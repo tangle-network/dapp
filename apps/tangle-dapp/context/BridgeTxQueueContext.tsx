@@ -140,7 +140,6 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
         );
         const updatedTxQueue = currTxQueue.map((txItem) => {
           if (txItem.hash === txHash) {
-            console.log('Found the one to change');
             return { ...txItem, sygmaTxId };
           }
           return txItem;

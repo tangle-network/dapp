@@ -1,5 +1,7 @@
 'use client';
 
+import { providers } from 'ethers';
+
 import { useBridge } from '../../../context/BridgeContext';
 import { useBridgeTxQueue } from '../../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
@@ -75,12 +77,19 @@ export default function useBridgeTransfer(): () => Promise<void> {
           throw new Error('Sygma EVM transfer failed');
         }
 
-        const { tx } = sygmaEvmTransfer;
+        const { tx, approvals } = sygmaEvmTransfer;
+
+        for (const approval of approvals) {
+          await ethersSigner.sendTransaction(
+            approval as providers.TransactionRequest,
+          );
+        }
 
         const res = await ethersSigner.sendTransaction(tx);
+        const txHash = res.hash;
 
         addTxToQueue({
-          hash: res.hash,
+          hash: txHash,
           env:
             selectedSourceChain.tag === 'live'
               ? 'live'
@@ -97,6 +106,14 @@ export default function useBridgeTransfer(): () => Promise<void> {
           creationTimestamp: new Date().getTime(),
           state: BridgeTxState.Sending,
         });
+
+        const receipt = await res.wait();
+        if (receipt.status === 1) {
+          addSygmaTxId(txHash, receipt.transactionHash);
+          updateTxState(txHash, BridgeTxState.Indexing);
+        } else {
+          updateTxState(txHash, BridgeTxState.Failed);
+        }
         break;
       }
 

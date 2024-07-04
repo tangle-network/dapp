@@ -1,5 +1,7 @@
 'use client';
 
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import getChainFromConfig from '@webb-tools/dapp-config/utils/getChainFromConfig';
 import { ArrowRight, ChainIcon, TokenIcon } from '@webb-tools/icons';
 import {
   Button,
@@ -15,10 +17,13 @@ import { FC, useCallback, useState } from 'react';
 import { useBridge } from '../../context/BridgeContext';
 import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
+import { isEVMChain } from '../../utils/bridge';
 import ensureError from '../../utils/ensureError';
 import FeeDetails from './FeeDetails';
 import useAmountInDecimals from './hooks/useAmountInDecimals';
+import useBridgeFee from './hooks/useBridgeFee';
 import useBridgeTransfer from './hooks/useBridgeTransfer';
+import useEstimatedGasFee from './hooks/useEstimatedGasFee';
 import useSelectedToken from './hooks/useSelectedToken';
 
 interface BridgeConfirmationModalProps {
@@ -31,6 +36,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
   handleClose,
 }) => {
   const { notificationApi } = useWebbUI();
+  const { switchChain, activeChain, activeWallet } = useWebContext();
   const activeAccountAddress = useActiveAccountAddress();
   const { setIsOpenQueueDropdown } = useBridgeTxQueue();
   const {
@@ -44,6 +50,8 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
   const { sourceAmountInDecimals, destinationAmountInDecimals } =
     useAmountInDecimals();
   const transfer = useBridgeTransfer();
+  const { fee: bridgeFee, isLoading: isBridgeFeeLoading } = useBridgeFee();
+  const { isLoading: isEstimatedGasFeeLoading } = useEstimatedGasFee();
 
   const [isTransferring, setIsTransferring] = useState(false);
 
@@ -54,8 +62,20 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
   }, [handleClose, setAmount, setDestinationAddress]);
 
   const bridgeTx = useCallback(async () => {
+    if (!activeWallet) {
+      throw new Error('No active wallet');
+    }
+
+    const isEvmWrongNetwork =
+      isEVMChain(selectedSourceChain) &&
+      activeChain?.id !== selectedSourceChain.id;
+
     try {
-      // TODO: for EVM case, switch chain if the user's is on the wrong network
+      // For EVM, if the user is on the wrong network, switch to the correct one
+      if (isEvmWrongNetwork) {
+        const nextChain = getChainFromConfig(selectedSourceChain);
+        await switchChain(nextChain, activeWallet);
+      }
 
       setIsTransferring(true);
       await transfer();
@@ -64,14 +84,24 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     } catch (error) {
       notificationApi({
         variant: 'error',
-        message: ensureError(error).message,
+        message: 'Bridge Failed',
+        secondaryMessage: ensureError(error).message,
       });
     } finally {
       setIsTransferring(false);
     }
 
     // TODO: for EVM case, switch chain back to the original Tangle chain after the transaction is done
-  }, [transfer, cleanUpWhenSubmit, notificationApi, setIsOpenQueueDropdown]);
+  }, [
+    transfer,
+    cleanUpWhenSubmit,
+    notificationApi,
+    setIsOpenQueueDropdown,
+    activeWallet,
+    selectedSourceChain,
+    switchChain,
+    activeChain,
+  ]);
 
   return (
     <Modal open>
@@ -116,6 +146,14 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
               bridgeTx();
               handleClose(); // TODO: handle clear form
             }}
+            isDisabled={
+              isBridgeFeeLoading ||
+              isEstimatedGasFeeLoading ||
+              bridgeFee === null ||
+              !sourceAmountInDecimals ||
+              !destinationAmountInDecimals ||
+              !destinationAddress
+            }
           >
             Confirm
           </Button>
