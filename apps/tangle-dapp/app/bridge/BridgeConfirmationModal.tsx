@@ -45,13 +45,16 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     destinationAddress,
     setAmount,
     setDestinationAddress,
+    bridgeFee,
+    isBridgeFeeLoading,
+    isEstimatedGasFeeLoading,
   } = useBridge();
   const selectedToken = useSelectedToken();
   const { sourceAmountInDecimals, destinationAmountInDecimals } =
     useAmountInDecimals();
   const transfer = useBridgeTransfer();
-  const { fee: bridgeFee, isLoading: isBridgeFeeLoading } = useBridgeFee();
-  const { isLoading: isEstimatedGasFeeLoading } = useEstimatedGasFee();
+  useBridgeFee();
+  useEstimatedGasFee();
 
   const [isTransferring, setIsTransferring] = useState(false);
 

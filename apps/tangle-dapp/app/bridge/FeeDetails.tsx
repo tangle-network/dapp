@@ -7,16 +7,17 @@ import Decimal from 'decimal.js';
 import { FC, useMemo } from 'react';
 
 import { useBridge } from '../../context/BridgeContext';
-import useBridgeFee from './hooks/useBridgeFee';
-import useEstimatedGasFee from './hooks/useEstimatedGasFee';
 import useSelectedToken from './hooks/useSelectedToken';
 import useTypedChainId from './hooks/useTypedChainId';
 
 const FeeDetails = () => {
-  const { selectedSourceChain } = useBridge();
-  const { fee: bridgeFee, isLoading: isLoadingBridgeFee } = useBridgeFee();
-  const { fee: estimatedGasFee, isLoading: isLoadingEstimatedGasFee } =
-    useEstimatedGasFee();
+  const {
+    selectedSourceChain,
+    bridgeFee,
+    isBridgeFeeLoading,
+    estimatedGasFee,
+    isEstimatedGasFeeLoading,
+  } = useBridge();
   const selectedToken = useSelectedToken();
   const { destinationTypedChainId } = useTypedChainId();
 
@@ -64,7 +65,7 @@ const FeeDetails = () => {
             value: (
               <FeeValueCmp fee={bridgeFee} symbol={selectedToken.symbol} />
             ),
-            isLoading: isLoadingBridgeFee,
+            isLoading: isBridgeFeeLoading,
             info: 'This transaction will charge a bridge fee to cover the destination chain’s gas fee.',
           },
           destChainTransactionFee !== null
@@ -87,7 +88,7 @@ const FeeDetails = () => {
                 symbol={selectedSourceChain.nativeCurrency.symbol}
               />
             ),
-            isLoading: isLoadingEstimatedGasFee,
+            isLoading: isEstimatedGasFeeLoading,
           },
         ].filter((item) => Boolean(item)) as Array<FeeItem>
       }

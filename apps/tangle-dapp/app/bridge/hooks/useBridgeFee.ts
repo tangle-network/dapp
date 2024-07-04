@@ -22,9 +22,7 @@ export default function useBridgeFee() {
     bridgeType,
     selectedSourceChain,
     selectedDestinationChain,
-    bridgeFee,
     setBridgeFee,
-    isBridgeFeeLoading,
     setIsBridgeFeeLoading,
   } = useBridge();
   const selectedToken = useSelectedToken();
@@ -115,6 +113,4 @@ export default function useBridgeFee() {
   useEffect(() => {
     setIsBridgeFeeLoading(isLoading);
   }, [setIsBridgeFeeLoading, isLoading]);
-
-  return { fee: bridgeFee, isLoading: isBridgeFeeLoading };
 }

@@ -25,9 +25,7 @@ export default function useEstimatedGasFee() {
     bridgeType,
     selectedSourceChain,
     selectedDestinationChain,
-    estimatedGasFee,
     setEstimatedGasFee,
-    isEstimatedGasFeeLoading,
     setIsEstimatedGasFeeLoading,
   } = useBridge();
   const selectedToken = useSelectedToken();
@@ -150,6 +148,4 @@ export default function useEstimatedGasFee() {
   useEffect(() => {
     setIsEstimatedGasFeeLoading(isLoading);
   }, [setIsEstimatedGasFeeLoading, isLoading]);
-
-  return { fee: estimatedGasFee, isLoading: isEstimatedGasFeeLoading };
 }

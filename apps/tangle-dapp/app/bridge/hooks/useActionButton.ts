@@ -9,8 +9,6 @@ import { useCallback, useMemo } from 'react';
 
 import { useBridge } from '../../../context/BridgeContext';
 import { BridgeWalletError } from '../../../types/bridge';
-import useBridgeFee from './useBridgeFee';
-import useEstimatedGasFee from './useEstimatedGasFee';
 
 type UseActionButtonReturnType = {
   isLoading: boolean;
@@ -36,9 +34,10 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
     isAmountInputError,
     isAddressInputError,
     walletError,
+    bridgeFee,
+    isBridgeFeeLoading,
+    isEstimatedGasFeeLoading,
   } = useBridge();
-  const { fee: bridgeFee, isLoading: isLoadingBridgeFee } = useBridgeFee();
-  const { isLoading: isLoadingEstimatedGasFee } = useEstimatedGasFee();
 
   const isNoActiveAccountOrWallet = useMemo(() => {
     return !activeAccount || !activeWallet;
@@ -110,8 +109,8 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
       : isInputInsufficient ||
         isAmountInputError ||
         isAddressInputError ||
-        isLoadingBridgeFee ||
-        isLoadingEstimatedGasFee ||
+        isBridgeFeeLoading ||
+        isEstimatedGasFeeLoading ||
         bridgeFee === null,
     buttonAction,
     buttonText,
