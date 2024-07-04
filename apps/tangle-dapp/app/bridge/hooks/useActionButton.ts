@@ -113,8 +113,8 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
         isAddressInputError ||
         isLoadingBridgeFee ||
         isLoadingEstimatedGasFee ||
-        bridgeFee === null ||
-        estimatedGasFee === null,
+        bridgeFee === null || // TODO: handle null case
+        estimatedGasFee === null, // TODO: handle null case
     buttonAction,
     buttonText,
     errorMessage,

@@ -76,7 +76,27 @@ export default function useBridgeTransfer(): () => Promise<void> {
         }
 
         const { tx } = sygmaEvmTransfer;
-        await ethersSigner.sendTransaction(tx);
+
+        const res = await ethersSigner.sendTransaction(tx);
+
+        addTxToQueue({
+          hash: res.hash,
+          env:
+            selectedSourceChain.tag === 'live'
+              ? 'live'
+              : selectedSourceChain.tag === 'test'
+                ? 'test'
+                : 'dev',
+          sourceTypedChainId,
+          destinationTypedChainId,
+          sourceAddress: activeAccountAddress,
+          recipientAddress: destinationAddress,
+          sourceAmount: sourceAmountInDecimals.toString(),
+          destinationAmount: destinationAmountInDecimals.toString(),
+          tokenSymbol: selectedToken.symbol,
+          creationTimestamp: new Date().getTime(),
+          state: BridgeTxState.Sending,
+        });
         break;
       }
 

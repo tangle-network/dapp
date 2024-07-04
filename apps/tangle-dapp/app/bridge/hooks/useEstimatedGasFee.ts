@@ -49,7 +49,8 @@ export default function useEstimatedGasFee() {
       isEthereumAddress(activeAccountAddress) &&
       bridgeType !== null &&
       ethersProvider !== null &&
-      ethersSigner !== null
+      ethersSigner !== null &&
+      destinationAddress
         ? {
             senderAddress: activeAccountAddress,
             recipientAddress: destinationAddress,
