@@ -1,6 +1,9 @@
 import chalk from 'chalk';
 import { ApiPromise, Keyring, WsProvider } from '@polkadot/api';
-import { TANGLE_LOCAL_WS_RPC_ENDPOINT } from '@webb-tools/dapp-config/constants/tangle';
+import {
+  TANGLE_LOCAL_WS_RPC_ENDPOINT,
+  TANGLE_TOKEN_DECIMALS,
+} from '@webb-tools/dapp-config/constants/tangle';
 import { parseUnits } from 'viem';
 import { formatBalance, stringToU8a } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
@@ -55,6 +58,7 @@ success(
 const keyring = new Keyring({ type: 'sr25519' });
 const ALICE_SUDO = keyring.addFromUri('//Alice');
 const BOB = keyring.addFromUri('//Bob');
+const DAVE = keyring.addFromUri('//Dave');
 
 type Asset = {
   id: number;
@@ -150,6 +154,13 @@ await api.tx.sudo
   )
   .signAndSend(ALICE_SUDO, { nonce });
 success('Assets whitelisted for the multi-asset-delegation pallet!');
+
+info('Join operators for DAVE');
+nonce = await api.rpc.system.accountNextIndex(DAVE.address);
+await api.tx.multiAssetDelegation
+  .joinOperators(parseUnits(MINIMUM_BALANCE_UINT, TANGLE_TOKEN_DECIMALS))
+  .signAndSend(DAVE, { nonce });
+success('DAVE joined the operators successfully!');
 
 console.log(
   chalk.bold.green(
