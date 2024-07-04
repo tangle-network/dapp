@@ -3,7 +3,6 @@
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { RelayerListCard } from '@webb-tools/webb-ui-components/components/ListCard';
 import type { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
@@ -14,6 +13,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
+import useRestakeOperatorMap from '../../../data/restake/useRestakeOperatorMap';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { PagePath } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
@@ -25,6 +25,7 @@ import ActionButton from './ActionButton';
 import AssetList from './AssetList';
 import DelegationInput from './DelegationInput';
 import Info from './Info';
+import OperatorList from './OperatorList';
 
 export default function DelegatePage() {
   const {
@@ -44,6 +45,8 @@ export default function DelegatePage() {
   }, [register]);
 
   const { delegatorInfo } = useRestakeDelegatorInfo();
+  const { operatorMap } = useRestakeOperatorMap();
+
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
 
@@ -152,10 +155,10 @@ export default function DelegatePage() {
       </SlideAnimation>
 
       <SlideAnimation show={isOperatorModalOpen} className="absolute">
-        <RelayerListCard
+        <OperatorList
+          operatorMap={operatorMap}
           overrideTitleProps={{ variant: 'h4' }}
           className="h-full dark:bg-[var(--restake-card-bg-dark)] p-0"
-          relayers={[]}
           onClose={closeOperatorModal}
         />
       </SlideAnimation>
