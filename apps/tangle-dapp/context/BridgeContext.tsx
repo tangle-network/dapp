@@ -6,6 +6,7 @@ import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import assert from 'assert';
+import Decimal from 'decimal.js';
 import {
   createContext,
   FC,
@@ -61,6 +62,16 @@ interface BridgeContextProps {
   setIsAddressInputError: (isAddressInputError: boolean) => void;
 
   walletError: BridgeWalletError | null;
+
+  bridgeFee: Decimal | null;
+  setBridgeFee: (bridgeFee: Decimal | null) => void;
+  isBridgeFeeLoading: boolean;
+  setIsBridgeFeeLoading: (isBridgeFeeLoading: boolean) => void;
+
+  estimatedGasFee: Decimal | null;
+  setEstimatedGasFee: (estimatedGasFee: Decimal | null) => void;
+  isEstimatedGasFeeLoading: boolean;
+  setIsEstimatedGasFeeLoading: (isEstimatedGasFeeLoading: boolean) => void;
 }
 
 const BridgeContext = createContext<BridgeContextProps>({
@@ -105,6 +116,24 @@ const BridgeContext = createContext<BridgeContextProps>({
   },
 
   walletError: null,
+
+  bridgeFee: null,
+  setBridgeFee: () => {
+    return;
+  },
+  isBridgeFeeLoading: false,
+  setIsBridgeFeeLoading: () => {
+    return;
+  },
+
+  estimatedGasFee: null,
+  setEstimatedGasFee: () => {
+    return;
+  },
+  isEstimatedGasFeeLoading: false,
+  setIsEstimatedGasFeeLoading: () => {
+    return;
+  },
 });
 
 export const useBridge = () => {
@@ -113,6 +142,13 @@ export const useBridge = () => {
 
 const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const { activeWallet } = useWebContext();
+
+  const [bridgeFee, setBridgeFee] = useState<Decimal | null>(null);
+  const [isBridgeFeeLoading, setIsBridgeFeeLoading] = useState(false);
+
+  const [estimatedGasFee, setEstimatedGasFee] = useState<Decimal | null>(null);
+  const [isEstimatedGasFeeLoading, setIsEstimatedGasFeeLoading] =
+    useState(false);
 
   const [selectedSourceChain, setSelectedSourceChain] = useState<ChainConfig>(
     BRIDGE_SOURCE_CHAIN_OPTIONS[0],
@@ -284,6 +320,16 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
         setIsAddressInputError,
 
         walletError,
+
+        bridgeFee,
+        setBridgeFee,
+        isBridgeFeeLoading,
+        setIsBridgeFeeLoading,
+
+        estimatedGasFee,
+        setEstimatedGasFee,
+        isEstimatedGasFeeLoading,
+        setIsEstimatedGasFeeLoading,
       }}
     >
       {children}
