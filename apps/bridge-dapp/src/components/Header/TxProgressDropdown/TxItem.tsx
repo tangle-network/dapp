@@ -6,6 +6,7 @@ import {
 } from '@webb-tools/api-provider-environment/transaction/useTransactionQueue';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { TxProgressor } from '@webb-tools/webb-ui-components/components/TxProgressor';
 import type { TxInfo } from '@webb-tools/webb-ui-components/components/TxProgressor/types';
 import type { ButtonProps } from '@webb-tools/webb-ui-components/components/buttons/types';
@@ -93,7 +94,7 @@ const TxItem: FC<{
           tx.currentStatus[0],
           tx.currentStatus[1],
         )}
-        actionProps={btnProps}
+        actionCmp={<Button {...btnProps} variant="link" size="sm" />}
         externalUrl={externalUrl}
         steppedProgressProps={{
           steps: tx.totalSteps,

@@ -11,11 +11,12 @@ import useNetworkStore from '../context/useNetworkStore';
 import { GetSuccessMessageFunction } from '../types';
 import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
-import { findInjectorForAddress, getApiPromise } from '../utils/polkadot';
+import { getApiPromise } from '../utils/polkadot';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useIsMountedRef from './useIsMountedRef';
 import useSubstrateAddress from './useSubstrateAddress';
+import useSubstrateInjectedExtension from './useSubstrateInjectedExtension';
 import useTxNotification from './useTxNotification';
 
 export enum TxStatus {
@@ -47,6 +48,7 @@ function useSubstrateTx<Context = void>(
   const activeSubstrateAddress = useSubstrateAddress();
   const isMountedRef = useIsMountedRef();
   const { rpcEndpoint } = useNetworkStore();
+  const injector = useSubstrateInjectedExtension();
 
   // Useful for debugging.
   useEffect(() => {
@@ -73,7 +75,11 @@ function useSubstrateTx<Context = void>(
         'Should not be able to execute a Substrate transaction while the active account is an EVM account',
       );
 
-      const injector = await findInjectorForAddress(activeSubstrateAddress);
+      assert(
+        injector !== null,
+        'Should not be able to execute a Substrate transaction without an injector',
+      );
+
       const api = await getApiPromise(overrideRpcEndpoint ?? rpcEndpoint);
       let tx: SubmittableExtrinsic<'promise', ISubmittableResult> | null;
       let newTxHash: HexString;
@@ -160,6 +166,7 @@ function useSubstrateTx<Context = void>(
       factory,
       isMountedRef,
       getSuccessMessageFnc,
+      injector,
     ],
   );
 

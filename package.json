@@ -232,7 +232,7 @@
     "@webb-tools/anchors": "1.0.11",
     "@webb-tools/api": "0.1.4-127",
     "@webb-tools/api-derive": "0.1.4-127",
-    "@webb-tools/app-util": "0.1.4-127",
+    "@webb-tools/app-util": "0.1.8",
     "@webb-tools/contracts": "1.0.11",
     "@webb-tools/interfaces": "1.0.11",
     "@webb-tools/sdk-core": "0.1.4-127",

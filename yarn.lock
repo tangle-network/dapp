@@ -17857,10 +17857,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/app-util@npm:0.1.4-127":
-  version: 0.1.4-127
-  resolution: "@webb-tools/app-util@npm:0.1.4-127"
-  checksum: 10c0/6ece534be43091ad4cc1bf8483b23a778d70a90c84df84905c375c335a2fbe81c0e6b11adb62c9a094114ffd816549c877fb8b7768d930a0dbb5e355fe0734a2
+"@webb-tools/app-util@npm:0.1.8":
+  version: 0.1.8
+  resolution: "@webb-tools/app-util@npm:0.1.8"
+  dependencies:
+    "@babel/runtime": "npm:^7.10.2"
+    bignumber.js: "npm:^9.0.0"
+  checksum: 10c0/43a9ec415db07099f74027048d4c768d1e0cc7080a24167494c130349352d2c0981bfb1c1b391710732d9e0fa1f4c1dbcd84dd455e4b6d3b5ecfcde1dd8d94ea
   languageName: node
   linkType: hard
 
@@ -38093,7 +38096,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:8.4.38, postcss@npm:^8.1.7, postcss@npm:^8.2.14, postcss@npm:^8.4.14, postcss@npm:^8.4.23, postcss@npm:^8.4.24, postcss@npm:^8.4.33, postcss@npm:^8.4.38":
+"postcss@npm:8.4.38":
   version: 8.4.38
   resolution: "postcss@npm:8.4.38"
   dependencies:
@@ -38101,6 +38104,17 @@ __metadata:
     picocolors: "npm:^1.0.0"
     source-map-js: "npm:^1.2.0"
   checksum: 10c0/955407b8f70cf0c14acf35dab3615899a2a60a26718a63c848cf3c29f2467b0533991b985a2b994430d890bd7ec2b1963e36352b0774a19143b5f591540f7c06
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.1.7, postcss@npm:^8.2.14, postcss@npm:^8.4.14, postcss@npm:^8.4.23, postcss@npm:^8.4.24, postcss@npm:^8.4.33, postcss@npm:^8.4.38":
+  version: 8.4.39
+  resolution: "postcss@npm:8.4.39"
+  dependencies:
+    nanoid: "npm:^3.3.7"
+    picocolors: "npm:^1.0.1"
+    source-map-js: "npm:^1.2.0"
+  checksum: 10c0/16f5ac3c4e32ee76d1582b3c0dcf1a1fdb91334a45ad755eeb881ccc50318fb8d64047de4f1601ac96e30061df203f0f2e2edbdc0bfc49b9c57bc9fb9bedaea3
   languageName: node
   linkType: hard
 
@@ -45633,7 +45647,7 @@ __metadata:
     "@webb-tools/anchors": "npm:1.0.11"
     "@webb-tools/api": "npm:0.1.4-127"
     "@webb-tools/api-derive": "npm:0.1.4-127"
-    "@webb-tools/app-util": "npm:0.1.4-127"
+    "@webb-tools/app-util": "npm:0.1.8"
     "@webb-tools/contracts": "npm:1.0.11"
     "@webb-tools/interfaces": "npm:1.0.11"
     "@webb-tools/proposals": "npm:^1.0.11"

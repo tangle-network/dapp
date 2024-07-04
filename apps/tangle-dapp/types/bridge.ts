@@ -59,3 +59,30 @@ export enum BridgeWalletError {
   MismatchEvm = 'WALLET_MISMATCH_EVM',
   MismatchSubstrate = 'WALLET_MISMATCH_SUBSTRATE',
 }
+
+export enum BridgeTxState {
+  Sending = 'Sending', // The user is signing the tx
+
+  Indexing = 'Indexing', // The tx is being indexed by Sygma
+
+  Pending = 'Pending', // The tx is done indexing but still pending
+
+  Executed = 'Executed', // The tx is executed successfully
+  Failed = 'Failed', // The tx is failed
+}
+
+export type BridgeQueueTxItem = {
+  hash: string;
+  sygmaTxId?: string;
+  env: 'live' | 'test' | 'dev';
+  sourceTypedChainId: number;
+  destinationTypedChainId: number;
+  sourceAddress: string;
+  recipientAddress: string;
+  sourceAmount: string;
+  destinationAmount: string;
+  tokenSymbol: string;
+  creationTimestamp: number;
+  state: BridgeTxState;
+  explorerUrl?: string;
+};

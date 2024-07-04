@@ -6,6 +6,7 @@ import {
   TransactionState,
   TransactionStatusMap,
   TransactionStatusValue,
+  TransactionName,
 } from '@webb-tools/abstract-api-provider/transaction';
 import calculateProgressPercentage from '@webb-tools/abstract-api-provider/utils/calculateProgressPercentage';
 import { ApiConfig, ChainConfig } from '@webb-tools/dapp-config';
@@ -156,7 +157,7 @@ export type TransactionQueueApi = {
      * @returns The latest transaction of the given name or null if no transaction is found
      */
     getLatestTransaction(
-      name: 'Deposit' | 'Withdraw' | 'Transfer',
+      name: TransactionName,
     ): TransactionExecutor<NewNotesTxResult> | null;
   };
 };
@@ -341,9 +342,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
   }, []);
 
   const getLatestTransaction = useCallback(
-    (
-      name: 'Deposit' | 'Withdraw' | 'Transfer',
-    ): TransactionExecutor<NewNotesTxResult> | null => {
+    (name: TransactionName): TransactionExecutor<NewNotesTxResult> | null => {
       const txes = txQueue$.getValue().filter((tx) => tx.name === name);
       if (txes.length === 0) {
         return null;
