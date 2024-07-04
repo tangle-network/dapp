@@ -3,6 +3,7 @@ import { FC } from 'react';
 
 import AvailableWithdrawCard from '../../../components/LiquidStaking/AvailableWithdrawCard';
 import LiquidStakeAndUnstakeCards from '../../../components/LiquidStaking/LiquidStakeAndUnstakeCards';
+import StakedAssetsTable from '../../../components/LiquidStaking/StakedAssetsTable';
 import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
 
 type Props = {
@@ -20,6 +21,8 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
       <LiquidStakeAndUnstakeCards />
 
       <AvailableWithdrawCard />
+
+      <StakedAssetsTable />
     </div>
   );
 };
