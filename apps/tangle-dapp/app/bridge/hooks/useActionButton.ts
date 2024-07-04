@@ -38,8 +38,7 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
     walletError,
   } = useBridge();
   const { fee: bridgeFee, isLoading: isLoadingBridgeFee } = useBridgeFee();
-  const { fee: estimatedGasFee, isLoading: isLoadingEstimatedGasFee } =
-    useEstimatedGasFee();
+  const { isLoading: isLoadingEstimatedGasFee } = useEstimatedGasFee();
 
   const isNoActiveAccountOrWallet = useMemo(() => {
     return !activeAccount || !activeWallet;
@@ -113,8 +112,7 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
         isAddressInputError ||
         isLoadingBridgeFee ||
         isLoadingEstimatedGasFee ||
-        bridgeFee === null || // TODO: handle null case
-        estimatedGasFee === null, // TODO: handle null case
+        bridgeFee === null,
     buttonAction,
     buttonText,
     errorMessage,
