@@ -3,13 +3,14 @@
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import InfoIconWithTooltip from '@webb-tools/webb-ui-components/components/IconWithTooltip/InfoIconWithTooltip';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import AddressInput, {
   AddressType,
 } from '../../components/AddressInput/AddressInput';
 import { useBridge } from '../../context/BridgeContext';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { isEVMChain } from '../../utils/bridge';
 import AmountAndTokenInput from './AmountAndTokenInput';
 import BridgeConfirmationModal from './BridgeConfirmationModal';
@@ -23,14 +24,34 @@ interface BridgeContainerProps {
 
 const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
   const {
+    amount,
     selectedDestinationChain,
     destinationAddress,
     setDestinationAddress,
     setIsAddressInputError,
+    isAmountInputError,
+    isAddressInputError,
   } = useBridge();
+  const activeAccountAddress = useActiveAccountAddress();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const { buttonAction, buttonText, isLoading, isDisabled, errorMessage } =
     useActionButton(() => setIsConfirmModalOpen(true));
+
+  const hideFeeDetails = useMemo(
+    () =>
+      !activeAccountAddress ||
+      !amount ||
+      !destinationAddress ||
+      isAmountInputError ||
+      isAddressInputError,
+    [
+      activeAccountAddress,
+      amount,
+      destinationAddress,
+      isAmountInputError,
+      isAddressInputError,
+    ],
+  );
 
   return (
     <>
@@ -65,7 +86,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
               }
             />
 
-            <FeeDetails />
+            {!hideFeeDetails && <FeeDetails />}
           </div>
           <div className="flex flex-col items-end gap-2">
             {errorMessage && (

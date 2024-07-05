@@ -4,6 +4,7 @@ import { BN } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
+import getChainFromConfig from '@webb-tools/dapp-config/utils/getChainFromConfig';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import assert from 'assert';
 import Decimal from 'decimal.js';
@@ -11,6 +12,7 @@ import {
   createContext,
   FC,
   PropsWithChildren,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -62,6 +64,7 @@ interface BridgeContextProps {
   setIsAddressInputError: (isAddressInputError: boolean) => void;
 
   walletError: BridgeWalletError | null;
+  switchToCorrectEvmChain: () => void;
 
   bridgeFee: Decimal | null;
   setBridgeFee: (bridgeFee: Decimal | null) => void;
@@ -116,6 +119,9 @@ const BridgeContext = createContext<BridgeContextProps>({
   },
 
   walletError: null,
+  switchToCorrectEvmChain: () => {
+    return;
+  },
 
   bridgeFee: null,
   setBridgeFee: () => {
@@ -141,7 +147,7 @@ export const useBridge = () => {
 };
 
 const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { activeWallet } = useWebContext();
+  const { activeChain, activeWallet, switchChain } = useWebContext();
 
   const [bridgeFee, setBridgeFee] = useState<Decimal | null>(null);
   const [isBridgeFeeLoading, setIsBridgeFeeLoading] = useState(false);
@@ -242,6 +248,12 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
     return null;
   }, [selectedSourceChain, selectedDestinationChain]);
 
+  const switchToCorrectEvmChain = useCallback(() => {
+    if (!activeWallet) return;
+    const correctChain = getChainFromConfig(selectedSourceChain);
+    switchChain(correctChain, activeWallet);
+  }, [activeWallet, selectedSourceChain, switchChain]);
+
   useEffect(() => {
     // If current destination chain is not in the destination chain options,
     // set the first option as the destination chain.
@@ -287,8 +299,16 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
       return;
     }
 
+    if (
+      isEVMChain(selectedSourceChain) &&
+      activeChain?.id !== selectedSourceChain.id
+    ) {
+      setWalletError(BridgeWalletError.EvmWrongChain);
+      return;
+    }
+
     setWalletError(null);
-  }, [activeWallet?.platform, selectedSourceChain]);
+  }, [activeWallet?.platform, selectedSourceChain, activeChain]);
 
   return (
     <BridgeContext.Provider
@@ -320,6 +340,7 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
         setIsAddressInputError,
 
         walletError,
+        switchToCorrectEvmChain,
 
         bridgeFee,
         setBridgeFee,

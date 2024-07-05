@@ -9,7 +9,6 @@ import { useCallback, useMemo } from 'react';
 
 import { useBridge } from '../../../context/BridgeContext';
 import { BridgeWalletError } from '../../../types/bridge';
-import useEvmWrongChain from './useEvmWrongChain';
 
 type UseActionButtonReturnType = {
   isLoading: boolean;
@@ -38,8 +37,8 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
     bridgeFee,
     isBridgeFeeLoading,
     isEstimatedGasFeeLoading,
+    switchToCorrectEvmChain,
   } = useBridge();
-  const { isEvmWrongChain, switchToCorrectEvmChain } = useEvmWrongChain();
 
   const isNoActiveAccountOrWallet = useMemo(() => {
     return !activeAccount || !activeWallet;
@@ -59,6 +58,10 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
           tooltip:
             'Source Chain is Substrate but the connected wallet only supports EVM networks',
         };
+      case BridgeWalletError.EvmWrongChain:
+        return {
+          text: 'Wrong EVM Chain Connected',
+        };
       default:
         return null;
     }
@@ -68,6 +71,11 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
     () =>
       walletError === BridgeWalletError.MismatchEvm ||
       walletError === BridgeWalletError.MismatchSubstrate,
+    [walletError],
+  );
+
+  const isEvmWrongChain = useMemo(
+    () => walletError === BridgeWalletError.EvmWrongChain,
     [walletError],
   );
 
@@ -110,7 +118,11 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
     if (isEvmWrongChain) return 'Switch Chain';
     if (isRequiredToConnectWallet) return 'Connect';
     return 'Transfer';
-  }, [isWalletAndSourceChainMismatch, isRequiredToConnectWallet, isEvmWrongChain]);
+  }, [
+    isWalletAndSourceChainMismatch,
+    isRequiredToConnectWallet,
+    isEvmWrongChain,
+  ]);
 
   return {
     isLoading: loading || isConnecting,
