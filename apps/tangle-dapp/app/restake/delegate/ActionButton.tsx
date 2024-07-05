@@ -27,17 +27,21 @@ export default function ActionButton({
   const assetId = watch('assetId');
   const amount = watch('amount');
 
-  const displayError = useMemo(() => {
-    return errors.operatorAccountId !== undefined || !operatorAccountId
-      ? 'Select an operator'
-      : errors.assetId !== undefined || !assetId
-        ? 'Select an asset'
-        : !amount
-          ? 'Enter an amount'
-          : errors.amount !== undefined
-            ? 'Invalid amount'
-            : undefined;
-  }, [errors, operatorAccountId, assetId, amount]);
+  const displayError = useMemo(
+    () => {
+      return errors.operatorAccountId !== undefined || !operatorAccountId
+        ? 'Select an operator'
+        : errors.assetId !== undefined || !assetId
+          ? 'Select an asset'
+          : !amount
+            ? 'Enter an amount'
+            : errors.amount !== undefined
+              ? 'Invalid amount'
+              : undefined;
+    },
+    // prettier-ignore
+    [errors.operatorAccountId, errors.assetId, errors.amount, operatorAccountId, assetId, amount],
+  );
 
   return (
     <ActionButtonBase>
