@@ -1,3 +1,4 @@
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
@@ -56,11 +57,8 @@ export default function DelegationInput({
       return {};
     }
 
-    const amountRaw = delegatorInfo.deposits[selectedAsset.id]?.amount;
-    if (!isDefined(amountRaw)) {
-      return {};
-    }
-
+    const amountRaw =
+      delegatorInfo.deposits[selectedAsset.id]?.amount ?? ZERO_BIG_INT;
     const maxFormatted = +formatUnits(amountRaw, selectedAsset.decimals);
 
     return {
