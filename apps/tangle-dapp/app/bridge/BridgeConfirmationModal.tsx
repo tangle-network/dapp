@@ -18,7 +18,6 @@ import { useBridge } from '../../context/BridgeContext';
 import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { isEVMChain } from '../../utils/bridge';
-import ensureError from '../../utils/ensureError';
 import FeeDetails from './FeeDetails';
 import useAmountInDecimals from './hooks/useAmountInDecimals';
 import useBridgeFee from './hooks/useBridgeFee';
@@ -84,11 +83,10 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
       await transfer();
       cleanUpWhenSubmit();
       setIsOpenQueueDropdown(true);
-    } catch (error) {
+    } catch {
       notificationApi({
         variant: 'error',
         message: 'Bridge Failed',
-        secondaryMessage: ensureError(error).message,
       });
     } finally {
       setIsTransferring(false);
