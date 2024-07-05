@@ -15,6 +15,7 @@ import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/re
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '../../../data/restake/useRestakeOperatorMap';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
+import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { PagePath } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
 import ChainList from '../ChainList';
@@ -49,6 +50,8 @@ export default function DelegatePage() {
 
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
+
+  useRpcSubscription(activeTypedChainId);
 
   // Set the default assetId to the first assetId in the depositedAssets
   const defaultAssetId = useMemo(() => {

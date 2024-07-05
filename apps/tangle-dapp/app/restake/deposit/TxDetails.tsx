@@ -54,7 +54,8 @@ export default function TxDetails({ watch }: Props) {
         {
           name: 'Withdraw Period',
           info: 'The duration for which the deposited asset is locked.',
-          value: bondDuration !== null ? `${bondDuration} eras` : bondDuration,
+          value:
+            bondDuration !== null ? `${bondDuration} rounds` : bondDuration,
         },
       ]}
     />
