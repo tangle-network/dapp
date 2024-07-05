@@ -8,21 +8,24 @@ import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import keys from 'lodash/keys';
 import Link from 'next/link';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { parseUnits } from 'viem';
+import { formatUnits, parseUnits } from 'viem';
 
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
-import type { TxEventHandlers } from '../../../data/restake/RestakeTx/base';
+import { DelegateContext, TxEvent } from '../../../data/restake/RestakeTx/base';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '../../../data/restake/useRestakeOperatorMap';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
-import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
+import useRestakeTxEventHandlersWithNoti, {
+  type Props,
+} from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { PagePath } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
+import AvatarWithText from '../AvatarWithText';
 import ChainList from '../ChainList';
 import RestakeTabs from '../RestakeTabs';
 import SlideAnimation from '../SlideAnimation';
@@ -40,7 +43,7 @@ export default function DelegatePage() {
     handleSubmit,
     watch,
     reset,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
   } = useForm<DelegationFormFields>({
     mode: 'onBlur',
   });
@@ -127,11 +130,49 @@ export default function DelegatePage() {
     [closeOperatorModal, setValue],
   );
 
-  const txEventHandlers = useRestakeTxEventHandlersWithNoti(
-    useRef<TxEventHandlers>({
+  const options = useMemo<Props<DelegateContext>>(() => {
+    return {
+      options: {
+        [TxEvent.SUCCESS]: {
+          persist: true,
+          secondaryMessage: (
+            { amount, assetId, operatorAccount },
+            explorerUrl,
+          ) => (
+            <div>
+              <Typography variant="body1" fw="bold">
+                Successfully delegated{' '}
+                {formatUnits(amount, assetMap[assetId].decimals)}{' '}
+                {assetMap[assetId].symbol} to{' '}
+                <AvatarWithText
+                  className="inline-flex"
+                  accountAddress={operatorAccount}
+                  overrideAvatarProps={{ size: 'sm' }}
+                />
+              </Typography>
+
+              {explorerUrl && (
+                <Typography component="p" variant="body1">
+                  View the transaction{' '}
+                  <Button
+                    className="inline-block"
+                    variant="link"
+                    href={explorerUrl}
+                    target="_blank"
+                  >
+                    on the explorer
+                  </Button>
+                </Typography>
+              )}
+            </div>
+          ),
+        },
+      },
       onTxSuccess: () => reset(),
-    }).current,
-  );
+    };
+  }, [assetMap, reset]);
+
+  const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
 
   const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>(
     async (data) => {
@@ -178,6 +219,7 @@ export default function DelegatePage() {
             isValid={isValid}
             openChainModal={openChainModal}
             watch={watch}
+            isSubmitting={isSubmitting}
           />
         </div>
       </div>

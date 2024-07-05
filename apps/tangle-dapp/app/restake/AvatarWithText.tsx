@@ -6,9 +6,10 @@ import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import isEqual from 'lodash/isEqual';
 import { type ComponentProps, memo } from 'react';
+import { twMerge } from 'tailwind-merge';
 import { isHex } from 'viem';
 
-type Props = {
+type Props = ComponentProps<'div'> & {
   accountAddress: string;
   overrideAvatarProps?: Partial<ComponentProps<typeof Avatar>>;
   overrideTypographyProps?: Partial<ComponentProps<typeof Typography>>;
@@ -18,21 +19,32 @@ const AvatarWithText = ({
   accountAddress,
   overrideAvatarProps,
   overrideTypographyProps,
+  className,
+  ...props
 }: Props) => {
   return (
-    <div className="flex items-center max-w-xs space-x-2 grow">
+    <div
+      {...props}
+      className={twMerge(
+        'flex items-center max-w-xs space-x-2 grow',
+        className,
+      )}
+    >
       <Avatar
         // TODO: Determine the theme instead of hardcoding it
         theme={isEthereumAddress(accountAddress) ? 'ethereum' : 'substrate'}
         value={accountAddress}
-        className={`${getFlexBasic()} shrink-0`}
         {...overrideAvatarProps}
+        className={twMerge(
+          `${getFlexBasic()} shrink-0`,
+          overrideAvatarProps?.className,
+        )}
       />
 
       <Typography
         variant="body2"
-        className="truncate"
         {...overrideTypographyProps}
+        className={twMerge('truncate', overrideTypographyProps?.className)}
       >
         {isHex(accountAddress)
           ? shortenHex(accountAddress)

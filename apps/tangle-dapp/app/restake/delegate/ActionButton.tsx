@@ -12,6 +12,7 @@ import ActionButtonBase from '../ActionButtonBase';
 type Props = {
   openChainModal: Noop;
   isValid: boolean;
+  isSubmitting: boolean;
   errors: FieldErrors<DelegationFormFields>;
   watch: UseFormWatch<DelegationFormFields>;
 };
@@ -19,6 +20,7 @@ type Props = {
 export default function ActionButton({
   openChainModal,
   isValid,
+  isSubmitting,
   errors,
   watch,
 }: Props) {
@@ -71,8 +73,8 @@ export default function ActionButton({
             isDisabled={!isValid || isDefined(displayError)}
             type="submit"
             isFullWidth
-            isLoading={isLoading}
-            loadingText={loadingText}
+            isLoading={isSubmitting || isLoading}
+            loadingText={isSubmitting ? 'Delegating...' : loadingText}
           >
             {displayError ?? 'Delegate'}
           </Button>

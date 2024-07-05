@@ -50,12 +50,12 @@ export default function useRestakeTx(): RestakeTxBase {
 
 function createDummyApi(error: string): RestakeTxBase {
   return {
-    delegate(_operator, _asset, _amount, eventHandlers) {
-      eventHandlers?.onTxFailed?.(error);
+    delegate(operatorAccount, assetId, amount, eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, { amount, assetId, operatorAccount });
       return Promise.resolve(null);
     },
-    deposit(_asset, _amount, eventHandlers) {
-      eventHandlers?.onTxFailed?.(error);
+    deposit(assetId, amount, eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, { amount, assetId });
       return Promise.resolve(null);
     },
   };

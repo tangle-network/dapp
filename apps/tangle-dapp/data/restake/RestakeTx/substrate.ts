@@ -4,7 +4,12 @@ import type { ISubmittableResult, Signer } from '@polkadot/types/types';
 import noop from 'lodash/noop';
 import type { Hash } from 'viem';
 
-import { RestakeTxBase, type TxEventHandlers } from './base';
+import {
+  type DelegateContext,
+  type DepositContext,
+  RestakeTxBase,
+  type TxEventHandlers,
+} from './base';
 
 export default class SubstrateRestakeTx extends RestakeTxBase {
   constructor(
@@ -17,9 +22,10 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     this.provider.setSigner(this.signer);
   }
 
-  private signAndSendExtrinsic(
+  private signAndSendExtrinsic<Context extends Record<string, unknown>>(
     extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
-    eventHandlers?: TxEventHandlers,
+    context: Context,
+    eventHandlers?: TxEventHandlers<Context>,
   ) {
     return new Promise<Hash | null>((resolve) => {
       let unsub = noop;
@@ -31,12 +37,20 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
           ({ dispatchError, events, status, txHash }) => {
             if (status.isInBlock) {
               const blockHash = status.asInBlock;
-              eventHandlers?.onTxInBlock?.(txHash.toHex(), blockHash.toHex());
+              eventHandlers?.onTxInBlock?.(
+                txHash.toHex(),
+                blockHash.toHex(),
+                context,
+              );
             }
 
             if (status.isFinalized) {
               const blockHash = status.asFinalized;
-              eventHandlers?.onTxFinalized?.(txHash.toHex(), blockHash.toHex());
+              eventHandlers?.onTxFinalized?.(
+                txHash.toHex(),
+                blockHash.toHex(),
+                context,
+              );
             }
 
             if (!status.isFinalized) {
@@ -62,7 +76,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
 
                     message = `${error.section}.${error.name}`;
                   } catch {
-                    eventHandlers?.onTxFailed?.(message);
+                    eventHandlers?.onTxFailed?.(message, context);
                     resolve(null);
                     unsub();
                   }
@@ -70,7 +84,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
                   message = `${dispatchError.type}.${dispatchError.asToken.type}`;
                 }
 
-                eventHandlers?.onTxFailed?.(message);
+                eventHandlers?.onTxFailed?.(message, context);
                 resolve(null);
                 unsub();
               } else if (method === 'ExtrinsicSuccess' && status.isFinalized) {
@@ -78,6 +92,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
                 eventHandlers?.onTxSuccess?.(
                   txHashHex,
                   status.asFinalized.toHex(),
+                  context,
                 );
                 // Resolve with the block hash
                 resolve(txHashHex);
@@ -89,7 +104,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
         .then((unsubFn) => (unsub = unsubFn))
         .catch((error) => {
           resolve(null);
-          eventHandlers?.onTxFailed?.(error.message);
+          eventHandlers?.onTxFailed?.(error.message, context);
           unsub();
         });
     });
@@ -98,25 +113,36 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   deposit = async (
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers,
+    eventHandlers?: TxEventHandlers<DepositContext>,
   ) => {
+    const context = {
+      amount,
+      assetId,
+    } satisfies DepositContext;
+
     // Deposit the asset into the Substrate chain.
     const extrinsic = this.provider.tx.multiAssetDelegation.deposit(
       assetId,
       amount,
     );
 
-    eventHandlers?.onTxSending?.();
+    eventHandlers?.onTxSending?.(context);
 
-    return this.signAndSendExtrinsic(extrinsic, eventHandlers);
+    return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
   };
 
   delegate = async (
     operatorAccount: string,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers,
+    eventHandlers?: TxEventHandlers<DelegateContext>,
   ) => {
+    const context = {
+      amount,
+      assetId,
+      operatorAccount,
+    } satisfies DelegateContext;
+
     // Deposit the asset into the Substrate chain.
     const extrinsic = this.provider.tx.multiAssetDelegation.delegate(
       operatorAccount,
@@ -124,8 +150,8 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
       amount,
     );
 
-    eventHandlers?.onTxSending?.();
+    eventHandlers?.onTxSending?.(context);
 
-    return this.signAndSendExtrinsic(extrinsic, eventHandlers);
+    return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
   };
 }
