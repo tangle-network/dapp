@@ -51,7 +51,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
   const selectedToken = useSelectedToken();
   const { sourceAmountInDecimals, destinationAmountInDecimals } =
     useAmountInDecimals();
-  const transfer = useBridgeTransfer();
+
   useBridgeFee();
   useEstimatedGasFee();
 
@@ -62,6 +62,13 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     setAmount(null);
     setDestinationAddress('');
   }, [handleClose, setAmount, setDestinationAddress]);
+
+  const transfer = useBridgeTransfer({
+    onTxAddedToQueue: () => {
+      cleanUpWhenSubmit();
+      setIsOpenQueueDropdown(true);
+    },
+  });
 
   const bridgeTx = useCallback(async () => {
     if (!activeWallet) {
@@ -81,8 +88,6 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
 
       setIsTransferring(true);
       await transfer();
-      cleanUpWhenSubmit();
-      setIsOpenQueueDropdown(true);
     } catch {
       notificationApi({
         variant: 'error',
@@ -91,13 +96,9 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     } finally {
       setIsTransferring(false);
     }
-
-    // TODO: for EVM case, switch chain back to the original Tangle chain after the transaction is done
   }, [
     transfer,
-    cleanUpWhenSubmit,
     notificationApi,
-    setIsOpenQueueDropdown,
     activeWallet,
     selectedSourceChain,
     switchChain,

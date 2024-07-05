@@ -17,7 +17,11 @@ import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 import useTypedChainId from './useTypedChainId';
 
-export default function useBridgeTransfer(): () => Promise<void> {
+export default function useBridgeTransfer({
+  onTxAddedToQueue,
+}: {
+  onTxAddedToQueue: () => void;
+}) {
   const activeAccountAddress = useActiveAccountAddress();
   const injector = useSubstrateInjectedExtension();
   const {
@@ -107,6 +111,8 @@ export default function useBridgeTransfer(): () => Promise<void> {
           state: BridgeTxState.Sending,
         });
 
+        onTxAddedToQueue();
+
         const receipt = await res.wait();
         if (receipt.status === 1) {
           addSygmaTxId(txHash, receipt.transactionHash);
@@ -179,6 +185,8 @@ export default function useBridgeTransfer(): () => Promise<void> {
                 creationTimestamp: new Date().getTime(),
                 state: BridgeTxState.Sending,
               });
+
+              onTxAddedToQueue();
             }
 
             if (dispatchError) {
