@@ -1,7 +1,5 @@
 'use client';
 
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import getChainFromConfig from '@webb-tools/dapp-config/utils/getChainFromConfig';
 import { ArrowRight, ChainIcon, TokenIcon } from '@webb-tools/icons';
 import {
   Button,
@@ -17,7 +15,6 @@ import { FC, useCallback, useState } from 'react';
 import { useBridge } from '../../context/BridgeContext';
 import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import { isEVMChain } from '../../utils/bridge';
 import FeeDetails from './FeeDetails';
 import useAmountInDecimals from './hooks/useAmountInDecimals';
 import useBridgeFee from './hooks/useBridgeFee';
@@ -35,7 +32,6 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
   handleClose,
 }) => {
   const { notificationApi } = useWebbUI();
-  const { switchChain, activeChain, activeWallet } = useWebContext();
   const activeAccountAddress = useActiveAccountAddress();
   const { setIsOpenQueueDropdown } = useBridgeTxQueue();
   const {
@@ -71,21 +67,8 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
   });
 
   const bridgeTx = useCallback(async () => {
-    if (!activeWallet) {
-      throw new Error('No active wallet');
-    }
-
-    const isEvmWrongNetwork =
-      isEVMChain(selectedSourceChain) &&
-      activeChain?.id !== selectedSourceChain.id;
 
     try {
-      // For EVM, if the user is on the wrong network, switch to the correct one
-      if (isEvmWrongNetwork) {
-        const nextChain = getChainFromConfig(selectedSourceChain);
-        await switchChain(nextChain, activeWallet);
-      }
-
       setIsTransferring(true);
       await transfer();
     } catch {
@@ -96,14 +79,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     } finally {
       setIsTransferring(false);
     }
-  }, [
-    transfer,
-    notificationApi,
-    activeWallet,
-    selectedSourceChain,
-    switchChain,
-    activeChain,
-  ]);
+  }, [transfer, notificationApi]);
 
   return (
     <Modal open>
