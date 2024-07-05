@@ -5,7 +5,7 @@ import { memo } from 'react';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 
 const Info = memo(() => {
-  const { leaveDelegatorsDelay } = useRestakeConsts();
+  const { leaveDelegatorsDelay, delegationBondLessDelay } = useRestakeConsts();
 
   return (
     <FeeDetails
@@ -18,6 +18,13 @@ const Info = memo(() => {
           value: isDefined(leaveDelegatorsDelay)
             ? `${leaveDelegatorsDelay} rounds`
             : leaveDelegatorsDelay,
+        },
+        {
+          name: 'Bond less delay',
+          info: 'Number of rounds that delegation bond less requests must wait before being executable.',
+          value: isDefined(delegationBondLessDelay)
+            ? `${delegationBondLessDelay} rounds`
+            : delegationBondLessDelay,
         },
       ]}
     />

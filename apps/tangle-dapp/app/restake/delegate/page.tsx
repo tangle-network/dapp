@@ -134,7 +134,6 @@ export default function DelegatePage() {
     return {
       options: {
         [TxEvent.SUCCESS]: {
-          persist: true,
           secondaryMessage: (
             { amount, assetId, operatorAccount },
             explorerUrl,
