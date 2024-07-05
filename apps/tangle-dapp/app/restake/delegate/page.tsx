@@ -31,13 +31,24 @@ import OperatorList from './OperatorList';
 export default function DelegatePage() {
   const {
     register,
-    setValue,
+    setValue: setFormValue,
     handleSubmit,
     watch,
     formState: { errors, isValid },
   } = useForm<DelegationFormFields>({
     mode: 'onBlur',
   });
+
+  const setValue = useCallback(
+    (...params: Parameters<typeof setFormValue>) => {
+      setFormValue(params[0], params[1], {
+        shouldDirty: true,
+        shouldValidate: true,
+        ...params[2],
+      });
+    },
+    [setFormValue],
+  );
 
   // Register select fields on mount
   useEffect(() => {
@@ -70,10 +81,7 @@ export default function DelegatePage() {
   // Set the default assetId to the first deposited assets
   useEffect(() => {
     if (defaultAssetId !== null) {
-      setValue('assetId', defaultAssetId, {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
+      setValue('assetId', defaultAssetId);
     }
   }, [defaultAssetId, setValue]);
 

@@ -50,10 +50,7 @@ export default function AssetList({
 
   const handleAssetChange = useCallback(
     (asset: TokenListCardProps['selectTokens'][number]) => {
-      setValue('assetId', asset.id, {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
+      setValue('assetId', asset.id);
       onClose?.();
     },
     [onClose, setValue],

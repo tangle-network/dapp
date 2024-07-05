@@ -82,7 +82,7 @@ export default function DelegationInput({
 
   const handleAmountChange = useCallback(
     (amount: string) => {
-      setValue('amount', amount, { shouldDirty: true, shouldValidate: true });
+      setValue('amount', amount);
     },
     [setValue],
   );
