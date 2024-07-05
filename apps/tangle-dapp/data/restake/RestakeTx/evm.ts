@@ -10,17 +10,26 @@ export default class EVMRestakeTx extends RestakeTxBase {
     readonly provider: Config,
   ) {
     super();
-
-    this.deposit = this.deposit.bind(this);
   }
 
-  public async deposit(
+  deposit = async (
     _assetId: string,
     _amount: bigint,
     _eventHandlers?: TxEventHandlers,
-  ) {
+  ) => {
     console.warn('EVM deposit not implemented yet');
     // Deposit the asset into the EVM.
     return null;
-  }
+  };
+
+  delegate = async (
+    _operatorAccount: string,
+    _assetId: string,
+    _amount: bigint,
+    _eventHandlers?: TxEventHandlers,
+  ) => {
+    console.warn('EVM delegate not implemented yet');
+    // Delegate the asset to the operator.
+    return null;
+  };
 }

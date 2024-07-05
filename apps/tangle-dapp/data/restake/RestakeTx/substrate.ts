@@ -1,5 +1,6 @@
 import type { ApiPromise } from '@polkadot/api';
-import { Signer } from '@polkadot/types/types';
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { ISubmittableResult, Signer } from '@polkadot/types/types';
 import noop from 'lodash/noop';
 import type { Hash } from 'viem';
 
@@ -14,22 +15,12 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     super();
 
     this.provider.setSigner(this.signer);
-    this.deposit = this.deposit.bind(this);
   }
 
-  public async deposit(
-    assetId: string,
-    amount: bigint,
+  private signAndSendExtrinsic(
+    extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
     eventHandlers?: TxEventHandlers,
   ) {
-    // Deposit the asset into the Substrate chain.
-    const extrinsic = this.provider.tx.multiAssetDelegation.deposit(
-      assetId,
-      amount,
-    );
-
-    eventHandlers?.onTxSending?.();
-
     return new Promise<Hash | null>((resolve) => {
       let unsub = noop;
 
@@ -103,4 +94,38 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
         });
     });
   }
+
+  deposit = async (
+    assetId: string,
+    amount: bigint,
+    eventHandlers?: TxEventHandlers,
+  ) => {
+    // Deposit the asset into the Substrate chain.
+    const extrinsic = this.provider.tx.multiAssetDelegation.deposit(
+      assetId,
+      amount,
+    );
+
+    eventHandlers?.onTxSending?.();
+
+    return this.signAndSendExtrinsic(extrinsic, eventHandlers);
+  };
+
+  delegate = async (
+    operatorAccount: string,
+    assetId: string,
+    amount: bigint,
+    eventHandlers?: TxEventHandlers,
+  ) => {
+    // Deposit the asset into the Substrate chain.
+    const extrinsic = this.provider.tx.multiAssetDelegation.delegate(
+      operatorAccount,
+      assetId,
+      amount,
+    );
+
+    eventHandlers?.onTxSending?.();
+
+    return this.signAndSendExtrinsic(extrinsic, eventHandlers);
+  };
 }

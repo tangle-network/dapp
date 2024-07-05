@@ -8,12 +8,17 @@ import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import keys from 'lodash/keys';
 import Link from 'next/link';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { parseUnits } from 'viem';
 
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
+import { useRestakeContext } from '../../../context/RestakeContext';
+import type { TxEventHandlers } from '../../../data/restake/RestakeTx/base';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '../../../data/restake/useRestakeOperatorMap';
+import useRestakeTx from '../../../data/restake/useRestakeTx';
+import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { PagePath } from '../../../types';
@@ -34,6 +39,7 @@ export default function DelegatePage() {
     setValue: setFormValue,
     handleSubmit,
     watch,
+    resetField,
     formState: { errors, isValid },
   } = useForm<DelegationFormFields>({
     mode: 'onBlur',
@@ -56,6 +62,8 @@ export default function DelegatePage() {
     register('operatorAccountId', { required: 'Operator is required' });
   }, [register]);
 
+  const { assetMap } = useRestakeContext();
+  const { delegate } = useRestakeTx();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
 
@@ -119,9 +127,30 @@ export default function DelegatePage() {
     [closeOperatorModal, setValue],
   );
 
-  const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>((data) => {
-    console.log(data);
-  }, []);
+  const txEventHandlers = useRestakeTxEventHandlersWithNoti(
+    useRef<TxEventHandlers>({
+      onTxSuccess: () => resetField('amount'),
+    }).current,
+  );
+
+  const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>(
+    async (data) => {
+      const { amount, assetId, operatorAccountId } = data;
+      if (!assetId || !isDefined(assetMap[assetId])) {
+        return;
+      }
+
+      const asset = assetMap[assetId];
+
+      await delegate(
+        operatorAccountId,
+        assetId,
+        parseUnits(amount, asset.decimals),
+        txEventHandlers,
+      );
+    },
+    [assetMap, delegate, txEventHandlers],
+  );
 
   return (
     <form

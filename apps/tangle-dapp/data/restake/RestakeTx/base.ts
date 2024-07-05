@@ -31,4 +31,11 @@ export abstract class RestakeTxBase {
     amount: bigint,
     eventHandlers?: TxEventHandlers,
   ): Promise<Hash | null>;
+
+  abstract delegate(
+    operatorAccount: string,
+    assetId: string,
+    amount: bigint,
+    eventHandlers?: TxEventHandlers,
+  ): Promise<Hash | null>;
 }
