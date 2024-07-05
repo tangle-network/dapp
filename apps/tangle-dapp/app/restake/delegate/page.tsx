@@ -39,7 +39,7 @@ export default function DelegatePage() {
     setValue: setFormValue,
     handleSubmit,
     watch,
-    resetField,
+    reset,
     formState: { errors, isValid },
   } = useForm<DelegationFormFields>({
     mode: 'onBlur',
@@ -129,7 +129,7 @@ export default function DelegatePage() {
 
   const txEventHandlers = useRestakeTxEventHandlersWithNoti(
     useRef<TxEventHandlers>({
-      onTxSuccess: () => resetField('amount'),
+      onTxSuccess: () => reset(),
     }).current,
   );
 
