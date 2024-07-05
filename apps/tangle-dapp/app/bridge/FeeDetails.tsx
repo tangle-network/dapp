@@ -43,7 +43,7 @@ const FeeDetails = () => {
       return `${totalFee.toString()} ${selectedToken.symbol}`;
     }
 
-    return `${allTokenFee.toString()} ${selectedToken.symbol} + ${estimatedGasFee.toString()} ${selectedSourceChain.nativeCurrency.symbol}`;
+    return `${allTokenFee.toDecimalPlaces(5).toString()} ${selectedToken.symbol} + ${estimatedGasFee.toDecimalPlaces(5).toString()} ${selectedSourceChain.nativeCurrency.symbol}`;
   }, [
     bridgeFee,
     destChainTransactionFee,
@@ -107,7 +107,7 @@ const FeeValueCmp: FC<{ fee: Decimal | null; symbol: string }> = ({
 }) => {
   return (
     <Typography variant="body1" className="!text-mono-120 dark:!text-mono-100">
-      {fee ? `${fee.toString()} ${symbol}` : 'N/A'}
+      {fee ? `${fee.toDecimalPlaces(5).toString()} ${symbol}` : 'N/A'}
     </Typography>
   );
 };
