@@ -22,6 +22,8 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       type = 'token',
       unavailableTokens,
       value: selectedAsset,
+      overrideInputProps,
+      renderEmpty,
       alertTitle,
       ...props
     },
@@ -62,6 +64,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
             placeholder="Search pool or enter token address"
             value={searchText}
             onChange={(val) => setSearchText(val.toString())}
+            {...overrideInputProps}
           />
         </div>
 
@@ -88,29 +91,31 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
 
         {/** Select tokens */}
         <div className="flex flex-col px-2 space-y-2 grow">
-          <div>
-            <Typography
-              variant="body4"
-              className="uppercase text-mono-200 dark:text-mono-0"
-              fw="bold"
-            >
-              Select {type}
-            </Typography>
+          {filteredSelect.length > 0 && (
+            <div>
+              <Typography
+                variant="body4"
+                className="uppercase text-mono-200 dark:text-mono-0"
+                fw="bold"
+              >
+                Select {type}
+              </Typography>
 
-            {/** Token list */}
-            <ScrollArea className="h-full py-2">
-              <ul>
-                {filteredSelect.map((current, idx) => (
-                  <TokenListItem
-                    key={`${current.name}-${idx}`}
-                    className="bg-transparent cursor-pointer dark:bg-transparent"
-                    {...current}
-                    onClick={() => onChange?.(current)}
-                  />
-                ))}
-              </ul>
-            </ScrollArea>
-          </div>
+              {/** Token list */}
+              <ScrollArea className="h-full py-2">
+                <ul>
+                  {filteredSelect.map((current, idx) => (
+                    <TokenListItem
+                      key={`${current.name}-${idx}`}
+                      className="bg-transparent cursor-pointer dark:bg-transparent"
+                      {...current}
+                      onClick={() => onChange?.(current)}
+                    />
+                  ))}
+                </ul>
+              </ScrollArea>
+            </div>
+          )}
 
           {unavailableTokens.length ? (
             <div>
@@ -137,6 +142,18 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
               </ScrollArea>
             </div>
           ) : null}
+
+          {filteredSelect.length === 0 && (
+            <div className="flex items-center justify-center h-full">
+              {typeof renderEmpty === 'function' ? (
+                renderEmpty()
+              ) : (
+                <Typography variant="h5" fw="bold" ta="center">
+                  No {type} Found.
+                </Typography>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Alert Component */}

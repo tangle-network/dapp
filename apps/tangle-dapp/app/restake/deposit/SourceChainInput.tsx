@@ -1,15 +1,10 @@
 'use client';
 
-import {
-  DEFAULT_DECIMALS,
-  ZERO_BIG_INT,
-} from '@webb-tools/dapp-config/constants';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import type { TokenSelectorProps } from '@webb-tools/webb-ui-components/components/TokenSelector/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import Decimal from 'decimal.js';
 import { useCallback, useMemo } from 'react';
 import type {
   UseFormRegister,
@@ -21,7 +16,9 @@ import { formatUnits } from 'viem';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import { DepositFormFields } from '../../../types/restake';
-import safeParseUnits from '../../../utils/safeParseUnits';
+import decimalsToStep from '../../../utils/decimalsToStep';
+import { getAmountValidation } from '../../../utils/getAmountValidation';
+import ErrorMessage from '../ErrorMessage';
 
 type Props = {
   amountError?: string;
@@ -94,7 +91,7 @@ const SourceChainInput = ({
     [openChainModal],
   );
 
-  const customAmountProsp = useMemo<TextFieldInputProps>(() => {
+  const customAmountProps = useMemo<TextFieldInputProps>(() => {
     const step = decimalsToStep(asset?.decimals);
 
     return {
@@ -102,43 +99,14 @@ const SourceChainInput = ({
       step,
       ...register('amount', {
         required: 'Amount is required',
-        validate: {
-          // Check amount with asset denomination
-          shouldDivisibleWithDecimals: (value) => {
-            return (
-              Decimal.mod(value, step).isZero() ||
-              `Amount must be divisible by ${step} ${asset !== null ? `, as ${asset?.symbol} has ${asset?.decimals} decimals` : ''}`.trim()
-            );
-          },
-          shouldNotBeZero: (value) => {
-            const parsed = safeParseUnits(value, asset?.decimals);
-            if (!parsed.sucess) return true;
-
-            return (
-              parsed.value !== ZERO_BIG_INT ||
-              'Amount must be greater than zero'
-            );
-          },
-          shouldNotLessThanMin: (value) => {
-            if (typeof min !== 'bigint') return true;
-
-            const parsed = safeParseUnits(value, asset?.decimals);
-            if (!parsed.sucess) return true;
-
-            return (
-              parsed.value >= min ||
-              `Amount must be at least ${minFormatted} ${asset?.symbol ?? ''}`.trim()
-            );
-          },
-          shouldNotExceedMax: (value) => {
-            if (typeof max !== 'bigint') return true;
-
-            const parsed = safeParseUnits(value, asset?.decimals);
-            if (!parsed.sucess) return true;
-
-            return parsed.value <= max || 'Amount exceeds balance';
-          },
-        },
+        validate: getAmountValidation(
+          step,
+          minFormatted,
+          min,
+          max,
+          asset?.decimals,
+          asset?.symbol,
+        ),
       }),
     };
   }, [asset, max, min, minFormatted, register]);
@@ -171,30 +139,12 @@ const SourceChainInput = ({
 
       <TransactionInputCard.Body
         tokenSelectorProps={tokenSelectorProps}
-        customAmountProps={customAmountProsp}
+        customAmountProps={customAmountProps}
       />
 
-      <Typography
-        component="p"
-        variant="body4"
-        fw="bold"
-        className="h-4 mt-2 text-red-70 dark:text-red-50"
-      >
-        {amountError}
-      </Typography>
+      <ErrorMessage>{amountError}</ErrorMessage>
     </TransactionInputCard.Root>
   );
 };
 
 export default SourceChainInput;
-
-/**
- * @internal
- * Convert decimals to input step
- * 18 decimals -> 0.000000000000000001
- */
-function decimalsToStep(decimals = DEFAULT_DECIMALS) {
-  if (decimals === 0) return '1';
-
-  return `0.${'0'.repeat(decimals - 1)}1`;
-}
