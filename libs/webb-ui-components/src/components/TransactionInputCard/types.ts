@@ -60,7 +60,14 @@ export interface TransactionInputCardRootProps
 
 export interface TransactionChainSelectorProps
   extends PropsOf<'button'>,
-    Pick<TransactionInputCardContextValue, 'typedChainId'> {}
+    Pick<TransactionInputCardContextValue, 'typedChainId'> {
+  /**
+   * @default 'Select Chain'
+   */
+  placeholder?: string;
+
+  renderBody?: () => ReactNode;
+}
 
 export interface TransactionButtonProps extends PropsOf<'button'> {
   /**
