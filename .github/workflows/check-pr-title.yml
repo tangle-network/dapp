@@ -1,0 +1,35 @@
+name: Validate PR Title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  validate-pr-title:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.7
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+          corepack prepare yarn@4.2.2 --activate
+          yarn set version 4.2.2
+
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: '>=18.12.x'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Extract PR title
+        id: extract_pr_title
+        run: echo "::set-output name=title::$(jq -r '.pull_request.title' $GITHUB_EVENT_PATH)"
+
+      - name: Validate PR title with commitlint
+        id: validate_pr_title
+        run: echo ${{ steps.extract_pr_title.outputs.title }} | yarn commitlint --config ${{ github.workspace }}/commitlint.config.js
