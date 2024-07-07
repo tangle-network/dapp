@@ -116,5 +116,13 @@
     "@nx/js": {
       "analyzeSourceFiles": true
     }
+  },
+  "release": {
+    "projects": ["apps/tangle-dapp"],
+    "projectsRelationship": "independent",
+    "changelog": {
+      "projectChangelogs": true
+    },
+    "releaseTagPattern": "{projectName}/{version}"
   }
 }

@@ -36,7 +36,8 @@
     "format": "prettier --write \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx}\" ",
     "format:check": "prettier --check \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx}\" ",
     "pr:check": "prettier --write \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx}\" && yarn lint && yarn build",
-    "chromatic": "npx chromatic --build-script-name=build:storybook --exit-zero-on-changes"
+    "chromatic": "npx chromatic --build-script-name=build:storybook --exit-zero-on-changes",
+    "generate:release": "node ./tools/release.js"
   },
   "private": true,
   "resolutions": {
