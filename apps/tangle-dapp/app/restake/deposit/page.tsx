@@ -1,30 +1,47 @@
 'use client';
 
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
+import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { ArrowRight } from '@webb-tools/icons/ArrowRight';
+import { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { useSubscription } from 'observable-hooks';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { parseUnits } from 'viem';
+import { formatUnits, parseUnits } from 'viem';
 
-import useRestakeTxEventHandlersWithNoti from '../../..//data/restake/useRestakeTxEventHandlersWithNoti';
+import useRestakeTxEventHandlersWithNoti, {
+  type Props,
+} from '../../..//data/restake/useRestakeTxEventHandlersWithNoti';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
-import type { TxEventHandlers } from '../../../data/restake/RestakeTx/base';
+import {
+  type DepositContext,
+  TxEvent,
+} from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
-import usePolkadotApi from '../../../hooks/usePolkadotApi';
+import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
+import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
+import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { DepositFormFields } from '../../../types/restake';
+import ChainList from '../ChainList';
 import RestakeTabs from '../RestakeTabs';
+import SlideAnimation from '../SlideAnimation';
 import ActionButton from './ActionButton';
-import ChainList from './ChainList';
 import DestChainInput from './DestChainInput';
-import SlideAnimation from './SlideAnimation';
 import SourceChainInput from './SourceChainInput';
 import TokenList from './TokenList';
 import TxDetails from './TxDetails';
 
+function getDefaultTypedChainId(activeTypedChainId: number | null) {
+  return isDefined(activeTypedChainId) &&
+    SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(activeTypedChainId)
+    ? activeTypedChainId
+    : SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0];
+}
+
 export default function DepositPage() {
   const formRef = useRef<HTMLFormElement>(null);
+
+  const activeTypedChainId = useActiveTypedChainId();
 
   const {
     register,
@@ -36,11 +53,10 @@ export default function DepositPage() {
   } = useForm<DepositFormFields>({
     mode: 'onBlur',
     defaultValues: {
-      sourceTypedChainId: SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0],
+      sourceTypedChainId: getDefaultTypedChainId(activeTypedChainId),
     },
   });
 
-  const { setCustomRpc } = usePolkadotApi();
   const { assetMap, assetWithBalances$ } = useRestakeContext();
   const { deposit } = useRestakeTx();
 
@@ -63,13 +79,14 @@ export default function DepositPage() {
     register('sourceTypedChainId', { required: 'Chain is required' });
   }, [register]);
 
+  useEffect(() => {
+    setValue('sourceTypedChainId', getDefaultTypedChainId(activeTypedChainId));
+  }, [activeTypedChainId, setValue]);
+
   const sourceTypedChainId = watch('sourceTypedChainId');
 
   // Subscribe to sourceTypedChainId and update customRpc
-  useEffect(() => {
-    const chain = chainsPopulated[sourceTypedChainId];
-    setCustomRpc(chain?.rpcUrls.default.webSocket?.[0]);
-  }, [setCustomRpc, sourceTypedChainId]);
+  useRpcSubscription(sourceTypedChainId);
 
   // Modal states
   const [chainModalOpen, setChainModalOpen] = useState(false);
@@ -83,10 +100,36 @@ export default function DepositPage() {
   const openTokenModal = useCallback(() => setTokenModalOpen(true), []);
   const closeTokenModal = useCallback(() => setTokenModalOpen(false), []);
 
-  const txEventHandlers = useRestakeTxEventHandlersWithNoti(
-    useRef<TxEventHandlers>({
+  const options = useMemo<Props<DepositContext>>(() => {
+    return {
+      options: {
+        [TxEvent.SUCCESS]: {
+          secondaryMessage: ({ amount, assetId }, explorerUrl) => {
+            return (
+              <ViewTxOnExplorer url={explorerUrl}>
+                {assetMap[assetId]
+                  ? `Successfully deposit ${formatUnits(amount, assetMap[assetId].decimals)} ${assetMap[assetId].symbol}`.trim()
+                  : undefined}
+              </ViewTxOnExplorer>
+            );
+          },
+        },
+      },
       onTxSuccess: () => resetField('amount'),
-    }).current,
+    };
+  }, [assetMap, resetField]);
+
+  const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
+
+  const handleChainChange = useCallback(
+    ({ typedChainId }: ChainType) => {
+      setValue('sourceTypedChainId', typedChainId, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+      setChainModalOpen(false);
+    },
+    [setValue],
   );
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
@@ -146,10 +189,10 @@ export default function DepositPage() {
 
       <SlideAnimation show={chainModalOpen} className="absolute">
         <ChainList
-          setValue={setValue}
-          watch={watch}
+          selectedTypedChainId={watch('sourceTypedChainId')}
           className="h-full"
           onClose={closeChainModal}
+          onChange={handleChainChange}
         />
       </SlideAnimation>
 

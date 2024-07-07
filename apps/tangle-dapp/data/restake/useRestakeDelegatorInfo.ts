@@ -1,9 +1,14 @@
-import { Option } from '@polkadot/types';
-import { PalletMultiAssetDelegationDelegatorDelegatorMetadata } from '@polkadot/types/lookup';
+import type { Option } from '@polkadot/types';
+import type {
+  PalletMultiAssetDelegationDelegatorBondLessRequest,
+  PalletMultiAssetDelegationDelegatorDelegatorMetadata,
+  PalletMultiAssetDelegationDelegatorDelegatorStatus,
+  PalletMultiAssetDelegationDelegatorUnstakeRequest,
+} from '@polkadot/types/lookup';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
-import { EMPTY, map, Observable, switchMap } from 'rxjs';
+import { EMPTY, map, type Observable, switchMap } from 'rxjs';
 
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
@@ -35,9 +40,6 @@ export default function useRestakeDelegatorInfo() {
   const delegatorInfo$ = useObservable(
     (input$) =>
       input$.pipe(
-        map((args) => {
-          return args;
-        }),
         switchMap(([activeAddress, delegatorQuery]) =>
           delegatorQuery(activeAddress ?? '').pipe(
             map((delegatorInfo) => {
@@ -74,58 +76,6 @@ export default function useRestakeDelegatorInfo() {
                 };
               });
 
-              function getUnstakeRequest(
-                request: typeof info.unstakeRequest,
-              ): DelegatorInfo['unstakeRequest'] {
-                if (request.isNone) {
-                  return null;
-                }
-
-                const unstakeRequest = request.unwrap();
-                const amountBigInt = unstakeRequest.amount.toBigInt();
-                const assetIdStr = unstakeRequest.assetId.toString();
-
-                return {
-                  assetId: assetIdStr,
-                  amount: amountBigInt,
-                  requestedRound: unstakeRequest.requestedRound.toNumber(),
-                };
-              }
-
-              function getBondLessRequest(
-                request: typeof info.delegatorBondLessRequest,
-              ): DelegatorInfo['delegatorBondLessRequest'] {
-                if (request.isNone) {
-                  return null;
-                }
-
-                const bondLessRequest = request.unwrap();
-                const amountBigInt = bondLessRequest.amount.toBigInt();
-                const assetIdStr = bondLessRequest.assetId.toString();
-
-                return {
-                  assetId: assetIdStr,
-                  bondLessAmount: amountBigInt,
-                  requestedRound: bondLessRequest.requestedRound.toNumber(),
-                };
-              }
-
-              function getStatus(
-                status: typeof info.status,
-              ): DelegatorInfo['status'] {
-                if (status.isActive) {
-                  return 'Active';
-                }
-
-                if (status.isLeavingScheduled) {
-                  return {
-                    LeavingScheduled: status.asLeavingScheduled.toNumber(),
-                  };
-                }
-
-                throw WebbError.from(WebbErrorCodes.InvalidEnumValue);
-              }
-
               return {
                 deposits,
                 delegations,
@@ -148,4 +98,65 @@ export default function useRestakeDelegatorInfo() {
     delegatorInfo,
     delegatorInfo$,
   };
+}
+
+/**
+ * @internal
+ */
+function getUnstakeRequest(
+  request: Option<PalletMultiAssetDelegationDelegatorUnstakeRequest>,
+): DelegatorInfo['unstakeRequest'] {
+  if (request.isNone) {
+    return null;
+  }
+
+  const unstakeRequest = request.unwrap();
+  const amountBigInt = unstakeRequest.amount.toBigInt();
+  const assetIdStr = unstakeRequest.assetId.toString();
+
+  return {
+    assetId: assetIdStr,
+    amount: amountBigInt,
+    requestedRound: unstakeRequest.requestedRound.toNumber(),
+  };
+}
+
+/**
+ * @internal
+ */
+function getBondLessRequest(
+  request: Option<PalletMultiAssetDelegationDelegatorBondLessRequest>,
+): DelegatorInfo['delegatorBondLessRequest'] {
+  if (request.isNone) {
+    return null;
+  }
+
+  const bondLessRequest = request.unwrap();
+  const amountBigInt = bondLessRequest.amount.toBigInt();
+  const assetIdStr = bondLessRequest.assetId.toString();
+
+  return {
+    assetId: assetIdStr,
+    bondLessAmount: amountBigInt,
+    requestedRound: bondLessRequest.requestedRound.toNumber(),
+  };
+}
+
+/**
+ * @internal
+ */
+function getStatus(
+  status: PalletMultiAssetDelegationDelegatorDelegatorStatus,
+): DelegatorInfo['status'] {
+  if (status.isActive) {
+    return 'Active';
+  }
+
+  if (status.isLeavingScheduled) {
+    return {
+      LeavingScheduled: status.asLeavingScheduled.toNumber(),
+    };
+  }
+
+  throw WebbError.from(WebbErrorCodes.InvalidEnumValue);
 }

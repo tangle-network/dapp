@@ -1,7 +1,12 @@
 import type { Account, Address } from 'viem';
 import { Config } from 'wagmi';
 
-import { RestakeTxBase, type TxEventHandlers } from './base';
+import {
+  type DelegateContext,
+  type DepositContext,
+  RestakeTxBase,
+  type TxEventHandlers,
+} from './base';
 
 export default class EVMRestakeTx extends RestakeTxBase {
   constructor(
@@ -10,17 +15,26 @@ export default class EVMRestakeTx extends RestakeTxBase {
     readonly provider: Config,
   ) {
     super();
-
-    this.deposit = this.deposit.bind(this);
   }
 
-  public async deposit(
+  deposit = async (
     _assetId: string,
     _amount: bigint,
-    _eventHandlers?: TxEventHandlers,
-  ) {
+    _eventHandlers?: TxEventHandlers<DepositContext>,
+  ) => {
     console.warn('EVM deposit not implemented yet');
     // Deposit the asset into the EVM.
     return null;
-  }
+  };
+
+  delegate = async (
+    _operatorAccount: string,
+    _assetId: string,
+    _amount: bigint,
+    _eventHandlers?: TxEventHandlers<DelegateContext>,
+  ) => {
+    console.warn('EVM delegate not implemented yet');
+    // Delegate the asset to the operator.
+    return null;
+  };
 }
