@@ -3,7 +3,6 @@
 import { BN } from '@polkadot/util';
 import { ArrowRight } from '@webb-tools/icons';
 import { Button, Chip, Typography } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
 import Image from 'next/image';
 import { FC, useMemo } from 'react';
 
@@ -25,12 +24,6 @@ export type LiquidStakingTokenItemProps = {
   tokenSymbol: LiquidStakingToken;
   totalValueStaked: number;
   totalStaked: string;
-
-  /**
-   * Annual Percentage Yield (APY). Should a decimal value
-   * between 0 and 1.
-   */
-  annualPercentageYield: number;
 };
 
 const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
@@ -38,22 +31,12 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
   chain,
   tokenSymbol,
   totalValueStaked,
-  annualPercentageYield,
   totalStaked,
 }) => {
-  assert(
-    annualPercentageYield >= 0 && annualPercentageYield <= 1,
-    'APY should be between 0 and 1',
-  );
-
   const formattedTotalValueStaked = totalValueStaked.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
   });
-
-  const formattedAnnualPercentageYield = (annualPercentageYield * 100).toFixed(
-    2,
-  );
 
   const formattedTotalStaked = useMemo(
     () => formatTangleBalance(new BN(totalStaked)),
@@ -87,8 +70,6 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
 
       <div className="flex items-center gap-6">
         <StatItem title={formattedTotalStaked} subtitle="Staked" />
-
-        <StatItem title={`${formattedAnnualPercentageYield}%`} subtitle="APY" />
 
         <StatItem
           title={formattedTotalValueStaked}
