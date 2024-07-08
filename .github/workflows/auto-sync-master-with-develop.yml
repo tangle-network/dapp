@@ -26,7 +26,7 @@ jobs:
         run: |
           git fetch origin master:master
           git checkout master
-          git merge develop
+          git merge --allow-unrelated-histories develop
 
       - name: Push Changes to Master
         run: git push origin master --force-with-lease
