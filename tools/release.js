@@ -1,7 +1,6 @@
 // @ts-check
 
-import { releaseChangelog } from 'nx/src/command-line/release/changelog.js';
-import { releaseVersion } from 'nx/src/command-line/release/version.js';
+import { releaseChangelog, releaseVersion } from 'nx/release/index.js';
 import yargs from 'yargs/yargs';
 
 (async () => {
@@ -49,8 +48,10 @@ import yargs from 'yargs/yargs';
     dryRun: options.dryRun,
     verbose: options.verbose,
     stageChanges: options.stageChanges,
-    gitCommit: options.gitCommit,
-    gitTag: options.gitTag,
+    // we don't want to commit the version changes only,
+    // we want to commit the changelog changes as well
+    gitCommit: false,
+    gitTag: false,
   });
 
   await releaseChangelog({

@@ -123,6 +123,9 @@
     "changelog": {
       "projectChangelogs": true
     },
-    "releaseTagPattern": "{projectName}/{version}"
+    "releaseTagPattern": "{projectName}/{version}",
+    "git": {
+      "commitMessage": "[RELEASE] {projectName} v{version}"
+    }
   }
 }
