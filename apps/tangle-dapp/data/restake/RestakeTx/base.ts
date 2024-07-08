@@ -8,12 +8,35 @@ export enum TxEvent {
   FAILED = 'FAILED',
 }
 
-export type TxEventHandlers = {
-  onTxSending?: () => void | Promise<void>;
-  onTxInBlock?: (txHash: Hash, blockHash: Hash) => void | Promise<void>;
-  onTxFinalized?: (txHash: Hash, blockHash: Hash) => void | Promise<void>;
-  onTxSuccess?: (txHash: Hash, blockHash: Hash) => void | Promise<void>;
-  onTxFailed?: (error: string) => void | Promise<void>;
+export type TxEventHandlers<Context extends Record<string, unknown>> = {
+  onTxSending?: (context: Context) => void | Promise<void>;
+  onTxInBlock?: (
+    txHash: Hash,
+    blockHash: Hash,
+    context: Context,
+  ) => void | Promise<void>;
+  onTxFinalized?: (
+    txHash: Hash,
+    blockHash: Hash,
+    context: Context,
+  ) => void | Promise<void>;
+  onTxSuccess?: (
+    txHash: Hash,
+    blockHash: Hash,
+    context: Context,
+  ) => void | Promise<void>;
+  onTxFailed?: (error: string, context: Context) => void | Promise<void>;
+};
+
+export type DepositContext = {
+  assetId: string;
+  amount: bigint;
+};
+
+export type DelegateContext = {
+  operatorAccount: string;
+  assetId: string;
+  amount: bigint;
 };
 
 export abstract class RestakeTxBase {
@@ -29,6 +52,13 @@ export abstract class RestakeTxBase {
   abstract deposit(
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers,
+    eventHandlers?: TxEventHandlers<DepositContext>,
+  ): Promise<Hash | null>;
+
+  abstract delegate(
+    operatorAccount: string,
+    assetId: string,
+    amount: bigint,
+    eventHandlers?: TxEventHandlers<DelegateContext>,
   ): Promise<Hash | null>;
 }

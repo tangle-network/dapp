@@ -8,10 +8,11 @@ import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
 import assert from 'assert';
 import { useMemo } from 'react';
 
+import type { RestakeTxBase } from './RestakeTx/base';
 import EVMRestakeTx from './RestakeTx/evm';
 import SubstrateRestakeTx from './RestakeTx/substrate';
 
-export default function useRestakeTx() {
+export default function useRestakeTx(): RestakeTxBase {
   const { activeAccount, activeWallet, activeApi } = useWebContext();
 
   return useMemo(() => {
@@ -20,11 +21,7 @@ export default function useRestakeTx() {
       activeAccount === null ||
       activeApi === undefined
     ) {
-      return {
-        deposit: () => {
-          throw WebbError.from(WebbErrorCodes.ApiNotReady);
-        },
-      };
+      return createDummyApi(WebbError.from(WebbErrorCodes.ApiNotReady).message);
     }
 
     switch (activeWallet.platform) {
@@ -43,12 +40,23 @@ export default function useRestakeTx() {
       }
 
       default: {
-        return {
-          deposit: () => {
-            throw WebbError.from(WebbErrorCodes.UnsupportedWallet);
-          },
-        };
+        return createDummyApi(
+          WebbError.from(WebbErrorCodes.UnsupportedWallet).message,
+        );
       }
     }
   }, [activeAccount, activeApi, activeWallet]);
+}
+
+function createDummyApi(error: string): RestakeTxBase {
+  return {
+    delegate(operatorAccount, assetId, amount, eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, { amount, assetId, operatorAccount });
+      return Promise.resolve(null);
+    },
+    deposit(assetId, amount, eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, { amount, assetId });
+      return Promise.resolve(null);
+    },
+  };
 }

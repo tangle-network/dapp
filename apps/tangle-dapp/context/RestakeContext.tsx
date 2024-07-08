@@ -1,7 +1,7 @@
 'use client';
 
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
-import orderBy from 'lodash/orderBy';
+import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import toPairs from 'lodash/toPairs';
 import { useObservableState } from 'observable-hooks';
 import {
@@ -70,22 +70,32 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
     () =>
       combineLatest([assetMap$, balances$]).pipe(
         map(([assetMap, balances]) => {
-          return orderBy(
-            toPairs(assetMap).reduce(
-              (assetWithBalances, [assetId, assetMetadata]) => {
-                const balance = balances[assetId] ?? null;
+          const combined = toPairs(assetMap).reduce(
+            (assetWithBalances, [assetId, assetMetadata]) => {
+              const balance = balances[assetId] ?? null;
 
-                return assetWithBalances.concat({
-                  assetId,
-                  metadata: assetMetadata,
-                  balance,
-                });
-              },
-              [] as Array<AssetWithBalance>,
-            ),
-            ({ balance }) => balance?.balance ?? ZERO_BIG_INT,
-            'desc',
+              return assetWithBalances.concat({
+                assetId,
+                metadata: assetMetadata,
+                balance,
+              });
+            },
+            [] as Array<AssetWithBalance>,
           );
+
+          // Order assets with balances first
+          return [
+            ...combined.filter(
+              (asset) =>
+                isDefined(asset.balance) &&
+                asset.balance.balance > ZERO_BIG_INT,
+            ),
+            ...combined.filter(
+              (asset) =>
+                !isDefined(asset.balance) ||
+                asset.balance.balance === ZERO_BIG_INT,
+            ),
+          ];
         }),
       ),
     [assetMap$, balances$],
