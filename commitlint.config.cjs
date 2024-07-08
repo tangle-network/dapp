@@ -5,6 +5,7 @@ module.exports = {
     'subject-max-length': [1, 'always', 110], // Warn when commit message is above 110 characters (longest commit message seen thus far in this repository).
     'subject-min-length': [1, 'always', 10], // Warn when commit message is below 10 characters (shortest commit message seen thus far in this repository).
     'subject-case': [1, 'always', 'sentence-case'],
+    'scope-empty': [1, 'never'],
     'scope-enum': [
       1,
       'always',

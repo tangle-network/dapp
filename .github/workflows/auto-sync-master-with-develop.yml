@@ -1,0 +1,34 @@
+name: Auto Sync Master with Develop
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  sync-branches:
+    if: "startsWith(github.event.head_commit.message, '[RELEASE]')"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Develop
+        uses: actions/checkout@v2
+        with:
+          ref: develop
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Checkout Master and Fast-Forward Merge
+        run: |
+          git fetch origin master:master
+          git checkout master
+          git merge --ff-only develop
+
+      - name: Push Changes to Master
+        run: git push origin master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

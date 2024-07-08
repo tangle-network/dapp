@@ -27,6 +27,7 @@
     <li><a href="#libs">Libraries</a></li>
     <li><a href="#test">Testing</a></li>
     <li><a href="#contribute">Contributing</a></li>
+    <li><a href="#how-to-release">How to release (for maintainers)</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#help">Need help?</a></li>
   </ul>
@@ -140,6 +141,24 @@ yarn build
 Additionally, to ensure commit message consistency, this repository uses [commitlint](https://commitlint.js.org/#/) and [husky](https://typicode.github.io/husky/#/). Please refer to the [Commit Message Guidelines](./.github/CONTRIBUTING.md#commit-message-guidelines) for more information.
 
 Without proper linting, formatting, or commit message, husky will prevent you from either committing or pushing your changes.
+
+<div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
+
+<h2 id="how-to-release"> How to release (for maintainers) </h2>
+
+To release a new version of the projects in this monorepo, follow these steps:
+
+1. Create a new branch from `develop`.
+2. Run `yarn run generate:release` to review the new bump version and the changelog.
+3. If everything looks good, run `yarn run generate:release -d=false` to apply changes, stage, and
+   commit them.
+
+   3.1. If you don't want to commit the changes, run `yarn run generate:release -d=false --gitCommit=false`. This will only update the version and changelog files.
+
+   3.2. There are a few options available for the `generate:release` script. You can check them by running `yarn run generate:release --help`.
+
+4. Push and open a PR to `develop`, the PR title should start with `[RELEASE]` in order to trigger the release workflow.
+5. After the PR is merged, the release workflow will sync the changes to the `master` branch if the commit message starts with `[RELEASE]` on the `develop` branch. The release workflow will also create a new release on GitHub.
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
