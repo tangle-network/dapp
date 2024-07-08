@@ -431,8 +431,8 @@
 
 ### Removed
 
-- Minimum stake column from validator tables - https://github.com/webb-tools/webb-dapp/pull/1847
+- Minimum stake column from validator tables - https://github.com/webb-tools/webb-dapp/pull/1847.
 
 ### Fixed
 
-- Client side data fetching for Header Chips, Key Stats and Nominator Stats containers to address timeout issue when fetching data - https://github.com/webb-tools/webb-dapp/pull/1849
+- Client side data fetching for Header Chips, Key Stats and Nominator Stats containers to address timeout issue when fetching data - https://github.com/webb-tools/webb-dapp/pull/1849.
