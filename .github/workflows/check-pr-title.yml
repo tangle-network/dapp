@@ -35,6 +35,7 @@ jobs:
         run: |
           commits=$(jq -r '.pull_request.commits_url' $GITHUB_EVENT_PATH)
           curl -s $commits | jq -r '.[].commit.message' > commit_messages.txt
+          cat commit_messages.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
