@@ -22,11 +22,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Checkout Master and Rebase Develop onto Master
+      - name: Checkout Master and Fast-Forward Merge
         run: |
           git fetch origin master:master
           git checkout master
-          git rebase develop
+          git merge --ff-only --allow-unrelated-histories develop
 
       - name: Push Changes to Master
         run: git push origin master --force-with-lease
