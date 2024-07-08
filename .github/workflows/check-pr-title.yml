@@ -28,7 +28,7 @@ jobs:
 
       - name: Extract PR title
         id: extract_pr_title
-        run: echo "::set-output name=title::$(jq -r '.pull_request.title' $GITHUB_EVENT_PATH)"
+        run: echo "title=$(jq -r '.pull_request.title' $GITHUB_EVENT_PATH)" >> $GITHUB_OUTPUT
 
       - name: Validate PR title with commitlint
         id: validate_pr_title
