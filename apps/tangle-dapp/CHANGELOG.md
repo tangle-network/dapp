@@ -1,3 +1,233 @@
+## 0.0.10 (2024-07-08)
+
+
+### 🚀 Features
+
+- backend integration with participants table on service details page
+
+- backend integration for Service Info card
+
+- integrate backend on Active Service table on Overview page
+
+- display wallet balance
+
+- **tangle-dapp:** Create new inputs with improved error handling
+
+- **tangle-dapp:** Add balances ERC20 precompile defs
+
+- **tangle-dapp, webb-ui:** Begin added logic to switch networks in EVM wallet (MetaMask and others)
+
+- **tangle-dapp:** Hide `Services` in non-development environments
+
+- **tangle-dapp:** Start migrating Viem client to a React hook
+
+- **tangle-dapp:** Add `useViemWalletClient` and `useViemPublicClient` hooks
+
+- **tangle-dapp:** Start migrating transactions to use updated hooks
+
+- **tangle-dapp:** Add nomination transaction hooks
+
+- **tangle-dapp:** Return transaction status
+
+- **tangle-dapp:** Create `useSetupNominatorTx` hook
+
+- **tangle-dapp:** Create `useUpdateNominatorTx` hook
+
+- **tangle-dapp:** Create `usePayoutAllTx` hook
+
+- **tangle-dapp:** Create `usePayoutStakersTx` hook
+
+- **tangle-dapp:** Use token amount cells which are more readable
+
+- **tangle-dapp:** Create `useTxNotification` hook
+
+- **tangle-dapp:** Consolidate transaction hooks into one
+
+- **tangle-dapp:** Show in-progress toast notification for transactions
+
+- **tangle-dapp:** Show success message apart from transaction name
+
+- **tangle-dapp:** Use Viem to encode function call data
+
+- **tangle-dapp:** Restake APY & Earnings (Reward) Calculation
+
+- **tangle-dapp:** Add # of Active Services and Restake Amount to Validators Table in Nomination
+
+- **tangle-dapp:** Add BalancesContext to share balances between components
+
+- **tangle-dapp:** Added Loading Account Page
+
+- **all:** Migrate to Nx 17.2 with breaking changes
+
+- **repo:** Migrate to Nx 19
+
+- **tangle-dapp:** Get Permitted Caller for Tangle Dapp
+
+- **tangle-dapp:** Bridge UI on Tangle Dapp
+
+- **tangle-dapp:** Switch chains in EVM wallets when switching networks
+
+- **tangle-dapp:** Update Substrate wallet metadata when appropriate
+
+- **tangle-dapp:** Show longest vesting schedule info
+
+- **tangle-dapp:** Setup the code logic to handle different scenarios of bridging
+
+- **tangle-dapp:** Display Balance in Bridge on Tangle Dapp
+
+- **tangle-dapp:** Payouts filter by Eras
+
+- **tangle-dapp:** Liquid staking overview page
+
+- **tangle-dapp:** Display Fees Info for Bridge Tx
+
+- **tangle-dapp:** Show Bridge Transaction Confirmation Modal
+
+- **tangle-dapp:** Implement Stake card to mint VTokens (ie. from DOT to tgDOT), `mint` & `redeem` hooks
+
+- **tangle-dapp:** Liquid Staking -  Staking information card UI
+
+- **tangle-dapp:** Fetch balances from Tangle Restaking Parachain
+
+- **tangle-dapp:** Restake Deposit Feature
+
+- **tangle-dapp:** Tx from Substrate Chains + showing Tx Progress
+
+- **tangle-dapp:** Add `robots.txt` to optimzie SEO
+
+- **tangle-dapp:** Restake Delegation
+
+
+### 🩹 Fixes
+
+- unclaimed rewards check
+
+- **tangle-dapp:** Use http RPC endpoints for Viem wallet client
+
+- **tangle-dapp:** Fix some bugs with the inputs
+
+- **tangle-dapp:** Reset error message on valid address input
+
+- **tangle-dapp:** Git issues with folder name casing
+
+- **tangle-dapp:** Git issues with folder name casing
+
+- **tangle-dapp:** Disable transfer button when there's no active account
+
+- **tangle-dapp:** Use EVM explorer URL when creating Viem chain
+
+- **tangle-dapp:** Missing `evmExplorerUrl` field for custom network
+
+- **tangle-dapp:** Round actual staked percentage
+
+- **tangle-dapp:** Fix build errors
+
+- **tangle-dapp:** Improve nominations table
+
+- **tangle-dapp:** Fix staking amounts being shown as zero
+
+- **tangle-dapp:** Fix bonded amount showing total instead of active
+
+- **tangle-dapp:** Fix commission scale
+
+- **tangle-dapp:** Use proper conditions
+
+- **tangle-dapp:** Fixed EVM batching
+
+- **tangle-dapp:** Fix `setPayee` tx
+
+- **tangle-dapp:** There are two kinds of EVM addresses
+
+- **tangle-dapp:** Testnet doesn't have era stakers overview query
+
+- **tangle-dapp:** Wrong property name
+
+- **tangle-dapp:** Fix infinite loading nominator stats
+
+- **tangle-dapp:** Property was renamed to `evmChainId`
+
+- **tangle-dapp:** Proper bonding calculations
+
+- **tangle-dapp:** Fix leftover merge errors
+
+- **tangle-dapp:** Clicking checkboxes render slow
+
+- **tangle-dapp:** Improve format balance method to display full amount
+
+- **tangle-dapp:** Update API compatibility
+
+- **tangle-dapp:** Iterate Tangle dApp May 04 2024
+
+- **tangle-dapp:** Fix most errors
+
+- **tangle-dapp:** Fix remaining errors
+
+- **tangle-dapp:** Use updated version of `ValidatorTable`
+
+- **tangle-dapp:** Fix most leftover errors from merge
+
+- **tangle-dapp:** Fix remaining errors
+
+- **tangle-dapp:** Fix errors from merge
+
+- **tangle-dapp:** Fix bug showing percentage instead of amount
+
+- **tangle-dapp:** Fix commission on update nominations
+
+- **tangle-dapp:** Fix EVM balance withdraw bugs
+
+- **tangle-dapp:** Fix bug where previous notifications show up again
+
+- **tangle-dapp:** Modify export statements
+
+- **tangle-dapp:** Replace useViemWalletClient with useConnectorClient from wagmi
+
+- **tangle-dapp:** Try to the Netlify build
+
+- **tangle-dapp:** Payouts reward calculation & Readme updates
+
+- **tangle-dapp:** Fix Next dApps builds
+
+- **tangle-dapp:** Handle svg as React comp & asset url
+
+- **tangle-dapp:** Fix payouts bug
+
+- **tangle-dapp:** Fix hardcoded URL
+
+- **tangle-dapp:** Fix hardcoded URL
+
+- **tangle-dapp:** sorting fix & payout dest modal layout update
+
+- **tangle-dapp:** Unable To Update Nominators
+
+- **tangle-dapp:** Configure wagmi to support SSR
+
+- **tangle-dapp:** Show update metadata button only for Substrate account
+
+- **tangle-dapp:** Fix Hydration Issue
+
+- **tangle-dapp:** Fix Amount Input
+
+
+### 🔥 Performance
+
+- **tangle-dapp:** Optimize tx batching
+
+- **tangle-dapp:** Optimize usePayouts hook
+
+- **tangle-dapp:** Optimize `usePayouts` hook
+
+- **tangle-dapp:** Added abort signal and identityMap
+
+
+### ❤️  Thank You
+
+- Pavan Soratur
+- Trung-Tin Pham
+- vutuanlinh2k2
+- yurixander
+- Yurixander R
+
 ## [0.0.9] - 2024-05-27
 
 ### Added
