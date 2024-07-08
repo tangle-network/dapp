@@ -240,3 +240,9 @@ export type DepositFormFields = {
   sourceTypedChainId: number;
   depositAssetId: string | null;
 };
+
+export type DelegationFormFields = {
+  amount: string;
+  operatorAccountId: string;
+  assetId: string;
+};

@@ -98,42 +98,58 @@ TransactionInputCardRoot.displayName = 'TransactionInputCardRoot';
 const TransactionChainSelector = forwardRef<
   React.ElementRef<'button'>,
   TransactionChainSelectorProps
->(({ typedChainId: typedChainIdProps, className, disabled, ...props }, ref) => {
-  const context = useContext(TransactionInputCardContext);
+>(
+  (
+    {
+      typedChainId: typedChainIdProps,
+      className,
+      disabled,
+      placeholder = 'Select Chain',
+      renderBody,
+      ...props
+    },
+    ref,
+  ) => {
+    const context = useContext(TransactionInputCardContext);
 
-  const typedChainId = typedChainIdProps ?? context.typedChainId;
-  const chain = typedChainId ? chainsConfig[typedChainId] : undefined;
+    const typedChainId = typedChainIdProps ?? context.typedChainId;
+    const chain = typedChainId ? chainsConfig[typedChainId] : undefined;
 
-  return (
-    <button
-      type="button"
-      {...props}
-      disabled={disabled}
-      ref={ref}
-      className={twMerge('flex items-center gap-1 p-2 group', className)}
-    >
-      <p className="flex items-center gap-2">
-        {chain && <ChainIcon name={chain.name} size="lg" />}
+    return (
+      <button
+        type="button"
+        {...props}
+        disabled={disabled}
+        ref={ref}
+        className={twMerge('flex items-center gap-1 p-2 group', className)}
+      >
+        {typeof renderBody === 'function' ? (
+          renderBody()
+        ) : (
+          <p className="flex items-center gap-2">
+            {chain && <ChainIcon name={chain.name} size="lg" />}
 
-        <Typography
-          variant="h5"
-          fw="bold"
-          component="span"
-          className="inline-block text-mono-200 dark:text-mono-40"
-        >
-          {chain?.name ?? 'Select chain'}
-        </Typography>
-      </p>
+            <Typography
+              variant="h5"
+              fw="bold"
+              component="span"
+              className="inline-block text-mono-200 dark:text-mono-40"
+            >
+              {chain?.name ?? placeholder}
+            </Typography>
+          </p>
+        )}
 
-      {!disabled && (
-        <ChevronDown
-          size="lg"
-          className="rounded-lg group-hover:bg-mono-40 dark:group-hover:bg-mono-160"
-        />
-      )}
-    </button>
-  );
-});
+        {!disabled && (
+          <ChevronDown
+            size="lg"
+            className="rounded-lg group-hover:bg-mono-40 dark:group-hover:bg-mono-160"
+          />
+        )}
+      </button>
+    );
+  },
+);
 TransactionChainSelector.displayName = 'TransactionChainSelector';
 
 const TransactionButton = forwardRef<

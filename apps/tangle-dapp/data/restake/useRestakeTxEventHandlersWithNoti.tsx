@@ -1,18 +1,56 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { isPolkadotPortal } from '@webb-tools/api-provider-environment/transaction/utils';
+import type { Evaluate } from '@webb-tools/dapp-types/utils/types';
 import Spinner from '@webb-tools/icons/Spinner';
-import { useWebbUI } from '@webb-tools/webb-ui-components';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { type SnackBarOpts } from '@webb-tools/webb-ui-components/components/Notification/NotificationContext';
+import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import type React from 'react';
 import { useCallback, useMemo } from 'react';
 import type { Hash } from 'viem';
 
 import useExplorerUrl from '../../hooks/useExplorerUrl';
 import { TxEvent, type TxEventHandlers } from './RestakeTx/base';
+import ViewTxOnExplorer from './ViewTxOnExplorer';
 
-export default function useRestakeTxEventHandlersWithNoti(
-  props?: TxEventHandlers,
-) {
+type NotiOpts<Context extends Record<string, unknown>> = Evaluate<
+  Partial<
+    Omit<SnackBarOpts, 'key' | 'close' | 'secondaryMessage'> & {
+      secondaryMessage?:
+        | SnackBarOpts['secondaryMessage']
+        | ((context: Context, explorerUrl?: string) => React.JSX.Element);
+    }
+  >
+>;
+
+export type Options<Context extends Record<string, unknown>> = Partial<
+  Record<TxEvent, NotiOpts<Context>>
+>;
+
+export type Props<Context extends Record<string, unknown>> =
+  TxEventHandlers<Context> & {
+    options?: Options<Context>;
+  };
+
+const extractNotiOptions = <Context extends Record<string, unknown>>(
+  context: Context,
+  options: NotiOpts<Context> = {},
+  explorerUrl?: string,
+) => {
+  const { secondaryMessage, ...restProps } = options;
+  return {
+    ...restProps,
+    ...(typeof secondaryMessage === 'function'
+      ? { secondaryMessage: secondaryMessage(context, explorerUrl) }
+      : secondaryMessage !== undefined
+        ? { secondaryMessage }
+        : {}),
+  };
+};
+
+export default function useRestakeTxEventHandlersWithNoti<
+  Context extends Record<string, unknown>,
+>({ options = {}, ...props }: Props<Context> = {}) {
   const { activeChain } = useWebContext();
   const { notificationApi } = useWebbUI();
   const getExplorerUrl = useExplorerUrl();
@@ -43,34 +81,40 @@ export default function useRestakeTxEventHandlersWithNoti(
     [getExplorerUrl],
   );
 
-  return useMemo<TxEventHandlers>(
+  return useMemo<TxEventHandlers<Context>>(
     () => ({
-      onTxSending: () => {
+      onTxSending: (context) => {
+        const key = TxEvent.SENDING;
+
         notificationApi.addToQueue({
-          key: TxEvent.SENDING,
+          key,
           Icon: <Spinner size="lg" />,
           message: 'Sending transaction...',
           variant: 'info',
           persist: true,
+          ...extractNotiOptions(context, options[key]),
         });
-        props?.onTxSending?.();
+        props?.onTxSending?.(context);
       },
-      onTxInBlock: (txHash, blockHash) => {
+      onTxInBlock: (txHash, blockHash, context) => {
+        const key = TxEvent.IN_BLOCK;
         const url = getTxUrl(txHash, blockHash, blockExplorer);
 
         notificationApi.remove(TxEvent.SENDING);
         notificationApi.addToQueue({
-          key: TxEvent.IN_BLOCK,
+          key,
           Icon: <Spinner size="lg" />,
           message: 'Transaction is included in a block',
           secondaryMessage: <ViewTxOnExplorer url={url?.toString()} />,
           variant: 'info',
           persist: true,
+          ...extractNotiOptions(context, options[key], url?.toString()),
         });
 
-        props?.onTxInBlock?.(txHash, blockHash);
+        props?.onTxInBlock?.(txHash, blockHash, context);
       },
-      onTxSuccess: (txHash, blockHash) => {
+      onTxSuccess: (txHash, blockHash, context) => {
+        const key = TxEvent.SUCCESS;
         const url = getTxUrl(txHash, blockHash, blockExplorer);
 
         notificationApi.remove(TxEvent.SENDING);
@@ -78,21 +122,24 @@ export default function useRestakeTxEventHandlersWithNoti(
         notificationApi.remove(TxEvent.FINALIZED);
 
         notificationApi.addToQueue({
-          key: TxEvent.SUCCESS,
+          key,
           message: 'Transaction finalized successfully!',
           secondaryMessage: <ViewTxOnExplorer url={url?.toString()} />,
           variant: 'success',
+          ...extractNotiOptions(context, options[key], url?.toString()),
         });
 
-        props?.onTxSuccess?.(txHash, blockHash);
+        props?.onTxSuccess?.(txHash, blockHash, context);
       },
-      onTxFailed: (error) => {
+      onTxFailed: (error, context) => {
+        const key = TxEvent.FAILED;
+
         notificationApi.remove(TxEvent.SENDING);
         notificationApi.remove(TxEvent.IN_BLOCK);
         notificationApi.remove(TxEvent.FINALIZED);
 
         notificationApi.addToQueue({
-          key: TxEvent.FAILED,
+          key,
           message: 'Transaction failed!',
           secondaryMessage: (
             <Typography
@@ -103,36 +150,12 @@ export default function useRestakeTxEventHandlersWithNoti(
             </Typography>
           ),
           variant: 'error',
+          ...extractNotiOptions(context, options[key]),
         });
 
-        props?.onTxFailed?.(error);
+        props?.onTxFailed?.(error, context);
       },
     }),
-    [blockExplorer, getTxUrl, notificationApi, props],
+    [blockExplorer, getTxUrl, notificationApi, options, props],
   );
 }
-
-/**
- * @internal
- */
-function ViewTxOnExplorer({ url }: { url?: string } = {}) {
-  if (url === undefined) return null;
-
-  return (
-    <Typography variant="body1">
-      View the transaction{' '}
-      <Button
-        className="inline-block"
-        variant="link"
-        href={url?.toString()}
-        target="_blank"
-      >
-        on the explorer
-      </Button>
-    </Typography>
-  );
-}
-
-/**
- * @internal
- */
