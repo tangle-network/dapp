@@ -15,6 +15,7 @@ type UseActionButtonReturnType = {
   isDisabled: boolean;
   buttonAction: () => void;
   buttonText: string;
+  buttonLoadingText?: string;
   errorMessage: ErrorMessage | null;
 };
 
@@ -23,7 +24,11 @@ type ErrorMessage = {
   tooltip?: string | null;
 };
 
-export default function useActionButton(handleOpenConfirmModal: () => void) {
+export default function useActionButton({
+  handleOpenConfirmModal,
+}: {
+  handleOpenConfirmModal: () => void;
+}) {
   const { activeAccount, activeWallet, loading, isConnecting } =
     useWebContext();
   const { toggleModal } = useConnectWallet();
@@ -38,6 +43,7 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
     isBridgeFeeLoading,
     isEstimatedGasFeeLoading,
     switchToCorrectEvmChain,
+    isTransferring,
   } = useBridge();
 
   const isNoActiveAccountOrWallet = useMemo(() => {
@@ -117,12 +123,19 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
     if (isWalletAndSourceChainMismatch) return 'Switch Wallet';
     if (isEvmWrongChain) return 'Switch Chain';
     if (isRequiredToConnectWallet) return 'Connect';
+    if (isTransferring) return 'Transferring...';
     return 'Transfer';
   }, [
     isWalletAndSourceChainMismatch,
     isRequiredToConnectWallet,
     isEvmWrongChain,
+    isTransferring,
   ]);
+
+  const buttonLoadingText = useMemo(() => {
+    if (isRequiredToConnectWallet || isEvmWrongChain) return 'Connecting...';
+    if (isTransferring) return 'Transferring...';
+  }, [isRequiredToConnectWallet, isEvmWrongChain, isTransferring]);
 
   return {
     isLoading: loading || isConnecting,
@@ -134,9 +147,11 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
           isAddressInputError ||
           isBridgeFeeLoading ||
           isEstimatedGasFeeLoading ||
-          bridgeFee === null,
+          bridgeFee === null ||
+          isTransferring,
     buttonAction,
     buttonText,
+    buttonLoadingText,
     errorMessage,
   } satisfies UseActionButtonReturnType;
 }

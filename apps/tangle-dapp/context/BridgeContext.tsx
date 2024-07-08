@@ -75,6 +75,9 @@ interface BridgeContextProps {
   setEstimatedGasFee: (estimatedGasFee: Decimal | null) => void;
   isEstimatedGasFeeLoading: boolean;
   setIsEstimatedGasFeeLoading: (isEstimatedGasFeeLoading: boolean) => void;
+
+  isTransferring: boolean;
+  setIsTransferring: (isTransferring: boolean) => void;
 }
 
 const BridgeContext = createContext<BridgeContextProps>({
@@ -140,6 +143,11 @@ const BridgeContext = createContext<BridgeContextProps>({
   setIsEstimatedGasFeeLoading: () => {
     return;
   },
+
+  isTransferring: false,
+  setIsTransferring: () => {
+    return;
+  },
 });
 
 export const useBridge = () => {
@@ -155,6 +163,8 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const [estimatedGasFee, setEstimatedGasFee] = useState<Decimal | null>(null);
   const [isEstimatedGasFeeLoading, setIsEstimatedGasFeeLoading] =
     useState(false);
+
+  const [isTransferring, setIsTransferring] = useState(false);
 
   const [selectedSourceChain, setSelectedSourceChain] = useState<ChainConfig>(
     BRIDGE_SOURCE_CHAIN_OPTIONS[0],
@@ -351,6 +361,9 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
         setEstimatedGasFee,
         isEstimatedGasFeeLoading,
         setIsEstimatedGasFeeLoading,
+
+        isTransferring,
+        setIsTransferring,
       }}
     >
       {children}

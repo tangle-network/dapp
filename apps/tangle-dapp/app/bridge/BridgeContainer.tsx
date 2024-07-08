@@ -34,8 +34,16 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
   } = useBridge();
   const activeAccountAddress = useActiveAccountAddress();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const { buttonAction, buttonText, isLoading, isDisabled, errorMessage } =
-    useActionButton(() => setIsConfirmModalOpen(true));
+  const {
+    buttonAction,
+    buttonText,
+    buttonLoadingText,
+    isLoading,
+    isDisabled,
+    errorMessage,
+  } = useActionButton({
+    handleOpenConfirmModal: () => setIsConfirmModalOpen(true),
+  });
 
   const hideFeeDetails = useMemo(
     () =>
@@ -111,7 +119,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
               isDisabled={isDisabled}
               isLoading={isLoading}
               onClick={buttonAction}
-              loadingText="Connecting..."
+              loadingText={buttonLoadingText}
             >
               {buttonText}
             </Button>

@@ -10,7 +10,7 @@ import {
   Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback } from 'react';
 
 import { useBridge } from '../../context/BridgeContext';
 import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
@@ -43,6 +43,8 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     bridgeFee,
     isBridgeFeeLoading,
     isEstimatedGasFeeLoading,
+    isTransferring,
+    setIsTransferring,
   } = useBridge();
   const selectedToken = useSelectedToken();
   const { sourceAmountInDecimals, destinationAmountInDecimals } =
@@ -50,8 +52,6 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
 
   useBridgeFee();
   useEstimatedGasFee();
-
-  const [isTransferring, setIsTransferring] = useState(false);
 
   const cleanUpWhenSubmit = useCallback(() => {
     handleClose();
@@ -67,7 +67,6 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
   });
 
   const bridgeTx = useCallback(async () => {
-
     try {
       setIsTransferring(true);
       await transfer();
@@ -79,7 +78,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     } finally {
       setIsTransferring(false);
     }
-  }, [transfer, notificationApi]);
+  }, [transfer, notificationApi, setIsTransferring]);
 
   return (
     <Modal open>
