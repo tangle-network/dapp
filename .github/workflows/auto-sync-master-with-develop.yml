@@ -20,8 +20,6 @@ jobs:
         with:
           app-id: ${{ vars.AUTO_SYNC_BRANCHES_APP_ID }}
           private-key: ${{ secrets.AUTO_SYNC_BRANCHES_SECRET }}
-          owner: ${{ github.repository_owner }}
-          repositories: ${{ github.repository }}
 
       - name: Checkout Develop
         uses: actions/checkout@v2
