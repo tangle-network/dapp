@@ -1,4 +1,4 @@
-## [0.0.9] - 2024-05-27
+## 0.0.9 (2024-05-27)
 
 ### Added
 
@@ -30,7 +30,7 @@
 - Adjusted the dropdown body to be scrollable on webb-ui-kit, fixed the wrong theme icon and updated the background color of the theme switcher to improve the visual on the sidebar, show the correct number of active nominators on the nomination page, show cached stats value (if existed) instead of loading animation on the nomination page and show the correct staked amounts on the validators table - https://github.com/webb-tools/webb-dapp/pull/2294
 - Fixed total unclaimed payouts rewards bug and actual staked percentage bug - https://github.com/webb-tools/webb-dapp/pull/2335
 
-## [0.0.8] - 2024-04-29
+## 0.0.8 (2024-04-29)
 
 ### Added
 
@@ -52,7 +52,7 @@
 - UI improvements on Tangle Dapp (Key Stats Item + Fix Footer bottom bound + Static Tangle Icon) - https://github.com/webb-tools/webb-dapp/pull/2256.
 - Fix account explorer link in wallet dropdown - https://github.com/webb-tools/webb-dapp/pull/2261.
 
-## [0.0.7] - 2024-04-12
+## 0.0.7 (2024-04-12)
 
 ### Added
 
@@ -75,7 +75,7 @@
 
 - Transaction confirmation modal, replaced with a notification that also includes a link to the explorer - https://github.com/webb-tools/webb-dapp/pull/2222
 
-## [0.0.6] - 2024-04-10
+## 0.0.6 (2024-04-10)
 
 ### Added
 
@@ -101,7 +101,7 @@
 - Free balance for EVM accounts is now shown correctly - https://github.com/webb-tools/webb-dapp/pull/2205
 - `Open Explorer` link now opens Polkadot/Substrate Explorer or Blockscout, depending on whether the active/connected account is a Substrate or EVM account - https://github.com/webb-tools/webb-dapp/pull/2205
 
-## [0.0.5] - 2024-03-29
+## 0.0.5 (2024-03-29)
 
 ### Added
 
@@ -124,7 +124,7 @@
 - Fixed issue regarding `getValidatorIdentity` not properly returning the identity names of validators - https://github.com/webb-tools/webb-dapp/pull/2154
 - Fixed performance bug in Nomination page, now is back to normal speed - https://github.com/webb-tools/webb-dapp/pull/2150
 
-## [0.0.4] - 2024-03-21
+## 0.0.4 (2024-03-21)
 
 ### Added
 
@@ -143,7 +143,7 @@
 
 - Addressed major performance issues on nominations page by batching requests - https://github.com/webb-tools/webb-dapp/pull/2107
 
-## [0.0.3] - 2024-03-12
+## 0.0.3 (2024-03-12)
 
 ### Added
 
@@ -176,7 +176,7 @@
 - Styling issues and UI audit for Account page - https://github.com/webb-tools/webb-dapp/pull/2035
 - Styling issues and UI audit for Claim Airdrop page - https://github.com/webb-tools/webb-dapp/pull/2049
 
-## [0.0.2] - 2024-02-07
+## 0.0.2 (2024-02-07)
 
 ### Added
 

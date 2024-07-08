@@ -23,7 +23,7 @@ function checkForBetaVersion(version) {
 
 function gatherReleaseInfo(logPath) {
   const changeLogs = fs.readFileSync(logPath, 'utf8');
-  const regex = /## \[([0-9]+(\.[0-9]+)+)] - [0-9]{4}-[0-9]{2}-[0-9]{2}/i;
+  const regex = /## ([0-9]+(\.[0-9]+)+)\s\([0-9]{4}-[0-9]{2}-[0-9]{2}\)/i;
 
   let lines = changeLogs.split(/\n/);
   let foundChangelog = false;
@@ -31,7 +31,7 @@ function gatherReleaseInfo(logPath) {
   let i = 0;
 
   for (let j = 0; j < lines.length; j++) {
-    if (lines[j].includes(`[${version}]`)) {
+    if (lines[j].includes(`${version}`)) {
       i = j;
       j = lines.length;
       foundChangelog = true;
