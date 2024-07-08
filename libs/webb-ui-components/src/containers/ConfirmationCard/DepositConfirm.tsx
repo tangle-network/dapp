@@ -1,6 +1,8 @@
 import { Close, FileShieldLine } from '@webb-tools/icons';
+import Decimal from 'decimal.js';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+
 import { TxProgressorBody } from '../../components/TxProgressor';
 import { CheckBox } from '../../components/CheckBox/Checkbox';
 import { Chip } from '../../components/Chip/Chip';
@@ -87,7 +89,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
               txSourceInfo={{
                 isSource: true,
                 typedChainId: sourceTypedChainId,
-                amount: amount * -1,
+                amount: new Decimal(amount * -1),
                 tokenSymbol: wrappableTokenSymbol ?? fungibleTokenSymbol,
                 walletAddress: sourceAddress,
                 accountType: 'wallet',
@@ -97,7 +99,7 @@ export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(
               }}
               txDestinationInfo={{
                 typedChainId: destTypedChainId,
-                amount: wrappingAmount ?? amount,
+                amount: new Decimal(wrappingAmount ?? amount),
                 tokenSymbol: fungibleTokenSymbol,
                 walletAddress: destAddress,
                 accountType: 'note',
