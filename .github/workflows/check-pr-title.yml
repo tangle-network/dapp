@@ -34,8 +34,8 @@ jobs:
         id: fetch_commits
         run: |
           commits=$(jq -r '.pull_request.commits_url' $GITHUB_EVENT_PATH)
+          echo $commits
           curl -s $commits | jq -r '.[].commit.message' > commit_messages.txt
-          cat commit_messages.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -43,7 +43,7 @@ jobs:
         id: check_commit
         # Check if any commit message starts with [RELEASE]
         run: |
-          if grep -q '^$$RELEASE$$' commit_messages.txt; then
+          if grep -qE '^\[RELEASE\]' commit_messages.txt; then
             echo "contains_release=true" >> $GITHUB_ENV
           else
             echo "contains_release=false" >> $GITHUB_ENV
@@ -52,7 +52,7 @@ jobs:
       - name: Validate PR title
         id: check_pr_title
         run: |
-          if [[ "${{ env.contains_release }}" == "true" && ! "${{ steps.extract_pr_title.outputs.title }}" =~ ^$$RELEASE$$ ]]; then
+          if [[ "${{ env.contains_release }}" == "true" && ! "${{ steps.extract_pr_title.outputs.title }}" =~ ^\[RELEASE\] ]]; then
             echo "PR title must start with [RELEASE] if any commit starts with [RELEASE]."
             exit 1
           else
