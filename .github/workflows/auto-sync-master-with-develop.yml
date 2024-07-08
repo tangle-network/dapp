@@ -24,9 +24,9 @@ jobs:
 
       - name: Checkout Master and Fast-Forward Merge
         run: |
-          git fetch origin master:master
+          git fetch origin
           git checkout master
-          git log --oneline --graph --all --decorate
+          git log --oneline --decorate
           git merge --ff-only --allow-unrelated-histories develop
 
       - name: Push Changes to Master
