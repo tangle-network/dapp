@@ -32,4 +32,4 @@ jobs:
 
       - name: Validate PR title with commitlint
         id: validate_pr_title
-        run: echo "${{ steps.extract_pr_title.outputs.title }}" | yarn commitlint --print-config -V
+        run: echo "${{ steps.extract_pr_title.outputs.title }}" | yarn commitlint -V
