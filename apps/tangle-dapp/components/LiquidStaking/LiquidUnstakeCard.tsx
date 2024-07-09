@@ -13,13 +13,12 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, ReactNode, useCallback, useMemo, useState } from 'react';
 
 import {
+  LIQUID_STAKING_CHAIN_MAP,
   LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingChain,
-  LS_CHAIN_TO_TOKEN,
-  LS_TOKEN_TO_CURRENCY,
+  LiquidStakingChainId,
 } from '../../constants/liquidStaking';
 import useRedeemTx from '../../data/liquidStaking/useRedeemTx';
 import useApi from '../../hooks/useApi';
@@ -29,26 +28,26 @@ import LiquidStakingInput from './LiquidStakingInput';
 import WalletBalance from './WalletBalance';
 
 const LiquidUnstakeCard: FC = () => {
-  const [toAmount, setToAmount] = useState<BN | null>(null);
+  const [fromAmount, setFromAmount] = useState<BN | null>(null);
 
   // TODO: The rate will likely be a hook on its own, likely needs to be extracted from the Tangle Restaking Parachain via a query/subscription.
   const [rate] = useState<number | null>(1.0);
 
-  const [selectedChain, setSelectedChain] = useState<LiquidStakingChain>(
-    LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN,
+  const [selectedChainId, setSelectedChainId] = useState<LiquidStakingChainId>(
+    LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN,
   );
 
   const { execute: executeRedeemTx, status: redeemTxStatus } = useRedeemTx();
 
-  const selectedChainToken = LS_CHAIN_TO_TOKEN[selectedChain];
+  const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
 
   const { result: minimumRedeemAmount } = useApiRx(
     useCallback(
       (api) =>
         api.query.lstMinting.minimumRedeem({
-          Native: LS_TOKEN_TO_CURRENCY[selectedChainToken],
+          Native: selectedChain.currency,
         }),
-      [selectedChainToken],
+      [selectedChain.currency],
     ),
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
   );
@@ -67,37 +66,35 @@ const LiquidUnstakeCard: FC = () => {
   }, [existentialDepositAmount, minimumRedeemAmount]);
 
   const handleUnstakeClick = useCallback(() => {
-    if (executeRedeemTx === null || toAmount === null) {
+    if (executeRedeemTx === null || fromAmount === null) {
       return;
     }
 
     executeRedeemTx({
-      amount: toAmount,
-      currency: LS_TOKEN_TO_CURRENCY[selectedChainToken],
+      amount: fromAmount,
+      currency: selectedChain.currency,
     });
-  }, [executeRedeemTx, toAmount, selectedChainToken]);
+  }, [executeRedeemTx, fromAmount, selectedChain.currency]);
 
-  const fromAmount = useMemo(() => {
-    if (toAmount === null || rate === null) {
+  const toAmount = useMemo(() => {
+    if (fromAmount === null || rate === null) {
       return null;
     }
 
-    return toAmount.muln(rate);
-  }, [toAmount, rate]);
+    return fromAmount.muln(rate);
+  }, [fromAmount, rate]);
 
   return (
     <>
       <LiquidStakingInput
         id="liquid-staking-unstake-from"
-        chain={selectedChain}
-        token={LS_CHAIN_TO_TOKEN[selectedChain]}
-        amount={toAmount}
-        setAmount={setToAmount}
-        placeholder={`0 ${selectedChainToken}`}
+        chain={LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN}
+        token={selectedChain.token}
+        amount={fromAmount}
+        setAmount={setFromAmount}
+        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
         rightElement={<WalletBalance />}
-        isReadOnly
         isTokenLiquidVariant
-        setChain={setSelectedChain}
         minAmount={minimumInputAmount ?? undefined}
       />
 
@@ -105,10 +102,12 @@ const LiquidUnstakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-unstake-to"
-        chain={LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN}
-        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChainToken}`}
-        amount={fromAmount}
-        token={LS_CHAIN_TO_TOKEN[selectedChain]}
+        chain={selectedChainId}
+        amount={toAmount}
+        placeholder={`0 ${selectedChain.token}`}
+        token={selectedChain.token}
+        setChain={setSelectedChainId}
+        isReadOnly
       />
 
       {/* Details */}
@@ -116,25 +115,39 @@ const LiquidUnstakeCard: FC = () => {
         <DetailItem
           title="Rate"
           tooltip="This is a test."
-          value={`1 ${selectedChainToken} = ${rate} ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChainToken}`}
+          value={
+            <>
+              <strong>1</strong> {selectedChain.token}{' '}
+              <strong> = {rate}</strong> {LIQUID_STAKING_TOKEN_PREFIX}
+              {selectedChain.token}
+            </>
+          }
         />
 
         <DetailItem
           title="Cross-chain fee"
           tooltip="This is a test."
-          value={`0.001984 ${selectedChainToken}`}
+          value={
+            <>
+              <strong>0.001984</strong> {selectedChain.token}
+            </>
+          }
         />
 
         <DetailItem
           title="Unstake period"
           tooltip="The period of time you need to wait before you can unstake your tokens."
-          value="7 days"
+          value={
+            <>
+              <strong>7</strong> days
+            </>
+          }
         />
       </div>
 
       <Button
         isDisabled={
-          executeRedeemTx === null || toAmount === null || toAmount.isZero()
+          executeRedeemTx === null || fromAmount === null || fromAmount.isZero()
         }
         isLoading={redeemTxStatus === TxStatus.PROCESSING}
         loadingText="Processing"
@@ -150,7 +163,7 @@ const LiquidUnstakeCard: FC = () => {
 type DetailItemProps = {
   title: string;
   tooltip?: string;
-  value: string;
+  value: string | ReactNode;
 };
 
 /** @internal */
@@ -175,7 +188,7 @@ const DetailItem: FC<DetailItemProps> = ({ title, tooltip, value }) => {
         )}
       </div>
 
-      <Typography className="dark:text-mono-0" variant="body1" fw="bold">
+      <Typography className="dark:text-mono-0" variant="body1" fw="normal">
         {value}
       </Typography>
     </div>

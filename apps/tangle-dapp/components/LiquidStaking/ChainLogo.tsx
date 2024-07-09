@@ -3,14 +3,14 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LiquidStakingChain,
-  LS_CHAIN_TO_LOGO,
+  LIQUID_STAKING_CHAIN_MAP,
+  LiquidStakingChainId,
 } from '../../constants/liquidStaking';
 
 export type ChainLogoSize = 'sm' | 'md';
 
 export type ChainLogoProps = {
-  chain: LiquidStakingChain;
+  chainId: LiquidStakingChainId;
   size: ChainLogoSize;
   isRounded?: boolean;
 };
@@ -33,17 +33,17 @@ const getSizeClass = (size: ChainLogoSize) => {
   }
 };
 
-const getBackgroundColor = (chain: LiquidStakingChain) => {
+const getBackgroundColor = (chain: LiquidStakingChainId) => {
   switch (chain) {
-    case LiquidStakingChain.MANTA:
+    case LiquidStakingChainId.MANTA:
       return 'bg-[#13101D] dark:bg-[#13101D]';
-    case LiquidStakingChain.MOONBEAM:
+    case LiquidStakingChainId.MOONBEAM:
       return 'bg-[#1d1336] dark:bg-[#1d1336]';
-    case LiquidStakingChain.PHALA:
+    case LiquidStakingChainId.PHALA:
       return 'bg-black dark:bg-black';
-    case LiquidStakingChain.POLKADOT:
+    case LiquidStakingChainId.POLKADOT:
       return 'bg-mono-0 dark:bg-mono-0';
-    case LiquidStakingChain.ASTAR:
+    case LiquidStakingChainId.ASTAR:
       // No background for Astar, since it looks better without
       // a background.
       return '';
@@ -51,7 +51,7 @@ const getBackgroundColor = (chain: LiquidStakingChain) => {
 };
 
 const ChainLogo: FC<ChainLogoProps> = ({
-  chain,
+  chainId,
   size = 'md',
   isRounded = false,
 }) => {
@@ -61,11 +61,11 @@ const ChainLogo: FC<ChainLogoProps> = ({
     <Image
       className={twMerge(
         getSizeClass(size),
-        getBackgroundColor(chain),
+        getBackgroundColor(chainId),
         isRounded ? 'rounded-full' : 'rounded-md',
       )}
-      src={LS_CHAIN_TO_LOGO[chain]}
-      alt={`Logo of the liquid staking token ${chain}`}
+      src={LIQUID_STAKING_CHAIN_MAP[chainId].logo}
+      alt={`Logo of the liquid staking token ${chainId}`}
       width={sizeNumber}
       height={sizeNumber}
     />

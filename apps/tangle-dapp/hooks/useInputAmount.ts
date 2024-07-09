@@ -64,6 +64,7 @@ const useInputAmount = ({
   decimals,
 }: Options) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const [displayAmount, setDisplayAmount] = useState(
     amount !== null ? formatBn(amount, decimals, INPUT_AMOUNT_FORMAT) : '',
   );

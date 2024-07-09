@@ -18,10 +18,9 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import {
+  LIQUID_STAKING_CHAIN_MAP,
   LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingChain,
-  LS_CHAIN_TO_TOKEN,
-  LS_TOKEN_TO_CURRENCY,
+  LiquidStakingChainId,
 } from '../../constants/liquidStaking';
 import useMintTx from '../../data/liquidStaking/useMintTx';
 import useApi from '../../hooks/useApi';
@@ -37,21 +36,21 @@ const LiquidStakeCard: FC = () => {
   // TODO: The rate will likely be a hook on its own, likely needs to be extracted from the Tangle Restaking Parachain via a query/subscription.
   const [rate] = useState<number | null>(1.0);
 
-  const [selectedChain, setSelectedChain] = useState<LiquidStakingChain>(
-    LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN,
+  const [selectedChainId, setSelectedChainId] = useState<LiquidStakingChainId>(
+    LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN,
   );
 
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
 
-  const selectedChainToken = LS_CHAIN_TO_TOKEN[selectedChain];
+  const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
 
   const { result: minimumMintingAmount } = useApiRx(
     useCallback(
       (api) =>
         api.query.lstMinting.minimumMint({
-          Native: LS_TOKEN_TO_CURRENCY[selectedChainToken],
+          Native: selectedChain.currency,
         }),
-      [selectedChainToken],
+      [selectedChain.currency],
     ),
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
   );
@@ -76,9 +75,9 @@ const LiquidStakeCard: FC = () => {
 
     executeMintTx({
       amount: fromAmount,
-      currency: LS_TOKEN_TO_CURRENCY[selectedChainToken],
+      currency: selectedChain.currency,
     });
-  }, [executeMintTx, fromAmount, selectedChainToken]);
+  }, [executeMintTx, fromAmount, selectedChain.currency]);
 
   const toAmount = useMemo(() => {
     if (fromAmount === null || rate === null) {
@@ -92,13 +91,13 @@ const LiquidStakeCard: FC = () => {
     <>
       <LiquidStakingInput
         id="liquid-staking-stake-from"
-        chain={selectedChain}
-        token={LS_CHAIN_TO_TOKEN[selectedChain]}
+        chain={selectedChainId}
+        token={selectedChain.token}
         amount={fromAmount}
         setAmount={setFromAmount}
-        placeholder={`0 ${selectedChainToken}`}
+        placeholder={`0 ${selectedChain.token}`}
         rightElement={<WalletBalance />}
-        setChain={setSelectedChain}
+        setChain={setSelectedChainId}
         minAmount={minimumInputAmount ?? undefined}
       />
 
@@ -106,12 +105,12 @@ const LiquidStakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-stake-to"
-        chain={LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN}
-        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChainToken}`}
+        chain={LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN}
+        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
         amount={toAmount}
         isReadOnly
         isTokenLiquidVariant
-        token={LS_CHAIN_TO_TOKEN[selectedChain]}
+        token={selectedChain.token}
         rightElement={<SelectValidators />}
       />
 
@@ -120,13 +119,13 @@ const LiquidStakeCard: FC = () => {
         <DetailItem
           title="Rate"
           tooltip="This is a test."
-          value={`1 ${selectedChainToken} = ${rate} ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChainToken}`}
+          value={`1 ${selectedChain.token} = ${rate} ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
         />
 
         <DetailItem
           title="Cross-chain fee"
           tooltip="This is a test."
-          value={`0.001984 ${selectedChainToken}`}
+          value={`0.001984 ${selectedChain.token}`}
         />
 
         <DetailItem

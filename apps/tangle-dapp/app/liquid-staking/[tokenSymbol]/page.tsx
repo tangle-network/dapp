@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
 import AvailableWithdrawCard from '../../../components/LiquidStaking/AvailableWithdrawCard';
-import HexagonAvatar from '../../../components/LiquidStaking/HexagonAvatar';
 import LiquidStakeAndUnstakeCards from '../../../components/LiquidStaking/LiquidStakeAndUnstakeCards';
 import StakedAssetsTable from '../../../components/LiquidStaking/StakedAssetsTable';
 import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
@@ -24,11 +23,6 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
       <AvailableWithdrawCard />
 
       <StakedAssetsTable />
-
-      <div>
-        <HexagonAvatar address={'abcd' as any} />
-        hello world
-      </div>
     </div>
   );
 };

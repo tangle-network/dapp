@@ -4,8 +4,7 @@ import { FC } from 'react';
 import { GlassCard } from '../../components';
 import LiquidStakingTokenItem from '../../components/LiquidStaking/LiquidStakingTokenItem';
 import StatItem from '../../components/LiquidStaking/StatItem';
-import { LS_CHAIN_TO_TOKEN } from '../../constants/liquidStaking';
-import entriesOf from '../../utils/entriesOf';
+import { LIQUID_STAKING_CHAINS } from '../../constants/liquidStaking';
 
 const LiquidStakingPage: FC = () => {
   return (
@@ -35,13 +34,13 @@ const LiquidStakingPage: FC = () => {
         <GlassCard className="space-y-4">
           <div className="overflow-x-auto">
             <div className="flex flex-col gap-4 min-w-[750px]">
-              {entriesOf(LS_CHAIN_TO_TOKEN).map(([chain, token]) => {
+              {LIQUID_STAKING_CHAINS.map((chain) => {
                 return (
                   <LiquidStakingTokenItem
-                    key={chain}
-                    chain={chain}
+                    key={chain.id}
+                    chainId={chain.id}
                     title={`Tangle ${chain}`}
-                    tokenSymbol={token}
+                    tokenSymbol={chain.token}
                     // TODO: Can't pass non-plain objects as props to Client components from Server components (this page). For now, passing in as a string then creating BN instance inside the component.
                     totalStaked="100000000"
                     totalValueStaked={220_000_123}

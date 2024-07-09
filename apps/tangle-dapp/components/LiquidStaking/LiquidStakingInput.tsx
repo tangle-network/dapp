@@ -11,15 +11,16 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
+import assert from 'assert';
 import { FC, ReactNode, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
+  LIQUID_STAKING_CHAINS,
   LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingChain,
+  LiquidStakingChainId,
   LiquidStakingToken,
   LS_CHAIN_TO_NETWORK_NAME,
-  LS_TOKEN_TO_CHAIN,
 } from '../../constants/liquidStaking';
 import useInputAmount from '../../hooks/useInputAmount';
 import formatBn from '../../utils/formatBn';
@@ -28,8 +29,8 @@ import HoverButtonStyle from './HoverButtonStyle';
 
 export type LiquidStakingInputProps = {
   id: string;
-  chain: LiquidStakingChain;
-  setChain?: (newChain: LiquidStakingChain) => void;
+  chain: LiquidStakingChainId;
+  setChain?: (newChain: LiquidStakingChainId) => void;
   amount: BN | null;
   setAmount?: (newAmount: BN | null) => void;
   isReadOnly?: boolean;
@@ -76,7 +77,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   });
 
   const handleChainChange = useCallback(
-    (newChain: LiquidStakingChain) => {
+    (newChain: LiquidStakingChainId) => {
       if (setChain !== undefined) {
         setChain(newChain);
       }
@@ -136,11 +137,13 @@ type TokenChipProps = {
 
 /** @internal */
 const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant }) => {
-  const chain = LS_TOKEN_TO_CHAIN[token];
+  const chain = LIQUID_STAKING_CHAINS.find((chain) => chain.token === token);
+
+  assert(chain !== undefined, 'All tokens should have a corresponding chain');
 
   return (
     <div className="flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-160 px-4 py-2 rounded-lg">
-      <ChainLogo size="sm" chain={chain} isRounded />
+      <ChainLogo size="sm" chainId={chain.id} isRounded />
 
       <Typography variant="h5" fw="bold">
         {isLiquidVariant && LIQUID_STAKING_TOKEN_PREFIX}
@@ -151,13 +154,13 @@ const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant }) => {
 };
 
 type ChainSelectorProps = {
-  selectedChain: LiquidStakingChain;
+  selectedChain: LiquidStakingChainId;
 
   /**
    * If this function is not provided, the selector will be
    * considered read-only.
    */
-  setChain?: (newChain: LiquidStakingChain) => void;
+  setChain?: (newChain: LiquidStakingChainId) => void;
 };
 
 const ChainSelector: FC<ChainSelectorProps> = ({ selectedChain, setChain }) => {
@@ -172,7 +175,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({ selectedChain, setChain }) => {
         isReadOnly && 'px-3',
       )}
     >
-      <ChainLogo size="sm" chain={selectedChain} />
+      <ChainLogo size="sm" chainId={selectedChain} />
 
       <Typography variant="h5" fw="bold" className="dark:text-mono-40">
         {LS_CHAIN_TO_NETWORK_NAME[selectedChain]}
@@ -191,13 +194,13 @@ const ChainSelector: FC<ChainSelectorProps> = ({ selectedChain, setChain }) => {
       <DropdownBody>
         <ScrollArea className="max-h-[300px]">
           <ul>
-            {Object.values(LiquidStakingChain)
+            {Object.values(LiquidStakingChainId)
               .filter((chain) => chain !== selectedChain)
               .map((chain) => {
                 return (
                   <li key={chain} className="w-full">
                     <MenuItem
-                      startIcon={<ChainLogo size="sm" chain={chain} />}
+                      startIcon={<ChainLogo size="sm" chainId={chain} />}
                       onSelect={() => setChain(chain)}
                       className="px-3 normal-case"
                     >
