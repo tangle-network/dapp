@@ -13,6 +13,7 @@ import {
 import { ExternalLinkLine, InformationLine } from '@webb-tools/icons';
 import {
   Avatar,
+  AvatarGroup,
   fuzzyFilter,
   shortenString,
   Table,
@@ -24,7 +25,6 @@ import { AnySubstrateAddress } from '../../types/utils';
 import GlassCard from '../GlassCard';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
-import AvatarList from './AvatarList';
 
 type StakedAssetItem = {
   id: HexString;
@@ -58,11 +58,11 @@ const columns = [
     ),
     cell: (props) => {
       return (
-        <AvatarList>
+        <AvatarGroup className="justify-center">
           {props.getValue().map((address, index) => (
             <Avatar key={index} value={address} />
           ))}
-        </AvatarList>
+        </AvatarGroup>
       );
     },
   }),
