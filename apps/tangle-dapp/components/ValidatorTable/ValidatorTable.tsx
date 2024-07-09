@@ -47,24 +47,28 @@ const getStaticColumns = (isWaiting?: boolean) => [
           header: () => (
             <HeaderCell
               title="Effective amount staked"
-              className="justify-center"
+              className="justify-start"
             />
           ),
-          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+          cell: (props) => (
+            <TokenAmountCell amount={props.getValue()} className="text-start" />
+          ),
           sortingFn: sortBnValueForNomineeOrValidator,
         }),
         columnHelper.accessor('selfStakeAmount', {
           header: () => (
-            <HeaderCell title="Self-staked" className="justify-center" />
+            <HeaderCell title="Self-staked" className="justify-start" />
           ),
-          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+          cell: (props) => (
+            <TokenAmountCell amount={props.getValue()} className="text-start" />
+          ),
           sortingFn: sortBnValueForNomineeOrValidator,
         }),
       ]),
   columnHelper.accessor('nominatorCount', {
-    header: () => <HeaderCell title="Nominations" className="justify-center" />,
+    header: () => <HeaderCell title="Nominations" className="justify-start" />,
     cell: (props) => (
-      <StringCell value={props.getValue().toString()} className="text-center" />
+      <StringCell value={props.getValue().toString()} className="text-start" />
     ),
   }),
   columnHelper.accessor('commission', {
@@ -72,7 +76,7 @@ const getStaticColumns = (isWaiting?: boolean) => [
     cell: (props) => (
       <StringCell
         value={calculateCommission(props.getValue()).toFixed(2) + '%'}
-        className="text-center"
+        className="text-start"
       />
     ),
     sortingFn: sortBnValueForNomineeOrValidator,

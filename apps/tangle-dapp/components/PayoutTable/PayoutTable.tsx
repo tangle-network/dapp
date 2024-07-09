@@ -156,7 +156,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
       columnHelper.display({
         id: 'remaining',
         header: () => (
-          <HeaderCell title="Remaining Eras" className="justify-center" />
+          <HeaderCell title="Remaining Eras" className="justify-start" />
         ),
         cell: (props) => {
           const rowData = props.row.original;
@@ -170,7 +170,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
           return (
             <StringCell
               value={sessionProgress ? `${remainingErasToClaim}` : 'N/A'}
-              className="text-center"
+              className="text-start"
             />
           );
         },
