@@ -19,7 +19,7 @@ jobs:
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4
 
       - name: Enable corepack
         run: |
@@ -51,7 +51,7 @@ jobs:
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4
 
       - name: Enable corepack
         run: |
@@ -79,7 +79,7 @@ jobs:
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4
 
       - name: Link Checker
         uses: lycheeverse/lychee-action@v1.10.0
