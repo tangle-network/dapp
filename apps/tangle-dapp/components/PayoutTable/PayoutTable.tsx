@@ -6,6 +6,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import { WalletPayIcon } from '@webb-tools/icons';
@@ -22,6 +23,7 @@ import { type FC, useState } from 'react';
 
 import PayoutTxContainer from '../../containers/PayoutTxContainer/PayoutTxContainer';
 import { AddressWithIdentity, Payout } from '../../types';
+import { sortBnValueForPayout } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { PayoutTableProps } from './types';
@@ -35,6 +37,11 @@ const PayoutTable: FC<PayoutTableProps> = ({
   historyDepth,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [sorting, setSorting] = useState<SortingState>([
+    // Default sorting by total stake amount in descending order
+    { id: 'era', desc: true },
+  ]);
 
   const [payoutTxProps, setPayoutTxProps] = useState<{
     validatorAddress: string;
@@ -83,6 +90,15 @@ const PayoutTable: FC<PayoutTableProps> = ({
             </div>
           );
         },
+        sortingFn: (rowA, rowB) => {
+          const { address: addressA, identity: identityA } =
+            rowA.original.validator;
+          const { address: addressB, identity: identityB } =
+            rowB.original.validator;
+          const sortingValueA = identityA === addressA ? addressA : identityA;
+          const sortingValueB = identityB === addressB ? addressB : identityB;
+          return sortingValueB.localeCompare(sortingValueA);
+        },
       }),
       columnHelper.accessor('validatorTotalStake', {
         header: () => (
@@ -91,6 +107,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
         cell: (props) => (
           <TokenAmountCell amount={props.getValue()} className="text-start" />
         ),
+        sortingFn: sortBnValueForPayout,
       }),
       columnHelper.accessor('nominators', {
         header: () => (
@@ -112,6 +129,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
             </AvatarGroup>
           );
         },
+        enableSorting: false,
       }),
       columnHelper.accessor('validatorTotalReward', {
         header: () => (
@@ -120,6 +138,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
         cell: (props) => (
           <TokenAmountCell amount={props.getValue()} className="text-start" />
         ),
+        sortingFn: sortBnValueForPayout,
       }),
       columnHelper.accessor('nominatorTotalReward', {
         header: () => (
@@ -130,6 +149,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
             <TokenAmountCell amount={props.getValue()} className="text-start" />
           );
         },
+        sortingFn: sortBnValueForPayout,
       }),
       columnHelper.display({
         id: 'remaining',
@@ -154,6 +174,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
             />
           );
         },
+        enableSorting: false,
       }),
       columnHelper.display({
         id: 'claim',
@@ -176,6 +197,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
             </button>
           );
         },
+        enableSorting: false,
       }),
     ],
     initialState: {
@@ -191,6 +213,11 @@ const PayoutTable: FC<PayoutTableProps> = ({
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    state: {
+      sorting,
+    },
+    enableSortingRemoval: false,
   });
 
   return (

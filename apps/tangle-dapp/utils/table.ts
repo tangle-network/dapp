@@ -1,44 +1,49 @@
 import { BN } from '@polkadot/util';
 import { SortingFn } from '@tanstack/react-table';
 
-import { Nominee } from '../types';
+import { Nominee, Payout } from '../types';
 
 // Utility type to extract keys of type T that have value type U
 type KeysOfType<T, U> = {
   [K in keyof T]: T[K] extends U ? K : never;
 }[keyof T];
 
-// Type that represents the keys of Nominee that have type BN
-// Note: Validator extends Nominee, so this type will also work for Validator
-type BNFields = KeysOfType<Nominee, BN>;
-
-const bnFieldsArray: BNFields[] = [
+const nomineeBnFieldsArray: KeysOfType<Nominee, BN>[] = [
   'commission',
   'selfStakeAmount',
   'totalStakeAmount',
 ];
 
+const payoutBnFieldsArray: KeysOfType<Payout, BN>[] = [
+  'validatorTotalStake',
+  'validatorTotalReward',
+  'nominatorTotalReward',
+  'nominatorTotalRewardRaw',
+];
+
 /**
- * Sort function for Tanstack tables for columns that use BN values
+ * Generic sort function for Tanstack tables for columns that use BN values
  */
-export const sortBnValueForNomineeOrValidator: SortingFn<Nominee> = (
-  rowA,
-  rowB,
-  columnId,
-) => {
-  if (!bnFieldsArray.includes(columnId as BNFields)) {
-    throw new Error('Wrong column ID');
-  }
+const sortBnValue =
+  <T>(bnFieldsArray: KeysOfType<T, BN>[]): SortingFn<T> =>
+  (rowA, rowB, columnId) => {
+    if (!bnFieldsArray.includes(columnId as KeysOfType<T, BN>)) {
+      throw new Error(`Invalid column ID: ${columnId}`);
+    }
 
-  const amountA = rowA.original[columnId as keyof Nominee];
-  const amountB = rowB.original[columnId as keyof Nominee];
+    const amountA = rowA.original[columnId as keyof T];
+    const amountB = rowB.original[columnId as keyof T];
 
-  if (!BN.isBN(amountA) || !BN.isBN(amountB)) {
-    throw new Error('Expected BN value');
-  }
+    if (!BN.isBN(amountA) || !BN.isBN(amountB)) {
+      throw new Error(`Expected BN values for column: ${columnId}`);
+    }
 
-  return amountA.cmp(amountB);
-};
+    return amountA.cmp(amountB);
+  };
+
+export const sortBnValueForNomineeOrValidator =
+  sortBnValue<Nominee>(nomineeBnFieldsArray);
+export const sortBnValueForPayout = sortBnValue<Payout>(payoutBnFieldsArray);
 
 export const sortAddressOrIdentityForNomineeOrValidator: SortingFn<Nominee> = (
   rowA,
