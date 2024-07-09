@@ -6,6 +6,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
@@ -20,12 +21,13 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useNetworkStore from '../../context/useNetworkStore';
 import { ExplorerType, PagePath, Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
+import sortBnFn from '../../utils/tanstackTableSortBnFn';
 import { HeaderCell, StringCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorTableProps } from './types';
@@ -46,12 +48,14 @@ const getStaticColumns = (isWaiting?: boolean) => [
             />
           ),
           cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+          sortingFn: sortBnFn,
         }),
         columnHelper.accessor('selfStakeAmount', {
           header: () => (
             <HeaderCell title="Self-staked" className="justify-center" />
           ),
           cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+          sortingFn: sortBnFn,
         }),
       ]),
   columnHelper.accessor('nominatorCount', {
@@ -68,6 +72,7 @@ const getStaticColumns = (isWaiting?: boolean) => [
         className="text-center"
       />
     ),
+    sortingFn: sortBnFn,
   }),
   // TODO: Hide this for live app for now
   ...(IS_PRODUCTION_ENV
@@ -91,6 +96,11 @@ const getStaticColumns = (isWaiting?: boolean) => [
 
 const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
   const { network } = useNetworkStore();
+
+  const [sorting, setSorting] = useState<SortingState>([
+    // Default sorting by total stake amount in descending order
+    { id: 'totalStakeAmount', desc: true },
+  ]);
 
   const columns = useMemo(
     () => [
@@ -134,6 +144,17 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
             </div>
           );
         },
+        sortingFn: (rowA, rowB) => {
+          const { address: addressA, identityName: identityNameA } =
+            rowA.original;
+          const { address: addressB, identityName: identityNameB } =
+            rowB.original;
+          const sortingValueA =
+            identityNameA === addressA ? addressA : identityNameA;
+          const sortingValueB =
+            identityNameB === addressB ? addressB : identityNameB;
+          return sortingValueB.localeCompare(sortingValueA);
+        },
       }),
       ...getStaticColumns(isWaiting),
     ],
@@ -151,6 +172,11 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    state: {
+      sorting,
+    },
+    enableSortingRemoval: false,
   });
 
   return (
