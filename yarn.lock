@@ -2084,7 +2084,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buildwithsygma/sygma-sdk-core@npm:^2.10.0":
+"@buildwithsygma/sygma-sdk-core@npm:^2.11.0":
   version: 2.11.0
   resolution: "@buildwithsygma/sygma-sdk-core@npm:2.11.0"
   dependencies:
@@ -45071,7 +45071,7 @@ __metadata:
     "@babel/preset-env": "npm:7.24.6"
     "@babel/preset-react": "npm:7.24.6"
     "@babel/preset-typescript": "npm:7.24.6"
-    "@buildwithsygma/sygma-sdk-core": "npm:^2.10.0"
+    "@buildwithsygma/sygma-sdk-core": "npm:^2.11.0"
     "@chromatic-com/storybook": "npm:^1.5.0"
     "@commitlint/cli": "npm:^19.3.0"
     "@commitlint/config-conventional": "npm:^19.2.2"
