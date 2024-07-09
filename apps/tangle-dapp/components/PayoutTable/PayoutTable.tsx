@@ -1,5 +1,7 @@
 'use client';
 
+import { DeriveSessionProgress } from '@polkadot/api-derive/types';
+import { BN } from '@polkadot/util';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -159,12 +161,10 @@ const PayoutTable: FC<PayoutTableProps> = ({
         cell: (props) => {
           const rowData = props.row.original;
 
-          const remainingErasToClaim = Math.abs(
-            sessionProgress && historyDepth
-              ? sessionProgress.currentEra.toNumber() -
-                  historyDepth.toNumber() -
-                  rowData.era
-              : 0,
+          const remainingErasToClaim = calculateRemainingErasToClaim(
+            sessionProgress,
+            historyDepth,
+            rowData.era,
           );
 
           return (
@@ -174,7 +174,21 @@ const PayoutTable: FC<PayoutTableProps> = ({
             />
           );
         },
-        enableSorting: false,
+        sortingFn: (rowA, rowB) => {
+          const remainingErasToClaimA = calculateRemainingErasToClaim(
+            sessionProgress,
+            historyDepth,
+            rowA.original.era,
+          );
+
+          const remainingErasToClaimB = calculateRemainingErasToClaim(
+            sessionProgress,
+            historyDepth,
+            rowB.original.era,
+          );
+
+          return remainingErasToClaimA - remainingErasToClaimB;
+        },
       }),
       columnHelper.display({
         id: 'claim',
@@ -243,3 +257,15 @@ const PayoutTable: FC<PayoutTableProps> = ({
 };
 
 export default PayoutTable;
+
+function calculateRemainingErasToClaim(
+  sessionProgress: DeriveSessionProgress | null,
+  historyDepth: BN | null,
+  era: number,
+) {
+  return Math.abs(
+    sessionProgress && historyDepth
+      ? sessionProgress.currentEra.toNumber() - historyDepth.toNumber() - era
+      : 0,
+  );
+}
