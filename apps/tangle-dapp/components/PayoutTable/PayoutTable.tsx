@@ -41,7 +41,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [sorting, setSorting] = useState<SortingState>([
-    // Default sorting by total stake amount in descending order
+    // Default sorting by era in descending order
     { id: 'era', desc: true },
   ]);
 
