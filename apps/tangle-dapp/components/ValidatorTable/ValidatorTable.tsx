@@ -27,7 +27,10 @@ import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useNetworkStore from '../../context/useNetworkStore';
 import { ExplorerType, PagePath, Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import sortBnFn from '../../utils/tanstackTableSortBnFn';
+import {
+  sortAddressOrIdentityForNomineeOrValidator,
+  sortBnValueForNomineeOrValidator,
+} from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorTableProps } from './types';
@@ -48,14 +51,14 @@ const getStaticColumns = (isWaiting?: boolean) => [
             />
           ),
           cell: (props) => <TokenAmountCell amount={props.getValue()} />,
-          sortingFn: sortBnFn,
+          sortingFn: sortBnValueForNomineeOrValidator,
         }),
         columnHelper.accessor('selfStakeAmount', {
           header: () => (
             <HeaderCell title="Self-staked" className="justify-center" />
           ),
           cell: (props) => <TokenAmountCell amount={props.getValue()} />,
-          sortingFn: sortBnFn,
+          sortingFn: sortBnValueForNomineeOrValidator,
         }),
       ]),
   columnHelper.accessor('nominatorCount', {
@@ -72,7 +75,7 @@ const getStaticColumns = (isWaiting?: boolean) => [
         className="text-center"
       />
     ),
-    sortingFn: sortBnFn,
+    sortingFn: sortBnValueForNomineeOrValidator,
   }),
   // TODO: Hide this for live app for now
   ...(IS_PRODUCTION_ENV
@@ -144,17 +147,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
             </div>
           );
         },
-        sortingFn: (rowA, rowB) => {
-          const { address: addressA, identityName: identityNameA } =
-            rowA.original;
-          const { address: addressB, identityName: identityNameB } =
-            rowB.original;
-          const sortingValueA =
-            identityNameA === addressA ? addressA : identityNameA;
-          const sortingValueB =
-            identityNameB === addressB ? addressB : identityNameB;
-          return sortingValueB.localeCompare(sortingValueA);
-        },
+        sortingFn: sortAddressOrIdentityForNomineeOrValidator,
       }),
       ...getStaticColumns(isWaiting),
     ],
