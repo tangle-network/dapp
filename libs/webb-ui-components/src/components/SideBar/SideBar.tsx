@@ -91,7 +91,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
 
             <SideBarItems
               pathnameOrHash={pathnameOrHash}
-              items={items}
+              items={items.filter((item) => item.isInternal)}
               isExpanded={isSidebarOpen}
             />
           </div>
@@ -104,15 +104,24 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
             }}
           />
 
-          <SideBarFooter
-            name={footer.name}
-            Icon={footer.Icon}
-            isInternal={footer.isInternal}
-            href={footer.href}
-            useNextThemesForThemeToggle={footer.useNextThemesForThemeToggle}
-            isExpanded={isSidebarOpen}
-            className={isSidebarOpen ? 'p-2' : 'pl-1'}
-          />
+          <div className="space-y-2">
+            <SideBarItems
+              pathnameOrHash={pathnameOrHash}
+              items={items.filter((item) => !item.isInternal)}
+              isExpanded={isSidebarOpen}
+              className='gap-2'
+            />
+
+            <SideBarFooter
+              name={footer.name}
+              Icon={footer.Icon}
+              isInternal={footer.isInternal}
+              href={footer.href}
+              useNextThemesForThemeToggle={footer.useNextThemesForThemeToggle}
+              isExpanded={isSidebarOpen}
+              className={isSidebarOpen ? 'p-2' : ''}
+            />
+          </div>
         </div>
       </div>
     );
