@@ -50,8 +50,8 @@ export const ThemeToggle: FC<ThemeToggleProps> = ({
         'select-none transition duration-200 ease-in rounded-full',
         '[&_*]:cursor-pointer shadow-md',
         {
-          'bg-mono-120': isDarkMode,
-          'bg-mono-60': !isDarkMode,
+          'bg-mono-170': isDarkMode,
+          'bg-mono-20': !isDarkMode,
         },
       )}
       onClick={(eve) => {
@@ -85,7 +85,7 @@ export const ThemeToggle: FC<ThemeToggleProps> = ({
         {isDarkMode ? (
           <MoonLine className="h-7 w-7 -ml-0.5 bg-mono-0 rounded-full p-[3px] !fill-mono-200" />
         ) : (
-          <SunLine className="h-7 w-7 ml-[3px] bg-blue-100 rounded-full p-0.5 !fill-mono-20" />
+          <SunLine className="h-7 w-7 ml-[3px] bg-mono-100 rounded-full p-0.5 !fill-mono-20" />
         )}
       </div>
     </div>
