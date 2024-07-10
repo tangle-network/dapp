@@ -2084,9 +2084,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@buildwithsygma/sygma-sdk-core@npm:^2.11.0":
-  version: 2.11.0
-  resolution: "@buildwithsygma/sygma-sdk-core@npm:2.11.0"
+"@buildwithsygma/sygma-sdk-core@npm:2.10.0":
+  version: 2.10.0
+  resolution: "@buildwithsygma/sygma-sdk-core@npm:2.10.0"
   dependencies:
     "@buildwithsygma/sygma-contracts": "npm:2.5.1"
     "@ethersproject/abi": "npm:^5.7.0"
@@ -2102,7 +2102,7 @@ __metadata:
     "@polkadot/util": "npm:12.2.1"
     "@polkadot/util-crypto": "npm:12.2.1"
     ethers: "npm:5.6.2"
-  checksum: 10c0/cf8ce44d6e2a67a92341fc92fcfc2eee0f945b86d4f8b86436340dca15e9f1d04002520a15e1aca50d124fb8b1ecd1ec3dd8dc7d64a756100e96681ecf973301
+  checksum: 10c0/fec17e1a40e57e196db2237efbd1fc4308a17d207131d840c0cd4a6ea756e55506f0a8c9b1388d190dbdf2019444c8786888e9fb9c7285b78bcc703ba67704e2
   languageName: node
   linkType: hard
 
@@ -45071,7 +45071,7 @@ __metadata:
     "@babel/preset-env": "npm:7.24.6"
     "@babel/preset-react": "npm:7.24.6"
     "@babel/preset-typescript": "npm:7.24.6"
-    "@buildwithsygma/sygma-sdk-core": "npm:^2.11.0"
+    "@buildwithsygma/sygma-sdk-core": "npm:2.10.0"
     "@chromatic-com/storybook": "npm:^1.5.0"
     "@commitlint/cli": "npm:^19.3.0"
     "@commitlint/config-conventional": "npm:^19.2.2"
