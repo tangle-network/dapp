@@ -7,6 +7,7 @@ import {
   DocumentationIcon,
   GiftLineIcon,
   GlobalLine,
+  PolkadotJs,
   ShuffleLine,
   TokenSwapFill,
   UserFillIcon,
@@ -91,32 +92,44 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
   useNextThemesForThemeToggle: true,
 };
 
-export default function getSidebarProps(
-  substrateExplorerHref?: string,
-  evmExplorerHref?: string,
-): SidebarProps {
+export default function getSidebarProps({
+  polkadotJsDashboardUrl,
+  nativeExplorerUrl,
+  evmExplorerUrl,
+}: {
+  polkadotJsDashboardUrl: string;
+  nativeExplorerUrl?: string;
+  evmExplorerUrl?: string;
+}): SidebarProps {
   const currentEnv = isAppEnvironmentType(process.env.NODE_ENV)
     ? process.env.NODE_ENV
     : 'development';
 
   const sideBarItems: SideBarItemProps[] = [
     ...SIDEBAR_STATIC_ITEMS,
-    ...(substrateExplorerHref
+    {
+      Icon: PolkadotJs,
+      href: polkadotJsDashboardUrl,
+      isInternal: false,
+      name: 'Polkadot-JS',
+      subItems: [],
+    },
+    ...(nativeExplorerUrl
       ? [
           {
             Icon: AppsLine,
-            href: substrateExplorerHref,
+            href: nativeExplorerUrl,
             isInternal: false,
             name: 'Substrate Explorer',
             subItems: [],
           },
         ]
       : []),
-    ...(evmExplorerHref
+    ...(evmExplorerUrl
       ? [
           {
             Icon: GlobalLine,
-            href: evmExplorerHref,
+            href: evmExplorerUrl,
             isInternal: false,
             name: 'EVM Explorer',
             subItems: [],

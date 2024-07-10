@@ -163,3 +163,5 @@ export { default as StatusIndicator } from './StatusIndicator';
 
 // Proposal Badges
 export * from './ProposalBadge';
+
+export { default as PolkadotJs } from './PolkadotJs';

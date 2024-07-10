@@ -65,7 +65,7 @@ const ParticipantsTable: FC<ParticipantTableProps> = ({ className }) => {
       cell: (props) => {
         const address = props.row.original.address;
         const accountExplorerLink = getExplorerURI(
-          network.polkadotExplorerUrl,
+          network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl,
           address,
           'address',
           ExplorerType.Substrate,

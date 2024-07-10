@@ -2,17 +2,19 @@ import { EVMChainId, SubstrateChainId } from '@webb-tools/dapp-types';
 import {
   TANGLE_MAINNET_WS_RPC_ENDPOINT,
   TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
+  TANGLE_MAINNET_POLKADOT_JS_DASHBOARD_URL,
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   TANGLE_MAINNET_EVM_EXPLORER_URL,
   TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
   TANGLE_TESTNET_WS_RPC_ENDPOINT,
   TANGLE_TESTNET_HTTP_RPC_ENDPOINT,
+  TANGLE_TESTNET_POLKADOT_JS_DASHBOARD_URL,
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   TANGLE_TESTNET_EVM_EXPLORER_URL,
   TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
   TANGLE_LOCAL_WS_RPC_ENDPOINT,
   TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
-  TANGLE_LOCAL_NATIVE_EXPLORER_URL,
+  TANGLE_LOCAL_POLKADOT_JS_DASHBOARD_URL,
   TANGLE_MAINNET_SS58_PREFIX,
   TANGLE_TESTNET_SS58_PREFIX,
   TANGLE_LOCAL_SS58_PREFIX,
@@ -39,7 +41,8 @@ export type Network = {
   tokenSymbol: 'tTNT' | 'TNT';
   nodeType: NetworkNodeType;
   subqueryEndpoint?: string;
-  polkadotExplorerUrl: string;
+  polkadotJsDashboardUrl: string;
+  nativeExplorerUrl?: string;
   evmExplorerUrl?: string;
   avatar?: string;
 
@@ -69,7 +72,8 @@ export const TANGLE_MAINNET_NETWORK = {
   nodeType: 'standalone',
   wsRpcEndpoint: TANGLE_MAINNET_WS_RPC_ENDPOINT,
   httpRpcEndpoint: TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
-  polkadotExplorerUrl: TANGLE_MAINNET_NATIVE_EXPLORER_URL,
+  polkadotJsDashboardUrl: TANGLE_MAINNET_POLKADOT_JS_DASHBOARD_URL,
+  nativeExplorerUrl: TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_MAINNET_EVM_EXPLORER_URL,
   ss58Prefix: TANGLE_MAINNET_SS58_PREFIX,
 } as const satisfies Network;
@@ -84,7 +88,8 @@ export const TANGLE_TESTNET_NATIVE_NETWORK = {
   subqueryEndpoint: SUBQUERY_ENDPOINT,
   httpRpcEndpoint: TANGLE_TESTNET_HTTP_RPC_ENDPOINT,
   wsRpcEndpoint: TANGLE_TESTNET_WS_RPC_ENDPOINT,
-  polkadotExplorerUrl: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
+  polkadotJsDashboardUrl: TANGLE_TESTNET_POLKADOT_JS_DASHBOARD_URL,
+  nativeExplorerUrl: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_TESTNET_EVM_EXPLORER_URL,
   ss58Prefix: TANGLE_TESTNET_SS58_PREFIX,
 } as const satisfies Network;
@@ -102,7 +107,7 @@ export const TANGLE_LOCAL_DEV_NETWORK = {
   subqueryEndpoint: 'http://localhost:4000/graphql',
   wsRpcEndpoint: TANGLE_LOCAL_WS_RPC_ENDPOINT,
   httpRpcEndpoint: TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
-  polkadotExplorerUrl: TANGLE_LOCAL_NATIVE_EXPLORER_URL,
+  polkadotJsDashboardUrl: TANGLE_LOCAL_POLKADOT_JS_DASHBOARD_URL,
   ss58Prefix: TANGLE_LOCAL_SS58_PREFIX,
 } as const satisfies Network;
 
@@ -112,7 +117,7 @@ export const TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK = {
   nodeType: 'parachain',
   tokenSymbol: 'TNT',
   wsRpcEndpoint: 'ws://localhost:30337',
-  polkadotExplorerUrl: 'https://polkadot.js.org/apps/',
+  polkadotJsDashboardUrl: 'https://polkadot.js.org/apps/',
 } as const satisfies Network;
 
 export const TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK = {
@@ -121,7 +126,7 @@ export const TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK = {
   nodeType: 'parachain',
   tokenSymbol: 'tTNT',
   wsRpcEndpoint: 'wss://testnet-parachain.tangle.tools',
-  polkadotExplorerUrl: 'https://polkadot.js.org/apps/',
+  polkadotJsDashboardUrl: 'https://polkadot.js.org/apps/',
 } as const satisfies Network;
 
 export const NETWORK_MAP = {

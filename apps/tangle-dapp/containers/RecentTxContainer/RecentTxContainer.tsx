@@ -18,8 +18,15 @@ const RecentTxContainer: FC = () => {
   const { isEvm } = useAgnosticAccountInfo();
 
   const explorerUrl = useMemo(() => {
-    return isEvm ? network.evmExplorerUrl : network.polkadotExplorerUrl;
-  }, [isEvm, network.evmExplorerUrl, network.polkadotExplorerUrl]);
+    return isEvm
+      ? network.evmExplorerUrl
+      : network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl;
+  }, [
+    isEvm,
+    network.evmExplorerUrl,
+    network.nativeExplorerUrl,
+    network.polkadotJsDashboardUrl,
+  ]);
 
   const accountExplorerUrl = useMemo(() => {
     return activeAccountAddress && explorerUrl

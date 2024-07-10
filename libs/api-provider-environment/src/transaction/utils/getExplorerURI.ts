@@ -10,7 +10,7 @@ import { chainsConfig as substrateChainsConfig } from '@webb-tools/dapp-config/c
  * @returns a flag indicates that the explorer uri
  * is the Polkadot Portal or not.
  */
-export function isPolkadotPortal(explorerUri = ''): boolean {
+export function isPolkadotDashboard(explorerUri = ''): boolean {
   return explorerUri.includes('polkadot.js.org/apps');
 }
 
@@ -34,7 +34,7 @@ export const getExplorerURI = (
   pathOrHash: string,
   variant: ExplorerVariant,
   txProviderType: WebbProviderType,
-  isPolkadotPortal?: boolean,
+  isPolkadotDashboard?: boolean,
 ): URL => {
   switch (txProviderType) {
     case 'web3':
@@ -45,7 +45,7 @@ export const getExplorerURI = (
         variant,
         explorerUri,
         pathOrHash,
-        isPolkadotPortal,
+        isPolkadotDashboard,
       );
 
       return new URL(path, explorerUri);
@@ -62,7 +62,7 @@ function getPolkadotPath(
   variant: ExplorerVariant,
   explorerUri: string,
   pathOrHash: string,
-  isPolkadotPortalArg?: boolean,
+  isPolkadotDashboardArg?: boolean,
 ) {
   if (variant === 'tx') {
     return `#/extrinsics/${pathOrHash}`;
@@ -78,12 +78,12 @@ function getPolkadotPath(
     return `#/accounts/${encodedAddress}`;
   }
 
-  const isPolkaPortal =
-    typeof isPolkadotPortalArg === 'boolean'
-      ? isPolkadotPortalArg
-      : isPolkadotPortal(explorerUri);
+  const isPolkaDashboard =
+    typeof isPolkadotDashboardArg === 'boolean'
+      ? isPolkadotDashboardArg
+      : isPolkadotDashboard(explorerUri);
 
-  if (!isPolkaPortal) {
+  if (!isPolkaDashboard) {
     return `#/blocks/${pathOrHash}`;
   }
 

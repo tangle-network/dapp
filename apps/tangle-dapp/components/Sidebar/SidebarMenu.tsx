@@ -2,20 +2,13 @@
 
 import { SideBarMenu as SideBarMenuCmp } from '@webb-tools/webb-ui-components';
 import { usePathname } from 'next/navigation';
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import getSidebarProps from './sidebarProps';
+import useSidebarProps from './useSidebarProps';
 
 const SidebarMenu: FC = () => {
   const pathname = usePathname();
-  const { network } = useNetworkStore();
-
-  const sidebarProps = useMemo(
-    () =>
-      getSidebarProps(network?.polkadotExplorerUrl, network?.evmExplorerUrl),
-    [network?.evmExplorerUrl, network?.polkadotExplorerUrl],
-  );
+  const sidebarProps = useSidebarProps();
 
   return (
     <SideBarMenuCmp
