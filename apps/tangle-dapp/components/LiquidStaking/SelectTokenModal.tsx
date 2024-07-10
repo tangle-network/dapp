@@ -1,13 +1,14 @@
-import { BN } from '@polkadot/util';
+import { BN, formatBalance } from '@polkadot/util';
 import { ExternalLinkLine } from '@webb-tools/icons';
 import {
   GITHUB_BUG_REPORT_URL,
   Modal,
   ModalContent,
   ModalHeader,
+  shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 
 import { LiquidStakingChainId } from '../../constants/liquidStaking';
 import { AnySubstrateAddress } from '../../types/utils';
@@ -84,14 +85,31 @@ const SelectTokenModal: FC<SelectTokenModalProps> = ({
 
 export type TokenListItemProps = {
   address: AnySubstrateAddress;
+  decimals: number;
   amount: BN;
   onClick: () => void;
 };
 
 /** @internal */
-const TokenListItem: FC<TokenListItemProps> = () => {
+const TokenListItem: FC<TokenListItemProps> = ({
+  address,
+  decimals,
+  amount,
+  onClick,
+}) => {
+  const formattedAmount = useMemo(() => {
+    return formatBalance(amount, {
+      withSi: true,
+      decimals,
+      withUnit: false,
+    });
+  }, [amount, decimals]);
+
   return (
-    <div className="flex items-center justify-between py-2 px-4 rounded-lg cursor-pointer w-full hover:dark:bg-mono-160">
+    <div
+      onClick={onClick}
+      className="flex items-center justify-between py-2 px-4 rounded-lg cursor-pointer w-full hover:dark:bg-mono-160"
+    >
       {/* Information */}
       <div className="flex items-center justify-center gap-2">
         <ChainLogo
@@ -110,7 +128,7 @@ const TokenListItem: FC<TokenListItemProps> = () => {
             className="flex items-center justify-center gap-1 hover:underline"
           >
             <Typography variant="body1" fw="normal">
-              tgbe12...006
+              {shortenString(address, 6)}
             </Typography>
 
             <ExternalLinkLine />
@@ -120,7 +138,7 @@ const TokenListItem: FC<TokenListItemProps> = () => {
 
       {/* Amount */}
       <Typography className="dark:text-mono-0" variant="h5" fw="bold">
-        88.29
+        {formattedAmount}
       </Typography>
     </div>
   );

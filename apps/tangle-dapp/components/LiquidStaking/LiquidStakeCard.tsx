@@ -21,14 +21,15 @@ import {
   LIQUID_STAKING_CHAIN_MAP,
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingChainId,
+  LiquidStakingToken,
 } from '../../constants/liquidStaking';
 import useMintTx from '../../data/liquidStaking/useMintTx';
 import useApi from '../../hooks/useApi';
 import useApiRx from '../../hooks/useApiRx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import LiquidStakingInput from './LiquidStakingInput';
+import ParachainWalletBalance from './ParachainWalletBalance';
 import SelectValidators from './SelectValidators';
-import WalletBalance from './WalletBalance';
 
 const LiquidStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
@@ -96,7 +97,8 @@ const LiquidStakeCard: FC = () => {
         amount={fromAmount}
         setAmount={setFromAmount}
         placeholder={`0 ${selectedChain.token}`}
-        rightElement={<WalletBalance />}
+        // TODO: Temporary. Use actual token.
+        rightElement={<ParachainWalletBalance token={LiquidStakingToken.TNT} />}
         setChain={setSelectedChainId}
         minAmount={minimumInputAmount ?? undefined}
       />

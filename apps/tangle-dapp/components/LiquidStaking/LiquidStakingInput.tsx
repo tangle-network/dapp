@@ -37,6 +37,7 @@ export type LiquidStakingInputProps = {
   placeholder?: string;
   rightElement?: ReactNode;
   token: LiquidStakingToken;
+  onTokenClick?: () => void;
   isTokenLiquidVariant?: boolean;
   minAmount?: BN;
 };
@@ -44,15 +45,16 @@ export type LiquidStakingInputProps = {
 const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   id,
   amount,
-  setAmount,
   isReadOnly = false,
   placeholder = '0',
   isTokenLiquidVariant = false,
   rightElement,
   chain,
-  setChain,
   token,
   minAmount,
+  setAmount,
+  setChain,
+  onTokenClick,
 }) => {
   const minErrorMessage = ((): string | undefined => {
     if (minAmount === undefined) {
@@ -117,7 +119,11 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
             readOnly={isReadOnly}
           />
 
-          <TokenChip token={token} isLiquidVariant={isTokenLiquidVariant} />
+          <TokenChip
+            onClick={onTokenClick}
+            token={token}
+            isLiquidVariant={isTokenLiquidVariant}
+          />
         </div>
       </div>
 
@@ -133,16 +139,23 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
 type TokenChipProps = {
   token: LiquidStakingToken;
   isLiquidVariant: boolean;
+  onClick?: () => void;
 };
 
 /** @internal */
-const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant }) => {
+const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
   const chain = LIQUID_STAKING_CHAINS.find((chain) => chain.token === token);
 
   assert(chain !== undefined, 'All tokens should have a corresponding chain');
 
   return (
-    <div className="flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-160 px-4 py-2 rounded-lg">
+    <div
+      onClick={onClick}
+      className={twMerge(
+        'flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-160 px-4 py-2 rounded-lg',
+        onClick && 'cursor-pointer hover:dark:bg-mono-140',
+      )}
+    >
       <ChainLogo size="sm" chainId={chain.id} isRounded />
 
       <Typography variant="h5" fw="bold">

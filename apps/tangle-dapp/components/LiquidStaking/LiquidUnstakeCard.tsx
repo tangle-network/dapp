@@ -19,15 +19,18 @@ import {
   LIQUID_STAKING_CHAIN_MAP,
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingChainId,
+  LiquidStakingToken,
 } from '../../constants/liquidStaking';
 import useRedeemTx from '../../data/liquidStaking/useRedeemTx';
 import useApi from '../../hooks/useApi';
 import useApiRx from '../../hooks/useApiRx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import LiquidStakingInput from './LiquidStakingInput';
-import WalletBalance from './WalletBalance';
+import ParachainWalletBalance from './ParachainWalletBalance';
+import SelectTokenModal from './SelectTokenModal';
 
 const LiquidUnstakeCard: FC = () => {
+  const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
 
   // TODO: The rate will likely be a hook on its own, likely needs to be extracted from the Tangle Restaking Parachain via a query/subscription.
@@ -84,6 +87,15 @@ const LiquidUnstakeCard: FC = () => {
     return fromAmount.muln(rate);
   }, [fromAmount, rate]);
 
+  const handleTokenSelect = useCallback(() => {
+    setIsSelectTokenModalOpen(false);
+  }, []);
+
+  const selectTokenModalOptions = useMemo(() => {
+    // TODO: Dummy data.
+    return [{ address: '0x123456' as any, amount: new BN(100), decimals: 18 }];
+  }, []);
+
   return (
     <>
       <LiquidStakingInput
@@ -93,9 +105,11 @@ const LiquidUnstakeCard: FC = () => {
         amount={fromAmount}
         setAmount={setFromAmount}
         placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
-        rightElement={<WalletBalance />}
+        // TODO: Temporary. Use actual token.
+        rightElement={<ParachainWalletBalance token={LiquidStakingToken.TNT} />}
         isTokenLiquidVariant
         minAmount={minimumInputAmount ?? undefined}
+        onTokenClick={() => setIsSelectTokenModalOpen(true)}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
@@ -156,6 +170,13 @@ const LiquidUnstakeCard: FC = () => {
       >
         Unstake
       </Button>
+
+      <SelectTokenModal
+        options={selectTokenModalOptions}
+        isOpen={isSelectTokenModalOpen}
+        onClose={() => setIsSelectTokenModalOpen(false)}
+        onTokenSelect={handleTokenSelect}
+      />
     </>
   );
 };
