@@ -1,0 +1,129 @@
+import { BN } from '@polkadot/util';
+import { ExternalLinkLine } from '@webb-tools/icons';
+import {
+  GITHUB_BUG_REPORT_URL,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  Typography,
+} from '@webb-tools/webb-ui-components';
+import { FC, useEffect } from 'react';
+
+import { LiquidStakingChainId } from '../../constants/liquidStaking';
+import { AnySubstrateAddress } from '../../types/utils';
+import ChainLogo from './ChainLogo';
+
+export type SelectTokenModalProps = {
+  isOpen: boolean;
+  options: Omit<TokenListItemProps, 'onClick'>[];
+  onTokenSelect: (address: AnySubstrateAddress) => void;
+  onClose: () => void;
+};
+
+const SelectTokenModal: FC<SelectTokenModalProps> = ({
+  isOpen,
+  options,
+  onTokenSelect,
+  onClose,
+}) => {
+  // Sanity check: Ensure all addresses are unique.
+  useEffect(() => {
+    const seenAddresses = new Set<AnySubstrateAddress>();
+
+    for (const option of options) {
+      if (seenAddresses.has(option.address)) {
+        console.warn(
+          `Duplicate token address found: ${option.address}, expected all addresses to be unique`,
+        );
+      }
+    }
+  }, [options]);
+
+  return (
+    <Modal open>
+      <ModalContent
+        isCenter
+        isOpen={isOpen}
+        className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+      >
+        <ModalHeader titleVariant="h4" onClose={onClose}>
+          Select Token
+        </ModalHeader>
+
+        <div className="p-9 space-y-4 max-h-[500px] overflow-y-auto">
+          {options.map((option) => {
+            return (
+              <TokenListItem
+                key={option.address}
+                {...option}
+                onClick={onTokenSelect.bind(null, option.address)}
+              />
+            );
+          })}
+
+          {/* No tokens available */}
+          {options.length === 0 && (
+            <div>
+              <Typography variant="body1" fw="normal" className="text-center">
+                No tokens available
+              </Typography>
+
+              <Typography variant="body1" fw="normal" className="text-center">
+                Think this is a bug?{' '}
+                <a className="underline" href={GITHUB_BUG_REPORT_URL}>
+                  Report it here
+                </a>
+              </Typography>
+            </div>
+          )}
+        </div>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+export type TokenListItemProps = {
+  address: AnySubstrateAddress;
+  amount: BN;
+  onClick: () => void;
+};
+
+/** @internal */
+const TokenListItem: FC<TokenListItemProps> = () => {
+  return (
+    <div className="flex items-center justify-between py-2 px-4 rounded-lg cursor-pointer w-full hover:dark:bg-mono-160">
+      {/* Information */}
+      <div className="flex items-center justify-center gap-2">
+        <ChainLogo
+          size="md"
+          isRounded
+          chainId={LiquidStakingChainId.POLKADOT}
+        />
+
+        <div className="space-y-1">
+          <Typography variant="h5" fw="bold" className="dark:text-mono-0">
+            tgDOT_A
+          </Typography>
+
+          <a
+            href="#"
+            className="flex items-center justify-center gap-1 hover:underline"
+          >
+            <Typography variant="body1" fw="normal">
+              tgbe12...006
+            </Typography>
+
+            <ExternalLinkLine />
+          </a>
+        </div>
+      </div>
+
+      {/* Amount */}
+      <Typography className="dark:text-mono-0" variant="h5" fw="bold">
+        88.29
+      </Typography>
+    </div>
+  );
+};
+
+export default SelectTokenModal;

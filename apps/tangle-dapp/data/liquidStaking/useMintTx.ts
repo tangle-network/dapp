@@ -20,14 +20,15 @@ const useMintTx = () => {
 
   return useSubstrateTxWithNotification<MintTxContext>(
     TxName.MINT,
-    (api, _activeSubstrateAddress, context) =>
+    (api, _activeSubstrateAddress, context) => {
       // TODO: Investigate what the `remark` and `channel` parameters are for, and whether they are relevant for us here.
-      api.tx.lstMinting.mint(
+      return api.tx.lstMinting.mint(
         { Native: context.currency },
         context.amount,
         Bytes.from([]),
         null,
-      ),
+      );
+    },
     undefined,
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
   );

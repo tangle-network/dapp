@@ -6,7 +6,7 @@ import GlassCard from '../GlassCard';
 
 const AvailableWithdrawCard: FC = () => {
   return (
-    <GlassCard className="flex py-2 px-3 rounded-xl gap-2">
+    <GlassCard className="flex rounded-xl gap-2">
       <div className="flex justify-between">
         <div className="flex flex-col gap-1">
           <Typography variant="body1" fw="semibold">
