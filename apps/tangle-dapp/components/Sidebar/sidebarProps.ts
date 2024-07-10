@@ -9,7 +9,7 @@ import {
   GlobalLine,
   ShuffleLine,
   TokenSwapFill,
-  UserLineIcon,
+  UserFillIcon,
   WaterDropletIcon,
 } from '@webb-tools/icons';
 import {
@@ -34,7 +34,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     href: PagePath.ACCOUNT,
     isInternal: true,
     isNext: true,
-    Icon: UserLineIcon,
+    Icon: UserFillIcon,
     subItems: [],
   },
   {
