@@ -11,6 +11,8 @@ import {
 } from '../../containers';
 import createPageMetadata from '../../utils/createPageMetadata';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = createPageMetadata({
   title: 'Nomination',
   imageUrl: OpenGraphPageImageUrl.Nomination,

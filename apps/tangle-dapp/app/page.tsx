@@ -7,6 +7,8 @@ import BalancesTableContainer from '../containers/BalancesTableContainer/Balance
 import RecentTxContainer from '../containers/RecentTxContainer/RecentTxContainer';
 import createPageMetadata from '../utils/createPageMetadata';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = createPageMetadata({
   title: 'Account',
   isHomepage: true,
