@@ -1,11 +1,11 @@
 import { isAddress } from '@polkadot/util-crypto';
 import {
-  ArrowLeftRightLineIcon,
   CodeFill,
-  FundsLine,
+  CoinLine,
   GiftLineIcon,
   GridFillIcon,
-  TokenSwapLineIcon,
+  ShuffleLine,
+  TokenSwapFill,
   WaterDropletIcon,
 } from '@webb-tools/icons';
 import { UserFillIcon } from '@webb-tools/icons';
@@ -21,12 +21,12 @@ import { PagePath } from '../../types';
 const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
   [PagePath.CLAIM_AIRDROP]: GiftLineIcon,
   [PagePath.ACCOUNT]: UserFillIcon,
-  [PagePath.NOMINATION]: FundsLine,
+  [PagePath.NOMINATION]: CoinLine,
   [PagePath.SERVICES_OVERVIEW]: GridFillIcon,
-  [PagePath.RESTAKE]: TokenSwapLineIcon,
-  [PagePath.RESTAKE_DEPOSIT]: TokenSwapLineIcon,
-  [PagePath.RESTAKE_DELEGATE]: TokenSwapLineIcon,
-  [PagePath.BRIDGE]: ArrowLeftRightLineIcon,
+  [PagePath.RESTAKE]: TokenSwapFill,
+  [PagePath.RESTAKE_DEPOSIT]: TokenSwapFill,
+  [PagePath.RESTAKE_DELEGATE]: TokenSwapFill,
+  [PagePath.BRIDGE]: ShuffleLine,
   [PagePath.LIQUID_STAKING]: WaterDropletIcon,
 };
 

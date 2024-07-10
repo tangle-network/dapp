@@ -77,7 +77,7 @@ const InfoCard: FC<InfoCardProps> = ({
 
               <ExternalLinkIcon
                 href={getExplorerURI(
-                  network.polkadotExplorerUrl,
+                  network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl,
                   validatorAddress,
                   'address',
                   ExplorerType.Substrate,
