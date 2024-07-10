@@ -109,7 +109,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
               pathnameOrHash={pathnameOrHash}
               items={items.filter((item) => !item.isInternal)}
               isExpanded={isSidebarOpen}
-              className='gap-2'
+              className="gap-2"
             />
 
             <SideBarFooter
