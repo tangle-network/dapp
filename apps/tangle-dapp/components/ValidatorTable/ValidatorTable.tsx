@@ -6,6 +6,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
@@ -20,12 +21,16 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import Link from 'next/link';
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useNetworkStore from '../../context/useNetworkStore';
 import { ExplorerType, PagePath, Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
+import {
+  sortAddressOrIdentityForNomineeOrValidator,
+  sortBnValueForNomineeOrValidator,
+} from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorTableProps } from './types';
@@ -42,22 +47,28 @@ const getStaticColumns = (isWaiting?: boolean) => [
           header: () => (
             <HeaderCell
               title="Effective amount staked"
-              className="justify-center"
+              className="justify-start"
             />
           ),
-          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+          cell: (props) => (
+            <TokenAmountCell amount={props.getValue()} className="text-start" />
+          ),
+          sortingFn: sortBnValueForNomineeOrValidator,
         }),
         columnHelper.accessor('selfStakeAmount', {
           header: () => (
-            <HeaderCell title="Self-staked" className="justify-center" />
+            <HeaderCell title="Self-staked" className="justify-start" />
           ),
-          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+          cell: (props) => (
+            <TokenAmountCell amount={props.getValue()} className="text-start" />
+          ),
+          sortingFn: sortBnValueForNomineeOrValidator,
         }),
       ]),
   columnHelper.accessor('nominatorCount', {
-    header: () => <HeaderCell title="Nominations" className="justify-center" />,
+    header: () => <HeaderCell title="Nominations" className="justify-start" />,
     cell: (props) => (
-      <StringCell value={props.getValue().toString()} className="text-center" />
+      <StringCell value={props.getValue().toString()} className="text-start" />
     ),
   }),
   columnHelper.accessor('commission', {
@@ -65,9 +76,10 @@ const getStaticColumns = (isWaiting?: boolean) => [
     cell: (props) => (
       <StringCell
         value={calculateCommission(props.getValue()).toFixed(2) + '%'}
-        className="text-center"
+        className="text-start"
       />
     ),
+    sortingFn: sortBnValueForNomineeOrValidator,
   }),
   // TODO: Hide this for live app for now
   ...(IS_PRODUCTION_ENV
@@ -91,6 +103,11 @@ const getStaticColumns = (isWaiting?: boolean) => [
 
 const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
   const { network } = useNetworkStore();
+
+  const [sorting, setSorting] = useState<SortingState>([
+    // Default sorting by total stake amount in descending order
+    { id: 'totalStakeAmount', desc: true },
+  ]);
 
   const columns = useMemo(
     () => [
@@ -134,6 +151,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
             </div>
           );
         },
+        sortingFn: sortAddressOrIdentityForNomineeOrValidator,
       }),
       ...getStaticColumns(isWaiting),
     ],
@@ -151,6 +169,11 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    state: {
+      sorting,
+    },
+    enableSortingRemoval: false,
   });
 
   return (

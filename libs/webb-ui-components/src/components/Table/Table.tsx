@@ -1,4 +1,5 @@
 import { type Row, type RowData, flexRender } from '@tanstack/react-table';
+import { ArrowDropDownFill, ArrowDropUpFill } from '@webb-tools/icons';
 import React, { useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -51,13 +52,36 @@ export const Table = <T extends RowData>({
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <THeader className={thClassName} key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                  <THeader
+                    className={twMerge(
+                      header.column.getCanSort() ? 'cursor-pointer' : '',
+                      thClassName,
+                    )}
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                    title={
+                      header.column.getCanSort()
+                        ? header.column.getNextSortingOrder() === 'asc'
+                          ? 'Sort ascending'
+                          : 'Sort descending'
+                        : undefined
+                    }
+                  >
+                    <div className="flex items-center">
+                      <div>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(header.column.columnDef.header, {
+                              ...header.getContext(),
+                            })}
+                      </div>
+                      <div>
+                        {{
+                          asc: <ArrowDropUpFill size="lg" />,
+                          desc: <ArrowDropDownFill size="lg" />,
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
+                    </div>
                   </THeader>
                 ))}
               </tr>
