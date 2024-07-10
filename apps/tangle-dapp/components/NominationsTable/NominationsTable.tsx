@@ -6,6 +6,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import {
@@ -17,10 +18,14 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { type FC } from 'react';
+import { FC, useState } from 'react';
 
 import { Nominee } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
+import {
+  sortAddressOrIdentityForNomineeOrValidator,
+  sortBnValueForNomineeOrValidator,
+} from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 
@@ -53,6 +58,7 @@ const columns = [
         </div>
       );
     },
+    sortingFn: sortAddressOrIdentityForNomineeOrValidator,
   }),
   columnHelper.accessor('isActive', {
     header: () => <HeaderCell title="Status" className="justify-start" />,
@@ -64,21 +70,31 @@ const columns = [
         </Chip>
       );
     },
+    sortingFn: (rowA, _) => {
+      const isActiveA = rowA.original.isActive;
+      return isActiveA ? 1 : -1;
+    },
   }),
   columnHelper.accessor('selfStakeAmount', {
     header: () => <HeaderCell title="Self-staked" className="justify-center" />,
-    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+    cell: (props) => (
+      <TokenAmountCell amount={props.getValue()} className="text-start" />
+    ),
+    sortingFn: sortBnValueForNomineeOrValidator,
   }),
   columnHelper.accessor('totalStakeAmount', {
     header: () => (
       <HeaderCell title="Effective amount staked" className="justify-center" />
     ),
-    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+    cell: (props) => (
+      <TokenAmountCell amount={props.getValue()} className="text-start" />
+    ),
+    sortingFn: sortBnValueForNomineeOrValidator,
   }),
   columnHelper.accessor('nominatorCount', {
     header: () => <HeaderCell title="Nominations" className="justify-center" />,
     cell: (props) => (
-      <StringCell value={props.getValue().toString()} className="text-center" />
+      <StringCell value={props.getValue().toString()} className="text-start" />
     ),
   }),
   columnHelper.accessor('commission', {
@@ -86,9 +102,10 @@ const columns = [
     cell: (props) => (
       <StringCell
         value={calculateCommission(props.getValue()).toFixed(2) + '%'}
-        className="text-center"
+        className="text-start"
       />
     ),
+    sortingFn: sortBnValueForNomineeOrValidator,
   }),
 ];
 
@@ -101,6 +118,11 @@ const NominationsTable: FC<NominationsTableProps> = ({
   nominees,
   pageSize,
 }) => {
+  const [sorting, setSorting] = useState<SortingState>([
+    // Default sorting by total stake amount in descending order
+    { id: 'totalStakeAmount', desc: true },
+  ]);
+
   const table = useReactTable({
     data: nominees,
     columns,
@@ -117,6 +139,11 @@ const NominationsTable: FC<NominationsTableProps> = ({
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    state: {
+      sorting,
+    },
+    enableSortingRemoval: false,
   });
 
   return (
