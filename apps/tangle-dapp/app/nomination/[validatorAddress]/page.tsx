@@ -6,6 +6,8 @@ import InfoCard from './InfoCard';
 import NodeSpecificationsTable from './NodeSpecificationsTable';
 import ServiceTableTabs from './ServiceTableTabs';
 
+export const dynamic = 'force-static';
+
 // TODO: might need to add metadata here
 
 export default function ValidatorDetails({
