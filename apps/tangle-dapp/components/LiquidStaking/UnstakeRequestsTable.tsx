@@ -6,7 +6,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { CheckboxCircleFill, TimeFillIcon } from '@webb-tools/icons';
+import {
+  CheckboxCircleFill,
+  Close,
+  TimeFillIcon,
+  WalletLineIcon,
+} from '@webb-tools/icons';
 import {
   Button,
   CheckBox,
@@ -24,6 +29,7 @@ import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import AddressLink from './AddressLink';
 import CancelUnstakeModal from './CancelUnstakeModal';
+import IconButton from './IconButton';
 
 export type UnstakeRequestItem = {
   address: AnySubstrateAddress;
@@ -80,11 +86,52 @@ const columns = [
       return <TokenAmountCell amount={props.getValue()} tokenSymbol="tgDOT" />;
     },
   }),
+  columnHelper.display({
+    id: 'actions',
+    header: () => <HeaderCell title="Actions" className="justify-center" />,
+    cell: (_props) => {
+      return (
+        <div className="flex items-center justify-center gap-1">
+          {/* TODO: Implement onClick. */}
+          <IconButton Icon={Close} tooltip="Cancel" onClick={() => void 0} />
+
+          {/* TODO: Implement onClick. */}
+          <IconButton
+            Icon={WalletLineIcon}
+            tooltip="Withdraw"
+            onClick={() => void 0}
+          />
+        </div>
+      );
+    },
+    enableSorting: false,
+  }),
 ];
 
 const UnstakeRequestsTable: FC = () => {
   // TODO: Mock data.
-  const data: UnstakeRequestItem[] = [];
+  const data: UnstakeRequestItem[] = [
+    {
+      address: '0x123456' as any,
+      amount: new BN(100),
+      endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
+    },
+    {
+      address: '0x123456' as any,
+      amount: new BN(100),
+      endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
+    },
+    {
+      address: '0x123456' as any,
+      amount: new BN(100),
+      endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
+    },
+    {
+      address: '0x123456' as any,
+      amount: new BN(100),
+      endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
+    },
+  ];
 
   const table = useReactTable({
     data,
