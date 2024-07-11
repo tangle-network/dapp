@@ -1,14 +1,15 @@
 'use client';
 
 import {
-  type ColumnSort,
   createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  type Row,
   type RowSelectionState,
   type SortingColumn,
+  type SortingFn,
   type SortingState,
   type TableOptions,
   useReactTable,
@@ -46,11 +47,6 @@ import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorSelectionTableProps } from './types';
 
-const SELECTED_VALIDATORS_COLUMN_SORT = {
-  id: 'totalStakeAmount',
-  desc: true,
-} as const satisfies ColumnSort;
-
 const columnHelper = createColumnHelper<Validator>();
 
 const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
@@ -67,8 +63,13 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
     }, {} as RowSelectionState),
   );
   const [sorting, setSorting] = useState<SortingState>([
-    SELECTED_VALIDATORS_COLUMN_SORT,
+    {
+      id: 'totalStakeAmount',
+      desc: true,
+    },
   ]);
+
+  const isDesc = useMemo(() => sorting[0].desc, [sorting]);
 
   const toggleSortSelectionHandlerRef = useRef<
     SortingColumn<Validator>['toggleSorting'] | null
@@ -121,7 +122,14 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
             </div>
           );
         },
-        sortingFn: sortAddressOrIdentityForNomineeOrValidator,
+        sortingFn: (rowA, rowB, columnId) =>
+          sortValidatorsBasedOnSortingFn(
+            rowA,
+            rowB,
+            columnId,
+            sortAddressOrIdentityForNomineeOrValidator,
+            isDesc,
+          ),
       }),
       columnHelper.accessor('totalStakeAmount', {
         header: () => (
@@ -134,7 +142,14 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
             </Chip>
           </div>
         ),
-        sortingFn: sortBnValueForNomineeOrValidator,
+        sortingFn: (rowA, rowB, columnId) =>
+          sortValidatorsBasedOnSortingFn(
+            rowA,
+            rowB,
+            columnId,
+            sortBnValueForNomineeOrValidator,
+            isDesc,
+          ),
       }),
       columnHelper.accessor('nominatorCount', {
         header: () => (
@@ -145,6 +160,15 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
             <Chip color="dark-grey">{props.getValue()}</Chip>
           </div>
         ),
+        sortingFn: (rowA, rowB, columnId) =>
+          sortValidatorsBasedOnSortingFn(
+            rowA,
+            rowB,
+            columnId,
+            (rowA, rowB) =>
+              rowA.original.nominatorCount - rowB.original.nominatorCount,
+            isDesc,
+          ),
       }),
       columnHelper.accessor('commission', {
         header: () => (
@@ -157,14 +181,21 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
             </Chip>
           </div>
         ),
-        sortingFn: sortBnValueForNomineeOrValidator,
+        sortingFn: (rowA, rowB, columnId) =>
+          sortValidatorsBasedOnSortingFn(
+            rowA,
+            rowB,
+            columnId,
+            sortBnValueForNomineeOrValidator,
+            isDesc,
+          ),
       }),
       columnHelper.accessor('identityName', {
         header: () => <HeaderCell title="Identity" />,
         cell: (props) => props.getValue(),
       }),
     ],
-    [],
+    [isDesc],
   );
 
   const tableProps = useMemo<TableOptions<Validator>>(
@@ -205,7 +236,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
       autoResetPageIndex: false,
       enableSortingRemoval: false,
     }),
-    [columns, allValidators, rowSelection, searchValue, sorting, pageSize],
+    [allValidators, columns, rowSelection, searchValue, sorting, pageSize],
   );
 
   const table = useReactTable(tableProps);
@@ -253,3 +284,20 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
 };
 
 export default React.memo(ValidatorSelectionTable);
+
+function sortValidatorsBasedOnSortingFn(
+  rowA: Row<Validator>,
+  rowB: Row<Validator>,
+  columnId: string,
+  sortFn: SortingFn<Validator>,
+  isDesc: boolean,
+) {
+  const rowASelected = rowA.getIsSelected();
+  const rowBSelected = rowB.getIsSelected();
+
+  // Prioritize selected validators
+  if (rowASelected && !rowBSelected) return isDesc ? 1 : -1;
+  if (!rowASelected && rowBSelected) return isDesc ? -1 : 1;
+
+  return sortFn(rowA, rowB, columnId);
+}
