@@ -238,14 +238,16 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         )}
       </div>
 
-      <Typography
-        variant="body1"
-        fw="normal"
-        className="text-mono-200 dark:text-mono-0"
-      >
-        Selected: {Object.keys(rowSelection).length}/
-        {table.getPreFilteredRowModel().rows.length}
-      </Typography>
+      {allValidators.length > 0 && (
+        <Typography
+          variant="body1"
+          fw="normal"
+          className="text-mono-200 dark:text-mono-0"
+        >
+          Selected: {Object.keys(rowSelection).length}/
+          {table.getPreFilteredRowModel().rows.length}
+        </Typography>
+      )}
     </>
   );
 };
