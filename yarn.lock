@@ -7111,7 +7111,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@headlessui/react@npm:^2.0.4":
+"@headlessui/react@npm:^2.1.2":
   version: 2.1.2
   resolution: "@headlessui/react@npm:2.1.2"
   dependencies:
@@ -45082,7 +45082,7 @@ __metadata:
     "@graphql-codegen/typescript": "npm:4.0.7"
     "@graphql-codegen/typescript-operations": "npm:4.2.1"
     "@graphql-codegen/typescript-react-apollo": "npm:4.3.0"
-    "@headlessui/react": "npm:^2.0.4"
+    "@headlessui/react": "npm:^2.1.2"
     "@netlify/plugin-nextjs": "npm:^5.3.2"
     "@next/bundle-analyzer": "npm:^14.2.3"
     "@ngneat/falso": "npm:^7.2.0"

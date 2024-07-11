@@ -23,13 +23,12 @@ export default function SlideAnimation({
     <Transition
       {...restProps}
       as="div"
-      className={twMerge('h-full w-full', className)}
-      enter={twMerge('transition-[top,_opacity] duration-150', enter)}
-      enterFrom={twMerge('opacity-0 top-[250px]', enterFrom)}
-      enterTo={twMerge('opacity-100 top-0', enterTo)}
-      leave={twMerge('transition-[top,_opacity] duration-150', leave)}
-      leaveFrom={twMerge('opacity-100 top-0', leaveFrom)}
-      leaveTo={twMerge('opacity-0 top-[250px]', leaveTo)}
+      className={twMerge(
+        'h-full w-full',
+        'transition-[top,_opacity] duration-150 opacity-100 top-0',
+        'data-[closed]:opacity-0 data-[closed]:top-[250px]',
+        className,
+      )}
     >
       {children}
     </Transition>
