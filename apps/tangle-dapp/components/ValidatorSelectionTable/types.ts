@@ -6,6 +6,7 @@ export type ValidatorSelectionTableProps = {
   allValidators: Validator[];
   defaultSelectedValidators: string[];
   setSelectedValidators: Dispatch<SetStateAction<Set<string>>>;
+  pageSize?: number;
 };
 
 export type SortBy = 'asc' | 'dsc';
