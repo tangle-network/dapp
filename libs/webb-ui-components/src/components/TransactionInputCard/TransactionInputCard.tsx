@@ -10,6 +10,8 @@ import {
   WalletLineIcon,
 } from '@webb-tools/icons';
 import {
+  type ElementType,
+  type ForwardedRef,
   cloneElement,
   createContext,
   forwardRef,
@@ -95,30 +97,30 @@ const TransactionInputCardRoot = forwardRef<
 );
 TransactionInputCardRoot.displayName = 'TransactionInputCardRoot';
 
-const TransactionChainSelector = forwardRef<
-  React.ElementRef<'button'>,
-  TransactionChainSelectorProps
->(
-  (
-    {
+const TransactionChainSelector = forwardRef(
+  <TAs extends ElementType>(
+    props: TransactionChainSelectorProps<TAs>,
+    ref: ForwardedRef<any>,
+  ) => {
+    const {
+      as: Cmp = 'button',
       typedChainId: typedChainIdProps,
       className,
       disabled,
       placeholder = 'Select Chain',
       renderBody,
-      ...props
-    },
-    ref,
-  ) => {
+      ...restProps
+    } = props;
+
     const context = useContext(TransactionInputCardContext);
 
     const typedChainId = typedChainIdProps ?? context.typedChainId;
     const chain = typedChainId ? chainsConfig[typedChainId] : undefined;
 
     return (
-      <button
+      <Cmp
         type="button"
-        {...props}
+        {...restProps}
         disabled={disabled}
         ref={ref}
         className={twMerge('flex items-center gap-1 p-2 group', className)}
@@ -146,7 +148,7 @@ const TransactionChainSelector = forwardRef<
             className="rounded-lg group-hover:bg-mono-40 dark:group-hover:bg-mono-160"
           />
         )}
-      </button>
+      </Cmp>
     );
   },
 );

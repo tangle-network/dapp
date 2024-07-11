@@ -258,31 +258,26 @@ export default function DelegatePage() {
       </div>
 
       <Modal>
-        <ModalContent isOpen={isAssetModalOpen} title="Select Asset">
+        <ModalContent
+          isOpen={isAssetModalOpen}
+          title="Select Asset"
+          description="Select the asset you want to delegate"
+          onInteractOutside={closeAssetModal}
+        >
           <AssetList
             selectTokens={selectableTokens}
             onChange={handleAssetChange}
             onClose={closeAssetModal}
-            renderEmpty={() => (
-              <div className="space-y-4">
-                <Typography variant="h5" fw="bold" ta="center">
-                  No assets available
-                </Typography>
-
-                <Button
-                  as={Link}
-                  href={PagePath.RESTAKE_DEPOSIT}
-                  variant="link"
-                  className="block mx-auto text-center"
-                >
-                  Deposit now
-                </Button>
-              </div>
-            )}
+            renderEmpty={EmptyAsset}
           />
         </ModalContent>
 
-        <ModalContent isOpen={isOperatorModalOpen} title="Select Operator">
+        <ModalContent
+          isOpen={isOperatorModalOpen}
+          title="Select Operator"
+          description="Select the operator you want to delegate to"
+          onInteractOutside={closeOperatorModal}
+        >
           <OperatorList
             selectedOperatorAccountId={watch('operatorAccountId')}
             onOperatorAccountIdChange={handleOperatorAccountIdChange}
@@ -293,7 +288,12 @@ export default function DelegatePage() {
           />
         </ModalContent>
 
-        <ModalContent isOpen={isChainModalOpen} title="Select Chain">
+        <ModalContent
+          isOpen={isChainModalOpen}
+          title="Select Chain"
+          description="Select the chain you want to delegate from"
+          onInteractOutside={closeChainModal}
+        >
           <ChainList
             selectedTypedChainId={activeTypedChainId}
             className="h-full"
@@ -308,3 +308,21 @@ export default function DelegatePage() {
     </form>
   );
 }
+
+/** @internal */
+const EmptyAsset = () => (
+  <div className="space-y-4">
+    <Typography variant="h5" fw="bold" ta="center">
+      No assets available
+    </Typography>
+
+    <Button
+      as={Link}
+      href={PagePath.RESTAKE_DEPOSIT}
+      variant="link"
+      className="block mx-auto text-center"
+    >
+      Deposit now
+    </Button>
+  </div>
+);

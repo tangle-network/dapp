@@ -228,7 +228,12 @@ export default function DepositPage() {
       </div>
 
       <Modal open={chainModalOpen} onOpenChange={setChainModalOpen}>
-        <ModalContent isOpen={chainModalOpen} title="Select Chain">
+        <ModalContent
+          isOpen={chainModalOpen}
+          title="Select Chain"
+          description="Select the chain you want to deposit from."
+          onInteractOutside={closeChainModal}
+        >
           <ChainList
             selectedTypedChainId={watch('sourceTypedChainId')}
             onClose={closeChainModal}
@@ -238,7 +243,12 @@ export default function DepositPage() {
       </Modal>
 
       <Modal open={tokenModalOpen} onOpenChange={setTokenModalOpen}>
-        <ModalContent isOpen={tokenModalOpen} title="Select Asset">
+        <ModalContent
+          isOpen={tokenModalOpen}
+          title="Select Asset"
+          description="Select the asset you want to deposit."
+          onInteractOutside={closeTokenModal}
+        >
           <AssetList
             selectTokens={selectableTokens}
             onChange={handleTokenChange}
