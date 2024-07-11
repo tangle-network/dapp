@@ -78,7 +78,7 @@ export default function usePayouts(): UsePayoutsReturnType {
 
   useEffect(
     () => {
-      // Make sure all data is available before computing payouts
+      // Make sure all data is available before computing payouts.
       if (
         activeSubstrateAddress === null ||
         unclaimedRewards.length === 0 ||
