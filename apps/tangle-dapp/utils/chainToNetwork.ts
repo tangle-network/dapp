@@ -1,5 +1,6 @@
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { DEFAULT_SS58 } from '@webb-tools/dapp-config/constants/polkadot';
+import getPolkadotJsDashboardUrl from '@webb-tools/dapp-config/utils/getPolkadotJsDashboardUrl';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { ChainType } from '@webb-tools/utils';
 import {
@@ -53,7 +54,7 @@ export default function chainToNetwork(typedChainId: number): Network {
     // TODO: Find out the correct way to determine the node type for a chain,
     // maybe the chain group property or something else.
     nodeType: 'standalone',
-    polkadotExplorerUrl: `https://polkadot.js.org/apps/?rpc=${wsRpcEndpoint}#/explorer`,
+    polkadotJsDashboardUrl: getPolkadotJsDashboardUrl(wsRpcEndpoint),
     wsRpcEndpoint,
     ...(chain.rpcUrls.default.http?.[0]
       ? {

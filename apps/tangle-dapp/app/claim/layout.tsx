@@ -8,6 +8,8 @@ import faqItems from '../../constants/faq';
 import { OpenGraphPageImageUrl } from '../../constants/openGraph';
 import createPageMetadata from '../../utils/createPageMetadata';
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = createPageMetadata({
   title: 'Claim Airdrop',
   imageUrl: OpenGraphPageImageUrl.ClaimAirdrop,

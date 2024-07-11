@@ -13,6 +13,8 @@ import { DEFAULT_OPENGRAPH_METADATA } from '../constants/openGraph';
 import { Layout } from '../containers';
 import Providers from './providers';
 
+export const dynamic = 'force-static';
+
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#fff' },

@@ -35,6 +35,7 @@ export * from './Close';
 export * from './CloseCircleLineIcon';
 export { default as CodeFill } from './CodeFill';
 export * from './CoinIcon';
+export { default as CoinLine } from './CoinLine';
 export * from './CoinsLineIcon';
 export * from './CoinsStackedLineIcon';
 export * from './Common2Icon';
@@ -129,6 +130,7 @@ export * from './ThreeDotsVerticalIcon';
 export * from './TimeLineIcon';
 export { default as TimerLine } from './TimerLine';
 export * from './TokenIcon';
+export { default as TokenSwapFill } from './TokenSwapFill';
 export { default as TokenSwapLineIcon } from './TokenSwapLineIcon';
 export * from './TwitterFill';
 export * from './UploadCloudIcon';
@@ -161,3 +163,5 @@ export { default as StatusIndicator } from './StatusIndicator';
 
 // Proposal Badges
 export * from './ProposalBadge';
+
+export { default as PolkadotJs } from './PolkadotJs';

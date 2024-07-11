@@ -1,5 +1,5 @@
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isPolkadotPortal } from '@webb-tools/api-provider-environment/transaction/utils';
+import { isPolkadotJsDashboard } from '@webb-tools/api-provider-environment/transaction/utils';
 import type { Evaluate } from '@webb-tools/dapp-types/utils/types';
 import Spinner from '@webb-tools/icons/Spinner';
 import { type SnackBarOpts } from '@webb-tools/webb-ui-components/components/Notification/NotificationContext';
@@ -65,7 +65,7 @@ export default function useRestakeTxEventHandlersWithNoti<
       // if the block explorer is the Polkadot Portal
       // we use block hash instead of the tx hash.
       // @see https://polkadot.js.org/docs/api/FAQ/#which-api-can-i-use-to-query-by-transaction-hash
-      if (isPolkadotPortal(blockExplorer)) {
+      if (isPolkadotJsDashboard(blockExplorer)) {
         const url = getExplorerUrl(
           blockHash,
           'block',
