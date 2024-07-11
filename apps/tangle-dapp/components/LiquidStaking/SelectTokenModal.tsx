@@ -1,17 +1,16 @@
 import { BN, formatBalance } from '@polkadot/util';
-import { ExternalLinkLine } from '@webb-tools/icons';
 import {
   GITHUB_BUG_REPORT_URL,
   Modal,
   ModalContent,
   ModalHeader,
-  shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useEffect, useMemo } from 'react';
 
 import { LiquidStakingChainId } from '../../constants/liquidStaking';
 import { AnySubstrateAddress } from '../../types/utils';
+import AddressLink from './AddressLink';
 import ChainLogo from './ChainLogo';
 
 export type SelectTokenModalProps = {
@@ -123,16 +122,7 @@ const TokenListItem: FC<TokenListItemProps> = ({
             tgDOT_A
           </Typography>
 
-          <a
-            href="#"
-            className="flex items-center justify-center gap-1 hover:underline"
-          >
-            <Typography variant="body1" fw="normal">
-              {shortenString(address, 6)}
-            </Typography>
-
-            <ExternalLinkLine />
-          </a>
+          <AddressLink address={address} />
         </div>
       </div>
 

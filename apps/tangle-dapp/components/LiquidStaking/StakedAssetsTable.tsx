@@ -10,12 +10,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ExternalLinkLine, InformationLine } from '@webb-tools/icons';
+import { InformationLine } from '@webb-tools/icons';
 import {
   Avatar,
   AvatarGroup,
   fuzzyFilter,
-  shortenString,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -25,6 +24,7 @@ import { AnySubstrateAddress } from '../../types/utils';
 import GlassCard from '../GlassCard';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
+import AddressLink from './AddressLink';
 
 type StakedAssetItem = {
   id: HexString;
@@ -38,18 +38,7 @@ const columns = [
   columnHelper.accessor('id', {
     header: () => <HeaderCell title="Asset ID" className="justify-start" />,
     cell: (props) => {
-      // TODO: Get proper href.
-      const href = '#';
-
-      return (
-        <a href={href} className="flex gap-1 items-center justify-start">
-          <Typography variant="body1" fw="normal" className="dark:text-mono-0">
-            {shortenString(props.getValue(), 3)}
-          </Typography>
-
-          <ExternalLinkLine className="dark:fill-mono-0" />
-        </a>
-      );
+      return <AddressLink address={props.getValue()} />;
     },
   }),
   columnHelper.accessor('validators', {
