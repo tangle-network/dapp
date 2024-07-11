@@ -222,6 +222,8 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
       onRowSelectionChange: (props) => {
         toggleSortSelectionHandlerRef.current?.(false);
         setRowSelection(props);
+        // Force re-sort after selecting an item
+        setSorting((prevSorting) => [...prevSorting]);
       },
       onSortingChange: setSorting,
       filterFns: {
