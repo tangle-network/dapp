@@ -1,4 +1,4 @@
-import { CheckboxCircleFill, TimeLineIcon, UndoIcon } from '@webb-tools/icons';
+import { CheckboxCircleFill, TimeFillIcon, UndoIcon } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { FC, ReactElement } from 'react';
 
@@ -45,14 +45,14 @@ const AvailableWithdrawCard: FC = () => {
             />
 
             <RequestItem
-              icon={<TimeLineIcon className="fill-blue-50" />}
+              icon={<TimeFillIcon className="fill-blue-50" />}
               text="1"
             />
           </div>
         </div>
 
         <div className="flex items-center justify-center gap-1">
-          <TimeLineIcon className="dark:fill-mono-0" />
+          <TimeFillIcon className="dark:fill-mono-0" />
 
           <Typography variant="body1" fw="bold" className="dark:text-mono-0">
             1.00 tgDOT

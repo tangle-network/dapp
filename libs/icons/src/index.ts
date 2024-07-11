@@ -146,6 +146,7 @@ export { default as WebbLogoIcon } from './WebbLogoIcon';
 export * from './YouTubeFill';
 export * from './WaterDropletIcon';
 export * from './UndoIcon';
+export * from './TimeFillIcon';
 
 // Wallet icons
 export * from './wallets';

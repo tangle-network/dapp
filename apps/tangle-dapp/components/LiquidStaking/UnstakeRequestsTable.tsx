@@ -6,7 +6,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { CheckboxCircleFill, TimeLineIcon } from '@webb-tools/icons';
+import { CheckboxCircleFill, TimeFillIcon } from '@webb-tools/icons';
 import {
   Button,
   CheckBox,
@@ -23,8 +23,9 @@ import GlassCard from '../GlassCard';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import AddressLink from './AddressLink';
+import CancelUnstakeModal from './CancelUnstakeModal';
 
-type UnstakeRequestItem = {
+export type UnstakeRequestItem = {
   address: AnySubstrateAddress;
   amount: BN;
   endTimestamp?: number;
@@ -66,7 +67,7 @@ const columns = [
           <CheckboxCircleFill className="dark:fill-green-50" />
         ) : (
           <div className="flex gap-1 items-center justify-center">
-            <TimeLineIcon className="dark:fill-blue-50" /> {timeRemaining}
+            <TimeFillIcon className="dark:fill-blue-50" /> {timeRemaining}
           </div>
         );
 
@@ -83,23 +84,7 @@ const columns = [
 
 const UnstakeRequestsTable: FC = () => {
   // TODO: Mock data.
-  const data: UnstakeRequestItem[] = [
-    {
-      address: '0x3a7f9e8c14b7d2f5' as any,
-      endTimestamp: undefined,
-      amount: new BN(100),
-    },
-    {
-      address: '0xd5c4a2b1f3e8c7d9' as any,
-      endTimestamp: 1720659733,
-      amount: new BN(123),
-    },
-    {
-      address: '0x9b3e47d8a5c2f1e4' as any,
-      endTimestamp: 1720859733,
-      amount: new BN(321),
-    },
-  ];
+  const data: UnstakeRequestItem[] = [];
 
   const table = useReactTable({
     data,
@@ -130,15 +115,23 @@ const UnstakeRequestsTable: FC = () => {
         )}
       </GlassCard>
 
-      <div className="flex items-center justify-center w-full gap-2">
-        <Button isFullWidth variant="secondary">
-          Cancel Unstake
-        </Button>
+      {data.length > 0 && (
+        <div className="flex items-center justify-center w-full gap-2">
+          <Button isFullWidth variant="secondary">
+            Cancel Unstake
+          </Button>
 
-        <Button isFullWidth isDisabled variant="primary">
-          Withdraw
-        </Button>
-      </div>
+          <Button isFullWidth isDisabled variant="primary">
+            Withdraw
+          </Button>
+        </div>
+      )}
+
+      <CancelUnstakeModal
+        isOpen
+        onClose={() => void 0}
+        unstakeRequest={null as any}
+      />
     </div>
   );
 };
