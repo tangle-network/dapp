@@ -3,13 +3,14 @@
 import { isAppEnvironmentType } from '@webb-tools/dapp-config/types';
 import {
   AppsLine,
-  ArrowLeftRightLineIcon,
+  CoinLine,
   DocumentationIcon,
-  FundsLine,
   GiftLineIcon,
   GlobalLine,
-  TokenSwapLineIcon,
-  UserLineIcon,
+  PolkadotJs,
+  ShuffleLine,
+  TokenSwapFill,
+  UserFillIcon,
   WaterDropletIcon,
 } from '@webb-tools/icons';
 import {
@@ -34,7 +35,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     href: PagePath.ACCOUNT,
     isInternal: true,
     isNext: true,
-    Icon: UserLineIcon,
+    Icon: UserFillIcon,
     subItems: [],
   },
   {
@@ -42,7 +43,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     href: PagePath.BRIDGE,
     isInternal: true,
     isNext: true,
-    Icon: ArrowLeftRightLineIcon,
+    Icon: ShuffleLine,
     subItems: [],
     environments: ['development', 'staging', 'test'],
   },
@@ -52,20 +53,20 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     href: PagePath.RESTAKE_DEPOSIT,
     isInternal: true,
     isNext: true,
-    Icon: TokenSwapLineIcon,
+    Icon: TokenSwapFill,
     environments: ['development', 'staging', 'test'],
     subItems: [],
   },
   {
-    name: 'Nomination',
+    name: 'Nominate',
     href: PagePath.NOMINATION,
     isInternal: true,
     isNext: true,
-    Icon: FundsLine,
+    Icon: CoinLine,
     subItems: [],
   },
   {
-    name: 'Liquid Staking',
+    name: 'Liquid Stake',
     href: PagePath.LIQUID_STAKING,
     environments: ['development', 'staging', 'test'],
     isInternal: true,
@@ -74,7 +75,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     subItems: [],
   },
   {
-    name: 'Claim Airdrop',
+    name: 'Claim',
     href: PagePath.CLAIM_AIRDROP,
     isInternal: true,
     isNext: true,
@@ -91,32 +92,44 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
   useNextThemesForThemeToggle: true,
 };
 
-export default function getSidebarProps(
-  substrateExplorerHref?: string,
-  evmExplorerHref?: string,
-): SidebarProps {
+export default function getSidebarProps({
+  polkadotJsDashboardUrl,
+  nativeExplorerUrl,
+  evmExplorerUrl,
+}: {
+  polkadotJsDashboardUrl: string;
+  nativeExplorerUrl?: string;
+  evmExplorerUrl?: string;
+}): SidebarProps {
   const currentEnv = isAppEnvironmentType(process.env.NODE_ENV)
     ? process.env.NODE_ENV
     : 'development';
 
   const sideBarItems: SideBarItemProps[] = [
     ...SIDEBAR_STATIC_ITEMS,
-    ...(substrateExplorerHref
+    {
+      Icon: PolkadotJs,
+      href: polkadotJsDashboardUrl,
+      isInternal: false,
+      name: 'Polkadot-JS',
+      subItems: [],
+    },
+    ...(nativeExplorerUrl
       ? [
           {
             Icon: AppsLine,
-            href: substrateExplorerHref,
+            href: nativeExplorerUrl,
             isInternal: false,
             name: 'Substrate Explorer',
             subItems: [],
           },
         ]
       : []),
-    ...(evmExplorerHref
+    ...(evmExplorerUrl
       ? [
           {
             Icon: GlobalLine,
-            href: evmExplorerHref,
+            href: evmExplorerUrl,
             isInternal: false,
             name: 'EVM Explorer',
             subItems: [],

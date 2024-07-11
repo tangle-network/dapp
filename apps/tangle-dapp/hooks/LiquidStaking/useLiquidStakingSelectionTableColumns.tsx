@@ -24,6 +24,7 @@ export const useLiquidStakingSelectionTableColumns = (
   >,
   liquidStakingItem: LiquidStakingItem,
 ) => {
+  console.debug('Liquid Staking Selection Table Columns:', liquidStakingItem);
   const validatorColumns = useMemo(() => {
     return [
       validatorColumnHelper.accessor('validatorAddress', {

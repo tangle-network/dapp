@@ -56,7 +56,7 @@ npx nx storybook project-name
 ```
 
 Please read the [Storybook 7.0.0 release article](https://storybook.js.org/blog/storybook-7-0/) and the
-official [Storybook 7.0.0 migration guide](https://storybook.js.org/docs/react/migration-guide)
+official [Storybook 7.0.0 migration guide](https://storybook.js.org/docs/7/migration-guide)
 for more information.
 
 You can also read the docs for the [@nx/storybook:migrate-7 generator](https://nx.dev/packages/storybook/generators/migrate-7) and our [Storybook 7 setup guide](https://nx.dev/packages/storybook/documents/storybook-7-setup).

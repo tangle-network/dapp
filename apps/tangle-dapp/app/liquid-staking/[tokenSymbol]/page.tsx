@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { FC, useState } from 'react';
 
 import LiquidStakingCard from '../../../components/LiquidStaking/LiquidStakingCard';
+import { LiquidStakingSelectionTable } from '../../../components/LiquidStaking/LiquidStakingSelectionTable';
 import TokenInfoCard from '../../../components/LiquidStaking/TokenInfoCard';
 import { LIQUID_STAKING_TOKEN_PREFIX } from '../../../constants/liquidStaking';
 import useLiquidStakingItems from '../../../data/liquidStaking/useLiquidStakingItems';
@@ -55,6 +56,11 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
         />
 
         {/* Validator Selection Component */}
+        <LiquidStakingSelectionTable
+          data={data}
+          dataType={dataType}
+          setSelectedItems={setSelectedItems}
+        />
       </div>
 
       <LiquidStakingCard />

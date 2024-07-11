@@ -3,26 +3,24 @@ import { ArrowDropDownFill, ArrowDropUpFill } from '@webb-tools/icons';
 import { Dispatch, FC, SetStateAction, useRef } from 'react';
 
 import { useLiquidStakingSelectionTableColumns } from '../../hooks/LiquidStaking/useLiquidStakingSelectionTableColumns';
-import { LiquidStakingItem, StakingItem } from '../../types/liquidStaking';
+import {
+  Dapp,
+  LiquidStakingItem,
+  Validator,
+  VaultOrStakePool,
+} from '../../types/liquidStaking';
 
-interface LiquidStakingSelectionTableProps<T extends StakingItem> {
-  data: T[];
+type LiquidStakingSelectionTableProps = {
+  data: Validator[] | VaultOrStakePool[] | Dapp[];
   dataType: LiquidStakingItem;
   setSelectedItems: Dispatch<SetStateAction<Set<string>>>;
-}
+};
 
-export const LiquidStakingSelectionTable = <T extends StakingItem>({
+export const LiquidStakingSelectionTable = ({
   data,
   dataType,
   setSelectedItems,
-}: LiquidStakingSelectionTableProps<T>) => {
-  console.debug(
-    'Liquid Staking Selection Table:',
-    data,
-    dataType,
-    setSelectedItems,
-  );
-
+}: LiquidStakingSelectionTableProps) => {
   const toggleSortSelectionHandlerRef = useRef<
     SortingColumn<any>['toggleSorting'] | null
   >(null);
@@ -32,7 +30,7 @@ export const LiquidStakingSelectionTable = <T extends StakingItem>({
     dataType,
   );
 
-  console.debug('Columns:', columns);
+  console.debug('LS', data, columns, setSelectedItems);
 
   return (
     <div>

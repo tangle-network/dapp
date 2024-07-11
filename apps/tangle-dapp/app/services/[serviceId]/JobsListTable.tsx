@@ -65,7 +65,7 @@ const JobsListTable: FC<JobsListTableProps> = ({ serviceId, className }) => {
 
           const txExplorerURI = TANGLE_BLOCK_EXPLORER
             ? getExplorerURI(
-                network.polkadotExplorerUrl,
+                network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl,
                 txHash,
                 'tx',
                 ExplorerType.Substrate,
@@ -81,7 +81,7 @@ const JobsListTable: FC<JobsListTableProps> = ({ serviceId, className }) => {
       }),
       timestampColumn,
     ],
-    [network.polkadotExplorerUrl],
+    [network.nativeExplorerUrl],
   );
 
   const table = useReactTable({

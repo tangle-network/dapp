@@ -46,13 +46,7 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
   }, [items, pathnameOrHash]);
 
   return (
-    <div
-      className={twMerge(
-        'flex flex-col mt-11',
-        isExpanded ? 'gap-1' : 'gap-4',
-        className,
-      )}
-    >
+    <div className={twMerge('flex flex-col mt-11 gap-4', className)}>
       {items.map((itemProps, idx) => {
         return (
           <SideBarItem

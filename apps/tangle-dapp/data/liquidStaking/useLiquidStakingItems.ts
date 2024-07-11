@@ -75,11 +75,15 @@ export default useLiquidStakingItems;
 
 const getDataType = (chain: LiquidStakingChain): LiquidStakingItem => {
   switch (chain) {
+    case LiquidStakingChain.MANTA:
+    case LiquidStakingChain.MOONBEAM:
+    case LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN:
     case LiquidStakingChain.POLKADOT:
       return LiquidStakingItem.VALIDATOR;
-
-    default:
-      return LiquidStakingItem.VALIDATOR;
+    case LiquidStakingChain.PHALA:
+      return LiquidStakingItem.VAULT_OR_STAKE_POOL;
+    case LiquidStakingChain.ASTAR:
+      return LiquidStakingItem.DAPP;
   }
 };
 
