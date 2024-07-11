@@ -1,12 +1,13 @@
-import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography/Typography';
 import { Metadata } from 'next';
-import { FC, Suspense } from 'react';
+import { FC } from 'react';
 
 import AccountSummaryCard from '../components/account/AccountSummaryCard';
 import BalancesTableContainer from '../containers/BalancesTableContainer/BalancesTableContainer';
 import RecentTxContainer from '../containers/RecentTxContainer/RecentTxContainer';
 import createPageMetadata from '../utils/createPageMetadata';
+
+export const dynamic = 'force-static';
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Account',
@@ -17,30 +18,16 @@ const AccountPage: FC = () => {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-6 xl:flex-row">
-        <Suspense
-          fallback={
-            <SkeletonLoader className="rounded-2xl md:max-w-full xl:max-w-[556px] min-h-[274px]" />
-          }
-        >
-          <AccountSummaryCard className="md:max-w-full xl:max-w-[556px]" />
-        </Suspense>
+        <AccountSummaryCard className="md:max-w-full xl:max-w-[556px]" />
 
-        <Suspense
-          fallback={
-            <SkeletonLoader className="rounded-2xl min-h-[170px] xl:min-h-[274px]" />
-          }
-        >
-          <RecentTxContainer />
-        </Suspense>
+        <RecentTxContainer />
       </div>
 
       <Typography variant="h4" fw="bold">
         Balances
       </Typography>
 
-      <Suspense fallback={<SkeletonLoader className="rounded-2xl h-[190px]" />}>
-        <BalancesTableContainer />
-      </Suspense>
+      <BalancesTableContainer />
     </div>
   );
 };

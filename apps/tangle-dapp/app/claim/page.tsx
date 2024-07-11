@@ -19,6 +19,8 @@ import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
 import type { ClaimInfoType } from './types';
 
+export const dynamic = 'force-static';
+
 export default function ClaimPage() {
   const { toggleModal, isWalletConnected } = useConnectWallet();
   const { activeAccount, loading, isConnecting } = useWebContext();
