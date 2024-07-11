@@ -22,16 +22,14 @@ const ModalIcon: FC<ModalIconProps> = ({
   return (
     <div
       className={twMerge(
-        // TODO: Any close-enough-looking TailwindCSS color alternative? Currently taking this specific hex color from the design, since it's not a standard TailwindCSS color.
-        'rounded-2xl p-5 dark:bg-[#21262C] w-min',
+        'rounded-2xl p-5 dark:bg-mono-170 w-min',
         commonVariant === ModalIconCommonVariant.SUCCESS && 'dark:bg-green-120',
         className,
       )}
     >
       <Icon
         className={twMerge(
-          // TODO: Any close-enough-looking TailwindCSS color alternative? Currently taking this specific hex color from the design, since it's not a standard TailwindCSS color.
-          'w-8 h-8 dark:fill-[#A0AEC0]',
+          'w-8 h-8 dark:fill-mono-100',
           commonVariant === ModalIconCommonVariant.SUCCESS &&
             'dark:fill-green-40',
           iconClassName,

@@ -1,5 +1,5 @@
 import { ExternalLinkLine } from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode } from 'react';
 
 export type ExternalLinkProps = {
@@ -9,24 +9,15 @@ export type ExternalLinkProps = {
 
 const ExternalLink: FC<ExternalLinkProps> = ({ href, children }) => {
   return (
-    <a
+    <Button
       href={href}
-      className="flex gap-1 items-center justify-center hover:underline"
+      size="sm"
+      variant="link"
+      // TODO: Make the icon highlight on hover.
+      rightIcon={<ExternalLinkLine className="dark:fill-blue-50" />}
     >
-      {typeof children === 'string' ? (
-        <Typography
-          className="uppercase dark:text-blue-50"
-          variant="body4"
-          fw="bold"
-        >
-          {children}
-        </Typography>
-      ) : (
-        children
-      )}
-
-      <ExternalLinkLine className="dark:fill-blue-50" />
-    </a>
+      {children}
+    </Button>
   );
 };
 
