@@ -1,21 +1,34 @@
 import { BN } from '@polkadot/util';
 
-export type Validator = {
-  address: string;
-  identity: string;
+// All chains
+export type StakingItem = {
+  id: string;
   totalValueStaked: BN;
-  annualPercentageYield: number;
-  commission: BN;
   chain: string;
   chainDecimals: number;
-  tokenSymbol: string;
+  chainTokenSymbol: string;
 };
 
-export type Collator = {
-  address: string;
-  identity: string;
-  // totalValueStaked: BN;
-  chain: string;
-  chainDecimals: number;
-  tokenSymbol: string;
-};
+// Chains - Polkadot, Kusama, Tangle etc.
+export type Validator = {
+  validatorAddress: string;
+  validatorIdentity: string;
+  validatorCommission: BN;
+  validatorAPY?: number;
+} & StakingItem;
+
+// Chain - Phala Network (Stake on Vaults or Stake Pools)
+export type VaultOrStakePool = {
+  type: 'vault' | 'stakePool';
+} & StakingItem;
+
+// Chain - Astar (dApp Staking)
+export type Dapp = {
+  dappContractAddress: string;
+} & StakingItem;
+
+export enum LiquidStakingItem {
+  VALIDATOR = 'validator',
+  VAULT_OR_STAKE_POOL = 'vaultOrStakePool',
+  DAPP = 'dapp',
+}

@@ -1,14 +1,18 @@
 import { BN_ZERO } from '@polkadot/util';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   LiquidStakingChain,
   LS_NETWORK_CONFIG,
 } from '../../constants/liquidStaking';
-import { Collator, Validator } from '../../types/liquidStaking';
+import {
+  Dapp,
+  LiquidStakingItem,
+  Validator,
+  VaultOrStakePool,
+} from '../../types/liquidStaking';
 import {
   fetchChainDecimals,
-  fetchCollators,
   fetchMappedCommission,
   fetchMappedIdentityNames,
   fetchMappedTotalValueStaked,
@@ -17,17 +21,18 @@ import {
 } from './helper';
 import { useLiquidStakingStore } from './store';
 
-const useValidatorsAndCollators = (): {
+const useLiquidStakingItems = (): {
   isLoading: boolean;
-  data: {
-    validators: Validator[];
-    collators: Collator[];
-  };
+  data: Validator[] | VaultOrStakePool[] | Dapp[];
+  dataType: LiquidStakingItem;
 } => {
   const { selectedChain } = useLiquidStakingStore();
   const [isLoading, setIsLoading] = useState(false);
-  const [Validators, setValidators] = useState<Validator[]>([]);
-  const [Collators, setCollators] = useState<Collator[]>([]);
+  const [items, setItems] = useState<Validator[] | VaultOrStakePool[] | Dapp[]>(
+    [],
+  );
+
+  const dataType = useMemo(() => getDataType(selectedChain), [selectedChain]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -36,29 +41,23 @@ const useValidatorsAndCollators = (): {
       const endpoint = LS_NETWORK_CONFIG[chain].endpoint;
 
       if (!endpoint) {
-        setValidators([]);
+        setItems([]);
         setIsLoading(false);
         return;
       }
 
-      let allValidators: Validator[] = [];
-      let allCollators: Collator[] = [];
+      let items: Validator[] | VaultOrStakePool[] | Dapp[] = [];
 
       switch (chain) {
         case LiquidStakingChain.POLKADOT:
-          allValidators = await getPolkadotMainnetValidators(endpoint);
-          break;
-
-        case LiquidStakingChain.PHALA:
-          allCollators = await getPhalaCollators(endpoint);
+          items = await getPolkadotMainnetValidators(endpoint);
           break;
 
         default:
           break;
       }
 
-      setValidators(allValidators);
-      setCollators(allCollators);
+      setItems(items);
       setIsLoading(false);
     };
 
@@ -67,16 +66,23 @@ const useValidatorsAndCollators = (): {
 
   return {
     isLoading,
-    data: {
-      validators: Validators,
-      collators: Collators,
-    },
+    data: items,
+    dataType,
   };
 };
 
-export default useValidatorsAndCollators;
+export default useLiquidStakingItems;
 
-// Polkadot Mainnet Validators
+const getDataType = (chain: LiquidStakingChain): LiquidStakingItem => {
+  switch (chain) {
+    case LiquidStakingChain.POLKADOT:
+      return LiquidStakingItem.VALIDATOR;
+
+    default:
+      return LiquidStakingItem.VALIDATOR;
+  }
+};
+
 const getPolkadotMainnetValidators = async (
   endpoint: string,
 ): Promise<Validator[]> => {
@@ -93,34 +99,15 @@ const getPolkadotMainnetValidators = async (
     const commission = mappedCommission.get(val.toString());
 
     return {
-      address: val.toString(),
-      identity: identityName ? identityName : val.toString(),
+      id: val.toString(),
+      validatorAddress: val.toString(),
+      validatorIdentity: identityName ? identityName : val.toString(),
       totalValueStaked: totalValueStaked ? totalValueStaked : BN_ZERO,
-      annualPercentageYield: 0,
-      commission: commission ? commission : BN_ZERO,
+      validatorAPY: 0,
+      validatorCommission: commission ? commission : BN_ZERO,
       chain: LiquidStakingChain.POLKADOT,
       chainDecimals: chainDecimals,
-      tokenSymbol: tokenSymbol,
-    };
-  });
-};
-
-// Phala Collators
-const getPhalaCollators = async (endpoint: string): Promise<Collator[]> => {
-  const collators = await fetchCollators(endpoint);
-  const mappedIdentityNames = await fetchMappedIdentityNames(endpoint);
-  const chainDecimals = await fetchChainDecimals(endpoint);
-  const tokenSymbol = await fetchTokenSymbol(endpoint);
-
-  return collators.map((col) => {
-    const identityName = mappedIdentityNames.get(col.toString());
-
-    return {
-      address: col.accountId.toString(),
-      identity: identityName ? identityName : col.accountId.toString(),
-      chain: LiquidStakingChain.PHALA,
-      chainDecimals: chainDecimals,
-      tokenSymbol: tokenSymbol,
+      chainTokenSymbol: tokenSymbol,
     };
   });
 };

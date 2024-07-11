@@ -1,18 +1,12 @@
 'use client';
 
 import { notFound } from 'next/navigation';
-import { FC, useMemo, useState } from 'react';
+import { FC, useState } from 'react';
 
 import LiquidStakingCard from '../../../components/LiquidStaking/LiquidStakingCard';
 import TokenInfoCard from '../../../components/LiquidStaking/TokenInfoCard';
-import ValidatorSelectionTable from '../../../components/LiquidStaking/ValidatorSelectionTable';
-import {
-  LIQUID_STAKING_TOKEN_PREFIX,
-  LS_NETWORK_CONFIG,
-  NetworkType,
-} from '../../../constants/liquidStaking';
-import { useLiquidStakingStore } from '../../../data/liquidStaking/store';
-import useValidatorsAndCollators from '../../../data/liquidStaking/useValidatorsAndCollators';
+import { LIQUID_STAKING_TOKEN_PREFIX } from '../../../constants/liquidStaking';
+import useLiquidStakingItems from '../../../data/liquidStaking/useLiquidStakingItems';
 import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
 
 type Props = {
@@ -20,21 +14,12 @@ type Props = {
 };
 
 const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
-  const { selectedChain } = useLiquidStakingStore();
+  const { isLoading, data, dataType } = useLiquidStakingItems();
 
-  const selectedNetwork = useMemo(() => {
-    return LS_NETWORK_CONFIG[selectedChain];
-  }, [selectedChain]);
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
-  const {
-    isLoading,
-    data: { validators, collators },
-  } = useValidatorsAndCollators();
-
-  const [selectedValidatorsOrCollators, setSelectedvalidatorsOrCollators] =
-    useState<Set<string>>(new Set());
-
-  console.debug('Selected Validators:', selectedValidatorsOrCollators);
+  console.debug('Liquid Staking Items:', data, isLoading, dataType);
+  console.debug('Selected Items:', selectedItems, setSelectedItems);
 
   // Invalid token provided on the URL parameters.
   if (!isLiquidStakingToken(tokenSymbol)) {
@@ -70,21 +55,6 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
         />
 
         {/* Validator Selection Component */}
-        <ValidatorSelectionTable
-          data={
-            selectedNetwork.chainType === NetworkType.RELAY_CHAIN
-              ? validators
-              : collators
-          }
-          // data={[]}
-          setSelectedvalidatorsOrCollators={setSelectedvalidatorsOrCollators}
-          tableType={
-            selectedNetwork.chainType === NetworkType.RELAY_CHAIN
-              ? 'validators'
-              : 'collators'
-          }
-          isLoading={isLoading}
-        />
       </div>
 
       <LiquidStakingCard />
