@@ -259,7 +259,10 @@ const TransactionMaxAmountButton = forwardRef<
                 Icon
               )
             }
-            className={disabled ? 'cursor-not-allowed' : ''}
+            className={twMerge(
+              'justify-end xs:justify-start',
+              disabled && 'cursor-not-allowed',
+            )}
           >
             {buttonCnt}
           </TransactionButton>
@@ -286,7 +289,7 @@ const TransactionInputCardHeader = forwardRef<
       {...props}
       ref={ref}
       className={twMerge(
-        'py-1 flex items-center justify-between',
+        'py-1 flex flex-col xs:flex-row xs:items-center xs:justify-between',
         'border-b border-mono-40 dark:border-mono-160',
         className,
       )}
