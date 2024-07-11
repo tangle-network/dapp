@@ -53,7 +53,7 @@ export const Socials = forwardRef<HTMLDivElement, SocialsProps>(
       >
         {resolvedSocialConfigs.map(({ Icon, name, ...linkProps }) => (
           <a key={name} {...linkProps} className={iconClassName}>
-            <Icon className="w-8 h-8 !fill-current" />
+            <Icon className="w-6 h-6 sm:w-8 sm:h-8 !fill-current" />
           </a>
         ))}
       </div>

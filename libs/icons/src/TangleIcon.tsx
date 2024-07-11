@@ -4,7 +4,7 @@ import { IconBase } from './types';
 export const TangleIcon = (props: IconBase) => {
   return createIcon({
     ...props,
-    viewBox: '0 0 32 28',
+    viewBox: '0 0 32 32',
     path: [
       <g clipPath="url(#clip0_828_2897)">
         <path

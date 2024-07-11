@@ -53,7 +53,7 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
       <main className="flex-1 h-full overflow-y-auto scrollbar-hide">
         <FeedbackBanner />
 
-        <div className="h-full max-w-[1448px] lg:px-12 md:px-8 px-4 m-auto flex flex-col justify-between">
+        <div className="h-full max-w-[1448px] lg:px-10 md:px-8 px-4 m-auto flex flex-col justify-between">
           <div className="flex flex-col justify-between space-y-5">
             <div className="flex items-center justify-between py-6">
               <div className="flex items-center space-x-4 lg:space-x-0">

@@ -40,12 +40,12 @@
 
 .bg-body {
   @apply bg-body-base;
-  background-image: url(./assets/body-bg.jpeg);
+  background-image: url(./assets/body-bg.jpg);
 }
 
 .dark .bg-body {
   @apply bg-body-base;
-  background-image: url(./assets/body-bg-dark.jpeg);
+  background-image: url(./assets/body-bg-dark.jpg);
 }
 
 .ls-bg-body {
