@@ -72,9 +72,13 @@ export default function usePayouts(): UsePayoutsReturnType {
     resetPayouts();
   }, [activeAccount?.address, resetPayouts, setPayouts]);
 
+  // Keep this check outside to prevent cycle by the `data` dependency.
+  const doesDataAtMaxErasExist =
+    data[maxEras] !== undefined && data[maxEras].length > 0;
+
   useEffect(
     () => {
-      // Make sure all data is available before computing payouts
+      // Make sure all data is available before computing payouts.
       if (
         activeSubstrateAddress === null ||
         unclaimedRewards.length === 0 ||
@@ -83,7 +87,7 @@ export default function usePayouts(): UsePayoutsReturnType {
         mappedValidatorInfo.size === 0 ||
         validatorIdentityNamesMap === null ||
         validatorIdentityNamesMap.size === 0 ||
-        (data[maxEras] !== undefined && data[maxEras].length > 0)
+        doesDataAtMaxErasExist
       ) {
         return;
       }
@@ -138,7 +142,7 @@ export default function usePayouts(): UsePayoutsReturnType {
       };
     },
     // prettier-ignore
-    [activeSubstrateAddress, data, eraTotalRewards, mappedValidatorInfo, maxEras, network.ss58Prefix, rpcEndpoint, setCachedPayouts, setIsLoading, setPayouts, unclaimedRewards, validatorIdentityNamesMap],
+    [activeSubstrateAddress, doesDataAtMaxErasExist, eraTotalRewards, mappedValidatorInfo, maxEras, network.ss58Prefix, rpcEndpoint, setCachedPayouts, setIsLoading, setPayouts, unclaimedRewards, validatorIdentityNamesMap],
   );
 
   return {
