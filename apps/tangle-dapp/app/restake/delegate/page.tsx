@@ -3,9 +3,14 @@
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import type { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import type {
+  ChainType,
+  TokenListCardProps,
+} from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import entries from 'lodash/entries';
 import keys from 'lodash/keys';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -25,13 +30,13 @@ import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { PagePath } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
+import AssetList from '../AssetList';
 import AvatarWithText from '../AvatarWithText';
 import ChainList from '../ChainList';
+import ModalContent from '../ModalContent';
 import RestakeTabs from '../RestakeTabs';
-import SlideAnimation from '../SlideAnimation';
 import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
-import AssetList from './AssetList';
 import DelegationInput from './DelegationInput';
 import Info from './Info';
 import OperatorList from './OperatorList';
@@ -113,6 +118,35 @@ export default function DelegatePage() {
     open: openOperatorModal,
     close: closeOperatorModal,
   } = useModal(false);
+
+  const selectableTokens = useMemo(() => {
+    if (!isDefined(delegatorInfo)) {
+      return [];
+    }
+
+    return entries(delegatorInfo.deposits)
+      .filter(([assetId]) => Boolean(assetMap[assetId]))
+      .map(([assetId, { amount }]) => {
+        const asset = assetMap[assetId];
+
+        return {
+          id: asset.id,
+          name: asset.name,
+          symbol: asset.symbol,
+          assetBalanceProps: {
+            balance: +formatUnits(amount, asset.decimals),
+          },
+        } satisfies TokenListCardProps['selectTokens'][number];
+      });
+  }, [assetMap, delegatorInfo]);
+
+  const handleAssetChange = useCallback(
+    (asset: TokenListCardProps['selectTokens'][number]) => {
+      setValue('assetId', asset.id);
+      closeAssetModal();
+    },
+    [closeAssetModal, setValue],
+  );
 
   const handleChainChange = useCallback(
     async ({ typedChainId }: ChainType) => {
@@ -223,53 +257,54 @@ export default function DelegatePage() {
         </div>
       </div>
 
-      <SlideAnimation show={isAssetModalOpen} className="absolute">
-        <AssetList
-          className="h-full"
-          delegatorInfo={delegatorInfo}
-          onClose={closeAssetModal}
-          setValue={setValue}
-          renderEmpty={() => (
-            <div className="space-y-4">
-              <Typography variant="h5" fw="bold" ta="center">
-                No assets available
-              </Typography>
+      <Modal>
+        <ModalContent isOpen={isAssetModalOpen} title="Select Asset">
+          <AssetList
+            selectTokens={selectableTokens}
+            onChange={handleAssetChange}
+            onClose={closeAssetModal}
+            renderEmpty={() => (
+              <div className="space-y-4">
+                <Typography variant="h5" fw="bold" ta="center">
+                  No assets available
+                </Typography>
 
-              <Button
-                as={Link}
-                href={PagePath.RESTAKE_DEPOSIT}
-                variant="link"
-                className="block mx-auto text-center"
-              >
-                Deposit now
-              </Button>
-            </div>
-          )}
-        />
-      </SlideAnimation>
+                <Button
+                  as={Link}
+                  href={PagePath.RESTAKE_DEPOSIT}
+                  variant="link"
+                  className="block mx-auto text-center"
+                >
+                  Deposit now
+                </Button>
+              </div>
+            )}
+          />
+        </ModalContent>
 
-      <SlideAnimation show={isOperatorModalOpen} className="absolute">
-        <OperatorList
-          selectedOperatorAccountId={watch('operatorAccountId')}
-          onOperatorAccountIdChange={handleOperatorAccountIdChange}
-          operatorMap={operatorMap}
-          overrideTitleProps={{ variant: 'h4' }}
-          className="h-full dark:bg-[var(--restake-card-bg-dark)] p-0"
-          onClose={closeOperatorModal}
-        />
-      </SlideAnimation>
+        <ModalContent isOpen={isOperatorModalOpen} title="Select Operator">
+          <OperatorList
+            selectedOperatorAccountId={watch('operatorAccountId')}
+            onOperatorAccountIdChange={handleOperatorAccountIdChange}
+            operatorMap={operatorMap}
+            overrideTitleProps={{ variant: 'h4' }}
+            className="h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]"
+            onClose={closeOperatorModal}
+          />
+        </ModalContent>
 
-      <SlideAnimation show={isChainModalOpen} className="absolute">
-        <ChainList
-          selectedTypedChainId={activeTypedChainId}
-          className="h-full"
-          onClose={closeChainModal}
-          onChange={handleChainChange}
-          defaultCategory={
-            chainsPopulated[SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0]].tag
-          }
-        />
-      </SlideAnimation>
+        <ModalContent isOpen={isChainModalOpen} title="Select Chain">
+          <ChainList
+            selectedTypedChainId={activeTypedChainId}
+            className="h-full"
+            onClose={closeChainModal}
+            onChange={handleChainChange}
+            defaultCategory={
+              chainsPopulated[SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0]].tag
+            }
+          />
+        </ModalContent>
+      </Modal>
     </form>
   );
 }

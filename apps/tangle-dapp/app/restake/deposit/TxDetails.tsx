@@ -43,7 +43,7 @@ export default function TxDetails({ watch }: Props) {
 
   return (
     <FeeDetails
-      className="!bg-opacity-0"
+      isDisabledBgColor
       disabled
       isDefaultOpen
       items={[

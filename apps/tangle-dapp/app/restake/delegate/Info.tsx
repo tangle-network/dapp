@@ -9,7 +9,7 @@ const Info = memo(() => {
 
   return (
     <FeeDetails
-      className="!bg-opacity-0"
+      isDisabledBgColor
       disabled
       isDefaultOpen
       items={[

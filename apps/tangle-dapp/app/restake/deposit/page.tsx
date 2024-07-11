@@ -2,7 +2,11 @@
 
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { ArrowRight } from '@webb-tools/icons/ArrowRight';
-import { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import {
+  ChainType,
+  type TokenListCardProps,
+} from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useSubscription } from 'observable-hooks';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
@@ -22,13 +26,13 @@ import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { DepositFormFields } from '../../../types/restake';
+import AssetList from '../AssetList';
 import ChainList from '../ChainList';
+import ModalContent from '../ModalContent';
 import RestakeTabs from '../RestakeTabs';
-import SlideAnimation from '../SlideAnimation';
 import ActionButton from './ActionButton';
 import DestChainInput from './DestChainInput';
 import SourceChainInput from './SourceChainInput';
-import TokenList from './TokenList';
 import TxDetails from './TxDetails';
 
 function getDefaultTypedChainId(activeTypedChainId: number | null) {
@@ -57,7 +61,8 @@ export default function DepositPage() {
     },
   });
 
-  const { assetMap, assetWithBalances$ } = useRestakeContext();
+  const { assetMap, assetWithBalances, assetWithBalances$ } =
+    useRestakeContext();
   const { deposit } = useRestakeTx();
 
   // Subscribe to assetMap$ and update depositAssetId to the first assetId
@@ -100,6 +105,30 @@ export default function DepositPage() {
   const openTokenModal = useCallback(() => setTokenModalOpen(true), []);
   const closeTokenModal = useCallback(() => setTokenModalOpen(false), []);
 
+  const selectableTokens = useMemo(
+    () =>
+      assetWithBalances.map((asset) => {
+        const balance = asset.balance;
+
+        return {
+          id: asset.assetId,
+          name: asset.metadata.name,
+          symbol: asset.metadata.symbol,
+          ...(balance !== null
+            ? {
+                assetBalanceProps: {
+                  balance: +formatUnits(
+                    balance.balance,
+                    asset.metadata.decimals,
+                  ),
+                },
+              }
+            : {}),
+        } satisfies TokenListCardProps['selectTokens'][number];
+      }),
+    [assetWithBalances],
+  );
+
   const options = useMemo<Props<DepositContext>>(() => {
     return {
       options: {
@@ -132,6 +161,17 @@ export default function DepositPage() {
     [setValue],
   );
 
+  const handleTokenChange = useCallback(
+    (token: TokenListCardProps['selectTokens'][number]) => {
+      setValue('depositAssetId', token.id, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+      closeTokenModal();
+    },
+    [closeTokenModal, setValue],
+  );
+
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
     async (data) => {
       const { amount, depositAssetId } = data;
@@ -154,7 +194,7 @@ export default function DepositPage() {
     <form
       ref={formRef}
       onSubmit={handleSubmit(onSubmit)}
-      className="relative h-full overflow-hidden"
+      className="h-full overflow-hidden"
     >
       <div className="flex flex-col h-full space-y-4 grow">
         <RestakeTabs />
@@ -187,22 +227,25 @@ export default function DepositPage() {
         </div>
       </div>
 
-      <SlideAnimation show={chainModalOpen} className="absolute">
-        <ChainList
-          selectedTypedChainId={watch('sourceTypedChainId')}
-          className="h-full"
-          onClose={closeChainModal}
-          onChange={handleChainChange}
-        />
-      </SlideAnimation>
+      <Modal open={chainModalOpen} onOpenChange={setChainModalOpen}>
+        <ModalContent isOpen={chainModalOpen} title="Select Chain">
+          <ChainList
+            selectedTypedChainId={watch('sourceTypedChainId')}
+            onClose={closeChainModal}
+            onChange={handleChainChange}
+          />
+        </ModalContent>
+      </Modal>
 
-      <SlideAnimation show={tokenModalOpen} className="absolute">
-        <TokenList
-          setValue={setValue}
-          className="h-full"
-          onClose={closeTokenModal}
-        />
-      </SlideAnimation>
+      <Modal open={tokenModalOpen} onOpenChange={setTokenModalOpen}>
+        <ModalContent isOpen={tokenModalOpen} title="Select Asset">
+          <AssetList
+            selectTokens={selectableTokens}
+            onChange={handleTokenChange}
+            onClose={closeTokenModal}
+          />
+        </ModalContent>
+      </Modal>
     </form>
   );
 }

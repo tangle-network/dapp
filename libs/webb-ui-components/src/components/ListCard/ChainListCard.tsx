@@ -49,6 +49,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       chains,
       chainType,
       defaultCategory = 'test',
+      disclaimer = 'The selection of source chain will determine tokens and destination chains availability.',
       isConnectingToChain,
       onChange,
       onClose,
@@ -138,7 +139,6 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       <ListCardWrapper
         {...props}
         overrideTitleProps={overrideTitleProps}
-        className={twMerge('flex flex-col', props.className)}
         title={`Select ${
           chainType === 'source' ? 'Source' : 'Destination'
         } Chain`}
@@ -175,7 +175,10 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
               return (
                 <ListItem
                   key={`${currentChain.name}-${idx}`}
-                  className="flex items-center justify-between bg-transparent dark:bg-transparent"
+                  className={twMerge(
+                    'flex items-center justify-between px-4',
+                    'bg-transparent dark:bg-transparent max-w-none',
+                  )}
                   onClick={() => onChainChange(currentChain)}
                 >
                   <div className="flex items-center space-x-2">
@@ -227,10 +230,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
 
         <div className="mt-7">
           {/** Disclamer */}
-          <Alert
-            title="The selection of source chain will determine tokens and
-              destination chains availability."
-          />
+          {disclaimer && <Alert title={disclaimer} />}
 
           {/** Network categories */}
           <RadioGroup
