@@ -135,6 +135,11 @@ export interface ButtonProps extends ButtonBase, IWebbComponentBase {
    * If `true`, the button will display as full width
    */
   isFullWidth?: boolean;
+
+  /**
+   * If `true`, the size of the button will be adjusted to fit the icon based on the variant
+   */
+  isJustIcon?: boolean;
 }
 
 export interface ButtonSpinnerProps extends WebbComponentBase {
@@ -168,9 +173,7 @@ export type ButtonClassNames = {
       active: string;
       disabled: string;
     };
-    sm: string;
-    md: string;
-  };
+  } & Record<ButtonSize, string>;
 };
 
 /**
