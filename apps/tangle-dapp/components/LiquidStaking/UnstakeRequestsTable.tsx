@@ -7,16 +7,17 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
+  ArrowRightUp,
   CheckboxCircleFill,
   Close,
   TimeFillIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
 import {
-  Button,
   CheckBox,
   fuzzyFilter,
   Table,
+  TANGLE_DOCS_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import BN from 'bn.js';
@@ -29,6 +30,7 @@ import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import AddressLink from './AddressLink';
 import CancelUnstakeModal from './CancelUnstakeModal';
+import ExternalLink from './ExternalLink';
 import IconButton from './IconButton';
 
 export type UnstakeRequestItem = {
@@ -162,20 +164,17 @@ const UnstakeRequestsTable: FC = () => {
         )}
       </GlassCard>
 
-      {data.length > 0 && (
-        <div className="flex items-center justify-center w-full gap-2">
-          <Button isFullWidth variant="secondary">
-            Cancel Unstake
-          </Button>
-
-          <Button isFullWidth isDisabled variant="primary">
-            Withdraw
-          </Button>
+      {data.length === 0 && (
+        <div className="flex items-center justify-end w-full">
+          <ExternalLink Icon={ArrowRightUp} href={TANGLE_DOCS_URL}>
+            View Docs
+          </ExternalLink>
         </div>
       )}
 
+      {/* TODO: Handle this modal properly. */}
       <CancelUnstakeModal
-        isOpen
+        isOpen={false}
         onClose={() => void 0}
         unstakeRequest={null as any}
       />

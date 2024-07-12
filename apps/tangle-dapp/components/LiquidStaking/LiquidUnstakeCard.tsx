@@ -19,7 +19,6 @@ import {
   LIQUID_STAKING_CHAIN_MAP,
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingChainId,
-  LiquidStakingToken,
 } from '../../constants/liquidStaking';
 import useRedeemTx from '../../data/liquidStaking/useRedeemTx';
 import useApi from '../../hooks/useApi';
@@ -96,6 +95,10 @@ const LiquidUnstakeCard: FC = () => {
     return [{ address: '0x123456' as any, amount: new BN(100), decimals: 18 }];
   }, []);
 
+  const balance = (
+    <ParachainWalletBalance isNative={false} token={selectedChain.token} />
+  );
+
   return (
     <>
       <LiquidStakingInput
@@ -105,8 +108,7 @@ const LiquidUnstakeCard: FC = () => {
         amount={fromAmount}
         setAmount={setFromAmount}
         placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
-        // TODO: Temporary. Use actual token.
-        rightElement={<ParachainWalletBalance token={LiquidStakingToken.TNT} />}
+        rightElement={balance}
         isTokenLiquidVariant
         minAmount={minimumInputAmount ?? undefined}
         onTokenClick={() => setIsSelectTokenModalOpen(true)}

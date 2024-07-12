@@ -14,7 +14,7 @@ export type ParachainWalletBalanceProps = {
 };
 
 const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
-  isNative,
+  isNative = true,
   token,
 }) => {
   const activeSubstrateAddress = useSubstrateAddress();
@@ -50,7 +50,7 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
     >
       <WalletLineIcon />{' '}
       {formattedBalance === null ? (
-        <SkeletonLoader size="md" />
+        <SkeletonLoader className="rounded-2xl w-12" size="md" />
       ) : (
         formattedBalance
       )}

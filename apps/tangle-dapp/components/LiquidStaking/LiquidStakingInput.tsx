@@ -11,12 +11,10 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import assert from 'assert';
-import { FC, ReactNode, useCallback } from 'react';
+import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LIQUID_STAKING_CHAINS,
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingChainId,
   LiquidStakingToken,
@@ -26,6 +24,7 @@ import useInputAmount from '../../hooks/useInputAmount';
 import formatBn from '../../utils/formatBn';
 import ChainLogo from './ChainLogo';
 import HoverButtonStyle from './HoverButtonStyle';
+import TokenChip from './TokenChip';
 
 export type LiquidStakingInputProps = {
   id: string;
@@ -78,15 +77,6 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
     minErrorMessage,
   });
 
-  const handleChainChange = useCallback(
-    (newChain: LiquidStakingChainId) => {
-      if (setChain !== undefined) {
-        setChain(newChain);
-      }
-    },
-    [setChain],
-  );
-
   const isError = errorMessage !== null;
 
   return (
@@ -98,10 +88,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
         )}
       >
         <div className="flex justify-between">
-          <ChainSelector
-            selectedChain={chain}
-            setChain={isReadOnly ? undefined : handleChainChange}
-          />
+          <ChainSelector selectedChain={chain} setChain={setChain} />
 
           {rightElement}
         </div>
@@ -133,36 +120,6 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
         </Typography>
       )}
     </>
-  );
-};
-
-type TokenChipProps = {
-  token: LiquidStakingToken;
-  isLiquidVariant: boolean;
-  onClick?: () => void;
-};
-
-/** @internal */
-const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
-  const chain = LIQUID_STAKING_CHAINS.find((chain) => chain.token === token);
-
-  assert(chain !== undefined, 'All tokens should have a corresponding chain');
-
-  return (
-    <div
-      onClick={onClick}
-      className={twMerge(
-        'flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-160 px-4 py-2 rounded-lg',
-        onClick && 'cursor-pointer hover:dark:bg-mono-140',
-      )}
-    >
-      <ChainLogo size="sm" chainId={chain.id} isRounded />
-
-      <Typography variant="h5" fw="bold">
-        {isLiquidVariant && LIQUID_STAKING_TOKEN_PREFIX}
-        {token}
-      </Typography>
-    </div>
   );
 };
 

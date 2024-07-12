@@ -10,7 +10,7 @@ import {
 export type ChainLogoSize = 'sm' | 'md';
 
 export type ChainLogoProps = {
-  chainId: LiquidStakingChainId;
+  chainId?: LiquidStakingChainId;
   size: ChainLogoSize;
   isRounded?: boolean;
 };
@@ -56,6 +56,18 @@ const ChainLogo: FC<ChainLogoProps> = ({
   isRounded = false,
 }) => {
   const sizeNumber = getSizeNumber(size);
+
+  // In case the chain id is not provided, render a placeholder.
+  if (chainId === undefined) {
+    return (
+      <div
+        className={twMerge(
+          getSizeClass(size),
+          'bg-mono-40 dark:bg-mono-140 rounded-md',
+        )}
+      />
+    );
+  }
 
   return (
     <Image

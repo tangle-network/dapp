@@ -14,8 +14,10 @@ const AddressLink: FC<AddressLinkProps> = ({ address }) => {
   const href = '#';
 
   return (
+    // TODO: Need to prevent clicking this link causing the token to be chosen. Instead, it should only open the address in a new tab.
     <a
       href={href}
+      target="_blank"
       className="flex gap-1 items-center justify-start hover:underline"
     >
       <Typography variant="body1" fw="normal" className="dark:text-mono-0">

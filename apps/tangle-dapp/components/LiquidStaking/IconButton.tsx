@@ -28,7 +28,7 @@ const IconButton: FC<IconButtonProps> = ({
           onClick={onClick}
           size="sm"
           variant="utility"
-          className={twMerge('', className)}
+          className={twMerge('px-2', className)}
         >
           <Icon className="fill-blue-80 dark:fill-blue-50" size="md" />
         </Button>
