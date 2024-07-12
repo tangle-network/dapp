@@ -52,7 +52,7 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({
     >
       {integerPart}
 
-      <span className="opacity-60 text-inherit">
+      <span className="!text-opacity-60 text-inherit">
         {decimalPart !== undefined && `.${decimalPart}`}{' '}
         {tokenSymbol ?? nativeTokenSymbol}
       </span>
