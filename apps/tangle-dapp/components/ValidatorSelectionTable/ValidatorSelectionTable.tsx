@@ -130,6 +130,13 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
             sortAddressOrIdentityForNomineeOrValidator,
             isDesc,
           ),
+        filterFn: (row, _, filterValue) => {
+          const { address, identityName } = row.original;
+          return (
+            address.toLowerCase().includes(filterValue.toLowerCase()) ||
+            identityName.toLowerCase().includes(filterValue.toLowerCase())
+          );
+        },
       }),
       columnHelper.accessor('totalStakeAmount', {
         header: () => (
@@ -213,12 +220,14 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         },
         sorting,
         rowSelection,
-        globalFilter: searchValue,
+        columnFilters: [
+          {
+            id: 'address',
+            value: searchValue,
+          },
+        ],
       },
       enableRowSelection: true,
-      onGlobalFilterChange: (props) => {
-        setSearchValue(props);
-      },
       onRowSelectionChange: (props) => {
         toggleSortSelectionHandlerRef.current?.(false);
         setRowSelection(props);
@@ -253,6 +262,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           value={searchValue}
           onChange={(val) => setSearchValue(val)}
           className="mb-1"
+          isControlled
         />
 
         {allValidators.length === 0 ? (
