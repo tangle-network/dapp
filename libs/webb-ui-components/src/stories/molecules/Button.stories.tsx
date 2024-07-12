@@ -169,6 +169,14 @@ export const UtilityIsDisabledWithIcon: Story = {
   ),
 };
 
+export const UtilityJustIcon: Story = {
+  render: () => (
+    <Button variant="utility" isJustIcon>
+      <ArrowRight className="!fill-current" />
+    </Button>
+  ),
+};
+
 export const Link: Story = {
   render: () => <Button variant="link">Click Me</Button>,
 };
@@ -217,6 +225,14 @@ export const LinkIsDisabledWithIcon: Story = {
       isDisabled
     >
       Click Me
+    </Button>
+  ),
+};
+
+export const LinkJustIcon: Story = {
+  render: () => (
+    <Button variant="link" isJustIcon>
+      <ArrowRight className="!fill-current" />
     </Button>
   ),
 };
