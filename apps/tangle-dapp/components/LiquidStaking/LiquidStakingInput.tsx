@@ -38,6 +38,7 @@ export type LiquidStakingInputProps = {
   isTokenLiquidVariant?: boolean;
   minAmount?: BN;
   maxAmount?: BN;
+  maxErrorMessage?: string;
   setAmount?: (newAmount: BN | null) => void;
   setChain?: (newChain: LiquidStakingChainId) => void;
   onTokenClick?: () => void;
@@ -54,6 +55,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   token,
   minAmount,
   maxAmount,
+  maxErrorMessage = ERROR_NOT_ENOUGH_BALANCE,
   setAmount,
   setChain,
   onTokenClick,
@@ -79,7 +81,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
     min: minAmount,
     minErrorMessage,
     max: maxAmount,
-    maxErrorMessage: ERROR_NOT_ENOUGH_BALANCE,
+    maxErrorMessage,
   });
 
   const isError = errorMessage !== null;

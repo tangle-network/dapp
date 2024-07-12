@@ -1,7 +1,14 @@
 import { BN_ZERO, formatBalance } from '@polkadot/util';
 import { WalletLineIcon } from '@webb-tools/icons';
-import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
+import {
+  SkeletonLoader,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { LiquidStakingToken } from '../../constants/liquidStaking';
@@ -11,11 +18,17 @@ import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 export type ParachainWalletBalanceProps = {
   isNative?: boolean;
   token: LiquidStakingToken;
+  tooltip?: string;
+  onlyShowTooltipWhenBalanceIsSet?: boolean;
+  onClick?: () => void;
 };
 
 const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
   isNative = true,
   token,
+  tooltip,
+  onlyShowTooltipWhenBalanceIsSet = true,
+  onClick,
 }) => {
   const activeSubstrateAddress = useSubstrateAddress();
   const { nativeBalances, liquidBalances } = useParachainBalances();
@@ -42,11 +55,15 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
     return formatBalance(balance);
   }, [activeSubstrateAddress, balance]);
 
-  return (
+  const content = (
     <Typography
+      onClick={onClick}
       variant="body1"
       fw="bold"
-      className="flex gap-1 items-center dark:text-mono-80"
+      className={twMerge(
+        'flex gap-1 items-center dark:text-mono-80',
+        onClick !== undefined && 'cursor-pointer',
+      )}
     >
       <WalletLineIcon />{' '}
       {formattedBalance === null ? (
@@ -55,6 +72,24 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
         formattedBalance
       )}
     </Typography>
+  );
+
+  const shouldShowTooltip =
+    onlyShowTooltipWhenBalanceIsSet && balance !== null && balance.isZero();
+
+  if (tooltip === undefined || shouldShowTooltip) {
+    return content;
+  }
+
+  // Otherwise, the tooltip is set and it should be shown.
+  return (
+    <Tooltip>
+      <TooltipTrigger>{content}</TooltipTrigger>
+
+      <TooltipBody className="max-w-[185px] w-auto">
+        <span>{tooltip}</span>
+      </TooltipBody>
+    </Tooltip>
   );
 };
 

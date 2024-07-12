@@ -98,6 +98,14 @@ const LiquidStakeCard: FC = () => {
     return fromAmount.muln(rate);
   }, [fromAmount, rate]);
 
+  // TODO: Temporary. Use actual token.
+  const walletBalance = (
+    <ParachainWalletBalance
+      token={LiquidStakingToken.TNT}
+      tooltip="Click to use all available balance"
+    />
+  );
+
   return (
     <>
       <LiquidStakingInput
@@ -107,8 +115,7 @@ const LiquidStakeCard: FC = () => {
         amount={fromAmount}
         setAmount={setFromAmount}
         placeholder={`0 ${selectedChain.token}`}
-        // TODO: Temporary. Use actual token.
-        rightElement={<ParachainWalletBalance token={LiquidStakingToken.TNT} />}
+        rightElement={walletBalance}
         setChain={setSelectedChainId}
         minAmount={minimumInputAmount ?? undefined}
         maxAmount={maximumInputAmount ?? undefined}

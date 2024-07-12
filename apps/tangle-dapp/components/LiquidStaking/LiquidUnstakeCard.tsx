@@ -4,7 +4,7 @@
 // the `lstMinting` pallet for this file only.
 import '@webb-tools/tangle-restaking-types';
 
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { InformationLine } from '@webb-tools/icons';
 import {
@@ -20,6 +20,7 @@ import {
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingChainId,
 } from '../../constants/liquidStaking';
+import useParachainBalances from '../../data/liquidStaking/useParachainBalances';
 import useRedeemTx from '../../data/liquidStaking/useRedeemTx';
 import useApi from '../../hooks/useApi';
 import useApiRx from '../../hooks/useApiRx';
@@ -40,6 +41,7 @@ const LiquidUnstakeCard: FC = () => {
   );
 
   const { execute: executeRedeemTx, status: redeemTxStatus } = useRedeemTx();
+  const { nativeBalances } = useParachainBalances();
 
   const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
 
@@ -66,6 +68,14 @@ const LiquidUnstakeCard: FC = () => {
 
     return BN.max(minimumRedeemAmount, existentialDepositAmount);
   }, [existentialDepositAmount, minimumRedeemAmount]);
+
+  const maximumInputAmount = useMemo(() => {
+    if (nativeBalances === null) {
+      return null;
+    }
+
+    return nativeBalances.get(selectedChain.token) ?? BN_ZERO;
+  }, [nativeBalances, selectedChain.token]);
 
   const handleUnstakeClick = useCallback(() => {
     if (executeRedeemTx === null || fromAmount === null) {
@@ -95,8 +105,12 @@ const LiquidUnstakeCard: FC = () => {
     return [{ address: '0x123456' as any, amount: new BN(100), decimals: 18 }];
   }, []);
 
-  const balance = (
-    <ParachainWalletBalance isNative={false} token={selectedChain.token} />
+  const stakedBalance = (
+    <ParachainWalletBalance
+      isNative={false}
+      token={selectedChain.token}
+      tooltip="Click to use all staked balance"
+    />
   );
 
   return (
@@ -108,9 +122,11 @@ const LiquidUnstakeCard: FC = () => {
         amount={fromAmount}
         setAmount={setFromAmount}
         placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
-        rightElement={balance}
+        rightElement={stakedBalance}
         isTokenLiquidVariant
         minAmount={minimumInputAmount ?? undefined}
+        maxAmount={maximumInputAmount ?? undefined}
+        maxErrorMessage="Not enough stake to redeem"
         onTokenClick={() => setIsSelectTokenModalOpen(true)}
       />
 
