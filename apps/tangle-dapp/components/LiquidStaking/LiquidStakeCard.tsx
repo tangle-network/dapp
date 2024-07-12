@@ -4,7 +4,7 @@
 // the `lstMinting` pallet for this file only.
 import '@webb-tools/tangle-restaking-types';
 
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { InformationLine, Search } from '@webb-tools/icons';
 import {
@@ -24,6 +24,7 @@ import {
   LiquidStakingToken,
 } from '../../constants/liquidStaking';
 import useMintTx from '../../data/liquidStaking/useMintTx';
+import useParachainBalances from '../../data/liquidStaking/useParachainBalances';
 import useApi from '../../hooks/useApi';
 import useApiRx from '../../hooks/useApiRx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
@@ -42,6 +43,7 @@ const LiquidStakeCard: FC = () => {
   );
 
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
+  const { nativeBalances } = useParachainBalances();
 
   const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
 
@@ -68,6 +70,14 @@ const LiquidStakeCard: FC = () => {
 
     return BN.max(minimumMintingAmount, existentialDepositAmount);
   }, [existentialDepositAmount, minimumMintingAmount]);
+
+  const maximumInputAmount = useMemo(() => {
+    if (nativeBalances === null) {
+      return null;
+    }
+
+    return nativeBalances.get(selectedChain.token) ?? BN_ZERO;
+  }, [nativeBalances, selectedChain.token]);
 
   const handleStakeClick = useCallback(() => {
     if (executeMintTx === null || fromAmount === null) {
@@ -101,6 +111,7 @@ const LiquidStakeCard: FC = () => {
         rightElement={<ParachainWalletBalance token={LiquidStakingToken.TNT} />}
         setChain={setSelectedChainId}
         minAmount={minimumInputAmount ?? undefined}
+        maxAmount={maximumInputAmount ?? undefined}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />

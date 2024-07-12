@@ -20,6 +20,7 @@ import {
   LiquidStakingToken,
   LS_CHAIN_TO_NETWORK_NAME,
 } from '../../constants/liquidStaking';
+import { ERROR_NOT_ENOUGH_BALANCE } from '../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../hooks/useInputAmount';
 import formatBn from '../../utils/formatBn';
 import ChainLogo from './ChainLogo';
@@ -29,16 +30,17 @@ import TokenChip from './TokenChip';
 export type LiquidStakingInputProps = {
   id: string;
   chain: LiquidStakingChainId;
-  setChain?: (newChain: LiquidStakingChainId) => void;
   amount: BN | null;
-  setAmount?: (newAmount: BN | null) => void;
   isReadOnly?: boolean;
   placeholder?: string;
   rightElement?: ReactNode;
   token: LiquidStakingToken;
-  onTokenClick?: () => void;
   isTokenLiquidVariant?: boolean;
   minAmount?: BN;
+  maxAmount?: BN;
+  setAmount?: (newAmount: BN | null) => void;
+  setChain?: (newChain: LiquidStakingChainId) => void;
+  onTokenClick?: () => void;
 };
 
 const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
@@ -51,6 +53,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   chain,
   token,
   minAmount,
+  maxAmount,
   setAmount,
   setChain,
   onTokenClick,
@@ -75,6 +78,8 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
     decimals: TANGLE_TOKEN_DECIMALS,
     min: minAmount,
     minErrorMessage,
+    max: maxAmount,
+    maxErrorMessage: ERROR_NOT_ENOUGH_BALANCE,
   });
 
   const isError = errorMessage !== null;
@@ -114,7 +119,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
         </div>
       </div>
 
-      {errorMessage && (
+      {errorMessage !== null && (
         <Typography variant="body2" className="text-red-70 dark:text-red-50">
           * {errorMessage}
         </Typography>
