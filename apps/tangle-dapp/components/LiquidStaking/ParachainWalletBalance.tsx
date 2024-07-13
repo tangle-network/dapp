@@ -74,10 +74,9 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
     </Typography>
   );
 
-  const shouldShowTooltip =
-    onlyShowTooltipWhenBalanceIsSet && balance !== null && balance.isZero();
+  const shouldShowTooltip = onlyShowTooltipWhenBalanceIsSet && balance !== null;
 
-  if (tooltip === undefined || shouldShowTooltip) {
+  if (tooltip === undefined || !shouldShowTooltip) {
     return content;
   }
 

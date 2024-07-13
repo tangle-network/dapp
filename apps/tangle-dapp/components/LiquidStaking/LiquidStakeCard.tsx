@@ -103,6 +103,7 @@ const LiquidStakeCard: FC = () => {
     <ParachainWalletBalance
       token={LiquidStakingToken.TNT}
       tooltip="Click to use all available balance"
+      onClick={() => setFromAmount(maximumInputAmount)}
     />
   );
 

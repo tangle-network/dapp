@@ -47,10 +47,10 @@ type Options = {
   min?: BN | null;
   max?: BN | null;
   errorOnEmptyValue?: boolean;
-  setAmount?: (newAmount: BN | null) => void;
   minErrorMessage?: string;
   maxErrorMessage?: string;
   decimals: number;
+  setAmount?: (newAmount: BN | null) => void;
 };
 
 const useInputAmount = ({
@@ -58,10 +58,10 @@ const useInputAmount = ({
   min = null,
   max = null,
   errorOnEmptyValue = false,
-  setAmount,
   minErrorMessage,
   maxErrorMessage,
   decimals,
+  setAmount,
 }: Options) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -130,10 +130,33 @@ const useInputAmount = ({
     }
   }, [amount]);
 
+  const trySetAmount = useCallback(
+    (newAmount: BN): boolean => {
+      // Only accept the new amount if it is within the min and max bounds.
+      if (max !== null && newAmount.gt(max)) {
+        return false;
+      } else if (min !== null && newAmount.lt(min)) {
+        return false;
+      }
+      // No closure was provided to set the new amount.
+      else if (setAmount === undefined) {
+        return false;
+      }
+
+      setAmount(newAmount);
+
+      // TODO: Update the display amount to reflect the new amount. Must format the BN to a string.
+
+      return true;
+    },
+    [max, min, setAmount],
+  );
+
   return {
     displayAmount,
     errorMessage,
     handleChange,
+    trySetAmount,
   };
 };
 

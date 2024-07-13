@@ -28,10 +28,14 @@ import { TxStatus } from '../../hooks/useSubstrateTx';
 import LiquidStakingInput from './LiquidStakingInput';
 import ParachainWalletBalance from './ParachainWalletBalance';
 import SelectTokenModal from './SelectTokenModal';
+import UnstakeRequestSubmittedModal from './UnstakeRequestSubmittedModal';
 
 const LiquidUnstakeCard: FC = () => {
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
+
+  const [isRequestSubmittedModalOpen, setIsRequestSubmittedModalOpen] =
+    useState(false);
 
   // TODO: The rate will likely be a hook on its own, likely needs to be extracted from the Tangle Restaking Parachain via a query/subscription.
   const [rate] = useState<number | null>(1.0);
@@ -110,6 +114,7 @@ const LiquidUnstakeCard: FC = () => {
       isNative={false}
       token={selectedChain.token}
       tooltip="Click to use all staked balance"
+      onClick={() => setFromAmount(maximumInputAmount)}
     />
   );
 
@@ -194,6 +199,12 @@ const LiquidUnstakeCard: FC = () => {
         isOpen={isSelectTokenModalOpen}
         onClose={() => setIsSelectTokenModalOpen(false)}
         onTokenSelect={handleTokenSelect}
+      />
+
+      <UnstakeRequestSubmittedModal
+        isOpen={isRequestSubmittedModalOpen}
+        onClose={() => setIsRequestSubmittedModalOpen(false)}
+        unstakeRequest={null as any}
       />
     </>
   );
