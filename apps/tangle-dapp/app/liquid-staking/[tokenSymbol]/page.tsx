@@ -3,9 +3,7 @@
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
-import AvailableWithdrawCard from '../../../components/LiquidStaking/AvailableWithdrawCard';
 import LiquidStakeAndUnstakeCards from '../../../components/LiquidStaking/LiquidStakeAndUnstakeCards';
-import StakedAssetsTable from '../../../components/LiquidStaking/StakedAssetsTable';
 import UnstakeRequestsTable from '../../../components/LiquidStaking/UnstakeRequestsTable';
 import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
 
@@ -22,10 +20,6 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
   return (
     <div className="grid grid-cols-2 gap-12 items-start">
       <LiquidStakeAndUnstakeCards />
-
-      <AvailableWithdrawCard />
-
-      <StakedAssetsTable />
 
       <UnstakeRequestsTable />
     </div>

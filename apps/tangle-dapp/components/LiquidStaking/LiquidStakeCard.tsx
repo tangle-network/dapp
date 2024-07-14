@@ -21,7 +21,6 @@ import {
   LIQUID_STAKING_CHAIN_MAP,
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingChainId,
-  LiquidStakingToken,
 } from '../../constants/liquidStaking';
 import useMintTx from '../../data/liquidStaking/useMintTx';
 import useParachainBalances from '../../data/liquidStaking/useParachainBalances';
@@ -98,10 +97,9 @@ const LiquidStakeCard: FC = () => {
     return fromAmount.muln(rate);
   }, [fromAmount, rate]);
 
-  // TODO: Temporary. Use actual token.
   const walletBalance = (
     <ParachainWalletBalance
-      token={LiquidStakingToken.TNT}
+      token={selectedChain.token}
       tooltip="Click to use all available balance"
       onClick={() => setFromAmount(maximumInputAmount)}
     />
@@ -139,7 +137,6 @@ const LiquidStakeCard: FC = () => {
       <div className="flex flex-col gap-2 p-3 bg-mono-20 dark:bg-mono-180 rounded-lg">
         <DetailItem
           title="Rate"
-          tooltip="This is a test."
           value={`1 ${selectedChain.token} = ${rate} ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
         />
 
