@@ -44,6 +44,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>((props, ref) => {
     spinner,
     spinnerPlacement = 'start',
     variant = 'primary',
+    isJustIcon,
     ...restProps
   } = props;
 
@@ -57,6 +58,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>((props, ref) => {
     'max-w-max',
     cx({ 'w-full max-w-none justify-center': isFullWidth }),
     getButtonClassNameByVariant(variant, size),
+    isJustIcon && variant === 'utility' ? 'p-2' : '',
     className,
   );
 
