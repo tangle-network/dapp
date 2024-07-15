@@ -214,7 +214,7 @@ const LiquidUnstakeCard: FC = () => {
         onClick={handleUnstakeClick}
         isFullWidth
       >
-        Unstake
+        Schedule Unstake
       </Button>
 
       <SelectTokenModal
