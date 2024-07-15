@@ -4,8 +4,12 @@ import useActiveValidators from './useActiveValidators';
 import useWaitingValidators from './useWaitingValidators';
 
 const useAllValidators = () => {
-  const activeValidators = useActiveValidators();
-  const waitingValidators = useWaitingValidators();
+  const { validators: activeValidators, isLoading: isLoadingActiveValidators } =
+    useActiveValidators();
+  const {
+    validators: waitingValidators,
+    isLoading: isLoadingWaitingValidators,
+  } = useWaitingValidators();
 
   // TODO: Consider making this a map instead of an array.
   const allValidators = useMemo(
@@ -13,7 +17,10 @@ const useAllValidators = () => {
     [activeValidators, waitingValidators],
   );
 
-  return allValidators;
+  return {
+    validators: allValidators,
+    isLoading: isLoadingActiveValidators || isLoadingWaitingValidators,
+  };
 };
 
 export default useAllValidators;

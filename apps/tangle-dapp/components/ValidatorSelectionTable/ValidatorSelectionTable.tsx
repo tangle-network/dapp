@@ -1,23 +1,20 @@
 'use client';
 
-import { BN } from '@polkadot/util';
 import {
-  type Column,
-  type ColumnSort,
   createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  type PaginationState,
   type Row,
   type RowSelectionState,
   type SortingColumn,
+  type SortingFn,
   type SortingState,
   type TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowDropDownFill, ArrowDropUpFill, Search } from '@webb-tools/icons';
+import { Search } from '@webb-tools/icons';
 import {
   Avatar,
   CheckBox,
@@ -41,27 +38,23 @@ import React, {
 
 import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
+import {
+  sortAddressOrIdentityForNomineeOrValidator,
+  sortBnValueForNomineeOrValidator,
+} from '../../utils/table';
 import { ContainerSkeleton } from '..';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorSelectionTableProps } from './types';
 
-const DEFAULT_PAGINATION: PaginationState = {
-  pageIndex: 0,
-  pageSize: 20,
-};
-
-const SELECTED_VALIDATORS_COLUMN_SORT = {
-  id: 'address',
-  desc: false,
-} as const satisfies ColumnSort;
-
 const columnHelper = createColumnHelper<Validator>();
 
 const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   allValidators,
+  isLoading,
   defaultSelectedValidators,
   setSelectedValidators,
+  pageSize = 20,
 }) => {
   const [searchValue, setSearchValue] = useState('');
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
@@ -71,11 +64,13 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
     }, {} as RowSelectionState),
   );
   const [sorting, setSorting] = useState<SortingState>([
-    SELECTED_VALIDATORS_COLUMN_SORT,
+    {
+      id: 'totalStakeAmount',
+      desc: true,
+    },
   ]);
 
-  const [pagination, setPagination] =
-    useState<PaginationState>(DEFAULT_PAGINATION);
+  const isDesc = useMemo(() => sorting[0].desc, [sorting]);
 
   const toggleSortSelectionHandlerRef = useRef<
     SortingColumn<Validator>['toggleSorting'] | null
@@ -91,10 +86,9 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   const columns = useMemo(
     () => [
       columnHelper.accessor('address', {
-        header: ({ header }) => {
-          toggleSortSelectionHandlerRef.current = header.column.toggleSorting;
-          return <HeaderCell title="Validator" className="justify-start" />;
-        },
+        header: () => (
+          <HeaderCell title="Validator" className="justify-start" />
+        ),
         cell: (props) => {
           const address = props.getValue();
           const identity = props.row.original.identityName;
@@ -123,134 +117,125 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
                   textToCopy={address}
                   isButton={false}
                   className="cursor-pointer"
+                  iconClassName="!fill-mono-160 dark:!fill-mono-80"
                 />
               </div>
             </div>
           );
         },
-        // Sort the selected validators first
-        sortingFn: (rowA, rowB) => {
-          const rowASelected = rowA.getIsSelected();
-          const rowBSelected = rowB.getIsSelected();
-
-          if (rowASelected && !rowBSelected) {
-            return -1;
-          }
-
-          if (!rowASelected && rowBSelected) {
-            return 1;
-          }
-
-          return 0;
+        sortingFn: (rowA, rowB, columnId) =>
+          sortValidatorsBasedOnSortingFn(
+            rowA,
+            rowB,
+            columnId,
+            sortAddressOrIdentityForNomineeOrValidator,
+            isDesc,
+          ),
+        filterFn: (row, _, filterValue) => {
+          const { address, identityName } = row.original;
+          return (
+            address.toLowerCase().includes(filterValue.toLowerCase()) ||
+            identityName.toLowerCase().includes(filterValue.toLowerCase())
+          );
         },
       }),
       columnHelper.accessor('totalStakeAmount', {
-        header: ({ header }) => (
-          <div
-            className="flex items-center justify-center cursor-pointer"
-            onClick={header.column.getToggleSortingHandler()}
-          >
-            <HeaderCell title="Total Staked" className="flex-none block" />
-
-            <SortArrow column={header.column} />
-          </div>
+        header: () => (
+          <HeaderCell title="Total Staked" className="justify-start" />
         ),
         cell: (props) => (
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-start">
             <Chip color="dark-grey" className="normal-case">
               <TokenAmountCell amount={props.getValue()} />
             </Chip>
           </div>
         ),
-        sortingFn,
+        sortingFn: (rowA, rowB, columnId) =>
+          sortValidatorsBasedOnSortingFn(
+            rowA,
+            rowB,
+            columnId,
+            sortBnValueForNomineeOrValidator,
+            isDesc,
+          ),
       }),
       columnHelper.accessor('nominatorCount', {
-        header: ({ header }) => (
-          <div
-            className="flex items-center justify-center cursor-pointer"
-            onClick={header.column.getToggleSortingHandler()}
-          >
-            <HeaderCell title="Nominations" className="flex-none block" />
-
-            <SortArrow column={header.column} />
-          </div>
+        header: () => (
+          <HeaderCell title="Nominations" className="justify-start" />
         ),
         cell: (props) => (
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-start">
             <Chip color="dark-grey">{props.getValue()}</Chip>
           </div>
         ),
-        sortingFn,
+        sortingFn: (rowA, rowB, columnId) =>
+          sortValidatorsBasedOnSortingFn(
+            rowA,
+            rowB,
+            columnId,
+            (rowA, rowB) =>
+              rowA.original.nominatorCount - rowB.original.nominatorCount,
+            isDesc,
+          ),
       }),
       columnHelper.accessor('commission', {
-        header: ({ header }) => (
-          <div
-            className="flex items-center justify-center cursor-pointer"
-            onClick={header.column.getToggleSortingHandler()}
-          >
-            <HeaderCell title="Commission" className="flex-none block" />
-
-            <SortArrow column={header.column} />
-          </div>
+        header: () => (
+          <HeaderCell title="Commission" className="justify-start" />
         ),
         cell: (props) => (
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-start">
             <Chip color="dark-grey">
               {calculateCommission(props.getValue()).toFixed(2)}%
             </Chip>
           </div>
         ),
-        sortingFn,
+        sortingFn: (rowA, rowB, columnId) =>
+          sortValidatorsBasedOnSortingFn(
+            rowA,
+            rowB,
+            columnId,
+            sortBnValueForNomineeOrValidator,
+            isDesc,
+          ),
       }),
       columnHelper.accessor('identityName', {
         header: () => <HeaderCell title="Identity" />,
         cell: (props) => props.getValue(),
       }),
     ],
-    [],
+    [isDesc],
   );
 
   const tableProps = useMemo<TableOptions<Validator>>(
     () => ({
       data: allValidators,
       columns,
+      initialState: {
+        pagination: {
+          pageSize,
+        },
+      },
       state: {
         columnVisibility: {
           identityName: false,
         },
         sorting,
         rowSelection,
-        pagination,
-        globalFilter: searchValue,
+        columnFilters: [
+          {
+            id: 'address',
+            value: searchValue,
+          },
+        ],
       },
       enableRowSelection: true,
-      onPaginationChange: setPagination,
-      onGlobalFilterChange: (props) => {
-        setPagination(DEFAULT_PAGINATION);
-        setSearchValue(props);
-      },
       onRowSelectionChange: (props) => {
         toggleSortSelectionHandlerRef.current?.(false);
         setRowSelection(props);
+        // Force re-sort after selecting an item
+        setSorting((prevSorting) => [...prevSorting]);
       },
-      onSortingChange: (updaterOrValue) => {
-        if (typeof updaterOrValue === 'function') {
-          setSorting((prev) => {
-            const newSorting = updaterOrValue(prev);
-
-            // Modify the sorting state to always sort by the selected validators first
-            if (newSorting.length === 0) {
-              return [SELECTED_VALIDATORS_COLUMN_SORT];
-            } else if (newSorting[0].id === 'address') {
-              return newSorting;
-            } else {
-              return [SELECTED_VALIDATORS_COLUMN_SORT, ...newSorting];
-            }
-          });
-        } else {
-          setSorting(updaterOrValue);
-        }
-      },
+      onSortingChange: setSorting,
       filterFns: {
         fuzzy: fuzzyFilter,
       },
@@ -261,8 +246,9 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
       getSortedRowModel: getSortedRowModel(),
       getRowId: (row) => row.address,
       autoResetPageIndex: false,
+      enableSortingRemoval: false,
     }),
-    [columns, allValidators, pagination, rowSelection, searchValue, sorting],
+    [allValidators, columns, rowSelection, searchValue, sorting, pageSize],
   );
 
   const table = useReactTable(tableProps);
@@ -277,91 +263,65 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           value={searchValue}
           onChange={(val) => setSearchValue(val)}
           className="mb-1"
+          isControlled
         />
 
-        {allValidators.length === 0 ? (
-          <ContainerSkeleton className="max-h-[340px] w-full" />
-        ) : (
-          <Table
-            tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
-            thClassName="border-t-0 py-3 sticky top-0"
-            trClassName="cursor-pointer"
-            tdClassName="py-2 border-t-0"
-            paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
-            tableWrapperClassName="max-h-[340px] overflow-y-scroll"
-            tableProps={table}
-            isPaginated
-          />
+        {isLoading && (
+          // <div className="h-[340px]">
+          <ContainerSkeleton className="h-[340px] w-full" />
+          // </div>
+        )}
+
+        {!isLoading &&
+          (allValidators.length === 0 ? (
+            <div className="h-[340px] flex items-center justify-center">
+              <Typography variant="body1" fw="normal">
+                No results found
+              </Typography>
+            </div>
+          ) : (
+            <Table
+              tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
+              thClassName="border-t-0 py-3 sticky top-0"
+              trClassName="cursor-pointer"
+              tdClassName="py-2 border-t-0"
+              paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
+              tableWrapperClassName="max-h-[340px] overflow-y-scroll"
+              tableProps={table}
+              isPaginated
+            />
+          ))}
+
+        {!isLoading && allValidators.length > 0 && (
+          <Typography
+            variant="body1"
+            fw="normal"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            Selected: {Object.keys(rowSelection).length}/
+            {table.getPreFilteredRowModel().rows.length}
+          </Typography>
         )}
       </div>
-
-      <Typography
-        variant="body1"
-        fw="normal"
-        className="text-mono-200 dark:text-mono-0"
-      >
-        Selected: {Object.keys(rowSelection).length}/
-        {table.getPreFilteredRowModel().rows.length}
-      </Typography>
     </>
   );
 };
 
-type ColumnIdAssertFn = (
-  columnId: string,
-) => asserts columnId is keyof Validator;
+export default React.memo(ValidatorSelectionTable);
 
-const assertColumnId: ColumnIdAssertFn = (columnId) => {
-  if (
-    ![
-      'address',
-      'effectiveAmountStaked',
-      'delegations',
-      'commission',
-      'nominatorCount',
-      'totalStakeAmount',
-    ].includes(columnId)
-  ) {
-    throw new Error(`Invalid columnId: ${columnId}`);
-  }
-};
-
-const sortingFn = (
+function sortValidatorsBasedOnSortingFn(
   rowA: Row<Validator>,
   rowB: Row<Validator>,
   columnId: string,
-) => {
-  assertColumnId(columnId);
+  sortFn: SortingFn<Validator>,
+  isDesc: boolean,
+) {
+  const rowASelected = rowA.getIsSelected();
+  const rowBSelected = rowB.getIsSelected();
 
-  if (columnId === 'totalStakeAmount') {
-    const totalStakedA = rowA.original.totalStakeAmount;
-    const totalStakedB = rowB.original.totalStakeAmount;
-    const result = totalStakedA.sub(totalStakedB);
+  // Prioritize selected validators
+  if (rowASelected && !rowBSelected) return isDesc ? 1 : -1;
+  if (!rowASelected && rowBSelected) return isDesc ? -1 : 1;
 
-    return result.ltn(0) ? -1 : result.gtn(0) ? 1 : 0;
-  }
-
-  // TODO: Avoid using Number() here, if it is a BN value, it should be compared as such.
-  const rowAValue = Number(rowA.original[columnId]);
-  const rowBValue = Number(rowB.original[columnId]);
-
-  return rowAValue - rowBValue;
-};
-
-const SortArrow: FC<{ column: Column<Validator, BN | number> }> = ({
-  column,
-}) => {
-  const isSorted = column.getIsSorted();
-
-  if (!isSorted) {
-    return null;
-  }
-
-  return isSorted === 'asc' ? (
-    <ArrowDropUpFill className="cursor-pointer" size="lg" />
-  ) : (
-    <ArrowDropDownFill className="cursor-pointer" size="lg" />
-  );
-};
-
-export default React.memo(ValidatorSelectionTable);
+  return sortFn(rowA, rowB, columnId);
+}

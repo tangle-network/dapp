@@ -4,8 +4,10 @@ import { Validator } from '../../types';
 
 export type ValidatorSelectionTableProps = {
   allValidators: Validator[];
+  isLoading: boolean;
   defaultSelectedValidators: string[];
   setSelectedValidators: Dispatch<SetStateAction<Set<string>>>;
+  pageSize?: number;
 };
 
 export type SortBy = 'asc' | 'dsc';
