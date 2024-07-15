@@ -13,7 +13,7 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
   defaultSelectedValidators = [],
   setSelectedValidators,
 }) => {
-  const validators = useAllValidators();
+  const { validators, isLoading } = useAllValidators();
 
   return (
     <div className="flex flex-col col-span-2 gap-2">
@@ -21,6 +21,7 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
         defaultSelectedValidators={defaultSelectedValidators}
         allValidators={validators}
         setSelectedValidators={setSelectedValidators}
+        isLoading={isLoading}
       />
 
       <Alert

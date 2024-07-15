@@ -51,6 +51,7 @@ const columnHelper = createColumnHelper<Validator>();
 
 const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   allValidators,
+  isLoading,
   defaultSelectedValidators,
   setSelectedValidators,
   pageSize = 20,
@@ -265,32 +266,43 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           isControlled
         />
 
-        {allValidators.length === 0 ? (
-          <ContainerSkeleton className="max-h-[340px] w-full" />
-        ) : (
-          <Table
-            tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
-            thClassName="border-t-0 py-3 sticky top-0"
-            trClassName="cursor-pointer"
-            tdClassName="py-2 border-t-0"
-            paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
-            tableWrapperClassName="max-h-[340px] overflow-y-scroll"
-            tableProps={table}
-            isPaginated
-          />
+        {isLoading && (
+          // <div className="h-[340px]">
+          <ContainerSkeleton className="h-[340px] w-full" />
+          // </div>
+        )}
+
+        {!isLoading &&
+          (allValidators.length === 0 ? (
+            <div className="h-[340px] flex items-center justify-center">
+              <Typography variant="body1" fw="normal">
+                No results found
+              </Typography>
+            </div>
+          ) : (
+            <Table
+              tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
+              thClassName="border-t-0 py-3 sticky top-0"
+              trClassName="cursor-pointer"
+              tdClassName="py-2 border-t-0"
+              paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
+              tableWrapperClassName="max-h-[340px] overflow-y-scroll"
+              tableProps={table}
+              isPaginated
+            />
+          ))}
+
+        {!isLoading && allValidators.length > 0 && (
+          <Typography
+            variant="body1"
+            fw="normal"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            Selected: {Object.keys(rowSelection).length}/
+            {table.getPreFilteredRowModel().rows.length}
+          </Typography>
         )}
       </div>
-
-      {allValidators.length > 0 && (
-        <Typography
-          variant="body1"
-          fw="normal"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          Selected: {Object.keys(rowSelection).length}/
-          {table.getPreFilteredRowModel().rows.length}
-        </Typography>
-      )}
     </>
   );
 };
