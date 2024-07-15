@@ -6,11 +6,10 @@ import '@webb-tools/tangle-restaking-types';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
-import { InformationLine, Search } from '@webb-tools/icons';
+import { Search } from '@webb-tools/icons';
 import {
   Button,
   Chip,
-  IconWithTooltip,
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -27,7 +26,9 @@ import useParachainBalances from '../../data/liquidStaking/useParachainBalances'
 import useApi from '../../hooks/useApi';
 import useApiRx from '../../hooks/useApiRx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
+import DetailItem from './DetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
+import MintAndRedeemDetailItem from './MintAndRedeemDetailItem';
 import ParachainWalletBalance from './ParachainWalletBalance';
 import SelectValidators from './SelectValidators';
 
@@ -140,10 +141,10 @@ const LiquidStakeCard: FC = () => {
           value={`1 ${selectedChain.token} = ${rate} ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
         />
 
-        <DetailItem
-          title="Cross-chain fee"
-          tooltip="This is a test."
-          value={`0.001984 ${selectedChain.token}`}
+        <MintAndRedeemDetailItem
+          intendedAmount={fromAmount}
+          isMinting
+          token={selectedChain.token}
         />
 
         <DetailItem
@@ -155,6 +156,7 @@ const LiquidStakeCard: FC = () => {
         <DetailItem title="Estimated wait time" value="~10 minutes" />
       </div>
 
+      {/* TODO: Disable stake button if no account is connected. Perhaps consider adding a tooltip instructing the user to connect an account in order to use this action. */}
       <Button
         isDisabled={
           executeMintTx === null || fromAmount === null || fromAmount.isZero()
@@ -167,41 +169,6 @@ const LiquidStakeCard: FC = () => {
         Stake
       </Button>
     </>
-  );
-};
-
-type DetailItemProps = {
-  title: string;
-  tooltip?: string;
-  value: string;
-};
-
-/** @internal */
-const DetailItem: FC<DetailItemProps> = ({ title, tooltip, value }) => {
-  return (
-    <div className="flex gap-2 justify-between w-full">
-      <div className="flex items-center gap-1">
-        <Typography variant="body1" fw="normal">
-          {title}
-        </Typography>
-
-        {tooltip !== undefined && (
-          <IconWithTooltip
-            icon={
-              <InformationLine className="fill-mono-140 dark:fill-mono-100" />
-            }
-            content={tooltip}
-            overrideTooltipBodyProps={{
-              className: 'max-w-[350px]',
-            }}
-          />
-        )}
-      </div>
-
-      <Typography className="dark:text-mono-0" variant="body1" fw="bold">
-        {value}
-      </Typography>
-    </div>
   );
 };
 

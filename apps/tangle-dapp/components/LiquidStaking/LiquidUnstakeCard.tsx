@@ -8,6 +8,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { InformationLine } from '@webb-tools/icons';
 import {
+  Alert,
   Button,
   IconWithTooltip,
   Typography,
@@ -20,6 +21,7 @@ import {
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingChainId,
 } from '../../constants/liquidStaking';
+import useDelegationsOccupiedStatus from '../../data/liquidStaking/useDelegationsOccupiedStatus';
 import useParachainBalances from '../../data/liquidStaking/useParachainBalances';
 import useRedeemTx from '../../data/liquidStaking/useRedeemTx';
 import useApi from '../../hooks/useApi';
@@ -48,6 +50,15 @@ const LiquidUnstakeCard: FC = () => {
   const { nativeBalances } = useParachainBalances();
 
   const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
+
+  const { result: areAllDelegationsOccupiedOpt } = useDelegationsOccupiedStatus(
+    selectedChain.currency,
+  );
+
+  const areAllDelegationsOccupied =
+    areAllDelegationsOccupiedOpt === null
+      ? null
+      : areAllDelegationsOccupiedOpt.unwrapOrDefault();
 
   const { result: minimumRedeemAmount } = useApiRx(
     useCallback(
@@ -182,9 +193,21 @@ const LiquidUnstakeCard: FC = () => {
         />
       </div>
 
+      {areAllDelegationsOccupied?.isTrue && (
+        <Alert
+          type="warning"
+          className="mt-4"
+          description="Cannot redeem due to all delegations being occupied."
+        />
+      )}
+
+      {/* TODO: Disable unstake button if no account is connected. Perhaps consider adding a tooltip instructing the user to connect an account in order to use this action. */}
       <Button
         isDisabled={
-          executeRedeemTx === null || fromAmount === null || fromAmount.isZero()
+          executeRedeemTx === null ||
+          fromAmount === null ||
+          fromAmount.isZero() ||
+          areAllDelegationsOccupied === null
         }
         isLoading={redeemTxStatus === TxStatus.PROCESSING}
         loadingText="Processing"

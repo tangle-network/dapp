@@ -16,6 +16,7 @@ export type RedeemTxContext = {
 
 const useRedeemTx = () => {
   // TODO: Add support for EVM accounts once precompile(s) for the `lstMinting` pallet are implemented on Tangle.
+  // TODO: Consider moving checks, such as checking that the provided amount equals or greater than 'minimumMint' amount here instead of in the consumer of this hook.
 
   return useSubstrateTxWithNotification<RedeemTxContext>(
     TxName.REDEEM,
