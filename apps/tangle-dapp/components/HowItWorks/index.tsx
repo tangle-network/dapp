@@ -20,7 +20,7 @@ const HowItWorks = forwardRef<HTMLDivElement, HowItWorksProps>(
       <div
         {...props}
         className={twMerge(
-          'space-y-6 p-6 rounded-xl bg-linear-table max-w-lg',
+          'space-y-6 p-6 rounded-xl bg-linear-table',
           className,
         )}
         ref={ref}

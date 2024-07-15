@@ -8,7 +8,8 @@ import {
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useSubscription } from 'observable-hooks';
-import React, {
+import {
+  type ComponentProps,
   useCallback,
   useEffect,
   useMemo,
@@ -16,6 +17,7 @@ import React, {
   useState,
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
+import { twMerge } from 'tailwind-merge';
 import { formatUnits, parseUnits } from 'viem';
 
 import useRestakeTxEventHandlersWithNoti, {
@@ -48,7 +50,9 @@ function getDefaultTypedChainId(activeTypedChainId: number | null) {
     : SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0];
 }
 
-const DepositForm = () => {
+export type DepositFormProps = ComponentProps<'form'>;
+
+const DepositForm = ({ className, ...props }: DepositFormProps) => {
   const formRef = useRef<HTMLFormElement>(null);
 
   const activeTypedChainId = useActiveTypedChainId();
@@ -198,9 +202,10 @@ const DepositForm = () => {
 
   return (
     <form
+      {...props}
       ref={formRef}
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full h-full max-w-lg overflow-hidden"
+      className={twMerge('w-full h-full max-w-lg overflow-hidden', className)}
     >
       <div className="flex flex-col h-full space-y-4 grow">
         <RestakeTabs />
