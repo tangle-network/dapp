@@ -6,7 +6,10 @@ import useApiRx from '../../hooks/useApiRx';
 import { useValidators } from './useValidators';
 
 const useWaitingValidators = () => {
-  const { result: waitingValidatorAddresses } = useApiRx(
+  const {
+    result: waitingValidatorAddresses,
+    isLoading: isLoadingWaitingValidatorAddresses,
+  } = useApiRx(
     useCallback(
       (api) =>
         api.derive.staking
@@ -16,7 +19,11 @@ const useWaitingValidators = () => {
     ),
   );
 
-  return useValidators(waitingValidatorAddresses, false);
+  return useValidators(
+    waitingValidatorAddresses,
+    isLoadingWaitingValidatorAddresses,
+    false,
+  );
 };
 
 export default useWaitingValidators;

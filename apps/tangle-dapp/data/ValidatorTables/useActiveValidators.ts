@@ -6,7 +6,10 @@ import useApiRx from '../../hooks/useApiRx';
 import { useValidators } from './useValidators';
 
 const useActiveValidators = () => {
-  const { result: activeValidatorAddresses } = useApiRx(
+  const {
+    result: activeValidatorAddresses,
+    isLoading: isLoadingActiveValidatorAddresses,
+  } = useApiRx(
     useCallback((api) => {
       const electedInfo = api.derive.staking.electedInfo(DEFAULT_FLAGS_ELECTED);
 
@@ -14,7 +17,11 @@ const useActiveValidators = () => {
     }, []),
   );
 
-  return useValidators(activeValidatorAddresses, true);
+  return useValidators(
+    activeValidatorAddresses,
+    isLoadingActiveValidatorAddresses,
+    true,
+  );
 };
 
 export default useActiveValidators;
