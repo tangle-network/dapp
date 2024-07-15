@@ -3,16 +3,16 @@
 import '@webb-tools/tangle-restaking-types';
 
 import { Bytes } from '@polkadot/types';
-import { TanglePrimitivesCurrencyTokenSymbol } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
 import { TxName } from '../../constants';
+import { LiquidStakingCurrency } from '../../constants/liquidStaking';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 
 export type MintTxContext = {
   amount: BN;
-  currency: TanglePrimitivesCurrencyTokenSymbol['type'];
+  currency: LiquidStakingCurrency;
 };
 
 const useMintTx = () => {

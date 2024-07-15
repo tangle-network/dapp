@@ -20,13 +20,18 @@ export enum LiquidStakingToken {
   TNT = 'BNC',
 }
 
+// TODO: Temporary manual override until the Parachain types are updated.
+export type LiquidStakingCurrency =
+  | Exclude<TanglePrimitivesCurrencyTokenSymbol['type'], 'Bnc'>
+  | 'Tnt';
+
 export type LiquidStakingChainDef = {
   id: LiquidStakingChainId;
   name: string;
   token: LiquidStakingToken;
   logo: StaticAssetPath;
   networkName: string;
-  currency: TanglePrimitivesCurrencyTokenSymbol['type'];
+  currency: LiquidStakingCurrency;
   decimals: number;
 };
 
@@ -89,8 +94,7 @@ const TANGLE_RESTAKING_PARACHAIN: LiquidStakingChainDef = {
   token: LiquidStakingToken.TNT,
   logo: StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO,
   networkName: 'Tangle Parachain',
-  // TODO: This is temporary until the Tangle Primitives are updated with the correct currency token symbol for TNT.
-  currency: 'Bnc',
+  currency: 'Tnt',
   decimals: 18,
 };
 

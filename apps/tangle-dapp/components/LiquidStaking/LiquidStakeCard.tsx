@@ -8,6 +8,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Search } from '@webb-tools/icons';
 import {
+  Alert,
   Button,
   Chip,
   Input,
@@ -21,12 +22,16 @@ import {
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingChainId,
 } from '../../constants/liquidStaking';
+import useExchangeRate, {
+  ExchangeRateType,
+} from '../../data/liquidStaking/useExchangeRate';
 import useMintTx from '../../data/liquidStaking/useMintTx';
 import useParachainBalances from '../../data/liquidStaking/useParachainBalances';
 import useApi from '../../hooks/useApi';
 import useApiRx from '../../hooks/useApiRx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import DetailItem from './DetailItem';
+import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
 import MintAndRedeemDetailItem from './MintAndRedeemDetailItem';
 import ParachainWalletBalance from './ParachainWalletBalance';
@@ -34,9 +39,6 @@ import SelectValidators from './SelectValidators';
 
 const LiquidStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
-
-  // TODO: The rate will likely be a hook on its own, likely needs to be extracted from the Tangle Restaking Parachain via a query/subscription.
-  const [rate] = useState<number | null>(1.0);
 
   const [selectedChainId, setSelectedChainId] = useState<LiquidStakingChainId>(
     LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN,
@@ -46,6 +48,11 @@ const LiquidStakeCard: FC = () => {
   const { nativeBalances } = useParachainBalances();
 
   const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
+
+  const exchangeRateOpt = useExchangeRate(
+    ExchangeRateType.NativeToLiquid,
+    selectedChain.currency,
+  );
 
   const { result: minimumMintingAmount } = useApiRx(
     useCallback(
@@ -91,12 +98,16 @@ const LiquidStakeCard: FC = () => {
   }, [executeMintTx, fromAmount, selectedChain.currency]);
 
   const toAmount = useMemo(() => {
-    if (fromAmount === null || rate === null) {
+    if (
+      fromAmount === null ||
+      exchangeRateOpt === null ||
+      exchangeRateOpt.value === null
+    ) {
       return null;
     }
 
-    return fromAmount.muln(rate);
-  }, [fromAmount, rate]);
+    return fromAmount.muln(exchangeRateOpt.value);
+  }, [fromAmount, exchangeRateOpt]);
 
   const walletBalance = (
     <ParachainWalletBalance
@@ -136,9 +147,10 @@ const LiquidStakeCard: FC = () => {
 
       {/* Details */}
       <div className="flex flex-col gap-2 p-3 bg-mono-20 dark:bg-mono-180 rounded-lg">
-        <DetailItem
-          title="Rate"
-          value={`1 ${selectedChain.token} = ${rate} ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
+        <ExchangeRateDetailItem
+          token={selectedChain.token}
+          currency={selectedChain.currency}
+          type={ExchangeRateType.NativeToLiquid}
         />
 
         <MintAndRedeemDetailItem
@@ -156,10 +168,25 @@ const LiquidStakeCard: FC = () => {
         <DetailItem title="Estimated wait time" value="~10 minutes" />
       </div>
 
+      {/* TODO: This should actually only apply to unstaking, since when staking the user itself is the liquidity provider, since they are minting LSTs. */}
+      {exchangeRateOpt?.isEmpty && (
+        <Alert
+          type="warning"
+          description="Liquidity is currently unavailable for this token. This means you cannot stake this token at this time. Please check back later or try a different token."
+        />
+      )}
+
       {/* TODO: Disable stake button if no account is connected. Perhaps consider adding a tooltip instructing the user to connect an account in order to use this action. */}
       <Button
         isDisabled={
-          executeMintTx === null || fromAmount === null || fromAmount.isZero()
+          // Mint transaction is not available yet.
+          executeMintTx === null ||
+          // No amount entered or amount is zero.
+          fromAmount === null ||
+          fromAmount.isZero() ||
+          // TODO: This should actually only apply to unstaking, since when staking the user itself is the liquidity provider, since they are minting LSTs.
+          // No liquidity available for this token.
+          exchangeRateOpt?.isEmpty === true
         }
         isLoading={mintTxStatus === TxStatus.PROCESSING}
         loadingText="Processing"
