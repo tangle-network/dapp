@@ -7,7 +7,6 @@ import {
   type TokenListCardProps,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
-import { useSubscription } from 'observable-hooks';
 import {
   type ComponentProps,
   useCallback,
@@ -59,7 +58,7 @@ const DepositForm = ({ className, ...props }: DepositFormProps) => {
 
   const {
     register,
-    setValue,
+    setValue: setFormValue,
     resetField,
     handleSubmit,
     watch,
@@ -71,22 +70,19 @@ const DepositForm = ({ className, ...props }: DepositFormProps) => {
     },
   });
 
-  const { assetMap, assetWithBalances, assetWithBalances$ } =
-    useRestakeContext();
+  const { assetMap, assetWithBalances } = useRestakeContext();
   const { deposit } = useRestakeTx();
 
-  // Subscribe to assetMap$ and update depositAssetId to the first assetId
-  useSubscription(assetWithBalances$, (assets) => {
-    if (assets.length === 0) {
-      return;
-    }
-
-    const defaultAssetId = assets[0].assetId;
-    setValue('depositAssetId', defaultAssetId, {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
-  });
+  const setValue = useCallback(
+    (...params: Parameters<typeof setFormValue>) => {
+      setFormValue(params[0], params[1], {
+        shouldDirty: true,
+        shouldValidate: true,
+        ...params[2],
+      });
+    },
+    [setFormValue],
+  );
 
   // Register fields render on modal on mount
   useEffect(() => {
@@ -162,10 +158,7 @@ const DepositForm = ({ className, ...props }: DepositFormProps) => {
 
   const handleChainChange = useCallback(
     ({ typedChainId }: ChainType) => {
-      setValue('sourceTypedChainId', typedChainId, {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
+      setValue('sourceTypedChainId', typedChainId);
       setChainModalOpen(false);
     },
     [setValue],
@@ -173,10 +166,7 @@ const DepositForm = ({ className, ...props }: DepositFormProps) => {
 
   const handleTokenChange = useCallback(
     (token: TokenListCardProps['selectTokens'][number]) => {
-      setValue('depositAssetId', token.id, {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
+      setValue('depositAssetId', token.id);
       closeTokenModal();
     },
     [closeTokenModal, setValue],
