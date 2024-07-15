@@ -200,7 +200,7 @@ const DepositForm = () => {
     <form
       ref={formRef}
       onSubmit={handleSubmit(onSubmit)}
-      className="h-full overflow-hidden"
+      className="w-full h-full max-w-lg overflow-hidden"
     >
       <div className="flex flex-col h-full space-y-4 grow">
         <RestakeTabs />

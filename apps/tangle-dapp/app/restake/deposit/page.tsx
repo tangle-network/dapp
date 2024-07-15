@@ -31,10 +31,10 @@ const HOW_IT_WORKS_STEPS = [
 
 export default function DepositPage() {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col items-center gap-6 md:flex-row md:justify-evenly md:items-start">
       <DepositForm />
 
-      <HowItWorks>
+      <HowItWorks className="mt-[60px]">
         {HOW_IT_WORKS_STEPS.map(({ title, description, Icon }, idx) => (
           <HowItWorksStep
             key={`${title}-${description}-${idx}`}

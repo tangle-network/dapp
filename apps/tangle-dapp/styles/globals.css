@@ -24,3 +24,7 @@ code span {
     --restake-card-min-height: 648px;
   }
 }
+
+.bg-linear-table {
+  @apply bg-gradient-to-b from-[#ffffff_-91.38%] to-[rgba(255,255,255,0)_180.01%] dark:from-[#2b2f40_-91.38%] dark:to-[rgba(43,47,64,0)_180.01%];
+}

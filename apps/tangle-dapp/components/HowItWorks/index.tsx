@@ -17,7 +17,14 @@ type HowItWorksProps = ComponentProps<'div'> & {
 const HowItWorks = forwardRef<HTMLDivElement, HowItWorksProps>(
   ({ children, className, docsUrl, ...props }, ref) => {
     return (
-      <div {...props} className={twMerge('space-y-6', className)} ref={ref}>
+      <div
+        {...props}
+        className={twMerge(
+          'space-y-6 p-6 rounded-xl bg-linear-table max-w-lg',
+          className,
+        )}
+        ref={ref}
+      >
         <Typography variant="body1" fw="bold">
           How it works
         </Typography>
