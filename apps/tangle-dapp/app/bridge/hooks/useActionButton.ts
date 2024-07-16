@@ -29,7 +29,7 @@ export default function useActionButton({
 }: {
   handleOpenConfirmModal: () => void;
 }) {
-  const { activeAccount, activeWallet, loading, isConnecting } =
+  const { activeAccount, activeChain, activeWallet, loading, isConnecting } =
     useWebContext();
   const { toggleModal } = useConnectWallet();
   const {
@@ -56,22 +56,23 @@ export default function useActionButton({
         return {
           text: 'Wallet and Source Chain Mismatch',
           tooltip:
-            'Source Chain is EVM but the connected wallet only supports Substrate networks',
+            'Selected Source Chain is EVM but the connected wallet only supports Substrate chains',
         };
       case BridgeWalletError.MismatchSubstrate:
         return {
           text: 'Wallet and Source Chain Mismatch',
           tooltip:
-            'Source Chain is Substrate but the connected wallet only supports EVM networks',
+            'Selected Source Chain is Substrate but the connected wallet only supports EVM chains',
         };
       case BridgeWalletError.EvmWrongChain:
         return {
           text: 'Wrong EVM Chain Connected',
+          tooltip: `Selected Source Chain is ${selectedSourceChain.name} but the connected wallet is on ${activeChain?.name}`,
         };
       default:
         return null;
     }
-  }, [walletError]);
+  }, [walletError, selectedSourceChain, activeChain]);
 
   const isWalletAndSourceChainMismatch = useMemo(
     () =>
@@ -121,7 +122,7 @@ export default function useActionButton({
 
   const buttonText = useMemo(() => {
     if (isWalletAndSourceChainMismatch) return 'Switch Wallet';
-    if (isEvmWrongChain) return 'Switch Chain';
+    if (isEvmWrongChain) return 'Switch Network';
     if (isRequiredToConnectWallet) return 'Connect';
     if (isTransferring) return 'Transferring...';
     return 'Transfer';

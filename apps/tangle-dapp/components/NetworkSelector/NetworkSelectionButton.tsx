@@ -118,7 +118,7 @@ const NetworkSelectionButton: FC = () => {
             </div>
           </TooltipTrigger>
 
-          <TooltipBody>Wrong EVM Network</TooltipBody>
+          <TooltipBody>Wrong EVM Chain Connected</TooltipBody>
         </Tooltip>
       )}
       <Dropdown>
