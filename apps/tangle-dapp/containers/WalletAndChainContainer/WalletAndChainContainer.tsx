@@ -12,7 +12,7 @@ import {
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
 import dynamic from 'next/dynamic';
-import { FC } from 'react';
+import { type FC } from 'react';
 
 import { WalletDropdown } from '../../components';
 import UpdateMetadataButton from '../../components/UpdateMetadataButton';
