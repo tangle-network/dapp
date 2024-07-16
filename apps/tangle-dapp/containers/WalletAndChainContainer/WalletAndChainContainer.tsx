@@ -4,12 +4,7 @@ import {
   useConnectWallet,
   useWebContext,
 } from '@webb-tools/api-provider-environment';
-import { chainsPopulated } from '@webb-tools/dapp-config';
 import { ComputerIcon } from '@webb-tools/icons';
-import {
-  calculateTypedChainId,
-  ChainType,
-} from '@webb-tools/sdk-core/typed-chain-id';
 import {
   Button,
   ConnectWalletMobileButton,
@@ -17,12 +12,10 @@ import {
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
 import dynamic from 'next/dynamic';
-import { usePathname } from 'next/navigation';
-import { FC, useEffect, useMemo } from 'react';
+import { FC } from 'react';
 
 import { WalletDropdown } from '../../components';
 import UpdateMetadataButton from '../../components/UpdateMetadataButton';
-import useNetworkStore from '../../context/useNetworkStore';
 
 const NetworkSelectionButton = dynamic(
   () => import('../../components/NetworkSelector/NetworkSelectionButton'),
@@ -30,55 +23,11 @@ const NetworkSelectionButton = dynamic(
 );
 
 const WalletAndChainContainer: FC = () => {
-  const pathname = usePathname();
-  const {
-    activeAccount,
-    activeChain,
-    activeWallet,
-    loading,
-    isConnecting,
-    switchChain,
-  } = useWebContext();
-  const { network } = useNetworkStore();
+  const { activeAccount, activeWallet, loading, isConnecting } =
+    useWebContext();
 
   const { toggleModal } = useConnectWallet();
   const { isMobile } = useCheckMobile();
-
-  const isBridgePage = useMemo(() => pathname === '/bridge', [pathname]);
-
-  useEffect(() => {
-    let isMounted = false;
-
-    const checkAndSwitchEvmChainIfNeeded = () => {
-      if (isBridgePage) return;
-      const isEvmWallet = activeWallet?.platform === 'EVM';
-      if (isEvmWallet && network?.evmChainId) {
-        if (activeChain?.id !== network.evmChainId) {
-          const typedChainId = calculateTypedChainId(
-            ChainType.EVM,
-            network.evmChainId,
-          );
-          const targetChain = chainsPopulated[typedChainId];
-          switchChain(targetChain, activeWallet);
-        }
-      }
-    };
-
-    isMounted = true;
-    if (isMounted) {
-      checkAndSwitchEvmChainIfNeeded();
-    }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [
-    isBridgePage,
-    activeWallet,
-    network?.evmChainId,
-    activeChain?.id,
-    switchChain,
-  ]);
 
   return (
     <div className="flex items-center gap-2">
