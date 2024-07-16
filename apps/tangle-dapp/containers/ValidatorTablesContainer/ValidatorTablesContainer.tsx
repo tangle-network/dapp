@@ -13,8 +13,8 @@ const waitingValidatorsTableTab = 'Waiting';
 
 const ValidatorTablesContainer = () => {
   const { network } = useNetworkStore();
-  const activeValidatorsData = useActiveValidators();
-  const waitingValidatorsData = useWaitingValidators();
+  const { validators: activeValidatorsData } = useActiveValidators();
+  const { validators: waitingValidatorsData } = useWaitingValidators();
   const isActiveValidatorsLoading = activeValidatorsData === null;
   const isWaitingValidatorsLoading = waitingValidatorsData === null;
 
