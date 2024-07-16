@@ -65,7 +65,7 @@ const NominatorStatsContainer: FC = () => {
   }, [bondedAmountOpt, nativeTokenSymbol]);
 
   return (
-    <>
+    <div>
       <div className="flex flex-col w-full gap-4 md:flex-row">
         <div
           className={cx(
@@ -240,7 +240,7 @@ const NominatorStatsContainer: FC = () => {
         isModalOpen={isWithdrawUnbondedModalOpen}
         setIsModalOpen={setIsWithdrawUnbondedModalOpen}
       />
-    </>
+    </div>
   );
 };
 
