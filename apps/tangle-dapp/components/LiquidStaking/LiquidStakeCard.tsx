@@ -112,6 +112,7 @@ const LiquidStakeCard: FC = () => {
   const walletBalance = (
     <ParachainWalletBalance
       token={selectedChain.token}
+      decimals={selectedChain.decimals}
       tooltip="Click to use all available balance"
       onClick={() => setFromAmount(maximumInputAmount)}
     />

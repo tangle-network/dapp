@@ -1,4 +1,4 @@
-import { BN_ZERO, formatBalance } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 import { WalletLineIcon } from '@webb-tools/icons';
 import {
   SkeletonLoader,
@@ -14,10 +14,12 @@ import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { LiquidStakingToken } from '../../constants/liquidStaking';
 import useParachainBalances from '../../data/liquidStaking/useParachainBalances';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import formatBn from '../../utils/formatBn';
 
 export type ParachainWalletBalanceProps = {
   isNative?: boolean;
   token: LiquidStakingToken;
+  decimals: number;
   tooltip?: string;
   onlyShowTooltipWhenBalanceIsSet?: boolean;
   onClick?: () => void;
@@ -26,6 +28,7 @@ export type ParachainWalletBalanceProps = {
 const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
   isNative = true,
   token,
+  decimals,
   tooltip,
   onlyShowTooltipWhenBalanceIsSet = true,
   onClick,
@@ -52,8 +55,8 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
       return null;
     }
 
-    return formatBalance(balance);
-  }, [activeSubstrateAddress, balance]);
+    return formatBn(balance, decimals);
+  }, [activeSubstrateAddress, balance, decimals]);
 
   const content = (
     <Typography

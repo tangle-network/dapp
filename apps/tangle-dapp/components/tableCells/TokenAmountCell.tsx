@@ -1,8 +1,9 @@
-import { BN, formatBalance } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useNetworkStore from '../../context/useNetworkStore';
+import formatBn from '../../utils/formatBn';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 
 export type TokenAmountCellProps = {
@@ -23,19 +24,12 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({
   const { nativeTokenSymbol } = useNetworkStore();
 
   const formattedBalance = useMemo(() => {
+    // Default to Tangle decimals if not provided.
     if (decimals === undefined) {
       return formatTangleBalance(amount);
     }
 
-    return formatBalance(amount, {
-      decimals,
-      withZero: false,
-      // This ensures that the balance is always displayed in the
-      // base unit, preventing the conversion to larger or smaller
-      // units (e.g. kilo, milli, etc.).
-      forceUnit: '-',
-      withUnit: false,
-    });
+    return formatBn(amount, decimals);
   }, [amount, decimals]);
 
   const parts = formattedBalance.split('.');

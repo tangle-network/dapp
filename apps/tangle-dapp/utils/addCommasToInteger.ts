@@ -5,13 +5,15 @@ import { BN } from '@polkadot/util';
  *
  * @example
  * ```ts
- * formatBnWithCommas(new BN('123456789')); // '123,456,789'
+ * addCommasToInteger(new BN('123456789')); // '123,456,789'
  * ```
  */
-export const formatBnWithCommas = (bn: BN): string => {
-  // TODO: Incorporate this into the logic of `formatBn` to consolidate balance formatting logic.
+export const addCommasToInteger = (
+  numberLike: BN | number | string,
+): string => {
+  // TODO: Consider adding a sanity check for the input value, to ensure that only digits are passed. In case that a number is passed, only add commas to the integer part.
 
-  const valueAsString = bn.toString();
+  const valueAsString = numberLike.toString();
   let result = '';
   let count = 0;
 

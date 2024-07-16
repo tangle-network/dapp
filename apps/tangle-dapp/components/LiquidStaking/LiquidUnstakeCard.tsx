@@ -124,6 +124,7 @@ const LiquidUnstakeCard: FC = () => {
     <ParachainWalletBalance
       isNative={false}
       token={selectedChain.token}
+      decimals={selectedChain.decimals}
       tooltip="Click to use all staked balance"
       onClick={() => setFromAmount(maximumInputAmount)}
     />

@@ -17,7 +17,7 @@ export enum LiquidStakingToken {
   MANTA = 'MANTA',
   ASTAR = 'ASTAR',
   PHALA = 'PHALA',
-  TNT = 'BNC',
+  TNT = 'TNT',
 }
 
 // TODO: Temporary manual override until the Parachain types are updated.

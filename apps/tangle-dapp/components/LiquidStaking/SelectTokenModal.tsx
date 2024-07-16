@@ -1,4 +1,4 @@
-import { BN, formatBalance } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import {
   GITHUB_BUG_REPORT_URL,
   Modal,
@@ -10,6 +10,7 @@ import { FC, useEffect, useMemo } from 'react';
 
 import { LiquidStakingChainId } from '../../constants/liquidStaking';
 import { AnySubstrateAddress } from '../../types/utils';
+import formatBn from '../../utils/formatBn';
 import AddressLink from './AddressLink';
 import ChainLogo from './ChainLogo';
 
@@ -97,11 +98,7 @@ const TokenListItem: FC<TokenListItemProps> = ({
   onClick,
 }) => {
   const formattedAmount = useMemo(() => {
-    return formatBalance(amount, {
-      withSi: true,
-      decimals,
-      withUnit: false,
-    });
+    return formatBn(amount, decimals);
   }, [amount, decimals]);
 
   return (
