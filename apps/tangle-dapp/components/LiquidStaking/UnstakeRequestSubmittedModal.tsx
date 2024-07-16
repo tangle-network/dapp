@@ -21,7 +21,8 @@ export type UnstakeRequestSubmittedModalProps = {
 
 const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
   isOpen,
-  unstakeRequest,
+  // TODO: Make use of the unstake request data, which is relevant for the link's href.
+  unstakeRequest: _unstakeRequest,
   onClose,
 }) => {
   const handleAddTokenToWallet = useCallback(() => {
