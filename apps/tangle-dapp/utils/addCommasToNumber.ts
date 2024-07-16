@@ -8,12 +8,18 @@ import { BN } from '@polkadot/util';
  * addCommasToInteger(new BN('123456789')); // '123,456,789'
  * ```
  */
-export const addCommasToInteger = (
-  numberLike: BN | number | string,
-): string => {
-  // TODO: Consider adding a sanity check for the input value, to ensure that only digits are passed. In case that a number is passed, only add commas to the integer part.
-
+const addCommasToNumber = (numberLike: BN | number | string): string => {
   const valueAsString = numberLike.toString();
+
+  // Sanity check that the value is not already formatted.
+  if (typeof numberLike === 'string' && numberLike.includes(',')) {
+    console.warn('Attempted to add commas to a number that already has commas');
+
+    return numberLike;
+  }
+
+  // TODO: Add a sanity check for the input value, to ensure that only digits are passed. In case that a number is passed, only add commas to the integer part.
+
   let result = '';
   let count = 0;
 
@@ -30,3 +36,5 @@ export const addCommasToInteger = (
 
   return result;
 };
+
+export default addCommasToNumber;

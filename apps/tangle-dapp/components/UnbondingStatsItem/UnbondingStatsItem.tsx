@@ -8,7 +8,7 @@ import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useNetworkStore from '../../context/useNetworkStore';
 import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useUnbonding from '../../data/staking/useUnbonding';
-import { addCommasToInteger } from '../../utils/addCommasToInteger';
+import addCommasToNumber from '../../utils/addCommasToNumber';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import { NominatorStatsItem } from '../NominatorStatsItem';
 
@@ -41,7 +41,7 @@ const UnbondingStatsItem: FC = () => {
           </p>
 
           {entry.remainingEras.gtn(0) && (
-            <p>{addCommasToInteger(entry.remainingEras)} eras remaining.</p>
+            <p>{addCommasToNumber(entry.remainingEras)} eras remaining.</p>
           )}
         </div>
       );

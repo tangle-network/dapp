@@ -39,7 +39,7 @@ function safeParseInputAmount(
 
 const INPUT_AMOUNT_FORMAT: Partial<FormatOptions> = {
   includeCommas: true,
-  fractionLength: undefined,
+  fractionMaxLength: undefined,
 };
 
 type Options = {

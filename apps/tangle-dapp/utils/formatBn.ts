@@ -1,6 +1,6 @@
 import { BN } from '@polkadot/util';
 
-import { addCommasToInteger } from './addCommasToInteger';
+import addCommasToNumber from './addCommasToNumber';
 
 /**
  * When the user inputs an amount in the UI, say using an Input
@@ -19,14 +19,14 @@ const getChainUnitFactor = (decimals: number) => {
 
 export type FormatOptions = {
   includeCommas: boolean;
-  fractionLength?: number;
-  padZerosInFraction: boolean;
+  fractionMaxLength?: number;
+  trimTrailingZeroes: boolean;
 };
 
 const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
-  fractionLength: 4,
-  includeCommas: true,
-  padZerosInFraction: false,
+  fractionMaxLength: 4,
+  includeCommas: false,
+  trimTrailingZeroes: true,
 };
 
 function formatBn(
@@ -40,43 +40,55 @@ function formatBn(
   const remainderBn = amount.mod(chainUnitFactorBn);
 
   let integerPart = integerPartBn.toString(10);
-  let decimalPart = remainderBn.toString(10);
+  let fractionPart = remainderBn.toString(10).padStart(decimals, '0');
 
-  // Check for missing leading zeros in the decimal part. This
+  const amountStringLength = amount.toString().length;
+  const partsLength = integerPart.length + fractionPart.length;
+
+  // Check for missing leading zeros in the fraction part. This
   // edge case can happen when the remainder has fewer digits
   // than the specified decimals, resulting in a loss of leading
   // zeros when converting to a string, ex. 0001 -> 1.
-  if (amount.toString().length !== (integerPart + decimalPart).length) {
+  if (amountStringLength !== partsLength) {
     // Count how many leading zeros are missing.
-    const missing0sCount =
-      amount.toString().length - (integerPart + decimalPart).length;
+    const missingZerosCount = amountStringLength - partsLength;
 
-    // Add the missing leading zeros.
-    decimalPart = '0'.repeat(missing0sCount) + decimalPart;
+    // Add the missing leading zeros. Use the max function to avoid
+    // strange situations where the count is negative (ie. the length
+    // of the number is greater than the length of the integer and fraction
+    // parts combined).
+    fractionPart = '0'.repeat(Math.max(missingZerosCount, 0)) + fractionPart;
   }
 
-  if (finalOptions.padZerosInFraction) {
-    decimalPart = decimalPart.padStart(decimals, '0');
+  // Pad the end of the fraction part with zeros if applicable,
+  // ex. 0.001 -> 0.0010 when the requested fraction length is 4.
+  if (!finalOptions.trimTrailingZeroes) {
+    fractionPart = fractionPart.padEnd(
+      finalOptions.fractionMaxLength ?? decimals,
+      '0',
+    );
   }
 
-  // Trim the decimal part to the desired length.
-  if (finalOptions.fractionLength !== undefined) {
-    decimalPart = decimalPart.substring(0, finalOptions.fractionLength);
+  // Trim the fraction part to the desired length.
+  if (finalOptions.fractionMaxLength !== undefined) {
+    fractionPart = fractionPart.substring(0, finalOptions.fractionMaxLength);
   }
 
-  // Remove trailing 0s.
-  while (decimalPart.endsWith('0')) {
-    decimalPart = decimalPart.substring(0, decimalPart.length - 1);
+  // Remove trailing zeroes if applicable.
+  if (finalOptions.trimTrailingZeroes) {
+    while (fractionPart.endsWith('0')) {
+      fractionPart = fractionPart.substring(0, fractionPart.length - 1);
+    }
   }
 
   // Insert commas in the integer part if requested.
   if (finalOptions.includeCommas) {
-    integerPart = addCommasToInteger(integerPart);
+    integerPart = addCommasToNumber(integerPart);
   }
 
-  // Combine the integer and decimal parts. Only include the decimal
+  // Combine the integer and fraction parts. Only include the fraction
   // part if it's available.
-  return decimalPart !== '' ? `${integerPart}.${decimalPart}` : integerPart;
+  return fractionPart !== '' ? `${integerPart}.${fractionPart}` : integerPart;
 }
 
 export default formatBn;
