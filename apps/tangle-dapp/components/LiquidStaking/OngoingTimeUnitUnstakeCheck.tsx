@@ -26,9 +26,10 @@ const OngoingTimeUnitUnstakeCheck: FC<OngoingTimeUnitUnstakeCheckProps> = ({
   // given currency, return a warning message.
   return (
     <Alert
-      type="warning"
+      type="error"
       className="mt-4"
-      description="There is no ongoing time unit defined for this token, and it cannot be redeemed yet. Please contact the Tangle team for more information."
+      title="No Ongoing Time Unit Defined"
+      description="There is no ongoing time unit defined for this token. This means that the unstake period cannot be calculated on-chain, and therefore this token cannot be redeemed at this time. Please contact the Tangle team for more information."
     />
   );
 };

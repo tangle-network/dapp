@@ -172,6 +172,7 @@ const LiquidStakeCard: FC = () => {
       {exchangeRateOpt?.isEmpty && (
         <Alert
           type="warning"
+          title="Liquidity Unavailable"
           description="Liquidity is currently unavailable for this token. This means you cannot stake this token at this time. Please check back later or try a different token."
         />
       )}

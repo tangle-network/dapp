@@ -190,6 +190,7 @@ const LiquidUnstakeCard: FC = () => {
         <Alert
           type="warning"
           className="mt-4"
+          title="All Delegations Occupied"
           description="Cannot redeem due to all delegations being occupied."
         />
       )}
