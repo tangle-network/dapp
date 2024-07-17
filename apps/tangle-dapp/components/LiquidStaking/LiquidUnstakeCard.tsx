@@ -27,6 +27,7 @@ import { TxStatus } from '../../hooks/useSubstrateTx';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
 import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
+import OngoingTimeUnitUnstakeCheck from './OngoingTimeUnitUnstakeCheck';
 import ParachainWalletBalance from './ParachainWalletBalance';
 import SelectTokenModal from './SelectTokenModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
@@ -192,6 +193,8 @@ const LiquidUnstakeCard: FC = () => {
           description="Cannot redeem due to all delegations being occupied."
         />
       )}
+
+      <OngoingTimeUnitUnstakeCheck currency={selectedChain.currency} />
 
       {/* TODO: Disable unstake button if no account is connected. Perhaps consider adding a tooltip instructing the user to connect an account in order to use this action. */}
       <Button

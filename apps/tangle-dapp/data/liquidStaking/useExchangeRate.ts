@@ -1,7 +1,10 @@
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useMemo } from 'react';
 
-import { LiquidStakingCurrency } from '../../constants/liquidStaking';
+import {
+  LiquidStakingCurrency,
+  LiquidStakingCurrencyKey,
+} from '../../constants/liquidStaking';
 import useApiRx from '../../hooks/useApiRx';
 import calculateBnRatio from '../../utils/calculateBnRatio';
 import Optional from '../../utils/Optional';
@@ -16,7 +19,7 @@ const useExchangeRate = (
   currency: LiquidStakingCurrency,
 ) => {
   const { result: tokenPoolAmount } = useApiRx((api) => {
-    const key =
+    const key: LiquidStakingCurrencyKey =
       type === ExchangeRateType.LiquidToNative
         ? { lst: currency }
         : { Native: currency };
