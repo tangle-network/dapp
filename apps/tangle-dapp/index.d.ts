@@ -14,8 +14,8 @@ interface EthereumProvider {
   }) => Promise<unknown>;
 }
 
-declare global {
-  interface Window {
-    ethereum: EthereumProvider;
-  }
+/// <reference types="react-scripts" />
+
+interface Window {
+  ethereum: EthereumProvider;
 }

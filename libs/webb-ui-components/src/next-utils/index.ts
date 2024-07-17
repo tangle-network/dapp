@@ -1,2 +1,2 @@
 export * from './sidebarState';
-export * from './useLayoutBgClassname';
+export * from './useLayoutBgClassName';

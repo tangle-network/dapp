@@ -1,7 +1,7 @@
 'use client';
 
 import Decimal from 'decimal.js';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 
 import { useBridge } from '../../../context/BridgeContext';
@@ -22,6 +22,8 @@ export default function useBridgeFee() {
     bridgeType,
     selectedSourceChain,
     selectedDestinationChain,
+    setBridgeFee,
+    setIsBridgeFeeLoading,
   } = useBridge();
   const selectedToken = useSelectedToken();
   const ethersProvider = useEthersProvider();
@@ -104,5 +106,11 @@ export default function useBridgeFee() {
     }
   }, [bridgeType, isLoadingEvmSygmaFee, isLoadingSubstrateSygmaFee]);
 
-  return { fee, isLoading };
+  useEffect(() => {
+    setBridgeFee(fee);
+  }, [setBridgeFee, fee]);
+
+  useEffect(() => {
+    setIsBridgeFeeLoading(isLoading);
+  }, [setIsBridgeFeeLoading, isLoading]);
 }

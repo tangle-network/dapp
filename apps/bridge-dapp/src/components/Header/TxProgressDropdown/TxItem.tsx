@@ -11,7 +11,9 @@ import { TxProgressor } from '@webb-tools/webb-ui-components/components/TxProgre
 import type { TxInfo } from '@webb-tools/webb-ui-components/components/TxProgressor/types';
 import type { ButtonProps } from '@webb-tools/webb-ui-components/components/buttons/types';
 import type { TransactionItemStatus } from '@webb-tools/webb-ui-components/containers/TransactionProgressCard/types';
+import Decimal from 'decimal.js';
 import type { FC } from 'react';
+
 import { NOTE_ACCOUNT_PATH } from '../../../constants/paths';
 
 const TxItem: FC<{
@@ -73,7 +75,7 @@ const TxItem: FC<{
         txSourceInfo={{
           isSource: true,
           typedChainId: tx.metaData.wallets.src,
-          amount: tx.metaData.amount * -1,
+          amount: new Decimal(tx.metaData.amount * -1),
           tokenSymbol: tx.metaData.tokens[0],
           walletAddress: tx.metaData.address,
           accountType: srcAccountType,
@@ -81,7 +83,7 @@ const TxItem: FC<{
         }}
         txDestinationInfo={{
           typedChainId: tx.metaData.wallets.dest,
-          amount: tx.metaData.amount,
+          amount: new Decimal(tx.metaData.amount),
           tokenSymbol: tx.metaData.tokens[1],
           walletAddress: tx.metaData.recipient,
           accountType: destAccountType,

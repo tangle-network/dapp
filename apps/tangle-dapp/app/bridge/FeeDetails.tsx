@@ -7,16 +7,17 @@ import Decimal from 'decimal.js';
 import { FC, useMemo } from 'react';
 
 import { useBridge } from '../../context/BridgeContext';
-import useBridgeFee from './hooks/useBridgeFee';
-import useEstimatedGasFee from './hooks/useEstimatedGasFee';
 import useSelectedToken from './hooks/useSelectedToken';
 import useTypedChainId from './hooks/useTypedChainId';
 
 const FeeDetails = () => {
-  const { selectedSourceChain } = useBridge();
-  const { fee: bridgeFee, isLoading: isLoadingBridgeFee } = useBridgeFee();
-  const { fee: estimatedGasFee, isLoading: isLoadingEstimatedGasFee } =
-    useEstimatedGasFee();
+  const {
+    selectedSourceChain,
+    bridgeFee,
+    isBridgeFeeLoading,
+    estimatedGasFee,
+    isEstimatedGasFeeLoading,
+  } = useBridge();
   const selectedToken = useSelectedToken();
   const { destinationTypedChainId } = useTypedChainId();
 
@@ -42,7 +43,7 @@ const FeeDetails = () => {
       return `${totalFee.toString()} ${selectedToken.symbol}`;
     }
 
-    return `${allTokenFee.toString()} ${selectedToken.symbol} + ${estimatedGasFee.toString()} ${selectedSourceChain.nativeCurrency.symbol}`;
+    return `${allTokenFee.toDecimalPlaces(5).toString()} ${selectedToken.symbol} + ${estimatedGasFee.toDecimalPlaces(5).toString()} ${selectedSourceChain.nativeCurrency.symbol}`;
   }, [
     bridgeFee,
     destChainTransactionFee,
@@ -53,21 +54,20 @@ const FeeDetails = () => {
 
   return (
     <FeeDetailsCmp
-      title="Total Fees"
+      title="Fees"
       totalFeeCmp={totalFeeCmp}
-      isTotalLoading={isLoadingBridgeFee || isLoadingEstimatedGasFee}
+      collapsible={false}
+      value="fee-details"
       items={
         [
-          bridgeFee !== null
-            ? {
-                name: 'Bridge Fee',
-                value: (
-                  <FeeValueCmp fee={bridgeFee} symbol={selectedToken.symbol} />
-                ),
-                isLoading: isLoadingBridgeFee,
-                info: 'This transaction will charge a bridge fee to cover the destination chain’s gas fee.',
-              }
-            : undefined,
+          {
+            name: 'Bridge Fee',
+            value: (
+              <FeeValueCmp fee={bridgeFee} symbol={selectedToken.symbol} />
+            ),
+            isLoading: isBridgeFeeLoading,
+            info: 'This transaction will charge a bridge fee to cover the destination chain’s gas fee.',
+          },
           destChainTransactionFee !== null
             ? {
                 name: 'Bridge Fee',
@@ -80,18 +80,16 @@ const FeeDetails = () => {
                 info: 'This fee is used to pay the XCM fee of the destination chain.',
               }
             : undefined,
-          estimatedGasFee !== null
-            ? {
-                name: 'Estimated Gas Fee',
-                value: (
-                  <FeeValueCmp
-                    fee={estimatedGasFee}
-                    symbol={selectedSourceChain.nativeCurrency.symbol}
-                  />
-                ),
-                isLoading: isLoadingEstimatedGasFee,
-              }
-            : undefined,
+          {
+            name: 'Estimated Gas Fee',
+            value: (
+              <FeeValueCmp
+                fee={estimatedGasFee}
+                symbol={selectedSourceChain.nativeCurrency.symbol}
+              />
+            ),
+            isLoading: isEstimatedGasFeeLoading,
+          },
         ].filter((item) => Boolean(item)) as Array<FeeItem>
       }
       className="!bg-mono-20 dark:!bg-mono-160"
@@ -103,11 +101,13 @@ const FeeDetails = () => {
 
 export default FeeDetails;
 
-const FeeValueCmp: FC<{ fee: Decimal; symbol: string }> = ({ fee, symbol }) => {
+const FeeValueCmp: FC<{ fee: Decimal | null; symbol: string }> = ({
+  fee,
+  symbol,
+}) => {
   return (
-    <Typography
-      variant="body1"
-      className="!text-mono-120 dark:!text-mono-100"
-    >{`${fee.toString()} ${symbol}`}</Typography>
+    <Typography variant="body1" className="!text-mono-120 dark:!text-mono-100">
+      {fee ? `${fee.toDecimalPlaces(5).toString()} ${symbol}` : 'N/A'}
+    </Typography>
   );
 };
