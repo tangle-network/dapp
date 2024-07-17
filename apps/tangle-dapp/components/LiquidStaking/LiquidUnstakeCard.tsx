@@ -188,7 +188,7 @@ const LiquidUnstakeCard: FC = () => {
 
       {areAllDelegationsOccupied?.isTrue && (
         <Alert
-          type="warning"
+          type="error"
           className="mt-4"
           title="All Delegations Occupied"
           description="Cannot redeem due to all delegations being occupied."

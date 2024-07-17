@@ -1,4 +1,7 @@
-import { TanglePrimitivesCurrencyTokenSymbol } from '@polkadot/types/lookup';
+import {
+  TanglePrimitivesCurrencyTokenSymbol,
+  TanglePrimitivesTimeUnit,
+} from '@polkadot/types/lookup';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 
 import { StaticAssetPath } from '.';
@@ -133,3 +136,10 @@ export const LIQUID_STAKING_TOKEN_PREFIX = 'tg';
 export type LiquidStakingCurrencyKey =
   | { lst: LiquidStakingCurrency }
   | { Native: LiquidStakingCurrency };
+
+export type LiquidStakingTimeUnit = TanglePrimitivesTimeUnit['type'];
+
+export type LiquidStakingTimeUnitInstance = {
+  value: number;
+  unit: LiquidStakingTimeUnit;
+};
