@@ -29,6 +29,7 @@
     "../../apps/tangle-dapp/.next/types/**/*.ts",
     "../../dist/apps/tangle-dapp/.next/types/**/*.ts",
     "next-env.d.ts",
+    "index.d.ts",
     "../../types/global.d.ts",
     ".next/types/**/*.ts"
   ],

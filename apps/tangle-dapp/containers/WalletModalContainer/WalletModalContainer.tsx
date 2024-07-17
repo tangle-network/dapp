@@ -74,8 +74,8 @@ const networkToTypedChainIds = (network: Network) => {
       : undefined;
 
   const substrate =
-    typeof network.chainId !== 'undefined'
-      ? calculateTypedChainId(ChainType.Substrate, network.chainId)
+    typeof network.substrateChainId !== 'undefined'
+      ? calculateTypedChainId(ChainType.Substrate, network.substrateChainId)
       : undefined;
 
   return { evm, substrate };

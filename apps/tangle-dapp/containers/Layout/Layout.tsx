@@ -8,7 +8,7 @@ import {
   TANGLE_TERMS_OF_SERVICE_URL,
   WEBB_AVAILABLE_SOCIALS,
 } from '@webb-tools/webb-ui-components/constants';
-import { useLayoutBgClassname } from '@webb-tools/webb-ui-components/next-utils';
+import { useLayoutBgClassName } from '@webb-tools/webb-ui-components/next-utils';
 import { type FC, type PropsWithChildren } from 'react';
 
 import {
@@ -44,7 +44,7 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
   isSidebarInitiallyExpanded,
   children,
 }) => {
-  const layoutBgClassname = useLayoutBgClassname();
+  const layoutBgClassname = useLayoutBgClassName();
 
   return (
     <div className={`flex h-screen ${layoutBgClassname}`}>

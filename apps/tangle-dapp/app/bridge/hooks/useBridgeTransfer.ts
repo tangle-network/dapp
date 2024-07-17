@@ -1,5 +1,7 @@
 'use client';
 
+import { providers } from 'ethers';
+
 import { useBridge } from '../../../context/BridgeContext';
 import { useBridgeTxQueue } from '../../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
@@ -15,7 +17,11 @@ import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 import useTypedChainId from './useTypedChainId';
 
-export default function useBridgeTransfer(): () => Promise<void> {
+export default function useBridgeTransfer({
+  onTxAddedToQueue,
+}: {
+  onTxAddedToQueue: () => void;
+}) {
   const activeAccountAddress = useActiveAccountAddress();
   const injector = useSubstrateInjectedExtension();
   const {
@@ -75,8 +81,45 @@ export default function useBridgeTransfer(): () => Promise<void> {
           throw new Error('Sygma EVM transfer failed');
         }
 
-        const { tx } = sygmaEvmTransfer;
-        await ethersSigner.sendTransaction(tx);
+        const { tx, approvals } = sygmaEvmTransfer;
+
+        for (const approval of approvals) {
+          await ethersSigner.sendTransaction(
+            approval as providers.TransactionRequest,
+          );
+        }
+
+        const res = await ethersSigner.sendTransaction(tx);
+        const txHash = res.hash;
+
+        addTxToQueue({
+          hash: txHash,
+          env:
+            selectedSourceChain.tag === 'live'
+              ? 'live'
+              : selectedSourceChain.tag === 'test'
+                ? 'test'
+                : 'dev',
+          sourceTypedChainId,
+          destinationTypedChainId,
+          sourceAddress: activeAccountAddress,
+          recipientAddress: destinationAddress,
+          sourceAmount: sourceAmountInDecimals.toString(),
+          destinationAmount: destinationAmountInDecimals.toString(),
+          tokenSymbol: selectedToken.symbol,
+          creationTimestamp: new Date().getTime(),
+          state: BridgeTxState.Sending,
+        });
+
+        onTxAddedToQueue();
+
+        const receipt = await res.wait();
+        if (receipt.status === 1) {
+          addSygmaTxId(txHash, receipt.transactionHash);
+          updateTxState(txHash, BridgeTxState.Indexing);
+        } else {
+          updateTxState(txHash, BridgeTxState.Failed);
+        }
         break;
       }
 
@@ -142,6 +185,8 @@ export default function useBridgeTransfer(): () => Promise<void> {
                 creationTimestamp: new Date().getTime(),
                 state: BridgeTxState.Sending,
               });
+
+              onTxAddedToQueue();
             }
 
             if (dispatchError) {

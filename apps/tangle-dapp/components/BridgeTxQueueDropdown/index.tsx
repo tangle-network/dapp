@@ -1,7 +1,7 @@
 'use client';
 
 import { DropdownMenuTrigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
-import { ArrowLeftRightLineIcon } from '@webb-tools/icons';
+import { ShuffleLine } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import {
   Dropdown,
@@ -48,7 +48,7 @@ const BridgeTxQueueDropdown: FC = () => {
           )}
         >
           <div className="flex items-center gap-1">
-            <ArrowLeftRightLineIcon className="fill-mono-160 dark:fill-mono-0" />
+            <ShuffleLine className="fill-mono-160 dark:fill-mono-0" />
             <Typography
               variant="body1"
               className="text-mono-160 dark:text-mono-0"

@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 
-export const useLayoutBgClassname = () => {
+export const useLayoutBgClassName = () => {
   const pathname = usePathname();
 
   if (pathname.includes('/liquid-staking')) {

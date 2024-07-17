@@ -8,8 +8,10 @@ import {
   StatusIndicator,
   TokenIcon,
 } from '@webb-tools/icons';
+import Decimal from 'decimal.js';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+
 import useTimeAgo from '../../hooks/useTimeAgo';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
@@ -132,11 +134,11 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
           className="text-mono-200 dark:text-mono-0"
         >
           <b>
-            {amount > 0
-              ? `+${amount.toFixed(2)}`
-              : amount < 0
-                ? `-${Math.abs(amount).toFixed(2)}`
-                : `${amount.toFixed(2)}`}
+            {amount.greaterThan(new Decimal(0))
+              ? `+${amount.toDecimalPlaces(4).toString()}`
+              : amount.lessThan(new Decimal(0))
+                ? `-${amount.abs().toDecimalPlaces(4).toString()}`
+                : `${amount.toDecimalPlaces(4).toString()}`}
           </b>{' '}
           {tokenSymbol}
         </Typography>

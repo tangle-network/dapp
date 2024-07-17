@@ -10,15 +10,16 @@ import {
   Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback } from 'react';
 
 import { useBridge } from '../../context/BridgeContext';
 import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import ensureError from '../../utils/ensureError';
 import FeeDetails from './FeeDetails';
 import useAmountInDecimals from './hooks/useAmountInDecimals';
+import useBridgeFee from './hooks/useBridgeFee';
 import useBridgeTransfer from './hooks/useBridgeTransfer';
+import useEstimatedGasFee from './hooks/useEstimatedGasFee';
 import useSelectedToken from './hooks/useSelectedToken';
 
 interface BridgeConfirmationModalProps {
@@ -39,13 +40,18 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     destinationAddress,
     setAmount,
     setDestinationAddress,
+    bridgeFee,
+    isBridgeFeeLoading,
+    isEstimatedGasFeeLoading,
+    isTransferring,
+    setIsTransferring,
   } = useBridge();
   const selectedToken = useSelectedToken();
   const { sourceAmountInDecimals, destinationAmountInDecimals } =
     useAmountInDecimals();
-  const transfer = useBridgeTransfer();
 
-  const [isTransferring, setIsTransferring] = useState(false);
+  useBridgeFee();
+  useEstimatedGasFee();
 
   const cleanUpWhenSubmit = useCallback(() => {
     handleClose();
@@ -53,25 +59,26 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     setDestinationAddress('');
   }, [handleClose, setAmount, setDestinationAddress]);
 
-  const bridgeTx = useCallback(async () => {
-    try {
-      // TODO: for EVM case, switch chain if the user's is on the wrong network
-
-      setIsTransferring(true);
-      await transfer();
+  const transfer = useBridgeTransfer({
+    onTxAddedToQueue: () => {
       cleanUpWhenSubmit();
       setIsOpenQueueDropdown(true);
-    } catch (error) {
+    },
+  });
+
+  const bridgeTx = useCallback(async () => {
+    try {
+      setIsTransferring(true);
+      await transfer();
+    } catch {
       notificationApi({
         variant: 'error',
-        message: ensureError(error).message,
+        message: 'Bridge Failed',
       });
     } finally {
       setIsTransferring(false);
     }
-
-    // TODO: for EVM case, switch chain back to the original Tangle chain after the transaction is done
-  }, [transfer, cleanUpWhenSubmit, notificationApi, setIsOpenQueueDropdown]);
+  }, [transfer, notificationApi, setIsTransferring]);
 
   return (
     <Modal open>
@@ -116,6 +123,14 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
               bridgeTx();
               handleClose(); // TODO: handle clear form
             }}
+            isDisabled={
+              isBridgeFeeLoading ||
+              isEstimatedGasFeeLoading ||
+              bridgeFee === null ||
+              !sourceAmountInDecimals ||
+              !destinationAmountInDecimals ||
+              !destinationAddress
+            }
           >
             Confirm
           </Button>

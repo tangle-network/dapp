@@ -35,7 +35,7 @@ export enum NetworkId {
 
 export type Network = {
   id: NetworkId;
-  chainId?: number;
+  substrateChainId?: number;
   evmChainId?: number;
   name: string;
   tokenSymbol: 'tTNT' | 'TNT';
@@ -65,7 +65,7 @@ export type Network = {
 
 export const TANGLE_MAINNET_NETWORK = {
   id: NetworkId.TANGLE_MAINNET,
-  chainId: SubstrateChainId.TangleMainnetNative,
+  substrateChainId: SubstrateChainId.TangleMainnetNative,
   evmChainId: EVMChainId.TangleMainnetEVM,
   name: 'Tangle Mainnet',
   tokenSymbol: TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
@@ -80,7 +80,7 @@ export const TANGLE_MAINNET_NETWORK = {
 
 export const TANGLE_TESTNET_NATIVE_NETWORK = {
   id: NetworkId.TANGLE_TESTNET,
-  chainId: SubstrateChainId.TangleTestnetNative,
+  substrateChainId: SubstrateChainId.TangleTestnetNative,
   evmChainId: EVMChainId.TangleTestnetEVM,
   name: 'Tangle Testnet',
   tokenSymbol: TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
@@ -99,7 +99,7 @@ export const TANGLE_TESTNET_NATIVE_NETWORK = {
  */
 export const TANGLE_LOCAL_DEV_NETWORK = {
   id: NetworkId.TANGLE_LOCAL_DEV,
-  chainId: SubstrateChainId.TangleLocalNative,
+  substrateChainId: SubstrateChainId.TangleLocalNative,
   evmChainId: EVMChainId.TangleLocalEVM,
   name: 'Local endpoint',
   tokenSymbol: TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
