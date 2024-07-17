@@ -1,4 +1,5 @@
 import isPrimitive from '@webb-tools/dapp-types/utils/isPrimitive';
+import { ExternalLinkLine } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import {
@@ -38,6 +39,8 @@ const HowItWorks = forwardRef<HTMLDivElement, HowItWorksProps>(
             href={docsUrl}
             target="_blank"
             rel="noopener noreferrer"
+            className="ml-auto"
+            rightIcon={<ExternalLinkLine className="!fill-current" />}
           >
             View docs
           </Button>

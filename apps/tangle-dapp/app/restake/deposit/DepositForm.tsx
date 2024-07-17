@@ -195,7 +195,7 @@ const DepositForm = ({ className, ...props }: DepositFormProps) => {
       {...props}
       ref={formRef}
       onSubmit={handleSubmit(onSubmit)}
-      className={twMerge('w-full h-full max-w-lg overflow-hidden', className)}
+      className={twMerge('overflow-hidden', className)}
     >
       <div className="flex flex-col h-full space-y-4 grow">
         <RestakeTabs />

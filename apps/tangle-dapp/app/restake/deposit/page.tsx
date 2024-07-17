@@ -1,49 +1,37 @@
-import { LockClosedIcon, ShuffleIcon } from '@radix-ui/react-icons';
-import UserFillIcon from '@webb-tools/icons/UserFillIcon';
-
-import {
-  HowItWorks,
-  HowItWorksStep,
-  type HowItWorksStepProps,
-} from '../../../components/HowItWorks';
+import RestakeAssetDetailCard from '../../../components/RestakeDetailCard/RestakeAssetDetailCard';
+import RestakeOperatorDetailCard from '../../../components/RestakeDetailCard/RestakeOperatorDetailCard';
 import DepositForm from './DepositForm';
-
-const HOW_IT_WORKS_STEPS = [
-  {
-    title: 'Bridge',
-    description:
-      'Select whitelisted Liquid Staking Tokens (LST) to bridge to Tangle Mainnet',
-    Icon: ShuffleIcon,
-  },
-  {
-    title: 'Deposit',
-    description: 'Deposit bridged token to Tangle Mainnet’s restake vault',
-    Icon: LockClosedIcon,
-  },
-  {
-    title: 'Delegate (optional)',
-    description: 'Select operator for delegation to complete restaking',
-    Icon: UserFillIcon,
-  },
-] as const satisfies Array<
-  Pick<HowItWorksStepProps, 'title' | 'description' | 'Icon'>
->;
 
 export default function DepositPage() {
   return (
-    <div className="flex flex-col items-center gap-6 md:flex-row md:justify-evenly md:items-start">
-      <DepositForm className="max-w-lg" />
+    <div className="grid grid-cols-1 gap-6 md:justify-evenly md:grid-cols-2">
+      <DepositForm className="w-full max-w-lg mx-auto" />
 
-      <HowItWorks className="mt-[60px] max-w-lg">
-        {HOW_IT_WORKS_STEPS.map(({ title, description, Icon }, idx) => (
-          <HowItWorksStep
-            key={`${title}-${description}-${idx}`}
-            title={title}
-            description={description}
-            Icon={Icon}
+      <div className="md:mt-[60px] max-w-lg mx-auto w-full">
+        <div className="space-y-4">
+          <RestakeAssetDetailCard
+            assetExternalLink="https://tangle.exchange"
+            getAssetLink="https://tangle.exchange"
+            limit={1000}
+            name="Tangle"
+            symbol="TGL"
+            tvl={10000}
           />
-        ))}
-      </HowItWorks>
+
+          <RestakeOperatorDetailCard
+            delegationCount={12}
+            identityEmailLink="mailto:hello@webb.tools"
+            identityName="WebbValidator"
+            identityWebLink="https://webb.tools"
+            identityXLink="https://x.com/@webbprotocol"
+            isDelegated={true}
+            operatorAccountId="5F9jS22zsSzmWNXKt4kknBsrhVAokEQ9e3UcuBeg21hkzqWz"
+            totalStaked="1,000 tTNT"
+            validatorExternalLink="https://x.com/@webbprotocol"
+            location="Singapore"
+          />
+        </div>
+      </div>
     </div>
   );
 }
