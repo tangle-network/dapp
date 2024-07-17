@@ -134,7 +134,7 @@ const Account: FC = () => {
           tabs={[shieldedAssetsTab, spendNotesTab]}
           className="py-4 space-y-4"
           onValueChange={(val) => setActiveTable(val as typeof activeTable)}
-          filterComponent={
+          additionalActionsCmp={
             <RightButtonsContainer
               onUpload={openUploadModal}
               onDownloadAllNotes={handleDownloadAllNotes}

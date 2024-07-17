@@ -1,6 +1,12 @@
 'use client';
 
-import { TabContent, TableAndChartTabs } from '@webb-tools/webb-ui-components';
+import { Search } from '@webb-tools/icons';
+import {
+  Input,
+  TabContent,
+  TableAndChartTabs,
+} from '@webb-tools/webb-ui-components';
+import { useState } from 'react';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
 import useNetworkStore from '../../context/useNetworkStore';
@@ -15,6 +21,9 @@ const ValidatorTablesContainer = () => {
   const { network } = useNetworkStore();
   const { validators: activeValidatorsData } = useActiveValidators();
   const { validators: waitingValidatorsData } = useWaitingValidators();
+
+  const [searchValue, setSearchValue] = useState('');
+
   const isActiveValidatorsLoading = activeValidatorsData === null;
   const isWaitingValidatorsLoading = waitingValidatorsData === null;
 
@@ -23,7 +32,18 @@ const ValidatorTablesContainer = () => {
   return (
     <TableAndChartTabs
       tabs={[activeValidatorsTableTab, waitingValidatorsTableTab]}
-      headerClassName="w-full overflow-x-auto"
+      headerClassName="w-full"
+      additionalActionsCmp={
+        <Input
+          id="search-validators"
+          rightIcon={<Search className="mr-2" />}
+          placeholder="Search validators..."
+          value={searchValue}
+          onChange={(val) => setSearchValue(val)}
+          isControlled
+          className="w-2/5"
+        />
+      }
     >
       {/* Active Validators Table */}
       <TabContent value={activeValidatorsTableTab}>
@@ -41,7 +61,10 @@ const ValidatorTablesContainer = () => {
         ) : isActiveValidatorsLoading ? (
           <ContainerSkeleton />
         ) : (
-          <ValidatorTableContainer data={activeValidatorsData} />
+          <ValidatorTableContainer
+            data={activeValidatorsData}
+            searchValue={searchValue}
+          />
         )}
       </TabContent>
 
@@ -63,7 +86,11 @@ const ValidatorTablesContainer = () => {
         ) : isWaitingValidatorsLoading ? (
           <ContainerSkeleton />
         ) : (
-          <ValidatorTableContainer isWaiting data={waitingValidatorsData} />
+          <ValidatorTableContainer
+            isWaiting
+            data={waitingValidatorsData}
+            searchValue={searchValue}
+          />
         )}
       </TabContent>
     </TableAndChartTabs>

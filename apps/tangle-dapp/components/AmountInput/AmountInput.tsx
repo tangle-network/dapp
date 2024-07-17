@@ -53,7 +53,12 @@ const AmountInput: FC<AmountInputProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const { nativeTokenSymbol } = useNetworkStore();
 
-  const { displayAmount, errorMessage, handleChange } = useInputAmount({
+  const {
+    displayAmount,
+    errorMessage,
+    handleChange,
+    updateDisplayAmountManual,
+  } = useInputAmount({
     amount,
     min,
     max,
@@ -74,8 +79,9 @@ const AmountInput: FC<AmountInputProps> = ({
   const setMaxAmount = useCallback(() => {
     if (max !== null) {
       setAmount(max);
+      updateDisplayAmountManual(max);
     }
-  }, [max, setAmount]);
+  }, [max, setAmount, updateDisplayAmountManual]);
 
   const actions: ReactNode = useMemo(
     () => (

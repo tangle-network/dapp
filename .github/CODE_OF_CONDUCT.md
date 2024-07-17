@@ -75,6 +75,6 @@ You can contact Webb via Email: drew@commonwealth.im
 
 ## 10. License and attribution
 
-This Code of Conduct is distributed under a [Creative Commons Attribution-ShareAlike license](http://creativecommons.org/licenses/by-sa/3.0/).
+This Code of Conduct is distributed under a [Creative Commons Attribution-ShareAlike license](https://creativecommons.org/licenses/by-sa/4.0/).
 
 Portions of text derived from the the [Parity Code of Conduct](https://github.com/openethereum/parity-ethereum/blob/v2.7.2-stable/.github/CODE_OF_CONDUCT.md), and [Django Code of Conduct](https://www.djangoproject.com/conduct/) and the [Geek Feminism Anti-Harassment Policy](http://geekfeminism.wikia.com/wiki/Conference_anti-harassment/Policy).
