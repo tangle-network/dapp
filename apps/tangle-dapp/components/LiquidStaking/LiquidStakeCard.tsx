@@ -123,13 +123,14 @@ const LiquidStakeCard: FC = () => {
     <>
       <LiquidStakingInput
         id="liquid-staking-stake-from"
-        chain={selectedChainId}
+        chainId={selectedChainId}
         token={selectedChain.token}
         amount={fromAmount}
+        decimals={selectedChain.decimals}
         onAmountChange={setFromAmount}
         placeholder={`0 ${selectedChain.token}`}
         rightElement={walletBalance}
-        setChain={setSelectedChainId}
+        setChainId={setSelectedChainId}
         minAmount={minimumInputAmount ?? undefined}
         maxAmount={maximumInputAmount ?? undefined}
       />
@@ -138,8 +139,9 @@ const LiquidStakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-stake-to"
-        chain={LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN}
+        chainId={LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN}
         placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
+        decimals={selectedChain.decimals}
         amount={toAmount}
         isReadOnly
         isTokenLiquidVariant

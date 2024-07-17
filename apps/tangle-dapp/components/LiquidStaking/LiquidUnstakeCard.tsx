@@ -44,7 +44,7 @@ const LiquidUnstakeCard: FC = () => {
   );
 
   const { execute: executeRedeemTx, status: redeemTxStatus } = useRedeemTx();
-  const { nativeBalances } = useParachainBalances();
+  const { liquidBalances } = useParachainBalances();
 
   const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
 
@@ -87,12 +87,12 @@ const LiquidUnstakeCard: FC = () => {
   }, [existentialDepositAmount, minimumRedeemAmount]);
 
   const maximumInputAmount = useMemo(() => {
-    if (nativeBalances === null) {
+    if (liquidBalances === null) {
       return null;
     }
 
-    return nativeBalances.get(selectedChain.token) ?? BN_ZERO;
-  }, [nativeBalances, selectedChain.token]);
+    return liquidBalances.get(selectedChain.token) ?? BN_ZERO;
+  }, [liquidBalances, selectedChain.token]);
 
   const handleUnstakeClick = useCallback(() => {
     if (executeRedeemTx === null || fromAmount === null) {
@@ -126,7 +126,7 @@ const LiquidUnstakeCard: FC = () => {
     return [{ address: '0x123456' as any, amount: new BN(100), decimals: 18 }];
   }, []);
 
-  const stakedBalance = (
+  const stakedWalletBalance = (
     <ParachainWalletBalance
       isNative={false}
       token={selectedChain.token}
@@ -138,14 +138,16 @@ const LiquidUnstakeCard: FC = () => {
 
   return (
     <>
+      {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
       <LiquidStakingInput
         id="liquid-staking-unstake-from"
-        chain={LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN}
+        chainId={LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN}
         token={selectedChain.token}
         amount={fromAmount}
+        decimals={selectedChain.decimals}
         onAmountChange={setFromAmount}
         placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
-        rightElement={stakedBalance}
+        rightElement={stakedWalletBalance}
         isTokenLiquidVariant
         minAmount={minimumInputAmount ?? undefined}
         maxAmount={maximumInputAmount ?? undefined}
@@ -157,11 +159,12 @@ const LiquidUnstakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-unstake-to"
-        chain={selectedChainId}
+        chainId={selectedChainId}
         amount={toAmount}
+        decimals={selectedChain.decimals}
         placeholder={`0 ${selectedChain.token}`}
         token={selectedChain.token}
-        setChain={setSelectedChainId}
+        setChainId={setSelectedChainId}
         isReadOnly
       />
 

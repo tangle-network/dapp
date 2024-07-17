@@ -29,7 +29,8 @@ import TokenChip from './TokenChip';
 
 export type LiquidStakingInputProps = {
   id: string;
-  chain: LiquidStakingChainId;
+  chainId: LiquidStakingChainId;
+  decimals: number;
   amount: BN | null;
   isReadOnly?: boolean;
   placeholder?: string;
@@ -40,24 +41,25 @@ export type LiquidStakingInputProps = {
   maxAmount?: BN;
   maxErrorMessage?: string;
   onAmountChange?: (newAmount: BN | null) => void;
-  setChain?: (newChain: LiquidStakingChainId) => void;
+  setChainId?: (newChain: LiquidStakingChainId) => void;
   onTokenClick?: () => void;
 };
 
 const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   id,
   amount,
+  decimals,
   isReadOnly = false,
   placeholder = '0',
   isTokenLiquidVariant = false,
   rightElement,
-  chain,
+  chainId,
   token,
   minAmount,
   maxAmount,
   maxErrorMessage = ERROR_NOT_ENOUGH_BALANCE,
   onAmountChange,
-  setChain,
+  setChainId,
   onTokenClick,
 }) => {
   const minErrorMessage = ((): string | undefined => {
@@ -67,8 +69,10 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
 
     const unit = `${isTokenLiquidVariant ? LIQUID_STAKING_TOKEN_PREFIX : ''}${token}`;
 
-    // TODO: Must consider the chain's token decimals, not always the Tangle token decimals.
-    const formattedMinAmount = formatBn(minAmount, TANGLE_TOKEN_DECIMALS);
+    const formattedMinAmount = formatBn(minAmount, decimals, {
+      fractionMaxLength: undefined,
+      includeCommas: true,
+    });
 
     return `Amount must be at least ${formattedMinAmount} ${unit}`;
   })();
@@ -109,7 +113,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
         )}
       >
         <div className="flex justify-between">
-          <ChainSelector selectedChain={chain} setChain={setChain} />
+          <ChainSelector selectedChain={chainId} setChain={setChainId} />
 
           {rightElement}
         </div>

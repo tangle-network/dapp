@@ -55,7 +55,10 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
       return null;
     }
 
-    return formatBn(balance, decimals);
+    return formatBn(balance, decimals, {
+      fractionMaxLength: undefined,
+      includeCommas: true,
+    });
   }, [activeSubstrateAddress, balance, decimals]);
 
   const content = (

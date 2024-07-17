@@ -1,4 +1,5 @@
 import { TanglePrimitivesCurrencyTokenSymbol } from '@polkadot/types/lookup';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 
 import { StaticAssetPath } from '.';
 
@@ -95,7 +96,7 @@ const TANGLE_RESTAKING_PARACHAIN: LiquidStakingChainDef = {
   logo: StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO,
   networkName: 'Tangle Parachain',
   currency: 'Tnt',
-  decimals: 18,
+  decimals: TANGLE_TOKEN_DECIMALS,
 };
 
 export const LIQUID_STAKING_CHAIN_MAP: Record<
