@@ -9,9 +9,9 @@ const UnstakePeriodDetailItem: FC = () => {
       title="Unstake period"
       tooltip="The period of time you need to wait before you can unstake your tokens."
       value={
-        <>
+        <div>
           <strong>7</strong> days
-        </>
+        </div>
       }
     />
   );

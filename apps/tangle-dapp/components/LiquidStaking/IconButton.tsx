@@ -23,7 +23,7 @@ const IconButton: FC<IconButtonProps> = ({
 }) => {
   return (
     <Tooltip>
-      <TooltipTrigger>
+      <TooltipTrigger asChild>
         <Button
           onClick={onClick}
           size="sm"

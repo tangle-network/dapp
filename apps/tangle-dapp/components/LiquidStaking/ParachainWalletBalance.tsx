@@ -59,22 +59,25 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
   }, [activeSubstrateAddress, balance, decimals]);
 
   const content = (
-    <Typography
-      onClick={onClick}
-      variant="body1"
-      fw="bold"
-      className={twMerge(
-        'flex gap-1 items-center dark:text-mono-80',
-        onClick !== undefined && 'cursor-pointer',
-      )}
-    >
-      <WalletLineIcon />{' '}
+    <div className="flex gap-1 items-center justify-center">
+      <WalletLineIcon />
+
       {formattedBalance === null ? (
         <SkeletonLoader className="rounded-2xl w-12" size="md" />
       ) : (
-        formattedBalance
+        <Typography
+          onClick={onClick}
+          variant="body1"
+          fw="bold"
+          className={twMerge(
+            'flex gap-1 items-center dark:text-mono-80',
+            onClick !== undefined && 'cursor-pointer',
+          )}
+        >
+          {formattedBalance}
+        </Typography>
       )}
-    </Typography>
+    </div>
   );
 
   const shouldShowTooltip = onlyShowTooltipWhenBalanceIsSet && balance !== null;
