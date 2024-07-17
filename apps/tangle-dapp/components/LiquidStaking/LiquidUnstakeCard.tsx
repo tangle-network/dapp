@@ -27,7 +27,6 @@ import { TxStatus } from '../../hooks/useSubstrateTx';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
 import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
-import OngoingTimeUnitUnstakeCheck from './OngoingTimeUnitUnstakeCheck';
 import ParachainWalletBalance from './ParachainWalletBalance';
 import SelectTokenModal from './SelectTokenModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
@@ -195,14 +194,15 @@ const LiquidUnstakeCard: FC = () => {
         />
       )}
 
-      <OngoingTimeUnitUnstakeCheck currency={selectedChain.currency} />
-
-      {/* TODO: Disable unstake button if no account is connected. Perhaps consider adding a tooltip instructing the user to connect an account in order to use this action. */}
       <Button
         isDisabled={
+          // The redeem extrinsic is not ready to be executed. This
+          // may indicate that there is no connected account.
           executeRedeemTx === null ||
+          // Amount not yet provided or is zero.
           fromAmount === null ||
           fromAmount.isZero() ||
+          // The extrinsic will fail once submitted due to unmet requirements.
           areAllDelegationsOccupied === null
         }
         isLoading={redeemTxStatus === TxStatus.PROCESSING}

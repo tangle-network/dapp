@@ -177,10 +177,10 @@ const LiquidStakeCard: FC = () => {
         />
       )}
 
-      {/* TODO: Disable stake button if no account is connected. Perhaps consider adding a tooltip instructing the user to connect an account in order to use this action. */}
       <Button
         isDisabled={
-          // Mint transaction is not available yet.
+          // Mint transaction is not available yet. This may indicate
+          // that there is no connected account.
           executeMintTx === null ||
           // No amount entered or amount is zero.
           fromAmount === null ||
