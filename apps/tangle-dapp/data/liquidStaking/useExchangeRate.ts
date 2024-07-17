@@ -30,7 +30,6 @@ const useExchangeRate = (
 
   const exchangeRate = useMemo<Optional<number> | null>(() => {
     if (tokenPoolAmount === null || lstTotalIssuance === null) {
-      console.debug(tokenPoolAmount?.toString(), lstTotalIssuance?.toString());
       return null;
     }
 

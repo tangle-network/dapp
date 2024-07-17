@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
@@ -39,7 +39,7 @@ export type LiquidStakingInputProps = {
   minAmount?: BN;
   maxAmount?: BN;
   maxErrorMessage?: string;
-  setAmount?: (newAmount: BN | null) => void;
+  onAmountChange?: (newAmount: BN | null) => void;
   setChain?: (newChain: LiquidStakingChainId) => void;
   onTokenClick?: () => void;
 };
@@ -56,7 +56,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   minAmount,
   maxAmount,
   maxErrorMessage = ERROR_NOT_ENOUGH_BALANCE,
-  setAmount,
+  onAmountChange,
   setChain,
   onTokenClick,
 }) => {
@@ -73,9 +73,14 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
     return `Amount must be at least ${formattedMinAmount} ${unit}`;
   })();
 
-  const { displayAmount, handleChange, errorMessage } = useInputAmount({
+  const {
+    displayAmount,
+    handleChange,
+    errorMessage,
+    updateDisplayAmountManual,
+  } = useInputAmount({
     amount,
-    setAmount,
+    setAmount: onAmountChange,
     // TODO: Decimals must be based on the active token's chain decimals, not always the Tangle token decimals.
     decimals: TANGLE_TOKEN_DECIMALS,
     min: minAmount,
@@ -83,6 +88,15 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
     max: maxAmount,
     maxErrorMessage,
   });
+
+  // Update the display amount when the amount prop changes.
+  // Only do this for controlled (read-only) inputs.
+  useEffect(() => {
+    if (isReadOnly && amount !== null) {
+      updateDisplayAmountManual(amount);
+      console.debug('set display amount manually', amount.toString());
+    }
+  }, [amount, isReadOnly, updateDisplayAmountManual]);
 
   const isError = errorMessage !== null;
 

@@ -33,9 +33,10 @@ import { TxStatus } from '../../hooks/useSubstrateTx';
 import DetailItem from './DetailItem';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
-import MintAndRedeemDetailItem from './MintAndRedeemDetailItem';
+import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
 import ParachainWalletBalance from './ParachainWalletBalance';
 import SelectValidators from './SelectValidators';
+import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 
 const LiquidStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
@@ -125,7 +126,7 @@ const LiquidStakeCard: FC = () => {
         chain={selectedChainId}
         token={selectedChain.token}
         amount={fromAmount}
-        setAmount={setFromAmount}
+        onAmountChange={setFromAmount}
         placeholder={`0 ${selectedChain.token}`}
         rightElement={walletBalance}
         setChain={setSelectedChainId}
@@ -154,17 +155,13 @@ const LiquidStakeCard: FC = () => {
           type={ExchangeRateType.NativeToLiquid}
         />
 
-        <MintAndRedeemDetailItem
+        <MintAndRedeemFeeDetailItem
           intendedAmount={fromAmount}
           isMinting
           token={selectedChain.token}
         />
 
-        <DetailItem
-          title="Unstake period"
-          tooltip="The period of time you need to wait before you can unstake your tokens."
-          value="7 days"
-        />
+        <UnstakePeriodDetailItem />
 
         <DetailItem title="Estimated wait time" value="~10 minutes" />
       </div>

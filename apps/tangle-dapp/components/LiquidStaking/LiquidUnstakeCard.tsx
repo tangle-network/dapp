@@ -6,15 +6,9 @@ import '@webb-tools/tangle-restaking-types';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
-import { InformationLine } from '@webb-tools/icons';
-import {
-  Alert,
-  Button,
-  IconWithTooltip,
-  Typography,
-} from '@webb-tools/webb-ui-components';
+import { Alert, Button } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
-import { FC, ReactNode, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 
 import {
   LIQUID_STAKING_CHAIN_MAP,
@@ -22,14 +16,20 @@ import {
   LiquidStakingChainId,
 } from '../../constants/liquidStaking';
 import useDelegationsOccupiedStatus from '../../data/liquidStaking/useDelegationsOccupiedStatus';
+import useExchangeRate, {
+  ExchangeRateType,
+} from '../../data/liquidStaking/useExchangeRate';
 import useParachainBalances from '../../data/liquidStaking/useParachainBalances';
 import useRedeemTx from '../../data/liquidStaking/useRedeemTx';
 import useApi from '../../hooks/useApi';
 import useApiRx from '../../hooks/useApiRx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
+import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
+import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
 import ParachainWalletBalance from './ParachainWalletBalance';
 import SelectTokenModal from './SelectTokenModal';
+import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import UnstakeRequestSubmittedModal from './UnstakeRequestSubmittedModal';
 
 const LiquidUnstakeCard: FC = () => {
@@ -39,9 +39,6 @@ const LiquidUnstakeCard: FC = () => {
   const [isRequestSubmittedModalOpen, setIsRequestSubmittedModalOpen] =
     useState(false);
 
-  // TODO: The rate will likely be a hook on its own, likely needs to be extracted from the Tangle Restaking Parachain via a query/subscription.
-  const [rate] = useState<number | null>(1.0);
-
   const [selectedChainId, setSelectedChainId] = useState<LiquidStakingChainId>(
     LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN,
   );
@@ -50,6 +47,11 @@ const LiquidUnstakeCard: FC = () => {
   const { nativeBalances } = useParachainBalances();
 
   const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
+
+  const exchangeRateOpt = useExchangeRate(
+    ExchangeRateType.LiquidToNative,
+    selectedChain.currency,
+  );
 
   const { result: areAllDelegationsOccupiedOpt } = useDelegationsOccupiedStatus(
     selectedChain.currency,
@@ -104,12 +106,16 @@ const LiquidUnstakeCard: FC = () => {
   }, [executeRedeemTx, fromAmount, selectedChain.currency]);
 
   const toAmount = useMemo(() => {
-    if (fromAmount === null || rate === null) {
+    if (
+      fromAmount === null ||
+      exchangeRateOpt === null ||
+      exchangeRateOpt.value === null
+    ) {
       return null;
     }
 
-    return fromAmount.muln(rate);
-  }, [fromAmount, rate]);
+    return fromAmount.muln(exchangeRateOpt.value);
+  }, [exchangeRateOpt, fromAmount]);
 
   const handleTokenSelect = useCallback(() => {
     setIsSelectTokenModalOpen(false);
@@ -137,7 +143,7 @@ const LiquidUnstakeCard: FC = () => {
         chain={LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN}
         token={selectedChain.token}
         amount={fromAmount}
-        setAmount={setFromAmount}
+        onAmountChange={setFromAmount}
         placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
         rightElement={stakedBalance}
         isTokenLiquidVariant
@@ -161,37 +167,19 @@ const LiquidUnstakeCard: FC = () => {
 
       {/* Details */}
       <div className="flex flex-col gap-2 p-3 bg-mono-20 dark:bg-mono-180 rounded-lg">
-        <DetailItem
-          title="Rate"
-          tooltip="This is a test."
-          value={
-            <>
-              <strong>1</strong> {selectedChain.token}{' '}
-              <strong> = {rate}</strong> {LIQUID_STAKING_TOKEN_PREFIX}
-              {selectedChain.token}
-            </>
-          }
+        <ExchangeRateDetailItem
+          token={selectedChain.token}
+          type={ExchangeRateType.LiquidToNative}
+          currency={selectedChain.currency}
         />
 
-        <DetailItem
-          title="Cross-chain fee"
-          tooltip="This is a test."
-          value={
-            <>
-              <strong>0.001984</strong> {selectedChain.token}
-            </>
-          }
+        <MintAndRedeemFeeDetailItem
+          token={selectedChain.token}
+          isMinting={false}
+          intendedAmount={fromAmount}
         />
 
-        <DetailItem
-          title="Unstake period"
-          tooltip="The period of time you need to wait before you can unstake your tokens."
-          value={
-            <>
-              <strong>7</strong> days
-            </>
-          }
-        />
+        <UnstakePeriodDetailItem />
       </div>
 
       {areAllDelegationsOccupied?.isTrue && (
@@ -231,41 +219,6 @@ const LiquidUnstakeCard: FC = () => {
         unstakeRequest={null as any}
       />
     </>
-  );
-};
-
-type DetailItemProps = {
-  title: string;
-  tooltip?: string;
-  value: string | ReactNode;
-};
-
-/** @internal */
-const DetailItem: FC<DetailItemProps> = ({ title, tooltip, value }) => {
-  return (
-    <div className="flex gap-2 justify-between w-full">
-      <div className="flex items-center gap-1">
-        <Typography variant="body1" fw="normal">
-          {title}
-        </Typography>
-
-        {tooltip !== undefined && (
-          <IconWithTooltip
-            icon={
-              <InformationLine className="fill-mono-140 dark:fill-mono-100" />
-            }
-            content={tooltip}
-            overrideTooltipBodyProps={{
-              className: 'max-w-[350px]',
-            }}
-          />
-        )}
-      </div>
-
-      <Typography className="dark:text-mono-0" variant="body1" fw="normal">
-        {value}
-      </Typography>
-    </div>
   );
 };
 

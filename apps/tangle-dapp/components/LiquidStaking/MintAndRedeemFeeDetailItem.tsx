@@ -16,7 +16,7 @@ export type MintAndRedeemFeeDetailItemProps = {
   token: LiquidStakingToken;
 };
 
-const MintAndRedeemDetailItem: FC<MintAndRedeemFeeDetailItemProps> = ({
+const MintAndRedeemFeeDetailItem: FC<MintAndRedeemFeeDetailItemProps> = ({
   isMinting,
   intendedAmount,
   token,
@@ -54,4 +54,4 @@ const MintAndRedeemDetailItem: FC<MintAndRedeemFeeDetailItemProps> = ({
   return <DetailItem title="Fee" tooltip="This is a test." value={value} />;
 };
 
-export default MintAndRedeemDetailItem;
+export default MintAndRedeemFeeDetailItem;
