@@ -7,7 +7,7 @@ import { TableAndChartTabsProps } from './types';
 
 export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
   tabs,
-  filterComponent,
+  additionalActionsCmp,
   className,
   headerClassName,
   listClassName,
@@ -55,7 +55,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
         </TabsList>
 
         {/* Component on the right */}
-        {filterComponent}
+        {additionalActionsCmp}
       </div>
 
       {/* Tabs Content */}

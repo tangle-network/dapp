@@ -257,7 +257,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
     <>
       <div className="flex flex-col gap-2">
         <Input
-          id="token"
+          id="search-validators-selection"
           rightIcon={<Search className="mr-2" />}
           placeholder="Search validators..."
           value={searchValue}
@@ -266,11 +266,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           isControlled
         />
 
-        {isLoading && (
-          // <div className="h-[340px]">
-          <ContainerSkeleton className="h-[340px] w-full" />
-          // </div>
-        )}
+        {isLoading && <ContainerSkeleton className="h-[340px] w-full" />}
 
         {!isLoading &&
           (allValidators.length === 0 ? (

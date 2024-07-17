@@ -121,6 +121,13 @@ const useInputAmount = ({
     ],
   );
 
+  const updateDisplayAmountManual = useCallback(
+    (amount: BN) => {
+      setDisplayAmount(formatBn(amount, decimals, INPUT_AMOUNT_FORMAT));
+    },
+    [decimals],
+  );
+
   useEffect(() => {
     // If the amount is null, then the display amount should always be empty.
     // This handle the case where the amount is set to null after submitting a tx
@@ -157,6 +164,7 @@ const useInputAmount = ({
     errorMessage,
     handleChange,
     trySetAmount,
+    updateDisplayAmountManual,
   };
 };
 
