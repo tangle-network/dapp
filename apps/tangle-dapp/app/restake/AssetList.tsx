@@ -12,6 +12,7 @@ const AssetList = ({
 }: Partial<TokenListCardProps>) => {
   return (
     <TokenListCard
+      type="asset"
       overrideTitleProps={{
         variant: 'h4',
       }}
@@ -24,6 +25,9 @@ const AssetList = ({
         'h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]',
         className,
       )}
+      overrideInputProps={{
+        placeholder: 'Search for an asset',
+      }}
     />
   );
 };

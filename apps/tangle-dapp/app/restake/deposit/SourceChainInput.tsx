@@ -111,6 +111,7 @@ const SourceChainInput = ({
   const tokenSelectorProps = useMemo<TokenSelectorProps>(
     () => ({
       onClick: () => openTokenModal(),
+      placeHolder: 'Select Asset',
     }),
     [openTokenModal],
   );
