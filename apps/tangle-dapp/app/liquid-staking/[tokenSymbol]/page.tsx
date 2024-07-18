@@ -18,7 +18,7 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-12 items-start">
+    <div className="flex flex-wrap gap-12 items-start">
       <LiquidStakeAndUnstakeCards />
 
       <UnstakeRequestsTable />

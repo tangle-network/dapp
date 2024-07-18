@@ -149,7 +149,7 @@ const UnstakeRequestsTable: FC = () => {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 flex-grow max-w-[700px]">
       <GlassCard>
         {data.length === 0 ? (
           <NoUnstakeRequestsNotice />
