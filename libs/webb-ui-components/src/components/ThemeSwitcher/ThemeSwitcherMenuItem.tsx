@@ -3,7 +3,7 @@ import { useDarkMode } from '../../hooks';
 import { MoonLine, SunLine } from '@webb-tools/icons';
 import { useMemo } from 'react';
 
-import { MenuItem } from '../MenuItems';
+import DropdownMenuItem from '../Dropdown/DropdownMenuItem';
 
 type ThemeSwitcherMenuItemProps = {
   className?: string;
@@ -27,13 +27,13 @@ const ThemeSwitcherMenuItem = (props: ThemeSwitcherMenuItemProps) => {
   }, [isDarkMode]);
 
   return (
-    <MenuItem
+    <DropdownMenuItem
       onClick={() => toggleThemeMode()}
       icon={Icon}
       className={props.className}
     >
       {isDarkMode ? 'Light Theme' : 'Dark Theme'}
-    </MenuItem>
+    </DropdownMenuItem>
   );
 };
 

@@ -11,8 +11,8 @@ import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   Dropdown,
   DropdownBody,
+  DropdownMenuItem,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
-import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/buttons/ChainOrTokenButton';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
@@ -79,12 +79,12 @@ const ActiveChainDropdown = () => {
             {selectableChains.map((chain) => {
               return (
                 <li key={`${chain.chainType}-${chain.id}`}>
-                  <MenuItem
+                  <DropdownMenuItem
                     startIcon={<ChainIcon size="lg" name={chain.name} />}
                     onSelect={() => handleSelectChain(chain)}
                   >
                     {chain.name}
-                  </MenuItem>
+                  </DropdownMenuItem>
                 </li>
               );
             })}

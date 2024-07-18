@@ -4,8 +4,12 @@ import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Dropdown, DropdownBody, DropdownButton } from '../Dropdown';
-import { MenuItem } from '../MenuItems';
+import {
+  Dropdown,
+  DropdownBody,
+  DropdownButton,
+  DropdownMenuItem,
+} from '../Dropdown';
 import { DropdownMenuProps } from './types';
 
 /**
@@ -89,7 +93,7 @@ export const DropdownMenu = React.forwardRef<HTMLDivElement, DropdownMenuProps>(
                 value={value}
                 asChild
               >
-                <MenuItem icon={icon}>{value}</MenuItem>
+                <DropdownMenuItem icon={icon}>{value}</DropdownMenuItem>
               </DropdownMenuPrimitive.RadioItem>
             ))}
           </DropdownMenuPrimitive.RadioGroup>

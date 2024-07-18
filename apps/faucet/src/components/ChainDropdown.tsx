@@ -7,7 +7,7 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
-  MenuItem,
+  DropdownMenuItem,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 
@@ -68,9 +68,11 @@ const ChainDropdown: FC = () => {
               value={`${calculateTypedChainId(chain.chainType, chain.id)}`}
               asChild
             >
-              <MenuItem startIcon={<ChainIcon size="lg" name={chain.name} />}>
+              <DropdownMenuItem
+                startIcon={<ChainIcon size="lg" name={chain.name} />}
+              >
                 {chain.name}
-              </MenuItem>
+              </DropdownMenuItem>
             </RadioItem>
           ))}
         </RadioGroup>

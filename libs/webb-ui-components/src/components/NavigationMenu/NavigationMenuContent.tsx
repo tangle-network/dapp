@@ -9,8 +9,7 @@ import {
 import { Fragment, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
-import { DropdownBody } from '../Dropdown';
-import { MenuItem } from '../MenuItems/MenuItem';
+import { DropdownBody, DropdownMenuItem } from '../Dropdown';
 import { NavigationMenuContentProps } from './types';
 
 /**
@@ -47,15 +46,21 @@ export const NavigationMenuContent = forwardRef<
         ref={ref}
       >
         {onDocsClick && (
-          <MenuItem icon={<BookOpenLineIcon size="lg" />} onClick={onDocsClick}>
+          <DropdownMenuItem
+            icon={<BookOpenLineIcon size="lg" />}
+            onClick={onDocsClick}
+          >
             Docs
-          </MenuItem>
+          </DropdownMenuItem>
         )}
 
         {onFaucetClick && (
-          <MenuItem icon={<FaucetIcon size="lg" />} onClick={onFaucetClick}>
+          <DropdownMenuItem
+            icon={<FaucetIcon size="lg" />}
+            onClick={onFaucetClick}
+          >
             Faucet
-          </MenuItem>
+          </DropdownMenuItem>
         )}
 
         {(onHelpCenterClick || onRequestFeaturesClick) && (
@@ -63,35 +68,41 @@ export const NavigationMenuContent = forwardRef<
         )}
 
         {onHelpCenterClick && (
-          <MenuItem
+          <DropdownMenuItem
             icon={<HelpLineIcon size="lg" />}
             onClick={onHelpCenterClick}
           >
             Help Center
-          </MenuItem>
+          </DropdownMenuItem>
         )}
 
         {onRequestFeaturesClick && (
-          <MenuItem
+          <DropdownMenuItem
             icon={<FlaskLineIcon size="lg" />}
             onClick={onRequestFeaturesClick}
           >
             Request Features
-          </MenuItem>
+          </DropdownMenuItem>
         )}
 
         {(onTestnetClick || onAboutClick) && <NavigationMenuDivider />}
 
         {onTestnetClick && (
-          <MenuItem icon={<TangleIcon size="lg" />} onClick={onTestnetClick}>
+          <DropdownMenuItem
+            icon={<TangleIcon size="lg" />}
+            onClick={onTestnetClick}
+          >
             Substrate Portal
-          </MenuItem>
+          </DropdownMenuItem>
         )}
 
         {onAboutClick && (
-          <MenuItem icon={<InformationLine size="lg" />} onClick={onAboutClick}>
+          <DropdownMenuItem
+            icon={<InformationLine size="lg" />}
+            onClick={onAboutClick}
+          >
             About
-          </MenuItem>
+          </DropdownMenuItem>
         )}
 
         {(extraMenuItems || version) && <NavigationMenuDivider />}

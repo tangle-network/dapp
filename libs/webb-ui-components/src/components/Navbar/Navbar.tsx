@@ -13,8 +13,12 @@ import { FC, forwardRef, useMemo } from 'react';
 import { Typography } from '../../typography';
 import { Accordion, AccordionContent, AccordionItem } from '../Accordion';
 import { Button } from '../buttons';
-import { Dropdown, DropdownBasicButton, DropdownBody } from '../Dropdown';
-import { MenuItem } from '../MenuItems';
+import {
+  Dropdown,
+  DropdownBasicButton,
+  DropdownBody,
+  DropdownMenuItem,
+} from '../Dropdown';
 import { InternalOrExternalLink } from './InternalOrExternalLink';
 import { MobileNavProps, NavItemType, NavbarProps } from './types';
 
@@ -71,14 +75,14 @@ export const Navbar = forwardRef<HTMLElement, NavbarProps>(
                         url={subItem.url}
                         isInternal={subItem.isInternal}
                       >
-                        <MenuItem
+                        <DropdownMenuItem
                           className="navbar-item px-4 py-2 rounded-lg hover:text-blue-70 font-bold"
                           icon={
                             <ArrowRight className="!fill-current" size="lg" />
                           }
                         >
                           {subItem.label}
-                        </MenuItem>
+                        </DropdownMenuItem>
                       </InternalOrExternalLink>
                     ))}
                   </DropdownBody>
@@ -127,7 +131,7 @@ const MobileNav: FC<MobileNavProps> = ({ navItems: navItemsProp }) => {
         {navItems.map((item, idx) =>
           isNavItem(item) ? (
             <InternalOrExternalLink key={idx} {...item}>
-              <MenuItem
+              <DropdownMenuItem
                 className={cx('px-4 py-2 rounded-lg', {
                   'hover:!bg-transparent': !isNavItem(item),
                 })}
@@ -138,7 +142,7 @@ const MobileNav: FC<MobileNavProps> = ({ navItems: navItemsProp }) => {
                 }
               >
                 {item.label}
-              </MenuItem>
+              </DropdownMenuItem>
             </InternalOrExternalLink>
           ) : (
             <Accordion key={idx} type={'single'} collapsible>
@@ -161,7 +165,7 @@ const MobileNav: FC<MobileNavProps> = ({ navItems: navItemsProp }) => {
                 <AccordionContent className="pt-0 pb-4 pl-4 pr-0 mt-4 space-y-4 border-b-2 border-mono-200">
                   {Object.values(item)[0].map((subItem, idx) => (
                     <InternalOrExternalLink key={idx} {...subItem}>
-                      <MenuItem
+                      <DropdownMenuItem
                         className="px-4 py-2 rounded-lg hover:text-blue-70"
                         icon={
                           <ArrowRight className="!fill-current" size="lg" />
@@ -169,7 +173,7 @@ const MobileNav: FC<MobileNavProps> = ({ navItems: navItemsProp }) => {
                         key={`${subItem.label}-${idx}`}
                       >
                         {subItem.label}
-                      </MenuItem>
+                      </DropdownMenuItem>
                     </InternalOrExternalLink>
                   ))}
                 </AccordionContent>

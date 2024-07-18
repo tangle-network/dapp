@@ -13,8 +13,8 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
+  DropdownMenuItem,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
-import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import {
   TANGLE_MKT_URL,
   WEBB_BLOG_URL,
@@ -104,14 +104,14 @@ export const Navbar = () => {
                       key={`${subItem.children.toString()}-${idx}`}
                       {...subItem}
                     >
-                      <MenuItem
+                      <DropdownMenuItem
                         className="px-4 py-2 rounded-lg hover:text-blue-70"
                         icon={
                           <ArrowRight className="!fill-current" size="lg" />
                         }
                       >
                         {subItem.children}
-                      </MenuItem>
+                      </DropdownMenuItem>
                     </Link>
                   ))}
                 </DropdownBody>
@@ -155,7 +155,7 @@ const MobileNav = () => {
           if (isNavItem(item)) {
             return (
               <Link key={idx} {...item}>
-                <MenuItem
+                <DropdownMenuItem
                   className={cx(
                     'px-2 py-4 rounded-none text-center text-mono-200 font-bold border-y border-mono-40',
                     {
@@ -164,7 +164,7 @@ const MobileNav = () => {
                   )}
                 >
                   {item.children}
-                </MenuItem>
+                </DropdownMenuItem>
               </Link>
             );
           }
@@ -193,7 +193,7 @@ const MobileNav = () => {
                 <AccordionContent className="pt-0 pb-4 pl-4 pr-0 mt-4 space-y-4 border-b-2 border-mono-200">
                   {props.map((subItem, idx) => (
                     <Link key={idx} {...subItem}>
-                      <MenuItem
+                      <DropdownMenuItem
                         className="px-4 py-2 rounded-lg hover:text-blue-70"
                         icon={
                           <ArrowRight className="!fill-current" size="lg" />
@@ -201,7 +201,7 @@ const MobileNav = () => {
                         key={`${subItem.children.toString()}-${idx}`}
                       >
                         {subItem.children}
-                      </MenuItem>
+                      </DropdownMenuItem>
                     </Link>
                   ))}
                 </AccordionContent>

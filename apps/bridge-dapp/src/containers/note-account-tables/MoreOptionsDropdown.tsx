@@ -7,7 +7,7 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
-  MenuItem,
+  DropdownMenuItem,
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
@@ -23,12 +23,18 @@ export const MoreOptionsDropdown: FC<MoreOptionsDropdownProps> = ({
         <ThreeDotsVerticalIcon size="lg" />
       </DropdownBasicButton>
       <DropdownBody className="radix-side-top:mb-3 radix-side-bottom:mt-3">
-        <MenuItem onClick={onDownloadNotes} icon={<Download size="lg" />}>
+        <DropdownMenuItem
+          onClick={onDownloadNotes}
+          icon={<Download size="lg" />}
+        >
           Download
-        </MenuItem>
-        <MenuItem onClick={onDeleteNotes} icon={<DeleteBinIcon size="lg" />}>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={onDeleteNotes}
+          icon={<DeleteBinIcon size="lg" />}
+        >
           Delete
-        </MenuItem>
+        </DropdownMenuItem>
       </DropdownBody>
     </Dropdown>
   );

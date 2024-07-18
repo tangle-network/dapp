@@ -11,8 +11,8 @@ import {
   Dropdown,
   DropdownBody,
   DropdownButton,
+  DropdownMenuItem,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
-import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItems';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import type { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -90,7 +90,7 @@ const ClaimingAccountInput: FC<Props> = ({
                   key={account.address}
                   onClick={() => setActiveAccount(account)}
                 >
-                  <MenuItem
+                  <DropdownMenuItem
                     startIcon={
                       <Avatar theme="substrate" value={account.address} />
                     }
@@ -99,7 +99,7 @@ const ClaimingAccountInput: FC<Props> = ({
                     <Typography variant="mkt-caption">
                       {account.address}
                     </Typography>
-                  </MenuItem>
+                  </DropdownMenuItem>
                 </li>
               ))}
             </ul>

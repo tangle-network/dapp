@@ -5,10 +5,10 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 
-import { MenuItemProps } from './types';
+import { DropdownMenuItemProps } from './types';
 
 /**
- * The dropdown `MenuItem` component (must be used inside the `Dropdown*` component)
+ * The DropdownMenuItem component (must be used inside the `Dropdown*` component)
  *
  * Props:
  *
@@ -17,11 +17,14 @@ import { MenuItemProps } from './types';
  * @example
  *
  * ```jsx
- *  <MenuItem icon={<Filter />}>Filter</MenuItem>
- *  <MenuItem>Item 1</MenuItem>
+ *  <DropdownMenuItem icon={<Filter />}>Filter</DropdownMenuItem>
+ *  <DropdownMenuItem>Item 1</DropdownMenuItem>
  * ```
  */
-const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
+const DropdownMenuItem = React.forwardRef<
+  HTMLDivElement,
+  DropdownMenuItemProps
+>(
   (
     {
       children,
@@ -60,4 +63,4 @@ const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
   },
 );
 
-export default MenuItem;
+export default DropdownMenuItem;

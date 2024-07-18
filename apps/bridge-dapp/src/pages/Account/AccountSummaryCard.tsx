@@ -9,9 +9,9 @@ import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import type { IconBase } from '@webb-tools/icons/types';
 import { useBalancesFromNotes } from '@webb-tools/react-hooks/currency/useBalancesFromNotes';
 import {
+  DropdownMenuItem,
   HiddenValue,
   HiddenValueEye,
-  MenuItem,
   getRoundedAmountString,
 } from '@webb-tools/webb-ui-components';
 import {
@@ -200,13 +200,13 @@ function TotalShieldedBalance() {
               <ul>
                 {availableCurrencyCfgs.map(({ name, symbol, id }) => (
                   <li key={`${name}-${id}`}>
-                    <MenuItem
+                    <DropdownMenuItem
                       startIcon={<TokenIcon name={symbol} />}
                       onSelect={() => setCurrencyId(id)}
                       textTransform="normal-case"
                     >
                       {symbol}
-                    </MenuItem>
+                    </DropdownMenuItem>
                   </li>
                 ))}
               </ul>

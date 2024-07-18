@@ -5,7 +5,7 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
-  MenuItem,
+  DropdownMenuItem,
   TokenInput,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
@@ -99,12 +99,12 @@ const TokenDropdown = () => {
         <RadioGroup value={token} onValueChange={handleValueChange}>
           {tokenNames.map((tokenName, i) => (
             <RadioItem key={`${tokenName}-${i}`} value={tokenName} asChild>
-              <MenuItem
+              <DropdownMenuItem
                 textTransform="normal-case"
                 startIcon={<TokenIcon size="lg" name={tokenName} />}
               >
                 {tokenName}
-              </MenuItem>
+              </DropdownMenuItem>
             </RadioItem>
           ))}
         </RadioGroup>

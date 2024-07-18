@@ -11,9 +11,9 @@ import {
   Button,
   Dropdown,
   DropdownBody,
+  DropdownMenuItem,
   ExternalLinkIcon,
   KeyValueWithButton,
-  MenuItem,
   shortenString,
   Typography,
   useWebbUI,
@@ -177,12 +177,12 @@ const SwitchAccountButton: FC = () => {
         <ul>
           {accounts.map((account) => (
             <li key={account.address} onClick={() => setActiveAccount(account)}>
-              <MenuItem>
+              <DropdownMenuItem>
                 {account.name}{' '}
                 <Typography variant="mkt-caption">
                   {shortenString(account.address)}
                 </Typography>
-              </MenuItem>
+              </DropdownMenuItem>
             </li>
           ))}
         </ul>

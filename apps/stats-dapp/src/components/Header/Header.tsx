@@ -8,7 +8,7 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
-  MenuItem,
+  DropdownMenuItem,
   TangleLogo,
   ThemeSwitcherButton,
 } from '@webb-tools/webb-ui-components';
@@ -78,7 +78,7 @@ export const Header: FC<HeaderProps> = ({
               </DropdownBasicButton>
 
               <DropdownBody className="mt-6 w-[280px] dark:bg-mono-180">
-                <MenuItem
+                <DropdownMenuItem
                   className="p-4 border-b border-mono-40 dark:border-mono-140 hover:bg-mono-0 dark:hover:bg-mono-180"
                   icon={<ExternalLinkLine size="lg" />}
                   onClick={() => {
@@ -88,9 +88,9 @@ export const Header: FC<HeaderProps> = ({
                   <Typography variant="label" fw="bold">
                     {selectedNetwork.name}
                   </Typography>
-                </MenuItem>
+                </DropdownMenuItem>
 
-                <MenuItem
+                <DropdownMenuItem
                   className="p-4 border-b border-mono-40 dark:border-mono-140 hover:bg-mono-0 dark:hover:bg-mono-180"
                   icon={<BookOpenLineIcon size="lg" />}
                   onClick={() => {
@@ -105,7 +105,7 @@ export const Header: FC<HeaderProps> = ({
                   <Typography variant="label" fw="bold">
                     Documentation
                   </Typography>
-                </MenuItem>
+                </DropdownMenuItem>
 
                 <div className="px-4 py-2 hover:bg-mono-0 dark:hover:bg-mono-180">
                   <Typography variant="label" fw="bold">

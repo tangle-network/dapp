@@ -1,9 +1,9 @@
-import type { MenuItemProps } from '../MenuItems/types';
+import type { DropdownMenuItemProps } from '../Dropdown/types';
 
 export type ActionItemType = {
   label: string;
   icon?: React.ReactElement;
-  onClick: MenuItemProps['onClick'];
+  onClick: DropdownMenuItemProps['onClick'];
 };
 
 export interface ManageButtonProps {
