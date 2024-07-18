@@ -8,10 +8,10 @@ import { LoginBoxLineIcon, WalletLineIcon } from '@webb-tools/icons';
 import { useWallets } from '@webb-tools/react-hooks';
 import { isViemError, WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import {
+  AccountDropdownBody,
   Button,
   Dropdown,
   DropdownBody,
-  DropdownMenuItem,
   ExternalLinkIcon,
   KeyValueWithButton,
   shortenString,
@@ -173,20 +173,19 @@ const SwitchAccountButton: FC = () => {
         </Button>
       </DropdownTrigger>
 
-      <DropdownBody className="mt-2">
-        <ul>
-          {accounts.map((account) => (
-            <li key={account.address} onClick={() => setActiveAccount(account)}>
-              <DropdownMenuItem>
-                {account.name}{' '}
-                <Typography variant="mkt-caption">
-                  {shortenString(account.address)}
-                </Typography>
-              </DropdownMenuItem>
-            </li>
-          ))}
-        </ul>
-      </DropdownBody>
+      <AccountDropdownBody
+        accountItems={accounts.map((item) => {
+          return {
+            address: item.address,
+            name: item.name,
+            onClick: () => {
+              setActiveAccount(item);
+            },
+          };
+        })}
+        addressShortenFn={shortenString}
+        className="mt-2"
+      />
     </Dropdown>
   );
 };

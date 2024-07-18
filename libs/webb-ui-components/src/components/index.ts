@@ -26,7 +26,6 @@ export * from './Disclaimer';
 export * from './Divider';
 export * from './Drawer';
 export * from './Dropdown';
-export * from './DropdownMenu';
 export * from './ErrorFallback';
 export { default as ExternalLinkIcon } from './ExternalLinkIcon';
 export { default as FeeDetails } from './FeeDetails';
