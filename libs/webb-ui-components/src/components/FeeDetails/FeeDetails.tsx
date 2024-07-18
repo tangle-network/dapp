@@ -102,7 +102,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
               {isTotalLoading ? (
                 <SkeletonLoader className="w-14 dark:bg-mono-140" />
               ) : (
-                totalFeeCmp ?? (
+                (totalFeeCmp ?? (
                   <>
                     <Typography variant="body1" fw="bold">
                       {typeof totalFee === 'number'
@@ -117,7 +117,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                       <TokenIcon name={totalFeeToken} className="ml-2" />
                     )}
                   </>
-                )
+                ))
               )}
 
               <ArrowDropDownFill

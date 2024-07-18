@@ -160,7 +160,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
       title="Total Restake"
       actions={actions}
       dropdownBody={hasDropdownBody ? dropdownBody : undefined}
-      errorMessage={validate ? errorMessage ?? undefined : undefined}
+      errorMessage={validate ? (errorMessage ?? undefined) : undefined}
       chipText={service ?? 'Select role'}
       chipColor={
         service !== null ? getChipColorOfServiceType(service) : undefined

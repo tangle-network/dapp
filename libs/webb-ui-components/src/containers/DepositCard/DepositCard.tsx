@@ -124,7 +124,7 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
                 {buttonProps.children}
               </Typography>
             ) : (
-              buttonProps.children ?? 'Deposit'
+              (buttonProps.children ?? 'Deposit')
             )}
           </Button>
         ) : (
