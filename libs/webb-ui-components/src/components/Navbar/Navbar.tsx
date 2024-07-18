@@ -77,7 +77,7 @@ export const Navbar = forwardRef<HTMLElement, NavbarProps>(
                       >
                         <DropdownMenuItem
                           className="navbar-item px-4 py-2 rounded-lg hover:text-blue-70 font-bold"
-                          icon={
+                          rightIcon={
                             <ArrowRight className="!fill-current" size="lg" />
                           }
                         >
@@ -135,7 +135,7 @@ const MobileNav: FC<MobileNavProps> = ({ navItems: navItemsProp }) => {
                 className={cx('px-4 py-2 rounded-lg', {
                   'hover:!bg-transparent': !isNavItem(item),
                 })}
-                icon={
+                rightIcon={
                   isNavItem(item) ? (
                     <ArrowRight className="!fill-current" size="lg" />
                   ) : undefined
@@ -167,7 +167,7 @@ const MobileNav: FC<MobileNavProps> = ({ navItems: navItemsProp }) => {
                     <InternalOrExternalLink key={idx} {...subItem}>
                       <DropdownMenuItem
                         className="px-4 py-2 rounded-lg hover:text-blue-70"
-                        icon={
+                        rightIcon={
                           <ArrowRight className="!fill-current" size="lg" />
                         }
                         key={`${subItem.label}-${idx}`}

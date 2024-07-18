@@ -30,7 +30,7 @@ const ActionsDropdown: FC<ManageButtonProps> = ({
 
       <DropdownBody className="min-w-[200px]" size="sm">
         {actionItems.map(({ label, icon, onClick }, idx) => (
-          <DropdownMenuItem key={idx} onClick={onClick} icon={icon}>
+          <DropdownMenuItem key={idx} onClick={onClick} rightIcon={icon}>
             {label}
           </DropdownMenuItem>
         ))}

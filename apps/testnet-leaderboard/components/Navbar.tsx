@@ -106,7 +106,7 @@ export const Navbar = () => {
                     >
                       <DropdownMenuItem
                         className="px-4 py-2 rounded-lg hover:text-blue-70"
-                        icon={
+                        rightIcon={
                           <ArrowRight className="!fill-current" size="lg" />
                         }
                       >
@@ -195,7 +195,7 @@ const MobileNav = () => {
                     <Link key={idx} {...subItem}>
                       <DropdownMenuItem
                         className="px-4 py-2 rounded-lg hover:text-blue-70"
-                        icon={
+                        rightIcon={
                           <ArrowRight className="!fill-current" size="lg" />
                         }
                         key={`${subItem.children.toString()}-${idx}`}

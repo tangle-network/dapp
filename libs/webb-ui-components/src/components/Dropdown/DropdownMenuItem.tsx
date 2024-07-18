@@ -12,12 +12,14 @@ import { DropdownMenuItemProps } from './types';
  *
  * Props:
  *
- * - `icon`: The icon displayed after the text
+ * - `rightIcon`: The icon displayed after the text
+ * - `leftIcon`: The icon displayed before the text
+ * - `textTransform`: The text transform style
  *
  * @example
  *
  * ```jsx
- *  <DropdownMenuItem icon={<Filter />}>Filter</DropdownMenuItem>
+ *  <DropdownMenuItem rightIcon={<Filter />}>Filter</DropdownMenuItem>
  *  <DropdownMenuItem>Item 1</DropdownMenuItem>
  * ```
  */
@@ -29,8 +31,8 @@ const DropdownMenuItem = React.forwardRef<
     {
       children,
       className: clsxProp,
-      startIcon,
-      icon,
+      leftIcon,
+      rightIcon,
       textTransform = 'capitalize',
       ...props
     },
@@ -53,11 +55,11 @@ const DropdownMenuItem = React.forwardRef<
 
     return (
       <DropdownMenu.Item className={className} {...props} ref={ref}>
-        {startIcon && <div className="mr-2.5 shrink-0">{startIcon}</div>}
+        {leftIcon && <div className="mr-2.5 shrink-0">{leftIcon}</div>}
         <span className="flex-grow text-inherit dark:text-inherit">
           {children}
         </span>
-        {icon && <div className="shrink-0">{icon}</div>}
+        {rightIcon && <div className="shrink-0">{rightIcon}</div>}
       </DropdownMenu.Item>
     );
   },

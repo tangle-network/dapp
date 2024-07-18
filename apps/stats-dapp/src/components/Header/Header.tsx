@@ -80,7 +80,7 @@ export const Header: FC<HeaderProps> = ({
               <DropdownBody className="mt-6 w-[280px] dark:bg-mono-180">
                 <DropdownMenuItem
                   className="p-4 border-b border-mono-40 dark:border-mono-140 hover:bg-mono-0 dark:hover:bg-mono-180"
-                  icon={<ExternalLinkLine size="lg" />}
+                  rightIcon={<ExternalLinkLine size="lg" />}
                   onClick={() => {
                     window.open(selectedNetwork.polkadotExplorer, '_blank');
                   }}
@@ -92,7 +92,7 @@ export const Header: FC<HeaderProps> = ({
 
                 <DropdownMenuItem
                   className="p-4 border-b border-mono-40 dark:border-mono-140 hover:bg-mono-0 dark:hover:bg-mono-180"
-                  icon={<BookOpenLineIcon size="lg" />}
+                  rightIcon={<BookOpenLineIcon size="lg" />}
                   onClick={() => {
                     window.open(
                       populateDocsUrl(

@@ -80,7 +80,7 @@ const ActiveChainDropdown = () => {
               return (
                 <li key={`${chain.chainType}-${chain.id}`}>
                   <DropdownMenuItem
-                    startIcon={<ChainIcon size="lg" name={chain.name} />}
+                    leftIcon={<ChainIcon size="lg" name={chain.name} />}
                     onSelect={() => handleSelectChain(chain)}
                   >
                     {chain.name}

@@ -69,7 +69,7 @@ const ChainDropdown: FC = () => {
               asChild
             >
               <DropdownMenuItem
-                startIcon={<ChainIcon size="lg" name={chain.name} />}
+                leftIcon={<ChainIcon size="lg" name={chain.name} />}
               >
                 {chain.name}
               </DropdownMenuItem>

@@ -197,7 +197,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({ selectedChain, setChain }) => {
                 return (
                   <li key={chain} className="w-full">
                     <DropdownMenuItem
-                      startIcon={<ChainLogo size="sm" chain={chain} />}
+                      leftIcon={<ChainLogo size="sm" chain={chain} />}
                       onSelect={() => setChain(chain)}
                       className="px-3 normal-case"
                     >

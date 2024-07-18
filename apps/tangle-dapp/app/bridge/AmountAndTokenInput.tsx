@@ -103,7 +103,7 @@ const AmountAndTokenInput: FC = () => {
                   return (
                     <li key={tokenId}>
                       <DropdownMenuItem
-                        startIcon={<TokenIcon size="lg" name={token.symbol} />}
+                        leftIcon={<TokenIcon size="lg" name={token.symbol} />}
                         onSelect={() => setSelectedTokenId(tokenId)}
                         className="px-3 normal-case"
                       >

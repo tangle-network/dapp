@@ -93,7 +93,7 @@ export const DropdownMenu = React.forwardRef<HTMLDivElement, DropdownMenuProps>(
                 value={value}
                 asChild
               >
-                <DropdownMenuItem icon={icon}>{value}</DropdownMenuItem>
+                <DropdownMenuItem rightIcon={icon}>{value}</DropdownMenuItem>
               </DropdownMenuPrimitive.RadioItem>
             ))}
           </DropdownMenuPrimitive.RadioGroup>

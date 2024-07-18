@@ -47,7 +47,7 @@ export const NavigationMenuContent = forwardRef<
       >
         {onDocsClick && (
           <DropdownMenuItem
-            icon={<BookOpenLineIcon size="lg" />}
+            rightIcon={<BookOpenLineIcon size="lg" />}
             onClick={onDocsClick}
           >
             Docs
@@ -56,7 +56,7 @@ export const NavigationMenuContent = forwardRef<
 
         {onFaucetClick && (
           <DropdownMenuItem
-            icon={<FaucetIcon size="lg" />}
+            rightIcon={<FaucetIcon size="lg" />}
             onClick={onFaucetClick}
           >
             Faucet
@@ -69,7 +69,7 @@ export const NavigationMenuContent = forwardRef<
 
         {onHelpCenterClick && (
           <DropdownMenuItem
-            icon={<HelpLineIcon size="lg" />}
+            rightIcon={<HelpLineIcon size="lg" />}
             onClick={onHelpCenterClick}
           >
             Help Center
@@ -78,7 +78,7 @@ export const NavigationMenuContent = forwardRef<
 
         {onRequestFeaturesClick && (
           <DropdownMenuItem
-            icon={<FlaskLineIcon size="lg" />}
+            rightIcon={<FlaskLineIcon size="lg" />}
             onClick={onRequestFeaturesClick}
           >
             Request Features
@@ -89,7 +89,7 @@ export const NavigationMenuContent = forwardRef<
 
         {onTestnetClick && (
           <DropdownMenuItem
-            icon={<TangleIcon size="lg" />}
+            rightIcon={<TangleIcon size="lg" />}
             onClick={onTestnetClick}
           >
             Substrate Portal
@@ -98,7 +98,7 @@ export const NavigationMenuContent = forwardRef<
 
         {onAboutClick && (
           <DropdownMenuItem
-            icon={<InformationLine size="lg" />}
+            rightIcon={<InformationLine size="lg" />}
             onClick={onAboutClick}
           >
             About

@@ -128,7 +128,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
               return (
                 <li key={`${chain.chainType}-${chain.id}`}>
                   <DropdownMenuItem
-                    startIcon={<ChainIcon size="lg" name={chain.name} />}
+                    leftIcon={<ChainIcon size="lg" name={chain.name} />}
                     onSelect={() => onSelectChain(chain)}
                     className="py-2.5"
                   >

@@ -51,14 +51,14 @@ export interface DropdownMenuItemProps
   extends IWebbComponentBase,
     RdxDropdownMenuItemProps {
   /**
-   * The icon displayed before the text
+   * The icon displayed on the left before the text
    */
-  startIcon?: React.ReactElement;
+  leftIcon?: React.ReactElement;
 
   /**
-   * The icon displayed after the text
+   * The icon displayed on the right
    */
-  icon?: React.ReactElement;
+  rightIcon?: React.ReactElement;
 
   /**
    * The text transform

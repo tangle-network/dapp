@@ -201,7 +201,7 @@ function TotalShieldedBalance() {
                 {availableCurrencyCfgs.map(({ name, symbol, id }) => (
                   <li key={`${name}-${id}`}>
                     <DropdownMenuItem
-                      startIcon={<TokenIcon name={symbol} />}
+                      leftIcon={<TokenIcon name={symbol} />}
                       onSelect={() => setCurrencyId(id)}
                       textTransform="normal-case"
                     >

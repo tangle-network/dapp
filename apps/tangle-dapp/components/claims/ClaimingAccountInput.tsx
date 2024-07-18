@@ -91,7 +91,7 @@ const ClaimingAccountInput: FC<Props> = ({
                   onClick={() => setActiveAccount(account)}
                 >
                   <DropdownMenuItem
-                    startIcon={
+                    leftIcon={
                       <Avatar theme="substrate" value={account.address} />
                     }
                   >

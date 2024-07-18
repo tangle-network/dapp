@@ -101,7 +101,7 @@ const TokenDropdown = () => {
             <RadioItem key={`${tokenName}-${i}`} value={tokenName} asChild>
               <DropdownMenuItem
                 textTransform="normal-case"
-                startIcon={<TokenIcon size="lg" name={tokenName} />}
+                leftIcon={<TokenIcon size="lg" name={tokenName} />}
               >
                 {tokenName}
               </DropdownMenuItem>

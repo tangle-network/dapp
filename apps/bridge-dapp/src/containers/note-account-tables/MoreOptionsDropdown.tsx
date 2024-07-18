@@ -25,13 +25,13 @@ export const MoreOptionsDropdown: FC<MoreOptionsDropdownProps> = ({
       <DropdownBody className="radix-side-top:mb-3 radix-side-bottom:mt-3">
         <DropdownMenuItem
           onClick={onDownloadNotes}
-          icon={<Download size="lg" />}
+          rightIcon={<Download size="lg" />}
         >
           Download
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={onDeleteNotes}
-          icon={<DeleteBinIcon size="lg" />}
+          rightIcon={<DeleteBinIcon size="lg" />}
         >
           Delete
         </DropdownMenuItem>

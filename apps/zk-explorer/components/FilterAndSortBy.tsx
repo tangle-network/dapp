@@ -101,7 +101,7 @@ const FilterAndSortBy: FC<FilterAndSortByProps> = ({
                 key={index}
                 disabled={isSelected}
                 onClick={() => onSortByClauseChange(clause)}
-                icon={isSelected ? <CheckCircledIcon /> : <CircleIcon />}
+                rightIcon={isSelected ? <CheckCircledIcon /> : <CircleIcon />}
               >
                 {clause}
               </DropdownMenuItem>
