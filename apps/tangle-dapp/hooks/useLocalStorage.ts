@@ -3,8 +3,10 @@
 import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
 
+import { LiquidStakingChain } from '../constants/liquidStaking';
 import { Payout, TangleTokenSymbol } from '../types';
 import { BridgeQueueTxItem } from '../types/bridge';
+import { Dapp, Validator, VaultOrStakePool } from '../types/liquidStaking';
 import Optional from '../utils/Optional';
 
 export enum LocalStorageKey {
@@ -20,12 +22,17 @@ export enum LocalStorageKey {
   SERVICES_CACHE = 'servicesCache',
   SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
   BRIDGE_TX_QUEUE_BY_ACC = 'bridgeTxQueue',
+  LIQUID_STAKING_TABLE_DATA = 'liquidStakingTableData',
 }
 
 export type PayoutsCache = {
   [rpcEndpoint: string]: {
     [address: string]: Payout[];
   };
+};
+
+export type LiquidStakingTableData = {
+  [chain in LiquidStakingChain]: Validator[] | VaultOrStakePool[] | Dapp[];
 };
 
 export type SubstrateWalletsMetadataEntry = {
@@ -67,7 +74,9 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
                       ? SubstrateWalletsMetadataCache
                       : T extends LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC
                         ? TxQueueByAccount
-                        : never;
+                        : T extends LocalStorageKey.LIQUID_STAKING_TABLE_DATA
+                          ? LiquidStakingTableData
+                          : never;
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,

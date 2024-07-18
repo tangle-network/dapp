@@ -88,7 +88,7 @@ const LiquidStakingCard: FC = () => {
   }, [fromAmount, rate]);
 
   return (
-    <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] bg-mono-0 dark:bg-mono-190 rounded-2xl p-9 border dark:border-mono-160 shadow-sm">
+    <div className="flex flex-col gap-4 w-full bg-mono-0 dark:bg-mono-190 rounded-2xl p-9 border dark:border-mono-160 shadow-sm">
       <div className="flex gap-3">
         <Typography className="dark:text-mono-0" variant="h4" fw="bold">
           Stake

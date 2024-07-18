@@ -2,11 +2,13 @@ import { BN } from '@polkadot/util';
 
 // All chains
 export type StakingItem = {
-  id: string;
+  id: string; // address - Validator, contract address - DAPP, pool/vault ID - VaultOrStakePool
   totalValueStaked: BN;
   chain: string;
   chainDecimals: number;
   chainTokenSymbol: string;
+  itemType: LiquidStakingItem;
+  href: string;
 };
 
 // Chains - Polkadot, Kusama, Tangle etc.
@@ -19,12 +21,19 @@ export type Validator = {
 
 // Chain - Phala Network (Stake on Vaults or Stake Pools)
 export type VaultOrStakePool = {
-  type: 'vault' | 'stakePool';
+  vaultOrStakePoolID: string;
+  vaultOrStakePoolName: string;
+  vaultOrStakePoolAccountID: string;
+  commission: BN;
+  type: string;
 } & StakingItem;
 
 // Chain - Astar (dApp Staking)
 export type Dapp = {
   dappContractAddress: string;
+  dappName: string;
+  dappContractType: string;
+  commission: BN;
 } & StakingItem;
 
 export enum LiquidStakingItem {
@@ -32,3 +41,5 @@ export enum LiquidStakingItem {
   VAULT_OR_STAKE_POOL = 'vaultOrStakePool',
   DAPP = 'dapp',
 }
+
+export type LiquidStakingItemType = Validator | VaultOrStakePool | Dapp;
