@@ -87,10 +87,15 @@ const useInputAmount = ({
         })
         .join('');
 
+      // Nothing to do.
+      if (displayAmount === cleanAmountString) {
+        return;
+      }
+
       setDisplayAmount(cleanAmountString);
 
       const amountOrError = safeParseInputAmount({
-        amountString: newAmountString,
+        amountString: cleanAmountString,
         min,
         max,
         errorOnEmptyValue,
@@ -105,13 +110,14 @@ const useInputAmount = ({
       }
       // If there was no error on the validation of the new amount string,
       // convert it to chain units and set it as the new amount.
-      else if (setAmount !== undefined && !newAmountString.endsWith('.')) {
+      else if (setAmount !== undefined && !cleanAmountString.endsWith('.')) {
         setErrorMessage(null);
         setAmount(amountOrError);
       }
     },
     [
       decimals,
+      displayAmount,
       errorOnEmptyValue,
       max,
       maxErrorMessage,

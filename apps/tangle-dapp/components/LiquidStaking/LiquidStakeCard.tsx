@@ -49,7 +49,7 @@ const LiquidStakeCard: FC = () => {
 
   const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
 
-  const exchangeRateOpt = useExchangeRate(
+  const exchangeRate = useExchangeRate(
     ExchangeRateType.NativeToLiquid,
     selectedChain.currency,
   );
@@ -98,16 +98,12 @@ const LiquidStakeCard: FC = () => {
   }, [executeMintTx, fromAmount, selectedChain.currency]);
 
   const toAmount = useMemo(() => {
-    if (
-      fromAmount === null ||
-      exchangeRateOpt === null ||
-      exchangeRateOpt.value === null
-    ) {
+    if (fromAmount === null || exchangeRate === null) {
       return null;
     }
 
-    return fromAmount.muln(exchangeRateOpt.value);
-  }, [fromAmount, exchangeRateOpt]);
+    return fromAmount.muln(exchangeRate);
+  }, [fromAmount, exchangeRate]);
 
   const walletBalance = (
     <ParachainWalletBalance
@@ -174,10 +170,7 @@ const LiquidStakeCard: FC = () => {
           executeMintTx === null ||
           // No amount entered or amount is zero.
           fromAmount === null ||
-          fromAmount.isZero() ||
-          // TODO: This should actually only apply to unstaking, since when staking the user itself is the liquidity provider, since they are minting LSTs.
-          // No liquidity available for this token.
-          exchangeRateOpt?.isEmpty === true
+          fromAmount.isZero()
         }
         isLoading={mintTxStatus === TxStatus.PROCESSING}
         loadingText="Processing"

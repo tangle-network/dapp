@@ -22,8 +22,7 @@ const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({
   token,
   currency,
 }) => {
-  const exchangeRateOpt = useExchangeRate(type, currency);
-  const exchangeRate = exchangeRateOpt?.value ?? null;
+  const exchangeRate = useExchangeRate(type, currency);
 
   const exchangeRateElement =
     exchangeRate === null ? (

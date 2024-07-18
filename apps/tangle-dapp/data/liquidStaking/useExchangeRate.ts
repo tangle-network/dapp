@@ -7,7 +7,6 @@ import {
 } from '../../constants/liquidStaking';
 import useApiRx from '../../hooks/useApiRx';
 import calculateBnRatio from '../../utils/calculateBnRatio';
-import Optional from '../../utils/Optional';
 
 export enum ExchangeRateType {
   NativeToLiquid,
@@ -31,26 +30,18 @@ const useExchangeRate = (
     return api.query.tokens.totalIssuance({ lst: currency });
   }, TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint);
 
-  const exchangeRate = useMemo<Optional<number> | null>(() => {
+  const exchangeRate = useMemo(() => {
     if (tokenPoolAmount === null || lstTotalIssuance === null) {
       return null;
     }
-    // TODO: Need to review whether this is the right way to handle this edge case.
-    // Special case: Default to an initial 1:1 exchange rate when
-    // the token pool amount and total issuance are both zero.
-    else if (tokenPoolAmount.isZero() && lstTotalIssuance.isZero()) {
-      return new Optional(1);
-    }
 
-    const isDivisionByZero =
-      (type === ExchangeRateType.NativeToLiquid && tokenPoolAmount.isZero()) ||
-      (type === ExchangeRateType.LiquidToNative && lstTotalIssuance.isZero());
+    const isEitherZero = tokenPoolAmount.isZero() || lstTotalIssuance.isZero();
 
     // TODO: Need to review whether this is the right way to handle this edge case.
-    // Special case: No native tokens are available for conversion.
-    // Need to handle this here to prevent division by zero.
-    if (isDivisionByZero) {
-      return new Optional();
+    // Special case: No native tokens or liquidity available for conversion.
+    // Default to 1:1 exchange rate. This also helps prevent division by zero.
+    if (isEitherZero) {
+      return 1;
     }
 
     const ratio =
@@ -58,7 +49,7 @@ const useExchangeRate = (
         ? calculateBnRatio(lstTotalIssuance, tokenPoolAmount)
         : calculateBnRatio(tokenPoolAmount, lstTotalIssuance);
 
-    return new Optional(ratio);
+    return ratio;
   }, [lstTotalIssuance, tokenPoolAmount, type]);
 
   return exchangeRate;

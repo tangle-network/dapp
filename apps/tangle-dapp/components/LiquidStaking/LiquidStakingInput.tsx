@@ -94,10 +94,10 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   // Update the display amount when the amount prop changes.
   // Only do this for controlled (read-only) inputs.
   useEffect(() => {
-    if (isReadOnly && amount !== null) {
+    if (amount !== null) {
       updateDisplayAmountManual(amount);
     }
-  }, [amount, isReadOnly, updateDisplayAmountManual]);
+  }, [amount, updateDisplayAmountManual]);
 
   const isError = errorMessage !== null;
 

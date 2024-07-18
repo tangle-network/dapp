@@ -48,7 +48,7 @@ const LiquidUnstakeCard: FC = () => {
 
   const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
 
-  const exchangeRateOpt = useExchangeRate(
+  const exchangeRate = useExchangeRate(
     ExchangeRateType.LiquidToNative,
     selectedChain.currency,
   );
@@ -106,16 +106,12 @@ const LiquidUnstakeCard: FC = () => {
   }, [executeRedeemTx, fromAmount, selectedChain.currency]);
 
   const toAmount = useMemo(() => {
-    if (
-      fromAmount === null ||
-      exchangeRateOpt === null ||
-      exchangeRateOpt.value === null
-    ) {
+    if (fromAmount === null || exchangeRate === null) {
       return null;
     }
 
-    return fromAmount.muln(exchangeRateOpt.value);
-  }, [exchangeRateOpt, fromAmount]);
+    return fromAmount.muln(exchangeRate);
+  }, [exchangeRate, fromAmount]);
 
   const handleTokenSelect = useCallback(() => {
     setIsSelectTokenModalOpen(false);
