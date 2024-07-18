@@ -1,7 +1,6 @@
 'use client';
 
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
@@ -10,7 +9,7 @@ import TabsList from './TabsList';
 
 export type TabsListProps = PropsOf<'ul'>;
 
-export const tabs = ['deposit', 'delegate'] as const;
+export const tabs = ['deposit', 'stake'] as const;
 
 const RestakeTabs = (props: TabsListProps) => {
   const pathname = usePathname();
@@ -26,10 +25,12 @@ const RestakeTabs = (props: TabsListProps) => {
   return (
     <TabsList {...props}>
       {tabs.map((tab, idx) => (
-        <TabListItem key={`${tab}-${idx}`} isActive={activeTab === tab}>
-          <Link href={tab} className="text-inherit">
-            {`${tab[0].toUpperCase()}${tab.substring(1)}`}
-          </Link>
+        <TabListItem
+          href={tab}
+          key={`${tab}-${idx}`}
+          isActive={activeTab === tab}
+        >
+          {`${tab[0].toUpperCase()}${tab.substring(1)}`}
         </TabListItem>
       ))}
     </TabsList>

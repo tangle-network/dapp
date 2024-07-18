@@ -33,13 +33,16 @@ import type { DelegationFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
 import AvatarWithText from '../AvatarWithText';
 import ChainList from '../ChainList';
+import Form from '../Form';
 import ModalContent from '../ModalContent';
 import RestakeTabs from '../RestakeTabs';
 import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
-import DelegationInput from './DelegationInput';
 import Info from './Info';
 import OperatorList from './OperatorList';
+import DelegationInput from './StakeInput';
+
+export const dynamic = 'force-static';
 
 export default function DelegatePage() {
   const {
@@ -227,10 +230,7 @@ export default function DelegatePage() {
   );
 
   return (
-    <form
-      className="relative h-full overflow-hidden"
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col h-full space-y-4 grow">
         <RestakeTabs />
 
@@ -305,7 +305,7 @@ export default function DelegatePage() {
           />
         </ModalContent>
       </Modal>
-    </form>
+    </Form>
   );
 }
 

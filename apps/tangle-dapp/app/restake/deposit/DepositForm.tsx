@@ -16,7 +16,6 @@ import {
   useState,
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { twMerge } from 'tailwind-merge';
 import { formatUnits, parseUnits } from 'viem';
 
 import useRestakeTxEventHandlersWithNoti, {
@@ -35,6 +34,7 @@ import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { DepositFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
 import ChainList from '../ChainList';
+import Form from '../Form';
 import ModalContent from '../ModalContent';
 import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
@@ -51,7 +51,7 @@ function getDefaultTypedChainId(activeTypedChainId: number | null) {
 
 export type DepositFormProps = ComponentProps<'form'>;
 
-const DepositForm = ({ className, ...props }: DepositFormProps) => {
+const DepositForm = ({ ...props }: DepositFormProps) => {
   const formRef = useRef<HTMLFormElement>(null);
 
   const activeTypedChainId = useActiveTypedChainId();
@@ -191,12 +191,7 @@ const DepositForm = ({ className, ...props }: DepositFormProps) => {
   );
 
   return (
-    <form
-      {...props}
-      ref={formRef}
-      onSubmit={handleSubmit(onSubmit)}
-      className={twMerge('overflow-hidden', className)}
-    >
+    <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col h-full space-y-4 grow">
         <RestakeTabs />
 
@@ -257,7 +252,7 @@ const DepositForm = ({ className, ...props }: DepositFormProps) => {
           />
         </ModalContent>
       </Modal>
-    </form>
+    </Form>
   );
 };
 
