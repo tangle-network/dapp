@@ -4,17 +4,17 @@ import {
   Dropdown,
   DropdownButton,
   DropdownBody,
+  DropdownMenuItem,
 } from '../../components/Dropdown';
-import { MenuItem } from '../../components/MenuItems';
 
-const meta: Meta<typeof MenuItem> = {
-  title: 'Design System/Molecules/MenuItems',
-  component: MenuItem,
+const meta: Meta<typeof DropdownMenuItem> = {
+  title: 'Design System/Molecules/DropdownMenuItem',
+  component: DropdownMenuItem,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof MenuItem>;
+type Story = StoryObj<typeof DropdownMenuItem>;
 
 export const Default: Story = {
   render: () => (
@@ -28,7 +28,7 @@ export const Default: Story = {
       <DropdownBody className="radix-side-top:mb-2 radix-side-bottom:mt-2 w-[var(--radix-dropdown-menu-trigger-width)]">
         <ul>
           {['abc', 'xyz'].map((str) => (
-            <MenuItem>{str}</MenuItem>
+            <DropdownMenuItem>{str}</DropdownMenuItem>
           ))}
         </ul>
       </DropdownBody>

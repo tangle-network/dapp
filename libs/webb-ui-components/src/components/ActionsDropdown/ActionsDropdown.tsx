@@ -1,7 +1,11 @@
 import { ChevronDown } from '@webb-tools/icons';
 import { type FC } from 'react';
-import { Dropdown, DropdownBasicButton, DropdownBody } from '../Dropdown';
-import { MenuItem } from '../MenuItems';
+import {
+  Dropdown,
+  DropdownBasicButton,
+  DropdownBody,
+  DropdownMenuItem,
+} from '../Dropdown';
 import Button from '../buttons/Button';
 import { ManageButtonProps } from './types';
 
@@ -26,9 +30,9 @@ const ActionsDropdown: FC<ManageButtonProps> = ({
 
       <DropdownBody className="min-w-[200px]" size="sm">
         {actionItems.map(({ label, icon, onClick }, idx) => (
-          <MenuItem key={idx} onClick={onClick} icon={icon}>
+          <DropdownMenuItem key={idx} onClick={onClick} icon={icon}>
             {label}
-          </MenuItem>
+          </DropdownMenuItem>
         ))}
       </DropdownBody>
     </Dropdown>
