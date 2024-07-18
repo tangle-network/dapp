@@ -3,7 +3,6 @@
 import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
 
-import { LiquidStakingChain } from '../constants/liquidStaking';
 import { Payout, TangleTokenSymbol } from '../types';
 import { BridgeQueueTxItem } from '../types/bridge';
 import { Dapp, Validator, VaultOrStakePool } from '../types/liquidStaking';
@@ -32,7 +31,7 @@ export type PayoutsCache = {
 };
 
 export type LiquidStakingTableData = {
-  [chain in LiquidStakingChain]: Validator[] | VaultOrStakePool[] | Dapp[];
+  [chain: string]: Validator[] | VaultOrStakePool[] | Dapp[];
 };
 
 export type SubstrateWalletsMetadataEntry = {

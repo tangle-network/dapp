@@ -91,9 +91,9 @@ export const LiquidStakingSelectionTable: FC<
       case LiquidStakingItem.VALIDATOR:
         return 'Validators';
       case LiquidStakingItem.DAPP:
-        return 'a dApp';
+        return 'DApp';
       case LiquidStakingItem.VAULT_OR_STAKE_POOL:
-        return 'a Vault or a Stake Pool';
+        return 'Vault or Stake Pool';
       default:
         return '';
     }
