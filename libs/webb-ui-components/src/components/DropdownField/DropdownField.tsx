@@ -2,7 +2,7 @@
 
 import { RadioGroup, RadioItem } from '@radix-ui/react-dropdown-menu';
 import { Dropdown, DropdownBasicButton, DropdownBody } from '../Dropdown';
-import { MenuItem } from '../MenuItem';
+import { MenuItem } from '../MenuItems';
 import { Typography } from '../../typography/Typography';
 import { useCallback } from 'react';
 import { DropdownFieldProps } from './types';

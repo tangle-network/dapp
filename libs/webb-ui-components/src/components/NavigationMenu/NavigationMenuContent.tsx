@@ -10,7 +10,7 @@ import { Fragment, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { DropdownBody } from '../Dropdown';
-import { MenuItem } from '../MenuItem/MenuItem';
+import { MenuItem } from '../MenuItems/MenuItem';
 import { NavigationMenuContentProps } from './types';
 
 /**

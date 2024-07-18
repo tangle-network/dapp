@@ -1,7 +1,7 @@
 import { ChevronDown } from '@webb-tools/icons';
 import { type FC } from 'react';
 import { Dropdown, DropdownBasicButton, DropdownBody } from '../Dropdown';
-import { MenuItem } from '../MenuItem';
+import { MenuItem } from '../MenuItems';
 import Button from '../buttons/Button';
 import { ManageButtonProps } from './types';
 

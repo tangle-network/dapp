@@ -43,7 +43,7 @@ export * from './LabelWithValue';
 export * from './ListCard';
 export * from './Logo';
 export * from './LogoWithoutName';
-export * from './MenuItem';
+export * from './MenuItems';
 export * from './Modal';
 export * from './Navbar';
 export * from './NavigationMenu';

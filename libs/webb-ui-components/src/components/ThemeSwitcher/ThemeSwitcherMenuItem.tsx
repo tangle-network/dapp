@@ -3,7 +3,7 @@ import { useDarkMode } from '../../hooks';
 import { MoonLine, SunLine } from '@webb-tools/icons';
 import { useMemo } from 'react';
 
-import { MenuItem } from '../MenuItem';
+import { MenuItem } from '../MenuItems';
 
 type ThemeSwitcherMenuItemProps = {
   className?: string;

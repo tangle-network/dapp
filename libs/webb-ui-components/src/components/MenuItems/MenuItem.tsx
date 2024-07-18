@@ -21,7 +21,7 @@ import { MenuItemProps } from './types';
  *  <MenuItem>Item 1</MenuItem>
  * ```
  */
-export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
+const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
   (
     {
       children,
@@ -59,3 +59,5 @@ export const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
     );
   },
 );
+
+export default MenuItem;

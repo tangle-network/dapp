@@ -12,7 +12,7 @@ import {
   DropdownBody,
   DropdownButton,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
-import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
+import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItems';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import type { FC } from 'react';
 import { twMerge } from 'tailwind-merge';

@@ -10,7 +10,7 @@ import {
   Dropdown,
   DropdownBody,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
-import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
+import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItems';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import assert from 'assert';
 import { FC, useCallback } from 'react';

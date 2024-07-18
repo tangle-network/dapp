@@ -5,7 +5,7 @@ import {
   DropdownButton,
   DropdownBody,
 } from '../../components/Dropdown';
-import { MenuItem } from '../../components/MenuItem';
+import { MenuItem } from '../../components/MenuItems';
 
 const meta: Meta<typeof MenuItem> = {
   title: 'Design System/Molecules/MenuItems',

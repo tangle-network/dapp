@@ -14,7 +14,7 @@ import { Typography } from '../../typography';
 import { Accordion, AccordionContent, AccordionItem } from '../Accordion';
 import { Button } from '../buttons';
 import { Dropdown, DropdownBasicButton, DropdownBody } from '../Dropdown';
-import { MenuItem } from '../MenuItem';
+import { MenuItem } from '../MenuItems';
 import { InternalOrExternalLink } from './InternalOrExternalLink';
 import { MobileNavProps, NavItemType, NavbarProps } from './types';
 

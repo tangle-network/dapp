@@ -5,7 +5,7 @@ import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Dropdown, DropdownBody, DropdownButton } from '../Dropdown';
-import { MenuItem } from '../MenuItem';
+import { MenuItem } from '../MenuItems';
 import { DropdownMenuProps } from './types';
 
 /**
