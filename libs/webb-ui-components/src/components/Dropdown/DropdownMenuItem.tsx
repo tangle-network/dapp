@@ -34,6 +34,7 @@ const DropdownMenuItem = React.forwardRef<
       leftIcon,
       rightIcon,
       textTransform = 'capitalize',
+      disabled = false,
       ...props
     },
     ref,
@@ -41,17 +42,25 @@ const DropdownMenuItem = React.forwardRef<
     const className = useMemo(() => {
       return twMerge(
         cx(
-          'flex cursor-pointer items-center px-4 py-2 text-base outline-none',
-          'text-mono-140 dark:text-mono-80',
-          'hover:bg-blue-0 dark:hover:bg-mono-180',
-          'focus:bg-blue-0 dark:focus:bg-mono-180',
-          'radix-state-checked:text-blue dark:radix-state-checked:text-blue-50',
-          'radix-state-active:text-blue dark:radix-state-active:text-blue-50',
+          'flex items-center px-4 py-2 text-base outline-none',
+          { 'cursor-pointer': !disabled },
+          !disabled
+            ? 'text-mono-160 dark:text-mono-40'
+            : 'text-mono-60 dark:text-mono-140',
+          !disabled
+            ? 'bg-mono-0 dark:bg-mono-190'
+            : 'bg-mono-0 dark:bg-mono-200',
+          { 'hover:bg-blue-0 dark:hover:bg-mono-170': !disabled },
+          { 'focus:bg-blue-0 dark:focus:bg-mono-170': !disabled },
+          { 'hover:text-mono-200 dark:hover:text-mono-0': !disabled },
+          { 'focus:text-mono-200 dark:focus:text-mono-0': !disabled },
+          'radix-state-checked:text-mono-200 dark:radix-state-checked:text-mono-0',
+          'radix-state-active:text-mono-200 dark:radix-state-active:text-mono-0',
         ),
         textTransform,
         clsxProp,
       );
-    }, [clsxProp, textTransform]);
+    }, [clsxProp, textTransform, disabled]);
 
     return (
       <DropdownMenu.Item className={className} {...props} ref={ref}>

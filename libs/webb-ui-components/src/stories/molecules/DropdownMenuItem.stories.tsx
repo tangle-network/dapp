@@ -8,7 +8,7 @@ import {
 } from '../../components/Dropdown';
 
 const meta: Meta<typeof DropdownMenuItem> = {
-  title: 'Design System/Molecules/DropdownMenuItem',
+  title: 'Design System/Molecules/DropdownMenu',
   component: DropdownMenuItem,
 };
 
@@ -23,9 +23,9 @@ export const Default: Story = {
 
       <DropdownBody className="radix-side-top:mb-2 radix-side-bottom:mt-2 w-[var(--radix-dropdown-menu-trigger-width)]">
         <ul>
-          {['abc', 'xyz'].map((str) => (
-            <DropdownMenuItem>{str}</DropdownMenuItem>
-          ))}
+          <DropdownMenuItem>Item 1</DropdownMenuItem>
+          <DropdownMenuItem>Item 2</DropdownMenuItem>
+          <DropdownMenuItem disabled>Disabled</DropdownMenuItem>
         </ul>
       </DropdownBody>
     </Dropdown>
