@@ -37,13 +37,13 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
   const { nativeBalances, liquidBalances } = useParachainBalances();
   const map = isNative ? nativeBalances : liquidBalances;
 
-  const balance = (() => {
+  const balance = useMemo(() => {
     if (map === null) {
       return null;
     }
 
     return map.get(token) ?? BN_ZERO;
-  })();
+  }, [map, token]);
 
   const formattedBalance = useMemo(() => {
     // No account is active.
