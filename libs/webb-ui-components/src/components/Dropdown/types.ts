@@ -98,6 +98,11 @@ export interface DropdownMenuItemProps
   extends IWebbComponentBase,
     RdxDropdownMenuItemProps {
   /**
+   * Handle state if the item is being active
+   */
+  isActive?: boolean;
+
+  /**
    * The icon displayed on the left before the text
    */
   leftIcon?: React.ReactElement;

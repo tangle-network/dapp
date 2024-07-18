@@ -73,7 +73,7 @@ export const WalletDropdown: FC<{
         />
       </DropdownTrigger>
 
-      <DropdownBody className="mt-6 md:w-[480px] p-4 space-y-4 dark:bg-mono-160">
+      <DropdownBody className="mt-6 md:w-[480px] p-4 space-y-4 dark:bg-mono-180">
         <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
           <div className="flex space-x-2">
             {wallet.Logo}

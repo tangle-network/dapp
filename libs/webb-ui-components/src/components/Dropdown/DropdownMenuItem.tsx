@@ -35,6 +35,7 @@ const DropdownMenuItem = React.forwardRef<
       rightIcon,
       textTransform = 'capitalize',
       disabled = false,
+      isActive = false,
       ...props
     },
     ref,
@@ -48,13 +49,15 @@ const DropdownMenuItem = React.forwardRef<
           { 'focus:bg-blue-0 dark:focus:bg-mono-170': !disabled },
           { 'hover:text-mono-200 dark:hover:text-mono-0': !disabled },
           { 'focus:text-mono-200 dark:focus:text-mono-0': !disabled },
+          { 'bg-blue-0 dark:bg-mono-170': isActive },
+          { 'text-mono-200 dark:text-mono-0': isActive },
           'radix-state-checked:text-mono-200 dark:radix-state-checked:text-mono-0',
           'radix-state-active:text-mono-200 dark:radix-state-active:text-mono-0',
         ),
         textTransform,
         clsxProp,
       );
-    }, [clsxProp, textTransform, disabled]);
+    }, [clsxProp, textTransform, disabled, isActive]);
 
     return (
       <DropdownMenu.Item className={className} {...props} ref={ref}>
