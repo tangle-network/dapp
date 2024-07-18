@@ -8,6 +8,7 @@ import {
 import { StatusVariant } from '@webb-tools/icons/StatusIndicator/types';
 import { TxProgressor } from '@webb-tools/webb-ui-components/components/TxProgressor';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import Decimal from 'decimal.js';
 import { FC, useEffect } from 'react';
 
 import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
@@ -79,13 +80,13 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
         txSourceInfo={{
           isSource: true,
           typedChainId: tx.sourceTypedChainId,
-          amount: -tx.sourceAmount,
+          amount: new Decimal(tx.sourceAmount).neg(),
           tokenSymbol: tx.tokenSymbol,
           walletAddress: tx.sourceAddress,
         }}
         txDestinationInfo={{
           typedChainId: tx.destinationTypedChainId,
-          amount: +tx.destinationAmount,
+          amount: new Decimal(tx.destinationAmount),
           tokenSymbol: tx.tokenSymbol,
           walletAddress: tx.recipientAddress,
         }}

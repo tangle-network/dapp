@@ -1,7 +1,12 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { ChainIcon, ChevronDown, Spinner } from '@webb-tools/icons';
+import { chainsPopulated } from '@webb-tools/dapp-config';
+import { Alert, ChainIcon, ChevronDown, Spinner } from '@webb-tools/icons';
+import {
+  calculateTypedChainId,
+  ChainType,
+} from '@webb-tools/sdk-core/typed-chain-id';
 import {
   Dropdown,
   DropdownBasicButton,
@@ -26,7 +31,8 @@ import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 export const TANGLE_TESTNET_CHAIN_NAME = 'Tangle Testnet Native';
 
 const NetworkSelectionButton: FC = () => {
-  const { isConnecting, loading } = useWebContext();
+  const { activeChain, activeWallet, isConnecting, loading, switchChain } =
+    useWebContext();
 
   const { network } = useNetworkStore();
   const { switchNetwork, isCustom } = useNetworkSwitcher();
@@ -51,37 +57,87 @@ const NetworkSelectionButton: FC = () => {
   // since it would have no effect there.
   const isInLiquidStakingPath = pathname.startsWith(PagePath.LIQUID_STAKING);
 
-  return isInLiquidStakingPath ? (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Dropdown>
-          <TriggerButton
-            className="opacity-60 cursor-not-allowed hover:!bg-none dark:hover:!bg-none"
-            networkName={TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.name}
-          />
-        </Dropdown>
-      </TooltipTrigger>
+  const isBridgePage = useMemo(() => pathname === '/bridge', [pathname]);
 
-      <TooltipBody>
-        Network can&apos;t be changed while you&apos;re in this page.
-      </TooltipBody>
-    </Tooltip>
-  ) : (
-    <Dropdown>
-      <TriggerButton
-        isLoading={isConnecting || loading}
-        networkName={networkName}
-      />
+  const isWrongEvmNetwork = useMemo(() => {
+    const isEvmWallet = activeWallet?.platform === 'EVM';
+    return (
+      isEvmWallet &&
+      network.evmChainId !== undefined &&
+      network.evmChainId !== activeChain?.id
+    );
+  }, [activeChain?.id, activeWallet?.platform, network.evmChainId]);
 
-      <DropdownBody className="mt-1 bg-mono-0 dark:bg-mono-180">
-        <NetworkSelectorDropdown
-          isCustomEndpointSelected={isCustom}
-          selectedNetwork={network}
-          onSetCustomNetwork={switchToCustomNetwork}
-          onNetworkChange={(newNetwork) => switchNetwork(newNetwork, false)}
+  const switchToCorrectEvmChain = useCallback(() => {
+    if (!network.evmChainId || !activeWallet) return;
+    const typedChainId = calculateTypedChainId(
+      ChainType.EVM,
+      network.evmChainId,
+    );
+    const targetChain = chainsPopulated[typedChainId];
+    switchChain(targetChain, activeWallet);
+  }, [activeWallet, network.evmChainId, switchChain]);
+
+  if (isBridgePage) return null;
+
+  if (isInLiquidStakingPath) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Dropdown>
+            <TriggerButton
+              className="opacity-60 cursor-not-allowed hover:!bg-none dark:hover:!bg-none"
+              networkName={TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.name}
+            />
+          </Dropdown>
+        </TooltipTrigger>
+
+        <TooltipBody>
+          Network can&apos;t be changed while you&apos;re in this page.
+        </TooltipBody>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-1">
+      {isWrongEvmNetwork && (
+        <Tooltip>
+          <TooltipTrigger>
+            <div
+              className={twMerge(
+                'cursor-pointer p-2 rounded-full',
+                'bg-mono-0/10 border-mono-60',
+                'dark:bg-mono-0/5 dark:border-mono-140',
+                'hover:bg-mono-0/30',
+                'dark:hover:bg-mono-0/10',
+              )}
+              onClick={switchToCorrectEvmChain}
+            >
+              <Alert className="fill-red-70 dark:fill-red-50" />
+            </div>
+          </TooltipTrigger>
+
+          <TooltipBody>Wrong EVM Chain Connected</TooltipBody>
+        </Tooltip>
+      )}
+      <Dropdown>
+        <TriggerButton
+          isLoading={isConnecting || loading}
+          networkName={networkName}
+          className="overflow-hidden"
         />
-      </DropdownBody>
-    </Dropdown>
+
+        <DropdownBody className="mt-1 bg-mono-0 dark:bg-mono-180">
+          <NetworkSelectorDropdown
+            isCustomEndpointSelected={isCustom}
+            selectedNetwork={network}
+            onSetCustomNetwork={switchToCustomNetwork}
+            onNetworkChange={(newNetwork) => switchNetwork(newNetwork, false)}
+          />
+        </DropdownBody>
+      </Dropdown>
+    </div>
   );
 };
 

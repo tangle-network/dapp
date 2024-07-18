@@ -9,14 +9,13 @@ import { useCallback, useMemo } from 'react';
 
 import { useBridge } from '../../../context/BridgeContext';
 import { BridgeWalletError } from '../../../types/bridge';
-import useBridgeFee from './useBridgeFee';
-import useEstimatedGasFee from './useEstimatedGasFee';
 
 type UseActionButtonReturnType = {
   isLoading: boolean;
   isDisabled: boolean;
   buttonAction: () => void;
   buttonText: string;
+  buttonLoadingText?: string;
   errorMessage: ErrorMessage | null;
 };
 
@@ -25,8 +24,12 @@ type ErrorMessage = {
   tooltip?: string | null;
 };
 
-export default function useActionButton(handleOpenConfirmModal: () => void) {
-  const { activeAccount, activeWallet, loading, isConnecting } =
+export default function useActionButton({
+  handleOpenConfirmModal,
+}: {
+  handleOpenConfirmModal: () => void;
+}) {
+  const { activeAccount, activeChain, activeWallet, loading, isConnecting } =
     useWebContext();
   const { toggleModal } = useConnectWallet();
   const {
@@ -36,10 +39,12 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
     isAmountInputError,
     isAddressInputError,
     walletError,
+    bridgeFee,
+    isBridgeFeeLoading,
+    isEstimatedGasFeeLoading,
+    switchToCorrectEvmChain,
+    isTransferring,
   } = useBridge();
-  const { fee: bridgeFee, isLoading: isLoadingBridgeFee } = useBridgeFee();
-  const { fee: estimatedGasFee, isLoading: isLoadingEstimatedGasFee } =
-    useEstimatedGasFee();
 
   const isNoActiveAccountOrWallet = useMemo(() => {
     return !activeAccount || !activeWallet;
@@ -51,23 +56,33 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
         return {
           text: 'Wallet and Source Chain Mismatch',
           tooltip:
-            'Source Chain is EVM but the connected wallet only supports Substrate networks',
+            'Selected Source Chain is EVM but the connected wallet only supports Substrate chains',
         };
       case BridgeWalletError.MismatchSubstrate:
         return {
           text: 'Wallet and Source Chain Mismatch',
           tooltip:
-            'Source Chain is Substrate but the connected wallet only supports EVM networks',
+            'Selected Source Chain is Substrate but the connected wallet only supports EVM chains',
+        };
+      case BridgeWalletError.EvmWrongChain:
+        return {
+          text: 'Wrong EVM Chain Connected',
+          tooltip: `Selected Source Chain is ${selectedSourceChain.name} but the connected wallet is on ${activeChain?.name}`,
         };
       default:
         return null;
     }
-  }, [walletError]);
+  }, [walletError, selectedSourceChain, activeChain]);
 
   const isWalletAndSourceChainMismatch = useMemo(
     () =>
       walletError === BridgeWalletError.MismatchEvm ||
       walletError === BridgeWalletError.MismatchSubstrate,
+    [walletError],
+  );
+
+  const isEvmWrongChain = useMemo(
+    () => walletError === BridgeWalletError.EvmWrongChain,
     [walletError],
   );
 
@@ -95,28 +110,49 @@ export default function useActionButton(handleOpenConfirmModal: () => void) {
 
   const buttonAction = useMemo(() => {
     if (isRequiredToConnectWallet) return openWalletModal;
+    if (isEvmWrongChain) return switchToCorrectEvmChain;
     return handleOpenConfirmModal;
-  }, [isRequiredToConnectWallet, openWalletModal, handleOpenConfirmModal]);
+  }, [
+    isRequiredToConnectWallet,
+    openWalletModal,
+    handleOpenConfirmModal,
+    isEvmWrongChain,
+    switchToCorrectEvmChain,
+  ]);
 
   const buttonText = useMemo(() => {
     if (isWalletAndSourceChainMismatch) return 'Switch Wallet';
+    if (isEvmWrongChain) return 'Switch Network';
     if (isRequiredToConnectWallet) return 'Connect';
+    if (isTransferring) return 'Transferring...';
     return 'Transfer';
-  }, [isWalletAndSourceChainMismatch, isRequiredToConnectWallet]);
+  }, [
+    isWalletAndSourceChainMismatch,
+    isRequiredToConnectWallet,
+    isEvmWrongChain,
+    isTransferring,
+  ]);
+
+  const buttonLoadingText = useMemo(() => {
+    if (isRequiredToConnectWallet || isEvmWrongChain) return 'Connecting...';
+    if (isTransferring) return 'Transferring...';
+  }, [isRequiredToConnectWallet, isEvmWrongChain, isTransferring]);
 
   return {
     isLoading: loading || isConnecting,
-    isDisabled: isRequiredToConnectWallet
-      ? false
-      : isInputInsufficient ||
-        isAmountInputError ||
-        isAddressInputError ||
-        isLoadingBridgeFee ||
-        isLoadingEstimatedGasFee ||
-        bridgeFee === null ||
-        estimatedGasFee === null,
+    isDisabled:
+      isRequiredToConnectWallet || isEvmWrongChain
+        ? false
+        : isInputInsufficient ||
+          isAmountInputError ||
+          isAddressInputError ||
+          isBridgeFeeLoading ||
+          isEstimatedGasFeeLoading ||
+          bridgeFee === null ||
+          isTransferring,
     buttonAction,
     buttonText,
+    buttonLoadingText,
     errorMessage,
   } satisfies UseActionButtonReturnType;
 }

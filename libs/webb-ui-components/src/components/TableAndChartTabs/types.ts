@@ -10,9 +10,9 @@ export interface TableAndChartTabsProps extends Tabs.TabsProps {
   tabs: string[];
 
   /**
-   * Filter component for the charts and tables (optional)
+   * Components on the right side of the tabs to perform additional actions (optional)
    */
-  filterComponent?: ReactNode;
+  additionalActionsCmp?: ReactNode;
 
   /**
    * The className for the whole component (optional)

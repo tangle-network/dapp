@@ -58,6 +58,7 @@ export type BridgeTokenType = {
 export enum BridgeWalletError {
   MismatchEvm = 'WALLET_MISMATCH_EVM',
   MismatchSubstrate = 'WALLET_MISMATCH_SUBSTRATE',
+  EvmWrongChain = 'WALLET_EVM_WRONG_CHAIN',
 }
 
 export enum BridgeTxState {

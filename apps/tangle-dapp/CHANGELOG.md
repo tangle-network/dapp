@@ -1,3 +1,28 @@
+## 0.0.11 (2024-07-11)
+
+
+### 🚀 Features
+
+- **tangle-dapp:** Add sorting functionalities to tables on Nomination Page
+
+- **tangle-dapp:** Update Side Navigation for Tangle dApp
+
+
+### 🩹 Fixes
+
+- **tangle-dapp:** Fix Timed Out Error
+
+- **tangle-dapp:** Fix `useEffect` cycle in `usePayouts` hook
+
+- **tangle-dapp:** Fix sort/scroll issues on nomination selection list modal
+
+
+### ❤️  Thank You
+
+- Trung-Tin Pham
+- vutuanlinh2k2
+- Yurixander
+
 ## 0.0.10 (2024-07-08)
 
 
