@@ -1,3 +1,7 @@
+// This will override global types and provide type definitions for
+// Tangle Restaking Parachain for this file only.
+import '@webb-tools/tangle-restaking-types';
+
 import { TanglePrimitivesCurrencyCurrencyId } from '@polkadot/types/lookup';
 
 import { LiquidStakingCurrency } from '../../constants/liquidStaking';

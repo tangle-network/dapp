@@ -6,7 +6,10 @@ import { BN } from '@polkadot/util';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
 import { TxName } from '../../constants';
-import { LiquidStakingCurrency } from '../../constants/liquidStaking';
+import {
+  LiquidStakingCurrency,
+  LiquidStakingCurrencyKey,
+} from '../../constants/liquidStaking';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 
 export type RedeemTxContext = {
@@ -20,8 +23,11 @@ const useRedeemTx = () => {
 
   return useSubstrateTxWithNotification<RedeemTxContext>(
     TxName.REDEEM,
-    (api, _activeSubstrateAddress, context) =>
-      api.tx.lstMinting.redeem({ lst: context.currency }, context.amount),
+    (api, _activeSubstrateAddress, context) => {
+      const key: LiquidStakingCurrencyKey = { lst: context.currency };
+
+      return api.tx.lstMinting.redeem(key, context.amount);
+    },
     undefined,
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
   );

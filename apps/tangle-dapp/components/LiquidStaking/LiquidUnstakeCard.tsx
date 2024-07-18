@@ -8,7 +8,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Alert, Button } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   LIQUID_STAKING_CHAIN_MAP,
@@ -125,6 +125,14 @@ const LiquidUnstakeCard: FC = () => {
     // TODO: Dummy data.
     return [{ address: '0x123456' as any, amount: new BN(100), decimals: 18 }];
   }, []);
+
+  // Open the request submitted modal when the redeem
+  // transaction is complete.
+  useEffect(() => {
+    if (redeemTxStatus === TxStatus.COMPLETE) {
+      setIsRequestSubmittedModalOpen(true);
+    }
+  }, [redeemTxStatus]);
 
   const stakedWalletBalance = (
     <ParachainWalletBalance

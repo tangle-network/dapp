@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
@@ -25,11 +25,11 @@ const MintAndRedeemFeeDetailItem: FC<MintAndRedeemFeeDetailItemProps> = ({
   const fee = fees === null ? null : isMinting ? fees.mintFee : fees.redeemFee;
 
   const feeAmount = useMemo(() => {
-    if (intendedAmount === null || fee === null) {
+    if (fee === null) {
       return null;
     }
 
-    return scaleAmountByPermill(intendedAmount, fee);
+    return scaleAmountByPermill(intendedAmount ?? BN_ZERO, fee);
   }, [fee, intendedAmount]);
 
   const formattedFeeAmount = useMemo(() => {

@@ -2,7 +2,6 @@
 
 import { BN } from '@polkadot/util';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { ChevronDown } from '@webb-tools/icons';
 import {
   Dropdown,
@@ -85,8 +84,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   } = useInputAmount({
     amount,
     setAmount: onAmountChange,
-    // TODO: Decimals must be based on the active token's chain decimals, not always the Tangle token decimals.
-    decimals: TANGLE_TOKEN_DECIMALS,
+    decimals,
     min: minAmount,
     minErrorMessage,
     max: maxAmount,
@@ -98,7 +96,6 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   useEffect(() => {
     if (isReadOnly && amount !== null) {
       updateDisplayAmountManual(amount);
-      console.debug('set display amount manually', amount.toString());
     }
   }, [amount, isReadOnly, updateDisplayAmountManual]);
 

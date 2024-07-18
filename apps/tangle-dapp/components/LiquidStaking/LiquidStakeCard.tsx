@@ -8,7 +8,6 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Search } from '@webb-tools/icons';
 import {
-  Alert,
   Button,
   Chip,
   Input,
@@ -167,15 +166,6 @@ const LiquidStakeCard: FC = () => {
 
         <DetailItem title="Estimated wait time" value="~10 minutes" />
       </div>
-
-      {/* TODO: This should actually only apply to unstaking, since when staking the user itself is the liquidity provider, since they are minting LSTs. */}
-      {exchangeRateOpt?.isEmpty && (
-        <Alert
-          type="error"
-          title="Liquidity Unavailable"
-          description="Liquidity is currently unavailable for this token. This means you cannot stake this token at this time. Please check back later or try a different token."
-        />
-      )}
 
       <Button
         isDisabled={

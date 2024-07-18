@@ -20,9 +20,9 @@ const useExchangeRate = (
 ) => {
   const { result: tokenPoolAmount } = useApiRx((api) => {
     const key: LiquidStakingCurrencyKey =
-      type === ExchangeRateType.LiquidToNative
-        ? { lst: currency }
-        : { Native: currency };
+      type === ExchangeRateType.NativeToLiquid
+        ? { Native: currency }
+        : { lst: currency };
 
     return api.query.lstMinting.tokenPool(key);
   }, TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint);
@@ -35,11 +35,18 @@ const useExchangeRate = (
     if (tokenPoolAmount === null || lstTotalIssuance === null) {
       return null;
     }
+    // TODO: Need to review whether this is the right way to handle this edge case.
+    // Special case: Default to an initial 1:1 exchange rate when
+    // the token pool amount and total issuance are both zero.
+    else if (tokenPoolAmount.isZero() && lstTotalIssuance.isZero()) {
+      return new Optional(1);
+    }
 
     const isDivisionByZero =
       (type === ExchangeRateType.NativeToLiquid && tokenPoolAmount.isZero()) ||
       (type === ExchangeRateType.LiquidToNative && lstTotalIssuance.isZero());
 
+    // TODO: Need to review whether this is the right way to handle this edge case.
     // Special case: No native tokens are available for conversion.
     // Need to handle this here to prevent division by zero.
     if (isDivisionByZero) {
