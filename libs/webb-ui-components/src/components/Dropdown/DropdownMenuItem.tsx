@@ -43,13 +43,7 @@ const DropdownMenuItem = React.forwardRef<
       return twMerge(
         cx(
           'flex items-center px-4 py-2 text-base outline-none',
-          { 'cursor-pointer': !disabled },
-          !disabled
-            ? 'text-mono-160 dark:text-mono-40'
-            : 'text-mono-60 dark:text-mono-140',
-          !disabled
-            ? 'bg-mono-0 dark:bg-mono-190'
-            : 'bg-mono-0 dark:bg-mono-200',
+          disabled ? 'opacity-60' : 'cursor-pointer',
           { 'hover:bg-blue-0 dark:hover:bg-mono-170': !disabled },
           { 'focus:bg-blue-0 dark:focus:bg-mono-170': !disabled },
           { 'hover:text-mono-200 dark:hover:text-mono-0': !disabled },
