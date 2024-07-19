@@ -44,9 +44,13 @@ const AvatarWithText = ({
       />
 
       <Typography
+        component="span"
         variant="body2"
         {...overrideTypographyProps}
-        className={twMerge('truncate', overrideTypographyProps?.className)}
+        className={twMerge(
+          'truncate inline-block',
+          overrideTypographyProps?.className,
+        )}
       >
         {identityName || isHex(accountAddress)
           ? shortenHex(accountAddress)

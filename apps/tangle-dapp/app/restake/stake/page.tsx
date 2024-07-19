@@ -26,6 +26,7 @@ import useRestakeTx from '../../../data/restake/useRestakeTx';
 import useRestakeTxEventHandlersWithNoti, {
   type Props,
 } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
+import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
@@ -179,33 +180,17 @@ export default function DelegatePage() {
             { amount, assetId, operatorAccount },
             explorerUrl,
           ) => (
-            <div>
-              <Typography variant="body1" fw="bold">
-                Successfully delegated{' '}
-                {formatUnits(amount, assetMap[assetId].decimals)}{' '}
-                {assetMap[assetId].symbol} to{' '}
-                <AvatarWithText
-                  className="inline-flex"
-                  accountAddress={operatorAccount}
-                  identityName={operatorIdentities?.[operatorAccount]?.name}
-                  overrideAvatarProps={{ size: 'sm' }}
-                />
-              </Typography>
-
-              {explorerUrl && (
-                <Typography component="p" variant="body1">
-                  View the transaction{' '}
-                  <Button
-                    className="inline-block"
-                    variant="link"
-                    href={explorerUrl}
-                    target="_blank"
-                  >
-                    on the explorer
-                  </Button>
-                </Typography>
-              )}
-            </div>
+            <ViewTxOnExplorer url={explorerUrl}>
+              Successfully delegated{' '}
+              {formatUnits(amount, assetMap[assetId].decimals)}{' '}
+              {assetMap[assetId].symbol} to{' '}
+              <AvatarWithText
+                className="inline-flex"
+                accountAddress={operatorAccount}
+                identityName={operatorIdentities?.[operatorAccount]?.name}
+                overrideAvatarProps={{ size: 'sm' }}
+              />
+            </ViewTxOnExplorer>
           ),
         },
       },

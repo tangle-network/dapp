@@ -35,6 +35,7 @@ import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { DepositFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
+import AvatarWithText from '../AvatarWithText';
 import ChainList from '../ChainList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
@@ -154,12 +155,29 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     return {
       options: {
         [TxEvent.SUCCESS]: {
-          secondaryMessage: ({ amount, assetId }, explorerUrl) => {
+          secondaryMessage: (
+            { amount, assetId, operatorAccount },
+            explorerUrl,
+          ) => {
+            if (!operatorAccount)
+              return (
+                <ViewTxOnExplorer url={explorerUrl}>
+                  {assetMap[assetId] &&
+                    `Successfully deposit ${formatUnits(amount, assetMap[assetId].decimals)} ${assetMap[assetId].symbol}`.trim()}
+                </ViewTxOnExplorer>
+              );
+
             return (
               <ViewTxOnExplorer url={explorerUrl}>
-                {assetMap[assetId]
-                  ? `Successfully deposit ${formatUnits(amount, assetMap[assetId].decimals)} ${assetMap[assetId].symbol}`.trim()
-                  : undefined}
+                Successfully deposited and delegated{' '}
+                {formatUnits(amount, assetMap[assetId].decimals)}{' '}
+                {assetMap[assetId].symbol} to{' '}
+                <AvatarWithText
+                  className="inline-flex"
+                  accountAddress={operatorAccount}
+                  identityName={operatorIdentities?.[operatorAccount]?.name}
+                  overrideAvatarProps={{ size: 'sm' }}
+                />
               </ViewTxOnExplorer>
             );
           },
@@ -167,7 +185,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
       },
       onTxSuccess: () => resetField('amount'),
     };
-  }, [assetMap, resetField]);
+  }, [assetMap, operatorIdentities, resetField]);
 
   const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
 
