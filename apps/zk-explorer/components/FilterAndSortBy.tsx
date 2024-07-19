@@ -5,7 +5,7 @@ import {
   Button,
   Dropdown,
   DropdownBody,
-  MenuItem,
+  DropdownMenuItem,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback } from 'react';
@@ -96,15 +96,15 @@ const FilterAndSortBy: FC<FilterAndSortByProps> = ({
             const isSelected = clause === sortByClause;
 
             return (
-              <MenuItem
+              <DropdownMenuItem
                 className={isSelected ? 'cursor-default' : ''}
                 key={index}
                 disabled={isSelected}
                 onClick={() => onSortByClauseChange(clause)}
-                icon={isSelected ? <CheckCircledIcon /> : <CircleIcon />}
+                rightIcon={isSelected ? <CheckCircledIcon /> : <CircleIcon />}
               >
                 {clause}
-              </MenuItem>
+              </DropdownMenuItem>
             );
           })}
         </DropdownBody>

@@ -9,8 +9,8 @@ import {
   BreadcrumbsItem,
   Button,
   ConnectWalletMobileButton,
+  DropdownMenuItem,
   Logo,
-  MenuItem,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuTrigger,
@@ -169,8 +169,8 @@ export const Header: FC<HeaderProps> = () => {
 };
 
 function ClearCacheMenuItem(): React.ReactElement<
-  ComponentProps<typeof MenuItem>,
-  typeof MenuItem
+  ComponentProps<typeof DropdownMenuItem>,
+  typeof DropdownMenuItem
 > {
   const [storageSize, setStorageSize] = useState<number | undefined>();
 
@@ -216,13 +216,13 @@ function ClearCacheMenuItem(): React.ReactElement<
   }, []);
 
   return (
-    <MenuItem onClick={handleClearCache}>
+    <DropdownMenuItem onClick={handleClearCache}>
       Clear cache{' '}
       {typeof storageSize === 'number' ? (
         <i>{`(${getHumanFileSize(storageSize, true)})`}</i>
       ) : (
         ''
       )}
-    </MenuItem>
+    </DropdownMenuItem>
   );
 }

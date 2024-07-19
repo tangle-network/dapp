@@ -128,7 +128,7 @@ const NetworkSelectionButton: FC = () => {
           className="overflow-hidden"
         />
 
-        <DropdownBody className="mt-1 bg-mono-0 dark:bg-mono-180">
+        <DropdownBody className="mt-2 bg-mono-0 dark:bg-mono-180">
           <NetworkSelectorDropdown
             isCustomEndpointSelected={isCustom}
             selectedNetwork={network}
