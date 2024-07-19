@@ -11,15 +11,17 @@ import { isHex } from 'viem';
 
 type Props = ComponentProps<'div'> & {
   accountAddress: string;
+  identityName?: string | null;
   overrideAvatarProps?: Partial<ComponentProps<typeof Avatar>>;
   overrideTypographyProps?: Partial<ComponentProps<typeof Typography>>;
 };
 
 const AvatarWithText = ({
   accountAddress,
+  className,
+  identityName,
   overrideAvatarProps,
   overrideTypographyProps,
-  className,
   ...props
 }: Props) => {
   return (
@@ -46,7 +48,7 @@ const AvatarWithText = ({
         {...overrideTypographyProps}
         className={twMerge('truncate', overrideTypographyProps?.className)}
       >
-        {isHex(accountAddress)
+        {identityName || isHex(accountAddress)
           ? shortenHex(accountAddress)
           : shortenString(accountAddress)}
       </Typography>

@@ -26,6 +26,7 @@ import useRestakeTx from '../../../data/restake/useRestakeTx';
 import useRestakeTxEventHandlersWithNoti, {
   type Props,
 } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
+import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { PagePath } from '../../../types';
@@ -77,6 +78,9 @@ export default function DelegatePage() {
   const { delegate } = useRestakeTx();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
+  const { result: operatorIdentities } = useIdentities(
+    useMemo(() => Object.keys(operatorMap), [operatorMap]),
+  );
 
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
@@ -183,6 +187,7 @@ export default function DelegatePage() {
                 <AvatarWithText
                   className="inline-flex"
                   accountAddress={operatorAccount}
+                  identityName={operatorIdentities?.[operatorAccount]?.name}
                   overrideAvatarProps={{ size: 'sm' }}
                 />
               </Typography>
@@ -206,7 +211,7 @@ export default function DelegatePage() {
       },
       onTxSuccess: () => reset(),
     };
-  }, [assetMap, reset]);
+  }, [assetMap, operatorIdentities, reset]);
 
   const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
 
@@ -282,6 +287,7 @@ export default function DelegatePage() {
             selectedOperatorAccountId={watch('operatorAccountId')}
             onOperatorAccountIdChange={handleOperatorAccountIdChange}
             operatorMap={operatorMap}
+            operatorIdentities={operatorIdentities}
             overrideTitleProps={{ variant: 'h4' }}
             className="h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]"
             onClose={closeOperatorModal}

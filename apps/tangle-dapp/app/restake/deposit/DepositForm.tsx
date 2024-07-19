@@ -30,6 +30,7 @@ import {
 import useRestakeOperatorMap from '../../../data/restake/useRestakeOperatorMap';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
+import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { DepositFormFields } from '../../../types/restake';
@@ -75,6 +76,9 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
 
   const { assetMap, assetWithBalances } = useRestakeContext();
   const { operatorMap } = useRestakeOperatorMap();
+  const { result: operatorIdentities } = useIdentities(
+    useMemo(() => Object.keys(operatorMap), [operatorMap]),
+  );
   const { deposit } = useRestakeTx();
 
   const setValue = useCallback(
@@ -227,7 +231,11 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
 
           <ArrowRight size="lg" className="mx-auto rotate-90" />
 
-          <DestChainInput openOperatorModal={openOperatorModal} watch={watch} />
+          <DestChainInput
+            openOperatorModal={openOperatorModal}
+            watch={watch}
+            operatorIdentities={operatorIdentities}
+          />
         </div>
 
         <div className="flex flex-col justify-between gap-4 grow">
@@ -280,6 +288,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             selectedOperatorAccountId={watch('operatorAccountId') ?? ''}
             onOperatorAccountIdChange={handleOperatorAccountIdChange}
             operatorMap={operatorMap}
+            operatorIdentities={operatorIdentities}
             overrideTitleProps={{ variant: 'h4' }}
             className="h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]"
             onClose={closeOperatorModal}

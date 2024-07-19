@@ -17,6 +17,7 @@ import {
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
+import omitBy from 'lodash/omitBy';
 import {
   type ComponentProps,
   forwardRef,
@@ -27,12 +28,14 @@ import { formatUnits } from 'viem';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import type { OperatorMap, OperatorMetadata } from '../../types/restake';
+import type { IdentityType } from '../../utils/polkadot';
 import AvatarWithText from './AvatarWithText';
 
 type TableData = OperatorMetadata & { accountId: string };
 
 type Props = Partial<ComponentProps<typeof ListCardWrapper>> & {
   operatorMap: OperatorMap;
+  operatorIdentities?: Record<string, IdentityType | null> | null;
   selectedOperatorAccountId: string;
   onOperatorAccountIdChange?: (accountId: string) => void;
 };
@@ -42,14 +45,21 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
     {
       onClose,
       overrideTitleProps,
-      operatorMap,
+      operatorMap: operatorMapProp,
+      operatorIdentities,
       selectedOperatorAccountId,
       onOperatorAccountIdChange,
       ...props
     },
     ref,
   ) => {
-    const isEmpty = Object.keys(operatorMap).length === 0;
+    // Only show active operators
+    const activeOperator = useMemo(
+      () => omitBy(operatorMapProp, (operator) => operator.status !== 'Active'),
+      [operatorMapProp],
+    );
+
+    const isEmpty = Object.keys(activeOperator).length === 0;
 
     const { nativeTokenSymbol } = useNetworkStore();
     const [activeChain] = useActiveChain();
@@ -64,11 +74,11 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
 
     const data = useMemo<TableData[]>(
       () =>
-        Object.entries(operatorMap).map(([accountId, metadata]) => ({
+        Object.entries(activeOperator).map(([accountId, metadata]) => ({
           ...metadata,
           accountId,
         })),
-      [operatorMap],
+      [activeOperator],
     );
 
     const columns = useMemo<ColumnDef<TableData>[]>(
@@ -96,7 +106,10 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
                 className="flex items-center justify-between grow"
                 htmlFor={accountId}
               >
-                <AvatarWithText accountAddress={accountId} />
+                <AvatarWithText
+                  identityName={operatorIdentities?.[accountId]?.name}
+                  accountAddress={accountId}
+                />
               </label>
             </RadioItem>
           ),
@@ -119,7 +132,7 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
           ),
         },
       ],
-      [nativeDecimals, nativeTokenSymbol],
+      [nativeDecimals, nativeTokenSymbol, operatorIdentities],
     );
 
     const table = useReactTable({

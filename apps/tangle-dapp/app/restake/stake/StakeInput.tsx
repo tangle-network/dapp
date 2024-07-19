@@ -20,6 +20,7 @@ import type {
 } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
+import type { IdentityType } from '../../../utils/polkadot';
 import AvatarWithText from '../AvatarWithText';
 import ErrorMessage from '../ErrorMessage';
 import SelectorPlaceholder from '../SelectorPlaceholder';
@@ -32,6 +33,7 @@ type Props = {
   register: UseFormRegister<DelegationFormFields>;
   setValue: UseFormSetValue<DelegationFormFields>;
   watch: UseFormWatch<DelegationFormFields>;
+  operatorIdentities?: Record<string, IdentityType | null> | null;
 };
 
 export default function StakeInput({
@@ -42,6 +44,7 @@ export default function StakeInput({
   register,
   setValue,
   watch,
+  operatorIdentities,
 }: Props) {
   const selectedAssetId = watch('assetId');
   const selectedOperatorAccountId = watch('operatorAccountId');
@@ -126,6 +129,9 @@ export default function StakeInput({
                 renderBody: () => (
                   <AvatarWithText
                     accountAddress={selectedOperatorAccountId}
+                    identityName={
+                      operatorIdentities?.[selectedOperatorAccountId]?.name
+                    }
                     overrideTypographyProps={{ variant: 'h5' }}
                   />
                 ),
