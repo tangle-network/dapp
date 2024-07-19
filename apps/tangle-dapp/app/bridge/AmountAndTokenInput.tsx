@@ -6,8 +6,8 @@ import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/button
 import {
   Dropdown,
   DropdownBody,
+  DropdownMenuItem,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
-import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
@@ -102,13 +102,13 @@ const AmountAndTokenInput: FC = () => {
                   const token = BRIDGE_SUPPORTED_TOKENS[tokenId];
                   return (
                     <li key={tokenId}>
-                      <MenuItem
-                        startIcon={<TokenIcon size="lg" name={token.symbol} />}
+                      <DropdownMenuItem
+                        leftIcon={<TokenIcon size="lg" name={token.symbol} />}
                         onSelect={() => setSelectedTokenId(tokenId)}
                         className="px-3 normal-case"
                       >
                         {token.symbol}
-                      </MenuItem>
+                      </DropdownMenuItem>
                     </li>
                   );
                 })}

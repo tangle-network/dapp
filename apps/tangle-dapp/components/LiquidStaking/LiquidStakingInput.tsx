@@ -7,7 +7,7 @@ import { ChevronDown } from '@webb-tools/icons';
 import {
   Dropdown,
   DropdownBody,
-  MenuItem,
+  DropdownMenuItem,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
@@ -196,13 +196,13 @@ const ChainSelector: FC<ChainSelectorProps> = ({ selectedChain, setChain }) => {
               .map((chain) => {
                 return (
                   <li key={chain} className="w-full">
-                    <MenuItem
-                      startIcon={<ChainLogo size="sm" chain={chain} />}
+                    <DropdownMenuItem
+                      leftIcon={<ChainLogo size="sm" chain={chain} />}
                       onSelect={() => setChain(chain)}
                       className="px-3 normal-case"
                     >
                       {LS_CHAIN_TO_NETWORK_NAME[chain]}
-                    </MenuItem>
+                    </DropdownMenuItem>
                   </li>
                 );
               })}

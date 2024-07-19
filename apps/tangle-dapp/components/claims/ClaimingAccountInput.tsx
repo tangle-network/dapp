@@ -8,11 +8,10 @@ import { WebbWeb3Provider } from '@webb-tools/web3-api-provider/webb-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
 import {
+  AccountDropdownBody,
   Dropdown,
-  DropdownBody,
   DropdownButton,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
-import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import type { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -83,27 +82,17 @@ const ClaimingAccountInput: FC<Props> = ({
             label={activeAccountAddress}
           />
 
-          <DropdownBody className="radix-side-top:mb-2 radix-side-bottom:mt-2 w-[var(--radix-dropdown-menu-trigger-width)]">
-            <ul>
-              {accounts.map((account) => (
-                <li
-                  key={account.address}
-                  onClick={() => setActiveAccount(account)}
-                >
-                  <MenuItem
-                    startIcon={
-                      <Avatar theme="substrate" value={account.address} />
-                    }
-                  >
-                    {account.name}{' '}
-                    <Typography variant="mkt-caption">
-                      {account.address}
-                    </Typography>
-                  </MenuItem>
-                </li>
-              ))}
-            </ul>
-          </DropdownBody>
+          <AccountDropdownBody
+            accountItems={accounts.map((item) => {
+              return {
+                address: item.address,
+                name: item.name,
+                onClick: () => {
+                  setActiveAccount(item);
+                },
+              };
+            })}
+          />
         </Dropdown>
       )}
     </div>

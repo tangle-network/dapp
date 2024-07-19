@@ -1,8 +1,12 @@
 'use client';
 
 import { RadioGroup, RadioItem } from '@radix-ui/react-dropdown-menu';
-import { Dropdown, DropdownBasicButton, DropdownBody } from '../Dropdown';
-import { MenuItem } from '../MenuItem';
+import {
+  Dropdown,
+  DropdownBasicButton,
+  DropdownBody,
+  DropdownMenuItem,
+} from '../Dropdown';
 import { Typography } from '../../typography/Typography';
 import { useCallback } from 'react';
 import { DropdownFieldProps } from './types';
@@ -68,7 +72,7 @@ const DropdownField = ({
           <RadioGroup value={selectedItem} onValueChange={handleValueChange}>
             {items.map((item, i) => (
               <RadioItem key={`${item}-${i}`} value={item} asChild>
-                <MenuItem
+                <DropdownMenuItem
                   className={twMerge(
                     selectedItem === item
                       ? 'bg-blue-10 hover:!bg-blue-10 dark:bg-blue-120 hover:dark:!bg-blue-120'
@@ -83,7 +87,7 @@ const DropdownField = ({
                   >
                     {item}
                   </Typography>
-                </MenuItem>
+                </DropdownMenuItem>
               </RadioItem>
             ))}
           </RadioGroup>
