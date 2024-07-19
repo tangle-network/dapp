@@ -1,5 +1,9 @@
+'use client';
+
 import { Cross1Icon } from '@radix-ui/react-icons';
+import { Search } from '@webb-tools/icons/Search';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { Input } from '@webb-tools/webb-ui-components/components/Input';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
 import { ListCardWrapper } from '@webb-tools/webb-ui-components/components/ListCard/ListCardWrapper';
 import { ListItem } from '@webb-tools/webb-ui-components/components/ListCard/ListItem';
@@ -9,7 +13,8 @@ import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenStrin
 import isFunction from 'lodash/isFunction';
 import keys from 'lodash/keys';
 import omitBy from 'lodash/omitBy';
-import { type ComponentProps, forwardRef, useMemo } from 'react';
+import pick from 'lodash/pick';
+import { type ComponentProps, forwardRef, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import type { OperatorMap } from '../../types/restake';
@@ -38,6 +43,8 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
     },
     ref,
   ) => {
+    const [searchText, setSearchText] = useState('');
+
     // Only show active operators
     const activeOperator = useMemo(
       () => omitBy(operatorMapProp, (operator) => operator.status !== 'Active'),
@@ -45,6 +52,22 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
     );
 
     const isEmpty = Object.keys(activeOperator).length === 0;
+
+    const filteredOperator = useMemo(() => {
+      if (searchText === '') return activeOperator;
+
+      const pickedOperators = keys(activeOperator).filter((operator) => {
+        const identity = operatorIdentities?.[operator]?.name;
+        if (!identity) return operator.includes(searchText);
+
+        return (
+          identity.toLowerCase().includes(searchText.toLowerCase()) ||
+          operator.includes(searchText)
+        );
+      });
+
+      return pick(activeOperator, pickedOperators);
+    }, [activeOperator, operatorIdentities, searchText]);
 
     return (
       <ListCardWrapper
@@ -55,9 +78,20 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
       >
         {!isEmpty && (
           <>
+            <div className="py-4">
+              <Input
+                id="token"
+                rightIcon={<Search />}
+                placeholder="Search Operator"
+                isControlled
+                value={searchText}
+                onChange={(val) => setSearchText(val.toString())}
+              />
+            </div>
+
             <ScrollArea className={twMerge('h-full py-2')}>
               <ul>
-                {keys(activeOperator).map((current) => (
+                {keys(filteredOperator).map((current) => (
                   <ListItem
                     key={current}
                     className="px-4 cursor-pointer max-w-none dark:bg-transparent"
