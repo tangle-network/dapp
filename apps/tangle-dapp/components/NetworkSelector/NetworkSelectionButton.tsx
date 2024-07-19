@@ -73,7 +73,7 @@ const NetworkSelectionButton: FC = () => {
         networkName={networkName}
       />
 
-      <DropdownBody className="mt-1 bg-mono-0 dark:bg-mono-180">
+      <DropdownBody isPortal className="mt-1 bg-mono-0 dark:bg-mono-180">
         <NetworkSelectorDropdown
           isCustomEndpointSelected={isCustom}
           selectedNetwork={network}

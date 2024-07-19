@@ -1,32 +1,45 @@
 'use client';
 
+import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import cx from 'classnames';
+import type { UseFormWatch } from 'react-hook-form';
 
-const DestChainInput = () => {
+import type { DepositFormFields } from '../../../types/restake';
+import AvatarWithText from '../AvatarWithText';
+import SelectorPlaceholder from '../SelectorPlaceholder';
+
+type Props = {
+  openOperatorModal: () => void;
+  watch: UseFormWatch<DepositFormFields>;
+};
+
+const DestChainInput = ({ openOperatorModal, watch }: Props) => {
+  const operatorAccountId = watch('operatorAccountId');
+
   return (
-    <div className="relative">
-      <TransactionInputCard.Root>
-        <TransactionInputCard.Header>
-          <TransactionInputCard.ChainSelector />
-          <TransactionInputCard.MaxAmountButton accountType="note" disabled />
-        </TransactionInputCard.Header>
+    <TransactionInputCard.Root>
+      <TransactionInputCard.Header className="min-h-[55px]">
+        <TransactionInputCard.MaxAmountButton accountType="note" disabled />
+      </TransactionInputCard.Header>
 
-        <TransactionInputCard.Body />
-      </TransactionInputCard.Root>
-
-      <div
-        className={cx(
-          'absolute inset-0 flex items-center justify-center',
-          'rounded-lg bg-mono-200/25 dark:bg-mono-200/75',
-        )}
-      >
-        <Typography variant="body1" className="cursor-default text-mono-140">
-          Bridging will be available soon
-        </Typography>
-      </div>
-    </div>
+      <TransactionInputCard.Body
+        hiddenAmountInput
+        tokenSelectorProps={{
+          onClick: openOperatorModal,
+          placeholder: (
+            <SelectorPlaceholder Icon={<Avatar value="" className="mr-2" />}>
+              Operator
+            </SelectorPlaceholder>
+          ),
+          children: operatorAccountId && (
+            <AvatarWithText
+              accountAddress={operatorAccountId}
+              overrideTypographyProps={{ variant: 'h5' }}
+            />
+          ),
+        }}
+      />
+    </TransactionInputCard.Root>
   );
 };
 

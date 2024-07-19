@@ -35,12 +35,12 @@ import AvatarWithText from '../AvatarWithText';
 import ChainList from '../ChainList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
+import OperatorList from '../OperatorList';
 import RestakeTabs from '../RestakeTabs';
 import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Info from './Info';
-import OperatorList from './OperatorList';
-import DelegationInput from './StakeInput';
+import StakeInput from './StakeInput';
 
 export const dynamic = 'force-static';
 
@@ -234,7 +234,7 @@ export default function DelegatePage() {
       <div className="flex flex-col h-full space-y-4 grow">
         <RestakeTabs />
 
-        <DelegationInput
+        <StakeInput
           amountError={errors.amount?.message}
           delegatorInfo={delegatorInfo}
           openAssetModal={openAssetModal}

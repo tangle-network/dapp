@@ -262,7 +262,7 @@ const TransactionMaxAmountButton = forwardRef<
               )
             }
             className={twMerge(
-              'justify-end xs:justify-start',
+              'ml-auto justify-end xs:justify-start',
               disabled && 'cursor-not-allowed',
             )}
           >
@@ -316,6 +316,7 @@ const TransactionInputCardBody = forwardRef<
       onAmountChange: onAmountChangeProp,
       tokenSelectorProps,
       tokenSymbol: tokenSymbolProp,
+      hiddenAmountInput,
       ...props
     },
     ref,
@@ -346,41 +347,48 @@ const TransactionInputCardBody = forwardRef<
           className,
         )}
       >
-        {isFixedAmount ? (
-          <AdjustAmount
-            min={0}
-            {...fixedAmountProps}
-            className={twMerge(
-              'max-w-[var(--adjust-amount-width)] h-full grow',
-              fixedAmountProps?.className,
-            )}
-            value={typeof amount === 'string' ? Number(amount) : undefined}
-            onChange={
-              typeof onAmountChange === 'function'
-                ? (nextVal) => onAmountChange(`${nextVal}`)
-                : undefined
-            }
-          />
-        ) : (
-          <TextField.Root isDisabledHoverStyle className="!bg-transparent grow">
-            <TextField.Input
-              placeholder="0.0"
+        {!hiddenAmountInput &&
+          (isFixedAmount ? (
+            <AdjustAmount
               min={0}
-              inputMode="decimal"
-              pattern="[0-9]*\.?[0-9]*"
-              value={amount}
-              onChange={handleTextFieldChange}
-              {...customAmountProps}
+              {...fixedAmountProps}
+              className={twMerge(
+                'max-w-[var(--adjust-amount-width)] h-full grow',
+                fixedAmountProps?.className,
+              )}
+              value={typeof amount === 'string' ? Number(amount) : undefined}
+              onChange={
+                typeof onAmountChange === 'function'
+                  ? (nextVal) => onAmountChange(`${nextVal}`)
+                  : undefined
+              }
             />
-          </TextField.Root>
-        )}
+          ) : (
+            <TextField.Root
+              isDisabledHoverStyle
+              className="!bg-transparent grow"
+            >
+              <TextField.Input
+                placeholder="0.0"
+                min={0}
+                inputMode="decimal"
+                pattern="[0-9]*\.?[0-9]*"
+                value={amount}
+                onChange={handleTextFieldChange}
+                {...customAmountProps}
+              />
+            </TextField.Root>
+          ))}
 
         <TokenSelector
           type="button"
           {...tokenSelectorProps}
-          className={twMerge('max-w-[210px]', tokenSelectorProps?.className)}
+          className={twMerge(
+            'ml-auto max-w-[210px]',
+            tokenSelectorProps?.className,
+          )}
         >
-          {tokenSymbol}
+          {tokenSymbol || tokenSelectorProps?.children}
         </TokenSelector>
       </div>
     );

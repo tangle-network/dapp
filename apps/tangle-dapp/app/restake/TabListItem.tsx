@@ -28,14 +28,14 @@ export default function TabListItem({
         {isActive && (
           <motion.span
             layoutId="bubble"
-            className="absolute inset-0 z-10 rounded-lg bg-mono-0 dark:bg-purple-50"
+            className="absolute inset-0 rounded-lg bg-mono-0 dark:bg-purple-50"
             transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
           />
         )}
 
         <span
           className={twMerge(
-            'absolute z-10 body2 w-full p-2 text-center',
+            'absolute body2 w-full p-2 text-center',
             isActive && 'font-bold',
             isActive
               ? 'text-mono-200 dark:text-mono-0'

@@ -32,7 +32,7 @@ export type TransactionInputCardContextValue = {
   /**
    * The token symbol of the transaction input card.
    */
-  tokenSymbol?: string;
+  tokenSymbol?: ReactNode;
 
   /**
    * The amount of the transaction input card.
@@ -113,6 +113,8 @@ export interface TransactionInputCardBodyProps
       TransactionInputCardContextValue,
       'amount' | 'onAmountChange' | 'tokenSymbol' | 'isFixedAmount'
     > {
+  hiddenAmountInput?: boolean;
+
   /**
    * The props of the custom amount input.
    */

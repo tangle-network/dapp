@@ -7,13 +7,13 @@ import {
   type TokenListCardProps,
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
+import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import {
   type ComponentProps,
   useCallback,
   useEffect,
   useMemo,
   useRef,
-  useState,
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -27,6 +27,7 @@ import {
   type DepositContext,
   TxEvent,
 } from '../../../data/restake/RestakeTx/base';
+import useRestakeOperatorMap from '../../../data/restake/useRestakeOperatorMap';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
@@ -36,6 +37,7 @@ import AssetList from '../AssetList';
 import ChainList from '../ChainList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
+import OperatorList from '../OperatorList';
 import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
 import DestChainInput from './DestChainInput';
@@ -67,10 +69,12 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     mode: 'onBlur',
     defaultValues: {
       sourceTypedChainId: getDefaultTypedChainId(activeTypedChainId),
+      operatorAccountId: null,
     },
   });
 
   const { assetMap, assetWithBalances } = useRestakeContext();
+  const { operatorMap } = useRestakeOperatorMap();
   const { deposit } = useRestakeTx();
 
   const setValue = useCallback(
@@ -88,6 +92,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   useEffect(() => {
     register('depositAssetId', { required: 'Asset is required' });
     register('sourceTypedChainId', { required: 'Chain is required' });
+    register('operatorAccountId');
   }, [register]);
 
   useEffect(() => {
@@ -100,16 +105,23 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   useRpcSubscription(sourceTypedChainId);
 
   // Modal states
-  const [chainModalOpen, setChainModalOpen] = useState(false);
-  const [tokenModalOpen, setTokenModalOpen] = useState(false);
+  const {
+    status: chainModalOpen,
+    close: closeChainModal,
+    open: openChainModal,
+  } = useModal();
 
-  // Chain modal handlers
-  const openChainModal = useCallback(() => setChainModalOpen(true), []);
-  const closeChainModal = useCallback(() => setChainModalOpen(false), []);
+  const {
+    status: operatorModalOpen,
+    close: closeOperatorModal,
+    open: openOperatorModal,
+  } = useModal();
 
-  // Token modal handlers
-  const openTokenModal = useCallback(() => setTokenModalOpen(true), []);
-  const closeTokenModal = useCallback(() => setTokenModalOpen(false), []);
+  const {
+    status: tokenModalOpen,
+    close: closeTokenModal,
+    open: openTokenModal,
+  } = useModal();
 
   const selectableTokens = useMemo(
     () =>
@@ -159,9 +171,9 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   const handleChainChange = useCallback(
     ({ typedChainId }: ChainType) => {
       setValue('sourceTypedChainId', typedChainId);
-      setChainModalOpen(false);
+      closeChainModal();
     },
-    [setValue],
+    [closeChainModal, setValue],
   );
 
   const handleTokenChange = useCallback(
@@ -170,6 +182,14 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
       closeTokenModal();
     },
     [closeTokenModal, setValue],
+  );
+
+  const handleOperatorAccountIdChange = useCallback(
+    (operatorAccountId: string) => {
+      setValue('operatorAccountId', operatorAccountId);
+      closeOperatorModal();
+    },
+    [closeOperatorModal, setValue],
   );
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
@@ -207,7 +227,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
 
           <ArrowRight size="lg" className="mx-auto rotate-90" />
 
-          <DestChainInput />
+          <DestChainInput openOperatorModal={openOperatorModal} watch={watch} />
         </div>
 
         <div className="flex flex-col justify-between gap-4 grow">
@@ -223,7 +243,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
         </div>
       </div>
 
-      <Modal open={chainModalOpen} onOpenChange={setChainModalOpen}>
+      <Modal>
         <ModalContent
           isOpen={chainModalOpen}
           title="Select Chain"
@@ -236,9 +256,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             onChange={handleChainChange}
           />
         </ModalContent>
-      </Modal>
 
-      <Modal open={tokenModalOpen} onOpenChange={setTokenModalOpen}>
         <ModalContent
           isOpen={tokenModalOpen}
           title="Select Asset"
@@ -249,6 +267,22 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             selectTokens={selectableTokens}
             onChange={handleTokenChange}
             onClose={closeTokenModal}
+          />
+        </ModalContent>
+
+        <ModalContent
+          isOpen={operatorModalOpen}
+          title="Select Operator"
+          description="Select the operator you want to delegate to"
+          onInteractOutside={closeOperatorModal}
+        >
+          <OperatorList
+            selectedOperatorAccountId={watch('operatorAccountId') ?? ''}
+            onOperatorAccountIdChange={handleOperatorAccountIdChange}
+            operatorMap={operatorMap}
+            overrideTitleProps={{ variant: 'h4' }}
+            className="h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]"
+            onClose={closeOperatorModal}
           />
         </ModalContent>
       </Modal>
