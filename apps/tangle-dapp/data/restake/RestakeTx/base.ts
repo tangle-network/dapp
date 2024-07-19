@@ -31,6 +31,7 @@ export type TxEventHandlers<Context extends Record<string, unknown>> = {
 export type DepositContext = {
   assetId: string;
   amount: bigint;
+  operatorAccount?: string;
 };
 
 export type DelegateContext = {
@@ -52,6 +53,7 @@ export abstract class RestakeTxBase {
   abstract deposit(
     assetId: string,
     amount: bigint,
+    operatorAccount?: string,
     eventHandlers?: TxEventHandlers<DepositContext>,
   ): Promise<Hash | null>;
 

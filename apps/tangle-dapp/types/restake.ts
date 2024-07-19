@@ -239,7 +239,7 @@ export type DepositFormFields = {
   amount: string;
   sourceTypedChainId: number;
   depositAssetId: string;
-  operatorAccountId: string | null;
+  operatorAccountId: string | undefined;
 };
 
 export type DelegationFormFields = {

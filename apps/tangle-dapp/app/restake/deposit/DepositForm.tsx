@@ -70,7 +70,6 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     mode: 'onBlur',
     defaultValues: {
       sourceTypedChainId: getDefaultTypedChainId(activeTypedChainId),
-      operatorAccountId: null,
     },
   });
 
@@ -198,7 +197,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
     async (data) => {
-      const { amount, depositAssetId } = data;
+      const { amount, depositAssetId, operatorAccountId } = data;
       if (depositAssetId === null || assetMap[depositAssetId] === undefined) {
         return;
       }
@@ -208,6 +207,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
       await deposit(
         depositAssetId,
         parseUnits(amount, asset.decimals),
+        operatorAccountId,
         txEventHandlers,
       );
     },

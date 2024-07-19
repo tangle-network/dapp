@@ -54,8 +54,8 @@ function createDummyApi(error: string): RestakeTxBase {
       eventHandlers?.onTxFailed?.(error, { amount, assetId, operatorAccount });
       return Promise.resolve(null);
     },
-    deposit(assetId, amount, eventHandlers) {
-      eventHandlers?.onTxFailed?.(error, { amount, assetId });
+    deposit(assetId, amount, operatorAccount, eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, { amount, assetId, operatorAccount });
       return Promise.resolve(null);
     },
   };
