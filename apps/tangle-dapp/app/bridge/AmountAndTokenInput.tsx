@@ -6,8 +6,8 @@ import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/button
 import {
   Dropdown,
   DropdownBody,
+  DropdownMenuItem,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
-import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
@@ -20,7 +20,6 @@ import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
 import { useBridge } from '../../context/BridgeContext';
 import convertDecimalToBn from '../../utils/convertDecimalToBn';
 import useBalance from './hooks/useBalance';
-import useBridgeFee from './hooks/useBridgeFee';
 import useDecimals from './hooks/useDecimals';
 import useSelectedToken from './hooks/useSelectedToken';
 import useTypedChainId from './hooks/useTypedChainId';
@@ -33,12 +32,12 @@ const AmountAndTokenInput: FC = () => {
     tokenIdOptions,
     setIsAmountInputError,
     isAmountInputError,
+    bridgeFee,
   } = useBridge();
   const selectedToken = useSelectedToken();
   const { balance, isLoading } = useBalance();
   const decimals = useDecimals();
   const { sourceTypedChainId } = useTypedChainId();
-  const { fee: bridgeFee } = useBridgeFee();
 
   const minAmount = useMemo(() => {
     const existentialDeposit =
@@ -103,13 +102,13 @@ const AmountAndTokenInput: FC = () => {
                   const token = BRIDGE_SUPPORTED_TOKENS[tokenId];
                   return (
                     <li key={tokenId}>
-                      <MenuItem
-                        startIcon={<TokenIcon size="lg" name={token.symbol} />}
+                      <DropdownMenuItem
+                        leftIcon={<TokenIcon size="lg" name={token.symbol} />}
                         onSelect={() => setSelectedTokenId(tokenId)}
                         className="px-3 normal-case"
                       >
                         {token.symbol}
-                      </MenuItem>
+                      </DropdownMenuItem>
                     </li>
                   );
                 })}

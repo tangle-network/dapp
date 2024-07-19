@@ -1,6 +1,7 @@
+import { Close, FileShieldLine } from '@webb-tools/icons';
+import Decimal from 'decimal.js';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Close, FileShieldLine } from '@webb-tools/icons';
 
 import AmountInfo from './AmountInfo';
 import Button from '../../components/buttons/Button';
@@ -99,7 +100,7 @@ export const WithdrawConfirm = forwardRef<
               txSourceInfo={{
                 isSource: true,
                 typedChainId: sourceTypedChainId,
-                amount: amount * -1,
+                amount: new Decimal(amount * -1),
                 tokenSymbol: token1Symbol,
                 walletAddress: sourceAddress,
                 accountType: 'note',
@@ -107,7 +108,7 @@ export const WithdrawConfirm = forwardRef<
               }}
               txDestinationInfo={{
                 typedChainId: destTypedChainId,
-                amount: amount,
+                amount: new Decimal(amount),
                 tokenSymbol: token2Symbol ?? token1Symbol,
                 walletAddress: destAddress,
                 accountType: 'wallet',

@@ -102,7 +102,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
 
             <div className="flex items-center">
               {isTotalLoading ? (
-                <SkeletonLoader className="w-14" />
+                <SkeletonLoader className="w-14 dark:bg-mono-140" />
               ) : (
                 totalFeeCmp ?? (
                   <>
@@ -184,9 +184,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
 
                     <div className="flex items-start gap-2 !text-inherit">
                       {isLoading ? (
-                        <div className="animate-pulse">
-                          <div className="h-5 rounded-md w-14 bg-slate-200 dark:bg-mono-160" />
-                        </div>
+                        <SkeletonLoader className="w-14 dark:bg-mono-140" />
                       ) : (
                         <>
                           {isPrimitive(value) ? (

@@ -101,7 +101,11 @@ const getStaticColumns = (isWaiting?: boolean) => [
       ]),
 ];
 
-const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
+const ValidatorTable: FC<ValidatorTableProps> = ({
+  data,
+  isWaiting,
+  searchValue,
+}) => {
   const { network } = useNetworkStore();
 
   const [sorting, setSorting] = useState<SortingState>([
@@ -152,6 +156,13 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
           );
         },
         sortingFn: sortAddressOrIdentityForNomineeOrValidator,
+        filterFn: (row, _, filterValue) => {
+          const { address, identityName } = row.original;
+          return (
+            address.toLowerCase().includes(filterValue.toLowerCase()) ||
+            identityName.toLowerCase().includes(filterValue.toLowerCase())
+          );
+        },
       }),
       ...getStaticColumns(isWaiting),
     ],
@@ -172,7 +183,17 @@ const ValidatorTable: FC<ValidatorTableProps> = ({ data, isWaiting }) => {
     onSortingChange: setSorting,
     state: {
       sorting,
+      columnFilters: searchValue
+        ? [
+            {
+              id: 'address',
+              value: searchValue,
+            },
+          ]
+        : [],
     },
+    getRowId: (row) => row.address,
+    autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
 

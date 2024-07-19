@@ -2,7 +2,7 @@
 
 import { isAddress, isEthereumAddress } from '@polkadot/util-crypto';
 import Decimal from 'decimal.js';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 
 import { useBridge } from '../../../context/BridgeContext';
@@ -25,6 +25,8 @@ export default function useEstimatedGasFee() {
     bridgeType,
     selectedSourceChain,
     selectedDestinationChain,
+    setEstimatedGasFee,
+    setIsEstimatedGasFeeLoading,
   } = useBridge();
   const selectedToken = useSelectedToken();
   const ethersProvider = useEthersProvider();
@@ -49,7 +51,8 @@ export default function useEstimatedGasFee() {
       isEthereumAddress(activeAccountAddress) &&
       bridgeType !== null &&
       ethersProvider !== null &&
-      ethersSigner !== null
+      ethersSigner !== null &&
+      destinationAddress
         ? {
             senderAddress: activeAccountAddress,
             recipientAddress: destinationAddress,
@@ -138,5 +141,11 @@ export default function useEstimatedGasFee() {
     isLoadingSubstrateEstimatedGasFee,
   ]);
 
-  return { fee, isLoading };
+  useEffect(() => {
+    setEstimatedGasFee(fee);
+  }, [setEstimatedGasFee, fee]);
+
+  useEffect(() => {
+    setIsEstimatedGasFeeLoading(isLoading);
+  }, [setIsEstimatedGasFeeLoading, isLoading]);
 }

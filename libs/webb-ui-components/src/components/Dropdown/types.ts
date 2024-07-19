@@ -1,9 +1,13 @@
 import type {
   DropdownMenuContentProps,
   DropdownMenuProps as RdxDropdownMenuProps,
+  DropdownMenuItemProps as RdxDropdownMenuItemProps,
 } from '@radix-ui/react-dropdown-menu';
-import type { IWebbComponentBase, PropsOf } from '../../types';
-import type { DropdownMenuProps } from '../DropdownMenu/types';
+import type {
+  IWebbComponentBase,
+  PropsOf,
+  WebbComponentBase,
+} from '../../types';
 
 /**
  * The `Dropdown` props
@@ -44,4 +48,83 @@ export interface DropdownBodyProps
    * @default true
    */
   isPortal?: boolean;
+}
+
+/**
+ * The option list of `DropdownMenu` component
+ */
+export type DropDownMemuOption = {
+  /**
+   * The item value and the display text
+   */
+  value: string;
+  /**
+   * Item icon
+   */
+  icon?: React.ReactElement;
+};
+
+/**
+ * Dropdown Menu component
+ */
+export interface DropdownMenuProps extends Omit<WebbComponentBase, 'onChange'> {
+  /**
+   * The `Dropdown` size
+   */
+  size?: 'md' | 'sm';
+  /**
+   * The label to be display, if not provided, the `Dropdown` trigger will display the value property
+   */
+  label?: string;
+  /**
+   * The icon before the `Dropdown` label
+   */
+  icon?: React.ReactElement;
+  /**
+   * Options array to display
+   */
+  menuOptions: Array<DropDownMemuOption>;
+  /**
+   * Current selected value
+   */
+  value?: string;
+  /**
+   * Callback function to update the value
+   */
+  onChange?: (nextValue: string) => void;
+}
+
+export interface DropdownMenuItemProps
+  extends IWebbComponentBase,
+    RdxDropdownMenuItemProps {
+  /**
+   * Handle state if the item is being active
+   */
+  isActive?: boolean;
+
+  /**
+   * The icon displayed on the left before the text
+   */
+  leftIcon?: React.ReactElement;
+
+  /**
+   * The icon displayed on the right
+   */
+  rightIcon?: React.ReactElement;
+
+  /**
+   * The text transform
+   * @default 'capitalize'
+   */
+  textTransform?: 'uppercase' | 'lowercase' | 'capitalize' | 'normal-case';
+}
+
+export interface AccountDropdownBodyProps {
+  accountItems: {
+    address: string;
+    name: string;
+    onClick: () => void;
+  }[];
+  className?: string;
+  addressShortenFn?: (address: string) => string;
 }

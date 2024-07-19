@@ -50,6 +50,7 @@ export default async function sygmaEvm(params?: {
 
   const fee = await assetTransfer.getFee(transfer);
   const tx = await assetTransfer.buildTransferTransaction(transfer, fee);
+  const approvals = await assetTransfer.buildApprovals(transfer, fee);
 
-  return { fee, tx };
+  return { fee, tx, approvals };
 }

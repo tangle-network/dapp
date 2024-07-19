@@ -150,7 +150,7 @@ const DelegationsPayoutsContainer: FC = () => {
         onValueChange={(tabString) => setActiveTab(assertTab(tabString))}
         tabs={[...Object.values(NominationsAndPayoutsTab)]}
         headerClassName="w-full overflow-x-auto"
-        filterComponent={
+        additionalActionsCmp={
           activeAccount?.address && isBondedOrNominating ? (
             activeTab === NominationsAndPayoutsTab.NOMINATIONS ? (
               <ManageButtonContainer

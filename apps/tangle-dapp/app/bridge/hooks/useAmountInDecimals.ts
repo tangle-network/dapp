@@ -4,13 +4,11 @@ import { useMemo } from 'react';
 
 import { useBridge } from '../../../context/BridgeContext';
 import convertBnToDecimal from '../../../utils/convertBnToDecimal';
-import useBridgeFee from './useBridgeFee';
 import useDecimals from './useDecimals';
 
 export default function useAmountInDecimals() {
-  const { amount } = useBridge();
+  const { amount, bridgeFee } = useBridge();
   const decimals = useDecimals();
-  const { fee: bridgeFee } = useBridgeFee();
 
   const sourceAmountInDecimals = useMemo(() => {
     if (!amount) return null;

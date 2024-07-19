@@ -1,4 +1,6 @@
 import { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
+import Decimal from 'decimal.js';
+
 import { PropsOf, TokenType } from '../../types';
 import { SteppedProgressProps } from '../Progress/types';
 
@@ -27,7 +29,7 @@ export type TxInfo = {
   /**
    * The amount of the transaction to display
    */
-  amount: number;
+  amount: Decimal;
 
   /**
    * The token symbol to display the token info

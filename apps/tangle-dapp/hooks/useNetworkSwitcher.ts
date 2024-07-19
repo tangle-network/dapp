@@ -206,8 +206,8 @@ async function netWorkToChain(network: Network, activeWallet: WalletConfig) {
     const api = await getApiPromise(network.wsRpcEndpoint);
 
     // if the chain id is not defined, fetch the chain id from the api
-    if (network.chainId === undefined) {
-      network.chainId =
+    if (network.substrateChainId === undefined) {
+      network.substrateChainId =
         typeof api.registry.chainSS58 === 'number'
           ? api.registry.chainSS58
           : DEFAULT_SS58.toNumber();
@@ -220,7 +220,7 @@ async function netWorkToChain(network: Network, activeWallet: WalletConfig) {
 
     const typedChainId = calculateTypedChainId(
       ChainType.Substrate,
-      network.chainId,
+      network.substrateChainId,
     );
 
     const chain =
@@ -228,7 +228,7 @@ async function netWorkToChain(network: Network, activeWallet: WalletConfig) {
         ? chainsPopulated[typedChainId]
         : defineWebbChain(
             network,
-            network.chainId,
+            network.substrateChainId,
             ChainType.Substrate,
             typedChainId,
             deciamls,

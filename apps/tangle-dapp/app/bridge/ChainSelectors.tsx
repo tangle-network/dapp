@@ -9,8 +9,8 @@ import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/button
 import {
   Dropdown,
   DropdownBody,
+  DropdownMenuItem,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
-import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import assert from 'assert';
 import { FC, useCallback } from 'react';
@@ -127,13 +127,13 @@ const ChainSelector: FC<ChainSelectorProps> = ({
             {chainOptions.map((chain) => {
               return (
                 <li key={`${chain.chainType}-${chain.id}`}>
-                  <MenuItem
-                    startIcon={<ChainIcon size="lg" name={chain.name} />}
+                  <DropdownMenuItem
+                    leftIcon={<ChainIcon size="lg" name={chain.name} />}
                     onSelect={() => onSelectChain(chain)}
                     className="py-2.5"
                   >
                     {chain.name}
-                  </MenuItem>
+                  </DropdownMenuItem>
                 </li>
               );
             })}
