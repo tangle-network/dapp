@@ -213,6 +213,11 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     [closeOperatorModal, setValue],
   );
 
+  const handleResetOperator = useCallback(() => {
+    resetField('operatorAccountId');
+    closeOperatorModal();
+  }, [closeOperatorModal, resetField]);
+
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
     async (data) => {
       const { amount, depositAssetId, operatorAccountId } = data;
@@ -310,6 +315,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             overrideTitleProps={{ variant: 'h4' }}
             className="h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]"
             onClose={closeOperatorModal}
+            onResetSelection={handleResetOperator}
           />
         </ModalContent>
       </Modal>

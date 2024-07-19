@@ -1,3 +1,4 @@
+import { Cross1Icon } from '@radix-ui/react-icons';
 import {
   type ColumnDef,
   getCoreRowModel,
@@ -7,6 +8,7 @@ import {
 import { useActiveChain } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
 import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { ListCardWrapper } from '@webb-tools/webb-ui-components/components/ListCard/ListCardWrapper';
@@ -17,6 +19,7 @@ import {
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
+import isFunction from 'lodash/isFunction';
 import omitBy from 'lodash/omitBy';
 import {
   type ComponentProps,
@@ -38,6 +41,7 @@ type Props = Partial<ComponentProps<typeof ListCardWrapper>> & {
   operatorIdentities?: Record<string, IdentityType | null> | null;
   selectedOperatorAccountId: string;
   onOperatorAccountIdChange?: (accountId: string) => void;
+  onResetSelection?: () => void;
 };
 
 const OperatorList = forwardRef<HTMLDivElement, Props>(
@@ -49,6 +53,7 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
       operatorIdentities,
       selectedOperatorAccountId,
       onOperatorAccountIdChange,
+      onResetSelection,
       ...props
     },
     ref,
@@ -154,6 +159,7 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
       >
         {!isEmpty && (
           <RadioGroup
+            className="flex flex-col justify-between grow"
             defaultValue={selectedOperatorAccountId}
             onValueChange={onOperatorAccountIdChange}
           >
@@ -168,6 +174,18 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
               )}
               isDisabledRowHoverStyle
             />
+
+            {isFunction(onResetSelection) && (
+              <Button
+                isDisabled={!selectedOperatorAccountId}
+                className="mt-auto"
+                leftIcon={<Cross1Icon />}
+                isFullWidth
+                onClick={onResetSelection}
+              >
+                Clear Selection
+              </Button>
+            )}
           </RadioGroup>
         )}
 
