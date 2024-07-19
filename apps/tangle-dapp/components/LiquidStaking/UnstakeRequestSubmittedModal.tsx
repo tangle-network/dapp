@@ -51,8 +51,8 @@ const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
             variant="body1"
             fw="normal"
           >
-            After the unbonding period, you can redeem this Unstake NFT to
-            withdraw unstaked tokens.
+            After the schedule period completes, you can withdraw unstaked
+            tokens.
           </Typography>
 
           {/* TODO: External link's href. */}
@@ -66,7 +66,7 @@ const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
             variant="primary"
             rightIcon={<WalletLineIcon />}
           >
-            Add Token to Wallet
+            View Explorer
           </Button>
         </ModalFooter>
       </ModalContent>
