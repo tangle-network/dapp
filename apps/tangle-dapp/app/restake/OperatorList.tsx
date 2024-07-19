@@ -1,40 +1,20 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
-import {
-  type ColumnDef,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
-import { useActiveChain } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
-import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config';
-import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
-import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
+import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
 import { ListCardWrapper } from '@webb-tools/webb-ui-components/components/ListCard/ListCardWrapper';
-import {
-  RadioGroup,
-  RadioItem,
-} from '@webb-tools/webb-ui-components/components/Radio';
-import { Table } from '@webb-tools/webb-ui-components/components/Table';
+import { ListItem } from '@webb-tools/webb-ui-components/components/ListCard/ListItem';
+import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import cx from 'classnames';
+import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import isFunction from 'lodash/isFunction';
+import keys from 'lodash/keys';
 import omitBy from 'lodash/omitBy';
-import {
-  type ComponentProps,
-  forwardRef,
-  PropsWithChildren,
-  useMemo,
-} from 'react';
-import { formatUnits } from 'viem';
+import { type ComponentProps, forwardRef, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import type { OperatorMap, OperatorMetadata } from '../../types/restake';
+import type { OperatorMap } from '../../types/restake';
 import type { IdentityType } from '../../utils/polkadot';
 import AvatarWithText from './AvatarWithText';
-
-type TableData = OperatorMetadata & { accountId: string };
 
 type Props = Partial<ComponentProps<typeof ListCardWrapper>> & {
   operatorMap: OperatorMap;
@@ -66,90 +46,6 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
 
     const isEmpty = Object.keys(activeOperator).length === 0;
 
-    const { nativeTokenSymbol } = useNetworkStore();
-    const [activeChain] = useActiveChain();
-
-    const nativeDecimals = useMemo(
-      () =>
-        isDefined(activeChain)
-          ? activeChain.nativeCurrency.decimals
-          : DEFAULT_DECIMALS,
-      [activeChain],
-    );
-
-    const data = useMemo<TableData[]>(
-      () =>
-        Object.entries(activeOperator).map(([accountId, metadata]) => ({
-          ...metadata,
-          accountId,
-        })),
-      [activeOperator],
-    );
-
-    const columns = useMemo<ColumnDef<TableData>[]>(
-      () => [
-        {
-          id: 'select-row',
-          enableSorting: false,
-          header: () => <Header>Operator</Header>,
-          cell: ({
-            row: {
-              original: { accountId, status },
-            },
-          }) => (
-            <RadioItem
-              id={accountId}
-              value={accountId}
-              className="w-full overflow-hidden px-0.5"
-              {...(status === 'Inactive'
-                ? {
-                    overrideRadixRadioItemProps: { disabled: true },
-                  }
-                : {})}
-            >
-              <label
-                className="flex items-center justify-between grow"
-                htmlFor={accountId}
-              >
-                <AvatarWithText
-                  identityName={operatorIdentities?.[accountId]?.name}
-                  accountAddress={accountId}
-                />
-              </label>
-            </RadioItem>
-          ),
-        },
-        {
-          accessorKey: 'bond',
-          enableSorting: true,
-          enableMultiSort: true,
-          header: () => <Header ta="right">Total Staked</Header>,
-          cell: ({
-            getValue,
-            row: {
-              original: { status },
-            },
-          }) => (
-            <ChipCell isRight isDisabled={status === 'Inactive'}>
-              {formatUnits(getValue<bigint>(), nativeDecimals)}{' '}
-              {nativeTokenSymbol}
-            </ChipCell>
-          ),
-        },
-      ],
-      [nativeDecimals, nativeTokenSymbol, operatorIdentities],
-    );
-
-    const table = useReactTable({
-      data,
-      columns,
-      getCoreRowModel: getCoreRowModel(),
-      getSortedRowModel: getSortedRowModel(),
-      filterFns: {
-        fuzzy: fuzzyFilter,
-      },
-    });
-
     return (
       <ListCardWrapper
         {...props}
@@ -158,22 +54,34 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
         ref={ref}
       >
         {!isEmpty && (
-          <RadioGroup
-            className="flex flex-col justify-between grow"
-            defaultValue={selectedOperatorAccountId}
-            onValueChange={onOperatorAccountIdChange}
-          >
-            <Table
-              className="pt-4"
-              tableProps={table}
-              thClassName={cx(
-                'bg-transparent dark:bg-transparent border-t-0 px-3 py-2',
-              )}
-              tdClassName={cx(
-                'bg-transparent dark:bg-transparent px-4 py-2.5 border-none',
-              )}
-              isDisabledRowHoverStyle
-            />
+          <>
+            <ScrollArea className={twMerge('h-full py-2')}>
+              <ul>
+                {keys(activeOperator).map((current) => (
+                  <ListItem
+                    key={current}
+                    className="px-4 cursor-pointer max-w-none dark:bg-transparent"
+                    onClick={() => onOperatorAccountIdChange?.(current)}
+                  >
+                    <AvatarWithText
+                      accountAddress={current}
+                      overrideAvatarProps={{ size: 'lg' }}
+                      overrideTypographyProps={{ variant: 'h5' }}
+                      identityName={
+                        operatorIdentities?.[current]?.name || '<Unknown>'
+                      }
+                      description={
+                        <KeyValueWithButton
+                          size="sm"
+                          keyValue={current}
+                          shortenFn={shortenString}
+                        />
+                      }
+                    />
+                  </ListItem>
+                ))}
+              </ul>
+            </ScrollArea>
 
             {isFunction(onResetSelection) && (
               <Button
@@ -186,7 +94,7 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
                 Clear Selection
               </Button>
             )}
-          </RadioGroup>
+          </>
         )}
 
         {isEmpty && (
@@ -213,34 +121,3 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
 OperatorList.displayName = 'OperatorList';
 
 export default OperatorList;
-
-const Header = ({
-  children,
-  ta = 'left',
-}: PropsWithChildren<{
-  ta?: 'left' | 'right' | 'center';
-}>) => (
-  <Typography className="w-full" variant="body3" fw="semibold" ta={ta}>
-    {children}
-  </Typography>
-);
-
-type CellProps = {
-  isRight?: boolean;
-  isDisabled?: boolean;
-};
-
-const ChipCell = ({
-  children,
-  isRight,
-  isDisabled,
-}: PropsWithChildren<CellProps>) => (
-  <div
-    className={cx(
-      isRight && 'flex justify-end ml-auto',
-      isDisabled && 'opacity-50',
-    )}
-  >
-    <Chip color="dark-grey">{children}</Chip>
-  </div>
-);
