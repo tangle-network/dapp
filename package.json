@@ -69,7 +69,7 @@
     "@apollo/client": "^3.10.4",
     "@buildwithsygma/sygma-sdk-core": "2.10.0",
     "@date-fns/utc": "^1.2.0",
-    "@headlessui/react": "^2.0.4",
+    "@headlessui/react": "^2.1.2",
     "@next/bundle-analyzer": "^14.2.3",
     "@ngneat/falso": "^7.2.0",
     "@octokit/request": "^9.1.1",

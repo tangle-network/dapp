@@ -63,6 +63,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
       items,
       isTotalLoading,
       isDefaultOpen,
+      isDisabledBgColor,
       ...props
     },
     ref,
@@ -72,7 +73,8 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
         {...props}
         className={twMerge(
           'rounded-lg w-full',
-          'bg-[#F7F8F7]/80 hover:bg-mono-20 dark:bg-mono-180',
+          !isDisabledBgColor &&
+            'bg-[#F7F8F7]/80 hover:bg-mono-20 dark:bg-mono-180',
           className,
         )}
         ref={ref}

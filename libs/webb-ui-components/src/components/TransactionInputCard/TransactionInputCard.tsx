@@ -10,6 +10,8 @@ import {
   WalletLineIcon,
 } from '@webb-tools/icons';
 import {
+  type ElementType,
+  type ForwardedRef,
   cloneElement,
   createContext,
   forwardRef,
@@ -65,12 +67,12 @@ const TransactionInputCardRoot = forwardRef<
         {...props}
         ref={ref}
         className={twMerge(
-          'w-full rounded-lg px-3 py-1.5 space-y-2 border',
-          errorMessage
-            ? 'border-red-70 dark:border-red-50'
-            : 'border-mono-40 dark:border-mono-160',
-          'bg-mono-20 dark:bg-mono-180',
-          'hover:bg-[#E2E5EB]/30 dark:hover:bg-mono-170',
+          'w-full rounded-xl px-3 py-1.5 space-y-2',
+          'bg-gradient-to-b',
+          'from-[rgba(255,_255,_255,_0.18)] to-[rgba(255,_255,_255,_0.6)]',
+          'hover:from-[rgba(255,_255,_255,_0.3)] hover:to-mono-0',
+          'dark:from-[rgba(43,_47,_64,_0.4)] dark:to-[rgba(112,_122,_166,_0.04)]',
+          'dark:hover:from-[rgba(43,_47,_64,_0.5)] dark:hover:to-[rgba(112,_122,_166,_0.05)]',
           className,
         )}
       >
@@ -95,30 +97,30 @@ const TransactionInputCardRoot = forwardRef<
 );
 TransactionInputCardRoot.displayName = 'TransactionInputCardRoot';
 
-const TransactionChainSelector = forwardRef<
-  React.ElementRef<'button'>,
-  TransactionChainSelectorProps
->(
-  (
-    {
+const TransactionChainSelector = forwardRef(
+  <TAs extends ElementType>(
+    props: TransactionChainSelectorProps<TAs>,
+    ref: ForwardedRef<any>,
+  ) => {
+    const {
+      as: Cmp = 'button',
       typedChainId: typedChainIdProps,
       className,
       disabled,
       placeholder = 'Select Chain',
       renderBody,
-      ...props
-    },
-    ref,
-  ) => {
+      ...restProps
+    } = props;
+
     const context = useContext(TransactionInputCardContext);
 
     const typedChainId = typedChainIdProps ?? context.typedChainId;
     const chain = typedChainId ? chainsConfig[typedChainId] : undefined;
 
     return (
-      <button
+      <Cmp
         type="button"
-        {...props}
+        {...restProps}
         disabled={disabled}
         ref={ref}
         className={twMerge('flex items-center gap-1 p-2 group', className)}
@@ -146,7 +148,7 @@ const TransactionChainSelector = forwardRef<
             className="rounded-lg group-hover:bg-mono-40 dark:group-hover:bg-mono-160"
           />
         )}
-      </button>
+      </Cmp>
     );
   },
 );
@@ -259,7 +261,10 @@ const TransactionMaxAmountButton = forwardRef<
                 Icon
               )
             }
-            className={disabled ? 'cursor-not-allowed' : ''}
+            className={twMerge(
+              'ml-auto justify-end xs:justify-start',
+              disabled && 'cursor-not-allowed',
+            )}
           >
             {buttonCnt}
           </TransactionButton>
@@ -286,7 +291,7 @@ const TransactionInputCardHeader = forwardRef<
       {...props}
       ref={ref}
       className={twMerge(
-        'py-1 flex items-center justify-between',
+        'py-1 flex flex-col xs:flex-row xs:items-center xs:justify-between',
         'border-b border-mono-40 dark:border-mono-160',
         className,
       )}
@@ -311,6 +316,7 @@ const TransactionInputCardBody = forwardRef<
       onAmountChange: onAmountChangeProp,
       tokenSelectorProps,
       tokenSymbol: tokenSymbolProp,
+      hiddenAmountInput,
       ...props
     },
     ref,
@@ -341,41 +347,48 @@ const TransactionInputCardBody = forwardRef<
           className,
         )}
       >
-        {isFixedAmount ? (
-          <AdjustAmount
-            min={0}
-            {...fixedAmountProps}
-            className={twMerge(
-              'max-w-[var(--adjust-amount-width)] h-full grow',
-              fixedAmountProps?.className,
-            )}
-            value={typeof amount === 'string' ? Number(amount) : undefined}
-            onChange={
-              typeof onAmountChange === 'function'
-                ? (nextVal) => onAmountChange(`${nextVal}`)
-                : undefined
-            }
-          />
-        ) : (
-          <TextField.Root isDisabledHoverStyle className="!bg-transparent grow">
-            <TextField.Input
-              placeholder="0.0"
+        {!hiddenAmountInput &&
+          (isFixedAmount ? (
+            <AdjustAmount
               min={0}
-              inputMode="decimal"
-              pattern="[0-9]*\.?[0-9]*"
-              value={amount}
-              onChange={handleTextFieldChange}
-              {...customAmountProps}
+              {...fixedAmountProps}
+              className={twMerge(
+                'max-w-[var(--adjust-amount-width)] h-full grow',
+                fixedAmountProps?.className,
+              )}
+              value={typeof amount === 'string' ? Number(amount) : undefined}
+              onChange={
+                typeof onAmountChange === 'function'
+                  ? (nextVal) => onAmountChange(`${nextVal}`)
+                  : undefined
+              }
             />
-          </TextField.Root>
-        )}
+          ) : (
+            <TextField.Root
+              isDisabledHoverStyle
+              className="!bg-transparent grow"
+            >
+              <TextField.Input
+                placeholder="0.0"
+                min={0}
+                inputMode="decimal"
+                pattern="[0-9]*\.?[0-9]*"
+                value={amount}
+                onChange={handleTextFieldChange}
+                {...customAmountProps}
+              />
+            </TextField.Root>
+          ))}
 
         <TokenSelector
           type="button"
           {...tokenSelectorProps}
-          className={twMerge('max-w-[210px]', tokenSelectorProps?.className)}
+          className={twMerge(
+            'ml-auto max-w-[210px]',
+            tokenSelectorProps?.className,
+          )}
         >
-          {tokenSymbol}
+          {tokenSymbol || tokenSelectorProps?.children}
         </TokenSelector>
       </div>
     );

@@ -1,32 +1,85 @@
 'use client';
 
+import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import cx from 'classnames';
+import { useMemo } from 'react';
+import type { UseFormWatch } from 'react-hook-form';
+import { formatUnits } from 'viem';
 
-const DestChainInput = () => {
+import { useRestakeContext } from '../../../context/RestakeContext';
+import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
+import type { DepositFormFields } from '../../../types/restake';
+import type { IdentityType } from '../../../utils/polkadot';
+import AvatarWithText from '../AvatarWithText';
+import SelectorPlaceholder from '../SelectorPlaceholder';
+
+type Props = {
+  openOperatorModal: () => void;
+  watch: UseFormWatch<DepositFormFields>;
+  operatorIdentities?: Record<string, IdentityType | null> | null;
+};
+
+const DestChainInput = ({
+  openOperatorModal,
+  watch,
+  operatorIdentities,
+}: Props) => {
+  const operatorAccountId = watch('operatorAccountId');
+  const selectedAssetId = watch('depositAssetId');
+
+  const { assetMap } = useRestakeContext();
+  const { delegatorInfo } = useRestakeDelegatorInfo();
+
+  const depositedBalance = useMemo(() => {
+    if (!isDefined(selectedAssetId)) return;
+
+    if (!isDefined(delegatorInfo)) return;
+
+    const amount = delegatorInfo.deposits[selectedAssetId]?.amount;
+    if (!isDefined(amount)) return;
+
+    const asset = assetMap[selectedAssetId];
+    if (!isDefined(asset)) return;
+
+    return +formatUnits(amount, asset.decimals);
+  }, [assetMap, delegatorInfo, selectedAssetId]);
+
   return (
-    <div className="relative">
-      <TransactionInputCard.Root>
-        <TransactionInputCard.Header>
-          <TransactionInputCard.ChainSelector />
-          <TransactionInputCard.MaxAmountButton accountType="note" disabled />
-        </TransactionInputCard.Header>
+    <TransactionInputCard.Root>
+      <TransactionInputCard.Header className="min-h-[55px]">
+        <TransactionInputCard.ChainSelector
+          placeholder={operatorAccountId ? 'Select Operator' : 'No Operator'}
+          disabled
+        />
 
-        <TransactionInputCard.Body />
-      </TransactionInputCard.Root>
+        <TransactionInputCard.MaxAmountButton
+          maxAmount={depositedBalance}
+          accountType="note"
+          tooltipBody="Deposited balance"
+          disabled
+        />
+      </TransactionInputCard.Header>
 
-      <div
-        className={cx(
-          'absolute inset-0 flex items-center justify-center',
-          'rounded-lg bg-mono-200/25 dark:bg-mono-200/75',
-        )}
-      >
-        <Typography variant="body1" className="cursor-default text-mono-140">
-          Bridging will be available soon
-        </Typography>
-      </div>
-    </div>
+      <TransactionInputCard.Body
+        hiddenAmountInput
+        tokenSelectorProps={{
+          onClick: openOperatorModal,
+          placeholder: (
+            <SelectorPlaceholder Icon={<Avatar value="" className="mr-2" />}>
+              Operator
+            </SelectorPlaceholder>
+          ),
+          children: operatorAccountId && (
+            <AvatarWithText
+              identityName={operatorIdentities?.[operatorAccountId]?.name}
+              accountAddress={operatorAccountId}
+              overrideTypographyProps={{ variant: 'h5' }}
+            />
+          ),
+        }}
+      />
+    </TransactionInputCard.Root>
   );
 };
 

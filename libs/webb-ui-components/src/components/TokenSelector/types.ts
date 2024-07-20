@@ -1,14 +1,10 @@
-import { IWebbComponentBase, PropsOf, TokenType } from '../../types';
+import type { ReactElement, ReactNode } from 'react';
+import type { IWebbComponentBase, PropsOf, TokenType } from '../../types';
 
 export interface TokenSelectorProps
   extends IWebbComponentBase,
     Omit<PropsOf<'button'>, 'disabled'> {
-  /**
-   * The chidren must be a token symbol (e.g. eth, dot, ...)
-   * for rendering the token icon and displaying.
-   * If not provided, the component will display the placeholder
-   */
-  children?: string;
+  Icon?: ReactElement;
 
   /**
    * The token type
@@ -31,7 +27,7 @@ export interface TokenSelectorProps
    * when the children is not provided
    * @default 'Select token'
    */
-  placeHolder?: string;
+  placeholder?: ReactNode;
 
   /**
    * Boolean indicate to render the dropdown chevron icon

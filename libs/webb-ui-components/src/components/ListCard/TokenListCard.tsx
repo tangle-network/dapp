@@ -10,6 +10,7 @@ import TokenListItem from './TokenListItem';
 import { ListCardWrapper } from './ListCardWrapper';
 import { AssetType, TokenListCardProps } from './types';
 import { Alert } from '../Alert';
+import { twMerge } from 'tailwind-merge';
 
 export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
   (
@@ -25,12 +26,21 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       overrideInputProps,
       renderEmpty,
       alertTitle,
+      overrideScrollAreaProps,
       ...props
     },
     ref,
   ) => {
     // Search text
     const [searchText, setSearchText] = useState('');
+
+    const isEmpty = useMemo(
+      () =>
+        !popularTokens.length &&
+        !selectTokens.length &&
+        !unavailableTokens.length,
+      [popularTokens, selectTokens, unavailableTokens],
+    );
 
     const getFilterList = useCallback(
       (list: AssetType[]) =>
@@ -57,16 +67,18 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
     return (
       <ListCardWrapper {...props} title={title} onClose={onClose} ref={ref}>
         {/** The search input */}
-        <div className="px-2 py-4">
-          <Input
-            id="token"
-            rightIcon={<Search />}
-            placeholder="Search pool or enter token address"
-            value={searchText}
-            onChange={(val) => setSearchText(val.toString())}
-            {...overrideInputProps}
-          />
-        </div>
+        {!isEmpty && (
+          <div className="py-4">
+            <Input
+              id="token"
+              rightIcon={<Search />}
+              placeholder="Search pool or enter token address"
+              value={searchText}
+              onChange={(val) => setSearchText(val.toString())}
+              {...overrideInputProps}
+            />
+          </div>
+        )}
 
         {/** Popular tokens */}
         {filteredPopular.length > 0 ? (
@@ -90,7 +102,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
         ) : null}
 
         {/** Select tokens */}
-        <div className="flex flex-col px-2 space-y-2 grow">
+        <div className="flex flex-col px-2 space-y-2 grow min-h-[320px]">
           {filteredSelect.length > 0 && (
             <div>
               <Typography
@@ -102,12 +114,18 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
               </Typography>
 
               {/** Token list */}
-              <ScrollArea className="h-full py-2">
+              <ScrollArea
+                {...overrideScrollAreaProps}
+                className={twMerge(
+                  'h-full py-2',
+                  overrideScrollAreaProps?.className,
+                )}
+              >
                 <ul>
                   {filteredSelect.map((current, idx) => (
                     <TokenListItem
                       key={`${current.name}-${idx}`}
-                      className="bg-transparent cursor-pointer dark:bg-transparent"
+                      className="px-4 bg-transparent cursor-pointer dark:bg-transparent max-w-none"
                       {...current}
                       onClick={() => onChange?.(current)}
                     />
@@ -128,12 +146,18 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
               </Typography>
 
               {/** Token list */}
-              <ScrollArea className="h-full py-2">
+              <ScrollArea
+                {...overrideScrollAreaProps}
+                className={twMerge(
+                  'h-full py-2',
+                  overrideScrollAreaProps?.className,
+                )}
+              >
                 <ul>
                   {unavailableTokens.map((current, idx) => (
                     <TokenListItem
                       isDisabled
-                      className="bg-transparent dark:bg-transparent"
+                      className="px-4 bg-transparent dark:bg-transparent max-w-none"
                       key={`${current.name}-${idx}`}
                       {...current}
                     />

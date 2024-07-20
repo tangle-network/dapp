@@ -25,6 +25,7 @@ export default function ActionButton({
   watch,
 }: Props) {
   const sourceTypedChainId = watch('sourceTypedChainId');
+  const operatorAccountId = watch('operatorAccountId');
 
   const activeTypedChainId = useActiveTypedChainId();
   const switchChain = useSwitchChain();
@@ -58,7 +59,9 @@ export default function ActionButton({
           return (
             <Button
               isLoading={isSubmitting || isLoading}
-              loadingText={isSubmitting ? 'Depositing...' : loadingText}
+              loadingText={
+                isSubmitting ? 'Sending transaction...' : loadingText
+              }
               type="button"
               isFullWidth
               onClick={handleClick}
@@ -71,12 +74,14 @@ export default function ActionButton({
         return (
           <Button
             isLoading={isSubmitting || isLoading}
-            loadingText={isSubmitting ? 'Depositing...' : loadingText}
+            loadingText={isSubmitting ? 'Sending transaction...' : loadingText}
             type="submit"
             isDisabled={!isValid || displayError !== undefined}
             isFullWidth
           >
-            {displayError ?? 'Deposit'}
+            {displayError ?? operatorAccountId
+              ? 'Deposit + Delegate'
+              : 'Deposit'}
           </Button>
         );
       }}

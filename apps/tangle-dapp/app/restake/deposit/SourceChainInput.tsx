@@ -2,6 +2,7 @@
 
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
+import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import type { TokenSelectorProps } from '@webb-tools/webb-ui-components/components/TokenSelector/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
@@ -19,6 +20,7 @@ import { DepositFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import ErrorMessage from '../ErrorMessage';
+import SelectorPlaceholder from '../SelectorPlaceholder';
 
 type Props = {
   amountError?: string;
@@ -78,10 +80,7 @@ const SourceChainInput = ({
 
   const handleAmountChange = useCallback(
     (amount: string) => {
-      setValue('amount', amount, {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
+      setValue('amount', amount);
     },
     [setValue],
   );
@@ -114,6 +113,11 @@ const SourceChainInput = ({
   const tokenSelectorProps = useMemo<TokenSelectorProps>(
     () => ({
       onClick: () => openTokenModal(),
+      placeholder: (
+        <SelectorPlaceholder Icon={<TokenIcon size="lg" className="mr-2" />}>
+          Asset
+        </SelectorPlaceholder>
+      ),
     }),
     [openTokenModal],
   );
