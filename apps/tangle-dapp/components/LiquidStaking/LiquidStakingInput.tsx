@@ -110,7 +110,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
         )}
       >
         <div className="flex justify-between">
-          <ChainSelector selectedChain={chainId} setChain={setChainId} />
+          <ChainSelector selectedChainId={chainId} setChain={setChainId} />
 
           {rightElement}
         </div>
@@ -146,7 +146,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
 };
 
 type ChainSelectorProps = {
-  selectedChain: LiquidStakingChainId;
+  selectedChainId: LiquidStakingChainId;
 
   /**
    * If this function is not provided, the selector will be
@@ -155,7 +155,11 @@ type ChainSelectorProps = {
   setChain?: (newChain: LiquidStakingChainId) => void;
 };
 
-const ChainSelector: FC<ChainSelectorProps> = ({ selectedChain, setChain }) => {
+/** @internal */
+const ChainSelector: FC<ChainSelectorProps> = ({
+  selectedChainId,
+  setChain,
+}) => {
   const isReadOnly = setChain === undefined;
 
   const base = (
@@ -167,10 +171,10 @@ const ChainSelector: FC<ChainSelectorProps> = ({ selectedChain, setChain }) => {
         isReadOnly && 'px-3',
       )}
     >
-      <ChainLogo size="sm" chainId={selectedChain} />
+      <ChainLogo size="sm" chainId={selectedChainId} />
 
       <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-        {LS_CHAIN_TO_NETWORK_NAME[selectedChain]}
+        {LS_CHAIN_TO_NETWORK_NAME[selectedChainId]}
       </Typography>
 
       {!isReadOnly && <ChevronDown className="dark:fill-mono-120" size="lg" />}
@@ -187,16 +191,16 @@ const ChainSelector: FC<ChainSelectorProps> = ({ selectedChain, setChain }) => {
         <ScrollArea className="max-h-[300px]">
           <ul>
             {Object.values(LiquidStakingChainId)
-              .filter((chain) => chain !== selectedChain)
-              .map((chain) => {
+              .filter((chainId) => chainId !== selectedChainId)
+              .map((chainId) => {
                 return (
-                  <li key={chain} className="w-full">
+                  <li key={chainId} className="w-full">
                     <DropdownMenuItem
-                      leftIcon={<ChainLogo size="sm" chain={chain} />}
-                      onSelect={() => setChain(chain)}
+                      leftIcon={<ChainLogo size="sm" chainId={chainId} />}
+                      onSelect={() => setChain(chainId)}
                       className="px-3 normal-case"
                     >
-                      {LS_CHAIN_TO_NETWORK_NAME[chain]}
+                      {LS_CHAIN_TO_NETWORK_NAME[chainId]}
                     </DropdownMenuItem>
                   </li>
                 );

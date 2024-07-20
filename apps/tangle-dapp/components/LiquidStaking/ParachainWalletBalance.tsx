@@ -1,5 +1,7 @@
+'use client';
+
 import { BN_ZERO } from '@polkadot/util';
-import { WalletLineIcon } from '@webb-tools/icons';
+import { WalletFillIcon, WalletLineIcon } from '@webb-tools/icons';
 import {
   SkeletonLoader,
   Tooltip,
@@ -7,7 +9,7 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
@@ -33,6 +35,8 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
   onlyShowTooltipWhenBalanceIsSet = true,
   onClick,
 }) => {
+  const [isHovering, setIsHovering] = useState(false);
+
   const activeSubstrateAddress = useSubstrateAddress();
   const { nativeBalances, liquidBalances } = useParachainBalances();
   const map = isNative ? nativeBalances : liquidBalances;
@@ -61,20 +65,43 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
     });
   }, [activeSubstrateAddress, balance, decimals]);
 
+  const isClickable = onlyShowTooltipWhenBalanceIsSet && balance !== null;
+
+  const handleClick = useCallback(() => {
+    if (!isClickable || onClick === undefined) {
+      return;
+    }
+
+    onClick();
+  }, [isClickable, onClick]);
+
   const content = (
-    <div className="flex gap-1 items-center justify-center">
-      <WalletLineIcon />
+    <div
+      onClick={handleClick}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      className={twMerge(
+        'group flex gap-1 items-center justify-center',
+        isClickable && 'cursor-pointer',
+      )}
+    >
+      {isHovering && isClickable ? (
+        <WalletFillIcon
+          className={twMerge(isClickable && 'dark:fill-mono-0')}
+        />
+      ) : (
+        <WalletLineIcon className="dark:fill-mono-80" />
+      )}
 
       {formattedBalance === null ? (
         <SkeletonLoader className="rounded-2xl w-12" size="md" />
       ) : (
         <Typography
-          onClick={onClick}
           variant="body1"
           fw="bold"
           className={twMerge(
             'flex gap-1 items-center dark:text-mono-80',
-            onClick !== undefined && 'cursor-pointer',
+            isClickable && 'group-hover:dark:text-mono-0',
           )}
         >
           {formattedBalance}
@@ -83,9 +110,7 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
     </div>
   );
 
-  const shouldShowTooltip = onlyShowTooltipWhenBalanceIsSet && balance !== null;
-
-  if (tooltip === undefined || !shouldShowTooltip) {
+  if (tooltip === undefined || !isClickable) {
     return content;
   }
 
