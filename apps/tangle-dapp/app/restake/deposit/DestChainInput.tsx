@@ -49,7 +49,7 @@ const DestChainInput = ({
     <TransactionInputCard.Root>
       <TransactionInputCard.Header className="min-h-[55px]">
         <TransactionInputCard.ChainSelector
-          placeholder="Select Operator (Optional)"
+          placeholder={operatorAccountId ? 'Select Operator' : 'No Operator'}
           disabled
         />
 
