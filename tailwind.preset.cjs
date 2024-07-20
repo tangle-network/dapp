@@ -253,6 +253,9 @@ const preset = {
         'webb-lg': '0px 8px 50px 0px rgba(0, 0, 0, 0.2)',
         'webb-lg-dark': '0px 8px 50px 0px rgba(0, 0, 0, 0.1)',
       },
+      screens: {
+        xs: '475px',
+      },
     },
   },
   variants: {

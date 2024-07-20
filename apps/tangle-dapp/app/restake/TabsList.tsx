@@ -8,7 +8,7 @@ const TabsList = ({ className, ...props }: TabsListProps) => {
     <ul
       {...props}
       className={twMerge(
-        'flex items-center gap-4 overflow-x-scroll',
+        'flex items-center flex-wrap bg-mono-20 dark:bg-mono-180 rounded-xl',
         className,
       )}
     />

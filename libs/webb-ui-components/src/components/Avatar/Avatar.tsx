@@ -1,14 +1,12 @@
-'use client';
-
-import React, { useEffect, useMemo } from 'react';
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import cx from 'classnames';
+import React, { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Typography } from '../../typography/Typography';
 import { Identicon } from './Identicon';
 import { AvatarProps } from './types';
-import { getAvatarSizeInPx, getAvatarClassNames } from './utils';
+import { getAvatarClassNames, getAvatarSizeInPx } from './utils';
 
 /**
  * Webb Avatar component
@@ -65,12 +63,6 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
     () => (sourceVariant === 'address' ? valueProp : undefined),
     [valueProp, sourceVariant],
   );
-
-  useEffect(() => {
-    if (!valueProp && !src) {
-      throw new Error('Must provide `src` or `value` for Avatar component');
-    }
-  }, [src, valueProp]);
 
   return (
     <AvatarPrimitive.Root

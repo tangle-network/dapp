@@ -1,6 +1,7 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
+import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useCallback, useMemo } from 'react';
@@ -19,8 +20,10 @@ import type {
 } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
+import type { IdentityType } from '../../../utils/polkadot';
 import AvatarWithText from '../AvatarWithText';
 import ErrorMessage from '../ErrorMessage';
+import SelectorPlaceholder from '../SelectorPlaceholder';
 
 type Props = {
   amountError: string | undefined;
@@ -30,9 +33,10 @@ type Props = {
   register: UseFormRegister<DelegationFormFields>;
   setValue: UseFormSetValue<DelegationFormFields>;
   watch: UseFormWatch<DelegationFormFields>;
+  operatorIdentities?: Record<string, IdentityType | null> | null;
 };
 
-export default function DelegationInput({
+export default function StakeInput({
   amountError,
   delegatorInfo,
   openAssetModal,
@@ -40,6 +44,7 @@ export default function DelegationInput({
   register,
   setValue,
   watch,
+  operatorIdentities,
 }: Props) {
   const selectedAssetId = watch('assetId');
   const selectedOperatorAccountId = watch('operatorAccountId');
@@ -124,6 +129,9 @@ export default function DelegationInput({
                 renderBody: () => (
                   <AvatarWithText
                     accountAddress={selectedOperatorAccountId}
+                    identityName={
+                      operatorIdentities?.[selectedOperatorAccountId]?.name
+                    }
                     overrideTypographyProps={{ variant: 'h5' }}
                   />
                 ),
@@ -138,8 +146,14 @@ export default function DelegationInput({
 
       <TransactionInputCard.Body
         tokenSelectorProps={{
-          placeHolder: 'Select Asset',
           onClick: openAssetModal,
+          placeholder: (
+            <SelectorPlaceholder
+              Icon={<TokenIcon size="lg" className="mr-2" />}
+            >
+              Asset
+            </SelectorPlaceholder>
+          ),
         }}
         customAmountProps={customAmountProps}
       />

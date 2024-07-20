@@ -2,6 +2,13 @@ import { PalletIdentityLegacyIdentityInfo } from '@polkadot/types/lookup';
 
 import { getApiPromise } from './api';
 
+export type IdentityType = {
+  name: string | null;
+  email: string | null;
+  web: string | null;
+  twitter: string | null;
+};
+
 export enum IdentityDataType {
   NAME = 'display',
   WEB = 'web',
@@ -58,7 +65,7 @@ export async function getAccountInfo(rpcEndpoint: string, address: string) {
         email,
         web,
         twitter,
-      };
+      } satisfies IdentityType;
     }
   }
 

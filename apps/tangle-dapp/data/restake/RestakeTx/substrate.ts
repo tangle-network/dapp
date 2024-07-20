@@ -113,22 +113,40 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   deposit = async (
     assetId: string,
     amount: bigint,
+    operatorAccount?: string,
     eventHandlers?: TxEventHandlers<DepositContext>,
   ) => {
     const context = {
       amount,
       assetId,
+      operatorAccount,
     } satisfies DepositContext;
 
-    // Deposit the asset into the Substrate chain.
-    const extrinsic = this.provider.tx.multiAssetDelegation.deposit(
-      assetId,
-      amount,
-    );
+    // If no operator account is provided, just deposit the asset and return.
+    if (!operatorAccount) {
+      const extrinsic = this.provider.tx.multiAssetDelegation.deposit(
+        assetId,
+        amount,
+      );
+
+      eventHandlers?.onTxSending?.(context);
+
+      return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
+    }
+
+    // Otherwise, batching the deposit & delegate transactions.
+    const extrinsics = this.provider.tx.utility.batchAll([
+      this.provider.tx.multiAssetDelegation.deposit(assetId, amount),
+      this.provider.tx.multiAssetDelegation.delegate(
+        operatorAccount,
+        assetId,
+        amount,
+      ),
+    ]);
 
     eventHandlers?.onTxSending?.(context);
 
-    return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
+    return this.signAndSendExtrinsic(extrinsics, context, eventHandlers);
   };
 
   delegate = async (

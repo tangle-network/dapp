@@ -20,6 +20,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
   deposit = async (
     _assetId: string,
     _amount: bigint,
+    _operatorAccount?: string,
     _eventHandlers?: TxEventHandlers<DepositContext>,
   ) => {
     console.warn('EVM deposit not implemented yet');

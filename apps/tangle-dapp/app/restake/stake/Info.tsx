@@ -9,6 +9,7 @@ const Info = memo(() => {
 
   return (
     <FeeDetails
+      isDisabledBgColor
       disabled
       isDefaultOpen
       items={[

@@ -55,6 +55,7 @@ const ChainList = ({
   return (
     <ChainListCard
       chainType="source"
+      disclaimer=""
       overrideTitleProps={{
         variant: 'h4',
       }}
@@ -66,13 +67,10 @@ const ChainList = ({
       }
       defaultCategory={defaultCategory}
       isConnectingToChain={loading}
-      overrideScrollAreaProps={{
-        className: 'h-[320px]',
-      }}
       {...props}
       onClose={onClose}
       className={twMerge(
-        'p-0 dark:bg-[var(--restake-card-bg-dark)]',
+        'h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]',
         className,
       )}
     />

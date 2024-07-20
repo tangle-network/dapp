@@ -22,8 +22,8 @@ export const ListCardWrapper = forwardRef<HTMLDivElement, ListCardWrapperProps>(
       <div
         {...props}
         className={twMerge(
-          'flex flex-col',
-          'rounded-xl bg-mono-0 dark:bg-mono-190 w-full max-w-xl p-9',
+          'flex flex-col overflow-hidden p-4 md:p-9',
+          'rounded-xl bg-mono-0 dark:bg-mono-190 w-full max-w-xl',
           className,
         )}
         ref={ref}

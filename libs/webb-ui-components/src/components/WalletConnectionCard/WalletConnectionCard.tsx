@@ -10,6 +10,9 @@ import { Typography } from '../../typography';
 import { ListItem } from '../ListCard/ListItem';
 import { Button } from '../buttons';
 import { WalletConnectionCardProps } from './types';
+import { ModalTitle } from '../Modal/ModalTitle';
+import { DialogClose } from '@radix-ui/react-dialog';
+import { ModalDescription } from '../Modal/ModalDescription';
 
 export const WalletConnectionCard = forwardRef<
   HTMLDivElement,
@@ -64,9 +67,15 @@ export const WalletConnectionCard = forwardRef<
         >
           <div className="w-[288px] lg:border-r border-r-mono-40 dark:border-r-mono-160">
             <div className="px-6 py-4">
-              <Typography variant="h5" fw="bold">
-                Connect a Wallet
-              </Typography>
+              <ModalTitle asChild>
+                <Typography variant="h5" fw="bold">
+                  Connect a Wallet
+                </Typography>
+              </ModalTitle>
+
+              <ModalDescription className="sr-only">
+                Select a wallet from the list below
+              </ModalDescription>
             </div>
             <WalletList wallets={wallets} onWalletSelect={onWalletSelect} />
           </div>
@@ -75,9 +84,11 @@ export const WalletConnectionCard = forwardRef<
           <div className="w-[432px] h-[504px] flex flex-col">
             {/** Top */}
             <div className="w-full h-[60px] flex justify-end items-center px-4">
-              <button onClick={onClose}>
-                <Close size="lg" />
-              </button>
+              <DialogClose asChild>
+                <button onClick={onClose}>
+                  <Close size="lg" />
+                </button>
+              </DialogClose>
             </div>
 
             {/** Content */}
@@ -116,12 +127,23 @@ export const WalletConnectionCard = forwardRef<
         ref={ref}
       >
         <div className="flex items-center justify-between px-6 py-4">
-          <Typography variant="h5" fw="bold" className="flex-1">
-            Connect a Wallet
-          </Typography>
-          <button onClick={onClose}>
-            <Close size="lg" />
-          </button>
+          <div>
+            <ModalTitle asChild>
+              <Typography variant="h5" fw="bold" className="flex-1">
+                Connect a Wallet
+              </Typography>
+            </ModalTitle>
+
+            <ModalDescription className="sr-only">
+              Select a wallet from the list below
+            </ModalDescription>
+          </div>
+
+          <DialogClose asChild>
+            <button onClick={onClose}>
+              <Close size="lg" />
+            </button>
+          </DialogClose>
         </div>
 
         {!failedWallet && !connectingWallet ? (
