@@ -6,8 +6,8 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
+  DropdownMenuItem,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
-import { MenuItem } from '@webb-tools/webb-ui-components/components/MenuItem';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import flatten from 'lodash/flatten';
@@ -115,7 +115,9 @@ const NoteAccountAction = () => {
           <ThreeDotsVerticalIcon size="lg" />
         </DropdownBasicButton>
         <DropdownBody className="mt-3">
-          <MenuItem onClick={() => setIsOpen(true)}>Clear data</MenuItem>
+          <DropdownMenuItem onClick={() => setIsOpen(true)}>
+            Clear data
+          </DropdownMenuItem>
         </DropdownBody>
       </Dropdown>
 

@@ -1,5 +1,6 @@
 import { ChainIcon } from '@webb-tools/icons';
 import {
+  DropdownMenuItem,
   InfoIconWithTooltip,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -11,7 +12,6 @@ import {
   TANGLE_TESTNET_NATIVE_NETWORK,
 } from '@webb-tools/webb-ui-components/constants/networks';
 import { FC, ReactNode, useCallback } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import CustomRpcEndpointInput from './CustomRpcEndpointInput';
@@ -31,7 +31,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
   onNetworkChange,
 }) => {
   return (
-    <div className="flex flex-col items-center justify-between gap-2 py-1">
+    <div className="flex flex-col items-center justify-between">
       {/* Mainnet network */}
       <NetworkOption
         isSelected={selectedNetwork?.id === TANGLE_MAINNET_NETWORK.id}
@@ -46,7 +46,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
         onClick={() => onNetworkChange(TANGLE_TESTNET_NATIVE_NETWORK)}
       />
 
-      <hr className="w-full border border-mono-40 dark:border-mono-120" />
+      <hr className="w-full h-0 border-t border-mono-40 dark:border-mono-120" />
 
       {/* Local dev network */}
       <NetworkOption
@@ -84,7 +84,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
         tooltip="Connect to a custom network by specifying its RPC endpoint URL"
       />
 
-      <div className="pb-2">
+      <div className="px-4 pb-2 pt-1 w-full">
         <CustomRpcEndpointInput
           id="custom-rpc-endpoint"
           placeholder="RPC endpoint URL"
@@ -117,22 +117,18 @@ const NetworkOption: FC<NetworkOptionProps> = ({
   }, [isSelected, onClick]);
 
   return (
-    <div
+    <DropdownMenuItem
+      leftIcon={<ChainIcon size="lg" name={TANGLE_TESTNET_CHAIN_NAME} />}
       onClick={handleClick}
-      className={twMerge(
-        'flex gap-2 w-full py-2 px-4',
-        onClick !== undefined &&
-          'cursor-pointer hover:bg-mono-20 hover:dark:bg-mono-140',
-        isSelected && 'bg-mono-20 dark:bg-mono-140 cursor-default',
-      )}
+      className="w-full py-3"
+      isActive={isSelected}
     >
-      <ChainIcon size="lg" name={TANGLE_TESTNET_CHAIN_NAME} />
-
-      <Typography variant="body1" fw="semibold" className="dark:text-mono-0">
-        {name}
-      </Typography>
-
-      {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
-    </div>
+      <div className="flex items-center gap-2">
+        <Typography variant="body1" fw="semibold" className="dark:text-mono-0">
+          {name}
+        </Typography>
+        {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
+      </div>
+    </DropdownMenuItem>
   );
 };
