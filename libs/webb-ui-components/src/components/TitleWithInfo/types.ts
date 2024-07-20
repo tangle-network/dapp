@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { WebbComponentBase } from '../../types';
 import {
   WebbTypographyProps,
@@ -33,7 +34,7 @@ export interface TitleWithInfoProps extends WebbComponentBase {
   /**
    * The `info` appears inside the tooltip to describe the title
    */
-  info?: string | React.ReactElement;
+  info?: ReactNode;
 
   /**
    * Whether center the info

@@ -1,3 +1,5 @@
+'use client';
+
 import { getFlexBasic } from '@webb-tools/icons/utils';
 import cx from 'classnames';
 import React from 'react';

@@ -251,6 +251,8 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
    * If `true`, wallet is connecting to chain
    */
   isConnectingToChain?: boolean;
+
+  disclaimer?: string;
 }
 
 export interface ContractListCardProps
@@ -352,4 +354,6 @@ export interface TokenListCardProps
    * Function to render body when the list is empty
    */
   renderEmpty?: () => React.ReactNode;
+
+  overrideScrollAreaProps?: ComponentProps<typeof ScrollArea>;
 }

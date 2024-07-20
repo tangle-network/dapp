@@ -1,6 +1,6 @@
 import { type Row, type RowData, flexRender } from '@tanstack/react-table';
-import { ArrowDropDownFill, ArrowDropUpFill } from '@webb-tools/icons';
 import React, { useCallback } from 'react';
+import { ArrowDropDownFill, ArrowDropUpFill } from '@webb-tools/icons';
 import { twMerge } from 'tailwind-merge';
 
 import { Pagination } from '../Pagination';
@@ -54,7 +54,8 @@ export const Table = <T extends RowData>({
                 {headerGroup.headers.map((header) => (
                   <THeader
                     className={twMerge(
-                      header.column.getCanSort() ? 'cursor-pointer' : '',
+                      header.column.getCanSort() &&
+                        'cursor-pointer flex items-center',
                       thClassName,
                     )}
                     key={header.id}
@@ -63,25 +64,24 @@ export const Table = <T extends RowData>({
                       header.column.getCanSort()
                         ? header.column.getNextSortingOrder() === 'asc'
                           ? 'Sort ascending'
-                          : 'Sort descending'
+                          : header.column.getNextSortingOrder() === 'desc'
+                            ? 'Sort descending'
+                            : 'Clear sort'
                         : undefined
                     }
                   >
-                    <div className="flex items-center">
-                      <div>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(header.column.columnDef.header, {
-                              ...header.getContext(),
-                            })}
-                      </div>
-                      <div>
+                    {header.isPlaceholder ? null : (
+                      <>
+                        {flexRender(header.column.columnDef.header, {
+                          ...header.getContext(),
+                        })}
+
                         {{
                           asc: <ArrowDropUpFill size="lg" />,
                           desc: <ArrowDropDownFill size="lg" />,
                         }[header.column.getIsSorted() as string] ?? null}
-                      </div>
-                    </div>
+                      </>
+                    )}
                   </THeader>
                 ))}
               </tr>

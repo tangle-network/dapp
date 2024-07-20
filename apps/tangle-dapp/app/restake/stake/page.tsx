@@ -3,9 +3,14 @@
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import type { ChainType } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import type {
+  ChainType,
+  TokenListCardProps,
+} from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import entries from 'lodash/entries';
 import keys from 'lodash/keys';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -21,20 +26,25 @@ import useRestakeTx from '../../../data/restake/useRestakeTx';
 import useRestakeTxEventHandlersWithNoti, {
   type Props,
 } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
+import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
+import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { PagePath } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
+import AssetList from '../AssetList';
 import AvatarWithText from '../AvatarWithText';
 import ChainList from '../ChainList';
+import Form from '../Form';
+import ModalContent from '../ModalContent';
+import OperatorList from '../OperatorList';
 import RestakeTabs from '../RestakeTabs';
-import SlideAnimation from '../SlideAnimation';
 import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
-import AssetList from './AssetList';
-import DelegationInput from './DelegationInput';
 import Info from './Info';
-import OperatorList from './OperatorList';
+import StakeInput from './StakeInput';
+
+export const dynamic = 'force-static';
 
 export default function DelegatePage() {
   const {
@@ -69,6 +79,9 @@ export default function DelegatePage() {
   const { delegate } = useRestakeTx();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
+  const { result: operatorIdentities } = useIdentities(
+    useMemo(() => Object.keys(operatorMap), [operatorMap]),
+  );
 
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
@@ -114,6 +127,35 @@ export default function DelegatePage() {
     close: closeOperatorModal,
   } = useModal(false);
 
+  const selectableTokens = useMemo(() => {
+    if (!isDefined(delegatorInfo)) {
+      return [];
+    }
+
+    return entries(delegatorInfo.deposits)
+      .filter(([assetId]) => Boolean(assetMap[assetId]))
+      .map(([assetId, { amount }]) => {
+        const asset = assetMap[assetId];
+
+        return {
+          id: asset.id,
+          name: asset.name,
+          symbol: asset.symbol,
+          assetBalanceProps: {
+            balance: +formatUnits(amount, asset.decimals),
+          },
+        } satisfies TokenListCardProps['selectTokens'][number];
+      });
+  }, [assetMap, delegatorInfo]);
+
+  const handleAssetChange = useCallback(
+    (asset: TokenListCardProps['selectTokens'][number]) => {
+      setValue('assetId', asset.id);
+      closeAssetModal();
+    },
+    [closeAssetModal, setValue],
+  );
+
   const handleChainChange = useCallback(
     async ({ typedChainId }: ChainType) => {
       await switchChain(typedChainId);
@@ -138,38 +180,23 @@ export default function DelegatePage() {
             { amount, assetId, operatorAccount },
             explorerUrl,
           ) => (
-            <div>
-              <Typography variant="body1" fw="bold">
-                Successfully delegated{' '}
-                {formatUnits(amount, assetMap[assetId].decimals)}{' '}
-                {assetMap[assetId].symbol} to{' '}
-                <AvatarWithText
-                  className="inline-flex"
-                  accountAddress={operatorAccount}
-                  overrideAvatarProps={{ size: 'sm' }}
-                />
-              </Typography>
-
-              {explorerUrl && (
-                <Typography component="p" variant="body1">
-                  View the transaction{' '}
-                  <Button
-                    className="inline-block"
-                    variant="link"
-                    href={explorerUrl}
-                    target="_blank"
-                  >
-                    on the explorer
-                  </Button>
-                </Typography>
-              )}
-            </div>
+            <ViewTxOnExplorer url={explorerUrl}>
+              Successfully delegated{' '}
+              {formatUnits(amount, assetMap[assetId].decimals)}{' '}
+              {assetMap[assetId].symbol} to{' '}
+              <AvatarWithText
+                className="inline-flex"
+                accountAddress={operatorAccount}
+                identityName={operatorIdentities?.[operatorAccount]?.name}
+                overrideAvatarProps={{ size: 'sm' }}
+              />
+            </ViewTxOnExplorer>
           ),
         },
       },
       onTxSuccess: () => reset(),
     };
-  }, [assetMap, reset]);
+  }, [assetMap, operatorIdentities, reset]);
 
   const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
 
@@ -193,14 +220,11 @@ export default function DelegatePage() {
   );
 
   return (
-    <form
-      className="relative h-full overflow-hidden"
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col h-full space-y-4 grow">
         <RestakeTabs />
 
-        <DelegationInput
+        <StakeInput
           amountError={errors.amount?.message}
           delegatorInfo={delegatorInfo}
           openAssetModal={openAssetModal}
@@ -223,53 +247,73 @@ export default function DelegatePage() {
         </div>
       </div>
 
-      <SlideAnimation show={isAssetModalOpen} className="absolute">
-        <AssetList
-          className="h-full"
-          delegatorInfo={delegatorInfo}
-          onClose={closeAssetModal}
-          setValue={setValue}
-          renderEmpty={() => (
-            <div className="space-y-4">
-              <Typography variant="h5" fw="bold" ta="center">
-                No assets available
-              </Typography>
+      <Modal>
+        <ModalContent
+          isOpen={isAssetModalOpen}
+          title="Select Asset"
+          description="Select the asset you want to delegate"
+          onInteractOutside={closeAssetModal}
+        >
+          <AssetList
+            selectTokens={selectableTokens}
+            onChange={handleAssetChange}
+            onClose={closeAssetModal}
+            renderEmpty={EmptyAsset}
+          />
+        </ModalContent>
 
-              <Button
-                as={Link}
-                href={PagePath.RESTAKE_DEPOSIT}
-                variant="link"
-                className="block mx-auto text-center"
-              >
-                Deposit now
-              </Button>
-            </div>
-          )}
-        />
-      </SlideAnimation>
+        <ModalContent
+          isOpen={isOperatorModalOpen}
+          title="Select Operator"
+          description="Select the operator you want to delegate to"
+          onInteractOutside={closeOperatorModal}
+        >
+          <OperatorList
+            selectedOperatorAccountId={watch('operatorAccountId')}
+            onOperatorAccountIdChange={handleOperatorAccountIdChange}
+            operatorMap={operatorMap}
+            operatorIdentities={operatorIdentities}
+            overrideTitleProps={{ variant: 'h4' }}
+            className="h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]"
+            onClose={closeOperatorModal}
+          />
+        </ModalContent>
 
-      <SlideAnimation show={isOperatorModalOpen} className="absolute">
-        <OperatorList
-          selectedOperatorAccountId={watch('operatorAccountId')}
-          onOperatorAccountIdChange={handleOperatorAccountIdChange}
-          operatorMap={operatorMap}
-          overrideTitleProps={{ variant: 'h4' }}
-          className="h-full dark:bg-[var(--restake-card-bg-dark)] p-0"
-          onClose={closeOperatorModal}
-        />
-      </SlideAnimation>
-
-      <SlideAnimation show={isChainModalOpen} className="absolute">
-        <ChainList
-          selectedTypedChainId={activeTypedChainId}
-          className="h-full"
-          onClose={closeChainModal}
-          onChange={handleChainChange}
-          defaultCategory={
-            chainsPopulated[SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0]].tag
-          }
-        />
-      </SlideAnimation>
-    </form>
+        <ModalContent
+          isOpen={isChainModalOpen}
+          title="Select Chain"
+          description="Select the chain you want to delegate from"
+          onInteractOutside={closeChainModal}
+        >
+          <ChainList
+            selectedTypedChainId={activeTypedChainId}
+            className="h-full"
+            onClose={closeChainModal}
+            onChange={handleChainChange}
+            defaultCategory={
+              chainsPopulated[SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0]].tag
+            }
+          />
+        </ModalContent>
+      </Modal>
+    </Form>
   );
 }
+
+/** @internal */
+const EmptyAsset = () => (
+  <div className="space-y-4">
+    <Typography variant="h5" fw="bold" ta="center">
+      No assets available
+    </Typography>
+
+    <Button
+      as={Link}
+      href={PagePath.RESTAKE_DEPOSIT}
+      variant="link"
+      className="block mx-auto text-center"
+    >
+      Deposit now
+    </Button>
+  </div>
+);

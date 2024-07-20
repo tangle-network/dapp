@@ -1,10 +1,11 @@
+import isPrimitive from '@webb-tools/dapp-types/utils/isPrimitive';
 import { ChevronDown, ShieldedAssetIcon, TokenIcon } from '@webb-tools/icons';
+import { getFlexBasic } from '@webb-tools/icons/utils';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { TokenSelectorProps } from './types';
-import { getFlexBasic } from '@webb-tools/icons/utils';
 
 /**
  * The TokenSelector component
@@ -30,8 +31,9 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
       className,
       isDisabled,
       isActive,
+      Icon,
       tokenType = 'unshielded',
-      placeHolder = 'Select token',
+      placeholder = 'Select token',
       isDropdown = true,
       ...props
     },
@@ -67,22 +69,28 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
             size="lg"
             className={twMerge('shrink-0 grow-0', getFlexBasic('lg'))}
           />
-        ) : children ? (
+        ) : typeof children === 'string' ? (
           <TokenIcon
             name={children.toLowerCase()}
             size="lg"
             className={twMerge('shrink-0 grow-0', getFlexBasic('lg'))}
           />
+        ) : Icon ? (
+          Icon
         ) : null}
 
-        <Typography
-          variant="h5"
-          fw="bold"
-          component="span"
-          className="block truncate text-mono-200 dark:text-mono-40"
-        >
-          {children || placeHolder}
-        </Typography>
+        {isPrimitive(children) ? (
+          <Typography
+            variant="h5"
+            fw="bold"
+            component="span"
+            className="block truncate text-mono-200 dark:text-mono-40"
+          >
+            {children || placeholder}
+          </Typography>
+        ) : (
+          children || placeholder
+        )}
 
         {isDropdown && (
           <ChevronDown

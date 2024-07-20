@@ -5,23 +5,28 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import isEqual from 'lodash/isEqual';
-import { type ComponentProps, memo } from 'react';
+import { type ComponentProps, memo, type ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { isHex } from 'viem';
 
 type Props = ComponentProps<'div'> & {
   accountAddress: string;
+  description?: ReactNode;
+  identityName?: string | null;
   overrideAvatarProps?: Partial<ComponentProps<typeof Avatar>>;
   overrideTypographyProps?: Partial<ComponentProps<typeof Typography>>;
 };
 
 const AvatarWithText = ({
   accountAddress,
+  className,
+  description,
+  identityName,
   overrideAvatarProps,
   overrideTypographyProps,
-  className,
   ...props
 }: Props) => {
+  console.log('identityName', identityName);
   return (
     <div
       {...props}
@@ -41,15 +46,24 @@ const AvatarWithText = ({
         )}
       />
 
-      <Typography
-        variant="body2"
-        {...overrideTypographyProps}
-        className={twMerge('truncate', overrideTypographyProps?.className)}
-      >
-        {isHex(accountAddress)
-          ? shortenHex(accountAddress)
-          : shortenString(accountAddress)}
-      </Typography>
+      <div>
+        <Typography
+          component="span"
+          variant="body2"
+          {...overrideTypographyProps}
+          className={twMerge(
+            'truncate block',
+            overrideTypographyProps?.className,
+          )}
+        >
+          {identityName ||
+            (isHex(accountAddress)
+              ? shortenHex(accountAddress)
+              : shortenString(accountAddress))}
+        </Typography>
+
+        {description}
+      </div>
     </div>
   );
 };

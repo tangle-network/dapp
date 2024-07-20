@@ -2,7 +2,12 @@ import { useCopyable } from '../../hooks/useCopyable';
 import { FileCopyLine } from '@webb-tools/icons';
 import { shortenHex } from '../../utils/shortenHex';
 import cx from 'classnames';
-import { forwardRef, useCallback, useMemo } from 'react';
+import {
+  type MouseEventHandler,
+  forwardRef,
+  useCallback,
+  useMemo,
+} from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { LabelWithValue } from '../LabelWithValue';
@@ -51,13 +56,17 @@ export const KeyValueWithButton = forwardRef<
       return copyableResult;
     }, [copyProps, copyableResult]);
 
-    const onCopy = useCallback(() => {
-      if (isCopied) {
-        return;
-      }
+    const onCopy = useCallback<MouseEventHandler<HTMLButtonElement>>(
+      (event) => {
+        event.stopPropagation();
+        if (isCopied) {
+          return;
+        }
 
-      copy(keyValue);
-    }, [copy, isCopied, keyValue]);
+        copy(keyValue);
+      },
+      [copy, isCopied, keyValue],
+    );
 
     const mergedClsx = useMemo(() => {
       return twMerge(

@@ -1,4 +1,10 @@
-import type { ComponentProps, ComponentPropsWithRef, ReactNode } from 'react';
+import type {
+  ComponentProps,
+  ComponentPropsWithRef,
+  ComponentPropsWithoutRef,
+  ElementType,
+  ReactNode,
+} from 'react';
 import type { PropsOf } from '../../types';
 import type { AdjustAmount } from '../BridgeInputs';
 import type { TextFieldInput } from '../TextField';
@@ -26,7 +32,7 @@ export type TransactionInputCardContextValue = {
   /**
    * The token symbol of the transaction input card.
    */
-  tokenSymbol?: string;
+  tokenSymbol?: ReactNode;
 
   /**
    * The amount of the transaction input card.
@@ -58,16 +64,20 @@ export interface TransactionInputCardRootProps
   extends PropsOf<'div'>,
     TransactionInputCardContextValue {}
 
-export interface TransactionChainSelectorProps
-  extends PropsOf<'button'>,
-    Pick<TransactionInputCardContextValue, 'typedChainId'> {
-  /**
-   * @default 'Select Chain'
-   */
-  placeholder?: string;
+export type TransactionChainSelectorProps<TAs extends ElementType> = {
+  as?: TAs;
+} & Omit<
+  ComponentPropsWithoutRef<ElementType extends TAs ? 'button' : TAs>,
+  'as'
+> &
+  Pick<TransactionInputCardContextValue, 'typedChainId'> & {
+    /**
+     * @default 'Select Chain'
+     */
+    placeholder?: string;
 
-  renderBody?: () => ReactNode;
-}
+    renderBody?: () => ReactNode;
+  };
 
 export interface TransactionButtonProps extends PropsOf<'button'> {
   /**
@@ -103,6 +113,8 @@ export interface TransactionInputCardBodyProps
       TransactionInputCardContextValue,
       'amount' | 'onAmountChange' | 'tokenSymbol' | 'isFixedAmount'
     > {
+  hiddenAmountInput?: boolean;
+
   /**
    * The props of the custom amount input.
    */

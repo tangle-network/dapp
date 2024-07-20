@@ -10,7 +10,6 @@ import {
   TelegramFill,
   TwitterFill,
   YouTubeFill,
-  TangleIcon,
 } from '@webb-tools/icons';
 import type { IconBase } from '@webb-tools/icons/types';
 import type {
@@ -172,7 +171,6 @@ export const WEBB_AVAILABLE_SOCIALS = [
   'twitter',
   'github',
   'youTube',
-  'community',
 ] as const;
 
 export const SOCIAL_URLS_RECORD = {
@@ -183,7 +181,6 @@ export const SOCIAL_URLS_RECORD = {
   twitter: 'https://twitter.com/webbprotocol',
   github: 'https://github.com/webb-tools',
   youTube: 'https://www.youtube.com/channel/UCDro1mNK9yHGQNDvFuucwVw',
-  community: 'https://www.tangle.tools/community',
 } as const satisfies {
   [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: string;
 };
@@ -205,7 +202,6 @@ export const SOCIAL_ICONS_RECORD = {
   twitter: TwitterFill,
   github: GithubFill,
   youTube: YouTubeFill,
-  community: TangleIcon,
 } as const satisfies {
   [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: (
     props: IconBase,

@@ -238,7 +238,8 @@ export type RewardConfig = {
 export type DepositFormFields = {
   amount: string;
   sourceTypedChainId: number;
-  depositAssetId: string | null;
+  depositAssetId: string;
+  operatorAccountId: string | undefined;
 };
 
 export type DelegationFormFields = {

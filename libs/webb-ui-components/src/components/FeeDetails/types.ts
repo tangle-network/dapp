@@ -97,4 +97,6 @@ export type FeeDetailsProps = Omit<AccordionSingleProps, 'type'> & {
    * Indicates if the accordion is open by default.
    */
   isDefaultOpen?: boolean;
+
+  isDisabledBgColor?: boolean;
 };
