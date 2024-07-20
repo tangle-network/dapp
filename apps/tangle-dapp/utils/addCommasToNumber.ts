@@ -17,8 +17,10 @@ const addCommasToNumber = (numberLike: BN | number | string): string => {
 
     return numberLike;
   }
-
-  // TODO: Add a sanity check for the input value, to ensure that only digits are passed. In case that a number is passed, only add commas to the integer part.
+  // This will format the number as a string with commas every 3 digits.
+  else if (typeof numberLike === 'number') {
+    return numberLike.toLocaleString('en-US');
+  }
 
   let result = '';
   let count = 0;

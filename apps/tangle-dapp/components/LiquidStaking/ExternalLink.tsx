@@ -16,11 +16,13 @@ const ExternalLink: FC<ExternalLinkProps> = ({
 }) => {
   return (
     <Button
+      className="group"
       href={href}
       size="sm"
       variant="link"
-      // TODO: Make the icon highlight on hover.
-      rightIcon={<Icon className="dark:fill-blue-50" />}
+      rightIcon={
+        <Icon className="dark:fill-blue-50 group-hover:dark:fill-blue-30" />
+      }
     >
       {children}
     </Button>

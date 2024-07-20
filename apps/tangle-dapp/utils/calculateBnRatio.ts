@@ -9,6 +9,8 @@ import assert from 'assert';
  *
  * Because of the possible loss in precision, this utility function is
  * only suitable for use in the UI.
+ *
+ * @throws If the second argument is zero.
  */
 function calculateBnRatio(a: BN, b: BN, decimalPrecision = 2): number {
   assert(

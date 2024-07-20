@@ -13,15 +13,17 @@ import {
   TimeFillIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
+import { IconBase } from '@webb-tools/icons/types';
 import {
   CheckBox,
   fuzzyFilter,
+  IconButton,
   Table,
   TANGLE_DOCS_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import BN from 'bn.js';
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 
 import { AnySubstrateAddress } from '../../types/utils';
 import calculateTimeRemaining from '../../utils/calculateTimeRemaining';
@@ -31,7 +33,6 @@ import TokenAmountCell from '../tableCells/TokenAmountCell';
 import AddressLink from './AddressLink';
 import CancelUnstakeModal from './CancelUnstakeModal';
 import ExternalLink from './ExternalLink';
-import IconButton from './IconButton';
 
 export type UnstakeRequestItem = {
   address: AnySubstrateAddress;
@@ -95,10 +96,14 @@ const columns = [
       return (
         <div className="flex items-center justify-center gap-1">
           {/* TODO: Implement onClick. */}
-          <IconButton Icon={Close} tooltip="Cancel" onClick={() => void 0} />
+          <UtilityIconButton
+            Icon={Close}
+            tooltip="Cancel"
+            onClick={() => void 0}
+          />
 
           {/* TODO: Implement onClick. */}
-          <IconButton
+          <UtilityIconButton
             Icon={WalletLineIcon}
             tooltip="Withdraw"
             onClick={() => void 0}
@@ -182,6 +187,7 @@ const UnstakeRequestsTable: FC = () => {
   );
 };
 
+/** @internal */
 const NoUnstakeRequestsNotice: FC = () => {
   return (
     <div className="flex flex-col items-start justify-center gap-4">
@@ -195,6 +201,29 @@ const NoUnstakeRequestsNotice: FC = () => {
         request.
       </Typography>
     </div>
+  );
+};
+
+export type UtilityIconButtonProps = {
+  tooltip: string;
+  Icon: (props: IconBase) => ReactNode;
+  onClick: () => void;
+};
+
+/** @internal */
+const UtilityIconButton: FC<UtilityIconButtonProps> = ({
+  tooltip,
+  Icon,
+  onClick,
+}) => {
+  return (
+    <IconButton
+      className="dark:bg-blue-120 hover:bg-blue-10"
+      onClick={onClick}
+      tooltip={tooltip}
+    >
+      <Icon className="fill-blue-80 dark:fill-blue-40" size="md" />
+    </IconButton>
   );
 };
 
