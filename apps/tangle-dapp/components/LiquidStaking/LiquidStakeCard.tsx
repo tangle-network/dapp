@@ -145,7 +145,7 @@ const LiquidStakeCard: FC = () => {
       />
 
       {/* Details */}
-      <div className="flex flex-col gap-2 p-3 bg-mono-20 dark:bg-mono-180 rounded-lg">
+      <div className="flex flex-col gap-2 p-3">
         <ExchangeRateDetailItem
           token={selectedChain.token}
           currency={selectedChain.currency}

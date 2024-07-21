@@ -41,7 +41,12 @@ const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
         onClick !== undefined && 'cursor-pointer hover:dark:bg-mono-140',
       )}
     >
-      <ChainLogo size="sm" chainId={chain?.id} isRounded />
+      <ChainLogo
+        size="sm"
+        chainId={chain?.id}
+        isRounded
+        isLiquidVariant={isLiquidVariant}
+      />
 
       <Typography variant="h5" fw="bold">
         {isLiquidVariant && LIQUID_STAKING_TOKEN_PREFIX}
