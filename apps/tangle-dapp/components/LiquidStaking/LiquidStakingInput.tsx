@@ -23,7 +23,6 @@ import { ERROR_NOT_ENOUGH_BALANCE } from '../../containers/ManageProfileModalCon
 import useInputAmount from '../../hooks/useInputAmount';
 import formatBn from '../../utils/formatBn';
 import ChainLogo from './ChainLogo';
-import HoverButtonStyle from './HoverButtonStyle';
 import TokenChip from './TokenChip';
 
 export type LiquidStakingInputProps = {
@@ -163,29 +162,24 @@ const ChainSelector: FC<ChainSelectorProps> = ({
   const isReadOnly = setChain === undefined;
 
   const base = (
-    <div
-      className={twMerge(
-        'flex gap-2 items-center justify-center',
-        // Provide some padding for consistency with the
-        // non-read-only variant.
-        isReadOnly && 'px-3',
-      )}
-    >
+    <div className="group flex gap-2 items-center justify-center">
       <ChainLogo size="sm" chainId={selectedChainId} />
 
       <Typography variant="h5" fw="bold" className="dark:text-mono-40">
         {LS_CHAIN_TO_NETWORK_NAME[selectedChainId]}
       </Typography>
 
-      {!isReadOnly && <ChevronDown className="dark:fill-mono-120" size="lg" />}
+      {!isReadOnly && (
+        <div className="p-1 rounded-lg group-hover:dark:bg-mono-160">
+          <ChevronDown className="dark:fill-mono-120" size="lg" />
+        </div>
+      )}
     </div>
   );
 
   return setChain !== undefined ? (
     <Dropdown>
-      <DropdownMenuTrigger>
-        <HoverButtonStyle>{base}</HoverButtonStyle>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger>{base}</DropdownMenuTrigger>
 
       <DropdownBody>
         <ScrollArea className="max-h-[300px]">

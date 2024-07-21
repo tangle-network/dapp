@@ -65,7 +65,8 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
     });
   }, [activeSubstrateAddress, balance, decimals]);
 
-  const isClickable = onlyShowTooltipWhenBalanceIsSet && balance !== null;
+  const isClickable =
+    onlyShowTooltipWhenBalanceIsSet && balance !== null && !balance.isZero();
 
   const handleClick = useCallback(() => {
     if (!isClickable || onClick === undefined) {
