@@ -1,8 +1,10 @@
-import { ChevronDown, SettingsFillIcon } from '@webb-tools/icons';
+import { SettingsFillIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-const SelectValidators: FC = () => {
+import DropdownChevronIcon from './DropdownChevronIcon';
+
+const SelectValidatorsButton: FC = () => {
   return (
     <div className="group flex gap-1 justify-center items-center cursor-pointer">
       <Typography
@@ -14,9 +16,9 @@ const SelectValidators: FC = () => {
         Validators
       </Typography>
 
-      <ChevronDown className="dark:fill-mono-120" size="lg" />
+      <DropdownChevronIcon />
     </div>
   );
 };
 
-export default SelectValidators;
+export default SelectValidatorsButton;

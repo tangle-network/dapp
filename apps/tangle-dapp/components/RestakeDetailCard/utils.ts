@@ -1,3 +1,5 @@
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
+
 export function getDisplayValue(val?: string | number): string {
   if (typeof val === 'string') {
     return val;
@@ -7,5 +9,5 @@ export function getDisplayValue(val?: string | number): string {
     return val.toLocaleString('en-US');
   }
 
-  return '--';
+  return EMPTY_VALUE_PLACEHOLDER;
 }

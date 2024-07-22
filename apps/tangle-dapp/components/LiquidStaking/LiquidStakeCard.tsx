@@ -34,7 +34,7 @@ import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
 import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
 import ParachainWalletBalance from './ParachainWalletBalance';
-import SelectValidators from './SelectValidators';
+import SelectValidatorsButton from './SelectValidatorsButton';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 
 const LiquidStakeCard: FC = () => {
@@ -141,7 +141,7 @@ const LiquidStakeCard: FC = () => {
         isReadOnly
         isTokenLiquidVariant
         token={selectedChain.token}
-        rightElement={<SelectValidators />}
+        rightElement={<SelectValidatorsButton />}
       />
 
       {/* Details */}
