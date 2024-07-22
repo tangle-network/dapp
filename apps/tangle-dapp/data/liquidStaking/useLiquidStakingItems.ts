@@ -71,11 +71,19 @@ const useLiquidStakingItems = (selectedChain: LiquidStakingChain) => {
           break;
 
         case LiquidStakingChain.MOONBEAM:
-          fetchedItems = await getCollators(endpoint);
+          fetchedItems = await getCollators(
+            endpoint,
+            LiquidStakingChain.MOONBEAM,
+            'https://stakeglmr.com/',
+          );
           break;
 
         case LiquidStakingChain.MANTA:
-          fetchedItems = await getCollators(endpoint);
+          fetchedItems = await getCollators(
+            endpoint,
+            LiquidStakingChain.MANTA,
+            'https://manta.subscan.io/account/',
+          );
           break;
 
         default:
@@ -240,7 +248,11 @@ const getVaultsAndStakePools = async (
   });
 };
 
-const getCollators = async (endpoint: string): Promise<Collator[]> => {
+const getCollators = async (
+  endpoint: string,
+  chain: LiquidStakingChain,
+  href: string,
+): Promise<Collator[]> => {
   const [
     collators,
     mappedIdentityNames,
@@ -259,17 +271,25 @@ const getCollators = async (endpoint: string): Promise<Collator[]> => {
     const identityName = mappedIdentityNames.get(collator);
     const collatorInfo = mappedCollatorInfo.get(collator);
 
+    let collatorExternalLink = '';
+
+    if (chain === LiquidStakingChain.MOONBEAM) {
+      collatorExternalLink = href;
+    } else if (chain === LiquidStakingChain.MANTA) {
+      collatorExternalLink = href + collator;
+    }
+
     return {
       id: collator,
       collatorAddress: collator,
       collatorIdentity: identityName || collator,
       collatorDelegationCount: collatorInfo?.delegationCount || 0,
       totalValueStaked: collatorInfo?.totalStaked || BN_ZERO,
-      chain: LiquidStakingChain.MOONBEAM,
+      chain,
       chainDecimals,
       chainTokenSymbol,
       itemType: LiquidStakingItem.COLLATOR,
-      href: `https://tangle.restaking.io/collator/${collator}`,
+      href: collatorExternalLink,
     };
   });
 };

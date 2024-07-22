@@ -621,12 +621,12 @@ export const useLiquidStakingSelectionTableColumns = (
           return rowAValue - rowBValue;
         },
       }),
-      // collatorColumnHelper.accessor('href', {
-      //   header: () => <span></span>,
-      //   cell: (props) => {
-      //     return <StakingItemExternalLinkButton href={props.getValue()} />;
-      //   },
-      // }),
+      collatorColumnHelper.accessor('href', {
+        header: () => <span></span>,
+        cell: (props) => {
+          return <StakingItemExternalLinkButton href={props.getValue()} />;
+        },
+      }),
     ];
   }, [toggleSortSelectionHandlerRef]);
 

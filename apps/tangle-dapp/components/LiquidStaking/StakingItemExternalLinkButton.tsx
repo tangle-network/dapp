@@ -7,6 +7,7 @@ export const StakingItemExternalLinkButton = ({ href }: { href: string }) => {
       variant="utility"
       className="bg-blue-0 dark:bg-blue-120"
       href={href}
+      target="_blank"
     >
       <ArrowRightUp
         width={16}
