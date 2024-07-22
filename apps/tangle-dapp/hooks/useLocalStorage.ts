@@ -5,7 +5,12 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Payout, TangleTokenSymbol } from '../types';
 import { BridgeQueueTxItem } from '../types/bridge';
-import { Dapp, Validator, VaultOrStakePool } from '../types/liquidStaking';
+import {
+  Collator,
+  Dapp,
+  Validator,
+  VaultOrStakePool,
+} from '../types/liquidStaking';
 import Optional from '../utils/Optional';
 
 export enum LocalStorageKey {
@@ -31,7 +36,7 @@ export type PayoutsCache = {
 };
 
 export type LiquidStakingTableData = {
-  [chain: string]: Validator[] | VaultOrStakePool[] | Dapp[];
+  [chain: string]: Validator[] | VaultOrStakePool[] | Dapp[] | Collator[];
 };
 
 export type SubstrateWalletsMetadataEntry = {

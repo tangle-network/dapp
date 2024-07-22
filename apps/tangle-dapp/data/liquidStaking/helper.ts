@@ -16,18 +16,18 @@ export const fetchValidators = async (
   return validators;
 };
 
-export const fetchMappedValidatorsIdentityNames = async (
+export const fetchMappedIdentityNames = async (
   rpcEndpoint: string,
 ): Promise<Map<string, string>> => {
   const api = await getApiPromise(rpcEndpoint);
+  const map = new Map<string, string>();
 
   if (!api.query.identity) {
-    throw new Error('identity pallet is not available in the runtime');
+    // throw new Error('identity pallet is not available in the runtime');
+    return map;
   }
 
   const identityNames = await api.query.identity.identityOf.entries();
-
-  const map = new Map<string, string>();
 
   identityNames.forEach((identity) => {
     if (!identity[1].unwrap()[0]) {
@@ -250,6 +250,64 @@ export const fetchVaultsAndStakePools = async (
       type,
     };
   });
+};
+
+export const fetchCollators = async (
+  rpcEndpoint: string,
+): Promise<string[]> => {
+  const api = await getApiPromise(rpcEndpoint);
+
+  if (!api.query.parachainStaking) {
+    throw new Error('parachainStaking pallet is not available in the runtime');
+  }
+
+  const selectedCollators =
+    await api.query.parachainStaking.selectedCandidates();
+
+  const collators = selectedCollators.map((collator) => collator.toString());
+
+  return collators;
+};
+
+type CollatorInfo = {
+  totalStaked: BN;
+  delegationCount: number;
+};
+
+export const fetchMappedCollatorInfo = async (
+  rpcEndpoint: string,
+): Promise<Map<string, CollatorInfo>> => {
+  const api = await getApiPromise(rpcEndpoint);
+
+  if (!api.query.parachainStaking) {
+    throw new Error('parachainStaking pallet is not available in the runtime');
+  }
+
+  const collatorInfos =
+    await api.query.parachainStaking.candidateInfo.entries();
+
+  const map = new Map<string, CollatorInfo>();
+
+  collatorInfos.forEach((collatorInfo) => {
+    const collator = collatorInfo[0].args[0].toString();
+    const info = collatorInfo[1];
+
+    let totalStaked = BN_ZERO;
+    let delegationCount = 0;
+
+    if (info.isSome) {
+      const infoObj = info.unwrap();
+      totalStaked = infoObj.totalCounted.toBn() || BN_ZERO;
+      delegationCount = infoObj.delegationCount.toNumber();
+    }
+
+    map.set(collator, {
+      totalStaked,
+      delegationCount,
+    });
+  });
+
+  return map;
 };
 
 /** @internal */

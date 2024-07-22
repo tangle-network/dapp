@@ -17,6 +17,7 @@ import {
   Dapp,
   LiquidStakingItem,
   Validator,
+  Collator,
   VaultOrStakePool,
 } from '../../types/liquidStaking';
 import calculateCommission from '../../utils/calculateCommission';
@@ -25,6 +26,7 @@ import formatBn from '../../utils/formatBn';
 const validatorColumnHelper = createColumnHelper<Validator>();
 const dappColumnHelper = createColumnHelper<Dapp>();
 const vaultOrStakePoolColumnHelper = createColumnHelper<VaultOrStakePool>();
+const collatorColumnHelper = createColumnHelper<Collator>();
 
 export const useLiquidStakingSelectionTableColumns = (
   toggleSortSelectionHandlerRef: React.MutableRefObject<
@@ -129,10 +131,10 @@ export const useLiquidStakingSelectionTableColumns = (
           </div>
         ),
         sortingFn: (rowA: Row<Validator>, rowB: Row<Validator>) => {
-          const rowAValue = Number(rowA.original.totalValueStaked);
-          const rowBValue = Number(rowB.original.totalValueStaked);
+          const rowAValue = rowA.original.totalValueStaked;
+          const rowBValue = rowB.original.totalValueStaked;
 
-          return rowAValue - rowBValue;
+          return Number(rowAValue.sub(rowBValue).toString());
         },
       }),
       validatorColumnHelper.accessor('validatorCommission', {
@@ -275,10 +277,10 @@ export const useLiquidStakingSelectionTableColumns = (
           </div>
         ),
         sortingFn: (rowA: Row<Dapp>, rowB: Row<Dapp>) => {
-          const rowAValue = Number(rowA.original.totalValueStaked);
-          const rowBValue = Number(rowB.original.totalValueStaked);
+          const rowAValue = rowA.original.totalValueStaked;
+          const rowBValue = rowB.original.totalValueStaked;
 
-          return rowAValue - rowBValue;
+          return Number(rowAValue.sub(rowBValue).toString());
         },
       }),
       dappColumnHelper.accessor('href', {
@@ -427,10 +429,10 @@ export const useLiquidStakingSelectionTableColumns = (
           rowA: Row<VaultOrStakePool>,
           rowB: Row<VaultOrStakePool>,
         ) => {
-          const rowAValue = Number(rowA.original.totalValueStaked);
-          const rowBValue = Number(rowB.original.totalValueStaked);
+          const rowAValue = rowA.original.totalValueStaked;
+          const rowBValue = rowB.original.totalValueStaked;
 
-          return rowAValue - rowBValue;
+          return Number(rowAValue.sub(rowBValue).toString());
         },
       }),
       vaultOrStakePoolColumnHelper.accessor('commission', {
@@ -480,6 +482,154 @@ export const useLiquidStakingSelectionTableColumns = (
     ];
   }, [toggleSortSelectionHandlerRef]);
 
+  const collatorColumns = useMemo(() => {
+    return [
+      collatorColumnHelper.accessor('collatorAddress', {
+        header: ({ header }) => {
+          toggleSortSelectionHandlerRef.current = header.column.toggleSorting;
+          return (
+            <Typography
+              variant="body2"
+              fw="semibold"
+              className="text-mono-120 dark:text-mono-120"
+            >
+              Collator
+            </Typography>
+          );
+        },
+        cell: (props) => {
+          const address = props.getValue();
+          const isEthAddress = address.startsWith('0x');
+          const identity = props.row.original.collatorIdentity ?? address;
+
+          return (
+            <div className="flex items-center gap-2">
+              <CheckBox
+                wrapperClassName="!block !min-h-auto cursor-pointer"
+                className="cursor-pointer"
+                isChecked={props.row.getIsSelected()}
+                onChange={props.row.getToggleSelectedHandler()}
+              />
+
+              <div className="flex items-center space-x-1">
+                <Avatar
+                  sourceVariant="address"
+                  value={address}
+                  theme={isEthAddress ? 'ethereum' : 'substrate'}
+                />
+
+                <Typography
+                  variant="body2"
+                  fw="normal"
+                  className="truncate text-mono-200 dark:text-mono-0"
+                >
+                  {identity === address ? shortenString(address, 8) : identity}
+                </Typography>
+
+                <CopyWithTooltip
+                  textToCopy={address}
+                  isButton={false}
+                  className="cursor-pointer"
+                />
+              </div>
+            </div>
+          );
+        },
+        sortingFn: (rowA: Row<Collator>, rowB: Row<Collator>) => {
+          const rowASelected = rowA.getIsSelected();
+          const rowBSelected = rowB.getIsSelected();
+
+          if (rowASelected && !rowBSelected) {
+            return -1;
+          }
+
+          if (!rowASelected && rowBSelected) {
+            return 1;
+          }
+
+          return 0;
+        },
+      }),
+      collatorColumnHelper.accessor('totalValueStaked', {
+        header: ({ header }) => (
+          <div
+            className="flex items-center justify-center cursor-pointer"
+            onClick={header.column.getToggleSortingHandler()}
+          >
+            <Typography
+              variant="body2"
+              fw="semibold"
+              className="text-mono-120 dark:text-mono-120"
+            >
+              Total Staked
+            </Typography>
+
+            <SortArrow column={header.column} />
+          </div>
+        ),
+        cell: (props) => (
+          <div className="flex items-center justify-center">
+            <Typography
+              variant="body2"
+              fw="normal"
+              className="text-mono-200 dark:text-mono-0"
+            >
+              {formatBn(props.getValue(), props.row.original.chainDecimals) +
+                ` ${props.row.original.chainTokenSymbol}`}
+            </Typography>
+          </div>
+        ),
+        sortingFn: (rowA: Row<Collator>, rowB: Row<Collator>) => {
+          const rowAValue = rowA.original.totalValueStaked;
+          const rowBValue = rowB.original.totalValueStaked;
+
+          return Number(rowAValue.sub(rowBValue).toString());
+        },
+      }),
+      collatorColumnHelper.accessor('collatorDelegationCount', {
+        header: ({ header }) => (
+          <div
+            className="flex items-center justify-center cursor-pointer"
+            onClick={header.column.getToggleSortingHandler()}
+          >
+            <Typography
+              variant="body2"
+              fw="semibold"
+              className="text-mono-120 dark:text-mono-120"
+            >
+              Delegations
+            </Typography>
+
+            <SortArrow column={header.column} />
+          </div>
+        ),
+        cell: (props) => (
+          <div className="flex items-center justify-center">
+            <Typography
+              variant="body2"
+              fw="normal"
+              className="text-mono-200 dark:text-mono-0"
+            >
+              {props.getValue()}
+            </Typography>
+          </div>
+        ),
+        sortingFn: (rowA: Row<Collator>, rowB: Row<Collator>) => {
+          const rowAValue = Number(rowA.original.collatorDelegationCount);
+          const rowBValue = Number(rowB.original.collatorDelegationCount);
+
+          return rowAValue - rowBValue;
+        },
+      }),
+      // collatorColumnHelper.accessor('href', {
+      //   header: () => <span></span>,
+      //   cell: (props) => {
+      //     return <StakingItemExternalLinkButton href={props.getValue()} />;
+      //   },
+      // }),
+    ];
+  }, [toggleSortSelectionHandlerRef]);
+
   const columns = useMemo(() => {
     switch (liquidStakingItem) {
       case LiquidStakingItem.VALIDATOR:
@@ -488,6 +638,8 @@ export const useLiquidStakingSelectionTableColumns = (
         return vaultOrStakePoolColumns;
       case LiquidStakingItem.DAPP:
         return dappColumns;
+      case LiquidStakingItem.COLLATOR:
+        return collatorColumns;
     }
   }, [
     dappColumns,

@@ -110,7 +110,7 @@ export const LS_NETWORK_CONFIG: Record<LiquidStakingChain, Network> = {
   },
   [LiquidStakingChain.MOONBEAM]: {
     name: 'Moonbeam',
-    endpoint: '',
+    endpoint: 'wss://moonbeam.api.onfinality.io/public-ws',
     tokenSymbol: LiquidStakingToken.GLMR,
     chainType: NetworkType.PARACHAIN,
   },
@@ -122,7 +122,7 @@ export const LS_NETWORK_CONFIG: Record<LiquidStakingChain, Network> = {
   },
   [LiquidStakingChain.MANTA]: {
     name: 'Manta',
-    endpoint: '',
+    endpoint: 'wss://ws.manta.systems',
     tokenSymbol: LiquidStakingToken.MANTA,
     chainType: NetworkType.PARACHAIN,
   },

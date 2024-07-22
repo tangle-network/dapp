@@ -84,7 +84,7 @@ export const LiquidStakingSelectionTable: FC<
   const columns = useLiquidStakingSelectionTableColumns(
     toggleSortSelectionHandlerRef,
     dataType,
-  ) as ColumnDef<LiquidStakingItemType, any>[];
+  ) as ColumnDef<LiquidStakingItemType, unknown>[];
 
   const tableTitle = useMemo(() => {
     switch (dataType) {
@@ -94,8 +94,8 @@ export const LiquidStakingSelectionTable: FC<
         return 'DApp';
       case LiquidStakingItem.VAULT_OR_STAKE_POOL:
         return 'Vault or Stake Pool';
-      default:
-        return '';
+      case LiquidStakingItem.COLLATOR:
+        return 'Collators';
     }
   }, [dataType]);
 
@@ -107,8 +107,8 @@ export const LiquidStakingSelectionTable: FC<
         return 'dApp';
       case LiquidStakingItem.VAULT_OR_STAKE_POOL:
         return 'Vault/Pool';
-      default:
-        return '';
+      case LiquidStakingItem.COLLATOR:
+        return 'Collator';
     }
   }, [dataType]);
 

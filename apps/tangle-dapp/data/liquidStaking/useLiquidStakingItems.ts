@@ -7,6 +7,7 @@ import {
 } from '../../constants/liquidStaking';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import {
+  Collator,
   Dapp,
   LiquidStakingItem,
   Validator,
@@ -14,10 +15,12 @@ import {
 } from '../../types/liquidStaking';
 import {
   fetchChainDecimals,
+  fetchCollators,
   fetchDapps,
+  fetchMappedCollatorInfo,
   fetchMappedDappsTotalValueStaked,
+  fetchMappedIdentityNames,
   fetchMappedValidatorsCommission,
-  fetchMappedValidatorsIdentityNames,
   fetchMappedValidatorsTotalValueStaked,
   fetchTokenSymbol,
   fetchValidators,
@@ -30,9 +33,9 @@ const useLiquidStakingItems = (selectedChain: LiquidStakingChain) => {
     setWithPreviousValue: setLiquidStakingTableData,
   } = useLocalStorage(LocalStorageKey.LIQUID_STAKING_TABLE_DATA, true);
   const [isLoading, setIsLoading] = useState(false);
-  const [items, setItems] = useState<Validator[] | VaultOrStakePool[] | Dapp[]>(
-    [],
-  );
+  const [items, setItems] = useState<
+    Validator[] | VaultOrStakePool[] | Dapp[] | Collator[]
+  >([]);
   const dataType = useMemo(() => getDataType(selectedChain), [selectedChain]);
 
   // const cachedData = useMemo(
@@ -51,7 +54,8 @@ const useLiquidStakingItems = (selectedChain: LiquidStakingChain) => {
         return;
       }
 
-      let fetchedItems: Validator[] | VaultOrStakePool[] | Dapp[] = [];
+      let fetchedItems: Validator[] | VaultOrStakePool[] | Dapp[] | Collator[] =
+        [];
 
       switch (chain) {
         case LiquidStakingChain.POLKADOT:
@@ -64,6 +68,14 @@ const useLiquidStakingItems = (selectedChain: LiquidStakingChain) => {
 
         case LiquidStakingChain.PHALA:
           fetchedItems = await getVaultsAndStakePools(endpoint);
+          break;
+
+        case LiquidStakingChain.MOONBEAM:
+          fetchedItems = await getCollators(endpoint);
+          break;
+
+        case LiquidStakingChain.MANTA:
+          fetchedItems = await getCollators(endpoint);
           break;
 
         default:
@@ -99,7 +111,9 @@ export default useLiquidStakingItems;
 const getDataType = (chain: LiquidStakingChain) => {
   switch (chain) {
     case LiquidStakingChain.MANTA:
+      return LiquidStakingItem.COLLATOR;
     case LiquidStakingChain.MOONBEAM:
+      return LiquidStakingItem.COLLATOR;
     case LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN:
     case LiquidStakingChain.POLKADOT:
       return LiquidStakingItem.VALIDATOR;
@@ -120,7 +134,7 @@ const getValidators = async (endpoint: string): Promise<Validator[]> => {
     chainTokenSymbol,
   ] = await Promise.all([
     fetchValidators(endpoint),
-    fetchMappedValidatorsIdentityNames(endpoint),
+    fetchMappedIdentityNames(endpoint),
     fetchMappedValidatorsTotalValueStaked(endpoint),
     fetchMappedValidatorsCommission(endpoint),
     fetchChainDecimals(endpoint),
@@ -222,6 +236,40 @@ const getVaultsAndStakePools = async (
       type,
       itemType: LiquidStakingItem.VAULT_OR_STAKE_POOL,
       href: `https://app.phala.network/phala/${type}/${vaultOrStakePoolID}`,
+    };
+  });
+};
+
+const getCollators = async (endpoint: string): Promise<Collator[]> => {
+  const [
+    collators,
+    mappedIdentityNames,
+    mappedCollatorInfo,
+    chainDecimals,
+    chainTokenSymbol,
+  ] = await Promise.all([
+    fetchCollators(endpoint),
+    fetchMappedIdentityNames(endpoint),
+    fetchMappedCollatorInfo(endpoint),
+    fetchChainDecimals(endpoint),
+    fetchTokenSymbol(endpoint),
+  ]);
+
+  return collators.map((collator) => {
+    const identityName = mappedIdentityNames.get(collator);
+    const collatorInfo = mappedCollatorInfo.get(collator);
+
+    return {
+      id: collator,
+      collatorAddress: collator,
+      collatorIdentity: identityName || collator,
+      collatorDelegationCount: collatorInfo?.delegationCount || 0,
+      totalValueStaked: collatorInfo?.totalStaked || BN_ZERO,
+      chain: LiquidStakingChain.MOONBEAM,
+      chainDecimals,
+      chainTokenSymbol,
+      itemType: LiquidStakingItem.COLLATOR,
+      href: `https://tangle.restaking.io/collator/${collator}`,
     };
   });
 };

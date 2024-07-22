@@ -4,6 +4,7 @@ import { BN } from '@polkadot/util';
 export type StakingItem = {
   id: string; // address - Validator, contract address - DAPP, pool/vault ID - VaultOrStakePool
   totalValueStaked: BN;
+  minnimumStake?: BN;
   chain: string;
   chainDecimals: number;
   chainTokenSymbol: string;
@@ -36,10 +37,18 @@ export type Dapp = {
   commission: BN;
 } & StakingItem;
 
+// Chains - Moonbeam, Manta
+export type Collator = {
+  collatorAddress: string;
+  collatorIdentity: string;
+  collatorDelegationCount: number;
+} & StakingItem;
+
 export enum LiquidStakingItem {
   VALIDATOR = 'validator',
   VAULT_OR_STAKE_POOL = 'vaultOrStakePool',
   DAPP = 'dapp',
+  COLLATOR = 'collator',
 }
 
 export type LiquidStakingItemType = Validator | VaultOrStakePool | Dapp;
