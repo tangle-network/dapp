@@ -39,7 +39,7 @@ function safeParseInputAmount(
 
 const INPUT_AMOUNT_FORMAT: Partial<FormatOptions> = {
   includeCommas: true,
-  fractionLength: undefined,
+  fractionMaxLength: undefined,
 };
 
 type Options = {
@@ -47,10 +47,10 @@ type Options = {
   min?: BN | null;
   max?: BN | null;
   errorOnEmptyValue?: boolean;
-  setAmount?: (newAmount: BN | null) => void;
   minErrorMessage?: string;
   maxErrorMessage?: string;
   decimals: number;
+  setAmount?: (newAmount: BN | null) => void;
 };
 
 const useInputAmount = ({
@@ -58,12 +58,13 @@ const useInputAmount = ({
   min = null,
   max = null,
   errorOnEmptyValue = false,
-  setAmount,
   minErrorMessage,
   maxErrorMessage,
   decimals,
+  setAmount,
 }: Options) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const [displayAmount, setDisplayAmount] = useState(
     amount !== null ? formatBn(amount, decimals, INPUT_AMOUNT_FORMAT) : '',
   );
@@ -86,10 +87,15 @@ const useInputAmount = ({
         })
         .join('');
 
+      // Nothing to do.
+      if (displayAmount === cleanAmountString) {
+        return;
+      }
+
       setDisplayAmount(cleanAmountString);
 
       const amountOrError = safeParseInputAmount({
-        amountString: newAmountString,
+        amountString: cleanAmountString,
         min,
         max,
         errorOnEmptyValue,
@@ -104,13 +110,14 @@ const useInputAmount = ({
       }
       // If there was no error on the validation of the new amount string,
       // convert it to chain units and set it as the new amount.
-      else if (setAmount !== undefined && !newAmountString.endsWith('.')) {
+      else if (setAmount !== undefined && !cleanAmountString.endsWith('.')) {
         setErrorMessage(null);
         setAmount(amountOrError);
       }
     },
     [
       decimals,
+      displayAmount,
       errorOnEmptyValue,
       max,
       maxErrorMessage,
@@ -136,10 +143,33 @@ const useInputAmount = ({
     }
   }, [amount]);
 
+  const trySetAmount = useCallback(
+    (newAmount: BN): boolean => {
+      // Only accept the new amount if it is within the min and max bounds.
+      if (max !== null && newAmount.gt(max)) {
+        return false;
+      } else if (min !== null && newAmount.lt(min)) {
+        return false;
+      }
+      // No closure was provided to set the new amount.
+      else if (setAmount === undefined) {
+        return false;
+      }
+
+      setAmount(newAmount);
+
+      // TODO: Update the display amount to reflect the new amount. Must format the BN to a string.
+
+      return true;
+    },
+    [max, min, setAmount],
+  );
+
   return {
     displayAmount,
     errorMessage,
     handleChange,
+    trySetAmount,
     updateDisplayAmountManual,
   };
 };

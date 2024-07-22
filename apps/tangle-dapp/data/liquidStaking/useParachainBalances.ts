@@ -23,7 +23,6 @@ const useParachainBalances = () => {
           return null;
         }
 
-        // TODO: For some reason, the `api.query.tokens.accounts` method does not recognize passing in `null` for the token parameter, which is equivalent to passing `None` and should return the balance for all tokens. For now, manually casting the return type.
         return api.query.tokens.accounts.entries(activeSubstrateAddress);
       },
       [activeSubstrateAddress],
@@ -46,10 +45,14 @@ const useParachainBalances = () => {
         string | undefined
       >;
 
-      const entryValue = entry.lst ?? entry.Native;
+      // TODO: 'Native' balance isn't showing up on the parachain for some reason, not even under `api.query.balances.account()`. Is this a bug? Currently unable to obtain user account's native balance (defaulting to 0). Is it due to some sort of bridging mechanism?
+      const entryTokenValue = entry.lst ?? entry.Native;
 
       // Irrelevant entry, skip.
-      if (entryValue === undefined || !isLiquidStakingToken(entryValue)) {
+      if (
+        entryTokenValue === undefined ||
+        !isLiquidStakingToken(entryTokenValue)
+      ) {
         continue;
       }
 
@@ -57,9 +60,9 @@ const useParachainBalances = () => {
       const balance = encodedBalance[1].free.toBn();
 
       if (isLiquid) {
-        liquidBalances.set(entryValue, balance);
+        liquidBalances.set(entryTokenValue, balance);
       } else {
-        nativeBalances.set(entryValue, balance);
+        nativeBalances.set(entryTokenValue, balance);
       }
     }
 

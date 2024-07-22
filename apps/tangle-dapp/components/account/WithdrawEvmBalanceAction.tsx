@@ -39,6 +39,10 @@ const WithdrawEvmBalanceAction: FC = () => {
   const { execute, status } = useEvmBalanceWithdrawTx(tokenAmountStr);
 
   const handleWithdraw = useCallback(async () => {
+    if (execute === null) {
+      return;
+    }
+
     await execute({
       pendingEvmBalance,
       evmAddress20,

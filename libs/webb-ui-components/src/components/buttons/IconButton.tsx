@@ -1,10 +1,11 @@
 import React, { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { IconButtonProps } from './types';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 
 const IconButton = forwardRef<React.ElementRef<'button'>, IconButtonProps>(
-  ({ className, ...props }, ref) => {
-    return (
+  ({ className, tooltip, ...props }, ref) => {
+    const content = (
       <button
         {...props}
         type="button"
@@ -17,8 +18,19 @@ const IconButton = forwardRef<React.ElementRef<'button'>, IconButtonProps>(
         )}
       />
     );
+
+    return tooltip !== undefined ? (
+      <Tooltip>
+        <TooltipTrigger asChild>{content}</TooltipTrigger>
+
+        <TooltipBody>{tooltip}</TooltipBody>
+      </Tooltip>
+    ) : (
+      content
+    );
   },
 );
+
 IconButton.displayName = 'IconButton';
 
 export default IconButton;

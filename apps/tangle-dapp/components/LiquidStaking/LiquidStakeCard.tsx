@@ -4,13 +4,12 @@
 // the `lstMinting` pallet for this file only.
 import '@webb-tools/tangle-restaking-types';
 
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
-import { InformationLine, Search } from '@webb-tools/icons';
+import { Search } from '@webb-tools/icons';
 import {
   Button,
   Chip,
-  IconWithTooltip,
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -18,40 +17,50 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import {
+  LIQUID_STAKING_CHAIN_MAP,
   LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingChain,
-  LS_CHAIN_TO_TOKEN,
-  LS_TOKEN_TO_CURRENCY,
+  LiquidStakingChainId,
 } from '../../constants/liquidStaking';
+import useExchangeRate, {
+  ExchangeRateType,
+} from '../../data/liquidStaking/useExchangeRate';
 import useMintTx from '../../data/liquidStaking/useMintTx';
+import useParachainBalances from '../../data/liquidStaking/useParachainBalances';
 import useApi from '../../hooks/useApi';
 import useApiRx from '../../hooks/useApiRx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
+import DetailItem from './DetailItem';
+import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
-import SelectValidators from './SelectValidators';
-import WalletBalance from './WalletBalance';
+import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
+import ParachainWalletBalance from './ParachainWalletBalance';
+import SelectValidatorsButton from './SelectValidatorsButton';
+import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 
-const LiquidStakingCard: FC = () => {
+const LiquidStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
 
-  // TODO: The rate will likely be a hook on its own, likely needs to be extracted from the Tangle Restaking Parachain via a query/subscription.
-  const [rate] = useState<number | null>(1.0);
-
-  const [selectedChain, setSelectedChain] = useState<LiquidStakingChain>(
-    LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN,
+  const [selectedChainId, setSelectedChainId] = useState<LiquidStakingChainId>(
+    LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN,
   );
 
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
+  const { nativeBalances } = useParachainBalances();
 
-  const selectedChainToken = LS_CHAIN_TO_TOKEN[selectedChain];
+  const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
+
+  const exchangeRate = useExchangeRate(
+    ExchangeRateType.NativeToLiquid,
+    selectedChain.currency,
+  );
 
   const { result: minimumMintingAmount } = useApiRx(
     useCallback(
       (api) =>
         api.query.lstMinting.minimumMint({
-          Native: LS_TOKEN_TO_CURRENCY[selectedChainToken],
+          Native: selectedChain.currency,
         }),
-      [selectedChainToken],
+      [selectedChain.currency],
     ),
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
   );
@@ -69,6 +78,14 @@ const LiquidStakingCard: FC = () => {
     return BN.max(minimumMintingAmount, existentialDepositAmount);
   }, [existentialDepositAmount, minimumMintingAmount]);
 
+  const maximumInputAmount = useMemo(() => {
+    if (nativeBalances === null) {
+      return null;
+    }
+
+    return nativeBalances.get(selectedChain.token) ?? BN_ZERO;
+  }, [nativeBalances, selectedChain.token]);
+
   const handleStakeClick = useCallback(() => {
     if (executeMintTx === null || fromAmount === null) {
       return;
@@ -76,85 +93,84 @@ const LiquidStakingCard: FC = () => {
 
     executeMintTx({
       amount: fromAmount,
-      currency: LS_TOKEN_TO_CURRENCY[selectedChainToken],
+      currency: selectedChain.currency,
     });
-  }, [executeMintTx, fromAmount, selectedChainToken]);
+  }, [executeMintTx, fromAmount, selectedChain.currency]);
 
   const toAmount = useMemo(() => {
-    if (fromAmount === null || rate === null) {
+    if (fromAmount === null || exchangeRate === null) {
       return null;
     }
 
-    return fromAmount.muln(rate);
-  }, [fromAmount, rate]);
+    return fromAmount.muln(exchangeRate);
+  }, [fromAmount, exchangeRate]);
+
+  const walletBalance = (
+    <ParachainWalletBalance
+      token={selectedChain.token}
+      decimals={selectedChain.decimals}
+      tooltip="Click to use all available balance"
+      onClick={() => setFromAmount(maximumInputAmount)}
+    />
+  );
 
   return (
-    <div className="flex flex-col gap-4 w-full min-w-[550px] max-w-[650px] bg-mono-0 dark:bg-mono-190 rounded-2xl p-9 border dark:border-mono-160 shadow-sm">
-      <div className="flex gap-3">
-        <Typography className="dark:text-mono-0" variant="h4" fw="bold">
-          Stake
-        </Typography>
-
-        <Typography
-          className="text-mono-100 dark:text-mono-100"
-          variant="h4"
-          fw="bold"
-        >
-          Unstake
-        </Typography>
-      </div>
-
+    <>
       <LiquidStakingInput
-        id="liquid-staking-from"
-        chain={selectedChain}
-        token={LS_CHAIN_TO_TOKEN[selectedChain]}
+        id="liquid-staking-stake-from"
+        chainId={selectedChainId}
+        token={selectedChain.token}
         amount={fromAmount}
-        setAmount={setFromAmount}
-        placeholder={`0 ${selectedChainToken}`}
-        rightElement={<WalletBalance />}
-        setChain={setSelectedChain}
+        decimals={selectedChain.decimals}
+        onAmountChange={setFromAmount}
+        placeholder={`0 ${selectedChain.token}`}
+        rightElement={walletBalance}
+        setChainId={setSelectedChainId}
         minAmount={minimumInputAmount ?? undefined}
+        maxAmount={maximumInputAmount ?? undefined}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
 
       <LiquidStakingInput
-        id="liquid-staking-to"
-        chain={LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN}
-        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChainToken}`}
+        id="liquid-staking-stake-to"
+        chainId={LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN}
+        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
+        decimals={selectedChain.decimals}
         amount={toAmount}
         isReadOnly
         isTokenLiquidVariant
-        token={LS_CHAIN_TO_TOKEN[selectedChain]}
-        rightElement={<SelectValidators />}
+        token={selectedChain.token}
+        rightElement={<SelectValidatorsButton />}
       />
 
       {/* Details */}
-      <div className="flex flex-col gap-2 p-3 bg-mono-20 dark:bg-mono-180 rounded-lg">
-        <DetailItem
-          title="Rate"
-          tooltip="This is a test."
-          value={`1 ${selectedChainToken} = ${rate} ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChainToken}`}
+      <div className="flex flex-col gap-2 p-3">
+        <ExchangeRateDetailItem
+          token={selectedChain.token}
+          currency={selectedChain.currency}
+          type={ExchangeRateType.NativeToLiquid}
         />
 
-        <DetailItem
-          title="Cross-chain fee"
-          tooltip="This is a test."
-          value={`0.001984 ${selectedChainToken}`}
+        <MintAndRedeemFeeDetailItem
+          intendedAmount={fromAmount}
+          isMinting
+          token={selectedChain.token}
         />
 
-        <DetailItem
-          title="Unstake period"
-          tooltip="The period of time you need to wait before you can unstake your tokens."
-          value="7 days"
-        />
+        <UnstakePeriodDetailItem />
 
-        <DetailItem title="Token address" value="0xbe507...00006" />
+        <DetailItem title="Estimated wait time" value="~10 minutes" />
       </div>
 
       <Button
         isDisabled={
-          executeMintTx === null || fromAmount === null || fromAmount.isZero()
+          // Mint transaction is not available yet. This may indicate
+          // that there is no connected account.
+          executeMintTx === null ||
+          // No amount entered or amount is zero.
+          fromAmount === null ||
+          fromAmount.isZero()
         }
         isLoading={mintTxStatus === TxStatus.PROCESSING}
         loadingText="Processing"
@@ -163,42 +179,7 @@ const LiquidStakingCard: FC = () => {
       >
         Stake
       </Button>
-    </div>
-  );
-};
-
-type DetailItemProps = {
-  title: string;
-  tooltip?: string;
-  value: string;
-};
-
-/** @internal */
-const DetailItem: FC<DetailItemProps> = ({ title, tooltip, value }) => {
-  return (
-    <div className="flex gap-2 justify-between w-full">
-      <div className="flex items-center gap-1">
-        <Typography variant="body1" fw="normal">
-          {title}
-        </Typography>
-
-        {tooltip !== undefined && (
-          <IconWithTooltip
-            icon={
-              <InformationLine className="fill-mono-140 dark:fill-mono-100" />
-            }
-            content={tooltip}
-            overrideTooltipBodyProps={{
-              className: 'max-w-[350px]',
-            }}
-          />
-        )}
-      </div>
-
-      <Typography className="dark:text-mono-0" variant="body1" fw="bold">
-        {value}
-      </Typography>
-    </div>
+    </>
   );
 };
 
@@ -250,4 +231,4 @@ export const SelectParachainContent: FC<SelectParachainContentProps> = ({
   );
 };
 
-export default LiquidStakingCard;
+export default LiquidStakeCard;

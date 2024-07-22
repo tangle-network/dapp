@@ -1,9 +1,10 @@
+'use client';
+
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
-import LiquidStakingCard from '../../../components/LiquidStaking/LiquidStakingCard';
-import TokenInfoCard from '../../../components/LiquidStaking/TokenInfoCard';
-import { LIQUID_STAKING_TOKEN_PREFIX } from '../../../constants/liquidStaking';
+import LiquidStakeAndUnstakeCards from '../../../components/LiquidStaking/LiquidStakeAndUnstakeCards';
+import UnstakeRequestsTable from '../../../components/LiquidStaking/UnstakeRequestsTable';
 import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
 
 type Props = {
@@ -17,33 +18,10 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-12">
-      <TokenInfoCard
-        stakingInfo={{
-          title: 'Staking',
-          tooltip: `Total staked ${tokenSymbol}`,
-          value: '-',
-        }}
-        availableInfo={{
-          title: 'Available',
-          tooltip: `Available ${LIQUID_STAKING_TOKEN_PREFIX}${tokenSymbol}`,
-          value: '98.00',
-          valueTooltip: `Available ${LIQUID_STAKING_TOKEN_PREFIX}${tokenSymbol}`,
-        }}
-        unstakingInfo={{
-          title: 'Unstaking',
-          tooltip: `Total unstaking ${tokenSymbol} in progress`,
-          value: '-',
-        }}
-        apyInfo={{
-          title: 'APY',
-          tooltip: 'APY (Annual Percentage Yield) %',
-          value: '-',
-        }}
-        tokenSymbol={tokenSymbol}
-      />
+    <div className="flex flex-wrap gap-12 items-start">
+      <LiquidStakeAndUnstakeCards />
 
-      <LiquidStakingCard />
+      <UnstakeRequestsTable />
     </div>
   );
 };

@@ -92,7 +92,7 @@ const NetworkSelectionButton: FC = () => {
           </Dropdown>
         </TooltipTrigger>
 
-        <TooltipBody>
+        <TooltipBody side="bottom">
           Network can&apos;t be changed while you&apos;re in this page.
         </TooltipBody>
       </Tooltip>
