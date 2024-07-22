@@ -2,8 +2,6 @@
 
 import { BN } from '@polkadot/util';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
-import { ChevronDown } from '@webb-tools/icons';
 import {
   Dropdown,
   DropdownBody,
@@ -11,47 +9,56 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import { FC, ReactNode, useCallback } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
   LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingChain,
+  LiquidStakingChainId,
   LiquidStakingToken,
   LS_CHAIN_TO_NETWORK_NAME,
-  LS_TOKEN_TO_CHAIN,
 } from '../../constants/liquidStaking';
+import { ERROR_NOT_ENOUGH_BALANCE } from '../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../hooks/useInputAmount';
 import formatBn from '../../utils/formatBn';
 import ChainLogo from './ChainLogo';
-import HoverButtonStyle from './HoverButtonStyle';
+import DropdownChevronIcon from './DropdownChevronIcon';
+import TokenChip from './TokenChip';
 
 export type LiquidStakingInputProps = {
   id: string;
-  chain: LiquidStakingChain;
-  setChain?: (newChain: LiquidStakingChain) => void;
+  chainId: LiquidStakingChainId;
+  decimals: number;
   amount: BN | null;
-  setAmount?: (newAmount: BN | null) => void;
   isReadOnly?: boolean;
   placeholder?: string;
   rightElement?: ReactNode;
   token: LiquidStakingToken;
   isTokenLiquidVariant?: boolean;
   minAmount?: BN;
+  maxAmount?: BN;
+  maxErrorMessage?: string;
+  onAmountChange?: (newAmount: BN | null) => void;
+  setChainId?: (newChain: LiquidStakingChainId) => void;
+  onTokenClick?: () => void;
 };
 
 const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   id,
   amount,
-  setAmount,
+  decimals,
   isReadOnly = false,
   placeholder = '0',
   isTokenLiquidVariant = false,
   rightElement,
-  chain,
-  setChain,
+  chainId,
   token,
   minAmount,
+  maxAmount,
+  maxErrorMessage = ERROR_NOT_ENOUGH_BALANCE,
+  onAmountChange,
+  setChainId,
+  onTokenClick,
 }) => {
   const minErrorMessage = ((): string | undefined => {
     if (minAmount === undefined) {
@@ -60,29 +67,36 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
 
     const unit = `${isTokenLiquidVariant ? LIQUID_STAKING_TOKEN_PREFIX : ''}${token}`;
 
-    // TODO: Must consider the chain's token decimals, not always the Tangle token decimals.
-    const formattedMinAmount = formatBn(minAmount, TANGLE_TOKEN_DECIMALS);
+    const formattedMinAmount = formatBn(minAmount, decimals, {
+      fractionMaxLength: undefined,
+      includeCommas: true,
+    });
 
     return `Amount must be at least ${formattedMinAmount} ${unit}`;
   })();
 
-  const { displayAmount, handleChange, errorMessage } = useInputAmount({
+  const {
+    displayAmount,
+    handleChange,
+    errorMessage,
+    updateDisplayAmountManual,
+  } = useInputAmount({
     amount,
-    setAmount,
-    // TODO: Decimals must be based on the active token's chain decimals, not always the Tangle token decimals.
-    decimals: TANGLE_TOKEN_DECIMALS,
+    setAmount: onAmountChange,
+    decimals,
     min: minAmount,
     minErrorMessage,
+    max: maxAmount,
+    maxErrorMessage,
   });
 
-  const handleChainChange = useCallback(
-    (newChain: LiquidStakingChain) => {
-      if (setChain !== undefined) {
-        setChain(newChain);
-      }
-    },
-    [setChain],
-  );
+  // Update the display amount when the amount prop changes.
+  // Only do this for controlled (read-only) inputs.
+  useEffect(() => {
+    if (amount !== null) {
+      updateDisplayAmountManual(amount);
+    }
+  }, [amount, updateDisplayAmountManual]);
 
   const isError = errorMessage !== null;
 
@@ -95,10 +109,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
         )}
       >
         <div className="flex justify-between">
-          <ChainSelector
-            selectedChain={chain}
-            setChain={isReadOnly ? undefined : handleChainChange}
-          />
+          <ChainSelector selectedChainId={chainId} setChain={setChainId} />
 
           {rightElement}
         </div>
@@ -116,11 +127,15 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
             readOnly={isReadOnly}
           />
 
-          <TokenChip token={token} isLiquidVariant={isTokenLiquidVariant} />
+          <TokenChip
+            onClick={onTokenClick}
+            token={token}
+            isLiquidVariant={isTokenLiquidVariant}
+          />
         </div>
       </div>
 
-      {errorMessage && (
+      {errorMessage !== null && (
         <Typography variant="body2" className="text-red-70 dark:text-red-50">
           * {errorMessage}
         </Typography>
@@ -129,79 +144,55 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   );
 };
 
-type TokenChipProps = {
-  token: LiquidStakingToken;
-  isLiquidVariant: boolean;
-};
-
-/** @internal */
-const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant }) => {
-  const chain = LS_TOKEN_TO_CHAIN[token];
-
-  return (
-    <div className="flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-160 px-4 py-2 rounded-lg">
-      <ChainLogo size="sm" chain={chain} isRounded />
-
-      <Typography variant="h5" fw="bold">
-        {isLiquidVariant && LIQUID_STAKING_TOKEN_PREFIX}
-        {token}
-      </Typography>
-    </div>
-  );
-};
-
 type ChainSelectorProps = {
-  selectedChain: LiquidStakingChain;
+  selectedChainId: LiquidStakingChainId;
 
   /**
    * If this function is not provided, the selector will be
    * considered read-only.
    */
-  setChain?: (newChain: LiquidStakingChain) => void;
+  setChain?: (newChain: LiquidStakingChainId) => void;
 };
 
-const ChainSelector: FC<ChainSelectorProps> = ({ selectedChain, setChain }) => {
+/** @internal */
+const ChainSelector: FC<ChainSelectorProps> = ({
+  selectedChainId,
+  setChain,
+}) => {
   const isReadOnly = setChain === undefined;
 
   const base = (
-    <div
-      className={twMerge(
-        'flex gap-2 items-center justify-center',
-        // Provide some padding for consistency with the
-        // non-read-only variant.
-        isReadOnly && 'px-3',
-      )}
-    >
-      <ChainLogo size="sm" chain={selectedChain} />
+    <div className="group flex gap-1 items-center justify-center">
+      <div className="flex gap-2 items-center justify-center">
+        <ChainLogo size="sm" chainId={selectedChainId} />
 
-      <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-        {LS_CHAIN_TO_NETWORK_NAME[selectedChain]}
-      </Typography>
+        <Typography variant="h5" fw="bold" className="dark:text-mono-40">
+          {LS_CHAIN_TO_NETWORK_NAME[selectedChainId]}
+        </Typography>
+      </div>
 
-      {!isReadOnly && <ChevronDown className="dark:fill-mono-120" size="lg" />}
+      {!isReadOnly && <DropdownChevronIcon isLarge />}
     </div>
   );
 
   return setChain !== undefined ? (
     <Dropdown>
-      <DropdownMenuTrigger>
-        <HoverButtonStyle>{base}</HoverButtonStyle>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger>{base}</DropdownMenuTrigger>
 
       <DropdownBody>
         <ScrollArea className="max-h-[300px]">
           <ul>
-            {Object.values(LiquidStakingChain)
-              .filter((chain) => chain !== selectedChain)
-              .map((chain) => {
+            {Object.values(LiquidStakingChainId)
+              .filter((chainId) => chainId !== selectedChainId)
+              .map((chainId) => {
                 return (
-                  <li key={chain} className="w-full">
+                  <li key={chainId} className="w-full">
                     <DropdownMenuItem
-                      leftIcon={<ChainLogo size="sm" chain={chain} />}
-                      onSelect={() => setChain(chain)}
+                      leftIcon={<ChainLogo size="sm" chainId={chainId} />}
+                      onSelect={() => setChain(chainId)}
                       className="px-3 normal-case"
                     >
-                      {LS_CHAIN_TO_NETWORK_NAME[chain]}
+                      {LS_CHAIN_TO_NETWORK_NAME[chainId]}
                     </DropdownMenuItem>
                   </li>
                 );
