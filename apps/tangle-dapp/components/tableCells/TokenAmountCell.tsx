@@ -11,7 +11,6 @@ export type TokenAmountCellProps = {
   className?: string;
   tokenSymbol?: string;
   decimals?: number;
-  alignCenter?: boolean;
 };
 
 const TokenAmountCell: FC<TokenAmountCellProps> = ({
@@ -19,7 +18,6 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({
   className,
   tokenSymbol,
   decimals,
-  alignCenter = true,
 }) => {
   const { nativeTokenSymbol } = useNetworkStore();
 
@@ -39,8 +37,7 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({
   return (
     <span
       className={twMerge(
-        'text-mono-140 dark:text-mono-40 whitespace-nowrap',
-        alignCenter && 'block text-center',
+        'text-mono-140 dark:text-mono-40 whitespace-nowrap block text-center',
         className,
       )}
     >
