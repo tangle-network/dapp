@@ -1,4 +1,3 @@
-import { ChevronDown } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC } from 'react';
@@ -10,6 +9,7 @@ import {
   LiquidStakingToken,
 } from '../../constants/liquidStaking';
 import ChainLogo from './ChainLogo';
+import DropdownChevronIcon from './DropdownChevronIcon';
 
 type TokenChipProps = {
   token?: LiquidStakingToken;
@@ -37,8 +37,8 @@ const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
     <div
       onClick={onClick}
       className={twMerge(
-        'flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-160 px-4 py-2 rounded-lg',
-        onClick !== undefined && 'cursor-pointer hover:dark:bg-mono-140',
+        'group flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-170 px-4 py-2 rounded-lg',
+        onClick !== undefined && 'cursor-pointer',
       )}
     >
       <ChainLogo
@@ -53,7 +53,7 @@ const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
         {token}
       </Typography>
 
-      {onClick !== undefined && <ChevronDown />}
+      {onClick !== undefined && <DropdownChevronIcon />}
     </div>
   );
 };

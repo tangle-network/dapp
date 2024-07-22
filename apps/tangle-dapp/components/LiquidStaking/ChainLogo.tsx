@@ -92,8 +92,6 @@ const ChainLogo: FC<ChainLogoProps> = ({
         alt={`Logo of the liquid staking token ${chainId}`}
         width={sizeNumber}
         height={sizeNumber}
-        objectPosition="center"
-        objectFit="cover"
       />
     </div>
   );
