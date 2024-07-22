@@ -51,4 +51,8 @@ export enum LiquidStakingItem {
   COLLATOR = 'collator',
 }
 
-export type LiquidStakingItemType = Validator | VaultOrStakePool | Dapp | Collator;
+export type LiquidStakingItemType =
+  | Validator
+  | VaultOrStakePool
+  | Dapp
+  | Collator;
