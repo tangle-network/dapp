@@ -14,10 +14,10 @@ import { twMerge } from 'tailwind-merge';
 import { SortArrow } from '../../components/LiquidStaking/LiquidStakingSelectionTable';
 import { StakingItemExternalLinkButton } from '../../components/LiquidStaking/StakingItemExternalLinkButton';
 import {
+  Collator,
   Dapp,
   LiquidStakingItem,
   Validator,
-  Collator,
   VaultOrStakePool,
 } from '../../types/liquidStaking';
 import calculateCommission from '../../utils/calculateCommission';
