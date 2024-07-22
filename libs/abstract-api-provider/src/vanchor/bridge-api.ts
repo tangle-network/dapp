@@ -58,7 +58,7 @@ export abstract class BridgeApi<
   getTokenTarget(typedChainId: number): string | null {
     const activeBridgeAsset = this.getCurrency();
     return activeBridgeAsset
-      ? (activeBridgeAsset.getAddress(typedChainId) ?? null)
+      ? activeBridgeAsset.getAddress(typedChainId) ?? null
       : null;
   }
 

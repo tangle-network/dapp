@@ -29,7 +29,7 @@ const useExplorerUrl = () => {
           ? explorerUrl_
           : isEvm
             ? network.evmExplorerUrl
-            : (network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl);
+            : network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl;
 
       if (explorerUrl === undefined) {
         return null;

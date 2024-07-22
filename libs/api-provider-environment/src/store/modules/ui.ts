@@ -31,9 +31,7 @@ const initState: UIData = {
   breadcrumb: [],
   pageTitle: '__empty',
   subMenu: null,
-  theme: isBrowser()
-    ? (window.localStorage.getItem('_theme') ?? 'dark')
-    : 'dark',
+  theme: isBrowser() ? window.localStorage.getItem('_theme') ?? 'dark' : 'dark',
 };
 
 const reducer = (state: UIData, action: UIAction): UIData => {
