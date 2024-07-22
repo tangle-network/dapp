@@ -75,7 +75,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     subItems: [],
   },
   {
-    name: 'Claim',
+    name: 'Claim Airdrop',
     href: PagePath.CLAIM_AIRDROP,
     isInternal: true,
     isNext: true,

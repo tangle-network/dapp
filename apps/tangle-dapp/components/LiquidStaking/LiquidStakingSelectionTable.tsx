@@ -38,6 +38,7 @@ import {
 
 import { useLiquidStakingSelectionTableColumns } from '../../hooks/LiquidStaking/useLiquidStakingSelectionTableColumns';
 import {
+  Collator,
   Dapp,
   LiquidStakingItem,
   LiquidStakingItemType,
@@ -46,7 +47,7 @@ import {
 } from '../../types/liquidStaking';
 
 type LiquidStakingSelectionTableProps = {
-  data: Validator[] | VaultOrStakePool[] | Dapp[];
+  data: Validator[] | VaultOrStakePool[] | Dapp[] | Collator[];
   dataType: LiquidStakingItem;
   setSelectedItems: Dispatch<SetStateAction<Set<string>>>;
   isLoading: boolean;
@@ -65,6 +66,7 @@ const SELECTED_ITEMS_COLUMN_SORT = {
 export const LiquidStakingSelectionTable: FC<
   LiquidStakingSelectionTableProps
 > = ({ data, dataType, setSelectedItems, isLoading }) => {
+  console.debug('LiquidStakingSelectionTable', data, dataType, isLoading);
   const [searchValue, setSearchValue] = useState('');
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [sorting, setSorting] = useState<SortingState>([

@@ -17,7 +17,7 @@ export default function useAmountToTransfer() {
         ? parseUnits(
             formatBn(amount, decimals, {
               includeCommas: false,
-              fractionLength: undefined,
+              fractionMaxLength: undefined,
             }),
             decimals,
           ).toString()

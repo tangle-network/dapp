@@ -1,5 +1,7 @@
 import { BN } from '@polkadot/util';
 
+import addCommasToNumber from './addCommasToNumber';
+
 /**
  * When the user inputs an amount in the UI, say using an Input
  * component, the amount needs to be treated as if it were in chain
@@ -9,23 +11,22 @@ import { BN } from '@polkadot/util';
  * `1` token, and not the smallest unit possible.
  *
  * To have the amount be in proper form, it needs to be multiplied by
- * this factor (input amount * 10^18).
+ * this factor (input amount * 10^decimals).
  */
-
-const convertChainUnitFactor = (decimals: number) => {
+const getChainUnitFactor = (decimals: number) => {
   return new BN(10).pow(new BN(decimals));
 };
 
 export type FormatOptions = {
   includeCommas: boolean;
-  fractionLength?: number;
-  padZerosInFraction: boolean;
+  fractionMaxLength?: number;
+  trimTrailingZeroes: boolean;
 };
 
 const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
-  fractionLength: 4,
-  includeCommas: true,
-  padZerosInFraction: false,
+  fractionMaxLength: 4,
+  includeCommas: false,
+  trimTrailingZeroes: true,
 };
 
 function formatBn(
@@ -34,50 +35,60 @@ function formatBn(
   options?: Partial<FormatOptions>,
 ): string {
   const finalOptions = { ...DEFAULT_FORMAT_OPTIONS, ...options };
-  const divisor = convertChainUnitFactor(decimals);
-  const divided = amount.div(divisor);
-  const remainder = amount.mod(divisor);
+  const chainUnitFactorBn = getChainUnitFactor(decimals);
+  const integerPartBn = amount.div(chainUnitFactorBn);
+  const remainderBn = amount.mod(chainUnitFactorBn);
 
-  let integerPart = divided.toString(10);
+  let integerPart = integerPartBn.toString(10);
+  let fractionPart = remainderBn.toString(10).padStart(decimals, '0');
 
-  // Convert remainder to a string and pad with zeros if necessary.
-  let remainderString = remainder.toString(10);
+  const amountStringLength = amount.toString().length;
+  const partsLength = integerPart.length + fractionPart.length;
 
-  // There is a case when the decimals part has leading 0s, so that the remaining
-  // string can missing those 0s when we use `mod` method.
-  // Solution: Try to construct the string again and check the length,
-  // if the length is not the same, we can say that the remainder string is missing
-  // leading 0s, so we try to prepend those 0s to the remainder string
-  if (amount.toString().length !== (integerPart + remainderString).length) {
-    const missing0sCount =
-      amount.toString().length - (integerPart + remainderString).length;
+  // Check for missing leading zeros in the fraction part. This
+  // edge case can happen when the remainder has fewer digits
+  // than the specified decimals, resulting in a loss of leading
+  // zeros when converting to a string, ex. 0001 -> 1.
+  if (amountStringLength !== partsLength) {
+    // Count how many leading zeros are missing.
+    const missingZerosCount = amountStringLength - partsLength;
 
-    remainderString =
-      Array.from({ length: missing0sCount })
-        .map(() => '0')
-        .join('') + remainderString;
+    // Add the missing leading zeros. Use the max function to avoid
+    // strange situations where the count is negative (ie. the length
+    // of the number is greater than the length of the integer and fraction
+    // parts combined).
+    fractionPart = '0'.repeat(Math.max(missingZerosCount, 0)) + fractionPart;
   }
 
-  if (finalOptions.padZerosInFraction) {
-    remainderString = remainderString.padStart(decimals, '0');
+  // Pad the end of the fraction part with zeros if applicable,
+  // ex. 0.001 -> 0.0010 when the requested fraction length is 4.
+  if (!finalOptions.trimTrailingZeroes) {
+    fractionPart = fractionPart.padEnd(
+      finalOptions.fractionMaxLength ?? decimals,
+      '0',
+    );
   }
 
-  remainderString = remainderString.substring(0, finalOptions.fractionLength);
+  // Trim the fraction part to the desired length.
+  if (finalOptions.fractionMaxLength !== undefined) {
+    fractionPart = fractionPart.substring(0, finalOptions.fractionMaxLength);
+  }
 
-  // Remove trailing 0s.
-  while (remainderString.endsWith('0')) {
-    remainderString = remainderString.substring(0, remainderString.length - 1);
+  // Remove trailing zeroes if applicable.
+  if (finalOptions.trimTrailingZeroes) {
+    while (fractionPart.endsWith('0')) {
+      fractionPart = fractionPart.substring(0, fractionPart.length - 1);
+    }
   }
 
   // Insert commas in the integer part if requested.
   if (finalOptions.includeCommas) {
-    // TODO: Avoid using regex, it's confusing.
-    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    integerPart = addCommasToNumber(integerPart);
   }
 
-  // TODO: Make the condition explicit. Is it checking for an empty string?
-  // Combine the integer and decimal parts.
-  return remainderString ? `${integerPart}.${remainderString}` : integerPart;
+  // Combine the integer and fraction parts. Only include the fraction
+  // part if it's available.
+  return fractionPart !== '' ? `${integerPart}.${fractionPart}` : integerPart;
 }
 
 export default formatBn;

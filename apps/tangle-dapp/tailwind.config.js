@@ -20,6 +20,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        primary: '#8E59FF',
+      },
       backgroundImage: {
         glass:
           'linear-gradient(180deg,rgba(255,255,255,0.80) 0%,rgba(255,255,255,0.00) 100%)',

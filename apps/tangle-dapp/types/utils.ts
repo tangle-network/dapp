@@ -117,3 +117,14 @@ export type TransformEnum<EnumType extends Enum> =
         ? never
         : AsEnumValuesToPrimitive<EnumType>
     >;
+
+export type Brand<Type, Name extends string> = Type & { __brand: Name };
+
+export type RemoveBrand = { __brand: never };
+
+export type AnySubstrateAddress = Brand<string, 'AnySubstrateAddress'>;
+
+export type SubstrateAddress<SS58 extends number> = Brand<
+  string,
+  'SubstrateAddress' & { ss58Format: SS58 }
+>;

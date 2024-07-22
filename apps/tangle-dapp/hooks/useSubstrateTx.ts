@@ -237,6 +237,7 @@ export function useSubstrateTxWithNotification<Context = void>(
 
   const execute = useCallback(
     (context: Context) => {
+      // TODO: Consider whether to change this to an assertion, since at this point the execute function shouldn't be null otherwise this function should not have been called.
       if (execute_ === null) {
         return;
       }
@@ -269,5 +270,13 @@ export function useSubstrateTxWithNotification<Context = void>(
     }
   }, [status, error, txHash, notifyError, notifySuccess, successMessage]);
 
-  return { execute, status, error, txHash, successMessage };
+  return {
+    // Prevent the consumer from executing the transaction if
+    // the underlying hook is not ready to do so.
+    execute: execute_ === null ? null : execute,
+    status,
+    error,
+    txHash,
+    successMessage,
+  };
 }

@@ -29,7 +29,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.UPDATE_RESTAKE_PROFILE]: 'Restake profile updated',
   [TxName.BRIDGE_TRANSFER]: 'Bridge transferred successful',
   [TxName.MINT]: 'Minted tokens',
-  [TxName.REDEEM]: 'Redeemed tokens',
+  [TxName.REDEEM]: 'Redeem request submitted',
 };
 
 // TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.

@@ -1,18 +1,18 @@
 import { create } from 'zustand';
 
-import { LiquidStakingChain } from '../../constants/liquidStaking';
+import { LiquidStakingChainId } from '../../constants/liquidStaking';
 
 type State = {
-  selectedChain: LiquidStakingChain;
+  selectedChainId: LiquidStakingChainId;
 };
 
 type Actions = {
-  setSelectedChain: (selectedChain: State['selectedChain']) => void;
+  setSelectedChainId: (selectedChainId: State['selectedChainId']) => void;
 };
 
 type Store = State & Actions;
 
 export const useLiquidStakingStore = create<Store>((set) => ({
-  selectedChain: LiquidStakingChain.TANGLE_RESTAKING_PARACHAIN,
-  setSelectedChain: (selectedChain) => set({ selectedChain }),
+  selectedChainId: LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN,
+  setSelectedChainId: (selectedChainId) => set({ selectedChainId }),
 }));
