@@ -79,7 +79,7 @@ export default function ActionButton({
             isDisabled={!isValid || displayError !== undefined}
             isFullWidth
           >
-            {displayError ?? operatorAccountId
+            {(displayError ?? operatorAccountId)
               ? 'Deposit + Delegate'
               : 'Deposit'}
           </Button>
