@@ -6,10 +6,7 @@ const Form = forwardRef<HTMLFormElement, ComponentProps<'form'>>(
     return (
       <form
         {...props}
-        className={twMerge(
-          'w-full max-w-lg mx-auto overflow-hidden',
-          className,
-        )}
+        className={twMerge('overflow-hidden', className)}
         ref={ref}
       />
     );

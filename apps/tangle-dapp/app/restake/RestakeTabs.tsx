@@ -3,6 +3,7 @@
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import TabListItem from './TabListItem';
 import TabsList from './TabsList';
@@ -23,7 +24,7 @@ const RestakeTabs = (props: TabsListProps) => {
   }, [pathname]);
 
   return (
-    <TabsList {...props}>
+    <TabsList {...props} className={twMerge('mb-4', props.className)}>
       {tabs.map((tab, idx) => (
         <TabListItem
           href={tab}

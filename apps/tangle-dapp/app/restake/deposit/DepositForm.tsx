@@ -40,7 +40,6 @@ import ChainList from '../ChainList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
 import OperatorList from '../OperatorList';
-import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
 import DestChainInput from './DestChainInput';
 import SourceChainInput from './SourceChainInput';
@@ -240,8 +239,6 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   return (
     <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col h-full space-y-4 grow">
-        <RestakeTabs />
-
         <div className="space-y-2">
           <SourceChainInput
             amountError={errors.amount?.message}

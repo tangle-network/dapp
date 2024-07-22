@@ -38,7 +38,6 @@ import ChainList from '../ChainList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
 import OperatorList from '../OperatorList';
-import RestakeTabs from '../RestakeTabs';
 import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Info from './Info';
@@ -222,8 +221,6 @@ export default function DelegatePage() {
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col h-full space-y-4 grow">
-        <RestakeTabs />
-
         <StakeInput
           amountError={errors.amount?.message}
           delegatorInfo={delegatorInfo}
