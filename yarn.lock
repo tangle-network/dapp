@@ -9735,14 +9735,14 @@ __metadata:
   linkType: hard
 
 "@octokit/request@npm:^9.1.1":
-  version: 9.1.1
-  resolution: "@octokit/request@npm:9.1.1"
+  version: 9.1.3
+  resolution: "@octokit/request@npm:9.1.3"
   dependencies:
     "@octokit/endpoint": "npm:^10.0.0"
     "@octokit/request-error": "npm:^6.0.1"
     "@octokit/types": "npm:^13.1.0"
     universal-user-agent: "npm:^7.0.2"
-  checksum: 10c0/60ad38ffc07b7f8148d146182da9dbcedffb0394ccea583272ac1cb92ede764039273960b449e8591fbf909f30d45e76840713e8533b5fe34140d1dbd2214948
+  checksum: 10c0/41c26387ca9b5b3081a17eebea0c7d6b0122f6b2cb21c2fd7ef63ca587a828448e40b33973416f615fed139c659598f2ae7a1370cc103738f0f6f3297b5fc4ab
   languageName: node
   linkType: hard
 
