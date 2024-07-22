@@ -643,6 +643,7 @@ export const useLiquidStakingSelectionTableColumns = (
     }
   }, [
     dappColumns,
+    collatorColumns,
     liquidStakingItem,
     validatorColumns,
     vaultOrStakePoolColumns,
