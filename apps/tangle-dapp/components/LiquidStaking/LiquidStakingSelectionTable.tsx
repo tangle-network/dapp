@@ -165,7 +165,9 @@ export const LiquidStakingSelectionTable: FC<
       getSortedRowModel: getSortedRowModel(),
       getRowId: (row) => row.id,
       autoResetPageIndex: false,
-      enableMultiRowSelection: dataType === LiquidStakingItem.VALIDATOR,
+      enableMultiRowSelection:
+        dataType === LiquidStakingItem.VALIDATOR ||
+        dataType === LiquidStakingItem.COLLATOR,
     }),
     [
       dataType,

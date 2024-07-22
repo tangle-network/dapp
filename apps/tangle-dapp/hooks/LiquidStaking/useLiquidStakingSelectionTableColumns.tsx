@@ -1,4 +1,9 @@
-import { createColumnHelper, Row } from '@tanstack/react-table';
+import { BN } from '@polkadot/util';
+import {
+  createColumnHelper,
+  Row,
+  SortingFnOption,
+} from '@tanstack/react-table';
 import {
   Avatar,
   CheckBox,
@@ -86,20 +91,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </div>
           );
         },
-        sortingFn: (rowA: Row<Validator>, rowB: Row<Validator>) => {
-          const rowASelected = rowA.getIsSelected();
-          const rowBSelected = rowB.getIsSelected();
-
-          if (rowASelected && !rowBSelected) {
-            return -1;
-          }
-
-          if (!rowASelected && rowBSelected) {
-            return 1;
-          }
-
-          return 0;
-        },
+        sortingFn: sortSelected as SortingFnOption<Validator>,
       }),
       validatorColumnHelper.accessor('totalValueStaked', {
         header: ({ header }) => (
@@ -130,12 +122,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </Typography>
           </div>
         ),
-        sortingFn: (rowA: Row<Validator>, rowB: Row<Validator>) => {
-          const rowAValue = rowA.original.totalValueStaked;
-          const rowBValue = rowB.original.totalValueStaked;
-
-          return Number(rowAValue.sub(rowBValue).toString());
-        },
+        sortingFn: sortValueStaked,
       }),
       validatorColumnHelper.accessor('validatorCommission', {
         header: ({ header }) => (
@@ -165,12 +152,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </Typography>
           </div>
         ),
-        sortingFn: (rowA: Row<Validator>, rowB: Row<Validator>) => {
-          const rowAValue = Number(rowA.original.validatorCommission);
-          const rowBValue = Number(rowB.original.validatorCommission);
-
-          return rowAValue - rowBValue;
-        },
+        sortingFn: sortCommission as SortingFnOption<Validator>,
       }),
       validatorColumnHelper.accessor('href', {
         header: () => <span></span>,
@@ -232,20 +214,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </div>
           );
         },
-        sortingFn: (rowA: Row<Dapp>, rowB: Row<Dapp>) => {
-          const rowASelected = rowA.getIsSelected();
-          const rowBSelected = rowB.getIsSelected();
-
-          if (rowASelected && !rowBSelected) {
-            return -1;
-          }
-
-          if (!rowASelected && rowBSelected) {
-            return 1;
-          }
-
-          return 0;
-        },
+        sortingFn: sortSelected as SortingFnOption<Dapp>,
       }),
       dappColumnHelper.accessor('totalValueStaked', {
         header: ({ header }) => (
@@ -276,12 +245,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </Typography>
           </div>
         ),
-        sortingFn: (rowA: Row<Dapp>, rowB: Row<Dapp>) => {
-          const rowAValue = rowA.original.totalValueStaked;
-          const rowBValue = rowB.original.totalValueStaked;
-
-          return Number(rowAValue.sub(rowBValue).toString());
-        },
+        sortingFn: sortValueStaked,
       }),
       dappColumnHelper.accessor('href', {
         header: () => <span></span>,
@@ -342,23 +306,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </div>
           );
         },
-        sortingFn: (
-          rowA: Row<VaultOrStakePool>,
-          rowB: Row<VaultOrStakePool>,
-        ) => {
-          const rowASelected = rowA.getIsSelected();
-          const rowBSelected = rowB.getIsSelected();
-
-          if (rowASelected && !rowBSelected) {
-            return -1;
-          }
-
-          if (!rowASelected && rowBSelected) {
-            return 1;
-          }
-
-          return 0;
-        },
+        sortingFn: sortSelected as SortingFnOption<VaultOrStakePool>,
       }),
       vaultOrStakePoolColumnHelper.accessor('type', {
         header: ({ header }) => (
@@ -386,15 +334,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </div>
           );
         },
-        sortingFn: (
-          rowA: Row<VaultOrStakePool>,
-          rowB: Row<VaultOrStakePool>,
-        ) => {
-          const rowAType = rowA.original.type;
-          const rowBType = rowB.original.type;
-
-          return rowAType.localeCompare(rowBType);
-        },
+        sortingFn: sortType,
       }),
       vaultOrStakePoolColumnHelper.accessor('totalValueStaked', {
         header: ({ header }) => (
@@ -425,15 +365,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </Typography>
           </div>
         ),
-        sortingFn: (
-          rowA: Row<VaultOrStakePool>,
-          rowB: Row<VaultOrStakePool>,
-        ) => {
-          const rowAValue = rowA.original.totalValueStaked;
-          const rowBValue = rowB.original.totalValueStaked;
-
-          return Number(rowAValue.sub(rowBValue).toString());
-        },
+        sortingFn: sortValueStaked,
       }),
       vaultOrStakePoolColumnHelper.accessor('commission', {
         header: ({ header }) => (
@@ -463,15 +395,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </Typography>
           </div>
         ),
-        sortingFn: (
-          rowA: Row<VaultOrStakePool>,
-          rowB: Row<VaultOrStakePool>,
-        ) => {
-          const rowAValue = Number(rowA.original.commission);
-          const rowBValue = Number(rowB.original.commission);
-
-          return rowAValue - rowBValue;
-        },
+        sortingFn: sortCommission as SortingFnOption<VaultOrStakePool>,
       }),
       vaultOrStakePoolColumnHelper.accessor('href', {
         header: () => <span></span>,
@@ -535,20 +459,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </div>
           );
         },
-        sortingFn: (rowA: Row<Collator>, rowB: Row<Collator>) => {
-          const rowASelected = rowA.getIsSelected();
-          const rowBSelected = rowB.getIsSelected();
-
-          if (rowASelected && !rowBSelected) {
-            return -1;
-          }
-
-          if (!rowASelected && rowBSelected) {
-            return 1;
-          }
-
-          return 0;
-        },
+        sortingFn: sortSelected as SortingFnOption<Collator>,
       }),
       collatorColumnHelper.accessor('totalValueStaked', {
         header: ({ header }) => (
@@ -579,12 +490,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </Typography>
           </div>
         ),
-        sortingFn: (rowA: Row<Collator>, rowB: Row<Collator>) => {
-          const rowAValue = rowA.original.totalValueStaked;
-          const rowBValue = rowB.original.totalValueStaked;
-
-          return Number(rowAValue.sub(rowBValue).toString());
-        },
+        sortingFn: sortValueStaked,
       }),
       collatorColumnHelper.accessor('collatorDelegationCount', {
         header: ({ header }) => (
@@ -614,12 +520,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </Typography>
           </div>
         ),
-        sortingFn: (rowA: Row<Collator>, rowB: Row<Collator>) => {
-          const rowAValue = Number(rowA.original.collatorDelegationCount);
-          const rowBValue = Number(rowB.original.collatorDelegationCount);
-
-          return rowAValue - rowBValue;
-        },
+        sortingFn: sortDelegationCount as SortingFnOption<Collator>,
       }),
       collatorColumnHelper.accessor('href', {
         header: () => <span></span>,
@@ -674,3 +575,72 @@ const RadioInput: React.FC<{
 };
 
 export default RadioInput;
+
+/**
+ * Function to sort rows based on their selected status.
+ * Selected rows are sorted to appear before non-selected rows.
+ */
+
+const sortSelected = <T extends { getIsSelected: () => boolean }>(
+  rowA: Row<T>,
+  rowB: Row<T>,
+) => {
+  const rowASelected = rowA.getIsSelected();
+  const rowBSelected = rowB.getIsSelected();
+  return rowASelected === rowBSelected ? 0 : rowASelected ? -1 : 1;
+};
+
+/**
+ * Function to sort rows based on the total value staked.
+ * Rows with higher staked values are sorted before those with lower values.
+ */
+const sortValueStaked = <T extends { totalValueStaked: BN }>(
+  rowA: Row<T>,
+  rowB: Row<T>,
+) => {
+  const rowAValue = rowA.original.totalValueStaked;
+  const rowBValue = rowB.original.totalValueStaked;
+  return Number(rowAValue.sub(rowBValue).toString());
+};
+
+/**
+ * Function to sort rows based on commission values.
+ * Rows with lower commission values are sorted before those with higher values.
+ */
+const sortCommission = <
+  T extends { validatorCommission?: BN; commission?: BN },
+>(
+  rowA: Row<T>,
+  rowB: Row<T>,
+) => {
+  const rowAValue =
+    Number(rowA.original.validatorCommission) ||
+    Number(rowA.original.commission);
+  const rowBValue =
+    Number(rowB.original.validatorCommission) ||
+    Number(rowB.original.commission);
+  return rowAValue - rowBValue;
+};
+
+/**
+ * Function to sort rows based on the number of delegations for collators.
+ * Rows with fewer delegations are sorted before those with more delegations.
+ */
+const sortDelegationCount = <T extends { collatorDelegationCount: number }>(
+  rowA: Row<T>,
+  rowB: Row<T>,
+) => {
+  const rowAValue = rowA.original.collatorDelegationCount;
+  const rowBValue = rowB.original.collatorDelegationCount;
+  return rowAValue - rowBValue;
+};
+
+/**
+ * Function to sort rows based on type.
+ * Uses localeCompare for string comparison to ensure proper alphabetical order.
+ */
+const sortType = <T extends { type: string }>(rowA: Row<T>, rowB: Row<T>) => {
+  const rowAType = rowA.original.type;
+  const rowBType = rowB.original.type;
+  return rowAType.localeCompare(rowBType);
+};
