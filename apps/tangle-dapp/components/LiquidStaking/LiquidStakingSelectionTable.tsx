@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Column,
   ColumnDef,
@@ -26,32 +28,15 @@ import {
   Pagination,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { FC, useEffect, useMemo, useRef, useState } from 'react';
 
+import { useLiquidStakingStore } from '../../data/liquidStaking/store';
+import useLiquidStakingItems from '../../data/liquidStaking/useLiquidStakingItems';
 import { useLiquidStakingSelectionTableColumns } from '../../hooks/LiquidStaking/useLiquidStakingSelectionTableColumns';
 import {
-  Collator,
-  Dapp,
   LiquidStakingItem,
   LiquidStakingItemType,
-  Validator,
-  VaultOrStakePool,
 } from '../../types/liquidStaking';
-
-type LiquidStakingSelectionTableProps = {
-  data: Validator[] | VaultOrStakePool[] | Dapp[] | Collator[];
-  dataType: LiquidStakingItem;
-  setSelectedItems: Dispatch<SetStateAction<Set<string>>>;
-  isLoading: boolean;
-};
 
 const DEFAULT_PAGINATION: PaginationState = {
   pageIndex: 0,
@@ -63,10 +48,15 @@ const SELECTED_ITEMS_COLUMN_SORT = {
   desc: false,
 } as const satisfies ColumnSort;
 
-export const LiquidStakingSelectionTable: FC<
-  LiquidStakingSelectionTableProps
-> = ({ data, dataType, setSelectedItems, isLoading }) => {
-  console.debug('LiquidStakingSelectionTable', data, dataType, isLoading);
+export const LiquidStakingSelectionTable = () => {
+  const selectedChainId = useLiquidStakingStore(
+    (state) => state.selectedChainId,
+  );
+  const setSelectedItems = useLiquidStakingStore(
+    (state) => state.setSelectedItems,
+  );
+  const { isLoading, data, dataType } = useLiquidStakingItems(selectedChainId);
+
   const [searchValue, setSearchValue] = useState('');
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [sorting, setSorting] = useState<SortingState>([
