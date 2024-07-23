@@ -1,5 +1,5 @@
 import { createIcon } from './create-icon';
-import { IconBase } from './types';
+import type { IconBase } from './types';
 
 export const LockLineIcon = (props: IconBase) => {
   return createIcon({

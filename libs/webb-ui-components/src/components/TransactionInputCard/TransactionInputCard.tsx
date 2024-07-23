@@ -17,6 +17,8 @@ import {
   forwardRef,
   useContext,
   useMemo,
+  isValidElement,
+  ComponentProps,
 } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
@@ -232,6 +234,19 @@ const TransactionMaxAmountButton = forwardRef<
       [disabledProp, maxAmount],
     );
 
+    const { iconDisabledClassName, iconEnabledClassName } = useMemo(
+      () =>
+        ({
+          iconDisabledClassName: twMerge(
+            '!fill-current hidden group-hover:group-enabled:block group-disabled:block',
+          ),
+          iconEnabledClassName: twMerge(
+            '!fill-current group-hover:group-enabled:hidden group-disabled:hidden',
+          ),
+        }) as const,
+      [],
+    );
+
     return (
       <Tooltip>
         <TooltipTrigger asChild>
@@ -248,18 +263,38 @@ const TransactionMaxAmountButton = forwardRef<
               Icon === undefined ? (
                 accountType === 'note' ? (
                   <>
-                    <ShieldKeyholeLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
-                    <ShieldKeyholeFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
+                    <ShieldKeyholeLineIcon className={iconEnabledClassName} />
+                    <ShieldKeyholeFillIcon className={iconDisabledClassName} />
                   </>
                 ) : (
                   <>
-                    <WalletLineIcon className="!fill-current group-hover:group-enabled:hidden group-disabled:hidden" />
-                    <WalletFillIcon className="!fill-current hidden group-hover:group-enabled:block group-disabled:block" />
+                    <WalletLineIcon className={iconEnabledClassName} />
+                    <WalletFillIcon className={iconDisabledClassName} />
                   </>
                 )
-              ) : (
-                Icon
-              )
+              ) : isValidElement<ComponentProps<'svg'>>(Icon) ? (
+                cloneElement(Icon, {
+                  ...Icon.props,
+                  className: twMerge('!fill-current', Icon.props.className),
+                })
+              ) : 'enabled' in Icon && 'disabled' in Icon ? (
+                <>
+                  {cloneElement(Icon.enabled, {
+                    ...Icon.enabled.props,
+                    className: twMerge(
+                      iconEnabledClassName,
+                      Icon.enabled.props.className,
+                    ),
+                  })}
+                  {cloneElement(Icon.disabled, {
+                    ...Icon.disabled.props,
+                    className: twMerge(
+                      iconDisabledClassName,
+                      Icon.disabled.props.className,
+                    ),
+                  })}
+                </>
+              ) : null
             }
             className={twMerge(
               'ml-auto justify-end xs:justify-start',

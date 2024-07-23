@@ -76,7 +76,7 @@ const RestakeDetailCardHeader = forwardRef(
       <div
         {...props}
         className={twMerge(
-          'flex items-start justify-between pb-3 border-b border-mono-60 border-opacity-50',
+          'flex items-start justify-between pb-3 border-b border-mono-40 dark:border-mono-160',
           className,
         )}
         ref={ref}
