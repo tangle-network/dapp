@@ -310,7 +310,7 @@ export const KeygenTable: FC = () => {
             column.getFacetedMinMaxValues()?.[0] ?? 0,
             column.getFacetedMinMaxValues()?.[1] ?? 0,
           ]
-        : column.getFacetedMinMaxValues() ?? [0, 0],
+        : (column.getFacetedMinMaxValues() ?? [0, 0]),
     [],
   );
 
