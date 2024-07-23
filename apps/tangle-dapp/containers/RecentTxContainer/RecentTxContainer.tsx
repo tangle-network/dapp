@@ -20,7 +20,7 @@ const RecentTxContainer: FC = () => {
   const explorerUrl = useMemo(() => {
     return isEvm
       ? network.evmExplorerUrl
-      : network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl;
+      : (network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl);
   }, [
     isEvm,
     network.evmExplorerUrl,
