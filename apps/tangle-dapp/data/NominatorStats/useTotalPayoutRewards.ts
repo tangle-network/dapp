@@ -7,33 +7,36 @@ import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { usePayoutsStore } from '../payouts/store';
 
 export default function useTotalPayoutRewards() {
-  const data = usePayoutsStore((state) => state.data);
+  const payouts = usePayoutsStore((state) => state.data);
   const maxEras = usePayoutsStore((state) => state.maxEras);
 
   const address = useSubstrateAddress();
 
-  const payoutsData = useMemo(() => {
-    if (data === null || address === null) {
-      return [];
+  const payoutsAtMaxEras = useMemo(() => {
+    if (payouts === null || address === null) {
+      return null;
     }
 
-    return data[maxEras] ?? [];
-  }, [address, data, maxEras]);
+    return payouts[maxEras] ?? [];
+  }, [address, payouts, maxEras]);
 
   const [error, setError] = useState<Error | null>(null);
 
   const totalPayoutRewards = useMemo(() => {
+    // TODO: Why is there a try-catch block here? What kind of error could be thrown? The BN operations here should not throw any errors.
     try {
-      if (!address) {
+      // Not ready yet.
+      if (address === null || payoutsAtMaxEras === null) {
         return null;
       }
-
-      if (payoutsData.length === 0) {
+      // Nothing to claim; total payouts are 0.
+      else if (payoutsAtMaxEras.length === 0) {
         return new BN(0);
       }
 
-      const totalPayoutRewards = payoutsData.reduce((acc, payout) => {
+      const totalPayoutRewards = payoutsAtMaxEras.reduce((acc, payout) => {
         const currentReward = payout.nominatorTotalRewardRaw;
+
         return acc.add(currentReward);
       }, new BN(0));
 
@@ -46,7 +49,7 @@ export default function useTotalPayoutRewards() {
       );
       return null;
     }
-  }, [address, payoutsData]);
+  }, [address, payoutsAtMaxEras]);
 
   return { error, data: totalPayoutRewards };
 }
