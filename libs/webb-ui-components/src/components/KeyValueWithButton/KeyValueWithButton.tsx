@@ -102,7 +102,11 @@ export const KeyValueWithButton = forwardRef<
           <div className={size === 'md' ? 'py-1 pl-3' : ''}>
             <Tooltip>
               <TooltipTrigger
-                onClick={() => copy(keyValue)}
+                onClick={
+                  typeof onCopyButtonClick === 'function'
+                    ? onCopyButtonClick
+                    : onCopy
+                }
                 disabled={isDisabledTooltip}
                 asChild
               >
