@@ -55,7 +55,7 @@ export function useDarkMode(
       if (!isBrowser()) return;
 
       const _nextThemeMode =
-        (nextThemeMode ?? theme === 'dark') ? 'light' : 'dark';
+        nextThemeMode ?? theme === 'dark' ? 'light' : 'dark';
 
       if (_nextThemeMode === theme) return;
 

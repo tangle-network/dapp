@@ -224,7 +224,7 @@ const getTxQueueFromLocalStorage = (
   txQueueByAccFromLocalStorage: Optional<TxQueueByAccount> | null,
 ) => {
   const bridgeTxQueueByAcc = txQueueByAccFromLocalStorage
-    ? (txQueueByAccFromLocalStorage.value ?? null)
+    ? txQueueByAccFromLocalStorage.value ?? null
     : null;
 
   const cachedTxQueue = bridgeTxQueueByAcc?.[activeAccountAddress] ?? [];
