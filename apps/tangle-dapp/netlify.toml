@@ -2,5 +2,5 @@
 package = "@netlify/plugin-nextjs"
 
 [build]
-command = "yarn nx build tangle-dapp --verbose --skip-nx-cache"
+command = "yarn nx build tangle-dapp"
 publish = "./dist/apps/tangle-dapp/.next"
