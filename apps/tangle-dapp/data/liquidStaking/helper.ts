@@ -1,12 +1,17 @@
 import { Option } from '@polkadot/types';
-import { AccountId32 } from '@polkadot/types/interfaces';
+import { AccountId32, Perbill } from '@polkadot/types/interfaces';
+import { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import {
   PalletDappStakingV3ContractStakeAmount,
   PalletDappStakingV3DAppInfo,
 } from '../../types/astarDappStaking';
-import { getApiPromise } from '../../utils/polkadot';
+import {
+  extractDataFromIdentityInfo,
+  getApiPromise,
+  IdentityDataType,
+} from '../../utils/polkadot';
 
 export const fetchValidators = async (
   rpcEndpoint: string,
@@ -23,7 +28,6 @@ export const fetchMappedIdentityNames = async (
   const map = new Map<string, string>();
 
   if (!api.query.identity) {
-    // throw new Error('identity pallet is not available in the runtime');
     return map;
   }
 
@@ -36,18 +40,9 @@ export const fetchMappedIdentityNames = async (
 
     const validator = identity[0].args[0];
     const info = identity[1].unwrap()[0].info;
-    let displayName = validator.toString();
-    if (info) {
-      const displayData = info['display'];
-      if (displayData.isNone) return null;
-      const displayDataObject: { raw?: string } = JSON.parse(
-        displayData.toString(),
-      );
-      if (displayDataObject.raw !== undefined) {
-        const hexString = displayDataObject.raw;
-        displayName = Buffer.from(hexString.slice(2), 'hex').toString('utf8');
-      }
-    }
+    const displayName =
+      extractDataFromIdentityInfo(info, IdentityDataType.NAME) ||
+      validator.toString();
     map.set(validator.toString(), displayName);
   });
   return map;
@@ -65,22 +60,31 @@ export const fetchMappedValidatorsTotalValueStaked = async (
   const activeEra = await api.query.staking.activeEra();
   const activeEraIndex = activeEra.unwrap().index;
   const validators = await fetchValidators(rpcEndpoint);
-  const stakerPromises = validators.map(async (val) => {
-    const erasStakers = await api.query.staking.erasStakersOverview(
-      activeEraIndex,
-      val,
-    );
-    const exposure = erasStakers.unwrap();
-    const totalStaked = exposure.total.unwrap().toBn() || BN_ZERO;
-    return {
-      validator: val.toString(),
-      totalStaked,
-    };
+
+  const erasStakersOverviewMap = new Map<string, BN>();
+  const erasStakersOverviewEntries =
+    await api.query.staking.erasStakersOverview.entries();
+
+  erasStakersOverviewEntries.forEach((overview) => {
+    const [key, exposure] = overview;
+    const eraIndex = key.args[0].toNumber();
+    const validator = key.args[1].toString();
+
+    const validatorExposure =
+      exposure as Option<SpStakingPagedExposureMetadata>;
+
+    if (eraIndex === activeEraIndex.toNumber()) {
+      const totalStaked =
+        validatorExposure.unwrap().total.unwrap().toBn() || BN_ZERO;
+      erasStakersOverviewMap.set(validator, totalStaked);
+    }
   });
-  const stakers = await Promise.all(stakerPromises);
+
   const map = new Map<string, BN>();
-  stakers.forEach((staker) => {
-    map.set(staker.validator, staker.totalStaked);
+
+  validators.forEach((validator) => {
+    const totalStaked = erasStakersOverviewMap.get(validator.toString());
+    map.set(validator.toString(), totalStaked || BN_ZERO);
   });
   return map;
 };
@@ -95,18 +99,24 @@ export const fetchMappedValidatorsCommission = async (
     throw new Error('staking pallet is not available in the runtime');
   }
 
-  const commissionPromises = validators.map(async (val) => {
-    const prefs = await api.query.staking.validators(val);
-    return {
-      validator: val.toString(),
-      commission: prefs.commission.unwrap(),
-    };
+  const commissionMap = new Map<string, Perbill>();
+  const allValidators = await api.query.staking.validators.entries();
+
+  allValidators.forEach(([key, prefs]) => {
+    const val = key.args[0].toString();
+    const commission = prefs.commission.unwrap();
+    console.debug('validator', val);
+    commissionMap.set(val, commission);
   });
-  const commissions = await Promise.all(commissionPromises);
+
   const map = new Map<string, BN>();
-  commissions.forEach((commission) => {
-    map.set(commission.validator, commission.commission);
+
+  validators.forEach((validator) => {
+    const commission = commissionMap.get(validator.toString());
+    // console.debug('validator', validator.toString(), commission?.toString());
+    map.set(validator.toString(), commission || BN_ZERO);
   });
+
   return map;
 };
 

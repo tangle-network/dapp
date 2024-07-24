@@ -176,7 +176,7 @@ export const LiquidStakingSelectionTable = () => {
 
   return (
     <div className="relative">
-      <div className="w-full overflow-x-auto bg-validator_table dark:bg-validator_table_dark rounded-2xl border-[1px] border-mono-0 dark:border-mono-160 px-8 py-6 flex flex-col justify-between min-h-[600px]">
+      <div className="w-full overflow-x-auto bg-validator_table dark:bg-validator_table_dark rounded-2xl border border-mono-0 dark:border-mono-160 px-8 py-6 flex flex-col justify-between min-h-[600px]">
         {!tableIsLoading ? (
           <>
             <div className="flex flex-col gap-2">
