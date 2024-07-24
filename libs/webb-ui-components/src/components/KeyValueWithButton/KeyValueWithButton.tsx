@@ -1,15 +1,17 @@
-import { useCopyable } from '../../hooks/useCopyable';
 import { FileCopyLine } from '@webb-tools/icons';
-import { shortenHex } from '../../utils/shortenHex';
 import cx from 'classnames';
 import {
-  type MouseEventHandler,
   forwardRef,
   useCallback,
   useMemo,
+  type MouseEventHandler,
 } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useCopyable } from '../../hooks/useCopyable';
+import { shortenHex } from '../../utils/shortenHex';
+import { shortenString } from '../../utils/shortenString';
 
+import { isHex } from 'viem';
 import { LabelWithValue } from '../LabelWithValue';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { KeyValueWithButtonProps } from './types';
@@ -41,6 +43,7 @@ export const KeyValueWithButton = forwardRef<
       shortenFn,
       isDisabledTooltip,
       onCopyButtonClick,
+      displayCharCount = 5,
       copyProps,
       ...props
     },
@@ -81,9 +84,11 @@ export const KeyValueWithButton = forwardRef<
         hasShortenValue
           ? shortenFn
             ? shortenFn(keyValue)
-            : shortenHex(keyValue, 5)
-          : shortenHex(keyValue, 5).replace('0x', ''),
-      [hasShortenValue, keyValue, shortenFn],
+            : isHex(keyValue)
+              ? shortenHex(keyValue, displayCharCount)
+              : shortenString(keyValue, displayCharCount)
+          : keyValue,
+      [displayCharCount, hasShortenValue, keyValue, shortenFn],
     );
 
     return (

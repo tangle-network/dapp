@@ -309,8 +309,6 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             onOperatorAccountIdChange={handleOperatorAccountIdChange}
             operatorMap={operatorMap}
             operatorIdentities={operatorIdentities}
-            overrideTitleProps={{ variant: 'h4' }}
-            className="h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]"
             onClose={closeOperatorModal}
             onResetSelection={handleResetOperator}
           />

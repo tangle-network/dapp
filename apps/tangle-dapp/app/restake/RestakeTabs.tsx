@@ -10,7 +10,7 @@ import TabsList from './TabsList';
 
 export type TabsListProps = PropsOf<'ul'>;
 
-export const tabs = ['deposit', 'stake', 'unstake', 'withdraw'] as const;
+export const tabs = ['deposit', 'stake', 'unstake'] as const;
 
 const RestakeTabs = (props: TabsListProps) => {
   const pathname = usePathname();

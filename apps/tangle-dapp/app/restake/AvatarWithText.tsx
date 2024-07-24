@@ -26,7 +26,6 @@ const AvatarWithText = ({
   overrideTypographyProps,
   ...props
 }: Props) => {
-  console.log('identityName', identityName);
   return (
     <div
       {...props}

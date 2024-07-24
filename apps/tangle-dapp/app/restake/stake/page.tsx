@@ -262,7 +262,7 @@ export default function DelegatePage() {
         <ModalContent
           isOpen={isOperatorModalOpen}
           title="Select Operator"
-          description="Select the operator you want to delegate to"
+          description="Select the operator you want to stake with"
           onInteractOutside={closeOperatorModal}
         >
           <OperatorList
@@ -270,8 +270,6 @@ export default function DelegatePage() {
             onOperatorAccountIdChange={handleOperatorAccountIdChange}
             operatorMap={operatorMap}
             operatorIdentities={operatorIdentities}
-            overrideTitleProps={{ variant: 'h4' }}
-            className="h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]"
             onClose={closeOperatorModal}
           />
         </ModalContent>
