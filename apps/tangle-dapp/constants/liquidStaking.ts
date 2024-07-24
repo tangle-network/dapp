@@ -2,6 +2,7 @@ import {
   TanglePrimitivesCurrencyTokenSymbol,
   TanglePrimitivesTimeUnit,
 } from '@polkadot/types/lookup';
+import { BN } from '@polkadot/util';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 
 import { StaticAssetPath } from '.';
@@ -29,6 +30,12 @@ export type LiquidStakingCurrency =
   | Exclude<TanglePrimitivesCurrencyTokenSymbol['type'], 'Bnc'>
   | 'Tnt';
 
+export type SubstrateChainTimingSpec = {
+  expectedBlockTimeMs: number;
+  blocksPerSession: number;
+  sessionsPerEra: number;
+};
+
 export type LiquidStakingChainDef = {
   id: LiquidStakingChainId;
   name: string;
@@ -37,6 +44,7 @@ export type LiquidStakingChainDef = {
   networkName: string;
   currency: LiquidStakingCurrency;
   decimals: number;
+  substrateTimingSpec?: SubstrateChainTimingSpec;
 };
 
 const POLKADOT: LiquidStakingChainDef = {
@@ -139,7 +147,12 @@ export type LiquidStakingCurrencyKey =
 
 export type LiquidStakingTimeUnit = TanglePrimitivesTimeUnit['type'];
 
-export type LiquidStakingTimeUnitInstance = {
+export type SimpleTimeUnitInstance = {
   value: number;
   unit: LiquidStakingTimeUnit;
+};
+
+export type CurrencyAndAmount = {
+  currency: LiquidStakingCurrency;
+  amount: BN;
 };

@@ -3,12 +3,11 @@
 import '@webb-tools/tangle-restaking-types';
 
 import { TanglePrimitivesCurrencyCurrencyId } from '@polkadot/types/lookup';
+import { BN } from '@polkadot/util';
 
-import { LiquidStakingCurrency } from '../../constants/liquidStaking';
-
-const getValueOfTangleCurrency = (
+const getAmountOfTangleCurrency = (
   tangleCurrencyId: TanglePrimitivesCurrencyCurrencyId,
-): LiquidStakingCurrency => {
+): BN => {
   // TODO: Implement.
   // Unfortunately, there doesn't seem to be a cleaner way of
   // going about this. This is a direct cause of the way that
@@ -50,4 +49,4 @@ const getValueOfTangleCurrency = (
   );
 };
 
-export default getValueOfTangleCurrency;
+export default getAmountOfTangleCurrency;

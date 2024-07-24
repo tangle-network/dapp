@@ -33,6 +33,7 @@ import TokenAmountCell from '../tableCells/TokenAmountCell';
 import AddressLink from './AddressLink';
 import CancelUnstakeModal from './CancelUnstakeModal';
 import ExternalLink from './ExternalLink';
+import useTokenUnlockLedger from '../../data/liquidStaking/useTokenUnlockLedger';
 
 export type UnstakeRequestItem = {
   address: AnySubstrateAddress;
@@ -116,6 +117,9 @@ const columns = [
 ];
 
 const UnstakeRequestsTable: FC = () => {
+  // TODO: Providing a key here doesn't make much sense; find a way to get all the entries for the current account, without needing to provide a key.
+  const tokenUnlockLedger = useTokenUnlockLedger();
+
   // TODO: Mock data.
   const data: UnstakeRequestItem[] = [
     {

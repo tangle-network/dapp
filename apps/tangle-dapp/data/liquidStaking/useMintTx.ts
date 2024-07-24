@@ -27,6 +27,8 @@ const useMintTx = () => {
       const key: LiquidStakingCurrencyKey = { Native: context.currency };
 
       // TODO: Investigate what the `remark` and `channel` parameters are for, and whether they are relevant for us here.
+      // The remark field can be used to store additional information about
+      // the minting transaction. Leave it empty since it is not required.
       return api.tx.lstMinting.mint(key, context.amount, Bytes.from([]), null);
     },
     undefined,
