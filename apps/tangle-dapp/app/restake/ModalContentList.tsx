@@ -29,7 +29,7 @@ type Props<ItemType> = Partial<ComponentProps<typeof ListCardWrapper>> & {
         title: string;
         description: string;
       };
-  renderItem?: (operator: ItemType) => ReactNode;
+  renderItem?: (operator: ItemType, index: number) => ReactNode;
 };
 
 const ModalContentList = forwardRef(
@@ -81,7 +81,11 @@ const ModalContentList = forwardRef(
             )}
 
             <ScrollArea className={twMerge('h-full py-2')}>
-              <ul>{filteredItems.map((current) => renderItem?.(current))}</ul>
+              <ul>
+                {filteredItems.map((current, idx) =>
+                  renderItem?.(current, idx),
+                )}
+              </ul>
             </ScrollArea>
 
             {hasResetButton && (

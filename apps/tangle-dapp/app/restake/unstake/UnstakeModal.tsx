@@ -5,7 +5,6 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatUnits } from 'viem';
-import type { Writeable } from 'zod';
 
 import { useRestakeContext } from '../../../context/RestakeContext';
 import { DelegatorInfo } from '../../../types/restake';
@@ -39,30 +38,7 @@ const UnstakeModal = ({
       return [];
     }
 
-    return delegatorInfo.delegations.reduce(
-      (acc, item) => {
-        const { operatorAccountId, assetId, amountBonded } = item;
-
-        const existingDelegation = acc.find(
-          (delegation) =>
-            delegation.operatorAccountId === operatorAccountId &&
-            delegation.assetId === assetId,
-        );
-
-        if (existingDelegation) {
-          existingDelegation.amountBonded += amountBonded;
-        } else {
-          acc.push({
-            operatorAccountId,
-            assetId,
-            amountBonded,
-          });
-        }
-
-        return acc;
-      },
-      [] as Writeable<NonNullable<typeof delegatorInfo.delegations>[number]>[],
-    );
+    return delegatorInfo.delegations;
   }, [delegatorInfo]);
 
   return (
@@ -105,7 +81,7 @@ const UnstakeModal = ({
           description:
             'You can try to deposit or delegate an asset to an operator.',
         }}
-        renderItem={({ amountBonded, assetId, operatorAccountId }) => {
+        renderItem={({ amountBonded, assetId, operatorAccountId }, idx) => {
           const asset = assetMap[assetId];
 
           const decimals = asset?.decimals || DEFAULT_DECIMALS;
@@ -119,7 +95,7 @@ const UnstakeModal = ({
                 'cursor-pointer max-w-none dark:bg-transparent',
                 'flex items-center justify-between px-0',
               )}
-              key={`${operatorAccountId}-${assetId}`}
+              key={`${idx}-${operatorAccountId}-${assetId}`}
               onClick={() =>
                 onItemSelected({
                   operatorAccountId,
