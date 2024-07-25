@@ -1,6 +1,5 @@
 'use client';
 
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import type {
@@ -17,7 +16,6 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 
-import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import { DelegateContext, TxEvent } from '../../../data/restake/RestakeTx/base';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
@@ -34,10 +32,10 @@ import { PagePath } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
 import AvatarWithText from '../AvatarWithText';
-import ChainList from '../ChainList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
 import OperatorList from '../OperatorList';
+import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Info from './Info';
@@ -274,22 +272,11 @@ export default function DelegatePage() {
           />
         </ModalContent>
 
-        <ModalContent
+        <SupportedChainModal
           isOpen={isChainModalOpen}
-          title="Select Chain"
-          description="Select the chain you want to delegate from"
-          onInteractOutside={closeChainModal}
-        >
-          <ChainList
-            selectedTypedChainId={activeTypedChainId}
-            className="h-full"
-            onClose={closeChainModal}
-            onChange={handleChainChange}
-            defaultCategory={
-              chainsPopulated[SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0]].tag
-            }
-          />
-        </ModalContent>
+          onClose={closeChainModal}
+          onChainChange={handleChainChange}
+        />
       </Modal>
     </Form>
   );
