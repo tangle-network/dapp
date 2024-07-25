@@ -19,7 +19,7 @@ export enum LiquidStakingToken {
   DOT = 'DOT',
   GLMR = 'GLMR',
   MANTA = 'MANTA',
-  ASTAR = 'ASTAR',
+  ASTAR = 'ASTR',
   PHALA = 'PHALA',
   TNT = 'TNT',
 }
@@ -37,6 +37,7 @@ export type LiquidStakingChainDef = {
   networkName: string;
   currency: LiquidStakingCurrency;
   decimals: number;
+  rpcEndpoint: string;
 };
 
 const POLKADOT: LiquidStakingChainDef = {
@@ -47,6 +48,7 @@ const POLKADOT: LiquidStakingChainDef = {
   networkName: 'Polkadot Mainnet',
   currency: 'Dot',
   decimals: 10,
+  rpcEndpoint: 'wss://polkadot-rpc.dwellir.com',
 };
 
 const PHALA: LiquidStakingChainDef = {
@@ -57,6 +59,7 @@ const PHALA: LiquidStakingChainDef = {
   networkName: 'Phala',
   currency: 'Pha',
   decimals: 18,
+  rpcEndpoint: 'wss://api.phala.network/ws',
 };
 
 const MOONBEAM: LiquidStakingChainDef = {
@@ -68,6 +71,7 @@ const MOONBEAM: LiquidStakingChainDef = {
   // TODO: No currency entry for GLMR in the Tangle Primitives?
   currency: 'Dot',
   decimals: 18,
+  rpcEndpoint: 'wss://moonbeam.api.onfinality.io/public-ws',
 };
 
 const ASTAR: LiquidStakingChainDef = {
@@ -79,6 +83,7 @@ const ASTAR: LiquidStakingChainDef = {
   // TODO: No currency entry for ASTAR in the Tangle Primitives?
   currency: 'Dot',
   decimals: 18,
+  rpcEndpoint: 'wss://astar.api.onfinality.io/public-ws',
 };
 
 const MANTA: LiquidStakingChainDef = {
@@ -90,6 +95,7 @@ const MANTA: LiquidStakingChainDef = {
   // TODO: No currency entry for ASTAR in the Tangle Primitives?
   currency: 'Dot',
   decimals: 18,
+  rpcEndpoint: 'wss://ws.manta.systems',
 };
 
 const TANGLE_RESTAKING_PARACHAIN: LiquidStakingChainDef = {
@@ -100,6 +106,7 @@ const TANGLE_RESTAKING_PARACHAIN: LiquidStakingChainDef = {
   networkName: 'Tangle Parachain',
   currency: 'Tnt',
   decimals: TANGLE_TOKEN_DECIMALS,
+  rpcEndpoint: '',
 };
 
 export const LIQUID_STAKING_CHAIN_MAP: Record<
@@ -145,46 +152,6 @@ export enum NetworkType {
   RELAY_CHAIN = 'Relay Chain',
   PARACHAIN = 'Parachain',
 }
-
-export const LS_NETWORK_CONFIG: Record<LiquidStakingChainId, Network> = {
-  [LiquidStakingChainId.POLKADOT]: {
-    name: 'Polkadot',
-    // TODO: This should be updated to the correct endpoint. Using the public OnFinality endpoint for now as the Rococco does not include staking pallet.
-    endpoint: 'wss://polkadot.api.onfinality.io/public-ws',
-    tokenSymbol: LiquidStakingToken.DOT,
-    chainType: NetworkType.RELAY_CHAIN,
-  },
-  [LiquidStakingChainId.PHALA]: {
-    name: 'Phala',
-    endpoint: 'wss://api.phala.network/ws',
-    tokenSymbol: LiquidStakingToken.PHALA,
-    chainType: NetworkType.PARACHAIN,
-  },
-  [LiquidStakingChainId.MOONBEAM]: {
-    name: 'Moonbeam',
-    endpoint: 'wss://moonbeam.api.onfinality.io/public-ws',
-    tokenSymbol: LiquidStakingToken.GLMR,
-    chainType: NetworkType.PARACHAIN,
-  },
-  [LiquidStakingChainId.ASTAR]: {
-    name: 'Astar',
-    endpoint: 'wss://astar.api.onfinality.io/public-ws',
-    tokenSymbol: LiquidStakingToken.ASTAR,
-    chainType: NetworkType.PARACHAIN,
-  },
-  [LiquidStakingChainId.MANTA]: {
-    name: 'Manta',
-    endpoint: 'wss://ws.manta.systems',
-    tokenSymbol: LiquidStakingToken.MANTA,
-    chainType: NetworkType.PARACHAIN,
-  },
-  [LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN]: {
-    name: 'Tangle Parachain',
-    endpoint: 'ws://127.0.0.1:59408',
-    tokenSymbol: LiquidStakingToken.TNT,
-    chainType: NetworkType.PARACHAIN,
-  },
-};
 
 export type LiquidStakingCurrencyKey =
   | { lst: LiquidStakingCurrency }

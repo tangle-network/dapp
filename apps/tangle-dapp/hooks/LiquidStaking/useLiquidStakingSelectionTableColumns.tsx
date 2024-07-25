@@ -16,7 +16,6 @@ import { useMemo } from 'react';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { SortArrow } from '../../components/LiquidStaking/LiquidStakingSelectionTable';
 import { StakingItemExternalLinkButton } from '../../components/LiquidStaking/StakingItemExternalLinkButton';
 import {
   Collator,
@@ -106,8 +105,6 @@ export const useLiquidStakingSelectionTableColumns = (
             >
               Total Staked
             </Typography>
-
-            <SortArrow column={header.column} />
           </div>
         ),
         cell: (props) => (
@@ -137,8 +134,6 @@ export const useLiquidStakingSelectionTableColumns = (
             >
               Commission
             </Typography>
-
-            <SortArrow column={header.column} />
           </div>
         ),
         cell: (props) => (
@@ -229,8 +224,6 @@ export const useLiquidStakingSelectionTableColumns = (
             >
               Total Staked
             </Typography>
-
-            <SortArrow column={header.column} />
           </div>
         ),
         cell: (props) => (
@@ -321,8 +314,6 @@ export const useLiquidStakingSelectionTableColumns = (
             >
               Type
             </Typography>
-
-            <SortArrow column={header.column} />
           </div>
         ),
         cell: (props) => {
@@ -349,8 +340,6 @@ export const useLiquidStakingSelectionTableColumns = (
             >
               Total Staked
             </Typography>
-
-            <SortArrow column={header.column} />
           </div>
         ),
         cell: (props) => (
@@ -380,8 +369,6 @@ export const useLiquidStakingSelectionTableColumns = (
             >
               Commission
             </Typography>
-
-            <SortArrow column={header.column} />
           </div>
         ),
         cell: (props) => (
@@ -474,8 +461,6 @@ export const useLiquidStakingSelectionTableColumns = (
             >
               Total Staked
             </Typography>
-
-            <SortArrow column={header.column} />
           </div>
         ),
         cell: (props) => (
@@ -505,8 +490,6 @@ export const useLiquidStakingSelectionTableColumns = (
             >
               Delegations
             </Typography>
-
-            <SortArrow column={header.column} />
           </div>
         ),
         cell: (props) => (

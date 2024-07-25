@@ -1,10 +1,8 @@
 'use client';
 
 import {
-  Column,
   ColumnDef,
   ColumnSort,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
@@ -16,19 +14,15 @@ import {
   TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  ArrowDropDownFill,
-  ArrowDropUpFill,
-  Search,
-  Spinner,
-} from '@webb-tools/icons';
+import { Search, Spinner } from '@webb-tools/icons';
 import {
   fuzzyFilter,
   Input,
   Pagination,
+  Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useLiquidStakingStore } from '../../data/liquidStaking/store';
 import useLiquidStakingItems from '../../data/liquidStaking/useLiquidStakingItems';
@@ -198,41 +192,13 @@ export const LiquidStakingSelectionTable = () => {
                 debounceTime={300}
               />
 
-              <table>
-                <thead>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => (
-                        <th
-                          key={header.id}
-                          className="border-b border-b-mono-40 dark:border-b-mono-140 pb-2 sticky top-0"
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody className="overflow-y-scroll max-h-[400px]">
-                  {table.getRowModel().rows.map((row) => (
-                    <tr key={row.id} className="group/tr">
-                      {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="h-[44px]">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <Table
+                thClassName="!bg-inherit border-t-0 bg-mono-0 !px-3 !py-2 whitespace-nowrap"
+                trClassName="!bg-inherit"
+                tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
+                tableProps={table}
+                totalRecords={tableData.length}
+              />
             </div>
 
             {data.length > DEFAULT_PAGINATION.pageSize && (
@@ -277,19 +243,5 @@ export const LiquidStakingSelectionTable = () => {
         <RefreshLineIcon />
       </IconButton> */}
     </div>
-  );
-};
-
-export const SortArrow: FC<{ column: Column<any, any> }> = ({ column }) => {
-  const isSorted = column.getIsSorted();
-
-  if (!isSorted) {
-    return null;
-  }
-
-  return isSorted === 'asc' ? (
-    <ArrowDropUpFill className="cursor-pointer" size="lg" />
-  ) : (
-    <ArrowDropDownFill className="cursor-pointer" size="lg" />
   );
 };

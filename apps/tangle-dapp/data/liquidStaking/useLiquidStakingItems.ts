@@ -2,8 +2,8 @@ import { BN_ZERO } from '@polkadot/util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
+  LIQUID_STAKING_CHAIN_MAP,
   LiquidStakingChainId,
-  LS_NETWORK_CONFIG,
 } from '../../constants/liquidStaking';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import {
@@ -46,7 +46,7 @@ const useLiquidStakingItems = (selectedChain: LiquidStakingChainId) => {
 
   const fetchData = useCallback(
     async (chain: LiquidStakingChainId) => {
-      const endpoint = LS_NETWORK_CONFIG[chain]?.endpoint;
+      const endpoint = LIQUID_STAKING_CHAIN_MAP[chain]?.rpcEndpoint;
 
       if (!endpoint) {
         setItems([]);
@@ -101,6 +101,7 @@ const useLiquidStakingItems = (selectedChain: LiquidStakingChainId) => {
     [setLiquidStakingTableData],
   );
 
+  // Whenever the selected chain changes, fetch the data for the new chain
   useEffect(() => {
     setItems([]);
     setIsLoading(true);
