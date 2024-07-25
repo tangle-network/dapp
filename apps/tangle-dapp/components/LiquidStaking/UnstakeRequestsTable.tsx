@@ -25,9 +25,9 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import BN from 'bn.js';
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 
-import useTokenUnlockLedger from '../../data/liquidStaking/useTokenUnlockLedger';
+import useLstUnlockRequests from '../../data/liquidStaking/useLstUnlockRequests';
 import { AnySubstrateAddress } from '../../types/utils';
 import calculateTimeRemaining from '../../utils/calculateTimeRemaining';
 import GlassCard from '../GlassCard';
@@ -38,6 +38,7 @@ import CancelUnstakeModal from './CancelUnstakeModal';
 import ExternalLink from './ExternalLink';
 
 export type UnstakeRequestItem = {
+  unlockId: number;
   address: AnySubstrateAddress;
   amount: BN;
   endTimestamp?: number;
@@ -120,44 +121,56 @@ const columns = [
 
 const UnstakeRequestsTable: FC = () => {
   // TODO: Providing a key here doesn't make much sense; find a way to get all the entries for the current account, without needing to provide a key.
-  const tokenUnlockLedger = useTokenUnlockLedger();
+  const tokenUnlockLedger = useLstUnlockRequests();
 
   // TODO: Mock data.
-  const data: UnstakeRequestItem[] = [
-    {
-      address: '0x123456' as any,
-      amount: new BN(100),
-      endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
-    },
-    {
-      address: '0x123456' as any,
-      amount: new BN(100),
-      endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
-    },
-    {
-      address: '0x123456' as any,
-      amount: new BN(100),
-      endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
-    },
-    {
-      address: '0x123456' as any,
-      amount: new BN(100),
-      endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
-    },
-  ];
+  const data: UnstakeRequestItem[] = useMemo(
+    () => [
+      {
+        unlockId: 0,
+        address: '0x123456' as any,
+        amount: new BN(100),
+        endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
+      },
+      {
+        unlockId: 1,
+        address: '0x123456' as any,
+        amount: new BN(100),
+        endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
+      },
+      {
+        unlockId: 2,
+        address: '0x123456' as any,
+        amount: new BN(100),
+        endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
+      },
+      {
+        unlockId: 3,
+        address: '0x123456' as any,
+        amount: new BN(100),
+        endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
+      },
+    ],
+    [],
+  );
 
-  const table = useReactTable({
-    data,
-    columns,
-    filterFns: {
-      fuzzy: fuzzyFilter,
-    },
-    globalFilterFn: fuzzyFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  });
+  const tableParams = useMemo(
+    () => ({
+      data,
+      columns,
+      filterFns: {
+        fuzzy: fuzzyFilter,
+      },
+      globalFilterFn: fuzzyFilter,
+      getCoreRowModel: getCoreRowModel(),
+      getFilteredRowModel: getFilteredRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
+    }),
+    [data],
+  );
+
+  const table = useReactTable(tableParams);
 
   return (
     <div className="space-y-4 flex-grow max-w-[700px]">

@@ -9,7 +9,7 @@ import { FC, useMemo } from 'react';
 import { StaticAssetPath } from '../../constants';
 import {
   LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingChainId,
+  ParachainChainId,
   LiquidStakingToken,
   TVS_TOOLTIP,
 } from '../../constants/liquidStaking';
@@ -19,7 +19,7 @@ import ChainLogo from './ChainLogo';
 import StatItem from './StatItem';
 
 export type LiquidStakingTokenItemProps = {
-  chainId: LiquidStakingChainId;
+  chainId: ParachainChainId;
   title: string;
   tokenSymbol: LiquidStakingToken;
   totalValueStaked: number;

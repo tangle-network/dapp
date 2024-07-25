@@ -17,9 +17,9 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import {
-  LIQUID_STAKING_CHAIN_MAP,
+  PARACHAIN_CHAIN_MAP,
   LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingChainId,
+  ParachainChainId,
 } from '../../constants/liquidStaking';
 import { useLiquidStakingStore } from '../../data/liquidStaking/store';
 import useExchangeRate, {
@@ -50,7 +50,7 @@ const LiquidStakeCard: FC = () => {
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const { nativeBalances } = useParachainBalances();
 
-  const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
+  const selectedChain = PARACHAIN_CHAIN_MAP[selectedChainId];
 
   const exchangeRate = useExchangeRate(
     ExchangeRateType.NativeToLiquid,
@@ -137,7 +137,7 @@ const LiquidStakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-stake-to"
-        chainId={LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN}
+        chainId={ParachainChainId.TANGLE_RESTAKING_PARACHAIN}
         placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
         decimals={selectedChain.decimals}
         amount={toAmount}

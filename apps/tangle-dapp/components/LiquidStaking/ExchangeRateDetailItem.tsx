@@ -3,7 +3,7 @@ import { FC } from 'react';
 
 import {
   LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingCurrency,
+  ParachainCurrency,
   LiquidStakingToken,
 } from '../../constants/liquidStaking';
 import useExchangeRate, {
@@ -14,7 +14,7 @@ import DetailItem from './DetailItem';
 export type ExchangeRateDetailItemProps = {
   type: ExchangeRateType;
   token: LiquidStakingToken;
-  currency: LiquidStakingCurrency;
+  currency: ParachainCurrency;
 };
 
 const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({

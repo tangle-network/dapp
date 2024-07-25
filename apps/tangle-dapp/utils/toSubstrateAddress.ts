@@ -18,10 +18,15 @@ import assert from 'assert';
  * @returns The converted Substrate address. If the address is already a
  * Substrate address, it will be returned as is.
  */
-export const toSubstrateAddress = (address: string) => {
+export const toSubstrateAddress = (
+  address: string,
+  ss58Format?: number,
+): string => {
   // If it's an EVM address, convert it to a Substrate address.
   if (isEthereumAddress(address)) {
-    return evmToAddress(address);
+    // Different SS58 formats can be used for different networks,
+    // which still represents the same account, but look different.
+    return evmToAddress(address, ss58Format);
   }
 
   assert(

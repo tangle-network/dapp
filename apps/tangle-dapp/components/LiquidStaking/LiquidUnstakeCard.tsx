@@ -11,9 +11,9 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
-  LIQUID_STAKING_CHAIN_MAP,
+  PARACHAIN_CHAIN_MAP,
   LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingChainId,
+  ParachainChainId,
 } from '../../constants/liquidStaking';
 import useDelegationsOccupiedStatus from '../../data/liquidStaking/useDelegationsOccupiedStatus';
 import useExchangeRate, {
@@ -39,14 +39,14 @@ const LiquidUnstakeCard: FC = () => {
   const [isRequestSubmittedModalOpen, setIsRequestSubmittedModalOpen] =
     useState(false);
 
-  const [selectedChainId, setSelectedChainId] = useState<LiquidStakingChainId>(
-    LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN,
+  const [selectedChainId, setSelectedChainId] = useState<ParachainChainId>(
+    ParachainChainId.TANGLE_RESTAKING_PARACHAIN,
   );
 
   const { execute: executeRedeemTx, status: redeemTxStatus } = useRedeemTx();
   const { liquidBalances } = useParachainBalances();
 
-  const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
+  const selectedChain = PARACHAIN_CHAIN_MAP[selectedChainId];
 
   const exchangeRate = useExchangeRate(
     ExchangeRateType.LiquidToNative,
@@ -145,7 +145,7 @@ const LiquidUnstakeCard: FC = () => {
       {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
       <LiquidStakingInput
         id="liquid-staking-unstake-from"
-        chainId={LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN}
+        chainId={ParachainChainId.TANGLE_RESTAKING_PARACHAIN}
         token={selectedChain.token}
         amount={fromAmount}
         decimals={selectedChain.decimals}

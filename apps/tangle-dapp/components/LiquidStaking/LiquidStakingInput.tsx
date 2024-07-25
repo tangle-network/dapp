@@ -14,7 +14,7 @@ import { twMerge } from 'tailwind-merge';
 
 import {
   LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingChainId,
+  ParachainChainId,
   LiquidStakingToken,
   LS_CHAIN_TO_NETWORK_NAME,
 } from '../../constants/liquidStaking';
@@ -27,7 +27,7 @@ import TokenChip from './TokenChip';
 
 export type LiquidStakingInputProps = {
   id: string;
-  chainId: LiquidStakingChainId;
+  chainId: ParachainChainId;
   decimals: number;
   amount: BN | null;
   isReadOnly?: boolean;
@@ -39,7 +39,7 @@ export type LiquidStakingInputProps = {
   maxAmount?: BN;
   maxErrorMessage?: string;
   onAmountChange?: (newAmount: BN | null) => void;
-  setChainId?: (newChain: LiquidStakingChainId) => void;
+  setChainId?: (newChain: ParachainChainId) => void;
   onTokenClick?: () => void;
 };
 
@@ -145,13 +145,13 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
 };
 
 type ChainSelectorProps = {
-  selectedChainId: LiquidStakingChainId;
+  selectedChainId: ParachainChainId;
 
   /**
    * If this function is not provided, the selector will be
    * considered read-only.
    */
-  setChain?: (newChain: LiquidStakingChainId) => void;
+  setChain?: (newChain: ParachainChainId) => void;
 };
 
 /** @internal */
@@ -182,7 +182,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
       <DropdownBody>
         <ScrollArea className="max-h-[300px]">
           <ul>
-            {Object.values(LiquidStakingChainId)
+            {Object.values(ParachainChainId)
               .filter((chainId) => chainId !== selectedChainId)
               .map((chainId) => {
                 return (

@@ -7,14 +7,14 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 
 import { TxName } from '../../constants';
 import {
-  LiquidStakingCurrency,
-  LiquidStakingCurrencyKey,
+  ParachainCurrency,
+  ParachainCurrencyFetchKey,
 } from '../../constants/liquidStaking';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 
 export type RedeemTxContext = {
   amount: BN;
-  currency: LiquidStakingCurrency;
+  currency: ParachainCurrency;
 };
 
 const useRedeemTx = () => {
@@ -24,7 +24,7 @@ const useRedeemTx = () => {
   return useSubstrateTxWithNotification<RedeemTxContext>(
     TxName.REDEEM,
     (api, _activeSubstrateAddress, context) => {
-      const key: LiquidStakingCurrencyKey = { lst: context.currency };
+      const key: ParachainCurrencyFetchKey = { lst: context.currency };
 
       return api.tx.lstMinting.redeem(key, context.amount);
     },

@@ -1,12 +1,12 @@
 import { TanglePrimitivesTimeUnit } from '@polkadot/types/lookup';
 
 import {
-  LIQUID_STAKING_CHAIN_MAP,
-  LiquidStakingChainId,
+  PARACHAIN_CHAIN_MAP,
+  ParachainChainId,
 } from '../../constants/liquidStaking';
 
-const estimateByEra = (chainId: LiquidStakingChainId, era: number): number => {
-  const chain = LIQUID_STAKING_CHAIN_MAP[chainId];
+const estimateByEra = (chainId: ParachainChainId, era: number): number => {
+  const chain = PARACHAIN_CHAIN_MAP[chainId];
 
   if (chain.substrateTimingSpec === undefined) {
     throw new Error(
@@ -23,7 +23,7 @@ const estimateByEra = (chainId: LiquidStakingChainId, era: number): number => {
 };
 
 const timeUnitToMilliseconds = (
-  chainId: LiquidStakingChainId,
+  chainId: ParachainChainId,
   tangleTimeUnit: TanglePrimitivesTimeUnit,
 ): number => {
   switch (tangleTimeUnit.type) {
