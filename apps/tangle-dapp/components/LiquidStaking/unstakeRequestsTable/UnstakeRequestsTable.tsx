@@ -11,37 +11,42 @@ import {
 import {
   ArrowRightUp,
   CheckboxCircleFill,
-  Close,
   TimeFillIcon,
-  WalletLineIcon,
 } from '@webb-tools/icons';
-import { IconBase } from '@webb-tools/icons/types';
 import {
   CheckBox,
   fuzzyFilter,
-  IconButton,
   Table,
   TANGLE_DOCS_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import BN from 'bn.js';
-import { FC, ReactNode, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 
-import useLstUnlockRequests from '../../data/liquidStaking/useLstUnlockRequests';
-import { AnySubstrateAddress } from '../../types/utils';
-import calculateTimeRemaining from '../../utils/calculateTimeRemaining';
-import GlassCard from '../GlassCard';
-import { HeaderCell } from '../tableCells';
-import TokenAmountCell from '../tableCells/TokenAmountCell';
-import AddressLink from './AddressLink';
-import CancelUnstakeModal from './CancelUnstakeModal';
-import ExternalLink from './ExternalLink';
+import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
+import { AnySubstrateAddress } from '../../../types/utils';
+import calculateTimeRemaining from '../../../utils/calculateTimeRemaining';
+import GlassCard from '../../GlassCard';
+import { HeaderCell } from '../../tableCells';
+import TokenAmountCell from '../../tableCells/TokenAmountCell';
+import AddressLink from '../AddressLink';
+import CancelUnstakeModal from '../CancelUnstakeModal';
+import ExternalLink from '../ExternalLink';
+import RebondLstUnstakeRequestButton from './RebondLstUnstakeRequestButton';
+import WithdrawLstUnstakeRequestButton from './WithdrawLstUnstakeRequestButton';
 
 export type UnstakeRequestItem = {
   unlockId: number;
   address: AnySubstrateAddress;
   amount: BN;
-  endTimestamp?: number;
+  unlockTimestamp?: number;
+
+  /**
+   * Whether the unlocking period of this request has completed,
+   * and the request is ready to be executed, and the tokens
+   * withdrawn.
+   */
+  unlockDurationHasElapsed: boolean;
 };
 
 const columnHelper = createColumnHelper<UnstakeRequestItem>();
@@ -65,7 +70,7 @@ const columns = [
       );
     },
   }),
-  columnHelper.accessor('endTimestamp', {
+  columnHelper.accessor('unlockTimestamp', {
     header: () => <HeaderCell title="Status" className="justify-center" />,
     cell: (props) => {
       const endTimestamp = props.getValue();
@@ -96,21 +101,19 @@ const columns = [
   columnHelper.display({
     id: 'actions',
     header: () => <HeaderCell title="Actions" className="justify-center" />,
-    cell: (_props) => {
+    cell: (props) => {
+      const unstakeRequest = props.row.original;
+
       return (
         <div className="flex items-center justify-center gap-1">
-          {/* TODO: Implement onClick. */}
-          <UtilityIconButton
-            Icon={Close}
-            tooltip="Cancel"
-            onClick={() => void 0}
+          <RebondLstUnstakeRequestButton
+            canRebond={!unstakeRequest.unlockDurationHasElapsed}
+            unlockId={unstakeRequest.unlockId}
           />
 
-          {/* TODO: Implement onClick. */}
-          <UtilityIconButton
-            Icon={WalletLineIcon}
-            tooltip="Withdraw"
-            onClick={() => void 0}
+          <WithdrawLstUnstakeRequestButton
+            canWithdraw={unstakeRequest.unlockDurationHasElapsed}
+            unlockId={unstakeRequest.unlockId}
           />
         </div>
       );
@@ -120,39 +123,30 @@ const columns = [
 ];
 
 const UnstakeRequestsTable: FC = () => {
-  // TODO: Providing a key here doesn't make much sense; find a way to get all the entries for the current account, without needing to provide a key.
   const tokenUnlockLedger = useLstUnlockRequests();
 
-  // TODO: Mock data.
-  const data: UnstakeRequestItem[] = useMemo(
-    () => [
-      {
-        unlockId: 0,
-        address: '0x123456' as any,
-        amount: new BN(100),
+  const data: UnstakeRequestItem[] = useMemo(() => {
+    if (tokenUnlockLedger === null) {
+      // TODO: Return null instead, and use skeleton loader if the data isn't ready.
+      return [];
+    }
+
+    return tokenUnlockLedger
+      .filter((entry) => {
+        // Filter entries to include only those that are redeeming
+        // into the native currency.
+        return entry.currencyType === 'Native';
+      })
+      .map((entry) => ({
+        unlockId: entry.unlockId,
+        amount: entry.amount,
+        // TODO: Calculate these properties properly. Currently using dummy data.
         endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
-      },
-      {
-        unlockId: 1,
-        address: '0x123456' as any,
-        amount: new BN(100),
-        endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
-      },
-      {
-        unlockId: 2,
-        address: '0x123456' as any,
-        amount: new BN(100),
-        endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
-      },
-      {
-        unlockId: 3,
-        address: '0x123456' as any,
-        amount: new BN(100),
-        endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
-      },
-    ],
-    [],
-  );
+        address:
+          '0x1234567890abcdef1234567890abcdef123456789' as AnySubstrateAddress,
+        unlockDurationHasElapsed: false,
+      }));
+  }, [tokenUnlockLedger]);
 
   const tableParams = useMemo(
     () => ({
@@ -220,29 +214,6 @@ const NoUnstakeRequestsNotice: FC = () => {
         request.
       </Typography>
     </div>
-  );
-};
-
-export type UtilityIconButtonProps = {
-  tooltip: string;
-  Icon: (props: IconBase) => ReactNode;
-  onClick: () => void;
-};
-
-/** @internal */
-const UtilityIconButton: FC<UtilityIconButtonProps> = ({
-  tooltip,
-  Icon,
-  onClick,
-}) => {
-  return (
-    <IconButton
-      className="dark:bg-blue-120 hover:bg-blue-10"
-      onClick={onClick}
-      tooltip={tooltip}
-    >
-      <Icon className="fill-blue-80 dark:fill-blue-40" size="md" />
-    </IconButton>
   );
 };
 

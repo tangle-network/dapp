@@ -6,20 +6,27 @@ import {
   TanglePrimitivesTimeUnit,
 } from '@polkadot/types/lookup';
 import { ITuple } from '@polkadot/types/types';
+import { BN } from '@polkadot/util';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 
-import { SimpleTimeUnitInstance } from '../../constants/liquidStaking';
+import {
+  ParachainCurrency,
+  SimpleTimeUnitInstance,
+} from '../../constants/liquidStaking';
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import compareSubstrateAddresses from '../../utils/compareSubstrateAddresses';
 import tangleTimeUnitToSimpleInstance from '../../utils/liquidStaking/tangleTimeUnitToSimpleInstance';
+import getValueOfTangleCurrency from './getValueOfTangleCurrency';
 
 export type LstUnlockRequest = {
   unlockId: number;
   currencyType: TanglePrimitivesCurrencyCurrencyId['type'];
+  currency: ParachainCurrency;
   unlockTimeUnit: SimpleTimeUnitInstance;
+  amount: BN;
 };
 
 const useLstUnlockRequests = () => {
@@ -94,27 +101,27 @@ const useLstUnlockRequests = () => {
 
     return tokenUnlockLedgers.flatMap(([key, valueOpt]) => {
       // Ignore empty values. Since `flatMap` is used, returning an empty
-      // array will filter out this entry. Also ignore entries that don't
-      // belong to the current account.
-      if (
-        valueOpt.isNone ||
-        !compareSubstrateAddresses(
-          valueOpt.unwrap()[0].toString(),
-          substrateAddress,
-        )
-      ) {
+      // array will filter out this entry.
+      if (valueOpt.isNone) {
+        return [];
+      }
+
+      const value = valueOpt.unwrap();
+
+      // Ignore entries that don't belong to the current account.
+      if (!compareSubstrateAddresses(value[0].toString(), substrateAddress)) {
         return [];
       }
 
       // The time unit at which the token will be unlocked.
-      const unlockTimeUnit = tangleTimeUnitToSimpleInstance(
-        valueOpt.unwrap()[2],
-      );
+      const unlockTimeUnit = tangleTimeUnitToSimpleInstance(value[2]);
 
       const currencyType = key.args[0].type;
+      const currency = getValueOfTangleCurrency(key.args[0]);
+      const amount = value[1];
       const unlockId = key.args[1].toNumber();
 
-      return [{ unlockId, currencyType, unlockTimeUnit }];
+      return [{ unlockId, currencyType, currency, unlockTimeUnit, amount }];
     });
   }, [substrateAddress, tokenUnlockLedgers]);
 

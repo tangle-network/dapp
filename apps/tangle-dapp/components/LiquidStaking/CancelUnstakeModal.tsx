@@ -11,7 +11,7 @@ import { FC, useCallback } from 'react';
 
 import ExternalLink from './ExternalLink';
 import ModalIcon from './ModalIcon';
-import { UnstakeRequestItem } from './UnstakeRequestsTable';
+import { UnstakeRequestItem } from './unstakeRequestsTable/UnstakeRequestsTable';
 
 export type CancelUnstakeModalProps = {
   isOpen: boolean;
