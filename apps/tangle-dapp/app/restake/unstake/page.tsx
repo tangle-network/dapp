@@ -28,7 +28,7 @@ import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeT
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
-import { DelegationFormFields } from '../../../types/restake';
+import type { UnstakeFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import ActionButtonBase from '../ActionButtonBase';
@@ -40,6 +40,7 @@ import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
 import UnstakeModal from './UnstakeModal';
+import UnstakeRequestTable from './UnstakeRequestTable';
 
 export const dynamic = 'force-static';
 
@@ -51,7 +52,7 @@ const Page = () => {
     watch,
     reset,
     formState: { errors, isValid, isSubmitting },
-  } = useForm<DelegationFormFields>({
+  } = useForm<UnstakeFormFields>({
     mode: 'onBlur',
   });
 
@@ -82,6 +83,7 @@ const Page = () => {
   }, [register]);
 
   const { delegatorInfo } = useRestakeDelegatorInfo();
+
   const { result: operatorIdentities } = useIdentities(
     useMemo(
       () =>
@@ -93,6 +95,12 @@ const Page = () => {
   const selectedAssetId = watch('assetId');
   const selectedOperatorAccountId = watch('operatorAccountId');
   const amount = watch('amount');
+
+  const delegatorBondLessRequests = useMemo(() => {
+    if (!delegatorInfo?.delegatorBondLessRequest) return [];
+
+    return [delegatorInfo.delegatorBondLessRequest];
+  }, [delegatorInfo?.delegatorBondLessRequest]);
 
   const selectedAsset = useMemo(() => {
     if (!selectedAssetId) return null;
@@ -171,7 +179,7 @@ const Page = () => {
   const { scheduleDelegatorBondLess } = useRestakeTx();
   const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
 
-  const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>(
+  const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
     async (data) => {
       const { amount, assetId, operatorAccountId } = data;
       if (!assetId || !isDefined(assetMap[assetId])) {
@@ -191,8 +199,8 @@ const Page = () => {
   );
 
   return (
-    <div className="grid items-start grid-cols-1 gap-4 sm:grid-cols-2 sm:justify-around">
-      <div className="w-full max-w-lg mx-auto">
+    <div className="grid items-start grid-cols-1 gap-4 sm:grid-cols-2 justify-stretch">
+      <div className="max-w-lg">
         <RestakeTabs />
 
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -284,17 +292,25 @@ const Page = () => {
       </div>
 
       {/** Hardcoded for the margin top to ensure the component is align to same card content */}
-      <RestakeDetailCard.Root className="max-w-lg mx-auto sm:mt-[61px]">
-        <RestakeDetailCard.Header title="No unstake requests found" />
+      <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
+        {delegatorBondLessRequests.length > 0 ? (
+          <UnstakeRequestTable
+            delegatorBondLessRequests={delegatorBondLessRequests}
+          />
+        ) : (
+          <>
+            <RestakeDetailCard.Header title="No unstake requests found" />
 
-        <Typography
-          variant="body2"
-          className="text-mono-120 dark:text-mono-100"
-        >
-          You will be able to withdraw your tokens after the unstake request has
-          been processed. To unstake your tokens go to the unstake tab to
-          schedule request.
-        </Typography>
+            <Typography
+              variant="body2"
+              className="text-mono-120 dark:text-mono-100"
+            >
+              You will be able to withdraw your tokens after the unstake request
+              has been processed. To unstake your tokens go to the unstake tab
+              to schedule request.
+            </Typography>
+          </>
+        )}
       </RestakeDetailCard.Root>
 
       <Modal>

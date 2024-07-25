@@ -247,3 +247,5 @@ export type DelegationFormFields = {
   operatorAccountId: string;
   assetId: string;
 };
+
+export type UnstakeFormFields = DelegationFormFields;
