@@ -7,6 +7,7 @@ import type { Hash } from 'viem';
 import {
   type DelegateContext,
   type DepositContext,
+  type OperatorBondLessContext,
   RestakeTxBase,
   type TxEventHandlers,
 } from './base';
@@ -167,6 +168,30 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
       assetId,
       amount,
     );
+
+    eventHandlers?.onTxSending?.(context);
+
+    return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
+  };
+
+  scheduleDelegatorBondLess = async (
+    operatorAccount: string,
+    assetId: string,
+    amount: bigint,
+    eventHandlers?: TxEventHandlers<OperatorBondLessContext>,
+  ) => {
+    const context = {
+      amount,
+      assetId,
+      operatorAccount,
+    } satisfies OperatorBondLessContext;
+
+    const extrinsic =
+      this.provider.tx.multiAssetDelegation.scheduleDelegatorBondLess(
+        operatorAccount,
+        assetId,
+        amount,
+      );
 
     eventHandlers?.onTxSending?.(context);
 

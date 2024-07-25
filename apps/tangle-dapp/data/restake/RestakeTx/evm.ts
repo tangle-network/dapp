@@ -4,6 +4,7 @@ import { Config } from 'wagmi';
 import {
   type DelegateContext,
   type DepositContext,
+  type OperatorBondLessContext,
   RestakeTxBase,
   type TxEventHandlers,
 } from './base';
@@ -38,4 +39,14 @@ export default class EVMRestakeTx extends RestakeTxBase {
     // Delegate the asset to the operator.
     return null;
   };
+
+  scheduleDelegatorBondLess(
+    _operatorAccount: string,
+    _assetId: string,
+    _amount: bigint,
+    _eventHandlers?: TxEventHandlers<OperatorBondLessContext>,
+  ): Promise<`0x${string}` | null> {
+    console.warn('EVM scheduleDelegatorBondLess not implemented yet');
+    return Promise.resolve(null);
+  }
 }

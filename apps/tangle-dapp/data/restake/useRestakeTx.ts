@@ -58,5 +58,9 @@ function createDummyApi(error: string): RestakeTxBase {
       eventHandlers?.onTxFailed?.(error, { amount, assetId, operatorAccount });
       return Promise.resolve(null);
     },
+    scheduleDelegatorBondLess(operatorAccount, assetId, amount, eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, { amount, assetId, operatorAccount });
+      return Promise.resolve(null);
+    },
   };
 }

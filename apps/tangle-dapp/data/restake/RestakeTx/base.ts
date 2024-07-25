@@ -40,6 +40,8 @@ export type DelegateContext = {
   amount: bigint;
 };
 
+export type OperatorBondLessContext = DelegateContext;
+
 export abstract class RestakeTxBase {
   /**
    * Deposit the amount of an asset into the multi-asset-delegation pallet,
@@ -62,5 +64,12 @@ export abstract class RestakeTxBase {
     assetId: string,
     amount: bigint,
     eventHandlers?: TxEventHandlers<DelegateContext>,
+  ): Promise<Hash | null>;
+
+  abstract scheduleDelegatorBondLess(
+    operatorAccount: string,
+    assetId: string,
+    amount: bigint,
+    eventHandlers?: TxEventHandlers<OperatorBondLessContext>,
   ): Promise<Hash | null>;
 }
