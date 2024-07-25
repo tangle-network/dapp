@@ -1,9 +1,8 @@
-'use client';
-
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
 import LiquidStakeAndUnstakeCards from '../../../components/LiquidStaking/LiquidStakeAndUnstakeCards';
+import { LiquidStakingSelectionTable } from '../../../components/LiquidStaking/LiquidStakingSelectionTable';
 import UnstakeRequestsTable from '../../../components/LiquidStaking/UnstakeRequestsTable';
 import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
 
@@ -12,16 +11,19 @@ type Props = {
 };
 
 const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
-  // Invalid token provided on the URL parameters.
   if (!isLiquidStakingToken(tokenSymbol)) {
     return notFound();
   }
 
   return (
-    <div className="flex flex-wrap gap-12 items-start">
+    <div className="grid grid-cols-2 gap-12">
       <LiquidStakeAndUnstakeCards />
 
-      <UnstakeRequestsTable />
+      <div className="flex flex-col gap-4">
+        <LiquidStakingSelectionTable />
+
+        <UnstakeRequestsTable />
+      </div>
     </div>
   );
 };

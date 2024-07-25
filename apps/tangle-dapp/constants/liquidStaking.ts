@@ -19,7 +19,7 @@ export enum LiquidStakingToken {
   DOT = 'DOT',
   GLMR = 'GLMR',
   MANTA = 'MANTA',
-  ASTAR = 'ASTAR',
+  ASTAR = 'ASTR',
   PHALA = 'PHALA',
   TNT = 'TNT',
 }
@@ -37,6 +37,7 @@ export type LiquidStakingChainDef = {
   networkName: string;
   currency: LiquidStakingCurrency;
   decimals: number;
+  rpcEndpoint: string;
 };
 
 const POLKADOT: LiquidStakingChainDef = {
@@ -47,6 +48,7 @@ const POLKADOT: LiquidStakingChainDef = {
   networkName: 'Polkadot Mainnet',
   currency: 'Dot',
   decimals: 10,
+  rpcEndpoint: 'wss://polkadot-rpc.dwellir.com',
 };
 
 const PHALA: LiquidStakingChainDef = {
@@ -57,6 +59,7 @@ const PHALA: LiquidStakingChainDef = {
   networkName: 'Phala',
   currency: 'Pha',
   decimals: 18,
+  rpcEndpoint: 'wss://api.phala.network/ws',
 };
 
 const MOONBEAM: LiquidStakingChainDef = {
@@ -68,6 +71,7 @@ const MOONBEAM: LiquidStakingChainDef = {
   // TODO: No currency entry for GLMR in the Tangle Primitives?
   currency: 'Dot',
   decimals: 18,
+  rpcEndpoint: 'wss://moonbeam.api.onfinality.io/public-ws',
 };
 
 const ASTAR: LiquidStakingChainDef = {
@@ -79,6 +83,7 @@ const ASTAR: LiquidStakingChainDef = {
   // TODO: No currency entry for ASTAR in the Tangle Primitives?
   currency: 'Dot',
   decimals: 18,
+  rpcEndpoint: 'wss://astar.api.onfinality.io/public-ws',
 };
 
 const MANTA: LiquidStakingChainDef = {
@@ -90,6 +95,7 @@ const MANTA: LiquidStakingChainDef = {
   // TODO: No currency entry for ASTAR in the Tangle Primitives?
   currency: 'Dot',
   decimals: 18,
+  rpcEndpoint: 'wss://ws.manta.systems',
 };
 
 const TANGLE_RESTAKING_PARACHAIN: LiquidStakingChainDef = {
@@ -100,6 +106,7 @@ const TANGLE_RESTAKING_PARACHAIN: LiquidStakingChainDef = {
   networkName: 'Tangle Parachain',
   currency: 'Tnt',
   decimals: TANGLE_TOKEN_DECIMALS,
+  rpcEndpoint: '',
 };
 
 export const LIQUID_STAKING_CHAIN_MAP: Record<
@@ -132,6 +139,19 @@ export const TVS_TOOLTIP =
   "Total Value Staked (TVS) refers to the total value of assets that are currently staked for this network in fiat currency. Generally used as an indicator of a network's security and trustworthiness.";
 
 export const LIQUID_STAKING_TOKEN_PREFIX = 'tg';
+
+// TODO: These should be moved/managed in libs/webb-ui-components/src/constants/networks.ts and not here. This is just a temporary solution.
+export type Network = {
+  name: string;
+  endpoint: string;
+  tokenSymbol: LiquidStakingToken;
+  chainType: NetworkType;
+};
+
+export enum NetworkType {
+  RELAY_CHAIN = 'Relay Chain',
+  PARACHAIN = 'Parachain',
+}
 
 export type LiquidStakingCurrencyKey =
   | { lst: LiquidStakingCurrency }

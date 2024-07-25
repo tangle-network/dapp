@@ -81,7 +81,7 @@ const JobsListTable: FC<JobsListTableProps> = ({ serviceId, className }) => {
       }),
       timestampColumn,
     ],
-    [network.nativeExplorerUrl],
+    [network.nativeExplorerUrl, network.polkadotJsDashboardUrl],
   );
 
   const table = useReactTable({
