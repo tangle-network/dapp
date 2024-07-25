@@ -4,8 +4,8 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { FC, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import LiquidStakeCard from './LiquidStakeCard';
-import LiquidUnstakeCard from './LiquidUnstakeCard';
+import LiquidStakeCard from './stakeAndUnstake/LiquidStakeCard';
+import LiquidUnstakeCard from './stakeAndUnstake/LiquidUnstakeCard';
 
 const LiquidStakeAndUnstakeCards: FC = () => {
   const [isStaking, setIsStaking] = useState(true);

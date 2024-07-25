@@ -9,9 +9,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback } from 'react';
 
-import ExternalLink from './ExternalLink';
-import ModalIcon, { ModalIconCommonVariant } from './ModalIcon';
-import { UnstakeRequestItem } from './unstakeRequestsTable/UnstakeRequestsTable';
+import ModalIcon, { ModalIconCommonVariant } from '..//ModalIcon';
+import ExternalLink from '../ExternalLink';
+import { UnstakeRequestItem } from '../unstakeRequestsTable/UnstakeRequestsTable';
 
 export type UnstakeRequestSubmittedModalProps = {
   isOpen: boolean;

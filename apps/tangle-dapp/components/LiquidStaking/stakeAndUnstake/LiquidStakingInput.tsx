@@ -14,13 +14,13 @@ import { twMerge } from 'tailwind-merge';
 
 import {
   LIQUID_STAKING_TOKEN_PREFIX,
-  ParachainChainId,
   LiquidStakingToken,
   LS_CHAIN_TO_NETWORK_NAME,
-} from '../../constants/liquidStaking';
-import { ERROR_NOT_ENOUGH_BALANCE } from '../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
-import useInputAmount from '../../hooks/useInputAmount';
-import formatBn from '../../utils/formatBn';
+  ParachainChainId,
+} from '../../../constants/liquidStaking';
+import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
+import useInputAmount from '../../../hooks/useInputAmount';
+import formatBn from '../../../utils/formatBn';
 import ChainLogo from './ChainLogo';
 import DropdownChevronIcon from './DropdownChevronIcon';
 import TokenChip from './TokenChip';

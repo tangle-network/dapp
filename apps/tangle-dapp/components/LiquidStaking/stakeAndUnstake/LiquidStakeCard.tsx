@@ -17,19 +17,19 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import {
-  PARACHAIN_CHAIN_MAP,
   LIQUID_STAKING_TOKEN_PREFIX,
+  PARACHAIN_CHAIN_MAP,
   ParachainChainId,
-} from '../../constants/liquidStaking';
-import { useLiquidStakingStore } from '../../data/liquidStaking/store';
+} from '../../../constants/liquidStaking';
+import { useLiquidStakingStore } from '../../../data/liquidStaking/store';
 import useExchangeRate, {
   ExchangeRateType,
-} from '../../data/liquidStaking/useExchangeRate';
-import useMintTx from '../../data/liquidStaking/useMintTx';
-import useParachainBalances from '../../data/liquidStaking/useParachainBalances';
-import useApi from '../../hooks/useApi';
-import useApiRx from '../../hooks/useApiRx';
-import { TxStatus } from '../../hooks/useSubstrateTx';
+} from '../../../data/liquidStaking/useExchangeRate';
+import useMintTx from '../../../data/liquidStaking/useMintTx';
+import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
+import useApi from '../../../hooks/useApi';
+import useApiRx from '../../../hooks/useApiRx';
+import { TxStatus } from '../../../hooks/useSubstrateTx';
 import DetailItem from './DetailItem';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';

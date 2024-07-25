@@ -5,7 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import {
   PARACHAIN_CHAIN_MAP,
   ParachainChainId,
-} from '../../constants/liquidStaking';
+} from '../../../constants/liquidStaking';
 
 export type ChainLogoSize = 'sm' | 'md';
 

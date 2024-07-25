@@ -8,10 +8,10 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useEffect, useMemo } from 'react';
 
-import { ParachainChainId } from '../../constants/liquidStaking';
-import { AnySubstrateAddress } from '../../types/utils';
-import formatBn from '../../utils/formatBn';
-import AddressLink from './AddressLink';
+import { ParachainChainId } from '../../../constants/liquidStaking';
+import { AnySubstrateAddress } from '../../../types/utils';
+import formatBn from '../../../utils/formatBn';
+import AddressLink from '../AddressLink';
 import ChainLogo from './ChainLogo';
 
 export type SelectTokenModalProps = {

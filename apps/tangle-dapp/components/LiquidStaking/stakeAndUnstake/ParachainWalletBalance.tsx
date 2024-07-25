@@ -12,11 +12,11 @@ import {
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
-import { LiquidStakingToken } from '../../constants/liquidStaking';
-import useParachainBalances from '../../data/liquidStaking/useParachainBalances';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import formatBn from '../../utils/formatBn';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
+import { LiquidStakingToken } from '../../../constants/liquidStaking';
+import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
+import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
+import formatBn from '../../../utils/formatBn';
 
 export type ParachainWalletBalanceProps = {
   isNative?: boolean;
