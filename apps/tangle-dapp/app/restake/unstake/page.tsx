@@ -52,6 +52,7 @@ const Page = () => {
     watch,
     reset,
     formState: { errors, isValid, isSubmitting },
+    trigger,
   } = useForm<UnstakeFormFields>({
     mode: 'onBlur',
   });
@@ -82,6 +83,12 @@ const Page = () => {
     register('assetId', { required: true });
   }, [register]);
 
+  useEffect(() => {
+    if (maxAmount) {
+      trigger('amount');
+    }
+  }, [maxAmount, trigger]);
+
   const { delegatorInfo } = useRestakeDelegatorInfo();
 
   const { result: operatorIdentities } = useIdentities(
@@ -109,29 +116,25 @@ const Page = () => {
     return assetMap[selectedAssetId];
   }, [assetMap, selectedAssetId]);
 
-  const customAmountProps = useMemo<TextFieldInputProps>(
-    () => {
-      const step = decimalsToStep(selectedAsset?.decimals);
+  const customAmountProps = useMemo<TextFieldInputProps>(() => {
+    const step = decimalsToStep(selectedAsset?.decimals);
 
-      return {
-        type: 'number',
-        step,
-        ...register('amount', {
-          required: 'Amount is required',
-          validate: getAmountValidation(
-            step,
-            '0',
-            ZERO_BIG_INT,
-            maxAmount?.raw,
-            selectedAsset?.decimals,
-            selectedAsset?.symbol,
-          ),
-        }),
-      };
-    },
-    // prettier-ignore
-    [maxAmount, register, selectedAsset?.decimals, selectedAsset?.symbol],
-  );
+    return {
+      type: 'number',
+      step,
+      ...register('amount', {
+        required: 'Amount is required',
+        validate: getAmountValidation(
+          step,
+          '0',
+          ZERO_BIG_INT,
+          maxAmount?.raw,
+          selectedAsset?.decimals,
+          selectedAsset?.symbol,
+        ),
+      }),
+    };
+  }, [maxAmount, register, selectedAsset?.decimals, selectedAsset?.symbol]);
 
   const displayError = useMemo(
     () => {
