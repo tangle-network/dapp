@@ -19,18 +19,17 @@ const OFACFilterProvider: FC<PropsWithChildren<OFACFilterProviderProps>> = ({
   blockedRegions,
 }) => {
   const [isOFAC, setIsOFAC] = useState(false);
-  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
-
     if (!isActivated) return;
 
-    setIsFetching(true);
+    let isMounted = true;
 
     fetch('https://geolocation-db.com/json/')
       .then((response) => response.json())
       .then((data) => {
+        if (!isMounted) return; // Check if the component is still mounted before proceeding
+
         const { country_code, state } = data;
 
         const isBlockedByCountryCode =
@@ -51,21 +50,12 @@ const OFACFilterProvider: FC<PropsWithChildren<OFACFilterProviderProps>> = ({
           setIsOFAC(true);
         }
       })
-      .catch((error) => console.log(error))
-      .finally(() => {
-        if (mounted) {
-          setIsFetching(false);
-        }
-      });
+      .catch((error) => console.log(error));
 
     return () => {
-      mounted = false;
+      isMounted = false;
     };
   }, [blockedCountryCodes, blockedRegions, isActivated]);
-
-  if (isFetching) {
-    return null;
-  }
 
   if (isOFAC) {
     return (

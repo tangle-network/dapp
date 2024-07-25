@@ -21,6 +21,7 @@ import {
   LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingChainId,
 } from '../../constants/liquidStaking';
+import { useLiquidStakingStore } from '../../data/liquidStaking/store';
 import useExchangeRate, {
   ExchangeRateType,
 } from '../../data/liquidStaking/useExchangeRate';
@@ -40,9 +41,11 @@ import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 const LiquidStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
 
-  const [selectedChainId, setSelectedChainId] = useState<LiquidStakingChainId>(
-    LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN,
-  );
+  // const [selectedChainId, setSelectedChainId] = useState<LiquidStakingChainId>(
+  //   LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN,
+  // );
+
+  const { selectedChainId, setSelectedChainId } = useLiquidStakingStore();
 
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const { nativeBalances } = useParachainBalances();

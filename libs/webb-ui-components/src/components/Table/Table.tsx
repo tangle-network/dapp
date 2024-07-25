@@ -53,11 +53,7 @@ export const Table = <T extends RowData>({
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <THeader
-                    className={twMerge(
-                      header.column.getCanSort() &&
-                        'cursor-pointer flex items-center',
-                      thClassName,
-                    )}
+                    className={thClassName}
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
                     title={
@@ -71,7 +67,13 @@ export const Table = <T extends RowData>({
                     }
                   >
                     {header.isPlaceholder ? null : (
-                      <>
+                      <div
+                        className={
+                          header.column.getCanSort()
+                            ? 'cursor-pointer flex items-start justify-start'
+                            : ''
+                        }
+                      >
                         {flexRender(header.column.columnDef.header, {
                           ...header.getContext(),
                         })}
@@ -80,7 +82,7 @@ export const Table = <T extends RowData>({
                           asc: <ArrowDropUpFill size="lg" />,
                           desc: <ArrowDropDownFill size="lg" />,
                         }[header.column.getIsSorted() as string] ?? null}
-                      </>
+                      </div>
                     )}
                   </THeader>
                 ))}
