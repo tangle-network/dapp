@@ -66,14 +66,8 @@ export const Table = <T extends RowData>({
                         : undefined
                     }
                   >
-                    {header.isPlaceholder ? null : (
-                      <div
-                        className={
-                          header.column.getCanSort()
-                            ? 'cursor-pointer flex items-start justify-start'
-                            : ''
-                        }
-                      >
+                    {header.isPlaceholder ? null : header.column.getCanSort() ? (
+                      <div className="flex items-start justify-start cursor-pointer">
                         {flexRender(header.column.columnDef.header, {
                           ...header.getContext(),
                         })}
@@ -83,6 +77,10 @@ export const Table = <T extends RowData>({
                           desc: <ArrowDropDownFill size="lg" />,
                         }[header.column.getIsSorted() as string] ?? null}
                       </div>
+                    ) : (
+                      flexRender(header.column.columnDef.header, {
+                        ...header.getContext(),
+                      })
                     )}
                   </THeader>
                 ))}
