@@ -87,6 +87,7 @@ export * from './IndeterminateCircleFillIcon';
 export * from './IndeterminateCircleLineIcon';
 export * from './InformationLine';
 export * from './InformationLineFill';
+export * from './LineChartIcon';
 export * from './KeyIcon';
 export * from './Link';
 export * from './LinkedInFill';

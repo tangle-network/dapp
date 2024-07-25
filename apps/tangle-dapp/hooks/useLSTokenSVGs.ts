@@ -1,4 +1,4 @@
-import ASTAR from '@webb-tools/icons/LiquidStakingTokens/ASTAR.svg';
+import ASTR from '@webb-tools/icons/LiquidStakingTokens/ASTAR.svg';
 import DOT from '@webb-tools/icons/LiquidStakingTokens/DOT.svg';
 import GLMR from '@webb-tools/icons/LiquidStakingTokens/GLMR.svg';
 import MANTA from '@webb-tools/icons/LiquidStakingTokens/MANTA.svg';
@@ -11,10 +11,10 @@ import { LiquidStakingToken } from '../constants/liquidStaking';
 const tokenSVGs: {
   [key in LiquidStakingToken]: React.FC<React.SVGProps<SVGSVGElement>>;
 } = {
-  ASTAR,
   DOT,
   GLMR,
   MANTA,
+  ASTR,
   PHALA,
   TNT,
 };
