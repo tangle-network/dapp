@@ -4,50 +4,6 @@
   "sourceRoot": "apps/bridge-dapp/src",
   "projectType": "application",
   "targets": {
-    "build": {
-      "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "outputPath": "dist/apps/bridge-dapp",
-        "compiler": "babel",
-        "index": "apps/bridge-dapp/src/public/index.html",
-        "baseHref": "/",
-        "main": "apps/bridge-dapp/src/index.tsx",
-        "tsConfig": "apps/bridge-dapp/tsconfig.app.json",
-        "assets": [
-          "apps/bridge-dapp/src/public/favicon.png",
-          "apps/bridge-dapp/src/public/logo.png"
-        ],
-        "generateIndexHtml": false,
-        "scripts": [],
-        "postcssConfig": "apps/bridge-dapp/postcss.config.js",
-        "webpackConfig": "apps/bridge-dapp/webpack.dev.cjs"
-      },
-      "configurations": {
-        "development": {
-          "extractLicenses": false,
-          "optimization": false,
-          "sourceMap": true,
-          "vendorChunk": true
-        },
-        "production": {
-          "fileReplacements": [
-            {
-              "replace": "apps/bridge-dapp/src/environments/environment.ts",
-              "with": "apps/bridge-dapp/src/environments/environment.prod.ts"
-            }
-          ],
-          "optimization": true,
-          "outputHashing": "all",
-          "sourceMap": false,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false,
-          "webpackConfig": "apps/bridge-dapp/webpack.prod.cjs"
-        }
-      }
-    },
     "serve": {
       "executor": "@nx/webpack:dev-server",
       "options": {
@@ -60,10 +16,6 @@
           "webpackConfig": "apps/bridge-dapp/webpack.prod.cjs"
         }
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
