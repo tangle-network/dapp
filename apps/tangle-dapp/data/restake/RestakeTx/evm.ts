@@ -2,9 +2,11 @@ import type { Account, Address } from 'viem';
 import { Config } from 'wagmi';
 
 import {
+  type CancelDelegatorBondLessContext,
   type DelegateContext,
+  type DelegatorBondLessContext,
   type DepositContext,
-  type OperatorBondLessContext,
+  type ExecuteDelegatorBondLessContext,
   RestakeTxBase,
   type TxEventHandlers,
 } from './base';
@@ -40,13 +42,27 @@ export default class EVMRestakeTx extends RestakeTxBase {
     return null;
   };
 
-  scheduleDelegatorBondLess(
+  scheduleDelegatorBondLess = async (
     _operatorAccount: string,
     _assetId: string,
     _amount: bigint,
-    _eventHandlers?: TxEventHandlers<OperatorBondLessContext>,
-  ): Promise<`0x${string}` | null> {
+    _eventHandlers?: TxEventHandlers<DelegatorBondLessContext>,
+  ): Promise<`0x${string}` | null> => {
     console.warn('EVM scheduleDelegatorBondLess not implemented yet');
     return Promise.resolve(null);
-  }
+  };
+
+  executeDelegatorBondLess = async (
+    _eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
+  ): Promise<`0x${string}` | null> => {
+    console.warn('EVM executeDelegatorBondLess not implemented yet');
+    return Promise.resolve(null);
+  };
+
+  cancelDelegatorBondLess = async (
+    _eventHandlers?: TxEventHandlers<CancelDelegatorBondLessContext>,
+  ): Promise<`0x${string}` | null> => {
+    console.warn('EVM cancelDelegatorBondLess not implemented yet');
+    return Promise.resolve(null);
+  };
 }

@@ -40,7 +40,11 @@ export type DelegateContext = {
   amount: bigint;
 };
 
-export type OperatorBondLessContext = DelegateContext;
+export type DelegatorBondLessContext = DelegateContext;
+
+export type ExecuteDelegatorBondLessContext = Record<string, unknown>;
+
+export type CancelDelegatorBondLessContext = Record<string, unknown>;
 
 export abstract class RestakeTxBase {
   /**
@@ -70,6 +74,14 @@ export abstract class RestakeTxBase {
     operatorAccount: string,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<OperatorBondLessContext>,
+    eventHandlers?: TxEventHandlers<DelegatorBondLessContext>,
+  ): Promise<Hash | null>;
+
+  abstract executeDelegatorBondLess(
+    eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
+  ): Promise<Hash | null>;
+
+  abstract cancelDelegatorBondLess(
+    eventHandlers?: TxEventHandlers<CancelDelegatorBondLessContext>,
   ): Promise<Hash | null>;
 }

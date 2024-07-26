@@ -1,21 +1,22 @@
 'use client';
 
 import { Checkbox as HeadlessCheckbox } from '@headlessui/react';
-import {
-  CheckCircledIcon,
-  CheckIcon,
-  DividerHorizontalIcon,
-} from '@radix-ui/react-icons';
+import { CheckIcon, DividerHorizontalIcon } from '@radix-ui/react-icons';
 import {
   createColumnHelper,
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  type TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
+import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
+import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
+import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
+import uniqueId from 'lodash/uniqueId';
 import { type ComponentProps, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatUnits } from 'viem';
@@ -23,9 +24,12 @@ import { formatUnits } from 'viem';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
+import useRestakeTx from '../../../data/restake/useRestakeTx';
+import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import type { DelegatorBondLessRequest } from '../../../types/restake';
 
 type Data = {
+  uid: string;
   amount: number;
   assetSymbol: string;
   timeRemaining: number;
@@ -71,13 +75,16 @@ const columns = [
         <TableCell fw="normal" className="text-mono-200 dark:text-mono-0">
           {value === 0 ? (
             <span className="flex items-center gap-1">
-              <CheckCircledIcon className="bg-green-50" />
-              Ready
+              <CheckboxCircleFill className="!fill-green-50" />
+              ready
             </span>
           ) : value < 0 ? (
             'N/A'
           ) : (
-            `${value} rounds`
+            <span className="flex items-center gap-1">
+              <TimeFillIcon className="!fill-blue-50" />
+              {`${value} round${value > 1 ? 's' : ''}`}
+            </span>
           )}
         </TableCell>
       );
@@ -94,69 +101,127 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
   const { delegationBondLessDelay } = useRestakeConsts();
   const { currentRound } = useRestakeCurrentRound();
 
-  const data = useMemo<Data[]>(
+  // Transforming the array to object with uuid as key
+  // for easier querying
+  const unstakeRequestsWithId = useMemo(
     () =>
-      delegatorBondLessRequests
-        .map(({ assetId, bondLessAmount, requestedRound }) => {
+      delegatorBondLessRequests.reduce(
+        (acc, current) => {
+          const uid = uniqueId('delegator-bond-less-request-');
+          acc[uid] = { ...current, uid };
+          return acc;
+        },
+        {} as Record<string, DelegatorBondLessRequest & { uid: string }>,
+      ),
+    [delegatorBondLessRequests],
+  );
+
+  const dataWithId = useMemo(
+    () =>
+      Object.values(unstakeRequestsWithId).reduce(
+        (acc, { assetId, bondLessAmount, requestedRound, uid }) => {
           const asset = assetMap[assetId];
-          if (!asset) return null;
+          if (!asset) return acc;
 
           const formattedAmount = formatUnits(bondLessAmount, asset.decimals);
-          const timeRemaining = (() => {
-            if (typeof delegationBondLessDelay !== 'number') return -1;
+          const timeRemaining = calculateTimeRemaining(
+            currentRound,
+            requestedRound,
+            delegationBondLessDelay,
+          );
 
-            const roundPassed = currentRound - requestedRound;
-            if (roundPassed >= delegationBondLessDelay) return 0;
-
-            return delegationBondLessDelay - roundPassed;
-          })();
-
-          return {
+          acc[uid] = {
             amount: Number(formattedAmount),
             assetSymbol: asset.symbol,
             timeRemaining,
+            uid,
           } satisfies Data;
-        })
-        .filter((r): r is Data => Boolean(r)),
-    [
-      assetMap,
-      currentRound,
-      delegationBondLessDelay,
-      delegatorBondLessRequests,
-    ],
+
+          return acc;
+        },
+        {} as Record<string, Data>,
+      ),
+    [assetMap, currentRound, delegationBondLessDelay, unstakeRequestsWithId],
   );
 
   const table = useReactTable(
-    useMemo(
+    useMemo<TableOptions<Data>>(
       () => ({
-        data,
+        data: Object.values(dataWithId),
         columns,
         initialState: {
           pagination: {
             pageSize: 5,
           },
         },
-        enableRowSelection: true, //enable row selection for all rows
-        // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
+        getRowId: (row) => row.uid,
+        enableRowSelection: true,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
       }),
-      [data],
+      [dataWithId],
     ),
   );
 
+  const selectedRows = table.getState().rowSelection;
+
+  const canCancelUnstake = useMemo(() => {
+    const entries = Object.entries(selectedRows);
+    if (entries.length === 0) return false;
+
+    return entries.some(([, selected]) => selected);
+  }, [selectedRows]);
+
+  const canExecuteUnstake = useMemo(() => {
+    const entries = Object.entries(selectedRows);
+    if (entries.length === 0) return false;
+
+    return entries.every(([uid, selected]) => {
+      if (!selected || !dataWithId[uid]) return false;
+
+      const { timeRemaining } = dataWithId[uid];
+      return isUnstakeReady(timeRemaining);
+    });
+  }, [dataWithId, selectedRows]);
+
+  const options = useRestakeTxEventHandlersWithNoti();
+  const { executeDelegatorBondLess, cancelDelegatorBondLess } = useRestakeTx();
+
   return (
-    <Table
-      tableProps={table}
-      isPaginated
-      thClassName={cx(
-        '!border-t-transparent !bg-transparent px-3 py-2 first:w-[18px]',
-      )}
-      tdClassName={cx(
-        '!border-transparent !bg-transparent px-3 py-2 first:w-[18px]',
-      )}
-    />
+    <>
+      <Table
+        tableProps={table}
+        isPaginated
+        thClassName={cx(
+          '!border-t-transparent !bg-transparent px-3 py-2 first:w-[18px]',
+        )}
+        tdClassName={cx(
+          '!border-transparent !bg-transparent px-3 py-2 first:w-[18px]',
+        )}
+      />
+
+      <div className="flex items-center gap-3">
+        <Button
+          className="flex-1"
+          isDisabled={!canCancelUnstake}
+          isFullWidth
+          onClick={() => cancelDelegatorBondLess(options)}
+          variant="secondary"
+        >
+          Cancel Unstake
+        </Button>
+
+        <Button
+          className="flex-1"
+          isDisabled={!canExecuteUnstake}
+          isFullWidth
+          onClick={() => executeDelegatorBondLess(options)}
+        >
+          Execute Unstake
+        </Button>
+      </div>
+    </>
   );
 };
 
@@ -207,4 +272,27 @@ function TableCell({
       {children}
     </Typography>
   );
+}
+
+/**
+ * @internal
+ */
+function calculateTimeRemaining(
+  currentRound: number,
+  requestedRound: number,
+  delegationBondLessDelay: number | null,
+) {
+  if (typeof delegationBondLessDelay !== 'number') return -1;
+
+  const roundPassed = currentRound - requestedRound;
+  if (roundPassed >= delegationBondLessDelay) return 0;
+
+  return delegationBondLessDelay - roundPassed;
+}
+
+/**
+ * @internal
+ */
+function isUnstakeReady(timeRemaining: number) {
+  return timeRemaining === 0;
 }
