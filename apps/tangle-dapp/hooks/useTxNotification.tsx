@@ -30,6 +30,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.BRIDGE_TRANSFER]: 'Bridge transferred successful',
   [TxName.MINT]: 'Minted tokens',
   [TxName.REDEEM]: 'Redeem request submitted',
+  [TxName.LST_REBOND]: 'Unstake request cancelled',
 };
 
 // TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.

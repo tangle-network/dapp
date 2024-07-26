@@ -6,6 +6,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
 import {
@@ -20,13 +21,16 @@ import {
   TANGLE_DOCS_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import assert from 'assert';
 import BN from 'bn.js';
-import { FC, ReactNode, useMemo, useState } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
+import React from 'react';
 
 import {
   LST_PREFIX,
   ParachainCurrency,
 } from '../../../constants/liquidStaking';
+import { LIQUID_STAKING_CHAINS } from '../../../constants/liquidStaking';
 import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import { AnySubstrateAddress } from '../../../types/utils';
@@ -36,7 +40,7 @@ import { HeaderCell } from '../../tableCells';
 import TokenAmountCell from '../../tableCells/TokenAmountCell';
 import AddressLink from '../AddressLink';
 import ExternalLink from '../ExternalLink';
-import SkeletonLoaderSet from '../SkeletonLoaderSet';
+import TableRowsSkeleton from '../TableRowsSkeleton';
 import RebondLstUnstakeRequestButton from './RebondLstUnstakeRequestButton';
 import WithdrawLstUnstakeRequestButton from './WithdrawLstUnstakeRequestButton';
 
@@ -44,6 +48,7 @@ export type UnstakeRequestItem = {
   unlockId: number;
   address: AnySubstrateAddress;
   amount: BN;
+  decimals: number;
   unlockTimestamp?: number;
   currency: ParachainCurrency;
 
@@ -66,9 +71,10 @@ const columns = [
       return (
         <div className="flex items-center justify-start gap-2">
           <CheckBox
-            isChecked={false}
-            onChange={() => void 0}
-            wrapperClassName="pt-0.5"
+            isChecked={props.row.getIsSelected()}
+            isDisabled={!props.row.getCanSelect()}
+            onChange={props.row.getToggleSelectedHandler()}
+            wrapperClassName="pt-0.5 flex items-center justify-center"
           />
 
           <AddressLink address={props.getValue()} />
@@ -105,17 +111,17 @@ const columns = [
       const tokenSymbol = `${LST_PREFIX}${unstakeRequest.currency.toUpperCase()}`;
 
       return (
-        <TokenAmountCell amount={props.getValue()} tokenSymbol={tokenSymbol} />
+        <TokenAmountCell
+          amount={props.getValue()}
+          tokenSymbol={tokenSymbol}
+          decimals={props.row.original.decimals}
+        />
       );
     },
   }),
 ];
 
 const UnstakeRequestsTable: FC = () => {
-  const [selectedRowsUnlockIds, setSelectedRowsUnlockIds] = useState<
-    Set<number>
-  >(new Set());
-
   const substrateAddress = useSubstrateAddress();
   const tokenUnlockLedger = useLstUnlockRequests();
 
@@ -131,19 +137,32 @@ const UnstakeRequestsTable: FC = () => {
         // into the native currency.
         return entry.currencyType === 'Native';
       })
-      .map((entry) => ({
-        unlockId: entry.unlockId,
-        amount: entry.amount,
-        // TODO: Calculate these properties properly. Currently using dummy data.
-        endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
-        address:
-          '0x1234567890abcdef1234567890abcdef123456789' as AnySubstrateAddress,
-        unlockDurationHasElapsed: false,
-        currency: entry.currency,
-      }));
+      .map((entry) => {
+        // Find the corresponding chain in order to get the decimals.
+        const chain = LIQUID_STAKING_CHAINS.find(
+          (chain) => chain.currency === entry.currency,
+        );
+
+        assert(
+          chain !== undefined,
+          'All currencies should be linked to a defined chain',
+        );
+
+        return {
+          unlockId: entry.unlockId,
+          amount: entry.amount,
+          // TODO: Calculate these properties properly. Currently using dummy data.
+          endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
+          address:
+            '0x1234567890abcdef1234567890abcdef123456789' as AnySubstrateAddress,
+          unlockDurationHasElapsed: false,
+          currency: entry.currency,
+          decimals: chain.decimals,
+        };
+      });
   }, [tokenUnlockLedger]);
 
-  const tableParams = useMemo(
+  const tableOptions = useMemo<TableOptions<UnstakeRequestItem>>(
     () => ({
       // In case that the data is not loaded yet, use an empty array
       // to avoid TypeScript errors.
@@ -152,18 +171,37 @@ const UnstakeRequestsTable: FC = () => {
       filterFns: {
         fuzzy: fuzzyFilter,
       },
+      // getRowId: (row) => row.unlockId.toString(),
       globalFilterFn: fuzzyFilter,
       getCoreRowModel: getCoreRowModel(),
       getFilteredRowModel: getFilteredRowModel(),
       getSortedRowModel: getSortedRowModel(),
       getPaginationRowModel: getPaginationRowModel(),
+      enableRowSelection: true,
     }),
     [data],
   );
 
-  const tableProps = useReactTable(tableParams);
+  const tableProps = useReactTable(tableOptions);
 
-  const table = useMemo(() => {
+  const selectedRowsUnlockIds = useMemo<Set<number>>(
+    () => {
+      console.debug('changed');
+
+      const selectedRows = tableProps
+        .getSelectedRowModel()
+        .rows.map((row) => row.original.unlockId);
+
+      return new Set(selectedRows);
+    },
+
+    // TODO: Get this bug fixed: For some reason, the `tableProps` object will not trigger a re-render when the selected rows change. This is a workaround to force a re-render. This might be because the object itself is not changing, only the contents of the object are changing?
+    [tableProps, tableProps.getSelectedRowModel().rows],
+  );
+
+  // Note that memoizing this will cause the table to not update
+  // when the selected rows change.
+  const table = (() => {
     // No account connected.
     if (substrateAddress === null) {
       return (
@@ -178,7 +216,7 @@ const UnstakeRequestsTable: FC = () => {
       return (
         <Notice
           title="Unstake requests"
-          content={<SkeletonLoaderSet count={5} />}
+          content={<TableRowsSkeleton rowCount={5} />}
         />
       );
     }
@@ -201,17 +239,27 @@ const UnstakeRequestsTable: FC = () => {
         totalRecords={data.length}
       />
     );
-  }, [data, substrateAddress, tableProps]);
+  })();
 
   // TODO: Compute this.
   const canRebondAllSelected = useMemo(() => {
+    // No rows selected.
+    if (selectedRowsUnlockIds.size === 0) {
+      return false;
+    }
+
     return true;
-  }, []);
+  }, [selectedRowsUnlockIds.size]);
 
   // TODO: Compute this.
   const canWithdrawAllSelected = useMemo(() => {
+    // No rows selected.
+    if (selectedRowsUnlockIds.size === 0) {
+      return false;
+    }
+
     return true;
-  }, []);
+  }, [selectedRowsUnlockIds.size]);
 
   return (
     <div className="space-y-4 flex-grow max-w-[700px]">
@@ -266,4 +314,4 @@ const Notice: FC<NoticeProps> = ({ title, content }) => {
   );
 };
 
-export default UnstakeRequestsTable;
+export default React.memo(UnstakeRequestsTable);

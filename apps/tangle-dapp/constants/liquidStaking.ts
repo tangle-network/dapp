@@ -157,7 +157,7 @@ export enum NetworkType {
   PARACHAIN = 'Parachain',
 }
 
-export type ParachainCurrencyFetchKey =
+export type ParachainCurrencyKey =
   | { lst: ParachainCurrency }
   | { Native: ParachainCurrency };
 

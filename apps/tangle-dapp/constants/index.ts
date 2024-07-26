@@ -61,6 +61,7 @@ export enum TxName {
   BRIDGE_TRANSFER = 'bridge transfer',
   MINT = 'mint',
   REDEEM = 'redeem',
+  LST_REBOND = 'cancel unstake request',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

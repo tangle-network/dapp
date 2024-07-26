@@ -3,24 +3,17 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export type SkeletonLoaderSetProps = {
-  count: number;
+  rowCount: number;
   className?: string;
-  isVerticalDirection?: boolean;
 };
 
-const SkeletonLoaderSet: FC<SkeletonLoaderSetProps> = ({
-  count,
+const TableRowsSkeleton: FC<SkeletonLoaderSetProps> = ({
+  rowCount,
   className,
-  isVerticalDirection = true,
 }) => {
   return (
-    <div
-      className={twMerge(
-        'flex gap-2 w-full',
-        isVerticalDirection ? 'flex-col' : 'flex-row',
-      )}
-    >
-      {Array.from({ length: count }).map((_, index) => (
+    <div className={twMerge('flex flex-col gap-2 w-full')}>
+      {Array.from({ length: rowCount }).map((_, index) => (
         <SkeletonLoader
           key={index}
           className={twMerge('h-7 w-full', className)}
@@ -30,4 +23,4 @@ const SkeletonLoaderSet: FC<SkeletonLoaderSetProps> = ({
   );
 };
 
-export default SkeletonLoaderSet;
+export default TableRowsSkeleton;
