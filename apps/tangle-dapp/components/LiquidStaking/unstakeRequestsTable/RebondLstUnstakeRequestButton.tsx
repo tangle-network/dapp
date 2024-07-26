@@ -1,8 +1,9 @@
 import { Button } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 
 import useLstRebondTx from '../../../data/liquidStaking/useLstRebondTx';
+import { TxStatus } from '../../../hooks/useSubstrateTx';
 import CancelUnstakeModal from '../CancelUnstakeModal';
 
 export type RebondLstUnstakeRequestButtonProps = {
@@ -14,9 +15,16 @@ const RebondLstUnstakeRequestButton: FC<RebondLstUnstakeRequestButtonProps> = ({
   canRebond,
   unlockIds,
 }) => {
-  // TODO: On click, call `withdraw_redeemed` extrinsic and provide it with the `unlockIds` via batching.
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
-  const { execute } = useLstRebondTx();
+  const { execute, status } = useLstRebondTx();
+
+  // Show the confirmation modal when the transaction is successful.
+  useEffect(() => {
+    if (status === TxStatus.COMPLETE) {
+      setIsConfirmationModalOpen(true);
+    }
+  }, [status]);
 
   const handleRebondClick = useCallback(() => {
     // The button should have been disabled if this was null.
@@ -40,11 +48,11 @@ const RebondLstUnstakeRequestButton: FC<RebondLstUnstakeRequestButtonProps> = ({
         Cancel Unstake
       </Button>
 
-      {/* TODO: Handle modal. */}
       <CancelUnstakeModal
-        isOpen={false}
-        onClose={() => void 0}
-        unstakeRequest={null as any}
+        isOpen={isConfirmationModalOpen}
+        onClose={() => setIsConfirmationModalOpen(false)}
+        // TODO: Picking the first value temporarily. Figure out how the modal will work with multiple unlock ids.
+        unlockId={unlockIds.values().next().value}
       />
     </>
   );

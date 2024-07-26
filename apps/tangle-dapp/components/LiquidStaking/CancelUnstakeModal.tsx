@@ -11,18 +11,17 @@ import { FC, useCallback } from 'react';
 
 import ExternalLink from './ExternalLink';
 import ModalIcon from './ModalIcon';
-import { UnstakeRequestItem } from './unstakeRequestsTable/UnstakeRequestsTable';
 
 export type CancelUnstakeModalProps = {
   isOpen: boolean;
-  unstakeRequest: UnstakeRequestItem;
+  unlockId: number;
   onClose: () => void;
 };
 
 const CancelUnstakeModal: FC<CancelUnstakeModalProps> = ({
   isOpen,
   // TODO: Make use of the unstake request data, which is relevant for the link's href.
-  unstakeRequest: _unstakeRequest,
+  unlockId: _unlockId,
   onClose,
 }) => {
   const handleConfirm = useCallback(() => {
