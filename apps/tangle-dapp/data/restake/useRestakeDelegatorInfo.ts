@@ -5,6 +5,7 @@ import type {
   PalletMultiAssetDelegationDelegatorUnstakeRequest,
 } from '@polkadot/types/lookup';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import uniqueId from 'lodash/uniqueId';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { map, of, switchMap } from 'rxjs';
 
@@ -62,6 +63,7 @@ export default function useRestakeDelegatorInfo() {
                   const assetIdStr = delegation.assetId.toString();
 
                   return {
+                    uid: uniqueId('delegator-delegation-'),
                     assetId: assetIdStr,
                     amountBonded: amountBigInt,
                     operatorAccountId: delegation.operator.toString(),

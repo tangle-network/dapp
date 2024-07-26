@@ -19,7 +19,9 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   onItemSelected: (
-    item: DelegatorInfo['delegations'][number] & { amountFormatted: string },
+    item: DelegatorInfo['delegations'][number] & {
+      formattedAmount: string;
+    },
   ) => void;
 };
 
@@ -81,7 +83,8 @@ const UnstakeModal = ({
           description:
             'You can try to deposit or delegate an asset to an operator.',
         }}
-        renderItem={({ amountBonded, assetId, operatorAccountId }, idx) => {
+        renderItem={(item) => {
+          const { uid, amountBonded, assetId, operatorAccountId } = item;
           const asset = assetMap[assetId];
 
           const decimals = asset?.decimals || DEFAULT_DECIMALS;
@@ -95,13 +98,11 @@ const UnstakeModal = ({
                 'cursor-pointer max-w-none dark:bg-transparent',
                 'flex items-center justify-between px-0',
               )}
-              key={`${idx}-${operatorAccountId}-${assetId}`}
+              key={uid}
               onClick={() =>
                 onItemSelected({
-                  operatorAccountId,
-                  assetId,
-                  amountBonded,
-                  amountFormatted: fmtAmount,
+                  ...item,
+                  formattedAmount: fmtAmount,
                 })
               }
             >

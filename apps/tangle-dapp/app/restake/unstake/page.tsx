@@ -10,7 +10,7 @@ import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/compone
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 
@@ -18,7 +18,7 @@ import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import {
-  type OperatorBondLessContext,
+  type DelegatorBondLessContext,
   TxEvent,
 } from '../../../data/restake/RestakeTx/base';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
@@ -52,14 +52,9 @@ const Page = () => {
     watch,
     reset,
     formState: { errors, isValid, isSubmitting },
-    trigger,
   } = useForm<UnstakeFormFields>({
     mode: 'onBlur',
   });
-
-  const [maxAmount, setMaxAmount] = useState<
-    { raw: bigint; formatted: number } | undefined
-  >();
 
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
@@ -81,13 +76,8 @@ const Page = () => {
   useEffect(() => {
     register('operatorAccountId', { required: true });
     register('assetId', { required: true });
+    register('uid', { required: true });
   }, [register]);
-
-  useEffect(() => {
-    if (maxAmount) {
-      trigger('amount');
-    }
-  }, [maxAmount, trigger]);
 
   const { delegatorInfo } = useRestakeDelegatorInfo();
 
@@ -101,6 +91,7 @@ const Page = () => {
 
   const selectedAssetId = watch('assetId');
   const selectedOperatorAccountId = watch('operatorAccountId');
+  const selectedUid = watch('uid');
   const amount = watch('amount');
 
   const delegatorBondLessRequests = useMemo(() => {
@@ -116,6 +107,26 @@ const Page = () => {
     return assetMap[selectedAssetId];
   }, [assetMap, selectedAssetId]);
 
+  const { maxAmount, formattedMaxAmount } = useMemo(() => {
+    if (!Array.isArray(delegatorInfo?.delegations)) return {};
+
+    const selectedDelegation = delegatorInfo.delegations.find(
+      (item) => item.uid === selectedUid,
+    );
+    if (!selectedDelegation) return {};
+    if (!assetMap[selectedDelegation.assetId]) return {};
+
+    const maxAmount = selectedDelegation.amountBonded;
+    const formattedMaxAmount = Number(
+      formatUnits(maxAmount, assetMap[selectedDelegation.assetId].decimals),
+    );
+
+    return {
+      maxAmount,
+      formattedMaxAmount,
+    };
+  }, [delegatorInfo?.delegations, assetMap, selectedUid]);
+
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
     const step = decimalsToStep(selectedAsset?.decimals);
 
@@ -128,7 +139,7 @@ const Page = () => {
           step,
           '0',
           ZERO_BIG_INT,
-          maxAmount?.raw,
+          maxAmount,
           selectedAsset?.decimals,
           selectedAsset?.symbol,
         ),
@@ -153,7 +164,7 @@ const Page = () => {
     [errors.operatorAccountId, errors.assetId, errors.amount, selectedOperatorAccountId, selectedAssetId, amount],
   );
 
-  const options = useMemo<Props<OperatorBondLessContext>>(() => {
+  const options = useMemo<Props<DelegatorBondLessContext>>(() => {
     return {
       options: {
         [TxEvent.SUCCESS]: {
@@ -228,7 +239,7 @@ const Page = () => {
                   : {})}
               />
               <TransactionInputCard.MaxAmountButton
-                maxAmount={maxAmount?.formatted}
+                maxAmount={formattedMaxAmount}
                 tooltipBody="Staked Balance"
                 Icon={
                   useRef({
@@ -322,26 +333,19 @@ const Page = () => {
           isOpen={isOperatorModalOpen}
           onClose={closeOperatorModal}
           operatorIdentities={operatorIdentities}
-          onItemSelected={({
-            amountBonded,
-            amountFormatted,
-            assetId,
-            operatorAccountId,
-          }) => {
+          onItemSelected={(item) => {
             closeOperatorModal();
 
+            const { formattedAmount, assetId, operatorAccountId, uid } = item;
             const commonOpts = {
               shouldDirty: true,
               shouldValidate: true,
             };
 
-            setMaxAmount({
-              raw: amountBonded,
-              formatted: Number(amountFormatted),
-            });
             setFormValue('operatorAccountId', operatorAccountId, commonOpts);
             setFormValue('assetId', assetId, commonOpts);
-            setFormValue('amount', amountFormatted, commonOpts);
+            setFormValue('amount', formattedAmount, commonOpts);
+            setFormValue('uid', uid, commonOpts);
           }}
         />
 

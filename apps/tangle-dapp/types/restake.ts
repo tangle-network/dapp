@@ -103,6 +103,7 @@ export type DelegatorUnstakeRequest = {
  * @name PalletMultiAssetDelegationDelegatorBondInfoDelegator (749)
  */
 export type DelegatorBondInfo = {
+  readonly uid: string;
   readonly operatorAccountId: string;
   readonly amountBonded: bigint;
   readonly assetId: string;
@@ -243,6 +244,7 @@ export type DepositFormFields = {
 };
 
 export type DelegationFormFields = {
+  uid: string;
   amount: string;
   operatorAccountId: string;
   assetId: string;
