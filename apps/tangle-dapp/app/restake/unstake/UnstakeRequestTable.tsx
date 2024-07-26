@@ -12,7 +12,6 @@ import {
 } from '@tanstack/react-table';
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
@@ -24,18 +23,12 @@ import { formatUnits } from 'viem';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
-import useRestakeTx from '../../../data/restake/useRestakeTx';
-import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import type { DelegatorBondLessRequest } from '../../../types/restake';
+import type { UnstakeRequestTableData } from './types';
+import UnstakeRequestTableActions from './UnstakeRequestTableActions';
+import { calculateTimeRemaining } from './utils';
 
-type Data = {
-  uid: string;
-  amount: number;
-  assetSymbol: string;
-  timeRemaining: number;
-};
-
-const columnsHelper = createColumnHelper<Data>();
+const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
 
 const columns = [
   columnsHelper.display({
@@ -135,17 +128,17 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
             assetSymbol: asset.symbol,
             timeRemaining,
             uid,
-          } satisfies Data;
+          } satisfies UnstakeRequestTableData;
 
           return acc;
         },
-        {} as Record<string, Data>,
+        {} as Record<string, UnstakeRequestTableData>,
       ),
     [assetMap, currentRound, delegationBondLessDelay, unstakeRequestsWithId],
   );
 
   const table = useReactTable(
-    useMemo<TableOptions<Data>>(
+    useMemo<TableOptions<UnstakeRequestTableData>>(
       () => ({
         data: Object.values(dataWithId),
         columns,
@@ -164,29 +157,15 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
     ),
   );
 
-  const selectedRows = table.getState().rowSelection;
+  const rowSelection = table.getState().rowSelection;
 
-  const canCancelUnstake = useMemo(() => {
-    const entries = Object.entries(selectedRows);
-    if (entries.length === 0) return false;
-
-    return entries.some(([, selected]) => selected);
-  }, [selectedRows]);
-
-  const canExecuteUnstake = useMemo(() => {
-    const entries = Object.entries(selectedRows);
-    if (entries.length === 0) return false;
-
-    return entries.every(([uid, selected]) => {
-      if (!selected || !dataWithId[uid]) return false;
-
-      const { timeRemaining } = dataWithId[uid];
-      return isUnstakeReady(timeRemaining);
-    });
-  }, [dataWithId, selectedRows]);
-
-  const options = useRestakeTxEventHandlersWithNoti();
-  const { executeDelegatorBondLess, cancelDelegatorBondLess } = useRestakeTx();
+  const selectedRequestIds = useMemo(
+    () =>
+      Object.entries(rowSelection)
+        .filter(([, selected]) => selected)
+        .map(([uid]) => uid),
+    [rowSelection],
+  );
 
   return (
     <>
@@ -202,24 +181,10 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
       />
 
       <div className="flex items-center gap-3">
-        <Button
-          className="flex-1"
-          isDisabled={!canCancelUnstake}
-          isFullWidth
-          onClick={() => cancelDelegatorBondLess(options)}
-          variant="secondary"
-        >
-          Cancel Unstake
-        </Button>
-
-        <Button
-          className="flex-1"
-          isDisabled={!canExecuteUnstake}
-          isFullWidth
-          onClick={() => executeDelegatorBondLess(options)}
-        >
-          Execute Unstake
-        </Button>
+        <UnstakeRequestTableActions
+          selectedRequestIds={selectedRequestIds}
+          dataWithId={dataWithId}
+        />
       </div>
     </>
   );
@@ -272,27 +237,4 @@ function TableCell({
       {children}
     </Typography>
   );
-}
-
-/**
- * @internal
- */
-function calculateTimeRemaining(
-  currentRound: number,
-  requestedRound: number,
-  delegationBondLessDelay: number | null,
-) {
-  if (typeof delegationBondLessDelay !== 'number') return -1;
-
-  const roundPassed = currentRound - requestedRound;
-  if (roundPassed >= delegationBondLessDelay) return 0;
-
-  return delegationBondLessDelay - roundPassed;
-}
-
-/**
- * @internal
- */
-function isUnstakeReady(timeRemaining: number) {
-  return timeRemaining === 0;
 }
