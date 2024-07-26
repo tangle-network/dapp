@@ -8,7 +8,7 @@ import { FC, useMemo } from 'react';
 
 import { StaticAssetPath } from '../../../constants';
 import {
-  LIQUID_STAKING_TOKEN_PREFIX,
+  LST_PREFIX,
   LiquidStakingToken,
   ParachainChainId,
   TVS_TOOLTIP,
@@ -63,7 +63,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
         </Typography>
 
         <Chip className="normal-case" color="dark-grey">
-          {LIQUID_STAKING_TOKEN_PREFIX}
+          {LST_PREFIX}
           {tokenSymbol.toUpperCase()}
         </Chip>
       </div>

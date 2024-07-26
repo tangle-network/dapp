@@ -17,7 +17,7 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import {
-  LIQUID_STAKING_TOKEN_PREFIX,
+  LST_PREFIX,
   PARACHAIN_CHAIN_MAP,
   ParachainChainId,
 } from '../../../constants/liquidStaking';
@@ -40,10 +40,6 @@ import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 
 const LiquidStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
-
-  // const [selectedChainId, setSelectedChainId] = useState<LiquidStakingChainId>(
-  //   LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN,
-  // );
 
   const { selectedChainId, setSelectedChainId } = useLiquidStakingStore();
 
@@ -138,7 +134,7 @@ const LiquidStakeCard: FC = () => {
       <LiquidStakingInput
         id="liquid-staking-stake-to"
         chainId={ParachainChainId.TANGLE_RESTAKING_PARACHAIN}
-        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
+        placeholder={`0 ${LST_PREFIX}${selectedChain.token}`}
         decimals={selectedChain.decimals}
         amount={toAmount}
         isReadOnly

@@ -13,7 +13,7 @@ import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LIQUID_STAKING_TOKEN_PREFIX,
+  LST_PREFIX,
   LiquidStakingToken,
   LS_CHAIN_TO_NETWORK_NAME,
   ParachainChainId,
@@ -65,7 +65,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
       return undefined;
     }
 
-    const unit = `${isTokenLiquidVariant ? LIQUID_STAKING_TOKEN_PREFIX : ''}${token}`;
+    const unit = `${isTokenLiquidVariant ? LST_PREFIX : ''}${token}`;
 
     const formattedMinAmount = formatBn(minAmount, decimals, {
       fractionMaxLength: undefined,

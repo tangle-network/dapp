@@ -11,7 +11,7 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
-  LIQUID_STAKING_TOKEN_PREFIX,
+  LST_PREFIX,
   PARACHAIN_CHAIN_MAP,
   ParachainChainId,
 } from '../../../constants/liquidStaking';
@@ -150,7 +150,7 @@ const LiquidUnstakeCard: FC = () => {
         amount={fromAmount}
         decimals={selectedChain.decimals}
         onAmountChange={setFromAmount}
-        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
+        placeholder={`0 ${LST_PREFIX}${selectedChain.token}`}
         rightElement={stakedWalletBalance}
         isTokenLiquidVariant
         minAmount={minimumInputAmount ?? undefined}

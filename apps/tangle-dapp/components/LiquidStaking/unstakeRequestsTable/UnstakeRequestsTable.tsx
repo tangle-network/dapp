@@ -21,17 +21,22 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import BN from 'bn.js';
-import { FC, useMemo } from 'react';
+import { FC, ReactNode, useMemo, useState } from 'react';
 
+import {
+  LST_PREFIX,
+  ParachainCurrency,
+} from '../../../constants/liquidStaking';
 import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
+import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import { AnySubstrateAddress } from '../../../types/utils';
 import calculateTimeRemaining from '../../../utils/calculateTimeRemaining';
 import GlassCard from '../../GlassCard';
 import { HeaderCell } from '../../tableCells';
 import TokenAmountCell from '../../tableCells/TokenAmountCell';
 import AddressLink from '../AddressLink';
-import CancelUnstakeModal from '../CancelUnstakeModal';
 import ExternalLink from '../ExternalLink';
+import SkeletonLoaderSet from '../SkeletonLoaderSet';
 import RebondLstUnstakeRequestButton from './RebondLstUnstakeRequestButton';
 import WithdrawLstUnstakeRequestButton from './WithdrawLstUnstakeRequestButton';
 
@@ -40,6 +45,7 @@ export type UnstakeRequestItem = {
   address: AnySubstrateAddress;
   amount: BN;
   unlockTimestamp?: number;
+  currency: ParachainCurrency;
 
   /**
    * Whether the unlocking period of this request has completed,
@@ -73,12 +79,12 @@ const columns = [
   columnHelper.accessor('unlockTimestamp', {
     header: () => <HeaderCell title="Status" className="justify-center" />,
     cell: (props) => {
-      const endTimestamp = props.getValue();
+      const unlockTimestamp = props.getValue();
 
       const timeRemaining =
-        endTimestamp === undefined
+        unlockTimestamp === undefined
           ? undefined
-          : calculateTimeRemaining(new Date(endTimestamp));
+          : calculateTimeRemaining(new Date(unlockTimestamp));
 
       const content =
         timeRemaining === undefined ? (
@@ -95,40 +101,28 @@ const columns = [
   columnHelper.accessor('amount', {
     header: () => <HeaderCell title="Amount" className="justify-center" />,
     cell: (props) => {
-      return <TokenAmountCell amount={props.getValue()} tokenSymbol="tgDOT" />;
-    },
-  }),
-  columnHelper.display({
-    id: 'actions',
-    header: () => <HeaderCell title="Actions" className="justify-center" />,
-    cell: (props) => {
       const unstakeRequest = props.row.original;
+      const tokenSymbol = `${LST_PREFIX}${unstakeRequest.currency.toUpperCase()}`;
 
       return (
-        <div className="flex items-center justify-center gap-1">
-          <RebondLstUnstakeRequestButton
-            canRebond={!unstakeRequest.unlockDurationHasElapsed}
-            unlockId={unstakeRequest.unlockId}
-          />
-
-          <WithdrawLstUnstakeRequestButton
-            canWithdraw={unstakeRequest.unlockDurationHasElapsed}
-            unlockId={unstakeRequest.unlockId}
-          />
-        </div>
+        <TokenAmountCell amount={props.getValue()} tokenSymbol={tokenSymbol} />
       );
     },
-    enableSorting: false,
   }),
 ];
 
 const UnstakeRequestsTable: FC = () => {
+  const [selectedRowsUnlockIds, setSelectedRowsUnlockIds] = useState<
+    Set<number>
+  >(new Set());
+
+  const substrateAddress = useSubstrateAddress();
   const tokenUnlockLedger = useLstUnlockRequests();
 
-  const data: UnstakeRequestItem[] = useMemo(() => {
+  const data = useMemo<UnstakeRequestItem[] | null>(() => {
+    // Data not loaded yet.
     if (tokenUnlockLedger === null) {
-      // TODO: Return null instead, and use skeleton loader if the data isn't ready.
-      return [];
+      return null;
     }
 
     return tokenUnlockLedger
@@ -145,12 +139,15 @@ const UnstakeRequestsTable: FC = () => {
         address:
           '0x1234567890abcdef1234567890abcdef123456789' as AnySubstrateAddress,
         unlockDurationHasElapsed: false,
+        currency: entry.currency,
       }));
   }, [tokenUnlockLedger]);
 
   const tableParams = useMemo(
     () => ({
-      data,
+      // In case that the data is not loaded yet, use an empty array
+      // to avoid TypeScript errors.
+      data: data ?? [],
       columns,
       filterFns: {
         fuzzy: fuzzyFilter,
@@ -164,55 +161,107 @@ const UnstakeRequestsTable: FC = () => {
     [data],
   );
 
-  const table = useReactTable(tableParams);
+  const tableProps = useReactTable(tableParams);
+
+  const table = useMemo(() => {
+    // No account connected.
+    if (substrateAddress === null) {
+      return (
+        <Notice
+          title="No account connected"
+          content="Once an account is connected, you will be able to see information about your unstake requests, including the amount, status, and actions you can take."
+        />
+      );
+    }
+    // Data still loading.
+    else if (data === null) {
+      return (
+        <Notice
+          title="Unstake requests"
+          content={<SkeletonLoaderSet count={5} />}
+        />
+      );
+    }
+    // No unstake requests.
+    else if (data.length === 0) {
+      return (
+        <Notice
+          title="No unstake requests"
+          content="You will be able to claim your tokens after the unstake request has been processed. To unstake your tokens go to the unstake tab to schedule request."
+        />
+      );
+    }
+
+    return (
+      <Table
+        thClassName="!bg-inherit border-t-0 bg-mono-0 !px-3 !py-2 whitespace-nowrap"
+        trClassName="!bg-inherit"
+        tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
+        tableProps={tableProps}
+        totalRecords={data.length}
+      />
+    );
+  }, [data, substrateAddress, tableProps]);
+
+  // TODO: Compute this.
+  const canRebondAllSelected = useMemo(() => {
+    return true;
+  }, []);
+
+  // TODO: Compute this.
+  const canWithdrawAllSelected = useMemo(() => {
+    return true;
+  }, []);
 
   return (
     <div className="space-y-4 flex-grow max-w-[700px]">
       <GlassCard>
-        {data.length === 0 ? (
-          <NoUnstakeRequestsNotice />
-        ) : (
-          <Table
-            thClassName="!bg-inherit border-t-0 bg-mono-0 !px-3 !py-2 whitespace-nowrap"
-            trClassName="!bg-inherit"
-            tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
-            tableProps={table}
-            totalRecords={data.length}
+        {table}
+
+        <div className="flex gap-3 items-center justify-center">
+          <RebondLstUnstakeRequestButton
+            canRebond={canRebondAllSelected}
+            unlockIds={selectedRowsUnlockIds}
           />
-        )}
+
+          <WithdrawLstUnstakeRequestButton
+            canWithdraw={canWithdrawAllSelected}
+            unlockIds={selectedRowsUnlockIds}
+          />
+        </div>
       </GlassCard>
 
-      {data.length === 0 && (
+      {data !== null && data.length === 0 && (
         <div className="flex items-center justify-end w-full">
           <ExternalLink Icon={ArrowRightUp} href={TANGLE_DOCS_URL}>
             View Docs
           </ExternalLink>
         </div>
       )}
-
-      {/* TODO: Handle this modal properly. */}
-      <CancelUnstakeModal
-        isOpen={false}
-        onClose={() => void 0}
-        unstakeRequest={null as any}
-      />
     </div>
   );
 };
 
+type NoticeProps = {
+  title: string;
+  content: string | ReactNode;
+};
+
 /** @internal */
-const NoUnstakeRequestsNotice: FC = () => {
+const Notice: FC<NoticeProps> = ({ title, content }) => {
   return (
     <div className="flex flex-col items-start justify-center gap-4">
       <Typography className="dark:text-mono-0" variant="body1" fw="bold">
-        No unstake requests
+        {title}
       </Typography>
 
-      <Typography variant="body2" fw="normal">
-        You will be able to claim your tokens after the unstake request has been
-        processed. To unstake your tokens go to the unstake tab to schedule
-        request.
-      </Typography>
+      {typeof content === 'string' ? (
+        <Typography variant="body2" fw="normal">
+          {content}
+        </Typography>
+      ) : (
+        content
+      )}
     </div>
   );
 };

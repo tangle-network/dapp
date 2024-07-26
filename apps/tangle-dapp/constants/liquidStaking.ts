@@ -142,7 +142,7 @@ export const LS_CHAIN_TO_NETWORK_NAME: Record<ParachainChainId, string> = {
 export const TVS_TOOLTIP =
   "Total Value Staked (TVS) refers to the total value of assets that are currently staked for this network in fiat currency. Generally used as an indicator of a network's security and trustworthiness.";
 
-export const LIQUID_STAKING_TOKEN_PREFIX = 'tg';
+export const LST_PREFIX = 'tg';
 
 // TODO: These should be moved/managed in libs/webb-ui-components/src/constants/networks.ts and not here. This is just a temporary solution.
 export type Network = {

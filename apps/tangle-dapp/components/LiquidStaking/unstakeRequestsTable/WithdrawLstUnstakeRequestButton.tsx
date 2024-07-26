@@ -1,25 +1,26 @@
-import { WalletLineIcon } from '@webb-tools/icons';
+import { Button } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
-
-import UtilityIconButton from './UtilityIconButton';
 
 export type WithdrawLstUnstakeRequestButtonProps = {
   canWithdraw: boolean;
-  unlockId: number;
+  unlockIds: Set<number>;
 };
 
 const WithdrawLstUnstakeRequestButton: FC<
   WithdrawLstUnstakeRequestButtonProps
-> = ({ canWithdraw, unlockId }) => {
-  // TODO: On click, call `withdraw_redeemed` extrinsic and provide it with the `unlockId`.
+> = ({ canWithdraw, unlockIds }) => {
+  // TODO: On click, call `withdraw_redeemed` extrinsic and provide it with the `unlockIds` via batching.
 
+  // TODO: Add and handle confirmation modal.
   return (
-    <UtilityIconButton
+    <Button
+      variant="secondary"
       isDisabled={!canWithdraw}
-      Icon={WalletLineIcon}
-      tooltip="Withdraw"
       onClick={() => void 0}
-    />
+      isFullWidth
+    >
+      Withdraw
+    </Button>
   );
 };
 
