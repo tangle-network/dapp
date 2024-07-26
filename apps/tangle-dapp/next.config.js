@@ -15,6 +15,12 @@ const nextConfigBase = require('../../next.config.cjs');
 const nextConfig = {
   ...nextConfigBase,
 
+  experimental: {
+    // --- TODO: Remove the 2 options if possible ---
+    webpackBuildWorker: true,
+    workerThreads: true,
+  },
+
   reactStrictMode: true,
 
   // at default environment variable is only accessible by the server, resulting in hydration mismatch
