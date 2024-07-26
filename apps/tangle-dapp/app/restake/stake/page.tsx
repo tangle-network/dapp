@@ -106,6 +106,11 @@ export default function DelegatePage() {
     }
   }, [defaultAssetId, setValue]);
 
+  // Reset form when active chain changes
+  useEffect(() => {
+    reset();
+  }, [activeTypedChainId, reset]);
+
   const {
     status: isChainModalOpen,
     open: openChainModal,

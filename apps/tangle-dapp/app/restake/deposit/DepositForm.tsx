@@ -102,6 +102,11 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     setValue('sourceTypedChainId', getDefaultTypedChainId(activeTypedChainId));
   }, [activeTypedChainId, setValue]);
 
+  // Reset form when active chain changes
+  useEffect(() => {
+    resetField('amount');
+  }, [activeTypedChainId, resetField]);
+
   const sourceTypedChainId = watch('sourceTypedChainId');
 
   // Subscribe to sourceTypedChainId and update customRpc

@@ -79,6 +79,11 @@ const Page = () => {
     register('uid', { required: true });
   }, [register]);
 
+  // Reset form when active chain changes
+  useEffect(() => {
+    reset();
+  }, [activeTypedChainId, reset]);
+
   const { delegatorInfo } = useRestakeDelegatorInfo();
 
   const { result: operatorIdentities } = useIdentities(
