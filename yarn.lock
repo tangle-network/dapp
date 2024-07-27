@@ -8721,13 +8721,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@netlify/plugin-nextjs@npm:^5.3.2":
-  version: 5.5.1
-  resolution: "@netlify/plugin-nextjs@npm:5.5.1"
-  checksum: 10c0/853e6652b6e415cf06578dcb8d464de119c6f3e7645ad2b13d4bc781302a813b197bab527fcad9b17adb74b4e74f61be17b89e8680e49c6fb3c35af971c6776c
-  languageName: node
-  linkType: hard
-
 "@netlify/plugins-list@npm:^6.80.0":
   version: 6.80.0
   resolution: "@netlify/plugins-list@npm:6.80.0"
@@ -45085,7 +45078,6 @@ __metadata:
     "@graphql-codegen/typescript-operations": "npm:4.2.1"
     "@graphql-codegen/typescript-react-apollo": "npm:4.3.0"
     "@headlessui/react": "npm:^2.1.2"
-    "@netlify/plugin-nextjs": "npm:^5.3.2"
     "@next/bundle-analyzer": "npm:^14.2.3"
     "@ngneat/falso": "npm:^7.2.0"
     "@nx/cypress": "npm:19.1.1"
