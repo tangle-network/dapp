@@ -7,12 +7,12 @@ import { TxStatus } from '../../../hooks/useSubstrateTx';
 import CancelUnstakeModal from '../CancelUnstakeModal';
 
 export type RebondLstUnstakeRequestButtonProps = {
-  canRebond: boolean;
+  isDisabled: boolean;
   unlockIds: Set<number>;
 };
 
 const RebondLstUnstakeRequestButton: FC<RebondLstUnstakeRequestButtonProps> = ({
-  canRebond,
+  isDisabled,
   unlockIds,
 }) => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
@@ -41,7 +41,7 @@ const RebondLstUnstakeRequestButton: FC<RebondLstUnstakeRequestButtonProps> = ({
     <>
       <Button
         variant="secondary"
-        isDisabled={!canRebond || execute === null}
+        isDisabled={isDisabled || execute === null}
         onClick={handleRebondClick}
         isFullWidth
       >

@@ -25,6 +25,7 @@ import assert from 'assert';
 import BN from 'bn.js';
 import { FC, ReactNode, useMemo } from 'react';
 import React from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import {
   LST_PREFIX,
@@ -125,7 +126,7 @@ const UnstakeRequestsTable: FC = () => {
   const substrateAddress = useSubstrateAddress();
   const tokenUnlockLedger = useLstUnlockRequests();
 
-  const data = useMemo<UnstakeRequestItem[] | null>(() => {
+  const unstakeRequests = useMemo<UnstakeRequestItem[] | null>(() => {
     // Data not loaded yet.
     if (tokenUnlockLedger === null) {
       return null;
@@ -166,7 +167,7 @@ const UnstakeRequestsTable: FC = () => {
     () => ({
       // In case that the data is not loaded yet, use an empty array
       // to avoid TypeScript errors.
-      data: data ?? [],
+      data: unstakeRequests ?? [],
       columns,
       filterFns: {
         fuzzy: fuzzyFilter,
@@ -179,7 +180,7 @@ const UnstakeRequestsTable: FC = () => {
       getPaginationRowModel: getPaginationRowModel(),
       enableRowSelection: true,
     }),
-    [data],
+    [unstakeRequests],
   );
 
   const tableProps = useReactTable(tableOptions);
@@ -212,7 +213,7 @@ const UnstakeRequestsTable: FC = () => {
       );
     }
     // Data still loading.
-    else if (data === null) {
+    else if (unstakeRequests === null) {
       return (
         <Notice
           title="Unstake requests"
@@ -221,7 +222,7 @@ const UnstakeRequestsTable: FC = () => {
       );
     }
     // No unstake requests.
-    else if (data.length === 0) {
+    else if (unstakeRequests.length === 0) {
       return (
         <Notice
           title="No unstake requests"
@@ -236,50 +237,65 @@ const UnstakeRequestsTable: FC = () => {
         trClassName="!bg-inherit"
         tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
         tableProps={tableProps}
-        totalRecords={data.length}
+        totalRecords={unstakeRequests.length}
       />
     );
   })();
 
-  // TODO: Compute this.
-  const canRebondAllSelected = useMemo(() => {
-    // No rows selected.
-    if (selectedRowsUnlockIds.size === 0) {
-      return false;
-    }
-
-    return true;
-  }, [selectedRowsUnlockIds.size]);
-
-  // TODO: Compute this.
+  // Can only withdraw all selected unstake requests if they
+  // have all completed their unlocking period.
   const canWithdrawAllSelected = useMemo(() => {
-    // No rows selected.
-    if (selectedRowsUnlockIds.size === 0) {
+    // No rows selected or not loaded yet.
+    if (selectedRowsUnlockIds.size === 0 || unstakeRequests === null) {
       return false;
     }
 
-    return true;
-  }, [selectedRowsUnlockIds.size]);
+    const unlockIds = Array.from(selectedRowsUnlockIds);
+
+    // Check that all selected rows have completed their unlocking
+    // period.
+    return unlockIds.every((unlockId) => {
+      const request = unstakeRequests.find(
+        (request) => request.unlockId === unlockId,
+      );
+
+      assert(
+        request !== undefined,
+        'All unlock ids should have a corresponding request',
+      );
+
+      return request.unlockDurationHasElapsed;
+    });
+  }, [selectedRowsUnlockIds, unstakeRequests]);
 
   return (
     <div className="space-y-4 flex-grow max-w-[700px]">
-      <GlassCard>
+      <GlassCard
+        className={twMerge(
+          unstakeRequests !== null &&
+            unstakeRequests.length > 0 &&
+            'flex flex-col justify-between min-h-[500px]',
+        )}
+      >
         {table}
 
-        <div className="flex gap-3 items-center justify-center">
-          <RebondLstUnstakeRequestButton
-            canRebond={canRebondAllSelected}
-            unlockIds={selectedRowsUnlockIds}
-          />
+        {unstakeRequests !== null && unstakeRequests.length > 0 && (
+          <div className="flex gap-3 items-center justify-center">
+            <RebondLstUnstakeRequestButton
+              // Can only rebond if there are selected rows.
+              isDisabled={selectedRowsUnlockIds.size === 0}
+              unlockIds={selectedRowsUnlockIds}
+            />
 
-          <WithdrawLstUnstakeRequestButton
-            canWithdraw={canWithdrawAllSelected}
-            unlockIds={selectedRowsUnlockIds}
-          />
-        </div>
+            <WithdrawLstUnstakeRequestButton
+              canWithdraw={canWithdrawAllSelected}
+              unlockIds={selectedRowsUnlockIds}
+            />
+          </div>
+        )}
       </GlassCard>
 
-      {data !== null && data.length === 0 && (
+      {unstakeRequests !== null && unstakeRequests.length === 0 && (
         <div className="flex items-center justify-end w-full">
           <ExternalLink Icon={ArrowRightUp} href={TANGLE_DOCS_URL}>
             View Docs
