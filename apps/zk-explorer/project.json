@@ -4,20 +4,6 @@
   "sourceRoot": "apps/zk-explorer",
   "projectType": "application",
   "targets": {
-    "build": {
-      "executor": "@nx/next:build",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "outputPath": "dist/apps/zk-explorer"
-      },
-      "configurations": {
-        "development": {
-          "outputPath": "apps/zk-explorer"
-        },
-        "production": {}
-      }
-    },
     "serve": {
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
@@ -48,10 +34,6 @@
       "options": {
         "jestConfig": "apps/zk-explorer/jest.config.ts"
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
     }
   },
   "tags": []
