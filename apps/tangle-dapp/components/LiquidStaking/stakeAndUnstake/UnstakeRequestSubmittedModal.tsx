@@ -11,11 +11,11 @@ import { FC, useCallback } from 'react';
 
 import ModalIcon, { ModalIconCommonVariant } from '..//ModalIcon';
 import ExternalLink from '../ExternalLink';
-import { UnstakeRequestItem } from '../unstakeRequestsTable/UnstakeRequestsTable';
+import { UnstakeRequestTableRow } from '../unstakeRequestsTable/UnstakeRequestsTable';
 
 export type UnstakeRequestSubmittedModalProps = {
   isOpen: boolean;
-  unstakeRequest: UnstakeRequestItem;
+  unstakeRequest: UnstakeRequestTableRow;
   onClose: () => void;
 };
 

@@ -31,8 +31,6 @@ import {
   LST_PREFIX,
   ParachainCurrency,
 } from '../../../constants/liquidStaking';
-import { LIQUID_STAKING_CHAINS } from '../../../constants/liquidStaking';
-import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import { AnySubstrateAddress } from '../../../types/utils';
 import calculateTimeRemaining from '../../../utils/calculateTimeRemaining';
@@ -43,9 +41,10 @@ import AddressLink from '../AddressLink';
 import ExternalLink from '../ExternalLink';
 import TableRowsSkeleton from '../TableRowsSkeleton';
 import RebondLstUnstakeRequestButton from './RebondLstUnstakeRequestButton';
+import useLstUnlockRequestTableRows from './useLstUnlockRequestTableRows';
 import WithdrawLstUnstakeRequestButton from './WithdrawLstUnstakeRequestButton';
 
-export type UnstakeRequestItem = {
+export type UnstakeRequestTableRow = {
   unlockId: number;
   address: AnySubstrateAddress;
   amount: BN;
@@ -61,7 +60,7 @@ export type UnstakeRequestItem = {
   unlockDurationHasElapsed: boolean;
 };
 
-const columnHelper = createColumnHelper<UnstakeRequestItem>();
+const columnHelper = createColumnHelper<UnstakeRequestTableRow>();
 
 const columns = [
   columnHelper.accessor('address', {
@@ -124,50 +123,13 @@ const columns = [
 
 const UnstakeRequestsTable: FC = () => {
   const substrateAddress = useSubstrateAddress();
-  const tokenUnlockLedger = useLstUnlockRequests();
+  const rows = useLstUnlockRequestTableRows();
 
-  const unstakeRequests = useMemo<UnstakeRequestItem[] | null>(() => {
-    // Data not loaded yet.
-    if (tokenUnlockLedger === null) {
-      return null;
-    }
-
-    return tokenUnlockLedger
-      .filter((entry) => {
-        // Filter entries to include only those that are redeeming
-        // into the native currency.
-        return entry.currencyType === 'Native';
-      })
-      .map((entry) => {
-        // Find the corresponding chain in order to get the decimals.
-        const chain = LIQUID_STAKING_CHAINS.find(
-          (chain) => chain.currency === entry.currency,
-        );
-
-        assert(
-          chain !== undefined,
-          'All currencies should be linked to a defined chain',
-        );
-
-        return {
-          unlockId: entry.unlockId,
-          amount: entry.amount,
-          // TODO: Calculate these properties properly. Currently using dummy data.
-          endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
-          address:
-            '0x1234567890abcdef1234567890abcdef123456789' as AnySubstrateAddress,
-          unlockDurationHasElapsed: false,
-          currency: entry.currency,
-          decimals: chain.decimals,
-        };
-      });
-  }, [tokenUnlockLedger]);
-
-  const tableOptions = useMemo<TableOptions<UnstakeRequestItem>>(
+  const tableOptions = useMemo<TableOptions<UnstakeRequestTableRow>>(
     () => ({
       // In case that the data is not loaded yet, use an empty array
       // to avoid TypeScript errors.
-      data: unstakeRequests ?? [],
+      data: rows ?? [],
       columns,
       filterFns: {
         fuzzy: fuzzyFilter,
@@ -180,7 +142,7 @@ const UnstakeRequestsTable: FC = () => {
       getPaginationRowModel: getPaginationRowModel(),
       enableRowSelection: true,
     }),
-    [unstakeRequests],
+    [rows],
   );
 
   const tableProps = useReactTable(tableOptions);
@@ -213,7 +175,7 @@ const UnstakeRequestsTable: FC = () => {
       );
     }
     // Data still loading.
-    else if (unstakeRequests === null) {
+    else if (rows === null) {
       return (
         <Notice
           title="Unstake requests"
@@ -222,7 +184,7 @@ const UnstakeRequestsTable: FC = () => {
       );
     }
     // No unstake requests.
-    else if (unstakeRequests.length === 0) {
+    else if (rows.length === 0) {
       return (
         <Notice
           title="No unstake requests"
@@ -237,7 +199,7 @@ const UnstakeRequestsTable: FC = () => {
         trClassName="!bg-inherit"
         tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
         tableProps={tableProps}
-        totalRecords={unstakeRequests.length}
+        totalRecords={rows.length}
       />
     );
   })();
@@ -246,7 +208,7 @@ const UnstakeRequestsTable: FC = () => {
   // have all completed their unlocking period.
   const canWithdrawAllSelected = useMemo(() => {
     // No rows selected or not loaded yet.
-    if (selectedRowsUnlockIds.size === 0 || unstakeRequests === null) {
+    if (selectedRowsUnlockIds.size === 0 || rows === null) {
       return false;
     }
 
@@ -255,9 +217,7 @@ const UnstakeRequestsTable: FC = () => {
     // Check that all selected rows have completed their unlocking
     // period.
     return unlockIds.every((unlockId) => {
-      const request = unstakeRequests.find(
-        (request) => request.unlockId === unlockId,
-      );
+      const request = rows.find((request) => request.unlockId === unlockId);
 
       assert(
         request !== undefined,
@@ -266,20 +226,20 @@ const UnstakeRequestsTable: FC = () => {
 
       return request.unlockDurationHasElapsed;
     });
-  }, [selectedRowsUnlockIds, unstakeRequests]);
+  }, [selectedRowsUnlockIds, rows]);
 
   return (
     <div className="space-y-4 flex-grow max-w-[700px]">
       <GlassCard
         className={twMerge(
-          unstakeRequests !== null &&
-            unstakeRequests.length > 0 &&
+          rows !== null &&
+            rows.length > 0 &&
             'flex flex-col justify-between min-h-[500px]',
         )}
       >
         {table}
 
-        {unstakeRequests !== null && unstakeRequests.length > 0 && (
+        {rows !== null && rows.length > 0 && (
           <div className="flex gap-3 items-center justify-center">
             <RebondLstUnstakeRequestButton
               // Can only rebond if there are selected rows.
@@ -295,7 +255,7 @@ const UnstakeRequestsTable: FC = () => {
         )}
       </GlassCard>
 
-      {unstakeRequests !== null && unstakeRequests.length === 0 && (
+      {rows !== null && rows.length === 0 && (
         <div className="flex items-center justify-end w-full">
           <ExternalLink Icon={ArrowRightUp} href={TANGLE_DOCS_URL}>
             View Docs
