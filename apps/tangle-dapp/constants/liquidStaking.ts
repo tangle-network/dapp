@@ -3,6 +3,7 @@ import {
   TanglePrimitivesTimeUnit,
 } from '@polkadot/types/lookup';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
+import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
 import { StaticAssetPath } from '.';
 
@@ -113,7 +114,13 @@ const TANGLE_RESTAKING_PARACHAIN: ParachainChainDef = {
   networkName: 'Tangle Parachain',
   currency: 'Bnc',
   decimals: TANGLE_TOKEN_DECIMALS,
-  rpcEndpoint: '',
+  rpcEndpoint: TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
+  substrateTimingSpec: {
+    expectedBlockTimeMs: 12_000,
+    // TODO: This is dummy data for now. Update with the actual values.
+    blocksPerSession: 6,
+    sessionsPerEra: 6,
+  },
 };
 
 export const PARACHAIN_CHAIN_MAP: Record<ParachainChainId, ParachainChainDef> =

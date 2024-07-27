@@ -17,7 +17,8 @@ const getValueOfTangleCurrency = (
       result = tangleCurrencyId.asNative.type;
 
       break;
-    // TODO: This mismatches the type definitions. What is being used elsewhere is 'lst', not 'Lst'. Need to get the Parachain type definitions updated! For that reason, this case won't match and it will throw an error.
+    // TODO: This mismatches the type definitions. What is being used elsewhere is 'lst', not 'Lst'. Need to get the Parachain type definitions updated! For now, manually fixing it here.
+    case 'lst' as any:
     case 'Lst':
       result = tangleCurrencyId.asLst.type;
 

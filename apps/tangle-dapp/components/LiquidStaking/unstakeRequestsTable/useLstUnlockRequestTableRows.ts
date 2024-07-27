@@ -1,12 +1,55 @@
 import assert from 'assert';
 import { useMemo } from 'react';
 
-import { LIQUID_STAKING_CHAINS } from '../../../constants/liquidStaking';
+import {
+  LIQUID_STAKING_CHAINS,
+  ParachainChainId,
+  SimpleTimeUnitInstance,
+} from '../../../constants/liquidStaking';
 import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
-import useOngoingTimeUnits from '../../../data/liquidStaking/useOngoingTimeUnits';
+import useOngoingTimeUnits, {
+  OngoingTimeUnitEntry,
+} from '../../../data/liquidStaking/useOngoingTimeUnits';
 import { AnySubstrateAddress } from '../../../types/utils';
 import timeUnitToMilliseconds from '../../../utils/liquidStaking/timeUnitToMilliseconds';
 import { UnstakeRequestTableRow } from './UnstakeRequestsTable';
+
+const estimateUnlockTimestamp = (
+  chainId: ParachainChainId,
+  unlockTimeUnit: SimpleTimeUnitInstance,
+  ongoingTimeUnitEntry: OngoingTimeUnitEntry,
+): number | undefined => {
+  assert(
+    ongoingTimeUnitEntry.timeUnit.unit === unlockTimeUnit.unit,
+    'The time unit of the ongoing time unit should match the time unit of the unlock request',
+  );
+
+  const remainingTimeUnit: SimpleTimeUnitInstance = {
+    unit: unlockTimeUnit.unit,
+    value: unlockTimeUnit.value - ongoingTimeUnitEntry.timeUnit.value,
+  };
+
+  const remainingTimeInMilliseconds = timeUnitToMilliseconds(
+    chainId,
+    remainingTimeUnit,
+  );
+
+  const estimatedUnlockTimestamp =
+    remainingTimeInMilliseconds > 0
+      ? Date.now() + remainingTimeInMilliseconds
+      : undefined;
+
+  console.debug(
+    'unlock',
+    unlockTimeUnit,
+    estimatedUnlockTimestamp,
+    remainingTimeInMilliseconds,
+    remainingTimeUnit,
+    ongoingTimeUnitEntry,
+  );
+
+  return estimatedUnlockTimestamp;
+};
 
 const useLstUnlockRequestTableRows = () => {
   const tokenUnlockLedger = useLstUnlockRequests();
@@ -42,38 +85,34 @@ const useLstUnlockRequestTableRows = () => {
             ongoingTimeUnit.currency === request.currency,
         );
 
-        // TODO: Don't rely on this assumption, as it might be the case that newly introduced currencies don't yet have an ongoing time unit registered onchain, and this may lead to a crash.
-        assert(
-          ongoingTimeUnitEntry !== undefined,
-          'All currencies should have an ongoing time unit entry onchain',
-        );
-
-        assert(
-          ongoingTimeUnitEntry.timeUnit.unit === request.unlockTimeUnit.unit,
-          'The time unit of the ongoing time unit should match the time unit of the unlock request',
-        );
+        const estimatedUnlockTime =
+          ongoingTimeUnitEntry === undefined
+            ? undefined
+            : estimateUnlockTimestamp(
+                chain.id,
+                request.unlockTimeUnit,
+                ongoingTimeUnitEntry,
+              );
 
         // TODO: Is it >= or >?
         const hasUnlocked =
-          ongoingTimeUnitEntry.timeUnit.value >= request.unlockTimeUnit.value;
-
-        const unlockTimestamp = timeUnitToMilliseconds(
-          chain.id,
-          request.unlockTimeUnit,
-        );
+          ongoingTimeUnitEntry === undefined
+            ? false
+            : ongoingTimeUnitEntry.timeUnit.value >=
+              request.unlockTimeUnit.value;
 
         return {
           unlockId: request.unlockId,
           amount: request.amount,
-
-          unlockTimestamp,
+          estimatedUnlockTimestamp: estimatedUnlockTime,
           // TODO: Using dummy address for now.
           address:
             '0x1234567890abcdef1234567890abcdef123456789' as AnySubstrateAddress,
-          unlockDurationHasElapsed: hasUnlocked,
+          hasUnlocked,
           currency: request.currency,
           decimals: chain.decimals,
-        };
+          unlockTimeUnit: request.unlockTimeUnit,
+        } satisfies UnstakeRequestTableRow;
       });
   }, [ongoingTimeUnits, tokenUnlockLedger]);
 

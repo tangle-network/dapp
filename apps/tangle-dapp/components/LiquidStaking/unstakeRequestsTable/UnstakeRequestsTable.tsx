@@ -30,6 +30,7 @@ import { twMerge } from 'tailwind-merge';
 import {
   LST_PREFIX,
   ParachainCurrency,
+  SimpleTimeUnitInstance,
 } from '../../../constants/liquidStaking';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import { AnySubstrateAddress } from '../../../types/utils';
@@ -49,7 +50,8 @@ export type UnstakeRequestTableRow = {
   address: AnySubstrateAddress;
   amount: BN;
   decimals: number;
-  unlockTimestamp?: number;
+  estimatedUnlockTimestamp?: number;
+  unlockTimeUnit: SimpleTimeUnitInstance;
   currency: ParachainCurrency;
 
   /**
@@ -57,7 +59,7 @@ export type UnstakeRequestTableRow = {
    * and the request is ready to be executed, and the tokens
    * withdrawn.
    */
-  unlockDurationHasElapsed: boolean;
+  hasUnlocked: boolean;
 };
 
 const columnHelper = createColumnHelper<UnstakeRequestTableRow>();
@@ -82,24 +84,26 @@ const columns = [
       );
     },
   }),
-  columnHelper.accessor('unlockTimestamp', {
+  columnHelper.accessor('estimatedUnlockTimestamp', {
     header: () => <HeaderCell title="Status" className="justify-center" />,
     cell: (props) => {
-      const unlockTimestamp = props.getValue();
+      const estimatedUnlockTimestamp = props.getValue();
+      const unlockTimeUnit = props.row.original.unlockTimeUnit;
+      const unit = unlockTimeUnit.unit.toLowerCase();
+      const plurality = unlockTimeUnit.value > 1 ? 's' : '';
 
       const timeRemaining =
-        unlockTimestamp === undefined
-          ? undefined
-          : calculateTimeRemaining(new Date(unlockTimestamp));
+        estimatedUnlockTimestamp === undefined
+          ? `${unlockTimeUnit.value} ${unit}${plurality}`
+          : calculateTimeRemaining(new Date(estimatedUnlockTimestamp));
 
-      const content =
-        timeRemaining === undefined ? (
-          <CheckboxCircleFill className="dark:fill-green-50" />
-        ) : (
-          <div className="flex gap-1 items-center justify-center">
-            <TimeFillIcon className="dark:fill-blue-50" /> {timeRemaining}
-          </div>
-        );
+      const content = props.row.original.hasUnlocked ? (
+        <CheckboxCircleFill className="dark:fill-green-50" />
+      ) : (
+        <div className="flex gap-1 items-center justify-center">
+          <TimeFillIcon className="dark:fill-blue-50" /> {timeRemaining}
+        </div>
+      );
 
       return <div className="flex items-center justify-center">{content}</div>;
     },
@@ -224,7 +228,7 @@ const UnstakeRequestsTable: FC = () => {
         'All unlock ids should have a corresponding request',
       );
 
-      return request.unlockDurationHasElapsed;
+      return request.hasUnlocked;
     });
   }, [selectedRowsUnlockIds, rows]);
 
