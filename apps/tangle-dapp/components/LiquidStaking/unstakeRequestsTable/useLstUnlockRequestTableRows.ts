@@ -5,6 +5,7 @@ import { LIQUID_STAKING_CHAINS } from '../../../constants/liquidStaking';
 import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
 import useOngoingTimeUnits from '../../../data/liquidStaking/useOngoingTimeUnits';
 import { AnySubstrateAddress } from '../../../types/utils';
+import timeUnitToMilliseconds from '../../../utils/liquidStaking/timeUnitToMilliseconds';
 import { UnstakeRequestTableRow } from './UnstakeRequestsTable';
 
 const useLstUnlockRequestTableRows = () => {
@@ -56,11 +57,17 @@ const useLstUnlockRequestTableRows = () => {
         const hasUnlocked =
           ongoingTimeUnitEntry.timeUnit.value >= request.unlockTimeUnit.value;
 
+        const unlockTimestamp = timeUnitToMilliseconds(
+          chain.id,
+          request.unlockTimeUnit,
+        );
+
         return {
           unlockId: request.unlockId,
           amount: request.amount,
-          // TODO: Calculate these properties properly. Currently using dummy data.
-          endTimestamp: Date.now() + 1000 * 60 * 60 * 24,
+
+          unlockTimestamp,
+          // TODO: Using dummy address for now.
           address:
             '0x1234567890abcdef1234567890abcdef123456789' as AnySubstrateAddress,
           unlockDurationHasElapsed: hasUnlocked,

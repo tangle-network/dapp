@@ -104,7 +104,7 @@ const TokenListItem: FC<TokenListItemProps> = ({
   return (
     <div
       onClick={onClick}
-      className="flex items-center justify-between py-2 px-4 rounded-lg cursor-pointer w-full hover:dark:bg-mono-160"
+      className="flex items-center justify-between py-2 px-4 rounded-lg cursor-pointer w-full hover:dark:bg-mono-200"
     >
       {/* Information */}
       <div className="flex items-center justify-center gap-2">

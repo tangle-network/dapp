@@ -1,8 +1,7 @@
-import { TanglePrimitivesTimeUnit } from '@polkadot/types/lookup';
-
 import {
   PARACHAIN_CHAIN_MAP,
   ParachainChainId,
+  SimpleTimeUnitInstance,
 } from '../../constants/liquidStaking';
 
 const estimateByEra = (chainId: ParachainChainId, era: number): number => {
@@ -24,22 +23,22 @@ const estimateByEra = (chainId: ParachainChainId, era: number): number => {
 
 const timeUnitToMilliseconds = (
   chainId: ParachainChainId,
-  tangleTimeUnit: TanglePrimitivesTimeUnit,
+  timeUnitInstance: SimpleTimeUnitInstance,
 ): number => {
-  switch (tangleTimeUnit.type) {
+  switch (timeUnitInstance.unit) {
     // A conventional hour.
     case 'Hour': {
-      return tangleTimeUnit.asHour.toNumber() * 60 * 60 * 1000;
+      return timeUnitInstance.value * 60 * 60 * 1000;
     }
     // The duration of an era is chain-specific, so the timing spec
     // is required.
     case 'Era': {
-      return estimateByEra(chainId, tangleTimeUnit.asEra.toNumber());
+      return estimateByEra(chainId, timeUnitInstance.value);
     }
     default: {
       // TODO: Add support for the remaining time unit types.
       throw new Error(
-        `Time unit type not yet supported: ${tangleTimeUnit.type}`,
+        `Time unit type not yet supported: ${timeUnitInstance.unit}`,
       );
     }
   }
