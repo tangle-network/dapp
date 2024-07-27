@@ -30,7 +30,6 @@ import { twMerge } from 'tailwind-merge';
 import {
   LST_PREFIX,
   ParachainCurrency,
-  SimpleTimeUnitInstance,
 } from '../../../constants/liquidStaking';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import { AnySubstrateAddress } from '../../../types/utils';
@@ -51,7 +50,6 @@ export type UnstakeRequestTableRow = {
   amount: BN;
   decimals: number;
   estimatedUnlockTimestamp?: number;
-  unlockTimeUnit: SimpleTimeUnitInstance;
   currency: ParachainCurrency;
 
   /**
@@ -88,16 +86,13 @@ const columns = [
     header: () => <HeaderCell title="Status" className="justify-center" />,
     cell: (props) => {
       const estimatedUnlockTimestamp = props.getValue();
-      const unlockTimeUnit = props.row.original.unlockTimeUnit;
-      const unit = unlockTimeUnit.unit.toLowerCase();
-      const plurality = unlockTimeUnit.value > 1 ? 's' : '';
 
       const timeRemaining =
         estimatedUnlockTimestamp === undefined
-          ? `${unlockTimeUnit.value} ${unit}${plurality}`
+          ? undefined
           : calculateTimeRemaining(new Date(estimatedUnlockTimestamp));
 
-      const content = props.row.original.hasUnlocked ? (
+      const content = timeRemaining ? (
         <CheckboxCircleFill className="dark:fill-green-50" />
       ) : (
         <div className="flex gap-1 items-center justify-center">

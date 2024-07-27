@@ -85,14 +85,16 @@ const useLstUnlockRequestTableRows = () => {
             ongoingTimeUnit.currency === request.currency,
         );
 
-        const estimatedUnlockTime =
-          ongoingTimeUnitEntry === undefined
-            ? undefined
-            : estimateUnlockTimestamp(
-                chain.id,
-                request.unlockTimeUnit,
-                ongoingTimeUnitEntry,
-              );
+        assert(
+          ongoingTimeUnitEntry !== undefined,
+          'Ongoing time unit should be set if user was able to mint and redeem LSTs',
+        );
+
+        const estimatedUnlockTime = estimateUnlockTimestamp(
+          chain.id,
+          request.unlockTimeUnit,
+          ongoingTimeUnitEntry,
+        );
 
         // TODO: Is it >= or >?
         const hasUnlocked =
@@ -111,7 +113,6 @@ const useLstUnlockRequestTableRows = () => {
           hasUnlocked,
           currency: request.currency,
           decimals: chain.decimals,
-          unlockTimeUnit: request.unlockTimeUnit,
         } satisfies UnstakeRequestTableRow;
       });
   }, [ongoingTimeUnits, tokenUnlockLedger]);
