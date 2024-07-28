@@ -99,7 +99,7 @@ const columns = [
       })();
 
       const content =
-        remainingString !== undefined ? (
+        remainingString === undefined ? (
           <CheckboxCircleFill className="dark:fill-green-50" />
         ) : (
           <div className="flex gap-1 items-center justify-center">

@@ -58,7 +58,7 @@ const useLstUnlockRequestTableRows = () => {
           request.unlockTimeUnit.value - ongoingTimeUnitEntry.timeUnit.value;
 
         const remainingTimeUnit: SimpleTimeUnitInstance | undefined =
-          remainingTimeUnitValue < 0
+          remainingTimeUnitValue <= 0
             ? undefined
             : {
                 unit: request.unlockTimeUnit.unit,
