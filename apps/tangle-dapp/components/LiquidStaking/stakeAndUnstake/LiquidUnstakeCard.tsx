@@ -43,7 +43,12 @@ const LiquidUnstakeCard: FC = () => {
     ParachainChainId.TANGLE_RESTAKING_PARACHAIN,
   );
 
-  const { execute: executeRedeemTx, status: redeemTxStatus } = useRedeemTx();
+  const {
+    execute: executeRedeemTx,
+    status: redeemTxStatus,
+    txHash: redeemTxHash,
+  } = useRedeemTx();
+
   const { liquidBalances } = useParachainBalances();
 
   const selectedChain = PARACHAIN_CHAIN_MAP[selectedChainId];
@@ -227,7 +232,7 @@ const LiquidUnstakeCard: FC = () => {
       <UnstakeRequestSubmittedModal
         isOpen={isRequestSubmittedModalOpen}
         onClose={() => setIsRequestSubmittedModalOpen(false)}
-        unstakeRequest={null as any}
+        txHash={redeemTxHash}
       />
     </>
   );

@@ -4,7 +4,7 @@ import { FC, useCallback, useEffect, useState } from 'react';
 
 import useLstRebondTx from '../../../data/liquidStaking/useLstRebondTx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
-import CancelUnstakeModal from '../CancelUnstakeModal';
+import CancelUnstakeModal from './CancelUnstakeModal';
 
 export type RebondLstUnstakeRequestButtonProps = {
   isDisabled: boolean;
@@ -17,32 +17,32 @@ const RebondLstUnstakeRequestButton: FC<RebondLstUnstakeRequestButtonProps> = ({
 }) => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
-  const { execute, status } = useLstRebondTx();
+  const { execute: executeRebondTx, status: rebondTxStatus } = useLstRebondTx();
 
   // Show the confirmation modal when the transaction is successful.
   useEffect(() => {
-    if (status === TxStatus.COMPLETE) {
+    if (rebondTxStatus === TxStatus.COMPLETE) {
       setIsConfirmationModalOpen(true);
     }
-  }, [status]);
+  }, [rebondTxStatus]);
 
-  const handleRebondClick = useCallback(() => {
+  const handleConfirmation = useCallback(() => {
     // The button should have been disabled if this was null.
     assert(
-      execute !== null,
+      executeRebondTx !== null,
       'Execute function should be defined if this callback was called',
     );
 
     // TODO: Provide the actual currencies, will likely need to be pegged with each provided unlock id.
-    execute({ currency: 'Bnc', unlockIds: Array.from(unlockIds) });
-  }, [execute, unlockIds]);
+    executeRebondTx({ currency: 'Bnc', unlockIds: Array.from(unlockIds) });
+  }, [executeRebondTx, unlockIds]);
 
   return (
     <>
       <Button
         variant="secondary"
-        isDisabled={isDisabled || execute === null}
-        onClick={handleRebondClick}
+        isDisabled={isDisabled || executeRebondTx === null}
+        onClick={() => setIsConfirmationModalOpen(true)}
         isFullWidth
       >
         Cancel Unstake
@@ -51,8 +51,8 @@ const RebondLstUnstakeRequestButton: FC<RebondLstUnstakeRequestButtonProps> = ({
       <CancelUnstakeModal
         isOpen={isConfirmationModalOpen}
         onClose={() => setIsConfirmationModalOpen(false)}
-        // TODO: Picking the first value temporarily. Figure out how the modal will work with multiple unlock ids.
-        unlockId={unlockIds.values().next().value}
+        onConfirm={handleConfirmation}
+        txStatus={rebondTxStatus}
       />
     </>
   );

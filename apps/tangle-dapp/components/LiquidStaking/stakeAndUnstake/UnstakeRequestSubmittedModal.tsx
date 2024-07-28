@@ -1,3 +1,4 @@
+import { HexString } from '@polkadot/util/types';
 import { CheckboxCircleLine, WalletLineIcon } from '@webb-tools/icons';
 import {
   Button,
@@ -7,27 +8,40 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback } from 'react';
+import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
+import { FC, useMemo } from 'react';
 
+import useExplorerUrl from '../../../hooks/useExplorerUrl';
 import ModalIcon, { ModalIconCommonVariant } from '..//ModalIcon';
 import ExternalLink from '../ExternalLink';
-import { UnstakeRequestTableRow } from '../unstakeRequestsTable/UnstakeRequestsTable';
 
 export type UnstakeRequestSubmittedModalProps = {
   isOpen: boolean;
-  unstakeRequest: UnstakeRequestTableRow;
+  txHash: HexString | null;
   onClose: () => void;
 };
 
 const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
   isOpen,
-  // TODO: Make use of the unstake request data, which is relevant for the link's href.
-  unstakeRequest: _unstakeRequest,
+  txHash,
   onClose,
 }) => {
-  const handleAddTokenToWallet = useCallback(() => {
-    // TODO: Handle this case.
-  }, []);
+  const getExplorerUrl = useExplorerUrl();
+
+  const viewExplorerHref = useMemo(() => {
+    // The hash is not available, so the URL cannot be generated.
+    if (txHash === null) {
+      return null;
+    }
+
+    return getExplorerUrl(
+      txHash,
+      'tx',
+      undefined,
+      TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
+      true,
+    );
+  }, [getExplorerUrl, txHash]);
 
   return (
     <Modal open>
@@ -61,7 +75,10 @@ const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
 
         <ModalFooter className="flex px-8 py-6 space-y-0">
           <Button
-            onClick={handleAddTokenToWallet}
+            href={viewExplorerHref?.toString()}
+            // In case that the explorer URL could not be obtained,
+            // disable the button.
+            isDisabled={viewExplorerHref === null}
             isFullWidth
             variant="primary"
             rightIcon={<WalletLineIcon />}
