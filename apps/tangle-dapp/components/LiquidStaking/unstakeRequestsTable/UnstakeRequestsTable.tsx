@@ -30,10 +30,10 @@ import { twMerge } from 'tailwind-merge';
 import {
   LST_PREFIX,
   ParachainCurrency,
+  SimpleTimeUnitInstance,
 } from '../../../constants/liquidStaking';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import { AnySubstrateAddress } from '../../../types/utils';
-import calculateTimeRemaining from '../../../utils/calculateTimeRemaining';
 import GlassCard from '../../GlassCard';
 import { HeaderCell } from '../../tableCells';
 import TokenAmountCell from '../../tableCells/TokenAmountCell';
@@ -49,15 +49,16 @@ export type UnstakeRequestTableRow = {
   address: AnySubstrateAddress;
   amount: BN;
   decimals: number;
-  estimatedUnlockTimestamp?: number;
   currency: ParachainCurrency;
 
   /**
-   * Whether the unlocking period of this request has completed,
-   * and the request is ready to be executed, and the tokens
-   * withdrawn.
+   * How many time units are remaining until the request is
+   * unlocked.
+   *
+   * If this is undefined, it means that the request has
+   * completed its unlocking period.
    */
-  hasUnlocked: boolean;
+  remainingTimeUnit?: SimpleTimeUnitInstance;
 };
 
 const columnHelper = createColumnHelper<UnstakeRequestTableRow>();
@@ -82,25 +83,31 @@ const columns = [
       );
     },
   }),
-  columnHelper.accessor('estimatedUnlockTimestamp', {
+  columnHelper.accessor('remainingTimeUnit', {
     header: () => <HeaderCell title="Status" className="justify-center" />,
     cell: (props) => {
-      const estimatedUnlockTimestamp = props.getValue();
+      const remainingTimeUnit = props.getValue();
 
-      const timeRemaining =
-        estimatedUnlockTimestamp === undefined
-          ? undefined
-          : calculateTimeRemaining(new Date(estimatedUnlockTimestamp));
+      const remainingString = (() => {
+        if (remainingTimeUnit === undefined) {
+          return undefined;
+        }
 
-      const content = timeRemaining ? (
-        <CheckboxCircleFill className="dark:fill-green-50" />
-      ) : (
-        <div className="flex gap-1 items-center justify-center">
-          <TimeFillIcon className="dark:fill-blue-50" /> {timeRemaining}
-        </div>
-      );
+        const plurality = remainingTimeUnit.value === 1 ? '' : 's';
 
-      return <div className="flex items-center justify-center">{content}</div>;
+        return `${remainingTimeUnit.value} ${remainingTimeUnit.unit}${plurality}`;
+      })();
+
+      const content =
+        remainingString !== undefined ? (
+          <CheckboxCircleFill className="dark:fill-green-50" />
+        ) : (
+          <div className="flex gap-1 items-center justify-center">
+            <TimeFillIcon className="dark:fill-blue-50" /> {remainingString}
+          </div>
+        );
+
+      return <div className="flex items-center justify-start">{content}</div>;
     },
   }),
   columnHelper.accessor('amount', {
@@ -114,6 +121,7 @@ const columns = [
           amount={props.getValue()}
           tokenSymbol={tokenSymbol}
           decimals={props.row.original.decimals}
+          className="text-left"
         />
       );
     },
@@ -223,7 +231,9 @@ const UnstakeRequestsTable: FC = () => {
         'All unlock ids should have a corresponding request',
       );
 
-      return request.hasUnlocked;
+      // If the remaining time unit is undefined, it means that the
+      // request has completed its unlocking period.
+      return request.remainingTimeUnit === undefined;
     });
   }, [selectedRowsUnlockIds, rows]);
 

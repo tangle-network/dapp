@@ -1,15 +1,15 @@
 'use client';
 
-import { Typography } from '@webb-tools/webb-ui-components';
 import { notFound } from 'next/navigation';
 import { FC, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 import { LiquidStakingSelectionTable } from '../../../components/LiquidStaking/LiquidStakingSelectionTable';
 import LiquidStakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidStakeCard';
 import LiquidUnstakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidUnstakeCard';
 import UnstakeRequestsTable from '../../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
 import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
+import TabListItem from '../../restake/TabListItem';
+import TabsList from '../../restake/TabsList';
 
 type Props = {
   params: { tokenSymbol: string };
@@ -22,37 +22,26 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
     return notFound();
   }
 
-  const selectedClass = 'dark:text-mono-0';
-  const unselectedClass = 'text-mono-100 dark:text-mono-100';
-
   return (
     <div className="grid grid-cols-2 gap-12">
       <div className="flex flex-col gap-4 w-full min-w-[450px] max-w-[600px]">
-        <div className="flex gap-3">
-          <Typography
+        <TabsList className="w-full">
+          <TabListItem
+            href="#"
+            isActive={isStaking}
             onClick={() => setIsStaking(true)}
-            className={twMerge(
-              isStaking ? selectedClass : unselectedClass,
-              !isStaking && 'cursor-pointer',
-            )}
-            variant="h4"
-            fw="bold"
           >
             Stake
-          </Typography>
+          </TabListItem>
 
-          <Typography
+          <TabListItem
+            href="#"
+            isActive={!isStaking}
             onClick={() => setIsStaking(false)}
-            className={twMerge(
-              !isStaking ? selectedClass : unselectedClass,
-              isStaking && 'cursor-pointer',
-            )}
-            variant="h4"
-            fw="bold"
           >
             Unstake
-          </Typography>
-        </div>
+          </TabListItem>
+        </TabsList>
 
         {isStaking ? <LiquidStakeCard /> : <LiquidUnstakeCard />}
       </div>

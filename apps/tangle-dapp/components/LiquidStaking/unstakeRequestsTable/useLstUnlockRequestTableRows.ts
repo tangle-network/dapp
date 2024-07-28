@@ -3,53 +3,12 @@ import { useMemo } from 'react';
 
 import {
   LIQUID_STAKING_CHAINS,
-  ParachainChainId,
   SimpleTimeUnitInstance,
 } from '../../../constants/liquidStaking';
 import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
-import useOngoingTimeUnits, {
-  OngoingTimeUnitEntry,
-} from '../../../data/liquidStaking/useOngoingTimeUnits';
+import useOngoingTimeUnits from '../../../data/liquidStaking/useOngoingTimeUnits';
 import { AnySubstrateAddress } from '../../../types/utils';
-import timeUnitToMilliseconds from '../../../utils/liquidStaking/timeUnitToMilliseconds';
 import { UnstakeRequestTableRow } from './UnstakeRequestsTable';
-
-const estimateUnlockTimestamp = (
-  chainId: ParachainChainId,
-  unlockTimeUnit: SimpleTimeUnitInstance,
-  ongoingTimeUnitEntry: OngoingTimeUnitEntry,
-): number | undefined => {
-  assert(
-    ongoingTimeUnitEntry.timeUnit.unit === unlockTimeUnit.unit,
-    'The time unit of the ongoing time unit should match the time unit of the unlock request',
-  );
-
-  const remainingTimeUnit: SimpleTimeUnitInstance = {
-    unit: unlockTimeUnit.unit,
-    value: unlockTimeUnit.value - ongoingTimeUnitEntry.timeUnit.value,
-  };
-
-  const remainingTimeInMilliseconds = timeUnitToMilliseconds(
-    chainId,
-    remainingTimeUnit,
-  );
-
-  const estimatedUnlockTimestamp =
-    remainingTimeInMilliseconds > 0
-      ? Date.now() + remainingTimeInMilliseconds
-      : undefined;
-
-  console.debug(
-    'unlock',
-    unlockTimeUnit,
-    estimatedUnlockTimestamp,
-    remainingTimeInMilliseconds,
-    remainingTimeUnit,
-    ongoingTimeUnitEntry,
-  );
-
-  return estimatedUnlockTimestamp;
-};
 
 const useLstUnlockRequestTableRows = () => {
   const tokenUnlockLedger = useLstUnlockRequests();
@@ -90,29 +49,31 @@ const useLstUnlockRequestTableRows = () => {
           'Ongoing time unit should be set if user was able to mint and redeem LSTs',
         );
 
-        const estimatedUnlockTime = estimateUnlockTimestamp(
-          chain.id,
-          request.unlockTimeUnit,
-          ongoingTimeUnitEntry,
+        assert(
+          ongoingTimeUnitEntry.timeUnit.unit === request.unlockTimeUnit.unit,
+          'The time unit of the ongoing time unit should match the time unit of the unlock request',
         );
 
-        // TODO: Is it >= or >?
-        const hasUnlocked =
-          ongoingTimeUnitEntry === undefined
-            ? false
-            : ongoingTimeUnitEntry.timeUnit.value >=
-              request.unlockTimeUnit.value;
+        const remainingTimeUnitValue =
+          request.unlockTimeUnit.value - ongoingTimeUnitEntry.timeUnit.value;
+
+        const remainingTimeUnit: SimpleTimeUnitInstance | undefined =
+          remainingTimeUnitValue < 0
+            ? undefined
+            : {
+                unit: request.unlockTimeUnit.unit,
+                value: remainingTimeUnitValue,
+              };
 
         return {
           unlockId: request.unlockId,
           amount: request.amount,
-          estimatedUnlockTimestamp: estimatedUnlockTime,
           // TODO: Using dummy address for now.
           address:
             '0x1234567890abcdef1234567890abcdef123456789' as AnySubstrateAddress,
-          hasUnlocked,
           currency: request.currency,
           decimals: chain.decimals,
+          remainingTimeUnit,
         } satisfies UnstakeRequestTableRow;
       });
   }, [ongoingTimeUnits, tokenUnlockLedger]);
