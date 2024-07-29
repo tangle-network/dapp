@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import { PagePath } from '../..//types';
+import { PagePath } from '../../types';
 
 export default function RestakePage() {
   // Default redirect to deposit page
