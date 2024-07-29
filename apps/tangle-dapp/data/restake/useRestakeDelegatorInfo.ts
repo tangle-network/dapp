@@ -1,14 +1,13 @@
 import type { Option } from '@polkadot/types';
 import type {
   PalletMultiAssetDelegationDelegatorBondLessRequest,
-  PalletMultiAssetDelegationDelegatorDelegatorMetadata,
   PalletMultiAssetDelegationDelegatorDelegatorStatus,
   PalletMultiAssetDelegationDelegatorUnstakeRequest,
 } from '@polkadot/types/lookup';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import uniqueId from 'lodash/uniqueId';
 import { useObservable, useObservableState } from 'observable-hooks';
-import { useMemo } from 'react';
-import { EMPTY, map, type Observable, switchMap } from 'rxjs';
+import { map, of, switchMap } from 'rxjs';
 
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
@@ -25,71 +24,66 @@ export default function useRestakeDelegatorInfo() {
 
   const { apiRx } = usePolkadotApi();
 
-  const delegatorQuery = useMemo(
-    (): ((
-      account: string,
-    ) => Observable<
-      Option<PalletMultiAssetDelegationDelegatorDelegatorMetadata>
-    >) =>
-      apiRx.query.multiAssetDelegation?.delegators !== undefined
-        ? apiRx.query.multiAssetDelegation.delegators
-        : () => EMPTY,
-    [apiRx.query.multiAssetDelegation?.delegators],
-  );
-
   const delegatorInfo$ = useObservable(
     (input$) =>
       input$.pipe(
-        switchMap(([activeAddress, delegatorQuery]) =>
-          delegatorQuery(activeAddress ?? '').pipe(
-            map((delegatorInfo) => {
-              if (delegatorInfo.isNone) {
-                return null;
-              }
+        switchMap(([activeAddress, apiRx]) => {
+          if (apiRx.query.multiAssetDelegation?.delegators === undefined) {
+            return of(null);
+          }
 
-              const info = delegatorInfo.unwrap();
+          return apiRx.query.multiAssetDelegation
+            ?.delegators(activeAddress ?? '')
+            .pipe(
+              map((delegatorInfo) => {
+                if (delegatorInfo.isNone) {
+                  return null;
+                }
 
-              const deposits = Array.from(info.deposits.entries()).reduce(
-                (depositRecord, [assetId, amount]) => {
-                  const assetIdStr = assetId.toString();
-                  const amountBigInt = amount.toBigInt();
+                const info = delegatorInfo.unwrap();
 
-                  return Object.assign(depositRecord, {
-                    [assetIdStr]: {
-                      amount: amountBigInt,
-                    },
-                  } satisfies DelegatorInfo['deposits']);
-                },
-                {} as DelegatorInfo['deposits'],
-              );
+                const deposits = Array.from(info.deposits.entries()).reduce(
+                  (depositRecord, [assetId, amount]) => {
+                    const assetIdStr = assetId.toString();
+                    const amountBigInt = amount.toBigInt();
 
-              const delegations = info.delegations.map<
-                DelegatorInfo['delegations'][number]
-              >((delegation) => {
-                const amountBigInt = delegation.amount.toBigInt();
-                const assetIdStr = delegation.assetId.toString();
+                    return Object.assign(depositRecord, {
+                      [assetIdStr]: {
+                        amount: amountBigInt,
+                      },
+                    } satisfies DelegatorInfo['deposits']);
+                  },
+                  {} as DelegatorInfo['deposits'],
+                );
+
+                const delegations = info.delegations.map<
+                  DelegatorInfo['delegations'][number]
+                >((delegation) => {
+                  const amountBigInt = delegation.amount.toBigInt();
+                  const assetIdStr = delegation.assetId.toString();
+
+                  return {
+                    uid: uniqueId('delegator-delegation-'),
+                    assetId: assetIdStr,
+                    amountBonded: amountBigInt,
+                    operatorAccountId: delegation.operator.toString(),
+                  };
+                });
 
                 return {
-                  assetId: assetIdStr,
-                  amountBonded: amountBigInt,
-                  operatorAccountId: delegation.operator.toString(),
-                };
-              });
-
-              return {
-                deposits,
-                delegations,
-                unstakeRequest: getUnstakeRequest(info.unstakeRequest),
-                delegatorBondLessRequest: getBondLessRequest(
-                  info.delegatorBondLessRequest,
-                ),
-                status: getStatus(info.status),
-              } satisfies DelegatorInfo;
-            }),
-          ),
-        ),
+                  deposits,
+                  delegations,
+                  unstakeRequest: getUnstakeRequest(info.unstakeRequest),
+                  delegatorBondLessRequest: getBondLessRequest(
+                    info.delegatorBondLessRequest,
+                  ),
+                  status: getStatus(info.status),
+                } satisfies DelegatorInfo;
+              }),
+            );
+        }),
       ),
-    [activeAddress, delegatorQuery],
+    [activeAddress, apiRx],
   );
 
   const delegatorInfo = useObservableState(delegatorInfo$, null);

@@ -5,8 +5,11 @@ import noop from 'lodash/noop';
 import type { Hash } from 'viem';
 
 import {
+  type CancelDelegatorBondLessContext,
   type DelegateContext,
+  type DelegatorBondLessContext,
   type DepositContext,
+  type ExecuteDelegatorBondLessContext,
   RestakeTxBase,
   type TxEventHandlers,
 } from './base';
@@ -22,11 +25,11 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     this.provider.setSigner(this.signer);
   }
 
-  private signAndSendExtrinsic<Context extends Record<string, unknown>>(
+  private signAndSendExtrinsic = <Context extends Record<string, unknown>>(
     extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
     context: Context,
     eventHandlers?: TxEventHandlers<Context>,
-  ) {
+  ) => {
     return new Promise<Hash | null>((resolve) => {
       let unsub = noop;
 
@@ -108,7 +111,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
           unsub();
         });
     });
-  }
+  };
 
   deposit = async (
     assetId: string,
@@ -171,5 +174,47 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     eventHandlers?.onTxSending?.(context);
 
     return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
+  };
+
+  scheduleDelegatorBondLess = async (
+    operatorAccount: string,
+    assetId: string,
+    amount: bigint,
+    eventHandlers?: TxEventHandlers<DelegatorBondLessContext>,
+  ) => {
+    const context = {
+      amount,
+      assetId,
+      operatorAccount,
+    } satisfies DelegatorBondLessContext;
+
+    const extrinsic =
+      this.provider.tx.multiAssetDelegation.scheduleDelegatorBondLess(
+        operatorAccount,
+        assetId,
+        amount,
+      );
+
+    eventHandlers?.onTxSending?.(context);
+
+    return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
+  };
+
+  executeDelegatorBondLess = async (
+    eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
+  ): Promise<Hash | null> => {
+    const extrinsic =
+      this.provider.tx.multiAssetDelegation.executeDelegatorBondLess();
+
+    return this.signAndSendExtrinsic(extrinsic, {}, eventHandlers);
+  };
+
+  cancelDelegatorBondLess = async (
+    eventHandlers?: TxEventHandlers<CancelDelegatorBondLessContext> | undefined,
+  ): Promise<Hash | null> => {
+    const extrinsic =
+      this.provider.tx.multiAssetDelegation.cancelDelegatorBondLess();
+
+    return this.signAndSendExtrinsic(extrinsic, {}, eventHandlers);
   };
 }

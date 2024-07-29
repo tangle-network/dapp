@@ -40,6 +40,12 @@ export type DelegateContext = {
   amount: bigint;
 };
 
+export type DelegatorBondLessContext = DelegateContext;
+
+export type ExecuteDelegatorBondLessContext = Record<string, unknown>;
+
+export type CancelDelegatorBondLessContext = Record<string, unknown>;
+
 export abstract class RestakeTxBase {
   /**
    * Deposit the amount of an asset into the multi-asset-delegation pallet,
@@ -62,5 +68,20 @@ export abstract class RestakeTxBase {
     assetId: string,
     amount: bigint,
     eventHandlers?: TxEventHandlers<DelegateContext>,
+  ): Promise<Hash | null>;
+
+  abstract scheduleDelegatorBondLess(
+    operatorAccount: string,
+    assetId: string,
+    amount: bigint,
+    eventHandlers?: TxEventHandlers<DelegatorBondLessContext>,
+  ): Promise<Hash | null>;
+
+  abstract executeDelegatorBondLess(
+    eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
+  ): Promise<Hash | null>;
+
+  abstract cancelDelegatorBondLess(
+    eventHandlers?: TxEventHandlers<CancelDelegatorBondLessContext>,
   ): Promise<Hash | null>;
 }

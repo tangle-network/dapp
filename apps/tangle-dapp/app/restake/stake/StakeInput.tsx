@@ -1,7 +1,6 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
-import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useCallback, useMemo } from 'react';
@@ -21,9 +20,9 @@ import type {
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import type { IdentityType } from '../../../utils/polkadot';
+import AssetPlaceholder from '../AssetPlaceholder';
 import AvatarWithText from '../AvatarWithText';
 import ErrorMessage from '../ErrorMessage';
-import SelectorPlaceholder from '../SelectorPlaceholder';
 
 type Props = {
   amountError: string | undefined;
@@ -147,13 +146,7 @@ export default function StakeInput({
       <TransactionInputCard.Body
         tokenSelectorProps={{
           onClick: openAssetModal,
-          placeholder: (
-            <SelectorPlaceholder
-              Icon={<TokenIcon size="lg" className="mr-2" />}
-            >
-              Asset
-            </SelectorPlaceholder>
-          ),
+          placeholder: <AssetPlaceholder />,
         }}
         customAmountProps={customAmountProps}
       />

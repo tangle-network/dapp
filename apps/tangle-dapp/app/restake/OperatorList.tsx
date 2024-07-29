@@ -22,9 +22,9 @@ import type { IdentityType } from '../../utils/polkadot';
 import AvatarWithText from './AvatarWithText';
 
 type Props = Partial<ComponentProps<typeof ListCardWrapper>> & {
-  operatorMap: OperatorMap;
+  operatorMap?: OperatorMap | null;
   operatorIdentities?: Record<string, IdentityType | null> | null;
-  selectedOperatorAccountId: string;
+  selectedOperatorAccountId?: string | null;
   onOperatorAccountIdChange?: (accountId: string) => void;
   onResetSelection?: () => void;
 };
@@ -34,7 +34,7 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
     {
       onClose,
       overrideTitleProps,
-      operatorMap: operatorMapProp,
+      operatorMap: operatorMapProp = {},
       operatorIdentities,
       selectedOperatorAccountId,
       onOperatorAccountIdChange,
@@ -71,8 +71,13 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
 
     return (
       <ListCardWrapper
-        {...props}
         title="Select Operator"
+        overrideTitleProps={{ variant: 'h4' }}
+        {...props}
+        className={twMerge(
+          'h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]',
+          props.className,
+        )}
         onClose={onClose}
         ref={ref}
       >
@@ -80,7 +85,7 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
           <>
             <div className="py-4">
               <Input
-                id="token"
+                id="operator-search"
                 rightIcon={<Search />}
                 placeholder="Search Operator"
                 isControlled

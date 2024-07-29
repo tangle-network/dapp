@@ -3,6 +3,7 @@ import type {
   ComponentPropsWithRef,
   ComponentPropsWithoutRef,
   ElementType,
+  ReactElement,
   ReactNode,
 } from 'react';
 import type { PropsOf } from '../../types';
@@ -10,7 +11,6 @@ import type { AdjustAmount } from '../BridgeInputs';
 import type { TextFieldInput } from '../TextField';
 import type TokenSelector from '../TokenSelector';
 import type { TitleWithInfo } from '../TitleWithInfo';
-import type { IconBase } from '@webb-tools/icons/types';
 
 export type TransactionInputCardContextValue = {
   /**
@@ -83,7 +83,7 @@ export interface TransactionButtonProps extends PropsOf<'button'> {
   /**
    * The icon of the transaction button.
    */
-  Icon?: React.ReactElement<IconBase>;
+  Icon?: ReactElement | null;
 }
 
 export interface TransactionMaxAmountButtonProps
@@ -102,7 +102,12 @@ export interface TransactionMaxAmountButtonProps
    * The Icon for the max amount button.
    * #@default <ShieldKeyhole /> | <Wallet /> (based on the account type)
    */
-  Icon?: React.ReactElement<IconBase>;
+  Icon?:
+    | ReactElement
+    | {
+        enabled: ReactElement;
+        disabled: ReactElement;
+      };
 }
 
 export interface TransactionInputCardHeaderProps extends PropsOf<'div'> {}

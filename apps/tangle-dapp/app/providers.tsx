@@ -47,7 +47,7 @@ const Providers = ({
           wagmiInitialState={wagmiInitialState}
         >
           <OFACFilterProvider
-            isActivated
+            isActivated={process.env.NODE_ENV !== 'development'}
             blockedRegions={blockedRegions}
             blockedCountryCodes={blockedCountryCodes}
           >

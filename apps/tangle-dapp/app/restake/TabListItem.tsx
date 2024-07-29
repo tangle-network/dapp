@@ -6,6 +6,7 @@ import { twMerge } from 'tailwind-merge';
 
 export type TabListItemProps = PropsOf<'li'> & {
   isActive?: boolean;
+  hideSeparator?: boolean;
   href: ComponentProps<typeof Link>['href'];
 };
 
@@ -14,13 +15,21 @@ export default function TabListItem({
   isActive,
   children,
   href,
+  hideSeparator,
   ...props
 }: TabListItemProps) {
   return (
     <li
       {...props}
+      role="tab"
+      aria-selected={isActive}
       className={twMerge(
-        'p-1 flex-1 flex justify-center grow min-h-[45px]',
+        'relative p-1 flex-1 flex justify-center grow min-h-[45px] border-x border-transparent',
+        "after:content-[''] after:w-[1px] after:h-7",
+        'after:absolute after:-right-[1.5px] after:top-1/2 after:-translate-y-1/2',
+        'after:bg-mono-60 dark:after:bg-mono-170',
+        'last:after:hidden',
+        (isActive || hideSeparator) && 'after:hidden',
         className,
       )}
     >
