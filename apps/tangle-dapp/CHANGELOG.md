@@ -1,3 +1,15 @@
+## 0.0.13 (2024-07-29)
+
+
+### 🩹 Fixes
+
+- **tangle-dapp:** Disable reskate pages generation
+
+
+### ❤️  Thank You
+
+- Trung-Tin Pham
+
 ## 0.0.12 (2024-07-25)
 
 
