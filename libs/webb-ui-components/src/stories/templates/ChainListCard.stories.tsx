@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import ChainListCard from '../../components/ListCard/ChainListCard';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
 const meta: Meta<typeof ChainListCard> = {
   title: 'Design System/V2 (WIP)/Templates/ChainListCard',
@@ -24,6 +25,10 @@ export const Default: Story = {
         name: chain.name,
         tag: chain.tag,
         needSwitchWallet: chain.chainType !== ChainType.EVM,
+        isDisabled:
+          +typedChainId === PresetTypedChainId.Polkadot ||
+          +typedChainId === PresetTypedChainId.Sepolia ||
+          +typedChainId === PresetTypedChainId.OptimismTestnet,
       }))}
     />
   ),

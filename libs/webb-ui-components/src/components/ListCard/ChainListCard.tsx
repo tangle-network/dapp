@@ -101,27 +101,23 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
       [chains, searchText, networkCategory],
     );
 
-    // Move the current active chain to the top of the list
+    // Move the current active chain to the top of the list and move disabled chains to the bottom
     const sortedChains = useMemo(() => {
-      if (!activeTypedChainId) {
-        return filteredChains.sort((a, b) => a.name.localeCompare(b.name));
-      }
-
-      const currentActiveChainIndex = filteredChains.findIndex(
+      const activeChain = filteredChains.find(
         (chain) => chain.typedChainId === activeTypedChainId,
       );
 
-      if (currentActiveChainIndex === -1) {
-        return filteredChains.sort((a, b) => a.name.localeCompare(b.name));
-      }
-
-      const activeChain = filteredChains[currentActiveChainIndex];
+      const disabledChains = filteredChains.filter((chain) => chain.isDisabled);
 
       return [
-        activeChain,
+        ...(activeChain ? [activeChain] : []),
         ...filteredChains
-          .filter((chain) => chain.name !== activeChain.name)
+          .filter(
+            (chain) =>
+              chain.typedChainId !== activeTypedChainId && !chain.isDisabled,
+          )
           .sort((a, b) => a.name.localeCompare(b.name)),
+        ...disabledChains.sort((a, b) => a.name.localeCompare(b.name)),
       ];
     }, [activeTypedChainId, filteredChains]);
 
@@ -171,6 +167,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                 currentChain.typedChainId === activeTypedChainId;
 
               const isSelectedToConnect = chain?.name === currentChain.name;
+              const isDisabled = currentChain.isDisabled;
 
               return (
                 <ListItem
@@ -178,8 +175,13 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                   className={twMerge(
                     'flex items-center justify-between px-4',
                     'bg-transparent dark:bg-transparent max-w-none',
+                    !isDisabled && 'cursor-pointer',
                   )}
-                  onClick={() => onChainChange(currentChain)}
+                  onClick={() => {
+                    if (isDisabled) return;
+                    onChainChange(currentChain);
+                  }}
+                  isDisabled={isDisabled}
                 >
                   <div className="flex items-center space-x-2">
                     <ChainIcon
@@ -207,7 +209,7 @@ const ChainListCard = forwardRef<HTMLDivElement, ChainListCardProps>(
                     </Chip>
                   ) : null}
 
-                  {!isConnected && !isConnectingToChain ? (
+                  {!isConnected && !isConnectingToChain && !isDisabled ? (
                     <div className="hidden group-hover:block">
                       <Button variant="link" size="sm">
                         {currentChain.needSwitchWallet
