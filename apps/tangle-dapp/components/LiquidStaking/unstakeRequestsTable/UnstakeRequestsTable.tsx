@@ -166,6 +166,7 @@ const UnstakeRequestsTable: FC = () => {
     },
 
     // TODO: Get this bug fixed: For some reason, the `tableProps` object will not trigger a re-render when the selected rows change. This is a workaround to force a re-render. This might be because the object itself is not changing, only the contents of the object are changing?
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [tableProps, tableProps.getSelectedRowModel().rows],
   );
 

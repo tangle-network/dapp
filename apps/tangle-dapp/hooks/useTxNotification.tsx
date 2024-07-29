@@ -31,6 +31,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.MINT]: 'Minted tokens',
   [TxName.REDEEM]: 'Redeem request submitted',
   [TxName.LST_REBOND]: 'Unstake request cancelled',
+  [TxName.LST_WITHDRAW_REDEEM]: 'Unstake request executed',
 };
 
 // TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.

@@ -2,8 +2,8 @@ import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import {
-  LST_PREFIX,
   LiquidStakingToken,
+  LST_PREFIX,
   ParachainCurrency,
 } from '../../../constants/liquidStaking';
 import useExchangeRate, {

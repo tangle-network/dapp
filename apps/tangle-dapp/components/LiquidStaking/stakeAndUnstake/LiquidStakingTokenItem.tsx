@@ -8,8 +8,8 @@ import { FC, useMemo } from 'react';
 
 import { StaticAssetPath } from '../../../constants';
 import {
-  LST_PREFIX,
   LiquidStakingToken,
+  LST_PREFIX,
   ParachainChainId,
   TVS_TOOLTIP,
 } from '../../../constants/liquidStaking';

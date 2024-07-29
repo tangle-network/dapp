@@ -13,9 +13,9 @@ import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LST_PREFIX,
   LiquidStakingToken,
   LS_CHAIN_TO_NETWORK_NAME,
+  LST_PREFIX,
   ParachainChainId,
 } from '../../../constants/liquidStaking';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
