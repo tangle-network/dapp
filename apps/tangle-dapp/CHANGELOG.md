@@ -1,3 +1,35 @@
+## 0.0.12 (2024-07-25)
+
+
+### 🚀 Features
+
+- **tangle-dapp:** Implementation of Bridge from EVM chain
+
+- **tangle-dapp:** Add Search functionalities for Validator tables + Fix Nomination Modal
+
+- **tangle-dapp:** Update Dropdown Menu Item across dApps
+
+- **tangle-dapp:** Add liquid staking unstaking card
+
+- **tangle-dapp:** Stake Operation Table UI & Logic
+
+
+### 🩹 Fixes
+
+- **tangle-dapp:** Fix Search not working on Validator Selection Table on Tangle dApp
+
+- **tangle-dapp:** Restake New Design
+
+- **tangle-dapp:** Fix blank screen after the page is mounting
+
+
+### ❤️  Thank You
+
+- Pavan Soratur
+- Trung-Tin Pham
+- vutuanlinh2k2
+- Yurixander
+
 ## 0.0.11 (2024-07-11)
 
 
