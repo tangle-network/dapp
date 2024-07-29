@@ -41,8 +41,6 @@ import ActionButton from './ActionButton';
 import Info from './Info';
 import StakeInput from './StakeInput';
 
-export const dynamic = 'force-static';
-
 export default function DelegatePage() {
   const {
     register,
