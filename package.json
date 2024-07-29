@@ -197,7 +197,7 @@
     "@storybook/addon-mdx-gfm": "8.1.10",
     "@storybook/addon-themes": "^8.1.5",
     "@storybook/addon-webpack5-compiler-babel": "^3.0.3",
-    "@storybook/blocks": "8.1.5",
+    "@storybook/blocks": "8.2.6",
     "@storybook/channels": "^8.1.5",
     "@storybook/components": "^8.1.5",
     "@storybook/core-events": "^8.1.5",
