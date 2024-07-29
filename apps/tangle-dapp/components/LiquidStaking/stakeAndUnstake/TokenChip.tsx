@@ -5,8 +5,8 @@ import { twMerge } from 'tailwind-merge';
 
 import {
   LIQUID_STAKING_CHAINS,
-  LST_PREFIX,
   LiquidStakingToken,
+  LST_PREFIX,
 } from '../../../constants/liquidStaking';
 import ChainLogo from './ChainLogo';
 import DropdownChevronIcon from './DropdownChevronIcon';

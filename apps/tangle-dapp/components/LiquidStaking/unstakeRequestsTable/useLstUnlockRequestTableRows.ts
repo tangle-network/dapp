@@ -39,7 +39,6 @@ const useLstUnlockRequestTableRows = () => {
 
         const ongoingTimeUnitEntry = ongoingTimeUnits.find(
           (ongoingTimeUnit) =>
-            // TODO: Verify whether it's Native or LST.
             ongoingTimeUnit.currencyType === 'Native' &&
             ongoingTimeUnit.currency === request.currency,
         );

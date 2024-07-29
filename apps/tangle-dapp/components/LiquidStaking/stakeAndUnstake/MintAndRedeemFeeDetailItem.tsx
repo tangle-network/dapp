@@ -50,8 +50,9 @@ const MintAndRedeemFeeDetailItem: FC<MintAndRedeemFeeDetailItemProps> = ({
       `${formattedFeeAmount} ${token}`
     );
 
-  // TODO: Add proper tooltip content.
-  return <DetailItem title="Fee" tooltip="This is a test." value={value} />;
+  const feeTitle = fee === null ? 'Fee' : `Fee (${(fee * 100).toFixed(2)}‰)`;
+
+  return <DetailItem title={feeTitle} value={value} />;
 };
 
 export default MintAndRedeemFeeDetailItem;

@@ -6,7 +6,6 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  TANGLE_DOCS_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
@@ -14,15 +13,14 @@ import { FC, useMemo } from 'react';
 
 import useExplorerUrl from '../../../hooks/useExplorerUrl';
 import ModalIcon, { ModalIconCommonVariant } from '..//ModalIcon';
-import ExternalLink from '../ExternalLink';
 
-export type UnstakeRequestSubmittedModalProps = {
+export type WithdrawalConfirmationModalProps = {
   isOpen: boolean;
   txHash: HexString | null;
   onClose: () => void;
 };
 
-const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
+const WithdrawalConfirmationModal: FC<WithdrawalConfirmationModalProps> = ({
   isOpen,
   txHash,
   onClose,
@@ -52,7 +50,7 @@ const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
         className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={onClose}>
-          Unstake Request Submitted
+          Withdrawal Success
         </ModalHeader>
 
         <div className="flex flex-col items-center justify-center gap-2 p-9">
@@ -66,11 +64,8 @@ const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
             variant="body1"
             fw="normal"
           >
-            After the schedule period completes, you can withdraw unstaked
-            tokens.
+            The tokens are now available in your wallet.
           </Typography>
-
-          <ExternalLink href={TANGLE_DOCS_URL}>Learn More</ExternalLink>
         </div>
 
         <ModalFooter className="flex px-8 py-6 space-y-0">
@@ -91,4 +86,4 @@ const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
   );
 };
 
-export default UnstakeRequestSubmittedModal;
+export default WithdrawalConfirmationModal;

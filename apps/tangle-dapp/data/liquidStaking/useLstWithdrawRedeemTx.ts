@@ -1,4 +1,4 @@
-import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
+import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
 import {
@@ -8,27 +8,24 @@ import {
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 
-type LstRebondTxContext = {
+type LstWithdrawRedeemTxContext = {
   currenciesAndUnlockIds: [ParachainCurrency, number][];
 };
 
-const useLstRebondTx = () => {
-  // TODO: Add support for EVM accounts once precompile(s) for the `lstMinting` pallet are implemented on Tangle.
-
-  return useSubstrateTxWithNotification<LstRebondTxContext>(
-    TxName.LST_REBOND,
-    (api, _activeSubstrateAddress, context) => {
+const useLstWithdrawRedeemTx = () => {
+  return useSubstrateTxWithNotification<LstWithdrawRedeemTxContext>(
+    TxName.LST_WITHDRAW_REDEEM,
+    useCallback((api, _activeSubstrateAddress, context) => {
       const txs = context.currenciesAndUnlockIds.map(([currency, unlockId]) => {
         const key: ParachainCurrencyKey = { Native: currency };
 
+        // TODO: This should be `withdrawRedeem`, but the type defs of the restaking parachain haven't been updated yet. So, this is only temporary/dummy data. Once it is implemented, it should be a quick change here.
         return api.tx.lstMinting.rebondByUnlockId(key, unlockId);
       });
 
       return optimizeTxBatch(api, txs);
-    },
-    undefined,
-    TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
+    }, []),
   );
 };
 
-export default useLstRebondTx;
+export default useLstWithdrawRedeemTx;

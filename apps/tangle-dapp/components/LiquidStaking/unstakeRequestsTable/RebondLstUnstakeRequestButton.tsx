@@ -2,18 +2,19 @@ import { Button } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useCallback, useEffect, useState } from 'react';
 
+import { ParachainCurrency } from '../../../constants/liquidStaking';
 import useLstRebondTx from '../../../data/liquidStaking/useLstRebondTx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import CancelUnstakeModal from './CancelUnstakeModal';
 
 export type RebondLstUnstakeRequestButtonProps = {
   isDisabled: boolean;
-  unlockIds: Set<number>;
+  currenciesAndUnlockIds: [ParachainCurrency, number][];
 };
 
 const RebondLstUnstakeRequestButton: FC<RebondLstUnstakeRequestButtonProps> = ({
   isDisabled,
-  unlockIds,
+  currenciesAndUnlockIds,
 }) => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
@@ -33,9 +34,8 @@ const RebondLstUnstakeRequestButton: FC<RebondLstUnstakeRequestButtonProps> = ({
       'Execute function should be defined if this callback was called',
     );
 
-    // TODO: Provide the actual currencies, will likely need to be pegged with each provided unlock id.
-    executeRebondTx({ currency: 'Bnc', unlockIds: Array.from(unlockIds) });
-  }, [executeRebondTx, unlockIds]);
+    executeRebondTx({ currenciesAndUnlockIds });
+  }, [executeRebondTx, currenciesAndUnlockIds]);
 
   return (
     <>

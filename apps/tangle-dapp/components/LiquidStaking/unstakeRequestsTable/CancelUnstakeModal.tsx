@@ -5,6 +5,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  TANGLE_DOCS_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useEffect } from 'react';
@@ -59,8 +60,7 @@ const CancelUnstakeModal: FC<CancelUnstakeModalProps> = ({
             rewards.
           </Typography>
 
-          {/* TODO: External link's href. */}
-          <ExternalLink href="#">Learn More</ExternalLink>
+          <ExternalLink href={TANGLE_DOCS_URL}>Learn More</ExternalLink>
         </div>
 
         <ModalFooter className="flex gap-1 px-8 py-6 space-y-0">

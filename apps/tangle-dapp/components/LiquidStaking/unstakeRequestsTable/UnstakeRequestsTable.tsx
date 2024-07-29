@@ -237,6 +237,14 @@ const UnstakeRequestsTable: FC = () => {
     });
   }, [selectedRowsUnlockIds, rows]);
 
+  const currenciesAndUnlockIds = useMemo<[ParachainCurrency, number][]>(() => {
+    return tableProps.getSelectedRowModel().rows.map((row) => {
+      const { currency, unlockId } = row.original;
+
+      return [currency, unlockId];
+    });
+  }, [tableProps]);
+
   return (
     <div className="space-y-4 flex-grow max-w-[700px]">
       <GlassCard
@@ -253,12 +261,12 @@ const UnstakeRequestsTable: FC = () => {
             <RebondLstUnstakeRequestButton
               // Can only rebond if there are selected rows.
               isDisabled={selectedRowsUnlockIds.size === 0}
-              unlockIds={selectedRowsUnlockIds}
+              currenciesAndUnlockIds={currenciesAndUnlockIds}
             />
 
             <WithdrawLstUnstakeRequestButton
               canWithdraw={canWithdrawAllSelected}
-              unlockIds={selectedRowsUnlockIds}
+              currenciesAndUnlockIds={currenciesAndUnlockIds}
             />
           </div>
         )}

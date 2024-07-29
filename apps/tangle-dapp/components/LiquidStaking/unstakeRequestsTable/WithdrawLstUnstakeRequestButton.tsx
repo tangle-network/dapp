@@ -1,26 +1,62 @@
 import { Button } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import assert from 'assert';
+import { FC, useCallback, useEffect, useState } from 'react';
+
+import { ParachainCurrency } from '../../../constants/liquidStaking';
+import useLstWithdrawRedeemTx from '../../../data/liquidStaking/useLstWithdrawRedeemTx';
+import { TxStatus } from '../../../hooks/useSubstrateTx';
+import WithdrawalConfirmationModal from './WithdrawalConfirmationModal';
 
 export type WithdrawLstUnstakeRequestButtonProps = {
   canWithdraw: boolean;
-  unlockIds: Set<number>;
+  currenciesAndUnlockIds: [ParachainCurrency, number][];
 };
 
 const WithdrawLstUnstakeRequestButton: FC<
   WithdrawLstUnstakeRequestButtonProps
-> = ({ canWithdraw, unlockIds }) => {
-  // TODO: On click, call `withdraw_redeemed` extrinsic and provide it with the `unlockIds` via batching.
+> = ({ canWithdraw, currenciesAndUnlockIds }) => {
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
-  // TODO: Add and handle confirmation modal.
+  const {
+    execute: executeWithdrawRedeemTx,
+    status: withdrawRedeemTxStatus,
+    txHash: withdrawRedeemTxHash,
+  } = useLstWithdrawRedeemTx();
+
+  // Show the confirmation modal when the transaction is successful.
+  useEffect(() => {
+    if (withdrawRedeemTxStatus === TxStatus.COMPLETE) {
+      setIsConfirmationModalOpen(true);
+    }
+  }, [withdrawRedeemTxStatus]);
+
+  const handleConfirmation = useCallback(() => {
+    // The button should have been disabled if this was null.
+    assert(
+      executeWithdrawRedeemTx !== null,
+      'Execute function should be defined if this callback was called',
+    );
+
+    executeWithdrawRedeemTx({ currenciesAndUnlockIds });
+  }, [executeWithdrawRedeemTx, currenciesAndUnlockIds]);
+
   return (
-    <Button
-      variant="secondary"
-      isDisabled={!canWithdraw}
-      onClick={() => void 0}
-      isFullWidth
-    >
-      Withdraw
-    </Button>
+    <>
+      <Button
+        variant="secondary"
+        isDisabled={!canWithdraw}
+        onClick={handleConfirmation}
+        isFullWidth
+      >
+        Withdraw
+      </Button>
+
+      <WithdrawalConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        onClose={() => setIsConfirmationModalOpen(false)}
+        txHash={withdrawRedeemTxHash}
+      />
+    </>
   );
 };
 
