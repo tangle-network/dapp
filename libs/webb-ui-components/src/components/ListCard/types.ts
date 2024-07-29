@@ -25,6 +25,11 @@ export type ChainType = {
    * Whether the current chain needs to switch wallet
    */
   needSwitchWallet?: boolean;
+
+  /**
+   * Whether the chain is disabled
+   */
+  isDisabled?: boolean;
 };
 
 export type RelayerType = {
