@@ -28,8 +28,8 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.WITHDRAW_EVM_BALANCE]: 'Withdrawal successful',
   [TxName.UPDATE_RESTAKE_PROFILE]: 'Restake profile updated',
   [TxName.BRIDGE_TRANSFER]: 'Bridge transferred successful',
-  [TxName.MINT]: 'Minted tokens',
-  [TxName.REDEEM]: 'Redeem request submitted',
+  [TxName.LST_MINT]: 'Minted tokens',
+  [TxName.LST_REDEEM]: 'Redeem request submitted',
   [TxName.LST_REBOND]: 'Unstake request cancelled',
   [TxName.LST_WITHDRAW_REDEEM]: 'Unstake request executed',
 };

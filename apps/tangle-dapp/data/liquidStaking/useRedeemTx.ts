@@ -22,7 +22,7 @@ const useRedeemTx = () => {
   // TODO: Consider moving checks, such as checking that the provided amount equals or greater than 'minimumMint' amount here instead of in the consumer of this hook.
 
   return useSubstrateTxWithNotification<RedeemTxContext>(
-    TxName.REDEEM,
+    TxName.LST_REDEEM,
     (api, _activeSubstrateAddress, context) => {
       const key: ParachainCurrencyKey = { lst: context.currency };
 

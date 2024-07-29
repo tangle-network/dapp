@@ -68,8 +68,7 @@ const useLstUnlockRequestTableRows = () => {
           unlockId: request.unlockId,
           amount: request.amount,
           // TODO: Using dummy address for now.
-          address:
-            '0x1234567890abcdef1234567890abcdef123456789' as AnySubstrateAddress,
+          address: '0xef1234567890abcdef123456789' as AnySubstrateAddress,
           currency: request.currency,
           decimals: chain.decimals,
           remainingTimeUnit,

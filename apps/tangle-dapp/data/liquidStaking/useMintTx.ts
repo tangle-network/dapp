@@ -22,7 +22,7 @@ const useMintTx = () => {
   // TODO: Add support for EVM accounts once precompile(s) for the `lstMinting` pallet are implemented on Tangle.
 
   return useSubstrateTxWithNotification<MintTxContext>(
-    TxName.MINT,
+    TxName.LST_MINT,
     (api, _activeSubstrateAddress, context) => {
       const key: ParachainCurrencyKey = { Native: context.currency };
 

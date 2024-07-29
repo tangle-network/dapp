@@ -20,10 +20,10 @@ const RebondLstUnstakeRequestButton: FC<RebondLstUnstakeRequestButtonProps> = ({
 
   const { execute: executeRebondTx, status: rebondTxStatus } = useLstRebondTx();
 
-  // Show the confirmation modal when the transaction is successful.
+  // Close the confirmation modal when the transaction is successful.
   useEffect(() => {
     if (rebondTxStatus === TxStatus.COMPLETE) {
-      setIsConfirmationModalOpen(true);
+      setIsConfirmationModalOpen(false);
     }
   }, [rebondTxStatus]);
 

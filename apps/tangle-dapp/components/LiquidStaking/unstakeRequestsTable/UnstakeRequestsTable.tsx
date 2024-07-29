@@ -28,7 +28,6 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LST_PREFIX,
   ParachainCurrency,
   SimpleTimeUnitInstance,
 } from '../../../constants/liquidStaking';
@@ -114,7 +113,7 @@ const columns = [
     header: () => <HeaderCell title="Amount" className="justify-center" />,
     cell: (props) => {
       const unstakeRequest = props.row.original;
-      const tokenSymbol = `${LST_PREFIX}${unstakeRequest.currency.toUpperCase()}`;
+      const tokenSymbol = unstakeRequest.currency.toUpperCase();
 
       return (
         <TokenAmountCell
@@ -153,22 +152,13 @@ const UnstakeRequestsTable: FC = () => {
   );
 
   const tableProps = useReactTable(tableOptions);
+  const tablePropsRows = tableProps.getSelectedRowModel().rows;
 
-  const selectedRowsUnlockIds = useMemo<Set<number>>(
-    () => {
-      console.debug('changed');
+  const selectedRowsUnlockIds = useMemo<Set<number>>(() => {
+    const selectedRows = tablePropsRows.map((row) => row.original.unlockId);
 
-      const selectedRows = tableProps
-        .getSelectedRowModel()
-        .rows.map((row) => row.original.unlockId);
-
-      return new Set(selectedRows);
-    },
-
-    // TODO: Get this bug fixed: For some reason, the `tableProps` object will not trigger a re-render when the selected rows change. This is a workaround to force a re-render. This might be because the object itself is not changing, only the contents of the object are changing?
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [tableProps, tableProps.getSelectedRowModel().rows],
-  );
+    return new Set(selectedRows);
+  }, [tablePropsRows]);
 
   // Note that memoizing this will cause the table to not update
   // when the selected rows change.
@@ -239,12 +229,12 @@ const UnstakeRequestsTable: FC = () => {
   }, [selectedRowsUnlockIds, rows]);
 
   const currenciesAndUnlockIds = useMemo<[ParachainCurrency, number][]>(() => {
-    return tableProps.getSelectedRowModel().rows.map((row) => {
+    return tablePropsRows.map((row) => {
       const { currency, unlockId } = row.original;
 
       return [currency, unlockId];
     });
-  }, [tableProps]);
+  }, [tablePropsRows]);
 
   return (
     <div className="space-y-4 flex-grow max-w-[700px]">
