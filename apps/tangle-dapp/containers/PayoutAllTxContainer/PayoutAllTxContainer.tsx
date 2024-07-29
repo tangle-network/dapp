@@ -10,6 +10,7 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo } from 'react';
 
@@ -98,20 +99,22 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
               />
             </InputField.Root>
 
-            <div className="flex flex-col gap-2">
-              {allValidators.map((validator) => (
-                <InputField.Root key={validator}>
-                  <InputField.Input
-                    title="Validator"
-                    isAddressType={true}
-                    addressTheme="substrate"
-                    value={validator}
-                    type="text"
-                    readOnly
-                  />
-                </InputField.Root>
-              ))}
-            </div>
+            <ScrollArea className="flex-1 max-h-64">
+              <div className="space-y-2">
+                {allValidators.map((validator) => (
+                  <InputField.Root key={validator}>
+                    <InputField.Input
+                      title="Validator"
+                      isAddressType={true}
+                      addressTheme="substrate"
+                      value={validator}
+                      type="text"
+                      readOnly
+                    />
+                  </InputField.Root>
+                ))}
+              </div>
+            </ScrollArea>
 
             {/* Eras */}
             {eraRange.length > 0 && (
