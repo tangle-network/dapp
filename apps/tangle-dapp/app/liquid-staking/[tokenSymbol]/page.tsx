@@ -26,16 +26,11 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
     <div className="grid grid-cols-2 gap-12">
       <div className="flex flex-col gap-4 w-full min-w-[450px] max-w-[600px]">
         <TabsList className="w-full">
-          <TabListItem
-            href="#"
-            isActive={isStaking}
-            onClick={() => setIsStaking(true)}
-          >
+          <TabListItem isActive={isStaking} onClick={() => setIsStaking(true)}>
             Stake
           </TabListItem>
 
           <TabListItem
-            href="#"
             isActive={!isStaking}
             onClick={() => setIsStaking(false)}
           >
