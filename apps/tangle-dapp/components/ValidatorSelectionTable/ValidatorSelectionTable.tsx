@@ -146,7 +146,10 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         cell: (props) => (
           <div className="flex items-center justify-start">
             <Chip color="dark-grey" className="normal-case">
-              <TokenAmountCell amount={props.getValue()} />
+              <TokenAmountCell
+                amount={props.getValue()}
+                className="text-mono-0"
+              />
             </Chip>
           </div>
         ),
@@ -278,7 +281,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           ) : (
             <Table
               tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
-              thClassName="z-10 border-t-0 py-3 sticky top-0"
+              thClassName="border-t-0 py-3 sticky top-0"
               trClassName="cursor-pointer"
               tdClassName="py-2 border-t-0"
               paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"

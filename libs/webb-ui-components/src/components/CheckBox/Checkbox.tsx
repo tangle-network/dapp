@@ -51,7 +51,7 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
     'enabled:hover:shadow-sm enabled:hover:shadow-blue-10 dark:hover:shadow-none';
 
   const inputCheckedClsx =
-    'checked:!bg-blue-50 checked:hover:bg-blue-50 checked:active:!bg-blue-60 dark:checked:active:!bg-blue-40';
+    'checked:bg-blue-50 dark:checked:bg-blue-50 checked:hover:bg-blue-50 dark:checked:hover:bg-blue-50 checked:active:bg-blue-60 dark:checked:active:bg-blue-40';
 
   const inputDisabledClsx =
     'disabled:border-mono-60 dark:disabled:border-mono-140 disabled:cursor-not-allowed disabled:shadow-none';
@@ -78,9 +78,9 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
   const mergedLabelClsx = twMerge(labelClsx, labelClsxProp);
 
   return (
-    <label className={twMerge('inline-flex', wrapperClassName)}>
-      <div className="min-w-[28px]">
-        <div className="relative group min-h-[28px]">
+    <div className={twMerge('inline-flex relative', wrapperClassName)}>
+      <label className="inline-flex">
+        <div className="relative group min-h-[28px] min-w-[28px]">
           <input
             id={id}
             type="checkbox"
@@ -103,9 +103,9 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
             )}
           />
         </div>
-      </div>
 
-      {children && <span className={mergedLabelClsx}>{children}</span>}
+        {children && <span className={mergedLabelClsx}>{children}</span>}
+      </label>
 
       {info && (
         <Tooltip delayDuration={100}>
@@ -130,6 +130,6 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
           </TooltipBody>
         </Tooltip>
       )}
-    </label>
+    </div>
   );
 };
