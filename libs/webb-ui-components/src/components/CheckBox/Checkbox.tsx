@@ -78,34 +78,32 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
   const mergedLabelClsx = twMerge(labelClsx, labelClsxProp);
 
   return (
-    <div className={twMerge('inline-flex relative', wrapperClassName)}>
-      <label className="inline-flex">
-        <div className="relative group min-h-[28px] min-w-[28px]">
-          <input
-            id={id}
-            type="checkbox"
-            className={twMerge(
-              mergedInputClsx,
-              'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-            )}
-            checked={isChecked}
-            onChange={onChange}
-            disabled={isDisabled}
-            {...inputProps}
-          />
-          <span
-            className={twMerge(
-              'w-[34px] h-[34px] rounded-full',
-              'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-              'bg-[rgba(89,83,249,0.10)] group-active:bg-[rgba(89,83,249,0.20)]',
-              'dark:bg-[rgba(89,83,249,0.20)] dark:group-active:bg-[rgba(89,83,249,0.30)]',
-              'opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out',
-            )}
-          />
-        </div>
+    <label className={twMerge('inline-flex', wrapperClassName)}>
+      <div className="relative group min-h-[28px] min-w-[28px]">
+        <input
+          id={id}
+          type="checkbox"
+          className={twMerge(
+            mergedInputClsx,
+            'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+          )}
+          checked={isChecked}
+          onChange={onChange}
+          disabled={isDisabled}
+          {...inputProps}
+        />
+        <span
+          className={twMerge(
+            'w-[34px] h-[34px] rounded-full',
+            'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+            'bg-[rgba(89,83,249,0.10)] group-active:bg-[rgba(89,83,249,0.20)]',
+            'dark:bg-[rgba(89,83,249,0.20)] dark:group-active:bg-[rgba(89,83,249,0.30)]',
+            'opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out',
+          )}
+        />
+      </div>
 
-        {children && <span className={mergedLabelClsx}>{children}</span>}
-      </label>
+      {children && <span className={mergedLabelClsx}>{children}</span>}
 
       {info && (
         <Tooltip delayDuration={100}>
@@ -130,6 +128,6 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
           </TooltipBody>
         </Tooltip>
       )}
-    </div>
+    </label>
   );
 };
