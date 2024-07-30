@@ -45,15 +45,16 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
   } = props;
 
   const inputClsx =
-    'form-checkbox peer transition-none bg-mono-0 w-[18px] h-[18px] rounded border border-mono-100 outline-none dark:bg-mono-180';
+    'form-checkbox peer transition-none bg-mono-0 w-[18px] h-[18px] rounded border-2 border-mono-100 outline-none dark:bg-mono-180 focus:ring-offset-0 focus:ring-0';
 
   const inputHoverClsx =
     'enabled:hover:shadow-sm enabled:hover:shadow-blue-10 dark:hover:shadow-none';
 
-  const inputCheckedClsx = 'checked:bg-blue-70 dark:checked:bg-blue-50';
+  const inputCheckedClsx =
+    'checked:!bg-blue-50 checked:hover:bg-blue-50 checked:active:!bg-blue-60 dark:checked:active:!bg-blue-40';
 
   const inputDisabledClsx =
-    'disabled:border-mono-60 disabled:cursor-not-allowed disabled:bg-mono-0 disabled:shadow-none dark:disabled:bg-mono-140 dark:disabled:border-mono-120';
+    'disabled:border-mono-60 dark:disabled:border-mono-140 disabled:cursor-not-allowed disabled:shadow-none';
 
   const inputCursorClsx =
     'cursor-pointer disabled:cursor-not-allowed peer-disabled:cursor-not-allowed';
@@ -77,18 +78,34 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
   const mergedLabelClsx = twMerge(labelClsx, labelClsxProp);
 
   return (
-    <label className={twMerge('inline-flex min-h-[28px]', wrapperClassName)}>
-      <input
-        id={id}
-        type="checkbox"
-        className={mergedInputClsx}
-        checked={isChecked}
-        onChange={onChange}
-        disabled={isDisabled}
-        {...inputProps}
-      />
+    <label className={twMerge('inline-flex', wrapperClassName)}>
+      <div className="min-w-[28px]">
+        <div className="relative group min-h-[28px]">
+          <input
+            id={id}
+            type="checkbox"
+            className={twMerge(
+              mergedInputClsx,
+              'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+            )}
+            checked={isChecked}
+            onChange={onChange}
+            disabled={isDisabled}
+            {...inputProps}
+          />
+          <span
+            className={twMerge(
+              'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
+              'w-[34px] h-[34px] rounded-full z-10',
+              'bg-[rgba(89,83,249,0.10)] group-active:bg-[rgba(89,83,249,0.20)]',
+              'dark:bg-[rgba(89,83,249,0.20)] dark:group-active:bg-[rgba(89,83,249,0.30)]',
+              'opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out',
+            )}
+          />
+        </div>
+      </div>
 
-      {children && <label className={mergedLabelClsx}>{children}</label>}
+      {children && <span className={mergedLabelClsx}>{children}</span>}
 
       {info && (
         <Tooltip delayDuration={100}>

@@ -278,7 +278,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           ) : (
             <Table
               tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
-              thClassName="border-t-0 py-3 sticky top-0"
+              thClassName="z-10 border-t-0 py-3 sticky top-0"
               trClassName="cursor-pointer"
               tdClassName="py-2 border-t-0"
               paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
