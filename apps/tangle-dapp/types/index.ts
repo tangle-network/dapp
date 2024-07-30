@@ -10,6 +10,7 @@ export enum PagePath {
   CLAIM_AIRDROP = '/claim',
   ACCOUNT = '/',
   BRIDGE = '/bridge',
+  BLUEPRINTS = '/blueprints',
   SERVICES_OVERVIEW = '/services',
   RESTAKE = '/restake',
   RESTAKE_DEPOSIT = '/restake/deposit',
