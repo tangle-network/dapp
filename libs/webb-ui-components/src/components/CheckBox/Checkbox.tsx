@@ -95,8 +95,8 @@ export const CheckBox: React.FC<CheckBoxProps> = (props) => {
           />
           <span
             className={twMerge(
+              'w-[34px] h-[34px] rounded-full',
               'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-              'w-[34px] h-[34px] rounded-full z-10',
               'bg-[rgba(89,83,249,0.10)] group-active:bg-[rgba(89,83,249,0.20)]',
               'dark:bg-[rgba(89,83,249,0.20)] dark:group-active:bg-[rgba(89,83,249,0.30)]',
               'opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out',
