@@ -1,6 +1,3 @@
-[[plugins]]
-package = "@netlify/plugin-nextjs"
-
 [build]
 command = "yarn nx build faucet --verbose --skip-nx-cache"
 publish = "./dist/apps/faucet/.next"

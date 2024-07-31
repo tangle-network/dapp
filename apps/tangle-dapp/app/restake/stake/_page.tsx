@@ -1,6 +1,5 @@
 'use client';
 
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import type {
@@ -17,7 +16,6 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 
-import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import { DelegateContext, TxEvent } from '../../../data/restake/RestakeTx/base';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
@@ -34,17 +32,14 @@ import { PagePath } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
 import AvatarWithText from '../AvatarWithText';
-import ChainList from '../ChainList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
 import OperatorList from '../OperatorList';
-import RestakeTabs from '../RestakeTabs';
+import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Info from './Info';
 import StakeInput from './StakeInput';
-
-export const dynamic = 'force-static';
 
 export default function DelegatePage() {
   const {
@@ -108,6 +103,11 @@ export default function DelegatePage() {
       setValue('assetId', defaultAssetId);
     }
   }, [defaultAssetId, setValue]);
+
+  // Reset form when active chain changes
+  useEffect(() => {
+    reset();
+  }, [activeTypedChainId, reset]);
 
   const {
     status: isChainModalOpen,
@@ -222,8 +222,6 @@ export default function DelegatePage() {
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col h-full space-y-4 grow">
-        <RestakeTabs />
-
         <StakeInput
           amountError={errors.amount?.message}
           delegatorInfo={delegatorInfo}
@@ -265,7 +263,7 @@ export default function DelegatePage() {
         <ModalContent
           isOpen={isOperatorModalOpen}
           title="Select Operator"
-          description="Select the operator you want to delegate to"
+          description="Select the operator you want to stake with"
           onInteractOutside={closeOperatorModal}
         >
           <OperatorList
@@ -273,28 +271,15 @@ export default function DelegatePage() {
             onOperatorAccountIdChange={handleOperatorAccountIdChange}
             operatorMap={operatorMap}
             operatorIdentities={operatorIdentities}
-            overrideTitleProps={{ variant: 'h4' }}
-            className="h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]"
             onClose={closeOperatorModal}
           />
         </ModalContent>
 
-        <ModalContent
+        <SupportedChainModal
           isOpen={isChainModalOpen}
-          title="Select Chain"
-          description="Select the chain you want to delegate from"
-          onInteractOutside={closeChainModal}
-        >
-          <ChainList
-            selectedTypedChainId={activeTypedChainId}
-            className="h-full"
-            onClose={closeChainModal}
-            onChange={handleChainChange}
-            defaultCategory={
-              chainsPopulated[SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0]].tag
-            }
-          />
-        </ModalContent>
+          onClose={closeChainModal}
+          onChainChange={handleChainChange}
+        />
       </Modal>
     </Form>
   );

@@ -3,13 +3,14 @@
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import TabListItem from './TabListItem';
 import TabsList from './TabsList';
 
 export type TabsListProps = PropsOf<'ul'>;
 
-export const tabs = ['deposit', 'stake'] as const;
+export const tabs = ['deposit', 'stake', 'unstake'] as const;
 
 const RestakeTabs = (props: TabsListProps) => {
   const pathname = usePathname();
@@ -23,12 +24,14 @@ const RestakeTabs = (props: TabsListProps) => {
   }, [pathname]);
 
   return (
-    <TabsList {...props}>
+    <TabsList {...props} className={twMerge('mb-4', props.className)}>
       {tabs.map((tab, idx) => (
         <TabListItem
           href={tab}
           key={`${tab}-${idx}`}
           isActive={activeTab === tab}
+          // Hide separator when the tab is directly previous to the active tab
+          hideSeparator={activeTab && tabs.indexOf(activeTab) - 1 === idx}
         >
           {`${tab[0].toUpperCase()}${tab.substring(1)}`}
         </TabListItem>

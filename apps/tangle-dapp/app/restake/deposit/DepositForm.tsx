@@ -40,7 +40,6 @@ import ChainList from '../ChainList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
 import OperatorList from '../OperatorList';
-import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
 import DestChainInput from './DestChainInput';
 import SourceChainInput from './SourceChainInput';
@@ -102,6 +101,11 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   useEffect(() => {
     setValue('sourceTypedChainId', getDefaultTypedChainId(activeTypedChainId));
   }, [activeTypedChainId, setValue]);
+
+  // Reset form when active chain changes
+  useEffect(() => {
+    resetField('amount');
+  }, [activeTypedChainId, resetField]);
 
   const sourceTypedChainId = watch('sourceTypedChainId');
 
@@ -240,8 +244,6 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   return (
     <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col h-full space-y-4 grow">
-        <RestakeTabs />
-
         <div className="space-y-2">
           <SourceChainInput
             amountError={errors.amount?.message}
@@ -312,8 +314,6 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             onOperatorAccountIdChange={handleOperatorAccountIdChange}
             operatorMap={operatorMap}
             operatorIdentities={operatorIdentities}
-            overrideTitleProps={{ variant: 'h4' }}
-            className="h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]"
             onClose={closeOperatorModal}
             onResetSelection={handleResetOperator}
           />

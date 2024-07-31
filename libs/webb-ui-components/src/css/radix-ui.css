@@ -31,8 +31,7 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Input darkmode fix for checkbox / radio */
-.dark [type='checkbox']:checked,
+/* Input darkmode fix for radio */
 .dark [type='radio']:checked {
   background-color: currentColor;
 }

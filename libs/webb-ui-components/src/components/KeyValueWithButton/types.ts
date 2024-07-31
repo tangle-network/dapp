@@ -62,4 +62,9 @@ export interface KeyValueWithButtonProps
   onCopyButtonClick?: ComponentProps<'button'>['onClick'];
 
   copyProps?: UseCopyableReturnType;
+
+  /**
+   * @default 5
+   */
+  displayCharCount?: number;
 }
