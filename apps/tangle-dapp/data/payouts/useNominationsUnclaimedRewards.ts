@@ -5,9 +5,9 @@ import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import useCurrentEra from '../staking/useCurrentEra';
 import { ValidatorReward } from '../types';
-import { usePayoutsStore } from './store';
 import useClaimedRewards from './useClaimedRewards';
 import useErasRewardsPoints from './useErasRewardsPoints';
+import { usePayoutsStore } from './usePayoutsStore';
 
 /**
  * Defined constant empty array to return on every render
@@ -20,7 +20,7 @@ const EMPTY_ARRAY: ValidatorReward[] = [];
  * Get all unclaimed rewards of the active account's nominations
  */
 export default function useNominationsUnclaimedRewards() {
-  const maxEras = usePayoutsStore((state) => state.maxEras);
+  const maxEras = usePayoutsStore((state) => state.eraRange);
   const activeSubstrateAddress = useSubstrateAddress();
   const { result: currentEra } = useCurrentEra();
 

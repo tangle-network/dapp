@@ -90,11 +90,14 @@ const getStaticColumns = (isWaiting?: boolean) => [
           header: () => null,
           cell: (props) => (
             <div className="flex items-center justify-center">
-              <Link href={`${PagePath.NOMINATION}/${props.getValue()}`}>
-                <Button variant="link" size="sm">
-                  DETAILS
-                </Button>
-              </Link>
+              <Button
+                as={Link}
+                variant="link"
+                size="sm"
+                href={`${PagePath.NOMINATION}/${props.getValue()}`}
+              >
+                DETAILS
+              </Button>
             </div>
           ),
         }),

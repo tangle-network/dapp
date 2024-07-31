@@ -4,11 +4,11 @@ import { BN } from '@polkadot/util';
 import { useMemo, useState } from 'react';
 
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import { usePayoutsStore } from '../payouts/store';
+import { usePayoutsStore } from '../payouts/usePayoutsStore';
 
 export default function useTotalPayoutRewards() {
   const payouts = usePayoutsStore((state) => state.data);
-  const maxEras = usePayoutsStore((state) => state.maxEras);
+  const maxEras = usePayoutsStore((state) => state.eraRange);
 
   const address = useSubstrateAddress();
 
