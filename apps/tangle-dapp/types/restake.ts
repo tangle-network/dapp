@@ -43,7 +43,7 @@ export type OperatorStatus =
  * @name PalletMultiAssetDelegationOperatorOperatorMetadata (735)
  */
 export type OperatorMetadata = {
-  readonly bond: bigint;
+  readonly stake: bigint;
   readonly delegationCount: number;
 
   /**

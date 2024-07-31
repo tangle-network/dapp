@@ -49,7 +49,7 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
                   const operator = operatorMetadata.unwrap();
 
                   const operatorMetadataPrimitive = {
-                    bond: operator.bond.toBigInt(),
+                    stake: operator.stake.toBigInt(),
                     delegationCount: operator.delegationCount.toNumber(),
                     bondLessRequest: toPrimitiveRequest(operator.request),
                     delegations: toPrimitiveDelegations(operator.delegations),
