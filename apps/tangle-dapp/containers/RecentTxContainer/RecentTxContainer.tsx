@@ -61,7 +61,7 @@ const RecentTxContainer: FC = () => {
           infrastructure.
         </Typography>
 
-        <Button isFullWidth href={TANGLE_DOCS_URL} target="_blank">
+        <Button href={TANGLE_DOCS_URL} target="_blank">
           Learn More
         </Button>
       </div>

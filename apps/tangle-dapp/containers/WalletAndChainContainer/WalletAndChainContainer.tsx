@@ -16,6 +16,7 @@ import { type FC } from 'react';
 
 import { WalletDropdown } from '../../components';
 import UpdateMetadataButton from '../../components/UpdateMetadataButton';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 
 const NetworkSelectionButton = dynamic(
   () => import('../../components/NetworkSelector/NetworkSelectionButton'),
@@ -23,6 +24,8 @@ const NetworkSelectionButton = dynamic(
 );
 
 const WalletAndChainContainer: FC = () => {
+  const activeAccountAddress = useActiveAccountAddress();
+
   const { activeAccount, activeWallet, loading, isConnecting } =
     useWebContext();
 
@@ -34,7 +37,11 @@ const WalletAndChainContainer: FC = () => {
       <NetworkSelectionButton />
 
       <div>
-        {isConnecting || loading || !activeWallet || !activeAccount ? (
+        {isConnecting ||
+        loading ||
+        !activeWallet ||
+        !activeAccount ||
+        activeAccountAddress === null ? (
           isMobile ? (
             <ConnectWalletMobileButton>
               <div className="flex flex-col items-center justify-center gap-4 py-9">
@@ -60,7 +67,7 @@ const WalletAndChainContainer: FC = () => {
         ) : (
           <div className="relative">
             <WalletDropdown
-              accountAddress={activeAccount.address}
+              accountAddress={activeAccountAddress}
               accountName={activeAccount.name}
               wallet={activeWallet}
             />
