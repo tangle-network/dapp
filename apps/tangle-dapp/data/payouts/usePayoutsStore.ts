@@ -1,21 +1,21 @@
 import { create } from 'zustand';
 
-import { PayoutFilterableEra } from '../../data/types';
+import { PayoutsEraRange } from '../types';
 import type { Payout } from '../../types';
 
 type State = {
   isLoading: boolean;
   data: {
-    [maxEras: number]: Payout[];
+    [eraRange: number]: Payout[];
   };
-  maxEras: PayoutFilterableEra;
+  eraRange: PayoutsEraRange;
 };
 
 type Actions = {
   setIsLoading: (isLoading: State['isLoading']) => void;
   setPayouts: (data: State['data']) => void;
   resetPayouts: () => void;
-  setMaxEras: (maxEras: State['maxEras']) => void;
+  setEraRange: (eraRange: State['eraRange']) => void;
 };
 
 type Store = State & Actions;
@@ -23,10 +23,10 @@ type Store = State & Actions;
 export const usePayoutsStore = create<Store>((set) => ({
   isLoading: false,
   data: {},
-  maxEras: PayoutFilterableEra.TWO,
+  eraRange: PayoutsEraRange.TWO,
   setIsLoading: (isLoading) => set({ isLoading }),
   setPayouts: (newData) =>
     set((state) => ({ data: { ...state.data, ...newData } })),
   resetPayouts: () => set({ data: {} }),
-  setMaxEras: (maxEras) => set({ maxEras }),
+  setEraRange: (eraRange) => set({ eraRange }),
 }));

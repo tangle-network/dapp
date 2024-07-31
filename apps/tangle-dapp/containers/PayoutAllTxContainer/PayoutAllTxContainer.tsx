@@ -1,6 +1,5 @@
 'use client';
 
-import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
   Button,
   InputField,
@@ -11,10 +10,11 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
+import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo } from 'react';
 
 import usePayoutAllTx from '../../data/payouts/usePayoutAllTx';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { PayoutAllTxContainerProps } from './types';
 
@@ -23,35 +23,24 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   setIsModalOpen,
   validatorsAndEras,
 }) => {
-  const { activeAccount } = useWebContext();
+  const substrateAddress = useSubstrateAddress();
 
-  const walletAddress = useMemo(() => {
-    if (!activeAccount?.address) {
-      return '0x0';
-    }
-
-    return activeAccount.address;
-  }, [activeAccount?.address]);
-
-  const payoutValidatorsAndEras = useMemo(
-    () => validatorsAndEras.slice(0, 10),
-    [validatorsAndEras],
-  );
-
-  const allValidators = useMemo(
-    () => [
+  const allValidators = useMemo(() => {
+    const uniqueValidatorAddresses = [
+      // Use a set to filter out duplicate validator addresses.
       ...new Set(
-        payoutValidatorsAndEras.map((v) => v.validatorSubstrateAddress),
+        validatorsAndEras.map((payout) => payout.validatorSubstrateAddress),
       ),
-    ],
-    [payoutValidatorsAndEras],
-  );
+    ];
+
+    return uniqueValidatorAddresses;
+  }, [validatorsAndEras]);
 
   const eraRange = useMemo(() => {
-    const eras = [...new Set(payoutValidatorsAndEras.map((v) => v.era))];
+    const eras = [...new Set(validatorsAndEras.map((payout) => payout.era))];
 
     return [eras[0], eras[eras.length - 1]];
-  }, [payoutValidatorsAndEras]);
+  }, [validatorsAndEras]);
 
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
@@ -66,11 +55,11 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     }
 
     await executePayoutAllTx({
-      validatorEraPairs: payoutValidatorsAndEras,
+      validatorEraPairs: validatorsAndEras,
     });
 
     closeModal();
-  }, [executePayoutAllTx, payoutValidatorsAndEras, closeModal]);
+  }, [executePayoutAllTx, validatorsAndEras, closeModal]);
 
   const canSubmitTx =
     validatorsAndEras.length > 0 && executePayoutAllTx !== null;
@@ -92,8 +81,8 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
             <InputField.Root>
               <InputField.Input
                 title="Request Payout From"
-                isAddressType={true}
-                value={walletAddress}
+                isAddressType
+                value={substrateAddress ?? 'Loading...'}
                 type="text"
                 readOnly
               />
@@ -105,7 +94,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
                   <InputField.Root key={validator}>
                     <InputField.Input
                       title="Validator"
-                      isAddressType={true}
+                      isAddressType
                       addressTheme="substrate"
                       value={validator}
                       type="text"
@@ -144,11 +133,6 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
               All the listed validators and all their nominators will receive
               their rewards.
             </Typography>
-
-            <Typography variant="body1" fw="normal">
-              The UI puts a limit of 10 payouts at a time, where each payout is
-              a single validator for a single era.
-            </Typography>
           </div>
         </div>
 
@@ -162,15 +146,15 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
             Confirm
           </Button>
 
-          <a
-            href={WEBB_TANGLE_DOCS_STAKING_URL}
+          <Button
+            isFullWidth
+            variant="secondary"
+            href={TANGLE_DOCS_STAKING_URL}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button isFullWidth variant="secondary">
-              Learn More
-            </Button>
-          </a>
+            Learn More
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

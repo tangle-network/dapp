@@ -6,7 +6,7 @@ import { Button, Divider } from '@webb-tools/webb-ui-components';
 import {
   SOCIAL_URLS_RECORD,
   WEBB_DISCORD_CHANNEL_URL,
-  WEBB_TANGLE_DOCS_STAKING_URL,
+  TANGLE_DOCS_STAKING_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';
@@ -203,7 +203,7 @@ const NominatorStatsContainer: FC = () => {
               </>
             ) : (
               <div className="flex items-center gap-2">
-                <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+                <Link href={TANGLE_DOCS_STAKING_URL} target="_blank">
                   <Button variant="utility">Learn More</Button>
                 </Link>
 

@@ -7,7 +7,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
-import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
+import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { type FC, useCallback, useState } from 'react';
 
@@ -74,7 +74,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
         </div>
 
         <ModalFooter className="px-8 py-6 flex items-center gap-2">
-          <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
+          <Link href={TANGLE_DOCS_STAKING_URL} target="_blank">
             <Button isFullWidth variant="secondary">
               Learn More
             </Button>

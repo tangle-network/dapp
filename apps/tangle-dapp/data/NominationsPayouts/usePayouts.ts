@@ -17,7 +17,7 @@ import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { Payout } from '../../types';
 import { getApiPromise as getPolkadotApiPromise } from '../../utils/polkadot';
-import { usePayoutsStore } from '../payouts/store';
+import { usePayoutsStore } from '../payouts/usePayoutsStore';
 import useEraTotalRewards from '../payouts/useEraTotalRewards';
 import useNominationsUnclaimedRewards from '../payouts/useNominationsUnclaimedRewards';
 import { ValidatorReward } from '../types';
@@ -38,7 +38,7 @@ export default function usePayouts(): UsePayoutsReturnType {
   const resetPayouts = usePayoutsStore((state) => state.resetPayouts);
   const isLoading = usePayoutsStore((state) => state.isLoading);
   const data = usePayoutsStore((state) => state.data);
-  const maxEras = usePayoutsStore((state) => state.maxEras);
+  const maxEras = usePayoutsStore((state) => state.eraRange);
 
   const { setWithPreviousValue: setCachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
