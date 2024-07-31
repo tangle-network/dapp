@@ -198,7 +198,8 @@ const Page = () => {
     };
   }, [assetMap, operatorIdentities, reset]);
 
-  const { scheduleDelegatorBondLess } = useRestakeTx();
+  const { scheduleDelegatorUnstake: scheduleDelegatorBondLess } =
+    useRestakeTx();
   const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
 
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
