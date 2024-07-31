@@ -3,10 +3,12 @@ import assert from 'assert';
 
 import { AnySubstrateAddress } from '../types/utils';
 
-const assertAnySubstrateAddress = (address: string): AnySubstrateAddress => {
-  assert(isAddress(address), 'Address should be a valid Substrate address');
+type AnySubstrateAddressAssertionFn = (
+  address: string,
+) => asserts address is AnySubstrateAddress;
 
-  return address as AnySubstrateAddress;
+const assertAnySubstrateAddress: AnySubstrateAddressAssertionFn = (address) => {
+  assert(isAddress(address), 'Address should be a valid Substrate address');
 };
 
 export default assertAnySubstrateAddress;

@@ -1,14 +1,14 @@
 'use client';
 
 import type { ApiRx } from '@polkadot/api';
-import type { Option, u128 } from '@polkadot/types';
+import type { Option } from '@polkadot/types';
 import type { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { combineLatest, map, of, switchMap } from 'rxjs';
 
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import { AssetBalance, AssetBalanceMap } from '../../types/restake';
+import type { AssetBalance, AssetBalanceMap } from '../../types/restake';
 import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restaking/filterNativeAsset';
 import useRestakeAssetIds from './useRestakeAssetIds';
@@ -94,7 +94,7 @@ export default function useRestakeBalances() {
 function assetBalancesReducer(
   assetBalances: Option<PalletAssetsAssetAccount>[],
   initialValue: typeof EMPTY_BALANCES,
-  nonNativeAssetIds: u128[],
+  nonNativeAssetIds: string[],
 ) {
   return assetBalances.reduce(
     (assetBalanceMap, accountBalance, idx) => {
@@ -104,7 +104,7 @@ function assetBalancesReducer(
 
       const { balance, status, reason } = accountBalance.unwrap();
 
-      const assetIdStr = nonNativeAssetIds[idx].toString();
+      const assetId = nonNativeAssetIds[idx];
 
       function toPrimitiveReason(
         reasonArg: typeof reason,
@@ -125,8 +125,8 @@ function assetBalancesReducer(
       }
 
       return Object.assign(assetBalanceMap, {
-        [assetIdStr]: {
-          assetId: assetIdStr,
+        [assetId]: {
+          assetId: assetId,
           balance: balance.toBigInt(),
           status: status.type,
           existenceReason: toPrimitiveReason(reason),
