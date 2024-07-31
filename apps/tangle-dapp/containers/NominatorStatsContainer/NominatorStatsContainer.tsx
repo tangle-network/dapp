@@ -5,8 +5,8 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Button, Divider } from '@webb-tools/webb-ui-components';
 import {
   SOCIAL_URLS_RECORD,
-  WEBB_DISCORD_CHANNEL_URL,
   TANGLE_DOCS_STAKING_URL,
+  WEBB_DISCORD_CHANNEL_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';

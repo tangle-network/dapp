@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
-import { PayoutsEraRange } from '../types';
 import type { Payout } from '../../types';
+import { PayoutsEraRange } from '../types';
 
 type State = {
   isLoading: boolean;

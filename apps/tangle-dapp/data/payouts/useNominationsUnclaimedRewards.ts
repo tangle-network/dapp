@@ -5,9 +5,9 @@ import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import useCurrentEra from '../staking/useCurrentEra';
 import { ValidatorReward } from '../types';
-import { usePayoutsStore } from './usePayoutsStore';
 import useClaimedRewards from './useClaimedRewards';
 import useErasRewardsPoints from './useErasRewardsPoints';
+import { usePayoutsStore } from './usePayoutsStore';
 
 /**
  * Defined constant empty array to return on every render

@@ -17,9 +17,9 @@ import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { Payout } from '../../types';
 import { getApiPromise as getPolkadotApiPromise } from '../../utils/polkadot';
-import { usePayoutsStore } from '../payouts/usePayoutsStore';
 import useEraTotalRewards from '../payouts/useEraTotalRewards';
 import useNominationsUnclaimedRewards from '../payouts/useNominationsUnclaimedRewards';
+import { usePayoutsStore } from '../payouts/usePayoutsStore';
 import { ValidatorReward } from '../types';
 import useValidatorIdentityNames from '../ValidatorTables/useValidatorIdentityNames';
 
