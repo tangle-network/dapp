@@ -85,11 +85,15 @@ const staticColumns = [
     id: 'details',
     header: () => null,
     cell: (props) => (
-      <Link href={`/services/${props.row.original.id}`}>
-        <Button variant="link" size="sm" className="mx-auto">
-          DETAILS
-        </Button>
-      </Link>
+      <Button
+        as={Link}
+        variant="link"
+        size="sm"
+        className="mx-auto"
+        href={`/services/${props.row.original.id}`}
+      >
+        DETAILS
+      </Button>
     ),
   }),
 ];

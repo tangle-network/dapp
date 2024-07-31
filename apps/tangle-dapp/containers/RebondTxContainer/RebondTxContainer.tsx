@@ -10,7 +10,6 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import Link from 'next/link';
 import { type FC, useCallback, useState } from 'react';
 
 import { BondedTokensBalanceInfo } from '../../components';
@@ -119,11 +118,14 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
             Confirm
           </Button>
 
-          <Link href={TANGLE_DOCS_STAKING_URL} target="_blank">
-            <Button isFullWidth variant="secondary">
-              Learn More
-            </Button>
-          </Link>
+          <Button
+            isFullWidth
+            variant="secondary"
+            href={TANGLE_DOCS_STAKING_URL}
+            target="_blank"
+          >
+            Learn More
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

@@ -23,6 +23,7 @@ const WhatIsRestakingCard: FC<WhatIsRestakingCardProps> = ({ className }) => {
         <Typography variant="h5" fw="bold">
           What Is Restaking?
         </Typography>
+
         <Typography variant="body2">
           Restaking empowers Tangle’s validators to actively participate in the
           network by allocating a portion of their staked tokens to various
@@ -30,14 +31,16 @@ const WhatIsRestakingCard: FC<WhatIsRestakingCardProps> = ({ className }) => {
         </Typography>
       </div>
       <div className="flex flex-row flex-wrap items-end justify-end gap-2 md:items-center">
-        <Link href={PagePath.RESTAKE}>
-          <Button>Restake Now</Button>
-        </Link>
+        <Button as={Link} href={PagePath.RESTAKE}>
+          Restake Now
+        </Button>
+
         {/* TODO: update this after the restaking page on docs available */}
         {/* <Button variant="secondary">
           Learn More
         </Button> */}
       </div>
+
       <TangleBigLogo className="w-48 absolute top-[50%] translate-y-[-50%] right-0" />
     </GlassCard>
   );

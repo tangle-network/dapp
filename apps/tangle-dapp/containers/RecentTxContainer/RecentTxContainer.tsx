@@ -3,7 +3,6 @@
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
-import Link from 'next/link';
 import { FC, useMemo } from 'react';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
@@ -20,7 +19,7 @@ const RecentTxContainer: FC = () => {
   const explorerUrl = useMemo(() => {
     return isEvm
       ? network.evmExplorerUrl
-      : (network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl);
+      : network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl;
   }, [
     isEvm,
     network.evmExplorerUrl,
@@ -62,9 +61,9 @@ const RecentTxContainer: FC = () => {
           infrastructure.
         </Typography>
 
-        <Link href={TANGLE_DOCS_URL} target="_blank">
-          <Button isFullWidth>Learn More</Button>
-        </Link>
+        <Button isFullWidth href={TANGLE_DOCS_URL} target="_blank">
+          Learn More
+        </Button>
       </div>
     </GlassCard>
   );
