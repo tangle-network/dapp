@@ -11,19 +11,19 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
-  LIQUID_STAKING_CHAIN_MAP,
-  LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingChainId,
-} from '../../constants/liquidStaking';
-import useDelegationsOccupiedStatus from '../../data/liquidStaking/useDelegationsOccupiedStatus';
+  LST_PREFIX,
+  PARACHAIN_CHAIN_MAP,
+  ParachainChainId,
+} from '../../../constants/liquidStaking';
+import useDelegationsOccupiedStatus from '../../../data/liquidStaking/useDelegationsOccupiedStatus';
 import useExchangeRate, {
   ExchangeRateType,
-} from '../../data/liquidStaking/useExchangeRate';
-import useParachainBalances from '../../data/liquidStaking/useParachainBalances';
-import useRedeemTx from '../../data/liquidStaking/useRedeemTx';
-import useApi from '../../hooks/useApi';
-import useApiRx from '../../hooks/useApiRx';
-import { TxStatus } from '../../hooks/useSubstrateTx';
+} from '../../../data/liquidStaking/useExchangeRate';
+import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
+import useRedeemTx from '../../../data/liquidStaking/useRedeemTx';
+import useApi from '../../../hooks/useApi';
+import useApiRx from '../../../hooks/useApiRx';
+import { TxStatus } from '../../../hooks/useSubstrateTx';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
 import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
@@ -39,14 +39,19 @@ const LiquidUnstakeCard: FC = () => {
   const [isRequestSubmittedModalOpen, setIsRequestSubmittedModalOpen] =
     useState(false);
 
-  const [selectedChainId, setSelectedChainId] = useState<LiquidStakingChainId>(
-    LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN,
+  const [selectedChainId, setSelectedChainId] = useState<ParachainChainId>(
+    ParachainChainId.TANGLE_RESTAKING_PARACHAIN,
   );
 
-  const { execute: executeRedeemTx, status: redeemTxStatus } = useRedeemTx();
+  const {
+    execute: executeRedeemTx,
+    status: redeemTxStatus,
+    txHash: redeemTxHash,
+  } = useRedeemTx();
+
   const { liquidBalances } = useParachainBalances();
 
-  const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
+  const selectedChain = PARACHAIN_CHAIN_MAP[selectedChainId];
 
   const exchangeRate = useExchangeRate(
     ExchangeRateType.LiquidToNative,
@@ -145,12 +150,12 @@ const LiquidUnstakeCard: FC = () => {
       {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
       <LiquidStakingInput
         id="liquid-staking-unstake-from"
-        chainId={LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN}
+        chainId={ParachainChainId.TANGLE_RESTAKING_PARACHAIN}
         token={selectedChain.token}
         amount={fromAmount}
         decimals={selectedChain.decimals}
         onAmountChange={setFromAmount}
-        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
+        placeholder={`0 ${LST_PREFIX}${selectedChain.token}`}
         rightElement={stakedWalletBalance}
         isTokenLiquidVariant
         minAmount={minimumInputAmount ?? undefined}
@@ -227,7 +232,7 @@ const LiquidUnstakeCard: FC = () => {
       <UnstakeRequestSubmittedModal
         isOpen={isRequestSubmittedModalOpen}
         onClose={() => setIsRequestSubmittedModalOpen(false)}
-        unstakeRequest={null as any}
+        txHash={redeemTxHash}
       />
     </>
   );

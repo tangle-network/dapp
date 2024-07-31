@@ -16,24 +16,21 @@ import { IconWithTooltip } from '@webb-tools/webb-ui-components/components/IconW
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
+import useNetworkStore from '../../context/useNetworkStore';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { toSubstrateAddress } from '../../utils';
 
-export type AccountAddressProps = {
-  activeAddress: string | null;
-  className?: string;
-};
-
-const AccountAddress: FC<AccountAddressProps> = ({
-  activeAddress,
-  className,
-}) => {
+const AccountAddress: FC = () => {
+  const { network } = useNetworkStore();
+  const activeAccountAddress = useActiveAccountAddress();
   const [isHiddenValue] = useHiddenValue();
 
   const isEvmAccountAddress =
-    activeAddress === null ? null : isEthereumAddress(activeAddress);
+    activeAccountAddress === null
+      ? null
+      : isEthereumAddress(activeAccountAddress);
 
   const [isDisplayingEvmAddress, setIsDisplayingEvmAddress] =
     useState(isEvmAccountAddress);
@@ -41,17 +38,17 @@ const AccountAddress: FC<AccountAddressProps> = ({
   // Make sure the address type is updated when the active address changes.
   useEffect(() => {
     setIsDisplayingEvmAddress(isEvmAccountAddress);
-  }, [activeAddress, isEvmAccountAddress]);
+  }, [activeAccountAddress, isEvmAccountAddress]);
 
   const displayAddress = useMemo(() => {
-    if (activeAddress === null) {
+    if (activeAccountAddress === null) {
       return null;
     }
 
     return isDisplayingEvmAddress
-      ? activeAddress
-      : toSubstrateAddress(activeAddress);
-  }, [activeAddress, isDisplayingEvmAddress]);
+      ? activeAccountAddress
+      : toSubstrateAddress(activeAccountAddress, network.ss58Prefix);
+  }, [activeAccountAddress, isDisplayingEvmAddress, network.ss58Prefix]);
 
   const possiblyHiddenAddress = useMemo(
     () =>
@@ -77,7 +74,7 @@ const AccountAddress: FC<AccountAddressProps> = ({
       : shortenString;
 
   const avatarIcon =
-    activeAddress === null ? (
+    activeAccountAddress === null ? (
       <div className="w-6 h-6 rounded-full bg-mono-40 dark:bg-mono-160" />
     ) : (
       <Avatar
@@ -87,7 +84,7 @@ const AccountAddress: FC<AccountAddressProps> = ({
     );
 
   return (
-    <div className={twMerge('flex items-center gap-1', className)}>
+    <div className="flex items-center gap-1">
       <IconWithTooltip icon={avatarIcon} content="Account public key" />
 
       <Typography variant="body1" fw="normal">

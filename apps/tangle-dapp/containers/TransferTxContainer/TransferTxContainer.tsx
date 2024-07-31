@@ -13,7 +13,6 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
-import Link from 'next/link';
 import {
   FC,
   ReactNode,
@@ -241,7 +240,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
             <Alert
               type="warning"
               size="sm"
-              description={`Consider keeping a small amount for transaction fees and future txes.`}
+              description="Consider keeping a small amount for transaction fees and future transactions."
             />
           )}
 
@@ -257,11 +256,14 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
         <ModalFooter className="flex items-center gap-2 px-8 py-6 space-y-0">
           <div className="flex-1">
-            <Link href={TANGLE_DOCS_URL} target="_blank" className="w-full">
-              <Button isFullWidth variant="secondary">
-                Learn More
-              </Button>
-            </Link>
+            <Button
+              isFullWidth
+              variant="secondary"
+              href={TANGLE_DOCS_URL}
+              target="_blank"
+            >
+              Learn More
+            </Button>
           </div>
 
           <div className="flex-1">

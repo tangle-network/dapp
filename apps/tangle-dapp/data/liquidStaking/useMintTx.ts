@@ -8,25 +8,27 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 
 import { TxName } from '../../constants';
 import {
-  LiquidStakingCurrency,
-  LiquidStakingCurrencyKey,
+  ParachainCurrency,
+  ParachainCurrencyKey,
 } from '../../constants/liquidStaking';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 
 export type MintTxContext = {
   amount: BN;
-  currency: LiquidStakingCurrency;
+  currency: ParachainCurrency;
 };
 
 const useMintTx = () => {
   // TODO: Add support for EVM accounts once precompile(s) for the `lstMinting` pallet are implemented on Tangle.
 
   return useSubstrateTxWithNotification<MintTxContext>(
-    TxName.MINT,
+    TxName.LST_MINT,
     (api, _activeSubstrateAddress, context) => {
-      const key: LiquidStakingCurrencyKey = { Native: context.currency };
+      const key: ParachainCurrencyKey = { Native: context.currency };
 
       // TODO: Investigate what the `remark` and `channel` parameters are for, and whether they are relevant for us here.
+      // The remark field can be used to store additional information about
+      // the minting transaction. Leave it empty since it is not required.
       return api.tx.lstMinting.mint(key, context.amount, Bytes.from([]), null);
     },
     undefined,

@@ -5,9 +5,9 @@ import { twMerge } from 'tailwind-merge';
 
 import {
   LIQUID_STAKING_CHAINS,
-  LIQUID_STAKING_TOKEN_PREFIX,
   LiquidStakingToken,
-} from '../../constants/liquidStaking';
+  LST_PREFIX,
+} from '../../../constants/liquidStaking';
 import ChainLogo from './ChainLogo';
 import DropdownChevronIcon from './DropdownChevronIcon';
 
@@ -49,7 +49,7 @@ const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
       />
 
       <Typography variant="h5" fw="bold">
-        {isLiquidVariant && LIQUID_STAKING_TOKEN_PREFIX}
+        {isLiquidVariant && LST_PREFIX}
         {token}
       </Typography>
 

@@ -1,3 +1,4 @@
+import { HexString } from '@polkadot/util/types';
 import { CheckboxCircleLine, WalletLineIcon } from '@webb-tools/icons';
 import {
   Button,
@@ -7,27 +8,39 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback } from 'react';
+import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
+import { FC, useMemo } from 'react';
 
-import ExternalLink from './ExternalLink';
-import ModalIcon, { ModalIconCommonVariant } from './ModalIcon';
-import { UnstakeRequestItem } from './UnstakeRequestsTable';
+import useExplorerUrl from '../../../hooks/useExplorerUrl';
+import ModalIcon, { ModalIconCommonVariant } from '..//ModalIcon';
 
-export type UnstakeRequestSubmittedModalProps = {
+export type WithdrawalConfirmationModalProps = {
   isOpen: boolean;
-  unstakeRequest: UnstakeRequestItem;
+  txHash: HexString | null;
   onClose: () => void;
 };
 
-const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
+const WithdrawalConfirmationModal: FC<WithdrawalConfirmationModalProps> = ({
   isOpen,
-  // TODO: Make use of the unstake request data, which is relevant for the link's href.
-  unstakeRequest: _unstakeRequest,
+  txHash,
   onClose,
 }) => {
-  const handleAddTokenToWallet = useCallback(() => {
-    // TODO: Handle this case.
-  }, []);
+  const getExplorerUrl = useExplorerUrl();
+
+  const viewExplorerHref = useMemo(() => {
+    // The hash is not available, so the URL cannot be generated.
+    if (txHash === null) {
+      return null;
+    }
+
+    return getExplorerUrl(
+      txHash,
+      'tx',
+      undefined,
+      TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
+      true,
+    );
+  }, [getExplorerUrl, txHash]);
 
   return (
     <Modal open>
@@ -37,7 +50,7 @@ const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
         className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
       >
         <ModalHeader titleVariant="h4" onClose={onClose}>
-          Unstake Request Submitted
+          Withdrawal Success
         </ModalHeader>
 
         <div className="flex flex-col items-center justify-center gap-2 p-9">
@@ -51,17 +64,16 @@ const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
             variant="body1"
             fw="normal"
           >
-            After the schedule period completes, you can withdraw unstaked
-            tokens.
+            The tokens are now available in your wallet.
           </Typography>
-
-          {/* TODO: External link's href. */}
-          <ExternalLink href="#">Learn More</ExternalLink>
         </div>
 
         <ModalFooter className="flex px-8 py-6 space-y-0">
           <Button
-            onClick={handleAddTokenToWallet}
+            href={viewExplorerHref?.toString()}
+            // In case that the explorer URL could not be obtained,
+            // disable the button.
+            isDisabled={viewExplorerHref === null}
             isFullWidth
             variant="primary"
             rightIcon={<WalletLineIcon />}
@@ -74,4 +86,4 @@ const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
   );
 };
 
-export default UnstakeRequestSubmittedModal;
+export default WithdrawalConfirmationModal;
