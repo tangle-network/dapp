@@ -29,16 +29,11 @@ export default function TxDetails({ watch }: Props) {
     }
 
     const asset = assetMap[assetId];
-    if (asset === undefined) {
+    if (asset === undefined || asset.poolId === null) {
       return null;
     }
 
-    const apyRaw = rewardConfig.configs[assetId]?.apy;
-    if (apyRaw === undefined) {
-      return null;
-    }
-
-    return formatUnits(apyRaw, assetMap[assetId]?.decimals ?? DEFAULT_DECIMALS);
+    return rewardConfig.configs[asset.poolId]?.apy ?? null;
   }, [assetId, assetMap, rewardConfig.configs]);
 
   return (

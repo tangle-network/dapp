@@ -204,7 +204,7 @@ export type RewardConfigForAsset = {
   /**
    * The annual percentage yield (APY) for the asset, represented as a fixed point number.
    */
-  readonly apy: bigint;
+  readonly apy: number;
 
   /**
    * The minimum amount required before the asset can be rewarded.
@@ -220,7 +220,7 @@ export type RewardConfig = {
    * A map of asset IDs to their respective reward configurations.
    */
   configs: {
-    [assetId: string]: RewardConfigForAsset;
+    [poolId: string]: RewardConfigForAsset;
   };
 
   /**

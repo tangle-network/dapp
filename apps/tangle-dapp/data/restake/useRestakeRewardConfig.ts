@@ -37,15 +37,15 @@ export default function useRestakeRewardConfig() {
           const config = rewardConfig.unwrap();
 
           const configs = Array.from(config.configs.entries()).reduce(
-            (configs, [assetId, rewardConfigForAsset]) => {
+            (configs, [poolId, rewardConfigForAsset]) => {
               const configForAsset = {
-                apy: rewardConfigForAsset.apy.toBigInt(),
+                apy: rewardConfigForAsset.apy.toNumber(),
                 cap: rewardConfigForAsset.cap.toBigInt(),
               } satisfies RewardConfigForAsset;
 
               return {
                 ...configs,
-                [assetId.toNumber()]: configForAsset,
+                [poolId.toNumber()]: configForAsset,
               };
             },
             {} as RewardConfig['configs'],
