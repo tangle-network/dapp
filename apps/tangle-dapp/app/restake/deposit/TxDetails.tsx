@@ -1,10 +1,8 @@
 'use client';
 
-import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config/constants';
 import FeeDetails from '@webb-tools/webb-ui-components/components/FeeDetails';
 import { useMemo } from 'react';
 import { UseFormWatch } from 'react-hook-form';
-import { formatUnits } from 'viem';
 
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
