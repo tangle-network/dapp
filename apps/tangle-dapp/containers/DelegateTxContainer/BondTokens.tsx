@@ -48,7 +48,7 @@ const BondTokens: FC<BondTokensProps> = ({
         <InputField.Root>
           <InputField.Input
             title="Account"
-            isAddressType={true}
+            isAddressType
             value={nominatorAddress}
             type="text"
             readOnly

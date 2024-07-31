@@ -26,6 +26,7 @@ import { isHex } from 'viem';
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
 import ClaimRecipientInput from '../../components/claims/ClaimRecipientInput';
 import useNetworkStore from '../../context/useNetworkStore';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import getStatement, { Statement } from '../../utils/getStatement';
@@ -52,14 +53,18 @@ const EligibleSection: FC<Props> = ({
     "Total amount can't be less than vesting amount",
   );
 
-  const { activeAccount, activeApi } = useWebContext();
+  const { activeApi } = useWebContext();
   const { toggleModal } = useConnectWallet();
   const { notificationApi } = useWebbUI();
   const searchParams = useSearchParams();
   const router = useRouter();
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+  const activeAccountAddress = useActiveAccountAddress();
 
-  const [recipient, setRecipient] = useState(activeAccount?.address ?? '');
+  const [recipient, setRecipient] = useState(
+    activeAccountAddress ?? 'Loading...',
+  );
+
   const [recipientErrorMsg, setRecipientErrorMsg] = useState('');
   const [step, setStep] = useState(Step.INPUT_ADDRESS);
   const [statement, setStatement] = useState<null | Statement>(null);
@@ -106,7 +111,7 @@ const EligibleSection: FC<Props> = ({
   }, [rpcEndpoint, isRegularStatement, notificationApi]);
 
   const handleClaimClick = useCallback(async () => {
-    if (!activeAccount || !activeApi) {
+    if (!activeApi || activeAccountAddress === null) {
       const message = !activeApi
         ? WebbError.getErrorMessage(WebbErrorCodes.ApiNotReady).message
         : WebbError.getErrorMessage(WebbErrorCodes.NoAccountAvailable).message;
@@ -115,6 +120,7 @@ const EligibleSection: FC<Props> = ({
         variant: 'error',
         message,
       });
+
       return;
     }
 
@@ -123,7 +129,7 @@ const EligibleSection: FC<Props> = ({
       setStep(Step.SIGN);
 
       const api = await getApiPromise(rpcEndpoint);
-      const accountId = activeAccount.address;
+      const accountId = activeAccountAddress;
       const isEvmRecipient = isEthereumAddress(recipient);
       const isEvmSigner = isEthereumAddress(accountId);
 
@@ -177,18 +183,18 @@ const EligibleSection: FC<Props> = ({
       setStep(Step.INPUT_ADDRESS);
     }
   }, [
-    activeAccount,
     activeApi,
-    rpcEndpoint,
+    activeAccountAddress,
     notificationApi,
     setIsClaiming,
+    rpcEndpoint,
     recipient,
-    router,
-    searchParams,
     statement?.sentence,
+    searchParams,
+    router,
   ]);
 
-  if (!activeAccount) {
+  if (activeAccountAddress === null) {
     return null;
   }
 
@@ -198,7 +204,7 @@ const EligibleSection: FC<Props> = ({
         <div className="space-y-4">
           <ClaimingAccountInput
             isDisabled={step !== Step.INPUT_ADDRESS}
-            activeAccountAddress={activeAccount.address}
+            activeAccountAddress={activeAccountAddress}
           />
 
           <ClaimRecipientInput

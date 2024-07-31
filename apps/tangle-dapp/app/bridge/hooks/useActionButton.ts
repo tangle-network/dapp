@@ -31,7 +31,9 @@ export default function useActionButton({
 }) {
   const { activeAccount, activeChain, activeWallet, loading, isConnecting } =
     useWebContext();
+
   const { toggleModal } = useConnectWallet();
+
   const {
     amount,
     destinationAddress,

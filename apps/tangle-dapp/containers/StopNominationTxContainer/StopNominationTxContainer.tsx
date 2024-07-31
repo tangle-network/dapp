@@ -9,8 +9,7 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import Link from 'next/link';
+import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback } from 'react';
 
 import useChillTx from '../../data/staking/useChillTx';
@@ -69,11 +68,14 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
             Confirm
           </Button>
 
-          <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
-            <Button isFullWidth variant="secondary">
-              Learn More
-            </Button>
-          </Link>
+          <Button
+            isFullWidth
+            variant="secondary"
+            href={TANGLE_DOCS_STAKING_URL}
+            target="_blank"
+          >
+            Learn More
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
