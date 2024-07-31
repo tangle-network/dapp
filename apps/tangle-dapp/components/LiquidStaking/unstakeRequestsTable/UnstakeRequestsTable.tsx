@@ -186,7 +186,7 @@ const UnstakeRequestsTable: FC = () => {
       return (
         <Notice
           title="No unstake requests"
-          content="You will be able to claim your tokens after the unstake request has been processed. To unstake your tokens go to the unstake tab to schedule request."
+          content="You will be able to withdraw your tokens after the unstake request has been processed. Schedule an unstake request to get started."
         />
       );
     }
