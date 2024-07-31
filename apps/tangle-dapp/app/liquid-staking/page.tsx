@@ -2,7 +2,7 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import { GlassCard } from '../../components';
-import LiquidStakingTokenItem from '../../components/LiquidStaking/LiquidStakingTokenItem';
+import LiquidStakingTokenItem from '../../components/LiquidStaking/stakeAndUnstake/LiquidStakingTokenItem';
 import StatItem from '../../components/LiquidStaking/StatItem';
 import { LIQUID_STAKING_CHAINS } from '../../constants/liquidStaking';
 

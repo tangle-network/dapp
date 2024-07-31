@@ -15,7 +15,7 @@ import assert from 'assert';
 import capitalize from 'lodash/capitalize';
 import { JSX } from 'react';
 
-import { LIQUID_STAKING_TOKEN_PREFIX } from '../../constants/liquidStaking';
+import { LST_PREFIX } from '../../constants/liquidStaking';
 import { PagePath } from '../../types';
 
 const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
@@ -88,7 +88,7 @@ export const getBreadcrumbLabel = (
     index === 1 &&
     pathNames[0] === PagePath.LIQUID_STAKING.substring(1)
   ) {
-    return `${LIQUID_STAKING_TOKEN_PREFIX}${pathName.toUpperCase()}`;
+    return `${LST_PREFIX}${pathName.toUpperCase()}`;
   }
 
   const pathNameWithSlash = '/' + pathName;

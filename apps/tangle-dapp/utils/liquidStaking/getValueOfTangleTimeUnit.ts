@@ -1,7 +1,4 @@
 import { TanglePrimitivesTimeUnit } from '@polkadot/types/lookup';
-import assert from 'assert';
-
-import { LiquidStakingTimeUnitInstance } from '../../constants/liquidStaking';
 
 const getValueOfTangleTimeUnit = (
   tangleTimeUnit: TanglePrimitivesTimeUnit,
@@ -26,22 +23,4 @@ const getValueOfTangleTimeUnit = (
   );
 };
 
-const addTimeUnits = (
-  a: TanglePrimitivesTimeUnit,
-  b: TanglePrimitivesTimeUnit,
-): LiquidStakingTimeUnitInstance => {
-  assert(
-    a.type === b.type,
-    `Time units must be of the same type, otherwise the addition is not possible; Received: ${a.type} and ${b.type}`,
-  );
-
-  const valueOfA = getValueOfTangleTimeUnit(a);
-  const valueOfB = getValueOfTangleTimeUnit(b);
-
-  return {
-    unit: a.type,
-    value: valueOfA + valueOfB,
-  };
-};
-
-export default addTimeUnits;
+export default getValueOfTangleTimeUnit;

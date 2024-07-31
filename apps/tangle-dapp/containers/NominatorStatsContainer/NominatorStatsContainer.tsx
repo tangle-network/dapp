@@ -87,7 +87,7 @@ const NominatorStatsContainer: FC = () => {
             </NominatorStatsItem>
 
             <NominatorStatsItem
-              title={`Unclaimed Payouts`}
+              title="Unclaimed Payouts"
               isError={totalPayoutRewardsError !== null}
             >
               {totalPayoutRewards === null

@@ -10,7 +10,7 @@ export type AddressLinkProps = {
 };
 
 const AddressLink: FC<AddressLinkProps> = ({ address }) => {
-  // TODO: Determine href.
+  // TODO: Determine href. Currently, there doesn't seem to be any logical place to link to based on the address.
   const href = '#';
 
   // Stop propagation to prevent a parent modal (if any) from closing.

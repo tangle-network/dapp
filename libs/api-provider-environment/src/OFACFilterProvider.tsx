@@ -21,14 +21,20 @@ const OFACFilterProvider: FC<PropsWithChildren<OFACFilterProviderProps>> = ({
   const [isOFAC, setIsOFAC] = useState(false);
 
   useEffect(() => {
-    if (!isActivated) return;
+    if (!isActivated) {
+      return;
+    }
 
     let isMounted = true;
 
+    // TODO: This needs to be re-implemented, the site is currently down. Look for a more reliable alternative. Also, when it is re-implemented, it should be done in an efficiency-conscious way, since this is a blocking operation. Example: Should have a timeout, and save the result in local storage for further site visits from the same device.
     fetch('https://geolocation-db.com/json/')
       .then((response) => response.json())
-      .then((data) => {
-        if (!isMounted) return; // Check if the component is still mounted before proceeding
+      .then((data: { country_code: unknown; state: unknown }) => {
+        // Check if the component is still mounted before proceeding
+        if (!isMounted) {
+          return;
+        }
 
         const { country_code, state } = data;
 
@@ -37,16 +43,16 @@ const OFACFilterProvider: FC<PropsWithChildren<OFACFilterProviderProps>> = ({
           blockedCountryCodes &&
           blockedCountryCodes.find(
             (code) => code.toLowerCase() === country_code.toLowerCase(),
-          );
+          ) !== undefined;
 
         const isBlockedByRegion =
           typeof state === 'string' &&
           blockedRegions &&
           blockedRegions.find(
             (region) => region.toLowerCase() === state.toLowerCase(),
-          );
+          ) !== undefined;
 
-        if (isBlockedByCountryCode || isBlockedByRegion) {
+        if (isBlockedByCountryCode === true || isBlockedByRegion === true) {
           setIsOFAC(true);
         }
       })
