@@ -13,8 +13,6 @@ import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restaking/filterNativeAsset';
 import useRestakeAssetIds from './useRestakeAssetIds';
 
-const EMPTY_BALANCES = {} as AssetBalanceMap;
-
 export default function useRestakeBalances() {
   const { apiRx } = usePolkadotApi();
   const { assetIds } = useRestakeAssetIds();
@@ -24,7 +22,7 @@ export default function useRestakeBalances() {
     (input$) =>
       input$.pipe(
         switchMap(([apiRx, assetIds, activeAccount]) => {
-          const emptyObservable = of(EMPTY_BALANCES);
+          const emptyObservable = of<AssetBalanceMap>({});
 
           if (!hasAssetsPallet(apiRx, 'query', 'account')) {
             return emptyObservable;
@@ -72,7 +70,7 @@ export default function useRestakeBalances() {
               map((assetAccountBalances) => {
                 return assetBalancesReducer(
                   assetAccountBalances,
-                  EMPTY_BALANCES,
+                  {},
                   nonNativeAssetIds,
                 );
               }),
@@ -83,7 +81,7 @@ export default function useRestakeBalances() {
     [apiRx, assetIds, activeAccount],
   );
 
-  const balances = useObservableState(balances$, EMPTY_BALANCES);
+  const balances = useObservableState(balances$, {});
 
   return {
     balances,
@@ -93,7 +91,7 @@ export default function useRestakeBalances() {
 
 function assetBalancesReducer(
   assetBalances: Option<PalletAssetsAssetAccount>[],
-  initialValue: typeof EMPTY_BALANCES,
+  initialValue: AssetBalanceMap,
   nonNativeAssetIds: string[],
 ) {
   return assetBalances.reduce(
@@ -131,7 +129,7 @@ function assetBalancesReducer(
           status: status.type,
           existenceReason: toPrimitiveReason(reason),
         },
-      } satisfies typeof EMPTY_BALANCES);
+      } satisfies AssetBalanceMap);
     },
     // Clone the initial value to avoid mutation
     { ...initialValue },
@@ -153,7 +151,7 @@ function getNativeBalance$(apiRx: ApiRx, activeAccount: string) {
             status: 'Liquid',
             existenceReason: 'Sufficient',
           },
-        }) as typeof EMPTY_BALANCES,
+        }) as AssetBalanceMap,
     ),
   );
 }

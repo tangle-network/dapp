@@ -11,8 +11,6 @@ import { map, type Observable, of, switchMap } from 'rxjs';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import type { OperatorMap, OperatorMetadata } from '../../types/restake';
 
-const EMPTY_OPERATOR_MAP: OperatorMap = {};
-
 type UseRestakeOperatorMapReturnType = {
   operatorMap: OperatorMap;
   operatorMap$: Observable<OperatorMap>;
@@ -60,7 +58,7 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
                     [accountId.toString()]: operatorMetadataPrimitive,
                   } satisfies OperatorMap);
                 },
-                {} as typeof EMPTY_OPERATOR_MAP,
+                {} as OperatorMap,
               ),
             ),
           );
@@ -69,7 +67,7 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
     [entries$],
   );
 
-  const operatorMap = useObservableState(operatorMap$, EMPTY_OPERATOR_MAP);
+  const operatorMap = useObservableState(operatorMap$, {});
 
   return {
     operatorMap,

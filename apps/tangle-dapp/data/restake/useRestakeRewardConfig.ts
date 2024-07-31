@@ -8,11 +8,6 @@ import usePolkadotApi from '../../hooks/usePolkadotApi';
 import type { RewardConfig, RewardConfigForAsset } from '../../types/restake';
 import hasQuery from '../../utils/hasQuery';
 
-const EMPTY_REWARD_CONFIG = {
-  configs: {},
-  whitelistedBlueprintIds: [],
-} as RewardConfig;
-
 export default function useRestakeRewardConfig() {
   const { apiRx } = usePolkadotApi();
 
@@ -33,7 +28,10 @@ export default function useRestakeRewardConfig() {
       rewardConfigFromQuery$.pipe(
         map((rewardConfig) => {
           if (rewardConfig.isNone) {
-            return EMPTY_REWARD_CONFIG;
+            return {
+              configs: {},
+              whitelistedBlueprintIds: [],
+            } as RewardConfig;
           }
 
           const config = rewardConfig.unwrap();
@@ -63,7 +61,10 @@ export default function useRestakeRewardConfig() {
     [rewardConfigFromQuery$],
   );
 
-  const rewardConfig = useObservableState(rewardConfig$, EMPTY_REWARD_CONFIG);
+  const rewardConfig = useObservableState(rewardConfig$, {
+    configs: {},
+    whitelistedBlueprintIds: [],
+  });
 
   return { rewardConfig, rewardConfig$ };
 }

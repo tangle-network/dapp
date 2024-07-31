@@ -16,8 +16,6 @@ import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restaking/filterNativeAsset';
 import useRestakeAssetIds from './useRestakeAssetIds';
 
-const EMPTY_ASSET_MAP = {} satisfies AssetMap as AssetMap;
-
 /**
  * Hook to retrieve the asset map for restaking.
  * @returns
@@ -40,7 +38,7 @@ export default function useRestakeAssetMap() {
     [assetIds, apiPromise, activeChain?.nativeCurrency],
   );
 
-  const assetMap = useObservableState(assetMap$, EMPTY_ASSET_MAP);
+  const assetMap = useObservableState(assetMap$, {});
 
   return {
     assetMap,
@@ -72,7 +70,7 @@ const mapAssetDetails = async (
             [nativeAsset.id]: nativeAsset,
           };
         })()
-      : EMPTY_ASSET_MAP;
+      : {};
   }
 
   // Batch queries for asset details
@@ -116,7 +114,7 @@ const mapAssetDetails = async (
     api.queryMulti<Option<u128>[]>(assetPoolIdQueries),
   ] as const);
 
-  const initialAssetMap: typeof EMPTY_ASSET_MAP = hasNative
+  const initialAssetMap: AssetMap = hasNative
     ? await (async () => {
         const nativeAsset = await getNativeAsset(nativeCurrentcy, api);
 
