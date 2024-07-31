@@ -42,7 +42,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
     return null;
   };
 
-  scheduleDelegatorBondLess = async (
+  scheduleDelegatorUnstake = async (
     _operatorAccount: string,
     _assetId: string,
     _amount: bigint,
@@ -52,14 +52,14 @@ export default class EVMRestakeTx extends RestakeTxBase {
     return Promise.resolve(null);
   };
 
-  executeDelegatorBondLess = async (
+  executeDelegatorUnstakeRequests = async (
     _eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
   ): Promise<`0x${string}` | null> => {
     console.warn('EVM executeDelegatorBondLess not implemented yet');
     return Promise.resolve(null);
   };
 
-  cancelDelegatorBondLess = async (
+  cancelDelegatorUnstakeRequests = async (
     _eventHandlers?: TxEventHandlers<CancelDelegatorBondLessContext>,
   ): Promise<`0x${string}` | null> => {
     console.warn('EVM cancelDelegatorBondLess not implemented yet');

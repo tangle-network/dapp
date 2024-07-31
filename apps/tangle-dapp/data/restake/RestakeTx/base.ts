@@ -70,18 +70,18 @@ export abstract class RestakeTxBase {
     eventHandlers?: TxEventHandlers<DelegateContext>,
   ): Promise<Hash | null>;
 
-  abstract scheduleDelegatorBondLess(
+  abstract scheduleDelegatorUnstake(
     operatorAccount: string,
     assetId: string,
     amount: bigint,
     eventHandlers?: TxEventHandlers<DelegatorBondLessContext>,
   ): Promise<Hash | null>;
 
-  abstract executeDelegatorBondLess(
+  abstract executeDelegatorUnstakeRequests(
     eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
   ): Promise<Hash | null>;
 
-  abstract cancelDelegatorBondLess(
+  abstract cancelDelegatorUnstakeRequests(
     eventHandlers?: TxEventHandlers<CancelDelegatorBondLessContext>,
   ): Promise<Hash | null>;
 }

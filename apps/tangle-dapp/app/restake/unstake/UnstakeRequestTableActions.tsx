@@ -47,19 +47,20 @@ const UnstakeRequestTableActions = ({
     ),
   );
 
-  const { executeDelegatorBondLess, cancelDelegatorBondLess } = useRestakeTx();
+  const { executeDelegatorUnstakeRequests, cancelDelegatorUnstakeRequests } =
+    useRestakeTx();
 
   const handleCancelUnstake = useCallback(async () => {
     setIsCanceling(true);
-    await cancelDelegatorBondLess(cancelOptions);
+    await cancelDelegatorUnstakeRequests(cancelOptions);
     setIsCanceling(false);
-  }, [cancelDelegatorBondLess, cancelOptions]);
+  }, [cancelDelegatorUnstakeRequests, cancelOptions]);
 
   const handleExecuteUnstake = useCallback(async () => {
     setIsExecuting(true);
-    await executeDelegatorBondLess(executeOptions);
+    await executeDelegatorUnstakeRequests(executeOptions);
     setIsExecuting(false);
-  }, [executeDelegatorBondLess, executeOptions]);
+  }, [executeDelegatorUnstakeRequests, executeOptions]);
 
   const canCancelUnstake = useMemo(
     () => selectedRequestIds.length > 0,

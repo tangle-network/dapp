@@ -176,7 +176,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
   };
 
-  scheduleDelegatorBondLess = async (
+  scheduleDelegatorUnstake = async (
     operatorAccount: string,
     assetId: string,
     amount: bigint,
@@ -189,7 +189,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     } satisfies DelegatorBondLessContext;
 
     const extrinsic =
-      this.provider.tx.multiAssetDelegation.scheduleDelegatorBondLess(
+      this.provider.tx.multiAssetDelegation.scheduleDelegatorUnstake(
         operatorAccount,
         assetId,
         amount,
@@ -200,7 +200,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
   };
 
-  executeDelegatorBondLess = async (
+  executeDelegatorUnstakeRequests = async (
     eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
   ): Promise<Hash | null> => {
     const extrinsic =
@@ -209,7 +209,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     return this.signAndSendExtrinsic(extrinsic, {}, eventHandlers);
   };
 
-  cancelDelegatorBondLess = async (
+  cancelDelegatorUnstakeRequests = async (
     eventHandlers?: TxEventHandlers<CancelDelegatorBondLessContext> | undefined,
   ): Promise<Hash | null> => {
     const extrinsic =
