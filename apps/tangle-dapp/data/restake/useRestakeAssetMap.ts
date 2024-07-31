@@ -56,7 +56,7 @@ const mapAssetDetails = async (
     symbol: formatBalance.getDefaults().unit,
     decimals: formatBalance.getDefaults().decimals,
   },
-) => {
+): Promise<AssetMap> => {
   const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
 
   if (
@@ -64,7 +64,15 @@ const mapAssetDetails = async (
     !hasAssetsPallet(api, 'query', ['asset', 'metadata']) ||
     api.query.multiAssetDelegation?.assetLookupRewardPools === undefined
   ) {
-    return hasNative ? getNativeAsset(nativeCurrentcy, api) : EMPTY_ASSET_MAP;
+    return hasNative
+      ? await (async () => {
+          const nativeAsset = await getNativeAsset(nativeCurrentcy, api);
+
+          return {
+            [nativeAsset.id]: nativeAsset,
+          };
+        })()
+      : EMPTY_ASSET_MAP;
   }
 
   // Batch queries for asset details
