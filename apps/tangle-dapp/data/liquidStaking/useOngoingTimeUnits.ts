@@ -1,32 +1,59 @@
+import { TanglePrimitivesCurrencyCurrencyId } from '@polkadot/types/lookup';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useMemo } from 'react';
 
+import {
+  ParachainCurrency,
+  SimpleTimeUnitInstance,
+} from '../../constants/liquidStaking';
 import useApiRx from '../../hooks/useApiRx';
+import tangleTimeUnitToSimpleInstance from '../../utils/liquidStaking/tangleTimeUnitToSimpleInstance';
 import getValueOfTangleCurrency from './getValueOfTangleCurrency';
 
+export type OngoingTimeUnitEntry = {
+  currencyType: TanglePrimitivesCurrencyCurrencyId['type'];
+  currency: ParachainCurrency;
+  timeUnit: SimpleTimeUnitInstance;
+};
+
 const useOngoingTimeUnits = () => {
-  const { result: ongoingTimeUnits } = useApiRx(
+  const { result: entries } = useApiRx(
     useCallback((api) => {
       return api.query.lstMinting.ongoingTimeUnit.entries();
     }, []),
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
   );
 
-  const ongoingTimeUnitsMap = useMemo(() => {
-    if (ongoingTimeUnits === null) {
+  const ongoingTimeUnits = useMemo<OngoingTimeUnitEntry[] | null>(() => {
+    if (entries === null) {
       return null;
     }
 
-    // TODO: This is incomplete, because the key must also account for the currency type (ie. Native, LST, etc.).
-    return new Map(
-      ongoingTimeUnits.map(([key, value]) => [
-        getValueOfTangleCurrency(key.args[0]),
-        value,
-      ]),
-    );
-  }, [ongoingTimeUnits]);
+    return entries.flatMap(([key, value]) => {
+      // Ignore empty values. Since `flatMap` is used, returning an empty
+      // array will filter out this entry.
+      if (value.isNone) {
+        return [];
+      }
 
-  return ongoingTimeUnitsMap;
+      const simpleTimeUnitInstance = tangleTimeUnitToSimpleInstance(
+        value.unwrap(),
+      );
+
+      const currencyType = key.args[0].type;
+      const currency = getValueOfTangleCurrency(key.args[0]);
+
+      return [
+        {
+          currencyType,
+          currency,
+          timeUnit: simpleTimeUnitInstance,
+        },
+      ];
+    });
+  }, [entries]);
+
+  return ongoingTimeUnits;
 };
 
 export default useOngoingTimeUnits;

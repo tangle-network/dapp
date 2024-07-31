@@ -7,14 +7,14 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 
 import { TxName } from '../../constants';
 import {
-  LiquidStakingCurrency,
-  LiquidStakingCurrencyKey,
+  ParachainCurrency,
+  ParachainCurrencyKey,
 } from '../../constants/liquidStaking';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 
 export type RedeemTxContext = {
   amount: BN;
-  currency: LiquidStakingCurrency;
+  currency: ParachainCurrency;
 };
 
 const useRedeemTx = () => {
@@ -22,9 +22,9 @@ const useRedeemTx = () => {
   // TODO: Consider moving checks, such as checking that the provided amount equals or greater than 'minimumMint' amount here instead of in the consumer of this hook.
 
   return useSubstrateTxWithNotification<RedeemTxContext>(
-    TxName.REDEEM,
+    TxName.LST_REDEEM,
     (api, _activeSubstrateAddress, context) => {
-      const key: LiquidStakingCurrencyKey = { lst: context.currency };
+      const key: ParachainCurrencyKey = { lst: context.currency };
 
       return api.tx.lstMinting.redeem(key, context.amount);
     },

@@ -1,28 +1,48 @@
-import { notFound } from 'next/navigation';
-import { FC } from 'react';
+'use client';
 
-import LiquidStakeAndUnstakeCards from '../../../components/LiquidStaking/LiquidStakeAndUnstakeCards';
+import { notFound } from 'next/navigation';
+import { FC, useState } from 'react';
+
 import { LiquidStakingSelectionTable } from '../../../components/LiquidStaking/LiquidStakingSelectionTable';
-import UnstakeRequestsTable from '../../../components/LiquidStaking/UnstakeRequestsTable';
+import LiquidStakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidStakeCard';
+import LiquidUnstakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidUnstakeCard';
+import UnstakeRequestsTable from '../../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
 import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
+import TabListItem from '../../restake/TabListItem';
+import TabsList from '../../restake/TabsList';
 
 type Props = {
   params: { tokenSymbol: string };
 };
 
 const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
+  const [isStaking, setIsStaking] = useState(true);
+
   if (!isLiquidStakingToken(tokenSymbol)) {
     return notFound();
   }
 
   return (
-    <div className="grid grid-cols-2 gap-12">
-      <LiquidStakeAndUnstakeCards />
+    <div className="flex flex-wrap gap-12">
+      <div className="flex flex-col gap-4 w-full min-w-[450px] max-w-[600px]">
+        <TabsList className="w-full">
+          <TabListItem isActive={isStaking} onClick={() => setIsStaking(true)}>
+            Stake
+          </TabListItem>
 
-      <div className="flex flex-col gap-4">
-        <LiquidStakingSelectionTable />
+          <TabListItem
+            isActive={!isStaking}
+            onClick={() => setIsStaking(false)}
+          >
+            Unstake
+          </TabListItem>
+        </TabsList>
 
-        <UnstakeRequestsTable />
+        {isStaking ? <LiquidStakeCard /> : <LiquidUnstakeCard />}
+      </div>
+
+      <div className="flex flex-col flex-grow w-min gap-4 min-w-[370px]">
+        {isStaking ? <LiquidStakingSelectionTable /> : <UnstakeRequestsTable />}
       </div>
     </div>
   );
