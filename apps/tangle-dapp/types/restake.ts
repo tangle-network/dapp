@@ -1,3 +1,14 @@
+/**
+ * TODO:
+ * - Asset ID should has a better type than string.
+ * - Pool ID should has a better type than string.
+ * - Account ID should has a better type than string.
+ * - Amount should has a better type than string.
+ *
+ * Maybe we can utize the `Brand` type in `apps/tangle-dapp/types/utils.ts`
+ * with some casting and assertion functions.
+ */
+
 import type {
   PalletAssetsAccountStatus,
   PalletAssetsAssetStatus,
@@ -62,6 +73,10 @@ export type OperatorMap = {
   readonly [accountId: string]: OperatorMetadata;
 };
 
+export type RewardPoolMap = {
+  [poolId: string]: string[] | null;
+};
+
 /**
  * Metadata of an asset, including ID, name, symbol, denomination, and status.
  */
@@ -79,6 +94,8 @@ export type AssetMetadata = {
    * @field Destroying - The asset is being destroyed and cannot be staked.
    */
   readonly status: TransformEnum<PalletAssetsAssetStatus>;
+
+  poolId: string | null;
 };
 
 /**
