@@ -5,7 +5,7 @@ import noop from 'lodash/noop';
 import type { Hash } from 'viem';
 
 import {
-  type CancelDelegatorBondLessContext,
+  type CancelDelegatorUnstakeRequestContext,
   type DelegateContext,
   type DelegatorBondLessContext,
   type DepositContext,
@@ -204,17 +204,28 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
   ): Promise<Hash | null> => {
     const extrinsic =
-      this.provider.tx.multiAssetDelegation.executeDelegatorBondLess();
+      this.provider.tx.multiAssetDelegation.executeDelegatorUnstake();
 
     return this.signAndSendExtrinsic(extrinsic, {}, eventHandlers);
   };
 
   cancelDelegatorUnstakeRequests = async (
-    eventHandlers?: TxEventHandlers<CancelDelegatorBondLessContext> | undefined,
+    unstakeRequest: CancelDelegatorUnstakeRequestContext,
+    eventHandlers?:
+      | TxEventHandlers<CancelDelegatorUnstakeRequestContext>
+      | undefined,
   ): Promise<Hash | null> => {
-    const extrinsic =
-      this.provider.tx.multiAssetDelegation.cancelDelegatorBondLess();
+    const args = Object.entries(unstakeRequest);
 
-    return this.signAndSendExtrinsic(extrinsic, {}, eventHandlers);
+    const extrinsics = this.provider.tx.utility.batchAll(
+      args.map(([assetId, amount]) =>
+        this.provider.tx.multiAssetDelegation.cancelDelegatorUnstake(
+          assetId,
+          amount,
+        ),
+      ),
+    );
+
+    return this.signAndSendExtrinsic(extrinsics, {}, eventHandlers);
   };
 }

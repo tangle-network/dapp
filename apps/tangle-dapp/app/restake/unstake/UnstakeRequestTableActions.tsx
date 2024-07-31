@@ -50,11 +50,29 @@ const UnstakeRequestTableActions = ({
   const { executeDelegatorUnstakeRequests, cancelDelegatorUnstakeRequests } =
     useRestakeTx();
 
-  const handleCancelUnstake = useCallback(async () => {
-    setIsCanceling(true);
-    await cancelDelegatorUnstakeRequests(cancelOptions);
-    setIsCanceling(false);
-  }, [cancelDelegatorUnstakeRequests, cancelOptions]);
+  const handleCancelUnstake = useCallback(
+    async () => {
+      setIsCanceling(true);
+
+      const args = selectedRequestIds.reduce(
+        (acc, id) => {
+          if (dataWithId[id] === undefined) {
+            return acc;
+          }
+
+          const data = dataWithId[id];
+          acc[data.assetId] = data.amountRaw;
+          return acc;
+        },
+        {} as Record<string, bigint>,
+      );
+      await cancelDelegatorUnstakeRequests(args, cancelOptions);
+
+      setIsCanceling(false);
+    },
+    // prettier-ignore
+    [cancelDelegatorUnstakeRequests, cancelOptions, dataWithId, selectedRequestIds],
+  );
 
   const handleExecuteUnstake = useCallback(async () => {
     setIsExecuting(true);

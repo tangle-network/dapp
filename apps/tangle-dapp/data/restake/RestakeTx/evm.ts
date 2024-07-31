@@ -2,7 +2,7 @@ import type { Account, Address } from 'viem';
 import { Config } from 'wagmi';
 
 import {
-  type CancelDelegatorBondLessContext,
+  type CancelDelegatorUnstakeRequestContext,
   type DelegateContext,
   type DelegatorBondLessContext,
   type DepositContext,
@@ -60,7 +60,8 @@ export default class EVMRestakeTx extends RestakeTxBase {
   };
 
   cancelDelegatorUnstakeRequests = async (
-    _eventHandlers?: TxEventHandlers<CancelDelegatorBondLessContext>,
+    _unstakeRequest: CancelDelegatorUnstakeRequestContext,
+    _eventHandlers?: TxEventHandlers<CancelDelegatorUnstakeRequestContext>,
   ): Promise<`0x${string}` | null> => {
     console.warn('EVM cancelDelegatorBondLess not implemented yet');
     return Promise.resolve(null);

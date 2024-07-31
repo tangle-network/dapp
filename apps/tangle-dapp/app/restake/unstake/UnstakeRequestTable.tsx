@@ -1,7 +1,5 @@
 'use client';
 
-import { Checkbox as HeadlessCheckbox } from '@headlessui/react';
-import { CheckIcon, DividerHorizontalIcon } from '@radix-ui/react-icons';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -12,6 +10,7 @@ import {
 } from '@tanstack/react-table';
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
+import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
@@ -24,6 +23,7 @@ import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
 import type { DelegatorUnstakeRequest } from '../../../types/restake';
 import type { IdentityType } from '../../../utils/polkadot';
+import AvatarWithText from '../AvatarWithText';
 import type { UnstakeRequestTableData } from './types';
 import UnstakeRequestTableActions from './UnstakeRequestTableActions';
 import { calculateTimeRemaining } from './utils';
@@ -31,23 +31,24 @@ import { calculateTimeRemaining } from './utils';
 const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
 
 const columns = [
-  columnsHelper.display({
+  columnsHelper.accessor('operatorAccountId', {
     id: 'select',
     enableSorting: false,
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllRowsSelected()}
-        indeterminate={table.getIsSomeRowsSelected()}
-        onChange={table.toggleAllRowsSelected}
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        disabled={!row.getCanSelect()}
-        indeterminate={row.getIsSomeSelected()}
-        onChange={row.toggleSelected}
-      />
+    header: () => <TableCell>Scheduled Unstake</TableCell>,
+    cell: (props) => (
+      <div className="flex items-center justify-start gap-2">
+        <CheckBox
+          isChecked={props.row.getIsSelected()}
+          isDisabled={!props.row.getCanSelect()}
+          onChange={props.row.getToggleSelectedHandler()}
+          wrapperClassName="pt-0.5 flex items-center justify-center"
+        />
+
+        <AvatarWithText
+          accountAddress={props.getValue()}
+          identityName={props.row.original.operatorIdentityName}
+        />
+      </div>
     ),
   }),
   columnsHelper.accessor('amount', {
@@ -114,6 +115,7 @@ const UnstakeRequestTable = ({
 
           acc[getId({ assetId, operatorAccountId })] = {
             amount: Number(formattedAmount),
+            amountRaw: amount,
             assetId: assetId,
             assetSymbol: asset.symbol,
             timeRemaining,
@@ -164,12 +166,8 @@ const UnstakeRequestTable = ({
       <Table
         tableProps={table}
         isPaginated
-        thClassName={cx(
-          '!border-t-transparent !bg-transparent px-3 py-2 first:w-[18px]',
-        )}
-        tdClassName={cx(
-          '!border-transparent !bg-transparent px-3 py-2 first:w-[18px]',
-        )}
+        thClassName={cx('!border-t-transparent !bg-transparent px-3 py-2')}
+        tdClassName={cx('!border-transparent !bg-transparent px-3 py-2')}
       />
 
       <div className="flex items-center gap-3">
@@ -183,31 +181,6 @@ const UnstakeRequestTable = ({
 };
 
 export default UnstakeRequestTable;
-
-/**
- * @internal
- */
-function Checkbox(props: ComponentProps<typeof HeadlessCheckbox>) {
-  return (
-    <HeadlessCheckbox
-      {...props}
-      className={twMerge(
-        'form-checkbox group flex items-center justify-center overflow-hidden size-[18px]',
-        'border border-mono-100 outline-none rounded',
-        'bg-mono-0 dark:bg-mono-180',
-        'enabled:hover:shadow-sm enabled:hover:shadow-blue-10 dark:hover:shadow-none',
-        'data-[checked]:bg-blue-70 dark:data-[checked]:bg-blue-50',
-        'data-[indeterminate]:bg-blue-70 dark:data-[indeterminate]:bg-blue-50',
-        'data-[disabled]:cursor-not-allowed data-[disabled]:shadow-none',
-        'data-[disabled]:border-mono-60 dark:data-[disabled]:border-mono-120',
-        'data-[disabled]:bg-mono-0 dark:data-[disabled]:bg-mono-140',
-      )}
-    >
-      <CheckIcon className="hidden group-data-[checked]:block" />
-      <DividerHorizontalIcon className="hidden group-data-[indeterminate]:block" />
-    </HeadlessCheckbox>
-  );
-}
 
 /**
  * @internal
