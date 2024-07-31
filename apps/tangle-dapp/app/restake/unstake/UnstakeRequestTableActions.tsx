@@ -69,10 +69,10 @@ const UnstakeRequestTableActions = ({
   const canExecuteUnstake = useMemo(() => {
     if (selectedRequestIds.length === 0) return false;
 
-    return selectedRequestIds.every((uid) => {
-      if (!dataWithId[uid]) return false;
+    return selectedRequestIds.every((id) => {
+      if (!dataWithId[id]) return false;
 
-      const { timeRemaining } = dataWithId[uid];
+      const { timeRemaining } = dataWithId[id];
       return isUnstakeRequestReady(timeRemaining);
     });
   }, [dataWithId, selectedRequestIds]);

@@ -1,6 +1,8 @@
 export type UnstakeRequestTableData = {
-  uid: string;
   amount: number;
+  assetId: string;
   assetSymbol: string;
   timeRemaining: number;
+  operatorAccountId: string;
+  operatorIdentityName?: string | null;
 };

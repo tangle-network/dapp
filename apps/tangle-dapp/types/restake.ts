@@ -88,35 +88,23 @@ export type AssetMap = {
   readonly [assetId: string]: AssetMetadata;
 };
 
-/**
- * Represents a request to unstake a specific amount of an asset.
- * @name PalletMultiAssetDelegationDelegatorUnstakeRequest (747)
- */
-export type DelegatorUnstakeRequest = {
+export type DelegatorWithdrawRequest = {
   readonly assetId: string;
   readonly amount: bigint;
   readonly requestedRound: number;
 };
 
-/**
- * Represents a bond between a delegator and an operator.
- * @name PalletMultiAssetDelegationDelegatorBondInfoDelegator (749)
- */
+export type DelegatorUnstakeRequest = {
+  readonly operatorAccountId: string;
+  readonly assetId: string;
+  readonly amount: bigint;
+  readonly requestedRound: number;
+};
+
 export type DelegatorBondInfo = {
-  readonly uid: string;
   readonly operatorAccountId: string;
   readonly amountBonded: bigint;
   readonly assetId: string;
-};
-
-/**
- * Represents a request to reduce the bonded amount of a specific asset.
- * @name PalletMultiAssetDelegationDelegatorBondLessRequest (751)
- */
-export type DelegatorBondLessRequest = {
-  readonly assetId: string;
-  readonly bondLessAmount: bigint;
-  readonly requestedRound: number;
 };
 
 /**
@@ -134,29 +122,17 @@ export type DelegatorStatus =
  * @name PalletMultiAssetDelegationDelegatorDelegatorMetadata (742)
  */
 export type DelegatorInfo = {
-  /**
-   * A map of deposited assets and their respective amounts.
-   */
   readonly deposits: {
     readonly [assetId: string]: {
       amount: bigint;
     };
   };
 
-  /**
-   * An optional unstake request, with only one allowed at a time.
-   */
-  readonly unstakeRequest: DelegatorUnstakeRequest | null;
+  readonly withdrawRequests: Array<DelegatorWithdrawRequest>;
 
-  /**
-   * A list of all current delegations.
-   */
   readonly delegations: Array<DelegatorBondInfo>;
 
-  /**
-   * An optional request to reduce the bonded amount, with only one allowed at a time.
-   */
-  readonly delegatorBondLessRequest: DelegatorBondLessRequest | null;
+  readonly unstakeRequests: Array<DelegatorUnstakeRequest>;
 
   readonly status: DelegatorStatus;
 };
@@ -244,7 +220,6 @@ export type DepositFormFields = {
 };
 
 export type DelegationFormFields = {
-  uid: string;
   amount: string;
   operatorAccountId: string;
   assetId: string;

@@ -15,7 +15,6 @@ import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
-import uniqueId from 'lodash/uniqueId';
 import { type ComponentProps, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatUnits } from 'viem';
@@ -23,7 +22,8 @@ import { formatUnits } from 'viem';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
-import type { DelegatorBondLessRequest } from '../../../types/restake';
+import type { DelegatorUnstakeRequest } from '../../../types/restake';
+import type { IdentityType } from '../../../utils/polkadot';
 import type { UnstakeRequestTableData } from './types';
 import UnstakeRequestTableActions from './UnstakeRequestTableActions';
 import { calculateTimeRemaining } from './utils';
@@ -86,55 +86,47 @@ const columns = [
 ];
 
 type Props = {
-  delegatorBondLessRequests: DelegatorBondLessRequest[];
+  unstakeRequests: DelegatorUnstakeRequest[];
+  operatorIdentities: Record<string, IdentityType | null>;
 };
 
-const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
+const UnstakeRequestTable = ({
+  unstakeRequests,
+  operatorIdentities,
+}: Props) => {
   const { assetMap } = useRestakeContext();
   const { delegationBondLessDelay } = useRestakeConsts();
   const { currentRound } = useRestakeCurrentRound();
 
-  // Transforming the array to object with uuid as key
-  // for easier querying
-  const unstakeRequestsWithId = useMemo(
-    () =>
-      delegatorBondLessRequests.reduce(
-        (acc, current) => {
-          const uid = uniqueId('delegator-bond-less-request-');
-          acc[uid] = { ...current, uid };
-          return acc;
-        },
-        {} as Record<string, DelegatorBondLessRequest & { uid: string }>,
-      ),
-    [delegatorBondLessRequests],
-  );
-
   const dataWithId = useMemo(
     () =>
-      Object.values(unstakeRequestsWithId).reduce(
-        (acc, { assetId, bondLessAmount, requestedRound, uid }) => {
+      unstakeRequests.reduce(
+        (acc, { assetId, amount, requestedRound, operatorAccountId }) => {
           const asset = assetMap[assetId];
           if (!asset) return acc;
 
-          const formattedAmount = formatUnits(bondLessAmount, asset.decimals);
+          const formattedAmount = formatUnits(amount, asset.decimals);
           const timeRemaining = calculateTimeRemaining(
             currentRound,
             requestedRound,
             delegationBondLessDelay,
           );
 
-          acc[uid] = {
+          acc[getId({ assetId, operatorAccountId })] = {
             amount: Number(formattedAmount),
+            assetId: assetId,
             assetSymbol: asset.symbol,
             timeRemaining,
-            uid,
+            operatorAccountId,
+            operatorIdentityName: operatorIdentities?.[operatorAccountId]?.name,
           } satisfies UnstakeRequestTableData;
 
           return acc;
         },
         {} as Record<string, UnstakeRequestTableData>,
       ),
-    [assetMap, currentRound, delegationBondLessDelay, unstakeRequestsWithId],
+    // prettier-ignore
+    [assetMap, currentRound, delegationBondLessDelay, operatorIdentities, unstakeRequests],
   );
 
   const table = useReactTable(
@@ -147,7 +139,7 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
             pageSize: 5,
           },
         },
-        getRowId: (row) => row.uid,
+        getRowId: (row) => getId(row),
         enableRowSelection: true,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -163,7 +155,7 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
     () =>
       Object.entries(rowSelection)
         .filter(([, selected]) => selected)
-        .map(([uid]) => uid),
+        .map(([rowId]) => rowId),
     [rowSelection],
   );
 
@@ -237,4 +229,14 @@ function TableCell({
       {children}
     </Typography>
   );
+}
+
+function getId({
+  assetId,
+  operatorAccountId,
+}: {
+  assetId: string;
+  operatorAccountId: string;
+}) {
+  return `${operatorAccountId}-${assetId}`;
 }

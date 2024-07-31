@@ -1,11 +1,10 @@
-import type { Option } from '@polkadot/types';
+import type { Vec } from '@polkadot/types';
 import type {
   PalletMultiAssetDelegationDelegatorBondLessRequest,
   PalletMultiAssetDelegationDelegatorDelegatorStatus,
-  PalletMultiAssetDelegationDelegatorUnstakeRequest,
+  PalletMultiAssetDelegationDelegatorWithdrawRequest,
 } from '@polkadot/types/lookup';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import uniqueId from 'lodash/uniqueId';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { map, of, switchMap } from 'rxjs';
 
@@ -63,7 +62,6 @@ export default function useRestakeDelegatorInfo() {
                   const assetIdStr = delegation.assetId.toString();
 
                   return {
-                    uid: uniqueId('delegator-delegation-'),
                     assetId: assetIdStr,
                     amountBonded: amountBigInt,
                     operatorAccountId: delegation.operator.toString(),
@@ -72,10 +70,10 @@ export default function useRestakeDelegatorInfo() {
 
                 return {
                   deposits,
+                  withdrawRequests: getWithdrawRequests(info.withdrawRequests),
                   delegations,
-                  unstakeRequest: getUnstakeRequest(info.unstakeRequest),
-                  delegatorBondLessRequest: getBondLessRequest(
-                    info.delegatorBondLessRequest,
+                  unstakeRequests: getUnstakeRequests(
+                    info.delegatorUnstakeRequests,
                   ),
                   status: getStatus(info.status),
                 } satisfies DelegatorInfo;
@@ -94,46 +92,34 @@ export default function useRestakeDelegatorInfo() {
   };
 }
 
-/**
- * @internal
- */
-function getUnstakeRequest(
-  request: Option<PalletMultiAssetDelegationDelegatorUnstakeRequest>,
-): DelegatorInfo['unstakeRequest'] {
-  if (request.isNone) {
-    return null;
-  }
-
-  const unstakeRequest = request.unwrap();
-  const amountBigInt = unstakeRequest.amount.toBigInt();
-  const assetIdStr = unstakeRequest.assetId.toString();
-
-  return {
-    assetId: assetIdStr,
-    amount: amountBigInt,
-    requestedRound: unstakeRequest.requestedRound.toNumber(),
-  };
+function getWithdrawRequests(
+  requests: Vec<PalletMultiAssetDelegationDelegatorWithdrawRequest>,
+): DelegatorInfo['withdrawRequests'] {
+  return requests.map(
+    (req) =>
+      ({
+        amount: req.amount.toBigInt(),
+        assetId: req.assetId.toString(),
+        requestedRound: req.requestedRound.toNumber(),
+      }) satisfies DelegatorInfo['withdrawRequests'][number],
+  );
 }
 
 /**
  * @internal
  */
-function getBondLessRequest(
-  request: Option<PalletMultiAssetDelegationDelegatorBondLessRequest>,
-): DelegatorInfo['delegatorBondLessRequest'] {
-  if (request.isNone) {
-    return null;
-  }
-
-  const bondLessRequest = request.unwrap();
-  const amountBigInt = bondLessRequest.amount.toBigInt();
-  const assetIdStr = bondLessRequest.assetId.toString();
-
-  return {
-    assetId: assetIdStr,
-    bondLessAmount: amountBigInt,
-    requestedRound: bondLessRequest.requestedRound.toNumber(),
-  };
+function getUnstakeRequests(
+  requests: Vec<PalletMultiAssetDelegationDelegatorBondLessRequest>,
+): DelegatorInfo['unstakeRequests'] {
+  return requests.map(
+    (req) =>
+      ({
+        amount: req.amount.toBigInt(),
+        assetId: req.assetId.toString(),
+        requestedRound: req.requestedRound.toNumber(),
+        operatorAccountId: req.operator.toString(),
+      }) satisfies DelegatorInfo['unstakeRequests'][number],
+  );
 }
 
 /**

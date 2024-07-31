@@ -84,7 +84,7 @@ const UnstakeModal = ({
             'You can try to deposit or delegate an asset to an operator.',
         }}
         renderItem={(item) => {
-          const { uid, amountBonded, assetId, operatorAccountId } = item;
+          const { amountBonded, assetId, operatorAccountId } = item;
           const asset = assetMap[assetId];
 
           const decimals = asset?.decimals || DEFAULT_DECIMALS;
@@ -98,7 +98,7 @@ const UnstakeModal = ({
                 'cursor-pointer max-w-none dark:bg-transparent',
                 'flex items-center justify-between px-0',
               )}
-              key={uid}
+              key={`${operatorAccountId}-${assetId}`}
               onClick={() =>
                 onItemSelected({
                   ...item,
