@@ -240,3 +240,5 @@ export type TangleTokenSymbol = 'tTNT' | 'TNT';
  * @returns The success message.
  */
 export type GetSuccessMessageFunction<Context> = (context: Context) => string;
+
+// add Blueprint
