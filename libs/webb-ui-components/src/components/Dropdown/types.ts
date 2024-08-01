@@ -116,7 +116,7 @@ export interface DropdownMenuItemProps
    * The text transform
    * @default 'capitalize'
    */
-  textTransform?: 'uppercase' | 'lowercase' | 'capitalize' | 'normal-case';
+  textTransform?: 'uppercase' | 'lowercase' | 'capitalize' | 'normal-case' | '';
 }
 
 export interface AccountDropdownBodyProps {

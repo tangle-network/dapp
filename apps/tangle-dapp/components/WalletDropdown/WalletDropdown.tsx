@@ -1,5 +1,6 @@
 'use client';
 
+import { encodeAddress } from '@polkadot/util-crypto';
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
@@ -21,6 +22,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
+import useNetworkStore from '../../context/useNetworkStore';
 import useExplorerUrl from '../../hooks/useExplorerUrl';
 
 export const WalletDropdown: FC<{
@@ -123,6 +125,7 @@ export const WalletDropdown: FC<{
 };
 
 const SwitchAccountButton: FC = () => {
+  const { network } = useNetworkStore();
   const { activeApi, accounts, setActiveAccount } = useWebContext();
 
   const { notificationApi } = useWebbUI();
@@ -179,7 +182,9 @@ const SwitchAccountButton: FC = () => {
       <AccountDropdownBody
         accountItems={accounts.map((item) => {
           return {
-            address: item.address,
+            // Attempt to re-encode the address to match the active network's
+            // SS58 prefix, if it's available.
+            address: encodeAddress(item.address, network.ss58Prefix),
             name: item.name,
             onClick: () => {
               setActiveAccount(item);

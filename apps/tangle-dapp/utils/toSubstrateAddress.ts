@@ -1,4 +1,8 @@
-import { evmToAddress, isEthereumAddress } from '@polkadot/util-crypto';
+import {
+  encodeAddress,
+  evmToAddress,
+  isEthereumAddress,
+} from '@polkadot/util-crypto';
 import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import assert from 'assert';
 
@@ -29,10 +33,14 @@ export const toSubstrateAddress = (
     return evmToAddress(address, ss58Format);
   }
 
+  // Otherwise, it must be a valid Substrate address.
   assert(
     isSubstrateAddress(address),
     'Address that is neither an EVM nor a Substrate address was provided (did you forget to validate an input address from the user?)',
   );
 
-  return address;
+  // Process the address with the given SS58 format, in
+  // case that the SS58 format given differs from that of the
+  // address.
+  return encodeAddress(address, ss58Format);
 };
