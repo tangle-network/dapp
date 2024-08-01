@@ -5,6 +5,7 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
@@ -33,13 +34,16 @@ import AssetPlaceholder from '../AssetPlaceholder';
 import AvatarWithText from '../AvatarWithText';
 import ErrorMessage from '../ErrorMessage';
 import RestakeTabs from '../RestakeTabs';
+import SupportedChainModal from '../SupportedChainModal';
+import useSwitchChain from '../useSwitchChain';
+import UnstakeModal from './UnstakeModal';
 
 export const dynamic = 'force-static';
 
 const Page = () => {
   const {
     register,
-    // setValue: setFormValue,
+    setValue: setFormValue,
     handleSubmit,
     watch,
     reset,
@@ -48,20 +52,20 @@ const Page = () => {
     mode: 'onBlur',
   });
 
-  // const switchChain = useSwitchChain();
+  const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
   const { assetMap } = useRestakeContext();
 
   const {
-    // status: isOperatorModalOpen,
+    status: isOperatorModalOpen,
     open: openOperatorModal,
-    // close: closeOperatorModal,
+    close: closeOperatorModal,
   } = useModal();
 
   const {
-    // status: isChainModalOpen,
+    status: isChainModalOpen,
     open: openChainModal,
-    // close: closeChainModal,
+    close: closeChainModal,
   } = useModal();
 
   // Register form fields on mount
@@ -303,7 +307,7 @@ const Page = () => {
       </div>
 
       {/** Hardcoded for the margin top to ensure the component is align to same card content */}
-      {/* <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
+      {/*       <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
         {delegatorBondLessRequests.length > 0 ? (
           <UnstakeRequestTable
             delegatorBondLessRequests={delegatorBondLessRequests}
@@ -322,7 +326,7 @@ const Page = () => {
             </Typography>
           </>
         )}
-      </RestakeDetailCard.Root>
+      </RestakeDetailCard.Root> */}
 
       <Modal>
         <UnstakeModal
@@ -354,7 +358,7 @@ const Page = () => {
             closeChainModal();
           }}
         />
-      </Modal> */}
+      </Modal>
     </div>
   );
 };
