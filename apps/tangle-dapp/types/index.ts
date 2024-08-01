@@ -246,7 +246,7 @@ export type GetSuccessMessageFunction<Context> = (context: Context) => string;
 export type Blueprint = {
   name: string;
   address: HexString;
-  imgUrl: string; // optional
+  imgUrl: string;
   category: string;
   description: string;
   restakersCount: number;

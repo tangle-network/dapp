@@ -4,17 +4,19 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 import { SparklingIcon } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';
 import { Pagination } from '@webb-tools/webb-ui-components/components/Pagination';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import Image from 'next/image';
-import { FC, useMemo, useState } from 'react';
+import { FC, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Blueprint } from '../../types';
@@ -26,6 +28,25 @@ const columns = [
   columnHelper.accessor('address', {
     header: () => 'Project',
     cell: (props) => <BlueprintItem {...props.row.original} />,
+    filterFn: (row, _, filterValue) => {
+      const { name, address, description } = row.original;
+      return (
+        name.toLowerCase().includes(filterValue.toLowerCase()) ||
+        address.toLowerCase().includes(filterValue.toLowerCase()) ||
+        description.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    },
+    sortingFn: (rowA, rowB) => {
+      const isBlueprintABoosted = rowA.original.isBoosted;
+      const isBlueprintBBoosted = rowB.original.isBoosted;
+      if (isBlueprintABoosted && !isBlueprintBBoosted) {
+        return -1;
+      }
+      if (!isBlueprintABoosted && isBlueprintBBoosted) {
+        return 1;
+      }
+      return 0;
+    },
   }),
 ];
 
@@ -33,29 +54,34 @@ const BlueprintListing: FC = () => {
   const blueprints = useBlueprintListing();
   const [searchValue, setSearchValue] = useState('');
 
-  const sortedBlueprints = useMemo(() => {
-    return blueprints.sort((a, b) => {
-      if (a.isBoosted && !b.isBoosted) {
-        return -1;
-      }
-
-      if (!a.isBoosted && b.isBoosted) {
-        return 1;
-      }
-
-      return 0;
-    });
-  }, [blueprints]);
-
   const table = useReactTable({
-    data: sortedBlueprints,
+    data: blueprints,
     columns,
+    filterFns: {
+      fuzzy: fuzzyFilter,
+    },
+    globalFilterFn: fuzzyFilter,
     initialState: {
       pagination: {
         pageSize: 12,
       },
+      sorting: [
+        {
+          id: 'address',
+          desc: false,
+        },
+      ],
+    },
+    state: {
+      columnFilters: [
+        {
+          id: 'address',
+          value: searchValue,
+        },
+      ],
     },
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     autoResetPageIndex: false,
   });
