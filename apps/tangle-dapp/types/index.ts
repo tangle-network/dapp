@@ -3,6 +3,7 @@ import type {
   SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
+import type { HexString } from '@polkadot/util/types';
 import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 
 export enum PagePath {
@@ -242,3 +243,14 @@ export type TangleTokenSymbol = 'tTNT' | 'TNT';
 export type GetSuccessMessageFunction<Context> = (context: Context) => string;
 
 // add Blueprint
+export type Blueprint = {
+  name: string;
+  address: HexString;
+  imgUrl: string; // optional
+  category: string;
+  description: string;
+  restakersCount: number;
+  operatorsCount: number;
+  tvl: string;
+  isBoosted?: boolean;
+};
