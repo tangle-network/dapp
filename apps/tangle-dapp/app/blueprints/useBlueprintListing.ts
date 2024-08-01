@@ -1,13 +1,13 @@
 'use client';
 
-import { Blueprint } from '../../types';
+import { Blueprint, BlueprintCategory } from '../../types';
 
 export default function useBlueprintListing(): Blueprint[] {
   return [
     {
       name: 'Groth16 ZK-SaaS',
       address: '0x1234567890123456789012345678901234567890',
-      category: 'ZK Proof Generation',
+      category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description:
@@ -20,7 +20,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'Plonk Prover Pro',
       address: '0x2345678901234567890123456789012345678901',
-      category: 'ZK Proof Generation',
+      category: BlueprintCategory.CATEGORY_2,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description: 'Advanced PLONK-based ZK proof generation.',
@@ -32,7 +32,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'Sonic ZK Solutions',
       address: '0x3456789012345678901234567890123456789012',
-      category: 'ZK Infrastructure',
+      category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description:
@@ -45,7 +45,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'Marlin ZK Platform',
       address: '0x4567890123456789012345678901234567890123',
-      category: 'ZK Scaling',
+      category: BlueprintCategory.CATEGORY_3,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description: 'Scalable ZK proof generation using Marlin.',
@@ -56,7 +56,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'Bulletproofs ZK Service',
       address: '0x5678901234567890123456789012345678901234',
-      category: 'Privacy Tech',
+      category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description:
@@ -68,7 +68,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'ZK-STARK Engine',
       address: '0x6789012345678901234567890123456789012345',
-      category: 'ZK Proof Generation',
+      category: BlueprintCategory.CATEGORY_3,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description: 'Scalable ZK-STARK proof generation service.',
@@ -79,7 +79,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'Ligero ZK Platform',
       address: '0x7890123456789012345678901234567890123456',
-      category: 'ZK Infrastructure',
+      category: BlueprintCategory.CATEGORY_3,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description:
@@ -91,7 +91,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'Aurora ZK Cloud',
       address: '0x8901234567890123456789012345678901234567',
-      category: 'ZK Infrastructure',
+      category: BlueprintCategory.CATEGORY_2,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description: 'Cloud-based ZK proofs.',
@@ -102,7 +102,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'Fractal ZK Services',
       address: '0x9012345678901234567890123456789012345678',
-      category: 'ZK Scaling',
+      category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description:
@@ -114,7 +114,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'Halo2 ZK Platform',
       address: '0xa123456789012345678901234567890123456789',
-      category: 'ZK Proof Generation',
+      category: BlueprintCategory.CATEGORY_2,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description: 'ZK proofs with Halo2 system.',
@@ -125,7 +125,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'Nova ZK Accelerator',
       address: '0xb234567890123456789012345678901234567890',
-      category: 'ZK Optimization',
+      category: BlueprintCategory.CATEGORY_2,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description:
@@ -137,7 +137,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'Hydra ZK Network',
       address: '0xc345678901234567890123456789012345678901',
-      category: 'ZK Infrastructure',
+      category: BlueprintCategory.CATEGORY_3,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description: 'Distributed ZK proofs.',
@@ -148,7 +148,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'Quantum ZK Solutions',
       address: '0xd456789012345678901234567890123456789012',
-      category: 'Privacy Tech',
+      category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description:
@@ -160,7 +160,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'Mina ZK Provider',
       address: '0xe567890123456789012345678901234567890123',
-      category: 'ZK Proof Generation',
+      category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description: 'Lightweight ZK proofs with Mina.',
@@ -171,7 +171,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       name: 'ZK Rollup Express',
       address: '0xf678901234567890123456789012345678901234',
-      category: 'ZK Scaling',
+      category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       description:

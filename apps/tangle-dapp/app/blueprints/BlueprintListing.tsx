@@ -16,10 +16,10 @@ import { Pagination } from '@webb-tools/webb-ui-components/components/Pagination
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import Image from 'next/image';
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Blueprint } from '../../types';
+import { Blueprint, BlueprintCategory } from '../../types';
 import useBlueprintListing from './useBlueprintListing';
 
 const columnHelper = createColumnHelper<Blueprint>();
@@ -48,11 +48,36 @@ const columns = [
       return 0;
     },
   }),
+  columnHelper.accessor('category', {
+    header: () => null,
+    cell: () => null,
+    filterFn: (row, _, filterValue) => {
+      return row.original.category === filterValue;
+    },
+  }),
 ];
 
 const BlueprintListing: FC = () => {
   const blueprints = useBlueprintListing();
   const [searchValue, setSearchValue] = useState('');
+  const [filteredCategory, setFilteredCategory] =
+    useState<BlueprintCategory | null>(null);
+
+  const categoryItems = useMemo(
+    () => [
+      {
+        label: 'View All',
+        onClick: () => setFilteredCategory(null),
+        isActive: filteredCategory === null,
+      },
+      ...Object.values(BlueprintCategory).map((category) => ({
+        label: category,
+        onClick: () => setFilteredCategory(category),
+        isActive: filteredCategory === category,
+      })),
+    ],
+    [filteredCategory],
+  );
 
   const table = useReactTable({
     data: blueprints,
@@ -62,6 +87,9 @@ const BlueprintListing: FC = () => {
     },
     globalFilterFn: fuzzyFilter,
     initialState: {
+      columnVisibility: {
+        category: false,
+      },
       pagination: {
         pageSize: 12,
       },
@@ -78,6 +106,14 @@ const BlueprintListing: FC = () => {
           id: 'address',
           value: searchValue,
         },
+        ...(filteredCategory
+          ? [
+              {
+                id: 'category',
+                value: filteredCategory,
+              },
+            ]
+          : []),
       ],
     },
     getCoreRowModel: getCoreRowModel(),
@@ -108,7 +144,34 @@ const BlueprintListing: FC = () => {
       </div>
 
       {/* Category */}
-      <div className="border-b-2 border-mono-80 dark:border-mono-170"></div>
+      <div className="-space-y-0.5">
+        <div className="flex items-center gap-9">
+          {categoryItems.map(({ label, onClick, isActive }, idx) => (
+            <div
+              key={idx}
+              className={twMerge(
+                'group cursor-pointer py-3 border-b-2 border-mono-80 dark:border-mono-170',
+                isActive && 'border-purple-50 dark:border-purple-60',
+              )}
+              onClick={onClick}
+            >
+              <Typography
+                variant="h5"
+                fw="normal"
+                className={twMerge(
+                  'text-mono-140 dark:text-mono-100',
+                  !isActive &&
+                    'group-hover:text-mono-160 dark:group-hover:text-mono-80',
+                  isActive && 'text-mono-200 dark:text-mono-0',
+                )}
+              >
+                {label}
+              </Typography>
+            </div>
+          ))}
+        </div>
+        <div className="h-0.5 bg-mono-80 dark:bg-mono-170" />
+      </div>
 
       {/* Blueprint list */}
       <div className="grid grid-cols-3 gap-5">

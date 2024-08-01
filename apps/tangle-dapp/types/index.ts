@@ -247,10 +247,16 @@ export type Blueprint = {
   name: string;
   address: HexString;
   imgUrl: string;
-  category: string;
+  category: BlueprintCategory;
   description: string;
   restakersCount: number;
   operatorsCount: number;
   tvl: string;
   isBoosted?: boolean;
 };
+
+export enum BlueprintCategory {
+  CATEGORY_1 = 'Category 1',
+  CATEGORY_2 = 'Category 2',
+  CATEGORY_3 = 'Category 3',
+}
