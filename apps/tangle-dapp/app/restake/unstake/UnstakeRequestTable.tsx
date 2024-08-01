@@ -23,7 +23,6 @@ import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
 import type { DelegatorBondLessRequest } from '../../../types/restake';
 import type { UnstakeRequestTableData } from './types';
-import UnstakeRequestTableActions from './UnstakeRequestTableActions';
 import { calculateTimeRemaining } from './utils';
 
 const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
@@ -159,7 +158,7 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
     ),
   );
 
-  const rowSelection = table.getState().rowSelection;
+  /* const rowSelection = table.getState().rowSelection;
 
   const selectedRequestIds = useMemo(
     () =>
@@ -167,7 +166,7 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
         .filter(([, selected]) => selected)
         .map(([uid]) => uid),
     [rowSelection],
-  );
+  ); */
 
   return (
     <>
@@ -182,12 +181,12 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
         )}
       />
 
-      <div className="flex items-center gap-3">
+      {/*       <div className="flex items-center gap-3">
         <UnstakeRequestTableActions
           selectedRequestIds={selectedRequestIds}
           dataWithId={dataWithId}
         />
-      </div>
+      </div> */}
     </>
   );
 };
