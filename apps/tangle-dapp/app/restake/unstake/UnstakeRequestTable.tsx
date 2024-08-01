@@ -36,16 +36,20 @@ const columns = [
     header: ({ table }) => (
       <CheckBox
         isChecked={table.getIsAllRowsSelected()}
+        // TODO: Add indeterminate state for CheckBox
         // indeterminate={table.getIsSomeRowsSelected()}
         onChange={table.getToggleAllRowsSelectedHandler()}
+        wrapperClassName={cx('min-h-0')}
       />
     ),
     cell: ({ row }) => (
       <CheckBox
         isChecked={row.getIsSelected()}
         isDisabled={!row.getCanSelect()}
+        // TODO: Add indeterminate state for CheckBox
         // indeterminate={row.getIsSomeSelected()}
         onChange={row.getToggleSelectedHandler()}
+        wrapperClassName={cx('min-h-0')}
       />
     ),
   }),
