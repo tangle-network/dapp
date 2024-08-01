@@ -196,9 +196,9 @@ function useSubstrateTx<Context = void>(
     };
   }, [status, timeoutDelay]);
 
-  // Prevent the consumer from executing the transaction if
-  // the active account is an EVM account.
   return {
+    // Prevent the consumer from executing the transaction if
+    // the active account is an EVM account.
     execute: isEvmAccount ? null : execute,
     reset,
     status,

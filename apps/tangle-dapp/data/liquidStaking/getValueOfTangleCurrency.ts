@@ -3,51 +3,47 @@
 import '@webb-tools/tangle-restaking-types';
 
 import { TanglePrimitivesCurrencyCurrencyId } from '@polkadot/types/lookup';
+import capitalize from 'lodash/capitalize';
 
-import { LiquidStakingCurrency } from '../../constants/liquidStaking';
+import { ParachainCurrency } from '../../constants/liquidStaking';
 
 const getValueOfTangleCurrency = (
   tangleCurrencyId: TanglePrimitivesCurrencyCurrencyId,
-): LiquidStakingCurrency => {
-  // TODO: Implement.
-  // Unfortunately, there doesn't seem to be a cleaner way of
-  // going about this. This is a direct cause of the way that
-  // Rust enums are generated to be used in TypeScript/JavaScript.
-  // if (tangleCurrencyId.isNative) {
-  //   return tangleCurrencyId.asNative.type;
-  // } else if (tangleCurrencyId.isToken) {
-  //   return tangleCurrencyId.asToken.type;
-  // } else if (tangleCurrencyId.isToken2) {
-  //   return tangleCurrencyId.asToken2.type;
-  // } else if (tangleCurrencyId.isLstToken) {
-  //   return tangleCurrencyId.asLst.type;
-  // } else if (tangleCurrencyId.isLst2) {
-  //   return tangleCurrencyId.asLst2.type;
-  // } else if (tangleCurrencyId.isStable) {
-  //   return tangleCurrencyId.asStable.type;
-  // } else if (tangleCurrencyId.isVsToken) {
-  //   return tangleCurrencyId.asVsToken.type;
-  // } else if (tangleCurrencyId.isVsToken2) {
-  //   return tangleCurrencyId.asVsToken2.type;
-  // } else if (tangleCurrencyId.isVsBond) {
-  //   return tangleCurrencyId.asVsBond.type;
-  // } else if (tangleCurrencyId.isVsBond2) {
-  //   return tangleCurrencyId.asVsBond2.type;
-  // } else if (tangleCurrencyId.isLpToken) {
-  //   return tangleCurrencyId.asLpToken.type;
-  // } else if (tangleCurrencyId.isForeignAsset) {
-  //   return tangleCurrencyId.asForeignAsset.type;
-  // } else if (tangleCurrencyId.isStableLpToken) {
-  //   return tangleCurrencyId.asStableLpToken.type;
-  // } else if (tangleCurrencyId.isBlp) {
-  //   return tangleCurrencyId.asBlp.type;
-  // } else if (tangleCurrencyId.isLend) {
-  //   return tangleCurrencyId.asLend.type;
-  // }
+): ParachainCurrency => {
+  let result: ParachainCurrency;
 
-  throw new Error(
-    `Unknown or unsupported currency type: ${tangleCurrencyId} (was the Tangle Restaking Parachain updated?)`,
-  );
+  switch (tangleCurrencyId.type) {
+    case 'Native':
+      result = tangleCurrencyId.asNative.type;
+
+      break;
+    // TODO: This mismatches the type definitions. What is being used elsewhere is 'lst', not 'Lst'. Need to get the Parachain type definitions updated! For now, manually fixing it here.
+    case 'lst' as TanglePrimitivesCurrencyCurrencyId['type']:
+    case 'Lst':
+      result = tangleCurrencyId.asLst.type;
+
+      break;
+    case 'Token':
+      result = tangleCurrencyId.asToken.type;
+
+      break;
+    case 'Stable':
+      result = tangleCurrencyId.asStable.type;
+
+      break;
+    case 'VsToken':
+      result = tangleCurrencyId.asVsToken.type;
+
+      break;
+    // TODO: Implement missing cases.
+    default:
+      throw new Error(
+        `Unknown or unsupported currency type: ${tangleCurrencyId} (was the Tangle Restaking Parachain updated?)`,
+      );
+  }
+
+  // TODO: For some reason, there's a mismatch between the type definitions and the actual values. The actual returned values are all uppercase, while the type definitions report it as being capitalized (ex. 'DOT' vs 'Dot'). This is a temporary fix until the type definitions are updated.
+  return capitalize(result) as ParachainCurrency;
 };
 
 export default getValueOfTangleCurrency;

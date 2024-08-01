@@ -15,14 +15,15 @@ import assert from 'assert';
 import capitalize from 'lodash/capitalize';
 import { JSX } from 'react';
 
-import { LIQUID_STAKING_TOKEN_PREFIX } from '../../constants/liquidStaking';
+import { LST_PREFIX } from '../../constants/liquidStaking';
 import { PagePath } from '../../types';
 
 const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
   [PagePath.CLAIM_AIRDROP]: GiftLineIcon,
   [PagePath.ACCOUNT]: UserFillIcon,
   [PagePath.NOMINATION]: CoinLine,
-  [PagePath.SERVICES_OVERVIEW]: GridFillIcon,
+  [PagePath.BLUEPRINTS]: GridFillIcon,
+  [PagePath.SERVICES]: GridFillIcon,
   [PagePath.RESTAKE]: TokenSwapFill,
   [PagePath.RESTAKE_DEPOSIT]: TokenSwapFill,
   [PagePath.RESTAKE_DELEGATE]: TokenSwapFill,
@@ -31,7 +32,7 @@ const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
 };
 
 const BREADCRUMB_LABELS: Partial<Record<PagePath, string>> = {
-  [PagePath.SERVICES_OVERVIEW]: 'Service Overview',
+  [PagePath.SERVICES]: 'Service Overview',
   [PagePath.CLAIM_AIRDROP]: 'Claim Airdrop',
 };
 
@@ -77,7 +78,7 @@ export const getBreadcrumbLabel = (
   if (
     pathNames.length === 2 &&
     index === 1 &&
-    pathNames[0] === PagePath.SERVICES_OVERVIEW.substring(1)
+    pathNames[0] === PagePath.SERVICES.substring(1)
   ) {
     return `Details: ${pathName}`;
   }
@@ -88,7 +89,7 @@ export const getBreadcrumbLabel = (
     index === 1 &&
     pathNames[0] === PagePath.LIQUID_STAKING.substring(1)
   ) {
-    return `${LIQUID_STAKING_TOKEN_PREFIX}${pathName.toUpperCase()}`;
+    return `${LST_PREFIX}${pathName.toUpperCase()}`;
   }
 
   const pathNameWithSlash = '/' + pathName;
@@ -120,7 +121,7 @@ export const getBreadcrumbIcon = (
   pathNames: string[],
 ): ((props: IconBase) => JSX.Element) | null => {
   // Special case for the Service Details page.
-  if (isSubPath(PagePath.SERVICES_OVERVIEW, 1, 2, index, pathNames)) {
+  if (isSubPath(PagePath.SERVICES, 1, 2, index, pathNames)) {
     return CodeFill;
   }
 

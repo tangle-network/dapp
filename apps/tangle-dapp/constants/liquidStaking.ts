@@ -3,10 +3,11 @@ import {
   TanglePrimitivesTimeUnit,
 } from '@polkadot/types/lookup';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
+import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
 import { StaticAssetPath } from '.';
 
-export enum LiquidStakingChainId {
+export enum ParachainChainId {
   POLKADOT = 'Polkadot',
   PHALA = 'Phala',
   MOONBEAM = 'Moonbeam',
@@ -25,23 +26,30 @@ export enum LiquidStakingToken {
 }
 
 // TODO: Temporary manual override until the Parachain types are updated.
-export type LiquidStakingCurrency =
-  | Exclude<TanglePrimitivesCurrencyTokenSymbol['type'], 'Bnc'>
-  | 'Tnt';
+export type ParachainCurrency = TanglePrimitivesCurrencyTokenSymbol['type'];
+// | Exclude<TanglePrimitivesCurrencyTokenSymbol['type'], 'Bnc'>
+// | 'Tnt';
 
-export type LiquidStakingChainDef = {
-  id: LiquidStakingChainId;
+export type SubstrateChainTimingSpec = {
+  expectedBlockTimeMs: number;
+  blocksPerSession: number;
+  sessionsPerEra: number;
+};
+
+export type ParachainChainDef = {
+  id: ParachainChainId;
   name: string;
   token: LiquidStakingToken;
   logo: StaticAssetPath;
   networkName: string;
-  currency: LiquidStakingCurrency;
+  currency: ParachainCurrency;
   decimals: number;
+  substrateTimingSpec?: SubstrateChainTimingSpec;
   rpcEndpoint: string;
 };
 
-const POLKADOT: LiquidStakingChainDef = {
-  id: LiquidStakingChainId.POLKADOT,
+const POLKADOT: ParachainChainDef = {
+  id: ParachainChainId.POLKADOT,
   name: 'Polkadot',
   token: LiquidStakingToken.DOT,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_POLKADOT,
@@ -51,8 +59,8 @@ const POLKADOT: LiquidStakingChainDef = {
   rpcEndpoint: 'wss://polkadot-rpc.dwellir.com',
 };
 
-const PHALA: LiquidStakingChainDef = {
-  id: LiquidStakingChainId.PHALA,
+const PHALA: ParachainChainDef = {
+  id: ParachainChainId.PHALA,
   name: 'Phala',
   token: LiquidStakingToken.PHALA,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
@@ -62,8 +70,8 @@ const PHALA: LiquidStakingChainDef = {
   rpcEndpoint: 'wss://api.phala.network/ws',
 };
 
-const MOONBEAM: LiquidStakingChainDef = {
-  id: LiquidStakingChainId.MOONBEAM,
+const MOONBEAM: ParachainChainDef = {
+  id: ParachainChainId.MOONBEAM,
   name: 'Moonbeam',
   token: LiquidStakingToken.GLMR,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_GLIMMER,
@@ -74,8 +82,8 @@ const MOONBEAM: LiquidStakingChainDef = {
   rpcEndpoint: 'wss://moonbeam.api.onfinality.io/public-ws',
 };
 
-const ASTAR: LiquidStakingChainDef = {
-  id: LiquidStakingChainId.ASTAR,
+const ASTAR: ParachainChainDef = {
+  id: ParachainChainId.ASTAR,
   name: 'Astar',
   token: LiquidStakingToken.ASTAR,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_ASTAR,
@@ -86,8 +94,8 @@ const ASTAR: LiquidStakingChainDef = {
   rpcEndpoint: 'wss://astar.api.onfinality.io/public-ws',
 };
 
-const MANTA: LiquidStakingChainDef = {
-  id: LiquidStakingChainId.MANTA,
+const MANTA: ParachainChainDef = {
+  id: ParachainChainId.MANTA,
   name: 'Manta',
   token: LiquidStakingToken.MANTA,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_MANTA,
@@ -98,47 +106,50 @@ const MANTA: LiquidStakingChainDef = {
   rpcEndpoint: 'wss://ws.manta.systems',
 };
 
-const TANGLE_RESTAKING_PARACHAIN: LiquidStakingChainDef = {
-  id: LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN,
+const TANGLE_RESTAKING_PARACHAIN: ParachainChainDef = {
+  id: ParachainChainId.TANGLE_RESTAKING_PARACHAIN,
   name: 'Tangle Parachain',
   token: LiquidStakingToken.TNT,
   logo: StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO,
   networkName: 'Tangle Parachain',
-  currency: 'Tnt',
+  currency: 'Bnc',
   decimals: TANGLE_TOKEN_DECIMALS,
-  rpcEndpoint: '',
+  rpcEndpoint: TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
+  substrateTimingSpec: {
+    expectedBlockTimeMs: 12_000,
+    // TODO: This is dummy data for now. Update with the actual values.
+    blocksPerSession: 6,
+    sessionsPerEra: 6,
+  },
 };
 
-export const LIQUID_STAKING_CHAIN_MAP: Record<
-  LiquidStakingChainId,
-  LiquidStakingChainDef
-> = {
-  [LiquidStakingChainId.POLKADOT]: POLKADOT,
-  [LiquidStakingChainId.PHALA]: PHALA,
-  [LiquidStakingChainId.MOONBEAM]: MOONBEAM,
-  [LiquidStakingChainId.ASTAR]: ASTAR,
-  [LiquidStakingChainId.MANTA]: MANTA,
-  [LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN]: TANGLE_RESTAKING_PARACHAIN,
-};
+export const PARACHAIN_CHAIN_MAP: Record<ParachainChainId, ParachainChainDef> =
+  {
+    [ParachainChainId.POLKADOT]: POLKADOT,
+    [ParachainChainId.PHALA]: PHALA,
+    [ParachainChainId.MOONBEAM]: MOONBEAM,
+    [ParachainChainId.ASTAR]: ASTAR,
+    [ParachainChainId.MANTA]: MANTA,
+    [ParachainChainId.TANGLE_RESTAKING_PARACHAIN]: TANGLE_RESTAKING_PARACHAIN,
+  };
 
-export const LIQUID_STAKING_CHAINS: LiquidStakingChainDef[] = Object.values(
-  LIQUID_STAKING_CHAIN_MAP,
-);
+export const LIQUID_STAKING_CHAINS: ParachainChainDef[] =
+  Object.values(PARACHAIN_CHAIN_MAP);
 
 // TODO: Instead of mapping to names, map to network/chain definitions themselves. This avoids redundancy and relies on a centralized definition for the network/chain which is better, since it simplifies future refactoring.
-export const LS_CHAIN_TO_NETWORK_NAME: Record<LiquidStakingChainId, string> = {
-  [LiquidStakingChainId.POLKADOT]: 'Polkadot Mainnet',
-  [LiquidStakingChainId.PHALA]: 'Phala',
-  [LiquidStakingChainId.MOONBEAM]: 'Moonbeam',
-  [LiquidStakingChainId.ASTAR]: 'Astar',
-  [LiquidStakingChainId.MANTA]: 'Manta',
-  [LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN]: 'Tangle Parachain',
+export const LS_CHAIN_TO_NETWORK_NAME: Record<ParachainChainId, string> = {
+  [ParachainChainId.POLKADOT]: 'Polkadot Mainnet',
+  [ParachainChainId.PHALA]: 'Phala',
+  [ParachainChainId.MOONBEAM]: 'Moonbeam',
+  [ParachainChainId.ASTAR]: 'Astar',
+  [ParachainChainId.MANTA]: 'Manta',
+  [ParachainChainId.TANGLE_RESTAKING_PARACHAIN]: 'Tangle Parachain',
 };
 
 export const TVS_TOOLTIP =
   "Total Value Staked (TVS) refers to the total value of assets that are currently staked for this network in fiat currency. Generally used as an indicator of a network's security and trustworthiness.";
 
-export const LIQUID_STAKING_TOKEN_PREFIX = 'tg';
+export const LST_PREFIX = 'tg';
 
 // TODO: These should be moved/managed in libs/webb-ui-components/src/constants/networks.ts and not here. This is just a temporary solution.
 export type Network = {
@@ -153,13 +164,13 @@ export enum NetworkType {
   PARACHAIN = 'Parachain',
 }
 
-export type LiquidStakingCurrencyKey =
-  | { lst: LiquidStakingCurrency }
-  | { Native: LiquidStakingCurrency };
+export type ParachainCurrencyKey =
+  | { lst: ParachainCurrency }
+  | { Native: ParachainCurrency };
 
-export type LiquidStakingTimeUnit = TanglePrimitivesTimeUnit['type'];
+export type ParachainTimeUnit = TanglePrimitivesTimeUnit['type'];
 
-export type LiquidStakingTimeUnitInstance = {
+export type SimpleTimeUnitInstance = {
   value: number;
-  unit: LiquidStakingTimeUnit;
+  unit: ParachainTimeUnit;
 };

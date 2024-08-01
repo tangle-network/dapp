@@ -6,20 +6,20 @@ import { Button, Chip, Typography } from '@webb-tools/webb-ui-components';
 import Image from 'next/image';
 import { FC, useMemo } from 'react';
 
-import { StaticAssetPath } from '../../constants';
+import { StaticAssetPath } from '../../../constants';
 import {
-  LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingChainId,
   LiquidStakingToken,
+  LST_PREFIX,
+  ParachainChainId,
   TVS_TOOLTIP,
-} from '../../constants/liquidStaking';
-import { PagePath } from '../../types';
-import formatTangleBalance from '../../utils/formatTangleBalance';
+} from '../../../constants/liquidStaking';
+import { PagePath } from '../../../types';
+import formatTangleBalance from '../../../utils/formatTangleBalance';
+import StatItem from '../StatItem';
 import ChainLogo from './ChainLogo';
-import StatItem from './StatItem';
 
 export type LiquidStakingTokenItemProps = {
-  chainId: LiquidStakingChainId;
+  chainId: ParachainChainId;
   title: string;
   tokenSymbol: LiquidStakingToken;
   totalValueStaked: number;
@@ -63,7 +63,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
         </Typography>
 
         <Chip className="normal-case" color="dark-grey">
-          {LIQUID_STAKING_TOKEN_PREFIX}
+          {LST_PREFIX}
           {tokenSymbol.toUpperCase()}
         </Chip>
       </div>

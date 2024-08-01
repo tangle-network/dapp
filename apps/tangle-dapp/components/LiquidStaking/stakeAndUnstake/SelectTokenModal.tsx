@@ -8,10 +8,10 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useEffect, useMemo } from 'react';
 
-import { LiquidStakingChainId } from '../../constants/liquidStaking';
-import { AnySubstrateAddress } from '../../types/utils';
-import formatBn from '../../utils/formatBn';
-import AddressLink from './AddressLink';
+import { ParachainChainId } from '../../../constants/liquidStaking';
+import { AnySubstrateAddress } from '../../../types/utils';
+import formatBn from '../../../utils/formatBn';
+import AddressLink from '../AddressLink';
 import ChainLogo from './ChainLogo';
 
 export type SelectTokenModalProps = {
@@ -104,15 +104,11 @@ const TokenListItem: FC<TokenListItemProps> = ({
   return (
     <div
       onClick={onClick}
-      className="flex items-center justify-between py-2 px-4 rounded-lg cursor-pointer w-full hover:dark:bg-mono-160"
+      className="flex items-center justify-between py-2 px-4 rounded-lg cursor-pointer w-full hover:dark:bg-mono-200"
     >
       {/* Information */}
       <div className="flex items-center justify-center gap-2">
-        <ChainLogo
-          size="md"
-          isRounded
-          chainId={LiquidStakingChainId.POLKADOT}
-        />
+        <ChainLogo size="md" isRounded chainId={ParachainChainId.POLKADOT} />
 
         <div className="space-y-1">
           <Typography variant="h5" fw="bold" className="dark:text-mono-0">

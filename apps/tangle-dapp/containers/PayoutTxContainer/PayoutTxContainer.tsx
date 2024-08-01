@@ -10,7 +10,7 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
+import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo } from 'react';
 
 import usePayoutStakersTx from '../../data/payouts/usePayoutStakersTx';
@@ -73,7 +73,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
             <InputField.Root>
               <InputField.Input
                 title="Request Payout From"
-                isAddressType={true}
+                isAddressType
                 value={walletAddress}
                 type="text"
                 readOnly
@@ -84,7 +84,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
             <InputField.Root>
               <InputField.Input
                 title="Payout Stakers For"
-                isAddressType={true}
+                isAddressType
                 addressTheme="substrate"
                 value={validatorAddress}
                 type="text"
@@ -133,7 +133,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
           </Button>
 
           <a
-            href={WEBB_TANGLE_DOCS_STAKING_URL}
+            href={TANGLE_DOCS_STAKING_URL}
             target="_blank"
             rel="noopener noreferrer"
           >

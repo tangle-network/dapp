@@ -18,7 +18,7 @@ import { FC, useMemo } from 'react';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
-import type { Service } from '../../types';
+import { PagePath, type Service } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
 import { HeaderCell, StringCell } from '../tableCells';
 import type { ServiceTableProps } from './types';
@@ -85,11 +85,15 @@ const staticColumns = [
     id: 'details',
     header: () => null,
     cell: (props) => (
-      <Link href={`/services/${props.row.original.id}`}>
-        <Button variant="link" size="sm" className="mx-auto">
-          DETAILS
-        </Button>
-      </Link>
+      <Button
+        as={Link}
+        variant="link"
+        size="sm"
+        className="mx-auto"
+        href={`${PagePath.SERVICES}/${props.row.original.id}`}
+      >
+        DETAILS
+      </Button>
     ),
   }),
 ];

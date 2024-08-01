@@ -59,8 +59,10 @@ export enum TxName {
   WITHDRAW_EVM_BALANCE = 'withdraw',
   UPDATE_RESTAKE_PROFILE = 'update restake profile',
   BRIDGE_TRANSFER = 'bridge transfer',
-  MINT = 'mint',
-  REDEEM = 'redeem',
+  LST_MINT = 'mint',
+  LST_REDEEM = 'redeem',
+  LST_REBOND = 'cancel unstake request',
+  LST_WITHDRAW_REDEEM = 'withdraw redeemed tokens',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

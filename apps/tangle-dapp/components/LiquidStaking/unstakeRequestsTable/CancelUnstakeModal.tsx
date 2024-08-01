@@ -5,29 +5,36 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  TANGLE_DOCS_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback } from 'react';
+import { FC, useEffect } from 'react';
 
-import ExternalLink from './ExternalLink';
-import ModalIcon from './ModalIcon';
-import { UnstakeRequestItem } from './UnstakeRequestsTable';
+import { TxStatus } from '../../../hooks/useSubstrateTx';
+import ExternalLink from '../ExternalLink';
+import ModalIcon from '../ModalIcon';
 
 export type CancelUnstakeModalProps = {
+  txStatus: TxStatus;
   isOpen: boolean;
-  unstakeRequest: UnstakeRequestItem;
   onClose: () => void;
+  onConfirm: () => void;
 };
 
 const CancelUnstakeModal: FC<CancelUnstakeModalProps> = ({
   isOpen,
-  // TODO: Make use of the unstake request data, which is relevant for the link's href.
-  unstakeRequest: _unstakeRequest,
+  txStatus,
   onClose,
+  onConfirm,
 }) => {
-  const handleConfirm = useCallback(() => {
-    // TODO: Set button as loading, disable ability to close modal, and proceed to execute the unstake cancellation via its corresponding extrinsic call.
-  }, []);
+  useEffect(() => {
+    // Automatically close the modal when the transaction is successful.
+    if (txStatus === TxStatus.COMPLETE) {
+      onClose();
+    }
+  }, [onClose, txStatus]);
+
+  const isProcessingTx = txStatus === TxStatus.PROCESSING;
 
   return (
     <Modal open>
@@ -53,16 +60,26 @@ const CancelUnstakeModal: FC<CancelUnstakeModalProps> = ({
             rewards.
           </Typography>
 
-          {/* TODO: External link's href. */}
-          <ExternalLink href="#">Learn More</ExternalLink>
+          <ExternalLink href={TANGLE_DOCS_URL}>Learn More</ExternalLink>
         </div>
 
         <ModalFooter className="flex gap-1 px-8 py-6 space-y-0">
-          <Button onClick={onClose} isFullWidth variant="secondary">
+          <Button
+            onClick={onClose}
+            isFullWidth
+            variant="secondary"
+            isDisabled={isProcessingTx}
+          >
             Cancel
           </Button>
 
-          <Button onClick={handleConfirm} isFullWidth variant="primary">
+          <Button
+            onClick={onConfirm}
+            isFullWidth
+            variant="primary"
+            isLoading={isProcessingTx}
+            loadingText="Processing"
+          >
             Confirm
           </Button>
         </ModalFooter>

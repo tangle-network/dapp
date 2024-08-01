@@ -5,10 +5,10 @@ export type ValidatorReward = {
   validatorRewardPoints: number;
 };
 
-export enum PayoutFilterableEra {
+export enum PayoutsEraRange {
   TWO = 2,
   SIX = 6,
   EIGHTEEN = 18,
-  FIFTYFOUR = 54,
-  MAX = 80,
+  FIFTY_FOUR = 54,
+  MAX_EIGHTY = 80,
 }

@@ -29,9 +29,9 @@ import {
 } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
-import { usePayoutsStore } from '../../data/payouts/store';
+import { usePayoutsStore } from '../../data/payouts/usePayoutsStore';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
-import { PayoutFilterableEra } from '../../data/types';
+import { PayoutsEraRange } from '../../data/types';
 import useApi from '../../hooks/useApi';
 import useQueryParamKey from '../../hooks/useQueryParamKey';
 import {
@@ -99,7 +99,7 @@ const DelegationsPayoutsContainer: FC = () => {
 
   const payoutsData = usePayoutsStore((state) => state.data);
   const payoutsIsLoading = usePayoutsStore((state) => state.isLoading);
-  const maxEras = usePayoutsStore((state) => state.maxEras);
+  const maxEras = usePayoutsStore((state) => state.eraRange);
 
   usePayouts();
 
@@ -153,7 +153,7 @@ const DelegationsPayoutsContainer: FC = () => {
         additionalActionsCmp={
           activeAccount?.address && isBondedOrNominating ? (
             activeTab === NominationsAndPayoutsTab.NOMINATIONS ? (
-              <ManageButtonContainer
+              <ManageNominationsButton
                 onUpdateNominations={() =>
                   setIsUpdateNominationsModalOpen(true)
                 }
@@ -241,8 +241,7 @@ const DelegationsPayoutsContainer: FC = () => {
               description={
                 !isBondedOrNominating
                   ? "It looks like you haven't nominated any validators yet. Start by choosing a validator to support and earn rewards!"
-                  : `You've successfully nominated validators and your rewards will be available soon. Check back to see your updated payout status.
-                  `
+                  : `You've successfully nominated validators and your rewards will be available soon. Check back to see your updated payout status. Expecting to see some past payouts here? Try selecting a larger era range.`
               }
               buttonText={!isBondedOrNominating ? 'Nominate' : 'Learn More'}
               buttonProps={{
@@ -297,17 +296,18 @@ const DelegationsPayoutsContainer: FC = () => {
   );
 };
 
-export default DelegationsPayoutsContainer;
-
-/** @internal */
-function ManageButtonContainer(props: {
+type ManageNominationsButtonProps = {
   onUpdateNominations: () => void;
   onChangeRewardDestination: () => void;
   onStopNomination: () => void;
-}) {
-  const { onUpdateNominations, onChangeRewardDestination, onStopNomination } =
-    props;
+};
 
+/** @internal */
+const ManageNominationsButton: FC<ManageNominationsButtonProps> = ({
+  onUpdateNominations,
+  onChangeRewardDestination,
+  onStopNomination,
+}) => {
   return (
     <div className="items-center space-x-2 flex">
       <ActionsDropdown
@@ -329,44 +329,37 @@ function ManageButtonContainer(props: {
       />
     </div>
   );
-}
+};
 
 /** @internal */
 function FilterByErasContainer() {
-  const maxEras = usePayoutsStore((state) => state.maxEras);
-  const setMaxEras = usePayoutsStore((state) => state.setMaxEras);
+  const { eraRange: activeEraRange, setEraRange: setActiveEraRange } =
+    usePayoutsStore();
+
+  const actionItems = Object.values(PayoutsEraRange)
+    .filter((value): value is PayoutsEraRange => typeof value !== 'string')
+    .flatMap((eraRange) => {
+      // Skip the active era range, as it's already displayed.
+      if (eraRange === activeEraRange) {
+        return [];
+      }
+
+      return [
+        {
+          label: `Last ${eraRange} eras`,
+          onClick: () => setActiveEraRange(eraRange),
+        },
+      ];
+    });
 
   return (
     <div className="items-center space-x-2 flex">
       <ActionsDropdown
-        buttonText={
-          maxEras === PayoutFilterableEra.MAX
-            ? `Max, ${maxEras} Eras`
-            : `${maxEras} Days`
-        }
-        actionItems={[
-          {
-            label: '2 Days',
-            onClick: () => setMaxEras(PayoutFilterableEra.TWO),
-          },
-          {
-            label: '6 Days',
-            onClick: () => setMaxEras(PayoutFilterableEra.SIX),
-          },
-          {
-            label: '18 Days',
-            onClick: () => setMaxEras(PayoutFilterableEra.EIGHTEEN),
-          },
-          {
-            label: '54 Days',
-            onClick: () => setMaxEras(PayoutFilterableEra.FIFTYFOUR),
-          },
-          {
-            label: 'Max, 80 eras',
-            onClick: () => setMaxEras(PayoutFilterableEra.MAX),
-          },
-        ]}
+        buttonText={`Last ${activeEraRange} eras`}
+        actionItems={actionItems}
       />
     </div>
   );
 }
+
+export default DelegationsPayoutsContainer;

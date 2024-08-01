@@ -26,6 +26,8 @@ const AccountDropdownBody: FC<AccountDropdownBodyProps> = ({
         {accountItems.map(({ address, name, onClick }) => (
           <li key={address} onClick={onClick}>
             <DropdownMenuItem
+              // Don't automatically capitalize addresses.
+              textTransform=""
               leftIcon={
                 <Avatar
                   theme={

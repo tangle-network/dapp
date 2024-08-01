@@ -9,7 +9,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
-import { WEBB_TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
+import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import assert from 'assert';
 import { type FC, useCallback, useState } from 'react';
 
@@ -202,7 +202,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
               isFullWidth
               variant="secondary"
               target="_blank"
-              href={WEBB_TANGLE_DOCS_STAKING_URL}
+              href={TANGLE_DOCS_STAKING_URL}
             >
               Learn More
             </Button>
