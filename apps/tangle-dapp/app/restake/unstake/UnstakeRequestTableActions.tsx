@@ -8,14 +8,10 @@ import type { UnstakeRequestTableData } from './types';
 import { isUnstakeRequestReady } from './utils';
 
 type Props = {
-  selectedRequestIds: string[];
-  dataWithId: Record<string, UnstakeRequestTableData>;
+  selectedRequests: UnstakeRequestTableData[];
 };
 
-const UnstakeRequestTableActions = ({
-  dataWithId,
-  selectedRequestIds,
-}: Props) => {
+const UnstakeRequestTableActions = ({ selectedRequests }: Props) => {
   const [isCanceling, setIsCanceling] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
 
@@ -62,20 +58,17 @@ const UnstakeRequestTableActions = ({
   }, [executeDelegatorBondLess, executeOptions]);
 
   const canCancelUnstake = useMemo(
-    () => selectedRequestIds.length > 0,
-    [selectedRequestIds.length],
+    () => selectedRequests.length > 0,
+    [selectedRequests.length],
   );
 
   const canExecuteUnstake = useMemo(() => {
-    if (selectedRequestIds.length === 0) return false;
+    if (selectedRequests.length === 0) return false;
 
-    return selectedRequestIds.every((uid) => {
-      if (!dataWithId[uid]) return false;
-
-      const { timeRemaining } = dataWithId[uid];
+    return selectedRequests.every(({ timeRemaining }) => {
       return isUnstakeRequestReady(timeRemaining);
     });
-  }, [dataWithId, selectedRequestIds]);
+  }, [selectedRequests]);
 
   return (
     <>
