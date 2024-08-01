@@ -5,16 +5,13 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 
-import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import {
@@ -36,18 +33,13 @@ import AssetPlaceholder from '../AssetPlaceholder';
 import AvatarWithText from '../AvatarWithText';
 import ErrorMessage from '../ErrorMessage';
 import RestakeTabs from '../RestakeTabs';
-import SupportedChainModal from '../SupportedChainModal';
-import useSwitchChain from '../useSwitchChain';
-import TxInfo from './TxInfo';
-import UnstakeModal from './UnstakeModal';
-import UnstakeRequestTable from './UnstakeRequestTable';
 
 export const dynamic = 'force-static';
 
 const Page = () => {
   const {
     register,
-    setValue: setFormValue,
+    // setValue: setFormValue,
     handleSubmit,
     watch,
     reset,
@@ -56,20 +48,20 @@ const Page = () => {
     mode: 'onBlur',
   });
 
-  const switchChain = useSwitchChain();
+  // const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
   const { assetMap } = useRestakeContext();
 
   const {
-    status: isOperatorModalOpen,
+    // status: isOperatorModalOpen,
     open: openOperatorModal,
-    close: closeOperatorModal,
+    // close: closeOperatorModal,
   } = useModal();
 
   const {
-    status: isChainModalOpen,
+    // status: isChainModalOpen,
     open: openChainModal,
-    close: closeChainModal,
+    // close: closeChainModal,
   } = useModal();
 
   // Register form fields on mount
@@ -99,11 +91,11 @@ const Page = () => {
   const selectedUid = watch('uid');
   const amount = watch('amount');
 
-  const delegatorBondLessRequests = useMemo(() => {
+  /*   const delegatorBondLessRequests = useMemo(() => {
     if (!delegatorInfo?.delegatorBondLessRequest) return [];
 
     return [delegatorInfo.delegatorBondLessRequest];
-  }, [delegatorInfo?.delegatorBondLessRequest]);
+  }, [delegatorInfo?.delegatorBondLessRequest]); */
 
   const selectedAsset = useMemo(() => {
     if (!selectedAssetId) return null;
@@ -268,7 +260,7 @@ const Page = () => {
             <ErrorMessage>{errors.amount?.message}</ErrorMessage>
           </TransactionInputCard.Root>
 
-          <TxInfo />
+          {/* <TxInfo /> */}
 
           <ActionButtonBase>
             {(isLoading, loadingText) => {
@@ -311,7 +303,7 @@ const Page = () => {
       </div>
 
       {/** Hardcoded for the margin top to ensure the component is align to same card content */}
-      <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
+      {/* <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
         {delegatorBondLessRequests.length > 0 ? (
           <UnstakeRequestTable
             delegatorBondLessRequests={delegatorBondLessRequests}
@@ -362,7 +354,7 @@ const Page = () => {
             closeChainModal();
           }}
         />
-      </Modal>
+      </Modal> */}
     </div>
   );
 };
