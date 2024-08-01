@@ -9,10 +9,12 @@ import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 
+import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import {
@@ -37,6 +39,7 @@ import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import UnstakeModal from './UnstakeModal';
+import UnstakeRequestTable from './UnstakeRequestTable';
 
 export const dynamic = 'force-static';
 
@@ -95,11 +98,11 @@ const Page = () => {
   const selectedUid = watch('uid');
   const amount = watch('amount');
 
-  /*   const delegatorBondLessRequests = useMemo(() => {
+  const delegatorBondLessRequests = useMemo(() => {
     if (!delegatorInfo?.delegatorBondLessRequest) return [];
 
     return [delegatorInfo.delegatorBondLessRequest];
-  }, [delegatorInfo?.delegatorBondLessRequest]); */
+  }, [delegatorInfo?.delegatorBondLessRequest]);
 
   const selectedAsset = useMemo(() => {
     if (!selectedAssetId) return null;
@@ -307,7 +310,7 @@ const Page = () => {
       </div>
 
       {/** Hardcoded for the margin top to ensure the component is align to same card content */}
-      {/*       <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
+      <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
         {delegatorBondLessRequests.length > 0 ? (
           <UnstakeRequestTable
             delegatorBondLessRequests={delegatorBondLessRequests}
@@ -326,7 +329,7 @@ const Page = () => {
             </Typography>
           </>
         )}
-      </RestakeDetailCard.Root> */}
+      </RestakeDetailCard.Root>
 
       <Modal>
         <UnstakeModal
