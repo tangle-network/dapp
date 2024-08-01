@@ -1,7 +1,7 @@
 'use client';
 
-import { Checkbox as HeadlessCheckbox } from '@headlessui/react';
-import { CheckIcon, DividerHorizontalIcon } from '@radix-ui/react-icons';
+// import { Checkbox as HeadlessCheckbox } from '@headlessui/react';
+// import { CheckIcon, DividerHorizontalIcon } from '@radix-ui/react-icons';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -30,7 +30,7 @@ import { calculateTimeRemaining } from './utils';
 const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
 
 const columns = [
-  columnsHelper.display({
+  /* columnsHelper.display({
     id: 'select',
     enableSorting: false,
     header: ({ table }) => (
@@ -48,7 +48,7 @@ const columns = [
         onChange={row.toggleSelected}
       />
     ),
-  }),
+  }), */
   columnsHelper.accessor('amount', {
     header: () => <TableCell>Amount</TableCell>,
     cell: (props) => (
@@ -191,10 +191,10 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
 
 export default UnstakeRequestTable;
 
-/**
+/*
  * @internal
  */
-function Checkbox(props: ComponentProps<typeof HeadlessCheckbox>) {
+/* function Checkbox(props: ComponentProps<typeof HeadlessCheckbox>) {
   return (
     <HeadlessCheckbox
       {...props}
@@ -214,7 +214,7 @@ function Checkbox(props: ComponentProps<typeof HeadlessCheckbox>) {
       <DividerHorizontalIcon className="hidden group-data-[indeterminate]:block" />
     </HeadlessCheckbox>
   );
-}
+} */
 
 /**
  * @internal

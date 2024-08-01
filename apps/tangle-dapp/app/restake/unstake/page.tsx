@@ -40,7 +40,7 @@ import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
 import UnstakeModal from './UnstakeModal';
-// import UnstakeRequestTable from './UnstakeRequestTable';
+import UnstakeRequestTable from './UnstakeRequestTable';
 
 export const dynamic = 'force-static';
 
@@ -99,11 +99,11 @@ const Page = () => {
   const selectedUid = watch('uid');
   const amount = watch('amount');
 
-  /*   const delegatorBondLessRequests = useMemo(() => {
+  const delegatorBondLessRequests = useMemo(() => {
     if (!delegatorInfo?.delegatorBondLessRequest) return [];
 
     return [delegatorInfo.delegatorBondLessRequest];
-  }, [delegatorInfo?.delegatorBondLessRequest]); */
+  }, [delegatorInfo?.delegatorBondLessRequest]);
 
   const selectedAsset = useMemo(() => {
     if (!selectedAssetId) return null;
@@ -312,24 +312,24 @@ const Page = () => {
 
       {/** Hardcoded for the margin top to ensure the component is align to same card content */}
       <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
-        {/* {delegatorBondLessRequests.length > 0 ? (
+        {delegatorBondLessRequests.length > 0 ? (
           <UnstakeRequestTable
             delegatorBondLessRequests={delegatorBondLessRequests}
           />
-        ) : ( */}
-        <>
-          <RestakeDetailCard.Header title="No unstake requests found" />
+        ) : (
+          <>
+            <RestakeDetailCard.Header title="No unstake requests found" />
 
-          <Typography
-            variant="body2"
-            className="text-mono-120 dark:text-mono-100"
-          >
-            You will be able to withdraw your tokens after the unstake request
-            has been processed. To unstake your tokens go to the unstake tab to
-            schedule request.
-          </Typography>
-        </>
-        {/* )} */}
+            <Typography
+              variant="body2"
+              className="text-mono-120 dark:text-mono-100"
+            >
+              You will be able to withdraw your tokens after the unstake request
+              has been processed. To unstake your tokens go to the unstake tab
+              to schedule request.
+            </Typography>
+          </>
+        )}
       </RestakeDetailCard.Root>
 
       <Modal>
