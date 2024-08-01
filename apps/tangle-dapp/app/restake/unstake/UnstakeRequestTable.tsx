@@ -10,6 +10,7 @@ import {
 } from '@tanstack/react-table';
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
+import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
@@ -28,7 +29,7 @@ import { calculateTimeRemaining } from './utils';
 const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
 
 const columns = [
-  /* columnsHelper.display({
+  columnsHelper.display({
     id: 'select',
     enableSorting: false,
     header: ({ table }) => (
@@ -50,7 +51,7 @@ const columns = [
         wrapperClassName={cx('min-h-0')}
       />
     ),
-  }), */
+  }),
   columnsHelper.accessor('amount', {
     header: () => <TableCell>Amount</TableCell>,
     cell: (props) => (
