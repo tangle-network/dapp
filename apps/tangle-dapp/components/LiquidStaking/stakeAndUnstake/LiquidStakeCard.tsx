@@ -17,19 +17,19 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import {
-  LIQUID_STAKING_CHAIN_MAP,
-  LIQUID_STAKING_TOKEN_PREFIX,
-  LiquidStakingChainId,
-} from '../../constants/liquidStaking';
-import { useLiquidStakingStore } from '../../data/liquidStaking/store';
+  LST_PREFIX,
+  PARACHAIN_CHAIN_MAP,
+  ParachainChainId,
+} from '../../../constants/liquidStaking';
+import { useLiquidStakingStore } from '../../../data/liquidStaking/store';
 import useExchangeRate, {
   ExchangeRateType,
-} from '../../data/liquidStaking/useExchangeRate';
-import useMintTx from '../../data/liquidStaking/useMintTx';
-import useParachainBalances from '../../data/liquidStaking/useParachainBalances';
-import useApi from '../../hooks/useApi';
-import useApiRx from '../../hooks/useApiRx';
-import { TxStatus } from '../../hooks/useSubstrateTx';
+} from '../../../data/liquidStaking/useExchangeRate';
+import useMintTx from '../../../data/liquidStaking/useMintTx';
+import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
+import useApi from '../../../hooks/useApi';
+import useApiRx from '../../../hooks/useApiRx';
+import { TxStatus } from '../../../hooks/useSubstrateTx';
 import DetailItem from './DetailItem';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
@@ -41,16 +41,12 @@ import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 const LiquidStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
 
-  // const [selectedChainId, setSelectedChainId] = useState<LiquidStakingChainId>(
-  //   LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN,
-  // );
-
   const { selectedChainId, setSelectedChainId } = useLiquidStakingStore();
 
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const { nativeBalances } = useParachainBalances();
 
-  const selectedChain = LIQUID_STAKING_CHAIN_MAP[selectedChainId];
+  const selectedChain = PARACHAIN_CHAIN_MAP[selectedChainId];
 
   const exchangeRate = useExchangeRate(
     ExchangeRateType.NativeToLiquid,
@@ -137,8 +133,8 @@ const LiquidStakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-stake-to"
-        chainId={LiquidStakingChainId.TANGLE_RESTAKING_PARACHAIN}
-        placeholder={`0 ${LIQUID_STAKING_TOKEN_PREFIX}${selectedChain.token}`}
+        chainId={ParachainChainId.TANGLE_RESTAKING_PARACHAIN}
+        placeholder={`0 ${LST_PREFIX}${selectedChain.token}`}
         decimals={selectedChain.decimals}
         amount={toAmount}
         isReadOnly

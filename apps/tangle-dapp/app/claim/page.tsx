@@ -14,6 +14,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { combineLatest, Subscription } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { getApiRx } from '../../utils/polkadot';
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
@@ -23,7 +24,8 @@ export const dynamic = 'force-static';
 
 export default function ClaimPage() {
   const { toggleModal, isWalletConnected } = useConnectWallet();
-  const { activeAccount, loading, isConnecting } = useWebContext();
+  const { loading, isConnecting } = useWebContext();
+  const activeAccountAddress = useActiveAccountAddress();
   const { notificationApi } = useWebbUI();
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
 
@@ -57,11 +59,13 @@ export default function ClaimPage() {
   }, [claimInfo, isClaiming]);
 
   useEffect(() => {
-    if (!activeAccount) return;
+    if (activeAccountAddress === null) {
+      return;
+    }
 
     let isMounted = true;
     let sub: Subscription | null = null;
-    const accountAddress = activeAccount.address;
+    const accountAddress = activeAccountAddress;
 
     const fetchClaimData = async () => {
       try {
@@ -120,7 +124,7 @@ export default function ClaimPage() {
       isMounted = false;
       sub?.unsubscribe();
     };
-  }, [activeAccount, rpcEndpoint, nativeTokenSymbol, notificationApi]);
+  }, [activeAccountAddress, rpcEndpoint, nativeTokenSymbol, notificationApi]);
 
   return (
     <AppTemplate.Content>

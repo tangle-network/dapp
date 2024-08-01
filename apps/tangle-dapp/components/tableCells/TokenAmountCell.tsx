@@ -27,7 +27,11 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({
       return formatTangleBalance(amount);
     }
 
-    return formatBn(amount, decimals);
+    return formatBn(amount, decimals, {
+      // Show small amounts. Without this, small amounts would
+      // be displayed as 0.
+      fractionMaxLength: undefined,
+    });
   }, [amount, decimals]);
 
   const parts = formattedBalance.split('.');

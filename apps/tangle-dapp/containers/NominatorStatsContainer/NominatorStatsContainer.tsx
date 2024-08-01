@@ -5,8 +5,8 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { Button, Divider } from '@webb-tools/webb-ui-components';
 import {
   SOCIAL_URLS_RECORD,
+  TANGLE_DOCS_STAKING_URL,
   WEBB_DISCORD_CHANNEL_URL,
-  WEBB_TANGLE_DOCS_STAKING_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';
@@ -87,7 +87,7 @@ const NominatorStatsContainer: FC = () => {
             </NominatorStatsItem>
 
             <NominatorStatsItem
-              title={`Unclaimed Payouts`}
+              title="Unclaimed Payouts"
               isError={totalPayoutRewardsError !== null}
             >
               {totalPayoutRewards === null
@@ -102,22 +102,25 @@ const NominatorStatsContainer: FC = () => {
           <div className="flex flex-wrap items-center gap-2">
             {networkFeatures.includes(NetworkFeature.Faucet) &&
               !isActiveAccountLoading && (
-                <Link href={WEBB_DISCORD_CHANNEL_URL} target="_blank">
-                  <Button variant="utility" className="!min-w-[100px]">
-                    {`Get ${nativeTokenSymbol}`}
-                  </Button>
-                </Link>
+                <Button
+                  variant="utility"
+                  className="!min-w-[100px]"
+                  href={WEBB_DISCORD_CHANNEL_URL}
+                  target="_blank"
+                >
+                  {`Get ${nativeTokenSymbol}`}
+                </Button>
               )}
 
-            <Link href={PagePath.ACCOUNT}>
-              <Button
-                variant="utility"
-                className="!min-w-[100px]"
-                isDisabled={isActiveAccountLoading}
-              >
-                View Account
-              </Button>
-            </Link>
+            <Button
+              as={Link}
+              variant="utility"
+              className="!min-w-[100px]"
+              isDisabled={isActiveAccountLoading}
+              href={PagePath.ACCOUNT}
+            >
+              View Account
+            </Button>
 
             {/* Only allow nominator setup if not already nominating or bonded */}
             {isBondedOrNominating === false && (
@@ -203,13 +206,21 @@ const NominatorStatsContainer: FC = () => {
               </>
             ) : (
               <div className="flex items-center gap-2">
-                <Link href={WEBB_TANGLE_DOCS_STAKING_URL} target="_blank">
-                  <Button variant="utility">Learn More</Button>
-                </Link>
+                <Button
+                  variant="utility"
+                  href={TANGLE_DOCS_STAKING_URL}
+                  target="_blank"
+                >
+                  Learn More
+                </Button>
 
-                <Link href={SOCIAL_URLS_RECORD.discord} target="_blank">
-                  <Button variant="utility">Join Community</Button>
-                </Link>
+                <Button
+                  variant="utility"
+                  href={SOCIAL_URLS_RECORD.discord}
+                  target="_blank"
+                >
+                  Join Community
+                </Button>
               </div>
             )}
           </div>

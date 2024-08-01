@@ -3,11 +3,11 @@ import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
-import { LiquidStakingToken } from '../../constants/liquidStaking';
-import useMintAndRedeemFees from '../../data/liquidStaking/useMintAndRedeemFees';
-import formatBn from '../../utils/formatBn';
-import scaleAmountByPermill from '../../utils/scaleAmountByPermill';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
+import { LiquidStakingToken } from '../../../constants/liquidStaking';
+import useMintAndRedeemFees from '../../../data/liquidStaking/useMintAndRedeemFees';
+import formatBn from '../../../utils/formatBn';
+import scaleAmountByPermill from '../../../utils/scaleAmountByPermill';
 import DetailItem from './DetailItem';
 
 export type MintAndRedeemFeeDetailItemProps = {
@@ -50,8 +50,9 @@ const MintAndRedeemFeeDetailItem: FC<MintAndRedeemFeeDetailItemProps> = ({
       `${formattedFeeAmount} ${token}`
     );
 
-  // TODO: Add proper tooltip content.
-  return <DetailItem title="Fee" tooltip="This is a test." value={value} />;
+  const feeTitle = fee === null ? 'Fee' : `Fee (${(fee * 100).toFixed(2)}‰)`;
+
+  return <DetailItem title={feeTitle} value={value} />;
 };
 
 export default MintAndRedeemFeeDetailItem;
