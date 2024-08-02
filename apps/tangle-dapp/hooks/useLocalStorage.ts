@@ -82,11 +82,9 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
                           ? LiquidStakingTableData
                           : never;
 
-export const extractFromLocalStorage = <Key extends LocalStorageKey>(
+export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,
 ): LocalStorageValueOf<Key> | null => {
-  type Value = LocalStorageValueOf<Key>;
-
   const valueString = localStorage.getItem(key);
 
   // Item was not present in local storage.
@@ -94,14 +92,18 @@ export const extractFromLocalStorage = <Key extends LocalStorageKey>(
     return null;
   }
 
-  // TODO: This logic is faulty and prone to uncommon bugs, as it will run into problems if the values on local storage are corrupted/outdated. Need to actually parse and validate these values at runtime, perhaps using zod.
-
-  // If the value can be parsed as JSON, assume that it should be
-  // parsed as such. Otherwise, return the raw string value.
   try {
-    return JSON.parse(valueString) as Value;
+    // TODO: Move to using zod to validate the value at runtime.
+    return JSON.parse(valueString) as LocalStorageValueOf<Key>;
   } catch {
-    return valueString as Value;
+    localStorage.removeItem(key);
+
+    console.warn(
+      'Removed corrupted local storage key, which failed to be parsed as JSON:',
+      key,
+    );
+
+    return null;
   }
 };
 
@@ -126,7 +128,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(key: Key) => {
   const [valueOpt, setValueOpt] = useState<Optional<Value> | null>(null);
 
   const refresh = useCallback(() => {
-    const freshValue = extractFromLocalStorage<Key>(key);
+    const freshValue = getJsonFromLocalStorage<Key>(key);
 
     const freshValueOpt = new Optional(
       freshValue === null ? undefined : freshValue,

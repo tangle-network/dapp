@@ -49,6 +49,7 @@ const CustomRpcEndpointInput: FC<CustomRpcEndpointInputProps> = ({
       placeholder={placeholder}
       value={value}
       onChange={setValue}
+      isControlled
       rightIcon={
         value !== '' ? (
           <SaveWithBg className="cursor-pointer" onClick={handleSave} />
