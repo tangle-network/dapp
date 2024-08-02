@@ -42,7 +42,6 @@ export default function usePayouts(): UsePayoutsReturnType {
 
   const { setWithPreviousValue: setCachedPayouts } = useLocalStorage(
     LocalStorageKey.PAYOUTS,
-    true,
   );
 
   const { rpcEndpoint, network } = useNetworkStore();

@@ -84,31 +84,25 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
 
 export const extractFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,
-  canClearIfInvalid: boolean,
 ): LocalStorageValueOf<Key> | null => {
   type Value = LocalStorageValueOf<Key>;
 
-  const jsonString = localStorage.getItem(key);
+  const valueString = localStorage.getItem(key);
 
   // Item was not present in local storage.
-  if (jsonString === null) {
+  if (valueString === null) {
     return null;
   }
 
-  let value: Value | null = null;
+  // TODO: This logic is faulty and prone to uncommon bugs, as it will run into problems if the values on local storage are corrupted/outdated. Need to actually parse and validate these values at runtime, perhaps using zod.
 
-  // Clear the local storage value if parsing fails, and the
-  // entry is set to be cleared if invalid.
+  // If the value can be parsed as JSON, assume that it should be
+  // parsed as such. Otherwise, return the raw string value.
   try {
-    // TODO: Use zod to validate the value, this helps prevent logic errors.
-    value = JSON.parse(jsonString) as Value;
+    return JSON.parse(valueString) as Value;
   } catch {
-    if (canClearIfInvalid) {
-      localStorage.removeItem(key);
-    }
+    return valueString as Value;
   }
-
-  return value;
 };
 
 // TODO: During development cycles, changing local storage value types will lead to
@@ -124,10 +118,7 @@ export const extractFromLocalStorage = <Key extends LocalStorageKey>(
  * it's recommended to instead use a `useEffect` and manually retrieve the
  * value from local storage on mount, using the `get` method.
  */
-const useLocalStorage = <Key extends LocalStorageKey>(
-  key: Key,
-  isUsedAsCache = false,
-) => {
+const useLocalStorage = <Key extends LocalStorageKey>(key: Key) => {
   type Value = LocalStorageValueOf<Key>;
 
   // Initially, the value is `null` until the component is mounted
@@ -135,7 +126,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(
   const [valueOpt, setValueOpt] = useState<Optional<Value> | null>(null);
 
   const refresh = useCallback(() => {
-    const freshValue = extractFromLocalStorage<Key>(key, isUsedAsCache);
+    const freshValue = extractFromLocalStorage<Key>(key);
 
     const freshValueOpt = new Optional(
       freshValue === null ? undefined : freshValue,
@@ -144,7 +135,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(
     setValueOpt(freshValueOpt);
 
     return freshValueOpt;
-  }, [isUsedAsCache, key]);
+  }, [key]);
 
   // Extract the value from local storage on mount.
   useEffect(() => {
