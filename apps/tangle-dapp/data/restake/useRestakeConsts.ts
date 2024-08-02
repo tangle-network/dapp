@@ -1,57 +1,80 @@
+import { useMemo } from 'react';
+
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import getModuleConstant from '../../utils/getModuleConstant';
 
 export default function useRestakeConsts() {
   const { apiPromise } = usePolkadotApi();
 
-  const bondDuration =
-    getModuleConstant(
-      apiPromise,
-      'multiAssetDelegation',
-      'bondDuration',
-    )?.toNumber() ?? null;
+  const bondDuration = useMemo(
+    () =>
+      getModuleConstant(
+        apiPromise,
+        'multiAssetDelegation',
+        'bondDuration',
+      )?.toNumber() ?? null,
+    [apiPromise],
+  );
 
-  const delegationBondLessDelay =
-    getModuleConstant(
-      apiPromise,
-      'multiAssetDelegation',
-      'delegationBondLessDelay',
-    )?.toNumber() ?? null;
+  const delegationBondLessDelay = useMemo(
+    () =>
+      getModuleConstant(
+        apiPromise,
+        'multiAssetDelegation',
+        'delegationBondLessDelay',
+      )?.toNumber() ?? null,
+    [apiPromise],
+  );
 
-  const leaveDelegatorsDelay =
-    getModuleConstant(
-      apiPromise,
-      'multiAssetDelegation',
-      'leaveDelegatorsDelay',
-    )?.toNumber() ?? null;
+  const leaveDelegatorsDelay = useMemo(
+    () =>
+      getModuleConstant(
+        apiPromise,
+        'multiAssetDelegation',
+        'leaveDelegatorsDelay',
+      )?.toNumber() ?? null,
+    [apiPromise],
+  );
 
-  const leaveOperatorsDelay =
-    getModuleConstant(
-      apiPromise,
-      'multiAssetDelegation',
-      'leaveOperatorsDelay',
-    )?.toNumber() ?? null;
+  const leaveOperatorsDelay = useMemo(
+    () =>
+      getModuleConstant(
+        apiPromise,
+        'multiAssetDelegation',
+        'leaveOperatorsDelay',
+      )?.toNumber() ?? null,
+    [apiPromise],
+  );
 
-  const minDelegateAmount =
-    getModuleConstant(
-      apiPromise,
-      'multiAssetDelegation',
-      'minDelegateAmount',
-    )?.toBigInt() ?? null;
+  const minDelegateAmount = useMemo(
+    () =>
+      getModuleConstant(
+        apiPromise,
+        'multiAssetDelegation',
+        'minDelegateAmount',
+      )?.toBigInt() ?? null,
+    [apiPromise],
+  );
 
-  const minOperatorBondAmount =
-    getModuleConstant(
-      apiPromise,
-      'multiAssetDelegation',
-      'minOperatorBondAmount',
-    )?.toBigInt() ?? null;
+  const minOperatorBondAmount = useMemo(
+    () =>
+      getModuleConstant(
+        apiPromise,
+        'multiAssetDelegation',
+        'minOperatorBondAmount',
+      )?.toBigInt() ?? null,
+    [apiPromise],
+  );
 
-  const operatorBondLessDelay =
-    getModuleConstant(
-      apiPromise,
-      'multiAssetDelegation',
-      'operatorBondLessDelay',
-    )?.toNumber() ?? null;
+  const operatorBondLessDelay = useMemo(
+    () =>
+      getModuleConstant(
+        apiPromise,
+        'multiAssetDelegation',
+        'operatorBondLessDelay',
+      )?.toNumber() ?? null,
+    [apiPromise],
+  );
 
   return {
     bondDuration,
