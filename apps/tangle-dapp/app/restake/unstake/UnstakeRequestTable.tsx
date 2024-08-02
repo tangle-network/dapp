@@ -1,6 +1,6 @@
 'use client';
 
-import {
+/* import {
   createColumnHelper,
   getCoreRowModel,
   getPaginationRowModel,
@@ -21,15 +21,15 @@ import { formatUnits } from 'viem';
 
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
-import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
+import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound'; */
 import type { DelegatorBondLessRequest } from '../../../types/restake';
-import type { UnstakeRequestTableData } from './types';
-// import UnstakeRequestTableActions from './UnstakeRequestTableActions';
-import { calculateTimeRemaining } from './utils';
+/* import type { UnstakeRequestTableData } from './types';
+import UnstakeRequestTableActions from './UnstakeRequestTableActions';
+import { calculateTimeRemaining } from './utils'; */
 
-const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
+// const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
 
-const columns = [
+/* const columns = [
   columnsHelper.display({
     id: 'select',
     enableSorting: false,
@@ -86,20 +86,20 @@ const columns = [
       );
     },
   }),
-];
+]; */
 
 type Props = {
   delegatorBondLessRequests: DelegatorBondLessRequest[];
 };
 
-const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
-  const { assetMap } = useRestakeContext();
+const UnstakeRequestTable = ({ delegatorBondLessRequests: _ }: Props) => {
+  /* const { assetMap } = useRestakeContext();
   const { delegationBondLessDelay } = useRestakeConsts();
-  const { currentRound } = useRestakeCurrentRound();
+  const { currentRound } = useRestakeCurrentRound(); */
 
   // Transforming the array to object with uuid as key
   // for easier querying
-  const unstakeRequestsWithId = useMemo(
+  /* const unstakeRequestsWithId = useMemo(
     () =>
       delegatorBondLessRequests.reduce(
         (acc, current) => {
@@ -110,9 +110,9 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
         {} as Record<string, DelegatorBondLessRequest & { uid: string }>,
       ),
     [delegatorBondLessRequests],
-  );
+  ); */
 
-  const dataWithId = useMemo(
+  /* const dataWithId = useMemo(
     () =>
       Object.values(unstakeRequestsWithId).reduce(
         (acc, { assetId, bondLessAmount, requestedRound, uid }) => {
@@ -138,9 +138,9 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
         {} as Record<string, UnstakeRequestTableData>,
       ),
     [assetMap, currentRound, delegationBondLessDelay, unstakeRequestsWithId],
-  );
+  ); */
 
-  const table = useReactTable(
+  /* const table = useReactTable(
     useMemo<TableOptions<UnstakeRequestTableData>>(
       () => ({
         data: Object.values(dataWithId),
@@ -158,7 +158,7 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
       }),
       [dataWithId],
     ),
-  );
+  ); */
 
   /* const rowSelection = table.getSelectedRowModel().rows;
 
@@ -169,7 +169,7 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
 
   return (
     <>
-      <Table
+      {/* <Table
         tableProps={table}
         isPaginated
         thClassName={cx(
@@ -178,7 +178,9 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
         tdClassName={cx(
           '!border-transparent !bg-transparent px-3 py-2 first:w-[18px]',
         )}
-      />
+      /> */}
+
+      <div>Table</div>
 
       {/* <div className="flex items-center gap-3">
         <UnstakeRequestTableActions selectedRequests={selectedRequests} />
@@ -192,7 +194,7 @@ export default UnstakeRequestTable;
 /**
  * @internal
  */
-function TableCell({
+/* function TableCell({
   className,
   children,
   variant = 'body2',
@@ -210,3 +212,4 @@ function TableCell({
     </Typography>
   );
 }
+ */
