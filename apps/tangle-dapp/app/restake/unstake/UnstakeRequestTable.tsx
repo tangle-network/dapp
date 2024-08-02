@@ -180,8 +180,6 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
         )}
       />
 
-      <div>Table</div>
-
       <div className="flex items-center gap-3">
         <UnstakeRequestTableActions selectedRequests={selectedRequests} />
       </div>
