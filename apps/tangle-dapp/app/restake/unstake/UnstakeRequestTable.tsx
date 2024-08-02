@@ -1,7 +1,5 @@
 'use client';
 
-import { Checkbox as HeadlessCheckbox } from '@headlessui/react';
-import { CheckIcon, DividerHorizontalIcon } from '@radix-ui/react-icons';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -12,6 +10,7 @@ import {
 } from '@tanstack/react-table';
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
+import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
@@ -35,18 +34,22 @@ const columns = [
     id: 'select',
     enableSorting: false,
     header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllRowsSelected()}
-        indeterminate={table.getIsSomeRowsSelected()}
-        onChange={table.toggleAllRowsSelected}
+      <CheckBox
+        isChecked={table.getIsAllRowsSelected()}
+        // TODO: Add indeterminate state for CheckBox
+        // indeterminate={table.getIsSomeRowsSelected()}
+        onChange={table.getToggleAllRowsSelectedHandler()}
+        wrapperClassName={cx('min-h-0')}
       />
     ),
     cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        disabled={!row.getCanSelect()}
-        indeterminate={row.getIsSomeSelected()}
-        onChange={row.toggleSelected}
+      <CheckBox
+        isChecked={row.getIsSelected()}
+        isDisabled={!row.getCanSelect()}
+        // TODO: Add indeterminate state for CheckBox
+        // indeterminate={row.getIsSomeSelected()}
+        onChange={row.getToggleSelectedHandler()}
+        wrapperClassName={cx('min-h-0')}
       />
     ),
   }),
@@ -157,13 +160,10 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
     ),
   );
 
-  const rowSelection = table.getState().rowSelection;
+  const rowSelection = table.getSelectedRowModel().rows;
 
-  const selectedRequestIds = useMemo(
-    () =>
-      Object.entries(rowSelection)
-        .filter(([, selected]) => selected)
-        .map(([uid]) => uid),
+  const selectedRequests = useMemo(
+    () => rowSelection.map((row) => row.original),
     [rowSelection],
   );
 
@@ -181,41 +181,13 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
       />
 
       <div className="flex items-center gap-3">
-        <UnstakeRequestTableActions
-          selectedRequestIds={selectedRequestIds}
-          dataWithId={dataWithId}
-        />
+        <UnstakeRequestTableActions selectedRequests={selectedRequests} />
       </div>
     </>
   );
 };
 
 export default UnstakeRequestTable;
-
-/**
- * @internal
- */
-function Checkbox(props: ComponentProps<typeof HeadlessCheckbox>) {
-  return (
-    <HeadlessCheckbox
-      {...props}
-      className={twMerge(
-        'form-checkbox group flex items-center justify-center overflow-hidden size-[18px]',
-        'border border-mono-100 outline-none rounded',
-        'bg-mono-0 dark:bg-mono-180',
-        'enabled:hover:shadow-sm enabled:hover:shadow-blue-10 dark:hover:shadow-none',
-        'data-[checked]:bg-blue-70 dark:data-[checked]:bg-blue-50',
-        'data-[indeterminate]:bg-blue-70 dark:data-[indeterminate]:bg-blue-50',
-        'data-[disabled]:cursor-not-allowed data-[disabled]:shadow-none',
-        'data-[disabled]:border-mono-60 dark:data-[disabled]:border-mono-120',
-        'data-[disabled]:bg-mono-0 dark:data-[disabled]:bg-mono-140',
-      )}
-    >
-      <CheckIcon className="hidden group-data-[checked]:block" />
-      <DividerHorizontalIcon className="hidden group-data-[indeterminate]:block" />
-    </HeadlessCheckbox>
-  );
-}
 
 /**
  * @internal
