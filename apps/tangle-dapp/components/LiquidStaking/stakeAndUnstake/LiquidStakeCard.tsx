@@ -157,7 +157,7 @@ const LiquidStakeCard: FC = () => {
           token={selectedChain.token}
         />
 
-        <UnstakePeriodDetailItem />
+        <UnstakePeriodDetailItem currency={selectedChain.currency} />
 
         <DetailItem title="Estimated wait time" value="~10 minutes" />
       </div>

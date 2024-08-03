@@ -213,7 +213,7 @@ async function netWorkToChain(network: Network, activeWallet: WalletConfig) {
           : DEFAULT_SS58.toNumber();
     }
 
-    const deciamls =
+    const decimals =
       api.registry.chainDecimals.length > 0
         ? api.registry.chainDecimals[0]
         : DEFAULT_DECIMALS;
@@ -231,7 +231,7 @@ async function netWorkToChain(network: Network, activeWallet: WalletConfig) {
             network.substrateChainId,
             ChainType.Substrate,
             typedChainId,
-            deciamls,
+            decimals,
           );
 
     return chain;
