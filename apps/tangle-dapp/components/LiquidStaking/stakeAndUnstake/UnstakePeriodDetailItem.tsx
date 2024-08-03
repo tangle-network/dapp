@@ -22,7 +22,6 @@ const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
     }
 
     const unlockDuration = unlockDurations.find(
-      // TODO: Is it native or liquid variant?
       (entry) => entry.currency === currency && entry.isNative,
     );
 
