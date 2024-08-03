@@ -1,6 +1,6 @@
 'use client';
 
-import {
+/* import {
   createColumnHelper,
   getCoreRowModel,
   getPaginationRowModel,
@@ -21,13 +21,13 @@ import { formatUnits } from 'viem';
 
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
-import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
+import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound'; */
 import type { DelegatorBondLessRequest } from '../../../types/restake';
-import type { UnstakeRequestTableData } from './types';
+/* import type { UnstakeRequestTableData } from './types';
 import UnstakeRequestTableActions from './UnstakeRequestTableActions';
-import { calculateTimeRemaining } from './utils';
+import { calculateTimeRemaining } from './utils'; */
 
-const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
+/* const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
 
 const columns = [
   columnsHelper.display({
@@ -87,13 +87,13 @@ const columns = [
     },
   }),
 ];
-
+ */
 type Props = {
   delegatorBondLessRequests: DelegatorBondLessRequest[];
 };
 
-const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
-  const { assetMap } = useRestakeContext();
+const UnstakeRequestTable = ({ delegatorBondLessRequests: _ }: Props) => {
+  /* const { assetMap } = useRestakeContext();
   const { delegationBondLessDelay } = useRestakeConsts();
   const { currentRound } = useRestakeCurrentRound();
 
@@ -165,9 +165,9 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
   const selectedRequests = useMemo(
     () => rowSelection.map((row) => row.original),
     [rowSelection],
-  );
+  ); */
 
-  return (
+  /* return (
     <>
       <Table
         tableProps={table}
@@ -184,7 +184,9 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
         <UnstakeRequestTableActions selectedRequests={selectedRequests} />
       </div>
     </>
-  );
+  ); */
+
+  return <div>Unstake Request Table</div>;
 };
 
 export default UnstakeRequestTable;
@@ -192,7 +194,7 @@ export default UnstakeRequestTable;
 /**
  * @internal
  */
-function TableCell({
+/* function TableCell({
   className,
   children,
   variant = 'body2',
@@ -210,3 +212,4 @@ function TableCell({
     </Typography>
   );
 }
+ */
