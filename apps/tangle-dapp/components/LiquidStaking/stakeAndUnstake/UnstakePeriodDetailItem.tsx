@@ -2,10 +2,8 @@ import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useMemo } from 'react';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { ParachainCurrency } from '../../../constants/liquidStaking';
 import useTokenUnlockDurations from '../../../data/liquidStaking/useTokenUnlockDurations';
-import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
 import DetailItem from './DetailItem';
 
@@ -16,7 +14,6 @@ export type UnstakePeriodDetailItemProps = {
 const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
   currency,
 }) => {
-  const activeAccountAddress = useActiveAccountAddress();
   const unlockDurations = useTokenUnlockDurations();
 
   const unlockPeriod = useMemo<'Unknown' | [string, string] | null>(() => {
@@ -42,10 +39,7 @@ const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
   }, [currency, unlockDurations]);
 
   const value =
-    activeAccountAddress === null ? (
-      // No active account.
-      EMPTY_VALUE_PLACEHOLDER
-    ) : unlockPeriod === null ? (
+    unlockPeriod === null ? (
       // Still fetching unlocking period.
       <SkeletonLoader className="max-w-[100px] min-w-4" />
     ) : typeof unlockPeriod !== 'string' ? (
