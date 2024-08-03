@@ -1,6 +1,6 @@
 'use client';
 
-/* import {
+import {
   createColumnHelper,
   getCoreRowModel,
   getPaginationRowModel,
@@ -11,7 +11,7 @@
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
-import { Table } from '@webb-tools/webb-ui-components/components/Table';
+// import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
 import uniqueId from 'lodash/uniqueId';
@@ -21,13 +21,13 @@ import { formatUnits } from 'viem';
 
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
-import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound'; */
+import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
 import type { DelegatorBondLessRequest } from '../../../types/restake';
-/* import type { UnstakeRequestTableData } from './types';
-import UnstakeRequestTableActions from './UnstakeRequestTableActions';
-import { calculateTimeRemaining } from './utils'; */
+import type { UnstakeRequestTableData } from './types';
+// import UnstakeRequestTableActions from './UnstakeRequestTableActions';
+import { calculateTimeRemaining } from './utils';
 
-/* const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
+const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
 
 const columns = [
   columnsHelper.display({
@@ -87,13 +87,13 @@ const columns = [
     },
   }),
 ];
- */
+
 type Props = {
   delegatorBondLessRequests: DelegatorBondLessRequest[];
 };
 
-const UnstakeRequestTable = ({ delegatorBondLessRequests: _ }: Props) => {
-  /* const { assetMap } = useRestakeContext();
+const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
+  const { assetMap } = useRestakeContext();
   const { delegationBondLessDelay } = useRestakeConsts();
   const { currentRound } = useRestakeCurrentRound();
 
@@ -165,7 +165,9 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests: _ }: Props) => {
   const selectedRequests = useMemo(
     () => rowSelection.map((row) => row.original),
     [rowSelection],
-  ); */
+  );
+
+  console.log('selectedRequests', selectedRequests);
 
   /* return (
     <>
@@ -194,7 +196,7 @@ export default UnstakeRequestTable;
 /**
  * @internal
  */
-/* function TableCell({
+function TableCell({
   className,
   children,
   variant = 'body2',
@@ -212,4 +214,3 @@ export default UnstakeRequestTable;
     </Typography>
   );
 }
- */
