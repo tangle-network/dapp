@@ -11,7 +11,7 @@ import {
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
-// import { Table } from '@webb-tools/webb-ui-components/components/Table';
+import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
 import uniqueId from 'lodash/uniqueId';
@@ -24,7 +24,7 @@ import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
 import type { DelegatorBondLessRequest } from '../../../types/restake';
 import type { UnstakeRequestTableData } from './types';
-// import UnstakeRequestTableActions from './UnstakeRequestTableActions';
+import UnstakeRequestTableActions from './UnstakeRequestTableActions';
 import { calculateTimeRemaining } from './utils';
 
 const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
@@ -167,9 +167,7 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
     [rowSelection],
   );
 
-  console.log('selectedRequests', selectedRequests);
-
-  /* return (
+  return (
     <>
       <Table
         tableProps={table}
@@ -186,9 +184,7 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
         <UnstakeRequestTableActions selectedRequests={selectedRequests} />
       </div>
     </>
-  ); */
-
-  return <div>Unstake Request Table</div>;
+  );
 };
 
 export default UnstakeRequestTable;
