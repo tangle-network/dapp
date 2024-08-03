@@ -40,7 +40,7 @@ import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
 import UnstakeModal from './UnstakeModal';
-import UnstakeRequestTable from './UnstakeRequestTable';
+// import UnstakeRequestTable from './UnstakeRequestTable';
 
 export const dynamic = 'force-static';
 
@@ -313,9 +313,12 @@ const Page = () => {
       {/** Hardcoded for the margin top to ensure the component is align to same card content */}
       <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
         {delegatorBondLessRequests.length > 0 ? (
-          <UnstakeRequestTable
+          <>
+            {/* <UnstakeRequestTable
             delegatorBondLessRequests={delegatorBondLessRequests}
-          />
+          /> */}
+            <div>Table</div>
+          </>
         ) : (
           <>
             <RestakeDetailCard.Header title="No unstake requests found" />
