@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import {
   ParachainCurrency,
-  ParachainCurrencyKey,
+  LsParachainCurrencyKey,
 } from '../../constants/liquidStaking';
 import useApiRx from '../../hooks/useApiRx';
 import calculateBnRatio from '../../utils/calculateBnRatio';
@@ -18,7 +18,7 @@ const useExchangeRate = (
   currency: ParachainCurrency,
 ) => {
   const { result: tokenPoolAmount } = useApiRx((api) => {
-    const key: ParachainCurrencyKey =
+    const key: LsParachainCurrencyKey =
       type === ExchangeRateType.NativeToLiquid
         ? { Native: currency }
         : { lst: currency };

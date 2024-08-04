@@ -7,22 +7,24 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 
 import { StaticAssetPath } from '.';
 
-export enum ParachainChainId {
+export enum LsChainId {
   POLKADOT = 'Polkadot',
   PHALA = 'Phala',
   MOONBEAM = 'Moonbeam',
   ASTAR = 'Astar',
   MANTA = 'Manta',
   TANGLE_RESTAKING_PARACHAIN = 'Tangle Parachain',
+  CHAINLINK = 'Chainlink',
 }
 
-export enum LiquidStakingToken {
+export enum LsToken {
   DOT = 'DOT',
   GLMR = 'GLMR',
   MANTA = 'MANTA',
   ASTAR = 'ASTR',
   PHALA = 'PHALA',
   TNT = 'TNT',
+  LINK = 'LINK',
 }
 
 // TODO: Temporary manual override until the Parachain types are updated.
@@ -30,28 +32,21 @@ export type ParachainCurrency = TanglePrimitivesCurrencyTokenSymbol['type'];
 // | Exclude<TanglePrimitivesCurrencyTokenSymbol['type'], 'Bnc'>
 // | 'Tnt';
 
-export type SubstrateChainTimingSpec = {
-  expectedBlockTimeMs: number;
-  blocksPerSession: number;
-  sessionsPerEra: number;
-};
-
-export type ParachainChainDef = {
-  id: ParachainChainId;
+export type LsChainDef = {
+  id: LsChainId;
   name: string;
-  token: LiquidStakingToken;
+  token: LsToken;
   logo: StaticAssetPath;
   networkName: string;
   currency: ParachainCurrency;
   decimals: number;
-  substrateTimingSpec?: SubstrateChainTimingSpec;
   rpcEndpoint: string;
 };
 
-const POLKADOT: ParachainChainDef = {
-  id: ParachainChainId.POLKADOT,
+const POLKADOT: LsChainDef = {
+  id: LsChainId.POLKADOT,
   name: 'Polkadot',
-  token: LiquidStakingToken.DOT,
+  token: LsToken.DOT,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_POLKADOT,
   networkName: 'Polkadot Mainnet',
   currency: 'Dot',
@@ -59,10 +54,10 @@ const POLKADOT: ParachainChainDef = {
   rpcEndpoint: 'wss://polkadot-rpc.dwellir.com',
 };
 
-const PHALA: ParachainChainDef = {
-  id: ParachainChainId.PHALA,
+const PHALA: LsChainDef = {
+  id: LsChainId.PHALA,
   name: 'Phala',
-  token: LiquidStakingToken.PHALA,
+  token: LsToken.PHALA,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
   networkName: 'Phala',
   currency: 'Pha',
@@ -70,10 +65,10 @@ const PHALA: ParachainChainDef = {
   rpcEndpoint: 'wss://api.phala.network/ws',
 };
 
-const MOONBEAM: ParachainChainDef = {
-  id: ParachainChainId.MOONBEAM,
+const MOONBEAM: LsChainDef = {
+  id: LsChainId.MOONBEAM,
   name: 'Moonbeam',
-  token: LiquidStakingToken.GLMR,
+  token: LsToken.GLMR,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_GLIMMER,
   networkName: 'Moonbeam',
   // TODO: No currency entry for GLMR in the Tangle Primitives?
@@ -82,10 +77,10 @@ const MOONBEAM: ParachainChainDef = {
   rpcEndpoint: 'wss://moonbeam.api.onfinality.io/public-ws',
 };
 
-const ASTAR: ParachainChainDef = {
-  id: ParachainChainId.ASTAR,
+const ASTAR: LsChainDef = {
+  id: LsChainId.ASTAR,
   name: 'Astar',
-  token: LiquidStakingToken.ASTAR,
+  token: LsToken.ASTAR,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_ASTAR,
   networkName: 'Astar',
   // TODO: No currency entry for ASTAR in the Tangle Primitives?
@@ -94,10 +89,10 @@ const ASTAR: ParachainChainDef = {
   rpcEndpoint: 'wss://astar.api.onfinality.io/public-ws',
 };
 
-const MANTA: ParachainChainDef = {
-  id: ParachainChainId.MANTA,
+const MANTA: LsChainDef = {
+  id: LsChainId.MANTA,
   name: 'Manta',
-  token: LiquidStakingToken.MANTA,
+  token: LsToken.MANTA,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_MANTA,
   networkName: 'Manta',
   // TODO: No currency entry for ASTAR in the Tangle Primitives?
@@ -106,45 +101,40 @@ const MANTA: ParachainChainDef = {
   rpcEndpoint: 'wss://ws.manta.systems',
 };
 
-const TANGLE_RESTAKING_PARACHAIN: ParachainChainDef = {
-  id: ParachainChainId.TANGLE_RESTAKING_PARACHAIN,
+const TANGLE_RESTAKING_PARACHAIN: LsChainDef = {
+  id: LsChainId.TANGLE_RESTAKING_PARACHAIN,
   name: 'Tangle Parachain',
-  token: LiquidStakingToken.TNT,
+  token: LsToken.TNT,
   logo: StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO,
   networkName: 'Tangle Parachain',
   currency: 'Bnc',
   decimals: TANGLE_TOKEN_DECIMALS,
   rpcEndpoint: TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
-  substrateTimingSpec: {
-    expectedBlockTimeMs: 12_000,
-    // TODO: This is dummy data for now. Update with the actual values.
-    blocksPerSession: 6,
-    sessionsPerEra: 6,
-  },
 };
 
-export const PARACHAIN_CHAIN_MAP: Record<ParachainChainId, ParachainChainDef> =
-  {
-    [ParachainChainId.POLKADOT]: POLKADOT,
-    [ParachainChainId.PHALA]: PHALA,
-    [ParachainChainId.MOONBEAM]: MOONBEAM,
-    [ParachainChainId.ASTAR]: ASTAR,
-    [ParachainChainId.MANTA]: MANTA,
-    [ParachainChainId.TANGLE_RESTAKING_PARACHAIN]: TANGLE_RESTAKING_PARACHAIN,
-  };
-
-export const LIQUID_STAKING_CHAINS: ParachainChainDef[] =
-  Object.values(PARACHAIN_CHAIN_MAP);
-
-// TODO: Instead of mapping to names, map to network/chain definitions themselves. This avoids redundancy and relies on a centralized definition for the network/chain which is better, since it simplifies future refactoring.
-export const LS_CHAIN_TO_NETWORK_NAME: Record<ParachainChainId, string> = {
-  [ParachainChainId.POLKADOT]: 'Polkadot Mainnet',
-  [ParachainChainId.PHALA]: 'Phala',
-  [ParachainChainId.MOONBEAM]: 'Moonbeam',
-  [ParachainChainId.ASTAR]: 'Astar',
-  [ParachainChainId.MANTA]: 'Manta',
-  [ParachainChainId.TANGLE_RESTAKING_PARACHAIN]: 'Tangle Parachain',
+const CHAINLINK: LsChainDef = {
+  id: LsChainId.CHAINLINK,
+  name: 'Chainlink',
+  token: LsToken.LINK,
+  networkName: 'Chainlink',
+  decimals: 18,
+  // TODO: Dummy data. Need to differentiate between EVM and Substrate chains.
+  currency: 'Asg',
+  logo: StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO,
+  rpcEndpoint: 'wss://api.chain.link',
 };
+
+export const LS_CHAIN_MAP: Record<LsChainId, LsChainDef> = {
+  [LsChainId.POLKADOT]: POLKADOT,
+  [LsChainId.PHALA]: PHALA,
+  [LsChainId.MOONBEAM]: MOONBEAM,
+  [LsChainId.ASTAR]: ASTAR,
+  [LsChainId.MANTA]: MANTA,
+  [LsChainId.TANGLE_RESTAKING_PARACHAIN]: TANGLE_RESTAKING_PARACHAIN,
+  [LsChainId.CHAINLINK]: CHAINLINK,
+};
+
+export const LIQUID_STAKING_CHAINS: LsChainDef[] = Object.values(LS_CHAIN_MAP);
 
 export const TVS_TOOLTIP =
   "Total Value Staked (TVS) refers to the total value of assets that are currently staked for this network in fiat currency. Generally used as an indicator of a network's security and trustworthiness.";
@@ -155,7 +145,7 @@ export const LST_PREFIX = 'tg';
 export type Network = {
   name: string;
   endpoint: string;
-  tokenSymbol: LiquidStakingToken;
+  tokenSymbol: LsToken;
   chainType: NetworkType;
 };
 
@@ -164,13 +154,13 @@ export enum NetworkType {
   PARACHAIN = 'Parachain',
 }
 
-export type ParachainCurrencyKey =
+export type LsParachainCurrencyKey =
   | { lst: ParachainCurrency }
   | { Native: ParachainCurrency };
 
-export type ParachainTimeUnit = TanglePrimitivesTimeUnit['type'];
+export type LsParachainTimeUnit = TanglePrimitivesTimeUnit['type'];
 
-export type SimpleTimeUnitInstance = {
+export type LsSimpleParachainTimeUnit = {
   value: number;
-  unit: ParachainTimeUnit;
+  unit: LsParachainTimeUnit;
 };

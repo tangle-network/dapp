@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import {
   LIQUID_STAKING_CHAINS,
-  SimpleTimeUnitInstance,
+  LsSimpleParachainTimeUnit,
 } from '../../../constants/liquidStaking';
 import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
 import useOngoingTimeUnits from '../../../data/liquidStaking/useOngoingTimeUnits';
@@ -56,7 +56,7 @@ const useLstUnlockRequestTableRows = () => {
         const remainingTimeUnitValue =
           request.unlockTimeUnit.value - ongoingTimeUnitEntry.timeUnit.value;
 
-        const remainingTimeUnit: SimpleTimeUnitInstance | undefined =
+        const remainingTimeUnit: LsSimpleParachainTimeUnit | undefined =
           remainingTimeUnitValue <= 0
             ? undefined
             : {

@@ -2,15 +2,12 @@ import Image from 'next/image';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import {
-  PARACHAIN_CHAIN_MAP,
-  ParachainChainId,
-} from '../../../constants/liquidStaking';
+import { LS_CHAIN_MAP, LsChainId } from '../../../constants/liquidStaking';
 
 export type ChainLogoSize = 'sm' | 'md';
 
 export type ChainLogoProps = {
-  chainId?: ParachainChainId;
+  chainId?: LsChainId;
   size: ChainLogoSize;
   isRounded?: boolean;
   isLiquidVariant?: boolean;
@@ -34,21 +31,21 @@ const getSizeClass = (size: ChainLogoSize) => {
   }
 };
 
-const getBackgroundColor = (chain: ParachainChainId) => {
+const getBackgroundColor = (chain: LsChainId) => {
   switch (chain) {
-    case ParachainChainId.MANTA:
+    case LsChainId.MANTA:
       return 'bg-[#13101D] dark:bg-[#13101D]';
-    case ParachainChainId.MOONBEAM:
+    case LsChainId.MOONBEAM:
       return 'bg-[#1d1336] dark:bg-[#1d1336]';
-    case ParachainChainId.PHALA:
+    case LsChainId.PHALA:
       return 'bg-black dark:bg-black';
-    case ParachainChainId.POLKADOT:
+    case LsChainId.POLKADOT:
       return 'bg-mono-0 dark:bg-mono-0';
-    case ParachainChainId.TANGLE_RESTAKING_PARACHAIN:
+    case LsChainId.TANGLE_RESTAKING_PARACHAIN:
       // Fix the icon SVG getting cut off on the sides by adding
       // a matching background.
       return 'bg-[#f6f4ff]';
-    case ParachainChainId.ASTAR:
+    case LsChainId.ASTAR:
       // No background for Astar, since it looks better without
       // a background.
       return '';
@@ -88,7 +85,7 @@ const ChainLogo: FC<ChainLogoProps> = ({
           getBackgroundColor(chainId),
           isRounded ? 'rounded-full' : 'rounded-md',
         )}
-        src={PARACHAIN_CHAIN_MAP[chainId].logo}
+        src={LS_CHAIN_MAP[chainId].logo}
         alt={`Logo of the liquid staking token ${chainId}`}
         width={sizeNumber}
         height={sizeNumber}

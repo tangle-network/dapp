@@ -1,11 +1,7 @@
-import { LiquidStakingToken } from '../../constants/liquidStaking';
+import { LsToken } from '../../constants/liquidStaking';
 
-function isLiquidStakingToken(
-  tokenSymbol: string,
-): tokenSymbol is LiquidStakingToken {
-  return Object.values(LiquidStakingToken).includes(
-    tokenSymbol as LiquidStakingToken,
-  );
+function isLiquidStakingToken(tokenSymbol: string): tokenSymbol is LsToken {
+  return Object.values(LsToken).includes(tokenSymbol as LsToken);
 }
 
 export default isLiquidStakingToken;

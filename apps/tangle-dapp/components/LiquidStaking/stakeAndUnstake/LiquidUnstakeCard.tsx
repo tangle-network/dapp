@@ -12,8 +12,8 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   LST_PREFIX,
-  PARACHAIN_CHAIN_MAP,
-  ParachainChainId,
+  LS_CHAIN_MAP,
+  LsChainId,
 } from '../../../constants/liquidStaking';
 import useDelegationsOccupiedStatus from '../../../data/liquidStaking/useDelegationsOccupiedStatus';
 import useExchangeRate, {
@@ -39,8 +39,8 @@ const LiquidUnstakeCard: FC = () => {
   const [isRequestSubmittedModalOpen, setIsRequestSubmittedModalOpen] =
     useState(false);
 
-  const [selectedChainId, setSelectedChainId] = useState<ParachainChainId>(
-    ParachainChainId.TANGLE_RESTAKING_PARACHAIN,
+  const [selectedChainId, setSelectedChainId] = useState<LsChainId>(
+    LsChainId.TANGLE_RESTAKING_PARACHAIN,
   );
 
   const {
@@ -51,7 +51,7 @@ const LiquidUnstakeCard: FC = () => {
 
   const { liquidBalances } = useParachainBalances();
 
-  const selectedChain = PARACHAIN_CHAIN_MAP[selectedChainId];
+  const selectedChain = LS_CHAIN_MAP[selectedChainId];
 
   const exchangeRate = useExchangeRate(
     ExchangeRateType.LiquidToNative,
@@ -150,7 +150,7 @@ const LiquidUnstakeCard: FC = () => {
       {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
       <LiquidStakingInput
         id="liquid-staking-unstake-from"
-        chainId={ParachainChainId.TANGLE_RESTAKING_PARACHAIN}
+        chainId={LsChainId.TANGLE_RESTAKING_PARACHAIN}
         token={selectedChain.token}
         amount={fromAmount}
         decimals={selectedChain.decimals}

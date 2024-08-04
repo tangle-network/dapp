@@ -13,10 +13,10 @@ import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LiquidStakingToken,
-  LS_CHAIN_TO_NETWORK_NAME,
+  LsToken,
   LST_PREFIX,
-  ParachainChainId,
+  LS_CHAIN_MAP,
+  LsChainId,
 } from '../../../constants/liquidStaking';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
@@ -27,19 +27,19 @@ import TokenChip from './TokenChip';
 
 export type LiquidStakingInputProps = {
   id: string;
-  chainId: ParachainChainId;
+  chainId: LsChainId;
   decimals: number;
   amount: BN | null;
   isReadOnly?: boolean;
   placeholder?: string;
   rightElement?: ReactNode;
-  token: LiquidStakingToken;
+  token: LsToken;
   isTokenLiquidVariant?: boolean;
   minAmount?: BN;
   maxAmount?: BN;
   maxErrorMessage?: string;
   onAmountChange?: (newAmount: BN | null) => void;
-  setChainId?: (newChain: ParachainChainId) => void;
+  setChainId?: (newChain: LsChainId) => void;
   onTokenClick?: () => void;
 };
 
@@ -109,7 +109,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
         )}
       >
         <div className="flex justify-between">
-          <ChainSelector selectedChainId={chainId} setChain={setChainId} />
+          <ChainSelector selectedChainId={chainId} setChainId={setChainId} />
 
           {rightElement}
         </div>
@@ -145,21 +145,22 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
 };
 
 type ChainSelectorProps = {
-  selectedChainId: ParachainChainId;
+  selectedChainId: LsChainId;
 
   /**
    * If this function is not provided, the selector will be
    * considered read-only.
    */
-  setChain?: (newChain: ParachainChainId) => void;
+  setChainId?: (newChain: LsChainId) => void;
 };
 
 /** @internal */
 const ChainSelector: FC<ChainSelectorProps> = ({
   selectedChainId,
-  setChain,
+  setChainId,
 }) => {
-  const isReadOnly = setChain === undefined;
+  const isReadOnly = setChainId === undefined;
+  const selectedChainName = LS_CHAIN_MAP[selectedChainId].name;
 
   const base = (
     <div className="group flex gap-1 items-center justify-center">
@@ -167,7 +168,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
         <ChainLogo size="sm" chainId={selectedChainId} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          {LS_CHAIN_TO_NETWORK_NAME[selectedChainId]}
+          {selectedChainName}
         </Typography>
       </div>
 
@@ -175,24 +176,26 @@ const ChainSelector: FC<ChainSelectorProps> = ({
     </div>
   );
 
-  return setChain !== undefined ? (
+  return setChainId !== undefined ? (
     <Dropdown>
       <DropdownMenuTrigger>{base}</DropdownMenuTrigger>
 
       <DropdownBody>
         <ScrollArea className="max-h-[300px]">
           <ul>
-            {Object.values(ParachainChainId)
+            {Object.values(LsChainId)
               .filter((chainId) => chainId !== selectedChainId)
               .map((chainId) => {
+                const chainName = LS_CHAIN_MAP[chainId].name;
+
                 return (
                   <li key={chainId} className="w-full">
                     <DropdownMenuItem
                       leftIcon={<ChainLogo size="sm" chainId={chainId} />}
-                      onSelect={() => setChain(chainId)}
+                      onSelect={() => setChainId(chainId)}
                       className="px-3 normal-case"
                     >
-                      {LS_CHAIN_TO_NETWORK_NAME[chainId]}
+                      {chainName}
                     </DropdownMenuItem>
                   </li>
                 );

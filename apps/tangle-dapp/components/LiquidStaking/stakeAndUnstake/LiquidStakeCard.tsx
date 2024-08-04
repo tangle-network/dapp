@@ -18,8 +18,8 @@ import { FC, useCallback, useMemo, useState } from 'react';
 
 import {
   LST_PREFIX,
-  PARACHAIN_CHAIN_MAP,
-  ParachainChainId,
+  LS_CHAIN_MAP,
+  LsChainId,
 } from '../../../constants/liquidStaking';
 import { useLiquidStakingStore } from '../../../data/liquidStaking/store';
 import useExchangeRate, {
@@ -46,7 +46,7 @@ const LiquidStakeCard: FC = () => {
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const { nativeBalances } = useParachainBalances();
 
-  const selectedChain = PARACHAIN_CHAIN_MAP[selectedChainId];
+  const selectedChain = LS_CHAIN_MAP[selectedChainId];
 
   const exchangeRate = useExchangeRate(
     ExchangeRateType.NativeToLiquid,
@@ -133,7 +133,7 @@ const LiquidStakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-stake-to"
-        chainId={ParachainChainId.TANGLE_RESTAKING_PARACHAIN}
+        chainId={LsChainId.TANGLE_RESTAKING_PARACHAIN}
         placeholder={`0 ${LST_PREFIX}${selectedChain.token}`}
         decimals={selectedChain.decimals}
         amount={toAmount}

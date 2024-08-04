@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 
 import {
   ParachainCurrency,
-  SimpleTimeUnitInstance,
+  LsSimpleParachainTimeUnit,
 } from '../../constants/liquidStaking';
 import useApiRx from '../../hooks/useApiRx';
 import tangleTimeUnitToSimpleInstance from '../../utils/liquidStaking/tangleTimeUnitToSimpleInstance';
@@ -13,7 +13,7 @@ import getValueOfTangleCurrency from './getValueOfTangleCurrency';
 export type OngoingTimeUnitEntry = {
   currencyType: TanglePrimitivesCurrencyCurrencyId['type'];
   currency: ParachainCurrency;
-  timeUnit: SimpleTimeUnitInstance;
+  timeUnit: LsSimpleParachainTimeUnit;
 };
 
 const useOngoingTimeUnits = () => {

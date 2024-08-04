@@ -3,7 +3,7 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { TxName } from '../../constants';
 import {
   ParachainCurrency,
-  ParachainCurrencyKey,
+  LsParachainCurrencyKey,
 } from '../../constants/liquidStaking';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
@@ -19,7 +19,7 @@ const useLstRebondTx = () => {
     TxName.LST_REBOND,
     (api, _activeSubstrateAddress, context) => {
       const txs = context.currenciesAndUnlockIds.map(([currency, unlockId]) => {
-        const key: ParachainCurrencyKey = { Native: currency };
+        const key: LsParachainCurrencyKey = { Native: currency };
 
         return api.tx.lstMinting.rebondByUnlockId(key, unlockId);
       });

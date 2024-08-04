@@ -1,11 +1,11 @@
 import {
-  PARACHAIN_CHAIN_MAP,
-  ParachainChainId,
-  SimpleTimeUnitInstance,
+  LS_CHAIN_MAP,
+  LsChainId,
+  LsSimpleParachainTimeUnit,
 } from '../../constants/liquidStaking';
 
-const estimateByEra = (chainId: ParachainChainId, era: number): number => {
-  const chain = PARACHAIN_CHAIN_MAP[chainId];
+const estimateByEra = (chainId: LsChainId, era: number): number => {
+  const chain = LS_CHAIN_MAP[chainId];
 
   if (chain.substrateTimingSpec === undefined) {
     throw new Error(
@@ -22,8 +22,8 @@ const estimateByEra = (chainId: ParachainChainId, era: number): number => {
 };
 
 const timeUnitToMilliseconds = (
-  chainId: ParachainChainId,
-  timeUnitInstance: SimpleTimeUnitInstance,
+  chainId: LsChainId,
+  timeUnitInstance: LsSimpleParachainTimeUnit,
 ): number => {
   switch (timeUnitInstance.unit) {
     // A conventional hour.

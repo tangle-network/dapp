@@ -6,10 +6,10 @@ import PHALA from '@webb-tools/icons/LiquidStakingTokens/PHALA.svg';
 import TNT from '@webb-tools/icons/LiquidStakingTokens/TNT.svg';
 import React, { useMemo } from 'react';
 
-import { LiquidStakingToken } from '../constants/liquidStaking';
+import { LsToken } from '../constants/liquidStaking';
 
 const tokenSVGs: {
-  [key in LiquidStakingToken]: React.FC<React.SVGProps<SVGSVGElement>>;
+  [key in LsToken]: React.FC<React.SVGProps<SVGSVGElement>>;
 } = {
   DOT,
   GLMR,
@@ -20,7 +20,7 @@ const tokenSVGs: {
 };
 
 const useLSTokenSVGs = (
-  tokenSymbol: LiquidStakingToken,
+  tokenSymbol: LsToken,
 ): React.FC<React.SVGProps<SVGSVGElement>> | null => {
   const TokenSVG = useMemo(() => tokenSVGs[tokenSymbol] || null, [tokenSymbol]);
 
