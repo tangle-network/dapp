@@ -15,6 +15,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { FC, useCallback, useMemo, useState } from 'react';
+import { z } from 'zod';
 
 import {
   LST_PREFIX,
@@ -47,6 +48,7 @@ const LiquidStakeCard: FC = () => {
 
   const searchParams = useTypedSearchParams({
     amount: (value) => new BN(value),
+    chainId: (value) => z.nativeEnum(ParachainChainId).parse(parseInt(value)),
   });
 
   // TODO: Must set the amount ONCE, if it is provided in the URL search params and parsed correctly. Setting the value once might prove difficult unless a useMemo is given to the `useTypedSearchParams` hook to maintain 'stability'.

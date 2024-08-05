@@ -14,8 +14,8 @@ import { twMerge } from 'tailwind-merge';
 
 import {
   LiquidStakingToken,
-  LS_CHAIN_TO_NETWORK_NAME,
   LST_PREFIX,
+  PARACHAIN_CHAIN_MAP,
   ParachainChainId,
 } from '../../../constants/liquidStaking';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
@@ -160,6 +160,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
   setChain,
 }) => {
   const isReadOnly = setChain === undefined;
+  const networkName = PARACHAIN_CHAIN_MAP[selectedChainId].networkName;
 
   const base = (
     <div className="group flex gap-1 items-center justify-center">
@@ -167,7 +168,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
         <ChainLogo size="sm" chainId={selectedChainId} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          {LS_CHAIN_TO_NETWORK_NAME[selectedChainId]}
+          {networkName}
         </Typography>
       </div>
 
@@ -192,7 +193,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
                       onSelect={() => setChain(chainId)}
                       className="px-3 normal-case"
                     >
-                      {LS_CHAIN_TO_NETWORK_NAME[chainId]}
+                      {networkName}
                     </DropdownMenuItem>
                   </li>
                 );
