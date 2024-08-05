@@ -30,6 +30,7 @@ import useParachainBalances from '../../../data/liquidStaking/useParachainBalanc
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
+import useTypedSearchParams from '../../../hooks/useTypedSearchParams';
 import DetailItem from './DetailItem';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
@@ -40,11 +41,15 @@ import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 
 const LiquidStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
-
   const { selectedChainId, setSelectedChainId } = useLiquidStakingStore();
-
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const { nativeBalances } = useParachainBalances();
+
+  const searchParams = useTypedSearchParams({
+    amount: (value) => new BN(value),
+  });
+
+  // TODO: Must set the amount ONCE, if it is provided in the URL search params and parsed correctly. Setting the value once might prove difficult unless a useMemo is given to the `useTypedSearchParams` hook to maintain 'stability'.
 
   const selectedChain = PARACHAIN_CHAIN_MAP[selectedChainId];
 

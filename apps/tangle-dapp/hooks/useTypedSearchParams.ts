@@ -1,34 +1,46 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
+import { useMemo } from 'react';
 
 const useTypedSearchParams = <T extends object>(parsers: {
   [Key in keyof T]: (value: string) => T[Key] | undefined;
 }): Partial<T> => {
   const searchParams = useSearchParams();
 
-  const entries = Object.keys(parsers).map((stringKey) => {
-    // TODO: Find a way to avoid casting here.
-    const key = stringKey as keyof T;
-    const parser = parsers[key];
-    const paramValue = searchParams.get(stringKey);
-    const parsedValue = paramValue !== null ? parser(paramValue) : undefined;
+  const entries = useMemo(() => {
+    return Object.keys(parsers).map((stringKey) => {
+      // TODO: Find a way to avoid casting here.
+      const key = stringKey as keyof T;
+      const parser = parsers[key];
+      const paramValue = searchParams.get(stringKey);
+      let parsedValue: T[keyof T] | undefined;
 
-    return [stringKey, parsedValue] as const;
-  });
+      // Try parsing the value. If it fails, ignore the value.
+      try {
+        parsedValue = paramValue !== null ? parser(paramValue) : undefined;
+      } catch {
+        parsedValue = undefined;
+      }
 
-  const result: Partial<T> = {};
+      return [stringKey, parsedValue] as const;
+    });
+  }, [parsers, searchParams]);
 
-  for (const [stringKey, value] of entries) {
-    // TODO: Find a way to avoid casting here.
-    const key = stringKey as keyof T;
+  return useMemo(() => {
+    const result: Partial<T> = {};
 
-    if (value !== undefined) {
-      result[key] = value;
+    for (const [stringKey, value] of entries) {
+      // TODO: Find a way to avoid casting here.
+      const key = stringKey as keyof T;
+
+      if (value !== undefined) {
+        result[key] = value;
+      }
     }
-  }
 
-  return result;
+    return result;
+  }, [entries]);
 };
 
 export default useTypedSearchParams;
