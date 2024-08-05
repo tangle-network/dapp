@@ -1,5 +1,4 @@
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
 import { FC, useMemo } from 'react';
 
 import { ParachainCurrency } from '../../../constants/liquidStaking';
@@ -30,11 +29,9 @@ const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
       return 'Unknown' as const;
     }
 
-    const parts = stringifyTimeUnit(unlockDuration.timeUnit).split(' ');
+    const parts = stringifyTimeUnit(unlockDuration.timeUnit);
 
-    assert(parts.length === 2, 'Unexpected time unit format');
-
-    return [parts[0], parts[1]];
+    return [parts[0].toString(), parts[1]];
   }, [currency, unlockDurations]);
 
   const value =

@@ -93,7 +93,7 @@ const columns = [
           return undefined;
         }
 
-        return stringifyTimeUnit(remainingTimeUnit);
+        return stringifyTimeUnit(remainingTimeUnit).join(' ');
       })();
 
       const content =
