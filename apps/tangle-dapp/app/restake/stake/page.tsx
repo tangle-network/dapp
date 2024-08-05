@@ -41,7 +41,9 @@ import ActionButton from './ActionButton';
 import Info from './Info';
 import StakeInput from './StakeInput';
 
-export default function DelegatePage() {
+export const dynamic = 'force-static';
+
+export default function Page() {
   const {
     register,
     setValue: setFormValue,

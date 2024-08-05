@@ -8,14 +8,10 @@ import type { UnstakeRequestTableData } from './types';
 import { isUnstakeRequestReady } from './utils';
 
 type Props = {
-  selectedRequestIds: string[];
-  dataWithId: Record<string, UnstakeRequestTableData>;
+  selectedRequests: UnstakeRequestTableData[];
 };
 
-const UnstakeRequestTableActions = ({
-  dataWithId,
-  selectedRequestIds,
-}: Props) => {
+const UnstakeRequestTableActions = ({ selectedRequests }: Props) => {
   const [isCanceling, setIsCanceling] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
 
@@ -50,29 +46,20 @@ const UnstakeRequestTableActions = ({
   const { executeDelegatorUnstakeRequests, cancelDelegatorUnstakeRequests } =
     useRestakeTx();
 
-  const handleCancelUnstake = useCallback(
-    async () => {
-      setIsCanceling(true);
+  const handleCancelUnstake = useCallback(async () => {
+    setIsCanceling(true);
 
-      const args = selectedRequestIds.reduce(
-        (acc, id) => {
-          if (dataWithId[id] === undefined) {
-            return acc;
-          }
+    const args = selectedRequests.reduce(
+      (acc, request) => {
+        acc[request.assetId] = request.amountRaw;
+        return acc;
+      },
+      {} as Record<string, bigint>,
+    );
+    await cancelDelegatorUnstakeRequests(args, cancelOptions);
 
-          const data = dataWithId[id];
-          acc[data.assetId] = data.amountRaw;
-          return acc;
-        },
-        {} as Record<string, bigint>,
-      );
-      await cancelDelegatorUnstakeRequests(args, cancelOptions);
-
-      setIsCanceling(false);
-    },
-    // prettier-ignore
-    [cancelDelegatorUnstakeRequests, cancelOptions, dataWithId, selectedRequestIds],
-  );
+    setIsCanceling(false);
+  }, [cancelDelegatorUnstakeRequests, cancelOptions, selectedRequests]);
 
   const handleExecuteUnstake = useCallback(async () => {
     setIsExecuting(true);
@@ -81,20 +68,17 @@ const UnstakeRequestTableActions = ({
   }, [executeDelegatorUnstakeRequests, executeOptions]);
 
   const canCancelUnstake = useMemo(
-    () => selectedRequestIds.length > 0,
-    [selectedRequestIds.length],
+    () => selectedRequests.length > 0,
+    [selectedRequests.length],
   );
 
   const canExecuteUnstake = useMemo(() => {
-    if (selectedRequestIds.length === 0) return false;
+    if (selectedRequests.length === 0) return false;
 
-    return selectedRequestIds.every((id) => {
-      if (!dataWithId[id]) return false;
-
-      const { timeRemaining } = dataWithId[id];
+    return selectedRequests.every(({ timeRemaining }) => {
       return isUnstakeRequestReady(timeRemaining);
     });
-  }, [dataWithId, selectedRequestIds]);
+  }, [selectedRequests]);
 
   return (
     <>

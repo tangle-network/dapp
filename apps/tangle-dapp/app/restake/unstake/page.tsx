@@ -42,6 +42,8 @@ import TxInfo from './TxInfo';
 import UnstakeModal from './UnstakeModal';
 import UnstakeRequestTable from './UnstakeRequestTable';
 
+export const dynamic = 'force-static';
+
 const Page = () => {
   const {
     register,

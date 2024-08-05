@@ -3,6 +3,7 @@
 import {
   createColumnHelper,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   type TableOptions,
@@ -11,6 +12,7 @@ import {
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
@@ -143,6 +145,11 @@ const UnstakeRequestTable = ({
         },
         getRowId: (row) => getId(row),
         enableRowSelection: true,
+        filterFns: {
+          fuzzy: fuzzyFilter,
+        },
+        globalFilterFn: fuzzyFilter,
+        getFilteredRowModel: getFilteredRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -151,13 +158,10 @@ const UnstakeRequestTable = ({
     ),
   );
 
-  const rowSelection = table.getState().rowSelection;
+  const rowSelection = table.getSelectedRowModel().rows;
 
-  const selectedRequestIds = useMemo(
-    () =>
-      Object.entries(rowSelection)
-        .filter(([, selected]) => selected)
-        .map(([rowId]) => rowId),
+  const selectedRequests = useMemo(
+    () => rowSelection.map((row) => row.original),
     [rowSelection],
   );
 
@@ -171,10 +175,7 @@ const UnstakeRequestTable = ({
       />
 
       <div className="flex items-center gap-3">
-        <UnstakeRequestTableActions
-          selectedRequestIds={selectedRequestIds}
-          dataWithId={dataWithId}
-        />
+        <UnstakeRequestTableActions selectedRequests={selectedRequests} />
       </div>
     </>
   );
