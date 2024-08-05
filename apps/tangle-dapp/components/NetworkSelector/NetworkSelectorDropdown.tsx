@@ -8,12 +8,10 @@ import {
   Network,
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
-  TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
 } from '@webb-tools/webb-ui-components/constants/networks';
 import { FC, ReactNode, useCallback } from 'react';
 
-import { IS_PRODUCTION_ENV } from '../../constants/env';
 import CustomRpcEndpointInput from './CustomRpcEndpointInput';
 import { TANGLE_TESTNET_CHAIN_NAME } from './NetworkSelectionButton';
 
@@ -62,20 +60,6 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
           </>
         }
       />
-
-      {/* Tangle restaking parachain (local dev) network */}
-      {IS_PRODUCTION_ENV && (
-        <NetworkOption
-          isSelected={
-            selectedNetwork?.id ===
-            TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.id
-          }
-          name={TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.name}
-          onClick={() =>
-            onNetworkChange(TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK)
-          }
-        />
-      )}
 
       {/* Custom network */}
       <NetworkOption

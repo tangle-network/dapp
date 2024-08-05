@@ -43,10 +43,7 @@ const BalancesTableContainer: FC = () => {
   const {
     set: setCachedIsDetailsCollapsed,
     valueOpt: cachedIsDetailsCollapsedOpt,
-  } = useLocalStorage(
-    LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED,
-    false,
-  );
+  } = useLocalStorage(LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED);
 
   const { result: locks } = useApiRx(
     useCallback(
