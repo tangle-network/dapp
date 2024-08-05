@@ -84,4 +84,13 @@ export default {
     return config;
   },
   framework: '@storybook/nextjs',
+  swc: () => ({
+    jsc: {
+      transform: {
+        react: {
+          runtime: 'automatic',
+        },
+      },
+    },
+  }),
 } satisfies StorybookConfig;
