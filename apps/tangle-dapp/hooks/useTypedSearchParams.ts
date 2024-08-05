@@ -10,7 +10,6 @@ const useTypedSearchParams = <T extends object>(parsers: {
   const entries = Object.keys(parsers).map((stringKey) => {
     // TODO: Find a way to avoid casting here.
     const key = stringKey as keyof T;
-
     const parser = parsers[key];
     const paramValue = searchParams.get(stringKey);
     const parsedValue = paramValue !== null ? parser(paramValue) : undefined;
@@ -20,7 +19,10 @@ const useTypedSearchParams = <T extends object>(parsers: {
 
   const result: Partial<T> = {};
 
-  for (const [key, value] of entries) {
+  for (const [stringKey, value] of entries) {
+    // TODO: Find a way to avoid casting here.
+    const key = stringKey as keyof T;
+
     if (value !== undefined) {
       result[key] = value;
     }
