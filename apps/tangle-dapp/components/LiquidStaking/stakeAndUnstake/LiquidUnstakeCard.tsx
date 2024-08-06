@@ -191,7 +191,7 @@ const LiquidUnstakeCard: FC = () => {
           intendedAmount={fromAmount}
         />
 
-        <UnstakePeriodDetailItem />
+        <UnstakePeriodDetailItem currency={selectedChain.currency} />
       </div>
 
       {areAllDelegationsOccupied?.isTrue && (
