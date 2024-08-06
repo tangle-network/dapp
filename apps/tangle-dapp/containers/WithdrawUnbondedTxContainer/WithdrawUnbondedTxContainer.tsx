@@ -61,11 +61,9 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
         <ModalContent
           isCenter
           isOpen={isModalOpen}
-          className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+          className="w-full max-w-[416px]"
         >
-          <ModalHeader titleVariant="h4" onClose={closeModal}>
-            Withdraw Funds
-          </ModalHeader>
+          <ModalHeader onClose={closeModal}>Withdraw Funds</ModalHeader>
 
           <div className="p-9 space-y-6">
             <Typography variant="body1" fw="normal">
@@ -85,7 +83,11 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
             </div>
           </div>
 
-          <ModalFooter className="px-8 py-6 flex flex-col gap-1">
+          <ModalFooter className="flex items-center gap-2">
+            <Button isFullWidth onClick={onRebondClick} variant="secondary">
+              Rebond
+            </Button>
+
             <Button
               isFullWidth
               isDisabled={!canSubmitTx}
@@ -93,10 +95,6 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
               onClick={submitTx}
             >
               Confirm
-            </Button>
-
-            <Button isFullWidth onClick={onRebondClick} variant="secondary">
-              Rebond
             </Button>
           </ModalFooter>
         </ModalContent>

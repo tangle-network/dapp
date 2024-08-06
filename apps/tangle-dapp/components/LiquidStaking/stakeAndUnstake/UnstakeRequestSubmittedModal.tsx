@@ -49,11 +49,9 @@ const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
       <ModalContent
         isCenter
         isOpen={isOpen}
-        className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px]"
       >
-        <ModalHeader titleVariant="h4" onClose={onClose}>
-          Unstake Request Submitted
-        </ModalHeader>
+        <ModalHeader onClose={onClose}>Unstake Request Submitted</ModalHeader>
 
         <div className="flex flex-col items-center justify-center gap-2 p-9">
           <ModalIcon
@@ -73,7 +71,7 @@ const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
           <ExternalLink href={TANGLE_DOCS_URL}>Learn More</ExternalLink>
         </div>
 
-        <ModalFooter className="flex px-8 py-6 space-y-0">
+        <ModalFooter className="flex items-center gap-2">
           <Button
             href={viewExplorerHref?.toString()}
             // In case that the explorer URL could not be obtained,

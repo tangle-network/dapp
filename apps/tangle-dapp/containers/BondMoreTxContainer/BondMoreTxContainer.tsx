@@ -81,11 +81,9 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
       <ModalContent
         isCenter
         isOpen={isModalOpen}
-        className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[416px]"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
-          Add Stake
-        </ModalHeader>
+        <ModalHeader onClose={closeModalAndReset}>Add Stake</ModalHeader>
 
         <div className="space-y-4 p-9">
           <AmountInput
@@ -105,16 +103,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
           </Typography>
         </div>
 
-        <ModalFooter className="flex flex-col gap-1 px-8 py-6">
-          <Button
-            isFullWidth
-            isDisabled={!canSubmitTx}
-            isLoading={isBondMoreTxLoading}
-            onClick={submitAndSignTx}
-          >
-            Confirm
-          </Button>
-
+        <ModalFooter className="flex items-center gap-2">
           <Button
             isFullWidth
             variant="secondary"
@@ -122,6 +111,15 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
             target="_blank"
           >
             Learn More
+          </Button>
+
+          <Button
+            isFullWidth
+            isDisabled={!canSubmitTx}
+            isLoading={isBondMoreTxLoading}
+            onClick={submitAndSignTx}
+          >
+            Confirm
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -59,6 +59,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
                   ? '-translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'
                   : 'top-0 left-0',
               ),
+              'bg-mono-0 dark:bg-mono-180 rounded-2xl',
               className,
             )}
             ref={ref}
