@@ -1,3 +1,4 @@
+import type { Option, u128, Vec } from '@polkadot/types';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { map, of, switchMap } from 'rxjs';
 
@@ -15,23 +16,29 @@ export default function useRestakeRewardPoolMap() {
             return of({} as RewardPoolMap);
           }
 
-          return apiRx.query.multiAssetDelegation.rewardPools.entries().pipe(
-            map((rewardPoolEntries) =>
-              rewardPoolEntries.reduce((acc, [poolIdKey, optionalAssetId]) => {
-                const assetIds = optionalAssetId.isSome
-                  ? optionalAssetId
-                      .unwrap()
-                      .map((assetId) => assetId.toString())
-                  : null;
+          // TODO: Remove this on `tangle-substrate-types` v0.5.11
+          return apiRx.query.multiAssetDelegation.rewardPools
+            .entries<Option<Vec<u128>>>()
+            .pipe(
+              map((rewardPoolEntries) =>
+                rewardPoolEntries.reduce(
+                  (acc, [poolIdKey, optionalAssetId]) => {
+                    const assetIds = optionalAssetId.isSome
+                      ? optionalAssetId
+                          .unwrap()
+                          .map((assetId) => assetId.toString())
+                      : null;
 
-                const poolId = poolIdKey.args[0].toString();
+                    const poolId = poolIdKey.args[0].toString();
 
-                acc[poolId] = assetIds;
+                    acc[poolId] = assetIds;
 
-                return acc;
-              }, {} as RewardPoolMap),
-            ),
-          );
+                    return acc;
+                  },
+                  {} as RewardPoolMap,
+                ),
+              ),
+            );
         }),
       ),
     [apiRx],

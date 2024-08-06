@@ -1,5 +1,5 @@
-import { Option, Vec } from '@polkadot/types';
-import {
+import type { Option, Struct, u32, u128, Vec } from '@polkadot/types';
+import type {
   PalletMultiAssetDelegationOperatorDelegatorBond,
   PalletMultiAssetDelegationOperatorOperatorBondLessRequest,
   PalletMultiAssetDelegationOperatorOperatorStatus,
@@ -16,6 +16,15 @@ type UseRestakeOperatorMapReturnType = {
   operatorMap$: Observable<OperatorMap>;
 };
 
+// TODO: Remove this on `tangle-substrate-types` v0.5.11
+interface PalletMultiAssetDelegationOperatorOperatorMetadata extends Struct {
+  readonly stake: u128;
+  readonly delegationCount: u32;
+  readonly request: Option<PalletMultiAssetDelegationOperatorOperatorBondLessRequest>;
+  readonly delegations: Vec<PalletMultiAssetDelegationOperatorDelegatorBond>;
+  readonly status: PalletMultiAssetDelegationOperatorOperatorStatus;
+}
+
 /**
  * Hook to retrieve the operator map for restaking.
  * @returns
@@ -28,7 +37,9 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
   const entries$ = useMemo(
     () =>
       apiRx.query.multiAssetDelegation?.operators !== undefined
-        ? apiRx.query.multiAssetDelegation.operators.entries()
+        ? apiRx.query.multiAssetDelegation.operators.entries<
+            Option<PalletMultiAssetDelegationOperatorOperatorMetadata>
+          >()
         : of([]),
     [apiRx.query.multiAssetDelegation?.operators],
   );

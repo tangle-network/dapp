@@ -170,8 +170,11 @@ const getNativeAsset = async (
 ) => {
   const assetId = '0';
 
+  // TODO: Remove this on `tangle-substrate-types` v0.5.11
   const poolId =
-    await api.query.multiAssetDelegation.assetLookupRewardPools(assetId);
+    await api.query.multiAssetDelegation.assetLookupRewardPools<Option<u128>>(
+      assetId,
+    );
 
   return {
     ...nativeCurrency,
