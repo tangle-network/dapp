@@ -50,7 +50,7 @@ const MintAndRedeemFeeDetailItem: FC<MintAndRedeemFeeDetailItemProps> = ({
       `${formattedFeeAmount} ${token}`
     );
 
-  const feeTitle = fee === null ? 'Fee' : `Fee (${(fee * 100).toFixed(2)}‰)`;
+  const feeTitle = fee === null ? 'Fee' : `Fee (${(fee * 100).toFixed(2)}%)`;
 
   return <DetailItem title={feeTitle} value={value} />;
 };
