@@ -219,7 +219,13 @@ const BlueprintItem: FC<Blueprint> = ({
   isBoosted,
 }) => {
   return (
-    <div className="h-[364px] overflow-hidden rounded-xl flex flex-col cursor-pointer group">
+    <div
+      className={twMerge(
+        'h-[364px] overflow-hidden rounded-xl flex flex-col cursor-pointer group',
+        'border border-mono-0 dark:border-mono-170',
+        isBoosted && 'border-t-0',
+      )}
+    >
       {isBoosted && (
         <div
           className={twMerge(
@@ -256,7 +262,12 @@ const BlueprintItem: FC<Blueprint> = ({
                   </Typography>
                 </div>
                 {isBoosted && (
-                  <div className="px-2 py-1 rounded-full border border-purple-50 flex items-center gap-0.5">
+                  <div
+                    className={twMerge(
+                      'px-2 py-1 rounded-full border border-purple-50 flex items-center gap-0.5',
+                      'shadow-[0px_-7px_11px_0px_rgba(185,183,255,0.24)] dark:shadow-[0px_-7px_11px_0px_rgba(185,183,255,0.12)]',
+                    )}
+                  >
                     <SparklingIcon className="fill-purple-60 dark:fill-purple-40" />
                     <Typography
                       variant="body4"
