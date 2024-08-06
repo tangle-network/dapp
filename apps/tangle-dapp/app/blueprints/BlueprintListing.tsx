@@ -219,14 +219,22 @@ const BlueprintItem: FC<Blueprint> = ({
   isBoosted,
 }) => {
   return (
-    <div className="overflow-hidden rounded-xl flex flex-col -space-y-2 cursor-pointer group">
-      {isBoosted && <div className="h-2 bg-purple-60 dark:bg-purple-50" />}
+    <div className="h-[364px] overflow-hidden rounded-xl flex flex-col cursor-pointer group">
+      {isBoosted && (
+        <div
+          className={twMerge(
+            'h-2 bg-purple-60',
+            'bg-[linear-gradient(to_right,hsla(230,64%,52%,0.8)0%,hsla(230,87%,74%,0.8)40%,hsla(242,100%,93%,0.8)100%)]',
+            'dark:bg-[linear-gradient(to_right,hsla(231,49%,13%,0.8)0%,hsla(242,67%,55%,0.8)40%,hsla(242,93%,65%,0.8)100%)]',
+          )}
+        />
+      )}
       <div
         className={twMerge(
-          'relative h-[364px] flex flex-col justify-between py-3 px-6 rounded-xl overflow-hidden',
-          'hover:before:absolute hover:before:inset-0 hover:before:bg-cover hover:before:bg-no-repeat hover:before:opacity-50 hover:before:pointer-events-none',
+          'relative flex-1 flex flex-col justify-between py-3 px-6 overflow-hidden',
           'bg-[linear-gradient(180deg,rgba(184,196,255,0.20)0%,rgba(236,239,255,0.20)100%),linear-gradient(180deg,rgba(255,255,255,0.50)0%,rgba(255,255,255,0.30)100%)]',
           'dark:bg-[linear-gradient(180deg,rgba(17,22,50,0.20)0%,rgba(21,37,117,0.20)100%),linear-gradient(180deg,rgba(43,47,64,0.50)0%,rgba(43,47,64,0.30)100%)]',
+          'hover:before:absolute hover:before:inset-0 hover:before:bg-cover hover:before:bg-no-repeat hover:before:opacity-50 hover:before:pointer-events-none',
           "hover:before:bg-[url('/static/assets/blueprints/grid-bg.png')] dark:hover:before:bg-[url('/static/assets/blueprints/grid-bg-dark.png')]",
         )}
       >
@@ -237,14 +245,16 @@ const BlueprintItem: FC<Blueprint> = ({
               width={72}
               height={72}
               alt={name}
-              className="rounded-full bg-center"
+              className="rounded-full bg-center flex-shrink-0"
               fill={false}
             />
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <Typography variant="h5" className="flex-1">
-                  {name}
-                </Typography>
+                <div className="min-w-0 flex-1">
+                  <Typography variant="h5" className="truncate">
+                    {name}
+                  </Typography>
+                </div>
                 {isBoosted && (
                   <div className="px-2 py-1 rounded-full border border-purple-50 flex items-center gap-0.5">
                     <SparklingIcon className="fill-purple-60 dark:fill-purple-40" />
