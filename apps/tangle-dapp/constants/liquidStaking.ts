@@ -2,6 +2,7 @@ import {
   TanglePrimitivesCurrencyTokenSymbol,
   TanglePrimitivesTimeUnit,
 } from '@polkadot/types/lookup';
+import { BN } from '@polkadot/util';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
@@ -163,4 +164,9 @@ export type ParachainTimeUnit = TanglePrimitivesTimeUnit['type'];
 export type SimpleTimeUnitInstance = {
   value: number;
   unit: ParachainTimeUnit;
+};
+
+export type LsCardSearchParams = {
+  amount: BN;
+  chainId: ParachainChainId;
 };

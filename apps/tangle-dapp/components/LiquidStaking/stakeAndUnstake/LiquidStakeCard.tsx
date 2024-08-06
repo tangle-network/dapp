@@ -14,10 +14,11 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 
 import {
+  LsCardSearchParams,
   LST_PREFIX,
   PARACHAIN_CHAIN_MAP,
   ParachainChainId,
@@ -45,7 +46,7 @@ const LiquidStakeCard: FC = () => {
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const { nativeBalances } = useParachainBalances();
 
-  const searchParams = useTypedSearchParams(
+  const searchParams = useTypedSearchParams<LsCardSearchParams>(
     useMemo(() => {
       return {
         amount: (value) => new BN(value),
@@ -65,8 +66,6 @@ const LiquidStakeCard: FC = () => {
       setSelectedChainId(searchParams.chainId);
     }
   }, [searchParams.amount, searchParams.chainId, setSelectedChainId]);
-
-  // TODO: Must set the amount ONCE, if it is provided in the URL search params and parsed correctly. Setting the value once might prove difficult unless a useMemo is given to the `useTypedSearchParams` hook to maintain 'stability'.
 
   const selectedChain = PARACHAIN_CHAIN_MAP[selectedChainId];
 

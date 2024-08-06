@@ -9,8 +9,10 @@ import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Alert, Button } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { z } from 'zod';
 
 import {
+  LsCardSearchParams,
   LST_PREFIX,
   PARACHAIN_CHAIN_MAP,
   ParachainChainId,
@@ -24,6 +26,7 @@ import useRedeemTx from '../../../data/liquidStaking/useRedeemTx';
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
+import useTypedSearchParams from '../../../hooks/useTypedSearchParams';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
 import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
@@ -61,6 +64,27 @@ const LiquidUnstakeCard: FC = () => {
   const { result: areAllDelegationsOccupiedOpt } = useDelegationsOccupiedStatus(
     selectedChain.currency,
   );
+
+  const searchParams = useTypedSearchParams<LsCardSearchParams>(
+    useMemo(() => {
+      return {
+        amount: (value) => new BN(value),
+        chainId: (value) =>
+          z.nativeEnum(ParachainChainId).parse(parseInt(value)),
+      };
+    }, []),
+  );
+
+  // If present in the URL search params, set the amount and chain ID.
+  useEffect(() => {
+    if (searchParams.amount !== undefined) {
+      setFromAmount(searchParams.amount);
+    }
+
+    if (searchParams.chainId !== undefined) {
+      setSelectedChainId(searchParams.chainId);
+    }
+  }, [searchParams.amount, searchParams.chainId, setSelectedChainId]);
 
   const areAllDelegationsOccupied =
     areAllDelegationsOccupiedOpt === null

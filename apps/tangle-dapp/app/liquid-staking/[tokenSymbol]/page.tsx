@@ -1,12 +1,14 @@
 'use client';
 
 import { notFound } from 'next/navigation';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
+import { z } from 'zod';
 
 import { LiquidStakingSelectionTable } from '../../../components/LiquidStaking/LiquidStakingSelectionTable';
 import LiquidStakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidStakeCard';
 import LiquidUnstakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidUnstakeCard';
 import UnstakeRequestsTable from '../../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
+import useTypedSearchParams from '../../../hooks/useTypedSearchParams';
 import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
 import TabListItem from '../../restake/TabListItem';
 import TabsList from '../../restake/TabsList';
@@ -15,8 +17,27 @@ type Props = {
   params: { tokenSymbol: string };
 };
 
+export enum LsSearchParamAction {
+  Stake = 'stake',
+  Unstake = 'unstake',
+}
+
 const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
   const [isStaking, setIsStaking] = useState(true);
+
+  const searchParams = useTypedSearchParams({
+    action: (value) => z.nativeEnum(LsSearchParamAction).parse(value),
+  });
+
+  // In case an action is provided in the URL search params,
+  // set the staking state accordingly.
+  useEffect(() => {
+    if (searchParams.action === undefined) {
+      return;
+    }
+
+    setIsStaking(searchParams.action === LsSearchParamAction.Stake);
+  }, [searchParams.action]);
 
   if (!isLiquidStakingToken(tokenSymbol)) {
     return notFound();
