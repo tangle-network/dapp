@@ -210,22 +210,25 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   };
 
   cancelDelegatorUnstakeRequests = async (
-    unstakeRequest: CancelDelegatorUnstakeRequestContext,
+    unstakeRequests: CancelDelegatorUnstakeRequestContext['unstakeRequests'],
     eventHandlers?:
       | TxEventHandlers<CancelDelegatorUnstakeRequestContext>
       | undefined,
   ): Promise<Hash | null> => {
-    const args = Object.entries(unstakeRequest);
-
     const extrinsics = this.provider.tx.utility.batchAll(
-      args.map(([assetId, amount]) =>
+      unstakeRequests.map(({ amount, assetId, operatorAccount }) =>
         this.provider.tx.multiAssetDelegation.cancelDelegatorUnstake(
+          operatorAccount,
           assetId,
           amount,
         ),
       ),
     );
 
-    return this.signAndSendExtrinsic(extrinsics, {}, eventHandlers);
+    return this.signAndSendExtrinsic(
+      extrinsics,
+      { unstakeRequests },
+      eventHandlers,
+    );
   };
 }

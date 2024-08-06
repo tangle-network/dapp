@@ -66,8 +66,8 @@ function createDummyApi(error: string): RestakeTxBase {
       eventHandlers?.onTxFailed?.(error, {});
       return Promise.resolve(null);
     },
-    cancelDelegatorUnstakeRequests(eventHandlers) {
-      eventHandlers?.onTxFailed?.(error, {});
+    cancelDelegatorUnstakeRequests(unstakeRequests, eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, { unstakeRequests });
       return Promise.resolve(null);
     },
   };
