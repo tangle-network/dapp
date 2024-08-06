@@ -219,13 +219,15 @@ const BlueprintItem: FC<Blueprint> = ({
   isBoosted,
 }) => {
   return (
-    <div className="overflow-hidden rounded-xl flex flex-col -space-y-2">
+    <div className="overflow-hidden rounded-xl flex flex-col -space-y-2 cursor-pointer group">
       {isBoosted && <div className="h-2 bg-purple-60 dark:bg-purple-50" />}
       <div
         className={twMerge(
-          'bg-[linear-gradient(180deg,rgba(236,239,255,0.20)_0%,rgba(184,196,255,0.20)_100%),linear-gradient(180deg,rgba(255,255,255,0.50)_0%,rgba(255,255,255,0.30)_100%)]',
-          'dark:bg-[linear-gradient(180deg,rgba(17,22,50,0.20)_0%,rgba(21,37,117,0.20)_100%),linear-gradient(180deg,rgba(43,47,64,0.50)_0%,rgba(43,47,64,0.30)_100%)]',
-          'h-[364px] flex flex-col justify-between py-3 px-6 rounded-xl overflow-hidden',
+          'relative h-[364px] flex flex-col justify-between py-3 px-6 rounded-xl overflow-hidden',
+          'hover:before:absolute hover:before:inset-0 hover:before:bg-cover hover:before:bg-no-repeat hover:before:opacity-50 hover:before:pointer-events-none',
+          'bg-[linear-gradient(180deg,rgba(184,196,255,0.20)0%,rgba(236,239,255,0.20)100%),linear-gradient(180deg,rgba(255,255,255,0.50)0%,rgba(255,255,255,0.30)100%)]',
+          'dark:bg-[linear-gradient(180deg,rgba(17,22,50,0.20)0%,rgba(21,37,117,0.20)100%),linear-gradient(180deg,rgba(43,47,64,0.50)0%,rgba(43,47,64,0.30)100%)]',
+          "hover:before:bg-[url('/static/assets/blueprints/grid-bg.png')] dark:hover:before:bg-[url('/static/assets/blueprints/grid-bg-dark.png')]",
         )}
       >
         <div className="space-y-3">
@@ -266,7 +268,7 @@ const BlueprintItem: FC<Blueprint> = ({
 
           <Typography
             variant="body2"
-            className="text-mono-120 dark:text-mono-100"
+            className="text-mono-120 dark:text-mono-100 group-hover:text-mono-200 dark:group-hover:text-mono-0"
           >
             {formatDescription(description)}
           </Typography>
