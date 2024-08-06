@@ -129,7 +129,7 @@ export const TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK = {
   polkadotJsDashboardUrl: 'https://polkadot.js.org/apps/',
 } as const satisfies Network;
 
-export const NETWORK_MAP = {
+export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {
   [NetworkId.TANGLE_MAINNET]: TANGLE_MAINNET_NETWORK,
   [NetworkId.TANGLE_TESTNET]: TANGLE_TESTNET_NATIVE_NETWORK,
   [NetworkId.TANGLE_LOCAL_DEV]: TANGLE_LOCAL_DEV_NETWORK,
@@ -137,4 +137,4 @@ export const NETWORK_MAP = {
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK,
   [NetworkId.TANGLE_RESTAKING_PARACHAIN_TESTNET]:
     TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK,
-} as const satisfies Partial<Record<NetworkId, Network>>;
+};

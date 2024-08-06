@@ -5,13 +5,8 @@ import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
 const usePayoutsAvailability = () => {
-  const { valueOpt: cachedPayouts } = useLocalStorage(
-    LocalStorageKey.PAYOUTS,
-    true,
-  );
-
+  const { valueOpt: cachedPayouts } = useLocalStorage(LocalStorageKey.PAYOUTS);
   const { rpcEndpoint } = useNetworkStore();
-
   const address = useSubstrateAddress();
 
   const payoutsData = useMemo(() => {

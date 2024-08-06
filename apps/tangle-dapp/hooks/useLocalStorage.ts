@@ -82,33 +82,29 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
                           ? LiquidStakingTableData
                           : never;
 
-export const extractFromLocalStorage = <Key extends LocalStorageKey>(
+export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,
-  canClearIfInvalid: boolean,
 ): LocalStorageValueOf<Key> | null => {
-  type Value = LocalStorageValueOf<Key>;
-
-  const jsonString = localStorage.getItem(key);
+  const valueString = localStorage.getItem(key);
 
   // Item was not present in local storage.
-  if (jsonString === null) {
+  if (valueString === null) {
     return null;
   }
 
-  let value: Value | null = null;
-
-  // Clear the local storage value if parsing fails, and the
-  // entry is set to be cleared if invalid.
   try {
-    // TODO: Use zod to validate the value, this helps prevent logic errors.
-    value = JSON.parse(jsonString) as Value;
+    // TODO: Move to using zod to validate the value at runtime.
+    return JSON.parse(valueString) as LocalStorageValueOf<Key>;
   } catch {
-    if (canClearIfInvalid) {
-      localStorage.removeItem(key);
-    }
-  }
+    localStorage.removeItem(key);
 
-  return value;
+    console.warn(
+      'Removed corrupted local storage key, which failed to be parsed as JSON:',
+      key,
+    );
+
+    return null;
+  }
 };
 
 // TODO: During development cycles, changing local storage value types will lead to
@@ -124,10 +120,7 @@ export const extractFromLocalStorage = <Key extends LocalStorageKey>(
  * it's recommended to instead use a `useEffect` and manually retrieve the
  * value from local storage on mount, using the `get` method.
  */
-const useLocalStorage = <Key extends LocalStorageKey>(
-  key: Key,
-  isUsedAsCache = false,
-) => {
+const useLocalStorage = <Key extends LocalStorageKey>(key: Key) => {
   type Value = LocalStorageValueOf<Key>;
 
   // Initially, the value is `null` until the component is mounted
@@ -135,7 +128,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(
   const [valueOpt, setValueOpt] = useState<Optional<Value> | null>(null);
 
   const refresh = useCallback(() => {
-    const freshValue = extractFromLocalStorage<Key>(key, isUsedAsCache);
+    const freshValue = getJsonFromLocalStorage<Key>(key);
 
     const freshValueOpt = new Optional(
       freshValue === null ? undefined : freshValue,
@@ -144,7 +137,7 @@ const useLocalStorage = <Key extends LocalStorageKey>(
     setValueOpt(freshValueOpt);
 
     return freshValueOpt;
-  }, [isUsedAsCache, key]);
+  }, [key]);
 
   // Extract the value from local storage on mount.
   useEffect(() => {

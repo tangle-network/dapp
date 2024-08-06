@@ -43,19 +43,21 @@ const CustomRpcEndpointInput: FC<CustomRpcEndpointInputProps> = ({
     }
   }, [getCachedCustomRpcEndpoint, value]);
 
+  const rightIcon =
+    value !== '' ? (
+      <SaveWithBg className="cursor-pointer" onClick={handleSave} />
+    ) : (
+      <Save className="opacity-60 cursor-not-allowed" />
+    );
+
   return (
     <Input
       id={id}
       placeholder={placeholder}
       value={value}
       onChange={setValue}
-      rightIcon={
-        value !== '' ? (
-          <SaveWithBg className="cursor-pointer" onClick={handleSave} />
-        ) : (
-          <Save className="opacity-60 cursor-not-allowed" />
-        )
-      }
+      isControlled
+      rightIcon={rightIcon}
     />
   );
 };
