@@ -12,10 +12,14 @@ import type { UnstakeRequestTableData } from './types';
 import { isUnstakeRequestReady } from './utils';
 
 type Props = {
+  allRequests: UnstakeRequestTableData[];
   selectedRequests: UnstakeRequestTableData[];
 };
 
-const UnstakeRequestTableActions = ({ selectedRequests }: Props) => {
+const UnstakeRequestTableActions = ({
+  allRequests,
+  selectedRequests,
+}: Props) => {
   const [isCanceling, setIsCanceling] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
 
@@ -82,12 +86,12 @@ const UnstakeRequestTableActions = ({ selectedRequests }: Props) => {
   );
 
   const canExecuteUnstake = useMemo(() => {
-    if (selectedRequests.length === 0) return false;
+    if (allRequests.length === 0) return false;
 
-    return selectedRequests.every(({ timeRemaining }) => {
+    return allRequests.some(({ timeRemaining }) => {
       return isUnstakeRequestReady(timeRemaining);
     });
-  }, [selectedRequests]);
+  }, [allRequests]);
 
   return (
     <>
@@ -95,7 +99,7 @@ const UnstakeRequestTableActions = ({ selectedRequests }: Props) => {
         className="flex-1"
         isLoading={isCanceling}
         loadingText="Canceling..."
-        isDisabled={!canCancelUnstake}
+        isDisabled={!canCancelUnstake || isExecuting}
         isFullWidth
         onClick={handleCancelUnstake}
         variant="secondary"
@@ -107,11 +111,11 @@ const UnstakeRequestTableActions = ({ selectedRequests }: Props) => {
         className="flex-1"
         isLoading={isExecuting}
         loadingText="Executing..."
-        isDisabled={!canExecuteUnstake}
+        isDisabled={!canExecuteUnstake || isCanceling}
         isFullWidth
         onClick={handleExecuteUnstake}
       >
-        Execute Unstake
+        Execute All Executable Requests
       </Button>
     </>
   );

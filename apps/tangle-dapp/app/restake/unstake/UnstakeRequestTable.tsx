@@ -36,7 +36,7 @@ const columns = [
   columnsHelper.accessor('operatorAccountId', {
     id: 'select',
     enableSorting: false,
-    header: () => <TableCell>Scheduled Unstake</TableCell>,
+    header: () => <TableCell>Select request to cancel</TableCell>,
     cell: (props) => (
       <div className="flex items-center justify-start gap-2">
         <CheckBox
@@ -175,7 +175,10 @@ const UnstakeRequestTable = ({
       />
 
       <div className="flex items-center gap-3">
-        <UnstakeRequestTableActions selectedRequests={selectedRequests} />
+        <UnstakeRequestTableActions
+          allRequests={Object.values(dataWithId)}
+          selectedRequests={selectedRequests}
+        />
       </div>
     </>
   );
