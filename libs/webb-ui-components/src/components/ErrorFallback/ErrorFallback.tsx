@@ -1,4 +1,6 @@
-import { Fragment, forwardRef, useMemo } from 'react';
+'use client';
+
+import { Fragment, forwardRef, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import * as constants from '../../constants';
@@ -9,11 +11,13 @@ import { ErrorFallbackProps } from './types';
 const telegramInfo = constants.defaultSocialConfigs.find(
   (c) => c.name === 'telegram',
 );
+
 const contactLink = telegramInfo?.href ?? '';
 
 const githubInfo = constants.defaultSocialConfigs.find(
   (c) => c.name === 'github',
 );
+
 const reportIssueLink = `${githubInfo?.href ?? ''}/webb-dapp/issues/new/choose`;
 
 /**
@@ -48,6 +52,8 @@ export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
     },
     ref,
   ) => {
+    const [hasClearedCache, setHasClearedCache] = useState(false);
+
     const description = useMemo(() => {
       if (descriptionProp) {
         return descriptionProp;
@@ -76,6 +82,11 @@ export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
       ];
     }, [contactUsLinkProps, descriptionProp]);
 
+    const handleClearCache = useCallback(() => {
+      localStorage.clear();
+      setHasClearedCache(true);
+    }, []);
+
     const buttonProps = useMemo<Array<ButtonProps>>(() => {
       if (buttons) {
         return buttons;
@@ -97,6 +108,14 @@ export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
           children: 'Refresh Page',
         },
         {
+          onClick: handleClearCache,
+          ...refreshPageButtonProps,
+          ...commonButtonProps,
+          variant: 'secondary',
+          children: 'Clear cache',
+          isDisabled: hasClearedCache,
+        },
+        {
           href: reportIssueLink,
           target: '_blank',
           ...reportIssueButtonProps,
@@ -105,7 +124,13 @@ export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
           children: 'Report issue',
         },
       ];
-    }, [buttons, refreshPageButtonProps, reportIssueButtonProps]);
+    }, [
+      buttons,
+      handleClearCache,
+      hasClearedCache,
+      refreshPageButtonProps,
+      reportIssueButtonProps,
+    ]);
 
     return (
       <div
