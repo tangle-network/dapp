@@ -14,7 +14,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 
 import {
@@ -32,7 +32,6 @@ import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import useTypedSearchParams from '../../../hooks/useTypedSearchParams';
-import DetailItem from './DetailItem';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
 import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
@@ -46,10 +45,26 @@ const LiquidStakeCard: FC = () => {
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const { nativeBalances } = useParachainBalances();
 
-  const searchParams = useTypedSearchParams({
-    amount: (value) => new BN(value),
-    chainId: (value) => z.nativeEnum(ParachainChainId).parse(parseInt(value)),
-  });
+  const searchParams = useTypedSearchParams(
+    useMemo(() => {
+      return {
+        amount: (value) => new BN(value),
+        chainId: (value) =>
+          z.nativeEnum(ParachainChainId).parse(parseInt(value)),
+      };
+    }, []),
+  );
+
+  // If present in the URL search params, set the amount and chain ID.
+  useEffect(() => {
+    if (searchParams.amount !== undefined) {
+      setFromAmount(searchParams.amount);
+    }
+
+    if (searchParams.chainId !== undefined) {
+      setSelectedChainId(searchParams.chainId);
+    }
+  }, [searchParams.amount, searchParams.chainId, setSelectedChainId]);
 
   // TODO: Must set the amount ONCE, if it is provided in the URL search params and parsed correctly. Setting the value once might prove difficult unless a useMemo is given to the `useTypedSearchParams` hook to maintain 'stability'.
 

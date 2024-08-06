@@ -184,7 +184,10 @@ const ChainSelector: FC<ChainSelectorProps> = ({
         <ScrollArea className="max-h-[300px]">
           <ul>
             {Object.values(ParachainChainId)
-              .filter((chainId) => chainId !== selectedChainId)
+              .filter(
+                (chainId): chainId is ParachainChainId =>
+                  chainId !== selectedChainId && typeof chainId !== 'string',
+              )
               .map((chainId) => {
                 return (
                   <li key={chainId} className="w-full">
