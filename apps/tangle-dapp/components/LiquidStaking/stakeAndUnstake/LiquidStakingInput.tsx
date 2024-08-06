@@ -160,7 +160,6 @@ const ChainSelector: FC<ChainSelectorProps> = ({
   setChain,
 }) => {
   const isReadOnly = setChain === undefined;
-  const networkName = PARACHAIN_CHAIN_MAP[selectedChainId].networkName;
 
   const base = (
     <div className="group flex gap-1 items-center justify-center">
@@ -168,7 +167,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
         <ChainLogo size="sm" chainId={selectedChainId} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          {networkName}
+          {PARACHAIN_CHAIN_MAP[selectedChainId].networkName}
         </Typography>
       </div>
 
@@ -196,7 +195,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
                       onSelect={() => setChain(chainId)}
                       className="px-3 normal-case"
                     >
-                      {networkName}
+                      {PARACHAIN_CHAIN_MAP[chainId].networkName}
                     </DropdownMenuItem>
                   </li>
                 );

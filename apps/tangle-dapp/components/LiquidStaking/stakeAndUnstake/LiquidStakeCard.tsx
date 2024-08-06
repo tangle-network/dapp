@@ -46,15 +46,16 @@ const LiquidStakeCard: FC = () => {
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const { nativeBalances } = useParachainBalances();
 
-  const searchParams = useTypedSearchParams<LsCardSearchParams>(
-    useMemo(() => {
-      return {
-        amount: (value) => new BN(value),
-        chainId: (value) =>
-          z.nativeEnum(ParachainChainId).parse(parseInt(value)),
-      };
-    }, []),
-  );
+  const { searchParams, setSearchParam } =
+    useTypedSearchParams<LsCardSearchParams>(
+      useMemo(() => {
+        return {
+          amount: (value) => new BN(value),
+          chainId: (value) =>
+            z.nativeEnum(ParachainChainId).parse(parseInt(value)),
+        };
+      }, []),
+    );
 
   // If present in the URL search params, set the amount and chain ID.
   useEffect(() => {
@@ -66,6 +67,17 @@ const LiquidStakeCard: FC = () => {
       setSelectedChainId(searchParams.chainId);
     }
   }, [searchParams.amount, searchParams.chainId, setSelectedChainId]);
+
+  // Maintain URL search params in sync with the state.
+  useEffect(() => {
+    if (fromAmount !== null) {
+      setSearchParam('amount', fromAmount.toString());
+    }
+
+    if (selectedChainId !== null) {
+      setSearchParam('chainId', selectedChainId.toString());
+    }
+  }, [fromAmount, selectedChainId, setSearchParam]);
 
   const selectedChain = PARACHAIN_CHAIN_MAP[selectedChainId];
 

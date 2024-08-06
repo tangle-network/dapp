@@ -65,7 +65,7 @@ const LiquidUnstakeCard: FC = () => {
     selectedChain.currency,
   );
 
-  const searchParams = useTypedSearchParams<LsCardSearchParams>(
+  const { searchParams } = useTypedSearchParams<LsCardSearchParams>(
     useMemo(() => {
       return {
         amount: (value) => new BN(value),

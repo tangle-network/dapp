@@ -25,7 +25,7 @@ export enum LsSearchParamAction {
 const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
   const [isStaking, setIsStaking] = useState(true);
 
-  const searchParams = useTypedSearchParams({
+  const { searchParams, setSearchParam } = useTypedSearchParams({
     action: (value) => z.nativeEnum(LsSearchParamAction).parse(value),
   });
 
@@ -38,6 +38,15 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
 
     setIsStaking(searchParams.action === LsSearchParamAction.Stake);
   }, [searchParams.action]);
+
+  // Maintain URL search params in sync with the state.
+  useEffect(() => {
+    const value = isStaking
+      ? LsSearchParamAction.Stake
+      : LsSearchParamAction.Unstake;
+
+    setSearchParam('action', value);
+  }, [isStaking, setSearchParam]);
 
   if (!isLiquidStakingToken(tokenSymbol)) {
     return notFound();

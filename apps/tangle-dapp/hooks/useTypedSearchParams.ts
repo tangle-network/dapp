@@ -1,11 +1,12 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
-import { useMemo } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useMemo } from 'react';
 
 const useTypedSearchParams = <T extends object>(parsers: {
   [Key in keyof T]: (value: string) => T[Key] | undefined;
-}): Partial<T> => {
+}) => {
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const entries = useMemo(() => {
@@ -27,7 +28,17 @@ const useTypedSearchParams = <T extends object>(parsers: {
     });
   }, [parsers, searchParams]);
 
-  return useMemo(() => {
+  const setSearchParam = useCallback(
+    (key: keyof T & string, value: string) => {
+      const url = new URL(window.location.href);
+
+      url.searchParams.set(key, value);
+      router.push(url.toString());
+    },
+    [router],
+  );
+
+  const typedSearchParams = useMemo<Partial<T>>(() => {
     const result: Partial<T> = {};
 
     for (const [stringKey, value] of entries) {
@@ -41,6 +52,8 @@ const useTypedSearchParams = <T extends object>(parsers: {
 
     return result;
   }, [entries]);
+
+  return { searchParams: typedSearchParams, setSearchParam };
 };
 
 export default useTypedSearchParams;
