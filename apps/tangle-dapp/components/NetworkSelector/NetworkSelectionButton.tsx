@@ -46,9 +46,11 @@ const NetworkSelectionButton: FC = () => {
   );
 
   const networkName = useMemo(() => {
-    if (isConnecting) return 'Connecting...';
-
-    if (loading) return 'Loading...';
+    if (isConnecting) {
+      return 'Connecting...';
+    } else if (loading) {
+      return 'Loading...';
+    }
 
     return network?.name ?? 'Unknown Network';
   }, [isConnecting, loading, network?.name]);
@@ -57,10 +59,14 @@ const NetworkSelectionButton: FC = () => {
   // since it would have no effect there.
   const isInLiquidStakingPath = pathname.startsWith(PagePath.LIQUID_STAKING);
 
-  const isBridgePage = useMemo(() => pathname === '/bridge', [pathname]);
+  const isInBridgePath = useMemo(
+    () => pathname.startsWith(PagePath.BRIDGE),
+    [pathname],
+  );
 
   const isWrongEvmNetwork = useMemo(() => {
     const isEvmWallet = activeWallet?.platform === 'EVM';
+
     return (
       isEvmWallet &&
       network.evmChainId !== undefined &&
@@ -69,18 +75,26 @@ const NetworkSelectionButton: FC = () => {
   }, [activeChain?.id, activeWallet?.platform, network.evmChainId]);
 
   const switchToCorrectEvmChain = useCallback(() => {
-    if (!network.evmChainId || !activeWallet) return;
+    if (!network.evmChainId || !activeWallet) {
+      return;
+    }
+
     const typedChainId = calculateTypedChainId(
       ChainType.EVM,
       network.evmChainId,
     );
+
     const targetChain = chainsPopulated[typedChainId];
+
     switchChain(targetChain, activeWallet);
   }, [activeWallet, network.evmChainId, switchChain]);
 
-  if (isBridgePage) return null;
-
-  if (isInLiquidStakingPath) {
+  if (isInBridgePath) {
+    return null;
+  }
+  // Network can't be switched from the Tangle Restaking Parachain while
+  // on liquid staking page.
+  else if (isInLiquidStakingPath) {
     return (
       <Tooltip>
         <TooltipTrigger asChild>
@@ -121,6 +135,7 @@ const NetworkSelectionButton: FC = () => {
           <TooltipBody>Wrong EVM Chain Connected</TooltipBody>
         </Tooltip>
       )}
+
       <Dropdown>
         <TriggerButton
           isLoading={isConnecting || loading}
