@@ -257,7 +257,10 @@ const BlueprintItem: FC<Blueprint> = ({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <div className="min-w-0 flex-1">
-                  <Typography variant="h5" className="truncate">
+                  <Typography
+                    variant="h5"
+                    className="truncate text-mono-180 dark:text-mono-20 group-hover:text-mono-200 dark:group-hover:text-mono-0"
+                  >
                     {name}
                   </Typography>
                 </div>
