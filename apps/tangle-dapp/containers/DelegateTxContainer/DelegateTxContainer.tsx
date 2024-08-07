@@ -163,9 +163,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
       <ModalContent
         isCenter
         isOpen={isModalOpen}
-        className="w-full max-w-[838px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[838px]"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
+        <ModalHeader onClose={closeModalAndReset}>
           Setup Nomination {currentStep}
         </ModalHeader>
 
@@ -196,7 +196,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           )}
         </div>
 
-        <ModalFooter className="flex gap-1 items-center">
+        <ModalFooter className="flex items-center gap-2">
           {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
             <Button
               isFullWidth

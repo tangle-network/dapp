@@ -5,7 +5,7 @@ import noop from 'lodash/noop';
 import type { Hash } from 'viem';
 
 import {
-  type CancelDelegatorBondLessContext,
+  type CancelDelegatorUnstakeRequestContext,
   type DelegateContext,
   type DelegatorBondLessContext,
   type DepositContext,
@@ -176,7 +176,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
   };
 
-  scheduleDelegatorBondLess = async (
+  scheduleDelegatorUnstake = async (
     operatorAccount: string,
     assetId: string,
     amount: bigint,
@@ -189,7 +189,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     } satisfies DelegatorBondLessContext;
 
     const extrinsic =
-      this.provider.tx.multiAssetDelegation.scheduleDelegatorBondLess(
+      this.provider.tx.multiAssetDelegation.scheduleDelegatorUnstake(
         operatorAccount,
         assetId,
         amount,
@@ -200,21 +200,35 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
   };
 
-  executeDelegatorBondLess = async (
+  executeDelegatorUnstakeRequests = async (
     eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
   ): Promise<Hash | null> => {
     const extrinsic =
-      this.provider.tx.multiAssetDelegation.executeDelegatorBondLess();
+      this.provider.tx.multiAssetDelegation.executeDelegatorUnstake();
 
     return this.signAndSendExtrinsic(extrinsic, {}, eventHandlers);
   };
 
-  cancelDelegatorBondLess = async (
-    eventHandlers?: TxEventHandlers<CancelDelegatorBondLessContext> | undefined,
+  cancelDelegatorUnstakeRequests = async (
+    unstakeRequests: CancelDelegatorUnstakeRequestContext['unstakeRequests'],
+    eventHandlers?:
+      | TxEventHandlers<CancelDelegatorUnstakeRequestContext>
+      | undefined,
   ): Promise<Hash | null> => {
-    const extrinsic =
-      this.provider.tx.multiAssetDelegation.cancelDelegatorBondLess();
+    const extrinsics = this.provider.tx.utility.batchAll(
+      unstakeRequests.map(({ amount, assetId, operatorAccount }) =>
+        this.provider.tx.multiAssetDelegation.cancelDelegatorUnstake(
+          operatorAccount,
+          assetId,
+          amount,
+        ),
+      ),
+    );
 
-    return this.signAndSendExtrinsic(extrinsic, {}, eventHandlers);
+    return this.signAndSendExtrinsic(
+      extrinsics,
+      { unstakeRequests },
+      eventHandlers,
+    );
   };
 }

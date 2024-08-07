@@ -57,10 +57,7 @@ const Template = () => {
       <ModalTrigger asChild>
         <Button>Click me</Button>
       </ModalTrigger>
-      <ModalContent
-        className="flex items-center justify-center"
-        isOpen={isOpen}
-      >
+      <ModalContent isOpen={isOpen}>
         <WalletConnectionCard
           onClose={() => setIsOpen(false)}
           wallets={wallets}

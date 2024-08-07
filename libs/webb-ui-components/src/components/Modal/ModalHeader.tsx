@@ -5,7 +5,7 @@ import { Typography } from '../../typography/Typography';
 import { Close as CloseIcon } from '@webb-tools/icons';
 
 export const ModalHeader = forwardRef<HTMLDivElement, ModalHeaderProps>(
-  ({ children, className, onClose, titleVariant = 'h5', ...props }, ref) => {
+  ({ children, className, onClose, titleVariant = 'h4', ...props }, ref) => {
     return (
       <div
         {...props}

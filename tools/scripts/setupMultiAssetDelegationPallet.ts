@@ -32,6 +32,9 @@ const PALLET_ACCOUNT = encodeAddress(
 
 const MINIMUM_BALANCE_UINT = '1';
 const MINT_AMOUNT = '1000';
+const POOL_ID = 1;
+const APY = 12;
+const CAP = parseUnits('2000', TANGLE_TOKEN_DECIMALS);
 
 // Initialize the API
 info('Connecting to the local Tangle network...');
@@ -80,7 +83,7 @@ const tgtTNT = {
 
 async function batchTxes(txes: Parameters<typeof api.tx.utility.batch>[0]) {
   const nonce = await api.rpc.system.accountNextIndex(ALICE_SUDO.address);
-  return api.tx.utility.batch(txes).signAndSend(ALICE_SUDO, { nonce });
+  return api.tx.utility.batchAll(txes).signAndSend(ALICE_SUDO, { nonce });
 }
 
 info('Creating two assets...');
@@ -136,7 +139,6 @@ await batchTxes([
     parseUnits(MINT_AMOUNT, tgtTNT.decimals),
   ),
 ]);
-
 success('Assets created and minted successfully!');
 
 info('Transfer native token to multi-asset-delegation pallet...');
@@ -146,14 +148,15 @@ await api.tx.balances
   .signAndSend(ALICE_SUDO, { nonce });
 success('Native token transferred to multi-asset-delegation pallet!');
 
-info('Whitelisting the assets for the multi-asset-delegation pallet...');
-nonce = await api.rpc.system.accountNextIndex(ALICE_SUDO.address);
-await api.tx.sudo
-  .sudo(
-    api.tx.multiAssetDelegation.setWhitelistedAssets([tgTEST.id, tgtTNT.id]),
-  )
-  .signAndSend(ALICE_SUDO, { nonce });
-success('Assets whitelisted for the multi-asset-delegation pallet!');
+info('Create and set reward for pool...');
+await batchTxes([
+  api.tx.multiAssetDelegation.manageAssetInPool(POOL_ID, tgTEST.id, 'Add'),
+  api.tx.multiAssetDelegation.manageAssetInPool(POOL_ID, tgtTNT.id, 'Add'),
+  api.tx.sudo.sudo(
+    api.tx.multiAssetDelegation.setIncentiveApyAndCap(POOL_ID, APY, CAP),
+  ),
+]);
+success('Pool created!');
 
 info('Join operators for DAVE');
 nonce = await api.rpc.system.accountNextIndex(DAVE.address);

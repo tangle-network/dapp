@@ -1,5 +1,5 @@
-import { Option, Vec } from '@polkadot/types';
-import {
+import type { Option, Struct, u32, u128, Vec } from '@polkadot/types';
+import type {
   PalletMultiAssetDelegationOperatorDelegatorBond,
   PalletMultiAssetDelegationOperatorOperatorBondLessRequest,
   PalletMultiAssetDelegationOperatorOperatorStatus,
@@ -11,12 +11,19 @@ import { map, type Observable, of, switchMap } from 'rxjs';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import type { OperatorMap, OperatorMetadata } from '../../types/restake';
 
-const EMPTY_OPERATOR_MAP: OperatorMap = {};
-
 type UseRestakeOperatorMapReturnType = {
   operatorMap: OperatorMap;
   operatorMap$: Observable<OperatorMap>;
 };
+
+// TODO: Remove this on `tangle-substrate-types` v0.5.11
+interface PalletMultiAssetDelegationOperatorOperatorMetadata extends Struct {
+  readonly stake: u128;
+  readonly delegationCount: u32;
+  readonly request: Option<PalletMultiAssetDelegationOperatorOperatorBondLessRequest>;
+  readonly delegations: Vec<PalletMultiAssetDelegationOperatorDelegatorBond>;
+  readonly status: PalletMultiAssetDelegationOperatorOperatorStatus;
+}
 
 /**
  * Hook to retrieve the operator map for restaking.
@@ -30,7 +37,9 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
   const entries$ = useMemo(
     () =>
       apiRx.query.multiAssetDelegation?.operators !== undefined
-        ? apiRx.query.multiAssetDelegation.operators.entries()
+        ? apiRx.query.multiAssetDelegation.operators.entries<
+            Option<PalletMultiAssetDelegationOperatorOperatorMetadata>
+          >()
         : of([]),
     [apiRx.query.multiAssetDelegation?.operators],
   );
@@ -49,7 +58,7 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
                   const operator = operatorMetadata.unwrap();
 
                   const operatorMetadataPrimitive = {
-                    bond: operator.bond.toBigInt(),
+                    stake: operator.stake.toBigInt(),
                     delegationCount: operator.delegationCount.toNumber(),
                     bondLessRequest: toPrimitiveRequest(operator.request),
                     delegations: toPrimitiveDelegations(operator.delegations),
@@ -60,7 +69,7 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
                     [accountId.toString()]: operatorMetadataPrimitive,
                   } satisfies OperatorMap);
                 },
-                {} as typeof EMPTY_OPERATOR_MAP,
+                {} as OperatorMap,
               ),
             ),
           );
@@ -69,7 +78,7 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
     [entries$],
   );
 
-  const operatorMap = useObservableState(operatorMap$, EMPTY_OPERATOR_MAP);
+  const operatorMap = useObservableState(operatorMap$, {});
 
   return {
     operatorMap,
