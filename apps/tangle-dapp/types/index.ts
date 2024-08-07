@@ -3,7 +3,6 @@ import type {
   SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
-import type { HexString } from '@polkadot/util/types';
 import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 
 export enum PagePath {
@@ -244,8 +243,9 @@ export type GetSuccessMessageFunction<Context> = (context: Context) => string;
 
 // add Blueprint
 export type Blueprint = {
+  id: string;
   name: string;
-  address: HexString;
+  author: string;
   imgUrl: string;
   category: BlueprintCategory;
   description: string;
@@ -253,6 +253,10 @@ export type Blueprint = {
   operatorsCount: number;
   tvl: string;
   isBoosted?: boolean;
+  githubUrl?: string;
+  websiteUrl?: string;
+  twitterUrl?: string;
+  email?: string;
 };
 
 export enum BlueprintCategory {
