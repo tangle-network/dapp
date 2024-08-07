@@ -42,9 +42,9 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
       <ModalContent
         isCenter
         isOpen={isModalOpen}
-        className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[416px]"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModal} className="mb-4">
+        <ModalHeader onClose={closeModal} className="mb-4">
           Stop Nominations
         </ModalHeader>
 
@@ -58,16 +58,7 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
           </Typography>
         </div>
 
-        <ModalFooter className="px-8 py-6 flex flex-col gap-1">
-          <Button
-            isFullWidth
-            isDisabled={isNominating === null || !isNominating}
-            isLoading={chillTxStatus === TxStatus.PROCESSING}
-            onClick={submitTx}
-          >
-            Confirm
-          </Button>
-
+        <ModalFooter className="flex items-center gap-2">
           <Button
             isFullWidth
             variant="secondary"
@@ -75,6 +66,15 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
             target="_blank"
           >
             Learn More
+          </Button>
+
+          <Button
+            isFullWidth
+            isDisabled={isNominating === null || !isNominating}
+            isLoading={chillTxStatus === TxStatus.PROCESSING}
+            onClick={submitTx}
+          >
+            Confirm
           </Button>
         </ModalFooter>
       </ModalContent>

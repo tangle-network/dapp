@@ -85,11 +85,9 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
       <ModalContent
         isCenter
         isOpen={isOpen}
-        className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px]"
       >
-        <ModalHeader titleVariant="h4" onClose={handleClose}>
-          Bridge Confirmation
-        </ModalHeader>
+        <ModalHeader onClose={handleClose}>Bridge Confirmation</ModalHeader>
 
         <div className="p-9 space-y-8">
           <div className="flex flex-col items-center gap-4">
@@ -115,7 +113,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
           <FeeDetails />
         </div>
 
-        <ModalFooter className="flex flex-col gap-1 px-8 py-6">
+        <ModalFooter className="flex items-center gap-2">
           <Button
             isFullWidth
             isLoading={isTransferring}
