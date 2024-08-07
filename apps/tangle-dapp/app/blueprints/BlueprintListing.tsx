@@ -9,7 +9,6 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { SparklingIcon } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';
@@ -22,6 +21,7 @@ import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Blueprint, BlueprintCategory, PagePath } from '../../types';
+import BoostedChip from './BoostedChip';
 import useBlueprintListing from './useBlueprintListing';
 
 const columnHelper = createColumnHelper<Blueprint>();
@@ -267,22 +267,7 @@ const BlueprintItem: FC<Blueprint> = ({
                       {name}
                     </Typography>
                   </div>
-                  {isBoosted && (
-                    <div
-                      className={twMerge(
-                        'px-2 py-1 rounded-full border border-purple-50 flex items-center gap-0.5',
-                        'shadow-[0px_-7px_11px_0px_rgba(185,183,255,0.24)] dark:shadow-[0px_-7px_11px_0px_rgba(185,183,255,0.12)]',
-                      )}
-                    >
-                      <SparklingIcon className="fill-purple-60 dark:fill-purple-40" />
-                      <Typography
-                        variant="body4"
-                        className="text-purple-60 dark:text-purple-40"
-                      >
-                        Boosted
-                      </Typography>
-                    </div>
-                  )}
+                  {isBoosted && <BoostedChip />}
                 </div>
                 <Typography
                   variant="body2"

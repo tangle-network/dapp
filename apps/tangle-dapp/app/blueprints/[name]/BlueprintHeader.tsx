@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import BoostedChip from '../BoostedChip';
 import useBlueprintDetails from './useBlueprintDetails';
 
 interface BlueprintHeaderProps {
@@ -77,6 +78,7 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprintName }) => {
                       className="!fill-mono-200 dark:!fill-mono-0 hover:!fill-mono-120 dark:hover:!fill-mono-80"
                     />
                   </a>
+                  {isBoosted && <BoostedChip />}
                 </div>
                 <div className="flex items-center">
                   <Typography
