@@ -21,7 +21,7 @@ export enum LiquidStakingToken {
   GLMR = 'GLMR',
   MANTA = 'MANTA',
   ASTAR = 'ASTR',
-  PHALA = 'PHALA',
+  PHALA = 'PHA',
   TNT = 'TNT',
 }
 

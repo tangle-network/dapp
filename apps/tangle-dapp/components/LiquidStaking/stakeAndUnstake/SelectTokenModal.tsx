@@ -8,11 +8,10 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useEffect, useMemo } from 'react';
 
-import { ParachainChainId } from '../../../constants/liquidStaking';
 import { AnySubstrateAddress } from '../../../types/utils';
 import formatBn from '../../../utils/formatBn';
+import LSTToken from '../../LSTToken';
 import AddressLink from '../AddressLink';
-import ChainLogo from './ChainLogo';
 
 export type SelectTokenModalProps = {
   isOpen: boolean;
@@ -108,7 +107,8 @@ const TokenListItem: FC<TokenListItemProps> = ({
     >
       {/* Information */}
       <div className="flex items-center justify-center gap-2">
-        <ChainLogo size="md" isRounded chainId={ParachainChainId.POLKADOT} />
+        {/* TODO: get list of token dynamically */}
+        <LSTToken size="lg" name="DOT" />
 
         <div className="space-y-1">
           <Typography variant="h5" fw="bold" className="dark:text-mono-0">

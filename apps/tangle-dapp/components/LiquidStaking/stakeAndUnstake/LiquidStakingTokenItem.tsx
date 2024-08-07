@@ -6,20 +6,18 @@ import { Button, Chip, Typography } from '@webb-tools/webb-ui-components';
 import Image from 'next/image';
 import { FC, useMemo } from 'react';
 
+import LSTToken from '../../../components/LSTToken';
 import { StaticAssetPath } from '../../../constants';
 import {
   LiquidStakingToken,
   LST_PREFIX,
-  ParachainChainId,
   TVS_TOOLTIP,
 } from '../../../constants/liquidStaking';
 import { PagePath } from '../../../types';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
 import StatItem from '../StatItem';
-import ChainLogo from './ChainLogo';
 
 export type LiquidStakingTokenItemProps = {
-  chainId: ParachainChainId;
   title: string;
   tokenSymbol: LiquidStakingToken;
   totalValueStaked: number;
@@ -28,7 +26,6 @@ export type LiquidStakingTokenItemProps = {
 
 const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
   title,
-  chainId,
   tokenSymbol,
   totalValueStaked,
   totalStaked,
@@ -46,8 +43,8 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
   return (
     <div className="flex gap-2 justify-between rounded-xl bg-mono-20 dark:bg-mono-160 w-full px-3 py-6 border border-mono-40 dark:border-none">
       <div className="flex gap-2 items-center">
-        <div className="relative rounded-full dark:bg-mono-180 border-2 dark:border-purple-80 p-1">
-          <ChainLogo size="md" chainId={chainId} isRounded />
+        <div className="relative">
+          <LSTToken size="lg" name={tokenSymbol} />
 
           <Image
             className="absolute bottom-0 right-0"

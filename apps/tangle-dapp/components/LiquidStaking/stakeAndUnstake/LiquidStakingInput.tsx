@@ -2,6 +2,7 @@
 
 import { BN } from '@polkadot/util';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { ChainIcon } from '@webb-tools/icons';
 import {
   Dropdown,
   DropdownBody,
@@ -21,7 +22,6 @@ import {
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
-import ChainLogo from './ChainLogo';
 import DropdownChevronIcon from './DropdownChevronIcon';
 import TokenChip from './TokenChip';
 
@@ -164,7 +164,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
   const base = (
     <div className="group flex gap-1 items-center justify-center">
       <div className="flex gap-2 items-center justify-center">
-        <ChainLogo size="sm" chainId={selectedChainId} />
+        <ChainIcon size="lg" name={selectedChainId} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
           {LS_CHAIN_TO_NETWORK_NAME[selectedChainId]}
@@ -188,7 +188,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
                 return (
                   <li key={chainId} className="w-full">
                     <DropdownMenuItem
-                      leftIcon={<ChainLogo size="sm" chainId={chainId} />}
+                      leftIcon={<ChainIcon size="lg" name={chainId} />}
                       onSelect={() => setChain(chainId)}
                       className="px-3 normal-case"
                     >
