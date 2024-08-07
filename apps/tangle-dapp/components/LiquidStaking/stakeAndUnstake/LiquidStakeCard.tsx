@@ -14,11 +14,10 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { z } from 'zod';
+import React, { FC, useCallback, useMemo } from 'react';
 
 import {
-  LsCardSearchParams,
+  LsSearchParamKey,
   LST_PREFIX,
   PARACHAIN_CHAIN_MAP,
   ParachainChainId,
@@ -31,8 +30,8 @@ import useMintTx from '../../../data/liquidStaking/useMintTx';
 import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
+import useSearchParamState from '../../../hooks/useSearchParamState';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
-import useTypedSearchParams from '../../../hooks/useTypedSearchParams';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
 import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
@@ -41,45 +40,16 @@ import SelectValidatorsButton from './SelectValidatorsButton';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 
 const LiquidStakeCard: FC = () => {
-  const [fromAmount, setFromAmount] = useState<BN | null>(null);
+  const [fromAmount, setFromAmount] = useSearchParamState<BN | null>({
+    defaultValue: null,
+    key: LsSearchParamKey.AMOUNT,
+    parser: (value) => new BN(value),
+    stringify: (value) => value?.toString(),
+  });
+
   const { selectedChainId, setSelectedChainId } = useLiquidStakingStore();
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const { nativeBalances } = useParachainBalances();
-
-  const { searchParams, setSearchParam } =
-    useTypedSearchParams<LsCardSearchParams>(
-      useMemo(() => {
-        return {
-          amount: (value) => new BN(value),
-          chainId: (value) =>
-            z.nativeEnum(ParachainChainId).parse(parseInt(value)),
-        };
-      }, []),
-    );
-
-  // If present in the URL search params, set the amount and chain ID.
-  useEffect(() => {
-    // TODO: Input isn't erroring when the amount is invalid, initially.
-    // TODO: Don't decimals need to be taken into account here?
-    if (searchParams.amount !== undefined) {
-      setFromAmount(searchParams.amount);
-    }
-
-    if (searchParams.chainId !== undefined) {
-      setSelectedChainId(searchParams.chainId);
-    }
-  }, [searchParams.amount, searchParams.chainId, setSelectedChainId]);
-
-  // Maintain URL search params in sync with the state.
-  useEffect(() => {
-    if (fromAmount !== null) {
-      setSearchParam('amount', fromAmount.toString());
-    }
-
-    if (selectedChainId !== null) {
-      setSearchParam('chainId', selectedChainId.toString());
-    }
-  }, [fromAmount, selectedChainId, setSearchParam]);
 
   const selectedChain = PARACHAIN_CHAIN_MAP[selectedChainId];
 

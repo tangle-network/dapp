@@ -1,14 +1,15 @@
 'use client';
 
 import { notFound } from 'next/navigation';
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import { z } from 'zod';
 
 import { LiquidStakingSelectionTable } from '../../../components/LiquidStaking/LiquidStakingSelectionTable';
 import LiquidStakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidStakeCard';
 import LiquidUnstakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidUnstakeCard';
 import UnstakeRequestsTable from '../../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
-import useTypedSearchParams from '../../../hooks/useTypedSearchParams';
+import { LsSearchParamKey } from '../../../constants/liquidStaking';
+import useSearchParamState from '../../../hooks/useSearchParamState';
 import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
 import TabListItem from '../../restake/TabListItem';
 import TabsList from '../../restake/TabsList';
@@ -18,35 +19,20 @@ type Props = {
 };
 
 export enum LsSearchParamAction {
-  Stake = 'stake',
-  Unstake = 'unstake',
+  STAKE = 'stake',
+  UNSTAKE = 'unstake',
 }
 
 const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
-  const [isStaking, setIsStaking] = useState(true);
-
-  const { searchParams, setSearchParam } = useTypedSearchParams({
-    action: (value) => z.nativeEnum(LsSearchParamAction).parse(value),
+  const [isStaking, setIsStaking] = useSearchParamState({
+    defaultValue: true,
+    key: LsSearchParamKey.ACTION,
+    parser: (value) =>
+      z.nativeEnum(LsSearchParamAction).parse(value) ===
+      LsSearchParamAction.STAKE,
+    stringify: (value) =>
+      value ? LsSearchParamAction.STAKE : LsSearchParamAction.UNSTAKE,
   });
-
-  // In case an action is provided in the URL search params,
-  // set the staking state accordingly.
-  useEffect(() => {
-    if (searchParams.action === undefined) {
-      return;
-    }
-
-    setIsStaking(searchParams.action === LsSearchParamAction.Stake);
-  }, [searchParams.action]);
-
-  // Maintain URL search params in sync with the state.
-  useEffect(() => {
-    const value = isStaking
-      ? LsSearchParamAction.Stake
-      : LsSearchParamAction.Unstake;
-
-    setSearchParam('action', value);
-  }, [isStaking, setSearchParam]);
 
   if (!isLiquidStakingToken(tokenSymbol)) {
     return notFound();

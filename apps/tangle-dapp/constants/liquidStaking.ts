@@ -170,3 +170,9 @@ export type LsCardSearchParams = {
   amount: BN;
   chainId: ParachainChainId;
 };
+
+export enum LsSearchParamKey {
+  AMOUNT = 'amount',
+  CHAIN_ID = 'chainId',
+  ACTION = 'action',
+}
