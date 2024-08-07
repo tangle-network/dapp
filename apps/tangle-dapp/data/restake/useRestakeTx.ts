@@ -58,16 +58,16 @@ function createDummyApi(error: string): RestakeTxBase {
       eventHandlers?.onTxFailed?.(error, { amount, assetId, operatorAccount });
       return Promise.resolve(null);
     },
-    scheduleDelegatorBondLess(operatorAccount, assetId, amount, eventHandlers) {
+    scheduleDelegatorUnstake(operatorAccount, assetId, amount, eventHandlers) {
       eventHandlers?.onTxFailed?.(error, { amount, assetId, operatorAccount });
       return Promise.resolve(null);
     },
-    executeDelegatorBondLess(eventHandlers) {
+    executeDelegatorUnstakeRequests(eventHandlers) {
       eventHandlers?.onTxFailed?.(error, {});
       return Promise.resolve(null);
     },
-    cancelDelegatorBondLess(eventHandlers) {
-      eventHandlers?.onTxFailed?.(error, {});
+    cancelDelegatorUnstakeRequests(unstakeRequests, eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, { unstakeRequests });
       return Promise.resolve(null);
     },
   };

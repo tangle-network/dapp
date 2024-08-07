@@ -147,6 +147,11 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
                     balance.balance,
                     asset.metadata.decimals,
                   ),
+                  ...(asset.metadata.poolId
+                    ? {
+                        subContent: `Pool ID: ${asset.metadata.poolId}`,
+                      }
+                    : {}),
                 },
               }
             : {}),
