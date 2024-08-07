@@ -2,8 +2,8 @@ import { SparklingIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
-BoostedChip
-const : FC = () => {
+
+const BoostedChip: FC = () => {
   return (
     <div
       className={twMerge(
