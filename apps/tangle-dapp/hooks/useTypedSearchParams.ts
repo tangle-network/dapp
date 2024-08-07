@@ -28,12 +28,20 @@ const useTypedSearchParams = <T extends object>(parsers: {
     });
   }, [parsers, searchParams]);
 
+  // TODO: Other calls to this are creating data races and overriding other search params. That is why some changes are not being reflected.
   const setSearchParam = useCallback(
     (key: keyof T & string, value: string) => {
       const url = new URL(window.location.href);
 
       url.searchParams.set(key, value);
-      router.push(url.toString());
+
+      const newUrl = url.toString();
+
+      if (window.location.href === newUrl) {
+        return;
+      }
+
+      router.push(newUrl);
     },
     [router],
   );

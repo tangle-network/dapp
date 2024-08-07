@@ -77,6 +77,8 @@ const LiquidUnstakeCard: FC = () => {
 
   // If present in the URL search params, set the amount and chain ID.
   useEffect(() => {
+    // TODO: Input isn't erroring when the amount is invalid, initially.
+    // TODO: Don't decimals need to be taken into account here?
     if (searchParams.amount !== undefined) {
       setFromAmount(searchParams.amount);
     }
