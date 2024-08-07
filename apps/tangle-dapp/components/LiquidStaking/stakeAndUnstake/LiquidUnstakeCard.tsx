@@ -12,7 +12,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 
 import {
-  LsCardSearchParams,
+  LsSearchParamKey,
   LST_PREFIX,
   PARACHAIN_CHAIN_MAP,
   ParachainChainId,
@@ -25,8 +25,9 @@ import useParachainBalances from '../../../data/liquidStaking/useParachainBalanc
 import useRedeemTx from '../../../data/liquidStaking/useRedeemTx';
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
+import useSearchParamState from '../../../hooks/useSearchParamState';
+import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
-import useTypedSearchParams from '../../../hooks/useTypedSearchParams';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
 import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
@@ -42,9 +43,13 @@ const LiquidUnstakeCard: FC = () => {
   const [isRequestSubmittedModalOpen, setIsRequestSubmittedModalOpen] =
     useState(false);
 
-  const [selectedChainId, setSelectedChainId] = useState<ParachainChainId>(
-    ParachainChainId.TANGLE_RESTAKING_PARACHAIN,
-  );
+  const [selectedChainId, setSelectedChainId] =
+    useSearchParamState<ParachainChainId>({
+      key: LsSearchParamKey.CHAIN_ID,
+      defaultValue: ParachainChainId.TANGLE_RESTAKING_PARACHAIN,
+      parser: (value) => z.nativeEnum(ParachainChainId).parse(value),
+      stringify: (value) => value.toString(),
+    });
 
   const {
     execute: executeRedeemTx,
@@ -65,28 +70,13 @@ const LiquidUnstakeCard: FC = () => {
     selectedChain.currency,
   );
 
-  const { searchParams } = useTypedSearchParams<LsCardSearchParams>(
-    useMemo(() => {
-      return {
-        amount: (value) => new BN(value),
-        chainId: (value) =>
-          z.nativeEnum(ParachainChainId).parse(parseInt(value)),
-      };
-    }, []),
-  );
-
-  // If present in the URL search params, set the amount and chain ID.
-  useEffect(() => {
-    // TODO: Input isn't erroring when the amount is invalid, initially.
-    // TODO: Don't decimals need to be taken into account here?
-    if (searchParams.amount !== undefined) {
-      setFromAmount(searchParams.amount);
-    }
-
-    if (searchParams.chainId !== undefined) {
-      setSelectedChainId(searchParams.chainId);
-    }
-  }, [searchParams.amount, searchParams.chainId, setSelectedChainId]);
+  useSearchParamSync({
+    key: LsSearchParamKey.AMOUNT,
+    value: fromAmount,
+    setValue: setFromAmount,
+    parse: (value) => new BN(value),
+    stringify: (value) => value?.toString(),
+  });
 
   const areAllDelegationsOccupied =
     areAllDelegationsOccupiedOpt === null
