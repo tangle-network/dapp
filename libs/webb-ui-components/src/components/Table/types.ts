@@ -48,6 +48,11 @@ export interface TableProps<T extends RowData, E extends HTMLElement>
   thClassName?: string;
 
   /**
+   * The optional class name for overriding style tbody component
+   */
+  tbodyClassName?: string;
+
+  /**
    * The optional class name for overriding style table row component
    */
   trClassName?: string;

@@ -1,6 +1,6 @@
 'use client';
 
-import { Blueprint, BlueprintCategory } from '../../types';
+import { Blueprint, BlueprintCategory } from '../../types/blueprint';
 
 export default function useBlueprintListing(): Blueprint[] {
   return [

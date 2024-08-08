@@ -1,6 +1,7 @@
 import { FC } from 'react';
 
 import BlueprintHeader from './BlueprintHeader';
+import OperatorsTable from './OperatorsTable';
 
 export const dynamic = 'force-static';
 
@@ -14,6 +15,7 @@ const BlueprintDetailsPage: FC<Props> = ({ params: { name } }) => {
   return (
     <div className="space-y-5">
       <BlueprintHeader blueprintName={name} />
+      <OperatorsTable />
     </div>
   );
 };

@@ -71,7 +71,9 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprintName }) => {
             <div className="space-y-4">
               <div>
                 <div className="flex items-center gap-1">
-                  <Typography variant="h4">{name}</Typography>
+                  <Typography variant="h4" fw="bold">
+                    {name}
+                  </Typography>
                   <a href={githubUrl} target="_blank" rel="noopener noreferrer">
                     <GithubFill
                       size="lg"
@@ -142,7 +144,9 @@ const StatsItem: FC<StatsItemProps> = ({ label, value }) => {
       >
         {label}
       </Typography>
-      <Typography variant="h4">{value}</Typography>
+      <Typography variant="h4" fw="bold">
+        {value}
+      </Typography>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { Blueprint, BlueprintCategory } from '../../../types';
+import { Blueprint, BlueprintCategory } from '../../../types/blueprint';
 
 export default function useBlueprintDetails(_: string): Blueprint {
   //   TODO: implement logic (get from local storage first if available)

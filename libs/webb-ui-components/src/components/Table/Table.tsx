@@ -17,6 +17,7 @@ export const Table = <T extends RowData>({
   tableClassName,
   tableProps: table,
   tableWrapperClassName,
+  tbodyClassName,
   tdClassName,
   thClassName,
   title,
@@ -67,14 +68,14 @@ export const Table = <T extends RowData>({
                     }
                   >
                     {header.isPlaceholder ? null : header.column.getCanSort() ? (
-                      <div className="flex items-center justify-start cursor-pointer">
+                      <div className="!text-inherit flex items-center justify-start cursor-pointer">
                         {flexRender(header.column.columnDef.header, {
                           ...header.getContext(),
                         })}
 
                         {{
-                          asc: <ArrowDropUpFill />,
-                          desc: <ArrowDropDownFill />,
+                          asc: <ArrowDropUpFill className="!fill-current" />,
+                          desc: <ArrowDropDownFill className="!fill-current" />,
                         }[header.column.getIsSorted() as string] ?? null}
                       </div>
                     ) : (
@@ -87,7 +88,7 @@ export const Table = <T extends RowData>({
               </tr>
             ))}
           </thead>
-          <tbody>
+          <tbody className={tbodyClassName}>
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}

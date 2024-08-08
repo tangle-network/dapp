@@ -20,7 +20,8 @@ import Link from 'next/link';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Blueprint, BlueprintCategory, PagePath } from '../../types';
+import { PagePath } from '../../types';
+import { Blueprint, BlueprintCategory } from '../../types/blueprint';
 import BoostedChip from './BoostedChip';
 import useBlueprintListing from './useBlueprintListing';
 

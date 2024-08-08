@@ -240,27 +240,3 @@ export type TangleTokenSymbol = 'tTNT' | 'TNT';
  * @returns The success message.
  */
 export type GetSuccessMessageFunction<Context> = (context: Context) => string;
-
-// add Blueprint
-export type Blueprint = {
-  id: string;
-  name: string;
-  author: string;
-  imgUrl: string;
-  category: BlueprintCategory;
-  description: string;
-  restakersCount: number;
-  operatorsCount: number;
-  tvl: string;
-  isBoosted?: boolean;
-  githubUrl?: string;
-  websiteUrl?: string;
-  twitterUrl?: string;
-  email?: string;
-};
-
-export enum BlueprintCategory {
-  CATEGORY_1 = 'Category 1',
-  CATEGORY_2 = 'Category 2',
-  CATEGORY_3 = 'Category 3',
-}
