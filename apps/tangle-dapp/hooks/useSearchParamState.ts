@@ -17,6 +17,7 @@ const useSearchParamState = <T>({
 }: SearchParamStateOptions<T>): [T, Dispatch<SetStateAction<T>>] => {
   const [value, setValue] = useState<T>(defaultValue);
 
+  // TODO: Default value seems to be overriding the initial value from the URL on mount.
   useSearchParamSync({ key, value, parse, stringify, setValue });
 
   return [value, setValue] as const;

@@ -1,40 +1,67 @@
 'use client';
 
 import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { create } from 'zustand';
 
 // A global, centralized store of search params is needed
 // to prevent data races when multiple hook instances are
 // trying to update the search params at the same time.
 const useSearchParamsZustandStore = create<{
-  href?: string;
-  searchParams: ReadonlyURLSearchParams;
+  searchParams: ReadonlyURLSearchParams | null;
   setSearchParams: (searchParams: ReadonlyURLSearchParams) => void;
-  setHref: (href: string) => void;
 }>((set) => ({
-  searchParams: new ReadonlyURLSearchParams(),
+  searchParams: null,
   setSearchParams: (searchParams) => set({ searchParams }),
-  setHref: (href) => set({ href }),
 }));
 
 const useSearchParamsStore = () => {
-  const searchParams = useSearchParams();
+  const routerSearchParams = useSearchParams();
 
   const {
-    searchParams: zustandSearchParams,
-    setSearchParams: updateZustandSearchParams,
-    href,
-    setHref,
+    searchParams: bufferSearchParams,
+    setSearchParams: setBufferSearchParams,
   } = useSearchParamsZustandStore();
 
-  // Maintain global search params state in sync with
-  // those provided by the Next.js router.
-  useEffect(() => {
-    updateZustandSearchParams(searchParams);
-  }, [searchParams, updateZustandSearchParams]);
+  const didInitializeRef = useRef(false);
 
-  return { searchParams: zustandSearchParams, href, setHref };
+  useEffect(() => {
+    if (didInitializeRef.current || routerSearchParams === null) {
+      return;
+    }
+
+    didInitializeRef.current = true;
+    setBufferSearchParams(routerSearchParams);
+  }, [routerSearchParams, setBufferSearchParams]);
+
+  const updateSearchParam = useCallback(
+    (key: string, value: string | undefined) => {
+      if (bufferSearchParams === null) {
+        return;
+      }
+
+      const newSearchParams = new URLSearchParams(
+        bufferSearchParams.toString(),
+      );
+
+      if (value === undefined) {
+        newSearchParams.delete(key);
+      } else {
+        newSearchParams.set(key, value);
+      }
+
+      const newReadonlySearchParams = new ReadonlyURLSearchParams(
+        newSearchParams,
+      );
+
+      setBufferSearchParams(newReadonlySearchParams);
+
+      return newReadonlySearchParams;
+    },
+    [bufferSearchParams, setBufferSearchParams],
+  );
+
+  return { searchParams: bufferSearchParams, updateSearchParam };
 };
 
 export default useSearchParamsStore;

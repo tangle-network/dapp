@@ -15,6 +15,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import React, { FC, useCallback, useMemo } from 'react';
+import { z } from 'zod';
 
 import {
   LsSearchParamKey,
@@ -31,6 +32,7 @@ import useParachainBalances from '../../../data/liquidStaking/useParachainBalanc
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import useSearchParamState from '../../../hooks/useSearchParamState';
+import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
@@ -52,6 +54,14 @@ const LiquidStakeCard: FC = () => {
   const { nativeBalances } = useParachainBalances();
 
   const selectedChain = PARACHAIN_CHAIN_MAP[selectedChainId];
+
+  useSearchParamSync({
+    key: LsSearchParamKey.CHAIN_ID,
+    value: selectedChainId,
+    parse: (value) => z.nativeEnum(ParachainChainId).parse(value),
+    stringify: (value) => value.toString(),
+    setValue: setSelectedChainId,
+  });
 
   const exchangeRate = useExchangeRate(
     ExchangeRateType.NativeToLiquid,

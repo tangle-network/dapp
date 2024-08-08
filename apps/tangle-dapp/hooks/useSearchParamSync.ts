@@ -1,4 +1,4 @@
-import { useRouter } from 'next/navigation';
+import { ReadonlyURLSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
 import useSearchParamsStore from '../context/useSearchParamsStore';
@@ -11,6 +11,20 @@ export type UseSearchParamSyncOptions<T> = {
   setValue: (value: T) => unknown;
 };
 
+const createHref = (newSearchParams: ReadonlyURLSearchParams): string => {
+  const newUrl = new URL(window.location.href);
+
+  for (const [key] of newUrl.searchParams) {
+    newUrl.searchParams.delete(key);
+  }
+
+  for (const [key, value] of newSearchParams) {
+    newUrl.searchParams.set(key, value);
+  }
+
+  return newUrl.toString();
+};
+
 const useSearchParamSync = <T>({
   key,
   value,
@@ -18,14 +32,15 @@ const useSearchParamSync = <T>({
   stringify,
   setValue,
 }: UseSearchParamSyncOptions<T>) => {
-  const { searchParams, href, setHref } = useSearchParamsStore();
+  const { searchParams, updateSearchParam } = useSearchParamsStore();
   const hasLoadedValueRef = useRef(false);
   const router = useRouter();
 
   // Load the value from the URL search params on mount.
   useEffect(() => {
-    // Only load the value once.
-    if (hasLoadedValueRef.current) {
+    // Only load the value once. Also, ensure that the search
+    // params are ready.
+    if (hasLoadedValueRef.current || searchParams === null) {
       return;
     }
 
@@ -60,38 +75,35 @@ const useSearchParamSync = <T>({
     setValue(parsedValue);
   }, [key, parse, searchParams, setValue]);
 
-  // Sync the value with the URL search params when it changes.
+  // Sync the value to the URL search param when it changes.
   useEffect(() => {
+    // TODO: There's a loop being caused by this useEffect.
+
     // Wait until the initial value has been loaded before syncing.
-    if (!hasLoadedValueRef.current) {
+    // Also, ensure that the search params are ready.
+    if (!hasLoadedValueRef.current || searchParams === null) {
       return;
     }
 
     const stringifiedValue = stringify(value);
-    const newSearchParams = new URLSearchParams(searchParams);
+    const existingParam = searchParams.get(key);
 
-    if (stringifiedValue === undefined) {
-      newSearchParams.delete(key);
-    } else {
-      newSearchParams.set(key, stringifiedValue);
+    // Nothing to do.
+    if (existingParam === null && stringifiedValue === undefined) {
+      return;
     }
-
-    const href_ = href ?? window.location.href;
-    const newUrl = new URL(href_);
-
-    // TODO: Replace newUrl's search params with newSearchParams.
-
-    const newUrlString = newUrl.toString();
-
-    // Prevent pushing the same URL to the history.
-    if (href_ === newUrlString) {
+    // If the value is already the same in the URL search params,
+    // do nothing.
+    else if (existingParam === stringifiedValue) {
       return;
     }
 
-    console.debug('Syncing URL search param', key, value, newUrlString);
-    setHref(newUrlString);
-    router.push(newUrlString);
-  }, [href, key, router, searchParams, setHref, stringify, value]);
+    const newSearchParams = updateSearchParam(key, stringifiedValue);
+    const href = createHref(new ReadonlyURLSearchParams(newSearchParams));
+
+    console.debug('Syncing URL search param', key, stringifiedValue, href);
+    router.push(href);
+  }, [key, router, searchParams, stringify, updateSearchParam, value]);
 };
 
 export default useSearchParamSync;
