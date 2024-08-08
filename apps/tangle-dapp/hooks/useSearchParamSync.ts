@@ -91,6 +91,7 @@ const useSearchParamSync = <T>({
     setValue(parsedValue);
   }, [initializeValue, key, parse, searchParams, setValue]);
 
+  // TODO: Data race is still occurring, but it is currently prioritizing the correct final value. Need to ensure that only one run of the effect occurs at a time.
   // Sync the value to the URL search param when it changes.
   useEffect(() => {
     // Wait until the initial value has been loaded before syncing.

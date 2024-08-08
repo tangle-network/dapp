@@ -160,7 +160,7 @@ const getValidators = async (endpoint: string): Promise<Validator[]> => {
       totalValueStaked: totalValueStaked || BN_ZERO,
       validatorAPY: 0,
       validatorCommission: commission || BN_ZERO,
-      chain: ParachainChainId.POLKADOT,
+      chainId: ParachainChainId.POLKADOT,
       chainDecimals,
       chainTokenSymbol,
       itemType: LiquidStakingItem.VALIDATOR,
@@ -207,7 +207,7 @@ const getDapps = async (endpoint: string): Promise<Dapp[]> => {
       dappContractType: dappInfo ? dappInfo.contractType || '' : '',
       commission: BN_ZERO,
       totalValueStaked: totalValueStaked || BN_ZERO,
-      chain: ParachainChainId.ASTAR,
+      chainId: ParachainChainId.ASTAR,
       chainDecimals,
       chainTokenSymbol,
       itemType: LiquidStakingItem.DAPP,
@@ -237,7 +237,7 @@ const getVaultsAndStakePools = async (
       vaultOrStakePoolName: val.id,
       commission: val.commission,
       totalValueStaked: val.totalValueStaked,
-      chain: ParachainChainId.PHALA,
+      chainId: ParachainChainId.PHALA,
       chainDecimals,
       chainTokenSymbol,
       type,
@@ -249,7 +249,7 @@ const getVaultsAndStakePools = async (
 
 const getCollators = async (
   endpoint: string,
-  chain: ParachainChainId,
+  chainId: ParachainChainId,
   href: string,
 ): Promise<Collator[]> => {
   const [
@@ -272,9 +272,9 @@ const getCollators = async (
 
     let collatorExternalLink = '';
 
-    if (chain === ParachainChainId.MOONBEAM) {
+    if (chainId === ParachainChainId.MOONBEAM) {
       collatorExternalLink = href;
-    } else if (chain === ParachainChainId.MANTA) {
+    } else if (chainId === ParachainChainId.MANTA) {
       collatorExternalLink = href + collator;
     }
 
@@ -284,7 +284,7 @@ const getCollators = async (
       collatorIdentity: identityName || collator,
       collatorDelegationCount: collatorInfo?.delegationCount || 0,
       totalValueStaked: collatorInfo?.totalStaked || BN_ZERO,
-      chain,
+      chainId,
       chainDecimals,
       chainTokenSymbol,
       itemType: LiquidStakingItem.COLLATOR,
