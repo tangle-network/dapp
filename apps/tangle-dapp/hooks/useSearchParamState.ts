@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 
 import useSearchParamSync from './useSearchParamSync';
 
@@ -14,11 +14,16 @@ const useSearchParamState = <T>({
   defaultValue,
   parser: parse,
   stringify,
-}: SearchParamStateOptions<T>): [T, Dispatch<SetStateAction<T>>] => {
+}: SearchParamStateOptions<T>): [T, (value: T) => void] => {
   const [value, setValue] = useState<T>(defaultValue);
 
-  // TODO: Default value seems to be overriding the initial value from the URL on mount.
-  useSearchParamSync({ key, value, parse, stringify, setValue });
+  useSearchParamSync<T>({
+    key,
+    value: value,
+    parse,
+    stringify,
+    setValue,
+  });
 
   return [value, setValue] as const;
 };

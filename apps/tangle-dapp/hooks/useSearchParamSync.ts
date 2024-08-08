@@ -1,5 +1,5 @@
 import { ReadonlyURLSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import useSearchParamsStore from '../context/useSearchParamsStore';
 
@@ -36,6 +36,17 @@ const useSearchParamSync = <T>({
   const hasLoadedValueRef = useRef(false);
   const router = useRouter();
 
+  const initializeValue = useCallback(() => {
+    hasLoadedValueRef.current = true;
+    setValue(value);
+
+    console.debug(
+      'Initialized URL search param with initial value',
+      key,
+      value,
+    );
+  }, [key, setValue, value]);
+
   // Load the value from the URL search params on mount.
   useEffect(() => {
     // Only load the value once. Also, ensure that the search
@@ -46,8 +57,9 @@ const useSearchParamSync = <T>({
 
     const paramValue = searchParams.get(key);
 
+    // No key present in the URL search params.
     if (paramValue === null) {
-      hasLoadedValueRef.current = true;
+      initializeValue();
 
       return;
     }
@@ -60,12 +72,16 @@ const useSearchParamSync = <T>({
 
       // Return value signals that parsing failed. Ignore the value.
       if (parseResult === undefined) {
+        initializeValue();
+        console.warn('URL search param parsing returned undefined', key);
+
         return;
       }
 
       parsedValue = parseResult;
-    } catch {
-      hasLoadedValueRef.current = true;
+    } catch (error) {
+      console.warn('Error thrown while parsing URL search param', key, error);
+      initializeValue();
 
       return;
     }
@@ -73,12 +89,10 @@ const useSearchParamSync = <T>({
     console.debug('Loaded URL search param', key, parsedValue);
     hasLoadedValueRef.current = true;
     setValue(parsedValue);
-  }, [key, parse, searchParams, setValue]);
+  }, [initializeValue, key, parse, searchParams, setValue]);
 
   // Sync the value to the URL search param when it changes.
   useEffect(() => {
-    // TODO: There's a loop being caused by this useEffect.
-
     // Wait until the initial value has been loaded before syncing.
     // Also, ensure that the search params are ready.
     if (!hasLoadedValueRef.current || searchParams === null) {

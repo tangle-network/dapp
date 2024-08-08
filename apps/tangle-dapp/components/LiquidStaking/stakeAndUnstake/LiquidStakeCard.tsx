@@ -58,7 +58,7 @@ const LiquidStakeCard: FC = () => {
   useSearchParamSync({
     key: LsSearchParamKey.CHAIN_ID,
     value: selectedChainId,
-    parse: (value) => z.nativeEnum(ParachainChainId).parse(value),
+    parse: (value) => z.nativeEnum(ParachainChainId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
     setValue: setSelectedChainId,
   });

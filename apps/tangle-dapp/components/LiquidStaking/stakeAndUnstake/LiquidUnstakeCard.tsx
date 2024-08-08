@@ -47,7 +47,7 @@ const LiquidUnstakeCard: FC = () => {
     useSearchParamState<ParachainChainId>({
       key: LsSearchParamKey.CHAIN_ID,
       defaultValue: ParachainChainId.TANGLE_RESTAKING_PARACHAIN,
-      parser: (value) => z.nativeEnum(ParachainChainId).parse(value),
+      parser: (value) => z.nativeEnum(ParachainChainId).parse(parseInt(value)),
       stringify: (value) => value.toString(),
     });
 
