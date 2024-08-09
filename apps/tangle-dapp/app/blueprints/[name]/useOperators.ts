@@ -14,7 +14,11 @@ export default function useOperators(): Operator[] {
         amount: 1000,
         usdValue: 10000,
       },
-      vaults: [LiquidStakingToken.ASTR, LiquidStakingToken.DOT, LiquidStakingToken.GLMR],
+      vaults: [
+        LiquidStakingToken.ASTR,
+        LiquidStakingToken.DOT,
+        LiquidStakingToken.GLMR,
+      ],
     },
     {
       address: 'tgDRbUxr3dV3j5pCW7DrpmswiABCMTN2NxioeDfA9TXLw6X1u',
@@ -25,7 +29,12 @@ export default function useOperators(): Operator[] {
         amount: 50,
         usdValue: 500,
       },
-      vaults: [LiquidStakingToken.MANTA, LiquidStakingToken.DOT, LiquidStakingToken.GLMR, LiquidStakingToken.ASTR],
+      vaults: [
+        LiquidStakingToken.MANTA,
+        LiquidStakingToken.DOT,
+        LiquidStakingToken.GLMR,
+        LiquidStakingToken.ASTR,
+      ],
     },
     {
       address: 'tgDRbUxr3dV3j5pCW7DrpmswiABCMTN2NxioeDfA9TXLw6X1u',
@@ -36,7 +45,11 @@ export default function useOperators(): Operator[] {
         amount: 23.34,
         usdValue: 233.4,
       },
-      vaults: [LiquidStakingToken.TNT, LiquidStakingToken.DOT, LiquidStakingToken.MANTA],
+      vaults: [
+        LiquidStakingToken.TNT,
+        LiquidStakingToken.DOT,
+        LiquidStakingToken.MANTA,
+      ],
     },
     {
       address: 'tgDRbUxr3dV3j5pCW7DrpmswiABCMTN2NxioeDfA9TXLw6X1u',
