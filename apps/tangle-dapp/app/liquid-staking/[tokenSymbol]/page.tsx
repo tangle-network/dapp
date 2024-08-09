@@ -2,7 +2,6 @@
 
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
-import { z } from 'zod';
 
 import { LiquidStakingSelectionTable } from '../../../components/LiquidStaking/LiquidStakingSelectionTable';
 import LiquidStakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidStakeCard';
@@ -18,20 +17,13 @@ type Props = {
   params: { tokenSymbol: string };
 };
 
-export enum LsSearchParamAction {
-  STAKE = 'stake',
-  UNSTAKE = 'unstake',
-}
-
 const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
   const [isStaking, setIsStaking] = useSearchParamState({
     defaultValue: true,
     key: LsSearchParamKey.ACTION,
-    parser: (value) =>
-      z.nativeEnum(LsSearchParamAction).parse(value) ===
-      LsSearchParamAction.STAKE,
-    stringify: (value) =>
-      value ? LsSearchParamAction.STAKE : LsSearchParamAction.UNSTAKE,
+    // TODO: Use an enum instead of strings. For some odd reason, currently it is causing compilation errors.
+    parser: (value) => value === 'stake',
+    stringify: (value) => (value ? 'stake' : 'unstake'),
   });
 
   if (!isLiquidStakingToken(tokenSymbol)) {
