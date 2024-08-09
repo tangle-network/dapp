@@ -54,7 +54,7 @@ const POLKADOT: ParachainChainDef = {
 const PHALA: ParachainChainDef = {
   id: ParachainChainId.PHALA,
   name: 'Phala',
-  token: LiquidStakingToken.PHALA,
+  token: LiquidStakingToken.PHA,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
   networkName: 'Phala',
   currency: 'Pha',
@@ -77,7 +77,7 @@ const MOONBEAM: ParachainChainDef = {
 const ASTAR: ParachainChainDef = {
   id: ParachainChainId.ASTAR,
   name: 'Astar',
-  token: LiquidStakingToken.ASTAR,
+  token: LiquidStakingToken.ASTR,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_ASTAR,
   networkName: 'Astar',
   // TODO: No currency entry for ASTAR in the Tangle Primitives?

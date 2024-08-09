@@ -1,4 +1,5 @@
 import { BasicAccountInfo } from '.';
+import { LiquidStakingToken } from './liquidStaking';
 
 export type Blueprint = {
   id: string;
@@ -30,5 +31,16 @@ export type Operator = BasicAccountInfo & {
     amount: number; // NOTE: put as number for faster UI development, might need to update later
     usdValue: number; // NOTE: put as number for faster UI development, might need to update later
   };
-  vaults: string[]; // NOTE: put as string for faster UI development, might need to update later
+  vaults: LiquidStakingToken[]; // NOTE: put as string for faster UI development, might need to update later
+};
+
+export type Vault = {
+  lstToken: LiquidStakingToken;
+  name: string;
+  apy: number;
+  tokensCount: number;
+  liquidity: {
+    amount: number; // NOTE: put as number for faster UI development, might need to update later
+    usdValue: number; // NOTE: put as number for faster UI development, might need to update later
+  };
 };

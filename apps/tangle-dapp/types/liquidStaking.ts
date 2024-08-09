@@ -61,7 +61,7 @@ export enum LiquidStakingToken {
   DOT = 'DOT',
   GLMR = 'GLMR',
   MANTA = 'MANTA',
-  ASTAR = 'ASTR',
-  PHALA = 'PHA',
+  ASTR = 'ASTR',
+  PHA = 'PHA',
   TNT = 'TNT',
 }
