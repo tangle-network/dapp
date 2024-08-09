@@ -84,7 +84,7 @@ const UnstakeModal = ({
             'You can try to deposit or delegate an asset to an operator.',
         }}
         renderItem={(item) => {
-          const { uid, amountBonded, assetId, operatorAccountId } = item;
+          const { amountBonded, assetId, operatorAccountId } = item;
           const asset = assetMap[assetId];
 
           const decimals = asset?.decimals || DEFAULT_DECIMALS;
@@ -96,9 +96,9 @@ const UnstakeModal = ({
             <ListItem
               className={twMerge(
                 'cursor-pointer max-w-none dark:bg-transparent',
-                'flex items-center justify-between px-0',
+                'flex items-center justify-between px-4',
               )}
-              key={uid}
+              key={`${operatorAccountId}-${assetId}`}
               onClick={() =>
                 onItemSelected({
                   ...item,
@@ -118,9 +118,22 @@ const UnstakeModal = ({
                 }
               />
 
-              <Typography variant="h5" fw="bold">
-                {fmtAmount} {assetSymbol}
-              </Typography>
+              <div>
+                <Typography variant="h5" fw="bold">
+                  {fmtAmount} {assetSymbol}
+                </Typography>
+
+                {asset.poolId && (
+                  <Typography
+                    ta="right"
+                    variant="body3"
+                    fw="semibold"
+                    className="!text-mono-100 mt-1"
+                  >
+                    Pool ID: {asset.poolId}
+                  </Typography>
+                )}
+              </div>
             </ListItem>
           );
         }}

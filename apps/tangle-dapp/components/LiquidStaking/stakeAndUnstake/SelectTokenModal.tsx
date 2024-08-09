@@ -44,11 +44,9 @@ const SelectTokenModal: FC<SelectTokenModalProps> = ({
       <ModalContent
         isCenter
         isOpen={isOpen}
-        className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px]"
       >
-        <ModalHeader titleVariant="h4" onClose={onClose}>
-          Select Token
-        </ModalHeader>
+        <ModalHeader onClose={onClose}>Select Token</ModalHeader>
 
         <div className="p-9 space-y-4 max-h-[500px] overflow-y-auto">
           {options.map((option) => {

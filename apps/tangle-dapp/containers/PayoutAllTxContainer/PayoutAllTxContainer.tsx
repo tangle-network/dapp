@@ -69,11 +69,9 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
       <ModalContent
         isCenter
         isOpen={isModalOpen}
-        className="w-full max-w-[838px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[838px]"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModal}>
-          Payout Stakers
-        </ModalHeader>
+        <ModalHeader onClose={closeModal}>Payout Stakers</ModalHeader>
 
         <div className="grid grid-cols-2 gap-9 p-9">
           <div className="flex flex-col gap-9">
@@ -136,16 +134,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
           </div>
         </div>
 
-        <ModalFooter className="flex flex-col gap-1 px-8 py-6">
-          <Button
-            isFullWidth
-            isDisabled={!canSubmitTx}
-            isLoading={payoutAllTxStatus === TxStatus.PROCESSING}
-            onClick={submitTx}
-          >
-            Confirm
-          </Button>
-
+        <ModalFooter className="flex items-center gap-2">
           <Button
             isFullWidth
             variant="secondary"
@@ -154,6 +143,15 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
             rel="noopener noreferrer"
           >
             Learn More
+          </Button>
+
+          <Button
+            isFullWidth
+            isDisabled={!canSubmitTx}
+            isLoading={payoutAllTxStatus === TxStatus.PROCESSING}
+            onClick={submitTx}
+          >
+            Confirm
           </Button>
         </ModalFooter>
       </ModalContent>

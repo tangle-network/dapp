@@ -8,11 +8,6 @@ import usePolkadotApi from '../../hooks/usePolkadotApi';
 import type { RewardConfig, RewardConfigForAsset } from '../../types/restake';
 import hasQuery from '../../utils/hasQuery';
 
-const EMPTY_REWARD_CONFIG = {
-  configs: {},
-  whitelistedBlueprintIds: [],
-} as RewardConfig;
-
 export default function useRestakeRewardConfig() {
   const { apiRx } = usePolkadotApi();
 
@@ -33,21 +28,24 @@ export default function useRestakeRewardConfig() {
       rewardConfigFromQuery$.pipe(
         map((rewardConfig) => {
           if (rewardConfig.isNone) {
-            return EMPTY_REWARD_CONFIG;
+            return {
+              configs: {},
+              whitelistedBlueprintIds: [],
+            } as RewardConfig;
           }
 
           const config = rewardConfig.unwrap();
 
           const configs = Array.from(config.configs.entries()).reduce(
-            (configs, [assetId, rewardConfigForAsset]) => {
+            (configs, [poolId, rewardConfigForAsset]) => {
               const configForAsset = {
-                apy: rewardConfigForAsset.apy.toBigInt(),
+                apy: rewardConfigForAsset.apy.toNumber(),
                 cap: rewardConfigForAsset.cap.toBigInt(),
               } satisfies RewardConfigForAsset;
 
               return {
                 ...configs,
-                [assetId.toNumber()]: configForAsset,
+                [poolId.toNumber()]: configForAsset,
               };
             },
             {} as RewardConfig['configs'],
@@ -63,7 +61,10 @@ export default function useRestakeRewardConfig() {
     [rewardConfigFromQuery$],
   );
 
-  const rewardConfig = useObservableState(rewardConfig$, EMPTY_REWARD_CONFIG);
+  const rewardConfig = useObservableState(rewardConfig$, {
+    configs: {},
+    whitelistedBlueprintIds: [],
+  });
 
   return { rewardConfig, rewardConfig$ };
 }
