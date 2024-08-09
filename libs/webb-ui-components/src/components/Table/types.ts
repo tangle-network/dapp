@@ -83,6 +83,11 @@ export interface TableProps<T extends RowData, E extends HTMLElement>
   ref?: React.Ref<E>;
 
   isDisabledRowHoverStyle?: boolean;
+
+  /**
+   * The optional function to get the expanded row content
+   */
+  getExpandedRowContent?: (row: Row<T>) => React.ReactNode;
 }
 
 /**

@@ -56,3 +56,12 @@ export type LiquidStakingItemType =
   | VaultOrStakePool
   | Dapp
   | Collator;
+
+export enum LiquidStakingToken {
+  DOT = 'DOT',
+  GLMR = 'GLMR',
+  MANTA = 'MANTA',
+  ASTAR = 'ASTR',
+  PHALA = 'PHA',
+  TNT = 'TNT',
+}

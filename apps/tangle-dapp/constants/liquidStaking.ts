@@ -5,6 +5,7 @@ import {
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
+import { LiquidStakingToken } from '../types/liquidStaking';
 import { StaticAssetPath } from '.';
 
 export enum ParachainChainId {
@@ -14,15 +15,6 @@ export enum ParachainChainId {
   ASTAR = 'Astar',
   MANTA = 'Manta',
   TANGLE_RESTAKING_PARACHAIN = 'Tangle Parachain',
-}
-
-export enum LiquidStakingToken {
-  DOT = 'DOT',
-  GLMR = 'GLMR',
-  MANTA = 'MANTA',
-  ASTAR = 'ASTR',
-  PHALA = 'PHA',
-  TNT = 'TNT',
 }
 
 // TODO: Temporary manual override until the Parachain types are updated.

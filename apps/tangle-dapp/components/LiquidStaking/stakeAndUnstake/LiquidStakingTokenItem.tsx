@@ -8,12 +8,9 @@ import { FC, useMemo } from 'react';
 
 import LSTToken from '../../../components/LSTToken';
 import { StaticAssetPath } from '../../../constants';
-import {
-  LiquidStakingToken,
-  LST_PREFIX,
-  TVS_TOOLTIP,
-} from '../../../constants/liquidStaking';
+import { LST_PREFIX, TVS_TOOLTIP } from '../../../constants/liquidStaking';
 import { PagePath } from '../../../types';
+import { LiquidStakingToken } from '../../../types/liquidStaking';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
 import StatItem from '../StatItem';
 

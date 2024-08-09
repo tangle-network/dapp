@@ -14,13 +14,13 @@ import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LiquidStakingToken,
   LS_CHAIN_TO_NETWORK_NAME,
   LST_PREFIX,
   ParachainChainId,
 } from '../../../constants/liquidStaking';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
+import { LiquidStakingToken } from '../../../types/liquidStaking';
 import formatBn from '../../../utils/formatBn';
 import DropdownChevronIcon from './DropdownChevronIcon';
 import TokenChip from './TokenChip';

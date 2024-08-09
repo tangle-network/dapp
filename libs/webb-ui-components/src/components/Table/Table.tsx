@@ -24,6 +24,7 @@ export const Table = <T extends RowData>({
   totalRecords = 0,
   trClassName,
   ref,
+  getExpandedRowContent,
   ...props
 }: TableProps<T, HTMLDivElement>) => {
   const getRowClickHandler = useCallback(
@@ -90,21 +91,34 @@ export const Table = <T extends RowData>({
           </thead>
           <tbody className={tbodyClassName}>
             {table.getRowModel().rows.map((row) => (
-              <tr
-                key={row.id}
-                className={twMerge('group/tr', trClassName)}
-                onClick={getRowClickHandler(row)}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TData
-                    isDisabledHoverStyle={isDisabledRowHoverStyle}
-                    className={tdClassName}
-                    key={cell.id}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TData>
-                ))}
-              </tr>
+              <>
+                <tr
+                  key={row.id}
+                  className={twMerge('group/tr', trClassName)}
+                  onClick={getRowClickHandler(row)}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TData
+                      isDisabledHoverStyle={isDisabledRowHoverStyle}
+                      className={tdClassName}
+                      key={cell.id}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TData>
+                  ))}
+                </tr>
+
+                {getExpandedRowContent && row.getIsExpanded() && (
+                  <tr>
+                    <td colSpan={row.getVisibleCells().length}>
+                      {getExpandedRowContent(row)}
+                    </td>
+                  </tr>
+                )}
+              </>
             ))}
           </tbody>
           {isDisplayFooter && (
