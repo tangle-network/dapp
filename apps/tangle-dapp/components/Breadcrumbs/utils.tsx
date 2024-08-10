@@ -22,6 +22,7 @@ const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
   [PagePath.CLAIM_AIRDROP]: GiftLineIcon,
   [PagePath.ACCOUNT]: UserFillIcon,
   [PagePath.NOMINATION]: CoinLine,
+  [PagePath.BLUEPRINTS]: GridFillIcon,
   [PagePath.SERVICES]: GridFillIcon,
   [PagePath.RESTAKE]: TokenSwapFill,
   [PagePath.RESTAKE_DEPOSIT]: TokenSwapFill,
