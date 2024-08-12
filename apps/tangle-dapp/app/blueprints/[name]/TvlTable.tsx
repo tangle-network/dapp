@@ -34,8 +34,10 @@ const columns = [
     cell: (props) => (
       <TableCellWrapper>
         <div className="flex items-center gap-2">
-          <LSTTokenIcon name={props.row.original.LSTTokenIcon} size="lg" />
-          <Typography variant="h5">{props.getValue()}</Typography>
+          <LSTTokenIcon name={props.row.original.lstToken} size="lg" />
+          <Typography variant="h5" className="whitespace-nowrap">
+            {props.getValue()}
+          </Typography>
         </div>
       </TableCellWrapper>
     ),
@@ -95,7 +97,7 @@ const columns = [
       </TableCellWrapper>
     ),
   }),
-  columnHelper.accessor('LSTTokenIcon', {
+  columnHelper.accessor('lstToken', {
     header: () => null,
     cell: ({ row, table }) => (
       <div className="flex items-center gap-2 justify-end">
@@ -139,7 +141,7 @@ const TvlTable: FC = () => {
     return (
       <div className="bg-mono-0 dark:bg-mono-190 -mt-7 pt-4 pb-3 rounded-b-xl -mx-px px-3">
         <VaultAssetsTable
-          LSTTokenIcon={row.original.LSTTokenIcon}
+          LSTTokenIcon={row.original.lstToken}
           isShown={row.getIsExpanded()}
         />
       </div>
