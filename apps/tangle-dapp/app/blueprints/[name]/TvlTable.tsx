@@ -25,6 +25,7 @@ import LSTToken from '../../../components/LSTToken';
 import { Vault } from '../../../types/blueprint';
 import TableCellWrapper from './TableCellWrapper';
 import useVaults from './useVaults';
+import VaultAssetsTable from './VaultAssetsTable';
 
 const columnHelper = createColumnHelper<Vault>();
 
@@ -39,13 +40,11 @@ const TvlTable: FC = () => {
 
   const getExpandedRowContent = (row: Row<Vault>) => {
     return (
-      <div
-        className={twMerge(
-          'bg-mono-0 dark:bg-mono-190 -mt-7 pt-4 pb-3 rounded-b-xl -mx-px px-3',
-          row.getIsExpanded() ? 'animate-slide-down' : 'animate-slide-up',
-        )}
-      >
-        {row.original.name}
+      <div className="bg-mono-0 dark:bg-mono-190 -mt-7 pt-4 pb-3 rounded-b-xl -mx-px px-3">
+        <VaultAssetsTable
+          lstToken={row.original.lstToken}
+          isShown={row.getIsExpanded()}
+        />
       </div>
     );
   };
@@ -169,7 +168,7 @@ const TvlTable: FC = () => {
             >
               <div
                 className={twMerge(
-                  'text-current transition-transform duration-300 ease-in-out',
+                  '!text-current transition-transform duration-300 ease-in-out',
                   row.getIsExpanded() ? 'rotate-180' : '',
                 )}
               >

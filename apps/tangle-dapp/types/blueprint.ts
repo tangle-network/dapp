@@ -10,7 +10,7 @@ export type Blueprint = {
   description: string;
   restakersCount: number;
   operatorsCount: number;
-  tvl: string;
+  tvl: string; // NOTE: put as string for faster UI development, might need to update later
   isBoosted?: boolean;
   githubUrl?: string;
   websiteUrl?: string;
@@ -44,4 +44,11 @@ export type Vault = {
     usdValue: number; // NOTE: put as number for faster UI development, might need to update later
   };
   isActive: boolean;
+};
+
+export type VaultAsset = {
+  id: string;
+  symbol: string;
+  tvl: number; // NOTE: put as number for faster UI development, might need to update later
+  myStake: number; // NOTE: put as number for faster UI development, might need to update later
 };
