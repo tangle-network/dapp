@@ -149,7 +149,7 @@ const useNetworkSwitcher = () => {
 
       if (activeWallet !== undefined) {
         try {
-          const chain = await netWorkToChain(newNetwork, activeWallet);
+          const chain = await networkToChain(newNetwork, activeWallet);
 
           const switchChainResult = await switchChain(chain, activeWallet);
 
@@ -201,7 +201,7 @@ const useNetworkSwitcher = () => {
  *
  * @returns the chain
  */
-async function netWorkToChain(network: Network, activeWallet: WalletConfig) {
+async function networkToChain(network: Network, activeWallet: WalletConfig) {
   if (activeWallet.platform === 'Substrate') {
     const api = await getApiPromise(network.wsRpcEndpoint);
 
