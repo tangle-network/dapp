@@ -25,21 +25,17 @@ import {
 } from './helper';
 
 const useLiquidStakingItems = (selectedChain: LsChainId) => {
-  const {
-    // valueOpt: liquidStakingTableData,
-    setWithPreviousValue: setLiquidStakingTableData,
-  } = useLocalStorage(LocalStorageKey.LIQUID_STAKING_TABLE_DATA, true);
+  const { setWithPreviousValue: setLiquidStakingTableData } = useLocalStorage(
+    LocalStorageKey.LIQUID_STAKING_TABLE_DATA,
+  );
+
   const [isLoading, setIsLoading] = useState(false);
+
   const [items, setItems] = useState<
     Validator[] | VaultOrStakePool[] | Dapp[] | Collator[]
   >([]);
-  const dataType = useMemo(() => getDataType(selectedChain), [selectedChain]);
 
-  // const cachedData = useMemo(
-  //   () => liquidStakingTableData.value[selectedChain] || [],
-  //   [liquidStakingTableData, selectedChain],
-  // );
-  // console.debug('cachedData', cachedData);
+  const dataType = useMemo(() => getDataType(selectedChain), [selectedChain]);
 
   const fetchData = useCallback(
     async (chain: LsChainId) => {

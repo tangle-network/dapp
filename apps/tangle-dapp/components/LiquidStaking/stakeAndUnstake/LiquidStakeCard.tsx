@@ -30,7 +30,6 @@ import useParachainBalances from '../../../data/liquidStaking/useParachainBalanc
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
-import DetailItem from './DetailItem';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
 import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
@@ -157,9 +156,7 @@ const LiquidStakeCard: FC = () => {
           token={selectedChain.token}
         />
 
-        <UnstakePeriodDetailItem />
-
-        <DetailItem title="Estimated wait time" value="~10 minutes" />
+        <UnstakePeriodDetailItem currency={selectedChain.currency} />
       </div>
 
       <Button

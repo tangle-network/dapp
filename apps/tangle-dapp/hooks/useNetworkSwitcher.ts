@@ -11,49 +11,21 @@ import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import {
   Network,
-  NETWORK_MAP,
   NetworkId,
 } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useEffect, useState } from 'react';
 import { createPublicClient, fallback, http, webSocket } from 'viem';
-import z from 'zod';
 
-import { DEFAULT_NETWORK } from '../constants/networks';
+import testRpcEndpointConnection from '../components/NetworkSelector/testRpcEndpointConnection';
 import useNetworkStore from '../context/useNetworkStore';
-import createCustomNetwork from '../utils/createCustomNetwork';
 import ensureError from '../utils/ensureError';
 import { getApiPromise } from '../utils/polkadot';
+import useInitialNetwork from './useInitialNetwork';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
-
-function testRpcEndpointConnection(rpcEndpoint: string): Promise<boolean> {
-  return new Promise((resolve) => {
-    try {
-      const ws = new WebSocket(rpcEndpoint);
-
-      const handleOpen = () => {
-        ws.removeEventListener('open', handleOpen);
-        ws.close();
-        resolve(true);
-      };
-
-      const handleCloseEvent = () => {
-        ws.removeEventListener('close', handleCloseEvent);
-        resolve(false);
-      };
-
-      ws.addEventListener('open', handleOpen);
-      ws.addEventListener('close', handleCloseEvent);
-    } catch {
-      resolve(false);
-    }
-  });
-}
 
 const useNetworkSwitcher = () => {
   const { switchChain, activeWallet } = useWebContext();
-
   const [isCustom, setIsCustom] = useState(false);
-
   const { network, setNetwork } = useNetworkStore();
 
   // TODO: Should utilize the zustand middleware to cache this
@@ -78,54 +50,20 @@ const useNetworkSwitcher = () => {
     remove: removeCachedNetworkId,
   } = useLocalStorage(LocalStorageKey.KNOWN_NETWORK_ID);
 
+  const getCachedInitialNetwork = useInitialNetwork();
+
   // Load the initial network from local storage.
   useEffect(() => {
-    const getCachedInitialNetwork = () => {
-      const cachedNetworkNameOpt = getCachedNetworkId();
-
-      // If the cached network name is present, that indicates that
-      // the cached network is a Webb network. Find it in the list of
-      // all Webb networks, and return it.
-      if (cachedNetworkNameOpt.value !== null) {
-        const parsedNetworkId = z
-          .nativeEnum(NetworkId)
-          .safeParse(cachedNetworkNameOpt.value);
-
-        if (parsedNetworkId.success) {
-          const id = parsedNetworkId.data as keyof typeof NETWORK_MAP;
-          const knownNetwork = NETWORK_MAP[id];
-
-          if (knownNetwork !== undefined) {
-            return knownNetwork;
-          }
-        }
-
-        console.warn(
-          `Could not find an associated network for cached network id: ${cachedNetworkNameOpt.value}, deleting from local storage`,
-        );
-
-        removeCachedNetworkId();
-
-        return DEFAULT_NETWORK;
-      }
-
-      const cachedCustomRpcEndpointOpt = getCachedCustomRpcEndpoint();
-
-      // If a custom RPC endpoint is cached, return it as a custom network.
-      if (cachedCustomRpcEndpointOpt.value !== null) {
+    getCachedInitialNetwork().then((initialNetwork) => {
+      if (initialNetwork.id === NetworkId.CUSTOM) {
         setIsCustom(true);
-
-        return createCustomNetwork(cachedCustomRpcEndpointOpt.value);
       }
 
-      // Otherwise, use the default network.
-      return DEFAULT_NETWORK;
-    };
-
-    // TODO: Test connection to the initial cached network, if it fails, use the default network instead. If the initial cached network IS the default network already and the connection is failing... it's a bit more complicated.
-    setNetwork(getCachedInitialNetwork());
+      setNetwork(initialNetwork);
+    });
   }, [
     getCachedCustomRpcEndpoint,
+    getCachedInitialNetwork,
     getCachedNetworkId,
     removeCachedNetworkId,
     setNetwork,
@@ -138,7 +76,9 @@ const useNetworkSwitcher = () => {
       // Already on the requested network.
       if (network.id === newNetwork.id) {
         return;
-      } else if (!(await testRpcEndpointConnection(newNetwork.wsRpcEndpoint))) {
+      }
+      // Test connection to the new network.
+      else if (!(await testRpcEndpointConnection(newNetwork.wsRpcEndpoint))) {
         notificationApi({
           variant: 'error',
           message: `Unable to connect to the requested network: ${newNetwork.wsRpcEndpoint}`,
@@ -149,7 +89,7 @@ const useNetworkSwitcher = () => {
 
       if (activeWallet !== undefined) {
         try {
-          const chain = await networkToChain(newNetwork, activeWallet);
+          const chain = await mapNetworkToChain(newNetwork, activeWallet);
 
           const switchChainResult = await switchChain(chain, activeWallet);
 
@@ -183,8 +123,16 @@ const useNetworkSwitcher = () => {
       setIsCustom(isCustom);
       setNetwork(newNetwork);
     },
-    // prettier-ignore
-    [activeWallet, network.id, removeCachedCustomRpcEndpoint, removeCachedNetworkId, setCachedCustomRpcEndpoint, setCachedNetworkId, setNetwork, switchChain],
+    [
+      activeWallet,
+      network.id,
+      removeCachedCustomRpcEndpoint,
+      removeCachedNetworkId,
+      setCachedCustomRpcEndpoint,
+      setCachedNetworkId,
+      setNetwork,
+      switchChain,
+    ],
   );
 
   return {
@@ -193,15 +141,10 @@ const useNetworkSwitcher = () => {
   };
 };
 
-/**
- * Map a network to a chain
- * @param network the network to map to a chain
- * @param chainsConfig the chains configuration
- * @param activeWallet the active wallet
- *
- * @returns the chain
- */
-async function networkToChain(network: Network, activeWallet: WalletConfig) {
+async function mapNetworkToChain(
+  network: Network,
+  activeWallet: WalletConfig,
+): Promise<Chain> {
   if (activeWallet.platform === 'Substrate') {
     const api = await getApiPromise(network.wsRpcEndpoint);
 
@@ -213,7 +156,7 @@ async function networkToChain(network: Network, activeWallet: WalletConfig) {
           : DEFAULT_SS58.toNumber();
     }
 
-    const deciamls =
+    const decimals =
       api.registry.chainDecimals.length > 0
         ? api.registry.chainDecimals[0]
         : DEFAULT_DECIMALS;
@@ -231,7 +174,7 @@ async function networkToChain(network: Network, activeWallet: WalletConfig) {
             network.substrateChainId,
             ChainType.Substrate,
             typedChainId,
-            deciamls,
+            decimals,
           );
 
     return chain;

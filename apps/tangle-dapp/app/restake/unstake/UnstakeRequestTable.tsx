@@ -3,6 +3,7 @@
 import {
   createColumnHelper,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   type TableOptions,
@@ -11,10 +12,10 @@ import {
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
-import uniqueId from 'lodash/uniqueId';
 import { type ComponentProps, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatUnits } from 'viem';
@@ -22,7 +23,9 @@ import { formatUnits } from 'viem';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
-import type { DelegatorBondLessRequest } from '../../../types/restake';
+import type { DelegatorUnstakeRequest } from '../../../types/restake';
+import type { IdentityType } from '../../../utils/polkadot';
+import AvatarWithText from '../AvatarWithText';
 import type { UnstakeRequestTableData } from './types';
 import UnstakeRequestTableActions from './UnstakeRequestTableActions';
 import { calculateTimeRemaining } from './utils';
@@ -30,27 +33,24 @@ import { calculateTimeRemaining } from './utils';
 const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
 
 const columns = [
-  columnsHelper.display({
+  columnsHelper.accessor('operatorAccountId', {
     id: 'select',
     enableSorting: false,
-    header: ({ table }) => (
-      <CheckBox
-        isChecked={table.getIsAllRowsSelected()}
-        // TODO: Add indeterminate state for CheckBox
-        // indeterminate={table.getIsSomeRowsSelected()}
-        onChange={table.getToggleAllRowsSelectedHandler()}
-        wrapperClassName={cx('min-h-0')}
-      />
-    ),
-    cell: ({ row }) => (
-      <CheckBox
-        isChecked={row.getIsSelected()}
-        isDisabled={!row.getCanSelect()}
-        // TODO: Add indeterminate state for CheckBox
-        // indeterminate={row.getIsSomeSelected()}
-        onChange={row.getToggleSelectedHandler()}
-        wrapperClassName={cx('min-h-0')}
-      />
+    header: () => <TableCell>Select request to cancel</TableCell>,
+    cell: (props) => (
+      <div className="flex items-center justify-start gap-2">
+        <CheckBox
+          isChecked={props.row.getIsSelected()}
+          isDisabled={!props.row.getCanSelect()}
+          onChange={props.row.getToggleSelectedHandler()}
+          wrapperClassName="pt-0.5 flex items-center justify-center"
+        />
+
+        <AvatarWithText
+          accountAddress={props.getValue()}
+          identityName={props.row.original.operatorIdentityName}
+        />
+      </div>
     ),
   }),
   columnsHelper.accessor('amount', {
@@ -89,55 +89,48 @@ const columns = [
 ];
 
 type Props = {
-  delegatorBondLessRequests: DelegatorBondLessRequest[];
+  unstakeRequests: DelegatorUnstakeRequest[];
+  operatorIdentities: Record<string, IdentityType | null>;
 };
 
-const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
+const UnstakeRequestTable = ({
+  unstakeRequests,
+  operatorIdentities,
+}: Props) => {
   const { assetMap } = useRestakeContext();
   const { delegationBondLessDelay } = useRestakeConsts();
   const { currentRound } = useRestakeCurrentRound();
 
-  // Transforming the array to object with uuid as key
-  // for easier querying
-  const unstakeRequestsWithId = useMemo(
-    () =>
-      delegatorBondLessRequests.reduce(
-        (acc, current) => {
-          const uid = uniqueId('delegator-bond-less-request-');
-          acc[uid] = { ...current, uid };
-          return acc;
-        },
-        {} as Record<string, DelegatorBondLessRequest & { uid: string }>,
-      ),
-    [delegatorBondLessRequests],
-  );
-
   const dataWithId = useMemo(
     () =>
-      Object.values(unstakeRequestsWithId).reduce(
-        (acc, { assetId, bondLessAmount, requestedRound, uid }) => {
+      unstakeRequests.reduce(
+        (acc, { assetId, amount, requestedRound, operatorAccountId }) => {
           const asset = assetMap[assetId];
           if (!asset) return acc;
 
-          const formattedAmount = formatUnits(bondLessAmount, asset.decimals);
+          const formattedAmount = formatUnits(amount, asset.decimals);
           const timeRemaining = calculateTimeRemaining(
             currentRound,
             requestedRound,
             delegationBondLessDelay,
           );
 
-          acc[uid] = {
+          acc[getId({ assetId, operatorAccountId })] = {
             amount: Number(formattedAmount),
+            amountRaw: amount,
+            assetId: assetId,
             assetSymbol: asset.symbol,
             timeRemaining,
-            uid,
+            operatorAccountId,
+            operatorIdentityName: operatorIdentities?.[operatorAccountId]?.name,
           } satisfies UnstakeRequestTableData;
 
           return acc;
         },
         {} as Record<string, UnstakeRequestTableData>,
       ),
-    [assetMap, currentRound, delegationBondLessDelay, unstakeRequestsWithId],
+    // prettier-ignore
+    [assetMap, currentRound, delegationBondLessDelay, operatorIdentities, unstakeRequests],
   );
 
   const table = useReactTable(
@@ -150,8 +143,13 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
             pageSize: 5,
           },
         },
-        getRowId: (row) => row.uid,
+        getRowId: (row) => getId(row),
         enableRowSelection: true,
+        filterFns: {
+          fuzzy: fuzzyFilter,
+        },
+        globalFilterFn: fuzzyFilter,
+        getFilteredRowModel: getFilteredRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -172,16 +170,15 @@ const UnstakeRequestTable = ({ delegatorBondLessRequests }: Props) => {
       <Table
         tableProps={table}
         isPaginated
-        thClassName={cx(
-          '!border-t-transparent !bg-transparent px-3 py-2 first:w-[18px]',
-        )}
-        tdClassName={cx(
-          '!border-transparent !bg-transparent px-3 py-2 first:w-[18px]',
-        )}
+        thClassName={cx('!border-t-transparent !bg-transparent px-3 py-2')}
+        tdClassName={cx('!border-transparent !bg-transparent px-3 py-2')}
       />
 
       <div className="flex items-center gap-3">
-        <UnstakeRequestTableActions selectedRequests={selectedRequests} />
+        <UnstakeRequestTableActions
+          allRequests={Object.values(dataWithId)}
+          selectedRequests={selectedRequests}
+        />
       </div>
     </>
   );
@@ -209,4 +206,14 @@ function TableCell({
       {children}
     </Typography>
   );
+}
+
+function getId({
+  assetId,
+  operatorAccountId,
+}: {
+  assetId: string;
+  operatorAccountId: string;
+}) {
+  return `${operatorAccountId}-${assetId}`;
 }

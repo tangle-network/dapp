@@ -113,11 +113,9 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
       <ModalContent
         isCenter
         isOpen={isModalOpen}
-        className="w-full max-w-[1000px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[1000px]"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModal}>
-          Update Nominations
-        </ModalHeader>
+        <ModalHeader onClose={closeModal}>Update Nominations</ModalHeader>
 
         <div className="px-8 py-6">
           <SelectValidators
@@ -134,7 +132,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
           )}
         </div>
 
-        <ModalFooter className="flex items-center gap-1">
+        <ModalFooter className="flex items-center gap-2">
           <Button isFullWidth variant="secondary" onClick={closeModal}>
             Cancel
           </Button>

@@ -58,9 +58,9 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
       <ModalContent
         isCenter
         isOpen={isModalOpen}
-        className="w-full max-w-[416px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[416px]"
       >
-        <ModalHeader titleVariant="h4" onClose={closeModalAndReset}>
+        <ModalHeader onClose={closeModalAndReset}>
           Change Reward Destination
         </ModalHeader>
 
@@ -72,7 +72,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
           />
         </div>
 
-        <ModalFooter className="px-8 py-6 flex items-center gap-2">
+        <ModalFooter className="flex items-center gap-2">
           <Button
             isFullWidth
             variant="secondary"

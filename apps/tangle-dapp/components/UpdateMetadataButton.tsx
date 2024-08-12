@@ -39,7 +39,7 @@ const UpdateMetadataButton: FC = () => {
   );
 
   const { setWithPreviousValue: setCache, valueOpt: cachedMetadata } =
-    useLocalStorage(LocalStorageKey.SUBSTRATE_WALLETS_METADATA, true);
+    useLocalStorage(LocalStorageKey.SUBSTRATE_WALLETS_METADATA);
 
   const updateCache = useCallback(
     (genesisHash: HexString, metadata: SubstrateWalletsMetadataEntry) => {

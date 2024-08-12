@@ -2,7 +2,7 @@ import type { Account, Address } from 'viem';
 import { Config } from 'wagmi';
 
 import {
-  type CancelDelegatorBondLessContext,
+  type CancelDelegatorUnstakeRequestContext,
   type DelegateContext,
   type DelegatorBondLessContext,
   type DepositContext,
@@ -21,48 +21,70 @@ export default class EVMRestakeTx extends RestakeTxBase {
   }
 
   deposit = async (
-    _assetId: string,
-    _amount: bigint,
-    _operatorAccount?: string,
-    _eventHandlers?: TxEventHandlers<DepositContext>,
+    assetId: string,
+    amount: bigint,
+    operatorAccount?: string,
+    eventHandlers?: TxEventHandlers<DepositContext>,
   ) => {
-    console.warn('EVM deposit not implemented yet');
-    // Deposit the asset into the EVM.
+    eventHandlers?.onTxFailed?.('EVM deposit not implemented yet', {
+      assetId,
+      amount,
+      operatorAccount,
+    });
     return null;
   };
 
   delegate = async (
-    _operatorAccount: string,
-    _assetId: string,
-    _amount: bigint,
-    _eventHandlers?: TxEventHandlers<DelegateContext>,
+    operatorAccount: string,
+    assetId: string,
+    amount: bigint,
+    eventHandlers?: TxEventHandlers<DelegateContext>,
   ) => {
-    console.warn('EVM delegate not implemented yet');
-    // Delegate the asset to the operator.
+    eventHandlers?.onTxFailed?.('EVM delegate not implemented yet', {
+      operatorAccount,
+      assetId,
+      amount,
+    });
     return null;
   };
 
-  scheduleDelegatorBondLess = async (
-    _operatorAccount: string,
-    _assetId: string,
-    _amount: bigint,
-    _eventHandlers?: TxEventHandlers<DelegatorBondLessContext>,
+  scheduleDelegatorUnstake = async (
+    operatorAccount: string,
+    assetId: string,
+    amount: bigint,
+    eventHandlers?: TxEventHandlers<DelegatorBondLessContext>,
   ): Promise<`0x${string}` | null> => {
-    console.warn('EVM scheduleDelegatorBondLess not implemented yet');
+    eventHandlers?.onTxFailed?.(
+      'EVM scheduleDelegatorBondLess not implemented yet',
+      {
+        operatorAccount,
+        assetId,
+        amount,
+      },
+    );
     return Promise.resolve(null);
   };
 
-  executeDelegatorBondLess = async (
-    _eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
+  executeDelegatorUnstakeRequests = async (
+    eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
   ): Promise<`0x${string}` | null> => {
-    console.warn('EVM executeDelegatorBondLess not implemented yet');
+    eventHandlers?.onTxFailed?.(
+      'EVM executeDelegatorBondLess not implemented yet',
+      {},
+    );
     return Promise.resolve(null);
   };
 
-  cancelDelegatorBondLess = async (
-    _eventHandlers?: TxEventHandlers<CancelDelegatorBondLessContext>,
+  cancelDelegatorUnstakeRequests = async (
+    unstakeRequests: CancelDelegatorUnstakeRequestContext['unstakeRequests'],
+    eventHandlers?: TxEventHandlers<CancelDelegatorUnstakeRequestContext>,
   ): Promise<`0x${string}` | null> => {
-    console.warn('EVM cancelDelegatorBondLess not implemented yet');
+    eventHandlers?.onTxFailed?.(
+      'EVM cancelDelegatorBondLess not implemented yet',
+      {
+        unstakeRequests,
+      },
+    );
     return Promise.resolve(null);
   };
 }

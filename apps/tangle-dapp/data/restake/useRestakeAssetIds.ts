@@ -1,14 +1,13 @@
-import type { u128, Vec } from '@polkadot/types';
 import type { Evaluate } from '@webb-tools/dapp-types/utils/types';
 import { useObservableState } from 'observable-hooks';
-import { useMemo, useRef } from 'react';
-import { type Observable, of } from 'rxjs';
+import { useMemo } from 'react';
+import { map, type Observable } from 'rxjs';
 
-import usePolkadotApi from '../../hooks/usePolkadotApi';
+import useRestakeRewardPoolMap from './useRestakeRewardPoolMap';
 
 export type UseRestakeAssetIdsReturnType = {
-  assetIds: u128[];
-  assetIds$: Observable<Vec<u128>>;
+  assetIds: string[];
+  assetIds$: Observable<string[]>;
 };
 
 /**
@@ -16,23 +15,24 @@ export type UseRestakeAssetIdsReturnType = {
  * The hook returns an object containing the asset IDs and an observable to refresh the asset IDs.
  */
 export default function useRestakeAssetIds(): Evaluate<UseRestakeAssetIdsReturnType> {
-  const { apiRx } = usePolkadotApi();
-
-  /** Default value won't change, so useRef to keep the reference */
-  const emptyVec = useRef(apiRx.createType('Vec<u128>', []));
+  const { rewardPoolMap$ } = useRestakeRewardPoolMap();
 
   const assetIds$ = useMemo(
     () =>
-      apiRx.query.multiAssetDelegation?.whitelistedAssets !== undefined
-        ? apiRx.query.multiAssetDelegation.whitelistedAssets()
-        : of(emptyVec.current),
-    [apiRx.query.multiAssetDelegation],
+      rewardPoolMap$.pipe(
+        map((rewardPoolMap) => {
+          const assetIds = Object.values(rewardPoolMap)
+            .flat()
+            .filter((assetId): assetId is string => assetId !== null);
+
+          // Remove duplicates
+          return Array.from(new Set(assetIds));
+        }),
+      ),
+    [rewardPoolMap$],
   );
 
-  const assetIds = useObservableState(assetIds$, emptyVec.current);
+  const assetIds = useObservableState(assetIds$, []);
 
-  return {
-    assetIds,
-    assetIds$,
-  };
+  return { assetIds, assetIds$ };
 }

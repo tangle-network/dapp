@@ -60,7 +60,7 @@ export const WalletConnectionCard = forwardRef<
         <div
           {...props}
           className={twMerge(
-            'flex max-w-max rounded-lg bg-mono-0 dark:bg-mono-190',
+            'flex max-w-max rounded-lg bg-mono-0 dark:bg-mono-180',
             className,
           )}
           ref={ref}
@@ -120,7 +120,7 @@ export const WalletConnectionCard = forwardRef<
       <div
         {...props}
         className={twMerge(
-          'max-w-full w-[356px] min-h-[448px] mx-9 rounded-lg bg-mono-0 dark:bg-mono-190',
+          'max-w-full w-[356px] min-h-[448px] mx-9 rounded-lg bg-mono-0 dark:bg-mono-180',
           'flex flex-col',
           className,
         )}
@@ -316,7 +316,7 @@ const WalletList: FC<
           {wallets.map((wallet) => (
             <ListItem
               key={wallet.id}
-              className="cursor-pointer"
+              className="cursor-pointer bg-mono-0 dark:bg-mono-180"
               onClick={() => onWalletSelect?.(wallet)}
             >
               <div className="flex items-center gap-2">

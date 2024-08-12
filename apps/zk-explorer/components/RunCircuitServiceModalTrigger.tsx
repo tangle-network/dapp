@@ -82,7 +82,7 @@ export const RunCircuitServiceModalTrigger: FC<
         <ModalContent
           usePortal
           isCenter
-          className="bg-mono-0 dark:bg-mono-180 rounded-xl max-w-[550px] w-full"
+          className=" w-full max-w-[550px]"
           isOpen={isOpen}
         >
           <ModalHeader onClose={() => setIsOpen(false)}>
@@ -124,15 +124,7 @@ export const RunCircuitServiceModalTrigger: FC<
             </div>
           </div>
 
-          <ModalFooter>
-            <Button
-              onClick={handleContinue}
-              isFullWidth
-              isDisabled={selectedRadioItemId === null}
-            >
-              Continue
-            </Button>
-
+          <ModalFooter className="flex items-center gap-2">
             <Button
               href={WEBB_DOCS_URL}
               target="_blank"
@@ -141,6 +133,14 @@ export const RunCircuitServiceModalTrigger: FC<
               variant="secondary"
             >
               Learn more
+            </Button>
+
+            <Button
+              onClick={handleContinue}
+              isFullWidth
+              isDisabled={selectedRadioItemId === null}
+            >
+              Continue
             </Button>
           </ModalFooter>
         </ModalContent>

@@ -145,6 +145,11 @@ export default function Page() {
           symbol: asset.symbol,
           assetBalanceProps: {
             balance: +formatUnits(amount, asset.decimals),
+            ...(asset.poolId
+              ? {
+                  subContent: `Pool ID: ${asset.poolId}`,
+                }
+              : {}),
           },
         } satisfies TokenListCardProps['selectTokens'][number];
       });

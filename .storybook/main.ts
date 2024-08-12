@@ -11,7 +11,7 @@ export default {
     getAbsolutePath('storybook-addon-remix-react-router'),
     getAbsolutePath('@storybook/theming'),
     getAbsolutePath('@storybook/addon-a11y'),
-    getAbsolutePath('@storybook/addon-webpack5-compiler-babel'),
+    getAbsolutePath('@storybook/addon-webpack5-compiler-swc'),
     getAbsolutePath('@chromatic-com/storybook'),
   ],
   // uncomment the property below if you want to apply some webpack config globally

@@ -1,3 +1,14 @@
+/**
+ * TODO:
+ * - Asset ID should has a better type than string.
+ * - Pool ID should has a better type than string.
+ * - Account ID should has a better type than string.
+ * - Amount should has a better type than string.
+ *
+ * Maybe we can utize the `Brand` type in `apps/tangle-dapp/types/utils.ts`
+ * with some casting and assertion functions.
+ */
+
 import type {
   PalletAssetsAccountStatus,
   PalletAssetsAssetStatus,
@@ -43,7 +54,7 @@ export type OperatorStatus =
  * @name PalletMultiAssetDelegationOperatorOperatorMetadata (735)
  */
 export type OperatorMetadata = {
-  readonly bond: bigint;
+  readonly stake: bigint;
   readonly delegationCount: number;
 
   /**
@@ -60,6 +71,10 @@ export type OperatorMetadata = {
  */
 export type OperatorMap = {
   readonly [accountId: string]: OperatorMetadata;
+};
+
+export type RewardPoolMap = {
+  [poolId: string]: string[] | null;
 };
 
 /**
@@ -79,6 +94,8 @@ export type AssetMetadata = {
    * @field Destroying - The asset is being destroyed and cannot be staked.
    */
   readonly status: TransformEnum<PalletAssetsAssetStatus>;
+
+  poolId: string | null;
 };
 
 /**
@@ -88,35 +105,23 @@ export type AssetMap = {
   readonly [assetId: string]: AssetMetadata;
 };
 
-/**
- * Represents a request to unstake a specific amount of an asset.
- * @name PalletMultiAssetDelegationDelegatorUnstakeRequest (747)
- */
-export type DelegatorUnstakeRequest = {
+export type DelegatorWithdrawRequest = {
   readonly assetId: string;
   readonly amount: bigint;
   readonly requestedRound: number;
 };
 
-/**
- * Represents a bond between a delegator and an operator.
- * @name PalletMultiAssetDelegationDelegatorBondInfoDelegator (749)
- */
+export type DelegatorUnstakeRequest = {
+  readonly operatorAccountId: string;
+  readonly assetId: string;
+  readonly amount: bigint;
+  readonly requestedRound: number;
+};
+
 export type DelegatorBondInfo = {
-  readonly uid: string;
   readonly operatorAccountId: string;
   readonly amountBonded: bigint;
   readonly assetId: string;
-};
-
-/**
- * Represents a request to reduce the bonded amount of a specific asset.
- * @name PalletMultiAssetDelegationDelegatorBondLessRequest (751)
- */
-export type DelegatorBondLessRequest = {
-  readonly assetId: string;
-  readonly bondLessAmount: bigint;
-  readonly requestedRound: number;
 };
 
 /**
@@ -134,29 +139,17 @@ export type DelegatorStatus =
  * @name PalletMultiAssetDelegationDelegatorDelegatorMetadata (742)
  */
 export type DelegatorInfo = {
-  /**
-   * A map of deposited assets and their respective amounts.
-   */
   readonly deposits: {
     readonly [assetId: string]: {
       amount: bigint;
     };
   };
 
-  /**
-   * An optional unstake request, with only one allowed at a time.
-   */
-  readonly unstakeRequest: DelegatorUnstakeRequest | null;
+  readonly withdrawRequests: Array<DelegatorWithdrawRequest>;
 
-  /**
-   * A list of all current delegations.
-   */
   readonly delegations: Array<DelegatorBondInfo>;
 
-  /**
-   * An optional request to reduce the bonded amount, with only one allowed at a time.
-   */
-  readonly delegatorBondLessRequest: DelegatorBondLessRequest | null;
+  readonly unstakeRequests: Array<DelegatorUnstakeRequest>;
 
   readonly status: DelegatorStatus;
 };
@@ -211,7 +204,7 @@ export type RewardConfigForAsset = {
   /**
    * The annual percentage yield (APY) for the asset, represented as a fixed point number.
    */
-  readonly apy: bigint;
+  readonly apy: number;
 
   /**
    * The minimum amount required before the asset can be rewarded.
@@ -227,7 +220,7 @@ export type RewardConfig = {
    * A map of asset IDs to their respective reward configurations.
    */
   configs: {
-    [assetId: string]: RewardConfigForAsset;
+    [poolId: string]: RewardConfigForAsset;
   };
 
   /**
@@ -244,7 +237,6 @@ export type DepositFormFields = {
 };
 
 export type DelegationFormFields = {
-  uid: string;
   amount: string;
   operatorAccountId: string;
   assetId: string;

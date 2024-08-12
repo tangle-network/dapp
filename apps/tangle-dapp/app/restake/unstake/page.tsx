@@ -76,7 +76,6 @@ const Page = () => {
   useEffect(() => {
     register('operatorAccountId', { required: true });
     register('assetId', { required: true });
-    register('uid', { required: true });
   }, [register]);
 
   // Reset form when active chain changes
@@ -96,14 +95,13 @@ const Page = () => {
 
   const selectedAssetId = watch('assetId');
   const selectedOperatorAccountId = watch('operatorAccountId');
-  const selectedUid = watch('uid');
   const amount = watch('amount');
 
-  const delegatorBondLessRequests = useMemo(() => {
-    if (!delegatorInfo?.delegatorBondLessRequest) return [];
+  const unstakeRequests = useMemo(() => {
+    if (!delegatorInfo?.unstakeRequests) return [];
 
-    return [delegatorInfo.delegatorBondLessRequest];
-  }, [delegatorInfo?.delegatorBondLessRequest]);
+    return delegatorInfo.unstakeRequests;
+  }, [delegatorInfo?.unstakeRequests]);
 
   const selectedAsset = useMemo(() => {
     if (!selectedAssetId) return null;
@@ -112,25 +110,32 @@ const Page = () => {
     return assetMap[selectedAssetId];
   }, [assetMap, selectedAssetId]);
 
-  const { maxAmount, formattedMaxAmount } = useMemo(() => {
-    if (!Array.isArray(delegatorInfo?.delegations)) return {};
+  const { maxAmount, formattedMaxAmount } = useMemo(
+    () => {
+      if (!Array.isArray(delegatorInfo?.delegations)) return {};
 
-    const selectedDelegation = delegatorInfo.delegations.find(
-      (item) => item.uid === selectedUid,
-    );
-    if (!selectedDelegation) return {};
-    if (!assetMap[selectedDelegation.assetId]) return {};
+      const selectedDelegation = delegatorInfo.delegations.find(
+        (item) =>
+          item.assetId === selectedAssetId &&
+          item.operatorAccountId === selectedOperatorAccountId,
+      );
 
-    const maxAmount = selectedDelegation.amountBonded;
-    const formattedMaxAmount = Number(
-      formatUnits(maxAmount, assetMap[selectedDelegation.assetId].decimals),
-    );
+      if (!selectedDelegation) return {};
+      if (!assetMap[selectedDelegation.assetId]) return {};
 
-    return {
-      maxAmount,
-      formattedMaxAmount,
-    };
-  }, [delegatorInfo?.delegations, assetMap, selectedUid]);
+      const maxAmount = selectedDelegation.amountBonded;
+      const formattedMaxAmount = Number(
+        formatUnits(maxAmount, assetMap[selectedDelegation.assetId].decimals),
+      );
+
+      return {
+        maxAmount,
+        formattedMaxAmount,
+      };
+    },
+    // prettier-ignore
+    [delegatorInfo?.delegations, assetMap, selectedAssetId, selectedOperatorAccountId],
+  );
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
     const step = decimalsToStep(selectedAsset?.decimals);
@@ -195,7 +200,8 @@ const Page = () => {
     };
   }, [assetMap, operatorIdentities, reset]);
 
-  const { scheduleDelegatorBondLess } = useRestakeTx();
+  const { scheduleDelegatorUnstake: scheduleDelegatorBondLess } =
+    useRestakeTx();
   const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
 
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
@@ -312,9 +318,10 @@ const Page = () => {
 
       {/** Hardcoded for the margin top to ensure the component is align to same card content */}
       <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
-        {delegatorBondLessRequests.length > 0 ? (
+        {unstakeRequests.length > 0 ? (
           <UnstakeRequestTable
-            delegatorBondLessRequests={delegatorBondLessRequests}
+            operatorIdentities={operatorIdentities}
+            unstakeRequests={unstakeRequests}
           />
         ) : (
           <>
@@ -341,7 +348,7 @@ const Page = () => {
           onItemSelected={(item) => {
             closeOperatorModal();
 
-            const { formattedAmount, assetId, operatorAccountId, uid } = item;
+            const { formattedAmount, assetId, operatorAccountId } = item;
             const commonOpts = {
               shouldDirty: true,
               shouldValidate: true,
@@ -350,7 +357,6 @@ const Page = () => {
             setFormValue('operatorAccountId', operatorAccountId, commonOpts);
             setFormValue('assetId', assetId, commonOpts);
             setFormValue('amount', formattedAmount, commonOpts);
-            setFormValue('uid', uid, commonOpts);
           }}
         />
 

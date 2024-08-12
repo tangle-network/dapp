@@ -171,10 +171,10 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
       <ModalContent
         isCenter
         isOpen={isModalOpen}
-        className="w-full max-w-[550px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[550px]"
         onCloseAutoFocus={reset}
       >
-        <ModalHeader titleVariant="h4" onClose={() => setIsModalOpen(false)}>
+        <ModalHeader onClose={() => setIsModalOpen(false)}>
           Transfer {nativeTokenSymbol} Tokens
         </ModalHeader>
 
@@ -254,33 +254,29 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           )}
         </div>
 
-        <ModalFooter className="flex items-center gap-2 px-8 py-6 space-y-0">
-          <div className="flex-1">
-            <Button
-              isFullWidth
-              variant="secondary"
-              href={TANGLE_DOCS_URL}
-              target="_blank"
-            >
-              Learn More
-            </Button>
-          </div>
+        <ModalFooter className="flex items-center gap-2">
+          <Button
+            isFullWidth
+            variant="secondary"
+            href={TANGLE_DOCS_URL}
+            target="_blank"
+          >
+            Learn More
+          </Button>
 
-          <div className="flex-1">
-            <Button
-              isFullWidth
-              isLoading={!isReady}
-              loadingText={getTxStatusText(status)}
-              onClick={handleSend}
-              isDisabled={
-                !canInitiateTx ||
-                executeTransferTx === null ||
-                !isValidReceiverAddress
-              }
-            >
-              Send
-            </Button>
-          </div>
+          <Button
+            isFullWidth
+            isLoading={!isReady}
+            loadingText={getTxStatusText(status)}
+            onClick={handleSend}
+            isDisabled={
+              !canInitiateTx ||
+              executeTransferTx === null ||
+              !isValidReceiverAddress
+            }
+          >
+            Send
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

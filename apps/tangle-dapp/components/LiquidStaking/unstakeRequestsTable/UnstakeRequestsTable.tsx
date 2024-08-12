@@ -33,6 +33,7 @@ import {
 } from '../../../constants/liquidStaking';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import { AnySubstrateAddress } from '../../../types/utils';
+import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
 import GlassCard from '../../GlassCard';
 import { HeaderCell } from '../../tableCells';
 import TokenAmountCell from '../../tableCells/TokenAmountCell';
@@ -92,9 +93,7 @@ const columns = [
           return undefined;
         }
 
-        const plurality = remainingTimeUnit.value === 1 ? '' : 's';
-
-        return `${remainingTimeUnit.value} ${remainingTimeUnit.unit}${plurality}`;
+        return stringifyTimeUnit(remainingTimeUnit).join(' ');
       })();
 
       const content =

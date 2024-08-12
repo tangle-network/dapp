@@ -237,13 +237,9 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
       <ModalContent
         isCenter
         isOpen={isModalOpen}
-        className="w-full max-w-[800px] rounded-2xl bg-mono-0 dark:bg-mono-180"
+        className="w-full max-w-[800px]"
       >
-        <ModalHeader
-          titleVariant="h4"
-          onClose={() => setIsModalOpen(false)}
-          className="pb-4 p-9"
-        >
+        <ModalHeader onClose={() => setIsModalOpen(false)}>
           {getStepTitle(step, profileType, isCreatingProfile)}
         </ModalHeader>
 
