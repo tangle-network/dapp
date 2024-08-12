@@ -68,7 +68,7 @@ const VaultAssetsTable: FC<VaultAssetsTableProps> = ({ lstToken, isShown }) => {
       title="Assets"
       className={twMerge(
         'rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200',
-        isShown ? 'animate-slide-up' : 'animate-slide-down',
+        isShown ? 'animate-slide-down' : 'animate-slide-up',
       )}
       thClassName="font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100"
       tbodyClassName="!bg-transparent"

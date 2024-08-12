@@ -7,7 +7,6 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   Row,
-  SortingFn,
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
@@ -18,7 +17,7 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useMemo, useState } from 'react';
+import { FC, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import LSTToken from '../../../components/LSTToken';
@@ -29,14 +28,112 @@ import VaultAssetsTable from './VaultAssetsTable';
 
 const columnHelper = createColumnHelper<Vault>();
 
+const columns = [
+  columnHelper.accessor('name', {
+    header: () => 'Vault',
+    cell: (props) => (
+      <TableCellWrapper>
+        <div className="flex items-center gap-2">
+          <LSTToken name={props.row.original.lstToken} size="lg" />
+          <Typography variant="h5">{props.getValue()}</Typography>
+        </div>
+      </TableCellWrapper>
+    ),
+    sortingFn: (rowA, rowB) => {
+      // NOTE: the sorting is reversed by default
+      return rowB.original.name.localeCompare(rowA.original.name);
+    },
+    sortDescFirst: true,
+  }),
+  columnHelper.accessor('apy', {
+    header: () => 'APY',
+    cell: (props) => (
+      <TableCellWrapper>
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="text-mono-200 dark:text-mono-0"
+        >
+          {props.getValue().toFixed(2)}%
+        </Typography>
+      </TableCellWrapper>
+    ),
+  }),
+  columnHelper.accessor('tokensCount', {
+    header: () => 'Tokens',
+    cell: (props) => (
+      <TableCellWrapper>
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="text-mono-200 dark:text-mono-0"
+        >
+          {props.getValue()}
+        </Typography>
+      </TableCellWrapper>
+    ),
+  }),
+  columnHelper.accessor('liquidity', {
+    header: () => 'Liquidity',
+    cell: (props) => (
+      <TableCellWrapper isLast>
+        <div>
+          <Typography
+            variant="body1"
+            fw="bold"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {getRoundedAmountString(props.getValue().amount)}
+          </Typography>
+          <Typography
+            variant="body1"
+            className="text-mono-120 dark:text-mono-100"
+          >
+            ${getRoundedAmountString(props.getValue().usdValue)}
+          </Typography>
+        </div>
+      </TableCellWrapper>
+    ),
+  }),
+  columnHelper.accessor('lstToken', {
+    header: () => null,
+    cell: ({ row, table }) => (
+      <div className="flex items-center gap-2 justify-end">
+        {row.original.tokensCount > 0 && (
+          // TODO: add onClick
+          <Button variant="utility" className="body4">
+            Restake
+          </Button>
+        )}
+        <Button
+          variant="utility"
+          isJustIcon
+          onClick={() => {
+            table.setExpanded({ [row.id]: !row.getIsExpanded() });
+          }}
+          isDisabled={!(row.original.tokensCount > 0)}
+        >
+          <div
+            className={twMerge(
+              '!text-current transition-transform duration-300 ease-in-out',
+              row.getIsExpanded() ? 'rotate-180' : '',
+            )}
+          >
+            <ChevronUp className={twMerge('!fill-current')} />
+          </div>
+        </Button>
+      </div>
+    ),
+    enableSorting: false,
+  }),
+];
+
 const TvlTable: FC = () => {
   const vaults = useVaults();
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'apy', desc: true },
   ]);
-
-  const isDesc = useMemo(() => sorting[0].desc, [sorting]);
 
   const getExpandedRowContent = (row: Row<Vault>) => {
     return (
@@ -48,140 +145,6 @@ const TvlTable: FC = () => {
       </div>
     );
   };
-
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor('name', {
-        header: () => 'Vault',
-        cell: (props) => (
-          <TableCellWrapper isActive={props.row.original.isActive}>
-            <div className="flex items-center gap-2">
-              <LSTToken name={props.row.original.lstToken} size="lg" />
-              <Typography variant="h5">{props.getValue()}</Typography>
-            </div>
-          </TableCellWrapper>
-        ),
-        sortingFn: (rowA, rowB, columnId) =>
-          sortVaultBasedOnSortingFn(
-            rowA,
-            rowB,
-            columnId,
-            isDesc,
-            (rowA, rowB) => {
-              return rowB.original.name.localeCompare(rowA.original.name);
-            },
-          ),
-      }),
-      columnHelper.accessor('apy', {
-        header: () => 'APY',
-        cell: (props) => (
-          <TableCellWrapper isActive={props.row.original.isActive}>
-            <Typography
-              variant="body1"
-              fw="bold"
-              className="text-mono-200 dark:text-mono-0"
-            >
-              {props.getValue().toFixed(2)}%
-            </Typography>
-          </TableCellWrapper>
-        ),
-        sortingFn: (rowA, rowB, columnId) =>
-          sortVaultBasedOnSortingFn(
-            rowA,
-            rowB,
-            columnId,
-            isDesc,
-            (rowA, rowB) => rowA.original.apy - rowB.original.apy,
-          ),
-      }),
-      columnHelper.accessor('tokensCount', {
-        header: () => 'Tokens',
-        cell: (props) => (
-          <TableCellWrapper isActive={props.row.original.isActive}>
-            <Typography
-              variant="body1"
-              fw="bold"
-              className="text-mono-200 dark:text-mono-0"
-            >
-              {props.getValue()}
-            </Typography>
-          </TableCellWrapper>
-        ),
-        sortingFn: (rowA, rowB, columnId) =>
-          sortVaultBasedOnSortingFn(
-            rowA,
-            rowB,
-            columnId,
-            isDesc,
-            (rowA, rowB) =>
-              rowA.original.tokensCount - rowB.original.tokensCount,
-          ),
-      }),
-      columnHelper.accessor('liquidity', {
-        header: () => 'Liquidity',
-        cell: (props) => (
-          <TableCellWrapper isLast isActive={props.row.original.isActive}>
-            <div>
-              <Typography
-                variant="body1"
-                fw="bold"
-                className="text-mono-200 dark:text-mono-0"
-              >
-                {getRoundedAmountString(props.getValue().amount)}
-              </Typography>
-              <Typography
-                variant="body1"
-                className="text-mono-120 dark:text-mono-100"
-              >
-                ${getRoundedAmountString(props.getValue().usdValue)}
-              </Typography>
-            </div>
-          </TableCellWrapper>
-        ),
-        sortingFn: (rowA, rowB, columnId) =>
-          sortVaultBasedOnSortingFn(
-            rowA,
-            rowB,
-            columnId,
-            isDesc,
-            (rowA, rowB) =>
-              rowA.original.liquidity.amount - rowB.original.liquidity.amount,
-          ),
-      }),
-      columnHelper.accessor('lstToken', {
-        header: () => null,
-        cell: ({ row, table }) => (
-          <div className="flex items-center gap-2 justify-end">
-            {row.original.tokensCount > 0 && (
-              // TODO: add onClick
-              <Button variant="utility" className="body4">
-                Restake
-              </Button>
-            )}
-            <Button
-              variant="utility"
-              isJustIcon
-              onClick={() => {
-                table.setExpanded({ [row.id]: !row.getIsExpanded() });
-              }}
-              isDisabled={!(row.original.tokensCount > 0)}
-            >
-              <div
-                className={twMerge(
-                  '!text-current transition-transform duration-300 ease-in-out',
-                  row.getIsExpanded() ? 'rotate-180' : '',
-                )}
-              >
-                <ChevronUp className={twMerge('!fill-current')} />
-              </div>
-            </Button>
-          </div>
-        ),
-        enableSorting: false,
-      }),
-    ],
-    [isDesc],
-  );
 
   const table = useReactTable({
     data: vaults,
@@ -226,19 +189,3 @@ const TvlTable: FC = () => {
 };
 
 export default TvlTable;
-
-function sortVaultBasedOnSortingFn(
-  rowA: Row<Vault>,
-  rowB: Row<Vault>,
-  columnId: string,
-  isDesc: boolean,
-  sortFn: SortingFn<Vault>,
-) {
-  const isRowAActive = rowA.original.isActive;
-  const isRowBActive = rowB.original.isActive;
-
-  if (isRowAActive && !isRowBActive) return isDesc ? 1 : -1;
-  if (!isRowAActive && isRowBActive) return isDesc ? -1 : 1;
-
-  return sortFn(rowA, rowB, columnId);
-}

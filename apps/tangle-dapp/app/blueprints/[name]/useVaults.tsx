@@ -14,7 +14,6 @@ export default function useVaults(): Vault[] {
         amount: 1000,
         usdValue: 10000,
       },
-      isActive: true,
     },
     {
       lstToken: LiquidStakingToken.ASTR,
@@ -25,7 +24,6 @@ export default function useVaults(): Vault[] {
         amount: 23.34,
         usdValue: 233.4,
       },
-      isActive: true,
     },
     {
       lstToken: LiquidStakingToken.PHA,
@@ -36,7 +34,6 @@ export default function useVaults(): Vault[] {
         amount: 50,
         usdValue: 500,
       },
-      isActive: true,
     },
     {
       lstToken: LiquidStakingToken.GLMR,
@@ -47,7 +44,6 @@ export default function useVaults(): Vault[] {
         amount: 0,
         usdValue: 0,
       },
-      isActive: false,
     },
     {
       lstToken: LiquidStakingToken.MANTA,
@@ -58,7 +54,6 @@ export default function useVaults(): Vault[] {
         amount: 0,
         usdValue: 0,
       },
-      isActive: false,
     },
   ];
 }
