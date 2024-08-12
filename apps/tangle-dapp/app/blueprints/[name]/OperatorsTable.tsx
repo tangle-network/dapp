@@ -21,6 +21,7 @@ import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import LSTToken from '../../../components/LSTToken';
+import { TableStatus } from '../../../components/TableStatus';
 import useNetworkStore from '../../../context/useNetworkStore';
 import { ExplorerType } from '../../../types';
 import { Operator } from '../../../types/blueprint';
@@ -179,22 +180,37 @@ const OperatorsTable: FC = () => {
         Operators
       </Typography>
 
-      <Table
-        tableProps={table}
-        title="Operators"
-        isPaginated
-        className={twMerge(
-          'px-6 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160',
-          'bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)]',
-          'dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]',
-        )}
-        tableClassName="border-separate border-spacing-y-3 pt-3"
-        thClassName="py-0 border-t-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0"
-        tbodyClassName="space-y-3 !bg-transparent"
-        trClassName="bg-mono-0 dark:bg-mono-190 overflow-hidden rounded-xl"
-        tdClassName="border-0 !bg-inherit first:rounded-l-xl last:rounded-r-xl pl-3 pr-0 last:pr-3"
-        paginationClassName="!bg-transparent dark:!bg-transparent pl-6 border-t-0 -mt-2"
-      />
+      {operators.length === 0 ? (
+        <TableStatus
+          title="No operators found"
+          description="It looks like there is no operator running this Blueprint at the moment."
+          icon="⚙️"
+          className={twMerge(
+            'relative px-6 py-10 rounded-2xl !bg-[unset] border-mono-0 dark:border-mono-160',
+            'bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)]',
+            'dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]',
+            'before:absolute before:inset-0 before:bg-cover before:bg-no-repeat before:opacity-30 before:pointer-events-none',
+            "before:bg-[url('/static/assets/blueprints/grid-bg.png')] dark:before:bg-[url('/static/assets/blueprints/grid-bg-dark.png')]",
+          )}
+        />
+      ) : (
+        <Table
+          tableProps={table}
+          title="Operators"
+          isPaginated
+          className={twMerge(
+            'px-6 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160',
+            'bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)]',
+            'dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]',
+          )}
+          tableClassName="border-separate border-spacing-y-3 pt-3"
+          thClassName="py-0 border-t-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0"
+          tbodyClassName="space-y-3 !bg-transparent"
+          trClassName="bg-mono-0 dark:bg-mono-190 overflow-hidden rounded-xl"
+          tdClassName="border-0 !bg-inherit first:rounded-l-xl last:rounded-r-xl pl-3 pr-0 last:pr-3"
+          paginationClassName="!bg-transparent dark:!bg-transparent pl-6 border-t-0 -mt-2"
+        />
+      )}
     </div>
   );
 };
