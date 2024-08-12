@@ -39,8 +39,8 @@ import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
-import UnstakeModal from './UnstakeModal';
-import UnstakeRequestTable from './UnstakeRequestTable';
+import UnstakeModal from './WithdrawModal';
+import UnstakeRequestTable from './WithdrawRequestTable';
 
 export const dynamic = 'force-static';
 
