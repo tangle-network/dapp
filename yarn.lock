@@ -13213,11 +13213,11 @@ __metadata:
   linkType: hard
 
 "@storybook/theming@npm:^8.2.7":
-  version: 8.2.7
-  resolution: "@storybook/theming@npm:8.2.7"
+  version: 8.2.8
+  resolution: "@storybook/theming@npm:8.2.8"
   peerDependencies:
-    storybook: ^8.2.7
-  checksum: 10c0/06da980f67f5bfa62bcf8b6e4c3473568982f271e18a5a9b6421907df5816b93c1b2f74705d9e03d218e5d0effe5dbfd5ca40b932c5005b225669ec59eb250cb
+    storybook: ^8.2.8
+  checksum: 10c0/d762d2715004ce7c1b9cdef3babf38ba4ac6fe53b7e9583aea737fa03d777f7a70fbc880fb4e7e7b64e7ff1471f3d2b67379a59170e0297015baa3e1beed02cf
   languageName: node
   linkType: hard
 
