@@ -31,7 +31,7 @@ export type Operator = BasicAccountInfo & {
     amount: number; // NOTE: put as number for faster UI development, might need to update later
     usdValue: number; // NOTE: put as number for faster UI development, might need to update later
   };
-  vaults: LiquidStakingToken[]; // NOTE: put as string for faster UI development, might need to update later
+  vaults: LiquidStakingToken[];
 };
 
 export type Vault = {
@@ -43,4 +43,5 @@ export type Vault = {
     amount: number; // NOTE: put as number for faster UI development, might need to update later
     usdValue: number; // NOTE: put as number for faster UI development, might need to update later
   };
+  isActive: boolean;
 };

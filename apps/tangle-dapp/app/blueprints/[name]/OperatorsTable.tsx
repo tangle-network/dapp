@@ -17,7 +17,7 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, PropsWithChildren, useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import LSTToken from '../../../components/LSTToken';
@@ -25,6 +25,7 @@ import useNetworkStore from '../../../context/useNetworkStore';
 import { ExplorerType } from '../../../types';
 import { Operator } from '../../../types/blueprint';
 import { getSortAddressOrIdentityFnc } from '../../../utils/table';
+import TableCellWrapper from './TableCellWrapper';
 import useOperators from './useOperators';
 
 const columnHelper = createColumnHelper<Operator>();
@@ -33,7 +34,7 @@ const staticColumns = [
   columnHelper.accessor('restakersCount', {
     header: () => 'Restakers',
     cell: (props) => (
-      <CellContentWrapper>
+      <TableCellWrapper>
         <Typography
           variant="body1"
           fw="bold"
@@ -41,13 +42,13 @@ const staticColumns = [
         >
           {props.getValue()}
         </Typography>
-      </CellContentWrapper>
+      </TableCellWrapper>
     ),
   }),
   columnHelper.accessor('concentration', {
     header: () => 'Concentration',
     cell: (props) => (
-      <CellContentWrapper>
+      <TableCellWrapper>
         <Typography
           variant="body1"
           fw="bold"
@@ -55,13 +56,13 @@ const staticColumns = [
         >
           {props.getValue().toFixed(2)}%
         </Typography>
-      </CellContentWrapper>
+      </TableCellWrapper>
     ),
   }),
   columnHelper.accessor('liquidity', {
     header: () => 'Liquidity',
     cell: (props) => (
-      <CellContentWrapper>
+      <TableCellWrapper>
         <div>
           <Typography
             variant="body1"
@@ -77,8 +78,11 @@ const staticColumns = [
             ${getRoundedAmountString(props.getValue().usdValue)}
           </Typography>
         </div>
-      </CellContentWrapper>
+      </TableCellWrapper>
     ),
+    sortingFn: (rowA, rowB) => {
+      return rowA.original.liquidity.amount - rowB.original.liquidity.amount;
+    },
   }),
   columnHelper.accessor('vaults', {
     header: () => 'Vaults',
@@ -101,7 +105,6 @@ const OperatorsTable: FC = () => {
   const operators = useOperators();
 
   const [sorting, setSorting] = useState<SortingState>([
-    // Default sorting by total stake amount in descending order
     { id: 'restakersCount', desc: true },
   ]);
 
@@ -197,11 +200,3 @@ const OperatorsTable: FC = () => {
 };
 
 export default OperatorsTable;
-
-const CellContentWrapper: FC<PropsWithChildren> = ({ children }) => {
-  return (
-    <div className="flex h-[51px] items-center border-r border-mono-60 dark:border-mono-140">
-      {children}
-    </div>
-  );
-};

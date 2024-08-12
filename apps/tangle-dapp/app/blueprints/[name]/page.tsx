@@ -2,8 +2,7 @@ import { FC } from 'react';
 
 import BlueprintHeader from './BlueprintHeader';
 import OperatorsTable from './OperatorsTable';
-
-export const dynamic = 'force-static';
+import TvlTable from './TvlTable';
 
 type Props = {
   params: {
@@ -15,6 +14,7 @@ const BlueprintDetailsPage: FC<Props> = ({ params: { name } }) => {
   return (
     <div className="space-y-5">
       <BlueprintHeader blueprintName={name} />
+      <TvlTable />
       <OperatorsTable />
     </div>
   );
