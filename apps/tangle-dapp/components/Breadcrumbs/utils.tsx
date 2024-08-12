@@ -101,18 +101,16 @@ export const getBreadcrumbLabel = (
   if (knownLabel !== undefined) {
     return knownLabel;
   }
+
   // In the case that the pathname is a Substrate address, shorten it
   // to a more readable format, and to prevent overflow.
-  else if (isSubstrateAddress(pathName)) {
+  if (isSubstrateAddress(pathName)) {
     return shortenString(pathName);
   }
+
   // Otherwise, derive the label from the path name.
-  else {
-    // Replace dashes with spaces. These dashes may
-    // be used to separate words in the URL. Then,
-    // Capitalize the first letter of each word.
-    return capitalize(pathName.split('-').join(' '));
-  }
+  // %20 inside a path represent a space
+  return capitalize(pathName).replace(/%20/g, ' ');
 };
 
 export const getBreadcrumbIcon = (

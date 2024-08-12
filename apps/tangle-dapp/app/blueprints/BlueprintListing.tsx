@@ -222,7 +222,7 @@ const BlueprintItem: FC<Blueprint> = ({
   isBoosted,
 }) => {
   return (
-    <Link href={`${PagePath.BLUEPRINTS}/${formatBlueprintNameToPath(name)}`}>
+    <Link href={`${PagePath.BLUEPRINTS}/${name}`}>
       <div
         className={twMerge(
           'h-[364px] overflow-hidden rounded-xl flex flex-col cursor-pointer group',
@@ -321,7 +321,3 @@ const BlueprintItem: FC<Blueprint> = ({
     </Link>
   );
 };
-
-function formatBlueprintNameToPath(name: string): string {
-  return name.toLowerCase().replace(/ /g, '-');
-}

@@ -56,7 +56,7 @@ const Breadcrumbs: FC<{ className?: string }> = ({ className }) => {
             <BreadcrumbsItem
               icon={breadcrumb.icon}
               className={cx('whitespace-nowrap', breadcrumb.className)}
-              textClassName="!text-[12px] lg:!text-[16px] normal-case"
+              textClassName="!text-[12px] lg:!text-[16px]"
               isLast={breadcrumb.isLast}
             >
               {breadcrumb.label}
