@@ -16,7 +16,7 @@ import { LiquidStakingToken } from '../../../types/liquidStaking';
 import useVaultAssets from './useVaultAssets';
 
 interface VaultAssetsTableProps {
-  lstToken: LiquidStakingToken;
+  LSTTokenIcon: LiquidStakingToken;
   isShown: boolean;
 }
 
@@ -41,8 +41,11 @@ const columns = [
   }),
 ];
 
-const VaultAssetsTable: FC<VaultAssetsTableProps> = ({ lstToken, isShown }) => {
-  const data = useVaultAssets(lstToken);
+const VaultAssetsTable: FC<VaultAssetsTableProps> = ({
+  LSTTokenIcon,
+  isShown,
+}) => {
+  const data = useVaultAssets(LSTTokenIcon);
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'tvl', desc: true },

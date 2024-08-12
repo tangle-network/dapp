@@ -20,7 +20,7 @@ import {
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import LSTToken from '../../../components/LSTToken';
+import LSTTokenIcon from '../../../components/LSTTokenIcon';
 import { TableStatus } from '../../../components/TableStatus';
 import useNetworkStore from '../../../context/useNetworkStore';
 import { ExplorerType } from '../../../types';
@@ -93,7 +93,7 @@ const staticColumns = [
           .getValue()
           .sort() // sort alphabetically
           .map((vault, index) => (
-            <LSTToken key={index} name={vault} />
+            <LSTTokenIcon key={index} name={vault} />
           ))}
       </div>
     ),

@@ -20,7 +20,7 @@ import {
 import { FC, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import LSTToken from '../../../components/LSTToken';
+import LSTTokenIcon from '../../../components/LSTTokenIcon';
 import { Vault } from '../../../types/blueprint';
 import TableCellWrapper from './TableCellWrapper';
 import useVaults from './useVaults';
@@ -34,7 +34,7 @@ const columns = [
     cell: (props) => (
       <TableCellWrapper>
         <div className="flex items-center gap-2">
-          <LSTToken name={props.row.original.lstToken} size="lg" />
+          <LSTTokenIcon name={props.row.original.LSTTokenIcon} size="lg" />
           <Typography variant="h5">{props.getValue()}</Typography>
         </div>
       </TableCellWrapper>
@@ -95,7 +95,7 @@ const columns = [
       </TableCellWrapper>
     ),
   }),
-  columnHelper.accessor('lstToken', {
+  columnHelper.accessor('LSTTokenIcon', {
     header: () => null,
     cell: ({ row, table }) => (
       <div className="flex items-center gap-2 justify-end">
@@ -139,7 +139,7 @@ const TvlTable: FC = () => {
     return (
       <div className="bg-mono-0 dark:bg-mono-190 -mt-7 pt-4 pb-3 rounded-b-xl -mx-px px-3">
         <VaultAssetsTable
-          lstToken={row.original.lstToken}
+          LSTTokenIcon={row.original.LSTTokenIcon}
           isShown={row.getIsExpanded()}
         />
       </div>

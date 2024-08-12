@@ -6,7 +6,7 @@ import { Button, Chip, Typography } from '@webb-tools/webb-ui-components';
 import Image from 'next/image';
 import { FC, useMemo } from 'react';
 
-import LSTToken from '../../../components/LSTToken';
+import LSTTokenIcon from '../../../components/LSTTokenIcon';
 import { StaticAssetPath } from '../../../constants';
 import { LST_PREFIX, TVS_TOOLTIP } from '../../../constants/liquidStaking';
 import { PagePath } from '../../../types';
@@ -41,7 +41,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
     <div className="flex gap-2 justify-between rounded-xl bg-mono-20 dark:bg-mono-160 w-full px-3 py-6 border border-mono-40 dark:border-none">
       <div className="flex gap-2 items-center">
         <div className="relative">
-          <LSTToken size="lg" name={tokenSymbol} />
+          <LSTTokenIcon size="lg" name={tokenSymbol} />
 
           <Image
             className="absolute bottom-0 right-0"

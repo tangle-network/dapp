@@ -2,14 +2,14 @@ import { TokenIcon } from '@webb-tools/icons';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-type LSTTokenSize = 'md' | 'lg';
+type LSTTokenIconSize = 'md' | 'lg';
 
-interface LSTTokenProps {
+interface LSTTokenIconProps {
   name: string;
-  size?: LSTTokenSize;
+  size?: LSTTokenIconSize;
 }
 
-const LSTToken: FC<LSTTokenProps> = ({ name, size = 'md' }) => {
+const LSTTokenIcon: FC<LSTTokenIconProps> = ({ name, size = 'md' }) => {
   const { wrapperSizeClassName, iconSizeClassName, borderSize } =
     getSizeValues(size);
 
@@ -60,9 +60,9 @@ const LSTToken: FC<LSTTokenProps> = ({ name, size = 'md' }) => {
   );
 };
 
-export default LSTToken;
+export default LSTTokenIcon;
 
-function getSizeValues(size: LSTTokenSize): {
+function getSizeValues(size: LSTTokenIconSize): {
   wrapperSizeClassName: string;
   iconSizeClassName: string;
   borderSize: number;

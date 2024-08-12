@@ -6,7 +6,7 @@ import { LiquidStakingToken } from '../../../types/liquidStaking';
 export default function useVaults(): Vault[] {
   return [
     {
-      lstToken: LiquidStakingToken.DOT,
+      LSTTokenIcon: LiquidStakingToken.DOT,
       name: 'Tangle Liquid Polkadot',
       apy: 50.123,
       tokensCount: 5,
@@ -16,7 +16,7 @@ export default function useVaults(): Vault[] {
       },
     },
     {
-      lstToken: LiquidStakingToken.ASTR,
+      LSTTokenIcon: LiquidStakingToken.ASTR,
       name: 'Tangle Liquid Astar',
       apy: 48,
       tokensCount: 10,
@@ -26,7 +26,7 @@ export default function useVaults(): Vault[] {
       },
     },
     {
-      lstToken: LiquidStakingToken.PHA,
+      LSTTokenIcon: LiquidStakingToken.PHA,
       name: 'Tangle Liquid Phala',
       apy: 60.13,
       tokensCount: 7,
@@ -36,7 +36,7 @@ export default function useVaults(): Vault[] {
       },
     },
     {
-      lstToken: LiquidStakingToken.GLMR,
+      LSTTokenIcon: LiquidStakingToken.GLMR,
       name: 'Tangle Liquid Glimmer',
       apy: 0,
       tokensCount: 0,
@@ -46,7 +46,7 @@ export default function useVaults(): Vault[] {
       },
     },
     {
-      lstToken: LiquidStakingToken.MANTA,
+      LSTTokenIcon: LiquidStakingToken.MANTA,
       name: 'Tangle Liquid Manta',
       apy: 0,
       tokensCount: 0,

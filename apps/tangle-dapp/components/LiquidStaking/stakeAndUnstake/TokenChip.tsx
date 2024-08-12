@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { LST_PREFIX } from '../../../constants/liquidStaking';
 import { LiquidStakingToken } from '../../../types/liquidStaking';
-import LSTToken from '../../LSTToken';
+import LSTTokenIcon from '../../LSTTokenIcon';
 import DropdownChevronIcon from './DropdownChevronIcon';
 
 type TokenChipProps = {
@@ -22,7 +22,7 @@ const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
         onClick !== undefined && 'cursor-pointer',
       )}
     >
-      {token && <LSTToken name={token} />}
+      {token && <LSTTokenIcon name={token} />}
 
       <Typography variant="h5" fw="bold">
         {isLiquidVariant && LST_PREFIX}
