@@ -88,14 +88,16 @@ const staticColumns = [
   columnHelper.accessor('vaults', {
     header: () => 'Vaults',
     cell: (props) => (
-      <div className="flex items-center -space-x-2">
-        {props
-          .getValue()
-          .sort() // sort alphabetically
-          .map((vault, index) => (
-            <LSTTokenIcon key={index} name={vault} />
-          ))}
-      </div>
+      <TableCellWrapper removeBorder>
+        <div className="flex items-center -space-x-2">
+          {props
+            .getValue()
+            .sort() // sort alphabetically
+            .map((vault, index) => (
+              <LSTTokenIcon key={index} name={vault} />
+            ))}
+        </div>
+      </TableCellWrapper>
     ),
     enableSorting: false,
   }),
@@ -123,32 +125,34 @@ const OperatorsTable: FC = () => {
           ).toString();
 
           return (
-            <div className="flex items-center gap-2 border-r border-mono-60 dark:border-mono-140">
-              <Avatar
-                sourceVariant="address"
-                value={address}
-                theme="substrate"
-                size="lg"
-              />
+            <TableCellWrapper className="pl-3">
+              <div className="flex-1 flex items-center gap-2">
+                <Avatar
+                  sourceVariant="address"
+                  value={address}
+                  theme="substrate"
+                  size="lg"
+                />
 
-              <div>
-                <Typography variant="h5" fw="bold">
-                  {identity === address ? shortenString(address) : identity}
-                </Typography>
-                <div className="flex items-center gap-1">
-                  <Typography
-                    variant="body2"
-                    className="text-mono-100 dark:text-mono-120"
-                  >
-                    {shortenString(address)}
+                <div>
+                  <Typography variant="h5" fw="bold">
+                    {identity === address ? shortenString(address) : identity}
                   </Typography>
-                  <ExternalLinkIcon
-                    href={accountExplorerLink}
-                    className="fill-mono-100 dark:fill-mono-120"
-                  />
+                  <div className="flex items-center gap-1">
+                    <Typography
+                      variant="body2"
+                      className="text-mono-100 dark:text-mono-120"
+                    >
+                      {shortenString(address)}
+                    </Typography>
+                    <ExternalLinkIcon
+                      href={accountExplorerLink}
+                      className="fill-mono-100 dark:fill-mono-120"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </TableCellWrapper>
           );
         },
         sortingFn: getSortAddressOrIdentityFnc<Operator>(),
@@ -205,9 +209,9 @@ const OperatorsTable: FC = () => {
           )}
           tableClassName="border-separate border-spacing-y-3 pt-3"
           thClassName="py-0 border-t-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0"
-          tbodyClassName="space-y-3 !bg-transparent"
-          trClassName="bg-mono-0 dark:bg-mono-190 overflow-hidden rounded-xl"
-          tdClassName="border-0 !bg-inherit first:rounded-l-xl last:rounded-r-xl pl-3 pr-0 last:pr-3"
+          tbodyClassName="!bg-transparent"
+          trClassName="group cursor-pointer overflow-hidden rounded-xl"
+          tdClassName="border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden"
           paginationClassName="!bg-transparent dark:!bg-transparent pl-6 border-t-0 -mt-2"
         />
       )}

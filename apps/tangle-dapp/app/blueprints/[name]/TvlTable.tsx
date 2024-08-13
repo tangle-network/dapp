@@ -17,7 +17,8 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useState } from 'react';
+import Link from 'next/link';
+import { FC, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import LSTTokenIcon from '../../../components/LSTTokenIcon';
@@ -32,7 +33,10 @@ const columns = [
   columnHelper.accessor('name', {
     header: () => 'Vault',
     cell: (props) => (
-      <TableCellWrapper>
+      <TableCellWrapper
+        disableHoverEffect={props.row.getIsExpanded()}
+        className="pl-3"
+      >
         <div className="flex items-center gap-2">
           <LSTTokenIcon name={props.row.original.lstToken} size="lg" />
           <Typography variant="h5" className="whitespace-nowrap">
@@ -50,7 +54,7 @@ const columns = [
   columnHelper.accessor('apy', {
     header: () => 'APY',
     cell: (props) => (
-      <TableCellWrapper>
+      <TableCellWrapper disableHoverEffect={props.row.getIsExpanded()}>
         <Typography
           variant="body1"
           fw="bold"
@@ -64,7 +68,7 @@ const columns = [
   columnHelper.accessor('tokensCount', {
     header: () => 'Tokens',
     cell: (props) => (
-      <TableCellWrapper>
+      <TableCellWrapper disableHoverEffect={props.row.getIsExpanded()}>
         <Typography
           variant="body1"
           fw="bold"
@@ -78,7 +82,10 @@ const columns = [
   columnHelper.accessor('liquidity', {
     header: () => 'Liquidity',
     cell: (props) => (
-      <TableCellWrapper isLast>
+      <TableCellWrapper
+        disableHoverEffect={props.row.getIsExpanded()}
+        removeBorder
+      >
         <div>
           <Typography
             variant="body1"
@@ -99,32 +106,38 @@ const columns = [
   }),
   columnHelper.accessor('lstToken', {
     header: () => null,
-    cell: ({ row, table }) => (
-      <div className="flex items-center gap-2 justify-end">
-        {row.original.tokensCount > 0 && (
-          // TODO: add onClick
-          <Button variant="utility" className="body4">
-            Restake
-          </Button>
-        )}
-        <Button
-          variant="utility"
-          isJustIcon
-          onClick={() => {
-            table.setExpanded({ [row.id]: !row.getIsExpanded() });
-          }}
-          isDisabled={!(row.original.tokensCount > 0)}
-        >
-          <div
-            className={twMerge(
-              '!text-current transition-transform duration-300 ease-in-out',
-              row.getIsExpanded() ? 'rotate-180' : '',
-            )}
+    cell: ({ row }) => (
+      <TableCellWrapper disableHoverEffect={row.getIsExpanded()} removeBorder>
+        <div className="flex-1 flex items-center gap-2 justify-end">
+          {/* TODO: add proper href */}
+          <Link href="#" passHref>
+            <Button
+              variant="utility"
+              className="body4"
+              onClick={(e) => {
+                e.stopPropagation(); // prevent row click
+              }}
+            >
+              Restake
+            </Button>
+          </Link>
+
+          <Button
+            variant="utility"
+            isJustIcon
+            isDisabled={!(row.original.tokensCount > 0)}
           >
-            <ChevronUp className={twMerge('!fill-current')} />
-          </div>
-        </Button>
-      </div>
+            <div
+              className={twMerge(
+                '!text-current transition-transform duration-300 ease-in-out',
+                row.getIsExpanded() ? 'rotate-180' : '',
+              )}
+            >
+              <ChevronUp className={twMerge('!fill-current')} />
+            </div>
+          </Button>
+        </div>
+      </TableCellWrapper>
     ),
     enableSorting: false,
   }),
@@ -163,6 +176,13 @@ const TvlTable: FC = () => {
     enableSortingRemoval: false,
   });
 
+  const onRowClick = useCallback(
+    (row: Row<Vault>) => {
+      table.setExpanded({ [row.id]: !row.getIsExpanded() });
+    },
+    [table],
+  );
+
   return (
     <div className="space-y-5">
       <Typography variant="h4" fw="bold">
@@ -173,6 +193,7 @@ const TvlTable: FC = () => {
         tableProps={table}
         title="Operators"
         getExpandedRowContent={getExpandedRowContent}
+        onRowClick={onRowClick}
         isPaginated
         className={twMerge(
           'px-6 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160',
@@ -182,8 +203,8 @@ const TvlTable: FC = () => {
         tableClassName="border-separate border-spacing-y-3 pt-3"
         thClassName="py-0 border-t-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0"
         tbodyClassName="!bg-transparent"
-        trClassName="bg-mono-0 dark:bg-mono-190 overflow-hidden rounded-xl"
-        tdClassName="border-0 !bg-inherit first:pl-3 first:rounded-l-xl last:rounded-r-xl pl-3 pr-0 last:pr-3"
+        trClassName="group cursor-pointer overflow-hidden rounded-xl"
+        tdClassName="border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden"
         paginationClassName="!bg-transparent dark:!bg-transparent pl-6 border-t-0 -mt-2"
       />
     </div>
