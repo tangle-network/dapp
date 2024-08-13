@@ -2,18 +2,19 @@ import {
   TanglePrimitivesCurrencyTokenSymbol,
   TanglePrimitivesTimeUnit,
 } from '@polkadot/types/lookup';
+import { BN } from '@polkadot/util';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
 import { StaticAssetPath } from '.';
 
 export enum ParachainChainId {
-  POLKADOT = 'Polkadot',
-  PHALA = 'Phala',
-  MOONBEAM = 'Moonbeam',
-  ASTAR = 'Astar',
-  MANTA = 'Manta',
-  TANGLE_RESTAKING_PARACHAIN = 'Tangle Parachain',
+  POLKADOT,
+  PHALA,
+  MOONBEAM,
+  ASTAR,
+  MANTA,
+  TANGLE_RESTAKING_PARACHAIN,
 }
 
 export enum LiquidStakingToken {
@@ -136,16 +137,6 @@ export const PARACHAIN_CHAIN_MAP: Record<ParachainChainId, ParachainChainDef> =
 export const LIQUID_STAKING_CHAINS: ParachainChainDef[] =
   Object.values(PARACHAIN_CHAIN_MAP);
 
-// TODO: Instead of mapping to names, map to network/chain definitions themselves. This avoids redundancy and relies on a centralized definition for the network/chain which is better, since it simplifies future refactoring.
-export const LS_CHAIN_TO_NETWORK_NAME: Record<ParachainChainId, string> = {
-  [ParachainChainId.POLKADOT]: 'Polkadot Mainnet',
-  [ParachainChainId.PHALA]: 'Phala',
-  [ParachainChainId.MOONBEAM]: 'Moonbeam',
-  [ParachainChainId.ASTAR]: 'Astar',
-  [ParachainChainId.MANTA]: 'Manta',
-  [ParachainChainId.TANGLE_RESTAKING_PARACHAIN]: 'Tangle Parachain',
-};
-
 export const TVS_TOOLTIP =
   "Total Value Staked (TVS) refers to the total value of assets that are currently staked for this network in fiat currency. Generally used as an indicator of a network's security and trustworthiness.";
 
@@ -174,3 +165,14 @@ export type SimpleTimeUnitInstance = {
   value: number;
   unit: ParachainTimeUnit;
 };
+
+export type LsCardSearchParams = {
+  amount: BN;
+  chainId: ParachainChainId;
+};
+
+export enum LsSearchParamKey {
+  AMOUNT = 'amount',
+  CHAIN_ID = 'chainId',
+  ACTION = 'action',
+}
