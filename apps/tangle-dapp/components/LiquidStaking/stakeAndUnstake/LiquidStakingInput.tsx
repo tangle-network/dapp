@@ -16,7 +16,7 @@ import {
   LsToken,
   LST_PREFIX,
   LS_CHAIN_MAP,
-  LsChainId,
+  LsProtocolId,
 } from '../../../constants/liquidStaking';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
@@ -27,7 +27,7 @@ import TokenChip from './TokenChip';
 
 export type LiquidStakingInputProps = {
   id: string;
-  chainId: LsChainId;
+  chainId: LsProtocolId;
   decimals: number;
   amount: BN | null;
   isReadOnly?: boolean;
@@ -39,7 +39,7 @@ export type LiquidStakingInputProps = {
   maxAmount?: BN;
   maxErrorMessage?: string;
   onAmountChange?: (newAmount: BN | null) => void;
-  setChainId?: (newChain: LsChainId) => void;
+  setChainId?: (newChain: LsProtocolId) => void;
   onTokenClick?: () => void;
 };
 
@@ -145,13 +145,13 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
 };
 
 type ChainSelectorProps = {
-  selectedChainId: LsChainId;
+  selectedChainId: LsProtocolId;
 
   /**
    * If this function is not provided, the selector will be
    * considered read-only.
    */
-  setChainId?: (newChain: LsChainId) => void;
+  setChainId?: (newChain: LsProtocolId) => void;
 };
 
 /** @internal */
@@ -183,7 +183,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
       <DropdownBody>
         <ScrollArea className="max-h-[300px]">
           <ul>
-            {Object.values(LsChainId)
+            {Object.values(LsProtocolId)
               .filter((chainId) => chainId !== selectedChainId)
               .map((chainId) => {
                 const chainName = LS_CHAIN_MAP[chainId].name;

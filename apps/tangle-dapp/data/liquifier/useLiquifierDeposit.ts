@@ -1,5 +1,6 @@
 import { BN } from '@polkadot/util';
 import assert from 'assert';
+import { useCallback } from 'react';
 import { erc20Abi } from 'viem';
 
 import { TxName } from '../../constants';
@@ -48,55 +49,71 @@ const useLiquifierDeposit = () => {
     writeChainlinkErc20 !== null &&
     activeEvmAddress20 !== null;
 
-  const deposit = async (token: Erc20TokenId, amount: BN) => {
-    // TODO: Need to call `Token.approve` before calling `Liquifier.stake`. This is not implemented yet. Also, should the user balance check be done here or assume that the consumer of the hook will handle that?
+  const deposit = useCallback(
+    async (token: Erc20TokenId, amount: BN) => {
+      // TODO: Should the user balance check be done here or assume that the consumer of the hook will handle that?
 
-    assert(
-      isReady,
-      'Should not be able to call this function if the requirements are not ready yet',
-    );
-
-    const tokenDef = ERC20_TOKEN_MAP[token];
-
-    notifyApproveProcessing();
-
-    // Approve spending the token amount by the Liquifier contract.
-    const approveTxReceipt = await writeChainlinkErc20({
-      address: tokenDef.address,
-      functionName: 'approve',
-      args: [tokenDef.liquifierAdapterAddress, BigInt(amount.toString())],
-    });
-
-    if (approveTxReceipt.status === 'reverted') {
-      notifyApproveError(
-        'Failed to approve spending the token amount by the Liquifier contract',
+      assert(
+        isReady,
+        'Should not be able to call this function if the requirements are not ready yet',
       );
 
-      return false;
-    }
+      const tokenDef = ERC20_TOKEN_MAP[token];
 
-    // TODO: Ensure that the transaction hash takes to the proper explorer URL, since it is not a Substrate transaction.
-    notifyApproveSuccess(approveTxReceipt.transactionHash);
-    notifyDepositProcessing();
+      notifyApproveProcessing();
 
-    const depositTxReceipt = await writeLiquifier({
-      // TODO: Does the adapter contract have a deposit function? It doesn't seem like so. In that case, will need to update the way that Liquifier contract's address is handled.
-      address: tokenDef.liquifierAdapterAddress,
-      functionName: 'deposit',
-      // TODO: Provide the first arg. (validator). Need to figure out how it works on Chainlink (vaults? single address?). See: https://github.com/webb-tools/tnt-core/blob/21c158d6cb11e2b5f50409d377431e7cd51ff72f/src/lst/adapters/ChainlinkAdapter.sol#L187
-      args: [activeEvmAddress20, BigInt(amount.toString())],
-    });
+      // Approve spending the token amount by the Liquifier contract.
+      const approveTxReceipt = await writeChainlinkErc20({
+        address: tokenDef.address,
+        functionName: 'approve',
+        args: [tokenDef.liquifierAdapterAddress, BigInt(amount.toString())],
+      });
 
-    if (depositTxReceipt.status === 'reverted') {
-      notifyDepositError('Failed to deposit the token amount to the Liquifier');
+      if (approveTxReceipt.status === 'reverted') {
+        notifyApproveError(
+          'Failed to approve spending the token amount by the Liquifier contract',
+        );
 
-      return false;
-    }
+        return false;
+      }
 
-    notifyDepositSuccess(depositTxReceipt.transactionHash);
+      // TODO: Ensure that the transaction hash takes to the proper explorer URL, since it is not a Substrate transaction.
+      notifyApproveSuccess(approveTxReceipt.transactionHash);
+      notifyDepositProcessing();
 
-    return true;
-  };
+      const depositTxReceipt = await writeLiquifier({
+        // TODO: Does the adapter contract have a deposit function? It doesn't seem like so. In that case, will need to update the way that Liquifier contract's address is handled.
+        address: tokenDef.liquifierAdapterAddress,
+        functionName: 'deposit',
+        // TODO: Provide the first arg. (validator). Need to figure out how it works on Chainlink (vaults? single address?). See: https://github.com/webb-tools/tnt-core/blob/21c158d6cb11e2b5f50409d377431e7cd51ff72f/src/lst/adapters/ChainlinkAdapter.sol#L187
+        args: [activeEvmAddress20, BigInt(amount.toString())],
+      });
+
+      if (depositTxReceipt.status === 'reverted') {
+        notifyDepositError(
+          'Failed to deposit the token amount to the Liquifier',
+        );
+
+        return false;
+      }
+
+      notifyDepositSuccess(depositTxReceipt.transactionHash);
+
+      return true;
+    },
+    [
+      activeEvmAddress20,
+      isReady,
+      notifyApproveError,
+      notifyApproveProcessing,
+      notifyApproveSuccess,
+      notifyDepositError,
+      notifyDepositProcessing,
+      notifyDepositSuccess,
+      writeChainlinkErc20,
+      writeLiquifier,
+    ],
+  );
 
   // Wait for the requirements to be ready before
   // returning the deposit function.

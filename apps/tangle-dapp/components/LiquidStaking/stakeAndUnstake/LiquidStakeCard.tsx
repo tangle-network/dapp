@@ -19,7 +19,7 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import {
   LST_PREFIX,
   LS_CHAIN_MAP,
-  LsChainId,
+  LsProtocolId,
 } from '../../../constants/liquidStaking';
 import { useLiquidStakingStore } from '../../../data/liquidStaking/store';
 import useExchangeRate, {
@@ -132,7 +132,7 @@ const LiquidStakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-stake-to"
-        chainId={LsChainId.TANGLE_RESTAKING_PARACHAIN}
+        chainId={LsProtocolId.TANGLE_RESTAKING_PARACHAIN}
         placeholder={`0 ${LST_PREFIX}${selectedChain.token}`}
         decimals={selectedChain.decimals}
         amount={toAmount}

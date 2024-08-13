@@ -7,7 +7,7 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 
 import { StaticAssetPath } from '.';
 
-export enum LsChainId {
+export enum LsProtocolId {
   POLKADOT = 'Polkadot',
   PHALA = 'Phala',
   MOONBEAM = 'Moonbeam',
@@ -16,6 +16,8 @@ export enum LsChainId {
   TANGLE_RESTAKING_PARACHAIN = 'Tangle Parachain',
   CHAINLINK = 'Chainlink',
 }
+
+export type Erc20ProtocolId = LsProtocolId.CHAINLINK;
 
 export enum LsToken {
   DOT = 'DOT',
@@ -32,8 +34,8 @@ export type ParachainCurrency = TanglePrimitivesCurrencyTokenSymbol['type'];
 // | Exclude<TanglePrimitivesCurrencyTokenSymbol['type'], 'Bnc'>
 // | 'Tnt';
 
-export type LsChainDef = {
-  id: LsChainId;
+export type LsParachainProtocolDef = {
+  id: LsProtocolId;
   name: string;
   token: LsToken;
   logo: StaticAssetPath;
@@ -43,8 +45,8 @@ export type LsChainDef = {
   rpcEndpoint: string;
 };
 
-const POLKADOT: LsChainDef = {
-  id: LsChainId.POLKADOT,
+const POLKADOT: LsParachainProtocolDef = {
+  id: LsProtocolId.POLKADOT,
   name: 'Polkadot',
   token: LsToken.DOT,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_POLKADOT,
@@ -54,8 +56,8 @@ const POLKADOT: LsChainDef = {
   rpcEndpoint: 'wss://polkadot-rpc.dwellir.com',
 };
 
-const PHALA: LsChainDef = {
-  id: LsChainId.PHALA,
+const PHALA: LsParachainProtocolDef = {
+  id: LsProtocolId.PHALA,
   name: 'Phala',
   token: LsToken.PHALA,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
@@ -65,8 +67,8 @@ const PHALA: LsChainDef = {
   rpcEndpoint: 'wss://api.phala.network/ws',
 };
 
-const MOONBEAM: LsChainDef = {
-  id: LsChainId.MOONBEAM,
+const MOONBEAM: LsParachainProtocolDef = {
+  id: LsProtocolId.MOONBEAM,
   name: 'Moonbeam',
   token: LsToken.GLMR,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_GLIMMER,
@@ -77,8 +79,8 @@ const MOONBEAM: LsChainDef = {
   rpcEndpoint: 'wss://moonbeam.api.onfinality.io/public-ws',
 };
 
-const ASTAR: LsChainDef = {
-  id: LsChainId.ASTAR,
+const ASTAR: LsParachainProtocolDef = {
+  id: LsProtocolId.ASTAR,
   name: 'Astar',
   token: LsToken.ASTAR,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_ASTAR,
@@ -89,8 +91,8 @@ const ASTAR: LsChainDef = {
   rpcEndpoint: 'wss://astar.api.onfinality.io/public-ws',
 };
 
-const MANTA: LsChainDef = {
-  id: LsChainId.MANTA,
+const MANTA: LsParachainProtocolDef = {
+  id: LsProtocolId.MANTA,
   name: 'Manta',
   token: LsToken.MANTA,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_MANTA,
@@ -101,8 +103,8 @@ const MANTA: LsChainDef = {
   rpcEndpoint: 'wss://ws.manta.systems',
 };
 
-const TANGLE_RESTAKING_PARACHAIN: LsChainDef = {
-  id: LsChainId.TANGLE_RESTAKING_PARACHAIN,
+const TANGLE_RESTAKING_PARACHAIN: LsParachainProtocolDef = {
+  id: LsProtocolId.TANGLE_RESTAKING_PARACHAIN,
   name: 'Tangle Parachain',
   token: LsToken.TNT,
   logo: StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO,
@@ -112,8 +114,8 @@ const TANGLE_RESTAKING_PARACHAIN: LsChainDef = {
   rpcEndpoint: TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
 };
 
-const CHAINLINK: LsChainDef = {
-  id: LsChainId.CHAINLINK,
+const CHAINLINK: LsParachainProtocolDef = {
+  id: LsProtocolId.CHAINLINK,
   name: 'Chainlink',
   token: LsToken.LINK,
   networkName: 'Chainlink',
@@ -124,17 +126,18 @@ const CHAINLINK: LsChainDef = {
   rpcEndpoint: 'wss://api.chain.link',
 };
 
-export const LS_CHAIN_MAP: Record<LsChainId, LsChainDef> = {
-  [LsChainId.POLKADOT]: POLKADOT,
-  [LsChainId.PHALA]: PHALA,
-  [LsChainId.MOONBEAM]: MOONBEAM,
-  [LsChainId.ASTAR]: ASTAR,
-  [LsChainId.MANTA]: MANTA,
-  [LsChainId.TANGLE_RESTAKING_PARACHAIN]: TANGLE_RESTAKING_PARACHAIN,
-  [LsChainId.CHAINLINK]: CHAINLINK,
+export const LS_CHAIN_MAP: Record<LsProtocolId, LsParachainProtocolDef> = {
+  [LsProtocolId.POLKADOT]: POLKADOT,
+  [LsProtocolId.PHALA]: PHALA,
+  [LsProtocolId.MOONBEAM]: MOONBEAM,
+  [LsProtocolId.ASTAR]: ASTAR,
+  [LsProtocolId.MANTA]: MANTA,
+  [LsProtocolId.TANGLE_RESTAKING_PARACHAIN]: TANGLE_RESTAKING_PARACHAIN,
+  [LsProtocolId.CHAINLINK]: CHAINLINK,
 };
 
-export const LIQUID_STAKING_CHAINS: LsChainDef[] = Object.values(LS_CHAIN_MAP);
+export const LIQUID_STAKING_CHAINS: LsParachainProtocolDef[] =
+  Object.values(LS_CHAIN_MAP);
 
 export const TVS_TOOLTIP =
   "Total Value Staked (TVS) refers to the total value of assets that are currently staked for this network in fiat currency. Generally used as an indicator of a network's security and trustworthiness.";

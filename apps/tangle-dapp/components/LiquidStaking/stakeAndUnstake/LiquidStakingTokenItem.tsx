@@ -10,7 +10,7 @@ import { StaticAssetPath } from '../../../constants';
 import {
   LsToken,
   LST_PREFIX,
-  LsChainId,
+  LsProtocolId,
   TVS_TOOLTIP,
 } from '../../../constants/liquidStaking';
 import { PagePath } from '../../../types';
@@ -19,7 +19,7 @@ import StatItem from '../StatItem';
 import ChainLogo from './ChainLogo';
 
 export type LiquidStakingTokenItemProps = {
-  chainId: LsChainId;
+  chainId: LsProtocolId;
   title: string;
   tokenSymbol: LsToken;
   totalValueStaked: number;
