@@ -11,12 +11,14 @@ import {
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import {
   Avatar,
+  Button,
   ExternalLinkIcon,
   getRoundedAmountString,
   shortenString,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import Link from 'next/link';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -100,6 +102,28 @@ const staticColumns = [
       </TableCellWrapper>
     ),
     enableSorting: false,
+  }),
+  columnHelper.accessor('address', {
+    header: () => null,
+    cell: ({ row }) => (
+      <TableCellWrapper disableHoverEffect={row.getIsExpanded()} removeBorder>
+        <div className="flex-1 flex items-center gap-2 justify-end">
+          {/* TODO: add proper href */}
+          <Link href="#" passHref>
+            <Button variant="utility" className="body4">
+              View
+            </Button>
+          </Link>
+
+          {/* TODO: add proper href */}
+          <Link href="#" passHref>
+            <Button variant="utility" className="body4">
+              Restake
+            </Button>
+          </Link>
+        </div>
+      </TableCellWrapper>
+    ),
   }),
 ];
 
