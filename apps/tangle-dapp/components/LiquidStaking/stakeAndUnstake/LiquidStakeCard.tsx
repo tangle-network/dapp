@@ -18,15 +18,15 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { z } from 'zod';
 
 import {
-  LsSearchParamKey,
-  LST_PREFIX,
   LS_CHAIN_MAP,
   LsParachainChainId,
+  LsSearchParamKey,
+  LST_PREFIX,
 } from '../../../constants/liquidStaking/liquidStakingParachain';
-import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
 import useExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useExchangeRate';
+import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
 import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
 import useApi from '../../../hooks/useApi';
@@ -58,7 +58,7 @@ const LiquidStakeCard: FC = () => {
   useSearchParamSync({
     key: LsSearchParamKey.CHAIN_ID,
     value: selectedChainId,
-    parse: (value) => z.nativeEnum(ParachainChainId).parse(parseInt(value)),
+    parse: (value) => z.nativeEnum(LsParachainChainId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
     setValue: setSelectedChainId,
   });

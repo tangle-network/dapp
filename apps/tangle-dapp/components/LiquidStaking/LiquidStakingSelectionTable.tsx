@@ -24,8 +24,8 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { useLiquidStakingStore } from '../../data/liquidStaking/useLiquidStakingStore';
 import useLiquidStakingItems from '../../data/liquidStaking/useLiquidStakingItems';
+import { useLiquidStakingStore } from '../../data/liquidStaking/useLiquidStakingStore';
 import { useLiquidStakingSelectionTableColumns } from '../../hooks/LiquidStaking/useLiquidStakingSelectionTableColumns';
 import {
   LiquidStakingItem,
