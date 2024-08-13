@@ -32,6 +32,8 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.LST_REDEEM]: 'Redeem request submitted',
   [TxName.LST_REBOND]: 'Unstake request cancelled',
   [TxName.LST_WITHDRAW_REDEEM]: 'Unstake request executed',
+  [TxName.LST_LIQUIFIER_DEPOSIT]: 'Liquifier deposit successful',
+  [TxName.LST_LIQUIFIER_APPROVE]: 'Liquifier approval successful',
 };
 
 // TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.
@@ -97,14 +99,16 @@ const useTxNotification = (txName: TxName, explorerUrl?: string) => {
   );
 
   const notifyError = useCallback(
-    (error: Error) => {
+    (error: Error | string) => {
       closeSnackbar(processingKey);
+
+      const errorMessage = typeof error === 'string' ? error : error.message;
 
       enqueueSnackbar(
         <div>
           <Typography variant="h5">{capitalize(txName)} failed</Typography>
 
-          <Typography variant="body1">{error.message}</Typography>
+          <Typography variant="body1">{errorMessage}</Typography>
         </div>,
         {
           variant: 'error',

@@ -1,4 +1,4 @@
-const liquifierAbi = [
+const liquifierChainlinkAdapterAbi = [
   {
     constant: false,
     inputs: [
@@ -341,4 +341,4 @@ const liquifierAbi = [
   },
 ] as const;
 
-export default liquifierAbi;
+export default liquifierChainlinkAdapterAbi;
