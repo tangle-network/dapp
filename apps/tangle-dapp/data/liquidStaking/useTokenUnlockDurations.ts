@@ -6,8 +6,8 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { useCallback, useMemo } from 'react';
 
 import {
+  LsSimpleParachainTimeUnit,
   ParachainCurrency,
-  SimpleTimeUnitInstance,
 } from '../../constants/liquidStaking';
 import useApiRx from '../../hooks/useApiRx';
 import tangleTimeUnitToSimpleInstance from '../../utils/liquidStaking/tangleTimeUnitToSimpleInstance';
@@ -16,7 +16,7 @@ import getValueOfTangleCurrency from './getValueOfTangleCurrency';
 export type TokenUnlockDurationEntry = {
   isNative: boolean;
   currency: ParachainCurrency;
-  timeUnit: SimpleTimeUnitInstance;
+  timeUnit: LsSimpleParachainTimeUnit;
 };
 
 const useTokenUnlockDurations = () => {

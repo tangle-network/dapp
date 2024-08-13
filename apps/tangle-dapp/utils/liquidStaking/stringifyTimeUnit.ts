@@ -1,7 +1,7 @@
-import { SimpleTimeUnitInstance } from '../../constants/liquidStaking';
+import { LsSimpleParachainTimeUnit } from '../../constants/liquidStaking';
 
 const stringifyTimeUnit = (
-  timeUnit: SimpleTimeUnitInstance,
+  timeUnit: LsSimpleParachainTimeUnit,
 ): [number, string] => {
   const plurality = timeUnit.value === 1 ? '' : 's';
 
