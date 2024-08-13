@@ -157,7 +157,7 @@ const getValidators = async (endpoint: string): Promise<Validator[]> => {
       totalValueStaked: totalValueStaked || BN_ZERO,
       validatorAPY: 0,
       validatorCommission: commission || BN_ZERO,
-      chain: LsProtocolId.POLKADOT,
+      chainId: LsProtocolId.POLKADOT,
       chainDecimals,
       chainTokenSymbol,
       itemType: LiquidStakingItem.VALIDATOR,
@@ -204,7 +204,7 @@ const getDapps = async (endpoint: string): Promise<Dapp[]> => {
       dappContractType: dappInfo ? dappInfo.contractType || '' : '',
       commission: BN_ZERO,
       totalValueStaked: totalValueStaked || BN_ZERO,
-      chain: LsProtocolId.ASTAR,
+      chainId: LsProtocolId.ASTAR,
       chainDecimals,
       chainTokenSymbol,
       itemType: LiquidStakingItem.DAPP,
@@ -234,7 +234,7 @@ const getVaultsAndStakePools = async (
       vaultOrStakePoolName: val.id,
       commission: val.commission,
       totalValueStaked: val.totalValueStaked,
-      chain: LsProtocolId.PHALA,
+      chainId: LsProtocolId.PHALA,
       chainDecimals,
       chainTokenSymbol,
       type,
@@ -246,7 +246,7 @@ const getVaultsAndStakePools = async (
 
 const getCollators = async (
   endpoint: string,
-  chain: LsProtocolId,
+  chainId: LsProtocolId,
   href: string,
 ): Promise<Collator[]> => {
   const [
@@ -269,9 +269,9 @@ const getCollators = async (
 
     let collatorExternalLink = '';
 
-    if (chain === LsProtocolId.MOONBEAM) {
+    if (chainId === LsProtocolId.MOONBEAM) {
       collatorExternalLink = href;
-    } else if (chain === LsProtocolId.MANTA) {
+    } else if (chainId === LsProtocolId.MANTA) {
       collatorExternalLink = href + collator;
     }
 
@@ -281,7 +281,7 @@ const getCollators = async (
       collatorIdentity: identityName || collator,
       collatorDelegationCount: collatorInfo?.delegationCount || 0,
       totalValueStaked: collatorInfo?.totalStaked || BN_ZERO,
-      chain,
+      chainId,
       chainDecimals,
       chainTokenSymbol,
       itemType: LiquidStakingItem.COLLATOR,

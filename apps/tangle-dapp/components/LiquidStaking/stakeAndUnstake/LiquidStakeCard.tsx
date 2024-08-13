@@ -14,9 +14,11 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
-import { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
+import { z } from 'zod';
 
 import {
+  LsSearchParamKey,
   LST_PREFIX,
   LS_CHAIN_MAP,
   LsProtocolId,
@@ -29,6 +31,8 @@ import useMintTx from '../../../data/liquidStaking/useMintTx';
 import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
+import useSearchParamState from '../../../hooks/useSearchParamState';
+import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
@@ -38,14 +42,26 @@ import SelectValidatorsButton from './SelectValidatorsButton';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 
 const LiquidStakeCard: FC = () => {
-  const [fromAmount, setFromAmount] = useState<BN | null>(null);
+  const [fromAmount, setFromAmount] = useSearchParamState<BN | null>({
+    defaultValue: null,
+    key: LsSearchParamKey.AMOUNT,
+    parser: (value) => new BN(value),
+    stringify: (value) => value?.toString(),
+  });
 
   const { selectedChainId, setSelectedChainId } = useLiquidStakingStore();
-
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const { nativeBalances } = useParachainBalances();
 
   const selectedChain = LS_CHAIN_MAP[selectedChainId];
+
+  useSearchParamSync({
+    key: LsSearchParamKey.CHAIN_ID,
+    value: selectedChainId,
+    parse: (value) => z.nativeEnum(ParachainChainId).parse(parseInt(value)),
+    stringify: (value) => value.toString(),
+    setValue: setSelectedChainId,
+  });
 
   const exchangeRate = useExchangeRate(
     ExchangeRateType.NativeToLiquid,

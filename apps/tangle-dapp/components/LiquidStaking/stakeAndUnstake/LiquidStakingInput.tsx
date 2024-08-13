@@ -13,10 +13,10 @@ import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LsToken,
-  LST_PREFIX,
   LS_CHAIN_MAP,
   LsProtocolId,
+  LST_PREFIX,
+  LsToken,
 } from '../../../constants/liquidStaking';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
@@ -168,7 +168,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
         <ChainLogo size="sm" chainId={selectedChainId} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          {selectedChainName}
+          {PARACHAIN_CHAIN_MAP[selectedChainId].networkName}
         </Typography>
       </div>
 
@@ -184,7 +184,10 @@ const ChainSelector: FC<ChainSelectorProps> = ({
         <ScrollArea className="max-h-[300px]">
           <ul>
             {Object.values(LsProtocolId)
-              .filter((chainId) => chainId !== selectedChainId)
+              .filter(
+                (chainId): chainId is LsProtocolId =>
+                  chainId !== selectedChainId && typeof chainId !== 'string',
+              )
               .map((chainId) => {
                 const chainName = LS_CHAIN_MAP[chainId].name;
 
@@ -195,7 +198,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
                       onSelect={() => setChainId(chainId)}
                       className="px-3 normal-case"
                     >
-                      {chainName}
+                      {PARACHAIN_CHAIN_MAP[chainId].networkName}
                     </DropdownMenuItem>
                   </li>
                 );

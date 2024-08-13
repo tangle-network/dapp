@@ -2,19 +2,20 @@ import {
   TanglePrimitivesCurrencyTokenSymbol,
   TanglePrimitivesTimeUnit,
 } from '@polkadot/types/lookup';
+import { BN } from '@polkadot/util';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
 import { StaticAssetPath } from '.';
 
 export enum LsProtocolId {
-  POLKADOT = 'Polkadot',
-  PHALA = 'Phala',
-  MOONBEAM = 'Moonbeam',
-  ASTAR = 'Astar',
-  MANTA = 'Manta',
-  TANGLE_RESTAKING_PARACHAIN = 'Tangle Parachain',
-  CHAINLINK = 'Chainlink',
+  POLKADOT,
+  PHALA,
+  MOONBEAM,
+  ASTAR,
+  MANTA,
+  TANGLE_RESTAKING_PARACHAIN,
+  CHAINLINK,
 }
 
 export type Erc20ProtocolId = LsProtocolId.CHAINLINK;
@@ -167,3 +168,14 @@ export type LsSimpleParachainTimeUnit = {
   value: number;
   unit: LsParachainTimeUnit;
 };
+
+export type LsCardSearchParams = {
+  amount: BN;
+  chainId: LsProtocolId;
+};
+
+export enum LsSearchParamKey {
+  AMOUNT = 'amount',
+  CHAIN_ID = 'chainId',
+  ACTION = 'action',
+}
