@@ -44,6 +44,8 @@ const useTxNotification = (txName: TxName, explorerUrl?: string) => {
 
   const processingKey = `${txName}-processing`;
 
+  // TODO: Consider warning the user if they attempt to close the browser window. The transaction won't fail, but they won't be able to see the result. Might need a global store to track the event listener, to prevent multiple listeners from being added.
+
   const notifySuccess = useCallback(
     (txHash: HexString, successMessage?: string | null) => {
       closeSnackbar(processingKey);

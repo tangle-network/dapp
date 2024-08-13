@@ -3,9 +3,10 @@ import assert from 'assert';
 import { erc20Abi } from 'viem';
 
 import { TxName } from '../../constants';
+import useEvmAddress20 from '../../hooks/useEvmAddress';
 import useTxNotification from '../../hooks/useTxNotification';
-import { ERC20_TOKEN_MAP, Erc20TokenId } from './erc20';
-import liquifierChainlinkAdapterAbi from './liquifierChainlinkAdapterAbi';
+import { ERC20_TOKEN_MAP, Erc20TokenId } from './erc20Tokens';
+import liquifierAbi from './liquifierAbi';
 import useContract from './useContract';
 
 /**
@@ -26,8 +27,9 @@ import useContract from './useContract';
  * See more: https://github.com/webb-tools/tnt-core/blob/1f371959884352e7af68e6091c5bb330fcaa58b8/script/XYZ_Stake.s.sol
  */
 const useLiquifierDeposit = () => {
+  const activeEvmAddress20 = useEvmAddress20();
   const { write: writeChainlinkErc20 } = useContract(erc20Abi);
-  const { write } = useContract(liquifierChainlinkAdapterAbi);
+  const { write: writeLiquifier } = useContract(liquifierAbi);
 
   const {
     notifyProcessing: notifyApproveProcessing,
@@ -41,9 +43,10 @@ const useLiquifierDeposit = () => {
     notifyError: notifyDepositError,
   } = useTxNotification(TxName.LST_LIQUIFIER_DEPOSIT);
 
-  // TODO: Return proxy read & write functions, each accepting an Erc20TokenId, and using `ERC20_TOKEN_MAP` to get the token definition, and from there get the actual address of the Liquifier's adapter contract for the given token.
-
-  const isReady = write !== null && writeChainlinkErc20 !== null;
+  const isReady =
+    writeLiquifier !== null &&
+    writeChainlinkErc20 !== null &&
+    activeEvmAddress20 !== null;
 
   const deposit = async (token: Erc20TokenId, amount: BN) => {
     // TODO: Need to call `Token.approve` before calling `Liquifier.stake`. This is not implemented yet. Also, should the user balance check be done here or assume that the consumer of the hook will handle that?
@@ -76,12 +79,12 @@ const useLiquifierDeposit = () => {
     notifyApproveSuccess(approveTxReceipt.transactionHash);
     notifyDepositProcessing();
 
-    const depositTxReceipt = await write({
+    const depositTxReceipt = await writeLiquifier({
+      // TODO: Does the adapter contract have a deposit function? It doesn't seem like so. In that case, will need to update the way that Liquifier contract's address is handled.
       address: tokenDef.liquifierAdapterAddress,
-      // TODO: This should be calling `deposit`, not `stake`. See: https://github.com/webb-tools/tnt-core/blob/1f371959884352e7af68e6091c5bb330fcaa58b8/script/XYZ_Stake.s.sol#L41
-      functionName: 'stake',
+      functionName: 'deposit',
       // TODO: Provide the first arg. (validator). Need to figure out how it works on Chainlink (vaults? single address?). See: https://github.com/webb-tools/tnt-core/blob/21c158d6cb11e2b5f50409d377431e7cd51ff72f/src/lst/adapters/ChainlinkAdapter.sol#L187
-      args: ['0x0', BigInt(amount.toString())],
+      args: [activeEvmAddress20, BigInt(amount.toString())],
     });
 
     if (depositTxReceipt.status === 'reverted') {
@@ -97,7 +100,7 @@ const useLiquifierDeposit = () => {
 
   // Wait for the requirements to be ready before
   // returning the deposit function.
-  return isReady ? null : deposit;
+  return !isReady ? null : deposit;
 };
 
 export default useLiquifierDeposit;
