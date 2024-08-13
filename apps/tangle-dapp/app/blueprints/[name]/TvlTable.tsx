@@ -178,6 +178,7 @@ const TvlTable: FC = () => {
 
   const onRowClick = useCallback(
     (row: Row<Vault>) => {
+      if (row.original.tokensCount === 0) return;
       table.setExpanded({ [row.id]: !row.getIsExpanded() });
     },
     [table],
