@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import {
   LIQUID_STAKING_CHAINS,
   LsSimpleParachainTimeUnit,
-} from '../../../constants/liquidStaking';
+} from '../../../constants/liquidStaking/liquidStakingParachain';
 import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
 import useOngoingTimeUnits from '../../../data/liquidStaking/useOngoingTimeUnits';
 import { AnySubstrateAddress } from '../../../types/utils';

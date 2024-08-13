@@ -6,28 +6,24 @@ import { BN } from '@polkadot/util';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
-import { StaticAssetPath } from '.';
+import { StaticAssetPath } from '..';
 
-export enum LsProtocolId {
+export enum LsParachainChainId {
   POLKADOT,
   PHALA,
   MOONBEAM,
   ASTAR,
   MANTA,
   TANGLE_RESTAKING_PARACHAIN,
-  CHAINLINK,
 }
 
-export type Erc20ProtocolId = LsProtocolId.CHAINLINK;
-
-export enum LsToken {
+export enum LsParachainToken {
   DOT = 'DOT',
   GLMR = 'GLMR',
   MANTA = 'MANTA',
   ASTAR = 'ASTR',
   PHALA = 'PHALA',
   TNT = 'TNT',
-  LINK = 'LINK',
 }
 
 // TODO: Temporary manual override until the Parachain types are updated.
@@ -36,9 +32,9 @@ export type ParachainCurrency = TanglePrimitivesCurrencyTokenSymbol['type'];
 // | 'Tnt';
 
 export type LsParachainProtocolDef = {
-  id: LsProtocolId;
+  id: LsParachainChainId;
   name: string;
-  token: LsToken;
+  token: LsParachainToken;
   logo: StaticAssetPath;
   networkName: string;
   currency: ParachainCurrency;
@@ -47,9 +43,9 @@ export type LsParachainProtocolDef = {
 };
 
 const POLKADOT: LsParachainProtocolDef = {
-  id: LsProtocolId.POLKADOT,
+  id: LsParachainChainId.POLKADOT,
   name: 'Polkadot',
-  token: LsToken.DOT,
+  token: LsParachainToken.DOT,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_POLKADOT,
   networkName: 'Polkadot Mainnet',
   currency: 'Dot',
@@ -58,9 +54,9 @@ const POLKADOT: LsParachainProtocolDef = {
 };
 
 const PHALA: LsParachainProtocolDef = {
-  id: LsProtocolId.PHALA,
+  id: LsParachainChainId.PHALA,
   name: 'Phala',
-  token: LsToken.PHALA,
+  token: LsParachainToken.PHALA,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
   networkName: 'Phala',
   currency: 'Pha',
@@ -69,9 +65,9 @@ const PHALA: LsParachainProtocolDef = {
 };
 
 const MOONBEAM: LsParachainProtocolDef = {
-  id: LsProtocolId.MOONBEAM,
+  id: LsParachainChainId.MOONBEAM,
   name: 'Moonbeam',
-  token: LsToken.GLMR,
+  token: LsParachainToken.GLMR,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_GLIMMER,
   networkName: 'Moonbeam',
   // TODO: No currency entry for GLMR in the Tangle Primitives?
@@ -81,9 +77,9 @@ const MOONBEAM: LsParachainProtocolDef = {
 };
 
 const ASTAR: LsParachainProtocolDef = {
-  id: LsProtocolId.ASTAR,
+  id: LsParachainChainId.ASTAR,
   name: 'Astar',
-  token: LsToken.ASTAR,
+  token: LsParachainToken.ASTAR,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_ASTAR,
   networkName: 'Astar',
   // TODO: No currency entry for ASTAR in the Tangle Primitives?
@@ -93,9 +89,9 @@ const ASTAR: LsParachainProtocolDef = {
 };
 
 const MANTA: LsParachainProtocolDef = {
-  id: LsProtocolId.MANTA,
+  id: LsParachainChainId.MANTA,
   name: 'Manta',
-  token: LsToken.MANTA,
+  token: LsParachainToken.MANTA,
   logo: StaticAssetPath.LIQUID_STAKING_TOKEN_MANTA,
   networkName: 'Manta',
   // TODO: No currency entry for ASTAR in the Tangle Primitives?
@@ -105,9 +101,9 @@ const MANTA: LsParachainProtocolDef = {
 };
 
 const TANGLE_RESTAKING_PARACHAIN: LsParachainProtocolDef = {
-  id: LsProtocolId.TANGLE_RESTAKING_PARACHAIN,
+  id: LsParachainChainId.TANGLE_RESTAKING_PARACHAIN,
   name: 'Tangle Parachain',
-  token: LsToken.TNT,
+  token: LsParachainToken.TNT,
   logo: StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO,
   networkName: 'Tangle Parachain',
   currency: 'Bnc',
@@ -115,27 +111,15 @@ const TANGLE_RESTAKING_PARACHAIN: LsParachainProtocolDef = {
   rpcEndpoint: TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
 };
 
-const CHAINLINK: LsParachainProtocolDef = {
-  id: LsProtocolId.CHAINLINK,
-  name: 'Chainlink',
-  token: LsToken.LINK,
-  networkName: 'Chainlink',
-  decimals: 18,
-  // TODO: Dummy data. Need to differentiate between EVM and Substrate chains.
-  currency: 'Asg',
-  logo: StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO,
-  rpcEndpoint: 'wss://api.chain.link',
-};
-
-export const LS_CHAIN_MAP: Record<LsProtocolId, LsParachainProtocolDef> = {
-  [LsProtocolId.POLKADOT]: POLKADOT,
-  [LsProtocolId.PHALA]: PHALA,
-  [LsProtocolId.MOONBEAM]: MOONBEAM,
-  [LsProtocolId.ASTAR]: ASTAR,
-  [LsProtocolId.MANTA]: MANTA,
-  [LsProtocolId.TANGLE_RESTAKING_PARACHAIN]: TANGLE_RESTAKING_PARACHAIN,
-  [LsProtocolId.CHAINLINK]: CHAINLINK,
-};
+export const LS_CHAIN_MAP: Record<LsParachainChainId, LsParachainProtocolDef> =
+  {
+    [LsParachainChainId.POLKADOT]: POLKADOT,
+    [LsParachainChainId.PHALA]: PHALA,
+    [LsParachainChainId.MOONBEAM]: MOONBEAM,
+    [LsParachainChainId.ASTAR]: ASTAR,
+    [LsParachainChainId.MANTA]: MANTA,
+    [LsParachainChainId.TANGLE_RESTAKING_PARACHAIN]: TANGLE_RESTAKING_PARACHAIN,
+  };
 
 export const LIQUID_STAKING_CHAINS: LsParachainProtocolDef[] =
   Object.values(LS_CHAIN_MAP);
@@ -149,7 +133,7 @@ export const LST_PREFIX = 'tg';
 export type Network = {
   name: string;
   endpoint: string;
-  tokenSymbol: LsToken;
+  tokenSymbol: LsParachainToken;
   chainType: NetworkType;
 };
 
@@ -171,7 +155,7 @@ export type LsSimpleParachainTimeUnit = {
 
 export type LsCardSearchParams = {
   amount: BN;
-  chainId: LsProtocolId;
+  chainId: LsParachainChainId;
 };
 
 export enum LsSearchParamKey {

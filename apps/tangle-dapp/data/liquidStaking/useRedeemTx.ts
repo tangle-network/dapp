@@ -9,7 +9,7 @@ import { TxName } from '../../constants';
 import {
   ParachainCurrency,
   LsParachainCurrencyKey,
-} from '../../constants/liquidStaking';
+} from '../../constants/liquidStaking/liquidStakingParachain';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 
 export type RedeemTxContext = {

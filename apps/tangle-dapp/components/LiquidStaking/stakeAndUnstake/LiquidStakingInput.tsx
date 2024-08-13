@@ -14,10 +14,10 @@ import { twMerge } from 'tailwind-merge';
 
 import {
   LS_CHAIN_MAP,
-  LsProtocolId,
+  LsParachainChainId,
   LST_PREFIX,
-  LsToken,
-} from '../../../constants/liquidStaking';
+  LsParachainToken,
+} from '../../../constants/liquidStaking/liquidStakingParachain';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
@@ -27,19 +27,19 @@ import TokenChip from './TokenChip';
 
 export type LiquidStakingInputProps = {
   id: string;
-  chainId: LsProtocolId;
+  chainId: LsParachainChainId;
   decimals: number;
   amount: BN | null;
   isReadOnly?: boolean;
   placeholder?: string;
   rightElement?: ReactNode;
-  token: LsToken;
+  token: LsParachainToken;
   isTokenLiquidVariant?: boolean;
   minAmount?: BN;
   maxAmount?: BN;
   maxErrorMessage?: string;
   onAmountChange?: (newAmount: BN | null) => void;
-  setChainId?: (newChain: LsProtocolId) => void;
+  setChainId?: (newChain: LsParachainChainId) => void;
   onTokenClick?: () => void;
 };
 
@@ -145,13 +145,13 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
 };
 
 type ChainSelectorProps = {
-  selectedChainId: LsProtocolId;
+  selectedChainId: LsParachainChainId;
 
   /**
    * If this function is not provided, the selector will be
    * considered read-only.
    */
-  setChainId?: (newChain: LsProtocolId) => void;
+  setChainId?: (newChain: LsParachainChainId) => void;
 };
 
 /** @internal */
@@ -182,9 +182,9 @@ const ChainSelector: FC<ChainSelectorProps> = ({
       <DropdownBody>
         <ScrollArea className="max-h-[300px]">
           <ul>
-            {Object.values(LsProtocolId)
+            {Object.values(LsParachainChainId)
               .filter(
-                (chainId): chainId is LsProtocolId =>
+                (chainId): chainId is LsParachainChainId =>
                   chainId !== selectedChainId && typeof chainId !== 'string',
               )
               .map((chainId) => {

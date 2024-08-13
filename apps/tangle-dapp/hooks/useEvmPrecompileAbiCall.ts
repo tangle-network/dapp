@@ -1,7 +1,6 @@
 import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
-import { AddressType } from '@webb-tools/dapp-config/types';
 import { useCallback, useEffect, useState } from 'react';
 import {
   simulateContract,

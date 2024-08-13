@@ -2,10 +2,10 @@ import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import {
-  LsToken,
+  LsParachainToken,
   LST_PREFIX,
   ParachainCurrency,
-} from '../../../constants/liquidStaking';
+} from '../../../constants/liquidStaking/liquidStakingParachain';
 import useExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useExchangeRate';
@@ -13,7 +13,7 @@ import DetailItem from './DetailItem';
 
 export type ExchangeRateDetailItemProps = {
   type: ExchangeRateType;
-  token: LsToken;
+  token: LsParachainToken;
   currency: ParachainCurrency;
 };
 

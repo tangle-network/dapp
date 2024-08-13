@@ -1,7 +1,10 @@
 import { BN_ZERO } from '@polkadot/util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { LS_CHAIN_MAP, LsProtocolId } from '../../constants/liquidStaking';
+import {
+  LS_CHAIN_MAP,
+  LsParachainChainId,
+} from '../../constants/liquidStaking/liquidStakingParachain';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import {
   Collator,
@@ -24,7 +27,7 @@ import {
   fetchVaultsAndStakePools,
 } from './helper';
 
-const useLiquidStakingItems = (selectedChain: LsProtocolId) => {
+const useLiquidStakingItems = (selectedChain: LsParachainChainId) => {
   const { setWithPreviousValue: setLiquidStakingTableData } = useLocalStorage(
     LocalStorageKey.LIQUID_STAKING_TABLE_DATA,
   );
@@ -38,7 +41,7 @@ const useLiquidStakingItems = (selectedChain: LsProtocolId) => {
   const dataType = useMemo(() => getDataType(selectedChain), [selectedChain]);
 
   const fetchData = useCallback(
-    async (chain: LsProtocolId) => {
+    async (chain: LsParachainChainId) => {
       const endpoint = LS_CHAIN_MAP[chain]?.rpcEndpoint;
 
       if (!endpoint) {
@@ -51,30 +54,30 @@ const useLiquidStakingItems = (selectedChain: LsProtocolId) => {
         [];
 
       switch (chain) {
-        case LsProtocolId.POLKADOT:
+        case LsParachainChainId.POLKADOT:
           fetchedItems = await getValidators(endpoint);
           break;
 
-        case LsProtocolId.ASTAR:
+        case LsParachainChainId.ASTAR:
           fetchedItems = await getDapps(endpoint);
           break;
 
-        case LsProtocolId.PHALA:
+        case LsParachainChainId.PHALA:
           fetchedItems = await getVaultsAndStakePools(endpoint);
           break;
 
-        case LsProtocolId.MOONBEAM:
+        case LsParachainChainId.MOONBEAM:
           fetchedItems = await getCollators(
             endpoint,
-            LsProtocolId.MOONBEAM,
+            LsParachainChainId.MOONBEAM,
             'https://stakeglmr.com/',
           );
           break;
 
-        case LsProtocolId.MANTA:
+        case LsParachainChainId.MANTA:
           fetchedItems = await getCollators(
             endpoint,
-            LsProtocolId.MANTA,
+            LsParachainChainId.MANTA,
             'https://manta.subscan.io/account/',
           );
           break;
@@ -110,18 +113,18 @@ const useLiquidStakingItems = (selectedChain: LsProtocolId) => {
 
 export default useLiquidStakingItems;
 
-const getDataType = (chain: LsProtocolId) => {
+const getDataType = (chain: LsParachainChainId) => {
   switch (chain) {
-    case LsProtocolId.MANTA:
+    case LsParachainChainId.MANTA:
       return LiquidStakingItem.COLLATOR;
-    case LsProtocolId.MOONBEAM:
+    case LsParachainChainId.MOONBEAM:
       return LiquidStakingItem.COLLATOR;
-    case LsProtocolId.TANGLE_RESTAKING_PARACHAIN:
-    case LsProtocolId.POLKADOT:
+    case LsParachainChainId.TANGLE_RESTAKING_PARACHAIN:
+    case LsParachainChainId.POLKADOT:
       return LiquidStakingItem.VALIDATOR;
-    case LsProtocolId.PHALA:
+    case LsParachainChainId.PHALA:
       return LiquidStakingItem.VAULT_OR_STAKE_POOL;
-    case LsProtocolId.ASTAR:
+    case LsParachainChainId.ASTAR:
       return LiquidStakingItem.DAPP;
     default:
       return LiquidStakingItem.VALIDATOR;
@@ -157,7 +160,7 @@ const getValidators = async (endpoint: string): Promise<Validator[]> => {
       totalValueStaked: totalValueStaked || BN_ZERO,
       validatorAPY: 0,
       validatorCommission: commission || BN_ZERO,
-      chainId: LsProtocolId.POLKADOT,
+      chainId: LsParachainChainId.POLKADOT,
       chainDecimals,
       chainTokenSymbol,
       itemType: LiquidStakingItem.VALIDATOR,
@@ -204,7 +207,7 @@ const getDapps = async (endpoint: string): Promise<Dapp[]> => {
       dappContractType: dappInfo ? dappInfo.contractType || '' : '',
       commission: BN_ZERO,
       totalValueStaked: totalValueStaked || BN_ZERO,
-      chainId: LsProtocolId.ASTAR,
+      chainId: LsParachainChainId.ASTAR,
       chainDecimals,
       chainTokenSymbol,
       itemType: LiquidStakingItem.DAPP,
@@ -234,7 +237,7 @@ const getVaultsAndStakePools = async (
       vaultOrStakePoolName: val.id,
       commission: val.commission,
       totalValueStaked: val.totalValueStaked,
-      chainId: LsProtocolId.PHALA,
+      chainId: LsParachainChainId.PHALA,
       chainDecimals,
       chainTokenSymbol,
       type,
@@ -246,7 +249,7 @@ const getVaultsAndStakePools = async (
 
 const getCollators = async (
   endpoint: string,
-  chainId: LsProtocolId,
+  chainId: LsParachainChainId,
   href: string,
 ): Promise<Collator[]> => {
   const [
@@ -269,9 +272,9 @@ const getCollators = async (
 
     let collatorExternalLink = '';
 
-    if (chainId === LsProtocolId.MOONBEAM) {
+    if (chainId === LsParachainChainId.MOONBEAM) {
       collatorExternalLink = href;
-    } else if (chainId === LsProtocolId.MANTA) {
+    } else if (chainId === LsParachainChainId.MANTA) {
       collatorExternalLink = href + collator;
     }
 

@@ -21,9 +21,9 @@ import {
   LsSearchParamKey,
   LST_PREFIX,
   LS_CHAIN_MAP,
-  LsProtocolId,
-} from '../../../constants/liquidStaking';
-import { useLiquidStakingStore } from '../../../data/liquidStaking/store';
+  LsParachainChainId,
+} from '../../../constants/liquidStaking/liquidStakingParachain';
+import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
 import useExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useExchangeRate';
@@ -148,7 +148,7 @@ const LiquidStakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-stake-to"
-        chainId={LsProtocolId.TANGLE_RESTAKING_PARACHAIN}
+        chainId={LsParachainChainId.TANGLE_RESTAKING_PARACHAIN}
         placeholder={`0 ${LST_PREFIX}${selectedChain.token}`}
         decimals={selectedChain.decimals}
         amount={toAmount}

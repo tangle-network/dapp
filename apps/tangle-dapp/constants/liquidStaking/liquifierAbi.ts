@@ -1,3 +1,5 @@
+import { Abi } from 'viem';
+
 const liquifierAbi = [
   {
     type: 'constructor',
@@ -183,6 +185,6 @@ const liquifierAbi = [
       },
     ],
   },
-] as const;
+] as const satisfies Abi;
 
 export default liquifierAbi;

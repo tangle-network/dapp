@@ -7,9 +7,9 @@ import { LiquidStakingSelectionTable } from '../../../components/LiquidStaking/L
 import LiquidStakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidStakeCard';
 import LiquidUnstakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidUnstakeCard';
 import UnstakeRequestsTable from '../../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
-import { LsSearchParamKey } from '../../../constants/liquidStaking';
+import { LsSearchParamKey } from '../../../constants/liquidStaking/liquidStakingParachain';
 import useSearchParamState from '../../../hooks/useSearchParamState';
-import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
+import isLsParachainToken from '../../../utils/liquidStaking/isLsParachainToken';
 import TabListItem from '../../restake/TabListItem';
 import TabsList from '../../restake/TabsList';
 
@@ -26,7 +26,7 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
     stringify: (value) => (value ? 'stake' : 'unstake'),
   });
 
-  if (!isLiquidStakingToken(tokenSymbol)) {
+  if (!isLsParachainToken(tokenSymbol)) {
     return notFound();
   }
 

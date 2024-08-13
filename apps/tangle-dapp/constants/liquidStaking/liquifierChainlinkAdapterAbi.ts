@@ -1,3 +1,5 @@
+import { Abi } from 'viem';
+
 const liquifierChainlinkAdapterAbi = [
   {
     constant: false,
@@ -339,6 +341,6 @@ const liquifierChainlinkAdapterAbi = [
     name: 'DepositBufferedTokens',
     type: 'event',
   },
-] as const;
+] as const satisfies Abi;
 
 export default liquifierChainlinkAdapterAbi;

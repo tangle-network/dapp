@@ -8,10 +8,10 @@ import { BN } from '@polkadot/util';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useMemo } from 'react';
 
-import { LsToken } from '../../constants/liquidStaking';
+import { LsParachainToken } from '../../constants/liquidStaking/liquidStakingParachain';
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import isLiquidStakingToken from '../../utils/liquidStaking/isLiquidStakingToken';
+import isLsParachainToken from '../../utils/liquidStaking/isLsParachainToken';
 
 const useParachainBalances = () => {
   const activeSubstrateAddress = useSubstrateAddress();
@@ -35,8 +35,8 @@ const useParachainBalances = () => {
       return null;
     }
 
-    const nativeBalances = new Map<LsToken, BN>();
-    const liquidBalances = new Map<LsToken, BN>();
+    const nativeBalances = new Map<LsParachainToken, BN>();
+    const liquidBalances = new Map<LsParachainToken, BN>();
 
     for (const encodedBalance of rawBalances) {
       // TODO: Need proper typing, ideally linked to Restaking Parachain's types. This is currently very hacky.
@@ -51,7 +51,7 @@ const useParachainBalances = () => {
       // Irrelevant entry, skip.
       if (
         entryTokenValue === undefined ||
-        !isLiquidStakingToken(entryTokenValue)
+        !isLsParachainToken(entryTokenValue)
       ) {
         continue;
       }

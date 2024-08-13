@@ -1,7 +1,7 @@
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
-import { ParachainCurrency } from '../../../constants/liquidStaking';
+import { ParachainCurrency } from '../../../constants/liquidStaking/liquidStakingParachain';
 import useTokenUnlockDurations from '../../../data/liquidStaking/useTokenUnlockDurations';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
 import DetailItem from './DetailItem';

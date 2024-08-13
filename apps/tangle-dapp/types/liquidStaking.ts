@@ -1,13 +1,13 @@
 import { BN } from '@polkadot/util';
 
-import { LsProtocolId } from '../constants/liquidStaking';
+import { LsParachainChainId } from '../constants/liquidStaking/liquidStakingParachain';
 
 // All chains
 export type StakingItem = {
   id: string; // address - Validator, contract address - DAPP, pool/vault ID - VaultOrStakePool
   totalValueStaked: BN;
   minimumStake?: BN;
-  chainId: LsProtocolId;
+  chainId: LsParachainChainId;
   chainDecimals: number;
   chainTokenSymbol: string;
   itemType: LiquidStakingItem;

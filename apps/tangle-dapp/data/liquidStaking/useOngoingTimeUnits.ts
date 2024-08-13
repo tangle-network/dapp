@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react';
 import {
   ParachainCurrency,
   LsSimpleParachainTimeUnit,
-} from '../../constants/liquidStaking';
+} from '../../constants/liquidStaking/liquidStakingParachain';
 import useApiRx from '../../hooks/useApiRx';
 import tangleTimeUnitToSimpleInstance from '../../utils/liquidStaking/tangleTimeUnitToSimpleInstance';
 import getValueOfTangleCurrency from './getValueOfTangleCurrency';

@@ -5,14 +5,14 @@ import { twMerge } from 'tailwind-merge';
 
 import {
   LIQUID_STAKING_CHAINS,
-  LsToken,
+  LsParachainToken,
   LST_PREFIX,
-} from '../../../constants/liquidStaking';
+} from '../../../constants/liquidStaking/liquidStakingParachain';
 import ChainLogo from './ChainLogo';
 import DropdownChevronIcon from './DropdownChevronIcon';
 
 type TokenChipProps = {
-  token?: LsToken;
+  token?: LsParachainToken;
   isLiquidVariant: boolean;
   onClick?: () => void;
 };

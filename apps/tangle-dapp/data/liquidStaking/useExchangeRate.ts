@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import {
   ParachainCurrency,
   LsParachainCurrencyKey,
-} from '../../constants/liquidStaking';
+} from '../../constants/liquidStaking/liquidStakingParachain';
 import useApiRx from '../../hooks/useApiRx';
 import calculateBnRatio from '../../utils/calculateBnRatio';
 

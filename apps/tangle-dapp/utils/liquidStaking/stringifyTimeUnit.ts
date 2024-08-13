@@ -1,4 +1,4 @@
-import { LsSimpleParachainTimeUnit } from '../../constants/liquidStaking';
+import { LsSimpleParachainTimeUnit } from '../../constants/liquidStaking/liquidStakingParachain';
 
 const stringifyTimeUnit = (
   timeUnit: LsSimpleParachainTimeUnit,
