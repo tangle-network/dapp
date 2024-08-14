@@ -1,5 +1,5 @@
 import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config/constants';
-import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
+import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import { ListItem } from '@webb-tools/webb-ui-components/components/ListCard/ListItem';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useMemo } from 'react';
@@ -8,89 +8,83 @@ import { formatUnits } from 'viem';
 
 import { useRestakeContext } from '../../../context/RestakeContext';
 import { DelegatorInfo } from '../../../types/restake';
-import type { IdentityType } from '../../../utils/polkadot';
-import AvatarWithText from '../AvatarWithText';
 import ModalContent from '../ModalContent';
 import ModalContentList from '../ModalContentList';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
-  operatorIdentities?: Record<string, IdentityType | null> | null;
   isOpen: boolean;
   onClose: () => void;
-  onItemSelected: (
-    item: DelegatorInfo['delegations'][number] & {
-      formattedAmount: string;
-    },
-  ) => void;
+  onItemSelected: (item: {
+    assetId: string;
+    amount: bigint;
+    formattedAmount: string;
+  }) => void;
 };
 
-const UnstakeModal = ({
+const WithdrawModal = ({
   delegatorInfo,
   isOpen,
   onClose,
   onItemSelected,
-  operatorIdentities,
 }: Props) => {
   const { assetMap } = useRestakeContext();
 
   // Aggregate the delegations based on the operator account id and asset id
-  const delegations = useMemo(() => {
-    if (!Array.isArray(delegatorInfo?.delegations)) {
+  const deposits = useMemo(() => {
+    if (!delegatorInfo?.deposits) {
       return [];
     }
 
-    return delegatorInfo.delegations;
+    return Object.entries(delegatorInfo.deposits).map(
+      ([assetId, { amount }]) => ({
+        assetId,
+        amount,
+      }),
+    );
   }, [delegatorInfo]);
 
   return (
     <ModalContent
       isOpen={isOpen}
-      title="Select Operator"
-      description="Select the operator you want to unstake from"
+      title="Select Withdrawal Asset"
+      description="Select the asset you want to withdraw"
       onInteractOutside={onClose}
     >
       <ModalContentList
-        title="Select Operator"
-        items={delegations}
+        title="Select Withdrawal Asset"
+        items={deposits}
         onClose={onClose}
         overrideSearchInputProps={{
-          id: 'search-unstake-operator',
-          placeholder: 'Search Operator to Unstake',
+          id: 'search-withdraw-asset',
+          placeholder: 'Search Asset to Withdraw',
         }}
-        searchFilter={({ assetId, operatorAccountId }, searchText) => {
+        searchFilter={({ amount, assetId }, searchText) => {
           if (!searchText) {
             return true;
           }
 
           const asset = assetMap[assetId];
           const assetSymbol = asset?.symbol || 'Unknown';
-          const identityName =
-            operatorIdentities?.[operatorAccountId]?.name || '';
 
           return (
-            operatorAccountId
-              .toLowerCase()
-              .includes(searchText.toLowerCase()) ||
             assetSymbol.toLowerCase().includes(searchText.toLowerCase()) ||
-            (identityName
-              ? identityName.toLowerCase().includes(searchText.toLowerCase())
-              : false)
+            amount.toString().includes(searchText)
           );
         }}
         renderEmpty={{
-          title: 'No Delegation Found',
+          title: 'No Asset Found',
           description:
             'You can try to deposit or delegate an asset to an operator.',
         }}
         renderItem={(item) => {
-          const { amountBonded, assetId, operatorAccountId } = item;
+          const { amount, assetId } = item;
           const asset = assetMap[assetId];
 
           const decimals = asset?.decimals || DEFAULT_DECIMALS;
           const assetSymbol = asset?.symbol || 'Unknown';
 
-          const fmtAmount = formatUnits(amountBonded, decimals);
+          const fmtAmount = formatUnits(amount, decimals);
 
           return (
             <ListItem
@@ -98,7 +92,7 @@ const UnstakeModal = ({
                 'cursor-pointer max-w-none dark:bg-transparent',
                 'flex items-center justify-between px-4',
               )}
-              key={`${operatorAccountId}-${assetId}`}
+              key={assetId}
               onClick={() =>
                 onItemSelected({
                   ...item,
@@ -106,21 +100,26 @@ const UnstakeModal = ({
                 })
               }
             >
-              <AvatarWithText
-                accountAddress={operatorAccountId}
-                overrideAvatarProps={{ size: 'lg' }}
-                overrideTypographyProps={{ variant: 'h5' }}
-                identityName={
-                  operatorIdentities?.[operatorAccountId]?.name || '<Unknown>'
-                }
-                description={
-                  <KeyValueWithButton size="sm" keyValue={operatorAccountId} />
-                }
-              />
+              <div className="flex items-center gap-2">
+                <TokenIcon size="xl" name={assetSymbol} />
+
+                <div>
+                  <Typography variant="h5" fw="bold">
+                    {assetSymbol}
+                  </Typography>
+
+                  <Typography
+                    variant="body2"
+                    className="text-mono-120 dark:text-mono-100"
+                  >
+                    Asset ID: {assetId}
+                  </Typography>
+                </div>
+              </div>
 
               <div>
-                <Typography variant="h5" fw="bold">
-                  {fmtAmount} {assetSymbol}
+                <Typography ta="right" variant="h5" fw="bold">
+                  {fmtAmount}
                 </Typography>
 
                 {asset.poolId && (
@@ -142,4 +141,4 @@ const UnstakeModal = ({
   );
 };
 
-export default UnstakeModal;
+export default WithdrawModal;

@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 
 const TxInfo = () => {
-  const { delegationBondLessDelay } = useRestakeConsts();
+  const { leaveDelegatorsDelay } = useRestakeConsts();
 
   const items = useMemo<FeeItem[]>(
     () => [
@@ -14,14 +14,14 @@ const TxInfo = () => {
         name: 'Fee',
       },
       {
-        name: 'Unstake Period',
+        name: 'Withdraw Delay',
         value:
-          typeof delegationBondLessDelay === 'number'
-            ? `${delegationBondLessDelay} rounds`
+          typeof leaveDelegatorsDelay === 'number'
+            ? `${leaveDelegatorsDelay} rounds`
             : null,
       },
     ],
-    [delegationBondLessDelay],
+    [leaveDelegatorsDelay],
   );
 
   return <FeeDetails isDisabledBgColor disabled isDefaultOpen items={items} />;

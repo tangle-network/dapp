@@ -16,24 +16,22 @@ import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/ut
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
-import { type ComponentProps, useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
+import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
-import type { DelegatorUnstakeRequest } from '../../../types/restake';
-import type { IdentityType } from '../../../utils/polkadot';
-import AvatarWithText from '../AvatarWithText';
-import type { UnstakeRequestTableData } from './types';
-import { calculateTimeRemaining } from './utils';
-import UnstakeRequestTableActions from './WithdrawRequestTableActions';
+import type { DelegatorWithdrawRequest } from '../../../types/restake';
+import TableCell from '../TableCell';
+import { calculateTimeRemaining } from '../utils';
+import type { WithdrawRequestTableData } from './types';
+import WithdrawRequestTableActions from './WithdrawRequestTableActions';
 
-const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
+const columnsHelper = createColumnHelper<WithdrawRequestTableData>();
 
 const columns = [
-  columnsHelper.accessor('operatorAccountId', {
+  columnsHelper.accessor('assetId', {
     id: 'select',
     enableSorting: false,
     header: () => <TableCell>Select request to cancel</TableCell>,
@@ -46,10 +44,9 @@ const columns = [
           wrapperClassName="pt-0.5 flex items-center justify-center"
         />
 
-        <AvatarWithText
-          accountAddress={props.getValue()}
-          identityName={props.row.original.operatorIdentityName}
-        />
+        <Typography variant="body1">
+          {props.row.original.assetSymbol}
+        </Typography>
       </div>
     ),
   }),
@@ -89,22 +86,18 @@ const columns = [
 ];
 
 type Props = {
-  unstakeRequests: DelegatorUnstakeRequest[];
-  operatorIdentities: Record<string, IdentityType | null>;
+  withdrawRequests: DelegatorWithdrawRequest[];
 };
 
-const UnstakeRequestTable = ({
-  unstakeRequests,
-  operatorIdentities,
-}: Props) => {
+const WithdrawRequestTable = ({ withdrawRequests }: Props) => {
   const { assetMap } = useRestakeContext();
-  const { delegationBondLessDelay } = useRestakeConsts();
+  const { leaveDelegatorsDelay } = useRestakeConsts();
   const { currentRound } = useRestakeCurrentRound();
 
   const dataWithId = useMemo(
     () =>
-      unstakeRequests.reduce(
-        (acc, { assetId, amount, requestedRound, operatorAccountId }) => {
+      withdrawRequests.reduce(
+        (acc, { assetId, amount, requestedRound }) => {
           const asset = assetMap[assetId];
           if (!asset) return acc;
 
@@ -112,29 +105,26 @@ const UnstakeRequestTable = ({
           const timeRemaining = calculateTimeRemaining(
             currentRound,
             requestedRound,
-            delegationBondLessDelay,
+            leaveDelegatorsDelay,
           );
 
-          acc[getId({ assetId, operatorAccountId })] = {
+          acc[assetId] = {
             amount: Number(formattedAmount),
             amountRaw: amount,
             assetId: assetId,
             assetSymbol: asset.symbol,
             timeRemaining,
-            operatorAccountId,
-            operatorIdentityName: operatorIdentities?.[operatorAccountId]?.name,
-          } satisfies UnstakeRequestTableData;
+          } satisfies WithdrawRequestTableData;
 
           return acc;
         },
-        {} as Record<string, UnstakeRequestTableData>,
+        {} as Record<string, WithdrawRequestTableData>,
       ),
-    // prettier-ignore
-    [assetMap, currentRound, delegationBondLessDelay, operatorIdentities, unstakeRequests],
+    [assetMap, currentRound, leaveDelegatorsDelay, withdrawRequests],
   );
 
   const table = useReactTable(
-    useMemo<TableOptions<UnstakeRequestTableData>>(
+    useMemo<TableOptions<WithdrawRequestTableData>>(
       () => ({
         data: Object.values(dataWithId),
         columns,
@@ -143,7 +133,6 @@ const UnstakeRequestTable = ({
             pageSize: 5,
           },
         },
-        getRowId: (row) => getId(row),
         enableRowSelection: true,
         filterFns: {
           fuzzy: fuzzyFilter,
@@ -175,7 +164,7 @@ const UnstakeRequestTable = ({
       />
 
       <div className="flex items-center gap-3">
-        <UnstakeRequestTableActions
+        <WithdrawRequestTableActions
           allRequests={Object.values(dataWithId)}
           selectedRequests={selectedRequests}
         />
@@ -184,36 +173,4 @@ const UnstakeRequestTable = ({
   );
 };
 
-export default UnstakeRequestTable;
-
-/**
- * @internal
- */
-function TableCell({
-  className,
-  children,
-  variant = 'body2',
-  ...props
-}: Partial<ComponentProps<typeof Typography>>) {
-  return (
-    <Typography
-      component="span"
-      fw="semibold"
-      {...props}
-      variant={variant}
-      className={twMerge('text-mono-120 dark:text-mono-100', className)}
-    >
-      {children}
-    </Typography>
-  );
-}
-
-function getId({
-  assetId,
-  operatorAccountId,
-}: {
-  assetId: string;
-  operatorAccountId: string;
-}) {
-  return `${operatorAccountId}-${assetId}`;
-}
+export default WithdrawRequestTable;

@@ -1,7 +1,9 @@
 'use client';
 
+import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
@@ -18,7 +20,7 @@ import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import {
-  type DelegatorBondLessContext,
+  type ScheduleWithdrawContext,
   TxEvent,
 } from '../../../data/restake/RestakeTx/base';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
@@ -26,21 +28,19 @@ import useRestakeTx from '../../../data/restake/useRestakeTx';
 import type { Props } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
-import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
-import type { UnstakeFormFields } from '../../../types/restake';
+import type { WithdrawFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import ActionButtonBase from '../ActionButtonBase';
 import AssetPlaceholder from '../AssetPlaceholder';
-import AvatarWithText from '../AvatarWithText';
 import ErrorMessage from '../ErrorMessage';
 import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
-import UnstakeModal from './WithdrawModal';
-import UnstakeRequestTable from './WithdrawRequestTable';
+import WithdrawModal from './WithdrawModal';
+import WithdrawRequestTable from './WithdrawRequestTable';
 
 export const dynamic = 'force-static';
 
@@ -52,18 +52,19 @@ const Page = () => {
     watch,
     reset,
     formState: { errors, isValid, isSubmitting },
-  } = useForm<UnstakeFormFields>({
+  } = useForm<WithdrawFormFields>({
     mode: 'onBlur',
   });
 
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
+  const { activeChain } = useWebContext();
   const { assetMap } = useRestakeContext();
 
   const {
-    status: isOperatorModalOpen,
-    open: openOperatorModal,
-    close: closeOperatorModal,
+    status: isWithdrawModalOpen,
+    open: openWithdrawModal,
+    close: closeWithdrawModal,
   } = useModal();
 
   const {
@@ -74,7 +75,6 @@ const Page = () => {
 
   // Register form fields on mount
   useEffect(() => {
-    register('operatorAccountId', { required: true });
     register('assetId', { required: true });
   }, [register]);
 
@@ -85,23 +85,14 @@ const Page = () => {
 
   const { delegatorInfo } = useRestakeDelegatorInfo();
 
-  const { result: operatorIdentities } = useIdentities(
-    useMemo(
-      () =>
-        delegatorInfo?.delegations?.map((item) => item.operatorAccountId) ?? [],
-      [delegatorInfo?.delegations],
-    ),
-  );
-
   const selectedAssetId = watch('assetId');
-  const selectedOperatorAccountId = watch('operatorAccountId');
   const amount = watch('amount');
 
-  const unstakeRequests = useMemo(() => {
-    if (!delegatorInfo?.unstakeRequests) return [];
+  const withdrawRequests = useMemo(() => {
+    if (!delegatorInfo?.withdrawRequests) return [];
 
-    return delegatorInfo.unstakeRequests;
-  }, [delegatorInfo?.unstakeRequests]);
+    return delegatorInfo.withdrawRequests;
+  }, [delegatorInfo?.withdrawRequests]);
 
   const selectedAsset = useMemo(() => {
     if (!selectedAssetId) return null;
@@ -112,20 +103,19 @@ const Page = () => {
 
   const { maxAmount, formattedMaxAmount } = useMemo(
     () => {
-      if (!Array.isArray(delegatorInfo?.delegations)) return {};
+      if (!delegatorInfo?.deposits) return {};
 
-      const selectedDelegation = delegatorInfo.delegations.find(
-        (item) =>
-          item.assetId === selectedAssetId &&
-          item.operatorAccountId === selectedOperatorAccountId,
+      const depositedAsset = Object.entries(delegatorInfo.deposits).find(
+        ([assetId]) => assetId === selectedAssetId,
       );
 
-      if (!selectedDelegation) return {};
-      if (!assetMap[selectedDelegation.assetId]) return {};
+      if (!depositedAsset) return {};
+      if (!assetMap[depositedAsset[0]]) return {};
 
-      const maxAmount = selectedDelegation.amountBonded;
+      const assetId = depositedAsset[0];
+      const maxAmount = depositedAsset[1].amount;
       const formattedMaxAmount = Number(
-        formatUnits(maxAmount, assetMap[selectedDelegation.assetId].decimals),
+        formatUnits(maxAmount, assetMap[assetId].decimals),
       );
 
       return {
@@ -134,7 +124,7 @@ const Page = () => {
       };
     },
     // prettier-ignore
-    [delegatorInfo?.delegations, assetMap, selectedAssetId, selectedOperatorAccountId],
+    [assetMap, delegatorInfo?.deposits, selectedAssetId],
   );
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
@@ -147,7 +137,7 @@ const Page = () => {
         required: 'Amount is required',
         validate: getAmountValidation(
           step,
-          '0',
+          step,
           ZERO_BIG_INT,
           maxAmount,
           selectedAsset?.decimals,
@@ -157,70 +147,52 @@ const Page = () => {
     };
   }, [maxAmount, register, selectedAsset?.decimals, selectedAsset?.symbol]);
 
-  const displayError = useMemo(
-    () => {
-      return errors.operatorAccountId !== undefined ||
-        !selectedOperatorAccountId
-        ? 'Select an operator'
-        : errors.assetId !== undefined || !selectedAssetId
-          ? 'Select an asset'
-          : !amount
-            ? 'Enter an amount'
-            : errors.amount !== undefined
-              ? 'Invalid amount'
-              : undefined;
-    },
-    // prettier-ignore
-    [errors.operatorAccountId, errors.assetId, errors.amount, selectedOperatorAccountId, selectedAssetId, amount],
-  );
+  const displayError = useMemo(() => {
+    return errors.assetId !== undefined || !selectedAssetId
+      ? 'Select an asset'
+      : !amount
+        ? 'Enter an amount'
+        : errors.amount !== undefined
+          ? 'Invalid amount'
+          : undefined;
+  }, [errors.assetId, errors.amount, selectedAssetId, amount]);
 
-  const options = useMemo<Props<DelegatorBondLessContext>>(() => {
+  const options = useMemo<Props<ScheduleWithdrawContext>>(() => {
     return {
       options: {
         [TxEvent.SUCCESS]: {
-          secondaryMessage: (
-            { amount, assetId, operatorAccount },
-            explorerUrl,
-          ) => (
+          secondaryMessage: ({ amount, assetId }, explorerUrl) => (
             <ViewTxOnExplorer url={explorerUrl}>
-              Successfully scheduled unstake of{' '}
+              Successfully scheduled withdraw of{' '}
               {formatUnits(amount, assetMap[assetId].decimals)}{' '}
-              {assetMap[assetId].symbol} from{' '}
-              <AvatarWithText
-                className="inline-flex"
-                accountAddress={operatorAccount}
-                identityName={operatorIdentities?.[operatorAccount]?.name}
-                overrideAvatarProps={{ size: 'sm' }}
-              />
+              {assetMap[assetId].symbol}{' '}
             </ViewTxOnExplorer>
           ),
         },
       },
       onTxSuccess: () => reset(),
     };
-  }, [assetMap, operatorIdentities, reset]);
+  }, [assetMap, reset]);
 
-  const { scheduleDelegatorUnstake: scheduleDelegatorBondLess } =
-    useRestakeTx();
+  const { scheduleWithdraw } = useRestakeTx();
   const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
 
-  const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
+  const onSubmit = useCallback<SubmitHandler<WithdrawFormFields>>(
     async (data) => {
-      const { amount, assetId, operatorAccountId } = data;
+      const { amount, assetId } = data;
       if (!assetId || !isDefined(assetMap[assetId])) {
         return;
       }
 
       const asset = assetMap[assetId];
 
-      await scheduleDelegatorBondLess(
-        operatorAccountId,
+      await scheduleWithdraw(
         assetId,
         parseUnits(amount, asset.decimals),
         txEventHandlers,
       );
     },
-    [assetMap, scheduleDelegatorBondLess, txEventHandlers],
+    [assetMap, scheduleWithdraw, txEventHandlers],
   );
 
   return (
@@ -232,26 +204,29 @@ const Page = () => {
           <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
             <TransactionInputCard.Header>
               <TransactionInputCard.ChainSelector
-                placeholder="Select"
-                onClick={openOperatorModal}
-                {...(selectedOperatorAccountId
+                placeholder="Active Chain"
+                disabled
+                {...(activeChain
                   ? {
                       renderBody: () => (
-                        <AvatarWithText
-                          accountAddress={selectedOperatorAccountId}
-                          identityName={
-                            operatorIdentities?.[selectedOperatorAccountId]
-                              ?.name
-                          }
-                          overrideTypographyProps={{ variant: 'h5' }}
-                        />
+                        <div className="flex items-center gap-2">
+                          <ChainIcon size="lg" name={activeChain.name} />
+
+                          <Typography
+                            variant="h5"
+                            fw="bold"
+                            className="text-mono-200 dark:text-mono-0"
+                          >
+                            {activeChain.name}
+                          </Typography>
+                        </div>
                       ),
                     }
                   : {})}
               />
               <TransactionInputCard.MaxAmountButton
                 maxAmount={formattedMaxAmount}
-                tooltipBody="Staked Balance"
+                tooltipBody="Deposited Balance"
                 Icon={
                   useRef({
                     enabled: <LockLineIcon />,
@@ -266,7 +241,7 @@ const Page = () => {
               tokenSelectorProps={
                 useRef({
                   placeholder: <AssetPlaceholder />,
-                  isDisabled: true,
+                  onClick: openWithdrawModal,
                 }).current
               }
             />
@@ -308,7 +283,7 @@ const Page = () => {
                     isSubmitting ? 'Sending transaction...' : loadingText
                   }
                 >
-                  {displayError ?? 'Schedule Unstake'}
+                  {displayError ?? 'Schedule Withdraw'}
                 </Button>
               );
             }}
@@ -318,43 +293,38 @@ const Page = () => {
 
       {/** Hardcoded for the margin top to ensure the component is align to same card content */}
       <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
-        {unstakeRequests.length > 0 ? (
-          <UnstakeRequestTable
-            operatorIdentities={operatorIdentities}
-            unstakeRequests={unstakeRequests}
-          />
+        {withdrawRequests.length > 0 ? (
+          <WithdrawRequestTable withdrawRequests={withdrawRequests} />
         ) : (
           <>
-            <RestakeDetailCard.Header title="No unstake requests found" />
+            <RestakeDetailCard.Header title="No withdraw requests found" />
 
             <Typography
               variant="body2"
               className="text-mono-120 dark:text-mono-100"
             >
-              You will be able to withdraw your tokens after the unstake request
-              has been processed. To unstake your tokens go to the unstake tab
-              to schedule request.
+              You will be able to withdraw your tokens after the unstake
+              schedule is completed. To unstake your tokens go to the unstake
+              tab to schedule request.
             </Typography>
           </>
         )}
       </RestakeDetailCard.Root>
 
       <Modal>
-        <UnstakeModal
+        <WithdrawModal
           delegatorInfo={delegatorInfo}
-          isOpen={isOperatorModalOpen}
-          onClose={closeOperatorModal}
-          operatorIdentities={operatorIdentities}
+          isOpen={isWithdrawModalOpen}
+          onClose={closeWithdrawModal}
           onItemSelected={(item) => {
-            closeOperatorModal();
+            closeWithdrawModal();
 
-            const { formattedAmount, assetId, operatorAccountId } = item;
+            const { formattedAmount, assetId } = item;
             const commonOpts = {
               shouldDirty: true,
               shouldValidate: true,
             };
 
-            setFormValue('operatorAccountId', operatorAccountId, commonOpts);
             setFormValue('assetId', assetId, commonOpts);
             setFormValue('amount', formattedAmount, commonOpts);
           }}
