@@ -108,9 +108,8 @@ export const getBreadcrumbLabel = (
     return shortenString(pathName);
   }
 
-  // Otherwise, derive the label from the path name.
-  // %20 inside a path represent a space
-  return capitalize(pathName).replace(/%20/g, ' ');
+  // decode special character encoding  (Ex: "%20" -> " ")
+  return capitalize(decodeURI(pathName));
 };
 
 export const getBreadcrumbIcon = (
