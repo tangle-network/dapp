@@ -21,7 +21,7 @@ const ModalContent = ({
       isCenter
       {...props}
       className={twMerge(
-        'w-full h-full p-4 max-w-xl max-h-[var(--restake-modal-max-height)]',
+        'w-full h-full max-w-xl max-h-[var(--restake-modal-max-height)]',
         className,
       )}
     >
