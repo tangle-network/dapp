@@ -1,6 +1,6 @@
 import { Abi } from 'viem';
 
-const liquifierAdapterAbi = [
+const LIQUIFIER_ADAPTER_ABI = [
   {
     constant: false,
     inputs: [
@@ -343,4 +343,4 @@ const liquifierAdapterAbi = [
   },
 ] as const satisfies Abi;
 
-export default liquifierAdapterAbi;
+export default LIQUIFIER_ADAPTER_ABI;

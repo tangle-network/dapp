@@ -1,6 +1,6 @@
 import { Abi } from 'viem';
 
-const liquifierTgTokenAbi = [
+const LIQUIFIER_TG_TOKEN_ABI = [
   {
     inputs: [],
     name: 'decimals',
@@ -288,4 +288,4 @@ const liquifierTgTokenAbi = [
   },
 ] as const satisfies Abi;
 
-export default liquifierTgTokenAbi;
+export default LIQUIFIER_TG_TOKEN_ABI;

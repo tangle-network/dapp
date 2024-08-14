@@ -60,7 +60,7 @@ export const LS_ERC20_TOKEN_IDS = [
 
 export type LsParachainChainDef = {
   type: 'parachain';
-  id: LsProtocolId;
+  id: LsParachainChainId;
   name: string;
   token: LsParachainToken;
   logo: StaticAssetPath;

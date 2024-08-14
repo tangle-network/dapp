@@ -1,6 +1,6 @@
 import { Abi } from 'viem';
 
-const liquifierAbi = [
+const LIQUIFIER_ABI = [
   {
     type: 'constructor',
     stateMutability: 'nonpayable',
@@ -187,4 +187,4 @@ const liquifierAbi = [
   },
 ] as const satisfies Abi;
 
-export default liquifierAbi;
+export default LIQUIFIER_ABI;

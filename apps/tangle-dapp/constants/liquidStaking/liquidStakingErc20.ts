@@ -2,7 +2,7 @@ import { StaticAssetPath } from '..';
 import { LsErc20TokenId, LsProtocolId, LsToken } from './types';
 import { LsErc20TokenDef } from './types';
 
-const ChainlinkErc20TokenDef: LsErc20TokenDef = {
+const CHAINLINK: LsErc20TokenDef = {
   type: 'erc20',
   id: LsProtocolId.CHAINLINK,
   name: 'Chainlink',
@@ -18,7 +18,7 @@ const ChainlinkErc20TokenDef: LsErc20TokenDef = {
   liquifierTgTokenAddress: '0x',
 };
 
-const TheGraphErc20TokenDef: LsErc20TokenDef = {
+const THE_GRAPH: LsErc20TokenDef = {
   type: 'erc20',
   id: LsProtocolId.THE_GRAPH,
   name: 'The Graph',
@@ -34,7 +34,7 @@ const TheGraphErc20TokenDef: LsErc20TokenDef = {
   liquifierTgTokenAddress: '0x',
 };
 
-const LivepeerErc20TokenDef: LsErc20TokenDef = {
+const LIVEPEER: LsErc20TokenDef = {
   type: 'erc20',
   id: LsProtocolId.LIVEPEER,
   name: 'Livepeer',
@@ -50,7 +50,7 @@ const LivepeerErc20TokenDef: LsErc20TokenDef = {
   liquifierTgTokenAddress: '0x',
 };
 
-const PolygonErc20TokenDef: LsErc20TokenDef = {
+const POLYGON: LsErc20TokenDef = {
   type: 'erc20',
   id: LsProtocolId.POLYGON,
   name: 'Polygon',
@@ -67,8 +67,8 @@ const PolygonErc20TokenDef: LsErc20TokenDef = {
 };
 
 export const LS_ERC20_TOKEN_MAP: Record<LsErc20TokenId, LsErc20TokenDef> = {
-  [LsProtocolId.CHAINLINK]: ChainlinkErc20TokenDef,
-  [LsProtocolId.THE_GRAPH]: TheGraphErc20TokenDef,
-  [LsProtocolId.LIVEPEER]: LivepeerErc20TokenDef,
-  [LsProtocolId.POLYGON]: PolygonErc20TokenDef,
+  [LsProtocolId.CHAINLINK]: CHAINLINK,
+  [LsProtocolId.THE_GRAPH]: THE_GRAPH,
+  [LsProtocolId.LIVEPEER]: LIVEPEER,
+  [LsProtocolId.POLYGON]: POLYGON,
 };

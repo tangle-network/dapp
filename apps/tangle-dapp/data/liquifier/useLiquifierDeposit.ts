@@ -5,7 +5,7 @@ import { erc20Abi } from 'viem';
 
 import { TxName } from '../../constants';
 import { LS_ERC20_TOKEN_MAP } from '../../constants/liquidStaking/liquidStakingErc20';
-import liquifierAbi from '../../constants/liquidStaking/liquifierAbi';
+import LIQUIFIER_ABI from '../../constants/liquidStaking/liquifierAbi';
 import { LsErc20TokenId } from '../../constants/liquidStaking/types';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import useTxNotification from '../../hooks/useTxNotification';
@@ -31,7 +31,7 @@ import useContract from './useContract';
 const useLiquifierDeposit = () => {
   const activeEvmAddress20 = useEvmAddress20();
   const { write: writeChainlinkErc20 } = useContract(erc20Abi);
-  const { write: writeLiquifier } = useContract(liquifierAbi);
+  const { write: writeLiquifier } = useContract(LIQUIFIER_ABI);
 
   const {
     notifyProcessing: notifyApproveProcessing,
