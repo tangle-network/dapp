@@ -12,7 +12,7 @@ import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import { AnySubstrateAddress } from '../../../types/utils';
 import formatBn from '../../../utils/formatBn';
 import AddressLink from '../AddressLink';
-import ChainLogo from './ChainLogo';
+import ProtocolLogo from './ProtocolLogo';
 
 export type SelectTokenModalProps = {
   isOpen: boolean;
@@ -106,7 +106,7 @@ const TokenListItem: FC<TokenListItemProps> = ({
     >
       {/* Information */}
       <div className="flex items-center justify-center gap-2">
-        <ChainLogo size="md" isRounded chainId={LsProtocolId.POLKADOT} />
+        <ProtocolLogo size="md" isRounded protocolId={LsProtocolId.POLKADOT} />
 
         <div className="space-y-1">
           <Typography variant="h5" fw="bold" className="dark:text-mono-0">

@@ -1,3 +1,4 @@
+import { StaticAssetPath } from '..';
 import { LsErc20TokenId, LsProtocolId, LsToken } from './types';
 import { LsErc20TokenDef } from './types';
 
@@ -6,6 +7,8 @@ const ChainlinkErc20TokenDef: LsErc20TokenDef = {
   id: LsProtocolId.CHAINLINK,
   name: 'Chainlink',
   networkName: 'Ethereum Mainnet',
+  // TODO: Add logo and link it here.
+  logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
   token: LsToken.LINK,
   decimals: 18,
   // TODO: Use Liquifier's testnet address if the environment is development.
@@ -20,6 +23,8 @@ const TheGraphErc20TokenDef: LsErc20TokenDef = {
   id: LsProtocolId.THE_GRAPH,
   name: 'The Graph',
   networkName: 'Ethereum Mainnet',
+  // TODO: Add logo and link it here.
+  logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
   token: LsToken.GRT,
   decimals: 18,
   // TODO: Use Liquifier's testnet address if the environment is development.
@@ -34,6 +39,8 @@ const LivepeerErc20TokenDef: LsErc20TokenDef = {
   id: LsProtocolId.LIVEPEER,
   name: 'Livepeer',
   networkName: 'Ethereum Mainnet',
+  // TODO: Add logo and link it here.
+  logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
   token: LsToken.LPT,
   decimals: 18,
   // TODO: Use Liquifier's testnet address if the environment is development.
@@ -48,6 +55,8 @@ const PolygonErc20TokenDef: LsErc20TokenDef = {
   id: LsProtocolId.POLYGON,
   name: 'Polygon',
   networkName: 'Ethereum Mainnet',
+  // TODO: Add logo and link it here.
+  logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
   token: LsToken.POL,
   decimals: 18,
   // TODO: Use Liquifier's testnet address if the environment is development.

@@ -56,7 +56,7 @@ const LiquidStakeCard: FC = () => {
   const selectedProtocol = getLsProtocolDef(selectedChainId);
 
   useSearchParamSync({
-    key: LsSearchParamKey.CHAIN_ID,
+    key: LsSearchParamKey.PROTOCOL_ID,
     value: selectedChainId,
     parse: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
@@ -132,7 +132,7 @@ const LiquidStakeCard: FC = () => {
     <>
       <LiquidStakingInput
         id="liquid-staking-stake-from"
-        chainId={selectedChainId}
+        protocolId={selectedChainId}
         token={selectedProtocol.token}
         amount={fromAmount}
         decimals={selectedProtocol.decimals}
@@ -148,7 +148,7 @@ const LiquidStakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-stake-to"
-        chainId={LsProtocolId.TANGLE_RESTAKING_PARACHAIN}
+        protocolId={LsProtocolId.TANGLE_RESTAKING_PARACHAIN}
         placeholder={`0 ${LST_PREFIX}${selectedProtocol.token}`}
         decimals={selectedProtocol.decimals}
         amount={toAmount}

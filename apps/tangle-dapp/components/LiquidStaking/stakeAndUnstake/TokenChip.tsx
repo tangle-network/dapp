@@ -8,7 +8,7 @@ import {
   LST_PREFIX,
   LsToken,
 } from '../../../constants/liquidStaking/types';
-import ChainLogo from './ChainLogo';
+import ProtocolLogo from './ProtocolLogo';
 import DropdownChevronIcon from './DropdownChevronIcon';
 
 type TokenChipProps = {
@@ -41,9 +41,9 @@ const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
         onClick !== undefined && 'cursor-pointer',
       )}
     >
-      <ChainLogo
+      <ProtocolLogo
         size="sm"
-        chainId={chain?.id}
+        protocolId={chain?.id}
         isRounded
         isLiquidVariant={isLiquidVariant}
       />

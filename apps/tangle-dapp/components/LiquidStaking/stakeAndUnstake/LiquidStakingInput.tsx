@@ -21,13 +21,13 @@ import {
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
-import ChainLogo from './ChainLogo';
 import DropdownChevronIcon from './DropdownChevronIcon';
+import ProtocolLogo from './ProtocolLogo';
 import TokenChip from './TokenChip';
 
 export type LiquidStakingInputProps = {
   id: string;
-  chainId: LsProtocolId;
+  protocolId: LsProtocolId;
   decimals: number;
   amount: BN | null;
   isReadOnly?: boolean;
@@ -51,7 +51,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   placeholder = '0',
   isTokenLiquidVariant = false,
   rightElement,
-  chainId,
+  protocolId,
   token,
   minAmount,
   maxAmount,
@@ -109,7 +109,10 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
         )}
       >
         <div className="flex justify-between">
-          <ChainSelector selectedChainId={chainId} setChainId={setChainId} />
+          <ProtocolSelector
+            selectedProtocolId={protocolId}
+            setProtocolId={setChainId}
+          />
 
           {rightElement}
         </div>
@@ -144,30 +147,30 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   );
 };
 
-type ChainSelectorProps = {
-  selectedChainId: LsProtocolId;
+type ProtocolSelectorProps = {
+  selectedProtocolId: LsProtocolId;
 
   /**
    * If this function is not provided, the selector will be
    * considered read-only.
    */
-  setChainId?: (newChain: LsProtocolId) => void;
+  setProtocolId?: (newProtocolId: LsProtocolId) => void;
 };
 
 /** @internal */
-const ChainSelector: FC<ChainSelectorProps> = ({
-  selectedChainId,
-  setChainId,
+const ProtocolSelector: FC<ProtocolSelectorProps> = ({
+  selectedProtocolId,
+  setProtocolId,
 }) => {
-  const isReadOnly = setChainId === undefined;
+  const isReadOnly = setProtocolId === undefined;
 
   const base = (
     <div className="group flex gap-1 items-center justify-center">
       <div className="flex gap-2 items-center justify-center">
-        <ChainLogo size="sm" chainId={selectedChainId} />
+        <ProtocolLogo size="sm" protocolId={selectedProtocolId} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          {getLsProtocolDef(selectedChainId).networkName}
+          {getLsProtocolDef(selectedProtocolId).networkName}
         </Typography>
       </div>
 
@@ -175,7 +178,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
     </div>
   );
 
-  return setChainId !== undefined ? (
+  return setProtocolId !== undefined ? (
     <Dropdown>
       <DropdownMenuTrigger>{base}</DropdownMenuTrigger>
 
@@ -184,18 +187,21 @@ const ChainSelector: FC<ChainSelectorProps> = ({
           <ul>
             {Object.values(LsProtocolId)
               .filter(
-                (chainId): chainId is LsProtocolId =>
-                  chainId !== selectedChainId && typeof chainId !== 'string',
+                (protocolId): protocolId is LsProtocolId =>
+                  protocolId !== selectedProtocolId &&
+                  typeof protocolId !== 'string',
               )
-              .map((chainId) => {
+              .map((protocolId) => {
                 return (
-                  <li key={chainId} className="w-full">
+                  <li key={protocolId} className="w-full">
                     <DropdownMenuItem
-                      leftIcon={<ChainLogo size="sm" chainId={chainId} />}
-                      onSelect={() => setChainId(chainId)}
+                      leftIcon={
+                        <ProtocolLogo size="sm" protocolId={protocolId} />
+                      }
+                      onSelect={() => setProtocolId(protocolId)}
                       className="px-3 normal-case"
                     >
-                      {getLsProtocolDef(chainId).networkName}
+                      {getLsProtocolDef(protocolId).networkName}
                     </DropdownMenuItem>
                   </li>
                 );

@@ -77,6 +77,7 @@ export type LsErc20TokenDef = {
   networkName: string;
   decimals: number;
   token: LsErc20Token;
+  logo: StaticAssetPath;
   address: HexString;
   liquifierAdapterAddress: HexString;
   liquifierTgTokenAddress: HexString;
@@ -91,7 +92,7 @@ export type LsCardSearchParams = {
 
 export enum LsSearchParamKey {
   AMOUNT = 'amount',
-  CHAIN_ID = 'chainId',
+  PROTOCOL_ID = 'protocol',
   ACTION = 'action',
 }
 

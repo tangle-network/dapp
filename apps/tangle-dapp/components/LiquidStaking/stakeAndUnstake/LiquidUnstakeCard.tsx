@@ -45,7 +45,7 @@ const LiquidUnstakeCard: FC = () => {
 
   const [selectedChainId, setSelectedChainId] =
     useSearchParamState<LsProtocolId>({
-      key: LsSearchParamKey.CHAIN_ID,
+      key: LsSearchParamKey.PROTOCOL_ID,
       defaultValue: LsProtocolId.TANGLE_RESTAKING_PARACHAIN,
       parser: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
       stringify: (value) => value.toString(),
@@ -166,7 +166,7 @@ const LiquidUnstakeCard: FC = () => {
       {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
       <LiquidStakingInput
         id="liquid-staking-unstake-from"
-        chainId={LsProtocolId.TANGLE_RESTAKING_PARACHAIN}
+        protocolId={LsProtocolId.TANGLE_RESTAKING_PARACHAIN}
         token={selectedProtocol.token}
         amount={fromAmount}
         decimals={selectedProtocol.decimals}
@@ -184,7 +184,7 @@ const LiquidUnstakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-unstake-to"
-        chainId={selectedChainId}
+        protocolId={selectedChainId}
         amount={toAmount}
         decimals={selectedProtocol.decimals}
         placeholder={`0 ${selectedProtocol.token}`}

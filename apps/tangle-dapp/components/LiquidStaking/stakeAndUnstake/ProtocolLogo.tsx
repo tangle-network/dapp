@@ -3,20 +3,20 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LS_CHAIN_MAP,
+  getLsProtocolDef,
   LsProtocolId,
-} from '../../../constants/liquidStaking/liquidStakingTypes';
+} from '../../../constants/liquidStaking/types';
 
-export type ChainLogoSize = 'sm' | 'md';
+export type ProtocolLogoSize = 'sm' | 'md';
 
-export type ChainLogoProps = {
-  chainId?: LsProtocolId;
-  size: ChainLogoSize;
+export type ProtocolLogoProps = {
+  protocolId?: LsProtocolId;
+  size: ProtocolLogoSize;
   isRounded?: boolean;
   isLiquidVariant?: boolean;
 };
 
-const getSizeNumber = (size: ChainLogoSize) => {
+const getSizeNumber = (size: ProtocolLogoSize) => {
   switch (size) {
     case 'sm':
       return 24;
@@ -25,7 +25,7 @@ const getSizeNumber = (size: ChainLogoSize) => {
   }
 };
 
-const getSizeClass = (size: ChainLogoSize) => {
+const getSizeClass = (size: ProtocolLogoSize) => {
   switch (size) {
     case 'sm':
       return 'min-w-[24px] min-h-[24px]';
@@ -34,8 +34,8 @@ const getSizeClass = (size: ChainLogoSize) => {
   }
 };
 
-const getBackgroundColor = (chain: LsProtocolId) => {
-  switch (chain) {
+const getBackgroundColor = (protocolId: LsProtocolId) => {
+  switch (protocolId) {
     case LsProtocolId.MANTA:
       return 'bg-[#13101D] dark:bg-[#13101D]';
     case LsProtocolId.MOONBEAM:
@@ -55,8 +55,8 @@ const getBackgroundColor = (chain: LsProtocolId) => {
   }
 };
 
-const ChainLogo: FC<ChainLogoProps> = ({
-  chainId,
+const ProtocolLogo: FC<ProtocolLogoProps> = ({
+  protocolId,
   size = 'md',
   isRounded = false,
   isLiquidVariant = false,
@@ -64,7 +64,7 @@ const ChainLogo: FC<ChainLogoProps> = ({
   const sizeNumber = getSizeNumber(size);
 
   // In case the chain id is not provided, render a placeholder.
-  if (chainId === undefined) {
+  if (protocolId === undefined) {
     return (
       <div
         className={twMerge(
@@ -85,11 +85,11 @@ const ChainLogo: FC<ChainLogoProps> = ({
       <Image
         className={twMerge(
           getSizeClass(size),
-          getBackgroundColor(chainId),
+          getBackgroundColor(protocolId),
           isRounded ? 'rounded-full' : 'rounded-md',
         )}
-        src={LS_CHAIN_MAP[chainId].logo}
-        alt={`Logo of the liquid staking token ${chainId}`}
+        src={getLsProtocolDef(protocolId).logo}
+        alt={`Logo of the liquid staking token ${protocolId}`}
         width={sizeNumber}
         height={sizeNumber}
       />
@@ -97,4 +97,4 @@ const ChainLogo: FC<ChainLogoProps> = ({
   );
 };
 
-export default ChainLogo;
+export default ProtocolLogo;
