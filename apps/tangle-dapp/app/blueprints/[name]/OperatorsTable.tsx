@@ -110,14 +110,14 @@ const staticColumns = [
         <div className="flex-1 flex items-center gap-2 justify-end">
           {/* TODO: add proper href */}
           <Link href="#" passHref>
-            <Button variant="utility" className="body4">
+            <Button variant="utility" className="body4 uppercase">
               View
             </Button>
           </Link>
 
           {/* TODO: add proper href */}
           <Link href="#" passHref>
-            <Button variant="utility" className="body4">
+            <Button variant="utility" className="body4 uppercase">
               Restake
             </Button>
           </Link>

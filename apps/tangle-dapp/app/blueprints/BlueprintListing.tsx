@@ -272,7 +272,7 @@ const BlueprintItem: FC<Blueprint> = ({
                 </div>
                 <Typography
                   variant="body2"
-                  className="text-mono-120 dark:text-mono-100"
+                  className="line-clamp-1 text-mono-120 dark:text-mono-100"
                 >
                   {isEthereumAddress(author) ? shortenHex(author) : author}
                 </Typography>

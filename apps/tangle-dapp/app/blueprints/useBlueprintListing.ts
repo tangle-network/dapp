@@ -7,7 +7,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '0',
       name: 'Groth16 ZK-SaaS',
-      author: '0x1234567890123456789012345678901234567890',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -21,7 +21,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '1',
       name: 'Plonk Prover Pro',
-      author: '0x2345678901234567890123456789012345678901',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_2,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -34,7 +34,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '2',
       name: 'Sonic ZK Solutions',
-      author: '0x3456789012345678901234567890123456789012',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -48,7 +48,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '3',
       name: 'Marlin ZK Platform',
-      author: '0x4567890123456789012345678901234567890123',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_3,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -60,7 +60,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '4',
       name: 'Bulletproofs ZK Service',
-      author: '0x5678901234567890123456789012345678901234',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -73,7 +73,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '5',
       name: 'ZK-STARK Engine',
-      author: '0x6789012345678901234567890123456789012345',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_3,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -85,7 +85,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '6',
       name: 'Ligero ZK Platform',
-      author: '0x7890123456789012345678901234567890123456',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_3,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -98,7 +98,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '7',
       name: 'Aurora ZK Cloud',
-      author: '0x8901234567890123456789012345678901234567',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_2,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -110,7 +110,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '8',
       name: 'Fractal ZK Services',
-      author: '0x9012345678901234567890123456789012345678',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -123,7 +123,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '9',
       name: 'Halo2 ZK Platform',
-      author: '0xa123456789012345678901234567890123456789',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_2,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -135,7 +135,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '10',
       name: 'Nova ZK Accelerator',
-      author: '0xb234567890123456789012345678901234567890',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_2,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -148,7 +148,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '11',
       name: 'Hydra ZK Network',
-      author: '0xc345678901234567890123456789012345678901',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_3,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -160,7 +160,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '12',
       name: 'Quantum ZK Solutions',
-      author: '0xd456789012345678901234567890123456789012',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -173,7 +173,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '13',
       name: 'Mina ZK Provider',
-      author: '0xe567890123456789012345678901234567890123',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -185,7 +185,7 @@ export default function useBlueprintListing(): Blueprint[] {
     {
       id: '14',
       name: 'ZK Rollup Express',
-      author: '0xf678901234567890123456789012345678901234',
+      author: 'Webb Technologies Inc.',
       category: BlueprintCategory.CATEGORY_1,
       imgUrl:
         'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',

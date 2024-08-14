@@ -75,8 +75,18 @@ export const Table = <T extends RowData>({
                         })}
 
                         {{
-                          asc: <ArrowDropUpFill className="!fill-current" />,
-                          desc: <ArrowDropDownFill className="!fill-current" />,
+                          asc: (
+                            <ArrowDropUpFill
+                              size="lg"
+                              className="!fill-current"
+                            />
+                          ),
+                          desc: (
+                            <ArrowDropDownFill
+                              size="lg"
+                              className="!fill-current"
+                            />
+                          ),
                         }[header.column.getIsSorted() as string] ?? null}
                       </div>
                     ) : (

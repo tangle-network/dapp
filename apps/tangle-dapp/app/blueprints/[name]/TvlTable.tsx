@@ -113,7 +113,7 @@ const columns = [
           <Link href="#" passHref>
             <Button
               variant="utility"
-              className="body4"
+              className="body4 uppercase"
               onClick={(e) => {
                 e.stopPropagation(); // prevent row click
               }}

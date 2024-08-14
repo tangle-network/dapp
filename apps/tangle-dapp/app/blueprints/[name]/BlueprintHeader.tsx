@@ -4,7 +4,6 @@ import { ArrowRight, GithubFill } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { SocialChip } from '@webb-tools/webb-ui-components/components/SocialChip';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import Image from 'next/image';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -85,9 +84,9 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprintName }) => {
                 <div className="flex items-center">
                   <Typography
                     variant="body2"
-                    className="text-mono-120 dark:text-mono-100"
+                    className="line-clamp-1 text-mono-120 dark:text-mono-100"
                   >
-                    {shortenHex(author, 6)}
+                    {author}
                   </Typography>
                   {/* TODO: to add link here */}
                   {/* <ExternalLinkIcon href /> */}
