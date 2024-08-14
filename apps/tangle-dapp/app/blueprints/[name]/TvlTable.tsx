@@ -33,10 +33,7 @@ const columns = [
   columnHelper.accessor('name', {
     header: () => 'Vault',
     cell: (props) => (
-      <TableCellWrapper
-        disableHoverEffect={props.row.getIsExpanded()}
-        className="pl-3"
-      >
+      <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-2">
           <LSTTokenIcon name={props.row.original.lstToken} size="lg" />
           <Typography variant="h5" className="whitespace-nowrap">
@@ -54,7 +51,7 @@ const columns = [
   columnHelper.accessor('apy', {
     header: () => 'APY',
     cell: (props) => (
-      <TableCellWrapper disableHoverEffect={props.row.getIsExpanded()}>
+      <TableCellWrapper>
         <Typography
           variant="body1"
           fw="bold"
@@ -68,7 +65,7 @@ const columns = [
   columnHelper.accessor('tokensCount', {
     header: () => 'Tokens',
     cell: (props) => (
-      <TableCellWrapper disableHoverEffect={props.row.getIsExpanded()}>
+      <TableCellWrapper>
         <Typography
           variant="body1"
           fw="bold"
@@ -82,10 +79,7 @@ const columns = [
   columnHelper.accessor('liquidity', {
     header: () => 'Liquidity',
     cell: (props) => (
-      <TableCellWrapper
-        disableHoverEffect={props.row.getIsExpanded()}
-        removeBorder
-      >
+      <TableCellWrapper removeBorder>
         <div>
           <Typography
             variant="body1"
@@ -107,7 +101,7 @@ const columns = [
   columnHelper.accessor('lstToken', {
     header: () => null,
     cell: ({ row }) => (
-      <TableCellWrapper disableHoverEffect={row.getIsExpanded()} removeBorder>
+      <TableCellWrapper removeBorder>
         <div className="flex-1 flex items-center gap-2 justify-end">
           {/* TODO: add proper href */}
           <Link href="#" passHref>

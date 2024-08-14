@@ -105,8 +105,8 @@ const staticColumns = [
   }),
   columnHelper.accessor('address', {
     header: () => null,
-    cell: ({ row }) => (
-      <TableCellWrapper disableHoverEffect={row.getIsExpanded()} removeBorder>
+    cell: () => (
+      <TableCellWrapper removeBorder>
         <div className="flex-1 flex items-center gap-2 justify-end">
           {/* TODO: add proper href */}
           <Link href="#" passHref>

@@ -5,20 +5,12 @@ const TableCellWrapper: FC<
   PropsWithChildren & {
     removeBorder?: boolean;
     className?: string;
-    disableHoverEffect?: boolean;
   }
-> = ({
-  children,
-  removeBorder = false,
-  className,
-  disableHoverEffect = false,
-}) => {
+> = ({ children, className, removeBorder = false }) => {
   return (
     <div
       className={twMerge(
         'py-3 pr-3 flex h-[75px] items-center justify-between bg-mono-0 dark:bg-mono-190',
-        !disableHoverEffect &&
-          'group-hover:bg-mono-20 dark:group-hover:bg-mono-170',
         className,
       )}
     >

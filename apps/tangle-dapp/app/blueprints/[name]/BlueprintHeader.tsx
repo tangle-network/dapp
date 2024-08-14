@@ -55,7 +55,7 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprintName }) => {
 
       <div className="px-8 py-6 space-y-4">
         <div className="pb-4 flex flex-col md:flex-row gap-4 border-b border-mono-60 dark:border-mono-160">
-          <div className="flex-[2] flex gap-3">
+          <div className="flex-1 flex gap-3">
             <div className="flex gap-3">
               <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0">
                 <Image
@@ -100,7 +100,7 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprintName }) => {
             </div>
           </div>
 
-          <div className="flex-[3] flex flex-col justify-between md:items-end gap-3">
+          <div className="flex-1 flex flex-col justify-between md:items-end gap-3">
             <Typography
               variant="body1"
               className="line-clamp-3 text-mono-120 dark:text-mono-100 group-hover:text-mono-200 dark:group-hover:text-mono-0"
