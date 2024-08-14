@@ -12,11 +12,11 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 
 import {
-  LS_CHAIN_MAP,
-  LsParachainChainId,
+  getLsProtocolDef,
+  LsProtocolId,
   LsSearchParamKey,
   LST_PREFIX,
-} from '../../../constants/liquidStaking/liquidStakingParachain';
+} from '../../../constants/liquidStaking/types';
 import useDelegationsOccupiedStatus from '../../../data/liquidStaking/useDelegationsOccupiedStatus';
 import useExchangeRate, {
   ExchangeRateType,
@@ -44,11 +44,10 @@ const LiquidUnstakeCard: FC = () => {
     useState(false);
 
   const [selectedChainId, setSelectedChainId] =
-    useSearchParamState<LsParachainChainId>({
+    useSearchParamState<LsProtocolId>({
       key: LsSearchParamKey.CHAIN_ID,
-      defaultValue: LsParachainChainId.TANGLE_RESTAKING_PARACHAIN,
-      parser: (value) =>
-        z.nativeEnum(LsParachainChainId).parse(parseInt(value)),
+      defaultValue: LsProtocolId.TANGLE_RESTAKING_PARACHAIN,
+      parser: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
       stringify: (value) => value.toString(),
     });
 
@@ -60,15 +59,15 @@ const LiquidUnstakeCard: FC = () => {
 
   const { liquidBalances } = useParachainBalances();
 
-  const selectedChain = LS_CHAIN_MAP[selectedChainId];
+  const selectedProtocol = getLsProtocolDef(selectedChainId);
 
   const exchangeRate = useExchangeRate(
     ExchangeRateType.LiquidToNative,
-    selectedChain.currency,
+    selectedProtocol.currency,
   );
 
   const { result: areAllDelegationsOccupiedOpt } = useDelegationsOccupiedStatus(
-    selectedChain.currency,
+    selectedProtocol.currency,
   );
 
   useSearchParamSync({
@@ -88,9 +87,9 @@ const LiquidUnstakeCard: FC = () => {
     useCallback(
       (api) =>
         api.query.lstMinting.minimumRedeem({
-          Native: selectedChain.currency,
+          Native: selectedProtocol.currency,
         }),
-      [selectedChain.currency],
+      [selectedProtocol.currency],
     ),
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
   );
@@ -113,8 +112,8 @@ const LiquidUnstakeCard: FC = () => {
       return null;
     }
 
-    return liquidBalances.get(selectedChain.token) ?? BN_ZERO;
-  }, [liquidBalances, selectedChain.token]);
+    return liquidBalances.get(selectedProtocol.token) ?? BN_ZERO;
+  }, [liquidBalances, selectedProtocol.token]);
 
   const handleUnstakeClick = useCallback(() => {
     if (executeRedeemTx === null || fromAmount === null) {
@@ -123,9 +122,9 @@ const LiquidUnstakeCard: FC = () => {
 
     executeRedeemTx({
       amount: fromAmount,
-      currency: selectedChain.currency,
+      currency: selectedProtocol.currency,
     });
-  }, [executeRedeemTx, fromAmount, selectedChain.currency]);
+  }, [executeRedeemTx, fromAmount, selectedProtocol.currency]);
 
   const toAmount = useMemo(() => {
     if (fromAmount === null || exchangeRate === null) {
@@ -155,8 +154,8 @@ const LiquidUnstakeCard: FC = () => {
   const stakedWalletBalance = (
     <ParachainWalletBalance
       isNative={false}
-      token={selectedChain.token}
-      decimals={selectedChain.decimals}
+      token={selectedProtocol.token}
+      decimals={selectedProtocol.decimals}
       tooltip="Click to use all staked balance"
       onClick={() => setFromAmount(maximumInputAmount)}
     />
@@ -167,12 +166,12 @@ const LiquidUnstakeCard: FC = () => {
       {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
       <LiquidStakingInput
         id="liquid-staking-unstake-from"
-        chainId={LsParachainChainId.TANGLE_RESTAKING_PARACHAIN}
-        token={selectedChain.token}
+        chainId={LsProtocolId.TANGLE_RESTAKING_PARACHAIN}
+        token={selectedProtocol.token}
         amount={fromAmount}
-        decimals={selectedChain.decimals}
+        decimals={selectedProtocol.decimals}
         onAmountChange={setFromAmount}
-        placeholder={`0 ${LST_PREFIX}${selectedChain.token}`}
+        placeholder={`0 ${LST_PREFIX}${selectedProtocol.token}`}
         rightElement={stakedWalletBalance}
         isTokenLiquidVariant
         minAmount={minimumInputAmount ?? undefined}
@@ -187,9 +186,9 @@ const LiquidUnstakeCard: FC = () => {
         id="liquid-staking-unstake-to"
         chainId={selectedChainId}
         amount={toAmount}
-        decimals={selectedChain.decimals}
-        placeholder={`0 ${selectedChain.token}`}
-        token={selectedChain.token}
+        decimals={selectedProtocol.decimals}
+        placeholder={`0 ${selectedProtocol.token}`}
+        token={selectedProtocol.token}
         setChainId={setSelectedChainId}
         isReadOnly
       />
@@ -197,18 +196,18 @@ const LiquidUnstakeCard: FC = () => {
       {/* Details */}
       <div className="flex flex-col gap-2 p-3">
         <ExchangeRateDetailItem
-          token={selectedChain.token}
+          token={selectedProtocol.token}
           type={ExchangeRateType.LiquidToNative}
-          currency={selectedChain.currency}
+          currency={selectedProtocol.currency}
         />
 
         <MintAndRedeemFeeDetailItem
-          token={selectedChain.token}
+          token={selectedProtocol.token}
           isMinting={false}
           intendedAmount={fromAmount}
         />
 
-        <UnstakePeriodDetailItem currency={selectedChain.currency} />
+        <UnstakePeriodDetailItem currency={selectedProtocol.currency} />
       </div>
 
       {areAllDelegationsOccupied?.isTrue && (

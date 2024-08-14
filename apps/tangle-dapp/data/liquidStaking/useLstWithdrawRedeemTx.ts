@@ -2,8 +2,8 @@ import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
 import {
-  ParachainCurrency,
   LsParachainCurrencyKey,
+  ParachainCurrency,
 } from '../../constants/liquidStaking/liquidStakingParachain';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';

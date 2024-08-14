@@ -18,11 +18,11 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { z } from 'zod';
 
 import {
-  LS_CHAIN_MAP,
-  LsParachainChainId,
+  getLsProtocolDef,
+  LsProtocolId,
   LsSearchParamKey,
   LST_PREFIX,
-} from '../../../constants/liquidStaking/liquidStakingParachain';
+} from '../../../constants/liquidStaking/types';
 import useExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useExchangeRate';
@@ -53,28 +53,28 @@ const LiquidStakeCard: FC = () => {
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const { nativeBalances } = useParachainBalances();
 
-  const selectedChain = LS_CHAIN_MAP[selectedChainId];
+  const selectedProtocol = getLsProtocolDef(selectedChainId);
 
   useSearchParamSync({
     key: LsSearchParamKey.CHAIN_ID,
     value: selectedChainId,
-    parse: (value) => z.nativeEnum(LsParachainChainId).parse(parseInt(value)),
+    parse: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
     setValue: setSelectedChainId,
   });
 
   const exchangeRate = useExchangeRate(
     ExchangeRateType.NativeToLiquid,
-    selectedChain.currency,
+    selectedProtocol.currency,
   );
 
   const { result: minimumMintingAmount } = useApiRx(
     useCallback(
       (api) =>
         api.query.lstMinting.minimumMint({
-          Native: selectedChain.currency,
+          Native: selectedProtocol.currency,
         }),
-      [selectedChain.currency],
+      [selectedProtocol.currency],
     ),
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
   );
@@ -97,8 +97,8 @@ const LiquidStakeCard: FC = () => {
       return null;
     }
 
-    return nativeBalances.get(selectedChain.token) ?? BN_ZERO;
-  }, [nativeBalances, selectedChain.token]);
+    return nativeBalances.get(selectedProtocol.token) ?? BN_ZERO;
+  }, [nativeBalances, selectedProtocol.token]);
 
   const handleStakeClick = useCallback(() => {
     if (executeMintTx === null || fromAmount === null) {
@@ -107,9 +107,9 @@ const LiquidStakeCard: FC = () => {
 
     executeMintTx({
       amount: fromAmount,
-      currency: selectedChain.currency,
+      currency: selectedProtocol.currency,
     });
-  }, [executeMintTx, fromAmount, selectedChain.currency]);
+  }, [executeMintTx, fromAmount, selectedProtocol.currency]);
 
   const toAmount = useMemo(() => {
     if (fromAmount === null || exchangeRate === null) {
@@ -121,8 +121,8 @@ const LiquidStakeCard: FC = () => {
 
   const walletBalance = (
     <ParachainWalletBalance
-      token={selectedChain.token}
-      decimals={selectedChain.decimals}
+      token={selectedProtocol.token}
+      decimals={selectedProtocol.decimals}
       tooltip="Click to use all available balance"
       onClick={() => setFromAmount(maximumInputAmount)}
     />
@@ -133,11 +133,11 @@ const LiquidStakeCard: FC = () => {
       <LiquidStakingInput
         id="liquid-staking-stake-from"
         chainId={selectedChainId}
-        token={selectedChain.token}
+        token={selectedProtocol.token}
         amount={fromAmount}
-        decimals={selectedChain.decimals}
+        decimals={selectedProtocol.decimals}
         onAmountChange={setFromAmount}
-        placeholder={`0 ${selectedChain.token}`}
+        placeholder={`0 ${selectedProtocol.token}`}
         rightElement={walletBalance}
         setChainId={setSelectedChainId}
         minAmount={minimumInputAmount ?? undefined}
@@ -148,31 +148,31 @@ const LiquidStakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-stake-to"
-        chainId={LsParachainChainId.TANGLE_RESTAKING_PARACHAIN}
-        placeholder={`0 ${LST_PREFIX}${selectedChain.token}`}
-        decimals={selectedChain.decimals}
+        chainId={LsProtocolId.TANGLE_RESTAKING_PARACHAIN}
+        placeholder={`0 ${LST_PREFIX}${selectedProtocol.token}`}
+        decimals={selectedProtocol.decimals}
         amount={toAmount}
         isReadOnly
         isTokenLiquidVariant
-        token={selectedChain.token}
+        token={selectedProtocol.token}
         rightElement={<SelectValidatorsButton />}
       />
 
       {/* Details */}
       <div className="flex flex-col gap-2 p-3">
         <ExchangeRateDetailItem
-          token={selectedChain.token}
-          currency={selectedChain.currency}
+          token={selectedProtocol.token}
+          currency={selectedProtocol.currency}
           type={ExchangeRateType.NativeToLiquid}
         />
 
         <MintAndRedeemFeeDetailItem
           intendedAmount={fromAmount}
           isMinting
-          token={selectedChain.token}
+          token={selectedProtocol.token}
         />
 
-        <UnstakePeriodDetailItem currency={selectedChain.currency} />
+        <UnstakePeriodDetailItem currency={selectedProtocol.currency} />
       </div>
 
       <Button

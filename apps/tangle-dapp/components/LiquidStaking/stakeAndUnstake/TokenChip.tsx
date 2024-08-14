@@ -4,15 +4,15 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LIQUID_STAKING_CHAINS,
-  LsParachainToken,
+  LS_PROTOCOLS,
   LST_PREFIX,
-} from '../../../constants/liquidStaking/liquidStakingParachain';
+  LsToken,
+} from '../../../constants/liquidStaking/types';
 import ChainLogo from './ChainLogo';
 import DropdownChevronIcon from './DropdownChevronIcon';
 
 type TokenChipProps = {
-  token?: LsParachainToken;
+  token?: LsToken;
   isLiquidVariant: boolean;
   onClick?: () => void;
 };
@@ -23,11 +23,11 @@ const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
       return null;
     }
 
-    const result = LIQUID_STAKING_CHAINS.find((chain) => chain.token === token);
+    const result = LS_PROTOCOLS.find((protocol) => protocol.token === token);
 
     assert(
       result !== undefined,
-      'All tokens should have a corresponding chain',
+      'All tokens should have a corresponding protocol',
     );
 
     return result;

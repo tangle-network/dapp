@@ -2,8 +2,8 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 
 import { TxName } from '../../constants';
 import {
-  ParachainCurrency,
   LsParachainCurrencyKey,
+  ParachainCurrency,
 } from '../../constants/liquidStaking/liquidStakingParachain';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';

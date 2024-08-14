@@ -1,11 +1,9 @@
 import { BN } from '@polkadot/util';
 import { useEffect, useState } from 'react';
 
-import {
-  LS_ERC20_TOKEN_MAP,
-  LsErc20TokenId,
-} from '../../constants/liquidStaking/liquidStakingEvm';
+import { LS_ERC20_TOKEN_MAP } from '../../constants/liquidStaking/liquidStakingErc20';
 import liquifierTgTokenAbi from '../../constants/liquidStaking/liquifierTgTokenAbi';
+import { LsErc20TokenId } from '../../constants/liquidStaking/types';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import useContract from './useContract';
 

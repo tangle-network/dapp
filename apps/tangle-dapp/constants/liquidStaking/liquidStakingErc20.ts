@@ -1,32 +1,13 @@
-import { HexString } from '@polkadot/util/types';
-
-export type LsErc20TokenDef = {
-  id: LsErc20TokenId;
-  name: string;
-  token: LsErc20Token;
-  address: HexString;
-  liquifierAdapterAddress: HexString;
-  liquifierTgTokenAddress: HexString;
-};
-
-export enum LsErc20TokenId {
-  Chainlink,
-  TheGraph,
-  Livepeer,
-  Polygon,
-}
-
-export enum LsErc20Token {
-  LINK,
-  GRT,
-  LPT,
-  POL,
-}
+import { LsErc20TokenId, LsProtocolId, LsToken } from './types';
+import { LsErc20TokenDef } from './types';
 
 const ChainlinkErc20TokenDef: LsErc20TokenDef = {
-  id: LsErc20TokenId.Chainlink,
+  type: 'erc20',
+  id: LsProtocolId.CHAINLINK,
   name: 'Chainlink',
-  token: LsErc20Token.LINK,
+  networkName: 'Ethereum Mainnet',
+  token: LsToken.LINK,
+  decimals: 18,
   // TODO: Use Liquifier's testnet address if the environment is development.
   address: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
   // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
@@ -35,9 +16,12 @@ const ChainlinkErc20TokenDef: LsErc20TokenDef = {
 };
 
 const TheGraphErc20TokenDef: LsErc20TokenDef = {
-  id: LsErc20TokenId.TheGraph,
+  type: 'erc20',
+  id: LsProtocolId.THE_GRAPH,
   name: 'The Graph',
-  token: LsErc20Token.GRT,
+  networkName: 'Ethereum Mainnet',
+  token: LsToken.GRT,
+  decimals: 18,
   // TODO: Use Liquifier's testnet address if the environment is development.
   address: '0xc944E90C64B2c07662A292be6244BDf05Cda44a7',
   // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
@@ -46,9 +30,12 @@ const TheGraphErc20TokenDef: LsErc20TokenDef = {
 };
 
 const LivepeerErc20TokenDef: LsErc20TokenDef = {
-  id: LsErc20TokenId.Livepeer,
+  type: 'erc20',
+  id: LsProtocolId.LIVEPEER,
   name: 'Livepeer',
-  token: LsErc20Token.LPT,
+  networkName: 'Ethereum Mainnet',
+  token: LsToken.LPT,
+  decimals: 18,
   // TODO: Use Liquifier's testnet address if the environment is development.
   address: '0x58b6A8A3302369DAEc383334672404Ee733aB239',
   // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
@@ -57,9 +44,12 @@ const LivepeerErc20TokenDef: LsErc20TokenDef = {
 };
 
 const PolygonErc20TokenDef: LsErc20TokenDef = {
-  id: LsErc20TokenId.Polygon,
+  type: 'erc20',
+  id: LsProtocolId.POLYGON,
   name: 'Polygon',
-  token: LsErc20Token.POL,
+  networkName: 'Ethereum Mainnet',
+  token: LsToken.POL,
+  decimals: 18,
   // TODO: Use Liquifier's testnet address if the environment is development.
   address: '0x0D500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
   // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
@@ -68,8 +58,8 @@ const PolygonErc20TokenDef: LsErc20TokenDef = {
 };
 
 export const LS_ERC20_TOKEN_MAP: Record<LsErc20TokenId, LsErc20TokenDef> = {
-  [LsErc20TokenId.Chainlink]: ChainlinkErc20TokenDef,
-  [LsErc20TokenId.TheGraph]: TheGraphErc20TokenDef,
-  [LsErc20TokenId.Livepeer]: LivepeerErc20TokenDef,
-  [LsErc20TokenId.Polygon]: PolygonErc20TokenDef,
+  [LsProtocolId.CHAINLINK]: ChainlinkErc20TokenDef,
+  [LsProtocolId.THE_GRAPH]: TheGraphErc20TokenDef,
+  [LsProtocolId.LIVEPEER]: LivepeerErc20TokenDef,
+  [LsProtocolId.POLYGON]: PolygonErc20TokenDef,
 };

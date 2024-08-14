@@ -8,7 +8,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useEffect, useMemo } from 'react';
 
-import { LsParachainChainId } from '../../../constants/liquidStaking/liquidStakingParachain';
+import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import { AnySubstrateAddress } from '../../../types/utils';
 import formatBn from '../../../utils/formatBn';
 import AddressLink from '../AddressLink';
@@ -106,7 +106,7 @@ const TokenListItem: FC<TokenListItemProps> = ({
     >
       {/* Information */}
       <div className="flex items-center justify-center gap-2">
-        <ChainLogo size="md" isRounded chainId={LsParachainChainId.POLKADOT} />
+        <ChainLogo size="md" isRounded chainId={LsProtocolId.POLKADOT} />
 
         <div className="space-y-1">
           <Typography variant="h5" fw="bold" className="dark:text-mono-0">

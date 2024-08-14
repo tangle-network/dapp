@@ -4,11 +4,9 @@ import { useCallback } from 'react';
 import { erc20Abi } from 'viem';
 
 import { TxName } from '../../constants';
-import {
-  LS_ERC20_TOKEN_MAP,
-  LsErc20TokenId,
-} from '../../constants/liquidStaking/liquidStakingEvm';
+import { LS_ERC20_TOKEN_MAP } from '../../constants/liquidStaking/liquidStakingErc20';
 import liquifierAbi from '../../constants/liquidStaking/liquifierAbi';
+import { LsErc20TokenId } from '../../constants/liquidStaking/types';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import useTxNotification from '../../hooks/useTxNotification';
 import useContract from './useContract';
@@ -53,7 +51,7 @@ const useLiquifierDeposit = () => {
     activeEvmAddress20 !== null;
 
   const deposit = useCallback(
-    async (token: LsErc20TokenId, amount: BN) => {
+    async (tokenId: LsErc20TokenId, amount: BN) => {
       // TODO: Should the user balance check be done here or assume that the consumer of the hook will handle that?
 
       assert(
@@ -61,7 +59,7 @@ const useLiquifierDeposit = () => {
         'Should not be able to call this function if the requirements are not ready yet',
       );
 
-      const tokenDef = LS_ERC20_TOKEN_MAP[token];
+      const tokenDef = LS_ERC20_TOKEN_MAP[tokenId];
 
       notifyApproveProcessing();
 

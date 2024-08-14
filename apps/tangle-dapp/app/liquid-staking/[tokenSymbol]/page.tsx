@@ -7,7 +7,7 @@ import { LiquidStakingSelectionTable } from '../../../components/LiquidStaking/L
 import LiquidStakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidStakeCard';
 import LiquidUnstakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidUnstakeCard';
 import UnstakeRequestsTable from '../../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
-import { LsSearchParamKey } from '../../../constants/liquidStaking/liquidStakingParachain';
+import { LsSearchParamKey } from '../../../constants/liquidStaking/types';
 import useSearchParamState from '../../../hooks/useSearchParamState';
 import isLsParachainToken from '../../../utils/liquidStaking/isLsParachainToken';
 import TabListItem from '../../restake/TabListItem';

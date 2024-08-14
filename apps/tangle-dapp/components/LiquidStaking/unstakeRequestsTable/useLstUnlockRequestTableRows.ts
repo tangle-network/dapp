@@ -2,7 +2,7 @@ import assert from 'assert';
 import { useMemo } from 'react';
 
 import {
-  LIQUID_STAKING_CHAINS,
+  LS_PARACHAIN_CHAIN_MAP,
   LsSimpleParachainTimeUnit,
 } from '../../../constants/liquidStaking/liquidStakingParachain';
 import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
@@ -28,7 +28,7 @@ const useLstUnlockRequestTableRows = () => {
       })
       .map((request) => {
         // Find the corresponding chain in order to get the decimals.
-        const chain = LIQUID_STAKING_CHAINS.find(
+        const chain = Object.values(LS_PARACHAIN_CHAIN_MAP).find(
           (chain) => chain.currency === request.currency,
         );
 

@@ -4,7 +4,7 @@ import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
-import { LsParachainToken } from '../../../constants/liquidStaking/liquidStakingParachain';
+import { LsToken } from '../../../constants/liquidStaking/types';
 import useMintAndRedeemFees from '../../../data/liquidStaking/useMintAndRedeemFees';
 import formatBn from '../../../utils/formatBn';
 import scaleAmountByPermill from '../../../utils/scaleAmountByPermill';
@@ -13,7 +13,7 @@ import DetailItem from './DetailItem';
 export type MintAndRedeemFeeDetailItemProps = {
   isMinting: boolean;
   intendedAmount: BN | null;
-  token: LsParachainToken;
+  token: LsToken;
 };
 
 const MintAndRedeemFeeDetailItem: FC<MintAndRedeemFeeDetailItemProps> = ({

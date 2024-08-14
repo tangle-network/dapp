@@ -13,14 +13,14 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
-import { LsParachainToken } from '../../../constants/liquidStaking/liquidStakingParachain';
+import { LsToken } from '../../../constants/liquidStaking/types';
 import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import formatBn from '../../../utils/formatBn';
 
 export type ParachainWalletBalanceProps = {
   isNative?: boolean;
-  token: LsParachainToken;
+  token: LsToken;
   decimals: number;
   tooltip?: string;
   onlyShowTooltipWhenBalanceIsSet?: boolean;

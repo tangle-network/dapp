@@ -8,20 +8,20 @@ import { FC, useMemo } from 'react';
 
 import { StaticAssetPath } from '../../../constants';
 import {
-  LsParachainToken,
+  LsProtocolId,
   LST_PREFIX,
-  LsParachainChainId,
+  LsToken,
   TVS_TOOLTIP,
-} from '../../../constants/liquidStaking/liquidStakingParachain';
+} from '../../../constants/liquidStaking/types';
 import { PagePath } from '../../../types';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
 import StatItem from '../StatItem';
 import ChainLogo from './ChainLogo';
 
 export type LiquidStakingTokenItemProps = {
-  chainId: LsParachainChainId;
+  chainId: LsProtocolId;
   title: string;
-  tokenSymbol: LsParachainToken;
+  tokenSymbol: LsToken;
   totalValueStaked: number;
   totalStaked: string;
 };

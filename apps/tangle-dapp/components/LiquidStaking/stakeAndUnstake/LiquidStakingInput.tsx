@@ -13,11 +13,11 @@ import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LS_CHAIN_MAP,
-  LsParachainChainId,
+  getLsProtocolDef,
+  LsProtocolId,
   LST_PREFIX,
-  LsParachainToken,
-} from '../../../constants/liquidStaking/liquidStakingParachain';
+  LsToken,
+} from '../../../constants/liquidStaking/types';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
@@ -27,19 +27,19 @@ import TokenChip from './TokenChip';
 
 export type LiquidStakingInputProps = {
   id: string;
-  chainId: LsParachainChainId;
+  chainId: LsProtocolId;
   decimals: number;
   amount: BN | null;
   isReadOnly?: boolean;
   placeholder?: string;
   rightElement?: ReactNode;
-  token: LsParachainToken;
+  token: LsToken;
   isTokenLiquidVariant?: boolean;
   minAmount?: BN;
   maxAmount?: BN;
   maxErrorMessage?: string;
   onAmountChange?: (newAmount: BN | null) => void;
-  setChainId?: (newChain: LsParachainChainId) => void;
+  setChainId?: (newChain: LsProtocolId) => void;
   onTokenClick?: () => void;
 };
 
@@ -145,13 +145,13 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
 };
 
 type ChainSelectorProps = {
-  selectedChainId: LsParachainChainId;
+  selectedChainId: LsProtocolId;
 
   /**
    * If this function is not provided, the selector will be
    * considered read-only.
    */
-  setChainId?: (newChain: LsParachainChainId) => void;
+  setChainId?: (newChain: LsProtocolId) => void;
 };
 
 /** @internal */
@@ -167,7 +167,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
         <ChainLogo size="sm" chainId={selectedChainId} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          {LS_CHAIN_MAP[selectedChainId].networkName}
+          {getLsProtocolDef(selectedChainId).networkName}
         </Typography>
       </div>
 
@@ -182,9 +182,9 @@ const ChainSelector: FC<ChainSelectorProps> = ({
       <DropdownBody>
         <ScrollArea className="max-h-[300px]">
           <ul>
-            {Object.values(LsParachainChainId)
+            {Object.values(LsProtocolId)
               .filter(
-                (chainId): chainId is LsParachainChainId =>
+                (chainId): chainId is LsProtocolId =>
                   chainId !== selectedChainId && typeof chainId !== 'string',
               )
               .map((chainId) => {
@@ -195,7 +195,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
                       onSelect={() => setChainId(chainId)}
                       className="px-3 normal-case"
                     >
-                      {LS_CHAIN_MAP[chainId].networkName}
+                      {getLsProtocolDef(chainId).networkName}
                     </DropdownMenuItem>
                   </li>
                 );

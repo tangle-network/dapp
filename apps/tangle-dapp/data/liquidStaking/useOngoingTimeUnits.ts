@@ -3,8 +3,8 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { useCallback, useMemo } from 'react';
 
 import {
-  ParachainCurrency,
   LsSimpleParachainTimeUnit,
+  ParachainCurrency,
 } from '../../constants/liquidStaking/liquidStakingParachain';
 import useApiRx from '../../hooks/useApiRx';
 import tangleTimeUnitToSimpleInstance from '../../utils/liquidStaking/tangleTimeUnitToSimpleInstance';

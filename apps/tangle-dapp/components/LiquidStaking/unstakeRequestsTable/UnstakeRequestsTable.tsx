@@ -28,8 +28,8 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  ParachainCurrency,
   LsSimpleParachainTimeUnit,
+  ParachainCurrency,
 } from '../../../constants/liquidStaking/liquidStakingParachain';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import { AnySubstrateAddress } from '../../../types/utils';
