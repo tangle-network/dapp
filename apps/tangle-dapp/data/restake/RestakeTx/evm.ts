@@ -1,13 +1,16 @@
-import type { Account, Address } from 'viem';
+import type { Account, Address, Hash } from 'viem';
 import { Config } from 'wagmi';
 
 import {
   type CancelDelegatorUnstakeRequestContext,
+  type CancelWithdrawContext,
   type DelegateContext,
   type DelegatorBondLessContext,
   type DepositContext,
   type ExecuteDelegatorBondLessContext,
+  ExecuteWithdrawContext,
   RestakeTxBase,
+  type ScheduleWithdrawContext,
   type TxEventHandlers,
 } from './base';
 
@@ -85,6 +88,45 @@ export default class EVMRestakeTx extends RestakeTxBase {
         unstakeRequests,
       },
     );
+    return Promise.resolve(null);
+  };
+
+  scheduleWithdraw = async (
+    assetId: string,
+    amount: bigint,
+    eventHandlers?: TxEventHandlers<ScheduleWithdrawContext>,
+  ): Promise<`0x${string}` | null> => {
+    eventHandlers?.onTxFailed?.('EVM scheduleWithdraw not implemented yet', {
+      assetId,
+      amount,
+    });
+    return Promise.resolve(null);
+  };
+
+  executeWithdraw = async (
+    eventHandlers?: TxEventHandlers<ExecuteWithdrawContext>,
+  ): Promise<Hash | null> => {
+    const context = {} as ExecuteWithdrawContext;
+
+    eventHandlers?.onTxFailed?.(
+      'EVM executeWithdraw not implemented yet',
+      context,
+    );
+
+    return Promise.resolve(null);
+  };
+
+  cancelWithdraw = async (
+    withdrawRequests: CancelWithdrawContext['withdrawRequests'],
+    eventHandlers?: TxEventHandlers<CancelWithdrawContext>,
+  ): Promise<Hash | null> => {
+    const context = { withdrawRequests } as CancelWithdrawContext;
+
+    eventHandlers?.onTxFailed?.(
+      'EVM cancelWithdraw not implemented yet',
+      context,
+    );
+
     return Promise.resolve(null);
   };
 }
