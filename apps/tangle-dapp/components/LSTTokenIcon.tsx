@@ -26,6 +26,15 @@ const LSTTokenIcon: FC<LSTTokenIconProps> = ({ name, size = 'md' }) => {
           'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
           iconSizeClassName,
         )}
+        customLoadingCmp={
+          <div
+            className={twMerge(
+              'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
+              'z-10 rounded-full bg-mono-60 dark:bg-mono-140',
+              size === 'md' ? 'h-[25px] w-[25px]' : 'h-[50px] w-[50px]',
+            )}
+          />
+        }
       />
       <svg
         width={borderSize}

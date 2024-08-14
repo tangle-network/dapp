@@ -150,7 +150,7 @@ const OperatorsTable: FC = () => {
 
           return (
             <TableCellWrapper className="pl-3">
-              <div className="flex-1 flex items-center gap-2">
+              <div className="flex-1 flex items-center gap-2 pr-3">
                 <Avatar
                   sourceVariant="address"
                   value={address}
