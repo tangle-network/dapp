@@ -63,6 +63,8 @@ const useInputAmount = ({
   decimals,
   setAmount,
 }: Options) => {
+  // TODO: Need to display the error message when the amount is invalid, and it is the first time the input is rendered (i.e. the initial amount is invalid).
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [displayAmount, setDisplayAmount] = useState(

@@ -9,8 +9,10 @@ import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Alert, Button } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { z } from 'zod';
 
 import {
+  LsSearchParamKey,
   LST_PREFIX,
   PARACHAIN_CHAIN_MAP,
   ParachainChainId,
@@ -23,6 +25,8 @@ import useParachainBalances from '../../../data/liquidStaking/useParachainBalanc
 import useRedeemTx from '../../../data/liquidStaking/useRedeemTx';
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
+import useSearchParamState from '../../../hooks/useSearchParamState';
+import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
@@ -39,9 +43,13 @@ const LiquidUnstakeCard: FC = () => {
   const [isRequestSubmittedModalOpen, setIsRequestSubmittedModalOpen] =
     useState(false);
 
-  const [selectedChainId, setSelectedChainId] = useState<ParachainChainId>(
-    ParachainChainId.TANGLE_RESTAKING_PARACHAIN,
-  );
+  const [selectedChainId, setSelectedChainId] =
+    useSearchParamState<ParachainChainId>({
+      key: LsSearchParamKey.CHAIN_ID,
+      defaultValue: ParachainChainId.TANGLE_RESTAKING_PARACHAIN,
+      parser: (value) => z.nativeEnum(ParachainChainId).parse(parseInt(value)),
+      stringify: (value) => value.toString(),
+    });
 
   const {
     execute: executeRedeemTx,
@@ -61,6 +69,14 @@ const LiquidUnstakeCard: FC = () => {
   const { result: areAllDelegationsOccupiedOpt } = useDelegationsOccupiedStatus(
     selectedChain.currency,
   );
+
+  useSearchParamSync({
+    key: LsSearchParamKey.AMOUNT,
+    value: fromAmount,
+    setValue: setFromAmount,
+    parse: (value) => new BN(value),
+    stringify: (value) => value?.toString(),
+  });
 
   const areAllDelegationsOccupied =
     areAllDelegationsOccupiedOpt === null

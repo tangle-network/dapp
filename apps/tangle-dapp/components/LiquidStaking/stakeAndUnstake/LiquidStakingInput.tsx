@@ -14,8 +14,8 @@ import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LS_CHAIN_TO_NETWORK_NAME,
   LST_PREFIX,
+  PARACHAIN_CHAIN_MAP,
   ParachainChainId,
 } from '../../../constants/liquidStaking';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
@@ -164,10 +164,13 @@ const ChainSelector: FC<ChainSelectorProps> = ({
   const base = (
     <div className="group flex gap-1 items-center justify-center">
       <div className="flex gap-2 items-center justify-center">
-        <ChainIcon size="lg" name={selectedChainId} />
+        <ChainIcon
+          size="lg"
+          name={PARACHAIN_CHAIN_MAP[selectedChainId].token}
+        />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          {LS_CHAIN_TO_NETWORK_NAME[selectedChainId]}
+          {PARACHAIN_CHAIN_MAP[selectedChainId].networkName}
         </Typography>
       </div>
 
@@ -183,16 +186,24 @@ const ChainSelector: FC<ChainSelectorProps> = ({
         <ScrollArea className="max-h-[300px]">
           <ul>
             {Object.values(ParachainChainId)
-              .filter((chainId) => chainId !== selectedChainId)
+              .filter(
+                (chainId): chainId is ParachainChainId =>
+                  chainId !== selectedChainId && typeof chainId !== 'string',
+              )
               .map((chainId) => {
                 return (
                   <li key={chainId} className="w-full">
                     <DropdownMenuItem
-                      leftIcon={<ChainIcon size="lg" name={chainId} />}
+                      leftIcon={
+                        <ChainIcon
+                          size="lg"
+                          name={PARACHAIN_CHAIN_MAP[chainId].token}
+                        />
+                      }
                       onSelect={() => setChain(chainId)}
                       className="px-3 normal-case"
                     >
-                      {LS_CHAIN_TO_NETWORK_NAME[chainId]}
+                      {PARACHAIN_CHAIN_MAP[chainId].networkName}
                     </DropdownMenuItem>
                   </li>
                 );
