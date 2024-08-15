@@ -44,7 +44,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
           <LSTTokenIcon size="lg" name={tokenSymbol} />
 
           <Image
-            className="absolute bottom-0 right-0"
+            className="absolute bottom-0 right-0 z-20"
             src={StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO}
             alt="Tangle logo"
             width={14}
