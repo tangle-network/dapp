@@ -14,8 +14,8 @@ import { twMerge } from 'tailwind-merge';
 
 import {
   LiquidStakingToken,
-  LS_CHAIN_TO_NETWORK_NAME,
   LST_PREFIX,
+  PARACHAIN_CHAIN_MAP,
   ParachainChainId,
 } from '../../../constants/liquidStaking';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
@@ -167,7 +167,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
         <ChainLogo size="sm" chainId={selectedChainId} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          {LS_CHAIN_TO_NETWORK_NAME[selectedChainId]}
+          {PARACHAIN_CHAIN_MAP[selectedChainId].networkName}
         </Typography>
       </div>
 
@@ -183,7 +183,10 @@ const ChainSelector: FC<ChainSelectorProps> = ({
         <ScrollArea className="max-h-[300px]">
           <ul>
             {Object.values(ParachainChainId)
-              .filter((chainId) => chainId !== selectedChainId)
+              .filter(
+                (chainId): chainId is ParachainChainId =>
+                  chainId !== selectedChainId && typeof chainId !== 'string',
+              )
               .map((chainId) => {
                 return (
                   <li key={chainId} className="w-full">
@@ -192,7 +195,7 @@ const ChainSelector: FC<ChainSelectorProps> = ({
                       onSelect={() => setChain(chainId)}
                       className="px-3 normal-case"
                     >
-                      {LS_CHAIN_TO_NETWORK_NAME[chainId]}
+                      {PARACHAIN_CHAIN_MAP[chainId].networkName}
                     </DropdownMenuItem>
                   </li>
                 );

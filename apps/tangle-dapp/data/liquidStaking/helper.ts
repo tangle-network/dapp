@@ -105,7 +105,7 @@ export const fetchMappedValidatorsCommission = async (
   allValidators.forEach(([key, prefs]) => {
     const val = key.args[0].toString();
     const commission = prefs.commission.unwrap();
-    console.debug('validator', val);
+
     commissionMap.set(val, commission);
   });
 
@@ -113,7 +113,7 @@ export const fetchMappedValidatorsCommission = async (
 
   validators.forEach((validator) => {
     const commission = commissionMap.get(validator.toString());
-    // console.debug('validator', validator.toString(), commission?.toString());
+
     map.set(validator.toString(), commission || BN_ZERO);
   });
 

@@ -1,12 +1,14 @@
 'use client';
 
 import { notFound } from 'next/navigation';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 
 import { LiquidStakingSelectionTable } from '../../../components/LiquidStaking/LiquidStakingSelectionTable';
 import LiquidStakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidStakeCard';
 import LiquidUnstakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LiquidUnstakeCard';
 import UnstakeRequestsTable from '../../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
+import { LsSearchParamKey } from '../../../constants/liquidStaking';
+import useSearchParamState from '../../../hooks/useSearchParamState';
 import isLiquidStakingToken from '../../../utils/liquidStaking/isLiquidStakingToken';
 import TabListItem from '../../restake/TabListItem';
 import TabsList from '../../restake/TabsList';
@@ -16,7 +18,13 @@ type Props = {
 };
 
 const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
-  const [isStaking, setIsStaking] = useState(true);
+  const [isStaking, setIsStaking] = useSearchParamState({
+    defaultValue: true,
+    key: LsSearchParamKey.ACTION,
+    // TODO: Use an enum instead of strings. For some odd reason, currently it is causing compilation errors.
+    parser: (value) => value === 'stake',
+    stringify: (value) => (value ? 'stake' : 'unstake'),
+  });
 
   if (!isLiquidStakingToken(tokenSymbol)) {
     return notFound();
