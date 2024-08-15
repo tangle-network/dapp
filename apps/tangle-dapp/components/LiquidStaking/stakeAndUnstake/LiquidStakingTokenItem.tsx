@@ -1,20 +1,17 @@
 'use client';
 
-import { BN } from '@polkadot/util';
-import { ArrowRight } from '@webb-tools/icons';
-import { Button, Chip, Typography } from '@webb-tools/webb-ui-components';
+import { ChevronDown, ChevronUp } from '@webb-tools/icons';
+import { Button, Typography } from '@webb-tools/webb-ui-components';
 import Image from 'next/image';
-import { FC, useMemo } from 'react';
+import { FC, useState } from 'react';
 
 import { StaticAssetPath } from '../../../constants';
 import {
   LiquidStakingToken,
-  LST_PREFIX,
   ParachainChainId,
-  TVS_TOOLTIP,
 } from '../../../constants/liquidStaking';
 import { PagePath } from '../../../types';
-import formatTangleBalance from '../../../utils/formatTangleBalance';
+import AssetTable from '../AssetTable';
 import StatItem from '../StatItem';
 import ChainLogo from './ChainLogo';
 
@@ -22,71 +19,94 @@ export type LiquidStakingTokenItemProps = {
   chainId: ParachainChainId;
   title: string;
   tokenSymbol: LiquidStakingToken;
-  totalValueStaked: number;
-  totalStaked: string;
+  apy: number;
+  derivativeTokens: string;
+  myStake: {
+    value: number;
+    valueInUSD: number;
+  };
 };
 
 const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
   title,
   chainId,
   tokenSymbol,
-  totalValueStaked,
-  totalStaked,
+  apy,
+  derivativeTokens,
+  myStake,
 }) => {
-  const formattedTotalValueStaked = totalValueStaked.toLocaleString('en-US', {
+  const [showAssetTable, setShowAssetTable] = useState(false);
+
+  const formattedMyStakedInUSD = myStake.valueInUSD.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
   });
 
-  const formattedTotalStaked = useMemo(
-    () => formatTangleBalance(new BN(totalStaked)),
-    [totalStaked],
-  );
-
   return (
-    <div className="flex gap-2 justify-between rounded-xl bg-mono-20 dark:bg-mono-160 w-full px-3 py-6 border border-mono-40 dark:border-none">
-      <div className="flex gap-2 items-center">
-        <div className="relative rounded-full dark:bg-mono-180 border-2 dark:border-purple-80 p-1">
-          <ChainLogo size="md" chainId={chainId} isRounded />
+    <div className="bg-mono-0 dark:bg-mono-190 w-full p-3 rounded-xl space-y-3">
+      <div className="grid grid-cols-5">
+        <div className="flex gap-2 items-center col-span-2">
+          <div className="relative rounded-full dark:bg-mono-180 border-2 dark:border-purple-80 p-1">
+            <ChainLogo size="md" chainId={chainId} isRounded />
 
-          <Image
-            className="absolute bottom-0 right-0"
-            src={StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO}
-            alt="Tangle logo"
-            width={14}
-            height={14}
+            <Image
+              className="absolute bottom-0 right-0"
+              src={StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO}
+              alt="Tangle logo"
+              width={14}
+              height={14}
+            />
+          </div>
+
+          <Typography variant="body1" fw="normal" className="dark:text-mono-0">
+            {title}
+          </Typography>
+        </div>
+
+        <div className="grid grid-cols-3 gap-6 col-span-2">
+          <StatItem title={apy + ' %'} subtitle="APY" tooltip="APY" />
+
+          <StatItem
+            title={derivativeTokens}
+            subtitle="Tokens"
+            tooltip="Total no. of derivative tokens"
+          />
+
+          <StatItem
+            title={myStake.value.toLocaleString()}
+            subtitle={formattedMyStakedInUSD}
+            tooltip="My staked amount in USD"
           />
         </div>
 
-        <Typography variant="body1" fw="normal" className="dark:text-mono-0">
-          {title}
-        </Typography>
+        <div className="flex items-center gap-1 justify-end col-span-1">
+          <Button
+            size="sm"
+            variant="utility"
+            className="uppercase"
+            href={`${PagePath.LIQUID_STAKING}/${tokenSymbol}`}
+          >
+            Stake
+          </Button>
 
-        <Chip className="normal-case" color="dark-grey">
-          {LST_PREFIX}
-          {tokenSymbol.toUpperCase()}
-        </Chip>
+          <Button
+            size="sm"
+            variant="utility"
+            onClick={() => setShowAssetTable(!showAssetTable)}
+          >
+            {showAssetTable ? (
+              <ChevronUp className="fill-blue-60 dark:fill-blue-40" size="md" />
+            ) : (
+              <ChevronDown
+                className="fill-blue-60 dark:fill-blue-40"
+                size="md"
+              />
+            )}
+          </Button>
+        </div>
       </div>
 
-      <div className="flex items-center gap-6">
-        <StatItem title={formattedTotalStaked} subtitle="Staked" />
-
-        <StatItem
-          title={formattedTotalValueStaked}
-          subtitle="TVS"
-          tooltip={TVS_TOOLTIP}
-        />
-
-        <Button
-          size="sm"
-          variant="utility"
-          className="uppercase"
-          rightIcon={<ArrowRight className="dark:fill-blue-50" />}
-          href={`${PagePath.LIQUID_STAKING}/${tokenSymbol}`}
-        >
-          Stake
-        </Button>
-      </div>
+      {showAssetTable && <AssetTable />}
     </div>
   );
 };

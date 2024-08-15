@@ -8,9 +8,15 @@ export type StatItemProps = {
   title: string;
   subtitle: string;
   tooltip?: string;
+  largeSubtitle?: boolean;
 };
 
-const StatItem: FC<StatItemProps> = ({ title, subtitle, tooltip }) => {
+const StatItem: FC<StatItemProps> = ({
+  title,
+  subtitle,
+  tooltip,
+  largeSubtitle = false,
+}) => {
   return (
     <div className="flex flex-col items-start justify-center border-l dark:border-mono-120 px-3">
       <Typography className="dark:text-mono-0" variant="body2" fw="bold">
@@ -18,7 +24,11 @@ const StatItem: FC<StatItemProps> = ({ title, subtitle, tooltip }) => {
       </Typography>
 
       <div className="flex gap-1 items-start justify-start">
-        <Typography variant="body2" fw="normal">
+        <Typography
+          variant={largeSubtitle ? 'body1' : 'body2'}
+          fw="normal"
+          className="text-mono-120 dark:text-mono-100"
+        >
           {subtitle}
         </Typography>
 
