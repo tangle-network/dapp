@@ -18,14 +18,14 @@ import ensureError from '../../../utils/ensureError';
 import toEvmAddress32 from '../../../utils/toEvmAddress32';
 import abi from './abi';
 import {
-  type CancelUnstakeRequestContext,
-  type CancelWithdrawContext,
-  type DelegateContext,
+  type CancelDelegatorUnstakeRequestContext,
+  type CancelWithdrawRequestContext,
+  type DelegatorStakeContext,
   type DepositContext,
-  type ExecuteUnstakeContext,
-  type ExecuteWithdrawContext,
+  type ExecuteAllDelegatorUnstakeRequestContext,
+  type ExecuteAllWithdrawRequestContext,
   RestakeTxBase,
-  type ScheduleUnstakeContext,
+  type ScheduleDelegatorUnstakeContext,
   type ScheduleWithdrawContext,
   TxEvent,
   type TxEventHandlers,
@@ -141,13 +141,17 @@ export default class EVMRestakeTx extends RestakeTxBase {
     }
   };
 
-  delegate = async (
+  stake = async (
     operatorAccount: string,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<DelegateContext>,
+    eventHandlers?: TxEventHandlers<DelegatorStakeContext>,
   ) => {
-    const context = { operatorAccount, assetId, amount } as DelegateContext;
+    const context = {
+      operatorAccount,
+      assetId,
+      amount,
+    } as DelegatorStakeContext;
 
     return this.sendTransaction(
       'delegate',
@@ -161,13 +165,13 @@ export default class EVMRestakeTx extends RestakeTxBase {
     operatorAccount: string,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<ScheduleUnstakeContext>,
+    eventHandlers?: TxEventHandlers<ScheduleDelegatorUnstakeContext>,
   ): Promise<Hash | null> => {
     const context = {
       operatorAccount,
       assetId,
       amount,
-    } as ScheduleUnstakeContext;
+    } as ScheduleDelegatorUnstakeContext;
 
     return this.sendTransaction(
       'scheduleDelegatorUnstake',
@@ -178,9 +182,9 @@ export default class EVMRestakeTx extends RestakeTxBase {
   };
 
   executeDelegatorUnstakeRequests = async (
-    eventHandlers?: TxEventHandlers<ExecuteUnstakeContext>,
+    eventHandlers?: TxEventHandlers<ExecuteAllDelegatorUnstakeRequestContext>,
   ): Promise<Hash | null> => {
-    const context = {} as ExecuteUnstakeContext;
+    const context = {} as ExecuteAllDelegatorUnstakeRequestContext;
 
     return this.sendTransaction(
       'executeDelegatorUnstake',
@@ -191,10 +195,10 @@ export default class EVMRestakeTx extends RestakeTxBase {
   };
 
   cancelDelegatorUnstakeRequests = async (
-    unstakeRequests: CancelUnstakeRequestContext['unstakeRequests'],
-    eventHandlers?: TxEventHandlers<CancelUnstakeRequestContext>,
+    unstakeRequests: CancelDelegatorUnstakeRequestContext['unstakeRequests'],
+    eventHandlers?: TxEventHandlers<CancelDelegatorUnstakeRequestContext>,
   ): Promise<Hash | null> => {
-    const context = { unstakeRequests } as CancelUnstakeRequestContext;
+    const context = { unstakeRequests } as CancelDelegatorUnstakeRequestContext;
 
     let lastHash: Hash | null = null;
 
@@ -234,18 +238,18 @@ export default class EVMRestakeTx extends RestakeTxBase {
   };
 
   executeWithdraw = async (
-    eventHandlers?: TxEventHandlers<ExecuteWithdrawContext>,
+    eventHandlers?: TxEventHandlers<ExecuteAllWithdrawRequestContext>,
   ): Promise<Hash | null> => {
-    const context = {} as ExecuteWithdrawContext;
+    const context = {} as ExecuteAllWithdrawRequestContext;
 
     return this.sendTransaction('executeWithdraw', [], context, eventHandlers);
   };
 
   cancelWithdraw = async (
-    withdrawRequests: CancelWithdrawContext['withdrawRequests'],
-    eventHandlers?: TxEventHandlers<CancelWithdrawContext>,
+    withdrawRequests: CancelWithdrawRequestContext['withdrawRequests'],
+    eventHandlers?: TxEventHandlers<CancelWithdrawRequestContext>,
   ): Promise<Hash | null> => {
-    const context = { withdrawRequests } as CancelWithdrawContext;
+    const context = { withdrawRequests } as CancelWithdrawRequestContext;
 
     let lastHash: Hash | null = null;
 

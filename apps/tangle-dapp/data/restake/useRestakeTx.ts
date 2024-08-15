@@ -50,7 +50,7 @@ export default function useRestakeTx(): RestakeTxBase {
 
 function createDummyApi(error: string): RestakeTxBase {
   return {
-    delegate(operatorAccount, assetId, amount, eventHandlers) {
+    stake(operatorAccount, assetId, amount, eventHandlers) {
       eventHandlers?.onTxFailed?.(error, { amount, assetId, operatorAccount });
       return Promise.resolve(null);
     },
