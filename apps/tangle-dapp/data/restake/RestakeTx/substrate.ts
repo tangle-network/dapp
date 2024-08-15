@@ -5,14 +5,14 @@ import noop from 'lodash/noop';
 import type { Hash } from 'viem';
 
 import {
-  type CancelDelegatorUnstakeRequestContext,
+  type CancelUnstakeRequestContext,
   type CancelWithdrawContext,
   type DelegateContext,
-  type DelegatorBondLessContext,
   type DepositContext,
-  type ExecuteDelegatorBondLessContext,
+  type ExecuteUnstakeContext,
   type ExecuteWithdrawContext,
   RestakeTxBase,
+  type ScheduleUnstakeContext,
   type ScheduleWithdrawContext,
   type TxEventHandlers,
 } from './base';
@@ -183,13 +183,13 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     operatorAccount: string,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<DelegatorBondLessContext>,
+    eventHandlers?: TxEventHandlers<ScheduleUnstakeContext>,
   ) => {
     const context = {
       amount,
       assetId,
       operatorAccount,
-    } satisfies DelegatorBondLessContext;
+    } satisfies ScheduleUnstakeContext;
 
     const extrinsic =
       this.provider.tx.multiAssetDelegation.scheduleDelegatorUnstake(
@@ -204,7 +204,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   };
 
   executeDelegatorUnstakeRequests = async (
-    eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
+    eventHandlers?: TxEventHandlers<ExecuteUnstakeContext>,
   ): Promise<Hash | null> => {
     const context = {} satisfies ExecuteWithdrawContext;
 
@@ -217,14 +217,12 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   };
 
   cancelDelegatorUnstakeRequests = async (
-    unstakeRequests: CancelDelegatorUnstakeRequestContext['unstakeRequests'],
-    eventHandlers?:
-      | TxEventHandlers<CancelDelegatorUnstakeRequestContext>
-      | undefined,
+    unstakeRequests: CancelUnstakeRequestContext['unstakeRequests'],
+    eventHandlers?: TxEventHandlers<CancelUnstakeRequestContext> | undefined,
   ): Promise<Hash | null> => {
     const context = {
       unstakeRequests,
-    } satisfies CancelDelegatorUnstakeRequestContext;
+    } satisfies CancelUnstakeRequestContext;
 
     const extrinsics = this.provider.tx.utility.batchAll(
       unstakeRequests.map(({ amount, assetId, operatorAccount }) =>

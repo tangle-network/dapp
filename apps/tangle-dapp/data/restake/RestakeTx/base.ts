@@ -40,11 +40,11 @@ export type DelegateContext = {
   amount: bigint;
 };
 
-export type DelegatorBondLessContext = DelegateContext;
+export type ScheduleUnstakeContext = DelegateContext;
 
-export type ExecuteDelegatorBondLessContext = Record<string, unknown>;
+export type ExecuteUnstakeContext = Record<string, unknown>;
 
-export type CancelDelegatorUnstakeRequestContext = {
+export type CancelUnstakeRequestContext = {
   unstakeRequests: {
     operatorAccount: string;
     assetId: string;
@@ -94,16 +94,16 @@ export abstract class RestakeTxBase {
     operatorAccount: string,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<DelegatorBondLessContext>,
+    eventHandlers?: TxEventHandlers<ScheduleUnstakeContext>,
   ): Promise<Hash | null>;
 
   abstract executeDelegatorUnstakeRequests(
-    eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
+    eventHandlers?: TxEventHandlers<ExecuteUnstakeContext>,
   ): Promise<Hash | null>;
 
   abstract cancelDelegatorUnstakeRequests(
-    unstakeRequests: CancelDelegatorUnstakeRequestContext['unstakeRequests'],
-    eventHandlers?: TxEventHandlers<CancelDelegatorUnstakeRequestContext>,
+    unstakeRequests: CancelUnstakeRequestContext['unstakeRequests'],
+    eventHandlers?: TxEventHandlers<CancelUnstakeRequestContext>,
   ): Promise<Hash | null>;
 
   abstract scheduleWithdraw(

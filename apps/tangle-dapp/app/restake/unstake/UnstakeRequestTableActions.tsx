@@ -2,8 +2,8 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { useCallback, useMemo, useState } from 'react';
 
 import {
-  type CancelDelegatorUnstakeRequestContext,
-  type ExecuteDelegatorBondLessContext,
+  type CancelUnstakeRequestContext,
+  type ExecuteUnstakeContext,
   TxEvent,
 } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
@@ -24,7 +24,7 @@ const UnstakeRequestTableActions = ({
   const [isExecuting, setIsExecuting] = useState(false);
 
   const cancelOptions =
-    useRestakeTxEventHandlersWithNoti<CancelDelegatorUnstakeRequestContext>(
+    useRestakeTxEventHandlersWithNoti<CancelUnstakeRequestContext>(
       useMemo(
         () =>
           ({
@@ -39,7 +39,7 @@ const UnstakeRequestTableActions = ({
     );
 
   const executeOptions =
-    useRestakeTxEventHandlersWithNoti<ExecuteDelegatorBondLessContext>(
+    useRestakeTxEventHandlersWithNoti<ExecuteUnstakeContext>(
       useMemo(
         () =>
           ({
@@ -65,7 +65,7 @@ const UnstakeRequestTableActions = ({
           amount: amountRaw,
           assetId,
           operatorAccount: operatorAccountId,
-        } satisfies CancelDelegatorUnstakeRequestContext['unstakeRequests'][number];
+        } satisfies CancelUnstakeRequestContext['unstakeRequests'][number];
       },
     );
 
