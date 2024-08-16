@@ -39,7 +39,7 @@ import React, {
 import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
 import {
-  sortAddressOrIdentityForNomineeOrValidator,
+  getSortAddressOrIdentityFnc,
   sortBnValueForNomineeOrValidator,
 } from '../../utils/table';
 import { ContainerSkeleton } from '..';
@@ -128,7 +128,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
             rowA,
             rowB,
             columnId,
-            sortAddressOrIdentityForNomineeOrValidator,
+            getSortAddressOrIdentityFnc<Validator>(),
             isDesc,
           ),
         filterFn: (row, _, filterValue) => {

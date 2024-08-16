@@ -20,7 +20,7 @@ const TableStatus = ({
         className,
       )}
     >
-      <div className="flex flex-col items-center justify-center gap-2 pt-4">
+      <div className="flex flex-col items-center justify-center gap-2 py-4">
         {icon}
 
         <Typography

@@ -12,6 +12,7 @@ import {
   ExternalLinkIcon,
   fuzzyFilter,
   shortenString,
+  SocialChip,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -19,7 +20,6 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { SkeletonRow } from '../../../components/skeleton';
-import SocialChip from '../../../components/SocialChip';
 import { HeaderCell } from '../../../components/tableCells';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useNetworkStore from '../../../context/useNetworkStore';
@@ -41,7 +41,7 @@ const addressColumn = columnHelper.accessor('address', {
         {twitter && <SocialChip href={twitter} type="twitter" />}
         {discord && <SocialChip href={discord} type="discord" />}
         {email && <SocialChip href={`mailto:${email}`} type="email" />}
-        {web && <SocialChip href={web} type="web" />}
+        {web && <SocialChip href={web} type="website" />}
         {!twitter && !discord && !email && !web && (
           <Typography
             variant="body1"

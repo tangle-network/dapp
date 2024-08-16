@@ -4,8 +4,8 @@ import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
-import { LiquidStakingToken } from '../../../constants/liquidStaking';
 import useMintAndRedeemFees from '../../../data/liquidStaking/useMintAndRedeemFees';
+import { LiquidStakingToken } from '../../../types/liquidStaking';
 import formatBn from '../../../utils/formatBn';
 import scaleAmountByPermill from '../../../utils/scaleAmountByPermill';
 import DetailItem from './DetailItem';

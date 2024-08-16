@@ -23,7 +23,7 @@ import { FC, useState } from 'react';
 import { Nominee } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
 import {
-  sortAddressOrIdentityForNomineeOrValidator,
+  getSortAddressOrIdentityFnc,
   sortBnValueForNomineeOrValidator,
 } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
@@ -58,7 +58,7 @@ const columns = [
         </div>
       );
     },
-    sortingFn: sortAddressOrIdentityForNomineeOrValidator,
+    sortingFn: getSortAddressOrIdentityFnc<Nominee>(),
   }),
   columnHelper.accessor('isActive', {
     header: () => <HeaderCell title="Status" className="justify-start" />,

@@ -56,6 +56,7 @@ export * from './Radio';
 export * from './SideBar';
 export { default as SkeletonLoader } from './SkeletonLoader';
 export * from './Slider';
+export * from './SocialChip';
 export * from './Socials';
 export * from './Stats';
 export { default as Suspense } from './Suspense';

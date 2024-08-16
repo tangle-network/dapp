@@ -1,4 +1,4 @@
-import { LiquidStakingToken } from '../../constants/liquidStaking';
+import { LiquidStakingToken } from '../../types/liquidStaking';
 
 function isLiquidStakingToken(
   tokenSymbol: string,
