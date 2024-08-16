@@ -9,7 +9,7 @@ const TxInfo = () => {
 
   const items = useMemo<FeeItem[]>(
     () => [
-      // TOOD: Add fee value
+      // TODO: Add fee value
       {
         name: 'Fee',
       },
