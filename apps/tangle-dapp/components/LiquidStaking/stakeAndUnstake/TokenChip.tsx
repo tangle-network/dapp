@@ -1,14 +1,10 @@
 import { Typography } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import {
-  LIQUID_STAKING_CHAINS,
-  LiquidStakingToken,
-  LST_PREFIX,
-} from '../../../constants/liquidStaking';
-import ChainLogo from './ChainLogo';
+import { LST_PREFIX } from '../../../constants/liquidStaking';
+import { LiquidStakingToken } from '../../../types/liquidStaking';
+import LSTTokenIcon from '../../LSTTokenIcon';
 import DropdownChevronIcon from './DropdownChevronIcon';
 
 type TokenChipProps = {
@@ -18,21 +14,6 @@ type TokenChipProps = {
 };
 
 const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
-  const chain = (() => {
-    if (token === undefined) {
-      return null;
-    }
-
-    const result = LIQUID_STAKING_CHAINS.find((chain) => chain.token === token);
-
-    assert(
-      result !== undefined,
-      'All tokens should have a corresponding chain',
-    );
-
-    return result;
-  })();
-
   return (
     <div
       onClick={onClick}
@@ -41,12 +22,7 @@ const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
         onClick !== undefined && 'cursor-pointer',
       )}
     >
-      <ChainLogo
-        size="sm"
-        chainId={chain?.id}
-        isRounded
-        isLiquidVariant={isLiquidVariant}
-      />
+      {token && <LSTTokenIcon name={token} />}
 
       <Typography variant="h5" fw="bold">
         {isLiquidVariant && LST_PREFIX}

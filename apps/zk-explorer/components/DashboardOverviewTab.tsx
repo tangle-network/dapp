@@ -1,7 +1,11 @@
 'use client';
 
-import { GithubFill, GlobalLine, TwitterFill } from '@webb-tools/icons';
-import { Button, Card, Typography } from '@webb-tools/webb-ui-components';
+import {
+  Button,
+  Card,
+  SocialChip,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { WEBB_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC, useMemo } from 'react';
 import { MOCK_AVATAR_URL } from '../constants/mock';
@@ -11,7 +15,6 @@ import useTailwindBreakpoint, {
 } from '../hooks/useTailwindBreakpoint';
 import { formatTimestamp } from '../utils';
 import LargeSquareAvatar from './LargeSquareAvatar';
-import SocialChip from './SocialChip';
 
 const DashboardOverviewTab: FC = () => {
   const {
@@ -72,23 +75,19 @@ const DashboardOverviewTab: FC = () => {
             <SocialChip
               title="View GitHub profile"
               href={`https://github.com/${githubUsername}`}
-              Icon={GithubFill}
+              type="github"
             />
 
             {twitterHandle !== undefined && (
               <SocialChip
                 title="View X profile"
                 href={`https://twitter.com/${twitterHandle}`}
-                Icon={TwitterFill}
+                type="twitter"
               />
             )}
 
             {website !== undefined && (
-              <SocialChip
-                title="View website"
-                href={website}
-                Icon={GlobalLine}
-              />
+              <SocialChip title="View website" href={website} type="website" />
             )}
           </div>
         </div>

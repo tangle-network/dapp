@@ -35,11 +35,11 @@ const classNames: ButtonClassNames = {
     base: {
       common:
         'rounded-lg px-3 py-2 bg-blue-0 text-blue-60 dark:bg-blue-120 dark:text-blue-40 font-bold border border-transparent',
-      hover: 'hover:bg-blue-10 dark:hover:text-blue-30',
+      hover: 'hover:bg-blue-10 dark:hover:bg-blue-110 dark:hover:text-blue-30',
       active:
         'active:bg-blue-10 active:border-blue-40 dark:active:border-blue-110 dark:active:text-blue-30',
       disabled:
-        'disabled:text-blue-30 disabled:border-transparent dark:disabled:bg-blue-120 dark:disabled:text-blue-90',
+        'disabled:text-blue-30 disabled:border-transparent dark:disabled:bg-blue-120 dark:disabled:text-blue-90 dark:disabled:opacity-50',
     },
     md: 'body1',
     sm: 'body4 uppercase',
