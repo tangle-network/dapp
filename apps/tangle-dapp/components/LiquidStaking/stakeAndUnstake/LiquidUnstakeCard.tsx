@@ -28,10 +28,10 @@ import useApiRx from '../../../hooks/useApiRx';
 import useSearchParamState from '../../../hooks/useSearchParamState';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
+import AgnosticLsBalance from './AgnosticLsBalance';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
 import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
-import ParachainWalletBalance from './ParachainWalletBalance';
 import SelectTokenModal from './SelectTokenModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import UnstakeRequestSubmittedModal from './UnstakeRequestSubmittedModal';
@@ -152,9 +152,9 @@ const LiquidUnstakeCard: FC = () => {
   }, [redeemTxStatus]);
 
   const stakedWalletBalance = (
-    <ParachainWalletBalance
+    <AgnosticLsBalance
       isNative={false}
-      token={selectedProtocol.token}
+      protocolId={selectedProtocol.id}
       decimals={selectedProtocol.decimals}
       tooltip="Click to use all staked balance"
       onClick={() => setFromAmount(maximumInputAmount)}

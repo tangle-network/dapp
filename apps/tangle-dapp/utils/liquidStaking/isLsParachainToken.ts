@@ -1,6 +1,8 @@
-import { LsToken } from '../../constants/liquidStaking/types';
+import { LsProtocolId, LsToken } from '../../constants/liquidStaking/types';
 
-function isLsParachainToken(tokenSymbol: string): tokenSymbol is LsToken {
+function isLsParachainToken(
+  tokenSymbol: string | LsProtocolId,
+): tokenSymbol is LsToken {
   return Object.values(LsToken).includes(tokenSymbol as LsToken);
 }
 

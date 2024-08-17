@@ -97,6 +97,8 @@ const useContract = <Abi extends ViemAbi>(abi: Abi) => {
     [abi, activeEvmAddress20, connectorClient],
   );
 
+  // TODO: This only loads the balance once. Make it so it updates every few seconds that way the it responds to any balance changes that may occur, not just when loading the site initially. Like a subscription. So, add an extra function like `readStream` or `subscribe` that will allow the user to subscribe to the contract and get updates whenever the contract changes.
+
   return {
     // Only provide the read functions once the public client is ready.
     read: publicClient === null ? null : read,
