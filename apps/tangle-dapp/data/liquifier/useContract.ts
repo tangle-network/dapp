@@ -13,6 +13,7 @@ import {
 } from 'viem/actions';
 import { mainnet } from 'viem/chains';
 import { useConnectorClient } from 'wagmi';
+import { ReadContractReturnType } from 'wagmi/actions';
 
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import useEthereumMainnetClient from './useEthereumMainnetClient';
@@ -43,7 +44,9 @@ const useContract = <Abi extends ViemAbi>(abi: Abi) => {
   const read = useCallback(
     <FunctionName extends ContractFunctionName<Abi, 'pure' | 'view'>>(
       options: ContractReadOptions<Abi, FunctionName>,
-    ) => {
+    ): Promise<
+      ReadContractReturnType<Abi, FunctionName, typeof options.args>
+    > => {
       assert(
         publicClient !== null,
         "Should not be able to call this function if the client isn't ready yet",
