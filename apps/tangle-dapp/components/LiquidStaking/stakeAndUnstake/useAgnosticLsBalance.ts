@@ -6,13 +6,15 @@ import { erc20Abi } from 'viem';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { LS_ERC20_TOKEN_MAP } from '../../../constants/liquidStaking/liquidStakingErc20';
 import LIQUIFIER_TG_TOKEN_ABI from '../../../constants/liquidStaking/liquifierTgTokenAbi';
-import { LsProtocolId } from '../../../constants/liquidStaking/types';
+import {
+  getLsProtocolDef,
+  LsProtocolId,
+} from '../../../constants/liquidStaking/types';
 import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
 import useContract from '../../../data/liquifier/useContract';
 import useEvmAddress20 from '../../../hooks/useEvmAddress';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import isLsErc20TokenId from '../../../utils/liquidStaking/isLsErc20TokenId';
-import isLsParachainToken from '../../../utils/liquidStaking/isLsParachainToken';
 
 const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
   const substrateAddress = useSubstrateAddress();
@@ -63,9 +65,11 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
         return;
       }
 
-      assert(isLsParachainToken(protocolId));
+      const protocol = getLsProtocolDef(protocolId);
 
-      const newBalance = parachainBalances.get(protocolId) ?? BN_ZERO;
+      assert(protocol.type === 'parachain');
+
+      const newBalance = parachainBalances.get(protocol.token) ?? BN_ZERO;
 
       setBalance(newBalance);
     }

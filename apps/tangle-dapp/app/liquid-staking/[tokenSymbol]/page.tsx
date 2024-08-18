@@ -26,6 +26,7 @@ const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
     stringify: (value) => (value ? 'stake' : 'unstake'),
   });
 
+  // An invalid or unknown token symbol was provided on the URL.
   if (!isLsParachainToken(tokenSymbol)) {
     return notFound();
   }

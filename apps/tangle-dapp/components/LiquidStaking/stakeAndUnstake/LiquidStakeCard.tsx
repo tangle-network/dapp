@@ -4,7 +4,7 @@
 // the `lstMinting` pallet for this file only.
 import '@webb-tools/tangle-restaking-types';
 
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Search } from '@webb-tools/icons';
 import {
@@ -13,7 +13,6 @@ import {
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import React, { FC, useCallback, useMemo } from 'react';
 import { z } from 'zod';
 
@@ -28,18 +27,16 @@ import useExchangeRate, {
 } from '../../../data/liquidStaking/useExchangeRate';
 import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
-import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
-import useApi from '../../../hooks/useApi';
-import useApiRx from '../../../hooks/useApiRx';
 import useSearchParamState from '../../../hooks/useSearchParamState';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
+import AgnosticLsBalance from './AgnosticLsBalance';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
 import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
-import ParachainWalletBalance from './ParachainWalletBalance';
 import SelectValidatorsButton from './SelectValidatorsButton';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
+import useLsSpendingLimits from './useLsSpendingLimits';
 
 const LiquidStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useSearchParamState<BN | null>({
@@ -51,7 +48,11 @@ const LiquidStakeCard: FC = () => {
 
   const { selectedChainId, setSelectedChainId } = useLiquidStakingStore();
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
-  const { nativeBalances } = useParachainBalances();
+
+  const { maxSpendable, minSpendable } = useLsSpendingLimits(
+    true,
+    selectedChainId,
+  );
 
   const selectedProtocol = getLsProtocolDef(selectedChainId);
 
@@ -63,42 +64,10 @@ const LiquidStakeCard: FC = () => {
     setValue: setSelectedChainId,
   });
 
-  const exchangeRate = useExchangeRate(
+  const { exchangeRate } = useExchangeRate(
     ExchangeRateType.NativeToLiquid,
     selectedProtocol.currency,
   );
-
-  const { result: minimumMintingAmount } = useApiRx(
-    useCallback(
-      (api) =>
-        api.query.lstMinting.minimumMint({
-          Native: selectedProtocol.currency,
-        }),
-      [selectedProtocol.currency],
-    ),
-    TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
-  );
-
-  const { result: existentialDepositAmount } = useApi(
-    useCallback((api) => api.consts.balances.existentialDeposit, []),
-    TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
-  );
-
-  const minimumInputAmount = useMemo(() => {
-    if (minimumMintingAmount === null || existentialDepositAmount === null) {
-      return null;
-    }
-
-    return BN.max(minimumMintingAmount, existentialDepositAmount);
-  }, [existentialDepositAmount, minimumMintingAmount]);
-
-  const maximumInputAmount = useMemo(() => {
-    if (nativeBalances === null) {
-      return null;
-    }
-
-    return nativeBalances.get(selectedProtocol.token) ?? BN_ZERO;
-  }, [nativeBalances, selectedProtocol.token]);
 
   const handleStakeClick = useCallback(() => {
     if (executeMintTx === null || fromAmount === null) {
@@ -120,11 +89,11 @@ const LiquidStakeCard: FC = () => {
   }, [fromAmount, exchangeRate]);
 
   const walletBalance = (
-    <ParachainWalletBalance
-      token={selectedProtocol.token}
+    <AgnosticLsBalance
+      protocolId={selectedProtocol.id}
       decimals={selectedProtocol.decimals}
       tooltip="Click to use all available balance"
-      onClick={() => setFromAmount(maximumInputAmount)}
+      onClick={() => setFromAmount(maxSpendable)}
     />
   );
 
@@ -140,8 +109,8 @@ const LiquidStakeCard: FC = () => {
         placeholder={`0 ${selectedProtocol.token}`}
         rightElement={walletBalance}
         setChainId={setSelectedChainId}
-        minAmount={minimumInputAmount ?? undefined}
-        maxAmount={maximumInputAmount ?? undefined}
+        minAmount={minSpendable ?? undefined}
+        maxAmount={maxSpendable ?? undefined}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />

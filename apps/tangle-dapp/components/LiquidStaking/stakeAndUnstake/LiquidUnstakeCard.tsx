@@ -4,10 +4,9 @@
 // the `lstMinting` pallet for this file only.
 import '@webb-tools/tangle-restaking-types';
 
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Alert, Button } from '@webb-tools/webb-ui-components';
-import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 
@@ -21,10 +20,7 @@ import useDelegationsOccupiedStatus from '../../../data/liquidStaking/useDelegat
 import useExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useExchangeRate';
-import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
 import useRedeemTx from '../../../data/liquidStaking/useRedeemTx';
-import useApi from '../../../hooks/useApi';
-import useApiRx from '../../../hooks/useApiRx';
 import useSearchParamState from '../../../hooks/useSearchParamState';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
@@ -35,6 +31,7 @@ import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
 import SelectTokenModal from './SelectTokenModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import UnstakeRequestSubmittedModal from './UnstakeRequestSubmittedModal';
+import useLsSpendingLimits from './useLsSpendingLimits';
 
 const LiquidUnstakeCard: FC = () => {
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
@@ -57,13 +54,16 @@ const LiquidUnstakeCard: FC = () => {
     txHash: redeemTxHash,
   } = useRedeemTx();
 
-  const { liquidBalances } = useParachainBalances();
+  const { minSpendable, maxSpendable } = useLsSpendingLimits(
+    false,
+    selectedChainId,
+  );
 
   const selectedProtocol = getLsProtocolDef(selectedChainId);
 
-  const exchangeRate = useExchangeRate(
+  const { exchangeRate } = useExchangeRate(
     ExchangeRateType.LiquidToNative,
-    selectedProtocol.currency,
+    selectedProtocol.id,
   );
 
   const { result: areAllDelegationsOccupiedOpt } = useDelegationsOccupiedStatus(
@@ -82,38 +82,6 @@ const LiquidUnstakeCard: FC = () => {
     areAllDelegationsOccupiedOpt === null
       ? null
       : areAllDelegationsOccupiedOpt.unwrapOrDefault();
-
-  const { result: minimumRedeemAmount } = useApiRx(
-    useCallback(
-      (api) =>
-        api.query.lstMinting.minimumRedeem({
-          Native: selectedProtocol.currency,
-        }),
-      [selectedProtocol.currency],
-    ),
-    TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
-  );
-
-  const { result: existentialDepositAmount } = useApi(
-    useCallback((api) => api.consts.balances.existentialDeposit, []),
-    TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
-  );
-
-  const minimumInputAmount = useMemo(() => {
-    if (minimumRedeemAmount === null || existentialDepositAmount === null) {
-      return null;
-    }
-
-    return BN.max(minimumRedeemAmount, existentialDepositAmount);
-  }, [existentialDepositAmount, minimumRedeemAmount]);
-
-  const maximumInputAmount = useMemo(() => {
-    if (liquidBalances === null) {
-      return null;
-    }
-
-    return liquidBalances.get(selectedProtocol.token) ?? BN_ZERO;
-  }, [liquidBalances, selectedProtocol.token]);
 
   const handleUnstakeClick = useCallback(() => {
     if (executeRedeemTx === null || fromAmount === null) {
@@ -157,7 +125,7 @@ const LiquidUnstakeCard: FC = () => {
       protocolId={selectedProtocol.id}
       decimals={selectedProtocol.decimals}
       tooltip="Click to use all staked balance"
-      onClick={() => setFromAmount(maximumInputAmount)}
+      onClick={() => setFromAmount(maxSpendable)}
     />
   );
 
@@ -174,8 +142,8 @@ const LiquidUnstakeCard: FC = () => {
         placeholder={`0 ${LST_PREFIX}${selectedProtocol.token}`}
         rightElement={stakedWalletBalance}
         isTokenLiquidVariant
-        minAmount={minimumInputAmount ?? undefined}
-        maxAmount={maximumInputAmount ?? undefined}
+        minAmount={minSpendable ?? undefined}
+        maxAmount={maxSpendable ?? undefined}
         maxErrorMessage="Not enough stake to redeem"
         onTokenClick={() => setIsSelectTokenModalOpen(true)}
       />

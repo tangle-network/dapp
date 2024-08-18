@@ -49,6 +49,15 @@ export type LsErc20Token =
   | LsToken.LPT
   | LsToken.POL;
 
+export const LS_PARACHAIN_TOKENS = [
+  LsToken.DOT,
+  LsToken.GLMR,
+  LsToken.MANTA,
+  LsToken.ASTAR,
+  LsToken.PHALA,
+  LsToken.TNT,
+] as const satisfies LsParachainToken[];
+
 export type LsParachainToken = Exclude<LsToken, LsErc20Token>;
 
 export const LS_ERC20_TOKEN_IDS = [
@@ -57,6 +66,12 @@ export const LS_ERC20_TOKEN_IDS = [
   LsProtocolId.LIVEPEER,
   LsProtocolId.POLYGON,
 ] as const satisfies LsErc20TokenId[];
+
+export const LS_PARACHAIN_CHAIN_IDS = Object.values(LsProtocolId).filter(
+  (value): value is LsParachainChainId =>
+    typeof value !== 'string' &&
+    !LS_ERC20_TOKEN_IDS.includes(value as LsErc20TokenId),
+) satisfies LsParachainChainId[];
 
 export type LsParachainChainDef = {
   type: 'parachain';
