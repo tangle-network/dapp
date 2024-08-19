@@ -34,7 +34,6 @@ import {
   RestakeTxBase,
   type ScheduleDelegatorUnstakeContext,
   type ScheduleWithdrawContext,
-  TxEvent,
   type TxEventHandlers,
 } from './base';
 import { MULTI_ASSET_DELEGATION_EVM_ADDRESS } from './constants';
@@ -64,20 +63,24 @@ export default class EVMRestakeTx extends RestakeTxBase {
     args: TArgs,
     context: Context,
     eventHandlers?: TxEventHandlers<Context>,
-    emittedEvents?: TxEvent[],
   ): Promise<Hash | null> => {
     try {
-      if (
-        Array.isArray(emittedEvents) &&
-        emittedEvents.includes(TxEvent.SENDING)
-      )
-        eventHandlers?.onTxSending?.(context);
+      eventHandlers?.onTxSending?.(context);
+
+      const connector = (() => {
+        if (this.provider.state.current === null) return;
+
+        return this.provider.state.connections.get(this.provider.state.current)
+          ?.connector;
+      })();
 
       const { request } = await simulateContract(this.provider, {
         abi,
         address,
         functionName,
         args,
+        account: this.activeAccount,
+        connector,
       } as SimulateContractParameters);
 
       const hash = await writeContract(this.provider, request);
