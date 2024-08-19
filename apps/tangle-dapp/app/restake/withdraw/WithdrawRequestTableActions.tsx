@@ -2,21 +2,21 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { useCallback, useMemo, useState } from 'react';
 
 import {
-  type CancelDelegatorUnstakeRequestContext,
-  type ExecuteDelegatorBondLessContext,
+  type CancelWithdrawContext,
+  type ExecuteWithdrawContext,
   TxEvent,
 } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import { isScheduledRequestReady } from '../utils';
-import type { UnstakeRequestTableData } from './types';
+import type { WithdrawRequestTableData } from './types';
 
 type Props = {
-  allRequests: UnstakeRequestTableData[];
-  selectedRequests: UnstakeRequestTableData[];
+  allRequests: WithdrawRequestTableData[];
+  selectedRequests: WithdrawRequestTableData[];
 };
 
-const UnstakeRequestTableActions = ({
+const WithdrawRequestTableActions = ({
   allRequests,
   selectedRequests,
 }: Props) => {
@@ -24,13 +24,13 @@ const UnstakeRequestTableActions = ({
   const [isExecuting, setIsExecuting] = useState(false);
 
   const cancelOptions =
-    useRestakeTxEventHandlersWithNoti<CancelDelegatorUnstakeRequestContext>(
+    useRestakeTxEventHandlersWithNoti<CancelWithdrawContext>(
       useMemo(
         () =>
           ({
             options: {
               [TxEvent.SUCCESS]: {
-                message: 'Successfully canceled unstake request!',
+                message: 'Successfully canceled withdraw request!',
               },
             },
           }) satisfies Parameters<typeof useRestakeTxEventHandlersWithNoti>[0],
@@ -39,13 +39,13 @@ const UnstakeRequestTableActions = ({
     );
 
   const executeOptions =
-    useRestakeTxEventHandlersWithNoti<ExecuteDelegatorBondLessContext>(
+    useRestakeTxEventHandlersWithNoti<ExecuteWithdrawContext>(
       useMemo(
         () =>
           ({
             options: {
               [TxEvent.SUCCESS]: {
-                message: 'Successfully executed unstake request!',
+                message: 'Successfully executed withdraw request!',
               },
             },
           }) satisfies Parameters<typeof useRestakeTxEventHandlersWithNoti>[0],
@@ -53,39 +53,35 @@ const UnstakeRequestTableActions = ({
       ),
     );
 
-  const { executeDelegatorUnstakeRequests, cancelDelegatorUnstakeRequests } =
-    useRestakeTx();
+  const { executeWithdraw, cancelWithdraw } = useRestakeTx();
 
-  const handleCancelUnstake = useCallback(async () => {
+  const handleCancelWithdraw = useCallback(async () => {
     setIsCanceling(true);
 
-    const unstakeRequests = selectedRequests.map(
-      ({ amountRaw, operatorAccountId, assetId }) => {
-        return {
-          amount: amountRaw,
-          assetId,
-          operatorAccount: operatorAccountId,
-        } satisfies CancelDelegatorUnstakeRequestContext['unstakeRequests'][number];
-      },
-    );
+    const requests = selectedRequests.map(({ amountRaw, assetId }) => {
+      return {
+        amount: amountRaw,
+        assetId,
+      } satisfies CancelWithdrawContext['withdrawRequests'][number];
+    });
 
-    await cancelDelegatorUnstakeRequests(unstakeRequests, cancelOptions);
+    await cancelWithdraw(requests, cancelOptions);
 
     setIsCanceling(false);
-  }, [cancelDelegatorUnstakeRequests, cancelOptions, selectedRequests]);
+  }, [cancelOptions, cancelWithdraw, selectedRequests]);
 
-  const handleExecuteUnstake = useCallback(async () => {
+  const handleExecuteWithdraw = useCallback(async () => {
     setIsExecuting(true);
-    await executeDelegatorUnstakeRequests(executeOptions);
+    await executeWithdraw(executeOptions);
     setIsExecuting(false);
-  }, [executeDelegatorUnstakeRequests, executeOptions]);
+  }, [executeWithdraw, executeOptions]);
 
-  const canCancelUnstake = useMemo(
+  const canCancelWithdraw = useMemo(
     () => selectedRequests.length > 0,
     [selectedRequests.length],
   );
 
-  const canExecuteUnstake = useMemo(() => {
+  const canExecuteWithdraw = useMemo(() => {
     if (allRequests.length === 0) return false;
 
     return allRequests.some(({ timeRemaining }) => {
@@ -99,21 +95,21 @@ const UnstakeRequestTableActions = ({
         className="flex-1"
         isLoading={isCanceling}
         loadingText="Canceling..."
-        isDisabled={!canCancelUnstake || isExecuting}
+        isDisabled={!canCancelWithdraw || isExecuting}
         isFullWidth
-        onClick={handleCancelUnstake}
+        onClick={handleCancelWithdraw}
         variant="secondary"
       >
-        Cancel Unstake
+        Cancel Withdraw
       </Button>
 
       <Button
         className="flex-1"
         isLoading={isExecuting}
         loadingText="Executing..."
-        isDisabled={!canExecuteUnstake || isCanceling}
+        isDisabled={!canExecuteWithdraw || isCanceling}
         isFullWidth
-        onClick={handleExecuteUnstake}
+        onClick={handleExecuteWithdraw}
       >
         Execute All
       </Button>
@@ -121,4 +117,4 @@ const UnstakeRequestTableActions = ({
   );
 };
 
-export default UnstakeRequestTableActions;
+export default WithdrawRequestTableActions;
