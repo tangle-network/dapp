@@ -1,8 +1,10 @@
 import {
+  type Abi,
   type Account,
   type Address,
   type ContractFunctionArgs,
   type ContractFunctionName,
+  encodeFunctionData,
   type Hash,
   zeroAddress,
 } from 'viem';
@@ -14,9 +16,14 @@ import {
   writeContract,
 } from 'wagmi/actions';
 
+import {
+  BATCH_PRECOMPILE_ABI,
+  PrecompileAddress,
+} from '../../../constants/evmPrecompiles';
 import ensureError from '../../../utils/ensureError';
+import createEvmBatchCallArgs from '../../../utils/staking/createEvmBatchCallArgs';
 import toEvmAddress32 from '../../../utils/toEvmAddress32';
-import abi from './abi';
+import restakeAbi from './abi';
 import {
   type CancelDelegatorUnstakeRequestContext,
   type CancelWithdrawRequestContext,
@@ -43,16 +50,16 @@ export default class EVMRestakeTx extends RestakeTxBase {
 
   sendTransaction = async <
     Context extends Record<string, unknown>,
-    TFunctionName extends ContractFunctionName<
-      typeof abi,
-      'nonpayable' | 'payable'
-    >,
+    const TAbi extends Abi | readonly unknown[],
+    TFunctionName extends ContractFunctionName<TAbi, 'nonpayable' | 'payable'>,
     TArgs extends ContractFunctionArgs<
-      typeof abi,
+      TAbi,
       'nonpayable' | 'payable',
       TFunctionName
     >,
   >(
+    abi: TAbi,
+    address: Address,
     functionName: TFunctionName,
     args: TArgs,
     context: Context,
@@ -68,7 +75,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
 
       const { request } = await simulateContract(this.provider, {
         abi,
-        address: MULTI_ASSET_DELEGATION_EVM_ADDRESS,
+        address,
         functionName,
         args,
       } as SimulateContractParameters);
@@ -108,36 +115,45 @@ export default class EVMRestakeTx extends RestakeTxBase {
 
     if (operatorAccount === undefined) {
       return this.sendTransaction(
+        restakeAbi,
+        MULTI_ASSET_DELEGATION_EVM_ADDRESS,
         'deposit',
         [assetIdBigInt, amount],
         context,
         eventHandlers,
       );
     } else {
-      // TODO: Find the correct way to batch these transactions on EVM
-      // Maybe: https://wagmi.sh/core/api/actions/writeContracts
-      // or deploy https://www.multicall3.com/ contract on our EVM
+      const batchArgs = createEvmBatchCallArgs([
+        {
+          callData: encodeFunctionData({
+            abi: restakeAbi,
+            functionName: 'deposit',
+            args: [assetIdBigInt, amount],
+          }),
+          gasLimit: 0,
+          to: MULTI_ASSET_DELEGATION_EVM_ADDRESS,
+          value: 0,
+        },
+        {
+          callData: encodeFunctionData({
+            abi: restakeAbi,
+            functionName: 'delegate',
+            args: [toEvmAddress32(operatorAccount), assetIdBigInt, amount],
+          }),
+          gasLimit: 0,
+          to: MULTI_ASSET_DELEGATION_EVM_ADDRESS,
+          value: 0,
+        },
+      ]);
 
-      const depositTx = await this.sendTransaction(
-        'deposit',
-        [assetIdBigInt, amount],
+      return this.sendTransaction(
+        BATCH_PRECOMPILE_ABI,
+        PrecompileAddress.BATCH,
+        'batchAll',
+        batchArgs,
         context,
         eventHandlers,
       );
-
-      // If the deposit tx failed, we don't want to delegate
-      if (depositTx === null) {
-        return null;
-      }
-
-      const delegateTx = await this.sendTransaction(
-        'delegate',
-        [toEvmAddress32(operatorAccount), assetIdBigInt, amount],
-        context,
-        eventHandlers,
-      );
-
-      return delegateTx;
     }
   };
 
@@ -154,6 +170,8 @@ export default class EVMRestakeTx extends RestakeTxBase {
     } as DelegatorStakeContext;
 
     return this.sendTransaction(
+      restakeAbi,
+      MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'delegate',
       [toEvmAddress32(operatorAccount), BigInt(assetId), amount],
       context,
@@ -174,6 +192,8 @@ export default class EVMRestakeTx extends RestakeTxBase {
     } as ScheduleDelegatorUnstakeContext;
 
     return this.sendTransaction(
+      restakeAbi,
+      MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'scheduleDelegatorUnstake',
       [toEvmAddress32(operatorAccount), BigInt(assetId), amount],
       context,
@@ -187,6 +207,8 @@ export default class EVMRestakeTx extends RestakeTxBase {
     const context = {} as ExecuteAllDelegatorUnstakeRequestContext;
 
     return this.sendTransaction(
+      restakeAbi,
+      MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'executeDelegatorUnstake',
       [],
       context,
@@ -200,26 +222,27 @@ export default class EVMRestakeTx extends RestakeTxBase {
   ): Promise<Hash | null> => {
     const context = { unstakeRequests } as CancelDelegatorUnstakeRequestContext;
 
-    let lastHash: Hash | null = null;
+    const batchArgs = createEvmBatchCallArgs(
+      unstakeRequests.map(({ amount, assetId, operatorAccount }) => ({
+        callData: encodeFunctionData({
+          abi: restakeAbi,
+          functionName: 'cancelDelegatorUnstake',
+          args: [toEvmAddress32(operatorAccount), BigInt(assetId), amount],
+        }),
+        gasLimit: 0,
+        to: MULTI_ASSET_DELEGATION_EVM_ADDRESS,
+        value: 0,
+      })),
+    );
 
-    // Handle the request one by one
-    // TODO: Find the correct way to batch these transactions on EVM
-    for (const { operatorAccount, amount, assetId } of unstakeRequests) {
-      const hash = await this.sendTransaction(
-        'cancelDelegatorUnstake',
-        [toEvmAddress32(operatorAccount), BigInt(assetId), amount],
-        context,
-        eventHandlers,
-      );
-
-      if (hash === null) {
-        return null;
-      }
-
-      lastHash = hash;
-    }
-
-    return lastHash;
+    return this.sendTransaction(
+      BATCH_PRECOMPILE_ABI,
+      PrecompileAddress.BATCH,
+      'batchAll',
+      batchArgs,
+      context,
+      eventHandlers,
+    );
   };
 
   scheduleWithdraw = async (
@@ -230,6 +253,8 @@ export default class EVMRestakeTx extends RestakeTxBase {
     const context = { assetId, amount } as ScheduleWithdrawContext;
 
     return this.sendTransaction(
+      restakeAbi,
+      MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'scheduleWithdraw',
       [BigInt(assetId), amount],
       context,
@@ -242,7 +267,14 @@ export default class EVMRestakeTx extends RestakeTxBase {
   ): Promise<Hash | null> => {
     const context = {} as ExecuteAllWithdrawRequestContext;
 
-    return this.sendTransaction('executeWithdraw', [], context, eventHandlers);
+    return this.sendTransaction(
+      restakeAbi,
+      MULTI_ASSET_DELEGATION_EVM_ADDRESS,
+      'executeWithdraw',
+      [],
+      context,
+      eventHandlers,
+    );
   };
 
   cancelWithdraw = async (
@@ -251,25 +283,26 @@ export default class EVMRestakeTx extends RestakeTxBase {
   ): Promise<Hash | null> => {
     const context = { withdrawRequests } as CancelWithdrawRequestContext;
 
-    let lastHash: Hash | null = null;
+    const batchArgs = createEvmBatchCallArgs(
+      withdrawRequests.map(({ amount, assetId }) => ({
+        callData: encodeFunctionData({
+          abi: restakeAbi,
+          functionName: 'cancelWithdraw',
+          args: [BigInt(assetId), amount],
+        }),
+        gasLimit: 0,
+        to: MULTI_ASSET_DELEGATION_EVM_ADDRESS,
+        value: 0,
+      })),
+    );
 
-    // Handle the request one by one
-    // TODO: Find the correct way to batch these transactions on EVM
-    for (const { amount, assetId } of withdrawRequests) {
-      const hash = await this.sendTransaction(
-        'cancelWithdraw',
-        [BigInt(assetId), amount],
-        context,
-        eventHandlers,
-      );
-
-      if (hash === null) {
-        return null;
-      }
-
-      lastHash = hash;
-    }
-
-    return lastHash;
+    return this.sendTransaction(
+      BATCH_PRECOMPILE_ABI,
+      PrecompileAddress.BATCH,
+      'batchAll',
+      batchArgs,
+      context,
+      eventHandlers,
+    );
   };
 }

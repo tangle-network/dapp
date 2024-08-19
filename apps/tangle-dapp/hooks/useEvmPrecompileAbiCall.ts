@@ -3,6 +3,7 @@ import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import { AddressType } from '@webb-tools/dapp-config/types';
 import { useCallback, useEffect, useState } from 'react';
+import type { Address, Hash } from 'viem';
 import {
   simulateContract,
   waitForTransactionReceipt,
@@ -43,14 +44,16 @@ export type AbiCallArg = string | number | BN | boolean;
 export type AbiEncodeableValue = string | number | boolean | bigint;
 
 export type AbiBatchCallData = {
-  to: PrecompileAddress;
+  to: PrecompileAddress | Address;
   // TODO: Value should be strongly typed and explicit. Accept a generic type to accomplish this.
-  value: AbiEncodeableValue | AbiEncodeableValue[];
+  value: AbiEncodeableValue;
   gasLimit: number;
-  callData: string;
+  callData: Hash;
 };
 
-export type AbiBatchCallArgs = (AbiEncodeableValue | AbiEncodeableValue[])[][];
+export type AbiBatchCallArgs =
+  | (AbiEncodeableValue | AbiEncodeableValue[])[][]
+  | Readonly<[Address[], bigint[], Hash[], bigint[]]>;
 
 export type AbiCall<PrecompileT extends Precompile> = {
   functionName: AbiFunctionName<PrecompileT>;
