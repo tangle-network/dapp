@@ -6,13 +6,14 @@ import {
   Chip,
   CopyWithTooltip,
   ExternalLinkIcon,
+  SocialChip,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { SocialChip, TangleCard } from '../../../components';
+import { TangleCard } from '../../../components';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useValidatorInfoCard from '../../../data/validatorDetails/useValidatorInfoCard';
@@ -109,7 +110,7 @@ const InfoCard: FC<InfoCardProps> = ({
           <div className="flex items-center flex-1 gap-2">
             {twitter && <SocialChip type="twitter" href={twitter} />}
             {email && <SocialChip type="email" href={`mailto:${email}`} />}
-            {web && <SocialChip type="web" href={web} />}
+            {web && <SocialChip type="website" href={web} />}
           </div>
           {/* TODO: get location later */}
         </div>

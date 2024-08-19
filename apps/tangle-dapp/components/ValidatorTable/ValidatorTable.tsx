@@ -28,7 +28,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import { ExplorerType, PagePath, Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
 import {
-  sortAddressOrIdentityForNomineeOrValidator,
+  getSortAddressOrIdentityFnc,
   sortBnValueForNomineeOrValidator,
 } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
@@ -158,7 +158,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
             </div>
           );
         },
-        sortingFn: sortAddressOrIdentityForNomineeOrValidator,
+        sortingFn: getSortAddressOrIdentityFnc<Validator>(),
         filterFn: (row, _, filterValue) => {
           const { address, identityName } = row.original;
           return (

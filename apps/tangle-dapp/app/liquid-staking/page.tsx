@@ -38,7 +38,6 @@ const LiquidStakingPage: FC = () => {
                 return (
                   <LiquidStakingTokenItem
                     key={chain.id}
-                    chainId={chain.id}
                     title={`Tangle ${chain.name}`}
                     tokenSymbol={chain.token}
                     // TODO: Can't pass non-plain objects as props to Client components from Server components (this page). For now, passing in as a string then creating BN instance inside the component.

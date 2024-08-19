@@ -1,10 +1,8 @@
-import { DiscordFill, GlobalLine, TwitterFill } from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components';
+import { SocialChip, Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import GitHubIconWithLink from '../components/GitHubIconWithLink';
 import RunCircuitServiceModalTrigger from '../components/RunCircuitServiceModalTrigger';
 import SmallChip from '../components/SmallChip';
-import SocialChip from '../components/SocialChip';
 import { MOCK_CIRCUIT_FILE_PATH } from '../constants/mock';
 import { fetchProjectBasicInfo } from '../server/projectDetails';
 
@@ -51,23 +49,19 @@ export default async function ProjectHeaderContainer({
             <SocialChip
               title="View X profile"
               href={twitterUrl}
-              Icon={TwitterFill}
+              type="twitter"
             />
           )}
 
           {websiteUrl && (
-            <SocialChip
-              title="View website"
-              href={websiteUrl}
-              Icon={GlobalLine}
-            />
+            <SocialChip title="View website" href={websiteUrl} type="website" />
           )}
 
           {discordUrl && (
             <SocialChip
               title="Join Discord server"
               href={discordUrl}
-              Icon={DiscordFill}
+              type="discord"
             />
           )}
         </div>

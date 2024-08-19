@@ -11,7 +11,6 @@ export * from './ServicesKeyMetricItem';
 export * from './ServiceTable';
 export * from './Sidebar';
 export * from './skeleton';
-export { default as SocialChip } from './SocialChip';
 export * from './TableStatus';
 export { default as TangleBigLogo } from './TangleBigLogo';
 export { default as TangleCard } from './TangleCard';

@@ -38,7 +38,7 @@ export function useDynamicSVGImport(
   const [importedIcon, setImportedIcon] = useState<
     React.ReactElement<React.SVGProps<SVGElement>, 'svg'> | undefined
   >();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error>();
 
   const { onCompleted, onError } = options;

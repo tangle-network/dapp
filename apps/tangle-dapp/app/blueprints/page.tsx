@@ -5,8 +5,6 @@ import createPageMetadata from '../../utils/createPageMetadata';
 import BlueprintListing from './BlueprintListing';
 import TopBanner from './TopBanner';
 
-export const dynamic = 'force-static';
-
 export const metadata: Metadata = createPageMetadata({
   title: 'Blueprints',
 });
