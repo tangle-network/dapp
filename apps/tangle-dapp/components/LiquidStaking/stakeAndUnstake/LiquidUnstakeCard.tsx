@@ -6,7 +6,7 @@ import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
-import { Alert, Button } from '@webb-tools/webb-ui-components';
+import { Button } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 
@@ -16,7 +16,6 @@ import {
   LsSearchParamKey,
   LST_PREFIX,
 } from '../../../constants/liquidStaking/types';
-import useDelegationsOccupiedStatus from '../../../data/liquidStaking/useDelegationsOccupiedStatus';
 import useExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useExchangeRate';
@@ -66,10 +65,6 @@ const LiquidUnstakeCard: FC = () => {
     selectedProtocol.id,
   );
 
-  const { result: areAllDelegationsOccupiedOpt } = useDelegationsOccupiedStatus(
-    selectedProtocol.currency,
-  );
-
   useSearchParamSync({
     key: LsSearchParamKey.AMOUNT,
     value: fromAmount,
@@ -77,11 +72,6 @@ const LiquidUnstakeCard: FC = () => {
     parse: (value) => new BN(value),
     stringify: (value) => value?.toString(),
   });
-
-  const areAllDelegationsOccupied =
-    areAllDelegationsOccupiedOpt === null
-      ? null
-      : areAllDelegationsOccupiedOpt.unwrapOrDefault();
 
   const handleUnstakeClick = useCallback(() => {
     if (executeRedeemTx === null || fromAmount === null) {
@@ -175,17 +165,8 @@ const LiquidUnstakeCard: FC = () => {
           intendedAmount={fromAmount}
         />
 
-        <UnstakePeriodDetailItem currency={selectedProtocol.currency} />
+        <UnstakePeriodDetailItem protocolId={selectedProtocol.id} />
       </div>
-
-      {areAllDelegationsOccupied?.isTrue && (
-        <Alert
-          type="error"
-          className="mt-4"
-          title="All Delegations Occupied"
-          description="Cannot redeem due to all delegations being occupied."
-        />
-      )}
 
       <Button
         isDisabled={
@@ -194,9 +175,7 @@ const LiquidUnstakeCard: FC = () => {
           executeRedeemTx === null ||
           // Amount not yet provided or is zero.
           fromAmount === null ||
-          fromAmount.isZero() ||
-          // The extrinsic will fail once submitted due to unmet requirements.
-          areAllDelegationsOccupied === null
+          fromAmount.isZero()
         }
         isLoading={redeemTxStatus === TxStatus.PROCESSING}
         loadingText="Processing"

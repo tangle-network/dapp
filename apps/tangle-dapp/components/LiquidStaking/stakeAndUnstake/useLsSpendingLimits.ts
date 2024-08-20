@@ -1,7 +1,10 @@
 import { BN } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
-import { LsProtocolId } from '../../../constants/liquidStaking/types';
+import {
+  getLsProtocolDef,
+  LsProtocolId,
+} from '../../../constants/liquidStaking/types';
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import useAgnosticLsBalance from './useAgnosticLsBalance';
@@ -17,22 +20,36 @@ const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
 
   const { result: minimumMintingAmount } = useApiRx(
     useCallback(
-      (api) =>
-        api.query.lstMinting.minimumMint({
-          Native: selectedProtocol.currency,
-        }),
-      [selectedProtocol.currency],
+      (api) => {
+        const protocol = getLsProtocolDef(protocolId);
+
+        if (protocol.type !== 'parachain') {
+          return null;
+        }
+
+        return api.query.lstMinting.minimumMint({
+          Native: protocol.currency,
+        });
+      },
+      [protocolId],
     ),
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
   );
 
   const { result: minimumRedeemAmount } = useApiRx(
     useCallback(
-      (api) =>
-        api.query.lstMinting.minimumRedeem({
-          Native: selectedProtocol.currency,
-        }),
-      [selectedProtocol.currency],
+      (api) => {
+        const protocol = getLsProtocolDef(protocolId);
+
+        if (protocol.type !== 'parachain') {
+          return null;
+        }
+
+        return api.query.lstMinting.minimumRedeem({
+          Native: protocol.currency,
+        });
+      },
+      [protocolId],
     ),
     TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
   );
@@ -42,6 +59,8 @@ const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
     : minimumRedeemAmount;
 
   const minSpendable = useMemo(() => {
+    // TODO: Add ERC20 cases as well.
+
     if (
       mintingOrRedeemingAmount === null ||
       existentialDepositAmount === null

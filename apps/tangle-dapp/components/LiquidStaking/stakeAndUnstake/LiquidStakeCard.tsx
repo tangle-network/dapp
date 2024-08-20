@@ -27,6 +27,7 @@ import useExchangeRate, {
 } from '../../../data/liquidStaking/useExchangeRate';
 import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
+import useLiquifierDeposit from '../../../data/liquifier/useLiquifierDeposit';
 import useSearchParamState from '../../../hooks/useSearchParamState';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
@@ -46,39 +47,48 @@ const LiquidStakeCard: FC = () => {
     stringify: (value) => value?.toString(),
   });
 
-  const { selectedChainId, setSelectedChainId } = useLiquidStakingStore();
+  const { selectedProtocolId, setSelectedProtocolId } = useLiquidStakingStore();
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
+  const performLiquifierDeposit = useLiquifierDeposit();
 
   const { maxSpendable, minSpendable } = useLsSpendingLimits(
     true,
-    selectedChainId,
+    selectedProtocolId,
   );
 
-  const selectedProtocol = getLsProtocolDef(selectedChainId);
+  const selectedProtocol = getLsProtocolDef(selectedProtocolId);
 
   useSearchParamSync({
     key: LsSearchParamKey.PROTOCOL_ID,
-    value: selectedChainId,
+    value: selectedProtocolId,
     parse: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
-    setValue: setSelectedChainId,
+    setValue: setSelectedProtocolId,
   });
 
   const { exchangeRate } = useExchangeRate(
     ExchangeRateType.NativeToLiquid,
-    selectedProtocol.currency,
+    selectedProtocolId,
   );
 
-  const handleStakeClick = useCallback(() => {
-    if (executeMintTx === null || fromAmount === null) {
+  const handleStakeClick = useCallback(async () => {
+    // Not ready yet; no amount given.
+    if (fromAmount === null) {
       return;
     }
 
-    executeMintTx({
-      amount: fromAmount,
-      currency: selectedProtocol.currency,
-    });
-  }, [executeMintTx, fromAmount, selectedProtocol.currency]);
+    if (selectedProtocol.type === 'parachain' && executeMintTx !== null) {
+      executeMintTx({
+        amount: fromAmount,
+        currency: selectedProtocol.currency,
+      });
+    } else if (
+      selectedProtocol.type === 'erc20' &&
+      performLiquifierDeposit !== null
+    ) {
+      await performLiquifierDeposit(selectedProtocol.id, fromAmount);
+    }
+  }, [executeMintTx, fromAmount, performLiquifierDeposit, selectedProtocol]);
 
   const toAmount = useMemo(() => {
     if (fromAmount === null || exchangeRate === null) {
@@ -90,7 +100,7 @@ const LiquidStakeCard: FC = () => {
 
   const walletBalance = (
     <AgnosticLsBalance
-      protocolId={selectedProtocol.id}
+      protocolId={selectedProtocolId}
       decimals={selectedProtocol.decimals}
       tooltip="Click to use all available balance"
       onClick={() => setFromAmount(maxSpendable)}
@@ -101,14 +111,14 @@ const LiquidStakeCard: FC = () => {
     <>
       <LiquidStakingInput
         id="liquid-staking-stake-from"
-        protocolId={selectedChainId}
+        protocolId={selectedProtocolId}
         token={selectedProtocol.token}
         amount={fromAmount}
         decimals={selectedProtocol.decimals}
         onAmountChange={setFromAmount}
         placeholder={`0 ${selectedProtocol.token}`}
         rightElement={walletBalance}
-        setChainId={setSelectedChainId}
+        setChainId={setSelectedProtocolId}
         minAmount={minSpendable ?? undefined}
         maxAmount={maxSpendable ?? undefined}
       />
@@ -130,7 +140,7 @@ const LiquidStakeCard: FC = () => {
       {/* Details */}
       <div className="flex flex-col gap-2 p-3">
         <ExchangeRateDetailItem
-          protocolId={selectedProtocol.id}
+          protocolId={selectedProtocolId}
           token={selectedProtocol.token}
           type={ExchangeRateType.NativeToLiquid}
         />
@@ -141,7 +151,7 @@ const LiquidStakeCard: FC = () => {
           token={selectedProtocol.token}
         />
 
-        <UnstakePeriodDetailItem currency={selectedProtocol.currency} />
+        <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
       </div>
 
       <Button

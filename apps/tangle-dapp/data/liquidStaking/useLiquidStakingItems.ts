@@ -42,11 +42,12 @@ const useLiquidStakingItems = (selectedChain: LsProtocolId) => {
 
   const fetchData = useCallback(
     async (protocolId: LsProtocolId) => {
-      const endpoint = getLsProtocolDef(protocolId)?.rpcEndpoint;
+      const protocol = getLsProtocolDef(protocolId);
 
-      if (!endpoint) {
+      if (protocol.type !== 'parachain') {
         setItems([]);
         setIsLoading(false);
+
         return;
       }
 
@@ -55,20 +56,20 @@ const useLiquidStakingItems = (selectedChain: LsProtocolId) => {
 
       switch (protocolId) {
         case LsProtocolId.POLKADOT:
-          fetchedItems = await getValidators(endpoint);
+          fetchedItems = await getValidators(protocol.rpcEndpoint);
           break;
 
         case LsProtocolId.ASTAR:
-          fetchedItems = await getDapps(endpoint);
+          fetchedItems = await getDapps(protocol.rpcEndpoint);
           break;
 
         case LsProtocolId.PHALA:
-          fetchedItems = await getVaultsAndStakePools(endpoint);
+          fetchedItems = await getVaultsAndStakePools(protocol.rpcEndpoint);
           break;
 
         case LsProtocolId.MOONBEAM:
           fetchedItems = await getCollators(
-            endpoint,
+            protocol.rpcEndpoint,
             LsProtocolId.MOONBEAM,
             'https://stakeglmr.com/',
           );
@@ -76,11 +77,13 @@ const useLiquidStakingItems = (selectedChain: LsProtocolId) => {
 
         case LsProtocolId.MANTA:
           fetchedItems = await getCollators(
-            endpoint,
+            protocol.rpcEndpoint,
             LsProtocolId.MANTA,
             'https://manta.subscan.io/account/',
           );
           break;
+
+        // TODO: Add cases for ERC20 tokens/networks (Chainlink, etc.).
 
         default:
           fetchedItems = [];

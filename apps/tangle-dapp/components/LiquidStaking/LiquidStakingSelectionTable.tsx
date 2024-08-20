@@ -44,7 +44,7 @@ const SELECTED_ITEMS_COLUMN_SORT = {
 
 export const LiquidStakingSelectionTable = () => {
   const selectedChainId = useLiquidStakingStore(
-    (state) => state.selectedChainId,
+    (state) => state.selectedProtocolId,
   );
   const setSelectedItems = useLiquidStakingStore(
     (state) => state.setSelectedItems,

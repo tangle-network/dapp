@@ -1,27 +1,36 @@
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
-import { ParachainCurrency } from '../../../constants/liquidStaking/liquidStakingParachain';
+import {
+  getLsProtocolDef,
+  LsProtocolId,
+} from '../../../constants/liquidStaking/types';
 import useTokenUnlockDurations from '../../../data/liquidStaking/useTokenUnlockDurations';
+import CrossChainTime from '../../../utils/CrossChainTime';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
 import DetailItem from './DetailItem';
 
 export type UnstakePeriodDetailItemProps = {
-  currency: ParachainCurrency;
+  protocolId: LsProtocolId;
 };
 
 const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
-  currency,
+  protocolId,
 }) => {
+  type UnlockPeriodParts = 'Unknown' | [number, string] | null;
+
   const unlockDurations = useTokenUnlockDurations();
 
-  const unlockPeriod = useMemo<'Unknown' | [string, string] | null>(() => {
-    if (unlockDurations === null) {
+  const protocol = getLsProtocolDef(protocolId);
+  const parachainCurrency = protocol.type === 'parachain' && protocol.currency;
+
+  const parachainUnlockPeriod = useMemo<UnlockPeriodParts>(() => {
+    if (unlockDurations === null || parachainCurrency === undefined) {
       return null;
     }
 
     const unlockDuration = unlockDurations.find(
-      (entry) => entry.currency === currency && entry.isNative,
+      (entry) => entry.currency === parachainCurrency && entry.isNative,
     );
 
     // Unlock duration is not set onchain.
@@ -31,21 +40,42 @@ const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
 
     const parts = stringifyTimeUnit(unlockDuration.timeUnit);
 
-    return [parts[0].toString(), parts[1]];
-  }, [currency, unlockDurations]);
+    return [parts[0], parts[1]];
+  }, [parachainCurrency, unlockDurations]);
+
+  const evmChainUnlockPeriod = ((): UnlockPeriodParts => {
+    if (protocol.type !== 'erc20') {
+      return null;
+    }
+
+    const unlockTime = new CrossChainTime(
+      protocol.timeUnit,
+      protocol.stakingUnlockPeriod,
+    );
+
+    // TODO: Plurality.
+    return [unlockTime.toDays(), 'days' as string] as const;
+  })();
+
+  const agnosticUnlockPeriod =
+    protocol.type === 'parachain'
+      ? parachainUnlockPeriod
+      : evmChainUnlockPeriod;
 
   const value =
-    unlockPeriod === null ? (
+    agnosticUnlockPeriod === null ? (
       // Still fetching unlocking period.
       <SkeletonLoader className="max-w-[100px] min-w-4" />
-    ) : typeof unlockPeriod !== 'string' ? (
+    ) : typeof agnosticUnlockPeriod !== 'string' ? (
       // Unlock period is set, and it is known.
       <div>
-        <strong>{unlockPeriod[0]}</strong> {unlockPeriod[1]}
+        <strong>{agnosticUnlockPeriod[0].toString()}</strong>{' '}
+        {agnosticUnlockPeriod[1]}
       </div>
     ) : (
-      // Unlocking period is unknown because it is not set onchain.
-      unlockPeriod
+      // Unlocking period is unknown because it is not set
+      // onchain (Parachain) or unavailable.
+      agnosticUnlockPeriod
     );
 
   return (

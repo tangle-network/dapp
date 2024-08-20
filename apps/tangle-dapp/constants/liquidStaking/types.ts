@@ -2,6 +2,7 @@ import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 import assert from 'assert';
 
+import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 import { StaticAssetPath } from '..';
 import { LS_ERC20_TOKEN_MAP } from './liquidStakingErc20';
 import {
@@ -96,6 +97,8 @@ export type LsErc20TokenDef = {
   address: HexString;
   liquifierAdapterAddress: HexString;
   liquifierTgTokenAddress: HexString;
+  timeUnit: CrossChainTimeUnit;
+  stakingUnlockPeriod: number;
 };
 
 export type LsProtocolDef = LsParachainChainDef | LsErc20TokenDef;

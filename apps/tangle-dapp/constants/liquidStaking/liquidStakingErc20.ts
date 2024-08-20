@@ -1,3 +1,4 @@
+import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 import { StaticAssetPath } from '..';
 import { LsErc20TokenId, LsProtocolId, LsToken } from './types';
 import { LsErc20TokenDef } from './types';
@@ -16,6 +17,8 @@ const CHAINLINK: LsErc20TokenDef = {
   // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
   liquifierAdapterAddress: '0x',
   liquifierTgTokenAddress: '0x',
+  timeUnit: CrossChainTimeUnit.DAY,
+  stakingUnlockPeriod: 7,
 };
 
 const THE_GRAPH: LsErc20TokenDef = {
@@ -32,6 +35,8 @@ const THE_GRAPH: LsErc20TokenDef = {
   // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
   liquifierAdapterAddress: '0x',
   liquifierTgTokenAddress: '0x',
+  timeUnit: CrossChainTimeUnit.DAY,
+  stakingUnlockPeriod: 28,
 };
 
 const LIVEPEER: LsErc20TokenDef = {
@@ -48,6 +53,8 @@ const LIVEPEER: LsErc20TokenDef = {
   // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
   liquifierAdapterAddress: '0x',
   liquifierTgTokenAddress: '0x',
+  timeUnit: CrossChainTimeUnit.LIVEPEER_ROUND,
+  stakingUnlockPeriod: 7,
 };
 
 const POLYGON: LsErc20TokenDef = {
@@ -64,6 +71,8 @@ const POLYGON: LsErc20TokenDef = {
   // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
   liquifierAdapterAddress: '0x',
   liquifierTgTokenAddress: '0x',
+  timeUnit: CrossChainTimeUnit.POLYGON_CHECKPOINT,
+  stakingUnlockPeriod: 82,
 };
 
 export const LS_ERC20_TOKEN_MAP: Record<LsErc20TokenId, LsErc20TokenDef> = {

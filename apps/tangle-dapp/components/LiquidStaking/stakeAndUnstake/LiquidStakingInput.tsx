@@ -2,6 +2,7 @@
 
 import { BN } from '@polkadot/util';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { ChainIcon } from '@webb-tools/icons';
 import {
   Dropdown,
   DropdownBody,
@@ -22,7 +23,6 @@ import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModal
 import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
 import DropdownChevronIcon from './DropdownChevronIcon';
-import ProtocolLogo from './ProtocolLogo';
 import TokenChip from './TokenChip';
 
 export type LiquidStakingInputProps = {
@@ -162,15 +162,16 @@ const ProtocolSelector: FC<ProtocolSelectorProps> = ({
   selectedProtocolId,
   setProtocolId,
 }) => {
+  const selectedProtocol = getLsProtocolDef(selectedProtocolId);
   const isReadOnly = setProtocolId === undefined;
 
   const base = (
     <div className="group flex gap-1 items-center justify-center">
       <div className="flex gap-2 items-center justify-center">
-        <ProtocolLogo size="sm" protocolId={selectedProtocolId} />
+        <ChainIcon size="lg" name={selectedProtocol.token} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          {getLsProtocolDef(selectedProtocolId).networkName}
+          {selectedProtocol.networkName}
         </Typography>
       </div>
 
@@ -192,16 +193,16 @@ const ProtocolSelector: FC<ProtocolSelectorProps> = ({
                   typeof protocolId !== 'string',
               )
               .map((protocolId) => {
+                const protocol = getLsProtocolDef(protocolId);
+
                 return (
                   <li key={protocolId} className="w-full">
                     <DropdownMenuItem
-                      leftIcon={
-                        <ProtocolLogo size="lg" protocolId={protocolId} />
-                      }
+                      leftIcon={<ChainIcon size="lg" name={protocol.token} />}
                       onSelect={() => setProtocolId(protocolId)}
                       className="px-3 normal-case"
                     >
-                      {getLsProtocolDef(protocolId).networkName}
+                      {protocol.networkName}
                     </DropdownMenuItem>
                   </li>
                 );
