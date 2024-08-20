@@ -9,9 +9,12 @@ import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
 import { twMerge } from 'tailwind-merge';
 
-export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
-  props,
-) => {
+export const TokenIcon: React.FC<
+  TokenIconBase & {
+    isActive?: boolean;
+    customLoadingCmp?: React.ReactNode;
+  }
+> = (props) => {
   const {
     className: classNameProp,
     isActive,
@@ -20,6 +23,7 @@ export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
     onError,
     size = 'md',
     onClick,
+    customLoadingCmp,
     ...restProps
   } = props;
 
@@ -53,7 +57,7 @@ export const TokenIcon: React.FC<TokenIconBase & { isActive?: boolean }> = (
   }
 
   if (loading) {
-    return <Spinner {...props} />;
+    return customLoadingCmp ?? <Spinner {...props} />;
   }
 
   if (svgElement) {

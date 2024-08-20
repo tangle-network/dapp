@@ -8,7 +8,7 @@ import {
   LST_PREFIX,
   LsToken,
 } from '../../../constants/liquidStaking/types';
-import ProtocolLogo from './ProtocolLogo';
+import LSTTokenIcon from '../../LSTTokenIcon';
 import DropdownChevronIcon from './DropdownChevronIcon';
 
 type TokenChipProps = {
@@ -18,21 +18,6 @@ type TokenChipProps = {
 };
 
 const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
-  const chain = (() => {
-    if (token === undefined) {
-      return null;
-    }
-
-    const result = LS_PROTOCOLS.find((protocol) => protocol.token === token);
-
-    assert(
-      result !== undefined,
-      'All tokens should have a corresponding protocol',
-    );
-
-    return result;
-  })();
-
   return (
     <div
       onClick={onClick}
@@ -41,12 +26,7 @@ const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
         onClick !== undefined && 'cursor-pointer',
       )}
     >
-      <ProtocolLogo
-        size="sm"
-        protocolId={chain?.id}
-        isRounded
-        isLiquidVariant={isLiquidVariant}
-      />
+      {token && <LSTTokenIcon name={token} />}
 
       <Typography variant="h5" fw="bold">
         {isLiquidVariant && LST_PREFIX}
