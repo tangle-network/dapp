@@ -74,15 +74,20 @@ const LiquidUnstakeCard: FC = () => {
   });
 
   const handleUnstakeClick = useCallback(() => {
-    if (executeRedeemTx === null || fromAmount === null) {
+    // Cannot perform transaction: Amount not set.
+    if (fromAmount === null) {
       return;
     }
 
-    executeRedeemTx({
-      amount: fromAmount,
-      currency: selectedProtocol.currency,
-    });
-  }, [executeRedeemTx, fromAmount, selectedProtocol.currency]);
+    if (selectedProtocol.type === 'parachain' && executeRedeemTx !== null) {
+      executeRedeemTx({
+        amount: fromAmount,
+        currency: selectedProtocol.currency,
+      });
+    }
+
+    // TODO: Perform action for EVM-based chains.
+  }, [executeRedeemTx, fromAmount, selectedProtocol]);
 
   const toAmount = useMemo(() => {
     if (fromAmount === null || exchangeRate === null) {

@@ -5,7 +5,6 @@ import usePolling, {
   PollingPrimaryCacheKey,
 } from '../liquidStaking/usePolling';
 import useContract, { ContractReadOptions } from './useContract';
-import { BN } from '@polkadot/util';
 
 const useContractReadSubscription = <
   Abi extends ViemAbi,

@@ -18,8 +18,8 @@ const usePolling = <T>({
   fetcher,
   // Default to a 3 second refresh interval.
   refreshInterval = 3_000,
-  primaryCacheKey,
-  cacheKey,
+  primaryCacheKey: _primaryCacheKey,
+  cacheKey: _cacheKey,
 }: PollingOptions<T>) => {
   const [value, setValue] = useState<T | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);

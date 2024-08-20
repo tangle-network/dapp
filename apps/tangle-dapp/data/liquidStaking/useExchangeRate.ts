@@ -67,7 +67,7 @@ const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
   }, [lstTotalIssuance, tokenPoolAmount, type]);
 
   const fetchErc20ExchangeRate = useCallback(
-    async (erc20TokenDef: LsErc20TokenDef) => {
+    async (_erc20TokenDef: LsErc20TokenDef) => {
       // TODO: Implement.
 
       return 0;
@@ -83,7 +83,7 @@ const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
 
   // TODO: Will need one for the LST total issuance, and another for the token pool amount.
   const {
-    value: erc20TotalIssuance,
+    value: _erc20TotalIssuance,
     setIsPaused: setIsErc20TotalIssuancePaused,
   } = useContractReadSubscription(erc20Abi, {
     address: '0x',
@@ -98,7 +98,7 @@ const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
     const isPaused = protocol.type === 'parachain';
 
     setIsErc20TotalIssuancePaused(isPaused);
-  }, []);
+  }, [protocol.type, setIsErc20TotalIssuancePaused]);
 
   // TODO: Use polling for the ERC20 exchange rate, NOT the parachain exchange rate which is already based on a subscription. Might need a mechanism to 'pause' polling when the selected protocol is a parachain chain, that way it doesn't make unnecessary requests until an ERC20 token is selected.
   const { value: exchangeRate, isRefreshing } = usePolling({
