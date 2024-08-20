@@ -70,5 +70,17 @@ function createDummyApi(error: string): RestakeTxBase {
       eventHandlers?.onTxFailed?.(error, { unstakeRequests });
       return Promise.resolve(null);
     },
+    scheduleWithdraw(assetId, amount, eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, { amount, assetId });
+      return Promise.resolve(null);
+    },
+    executeWithdraw(eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, {});
+      return Promise.resolve(null);
+    },
+    cancelWithdraw(withdrawRequests, eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, { withdrawRequests });
+      return Promise.resolve(null);
+    },
   };
 }

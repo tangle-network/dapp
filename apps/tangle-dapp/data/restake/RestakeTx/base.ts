@@ -52,6 +52,20 @@ export type CancelDelegatorUnstakeRequestContext = {
   }[];
 };
 
+export type ScheduleWithdrawContext = {
+  assetId: string;
+  amount: bigint;
+};
+
+export type ExecuteWithdrawContext = Record<string, unknown>;
+
+export type CancelWithdrawContext = {
+  withdrawRequests: {
+    assetId: string;
+    amount: bigint;
+  }[];
+};
+
 export abstract class RestakeTxBase {
   /**
    * Deposit the amount of an asset into the multi-asset-delegation pallet,
@@ -90,5 +104,20 @@ export abstract class RestakeTxBase {
   abstract cancelDelegatorUnstakeRequests(
     unstakeRequests: CancelDelegatorUnstakeRequestContext['unstakeRequests'],
     eventHandlers?: TxEventHandlers<CancelDelegatorUnstakeRequestContext>,
+  ): Promise<Hash | null>;
+
+  abstract scheduleWithdraw(
+    assetId: string,
+    amount: bigint,
+    eventHandlers?: TxEventHandlers<ScheduleWithdrawContext>,
+  ): Promise<Hash | null>;
+
+  abstract executeWithdraw(
+    eventHandlers?: TxEventHandlers<ExecuteWithdrawContext>,
+  ): Promise<Hash | null>;
+
+  abstract cancelWithdraw(
+    withdrawRequests: CancelWithdrawContext['withdrawRequests'],
+    eventHandlers?: TxEventHandlers<CancelWithdrawContext>,
   ): Promise<Hash | null>;
 }

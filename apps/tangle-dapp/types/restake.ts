@@ -243,3 +243,8 @@ export type DelegationFormFields = {
 };
 
 export type UnstakeFormFields = DelegationFormFields;
+
+export type WithdrawFormFields = {
+  amount: string;
+  assetId: string;
+};
