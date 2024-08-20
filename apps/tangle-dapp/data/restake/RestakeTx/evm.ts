@@ -74,6 +74,13 @@ export default class EVMRestakeTx extends RestakeTxBase {
           ?.connector;
       })();
 
+      const chainId = (() => {
+        if (this.provider.state.current === null) return;
+
+        return this.provider.state.connections.get(this.provider.state.current)
+          ?.chainId;
+      })();
+
       const { request } = await simulateContract(this.provider, {
         abi,
         address,
@@ -81,6 +88,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
         args,
         account: this.activeAccount,
         connector,
+        chainId,
       } as SimulateContractParameters);
 
       const hash = await writeContract(this.provider, request);
