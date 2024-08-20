@@ -12,6 +12,7 @@ import type { State } from 'wagmi';
 import z from 'zod';
 
 import BridgeTxQueueProvider from '../context/BridgeTxQueueContext';
+import HyperlaneWarpContext from '../context/HyperlaneWarpContext';
 
 const appEvent = new AppEvent();
 
@@ -51,7 +52,9 @@ const Providers = ({
             blockedRegions={blockedRegions}
             blockedCountryCodes={blockedCountryCodes}
           >
-            <BridgeTxQueueProvider>{children}</BridgeTxQueueProvider>
+            <HyperlaneWarpContext>
+              <BridgeTxQueueProvider>{children}</BridgeTxQueueProvider>
+            </HyperlaneWarpContext>
           </OFACFilterProvider>
         </WebbProvider>
       </WebbUIProvider>
