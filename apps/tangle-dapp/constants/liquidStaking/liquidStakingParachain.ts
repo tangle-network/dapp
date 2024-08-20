@@ -5,6 +5,7 @@ import {
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
+import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 import { StaticAssetPath } from '..';
 import {
   LsParachainChainDef,
@@ -23,6 +24,8 @@ const POLKADOT: LsParachainChainDef = {
   currency: 'Dot',
   decimals: 10,
   rpcEndpoint: 'wss://polkadot-rpc.dwellir.com',
+  timeUnit: CrossChainTimeUnit.POLKADOT_ERA,
+  unstakingPeriod: 28,
 };
 
 const PHALA: LsParachainChainDef = {
@@ -35,6 +38,8 @@ const PHALA: LsParachainChainDef = {
   currency: 'Pha',
   decimals: 18,
   rpcEndpoint: 'wss://api.phala.network/ws',
+  timeUnit: CrossChainTimeUnit.DAY,
+  unstakingPeriod: 7,
 };
 
 const MOONBEAM: LsParachainChainDef = {
@@ -48,6 +53,8 @@ const MOONBEAM: LsParachainChainDef = {
   currency: 'Dot',
   decimals: 18,
   rpcEndpoint: 'wss://moonbeam.api.onfinality.io/public-ws',
+  timeUnit: CrossChainTimeUnit.MOONBEAM_ROUND,
+  unstakingPeriod: 28,
 };
 
 const ASTAR: LsParachainChainDef = {
@@ -61,6 +68,8 @@ const ASTAR: LsParachainChainDef = {
   currency: 'Dot',
   decimals: 18,
   rpcEndpoint: 'wss://astar.api.onfinality.io/public-ws',
+  timeUnit: CrossChainTimeUnit.ASTAR_ERA,
+  unstakingPeriod: 7,
 };
 
 const MANTA: LsParachainChainDef = {
@@ -74,6 +83,8 @@ const MANTA: LsParachainChainDef = {
   currency: 'Dot',
   decimals: 18,
   rpcEndpoint: 'wss://ws.manta.systems',
+  timeUnit: CrossChainTimeUnit.DAY,
+  unstakingPeriod: 7,
 };
 
 const TANGLE_RESTAKING_PARACHAIN: LsParachainChainDef = {
@@ -86,6 +97,9 @@ const TANGLE_RESTAKING_PARACHAIN: LsParachainChainDef = {
   currency: 'Bnc',
   decimals: TANGLE_TOKEN_DECIMALS,
   rpcEndpoint: TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
+  timeUnit: CrossChainTimeUnit.TANGLE_RESTAKING_PARACHAIN_ERA,
+  // TODO: The Tangle Restaking Parachain is a special case.
+  unstakingPeriod: 0,
 };
 
 export const LS_PARACHAIN_CHAIN_MAP: Record<

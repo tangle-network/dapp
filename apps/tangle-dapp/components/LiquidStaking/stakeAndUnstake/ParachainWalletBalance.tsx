@@ -16,7 +16,6 @@ import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { LsParachainToken } from '../../../constants/liquidStaking/types';
 import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
-import { LiquidStakingToken } from '../../../types/liquidStaking';
 import formatBn from '../../../utils/formatBn';
 
 export type ParachainWalletBalanceProps = {

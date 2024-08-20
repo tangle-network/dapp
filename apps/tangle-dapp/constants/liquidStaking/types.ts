@@ -74,32 +74,33 @@ export const LS_PARACHAIN_CHAIN_IDS = Object.values(LsProtocolId).filter(
     !LS_ERC20_TOKEN_IDS.includes(value as LsErc20TokenId),
 ) satisfies LsParachainChainId[];
 
-export type LsParachainChainDef = {
+type ProtocolDefCommon = {
+  name: string;
+  decimals: number;
+  networkName: string;
+  timeUnit: CrossChainTimeUnit;
+  unstakingPeriod: number;
+  logo: StaticAssetPath;
+};
+
+export interface LsParachainChainDef extends ProtocolDefCommon {
   type: 'parachain';
   id: LsParachainChainId;
   name: string;
   token: LsParachainToken;
-  logo: StaticAssetPath;
-  networkName: string;
   currency: ParachainCurrency;
-  decimals: number;
   rpcEndpoint: string;
-};
+}
 
-export type LsErc20TokenDef = {
+export interface LsErc20TokenDef extends ProtocolDefCommon {
   type: 'erc20';
   id: LsErc20TokenId;
-  name: string;
   networkName: string;
-  decimals: number;
   token: LsErc20Token;
-  logo: StaticAssetPath;
   address: HexString;
   liquifierAdapterAddress: HexString;
   liquifierTgTokenAddress: HexString;
-  timeUnit: CrossChainTimeUnit;
-  stakingUnlockPeriod: number;
-};
+}
 
 export type LsProtocolDef = LsParachainChainDef | LsErc20TokenDef;
 

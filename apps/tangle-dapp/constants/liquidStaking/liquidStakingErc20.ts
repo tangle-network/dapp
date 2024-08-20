@@ -18,7 +18,7 @@ const CHAINLINK: LsErc20TokenDef = {
   liquifierAdapterAddress: '0x',
   liquifierTgTokenAddress: '0x',
   timeUnit: CrossChainTimeUnit.DAY,
-  stakingUnlockPeriod: 7,
+  unstakingPeriod: 7,
 };
 
 const THE_GRAPH: LsErc20TokenDef = {
@@ -36,7 +36,7 @@ const THE_GRAPH: LsErc20TokenDef = {
   liquifierAdapterAddress: '0x',
   liquifierTgTokenAddress: '0x',
   timeUnit: CrossChainTimeUnit.DAY,
-  stakingUnlockPeriod: 28,
+  unstakingPeriod: 28,
 };
 
 const LIVEPEER: LsErc20TokenDef = {
@@ -54,7 +54,7 @@ const LIVEPEER: LsErc20TokenDef = {
   liquifierAdapterAddress: '0x',
   liquifierTgTokenAddress: '0x',
   timeUnit: CrossChainTimeUnit.LIVEPEER_ROUND,
-  stakingUnlockPeriod: 7,
+  unstakingPeriod: 7,
 };
 
 const POLYGON: LsErc20TokenDef = {
@@ -72,7 +72,7 @@ const POLYGON: LsErc20TokenDef = {
   liquifierAdapterAddress: '0x',
   liquifierTgTokenAddress: '0x',
   timeUnit: CrossChainTimeUnit.POLYGON_CHECKPOINT,
-  stakingUnlockPeriod: 82,
+  unstakingPeriod: 82,
 };
 
 export const LS_ERC20_TOKEN_MAP: Record<LsErc20TokenId, LsErc20TokenDef> = {

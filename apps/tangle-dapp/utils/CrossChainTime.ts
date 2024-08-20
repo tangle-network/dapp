@@ -4,6 +4,10 @@ export enum CrossChainTimeUnit {
   DAY,
   LIVEPEER_ROUND,
   POLYGON_CHECKPOINT,
+  MOONBEAM_ROUND,
+  POLKADOT_ERA,
+  ASTAR_ERA,
+  TANGLE_RESTAKING_PARACHAIN_ERA,
 }
 
 /**
@@ -14,6 +18,11 @@ export const TIME_UNIT_CONVERSION_RATIOS: Record<CrossChainTimeUnit, number> = {
   [CrossChainTimeUnit.DAY]: 1,
   [CrossChainTimeUnit.LIVEPEER_ROUND]: 0.88,
   [CrossChainTimeUnit.POLYGON_CHECKPOINT]: 0.037,
+  [CrossChainTimeUnit.ASTAR_ERA]: 1,
+  [CrossChainTimeUnit.MOONBEAM_ROUND]: 0.25,
+  // TODO: Tangle Restaking Parachain is a special case.
+  [CrossChainTimeUnit.TANGLE_RESTAKING_PARACHAIN_ERA]: 0,
+  [CrossChainTimeUnit.POLKADOT_ERA]: 1,
 };
 
 class CrossChainTime<T extends CrossChainTimeUnit> {

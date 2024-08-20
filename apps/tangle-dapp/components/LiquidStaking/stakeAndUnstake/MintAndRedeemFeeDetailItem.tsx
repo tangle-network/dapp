@@ -6,7 +6,6 @@ import { FC, useMemo } from 'react';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { LsToken } from '../../../constants/liquidStaking/types';
 import useMintAndRedeemFees from '../../../data/liquidStaking/useMintAndRedeemFees';
-import { LiquidStakingToken } from '../../../types/liquidStaking';
 import formatBn from '../../../utils/formatBn';
 import scaleAmountByPermill from '../../../utils/scaleAmountByPermill';
 import DetailItem from './DetailItem';

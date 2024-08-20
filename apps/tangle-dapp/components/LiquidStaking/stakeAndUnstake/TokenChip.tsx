@@ -1,13 +1,8 @@
 import { Typography } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import {
-  LS_PROTOCOLS,
-  LST_PREFIX,
-  LsToken,
-} from '../../../constants/liquidStaking/types';
+import { LST_PREFIX, LsToken } from '../../../constants/liquidStaking/types';
 import LSTTokenIcon from '../../LSTTokenIcon';
 import DropdownChevronIcon from './DropdownChevronIcon';
 
