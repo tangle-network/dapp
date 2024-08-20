@@ -130,8 +130,8 @@ const LiquidStakeCard: FC = () => {
       {/* Details */}
       <div className="flex flex-col gap-2 p-3">
         <ExchangeRateDetailItem
+          protocolId={selectedProtocol.id}
           token={selectedProtocol.token}
-          currency={selectedProtocol.currency}
           type={ExchangeRateType.NativeToLiquid}
         />
 

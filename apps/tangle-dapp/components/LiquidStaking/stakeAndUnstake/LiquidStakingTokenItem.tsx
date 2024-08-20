@@ -9,7 +9,6 @@ import { FC, useMemo } from 'react';
 import LSTTokenIcon from '../../../components/LSTTokenIcon';
 import { StaticAssetPath } from '../../../constants';
 import {
-  LsProtocolId,
   LST_PREFIX,
   LsToken,
   TVS_TOOLTIP,
@@ -19,7 +18,6 @@ import formatTangleBalance from '../../../utils/formatTangleBalance';
 import StatItem from '../StatItem';
 
 export type LiquidStakingTokenItemProps = {
-  protocolId: LsProtocolId;
   title: string;
   tokenSymbol: LsToken;
   totalValueStaked: number;
@@ -28,7 +26,6 @@ export type LiquidStakingTokenItemProps = {
 
 const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
   title,
-  protocolId,
   tokenSymbol,
   totalValueStaked,
   totalStaked,

@@ -8,12 +8,10 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useEffect, useMemo } from 'react';
 
-import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import { AnySubstrateAddress } from '../../../types/utils';
 import formatBn from '../../../utils/formatBn';
 import LSTTokenIcon from '../../LSTTokenIcon';
 import AddressLink from '../AddressLink';
-import ProtocolLogo from './ProtocolLogo';
 
 export type SelectTokenModalProps = {
   isOpen: boolean;

@@ -2,7 +2,6 @@
 
 import { BN } from '@polkadot/util';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { ChainIcon } from '@webb-tools/icons';
 import {
   Dropdown,
   DropdownBody,
@@ -21,7 +20,6 @@ import {
 } from '../../../constants/liquidStaking/types';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
-import { LiquidStakingToken } from '../../../types/liquidStaking';
 import formatBn from '../../../utils/formatBn';
 import DropdownChevronIcon from './DropdownChevronIcon';
 import ProtocolLogo from './ProtocolLogo';
