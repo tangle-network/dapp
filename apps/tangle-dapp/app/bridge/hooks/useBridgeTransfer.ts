@@ -1,5 +1,3 @@
-'use client';
-
 import { providers } from 'ethers';
 
 import { useBridge } from '../../../context/BridgeContext';

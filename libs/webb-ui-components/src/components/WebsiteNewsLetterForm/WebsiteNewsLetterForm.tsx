@@ -1,5 +1,3 @@
-'use client';
-
 import { InformationLine } from '@webb-tools/icons';
 import { FC, useCallback, useState } from 'react';
 

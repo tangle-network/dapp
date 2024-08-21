@@ -1,10 +1,8 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import assert from 'assert';
 import { useEffect, useState } from 'react';
 import { erc20Abi } from 'viem';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
-import { LS_ERC20_TOKEN_MAP } from '../../../constants/liquidStaking/liquidStakingErc20';
 import LIQUIFIER_TG_TOKEN_ABI from '../../../constants/liquidStaking/liquifierTgTokenAbi';
 import {
   getLsProtocolDef,
@@ -14,7 +12,6 @@ import useParachainBalances from '../../../data/liquidStaking/useParachainBalanc
 import useContract from '../../../data/liquifier/useContract';
 import useEvmAddress20 from '../../../hooks/useEvmAddress';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
-import isLsErc20TokenId from '../../../utils/liquidStaking/isLsErc20TokenId';
 
 const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
   const substrateAddress = useSubstrateAddress();
@@ -29,59 +26,50 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
 
   const parachainBalances = isNative ? nativeBalances : liquidBalances;
   const isAccountConnected = substrateAddress !== null || evmAddress20 !== null;
+  const protocol = getLsProtocolDef(protocolId);
 
+  // Reset balance to a placeholder when the active account is
+  // disconnected.
   useEffect(() => {
     // Account is not connected. Reset balance to a placeholder.
     if (!isAccountConnected) {
       setBalance(EMPTY_VALUE_PLACEHOLDER);
 
       return;
-    } else if (isLsErc20TokenId(protocolId)) {
-      // Can't determine ERC20 balance without an active EVM account.
-      if (evmAddress20 === null) {
-        setBalance(EMPTY_VALUE_PLACEHOLDER);
-
-        return;
-      }
-
-      const tokenDef = LS_ERC20_TOKEN_MAP[protocolId];
-      const target = isNative ? readErc20 : readLiquidErc20;
-
-      // Still loading.
-      if (target === null) {
-        setBalance(null);
-
-        return;
-      }
-
-      // TODO: This only loads the balance once. Make it so it updates every few seconds that way the it responds to any balance changes that may occur, not just when loading the site initially. Like a subscription.
-      target({
-        address: tokenDef.address,
-        functionName: 'balanceOf',
-        args: [evmAddress20],
-      }).then((result) => setBalance(new BN(result.toString())));
-    } else {
-      if (parachainBalances === null) {
-        return;
-      }
-
-      const protocol = getLsProtocolDef(protocolId);
-
-      assert(protocol.type === 'parachain');
-
-      const newBalance = parachainBalances.get(protocol.token) ?? BN_ZERO;
-
-      setBalance(newBalance);
     }
-  }, [
-    evmAddress20,
-    isAccountConnected,
-    isNative,
-    parachainBalances,
-    protocolId,
-    readErc20,
-    readLiquidErc20,
-  ]);
+  }, [isAccountConnected]);
+
+  // TODO: Make use of the `usePolling` hook here in order to refresh the balance every so often.
+  useEffect(() => {
+    if (protocol.type !== 'erc20' || evmAddress20 === null) {
+      return;
+    }
+
+    const target = isNative ? readErc20 : readLiquidErc20;
+
+    // Still loading.
+    if (target === null) {
+      setBalance(null);
+
+      return;
+    }
+
+    target({
+      address: protocol.address,
+      functionName: 'balanceOf',
+      args: [evmAddress20],
+    }).then((result) => setBalance(new BN(result.toString())));
+  }, [evmAddress20, isNative, protocol, readErc20, readLiquidErc20]);
+
+  useEffect(() => {
+    if (protocol.type !== 'parachain' || parachainBalances === null) {
+      return;
+    }
+
+    const newBalance = parachainBalances.get(protocol.token) ?? BN_ZERO;
+
+    setBalance(newBalance);
+  }, [parachainBalances, protocol.token, protocol.type]);
 
   return balance;
 };
