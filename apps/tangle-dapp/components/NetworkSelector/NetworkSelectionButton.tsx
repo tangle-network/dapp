@@ -102,6 +102,10 @@ const NetworkSelectionButton: FC = () => {
       ? 'Ethereum Mainnet'
       : TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.name;
 
+    const chainIconName = isLsErc20TokenId(selectedProtocolId)
+      ? 'ethereum'
+      : TANGLE_TESTNET_CHAIN_NAME;
+
     return (
       <Tooltip>
         <TooltipTrigger asChild>
@@ -109,6 +113,7 @@ const NetworkSelectionButton: FC = () => {
             <TriggerButton
               className="opacity-60 cursor-not-allowed hover:!bg-none dark:hover:!bg-none"
               networkName={liquidStakingNetworkName}
+              chainIconName={chainIconName}
             />
           </Dropdown>
         </TooltipTrigger>
@@ -167,12 +172,14 @@ type TriggerButtonProps = {
   className?: string;
   networkName: string;
   isLoading?: boolean;
+  chainIconName?: string;
 };
 
 const TriggerButton: FC<TriggerButtonProps> = ({
-  isLoading,
+  isLoading = false,
   networkName,
   className,
+  chainIconName = TANGLE_TESTNET_CHAIN_NAME,
 }) => {
   return (
     <DropdownBasicButton
@@ -191,11 +198,7 @@ const TriggerButton: FC<TriggerButtonProps> = ({
       {isLoading ? (
         <Spinner size="lg" />
       ) : (
-        <ChainIcon
-          size="lg"
-          className="shrink-0 grow-0"
-          name={TANGLE_TESTNET_CHAIN_NAME}
-        />
+        <ChainIcon size="lg" className="shrink-0 grow-0" name={chainIconName} />
       )}
 
       <div className="flex items-center gap-0">
