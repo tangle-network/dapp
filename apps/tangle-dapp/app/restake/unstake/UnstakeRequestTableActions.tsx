@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import {
   type CancelDelegatorUnstakeRequestContext,
-  type ExecuteDelegatorBondLessContext,
+  type ExecuteAllDelegatorUnstakeRequestContext,
   TxEvent,
 } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
@@ -39,7 +39,7 @@ const UnstakeRequestTableActions = ({
     );
 
   const executeOptions =
-    useRestakeTxEventHandlersWithNoti<ExecuteDelegatorBondLessContext>(
+    useRestakeTxEventHandlersWithNoti<ExecuteAllDelegatorUnstakeRequestContext>(
       useMemo(
         () =>
           ({

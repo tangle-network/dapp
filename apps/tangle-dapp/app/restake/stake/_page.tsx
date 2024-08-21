@@ -17,7 +17,10 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 
 import { useRestakeContext } from '../../../context/RestakeContext';
-import { DelegateContext, TxEvent } from '../../../data/restake/RestakeTx/base';
+import {
+  DelegatorStakeContext,
+  TxEvent,
+} from '../../../data/restake/RestakeTx/base';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '../../../data/restake/useRestakeOperatorMap';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
@@ -73,7 +76,7 @@ export default function Page() {
   }, [register]);
 
   const { assetMap } = useRestakeContext();
-  const { delegate } = useRestakeTx();
+  const { stake: delegate } = useRestakeTx();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
   const { result: operatorIdentities } = useIdentities(
@@ -179,7 +182,7 @@ export default function Page() {
     [closeOperatorModal, setValue],
   );
 
-  const options = useMemo<Props<DelegateContext>>(() => {
+  const options = useMemo<Props<DelegatorStakeContext>>(() => {
     return {
       options: {
         [TxEvent.SUCCESS]: {

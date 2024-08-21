@@ -8,9 +8,9 @@ function createEvmBatchCallArgs(
 ): AbiBatchCallArgs {
   return [
     callData.map((call) => call.to),
-    callData.map((call) => call.value),
+    callData.map((call) => BigInt(call.value)),
     callData.map((call) => call.callData),
-    callData.map((call) => call.gasLimit),
+    callData.map((call) => BigInt(call.gasLimit)),
   ];
 }
 
