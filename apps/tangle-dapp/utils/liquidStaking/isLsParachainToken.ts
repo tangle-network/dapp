@@ -1,5 +1,5 @@
+import { LS_PARACHAIN_TOKENS } from '../../constants/liquidStaking/constants';
 import {
-  LS_PARACHAIN_TOKENS,
   LsParachainToken,
   LsProtocolId,
 } from '../../constants/liquidStaking/types';

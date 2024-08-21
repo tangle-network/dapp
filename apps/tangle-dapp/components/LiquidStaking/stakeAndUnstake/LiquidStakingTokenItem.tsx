@@ -10,9 +10,9 @@ import LSTTokenIcon from '../../../components/LSTTokenIcon';
 import { StaticAssetPath } from '../../../constants';
 import {
   LST_PREFIX,
-  LsToken,
   TVS_TOOLTIP,
-} from '../../../constants/liquidStaking/types';
+} from '../../../constants/liquidStaking/constants';
+import { LsToken } from '../../../constants/liquidStaking/types';
 import { PagePath } from '../../../types';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
 import StatItem from '../StatItem';

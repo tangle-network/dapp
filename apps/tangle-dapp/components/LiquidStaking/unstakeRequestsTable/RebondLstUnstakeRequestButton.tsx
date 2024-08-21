@@ -2,7 +2,7 @@ import { Button } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import { ParachainCurrency } from '../../../constants/liquidStaking/liquidStakingParachain';
+import { ParachainCurrency } from '../../../constants/liquidStaking/types';
 import useLstRebondTx from '../../../data/liquidStaking/useLstRebondTx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import CancelUnstakeModal from './CancelUnstakeModal';

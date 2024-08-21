@@ -1,5 +1,5 @@
+import { LS_PARACHAIN_CHAIN_IDS } from '../../constants/liquidStaking/constants';
 import {
-  LS_PARACHAIN_CHAIN_IDS,
   LsParachainChainId,
   LsProtocolId,
 } from '../../constants/liquidStaking/types';

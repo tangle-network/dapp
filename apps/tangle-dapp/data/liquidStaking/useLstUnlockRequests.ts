@@ -14,7 +14,7 @@ import { map } from 'rxjs';
 import {
   LsSimpleParachainTimeUnit,
   ParachainCurrency,
-} from '../../constants/liquidStaking/liquidStakingParachain';
+} from '../../constants/liquidStaking/types';
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import compareSubstrateAddresses from '../../utils/compareSubstrateAddresses';

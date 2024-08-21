@@ -1,10 +1,7 @@
 import { BN_ZERO } from '@polkadot/util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  getLsProtocolDef,
-  LsProtocolId,
-} from '../../constants/liquidStaking/types';
+import { LsProtocolId } from '../../constants/liquidStaking/types';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import {
   Collator,
@@ -13,6 +10,7 @@ import {
   Validator,
   VaultOrStakePool,
 } from '../../types/liquidStaking';
+import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import {
   fetchChainDecimals,
   fetchCollators,

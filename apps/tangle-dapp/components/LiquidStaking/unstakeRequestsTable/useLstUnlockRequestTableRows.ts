@@ -1,10 +1,8 @@
 import assert from 'assert';
 import { useMemo } from 'react';
 
-import {
-  LS_PARACHAIN_CHAIN_MAP,
-  LsSimpleParachainTimeUnit,
-} from '../../../constants/liquidStaking/liquidStakingParachain';
+import { LS_PARACHAIN_CHAIN_MAP } from '../../../constants/liquidStaking/constants';
+import { LsSimpleParachainTimeUnit } from '../../../constants/liquidStaking/types';
 import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
 import useOngoingTimeUnits from '../../../data/liquidStaking/useOngoingTimeUnits';
 import { AnySubstrateAddress } from '../../../types/utils';

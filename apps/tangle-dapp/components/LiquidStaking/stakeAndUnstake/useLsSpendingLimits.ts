@@ -1,14 +1,12 @@
 import { BN } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
-import {
-  getLsProtocolDef,
-  LsProtocolId,
-} from '../../../constants/liquidStaking/types';
+import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import useAgnosticLsBalance from './useAgnosticLsBalance';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '../../../../../libs/webb-ui-components/src/constants/networks';
+import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 
 const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
   const balance = useAgnosticLsBalance(isNative, protocolId);

@@ -2,7 +2,7 @@ import { BN } from '@polkadot/util';
 import { useEffect, useState } from 'react';
 import { erc20Abi } from 'viem';
 
-import { LS_ERC20_TOKEN_MAP } from '../../constants/liquidStaking/liquidStakingErc20';
+import { LS_ERC20_TOKEN_MAP } from '../../constants/liquidStaking/constants';
 import { LsErc20TokenId } from '../../constants/liquidStaking/types';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import useContract from './useContract';

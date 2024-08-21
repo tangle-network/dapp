@@ -15,7 +15,7 @@ import assert from 'assert';
 import capitalize from 'lodash/capitalize';
 import { JSX } from 'react';
 
-import { LST_PREFIX } from '../../constants/liquidStaking/types';
+import { LST_PREFIX } from '../../constants/liquidStaking/constants';
 import { PagePath } from '../../types';
 
 const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {

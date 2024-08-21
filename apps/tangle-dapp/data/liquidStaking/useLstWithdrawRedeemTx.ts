@@ -4,7 +4,7 @@ import { TxName } from '../../constants';
 import {
   LsParachainCurrencyKey,
   ParachainCurrency,
-} from '../../constants/liquidStaking/liquidStakingParachain';
+} from '../../constants/liquidStaking/types';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 

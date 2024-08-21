@@ -30,7 +30,7 @@ import { twMerge } from 'tailwind-merge';
 import {
   LsSimpleParachainTimeUnit,
   ParachainCurrency,
-} from '../../../constants/liquidStaking/liquidStakingParachain';
+} from '../../../constants/liquidStaking/types';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import { AnySubstrateAddress } from '../../../types/utils';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';

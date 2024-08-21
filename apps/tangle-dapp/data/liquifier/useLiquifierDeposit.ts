@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { erc20Abi } from 'viem';
 
 import { TxName } from '../../constants';
-import { LS_ERC20_TOKEN_MAP } from '../../constants/liquidStaking/liquidStakingErc20';
+import { LS_ERC20_TOKEN_MAP } from '../../constants/liquidStaking/constants';
 import LIQUIFIER_ABI from '../../constants/liquidStaking/liquifierAbi';
 import { LsErc20TokenId } from '../../constants/liquidStaking/types';
 import useEvmAddress20 from '../../hooks/useEvmAddress';

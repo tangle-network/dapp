@@ -2,14 +2,14 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { useCallback, useEffect, useMemo } from 'react';
 import { erc20Abi } from 'viem';
 
-import { LsParachainCurrencyKey } from '../../constants/liquidStaking/liquidStakingParachain';
 import {
-  getLsProtocolDef,
   LsErc20TokenDef,
+  LsParachainCurrencyKey,
   LsProtocolId,
 } from '../../constants/liquidStaking/types';
 import useApiRx from '../../hooks/useApiRx';
 import calculateBnRatio from '../../utils/calculateBnRatio';
+import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import useContractReadSubscription from '../liquifier/useContractReadSubscription';
 import usePolling, { PollingPrimaryCacheKey } from './usePolling';
 

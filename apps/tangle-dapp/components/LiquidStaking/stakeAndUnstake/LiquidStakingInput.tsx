@@ -13,15 +13,12 @@ import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea
 import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import {
-  getLsProtocolDef,
-  LsProtocolId,
-  LST_PREFIX,
-  LsToken,
-} from '../../../constants/liquidStaking/types';
+import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
+import { LsProtocolId, LsToken } from '../../../constants/liquidStaking/types';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
+import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import DropdownChevronIcon from './DropdownChevronIcon';
 import TokenChip from './TokenChip';
 

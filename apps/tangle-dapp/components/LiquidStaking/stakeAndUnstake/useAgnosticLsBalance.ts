@@ -4,14 +4,12 @@ import { erc20Abi } from 'viem';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import LIQUIFIER_TG_TOKEN_ABI from '../../../constants/liquidStaking/liquifierTgTokenAbi';
-import {
-  getLsProtocolDef,
-  LsProtocolId,
-} from '../../../constants/liquidStaking/types';
+import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
 import useContract from '../../../data/liquifier/useContract';
 import useEvmAddress20 from '../../../hooks/useEvmAddress';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
+import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 
 const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
   const substrateAddress = useSubstrateAddress();

@@ -10,11 +10,10 @@ import { Button } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 
+import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
-  getLsProtocolDef,
   LsProtocolId,
   LsSearchParamKey,
-  LST_PREFIX,
 } from '../../../constants/liquidStaking/types';
 import useExchangeRate, {
   ExchangeRateType,
@@ -23,6 +22,7 @@ import useRedeemTx from '../../../data/liquidStaking/useRedeemTx';
 import useSearchParamState from '../../../hooks/useSearchParamState';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
+import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import AgnosticLsBalance from './AgnosticLsBalance';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';

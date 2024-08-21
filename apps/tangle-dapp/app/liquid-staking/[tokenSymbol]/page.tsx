@@ -17,13 +17,18 @@ type Props = {
   params: { tokenSymbol: string };
 };
 
+enum SearchParamAction {
+  STAKE = 'stake',
+  UNSTAKE = 'unstake',
+}
+
 const LiquidStakingTokenPage: FC<Props> = ({ params: { tokenSymbol } }) => {
   const [isStaking, setIsStaking] = useSearchParamState({
     defaultValue: true,
     key: LsSearchParamKey.ACTION,
-    // TODO: Use an enum instead of strings. For some odd reason, currently it is causing compilation errors.
-    parser: (value) => value === 'stake',
-    stringify: (value) => (value ? 'stake' : 'unstake'),
+    parser: (value) => value === SearchParamAction.STAKE,
+    stringify: (value) =>
+      value ? SearchParamAction.STAKE : SearchParamAction.UNSTAKE,
   });
 
   // An invalid or unknown token symbol was provided on the URL.

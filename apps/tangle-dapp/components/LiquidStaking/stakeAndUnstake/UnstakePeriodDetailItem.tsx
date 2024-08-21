@@ -1,11 +1,9 @@
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import {
-  getLsProtocolDef,
-  LsProtocolId,
-} from '../../../constants/liquidStaking/types';
+import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import CrossChainTime from '../../../utils/CrossChainTime';
+import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import DetailItem from './DetailItem';
 
 export type UnstakePeriodDetailItemProps = {

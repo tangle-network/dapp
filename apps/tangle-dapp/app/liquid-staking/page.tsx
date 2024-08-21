@@ -4,7 +4,7 @@ import { FC } from 'react';
 import { GlassCard } from '../../components';
 import LiquidStakingTokenItem from '../../components/LiquidStaking/stakeAndUnstake/LiquidStakingTokenItem';
 import StatItem from '../../components/LiquidStaking/StatItem';
-import { LS_PROTOCOLS } from '../../constants/liquidStaking/types';
+import { LS_PROTOCOLS } from '../../constants/liquidStaking/constants';
 
 const LiquidStakingPage: FC = () => {
   return (

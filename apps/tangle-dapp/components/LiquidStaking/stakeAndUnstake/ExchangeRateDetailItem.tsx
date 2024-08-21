@@ -1,11 +1,8 @@
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import {
-  LsProtocolId,
-  LST_PREFIX,
-  LsToken,
-} from '../../../constants/liquidStaking/types';
+import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
+import { LsProtocolId, LsToken } from '../../../constants/liquidStaking/types';
 import { ExchangeRateType } from '../../../data/liquidStaking/useExchangeRate';
 import useExchangeRate from '../../../data/liquidStaking/useExchangeRate';
 import DetailItem from './DetailItem';

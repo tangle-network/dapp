@@ -5,7 +5,7 @@ import '@webb-tools/tangle-restaking-types';
 import { TanglePrimitivesCurrencyCurrencyId } from '@polkadot/types/lookup';
 import capitalize from 'lodash/capitalize';
 
-import { ParachainCurrency } from '../../constants/liquidStaking/liquidStakingParachain';
+import { ParachainCurrency } from '../../constants/liquidStaking/types';
 
 const getValueOfTangleCurrency = (
   tangleCurrencyId: TanglePrimitivesCurrencyCurrencyId,
