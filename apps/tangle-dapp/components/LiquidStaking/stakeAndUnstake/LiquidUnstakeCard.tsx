@@ -39,6 +39,7 @@ const LiquidUnstakeCard: FC = () => {
   const [isRequestSubmittedModalOpen, setIsRequestSubmittedModalOpen] =
     useState(false);
 
+  // TODO: Need to use the global store in order for the network switcher to pick up EVM vs. Parachain chains.
   const [selectedChainId, setSelectedChainId] =
     useSearchParamState<LsProtocolId>({
       key: LsSearchParamKey.PROTOCOL_ID,

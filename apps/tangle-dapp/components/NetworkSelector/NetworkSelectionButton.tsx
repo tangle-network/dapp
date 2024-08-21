@@ -22,9 +22,11 @@ import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useNetworkStore from '../../context/useNetworkStore';
+import { useLiquidStakingStore } from '../../data/liquidStaking/useLiquidStakingStore';
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
 import { PagePath } from '../../types';
 import createCustomNetwork from '../../utils/createCustomNetwork';
+import isLsErc20TokenId from '../../utils/liquidStaking/isLsErc20TokenId';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
 // TODO: Currently hard-coded, but shouldn't it always be the Tangle icon, since it's not switching chains but rather networks within Tangle? If so, find some constant somewhere instead of having it hard-coded here.
@@ -37,6 +39,7 @@ const NetworkSelectionButton: FC = () => {
   const { network } = useNetworkStore();
   const { switchNetwork, isCustom } = useNetworkSwitcher();
   const pathname = usePathname();
+  const { selectedProtocolId } = useLiquidStakingStore();
 
   // TODO: Handle switching network on EVM wallet here.
   const switchToCustomNetwork = useCallback(
@@ -95,13 +98,17 @@ const NetworkSelectionButton: FC = () => {
   // Network can't be switched from the Tangle Restaking Parachain while
   // on liquid staking page.
   else if (isInLiquidStakingPath) {
+    const liquidStakingNetworkName = isLsErc20TokenId(selectedProtocolId)
+      ? 'Ethereum Mainnet'
+      : TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.name;
+
     return (
       <Tooltip>
         <TooltipTrigger asChild>
           <Dropdown>
             <TriggerButton
               className="opacity-60 cursor-not-allowed hover:!bg-none dark:hover:!bg-none"
-              networkName={TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.name}
+              networkName={liquidStakingNetworkName}
             />
           </Dropdown>
         </TooltipTrigger>
