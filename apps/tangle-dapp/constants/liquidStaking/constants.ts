@@ -16,12 +16,17 @@ import {
   LsToken,
 } from './types';
 
-const SEPOLIA_LIQUIFIER_CONTRACT_ADDRESS: HexString =
-  '0xCE0148DbA55c9719B59642f5cBf4F26e67F44E70';
-
-// TODO: Fill in the actual addresses once deployed to a testnet.
-const SEPOLIA_ERC20_CONTRACT_ADDRESS: HexString = '0x';
-const SEPOLIA_TG_TOKEN_CONTRACT_ADDRESS: HexString = '0x';
+/**
+ * Development only. Sepolia testnet contracts that were
+ * deployed to test the liquifier functionality. These contracts
+ * use dummy data.
+ */
+const SEPOLIA_TESTNET_CONTRACTS = {
+  LIQUIFIER: '0xCE0148DbA55c9719B59642f5cBf4F26e67F44E70',
+  // TODO: Fill in the actual addresses once deployed to a testnet.
+  ERC20: '0x',
+  TG_TOKEN: '0x',
+} as const satisfies Record<string, HexString>;
 
 const CHAINLINK: LsErc20TokenDef = {
   type: 'erc20',
@@ -33,14 +38,14 @@ const CHAINLINK: LsErc20TokenDef = {
   decimals: 18,
   address: IS_PRODUCTION_ENV
     ? '0x514910771AF9Ca656af840dff83E8264EcF986CA'
-    : SEPOLIA_ERC20_CONTRACT_ADDRESS,
+    : SEPOLIA_TESTNET_CONTRACTS.ERC20,
   // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
   liquifierAdapterAddress: IS_PRODUCTION_ENV
     ? '0x'
-    : SEPOLIA_LIQUIFIER_CONTRACT_ADDRESS,
+    : SEPOLIA_TESTNET_CONTRACTS.LIQUIFIER,
   liquifierTgTokenAddress: IS_PRODUCTION_ENV
     ? '0x'
-    : SEPOLIA_TG_TOKEN_CONTRACT_ADDRESS,
+    : SEPOLIA_TESTNET_CONTRACTS.TG_TOKEN,
   timeUnit: CrossChainTimeUnit.DAY,
   unstakingPeriod: 7,
 };
@@ -55,14 +60,14 @@ const THE_GRAPH: LsErc20TokenDef = {
   decimals: 18,
   address: IS_PRODUCTION_ENV
     ? '0xc944E90C64B2c07662A292be6244BDf05Cda44a7'
-    : SEPOLIA_ERC20_CONTRACT_ADDRESS,
+    : SEPOLIA_TESTNET_CONTRACTS.ERC20,
   // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
   liquifierAdapterAddress: IS_PRODUCTION_ENV
     ? '0x'
-    : SEPOLIA_LIQUIFIER_CONTRACT_ADDRESS,
+    : SEPOLIA_TESTNET_CONTRACTS.LIQUIFIER,
   liquifierTgTokenAddress: IS_PRODUCTION_ENV
     ? '0x'
-    : SEPOLIA_TG_TOKEN_CONTRACT_ADDRESS,
+    : SEPOLIA_TESTNET_CONTRACTS.TG_TOKEN,
   timeUnit: CrossChainTimeUnit.DAY,
   unstakingPeriod: 28,
 };
@@ -77,14 +82,14 @@ const LIVEPEER: LsErc20TokenDef = {
   decimals: 18,
   address: IS_PRODUCTION_ENV
     ? '0x58b6A8A3302369DAEc383334672404Ee733aB239'
-    : SEPOLIA_ERC20_CONTRACT_ADDRESS,
+    : SEPOLIA_TESTNET_CONTRACTS.ERC20,
   // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
   liquifierAdapterAddress: IS_PRODUCTION_ENV
     ? '0x'
-    : SEPOLIA_LIQUIFIER_CONTRACT_ADDRESS,
+    : SEPOLIA_TESTNET_CONTRACTS.LIQUIFIER,
   liquifierTgTokenAddress: IS_PRODUCTION_ENV
     ? '0x'
-    : SEPOLIA_TG_TOKEN_CONTRACT_ADDRESS,
+    : SEPOLIA_TESTNET_CONTRACTS.TG_TOKEN,
   timeUnit: CrossChainTimeUnit.LIVEPEER_ROUND,
   unstakingPeriod: 7,
 };
@@ -99,14 +104,14 @@ const POLYGON: LsErc20TokenDef = {
   // TODO: Use Liquifier's testnet address if the environment is development.
   address: IS_PRODUCTION_ENV
     ? '0x0D500B1d8E8eF31E21C99d1Db9A6444d3ADf1270'
-    : SEPOLIA_ERC20_CONTRACT_ADDRESS,
+    : SEPOLIA_TESTNET_CONTRACTS.ERC20,
   // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
   liquifierAdapterAddress: IS_PRODUCTION_ENV
     ? '0x'
-    : SEPOLIA_LIQUIFIER_CONTRACT_ADDRESS,
+    : SEPOLIA_TESTNET_CONTRACTS.LIQUIFIER,
   liquifierTgTokenAddress: IS_PRODUCTION_ENV
     ? '0x'
-    : SEPOLIA_TG_TOKEN_CONTRACT_ADDRESS,
+    : SEPOLIA_TESTNET_CONTRACTS.TG_TOKEN,
   timeUnit: CrossChainTimeUnit.POLYGON_CHECKPOINT,
   unstakingPeriod: 82,
 };
