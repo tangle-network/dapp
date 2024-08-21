@@ -53,7 +53,6 @@ export type LsParachainToken = Exclude<LsToken, LsErc20Token>;
 type ProtocolDefCommon = {
   name: string;
   decimals: number;
-  networkName: string;
   timeUnit: CrossChainTimeUnit;
   unstakingPeriod: number;
   logo: StaticAssetPath;
@@ -71,7 +70,6 @@ export interface LsParachainChainDef extends ProtocolDefCommon {
 export interface LsErc20TokenDef extends ProtocolDefCommon {
   type: 'erc20';
   id: LsErc20TokenId;
-  networkName: string;
   token: LsErc20Token;
   address: HexString;
   liquifierAdapterAddress: HexString;

@@ -168,7 +168,7 @@ const ProtocolSelector: FC<ProtocolSelectorProps> = ({
         <ChainIcon size="lg" name={selectedProtocol.token} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          {selectedProtocol.networkName}
+          {selectedProtocol.name}
         </Typography>
       </div>
 
@@ -199,7 +199,7 @@ const ProtocolSelector: FC<ProtocolSelectorProps> = ({
                       onSelect={() => setProtocolId(protocolId)}
                       className="px-3 normal-case"
                     >
-                      {protocol.networkName}
+                      {protocol.name}
                     </DropdownMenuItem>
                   </li>
                 );

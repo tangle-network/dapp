@@ -10,12 +10,18 @@ export type UnstakePeriodDetailItemProps = {
   protocolId: LsProtocolId;
 };
 
+type UnstakePeriod = {
+  value: number;
+  unit: string;
+  isEstimate: boolean;
+};
+
 const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
   protocolId,
 }) => {
   const protocol = getLsProtocolDef(protocolId);
 
-  const unlockPeriod = ((): [number, string] | null => {
+  const unlockPeriod = ((): UnstakePeriod | null => {
     const unlockPeriod = new CrossChainTime(
       protocol.timeUnit,
       protocol.unstakingPeriod,
@@ -25,8 +31,13 @@ const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
 
     // TODO: Special case for 0 days?
     const plurality = days > 1 ? 'days' : 'day';
+    const roundedDays = Math.round(days);
 
-    return [days, plurality];
+    return {
+      unit: plurality,
+      value: roundedDays,
+      isEstimate: days !== roundedDays,
+    };
   })();
 
   const value =
@@ -35,7 +46,8 @@ const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
       <SkeletonLoader className="max-w-[100px] min-w-4" />
     ) : (
       <div>
-        <strong>{unlockPeriod[0].toString()}</strong> {unlockPeriod[1]}
+        {unlockPeriod.isEstimate && '~'}
+        <strong>{unlockPeriod.value.toString()}</strong> {unlockPeriod.unit}
       </div>
     );
 
