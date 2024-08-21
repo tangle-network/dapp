@@ -37,13 +37,13 @@ const useLiquifierDeposit = () => {
     notifyProcessing: notifyApproveProcessing,
     notifySuccess: notifyApproveSuccess,
     notifyError: notifyApproveError,
-  } = useTxNotification(TxName.LST_LIQUIFIER_APPROVE);
+  } = useTxNotification(TxName.LS_LIQUIFIER_APPROVE);
 
   const {
     notifyProcessing: notifyDepositProcessing,
     notifySuccess: notifyDepositSuccess,
     notifyError: notifyDepositError,
-  } = useTxNotification(TxName.LST_LIQUIFIER_DEPOSIT);
+  } = useTxNotification(TxName.LS_LIQUIFIER_DEPOSIT);
 
   const isReady =
     writeLiquifier !== null &&

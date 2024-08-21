@@ -1,20 +1,19 @@
 import { useEffect, useState } from 'react';
-import { createPublicClient, http, PublicClient } from 'viem';
-import { mainnet } from 'viem/chains';
+import { Chain, createPublicClient, http, PublicClient } from 'viem';
 
-const useEthereumMainnetClient = () => {
+const useViemPublicClientWithChain = (chain: Chain) => {
   const [publicClient, setPublicClient] = useState<PublicClient | null>(null);
 
   useEffect(() => {
     const newPublicClient = createPublicClient({
-      chain: mainnet,
+      chain,
       transport: http(),
     });
 
     setPublicClient(newPublicClient);
-  }, []);
+  }, [chain]);
 
   return publicClient;
 };
 
-export default useEthereumMainnetClient;
+export default useViemPublicClientWithChain;

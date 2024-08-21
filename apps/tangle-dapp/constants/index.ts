@@ -63,8 +63,9 @@ export enum TxName {
   LST_REDEEM = 'redeem',
   LST_REBOND = 'cancel unstake request',
   LST_WITHDRAW_REDEEM = 'withdraw redeemed tokens',
-  LST_LIQUIFIER_APPROVE = 'liquifier approve spending',
-  LST_LIQUIFIER_DEPOSIT = 'liquifier deposit',
+  LS_LIQUIFIER_APPROVE = 'liquifier approve spending',
+  LS_LIQUIFIER_DEPOSIT = 'liquifier deposit',
+  LS_LIQUIFIER_UNLOCK = 'liquifier unlock',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

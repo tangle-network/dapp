@@ -19,6 +19,7 @@ import useExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useExchangeRate';
 import useRedeemTx from '../../../data/liquidStaking/useRedeemTx';
+import useLiquifierUnlock from '../../../data/liquifier/useLiquifierUnlock';
 import useSearchParamState from '../../../hooks/useSearchParamState';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
@@ -54,6 +55,8 @@ const LiquidUnstakeCard: FC = () => {
     txHash: redeemTxHash,
   } = useRedeemTx();
 
+  const performLiquifierUnlock = useLiquifierUnlock();
+
   const { minSpendable, maxSpendable } = useLsSpendingLimits(
     false,
     selectedChainId,
@@ -74,7 +77,7 @@ const LiquidUnstakeCard: FC = () => {
     stringify: (value) => value?.toString(),
   });
 
-  const handleUnstakeClick = useCallback(() => {
+  const handleUnstakeClick = useCallback(async () => {
     // Cannot perform transaction: Amount not set.
     if (fromAmount === null) {
       return;
@@ -85,10 +88,13 @@ const LiquidUnstakeCard: FC = () => {
         amount: fromAmount,
         currency: selectedProtocol.currency,
       });
+    } else if (
+      selectedProtocol.type === 'erc20' &&
+      performLiquifierUnlock !== null
+    ) {
+      await performLiquifierUnlock(selectedProtocol.id, fromAmount);
     }
-
-    // TODO: Perform action for EVM-based chains.
-  }, [executeRedeemTx, fromAmount, selectedProtocol]);
+  }, [executeRedeemTx, fromAmount, performLiquifierUnlock, selectedProtocol]);
 
   const toAmount = useMemo(() => {
     if (fromAmount === null || exchangeRate === null) {

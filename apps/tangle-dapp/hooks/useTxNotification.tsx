@@ -32,8 +32,9 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.LST_REDEEM]: 'Redeem request submitted',
   [TxName.LST_REBOND]: 'Unstake request cancelled',
   [TxName.LST_WITHDRAW_REDEEM]: 'Unstake request executed',
-  [TxName.LST_LIQUIFIER_DEPOSIT]: 'Liquifier deposit successful',
-  [TxName.LST_LIQUIFIER_APPROVE]: 'Liquifier approval successful',
+  [TxName.LS_LIQUIFIER_DEPOSIT]: 'Liquifier deposit successful',
+  [TxName.LS_LIQUIFIER_APPROVE]: 'Liquifier approval successful',
+  [TxName.LS_LIQUIFIER_UNLOCK]: 'Liquifier unlock successful',
 };
 
 // TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.

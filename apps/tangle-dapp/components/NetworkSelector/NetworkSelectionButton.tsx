@@ -21,6 +21,7 @@ import { usePathname } from 'next/navigation';
 import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useNetworkStore from '../../context/useNetworkStore';
 import { useLiquidStakingStore } from '../../data/liquidStaking/useLiquidStakingStore';
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
@@ -99,7 +100,9 @@ const NetworkSelectionButton: FC = () => {
   // on liquid staking page.
   else if (isInLiquidStakingPath) {
     const liquidStakingNetworkName = isLsErc20TokenId(selectedProtocolId)
-      ? 'Ethereum Mainnet'
+      ? IS_PRODUCTION_ENV
+        ? 'Ethereum Mainnet'
+        : 'Sepolia Testnet'
       : TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.name;
 
     const chainIconName = isLsErc20TokenId(selectedProtocolId)
@@ -114,6 +117,7 @@ const NetworkSelectionButton: FC = () => {
               className="opacity-60 cursor-not-allowed hover:!bg-none dark:hover:!bg-none"
               networkName={liquidStakingNetworkName}
               chainIconName={chainIconName}
+              isLocked
             />
           </Dropdown>
         </TooltipTrigger>
@@ -173,6 +177,7 @@ type TriggerButtonProps = {
   networkName: string;
   isLoading?: boolean;
   chainIconName?: string;
+  isLocked?: boolean;
 };
 
 const TriggerButton: FC<TriggerButtonProps> = ({
@@ -180,6 +185,7 @@ const TriggerButton: FC<TriggerButtonProps> = ({
   networkName,
   className,
   chainIconName = TANGLE_TESTNET_CHAIN_NAME,
+  isLocked = false,
 }) => {
   return (
     <DropdownBasicButton
@@ -210,7 +216,7 @@ const TriggerButton: FC<TriggerButtonProps> = ({
           {networkName}
         </Typography>
 
-        <ChevronDown size="lg" className="shrink-0 grow-0" />
+        {!isLocked && <ChevronDown size="lg" className="shrink-0 grow-0" />}
       </div>
     </DropdownBasicButton>
   );

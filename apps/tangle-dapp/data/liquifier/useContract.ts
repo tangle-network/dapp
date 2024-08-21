@@ -11,12 +11,13 @@ import {
   waitForTransactionReceipt,
   writeContract,
 } from 'viem/actions';
-import { mainnet } from 'viem/chains';
+import { mainnet, sepolia } from 'viem/chains';
 import { useConnectorClient } from 'wagmi';
 import { ReadContractReturnType } from 'wagmi/actions';
 
+import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
-import useEthereumMainnetClient from './useEthereumMainnetClient';
+import useViemPublicClientWithChain from './useViemPublicClientWithChain';
 
 export type ContractReadOptions<
   Abi extends ViemAbi,
@@ -37,7 +38,11 @@ export type ContractWriteOptions<
 };
 
 const useContract = <Abi extends ViemAbi>(abi: Abi) => {
-  const publicClient = useEthereumMainnetClient();
+  // Use Sepolia testnet for development, and mainnet for production.
+  // Some dummy contracts were deployed on Sepolia for testing purposes.
+  const chain = IS_PRODUCTION_ENV ? mainnet : sepolia;
+
+  const publicClient = useViemPublicClientWithChain(chain);
   const { data: connectorClient } = useConnectorClient();
   const activeEvmAddress20 = useEvmAddress20();
 
