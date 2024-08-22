@@ -1,4 +1,10 @@
 import { HexString } from '@polkadot/util/types';
+import { useWebContext } from '@webb-tools/api-provider-environment';
+import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
+import {
+  calculateTypedChainId,
+  ChainType,
+} from '@webb-tools/sdk-core/typed-chain-id';
 import assert from 'assert';
 import { useCallback } from 'react';
 import {
@@ -17,7 +23,10 @@ import { useConnectorClient } from 'wagmi';
 import { TxName } from '../../constants';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
-import useTxNotification from '../../hooks/useTxNotification';
+import useTxNotification, {
+  NotificationSteps,
+} from '../../hooks/useTxNotification';
+import ensureError from '../../utils/ensureError';
 
 export type ContractWriteOptions<
   Abi extends ViemAbi,
@@ -27,18 +36,14 @@ export type ContractWriteOptions<
   address: HexString;
   functionName: FunctionName;
   args: ContractFunctionArgs<Abi, 'payable' | 'nonpayable', FunctionName>;
+  notificationStep?: NotificationSteps;
 };
 
 const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
   const { data: connectorClient } = useConnectorClient();
   const activeEvmAddress20 = useEvmAddress20();
-
-  // TODO: Make use of success and error notifications.
-  const {
-    notifyProcessing,
-    notifySuccess: _,
-    notifyError: __,
-  } = useTxNotification();
+  const { activeChain, activeWallet, switchChain } = useWebContext();
+  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 
   const write = useCallback(
     async <
@@ -56,28 +61,71 @@ const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
         'Should not be able to call this function if there is no active EVM account',
       );
 
-      notifyProcessing(options.txName);
+      // On development, switch to the Sepolia chain if it's not already active.
+      // This is because there are dummy contracts deployed to Sepolia for testing.
+      if (
+        !IS_PRODUCTION_ENV &&
+        activeChain !== null &&
+        activeChain !== undefined &&
+        activeChain.id !== sepolia.id &&
+        activeWallet !== undefined
+      ) {
+        const typedChainId = calculateTypedChainId(ChainType.EVM, sepolia.id);
+        const targetChain = chainsPopulated[typedChainId];
 
-      // TODO: Handle possible errors thrown by `simulateContract`.
-      const { request } = await simulateContract(connectorClient, {
-        chain: IS_PRODUCTION_ENV ? mainnet : sepolia,
-        address: options.address,
-        functionName: options.functionName,
-        account: activeEvmAddress20,
-        // TODO: Getting the type of `args` and `abi` right has proven quite difficult.
-        abi: abi as any,
-        args: options.args as any,
-      });
+        await switchChain(targetChain, activeWallet);
+      }
 
-      const txHash = await writeContract(connectorClient, request);
+      notifyProcessing(options.txName, options.notificationStep);
 
-      // Return the transaction receipt, which contains the transaction status.
-      return waitForTransactionReceipt(connectorClient, {
-        hash: txHash,
-        // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
-      });
+      try {
+        const { request } = await simulateContract(connectorClient, {
+          chain: IS_PRODUCTION_ENV ? mainnet : sepolia,
+          address: options.address,
+          functionName: options.functionName,
+          account: activeEvmAddress20,
+          // TODO: Getting the type of `args` and `abi` right has proven quite difficult.
+          abi: abi as any,
+          args: options.args as any,
+        });
+
+        const txHash = await writeContract(connectorClient, request);
+
+        const txReceipt = await waitForTransactionReceipt(connectorClient, {
+          hash: txHash,
+          // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
+        });
+
+        if (txReceipt.status === 'success') {
+          notifySuccess(options.txName, txHash);
+        } else {
+          // TODO: Improve UX by at least providing a link to the transaction hash. The idea is that if there was an error, it would have been caught by the try-catch, so this part here is sort of an 'unreachable' section.
+          notifyError(
+            options.txName,
+            `${options.txName} reverted, but no information about the error is known`,
+          );
+        }
+
+        return txReceipt.status === 'success';
+      } catch (possibleError) {
+        const error = ensureError(possibleError);
+
+        notifyError(options.txName, error);
+
+        return false;
+      }
     },
-    [abi, activeEvmAddress20, connectorClient, notifyProcessing],
+    [
+      abi,
+      activeChain,
+      activeEvmAddress20,
+      activeWallet,
+      connectorClient,
+      notifyError,
+      notifyProcessing,
+      notifySuccess,
+      switchChain,
+    ],
   );
 
   // Only provide the write function once the connector client is ready,

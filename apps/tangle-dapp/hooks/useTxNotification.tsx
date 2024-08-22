@@ -40,6 +40,11 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
 const makeKey = (txName: TxName): `${TxName}-tx-notification` =>
   `${txName}-tx-notification`;
 
+export type NotificationSteps = {
+  current: number;
+  max: number;
+};
+
 // TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.
 const useTxNotification = (explorerUrl?: string) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -126,13 +131,23 @@ const useTxNotification = (explorerUrl?: string) => {
   );
 
   const notifyProcessing = useCallback(
-    (txName: TxName) => {
+    (txName: TxName, steps?: NotificationSteps) => {
+      // Sanity check.
+      if (steps !== undefined && steps.current > steps.max) {
+        console.warn(
+          'Current transaction notification steps exceed the maximum steps (check for off-by-one errors)',
+        );
+      }
+
       const key = makeKey(txName);
 
       closeSnackbar(makeKey(txName));
 
       enqueueSnackbar(
-        <Typography variant="h5">Processing {txName}</Typography>,
+        <Typography variant="h5">
+          {steps !== undefined && `(${steps.current}/${steps.max}) `}Processing{' '}
+          {txName}
+        </Typography>,
         {
           key,
           variant: 'info',
