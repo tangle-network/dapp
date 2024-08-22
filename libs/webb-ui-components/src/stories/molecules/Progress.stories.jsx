@@ -2,7 +2,7 @@ import { Progress, SteppedProgress } from '../../components/Progress';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Design System/V2 (WIP)/Molecules/Progress',
+  title: 'Design System/Molecules/Progress',
   component: Progress,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 };

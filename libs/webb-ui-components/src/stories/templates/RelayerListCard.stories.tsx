@@ -3,7 +3,7 @@ import RelayerListCard from '../../components/ListCard/RelayerListCard';
 import { randBoolean, randEthereumAddress, randNumber } from '@ngneat/falso';
 
 const meta: Meta<typeof RelayerListCard> = {
-  title: 'Design System/V2 (WIP)/Templates/RelayerListCard',
+  title: 'Design System/Templates/RelayerListCard',
   component: RelayerListCard,
 };
 

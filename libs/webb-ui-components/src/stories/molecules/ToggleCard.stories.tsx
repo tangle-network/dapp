@@ -4,7 +4,7 @@ import ToggleCard from '../../components/ToggleCard';
 import GasStationFill from '@webb-tools/icons/GasStationFill';
 
 const meta: Meta<typeof ToggleCard> = {
-  title: 'Design System/V2 (WIP)/Molecules/ToggleCard',
+  title: 'Design System/Molecules/ToggleCard',
   component: ToggleCard,
 };
 

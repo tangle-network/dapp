@@ -3,7 +3,7 @@ import { AdjustAmount } from '../../components/BridgeInputs/AdjustAmount';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Design System/V2 (WIP)/Molecules/AdjustAmount',
+  title: 'Design System/Molecules/AdjustAmount',
   component: AdjustAmount,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 };

@@ -4,7 +4,7 @@ import TokenListItem from '../../components/ListCard/TokenListItem';
 import noop from 'lodash/noop';
 
 const meta: Meta<typeof TokenListItem> = {
-  title: 'Design System/V2 (WIP)/Molecules/TokenListItem',
+  title: 'Design System/Molecules/TokenListItem',
   component: TokenListItem,
 };
 
@@ -15,16 +15,19 @@ type Story = StoryObj<typeof TokenListItem>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 export const Default: Story = {
-  render: () => <TokenListItem name="Ethereum" symbol="ETH" />,
+  render: () => <TokenListItem id="eth" name="Ethereum" symbol="ETH" />,
 };
 
 export const Disabled: Story = {
-  render: () => <TokenListItem isDisabled name="Ethereum" symbol="ETH" />,
+  render: () => (
+    <TokenListItem id="eth" isDisabled name="Ethereum" symbol="ETH" />
+  ),
 };
 
 export const WithBalance: Story = {
   render: () => (
     <TokenListItem
+      id="eth"
       name="Ethereum"
       symbol="ETH"
       assetBalanceProps={{ balance: 0, balanceInUsd: 0 }}
@@ -34,13 +37,14 @@ export const WithBalance: Story = {
 
 export const AddTokenToWallet: Story = {
   render: () => (
-    <TokenListItem name="Ethereum" symbol="ETH" onAddToken={noop} />
+    <TokenListItem id="eth" name="Ethereum" symbol="ETH" onAddToken={noop} />
   ),
 };
 
 export const WithWarningBadge: Story = {
   render: () => (
     <TokenListItem
+      id="webbEth"
       name="Webb Ethereum"
       symbol="webbETH"
       assetBadgeProps={{
@@ -54,6 +58,7 @@ export const WithWarningBadge: Story = {
 export const WithInfoBadge: Story = {
   render: () => (
     <TokenListItem
+      id="webbETH"
       name="Webb Ethereum"
       symbol="webbETH"
       assetBadgeProps={{
@@ -67,6 +72,7 @@ export const WithInfoBadge: Story = {
 export const ShieldedPoolItem: Story = {
   render: () => (
     <TokenListItem
+      id="webbETH"
       name="Webb Ethereum"
       symbol="webbETH"
       tokenType="shielded"
@@ -81,6 +87,7 @@ export const ShieldedPoolItem: Story = {
 export const ShieldedPoolItemWithChain: Story = {
   render: () => (
     <TokenListItem
+      id="webbETH"
       name="Webb Ethereum"
       symbol="webbETH"
       tokenType="shielded"
