@@ -165,7 +165,7 @@ const ProtocolSelector: FC<ProtocolSelectorProps> = ({
   const base = (
     <div className="group flex gap-1 items-center justify-center">
       <div className="flex gap-2 items-center justify-center">
-        <ChainIcon size="lg" name={selectedProtocol.token} />
+        <ChainIcon size="lg" name={selectedProtocol.chainIconFileName} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
           {selectedProtocol.name}
@@ -181,8 +181,8 @@ const ProtocolSelector: FC<ProtocolSelectorProps> = ({
       <DropdownMenuTrigger>{base}</DropdownMenuTrigger>
 
       <DropdownBody>
-        <ScrollArea className="max-h-[300px]">
-          <ul>
+        <ScrollArea>
+          <ul className="max-h-[300px]">
             {Object.values(LsProtocolId)
               .filter(
                 (protocolId): protocolId is LsProtocolId =>
@@ -195,7 +195,12 @@ const ProtocolSelector: FC<ProtocolSelectorProps> = ({
                 return (
                   <li key={protocolId} className="w-full">
                     <DropdownMenuItem
-                      leftIcon={<ChainIcon size="lg" name={protocol.token} />}
+                      leftIcon={
+                        <ChainIcon
+                          size="lg"
+                          name={protocol.chainIconFileName}
+                        />
+                      }
                       onSelect={() => setProtocolId(protocolId)}
                       className="px-3 normal-case"
                     >

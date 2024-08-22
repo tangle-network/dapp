@@ -55,7 +55,7 @@ type ProtocolDefCommon = {
   decimals: number;
   timeUnit: CrossChainTimeUnit;
   unstakingPeriod: number;
-  logo: StaticAssetPath;
+  chainIconFileName: string;
 };
 
 export interface LsParachainChainDef extends ProtocolDefCommon {

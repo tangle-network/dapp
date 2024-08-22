@@ -3,7 +3,6 @@ import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
-import { StaticAssetPath } from '..';
 import { IS_PRODUCTION_ENV } from '../env';
 import {
   LsErc20TokenDef,
@@ -32,8 +31,7 @@ const CHAINLINK: LsErc20TokenDef = {
   type: 'erc20',
   id: LsProtocolId.CHAINLINK,
   name: 'Chainlink',
-  // TODO: Add logo and link it here.
-  logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
+  chainIconFileName: 'chainlink',
   token: LsToken.LINK,
   decimals: 18,
   address: IS_PRODUCTION_ENV
@@ -54,8 +52,7 @@ const THE_GRAPH: LsErc20TokenDef = {
   type: 'erc20',
   id: LsProtocolId.THE_GRAPH,
   name: 'The Graph',
-  // TODO: Add logo and link it here.
-  logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
+  chainIconFileName: 'the-graph',
   token: LsToken.GRT,
   decimals: 18,
   address: IS_PRODUCTION_ENV
@@ -76,8 +73,7 @@ const LIVEPEER: LsErc20TokenDef = {
   type: 'erc20',
   id: LsProtocolId.LIVEPEER,
   name: 'Livepeer',
-  // TODO: Add logo and link it here.
-  logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
+  chainIconFileName: 'livepeer',
   token: LsToken.LPT,
   decimals: 18,
   address: IS_PRODUCTION_ENV
@@ -98,7 +94,7 @@ const POLYGON: LsErc20TokenDef = {
   type: 'erc20',
   id: LsProtocolId.POLYGON,
   name: 'Polygon',
-  logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
+  chainIconFileName: 'polygon',
   token: LsToken.POL,
   decimals: 18,
   // TODO: Use Liquifier's testnet address if the environment is development.
@@ -121,7 +117,7 @@ const POLKADOT: LsParachainChainDef = {
   id: LsProtocolId.POLKADOT,
   name: 'Polkadot',
   token: LsToken.DOT,
-  logo: StaticAssetPath.LIQUID_STAKING_TOKEN_POLKADOT,
+  chainIconFileName: 'polkadot',
   currency: 'Dot',
   decimals: 10,
   rpcEndpoint: 'wss://polkadot-rpc.dwellir.com',
@@ -134,7 +130,7 @@ const PHALA: LsParachainChainDef = {
   id: LsProtocolId.PHALA,
   name: 'Phala',
   token: LsToken.PHALA,
-  logo: StaticAssetPath.LIQUID_STAKING_TOKEN_PHALA,
+  chainIconFileName: 'phala',
   currency: 'Pha',
   decimals: 18,
   rpcEndpoint: 'wss://api.phala.network/ws',
@@ -147,7 +143,7 @@ const MOONBEAM: LsParachainChainDef = {
   id: LsProtocolId.MOONBEAM,
   name: 'Moonbeam',
   token: LsToken.GLMR,
-  logo: StaticAssetPath.LIQUID_STAKING_TOKEN_GLIMMER,
+  chainIconFileName: 'moonbeam',
   // TODO: No currency entry for GLMR in the Tangle Primitives?
   currency: 'Dot',
   decimals: 18,
@@ -161,7 +157,7 @@ const ASTAR: LsParachainChainDef = {
   id: LsProtocolId.ASTAR,
   name: 'Astar',
   token: LsToken.ASTAR,
-  logo: StaticAssetPath.LIQUID_STAKING_TOKEN_ASTAR,
+  chainIconFileName: 'astar',
   // TODO: No currency entry for ASTAR in the Tangle Primitives?
   currency: 'Dot',
   decimals: 18,
@@ -175,7 +171,7 @@ const MANTA: LsParachainChainDef = {
   id: LsProtocolId.MANTA,
   name: 'Manta',
   token: LsToken.MANTA,
-  logo: StaticAssetPath.LIQUID_STAKING_TOKEN_MANTA,
+  chainIconFileName: 'manta',
   // TODO: No currency entry for ASTAR in the Tangle Primitives?
   currency: 'Dot',
   decimals: 18,
@@ -189,7 +185,7 @@ const TANGLE_RESTAKING_PARACHAIN: LsParachainChainDef = {
   id: LsProtocolId.TANGLE_RESTAKING_PARACHAIN,
   name: 'Tangle Parachain',
   token: LsToken.TNT,
-  logo: StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO,
+  chainIconFileName: 'tangle',
   currency: 'Bnc',
   decimals: TANGLE_TOKEN_DECIMALS,
   rpcEndpoint: TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,

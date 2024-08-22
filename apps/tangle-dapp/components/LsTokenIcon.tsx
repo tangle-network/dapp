@@ -4,15 +4,16 @@ import { twMerge } from 'tailwind-merge';
 
 type LSTTokenIconSize = 'md' | 'lg';
 
-interface LSTTokenIconProps {
+interface LsTokenIconProps {
   name: string;
   size?: LSTTokenIconSize;
 }
 
-const LSTTokenIcon: FC<LSTTokenIconProps> = ({ name, size = 'md' }) => {
+const LsTokenIcon: FC<LsTokenIconProps> = ({ name, size = 'md' }) => {
   const { wrapperSizeClassName, iconSizeClassName, borderSize } =
     getSizeValues(size);
 
+  // TODO: Positioning of the logo is not 100% centered; a few pixels off.
   return (
     <div
       className={twMerge(
@@ -69,7 +70,7 @@ const LSTTokenIcon: FC<LSTTokenIconProps> = ({ name, size = 'md' }) => {
   );
 };
 
-export default LSTTokenIcon;
+export default LsTokenIcon;
 
 function getSizeValues(size: LSTTokenIconSize): {
   wrapperSizeClassName: string;

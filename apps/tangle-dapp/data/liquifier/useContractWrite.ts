@@ -11,10 +11,11 @@ import {
   waitForTransactionReceipt,
   writeContract,
 } from 'viem/actions';
-import { mainnet } from 'viem/chains';
+import { mainnet, sepolia } from 'viem/chains';
 import { useConnectorClient } from 'wagmi';
 
 import { TxName } from '../../constants';
+import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import useTxNotification from '../../hooks/useTxNotification';
 
@@ -59,7 +60,7 @@ const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
 
       // TODO: Handle possible errors thrown by `simulateContract`.
       const { request } = await simulateContract(connectorClient, {
-        chain: mainnet,
+        chain: IS_PRODUCTION_ENV ? mainnet : sepolia,
         address: options.address,
         functionName: options.functionName,
         account: activeEvmAddress20,
