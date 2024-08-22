@@ -37,19 +37,20 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.LS_LIQUIFIER_UNLOCK]: 'Liquifier unlock successful',
 };
 
+const makeKey = (txName: TxName): `${TxName}-tx-notification` =>
+  `${txName}-tx-notification`;
+
 // TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.
-const useTxNotification = (txName: TxName, explorerUrl?: string) => {
+const useTxNotification = (explorerUrl?: string) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const getTxExplorerUrl = useExplorerUrl();
   const { isEvm: isEvmActiveAccount } = useAgnosticAccountInfo();
 
-  const processingKey = `${txName}-processing`;
-
   // TODO: Consider warning the user if they attempt to close the browser window. The transaction won't fail, but they won't be able to see the result. Might need a global store to track the event listener, to prevent multiple listeners from being added.
 
   const notifySuccess = useCallback(
-    (txHash: HexString, successMessage?: string | null) => {
-      closeSnackbar(processingKey);
+    (txName: TxName, txHash: HexString, successMessage?: string | null) => {
+      closeSnackbar(makeKey(txName));
 
       // In case that the EVM account status is unavailable,
       // default to not display the transaction explorer URL,
@@ -95,15 +96,13 @@ const useTxNotification = (txName: TxName, explorerUrl?: string) => {
       enqueueSnackbar,
       getTxExplorerUrl,
       isEvmActiveAccount,
-      processingKey,
-      txName,
       explorerUrl,
     ],
   );
 
   const notifyError = useCallback(
-    (error: Error | string) => {
-      closeSnackbar(processingKey);
+    (txName: TxName, error: Error | string) => {
+      closeSnackbar(makeKey(txName));
 
       const errorMessage = typeof error === 'string' ? error : error.message;
 
@@ -123,18 +122,26 @@ const useTxNotification = (txName: TxName, explorerUrl?: string) => {
         },
       );
     },
-    [closeSnackbar, enqueueSnackbar, processingKey, txName],
+    [closeSnackbar, enqueueSnackbar],
   );
 
-  const notifyProcessing = useCallback(() => {
-    closeSnackbar(processingKey);
+  const notifyProcessing = useCallback(
+    (txName: TxName) => {
+      const key = makeKey(txName);
 
-    enqueueSnackbar(<Typography variant="h5">Processing {txName}</Typography>, {
-      key: processingKey,
-      variant: 'info',
-      persist: true,
-    });
-  }, [closeSnackbar, enqueueSnackbar, processingKey, txName]);
+      closeSnackbar(makeKey(txName));
+
+      enqueueSnackbar(
+        <Typography variant="h5">Processing {txName}</Typography>,
+        {
+          key,
+          variant: 'info',
+          persist: true,
+        },
+      );
+    },
+    [closeSnackbar, enqueueSnackbar],
+  );
 
   return { notifyProcessing, notifySuccess, notifyError };
 };

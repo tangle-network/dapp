@@ -5,12 +5,12 @@ import { erc20Abi } from 'viem';
 import { LS_ERC20_TOKEN_MAP } from '../../constants/liquidStaking/constants';
 import { LsErc20TokenId } from '../../constants/liquidStaking/types';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
-import useContract from './useContract';
+import useContractRead from './useContractRead';
 
 const useLiquifierErc20Balance = (tokenId: LsErc20TokenId): BN | null => {
   const activeEvmAddress20 = useEvmAddress20();
   const [balance, setBalance] = useState<BN | null>(null);
-  const { read } = useContract(erc20Abi);
+  const read = useContractRead(erc20Abi);
 
   // TODO: This only loads the balance once. Make it so it updates every few seconds that way the it responds to any balance changes that may occur, not just when loading the site initially. Like a subscription.
   useEffect(() => {

@@ -25,7 +25,7 @@ const usePolling = <T>({
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
+    const intervalHandle = setInterval(async () => {
       // Fetcher isn't ready to be called yet.
       if (fetcher === null) {
         return;
@@ -37,7 +37,7 @@ const usePolling = <T>({
     }, refreshInterval);
 
     return () => {
-      clearInterval(interval);
+      clearInterval(intervalHandle);
     };
   }, [fetcher, refreshInterval]);
 

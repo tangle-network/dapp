@@ -23,8 +23,8 @@ import {
  */
 const SEPOLIA_TESTNET_CONTRACTS = {
   LIQUIFIER: '0xCE0148DbA55c9719B59642f5cBf4F26e67F44E70',
+  ERC20: '0x2eE951c2d215ba1b3E0DF20764c96a0bC7809F41',
   // TODO: Fill in the actual addresses once deployed to a testnet.
-  ERC20: '0x',
   TG_TOKEN: '0x',
 } as const satisfies Record<string, HexString>;
 

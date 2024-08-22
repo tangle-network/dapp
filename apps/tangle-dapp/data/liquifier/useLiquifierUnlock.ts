@@ -7,16 +7,11 @@ import { LS_ERC20_TOKEN_MAP } from '../../constants/liquidStaking/constants';
 import LIQUIFIER_ABI from '../../constants/liquidStaking/liquifierAbi';
 import { LsErc20TokenId } from '../../constants/liquidStaking/types';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
-import useTxNotification from '../../hooks/useTxNotification';
-import useContract from './useContract';
+import useContractWrite from './useContractWrite';
 
 const useLiquifierUnlock = () => {
   const activeEvmAddress20 = useEvmAddress20();
-  const { write: writeLiquifier } = useContract(LIQUIFIER_ABI);
-
-  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification(
-    TxName.LS_LIQUIFIER_UNLOCK,
-  );
+  const writeLiquifier = useContractWrite(LIQUIFIER_ABI);
 
   const isReady = writeLiquifier !== null && activeEvmAddress20 !== null;
 
@@ -31,26 +26,17 @@ const useLiquifierUnlock = () => {
 
       const tokenDef = LS_ERC20_TOKEN_MAP[tokenId];
 
-      notifyProcessing();
-
       const unlockTxReceipt = await writeLiquifier({
+        txName: TxName.LS_LIQUIFIER_UNLOCK,
         // TODO: Does the adapter contract have a unlock function? It doesn't seem like so. In that case, will need to update the way that Liquifier contract's address is handled.
         address: tokenDef.liquifierAdapterAddress,
         functionName: 'unlock',
         args: [BigInt(amount.toString())],
       });
 
-      if (unlockTxReceipt.status === 'reverted') {
-        notifyError('Failed to unlock the token amount from the Liquifier');
-
-        return false;
-      }
-
-      notifySuccess(unlockTxReceipt.transactionHash);
-
-      return true;
+      return unlockTxReceipt.status !== 'reverted';
     },
-    [isReady, notifyError, notifyProcessing, notifySuccess, writeLiquifier],
+    [isReady, writeLiquifier],
   );
 
   // Wait for the requirements to be ready before

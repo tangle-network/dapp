@@ -10,6 +10,7 @@ import {
 import useApiRx from '../../hooks/useApiRx';
 import calculateBnRatio from '../../utils/calculateBnRatio';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
+import { ContractReadOptions } from '../liquifier/useContractRead';
 import useContractReadSubscription from '../liquifier/useContractReadSubscription';
 import usePolling, { PollingPrimaryCacheKey } from './usePolling';
 
@@ -81,15 +82,26 @@ const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
       : fetchErc20ExchangeRate(protocol);
   }, [fetchErc20ExchangeRate, parachainExchangeRate, protocol]);
 
+  const totalSupplyFetcher = useCallback((): ContractReadOptions<
+    typeof erc20Abi,
+    'totalSupply'
+  > | null => {
+    if (protocol.type !== 'erc20') {
+      return null;
+    }
+
+    return {
+      address: protocol.address,
+      functionName: 'totalSupply',
+      args: [],
+    };
+  }, [protocol]);
+
   // TODO: Will need one for the LST total issuance, and another for the token pool amount.
   const {
     value: _erc20TotalIssuance,
     setIsPaused: setIsErc20TotalIssuancePaused,
-  } = useContractReadSubscription(erc20Abi, {
-    address: '0x',
-    functionName: 'totalSupply',
-    args: [],
-  });
+  } = useContractReadSubscription(erc20Abi, totalSupplyFetcher);
 
   // Pause or resume ERC20-based exchange rate fetching based
   // on whether the requested protocol is a parachain or an ERC20 token.

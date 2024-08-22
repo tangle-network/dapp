@@ -98,6 +98,12 @@ const LiquidStakeCard: FC = () => {
     return fromAmount.muln(exchangeRate);
   }, [fromAmount, exchangeRate]);
 
+  const isReady =
+    (fromAmount !== null &&
+      selectedProtocol.type === 'parachain' &&
+      executeMintTx !== null) ||
+    (selectedProtocol.type === 'erc20' && performLiquifierDeposit !== null);
+
   const walletBalance = (
     <AgnosticLsBalance
       protocolId={selectedProtocolId}
@@ -156,9 +162,7 @@ const LiquidStakeCard: FC = () => {
 
       <Button
         isDisabled={
-          // Mint transaction is not available yet. This may indicate
-          // that there is no connected account.
-          executeMintTx === null ||
+          !isReady ||
           // No amount entered or amount is zero.
           fromAmount === null ||
           fromAmount.isZero()

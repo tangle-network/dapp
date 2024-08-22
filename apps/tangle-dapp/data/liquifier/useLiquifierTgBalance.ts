@@ -5,11 +5,11 @@ import { LS_ERC20_TOKEN_MAP } from '../../constants/liquidStaking/constants';
 import LIQUIFIER_TG_TOKEN_ABI from '../../constants/liquidStaking/liquifierTgTokenAbi';
 import { LsErc20TokenId } from '../../constants/liquidStaking/types';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
-import useContract from './useContract';
+import useContractRead from './useContractRead';
 
 const useLiquifierTgBalance = (tokenId: LsErc20TokenId) => {
   const activeEvmAddress20 = useEvmAddress20();
-  const { read } = useContract(LIQUIFIER_TG_TOKEN_ABI);
+  const read = useContractRead(LIQUIFIER_TG_TOKEN_ABI);
   const [balance, setBalance] = useState<BN | null>(null);
 
   useEffect(() => {

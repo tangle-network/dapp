@@ -8,8 +8,7 @@ import { LS_ERC20_TOKEN_MAP } from '../../constants/liquidStaking/constants';
 import LIQUIFIER_ABI from '../../constants/liquidStaking/liquifierAbi';
 import { LsErc20TokenId } from '../../constants/liquidStaking/types';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
-import useTxNotification from '../../hooks/useTxNotification';
-import useContract from './useContract';
+import useContractWrite from './useContractWrite';
 
 /**
  * 0. Token.balanceOf(sender) // Obtain the user's token balance (eg. LINK).
@@ -30,20 +29,8 @@ import useContract from './useContract';
  */
 const useLiquifierDeposit = () => {
   const activeEvmAddress20 = useEvmAddress20();
-  const { write: writeChainlinkErc20 } = useContract(erc20Abi);
-  const { write: writeLiquifier } = useContract(LIQUIFIER_ABI);
-
-  const {
-    notifyProcessing: notifyApproveProcessing,
-    notifySuccess: notifyApproveSuccess,
-    notifyError: notifyApproveError,
-  } = useTxNotification(TxName.LS_LIQUIFIER_APPROVE);
-
-  const {
-    notifyProcessing: notifyDepositProcessing,
-    notifySuccess: notifyDepositSuccess,
-    notifyError: notifyDepositError,
-  } = useTxNotification(TxName.LS_LIQUIFIER_DEPOSIT);
+  const writeChainlinkErc20 = useContractWrite(erc20Abi);
+  const writeLiquifier = useContractWrite(LIQUIFIER_ABI);
 
   const isReady =
     writeLiquifier !== null &&
@@ -61,28 +48,20 @@ const useLiquifierDeposit = () => {
 
       const tokenDef = LS_ERC20_TOKEN_MAP[tokenId];
 
-      notifyApproveProcessing();
-
       // Approve spending the token amount by the Liquifier contract.
       const approveTxReceipt = await writeChainlinkErc20({
+        txName: TxName.LS_LIQUIFIER_APPROVE,
         address: tokenDef.address,
         functionName: 'approve',
         args: [tokenDef.liquifierAdapterAddress, BigInt(amount.toString())],
       });
 
       if (approveTxReceipt.status === 'reverted') {
-        notifyApproveError(
-          'Failed to approve spending the token amount by the Liquifier contract',
-        );
-
         return false;
       }
 
-      // TODO: Ensure that the transaction hash takes to the proper explorer URL, since it is not a Substrate transaction.
-      notifyApproveSuccess(approveTxReceipt.transactionHash);
-      notifyDepositProcessing();
-
       const depositTxReceipt = await writeLiquifier({
+        txName: TxName.LS_LIQUIFIER_DEPOSIT,
         // TODO: Does the adapter contract have a deposit function? It doesn't seem like so. In that case, will need to update the way that Liquifier contract's address is handled.
         address: tokenDef.liquifierAdapterAddress,
         functionName: 'deposit',
@@ -91,29 +70,12 @@ const useLiquifierDeposit = () => {
       });
 
       if (depositTxReceipt.status === 'reverted') {
-        notifyDepositError(
-          'Failed to deposit the token amount to the Liquifier',
-        );
-
         return false;
       }
 
-      notifyDepositSuccess(depositTxReceipt.transactionHash);
-
       return true;
     },
-    [
-      activeEvmAddress20,
-      isReady,
-      notifyApproveError,
-      notifyApproveProcessing,
-      notifyApproveSuccess,
-      notifyDepositError,
-      notifyDepositProcessing,
-      notifyDepositSuccess,
-      writeChainlinkErc20,
-      writeLiquifier,
-    ],
+    [activeEvmAddress20, isReady, writeChainlinkErc20, writeLiquifier],
   );
 
   // Wait for the requirements to be ready before

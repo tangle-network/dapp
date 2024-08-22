@@ -6,7 +6,7 @@ import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import LIQUIFIER_TG_TOKEN_ABI from '../../../constants/liquidStaking/liquifierTgTokenAbi';
 import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
-import useContract from '../../../data/liquifier/useContract';
+import useContractRead from '../../../data/liquifier/useContractRead';
 import useEvmAddress20 from '../../../hooks/useEvmAddress';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
@@ -15,8 +15,8 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
   const substrateAddress = useSubstrateAddress();
   const evmAddress20 = useEvmAddress20();
   const { nativeBalances, liquidBalances } = useParachainBalances();
-  const { read: readErc20 } = useContract(erc20Abi);
-  const { read: readLiquidErc20 } = useContract(LIQUIFIER_TG_TOKEN_ABI);
+  const readErc20 = useContractRead(erc20Abi);
+  const readLiquidErc20 = useContractRead(LIQUIFIER_TG_TOKEN_ABI);
 
   const [balance, setBalance] = useState<
     BN | null | typeof EMPTY_VALUE_PLACEHOLDER
