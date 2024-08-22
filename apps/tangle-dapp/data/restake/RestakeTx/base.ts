@@ -34,15 +34,15 @@ export type DepositContext = {
   operatorAccount?: string;
 };
 
-export type DelegateContext = {
+export type DelegatorStakeContext = {
   operatorAccount: string;
   assetId: string;
   amount: bigint;
 };
 
-export type DelegatorBondLessContext = DelegateContext;
+export type ScheduleDelegatorUnstakeContext = DelegatorStakeContext;
 
-export type ExecuteDelegatorBondLessContext = Record<string, unknown>;
+export type ExecuteAllDelegatorUnstakeRequestContext = Record<string, unknown>;
 
 export type CancelDelegatorUnstakeRequestContext = {
   unstakeRequests: {
@@ -57,9 +57,9 @@ export type ScheduleWithdrawContext = {
   amount: bigint;
 };
 
-export type ExecuteWithdrawContext = Record<string, unknown>;
+export type ExecuteAllWithdrawRequestContext = Record<string, unknown>;
 
-export type CancelWithdrawContext = {
+export type CancelWithdrawRequestContext = {
   withdrawRequests: {
     assetId: string;
     amount: bigint;
@@ -83,22 +83,22 @@ export abstract class RestakeTxBase {
     eventHandlers?: TxEventHandlers<DepositContext>,
   ): Promise<Hash | null>;
 
-  abstract delegate(
+  abstract stake(
     operatorAccount: string,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<DelegateContext>,
+    eventHandlers?: TxEventHandlers<DelegatorStakeContext>,
   ): Promise<Hash | null>;
 
   abstract scheduleDelegatorUnstake(
     operatorAccount: string,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<DelegatorBondLessContext>,
+    eventHandlers?: TxEventHandlers<ScheduleDelegatorUnstakeContext>,
   ): Promise<Hash | null>;
 
   abstract executeDelegatorUnstakeRequests(
-    eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
+    eventHandlers?: TxEventHandlers<ExecuteAllDelegatorUnstakeRequestContext>,
   ): Promise<Hash | null>;
 
   abstract cancelDelegatorUnstakeRequests(
@@ -113,11 +113,11 @@ export abstract class RestakeTxBase {
   ): Promise<Hash | null>;
 
   abstract executeWithdraw(
-    eventHandlers?: TxEventHandlers<ExecuteWithdrawContext>,
+    eventHandlers?: TxEventHandlers<ExecuteAllWithdrawRequestContext>,
   ): Promise<Hash | null>;
 
   abstract cancelWithdraw(
-    withdrawRequests: CancelWithdrawContext['withdrawRequests'],
-    eventHandlers?: TxEventHandlers<CancelWithdrawContext>,
+    withdrawRequests: CancelWithdrawRequestContext['withdrawRequests'],
+    eventHandlers?: TxEventHandlers<CancelWithdrawRequestContext>,
   ): Promise<Hash | null>;
 }

@@ -2,8 +2,8 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { useCallback, useMemo, useState } from 'react';
 
 import {
-  type CancelWithdrawContext,
-  type ExecuteWithdrawContext,
+  type CancelWithdrawRequestContext,
+  type ExecuteAllWithdrawRequestContext,
   TxEvent,
 } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
@@ -24,7 +24,7 @@ const WithdrawRequestTableActions = ({
   const [isExecuting, setIsExecuting] = useState(false);
 
   const cancelOptions =
-    useRestakeTxEventHandlersWithNoti<CancelWithdrawContext>(
+    useRestakeTxEventHandlersWithNoti<CancelWithdrawRequestContext>(
       useMemo(
         () =>
           ({
@@ -39,7 +39,7 @@ const WithdrawRequestTableActions = ({
     );
 
   const executeOptions =
-    useRestakeTxEventHandlersWithNoti<ExecuteWithdrawContext>(
+    useRestakeTxEventHandlersWithNoti<ExecuteAllWithdrawRequestContext>(
       useMemo(
         () =>
           ({
@@ -62,7 +62,7 @@ const WithdrawRequestTableActions = ({
       return {
         amount: amountRaw,
         assetId,
-      } satisfies CancelWithdrawContext['withdrawRequests'][number];
+      } satisfies CancelWithdrawRequestContext['withdrawRequests'][number];
     });
 
     await cancelWithdraw(requests, cancelOptions);

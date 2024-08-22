@@ -6,13 +6,13 @@ import type { Hash } from 'viem';
 
 import {
   type CancelDelegatorUnstakeRequestContext,
-  type CancelWithdrawContext,
-  type DelegateContext,
-  type DelegatorBondLessContext,
+  type CancelWithdrawRequestContext,
+  type DelegatorStakeContext,
   type DepositContext,
-  type ExecuteDelegatorBondLessContext,
-  type ExecuteWithdrawContext,
+  type ExecuteAllDelegatorUnstakeRequestContext,
+  type ExecuteAllWithdrawRequestContext,
   RestakeTxBase,
+  type ScheduleDelegatorUnstakeContext,
   type ScheduleWithdrawContext,
   type TxEventHandlers,
 } from './base';
@@ -155,17 +155,17 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     return this.signAndSendExtrinsic(extrinsics, context, eventHandlers);
   };
 
-  delegate = async (
+  stake = async (
     operatorAccount: string,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<DelegateContext>,
+    eventHandlers?: TxEventHandlers<DelegatorStakeContext>,
   ) => {
     const context = {
       amount,
       assetId,
       operatorAccount,
-    } satisfies DelegateContext;
+    } satisfies DelegatorStakeContext;
 
     // Deposit the asset into the Substrate chain.
     const extrinsic = this.provider.tx.multiAssetDelegation.delegate(
@@ -183,13 +183,13 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     operatorAccount: string,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<DelegatorBondLessContext>,
+    eventHandlers?: TxEventHandlers<ScheduleDelegatorUnstakeContext>,
   ) => {
     const context = {
       amount,
       assetId,
       operatorAccount,
-    } satisfies DelegatorBondLessContext;
+    } satisfies ScheduleDelegatorUnstakeContext;
 
     const extrinsic =
       this.provider.tx.multiAssetDelegation.scheduleDelegatorUnstake(
@@ -204,9 +204,9 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   };
 
   executeDelegatorUnstakeRequests = async (
-    eventHandlers?: TxEventHandlers<ExecuteDelegatorBondLessContext>,
+    eventHandlers?: TxEventHandlers<ExecuteAllDelegatorUnstakeRequestContext>,
   ): Promise<Hash | null> => {
-    const context = {} satisfies ExecuteWithdrawContext;
+    const context = {} satisfies ExecuteAllWithdrawRequestContext;
 
     const extrinsic =
       this.provider.tx.multiAssetDelegation.executeDelegatorUnstake();
@@ -262,9 +262,9 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   };
 
   executeWithdraw = async (
-    eventHandlers?: TxEventHandlers<ExecuteWithdrawContext>,
+    eventHandlers?: TxEventHandlers<ExecuteAllWithdrawRequestContext>,
   ) => {
-    const context = {} satisfies ExecuteWithdrawContext;
+    const context = {} satisfies ExecuteAllWithdrawRequestContext;
 
     const extrinsic = this.provider.tx.multiAssetDelegation.executeWithdraw();
 
@@ -274,12 +274,12 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   };
 
   cancelWithdraw = async (
-    withdrawRequests: CancelWithdrawContext['withdrawRequests'],
-    eventHandlers?: TxEventHandlers<CancelWithdrawContext>,
+    withdrawRequests: CancelWithdrawRequestContext['withdrawRequests'],
+    eventHandlers?: TxEventHandlers<CancelWithdrawRequestContext>,
   ) => {
     const context = {
       withdrawRequests,
-    } satisfies CancelWithdrawContext;
+    } satisfies CancelWithdrawRequestContext;
 
     const extrinsics = this.provider.tx.utility.batchAll(
       withdrawRequests.map(({ amount, assetId }) =>
