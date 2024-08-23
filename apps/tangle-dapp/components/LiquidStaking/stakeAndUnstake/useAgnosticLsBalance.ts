@@ -1,11 +1,14 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { erc20Abi } from 'viem';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import LIQUIFIER_TG_TOKEN_ABI from '../../../constants/liquidStaking/liquifierTgTokenAbi';
 import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
+import usePolling, {
+  PollingPrimaryCacheKey,
+} from '../../../data/liquidStaking/usePolling';
 import useContractRead from '../../../data/liquifier/useContractRead';
 import useEvmAddress20 from '../../../hooks/useEvmAddress';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
@@ -37,8 +40,7 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
     }
   }, [isAccountConnected]);
 
-  // TODO: Make use of the `usePolling` hook here in order to refresh the balance every so often.
-  useEffect(() => {
+  const erc20BalanceFetcher = useCallback(() => {
     if (protocol.type !== 'erc20' || evmAddress20 === null) {
       return;
     }
@@ -74,6 +76,12 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
       });
     });
   }, [evmAddress20, isNative, protocol, readErc20, readLiquidErc20]);
+
+  usePolling({
+    fetcher: erc20BalanceFetcher,
+    refreshInterval: 5_000,
+    primaryCacheKey: PollingPrimaryCacheKey.LS_ERC20_BALANCE,
+  });
 
   useEffect(() => {
     if (protocol.type !== 'parachain' || parachainBalances === null) {

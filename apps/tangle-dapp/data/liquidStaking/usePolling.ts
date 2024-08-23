@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 export enum PollingPrimaryCacheKey {
   EXCHANGE_RATE,
   CONTRACT_READ_SUBSCRIPTION,
+  LS_ERC20_BALANCE,
 }
 
 export type PollingOptions<T> = {
