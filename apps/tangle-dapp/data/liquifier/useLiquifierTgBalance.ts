@@ -23,7 +23,23 @@ const useLiquifierTgBalance = (tokenId: LsErc20TokenId) => {
       address: tokenDef.liquifierTgTokenAddress,
       functionName: 'balanceOf',
       args: [activeEvmAddress20],
-    }).then((result) => setBalance(new BN(result.toString())));
+    }).then((result) => {
+      if (result instanceof Error) {
+        return;
+      }
+
+      setBalance((prevBalance) => {
+        const newBalance = new BN(result.toString());
+
+        // Do not update the balance state with a new BN instance if
+        // it is the same as the current balance.
+        if (prevBalance?.toString() === newBalance.toString()) {
+          return prevBalance;
+        }
+
+        return newBalance;
+      });
+    });
   }, [activeEvmAddress20, read, tokenId]);
 
   return balance;

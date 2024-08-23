@@ -18,9 +18,10 @@ import {
 import useExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useExchangeRate';
+import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
 import useRedeemTx from '../../../data/liquidStaking/useRedeemTx';
 import useLiquifierUnlock from '../../../data/liquifier/useLiquifierUnlock';
-import useSearchParamState from '../../../hooks/useSearchParamState';
+import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
@@ -36,18 +37,23 @@ import useLsSpendingLimits from './useLsSpendingLimits';
 const LiquidUnstakeCard: FC = () => {
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
+  const { selectedProtocolId, setSelectedProtocolId } = useLiquidStakingStore();
+  const activeAccountAddress = useActiveAccountAddress();
+
+  const [didLiquifierUnlockSucceed, setDidLiquifierUnlockSucceed] =
+    useState(false);
 
   const [isRequestSubmittedModalOpen, setIsRequestSubmittedModalOpen] =
     useState(false);
 
-  // TODO: Need to use the global store in order for the network switcher to pick up EVM vs. Parachain chains.
-  const [selectedChainId, setSelectedChainId] =
-    useSearchParamState<LsProtocolId>({
-      key: LsSearchParamKey.PROTOCOL_ID,
-      defaultValue: LsProtocolId.TANGLE_RESTAKING_PARACHAIN,
-      parser: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
-      stringify: (value) => value.toString(),
-    });
+  // TODO: Won't both of these hooks be attempting to update the same state?
+  useSearchParamSync({
+    key: LsSearchParamKey.PROTOCOL_ID,
+    value: selectedProtocolId,
+    parse: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
+    stringify: (value) => value.toString(),
+    setValue: setSelectedProtocolId,
+  });
 
   const {
     execute: executeRedeemTx,
@@ -59,10 +65,10 @@ const LiquidUnstakeCard: FC = () => {
 
   const { minSpendable, maxSpendable } = useLsSpendingLimits(
     false,
-    selectedChainId,
+    selectedProtocolId,
   );
 
-  const selectedProtocol = getLsProtocolDef(selectedChainId);
+  const selectedProtocol = getLsProtocolDef(selectedProtocolId);
 
   const { exchangeRate } = useExchangeRate(
     ExchangeRateType.LiquidToNative,
@@ -92,7 +98,14 @@ const LiquidUnstakeCard: FC = () => {
       selectedProtocol.type === 'erc20' &&
       performLiquifierUnlock !== null
     ) {
-      await performLiquifierUnlock(selectedProtocol.id, fromAmount);
+      setDidLiquifierUnlockSucceed(false);
+
+      const success = await performLiquifierUnlock(
+        selectedProtocol.id,
+        fromAmount,
+      );
+
+      setDidLiquifierUnlockSucceed(success);
     }
   }, [executeRedeemTx, fromAmount, performLiquifierUnlock, selectedProtocol]);
 
@@ -113,20 +126,18 @@ const LiquidUnstakeCard: FC = () => {
     return [{ address: '0x123456' as any, amount: new BN(100), decimals: 18 }];
   }, []);
 
-  // TODO: Also show this for the EVM variant.
   // Open the request submitted modal when the redeem
   // transaction is complete.
   useEffect(() => {
-    if (redeemTxStatus === TxStatus.COMPLETE) {
+    if (redeemTxStatus === TxStatus.COMPLETE || didLiquifierUnlockSucceed) {
       setIsRequestSubmittedModalOpen(true);
     }
-  }, [redeemTxStatus]);
+  }, [didLiquifierUnlockSucceed, redeemTxStatus]);
 
   const stakedWalletBalance = (
     <AgnosticLsBalance
       isNative={false}
       protocolId={selectedProtocol.id}
-      decimals={selectedProtocol.decimals}
       tooltip="Click to use all staked balance"
       onClick={() => setFromAmount(maxSpendable)}
     />
@@ -160,12 +171,12 @@ const LiquidUnstakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-unstake-to"
-        protocolId={selectedChainId}
+        protocolId={selectedProtocolId}
         amount={toAmount}
         decimals={selectedProtocol.decimals}
         placeholder={`0 ${selectedProtocol.token}`}
         token={selectedProtocol.token}
-        setChainId={setSelectedChainId}
+        setChainId={setSelectedProtocolId}
         isReadOnly
       />
 
@@ -188,6 +199,8 @@ const LiquidUnstakeCard: FC = () => {
 
       <Button
         isDisabled={
+          // No active account.
+          activeAccountAddress === null ||
           !canCallUnstake ||
           // Amount not yet provided or is zero.
           fromAmount === null ||

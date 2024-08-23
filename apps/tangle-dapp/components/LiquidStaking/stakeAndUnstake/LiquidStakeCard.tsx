@@ -27,6 +27,7 @@ import useExchangeRate, {
 import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
 import useLiquifierDeposit from '../../../data/liquifier/useLiquifierDeposit';
+import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamState from '../../../hooks/useSearchParamState';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
@@ -50,6 +51,7 @@ const LiquidStakeCard: FC = () => {
   const { selectedProtocolId, setSelectedProtocolId } = useLiquidStakingStore();
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const performLiquifierDeposit = useLiquifierDeposit();
+  const activeAccountAddress = useActiveAccountAddress();
 
   const { maxSpendable, minSpendable } = useLsSpendingLimits(
     true,
@@ -98,7 +100,7 @@ const LiquidStakeCard: FC = () => {
     return fromAmount.muln(exchangeRate);
   }, [fromAmount, exchangeRate]);
 
-  const isReady =
+  const canCallStake =
     (fromAmount !== null &&
       selectedProtocol.type === 'parachain' &&
       executeMintTx !== null) ||
@@ -107,7 +109,6 @@ const LiquidStakeCard: FC = () => {
   const walletBalance = (
     <AgnosticLsBalance
       protocolId={selectedProtocolId}
-      decimals={selectedProtocol.decimals}
       tooltip="Click to use all available balance"
       onClick={() => setFromAmount(maxSpendable)}
     />
@@ -162,7 +163,9 @@ const LiquidStakeCard: FC = () => {
 
       <Button
         isDisabled={
-          !isReady ||
+          // No active account.
+          activeAccountAddress === null ||
+          !canCallStake ||
           // No amount entered or amount is zero.
           fromAmount === null ||
           fromAmount.isZero()

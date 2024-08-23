@@ -1,12 +1,10 @@
 'use client';
 
 import { BN } from '@polkadot/util';
-import { ArrowRight } from '@webb-tools/icons';
+import { ArrowRight, ChainIcon } from '@webb-tools/icons';
 import { Button, Chip, Typography } from '@webb-tools/webb-ui-components';
-import Image from 'next/image';
 import { FC, useMemo } from 'react';
 
-import { StaticAssetPath } from '../../../constants';
 import {
   LST_PREFIX,
   TVS_TOOLTIP,
@@ -17,18 +15,20 @@ import formatTangleBalance from '../../../utils/formatTangleBalance';
 import LsTokenIcon from '../../LsTokenIcon';
 import StatItem from '../StatItem';
 
-export type LiquidStakingTokenItemProps = {
+export type LsOverviewItemProps = {
   title: string;
   tokenSymbol: LsToken;
   totalValueStaked: number;
   totalStaked: string;
+  hasLiquidIndicator: boolean;
 };
 
-const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
+const LsOverviewItem: FC<LsOverviewItemProps> = ({
   title,
   tokenSymbol,
   totalValueStaked,
   totalStaked,
+  hasLiquidIndicator,
 }) => {
   const formattedTotalValueStaked = totalValueStaked.toLocaleString('en-US', {
     style: 'currency',
@@ -46,13 +46,11 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
         <div className="relative">
           <LsTokenIcon size="lg" name={tokenSymbol} />
 
-          <Image
-            className="absolute bottom-0 right-0 z-20"
-            src={StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO}
-            alt="Tangle logo"
-            width={14}
-            height={14}
-          />
+          {hasLiquidIndicator && (
+            <div className="absolute bottom-0 right-0 z-20">
+              <ChainIcon size="md" name="tangle" />
+            </div>
+          )}
         </div>
 
         <Typography variant="body1" fw="normal" className="dark:text-mono-0">
@@ -88,4 +86,4 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
   );
 };
 
-export default LiquidStakingTokenItem;
+export default LsOverviewItem;

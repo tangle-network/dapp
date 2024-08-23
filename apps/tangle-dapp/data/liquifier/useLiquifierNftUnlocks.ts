@@ -75,15 +75,15 @@ const useLiquifierNftUnlocks = (
     getUnlockIdCountOptions,
   );
 
-  const unlockIds = useMemo(() => {
+  const _unlockIds = useMemo(() => {
     if (rawUnlockIdCount === null) {
       return null;
     }
 
     const ids = [];
 
-    // TODO: Since this is a `balanceOf` operation, might need to shrink it down to base unit, since it's likely in the underlying token's decimals, which is very big, causing JavaScript to throw an `invalid array length` error.
-    for (let i = 0; i < rawUnlockIdCount; i++) {
+    // TODO: Since this is a `balanceOf` operation, might need to shrink it down to base unit, since it's likely in the underlying token's decimals, which is very big, causing JavaScript to throw an `invalid array length` error. Also, for now made the upper bound be `0`, it should be `rawUnlockIdCount`, but it was erroring since it's not yet implemented.
+    for (let i = 0; i < 0; i++) {
       ids.push(i);
     }
 
@@ -95,6 +95,11 @@ const useLiquifierNftUnlocks = (
     typeof LIQUIFIER_UNLOCKS_ABI,
     'getMetadata'
   > | null => {
+    // Do not fetch if there's no active EVM account.
+    if (activeEvmAddress20 === null) {
+      return null;
+    }
+
     const protocol = getLsProtocolDef(tokenId);
 
     return {
@@ -105,7 +110,7 @@ const useLiquifierNftUnlocks = (
       // TODO: Consider adding support for an array of args, which would be interpreted as a multi-fetch by `useContractReadSubscription`.
       args: [BigInt(0)],
     };
-  }, [tokenId]);
+  }, [activeEvmAddress20, tokenId]);
 
   const { value: rawMetadata } = useContractReadSubscription(
     LIQUIFIER_UNLOCKS_ABI,

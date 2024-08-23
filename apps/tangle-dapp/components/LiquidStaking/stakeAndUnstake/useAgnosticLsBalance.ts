@@ -53,10 +53,26 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
     }
 
     target({
-      address: protocol.address,
+      address: isNative ? protocol.address : protocol.liquifierTgTokenAddress,
       functionName: 'balanceOf',
       args: [evmAddress20],
-    }).then((result) => setBalance(new BN(result.toString())));
+    }).then((result) => {
+      if (result instanceof Error) {
+        return;
+      }
+
+      setBalance((prevBalance) => {
+        const newBalance = new BN(result.toString());
+
+        // Do not update the balance state with a new BN instance if
+        // it is the same as the current balance.
+        if (prevBalance?.toString() === newBalance.toString()) {
+          return prevBalance;
+        }
+
+        return newBalance;
+      });
+    });
   }, [evmAddress20, isNative, protocol, readErc20, readLiquidErc20]);
 
   useEffect(() => {
@@ -66,7 +82,15 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
 
     const newBalance = parachainBalances.get(protocol.token) ?? BN_ZERO;
 
-    setBalance(newBalance);
+    setBalance((prevBalance) => {
+      // Do not update the balance state with a new BN instance if
+      // it is the same as the current balance.
+      if (prevBalance?.toString() === newBalance.toString()) {
+        return prevBalance;
+      }
+
+      return newBalance;
+    });
   }, [parachainBalances, protocol.token, protocol.type]);
 
   return balance;

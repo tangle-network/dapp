@@ -53,21 +53,17 @@ const AmountInput: FC<AmountInputProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const { nativeTokenSymbol } = useNetworkStore();
 
-  const {
-    displayAmount,
-    errorMessage,
-    handleChange,
-    updateDisplayAmountManual,
-  } = useInputAmount({
-    amount,
-    min,
-    max,
-    decimals,
-    errorOnEmptyValue,
-    setAmount,
-    minErrorMessage,
-    maxErrorMessage,
-  });
+  const { displayAmount, errorMessage, handleChange, setDisplayAmount } =
+    useInputAmount({
+      amount,
+      min,
+      max,
+      decimals,
+      errorOnEmptyValue,
+      setAmount,
+      minErrorMessage,
+      maxErrorMessage,
+    });
 
   // Set the error message in the parent component.
   useEffect(() => {
@@ -77,11 +73,11 @@ const AmountInput: FC<AmountInputProps> = ({
   }, [errorMessage, setErrorMessage]);
 
   const setMaxAmount = useCallback(() => {
-    if (max !== null) {
+    if (max !== null && amount?.toString() !== max.toString()) {
       setAmount(max);
-      updateDisplayAmountManual(max);
+      setDisplayAmount(max);
     }
-  }, [max, setAmount, updateDisplayAmountManual]);
+  }, [amount, max, setAmount, setDisplayAmount]);
 
   const actions: ReactNode = useMemo(
     () => (

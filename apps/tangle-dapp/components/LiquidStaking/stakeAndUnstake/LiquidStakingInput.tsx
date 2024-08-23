@@ -72,28 +72,24 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
     return `Amount must be at least ${formattedMinAmount} ${unit}`;
   })();
 
-  const {
-    displayAmount,
-    handleChange,
-    errorMessage,
-    updateDisplayAmountManual,
-  } = useInputAmount({
-    amount,
-    setAmount: onAmountChange,
-    decimals,
-    min: minAmount,
-    minErrorMessage,
-    max: maxAmount,
-    maxErrorMessage,
-  });
+  const { displayAmount, handleChange, errorMessage, setDisplayAmount } =
+    useInputAmount({
+      amount,
+      setAmount: onAmountChange,
+      decimals,
+      min: minAmount,
+      minErrorMessage,
+      max: maxAmount,
+      maxErrorMessage,
+    });
 
   // Update the display amount when the amount prop changes.
   // Only do this for controlled (read-only) inputs.
   useEffect(() => {
     if (amount !== null) {
-      updateDisplayAmountManual(amount);
+      setDisplayAmount(amount);
     }
-  }, [amount, updateDisplayAmountManual]);
+  }, [amount, setDisplayAmount]);
 
   const isError = errorMessage !== null;
 

@@ -2,9 +2,10 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import { GlassCard } from '../../../components';
-import LiquidStakingTokenItem from '../../../components/LiquidStaking/stakeAndUnstake/LiquidStakingTokenItem';
+import LsOverviewItem from '../../../components/LiquidStaking/stakeAndUnstake/LsOverviewItem';
 import StatItem from '../../../components/LiquidStaking/StatItem';
 import { LS_PROTOCOLS } from '../../../constants/liquidStaking/constants';
+import { LsProtocolId } from '../../../constants/liquidStaking/types';
 
 const LiquidStakingPage: FC = () => {
   return (
@@ -36,13 +37,16 @@ const LiquidStakingPage: FC = () => {
             <div className="flex flex-col gap-4 min-w-[750px]">
               {LS_PROTOCOLS.map((protocol) => {
                 return (
-                  <LiquidStakingTokenItem
+                  <LsOverviewItem
                     key={protocol.id}
-                    title={`Tangle ${protocol.name}`}
+                    title={`Tangle Liquid ${protocol.name}`}
                     tokenSymbol={protocol.token}
                     // TODO: Can't pass non-plain objects as props to Client components from Server components (this page). For now, passing in as a string then creating BN instance inside the component.
                     totalStaked="100000000"
                     totalValueStaked={220_000_123}
+                    hasLiquidIndicator={
+                      protocol.id !== LsProtocolId.TANGLE_RESTAKING_PARACHAIN
+                    }
                   />
                 );
               })}

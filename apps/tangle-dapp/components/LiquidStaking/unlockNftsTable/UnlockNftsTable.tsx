@@ -92,7 +92,9 @@ const columns = [
         <TokenAmountCell
           amount={props.getValue()}
           tokenSymbol={unstakeRequest.symbol}
-          decimals={props.row.original.decimals}
+          // TODO: Handle decimals.
+          // decimals={props.row.original.decimals}
+          decimals={18}
           className="text-left"
         />
       );
@@ -182,7 +184,7 @@ const UnlockNftsTable: FC<UnlockNftsTableProps> = ({ tokenId }) => {
 
   // Can only withdraw all selected unstake requests if they
   // have all completed their unlocking period.
-  const canWithdrawAllSelected = useMemo(() => {
+  const _canWithdrawAllSelected = useMemo(() => {
     // No rows selected or not loaded yet.
     if (selectedRowsUnlockIds.size === 0 || rows === null) {
       return false;

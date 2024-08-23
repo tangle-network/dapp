@@ -32,7 +32,9 @@ const useContractReadSubscription = <
       return null;
     }
 
-    return read(options_);
+    const result = await read(options_);
+
+    return result instanceof Error ? null : result;
   }, [isPaused, options, read]);
 
   const { value, isRefreshing } = usePolling({

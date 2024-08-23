@@ -14,12 +14,12 @@ import { twMerge } from 'tailwind-merge';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import formatBn from '../../../utils/formatBn';
+import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import useAgnosticLsBalance from './useAgnosticLsBalance';
 
 export type AgnosticLsBalanceProps = {
   isNative?: boolean;
   protocolId: LsProtocolId;
-  decimals: number;
   tooltip?: string;
   onlyShowTooltipWhenBalanceIsSet?: boolean;
   onClick?: () => void;
@@ -28,13 +28,18 @@ export type AgnosticLsBalanceProps = {
 const AgnosticLsBalance: FC<AgnosticLsBalanceProps> = ({
   isNative = true,
   protocolId,
-  decimals,
   tooltip,
   onlyShowTooltipWhenBalanceIsSet = true,
   onClick,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
   const balance = useAgnosticLsBalance(isNative, protocolId);
+  const protocol = getLsProtocolDef(protocolId);
+
+  // Special case for liquid tokens on the `TgToken.sol` contract.
+  // See: https://github.com/webb-tools/tnt-core/blob/1f371959884352e7af68e6091c5bb330fcaa58b8/src/lst/liquidtoken/TgToken.sol#L26
+  const decimals =
+    !isNative && protocol.type === 'erc20' ? 18 : protocol.decimals;
 
   const formattedBalance = useMemo(() => {
     // No account is active; display a placeholder instead of a loading state.
