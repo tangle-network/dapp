@@ -113,6 +113,7 @@ const LiquidUnstakeCard: FC = () => {
     return [{ address: '0x123456' as any, amount: new BN(100), decimals: 18 }];
   }, []);
 
+  // TODO: Also show this for the EVM variant.
   // Open the request submitted modal when the redeem
   // transaction is complete.
   useEffect(() => {

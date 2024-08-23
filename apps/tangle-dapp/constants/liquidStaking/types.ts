@@ -6,7 +6,6 @@ import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
-import { StaticAssetPath } from '..';
 
 export enum LsProtocolId {
   POLKADOT,

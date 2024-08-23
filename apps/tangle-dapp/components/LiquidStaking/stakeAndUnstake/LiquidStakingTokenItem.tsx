@@ -79,7 +79,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
           variant="utility"
           className="uppercase"
           rightIcon={<ArrowRight className="dark:fill-blue-50" />}
-          href={`${PagePath.LIQUID_STAKING}/${tokenSymbol}`}
+          href={PagePath.LIQUID_STAKING}
         >
           Stake
         </Button>
