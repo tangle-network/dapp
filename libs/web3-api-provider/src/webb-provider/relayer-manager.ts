@@ -25,7 +25,7 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import { LOCALNET_CHAIN_IDS } from '@webb-tools/dapp-config';
-import { GetContractReturnType, PublicClient } from 'viem';
+import { GetContractReturnType, Client as ViemClient } from 'viem';
 
 export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
   cmdKey = 'evm' as const;
@@ -142,7 +142,7 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
     relayers: WebbRelayer[],
     vanchorContract: GetContractReturnType<
       typeof VAnchor__factory.abi,
-      PublicClient
+      ViemClient
     >,
     storage: Storage<BridgeStorage>,
     options: {

@@ -2,9 +2,10 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { TxProgressor } from '../../components/TxProgressor';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { randEthereumAddress } from '@ngneat/falso';
+import Decimal from 'decimal.js';
 
 const meta: Meta<typeof TxProgressor> = {
-  title: 'Design System/V2 (WIP)/Molecules/TxProgressor',
+  title: 'Design System/Molecules/TxProgressor',
 };
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -20,13 +21,13 @@ export const Deposit: Story = {
       <TxProgressor.Body
         txSourceInfo={{
           typedChainId: PresetTypedChainId.Goerli,
-          amount: -1.45,
+          amount: new Decimal(-1.45),
           tokenSymbol: 'WETH',
           walletAddress: randEthereumAddress(),
         }}
         txDestinationInfo={{
           typedChainId: PresetTypedChainId.PolygonTestnet,
-          amount: 1.45,
+          amount: new Decimal(1.45),
           tokenSymbol: 'webbETH',
           tokenType: 'shielded',
           accountType: 'note',
@@ -41,7 +42,6 @@ export const Deposit: Story = {
           activeStep: 3,
         }}
         externalUrl={new URL('https://webb.tools')}
-        actionProps={{ children: 'Open explorer' }}
       />
     </TxProgressor.Root>
   ),
@@ -54,7 +54,7 @@ export const Withdraw: Story = {
       <TxProgressor.Body
         txSourceInfo={{
           typedChainId: PresetTypedChainId.Goerli,
-          amount: -1,
+          amount: new Decimal(-1),
           tokenSymbol: 'webbETH',
           tokenType: 'shielded',
           accountType: 'note',
@@ -62,7 +62,7 @@ export const Withdraw: Story = {
         }}
         txDestinationInfo={{
           typedChainId: PresetTypedChainId.PolygonTestnet,
-          amount: 0.96,
+          amount: new Decimal(0.96),
           tokenSymbol: 'ETH',
           walletAddress: randEthereumAddress(),
         }}
@@ -74,7 +74,6 @@ export const Withdraw: Story = {
           steps: 8,
         }}
         externalUrl={new URL('https://webb.tools')}
-        actionProps={{ children: 'Try again' }}
       />
     </TxProgressor.Root>
   ),
@@ -87,7 +86,7 @@ export const Transfer: Story = {
       <TxProgressor.Body
         txSourceInfo={{
           typedChainId: PresetTypedChainId.Goerli,
-          amount: -1,
+          amount: new Decimal(-1),
           tokenSymbol: 'webbETH',
           tokenType: 'shielded',
           accountType: 'note',
@@ -95,7 +94,7 @@ export const Transfer: Story = {
         }}
         txDestinationInfo={{
           typedChainId: PresetTypedChainId.PolygonTestnet,
-          amount: 1,
+          amount: new Decimal(1),
           tokenSymbol: 'webbETH',
           tokenType: 'shielded',
           accountType: 'note',
@@ -110,7 +109,6 @@ export const Transfer: Story = {
           activeStep: 9,
         }}
         externalUrl={new URL('https://webb.tools')}
-        actionProps={{ children: 'Report bug' }}
       />
     </TxProgressor.Root>
   ),

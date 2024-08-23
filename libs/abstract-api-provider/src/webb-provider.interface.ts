@@ -12,7 +12,11 @@ import { NoteManager } from '@webb-tools/note-manager';
 import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 import { ZkComponents, Backend } from '@webb-tools/utils';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { GetContractReturnType, PublicClient } from 'viem';
+import {
+  GetContractReturnType,
+  PublicClient,
+  Client as ViemClient,
+} from 'viem';
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { ChainQuery } from './chain-query';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
@@ -267,7 +271,9 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   generateUtxo: (input: UtxoGenInput) => Promise<Utxo>;
 
   getVAnchorLeaves(
-    vanchor: GetContractReturnType<typeof VAnchor__factory.abi> | ApiPromise,
+    vanchor:
+      | GetContractReturnType<typeof VAnchor__factory.abi, ViemClient>
+      | ApiPromise,
     storage: Storage<BridgeStorage>,
     options: {
       treeHeight: number;
