@@ -21,7 +21,6 @@ import {
   TANGLE_DOCS_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
 import { FC, ReactNode, useMemo } from 'react';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -132,13 +131,13 @@ const UnlockNftsTable: FC<UnlockNftsTableProps> = ({ tokenId }) => {
   );
 
   const tableProps = useReactTable(tableOptions);
-  const tablePropsRows = tableProps.getSelectedRowModel().rows;
+  // const tablePropsRows = tableProps.getSelectedRowModel().rows;
 
-  const selectedRowsUnlockIds = useMemo<Set<number>>(() => {
-    const selectedRows = tablePropsRows.map((row) => row.original.unlockId);
+  // const selectedRowsUnlockIds = useMemo<Set<number>>(() => {
+  //   const selectedRows = tablePropsRows.map((row) => row.original.unlockId);
 
-    return new Set(selectedRows);
-  }, [tablePropsRows]);
+  //   return new Set(selectedRows);
+  // }, [tablePropsRows]);
 
   // Note that memoizing this will cause the table to not update
   // when the selected rows change.
@@ -184,27 +183,27 @@ const UnlockNftsTable: FC<UnlockNftsTableProps> = ({ tokenId }) => {
 
   // Can only withdraw all selected unstake requests if they
   // have all completed their unlocking period.
-  const _canWithdrawAllSelected = useMemo(() => {
-    // No rows selected or not loaded yet.
-    if (selectedRowsUnlockIds.size === 0 || rows === null) {
-      return false;
-    }
+  // const _canWithdrawAllSelected = useMemo(() => {
+  //   // No rows selected or not loaded yet.
+  //   if (selectedRowsUnlockIds.size === 0 || rows === null) {
+  //     return false;
+  //   }
 
-    const unlockIds = Array.from(selectedRowsUnlockIds);
+  //   const unlockIds = Array.from(selectedRowsUnlockIds);
 
-    // Check that all selected rows have completed their unlocking
-    // period.
-    return unlockIds.every((unlockId) => {
-      const request = rows.find((request) => request.unlockId === unlockId);
+  //   // Check that all selected rows have completed their unlocking
+  //   // period.
+  //   return unlockIds.every((unlockId) => {
+  //     const request = rows.find((request) => request.unlockId === unlockId);
 
-      assert(
-        request !== undefined,
-        'All unlock ids should have a corresponding request',
-      );
+  //     assert(
+  //       request !== undefined,
+  //       'All unlock ids should have a corresponding request',
+  //     );
 
-      return request.progress === 100;
-    });
-  }, [selectedRowsUnlockIds, rows]);
+  //     return request.progress === 100;
+  //   });
+  // }, [selectedRowsUnlockIds, rows]);
 
   return (
     <div className="space-y-4 flex-grow max-w-[700px]">

@@ -52,43 +52,43 @@ const useLiquifierNftUnlocks = (
 ): LiquifierUnlockNft[] | null => {
   const activeEvmAddress20 = useEvmAddress20();
 
-  const getUnlockIdCountOptions = useCallback((): ContractReadOptions<
-    typeof LIQUIFIER_UNLOCKS_ABI,
-    'balanceOf'
-  > | null => {
-    if (activeEvmAddress20 === null) {
-      return null;
-    }
+  // const getUnlockIdCountOptions = useCallback((): ContractReadOptions<
+  //   typeof LIQUIFIER_UNLOCKS_ABI,
+  //   'balanceOf'
+  // > | null => {
+  //   if (activeEvmAddress20 === null) {
+  //     return null;
+  //   }
 
-    const protocol = getLsProtocolDef(tokenId);
+  //   const protocol = getLsProtocolDef(tokenId);
 
-    return {
-      // TODO: This should be something like 'unlockAddress', defined per-protocol. For now, just use the protocol address as a placeholder.
-      address: protocol.address,
-      functionName: 'balanceOf',
-      args: [activeEvmAddress20],
-    };
-  }, [activeEvmAddress20, tokenId]);
+  //   return {
+  //     // TODO: This should be something like 'unlockAddress', defined per-protocol. For now, just use the protocol address as a placeholder.
+  //     address: protocol.address,
+  //     functionName: 'balanceOf',
+  //     args: [activeEvmAddress20],
+  //   };
+  // }, [activeEvmAddress20, tokenId]);
 
-  const { value: rawUnlockIdCount } = useContractReadSubscription(
-    LIQUIFIER_UNLOCKS_ABI,
-    getUnlockIdCountOptions,
-  );
+  // const { value: rawUnlockIdCount } = useContractReadSubscription(
+  //   LIQUIFIER_UNLOCKS_ABI,
+  //   getUnlockIdCountOptions,
+  // );
 
-  const _unlockIds = useMemo(() => {
-    if (rawUnlockIdCount === null) {
-      return null;
-    }
+  // const _unlockIds = useMemo(() => {
+  //   if (rawUnlockIdCount === null) {
+  //     return null;
+  //   }
 
-    const ids = [];
+  //   const ids = [];
 
-    // TODO: Since this is a `balanceOf` operation, might need to shrink it down to base unit, since it's likely in the underlying token's decimals, which is very big, causing JavaScript to throw an `invalid array length` error. Also, for now made the upper bound be `0`, it should be `rawUnlockIdCount`, but it was erroring since it's not yet implemented.
-    for (let i = 0; i < 0; i++) {
-      ids.push(i);
-    }
+  //   // TODO: Since this is a `balanceOf` operation, might need to shrink it down to base unit, since it's likely in the underlying token's decimals, which is very big, causing JavaScript to throw an `invalid array length` error. Also, for now made the upper bound be `0`, it should be `rawUnlockIdCount`, but it was erroring since it's not yet implemented.
+  //   for (let i = 0; i < 0; i++) {
+  //     ids.push(i);
+  //   }
 
-    return ids;
-  }, [rawUnlockIdCount]);
+  //   return ids;
+  // }, [rawUnlockIdCount]);
 
   // TODO: Need to page/lazy load this, since there could be many unlock requests. Then, paging would be handled by the parent table component. Perhaps try to add the lazy loading functionality directly into the `useContractReadSubscription` hook (e.g. multi-arg fetch capability + paging options & state).
   const getMetadataOptions = useCallback((): ContractReadOptions<
