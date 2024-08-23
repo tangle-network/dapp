@@ -132,6 +132,11 @@ const LiquidUnstakeCard: FC = () => {
     />
   );
 
+  // TODO: Also check if the user has enough balance to unstake.
+  const canCallUnstake =
+    (selectedProtocol.type === 'parachain' && executeRedeemTx !== null) ||
+    (selectedProtocol.type === 'erc20' && performLiquifierUnlock !== null);
+
   return (
     <>
       {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
@@ -183,9 +188,7 @@ const LiquidUnstakeCard: FC = () => {
 
       <Button
         isDisabled={
-          // The redeem extrinsic is not ready to be executed. This
-          // may indicate that there is no connected account.
-          executeRedeemTx === null ||
+          !canCallUnstake ||
           // Amount not yet provided or is zero.
           fromAmount === null ||
           fromAmount.isZero()

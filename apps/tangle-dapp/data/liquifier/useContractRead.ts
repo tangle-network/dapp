@@ -29,10 +29,16 @@ const useContractRead = <Abi extends ViemAbi>(abi: Abi) => {
   const publicClient = useViemPublicClientWithChain(chain);
 
   const read = useCallback(
-    <FunctionName extends ContractFunctionName<Abi, 'pure' | 'view'>>(
-      options: ContractReadOptions<Abi, FunctionName>,
-    ): Promise<
-      ReadContractReturnType<Abi, FunctionName, typeof options.args>
+    <FunctionName extends ContractFunctionName<Abi, 'pure' | 'view'>>({
+      address,
+      functionName,
+      args,
+    }: ContractReadOptions<Abi, FunctionName>): Promise<
+      ReadContractReturnType<
+        Abi,
+        FunctionName,
+        ContractFunctionArgs<Abi, 'pure' | 'view', FunctionName>
+      >
     > => {
       assert(
         publicClient !== null,
@@ -40,10 +46,10 @@ const useContractRead = <Abi extends ViemAbi>(abi: Abi) => {
       );
 
       return publicClient.readContract({
-        address: options.address,
+        address,
         abi,
-        functionName: options.functionName,
-        args: options.args,
+        functionName,
+        args,
       });
     },
     [abi, publicClient],
