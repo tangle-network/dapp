@@ -7,7 +7,7 @@ import { VAnchor__factory } from '@webb-tools/contracts';
 import Storage from '@webb-tools/dapp-types/Storage';
 import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { GetContractReturnType, PublicClient } from 'viem';
+import { GetContractReturnType, Client as ViemClient } from 'viem';
 import {
   NewNotesTxResult,
   TransactionExecutor,
@@ -88,7 +88,7 @@ export abstract class WebbRelayerManager<
     api: Provider extends 'polkadot'
       ? ApiPromise
       : Provider extends 'web3'
-        ? GetContractReturnType<typeof VAnchor__factory.abi, PublicClient>
+        ? GetContractReturnType<typeof VAnchor__factory.abi, ViemClient>
         : never,
     storage: Storage<BridgeStorage>,
     options: {

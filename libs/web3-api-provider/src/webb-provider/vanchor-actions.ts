@@ -52,6 +52,7 @@ import {
   GetContractReturnType,
   Hash,
   PublicClient,
+  Client as ViemClient,
   getContract,
 } from 'viem';
 import { getPublicClient, getWalletClient } from 'wagmi/actions';
@@ -760,10 +761,7 @@ export class Web3VAnchorActions extends VAnchorActions<
   private async fetchNoteLeaves(
     note: Note,
     leavesMap: Record<string, Uint8Array[]>,
-    destVAnchor: GetContractReturnType<
-      typeof VAnchor__factory.abi,
-      PublicClient
-    >,
+    destVAnchor: GetContractReturnType<typeof VAnchor__factory.abi, ViemClient>,
     treeHeight: number,
     tx?: TransactionExecutor<NewNotesTxResult>,
   ): Promise<{ leafIndex: number; utxo: Utxo; amount: bigint }> | never {
@@ -890,7 +888,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     payload: Note,
     isDestAnchor = false,
   ):
-    | Promise<GetContractReturnType<typeof VAnchor__factory.abi, PublicClient>>
+    | Promise<GetContractReturnType<typeof VAnchor__factory.abi, ViemClient>>
     | never {
     const { note } = payload;
     const { sourceChainId, targetChainId } = note;

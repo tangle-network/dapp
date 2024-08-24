@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { TransactionInputCard } from '../../components/TransactionInputCard';
 
 const meta: Meta<typeof TransactionInputCard> = {
-  title: 'Design System/V2 (WIP)/Organisms/TransactionInputCard',
+  title: 'Design System/Organisms/TransactionInputCard',
 };
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
