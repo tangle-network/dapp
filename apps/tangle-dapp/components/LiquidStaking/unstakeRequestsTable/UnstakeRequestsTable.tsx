@@ -31,24 +31,36 @@ import {
   LsSimpleParachainTimeUnit,
   ParachainCurrency,
 } from '../../../constants/liquidStaking/types';
+import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
+import useLiquifierNftUnlocks, {
+  LiquifierUnlockNftMetadata,
+} from '../../../data/liquifier/useLiquifierNftUnlocks';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
-import { AnySubstrateAddress } from '../../../types/utils';
+import addCommasToNumber from '../../../utils/addCommasToNumber';
+import isLsErc20TokenId from '../../../utils/liquidStaking/isLsErc20TokenId';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
 import GlassCard from '../../GlassCard';
 import { HeaderCell } from '../../tableCells';
 import TokenAmountCell from '../../tableCells/TokenAmountCell';
-import AddressLink from '../AddressLink';
 import ExternalLink from '../ExternalLink';
 import TableRowsSkeleton from '../TableRowsSkeleton';
 import RebondLstUnstakeRequestButton from './RebondLstUnstakeRequestButton';
 import useLstUnlockRequestTableRows from './useLstUnlockRequestTableRows';
 import WithdrawLstUnstakeRequestButton from './WithdrawLstUnstakeRequestButton';
 
-export type UnstakeRequestTableRow = {
+export type BaseUnstakeRequest = {
   unlockId: number;
-  address: AnySubstrateAddress;
-  amount: BN;
   decimals: number;
+
+  /**
+   * The underlying stake tokens amount represented by the unlock
+   * request.
+   */
+  amount: BN;
+};
+
+export type ParachainUnstakeRequest = BaseUnstakeRequest & {
+  type: 'parachainUnstakeRequest';
   currency: ParachainCurrency;
 
   /**
@@ -58,16 +70,18 @@ export type UnstakeRequestTableRow = {
    * If this is undefined, it means that the request has
    * completed its unlocking period.
    */
-  remainingTimeUnit?: LsSimpleParachainTimeUnit;
+  progress?: LsSimpleParachainTimeUnit;
 };
+
+type UnstakeRequestTableRow =
+  | LiquifierUnlockNftMetadata
+  | ParachainUnstakeRequest;
 
 const columnHelper = createColumnHelper<UnstakeRequestTableRow>();
 
 const columns = [
-  columnHelper.accessor('address', {
-    header: () => (
-      <HeaderCell title="Unstake Request" className="justify-start" />
-    ),
+  columnHelper.accessor('unlockId', {
+    header: () => <HeaderCell title="Unlock ID" className="justify-start" />,
     cell: (props) => {
       return (
         <div className="flex items-center justify-start gap-2">
@@ -77,31 +91,42 @@ const columns = [
             onChange={props.row.getToggleSelectedHandler()}
             wrapperClassName="pt-0.5 flex items-center justify-center"
           />
-
-          <AddressLink address={props.getValue()} />
+          #{addCommasToNumber(props.getValue())}
         </div>
       );
     },
   }),
-  columnHelper.accessor('remainingTimeUnit', {
+  columnHelper.accessor('progress', {
     header: () => <HeaderCell title="Status" className="justify-center" />,
     cell: (props) => {
-      const remainingTimeUnit = props.getValue();
+      const progress = props.getValue();
 
-      const remainingString = (() => {
-        if (remainingTimeUnit === undefined) {
+      const progressString = (() => {
+        if (progress === undefined) {
           return undefined;
         }
+        // If it's a number (percentage) representing an unlock NFT's
+        // unlocking progress, convert it to a string.
+        else if (typeof progress === 'number') {
+          if (progress === 100) {
+            return undefined;
+          }
 
-        return stringifyTimeUnit(remainingTimeUnit).join(' ');
+          return progress.toFixed(2) + '%';
+        }
+        // Otherwise, it must be a Parachain unstake request's
+        // remaining time unit.
+        else {
+          return stringifyTimeUnit(progress).join(' ');
+        }
       })();
 
       const content =
-        remainingString === undefined ? (
+        progressString === undefined ? (
           <CheckboxCircleFill className="dark:fill-green-50" />
         ) : (
           <div className="flex gap-1 items-center justify-center">
-            <TimeFillIcon className="dark:fill-blue-50" /> {remainingString}
+            <TimeFillIcon className="dark:fill-blue-50" /> {progressString}
           </div>
         );
 
@@ -112,7 +137,11 @@ const columns = [
     header: () => <HeaderCell title="Amount" className="justify-center" />,
     cell: (props) => {
       const unstakeRequest = props.row.original;
-      const tokenSymbol = unstakeRequest.currency.toUpperCase();
+
+      const tokenSymbol =
+        unstakeRequest.type === 'parachainUnstakeRequest'
+          ? unstakeRequest.currency.toUpperCase()
+          : unstakeRequest.symbol;
 
       return (
         <TokenAmountCell
@@ -123,12 +152,19 @@ const columns = [
         />
       );
     },
+    // TODO: Name, validator, and maturity date (time left) columns. Also add an info icon tooltip for the maturity date to show the exact unlock date on hover.
   }),
 ];
 
 const UnstakeRequestsTable: FC = () => {
+  const { selectedProtocolId } = useLiquidStakingStore();
   const substrateAddress = useSubstrateAddress();
-  const rows = useLstUnlockRequestTableRows();
+  const parachainRows = useLstUnlockRequestTableRows();
+  const evmRows = useLiquifierNftUnlocks();
+
+  // Select the table rows based on whether the selected protocol
+  // is an EVM-based chain or a parachain-based Substrate chain.
+  const rows = isLsErc20TokenId(selectedProtocolId) ? evmRows : parachainRows;
 
   const tableOptions = useMemo<TableOptions<UnstakeRequestTableRow>>(
     () => ({
@@ -172,7 +208,7 @@ const UnstakeRequestsTable: FC = () => {
       );
     }
     // Data still loading.
-    else if (rows === null) {
+    else if (parachainRows === null) {
       return (
         <Notice
           title="Unstake requests"
@@ -181,7 +217,7 @@ const UnstakeRequestsTable: FC = () => {
       );
     }
     // No unstake requests.
-    else if (rows.length === 0) {
+    else if (parachainRows.length === 0) {
       return (
         <Notice
           title="No unstake requests"
@@ -196,7 +232,7 @@ const UnstakeRequestsTable: FC = () => {
         trClassName="!bg-inherit"
         tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
         tableProps={tableProps}
-        totalRecords={rows.length}
+        totalRecords={parachainRows.length}
       />
     );
   })();
@@ -205,7 +241,7 @@ const UnstakeRequestsTable: FC = () => {
   // have all completed their unlocking period.
   const canWithdrawAllSelected = useMemo(() => {
     // No rows selected or not loaded yet.
-    if (selectedRowsUnlockIds.size === 0 || rows === null) {
+    if (selectedRowsUnlockIds.size === 0 || parachainRows === null) {
       return false;
     }
 
@@ -214,7 +250,9 @@ const UnstakeRequestsTable: FC = () => {
     // Check that all selected rows have completed their unlocking
     // period.
     return unlockIds.every((unlockId) => {
-      const request = rows.find((request) => request.unlockId === unlockId);
+      const request = parachainRows.find(
+        (request) => request.unlockId === unlockId,
+      );
 
       assert(
         request !== undefined,
@@ -223,9 +261,11 @@ const UnstakeRequestsTable: FC = () => {
 
       // If the remaining time unit is undefined, it means that the
       // request has completed its unlocking period.
-      return request.remainingTimeUnit === undefined;
+      return request.type === 'parachainUnstakeRequest'
+        ? request.progress === undefined
+        : request.progress === 100;
     });
-  }, [selectedRowsUnlockIds, rows]);
+  }, [selectedRowsUnlockIds, parachainRows]);
 
   const currenciesAndUnlockIds = useMemo<[ParachainCurrency, number][]>(() => {
     return tablePropsRows.map((row) => {
@@ -239,14 +279,14 @@ const UnstakeRequestsTable: FC = () => {
     <div className="space-y-4 flex-grow max-w-[700px]">
       <GlassCard
         className={twMerge(
-          rows !== null &&
-            rows.length > 0 &&
+          parachainRows !== null &&
+            parachainRows.length > 0 &&
             'flex flex-col justify-between min-h-[500px]',
         )}
       >
         {table}
 
-        {rows !== null && rows.length > 0 && (
+        {parachainRows !== null && parachainRows.length > 0 && (
           <div className="flex gap-3 items-center justify-center">
             <RebondLstUnstakeRequestButton
               // Can only rebond if there are selected rows.
@@ -262,7 +302,7 @@ const UnstakeRequestsTable: FC = () => {
         )}
       </GlassCard>
 
-      {rows !== null && rows.length === 0 && (
+      {parachainRows !== null && parachainRows.length === 0 && (
         <div className="flex items-center justify-end w-full">
           <ExternalLink Icon={ArrowRightUp} href={TANGLE_DOCS_URL}>
             View Docs

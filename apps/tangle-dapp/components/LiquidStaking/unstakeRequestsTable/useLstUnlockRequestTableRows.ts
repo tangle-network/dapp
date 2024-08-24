@@ -5,14 +5,13 @@ import { LS_PARACHAIN_CHAIN_MAP } from '../../../constants/liquidStaking/constan
 import { LsSimpleParachainTimeUnit } from '../../../constants/liquidStaking/types';
 import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
 import useOngoingTimeUnits from '../../../data/liquidStaking/useOngoingTimeUnits';
-import { AnySubstrateAddress } from '../../../types/utils';
-import { UnstakeRequestTableRow } from './UnstakeRequestsTable';
+import { ParachainUnstakeRequest } from './UnstakeRequestsTable';
 
 const useLstUnlockRequestTableRows = () => {
   const tokenUnlockLedger = useLstUnlockRequests();
   const ongoingTimeUnits = useOngoingTimeUnits();
 
-  const rows = useMemo<UnstakeRequestTableRow[] | null>(() => {
+  const rows = useMemo<ParachainUnstakeRequest[] | null>(() => {
     // Data not loaded yet.
     if (tokenUnlockLedger === null || ongoingTimeUnits === null) {
       return null;
@@ -63,14 +62,13 @@ const useLstUnlockRequestTableRows = () => {
               };
 
         return {
+          type: 'parachainUnstakeRequest',
           unlockId: request.unlockId,
           amount: request.amount,
-          // TODO: Using dummy address for now.
-          address: '0xef1234567890abcdef123456789' as AnySubstrateAddress,
           currency: request.currency,
           decimals: chain.decimals,
-          remainingTimeUnit,
-        } satisfies UnstakeRequestTableRow;
+          progress: remainingTimeUnit,
+        } satisfies ParachainUnstakeRequest;
       });
   }, [ongoingTimeUnits, tokenUnlockLedger]);
 
