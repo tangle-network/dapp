@@ -10,9 +10,9 @@ import {
 import useApiRx from '../../hooks/useApiRx';
 import calculateBnRatio from '../../utils/calculateBnRatio';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
-import { ContractReadOptions } from '../liquifier/useContractRead';
-import useContractReadSubscription from '../liquifier/useContractReadSubscription';
-import usePolling, { PollingPrimaryCacheKey } from './usePolling';
+import useContractRead from '../liquifier/useContractRead';
+import { ContractReadOptions } from '../liquifier/useContractReadOnce';
+import usePolling from './usePolling';
 
 export enum ExchangeRateType {
   NativeToLiquid,
@@ -101,7 +101,7 @@ const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
   const {
     value: _erc20TotalIssuance,
     setIsPaused: setIsErc20TotalIssuancePaused,
-  } = useContractReadSubscription(erc20Abi, totalSupplyFetcher);
+  } = useContractRead(erc20Abi, totalSupplyFetcher);
 
   // Pause or resume ERC20-based exchange rate fetching based
   // on whether the requested protocol is a parachain or an ERC20 token.
@@ -117,8 +117,6 @@ const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
     fetcher,
     // Refresh every 5 seconds.
     refreshInterval: 5_000,
-    primaryCacheKey: PollingPrimaryCacheKey.EXCHANGE_RATE,
-    cacheKey: ['exchangeRate', protocolId],
   });
 
   return { exchangeRate, isRefreshing };

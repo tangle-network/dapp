@@ -6,10 +6,8 @@ import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import LIQUIFIER_TG_TOKEN_ABI from '../../../constants/liquidStaking/liquifierTgTokenAbi';
 import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
-import usePolling, {
-  PollingPrimaryCacheKey,
-} from '../../../data/liquidStaking/usePolling';
-import useContractRead from '../../../data/liquifier/useContractRead';
+import usePolling from '../../../data/liquidStaking/usePolling';
+import useContractReadOnce from '../../../data/liquifier/useContractReadOnce';
 import useEvmAddress20 from '../../../hooks/useEvmAddress';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
@@ -18,8 +16,10 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
   const substrateAddress = useSubstrateAddress();
   const evmAddress20 = useEvmAddress20();
   const { nativeBalances, liquidBalances } = useParachainBalances();
-  const readErc20 = useContractRead(erc20Abi);
-  const readLiquidErc20 = useContractRead(LIQUIFIER_TG_TOKEN_ABI);
+
+  // TODO: Why not use the subscription hook variants (useContractRead) instead of manually utilizing usePolling?
+  const readErc20 = useContractReadOnce(erc20Abi);
+  const readLiquidErc20 = useContractReadOnce(LIQUIFIER_TG_TOKEN_ABI);
 
   const [balance, setBalance] = useState<
     BN | null | typeof EMPTY_VALUE_PLACEHOLDER
@@ -80,7 +80,6 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
   usePolling({
     fetcher: erc20BalanceFetcher,
     refreshInterval: 5_000,
-    primaryCacheKey: PollingPrimaryCacheKey.LS_ERC20_BALANCE,
   });
 
   useEffect(() => {

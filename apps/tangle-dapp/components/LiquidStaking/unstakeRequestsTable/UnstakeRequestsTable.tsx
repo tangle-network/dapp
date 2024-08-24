@@ -38,6 +38,7 @@ import useLiquifierNftUnlocks, {
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import addCommasToNumber from '../../../utils/addCommasToNumber';
 import isLsErc20TokenId from '../../../utils/liquidStaking/isLsErc20TokenId';
+import isLsParachainChainId from '../../../utils/liquidStaking/isLsParachainChainId';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
 import GlassCard from '../../GlassCard';
 import { HeaderCell } from '../../tableCells';
@@ -160,7 +161,9 @@ const UnstakeRequestsTable: FC = () => {
   const { selectedProtocolId } = useLiquidStakingStore();
   const substrateAddress = useSubstrateAddress();
   const parachainRows = useLstUnlockRequestTableRows();
-  const evmRows = useLiquifierNftUnlocks();
+
+  // TODO: Link table paging with paging options here.
+  const evmRows = useLiquifierNftUnlocks({ page: 1, pageSize: 5 });
 
   // Select the table rows based on whether the selected protocol
   // is an EVM-based chain or a parachain-based Substrate chain.
@@ -187,13 +190,13 @@ const UnstakeRequestsTable: FC = () => {
   );
 
   const tableProps = useReactTable(tableOptions);
-  const tablePropsRows = tableProps.getSelectedRowModel().rows;
+  const selectedRows = tableProps.getSelectedRowModel().rows;
 
   const selectedRowsUnlockIds = useMemo<Set<number>>(() => {
-    const selectedRows = tablePropsRows.map((row) => row.original.unlockId);
+    const selectedRowsIds = selectedRows.map((row) => row.original.unlockId);
 
-    return new Set(selectedRows);
-  }, [tablePropsRows]);
+    return new Set(selectedRowsIds);
+  }, [selectedRows]);
 
   // Note that memoizing this will cause the table to not update
   // when the selected rows change.
@@ -241,7 +244,7 @@ const UnstakeRequestsTable: FC = () => {
   // have all completed their unlocking period.
   const canWithdrawAllSelected = useMemo(() => {
     // No rows selected or not loaded yet.
-    if (selectedRowsUnlockIds.size === 0 || parachainRows === null) {
+    if (selectedRowsUnlockIds.size === 0 || rows === null) {
       return false;
     }
 
@@ -250,9 +253,7 @@ const UnstakeRequestsTable: FC = () => {
     // Check that all selected rows have completed their unlocking
     // period.
     return unlockIds.every((unlockId) => {
-      const request = parachainRows.find(
-        (request) => request.unlockId === unlockId,
-      );
+      const request = rows.find((request) => request.unlockId === unlockId);
 
       assert(
         request !== undefined,
@@ -265,15 +266,17 @@ const UnstakeRequestsTable: FC = () => {
         ? request.progress === undefined
         : request.progress === 100;
     });
-  }, [selectedRowsUnlockIds, parachainRows]);
+  }, [selectedRowsUnlockIds, rows]);
 
   const currenciesAndUnlockIds = useMemo<[ParachainCurrency, number][]>(() => {
-    return tablePropsRows.map((row) => {
-      const { currency, unlockId } = row.original;
+    return selectedRows.flatMap((row) => {
+      if (row.original.type !== 'parachainUnstakeRequest') {
+        return [];
+      }
 
-      return [currency, unlockId];
+      return [[row.original.currency, row.original.unlockId]];
     });
-  }, [tablePropsRows]);
+  }, [selectedRows]);
 
   return (
     <div className="space-y-4 flex-grow max-w-[700px]">
@@ -288,16 +291,20 @@ const UnstakeRequestsTable: FC = () => {
 
         {parachainRows !== null && parachainRows.length > 0 && (
           <div className="flex gap-3 items-center justify-center">
-            <RebondLstUnstakeRequestButton
-              // Can only rebond if there are selected rows.
-              isDisabled={selectedRowsUnlockIds.size === 0}
-              currenciesAndUnlockIds={currenciesAndUnlockIds}
-            />
+            {isLsParachainChainId(selectedProtocolId) && (
+              <RebondLstUnstakeRequestButton
+                // Can only rebond if there are selected rows.
+                isDisabled={selectedRowsUnlockIds.size === 0}
+                currenciesAndUnlockIds={currenciesAndUnlockIds}
+              />
+            )}
 
-            <WithdrawLstUnstakeRequestButton
-              canWithdraw={canWithdrawAllSelected}
-              currenciesAndUnlockIds={currenciesAndUnlockIds}
-            />
+            {isLsParachainChainId(selectedProtocolId) && (
+              <WithdrawLstUnstakeRequestButton
+                canWithdraw={canWithdrawAllSelected}
+                currenciesAndUnlockIds={currenciesAndUnlockIds}
+              />
+            )}
           </div>
         )}
       </GlassCard>

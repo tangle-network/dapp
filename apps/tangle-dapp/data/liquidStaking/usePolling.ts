@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export enum PollingPrimaryCacheKey {
   EXCHANGE_RATE,
@@ -9,21 +9,16 @@ export enum PollingPrimaryCacheKey {
 export type PollingOptions<T> = {
   fetcher: (() => Promise<T> | T) | null;
   refreshInterval?: number;
-  primaryCacheKey: PollingPrimaryCacheKey;
-  cacheKey?: unknown[];
 };
-
-// TODO: Use Zustand global store for caching.
 
 const usePolling = <T>({
   fetcher,
   // Default to a 3 second refresh interval.
   refreshInterval = 3_000,
-  primaryCacheKey: _primaryCacheKey,
-  cacheKey: _cacheKey,
 }: PollingOptions<T>) => {
   const [value, setValue] = useState<T | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const lastUpdatedTimestampRef = useRef(Date.now());
 
   useEffect(() => {
     const intervalHandle = setInterval(async () => {
@@ -32,8 +27,20 @@ const usePolling = <T>({
         return;
       }
 
+      const now = Date.now();
+      const difference = now - lastUpdatedTimestampRef.current;
+
+      // Don't refresh if the last refresh was less than
+      // the refresh interval ago. This prevents issues where
+      // the fetcher is unstable and the setInterval gets called
+      // multiple times before the fetcher resolves.
+      if (difference < refreshInterval) {
+        return;
+      }
+
       setIsRefreshing(true);
       setValue(await fetcher());
+      lastUpdatedTimestampRef.current = now;
       setIsRefreshing(false);
     }, refreshInterval);
 

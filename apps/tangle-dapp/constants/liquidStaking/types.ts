@@ -73,6 +73,7 @@ export interface LsErc20TokenDef extends ProtocolDefCommon {
   address: HexString;
   liquifierAdapterAddress: HexString;
   liquifierTgTokenAddress: HexString;
+  liquifierUnlocksAddress: HexString;
 }
 
 export type LsProtocolDef = LsParachainChainDef | LsErc20TokenDef;

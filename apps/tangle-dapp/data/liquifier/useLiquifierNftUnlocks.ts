@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { assert, BN } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 import { Address } from 'viem';
 
@@ -6,10 +6,12 @@ import { BaseUnstakeRequest } from '../../components/LiquidStaking/unstakeReques
 import LIQUIFIER_UNLOCKS_ABI from '../../constants/liquidStaking/liquifierUnlocksAbi';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
-import isLsErc20TokenId from '../../utils/liquidStaking/isLsErc20TokenId';
 import { useLiquidStakingStore } from '../liquidStaking/useLiquidStakingStore';
-import { ContractReadOptions } from './useContractRead';
-import useContractReadSubscription from './useContractReadSubscription';
+import useContractRead from './useContractRead';
+import useContractReadBatch, {
+  ContractReadOptionsBatch,
+} from './useContractReadBatch';
+import { ContractReadOptions } from './useContractReadOnce';
 
 /**
  * Represents the metadata of an ERC-721 NFT liquifier unlock request.
@@ -36,104 +38,137 @@ export type LiquifierUnlockNftMetadata = BaseUnstakeRequest & {
 };
 
 /**
+ * Note that the `page` and `pageSize` fields are assumed to be
+ * 1-indexed.
+ */
+export type PagingOptions = {
+  page: number;
+  pageSize: number;
+};
+
+/**
  * In the case of liquifier unlock requests, they are represented
  * by ERC-721 NFTs owned by the user.
  *
  * Each unlock NFT has associated metadata about the unlock request,
  * including the progress of the unlock request, the amount of underlying
  * stake tokens, and the maturity timestamp.
+ *
+ * @param paging The paging options for the unlock requests (1-based index).
  */
-const useLiquifierNftUnlocks = (): LiquifierUnlockNftMetadata[] | null => {
+const useLiquifierNftUnlocks = (
+  paging?: PagingOptions,
+): LiquifierUnlockNftMetadata[] | null => {
   const { selectedProtocolId } = useLiquidStakingStore();
   const activeEvmAddress20 = useEvmAddress20();
+
+  const protocol = getLsProtocolDef(selectedProtocolId);
 
   const getUnlockIdCountOptions = useCallback((): ContractReadOptions<
     typeof LIQUIFIER_UNLOCKS_ABI,
     'balanceOf'
   > | null => {
-    if (activeEvmAddress20 === null || !isLsErc20TokenId(selectedProtocolId)) {
+    if (activeEvmAddress20 === null || protocol.type !== 'erc20') {
       return null;
     }
 
-    const protocol = getLsProtocolDef(selectedProtocolId);
-
     return {
-      // TODO: This should be something like 'unlockAddress', defined per-protocol. For now, just use the protocol address as a placeholder.
-      address: protocol.address,
+      address: protocol.liquifierUnlocksAddress,
       functionName: 'balanceOf',
       args: [activeEvmAddress20],
     };
-  }, [activeEvmAddress20, selectedProtocolId]);
+  }, [activeEvmAddress20, protocol]);
 
-  const { value: rawUnlockIdCount } = useContractReadSubscription(
+  const { value: rawUnlockIdCount } = useContractRead(
     LIQUIFIER_UNLOCKS_ABI,
     getUnlockIdCountOptions,
   );
 
+  // Extract the paging options from the object, to prevent
+  // possible issues due to unstable object references passed.
+  const page = paging?.page;
+  const pageSize = paging?.pageSize;
+
   const unlockIds = useMemo(() => {
-    if (rawUnlockIdCount === null) {
+    if (rawUnlockIdCount === null || rawUnlockIdCount instanceof Error) {
       return null;
     }
 
-    const ids = [];
+    // Extremely unlikely that the user would have this many unlock
+    // requests, but just in case.
+    assert(
+      rawUnlockIdCount <= Number.MAX_SAFE_INTEGER,
+      'Unlock ID count exceeds maximum safe integer, user seems to have an unreasonable amount of unlock requests',
+    );
 
-    // TODO: Since this is a `balanceOf` operation, might need to shrink it down to base unit, since it's likely in the underlying token's decimals, which is very big, causing JavaScript to throw an `invalid array length` error. Also, for now made the upper bound be `0`, it should be `rawUnlockIdCount`, but it was erroring since it's not yet implemented.
-    for (let i = 0; i < 0; i++) {
-      ids.push(i);
-    }
+    const unlockIdCount = Number(rawUnlockIdCount);
 
-    return ids;
-  }, [rawUnlockIdCount]);
+    const from =
+      page === undefined || pageSize === undefined ? 0 : (page - 1) * pageSize;
 
-  // TODO: Need to page/lazy load this, since there could be many unlock requests. Then, paging would be handled by the parent table component. Perhaps try to add the lazy loading functionality directly into the `useContractReadSubscription` hook (e.g. multi-arg fetch capability + paging options & state).
-  const getMetadataOptions = useCallback((): ContractReadOptions<
+    const to =
+      pageSize === undefined
+        ? unlockIdCount
+        : Math.min(from + pageSize, unlockIdCount);
+
+    return Array.from<bigint>({
+      length: to - from,
+    }).map((_, i) => BigInt(i + from));
+  }, [page, pageSize, rawUnlockIdCount]);
+
+  const getMetadataOptions = useCallback((): ContractReadOptionsBatch<
     typeof LIQUIFIER_UNLOCKS_ABI,
     'getMetadata'
   > | null => {
-    // Do not fetch if there's no active EVM account.
-    if (activeEvmAddress20 === null || !isLsErc20TokenId(selectedProtocolId)) {
+    if (
+      // Do not fetch if there's no active EVM account.
+      activeEvmAddress20 === null ||
+      protocol.type !== 'erc20' ||
+      unlockIds === null
+    ) {
       return null;
     }
 
-    const protocol = getLsProtocolDef(selectedProtocolId);
+    const batchArgs = unlockIds.map((unlockId) => [BigInt(unlockId)] as const);
 
     return {
-      // TODO: This should be something like 'unlockAddress', defined per-protocol. For now, just use the protocol address as a placeholder.
-      address: protocol.address,
+      address: protocol.liquifierUnlocksAddress,
       functionName: 'getMetadata',
-      // TODO: Using index 0 for now, until paging is implemented.
-      // TODO: Consider adding support for an array of args, which would be interpreted as a multi-fetch by `useContractReadSubscription`.
-      args: [BigInt(0)],
+      args: batchArgs,
     };
-  }, [activeEvmAddress20, selectedProtocolId]);
+  }, [activeEvmAddress20, protocol, unlockIds]);
 
-  const { value: rawMetadata } = useContractReadSubscription(
+  const { value: rawMetadatas } = useContractReadBatch(
     LIQUIFIER_UNLOCKS_ABI,
     getMetadataOptions,
   );
 
-  const metadata = useMemo<LiquifierUnlockNftMetadata[] | null>(() => {
-    if (rawMetadata === null) {
+  const nftMetadatas = useMemo<LiquifierUnlockNftMetadata[] | null>(() => {
+    if (rawMetadatas === null) {
       return null;
     }
 
-    return [
-      {
-        type: 'liquifierUnlockNft',
-        // TODO: Using dummy decimals for now. Obtain them from the protocol definition?
-        decimals: 18,
-        unlockId: Number(rawMetadata.unlockId),
-        symbol: rawMetadata.symbol,
-        name: rawMetadata.name,
-        validator: rawMetadata.validator,
-        progress: Number(rawMetadata.progress) / 100,
-        amount: new BN(rawMetadata.amount.toString()),
-        maturityTimestamp: Number(rawMetadata.maturity),
-      } satisfies LiquifierUnlockNftMetadata,
-    ];
-  }, [rawMetadata]);
+    return rawMetadatas.flatMap((metadata) => {
+      // Ignore failed metadata fetches and those that are still loading.
+      if (metadata === null || metadata instanceof Error) {
+        return [];
+      }
 
-  return metadata;
+      return {
+        type: 'liquifierUnlockNft',
+        decimals: protocol.decimals,
+        unlockId: Number(metadata.unlockId),
+        symbol: metadata.symbol,
+        name: metadata.name,
+        validator: metadata.validator,
+        progress: Number(metadata.progress) / 100,
+        amount: new BN(metadata.amount.toString()),
+        maturityTimestamp: Number(metadata.maturity),
+      } satisfies LiquifierUnlockNftMetadata;
+    });
+  }, [protocol.decimals, rawMetadatas]);
+
+  return nftMetadatas;
 };
 
 export default useLiquifierNftUnlocks;

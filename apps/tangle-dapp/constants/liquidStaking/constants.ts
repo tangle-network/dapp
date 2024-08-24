@@ -25,6 +25,8 @@ const SEPOLIA_TESTNET_CONTRACTS = {
   ERC20: '0x2eE951c2d215ba1b3E0DF20764c96a0bC7809F41',
   // Use the same address as the dummy ERC20 contract.
   TG_TOKEN: '0x2eE951c2d215ba1b3E0DF20764c96a0bC7809F41',
+  // TODO: Deploy a development/testing `Unlocks.sol` contract on Sepolia and put its address here.
+  UNLOCKS: '0x',
 } as const satisfies Record<string, HexString>;
 
 const CHAINLINK: LsErc20TokenDef = {
@@ -44,6 +46,9 @@ const CHAINLINK: LsErc20TokenDef = {
   liquifierTgTokenAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.TG_TOKEN,
+  liquifierUnlocksAddress: IS_PRODUCTION_ENV
+    ? '0x'
+    : SEPOLIA_TESTNET_CONTRACTS.UNLOCKS,
   timeUnit: CrossChainTimeUnit.DAY,
   unstakingPeriod: 7,
 };
@@ -65,6 +70,9 @@ const THE_GRAPH: LsErc20TokenDef = {
   liquifierTgTokenAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.TG_TOKEN,
+  liquifierUnlocksAddress: IS_PRODUCTION_ENV
+    ? '0x'
+    : SEPOLIA_TESTNET_CONTRACTS.UNLOCKS,
   timeUnit: CrossChainTimeUnit.DAY,
   unstakingPeriod: 28,
 };
@@ -86,6 +94,9 @@ const LIVEPEER: LsErc20TokenDef = {
   liquifierTgTokenAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.TG_TOKEN,
+  liquifierUnlocksAddress: IS_PRODUCTION_ENV
+    ? '0x'
+    : SEPOLIA_TESTNET_CONTRACTS.UNLOCKS,
   timeUnit: CrossChainTimeUnit.LIVEPEER_ROUND,
   unstakingPeriod: 7,
 };
@@ -108,6 +119,9 @@ const POLYGON: LsErc20TokenDef = {
   liquifierTgTokenAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.TG_TOKEN,
+  liquifierUnlocksAddress: IS_PRODUCTION_ENV
+    ? '0x'
+    : SEPOLIA_TESTNET_CONTRACTS.UNLOCKS,
   timeUnit: CrossChainTimeUnit.POLYGON_CHECKPOINT,
   unstakingPeriod: 82,
 };

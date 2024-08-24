@@ -2,25 +2,29 @@ import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import { useCallback, useState } from 'react';
 import { Abi as ViemAbi, ContractFunctionName } from 'viem';
 
+import { IS_PRODUCTION_ENV } from '../../constants/env';
 import usePolling from '../liquidStaking/usePolling';
 import useContractReadOnce, {
   ContractReadOptions,
 } from './useContractReadOnce';
 
-/**
- * Continuously reads a contract function, refreshing the value
- * at a specified interval.
- */
-const useContractRead = <
+export type ContractReadOptionsBatch<
+  Abi extends ViemAbi,
+  FunctionName extends ContractFunctionName<Abi, 'pure' | 'view'>,
+> = Omit<ContractReadOptions<Abi, FunctionName>, 'args'> & {
+  args: ContractReadOptions<Abi, FunctionName>['args'][];
+};
+
+const useContractReadBatch = <
   Abi extends ViemAbi,
   FunctionName extends ContractFunctionName<Abi, 'pure' | 'view'>,
 >(
   abi: Abi,
   options:
-    | ContractReadOptions<Abi, FunctionName>
+    | ContractReadOptionsBatch<Abi, FunctionName>
     // Allow consumers to provide a function that returns the options.
     // This is useful for when the options are dependent on some state.
-    | (() => PromiseOrT<ContractReadOptions<Abi, FunctionName> | null>),
+    | (() => PromiseOrT<ContractReadOptionsBatch<Abi, FunctionName> | null>),
 ) => {
   const [isPaused, setIsPaused] = useState(false);
   const readOnce = useContractReadOnce(abi);
@@ -38,8 +42,18 @@ const useContractRead = <
     if (options_ === null) {
       return null;
     }
+    // Remind developer about possible performance impact.
+    else if (!IS_PRODUCTION_ENV && options_.args.length >= 50) {
+      console.warn(
+        'Reading a large amount of contracts simultaneously may affect performance, please consider utilizing pagination',
+      );
+    }
 
-    return readOnce(options_);
+    const promises = options_.args.map((args) =>
+      readOnce({ ...options_, args }),
+    );
+
+    return Promise.all(promises);
   }, [isPaused, options, readOnce]);
 
   const { value, isRefreshing } = usePolling({
@@ -51,4 +65,4 @@ const useContractRead = <
   return { value, isRefreshing, isPaused, setIsPaused };
 };
 
-export default useContractRead;
+export default useContractReadBatch;

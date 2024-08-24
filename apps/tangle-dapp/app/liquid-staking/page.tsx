@@ -5,12 +5,9 @@ import { FC } from 'react';
 import { LiquidStakingSelectionTable } from '../../components/LiquidStaking/LiquidStakingSelectionTable';
 import LiquidStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LiquidStakeCard';
 import LiquidUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LiquidUnstakeCard';
-import UnlockNftsTable from '../../components/LiquidStaking/unlockNftsTable/UnlockNftsTable';
 import UnstakeRequestsTable from '../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
-import { useLiquidStakingStore } from '../../data/liquidStaking/useLiquidStakingStore';
 import useSearchParamState from '../../hooks/useSearchParamState';
-import isLsParachainChainId from '../../utils/liquidStaking/isLsParachainChainId';
 import TabListItem from '../restake/TabListItem';
 import TabsList from '../restake/TabsList';
 
@@ -27,8 +24,6 @@ const LiquidStakingTokenPage: FC = () => {
     stringify: (value) =>
       value ? SearchParamAction.STAKE : SearchParamAction.UNSTAKE,
   });
-
-  const { selectedProtocolId } = useLiquidStakingStore();
 
   return (
     <div className="flex flex-wrap gap-12">
@@ -50,13 +45,7 @@ const LiquidStakingTokenPage: FC = () => {
       </div>
 
       <div className="flex flex-col flex-grow w-min gap-4 min-w-[370px]">
-        {isStaking ? (
-          <LiquidStakingSelectionTable />
-        ) : isLsParachainChainId(selectedProtocolId) ? (
-          <UnstakeRequestsTable />
-        ) : (
-          <UnlockNftsTable tokenId={selectedProtocolId} />
-        )}
+        {isStaking ? <LiquidStakingSelectionTable /> : <UnstakeRequestsTable />}
       </div>
     </div>
   );
