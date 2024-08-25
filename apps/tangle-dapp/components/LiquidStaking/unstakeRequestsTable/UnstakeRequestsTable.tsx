@@ -35,7 +35,7 @@ import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStak
 import useLiquifierNftUnlocks, {
   LiquifierUnlockNftMetadata,
 } from '../../../data/liquifier/useLiquifierNftUnlocks';
-import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
+import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import addCommasToNumber from '../../../utils/addCommasToNumber';
 import isLsErc20TokenId from '../../../utils/liquidStaking/isLsErc20TokenId';
 import isLsParachainChainId from '../../../utils/liquidStaking/isLsParachainChainId';
@@ -85,11 +85,16 @@ const COLUMNS = [
   COLUMN_HELPER.accessor('unlockId', {
     header: () => <HeaderCell title="Unlock ID" className="justify-start" />,
     cell: (props) => {
+      const canSelect =
+        props.row.original.type === 'liquifierUnlockNft'
+          ? props.row.original.progress === 1
+          : true;
+
       return (
         <div className="flex items-center justify-start gap-2">
           <CheckBox
             isChecked={props.row.getIsSelected()}
-            isDisabled={!props.row.getCanSelect()}
+            isDisabled={!props.row.getCanSelect() || !canSelect}
             onChange={props.row.getToggleSelectedHandler()}
             wrapperClassName="pt-0.5 flex items-center justify-center"
           />
@@ -160,7 +165,7 @@ const COLUMNS = [
 
 const UnstakeRequestsTable: FC = () => {
   const { selectedProtocolId } = useLiquidStakingStore();
-  const substrateAddress = useSubstrateAddress();
+  const activeAccountAddress = useActiveAccountAddress();
   const parachainRows = useLstUnlockRequestTableRows();
   const evmRows = useLiquifierNftUnlocks();
 
@@ -202,7 +207,7 @@ const UnstakeRequestsTable: FC = () => {
   // when the selected rows change.
   const table = (() => {
     // No account connected.
-    if (substrateAddress === null) {
+    if (activeAccountAddress === null) {
       return (
         <Notice
           title="No account connected"
@@ -291,6 +296,9 @@ const UnstakeRequestsTable: FC = () => {
     });
   }, [selectedRows]);
 
+  const isDataState =
+    rows !== null && rows.length > 0 && activeAccountAddress !== null;
+
   return (
     <div className="space-y-4 flex-grow max-w-[700px]">
       <GlassCard
@@ -302,7 +310,7 @@ const UnstakeRequestsTable: FC = () => {
       >
         {table}
 
-        {rows !== null && rows.length > 0 && (
+        {isDataState && (
           <div className="flex gap-3 items-center justify-center">
             {isLsParachainChainId(selectedProtocolId) && (
               <RebondLstUnstakeRequestButton

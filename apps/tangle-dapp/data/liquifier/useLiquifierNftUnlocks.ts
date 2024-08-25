@@ -134,6 +134,13 @@ const useLiquifierNftUnlocks = (): LiquifierUnlockNftMetadata[] | null => {
       // different unlock requests.
       const unlockId = IS_PRODUCTION_ENV ? Number(metadata.unlockId) : index;
 
+      // On development, mark some as completed for testing purposes.
+      const progress = IS_PRODUCTION_ENV
+        ? Number(metadata.progress) / 100
+        : index < 10
+          ? 1
+          : 0.6123;
+
       return {
         type: 'liquifierUnlockNft',
         decimals: protocol.decimals,
@@ -141,7 +148,7 @@ const useLiquifierNftUnlocks = (): LiquifierUnlockNftMetadata[] | null => {
         symbol: metadata.symbol,
         name: metadata.name,
         validator: metadata.validator,
-        progress: Number(metadata.progress) / 100,
+        progress,
         amount: new BN(metadata.amount.toString()),
         maturityTimestamp: Number(metadata.maturity),
       } satisfies LiquifierUnlockNftMetadata;
