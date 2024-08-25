@@ -47,6 +47,10 @@ const useContractReadOnce = <Abi extends ViemAbi>(abi: Abi) => {
         "Should not be able to call this function if the client isn't ready yet",
       );
 
+      if (!IS_PRODUCTION_ENV) {
+        console.debug('Fetching contract data:', functionName);
+      }
+
       try {
         return await publicClient.readContract({
           address,

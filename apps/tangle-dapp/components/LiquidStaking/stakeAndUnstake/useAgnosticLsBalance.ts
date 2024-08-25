@@ -77,10 +77,7 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
     });
   }, [evmAddress20, isNative, protocol, readErc20, readLiquidErc20]);
 
-  usePolling({
-    fetcher: erc20BalanceFetcher,
-    refreshInterval: 5_000,
-  });
+  usePolling({ fetcher: erc20BalanceFetcher });
 
   useEffect(() => {
     if (protocol.type !== 'parachain' || parachainBalances === null) {

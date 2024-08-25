@@ -113,11 +113,7 @@ const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
   }, [protocol.type, setIsErc20TotalIssuancePaused]);
 
   // TODO: Use polling for the ERC20 exchange rate, NOT the parachain exchange rate which is already based on a subscription. Might need a mechanism to 'pause' polling when the selected protocol is a parachain chain, that way it doesn't make unnecessary requests until an ERC20 token is selected.
-  const { value: exchangeRate, isRefreshing } = usePolling({
-    fetcher,
-    // Refresh every 5 seconds.
-    refreshInterval: 5_000,
-  });
+  const { value: exchangeRate, isRefreshing } = usePolling({ fetcher });
 
   return { exchangeRate, isRefreshing };
 };

@@ -48,6 +48,7 @@ import TableRowsSkeleton from '../TableRowsSkeleton';
 import RebondLstUnstakeRequestButton from './RebondLstUnstakeRequestButton';
 import useLstUnlockRequestTableRows from './useLstUnlockRequestTableRows';
 import WithdrawLstUnstakeRequestButton from './WithdrawLstUnstakeRequestButton';
+import WithdrawUnlockNftButton from './WithdrawUnlockNftButton';
 
 export type BaseUnstakeRequest = {
   unlockId: number;
@@ -109,11 +110,11 @@ const columns = [
         // If it's a number (percentage) representing an unlock NFT's
         // unlocking progress, convert it to a string.
         else if (typeof progress === 'number') {
-          if (progress === 100) {
+          if (progress === 1) {
             return undefined;
           }
 
-          return progress.toFixed(2) + '%';
+          return (progress * 100).toFixed(2) + '%';
         }
         // Otherwise, it must be a Parachain unstake request's
         // remaining time unit.
@@ -211,7 +212,7 @@ const UnstakeRequestsTable: FC = () => {
       );
     }
     // Data still loading.
-    else if (parachainRows === null) {
+    else if (rows === null) {
       return (
         <Notice
           title="Unstake requests"
@@ -220,7 +221,7 @@ const UnstakeRequestsTable: FC = () => {
       );
     }
     // No unstake requests.
-    else if (parachainRows.length === 0) {
+    else if (rows.length === 0) {
       return (
         <Notice
           title="No unstake requests"
@@ -235,7 +236,7 @@ const UnstakeRequestsTable: FC = () => {
         trClassName="!bg-inherit"
         tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
         tableProps={tableProps}
-        totalRecords={parachainRows.length}
+        totalRecords={rows.length}
       />
     );
   })();
@@ -268,7 +269,9 @@ const UnstakeRequestsTable: FC = () => {
     });
   }, [selectedRowsUnlockIds, rows]);
 
-  const currenciesAndUnlockIds = useMemo<[ParachainCurrency, number][]>(() => {
+  const parachainCurrenciesAndUnlockIds = useMemo<
+    [ParachainCurrency, number][]
+  >(() => {
     return selectedRows.flatMap((row) => {
       if (row.original.type !== 'parachainUnstakeRequest') {
         return [];
@@ -278,38 +281,54 @@ const UnstakeRequestsTable: FC = () => {
     });
   }, [selectedRows]);
 
+  const nftUnlockIds = useMemo<number[]>(() => {
+    return selectedRows.flatMap((row) => {
+      if (row.original.type !== 'liquifierUnlockNft') {
+        return [];
+      }
+
+      return [row.original.unlockId];
+    });
+  }, [selectedRows]);
+
   return (
     <div className="space-y-4 flex-grow max-w-[700px]">
       <GlassCard
         className={twMerge(
-          parachainRows !== null &&
-            parachainRows.length > 0 &&
+          rows !== null &&
+            rows.length > 0 &&
             'flex flex-col justify-between min-h-[500px]',
         )}
       >
         {table}
 
-        {parachainRows !== null && parachainRows.length > 0 && (
+        {rows !== null && rows.length > 0 && (
           <div className="flex gap-3 items-center justify-center">
             {isLsParachainChainId(selectedProtocolId) && (
               <RebondLstUnstakeRequestButton
                 // Can only rebond if there are selected rows.
                 isDisabled={selectedRowsUnlockIds.size === 0}
-                currenciesAndUnlockIds={currenciesAndUnlockIds}
+                currenciesAndUnlockIds={parachainCurrenciesAndUnlockIds}
               />
             )}
 
-            {isLsParachainChainId(selectedProtocolId) && (
+            {isLsParachainChainId(selectedProtocolId) ? (
               <WithdrawLstUnstakeRequestButton
                 canWithdraw={canWithdrawAllSelected}
-                currenciesAndUnlockIds={currenciesAndUnlockIds}
+                currenciesAndUnlockIds={parachainCurrenciesAndUnlockIds}
+              />
+            ) : (
+              <WithdrawUnlockNftButton
+                tokenId={selectedProtocolId}
+                canWithdraw={canWithdrawAllSelected}
+                unlockIds={nftUnlockIds}
               />
             )}
           </div>
         )}
       </GlassCard>
 
-      {parachainRows !== null && parachainRows.length === 0 && (
+      {rows !== null && rows.length === 0 && (
         <div className="flex items-center justify-end w-full">
           <ExternalLink Icon={ArrowRightUp} href={TANGLE_DOCS_URL}>
             View Docs

@@ -41,7 +41,11 @@ const RebondLstUnstakeRequestButton: FC<RebondLstUnstakeRequestButtonProps> = ({
     <>
       <Button
         variant="secondary"
-        isDisabled={isDisabled || executeRebondTx === null}
+        isDisabled={
+          isDisabled ||
+          executeRebondTx === null ||
+          currenciesAndUnlockIds.length === 0
+        }
         onClick={() => setIsConfirmationModalOpen(true)}
         isFullWidth
       >

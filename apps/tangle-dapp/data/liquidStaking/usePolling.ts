@@ -13,8 +13,8 @@ export type PollingOptions<T> = {
 
 const usePolling = <T>({
   fetcher,
-  // Default to a 3 second refresh interval.
-  refreshInterval = 3_000,
+  // Default to a 6 second refresh interval.
+  refreshInterval = 6_000,
 }: PollingOptions<T>) => {
   const [value, setValue] = useState<T | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
