@@ -43,7 +43,7 @@ const WithdrawLstUnstakeRequestButton: FC<
   return (
     <>
       <Button
-        variant="secondary"
+        variant="primary"
         isDisabled={
           !canWithdraw ||
           executeWithdrawRedeemTx === null ||
@@ -51,6 +51,8 @@ const WithdrawLstUnstakeRequestButton: FC<
         }
         onClick={handleClick}
         isFullWidth
+        isLoading={withdrawRedeemTxStatus === TxStatus.PROCESSING}
+        loadingText="Processing"
       >
         Withdraw
       </Button>

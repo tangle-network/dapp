@@ -1,5 +1,5 @@
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { erc20Abi } from 'viem';
 
 import {
@@ -21,6 +21,8 @@ export enum ExchangeRateType {
 
 // TODO: This NEEDS to be based on subscription for sure, since exchange rates are always changing. Perhaps make it return whether it is re-fetching, so that an effect can be shown on the UI to indicate that it is fetching the latest exchange rate, and also have it be ran in a 3 or 5 second interval. Will also need de-duping logic, error handling, and also prevent spamming requests when the parent component is re-rendered many times (e.g. by using a ref to store the latest fetch timestamp). Might want to extract this pattern into its own hook, similar to a subscription. Also consider having a global store (Zustand) for that custom hook that uses caching to prevent spamming requests when the same hook is used in multiple components, might need to accept a custom 'key' parameter to use as the cache key.
 const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
+  const [exchangeRate, setExchangeRate] = useState<number | null>(null);
+
   const protocol = getLsProtocolDef(protocolId);
 
   const { result: tokenPoolAmount } = useApiRx((api) => {
@@ -76,10 +78,13 @@ const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
     [],
   );
 
-  const fetcher = useCallback(() => {
-    return protocol.type === 'parachain'
-      ? parachainExchangeRate
-      : fetchErc20ExchangeRate(protocol);
+  const fetcher = useCallback(async () => {
+    const promise =
+      protocol.type === 'parachain'
+        ? parachainExchangeRate
+        : fetchErc20ExchangeRate(protocol);
+
+    setExchangeRate(await promise);
   }, [fetchErc20ExchangeRate, parachainExchangeRate, protocol]);
 
   const totalSupplyFetcher = useCallback((): ContractReadOptions<
@@ -113,7 +118,7 @@ const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
   }, [protocol.type, setIsErc20TotalIssuancePaused]);
 
   // TODO: Use polling for the ERC20 exchange rate, NOT the parachain exchange rate which is already based on a subscription. Might need a mechanism to 'pause' polling when the selected protocol is a parachain chain, that way it doesn't make unnecessary requests until an ERC20 token is selected.
-  const { value: exchangeRate, isRefreshing } = usePolling({ fetcher });
+  const isRefreshing = usePolling({ effect: fetcher });
 
   return { exchangeRate, isRefreshing };
 };

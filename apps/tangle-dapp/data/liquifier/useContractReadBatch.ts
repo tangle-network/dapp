@@ -1,6 +1,11 @@
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import { useCallback, useState } from 'react';
-import { Abi as ViemAbi, ContractFunctionName } from 'viem';
+import {
+  Abi as ViemAbi,
+  ContractFunctionArgs,
+  ContractFunctionName,
+  ContractFunctionReturnType,
+} from 'viem';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import usePolling from '../liquidStaking/usePolling';
@@ -26,12 +31,24 @@ const useContractReadBatch = <
     // This is useful for when the options are dependent on some state.
     | (() => PromiseOrT<ContractReadOptionsBatch<Abi, FunctionName> | null>),
 ) => {
-  const [isPaused, setIsPaused] = useState(false);
+  type ReturnType = (
+    | Error
+    | Awaited<
+        ContractFunctionReturnType<
+          Abi,
+          'pure' | 'view',
+          FunctionName,
+          ContractFunctionArgs<Abi, 'pure' | 'view', FunctionName>
+        >
+      >
+  )[];
+
+  const [value, setValue] = useState<ReturnType | null>(null);
   const readOnce = useContractReadOnce(abi);
 
-  const fetcher = useCallback(async () => {
+  const refresh = useCallback(async () => {
     // Not yet ready to fetch.
-    if (isPaused || readOnce === null) {
+    if (readOnce === null) {
       return null;
     }
 
@@ -53,16 +70,15 @@ const useContractReadBatch = <
       readOnce({ ...options_, args }),
     );
 
-    return Promise.all(promises);
-  }, [isPaused, options, readOnce]);
+    setValue(await Promise.all(promises));
+  }, [options, readOnce]);
 
-  const { value, isRefreshing } = usePolling({
-    // By providing null, it signals to the hook to maintain
-    // its current value and not refresh.
-    fetcher: isPaused ? null : fetcher,
-  });
+  usePolling({ effect: refresh });
 
-  return { value, isRefreshing, isPaused, setIsPaused };
+  return {
+    value,
+    refresh,
+  };
 };
 
 export default useContractReadBatch;

@@ -35,6 +35,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.LS_LIQUIFIER_DEPOSIT]: 'Liquifier deposit successful',
   [TxName.LS_LIQUIFIER_APPROVE]: 'Liquifier approval successful',
   [TxName.LS_LIQUIFIER_UNLOCK]: 'Liquifier unlock successful',
+  [TxName.LS_LIQUIFIER_WITHDRAW]: 'Liquifier withdrawal successful',
 };
 
 const makeKey = (txName: TxName): `${TxName}-tx-notification` =>
@@ -42,7 +43,7 @@ const makeKey = (txName: TxName): `${TxName}-tx-notification` =>
 
 export type NotificationSteps = {
   current: number;
-  max: number;
+  total: number;
 };
 
 // TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.
@@ -133,7 +134,7 @@ const useTxNotification = (explorerUrl?: string) => {
   const notifyProcessing = useCallback(
     (txName: TxName, steps?: NotificationSteps) => {
       // Sanity check.
-      if (steps !== undefined && steps.current > steps.max) {
+      if (steps !== undefined && steps.current > steps.total) {
         console.warn(
           'Current transaction notification steps exceed the maximum steps (check for off-by-one errors)',
         );
@@ -145,8 +146,8 @@ const useTxNotification = (explorerUrl?: string) => {
 
       enqueueSnackbar(
         <Typography variant="h5">
-          {steps !== undefined && `(${steps.current}/${steps.max}) `}Processing{' '}
-          {txName}
+          {steps !== undefined && `(${steps.current}/${steps.total}) `}
+          Processing {txName}
         </Typography>,
         {
           key,

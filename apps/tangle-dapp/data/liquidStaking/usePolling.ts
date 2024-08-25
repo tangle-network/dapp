@@ -1,55 +1,46 @@
-import { useEffect, useRef, useState } from 'react';
-
-export enum PollingPrimaryCacheKey {
-  EXCHANGE_RATE,
-  CONTRACT_READ_SUBSCRIPTION,
-  LS_ERC20_BALANCE,
-}
+import { useCallback, useEffect, useState } from 'react';
 
 export type PollingOptions<T> = {
-  fetcher: (() => Promise<T> | T) | null;
+  effect: (() => Promise<T> | T) | null;
   refreshInterval?: number;
 };
 
 const usePolling = <T>({
-  fetcher,
-  // Default to a 6 second refresh interval.
-  refreshInterval = 6_000,
+  effect,
+  // Default to a 12 second refresh interval.
+  refreshInterval = 12_000,
 }: PollingOptions<T>) => {
-  const [value, setValue] = useState<T | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const lastUpdatedTimestampRef = useRef(Date.now());
+
+  const refresh = useCallback(async () => {
+    // Fetcher isn't ready to be called yet.
+    if (effect === null) {
+      return;
+    }
+
+    setIsRefreshing(true);
+    await effect();
+    setIsRefreshing(false);
+  }, [effect]);
 
   useEffect(() => {
-    const intervalHandle = setInterval(async () => {
-      // Fetcher isn't ready to be called yet.
-      if (fetcher === null) {
-        return;
-      }
+    let intervalHandle: ReturnType<typeof setInterval> | null = null;
 
-      const now = Date.now();
-      const difference = now - lastUpdatedTimestampRef.current;
+    (async () => {
+      // Call it immediately to avoid initial delay.
+      await refresh();
 
-      // Don't refresh if the last refresh was less than
-      // the refresh interval ago. This prevents issues where
-      // the fetcher is unstable and the setInterval gets called
-      // multiple times before the fetcher resolves.
-      if (difference < refreshInterval) {
-        return;
-      }
-
-      setIsRefreshing(true);
-      setValue(await fetcher());
-      lastUpdatedTimestampRef.current = now;
-      setIsRefreshing(false);
-    }, refreshInterval);
+      intervalHandle = setInterval(refresh, refreshInterval);
+    })();
 
     return () => {
-      clearInterval(intervalHandle);
+      if (intervalHandle !== null) {
+        clearInterval(intervalHandle);
+      }
     };
-  }, [fetcher, refreshInterval]);
+  }, [effect, refresh, refreshInterval]);
 
-  return { value, isRefreshing };
+  return isRefreshing;
 };
 
 export default usePolling;

@@ -79,10 +79,10 @@ type UnstakeRequestTableRow =
   | LiquifierUnlockNftMetadata
   | ParachainUnstakeRequest;
 
-const columnHelper = createColumnHelper<UnstakeRequestTableRow>();
+const COLUMN_HELPER = createColumnHelper<UnstakeRequestTableRow>();
 
-const columns = [
-  columnHelper.accessor('unlockId', {
+const COLUMNS = [
+  COLUMN_HELPER.accessor('unlockId', {
     header: () => <HeaderCell title="Unlock ID" className="justify-start" />,
     cell: (props) => {
       return (
@@ -98,7 +98,7 @@ const columns = [
       );
     },
   }),
-  columnHelper.accessor('progress', {
+  COLUMN_HELPER.accessor('progress', {
     header: () => <HeaderCell title="Status" className="justify-center" />,
     cell: (props) => {
       const progress = props.getValue();
@@ -135,7 +135,7 @@ const columns = [
       return <div className="flex items-center justify-start">{content}</div>;
     },
   }),
-  columnHelper.accessor('amount', {
+  COLUMN_HELPER.accessor('amount', {
     header: () => <HeaderCell title="Amount" className="justify-center" />,
     cell: (props) => {
       const unstakeRequest = props.row.original;
@@ -162,9 +162,7 @@ const UnstakeRequestsTable: FC = () => {
   const { selectedProtocolId } = useLiquidStakingStore();
   const substrateAddress = useSubstrateAddress();
   const parachainRows = useLstUnlockRequestTableRows();
-
-  // TODO: Link table paging with paging options here.
-  const evmRows = useLiquifierNftUnlocks({ page: 1, pageSize: 5 });
+  const evmRows = useLiquifierNftUnlocks();
 
   // Select the table rows based on whether the selected protocol
   // is an EVM-based chain or a parachain-based Substrate chain.
@@ -175,17 +173,18 @@ const UnstakeRequestsTable: FC = () => {
       // In case that the data is not loaded yet, use an empty array
       // to avoid TypeScript errors.
       data: rows ?? [],
-      columns,
+      columns: COLUMNS,
       filterFns: {
         fuzzy: fuzzyFilter,
       },
-      // getRowId: (row) => row.unlockId.toString(),
       globalFilterFn: fuzzyFilter,
       getCoreRowModel: getCoreRowModel(),
       getFilteredRowModel: getFilteredRowModel(),
       getSortedRowModel: getSortedRowModel(),
       getPaginationRowModel: getPaginationRowModel(),
       enableRowSelection: true,
+      autoResetPageIndex: false,
+      getRowId: (row) => row.unlockId.toString(),
     }),
     [rows],
   );
@@ -237,6 +236,7 @@ const UnstakeRequestsTable: FC = () => {
         tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
         tableProps={tableProps}
         totalRecords={rows.length}
+        isPaginated
       />
     );
   })();
@@ -265,7 +265,7 @@ const UnstakeRequestsTable: FC = () => {
       // request has completed its unlocking period.
       return request.type === 'parachainUnstakeRequest'
         ? request.progress === undefined
-        : request.progress === 100;
+        : request.progress === 1;
     });
   }, [selectedRowsUnlockIds, rows]);
 

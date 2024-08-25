@@ -55,7 +55,7 @@ const useLiquifierDeposit = () => {
         address: tokenDef.address,
         functionName: 'approve',
         args: [tokenDef.liquifierAdapterAddress, BigInt(amount.toString())],
-        notificationStep: { current: 1, max: 2 },
+        notificationStep: { current: 1, total: 2 },
       });
 
       if (!approveTxSucceeded) {
@@ -69,7 +69,7 @@ const useLiquifierDeposit = () => {
         functionName: 'deposit',
         // TODO: Provide the first arg. (validator). Need to figure out how it works on Chainlink (vaults? single address?). See: https://github.com/webb-tools/tnt-core/blob/21c158d6cb11e2b5f50409d377431e7cd51ff72f/src/lst/adapters/ChainlinkAdapter.sol#L187
         args: [activeEvmAddress20, BigInt(amount.toString())],
-        notificationStep: { current: 2, max: 2 },
+        notificationStep: { current: 2, total: 2 },
       });
 
       return depositTxSucceeded;

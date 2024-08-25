@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { Address } from 'viem';
 
 import { BaseUnstakeRequest } from '../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
+import { IS_PRODUCTION_ENV } from '../../constants/env';
 import LIQUIFIER_UNLOCKS_ABI from '../../constants/liquidStaking/liquifierUnlocksAbi';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
@@ -38,27 +39,14 @@ export type LiquifierUnlockNftMetadata = BaseUnstakeRequest & {
 };
 
 /**
- * Note that the `page` and `pageSize` fields are assumed to be
- * 1-indexed.
- */
-export type PagingOptions = {
-  page: number;
-  pageSize: number;
-};
-
-/**
  * In the case of liquifier unlock requests, they are represented
  * by ERC-721 NFTs owned by the user.
  *
  * Each unlock NFT has associated metadata about the unlock request,
  * including the progress of the unlock request, the amount of underlying
  * stake tokens, and the maturity timestamp.
- *
- * @param paging The paging options for the unlock requests (1-based index).
  */
-const useLiquifierNftUnlocks = (
-  paging?: PagingOptions,
-): LiquifierUnlockNftMetadata[] | null => {
+const useLiquifierNftUnlocks = (): LiquifierUnlockNftMetadata[] | null => {
   const { selectedProtocolId } = useLiquidStakingStore();
   const activeEvmAddress20 = useEvmAddress20();
 
@@ -84,11 +72,6 @@ const useLiquifierNftUnlocks = (
     getUnlockIdCountOptions,
   );
 
-  // Extract the paging options from the object, to prevent
-  // possible issues due to unstable object references passed.
-  const page = paging?.page;
-  const pageSize = paging?.pageSize;
-
   const unlockIds = useMemo(() => {
     if (rawUnlockIdCount === null || rawUnlockIdCount instanceof Error) {
       return null;
@@ -103,18 +86,10 @@ const useLiquifierNftUnlocks = (
 
     const unlockIdCount = Number(rawUnlockIdCount);
 
-    const from =
-      page === undefined || pageSize === undefined ? 0 : (page - 1) * pageSize;
-
-    const to =
-      pageSize === undefined
-        ? unlockIdCount
-        : Math.min(from + pageSize, unlockIdCount);
-
     return Array.from<bigint>({
-      length: to - from,
-    }).map((_, i) => BigInt(i + from));
-  }, [page, pageSize, rawUnlockIdCount]);
+      length: unlockIdCount,
+    }).map((_, i) => BigInt(i));
+  }, [rawUnlockIdCount]);
 
   const getMetadataOptions = useCallback((): ContractReadOptionsBatch<
     typeof LIQUIFIER_UNLOCKS_ABI,
@@ -143,21 +118,26 @@ const useLiquifierNftUnlocks = (
     getMetadataOptions,
   );
 
-  const nftMetadatas = useMemo<LiquifierUnlockNftMetadata[] | null>(() => {
+  const metadatas = useMemo<LiquifierUnlockNftMetadata[] | null>(() => {
     if (rawMetadatas === null) {
       return null;
     }
 
-    return rawMetadatas.flatMap((metadata) => {
+    return rawMetadatas.flatMap((metadata, index) => {
       // Ignore failed metadata fetches and those that are still loading.
       if (metadata === null || metadata instanceof Error) {
         return [];
       }
 
+      // The Sepolia development contract always returns 0 for the
+      // unlock ID. Use the index number to differentiate between
+      // different unlock requests.
+      const unlockId = IS_PRODUCTION_ENV ? Number(metadata.unlockId) : index;
+
       return {
         type: 'liquifierUnlockNft',
         decimals: protocol.decimals,
-        unlockId: Number(metadata.unlockId),
+        unlockId,
         symbol: metadata.symbol,
         name: metadata.name,
         validator: metadata.validator,
@@ -168,7 +148,7 @@ const useLiquifierNftUnlocks = (
     });
   }, [protocol.decimals, rawMetadatas]);
 
-  return nftMetadatas;
+  return metadatas;
 };
 
 export default useLiquifierNftUnlocks;

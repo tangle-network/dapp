@@ -48,6 +48,8 @@ const RebondLstUnstakeRequestButton: FC<RebondLstUnstakeRequestButtonProps> = ({
         }
         onClick={() => setIsConfirmationModalOpen(true)}
         isFullWidth
+        isLoading={rebondTxStatus === TxStatus.PROCESSING}
+        loadingText="Processing"
       >
         Cancel Unstake
       </Button>

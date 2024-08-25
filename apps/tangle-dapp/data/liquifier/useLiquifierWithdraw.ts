@@ -6,6 +6,7 @@ import { LS_ERC20_TOKEN_MAP } from '../../constants/liquidStaking/constants';
 import LIQUIFIER_ABI from '../../constants/liquidStaking/liquifierAbi';
 import { LsErc20TokenId } from '../../constants/liquidStaking/types';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
+import { NotificationSteps } from '../../hooks/useTxNotification';
 import useContractWrite from './useContractWrite';
 
 const useLiquifierWithdraw = () => {
@@ -15,7 +16,11 @@ const useLiquifierWithdraw = () => {
   const isReady = writeLiquifier !== null && activeEvmAddress20 !== null;
 
   const withdraw = useCallback(
-    async (tokenId: LsErc20TokenId, unlockId: number) => {
+    async (
+      tokenId: LsErc20TokenId,
+      unlockId: number,
+      notificationStep?: NotificationSteps,
+    ) => {
       // TODO: Should the user balance check be done here or assume that the consumer of the hook will handle that?
 
       assert(
@@ -31,6 +36,7 @@ const useLiquifierWithdraw = () => {
         address: tokenDef.liquifierAdapterAddress,
         functionName: 'withdraw',
         args: [activeEvmAddress20, BigInt(unlockId)],
+        notificationStep,
       });
 
       return withdrawTxSucceeded;
