@@ -303,9 +303,7 @@ const UnstakeRequestsTable: FC = () => {
     <div className="space-y-4 flex-grow max-w-[700px]">
       <GlassCard
         className={twMerge(
-          rows !== null &&
-            rows.length > 0 &&
-            'flex flex-col justify-between min-h-[500px]',
+          isDataState && 'flex flex-col justify-between min-h-[500px]',
         )}
       >
         {table}
