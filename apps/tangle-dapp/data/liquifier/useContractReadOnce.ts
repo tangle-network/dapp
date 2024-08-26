@@ -10,6 +10,7 @@ import { mainnet, sepolia } from 'viem/chains';
 import { ReadContractReturnType } from 'wagmi/actions';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
+import useDebugMetricsStore from '../../context/useDebugMetricsStore';
 import ensureError from '../../utils/ensureError';
 import useViemPublicClientWithChain from './useViemPublicClientWithChain';
 
@@ -23,6 +24,8 @@ export type ContractReadOptions<
 };
 
 const useContractReadOnce = <Abi extends ViemAbi>(abi: Abi) => {
+  const { incrementRequestCount } = useDebugMetricsStore();
+
   // Use Sepolia testnet for development, and mainnet for production.
   // Some dummy contracts were deployed on Sepolia for testing purposes.
   const chain = IS_PRODUCTION_ENV ? mainnet : sepolia;
@@ -47,9 +50,7 @@ const useContractReadOnce = <Abi extends ViemAbi>(abi: Abi) => {
         "Should not be able to call this function if the client isn't ready yet",
       );
 
-      if (!IS_PRODUCTION_ENV) {
-        console.debug('Fetching contract data:', functionName);
-      }
+      incrementRequestCount();
 
       try {
         return await publicClient.readContract({
@@ -69,7 +70,7 @@ const useContractReadOnce = <Abi extends ViemAbi>(abi: Abi) => {
         return error;
       }
     },
-    [abi, publicClient],
+    [abi, incrementRequestCount, publicClient],
   );
 
   // Only provide the read functions once the public client is ready.

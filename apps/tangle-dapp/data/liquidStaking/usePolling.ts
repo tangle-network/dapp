@@ -7,7 +7,9 @@ export type PollingOptions<T> = {
 
 const usePolling = <T>({
   effect,
-  // Default to a 12 second refresh interval.
+  // Default to a 12 second refresh interval. This default is also
+  // convenient since it matches the expected block time of Ethereum
+  // as well as some Substrate-based chains.
   refreshInterval = 12_000,
 }: PollingOptions<T>) => {
   const [isRefreshing, setIsRefreshing] = useState(false);

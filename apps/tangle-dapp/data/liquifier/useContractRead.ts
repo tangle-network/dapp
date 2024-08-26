@@ -1,5 +1,5 @@
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Abi as ViemAbi,
   ContractFunctionArgs,
@@ -7,6 +7,7 @@ import {
   ContractFunctionReturnType,
 } from 'viem';
 
+import useDebugMetricsStore from '../../context/useDebugMetricsStore';
 import usePolling from '../liquidStaking/usePolling';
 import useContractReadOnce, {
   ContractReadOptions,
@@ -41,6 +42,21 @@ const useContractRead = <
   const [value, setValue] = useState<ReturnType | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const readOnce = useContractReadOnce(abi);
+
+  const { incrementSubscriptionCount, decrementSubscriptionCount } =
+    useDebugMetricsStore();
+
+  // Register and deregister subscription count entry to keep track
+  // of performance metrics.
+  useEffect(() => {
+    isPaused ? decrementSubscriptionCount() : incrementSubscriptionCount();
+
+    return () => {
+      if (!isPaused) {
+        decrementSubscriptionCount();
+      }
+    };
+  }, [decrementSubscriptionCount, incrementSubscriptionCount, isPaused]);
 
   const fetcher = useCallback(async () => {
     // Not yet ready to fetch.
