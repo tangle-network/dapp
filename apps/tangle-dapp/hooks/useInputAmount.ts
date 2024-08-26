@@ -94,6 +94,7 @@ const useInputAmount = ({
         return;
       }
 
+      // TODO: Format the new amount string to include commas. Use `INPUT_AMOUNT_FORMAT`.
       setDisplayAmount(cleanAmountString);
 
       const amountOrError = safeParseInputAmount({
