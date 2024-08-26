@@ -5,8 +5,8 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 import { IS_PRODUCTION_ENV } from '../env';
 import {
-  LsErc20TokenDef,
-  LsErc20TokenId,
+  LsLiquifierProtocolDef,
+  LsLiquifierProtocolId,
   LsParachainChainDef,
   LsParachainChainId,
   LsParachainToken,
@@ -28,97 +28,92 @@ const SEPOLIA_TESTNET_CONTRACTS = {
   UNLOCKS: '0x32d70bC73d0965209Cf175711b010dE6A7650c2B',
 } as const satisfies Record<string, HexString>;
 
-const CHAINLINK: LsErc20TokenDef = {
-  type: 'erc20',
+const CHAINLINK: LsLiquifierProtocolDef = {
+  type: 'liquifier',
   id: LsProtocolId.CHAINLINK,
   name: 'Chainlink',
   chainIconFileName: 'chainlink',
   token: LsToken.LINK,
   decimals: 18,
-  address: IS_PRODUCTION_ENV
+  erc20TokenAddress: IS_PRODUCTION_ENV
     ? '0x514910771AF9Ca656af840dff83E8264EcF986CA'
     : SEPOLIA_TESTNET_CONTRACTS.ERC20,
-  // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
-  liquifierAdapterAddress: IS_PRODUCTION_ENV
+  liquifierContractAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.LIQUIFIER,
-  liquifierTgTokenAddress: IS_PRODUCTION_ENV
+  tgTokenContractAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.TG_TOKEN,
-  liquifierUnlocksAddress: IS_PRODUCTION_ENV
+  unlocksContractAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.UNLOCKS,
   timeUnit: CrossChainTimeUnit.DAY,
   unstakingPeriod: 7,
 };
 
-const THE_GRAPH: LsErc20TokenDef = {
-  type: 'erc20',
+const THE_GRAPH: LsLiquifierProtocolDef = {
+  type: 'liquifier',
   id: LsProtocolId.THE_GRAPH,
   name: 'The Graph',
   chainIconFileName: 'the-graph',
   token: LsToken.GRT,
   decimals: 18,
-  address: IS_PRODUCTION_ENV
+  erc20TokenAddress: IS_PRODUCTION_ENV
     ? '0xc944E90C64B2c07662A292be6244BDf05Cda44a7'
     : SEPOLIA_TESTNET_CONTRACTS.ERC20,
-  // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
-  liquifierAdapterAddress: IS_PRODUCTION_ENV
+  liquifierContractAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.LIQUIFIER,
-  liquifierTgTokenAddress: IS_PRODUCTION_ENV
+  tgTokenContractAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.TG_TOKEN,
-  liquifierUnlocksAddress: IS_PRODUCTION_ENV
+  unlocksContractAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.UNLOCKS,
   timeUnit: CrossChainTimeUnit.DAY,
   unstakingPeriod: 28,
 };
 
-const LIVEPEER: LsErc20TokenDef = {
-  type: 'erc20',
+const LIVEPEER: LsLiquifierProtocolDef = {
+  type: 'liquifier',
   id: LsProtocolId.LIVEPEER,
   name: 'Livepeer',
   chainIconFileName: 'livepeer',
   token: LsToken.LPT,
   decimals: 18,
-  address: IS_PRODUCTION_ENV
+  erc20TokenAddress: IS_PRODUCTION_ENV
     ? '0x58b6A8A3302369DAEc383334672404Ee733aB239'
     : SEPOLIA_TESTNET_CONTRACTS.ERC20,
-  // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
-  liquifierAdapterAddress: IS_PRODUCTION_ENV
+  liquifierContractAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.LIQUIFIER,
-  liquifierTgTokenAddress: IS_PRODUCTION_ENV
+  tgTokenContractAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.TG_TOKEN,
-  liquifierUnlocksAddress: IS_PRODUCTION_ENV
+  unlocksContractAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.UNLOCKS,
   timeUnit: CrossChainTimeUnit.LIVEPEER_ROUND,
   unstakingPeriod: 7,
 };
 
-const POLYGON: LsErc20TokenDef = {
-  type: 'erc20',
+const POLYGON: LsLiquifierProtocolDef = {
+  type: 'liquifier',
   id: LsProtocolId.POLYGON,
   name: 'Polygon',
   chainIconFileName: 'polygon',
   token: LsToken.POL,
   decimals: 18,
-  // TODO: Use Liquifier's testnet address if the environment is development.
-  address: IS_PRODUCTION_ENV
+  erc20TokenAddress: IS_PRODUCTION_ENV
     ? '0x0D500B1d8E8eF31E21C99d1Db9A6444d3ADf1270'
     : SEPOLIA_TESTNET_CONTRACTS.ERC20,
-  // TODO: Use the actual Chainlink Liquifier Adapter address. This is likely deployed to a testnet (Tenderly?).
-  liquifierAdapterAddress: IS_PRODUCTION_ENV
+  liquifierContractAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.LIQUIFIER,
-  liquifierTgTokenAddress: IS_PRODUCTION_ENV
+  tgTokenContractAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.TG_TOKEN,
-  liquifierUnlocksAddress: IS_PRODUCTION_ENV
+  unlocksContractAddress: IS_PRODUCTION_ENV
     ? '0x'
     : SEPOLIA_TESTNET_CONTRACTS.UNLOCKS,
   timeUnit: CrossChainTimeUnit.POLYGON_CHECKPOINT,
@@ -219,7 +214,10 @@ export const LS_PARACHAIN_CHAIN_MAP: Record<
   [LsProtocolId.TANGLE_RESTAKING_PARACHAIN]: TANGLE_RESTAKING_PARACHAIN,
 };
 
-export const LS_ERC20_TOKEN_MAP: Record<LsErc20TokenId, LsErc20TokenDef> = {
+export const LS_LIQUIFIER_PROTOCOL_MAP: Record<
+  LsLiquifierProtocolId,
+  LsLiquifierProtocolDef
+> = {
   [LsProtocolId.CHAINLINK]: CHAINLINK,
   [LsProtocolId.THE_GRAPH]: THE_GRAPH,
   [LsProtocolId.LIVEPEER]: LIVEPEER,
@@ -228,20 +226,20 @@ export const LS_ERC20_TOKEN_MAP: Record<LsErc20TokenId, LsErc20TokenDef> = {
 
 export const LS_PROTOCOLS: LsProtocolDef[] = [
   ...Object.values(LS_PARACHAIN_CHAIN_MAP),
-  ...Object.values(LS_ERC20_TOKEN_MAP),
+  ...Object.values(LS_LIQUIFIER_PROTOCOL_MAP),
 ];
 
-export const LS_ERC20_TOKEN_IDS = [
+export const LS_LIQUIFIER_PROTOCOL_IDS = [
   LsProtocolId.CHAINLINK,
   LsProtocolId.THE_GRAPH,
   LsProtocolId.LIVEPEER,
   LsProtocolId.POLYGON,
-] as const satisfies LsErc20TokenId[];
+] as const satisfies LsLiquifierProtocolId[];
 
 export const LS_PARACHAIN_CHAIN_IDS = Object.values(LsProtocolId).filter(
   (value): value is LsParachainChainId =>
     typeof value !== 'string' &&
-    !LS_ERC20_TOKEN_IDS.includes(value as LsErc20TokenId),
+    !LS_LIQUIFIER_PROTOCOL_IDS.includes(value as LsLiquifierProtocolId),
 ) satisfies LsParachainChainId[];
 
 export const LS_PARACHAIN_TOKENS = [

@@ -20,13 +20,13 @@ export enum LsProtocolId {
   POLYGON,
 }
 
-export type LsErc20TokenId =
+export type LsLiquifierProtocolId =
   | LsProtocolId.CHAINLINK
   | LsProtocolId.THE_GRAPH
   | LsProtocolId.LIVEPEER
   | LsProtocolId.POLYGON;
 
-export type LsParachainChainId = Exclude<LsProtocolId, LsErc20TokenId>;
+export type LsParachainChainId = Exclude<LsProtocolId, LsLiquifierProtocolId>;
 
 export enum LsToken {
   DOT = 'DOT',
@@ -41,13 +41,13 @@ export enum LsToken {
   POL = 'POL',
 }
 
-export type LsErc20Token =
+export type LsLiquifierProtocolToken =
   | LsToken.LINK
   | LsToken.GRT
   | LsToken.LPT
   | LsToken.POL;
 
-export type LsParachainToken = Exclude<LsToken, LsErc20Token>;
+export type LsParachainToken = Exclude<LsToken, LsLiquifierProtocolToken>;
 
 type ProtocolDefCommon = {
   name: string;
@@ -66,17 +66,17 @@ export interface LsParachainChainDef extends ProtocolDefCommon {
   rpcEndpoint: string;
 }
 
-export interface LsErc20TokenDef extends ProtocolDefCommon {
-  type: 'erc20';
-  id: LsErc20TokenId;
-  token: LsErc20Token;
-  address: HexString;
-  liquifierAdapterAddress: HexString;
-  liquifierTgTokenAddress: HexString;
-  liquifierUnlocksAddress: HexString;
+export interface LsLiquifierProtocolDef extends ProtocolDefCommon {
+  type: 'liquifier';
+  id: LsLiquifierProtocolId;
+  token: LsLiquifierProtocolToken;
+  erc20TokenAddress: HexString;
+  liquifierContractAddress: HexString;
+  tgTokenContractAddress: HexString;
+  unlocksContractAddress: HexString;
 }
 
-export type LsProtocolDef = LsParachainChainDef | LsErc20TokenDef;
+export type LsProtocolDef = LsParachainChainDef | LsLiquifierProtocolDef;
 
 export type LsCardSearchParams = {
   amount: BN;

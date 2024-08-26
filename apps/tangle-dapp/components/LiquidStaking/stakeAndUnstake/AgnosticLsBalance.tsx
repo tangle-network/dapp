@@ -39,7 +39,7 @@ const AgnosticLsBalance: FC<AgnosticLsBalanceProps> = ({
   // Special case for liquid tokens on the `TgToken.sol` contract.
   // See: https://github.com/webb-tools/tnt-core/blob/1f371959884352e7af68e6091c5bb330fcaa58b8/src/lst/liquidtoken/TgToken.sol#L26
   const decimals =
-    !isNative && protocol.type === 'erc20' ? 18 : protocol.decimals;
+    !isNative && protocol.type === 'liquifier' ? 18 : protocol.decimals;
 
   const formattedBalance = useMemo(() => {
     // No account is active; display a placeholder instead of a loading state.

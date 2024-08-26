@@ -4,9 +4,9 @@ import { useCallback } from 'react';
 import { erc20Abi } from 'viem';
 
 import { TxName } from '../../constants';
-import { LS_ERC20_TOKEN_MAP } from '../../constants/liquidStaking/constants';
+import { LS_LIQUIFIER_PROTOCOL_MAP } from '../../constants/liquidStaking/constants';
 import LIQUIFIER_ABI from '../../constants/liquidStaking/liquifierAbi';
-import { LsErc20TokenId } from '../../constants/liquidStaking/types';
+import { LsLiquifierProtocolId } from '../../constants/liquidStaking/types';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import useContractWrite from './useContractWrite';
 
@@ -38,7 +38,7 @@ const useLiquifierDeposit = () => {
     activeEvmAddress20 !== null;
 
   const deposit = useCallback(
-    async (tokenId: LsErc20TokenId, amount: BN) => {
+    async (tokenId: LsLiquifierProtocolId, amount: BN) => {
       // TODO: Should the user balance check be done here or assume that the consumer of the hook will handle that?
 
       assert(
@@ -46,15 +46,15 @@ const useLiquifierDeposit = () => {
         'Should not be able to call this function if the requirements are not ready yet',
       );
 
-      const tokenDef = LS_ERC20_TOKEN_MAP[tokenId];
+      const tokenDef = LS_LIQUIFIER_PROTOCOL_MAP[tokenId];
 
       // TODO: Check for approval first, in case that it has already been granted. This prevents another unnecessary approval transaction (ex. if the transaction fails after the approval but before the deposit).
       // Approve spending the token amount by the Liquifier contract.
       const approveTxSucceeded = await writeChainlinkErc20({
         txName: TxName.LS_LIQUIFIER_APPROVE,
-        address: tokenDef.address,
+        address: tokenDef.erc20TokenAddress,
         functionName: 'approve',
-        args: [tokenDef.liquifierAdapterAddress, BigInt(amount.toString())],
+        args: [tokenDef.liquifierContractAddress, BigInt(amount.toString())],
         notificationStep: { current: 1, total: 2 },
       });
 
@@ -65,7 +65,7 @@ const useLiquifierDeposit = () => {
       const depositTxSucceeded = await writeLiquifier({
         txName: TxName.LS_LIQUIFIER_DEPOSIT,
         // TODO: Does the adapter contract have a deposit function? It doesn't seem like so. In that case, will need to update the way that Liquifier contract's address is handled.
-        address: tokenDef.liquifierAdapterAddress,
+        address: tokenDef.liquifierContractAddress,
         functionName: 'deposit',
         // TODO: Provide the first arg. (validator). Need to figure out how it works on Chainlink (vaults? single address?). See: https://github.com/webb-tools/tnt-core/blob/21c158d6cb11e2b5f50409d377431e7cd51ff72f/src/lst/adapters/ChainlinkAdapter.sol#L187
         args: [activeEvmAddress20, BigInt(amount.toString())],

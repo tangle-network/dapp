@@ -69,7 +69,7 @@ const LiquidStakeCard: FC = () => {
   });
 
   const { exchangeRate } = useExchangeRate(
-    ExchangeRateType.NativeToLiquid,
+    ExchangeRateType.NativeToDerivative,
     selectedProtocolId,
   );
 
@@ -85,7 +85,7 @@ const LiquidStakeCard: FC = () => {
         currency: selectedProtocol.currency,
       });
     } else if (
-      selectedProtocol.type === 'erc20' &&
+      selectedProtocol.type === 'liquifier' &&
       performLiquifierDeposit !== null
     ) {
       await performLiquifierDeposit(selectedProtocol.id, fromAmount);
@@ -104,7 +104,7 @@ const LiquidStakeCard: FC = () => {
     (fromAmount !== null &&
       selectedProtocol.type === 'parachain' &&
       executeMintTx !== null) ||
-    (selectedProtocol.type === 'erc20' && performLiquifierDeposit !== null);
+    (selectedProtocol.type === 'liquifier' && performLiquifierDeposit !== null);
 
   const walletBalance = (
     <AgnosticLsBalance
@@ -149,7 +149,7 @@ const LiquidStakeCard: FC = () => {
         <ExchangeRateDetailItem
           protocolId={selectedProtocolId}
           token={selectedProtocol.token}
-          type={ExchangeRateType.NativeToLiquid}
+          type={ExchangeRateType.NativeToDerivative}
         />
 
         <MintAndRedeemFeeDetailItem

@@ -71,7 +71,7 @@ const LiquidUnstakeCard: FC = () => {
   const selectedProtocol = getLsProtocolDef(selectedProtocolId);
 
   const { exchangeRate } = useExchangeRate(
-    ExchangeRateType.LiquidToNative,
+    ExchangeRateType.DerivativeToNative,
     selectedProtocol.id,
   );
 
@@ -95,7 +95,7 @@ const LiquidUnstakeCard: FC = () => {
         currency: selectedProtocol.currency,
       });
     } else if (
-      selectedProtocol.type === 'erc20' &&
+      selectedProtocol.type === 'liquifier' &&
       performLiquifierUnlock !== null
     ) {
       setDidLiquifierUnlockSucceed(false);
@@ -146,7 +146,7 @@ const LiquidUnstakeCard: FC = () => {
   // TODO: Also check if the user has enough balance to unstake.
   const canCallUnstake =
     (selectedProtocol.type === 'parachain' && executeRedeemTx !== null) ||
-    (selectedProtocol.type === 'erc20' && performLiquifierUnlock !== null);
+    (selectedProtocol.type === 'liquifier' && performLiquifierUnlock !== null);
 
   return (
     <>
@@ -185,7 +185,7 @@ const LiquidUnstakeCard: FC = () => {
         <ExchangeRateDetailItem
           protocolId={selectedProtocol.id}
           token={selectedProtocol.token}
-          type={ExchangeRateType.LiquidToNative}
+          type={ExchangeRateType.DerivativeToNative}
         />
 
         <MintAndRedeemFeeDetailItem

@@ -19,7 +19,7 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
 
   // TODO: Why not use the subscription hook variants (useContractRead) instead of manually utilizing usePolling?
   const readErc20 = useContractReadOnce(erc20Abi);
-  const readLiquidErc20 = useContractReadOnce(LIQUIFIER_TG_TOKEN_ABI);
+  const readTgToken = useContractReadOnce(LIQUIFIER_TG_TOKEN_ABI);
 
   const [balance, setBalance] = useState<
     BN | null | typeof EMPTY_VALUE_PLACEHOLDER
@@ -41,11 +41,11 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
   }, [isAccountConnected]);
 
   const erc20BalanceFetcher = useCallback(() => {
-    if (protocol.type !== 'erc20' || evmAddress20 === null) {
+    if (protocol.type !== 'liquifier' || evmAddress20 === null) {
       return;
     }
 
-    const target = isNative ? readErc20 : readLiquidErc20;
+    const target = isNative ? readErc20 : readTgToken;
 
     // Still loading.
     if (target === null) {
@@ -55,7 +55,9 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
     }
 
     target({
-      address: isNative ? protocol.address : protocol.liquifierTgTokenAddress,
+      address: isNative
+        ? protocol.erc20TokenAddress
+        : protocol.tgTokenContractAddress,
       functionName: 'balanceOf',
       args: [evmAddress20],
     }).then((result) => {
@@ -75,7 +77,7 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
         return newBalance;
       });
     });
-  }, [evmAddress20, isNative, protocol, readErc20, readLiquidErc20]);
+  }, [evmAddress20, isNative, protocol, readErc20, readTgToken]);
 
   usePolling({ effect: erc20BalanceFetcher });
 

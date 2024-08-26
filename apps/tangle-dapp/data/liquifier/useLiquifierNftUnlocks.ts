@@ -56,12 +56,12 @@ const useLiquifierNftUnlocks = (): LiquifierUnlockNftMetadata[] | null => {
     typeof LIQUIFIER_UNLOCKS_ABI,
     'balanceOf'
   > | null => {
-    if (activeEvmAddress20 === null || protocol.type !== 'erc20') {
+    if (activeEvmAddress20 === null || protocol.type !== 'liquifier') {
       return null;
     }
 
     return {
-      address: protocol.liquifierUnlocksAddress,
+      address: protocol.unlocksContractAddress,
       functionName: 'balanceOf',
       args: [activeEvmAddress20],
     };
@@ -98,7 +98,7 @@ const useLiquifierNftUnlocks = (): LiquifierUnlockNftMetadata[] | null => {
     if (
       // Do not fetch if there's no active EVM account.
       activeEvmAddress20 === null ||
-      protocol.type !== 'erc20' ||
+      protocol.type !== 'liquifier' ||
       unlockIds === null
     ) {
       return null;
@@ -107,7 +107,7 @@ const useLiquifierNftUnlocks = (): LiquifierUnlockNftMetadata[] | null => {
     const batchArgs = unlockIds.map((unlockId) => [BigInt(unlockId)] as const);
 
     return {
-      address: protocol.liquifierUnlocksAddress,
+      address: protocol.unlocksContractAddress,
       functionName: 'getMetadata',
       args: batchArgs,
     };

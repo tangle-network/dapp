@@ -57,7 +57,7 @@ const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
     : minimumRedeemAmount;
 
   const minSpendable = useMemo(() => {
-    // TODO: Add ERC20 cases as well.
+    // TODO: Add liquifier cases as well.
 
     if (
       mintingOrRedeemingAmount === null ||

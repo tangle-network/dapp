@@ -37,7 +37,7 @@ import useLiquifierNftUnlocks, {
 } from '../../../data/liquifier/useLiquifierNftUnlocks';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import addCommasToNumber from '../../../utils/addCommasToNumber';
-import isLsErc20TokenId from '../../../utils/liquidStaking/isLsErc20TokenId';
+import isLiquifierProtocolId from '../../../utils/liquidStaking/isLiquifierProtocolId';
 import isLsParachainChainId from '../../../utils/liquidStaking/isLsParachainChainId';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
 import GlassCard from '../../GlassCard';
@@ -167,11 +167,14 @@ const UnstakeRequestsTable: FC = () => {
   const { selectedProtocolId } = useLiquidStakingStore();
   const activeAccountAddress = useActiveAccountAddress();
   const parachainRows = useLstUnlockRequestTableRows();
-  const evmRows = useLiquifierNftUnlocks();
+  const liquifierRows = useLiquifierNftUnlocks();
 
   // Select the table rows based on whether the selected protocol
-  // is an EVM-based chain or a parachain-based Substrate chain.
-  const rows = isLsErc20TokenId(selectedProtocolId) ? evmRows : parachainRows;
+  // is an EVM-based chain (liquifier contract) or a parachain-based
+  // Substrate chain.
+  const rows = isLiquifierProtocolId(selectedProtocolId)
+    ? liquifierRows
+    : parachainRows;
 
   const tableOptions = useMemo<TableOptions<UnstakeRequestTableRow>>(
     () => ({

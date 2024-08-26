@@ -1,11 +1,11 @@
 import { Button } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useState } from 'react';
 
-import { LsErc20TokenId } from '../../../constants/liquidStaking/types';
+import { LsLiquifierProtocolId } from '../../../constants/liquidStaking/types';
 import useLiquifierWithdraw from '../../../data/liquifier/useLiquifierWithdraw';
 
 type WithdrawUnlockNftButtonProps = {
-  tokenId: LsErc20TokenId;
+  tokenId: LsLiquifierProtocolId;
   canWithdraw: boolean;
   unlockIds: number[];
 };
