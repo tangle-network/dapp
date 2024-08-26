@@ -21,10 +21,10 @@ import {
   LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
-import useExchangeRate, {
-  ExchangeRateType,
-} from '../../../data/liquidStaking/useExchangeRate';
 import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
+import useLsExchangeRate, {
+  ExchangeRateType,
+} from '../../../data/liquidStaking/useLsExchangeRate';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
 import useLiquifierDeposit from '../../../data/liquifier/useLiquifierDeposit';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
@@ -34,9 +34,10 @@ import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import AgnosticLsBalance from './AgnosticLsBalance';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
+import FeesDetailItem from './FeesDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
-import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
 import SelectValidatorsButton from './SelectValidatorsButton';
+import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
@@ -68,7 +69,7 @@ const LiquidStakeCard: FC = () => {
     setValue: setSelectedProtocolId,
   });
 
-  const { exchangeRate } = useExchangeRate(
+  const { exchangeRate } = useLsExchangeRate(
     ExchangeRateType.NativeToDerivative,
     selectedProtocolId,
   );
@@ -146,19 +147,25 @@ const LiquidStakeCard: FC = () => {
 
       {/* Details */}
       <div className="flex flex-col gap-2 p-3">
+        <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
+
         <ExchangeRateDetailItem
           protocolId={selectedProtocolId}
           token={selectedProtocol.token}
           type={ExchangeRateType.NativeToDerivative}
         />
 
-        <MintAndRedeemFeeDetailItem
-          intendedAmount={fromAmount}
+        <FeesDetailItem
+          inputAmount={fromAmount}
           isMinting
-          token={selectedProtocol.token}
+          protocolId={selectedProtocolId}
         />
 
-        <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
+        <TotalDetailItem
+          isMinting
+          protocolId={selectedProtocolId}
+          inputAmount={fromAmount}
+        />
       </div>
 
       <Button

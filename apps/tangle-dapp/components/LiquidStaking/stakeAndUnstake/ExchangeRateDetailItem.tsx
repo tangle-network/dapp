@@ -3,8 +3,8 @@ import { FC } from 'react';
 
 import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
 import { LsProtocolId, LsToken } from '../../../constants/liquidStaking/types';
-import { ExchangeRateType } from '../../../data/liquidStaking/useExchangeRate';
-import useExchangeRate from '../../../data/liquidStaking/useExchangeRate';
+import { ExchangeRateType } from '../../../data/liquidStaking/useLsExchangeRate';
+import useLsExchangeRate from '../../../data/liquidStaking/useLsExchangeRate';
 import DetailItem from './DetailItem';
 
 export type ExchangeRateDetailItemProps = {
@@ -18,7 +18,7 @@ const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({
   token,
   protocolId,
 }) => {
-  const { exchangeRate, isRefreshing } = useExchangeRate(type, protocolId);
+  const { exchangeRate, isRefreshing } = useLsExchangeRate(type, protocolId);
 
   const exchangeRateElement =
     exchangeRate === null ? (

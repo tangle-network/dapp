@@ -15,6 +15,9 @@ import {
   LsToken,
 } from './types';
 
+// TODO: Deploy to Sepolia and update the addresses.
+export const LS_REGISTRY_ADDRESS = IS_PRODUCTION_ENV ? '0x' : '0x';
+
 /**
  * Development only. Sepolia testnet contracts that were
  * deployed to test the liquifier functionality. These contracts

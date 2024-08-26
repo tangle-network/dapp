@@ -44,7 +44,10 @@ const computeExchangeRate = (
   return ratio;
 };
 
-const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
+const useLsExchangeRate = (
+  type: ExchangeRateType,
+  protocolId: LsProtocolId,
+) => {
   const [exchangeRate, setExchangeRate] = useState<number | null>(null);
 
   const protocol = getLsProtocolDef(protocolId);
@@ -79,7 +82,7 @@ const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
     return computeExchangeRate(type, tokenPoolAmount, lstTotalIssuance);
   }, [lstTotalIssuance, tokenPoolAmount, type]);
 
-  const tgTokenTotalSupplyFetcher = useCallback((): ContractReadOptions<
+  const getTgTokenTotalSupplyOptions = useCallback((): ContractReadOptions<
     typeof LIQUIFIER_TG_TOKEN_ABI,
     'totalSupply'
   > | null => {
@@ -94,7 +97,7 @@ const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
     };
   }, [protocol]);
 
-  const liquifierTotalSharesFetcher = useCallback((): ContractReadOptions<
+  const getLiquifierTotalSharesOptions = useCallback((): ContractReadOptions<
     typeof LIQUIFIER_ADAPTER_ABI,
     'totalShares'
   > | null => {
@@ -112,12 +115,12 @@ const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
   const {
     value: tgTokenTotalSupply,
     setIsPaused: setIsTgTokenTotalSupplyPaused,
-  } = useContractRead(erc20Abi, tgTokenTotalSupplyFetcher);
+  } = useContractRead(erc20Abi, getTgTokenTotalSupplyOptions);
 
   const {
     value: liquifierTotalShares,
     setIsPaused: setIsLiquifierTotalSharesPaused,
-  } = useContractRead(LIQUIFIER_ADAPTER_ABI, liquifierTotalSharesFetcher);
+  } = useContractRead(LIQUIFIER_ADAPTER_ABI, getLiquifierTotalSharesOptions);
 
   const fetchLiquifierExchangeRate = useCallback(async () => {
     // Not yet ready.
@@ -168,4 +171,4 @@ const useExchangeRate = (type: ExchangeRateType, protocolId: LsProtocolId) => {
   return { exchangeRate, isRefreshing };
 };
 
-export default useExchangeRate;
+export default useLsExchangeRate;
