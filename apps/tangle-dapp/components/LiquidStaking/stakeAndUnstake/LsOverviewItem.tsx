@@ -1,31 +1,34 @@
 'use client';
 
 import { BN } from '@polkadot/util';
-import { ArrowRight } from '@webb-tools/icons';
+import { ArrowRight, ChainIcon } from '@webb-tools/icons';
 import { Button, Chip, Typography } from '@webb-tools/webb-ui-components';
-import Image from 'next/image';
 import { FC, useMemo } from 'react';
 
-import LSTTokenIcon from '../../../components/LSTTokenIcon';
-import { StaticAssetPath } from '../../../constants';
-import { LST_PREFIX, TVS_TOOLTIP } from '../../../constants/liquidStaking';
+import {
+  LST_PREFIX,
+  TVS_TOOLTIP,
+} from '../../../constants/liquidStaking/constants';
+import { LsToken } from '../../../constants/liquidStaking/types';
 import { PagePath } from '../../../types';
-import { LiquidStakingToken } from '../../../types/liquidStaking';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
+import LsTokenIcon from '../../LsTokenIcon';
 import StatItem from '../StatItem';
 
-export type LiquidStakingTokenItemProps = {
+export type LsOverviewItemProps = {
   title: string;
-  tokenSymbol: LiquidStakingToken;
+  tokenSymbol: LsToken;
   totalValueStaked: number;
   totalStaked: string;
+  hasLiquidIndicator: boolean;
 };
 
-const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
+const LsOverviewItem: FC<LsOverviewItemProps> = ({
   title,
   tokenSymbol,
   totalValueStaked,
   totalStaked,
+  hasLiquidIndicator,
 }) => {
   const formattedTotalValueStaked = totalValueStaked.toLocaleString('en-US', {
     style: 'currency',
@@ -41,15 +44,13 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
     <div className="flex gap-2 justify-between rounded-xl bg-mono-20 dark:bg-mono-160 w-full px-3 py-6 border border-mono-40 dark:border-none">
       <div className="flex gap-2 items-center">
         <div className="relative">
-          <LSTTokenIcon size="lg" name={tokenSymbol} />
+          <LsTokenIcon size="lg" name={tokenSymbol} />
 
-          <Image
-            className="absolute bottom-0 right-0 z-20"
-            src={StaticAssetPath.LIQUID_STAKING_TANGLE_LOGO}
-            alt="Tangle logo"
-            width={14}
-            height={14}
-          />
+          {hasLiquidIndicator && (
+            <div className="absolute bottom-0 right-0 z-20">
+              <ChainIcon size="md" name="tangle" />
+            </div>
+          )}
         </div>
 
         <Typography variant="body1" fw="normal" className="dark:text-mono-0">
@@ -76,7 +77,7 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
           variant="utility"
           className="uppercase"
           rightIcon={<ArrowRight className="dark:fill-blue-50" />}
-          href={`${PagePath.LIQUID_STAKING}/${tokenSymbol}`}
+          href={PagePath.LIQUID_STAKING}
         >
           Stake
         </Button>
@@ -85,4 +86,4 @@ const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
   );
 };
 
-export default LiquidStakingTokenItem;
+export default LsOverviewItem;

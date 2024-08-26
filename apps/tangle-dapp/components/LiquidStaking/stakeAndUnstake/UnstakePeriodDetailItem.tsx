@@ -1,51 +1,54 @@
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 
-import { ParachainCurrency } from '../../../constants/liquidStaking';
-import useTokenUnlockDurations from '../../../data/liquidStaking/useTokenUnlockDurations';
-import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
+import { LsProtocolId } from '../../../constants/liquidStaking/types';
+import CrossChainTime from '../../../utils/CrossChainTime';
+import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import DetailItem from './DetailItem';
 
 export type UnstakePeriodDetailItemProps = {
-  currency: ParachainCurrency;
+  protocolId: LsProtocolId;
+};
+
+type UnstakePeriod = {
+  value: number;
+  unit: string;
+  isEstimate: boolean;
 };
 
 const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
-  currency,
+  protocolId,
 }) => {
-  const unlockDurations = useTokenUnlockDurations();
+  const protocol = getLsProtocolDef(protocolId);
 
-  const unlockPeriod = useMemo<'Unknown' | [string, string] | null>(() => {
-    if (unlockDurations === null) {
-      return null;
-    }
-
-    const unlockDuration = unlockDurations.find(
-      (entry) => entry.currency === currency && entry.isNative,
+  const unlockPeriod = ((): UnstakePeriod | null => {
+    const unlockPeriod = new CrossChainTime(
+      protocol.timeUnit,
+      protocol.unstakingPeriod,
     );
 
-    // Unlock duration is not set onchain.
-    if (unlockDuration === undefined) {
-      return 'Unknown' as const;
-    }
+    const days = unlockPeriod.toDays();
 
-    const parts = stringifyTimeUnit(unlockDuration.timeUnit);
+    // TODO: Special case for 0 days?
+    const plurality = days > 1 ? 'days' : 'day';
+    const roundedDays = Math.round(days);
 
-    return [parts[0].toString(), parts[1]];
-  }, [currency, unlockDurations]);
+    return {
+      unit: plurality,
+      value: roundedDays,
+      isEstimate: days !== roundedDays,
+    };
+  })();
 
   const value =
     unlockPeriod === null ? (
       // Still fetching unlocking period.
       <SkeletonLoader className="max-w-[100px] min-w-4" />
-    ) : typeof unlockPeriod !== 'string' ? (
-      // Unlock period is set, and it is known.
-      <div>
-        <strong>{unlockPeriod[0]}</strong> {unlockPeriod[1]}
-      </div>
     ) : (
-      // Unlocking period is unknown because it is not set onchain.
-      unlockPeriod
+      <div>
+        {unlockPeriod.isEstimate && '~'}
+        <strong>{unlockPeriod.value.toString()}</strong> {unlockPeriod.unit}
+      </div>
     );
 
   return (

@@ -8,9 +8,9 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 
 import { TxName } from '../../constants';
 import {
+  LsParachainCurrencyKey,
   ParachainCurrency,
-  ParachainCurrencyKey,
-} from '../../constants/liquidStaking';
+} from '../../constants/liquidStaking/types';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
 
 export type MintTxContext = {
@@ -24,7 +24,7 @@ const useMintTx = () => {
   return useSubstrateTxWithNotification<MintTxContext>(
     TxName.LST_MINT,
     (api, _activeSubstrateAddress, context) => {
-      const key: ParachainCurrencyKey = { Native: context.currency };
+      const key: LsParachainCurrencyKey = { Native: context.currency };
 
       // TODO: Investigate what the `remark` and `channel` parameters are for, and whether they are relevant for us here.
       // The remark field can be used to store additional information about

@@ -76,12 +76,11 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     successMessage: evmSuccessMessage,
   } = useEvmPrecompileAbiCall(precompile, evmTxFactory);
 
-  const { notifyProcessing, notifySuccess, notifyError } =
-    useTxNotification(name);
+  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 
   const execute = useCallback(
     async (context: Context) => {
-      notifyProcessing();
+      notifyProcessing(name);
 
       if (executeEvmPrecompileAbiCall !== null) {
         await executeEvmPrecompileAbiCall(context);
@@ -96,7 +95,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
         await executeSubstrateTx(context);
       }
     },
-    [executeEvmPrecompileAbiCall, executeSubstrateTx, notifyProcessing],
+    [executeEvmPrecompileAbiCall, executeSubstrateTx, name, notifyProcessing],
   );
 
   // Special effect that handles when an account is disconnected,
@@ -148,11 +147,12 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     // not have been updated yet.
     if (txHash !== null) {
       notifySuccess(
+        name,
         txHash,
         isEvmAccount ? evmSuccessMessage : substrateSuccessMessage,
       );
     } else if (error !== null) {
-      notifyError(error);
+      notifyError(name, error);
     }
 
     // Only execute effect when the transaction status changes.

@@ -36,7 +36,8 @@ function formatBn(
 ): string {
   const finalOptions = { ...DEFAULT_FORMAT_OPTIONS, ...options };
   const chainUnitFactorBn = getChainUnitFactor(decimals);
-  const integerPartBn = amount.div(chainUnitFactorBn);
+
+  const integerPartBn = new BN(amount).div(chainUnitFactorBn);
   const remainderBn = amount.mod(chainUnitFactorBn);
 
   let integerPart = integerPartBn.toString(10);
