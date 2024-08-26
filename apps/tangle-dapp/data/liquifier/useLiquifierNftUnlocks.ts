@@ -113,7 +113,7 @@ const useLiquifierNftUnlocks = (): LiquifierUnlockNftMetadata[] | null => {
     };
   }, [activeEvmAddress20, protocol, unlockIds]);
 
-  const { value: rawMetadatas } = useContractReadBatch(
+  const { results: rawMetadatas } = useContractReadBatch(
     LIQUIFIER_UNLOCKS_ABI,
     getMetadataOptions,
   );

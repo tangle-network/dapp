@@ -6,12 +6,13 @@ import {
   ContractFunctionName,
   ContractFunctionReturnType,
 } from 'viem';
+import { mainnet, sepolia } from 'viem/chains';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
+import ensureError from '../../utils/ensureError';
 import usePolling from '../liquidStaking/usePolling';
-import useContractReadOnce, {
-  ContractReadOptions,
-} from './useContractReadOnce';
+import { ContractReadOptions } from './useContractReadOnce';
+import useViemPublicClientWithChain from './useViemPublicClientWithChain';
 
 export type ContractReadOptionsBatch<
   Abi extends ViemAbi,
@@ -31,24 +32,26 @@ const useContractReadBatch = <
     // This is useful for when the options are dependent on some state.
     | (() => PromiseOrT<ContractReadOptionsBatch<Abi, FunctionName> | null>),
 ) => {
-  type ReturnType = (
-    | Error
-    | Awaited<
-        ContractFunctionReturnType<
-          Abi,
-          'pure' | 'view',
-          FunctionName,
-          ContractFunctionArgs<Abi, 'pure' | 'view', FunctionName>
-        >
-      >
-  )[];
+  type ValueType = ContractFunctionReturnType<
+    Abi,
+    'pure' | 'view',
+    FunctionName,
+    ContractFunctionArgs<Abi, 'pure' | 'view', FunctionName>
+  >;
 
-  const [value, setValue] = useState<ReturnType | null>(null);
-  const readOnce = useContractReadOnce(abi);
+  type ReturnType = (Error | Awaited<ValueType>)[];
+
+  const [results, setResults] = useState<ReturnType | null>(null);
+
+  // Use Sepolia testnet for development, and mainnet for production.
+  // Some dummy contracts were deployed on Sepolia for testing purposes.
+  const chain = IS_PRODUCTION_ENV ? mainnet : sepolia;
+
+  const publicClient = useViemPublicClientWithChain(chain);
 
   const refresh = useCallback(async () => {
     // Not yet ready to fetch.
-    if (readOnce === null) {
+    if (publicClient === null) {
       return null;
     }
 
@@ -66,17 +69,34 @@ const useContractReadBatch = <
       );
     }
 
-    const promises = options_.args.map((args) =>
-      readOnce({ ...options_, args }),
-    );
+    const targets = options_.args.map((args) => ({
+      abi: abi,
+      ...options_,
+      args,
+    }));
 
-    setValue(await Promise.all(promises));
-  }, [options, readOnce]);
+    // See: https://viem.sh/docs/contract/multicall.html
+    const promiseOfAll = await publicClient.multicall({
+      // TODO: Viem is complaining about the type of `contracts` here.
+      contracts: targets as any,
+    });
+
+    // TODO: Avoid casting to ReturnType. Viem is complaining, likely  because of the complexity of the types involved.
+    const results = promiseOfAll.map((promise) => {
+      if (promise.result === undefined) {
+        return ensureError(promise.error);
+      }
+
+      return promise.result;
+    }) as ReturnType;
+
+    setResults(results);
+  }, [abi, options, publicClient]);
 
   usePolling({ effect: refresh });
 
   return {
-    value,
+    results,
     refresh,
   };
 };
