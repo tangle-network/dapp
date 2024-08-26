@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import TokenSelector from '../../components/TokenSelector';
 
 const meta: Meta<typeof TokenSelector> = {
-  title: 'Design System/V2 (WIP)/Molecules/TokenSelector',
+  title: 'Design System/Molecules/TokenSelector',
   component: TokenSelector,
 };
 

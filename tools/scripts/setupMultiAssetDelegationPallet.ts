@@ -6,7 +6,9 @@ import {
 } from '@webb-tools/dapp-config/constants/tangle';
 import { parseUnits } from 'viem';
 import { formatBalance, stringToU8a } from '@polkadot/util';
-import { encodeAddress } from '@polkadot/util-crypto';
+import { encodeAddress, evmToAddress } from '@polkadot/util-crypto';
+import yargs from 'yargs/yargs';
+import { SubmittableExtrinsic } from '@polkadot/api/types';
 
 function info(message: string): void {
   console.log(chalk.cyan(`ℹ️ ${message}`));
@@ -35,6 +37,16 @@ const MINT_AMOUNT = '1000';
 const POOL_ID = 1;
 const APY = 12;
 const CAP = parseUnits('2000', TANGLE_TOKEN_DECIMALS);
+
+const argv = yargs(process.argv.slice(2))
+  .options({
+    evmAccount: {
+      type: 'string',
+      desc: 'The EVM account that will be funded with pallet assets',
+      requiresArg: false,
+    },
+  })
+  .parseSync();
 
 // Initialize the API
 info('Connecting to the local Tangle network...');
@@ -140,6 +152,32 @@ await batchTxes([
   ),
 ]);
 success('Assets created and minted successfully!');
+
+if (argv.evmAccount) {
+  const evmToSubstrateAddress = evmToAddress(argv.evmAccount);
+  info(
+    `Received evm account: ${argv.evmAccount}\nConverted to substrate address: ${evmToSubstrateAddress}\nMint fund to the account...`,
+  );
+
+  await batchTxes([
+    api.tx.balances.transferKeepAlive(
+      evmToSubstrateAddress,
+      parseUnits(MINIMUM_BALANCE_UINT, decimals),
+    ),
+    api.tx.assets.mint(
+      tgTEST.id,
+      evmToSubstrateAddress,
+      parseUnits(MINT_AMOUNT, tgTEST.decimals),
+    ),
+    api.tx.assets.mint(
+      tgtTNT.id,
+      evmToSubstrateAddress,
+      parseUnits(MINT_AMOUNT, tgtTNT.decimals),
+    ),
+  ]);
+
+  success('Minted fund to the EVM account successfully!');
+}
 
 info('Transfer native token to multi-asset-delegation pallet...');
 let nonce = await api.rpc.system.accountNextIndex(ALICE_SUDO.address);

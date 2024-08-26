@@ -4,7 +4,7 @@ import { IconWithTooltip } from '../../components/IconWithTooltip';
 import { TextField } from '../../components/TextField';
 
 const meta: Meta<typeof TextField> = {
-  title: 'Design System/V2 (WIP)/Molecules/TextField',
+  title: 'Design System/Molecules/TextField',
 };
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

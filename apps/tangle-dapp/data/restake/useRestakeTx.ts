@@ -50,7 +50,7 @@ export default function useRestakeTx(): RestakeTxBase {
 
 function createDummyApi(error: string): RestakeTxBase {
   return {
-    delegate(operatorAccount, assetId, amount, eventHandlers) {
+    stake(operatorAccount, assetId, amount, eventHandlers) {
       eventHandlers?.onTxFailed?.(error, { amount, assetId, operatorAccount });
       return Promise.resolve(null);
     },
@@ -68,6 +68,18 @@ function createDummyApi(error: string): RestakeTxBase {
     },
     cancelDelegatorUnstakeRequests(unstakeRequests, eventHandlers) {
       eventHandlers?.onTxFailed?.(error, { unstakeRequests });
+      return Promise.resolve(null);
+    },
+    scheduleWithdraw(assetId, amount, eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, { amount, assetId });
+      return Promise.resolve(null);
+    },
+    executeWithdraw(eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, {});
+      return Promise.resolve(null);
+    },
+    cancelWithdraw(withdrawRequests, eventHandlers) {
+      eventHandlers?.onTxFailed?.(error, { withdrawRequests });
       return Promise.resolve(null);
     },
   };

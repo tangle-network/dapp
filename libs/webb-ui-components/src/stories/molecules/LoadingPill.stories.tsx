@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import LoadingPill from '../../components/buttons/LoadingPill';
 
 const meta: Meta<typeof LoadingPill> = {
-  title: 'Design System/V2 (WIP)/Molecules/LoadingPill',
+  title: 'Design System/Molecules/LoadingPill',
   component: LoadingPill,
 };
 

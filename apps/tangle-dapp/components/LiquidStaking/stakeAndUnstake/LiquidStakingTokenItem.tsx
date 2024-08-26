@@ -5,6 +5,7 @@ import { Button, Typography } from '@webb-tools/webb-ui-components';
 import Image from 'next/image';
 import { FC, useState } from 'react';
 
+import LSTTokenIcon from '../../../components/LSTTokenIcon';
 import { StaticAssetPath } from '../../../constants';
 import {
   LiquidStakingToken,
@@ -13,10 +14,8 @@ import {
 import { PagePath } from '../../../types';
 import AssetTable from '../AssetTable';
 import StatItem from '../StatItem';
-import ChainLogo from './ChainLogo';
 
 export type LiquidStakingTokenItemProps = {
-  chainId: ParachainChainId;
   title: string;
   tokenSymbol: LiquidStakingToken;
   apy: number;
@@ -29,7 +28,6 @@ export type LiquidStakingTokenItemProps = {
 
 const LiquidStakingTokenItem: FC<LiquidStakingTokenItemProps> = ({
   title,
-  chainId,
   tokenSymbol,
   apy,
   derivativeTokens,

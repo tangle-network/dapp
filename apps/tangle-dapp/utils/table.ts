@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
 import { SortingFn } from '@tanstack/react-table';
 
-import { Nominee, Payout } from '../types';
+import { BasicAccountInfo, Nominee, Payout } from '../types';
 
 // Utility type to extract keys of type T that have value type U
 type KeysOfType<T, U> = {
@@ -44,6 +44,18 @@ const sortBnValue =
 export const sortBnValueForNomineeOrValidator =
   sortBnValue<Nominee>(nomineeBnFieldsArray);
 export const sortBnValueForPayout = sortBnValue<Payout>(payoutBnFieldsArray);
+
+export const getSortAddressOrIdentityFnc = <
+  T extends BasicAccountInfo,
+>(): SortingFn<T> => {
+  return (rowA, rowB) => {
+    const { address: addressA, identityName: identityNameA } = rowA.original;
+    const { address: addressB, identityName: identityNameB } = rowB.original;
+    const sortingValueA = identityNameA === addressA ? addressA : identityNameA;
+    const sortingValueB = identityNameB === addressB ? addressB : identityNameB;
+    return sortingValueB.localeCompare(sortingValueA);
+  };
+};
 
 export const sortAddressOrIdentityForNomineeOrValidator: SortingFn<Nominee> = (
   rowA,

@@ -3,13 +3,13 @@ import { useCallback, useMemo, useState } from 'react';
 
 import {
   type CancelDelegatorUnstakeRequestContext,
-  type ExecuteDelegatorBondLessContext,
+  type ExecuteAllDelegatorUnstakeRequestContext,
   TxEvent,
 } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
+import { isScheduledRequestReady } from '../utils';
 import type { UnstakeRequestTableData } from './types';
-import { isUnstakeRequestReady } from './utils';
 
 type Props = {
   allRequests: UnstakeRequestTableData[];
@@ -39,7 +39,7 @@ const UnstakeRequestTableActions = ({
     );
 
   const executeOptions =
-    useRestakeTxEventHandlersWithNoti<ExecuteDelegatorBondLessContext>(
+    useRestakeTxEventHandlersWithNoti<ExecuteAllDelegatorUnstakeRequestContext>(
       useMemo(
         () =>
           ({
@@ -89,7 +89,7 @@ const UnstakeRequestTableActions = ({
     if (allRequests.length === 0) return false;
 
     return allRequests.some(({ timeRemaining }) => {
-      return isUnstakeRequestReady(timeRemaining);
+      return isScheduledRequestReady(timeRemaining);
     });
   }, [allRequests]);
 
@@ -115,7 +115,7 @@ const UnstakeRequestTableActions = ({
         isFullWidth
         onClick={handleExecuteUnstake}
       >
-        Execute All Executable Requests
+        Execute All
       </Button>
     </>
   );

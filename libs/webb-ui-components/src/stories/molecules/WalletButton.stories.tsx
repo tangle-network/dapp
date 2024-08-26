@@ -5,7 +5,7 @@ import { WalletId } from '@webb-tools/dapp-types/WalletId';
 import WalletButton from '../../components/buttons/WalletButton';
 
 const meta: Meta<typeof WalletButton> = {
-  title: 'Design System/V2 (WIP)/Molecules/WalletButton',
+  title: 'Design System/Molecules/WalletButton',
   component: WalletButton,
 };
 

@@ -14,4 +14,5 @@ export const Default = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Default.args = {
   isNext: true,
+  logoType: 'tangle',
 };

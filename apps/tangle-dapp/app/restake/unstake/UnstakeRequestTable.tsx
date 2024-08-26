@@ -14,10 +14,8 @@ import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
-import { type ComponentProps, useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
+import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 
 import { useRestakeContext } from '../../../context/RestakeContext';
@@ -26,9 +24,10 @@ import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound
 import type { DelegatorUnstakeRequest } from '../../../types/restake';
 import type { IdentityType } from '../../../utils/polkadot';
 import AvatarWithText from '../AvatarWithText';
+import TableCell from '../TableCell';
+import { calculateTimeRemaining } from '../utils';
 import type { UnstakeRequestTableData } from './types';
 import UnstakeRequestTableActions from './UnstakeRequestTableActions';
-import { calculateTimeRemaining } from './utils';
 
 const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
 
@@ -185,28 +184,6 @@ const UnstakeRequestTable = ({
 };
 
 export default UnstakeRequestTable;
-
-/**
- * @internal
- */
-function TableCell({
-  className,
-  children,
-  variant = 'body2',
-  ...props
-}: Partial<ComponentProps<typeof Typography>>) {
-  return (
-    <Typography
-      component="span"
-      fw="semibold"
-      {...props}
-      variant={variant}
-      className={twMerge('text-mono-120 dark:text-mono-100', className)}
-    >
-      {children}
-    </Typography>
-  );
-}
 
 function getId({
   assetId,

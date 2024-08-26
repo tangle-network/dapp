@@ -352,7 +352,8 @@ class VAnchor {
       walletClient: WalletClient;
     } & Partial<TransactionRequestBase>,
   ) {
-    const [{ walletClient, ...override }, txOptions] =
+    // Ignore the type of the transaction to use the default one
+    const [{ walletClient, type: _, ...override }, txOptions] =
       this.splitTransactionOptions(overridesTransaction);
 
     if (!walletClient.account) {
