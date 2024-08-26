@@ -71,10 +71,17 @@ const LiquidUnstakeCard: FC = () => {
 
   const selectedProtocol = getLsProtocolDef(selectedProtocolId);
 
-  const { exchangeRate } = useLsExchangeRate(
+  const {
+    exchangeRate: exchangeRateOrError,
+    isRefreshing: isRefreshingExchangeRate,
+  } = useLsExchangeRate(
     ExchangeRateType.DerivativeToNative,
     selectedProtocol.id,
   );
+
+  // TODO: Properly handle the error state.
+  const exchangeRate =
+    exchangeRateOrError instanceof Error ? null : exchangeRateOrError;
 
   useSearchParamSync({
     key: LsSearchParamKey.AMOUNT,
@@ -179,6 +186,7 @@ const LiquidUnstakeCard: FC = () => {
         token={selectedProtocol.token}
         setChainId={setSelectedProtocolId}
         isReadOnly
+        className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
       />
 
       {/* Details */}

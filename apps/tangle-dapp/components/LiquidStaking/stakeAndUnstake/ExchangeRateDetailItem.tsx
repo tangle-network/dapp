@@ -21,7 +21,9 @@ const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({
   const { exchangeRate, isRefreshing } = useLsExchangeRate(type, protocolId);
 
   const exchangeRateElement =
-    exchangeRate === null ? (
+    exchangeRate instanceof Error ? (
+      exchangeRate
+    ) : exchangeRate === null ? (
       <SkeletonLoader className="w-[50px]" />
     ) : isRefreshing ? (
       <div className="animate-pulse">{exchangeRate}</div>
@@ -29,17 +31,17 @@ const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({
       exchangeRate
     );
 
-  return (
-    <DetailItem
-      title="Rate"
-      value={
-        <div className="flex gap-1 items-center justify-center whitespace-nowrap">
-          1 {token} = {exchangeRateElement} {LST_PREFIX}
-          {token}
-        </div>
-      }
-    />
-  );
+  const value =
+    exchangeRateElement instanceof Error ? (
+      exchangeRateElement
+    ) : (
+      <div className="flex gap-1 items-center justify-center whitespace-nowrap">
+        1 {token} = {exchangeRateElement} {LST_PREFIX}
+        {token}
+      </div>
+    );
+
+  return <DetailItem title="Rate" value={value} />;
 };
 
 export default ExchangeRateDetailItem;

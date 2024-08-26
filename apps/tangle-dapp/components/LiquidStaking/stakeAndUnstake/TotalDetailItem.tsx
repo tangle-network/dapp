@@ -38,9 +38,11 @@ const TotalDetailItem: FC<TotalDetailItemProps> = ({
     if (inputAmount === null || exchangeRate === null || feePermill === null) {
       return null;
     }
-    // Propagate error.
+    // Propagate errors.
     else if (feePermill instanceof Error) {
       return feePermill;
+    } else if (exchangeRate instanceof Error) {
+      return exchangeRate;
     }
 
     const feeAmount = scaleAmountByPermill(inputAmount, feePermill);

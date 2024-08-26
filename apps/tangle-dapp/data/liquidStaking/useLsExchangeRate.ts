@@ -48,7 +48,7 @@ const useLsExchangeRate = (
   type: ExchangeRateType,
   protocolId: LsProtocolId,
 ) => {
-  const [exchangeRate, setExchangeRate] = useState<number | null>(null);
+  const [exchangeRate, setExchangeRate] = useState<number | Error | null>(null);
 
   const protocol = getLsProtocolDef(protocolId);
 
@@ -123,14 +123,11 @@ const useLsExchangeRate = (
   } = useContractRead(LIQUIFIER_ADAPTER_ABI, getLiquifierTotalSharesOptions);
 
   const fetchLiquifierExchangeRate = useCallback(async () => {
-    // Not yet ready.
-    if (
-      tgTokenTotalSupply === null ||
-      liquifierTotalShares === null ||
-      tgTokenTotalSupply instanceof Error ||
-      liquifierTotalShares instanceof Error
-    ) {
-      return null;
+    // Propagate error or loading states.
+    if (typeof tgTokenTotalSupply !== 'bigint') {
+      return tgTokenTotalSupply;
+    } else if (typeof liquifierTotalShares !== 'bigint') {
+      return liquifierTotalShares;
     }
 
     const tgTokenTotalSupplyBn = new BN(tgTokenTotalSupply.toString());

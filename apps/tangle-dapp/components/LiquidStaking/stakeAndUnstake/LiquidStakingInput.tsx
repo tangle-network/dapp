@@ -35,6 +35,7 @@ export type LiquidStakingInputProps = {
   minAmount?: BN;
   maxAmount?: BN;
   maxErrorMessage?: string;
+  className?: string;
   onAmountChange?: (newAmount: BN | null) => void;
   setChainId?: (newChain: LsProtocolId) => void;
   onTokenClick?: () => void;
@@ -56,6 +57,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   onAmountChange,
   setChainId,
   onTokenClick,
+  className,
 }) => {
   const minErrorMessage = ((): string | undefined => {
     if (minAmount === undefined) {
@@ -115,7 +117,10 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
         <div className="flex gap-1">
           <input
             id={id}
-            className="w-full bg-transparent border-none text-xl font-bold outline-none focus:ring-0"
+            className={twMerge(
+              'w-full bg-transparent border-none text-xl font-bold outline-none focus:ring-0',
+              className,
+            )}
             type="text"
             placeholder={placeholder}
             value={displayAmount}

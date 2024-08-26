@@ -69,10 +69,17 @@ const LiquidStakeCard: FC = () => {
     setValue: setSelectedProtocolId,
   });
 
-  const { exchangeRate } = useLsExchangeRate(
+  const {
+    exchangeRate: exchangeRateOrError,
+    isRefreshing: isRefreshingExchangeRate,
+  } = useLsExchangeRate(
     ExchangeRateType.NativeToDerivative,
     selectedProtocolId,
   );
+
+  // TODO: Properly handle the error state.
+  const exchangeRate =
+    exchangeRateOrError instanceof Error ? null : exchangeRateOrError;
 
   const handleStakeClick = useCallback(async () => {
     // Not ready yet; no amount given.
@@ -143,6 +150,7 @@ const LiquidStakeCard: FC = () => {
         isTokenLiquidVariant
         token={selectedProtocol.token}
         rightElement={<SelectValidatorsButton />}
+        className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
       />
 
       {/* Details */}
