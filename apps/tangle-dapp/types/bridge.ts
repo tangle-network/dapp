@@ -108,4 +108,4 @@ export type BridgeFeeItem = {
   amount: Decimal | null;
   symbol: string;
   isLoading?: boolean;
-}; 
+};
