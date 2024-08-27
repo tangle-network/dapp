@@ -1,9 +1,8 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import LiquidStakingTokenItem from '../../components/LiquidStaking/stakeAndUnstake/LiquidStakingTokenItem';
-import StatItem from '../../components/LiquidStaking/StatItem';
-import { LIQUID_STAKING_CHAINS } from '../../constants/liquidStaking';
+import StatItem from '../../components/StatItem';
+import VaultsAndAssetsTable from '../../components/LiquidStaking/VaultsAndAssetsTable';
 
 const LiquidStakingPage: FC = () => {
   return (
@@ -29,31 +28,7 @@ const LiquidStakingPage: FC = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4">
-        <Typography variant="h4" fw="bold">
-          Liquid Staking Tokens
-        </Typography>
-
-        <div className="flex flex-col gap-3 min-w-[750px] py-5 px-6 border border-mono-0 dark:border-mono-160 rounded-2xl bg-liquid_staking_tokens_table dark:bg-liquid_staking_tokens_table_dark overflow-x-auto">
-          {LIQUID_STAKING_CHAINS.map((chain) => {
-            return (
-              <LiquidStakingTokenItem
-                key={chain.id}
-                chainId={chain.id}
-                title={`Tangle ${chain.name}`}
-                tokenSymbol={chain.token}
-                // TODO: Can't pass non-plain objects as props to Client components from Server components (this page). For now, passing in as a string then creating BN instance inside the component.
-                apy={0.1}
-                derivativeTokens="5"
-                myStake={{
-                  value: 30,
-                  valueInUSD: 1200,
-                }}
-              />
-            );
-          })}
-        </div>
-      </div>
+      <VaultsAndAssetsTable />
     </div>
   );
 };
