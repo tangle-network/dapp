@@ -101,11 +101,11 @@ export type BridgeQueueTxItem = {
 
 export type BridgeFeeType =
   | 'gas'
-  | 'bridge' // Sygma
-  | 'interchain'; // Hyperlane
+  | 'bridge' // used with Sygma
+  | 'interchain'; // used with Hyperlane
 
 export type BridgeFeeItem = {
   amount: Decimal | null;
   symbol: string;
   isLoading?: boolean;
-}; // Need to add clear, add item, update item
+}; 

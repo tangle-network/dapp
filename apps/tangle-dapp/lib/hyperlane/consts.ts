@@ -41,36 +41,6 @@ export const customWarpRouteConfigs: WarpCoreConfig = {
       symbol: 'WETH',
     },
   ],
-  // options: {
-  //   localFeeConstants: [
-  //     {
-  //       amount: BigInt('10000000000000000'),
-  //       origin: 'sepolia',
-  //       destination: 'basesepolia',
-  //       addressOrDenom: '0xA9F30c6B5E7996D1bAd51D213277c30750bcBB36',
-  //     },
-  //     {
-  //       amount: BigInt('10000000000000000'),
-  //       origin: 'basesepolia',
-  //       destination: 'sepolia',
-  //       addressOrDenom: '0xb947F89269F0cF54CC721BcDE298a46930f3418b',
-  //     },
-  //   ],
-  //   interchainFeeConstants: [
-  //     {
-  //       amount: BigInt('20000000000000000'),
-  //       origin: 'sepolia',
-  //       destination: 'basesepolia',
-  //       addressOrDenom: '0xA9F30c6B5E7996D1bAd51D213277c30750bcBB36',
-  //     },
-  //     {
-  //       amount: BigInt('20000000000000000'),
-  //       origin: 'basesepolia',
-  //       destination: 'sepolia',
-  //       addressOrDenom: '0xb947F89269F0cF54CC721BcDE298a46930f3418b',
-  //     },
-  //   ],
-  // },
 };
 
 // A list of warp route config IDs to be included in the app

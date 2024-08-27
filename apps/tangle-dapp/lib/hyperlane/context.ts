@@ -31,14 +31,6 @@ export async function initHyperlaneWarpContext() {
   return warpContext;
 }
 
-export function getHyperlaneMultiProvider() {
-  return getHyperlaneWarpContext()?.multiProvider ?? null;
-}
-
-export function getHyperlaneRegistry() {
-  return getHyperlaneWarpContext()?.registry ?? null;
-}
-
 export function getHyperlaneWarpCore() {
   return getHyperlaneWarpContext()?.warpCore ?? null;
 }

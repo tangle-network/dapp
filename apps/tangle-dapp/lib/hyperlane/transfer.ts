@@ -30,9 +30,8 @@ export async function hyperlaneTransfer(params?: {
     token.hyperlaneRouteContractAddress?.[sourceTypedChainId];
   if (!routeAddress) throw new Error('Token address not found');
 
-  // NOTE: the name is getting from chainsConfig, which can be different in Hyperlane registry
   const hyperlaneToken = tryFindToken(
-    getHyperlaneChainName(sourceTypedChainId),
+    getHyperlaneChainName(sourceTypedChainId), // the name is getting from chainsConfig, convert to match with Hyperlane registry
     routeAddress,
   );
   if (!hyperlaneToken) throw new Error('Token not found');
