@@ -5,7 +5,7 @@ import {
 import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 
-import { AnyValidator, LsAdapterDef } from '../../data/liquidStaking/adapter';
+import { NetworkEntity, LsAdapterDef } from '../../data/liquidStaking/adapter';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 
 export enum LsProtocolId {
@@ -50,7 +50,7 @@ export type LsLiquifierProtocolToken =
 
 export type LsParachainToken = Exclude<LsToken, LsLiquifierProtocolToken>;
 
-type ProtocolDefCommon<T extends AnyValidator> = {
+type ProtocolDefCommon<T extends NetworkEntity> = {
   name: string;
   decimals: number;
   timeUnit: CrossChainTimeUnit;
@@ -64,7 +64,7 @@ export enum LsProtocolType {
   ETHEREUM_MAINNET_LIQUIFIER,
 }
 
-export interface LsParachainChainDef<T extends AnyValidator = AnyValidator>
+export interface LsParachainChainDef<T extends NetworkEntity = NetworkEntity>
   extends ProtocolDefCommon<T> {
   type: LsProtocolType.TANGLE_RESTAKING_PARACHAIN;
   id: LsParachainChainId;
@@ -75,7 +75,7 @@ export interface LsParachainChainDef<T extends AnyValidator = AnyValidator>
   ss58Prefix: number;
 }
 
-export interface LsLiquifierProtocolDef<T extends AnyValidator = AnyValidator>
+export interface LsLiquifierProtocolDef<T extends NetworkEntity = NetworkEntity>
   extends ProtocolDefCommon<T> {
   type: LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER;
   id: LsLiquifierProtocolId;

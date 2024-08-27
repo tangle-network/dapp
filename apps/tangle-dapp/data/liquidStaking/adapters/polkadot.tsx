@@ -1,6 +1,14 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import { AccessorKeyColumnDef } from '@tanstack/react-table';
+import { createColumnHelper, SortingFnOption } from '@tanstack/react-table';
+import {
+  Avatar,
+  CheckBox,
+  CopyWithTooltip,
+  shortenString,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 
+import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking/StakingItemExternalLinkButton';
 import {
   LsParachainChainDef,
   LsProtocolId,
@@ -10,8 +18,15 @@ import {
 import { LiquidStakingItem } from '../../../types/liquidStaking';
 import { SubstrateAddress } from '../../../types/utils';
 import assertSubstrateAddress from '../../../utils/assertSubstrateAddress';
+import calculateCommission from '../../../utils/calculateCommission';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
-import { ValidatorCommon } from '../adapter';
+import formatBn from '../../../utils/formatBn';
+import { GetTableColumnsFn, NetworkEntityCommon } from '../adapter';
+import {
+  sortCommission,
+  sortSelected,
+  sortValueStaked,
+} from '../columnSorting';
 import {
   fetchChainDecimals,
   fetchMappedIdentityNames,
@@ -21,8 +36,10 @@ import {
 } from '../fetchHelpers';
 
 const SS58_PREFIX = 0;
+const DECIMALS = 18;
+const TOKEN_SYMBOL = 'DOT';
 
-export type PolkadotValidator = ValidatorCommon & {
+export type PolkadotValidator = NetworkEntityCommon & {
   address: SubstrateAddress<typeof SS58_PREFIX>;
   identity: string;
   commission: BN;
@@ -65,69 +82,129 @@ const fetchValidators = async (
   });
 };
 
-const getTableColumns = (): AccessorKeyColumnDef<PolkadotValidator>[] => {
-  // const columnHelper = createColumnHelper<PolkadotValidator>();
+const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
+  toggleSortSelectionHandlerRef,
+) => {
+  const validatorColumnHelper = createColumnHelper<PolkadotValidator>();
 
-  // return [
-  //   columnHelper.accessor('address', {
-  //     header: () => <HeaderCell title="Address" className="justify-start" />,
-  //     cell: (props) => {
-  //       const address = props.getValue();
-  //       const identity = props.row.original.identity;
+  return [
+    validatorColumnHelper.accessor('address', {
+      header: ({ header }) => {
+        toggleSortSelectionHandlerRef.current = header.column.toggleSorting;
+        return (
+          <Typography
+            variant="body2"
+            fw="semibold"
+            className="text-mono-120 dark:text-mono-120"
+          >
+            Validator
+          </Typography>
+        );
+      },
+      cell: (props) => {
+        const address = props.getValue();
+        const identity = props.row.original.identity ?? address;
 
-  //       return (
-  //         <div className="flex items-center gap-2">
-  //           <CheckBox
-  //             wrapperClassName="!block !min-h-auto cursor-pointer"
-  //             className="cursor-pointer"
-  //             isChecked={props.row.getIsSelected()}
-  //             onChange={props.row.getToggleSelectedHandler()}
-  //           />
+        return (
+          <div className="flex items-center gap-2">
+            <CheckBox
+              wrapperClassName="!block !min-h-auto cursor-pointer"
+              className="cursor-pointer"
+              isChecked={props.row.getIsSelected()}
+              onChange={props.row.getToggleSelectedHandler()}
+            />
 
-  //           <div className="flex items-center space-x-1">
-  //             <Avatar
-  //               sourceVariant="address"
-  //               value={address}
-  //               theme="substrate"
-  //             />
+            <div className="flex items-center space-x-1">
+              <Avatar
+                sourceVariant="address"
+                value={address}
+                theme="substrate"
+              />
 
-  //             <Typography variant="body1" fw="normal" className="truncate">
-  //               {identity === address ? shortenString(address, 6) : identity}
-  //             </Typography>
+              <Typography
+                variant="body2"
+                fw="normal"
+                className="truncate text-mono-200 dark:text-mono-0"
+              >
+                {identity === address ? shortenString(address, 8) : identity}
+              </Typography>
 
-  //             <CopyWithTooltip
-  //               textToCopy={address}
-  //               isButton={false}
-  //               className="cursor-pointer"
-  //               iconClassName="!fill-mono-160 dark:!fill-mono-80"
-  //             />
-  //           </div>
-  //         </div>
-  //       );
-  //     },
-  //     // sortingFn: (rowA, rowB, columnId) =>
-  //     //   sortValidatorsBasedOnSortingFn(
-  //     //     rowA,
-  //     //     rowB,
-  //     //     columnId,
-  //     //     getSortAddressOrIdentityFnc<Validator>(),
-  //     //     isDesc,
-  //     //   ),
-  //     // TODO: Create a generic filter function?
-  //     filterFn: (row, _, filterValue) => {
-  //       return (
-  //         row.original.address
-  //           .toLowerCase()
-  //           .includes(filterValue.toLowerCase()) ||
-  //         row.original.identity
-  //           .toLowerCase()
-  //           .includes(filterValue.toLowerCase())
-  //       );
-  //     },
-  //   }),
-  // ];
-
-  return [];
+              <CopyWithTooltip
+                textToCopy={address}
+                isButton={false}
+                className="cursor-pointer"
+              />
+            </div>
+          </div>
+        );
+      },
+      // TODO: Avoid casting sorting function.
+      sortingFn: sortSelected as SortingFnOption<PolkadotValidator>,
+    }),
+    validatorColumnHelper.accessor('totalValueStaked', {
+      header: ({ header }) => (
+        <div
+          className="flex items-center justify-center cursor-pointer"
+          onClick={header.column.getToggleSortingHandler()}
+        >
+          <Typography
+            variant="body2"
+            fw="semibold"
+            className="text-mono-120 dark:text-mono-120"
+          >
+            Total Staked
+          </Typography>
+        </div>
+      ),
+      cell: (props) => (
+        <div className="flex items-center justify-center">
+          <Typography
+            variant="body2"
+            fw="normal"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {formatBn(props.getValue(), DECIMALS) + ` ${TOKEN_SYMBOL}`}
+          </Typography>
+        </div>
+      ),
+      sortingFn: sortValueStaked,
+    }),
+    validatorColumnHelper.accessor('commission', {
+      header: ({ header }) => (
+        <div
+          className="flex items-center justify-center cursor-pointer"
+          onClick={header.column.getToggleSortingHandler()}
+        >
+          <Typography
+            variant="body2"
+            fw="semibold"
+            className="text-mono-120 dark:text-mono-120"
+          >
+            Commission
+          </Typography>
+        </div>
+      ),
+      cell: (props) => (
+        <div className="flex items-center justify-center">
+          <Typography
+            variant="body2"
+            fw="normal"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {calculateCommission(props.getValue()).toFixed(2) + '%'}
+          </Typography>
+        </div>
+      ),
+      // TODO: Avoid casting sorting function.
+      sortingFn: sortCommission as SortingFnOption<PolkadotValidator>,
+    }),
+    validatorColumnHelper.accessor('href', {
+      header: () => <span></span>,
+      cell: (props) => {
+        return <StakingItemExternalLinkButton href={props.getValue()} />;
+      },
+    }),
+  ];
 };
 
 const POLKADOT = {
@@ -137,13 +214,13 @@ const POLKADOT = {
   token: LsToken.DOT,
   chainIconFileName: 'polkadot',
   currency: 'Dot',
-  decimals: 10,
+  decimals: DECIMALS,
   rpcEndpoint: 'wss://polkadot-rpc.dwellir.com',
   timeUnit: CrossChainTimeUnit.POLKADOT_ERA,
   unstakingPeriod: 28,
   ss58Prefix: 0,
   adapter: {
-    fetchValidators,
+    fetchNetworkEntities: fetchValidators,
     getTableColumns,
   },
 } as const satisfies LsParachainChainDef<PolkadotValidator>;

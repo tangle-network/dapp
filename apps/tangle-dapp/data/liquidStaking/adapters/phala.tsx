@@ -1,10 +1,17 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import {
-  AccessorKeyColumnDef,
   createColumnHelper,
   Row,
+  SortingFnOption,
 } from '@tanstack/react-table';
+import {
+  Avatar,
+  Chip,
+  CopyWithTooltip,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 
+import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking/StakingItemExternalLinkButton';
 import {
   LsParachainChainDef,
   LsProtocolId,
@@ -18,7 +25,17 @@ import {
 import { SubstrateAddress } from '../../../types/utils';
 import assertSubstrateAddress from '../../../utils/assertSubstrateAddress';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
-import { ValidatorCommon } from '../adapter';
+import formatBn from '../../../utils/formatBn';
+import {
+  FetchNetworkEntitiesFn,
+  GetTableColumnsFn,
+  NetworkEntityCommon,
+} from '../adapter';
+import {
+  sortCommission,
+  sortSelected,
+  sortValueStaked,
+} from '../columnSorting';
 import {
   fetchChainDecimals,
   fetchMappedIdentityNames,
@@ -26,19 +43,11 @@ import {
   fetchMappedValidatorsTotalValueStaked,
   fetchTokenSymbol,
 } from '../fetchHelpers';
-import {
-  Avatar,
-  Chip,
-  CopyWithTooltip,
-  Typography,
-} from '@webb-tools/webb-ui-components';
 import RadioInput from '../useLsValidatorSelectionTableColumns';
-import formatBn from '../../../utils/formatBn';
-import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking/StakingItemExternalLinkButton';
 
 const SS58_PREFIX = 0;
 
-export type PolkadotValidator = ValidatorCommon & {
+export type PolkadotValidator = NetworkEntityCommon & {
   address: SubstrateAddress<typeof SS58_PREFIX>;
   identity: string;
   commission: BN;
@@ -46,16 +55,16 @@ export type PolkadotValidator = ValidatorCommon & {
   totalValueStaked: BN;
 };
 
-const fetchValidators = async (
-  rpcEndpoint: string,
-): Promise<PolkadotValidator[]> => {
+const fetchVaultOrStakePools: FetchNetworkEntitiesFn<
+  PhalaVaultOrStakePool
+> = async (rpcEndpoint) => {
   const [
     validators,
     mappedIdentityNames,
     mappedTotalValueStaked,
     mappedCommission,
   ] = await Promise.all([
-    fetchValidators(rpcEndpoint),
+    fetchVaultOrStakePools(rpcEndpoint),
     fetchMappedIdentityNames(rpcEndpoint),
     fetchMappedValidatorsTotalValueStaked(rpcEndpoint),
     fetchMappedValidatorsCommission(rpcEndpoint),
@@ -81,11 +90,9 @@ const fetchValidators = async (
   });
 };
 
-const getTableColumns = (
-  toggleSortSelectionHandlerRef: React.MutableRefObject<
-    ((desc?: boolean | undefined, isMulti?: boolean | undefined) => void) | null
-  >,
-): AccessorKeyColumnDef<PolkadotValidator>[] => {
+const getTableColumns: GetTableColumnsFn<PhalaVaultOrStakePool> = (
+  toggleSortSelectionHandlerRef,
+) => {
   const vaultOrStakePoolColumnHelper =
     createColumnHelper<PhalaVaultOrStakePool>();
 
@@ -147,6 +154,7 @@ const getTableColumns = (
           </div>
         );
       },
+      // TODO: Avoid casting sorting function.
       sortingFn: sortSelected as SortingFnOption<PhalaVaultOrStakePool>,
     }),
     vaultOrStakePoolColumnHelper.accessor('type', {
@@ -230,6 +238,7 @@ const getTableColumns = (
           </Typography>
         </div>
       ),
+      // TODO: Avoid casting sorting function.
       sortingFn: sortCommission as SortingFnOption<PhalaVaultOrStakePool>,
     }),
     vaultOrStakePoolColumnHelper.accessor('href', {
@@ -254,7 +263,7 @@ const PHALA: LsParachainChainDef = {
   unstakingPeriod: 7,
   ss58Prefix: 30,
   adapter: {
-    fetchValidators,
+    fetchNetworkEntities: fetchVaultOrStakePools,
     getTableColumns,
   },
 } as const satisfies LsParachainChainDef<PhalaVaultOrStakePool>;

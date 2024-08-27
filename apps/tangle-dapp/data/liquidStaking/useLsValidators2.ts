@@ -9,8 +9,8 @@ import {
   Collator,
   Dapp,
   LiquidStakingItem,
-  Validator,
   PhalaVaultOrStakePool,
+  Validator,
 } from '../../types/liquidStaking';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 
@@ -38,7 +38,9 @@ const useLsValidators2 = (protocolId: LsProtocolId) => {
         return;
       }
 
-      const newItems = protocol.adapter.fetchValidators(protocol.rpcEndpoint);
+      const newItems = protocol.adapter.fetchNetworkEntities(
+        protocol.rpcEndpoint,
+      );
 
       setItems(newItems);
 
@@ -67,7 +69,7 @@ const useLsValidators2 = (protocolId: LsProtocolId) => {
   };
 };
 
-const getDataType = (chain: LsProtocolId): LiquidStakingItem => {
+const getDataType = (chain: LsProtocolId): LiquidStakingItem | null => {
   switch (chain) {
     case LsProtocolId.MANTA:
       return LiquidStakingItem.COLLATOR;
@@ -80,6 +82,11 @@ const getDataType = (chain: LsProtocolId): LiquidStakingItem => {
       return LiquidStakingItem.VAULT_OR_STAKE_POOL;
     case LsProtocolId.ASTAR:
       return LiquidStakingItem.DAPP;
+    case LsProtocolId.CHAINLINK:
+    case LsProtocolId.LIVEPEER:
+    case LsProtocolId.POLYGON:
+    case LsProtocolId.THE_GRAPH:
+      return null;
   }
 };
 

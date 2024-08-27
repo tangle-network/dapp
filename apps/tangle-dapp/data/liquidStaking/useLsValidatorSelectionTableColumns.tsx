@@ -21,8 +21,8 @@ import {
   Collator,
   Dapp,
   LiquidStakingItem,
-  Validator,
   PhalaVaultOrStakePool,
+  Validator,
 } from '../../types/liquidStaking';
 import calculateCommission from '../../utils/calculateCommission';
 import formatBn from '../../utils/formatBn';
