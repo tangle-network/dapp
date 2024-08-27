@@ -242,11 +242,11 @@ export function useSubstrateTxWithNotification<Context = void>(
         return;
       }
 
-      notifyProcessing();
+      notifyProcessing(txName);
 
       return execute_(context);
     },
-    [execute_, notifyProcessing],
+    [execute_, notifyProcessing, txName],
   );
 
   useEffect(() => {
@@ -264,11 +264,19 @@ export function useSubstrateTxWithNotification<Context = void>(
     }
 
     if (error !== null) {
-      notifyError(error);
+      notifyError(txName, error);
     } else if (txHash !== null) {
-      notifySuccess(txHash, successMessage);
+      notifySuccess(txName, txHash, successMessage);
     }
-  }, [status, error, txHash, notifyError, notifySuccess, successMessage]);
+  }, [
+    status,
+    error,
+    txHash,
+    notifyError,
+    notifySuccess,
+    successMessage,
+    txName,
+  ]);
 
   return {
     // Prevent the consumer from executing the transaction if

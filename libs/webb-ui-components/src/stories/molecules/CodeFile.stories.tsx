@@ -2,7 +2,7 @@ import CodeFile from '../../components/CodeFile';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof CodeFile> = {
-  title: 'Design System/V2 (WIP)/Molecules/CodeFile',
+  title: 'Design System/Molecules/CodeFile',
 };
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

@@ -4,7 +4,7 @@ import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import ChainOrTokenButton from '../../components/buttons/ChainOrTokenButton';
 
 const meta: Meta<typeof ChainOrTokenButton> = {
-  title: 'Design System/V2 (WIP)/Molecules/ChainOrTokenButton',
+  title: 'Design System/Molecules/ChainOrTokenButton',
   component: ChainOrTokenButton,
 };
 

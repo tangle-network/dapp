@@ -13,33 +13,30 @@ import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea
 import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import {
-  LST_PREFIX,
-  PARACHAIN_CHAIN_MAP,
-  ParachainChainId,
-} from '../../../constants/liquidStaking';
+import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
+import { LsProtocolId, LsToken } from '../../../constants/liquidStaking/types';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
-import { LiquidStakingToken } from '../../../types/liquidStaking';
 import formatBn from '../../../utils/formatBn';
+import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import DropdownChevronIcon from './DropdownChevronIcon';
 import TokenChip from './TokenChip';
 
 export type LiquidStakingInputProps = {
   id: string;
-  chainId: ParachainChainId;
+  protocolId: LsProtocolId;
   decimals: number;
   amount: BN | null;
   isReadOnly?: boolean;
   placeholder?: string;
   rightElement?: ReactNode;
-  token: LiquidStakingToken;
+  token: LsToken;
   isTokenLiquidVariant?: boolean;
   minAmount?: BN;
   maxAmount?: BN;
   maxErrorMessage?: string;
   onAmountChange?: (newAmount: BN | null) => void;
-  setChainId?: (newChain: ParachainChainId) => void;
+  setChainId?: (newChain: LsProtocolId) => void;
   onTokenClick?: () => void;
 };
 
@@ -51,7 +48,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   placeholder = '0',
   isTokenLiquidVariant = false,
   rightElement,
-  chainId,
+  protocolId,
   token,
   minAmount,
   maxAmount,
@@ -75,28 +72,24 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
     return `Amount must be at least ${formattedMinAmount} ${unit}`;
   })();
 
-  const {
-    displayAmount,
-    handleChange,
-    errorMessage,
-    updateDisplayAmountManual,
-  } = useInputAmount({
-    amount,
-    setAmount: onAmountChange,
-    decimals,
-    min: minAmount,
-    minErrorMessage,
-    max: maxAmount,
-    maxErrorMessage,
-  });
+  const { displayAmount, handleChange, errorMessage, setDisplayAmount } =
+    useInputAmount({
+      amount,
+      setAmount: onAmountChange,
+      decimals,
+      min: minAmount,
+      minErrorMessage,
+      max: maxAmount,
+      maxErrorMessage,
+    });
 
   // Update the display amount when the amount prop changes.
   // Only do this for controlled (read-only) inputs.
   useEffect(() => {
     if (amount !== null) {
-      updateDisplayAmountManual(amount);
+      setDisplayAmount(amount);
     }
-  }, [amount, updateDisplayAmountManual]);
+  }, [amount, setDisplayAmount]);
 
   const isError = errorMessage !== null;
 
@@ -109,7 +102,10 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
         )}
       >
         <div className="flex justify-between">
-          <ChainSelector selectedChainId={chainId} setChain={setChainId} />
+          <ProtocolSelector
+            selectedProtocolId={protocolId}
+            setProtocolId={setChainId}
+          />
 
           {rightElement}
         </div>
@@ -144,33 +140,31 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   );
 };
 
-type ChainSelectorProps = {
-  selectedChainId: ParachainChainId;
+type ProtocolSelectorProps = {
+  selectedProtocolId: LsProtocolId;
 
   /**
    * If this function is not provided, the selector will be
    * considered read-only.
    */
-  setChain?: (newChain: ParachainChainId) => void;
+  setProtocolId?: (newProtocolId: LsProtocolId) => void;
 };
 
 /** @internal */
-const ChainSelector: FC<ChainSelectorProps> = ({
-  selectedChainId,
-  setChain,
+const ProtocolSelector: FC<ProtocolSelectorProps> = ({
+  selectedProtocolId,
+  setProtocolId,
 }) => {
-  const isReadOnly = setChain === undefined;
+  const selectedProtocol = getLsProtocolDef(selectedProtocolId);
+  const isReadOnly = setProtocolId === undefined;
 
   const base = (
     <div className="group flex gap-1 items-center justify-center">
       <div className="flex gap-2 items-center justify-center">
-        <ChainIcon
-          size="lg"
-          name={PARACHAIN_CHAIN_MAP[selectedChainId].token}
-        />
+        <ChainIcon size="lg" name={selectedProtocol.chainIconFileName} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          {PARACHAIN_CHAIN_MAP[selectedChainId].networkName}
+          {selectedProtocol.name}
         </Typography>
       </div>
 
@@ -178,32 +172,35 @@ const ChainSelector: FC<ChainSelectorProps> = ({
     </div>
   );
 
-  return setChain !== undefined ? (
+  return setProtocolId !== undefined ? (
     <Dropdown>
       <DropdownMenuTrigger>{base}</DropdownMenuTrigger>
 
       <DropdownBody>
-        <ScrollArea className="max-h-[300px]">
-          <ul>
-            {Object.values(ParachainChainId)
+        <ScrollArea>
+          <ul className="max-h-[300px]">
+            {Object.values(LsProtocolId)
               .filter(
-                (chainId): chainId is ParachainChainId =>
-                  chainId !== selectedChainId && typeof chainId !== 'string',
+                (protocolId): protocolId is LsProtocolId =>
+                  protocolId !== selectedProtocolId &&
+                  typeof protocolId !== 'string',
               )
-              .map((chainId) => {
+              .map((protocolId) => {
+                const protocol = getLsProtocolDef(protocolId);
+
                 return (
-                  <li key={chainId} className="w-full">
+                  <li key={protocolId} className="w-full">
                     <DropdownMenuItem
                       leftIcon={
                         <ChainIcon
                           size="lg"
-                          name={PARACHAIN_CHAIN_MAP[chainId].token}
+                          name={protocol.chainIconFileName}
                         />
                       }
-                      onSelect={() => setChain(chainId)}
+                      onSelect={() => setProtocolId(protocolId)}
                       className="px-3 normal-case"
                     >
-                      {PARACHAIN_CHAIN_MAP[chainId].networkName}
+                      {protocol.name}
                     </DropdownMenuItem>
                   </li>
                 );

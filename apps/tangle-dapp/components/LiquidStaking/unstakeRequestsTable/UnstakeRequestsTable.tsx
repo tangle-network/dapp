@@ -28,9 +28,9 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
+  LsSimpleParachainTimeUnit,
   ParachainCurrency,
-  SimpleTimeUnitInstance,
-} from '../../../constants/liquidStaking';
+} from '../../../constants/liquidStaking/types';
 import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import { AnySubstrateAddress } from '../../../types/utils';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
@@ -58,7 +58,7 @@ export type UnstakeRequestTableRow = {
    * If this is undefined, it means that the request has
    * completed its unlocking period.
    */
-  remainingTimeUnit?: SimpleTimeUnitInstance;
+  remainingTimeUnit?: LsSimpleParachainTimeUnit;
 };
 
 const columnHelper = createColumnHelper<UnstakeRequestTableRow>();

@@ -15,7 +15,6 @@ import assert from 'assert';
 import capitalize from 'lodash/capitalize';
 import { JSX } from 'react';
 
-import { LST_PREFIX } from '../../constants/liquidStaking';
 import { PagePath } from '../../types';
 
 const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
@@ -29,6 +28,7 @@ const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
   [PagePath.RESTAKE_DELEGATE]: TokenSwapFill,
   [PagePath.BRIDGE]: ShuffleLine,
   [PagePath.LIQUID_STAKING]: WaterDropletIcon,
+  [PagePath.LIQUID_STAKING_OVERVIEW]: WaterDropletIcon,
 };
 
 const BREADCRUMB_LABELS: Partial<Record<PagePath, string>> = {
@@ -81,15 +81,6 @@ export const getBreadcrumbLabel = (
     pathNames[0] === PagePath.SERVICES.substring(1)
   ) {
     return `Details: ${pathName}`;
-  }
-  // Special case for Liquid Staking individual token pages.
-  // Show it as something like `tgDOT` instead of `Dot`.
-  else if (
-    pathNames.length === 2 &&
-    index === 1 &&
-    pathNames[0] === PagePath.LIQUID_STAKING.substring(1)
-  ) {
-    return `${LST_PREFIX}${pathName.toUpperCase()}`;
   }
 
   const pathNameWithSlash = '/' + pathName;

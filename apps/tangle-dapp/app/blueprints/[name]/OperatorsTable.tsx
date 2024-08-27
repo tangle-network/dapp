@@ -22,7 +22,7 @@ import Link from 'next/link';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import LSTTokenIcon from '../../../components/LSTTokenIcon';
+import LsTokenIcon from '../../../components/LsTokenIcon';
 import { TableStatus } from '../../../components/TableStatus';
 import useNetworkStore from '../../../context/useNetworkStore';
 import { ExplorerType } from '../../../types';
@@ -96,7 +96,7 @@ const staticColumns = [
             .getValue()
             .sort() // sort alphabetically
             .map((vault, index) => (
-              <LSTTokenIcon key={index} name={vault} />
+              <LsTokenIcon key={index} name={vault} />
             ))}
         </div>
       </TableCellWrapper>

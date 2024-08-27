@@ -5,7 +5,7 @@ import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
 const meta: Meta<typeof ChainListCard> = {
-  title: 'Design System/V2 (WIP)/Templates/ChainListCard',
+  title: 'Design System/Templates/ChainListCard',
   component: ChainListCard,
 };
 

@@ -18,7 +18,7 @@ import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import {
-  type DelegatorBondLessContext,
+  type ScheduleDelegatorUnstakeContext,
   TxEvent,
 } from '../../../data/restake/RestakeTx/base';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
@@ -174,7 +174,7 @@ const Page = () => {
     [errors.operatorAccountId, errors.assetId, errors.amount, selectedOperatorAccountId, selectedAssetId, amount],
   );
 
-  const options = useMemo<Props<DelegatorBondLessContext>>(() => {
+  const options = useMemo<Props<ScheduleDelegatorUnstakeContext>>(() => {
     return {
       options: {
         [TxEvent.SUCCESS]: {
