@@ -44,7 +44,7 @@ function AssetsTable<T>({ data, columns, isShown }: AssetsTableProps<T>) {
   });
 
   return (
-    <div className='flex flex-col'>
+    <div className="flex flex-col">
       <Table
         tableProps={table}
         title="Assets"
