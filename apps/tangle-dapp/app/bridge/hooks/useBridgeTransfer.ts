@@ -1,6 +1,8 @@
 'use client';
 
 import { ProviderType } from '@hyperlane-xyz/sdk';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
+import { chainsConfig } from '@webb-tools/dapp-config';
 import { providers } from 'ethers';
 
 import { useBridge } from '../../../context/BridgeContext';
@@ -41,7 +43,8 @@ export default function useBridgeTransfer({
   const { sourceAmountInDecimals, destinationAmountInDecimals } =
     useAmountInDecimals();
 
-  const { addTxToQueue, addSygmaTxId, updateTxState } = useBridgeTxQueue();
+  const { addTxToQueue, addSygmaTxId, updateTxState, addTxExplorerUrl } =
+    useBridgeTxQueue();
 
   return async () => {
     if (activeAccountAddress === null) {
@@ -123,6 +126,17 @@ export default function useBridgeTransfer({
             });
 
             updateTxState(txHash, BridgeTxState.Sending);
+            if (chainsConfig[sourceTypedChainId].blockExplorers) {
+              addTxExplorerUrl(
+                txHash,
+                getExplorerURI(
+                  chainsConfig[sourceTypedChainId].blockExplorers.default.url,
+                  txHash,
+                  'tx',
+                  'web3',
+                ).toString(),
+              );
+            }
             onTxAddedToQueue();
           }
 
