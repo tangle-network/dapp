@@ -37,7 +37,7 @@ import { ValidatorTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
 
-const getStaticColumns = (isWaiting?: boolean) => [
+const getTableColumns = (isWaiting?: boolean) => [
   // Hide the effective amount staked and self-staked columns on waiting validators tab
   // as they don't have values for these columns
   ...(isWaiting
@@ -167,7 +167,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
           );
         },
       }),
-      ...getStaticColumns(isWaiting),
+      ...getTableColumns(isWaiting),
     ],
     [isWaiting, network.nativeExplorerUrl, network.polkadotJsDashboardUrl],
   );

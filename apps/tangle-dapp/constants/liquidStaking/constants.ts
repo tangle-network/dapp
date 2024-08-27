@@ -2,16 +2,19 @@ import { HexString } from '@polkadot/util/types';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
+import POLKADOT from '../../data/liquidStaking/adapters/polkadot';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 import { IS_PRODUCTION_ENV } from '../env';
 import {
-  LsLiquifierProtocolDef,
-  LsLiquifierProtocolId,
+  LsLiquifierProtocolDef as LsLiquifierTokenDef,
+  LsLiquifierProtocolId as LsLiquifierTokenId,
   LsParachainChainDef,
   LsParachainChainId,
   LsParachainToken,
   LsProtocolDef,
   LsProtocolId,
+  LsProtocolType,
+  LsProtocolTypeMetadata as LsNetwork,
   LsToken,
 } from './types';
 
@@ -31,8 +34,8 @@ const SEPOLIA_TESTNET_CONTRACTS = {
   UNLOCKS: '0x32d70bC73d0965209Cf175711b010dE6A7650c2B',
 } as const satisfies Record<string, HexString>;
 
-const CHAINLINK: LsLiquifierProtocolDef = {
-  type: 'liquifier',
+const CHAINLINK: LsLiquifierTokenDef = {
+  type: LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER,
   id: LsProtocolId.CHAINLINK,
   name: 'Chainlink',
   chainIconFileName: 'chainlink',
@@ -54,8 +57,8 @@ const CHAINLINK: LsLiquifierProtocolDef = {
   unstakingPeriod: 7,
 };
 
-const THE_GRAPH: LsLiquifierProtocolDef = {
-  type: 'liquifier',
+const THE_GRAPH: LsLiquifierTokenDef = {
+  type: LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER,
   id: LsProtocolId.THE_GRAPH,
   name: 'The Graph',
   chainIconFileName: 'the-graph',
@@ -77,8 +80,8 @@ const THE_GRAPH: LsLiquifierProtocolDef = {
   unstakingPeriod: 28,
 };
 
-const LIVEPEER: LsLiquifierProtocolDef = {
-  type: 'liquifier',
+const LIVEPEER: LsLiquifierTokenDef = {
+  type: LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER,
   id: LsProtocolId.LIVEPEER,
   name: 'Livepeer',
   chainIconFileName: 'livepeer',
@@ -100,8 +103,8 @@ const LIVEPEER: LsLiquifierProtocolDef = {
   unstakingPeriod: 7,
 };
 
-const POLYGON: LsLiquifierProtocolDef = {
-  type: 'liquifier',
+const POLYGON: LsLiquifierTokenDef = {
+  type: LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER,
   id: LsProtocolId.POLYGON,
   name: 'Polygon',
   chainIconFileName: 'polygon',
@@ -123,21 +126,8 @@ const POLYGON: LsLiquifierProtocolDef = {
   unstakingPeriod: 82,
 };
 
-const POLKADOT: LsParachainChainDef = {
-  type: 'parachain',
-  id: LsProtocolId.POLKADOT,
-  name: 'Polkadot',
-  token: LsToken.DOT,
-  chainIconFileName: 'polkadot',
-  currency: 'Dot',
-  decimals: 10,
-  rpcEndpoint: 'wss://polkadot-rpc.dwellir.com',
-  timeUnit: CrossChainTimeUnit.POLKADOT_ERA,
-  unstakingPeriod: 28,
-};
-
 const PHALA: LsParachainChainDef = {
-  type: 'parachain',
+  type: LsProtocolType.TANGLE_RESTAKING_PARACHAIN,
   id: LsProtocolId.PHALA,
   name: 'Phala',
   token: LsToken.PHALA,
@@ -147,10 +137,11 @@ const PHALA: LsParachainChainDef = {
   rpcEndpoint: 'wss://api.phala.network/ws',
   timeUnit: CrossChainTimeUnit.DAY,
   unstakingPeriod: 7,
+  ss58Prefix: 30,
 };
 
 const MOONBEAM: LsParachainChainDef = {
-  type: 'parachain',
+  type: LsProtocolType.TANGLE_RESTAKING_PARACHAIN,
   id: LsProtocolId.MOONBEAM,
   name: 'Moonbeam',
   token: LsToken.GLMR,
@@ -161,10 +152,11 @@ const MOONBEAM: LsParachainChainDef = {
   rpcEndpoint: 'wss://moonbeam.api.onfinality.io/public-ws',
   timeUnit: CrossChainTimeUnit.MOONBEAM_ROUND,
   unstakingPeriod: 28,
+  ss58Prefix: 1284,
 };
 
 const ASTAR: LsParachainChainDef = {
-  type: 'parachain',
+  type: LsProtocolType.TANGLE_RESTAKING_PARACHAIN,
   id: LsProtocolId.ASTAR,
   name: 'Astar',
   token: LsToken.ASTAR,
@@ -175,10 +167,11 @@ const ASTAR: LsParachainChainDef = {
   rpcEndpoint: 'wss://astar.api.onfinality.io/public-ws',
   timeUnit: CrossChainTimeUnit.ASTAR_ERA,
   unstakingPeriod: 7,
+  ss58Prefix: 5,
 };
 
 const MANTA: LsParachainChainDef = {
-  type: 'parachain',
+  type: LsProtocolType.TANGLE_RESTAKING_PARACHAIN,
   id: LsProtocolId.MANTA,
   name: 'Manta',
   token: LsToken.MANTA,
@@ -189,10 +182,11 @@ const MANTA: LsParachainChainDef = {
   rpcEndpoint: 'wss://ws.manta.systems',
   timeUnit: CrossChainTimeUnit.DAY,
   unstakingPeriod: 7,
+  ss58Prefix: 77,
 };
 
 const TANGLE_RESTAKING_PARACHAIN: LsParachainChainDef = {
-  type: 'parachain',
+  type: LsProtocolType.TANGLE_RESTAKING_PARACHAIN,
   id: LsProtocolId.TANGLE_RESTAKING_PARACHAIN,
   name: 'Tangle Parachain',
   token: LsToken.TNT,
@@ -203,6 +197,8 @@ const TANGLE_RESTAKING_PARACHAIN: LsParachainChainDef = {
   timeUnit: CrossChainTimeUnit.TANGLE_RESTAKING_PARACHAIN_ERA,
   // TODO: The Tangle Restaking Parachain is a special case.
   unstakingPeriod: 0,
+  // TODO: Update with the actual value. Using dummy value for now.
+  ss58Prefix: 58,
 };
 
 export const LS_PARACHAIN_CHAIN_MAP: Record<
@@ -218,8 +214,8 @@ export const LS_PARACHAIN_CHAIN_MAP: Record<
 };
 
 export const LS_LIQUIFIER_PROTOCOL_MAP: Record<
-  LsLiquifierProtocolId,
-  LsLiquifierProtocolDef
+  LsLiquifierTokenId,
+  LsLiquifierTokenDef
 > = {
   [LsProtocolId.CHAINLINK]: CHAINLINK,
   [LsProtocolId.THE_GRAPH]: THE_GRAPH,
@@ -237,12 +233,12 @@ export const LS_LIQUIFIER_PROTOCOL_IDS = [
   LsProtocolId.THE_GRAPH,
   LsProtocolId.LIVEPEER,
   LsProtocolId.POLYGON,
-] as const satisfies LsLiquifierProtocolId[];
+] as const satisfies LsLiquifierTokenId[];
 
 export const LS_PARACHAIN_CHAIN_IDS = Object.values(LsProtocolId).filter(
   (value): value is LsParachainChainId =>
     typeof value !== 'string' &&
-    !LS_LIQUIFIER_PROTOCOL_IDS.includes(value as LsLiquifierProtocolId),
+    !LS_LIQUIFIER_PROTOCOL_IDS.includes(value as LsLiquifierTokenId),
 ) satisfies LsParachainChainId[];
 
 export const LS_PARACHAIN_TOKENS = [
@@ -258,3 +254,29 @@ export const TVS_TOOLTIP =
   "Total Value Staked (TVS) refers to the total value of assets that are currently staked for this network in fiat currency. Generally used as an indicator of a network's security and trustworthiness.";
 
 export const LST_PREFIX = 'tg';
+
+export const LS_ETHEREUM_MAINNET_LIQUIFIER: LsNetwork = {
+  type: LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER,
+  networkName: 'Ethereum Mainnet',
+  chainIconFileName: 'ethereum',
+  protocols: [CHAINLINK, THE_GRAPH, LIVEPEER, POLYGON],
+};
+
+export const LS_TANGLE_RESTAKING_PARACHAIN: LsNetwork = {
+  type: LsProtocolType.TANGLE_RESTAKING_PARACHAIN,
+  networkName: 'Tangle Restaking Parachain',
+  chainIconFileName: 'tangle',
+  protocols: [
+    POLKADOT,
+    PHALA,
+    MOONBEAM,
+    ASTAR,
+    MANTA,
+    TANGLE_RESTAKING_PARACHAIN,
+  ],
+};
+
+export const LS_NETWORKS: LsNetwork[] = [
+  LS_ETHEREUM_MAINNET_LIQUIFIER,
+  LS_TANGLE_RESTAKING_PARACHAIN,
+];

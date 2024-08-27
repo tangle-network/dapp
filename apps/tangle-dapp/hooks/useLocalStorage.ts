@@ -9,7 +9,7 @@ import {
   Collator,
   Dapp,
   Validator,
-  VaultOrStakePool,
+  PhalaVaultOrStakePool,
 } from '../types/liquidStaking';
 import Optional from '../utils/Optional';
 
@@ -36,7 +36,7 @@ export type PayoutsCache = {
 };
 
 export type LiquidStakingTableData = {
-  [chain: string]: Validator[] | VaultOrStakePool[] | Dapp[] | Collator[];
+  [chain: string]: Validator[] | PhalaVaultOrStakePool[] | Dapp[] | Collator[];
 };
 
 export type SubstrateWalletsMetadataEntry = {

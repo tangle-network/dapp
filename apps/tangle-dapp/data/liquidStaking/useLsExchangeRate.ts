@@ -8,6 +8,7 @@ import LIQUIFIER_TG_TOKEN_ABI from '../../constants/liquidStaking/liquifierTgTok
 import {
   LsParachainCurrencyKey,
   LsProtocolId,
+  LsProtocolType,
 } from '../../constants/liquidStaking/types';
 import useApiRx from '../../hooks/useApiRx';
 import calculateBnRatio from '../../utils/calculateBnRatio';
@@ -53,7 +54,7 @@ const useLsExchangeRate = (
   const protocol = getLsProtocolDef(protocolId);
 
   const { result: tokenPoolAmount } = useApiRx((api) => {
-    if (protocol.type !== 'parachain') {
+    if (protocol.type !== LsProtocolType.TANGLE_RESTAKING_PARACHAIN) {
       return null;
     }
 
@@ -66,7 +67,7 @@ const useLsExchangeRate = (
   }, TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint);
 
   const { result: lstTotalIssuance } = useApiRx((api) => {
-    if (protocol.type !== 'parachain') {
+    if (protocol.type !== LsProtocolType.TANGLE_RESTAKING_PARACHAIN) {
       return null;
     }
 
@@ -86,7 +87,7 @@ const useLsExchangeRate = (
     typeof LIQUIFIER_TG_TOKEN_ABI,
     'totalSupply'
   > | null => {
-    if (protocol.type !== 'liquifier') {
+    if (protocol.type !== LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER) {
       return null;
     }
 
@@ -101,7 +102,7 @@ const useLsExchangeRate = (
     typeof LIQUIFIER_ADAPTER_ABI,
     'totalShares'
   > | null => {
-    if (protocol.type !== 'liquifier') {
+    if (protocol.type !== LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER) {
       return null;
     }
 
@@ -142,7 +143,7 @@ const useLsExchangeRate = (
 
   const fetcher = useCallback(async () => {
     const promise =
-      protocol.type === 'parachain'
+      protocol.type === LsProtocolType.TANGLE_RESTAKING_PARACHAIN
         ? parachainExchangeRate
         : fetchLiquifierExchangeRate();
 
@@ -153,7 +154,8 @@ const useLsExchangeRate = (
   // on whether the requested protocol is a parachain or an ERC20 token.
   // This helps prevent unnecessary requests.
   useEffect(() => {
-    const isPaused = protocol.type === 'parachain';
+    const isPaused =
+      protocol.type === LsProtocolType.TANGLE_RESTAKING_PARACHAIN;
 
     setIsTgTokenTotalSupplyPaused(isPaused);
     setIsLiquifierTotalSharesPaused(isPaused);

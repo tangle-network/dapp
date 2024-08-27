@@ -5,6 +5,7 @@ import {
 import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 
+import { AnyValidator, LsAdapterDef } from '../../data/liquidStaking/adapter';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 
 export enum LsProtocolId {
@@ -49,25 +50,34 @@ export type LsLiquifierProtocolToken =
 
 export type LsParachainToken = Exclude<LsToken, LsLiquifierProtocolToken>;
 
-type ProtocolDefCommon = {
+type ProtocolDefCommon<T extends AnyValidator> = {
   name: string;
   decimals: number;
   timeUnit: CrossChainTimeUnit;
   unstakingPeriod: number;
   chainIconFileName: string;
+  adapter: LsAdapterDef<T>;
 };
 
-export interface LsParachainChainDef extends ProtocolDefCommon {
-  type: 'parachain';
+export enum LsProtocolType {
+  TANGLE_RESTAKING_PARACHAIN,
+  ETHEREUM_MAINNET_LIQUIFIER,
+}
+
+export interface LsParachainChainDef<T extends AnyValidator = AnyValidator>
+  extends ProtocolDefCommon<T> {
+  type: LsProtocolType.TANGLE_RESTAKING_PARACHAIN;
   id: LsParachainChainId;
   name: string;
   token: LsParachainToken;
   currency: ParachainCurrency;
   rpcEndpoint: string;
+  ss58Prefix: number;
 }
 
-export interface LsLiquifierProtocolDef extends ProtocolDefCommon {
-  type: 'liquifier';
+export interface LsLiquifierProtocolDef<T extends AnyValidator = AnyValidator>
+  extends ProtocolDefCommon<T> {
+  type: LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER;
   id: LsLiquifierProtocolId;
   token: LsLiquifierProtocolToken;
   erc20TokenAddress: HexString;
@@ -116,4 +126,11 @@ export type LsParachainTimeUnit = TanglePrimitivesTimeUnit['type'];
 export type LsSimpleParachainTimeUnit = {
   value: number;
   unit: LsParachainTimeUnit;
+};
+
+export type LsProtocolTypeMetadata = {
+  type: LsProtocolType;
+  networkName: string;
+  chainIconFileName: string;
+  protocols: LsProtocolDef[];
 };

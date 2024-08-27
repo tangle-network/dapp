@@ -2,7 +2,10 @@ import { useCallback, useEffect } from 'react';
 
 import { LS_REGISTRY_ADDRESS } from '../../../constants/liquidStaking/constants';
 import LIQUIFIER_REGISTRY_ABI from '../../../constants/liquidStaking/liquifierRegistryAbi';
-import { LsProtocolId } from '../../../constants/liquidStaking/types';
+import {
+  LsProtocolId,
+  LsProtocolType,
+} from '../../../constants/liquidStaking/types';
 import useParachainLsFees from '../../../data/liquidStaking/useParachainLsFees';
 import useContractRead from '../../../data/liquifier/useContractRead';
 import { ContractReadOptions } from '../../../data/liquifier/useContractReadOnce';
@@ -24,7 +27,7 @@ const useLsFeePermill = (protocolId: LsProtocolId, isMinting: boolean) => {
     typeof LIQUIFIER_REGISTRY_ABI,
     'fee'
   > | null => {
-    if (protocol.type !== 'liquifier') {
+    if (protocol.type !== LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER) {
       return null;
     }
 
@@ -44,7 +47,9 @@ const useLsFeePermill = (protocolId: LsProtocolId, isMinting: boolean) => {
   // Pause liquifier fee fetching if the protocol is a parachain chain.
   // This helps prevent unnecessary contract read calls.
   useEffect(() => {
-    setIsLiquifierFeePaused(protocol.type === 'parachain');
+    setIsLiquifierFeePaused(
+      protocol.type === LsProtocolType.TANGLE_RESTAKING_PARACHAIN,
+    );
   }, [protocol.type, setIsLiquifierFeePaused]);
 
   // The fee should be returned as a per-mill value from the liquifier contract.
@@ -55,7 +60,7 @@ const useLsFeePermill = (protocolId: LsProtocolId, isMinting: boolean) => {
         ? null
         : Number(rawLiquifierFeeOrError);
 
-  return protocol.type === 'parachain'
+  return protocol.type === LsProtocolType.TANGLE_RESTAKING_PARACHAIN
     ? parachainFee
     : liquifierFeePermillOrError;
 };

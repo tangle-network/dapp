@@ -1,14 +1,17 @@
 import { BN_ZERO } from '@polkadot/util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { LsProtocolId } from '../../constants/liquidStaking/types';
+import {
+  LsProtocolId,
+  LsProtocolType,
+} from '../../constants/liquidStaking/types';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import {
   Collator,
   Dapp,
   LiquidStakingItem,
   Validator,
-  VaultOrStakePool,
+  PhalaVaultOrStakePool,
 } from '../../types/liquidStaking';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import {
@@ -23,9 +26,9 @@ import {
   fetchTokenSymbol,
   fetchValidators,
   fetchVaultsAndStakePools,
-} from './helper';
+} from './fetchHelpers';
 
-const useLiquidStakingItems = (selectedChain: LsProtocolId) => {
+const useLsValidators = (selectedChain: LsProtocolId) => {
   const { setWithPreviousValue: setLiquidStakingTableData } = useLocalStorage(
     LocalStorageKey.LIQUID_STAKING_TABLE_DATA,
   );
@@ -33,7 +36,7 @@ const useLiquidStakingItems = (selectedChain: LsProtocolId) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [items, setItems] = useState<
-    Validator[] | VaultOrStakePool[] | Dapp[] | Collator[]
+    Validator[] | PhalaVaultOrStakePool[] | Dapp[] | Collator[]
   >([]);
 
   const dataType = useMemo(() => getDataType(selectedChain), [selectedChain]);
@@ -42,15 +45,18 @@ const useLiquidStakingItems = (selectedChain: LsProtocolId) => {
     async (protocolId: LsProtocolId) => {
       const protocol = getLsProtocolDef(protocolId);
 
-      if (protocol.type !== 'parachain') {
+      if (protocol.type !== LsProtocolType.TANGLE_RESTAKING_PARACHAIN) {
         setItems([]);
         setIsLoading(false);
 
         return;
       }
 
-      let fetchedItems: Validator[] | VaultOrStakePool[] | Dapp[] | Collator[] =
-        [];
+      let fetchedItems:
+        | Validator[]
+        | PhalaVaultOrStakePool[]
+        | Dapp[]
+        | Collator[] = [];
 
       switch (protocolId) {
         case LsProtocolId.POLKADOT:
@@ -112,7 +118,7 @@ const useLiquidStakingItems = (selectedChain: LsProtocolId) => {
   };
 };
 
-export default useLiquidStakingItems;
+export default useLsValidators;
 
 const getDataType = (chain: LsProtocolId) => {
   switch (chain) {
@@ -219,7 +225,7 @@ const getDapps = async (endpoint: string): Promise<Dapp[]> => {
 
 const getVaultsAndStakePools = async (
   endpoint: string,
-): Promise<VaultOrStakePool[]> => {
+): Promise<PhalaVaultOrStakePool[]> => {
   const [vaultsAndStakePools, chainDecimals, chainTokenSymbol] =
     await Promise.all([
       fetchVaultsAndStakePools(endpoint),

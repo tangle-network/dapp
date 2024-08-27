@@ -24,9 +24,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import useLiquidStakingItems from '../../data/liquidStaking/useLiquidStakingItems';
 import { useLiquidStakingStore } from '../../data/liquidStaking/useLiquidStakingStore';
-import { useLiquidStakingSelectionTableColumns } from '../../hooks/LiquidStaking/useLiquidStakingSelectionTableColumns';
+import useLsValidators from '../../data/liquidStaking/useLsValidators';
+import { useLsValidatorSelectionTableColumns } from '../../data/liquidStaking/useLsValidatorSelectionTableColumns';
 import {
   LiquidStakingItem,
   LiquidStakingItemType,
@@ -42,20 +42,16 @@ const SELECTED_ITEMS_COLUMN_SORT = {
   desc: false,
 } as const satisfies ColumnSort;
 
-export const LiquidStakingSelectionTable = () => {
-  const selectedChainId = useLiquidStakingStore(
-    (state) => state.selectedProtocolId,
-  );
-  const setSelectedItems = useLiquidStakingStore(
-    (state) => state.setSelectedItems,
-  );
-  const { isLoading, data, dataType } = useLiquidStakingItems(selectedChainId);
-
+export const LsValidatorTable = () => {
+  const { selectedProtocolId, setSelectedItems } = useLiquidStakingStore();
+  const { isLoading, data, dataType } = useLsValidators(selectedProtocolId);
   const [searchValue, setSearchValue] = useState('');
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
   const [sorting, setSorting] = useState<SortingState>([
     SELECTED_ITEMS_COLUMN_SORT,
   ]);
+
   const [pagination, setPagination] =
     useState<PaginationState>(DEFAULT_PAGINATION);
 
@@ -67,7 +63,7 @@ export const LiquidStakingSelectionTable = () => {
     setSelectedItems(new Set(Object.keys(rowSelection)));
   }, [rowSelection, setSelectedItems]);
 
-  const columns = useLiquidStakingSelectionTableColumns(
+  const columns = useLsValidatorSelectionTableColumns(
     toggleSortSelectionHandlerRef,
     dataType,
   ) as ColumnDef<LiquidStakingItemType, unknown>[];
@@ -99,15 +95,18 @@ export const LiquidStakingSelectionTable = () => {
   }, [dataType]);
 
   const tableData = useMemo(() => (isLoading ? [] : data), [data, isLoading]);
+
   const tableColumns = useMemo(
     () => (isLoading ? [] : columns),
     [columns, isLoading],
   );
 
   const tableIsLoading = useMemo(() => {
-    return (
-      (data.length > 0 && data[0].itemType !== dataType) || isLoading === true
-    );
+    if (isLoading) {
+      return true;
+    }
+
+    return data.length > 0 && data[0].itemType !== dataType;
   }, [data, dataType, isLoading]);
 
   const tableProps = useMemo<TableOptions<LiquidStakingItemType>>(
@@ -136,6 +135,7 @@ export const LiquidStakingSelectionTable = () => {
             typeof updaterOrValue === 'function'
               ? updaterOrValue(prev)
               : updaterOrValue;
+
           return newSorting.length === 0
             ? [SELECTED_ITEMS_COLUMN_SORT]
             : newSorting[0].id === 'id'
@@ -183,11 +183,11 @@ export const LiquidStakingSelectionTable = () => {
               </Typography>
 
               <Input
-                id="search"
+                id="ls-validator-selection-search"
                 rightIcon={<Search className="mr-2" />}
                 placeholder="Search"
                 value={searchValue}
-                onChange={(val) => setSearchValue(val)}
+                onChange={(newSearchValue) => setSearchValue(newSearchValue)}
                 className="mb-1"
                 debounceTime={300}
               />
@@ -224,6 +224,7 @@ export const LiquidStakingSelectionTable = () => {
           <div className="flex justify-center items-center min-h-[600px]">
             <div className="flex items-center justify-center gap-1">
               <Spinner size="md" />
+
               <Typography
                 variant="body1"
                 fw="normal"

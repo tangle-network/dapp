@@ -2,7 +2,10 @@ import { BN } from '@polkadot/util';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useMemo } from 'react';
 
-import { LsProtocolId } from '../../../constants/liquidStaking/types';
+import {
+  LsProtocolId,
+  LsProtocolType,
+} from '../../../constants/liquidStaking/types';
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
@@ -21,7 +24,7 @@ const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
       (api) => {
         const protocol = getLsProtocolDef(protocolId);
 
-        if (protocol.type !== 'parachain') {
+        if (protocol.type !== LsProtocolType.TANGLE_RESTAKING_PARACHAIN) {
           return null;
         }
 
@@ -39,7 +42,7 @@ const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
       (api) => {
         const protocol = getLsProtocolDef(protocolId);
 
-        if (protocol.type !== 'parachain') {
+        if (protocol.type !== LsProtocolType.TANGLE_RESTAKING_PARACHAIN) {
           return null;
         }
 

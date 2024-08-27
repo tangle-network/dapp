@@ -2,7 +2,7 @@
 
 import { FC } from 'react';
 
-import { LiquidStakingSelectionTable } from '../../components/LiquidStaking/LiquidStakingSelectionTable';
+import { LsValidatorTable } from '../../components/LiquidStaking/LsValidatorTable';
 import LiquidStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LiquidStakeCard';
 import LiquidUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LiquidUnstakeCard';
 import UnstakeRequestsTable from '../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
@@ -45,7 +45,7 @@ const LiquidStakingTokenPage: FC = () => {
       </div>
 
       <div className="flex flex-col flex-grow w-min gap-4 min-w-[370px]">
-        {isStaking ? <LiquidStakingSelectionTable /> : <UnstakeRequestsTable />}
+        {isStaking ? <LsValidatorTable /> : <UnstakeRequestsTable />}
       </div>
     </div>
   );

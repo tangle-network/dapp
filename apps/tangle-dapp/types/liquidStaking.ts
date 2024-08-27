@@ -23,7 +23,7 @@ export type Validator = {
 } & StakingItem;
 
 // Chain - Phala Network (Stake on Vaults or Stake Pools)
-export type VaultOrStakePool = {
+export type PhalaVaultOrStakePool = {
   vaultOrStakePoolID: string;
   vaultOrStakePoolName: string;
   vaultOrStakePoolAccountID: string;
@@ -55,7 +55,7 @@ export enum LiquidStakingItem {
 
 export type LiquidStakingItemType =
   | Validator
-  | VaultOrStakePool
+  | PhalaVaultOrStakePool
   | Dapp
   | Collator;
 

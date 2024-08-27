@@ -19,6 +19,7 @@ import { z } from 'zod';
 import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
   LsProtocolId,
+  LsProtocolType,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
 import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
@@ -87,13 +88,16 @@ const LiquidStakeCard: FC = () => {
       return;
     }
 
-    if (selectedProtocol.type === 'parachain' && executeMintTx !== null) {
+    if (
+      selectedProtocol.type === LsProtocolType.TANGLE_RESTAKING_PARACHAIN &&
+      executeMintTx !== null
+    ) {
       executeMintTx({
         amount: fromAmount,
         currency: selectedProtocol.currency,
       });
     } else if (
-      selectedProtocol.type === 'liquifier' &&
+      selectedProtocol.type === LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER &&
       performLiquifierDeposit !== null
     ) {
       await performLiquifierDeposit(selectedProtocol.id, fromAmount);
@@ -110,9 +114,10 @@ const LiquidStakeCard: FC = () => {
 
   const canCallStake =
     (fromAmount !== null &&
-      selectedProtocol.type === 'parachain' &&
+      selectedProtocol.type === LsProtocolType.TANGLE_RESTAKING_PARACHAIN &&
       executeMintTx !== null) ||
-    (selectedProtocol.type === 'liquifier' && performLiquifierDeposit !== null);
+    (selectedProtocol.type === LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER &&
+      performLiquifierDeposit !== null);
 
   const walletBalance = (
     <AgnosticLsBalance

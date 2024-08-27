@@ -13,12 +13,19 @@ import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea
 import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
-import { LsProtocolId, LsToken } from '../../../constants/liquidStaking/types';
+import {
+  LS_NETWORKS,
+  LST_PREFIX,
+} from '../../../constants/liquidStaking/constants';
+import {
+  LsProtocolId,
+  LsProtocolType,
+  LsToken,
+} from '../../../constants/liquidStaking/types';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
-import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
+import getLsProtocolTypeMetadata from '../../../utils/liquidStaking/getLsProtocolMetadata';
 import DropdownChevronIcon from './DropdownChevronIcon';
 import TokenChip from './TokenChip';
 
@@ -104,9 +111,9 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
         )}
       >
         <div className="flex justify-between">
-          <ProtocolSelector
-            selectedProtocolId={protocolId}
-            setProtocolId={setChainId}
+          <ProtocolTypeSelector
+            selectedProtocolType={protocolId}
+            setProtocolType={setChainId}
           />
 
           {rightElement}
@@ -145,31 +152,36 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   );
 };
 
-type ProtocolSelectorProps = {
-  selectedProtocolId: LsProtocolId;
+type ProtocolTypeSelectorProps = {
+  selectedProtocolType: LsProtocolType;
 
   /**
    * If this function is not provided, the selector will be
    * considered read-only.
    */
-  setProtocolId?: (newProtocolId: LsProtocolId) => void;
+  setProtocolType?: (newProtocolType: LsProtocolType) => void;
 };
 
 /** @internal */
-const ProtocolSelector: FC<ProtocolSelectorProps> = ({
-  selectedProtocolId,
-  setProtocolId,
+const ProtocolTypeSelector: FC<ProtocolTypeSelectorProps> = ({
+  selectedProtocolType,
+  setProtocolType,
 }) => {
-  const selectedProtocol = getLsProtocolDef(selectedProtocolId);
-  const isReadOnly = setProtocolId === undefined;
+  const isReadOnly = selectedProtocolType === undefined;
+
+  const selectedProtocolTypeMetadata =
+    getLsProtocolTypeMetadata(selectedProtocolType);
 
   const base = (
     <div className="group flex gap-1 items-center justify-center">
       <div className="flex gap-2 items-center justify-center">
-        <ChainIcon size="lg" name={selectedProtocol.chainIconFileName} />
+        <ChainIcon
+          size="lg"
+          name={selectedProtocolTypeMetadata.chainIconFileName}
+        />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          {selectedProtocol.name}
+          {selectedProtocolTypeMetadata.networkName}
         </Typography>
       </div>
 
@@ -177,39 +189,37 @@ const ProtocolSelector: FC<ProtocolSelectorProps> = ({
     </div>
   );
 
-  return setProtocolId !== undefined ? (
+  return setProtocolType !== undefined ? (
     <Dropdown>
       <DropdownMenuTrigger>{base}</DropdownMenuTrigger>
 
       <DropdownBody>
         <ScrollArea>
           <ul className="max-h-[300px]">
-            {Object.values(LsProtocolId)
-              .filter(
-                (protocolId): protocolId is LsProtocolId =>
-                  protocolId !== selectedProtocolId &&
-                  typeof protocolId !== 'string',
-              )
-              .map((protocolId) => {
-                const protocol = getLsProtocolDef(protocolId);
+            {LS_NETWORKS.map((protocolTypeMetadata) => {
+              return (
+                <li key={protocolTypeMetadata.type}>
+                  <DropdownMenuItem
+                    onClick={() => setProtocolType(protocolTypeMetadata.type)}
+                  >
+                    <div className="flex gap-2 items-center justify-center">
+                      <ChainIcon
+                        size="lg"
+                        name={protocolTypeMetadata.chainIconFileName}
+                      />
 
-                return (
-                  <li key={protocolId} className="w-full">
-                    <DropdownMenuItem
-                      leftIcon={
-                        <ChainIcon
-                          size="lg"
-                          name={protocol.chainIconFileName}
-                        />
-                      }
-                      onSelect={() => setProtocolId(protocolId)}
-                      className="px-3 normal-case"
-                    >
-                      {protocol.name}
-                    </DropdownMenuItem>
-                  </li>
-                );
-              })}
+                      <Typography
+                        variant="h5"
+                        fw="bold"
+                        className="dark:text-mono-40"
+                      >
+                        {protocolTypeMetadata.networkName}
+                      </Typography>
+                    </div>
+                  </DropdownMenuItem>
+                </li>
+              );
+            })}
           </ul>
         </ScrollArea>
       </DropdownBody>

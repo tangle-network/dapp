@@ -5,6 +5,7 @@ import { Address } from 'viem';
 import { BaseUnstakeRequest } from '../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import LIQUIFIER_UNLOCKS_ABI from '../../constants/liquidStaking/liquifierUnlocksAbi';
+import { LsProtocolType } from '../../constants/liquidStaking/types';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import { useLiquidStakingStore } from '../liquidStaking/useLiquidStakingStore';
@@ -56,7 +57,10 @@ const useLiquifierNftUnlocks = (): LiquifierUnlockNftMetadata[] | null => {
     typeof LIQUIFIER_UNLOCKS_ABI,
     'balanceOf'
   > | null => {
-    if (activeEvmAddress20 === null || protocol.type !== 'liquifier') {
+    if (
+      activeEvmAddress20 === null ||
+      protocol.type !== LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER
+    ) {
       return null;
     }
 
@@ -98,7 +102,7 @@ const useLiquifierNftUnlocks = (): LiquifierUnlockNftMetadata[] | null => {
     if (
       // Do not fetch if there's no active EVM account.
       activeEvmAddress20 === null ||
-      protocol.type !== 'liquifier' ||
+      protocol.type !== LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER ||
       unlockIds === null
     ) {
       return null;
