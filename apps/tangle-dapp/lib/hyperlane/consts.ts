@@ -1,44 +1,82 @@
-import { ChainMap, ChainMetadata, WarpCoreConfig } from '@hyperlane-xyz/sdk';
+import {
+  ChainMap,
+  ChainMetadata,
+  TokenStandard,
+  WarpCoreConfig,
+} from '@hyperlane-xyz/sdk';
 
-export const customChains: ChainMap<ChainMetadata> = {
-  // mycustomchain: {
-  //   protocol: ProtocolType.Ethereum,
-  //   chainId: 123123,
-  //   domainId: 123123,
-  //   name: 'mycustomchain',
-  //   displayName: 'My Chain',
-  //   nativeToken: { name: 'Ether', symbol: 'ETH', decimals: 18 },
-  //   rpcUrls: [{ http: 'https://mycustomchain-rpc.com' }],
-  //   blockExplorers: [
-  //     {
-  //       name: 'MyCustomScan',
-  //       url: 'https://mycustomchain-scan.com',
-  //       apiUrl: 'https://api.mycustomchain-scan.com/api',
-  //       family: ExplorerFamily.Etherscan,
-  //     },
-  //   ],
-  //   blocks: {
-  //     confirmations: 1,
-  //     reorgPeriod: 1,
-  //     estimateBlockTime: 10,
-  //   },
-  //   logoURI: '/logo.svg',
-  // },
-};
+export const customChains: ChainMap<ChainMetadata> = {};
 
 // A list of Warp Route token configs
 // These configs will be merged with the warp routes in the configured registry
+// NOTE: the route configs was deployed with Hyperlane SDK. Link: https://docs.hyperlane.xyz/docs/guides/deploy-warp-route
+// TODO: remove these routes (this is for testing Hyperlane only)
 export const customWarpRouteConfigs: WarpCoreConfig = {
-  tokens: [],
-  options: {},
+  tokens: [
+    {
+      addressOrDenom: '0x9DB8ebb2666E2e9f6864A82272199632eE45d182',
+      chainName: 'holesky',
+      collateralAddressOrDenom: '0x94373a4919B3240D86eA41593D5eBa789FEF3848',
+      connections: [
+        {
+          token: 'ethereum|sepolia|0x0F4C1d951295Fe17c1514eB3020dFA6EedAd0137',
+        },
+      ],
+      decimals: 18,
+      name: 'Wrapped Ether',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'WETH',
+    },
+    {
+      addressOrDenom: '0x0F4C1d951295Fe17c1514eB3020dFA6EedAd0137',
+      chainName: 'sepolia',
+      connections: [
+        {
+          token: 'ethereum|holesky|0x9DB8ebb2666E2e9f6864A82272199632eE45d182',
+        },
+      ],
+      decimals: 18,
+      name: 'Wrapped Ether',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'WETH',
+    },
+  ],
+  // options: {
+  //   localFeeConstants: [
+  //     {
+  //       amount: BigInt('10000000000000000'),
+  //       origin: 'sepolia',
+  //       destination: 'basesepolia',
+  //       addressOrDenom: '0xA9F30c6B5E7996D1bAd51D213277c30750bcBB36',
+  //     },
+  //     {
+  //       amount: BigInt('10000000000000000'),
+  //       origin: 'basesepolia',
+  //       destination: 'sepolia',
+  //       addressOrDenom: '0xb947F89269F0cF54CC721BcDE298a46930f3418b',
+  //     },
+  //   ],
+  //   interchainFeeConstants: [
+  //     {
+  //       amount: BigInt('20000000000000000'),
+  //       origin: 'sepolia',
+  //       destination: 'basesepolia',
+  //       addressOrDenom: '0xA9F30c6B5E7996D1bAd51D213277c30750bcBB36',
+  //     },
+  //     {
+  //       amount: BigInt('20000000000000000'),
+  //       origin: 'basesepolia',
+  //       destination: 'sepolia',
+  //       addressOrDenom: '0xb947F89269F0cF54CC721BcDE298a46930f3418b',
+  //     },
+  //   ],
+  // },
 };
 
 // A list of warp route config IDs to be included in the app
 // Warp Route IDs use format `SYMBOL/chainname1-chainname2...` where chains are ordered alphabetically
 // If left null, all warp routes in the configured registry will be included
 // If set to a list (including an empty list), only the specified routes will be included
-export const warpRouteWhitelist: Array<string> | null = null;
-// Example:
-// [
-//   // 'ETH/ethereum-viction'
-// ];
+export const warpRouteWhitelist: Array<string> | null = [
+  'WETH/holesky-sepolia',
+];

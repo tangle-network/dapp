@@ -30,7 +30,7 @@ export function tryFindToken(
   if (!warpCore) throw new Error('Hyperlane Warp Core not initialized');
 
   try {
-    return warpCore.findToken(chain, addressOrDenom) ?? null;
+    return warpCore.findToken(chain, addressOrDenom);
   } catch {
     return null;
   }

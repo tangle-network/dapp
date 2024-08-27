@@ -3,6 +3,7 @@ export enum EVMChainId {
   EthereumMainNet = 1,
   Goerli = 5,
   Sepolia = 11155111,
+  Holesky = 17000,
   Ganache = 1337,
 
   /* Added EVM Chains on MetaMask */

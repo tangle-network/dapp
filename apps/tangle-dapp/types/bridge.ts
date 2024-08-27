@@ -11,7 +11,8 @@ export enum BridgeType {
 }
 
 // Supported tokens to be used in the bridge
-export type BridgeTokenId = 'tTNT' | 'TNT' | 'sygUSD';
+// TODO: remove WETH later (this is for testing Hyperlane only)
+export type BridgeTokenId = 'tTNT' | 'TNT' | 'sygUSD' | 'WETH';
 
 export type ChainId = PresetTypedChainId;
 
@@ -43,6 +44,11 @@ export type BridgeTokenType = {
    * TODO: might need type only for EVM Chain Id
    */
   erc20TokenContractAddress?: Partial<Record<ChainId, HexString>>;
+
+  /**
+   * Address of the Route Contract of Hyperlane to bridge EVM assets
+   */
+  hyperlaneRouteContractAddress?: Partial<Record<ChainId, HexString>>;
 
   /**
    * The id of an asset on Substrate chain pallet

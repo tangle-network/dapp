@@ -7,6 +7,7 @@ import {
   arbitrumGoerli,
   avalancheFuji,
   goerli,
+  holesky,
   moonbaseAlpha,
   optimismGoerli,
   polygonMumbai,
@@ -36,6 +37,7 @@ export const wagmiChains = [
   hermesLocalnet,
   athenaLocalnet,
   demeterLocalnet,
+  holesky,
 ] as const;
 
 export const chainsConfig = {
@@ -148,5 +150,12 @@ export const chainsConfig = {
     group: 'webb-dev',
     tag: 'dev',
     env: ['development'],
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.Holesky]: {
+    ...holesky,
+    chainType: ChainType.EVM,
+    group: 'ethereum',
+    tag: 'test',
   } satisfies ChainConfig,
 } as const satisfies Record<number, ChainConfig>;

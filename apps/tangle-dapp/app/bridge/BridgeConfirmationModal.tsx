@@ -121,14 +121,14 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
               bridgeTx();
               handleClose(); // TODO: handle clear form
             }}
-            isDisabled={
-              isBridgeFeeLoading ||
-              isEstimatedGasFeeLoading ||
-              bridgeFee === null ||
-              !sourceAmountInDecimals ||
-              !destinationAmountInDecimals ||
-              !destinationAddress
-            }
+            // isDisabled={
+            //   isBridgeFeeLoading ||
+            //   isEstimatedGasFeeLoading ||
+            //   bridgeFee === null ||
+            //   !sourceAmountInDecimals ||
+            //   !destinationAmountInDecimals ||
+            //   !destinationAddress
+            // }
           >
             Confirm
           </Button>

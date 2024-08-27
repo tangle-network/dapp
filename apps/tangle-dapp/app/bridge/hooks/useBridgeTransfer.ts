@@ -1,11 +1,13 @@
 'use client';
 
+import { ProviderType } from '@hyperlane-xyz/sdk';
 import { providers } from 'ethers';
 
 import { useBridge } from '../../../context/BridgeContext';
 import { useBridgeTxQueue } from '../../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSubstrateInjectedExtension from '../../../hooks/useSubstrateInjectedExtension';
+import { hyperlaneTransfer } from '../../../lib/hyperlane/transfer';
 import { BridgeTxState, BridgeType } from '../../../types/bridge';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
@@ -58,7 +60,79 @@ export default function useBridgeTransfer({
     }
 
     switch (bridgeType) {
-      case BridgeType.SYGMA_EVM_TO_EVM:
+      case BridgeType.SYGMA_EVM_TO_EVM: {
+        if (ethersProvider === null) {
+          throw new Error('No Ethers Provider found');
+        }
+        if (ethersSigner === null) {
+          throw new Error('No Ethers Signer found');
+        }
+
+        const hyperlaneResult = await hyperlaneTransfer({
+          sourceTypedChainId,
+          destinationTypedChainId,
+          senderAddress: activeAccountAddress,
+          recipientAddress: destinationAddress,
+          token: selectedToken,
+          amount: formattedAmount,
+        });
+
+        if (!hyperlaneResult) throw new Error('Hyperlane transfer failed');
+        const { txs } = hyperlaneResult;
+
+        for (const tx of txs) {
+          // Note, this doesn't use wagmi's prepare + send pattern because we're potentially sending two transactions
+          // The prepare hooks are recommended to use pre-click downtime to run async calls, but since the flow
+          // may require two serial txs, the prepare hooks aren't useful and complicate hook architecture considerably.
+          // See https://github.com/hyperlane-xyz/hyperlane-warp-ui-template/issues/19
+          // See https://github.com/wagmi-dev/wagmi/discussions/1564
+          if (tx.type !== ProviderType.EthersV5) {
+            throw new Error('Unsupported provider type');
+          }
+        }
+
+        for (const [idx, tx] of txs.entries()) {
+          const res = await ethersSigner.sendTransaction(
+            tx.transaction as providers.TransactionRequest,
+          );
+
+          // There are two transactions, one for approvals and one for actual transfer
+          // We only want to add the actual transfer to the queue
+          if (idx === txs.length - 1) {
+            const txHash = res.hash;
+            // add Tx to Queue
+            addTxToQueue({
+              hash: txHash,
+              env:
+                selectedSourceChain.tag === 'live'
+                  ? 'live'
+                  : selectedSourceChain.tag === 'test'
+                    ? 'test'
+                    : 'dev',
+              sourceTypedChainId,
+              destinationTypedChainId,
+              sourceAddress: activeAccountAddress,
+              recipientAddress: destinationAddress,
+              sourceAmount: sourceAmountInDecimals.toString(),
+              destinationAmount: destinationAmountInDecimals.toString(),
+              tokenSymbol: selectedToken.symbol,
+              creationTimestamp: new Date().getTime(),
+              state: BridgeTxState.Sending,
+            });
+
+            onTxAddedToQueue();
+
+            const receipt = await res.wait();
+            if (receipt.status === 1) {
+              updateTxState(txHash, BridgeTxState.Executed);
+            } else {
+              updateTxState(txHash, BridgeTxState.Failed);
+            }
+          }
+        }
+        break;
+      }
+
       case BridgeType.SYGMA_EVM_TO_SUBSTRATE: {
         if (ethersProvider === null) {
           throw new Error('No Ethers Provider found');

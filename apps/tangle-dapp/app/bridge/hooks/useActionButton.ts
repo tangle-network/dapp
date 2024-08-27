@@ -142,16 +142,16 @@ export default function useActionButton({
 
   return {
     isLoading: loading || isConnecting,
-    isDisabled:
-      isRequiredToConnectWallet || isEvmWrongChain
-        ? false
-        : isInputInsufficient ||
-          isAmountInputError ||
-          isAddressInputError ||
-          isBridgeFeeLoading ||
-          isEstimatedGasFeeLoading ||
-          bridgeFee === null ||
-          isTransferring,
+    isDisabled: false,
+      // isRequiredToConnectWallet || isEvmWrongChain
+      //   ? false
+      //   : isInputInsufficient ||
+      //     isAmountInputError ||
+      //     isAddressInputError ||
+      //     isBridgeFeeLoading ||
+      //     isEstimatedGasFeeLoading ||
+      //     bridgeFee === null ||
+      //     isTransferring,
     buttonAction,
     buttonText,
     buttonLoadingText,
