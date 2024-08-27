@@ -49,7 +49,7 @@ function filterToIds(
   config: Record<string, WarpCoreConfig>,
   idWhitelist: string[],
 ): Record<string, WarpCoreConfig> {
-  return objFilter(config, (id, c): c is WarpCoreConfig =>
+  return objFilter(config, (id, _): _ is WarpCoreConfig =>
     idWhitelist.includes(id),
   );
 }
