@@ -1,36 +1,65 @@
-import { Typography } from '@webb-tools/webb-ui-components';
+'use client';
+
 import { FC } from 'react';
 
-import VaultsAndAssetsTable from '../../components/LiquidStaking/VaultsAndAssetsTable';
-import StatItem from '../../components/StatItem';
+import { LiquidStakingSelectionTable } from '../../components/LiquidStaking/LiquidStakingSelectionTable';
+import LiquidStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LiquidStakeCard';
+import LiquidUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LiquidUnstakeCard';
+import UnlockNftsTable from '../../components/LiquidStaking/unlockNftsTable/UnlockNftsTable';
+import UnstakeRequestsTable from '../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
+import { LsSearchParamKey } from '../../constants/liquidStaking/types';
+import { useLiquidStakingStore } from '../../data/liquidStaking/useLiquidStakingStore';
+import useSearchParamState from '../../hooks/useSearchParamState';
+import isLsParachainChainId from '../../utils/liquidStaking/isLsParachainChainId';
+import TabListItem from '../restake/TabListItem';
+import TabsList from '../restake/TabsList';
 
-const LiquidStakingPage: FC = () => {
+enum SearchParamAction {
+  STAKE = 'stake',
+  UNSTAKE = 'unstake',
+}
+
+const LiquidStakingTokenPage: FC = () => {
+  const [isStaking, setIsStaking] = useSearchParamState({
+    defaultValue: true,
+    key: LsSearchParamKey.ACTION,
+    parser: (value) => value === SearchParamAction.STAKE,
+    stringify: (value) =>
+      value ? SearchParamAction.STAKE : SearchParamAction.UNSTAKE,
+  });
+
+  const { selectedProtocolId } = useLiquidStakingStore();
+
   return (
-    <div className="flex flex-col gap-10">
-      <div className="p-6 space-y-0 rounded-2xl flex flex-row items-center justify-between w-full overflow-x-auto bg-liquid_staking_banner dark:bg-liquid_staking_banner_dark">
-        <div className="flex flex-col gap-2">
-          <Typography variant="h5" fw="bold">
-            Tangle Liquid Staking
-          </Typography>
+    <div className="flex flex-wrap gap-12">
+      <div className="flex flex-col gap-4 w-full min-w-[450px] max-w-[600px]">
+        <TabsList className="w-full">
+          <TabListItem isActive={isStaking} onClick={() => setIsStaking(true)}>
+            Stake
+          </TabListItem>
 
-          <Typography
-            variant="body1"
-            fw="normal"
-            className="text-mono-120 dark:text-mono-100"
+          <TabListItem
+            isActive={!isStaking}
+            onClick={() => setIsStaking(false)}
           >
-            Get Liquid Staking Tokens (LSTs) to earn & unleash restaking on
-            Tangle Mainnet via delegation.
-          </Typography>
-        </div>
+            Unstake
+          </TabListItem>
+        </TabsList>
 
-        <div className="flex gap-6 h-full">
-          <StatItem title="$123.01" subtitle="My Total Staking" largeSubtitle />
-        </div>
+        {isStaking ? <LiquidStakeCard /> : <LiquidUnstakeCard />}
       </div>
 
-      <VaultsAndAssetsTable />
+      <div className="flex flex-col flex-grow w-min gap-4 min-w-[370px]">
+        {isStaking ? (
+          <LiquidStakingSelectionTable />
+        ) : isLsParachainChainId(selectedProtocolId) ? (
+          <UnstakeRequestsTable />
+        ) : (
+          <UnlockNftsTable tokenId={selectedProtocolId} />
+        )}
+      </div>
     </div>
   );
 };
 
-export default LiquidStakingPage;
+export default LiquidStakingTokenPage;

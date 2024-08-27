@@ -24,8 +24,8 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { useLiquidStakingStore } from '../../data/liquidStaking/store';
 import useLiquidStakingItems from '../../data/liquidStaking/useLiquidStakingItems';
+import { useLiquidStakingStore } from '../../data/liquidStaking/useLiquidStakingStore';
 import { useLiquidStakingSelectionTableColumns } from '../../hooks/LiquidStaking/useLiquidStakingSelectionTableColumns';
 import {
   LiquidStakingItem,
@@ -44,7 +44,7 @@ const SELECTED_ITEMS_COLUMN_SORT = {
 
 export const LiquidStakingSelectionTable = () => {
   const selectedChainId = useLiquidStakingStore(
-    (state) => state.selectedChainId,
+    (state) => state.selectedProtocolId,
   );
   const setSelectedItems = useLiquidStakingStore(
     (state) => state.setSelectedItems,

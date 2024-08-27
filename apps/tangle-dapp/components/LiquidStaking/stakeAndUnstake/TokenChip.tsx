@@ -2,13 +2,13 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { LST_PREFIX } from '../../../constants/liquidStaking';
-import { LiquidStakingToken } from '../../../types/liquidStaking';
-import LSTTokenIcon from '../../LSTTokenIcon';
+import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
+import { LsToken } from '../../../constants/liquidStaking/types';
+import LsTokenIcon from '../../LsTokenIcon';
 import DropdownChevronIcon from './DropdownChevronIcon';
 
 type TokenChipProps = {
-  token?: LiquidStakingToken;
+  token?: LsToken;
   isLiquidVariant: boolean;
   onClick?: () => void;
 };
@@ -22,7 +22,7 @@ const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
         onClick !== undefined && 'cursor-pointer',
       )}
     >
-      {token && <LSTTokenIcon name={token} />}
+      {token && <LsTokenIcon name={token} />}
 
       <Typography variant="h5" fw="bold">
         {isLiquidVariant && LST_PREFIX}

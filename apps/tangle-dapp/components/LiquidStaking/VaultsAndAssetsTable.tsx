@@ -14,7 +14,7 @@ import { twMerge } from 'tailwind-merge';
 import useVaults from '../../app/liquid-staking/useVaults';
 import StatItem from '../../components/StatItem';
 import { Asset, Vault } from '../../types/liquidStaking';
-import LSTTokenIcon from '../LSTTokenIcon';
+import LsTokenIcon from '../LsTokenIcon';
 import TableCellWrapper from '../TableCellWrapper';
 
 const vaultColumnHelper = createColumnHelper<Vault>();
@@ -26,7 +26,7 @@ const vaultColumns = [
     cell: (props) => (
       <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-2">
-          <LSTTokenIcon name={props.row.original.lstToken} size="lg" />
+          <LsTokenIcon name={props.row.original.lstToken} size="lg" />
           <Typography variant="h5" className="whitespace-nowrap">
             {props.getValue()}
           </Typography>

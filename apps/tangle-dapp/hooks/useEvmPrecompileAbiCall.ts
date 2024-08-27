@@ -1,7 +1,6 @@
 import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
-import { AddressType } from '@webb-tools/dapp-config/types';
 import { useCallback, useEffect, useState } from 'react';
 import type { Address, Hash } from 'viem';
 import {
@@ -21,23 +20,6 @@ import {
 import ensureError from '../utils/ensureError';
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
-
-// TODO: For some reason, Viem returns `any` for the tx receipt. Perhaps it is because it has no knowledge of the network, and thus no knowledge of its produced tx receipts. As a temporary workaround, use this custom type.
-type TxReceipt = {
-  transactionHash: AddressType;
-  transactionIndex: number;
-  blockHash: AddressType;
-  from: AddressType;
-  to: AddressType | null;
-  blockNumber: bigint;
-  cumulativeGasUsed: bigint;
-  gasUsed: bigint;
-  logs: unknown[];
-  logsBloom: string;
-  status: 'success' | 'reverted';
-  type: string;
-  contractAddress: unknown | null;
-};
 
 export type AbiCallArg = string | number | BN | boolean;
 
@@ -89,7 +71,7 @@ function useEvmPrecompileAbiCall<
   const [txHash, setTxHash] = useState<HexString | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const activeEvmAddress = useEvmAddress20();
+  const activeEvmAddress20 = useEvmAddress20();
   const { data: connectorClient } = useConnectorClient();
 
   // Useful for debugging.
@@ -102,7 +84,7 @@ function useEvmPrecompileAbiCall<
   const execute = useCallback(
     async (context: Context) => {
       if (
-        activeEvmAddress === null ||
+        activeEvmAddress20 === null ||
         status === TxStatus.PROCESSING ||
         connectorClient === undefined
       ) {
@@ -128,22 +110,22 @@ function useEvmPrecompileAbiCall<
           abi: getPrecompileAbi(precompile),
           functionName: factoryResult.functionName,
           args: factoryResult.arguments,
-          account: activeEvmAddress,
+          account: activeEvmAddress20,
         });
 
         const newTxHash = await writeContract(connectorClient, request);
 
         setTxHash(newTxHash);
 
-        const txReceipt: TxReceipt = await waitForTransactionReceipt(
-          connectorClient,
-          {
-            hash: newTxHash,
-            // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
-          },
-        );
+        const txReceipt = await waitForTransactionReceipt(connectorClient, {
+          hash: newTxHash,
+          // TODO: Make use of the `timeout` parameter, and error handle if it fails due to timeout.
+        });
 
-        console.debug('EVM transaction receipt:', txReceipt);
+        console.debug(
+          'EVM pre-compile ABI call transaction receipt:',
+          txReceipt,
+        );
 
         setStatus(
           txReceipt.status === 'success' ? TxStatus.COMPLETE : TxStatus.ERROR,
@@ -164,7 +146,7 @@ function useEvmPrecompileAbiCall<
       }
     },
     // prettier-ignore
-    [activeEvmAddress, status, connectorClient, factory, precompile, getSuccessMessageFnc],
+    [activeEvmAddress20, status, connectorClient, factory, precompile, getSuccessMessageFnc],
   );
 
   const reset = useCallback(() => {
@@ -175,7 +157,7 @@ function useEvmPrecompileAbiCall<
   // Prevent the consumer from executing the call if the active
   // account is not an EVM account.
   return {
-    execute: activeEvmAddress !== null ? execute : null,
+    execute: activeEvmAddress20 !== null ? execute : null,
     reset,
     status,
     error,

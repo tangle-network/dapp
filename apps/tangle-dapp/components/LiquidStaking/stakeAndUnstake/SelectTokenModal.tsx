@@ -10,7 +10,7 @@ import { FC, useEffect, useMemo } from 'react';
 
 import { AnySubstrateAddress } from '../../../types/utils';
 import formatBn from '../../../utils/formatBn';
-import LSTTokenIcon from '../../LSTTokenIcon';
+import LsTokenIcon from '../../LsTokenIcon';
 import AddressLink from '../AddressLink';
 
 export type SelectTokenModalProps = {
@@ -106,7 +106,7 @@ const TokenListItem: FC<TokenListItemProps> = ({
       {/* Information */}
       <div className="flex items-center justify-center gap-2">
         {/* TODO: get list of token dynamically */}
-        <LSTTokenIcon size="lg" name="DOT" />
+        <LsTokenIcon size="lg" name="DOT" />
 
         <div className="space-y-1">
           <Typography variant="h5" fw="bold" className="dark:text-mono-0">

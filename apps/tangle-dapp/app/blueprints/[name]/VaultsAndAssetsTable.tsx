@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import LSTTokenIcon from '../../../components/LSTTokenIcon';
+import LsTokenIcon from '../../../components/LsTokenIcon';
 import TableCellWrapper from '../../../components/TableCellWrapper';
 import { Asset, Vault } from '../../../types/blueprint';
 import useVaults from './useVaults';
@@ -26,7 +26,7 @@ const vaultColumns = [
     cell: (props) => (
       <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-2">
-          <LSTTokenIcon name={props.row.original.lstToken} size="lg" />
+          <LsTokenIcon name={props.row.original.lstToken} size="lg" />
           <Typography variant="h5" className="whitespace-nowrap">
             {props.getValue()}
           </Typography>

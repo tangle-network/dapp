@@ -1,32 +1,30 @@
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import {
-  LST_PREFIX,
-  ParachainCurrency,
-} from '../../../constants/liquidStaking';
-import useExchangeRate, {
-  ExchangeRateType,
-} from '../../../data/liquidStaking/useExchangeRate';
-import { LiquidStakingToken } from '../../../types/liquidStaking';
+import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
+import { LsProtocolId, LsToken } from '../../../constants/liquidStaking/types';
+import { ExchangeRateType } from '../../../data/liquidStaking/useExchangeRate';
+import useExchangeRate from '../../../data/liquidStaking/useExchangeRate';
 import DetailItem from './DetailItem';
 
 export type ExchangeRateDetailItemProps = {
   type: ExchangeRateType;
-  token: LiquidStakingToken;
-  currency: ParachainCurrency;
+  token: LsToken;
+  protocolId: LsProtocolId;
 };
 
 const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({
   type,
   token,
-  currency,
+  protocolId,
 }) => {
-  const exchangeRate = useExchangeRate(type, currency);
+  const { exchangeRate, isRefreshing } = useExchangeRate(type, protocolId);
 
   const exchangeRateElement =
     exchangeRate === null ? (
       <SkeletonLoader className="w-[50px]" />
+    ) : isRefreshing ? (
+      <div className="animate-pulse">{exchangeRate}</div>
     ) : (
       exchangeRate
     );

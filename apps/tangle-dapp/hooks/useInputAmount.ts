@@ -129,7 +129,7 @@ const useInputAmount = ({
     ],
   );
 
-  const updateDisplayAmountManual = useCallback(
+  const setDisplayAmount_ = useCallback(
     (amount: BN) => {
       setDisplayAmount(formatBn(amount, decimals, INPUT_AMOUNT_FORMAT));
     },
@@ -172,7 +172,7 @@ const useInputAmount = ({
     errorMessage,
     handleChange,
     trySetAmount,
-    updateDisplayAmountManual,
+    setDisplayAmount: setDisplayAmount_,
   };
 };
 

@@ -1,10 +1,8 @@
 import assert from 'assert';
 import { useMemo } from 'react';
 
-import {
-  LIQUID_STAKING_CHAINS,
-  SimpleTimeUnitInstance,
-} from '../../../constants/liquidStaking';
+import { LS_PARACHAIN_CHAIN_MAP } from '../../../constants/liquidStaking/constants';
+import { LsSimpleParachainTimeUnit } from '../../../constants/liquidStaking/types';
 import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
 import useOngoingTimeUnits from '../../../data/liquidStaking/useOngoingTimeUnits';
 import { AnySubstrateAddress } from '../../../types/utils';
@@ -28,7 +26,7 @@ const useLstUnlockRequestTableRows = () => {
       })
       .map((request) => {
         // Find the corresponding chain in order to get the decimals.
-        const chain = LIQUID_STAKING_CHAINS.find(
+        const chain = Object.values(LS_PARACHAIN_CHAIN_MAP).find(
           (chain) => chain.currency === request.currency,
         );
 
@@ -56,7 +54,7 @@ const useLstUnlockRequestTableRows = () => {
         const remainingTimeUnitValue =
           request.unlockTimeUnit.value - ongoingTimeUnitEntry.timeUnit.value;
 
-        const remainingTimeUnit: SimpleTimeUnitInstance | undefined =
+        const remainingTimeUnit: LsSimpleParachainTimeUnit | undefined =
           remainingTimeUnitValue <= 0
             ? undefined
             : {
