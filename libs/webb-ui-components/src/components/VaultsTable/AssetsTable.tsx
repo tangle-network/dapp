@@ -8,7 +8,8 @@ import {
   SortingState,
   getPaginationRowModel,
 } from '@tanstack/react-table';
-import { Table, Pagination } from '@webb-tools/webb-ui-components';
+import { Table } from '../Table';
+import { Pagination } from '../Pagination';
 import { twMerge } from 'tailwind-merge';
 import { AssetsTableProps } from './types';
 

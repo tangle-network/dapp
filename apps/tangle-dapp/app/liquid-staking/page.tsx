@@ -1,8 +1,8 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import StatItem from '../../components/StatItem';
 import VaultsAndAssetsTable from '../../components/LiquidStaking/VaultsAndAssetsTable';
+import StatItem from '../../components/StatItem';
 
 const LiquidStakingPage: FC = () => {
   return (

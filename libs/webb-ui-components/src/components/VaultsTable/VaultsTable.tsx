@@ -10,7 +10,8 @@ import {
   SortingState,
   Row,
 } from '@tanstack/react-table';
-import { Table, Typography } from '@webb-tools/webb-ui-components';
+import { Table } from '../Table';
+import { Typography } from '../../typography';
 import { twMerge } from 'tailwind-merge';
 import AssetsTable from './AssetsTable';
 import { VaultsTableProps } from './types';
