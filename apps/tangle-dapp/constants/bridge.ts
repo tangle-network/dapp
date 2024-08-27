@@ -45,13 +45,13 @@ export const BRIDGE_SUPPORTED_TOKENS: Record<BridgeTokenId, BridgeTokenType> = {
     },
     erc20TokenContractAddress: {
       [PresetTypedChainId.Sepolia]:
-        '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
+        '0x0F4C1d951295Fe17c1514eB3020dFA6EedAd0137',
       [PresetTypedChainId.Holesky]:
         '0x94373a4919B3240D86eA41593D5eBa789FEF3848',
     },
     hyperlaneRouteContractAddress: {
       [PresetTypedChainId.Sepolia]:
-        '0x0F4C1d951295Fe17c1514eB3020dFA6EedAd0137',
+        '0x9DB8ebb2666E2e9f6864A82272199632eE45d182',
       [PresetTypedChainId.Holesky]:
         '0x9DB8ebb2666E2e9f6864A82272199632eE45d182',
     },

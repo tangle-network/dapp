@@ -60,7 +60,7 @@ export default function useBridgeTransfer({
     }
 
     switch (bridgeType) {
-      case BridgeType.SYGMA_EVM_TO_EVM: {
+      case BridgeType.HYPERLANE_EVM_TO_EVM: {
         if (ethersProvider === null) {
           throw new Error('No Ethers Provider found');
         }
@@ -91,6 +91,8 @@ export default function useBridgeTransfer({
           }
         }
 
+        let txHash: string | undefined;
+
         for (const [idx, tx] of txs.entries()) {
           const res = await ethersSigner.sendTransaction(
             tx.transaction as providers.TransactionRequest,
@@ -99,7 +101,7 @@ export default function useBridgeTransfer({
           // There are two transactions, one for approvals and one for actual transfer
           // We only want to add the actual transfer to the queue
           if (idx === txs.length - 1) {
-            const txHash = res.hash;
+            txHash = res.hash;
             // add Tx to Queue
             addTxToQueue({
               hash: txHash,
@@ -117,12 +119,15 @@ export default function useBridgeTransfer({
               destinationAmount: destinationAmountInDecimals.toString(),
               tokenSymbol: selectedToken.symbol,
               creationTimestamp: new Date().getTime(),
-              state: BridgeTxState.Sending,
+              type: bridgeType,
             });
 
+            updateTxState(txHash, BridgeTxState.Sending);
             onTxAddedToQueue();
+          }
 
-            const receipt = await res.wait();
+          const receipt = await res.wait();
+          if (txHash !== undefined) {
             if (receipt.status === 1) {
               updateTxState(txHash, BridgeTxState.Executed);
             } else {
@@ -182,9 +187,10 @@ export default function useBridgeTransfer({
           destinationAmount: destinationAmountInDecimals.toString(),
           tokenSymbol: selectedToken.symbol,
           creationTimestamp: new Date().getTime(),
-          state: BridgeTxState.Sending,
+          type: bridgeType,
         });
 
+        updateTxState(txHash, BridgeTxState.Sending);
         onTxAddedToQueue();
 
         const receipt = await res.wait();
@@ -257,9 +263,10 @@ export default function useBridgeTransfer({
                 destinationAmount: destinationAmountInDecimals.toString(),
                 tokenSymbol: selectedToken.symbol,
                 creationTimestamp: new Date().getTime(),
-                state: BridgeTxState.Sending,
+                type: bridgeType,
               });
 
+              updateTxState(txHashStr, BridgeTxState.Sending);
               onTxAddedToQueue();
             }
 

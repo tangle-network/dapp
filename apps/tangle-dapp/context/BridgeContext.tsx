@@ -228,7 +228,8 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
       isEVMChain(selectedSourceChain) &&
       isEVMChain(selectedDestinationChain)
     ) {
-      return BridgeType.SYGMA_EVM_TO_EVM;
+      // TODO: Temporarily get Hyperlane for EVM to EVM
+      return BridgeType.HYPERLANE_EVM_TO_EVM;
     }
 
     // EVM to Substrate

@@ -4,6 +4,7 @@ import Decimal from 'decimal.js';
 
 // NOTE: might need to add cases when Sygma SDK does not support
 export enum BridgeType {
+  HYPERLANE_EVM_TO_EVM = 'hyperlane-evmToEvm',
   SYGMA_EVM_TO_EVM = 'sygma-evmToEvm',
   SYGMA_EVM_TO_SUBSTRATE = 'sygma-evmToSubstrate',
   SYGMA_SUBSTRATE_TO_EVM = 'sygma-substrateToEvm',
@@ -68,13 +69,16 @@ export enum BridgeWalletError {
 }
 
 export enum BridgeTxState {
+  Initializing = 'Initializing', // The tx is being initialized
+
   Sending = 'Sending', // The user is signing the tx
 
-  Indexing = 'Indexing', // The tx is being indexed by Sygma
+  Indexing = 'Indexing', // The tx is being indexed (Sygma txs only)
 
-  Pending = 'Pending', // The tx is done indexing but still pending
+  Pending = 'Pending', // The tx is done indexing but still pending (Sygma txs only)
 
   Executed = 'Executed', // The tx is executed successfully
+
   Failed = 'Failed', // The tx is failed
 }
 
@@ -91,5 +95,6 @@ export type BridgeQueueTxItem = {
   tokenSymbol: string;
   creationTimestamp: number;
   state: BridgeTxState;
+  type: BridgeType;
   explorerUrl?: string;
 };
