@@ -98,3 +98,14 @@ export type BridgeQueueTxItem = {
   type: BridgeType;
   explorerUrl?: string;
 };
+
+export type BridgeFeeType =
+  | 'gas'
+  | 'bridge' // Sygma
+  | 'interchain'; // Hyperlane
+
+export type BridgeFeeItem = {
+  amount: Decimal | null;
+  symbol: string;
+  isLoading?: boolean;
+}; // Need to add clear, add item, update item

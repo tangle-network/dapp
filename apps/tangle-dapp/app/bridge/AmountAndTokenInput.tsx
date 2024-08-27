@@ -32,7 +32,7 @@ const AmountAndTokenInput: FC = () => {
     tokenIdOptions,
     setIsAmountInputError,
     isAmountInputError,
-    bridgeFee,
+    feeItems,
   } = useBridge();
   const selectedToken = useSelectedToken();
   const { balance, isLoading } = useBalance();
@@ -47,12 +47,12 @@ const AmountAndTokenInput: FC = () => {
 
     return (existentialDeposit ?? new Decimal(0))
       .add(destChainTransactionFee ?? new Decimal(0))
-      .add(bridgeFee ?? new Decimal(0));
+      .add(feeItems.bridge?.amount ?? new Decimal(0));
   }, [
     selectedToken.existentialDeposit,
     selectedToken.destChainTransactionFee,
     sourceTypedChainId,
-    bridgeFee,
+    feeItems.bridge?.amount,
   ]);
 
   return (

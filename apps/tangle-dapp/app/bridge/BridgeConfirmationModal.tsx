@@ -20,6 +20,7 @@ import useAmountInDecimals from './hooks/useAmountInDecimals';
 import useBridgeFee from './hooks/useBridgeFee';
 import useBridgeTransfer from './hooks/useBridgeTransfer';
 import useEstimatedGasFee from './hooks/useEstimatedGasFee';
+import useHyperlaneFees from './hooks/useHyperlaneFees';
 import useSelectedToken from './hooks/useSelectedToken';
 
 interface BridgeConfirmationModalProps {
@@ -40,11 +41,9 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     destinationAddress,
     setAmount,
     setDestinationAddress,
-    bridgeFee,
-    isBridgeFeeLoading,
-    isEstimatedGasFeeLoading,
     isTransferring,
     setIsTransferring,
+    feeItems,
   } = useBridge();
   const selectedToken = useSelectedToken();
   const { sourceAmountInDecimals, destinationAmountInDecimals } =
@@ -52,6 +51,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
 
   useBridgeFee();
   useEstimatedGasFee();
+  useHyperlaneFees();
 
   const cleanUpWhenSubmit = useCallback(() => {
     handleClose();
@@ -121,14 +121,15 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
               bridgeTx();
               handleClose(); // TODO: handle clear form
             }}
-            // isDisabled={
-            //   isBridgeFeeLoading ||
-            //   isEstimatedGasFeeLoading ||
-            //   bridgeFee === null ||
-            //   !sourceAmountInDecimals ||
-            //   !destinationAmountInDecimals ||
-            //   !destinationAddress
-            // }
+            isDisabled={
+              feeItems.bridge?.isLoading ||
+              feeItems.interchain?.isLoading ||
+              feeItems.gas?.isLoading ||
+              feeItems.gas?.amount === null ||
+              !sourceAmountInDecimals ||
+              !destinationAmountInDecimals ||
+              !destinationAddress
+            }
           >
             Confirm
           </Button>

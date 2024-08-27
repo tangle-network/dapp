@@ -9,9 +9,9 @@ import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import { BridgeType } from '../../../types/bridge';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
+import useAmountInStr from './useAmountInStr';
 import useDecimals from './useDecimals';
 import useEthersProvider from './useEthersProvider';
-import useFormattedAmountForSygmaTx from './useFormattedAmountForSygmaTx';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 
@@ -22,13 +22,12 @@ export default function useBridgeFee() {
     bridgeType,
     selectedSourceChain,
     selectedDestinationChain,
-    setBridgeFee,
-    setIsBridgeFeeLoading,
+    updateFeeItem,
   } = useBridge();
   const selectedToken = useSelectedToken();
   const ethersProvider = useEthersProvider();
   const api = useSubstrateApi();
-  const formattedAmount = useFormattedAmountForSygmaTx();
+  const amountInStr = useAmountInStr();
   const decimals = useDecimals();
 
   const { data: evmSygmaFee, isLoading: isLoadingEvmSygmaFee } = useSWR(
@@ -43,7 +42,7 @@ export default function useBridgeFee() {
             sourceChain: selectedSourceChain,
             destinationChain: selectedDestinationChain,
             token: selectedToken,
-            amount: formattedAmount,
+            amount: amountInStr,
           }
         : undefined,
     ],
@@ -67,7 +66,7 @@ export default function useBridgeFee() {
               sourceChain: selectedSourceChain,
               destinationChain: selectedDestinationChain,
               token: selectedToken,
-              amount: formattedAmount,
+              amount: amountInStr,
             }
           : undefined,
       ],
@@ -82,35 +81,39 @@ export default function useBridgeFee() {
 
   const fee = useMemo(() => {
     switch (bridgeType) {
+      case BridgeType.HYPERLANE_EVM_TO_EVM:
+        return null;
       case BridgeType.SYGMA_EVM_TO_EVM:
       case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
         return evmSygmaFee ?? null;
       case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
       case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
         return substrateSygmaFee ?? null;
-      default:
-        return null;
     }
   }, [bridgeType, evmSygmaFee, substrateSygmaFee]);
 
   const isLoading = useMemo(() => {
     switch (bridgeType) {
+      case BridgeType.HYPERLANE_EVM_TO_EVM:
+        return false;
       case BridgeType.SYGMA_EVM_TO_EVM:
       case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
         return isLoadingEvmSygmaFee;
       case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
       case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
         return isLoadingSubstrateSygmaFee;
-      default:
-        return false;
     }
   }, [bridgeType, isLoadingEvmSygmaFee, isLoadingSubstrateSygmaFee]);
 
   useEffect(() => {
-    setBridgeFee(fee);
-  }, [setBridgeFee, fee]);
-
-  useEffect(() => {
-    setIsBridgeFeeLoading(isLoading);
-  }, [setIsBridgeFeeLoading, isLoading]);
+    updateFeeItem(
+      'bridge',
+      fee !== null
+        ? {
+            amount: fee,
+            isLoading,
+          }
+        : null,
+    );
+  }, [fee, isLoading, updateFeeItem]);
 }

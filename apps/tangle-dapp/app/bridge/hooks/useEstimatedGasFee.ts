@@ -11,10 +11,10 @@ import { BridgeType } from '../../../types/bridge';
 import { getEthersGasPrice } from '../lib/fee';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
+import useAmountInStr from './useAmountInStr';
 import useDecimals from './useDecimals';
 import useEthersProvider from './useEthersProvider';
 import useEthersSigner from './useEthersSigner';
-import useFormattedAmountForSygmaTx from './useFormattedAmountForSygmaTx';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 
@@ -25,14 +25,13 @@ export default function useEstimatedGasFee() {
     bridgeType,
     selectedSourceChain,
     selectedDestinationChain,
-    setEstimatedGasFee,
-    setIsEstimatedGasFeeLoading,
+    updateFeeItem,
   } = useBridge();
   const selectedToken = useSelectedToken();
   const ethersProvider = useEthersProvider();
   const ethersSigner = useEthersSigner();
   const api = useSubstrateApi();
-  const formattedAmount = useFormattedAmountForSygmaTx();
+  const amountInStr = useAmountInStr();
   const decimals = useDecimals();
 
   const { data: ethersGasPrice, isLoading: isLoadingEthersGasPrice } = useSWR(
@@ -60,7 +59,7 @@ export default function useEstimatedGasFee() {
             sourceChain: selectedSourceChain,
             destinationChain: selectedDestinationChain,
             token: selectedToken,
-            amount: formattedAmount,
+            amount: amountInStr,
           }
         : undefined,
     ],
@@ -88,7 +87,7 @@ export default function useEstimatedGasFee() {
             sourceChain: selectedSourceChain,
             destinationChain: selectedDestinationChain,
             token: selectedToken,
-            amount: formattedAmount,
+            amount: amountInStr,
           }
         : undefined,
     ],
@@ -142,10 +141,9 @@ export default function useEstimatedGasFee() {
   ]);
 
   useEffect(() => {
-    setEstimatedGasFee(fee);
-  }, [setEstimatedGasFee, fee]);
-
-  useEffect(() => {
-    setIsEstimatedGasFeeLoading(isLoading);
-  }, [setIsEstimatedGasFeeLoading, isLoading]);
+    updateFeeItem('gas', {
+      amount: fee,
+      isLoading,
+    });
+  }, [fee, isLoading, updateFeeItem]);
 }

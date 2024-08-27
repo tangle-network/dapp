@@ -7,7 +7,6 @@ import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interfa
 import getChainFromConfig from '@webb-tools/dapp-config/utils/getChainFromConfig';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import assert from 'assert';
-import Decimal from 'decimal.js';
 import {
   createContext,
   FC,
@@ -20,7 +19,13 @@ import {
 } from 'react';
 
 import { BRIDGE } from '../constants/bridge';
-import { BridgeTokenId, BridgeType, BridgeWalletError } from '../types/bridge';
+import {
+  BridgeFeeItem,
+  BridgeFeeType,
+  BridgeTokenId,
+  BridgeType,
+  BridgeWalletError,
+} from '../types/bridge';
 import { isEVMChain, isSubstrateChain } from '../utils/bridge';
 
 const BRIDGE_SOURCE_CHAIN_OPTIONS = sortChainOptions(
@@ -66,18 +71,15 @@ interface BridgeContextProps {
   walletError: BridgeWalletError | null;
   switchToCorrectEvmChain: () => void;
 
-  bridgeFee: Decimal | null;
-  setBridgeFee: (bridgeFee: Decimal | null) => void;
-  isBridgeFeeLoading: boolean;
-  setIsBridgeFeeLoading: (isBridgeFeeLoading: boolean) => void;
-
-  estimatedGasFee: Decimal | null;
-  setEstimatedGasFee: (estimatedGasFee: Decimal | null) => void;
-  isEstimatedGasFeeLoading: boolean;
-  setIsEstimatedGasFeeLoading: (isEstimatedGasFeeLoading: boolean) => void;
-
   isTransferring: boolean;
   setIsTransferring: (isTransferring: boolean) => void;
+
+  feeItems: Record<BridgeFeeType, BridgeFeeItem | null>;
+  updateFeeItem: (
+    type: BridgeFeeType,
+    data: Partial<BridgeFeeItem> | null,
+  ) => void;
+  clearFeeItems: () => void;
 }
 
 const BridgeContext = createContext<BridgeContextProps>({
@@ -126,26 +128,20 @@ const BridgeContext = createContext<BridgeContextProps>({
     return;
   },
 
-  bridgeFee: null,
-  setBridgeFee: () => {
-    return;
-  },
-  isBridgeFeeLoading: false,
-  setIsBridgeFeeLoading: () => {
-    return;
-  },
-
-  estimatedGasFee: null,
-  setEstimatedGasFee: () => {
-    return;
-  },
-  isEstimatedGasFeeLoading: false,
-  setIsEstimatedGasFeeLoading: () => {
-    return;
-  },
-
   isTransferring: false,
   setIsTransferring: () => {
+    return;
+  },
+
+  feeItems: {
+    gas: null,
+    bridge: null,
+    interchain: null,
+  },
+  updateFeeItem: () => {
+    return;
+  },
+  clearFeeItems: () => {
     return;
   },
 });
@@ -157,18 +153,19 @@ export const useBridge = () => {
 const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const { activeChain, activeWallet, switchChain } = useWebContext();
 
-  const [bridgeFee, setBridgeFee] = useState<Decimal | null>(null);
-  const [isBridgeFeeLoading, setIsBridgeFeeLoading] = useState(false);
-
-  const [estimatedGasFee, setEstimatedGasFee] = useState<Decimal | null>(null);
-  const [isEstimatedGasFeeLoading, setIsEstimatedGasFeeLoading] =
-    useState(false);
-
   const [isTransferring, setIsTransferring] = useState(false);
 
   const [selectedSourceChain, setSelectedSourceChain] = useState<ChainConfig>(
     BRIDGE_SOURCE_CHAIN_OPTIONS[0],
   );
+
+  const [feeItems, setFeeItems] = useState<
+    Record<BridgeFeeType, BridgeFeeItem | null>
+  >({
+    gas: null,
+    bridge: null,
+    interchain: null,
+  });
 
   const selectedSourceTypedChainId = useMemo(
     () =>
@@ -265,6 +262,30 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
     switchChain(correctChain, activeWallet);
   }, [activeWallet, selectedSourceChain, switchChain]);
 
+  const updateFeeItem = useCallback(
+    (type: BridgeFeeType, data: Partial<BridgeFeeItem> | null) => {
+      setFeeItems((prev) => ({
+        ...prev,
+        [type]:
+          data === null
+            ? null
+            : {
+                ...prev[type],
+                ...data,
+              },
+      }));
+    },
+    [],
+  );
+
+  const clearFeeItems = useCallback(() => {
+    setFeeItems({
+      gas: null,
+      bridge: null,
+      interchain: null,
+    });
+  }, []);
+
   useEffect(() => {
     // If current destination chain is not in the destination chain options,
     // set the first option as the destination chain.
@@ -353,18 +374,12 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
         walletError,
         switchToCorrectEvmChain,
 
-        bridgeFee,
-        setBridgeFee,
-        isBridgeFeeLoading,
-        setIsBridgeFeeLoading,
-
-        estimatedGasFee,
-        setEstimatedGasFee,
-        isEstimatedGasFeeLoading,
-        setIsEstimatedGasFeeLoading,
-
         isTransferring,
         setIsTransferring,
+
+        feeItems,
+        updateFeeItem,
+        clearFeeItems,
       }}
     >
       {children}

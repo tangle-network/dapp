@@ -12,9 +12,9 @@ import { BridgeTxState, BridgeType } from '../../../types/bridge';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
 import useAmountInDecimals from './useAmountInDecimals';
+import useAmountInStr from './useAmountInStr';
 import useEthersProvider from './useEthersProvider';
 import useEthersSigner from './useEthersSigner';
-import useFormattedAmountForSygmaTx from './useFormattedAmountForSygmaTx';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 import useTypedChainId from './useTypedChainId';
@@ -36,7 +36,7 @@ export default function useBridgeTransfer({
   const ethersProvider = useEthersProvider();
   const ethersSigner = useEthersSigner();
   const api = useSubstrateApi();
-  const formattedAmount = useFormattedAmountForSygmaTx();
+  const amountInStr = useAmountInStr();
   const { sourceTypedChainId, destinationTypedChainId } = useTypedChainId();
   const { sourceAmountInDecimals, destinationAmountInDecimals } =
     useAmountInDecimals();
@@ -74,7 +74,7 @@ export default function useBridgeTransfer({
           senderAddress: activeAccountAddress,
           recipientAddress: destinationAddress,
           token: selectedToken,
-          amount: formattedAmount,
+          amount: amountInStr,
         });
 
         if (!hyperlaneResult) throw new Error('Hyperlane transfer failed');
@@ -153,7 +153,7 @@ export default function useBridgeTransfer({
           sourceChain: selectedSourceChain,
           destinationChain: selectedDestinationChain,
           token: selectedToken,
-          amount: formattedAmount,
+          amount: amountInStr,
         });
 
         if (!sygmaEvmTransfer) {
@@ -220,7 +220,7 @@ export default function useBridgeTransfer({
           sourceChain: selectedSourceChain,
           destinationChain: selectedDestinationChain,
           token: selectedToken,
-          amount: formattedAmount,
+          amount: amountInStr,
         });
 
         if (!sygmaSubstrateTransfer) {

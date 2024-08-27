@@ -41,10 +41,8 @@ export default function useActionButton({
     isAmountInputError,
     isAddressInputError,
     walletError,
-    bridgeFee,
-    isBridgeFeeLoading,
-    isEstimatedGasFeeLoading,
     switchToCorrectEvmChain,
+    feeItems,
     isTransferring,
   } = useBridge();
 
@@ -142,16 +140,17 @@ export default function useActionButton({
 
   return {
     isLoading: loading || isConnecting,
-    isDisabled: false,
-      // isRequiredToConnectWallet || isEvmWrongChain
-      //   ? false
-      //   : isInputInsufficient ||
-      //     isAmountInputError ||
-      //     isAddressInputError ||
-      //     isBridgeFeeLoading ||
-      //     isEstimatedGasFeeLoading ||
-      //     bridgeFee === null ||
-      //     isTransferring,
+    isDisabled:
+      isRequiredToConnectWallet || isEvmWrongChain
+        ? false
+        : isInputInsufficient ||
+          isAmountInputError ||
+          isAddressInputError ||
+          feeItems.bridge?.isLoading ||
+          feeItems.interchain?.isLoading ||
+          feeItems.gas?.isLoading ||
+          feeItems.gas?.amount === null ||
+          isTransferring,
     buttonAction,
     buttonText,
     buttonLoadingText,
