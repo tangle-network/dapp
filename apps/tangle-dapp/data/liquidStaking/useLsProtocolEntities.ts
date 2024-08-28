@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import {
   LsProtocolId,
-  LsProtocolType,
+  LsProtocolNetworkId,
 } from '../../constants/liquidStaking/types';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import {
@@ -14,7 +14,7 @@ import {
 } from '../../types/liquidStaking';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 
-const useLsValidators2 = (protocolId: LsProtocolId) => {
+const useLsProtocolEntities = (protocolId: LsProtocolId) => {
   const { setWithPreviousValue: setLiquidStakingTableData } = useLocalStorage(
     LocalStorageKey.LIQUID_STAKING_TABLE_DATA,
   );
@@ -31,14 +31,16 @@ const useLsValidators2 = (protocolId: LsProtocolId) => {
     async (protocolId: LsProtocolId) => {
       const protocol = getLsProtocolDef(protocolId);
 
-      if (protocol.type !== LsProtocolType.TANGLE_RESTAKING_PARACHAIN) {
+      if (
+        protocol.networkId !== LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN
+      ) {
         setItems([]);
         setIsLoading(false);
 
         return;
       }
 
-      const newItems = protocol.adapter.fetchNetworkEntities(
+      const newItems = protocol.adapter.fetchProtocolEntities(
         protocol.rpcEndpoint,
       );
 
@@ -90,4 +92,4 @@ const getDataType = (chain: LsProtocolId): LiquidStakingItem | null => {
   }
 };
 
-export default useLsValidators2;
+export default useLsProtocolEntities;

@@ -16,77 +16,75 @@ import {
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { LiquidStakingItem } from '../../../types/liquidStaking';
-import { SubstrateAddress } from '../../../types/utils';
-import assertSubstrateAddress from '../../../utils/assertSubstrateAddress';
-import calculateCommission from '../../../utils/calculateCommission';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
 import formatBn from '../../../utils/formatBn';
-import { GetTableColumnsFn } from '../adapter';
+import { getApiPromise } from '../../../utils/polkadot';
+import { FetchProtocolEntitiesFn, GetTableColumnsFn } from '../adapter';
 import {
-  sortCommission,
+  sortDelegationCount,
   sortSelected,
   sortValueStaked,
 } from '../columnSorting';
 import {
-  fetchChainDecimals,
+  fetchMappedCollatorInfo,
   fetchMappedIdentityNames,
-  fetchMappedValidatorsCommission,
-  fetchMappedValidatorsTotalValueStaked,
-  fetchTokenSymbol,
 } from '../fetchHelpers';
 
-const SS58_PREFIX = 0;
 const DECIMALS = 18;
 
-export type PolkadotValidator = {
-  address: SubstrateAddress<typeof SS58_PREFIX>;
+export type MoonbeamCollator = {
+  // TODO: Is `collatorAddress` a Substrate address? If so, use `SubstrateAddress` type.
+  address: string;
   identity: string;
-  commission: BN;
-  apy?: number;
+  delegationCount: number;
   totalValueStaked: BN;
 };
 
-const fetchValidators = async (
-  rpcEndpoint: string,
-): Promise<PolkadotValidator[]> => {
-  const [
-    validators,
-    mappedIdentityNames,
-    mappedTotalValueStaked,
-    mappedCommission,
-  ] = await Promise.all([
-    fetchValidators(rpcEndpoint),
-    fetchMappedIdentityNames(rpcEndpoint),
-    fetchMappedValidatorsTotalValueStaked(rpcEndpoint),
-    fetchMappedValidatorsCommission(rpcEndpoint),
-    fetchChainDecimals(rpcEndpoint),
-    fetchTokenSymbol(rpcEndpoint),
-  ]);
+const fetchAllCollators = async (rpcEndpoint: string) => {
+  const api = await getApiPromise(rpcEndpoint);
 
-  return validators.map((address) => {
-    const identityName = mappedIdentityNames.get(address.toString());
-    const totalValueStaked = mappedTotalValueStaked.get(address.toString());
-    const commission = mappedCommission.get(address.toString());
+  if (!api.query.parachainStaking) {
+    throw new Error('parachainStaking pallet is not available in the runtime');
+  }
+
+  const selectedCollators =
+    await api.query.parachainStaking.selectedCandidates();
+
+  return selectedCollators.map((collator) => collator.toString());
+};
+
+const fetchCollators: FetchProtocolEntitiesFn<MoonbeamCollator> = async (
+  rpcEndpoint,
+) => {
+  const [collators, mappedIdentityNames, mappedCollatorInfo] =
+    await Promise.all([
+      fetchAllCollators(rpcEndpoint),
+      fetchMappedIdentityNames(rpcEndpoint),
+      fetchMappedCollatorInfo(rpcEndpoint),
+    ]);
+
+  return collators.map((collator) => {
+    const identityName = mappedIdentityNames.get(collator);
+    const collatorInfo = mappedCollatorInfo.get(collator);
 
     return {
-      id: address.toString(),
-      address: assertSubstrateAddress(address.toString(), SS58_PREFIX),
-      identity: identityName ?? address.toString(),
-      totalValueStaked: totalValueStaked ?? BN_ZERO,
-      apy: 0,
-      commission: commission ?? BN_ZERO,
-      itemType: LiquidStakingItem.VALIDATOR,
+      id: collator,
+      address: collator,
+      identity: identityName || collator,
+      delegationCount: collatorInfo?.delegationCount ?? 0,
+      totalValueStaked: collatorInfo?.totalStaked ?? BN_ZERO,
+      itemType: LiquidStakingItem.COLLATOR,
     };
   });
 };
 
-const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
+const getTableColumns: GetTableColumnsFn<MoonbeamCollator> = (
   toggleSortSelectionHandlerRef,
 ) => {
-  const validatorColumnHelper = createColumnHelper<PolkadotValidator>();
+  const collatorColumnHelper = createColumnHelper<MoonbeamCollator>();
 
   return [
-    validatorColumnHelper.accessor('address', {
+    collatorColumnHelper.accessor('address', {
       header: ({ header }) => {
         toggleSortSelectionHandlerRef.current = header.column.toggleSorting;
         return (
@@ -95,12 +93,13 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
             fw="semibold"
             className="text-mono-120 dark:text-mono-120"
           >
-            Validator
+            Collator
           </Typography>
         );
       },
       cell: (props) => {
         const address = props.getValue();
+        const isEthAddress = address.startsWith('0x');
         const identity = props.row.original.identity ?? address;
 
         return (
@@ -116,7 +115,7 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
               <Avatar
                 sourceVariant="address"
                 value={address}
-                theme="substrate"
+                theme={isEthAddress ? 'ethereum' : 'substrate'}
               />
 
               <Typography
@@ -136,10 +135,9 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
           </div>
         );
       },
-      // TODO: Avoid casting sorting function.
-      sortingFn: sortSelected as SortingFnOption<PolkadotValidator>,
+      sortingFn: sortSelected as SortingFnOption<MoonbeamCollator>,
     }),
-    validatorColumnHelper.accessor('totalValueStaked', {
+    collatorColumnHelper.accessor('totalValueStaked', {
       header: ({ header }) => (
         <div
           className="flex items-center justify-center cursor-pointer"
@@ -161,13 +159,13 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
             fw="normal"
             className="text-mono-200 dark:text-mono-0"
           >
-            {formatBn(props.getValue(), DECIMALS) + ` ${LsToken.DOT}`}
+            {formatBn(props.getValue(), DECIMALS) + ` ${LsToken.GLMR}`}
           </Typography>
         </div>
       ),
       sortingFn: sortValueStaked,
     }),
-    validatorColumnHelper.accessor('commission', {
+    collatorColumnHelper.accessor('delegationCount', {
       header: ({ header }) => (
         <div
           className="flex items-center justify-center cursor-pointer"
@@ -178,7 +176,7 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
             fw="semibold"
             className="text-mono-120 dark:text-mono-120"
           >
-            Commission
+            Delegations
           </Typography>
         </div>
       ),
@@ -189,41 +187,41 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
             fw="normal"
             className="text-mono-200 dark:text-mono-0"
           >
-            {calculateCommission(props.getValue()).toFixed(2) + '%'}
+            {props.getValue()}
           </Typography>
         </div>
       ),
-      // TODO: Avoid casting sorting function.
-      sortingFn: sortCommission as SortingFnOption<PolkadotValidator>,
+      sortingFn: sortDelegationCount as SortingFnOption<MoonbeamCollator>,
     }),
-    validatorColumnHelper.display({
-      id: 'href',
+    collatorColumnHelper.display({
+      id: 'identity',
       header: () => <span></span>,
-      cell: (props) => {
-        const href = `https://polkadot.subscan.io/account/${props.getValue()}`;
-
-        return <StakingItemExternalLinkButton href={href} />;
+      cell: () => {
+        // Note that Moonbeam collators don't have a direct link on
+        // stakeglmr.com.
+        return <StakingItemExternalLinkButton href="https://stakeglmr.com/" />;
       },
     }),
   ];
 };
 
-const POLKADOT = {
+const MOONBEAM: LsParachainChainDef<MoonbeamCollator> = {
   networkId: LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN,
-  id: LsProtocolId.POLKADOT,
-  name: 'Polkadot',
-  token: LsToken.DOT,
-  chainIconFileName: 'polkadot',
+  id: LsProtocolId.MOONBEAM,
+  name: 'Moonbeam',
+  token: LsToken.GLMR,
+  chainIconFileName: 'moonbeam',
+  // TODO: No currency entry for GLMR in the Tangle Primitives?
   currency: 'Dot',
   decimals: DECIMALS,
-  rpcEndpoint: 'wss://polkadot-rpc.dwellir.com',
-  timeUnit: CrossChainTimeUnit.POLKADOT_ERA,
+  rpcEndpoint: 'wss://moonbeam.api.onfinality.io/public-ws',
+  timeUnit: CrossChainTimeUnit.MOONBEAM_ROUND,
   unstakingPeriod: 28,
-  ss58Prefix: 0,
+  ss58Prefix: 1284,
   adapter: {
-    fetchProtocolEntities: fetchValidators,
+    fetchProtocolEntities: fetchCollators,
     getTableColumns,
   },
-} as const satisfies LsParachainChainDef<PolkadotValidator>;
+} as const satisfies LsParachainChainDef<MoonbeamCollator>;
 
-export default POLKADOT;
+export default MOONBEAM;

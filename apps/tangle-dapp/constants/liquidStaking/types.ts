@@ -5,7 +5,7 @@ import {
 import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 
-import { NetworkEntity, LsAdapterDef } from '../../data/liquidStaking/adapter';
+import { LsAdapterDef, ProtocolEntity } from '../../data/liquidStaking/adapter';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 
 export enum LsProtocolId {
@@ -14,7 +14,6 @@ export enum LsProtocolId {
   MOONBEAM,
   ASTAR,
   MANTA,
-  TANGLE_RESTAKING_PARACHAIN,
   CHAINLINK,
   THE_GRAPH,
   LIVEPEER,
@@ -50,34 +49,33 @@ export type LsLiquifierProtocolToken =
 
 export type LsParachainToken = Exclude<LsToken, LsLiquifierProtocolToken>;
 
-type ProtocolDefCommon<T extends NetworkEntity> = {
+type ProtocolDefCommon = {
   name: string;
   decimals: number;
   timeUnit: CrossChainTimeUnit;
   unstakingPeriod: number;
   chainIconFileName: string;
-  adapter: LsAdapterDef<T>;
 };
 
-export enum LsProtocolType {
+export enum LsProtocolNetworkId {
   TANGLE_RESTAKING_PARACHAIN,
   ETHEREUM_MAINNET_LIQUIFIER,
 }
 
-export interface LsParachainChainDef<T extends NetworkEntity = NetworkEntity>
-  extends ProtocolDefCommon<T> {
-  type: LsProtocolType.TANGLE_RESTAKING_PARACHAIN;
+export interface LsParachainChainDef<T extends ProtocolEntity = ProtocolEntity>
+  extends ProtocolDefCommon {
+  networkId: LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN;
   id: LsParachainChainId;
   name: string;
   token: LsParachainToken;
   currency: ParachainCurrency;
   rpcEndpoint: string;
   ss58Prefix: number;
+  adapter: LsAdapterDef<T>;
 }
 
-export interface LsLiquifierProtocolDef<T extends NetworkEntity = NetworkEntity>
-  extends ProtocolDefCommon<T> {
-  type: LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER;
+export interface LsLiquifierProtocolDef extends ProtocolDefCommon {
+  networkId: LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER;
   id: LsLiquifierProtocolId;
   token: LsLiquifierProtocolToken;
   erc20TokenAddress: HexString;
@@ -129,7 +127,7 @@ export type LsSimpleParachainTimeUnit = {
 };
 
 export type LsProtocolTypeMetadata = {
-  type: LsProtocolType;
+  type: LsProtocolNetworkId;
   networkName: string;
   chainIconFileName: string;
   protocols: LsProtocolDef[];

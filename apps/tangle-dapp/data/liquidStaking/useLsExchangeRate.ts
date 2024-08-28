@@ -8,7 +8,7 @@ import LIQUIFIER_TG_TOKEN_ABI from '../../constants/liquidStaking/liquifierTgTok
 import {
   LsParachainCurrencyKey,
   LsProtocolId,
-  LsProtocolType,
+  LsProtocolNetworkId,
 } from '../../constants/liquidStaking/types';
 import useApiRx from '../../hooks/useApiRx';
 import calculateBnRatio from '../../utils/calculateBnRatio';
@@ -54,7 +54,7 @@ const useLsExchangeRate = (
   const protocol = getLsProtocolDef(protocolId);
 
   const { result: tokenPoolAmount } = useApiRx((api) => {
-    if (protocol.type !== LsProtocolType.TANGLE_RESTAKING_PARACHAIN) {
+    if (protocol.networkId !== LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN) {
       return null;
     }
 
@@ -67,7 +67,7 @@ const useLsExchangeRate = (
   }, TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint);
 
   const { result: lstTotalIssuance } = useApiRx((api) => {
-    if (protocol.type !== LsProtocolType.TANGLE_RESTAKING_PARACHAIN) {
+    if (protocol.networkId !== LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN) {
       return null;
     }
 
@@ -87,7 +87,7 @@ const useLsExchangeRate = (
     typeof LIQUIFIER_TG_TOKEN_ABI,
     'totalSupply'
   > | null => {
-    if (protocol.type !== LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER) {
+    if (protocol.networkId !== LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER) {
       return null;
     }
 
@@ -102,7 +102,7 @@ const useLsExchangeRate = (
     typeof LIQUIFIER_ADAPTER_ABI,
     'totalShares'
   > | null => {
-    if (protocol.type !== LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER) {
+    if (protocol.networkId !== LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER) {
       return null;
     }
 
@@ -143,7 +143,7 @@ const useLsExchangeRate = (
 
   const fetcher = useCallback(async () => {
     const promise =
-      protocol.type === LsProtocolType.TANGLE_RESTAKING_PARACHAIN
+      protocol.networkId === LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN
         ? parachainExchangeRate
         : fetchLiquifierExchangeRate();
 
@@ -155,12 +155,12 @@ const useLsExchangeRate = (
   // This helps prevent unnecessary requests.
   useEffect(() => {
     const isPaused =
-      protocol.type === LsProtocolType.TANGLE_RESTAKING_PARACHAIN;
+      protocol.networkId === LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN;
 
     setIsTgTokenTotalSupplyPaused(isPaused);
     setIsLiquifierTotalSharesPaused(isPaused);
   }, [
-    protocol.type,
+    protocol.networkId,
     setIsLiquifierTotalSharesPaused,
     setIsTgTokenTotalSupplyPaused,
   ]);

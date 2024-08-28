@@ -3,15 +3,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   LsProtocolId,
-  LsProtocolType,
+  LsProtocolNetworkId,
 } from '../../constants/liquidStaking/types';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import {
   Collator,
   Dapp,
   LiquidStakingItem,
-  Validator,
   PhalaVaultOrStakePool,
+  Validator,
 } from '../../types/liquidStaking';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import {
@@ -45,7 +45,9 @@ const useLsValidators = (selectedChain: LsProtocolId) => {
     async (protocolId: LsProtocolId) => {
       const protocol = getLsProtocolDef(protocolId);
 
-      if (protocol.type !== LsProtocolType.TANGLE_RESTAKING_PARACHAIN) {
+      if (
+        protocol.networkId !== LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN
+      ) {
         setItems([]);
         setIsLoading(false);
 

@@ -2,39 +2,33 @@ import { ColumnDef } from '@tanstack/react-table';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import { MutableRefObject } from 'react';
 
-import {
-  Collator,
-  Dapp,
-  PhalaVaultOrStakePool,
-} from '../../types/liquidStaking';
+import { AstarDapp } from './adapters/astar';
+import { MoonbeamCollator } from './adapters/moonbeam';
+import { PhalaVaultOrStakePool } from './adapters/phala';
 import { PolkadotValidator } from './adapters/polkadot';
 
-export type NetworkEntityCommon = {
-  href?: string;
-};
-
-export type NetworkEntity =
+export type ProtocolEntity =
   | PolkadotValidator
   | PhalaVaultOrStakePool
-  | Dapp
-  | Collator;
+  | AstarDapp
+  | MoonbeamCollator;
 
 export enum NetworkEntityType {
   POLKADOT_VALIDATOR,
   PHALA_VAULT_OR_STAKE_POOL,
 }
 
-export type FetchNetworkEntitiesFn<T extends NetworkEntity> = (
+export type FetchProtocolEntitiesFn<T extends ProtocolEntity> = (
   rpcEndpoint: string,
 ) => PromiseOrT<T[]>;
 
-export type GetTableColumnsFn<T extends NetworkEntity> = (
+export type GetTableColumnsFn<T extends ProtocolEntity> = (
   toggleSortSelectionHandlerRef: MutableRefObject<
     ((desc?: boolean | undefined, isMulti?: boolean | undefined) => void) | null
   >,
 ) => ColumnDef<T, any>[];
 
-export type LsAdapterDef<T extends NetworkEntity = NetworkEntity> = {
-  fetchNetworkEntities: FetchNetworkEntitiesFn<T>;
+export type LsAdapterDef<T extends ProtocolEntity = ProtocolEntity> = {
+  fetchProtocolEntities: FetchProtocolEntitiesFn<T>;
   getTableColumns: GetTableColumnsFn<T>;
 };

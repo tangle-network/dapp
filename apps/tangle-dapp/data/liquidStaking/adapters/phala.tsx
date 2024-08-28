@@ -1,4 +1,4 @@
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import {
   createColumnHelper,
   Row,
@@ -15,77 +15,47 @@ import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking
 import {
   LsParachainChainDef,
   LsProtocolId,
-  LsProtocolType,
+  LsProtocolNetworkId,
   LsToken,
 } from '../../../constants/liquidStaking/types';
-import {
-  LiquidStakingItem,
-  PhalaVaultOrStakePool,
-} from '../../../types/liquidStaking';
-import { SubstrateAddress } from '../../../types/utils';
-import assertSubstrateAddress from '../../../utils/assertSubstrateAddress';
+import { LiquidStakingItem } from '../../../types/liquidStaking';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
 import formatBn from '../../../utils/formatBn';
-import {
-  FetchNetworkEntitiesFn,
-  GetTableColumnsFn,
-  NetworkEntityCommon,
-} from '../adapter';
+import { FetchProtocolEntitiesFn, GetTableColumnsFn } from '../adapter';
 import {
   sortCommission,
   sortSelected,
   sortValueStaked,
 } from '../columnSorting';
-import {
-  fetchChainDecimals,
-  fetchMappedIdentityNames,
-  fetchMappedValidatorsCommission,
-  fetchMappedValidatorsTotalValueStaked,
-  fetchTokenSymbol,
-} from '../fetchHelpers';
+import { fetchVaultsAndStakePools } from '../fetchHelpers';
 import RadioInput from '../useLsValidatorSelectionTableColumns';
 
-const SS58_PREFIX = 0;
+const DECIMALS = 18;
 
-export type PolkadotValidator = NetworkEntityCommon & {
-  address: SubstrateAddress<typeof SS58_PREFIX>;
-  identity: string;
+export type PhalaVaultOrStakePool = {
+  // TODO: Is `id` or `accountId` a Substrate address? If so, use `SubstrateAddress` type.
+  id: string;
+  accountId: string;
   commission: BN;
-  apy?: number;
   totalValueStaked: BN;
+  type: 'vault' | 'stake-pool';
 };
 
-const fetchVaultOrStakePools: FetchNetworkEntitiesFn<
+const fetchVaultOrStakePools: FetchProtocolEntitiesFn<
   PhalaVaultOrStakePool
 > = async (rpcEndpoint) => {
-  const [
-    validators,
-    mappedIdentityNames,
-    mappedTotalValueStaked,
-    mappedCommission,
-  ] = await Promise.all([
-    fetchVaultOrStakePools(rpcEndpoint),
-    fetchMappedIdentityNames(rpcEndpoint),
-    fetchMappedValidatorsTotalValueStaked(rpcEndpoint),
-    fetchMappedValidatorsCommission(rpcEndpoint),
-    fetchChainDecimals(rpcEndpoint),
-    fetchTokenSymbol(rpcEndpoint),
-  ]);
+  const vaultsAndStakePools = await fetchVaultsAndStakePools(rpcEndpoint);
 
-  return validators.map((address) => {
-    const identityName = mappedIdentityNames.get(address.toString());
-    const totalValueStaked = mappedTotalValueStaked.get(address.toString());
-    const commission = mappedCommission.get(address.toString());
+  return vaultsAndStakePools.map((entity) => {
+    const type = entity.type === 'vault' ? 'vault' : 'stake-pool';
 
     return {
-      id: address.toString(),
-      address: assertSubstrateAddress(address.toString(), SS58_PREFIX),
-      identity: identityName ?? address.toString(),
-      totalValueStaked: totalValueStaked ?? BN_ZERO,
-      apy: 0,
-      commission: commission ?? BN_ZERO,
-      itemType: LiquidStakingItem.VALIDATOR,
-      href: `https://polkadot.subscan.io/account/${address.toString()}`,
+      id: entity.id,
+      accountId: entity.accountId,
+      commission: entity.commission,
+      totalValueStaked: entity.totalValueStaked,
+      type,
+      itemType: LiquidStakingItem.VAULT_OR_STAKE_POOL,
     };
   });
 };
@@ -106,7 +76,7 @@ const getTableColumns: GetTableColumnsFn<PhalaVaultOrStakePool> = (
   };
 
   return [
-    vaultOrStakePoolColumnHelper.accessor('vaultOrStakePoolID', {
+    vaultOrStakePoolColumnHelper.accessor('id', {
       header: ({ header }) => {
         toggleSortSelectionHandlerRef.current = header.column.toggleSorting;
         return (
@@ -121,7 +91,6 @@ const getTableColumns: GetTableColumnsFn<PhalaVaultOrStakePool> = (
       },
       cell: (props) => {
         const id = props.getValue();
-        const accountID = props.row.original.vaultOrStakePoolAccountID;
 
         return (
           <div className="flex items-center gap-2">
@@ -133,7 +102,7 @@ const getTableColumns: GetTableColumnsFn<PhalaVaultOrStakePool> = (
             <div className="flex items-center space-x-1">
               <Avatar
                 sourceVariant="address"
-                value={accountID}
+                value={props.row.original.accountId}
                 theme="substrate"
               />
 
@@ -205,8 +174,7 @@ const getTableColumns: GetTableColumnsFn<PhalaVaultOrStakePool> = (
             fw="normal"
             className="text-mono-200 dark:text-mono-0"
           >
-            {formatBn(props.getValue(), props.row.original.chainDecimals) +
-              ` ${props.row.original.chainTokenSymbol}`}
+            {formatBn(props.getValue(), DECIMALS) + ` ${LsToken.PHALA}`}
           </Typography>
         </div>
       ),
@@ -241,29 +209,32 @@ const getTableColumns: GetTableColumnsFn<PhalaVaultOrStakePool> = (
       // TODO: Avoid casting sorting function.
       sortingFn: sortCommission as SortingFnOption<PhalaVaultOrStakePool>,
     }),
-    vaultOrStakePoolColumnHelper.accessor('href', {
+    vaultOrStakePoolColumnHelper.display({
+      id: 'href',
       header: () => <span></span>,
       cell: (props) => {
-        return <StakingItemExternalLinkButton href={props.getValue()} />;
+        const href = `https://app.phala.network/phala/${props.row.original.type}/${props.row.original.id}`;
+
+        return <StakingItemExternalLinkButton href={href} />;
       },
     }),
   ];
 };
 
-const PHALA: LsParachainChainDef = {
-  type: LsProtocolType.TANGLE_RESTAKING_PARACHAIN,
+const PHALA: LsParachainChainDef<PhalaVaultOrStakePool> = {
+  networkId: LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN,
   id: LsProtocolId.PHALA,
   name: 'Phala',
   token: LsToken.PHALA,
   chainIconFileName: 'phala',
   currency: 'Pha',
-  decimals: 18,
+  decimals: DECIMALS,
   rpcEndpoint: 'wss://api.phala.network/ws',
   timeUnit: CrossChainTimeUnit.DAY,
   unstakingPeriod: 7,
   ss58Prefix: 30,
   adapter: {
-    fetchNetworkEntities: fetchVaultOrStakePools,
+    fetchProtocolEntities: fetchVaultOrStakePools,
     getTableColumns,
   },
 } as const satisfies LsParachainChainDef<PhalaVaultOrStakePool>;

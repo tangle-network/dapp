@@ -6,7 +6,7 @@ import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import LIQUIFIER_TG_TOKEN_ABI from '../../../constants/liquidStaking/liquifierTgTokenAbi';
 import {
   LsProtocolId,
-  LsProtocolType,
+  LsProtocolNetworkId,
 } from '../../../constants/liquidStaking/types';
 import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
 import usePolling from '../../../data/liquidStaking/usePolling';
@@ -45,7 +45,7 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
 
   const erc20BalanceFetcher = useCallback(() => {
     if (
-      protocol.type !== LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER ||
+      protocol.networkId !== LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER ||
       evmAddress20 === null
     ) {
       return;
@@ -89,7 +89,7 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
 
   useEffect(() => {
     if (
-      protocol.type !== LsProtocolType.TANGLE_RESTAKING_PARACHAIN ||
+      protocol.networkId !== LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN ||
       parachainBalances === null
     ) {
       return;
@@ -106,7 +106,7 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
 
       return newBalance;
     });
-  }, [parachainBalances, protocol.token, protocol.type]);
+  }, [parachainBalances, protocol.token, protocol.networkId]);
 
   return balance;
 };

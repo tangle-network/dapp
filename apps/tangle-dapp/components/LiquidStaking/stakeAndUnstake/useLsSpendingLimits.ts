@@ -4,14 +4,22 @@ import { useCallback, useMemo } from 'react';
 
 import {
   LsProtocolId,
-  LsProtocolType,
+  LsProtocolNetworkId,
 } from '../../../constants/liquidStaking/types';
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import useAgnosticLsBalance from './useAgnosticLsBalance';
 
-const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
+type LsSpendingLimits = {
+  minSpendable: BN | null;
+  maxSpendable: BN | null;
+};
+
+const useLsSpendingLimits = (
+  isNative: boolean,
+  protocolId: LsProtocolId,
+): LsSpendingLimits => {
   const balance = useAgnosticLsBalance(isNative, protocolId);
 
   const { result: existentialDepositAmount } = useApi(
@@ -24,7 +32,9 @@ const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
       (api) => {
         const protocol = getLsProtocolDef(protocolId);
 
-        if (protocol.type !== LsProtocolType.TANGLE_RESTAKING_PARACHAIN) {
+        if (
+          protocol.networkId !== LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN
+        ) {
           return null;
         }
 
@@ -42,7 +52,9 @@ const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
       (api) => {
         const protocol = getLsProtocolDef(protocolId);
 
-        if (protocol.type !== LsProtocolType.TANGLE_RESTAKING_PARACHAIN) {
+        if (
+          protocol.networkId !== LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN
+        ) {
           return null;
         }
 

@@ -4,14 +4,17 @@ import { LS_REGISTRY_ADDRESS } from '../../../constants/liquidStaking/constants'
 import LIQUIFIER_REGISTRY_ABI from '../../../constants/liquidStaking/liquifierRegistryAbi';
 import {
   LsProtocolId,
-  LsProtocolType,
+  LsProtocolNetworkId,
 } from '../../../constants/liquidStaking/types';
 import useParachainLsFees from '../../../data/liquidStaking/useParachainLsFees';
 import useContractRead from '../../../data/liquifier/useContractRead';
 import { ContractReadOptions } from '../../../data/liquifier/useContractReadOnce';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 
-const useLsFeePermill = (protocolId: LsProtocolId, isMinting: boolean) => {
+const useLsFeePermill = (
+  protocolId: LsProtocolId,
+  isMinting: boolean,
+): number | Error | null => {
   const { result: parachainFees } = useParachainLsFees();
 
   const protocol = getLsProtocolDef(protocolId);
@@ -27,7 +30,7 @@ const useLsFeePermill = (protocolId: LsProtocolId, isMinting: boolean) => {
     typeof LIQUIFIER_REGISTRY_ABI,
     'fee'
   > | null => {
-    if (protocol.type !== LsProtocolType.ETHEREUM_MAINNET_LIQUIFIER) {
+    if (protocol.networkId !== LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER) {
       return null;
     }
 
@@ -48,9 +51,9 @@ const useLsFeePermill = (protocolId: LsProtocolId, isMinting: boolean) => {
   // This helps prevent unnecessary contract read calls.
   useEffect(() => {
     setIsLiquifierFeePaused(
-      protocol.type === LsProtocolType.TANGLE_RESTAKING_PARACHAIN,
+      protocol.networkId === LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN,
     );
-  }, [protocol.type, setIsLiquifierFeePaused]);
+  }, [protocol.networkId, setIsLiquifierFeePaused]);
 
   // The fee should be returned as a per-mill value from the liquifier contract.
   const liquifierFeePermillOrError =
@@ -60,7 +63,7 @@ const useLsFeePermill = (protocolId: LsProtocolId, isMinting: boolean) => {
         ? null
         : Number(rawLiquifierFeeOrError);
 
-  return protocol.type === LsProtocolType.TANGLE_RESTAKING_PARACHAIN
+  return protocol.networkId === LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN
     ? parachainFee
     : liquifierFeePermillOrError;
 };

@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
   LsProtocolId,
+  LsProtocolNetworkId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
 import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
@@ -97,13 +98,18 @@ const LiquidUnstakeCard: FC = () => {
       return;
     }
 
-    if (selectedProtocol.type === 'parachain' && executeRedeemTx !== null) {
+    if (
+      selectedProtocol.networkId ===
+        LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN &&
+      executeRedeemTx !== null
+    ) {
       executeRedeemTx({
         amount: fromAmount,
         currency: selectedProtocol.currency,
       });
     } else if (
-      selectedProtocol.type === 'liquifier' &&
+      selectedProtocol.networkId ===
+        LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
       performLiquifierUnlock !== null
     ) {
       setDidLiquifierUnlockSucceed(false);
@@ -153,8 +159,12 @@ const LiquidUnstakeCard: FC = () => {
 
   // TODO: Also check if the user has enough balance to unstake.
   const canCallUnstake =
-    (selectedProtocol.type === 'parachain' && executeRedeemTx !== null) ||
-    (selectedProtocol.type === 'liquifier' && performLiquifierUnlock !== null);
+    (selectedProtocol.networkId ===
+      LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN &&
+      executeRedeemTx !== null) ||
+    (selectedProtocol.networkId ===
+      LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
+      performLiquifierUnlock !== null);
 
   return (
     <>

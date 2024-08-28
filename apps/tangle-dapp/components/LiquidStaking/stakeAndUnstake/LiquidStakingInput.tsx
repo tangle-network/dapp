@@ -19,13 +19,13 @@ import {
 } from '../../../constants/liquidStaking/constants';
 import {
   LsProtocolId,
-  LsProtocolType,
+  LsProtocolNetworkId,
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
-import getLsProtocolTypeMetadata from '../../../utils/liquidStaking/getLsProtocolMetadata';
+import getLsProtocolNetwork from '../../../utils/liquidStaking/getLsProtocolMetadata';
 import DropdownChevronIcon from './DropdownChevronIcon';
 import TokenChip from './TokenChip';
 
@@ -153,13 +153,13 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
 };
 
 type ProtocolTypeSelectorProps = {
-  selectedProtocolType: LsProtocolType;
+  selectedProtocolType: LsProtocolNetworkId;
 
   /**
    * If this function is not provided, the selector will be
    * considered read-only.
    */
-  setProtocolType?: (newProtocolType: LsProtocolType) => void;
+  setProtocolType?: (newProtocolType: LsProtocolNetworkId) => void;
 };
 
 /** @internal */
@@ -170,7 +170,7 @@ const ProtocolTypeSelector: FC<ProtocolTypeSelectorProps> = ({
   const isReadOnly = selectedProtocolType === undefined;
 
   const selectedProtocolTypeMetadata =
-    getLsProtocolTypeMetadata(selectedProtocolType);
+    getLsProtocolNetwork(selectedProtocolType);
 
   const base = (
     <div className="group flex gap-1 items-center justify-center">
