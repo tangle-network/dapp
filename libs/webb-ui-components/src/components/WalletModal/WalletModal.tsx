@@ -1,12 +1,12 @@
 'use client';
 
-import { forwardRef, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { Modal, ModalContent } from '../Modal';
 import { WalletConnectionCard } from '../WalletConnectionCard';
 import { WalletModalProps } from './types';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 
-export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
+export const WalletModal: FC<WalletModalProps> =
   (
     {
       notificationApi,
@@ -23,9 +23,7 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
       platformId,
       targetTypedChainIds,
       contentDefaultText,
-      ...props
     },
-    ref,
   ) => {
     // Get the current failed or connecting wallet
     const getCurrentWallet = useCallback(() => {
@@ -80,42 +78,39 @@ export const WalletModal = forwardRef<HTMLDivElement, WalletModalProps>(
     }, [connectWallet, notificationApi, selectedWallet, connectError]);
 
     return (
-      <div ref={ref} {...props}>
-        <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
-          <ModalContent
-            isOpen={isModalOpen}
-            isCenter
-            onCloseAutoFocus={() => resetState()}
-          >
-            <WalletConnectionCard
-              wallets={supportedWallets}
-              onWalletSelect={(nextWallet) =>
-                connectWallet(nextWallet, targetTypedChainIds)
-              }
-              onClose={() => toggleModal(false)}
-              connectingWalletId={connectingWalletId}
-              errorMessage={errorMessage}
-              failedWalletId={failedWalletId}
-              onTryAgainBtnClick={handleTryAgainBtnClick}
-              errorBtnText={
-                connectError instanceof WalletNotInstalledError
-                  ? 'Download'
-                  : 'Try Again'
-              }
-              tryAgainBtnProps={
-                connectError instanceof WalletNotInstalledError
-                  ? {
-                      href: downloadURL?.toString(),
-                      target: '_blank',
-                    }
-                  : {}
-              }
-              downloadWalletURL={downloadURL}
-              contentDefaultText={contentDefaultText}
-            />
-          </ModalContent>
-        </Modal>
-      </div>
+      <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
+        <ModalContent
+          isOpen={isModalOpen}
+          isCenter
+          onCloseAutoFocus={() => resetState()}
+        >
+          <WalletConnectionCard
+            wallets={supportedWallets}
+            onWalletSelect={(nextWallet) =>
+              connectWallet(nextWallet, targetTypedChainIds)
+            }
+            onClose={() => toggleModal(false)}
+            connectingWalletId={connectingWalletId}
+            errorMessage={errorMessage}
+            failedWalletId={failedWalletId}
+            onTryAgainBtnClick={handleTryAgainBtnClick}
+            errorBtnText={
+              connectError instanceof WalletNotInstalledError
+                ? 'Download'
+                : 'Try Again'
+            }
+            tryAgainBtnProps={
+              connectError instanceof WalletNotInstalledError
+                ? {
+                  href: downloadURL?.toString(),
+                  target: '_blank',
+                }
+                : {}
+            }
+            downloadWalletURL={downloadURL}
+            contentDefaultText={contentDefaultText}
+          />
+        </ModalContent>
+      </Modal>
     );
-  },
-);
+  };
