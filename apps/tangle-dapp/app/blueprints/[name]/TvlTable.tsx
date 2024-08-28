@@ -22,8 +22,8 @@ import { FC, useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import LsTokenIcon from '../../../components/LsTokenIcon';
+import TableCellWrapper from '../../../components/tables/TableCellWrapper';
 import { Vault } from '../../../types/blueprint';
-import TableCellWrapper from './TableCellWrapper';
 import useVaults from './useVaults';
 import VaultAssetsTable from './VaultAssetsTable';
 
@@ -102,12 +102,12 @@ const columns = [
     header: () => null,
     cell: ({ row }) => (
       <TableCellWrapper removeBorder>
-        <div className="flex-1 flex items-center gap-2 justify-end">
+        <div className="flex items-center justify-end flex-1 gap-2">
           {/* TODO: add proper href */}
           <Link href="#" passHref>
             <Button
               variant="utility"
-              className="body4 uppercase"
+              className="uppercase body4"
               onClick={(e) => {
                 e.stopPropagation(); // prevent row click
               }}
@@ -146,7 +146,7 @@ const TvlTable: FC = () => {
 
   const getExpandedRowContent = (row: Row<Vault>) => {
     return (
-      <div className="bg-mono-0 dark:bg-mono-190 -mt-7 pt-4 pb-3 rounded-b-xl -mx-px px-3">
+      <div className="px-3 pt-4 pb-3 -mx-px bg-mono-0 dark:bg-mono-190 -mt-7 rounded-b-xl">
         <VaultAssetsTable
           LSTTokenIcon={row.original.lstToken}
           isShown={row.getIsExpanded()}

@@ -1,4 +1,6 @@
+import { Search } from '@webb-tools/icons/Search';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { Input } from '@webb-tools/webb-ui-components/components/Input';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
@@ -6,6 +8,7 @@ import { twMerge } from 'tailwind-merge';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
 import StatItem from '../../components/LiquidStaking/StatItem';
+import OperatorsTable from '../../components/tables/Operators';
 
 export const dynamic = 'force-static';
 
@@ -82,25 +85,21 @@ export default function RestakePage() {
       <TableAndChartTabs
         tabs={[RESTAKE_VAULTS_TAB, OPERATORS_TAB]}
         headerClassName="w-full"
-        // TODO: Implement search functionality
-        /* additionalActionsCmp={
+        additionalActionsCmp={
           <Input
             id="search-validators"
             rightIcon={<Search className="mr-2" />}
-            placeholder="Search validators..."
-            value={searchValue}
-            onChange={(val) => setSearchValue(val)}
-            isControlled
-            className="w-2/5"
+            placeholder="Search identity or address"
+            className="w-1/3"
           />
-        } */
+        }
       >
         <TabContent value={RESTAKE_VAULTS_TAB}>
           TODO: Implement Restake Vaults
         </TabContent>
 
         <TabContent value={OPERATORS_TAB}>
-          TODO: Implement Operators Table
+          <OperatorsTable />
         </TabContent>
       </TableAndChartTabs>
     </div>
