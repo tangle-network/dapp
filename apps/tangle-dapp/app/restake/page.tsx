@@ -1,5 +1,72 @@
+import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import cx from 'classnames';
+
+import GlassCard from '../../components/GlassCard/GlassCard';
+import StatItem from '../../components/LiquidStaking/StatItem';
+
 export const dynamic = 'force-static';
 
+const CONTENT = {
+  OVERVIEW: (
+    <>
+      Operators on Tangle provide computation resources to power AVS Blueprints.
+      <b>&nbsp;Deposit and Delegate liquidity to earn yields.</b>
+    </>
+  ),
+  HOW_IT_WORKS:
+    'Tangle combines restaking with omnichain assets to provide a multi-asset crypto-economically secured compute infrastructure.',
+} as const;
+
 export default function RestakePage() {
-  return <div>Restake</div>;
+  return (
+    <div>
+      <div className="flex gap-5">
+        <GlassCard
+          className={cx(
+            'justify-between',
+            '[background:linear-gradient(79deg,_#b6b8dd_8.85%,_#d9ddf2_55.91%,_#dbbdcd_127.36%),_#fff]',
+            'dark:[background:linear-gradient(79deg,_rgba(30,_32,_65,_0.8)_8.85%,_rgba(38,_52,_116,_0.8)_55.91%,_rgba(113,_61,_89,_0.8)_127.36%)]',
+          )}
+        >
+          <Typography
+            variant="body1"
+            className="text-mono-200 dark:text-mono-0 max-w-[510px]"
+          >
+            {CONTENT.OVERVIEW}
+          </Typography>
+
+          <div className="flex justify-end gap-6 pt-3 border-t border-mono-0 dark:border-mono-140">
+            <StatItem title="$123.01" subtitle="My Total Restaked" />
+
+            <StatItem title="$123.01" subtitle="Network TVL" />
+          </div>
+        </GlassCard>
+
+        <GlassCard className="max-w-[442px] min-h-[233px] justify-between">
+          <div>
+            <Typography
+              variant="body1"
+              fw="bold"
+              className="text-mono-200 dark:text-mono-0 mb-2.5"
+            >
+              How it works
+            </Typography>
+
+            <Typography variant="body1">{CONTENT.HOW_IT_WORKS}</Typography>
+          </div>
+
+          {/** TODO: Determine read more link here */}
+          <Button
+            href="#"
+            variant="link"
+            size="sm"
+            className="inline-block ml-auto"
+          >
+            Read more
+          </Button>
+        </GlassCard>
+      </div>
+    </div>
+  );
 }
