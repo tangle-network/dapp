@@ -2,17 +2,18 @@ import { TokenIcon } from '@webb-tools/icons';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-type LSTTokenIconSize = 'md' | 'lg';
+type LsTokenIconSize = 'md' | 'lg';
 
-interface LSTTokenIconProps {
+interface LsTokenIconProps {
   name: string;
-  size?: LSTTokenIconSize;
+  size?: LsTokenIconSize;
 }
 
-const LSTTokenIcon: FC<LSTTokenIconProps> = ({ name, size = 'md' }) => {
+const LsTokenIcon: FC<LsTokenIconProps> = ({ name, size = 'md' }) => {
   const { wrapperSizeClassName, iconSizeClassName, borderSize } =
     getSizeValues(size);
 
+  // TODO: Positioning of the logo is not 100% centered; a few pixels off. Avoid using absolute positioning for the logo to fix this.
   return (
     <div
       className={twMerge(
@@ -23,7 +24,7 @@ const LSTTokenIcon: FC<LSTTokenIconProps> = ({ name, size = 'md' }) => {
       <TokenIcon
         name={name}
         className={twMerge(
-          'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
+          'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full',
           iconSizeClassName,
         )}
         customLoadingCmp={
@@ -69,9 +70,9 @@ const LSTTokenIcon: FC<LSTTokenIconProps> = ({ name, size = 'md' }) => {
   );
 };
 
-export default LSTTokenIcon;
+export default LsTokenIcon;
 
-function getSizeValues(size: LSTTokenIconSize): {
+function getSizeValues(size: LsTokenIconSize): {
   wrapperSizeClassName: string;
   iconSizeClassName: string;
   borderSize: number;

@@ -21,10 +21,13 @@ import { usePathname } from 'next/navigation';
 import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useNetworkStore from '../../context/useNetworkStore';
+import { useLiquidStakingStore } from '../../data/liquidStaking/useLiquidStakingStore';
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
 import { PagePath } from '../../types';
 import createCustomNetwork from '../../utils/createCustomNetwork';
+import isLsErc20TokenId from '../../utils/liquidStaking/isLsErc20TokenId';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
 // TODO: Currently hard-coded, but shouldn't it always be the Tangle icon, since it's not switching chains but rather networks within Tangle? If so, find some constant somewhere instead of having it hard-coded here.
@@ -37,6 +40,7 @@ const NetworkSelectionButton: FC = () => {
   const { network } = useNetworkStore();
   const { switchNetwork, isCustom } = useNetworkSwitcher();
   const pathname = usePathname();
+  const { selectedProtocolId } = useLiquidStakingStore();
 
   // TODO: Handle switching network on EVM wallet here.
   const switchToCustomNetwork = useCallback(
@@ -95,13 +99,25 @@ const NetworkSelectionButton: FC = () => {
   // Network can't be switched from the Tangle Restaking Parachain while
   // on liquid staking page.
   else if (isInLiquidStakingPath) {
+    const liquidStakingNetworkName = isLsErc20TokenId(selectedProtocolId)
+      ? IS_PRODUCTION_ENV
+        ? 'Ethereum Mainnet'
+        : 'Sepolia Testnet'
+      : TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.name;
+
+    const chainIconName = isLsErc20TokenId(selectedProtocolId)
+      ? 'ethereum'
+      : TANGLE_TESTNET_CHAIN_NAME;
+
     return (
       <Tooltip>
         <TooltipTrigger asChild>
           <Dropdown>
             <TriggerButton
               className="opacity-60 cursor-not-allowed hover:!bg-none dark:hover:!bg-none"
-              networkName={TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.name}
+              networkName={liquidStakingNetworkName}
+              chainIconName={chainIconName}
+              isLocked
             />
           </Dropdown>
         </TooltipTrigger>
@@ -160,12 +176,16 @@ type TriggerButtonProps = {
   className?: string;
   networkName: string;
   isLoading?: boolean;
+  chainIconName?: string;
+  isLocked?: boolean;
 };
 
 const TriggerButton: FC<TriggerButtonProps> = ({
-  isLoading,
+  isLoading = false,
   networkName,
   className,
+  chainIconName = TANGLE_TESTNET_CHAIN_NAME,
+  isLocked = false,
 }) => {
   return (
     <DropdownBasicButton
@@ -184,11 +204,7 @@ const TriggerButton: FC<TriggerButtonProps> = ({
       {isLoading ? (
         <Spinner size="lg" />
       ) : (
-        <ChainIcon
-          size="lg"
-          className="shrink-0 grow-0"
-          name={TANGLE_TESTNET_CHAIN_NAME}
-        />
+        <ChainIcon size="lg" className="shrink-0 grow-0" name={chainIconName} />
       )}
 
       <div className="flex items-center gap-0">
@@ -200,7 +216,7 @@ const TriggerButton: FC<TriggerButtonProps> = ({
           {networkName}
         </Typography>
 
-        <ChevronDown size="lg" className="shrink-0 grow-0" />
+        {!isLocked && <ChevronDown size="lg" className="shrink-0 grow-0" />}
       </div>
     </DropdownBasicButton>
   );

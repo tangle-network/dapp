@@ -4,7 +4,7 @@
 // the `lstMinting` pallet for this file only.
 import '@webb-tools/tangle-restaking-types';
 
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Search } from '@webb-tools/icons';
 import {
@@ -13,33 +13,32 @@ import {
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import React, { FC, useCallback, useMemo } from 'react';
 import { z } from 'zod';
 
+import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
+  LsProtocolId,
   LsSearchParamKey,
-  LST_PREFIX,
-  PARACHAIN_CHAIN_MAP,
-  ParachainChainId,
-} from '../../../constants/liquidStaking';
-import { useLiquidStakingStore } from '../../../data/liquidStaking/store';
+} from '../../../constants/liquidStaking/types';
 import useExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useExchangeRate';
+import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
-import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
-import useApi from '../../../hooks/useApi';
-import useApiRx from '../../../hooks/useApiRx';
+import useLiquifierDeposit from '../../../data/liquifier/useLiquifierDeposit';
+import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamState from '../../../hooks/useSearchParamState';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
+import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
+import AgnosticLsBalance from './AgnosticLsBalance';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import LiquidStakingInput from './LiquidStakingInput';
 import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
-import ParachainWalletBalance from './ParachainWalletBalance';
 import SelectValidatorsButton from './SelectValidatorsButton';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
+import useLsSpendingLimits from './useLsSpendingLimits';
 
 const LiquidStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useSearchParamState<BN | null>({
@@ -49,67 +48,49 @@ const LiquidStakeCard: FC = () => {
     stringify: (value) => value?.toString(),
   });
 
-  const { selectedChainId, setSelectedChainId } = useLiquidStakingStore();
+  const { selectedProtocolId, setSelectedProtocolId } = useLiquidStakingStore();
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
-  const { nativeBalances } = useParachainBalances();
+  const performLiquifierDeposit = useLiquifierDeposit();
+  const activeAccountAddress = useActiveAccountAddress();
 
-  const selectedChain = PARACHAIN_CHAIN_MAP[selectedChainId];
+  const { maxSpendable, minSpendable } = useLsSpendingLimits(
+    true,
+    selectedProtocolId,
+  );
+
+  const selectedProtocol = getLsProtocolDef(selectedProtocolId);
 
   useSearchParamSync({
-    key: LsSearchParamKey.CHAIN_ID,
-    value: selectedChainId,
-    parse: (value) => z.nativeEnum(ParachainChainId).parse(parseInt(value)),
+    key: LsSearchParamKey.PROTOCOL_ID,
+    value: selectedProtocolId,
+    parse: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
-    setValue: setSelectedChainId,
+    setValue: setSelectedProtocolId,
   });
 
-  const exchangeRate = useExchangeRate(
+  const { exchangeRate } = useExchangeRate(
     ExchangeRateType.NativeToLiquid,
-    selectedChain.currency,
+    selectedProtocolId,
   );
 
-  const { result: minimumMintingAmount } = useApiRx(
-    useCallback(
-      (api) =>
-        api.query.lstMinting.minimumMint({
-          Native: selectedChain.currency,
-        }),
-      [selectedChain.currency],
-    ),
-    TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
-  );
-
-  const { result: existentialDepositAmount } = useApi(
-    useCallback((api) => api.consts.balances.existentialDeposit, []),
-    TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
-  );
-
-  const minimumInputAmount = useMemo(() => {
-    if (minimumMintingAmount === null || existentialDepositAmount === null) {
-      return null;
-    }
-
-    return BN.max(minimumMintingAmount, existentialDepositAmount);
-  }, [existentialDepositAmount, minimumMintingAmount]);
-
-  const maximumInputAmount = useMemo(() => {
-    if (nativeBalances === null) {
-      return null;
-    }
-
-    return nativeBalances.get(selectedChain.token) ?? BN_ZERO;
-  }, [nativeBalances, selectedChain.token]);
-
-  const handleStakeClick = useCallback(() => {
-    if (executeMintTx === null || fromAmount === null) {
+  const handleStakeClick = useCallback(async () => {
+    // Not ready yet; no amount given.
+    if (fromAmount === null) {
       return;
     }
 
-    executeMintTx({
-      amount: fromAmount,
-      currency: selectedChain.currency,
-    });
-  }, [executeMintTx, fromAmount, selectedChain.currency]);
+    if (selectedProtocol.type === 'parachain' && executeMintTx !== null) {
+      executeMintTx({
+        amount: fromAmount,
+        currency: selectedProtocol.currency,
+      });
+    } else if (
+      selectedProtocol.type === 'erc20' &&
+      performLiquifierDeposit !== null
+    ) {
+      await performLiquifierDeposit(selectedProtocol.id, fromAmount);
+    }
+  }, [executeMintTx, fromAmount, performLiquifierDeposit, selectedProtocol]);
 
   const toAmount = useMemo(() => {
     if (fromAmount === null || exchangeRate === null) {
@@ -119,12 +100,17 @@ const LiquidStakeCard: FC = () => {
     return fromAmount.muln(exchangeRate);
   }, [fromAmount, exchangeRate]);
 
+  const canCallStake =
+    (fromAmount !== null &&
+      selectedProtocol.type === 'parachain' &&
+      executeMintTx !== null) ||
+    (selectedProtocol.type === 'erc20' && performLiquifierDeposit !== null);
+
   const walletBalance = (
-    <ParachainWalletBalance
-      token={selectedChain.token}
-      decimals={selectedChain.decimals}
+    <AgnosticLsBalance
+      protocolId={selectedProtocolId}
       tooltip="Click to use all available balance"
-      onClick={() => setFromAmount(maximumInputAmount)}
+      onClick={() => setFromAmount(maxSpendable)}
     />
   );
 
@@ -132,54 +118,54 @@ const LiquidStakeCard: FC = () => {
     <>
       <LiquidStakingInput
         id="liquid-staking-stake-from"
-        chainId={selectedChainId}
-        token={selectedChain.token}
+        protocolId={selectedProtocolId}
+        token={selectedProtocol.token}
         amount={fromAmount}
-        decimals={selectedChain.decimals}
+        decimals={selectedProtocol.decimals}
         onAmountChange={setFromAmount}
-        placeholder={`0 ${selectedChain.token}`}
+        placeholder={`0 ${selectedProtocol.token}`}
         rightElement={walletBalance}
-        setChainId={setSelectedChainId}
-        minAmount={minimumInputAmount ?? undefined}
-        maxAmount={maximumInputAmount ?? undefined}
+        setChainId={setSelectedProtocolId}
+        minAmount={minSpendable ?? undefined}
+        maxAmount={maxSpendable ?? undefined}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
 
       <LiquidStakingInput
         id="liquid-staking-stake-to"
-        chainId={ParachainChainId.TANGLE_RESTAKING_PARACHAIN}
-        placeholder={`0 ${LST_PREFIX}${selectedChain.token}`}
-        decimals={selectedChain.decimals}
+        protocolId={LsProtocolId.TANGLE_RESTAKING_PARACHAIN}
+        placeholder={`0 ${LST_PREFIX}${selectedProtocol.token}`}
+        decimals={selectedProtocol.decimals}
         amount={toAmount}
         isReadOnly
         isTokenLiquidVariant
-        token={selectedChain.token}
+        token={selectedProtocol.token}
         rightElement={<SelectValidatorsButton />}
       />
 
       {/* Details */}
       <div className="flex flex-col gap-2 p-3">
         <ExchangeRateDetailItem
-          token={selectedChain.token}
-          currency={selectedChain.currency}
+          protocolId={selectedProtocolId}
+          token={selectedProtocol.token}
           type={ExchangeRateType.NativeToLiquid}
         />
 
         <MintAndRedeemFeeDetailItem
           intendedAmount={fromAmount}
           isMinting
-          token={selectedChain.token}
+          token={selectedProtocol.token}
         />
 
-        <UnstakePeriodDetailItem currency={selectedChain.currency} />
+        <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
       </div>
 
       <Button
         isDisabled={
-          // Mint transaction is not available yet. This may indicate
-          // that there is no connected account.
-          executeMintTx === null ||
+          // No active account.
+          activeAccountAddress === null ||
+          !canCallStake ||
           // No amount entered or amount is zero.
           fromAmount === null ||
           fromAmount.isZero()
