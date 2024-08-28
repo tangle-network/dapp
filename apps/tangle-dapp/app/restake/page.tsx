@@ -1,4 +1,6 @@
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
+import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { twMerge } from 'tailwind-merge';
 
@@ -20,9 +22,13 @@ const CONTENT = {
 
 const minHeightClsx = 'min-h-[233px]';
 
+const RESTAKE_VAULTS_TAB = 'Restake Vaults';
+
+const OPERATORS_TAB = 'Operators';
+
 export default function RestakePage() {
   return (
-    <div>
+    <div className="space-y-5">
       <div className="flex flex-col gap-5 md:flex-row">
         <GlassCard
           className={twMerge(
@@ -72,6 +78,31 @@ export default function RestakePage() {
           </Button>
         </GlassCard>
       </div>
+
+      <TableAndChartTabs
+        tabs={[RESTAKE_VAULTS_TAB, OPERATORS_TAB]}
+        headerClassName="w-full"
+        // TODO: Implement search functionality
+        /* additionalActionsCmp={
+          <Input
+            id="search-validators"
+            rightIcon={<Search className="mr-2" />}
+            placeholder="Search validators..."
+            value={searchValue}
+            onChange={(val) => setSearchValue(val)}
+            isControlled
+            className="w-2/5"
+          />
+        } */
+      >
+        <TabContent value={RESTAKE_VAULTS_TAB}>
+          TODO: Implement Restake Vaults
+        </TabContent>
+
+        <TabContent value={OPERATORS_TAB}>
+          TODO: Implement Operators Table
+        </TabContent>
+      </TableAndChartTabs>
     </div>
   );
 }
