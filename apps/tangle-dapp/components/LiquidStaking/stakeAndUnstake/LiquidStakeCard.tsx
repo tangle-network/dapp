@@ -16,16 +16,16 @@ import {
 import React, { FC, useCallback, useMemo } from 'react';
 import { z } from 'zod';
 
-import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
+import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
+  LsNetworkId,
   LsProtocolId,
-  LsProtocolNetworkId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
-import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
 import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
+import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
 import useLiquifierDeposit from '../../../data/liquifier/useLiquifierDeposit';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
@@ -50,7 +50,13 @@ const LiquidStakeCard: FC = () => {
     stringify: (value) => value?.toString(),
   });
 
-  const { selectedProtocolId, setSelectedProtocolId } = useLiquidStakingStore();
+  const {
+    selectedProtocolId,
+    setSelectedProtocolId,
+    selectedNetworkId,
+    setSelectedNetworkId,
+  } = useLsStore();
+
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const performLiquifierDeposit = useLiquifierDeposit();
   const activeAccountAddress = useActiveAccountAddress();
@@ -68,6 +74,14 @@ const LiquidStakeCard: FC = () => {
     parse: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
     setValue: setSelectedProtocolId,
+  });
+
+  useSearchParamSync({
+    key: LsSearchParamKey.NETWORK_ID,
+    value: selectedNetworkId,
+    parse: (value) => z.nativeEnum(LsNetworkId).parse(parseInt(value)),
+    stringify: (value) => value.toString(),
+    setValue: setSelectedNetworkId,
   });
 
   const {
@@ -89,8 +103,7 @@ const LiquidStakeCard: FC = () => {
     }
 
     if (
-      selectedProtocol.networkId ===
-        LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN &&
+      selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
       executeMintTx !== null
     ) {
       executeMintTx({
@@ -98,8 +111,7 @@ const LiquidStakeCard: FC = () => {
         currency: selectedProtocol.currency,
       });
     } else if (
-      selectedProtocol.networkId ===
-        LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
+      selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
       performLiquifierDeposit !== null
     ) {
       await performLiquifierDeposit(selectedProtocol.id, fromAmount);
@@ -116,11 +128,9 @@ const LiquidStakeCard: FC = () => {
 
   const canCallStake =
     (fromAmount !== null &&
-      selectedProtocol.networkId ===
-        LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN &&
+      selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
       executeMintTx !== null) ||
-    (selectedProtocol.networkId ===
-      LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
+    (selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
       performLiquifierDeposit !== null);
 
   const walletBalance = (
@@ -135,6 +145,7 @@ const LiquidStakeCard: FC = () => {
     <>
       <LiquidStakingInput
         id="liquid-staking-stake-from"
+        networkId={selectedNetworkId}
         protocolId={selectedProtocolId}
         token={selectedProtocol.token}
         amount={fromAmount}
@@ -142,17 +153,19 @@ const LiquidStakeCard: FC = () => {
         onAmountChange={setFromAmount}
         placeholder={`0 ${selectedProtocol.token}`}
         rightElement={walletBalance}
-        setChainId={setSelectedProtocolId}
+        setProtocolId={setSelectedProtocolId}
         minAmount={minSpendable ?? undefined}
         maxAmount={maxSpendable ?? undefined}
+        setNetworkId={setSelectedNetworkId}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
 
       <LiquidStakingInput
         id="liquid-staking-stake-to"
-        protocolId={LsProtocolId.TANGLE_RESTAKING_PARACHAIN}
-        placeholder={`0 ${LST_PREFIX}${selectedProtocol.token}`}
+        networkId={LsNetworkId.TANGLE_RESTAKING_PARACHAIN}
+        protocolId={selectedProtocolId}
+        placeholder={`0 ${LS_DERIVATIVE_TOKEN_PREFIX}${selectedProtocol.token}`}
         decimals={selectedProtocol.decimals}
         amount={toAmount}
         isReadOnly

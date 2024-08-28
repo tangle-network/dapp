@@ -10,9 +10,9 @@ import {
 
 import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking/StakingItemExternalLinkButton';
 import {
+  LsNetworkId,
   LsParachainChainDef,
   LsProtocolId,
-  LsProtocolNetworkId,
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { LiquidStakingItem } from '../../../types/liquidStaking';
@@ -206,7 +206,7 @@ const getTableColumns: GetTableColumnsFn<MantaCollator> = (
 };
 
 const MANTA: LsParachainChainDef<MantaCollator> = {
-  networkId: LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN,
+  networkId: LsNetworkId.TANGLE_RESTAKING_PARACHAIN,
   id: LsProtocolId.MANTA,
   name: 'Manta',
   token: LsToken.MANTA,

@@ -5,7 +5,10 @@ import {
 import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 
-import { LsAdapterDef, ProtocolEntity } from '../../data/liquidStaking/adapter';
+import {
+  LsNetworkEntityAdapter,
+  ProtocolEntity,
+} from '../../data/liquidStaking/adapter';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 
 export enum LsProtocolId {
@@ -57,25 +60,25 @@ type ProtocolDefCommon = {
   chainIconFileName: string;
 };
 
-export enum LsProtocolNetworkId {
+export enum LsNetworkId {
   TANGLE_RESTAKING_PARACHAIN,
   ETHEREUM_MAINNET_LIQUIFIER,
 }
 
 export interface LsParachainChainDef<T extends ProtocolEntity = ProtocolEntity>
   extends ProtocolDefCommon {
-  networkId: LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN;
+  networkId: LsNetworkId.TANGLE_RESTAKING_PARACHAIN;
   id: LsParachainChainId;
   name: string;
   token: LsParachainToken;
   currency: ParachainCurrency;
   rpcEndpoint: string;
   ss58Prefix: number;
-  adapter: LsAdapterDef<T>;
+  adapter: LsNetworkEntityAdapter<T>;
 }
 
 export interface LsLiquifierProtocolDef extends ProtocolDefCommon {
-  networkId: LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER;
+  networkId: LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER;
   id: LsLiquifierProtocolId;
   token: LsLiquifierProtocolToken;
   erc20TokenAddress: HexString;
@@ -88,13 +91,14 @@ export type LsProtocolDef = LsParachainChainDef | LsLiquifierProtocolDef;
 
 export type LsCardSearchParams = {
   amount: BN;
-  chainId: LsProtocolId;
+  protocolId: LsProtocolId;
 };
 
 export enum LsSearchParamKey {
   AMOUNT = 'amount',
   PROTOCOL_ID = 'protocol',
   ACTION = 'action',
+  NETWORK_ID = 'network',
 }
 
 // TODO: These should be moved/managed in libs/webb-ui-components/src/constants/networks.ts and not here. This is just a temporary solution.
@@ -121,14 +125,15 @@ export type LsParachainCurrencyKey =
 
 export type LsParachainTimeUnit = TanglePrimitivesTimeUnit['type'];
 
-export type LsSimpleParachainTimeUnit = {
+export type LsParachainSimpleTimeUnit = {
   value: number;
   unit: LsParachainTimeUnit;
 };
 
-export type LsProtocolTypeMetadata = {
-  type: LsProtocolNetworkId;
+export type LsNetwork = {
+  type: LsNetworkId;
   networkName: string;
   chainIconFileName: string;
+  defaultProtocolId: LsProtocolId;
   protocols: LsProtocolDef[];
 };

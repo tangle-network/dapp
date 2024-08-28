@@ -9,9 +9,9 @@ import {
 
 import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking/StakingItemExternalLinkButton';
 import {
+  LsNetworkId,
   LsParachainChainDef,
   LsProtocolId,
-  LsProtocolNetworkId,
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { LiquidStakingItem } from '../../../types/liquidStaking';
@@ -46,9 +46,11 @@ const fetchDapps = async (rpcEndpoint: string): Promise<AstarDapp[]> => {
     throw new Error('Failed to fetch staking dapps');
   }
 
+  // TODO: This is typed as 'any'.
   const dappInfosArray = await stakingDappsResponse.json();
 
   const dappInfosMap = new Map(
+    // TODO: Avoid using `any`.
     dappInfosArray.map((dappInfo: any) => [dappInfo.address, dappInfo]),
   );
 
@@ -177,7 +179,7 @@ const getTableColumns: GetTableColumnsFn<AstarDapp> = (
 };
 
 const ASTAR: LsParachainChainDef<AstarDapp> = {
-  networkId: LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN,
+  networkId: LsNetworkId.TANGLE_RESTAKING_PARACHAIN,
   id: LsProtocolId.ASTAR,
   name: 'Astar',
   token: LsToken.ASTAR,

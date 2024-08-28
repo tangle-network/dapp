@@ -2,7 +2,7 @@ import { BN } from '@polkadot/util';
 import { FC, useMemo } from 'react';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
-import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
+import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import useLsExchangeRate, {
   ExchangeRateType,
@@ -66,7 +66,9 @@ const TotalDetailItem: FC<TotalDetailItemProps> = ({
     return formatBn(totalAmount, protocol.decimals);
   }, [inputAmount, totalAmount, protocol.decimals]);
 
-  const token = isMinting ? `${LST_PREFIX}${protocol.token}` : protocol.token;
+  const token = isMinting
+    ? `${LS_DERIVATIVE_TOKEN_PREFIX}${protocol.token}`
+    : protocol.token;
 
   const value =
     typeof formattedTotalAmount === 'string'

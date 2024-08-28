@@ -22,13 +22,18 @@ export type FetchProtocolEntitiesFn<T extends ProtocolEntity> = (
   rpcEndpoint: string,
 ) => PromiseOrT<T[]>;
 
+// Note that it's acceptable to use `any` for the return type here,
+// since it won't affect our type safety of our logic, only TanStack's.
+// In fact, they also use `any` internally, likely because of the complexity
+// of the different possible column types.
 export type GetTableColumnsFn<T extends ProtocolEntity> = (
   toggleSortSelectionHandlerRef: MutableRefObject<
     ((desc?: boolean | undefined, isMulti?: boolean | undefined) => void) | null
   >,
 ) => ColumnDef<T, any>[];
 
-export type LsAdapterDef<T extends ProtocolEntity = ProtocolEntity> = {
-  fetchProtocolEntities: FetchProtocolEntitiesFn<T>;
-  getTableColumns: GetTableColumnsFn<T>;
-};
+export type LsNetworkEntityAdapter<T extends ProtocolEntity = ProtocolEntity> =
+  {
+    fetchProtocolEntities: FetchProtocolEntitiesFn<T>;
+    getTableColumns: GetTableColumnsFn<T>;
+  };

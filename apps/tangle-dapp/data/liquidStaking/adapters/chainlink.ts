@@ -1,15 +1,15 @@
 import { IS_PRODUCTION_ENV } from '../../../constants/env';
-import { SEPOLIA_TESTNET_CONTRACTS } from '../../../constants/liquidStaking/constants';
+import { SEPOLIA_TESTNET_CONTRACTS } from '../../../constants/liquidStaking/devConstants';
 import {
   LsLiquifierProtocolDef,
+  LsNetworkId,
   LsProtocolId,
-  LsProtocolNetworkId,
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
 
 const CHAINLINK = {
-  networkId: LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER,
+  networkId: LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER,
   id: LsProtocolId.CHAINLINK,
   name: 'Chainlink',
   chainIconFileName: 'chainlink',

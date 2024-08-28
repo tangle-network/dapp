@@ -1,18 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import {
-  LsProtocolId,
-  LsProtocolNetworkId,
-} from '../../constants/liquidStaking/types';
+import { LsNetworkId, LsProtocolId } from '../../constants/liquidStaking/types';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import {
-  Collator,
-  Dapp,
-  LiquidStakingItem,
-  PhalaVaultOrStakePool,
-  Validator,
-} from '../../types/liquidStaking';
+import { LiquidStakingItem } from '../../types/liquidStaking';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
+import { ProtocolEntity } from './adapter';
 
 const useLsProtocolEntities = (protocolId: LsProtocolId) => {
   const { setWithPreviousValue: setLiquidStakingTableData } = useLocalStorage(
@@ -20,10 +12,7 @@ const useLsProtocolEntities = (protocolId: LsProtocolId) => {
   );
 
   const [isLoading, setIsLoading] = useState(false);
-
-  const [items, setItems] = useState<
-    Validator[] | PhalaVaultOrStakePool[] | Dapp[] | Collator[]
-  >([]);
+  const [entities, setEntities] = useState<ProtocolEntity[]>([]);
 
   const dataType = getDataType(protocolId);
 
@@ -31,24 +20,22 @@ const useLsProtocolEntities = (protocolId: LsProtocolId) => {
     async (protocolId: LsProtocolId) => {
       const protocol = getLsProtocolDef(protocolId);
 
-      if (
-        protocol.networkId !== LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN
-      ) {
-        setItems([]);
+      if (protocol.networkId !== LsNetworkId.TANGLE_RESTAKING_PARACHAIN) {
+        setEntities([]);
         setIsLoading(false);
 
         return;
       }
 
-      const newItems = protocol.adapter.fetchProtocolEntities(
+      const newEntities = await protocol.adapter.fetchProtocolEntities(
         protocol.rpcEndpoint,
       );
 
-      setItems(newItems);
+      setEntities(newEntities);
 
       setLiquidStakingTableData((prev) => ({
         ...prev?.value,
-        [protocolId]: newItems,
+        [protocolId]: newEntities,
       }));
 
       setIsLoading(false);
@@ -59,14 +46,14 @@ const useLsProtocolEntities = (protocolId: LsProtocolId) => {
   // Whenever the selected protocol changes, fetch the data for
   // the new protocol.
   useEffect(() => {
-    setItems([]);
+    setEntities([]);
     setIsLoading(true);
     fetchData(protocolId);
   }, [protocolId, fetchData]);
 
   return {
     isLoading,
-    data: items,
+    data: entities,
     dataType,
   };
 };
@@ -77,7 +64,6 @@ const getDataType = (chain: LsProtocolId): LiquidStakingItem | null => {
       return LiquidStakingItem.COLLATOR;
     case LsProtocolId.MOONBEAM:
       return LiquidStakingItem.COLLATOR;
-    case LsProtocolId.TANGLE_RESTAKING_PARACHAIN:
     case LsProtocolId.POLKADOT:
       return LiquidStakingItem.VALIDATOR;
     case LsProtocolId.PHALA:

@@ -23,7 +23,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useNetworkStore from '../../context/useNetworkStore';
-import { useLiquidStakingStore } from '../../data/liquidStaking/useLiquidStakingStore';
+import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
 import { PagePath } from '../../types';
 import createCustomNetwork from '../../utils/createCustomNetwork';
@@ -40,7 +40,7 @@ const NetworkSelectionButton: FC = () => {
   const { network } = useNetworkStore();
   const { switchNetwork, isCustom } = useNetworkSwitcher();
   const pathname = usePathname();
-  const { selectedProtocolId } = useLiquidStakingStore();
+  const { selectedProtocolId } = useLsStore();
 
   // TODO: Handle switching network on EVM wallet here.
   const switchToCustomNetwork = useCallback(

@@ -1,7 +1,7 @@
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
+import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import { LsProtocolId, LsToken } from '../../../constants/liquidStaking/types';
 import { ExchangeRateType } from '../../../data/liquidStaking/useLsExchangeRate';
 import useLsExchangeRate from '../../../data/liquidStaking/useLsExchangeRate';
@@ -36,7 +36,7 @@ const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({
       exchangeRateElement
     ) : (
       <div className="flex gap-1 items-center justify-center whitespace-nowrap">
-        1 {token} = {exchangeRateElement} {LST_PREFIX}
+        1 {token} = {exchangeRateElement} {LS_DERIVATIVE_TOKEN_PREFIX}
         {token}
       </div>
     );

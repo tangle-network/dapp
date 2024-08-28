@@ -24,7 +24,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { useLiquidStakingStore } from '../../data/liquidStaking/useLiquidStakingStore';
+import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useLsValidators from '../../data/liquidStaking/useLsValidators';
 import { useLsValidatorSelectionTableColumns } from '../../data/liquidStaking/useLsValidatorSelectionTableColumns';
 import {
@@ -43,7 +43,7 @@ const SELECTED_ITEMS_COLUMN_SORT = {
 } as const satisfies ColumnSort;
 
 export const LsValidatorTable = () => {
-  const { selectedProtocolId, setSelectedItems } = useLiquidStakingStore();
+  const { selectedProtocolId, setSelectedItems } = useLsStore();
   const { isLoading, data, dataType } = useLsValidators(selectedProtocolId);
   const [searchValue, setSearchValue] = useState('');
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});

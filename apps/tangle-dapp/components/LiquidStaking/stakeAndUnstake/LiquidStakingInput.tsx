@@ -14,23 +14,24 @@ import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
+  LS_DERIVATIVE_TOKEN_PREFIX,
   LS_NETWORKS,
-  LST_PREFIX,
 } from '../../../constants/liquidStaking/constants';
 import {
+  LsNetworkId,
   LsProtocolId,
-  LsProtocolNetworkId,
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
-import getLsProtocolNetwork from '../../../utils/liquidStaking/getLsProtocolMetadata';
+import getLsNetwork from '../../../utils/liquidStaking/getLsNetwork';
+import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import DropdownChevronIcon from './DropdownChevronIcon';
-import TokenChip from './TokenChip';
 
 export type LiquidStakingInputProps = {
   id: string;
+  networkId: LsNetworkId;
   protocolId: LsProtocolId;
   decimals: number;
   amount: BN | null;
@@ -44,7 +45,8 @@ export type LiquidStakingInputProps = {
   maxErrorMessage?: string;
   className?: string;
   onAmountChange?: (newAmount: BN | null) => void;
-  setChainId?: (newChain: LsProtocolId) => void;
+  setProtocolId?: (newProtocolId: LsProtocolId) => void;
+  setNetworkId?: (newNetworkId: LsNetworkId) => void;
   onTokenClick?: () => void;
 };
 
@@ -57,12 +59,14 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   isTokenLiquidVariant = false,
   rightElement,
   protocolId,
+  networkId,
   token,
   minAmount,
   maxAmount,
   maxErrorMessage = ERROR_NOT_ENOUGH_BALANCE,
   onAmountChange,
-  setChainId,
+  setProtocolId,
+  setNetworkId,
   onTokenClick,
   className,
 }) => {
@@ -71,7 +75,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
       return undefined;
     }
 
-    const unit = `${isTokenLiquidVariant ? LST_PREFIX : ''}${token}`;
+    const unit = `${isTokenLiquidVariant ? LS_DERIVATIVE_TOKEN_PREFIX : ''}${token}`;
 
     const formattedMinAmount = formatBn(minAmount, decimals, {
       fractionMaxLength: undefined,
@@ -111,9 +115,9 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
         )}
       >
         <div className="flex justify-between">
-          <ProtocolTypeSelector
-            selectedProtocolType={protocolId}
-            setProtocolType={setChainId}
+          <NetworkSelector
+            selectedNetworkId={networkId}
+            setNetworkId={setNetworkId}
           />
 
           {rightElement}
@@ -135,10 +139,16 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
             readOnly={isReadOnly}
           />
 
-          <TokenChip
+          {/** TODO: Replace token chip with protocol chip styling. */}
+          {/* <TokenChip
             onClick={onTokenClick}
             token={token}
             isLiquidVariant={isTokenLiquidVariant}
+          /> */}
+          <ProtocolSelector
+            selectedNetworkId={networkId}
+            selectedProtocolId={protocolId}
+            setProtocolId={setProtocolId}
           />
         </div>
       </div>
@@ -152,25 +162,23 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   );
 };
 
-type ProtocolTypeSelectorProps = {
-  selectedProtocolType: LsProtocolNetworkId;
+type NetworkSelectorProps = {
+  selectedNetworkId: LsNetworkId;
 
   /**
    * If this function is not provided, the selector will be
    * considered read-only.
    */
-  setProtocolType?: (newProtocolType: LsProtocolNetworkId) => void;
+  setNetworkId?: (newNetworkId: LsNetworkId) => void;
 };
 
 /** @internal */
-const ProtocolTypeSelector: FC<ProtocolTypeSelectorProps> = ({
-  selectedProtocolType,
-  setProtocolType,
+const NetworkSelector: FC<NetworkSelectorProps> = ({
+  selectedNetworkId,
+  setNetworkId,
 }) => {
-  const isReadOnly = selectedProtocolType === undefined;
-
-  const selectedProtocolTypeMetadata =
-    getLsProtocolNetwork(selectedProtocolType);
+  const isReadOnly = selectedNetworkId === undefined;
+  const selectedProtocolTypeMetadata = getLsNetwork(selectedNetworkId);
 
   const base = (
     <div className="group flex gap-1 items-center justify-center">
@@ -189,7 +197,7 @@ const ProtocolTypeSelector: FC<ProtocolTypeSelectorProps> = ({
     </div>
   );
 
-  return setProtocolType !== undefined ? (
+  return setNetworkId !== undefined ? (
     <Dropdown>
       <DropdownMenuTrigger>{base}</DropdownMenuTrigger>
 
@@ -200,7 +208,7 @@ const ProtocolTypeSelector: FC<ProtocolTypeSelectorProps> = ({
               return (
                 <li key={protocolTypeMetadata.type}>
                   <DropdownMenuItem
-                    onClick={() => setProtocolType(protocolTypeMetadata.type)}
+                    onClick={() => setNetworkId(protocolTypeMetadata.type)}
                   >
                     <div className="flex gap-2 items-center justify-center">
                       <ChainIcon
@@ -226,6 +234,68 @@ const ProtocolTypeSelector: FC<ProtocolTypeSelectorProps> = ({
     </Dropdown>
   ) : (
     base
+  );
+};
+
+type ProtocolSelectorProps = {
+  selectedNetworkId: LsNetworkId;
+  selectedProtocolId: LsProtocolId;
+  setProtocolId?: (newProtocolId: LsProtocolId) => void;
+};
+
+/** @internal */
+const ProtocolSelector: FC<ProtocolSelectorProps> = ({
+  selectedNetworkId,
+  selectedProtocolId,
+  setProtocolId,
+}) => {
+  const protocol = getLsProtocolDef(selectedProtocolId);
+  const network = getLsNetwork(selectedNetworkId);
+
+  const trySetProtocolId = (newProtocolId: LsProtocolId) => {
+    return () => {
+      if (setProtocolId === undefined) {
+        return;
+      }
+
+      setProtocolId(newProtocolId);
+    };
+  };
+
+  return (
+    <Dropdown>
+      <DropdownMenuTrigger>
+        <div className="group flex gap-1 items-center justify-center">
+          <Typography variant="h5" fw="bold" className="dark:text-mono-40">
+            {protocol.name}
+          </Typography>
+
+          <DropdownChevronIcon isLarge />
+        </div>
+      </DropdownMenuTrigger>
+
+      <DropdownBody>
+        <ScrollArea>
+          <ul className="max-h-[300px]">
+            {network.protocols.map((protocol) => {
+              return (
+                <li key={protocol.id}>
+                  <DropdownMenuItem onClick={trySetProtocolId(protocol.id)}>
+                    <Typography
+                      variant="h5"
+                      fw="bold"
+                      className="dark:text-mono-40"
+                    >
+                      {protocol.name}
+                    </Typography>
+                  </DropdownMenuItem>
+                </li>
+              );
+            })}
+          </ul>
+        </ScrollArea>
+      </DropdownBody>
+    </Dropdown>
   );
 };
 

@@ -2,7 +2,7 @@ import assert from 'assert';
 import { useMemo } from 'react';
 
 import { LS_PARACHAIN_CHAIN_MAP } from '../../../constants/liquidStaking/constants';
-import { LsSimpleParachainTimeUnit } from '../../../constants/liquidStaking/types';
+import { LsParachainSimpleTimeUnit } from '../../../constants/liquidStaking/types';
 import useLstUnlockRequests from '../../../data/liquidStaking/useLstUnlockRequests';
 import useOngoingTimeUnits from '../../../data/liquidStaking/useOngoingTimeUnits';
 import { ParachainUnstakeRequest } from './UnstakeRequestsTable';
@@ -53,7 +53,7 @@ const useLstUnlockRequestTableRows = () => {
         const remainingTimeUnitValue =
           request.unlockTimeUnit.value - ongoingTimeUnitEntry.timeUnit.value;
 
-        const remainingTimeUnit: LsSimpleParachainTimeUnit | undefined =
+        const remainingTimeUnit: LsParachainSimpleTimeUnit | undefined =
           remainingTimeUnitValue <= 0
             ? undefined
             : {

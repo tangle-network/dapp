@@ -3,8 +3,8 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { useCallback, useMemo } from 'react';
 
 import {
+  LsNetworkId,
   LsProtocolId,
-  LsProtocolNetworkId,
 } from '../../../constants/liquidStaking/types';
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
@@ -32,9 +32,7 @@ const useLsSpendingLimits = (
       (api) => {
         const protocol = getLsProtocolDef(protocolId);
 
-        if (
-          protocol.networkId !== LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN
-        ) {
+        if (protocol.networkId !== LsNetworkId.TANGLE_RESTAKING_PARACHAIN) {
           return null;
         }
 
@@ -52,9 +50,7 @@ const useLsSpendingLimits = (
       (api) => {
         const protocol = getLsProtocolDef(protocolId);
 
-        if (
-          protocol.networkId !== LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN
-        ) {
+        if (protocol.networkId !== LsNetworkId.TANGLE_RESTAKING_PARACHAIN) {
           return null;
         }
 

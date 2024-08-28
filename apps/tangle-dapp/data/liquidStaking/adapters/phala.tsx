@@ -13,9 +13,9 @@ import {
 
 import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking/StakingItemExternalLinkButton';
 import {
+  LsNetworkId,
   LsParachainChainDef,
   LsProtocolId,
-  LsProtocolNetworkId,
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { LiquidStakingItem } from '../../../types/liquidStaking';
@@ -222,7 +222,7 @@ const getTableColumns: GetTableColumnsFn<PhalaVaultOrStakePool> = (
 };
 
 const PHALA: LsParachainChainDef<PhalaVaultOrStakePool> = {
-  networkId: LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN,
+  networkId: LsNetworkId.TANGLE_RESTAKING_PARACHAIN,
   id: LsProtocolId.PHALA,
   name: 'Phala',
   token: LsToken.PHALA,

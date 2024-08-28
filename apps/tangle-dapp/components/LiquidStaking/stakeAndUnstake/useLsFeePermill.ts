@@ -3,8 +3,8 @@ import { useCallback, useEffect } from 'react';
 import { LS_REGISTRY_ADDRESS } from '../../../constants/liquidStaking/constants';
 import LIQUIFIER_REGISTRY_ABI from '../../../constants/liquidStaking/liquifierRegistryAbi';
 import {
+  LsNetworkId,
   LsProtocolId,
-  LsProtocolNetworkId,
 } from '../../../constants/liquidStaking/types';
 import useParachainLsFees from '../../../data/liquidStaking/useParachainLsFees';
 import useContractRead from '../../../data/liquifier/useContractRead';
@@ -30,7 +30,7 @@ const useLsFeePermill = (
     typeof LIQUIFIER_REGISTRY_ABI,
     'fee'
   > | null => {
-    if (protocol.networkId !== LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER) {
+    if (protocol.networkId !== LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER) {
       return null;
     }
 
@@ -51,7 +51,7 @@ const useLsFeePermill = (
   // This helps prevent unnecessary contract read calls.
   useEffect(() => {
     setIsLiquifierFeePaused(
-      protocol.networkId === LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN,
+      protocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN,
     );
   }, [protocol.networkId, setIsLiquifierFeePaused]);
 
@@ -63,7 +63,7 @@ const useLsFeePermill = (
         ? null
         : Number(rawLiquifierFeeOrError);
 
-  return protocol.networkId === LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN
+  return protocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN
     ? parachainFee
     : liquifierFeePermillOrError;
 };

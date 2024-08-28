@@ -1,10 +1,7 @@
 import { BN_ZERO } from '@polkadot/util';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  LsProtocolId,
-  LsProtocolNetworkId,
-} from '../../constants/liquidStaking/types';
+import { LsNetworkId, LsProtocolId } from '../../constants/liquidStaking/types';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import {
   Collator,
@@ -45,9 +42,7 @@ const useLsValidators = (selectedChain: LsProtocolId) => {
     async (protocolId: LsProtocolId) => {
       const protocol = getLsProtocolDef(protocolId);
 
-      if (
-        protocol.networkId !== LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN
-      ) {
+      if (protocol.networkId !== LsNetworkId.TANGLE_RESTAKING_PARACHAIN) {
         setItems([]);
         setIsLoading(false);
 
@@ -128,7 +123,6 @@ const getDataType = (chain: LsProtocolId) => {
       return LiquidStakingItem.COLLATOR;
     case LsProtocolId.MOONBEAM:
       return LiquidStakingItem.COLLATOR;
-    case LsProtocolId.TANGLE_RESTAKING_PARACHAIN:
     case LsProtocolId.POLKADOT:
       return LiquidStakingItem.VALIDATOR;
     case LsProtocolId.PHALA:

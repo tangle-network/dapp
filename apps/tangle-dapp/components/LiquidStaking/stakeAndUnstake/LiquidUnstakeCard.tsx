@@ -10,13 +10,13 @@ import { Button } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 
-import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
+import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
   LsProtocolId,
-  LsProtocolNetworkId,
+  LsNetworkId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
-import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
+import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
@@ -39,7 +39,7 @@ import useLsSpendingLimits from './useLsSpendingLimits';
 const LiquidUnstakeCard: FC = () => {
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
-  const { selectedProtocolId, setSelectedProtocolId } = useLiquidStakingStore();
+  const { selectedProtocolId, setSelectedProtocolId } = useLsStore();
   const activeAccountAddress = useActiveAccountAddress();
 
   const [didLiquifierUnlockSucceed, setDidLiquifierUnlockSucceed] =
@@ -99,8 +99,7 @@ const LiquidUnstakeCard: FC = () => {
     }
 
     if (
-      selectedProtocol.networkId ===
-        LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN &&
+      selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
       executeRedeemTx !== null
     ) {
       executeRedeemTx({
@@ -108,8 +107,7 @@ const LiquidUnstakeCard: FC = () => {
         currency: selectedProtocol.currency,
       });
     } else if (
-      selectedProtocol.networkId ===
-        LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
+      selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
       performLiquifierUnlock !== null
     ) {
       setDidLiquifierUnlockSucceed(false);
@@ -159,11 +157,9 @@ const LiquidUnstakeCard: FC = () => {
 
   // TODO: Also check if the user has enough balance to unstake.
   const canCallUnstake =
-    (selectedProtocol.networkId ===
-      LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN &&
+    (selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
       executeRedeemTx !== null) ||
-    (selectedProtocol.networkId ===
-      LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
+    (selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
       performLiquifierUnlock !== null);
 
   return (
@@ -176,7 +172,7 @@ const LiquidUnstakeCard: FC = () => {
         amount={fromAmount}
         decimals={selectedProtocol.decimals}
         onAmountChange={setFromAmount}
-        placeholder={`0 ${LST_PREFIX}${selectedProtocol.token}`}
+        placeholder={`0 ${LS_DERIVATIVE_TOKEN_PREFIX}${selectedProtocol.token}`}
         rightElement={stakedWalletBalance}
         isTokenLiquidVariant
         minAmount={minSpendable ?? undefined}
@@ -194,7 +190,7 @@ const LiquidUnstakeCard: FC = () => {
         decimals={selectedProtocol.decimals}
         placeholder={`0 ${selectedProtocol.token}`}
         token={selectedProtocol.token}
-        setChainId={setSelectedProtocolId}
+        setProtocolId={setSelectedProtocolId}
         isReadOnly
         className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
       />

@@ -13,8 +13,8 @@ import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
+  LsNetworkId,
   LsProtocolId,
-  LsProtocolNetworkId,
 } from '../../../constants/liquidStaking/types';
 import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
@@ -42,8 +42,7 @@ const AgnosticLsBalance: FC<AgnosticLsBalanceProps> = ({
   // Special case for liquid tokens on the `TgToken.sol` contract.
   // See: https://github.com/webb-tools/tnt-core/blob/1f371959884352e7af68e6091c5bb330fcaa58b8/src/lst/liquidtoken/TgToken.sol#L26
   const decimals =
-    !isNative &&
-    protocol.networkId === LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER
+    !isNative && protocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER
       ? 18
       : protocol.decimals;
 

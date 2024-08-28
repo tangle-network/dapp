@@ -5,10 +5,10 @@ import { Address } from 'viem';
 import { BaseUnstakeRequest } from '../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import LIQUIFIER_UNLOCKS_ABI from '../../constants/liquidStaking/liquifierUnlocksAbi';
-import { LsProtocolNetworkId } from '../../constants/liquidStaking/types';
+import { LsNetworkId } from '../../constants/liquidStaking/types';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
-import { useLiquidStakingStore } from '../liquidStaking/useLiquidStakingStore';
+import { useLsStore } from '../liquidStaking/useLsStore';
 import useContractRead from './useContractRead';
 import useContractReadBatch, {
   ContractReadOptionsBatch,
@@ -48,7 +48,7 @@ export type LiquifierUnlockNftMetadata = BaseUnstakeRequest & {
  * stake tokens, and the maturity timestamp.
  */
 const useLiquifierNftUnlocks = (): LiquifierUnlockNftMetadata[] | null => {
-  const { selectedProtocolId } = useLiquidStakingStore();
+  const { selectedProtocolId } = useLsStore();
   const activeEvmAddress20 = useEvmAddress20();
 
   const protocol = getLsProtocolDef(selectedProtocolId);
@@ -59,7 +59,7 @@ const useLiquifierNftUnlocks = (): LiquifierUnlockNftMetadata[] | null => {
   > | null => {
     if (
       activeEvmAddress20 === null ||
-      protocol.networkId !== LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER
+      protocol.networkId !== LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER
     ) {
       return null;
     }
@@ -102,7 +102,7 @@ const useLiquifierNftUnlocks = (): LiquifierUnlockNftMetadata[] | null => {
     if (
       // Do not fetch if there's no active EVM account.
       activeEvmAddress20 === null ||
-      protocol.networkId !== LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER ||
+      protocol.networkId !== LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER ||
       unlockIds === null
     ) {
       return null;

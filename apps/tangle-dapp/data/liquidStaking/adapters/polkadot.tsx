@@ -10,9 +10,9 @@ import {
 
 import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking/StakingItemExternalLinkButton';
 import {
+  LsNetworkId,
   LsParachainChainDef,
   LsProtocolId,
-  LsProtocolNetworkId,
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { LiquidStakingItem } from '../../../types/liquidStaking';
@@ -209,7 +209,7 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
 };
 
 const POLKADOT = {
-  networkId: LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN,
+  networkId: LsNetworkId.TANGLE_RESTAKING_PARACHAIN,
   id: LsProtocolId.POLKADOT,
   name: 'Polkadot',
   token: LsToken.DOT,

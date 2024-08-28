@@ -28,10 +28,10 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LsSimpleParachainTimeUnit,
+  LsParachainSimpleTimeUnit,
   ParachainCurrency,
 } from '../../../constants/liquidStaking/types';
-import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
+import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useLiquifierNftUnlocks, {
   LiquifierUnlockNftMetadata,
 } from '../../../data/liquifier/useLiquifierNftUnlocks';
@@ -72,7 +72,7 @@ export type ParachainUnstakeRequest = BaseUnstakeRequest & {
    * If this is undefined, it means that the request has
    * completed its unlocking period.
    */
-  progress?: LsSimpleParachainTimeUnit;
+  progress?: LsParachainSimpleTimeUnit;
 };
 
 type UnstakeRequestTableRow =
@@ -164,7 +164,7 @@ const COLUMNS = [
 ];
 
 const UnstakeRequestsTable: FC = () => {
-  const { selectedProtocolId } = useLiquidStakingStore();
+  const { selectedProtocolId } = useLsStore();
   const activeAccountAddress = useActiveAccountAddress();
   const parachainRows = useLstUnlockRequestTableRows();
   const liquifierRows = useLiquifierNftUnlocks();

@@ -1,5 +1,3 @@
-import { HexString } from '@polkadot/util/types';
-
 import ASTAR from '../../data/liquidStaking/adapters/astar';
 import CHAINLINK from '../../data/liquidStaking/adapters/chainlink';
 import LIVEPEER from '../../data/liquidStaking/adapters/livePeer';
@@ -13,31 +11,18 @@ import { IS_PRODUCTION_ENV } from '../env';
 import {
   LsLiquifierProtocolDef,
   LsLiquifierProtocolId,
+  LsNetwork,
+  LsNetworkId,
   LsParachainChainDef,
   LsParachainChainId,
   LsParachainToken,
   LsProtocolDef,
   LsProtocolId,
-  LsProtocolNetworkId,
-  LsProtocolTypeMetadata,
   LsToken,
 } from './types';
 
 // TODO: Deploy to Sepolia and update the addresses.
 export const LS_REGISTRY_ADDRESS = IS_PRODUCTION_ENV ? '0x' : '0x';
-
-/**
- * Development only. Sepolia testnet contracts that were
- * deployed to test the liquifier functionality. These contracts
- * use dummy data.
- */
-export const SEPOLIA_TESTNET_CONTRACTS = {
-  LIQUIFIER: '0x55D942dC55b8b3bEE51C964c4985C46C7DF98Be0',
-  ERC20: '0x2eE951c2d215ba1b3E0DF20764c96a0bC7809F41',
-  // Use the same address as the dummy ERC20 contract.
-  TG_TOKEN: '0x2eE951c2d215ba1b3E0DF20764c96a0bC7809F41',
-  UNLOCKS: '0x32d70bC73d0965209Cf175711b010dE6A7650c2B',
-} as const satisfies Record<string, HexString>;
 
 export const LS_PARACHAIN_CHAIN_MAP: Record<
   LsParachainChainId,
@@ -90,23 +75,25 @@ export const LS_PARACHAIN_TOKENS = [
 export const TVS_TOOLTIP =
   "Total Value Staked (TVS) refers to the total value of assets that are currently staked for this network in fiat currency. Generally used as an indicator of a network's security and trustworthiness.";
 
-export const LST_PREFIX = 'tg';
+export const LS_DERIVATIVE_TOKEN_PREFIX = 'tg';
 
-export const LS_ETHEREUM_MAINNET_LIQUIFIER: LsProtocolTypeMetadata = {
-  type: LsProtocolNetworkId.ETHEREUM_MAINNET_LIQUIFIER,
+export const LS_ETHEREUM_MAINNET_LIQUIFIER: LsNetwork = {
+  type: LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER,
   networkName: 'Ethereum Mainnet',
   chainIconFileName: 'ethereum',
+  defaultProtocolId: LsProtocolId.CHAINLINK,
   protocols: [CHAINLINK, THE_GRAPH, LIVEPEER, POLYGON],
 };
 
-export const LS_TANGLE_RESTAKING_PARACHAIN: LsProtocolTypeMetadata = {
-  type: LsProtocolNetworkId.TANGLE_RESTAKING_PARACHAIN,
-  networkName: 'Tangle Restaking Parachain',
+export const LS_TANGLE_RESTAKING_PARACHAIN: LsNetwork = {
+  type: LsNetworkId.TANGLE_RESTAKING_PARACHAIN,
+  networkName: 'Tangle Parachain',
   chainIconFileName: 'tangle',
+  defaultProtocolId: LsProtocolId.POLKADOT,
   protocols: [POLKADOT, PHALA, MOONBEAM, ASTAR, MANTA],
 };
 
-export const LS_NETWORKS: LsProtocolTypeMetadata[] = [
+export const LS_NETWORKS: LsNetwork[] = [
   LS_ETHEREUM_MAINNET_LIQUIFIER,
   LS_TANGLE_RESTAKING_PARACHAIN,
 ];
