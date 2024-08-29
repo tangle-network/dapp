@@ -23,12 +23,12 @@ import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import LsTokenIcon from '../../../components/LsTokenIcon';
+import TableCellWrapper from '../../../components/TableCellWrapper';
 import { TableStatus } from '../../../components/TableStatus';
 import useNetworkStore from '../../../context/useNetworkStore';
 import { ExplorerType } from '../../../types';
 import { Operator } from '../../../types/blueprint';
 import { getSortAddressOrIdentityFnc } from '../../../utils/table';
-import TableCellWrapper from './TableCellWrapper';
 import useOperators from './useOperators';
 
 const columnHelper = createColumnHelper<Operator>();

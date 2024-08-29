@@ -2,7 +2,7 @@ import { FC } from 'react';
 
 import BlueprintHeader from './BlueprintHeader';
 import OperatorsTable from './OperatorsTable';
-import TvlTable from './TvlTable';
+import VaultsAndAssetsTable from './VaultsAndAssetsTable';
 
 type Props = {
   params: {
@@ -14,7 +14,7 @@ const BlueprintDetailsPage: FC<Props> = ({ params: { name } }) => {
   return (
     <div className="space-y-5">
       <BlueprintHeader blueprintName={name} />
-      <TvlTable />
+      <VaultsAndAssetsTable />
       <OperatorsTable />
     </div>
   );

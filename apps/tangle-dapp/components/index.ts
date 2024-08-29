@@ -11,6 +11,7 @@ export * from './ServicesKeyMetricItem';
 export * from './ServiceTable';
 export * from './Sidebar';
 export * from './skeleton';
+export { default as TableCellWrapper } from './TableCellWrapper';
 export * from './TableStatus';
 export { default as TangleBigLogo } from './TangleBigLogo';
 export { default as TangleCard } from './TangleCard';

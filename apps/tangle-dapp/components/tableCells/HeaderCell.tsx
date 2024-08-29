@@ -7,10 +7,15 @@ import { twMerge } from 'tailwind-merge';
 
 import { HeaderCellProps } from './types';
 
-const HeaderCell: FC<HeaderCellProps> = ({ title, tooltip, className }) => {
+const HeaderCell: FC<HeaderCellProps> = ({
+  title,
+  tooltip,
+  className,
+  titleVariant = 'body1',
+}) => {
   return (
     <Typography
-      variant="body1"
+      variant={titleVariant}
       fw="bold"
       className={twMerge(
         'whitespace-nowrap text-mono-140 dark:text-mono-40',
