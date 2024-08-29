@@ -5,6 +5,7 @@ import { ArrowRight, ChainIcon } from '@webb-tools/icons';
 import { Button, Chip, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
+import StatItem from '../../../components/StatItem';
 import {
   LS_DERIVATIVE_TOKEN_PREFIX,
   TVS_TOOLTIP,
@@ -13,7 +14,6 @@ import { LsToken } from '../../../constants/liquidStaking/types';
 import { PagePath } from '../../../types';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
 import LsTokenIcon from '../../LsTokenIcon';
-import StatItem from '../StatItem';
 
 export type LsOverviewItemProps = {
   title: string;

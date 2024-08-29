@@ -43,9 +43,10 @@ export type Vault = {
     amount: number; // NOTE: put as number for faster UI development, might need to update later
     usdValue: number; // NOTE: put as number for faster UI development, might need to update later
   };
+  assets: Asset[];
 };
 
-export type VaultAsset = {
+export type Asset = {
   id: string;
   symbol: string;
   tvl: number; // NOTE: put as number for faster UI development, might need to update later
