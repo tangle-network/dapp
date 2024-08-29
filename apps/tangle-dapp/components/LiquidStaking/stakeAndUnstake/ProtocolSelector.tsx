@@ -75,7 +75,7 @@ const ProtocolSelector: FC<ProtocolSelectorProps> = ({
                         fw="bold"
                         className="dark:text-mono-40"
                       >
-                        {protocol.name}
+                        {protocol.token}
                       </Typography>
                     </div>
                   </DropdownMenuItem>

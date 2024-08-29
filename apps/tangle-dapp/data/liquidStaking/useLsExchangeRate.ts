@@ -141,13 +141,21 @@ const useLsExchangeRate = (
     );
   }, [liquifierTotalShares, tgTokenTotalSupply, type]);
 
-  const fetcher = useCallback(async () => {
+  const fetch = useCallback(async () => {
     const promise =
       protocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN
         ? parachainExchangeRate
         : fetchLiquifierExchangeRate();
 
-    setExchangeRate(await promise);
+    const newExchangeRate = await promise;
+
+    // Still loading. Do not update the value. Display the stale
+    // value.
+    if (newExchangeRate === null) {
+      return;
+    }
+
+    setExchangeRate(newExchangeRate);
   }, [fetchLiquifierExchangeRate, parachainExchangeRate, protocol]);
 
   // Pause or resume ERC20-based exchange rate fetching based
@@ -165,7 +173,7 @@ const useLsExchangeRate = (
     setIsTgTokenTotalSupplyPaused,
   ]);
 
-  const isRefreshing = usePolling({ effect: fetcher });
+  const isRefreshing = usePolling({ effect: fetch });
 
   return { exchangeRate, isRefreshing };
 };

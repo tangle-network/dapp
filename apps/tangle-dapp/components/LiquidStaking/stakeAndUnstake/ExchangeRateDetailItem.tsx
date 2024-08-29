@@ -1,5 +1,6 @@
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import { LsProtocolId, LsToken } from '../../../constants/liquidStaking/types';
@@ -25,17 +26,24 @@ const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({
       exchangeRate
     ) : exchangeRate === null ? (
       <SkeletonLoader className="w-[50px]" />
-    ) : isRefreshing ? (
-      <div className="animate-pulse">{exchangeRate}</div>
     ) : (
       exchangeRate
     );
+
+  useEffect(() => {
+    console.debug('is refreshing', isRefreshing);
+  }, [isRefreshing]);
 
   const value =
     exchangeRateElement instanceof Error ? (
       exchangeRateElement
     ) : (
-      <div className="flex gap-1 items-center justify-center whitespace-nowrap">
+      <div
+        className={twMerge(
+          'flex gap-1 items-center justify-center whitespace-nowrap',
+          isRefreshing && 'animate-pulse',
+        )}
+      >
         1 {token} = {exchangeRateElement} {LS_DERIVATIVE_TOKEN_PREFIX}
         {token}
       </div>

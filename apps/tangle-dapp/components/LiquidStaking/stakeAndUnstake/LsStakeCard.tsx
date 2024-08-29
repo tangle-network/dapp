@@ -33,9 +33,9 @@ import useSearchParamState from '../../../hooks/useSearchParamState';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import AgnosticLsBalance from './AgnosticLsBalance';
+import LsAgnosticBalance from './LsAgnosticBalance';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
-import FeesDetailItem from './FeesDetailItem';
+import FeeDetailItem from './FeeDetailItem';
 import LsInput from './LsInput';
 import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
@@ -133,7 +133,7 @@ const LsStakeCard: FC = () => {
       performLiquifierDeposit !== null);
 
   const walletBalance = (
-    <AgnosticLsBalance
+    <LsAgnosticBalance
       protocolId={selectedProtocolId}
       tooltip="Click to use all available balance"
       onClick={() => setFromAmount(maxSpendable)}
@@ -183,7 +183,7 @@ const LsStakeCard: FC = () => {
           type={ExchangeRateType.NativeToDerivative}
         />
 
-        <FeesDetailItem
+        <FeeDetailItem
           inputAmount={fromAmount}
           isMinting
           protocolId={selectedProtocolId}

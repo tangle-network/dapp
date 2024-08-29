@@ -1,6 +1,5 @@
 'use client';
 
-import { BN_ZERO } from '@polkadot/util';
 import { WalletFillIcon, WalletLineIcon } from '@webb-tools/icons';
 import {
   SkeletonLoader,
@@ -13,45 +12,43 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
-import { LsParachainToken } from '../../../constants/liquidStaking/types';
-import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
-import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
+import {
+  LsNetworkId,
+  LsProtocolId,
+} from '../../../constants/liquidStaking/types';
 import formatBn from '../../../utils/formatBn';
+import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
+import useLsAgnosticBalance from './useLsAgnosticBalance';
 
-export type ParachainWalletBalanceProps = {
+export type LsAgnosticBalanceProps = {
   isNative?: boolean;
-  token: LsParachainToken;
-  decimals: number;
+  protocolId: LsProtocolId;
   tooltip?: string;
   onlyShowTooltipWhenBalanceIsSet?: boolean;
   onClick?: () => void;
 };
 
-const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
+const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
   isNative = true,
-  token,
-  decimals,
+  protocolId,
   tooltip,
   onlyShowTooltipWhenBalanceIsSet = true,
   onClick,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
+  const { balance, isRefreshing } = useLsAgnosticBalance(isNative, protocolId);
+  const protocol = getLsProtocolDef(protocolId);
 
-  const activeSubstrateAddress = useSubstrateAddress();
-  const { nativeBalances, liquidBalances } = useParachainBalances();
-  const map = isNative ? nativeBalances : liquidBalances;
-
-  const balance = useMemo(() => {
-    if (map === null) {
-      return null;
-    }
-
-    return map.get(token) ?? BN_ZERO;
-  }, [map, token]);
+  // Special case for liquid tokens on the `TgToken.sol` contract.
+  // See: https://github.com/webb-tools/tnt-core/blob/1f371959884352e7af68e6091c5bb330fcaa58b8/src/lst/liquidtoken/TgToken.sol#L26
+  const decimals =
+    !isNative && protocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER
+      ? 18
+      : protocol.decimals;
 
   const formattedBalance = useMemo(() => {
-    // No account is active.
-    if (activeSubstrateAddress === null) {
+    // No account is active; display a placeholder instead of a loading state.
+    if (balance === EMPTY_VALUE_PLACEHOLDER) {
       return EMPTY_VALUE_PLACEHOLDER;
     }
     // Balance is still loading.
@@ -63,10 +60,13 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
       fractionMaxLength: undefined,
       includeCommas: true,
     });
-  }, [activeSubstrateAddress, balance, decimals]);
+  }, [balance, decimals]);
 
   const isClickable =
-    onlyShowTooltipWhenBalanceIsSet && balance !== null && !balance.isZero();
+    onlyShowTooltipWhenBalanceIsSet &&
+    balance !== null &&
+    typeof balance !== 'string' &&
+    !balance.isZero();
 
   const handleClick = useCallback(() => {
     if (!isClickable || onClick === undefined) {
@@ -84,6 +84,7 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
       className={twMerge(
         'group flex gap-1 items-center justify-center',
         isClickable && 'cursor-pointer',
+        isRefreshing && 'animate-pulse',
       )}
     >
       {isHovering && isClickable ? (
@@ -127,4 +128,4 @@ const ParachainWalletBalance: FC<ParachainWalletBalanceProps> = ({
   );
 };
 
-export default ParachainWalletBalance;
+export default LsAgnosticBalance;

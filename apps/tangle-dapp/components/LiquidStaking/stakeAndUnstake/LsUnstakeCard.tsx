@@ -26,9 +26,9 @@ import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import AgnosticLsBalance from './AgnosticLsBalance';
+import LsAgnosticBalance from './LsAgnosticBalance';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
-import FeesDetailItem from './FeesDetailItem';
+import FeeDetailItem from './FeeDetailItem';
 import LsInput from './LsInput';
 import SelectTokenModal from './SelectTokenModal';
 import TotalDetailItem from './TotalDetailItem';
@@ -153,7 +153,7 @@ const LsUnstakeCard: FC = () => {
   }, [didLiquifierUnlockSucceed, redeemTxStatus]);
 
   const stakedWalletBalance = (
-    <AgnosticLsBalance
+    <LsAgnosticBalance
       isNative={false}
       protocolId={selectedProtocol.id}
       tooltip="Click to use all staked balance"
@@ -214,7 +214,7 @@ const LsUnstakeCard: FC = () => {
           type={ExchangeRateType.DerivativeToNative}
         />
 
-        <FeesDetailItem
+        <FeeDetailItem
           protocolId={selectedProtocolId}
           isMinting={false}
           inputAmount={fromAmount}

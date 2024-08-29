@@ -11,12 +11,43 @@ import {
 import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
 import usePolling from '../../../data/liquidStaking/usePolling';
 import useContractReadOnce from '../../../data/liquifier/useContractReadOnce';
+import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useEvmAddress20 from '../../../hooks/useEvmAddress';
-import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 
-const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
-  const substrateAddress = useSubstrateAddress();
+type BalanceUpdater = (
+  prevBalance: BN | null | typeof EMPTY_VALUE_PLACEHOLDER,
+) => BN | null | typeof EMPTY_VALUE_PLACEHOLDER;
+
+const createBalanceStateUpdater = (
+  newBalance: BN | null | typeof EMPTY_VALUE_PLACEHOLDER,
+): BalanceUpdater => {
+  return (prevBalance) => {
+    // Do not trigger a state update for the same underlying balance
+    // value. If it's not checked by strings, a state update with the
+    // same underlying value would trigger an update due to object
+    // references being different.
+    if (newBalance?.toString() === prevBalance?.toString()) {
+      return prevBalance;
+    }
+    // An account was just connected, and the balance is changing
+    // from the empty placeholder -> loading state.
+    else if (newBalance === null && prevBalance === EMPTY_VALUE_PLACEHOLDER) {
+      return null;
+    }
+    // Attempting to switch from a stale value to a loading state.
+    // Deny this request, since we only want to show a loading state
+    // for the initial value. Return the stale balance.
+    else if (prevBalance instanceof BN && newBalance === null) {
+      return prevBalance;
+    }
+
+    return newBalance;
+  };
+};
+
+const useLsAgnosticBalance = (isNative: boolean, protocolId: LsProtocolId) => {
+  const activeAccountAddress = useActiveAccountAddress();
   const evmAddress20 = useEvmAddress20();
   const { nativeBalances, liquidBalances } = useParachainBalances();
 
@@ -29,18 +60,14 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
   >(EMPTY_VALUE_PLACEHOLDER);
 
   const parachainBalances = isNative ? nativeBalances : liquidBalances;
-  const isAccountConnected = substrateAddress !== null || evmAddress20 !== null;
+  const isAccountConnected = activeAccountAddress !== null;
   const protocol = getLsProtocolDef(protocolId);
 
   // Reset balance to a placeholder when the active account is
-  // disconnected.
+  // disconnected, and to a loading state once an account is
+  // connected.
   useEffect(() => {
-    // Account is not connected. Reset balance to a placeholder.
-    if (!isAccountConnected) {
-      setBalance(EMPTY_VALUE_PLACEHOLDER);
-
-      return;
-    }
+    setBalance(isAccountConnected ? null : EMPTY_VALUE_PLACEHOLDER);
   }, [isAccountConnected]);
 
   const erc20BalanceFetcher = useCallback(() => {
@@ -53,14 +80,15 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
 
     const target = isNative ? readErc20 : readTgToken;
 
-    // Still loading.
+    // There is an account connected, but the target read contract
+    // function is not yet ready (ie. the public client is being re-created).
     if (target === null) {
-      setBalance(null);
+      setBalance(createBalanceStateUpdater(null));
 
       return;
     }
 
-    target({
+    return target({
       address: isNative
         ? protocol.erc20TokenAddress
         : protocol.tgTokenContractAddress,
@@ -71,21 +99,14 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
         return;
       }
 
-      setBalance((prevBalance) => {
-        const newBalance = new BN(result.toString());
-
-        // Do not update the balance state with a new BN instance if
-        // it is the same as the current balance.
-        if (prevBalance?.toString() === newBalance.toString()) {
-          return prevBalance;
-        }
-
-        return newBalance;
-      });
+      setBalance(createBalanceStateUpdater(new BN(result.toString())));
     });
   }, [evmAddress20, isNative, protocol, readErc20, readTgToken]);
 
-  usePolling({ effect: erc20BalanceFetcher });
+  const isRefreshing = usePolling({
+    // Pause polling if there's no active account.
+    effect: isAccountConnected ? erc20BalanceFetcher : null,
+  });
 
   useEffect(() => {
     if (
@@ -97,18 +118,10 @@ const useAgnosticLsBalance = (isNative: boolean, protocolId: LsProtocolId) => {
 
     const newBalance = parachainBalances.get(protocol.token) ?? BN_ZERO;
 
-    setBalance((prevBalance) => {
-      // Do not update the balance state with a new BN instance if
-      // it is the same as the current balance.
-      if (prevBalance?.toString() === newBalance.toString()) {
-        return prevBalance;
-      }
-
-      return newBalance;
-    });
+    setBalance(createBalanceStateUpdater(newBalance));
   }, [parachainBalances, protocol.token, protocol.networkId]);
 
-  return balance;
+  return { balance, isRefreshing };
 };
 
-export default useAgnosticLsBalance;
+export default useLsAgnosticBalance;

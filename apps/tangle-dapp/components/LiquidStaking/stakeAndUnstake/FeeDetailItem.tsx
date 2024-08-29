@@ -8,13 +8,13 @@ import scaleAmountByPermill from '../../../utils/scaleAmountByPermill';
 import DetailItem from './DetailItem';
 import useLsFeePermill from './useLsFeePermill';
 
-export type FeesDetailItemProps = {
+export type FeeDetailItemProps = {
   isMinting: boolean;
   inputAmount: BN | null;
   protocolId: LsProtocolId;
 };
 
-const FeesDetailItem: FC<FeesDetailItemProps> = ({
+const FeeDetailItem: FC<FeeDetailItemProps> = ({
   isMinting,
   inputAmount,
   protocolId,
@@ -40,8 +40,12 @@ const FeesDetailItem: FC<FeesDetailItemProps> = ({
       return feeAmount;
     }
 
-    return formatBn(feeAmount, protocol.decimals);
-  }, [feeAmount, protocol.decimals]);
+    const formattedAmount = formatBn(feeAmount, protocol.decimals, {
+      includeCommas: true,
+    });
+
+    return `${formattedAmount} ${protocol.token}`;
+  }, [feeAmount, protocol.decimals, protocol.token]);
 
   const feeTitle =
     typeof feePermill !== 'number'
@@ -51,4 +55,4 @@ const FeesDetailItem: FC<FeesDetailItemProps> = ({
   return <DetailItem title={feeTitle} value={formattedFeeAmount} />;
 };
 
-export default FeesDetailItem;
+export default FeeDetailItem;

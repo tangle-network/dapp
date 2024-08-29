@@ -9,7 +9,7 @@ import {
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import useAgnosticLsBalance from './useAgnosticLsBalance';
+import useLsAgnosticBalance from './useLsAgnosticBalance';
 
 type LsSpendingLimits = {
   minSpendable: BN | null;
@@ -20,7 +20,7 @@ const useLsSpendingLimits = (
   isNative: boolean,
   protocolId: LsProtocolId,
 ): LsSpendingLimits => {
-  const balance = useAgnosticLsBalance(isNative, protocolId);
+  const balance = useLsAgnosticBalance(isNative, protocolId);
 
   const { result: existentialDepositAmount } = useApi(
     useCallback((api) => api.consts.balances.existentialDeposit, []),

@@ -21,8 +21,9 @@ import {
   LsToken,
 } from './types';
 
-// TODO: Deploy to Sepolia and update the addresses.
-export const LS_REGISTRY_ADDRESS = IS_PRODUCTION_ENV ? '0x' : '0x';
+export const LS_REGISTRY_ADDRESS = IS_PRODUCTION_ENV
+  ? '0x'
+  : '0xCFF6785AC20878250b3FE70152905cEed38cf554';
 
 // TODO: Find a way to avoid casting. Some type errors are being pesky.
 export const LS_PARACHAIN_CHAIN_MAP: Record<

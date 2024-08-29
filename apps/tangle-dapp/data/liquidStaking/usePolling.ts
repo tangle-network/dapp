@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 
-export type PollingOptions<T> = {
-  effect: (() => Promise<T> | T) | null;
+export type PollingOptions = {
+  effect: (() => Promise<unknown> | unknown) | null;
   refreshInterval?: number;
 };
 
-const usePolling = <T>({
+const usePolling = ({
   effect,
   // Default to a 12 second refresh interval. This default is also
   // convenient since it matches the expected block time of Ethereum
   // as well as some Substrate-based chains.
   refreshInterval = 12_000,
-}: PollingOptions<T>) => {
+}: PollingOptions) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const refresh = useCallback(async () => {

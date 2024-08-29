@@ -61,7 +61,7 @@ const useLsFeePermill = (
       ? rawLiquifierFeeOrError
       : rawLiquifierFeeOrError === null
         ? null
-        : Number(rawLiquifierFeeOrError);
+        : Number(rawLiquifierFeeOrError) / 100;
 
   return protocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN
     ? parachainFee
