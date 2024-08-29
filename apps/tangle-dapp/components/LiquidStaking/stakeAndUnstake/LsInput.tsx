@@ -17,7 +17,7 @@ import formatBn from '../../../utils/formatBn';
 import NetworkSelector from './NetworkSelector';
 import ProtocolSelector from './ProtocolSelector';
 
-export type LiquidStakingInputProps = {
+export type LsInputProps = {
   id: string;
   networkId: LsNetworkId;
   protocolId: LsProtocolId;
@@ -38,7 +38,7 @@ export type LiquidStakingInputProps = {
   onTokenClick?: () => void;
 };
 
-const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
+const LsInput: FC<LsInputProps> = ({
   id,
   amount,
   decimals,
@@ -144,4 +144,4 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   );
 };
 
-export default LiquidStakingInput;
+export default LsInput;

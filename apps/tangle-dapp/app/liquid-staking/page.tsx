@@ -3,8 +3,8 @@
 import { FC } from 'react';
 
 import { LsValidatorTable } from '../../components/LiquidStaking/LsValidatorTable';
-import LiquidStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LiquidStakeCard';
-import LiquidUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LiquidUnstakeCard';
+import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeCard';
+import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
 import UnstakeRequestsTable from '../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
 import useSearchParamState from '../../hooks/useSearchParamState';
@@ -41,7 +41,7 @@ const LiquidStakingTokenPage: FC = () => {
           </TabListItem>
         </TabsList>
 
-        {isStaking ? <LiquidStakeCard /> : <LiquidUnstakeCard />}
+        {isStaking ? <LsStakeCard /> : <LsUnstakeCard />}
       </div>
 
       <div className="flex flex-col flex-grow w-min gap-4 min-w-[370px]">

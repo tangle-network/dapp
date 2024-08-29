@@ -29,14 +29,14 @@ import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import AgnosticLsBalance from './AgnosticLsBalance';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeesDetailItem from './FeesDetailItem';
-import LiquidStakingInput from './LiquidStakingInput';
+import LsInput from './LsInput';
 import SelectTokenModal from './SelectTokenModal';
 import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import UnstakeRequestSubmittedModal from './UnstakeRequestSubmittedModal';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
-const LiquidUnstakeCard: FC = () => {
+const LsUnstakeCard: FC = () => {
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
   const activeAccountAddress = useActiveAccountAddress();
@@ -171,7 +171,7 @@ const LiquidUnstakeCard: FC = () => {
   return (
     <>
       {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
-      <LiquidStakingInput
+      <LsInput
         id="liquid-staking-unstake-from"
         networkId={selectedNetworkId}
         setNetworkId={setSelectedNetworkId}
@@ -192,7 +192,7 @@ const LiquidUnstakeCard: FC = () => {
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
 
-      <LiquidStakingInput
+      <LsInput
         id="liquid-staking-unstake-to"
         networkId={selectedNetworkId}
         protocolId={selectedProtocolId}
@@ -260,4 +260,4 @@ const LiquidUnstakeCard: FC = () => {
   );
 };
 
-export default LiquidUnstakeCard;
+export default LsUnstakeCard;

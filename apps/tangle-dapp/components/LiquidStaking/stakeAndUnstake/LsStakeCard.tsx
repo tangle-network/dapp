@@ -36,13 +36,12 @@ import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import AgnosticLsBalance from './AgnosticLsBalance';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeesDetailItem from './FeesDetailItem';
-import LiquidStakingInput from './LiquidStakingInput';
-import SelectValidatorsButton from './SelectValidatorsButton';
+import LsInput from './LsInput';
 import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
-const LiquidStakeCard: FC = () => {
+const LsStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useSearchParamState<BN | null>({
     defaultValue: null,
     key: LsSearchParamKey.AMOUNT,
@@ -143,7 +142,7 @@ const LiquidStakeCard: FC = () => {
 
   return (
     <>
-      <LiquidStakingInput
+      <LsInput
         id="liquid-staking-stake-from"
         networkId={selectedNetworkId}
         protocolId={selectedProtocolId}
@@ -161,7 +160,7 @@ const LiquidStakeCard: FC = () => {
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
 
-      <LiquidStakingInput
+      <LsInput
         id="liquid-staking-stake-to"
         networkId={selectedNetworkId}
         protocolId={selectedProtocolId}
@@ -171,7 +170,6 @@ const LiquidStakeCard: FC = () => {
         isReadOnly
         isDerivativeVariant
         token={selectedProtocol.token}
-        rightElement={<SelectValidatorsButton />}
         className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
       />
 
@@ -266,4 +264,4 @@ export const SelectParachainContent: FC<SelectParachainContentProps> = ({
   );
 };
 
-export default LiquidStakeCard;
+export default LsStakeCard;
