@@ -4,20 +4,14 @@ import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/Tab
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
 import { type ComponentProps, useMemo } from 'react';
 
-import OperatorsTable from '../../components/tables/Operators';
 import VaultAssetsTable from '../../components/tables/VaultAssets';
 import VaultsTable from '../../components/tables/Vaults';
 import { useRestakeContext } from '../../context/RestakeContext';
-import useRestakeOperatorMap from '../../data/restake/useRestakeOperatorMap';
-import useIdentities from '../../data/useIdentities';
+import OperatorsTable from './OperatorsTable';
 
 const RESTAKE_VAULTS_TAB = 'Restake Vaults';
 
 const OPERATORS_TAB = 'Operators';
-
-type OperatorUI = NonNullable<
-  ComponentProps<typeof OperatorsTable>['data']
->[number];
 
 type VaultUI = NonNullable<ComponentProps<typeof VaultsTable>['data']>[number];
 
@@ -26,35 +20,7 @@ type VaultAssetUI = NonNullable<
 >[number];
 
 const TableTabs = () => {
-  const { operatorMap } = useRestakeOperatorMap();
   const { assetMap } = useRestakeContext();
-
-  const { result: identities } = useIdentities(
-    useMemo(() => Object.keys(operatorMap), [operatorMap]),
-  );
-
-  const operators = useMemo(
-    () =>
-      Object.entries(operatorMap).map<OperatorUI>(
-        ([address, { delegationCount, delegations }]) => {
-          const vaultTokens = delegations
-            .map((delegation) => assetMap[delegation.assetId]?.symbol)
-            .filter(Boolean);
-
-          return {
-            address,
-            // TODO: Calculate concentration percentage
-            concentrationPercentage: 0,
-            identityName: identities[address]?.name ?? '',
-            restakersCount: delegationCount,
-            // TODO: Calculate tvl in USD
-            tvlInUsd: 0,
-            vaultTokens,
-          };
-        },
-      ),
-    [assetMap, identities, operatorMap],
-  );
 
   // Recalculate vaults (pools) data from assetMap
   const vaults = useMemo(() => {
@@ -123,22 +89,13 @@ const TableTabs = () => {
     <TableAndChartTabs
       tabs={[RESTAKE_VAULTS_TAB, OPERATORS_TAB]}
       headerClassName="w-full"
-      // TODO: Implement operators search
-      /* additionalActionsCmp={
-        <Input
-          id="search-validators"
-          rightIcon={<Search className="mr-2" />}
-          placeholder="Search identity or address"
-          className="w-1/3"
-        />
-      } */
     >
       <TabContent value={RESTAKE_VAULTS_TAB}>
         <VaultsTable data={Object.values(vaults)} tableProps={tableProps} />
       </TabContent>
 
       <TabContent value={OPERATORS_TAB}>
-        <OperatorsTable data={operators} />
+        <OperatorsTable />
       </TabContent>
     </TableAndChartTabs>
   );

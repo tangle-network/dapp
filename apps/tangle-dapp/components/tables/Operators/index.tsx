@@ -3,6 +3,7 @@
 import {
   createColumnHelper,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -165,6 +166,8 @@ const OperatorsTable: FC<Props> = ({
   loadingTableProps,
   emptyTableProps,
   tableProps,
+  globalFilter,
+  onGlobalFilterChange,
 }) => {
   const table = useReactTable({
     data,
@@ -172,6 +175,7 @@ const OperatorsTable: FC<Props> = ({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     initialState: {
       sorting: [
         {
@@ -180,9 +184,14 @@ const OperatorsTable: FC<Props> = ({
         },
       ],
     },
+    state: {
+      globalFilter,
+    },
+    onGlobalFilterChange,
     getRowId: (row) => row.address,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
+    enableGlobalFilter: true,
   });
 
   if (isLoading) {

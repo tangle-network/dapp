@@ -15,6 +15,8 @@ export type OperatorData = {
 export type Props = {
   isLoading?: boolean;
   data?: OperatorData[];
+  globalFilter?: string;
+  onGlobalFilterChange?: (value: string) => void;
   loadingTableProps?: Partial<ComponentProps<typeof TableStatus>>;
   emptyTableProps?: Partial<ComponentProps<typeof TableStatus>>;
   tableProps?: Partial<ComponentProps<typeof Table>>;
