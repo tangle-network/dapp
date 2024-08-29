@@ -80,6 +80,7 @@ export * from './Tooltip';
 export * from './TransactionInputCard';
 export * from './TxProgressor';
 export { default as TxConfirmationRing } from './TxConfirmationRing';
+export * from './VaultsTable';
 export * from './WalletConnectionCard';
 export * from './WalletModal';
 export * from './WebsiteFooter';
