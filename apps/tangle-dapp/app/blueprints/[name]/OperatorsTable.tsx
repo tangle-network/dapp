@@ -17,7 +17,7 @@ const OperatorsTable: FC = () => {
       </Typography>
 
       <OperatorsTableUI
-        operators={operators.map((o) => ({
+        data={operators.map((o) => ({
           address: o.address,
           identityName: o.identityName,
           restakersCount: o.restakersCount,

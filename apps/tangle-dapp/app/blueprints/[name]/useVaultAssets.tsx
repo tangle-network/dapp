@@ -1,9 +1,8 @@
 'use client';
 
 import { VaultAsset } from '../../../types/blueprint';
-import { LiquidStakingToken } from '../../../types/liquidStaking';
 
-export default function useVaultAssets(_: LiquidStakingToken): VaultAsset[] {
+export default function useVaultAssets(_: string): VaultAsset[] {
   return [
     {
       id: '31234',

@@ -9,6 +9,7 @@ import { twMerge } from 'tailwind-merge';
 import GlassCard from '../../components/GlassCard/GlassCard';
 import StatItem from '../../components/LiquidStaking/StatItem';
 import OperatorsTable from '../../components/tables/Operators';
+import VaultsTable from '../../components/tables/Vaults';
 
 export const dynamic = 'force-static';
 
@@ -95,7 +96,7 @@ export default function RestakePage() {
         }
       >
         <TabContent value={RESTAKE_VAULTS_TAB}>
-          TODO: Implement Restake Vaults
+          <VaultsTable />
         </TabContent>
 
         <TabContent value={OPERATORS_TAB}>

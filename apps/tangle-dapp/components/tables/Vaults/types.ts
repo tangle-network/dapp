@@ -3,19 +3,18 @@ import type { ComponentProps } from 'react';
 
 import type { TableStatus } from '../../TableStatus';
 
-export type OperatorData = {
-  address: string;
-  identityName: string;
-  restakersCount: number;
-  concentrationPercentage: number;
+export type VaultData = {
+  name: string;
+  apyPercentage: number;
+  tokensCount: number;
   tvlInUsd: number;
-  vaultTokens: string[];
+  representToken: string;
 };
 
 export type Props = {
+  data?: VaultData[];
   isLoading?: boolean;
-  data?: OperatorData[];
   loadingTableProps?: Partial<ComponentProps<typeof TableStatus>>;
   emptyTableProps?: Partial<ComponentProps<typeof TableStatus>>;
-  tableProps?: Partial<ComponentProps<typeof Table>>;
+  tableProps?: Partial<ComponentProps<typeof Table<VaultData>>>;
 };

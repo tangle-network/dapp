@@ -3,81 +3,50 @@
 import {
   createColumnHelper,
   getCoreRowModel,
+  getExpandedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  Avatar,
-  Button,
-  getRoundedAmountString,
-  shortenString,
-  Table,
-  Typography,
-} from '@webb-tools/webb-ui-components';
+import { ChevronUp } from '@webb-tools/icons/ChevronUp';
+import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { Table } from '@webb-tools/webb-ui-components/components/Table';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/getRoundedAmountString';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { getSortAddressOrIdentityFnc } from '../../../utils/table';
 import LsTokenIcon from '../../LsTokenIcon';
 import { TableStatus } from '../../TableStatus';
 import { sharedTableStatusClxs } from '../shared';
 import TableCellWrapper from '../TableCellWrapper';
-import type { OperatorData, Props } from './types';
+import type { Props, VaultData } from './types';
 
-const columnHelper = createColumnHelper<OperatorData>();
+const columnHelper = createColumnHelper<VaultData>();
 
 const columns = [
-  columnHelper.accessor('address', {
-    header: () => 'Identity',
-    cell: (props) => {
-      const { address, identityName: identity } = props.row.original;
-
-      return (
-        <TableCellWrapper className="pl-3">
-          <div className="flex items-center flex-1 gap-2 pr-3">
-            <Avatar
-              sourceVariant="address"
-              value={address}
-              theme="substrate"
-              size="lg"
-            />
-
-            <div>
-              <Typography variant="h5" fw="bold">
-                {identity === address ? shortenString(address) : identity}
-              </Typography>
-
-              <Typography
-                variant="body2"
-                className="text-mono-100 dark:text-mono-120"
-              >
-                {shortenString(address)}
-              </Typography>
-            </div>
-          </div>
-        </TableCellWrapper>
-      );
-    },
-    sortingFn: getSortAddressOrIdentityFnc<OperatorData>(),
-  }),
-  columnHelper.accessor('restakersCount', {
-    header: () => 'Restakers',
+  columnHelper.accessor('name', {
+    header: () => 'Vault',
     cell: (props) => (
-      <TableCellWrapper>
-        <Typography
-          variant="body1"
-          fw="bold"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          {props.getValue()}
-        </Typography>
+      <TableCellWrapper className="pl-3">
+        <div className="flex items-center gap-2">
+          <LsTokenIcon name={props.row.original.representToken} size="lg" />
+          <Typography variant="h5" className="whitespace-nowrap">
+            {props.getValue()}
+          </Typography>
+        </div>
       </TableCellWrapper>
     ),
+    sortingFn: (rowA, rowB) => {
+      // NOTE: the sorting is reversed by default
+      return rowB.original.name.localeCompare(rowA.original.name);
+    },
+    sortDescFirst: true,
   }),
-  columnHelper.accessor('concentrationPercentage', {
-    header: () => 'Concentration',
+  columnHelper.accessor('apyPercentage', {
+    header: () => 'APY',
     cell: (props) => (
       <TableCellWrapper>
         <Typography
@@ -90,10 +59,24 @@ const columns = [
       </TableCellWrapper>
     ),
   }),
-  columnHelper.accessor('tvlInUsd', {
-    header: () => 'TVL',
+  columnHelper.accessor('tokensCount', {
+    header: () => 'Tokens',
     cell: (props) => (
       <TableCellWrapper>
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="text-mono-200 dark:text-mono-0"
+        >
+          {props.getValue()}
+        </Typography>
+      </TableCellWrapper>
+    ),
+  }),
+  columnHelper.accessor('tvlInUsd', {
+    header: () => 'Liquidity',
+    cell: (props) => (
+      <TableCellWrapper removeBorder>
         <Typography
           variant="body1"
           className="text-mono-120 dark:text-mono-100"
@@ -103,41 +86,31 @@ const columns = [
       </TableCellWrapper>
     ),
   }),
-  columnHelper.accessor('vaultTokens', {
-    header: () => 'Vaults',
-    cell: (props) => (
-      <TableCellWrapper removeBorder>
-        <div className="flex items-center -space-x-2">
-          {props
-            .getValue()
-            .sort() // sort alphabetically
-            .map((vault, index) => (
-              <LsTokenIcon key={index} name={vault} />
-            ))}
-        </div>
-      </TableCellWrapper>
-    ),
-    enableSorting: false,
-  }),
   columnHelper.display({
     id: 'actions',
     header: () => null,
-    cell: () => (
+    cell: ({ row }) => (
       <TableCellWrapper removeBorder>
         <div className="flex items-center justify-end flex-1 gap-2">
-          {/* TODO: add proper href */}
-          <Link href="#" passHref>
-            <Button variant="utility" className="uppercase body4">
-              View
-            </Button>
-          </Link>
+          <Button
+            as={Link}
+            href="#"
+            variant="utility"
+            className="uppercase body4"
+          >
+            Restake
+          </Button>
 
-          {/* TODO: add proper href */}
-          <Link href="#" passHref>
-            <Button variant="utility" className="uppercase body4">
-              Restake
-            </Button>
-          </Link>
+          <Button variant="utility" isJustIcon isDisabled={!row.getCanExpand()}>
+            <div
+              className={twMerge(
+                '!text-current transition-transform duration-300 ease-in-out',
+                row.getIsExpanded() ? 'rotate-180' : '',
+              )}
+            >
+              <ChevronUp className={twMerge('!fill-current')} />
+            </div>
+          </Button>
         </div>
       </TableCellWrapper>
     ),
@@ -145,31 +118,38 @@ const columns = [
   }),
 ];
 
-const OperatorsTable: FC<Props> = ({
+const VaultsTable: FC<Props> = ({
   data = [],
   isLoading,
-  loadingTableProps,
   emptyTableProps,
+  loadingTableProps,
   tableProps,
 }) => {
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      sorting: [
-        {
-          id: 'restakersCount',
-          desc: true,
-        },
-      ],
-    },
-    getRowId: (row) => row.address,
-    autoResetPageIndex: false,
-    enableSortingRemoval: false,
-  });
+  const table = useReactTable(
+    useMemo(
+      () =>
+        ({
+          data,
+          columns,
+          initialState: {
+            sorting: [
+              {
+                id: 'apy',
+                desc: true,
+              },
+            ],
+          },
+          getCoreRowModel: getCoreRowModel(),
+          getExpandedRowModel: getExpandedRowModel(),
+          getSortedRowModel: getSortedRowModel(),
+          getPaginationRowModel: getPaginationRowModel(),
+          getRowCanExpand: (row) => row.original.tokensCount > 0,
+          autoResetPageIndex: false,
+          enableSortingRemoval: false,
+        }) satisfies TableOptions<VaultData>,
+      [data],
+    ),
+  );
 
   if (isLoading) {
     return (
@@ -186,9 +166,9 @@ const OperatorsTable: FC<Props> = ({
   if (data.length === 0) {
     return (
       <TableStatus
-        title="No operators found"
-        description="It looks like there is no operator running at the moment."
-        icon="⚙️"
+        title="No vaults found"
+        description="It looks like there is no vaults at the moment."
+        icon="🔍"
         {...emptyTableProps}
         className={twMerge(sharedTableStatusClxs, emptyTableProps?.className)}
       />
@@ -197,7 +177,7 @@ const OperatorsTable: FC<Props> = ({
 
   return (
     <Table
-      title="Operators"
+      title="Vaults"
       isPaginated
       {...tableProps}
       tableProps={table}
@@ -232,4 +212,4 @@ const OperatorsTable: FC<Props> = ({
   );
 };
 
-export default OperatorsTable;
+export default VaultsTable;
