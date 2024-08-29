@@ -1,8 +1,6 @@
 'use client';
 
-import { VaultAsset } from '../../../types/blueprint';
-
-export default function useVaultAssets(_: string): VaultAsset[] {
+export default function useVaultAssets(_: string) {
   return [
     {
       id: '31234',

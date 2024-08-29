@@ -3,7 +3,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { twMerge } from 'tailwind-merge';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
-import StatItem from '../../components/LiquidStaking/StatItem';
+import StatItem from '../../components/StatItem';
 import TableTabs from './TableTabs';
 
 export const dynamic = 'force-static';
