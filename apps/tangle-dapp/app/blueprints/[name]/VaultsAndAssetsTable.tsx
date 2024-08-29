@@ -7,7 +7,7 @@ import VaultsTable from '../../../components/tables/Vaults';
 import useVaults from './useVaults';
 import VaultAssetsTable from './VaultAssetsTable';
 
-const TvlTable: FC = () => {
+const VaultsAndAssetsTable: FC = () => {
   const vaults = useVaults();
 
   return (
@@ -46,4 +46,4 @@ const TvlTable: FC = () => {
   );
 };
 
-export default TvlTable;
+export default VaultsAndAssetsTable;
