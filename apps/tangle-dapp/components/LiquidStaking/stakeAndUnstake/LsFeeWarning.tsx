@@ -1,7 +1,8 @@
+import { Alert } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
+
 import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import useLsFeePermill from './useLsFeePermill';
-import { Alert } from '@webb-tools/webb-ui-components';
 
 // 10%.
 const THRESHOLD_PERMILL = 0.1;

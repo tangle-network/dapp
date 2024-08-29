@@ -8,8 +8,8 @@ import { BridgeQueueTxItem } from '../types/bridge';
 import {
   Collator,
   Dapp,
-  Validator,
   PhalaVaultOrStakePool,
+  Validator,
 } from '../types/liquidStaking';
 import Optional from '../utils/Optional';
 
