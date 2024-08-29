@@ -45,6 +45,8 @@ const computeExchangeRate = (
   return ratio;
 };
 
+const MAX_BN_OPERATION_NUMBER = 2 ** 26 - 1;
+
 const useLsExchangeRate = (
   type: ExchangeRateType,
   protocolId: LsProtocolId,
@@ -175,7 +177,15 @@ const useLsExchangeRate = (
 
   const isRefreshing = usePolling({ effect: fetch });
 
-  return { exchangeRate, isRefreshing };
+  return {
+    exchangeRate:
+      // For some undocumented reason, BN.js can perform number operations
+      // on BN instances that are up to 2^26 - 1.
+      typeof exchangeRate === 'number'
+        ? Math.min(MAX_BN_OPERATION_NUMBER, exchangeRate)
+        : exchangeRate,
+    isRefreshing,
+  };
 };
 
 export default useLsExchangeRate;

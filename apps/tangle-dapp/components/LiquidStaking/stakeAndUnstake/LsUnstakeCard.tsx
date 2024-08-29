@@ -26,9 +26,10 @@ import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import LsAgnosticBalance from './LsAgnosticBalance';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeeDetailItem from './FeeDetailItem';
+import LsAgnosticBalance from './LsAgnosticBalance';
+import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
 import SelectTokenModal from './SelectTokenModal';
 import TotalDetailItem from './TotalDetailItem';
@@ -226,6 +227,8 @@ const LsUnstakeCard: FC = () => {
           inputAmount={fromAmount}
         />
       </div>
+
+      <LsFeeWarning isMinting={false} selectedProtocolId={selectedProtocolId} />
 
       <Button
         isDisabled={

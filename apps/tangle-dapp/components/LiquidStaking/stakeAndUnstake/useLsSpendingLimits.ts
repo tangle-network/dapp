@@ -20,7 +20,7 @@ const useLsSpendingLimits = (
   isNative: boolean,
   protocolId: LsProtocolId,
 ): LsSpendingLimits => {
-  const balance = useLsAgnosticBalance(isNative, protocolId);
+  const { balance } = useLsAgnosticBalance(isNative, protocolId);
 
   const { result: existentialDepositAmount } = useApi(
     useCallback((api) => api.consts.balances.existentialDeposit, []),
@@ -68,7 +68,7 @@ const useLsSpendingLimits = (
     : minimumRedeemAmount;
 
   const minSpendable = useMemo(() => {
-    // TODO: Add liquifier cases as well.
+    // TODO: Add liquifier cases as well (enough to cover fees?).
 
     if (
       mintingOrRedeemingAmount === null ||
@@ -80,15 +80,8 @@ const useLsSpendingLimits = (
     return BN.max(mintingOrRedeemingAmount, existentialDepositAmount);
   }, [existentialDepositAmount, mintingOrRedeemingAmount]);
 
-  const maxSpendable = (() => {
-    if (balance === null || typeof balance === 'string') {
-      return null;
-    }
-
-    return balance;
-  })();
-
-  return { minSpendable, maxSpendable };
+  // TODO: Properly handle error state of maxSpendable.
+  return { minSpendable, maxSpendable: balance instanceof BN ? balance : null };
 };
 
 export default useLsSpendingLimits;

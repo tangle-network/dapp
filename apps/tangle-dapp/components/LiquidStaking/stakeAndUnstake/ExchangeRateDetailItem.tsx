@@ -1,5 +1,5 @@
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
@@ -29,10 +29,6 @@ const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({
     ) : (
       exchangeRate
     );
-
-  useEffect(() => {
-    console.debug('is refreshing', isRefreshing);
-  }, [isRefreshing]);
 
   const value =
     exchangeRateElement instanceof Error ? (

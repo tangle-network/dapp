@@ -12,6 +12,7 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
+import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
   LsNetworkId,
   LsProtocolId,
@@ -56,11 +57,15 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
       return null;
     }
 
-    return formatBn(balance, decimals, {
+    const formattedBalance = formatBn(balance, decimals, {
       fractionMaxLength: undefined,
       includeCommas: true,
     });
-  }, [balance, decimals]);
+
+    const derivativePrefix = isNative ? '' : LS_DERIVATIVE_TOKEN_PREFIX;
+
+    return `${formattedBalance} ${derivativePrefix}${protocol.token}`;
+  }, [balance, decimals, isNative, protocol.token]);
 
   const isClickable =
     onlyShowTooltipWhenBalanceIsSet &&

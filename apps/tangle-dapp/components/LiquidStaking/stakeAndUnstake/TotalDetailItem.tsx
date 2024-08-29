@@ -63,7 +63,9 @@ const TotalDetailItem: FC<TotalDetailItemProps> = ({
       return totalAmount;
     }
 
-    return formatBn(totalAmount, protocol.decimals);
+    return formatBn(totalAmount, protocol.decimals, {
+      includeCommas: true,
+    });
   }, [inputAmount, totalAmount, protocol.decimals]);
 
   const token = isMinting
