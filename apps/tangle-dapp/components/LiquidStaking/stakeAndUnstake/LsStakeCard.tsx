@@ -8,6 +8,7 @@ import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Search } from '@webb-tools/icons';
 import {
+  Alert,
   Button,
   Chip,
   Input,
@@ -40,6 +41,7 @@ import LsInput from './LsInput';
 import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsSpendingLimits from './useLsSpendingLimits';
+import useLsFeePermill from './useLsFeePermill';
 
 const LsStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useSearchParamState<BN | null>({
@@ -59,6 +61,7 @@ const LsStakeCard: FC = () => {
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const performLiquifierDeposit = useLiquifierDeposit();
   const activeAccountAddress = useActiveAccountAddress();
+  const fee = useLsFeePermill(selectedProtocolId, true);
 
   const { maxSpendable, minSpendable } = useLsSpendingLimits(
     true,
@@ -195,6 +198,15 @@ const LsStakeCard: FC = () => {
           inputAmount={fromAmount}
         />
       </div>
+
+      {/** Warn the user when the fee is >=10%. */}
+      {typeof fee === 'number' && fee > 0.1 && (
+        <Alert
+          type="warning"
+          title="High fees"
+          description="The fee for liquid staking this asset is higher than 10% of the amount."
+        />
+      )}
 
       <Button
         isDisabled={

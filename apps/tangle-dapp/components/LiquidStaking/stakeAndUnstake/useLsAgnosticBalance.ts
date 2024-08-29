@@ -70,6 +70,13 @@ const useLsAgnosticBalance = (isNative: boolean, protocolId: LsProtocolId) => {
     setBalance(isAccountConnected ? null : EMPTY_VALUE_PLACEHOLDER);
   }, [isAccountConnected]);
 
+  // Reset the balance to the initial loading state when the protocol changes.
+  useEffect(() => {
+    if (isAccountConnected) {
+      setBalance(null);
+    }
+  }, [isAccountConnected, isNative, protocolId]);
+
   const erc20BalanceFetcher = useCallback(() => {
     if (
       protocol.networkId !== LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER ||
