@@ -74,7 +74,7 @@ const columns = [
     ),
   }),
   columnHelper.accessor('tvlInUsd', {
-    header: () => 'Liquidity',
+    header: () => 'TVL',
     cell: (props) => (
       <TableCellWrapper removeBorder>
         <Typography
@@ -134,7 +134,7 @@ const VaultsTable: FC<Props> = ({
           initialState: {
             sorting: [
               {
-                id: 'apy',
+                id: 'apyPercentage',
                 desc: true,
               },
             ],

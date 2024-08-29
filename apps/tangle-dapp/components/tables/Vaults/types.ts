@@ -4,6 +4,7 @@ import type { ComponentProps } from 'react';
 import type { TableStatus } from '../../TableStatus';
 
 export type VaultData = {
+  id: string;
   name: string;
   apyPercentage: number;
   tokensCount: number;

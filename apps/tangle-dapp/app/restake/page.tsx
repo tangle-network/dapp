@@ -1,15 +1,10 @@
-import { Search } from '@webb-tools/icons/Search';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { Input } from '@webb-tools/webb-ui-components/components/Input';
-import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
-import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { twMerge } from 'tailwind-merge';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
 import StatItem from '../../components/LiquidStaking/StatItem';
-import OperatorsTable from '../../components/tables/Operators';
-import VaultsTable from '../../components/tables/Vaults';
+import TableTabs from './TableTabs';
 
 export const dynamic = 'force-static';
 
@@ -25,10 +20,6 @@ const CONTENT = {
 } as const;
 
 const minHeightClsx = 'min-h-[233px]';
-
-const RESTAKE_VAULTS_TAB = 'Restake Vaults';
-
-const OPERATORS_TAB = 'Operators';
 
 export default function RestakePage() {
   return (
@@ -50,6 +41,7 @@ export default function RestakePage() {
           </Typography>
 
           <div className="flex justify-end gap-6 pt-3 border-t border-mono-0 dark:border-mono-140">
+            {/* TODO: Calculate these values */}
             <StatItem title="$123.01" subtitle="My Total Restaked" />
 
             <StatItem title="$123.01" subtitle="Network TVL" />
@@ -83,26 +75,7 @@ export default function RestakePage() {
         </GlassCard>
       </div>
 
-      <TableAndChartTabs
-        tabs={[RESTAKE_VAULTS_TAB, OPERATORS_TAB]}
-        headerClassName="w-full"
-        additionalActionsCmp={
-          <Input
-            id="search-validators"
-            rightIcon={<Search className="mr-2" />}
-            placeholder="Search identity or address"
-            className="w-1/3"
-          />
-        }
-      >
-        <TabContent value={RESTAKE_VAULTS_TAB}>
-          <VaultsTable />
-        </TabContent>
-
-        <TabContent value={OPERATORS_TAB}>
-          <OperatorsTable />
-        </TabContent>
-      </TableAndChartTabs>
+      <TableTabs />
     </div>
   );
 }

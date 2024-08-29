@@ -18,6 +18,7 @@ const TvlTable: FC = () => {
 
       <VaultsTable
         data={vaults.map((v) => ({
+          id: v.name,
           apyPercentage: v.apy,
           name: v.name,
           representToken: v.lstToken,

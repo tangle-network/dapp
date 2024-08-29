@@ -105,18 +105,26 @@ const columns = [
   }),
   columnHelper.accessor('vaultTokens', {
     header: () => 'Vaults',
-    cell: (props) => (
-      <TableCellWrapper removeBorder>
-        <div className="flex items-center -space-x-2">
-          {props
-            .getValue()
-            .sort() // sort alphabetically
-            .map((vault, index) => (
-              <LsTokenIcon key={index} name={vault} />
-            ))}
-        </div>
-      </TableCellWrapper>
-    ),
+    cell: (props) => {
+      const tokensList = props.getValue();
+
+      return (
+        <TableCellWrapper removeBorder>
+          {tokensList.length > 0 ? (
+            <div className="flex items-center -space-x-2">
+              {props
+                .getValue()
+                .sort() // sort alphabetically
+                .map((vault, index) => (
+                  <LsTokenIcon key={index} name={vault} />
+                ))}
+            </div>
+          ) : (
+            <Typography variant="body1">No vaults</Typography>
+          )}
+        </TableCellWrapper>
+      );
+    },
     enableSorting: false,
   }),
   columnHelper.display({
@@ -126,18 +134,24 @@ const columns = [
       <TableCellWrapper removeBorder>
         <div className="flex items-center justify-end flex-1 gap-2">
           {/* TODO: add proper href */}
-          <Link href="#" passHref>
-            <Button variant="utility" className="uppercase body4">
-              View
-            </Button>
-          </Link>
+          <Button
+            as={Link}
+            href="#"
+            variant="utility"
+            className="uppercase body4"
+          >
+            View
+          </Button>
 
           {/* TODO: add proper href */}
-          <Link href="#" passHref>
-            <Button variant="utility" className="uppercase body4">
-              Restake
-            </Button>
-          </Link>
+          <Button
+            as={Link}
+            href="#"
+            variant="utility"
+            className="uppercase body4"
+          >
+            Restake
+          </Button>
         </div>
       </TableCellWrapper>
     ),

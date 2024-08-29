@@ -45,7 +45,6 @@ const VaultAssetsTable: FC<Props> = ({ data = [], isShown }) => {
           initialState: {
             sorting: [{ id: 'tvl', desc: true }],
           },
-          getRowId: (row) => row.id,
           autoResetPageIndex: false,
           enableSortingRemoval: false,
         }) satisfies TableOptions<VaultAssetData>,
