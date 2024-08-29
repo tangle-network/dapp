@@ -30,7 +30,6 @@ export type AstarDapp = {
   // TODO: Is this a Substrate address? If so, use `SubstrateAddress` type.
   contractAddress: string;
   identity?: string;
-  delegationCount: number;
   totalValueStaked: BN;
 };
 

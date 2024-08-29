@@ -1,22 +1,11 @@
 'use client';
 
 import { BN } from '@polkadot/util';
-import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { ChainIcon } from '@webb-tools/icons';
-import {
-  Dropdown,
-  DropdownBody,
-  DropdownMenuItem,
-  Typography,
-} from '@webb-tools/webb-ui-components';
-import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
+import { Typography } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import {
-  LS_DERIVATIVE_TOKEN_PREFIX,
-  LS_NETWORKS,
-} from '../../../constants/liquidStaking/constants';
+import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
   LsNetworkId,
   LsProtocolId,
@@ -25,9 +14,8 @@ import {
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
-import getLsNetwork from '../../../utils/liquidStaking/getLsNetwork';
-import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import DropdownChevronIcon from './DropdownChevronIcon';
+import NetworkSelector from './NetworkSelector';
+import ProtocolSelector from './ProtocolSelector';
 
 export type LiquidStakingInputProps = {
   id: string;
@@ -39,7 +27,7 @@ export type LiquidStakingInputProps = {
   placeholder?: string;
   rightElement?: ReactNode;
   token: LsToken;
-  isTokenLiquidVariant?: boolean;
+  isDerivativeVariant?: boolean;
   minAmount?: BN;
   maxAmount?: BN;
   maxErrorMessage?: string;
@@ -56,7 +44,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   decimals,
   isReadOnly = false,
   placeholder = '0',
-  isTokenLiquidVariant = false,
+  isDerivativeVariant = false,
   rightElement,
   protocolId,
   networkId,
@@ -67,7 +55,6 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
   onAmountChange,
   setProtocolId,
   setNetworkId,
-  onTokenClick,
   className,
 }) => {
   const minErrorMessage = ((): string | undefined => {
@@ -75,7 +62,7 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
       return undefined;
     }
 
-    const unit = `${isTokenLiquidVariant ? LS_DERIVATIVE_TOKEN_PREFIX : ''}${token}`;
+    const unit = `${isDerivativeVariant ? LS_DERIVATIVE_TOKEN_PREFIX : ''}${token}`;
 
     const formattedMinAmount = formatBn(minAmount, decimals, {
       fractionMaxLength: undefined,
@@ -139,16 +126,11 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
             readOnly={isReadOnly}
           />
 
-          {/** TODO: Replace token chip with protocol chip styling. */}
-          {/* <TokenChip
-            onClick={onTokenClick}
-            token={token}
-            isLiquidVariant={isTokenLiquidVariant}
-          /> */}
           <ProtocolSelector
             selectedNetworkId={networkId}
             selectedProtocolId={protocolId}
             setProtocolId={setProtocolId}
+            isDerivativeVariant={isDerivativeVariant}
           />
         </div>
       </div>
@@ -159,143 +141,6 @@ const LiquidStakingInput: FC<LiquidStakingInputProps> = ({
         </Typography>
       )}
     </>
-  );
-};
-
-type NetworkSelectorProps = {
-  selectedNetworkId: LsNetworkId;
-
-  /**
-   * If this function is not provided, the selector will be
-   * considered read-only.
-   */
-  setNetworkId?: (newNetworkId: LsNetworkId) => void;
-};
-
-/** @internal */
-const NetworkSelector: FC<NetworkSelectorProps> = ({
-  selectedNetworkId,
-  setNetworkId,
-}) => {
-  const isReadOnly = selectedNetworkId === undefined;
-  const selectedProtocolTypeMetadata = getLsNetwork(selectedNetworkId);
-
-  const base = (
-    <div className="group flex gap-1 items-center justify-center">
-      <div className="flex gap-2 items-center justify-center">
-        <ChainIcon
-          size="lg"
-          name={selectedProtocolTypeMetadata.chainIconFileName}
-        />
-
-        <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-          {selectedProtocolTypeMetadata.networkName}
-        </Typography>
-      </div>
-
-      {!isReadOnly && <DropdownChevronIcon isLarge />}
-    </div>
-  );
-
-  return setNetworkId !== undefined ? (
-    <Dropdown>
-      <DropdownMenuTrigger>{base}</DropdownMenuTrigger>
-
-      <DropdownBody>
-        <ScrollArea>
-          <ul className="max-h-[300px]">
-            {LS_NETWORKS.map((protocolTypeMetadata) => {
-              return (
-                <li key={protocolTypeMetadata.type}>
-                  <DropdownMenuItem
-                    onClick={() => setNetworkId(protocolTypeMetadata.type)}
-                  >
-                    <div className="flex gap-2 items-center justify-center">
-                      <ChainIcon
-                        size="lg"
-                        name={protocolTypeMetadata.chainIconFileName}
-                      />
-
-                      <Typography
-                        variant="h5"
-                        fw="bold"
-                        className="dark:text-mono-40"
-                      >
-                        {protocolTypeMetadata.networkName}
-                      </Typography>
-                    </div>
-                  </DropdownMenuItem>
-                </li>
-              );
-            })}
-          </ul>
-        </ScrollArea>
-      </DropdownBody>
-    </Dropdown>
-  ) : (
-    base
-  );
-};
-
-type ProtocolSelectorProps = {
-  selectedNetworkId: LsNetworkId;
-  selectedProtocolId: LsProtocolId;
-  setProtocolId?: (newProtocolId: LsProtocolId) => void;
-};
-
-/** @internal */
-const ProtocolSelector: FC<ProtocolSelectorProps> = ({
-  selectedNetworkId,
-  selectedProtocolId,
-  setProtocolId,
-}) => {
-  const protocol = getLsProtocolDef(selectedProtocolId);
-  const network = getLsNetwork(selectedNetworkId);
-
-  const trySetProtocolId = (newProtocolId: LsProtocolId) => {
-    return () => {
-      if (setProtocolId === undefined) {
-        return;
-      }
-
-      setProtocolId(newProtocolId);
-    };
-  };
-
-  return (
-    <Dropdown>
-      <DropdownMenuTrigger>
-        <div className="group flex gap-1 items-center justify-center">
-          <Typography variant="h5" fw="bold" className="dark:text-mono-40">
-            {protocol.name}
-          </Typography>
-
-          <DropdownChevronIcon isLarge />
-        </div>
-      </DropdownMenuTrigger>
-
-      <DropdownBody>
-        <ScrollArea>
-          <ul className="max-h-[300px]">
-            {network.protocols.map((protocol) => {
-              return (
-                <li key={protocol.id}>
-                  <DropdownMenuItem onClick={trySetProtocolId(protocol.id)}>
-                    <Typography
-                      variant="h5"
-                      fw="bold"
-                      className="dark:text-mono-40"
-                    >
-                      {protocol.name}
-                    </Typography>
-                  </DropdownMenuItem>
-                </li>
-              );
-            })}
-          </ul>
-        </ScrollArea>
-      </DropdownBody>
-    </Dropdown>
   );
 };
 

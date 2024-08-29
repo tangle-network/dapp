@@ -163,13 +163,13 @@ const LiquidStakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-stake-to"
-        networkId={LsNetworkId.TANGLE_RESTAKING_PARACHAIN}
+        networkId={selectedNetworkId}
         protocolId={selectedProtocolId}
         placeholder={`0 ${LS_DERIVATIVE_TOKEN_PREFIX}${selectedProtocol.token}`}
         decimals={selectedProtocol.decimals}
         amount={toAmount}
         isReadOnly
-        isTokenLiquidVariant
+        isDerivativeVariant
         token={selectedProtocol.token}
         rightElement={<SelectValidatorsButton />}
         className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}

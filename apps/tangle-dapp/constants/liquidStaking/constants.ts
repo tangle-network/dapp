@@ -1,6 +1,6 @@
 import ASTAR from '../../data/liquidStaking/adapters/astar';
 import CHAINLINK from '../../data/liquidStaking/adapters/chainlink';
-import LIVEPEER from '../../data/liquidStaking/adapters/livePeer';
+import LIVEPEER from '../../data/liquidStaking/adapters/livepeer';
 import MANTA from '../../data/liquidStaking/adapters/manta';
 import MOONBEAM from '../../data/liquidStaking/adapters/moonbeam';
 import PHALA from '../../data/liquidStaking/adapters/phala';
@@ -24,6 +24,7 @@ import {
 // TODO: Deploy to Sepolia and update the addresses.
 export const LS_REGISTRY_ADDRESS = IS_PRODUCTION_ENV ? '0x' : '0x';
 
+// TODO: Find a way to avoid casting. Some type errors are being pesky.
 export const LS_PARACHAIN_CHAIN_MAP: Record<
   LsParachainChainId,
   LsParachainChainDef
@@ -33,7 +34,7 @@ export const LS_PARACHAIN_CHAIN_MAP: Record<
   [LsProtocolId.MOONBEAM]: MOONBEAM,
   [LsProtocolId.ASTAR]: ASTAR,
   [LsProtocolId.MANTA]: MANTA,
-};
+} as Record<LsParachainChainId, LsParachainChainDef>;
 
 export const LS_LIQUIFIER_PROTOCOL_MAP: Record<
   LsLiquifierProtocolId,
@@ -79,7 +80,7 @@ export const LS_DERIVATIVE_TOKEN_PREFIX = 'tg';
 
 export const LS_ETHEREUM_MAINNET_LIQUIFIER: LsNetwork = {
   type: LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER,
-  networkName: 'Ethereum Mainnet',
+  networkName: IS_PRODUCTION_ENV ? 'Ethereum Mainnet' : 'Sepolia Testnet',
   chainIconFileName: 'ethereum',
   defaultProtocolId: LsProtocolId.CHAINLINK,
   protocols: [CHAINLINK, THE_GRAPH, LIVEPEER, POLYGON],
@@ -90,7 +91,8 @@ export const LS_TANGLE_RESTAKING_PARACHAIN: LsNetwork = {
   networkName: 'Tangle Parachain',
   chainIconFileName: 'tangle',
   defaultProtocolId: LsProtocolId.POLKADOT,
-  protocols: [POLKADOT, PHALA, MOONBEAM, ASTAR, MANTA],
+  // TODO: Find a way to avoid casting. Some type errors are being pesky.
+  protocols: [POLKADOT, PHALA, MOONBEAM, ASTAR, MANTA] as LsProtocolDef[],
 };
 
 export const LS_NETWORKS: LsNetwork[] = [

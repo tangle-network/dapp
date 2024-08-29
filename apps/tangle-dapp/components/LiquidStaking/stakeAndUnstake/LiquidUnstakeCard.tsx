@@ -12,14 +12,14 @@ import { z } from 'zod';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
-  LsProtocolId,
   LsNetworkId,
+  LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
-import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
+import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useRedeemTx from '../../../data/liquidStaking/useRedeemTx';
 import useLiquifierUnlock from '../../../data/liquifier/useLiquifierUnlock';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
@@ -39,8 +39,14 @@ import useLsSpendingLimits from './useLsSpendingLimits';
 const LiquidUnstakeCard: FC = () => {
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
-  const { selectedProtocolId, setSelectedProtocolId } = useLsStore();
   const activeAccountAddress = useActiveAccountAddress();
+
+  const {
+    selectedProtocolId,
+    setSelectedProtocolId,
+    selectedNetworkId,
+    setSelectedNetworkId,
+  } = useLsStore();
 
   const [didLiquifierUnlockSucceed, setDidLiquifierUnlockSucceed] =
     useState(false);
@@ -167,14 +173,17 @@ const LiquidUnstakeCard: FC = () => {
       {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
       <LiquidStakingInput
         id="liquid-staking-unstake-from"
-        protocolId={LsProtocolId.TANGLE_RESTAKING_PARACHAIN}
+        networkId={selectedNetworkId}
+        setNetworkId={setSelectedNetworkId}
+        protocolId={selectedProtocolId}
+        setProtocolId={setSelectedProtocolId}
         token={selectedProtocol.token}
         amount={fromAmount}
         decimals={selectedProtocol.decimals}
         onAmountChange={setFromAmount}
         placeholder={`0 ${LS_DERIVATIVE_TOKEN_PREFIX}${selectedProtocol.token}`}
         rightElement={stakedWalletBalance}
-        isTokenLiquidVariant
+        isDerivativeVariant
         minAmount={minSpendable ?? undefined}
         maxAmount={maxSpendable ?? undefined}
         maxErrorMessage="Not enough stake to redeem"
@@ -185,12 +194,12 @@ const LiquidUnstakeCard: FC = () => {
 
       <LiquidStakingInput
         id="liquid-staking-unstake-to"
+        networkId={selectedNetworkId}
         protocolId={selectedProtocolId}
         amount={toAmount}
         decimals={selectedProtocol.decimals}
         placeholder={`0 ${selectedProtocol.token}`}
         token={selectedProtocol.token}
-        setProtocolId={setSelectedProtocolId}
         isReadOnly
         className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
       />
