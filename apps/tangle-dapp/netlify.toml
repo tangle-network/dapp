@@ -1,3 +1,3 @@
 [build]
-command = "ls -a . && echo \"\n\n\" && ls -a ./apps/tangle-dapp && yarn nx build tangle-dapp"
+command = "yarn nx build tangle-dapp"
 publish = "./dist/apps/tangle-dapp/.next"
