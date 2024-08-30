@@ -3,10 +3,13 @@
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
 import { type ComponentProps, useMemo } from 'react';
+import { formatUnits } from 'viem';
 
 import VaultAssetsTable from '../../components/tables/VaultAssets';
 import VaultsTable from '../../components/tables/Vaults';
 import { useRestakeContext } from '../../context/RestakeContext';
+import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
+import useRestakeRewardConfig from '../../data/restake/useRestakeRewardConfig';
 import OperatorsTable from './OperatorsTable';
 
 const RESTAKE_VAULTS_TAB = 'Restake Vaults';
@@ -21,6 +24,9 @@ type VaultAssetUI = NonNullable<
 
 const TableTabs = () => {
   const { assetMap } = useRestakeContext();
+  const { delegatorInfo } = useRestakeDelegatorInfo();
+
+  const { rewardConfig } = useRestakeRewardConfig();
 
   // Recalculate vaults (pools) data from assetMap
   const vaults = useMemo(() => {
@@ -32,8 +38,7 @@ const TableTabs = () => {
       if (vaults[poolId] === undefined) {
         vaults[poolId] = {
           id: poolId,
-          // TODO: Calculate APY
-          apyPercentage: 0,
+          apyPercentage: rewardConfig.configs[poolId]?.apy ?? 0,
           // TODO: Find out a proper way to get the pool name, now it's the first token name
           name: name,
           // TODO: Find out a proper way to get the pool symbol, now it's the first token symbol
@@ -48,7 +53,25 @@ const TableTabs = () => {
     }
 
     return vaults;
-  }, [assetMap]);
+  }, [assetMap, rewardConfig.configs]);
+
+  const delegatorTotalRestakedAssets = useMemo(() => {
+    if (!delegatorInfo?.delegations) {
+      return {};
+    }
+
+    return delegatorInfo.delegations.reduce<Record<string, bigint>>(
+      (acc, { amountBonded, assetId }) => {
+        if (acc[assetId] === undefined) {
+          acc[assetId] = amountBonded;
+        } else {
+          acc[assetId] += amountBonded;
+        }
+        return acc;
+      },
+      {},
+    );
+  }, [delegatorInfo?.delegations]);
 
   const tableProps = useMemo<ComponentProps<typeof VaultsTable>['tableProps']>(
     () => ({
@@ -60,17 +83,26 @@ const TableTabs = () => {
         const poolId = row.original.id;
         const vaultAssets = Object.values(assetMap)
           .filter((asset) => asset.poolId === poolId)
-          .map(
-            (asset) =>
-              ({
-                id: asset.id,
-                symbol: asset.symbol,
-                // TODO: Calculate tvl
-                tvl: 0,
-                // TODO: Calculate self stake
-                selfStake: 0,
-              }) satisfies VaultAssetUI,
-          );
+          .map((asset) => {
+            const selfStake = (() => {
+              if (delegatorTotalRestakedAssets[asset.id] === undefined) {
+                return 0;
+              }
+
+              return +formatUnits(
+                delegatorTotalRestakedAssets[asset.id],
+                asset.decimals,
+              );
+            })();
+
+            return {
+              id: asset.id,
+              symbol: asset.symbol,
+              // TODO: Calculate tvl
+              tvl: 0,
+              selfStake,
+            } satisfies VaultAssetUI;
+          });
 
         return (
           <div className="px-3 pt-4 pb-3 -mx-px bg-mono-0 dark:bg-mono-190 -mt-7 rounded-b-xl">
@@ -82,7 +114,7 @@ const TableTabs = () => {
         );
       },
     }),
-    [assetMap],
+    [assetMap, delegatorTotalRestakedAssets],
   );
 
   return (
