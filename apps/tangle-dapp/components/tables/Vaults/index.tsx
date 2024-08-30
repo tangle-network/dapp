@@ -94,6 +94,7 @@ const columns = [
         <div className="flex items-center justify-end flex-1 gap-2">
           <Button
             as={Link}
+            // TODO: add proper href
             href="#"
             variant="utility"
             className="uppercase body4"
@@ -105,10 +106,10 @@ const columns = [
             <div
               className={twMerge(
                 '!text-current transition-transform duration-300 ease-in-out',
-                row.getIsExpanded() ? 'rotate-180' : '',
+                row.getIsExpanded() && 'rotate-180',
               )}
             >
-              <ChevronUp className={twMerge('!fill-current')} />
+              <ChevronUp className="!fill-current" />
             </div>
           </Button>
         </div>
