@@ -1,77 +1,87 @@
-import { HexString } from '@polkadot/util/types';
-import assert from 'assert';
-import { useCallback } from 'react';
+import { PromiseOrT } from '@webb-tools/abstract-api-provider';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Abi as ViemAbi,
   ContractFunctionArgs,
   ContractFunctionName,
+  ContractFunctionReturnType,
 } from 'viem';
-import { mainnet, sepolia } from 'viem/chains';
-import { ReadContractReturnType } from 'wagmi/actions';
 
-import { IS_PRODUCTION_ENV } from '../../constants/env';
-import ensureError from '../../utils/ensureError';
-import useViemPublicClientWithChain from './useViemPublicClientWithChain';
+import useDebugMetricsStore from '../../context/useDebugMetricsStore';
+import usePolling from '../liquidStaking/usePolling';
+import useContractReadOnce, {
+  ContractReadOptions,
+} from './useContractReadOnce';
 
-export type ContractReadOptions<
+/**
+ * Continuously reads a contract function, refreshing the value
+ * at a specified interval.
+ */
+const useContractRead = <
   Abi extends ViemAbi,
   FunctionName extends ContractFunctionName<Abi, 'pure' | 'view'>,
-> = {
-  address: HexString;
-  functionName: FunctionName;
-  args: ContractFunctionArgs<Abi, 'pure' | 'view', FunctionName>;
-};
-
-const useContractRead = <Abi extends ViemAbi>(abi: Abi) => {
-  // Use Sepolia testnet for development, and mainnet for production.
-  // Some dummy contracts were deployed on Sepolia for testing purposes.
-  const chain = IS_PRODUCTION_ENV ? mainnet : sepolia;
-
-  const publicClient = useViemPublicClientWithChain(chain);
-
-  const read = useCallback(
-    async <FunctionName extends ContractFunctionName<Abi, 'pure' | 'view'>>({
-      address,
-      functionName,
-      args,
-    }: ContractReadOptions<Abi, FunctionName>): Promise<
-      | ReadContractReturnType<
+>(
+  abi: Abi,
+  options:
+    | ContractReadOptions<Abi, FunctionName>
+    // Allow consumers to provide a function that returns the options.
+    // This is useful for when the options are dependent on some state.
+    | (() => PromiseOrT<ContractReadOptions<Abi, FunctionName> | null>),
+) => {
+  type ReturnType =
+    | Error
+    | Awaited<
+        ContractFunctionReturnType<
           Abi,
+          'pure' | 'view',
           FunctionName,
           ContractFunctionArgs<Abi, 'pure' | 'view', FunctionName>
         >
-      | Error
-    > => {
-      assert(
-        publicClient !== null,
-        "Should not be able to call this function if the client isn't ready yet",
-      );
+      >;
 
-      try {
-        return await publicClient.readContract({
-          address,
-          abi,
-          functionName,
-          args,
-        });
-      } catch (possibleError) {
-        const error = ensureError(possibleError);
+  const [value, setValue] = useState<ReturnType | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const readOnce = useContractReadOnce(abi);
 
-        console.error(
-          `Error reading contract ${address} function ${functionName}:`,
-          error,
-        );
+  const { incrementSubscriptionCount, decrementSubscriptionCount } =
+    useDebugMetricsStore();
 
-        return error;
+  // Register and deregister subscription count entry to keep track
+  // of performance metrics.
+  useEffect(() => {
+    isPaused ? decrementSubscriptionCount() : incrementSubscriptionCount();
+
+    return () => {
+      if (!isPaused) {
+        decrementSubscriptionCount();
       }
-    },
-    [abi, publicClient],
-  );
+    };
+  }, [decrementSubscriptionCount, incrementSubscriptionCount, isPaused]);
 
-  // TODO: This only loads the balance once. Make it so it updates every few seconds that way the it responds to any balance changes that may occur, not just when loading the site initially. Like a subscription. So, add an extra function like `readStream` or `subscribe` that will allow the user to subscribe to the contract and get updates whenever the contract changes.
+  const fetcher = useCallback(async () => {
+    // Not yet ready to fetch.
+    if (isPaused || readOnce === null) {
+      return null;
+    }
 
-  // Only provide the read functions once the public client is ready.
-  return publicClient === null ? null : read;
+    const options_ = typeof options === 'function' ? await options() : options;
+
+    // If the options are null, it means that the consumer
+    // of this hook does not want to fetch the data at this time.
+    if (options_ === null) {
+      return null;
+    }
+
+    setValue(await readOnce(options_));
+  }, [isPaused, options, readOnce]);
+
+  usePolling({
+    // By providing null, it signals to the hook to maintain
+    // its current value and not refresh.
+    effect: isPaused ? null : fetcher,
+  });
+
+  return { value, isPaused, setIsPaused };
 };
 
 export default useContractRead;

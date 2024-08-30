@@ -49,6 +49,7 @@ const usePayoutAllTx = () => {
         },
       );
 
+      // TODO: Will need to split tx into multiple batch calls if there are too many, this is because it will otherwise fail with "1010: Invalid Transaction: Transaction would exhaust the block limits," due to the block weight limit.
       return optimizeTxBatch(api, txs);
     }, []);
 

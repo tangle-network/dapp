@@ -18,6 +18,7 @@ const ExternalLink: FC<ExternalLinkProps> = ({
     <Button
       className="group"
       href={href}
+      target="_blank"
       size="sm"
       variant="link"
       rightIcon={

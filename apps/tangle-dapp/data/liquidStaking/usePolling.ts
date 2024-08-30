@@ -1,48 +1,48 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-export enum PollingPrimaryCacheKey {
-  EXCHANGE_RATE,
-  CONTRACT_READ_SUBSCRIPTION,
-  LS_ERC20_BALANCE,
-}
-
-export type PollingOptions<T> = {
-  fetcher: (() => Promise<T> | T) | null;
+export type PollingOptions = {
+  effect: (() => Promise<unknown> | unknown) | null;
   refreshInterval?: number;
-  primaryCacheKey: PollingPrimaryCacheKey;
-  cacheKey?: unknown[];
 };
 
-// TODO: Use Zustand global store for caching.
-
-const usePolling = <T>({
-  fetcher,
-  // Default to a 3 second refresh interval.
-  refreshInterval = 3_000,
-  primaryCacheKey: _primaryCacheKey,
-  cacheKey: _cacheKey,
-}: PollingOptions<T>) => {
-  const [value, setValue] = useState<T | null>(null);
+const usePolling = ({
+  effect,
+  // Default to a 12 second refresh interval. This default is also
+  // convenient since it matches the expected block time of Ethereum
+  // as well as some Substrate-based chains.
+  refreshInterval = 12_000,
+}: PollingOptions) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  useEffect(() => {
-    const intervalHandle = setInterval(async () => {
-      // Fetcher isn't ready to be called yet.
-      if (fetcher === null) {
-        return;
-      }
+  const refresh = useCallback(async () => {
+    // Fetcher isn't ready to be called yet.
+    if (effect === null) {
+      return;
+    }
 
-      setIsRefreshing(true);
-      setValue(await fetcher());
-      setIsRefreshing(false);
-    }, refreshInterval);
+    setIsRefreshing(true);
+    await effect();
+    setIsRefreshing(false);
+  }, [effect]);
+
+  useEffect(() => {
+    let intervalHandle: ReturnType<typeof setInterval> | null = null;
+
+    (async () => {
+      // Call it immediately to avoid initial delay.
+      await refresh();
+
+      intervalHandle = setInterval(refresh, refreshInterval);
+    })();
 
     return () => {
-      clearInterval(intervalHandle);
+      if (intervalHandle !== null) {
+        clearInterval(intervalHandle);
+      }
     };
-  }, [fetcher, refreshInterval]);
+  }, [effect, refresh, refreshInterval]);
 
-  return { value, isRefreshing };
+  return isRefreshing;
 };
 
 export default usePolling;

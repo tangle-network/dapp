@@ -7,7 +7,7 @@ import { FC, useMemo } from 'react';
 
 import StatItem from '../../../components/StatItem';
 import {
-  LST_PREFIX,
+  LS_DERIVATIVE_TOKEN_PREFIX,
   TVS_TOOLTIP,
 } from '../../../constants/liquidStaking/constants';
 import { LsToken } from '../../../constants/liquidStaking/types';
@@ -20,7 +20,6 @@ export type LsOverviewItemProps = {
   tokenSymbol: LsToken;
   totalValueStaked: number;
   totalStaked: string;
-  hasLiquidIndicator: boolean;
 };
 
 const LsOverviewItem: FC<LsOverviewItemProps> = ({
@@ -28,7 +27,6 @@ const LsOverviewItem: FC<LsOverviewItemProps> = ({
   tokenSymbol,
   totalValueStaked,
   totalStaked,
-  hasLiquidIndicator,
 }) => {
   const formattedTotalValueStaked = totalValueStaked.toLocaleString('en-US', {
     style: 'currency',
@@ -46,11 +44,9 @@ const LsOverviewItem: FC<LsOverviewItemProps> = ({
         <div className="relative">
           <LsTokenIcon size="lg" name={tokenSymbol} />
 
-          {hasLiquidIndicator && (
-            <div className="absolute bottom-0 right-0 z-20">
-              <ChainIcon size="md" name="tangle" />
-            </div>
-          )}
+          <div className="absolute bottom-0 right-0 z-20">
+            <ChainIcon size="md" name="tangle" />
+          </div>
         </div>
 
         <Typography variant="body1" fw="normal" className="dark:text-mono-0">
@@ -58,7 +54,7 @@ const LsOverviewItem: FC<LsOverviewItemProps> = ({
         </Typography>
 
         <Chip className="normal-case" color="dark-grey">
-          {LST_PREFIX}
+          {LS_DERIVATIVE_TOKEN_PREFIX}
           {tokenSymbol.toUpperCase()}
         </Chip>
       </div>
