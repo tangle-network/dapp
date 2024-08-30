@@ -27,8 +27,8 @@ const OperatorsTable = () => {
     () =>
       Object.entries(operatorMap).map<OperatorUI>(
         ([address, { delegationCount, delegations }]) => {
-          const vaultTokens = delegations
-            .map((delegation) => assetMap[delegation.assetId]?.symbol)
+          const vaultAssets = delegations
+            .map((delegation) => assetMap[delegation.assetId])
             .filter(Boolean);
 
           return {
@@ -39,7 +39,12 @@ const OperatorsTable = () => {
             restakersCount: delegationCount,
             // TODO: Calculate tvl in USD
             tvlInUsd: 0,
-            vaultTokens,
+            vaultTokens: vaultAssets.map((asset) => ({
+              // TODO: Calculate amount
+              amount: 0,
+              name: asset.name,
+              symbol: asset.symbol,
+            })),
           };
         },
       ),
@@ -52,7 +57,7 @@ const OperatorsTable = () => {
         id="search-validators"
         rightIcon={<Search className="mr-2" />}
         placeholder="Search identity or address"
-        className="w-1/3 mb-4 ml-auto -mt-[54px]"
+        className="w-1/3 mb-1.5 ml-auto -mt-[54px]"
         isControlled
         debounceTime={500}
         value={globalFilter}
