@@ -25,7 +25,7 @@ const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
   [PagePath.SERVICES]: GridFillIcon,
   [PagePath.RESTAKE]: TokenSwapFill,
   [PagePath.RESTAKE_DEPOSIT]: TokenSwapFill,
-  [PagePath.RESTAKE_DELEGATE]: TokenSwapFill,
+  [PagePath.RESTAKE_STAKE]: TokenSwapFill,
   [PagePath.BRIDGE]: ShuffleLine,
   [PagePath.LIQUID_STAKING]: WaterDropletIcon,
   [PagePath.LIQUID_STAKING_OVERVIEW]: WaterDropletIcon,

@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { PagePath, QueryParamKey } from '../../../types';
 import LsTokenIcon from '../../LsTokenIcon';
 import { TableStatus } from '../../TableStatus';
 import { sharedTableStatusClxs } from '../shared';
@@ -94,9 +95,10 @@ const columns = [
         <div className="flex items-center justify-end flex-1 gap-2">
           <Button
             as={Link}
-            href="#"
+            href={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_VAULT}=${row.original.id}`}
             variant="utility"
             className="uppercase body4"
+            onClick={(event) => event.stopPropagation()}
           >
             Restake
           </Button>

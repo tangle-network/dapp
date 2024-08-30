@@ -20,6 +20,7 @@ import Link from 'next/link';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { PagePath, QueryParamKey } from '../../../types';
 import { getSortAddressOrIdentityFnc } from '../../../utils/table';
 import { TableStatus } from '../../TableStatus';
 import { sharedTableStatusClxs } from '../shared';
@@ -124,12 +125,13 @@ const columns = [
   columnHelper.display({
     id: 'actions',
     header: () => null,
-    cell: () => (
+    cell: (props) => (
       <TableCellWrapper removeBorder>
         <div className="flex items-center justify-end flex-1 gap-2">
           {/* TODO: add proper href */}
           <Button
             as={Link}
+            // TODO: add proper href
             href="#"
             variant="utility"
             className="uppercase body4"
@@ -137,10 +139,9 @@ const columns = [
             View
           </Button>
 
-          {/* TODO: add proper href */}
           <Button
             as={Link}
-            href="#"
+            href={`${PagePath.RESTAKE_STAKE}?${QueryParamKey.RESTAKE_OPERATOR}=${props.row.original.address}`}
             variant="utility"
             className="uppercase body4"
           >

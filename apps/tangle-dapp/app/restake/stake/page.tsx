@@ -12,6 +12,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import entries from 'lodash/entries';
 import keys from 'lodash/keys';
 import Link from 'next/link';
+import { useQueryState } from 'nuqs';
 import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -31,7 +32,7 @@ import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
-import { PagePath } from '../../../types';
+import { PagePath, QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
 import AvatarWithText from '../AvatarWithText';
@@ -57,6 +58,8 @@ export default function Page() {
   } = useForm<DelegationFormFields>({
     mode: 'onBlur',
   });
+
+  const [operatorParam] = useQueryState(QueryParamKey.RESTAKE_OPERATOR);
 
   const setValue = useCallback(
     (...params: Parameters<typeof setFormValue>) => {
@@ -109,10 +112,13 @@ export default function Page() {
     }
   }, [defaultAssetId, setValue]);
 
-  // Reset form when active chain changes
   useEffect(() => {
-    reset();
-  }, [activeTypedChainId, reset]);
+    if (!operatorParam) return;
+
+    if (!operatorMap[operatorParam]) return;
+
+    setFormValue('operatorAccountId', operatorParam);
+  }, [operatorMap, operatorParam, setFormValue]);
 
   const {
     status: isChainModalOpen,
