@@ -23,7 +23,11 @@ const OperatorsTable: FC = () => {
           restakersCount: o.restakersCount,
           concentrationPercentage: o.concentration,
           tvlInUsd: o.liquidity.usdValue,
-          vaultTokens: o.vaults,
+          vaultTokens: o.vaults.map((v) => ({
+            name: v,
+            symbol: v,
+            amount: 0,
+          })),
         }))}
       />
     </div>

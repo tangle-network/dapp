@@ -21,11 +21,11 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { getSortAddressOrIdentityFnc } from '../../../utils/table';
-import LsTokenIcon from '../../LsTokenIcon';
 import { TableStatus } from '../../TableStatus';
 import { sharedTableStatusClxs } from '../shared';
 import TableCellWrapper from '../TableCellWrapper';
 import type { OperatorData, Props } from './types';
+import VaultsDropdown from './VaultsDropdown';
 
 const columnHelper = createColumnHelper<OperatorData>();
 
@@ -112,14 +112,7 @@ const columns = [
       return (
         <TableCellWrapper removeBorder>
           {tokensList.length > 0 ? (
-            <div className="flex items-center -space-x-2">
-              {props
-                .getValue()
-                .sort() // sort alphabetically
-                .map((vault, index) => (
-                  <LsTokenIcon key={index} name={vault} />
-                ))}
-            </div>
+            <VaultsDropdown vaultTokens={tokensList.sort()} />
           ) : (
             <Typography variant="body1">No vaults</Typography>
           )}
