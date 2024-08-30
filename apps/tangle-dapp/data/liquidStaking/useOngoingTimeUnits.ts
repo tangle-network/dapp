@@ -3,7 +3,7 @@ import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-u
 import { useCallback, useMemo } from 'react';
 
 import {
-  LsSimpleParachainTimeUnit,
+  LsParachainSimpleTimeUnit,
   ParachainCurrency,
 } from '../../constants/liquidStaking/types';
 import useApiRx from '../../hooks/useApiRx';
@@ -13,7 +13,7 @@ import getValueOfTangleCurrency from './getValueOfTangleCurrency';
 export type OngoingTimeUnitEntry = {
   currencyType: TanglePrimitivesCurrencyCurrencyId['type'];
   currency: ParachainCurrency;
-  timeUnit: LsSimpleParachainTimeUnit;
+  timeUnit: LsParachainSimpleTimeUnit;
 };
 
 const useOngoingTimeUnits = () => {

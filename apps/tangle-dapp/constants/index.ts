@@ -60,6 +60,7 @@ export enum TxName {
   LS_LIQUIFIER_APPROVE = 'approve spending for liquifier',
   LS_LIQUIFIER_DEPOSIT = 'liquifier deposit',
   LS_LIQUIFIER_UNLOCK = 'liquifier unlock',
+  LS_LIQUIFIER_WITHDRAW = 'liquifier withdraw',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

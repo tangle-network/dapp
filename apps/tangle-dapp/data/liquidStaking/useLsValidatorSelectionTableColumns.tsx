@@ -21,18 +21,21 @@ import {
   Collator,
   Dapp,
   LiquidStakingItem,
+  PhalaVaultOrStakePool,
   Validator,
-  VaultOrStakePool,
 } from '../../types/liquidStaking';
 import calculateCommission from '../../utils/calculateCommission';
 import formatBn from '../../utils/formatBn';
 
 const validatorColumnHelper = createColumnHelper<Validator>();
 const dappColumnHelper = createColumnHelper<Dapp>();
-const vaultOrStakePoolColumnHelper = createColumnHelper<VaultOrStakePool>();
+
+const vaultOrStakePoolColumnHelper =
+  createColumnHelper<PhalaVaultOrStakePool>();
+
 const collatorColumnHelper = createColumnHelper<Collator>();
 
-export const useLiquidStakingSelectionTableColumns = (
+export const useLsValidatorSelectionTableColumns = (
   toggleSortSelectionHandlerRef: React.MutableRefObject<
     ((desc?: boolean | undefined, isMulti?: boolean | undefined) => void) | null
   >,
@@ -299,7 +302,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </div>
           );
         },
-        sortingFn: sortSelected as SortingFnOption<VaultOrStakePool>,
+        sortingFn: sortSelected as SortingFnOption<PhalaVaultOrStakePool>,
       }),
       vaultOrStakePoolColumnHelper.accessor('type', {
         header: ({ header }) => (
@@ -382,7 +385,7 @@ export const useLiquidStakingSelectionTableColumns = (
             </Typography>
           </div>
         ),
-        sortingFn: sortCommission as SortingFnOption<VaultOrStakePool>,
+        sortingFn: sortCommission as SortingFnOption<PhalaVaultOrStakePool>,
       }),
       vaultOrStakePoolColumnHelper.accessor('href', {
         header: () => <span></span>,

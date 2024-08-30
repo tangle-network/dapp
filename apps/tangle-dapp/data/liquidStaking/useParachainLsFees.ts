@@ -5,7 +5,7 @@ import { map } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';
 import permillToPercentage from '../../utils/permillToPercentage';
 
-const useMintAndRedeemFees = () => {
+const useParachainLsFees = () => {
   return useApiRx(
     useCallback((api) => {
       return api.query.lstMinting.fees().pipe(
@@ -24,4 +24,4 @@ const useMintAndRedeemFees = () => {
   );
 };
 
-export default useMintAndRedeemFees;
+export default useParachainLsFees;

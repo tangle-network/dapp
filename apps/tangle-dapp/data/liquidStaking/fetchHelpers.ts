@@ -18,6 +18,7 @@ export const fetchValidators = async (
 ): Promise<AccountId32[]> => {
   const api = await getApiPromise(rpcEndpoint);
   const validators = (await api.query.session.validators()).map((val) => val);
+
   return validators;
 };
 
@@ -40,11 +41,13 @@ export const fetchMappedIdentityNames = async (
 
     const validator = identity[0].args[0];
     const info = identity[1].unwrap()[0].info;
+
     const displayName =
       extractDataFromIdentityInfo(info, IdentityDataType.NAME) ||
       validator.toString();
     map.set(validator.toString(), displayName);
   });
+
   return map;
 };
 
@@ -62,6 +65,7 @@ export const fetchMappedValidatorsTotalValueStaked = async (
   const validators = await fetchValidators(rpcEndpoint);
 
   const erasStakersOverviewMap = new Map<string, BN>();
+
   const erasStakersOverviewEntries =
     await api.query.staking.erasStakersOverview.entries();
 
@@ -76,6 +80,7 @@ export const fetchMappedValidatorsTotalValueStaked = async (
     if (eraIndex === activeEraIndex.toNumber()) {
       const totalStaked =
         validatorExposure.unwrap().total.unwrap().toBn() || BN_ZERO;
+
       erasStakersOverviewMap.set(validator, totalStaked);
     }
   });
@@ -84,8 +89,10 @@ export const fetchMappedValidatorsTotalValueStaked = async (
 
   validators.forEach((validator) => {
     const totalStaked = erasStakersOverviewMap.get(validator.toString());
+
     map.set(validator.toString(), totalStaked || BN_ZERO);
   });
+
   return map;
 };
 
@@ -124,7 +131,8 @@ export const fetchChainDecimals = async (
   rpcEndpoint: string,
 ): Promise<number> => {
   const api = await getApiPromise(rpcEndpoint);
-  const chainDecimals = await api.registry.chainDecimals;
+  const chainDecimals = api.registry.chainDecimals;
+
   return chainDecimals.length > 0 ? chainDecimals[0] : 18;
 };
 
@@ -153,11 +161,11 @@ export const fetchDapps = async (rpcEndpoint: string): Promise<Dapp[]> => {
   const dapps = integratedDapps.map((dapp) => {
     const dappAddress = JSON.parse(dapp[0].args[0].toString());
     const dappIdOption = dapp[1] as Option<PalletDappStakingV3DAppInfo>;
-    let dappId = '';
 
-    if (dappIdOption.isSome) {
-      dappId = dappIdOption.unwrap().id.toString();
-    }
+    const dappId = dappIdOption.isSome
+      ? dappIdOption.unwrap().id.toString()
+      : '';
+
     return {
       id: dappId,
       address: dappAddress.evm || dappAddress.wasm,
@@ -178,10 +186,13 @@ export const fetchMappedDappsTotalValueStaked = async (
 
   const contractStakes = await api.query.dappStaking.contractStake.entries();
   const map = new Map<string, BN>();
+
   contractStakes.forEach((contractStake) => {
     const dappId = contractStake[0].args[0].toString();
+
     const stakeAmount =
       contractStake[1] as PalletDappStakingV3ContractStakeAmount;
+
     let totalStaked = BN_ZERO;
 
     if (!stakeAmount.isEmpty) {
@@ -246,7 +257,7 @@ export const fetchVaultsAndStakePools = async (
 
       if (poolInfoObj[type].basepool.totalValue !== undefined) {
         totalValueStaked = new BN(
-          cleanHexString(poolInfoObj[type].basepool.totalValue.toString()),
+          remove0xPrefix(poolInfoObj[type].basepool.totalValue.toString()),
           16,
         );
       }
@@ -307,6 +318,7 @@ export const fetchMappedCollatorInfo = async (
 
     if (info.isSome) {
       const infoObj = info.unwrap();
+
       totalStaked = infoObj.totalCounted.toBn() || BN_ZERO;
       delegationCount = infoObj.delegationCount.toNumber();
     }
@@ -321,12 +333,8 @@ export const fetchMappedCollatorInfo = async (
 };
 
 /** @internal */
-const cleanHexString = (hex: string) => {
-  if (!hex) return '';
-
-  if (hex.startsWith('0x')) {
-    hex = hex.slice(2);
-  }
-
-  return hex;
+const remove0xPrefix = (possibleHexString: string): string => {
+  return possibleHexString.startsWith('0x')
+    ? possibleHexString.slice(2)
+    : possibleHexString;
 };

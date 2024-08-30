@@ -34,6 +34,7 @@ const useSearchParamsStore = () => {
     setBufferSearchParams(routerSearchParams);
   }, [routerSearchParams, setBufferSearchParams]);
 
+  // TODO: Sort params by name so that after each update, the URL search params don't "flicker" due to their positions changing.
   const updateSearchParam = useCallback(
     (key: string, value: string | undefined) => {
       if (bufferSearchParams === null) {

@@ -16,15 +16,16 @@ import {
 import React, { FC, useCallback, useMemo } from 'react';
 import { z } from 'zod';
 
-import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
+import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
+  LsNetworkId,
   LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
-import useExchangeRate, {
+import useLsExchangeRate, {
   ExchangeRateType,
-} from '../../../data/liquidStaking/useExchangeRate';
-import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
+} from '../../../data/liquidStaking/useLsExchangeRate';
+import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useMintTx from '../../../data/liquidStaking/useMintTx';
 import useLiquifierDeposit from '../../../data/liquifier/useLiquifierDeposit';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
@@ -32,15 +33,16 @@ import useSearchParamState from '../../../hooks/useSearchParamState';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import AgnosticLsBalance from './AgnosticLsBalance';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
-import LiquidStakingInput from './LiquidStakingInput';
-import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
-import SelectValidatorsButton from './SelectValidatorsButton';
+import FeeDetailItem from './FeeDetailItem';
+import LsAgnosticBalance from './LsAgnosticBalance';
+import LsFeeWarning from './LsFeeWarning';
+import LsInput from './LsInput';
+import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
-const LiquidStakeCard: FC = () => {
+const LsStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useSearchParamState<BN | null>({
     defaultValue: null,
     key: LsSearchParamKey.AMOUNT,
@@ -48,7 +50,13 @@ const LiquidStakeCard: FC = () => {
     stringify: (value) => value?.toString(),
   });
 
-  const { selectedProtocolId, setSelectedProtocolId } = useLiquidStakingStore();
+  const {
+    selectedProtocolId,
+    setSelectedProtocolId,
+    selectedNetworkId,
+    setSelectedNetworkId,
+  } = useLsStore();
+
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const performLiquifierDeposit = useLiquifierDeposit();
   const activeAccountAddress = useActiveAccountAddress();
@@ -68,10 +76,25 @@ const LiquidStakeCard: FC = () => {
     setValue: setSelectedProtocolId,
   });
 
-  const { exchangeRate } = useExchangeRate(
-    ExchangeRateType.NativeToLiquid,
+  useSearchParamSync({
+    key: LsSearchParamKey.NETWORK_ID,
+    value: selectedNetworkId,
+    parse: (value) => z.nativeEnum(LsNetworkId).parse(parseInt(value)),
+    stringify: (value) => value.toString(),
+    setValue: setSelectedNetworkId,
+  });
+
+  const {
+    exchangeRate: exchangeRateOrError,
+    isRefreshing: isRefreshingExchangeRate,
+  } = useLsExchangeRate(
+    ExchangeRateType.NativeToDerivative,
     selectedProtocolId,
   );
+
+  // TODO: Properly handle the error state.
+  const exchangeRate =
+    exchangeRateOrError instanceof Error ? null : exchangeRateOrError;
 
   const handleStakeClick = useCallback(async () => {
     // Not ready yet; no amount given.
@@ -79,13 +102,16 @@ const LiquidStakeCard: FC = () => {
       return;
     }
 
-    if (selectedProtocol.type === 'parachain' && executeMintTx !== null) {
+    if (
+      selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
+      executeMintTx !== null
+    ) {
       executeMintTx({
         amount: fromAmount,
         currency: selectedProtocol.currency,
       });
     } else if (
-      selectedProtocol.type === 'erc20' &&
+      selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
       performLiquifierDeposit !== null
     ) {
       await performLiquifierDeposit(selectedProtocol.id, fromAmount);
@@ -102,22 +128,28 @@ const LiquidStakeCard: FC = () => {
 
   const canCallStake =
     (fromAmount !== null &&
-      selectedProtocol.type === 'parachain' &&
+      selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
       executeMintTx !== null) ||
-    (selectedProtocol.type === 'erc20' && performLiquifierDeposit !== null);
+    (selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
+      performLiquifierDeposit !== null);
 
   const walletBalance = (
-    <AgnosticLsBalance
+    <LsAgnosticBalance
       protocolId={selectedProtocolId}
       tooltip="Click to use all available balance"
-      onClick={() => setFromAmount(maxSpendable)}
+      onClick={() => {
+        if (maxSpendable !== null) {
+          setFromAmount(maxSpendable);
+        }
+      }}
     />
   );
 
   return (
     <>
-      <LiquidStakingInput
+      <LsInput
         id="liquid-staking-stake-from"
+        networkId={selectedNetworkId}
         protocolId={selectedProtocolId}
         token={selectedProtocol.token}
         amount={fromAmount}
@@ -125,41 +157,51 @@ const LiquidStakeCard: FC = () => {
         onAmountChange={setFromAmount}
         placeholder={`0 ${selectedProtocol.token}`}
         rightElement={walletBalance}
-        setChainId={setSelectedProtocolId}
+        setProtocolId={setSelectedProtocolId}
         minAmount={minSpendable ?? undefined}
         maxAmount={maxSpendable ?? undefined}
+        setNetworkId={setSelectedNetworkId}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
 
-      <LiquidStakingInput
+      <LsInput
         id="liquid-staking-stake-to"
-        protocolId={LsProtocolId.TANGLE_RESTAKING_PARACHAIN}
-        placeholder={`0 ${LST_PREFIX}${selectedProtocol.token}`}
+        networkId={selectedNetworkId}
+        protocolId={selectedProtocolId}
+        placeholder={`0 ${LS_DERIVATIVE_TOKEN_PREFIX}${selectedProtocol.token}`}
         decimals={selectedProtocol.decimals}
         amount={toAmount}
         isReadOnly
-        isTokenLiquidVariant
+        isDerivativeVariant
         token={selectedProtocol.token}
-        rightElement={<SelectValidatorsButton />}
+        className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
       />
 
       {/* Details */}
       <div className="flex flex-col gap-2 p-3">
+        <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
+
         <ExchangeRateDetailItem
           protocolId={selectedProtocolId}
           token={selectedProtocol.token}
-          type={ExchangeRateType.NativeToLiquid}
+          type={ExchangeRateType.NativeToDerivative}
         />
 
-        <MintAndRedeemFeeDetailItem
-          intendedAmount={fromAmount}
+        <FeeDetailItem
+          inputAmount={fromAmount}
           isMinting
-          token={selectedProtocol.token}
+          protocolId={selectedProtocolId}
         />
 
-        <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
+        <TotalDetailItem
+          isMinting
+          protocolId={selectedProtocolId}
+          inputAmount={fromAmount}
+        />
       </div>
+
+      <LsFeeWarning isMinting selectedProtocolId={selectedProtocolId} />
 
       <Button
         isDisabled={
@@ -229,4 +271,4 @@ export const SelectParachainContent: FC<SelectParachainContentProps> = ({
   );
 };
 
-export default LiquidStakeCard;
+export default LsStakeCard;
