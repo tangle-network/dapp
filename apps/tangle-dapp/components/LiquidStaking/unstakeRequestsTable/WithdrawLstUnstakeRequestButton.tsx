@@ -30,7 +30,7 @@ const WithdrawLstUnstakeRequestButton: FC<
     }
   }, [withdrawRedeemTxStatus]);
 
-  const handleConfirmation = useCallback(() => {
+  const handleClick = useCallback(() => {
     // The button should have been disabled if this was null.
     assert(
       executeWithdrawRedeemTx !== null,
@@ -43,10 +43,16 @@ const WithdrawLstUnstakeRequestButton: FC<
   return (
     <>
       <Button
-        variant="secondary"
-        isDisabled={!canWithdraw}
-        onClick={handleConfirmation}
+        variant="primary"
+        isDisabled={
+          !canWithdraw ||
+          executeWithdrawRedeemTx === null ||
+          currenciesAndUnlockIds.length === 0
+        }
+        onClick={handleClick}
         isFullWidth
+        isLoading={withdrawRedeemTxStatus === TxStatus.PROCESSING}
+        loadingText="Processing"
       >
         Withdraw
       </Button>

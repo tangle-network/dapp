@@ -1,11 +1,20 @@
 import { InformationLine } from '@webb-tools/icons';
-import { IconWithTooltip, Typography } from '@webb-tools/webb-ui-components';
+import {
+  Chip,
+  GITHUB_BUG_REPORT_URL,
+  IconWithTooltip,
+  InfoIconWithTooltip,
+  SkeletonLoader,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { FC, ReactNode } from 'react';
+
+import ExternalLink from '../ExternalLink';
 
 type DetailItemProps = {
   title: string;
   tooltip?: string;
-  value: ReactNode | string;
+  value: Error | ReactNode | string | null;
 };
 
 const DetailItem: FC<DetailItemProps> = ({ title, tooltip, value }) => {
@@ -33,10 +42,37 @@ const DetailItem: FC<DetailItemProps> = ({ title, tooltip, value }) => {
         <Typography className="dark:text-mono-0" variant="body1" fw="bold">
           {value}
         </Typography>
+      ) : value === null ? (
+        <SkeletonLoader className="max-w-[80px]" />
+      ) : value instanceof Error ? (
+        <ErrorChip error={value} />
       ) : (
         value
       )}
     </div>
+  );
+};
+
+/** @internal */
+const ErrorChip: FC<{ error: Error }> = ({ error }) => {
+  return (
+    <Chip color="red">
+      Error{' '}
+      <InfoIconWithTooltip
+        className="dark:fill-red-400 fill-red-400"
+        content={
+          <>
+            <Typography variant="body1">
+              {error.name}: {error.message}
+            </Typography>
+
+            <ExternalLink href={GITHUB_BUG_REPORT_URL}>
+              Report issue
+            </ExternalLink>
+          </>
+        }
+      />
+    </Chip>
   );
 };
 

@@ -18,7 +18,7 @@ import {
   SidebarMenu,
 } from '../../components';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
-import ApiDevStatsContainer from '../ApiDevStatsContainer';
+import ApiDevStatsContainer from '../DebugMetricsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
 import { WalletModalContainer } from '../WalletModalContainer';
 import FeedbackBanner from './FeedbackBanner';

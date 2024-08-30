@@ -28,27 +28,41 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import {
-  LsSimpleParachainTimeUnit,
+  LsParachainSimpleTimeUnit,
   ParachainCurrency,
 } from '../../../constants/liquidStaking/types';
-import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
-import { AnySubstrateAddress } from '../../../types/utils';
+import { useLsStore } from '../../../data/liquidStaking/useLsStore';
+import useLiquifierNftUnlocks, {
+  LiquifierUnlockNftMetadata,
+} from '../../../data/liquifier/useLiquifierNftUnlocks';
+import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
+import addCommasToNumber from '../../../utils/addCommasToNumber';
+import isLiquifierProtocolId from '../../../utils/liquidStaking/isLiquifierProtocolId';
+import isLsParachainChainId from '../../../utils/liquidStaking/isLsParachainChainId';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
 import GlassCard from '../../GlassCard';
 import { HeaderCell } from '../../tableCells';
 import TokenAmountCell from '../../tableCells/TokenAmountCell';
-import AddressLink from '../AddressLink';
 import ExternalLink from '../ExternalLink';
 import TableRowsSkeleton from '../TableRowsSkeleton';
 import RebondLstUnstakeRequestButton from './RebondLstUnstakeRequestButton';
 import useLstUnlockRequestTableRows from './useLstUnlockRequestTableRows';
 import WithdrawLstUnstakeRequestButton from './WithdrawLstUnstakeRequestButton';
+import WithdrawUnlockNftButton from './WithdrawUnlockNftButton';
 
-export type UnstakeRequestTableRow = {
+export type BaseUnstakeRequest = {
   unlockId: number;
-  address: AnySubstrateAddress;
-  amount: BN;
   decimals: number;
+
+  /**
+   * The underlying stake tokens amount represented by the unlock
+   * request.
+   */
+  amount: BN;
+};
+
+export type ParachainUnstakeRequest = BaseUnstakeRequest & {
+  type: 'parachainUnstakeRequest';
   currency: ParachainCurrency;
 
   /**
@@ -58,61 +72,83 @@ export type UnstakeRequestTableRow = {
    * If this is undefined, it means that the request has
    * completed its unlocking period.
    */
-  remainingTimeUnit?: LsSimpleParachainTimeUnit;
+  progress?: LsParachainSimpleTimeUnit;
 };
 
-const columnHelper = createColumnHelper<UnstakeRequestTableRow>();
+type UnstakeRequestTableRow =
+  | LiquifierUnlockNftMetadata
+  | ParachainUnstakeRequest;
 
-const columns = [
-  columnHelper.accessor('address', {
-    header: () => (
-      <HeaderCell title="Unstake Request" className="justify-start" />
-    ),
+const COLUMN_HELPER = createColumnHelper<UnstakeRequestTableRow>();
+
+const COLUMNS = [
+  COLUMN_HELPER.accessor('unlockId', {
+    header: () => <HeaderCell title="Unlock ID" className="justify-start" />,
     cell: (props) => {
+      const canSelect =
+        props.row.original.type === 'liquifierUnlockNft'
+          ? props.row.original.progress === 1
+          : true;
+
       return (
         <div className="flex items-center justify-start gap-2">
           <CheckBox
             isChecked={props.row.getIsSelected()}
-            isDisabled={!props.row.getCanSelect()}
+            isDisabled={!props.row.getCanSelect() || !canSelect}
             onChange={props.row.getToggleSelectedHandler()}
             wrapperClassName="pt-0.5 flex items-center justify-center"
           />
-
-          <AddressLink address={props.getValue()} />
+          #{addCommasToNumber(props.getValue())}
         </div>
       );
     },
   }),
-  columnHelper.accessor('remainingTimeUnit', {
+  COLUMN_HELPER.accessor('progress', {
     header: () => <HeaderCell title="Status" className="justify-center" />,
     cell: (props) => {
-      const remainingTimeUnit = props.getValue();
+      const progress = props.getValue();
 
-      const remainingString = (() => {
-        if (remainingTimeUnit === undefined) {
+      const progressString = (() => {
+        if (progress === undefined) {
           return undefined;
         }
+        // If it's a number (percentage) representing an unlock NFT's
+        // unlocking progress, convert it to a string.
+        else if (typeof progress === 'number') {
+          if (progress === 1) {
+            return undefined;
+          }
 
-        return stringifyTimeUnit(remainingTimeUnit).join(' ');
+          return (progress * 100).toFixed(2) + '%';
+        }
+        // Otherwise, it must be a Parachain unstake request's
+        // remaining time unit.
+        else {
+          return stringifyTimeUnit(progress).join(' ');
+        }
       })();
 
       const content =
-        remainingString === undefined ? (
+        progressString === undefined ? (
           <CheckboxCircleFill className="dark:fill-green-50" />
         ) : (
           <div className="flex gap-1 items-center justify-center">
-            <TimeFillIcon className="dark:fill-blue-50" /> {remainingString}
+            <TimeFillIcon className="dark:fill-blue-50" /> {progressString}
           </div>
         );
 
       return <div className="flex items-center justify-start">{content}</div>;
     },
   }),
-  columnHelper.accessor('amount', {
+  COLUMN_HELPER.accessor('amount', {
     header: () => <HeaderCell title="Amount" className="justify-center" />,
     cell: (props) => {
       const unstakeRequest = props.row.original;
-      const tokenSymbol = unstakeRequest.currency.toUpperCase();
+
+      const tokenSymbol =
+        unstakeRequest.type === 'parachainUnstakeRequest'
+          ? unstakeRequest.currency.toUpperCase()
+          : unstakeRequest.symbol;
 
       return (
         <TokenAmountCell
@@ -123,47 +159,58 @@ const columns = [
         />
       );
     },
+    // TODO: Name, validator, and maturity date (time left) columns. Also add an info icon tooltip for the maturity date to show the exact unlock date on hover.
   }),
 ];
 
 const UnstakeRequestsTable: FC = () => {
-  const substrateAddress = useSubstrateAddress();
-  const rows = useLstUnlockRequestTableRows();
+  const { selectedProtocolId } = useLsStore();
+  const activeAccountAddress = useActiveAccountAddress();
+  const parachainRows = useLstUnlockRequestTableRows();
+  const liquifierRows = useLiquifierNftUnlocks();
+
+  // Select the table rows based on whether the selected protocol
+  // is an EVM-based chain (liquifier contract) or a parachain-based
+  // Substrate chain.
+  const rows = isLiquifierProtocolId(selectedProtocolId)
+    ? liquifierRows
+    : parachainRows;
 
   const tableOptions = useMemo<TableOptions<UnstakeRequestTableRow>>(
     () => ({
       // In case that the data is not loaded yet, use an empty array
       // to avoid TypeScript errors.
       data: rows ?? [],
-      columns,
+      columns: COLUMNS,
       filterFns: {
         fuzzy: fuzzyFilter,
       },
-      // getRowId: (row) => row.unlockId.toString(),
       globalFilterFn: fuzzyFilter,
       getCoreRowModel: getCoreRowModel(),
       getFilteredRowModel: getFilteredRowModel(),
       getSortedRowModel: getSortedRowModel(),
       getPaginationRowModel: getPaginationRowModel(),
       enableRowSelection: true,
+      autoResetPageIndex: false,
+      getRowId: (row) => row.unlockId.toString(),
     }),
     [rows],
   );
 
   const tableProps = useReactTable(tableOptions);
-  const tablePropsRows = tableProps.getSelectedRowModel().rows;
+  const selectedRows = tableProps.getSelectedRowModel().rows;
 
   const selectedRowsUnlockIds = useMemo<Set<number>>(() => {
-    const selectedRows = tablePropsRows.map((row) => row.original.unlockId);
+    const selectedRowsIds = selectedRows.map((row) => row.original.unlockId);
 
-    return new Set(selectedRows);
-  }, [tablePropsRows]);
+    return new Set(selectedRowsIds);
+  }, [selectedRows]);
 
   // Note that memoizing this will cause the table to not update
   // when the selected rows change.
   const table = (() => {
     // No account connected.
-    if (substrateAddress === null) {
+    if (activeAccountAddress === null) {
       return (
         <Notice
           title="No account connected"
@@ -197,6 +244,7 @@ const UnstakeRequestsTable: FC = () => {
         tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
         tableProps={tableProps}
         totalRecords={rows.length}
+        isPaginated
       />
     );
   })();
@@ -223,41 +271,68 @@ const UnstakeRequestsTable: FC = () => {
 
       // If the remaining time unit is undefined, it means that the
       // request has completed its unlocking period.
-      return request.remainingTimeUnit === undefined;
+      return request.type === 'parachainUnstakeRequest'
+        ? request.progress === undefined
+        : request.progress === 1;
     });
   }, [selectedRowsUnlockIds, rows]);
 
-  const currenciesAndUnlockIds = useMemo<[ParachainCurrency, number][]>(() => {
-    return tablePropsRows.map((row) => {
-      const { currency, unlockId } = row.original;
+  const parachainCurrenciesAndUnlockIds = useMemo<
+    [ParachainCurrency, number][]
+  >(() => {
+    return selectedRows.flatMap((row) => {
+      if (row.original.type !== 'parachainUnstakeRequest') {
+        return [];
+      }
 
-      return [currency, unlockId];
+      return [[row.original.currency, row.original.unlockId]];
     });
-  }, [tablePropsRows]);
+  }, [selectedRows]);
+
+  const nftUnlockIds = useMemo<number[]>(() => {
+    return selectedRows.flatMap((row) => {
+      if (row.original.type !== 'liquifierUnlockNft') {
+        return [];
+      }
+
+      return [row.original.unlockId];
+    });
+  }, [selectedRows]);
+
+  const isDataState =
+    rows !== null && rows.length > 0 && activeAccountAddress !== null;
 
   return (
     <div className="space-y-4 flex-grow max-w-[700px]">
       <GlassCard
         className={twMerge(
-          rows !== null &&
-            rows.length > 0 &&
-            'flex flex-col justify-between min-h-[500px]',
+          isDataState && 'flex flex-col justify-between min-h-[500px]',
         )}
       >
         {table}
 
-        {rows !== null && rows.length > 0 && (
+        {isDataState && (
           <div className="flex gap-3 items-center justify-center">
-            <RebondLstUnstakeRequestButton
-              // Can only rebond if there are selected rows.
-              isDisabled={selectedRowsUnlockIds.size === 0}
-              currenciesAndUnlockIds={currenciesAndUnlockIds}
-            />
+            {isLsParachainChainId(selectedProtocolId) && (
+              <RebondLstUnstakeRequestButton
+                // Can only rebond if there are selected rows.
+                isDisabled={selectedRowsUnlockIds.size === 0}
+                currenciesAndUnlockIds={parachainCurrenciesAndUnlockIds}
+              />
+            )}
 
-            <WithdrawLstUnstakeRequestButton
-              canWithdraw={canWithdrawAllSelected}
-              currenciesAndUnlockIds={currenciesAndUnlockIds}
-            />
+            {isLsParachainChainId(selectedProtocolId) ? (
+              <WithdrawLstUnstakeRequestButton
+                canWithdraw={canWithdrawAllSelected}
+                currenciesAndUnlockIds={parachainCurrenciesAndUnlockIds}
+              />
+            ) : (
+              <WithdrawUnlockNftButton
+                tokenId={selectedProtocolId}
+                canWithdraw={canWithdrawAllSelected}
+                unlockIds={nftUnlockIds}
+              />
+            )}
           </div>
         )}
       </GlassCard>

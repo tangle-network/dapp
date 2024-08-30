@@ -94,6 +94,7 @@ const useInputAmount = ({
         return;
       }
 
+      // TODO: Format the new amount string to include commas. Use `INPUT_AMOUNT_FORMAT`.
       setDisplayAmount(cleanAmountString);
 
       const amountOrError = safeParseInputAmount({
@@ -131,7 +132,12 @@ const useInputAmount = ({
 
   const setDisplayAmount_ = useCallback(
     (amount: BN) => {
-      setDisplayAmount(formatBn(amount, decimals, INPUT_AMOUNT_FORMAT));
+      setDisplayAmount(
+        formatBn(amount, decimals, {
+          ...INPUT_AMOUNT_FORMAT,
+          includeCommas: false,
+        }),
+      );
     },
     [decimals],
   );

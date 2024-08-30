@@ -34,14 +34,18 @@ function formatBn(
   decimals: number,
   options?: Partial<FormatOptions>,
 ): string {
-  const finalOptions = { ...DEFAULT_FORMAT_OPTIONS, ...options };
+  const finalOptions: FormatOptions = { ...DEFAULT_FORMAT_OPTIONS, ...options };
   const chainUnitFactorBn = getChainUnitFactor(decimals);
+  const isNegative = amount.isNeg();
 
-  const integerPartBn = new BN(amount).div(chainUnitFactorBn);
+  // There's a weird bug with BN.js, so need to create a new BN
+  // instance here for the amount, to avoid a strange error.
+  const integerPartBn = new BN(amount.toString()).div(chainUnitFactorBn);
+
   const remainderBn = amount.mod(chainUnitFactorBn);
 
-  let integerPart = integerPartBn.toString(10);
-  let fractionPart = remainderBn.toString(10).padStart(decimals, '0');
+  let integerPart = integerPartBn.abs().toString(10);
+  let fractionPart = remainderBn.abs().toString(10).padStart(decimals, '0');
 
   const amountStringLength = amount.toString().length;
   const partsLength = integerPart.length + fractionPart.length;
@@ -87,9 +91,13 @@ function formatBn(
     integerPart = addCommasToNumber(integerPart);
   }
 
+  const polarity = isNegative ? '-' : '';
+
   // Combine the integer and fraction parts. Only include the fraction
   // part if it's available.
-  return fractionPart !== '' ? `${integerPart}.${fractionPart}` : integerPart;
+  return fractionPart !== ''
+    ? `${polarity}${integerPart}.${fractionPart}`
+    : `${polarity}${integerPart}`;
 }
 
 export default formatBn;

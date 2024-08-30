@@ -10,35 +10,44 @@ import { Button } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
 
-import { LST_PREFIX } from '../../../constants/liquidStaking/constants';
+import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
+  LsNetworkId,
   LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
-import useExchangeRate, {
+import useLsExchangeRate, {
   ExchangeRateType,
-} from '../../../data/liquidStaking/useExchangeRate';
-import { useLiquidStakingStore } from '../../../data/liquidStaking/useLiquidStakingStore';
+} from '../../../data/liquidStaking/useLsExchangeRate';
+import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useRedeemTx from '../../../data/liquidStaking/useRedeemTx';
 import useLiquifierUnlock from '../../../data/liquifier/useLiquifierUnlock';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import AgnosticLsBalance from './AgnosticLsBalance';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
-import LiquidStakingInput from './LiquidStakingInput';
-import MintAndRedeemFeeDetailItem from './MintAndRedeemFeeDetailItem';
+import FeeDetailItem from './FeeDetailItem';
+import LsAgnosticBalance from './LsAgnosticBalance';
+import LsFeeWarning from './LsFeeWarning';
+import LsInput from './LsInput';
 import SelectTokenModal from './SelectTokenModal';
+import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import UnstakeRequestSubmittedModal from './UnstakeRequestSubmittedModal';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
-const LiquidUnstakeCard: FC = () => {
+const LsUnstakeCard: FC = () => {
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
-  const { selectedProtocolId, setSelectedProtocolId } = useLiquidStakingStore();
   const activeAccountAddress = useActiveAccountAddress();
+
+  const {
+    selectedProtocolId,
+    setSelectedProtocolId,
+    selectedNetworkId,
+    setSelectedNetworkId,
+  } = useLsStore();
 
   const [didLiquifierUnlockSucceed, setDidLiquifierUnlockSucceed] =
     useState(false);
@@ -70,10 +79,17 @@ const LiquidUnstakeCard: FC = () => {
 
   const selectedProtocol = getLsProtocolDef(selectedProtocolId);
 
-  const { exchangeRate } = useExchangeRate(
-    ExchangeRateType.LiquidToNative,
+  const {
+    exchangeRate: exchangeRateOrError,
+    isRefreshing: isRefreshingExchangeRate,
+  } = useLsExchangeRate(
+    ExchangeRateType.DerivativeToNative,
     selectedProtocol.id,
   );
+
+  // TODO: Properly handle the error state.
+  const exchangeRate =
+    exchangeRateOrError instanceof Error ? null : exchangeRateOrError;
 
   useSearchParamSync({
     key: LsSearchParamKey.AMOUNT,
@@ -89,13 +105,16 @@ const LiquidUnstakeCard: FC = () => {
       return;
     }
 
-    if (selectedProtocol.type === 'parachain' && executeRedeemTx !== null) {
+    if (
+      selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
+      executeRedeemTx !== null
+    ) {
       executeRedeemTx({
         amount: fromAmount,
         currency: selectedProtocol.currency,
       });
     } else if (
-      selectedProtocol.type === 'erc20' &&
+      selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
       performLiquifierUnlock !== null
     ) {
       setDidLiquifierUnlockSucceed(false);
@@ -135,7 +154,7 @@ const LiquidUnstakeCard: FC = () => {
   }, [didLiquifierUnlockSucceed, redeemTxStatus]);
 
   const stakedWalletBalance = (
-    <AgnosticLsBalance
+    <LsAgnosticBalance
       isNative={false}
       protocolId={selectedProtocol.id}
       tooltip="Click to use all staked balance"
@@ -145,22 +164,27 @@ const LiquidUnstakeCard: FC = () => {
 
   // TODO: Also check if the user has enough balance to unstake.
   const canCallUnstake =
-    (selectedProtocol.type === 'parachain' && executeRedeemTx !== null) ||
-    (selectedProtocol.type === 'erc20' && performLiquifierUnlock !== null);
+    (selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
+      executeRedeemTx !== null) ||
+    (selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
+      performLiquifierUnlock !== null);
 
   return (
     <>
       {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
-      <LiquidStakingInput
+      <LsInput
         id="liquid-staking-unstake-from"
-        protocolId={LsProtocolId.TANGLE_RESTAKING_PARACHAIN}
+        networkId={selectedNetworkId}
+        setNetworkId={setSelectedNetworkId}
+        protocolId={selectedProtocolId}
+        setProtocolId={setSelectedProtocolId}
         token={selectedProtocol.token}
         amount={fromAmount}
         decimals={selectedProtocol.decimals}
         onAmountChange={setFromAmount}
-        placeholder={`0 ${LST_PREFIX}${selectedProtocol.token}`}
+        placeholder={`0 ${LS_DERIVATIVE_TOKEN_PREFIX}${selectedProtocol.token}`}
         rightElement={stakedWalletBalance}
-        isTokenLiquidVariant
+        isDerivativeVariant
         minAmount={minSpendable ?? undefined}
         maxAmount={maxSpendable ?? undefined}
         maxErrorMessage="Not enough stake to redeem"
@@ -169,33 +193,42 @@ const LiquidUnstakeCard: FC = () => {
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
 
-      <LiquidStakingInput
+      <LsInput
         id="liquid-staking-unstake-to"
+        networkId={selectedNetworkId}
         protocolId={selectedProtocolId}
         amount={toAmount}
         decimals={selectedProtocol.decimals}
         placeholder={`0 ${selectedProtocol.token}`}
         token={selectedProtocol.token}
-        setChainId={setSelectedProtocolId}
         isReadOnly
+        className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
       />
 
       {/* Details */}
       <div className="flex flex-col gap-2 p-3">
+        <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
+
         <ExchangeRateDetailItem
-          protocolId={selectedProtocol.id}
+          protocolId={selectedProtocolId}
           token={selectedProtocol.token}
-          type={ExchangeRateType.LiquidToNative}
+          type={ExchangeRateType.DerivativeToNative}
         />
 
-        <MintAndRedeemFeeDetailItem
-          token={selectedProtocol.token}
+        <FeeDetailItem
+          protocolId={selectedProtocolId}
           isMinting={false}
-          intendedAmount={fromAmount}
+          inputAmount={fromAmount}
         />
 
-        <UnstakePeriodDetailItem protocolId={selectedProtocol.id} />
+        <TotalDetailItem
+          isMinting={false}
+          protocolId={selectedProtocolId}
+          inputAmount={fromAmount}
+        />
       </div>
+
+      <LsFeeWarning isMinting={false} selectedProtocolId={selectedProtocolId} />
 
       <Button
         isDisabled={
@@ -230,4 +263,4 @@ const LiquidUnstakeCard: FC = () => {
   );
 };
 
-export default LiquidUnstakeCard;
+export default LsUnstakeCard;

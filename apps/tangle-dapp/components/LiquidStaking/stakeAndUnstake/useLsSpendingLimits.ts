@@ -2,14 +2,25 @@ import { BN } from '@polkadot/util';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useMemo } from 'react';
 
-import { LsProtocolId } from '../../../constants/liquidStaking/types';
+import {
+  LsNetworkId,
+  LsProtocolId,
+} from '../../../constants/liquidStaking/types';
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import useAgnosticLsBalance from './useAgnosticLsBalance';
+import useLsAgnosticBalance from './useLsAgnosticBalance';
 
-const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
-  const balance = useAgnosticLsBalance(isNative, protocolId);
+type LsSpendingLimits = {
+  minSpendable: BN | null;
+  maxSpendable: BN | null;
+};
+
+const useLsSpendingLimits = (
+  isNative: boolean,
+  protocolId: LsProtocolId,
+): LsSpendingLimits => {
+  const { balance } = useLsAgnosticBalance(isNative, protocolId);
 
   const { result: existentialDepositAmount } = useApi(
     useCallback((api) => api.consts.balances.existentialDeposit, []),
@@ -21,7 +32,7 @@ const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
       (api) => {
         const protocol = getLsProtocolDef(protocolId);
 
-        if (protocol.type !== 'parachain') {
+        if (protocol.networkId !== LsNetworkId.TANGLE_RESTAKING_PARACHAIN) {
           return null;
         }
 
@@ -39,7 +50,7 @@ const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
       (api) => {
         const protocol = getLsProtocolDef(protocolId);
 
-        if (protocol.type !== 'parachain') {
+        if (protocol.networkId !== LsNetworkId.TANGLE_RESTAKING_PARACHAIN) {
           return null;
         }
 
@@ -57,7 +68,7 @@ const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
     : minimumRedeemAmount;
 
   const minSpendable = useMemo(() => {
-    // TODO: Add ERC20 cases as well.
+    // TODO: Add liquifier cases as well (enough to cover fees?).
 
     if (
       mintingOrRedeemingAmount === null ||
@@ -69,15 +80,8 @@ const useLsSpendingLimits = (isNative: boolean, protocolId: LsProtocolId) => {
     return BN.max(mintingOrRedeemingAmount, existentialDepositAmount);
   }, [existentialDepositAmount, mintingOrRedeemingAmount]);
 
-  const maxSpendable = (() => {
-    if (balance === null || typeof balance === 'string') {
-      return null;
-    }
-
-    return balance;
-  })();
-
-  return { minSpendable, maxSpendable };
+  // TODO: Properly handle error state of maxSpendable.
+  return { minSpendable, maxSpendable: balance instanceof BN ? balance : null };
 };
 
 export default useLsSpendingLimits;
