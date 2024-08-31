@@ -23,11 +23,11 @@ import { twMerge } from 'tailwind-merge';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useNetworkStore from '../../context/useNetworkStore';
-import { useLiquidStakingStore } from '../../data/liquidStaking/useLiquidStakingStore';
+import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
 import { PagePath } from '../../types';
 import createCustomNetwork from '../../utils/createCustomNetwork';
-import isLsErc20TokenId from '../../utils/liquidStaking/isLsErc20TokenId';
+import isLiquifierProtocolId from '../../utils/liquidStaking/isLiquifierProtocolId';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
 // TODO: Currently hard-coded, but shouldn't it always be the Tangle icon, since it's not switching chains but rather networks within Tangle? If so, find some constant somewhere instead of having it hard-coded here.
@@ -40,7 +40,7 @@ const NetworkSelectionButton: FC = () => {
   const { network } = useNetworkStore();
   const { switchNetwork, isCustom } = useNetworkSwitcher();
   const pathname = usePathname();
-  const { selectedProtocolId } = useLiquidStakingStore();
+  const { selectedProtocolId } = useLsStore();
 
   // TODO: Handle switching network on EVM wallet here.
   const switchToCustomNetwork = useCallback(
@@ -99,13 +99,13 @@ const NetworkSelectionButton: FC = () => {
   // Network can't be switched from the Tangle Restaking Parachain while
   // on liquid staking page.
   else if (isInLiquidStakingPath) {
-    const liquidStakingNetworkName = isLsErc20TokenId(selectedProtocolId)
+    const liquidStakingNetworkName = isLiquifierProtocolId(selectedProtocolId)
       ? IS_PRODUCTION_ENV
         ? 'Ethereum Mainnet'
         : 'Sepolia Testnet'
       : TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.name;
 
-    const chainIconName = isLsErc20TokenId(selectedProtocolId)
+    const chainIconName = isLiquifierProtocolId(selectedProtocolId)
       ? 'ethereum'
       : TANGLE_TESTNET_CHAIN_NAME;
 

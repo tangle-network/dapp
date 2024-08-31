@@ -1,11 +1,11 @@
 import { TanglePrimitivesTimeUnit } from '@polkadot/types/lookup';
 
-import { LsSimpleParachainTimeUnit } from '../../constants/liquidStaking/types';
+import { LsParachainSimpleTimeUnit } from '../../constants/liquidStaking/types';
 import getValueOfTangleTimeUnit from './getValueOfTangleTimeUnit';
 
 const tangleTimeUnitToSimpleInstance = (
   tangleTimeUnit: TanglePrimitivesTimeUnit,
-): LsSimpleParachainTimeUnit => {
+): LsParachainSimpleTimeUnit => {
   return {
     unit: tangleTimeUnit.type,
     value: getValueOfTangleTimeUnit(tangleTimeUnit),

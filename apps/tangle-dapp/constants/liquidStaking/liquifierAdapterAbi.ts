@@ -341,6 +341,18 @@ const LIQUIFIER_ADAPTER_ABI = [
     name: 'DepositBufferedTokens',
     type: 'event',
   },
+  {
+    name: 'totalShares',
+    type: 'function',
+    inputs: [],
+    stateMutability: 'view',
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+      },
+    ],
+  },
 ] as const satisfies Abi;
 
 export default LIQUIFIER_ADAPTER_ABI;

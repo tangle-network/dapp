@@ -12,7 +12,7 @@ import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 
 import {
-  LsSimpleParachainTimeUnit,
+  LsParachainSimpleTimeUnit,
   ParachainCurrency,
 } from '../../constants/liquidStaking/types';
 import useApiRx from '../../hooks/useApiRx';
@@ -25,7 +25,7 @@ export type LstUnlockRequest = {
   unlockId: number;
   currencyType: TanglePrimitivesCurrencyCurrencyId['type'];
   currency: ParachainCurrency;
-  unlockTimeUnit: LsSimpleParachainTimeUnit;
+  unlockTimeUnit: LsParachainSimpleTimeUnit;
   amount: BN;
 };
 

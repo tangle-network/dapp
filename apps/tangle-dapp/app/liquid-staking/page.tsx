@@ -2,15 +2,12 @@
 
 import { FC } from 'react';
 
-import { LiquidStakingSelectionTable } from '../../components/LiquidStaking/LiquidStakingSelectionTable';
-import LiquidStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LiquidStakeCard';
-import LiquidUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LiquidUnstakeCard';
-import UnlockNftsTable from '../../components/LiquidStaking/unlockNftsTable/UnlockNftsTable';
+import { LsValidatorTable } from '../../components/LiquidStaking/LsValidatorTable';
+import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeCard';
+import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
 import UnstakeRequestsTable from '../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
-import { useLiquidStakingStore } from '../../data/liquidStaking/useLiquidStakingStore';
 import useSearchParamState from '../../hooks/useSearchParamState';
-import isLsParachainChainId from '../../utils/liquidStaking/isLsParachainChainId';
 import TabListItem from '../restake/TabListItem';
 import TabsList from '../restake/TabsList';
 
@@ -28,8 +25,6 @@ const LiquidStakingTokenPage: FC = () => {
       value ? SearchParamAction.STAKE : SearchParamAction.UNSTAKE,
   });
 
-  const { selectedProtocolId } = useLiquidStakingStore();
-
   return (
     <div className="flex flex-wrap gap-12">
       <div className="flex flex-col gap-4 w-full min-w-[450px] max-w-[600px]">
@@ -46,17 +41,11 @@ const LiquidStakingTokenPage: FC = () => {
           </TabListItem>
         </TabsList>
 
-        {isStaking ? <LiquidStakeCard /> : <LiquidUnstakeCard />}
+        {isStaking ? <LsStakeCard /> : <LsUnstakeCard />}
       </div>
 
       <div className="flex flex-col flex-grow w-min gap-4 min-w-[370px]">
-        {isStaking ? (
-          <LiquidStakingSelectionTable />
-        ) : isLsParachainChainId(selectedProtocolId) ? (
-          <UnstakeRequestsTable />
-        ) : (
-          <UnlockNftsTable tokenId={selectedProtocolId} />
-        )}
+        {isStaking ? <LsValidatorTable /> : <UnstakeRequestsTable />}
       </div>
     </div>
   );

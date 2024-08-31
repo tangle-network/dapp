@@ -4,6 +4,7 @@ import { Expand } from '@webb-tools/icons';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
+import useDebugMetricsStore from '../../context/useDebugMetricsStore';
 import useNetworkStore from '../../context/useNetworkStore';
 import usePromise from '../../hooks/usePromise';
 import { getApiPromise, getApiRx } from '../../utils/polkadot';
@@ -19,9 +20,10 @@ function formatBytes(bytes: number): string {
   return Math.round(bytes * MEGABYTE_FACTOR * 100) / 100 + 'mb';
 }
 
-const ApiDevStats: FC = () => {
+const DebugMetrics: FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const { rpcEndpoint } = useNetworkStore();
+  const { requestCount, subscriptionCount } = useDebugMetricsStore();
 
   const { result: api } = usePromise(
     useCallback(() => getApiPromise(rpcEndpoint), [rpcEndpoint]),
@@ -37,11 +39,9 @@ const ApiDevStats: FC = () => {
   const [tick, setTick] = useState(0);
 
   const totalRequests =
-    (api?.stats?.total.requests ?? 0) + (apiRx?.stats?.total.requests ?? 0);
-
-  const totalSubscriptions =
-    (api?.stats?.total.subscriptions ?? 0) +
-    (apiRx?.stats?.total.subscriptions ?? 0);
+    (api?.stats?.total.requests ?? 0) +
+    (apiRx?.stats?.total.requests ?? 0) +
+    requestCount;
 
   const totalBytesReceived =
     (api?.stats?.total.bytesRecv ?? 0) + (apiRx?.stats?.total.bytesRecv ?? 0);
@@ -52,12 +52,10 @@ const ApiDevStats: FC = () => {
   const totalErrors =
     (api?.stats?.total.errors ?? 0) + (apiRx?.stats?.total.errors ?? 0);
 
-  const totalActiveRequests =
-    (api?.stats?.active.requests ?? 0) + (apiRx?.stats?.active.requests ?? 0);
-
   const totalActiveSubscriptions =
     (api?.stats?.active.subscriptions ?? 0) +
-    (apiRx?.stats?.active.subscriptions ?? 0);
+    (apiRx?.stats?.active.subscriptions ?? 0) +
+    subscriptionCount;
 
   // Manually trigger a re-render every second, since the stats
   // are not automatically updated.
@@ -80,33 +78,13 @@ const ApiDevStats: FC = () => {
 
       <Metric
         title="Subscriptions"
-        value={totalSubscriptions}
-        warnAt={100}
+        value={`${totalActiveSubscriptions} active`}
         isApiLoading={isApiLoading}
       />
 
       <Metric
-        title="Requests (active)"
-        value={totalActiveRequests}
-        isApiLoading={isApiLoading}
-      />
-
-      <Metric
-        title="Subscriptions (active)"
-        value={totalActiveSubscriptions}
-        warnAt={100}
-        isApiLoading={isApiLoading}
-      />
-
-      <Metric
-        title="Data sent"
-        value={formatBytes(totalBytesSent)}
-        isApiLoading={isApiLoading}
-      />
-
-      <Metric
-        title="Data received"
-        value={formatBytes(totalBytesReceived)}
+        title="Data usage"
+        value={`${formatBytes(totalBytesReceived)} in, ${formatBytes(totalBytesSent)} out`}
         isApiLoading={isApiLoading}
       />
 
@@ -148,7 +126,7 @@ const Metric: FC<{
       : '';
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-max whitespace-nowrap">
       <Typography variant="body1" className="whitespace-nowrap">
         {title}
       </Typography>
@@ -156,7 +134,7 @@ const Metric: FC<{
       {isApiLoading ? (
         <SkeletonLoader />
       ) : (
-        <Typography variant="h4" className={warnAfterClassName}>
+        <Typography variant="h5" className={warnAfterClassName}>
           {value}
         </Typography>
       )}
@@ -164,4 +142,4 @@ const Metric: FC<{
   );
 };
 
-export default ApiDevStats;
+export default DebugMetrics;
