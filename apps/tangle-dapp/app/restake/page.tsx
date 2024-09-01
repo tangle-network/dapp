@@ -3,7 +3,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { twMerge } from 'tailwind-merge';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
-import StatItem from '../../components/StatItem';
+import OverviewTVLStats from './OverviewTVLStats';
 import TableTabs from './TableTabs';
 
 export const dynamic = 'force-static';
@@ -40,12 +40,7 @@ export default function RestakePage() {
             {CONTENT.OVERVIEW}
           </Typography>
 
-          <div className="flex justify-end gap-6 pt-3 border-t border-mono-0 dark:border-mono-140">
-            {/* TODO: Calculate these values */}
-            <StatItem title="$123.01" subtitle="My Total Restaked" />
-
-            <StatItem title="$123.01" subtitle="Network TVL" />
-          </div>
+          <OverviewTVLStats />
         </GlassCard>
 
         <GlassCard
