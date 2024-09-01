@@ -15,6 +15,10 @@ const nextConfigBase = require('../../next.config.cjs');
 const nextConfig = {
   ...nextConfigBase,
 
+  experimental: {
+    cpus: 1,
+  },
+
   reactStrictMode: true,
 
   // at default environment variable is only accessible by the server, resulting in hydration mismatch

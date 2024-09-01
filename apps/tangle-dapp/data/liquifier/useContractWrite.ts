@@ -85,8 +85,8 @@ const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
           functionName: options.functionName,
           account: activeEvmAddress20,
           // TODO: Getting the type of `args` and `abi` right has proven quite difficult.
-          abi: abi as any,
-          args: options.args as any,
+          abi: abi as ViemAbi,
+          args: options.args as unknown[],
         });
 
         const txHash = await writeContract(connectorClient, request);

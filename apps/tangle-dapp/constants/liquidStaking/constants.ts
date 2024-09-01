@@ -100,3 +100,11 @@ export const LS_NETWORKS: LsNetwork[] = [
   LS_ETHEREUM_MAINNET_LIQUIFIER,
   LS_TANGLE_RESTAKING_PARACHAIN,
 ];
+
+/**
+ * Allows for batching multiple contract writes into a single transaction.
+ *
+ * Read more about the Multicall3 contract here: https://github.com/mds1/multicall
+ */
+export const MULTICALL3_CONTRACT_ADDRESS =
+  '0xcA11bde05977b3631167028862bE2a173976CA11';
