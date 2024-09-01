@@ -1,3 +1,5 @@
 import { ComponentProps } from 'react';
 
-export type GlassCardProps = ComponentProps<'div'>;
+export type GlassCardProps = ComponentProps<'div'> & {
+  bgClassName?: string;
+};
