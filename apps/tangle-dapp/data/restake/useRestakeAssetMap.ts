@@ -14,6 +14,7 @@ import usePolkadotApi from '../../hooks/usePolkadotApi';
 import type { AssetMap, AssetMetadata } from '../../types/restake';
 import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restaking/filterNativeAsset';
+import { fetchSingleTokenPrice, fetchTokenPrices } from '../tokenPrice';
 import useRestakeAssetIds from './useRestakeAssetIds';
 
 /**
@@ -114,6 +115,15 @@ const mapAssetDetails = async (
     api.queryMulti<Option<u128>[]>(assetPoolIdQueries),
   ] as const);
 
+  // Get list of token symbols for fetching the prices
+  const tokenSymbols = nonNativeAssetIds.map((_, idx) => {
+    const metadata = assetMetadatas[idx];
+    return hexToString(metadata.symbol.toHex());
+  });
+
+  // Fetch the prices of the tokens
+  const tokenPrices = await fetchTokenPrices(tokenSymbols);
+
   const initialAssetMap: AssetMap = hasNative
     ? await (async () => {
         const nativeAsset = await getNativeAsset(nativeCurrentcy, api);
@@ -153,6 +163,7 @@ const mapAssetDetails = async (
         decimals: metadata.decimals.toNumber(),
         status: detail.status.type,
         poolId: u128ToPoolId(poolId),
+        priceInUsd: tokenPrices[idx],
       },
     } satisfies AssetMap);
   }, initialAssetMap);
@@ -176,10 +187,13 @@ const getNativeAsset = async (
       assetId,
     );
 
+  const priceInUsd = await fetchSingleTokenPrice(nativeCurrency.symbol);
+
   return {
     ...nativeCurrency,
     id: assetId,
     status: 'Live',
     poolId: u128ToPoolId(poolId),
+    priceInUsd,
   } satisfies AssetMetadata;
 };
