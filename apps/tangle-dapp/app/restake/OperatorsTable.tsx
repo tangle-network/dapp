@@ -3,6 +3,7 @@
 import { Search } from '@webb-tools/icons/Search';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';
 import { type ComponentProps, type FC, useMemo, useState } from 'react';
+import { formatUnits } from 'viem';
 
 import OperatorsTableUI from '../../components/tables/Operators';
 import { useRestakeContext } from '../../context/RestakeContext';
@@ -15,9 +16,10 @@ type OperatorUI = NonNullable<
 
 type Props = {
   operatorMap: OperatorMap,
+  operatorTVL?: Record<string, number>
 }
 
-const OperatorsTable: FC<Props> = ({ operatorMap }) => {
+const OperatorsTable: FC<Props> = ({ operatorMap, operatorTVL }) => {
   const [globalFilter, setGlobalFilter] = useState('');
 
   const { assetMap } = useRestakeContext();
@@ -31,8 +33,10 @@ const OperatorsTable: FC<Props> = ({ operatorMap }) => {
       Object.entries(operatorMap).map<OperatorUI>(
         ([address, { delegationCount, delegations }]) => {
           const vaultAssets = delegations
-            .map((delegation) => assetMap[delegation.assetId])
-            .filter(Boolean);
+            .map((delegation) => ({ asset: assetMap[delegation.assetId], amount: delegation.amount }))
+            .filter(vaultAsset => Boolean(vaultAsset.asset));
+
+          const tvlInUsd = operatorTVL?.[address] ?? Number.NaN;
 
           return {
             address,
@@ -40,18 +44,16 @@ const OperatorsTable: FC<Props> = ({ operatorMap }) => {
             concentrationPercentage: 0,
             identityName: identities[address]?.name ?? '',
             restakersCount: delegationCount,
-            // TODO: Calculate tvl in USD
-            tvlInUsd: 0,
-            vaultTokens: vaultAssets.map((asset) => ({
-              // TODO: Calculate amount
-              amount: 0,
+            tvlInUsd,
+            vaultTokens: vaultAssets.map(({ asset, amount }) => ({
+              amount: +formatUnits(amount, asset.decimals),
               name: asset.name,
               symbol: asset.symbol,
             })),
           };
         },
       ),
-    [assetMap, identities, operatorMap],
+    [assetMap, identities, operatorMap, operatorTVL],
   );
 
   return (

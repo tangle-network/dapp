@@ -13,12 +13,12 @@ import { ChevronUp } from '@webb-tools/icons/ChevronUp';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/getRoundedAmountString';
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath, QueryParamKey } from '../../../types';
+import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import LsTokenIcon from '../../LsTokenIcon';
 import { TableStatus } from '../../TableStatus';
 import { sharedTableStatusClxs } from '../shared';
@@ -82,7 +82,7 @@ const columns = [
           variant="body1"
           className="text-mono-120 dark:text-mono-100"
         >
-          ${getRoundedAmountString(props.getValue())}
+          {getTVLToDisplay(props.getValue())}
         </Typography>
       </TableCellWrapper>
     ),

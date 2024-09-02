@@ -15,35 +15,46 @@ export default function useRestakeTVL(
     (input$) =>
       input$.pipe(
         switchMap(([operatorMap, delegatorInfo, assetMap]) => {
-          const operatorTVL = Object.entries(operatorMap).reduce(
+          const { operatorTVL, poolTVL } = Object.entries(operatorMap).reduce(
             (acc, [operatorId, operatorData]) => {
               const operatorTVL = operatorData.delegations.reduce(
                 (sum, delegation) => {
-                  const assetPrice =
-                    assetMap[delegation.assetId]?.priceInUsd || Number.NaN;
+                  const asset = assetMap[delegation.assetId];
+                  const assetPrice = asset?.priceInUsd || Number.NaN;
 
                   if (Number.isNaN(assetPrice)) {
                     return sum;
                   }
 
                   const formattedAmount = Number(
-                    formatUnits(
-                      delegation.amount,
-                      assetMap[delegation.assetId].decimals,
-                    ),
+                    formatUnits(delegation.amount, asset.decimals),
                   );
 
-                  return sum + formattedAmount * assetPrice;
+                  // Calculate operator TVL
+                  sum += formattedAmount * assetPrice;
+
+                  // Calculate pool TVL
+                  const poolId = asset.poolId;
+                  if (poolId !== null) {
+                    acc.poolTVL[poolId] =
+                      (acc.poolTVL[poolId] || 0) + formattedAmount * assetPrice;
+                  }
+
+                  return sum;
                 },
                 0,
               );
-              acc[operatorId] = operatorTVL;
+
+              acc.operatorTVL[operatorId] = operatorTVL;
               return acc;
             },
-            {} as Record<string, number>,
+            {
+              operatorTVL: {} as Record<string, number>,
+              poolTVL: {} as Record<string, number>,
+            },
           );
 
-          const totalNetworkTVL = Object.values(operatorTVL).reduce(
+          const totalNetworkTVL = Object.values(poolTVL).reduce(
             (sum, tvl) => sum + tvl,
             0,
           );
@@ -80,6 +91,7 @@ export default function useRestakeTVL(
 
           return of({
             operatorTVL,
+            poolTVL,
             totalNetworkTVL,
             delegatorTVL,
             totalDelegatorTVL,
@@ -91,6 +103,7 @@ export default function useRestakeTVL(
 
   const tvl = useObservableState(tvl$, {
     operatorTVL: {},
+    poolTVL: {},
     totalNetworkTVL: 0,
     delegatorTVL: {},
     totalDelegatorTVL: 0,

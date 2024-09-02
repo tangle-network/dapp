@@ -14,9 +14,3 @@ export function calculateTimeRemaining(
 export function isScheduledRequestReady(timeRemaining: number) {
   return timeRemaining === 0;
 }
-
-export function tvlToDisplay(tvl: number) {
-  if (Number.isNaN(tvl) || tvl === 0) return '--';
-
-  return `$${tvl}`;
-}

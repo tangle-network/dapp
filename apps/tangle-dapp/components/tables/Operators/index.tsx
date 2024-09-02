@@ -11,7 +11,6 @@ import {
 import {
   Avatar,
   Button,
-  getRoundedAmountString,
   shortenString,
   Table,
   Typography,
@@ -21,6 +20,7 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath, QueryParamKey } from '../../../types';
+import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import { getSortAddressOrIdentityFnc } from '../../../utils/table';
 import { TableStatus } from '../../TableStatus';
 import { sharedTableStatusClxs } from '../shared';
@@ -100,7 +100,7 @@ const columns = [
           variant="body1"
           className="text-mono-120 dark:text-mono-100"
         >
-          ${getRoundedAmountString(props.getValue())}
+          {getTVLToDisplay(props.getValue())}
         </Typography>
       </TableCellWrapper>
     ),

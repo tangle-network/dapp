@@ -9,8 +9,8 @@ import StatItem from '../../components/StatItem';
 import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '../../data/restake/useRestakeOperatorMap';
 import useRestakeTVL from '../../data/restake/useRestakeTVL';
+import getTVLToDisplay from '../../utils/getTVLToDisplay';
 import TableTabs from './TableTabs';
-import { tvlToDisplay } from './utils';
 
 export const dynamic = 'force-static';
 
@@ -31,7 +31,13 @@ export default function RestakePage() {
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
 
-  const { totalNetworkTVL, totalDelegatorTVL } = useRestakeTVL(
+  const {
+    delegatorTVL,
+    operatorTVL,
+    poolTVL,
+    totalDelegatorTVL,
+    totalNetworkTVL,
+  } = useRestakeTVL(
     operatorMap,
     delegatorInfo
   )
@@ -55,9 +61,9 @@ export default function RestakePage() {
           </Typography>
 
           <div className="flex justify-end gap-6 pt-3 border-t border-mono-0 dark:border-mono-140">
-            <StatItem title={tvlToDisplay(totalDelegatorTVL)} subtitle="My Total Restaked" />
+            <StatItem title={getTVLToDisplay(totalDelegatorTVL)} subtitle="My Total Restaked" />
 
-            <StatItem title={tvlToDisplay(totalNetworkTVL)} subtitle="Network TVL" />
+            <StatItem title={getTVLToDisplay(totalNetworkTVL)} subtitle="Network TVL" />
           </div>
         </GlassCard>
 
@@ -89,8 +95,11 @@ export default function RestakePage() {
       </div>
 
       <TableTabs
+        delegatorTVL={delegatorTVL}
         operatorMap={operatorMap}
         delegatorInfo={delegatorInfo}
+        operatorTVL={operatorTVL}
+        vaultTVL={poolTVL}
       />
     </div>
   );

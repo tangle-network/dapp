@@ -10,6 +10,7 @@ import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/get
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import type { Props, VaultAssetData } from './types';
 
 const columnHelper = createColumnHelper<VaultAssetData>();
@@ -25,7 +26,7 @@ const columns = [
   }),
   columnHelper.accessor('tvl', {
     header: () => 'TVL',
-    cell: (props) => getRoundedAmountString(props.getValue()),
+    cell: (props) => getTVLToDisplay(props.getValue()),
   }),
   columnHelper.accessor('selfStake', {
     header: () => 'My Stake',

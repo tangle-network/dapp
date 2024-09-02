@@ -25,9 +25,18 @@ type VaultAssetUI = NonNullable<
 type Props = {
   operatorMap: OperatorMap,
   delegatorInfo: DelegatorInfo | null,
+  delegatorTVL?: Record<string, number>,
+  operatorTVL?: Record<string, number>,
+  vaultTVL?: Record<string, number>,
 }
 
-const TableTabs: FC<Props> = ({ delegatorInfo, operatorMap }) => {
+const TableTabs: FC<Props> = ({
+  delegatorInfo,
+  delegatorTVL,
+  operatorMap,
+  operatorTVL,
+  vaultTVL
+}) => {
   const { assetMap } = useRestakeContext();
 
   const { rewardConfig } = useRestakeRewardConfig();
@@ -40,16 +49,18 @@ const TableTabs: FC<Props> = ({ delegatorInfo, operatorMap }) => {
       if (poolId === null) continue;
 
       if (vaults[poolId] === undefined) {
+        const apyPercentage = rewardConfig.configs[poolId]?.apy ?? 0
+        const tvlInUsd = vaultTVL?.[poolId] ?? Number.NaN;
+
         vaults[poolId] = {
           id: poolId,
-          apyPercentage: rewardConfig.configs[poolId]?.apy ?? 0,
+          apyPercentage,
           // TODO: Find out a proper way to get the pool name, now it's the first token name
           name: name,
           // TODO: Find out a proper way to get the pool symbol, now it's the first token symbol
           representToken: symbol,
           tokensCount: 1,
-          // TODO: Calculate tvl in USD
-          tvlInUsd: 0,
+          tvlInUsd,
         };
       } else {
         vaults[poolId].tokensCount += 1;
@@ -57,7 +68,7 @@ const TableTabs: FC<Props> = ({ delegatorInfo, operatorMap }) => {
     }
 
     return vaults;
-  }, [assetMap, rewardConfig.configs]);
+  }, [assetMap, rewardConfig.configs, vaultTVL]);
 
   const delegatorTotalRestakedAssets = useMemo(() => {
     if (!delegatorInfo?.delegations) {
@@ -99,11 +110,12 @@ const TableTabs: FC<Props> = ({ delegatorInfo, operatorMap }) => {
               );
             })();
 
+            const tvl = delegatorTVL?.[asset.id] ?? Number.NaN;
+
             return {
               id: asset.id,
               symbol: asset.symbol,
-              // TODO: Calculate tvl
-              tvl: 0,
+              tvl,
               selfStake,
             } satisfies VaultAssetUI;
           });
@@ -118,7 +130,7 @@ const TableTabs: FC<Props> = ({ delegatorInfo, operatorMap }) => {
         );
       },
     }),
-    [assetMap, delegatorTotalRestakedAssets],
+    [assetMap, delegatorTVL, delegatorTotalRestakedAssets],
   );
 
   return (
@@ -131,7 +143,7 @@ const TableTabs: FC<Props> = ({ delegatorInfo, operatorMap }) => {
       </TabContent>
 
       <TabContent value={OPERATORS_TAB}>
-        <OperatorsTable operatorMap={operatorMap} />
+        <OperatorsTable operatorMap={operatorMap} operatorTVL={operatorTVL} />
       </TabContent>
     </TableAndChartTabs>
   );
