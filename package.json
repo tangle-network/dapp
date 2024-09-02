@@ -174,7 +174,7 @@
     "@next/bundle-analyzer": "^14.2.6",
     "@nx/cypress": "19.6.2",
     "@nx/eslint": "19.6.2",
-    "@nx/eslint-plugin": "19.6.2",
+    "@nx/eslint-plugin": "19.6.4",
     "@nx/jest": "19.6.2",
     "@nx/js": "19.6.2",
     "@nx/next": "19.6.2",
