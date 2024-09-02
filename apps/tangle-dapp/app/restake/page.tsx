@@ -37,10 +37,7 @@ export default function RestakePage() {
     poolTVL,
     totalDelegatorTVL,
     totalNetworkTVL,
-  } = useRestakeTVL(
-    operatorMap,
-    delegatorInfo
-  )
+  } = useRestakeTVL(operatorMap, delegatorInfo);
 
   return (
     <div className="space-y-5">
@@ -61,9 +58,15 @@ export default function RestakePage() {
           </Typography>
 
           <div className="flex justify-end gap-6 pt-3 border-t border-mono-0 dark:border-mono-140">
-            <StatItem title={getTVLToDisplay(totalDelegatorTVL)} subtitle="My Total Restaked" />
+            <StatItem
+              title={getTVLToDisplay(totalDelegatorTVL)}
+              subtitle="My Total Restaked"
+            />
 
-            <StatItem title={getTVLToDisplay(totalNetworkTVL)} subtitle="Network TVL" />
+            <StatItem
+              title={getTVLToDisplay(totalNetworkTVL)}
+              subtitle="Network TVL"
+            />
           </div>
         </GlassCard>
 

@@ -23,19 +23,19 @@ type VaultAssetUI = NonNullable<
 >[number];
 
 type Props = {
-  operatorMap: OperatorMap,
-  delegatorInfo: DelegatorInfo | null,
-  delegatorTVL?: Record<string, number>,
-  operatorTVL?: Record<string, number>,
-  vaultTVL?: Record<string, number>,
-}
+  operatorMap: OperatorMap;
+  delegatorInfo: DelegatorInfo | null;
+  delegatorTVL?: Record<string, number>;
+  operatorTVL?: Record<string, number>;
+  vaultTVL?: Record<string, number>;
+};
 
 const TableTabs: FC<Props> = ({
   delegatorInfo,
   delegatorTVL,
   operatorMap,
   operatorTVL,
-  vaultTVL
+  vaultTVL,
 }) => {
   const { assetMap } = useRestakeContext();
 
@@ -49,7 +49,7 @@ const TableTabs: FC<Props> = ({
       if (poolId === null) continue;
 
       if (vaults[poolId] === undefined) {
-        const apyPercentage = rewardConfig.configs[poolId]?.apy ?? 0
+        const apyPercentage = rewardConfig.configs[poolId]?.apy ?? 0;
         const tvlInUsd = vaultTVL?.[poolId] ?? Number.NaN;
 
         vaults[poolId] = {

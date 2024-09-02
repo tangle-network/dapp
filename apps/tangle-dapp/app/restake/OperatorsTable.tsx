@@ -15,9 +15,9 @@ type OperatorUI = NonNullable<
 >[number];
 
 type Props = {
-  operatorMap: OperatorMap,
-  operatorTVL?: Record<string, number>
-}
+  operatorMap: OperatorMap;
+  operatorTVL?: Record<string, number>;
+};
 
 const OperatorsTable: FC<Props> = ({ operatorMap, operatorTVL }) => {
   const [globalFilter, setGlobalFilter] = useState('');
@@ -33,8 +33,11 @@ const OperatorsTable: FC<Props> = ({ operatorMap, operatorTVL }) => {
       Object.entries(operatorMap).map<OperatorUI>(
         ([address, { delegationCount, delegations }]) => {
           const vaultAssets = delegations
-            .map((delegation) => ({ asset: assetMap[delegation.assetId], amount: delegation.amount }))
-            .filter(vaultAsset => Boolean(vaultAsset.asset));
+            .map((delegation) => ({
+              asset: assetMap[delegation.assetId],
+              amount: delegation.amount,
+            }))
+            .filter((vaultAsset) => Boolean(vaultAsset.asset));
 
           const tvlInUsd = operatorTVL?.[address] ?? Number.NaN;
 
