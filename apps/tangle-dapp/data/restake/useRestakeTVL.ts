@@ -2,14 +2,14 @@ import { useObservable, useObservableState } from 'observable-hooks';
 import { of, switchMap } from 'rxjs';
 import { formatUnits } from 'viem';
 
-import useRestakeAssetMap from './useRestakeAssetMap';
-import useRestakeDelegatorInfo from './useRestakeDelegatorInfo';
-import useRestakeOperatorMap from './useRestakeOperatorMap';
+import { useRestakeContext } from '../../context/RestakeContext';
+import type { DelegatorInfo, OperatorMap } from '../../types/restake';
 
-export default function useRestakeTVL() {
-  const { operatorMap } = useRestakeOperatorMap();
-  const { delegatorInfo } = useRestakeDelegatorInfo();
-  const { assetMap } = useRestakeAssetMap();
+export default function useRestakeTVL(
+  operatorMap: OperatorMap,
+  delegatorInfo: DelegatorInfo | null,
+) {
+  const { assetMap } = useRestakeContext();
 
   const tvl$ = useObservable(
     (input$) =>

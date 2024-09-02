@@ -2,14 +2,14 @@
 
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
-import { type ComponentProps, useMemo } from 'react';
+import { type ComponentProps, type FC, useMemo } from 'react';
 import { formatUnits } from 'viem';
 
 import VaultAssetsTable from '../../components/tables/VaultAssets';
 import VaultsTable from '../../components/tables/Vaults';
 import { useRestakeContext } from '../../context/RestakeContext';
-import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
 import useRestakeRewardConfig from '../../data/restake/useRestakeRewardConfig';
+import type { DelegatorInfo, OperatorMap } from '../../types/restake';
 import OperatorsTable from './OperatorsTable';
 
 const RESTAKE_VAULTS_TAB = 'Restake Vaults';
@@ -22,9 +22,13 @@ type VaultAssetUI = NonNullable<
   ComponentProps<typeof VaultAssetsTable>['data']
 >[number];
 
-const TableTabs = () => {
+type Props = {
+  operatorMap: OperatorMap,
+  delegatorInfo: DelegatorInfo | null,
+}
+
+const TableTabs: FC<Props> = ({ delegatorInfo, operatorMap }) => {
   const { assetMap } = useRestakeContext();
-  const { delegatorInfo } = useRestakeDelegatorInfo();
 
   const { rewardConfig } = useRestakeRewardConfig();
 
@@ -127,7 +131,7 @@ const TableTabs = () => {
       </TabContent>
 
       <TabContent value={OPERATORS_TAB}>
-        <OperatorsTable />
+        <OperatorsTable operatorMap={operatorMap} />
       </TabContent>
     </TableAndChartTabs>
   );

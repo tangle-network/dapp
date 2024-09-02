@@ -2,21 +2,24 @@
 
 import { Search } from '@webb-tools/icons/Search';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';
-import { ComponentProps, useMemo, useState } from 'react';
+import { type ComponentProps, type FC, useMemo, useState } from 'react';
 
 import OperatorsTableUI from '../../components/tables/Operators';
 import { useRestakeContext } from '../../context/RestakeContext';
-import useRestakeOperatorMap from '../../data/restake/useRestakeOperatorMap';
 import useIdentities from '../../data/useIdentities';
+import type { OperatorMap } from '../../types/restake';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
 >[number];
 
-const OperatorsTable = () => {
+type Props = {
+  operatorMap: OperatorMap,
+}
+
+const OperatorsTable: FC<Props> = ({ operatorMap }) => {
   const [globalFilter, setGlobalFilter] = useState('');
 
-  const { operatorMap } = useRestakeOperatorMap();
   const { assetMap } = useRestakeContext();
 
   const { result: identities } = useIdentities(
