@@ -78,7 +78,7 @@ const useContractReadBatch = <
     // See: https://viem.sh/docs/contract/multicall.html
     const promiseOfAll = await publicClient.multicall({
       // TODO: Viem is complaining about the type of `contracts` here.
-      contracts: targets as any,
+      contracts: targets as readonly unknown[],
     });
 
     // TODO: Avoid casting to ReturnType. Viem is complaining, likely  because of the complexity of the types involved.

@@ -24,22 +24,7 @@ const WithdrawUnlockNftButton: FC<WithdrawUnlockNftButtonProps> = ({
     }
 
     setIsProcessing(true);
-
-    for (const [index, unlockId] of unlockIds.entries()) {
-      const success = await withdraw(tokenId, unlockId, {
-        current: index + 1,
-        total: unlockIds.length,
-      });
-
-      if (!success) {
-        console.error(
-          'Liquifier withdraw batch was aborted because one request failed',
-        );
-
-        break;
-      }
-    }
-
+    await withdraw(tokenId, unlockIds);
     setIsProcessing(false);
   }, [tokenId, unlockIds, withdraw]);
 
