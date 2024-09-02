@@ -87,7 +87,9 @@ const columns = [
           fw="bold"
           className="text-mono-200 dark:text-mono-0"
         >
-          {props.getValue().toFixed(2)}%
+          {Number.isNaN(props.getValue())
+            ? '--'
+            : `${props.getValue().toFixed(2)}%`}
         </Typography>
       </TableCellWrapper>
     ),

@@ -59,6 +59,17 @@ export default function useRestakeTVL(
             0,
           );
 
+          const operatorConcentration = Object.entries(operatorTVL).reduce(
+            (acc, [operatorId, operatorTVL]) => {
+              acc[operatorId] =
+                totalNetworkTVL > 0
+                  ? (operatorTVL / totalNetworkTVL) * 100
+                  : Number.NaN;
+              return acc;
+            },
+            {} as Record<string, number>,
+          );
+
           const delegatorTVL =
             delegatorInfo?.delegations.reduce(
               (acc, delegation) => {
@@ -90,11 +101,12 @@ export default function useRestakeTVL(
           );
 
           return of({
+            delegatorTVL,
+            operatorConcentration,
             operatorTVL,
             poolTVL,
-            totalNetworkTVL,
-            delegatorTVL,
             totalDelegatorTVL,
+            totalNetworkTVL,
           });
         }),
       ),
@@ -102,11 +114,12 @@ export default function useRestakeTVL(
   );
 
   const tvl = useObservableState(tvl$, {
+    delegatorTVL: {},
+    operatorConcentration: {},
     operatorTVL: {},
     poolTVL: {},
-    totalNetworkTVL: 0,
-    delegatorTVL: {},
     totalDelegatorTVL: 0,
+    totalNetworkTVL: 0,
   });
 
   return tvl;

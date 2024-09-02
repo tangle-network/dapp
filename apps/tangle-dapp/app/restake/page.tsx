@@ -33,6 +33,7 @@ export default function RestakePage() {
 
   const {
     delegatorTVL,
+    operatorConcentration,
     operatorTVL,
     poolTVL,
     totalDelegatorTVL,
@@ -103,6 +104,7 @@ export default function RestakePage() {
         delegatorInfo={delegatorInfo}
         operatorTVL={operatorTVL}
         vaultTVL={poolTVL}
+        operatorConcentration={operatorConcentration}
       />
     </div>
   );

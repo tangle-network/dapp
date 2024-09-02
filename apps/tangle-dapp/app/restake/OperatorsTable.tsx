@@ -15,11 +15,16 @@ type OperatorUI = NonNullable<
 >[number];
 
 type Props = {
+  operatorConcentration?: Record<string, number>;
   operatorMap: OperatorMap;
   operatorTVL?: Record<string, number>;
 };
 
-const OperatorsTable: FC<Props> = ({ operatorMap, operatorTVL }) => {
+const OperatorsTable: FC<Props> = ({
+  operatorConcentration,
+  operatorMap,
+  operatorTVL,
+}) => {
   const [globalFilter, setGlobalFilter] = useState('');
 
   const { assetMap } = useRestakeContext();
@@ -40,11 +45,12 @@ const OperatorsTable: FC<Props> = ({ operatorMap, operatorTVL }) => {
             .filter((vaultAsset) => Boolean(vaultAsset.asset));
 
           const tvlInUsd = operatorTVL?.[address] ?? Number.NaN;
+          const concentrationPercentage =
+            operatorConcentration?.[address] ?? Number.NaN;
 
           return {
             address,
-            // TODO: Calculate concentration percentage
-            concentrationPercentage: 0,
+            concentrationPercentage,
             identityName: identities[address]?.name ?? '',
             restakersCount: delegationCount,
             tvlInUsd,
@@ -56,7 +62,7 @@ const OperatorsTable: FC<Props> = ({ operatorMap, operatorTVL }) => {
           };
         },
       ),
-    [assetMap, identities, operatorMap, operatorTVL],
+    [assetMap, identities, operatorConcentration, operatorMap, operatorTVL],
   );
 
   return (

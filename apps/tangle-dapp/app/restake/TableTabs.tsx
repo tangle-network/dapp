@@ -23,9 +23,10 @@ type VaultAssetUI = NonNullable<
 >[number];
 
 type Props = {
-  operatorMap: OperatorMap;
   delegatorInfo: DelegatorInfo | null;
   delegatorTVL?: Record<string, number>;
+  operatorConcentration?: Record<string, number>;
+  operatorMap: OperatorMap;
   operatorTVL?: Record<string, number>;
   vaultTVL?: Record<string, number>;
 };
@@ -33,6 +34,7 @@ type Props = {
 const TableTabs: FC<Props> = ({
   delegatorInfo,
   delegatorTVL,
+  operatorConcentration,
   operatorMap,
   operatorTVL,
   vaultTVL,
@@ -143,7 +145,11 @@ const TableTabs: FC<Props> = ({
       </TabContent>
 
       <TabContent value={OPERATORS_TAB}>
-        <OperatorsTable operatorMap={operatorMap} operatorTVL={operatorTVL} />
+        <OperatorsTable
+          operatorConcentration={operatorConcentration}
+          operatorMap={operatorMap}
+          operatorTVL={operatorTVL}
+        />
       </TabContent>
     </TableAndChartTabs>
   );
