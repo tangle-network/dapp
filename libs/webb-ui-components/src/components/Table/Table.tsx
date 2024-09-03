@@ -122,7 +122,7 @@ export const Table = <T extends RowData>({
                 </tr>
 
                 {getExpandedRowContent && row.getIsExpanded() && (
-                  <tr>
+                  <tr key={`${row.id}_expanded`}>
                     <td colSpan={row.getVisibleCells().length}>
                       {getExpandedRowContent(row)}
                     </td>

@@ -13,9 +13,9 @@ import { twMerge } from 'tailwind-merge';
 
 import useVaults from '../../app/liquid-staking/useVaults';
 import StatItem from '../../components/StatItem';
+import TableCellWrapper from '../../components/tables/TableCellWrapper';
 import { Asset, Vault } from '../../types/liquidStaking';
 import LsTokenIcon from '../LsTokenIcon';
-import TableCellWrapper from '../TableCellWrapper';
 
 const vaultColumnHelper = createColumnHelper<Vault>();
 const assetsColumnHelper = createColumnHelper<Asset>();
@@ -79,12 +79,12 @@ const vaultColumns = [
     header: () => null,
     cell: ({ row }) => (
       <TableCellWrapper removeBorder>
-        <div className="flex-1 flex items-center gap-2 justify-end">
+        <div className="flex items-center justify-end flex-1 gap-2">
           {/* TODO: add proper href */}
           <Link href="#" passHref>
             <Button
               variant="utility"
-              className="body4 uppercase"
+              className="uppercase body4"
               onClick={(e) => {
                 e.stopPropagation(); // prevent row click
               }}

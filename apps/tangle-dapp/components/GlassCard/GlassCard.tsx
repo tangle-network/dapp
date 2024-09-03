@@ -5,13 +5,22 @@ import { twMerge } from 'tailwind-merge';
 import { GlassCardProps } from './types';
 
 const GlassCard = forwardRef<ElementRef<'div'>, GlassCardProps>(
-  ({ children, className, ...props }, ref) => {
+  (
+    {
+      children,
+      className,
+      bgClassName = 'bg-glass dark:bg-glass_dark',
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <Card
         {...props}
         ref={ref}
         className={twMerge(
-          'p-6 space-y-0 rounded-2xl border border-mono-0 dark:border-mono-160 bg-glass dark:bg-glass_dark',
+          'p-6 space-y-0 rounded-2xl border border-mono-0 dark:border-mono-160',
+          bgClassName,
           className,
         )}
       >
