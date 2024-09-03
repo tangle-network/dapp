@@ -23,11 +23,11 @@ const columns = [
   columnHelper.accessor('name', {
     header: () => <Typography variant="body2">Token</Typography>,
     cell: (props) => (
-      <p className="flex items-center gap-2">
+      <div className="flex items-center gap-2">
         <LsTokenIcon name={props.row.original.symbol} />
 
         <Typography variant="body1">{props.getValue()}</Typography>
-      </p>
+      </div>
     ),
   }),
   columnHelper.accessor('amount', {
