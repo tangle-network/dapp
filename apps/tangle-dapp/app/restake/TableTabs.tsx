@@ -1,9 +1,9 @@
 'use client';
 
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
 import { type ComponentProps, type FC, useMemo } from 'react';
-import { formatUnits } from 'viem';
 
 import VaultAssetsTable from '../../components/tables/VaultAssets';
 import VaultsTable from '../../components/tables/Vaults';
@@ -25,7 +25,7 @@ type VaultAssetUI = NonNullable<
 type Props = {
   delegatorInfo: DelegatorInfo | null;
   delegatorTVL?: Record<string, number>;
-  operatorConcentration?: Record<string, number>;
+  operatorConcentration?: Record<string, number | null>;
   operatorMap: OperatorMap;
   operatorTVL?: Record<string, number>;
   vaultTVL?: Record<string, number>;
@@ -52,7 +52,7 @@ const TableTabs: FC<Props> = ({
 
       if (vaults[poolId] === undefined) {
         const apyPercentage = rewardConfig.configs[poolId]?.apy ?? 0;
-        const tvlInUsd = vaultTVL?.[poolId] ?? Number.NaN;
+        const tvlInUsd = vaultTVL?.[poolId] ?? null;
 
         vaults[poolId] = {
           id: poolId,
@@ -101,22 +101,15 @@ const TableTabs: FC<Props> = ({
         const vaultAssets = Object.values(assetMap)
           .filter((asset) => asset.poolId === poolId)
           .map((asset) => {
-            const selfStake = (() => {
-              if (delegatorTotalRestakedAssets[asset.id] === undefined) {
-                return 0;
-              }
+            const selfStake =
+              delegatorTotalRestakedAssets[asset.id] ?? ZERO_BIG_INT;
 
-              return +formatUnits(
-                delegatorTotalRestakedAssets[asset.id],
-                asset.decimals,
-              );
-            })();
-
-            const tvl = delegatorTVL?.[asset.id] ?? Number.NaN;
+            const tvl = delegatorTVL?.[asset.id] ?? null;
 
             return {
               id: asset.id,
               symbol: asset.symbol,
+              decimals: asset.decimals,
               tvl,
               selfStake,
             } satisfies VaultAssetUI;

@@ -97,7 +97,7 @@ export type AssetMetadata = {
 
   readonly poolId: string | null;
 
-  readonly priceInUsd: number;
+  readonly priceInUsd: number | null;
 };
 
 /**

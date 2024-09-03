@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { PagePath, QueryParamKey } from '../../../types';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import { getSortAddressOrIdentityFnc } from '../../../utils/table';
@@ -80,19 +81,23 @@ const columns = [
   }),
   columnHelper.accessor('concentrationPercentage', {
     header: () => 'Concentration',
-    cell: (props) => (
-      <TableCellWrapper>
-        <Typography
-          variant="body1"
-          fw="bold"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          {Number.isNaN(props.getValue())
-            ? '--'
-            : `${props.getValue().toFixed(2)}%`}
-        </Typography>
-      </TableCellWrapper>
-    ),
+    cell: (props) => {
+      const value = props.getValue();
+
+      return (
+        <TableCellWrapper>
+          <Typography
+            variant="body1"
+            fw="bold"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {typeof value !== 'number'
+              ? EMPTY_VALUE_PLACEHOLDER
+              : `${value.toFixed(2)}%`}
+          </Typography>
+        </TableCellWrapper>
+      );
+    },
   }),
   columnHelper.accessor('tvlInUsd', {
     header: () => 'TVL',

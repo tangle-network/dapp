@@ -15,7 +15,7 @@ type OperatorUI = NonNullable<
 >[number];
 
 type Props = {
-  operatorConcentration?: Record<string, number>;
+  operatorConcentration?: Record<string, number | null>;
   operatorMap: OperatorMap;
   operatorTVL?: Record<string, number>;
 };
@@ -49,9 +49,9 @@ const OperatorsTable: FC<Props> = ({
             return restakerSet;
           }, new Set<string>());
 
-          const tvlInUsd = operatorTVL?.[address] ?? Number.NaN;
+          const tvlInUsd = operatorTVL?.[address] ?? null;
           const concentrationPercentage =
-            operatorConcentration?.[address] ?? Number.NaN;
+            operatorConcentration?.[address] ?? null;
 
           return {
             address,

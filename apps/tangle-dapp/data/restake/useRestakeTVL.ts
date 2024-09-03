@@ -1,9 +1,9 @@
 import { useObservable, useObservableState } from 'observable-hooks';
 import { of, switchMap } from 'rxjs';
-import { formatUnits } from 'viem';
 
 import { useRestakeContext } from '../../context/RestakeContext';
 import type { DelegatorInfo, OperatorMap } from '../../types/restake';
+import safeFormatUnits from '../../utils/safeFormatUnits';
 
 export default function useRestakeTVL(
   operatorMap: OperatorMap,
@@ -20,15 +20,22 @@ export default function useRestakeTVL(
               const operatorTVL = operatorData.delegations.reduce(
                 (sum, delegation) => {
                   const asset = assetMap[delegation.assetId];
-                  const assetPrice = asset?.priceInUsd || Number.NaN;
+                  const assetPrice = asset?.priceInUsd ?? null;
 
-                  if (Number.isNaN(assetPrice)) {
+                  if (typeof assetPrice !== 'number') {
                     return sum;
                   }
 
-                  const formattedAmount = Number(
-                    formatUnits(delegation.amount, asset.decimals),
+                  const result = safeFormatUnits(
+                    delegation.amount,
+                    asset.decimals,
                   );
+
+                  if (!result.sucess) {
+                    return sum;
+                  }
+
+                  const formattedAmount = Number(result.value);
 
                   // Calculate operator TVL
                   sum += formattedAmount * assetPrice;
@@ -64,28 +71,36 @@ export default function useRestakeTVL(
               acc[operatorId] =
                 totalNetworkTVL > 0
                   ? (operatorTVL / totalNetworkTVL) * 100
-                  : Number.NaN;
+                  : null;
               return acc;
             },
-            {} as Record<string, number>,
+            {} as Record<string, number | null>,
           );
 
           const delegatorTVL =
             delegatorInfo?.delegations.reduce(
               (acc, delegation) => {
-                const assetPrice =
-                  assetMap[delegation.assetId]?.priceInUsd || Number.NaN;
-
-                if (Number.isNaN(assetPrice)) {
+                const assetData = assetMap[delegation.assetId];
+                if (assetData === undefined) {
                   return acc;
                 }
 
-                const formattedAmount = Number(
-                  formatUnits(
-                    delegation.amountBonded,
-                    assetMap[delegation.assetId].decimals,
-                  ),
+                const assetPrice = assetData.priceInUsd ?? null;
+
+                if (typeof assetPrice !== 'number') {
+                  return acc;
+                }
+
+                const result = safeFormatUnits(
+                  delegation.amountBonded,
+                  assetData.decimals,
                 );
+
+                if (!result.sucess) {
+                  return acc;
+                }
+
+                const formattedAmount = Number(result.value);
 
                 acc[delegation.assetId] =
                   (acc[delegation.assetId] || 0) + formattedAmount * assetPrice;

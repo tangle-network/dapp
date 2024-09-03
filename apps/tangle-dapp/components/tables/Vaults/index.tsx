@@ -110,7 +110,7 @@ const columns = [
                 row.getIsExpanded() ? 'rotate-180' : '',
               )}
             >
-              <ChevronUp className={twMerge('!fill-current')} />
+              <ChevronUp className="!fill-current" />
             </div>
           </Button>
         </div>

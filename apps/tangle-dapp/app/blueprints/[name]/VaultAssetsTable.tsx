@@ -16,17 +16,7 @@ const VaultAssetsTable: FC<VaultAssetsTableProps> = ({
 }) => {
   const data = useVaultAssets(LSTTokenIcon);
 
-  return (
-    <VaultAssetsTableUI
-      isShown={isShown}
-      data={data.map((d) => ({
-        id: d.id,
-        selfStake: d.myStake,
-        symbol: d.symbol,
-        tvl: d.tvl,
-      }))}
-    />
-  );
+  return <VaultAssetsTableUI isShown={isShown} data={data} />;
 };
 
 export default VaultAssetsTable;

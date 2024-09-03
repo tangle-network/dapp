@@ -5,5 +5,5 @@ export interface TokenPriceFetcher<TIsBatchSupported extends boolean> {
 
   fetchTokenPrice(
     token: TIsBatchSupported extends true ? string[] : string,
-  ): Promise<TIsBatchSupported extends true ? number[] : number>;
+  ): Promise<(TIsBatchSupported extends true ? number[] : number) | Error>;
 }

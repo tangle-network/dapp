@@ -8,7 +8,7 @@ export type VaultData = {
   name: string;
   apyPercentage: number;
   tokensCount: number;
-  tvlInUsd: number;
+  tvlInUsd: number | null;
   representToken: string;
 };
 

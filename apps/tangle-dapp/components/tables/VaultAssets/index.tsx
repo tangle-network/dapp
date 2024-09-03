@@ -6,10 +6,10 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
-import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/getRoundedAmountString';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import formatTangleBalance from '../../../utils/formatTangleBalance';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import type { Props, VaultAssetData } from './types';
 
@@ -30,7 +30,10 @@ const columns = [
   }),
   columnHelper.accessor('selfStake', {
     header: () => 'My Stake',
-    cell: (props) => getRoundedAmountString(props.getValue()),
+    cell: (props) =>
+      formatTangleBalance(props.getValue(), undefined, {
+        decimals: props.row.original.decimals,
+      }),
   }),
 ];
 

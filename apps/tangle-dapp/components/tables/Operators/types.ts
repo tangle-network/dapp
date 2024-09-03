@@ -13,8 +13,8 @@ export type OperatorData = {
   address: string;
   identityName: string;
   restakersCount: number;
-  concentrationPercentage: number;
-  tvlInUsd: number;
+  concentrationPercentage: number | null;
+  tvlInUsd: number | null;
   vaultTokens: VaultToken[];
 };
 

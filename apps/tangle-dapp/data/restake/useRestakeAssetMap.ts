@@ -163,7 +163,8 @@ const mapAssetDetails = async (
         decimals: metadata.decimals.toNumber(),
         status: detail.status.type,
         poolId: u128ToPoolId(poolId),
-        priceInUsd: tokenPrices[idx],
+        priceInUsd:
+          typeof tokenPrices[idx] === 'number' ? tokenPrices[idx] : null,
       },
     } satisfies AssetMap);
   }, initialAssetMap);
@@ -194,6 +195,6 @@ const getNativeAsset = async (
     id: assetId,
     status: 'Live',
     poolId: u128ToPoolId(poolId),
-    priceInUsd,
+    priceInUsd: typeof priceInUsd === 'number' ? priceInUsd : null,
   } satisfies AssetMetadata;
 };
