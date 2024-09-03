@@ -76,7 +76,9 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     },
   });
 
-  const [poolIdParam] = useQueryState(QueryParamKey.RESTAKE_VAULT);
+  const [poolIdParam, setPoolIdParam] = useQueryState(
+    QueryParamKey.RESTAKE_VAULT,
+  );
 
   const { assetMap, assetWithBalances } = useRestakeContext();
   const { operatorMap } = useRestakeOperatorMap();
@@ -139,7 +141,10 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
       'amount',
       formatUnits(defaultAsset.balance.balance, defaultAsset.metadata.decimals),
     );
-  }, [assetWithBalances, poolIdParam, setValue]);
+
+    // Remove the param to prevent reuse after initial load
+    setPoolIdParam(null);
+  }, [assetWithBalances, poolIdParam, setPoolIdParam, setValue]);
 
   const sourceTypedChainId = watch('sourceTypedChainId');
 

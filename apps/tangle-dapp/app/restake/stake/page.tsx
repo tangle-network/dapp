@@ -59,7 +59,9 @@ export default function Page() {
     mode: 'onBlur',
   });
 
-  const [operatorParam] = useQueryState(QueryParamKey.RESTAKE_OPERATOR);
+  const [operatorParam, setOperatorParam] = useQueryState(
+    QueryParamKey.RESTAKE_OPERATOR,
+  );
 
   const setValue = useCallback(
     (...params: Parameters<typeof setFormValue>) => {
@@ -118,7 +120,10 @@ export default function Page() {
     if (!operatorMap[operatorParam]) return;
 
     setFormValue('operatorAccountId', operatorParam);
-  }, [operatorMap, operatorParam, setFormValue]);
+
+    // Remove the param to prevent reuse after initial load
+    setOperatorParam(null);
+  }, [operatorMap, operatorParam, setFormValue, setOperatorParam]);
 
   const {
     status: isChainModalOpen,
