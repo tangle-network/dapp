@@ -69,7 +69,7 @@ interface BridgeContextProps {
   setIsAddressInputError: (isAddressInputError: boolean) => void;
 
   walletError: BridgeWalletError | null;
-  switchToCorrectEvmChain: () => void;
+  switchToSelectedChain: () => void;
 
   isTransferring: boolean;
   setIsTransferring: (isTransferring: boolean) => void;
@@ -124,7 +124,7 @@ const BridgeContext = createContext<BridgeContextProps>({
   },
 
   walletError: null,
-  switchToCorrectEvmChain: () => {
+  switchToSelectedChain: () => {
     return;
   },
 
@@ -256,7 +256,7 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
     return null;
   }, [selectedSourceChain, selectedDestinationChain]);
 
-  const switchToCorrectEvmChain = useCallback(() => {
+  const switchToSelectedChain = useCallback(() => {
     if (!activeWallet) return;
     const correctChain = getChainFromConfig(selectedSourceChain);
     switchChain(correctChain, activeWallet);
@@ -319,7 +319,7 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
       activeWallet?.platform === 'Substrate' &&
       isEVMChain(selectedSourceChain)
     ) {
-      setWalletError(BridgeWalletError.MismatchEvm);
+      setWalletError(BridgeWalletError.WalletMismatchEvm);
       return;
     }
 
@@ -327,7 +327,7 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
       activeWallet?.platform === 'EVM' &&
       isSubstrateChain(selectedSourceChain)
     ) {
-      setWalletError(BridgeWalletError.MismatchSubstrate);
+      setWalletError(BridgeWalletError.WalletMismatchSubstrate);
       return;
     }
 
@@ -335,7 +335,15 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
       isEVMChain(selectedSourceChain) &&
       activeChain?.id !== selectedSourceChain.id
     ) {
-      setWalletError(BridgeWalletError.EvmWrongChain);
+      setWalletError(BridgeWalletError.NetworkMismatchEvm);
+      return;
+    }
+
+    if (
+      isSubstrateChain(selectedSourceChain) &&
+      activeChain?.id !== selectedSourceChain.id
+    ) {
+      setWalletError(BridgeWalletError.NetworkMismatchSubstrate);
       return;
     }
 
@@ -372,7 +380,7 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
         setIsAddressInputError,
 
         walletError,
-        switchToCorrectEvmChain,
+        switchToSelectedChain,
 
         isTransferring,
         setIsTransferring,

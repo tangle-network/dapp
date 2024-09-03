@@ -41,9 +41,11 @@ export default function useActionButton({
     isAmountInputError,
     isAddressInputError,
     walletError,
-    switchToCorrectEvmChain,
+    switchToSelectedChain,
     feeItems,
     isTransferring,
+    setAmount,
+    setDestinationAddress,
   } = useBridge();
 
   const isNoActiveAccountOrWallet = useMemo(() => {
@@ -52,21 +54,26 @@ export default function useActionButton({
 
   const errorMessage = useMemo<ErrorMessage | null>(() => {
     switch (walletError) {
-      case BridgeWalletError.MismatchEvm:
+      case BridgeWalletError.WalletMismatchEvm:
         return {
           text: 'Wallet and Source Chain Mismatch',
           tooltip:
             'Selected Source Chain is EVM but the connected wallet only supports Substrate chains',
         };
-      case BridgeWalletError.MismatchSubstrate:
+      case BridgeWalletError.WalletMismatchSubstrate:
         return {
           text: 'Wallet and Source Chain Mismatch',
           tooltip:
             'Selected Source Chain is Substrate but the connected wallet only supports EVM chains',
         };
-      case BridgeWalletError.EvmWrongChain:
+      case BridgeWalletError.NetworkMismatchEvm:
         return {
-          text: 'Wrong EVM Chain Connected',
+          text: `Switch to ${selectedSourceChain.name}`,
+          tooltip: `Selected Source Chain is ${selectedSourceChain.name} but the connected wallet is on ${activeChain?.name}`,
+        };
+      case BridgeWalletError.NetworkMismatchSubstrate:
+        return {
+          text: `Switch to ${selectedSourceChain.name}`,
           tooltip: `Selected Source Chain is ${selectedSourceChain.name} but the connected wallet is on ${activeChain?.name}`,
         };
       default:
@@ -76,13 +83,15 @@ export default function useActionButton({
 
   const isWalletAndSourceChainMismatch = useMemo(
     () =>
-      walletError === BridgeWalletError.MismatchEvm ||
-      walletError === BridgeWalletError.MismatchSubstrate,
+      walletError === BridgeWalletError.WalletMismatchEvm ||
+      walletError === BridgeWalletError.WalletMismatchSubstrate,
     [walletError],
   );
 
-  const isEvmWrongChain = useMemo(
-    () => walletError === BridgeWalletError.EvmWrongChain,
+  const isSelectedNetworkAndSourceChainMismatch = useMemo(
+    () =>
+      walletError === BridgeWalletError.NetworkMismatchEvm ||
+      walletError === BridgeWalletError.NetworkMismatchSubstrate,
     [walletError],
   );
 
@@ -90,6 +99,10 @@ export default function useActionButton({
     () => !amount || !destinationAddress,
     [amount, destinationAddress],
   );
+
+  const isAmountZeroOrNegative = useMemo(() => {
+    return !amount || amount.isZero() || amount.isNeg();
+  }, [amount]);
 
   const isRequiredToConnectWallet = useMemo(
     () => isNoActiveAccountOrWallet || isWalletAndSourceChainMismatch,
@@ -106,42 +119,63 @@ export default function useActionButton({
           )
         : undefined,
     );
-  }, [toggleModal, isWalletAndSourceChainMismatch, selectedSourceChain]);
+
+    setAmount(null);
+    setDestinationAddress('');
+  }, [
+    toggleModal,
+    isWalletAndSourceChainMismatch,
+    selectedSourceChain.chainType,
+    selectedSourceChain.id,
+    setAmount,
+    setDestinationAddress,
+  ]);
+
+  const switchChain = useCallback(() => {
+    switchToSelectedChain();
+    setAmount(null);
+    setDestinationAddress('');
+  }, [switchToSelectedChain, setAmount, setDestinationAddress]);
 
   const buttonAction = useMemo(() => {
     if (isRequiredToConnectWallet) return openWalletModal;
-    if (isEvmWrongChain) return switchToCorrectEvmChain;
+    if (isSelectedNetworkAndSourceChainMismatch) return switchChain;
     return handleOpenConfirmModal;
   }, [
     isRequiredToConnectWallet,
     openWalletModal,
+    isSelectedNetworkAndSourceChainMismatch,
+    switchChain,
     handleOpenConfirmModal,
-    isEvmWrongChain,
-    switchToCorrectEvmChain,
   ]);
 
   const buttonText = useMemo(() => {
     if (isWalletAndSourceChainMismatch) return 'Switch Wallet';
-    if (isEvmWrongChain) return 'Switch Network';
+    if (isSelectedNetworkAndSourceChainMismatch) return 'Switch Chain';
     if (isRequiredToConnectWallet) return 'Connect';
     if (isTransferring) return 'Transferring...';
     return 'Transfer';
   }, [
     isWalletAndSourceChainMismatch,
+    isSelectedNetworkAndSourceChainMismatch,
     isRequiredToConnectWallet,
-    isEvmWrongChain,
     isTransferring,
   ]);
 
   const buttonLoadingText = useMemo(() => {
-    if (isRequiredToConnectWallet || isEvmWrongChain) return 'Connecting...';
+    if (isRequiredToConnectWallet || isSelectedNetworkAndSourceChainMismatch)
+      return 'Connecting...';
     if (isTransferring) return 'Transferring...';
-  }, [isRequiredToConnectWallet, isEvmWrongChain, isTransferring]);
+  }, [
+    isRequiredToConnectWallet,
+    isSelectedNetworkAndSourceChainMismatch,
+    isTransferring,
+  ]);
 
   return {
     isLoading: loading || isConnecting,
     isDisabled:
-      isRequiredToConnectWallet || isEvmWrongChain
+      isRequiredToConnectWallet || isSelectedNetworkAndSourceChainMismatch
         ? false
         : isInputInsufficient ||
           isAmountInputError ||
@@ -150,7 +184,8 @@ export default function useActionButton({
           feeItems.interchain?.isLoading ||
           feeItems.gas?.isLoading ||
           feeItems.gas?.amount === null ||
-          isTransferring,
+          isTransferring ||
+          isAmountZeroOrNegative,
     buttonAction,
     buttonText,
     buttonLoadingText,

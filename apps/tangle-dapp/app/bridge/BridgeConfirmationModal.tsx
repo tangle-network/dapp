@@ -17,10 +17,8 @@ import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import FeeDetails from './FeeDetails';
 import useAmountInDecimals from './hooks/useAmountInDecimals';
-import useBridgeFee from './hooks/useBridgeFee';
 import useBridgeTransfer from './hooks/useBridgeTransfer';
-import useEstimatedGasFee from './hooks/useEstimatedGasFee';
-import useHyperlaneFees from './hooks/useHyperlaneFees';
+import useFees from './hooks/useFees';
 import useSelectedToken from './hooks/useSelectedToken';
 
 interface BridgeConfirmationModalProps {
@@ -49,9 +47,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
   const { sourceAmountInDecimals, destinationAmountInDecimals } =
     useAmountInDecimals();
 
-  useBridgeFee();
-  useEstimatedGasFee();
-  useHyperlaneFees();
+  useFees();
 
   const cleanUpWhenSubmit = useCallback(() => {
     handleClose();

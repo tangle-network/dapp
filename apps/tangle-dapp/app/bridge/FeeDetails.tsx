@@ -37,8 +37,8 @@ const FeeDetails = () => {
     <FeeDetailsCmp
       title="Fees"
       totalFeeCmp={totalFeeCmp}
-      collapsible={false}
-      value="fee-details"
+      collapsible={true}
+      isDefaultOpen={true}
       items={
         [
           feeItems.bridge !== null && {

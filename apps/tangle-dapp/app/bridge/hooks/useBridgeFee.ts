@@ -112,8 +112,15 @@ export default function useBridgeFee() {
         ? {
             amount: fee,
             isLoading,
+            symbol: selectedSourceChain.nativeCurrency.symbol,
           }
         : null,
     );
-  }, [fee, isLoading, updateFeeItem]);
+  }, [
+    fee,
+    isLoading,
+    selectedSourceChain.nativeCurrency.symbol,
+    selectedToken.symbol,
+    updateFeeItem,
+  ]);
 }
