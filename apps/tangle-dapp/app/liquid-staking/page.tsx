@@ -7,6 +7,7 @@ import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeC
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
 import UnstakeRequestsTable from '../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
+import ParachainPoolsTable from '../../containers/ParachainPoolsTable';
 import useSearchParamState from '../../hooks/useSearchParamState';
 import TabListItem from '../restake/TabListItem';
 import TabsList from '../restake/TabsList';
@@ -46,6 +47,8 @@ const LiquidStakingTokenPage: FC = () => {
 
       <div className="flex flex-col flex-grow w-min gap-4 min-w-[370px]">
         {isStaking ? <LsValidatorTable /> : <UnstakeRequestsTable />}
+
+        <ParachainPoolsTable setSelectedPoolId={() => void 0} />
       </div>
     </div>
   );

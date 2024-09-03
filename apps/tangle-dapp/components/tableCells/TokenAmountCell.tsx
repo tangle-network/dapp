@@ -9,14 +9,14 @@ import formatTangleBalance from '../../utils/formatTangleBalance';
 export type TokenAmountCellProps = {
   amount: BN;
   className?: string;
-  tokenSymbol?: string;
+  symbol?: string;
   decimals?: number;
 };
 
 const TokenAmountCell: FC<TokenAmountCellProps> = ({
   amount,
   className,
-  tokenSymbol,
+  symbol,
   decimals,
 }) => {
   const { nativeTokenSymbol } = useNetworkStore();
@@ -31,6 +31,7 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({
       // Show small amounts. Without this, small amounts would
       // be displayed as 0.
       fractionMaxLength: undefined,
+      includeCommas: true,
     });
   }, [amount, decimals]);
 
@@ -49,7 +50,7 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({
 
       <span className="!text-opacity-60 text-inherit">
         {decimalPart !== undefined && `.${decimalPart}`}{' '}
-        {typeof tokenSymbol === 'string' ? tokenSymbol : nativeTokenSymbol}
+        {typeof symbol === 'string' ? symbol : nativeTokenSymbol}
       </span>
     </span>
   );

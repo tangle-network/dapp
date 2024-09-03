@@ -58,7 +58,7 @@ const columns = [
   columnHelper.accessor('amount', {
     header: () => <HeaderCell title="Amount" className="justify-center" />,
     cell: (props) => {
-      return <TokenAmountCell amount={props.getValue()} tokenSymbol="tgDOT" />;
+      return <TokenAmountCell amount={props.getValue()} symbol="tgDOT" />;
     },
   }),
 ];

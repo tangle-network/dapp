@@ -38,6 +38,7 @@ const DEFAULT_PAGINATION: PaginationState = {
 };
 
 const SELECTED_ITEMS_COLUMN_SORT = {
+  // TODO: Need to update the correct id. It seems that the `id` field no longer exists in the row's type. Need to statically-type-link-it instead of hard coding it, to avoid the same bug in the future.
   id: 'id',
   desc: false,
 } as const satisfies ColumnSort;
