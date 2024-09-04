@@ -22,7 +22,6 @@ import {
   formatTokenAmount,
   fuzzyFilter,
   numberToString,
-  shortenString,
 } from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 
@@ -121,7 +120,6 @@ const staticColumns = [
     cell: (props) => (
       <div className="flex items-center">
         <KeyValueWithButton
-          shortenFn={(note: string) => shortenString(note, 4)}
           isHiddenLabel
           size="sm"
           keyValue={props.getValue()}

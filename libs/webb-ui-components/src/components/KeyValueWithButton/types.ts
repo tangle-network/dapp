@@ -47,14 +47,6 @@ export interface KeyValueWithButtonProps
   hasShortenValue?: boolean;
 
   /**
-   * The shorten string function
-   * @param value represents the value to shorten
-   * @param chars number of displayed characters
-   * @returns the shortened string
-   */
-  shortenFn?: (value: string, chars?: number) => string;
-
-  /**
    * If `true`, the tooltip value will be disabled.
    */
   isDisabledTooltip?: boolean;

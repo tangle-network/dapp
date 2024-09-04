@@ -1,3 +1,5 @@
+'use client';
+
 import { FileCopyLine } from '@webb-tools/icons';
 import cx from 'classnames';
 import {
@@ -40,7 +42,6 @@ export const KeyValueWithButton = forwardRef<
       valueFontWeight,
       valueVariant,
       label = '',
-      shortenFn,
       isDisabledTooltip,
       onCopyButtonClick,
       displayCharCount = 5,
@@ -82,13 +83,11 @@ export const KeyValueWithButton = forwardRef<
     const value = useMemo(
       () =>
         hasShortenValue
-          ? shortenFn
-            ? shortenFn(keyValue)
-            : isHex(keyValue)
-              ? shortenHex(keyValue, displayCharCount)
-              : shortenString(keyValue, displayCharCount)
+          ? isHex(keyValue)
+            ? shortenHex(keyValue, displayCharCount)
+            : shortenString(keyValue, displayCharCount)
           : keyValue,
-      [displayCharCount, hasShortenValue, keyValue, shortenFn],
+      [displayCharCount, hasShortenValue, keyValue],
     );
 
     return (

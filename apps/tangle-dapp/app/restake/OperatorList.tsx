@@ -9,7 +9,6 @@ import { ListCardWrapper } from '@webb-tools/webb-ui-components/components/ListC
 import { ListItem } from '@webb-tools/webb-ui-components/components/ListCard/ListItem';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import isFunction from 'lodash/isFunction';
 import keys from 'lodash/keys';
 import omitBy from 'lodash/omitBy';
@@ -110,11 +109,7 @@ const OperatorList = forwardRef<HTMLDivElement, Props>(
                         operatorIdentities?.[current]?.name || '<Unknown>'
                       }
                       description={
-                        <KeyValueWithButton
-                          size="sm"
-                          keyValue={current}
-                          shortenFn={shortenString}
-                        />
+                        <KeyValueWithButton size="sm" keyValue={current} />
                       }
                     />
                   </ListItem>
