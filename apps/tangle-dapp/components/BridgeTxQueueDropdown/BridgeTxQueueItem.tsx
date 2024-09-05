@@ -49,7 +49,7 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
               updateTxState(tx.hash, BridgeTxState.Executed);
               clearInterval(interval);
             } else if (status === 'pending') {
-              updateTxState(tx.hash, BridgeTxState.Pending);
+              updateTxState(tx.hash, BridgeTxState.SygmaPending);
               clearInterval(interval);
             } else if (status === 'failed') {
               updateTxState(tx.hash, BridgeTxState.Failed);
@@ -145,11 +145,11 @@ const getActiveStep = (state: BridgeTxState, type: BridgeType): number => {
       return 1;
     case BridgeTxState.Sending:
       return 2;
-    case BridgeTxState.Indexing: {
+    case BridgeTxState.SygmaIndexing: {
       if (!isSygma) throw new Error('Invalid state for non-Sygma tx');
       return 3;
     }
-    case BridgeTxState.Pending: {
+    case BridgeTxState.SygmaPending: {
       if (!isSygma) throw new Error('Invalid state for non-Sygma tx');
       return 4;
     }
@@ -163,8 +163,8 @@ const getStatus = (state: BridgeTxState): StatusVariant => {
   switch (state) {
     case BridgeTxState.Initializing:
     case BridgeTxState.Sending:
-    case BridgeTxState.Indexing:
-    case BridgeTxState.Pending:
+    case BridgeTxState.SygmaIndexing:
+    case BridgeTxState.SygmaPending:
       return 'info';
     case BridgeTxState.Executed:
       return 'success';

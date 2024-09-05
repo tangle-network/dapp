@@ -135,8 +135,8 @@ const BridgeContext = createContext<BridgeContextProps>({
 
   feeItems: {
     gas: null,
-    bridge: null,
-    interchain: null,
+    sygmaBridge: null,
+    hyperlaneInterchain: null,
   },
   updateFeeItem: () => {
     return;
@@ -163,8 +163,8 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
     Record<BridgeFeeType, BridgeFeeItem | null>
   >({
     gas: null,
-    bridge: null,
-    interchain: null,
+    sygmaBridge: null,
+    hyperlaneInterchain: null,
   });
 
   const selectedSourceTypedChainId = useMemo(
@@ -281,8 +281,8 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const clearFeeItems = useCallback(() => {
     setFeeItems({
       gas: null,
-      bridge: null,
-      interchain: null,
+      sygmaBridge: null,
+      hyperlaneInterchain: null,
     });
   }, []);
 

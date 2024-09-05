@@ -81,28 +81,20 @@ export default function useActionButton({
     }
   }, [walletError, selectedSourceChain, activeChain]);
 
-  const isWalletAndSourceChainMismatch = useMemo(
-    () =>
-      walletError === BridgeWalletError.WalletMismatchEvm ||
-      walletError === BridgeWalletError.WalletMismatchSubstrate,
-    [walletError],
-  );
+  const isWalletAndSourceChainMismatch =
+    walletError === BridgeWalletError.WalletMismatchEvm ||
+    walletError === BridgeWalletError.WalletMismatchSubstrate;
 
-  const isSelectedNetworkAndSourceChainMismatch = useMemo(
-    () =>
-      walletError === BridgeWalletError.NetworkMismatchEvm ||
-      walletError === BridgeWalletError.NetworkMismatchSubstrate,
-    [walletError],
-  );
+  const isSelectedNetworkAndSourceChainMismatch =
+    walletError === BridgeWalletError.NetworkMismatchEvm ||
+    walletError === BridgeWalletError.NetworkMismatchSubstrate;
 
   const isInputInsufficient = useMemo(
     () => !amount || !destinationAddress,
     [amount, destinationAddress],
   );
 
-  const isAmountZeroOrNegative = useMemo(() => {
-    return !amount || amount.isZero() || amount.isNeg();
-  }, [amount]);
+  const isAmountZeroOrNegative = !amount || amount.isZero() || amount.isNeg();
 
   const isRequiredToConnectWallet = useMemo(
     () => isNoActiveAccountOrWallet || isWalletAndSourceChainMismatch,
@@ -180,8 +172,8 @@ export default function useActionButton({
         : isInputInsufficient ||
           isAmountInputError ||
           isAddressInputError ||
-          feeItems.bridge?.isLoading ||
-          feeItems.interchain?.isLoading ||
+          feeItems.sygmaBridge?.isLoading ||
+          feeItems.hyperlaneInterchain?.isLoading ||
           feeItems.gas?.isLoading ||
           feeItems.gas?.amount === null ||
           isTransferring ||

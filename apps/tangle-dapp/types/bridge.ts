@@ -71,15 +71,10 @@ export enum BridgeWalletError {
 
 export enum BridgeTxState {
   Initializing = 'Initializing', // The tx is being initialized
-
   Sending = 'Sending', // The user is signing the tx
-
-  Indexing = 'Indexing', // The tx is being indexed (Sygma txs only)
-
-  Pending = 'Pending', // The tx is done indexing but still pending (Sygma txs only)
-
+  SygmaIndexing = 'SygmaIndexing', // The tx is being indexed (Sygma txs only)
+  SygmaPending = 'SygmaPending', // The tx is done indexing but still pending (Sygma txs only)
   Executed = 'Executed', // The tx is executed successfully
-
   Failed = 'Failed', // The tx is failed
 }
 
@@ -100,10 +95,11 @@ export type BridgeQueueTxItem = {
   explorerUrl?: string;
 };
 
-export type BridgeFeeType =
-  | 'gas'
-  | 'bridge' // used with Sygma
-  | 'interchain'; // used with Hyperlane
+export enum BridgeFeeType {
+  Gas = 'gas',
+  SygmaBridge = 'sygmaBridge',
+  HyperlaneInterchain = 'hyperlaneInterchain',
+}
 
 export type BridgeFeeItem = {
   amount: Decimal | null;

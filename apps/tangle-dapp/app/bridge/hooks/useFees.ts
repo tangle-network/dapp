@@ -2,13 +2,17 @@
 
 import { isAddress, isEthereumAddress } from '@polkadot/util-crypto';
 import Decimal from 'decimal.js';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import useSWR from 'swr';
 
 import { useBridge } from '../../../context/BridgeContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import { hyperlaneTransfer } from '../../../lib/hyperlane/transfer';
-import { BridgeFeeItem, BridgeType } from '../../../types/bridge';
+import {
+  BridgeFeeItem,
+  BridgeFeeType,
+  BridgeType,
+} from '../../../types/bridge';
 import { getEthersGasPrice } from '../lib/fee';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
@@ -277,15 +281,15 @@ export default function useFees() {
 
     // Bridge Fee
     const bridgeFee = calculateBridgeFee();
-    updateFeeItem('bridge', bridgeFee);
+    updateFeeItem(BridgeFeeType.SygmaBridge, bridgeFee);
 
     // Gas Fee
     const gasFee = calculateGasFee();
-    updateFeeItem('gas', gasFee);
+    updateFeeItem(BridgeFeeType.Gas, gasFee);
 
     // Interchain Fee (only for Hyperlane)
     const interchainFee = calculateInterchainFee();
-    updateFeeItem('interchain', interchainFee);
+    updateFeeItem(BridgeFeeType.HyperlaneInterchain, interchainFee);
   }, [
     bridgeType,
     evmSygmaFee,
@@ -304,25 +308,13 @@ export default function useFees() {
     isLoadingSubstrateEstimatedGasFee,
   ]);
 
-  const isLoading = useMemo(() => {
-    return (
-      isLoadingEvmSygmaFee ||
-      isLoadingSubstrateSygmaFee ||
-      isLoadingEthersGasPrice ||
-      isLoadingEvmEstimatedGasPrice ||
-      isLoadingSubstrateEstimatedGasFee ||
-      isLoadingHyperlaneFees
-    );
-  }, [
-    isLoadingEvmSygmaFee,
-    isLoadingSubstrateSygmaFee,
-    isLoadingEthersGasPrice,
-    isLoadingEvmEstimatedGasPrice,
-    isLoadingSubstrateEstimatedGasFee,
-    isLoadingHyperlaneFees,
-  ]);
+  const isLoading =
+    isLoadingEvmSygmaFee ||
+    isLoadingSubstrateSygmaFee ||
+    isLoadingEthersGasPrice ||
+    isLoadingEvmEstimatedGasPrice ||
+    isLoadingSubstrateEstimatedGasFee ||
+    isLoadingHyperlaneFees;
 
-  return {
-    isLoading,
-  };
+  return isLoading;
 }

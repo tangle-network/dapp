@@ -210,7 +210,7 @@ export default function useBridgeTransfer({
         const receipt = await res.wait();
         if (receipt.status === 1) {
           addSygmaTxId(txHash, receipt.transactionHash);
-          updateTxState(txHash, BridgeTxState.Indexing);
+          updateTxState(txHash, BridgeTxState.SygmaIndexing);
         } else {
           updateTxState(txHash, BridgeTxState.Failed);
         }
@@ -310,7 +310,7 @@ export default function useBridgeTransfer({
               ) {
                 updateTxState(txHashStr, BridgeTxState.Failed);
               } else {
-                updateTxState(txHashStr, BridgeTxState.Indexing);
+                updateTxState(txHashStr, BridgeTxState.SygmaIndexing);
               }
 
               unsub();

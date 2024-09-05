@@ -1,12 +1,12 @@
 'use client';
 
 import Decimal from 'decimal.js';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import useSWR from 'swr';
 
 import { useBridge } from '../../../context/BridgeContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
-import { BridgeType } from '../../../types/bridge';
+import { BridgeFeeType, BridgeType } from '../../../types/bridge';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
 import useAmountInStr from './useAmountInStr';
@@ -79,7 +79,7 @@ export default function useBridgeFee() {
       },
     );
 
-  const fee = useMemo(() => {
+  const fee = (() => {
     switch (bridgeType) {
       case BridgeType.HYPERLANE_EVM_TO_EVM:
         return null;
@@ -90,9 +90,9 @@ export default function useBridgeFee() {
       case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
         return substrateSygmaFee ?? null;
     }
-  }, [bridgeType, evmSygmaFee, substrateSygmaFee]);
+  })();
 
-  const isLoading = useMemo(() => {
+  const isLoading = (() => {
     switch (bridgeType) {
       case BridgeType.HYPERLANE_EVM_TO_EVM:
         return false;
@@ -103,11 +103,11 @@ export default function useBridgeFee() {
       case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
         return isLoadingSubstrateSygmaFee;
     }
-  }, [bridgeType, isLoadingEvmSygmaFee, isLoadingSubstrateSygmaFee]);
+  })();
 
   useEffect(() => {
     updateFeeItem(
-      'bridge',
+      BridgeFeeType.SygmaBridge,
       fee !== null
         ? {
             amount: fee,
