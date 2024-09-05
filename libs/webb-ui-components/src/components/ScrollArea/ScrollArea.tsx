@@ -39,9 +39,9 @@ const Scrollbar = forwardRef<
     {...props}
     className={twMerge(
       cx(
-        'flex select-none touch-none p-[2px]',
+        'flex select-none touch-none p-0.5 w-2.5',
         'bg-transparent',
-        'radix-orientation-vertical:w-[10px] radix-orientation-horizontal:flex-col radix-orientation-horizontal:h-[10px]',
+        'data-[orientation=vertical]:w-2.5 data-[orientation=horizontal]:flex-col data-[orientation=horizontal]:h-2.5',
       ),
       className,
     )}
@@ -60,8 +60,8 @@ const Thumb: FC = forwardRef<
     className={twMerge(
       cx(
         'flex-1 bg-mono-60 dark:bg-mono-120 rounded-full',
-        'relative before:content-["\'\'"] before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2',
-        'before:w-full before:h-full before:min-w-[44px] before:min-h-[44px]',
+        'relative before:content-[""] before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2',
+        'before:w-full before:h-full',
       ),
       className,
     )}
