@@ -25,6 +25,8 @@ export enum PresetTypedChainId {
 
   Sepolia = calculateTypedChainId(ChainType.EVM, EVMChainId.Sepolia),
 
+  Holesky = calculateTypedChainId(ChainType.EVM, EVMChainId.Holesky),
+
   HarmonyTestnet1 = calculateTypedChainId(
     ChainType.EVM,
     EVMChainId.HarmonyTestnet1,

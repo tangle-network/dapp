@@ -64,6 +64,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
       isTotalLoading,
       isDefaultOpen,
       isDisabledBgColor,
+      collapsible = true,
       ...props
     },
     ref,
@@ -78,9 +79,9 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
           className,
         )}
         ref={ref}
-        collapsible
         type="single"
-        defaultValue={isDefaultOpen ? 'fee-details' : undefined}
+        collapsible={collapsible}
+        defaultValue="fee-details"
       >
         <AccordionItem
           value="fee-details"

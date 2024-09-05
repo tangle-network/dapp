@@ -20,7 +20,7 @@ import Optional from '../utils/Optional';
 
 interface BridgeTxQueueContextProps {
   txQueue: BridgeQueueTxItem[];
-  addTxToQueue: (tx: BridgeQueueTxItem) => void;
+  addTxToQueue: (tx: Omit<BridgeQueueTxItem, 'state'>) => void;
   deleteTxFromQueue: (txHash: string) => void;
   addSygmaTxId: (txHash: string, sygmaTxId: string) => void;
   addTxExplorerUrl: (txHash: string, explorerUrl: string) => void;
@@ -77,8 +77,12 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 
   const addTxToQueue = useCallback(
-    (tx: BridgeQueueTxItem) => {
+    (txData: Omit<BridgeQueueTxItem, 'state'>) => {
       if (!activeAccountAddress) return;
+      const tx = {
+        ...txData,
+        state: BridgeTxState.Initializing,
+      };
 
       setCachedBridgeTxQueueByAcc((cache) => {
         const currTxQueue = getTxQueueFromLocalStorage(

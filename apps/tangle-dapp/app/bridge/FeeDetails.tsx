@@ -11,13 +11,7 @@ import useSelectedToken from './hooks/useSelectedToken';
 import useTypedChainId from './hooks/useTypedChainId';
 
 const FeeDetails = () => {
-  const {
-    selectedSourceChain,
-    bridgeFee,
-    isBridgeFeeLoading,
-    estimatedGasFee,
-    isEstimatedGasFeeLoading,
-  } = useBridge();
+  const { selectedSourceChain, feeItems } = useBridge();
   const selectedToken = useSelectedToken();
   const { destinationTypedChainId } = useTypedChainId();
 
@@ -27,45 +21,46 @@ const FeeDetails = () => {
     [destinationTypedChainId, selectedToken.destChainTransactionFee],
   );
 
-  const totalFeeCmp = useMemo(() => {
-    if (bridgeFee === null || estimatedGasFee === null) return null;
-
-    const allTokenFee = bridgeFee.add(
-      destChainTransactionFee ?? new Decimal(0),
-    );
-
-    if (
-      selectedToken.symbol.toLowerCase() ===
-      selectedSourceChain.nativeCurrency.symbol.toLowerCase()
-    ) {
-      const totalFee = allTokenFee.add(estimatedGasFee);
-      if (totalFee.isZero()) return null;
-      return `${totalFee.toString()} ${selectedToken.symbol}`;
-    }
-
-    return `${allTokenFee.toDecimalPlaces(5).toString()} ${selectedToken.symbol} + ${estimatedGasFee.toDecimalPlaces(5).toString()} ${selectedSourceChain.nativeCurrency.symbol}`;
-  }, [
-    bridgeFee,
-    destChainTransactionFee,
-    selectedToken.symbol,
-    estimatedGasFee,
-    selectedSourceChain.nativeCurrency.symbol,
-  ]);
+  const totalFeeCmp = useMemo(
+    () =>
+      formatTotalAmount({
+        ...feeItems,
+        destChainTransactionFee:
+          destChainTransactionFee !== null
+            ? { amount: destChainTransactionFee, symbol: selectedToken.symbol }
+            : null,
+      }),
+    [feeItems, destChainTransactionFee, selectedToken.symbol],
+  );
 
   return (
     <FeeDetailsCmp
       title="Fees"
       totalFeeCmp={totalFeeCmp}
-      collapsible={false}
-      value="fee-details"
+      collapsible={true}
+      isDefaultOpen={true}
       items={
         [
-          {
+          feeItems.sygmaBridge !== null && {
             name: 'Bridge Fee',
             value: (
-              <FeeValueCmp fee={bridgeFee} symbol={selectedToken.symbol} />
+              <FeeValueCmp
+                fee={feeItems.sygmaBridge.amount}
+                symbol={feeItems.sygmaBridge.symbol}
+              />
             ),
-            isLoading: isBridgeFeeLoading,
+            isLoading: feeItems.sygmaBridge.isLoading,
+            info: 'This transaction will charge a bridge fee to cover the destination chain’s gas fee.',
+          },
+          feeItems.hyperlaneInterchain !== null && {
+            name: 'Interchain Fee',
+            value: (
+              <FeeValueCmp
+                fee={feeItems.hyperlaneInterchain.amount}
+                symbol={feeItems.hyperlaneInterchain.symbol}
+              />
+            ),
+            isLoading: feeItems.hyperlaneInterchain.isLoading,
             info: 'This transaction will charge a bridge fee to cover the destination chain’s gas fee.',
           },
           destChainTransactionFee !== null
@@ -84,11 +79,11 @@ const FeeDetails = () => {
             name: 'Estimated Gas Fee',
             value: (
               <FeeValueCmp
-                fee={estimatedGasFee}
+                fee={feeItems.gas?.amount ?? null}
                 symbol={selectedSourceChain.nativeCurrency.symbol}
               />
             ),
-            isLoading: isEstimatedGasFeeLoading,
+            isLoading: feeItems.gas?.isLoading ?? false,
           },
         ].filter((item) => Boolean(item)) as Array<FeeItem>
       }
@@ -111,3 +106,26 @@ const FeeValueCmp: FC<{ fee: Decimal | null; symbol: string }> = ({
     </Typography>
   );
 };
+
+function formatTotalAmount(
+  feeItems: Record<string, { amount: Decimal | null; symbol: string } | null>,
+): string {
+  const symbolTotals: Record<string, Decimal> = {};
+
+  for (const [, item] of Object.entries(feeItems)) {
+    if (item === null) continue;
+    const { amount, symbol } = item;
+    if (!amount) continue;
+    symbolTotals[symbol] = (symbolTotals[symbol] ?? new Decimal(0)).plus(
+      amount,
+    );
+  }
+
+  const formattedTotals = Object.entries(symbolTotals)
+    .map(
+      ([symbol, amount]) => `${amount.toDecimalPlaces(5).toString()} ${symbol}`,
+    )
+    .join(' + ');
+
+  return formattedTotals;
+}

@@ -17,9 +17,8 @@ import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import FeeDetails from './FeeDetails';
 import useAmountInDecimals from './hooks/useAmountInDecimals';
-import useBridgeFee from './hooks/useBridgeFee';
 import useBridgeTransfer from './hooks/useBridgeTransfer';
-import useEstimatedGasFee from './hooks/useEstimatedGasFee';
+import useFees from './hooks/useFees';
 import useSelectedToken from './hooks/useSelectedToken';
 
 interface BridgeConfirmationModalProps {
@@ -40,18 +39,15 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     destinationAddress,
     setAmount,
     setDestinationAddress,
-    bridgeFee,
-    isBridgeFeeLoading,
-    isEstimatedGasFeeLoading,
     isTransferring,
     setIsTransferring,
+    feeItems,
   } = useBridge();
   const selectedToken = useSelectedToken();
   const { sourceAmountInDecimals, destinationAmountInDecimals } =
     useAmountInDecimals();
 
-  useBridgeFee();
-  useEstimatedGasFee();
+  useFees();
 
   const cleanUpWhenSubmit = useCallback(() => {
     handleClose();
@@ -122,9 +118,10 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
               handleClose(); // TODO: handle clear form
             }}
             isDisabled={
-              isBridgeFeeLoading ||
-              isEstimatedGasFeeLoading ||
-              bridgeFee === null ||
+              feeItems.sygmaBridge?.isLoading ||
+              feeItems.hyperlaneInterchain?.isLoading ||
+              feeItems.gas?.isLoading ||
+              feeItems.gas?.amount === null ||
               !sourceAmountInDecimals ||
               !destinationAmountInDecimals ||
               !destinationAddress
