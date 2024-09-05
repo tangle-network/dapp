@@ -8,7 +8,7 @@ import useSWR from 'swr';
 import { useBridge } from '../../../context/BridgeContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import { hyperlaneTransfer } from '../../../lib/hyperlane/transfer';
-import { BridgeType } from '../../../types/bridge';
+import { BridgeFeeType, BridgeType } from '../../../types/bridge';
 import useAmountInStr from './useAmountInStr';
 import useDecimals from './useDecimals';
 import useSelectedToken from './useSelectedToken';
@@ -61,12 +61,12 @@ export default function useHyperlaneFees() {
   useEffect(() => {
     if (fees) {
       const { gasFee, interchainFee } = fees;
-      updateFeeItem('gas', {
+      updateFeeItem(BridgeFeeType.Gas, {
         amount: gasFee.amount,
         symbol: gasFee.symbol,
         isLoading,
       });
-      updateFeeItem('interchain', {
+      updateFeeItem(BridgeFeeType.HyperlaneInterchain, {
         amount: interchainFee.amount,
         symbol: interchainFee.symbol,
         isLoading,

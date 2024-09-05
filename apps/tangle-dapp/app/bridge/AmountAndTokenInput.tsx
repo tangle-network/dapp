@@ -47,12 +47,12 @@ const AmountAndTokenInput: FC = () => {
 
     return (existentialDeposit ?? new Decimal(0))
       .add(destChainTransactionFee ?? new Decimal(0))
-      .add(feeItems.bridge?.amount ?? new Decimal(0));
+      .add(feeItems.sygmaBridge?.amount ?? new Decimal(0));
   }, [
     selectedToken.existentialDeposit,
     selectedToken.destChainTransactionFee,
     sourceTypedChainId,
-    feeItems.bridge?.amount,
+    feeItems.sygmaBridge?.amount,
   ]);
 
   return (

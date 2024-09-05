@@ -18,17 +18,17 @@ export default function useAmountInDecimals() {
   }, [amount, decimals]);
 
   const subtractedAmount = useMemo(() => {
-    if (token.symbol === feeItems.bridge?.symbol)
-      return feeItems.bridge?.amount;
-    if (token.symbol === feeItems.interchain?.symbol)
-      return feeItems.interchain?.amount;
+    if (token.symbol === feeItems.sygmaBridge?.symbol)
+      return feeItems.sygmaBridge?.amount;
+    if (token.symbol === feeItems.hyperlaneInterchain?.symbol)
+      return feeItems.hyperlaneInterchain?.amount;
     return null;
   }, [
     token.symbol,
-    feeItems.bridge?.symbol,
-    feeItems.bridge?.amount,
-    feeItems.interchain?.symbol,
-    feeItems.interchain?.amount,
+    feeItems.sygmaBridge?.symbol,
+    feeItems.sygmaBridge?.amount,
+    feeItems.hyperlaneInterchain?.symbol,
+    feeItems.hyperlaneInterchain?.amount,
   ]);
 
   const destinationAmountInDecimals = useMemo(() => {

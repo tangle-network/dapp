@@ -41,26 +41,26 @@ const FeeDetails = () => {
       isDefaultOpen={true}
       items={
         [
-          feeItems.bridge !== null && {
+          feeItems.sygmaBridge !== null && {
             name: 'Bridge Fee',
             value: (
               <FeeValueCmp
-                fee={feeItems.bridge.amount}
-                symbol={feeItems.bridge.symbol}
+                fee={feeItems.sygmaBridge.amount}
+                symbol={feeItems.sygmaBridge.symbol}
               />
             ),
-            isLoading: feeItems.bridge.isLoading,
+            isLoading: feeItems.sygmaBridge.isLoading,
             info: 'This transaction will charge a bridge fee to cover the destination chain’s gas fee.',
           },
-          feeItems.interchain !== null && {
+          feeItems.hyperlaneInterchain !== null && {
             name: 'Interchain Fee',
             value: (
               <FeeValueCmp
-                fee={feeItems.interchain.amount}
-                symbol={feeItems.interchain.symbol}
+                fee={feeItems.hyperlaneInterchain.amount}
+                symbol={feeItems.hyperlaneInterchain.symbol}
               />
             ),
-            isLoading: feeItems.interchain.isLoading,
+            isLoading: feeItems.hyperlaneInterchain.isLoading,
             info: 'This transaction will charge a bridge fee to cover the destination chain’s gas fee.',
           },
           destChainTransactionFee !== null

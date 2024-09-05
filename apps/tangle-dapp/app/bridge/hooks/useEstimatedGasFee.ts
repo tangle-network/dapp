@@ -7,7 +7,7 @@ import useSWR from 'swr';
 
 import { useBridge } from '../../../context/BridgeContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
-import { BridgeType } from '../../../types/bridge';
+import { BridgeFeeType, BridgeType } from '../../../types/bridge';
 import { getEthersGasPrice } from '../lib/fee';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
@@ -141,7 +141,7 @@ export default function useEstimatedGasFee() {
   ]);
 
   useEffect(() => {
-    updateFeeItem('gas', {
+    updateFeeItem(BridgeFeeType.Gas, {
       amount: fee,
       isLoading,
     });

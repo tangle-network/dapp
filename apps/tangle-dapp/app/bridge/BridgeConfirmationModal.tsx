@@ -118,8 +118,8 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
               handleClose(); // TODO: handle clear form
             }}
             isDisabled={
-              feeItems.bridge?.isLoading ||
-              feeItems.interchain?.isLoading ||
+              feeItems.sygmaBridge?.isLoading ||
+              feeItems.hyperlaneInterchain?.isLoading ||
               feeItems.gas?.isLoading ||
               feeItems.gas?.amount === null ||
               !sourceAmountInDecimals ||
