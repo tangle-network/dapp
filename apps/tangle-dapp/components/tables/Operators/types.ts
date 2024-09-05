@@ -3,13 +3,19 @@ import type { ComponentProps } from 'react';
 
 import type { TableStatus } from '../../TableStatus';
 
+export type VaultToken = {
+  name: string;
+  symbol: string;
+  amount: number;
+};
+
 export type OperatorData = {
   address: string;
   identityName: string;
   restakersCount: number;
-  concentrationPercentage: number;
-  tvlInUsd: number;
-  vaultTokens: string[];
+  concentrationPercentage: number | null;
+  tvlInUsd: number | null;
+  vaultTokens: VaultToken[];
 };
 
 export type Props = {

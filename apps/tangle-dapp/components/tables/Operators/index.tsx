@@ -11,7 +11,6 @@ import {
 import {
   Avatar,
   Button,
-  getRoundedAmountString,
   shortenString,
   Table,
   Typography,
@@ -20,12 +19,15 @@ import Link from 'next/link';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
+import { PagePath, QueryParamKey } from '../../../types';
+import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import { getSortAddressOrIdentityFnc } from '../../../utils/table';
-import LsTokenIcon from '../../LsTokenIcon';
 import { TableStatus } from '../../TableStatus';
 import { sharedTableStatusClxs } from '../shared';
 import TableCellWrapper from '../TableCellWrapper';
 import type { OperatorData, Props } from './types';
+import VaultsDropdown from './VaultsDropdown';
 
 const columnHelper = createColumnHelper<OperatorData>();
 
@@ -79,17 +81,23 @@ const columns = [
   }),
   columnHelper.accessor('concentrationPercentage', {
     header: () => 'Concentration',
-    cell: (props) => (
-      <TableCellWrapper>
-        <Typography
-          variant="body1"
-          fw="bold"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          {props.getValue().toFixed(2)}%
-        </Typography>
-      </TableCellWrapper>
-    ),
+    cell: (props) => {
+      const value = props.getValue();
+
+      return (
+        <TableCellWrapper>
+          <Typography
+            variant="body1"
+            fw="bold"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {typeof value !== 'number'
+              ? EMPTY_VALUE_PLACEHOLDER
+              : `${value.toFixed(2)}%`}
+          </Typography>
+        </TableCellWrapper>
+      );
+    },
   }),
   columnHelper.accessor('tvlInUsd', {
     header: () => 'TVL',
@@ -99,7 +107,7 @@ const columns = [
           variant="body1"
           className="text-mono-120 dark:text-mono-100"
         >
-          ${getRoundedAmountString(props.getValue())}
+          {getTVLToDisplay(props.getValue())}
         </Typography>
       </TableCellWrapper>
     ),
@@ -112,14 +120,7 @@ const columns = [
       return (
         <TableCellWrapper removeBorder>
           {tokensList.length > 0 ? (
-            <div className="flex items-center -space-x-2">
-              {props
-                .getValue()
-                .sort() // sort alphabetically
-                .map((vault, index) => (
-                  <LsTokenIcon key={index} name={vault} />
-                ))}
-            </div>
+            <VaultsDropdown vaultTokens={tokensList} />
           ) : (
             <Typography variant="body1">No vaults</Typography>
           )}
@@ -131,12 +132,13 @@ const columns = [
   columnHelper.display({
     id: 'actions',
     header: () => null,
-    cell: () => (
+    cell: (props) => (
       <TableCellWrapper removeBorder>
         <div className="flex items-center justify-end flex-1 gap-2">
           {/* TODO: add proper href */}
           <Button
             as={Link}
+            // TODO: add proper href
             href="#"
             variant="utility"
             className="uppercase body4"
@@ -144,10 +146,9 @@ const columns = [
             View
           </Button>
 
-          {/* TODO: add proper href */}
           <Button
             as={Link}
-            href="#"
+            href={`${PagePath.RESTAKE_STAKE}?${QueryParamKey.RESTAKE_OPERATOR}=${props.row.original.address}`}
             variant="utility"
             className="uppercase body4"
           >

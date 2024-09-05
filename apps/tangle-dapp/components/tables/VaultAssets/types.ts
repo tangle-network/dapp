@@ -1,8 +1,9 @@
 export type VaultAssetData = {
   id: string;
   symbol: string;
-  tvl: number;
-  selfStake: number;
+  decimals: number;
+  tvl: number | null;
+  selfStake: bigint;
 };
 
 export type Props = {
