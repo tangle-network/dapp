@@ -1,5 +1,5 @@
 import { type Row, type RowData, flexRender } from '@tanstack/react-table';
-import React, { useCallback } from 'react';
+import React, { Fragment, useCallback } from 'react';
 import { ArrowDropDownFill, ArrowDropUpFill } from '@webb-tools/icons';
 import { twMerge } from 'tailwind-merge';
 
@@ -101,9 +101,8 @@ export const Table = <T extends RowData>({
           </thead>
           <tbody className={tbodyClassName}>
             {table.getRowModel().rows.map((row) => (
-              <>
+              <Fragment key={row.id}>
                 <tr
-                  key={row.id}
                   className={twMerge('group/tr', trClassName)}
                   onClick={getRowClickHandler(row)}
                 >
@@ -122,13 +121,13 @@ export const Table = <T extends RowData>({
                 </tr>
 
                 {getExpandedRowContent && row.getIsExpanded() && (
-                  <tr key={`${row.id}_expanded`}>
+                  <tr>
                     <td colSpan={row.getVisibleCells().length}>
                       {getExpandedRowContent(row)}
                     </td>
                   </tr>
                 )}
-              </>
+              </Fragment>
             ))}
           </tbody>
           {isDisplayFooter && (

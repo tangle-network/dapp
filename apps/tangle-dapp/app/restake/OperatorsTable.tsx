@@ -2,21 +2,31 @@
 
 import { Search } from '@webb-tools/icons/Search';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';
-import { ComponentProps, useMemo, useState } from 'react';
+import { type ComponentProps, type FC, useMemo, useState } from 'react';
+import { formatUnits } from 'viem';
 
 import OperatorsTableUI from '../../components/tables/Operators';
 import { useRestakeContext } from '../../context/RestakeContext';
-import useRestakeOperatorMap from '../../data/restake/useRestakeOperatorMap';
 import useIdentities from '../../data/useIdentities';
+import type { OperatorMap } from '../../types/restake';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
 >[number];
 
-const OperatorsTable = () => {
+type Props = {
+  operatorConcentration?: Record<string, number | null>;
+  operatorMap: OperatorMap;
+  operatorTVL?: Record<string, number>;
+};
+
+const OperatorsTable: FC<Props> = ({
+  operatorConcentration,
+  operatorMap,
+  operatorTVL,
+}) => {
   const [globalFilter, setGlobalFilter] = useState('');
 
-  const { operatorMap } = useRestakeOperatorMap();
   const { assetMap } = useRestakeContext();
 
   const { result: identities } = useIdentities(
@@ -26,24 +36,38 @@ const OperatorsTable = () => {
   const operators = useMemo(
     () =>
       Object.entries(operatorMap).map<OperatorUI>(
-        ([address, { delegationCount, delegations }]) => {
-          const vaultTokens = delegations
-            .map((delegation) => assetMap[delegation.assetId]?.symbol)
-            .filter(Boolean);
+        ([address, { delegations }]) => {
+          const vaultAssets = delegations
+            .map((delegation) => ({
+              asset: assetMap[delegation.assetId],
+              amount: delegation.amount,
+            }))
+            .filter((vaultAsset) => Boolean(vaultAsset.asset));
+
+          const restakerSet = delegations.reduce((restakerSet, delegation) => {
+            restakerSet.add(delegation.delegatorAccountId);
+            return restakerSet;
+          }, new Set<string>());
+
+          const tvlInUsd = operatorTVL?.[address] ?? null;
+          const concentrationPercentage =
+            operatorConcentration?.[address] ?? null;
 
           return {
             address,
-            // TODO: Calculate concentration percentage
-            concentrationPercentage: 0,
+            concentrationPercentage,
             identityName: identities[address]?.name ?? '',
-            restakersCount: delegationCount,
-            // TODO: Calculate tvl in USD
-            tvlInUsd: 0,
-            vaultTokens,
+            restakersCount: restakerSet.size,
+            tvlInUsd,
+            vaultTokens: vaultAssets.map(({ asset, amount }) => ({
+              amount: +formatUnits(amount, asset.decimals),
+              name: asset.name,
+              symbol: asset.symbol,
+            })),
           };
         },
       ),
-    [assetMap, identities, operatorMap],
+    [assetMap, identities, operatorConcentration, operatorMap, operatorTVL],
   );
 
   return (
@@ -52,7 +76,7 @@ const OperatorsTable = () => {
         id="search-validators"
         rightIcon={<Search className="mr-2" />}
         placeholder="Search identity or address"
-        className="w-1/3 mb-4 ml-auto -mt-[54px]"
+        className="w-1/3 mb-1.5 ml-auto -mt-[54px]"
         isControlled
         debounceTime={500}
         value={globalFilter}

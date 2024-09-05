@@ -1,5 +1,6 @@
 'use client';
 
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { ArrowRight } from '@webb-tools/icons/ArrowRight';
 import {
@@ -8,6 +9,7 @@ import {
 } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
+import { useQueryState } from 'nuqs';
 import {
   type ComponentProps,
   useCallback,
@@ -33,6 +35,7 @@ import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
+import { QueryParamKey } from '../../../types';
 import { DepositFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
 import AvatarWithText from '../AvatarWithText';
@@ -73,6 +76,10 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     },
   });
 
+  const [poolIdParam, setPoolIdParam] = useQueryState(
+    QueryParamKey.RESTAKE_VAULT,
+  );
+
   const { assetMap, assetWithBalances } = useRestakeContext();
   const { operatorMap } = useRestakeOperatorMap();
   const { result: operatorIdentities } = useIdentities(
@@ -106,6 +113,38 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   useEffect(() => {
     resetField('amount');
   }, [activeTypedChainId, resetField]);
+
+  useEffect(() => {
+    if (!poolIdParam) return;
+
+    const defaultAsset = assetWithBalances
+      .filter((asset) => asset.metadata.poolId === poolIdParam)
+      .sort((a, b) => {
+        const aBalance = a.balance?.balance ?? ZERO_BIG_INT;
+        const bBalance = b.balance?.balance ?? ZERO_BIG_INT;
+
+        if (aBalance === bBalance) return 0;
+
+        return aBalance > bBalance ? -1 : 1;
+      })
+      // Find the first asset with balance
+      .find(
+        (asset) =>
+          asset.balance?.balance && asset.balance.balance > ZERO_BIG_INT,
+      );
+
+    if (!defaultAsset?.balance?.balance) return;
+
+    // Select the first asset in the pool by default
+    setValue('depositAssetId', defaultAsset.assetId);
+    setValue(
+      'amount',
+      formatUnits(defaultAsset.balance.balance, defaultAsset.metadata.decimals),
+    );
+
+    // Remove the param to prevent reuse after initial load
+    setPoolIdParam(null);
+  }, [assetWithBalances, poolIdParam, setPoolIdParam, setValue]);
 
   const sourceTypedChainId = watch('sourceTypedChainId');
 

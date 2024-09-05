@@ -13,11 +13,13 @@ import { ChevronUp } from '@webb-tools/icons/ChevronUp';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/getRoundedAmountString';
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
+import { PagePath, QueryParamKey } from '../../../types';
+import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import LsTokenIcon from '../../LsTokenIcon';
 import { TableStatus } from '../../TableStatus';
 import { sharedTableStatusClxs } from '../shared';
@@ -47,17 +49,24 @@ const columns = [
   }),
   columnHelper.accessor('apyPercentage', {
     header: () => 'APY',
-    cell: (props) => (
-      <TableCellWrapper>
-        <Typography
-          variant="body1"
-          fw="bold"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          {props.getValue().toFixed(2)}%
-        </Typography>
-      </TableCellWrapper>
-    ),
+    cell: (props) => {
+      const value = props.getValue();
+
+      return (
+        <TableCellWrapper>
+          <Typography
+            variant="body1"
+            fw="bold"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {typeof value !== 'number'
+              ? EMPTY_VALUE_PLACEHOLDER
+              : value.toFixed(2)}
+            %
+          </Typography>
+        </TableCellWrapper>
+      );
+    },
   }),
   columnHelper.accessor('tokensCount', {
     header: () => 'Tokens',
@@ -81,7 +90,7 @@ const columns = [
           variant="body1"
           className="text-mono-120 dark:text-mono-100"
         >
-          ${getRoundedAmountString(props.getValue())}
+          {getTVLToDisplay(props.getValue())}
         </Typography>
       </TableCellWrapper>
     ),
@@ -94,10 +103,10 @@ const columns = [
         <div className="flex items-center justify-end flex-1 gap-2">
           <Button
             as={Link}
-            // TODO: add proper href
-            href="#"
+            href={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_VAULT}=${row.original.id}`}
             variant="utility"
             className="uppercase body4"
+            onClick={(event) => event.stopPropagation()}
           >
             Restake
           </Button>
@@ -106,7 +115,7 @@ const columns = [
             <div
               className={twMerge(
                 '!text-current transition-transform duration-300 ease-in-out',
-                row.getIsExpanded() && 'rotate-180',
+                row.getIsExpanded() ? 'rotate-180' : '',
               )}
             >
               <ChevronUp className="!fill-current" />
