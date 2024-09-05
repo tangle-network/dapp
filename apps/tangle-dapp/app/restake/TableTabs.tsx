@@ -51,7 +51,7 @@ const TableTabs: FC<Props> = ({
       if (poolId === null) continue;
 
       if (vaults[poolId] === undefined) {
-        const apyPercentage = rewardConfig.configs[poolId]?.apy ?? 0;
+        const apyPercentage = rewardConfig.configs[poolId]?.apy ?? null;
         const tvlInUsd = vaultTVL?.[poolId] ?? null;
 
         vaults[poolId] = {

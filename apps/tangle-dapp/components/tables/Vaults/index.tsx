@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { PagePath, QueryParamKey } from '../../../types';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import LsTokenIcon from '../../LsTokenIcon';
@@ -48,17 +49,24 @@ const columns = [
   }),
   columnHelper.accessor('apyPercentage', {
     header: () => 'APY',
-    cell: (props) => (
-      <TableCellWrapper>
-        <Typography
-          variant="body1"
-          fw="bold"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          {props.getValue().toFixed(2)}%
-        </Typography>
-      </TableCellWrapper>
-    ),
+    cell: (props) => {
+      const value = props.getValue();
+
+      return (
+        <TableCellWrapper>
+          <Typography
+            variant="body1"
+            fw="bold"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {typeof value !== 'number'
+              ? EMPTY_VALUE_PLACEHOLDER
+              : value.toFixed(2)}
+            %
+          </Typography>
+        </TableCellWrapper>
+      );
+    },
   }),
   columnHelper.accessor('tokensCount', {
     header: () => 'Tokens',

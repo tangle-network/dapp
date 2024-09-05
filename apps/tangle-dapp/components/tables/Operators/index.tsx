@@ -120,7 +120,7 @@ const columns = [
       return (
         <TableCellWrapper removeBorder>
           {tokensList.length > 0 ? (
-            <VaultsDropdown vaultTokens={tokensList.sort()} />
+            <VaultsDropdown vaultTokens={tokensList} />
           ) : (
             <Typography variant="body1">No vaults</Typography>
           )}
