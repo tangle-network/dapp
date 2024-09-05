@@ -6,9 +6,9 @@ import type { TableStatus } from '../../TableStatus';
 export type VaultData = {
   id: string;
   name: string;
-  apyPercentage: number;
+  apyPercentage: number | null;
   tokensCount: number;
-  tvlInUsd: number;
+  tvlInUsd: number | null;
   representToken: string;
 };
 

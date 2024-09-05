@@ -4,9 +4,10 @@ import type {
   PalletMultiAssetDelegationOperatorOperatorBondLessRequest,
   PalletMultiAssetDelegationOperatorOperatorStatus,
 } from '@polkadot/types/lookup';
-import { useObservable, useObservableState } from 'observable-hooks';
+import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
-import { map, type Observable, of, switchMap } from 'rxjs';
+import { map, type Observable, of } from 'rxjs';
 
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import type { OperatorMap, OperatorMetadata } from '../../types/restake';
@@ -34,49 +35,38 @@ interface PalletMultiAssetDelegationOperatorOperatorMetadata extends Struct {
 export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType {
   const { apiRx } = usePolkadotApi();
 
-  const entries$ = useMemo(
-    () =>
-      apiRx.query.multiAssetDelegation?.operators !== undefined
-        ? apiRx.query.multiAssetDelegation.operators.entries<
-            Option<PalletMultiAssetDelegationOperatorOperatorMetadata>
-          >()
-        : of([]),
-    [apiRx.query.multiAssetDelegation?.operators],
-  );
+  const operatorMap$ = useMemo(() => {
+    if (!isDefined(apiRx.query?.multiAssetDelegation?.operators?.entries))
+      return of<OperatorMap>({});
 
-  const operatorMap$ = useObservable(
-    (input$) =>
-      input$.pipe(
-        switchMap(([entries$]) => {
-          return entries$.pipe(
-            map((entries) =>
-              entries.reduce(
-                (operatorsMap, [accountStorage, operatorMetadata]) => {
-                  if (operatorMetadata.isNone) return operatorsMap;
+    return apiRx.query.multiAssetDelegation.operators
+      .entries<Option<PalletMultiAssetDelegationOperatorOperatorMetadata>>()
+      .pipe(
+        map((entries) => {
+          return entries.reduce(
+            (operatorsMap, [accountStorage, operatorMetadata]) => {
+              if (operatorMetadata.isNone) return operatorsMap;
 
-                  const accountId = accountStorage.args[0];
-                  const operator = operatorMetadata.unwrap();
+              const accountId = accountStorage.args[0];
+              const operator = operatorMetadata.unwrap();
 
-                  const operatorMetadataPrimitive = {
-                    stake: operator.stake.toBigInt(),
-                    delegationCount: operator.delegationCount.toNumber(),
-                    bondLessRequest: toPrimitiveRequest(operator.request),
-                    delegations: toPrimitiveDelegations(operator.delegations),
-                    status: toPrimitiveStatus(operator.status),
-                  } satisfies OperatorMetadata;
+              const operatorMetadataPrimitive = {
+                stake: operator.stake.toBigInt(),
+                delegationCount: operator.delegationCount.toNumber(),
+                bondLessRequest: toPrimitiveRequest(operator.request),
+                delegations: toPrimitiveDelegations(operator.delegations),
+                status: toPrimitiveStatus(operator.status),
+              } satisfies OperatorMetadata;
 
-                  return Object.assign(operatorsMap, {
-                    [accountId.toString()]: operatorMetadataPrimitive,
-                  } satisfies OperatorMap);
-                },
-                {} as OperatorMap,
-              ),
-            ),
+              return Object.assign(operatorsMap, {
+                [accountId.toString()]: operatorMetadataPrimitive,
+              } satisfies OperatorMap);
+            },
+            {} as OperatorMap,
           );
         }),
-      ),
-    [entries$],
-  );
+      );
+  }, [apiRx.query.multiAssetDelegation?.operators]);
 
   const operatorMap = useObservableState(operatorMap$, {});
 

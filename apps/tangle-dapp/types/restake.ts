@@ -95,7 +95,9 @@ export type AssetMetadata = {
    */
   readonly status: TransformEnum<PalletAssetsAssetStatus>;
 
-  poolId: string | null;
+  readonly poolId: string | null;
+
+  readonly priceInUsd: number | null;
 };
 
 /**

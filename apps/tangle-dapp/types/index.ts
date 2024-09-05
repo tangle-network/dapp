@@ -15,13 +15,15 @@ export enum PagePath {
   SERVICES = '/services',
   RESTAKE = '/restake',
   RESTAKE_DEPOSIT = '/restake/deposit',
-  RESTAKE_DELEGATE = '/restake/delegate',
+  RESTAKE_STAKE = '/restake/stake',
   LIQUID_STAKING = '/liquid-staking',
   LIQUID_STAKING_OVERVIEW = '/liquid-staking/overview',
 }
 
 export enum QueryParamKey {
   DELEGATIONS_AND_PAYOUTS_TAB = 'tab',
+  RESTAKE_VAULT = 'vault',
+  RESTAKE_OPERATOR = 'operator',
 }
 
 export type QueryParamKeyOf<Page extends PagePath> =
