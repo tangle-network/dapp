@@ -155,7 +155,6 @@ const COLUMNS = [
           amount={props.getValue()}
           symbol={tokenSymbol}
           decimals={props.row.original.decimals}
-          className="text-left"
         />
       );
     },

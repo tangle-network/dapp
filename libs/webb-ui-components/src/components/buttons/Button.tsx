@@ -41,6 +41,7 @@ const Button = React.forwardRef<HTMLElement, ButtonProps>((props, ref) => {
     isLoading,
     leftIcon,
     loadingText,
+    // TODO: Icons don't inherit the color of the button's variant, they just stay white.
     rightIcon,
     size = 'md',
     spinner,

@@ -31,6 +31,7 @@ import {
   LiquidStakingItem,
   LiquidStakingItemType,
 } from '../../types/liquidStaking';
+import pluralize from '../../utils/pluralize';
 
 const DEFAULT_PAGINATION: PaginationState = {
   pageIndex: 0,
@@ -186,7 +187,7 @@ export const LsValidatorTable = () => {
               <Input
                 id="ls-validator-selection-search"
                 rightIcon={<Search className="mr-2" />}
-                placeholder="Search"
+                placeholder={`Search ${tableTitle.toLowerCase()}...`}
                 value={searchValue}
                 onChange={(newSearchValue) => setSearchValue(newSearchValue)}
                 className="mb-1"
@@ -216,7 +217,7 @@ export const LsValidatorTable = () => {
                 canNextPage={table.getCanNextPage()}
                 nextPage={table.nextPage}
                 setPageIndex={table.setPageIndex}
-                title={itemText + 's'}
+                title={pluralize(itemText.toLowerCase(), data.length > 1)}
                 className="!px-0 !py-0 !pt-6"
               />
             )}

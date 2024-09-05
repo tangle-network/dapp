@@ -28,9 +28,6 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({
     }
 
     return formatBn(amount, decimals, {
-      // Show small amounts. Without this, small amounts would
-      // be displayed as 0.
-      fractionMaxLength: undefined,
       includeCommas: true,
     });
   }, [amount, decimals]);
@@ -42,7 +39,7 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({
   return (
     <span
       className={twMerge(
-        'text-mono-140 dark:text-mono-40 whitespace-nowrap block text-center',
+        'text-mono-140 dark:text-mono-40 whitespace-nowrap block',
         className,
       )}
     >

@@ -127,11 +127,7 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
                 {identity === address ? shortenString(address, 8) : identity}
               </Typography>
 
-              <CopyWithTooltip
-                textToCopy={address}
-                isButton={false}
-                className="cursor-pointer"
-              />
+              <CopyWithTooltip textToCopy={address} isButton={false} />
             </div>
           </div>
         );

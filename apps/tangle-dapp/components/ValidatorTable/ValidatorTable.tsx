@@ -50,18 +50,14 @@ const getTableColumns = (isWaiting?: boolean) => [
               className="justify-start"
             />
           ),
-          cell: (props) => (
-            <TokenAmountCell amount={props.getValue()} className="text-start" />
-          ),
+          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
           sortingFn: sortBnValueForNomineeOrValidator,
         }),
         columnHelper.accessor('selfStakeAmount', {
           header: () => (
             <HeaderCell title="Self-staked" className="justify-start" />
           ),
-          cell: (props) => (
-            <TokenAmountCell amount={props.getValue()} className="text-start" />
-          ),
+          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
           sortingFn: sortBnValueForNomineeOrValidator,
         }),
       ]),
@@ -147,7 +143,6 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
               <CopyWithTooltip
                 textToCopy={address}
                 isButton={false}
-                className="cursor-pointer"
                 iconClassName="!fill-mono-160 dark:!fill-mono-80"
               />
 

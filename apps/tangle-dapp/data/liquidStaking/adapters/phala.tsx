@@ -114,11 +114,7 @@ const getTableColumns: GetTableColumnsFn<PhalaVaultOrStakePool> = (
                 #{id}
               </Typography>
 
-              <CopyWithTooltip
-                textToCopy={id}
-                isButton={false}
-                className="cursor-pointer"
-              />
+              <CopyWithTooltip textToCopy={id} isButton={false} />
             </div>
           </div>
         );

@@ -14,6 +14,9 @@ const ToggleableRadioInput: FC<ToggleableRadioInputProps> = ({
     <input
       type="radio"
       checked={isChecked}
+      // Mark the radio as read-only to avoid a warning about the `onChange`
+      // property missing.
+      readOnly
       onClick={onToggle}
       className={twMerge(
         'w-[18px] h-[18px] rounded-full bg-mono-0 dark:bg-mono-180 border border-mono-100',

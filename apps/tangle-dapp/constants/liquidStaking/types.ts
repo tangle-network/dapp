@@ -148,4 +148,5 @@ export type LsParachainPool = {
   validators: SubstrateAddress<typeof TANGLE_MAINNET_SS58_PREFIX>[];
   totalStaked: BN;
   apyPermill: number;
+  commissionPermill: number;
 };

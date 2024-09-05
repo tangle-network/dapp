@@ -50,11 +50,7 @@ const columns = [
               : identityName}
           </Typography>
 
-          <CopyWithTooltip
-            textToCopy={address}
-            isButton={false}
-            className="cursor-pointer"
-          />
+          <CopyWithTooltip textToCopy={address} isButton={false} />
         </div>
       );
     },
@@ -77,18 +73,14 @@ const columns = [
   }),
   columnHelper.accessor('selfStakeAmount', {
     header: () => <HeaderCell title="Self-staked" className="justify-center" />,
-    cell: (props) => (
-      <TokenAmountCell amount={props.getValue()} className="text-start" />
-    ),
+    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
     sortingFn: sortBnValueForNomineeOrValidator,
   }),
   columnHelper.accessor('totalStakeAmount', {
     header: () => (
       <HeaderCell title="Effective amount staked" className="justify-center" />
     ),
-    cell: (props) => (
-      <TokenAmountCell amount={props.getValue()} className="text-start" />
-    ),
+    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
     sortingFn: sortBnValueForNomineeOrValidator,
   }),
   columnHelper.accessor('nominatorCount', {
