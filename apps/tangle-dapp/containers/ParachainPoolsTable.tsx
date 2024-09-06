@@ -35,6 +35,7 @@ import {
   LsParachainPool,
   LsProtocolId,
 } from '../constants/liquidStaking/types';
+import { useLsStore } from '../data/liquidStaking/useLsStore';
 import getLsProtocolDef from '../utils/liquidStaking/getLsProtocolDef';
 import pluralize from '../utils/pluralize';
 
@@ -167,13 +168,8 @@ const DEFAULT_PAGINATION_STATE: PaginationState = {
   pageSize: 10,
 };
 
-export type ParachainPoolsTableProps = {
-  setSelectedPoolId: (poolId: string | null) => void;
-};
-
-const ParachainPoolsTable: FC<ParachainPoolsTableProps> = ({
-  setSelectedPoolId,
-}) => {
+const ParachainPoolsTable: FC = () => {
+  const { setSelectedParachainPoolId } = useLsStore();
   const [searchQuery, setSearchQuery] = useState('');
 
   const [paginationState, setPaginationState] = useState<PaginationState>(
@@ -196,10 +192,15 @@ const ParachainPoolsTable: FC<ParachainPoolsTableProps> = ({
       );
 
       assert(selectedRowIds.length <= 1, 'Only one row can ever be selected');
-      setSelectedPoolId(selectedRowIds.length > 0 ? selectedRowIds[0] : null);
+
+      // TODO: Rows can only be selected, but once selected, one radio input/row must always remain selected.
+      setSelectedParachainPoolId(
+        selectedRowIds.length > 0 ? selectedRowIds[0] : null,
+      );
+
       setRowSelectionState(newSelectionState);
     },
-    [rowSelectionState, setSelectedPoolId],
+    [rowSelectionState, setSelectedParachainPoolId],
   );
 
   const rows: LsParachainPool[] = [

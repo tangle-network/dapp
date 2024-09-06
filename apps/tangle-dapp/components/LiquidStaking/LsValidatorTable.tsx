@@ -45,7 +45,8 @@ const SELECTED_ITEMS_COLUMN_SORT = {
 } as const satisfies ColumnSort;
 
 export const LsValidatorTable = () => {
-  const { selectedProtocolId, setSelectedItems } = useLsStore();
+  const { selectedProtocolId, setSelectedNetworkEntities: setSelectedItems } =
+    useLsStore();
   const { isLoading, data, dataType } = useLsValidators(selectedProtocolId);
   const [searchValue, setSearchValue] = useState('');
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
