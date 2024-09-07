@@ -7,6 +7,7 @@ import {
   arbitrumGoerli,
   avalancheFuji,
   goerli,
+  holesky,
   moonbaseAlpha,
   optimismGoerli,
   polygonMumbai,
@@ -36,6 +37,7 @@ export const wagmiChains = [
   hermesLocalnet,
   athenaLocalnet,
   demeterLocalnet,
+  holesky,
 ] as const;
 
 export const chainsConfig = {
@@ -90,6 +92,23 @@ export const chainsConfig = {
       },
     },
   },
+
+  [PresetTypedChainId.Holesky]: {
+    ...holesky,
+    chainType: ChainType.EVM,
+    group: 'ethereum',
+    tag: 'test',
+    // NOTE: override the default rpcUrls provided by viem.sh to prevent being blocked by CORS policy
+    rpcUrls: {
+      default: {
+        http: ['https://ethereum-holesky-rpc.publicnode.com'],
+      },
+      public: {
+        http: ['https://ethereum-holesky-rpc.publicnode.com'],
+      },
+    },
+  } satisfies ChainConfig,
+
   [PresetTypedChainId.AvalancheFuji]: {
     ...avalancheFuji,
     chainType: ChainType.EVM,

@@ -34,6 +34,28 @@ export const BRIDGE_SUPPORTED_TOKENS: Record<BridgeTokenId, BridgeTokenType> = {
         '0xA9F30c6B5E7996D1bAd51D213277c30750bcBB36',
     },
   },
+  // TODO: remove this (this is for testing Hyperlane only)
+  WETH: {
+    id: 'WETH',
+    symbol: 'WETH',
+    existentialDeposit: {},
+    destChainTransactionFee: {},
+    decimals: {
+      default: 18,
+    },
+    erc20TokenContractAddress: {
+      [PresetTypedChainId.Sepolia]:
+        '0x0F4C1d951295Fe17c1514eB3020dFA6EedAd0137',
+      [PresetTypedChainId.Holesky]:
+        '0x94373a4919B3240D86eA41593D5eBa789FEF3848',
+    },
+    hyperlaneRouteContractAddress: {
+      [PresetTypedChainId.Sepolia]:
+        '0x9DB8ebb2666E2e9f6864A82272199632eE45d182',
+      [PresetTypedChainId.Holesky]:
+        '0x9DB8ebb2666E2e9f6864A82272199632eE45d182',
+    },
+  },
 };
 
 // A Map with key as source chain id and value as another map
@@ -71,6 +93,16 @@ export const BRIDGE: BridgeType = {
     },
     [PresetTypedChainId.TangleTestnetNative]: {
       supportedTokens: ['sygUSD'],
+    },
+    // TODO: remove this (this is for testing Hyperlane only)
+    [PresetTypedChainId.Holesky]: {
+      supportedTokens: ['WETH'],
+    },
+  },
+  // TODO: remove this (this is for testing Hyperlane only)
+  [PresetTypedChainId.Holesky]: {
+    [PresetTypedChainId.Sepolia]: {
+      supportedTokens: ['WETH'],
     },
   },
 };
