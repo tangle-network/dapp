@@ -4,9 +4,9 @@ import { FC, useMemo } from 'react';
 import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import scaleAmountByPermill from '../../../utils/scaleAmountByPermill';
+import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
 import DetailItem from './DetailItem';
-import useLsFeePermill from './useLsFeePermill';
+import useLsFeePercentage from './useLsFeePercentage';
 
 export type FeeDetailItemProps = {
   isMinting: boolean;
@@ -19,7 +19,7 @@ const FeeDetailItem: FC<FeeDetailItemProps> = ({
   inputAmount,
   protocolId,
 }) => {
-  const feePermill = useLsFeePermill(protocolId, isMinting);
+  const feePercentage = useLsFeePercentage(protocolId, isMinting);
 
   const protocol = getLsProtocolDef(protocolId);
 
@@ -27,12 +27,12 @@ const FeeDetailItem: FC<FeeDetailItemProps> = ({
 
   const feeAmount = useMemo(() => {
     // Propagate error or loading state.
-    if (typeof feePermill !== 'number') {
-      return feePermill;
+    if (typeof feePercentage !== 'number') {
+      return feePercentage;
     }
 
-    return scaleAmountByPermill(inputAmount ?? BN_ZERO, feePermill);
-  }, [feePermill, inputAmount]);
+    return scaleAmountByPercentage(inputAmount ?? BN_ZERO, feePercentage);
+  }, [feePercentage, inputAmount]);
 
   const formattedFeeAmount = useMemo(() => {
     // Propagate error or loading state.
@@ -48,9 +48,9 @@ const FeeDetailItem: FC<FeeDetailItemProps> = ({
   }, [feeAmount, protocol.decimals, protocol.token]);
 
   const feeTitle =
-    typeof feePermill !== 'number'
+    typeof feePercentage !== 'number'
       ? 'Fee'
-      : `Fee (${(feePermill * 100).toFixed(2)}%)`;
+      : `Fee (${(feePercentage * 100).toFixed(2)}%)`;
 
   return <DetailItem title={feeTitle} value={formattedFeeAmount} />;
 };

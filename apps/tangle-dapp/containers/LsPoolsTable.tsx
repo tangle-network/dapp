@@ -1,6 +1,5 @@
 'use client';
 
-import { BN } from '@polkadot/util';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -25,42 +24,47 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 
 import { GlassCard } from '../components';
 import { StringCell } from '../components/tableCells';
 import TokenAmountCell from '../components/tableCells/TokenAmountCell';
 import ToggleableRadioInput from '../components/ToggleableRadioInput';
-import {
-  LsParachainPool,
-  LsProtocolId,
-} from '../constants/liquidStaking/types';
+import { EMPTY_VALUE_PLACEHOLDER } from '../constants';
+import { LsPool } from '../constants/liquidStaking/types';
+import useLsPools from '../data/liquidStaking/useLsPools';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
 import getLsProtocolDef from '../utils/liquidStaking/getLsProtocolDef';
 import pluralize from '../utils/pluralize';
 
-const COLUMN_HELPER = createColumnHelper<LsParachainPool>();
+const COLUMN_HELPER = createColumnHelper<LsPool>();
 
 const COLUMNS = [
-  COLUMN_HELPER.accessor('id', {
-    header: () => 'Asset ID',
-    cell: (props) => (
-      <div className="flex items-center gap-2">
-        <ToggleableRadioInput
-          isChecked={props.row.getIsSelected()}
-          onToggle={() => props.row.toggleSelected(!props.row.getIsSelected())}
-        />
+  COLUMN_HELPER.accessor('metadata', {
+    header: () => 'Metadata/name',
+    cell: (props) => {
+      const metadata = props.getValue();
 
-        <Typography variant="body2" className="whitespace-nowrap">
-          {props.getValue()}
-        </Typography>
+      if (metadata === undefined) {
+        return EMPTY_VALUE_PLACEHOLDER;
+      }
 
-        <CopyWithTooltip textToCopy={props.getValue()} isButton={false} />
-      </div>
-    ),
-    sortingFn: (rowA, rowB) => {
-      // NOTE: the sorting is reversed by default
-      return rowB.original.id.localeCompare(rowA.original.id);
+      return (
+        <div className="flex items-center gap-2">
+          <ToggleableRadioInput
+            isChecked={props.row.getIsSelected()}
+            onToggle={() =>
+              props.row.toggleSelected(!props.row.getIsSelected())
+            }
+          />
+
+          <Typography variant="body2" className="whitespace-nowrap">
+            {props.getValue()}
+          </Typography>
+
+          <CopyWithTooltip textToCopy={metadata} isButton={false} />
+        </div>
+      );
     },
     sortDescFirst: true,
   }),
@@ -100,7 +104,7 @@ const COLUMNS = [
     header: () => 'Validators',
     cell: (props) =>
       props.row.original.validators.length === 0 ? (
-        'None'
+        EMPTY_VALUE_PLACEHOLDER
       ) : (
         <AvatarGroup total={props.row.original.validators.length}>
           {props.row.original.validators.map((substrateAddress) => (
@@ -143,16 +147,24 @@ const COLUMNS = [
       );
     },
   }),
-  COLUMN_HELPER.accessor('commissionPermill', {
+  COLUMN_HELPER.accessor('commissionPercentage', {
     header: () => 'Commission',
-    cell: (props) => (
-      <StringCell
-        value={`${(props.getValue() * 100).toFixed(2)}%`}
-        className="text-start"
-      />
-    ),
+    cell: (props) => {
+      const commissionPercentage = props.getValue();
+
+      if (commissionPercentage === undefined) {
+        return EMPTY_VALUE_PLACEHOLDER;
+      }
+
+      return (
+        <StringCell
+          value={`${(commissionPercentage * 100).toFixed(2)}%`}
+          className="text-start"
+        />
+      );
+    },
   }),
-  COLUMN_HELPER.accessor('apyPermill', {
+  COLUMN_HELPER.accessor('apyPercentage', {
     header: () => 'APY',
     cell: (props) => (
       <StringCell
@@ -168,7 +180,7 @@ const DEFAULT_PAGINATION_STATE: PaginationState = {
   pageSize: 10,
 };
 
-const ParachainPoolsTable: FC = () => {
+const LsPoolsTable: FC = () => {
   const { setSelectedParachainPoolId } = useLsStore();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -203,43 +215,16 @@ const ParachainPoolsTable: FC = () => {
     [rowSelectionState, setSelectedParachainPoolId],
   );
 
-  const rows: LsParachainPool[] = [
-    {
-      id: 'abcdXYZ123',
-      owner: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY' as any,
-      chainId: LsProtocolId.POLKADOT,
-      apyPermill: 0.3,
-      ownerStaked: new BN(1234560000000000),
-      validators: [
-        '5FfP4SU5jXY9ZVfR1kY1pUXuJ3G1bfjJoQDRz4p7wSH3Mmdn' as any,
-        '5FnL9Pj3NX7E6yC1a2tN4kVdR7y2sAqG8vRsF4PN6yLeu2mL' as any,
-        '5CF8H7P3qHfZzBtPXH6G6e3Wc3V2wVn6tQHgYJ5HGKK1eC5z' as any,
-        '5GV8vP8Bh3fGZm2P7YNxMzUd9Wy4k3RSRvkq7RXVjxGGM1cy' as any,
-        '5DPy4XU6nNV2t2NQkz3QvPB2X5GJ5ZJ1wqMzC4Rxn2WLbXVD' as any,
-      ],
-      totalStaked: new BN(12300003567),
-      commissionPermill: 0.1,
-    },
-    {
-      id: 'zxcvbnm',
-      owner: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY' as any,
-      chainId: LsProtocolId.POLKADOT,
-      apyPermill: 0.3,
-      ownerStaked: new BN(123456).mul(new BN(10).pow(new BN(18))),
-      validators: [
-        '5FfP4SU5jXY9ZVfR1kY1pUXuJ3G1bfjJoQDRz4p7wSH3Mmdn' as any,
-        '5FnL9Pj3NX7E6yC1a2tN4kVdR7y2sAqG8vRsF4PN6yLeu2mL' as any,
-        '5CF8H7P3qHfZzBtPXH6G6e3Wc3V2wVn6tQHgYJ5HGKK1eC5z' as any,
-        '5GV8vP8Bh3fGZm2P7YNxMzUd9Wy4k3RSRvkq7RXVjxGGM1cy' as any,
-      ],
-      totalStaked: new BN(223456).mul(new BN(10).pow(new BN(18))),
-      commissionPermill: 0.1,
-    },
-  ];
+  // TODO: Handle possible error and loading states.
+  const poolsMap = useLsPools();
+
+  const rows: LsPool[] = useMemo(() => {
+    return poolsMap instanceof Map ? Array.from(poolsMap.values()) : [];
+  }, [poolsMap]);
 
   // TODO: Sort by chain by default, otherwise rows would look messy if there are many pools from different chains.
   const table = useReactTable({
-    getRowId: (row) => row.id,
+    getRowId: (row) => row.id.toString(),
     data: rows,
     columns: COLUMNS,
     state: {
@@ -269,7 +254,7 @@ const ParachainPoolsTable: FC = () => {
   return (
     <div className="flex flex-col items-end justify-center gap-2">
       <Button variant="utility" size="sm" rightIcon={<ArrowRight />}>
-        New Vault
+        Create Pool
       </Button>
 
       <GlassCard className="space-y-2">
@@ -278,7 +263,7 @@ const ParachainPoolsTable: FC = () => {
           fw="bold"
           className="text-mono-200 dark:text-mono-0"
         >
-          Select Token Vault
+          Select Pool
         </Typography>
 
         <Input
@@ -304,4 +289,4 @@ const ParachainPoolsTable: FC = () => {
   );
 };
 
-export default ParachainPoolsTable;
+export default LsPoolsTable;

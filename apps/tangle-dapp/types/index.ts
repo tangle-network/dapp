@@ -221,6 +221,7 @@ export type ServiceParticipant = {
 export enum NetworkFeature {
   Faucet,
   EraStakersOverview,
+  LsPools,
 }
 
 export const ExplorerType = {

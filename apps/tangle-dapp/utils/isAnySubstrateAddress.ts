@@ -1,10 +1,10 @@
 import { isAddress } from '@polkadot/util-crypto';
 
-import { AnySubstrateAddress, RemoveBrand } from '../types/utils';
+import { SubstrateAddress, RemoveBrand } from '../types/utils';
 
 const isAnySubstrateAddress = (
   address: string,
-): address is AnySubstrateAddress & RemoveBrand => {
+): address is SubstrateAddress & RemoveBrand => {
   return isAddress(address);
 };
 

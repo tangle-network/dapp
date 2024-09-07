@@ -7,7 +7,7 @@ import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeC
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
 import UnstakeRequestsTable from '../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
-import ParachainPoolsTable from '../../containers/ParachainPoolsTable';
+import LsPoolsTable from '../../containers/LsPoolsTable';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useSearchParamState from '../../hooks/useSearchParamState';
 import isLsParachainChainId from '../../utils/liquidStaking/isLsParachainChainId';
@@ -29,7 +29,7 @@ const LiquidStakingTokenPage: FC = () => {
   });
 
   const { selectedProtocolId } = useLsStore();
-  
+
   const isParachainChain = isLsParachainChainId(selectedProtocolId);
 
   return (
@@ -54,7 +54,7 @@ const LiquidStakingTokenPage: FC = () => {
       <div className="flex flex-col flex-grow w-min gap-4 min-w-[370px]">
         {isStaking ? (
           isParachainChain ? (
-            <ParachainPoolsTable />
+            <LsPoolsTable />
           ) : (
             <LsValidatorTable />
           )

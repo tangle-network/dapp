@@ -10,12 +10,12 @@ const useParachainLsFees = () => {
     useCallback((api) => {
       return api.query.lstMinting.fees().pipe(
         map((fees) => {
-          const mintFee = permillToPercentage(fees[0]);
-          const redeemFee = permillToPercentage(fees[1]);
+          const mintFeePercentage = permillToPercentage(fees[0]);
+          const redeemFeePercentage = permillToPercentage(fees[1]);
 
           return {
-            mintFee,
-            redeemFee,
+            mintFeePercentage,
+            redeemFeePercentage,
           };
         }),
       );

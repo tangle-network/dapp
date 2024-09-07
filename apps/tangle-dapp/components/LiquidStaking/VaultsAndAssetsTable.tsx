@@ -14,6 +14,7 @@ import { twMerge } from 'tailwind-merge';
 import useVaults from '../../app/liquid-staking/useVaults';
 import StatItem from '../../components/StatItem';
 import TableCellWrapper from '../../components/tables/TableCellWrapper';
+import { PagePath } from '../../types';
 import { Asset, Vault } from '../../types/liquidStaking';
 import LsTokenIcon from '../LsTokenIcon';
 
@@ -80,8 +81,7 @@ const vaultColumns = [
     cell: ({ row }) => (
       <TableCellWrapper removeBorder>
         <div className="flex items-center justify-end flex-1 gap-2">
-          {/* TODO: add proper href */}
-          <Link href="#" passHref>
+          <Link href={PagePath.LIQUID_STAKING} passHref>
             <Button
               variant="utility"
               className="uppercase body4"

@@ -8,7 +8,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useEffect, useMemo } from 'react';
 
-import { AnySubstrateAddress } from '../../../types/utils';
+import { SubstrateAddress } from '../../../types/utils';
 import formatBn from '../../../utils/formatBn';
 import LsTokenIcon from '../../LsTokenIcon';
 import AddressLink from '../AddressLink';
@@ -16,7 +16,7 @@ import AddressLink from '../AddressLink';
 export type SelectTokenModalProps = {
   isOpen: boolean;
   options: Omit<TokenListItemProps, 'onClick'>[];
-  onTokenSelect: (address: AnySubstrateAddress) => void;
+  onTokenSelect: (address: SubstrateAddress) => void;
   onClose: () => void;
 };
 
@@ -28,7 +28,7 @@ const SelectTokenModal: FC<SelectTokenModalProps> = ({
 }) => {
   // Sanity check: Ensure all addresses are unique.
   useEffect(() => {
-    const seenAddresses = new Set<AnySubstrateAddress>();
+    const seenAddresses = new Set<SubstrateAddress>();
 
     for (const option of options) {
       if (seenAddresses.has(option.address)) {
@@ -81,7 +81,7 @@ const SelectTokenModal: FC<SelectTokenModalProps> = ({
 };
 
 export type TokenListItemProps = {
-  address: AnySubstrateAddress;
+  address: SubstrateAddress;
   decimals: number;
   amount: BN;
   onClick: () => void;

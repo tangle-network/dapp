@@ -122,9 +122,4 @@ export type Brand<Type, Name extends string> = Type & { __brand: Name };
 
 export type RemoveBrand = { __brand: never };
 
-export type AnySubstrateAddress = Brand<string, 'AnySubstrateAddress'>;
-
-export type SubstrateAddress<SS58 extends number> = Brand<
-  string,
-  'SubstrateAddress' & { ss58Format: SS58 }
->;
+export type SubstrateAddress = Brand<string, 'SubstrateAddress'>;

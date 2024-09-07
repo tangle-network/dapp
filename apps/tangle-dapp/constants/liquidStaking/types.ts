@@ -9,9 +9,8 @@ import {
   LsNetworkEntityAdapter,
   ProtocolEntity,
 } from '../../data/liquidStaking/adapter';
-import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 import { SubstrateAddress } from '../../types/utils';
-import { TANGLE_MAINNET_SS58_PREFIX } from '../../../../libs/dapp-config/src/constants/tangle';
+import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 
 export enum LsProtocolId {
   POLKADOT,
@@ -140,13 +139,14 @@ export type LsNetwork = {
   protocols: LsProtocolDef[];
 };
 
-export type LsParachainPool = {
-  id: string;
-  owner: SubstrateAddress<typeof TANGLE_MAINNET_SS58_PREFIX>;
+export type LsPool = {
+  id: number;
+  metadata?: string;
+  owner: SubstrateAddress;
   ownerStaked: BN;
   chainId: LsParachainChainId;
-  validators: SubstrateAddress<typeof TANGLE_MAINNET_SS58_PREFIX>[];
+  validators: SubstrateAddress[];
   totalStaked: BN;
-  apyPermill: number;
-  commissionPermill: number;
+  apyPercentage: number;
+  commissionPercentage?: number;
 };
