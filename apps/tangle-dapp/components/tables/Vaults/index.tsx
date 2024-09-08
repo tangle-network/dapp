@@ -164,8 +164,8 @@ const VaultsTable: FC<Props> = ({
   if (isLoading) {
     return (
       <TableStatus
-        title="Loading operators..."
-        description="Please wait while we load the operators."
+        title="Loading vaults..."
+        description="Please wait while we load the vaults."
         icon="🔄"
         {...loadingTableProps}
         className={twMerge(sharedTableStatusClxs, loadingTableProps?.className)}
