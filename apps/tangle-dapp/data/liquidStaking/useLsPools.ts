@@ -7,9 +7,11 @@ import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
 import assertSubstrateAddress from '../../utils/assertSubstrateAddress';
 import permillToPercentage from '../../utils/permillToPercentage';
+import useLsPoolNominations from './useLsPoolNominations';
 
 const useLsPools = (): Map<number, LsPool> | null | Error => {
   const networkFeatures = useNetworkFeatures();
+  const poolNominations = useLsPoolNominations();
 
   if (!networkFeatures.includes(NetworkFeature.LsPools)) {
     // TODO: Handle case where the active network doesn't support liquid staking pools.
@@ -32,7 +34,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
       return null;
     }
 
-    return rawBondedPools.flatMap(([key, valueOpt]) => {
+    return rawBondedPools.flatMap(([poolIdKey, valueOpt]) => {
       // Skip empty values.
       if (valueOpt.isNone) {
         return [];
@@ -45,21 +47,21 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         return [];
       }
 
-      return [[key.args[0].toNumber(), tanglePool] as const];
+      return [[poolIdKey.args[0].toNumber(), tanglePool] as const];
     });
   }, [rawBondedPools]);
 
   const poolsMap = useMemo(() => {
-    if (tanglePools === null) {
+    if (tanglePools === null || poolNominations === null) {
       return null;
     }
 
-    const keyValuePairs = tanglePools.map(([id, tanglePool]) => {
+    const keyValuePairs = tanglePools.map(([poolId, tanglePool]) => {
       const metadataEntryBytes =
         rawMetadataEntries === null
           ? undefined
           : rawMetadataEntries.find(
-              ([idKey]) => idKey.args[0].toNumber() === id,
+              ([idKey]) => idKey.args[0].toNumber() === poolId,
             )?.[1];
 
       const metadata =
@@ -77,29 +79,23 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         : permillToPercentage(tanglePool.commission.current.unwrap()[0]);
 
       const pool: LsPool = {
-        id,
+        id: poolId,
         metadata,
         owner,
         commissionPercentage,
+        validators: poolNominations.get(poolId) ?? [],
         // TODO: Dummy values.
         apyPercentage: 0.1,
         chainId: LsProtocolId.POLKADOT,
         totalStaked: new BN(1234560000000000),
         ownerStaked: new BN(12300003567),
-        validators: [
-          '5FfP4SU5jXY9ZVfR1kY1pUXuJ3G1bfjJoQDRz4p7wSH3Mmdn' as any,
-          '5FnL9Pj3NX7E6yC1a2tN4kVdR7y2sAqG8vRsF4PN6yLeu2mL' as any,
-          '5CF8H7P3qHfZzBtPXH6G6e3Wc3V2wVn6tQHgYJ5HGKK1eC5z' as any,
-          '5GV8vP8Bh3fGZm2P7YNxMzUd9Wy4k3RSRvkq7RXVjxGGM1cy' as any,
-          '5DPy4XU6nNV2t2NQkz3QvPB2X5GJ5ZJ1wqMzC4Rxn2WLbXVD' as any,
-        ],
       };
 
-      return [id, pool] as const;
+      return [poolId, pool] as const;
     });
 
     return new Map(keyValuePairs);
-  }, [rawMetadataEntries, tanglePools]);
+  }, [poolNominations, rawMetadataEntries, tanglePools]);
 
   return poolsMap;
 };
