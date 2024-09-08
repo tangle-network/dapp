@@ -1,5 +1,3 @@
-'use client';
-
 import { isHex } from '@polkadot/util';
 import isValidUrl from '@webb-tools/dapp-types/utils/isValidUrl';
 import { ExternalLinkLine } from '@webb-tools/icons/ExternalLinkLine';
@@ -9,7 +7,6 @@ import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/Ke
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
-import { notFound } from 'next/navigation';
 import { type ComponentProps, type FC, type ReactNode, useMemo } from 'react';
 import useSWRImmutable from 'swr/immutable';
 import { twMerge } from 'tailwind-merge';
@@ -17,30 +14,33 @@ import { twMerge } from 'tailwind-merge';
 import GlassCard from '../../../../components/GlassCard/GlassCard';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
 import useNetworkStore from '../../../../context/useNetworkStore';
-import useRestakeDelegatorInfo from '../../../../data/restake/useRestakeDelegatorInfo';
-import useRestakeOperatorMap from '../../../../data/restake/useRestakeOperatorMap';
-import useRestakeTVL from '../../../../data/restake/useRestakeTVL';
+import type {
+  DelegatorInfo,
+  OperatorMap,
+  OperatorMetadata,
+} from '../../../../types/restake';
 import getTVLToDisplay from '../../../../utils/getTVLToDisplay';
 import { getAccountInfo } from '../../../../utils/polkadot';
 import AvatarWithText from '../../AvatarWithText';
 
 interface Props extends Partial<ComponentProps<typeof GlassCard>> {
   operatorAddress: string;
+  operatorData: OperatorMetadata;
+  operatorMap: OperatorMap;
+  delegatorInfo: DelegatorInfo | null;
+  operatorTVL: Record<string, number>;
 }
 
 const OperatorInfoCard: FC<Props> = ({
   className,
   operatorAddress,
+  operatorData,
+  operatorMap,
+  delegatorInfo,
+  operatorTVL,
   ...props
 }) => {
-  const { operatorMap } = useRestakeOperatorMap();
-  const { delegatorInfo } = useRestakeDelegatorInfo();
-  const { operatorTVL } = useRestakeTVL(operatorMap, delegatorInfo);
   const { rpcEndpoint } = useNetworkStore();
-
-  if (operatorMap[operatorAddress] === undefined) {
-    notFound();
-  }
 
   const isRestaked = useMemo<boolean>(() => {
     if (delegatorInfo === null) {
@@ -60,8 +60,8 @@ const OperatorInfoCard: FC<Props> = ({
   );
 
   const restakersCount = useMemo(
-    () => operatorMap[operatorAddress].restakersCount.toString(),
-    [operatorAddress, operatorMap],
+    () => operatorData.restakersCount.toString(),
+    [operatorData.restakersCount],
   );
 
   const { data: operatorInfo } = useSWRImmutable(
