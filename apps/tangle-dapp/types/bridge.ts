@@ -4,6 +4,7 @@ import Decimal from 'decimal.js';
 
 // NOTE: might need to add cases when Sygma SDK does not support
 export enum BridgeType {
+  HYPERLANE_EVM_TO_EVM = 'hyperlane-evmToEvm',
   SYGMA_EVM_TO_EVM = 'sygma-evmToEvm',
   SYGMA_EVM_TO_SUBSTRATE = 'sygma-evmToSubstrate',
   SYGMA_SUBSTRATE_TO_EVM = 'sygma-substrateToEvm',
@@ -11,7 +12,8 @@ export enum BridgeType {
 }
 
 // Supported tokens to be used in the bridge
-export type BridgeTokenId = 'tTNT' | 'TNT' | 'sygUSD';
+// TODO: remove WETH later (this is for testing Hyperlane only)
+export type BridgeTokenId = 'tTNT' | 'TNT' | 'sygUSD' | 'WETH';
 
 export type ChainId = PresetTypedChainId;
 
@@ -45,6 +47,11 @@ export type BridgeTokenType = {
   erc20TokenContractAddress?: Partial<Record<ChainId, HexString>>;
 
   /**
+   * Address of the Route Contract of Hyperlane to bridge EVM assets
+   */
+  hyperlaneRouteContractAddress?: Partial<Record<ChainId, HexString>>;
+
+  /**
    * The id of an asset on Substrate chain pallet
    */
   substrateAssetId?: Partial<Record<ChainId, number>>;
@@ -56,18 +63,17 @@ export type BridgeTokenType = {
 };
 
 export enum BridgeWalletError {
-  MismatchEvm = 'WALLET_MISMATCH_EVM',
-  MismatchSubstrate = 'WALLET_MISMATCH_SUBSTRATE',
-  EvmWrongChain = 'WALLET_EVM_WRONG_CHAIN',
+  WalletMismatchEvm = 'WALLET_MISMATCH_EVM',
+  WalletMismatchSubstrate = 'WALLET_MISMATCH_SUBSTRATE',
+  NetworkMismatchEvm = 'NETWORK_MISMATCH_EVM',
+  NetworkMismatchSubstrate = 'NETWORK_MISMATCH_SUBSTRATE',
 }
 
 export enum BridgeTxState {
+  Initializing = 'Initializing', // The tx is being initialized
   Sending = 'Sending', // The user is signing the tx
-
-  Indexing = 'Indexing', // The tx is being indexed by Sygma
-
-  Pending = 'Pending', // The tx is done indexing but still pending
-
+  SygmaIndexing = 'SygmaIndexing', // The tx is being indexed (Sygma txs only)
+  SygmaPending = 'SygmaPending', // The tx is done indexing but still pending (Sygma txs only)
   Executed = 'Executed', // The tx is executed successfully
   Failed = 'Failed', // The tx is failed
 }
@@ -85,5 +91,18 @@ export type BridgeQueueTxItem = {
   tokenSymbol: string;
   creationTimestamp: number;
   state: BridgeTxState;
+  type: BridgeType;
   explorerUrl?: string;
+};
+
+export enum BridgeFeeType {
+  Gas = 'gas',
+  SygmaBridge = 'sygmaBridge',
+  HyperlaneInterchain = 'hyperlaneInterchain',
+}
+
+export type BridgeFeeItem = {
+  amount: Decimal | null;
+  symbol: string;
+  isLoading?: boolean;
 };

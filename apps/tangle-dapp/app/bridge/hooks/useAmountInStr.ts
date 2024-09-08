@@ -7,7 +7,7 @@ import { useBridge } from '../../../context/BridgeContext';
 import formatBn from '../../../utils/formatBn';
 import useDecimals from './useDecimals';
 
-export default function useAmountToTransfer() {
+export default function useAmountInStr() {
   const { amount } = useBridge();
   const decimals = useDecimals();
 

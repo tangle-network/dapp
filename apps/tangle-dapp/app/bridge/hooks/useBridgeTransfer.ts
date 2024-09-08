@@ -1,18 +1,22 @@
 'use client';
 
+import { ProviderType } from '@hyperlane-xyz/sdk';
+import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
+import { chainsConfig } from '@webb-tools/dapp-config';
 import { providers } from 'ethers';
 
 import { useBridge } from '../../../context/BridgeContext';
 import { useBridgeTxQueue } from '../../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSubstrateInjectedExtension from '../../../hooks/useSubstrateInjectedExtension';
+import { hyperlaneTransfer } from '../../../lib/hyperlane/transfer';
 import { BridgeTxState, BridgeType } from '../../../types/bridge';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
 import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
 import useAmountInDecimals from './useAmountInDecimals';
+import useAmountInStr from './useAmountInStr';
 import useEthersProvider from './useEthersProvider';
 import useEthersSigner from './useEthersSigner';
-import useFormattedAmountForSygmaTx from './useFormattedAmountForSygmaTx';
 import useSelectedToken from './useSelectedToken';
 import useSubstrateApi from './useSubstrateApi';
 import useTypedChainId from './useTypedChainId';
@@ -34,12 +38,13 @@ export default function useBridgeTransfer({
   const ethersProvider = useEthersProvider();
   const ethersSigner = useEthersSigner();
   const api = useSubstrateApi();
-  const formattedAmount = useFormattedAmountForSygmaTx();
+  const amountInStr = useAmountInStr();
   const { sourceTypedChainId, destinationTypedChainId } = useTypedChainId();
   const { sourceAmountInDecimals, destinationAmountInDecimals } =
     useAmountInDecimals();
 
-  const { addTxToQueue, addSygmaTxId, updateTxState } = useBridgeTxQueue();
+  const { addTxToQueue, addSygmaTxId, updateTxState, addTxExplorerUrl } =
+    useBridgeTxQueue();
 
   return async () => {
     if (activeAccountAddress === null) {
@@ -58,7 +63,95 @@ export default function useBridgeTransfer({
     }
 
     switch (bridgeType) {
-      case BridgeType.SYGMA_EVM_TO_EVM:
+      case BridgeType.HYPERLANE_EVM_TO_EVM: {
+        if (ethersProvider === null) {
+          throw new Error('No Ethers Provider found');
+        }
+        if (ethersSigner === null) {
+          throw new Error('No Ethers Signer found');
+        }
+
+        const hyperlaneResult = await hyperlaneTransfer({
+          sourceTypedChainId,
+          destinationTypedChainId,
+          senderAddress: activeAccountAddress,
+          recipientAddress: destinationAddress,
+          token: selectedToken,
+          amount: amountInStr,
+        });
+
+        if (!hyperlaneResult) throw new Error('Hyperlane transfer failed');
+        const { txs } = hyperlaneResult;
+
+        for (const tx of txs) {
+          // Note, this doesn't use wagmi's prepare + send pattern because we're potentially sending two transactions
+          // The prepare hooks are recommended to use pre-click downtime to run async calls, but since the flow
+          // may require two serial txs, the prepare hooks aren't useful and complicate hook architecture considerably.
+          // See https://github.com/hyperlane-xyz/hyperlane-warp-ui-template/issues/19
+          // See https://github.com/wagmi-dev/wagmi/discussions/1564
+          if (tx.type !== ProviderType.EthersV5) {
+            throw new Error('Unsupported provider type');
+          }
+        }
+
+        let txHash: string | undefined;
+
+        for (const [idx, tx] of txs.entries()) {
+          const res = await ethersSigner.sendTransaction(
+            tx.transaction as providers.TransactionRequest,
+          );
+
+          // There are two transactions, one for approvals and one for actual transfer
+          // We only want to add the actual transfer to the queue
+          if (idx === txs.length - 1) {
+            txHash = res.hash;
+            // add Tx to Queue
+            addTxToQueue({
+              hash: txHash,
+              env:
+                selectedSourceChain.tag === 'live'
+                  ? 'live'
+                  : selectedSourceChain.tag === 'test'
+                    ? 'test'
+                    : 'dev',
+              sourceTypedChainId,
+              destinationTypedChainId,
+              sourceAddress: activeAccountAddress,
+              recipientAddress: destinationAddress,
+              sourceAmount: sourceAmountInDecimals.toString(),
+              destinationAmount: destinationAmountInDecimals.toString(),
+              tokenSymbol: selectedToken.symbol,
+              creationTimestamp: new Date().getTime(),
+              type: bridgeType,
+            });
+
+            updateTxState(txHash, BridgeTxState.Sending);
+            if (chainsConfig[sourceTypedChainId].blockExplorers) {
+              addTxExplorerUrl(
+                txHash,
+                getExplorerURI(
+                  chainsConfig[sourceTypedChainId].blockExplorers.default.url,
+                  txHash,
+                  'tx',
+                  'web3',
+                ).toString(),
+              );
+            }
+            onTxAddedToQueue();
+          }
+
+          const receipt = await res.wait();
+          if (txHash !== undefined) {
+            if (receipt.status === 1) {
+              updateTxState(txHash, BridgeTxState.Executed);
+            } else {
+              updateTxState(txHash, BridgeTxState.Failed);
+            }
+          }
+        }
+        break;
+      }
+
       case BridgeType.SYGMA_EVM_TO_SUBSTRATE: {
         if (ethersProvider === null) {
           throw new Error('No Ethers Provider found');
@@ -74,7 +167,7 @@ export default function useBridgeTransfer({
           sourceChain: selectedSourceChain,
           destinationChain: selectedDestinationChain,
           token: selectedToken,
-          amount: formattedAmount,
+          amount: amountInStr,
         });
 
         if (!sygmaEvmTransfer) {
@@ -108,15 +201,16 @@ export default function useBridgeTransfer({
           destinationAmount: destinationAmountInDecimals.toString(),
           tokenSymbol: selectedToken.symbol,
           creationTimestamp: new Date().getTime(),
-          state: BridgeTxState.Sending,
+          type: bridgeType,
         });
 
+        updateTxState(txHash, BridgeTxState.Sending);
         onTxAddedToQueue();
 
         const receipt = await res.wait();
         if (receipt.status === 1) {
           addSygmaTxId(txHash, receipt.transactionHash);
-          updateTxState(txHash, BridgeTxState.Indexing);
+          updateTxState(txHash, BridgeTxState.SygmaIndexing);
         } else {
           updateTxState(txHash, BridgeTxState.Failed);
         }
@@ -140,7 +234,7 @@ export default function useBridgeTransfer({
           sourceChain: selectedSourceChain,
           destinationChain: selectedDestinationChain,
           token: selectedToken,
-          amount: formattedAmount,
+          amount: amountInStr,
         });
 
         if (!sygmaSubstrateTransfer) {
@@ -183,9 +277,10 @@ export default function useBridgeTransfer({
                 destinationAmount: destinationAmountInDecimals.toString(),
                 tokenSymbol: selectedToken.symbol,
                 creationTimestamp: new Date().getTime(),
-                state: BridgeTxState.Sending,
+                type: bridgeType,
               });
 
+              updateTxState(txHashStr, BridgeTxState.Sending);
               onTxAddedToQueue();
             }
 
@@ -215,7 +310,7 @@ export default function useBridgeTransfer({
               ) {
                 updateTxState(txHashStr, BridgeTxState.Failed);
               } else {
-                updateTxState(txHashStr, BridgeTxState.Indexing);
+                updateTxState(txHashStr, BridgeTxState.SygmaIndexing);
               }
 
               unsub();
