@@ -10,7 +10,7 @@ const page = ({ params: { address } }: { params: { address: string } }) => {
   return (
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row items-stretch gap-5 max-h-none md:max-h-[290px]">
-        <OperatorInfoCard className="flex-1" />
+        <OperatorInfoCard className="flex-1" operatorAddress={address} />
 
         <RegisteredBlueprintsCard className="flex-1" />
       </div>

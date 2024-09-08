@@ -36,18 +36,13 @@ const OperatorsTable: FC<Props> = ({
   const operators = useMemo(
     () =>
       Object.entries(operatorMap).map<OperatorUI>(
-        ([address, { delegations }]) => {
+        ([address, { delegations, restakersCount }]) => {
           const vaultAssets = delegations
             .map((delegation) => ({
               asset: assetMap[delegation.assetId],
               amount: delegation.amount,
             }))
             .filter((vaultAsset) => Boolean(vaultAsset.asset));
-
-          const restakerSet = delegations.reduce((restakerSet, delegation) => {
-            restakerSet.add(delegation.delegatorAccountId);
-            return restakerSet;
-          }, new Set<string>());
 
           const tvlInUsd = operatorTVL?.[address] ?? null;
           const concentrationPercentage =
@@ -57,7 +52,7 @@ const OperatorsTable: FC<Props> = ({
             address,
             concentrationPercentage,
             identityName: identities[address]?.name ?? '',
-            restakersCount: restakerSet.size,
+            restakersCount,
             tvlInUsd,
             vaultTokens: vaultAssets.map(({ asset, amount }) => ({
               amount: +formatUnits(amount, asset.decimals),

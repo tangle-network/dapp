@@ -49,12 +49,16 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
 
               const accountId = accountStorage.args[0];
               const operator = operatorMetadata.unwrap();
+              const { delegations, restakersCount } = toPrimitiveDelegations(
+                operator.delegations,
+              );
 
               const operatorMetadataPrimitive = {
                 stake: operator.stake.toBigInt(),
                 delegationCount: operator.delegationCount.toNumber(),
                 bondLessRequest: toPrimitiveRequest(operator.request),
-                delegations: toPrimitiveDelegations(operator.delegations),
+                delegations,
+                restakersCount,
                 status: toPrimitiveStatus(operator.status),
               } satisfies OperatorMetadata;
 
@@ -112,10 +116,25 @@ function toPrimitiveStatus(
  */
 function toPrimitiveDelegations(
   delegations: Vec<PalletMultiAssetDelegationOperatorDelegatorBond>,
-): OperatorMetadata['delegations'] {
-  return delegations.map(({ amount, assetId, delegator }) => ({
-    amount: amount.toBigInt(),
-    delegatorAccountId: delegator.toString(),
-    assetId: assetId.toString(),
-  }));
+) {
+  const restakerSet = new Set<string>();
+
+  const primitiveDelegations = delegations.map(
+    ({ amount, assetId, delegator }) => {
+      const delegatorAccountId = delegator.toString();
+
+      restakerSet.add(delegatorAccountId);
+
+      return {
+        amount: amount.toBigInt(),
+        delegatorAccountId,
+        assetId: assetId.toString(),
+      } satisfies OperatorMetadata['delegations'][number];
+    },
+  );
+
+  return {
+    delegations: primitiveDelegations,
+    restakersCount: restakerSet.size,
+  };
 }
