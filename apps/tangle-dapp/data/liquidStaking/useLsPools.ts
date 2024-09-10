@@ -1,7 +1,7 @@
 import { BN, u8aToString } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
-import { LsPool, LsProtocolId } from '../../constants/liquidStaking/types';
+import { LsPool } from '../../constants/liquidStaking/types';
 import useApiRx from '../../hooks/useApiRx';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
@@ -86,9 +86,8 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         validators: poolNominations.get(poolId) ?? [],
         // TODO: Dummy values.
         apyPercentage: 0.1,
-        chainId: LsProtocolId.POLKADOT,
         totalStaked: new BN(1234560000000000),
-        ownerStaked: new BN(12300003567),
+        ownerStake: new BN(12300003567),
       };
 
       return [poolId, pool] as const;

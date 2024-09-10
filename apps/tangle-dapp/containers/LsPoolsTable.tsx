@@ -12,7 +12,7 @@ import {
   Updater,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowRight, ChainIcon, Search } from '@webb-tools/icons';
+import { ArrowRight, Search } from '@webb-tools/icons';
 import {
   Avatar,
   AvatarGroup,
@@ -29,12 +29,11 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { GlassCard } from '../components';
 import { StringCell } from '../components/tableCells';
 import TokenAmountCell from '../components/tableCells/TokenAmountCell';
-import ToggleableRadioInput from '../components/ToggleableRadioInput';
 import { EMPTY_VALUE_PLACEHOLDER } from '../constants';
 import { LsPool } from '../constants/liquidStaking/types';
 import useLsPools from '../data/liquidStaking/useLsPools';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
-import getLsProtocolDef from '../utils/liquidStaking/getLsProtocolDef';
+import RadioInput from '../data/liquidStaking/useLsValidatorSelectionTableColumns';
 import pluralize from '../utils/pluralize';
 
 const COLUMN_HELPER = createColumnHelper<LsPool>();
@@ -51,11 +50,9 @@ const COLUMNS = [
 
       return (
         <div className="flex items-center gap-2">
-          <ToggleableRadioInput
-            isChecked={props.row.getIsSelected()}
-            onToggle={() =>
-              props.row.toggleSelected(!props.row.getIsSelected())
-            }
+          <RadioInput
+            checked={props.row.getIsSelected()}
+            onChange={(e) => props.row.toggleSelected(e.target.checked)}
           />
 
           <Typography variant="body2" className="whitespace-nowrap">
@@ -67,28 +64,6 @@ const COLUMNS = [
       );
     },
     sortDescFirst: true,
-  }),
-  COLUMN_HELPER.accessor('chainId', {
-    header: () => 'Chain',
-    cell: (props) => {
-      const chain = getLsProtocolDef(props.row.original.chainId);
-
-      return (
-        <div className="flex items-center gap-2">
-          <ChainIcon size="lg" name={chain.chainIconFileName} />
-
-          <Typography variant="body2" className="whitespace-nowrap">
-            {chain.name}
-          </Typography>
-        </div>
-      );
-    },
-    sortingFn: (rowA, rowB) => {
-      const chainA = getLsProtocolDef(rowA.original.chainId);
-      const chainB = getLsProtocolDef(rowB.original.chainId);
-
-      return chainA.name.localeCompare(chainB.name);
-    },
   }),
   COLUMN_HELPER.accessor('owner', {
     header: () => 'Owner',
@@ -118,34 +93,15 @@ const COLUMNS = [
         </AvatarGroup>
       ),
   }),
-  COLUMN_HELPER.accessor('ownerStaked', {
+  COLUMN_HELPER.accessor('ownerStake', {
     header: () => "Owner's Stake",
-    cell: (props) => {
-      const protocol = getLsProtocolDef(props.row.original.chainId);
-
-      return (
-        <TokenAmountCell
-          amount={props.getValue()}
-          decimals={protocol.decimals}
-          symbol={protocol.token}
-        />
-      );
-    },
+    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
   }),
   COLUMN_HELPER.accessor('totalStaked', {
     header: () => 'Total Staked (TVL)',
-    cell: (props) => {
-      const protocol = getLsProtocolDef(props.row.original.chainId);
-
-      return (
-        <TokenAmountCell
-          amount={props.getValue()}
-          decimals={protocol.decimals}
-          symbol={protocol.token}
-          className="text-left"
-        />
-      );
-    },
+    cell: (props) => (
+      <TokenAmountCell amount={props.getValue()} className="text-left" />
+    ),
   }),
   COLUMN_HELPER.accessor('commissionPercentage', {
     header: () => 'Commission',
@@ -203,13 +159,10 @@ const LsPoolsTable: FC = () => {
         (rowId) => newSelectionState[rowId],
       );
 
-      assert(selectedRowIds.length <= 1, 'Only one row can ever be selected');
+      const selectedRow = selectedRowIds.at(0);
 
-      // TODO: Rows can only be selected, but once selected, one radio input/row must always remain selected.
-      setSelectedParachainPoolId(
-        selectedRowIds.length > 0 ? selectedRowIds[0] : null,
-      );
-
+      assert(selectedRow !== undefined, 'One row must always be selected');
+      setSelectedParachainPoolId(selectedRow);
       setRowSelectionState(newSelectionState);
     },
     [rowSelectionState, setSelectedParachainPoolId],

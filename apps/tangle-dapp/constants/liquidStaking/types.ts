@@ -143,8 +143,7 @@ export type LsPool = {
   id: number;
   metadata?: string;
   owner: SubstrateAddress;
-  ownerStaked: BN;
-  chainId: LsParachainChainId;
+  ownerStake: BN;
   validators: SubstrateAddress[];
   totalStaked: BN;
   apyPercentage: number;
