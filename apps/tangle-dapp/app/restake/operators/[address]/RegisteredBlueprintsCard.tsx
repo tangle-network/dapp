@@ -14,6 +14,8 @@ import { PagePath } from '../../../../types';
 
 interface Props extends Partial<ComponentProps<typeof GlassCard>> {}
 
+// TODO: Integrate API to get the blueprint detail.
+// The backend team is still working on adding these APIs.
 const blueprints = [
   {
     id: '1',
