@@ -47,3 +47,4 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           buildScriptName: 'build:storybook'
           exitZeroOnChanges: true # 👈 Option to prevent the workflow from failing
+          outputDir: 'dist/storybook/webb-ui-components'
