@@ -38,6 +38,9 @@ jobs:
         # 👇 Install dependencies with the same package manager used in the project (replace it as needed), e.g. yarn, npm, pnpm
         run: yarn
 
+      - name: Build Storybook
+        run: yarn nx build-storybook webb-ui-components
+
         # 👇 Adds Chromatic as a step in the workflow
       - name: Publish to Chromatic
         uses: chromaui/action@v11
@@ -45,5 +48,5 @@ jobs:
         with:
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          buildScriptName: 'build:storybook'
           exitZeroOnChanges: true # 👈 Option to prevent the workflow from failing
+          storybookBuildDir: 'dist/storybook/webb-ui-components'
