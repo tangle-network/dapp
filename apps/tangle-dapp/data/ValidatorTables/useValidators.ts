@@ -4,8 +4,8 @@ import { useCallback, useMemo } from 'react';
 import useApiRx from '../../hooks/useApiRx';
 import { Validator } from '../../types';
 import createValidator from '../../utils/staking/createValidator';
-import useStakingExposures2 from '../staking/useStakingExposures2';
 import useValidatorPrefs from '../staking/useValidatorPrefs';
+import useValidatorStakingExposures from '../staking/useValidatorStakingExposures';
 import useValidatorIdentityNames from './useValidatorIdentityNames';
 
 export const useValidators = (
@@ -20,7 +20,7 @@ export const useValidators = (
     useValidatorIdentityNames();
   const { result: validatorPrefs, isLoading: isLoadingValidatorPrefs } =
     useValidatorPrefs();
-  const { result: exposures } = useStakingExposures2(isActive);
+  const { result: exposures } = useValidatorStakingExposures(isActive);
 
   const { result: nominations, isLoading: isLoadingNominations } = useApiRx(
     useCallback((api) => api.query.staking.nominators.entries(), []),

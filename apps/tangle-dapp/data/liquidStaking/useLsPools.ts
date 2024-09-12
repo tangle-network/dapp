@@ -7,6 +7,7 @@ import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
 import assertSubstrateAddress from '../../utils/assertSubstrateAddress';
 import permillToPercentage from '../../utils/permillToPercentage';
+import useLsBondedPools from './useLsBondedPools';
 import useLsPoolMembers from './useLsPoolMembers';
 import useLsPoolNominations from './useLsPoolNominations';
 
@@ -24,42 +25,15 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
     }, []),
   );
 
-  const { result: rawBondedPools } = useApiRx(
-    useCallback((api) => {
-      return api.query.lst.bondedPools.entries();
-    }, []),
-  );
-
+  const bondedPools = useLsBondedPools();
   const poolMembers = useLsPoolMembers();
 
-  const tanglePools = useMemo(() => {
-    if (rawBondedPools === null) {
-      return null;
-    }
-
-    return rawBondedPools.flatMap(([poolIdKey, valueOpt]) => {
-      // Skip empty values.
-      if (valueOpt.isNone) {
-        return [];
-      }
-
-      const tanglePool = valueOpt.unwrap();
-
-      // Ignore all non-open pools.
-      if (!tanglePool.state.isOpen) {
-        return [];
-      }
-
-      return [[poolIdKey.args[0].toNumber(), tanglePool] as const];
-    });
-  }, [rawBondedPools]);
-
   const poolsMap = useMemo(() => {
-    if (tanglePools === null || poolNominations === null) {
+    if (bondedPools === null || poolNominations === null) {
       return null;
     }
 
-    const keyValuePairs = tanglePools.map(([poolId, tanglePool]) => {
+    const keyValuePairs = bondedPools.map(([poolId, tanglePool]) => {
       const metadataEntryBytes =
         rawMetadataEntries === null
           ? undefined
@@ -97,12 +71,14 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         ? undefined
         : permillToPercentage(tanglePool.commission.current.unwrap()[0]);
 
+      const validators = poolNominations.get(poolId) ?? [];
+
       const pool: LsPool = {
         id: poolId,
         metadata,
         owner,
         commissionPercentage,
-        validators: poolNominations.get(poolId) ?? [],
+        validators,
         totalStaked,
         ownerStake,
         // TODO: Dummy value.
@@ -113,7 +89,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
     });
 
     return new Map(keyValuePairs);
-  }, [poolMembers, poolNominations, rawMetadataEntries, tanglePools]);
+  }, [poolMembers, poolNominations, rawMetadataEntries, bondedPools]);
 
   return poolsMap;
 };
