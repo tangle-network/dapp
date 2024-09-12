@@ -1,4 +1,4 @@
-import { BN, u8aToString } from '@polkadot/util';
+import { BN_ZERO, u8aToString } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
 import { LsPool } from '../../constants/liquidStaking/types';
@@ -7,6 +7,7 @@ import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
 import assertSubstrateAddress from '../../utils/assertSubstrateAddress';
 import permillToPercentage from '../../utils/permillToPercentage';
+import useLsPoolMembers from './useLsPoolMembers';
 import useLsPoolNominations from './useLsPoolNominations';
 
 const useLsPools = (): Map<number, LsPool> | null | Error => {
@@ -28,6 +29,8 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
       return api.query.lst.bondedPools.entries();
     }, []),
   );
+
+  const poolMembers = useLsPoolMembers();
 
   const tanglePools = useMemo(() => {
     if (rawBondedPools === null) {
@@ -74,6 +77,22 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         tanglePool.roles.root.unwrap().toString(),
       );
 
+      const ownerStake =
+        poolMembers
+          ?.find(([id, memberAddress]) => {
+            return id === poolId && memberAddress === owner;
+          })?.[2]
+          .balance.toBn() ?? BN_ZERO;
+
+      const memberBalances = poolMembers?.filter(([id]) => {
+        return id === poolId;
+      });
+
+      const totalStaked =
+        memberBalances?.reduce((acc, [, , account]) => {
+          return acc.add(account.balance.toBn());
+        }, BN_ZERO) ?? BN_ZERO;
+
       const commissionPercentage = tanglePool.commission.current.isNone
         ? undefined
         : permillToPercentage(tanglePool.commission.current.unwrap()[0]);
@@ -84,17 +103,17 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         owner,
         commissionPercentage,
         validators: poolNominations.get(poolId) ?? [],
-        // TODO: Dummy values.
+        totalStaked,
+        ownerStake,
+        // TODO: Dummy value.
         apyPercentage: 0.1,
-        totalStaked: new BN(1234560000000000),
-        ownerStake: new BN(12300003567),
       };
 
       return [poolId, pool] as const;
     });
 
     return new Map(keyValuePairs);
-  }, [poolNominations, rawMetadataEntries, tanglePools]);
+  }, [poolMembers, poolNominations, rawMetadataEntries, tanglePools]);
 
   return poolsMap;
 };
