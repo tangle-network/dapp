@@ -1,8 +1,6 @@
 'use client';
 
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import InfoIconWithTooltip from '@webb-tools/webb-ui-components/components/IconWithTooltip/InfoIconWithTooltip';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -40,7 +38,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
     buttonLoadingText,
     isLoading,
     isDisabled,
-    errorMessage,
+    // errorMessage,
   } = useActionButton({
     handleOpenConfirmModal: () => setIsConfirmModalOpen(true),
   });
@@ -72,8 +70,8 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
           className,
         )}
       >
-        <div className="flex-1 w-full flex flex-col justify-between">
-          <div className="space-y-8">
+        <div className="flex flex-col justify-between flex-1">
+          <div className="flex flex-col gap-10">
             <ChainSelectors />
 
             <AmountAndTokenInput />
@@ -96,8 +94,9 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
 
             {!hideFeeDetails && <FeeDetails />}
           </div>
+
           <div className="flex flex-col items-end gap-2">
-            {errorMessage && (
+            {/* {errorMessage && (
               <div className="flex items-center gap-1">
                 <Typography
                   variant="body2"
@@ -113,7 +112,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
                   />
                 )}
               </div>
-            )}
+            )} */}
             <Button
               isFullWidth
               isDisabled={isDisabled}

@@ -29,6 +29,7 @@ const ANY_EVM = [
   PresetTypedChainId.AvalancheFuji,
   PresetTypedChainId.ScrollSepolia,
   PresetTypedChainId.TangleTestnetEVM,
+  PresetTypedChainId.Holesky,
 
   // Localnet
   PresetTypedChainId.TangleLocalEVM,
@@ -43,6 +44,7 @@ const ANY_SUBSTRATE = [
   PresetTypedChainId.TangleLocalNative,
   PresetTypedChainId.Kusama,
   PresetTypedChainId.Polkadot,
+  PresetTypedChainId.RococoPhala,
 ];
 
 export const walletsConfig: Record<number, WalletConfig> = {

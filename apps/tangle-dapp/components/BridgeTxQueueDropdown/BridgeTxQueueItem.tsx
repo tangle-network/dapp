@@ -12,7 +12,11 @@ import Decimal from 'decimal.js';
 import { FC, useEffect } from 'react';
 
 import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
-import { BridgeQueueTxItem, BridgeTxState } from '../../types/bridge';
+import {
+  BridgeQueueTxItem,
+  BridgeTxState,
+  BridgeType,
+} from '../../types/bridge';
 
 interface BridgeTxQueueItemProps {
   tx: BridgeQueueTxItem;
@@ -45,7 +49,7 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
               updateTxState(tx.hash, BridgeTxState.Executed);
               clearInterval(interval);
             } else if (status === 'pending') {
-              updateTxState(tx.hash, BridgeTxState.Pending);
+              updateTxState(tx.hash, BridgeTxState.SygmaPending);
               clearInterval(interval);
             } else if (status === 'failed') {
               updateTxState(tx.hash, BridgeTxState.Failed);
@@ -95,8 +99,8 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
         status={getStatus(tx.state)}
         statusMessage={tx.state}
         steppedProgressProps={{
-          steps: 4, // 1.Sending, 2.Indexing, 3.Pending, 4.Executed or Failed
-          activeStep: getActiveStep(tx.state),
+          steps: getTotalSteps(tx.type),
+          activeStep: getActiveStep(tx.state, tx.type),
         }}
         externalUrl={tx.explorerUrl ? new URL(tx.explorerUrl) : undefined}
         actionCmp={
@@ -117,26 +121,50 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
 
 export default BridgeTxQueueItem;
 
-const getActiveStep = (state: BridgeTxState) => {
+const getTotalSteps = (type: BridgeType) => {
+  switch (type) {
+    case BridgeType.HYPERLANE_EVM_TO_EVM:
+      return 3; // 1.Initializing 2.Sending 3.Executed or Failed
+    case BridgeType.SYGMA_EVM_TO_EVM:
+    case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
+    case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
+    case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
+      return 5; // 1.Initializing 2.Sending 3.Indexing 4.Pending 5.Executed or Failed
+  }
+};
+
+const getActiveStep = (state: BridgeTxState, type: BridgeType): number => {
+  const isSygma =
+    type === BridgeType.SYGMA_EVM_TO_EVM ||
+    type === BridgeType.SYGMA_SUBSTRATE_TO_EVM ||
+    type === BridgeType.SYGMA_EVM_TO_SUBSTRATE ||
+    type === BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE;
+
   switch (state) {
-    case BridgeTxState.Sending:
+    case BridgeTxState.Initializing:
       return 1;
-    case BridgeTxState.Indexing:
+    case BridgeTxState.Sending:
       return 2;
-    case BridgeTxState.Pending:
+    case BridgeTxState.SygmaIndexing: {
+      if (!isSygma) throw new Error('Invalid state for non-Sygma tx');
       return 3;
+    }
+    case BridgeTxState.SygmaPending: {
+      if (!isSygma) throw new Error('Invalid state for non-Sygma tx');
+      return 4;
+    }
     case BridgeTxState.Executed:
-      return 4;
     case BridgeTxState.Failed:
-      return 4;
+      return isSygma ? 5 : 3;
   }
 };
 
 const getStatus = (state: BridgeTxState): StatusVariant => {
   switch (state) {
+    case BridgeTxState.Initializing:
     case BridgeTxState.Sending:
-    case BridgeTxState.Indexing:
-    case BridgeTxState.Pending:
+    case BridgeTxState.SygmaIndexing:
+    case BridgeTxState.SygmaPending:
       return 'info';
     case BridgeTxState.Executed:
       return 'success';
