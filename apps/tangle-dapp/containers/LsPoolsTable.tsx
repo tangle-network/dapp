@@ -14,6 +14,7 @@ import {
 } from '@tanstack/react-table';
 import { ArrowRight, Search } from '@webb-tools/icons';
 import {
+  Alert,
   Avatar,
   AvatarGroup,
   Button,
@@ -40,13 +41,9 @@ const COLUMN_HELPER = createColumnHelper<LsPool>();
 
 const COLUMNS = [
   COLUMN_HELPER.accessor('metadata', {
-    header: () => 'Metadata/name',
+    header: () => 'Name',
     cell: (props) => {
       const metadata = props.getValue();
-
-      if (metadata === undefined) {
-        return EMPTY_VALUE_PLACEHOLDER;
-      }
 
       return (
         <div className="flex items-center gap-2">
@@ -55,11 +52,17 @@ const COLUMNS = [
             onChange={(e) => props.row.toggleSelected(e.target.checked)}
           />
 
-          <Typography variant="body2" className="whitespace-nowrap">
-            {props.getValue()}
-          </Typography>
+          {metadata === undefined ? (
+            EMPTY_VALUE_PLACEHOLDER
+          ) : (
+            <>
+              <Typography variant="body2" className="whitespace-nowrap">
+                {props.getValue()}
+              </Typography>
 
-          <CopyWithTooltip textToCopy={metadata} isButton={false} />
+              <CopyWithTooltip textToCopy={metadata} isButton={false} />
+            </>
+          )}
         </div>
       );
     },
@@ -176,7 +179,7 @@ const LsPoolsTable: FC = () => {
     [rowSelectionState, setSelectedParachainPoolId],
   );
 
-  // TODO: Handle possible error and loading states.
+  // TODO: Handle possible loading state.
   const poolsMap = useLsPools();
 
   const rows: LsPool[] = useMemo(() => {
@@ -227,24 +230,34 @@ const LsPoolsTable: FC = () => {
           Select Pool
         </Typography>
 
-        <Input
-          id="ls-search-parachain-pools"
-          placeholder="Search and filter pools..."
-          value={searchQuery}
-          onChange={(newValue) => setSearchQuery(newValue)}
-          isControlled
-          rightIcon={<Search className="mr-2" />}
-        />
+        {poolsMap instanceof Error ? (
+          <Alert
+            type="error"
+            title="Unable to display pools"
+            description={poolsMap.message}
+          />
+        ) : (
+          <>
+            <Input
+              id="ls-search-parachain-pools"
+              placeholder="Search and filter pools..."
+              value={searchQuery}
+              onChange={(newValue) => setSearchQuery(newValue)}
+              isControlled
+              rightIcon={<Search className="mr-2" />}
+            />
 
-        <Table
-          tableProps={table}
-          title={pluralize('pool', rows.length > 1)}
-          isPaginated
-          totalRecords={rows.length}
-          thClassName="!bg-inherit border-t-0 bg-mono-0 !px-3 !py-2 whitespace-nowrap"
-          trClassName="!bg-inherit"
-          tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
-        />
+            <Table
+              tableProps={table}
+              title={pluralize('pool', rows.length > 1)}
+              isPaginated
+              totalRecords={rows.length}
+              thClassName="!bg-inherit border-t-0 bg-mono-0 !px-3 !py-2 whitespace-nowrap"
+              trClassName="!bg-inherit"
+              tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
+            />
+          </>
+        )}
       </GlassCard>
     </div>
   );

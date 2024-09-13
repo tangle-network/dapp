@@ -15,10 +15,7 @@ import useLsPoolNominations from './useLsPoolNominations';
 const useLsPools = (): Map<number, LsPool> | null | Error => {
   const networkFeatures = useNetworkFeatures();
   const poolNominations = useLsPoolNominations();
-
-  if (!networkFeatures.includes(NetworkFeature.LsPools)) {
-    // TODO: Handle case where the active network doesn't support liquid staking pools.
-  }
+  const isSupported = networkFeatures.includes(NetworkFeature.LsPools);
 
   const { result: rawMetadataEntries } = useApiRx(
     useCallback((api) => {
@@ -34,7 +31,8 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
     if (
       bondedPools === null ||
       poolNominations === null ||
-      compoundApys === null
+      compoundApys === null ||
+      !isSupported
     ) {
       return null;
     }
@@ -99,12 +97,21 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
 
     return new Map(keyValuePairs);
   }, [
-    poolMembers,
-    poolNominations,
-    rawMetadataEntries,
     bondedPools,
+    poolNominations,
     compoundApys,
+    isSupported,
+    rawMetadataEntries,
+    poolMembers,
   ]);
+
+  // In case that the user connects to testnet or mainnet, but the network
+  // doesn't have the liquid staking pools feature.
+  if (!isSupported) {
+    return new Error(
+      'Liquid staking pools are not yet supported on this network.',
+    );
+  }
 
   return poolsMap;
 };
