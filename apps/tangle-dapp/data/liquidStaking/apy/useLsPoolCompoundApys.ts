@@ -118,6 +118,12 @@ const useLsPoolCompoundApys = (): Map<number, Decimal> | null => {
         actualErasConsidered += 1;
       }
 
+      // Skip if no eras were considered, which would mean
+      // that the pool has no previous nominations.
+      if (actualErasConsidered === 0) {
+        continue;
+      }
+
       const avgPerEraReturnRate = perEraReturnSum.div(actualErasConsidered);
 
       // APY = (avg(ERPT) + 1) ^ 365 - 1.

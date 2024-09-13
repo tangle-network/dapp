@@ -146,6 +146,6 @@ export type LsPool = {
   ownerStake: BN;
   validators: SubstrateAddress[];
   totalStaked: BN;
-  apyPercentage: number;
+  apyPercentage?: number;
   commissionPercentage?: number;
 };

@@ -10,6 +10,7 @@ import permillToPercentage from '../../utils/permillToPercentage';
 import useLsBondedPools from './useLsBondedPools';
 import useLsPoolMembers from './useLsPoolMembers';
 import useLsPoolNominations from './useLsPoolNominations';
+import useLsPoolCompoundApys from './apy/useLsPoolCompoundApys';
 
 const useLsPools = (): Map<number, LsPool> | null | Error => {
   const networkFeatures = useNetworkFeatures();
@@ -27,9 +28,14 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
 
   const bondedPools = useLsBondedPools();
   const poolMembers = useLsPoolMembers();
+  const compoundApys = useLsPoolCompoundApys();
 
   const poolsMap = useMemo(() => {
-    if (bondedPools === null || poolNominations === null) {
+    if (
+      bondedPools === null ||
+      poolNominations === null ||
+      compoundApys === null
+    ) {
       return null;
     }
 
@@ -72,6 +78,10 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         : permillToPercentage(tanglePool.commission.current.unwrap()[0]);
 
       const validators = poolNominations.get(poolId) ?? [];
+      const apyEntry = compoundApys.get(poolId);
+
+      const apyPercentage =
+        apyEntry === undefined ? undefined : Number(apyEntry.toFixed(2));
 
       const pool: LsPool = {
         id: poolId,
@@ -81,8 +91,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         validators,
         totalStaked,
         ownerStake,
-        // TODO: Dummy value.
-        apyPercentage: 0.1,
+        apyPercentage,
       };
 
       return [poolId, pool] as const;

@@ -122,12 +122,20 @@ const COLUMNS = [
   }),
   COLUMN_HELPER.accessor('apyPercentage', {
     header: () => 'APY',
-    cell: (props) => (
-      <StringCell
-        value={`${(props.getValue() * 100).toFixed(2)}%`}
-        className="text-start"
-      />
-    ),
+    cell: (props) => {
+      const apyPercentage = props.getValue();
+
+      if (apyPercentage === undefined) {
+        return EMPTY_VALUE_PLACEHOLDER;
+      }
+
+      return (
+        <StringCell
+          value={`${(apyPercentage * 100).toFixed(2)}%`}
+          className="text-start"
+        />
+      );
+    },
   }),
 ];
 
