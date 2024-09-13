@@ -7,10 +7,10 @@ import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
 import assertSubstrateAddress from '../../utils/assertSubstrateAddress';
 import permillToPercentage from '../../utils/permillToPercentage';
+import useLsPoolCompoundApys from './apy/useLsPoolCompoundApys';
 import useLsBondedPools from './useLsBondedPools';
 import useLsPoolMembers from './useLsPoolMembers';
 import useLsPoolNominations from './useLsPoolNominations';
-import useLsPoolCompoundApys from './apy/useLsPoolCompoundApys';
 
 const useLsPools = (): Map<number, LsPool> | null | Error => {
   const networkFeatures = useNetworkFeatures();
@@ -98,7 +98,13 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
     });
 
     return new Map(keyValuePairs);
-  }, [poolMembers, poolNominations, rawMetadataEntries, bondedPools]);
+  }, [
+    poolMembers,
+    poolNominations,
+    rawMetadataEntries,
+    bondedPools,
+    compoundApys,
+  ]);
 
   return poolsMap;
 };
