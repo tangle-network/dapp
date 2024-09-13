@@ -62,7 +62,8 @@ function useApiRx<T>(
       return;
     }
 
-    let observable;
+    // TODO: Also allow for `| Error` return value, to allow for error handling in the consumer.
+    let observable: Observable<T> | null;
 
     // In certain cases, the factory may fail with an error. For example,
     // if a pallet isn't available on the active chain. Another example would

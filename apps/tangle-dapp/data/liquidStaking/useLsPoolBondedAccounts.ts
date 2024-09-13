@@ -1,14 +1,26 @@
 import { useCallback, useMemo } from 'react';
 
 import useApiRx from '../../hooks/useApiRx';
+import useNetworkFeatures from '../../hooks/useNetworkFeatures';
+import { NetworkFeature } from '../../types';
 import { SubstrateAddress } from '../../types/utils';
 import assertSubstrateAddress from '../../utils/assertSubstrateAddress';
 
 const useLsPoolBondedAccounts = (): Map<number, SubstrateAddress> | null => {
+  const networkFeatures = useNetworkFeatures();
+  const isSupported = networkFeatures.includes(NetworkFeature.LsPools);
+
   const { result: entries } = useApiRx(
-    useCallback((api) => {
-      return api.query.lst.reversePoolIdLookup.entries();
-    }, []),
+    useCallback(
+      (api) => {
+        if (!isSupported) {
+          return null;
+        }
+
+        return api.query.lst.reversePoolIdLookup.entries();
+      },
+      [isSupported],
+    ),
   );
 
   const keyValuePairs = useMemo(() => {
@@ -40,6 +52,7 @@ const useLsPoolBondedAccounts = (): Map<number, SubstrateAddress> | null => {
     return new Map(keyValuePairs);
   }, [keyValuePairs]);
 
+  // TODO: Add error state. For example, in case that the active network doesn't support liquid staking pools.
   return map;
 };
 

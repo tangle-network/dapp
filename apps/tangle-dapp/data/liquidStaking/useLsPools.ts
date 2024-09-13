@@ -18,9 +18,16 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
   const isSupported = networkFeatures.includes(NetworkFeature.LsPools);
 
   const { result: rawMetadataEntries } = useApiRx(
-    useCallback((api) => {
-      return api.query.lst.metadata.entries();
-    }, []),
+    useCallback(
+      (api) => {
+        if (!isSupported) {
+          return null;
+        }
+
+        return api.query.lst.metadata.entries();
+      },
+      [isSupported],
+    ),
   );
 
   const bondedPools = useLsBondedPools();
