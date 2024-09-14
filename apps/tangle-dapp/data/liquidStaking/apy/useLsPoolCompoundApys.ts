@@ -1,6 +1,6 @@
 import assert from 'assert';
 import Decimal from 'decimal.js';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import useApi from '../../../hooks/useApi';
 import useAllStakingExposures from '../../staking/useAllStakingExposures';
@@ -23,7 +23,7 @@ const useLsPoolCompoundApys = (): Map<number, Decimal> | null => {
   const activeEraIndex = useActiveEraIndex();
 
   const { result: rawHistoryDepth } = useApi(
-    (api) => api.consts.staking.historyDepth,
+    useCallback((api) => api.consts.staking.historyDepth, []),
   );
 
   const historyDepth = rawHistoryDepth?.toNumber() ?? null;

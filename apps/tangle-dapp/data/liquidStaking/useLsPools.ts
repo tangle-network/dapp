@@ -116,7 +116,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
   // doesn't have the liquid staking pools feature.
   if (!isSupported) {
     return new Error(
-      'Liquid staking pools are not yet supported on this network.',
+      'Liquid staking pools are not yet supported on this network. Please try connecting to a different network that supports liquid staking pools.',
     );
   }
 

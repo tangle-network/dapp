@@ -22,12 +22,14 @@ import {
   fuzzyFilter,
   Input,
   Table,
+  TANGLE_DOCS_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useCallback, useMemo, useState } from 'react';
 
-import { GlassCard } from '../components';
+import { GlassCard, TableStatus } from '../components';
+import TableRowsSkeleton from '../components/LiquidStaking/TableRowsSkeleton';
 import { StringCell } from '../components/tableCells';
 import TokenAmountCell from '../components/tableCells/TokenAmountCell';
 import { EMPTY_VALUE_PLACEHOLDER } from '../constants';
@@ -179,7 +181,6 @@ const LsPoolsTable: FC = () => {
     [rowSelectionState, setSelectedParachainPoolId],
   );
 
-  // TODO: Handle possible loading state.
   const poolsMap = useLsPools();
 
   const rows: LsPool[] = useMemo(() => {
@@ -221,7 +222,7 @@ const LsPoolsTable: FC = () => {
         Create Pool
       </Button>
 
-      <GlassCard className="space-y-2">
+      <GlassCard className="space-y-2 px-10">
         <Typography
           variant="body1"
           fw="bold"
@@ -230,11 +231,26 @@ const LsPoolsTable: FC = () => {
           Select Pool
         </Typography>
 
-        {poolsMap instanceof Error ? (
+        {poolsMap === null ? (
+          <TableRowsSkeleton className="h-10" />
+        ) : poolsMap instanceof Error ? (
           <Alert
             type="error"
             title="Unable to display pools"
             description={poolsMap.message}
+          />
+        ) : rows.length === 0 ? (
+          <TableStatus
+            className="bg-transparent dark:bg-transparent border-none"
+            title="No pools available yet"
+            description="Looks like there's currently no liquid staking pools available. Try creating your own pool to get started!"
+            icon="🔍"
+            buttonText="Learn More"
+            buttonProps={{
+              // TODO: Link to liquid staking pools docs page once implemented.
+              href: TANGLE_DOCS_URL,
+              target: '_blank',
+            }}
           />
         ) : (
           <>

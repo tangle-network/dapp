@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import useApiRx from '../../../hooks/useApiRx';
 import { SubstrateAddress } from '../../../types/utils';
@@ -17,13 +17,18 @@ export type EraRewardPointsEntry = {
 const useEraRewardPoints = (): Map<number, EraRewardPointsEntry> | null => {
   const activeEraIndex = useActiveEraIndex();
 
-  const { result: activeEraRewardPoints } = useApiRx((api) => {
-    if (activeEraIndex === null) {
-      return null;
-    }
+  const { result: activeEraRewardPoints } = useApiRx(
+    useCallback(
+      (api) => {
+        if (activeEraIndex === null) {
+          return null;
+        }
 
-    return api.query.staking.erasRewardPoints.entries();
-  });
+        return api.query.staking.erasRewardPoints.entries();
+      },
+      [activeEraIndex],
+    ),
+  );
 
   const keyValuePairs = useMemo(() => {
     if (activeEraRewardPoints === null) {

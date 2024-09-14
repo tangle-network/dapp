@@ -3,12 +3,12 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export type SkeletonLoaderSetProps = {
-  rowCount: number;
+  rowCount?: number;
   className?: string;
 };
 
 const TableRowsSkeleton: FC<SkeletonLoaderSetProps> = ({
-  rowCount,
+  rowCount = 10,
   className,
 }) => {
   return (
