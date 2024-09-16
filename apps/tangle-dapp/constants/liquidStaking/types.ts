@@ -142,8 +142,8 @@ export type LsNetwork = {
 export type LsPool = {
   id: number;
   metadata?: string;
-  owner: SubstrateAddress;
-  ownerStake: BN;
+  ownerAddress?: SubstrateAddress;
+  ownerStake?: BN;
   validators: SubstrateAddress[];
   totalStaked: BN;
   apyPercentage?: number;

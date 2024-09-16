@@ -48,7 +48,7 @@ const useLsPoolMembers = ():
     ),
   );
 
-  // TODO: Add error state. For example, in case that the active network doesn't support liquid staking pools.
+  // TODO: Add explicit error state: `| Error`. For example, in case that the active network doesn't support liquid staking pools.
   // TODO: Return a map instead for improved lookup efficiency: PoolId -> [MemberAddress, Account].
   return accounts;
 };

@@ -43,7 +43,7 @@ const useLsBondedPools = () => {
     });
   }, [rawBondedPools]);
 
-  // TODO: Add error state. For example, in case that the active network doesn't support liquid staking pools.
+  // TODO: Add explicit error state: `| Error`. For example, in case that the active network doesn't support liquid staking pools.
   return tanglePools;
 };
 

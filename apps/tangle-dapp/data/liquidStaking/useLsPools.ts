@@ -1,4 +1,4 @@
-import { BN_ZERO, u8aToString } from '@polkadot/util';
+import { BN, BN_ZERO, u8aToString } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
 import { LsPool } from '../../constants/liquidStaking/types';
@@ -57,17 +57,21 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
           ? undefined
           : u8aToString(metadataEntryBytes);
 
-      // TODO: Under what circumstances would this be `None`? During pool creation, the various addresses seem required, not optional.
-      const owner = assertSubstrateAddress(
-        tanglePool.roles.root.unwrap().toString(),
-      );
+      // Root role can be `None` if its roles are updated, and the root
+      // role is removed.
+      const ownerAddress = tanglePool.roles.root.isNone
+        ? undefined
+        : assertSubstrateAddress(tanglePool.roles.root.unwrap().toString());
 
-      const ownerStake =
-        poolMembers
-          ?.find(([id, memberAddress]) => {
-            return id === poolId && memberAddress === owner;
+      let ownerStake: BN | undefined = undefined;
+
+      if (ownerAddress !== undefined && poolMembers !== null) {
+        ownerStake = poolMembers
+          .find(([id, memberAddress]) => {
+            return id === poolId && memberAddress === ownerAddress;
           })?.[2]
-          .balance.toBn() ?? BN_ZERO;
+          .balance.toBn();
+      }
 
       const memberBalances = poolMembers?.filter(([id]) => {
         return id === poolId;
@@ -91,7 +95,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
       const pool: LsPool = {
         id: poolId,
         metadata,
-        owner,
+        ownerAddress,
         commissionPercentage,
         validators,
         totalStaked,

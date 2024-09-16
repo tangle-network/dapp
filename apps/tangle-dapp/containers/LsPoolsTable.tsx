@@ -70,12 +70,12 @@ const COLUMNS = [
     },
     sortDescFirst: true,
   }),
-  COLUMN_HELPER.accessor('owner', {
+  COLUMN_HELPER.accessor('ownerAddress', {
     header: () => 'Owner',
     cell: (props) => (
       <Avatar
         sourceVariant="address"
-        value={props.row.original.owner}
+        value={props.row.original.ownerAddress}
         theme="substrate"
       />
     ),
@@ -100,7 +100,15 @@ const COLUMNS = [
   }),
   COLUMN_HELPER.accessor('ownerStake', {
     header: () => "Owner's Stake",
-    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+    cell: (props) => {
+      const ownerStake = props.getValue();
+
+      if (ownerStake === undefined) {
+        return EMPTY_VALUE_PLACEHOLDER;
+      }
+
+      return <TokenAmountCell amount={ownerStake} className="text-left" />;
+    },
   }),
   COLUMN_HELPER.accessor('totalStaked', {
     header: () => 'Total Staked (TVL)',
