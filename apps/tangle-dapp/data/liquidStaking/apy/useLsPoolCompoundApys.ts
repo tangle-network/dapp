@@ -61,7 +61,7 @@ const useLsPoolCompoundApys = (): Map<number, Decimal> | null => {
         'Each pool id should always have a corresponding bonded account entry',
       );
 
-      // Calculate the avg. per-era return rate for the last MAX_ERAS eras
+      // Calculate the avg. per-era return rate for the last max eras (history depth)
       // for the current pool.
       for (let i = activeEraIndex - historyDepth; i < activeEraIndex; i++) {
         const poolExposureAtEra = allExposures.find(
@@ -69,16 +69,13 @@ const useLsPoolCompoundApys = (): Map<number, Decimal> | null => {
             entry.address === poolBondedAccountAddress && entry.eraIndex === i,
         );
 
-        // TODO: Shouldn't all eras have an exposure entry?
         // No exposure entry exists at this era for this pool. Skip.
         if (poolExposureAtEra === undefined) {
           continue;
         }
 
-        // TODO: Need to get the specific portion of points & stake for the pool X (its bounded account), not just the entire era's.
         const rewardPointsAtEra = eraRewardPoints.get(i);
 
-        // TODO: Shouldn't all eras have a rewards entry?
         // No rewards data exists at this era. Skip.
         if (rewardPointsAtEra === undefined) {
           continue;
@@ -86,7 +83,6 @@ const useLsPoolCompoundApys = (): Map<number, Decimal> | null => {
 
         const totalRewardsAtEra = eraTotalRewards.get(i);
 
-        // TODO: Shouldn't all eras have a total rewards entry? Would the total rewards ever be zero?
         // No rewards entry exists at this era. Skip.
         // Also ignore if the total rewards at this era is zero, to avoid division by zero.
         if (totalRewardsAtEra === undefined || totalRewardsAtEra.isZero()) {
@@ -102,7 +98,6 @@ const useLsPoolCompoundApys = (): Map<number, Decimal> | null => {
 
         const eraTotalStakeForPool = poolExposureAtEra.metadata.total.toBn();
 
-        // TODO: Shouldn't this also be considered for the avg.? Count it as zero?
         // Avoid potential division by zero.
         if (eraTotalStakeForPool.isZero()) {
           continue;
@@ -126,7 +121,7 @@ const useLsPoolCompoundApys = (): Map<number, Decimal> | null => {
 
       const avgPerEraReturnRate = perEraReturnSum.div(actualErasConsidered);
 
-      // APY = (avg(ERPT) + 1) ^ 365 - 1.
+      // APY = (avg(per era return rate) + 1) ^ 365 - 1.
       // The reason why 365 is used is because the era duration is 24 hours (1 day).
       const apy = avgPerEraReturnRate.plus(1).pow(365).minus(1);
 
