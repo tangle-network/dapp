@@ -20,7 +20,8 @@ const useLsAssetDetails = () => {
         return [];
       }
 
-      // TODO: The key's type is u128, yet when creating pools, it uses u32 for the pool id. Is this a Tangle bug, or is there a reason for this? For now, assuming that all keys are max u32.
+      // Ids larger than `u32::MAX` aren't expected, so it is safe to
+      // convert to a number here.
       return [[poolIdKey.args[0].toNumber(), valueOpt.unwrap()]] as const;
     });
   }, [tangleAssetDetails]);

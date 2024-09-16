@@ -23,8 +23,6 @@ const FeeDetailItem: FC<FeeDetailItemProps> = ({
 
   const protocol = getLsProtocolDef(protocolId);
 
-  // TODO: Add liquifier fees, and select either parachain or liquifier fees based on the given protocol's id.
-
   const feeAmount = useMemo(() => {
     // Propagate error or loading state.
     if (typeof feePercentage !== 'number') {
