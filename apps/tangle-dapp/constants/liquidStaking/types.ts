@@ -9,8 +9,10 @@ import {
   LsNetworkEntityAdapter,
   ProtocolEntity,
 } from '../../data/liquidStaking/adapter';
+import { PolkadotValidator } from '../../data/liquidStaking/adapters/polkadot';
 import { SubstrateAddress } from '../../types/utils';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
+import { TANGLE_MAINNET_NETWORK } from '../../../../libs/webb-ui-components/src/constants/networks';
 
 export enum LsProtocolId {
   POLKADOT,
@@ -22,6 +24,7 @@ export enum LsProtocolId {
   THE_GRAPH,
   LIVEPEER,
   POLYGON,
+  TANGLE,
 }
 
 export type LsLiquifierProtocolId =
@@ -62,8 +65,18 @@ type ProtocolDefCommon = {
 };
 
 export enum LsNetworkId {
+  TANGLE_MAINNET,
   TANGLE_RESTAKING_PARACHAIN,
   ETHEREUM_MAINNET_LIQUIFIER,
+}
+
+export interface LsTangleMainnetDef extends ProtocolDefCommon {
+  networkId: LsNetworkId.TANGLE_MAINNET;
+  id: LsProtocolId.TANGLE;
+  token: LsToken.TNT;
+  rpcEndpoint: string;
+  ss58Prefix: typeof TANGLE_MAINNET_NETWORK.ss58Prefix;
+  adapter: LsNetworkEntityAdapter<PolkadotValidator>;
 }
 
 export interface LsParachainChainDef<T extends ProtocolEntity = ProtocolEntity>
@@ -88,7 +101,10 @@ export interface LsLiquifierProtocolDef extends ProtocolDefCommon {
   unlocksContractAddress: HexString;
 }
 
-export type LsProtocolDef = LsParachainChainDef | LsLiquifierProtocolDef;
+export type LsProtocolDef =
+  | LsParachainChainDef
+  | LsLiquifierProtocolDef
+  | LsTangleMainnetDef;
 
 export type LsCardSearchParams = {
   amount: BN;

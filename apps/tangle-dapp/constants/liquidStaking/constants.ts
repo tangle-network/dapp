@@ -6,6 +6,7 @@ import MOONBEAM from '../../data/liquidStaking/adapters/moonbeam';
 import PHALA from '../../data/liquidStaking/adapters/phala';
 import POLKADOT from '../../data/liquidStaking/adapters/polkadot';
 import POLYGON from '../../data/liquidStaking/adapters/polygon';
+import TANGLE from '../../data/liquidStaking/adapters/tangle';
 import THE_GRAPH from '../../data/liquidStaking/adapters/theGraph';
 import { IS_PRODUCTION_ENV } from '../env';
 import {
@@ -94,6 +95,14 @@ export const LS_TANGLE_RESTAKING_PARACHAIN: LsNetwork = {
   defaultProtocolId: LsProtocolId.POLKADOT,
   // TODO: Find a way to avoid casting. Some type errors are being pesky.
   protocols: [POLKADOT, PHALA, MOONBEAM, ASTAR, MANTA] as LsProtocolDef[],
+};
+
+export const LS_TANGLE_MAINNET: LsNetwork = {
+  type: LsNetworkId.TANGLE_MAINNET,
+  networkName: 'Tangle Mainnet',
+  chainIconFileName: 'tangle',
+  defaultProtocolId: LsProtocolId.TANGLE,
+  protocols: [TANGLE],
 };
 
 export const LS_NETWORKS: LsNetwork[] = [
