@@ -13,6 +13,7 @@ import { twMerge } from 'tailwind-merge';
 
 import GlassCard from '../../../../components/GlassCard/GlassCard';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../../constants';
 import useNetworkStore from '../../../../context/useNetworkStore';
 import type {
   DelegatorInfo,
@@ -25,7 +26,7 @@ import AvatarWithText from '../../AvatarWithText';
 
 interface Props extends Partial<ComponentProps<typeof GlassCard>> {
   operatorAddress: string;
-  operatorData: OperatorMetadata;
+  operatorData: OperatorMetadata | undefined;
   operatorMap: OperatorMap;
   delegatorInfo: DelegatorInfo | null;
   operatorTVL: Record<string, number>;
@@ -60,8 +61,8 @@ const OperatorInfoCard: FC<Props> = ({
   );
 
   const restakersCount = useMemo(
-    () => operatorData.restakersCount.toString(),
-    [operatorData.restakersCount],
+    () => operatorData?.restakersCount.toString() ?? EMPTY_VALUE_PLACEHOLDER,
+    [operatorData?.restakersCount],
   );
 
   const { data: operatorInfo } = useSWRImmutable(
@@ -86,9 +87,10 @@ const OperatorInfoCard: FC<Props> = ({
     const webUrl = operatorInfo?.web ?? '';
     const email = operatorInfo?.email ?? '';
 
-    const twitterUrl = isValidUrl(twitterHandle)
-      ? twitterHandle
-      : `https://x.com/${twitterHandle}`;
+    const twitterUrl =
+      twitterHandle === '' || isValidUrl(twitterHandle)
+        ? twitterHandle
+        : `https://x.com/${twitterHandle}`;
 
     return {
       twitterUrl,

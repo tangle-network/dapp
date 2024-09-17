@@ -13,7 +13,7 @@ import type {
 } from '../../../../types/restake';
 
 type Props = {
-  operatorData: OperatorMetadata;
+  operatorData: OperatorMetadata | undefined;
   delegatorInfo: DelegatorInfo | null;
   delegatorTVL: Record<string, number>;
   vaultTVL: Record<string, number>;
@@ -31,7 +31,9 @@ const TVLTable: FC<Props> = ({
   const vaults = useMemo(() => {
     const vaults: Record<string, VaultData> = {};
 
-    operatorData.delegations.forEach(({ assetId }) => {
+    const delegations = operatorData?.delegations ?? [];
+
+    delegations.forEach(({ assetId }) => {
       if (assetMap[assetId] === undefined) return;
 
       if (assetMap[assetId].poolId === null) return;
@@ -59,7 +61,7 @@ const TVLTable: FC<Props> = ({
     });
 
     return vaults;
-  }, [assetMap, operatorData.delegations, rewardConfig.configs, vaultTVL]);
+  }, [assetMap, operatorData?.delegations, rewardConfig.configs, vaultTVL]);
 
   const delegatorTotalRestakedAssets = useMemo(() => {
     if (!delegatorInfo?.delegations) {

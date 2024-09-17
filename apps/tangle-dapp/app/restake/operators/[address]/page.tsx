@@ -1,7 +1,6 @@
 'use client';
 
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { notFound } from 'next/navigation';
 
 import useRestakeDelegatorInfo from '../../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '../../../../data/restake/useRestakeOperatorMap';
@@ -19,10 +18,6 @@ const Page = ({ params: { address } }: { params: { address: string } }) => {
     operatorMap,
     delegatorInfo,
   );
-
-  if (operatorMap[address] === undefined) {
-    notFound();
-  }
 
   return (
     <div className="space-y-10">
