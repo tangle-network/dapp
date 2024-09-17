@@ -135,11 +135,9 @@ const columns = [
     cell: (props) => (
       <TableCellWrapper removeBorder>
         <div className="flex items-center justify-end flex-1 gap-2">
-          {/* TODO: add proper href */}
           <Button
             as={Link}
-            // TODO: add proper href
-            href="#"
+            href={`${PagePath.RESTAKE_OPERATOR}/${props.row.original.address}`}
             variant="utility"
             className="uppercase body4"
           >
