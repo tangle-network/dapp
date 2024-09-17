@@ -84,24 +84,25 @@ const RegisteredBlueprintsCard: FC<Props> = ({ className, ...props }) => {
                   key={id}
                   className="group px-1 py-2 hover:bg-[#3A3E53]/10 dark:hover:bg-mono-0/5 rounded-lg"
                 >
-                  <Link
-                    className="flex items-center justify-between gap-4"
-                    href={`${PagePath.BLUEPRINTS}/${name}`}
-                    target="_blank"
-                  >
-                    <p className="flex items-center flex-grow gap-2">
+                  <div className="flex items-center justify-between gap-4">
+                    <Link
+                      href={`${PagePath.BLUEPRINTS}/${name}`}
+                      target="_blank"
+                      className="flex items-center flex-grow gap-2"
+                    >
                       <Avatar src={avatarUrl} size="lg" />
 
                       <Typography
                         variant="h5"
                         fw="bold"
                         className="text-mono-200 dark:text-mono-0"
+                        component="p"
                       >
                         {name}
                       </Typography>
 
                       <ExternalLinkLine className="invisible fill-mono-200 dark:fill-mono-0 group-hover:visible" />
-                    </p>
+                    </Link>
 
                     {githubUrl && (
                       <a
@@ -113,7 +114,7 @@ const RegisteredBlueprintsCard: FC<Props> = ({ className, ...props }) => {
                         <GithubFill size="lg" />
                       </a>
                     )}
-                  </Link>
+                  </div>
                 </li>
               );
             })}
