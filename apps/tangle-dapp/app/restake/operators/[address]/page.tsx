@@ -1,7 +1,9 @@
 'use client';
 
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { ComponentProps, useMemo } from 'react';
 
+import useOperatorBlueprints from '../../../../data/blueprints/useOperatorBlueprints';
 import useRestakeDelegatorInfo from '../../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '../../../../data/restake/useRestakeOperatorMap';
 import useRestakeTVL from '../../../../data/restake/useRestakeTVL';
@@ -19,6 +21,28 @@ const Page = ({ params: { address } }: { params: { address: string } }) => {
     delegatorInfo,
   );
 
+  const { isLoading, blueprints, error } = useOperatorBlueprints(address);
+
+  const blueprintsUI = useMemo<
+    ComponentProps<typeof RegisteredBlueprintsCard>['blueprints']
+  >(
+    () =>
+      blueprints.map(
+        ({
+          blueprint: {
+            metadata: { name, logo, codeRepository },
+          },
+          blueprintId,
+        }) => ({
+          id: blueprintId.toString(),
+          avatarUrl: logo,
+          name,
+          githubUrl: codeRepository,
+        }),
+      ),
+    [blueprints],
+  );
+
   return (
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row items-stretch gap-5 max-h-none md:max-h-[290px]">
@@ -31,11 +55,12 @@ const Page = ({ params: { address } }: { params: { address: string } }) => {
           operatorTVL={operatorTVL}
         />
 
-        {/**
-         * TODO: Integrate API to get the blueprint detail.
-         * The backend team is still working on adding these APIs.
-         */}
-        <RegisteredBlueprintsCard className="flex-1" blueprints={[]} />
+        <RegisteredBlueprintsCard
+          className="flex-1"
+          blueprints={blueprintsUI}
+          isLoading={isLoading}
+          error={error && error.message}
+        />
       </div>
 
       <div>
