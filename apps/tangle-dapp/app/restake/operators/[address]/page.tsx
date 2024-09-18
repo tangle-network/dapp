@@ -31,7 +31,11 @@ const Page = ({ params: { address } }: { params: { address: string } }) => {
           operatorTVL={operatorTVL}
         />
 
-        <RegisteredBlueprintsCard className="flex-1" />
+        {/**
+         * TODO: Integrate API to get the blueprint detail.
+         * The backend team is still working on adding these APIs.
+         */}
+        <RegisteredBlueprintsCard className="flex-1" blueprints={[]} />
       </div>
 
       <div>

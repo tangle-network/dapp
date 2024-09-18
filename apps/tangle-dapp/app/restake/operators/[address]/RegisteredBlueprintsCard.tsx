@@ -12,38 +12,16 @@ import { twMerge } from 'tailwind-merge';
 import GlassCard from '../../../../components/GlassCard/GlassCard';
 import { PagePath } from '../../../../types';
 
-interface Props extends Partial<ComponentProps<typeof GlassCard>> {}
-
-// TODO: Integrate API to get the blueprint detail.
-// The backend team is still working on adding these APIs.
-const blueprints = [
-  {
-    id: '1',
-    name: 'DKLS',
-    avatarUrl: 'https://avatars.githubusercontent.com/u/76852793?s=96&v=4',
-    githubUrl: 'https://github.com/webb-tools/tangle',
-  },
-  {
-    id: '2',
-    name: 'DFNS CGGMP21',
-    avatarUrl:
-      'https://pbs.twimg.com/profile_images/1746972470840836096/Xzg3jx6V_400x400.png',
-    githubUrl: 'https://github.com/webb-tools/tangle',
-  },
-  {
-    id: '3',
-    name: 'LIT Protocol fork of ZCash Frost',
-    avatarUrl:
-      'https://pbs.twimg.com/profile_images/1746972470840836096/Xzg3jx6V_400x400.png',
-    githubUrl: 'https://github.com/webb-tools/tangle',
-  },
-  {
-    id: '4',
-    name: 'DFNS',
-    avatarUrl:
-      'https://pbs.twimg.com/profile_images/1746972470840836096/Xzg3jx6V_400x400.png',
-  },
-];
+interface Props extends Partial<ComponentProps<typeof GlassCard>> {
+  blueprints:
+    | {
+        id: string;
+        name: string;
+        avatarUrl: string;
+        githubUrl: string;
+      }[]
+    | undefined;
+}
 
 // Use `twMerge` here for intellisense
 const bgDarkClassName = twMerge(
@@ -51,12 +29,17 @@ const bgDarkClassName = twMerge(
   'dark:[background-blend-mode:_normal,_plus-lighter,_normal]',
 );
 
+// Use `twMerge` here for intellisense
 const bgClassName = twMerge(
   '[background:_linear-gradient(180deg,_rgba(236,_239,_255,_0.20)_0%,_rgba(129,_149,_246,_0.20)_100%),_linear-gradient(180deg,_rgba(255,_255,_255,_0.70)_0%,_rgba(255,_255,_255,_0.00)_100%)]',
 );
 
-const RegisteredBlueprintsCard: FC<Props> = ({ className, ...props }) => {
-  const isEmpty = false;
+const RegisteredBlueprintsCard: FC<Props> = ({
+  className,
+  blueprints = [],
+  ...props
+}) => {
+  const isEmpty = blueprints.length === 0;
 
   return (
     <GlassCard
@@ -67,16 +50,16 @@ const RegisteredBlueprintsCard: FC<Props> = ({ className, ...props }) => {
         Registered Blueprints
       </Typography>
 
-      <ScrollArea className="flex items-center justify-center flex-grow overflow-auto">
-        {isEmpty ? (
-          <Typography
-            variant="body2"
-            ta="center"
-            className="text-mono-100 dark:text-mono-120"
-          >
-            This Operator has not registered any Blueprints.
-          </Typography>
-        ) : (
+      {isEmpty ? (
+        <Typography
+          variant="body2"
+          ta="center"
+          className="flex items-center justify-center flex-grow text-mono-100 dark:text-mono-120"
+        >
+          This Operator has not registered any Blueprints.
+        </Typography>
+      ) : (
+        <ScrollArea className="flex items-center justify-center flex-grow overflow-auto">
           <ul className="w-full h-full px-2">
             {blueprints.map(({ id, avatarUrl, name, githubUrl }) => {
               return (
@@ -119,8 +102,8 @@ const RegisteredBlueprintsCard: FC<Props> = ({ className, ...props }) => {
               );
             })}
           </ul>
-        )}
-      </ScrollArea>
+        </ScrollArea>
+      )}
     </GlassCard>
   );
 };
