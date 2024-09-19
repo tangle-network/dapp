@@ -63,7 +63,6 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     isInternal: true,
     isNext: true,
     Icon: TokenSwapFill,
-    environments: ['development', 'staging', 'test'],
     subItems: [],
   },
   {
