@@ -4,7 +4,6 @@ import { IconWithTooltip } from '@webb-tools/webb-ui-components/components/IconW
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
 import { useCopyable } from '@webb-tools/webb-ui-components/hooks/useCopyable';
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import type { ComponentProps, ElementRef } from 'react';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -55,7 +54,6 @@ const NoteAccountAvatarWithKey = forwardRef<
                 .join('')
             : keyValue
         }
-        shortenFn={isHiddenValue ? shortenString : undefined}
         isDisabledTooltip={isHiddenValue}
         copyProps={isHiddenValue ? copyableResult : undefined}
         onCopyButtonClick={

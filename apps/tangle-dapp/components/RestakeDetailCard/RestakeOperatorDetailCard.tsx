@@ -49,11 +49,7 @@ const RestakeOperatorDetailCard = ({
         }
         title={identityName || shortenString(operatorAccountId ?? '')}
         description={
-          <KeyValueWithButton
-            size="sm"
-            shortenFn={shortenString}
-            keyValue={operatorAccountId}
-          />
+          <KeyValueWithButton size="sm" keyValue={operatorAccountId} />
         }
         descExternalLink={validatorExternalLink}
       />

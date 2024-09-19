@@ -96,7 +96,7 @@ export const WalletDropdown: FC<{
                   size="sm"
                   labelVariant="body1"
                   valueVariant="body1"
-                  shortenFn={(str) => shortenString(str, 5)}
+                  displayCharCount={5}
                 />
 
                 {accountExplorerUrl && (

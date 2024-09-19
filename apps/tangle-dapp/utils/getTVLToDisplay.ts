@@ -2,8 +2,9 @@ import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/get
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../constants';
 
-export default function getTVLToDisplay(tvl: number | null) {
-  if (tvl === null || tvl === 0) return EMPTY_VALUE_PLACEHOLDER;
+export default function getTVLToDisplay(tvl: number | null | undefined) {
+  if (tvl === null || tvl === undefined || tvl === 0)
+    return EMPTY_VALUE_PLACEHOLDER;
 
   return `$${getRoundedAmountString(tvl)}`;
 }
