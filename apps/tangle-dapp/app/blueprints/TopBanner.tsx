@@ -4,6 +4,8 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { BLUEPRINT_DOCS } from '../../constants/links';
+
 const TopBanner: FC = () => {
   return (
     <div
@@ -22,7 +24,11 @@ const TopBanner: FC = () => {
           Set up a minimal Tangle Blueprint in minutes accompanied by a
           step-by-step guide.
         </Typography>
-        <Button rightIcon={<ArrowRight size="lg" className="!fill-mono-0" />}>
+        <Button
+          href={BLUEPRINT_DOCS}
+          target="_blank"
+          rightIcon={<ArrowRight size="lg" className="!fill-mono-0" />}
+        >
           Create Blueprint
         </Button>
       </div>
