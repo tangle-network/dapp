@@ -9,6 +9,7 @@ import {
   LsNetworkEntityAdapter,
   ProtocolEntity,
 } from '../../data/liquidStaking/adapter';
+import { SubstrateAddress } from '../../types/utils';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 
 export enum LsProtocolId {
@@ -136,4 +137,15 @@ export type LsNetwork = {
   chainIconFileName: string;
   defaultProtocolId: LsProtocolId;
   protocols: LsProtocolDef[];
+};
+
+export type LsPool = {
+  id: number;
+  metadata?: string;
+  ownerAddress?: SubstrateAddress;
+  ownerStake?: BN;
+  validators: SubstrateAddress[];
+  totalStaked: BN;
+  apyPercentage?: number;
+  commissionPercentage?: number;
 };

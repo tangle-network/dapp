@@ -126,11 +126,7 @@ const getTableColumns: GetTableColumnsFn<AstarDapp> = (
                 {dappName === address ? shortenString(address, 8) : dappName}
               </Typography>
 
-              <CopyWithTooltip
-                textToCopy={address}
-                isButton={false}
-                className="cursor-pointer"
-              />
+              <CopyWithTooltip textToCopy={address} isButton={false} />
             </div>
           </div>
         );

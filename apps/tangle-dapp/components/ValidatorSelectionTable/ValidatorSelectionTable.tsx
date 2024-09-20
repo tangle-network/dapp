@@ -116,7 +116,6 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
                 <CopyWithTooltip
                   textToCopy={address}
                   isButton={false}
-                  className="cursor-pointer"
                   iconClassName="!fill-mono-160 dark:!fill-mono-80"
                 />
               </div>

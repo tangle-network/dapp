@@ -3,10 +3,10 @@ import { ExternalLinkLine } from '@webb-tools/icons';
 import { shortenString, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback } from 'react';
 
-import { AnySubstrateAddress } from '../../types/utils';
+import { SubstrateAddress } from '../../types/utils';
 
 export type AddressLinkProps = {
-  address: AnySubstrateAddress | HexString;
+  address: SubstrateAddress | HexString;
 };
 
 const AddressLink: FC<AddressLinkProps> = ({ address }) => {

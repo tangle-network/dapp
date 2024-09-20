@@ -35,11 +35,10 @@ import {
   fetchTokenSymbol,
 } from '../fetchHelpers';
 
-const SS58_PREFIX = 0;
 const DECIMALS = 18;
 
 export type PolkadotValidator = {
-  address: SubstrateAddress<typeof SS58_PREFIX>;
+  address: SubstrateAddress;
   identity: string;
   commission: BN;
   apy?: number;
@@ -70,7 +69,7 @@ const fetchValidators = async (
 
     return {
       id: address.toString(),
-      address: assertSubstrateAddress(address.toString(), SS58_PREFIX),
+      address: assertSubstrateAddress(address.toString()),
       identity: identityName ?? address.toString(),
       totalValueStaked: totalValueStaked ?? BN_ZERO,
       apy: 0,
@@ -127,11 +126,7 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
                 {identity === address ? shortenString(address, 8) : identity}
               </Typography>
 
-              <CopyWithTooltip
-                textToCopy={address}
-                isButton={false}
-                className="cursor-pointer"
-              />
+              <CopyWithTooltip textToCopy={address} isButton={false} />
             </div>
           </div>
         );

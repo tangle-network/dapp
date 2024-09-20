@@ -31,6 +31,7 @@ import {
   LiquidStakingItem,
   LiquidStakingItemType,
 } from '../../types/liquidStaking';
+import pluralize from '../../utils/pluralize';
 
 const DEFAULT_PAGINATION: PaginationState = {
   pageIndex: 0,
@@ -38,12 +39,14 @@ const DEFAULT_PAGINATION: PaginationState = {
 };
 
 const SELECTED_ITEMS_COLUMN_SORT = {
+  // TODO: Need to update the correct id. It seems that the `id` field no longer exists in the row's type. Need to statically-type-link-it instead of hard coding it, to avoid the same bug in the future.
   id: 'id',
   desc: false,
 } as const satisfies ColumnSort;
 
 export const LsValidatorTable = () => {
-  const { selectedProtocolId, setSelectedItems } = useLsStore();
+  const { selectedProtocolId, setSelectedNetworkEntities: setSelectedItems } =
+    useLsStore();
   const { isLoading, data, dataType } = useLsValidators(selectedProtocolId);
   const [searchValue, setSearchValue] = useState('');
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -185,7 +188,7 @@ export const LsValidatorTable = () => {
               <Input
                 id="ls-validator-selection-search"
                 rightIcon={<Search className="mr-2" />}
-                placeholder="Search"
+                placeholder={`Search ${tableTitle.toLowerCase()}...`}
                 value={searchValue}
                 onChange={(newSearchValue) => setSearchValue(newSearchValue)}
                 className="mb-1"
@@ -215,7 +218,7 @@ export const LsValidatorTable = () => {
                 canNextPage={table.getCanNextPage()}
                 nextPage={table.nextPage}
                 setPageIndex={table.setPageIndex}
-                title={itemText + 's'}
+                title={pluralize(itemText.toLowerCase(), data.length > 1)}
                 className="!px-0 !py-0 !pt-6"
               />
             )}

@@ -2,10 +2,10 @@ import { Alert } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import { LsProtocolId } from '../../../constants/liquidStaking/types';
-import useLsFeePermill from './useLsFeePermill';
+import useLsFeePercentage from './useLsFeePercentage';
 
 // 10%.
-const THRESHOLD_PERMILL = 0.1;
+const THRESHOLD_PERCENTAGE = 0.1;
 
 export type LsFeeWarningProps = {
   isMinting: boolean;
@@ -13,11 +13,11 @@ export type LsFeeWarningProps = {
 };
 
 const LsFeeWarning: FC<LsFeeWarningProps> = ({ selectedProtocolId }) => {
-  const fee = useLsFeePermill(selectedProtocolId, true);
+  const fee = useLsFeePercentage(selectedProtocolId, true);
 
   return (
     typeof fee === 'number' &&
-    fee >= THRESHOLD_PERMILL && (
+    fee >= THRESHOLD_PERCENTAGE && (
       <Alert
         type="warning"
         title="High fees"

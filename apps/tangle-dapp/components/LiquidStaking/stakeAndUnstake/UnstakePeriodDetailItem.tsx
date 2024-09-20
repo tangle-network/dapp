@@ -4,6 +4,7 @@ import { FC } from 'react';
 import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import CrossChainTime from '../../../utils/CrossChainTime';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
+import pluralize from '../../../utils/pluralize';
 import DetailItem from './DetailItem';
 
 export type UnstakePeriodDetailItemProps = {
@@ -28,13 +29,11 @@ const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
     );
 
     const days = unlockPeriod.toDays();
-
-    // TODO: Special case for 0 days?
-    const plurality = days > 1 ? 'days' : 'day';
     const roundedDays = Math.round(days);
 
     return {
-      unit: plurality,
+      // TODO: Does 0 days mean it's past or unlocking today?
+      unit: days === 0 ? 'today' : pluralize('day', days > 1),
       value: roundedDays,
       isEstimate: days !== roundedDays,
     };

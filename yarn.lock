@@ -18469,7 +18469,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/protocol-substrate-types@npm:@webb-tools/tangle-substrate-types@0.5.9, @webb-tools/tangle-substrate-types@npm:0.5.9":
+"@webb-tools/protocol-substrate-types@npm:@webb-tools/tangle-substrate-types@0.5.9":
   version: 0.5.9
   resolution: "@webb-tools/tangle-substrate-types@npm:0.5.9"
   dependencies:
@@ -18566,6 +18566,47 @@ __metadata:
     mkdirp: "npm:^3.0.1"
     tiny-secp256k1: "npm:^2.2.3"
   checksum: 10c0/78eb2677437354e3b928ab877a7b9f58a9f35b4862919fe9efa4af7477a624a798777fd7d766ee8b27d268d2b630e86415c97c5552de0575cdd37f4210075255
+  languageName: node
+  linkType: hard
+
+"@webb-tools/tangle-substrate-types@npm:0.5.12":
+  version: 0.5.12
+  resolution: "@webb-tools/tangle-substrate-types@npm:0.5.12"
+  dependencies:
+    "@babel/cli": "npm:^7.23.9"
+    "@babel/core": "npm:^7.24.0"
+    "@babel/plugin-proposal-nullish-coalescing-operator": "npm:^7.18.6"
+    "@babel/plugin-proposal-numeric-separator": "npm:^7.18.6"
+    "@babel/plugin-proposal-optional-chaining": "npm:^7.20.7"
+    "@babel/plugin-syntax-bigint": "npm:^7.8.3"
+    "@babel/plugin-syntax-dynamic-import": "npm:^7.8.3"
+    "@babel/plugin-syntax-import-assertions": "npm:^7.23.3"
+    "@babel/plugin-syntax-import-meta": "npm:^7.10.4"
+    "@babel/plugin-syntax-top-level-await": "npm:^7.14.5"
+    "@babel/plugin-transform-regenerator": "npm:^7.23.3"
+    "@babel/plugin-transform-runtime": "npm:^7.24.0"
+    "@babel/preset-env": "npm:^7.24.0"
+    "@babel/preset-react": "npm:^7.23.3"
+    "@babel/preset-typescript": "npm:^7.23.3"
+    "@babel/register": "npm:^7.23.7"
+    "@babel/runtime": "npm:^7.24.0"
+    "@open-web3/orml-types": "npm:^2.0.1"
+    "@polkadot/api": "npm:^11.0.2"
+    "@polkadot/dev": "npm:^0.78.11"
+    "@polkadot/typegen": "npm:^11.0.2"
+    "@polkadot/types": "npm:^11.0.2"
+    babel-jest: "npm:^29.7.0"
+    babel-plugin-module-extension-resolver: "npm:^1.0.0"
+    babel-plugin-module-resolver: "npm:^5.0.0"
+    babel-plugin-styled-components: "npm:^2.1.4"
+    ecpair: "npm:^2.1.0"
+    elliptic: "npm:^6.5.5"
+    fs-extra: "npm:^11.2.0"
+    glob2base: "npm:^0.0.12"
+    minimatch: "npm:^9.0.3"
+    mkdirp: "npm:^3.0.1"
+    tiny-secp256k1: "npm:^2.2.3"
+  checksum: 10c0/03521ed872493700c3d6145da1c5895fb0107400e8f5160d874e29c42122acfc4c2b9b1f4a496cab86aa0ecbb483de124781dd4a8d82bd2e32ead9a8be533235
   languageName: node
   linkType: hard
 
@@ -46763,7 +46804,7 @@ __metadata:
     "@webb-tools/proposals": "npm:^1.0.11"
     "@webb-tools/sdk-core": "npm:0.1.4-127"
     "@webb-tools/tangle-restaking-types": "npm:^0.1.0"
-    "@webb-tools/tangle-substrate-types": "npm:0.5.9"
+    "@webb-tools/tangle-substrate-types": "npm:0.5.12"
     "@webb-tools/test-utils": "npm:0.1.8"
     "@webb-tools/tokens": "npm:1.0.11"
     "@webb-tools/utils": "npm:1.0.11"

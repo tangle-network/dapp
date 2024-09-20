@@ -30,9 +30,7 @@ export const TANGLE_LOCAL_POLKADOT_JS_DASHBOARD_URL = getPolkadotJsDashboardUrl(
   TANGLE_LOCAL_WS_RPC_ENDPOINT,
 );
 
-export const TANGLE_MAINNET_SS58_PREFIX = 5845;
-export const TANGLE_TESTNET_SS58_PREFIX = 5845;
-export const TANGLE_LOCAL_SS58_PREFIX = 42;
+export const TANGLE_SS58_PREFIX = 5845;
 
 // Note that the chain decimal count is usually constant, and set when
 // the blockchain is deployed. It could be technically changed due to

@@ -7,7 +7,10 @@ import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeC
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
 import UnstakeRequestsTable from '../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
+import LsPoolsTable from '../../containers/LsPoolsTable';
+import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useSearchParamState from '../../hooks/useSearchParamState';
+import isLsParachainChainId from '../../utils/liquidStaking/isLsParachainChainId';
 import TabListItem from '../restake/TabListItem';
 import TabsList from '../restake/TabsList';
 
@@ -24,6 +27,10 @@ const LiquidStakingTokenPage: FC = () => {
     stringify: (value) =>
       value ? SearchParamAction.STAKE : SearchParamAction.UNSTAKE,
   });
+
+  const { selectedProtocolId } = useLsStore();
+
+  const isParachainChain = isLsParachainChainId(selectedProtocolId);
 
   return (
     <div className="flex flex-wrap gap-12">
@@ -45,7 +52,15 @@ const LiquidStakingTokenPage: FC = () => {
       </div>
 
       <div className="flex flex-col flex-grow w-min gap-4 min-w-[370px]">
-        {isStaking ? <LsValidatorTable /> : <UnstakeRequestsTable />}
+        {isStaking ? (
+          isParachainChain ? (
+            <LsPoolsTable />
+          ) : (
+            <LsValidatorTable />
+          )
+        ) : (
+          <UnstakeRequestsTable />
+        )}
       </div>
     </div>
   );

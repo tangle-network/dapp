@@ -62,7 +62,28 @@ function useApiRx<T>(
       return;
     }
 
-    const observable = factory(apiRx);
+    // TODO: Also allow for `| Error` return value, to allow for error handling in the consumer.
+    let observable: Observable<T> | null;
+
+    // In certain cases, the factory may fail with an error. For example,
+    // if a pallet isn't available on the active chain. Another example would
+    // be if the active chain is mainnet, but the factory is trying to fetch
+    // data from a testnet pallet that hasn't been deployed to mainnet yet.
+    try {
+      observable = factory(apiRx);
+    } catch (possibleError) {
+      const error = ensureError(possibleError);
+
+      console.error(
+        'Error creating subscription, this can happen when TypeScript type definitions are outdated or accessing pallets on the wrong chain:',
+        error,
+      );
+
+      setError(error);
+      setLoading(false);
+
+      return;
+    }
 
     // The factory is not yet ready to produce an observable.
     // Discard any previous data

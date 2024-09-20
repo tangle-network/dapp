@@ -29,6 +29,7 @@ const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
   trimTrailingZeroes: true,
 };
 
+// TODO: Break this function down into smaller local functions for improved legibility and modularity, since its logic is getting complex. Consider making it functional instead of modifying the various variables: Return {integerPart, fractionalPart} per transformation/function, so that it can be easily chainable monad-style.
 function formatBn(
   amount: BN,
   decimals: number,
@@ -43,12 +44,18 @@ function formatBn(
   const integerPartBn = new BN(amount.toString()).div(chainUnitFactorBn);
 
   const remainderBn = amount.mod(chainUnitFactorBn);
-
   let integerPart = integerPartBn.abs().toString(10);
   let fractionPart = remainderBn.abs().toString(10).padStart(decimals, '0');
-
   const amountStringLength = amount.toString().length;
   const partsLength = integerPart.length + fractionPart.length;
+
+  // Special case: If the integer part is 0, and options don't specify a
+  // fraction max length, then don't use the default value for the fraction
+  // max length. Instead keep it undefined. This is so that small, fractional
+  // amounts are always shown, which would otherwise be cut-off and shown as '0'.
+  if (integerPart === '0' && options?.fractionMaxLength === undefined) {
+    finalOptions.fractionMaxLength = undefined;
+  }
 
   // Check for missing leading zeros in the fraction part. This
   // edge case can happen when the remainder has fewer digits

@@ -56,7 +56,7 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
         </div>
         {extraAvatars > 0 && (
           <Typography className="inline-block translate-x-1" variant="body3">
-            +{extraAvatars} others
+            +{extraAvatars} other{extraAvatars > 1 && 's'}
           </Typography>
         )}
       </div>

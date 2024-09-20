@@ -84,11 +84,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
                 {identity === address ? shortenString(address, 6) : identity}
               </Typography>
 
-              <CopyWithTooltip
-                textToCopy={address}
-                isButton={false}
-                className="cursor-pointer"
-              />
+              <CopyWithTooltip textToCopy={address} isButton={false} />
             </div>
           );
         },
@@ -106,9 +102,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
         header: () => (
           <HeaderCell title="Total Stake" className="justify-start" />
         ),
-        cell: (props) => (
-          <TokenAmountCell amount={props.getValue()} className="text-start" />
-        ),
+        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
         sortingFn: sortBnValueForPayout,
       }),
       columnHelper.accessor('nominators', {
@@ -137,9 +131,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
         header: () => (
           <HeaderCell title="Total Rewards" className="justify-start" />
         ),
-        cell: (props) => (
-          <TokenAmountCell amount={props.getValue()} className="text-start" />
-        ),
+        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
         sortingFn: sortBnValueForPayout,
       }),
       columnHelper.accessor('nominatorTotalReward', {
@@ -147,9 +139,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
           <HeaderCell title="Your Rewards" className="justify-start" />
         ),
         cell: (props) => {
-          return (
-            <TokenAmountCell amount={props.getValue()} className="text-start" />
-          );
+          return <TokenAmountCell amount={props.getValue()} />;
         },
         sortingFn: sortBnValueForPayout,
       }),

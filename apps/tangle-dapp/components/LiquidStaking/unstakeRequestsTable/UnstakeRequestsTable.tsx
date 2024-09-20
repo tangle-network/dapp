@@ -153,9 +153,8 @@ const COLUMNS = [
       return (
         <TokenAmountCell
           amount={props.getValue()}
-          tokenSymbol={tokenSymbol}
+          symbol={tokenSymbol}
           decimals={props.row.original.decimals}
-          className="text-left"
         />
       );
     },

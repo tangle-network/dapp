@@ -235,6 +235,8 @@ export const fetchVaultsAndStakePools = async (
 
   return poolsInPhalaBasePool.map((pool) => {
     const id = pool[0].args[0].toString();
+
+    // TODO: Avoid using `any`.
     const poolInfo = pool[1] as Option<any>;
 
     let type = '';

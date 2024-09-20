@@ -21,7 +21,10 @@ export const extractDataFromIdentityInfo = (
   type: IdentityDataType,
 ): string | null => {
   const displayData = info[type];
-  if (displayData.isNone) return null;
+
+  if (displayData.isNone) {
+    return null;
+  }
 
   const displayDataObject: { raw?: string } = JSON.parse(
     displayData.toString(),

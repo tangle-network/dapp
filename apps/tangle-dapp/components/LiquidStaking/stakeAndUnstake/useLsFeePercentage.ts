@@ -11,7 +11,7 @@ import useContractRead from '../../../data/liquifier/useContractRead';
 import { ContractReadOptions } from '../../../data/liquifier/useContractReadOnce';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 
-const useLsFeePermill = (
+const useLsFeePercentage = (
   protocolId: LsProtocolId,
   isMinting: boolean,
 ): number | Error | null => {
@@ -23,8 +23,8 @@ const useLsFeePermill = (
     parachainFees === null
       ? null
       : isMinting
-        ? parachainFees.mintFee
-        : parachainFees.redeemFee;
+        ? parachainFees.mintFeePercentage
+        : parachainFees.redeemFeePercentage;
 
   const getLiquifierFeeOptions = useCallback((): ContractReadOptions<
     typeof LIQUIFIER_REGISTRY_ABI,
@@ -56,7 +56,7 @@ const useLsFeePermill = (
   }, [protocol.networkId, setIsLiquifierFeePaused]);
 
   // The fee should be returned as a per-mill value from the liquifier contract.
-  const liquifierFeePermillOrError =
+  const liquifierFeePercentageOrError =
     rawLiquifierFeeOrError instanceof Error
       ? rawLiquifierFeeOrError
       : rawLiquifierFeeOrError === null
@@ -65,7 +65,7 @@ const useLsFeePermill = (
 
   return protocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN
     ? parachainFee
-    : liquifierFeePermillOrError;
+    : liquifierFeePercentageOrError;
 };
 
-export default useLsFeePermill;
+export default useLsFeePercentage;

@@ -68,6 +68,7 @@ const LsStakeCard: FC = () => {
 
   const selectedProtocol = getLsProtocolDef(selectedProtocolId);
 
+  // TODO: Not loading the correct protocol for: '?amount=123000000000000000000&protocol=7&network=1&action=stake'. When network=1, it switches to protocol=5 on load. Could this be because the protocol is reset to its default once the network is switched?
   useSearchParamSync({
     key: LsSearchParamKey.PROTOCOL_ID,
     value: selectedProtocolId,

@@ -17,7 +17,7 @@ export type ExposureMapEntry = {
   exposureMeta: SpStakingPagedExposureMetadata | null;
 };
 
-const useStakingExposures2 = (isActive: boolean) => {
+const useValidatorStakingExposures = (isActive: boolean) => {
   const { result: queryResults, ...other } = useApiRx(
     useCallback(
       (api) => {
@@ -55,4 +55,4 @@ const useStakingExposures2 = (isActive: boolean) => {
   return { result: exposureMap, ...other };
 };
 
-export default useStakingExposures2;
+export default useValidatorStakingExposures;

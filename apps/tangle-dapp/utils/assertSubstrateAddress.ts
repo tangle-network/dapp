@@ -3,16 +3,10 @@ import assert from 'assert';
 
 import { SubstrateAddress } from '../types/utils';
 
-const assertSubstrateAddress = <SS58 extends number>(
-  address: string,
-  ss58Prefix: SS58,
-): SubstrateAddress<SS58> => {
-  assert(
-    isAddress(address, undefined, ss58Prefix),
-    'Address should be a valid Substrate address',
-  );
+const assertSubstrateAddress = (address: string): SubstrateAddress => {
+  assert(isAddress(address), 'Address should be a valid Substrate address');
 
-  return address as SubstrateAddress<SS58>;
+  return address as SubstrateAddress;
 };
 
 export default assertSubstrateAddress;

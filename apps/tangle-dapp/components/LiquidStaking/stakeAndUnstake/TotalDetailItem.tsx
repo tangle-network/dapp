@@ -9,9 +9,9 @@ import useLsExchangeRate, {
 } from '../../../data/liquidStaking/useLsExchangeRate';
 import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import scaleAmountByPermill from '../../../utils/scaleAmountByPermill';
+import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
 import DetailItem from './DetailItem';
-import useLsFeePermill from './useLsFeePermill';
+import useLsFeePercentage from './useLsFeePercentage';
 
 export type TotalDetailItemProps = {
   isMinting: boolean;
@@ -24,7 +24,7 @@ const TotalDetailItem: FC<TotalDetailItemProps> = ({
   inputAmount,
   protocolId,
 }) => {
-  const feePermill = useLsFeePermill(protocolId, isMinting);
+  const feePercentage = useLsFeePercentage(protocolId, isMinting);
 
   const { exchangeRate } = useLsExchangeRate(
     isMinting
@@ -36,22 +36,26 @@ const TotalDetailItem: FC<TotalDetailItemProps> = ({
   const protocol = getLsProtocolDef(protocolId);
 
   const totalAmount = useMemo(() => {
-    if (inputAmount === null || exchangeRate === null || feePermill === null) {
+    if (
+      inputAmount === null ||
+      exchangeRate === null ||
+      feePercentage === null
+    ) {
       return null;
     }
     // Propagate errors.
-    else if (feePermill instanceof Error) {
-      return feePermill;
+    else if (feePercentage instanceof Error) {
+      return feePercentage;
     } else if (exchangeRate instanceof Error) {
       return exchangeRate;
     }
 
-    const feeAmount = scaleAmountByPermill(inputAmount, feePermill);
+    const feeAmount = scaleAmountByPercentage(inputAmount, feePercentage);
 
     return isMinting
       ? inputAmount.muln(exchangeRate).sub(feeAmount)
       : inputAmount.divn(exchangeRate).sub(feeAmount);
-  }, [exchangeRate, feePermill, inputAmount, isMinting]);
+  }, [exchangeRate, feePercentage, inputAmount, isMinting]);
 
   const formattedTotalAmount = useMemo(() => {
     // Nothing to show if the input amount is not set.

@@ -59,7 +59,7 @@ const BondTokens: FC<BondTokensProps> = ({
               textToCopy={nominatorAddress}
               isButton={false}
               iconSize="lg"
-              className="text-mono-160 dark:text-mono-80 cursor-pointer"
+              className="text-mono-160 dark:text-mono-80"
             />
           </InputField.Slot>
         </InputField.Root>

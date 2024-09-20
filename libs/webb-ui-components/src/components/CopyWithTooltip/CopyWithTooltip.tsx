@@ -1,13 +1,14 @@
 'use client';
 
 import { FileCopyLine } from '@webb-tools/icons/FileCopyLine';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useCopyable } from '../../hooks';
 import { Typography } from '../../typography/Typography';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { Button } from '../buttons';
 import { CopyWithTooltipProps, CopyWithTooltipUIProps } from './types';
+import { CheckLineIcon } from '@webb-tools/icons';
 
 /**
  * The `CopyWithTooltip` component
@@ -60,35 +61,48 @@ const CopyWithTooltipUI: React.FC<CopyWithTooltipUIProps> = ({
   copyLabel = 'Copy',
 }) => {
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+  const IconTag = isCopied ? CheckLineIcon : FileCopyLine;
+
+  const icon = (
+    <IconTag
+      size={iconSize}
+      className={twMerge('!fill-current', iconClassName)}
+    />
+  );
+
+  const handleClick = useCallback(() => {
+    // Don't re-trigger the copy action if the text is already copied.
+    if (isCopied) {
+      return;
+    }
+
+    onClick();
+  }, [isCopied, onClick]);
 
   return (
-    <Tooltip isOpen={isTooltipOpen}>
+    <Tooltip isOpen={isTooltipOpen && !isCopied}>
       <TooltipTrigger
         onMouseEnter={() => setIsTooltipOpen(true)}
         onMouseLeave={() => setIsTooltipOpen(false)}
-        className={twMerge(isCopied ? 'cursor-not-allowed' : '', className)}
-        onClick={onClick}
+        className={twMerge(
+          isCopied ? 'cursor-default' : 'cursor-pointer',
+          className,
+        )}
+        onClick={handleClick}
         asChild
       >
         {isButton ? (
           <Button className="p-2" variant="utility" size="sm">
-            <FileCopyLine
-              size={iconSize}
-              className={twMerge('!fill-current', iconClassName)}
-            />
+            {icon}
           </Button>
         ) : (
-          <span>
-            <FileCopyLine
-              size={iconSize}
-              className={twMerge('!fill-current', iconClassName)}
-            />
-          </span>
+          <span>{icon}</span>
         )}
       </TooltipTrigger>
+
       <TooltipBody>
         <Typography className="capitalize" variant="body3">
-          {isCopied ? 'Copied!' : copyLabel}
+          {copyLabel}
         </Typography>
       </TooltipBody>
     </Tooltip>

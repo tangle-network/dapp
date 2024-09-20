@@ -17,6 +17,7 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { StakingItemExternalLinkButton } from '../../components/LiquidStaking/StakingItemExternalLinkButton';
+import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import {
   Collator,
   Dapp,
@@ -84,11 +85,7 @@ export const useLsValidatorSelectionTableColumns = (
                   {identity === address ? shortenString(address, 8) : identity}
                 </Typography>
 
-                <CopyWithTooltip
-                  textToCopy={address}
-                  isButton={false}
-                  className="cursor-pointer"
-                />
+                <CopyWithTooltip textToCopy={address} isButton={false} />
               </div>
             </div>
           );
@@ -111,16 +108,11 @@ export const useLsValidatorSelectionTableColumns = (
           </div>
         ),
         cell: (props) => (
-          <div className="flex items-center justify-center">
-            <Typography
-              variant="body2"
-              fw="normal"
-              className="text-mono-200 dark:text-mono-0"
-            >
-              {formatBn(props.getValue(), props.row.original.chainDecimals) +
-                ` ${props.row.original.chainTokenSymbol}`}
-            </Typography>
-          </div>
+          <TokenAmountCell
+            amount={props.getValue()}
+            decimals={props.row.original.chainDecimals}
+            symbol={props.row.original.chainTokenSymbol}
+          />
         ),
         sortingFn: sortValueStaked,
       }),
@@ -140,7 +132,7 @@ export const useLsValidatorSelectionTableColumns = (
           </div>
         ),
         cell: (props) => (
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-start">
             <Typography
               variant="body2"
               fw="normal"
@@ -203,11 +195,7 @@ export const useLsValidatorSelectionTableColumns = (
                   {dappName === address ? shortenString(address, 8) : dappName}
                 </Typography>
 
-                <CopyWithTooltip
-                  textToCopy={address}
-                  isButton={false}
-                  className="cursor-pointer"
-                />
+                <CopyWithTooltip textToCopy={address} isButton={false} />
               </div>
             </div>
           );
@@ -230,16 +218,11 @@ export const useLsValidatorSelectionTableColumns = (
           </div>
         ),
         cell: (props) => (
-          <div className="flex items-center justify-center">
-            <Typography
-              variant="body2"
-              fw="normal"
-              className="text-mono-200 dark:text-mono-0"
-            >
-              {formatBn(props.getValue(), props.row.original.chainDecimals) +
-                ` ${props.row.original.chainTokenSymbol}`}
-            </Typography>
-          </div>
+          <TokenAmountCell
+            amount={props.getValue()}
+            decimals={props.row.original.chainDecimals}
+            symbol={props.row.original.chainTokenSymbol}
+          />
         ),
         sortingFn: sortValueStaked,
       }),
@@ -293,11 +276,7 @@ export const useLsValidatorSelectionTableColumns = (
                   #{id}
                 </Typography>
 
-                <CopyWithTooltip
-                  textToCopy={id}
-                  isButton={false}
-                  className="cursor-pointer"
-                />
+                <CopyWithTooltip textToCopy={id} isButton={false} />
               </div>
             </div>
           );
@@ -346,16 +325,11 @@ export const useLsValidatorSelectionTableColumns = (
           </div>
         ),
         cell: (props) => (
-          <div className="flex items-center justify-center">
-            <Typography
-              variant="body2"
-              fw="normal"
-              className="text-mono-200 dark:text-mono-0"
-            >
-              {formatBn(props.getValue(), props.row.original.chainDecimals) +
-                ` ${props.row.original.chainTokenSymbol}`}
-            </Typography>
-          </div>
+          <TokenAmountCell
+            amount={props.getValue()}
+            decimals={props.row.original.chainDecimals}
+            symbol={props.row.original.chainTokenSymbol}
+          />
         ),
         sortingFn: sortValueStaked,
       }),
@@ -440,11 +414,7 @@ export const useLsValidatorSelectionTableColumns = (
                   {identity === address ? shortenString(address, 8) : identity}
                 </Typography>
 
-                <CopyWithTooltip
-                  textToCopy={address}
-                  isButton={false}
-                  className="cursor-pointer"
-                />
+                <CopyWithTooltip textToCopy={address} isButton={false} />
               </div>
             </div>
           );

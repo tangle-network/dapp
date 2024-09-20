@@ -2,6 +2,7 @@ import { ApiPromise } from '@polkadot/api';
 import { useCallback, useEffect, useState } from 'react';
 
 import useNetworkStore from '../context/useNetworkStore';
+import ensureError from '../utils/ensureError';
 import { getApiPromise } from '../utils/polkadot';
 import usePromise from './usePromise';
 
@@ -22,6 +23,7 @@ export type ApiFetcher<T> = (api: ApiPromise) => Promise<T> | T;
  */
 function useApi<T>(fetcher: ApiFetcher<T>, overrideRpcEndpoint?: string) {
   const [result, setResult] = useState<T | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   const { rpcEndpoint } = useNetworkStore();
 
   const { result: api } = usePromise<ApiPromise | null>(
@@ -38,11 +40,32 @@ function useApi<T>(fetcher: ApiFetcher<T>, overrideRpcEndpoint?: string) {
       return;
     }
 
-    const newResult = fetcher(api);
+    let newResult;
+
+    // Fetch the data, and catch any errors that are thrown.
+    // In certain cases, the fetcher may fail with an error. For example,
+    // if a pallet isn't available on the active chain. Another example would
+    // be if the active chain is mainnet, but the fetcher is trying to fetch
+    // data from a testnet pallet that hasn't been deployed to mainnet yet.
+    try {
+      newResult = fetcher(api);
+    } catch (possibleError) {
+      const error = ensureError(possibleError);
+
+      console.error(
+        'Error while fetching data, this can happen when TypeScript type definitions are outdated or accessing pallets on the wrong chain:',
+        error,
+      );
+
+      setError(error);
+
+      return;
+    }
 
     if (newResult instanceof Promise) {
       newResult.then((data) => setResult(data));
     } else {
+      setError(null);
       setResult(newResult);
     }
   }, [api, fetcher]);
@@ -52,7 +75,7 @@ function useApi<T>(fetcher: ApiFetcher<T>, overrideRpcEndpoint?: string) {
     refetch();
   }, [refetch]);
 
-  return { result, refetch };
+  return { result, error, refetch };
 }
 
 export default useApi;
