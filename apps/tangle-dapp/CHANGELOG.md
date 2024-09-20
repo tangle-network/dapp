@@ -1,6 +1,5 @@
 ## 0.0.14 (2024-09-19)
 
-
 ### 🚀 Features
 
 - **tangle-dapp:** Unstaking/Undelegating for Restaking
@@ -37,7 +36,6 @@
 
 - **tangle-dapp:** Expose restake pages
 
-
 ### 🩹 Fixes
 
 - **tangle-dapp:** Fix payouts batch limit and SS58 prefix bugs
@@ -50,8 +48,9 @@
 
 - **tangle-dapp:** Fix Static Sites Generation Build on Netlify
 
+- Fix auto sync workflow when multiple PRs are merged
 
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Trung-Tin Pham
 - vutuanlinh2k2
@@ -59,18 +58,15 @@
 
 ## 0.0.13 (2024-07-29)
 
-
 ### 🩹 Fixes
 
 - **tangle-dapp:** Disable reskate pages generation
 
-
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Trung-Tin Pham
 
 ## 0.0.12 (2024-07-25)
-
 
 ### 🚀 Features
 
@@ -84,7 +80,6 @@
 
 - **tangle-dapp:** Stake Operation Table UI & Logic
 
-
 ### 🩹 Fixes
 
 - **tangle-dapp:** Fix Search not working on Validator Selection Table on Tangle dApp
@@ -93,8 +88,7 @@
 
 - **tangle-dapp:** Fix blank screen after the page is mounting
 
-
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Pavan Soratur
 - Trung-Tin Pham
@@ -103,13 +97,11 @@
 
 ## 0.0.11 (2024-07-11)
 
-
 ### 🚀 Features
 
 - **tangle-dapp:** Add sorting functionalities to tables on Nomination Page
 
 - **tangle-dapp:** Update Side Navigation for Tangle dApp
-
 
 ### 🩹 Fixes
 
@@ -119,15 +111,13 @@
 
 - **tangle-dapp:** Fix sort/scroll issues on nomination selection list modal
 
-
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Trung-Tin Pham
 - vutuanlinh2k2
 - Yurixander
 
 ## 0.0.10 (2024-07-08)
-
 
 ### 🚀 Features
 
@@ -213,7 +203,7 @@
 
 - **tangle-dapp:** Implement Stake card to mint VTokens (ie. from DOT to tgDOT), `mint` & `redeem` hooks
 
-- **tangle-dapp:** Liquid Staking -  Staking information card UI
+- **tangle-dapp:** Liquid Staking - Staking information card UI
 
 - **tangle-dapp:** Fetch balances from Tangle Restaking Parachain
 
@@ -224,7 +214,6 @@
 - **tangle-dapp:** Add `robots.txt` to optimzie SEO
 
 - **tangle-dapp:** Restake Delegation
-
 
 ### 🩹 Fixes
 
@@ -338,7 +327,6 @@
 
 - **tangle-dapp:** Update changelog and release script
 
-
 ### 🔥 Performance
 
 - **tangle-dapp:** Optimize tx batching
@@ -349,8 +337,7 @@
 
 - **tangle-dapp:** Added abort signal and identityMap
 
-
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Pavan Soratur
 - Trung-Tin Pham
