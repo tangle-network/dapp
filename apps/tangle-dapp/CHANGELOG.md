@@ -1,3 +1,62 @@
+## 0.0.14 (2024-09-19)
+
+
+### 🚀 Features
+
+- **tangle-dapp:** Unstaking/Undelegating for Restaking
+
+- **tangle-dapp:** Update Checkbox component
+
+- **tangle-dapp:** Implement unstake requests table
+
+- **tangle-dapp:** Fetch onchain token unlock duration
+
+- **tangle-dapp:** Add Blueprint Overview Page on Tangle dApp
+
+- **tangle-dapp:** Ability to pre-fill input values from URL search params
+
+- **tangle-dapp:** Blueprint Details Page on Tangle dApp
+
+- **tangle-dapp:** Add Restake Withdraw Flow
+
+- **tangle-dapp:** Implement EVM Restaking
+
+- **tangle-dapp:** Implement stake & unstake liquifier functionality for EVM-based liquid staking
+
+- **tangle-dapp:** Implement Liquifier `unlock NFTs` unstake requests table
+
+- **tangle-dapp:** Use `multicall3` contract to batch Liquifier withdraw calls
+
+- **tangle-dapp:** Restake Overview Page
+
+- **tangle-dapp:** Compute Restaking TVL Values
+
+- **tangle-dapp:** Hyperlane Integration
+
+- **tangle-dapp:** Add Operator Profile Page
+
+- **tangle-dapp:** Expose restake pages
+
+
+### 🩹 Fixes
+
+- **tangle-dapp:** Fix payouts batch limit and SS58 prefix bugs
+
+- **tangle-dapp:** Fix Static Page Generation on Netlify
+
+- **webb-ui:** Fix storybook Build & Publish
+
+- **tangle-dapp:** Fix network switcher bug
+
+- **tangle-dapp:** Fix Static Sites Generation Build on Netlify
+
+
+### ❤️  Thank You
+
+- Trung-Tin Pham
+- vutuanlinh2k2
+- Yurixander
+
 ## 0.0.13 (2024-07-29)
 
 
