@@ -21,10 +21,10 @@ jobs:
           app-id: ${{ vars.AUTO_SYNC_BRANCHES_APP_ID }}
           private-key: ${{ secrets.AUTO_SYNC_BRANCHES_SECRET }}
 
-      - name: Checkout Develop
+      - name: Checkout Master
         uses: actions/checkout@v4
         with:
-          ref: develop
+          ref: master
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
 
@@ -33,15 +33,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Checkout Master and Fast-Forward Merge
+      - name: Merge Release Commit to Master
         run: |
-          git checkout develop
-          git fetch origin
-          git checkout master
-          git pull
-          git merge --ff-only origin/develop
+          git fetch origin develop
+          git merge --ff-only ${{ github.sha }}
 
       - name: Push Changes to Master
-        run: git push origin master --force-with-lease
+        run: git push origin master
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
