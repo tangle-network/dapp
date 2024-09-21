@@ -38,11 +38,20 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       [boundaryCount, currentPage, siblingCount, totalPages],
     );
 
-    const showingItemsCount = useMemo(
-      () =>
-        itemsPerPage && totalItems ? Math.min(itemsPerPage, totalItems) : '-',
-      [itemsPerPage, totalItems],
-    );
+    const showingItemsCount = useMemo(() => {
+      const isLastPage = currentPage === totalPages;
+
+      // If not the last page, return the itemsPerPage
+      if (!isLastPage) {
+        return itemsPerPage?.toLocaleString() ?? '-';
+      }
+
+      // Otherwise, calculate the remaining items on the last page
+      const remainingItems = totalItems ? totalItems % (itemsPerPage ?? 1) : 0;
+      return remainingItems > 0
+        ? remainingItems.toLocaleString()
+        : (itemsPerPage?.toLocaleString() ?? '-');
+    }, [currentPage, itemsPerPage, totalItems, totalPages]);
 
     const mergedClsx = useMemo(
       () =>
