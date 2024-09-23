@@ -22,7 +22,6 @@ export enum LocalStorageKey {
   PAYOUTS = 'payouts',
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   KNOWN_NETWORK_ID = 'knownNetworkId',
-  WAS_BANNER_DISMISSED = 'wasBannerDismissed',
   SERVICES_CACHE = 'servicesCache',
   SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
   BRIDGE_TX_QUEUE_BY_ACC = 'bridgeTxQueue',
@@ -72,15 +71,13 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
                 ? string
                 : T extends LocalStorageKey.KNOWN_NETWORK_ID
                   ? number
-                  : T extends LocalStorageKey.WAS_BANNER_DISMISSED
-                    ? boolean
-                    : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
-                      ? SubstrateWalletsMetadataCache
-                      : T extends LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC
-                        ? TxQueueByAccount
-                        : T extends LocalStorageKey.LIQUID_STAKING_TABLE_DATA
-                          ? LiquidStakingTableData
-                          : never;
+                  : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
+                    ? SubstrateWalletsMetadataCache
+                    : T extends LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC
+                      ? TxQueueByAccount
+                      : T extends LocalStorageKey.LIQUID_STAKING_TABLE_DATA
+                        ? LiquidStakingTableData
+                        : never;
 
 export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,
