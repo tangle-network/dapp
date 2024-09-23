@@ -9,12 +9,13 @@ import {
   LsNetworkEntityAdapter,
   ProtocolEntity,
 } from '../../data/liquidStaking/adapter';
-import { PolkadotValidator } from '../../data/liquidStaking/adapters/polkadot';
 import { SubstrateAddress } from '../../types/utils';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 import {
+  TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
+  Network as TangleNetwork,
 } from '../../../../libs/webb-ui-components/src/constants/networks';
 
 export enum LsProtocolId {
@@ -29,6 +30,7 @@ export enum LsProtocolId {
   POLYGON,
   TANGLE_MAINNET,
   TANGLE_TESTNET,
+  TANGLE_LOCAL,
 }
 
 export type LsLiquifierProtocolId =
@@ -75,6 +77,7 @@ type ProtocolDefCommon = {
 };
 
 export enum LsNetworkId {
+  TANGLE_LOCAL,
   TANGLE_TESTNET,
   TANGLE_MAINNET,
   TANGLE_RESTAKING_PARACHAIN,
@@ -82,17 +85,21 @@ export enum LsNetworkId {
 }
 
 export interface LsTangleNetworkDef extends ProtocolDefCommon {
-  networkId: LsNetworkId.TANGLE_MAINNET | LsNetworkId.TANGLE_TESTNET;
-  id: LsProtocolId.TANGLE_MAINNET | LsProtocolId.TANGLE_TESTNET;
+  networkId:
+    | LsNetworkId.TANGLE_MAINNET
+    | LsNetworkId.TANGLE_TESTNET
+    | LsNetworkId.TANGLE_LOCAL;
+  id:
+    | LsProtocolId.TANGLE_MAINNET
+    | LsProtocolId.TANGLE_TESTNET
+    | LsProtocolId.TANGLE_LOCAL;
   token: LsToken.TNT | LsToken.TTNT;
   rpcEndpoint: string;
   ss58Prefix:
     | typeof TANGLE_MAINNET_NETWORK.ss58Prefix
-    | typeof TANGLE_TESTNET_NATIVE_NETWORK.ss58Prefix;
-  adapter: LsNetworkEntityAdapter<PolkadotValidator>;
-  tangleNetwork:
-    | typeof TANGLE_MAINNET_NETWORK
-    | typeof TANGLE_TESTNET_NATIVE_NETWORK;
+    | typeof TANGLE_TESTNET_NATIVE_NETWORK.ss58Prefix
+    | typeof TANGLE_LOCAL_DEV_NETWORK.ss58Prefix;
+  tangleNetwork: TangleNetwork;
 }
 
 export interface LsParachainChainDef<T extends ProtocolEntity = ProtocolEntity>

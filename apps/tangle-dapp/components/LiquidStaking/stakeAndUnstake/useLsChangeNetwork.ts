@@ -1,8 +1,5 @@
 import { useWebbUI } from '@webb-tools/webb-ui-components';
-import {
-  TANGLE_MAINNET_NETWORK,
-  TANGLE_TESTNET_NATIVE_NETWORK,
-} from '@webb-tools/webb-ui-components/constants/networks';
+import assert from 'assert';
 import { useCallback } from 'react';
 
 import { LsNetworkId } from '../../../constants/liquidStaking/types';
@@ -11,6 +8,7 @@ import useNetworkStore from '../../../context/useNetworkStore';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import { NetworkFeature } from '../../../types';
 import getLsNetwork from '../../../utils/liquidStaking/getLsNetwork';
+import getLsTangleNetwork from '../../../utils/liquidStaking/getLsTangleNetwork';
 import testRpcEndpointConnection from '../../NetworkSelector/testRpcEndpointConnection';
 
 const useLsChangeNetwork = () => {
@@ -35,10 +33,9 @@ const useLsChangeNetwork = () => {
         return;
       }
 
-      const tangleNetwork =
-        lsNetwork.id === LsNetworkId.TANGLE_MAINNET
-          ? TANGLE_MAINNET_NETWORK
-          : TANGLE_TESTNET_NATIVE_NETWORK;
+      const tangleNetwork = getLsTangleNetwork(newNetworkId);
+
+      assert(tangleNetwork !== null);
 
       const networkFeatures = NETWORK_FEATURE_MAP[tangleNetwork.id];
 

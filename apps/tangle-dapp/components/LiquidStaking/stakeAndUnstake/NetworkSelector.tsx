@@ -7,17 +7,16 @@ import {
   DropdownMenuItem,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import {
-  TANGLE_MAINNET_NETWORK,
-  TANGLE_TESTNET_NATIVE_NETWORK,
-} from '@webb-tools/webb-ui-components/constants/networks';
+import assert from 'assert';
 import { FC } from 'react';
 
+import { IS_PRODUCTION_ENV } from '../../../constants/env';
 import { LS_NETWORKS } from '../../../constants/liquidStaking/constants';
 import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import { NETWORK_FEATURE_MAP } from '../../../constants/networks';
 import { NetworkFeature } from '../../../types';
 import getLsNetwork from '../../../utils/liquidStaking/getLsNetwork';
+import getLsTangleNetwork from '../../../utils/liquidStaking/getLsTangleNetwork';
 import DropdownChevronIcon from './DropdownChevronIcon';
 
 type NetworkSelectorProps = {
@@ -53,19 +52,25 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({
 
   // Filter out networks that don't support liquid staking yet.
   const supportedLsNetworks = LS_NETWORKS.filter((network) => {
-    if (network.id === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER) {
+    // TODO: Check whether the restaking parachain supports liquid staking instead of hardcoding it.
+    if (network.id === LsNetworkId.TANGLE_RESTAKING_PARACHAIN) {
       return true;
+    } else if (network.id === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER) {
+      return true;
+    }
+    // Exclude the local Tangle network in production.
+    else if (network.id === LsNetworkId.TANGLE_LOCAL && IS_PRODUCTION_ENV) {
+      return false;
     }
 
     // TODO: Obtain the Tangle network from the LS Network's properties instead.
-    const tangleNetwork =
-      network.id === LsNetworkId.TANGLE_MAINNET
-        ? TANGLE_MAINNET_NETWORK
-        : TANGLE_TESTNET_NATIVE_NETWORK;
+    const tangleNetwork = getLsTangleNetwork(network.id);
 
-    const networkFeatures = NETWORK_FEATURE_MAP[tangleNetwork.id];
+    assert(tangleNetwork !== null);
 
-    return networkFeatures.includes(NetworkFeature.LsPools);
+    return NETWORK_FEATURE_MAP[tangleNetwork.id].includes(
+      NetworkFeature.LsPools,
+    );
   });
 
   return setNetworkId !== undefined ? (

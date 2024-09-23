@@ -6,6 +6,7 @@ import MOONBEAM from '../../data/liquidStaking/adapters/moonbeam';
 import PHALA from '../../data/liquidStaking/adapters/phala';
 import POLKADOT from '../../data/liquidStaking/adapters/polkadot';
 import POLYGON from '../../data/liquidStaking/adapters/polygon';
+import TANGLE_LOCAL from '../../data/liquidStaking/adapters/tangleLocal';
 import TANGLE_MAINNET from '../../data/liquidStaking/adapters/tangleMainnet';
 import TANGLE_TESTNET from '../../data/liquidStaking/adapters/tangleTestnet';
 import THE_GRAPH from '../../data/liquidStaking/adapters/theGraph';
@@ -54,6 +55,7 @@ export const LS_PROTOCOLS: LsProtocolDef[] = [
   ...Object.values(LS_LIQUIFIER_PROTOCOL_MAP),
   TANGLE_MAINNET,
   TANGLE_TESTNET,
+  TANGLE_LOCAL,
 ];
 
 export const LS_LIQUIFIER_PROTOCOL_IDS = [
@@ -99,25 +101,34 @@ export const LS_TANGLE_RESTAKING_PARACHAIN: LsNetwork = {
   protocols: [POLKADOT, PHALA, MOONBEAM, ASTAR, MANTA] as LsProtocolDef[],
 };
 
-export const LS_TANGLE_MAINNET: LsNetwork = {
+export const LS_TANGLE_MAINNET = {
   id: LsNetworkId.TANGLE_MAINNET,
   networkName: 'Tangle Mainnet',
   chainIconFileName: 'tangle',
   defaultProtocolId: LsProtocolId.TANGLE_MAINNET,
   protocols: [TANGLE_MAINNET],
-};
+} as const satisfies LsNetwork;
 
-export const LS_TANGLE_TESTNET: LsNetwork = {
+export const LS_TANGLE_TESTNET = {
   id: LsNetworkId.TANGLE_MAINNET,
   networkName: 'Tangle Testnet',
   chainIconFileName: 'tangle',
   defaultProtocolId: LsProtocolId.TANGLE_MAINNET,
   protocols: [TANGLE_MAINNET],
-};
+} as const satisfies LsNetwork;
+
+export const LS_TANGLE_LOCAL = {
+  id: LsNetworkId.TANGLE_LOCAL,
+  networkName: 'Tangle Local Dev',
+  chainIconFileName: 'tangle',
+  defaultProtocolId: LsProtocolId.TANGLE_LOCAL,
+  protocols: [TANGLE_LOCAL],
+} as const satisfies LsNetwork;
 
 export const LS_NETWORKS: LsNetwork[] = [
   LS_TANGLE_MAINNET,
   LS_TANGLE_TESTNET,
+  LS_TANGLE_LOCAL,
   LS_TANGLE_RESTAKING_PARACHAIN,
   LS_ETHEREUM_MAINNET_LIQUIFIER,
 ];

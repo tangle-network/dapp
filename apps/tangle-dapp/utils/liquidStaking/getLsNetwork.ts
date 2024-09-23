@@ -1,5 +1,6 @@
 import {
   LS_ETHEREUM_MAINNET_LIQUIFIER,
+  LS_TANGLE_LOCAL,
   LS_TANGLE_MAINNET,
   LS_TANGLE_RESTAKING_PARACHAIN,
   LS_TANGLE_TESTNET,
@@ -16,6 +17,8 @@ const getLsNetwork = (networkId: LsNetworkId): LsNetwork => {
       return LS_TANGLE_MAINNET;
     case LsNetworkId.TANGLE_TESTNET:
       return LS_TANGLE_TESTNET;
+    case LsNetworkId.TANGLE_LOCAL:
+      return LS_TANGLE_LOCAL;
   }
 };
 
