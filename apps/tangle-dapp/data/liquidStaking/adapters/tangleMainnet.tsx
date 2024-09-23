@@ -17,7 +17,7 @@ import { IS_PRODUCTION_ENV } from '../../../constants/env';
 import {
   LsNetworkId,
   LsProtocolId,
-  LsTangleMainnetDef,
+  LsTangleNetworkDef,
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { LiquidStakingItem } from '../../../types/liquidStaking';
@@ -200,9 +200,9 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
   ];
 };
 
-const TANGLE = {
+const TANGLE_MAINNET = {
   networkId: LsNetworkId.TANGLE_MAINNET,
-  id: LsProtocolId.TANGLE,
+  id: LsProtocolId.TANGLE_MAINNET,
   name: 'Tangle',
   token: LsToken.TNT,
   chainIconFileName: 'tangle',
@@ -217,6 +217,7 @@ const TANGLE = {
     fetchProtocolEntities: fetchValidators,
     getTableColumns,
   },
-} as const satisfies LsTangleMainnetDef;
+  tangleNetwork: TANGLE_MAINNET_NETWORK,
+} as const satisfies LsTangleNetworkDef;
 
-export default TANGLE;
+export default TANGLE_MAINNET;

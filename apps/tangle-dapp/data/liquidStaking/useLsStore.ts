@@ -7,13 +7,13 @@ type State = {
   selectedNetworkId: LsNetworkId;
   selectedProtocolId: LsProtocolId;
   selectedNetworkEntities: Set<string>;
-  selectedParachainPoolId: string | null;
+  selectedPoolId: number | null;
 };
 
 type Actions = {
   setSelectedProtocolId: (newProtocolId: State['selectedProtocolId']) => void;
   setSelectedNetworkId: (newNetworkId: State['selectedNetworkId']) => void;
-  setSelectedParachainPoolId: (parachainPoolId: string) => void;
+  setSelectedPoolId: (poolId: number) => void;
 
   setSelectedNetworkEntities: (
     selectedNetworkEntities: State['selectedNetworkEntities'],
@@ -23,14 +23,12 @@ type Actions = {
 type Store = State & Actions;
 
 export const useLsStore = create<Store>((set) => ({
-  selectedParachainPoolId: null,
+  selectedPoolId: null,
   selectedNetworkId: LsNetworkId.TANGLE_RESTAKING_PARACHAIN,
   selectedProtocolId: LsProtocolId.POLKADOT,
   selectedNetworkEntities: new Set<string>(),
-  setSelectedParachainPoolId: (selectedParachainPoolId) =>
-    set({ selectedParachainPoolId }),
-  setSelectedProtocolId: (selectedChainId) =>
-    set({ selectedProtocolId: selectedChainId }),
+  setSelectedPoolId: (selectedPoolId) => set({ selectedPoolId }),
+  setSelectedProtocolId: (selectedProtocolId) => set({ selectedProtocolId }),
   setSelectedNetworkEntities: (selectedNetworkEntities) =>
     set({ selectedNetworkEntities }),
   setSelectedNetworkId: (selectedNetworkId) => {

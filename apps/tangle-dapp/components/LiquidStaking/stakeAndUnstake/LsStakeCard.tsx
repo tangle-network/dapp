@@ -13,7 +13,7 @@ import {
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { z } from 'zod';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
@@ -40,6 +40,7 @@ import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
 import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
+import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
 const LsStakeCard: FC = () => {
@@ -50,12 +51,8 @@ const LsStakeCard: FC = () => {
     stringify: (value) => value?.toString(),
   });
 
-  const {
-    selectedProtocolId,
-    setSelectedProtocolId,
-    selectedNetworkId,
-    setSelectedNetworkId,
-  } = useLsStore();
+  const { selectedProtocolId, setSelectedProtocolId, selectedNetworkId } =
+    useLsStore();
 
   const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
   const performLiquifierDeposit = useLiquifierDeposit();
@@ -67,6 +64,7 @@ const LsStakeCard: FC = () => {
   );
 
   const selectedProtocol = getLsProtocolDef(selectedProtocolId);
+  const tryChangeNetwork = useLsChangeNetwork();
 
   // TODO: Not loading the correct protocol for: '?amount=123000000000000000000&protocol=7&network=1&action=stake'. When network=1, it switches to protocol=5 on load. Could this be because the protocol is reset to its default once the network is switched?
   useSearchParamSync({
@@ -82,7 +80,7 @@ const LsStakeCard: FC = () => {
     value: selectedNetworkId,
     parse: (value) => z.nativeEnum(LsNetworkId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
-    setValue: setSelectedNetworkId,
+    setValue: tryChangeNetwork,
   });
 
   const {
@@ -146,6 +144,11 @@ const LsStakeCard: FC = () => {
     />
   );
 
+  // Reset the input amount when the network changes.
+  useEffect(() => {
+    setFromAmount(null);
+  }, [setFromAmount, selectedNetworkId]);
+
   return (
     <>
       <LsInput
@@ -161,7 +164,7 @@ const LsStakeCard: FC = () => {
         setProtocolId={setSelectedProtocolId}
         minAmount={minSpendable ?? undefined}
         maxAmount={maxSpendable ?? undefined}
-        setNetworkId={setSelectedNetworkId}
+        setNetworkId={tryChangeNetwork}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />

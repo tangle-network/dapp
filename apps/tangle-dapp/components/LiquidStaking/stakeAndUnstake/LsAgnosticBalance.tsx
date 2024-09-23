@@ -58,7 +58,6 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
     }
 
     const formattedBalance = formatBn(balance, decimals, {
-      fractionMaxLength: undefined,
       includeCommas: true,
     });
 

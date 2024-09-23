@@ -35,19 +35,17 @@ import SelectTokenModal from './SelectTokenModal';
 import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import UnstakeRequestSubmittedModal from './UnstakeRequestSubmittedModal';
+import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
 const LsUnstakeCard: FC = () => {
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
   const activeAccountAddress = useActiveAccountAddress();
+  const tryChangeNetwork = useLsChangeNetwork();
 
-  const {
-    selectedProtocolId,
-    setSelectedProtocolId,
-    selectedNetworkId,
-    setSelectedNetworkId,
-  } = useLsStore();
+  const { selectedProtocolId, setSelectedProtocolId, selectedNetworkId } =
+    useLsStore();
 
   const [didLiquifierUnlockSucceed, setDidLiquifierUnlockSucceed] =
     useState(false);
@@ -153,6 +151,11 @@ const LsUnstakeCard: FC = () => {
     }
   }, [didLiquifierUnlockSucceed, redeemTxStatus]);
 
+  // Reset the input amount when the network changes.
+  useEffect(() => {
+    setFromAmount(null);
+  }, [setFromAmount, selectedNetworkId]);
+
   const stakedWalletBalance = (
     <LsAgnosticBalance
       isNative={false}
@@ -175,7 +178,7 @@ const LsUnstakeCard: FC = () => {
       <LsInput
         id="liquid-staking-unstake-from"
         networkId={selectedNetworkId}
-        setNetworkId={setSelectedNetworkId}
+        setNetworkId={tryChangeNetwork}
         protocolId={selectedProtocolId}
         setProtocolId={setSelectedProtocolId}
         token={selectedProtocol.token}

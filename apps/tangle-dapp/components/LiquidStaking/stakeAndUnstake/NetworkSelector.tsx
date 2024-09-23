@@ -7,10 +7,16 @@ import {
   DropdownMenuItem,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import {
+  TANGLE_MAINNET_NETWORK,
+  TANGLE_TESTNET_NATIVE_NETWORK,
+} from '@webb-tools/webb-ui-components/constants/networks';
 import { FC } from 'react';
 
 import { LS_NETWORKS } from '../../../constants/liquidStaking/constants';
 import { LsNetworkId } from '../../../constants/liquidStaking/types';
+import { NETWORK_FEATURE_MAP } from '../../../constants/networks';
+import { NetworkFeature } from '../../../types';
 import getLsNetwork from '../../../utils/liquidStaking/getLsNetwork';
 import DropdownChevronIcon from './DropdownChevronIcon';
 
@@ -45,6 +51,23 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({
     </div>
   );
 
+  // Filter out networks that don't support liquid staking yet.
+  const supportedLsNetworks = LS_NETWORKS.filter((network) => {
+    if (network.id === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER) {
+      return true;
+    }
+
+    // TODO: Obtain the Tangle network from the LS Network's properties instead.
+    const tangleNetwork =
+      network.id === LsNetworkId.TANGLE_MAINNET
+        ? TANGLE_MAINNET_NETWORK
+        : TANGLE_TESTNET_NATIVE_NETWORK;
+
+    const networkFeatures = NETWORK_FEATURE_MAP[tangleNetwork.id];
+
+    return networkFeatures.includes(NetworkFeature.LsPools);
+  });
+
   return setNetworkId !== undefined ? (
     <Dropdown>
       <DropdownMenuTrigger>{base}</DropdownMenuTrigger>
@@ -52,10 +75,10 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({
       <DropdownBody>
         <ScrollArea>
           <ul className="max-h-[300px]">
-            {LS_NETWORKS.map((network) => {
+            {supportedLsNetworks.map((network) => {
               return (
-                <li key={network.type}>
-                  <DropdownMenuItem onClick={() => setNetworkId(network.type)}>
+                <li key={network.id}>
+                  <DropdownMenuItem onClick={() => setNetworkId(network.id)}>
                     <div className="flex gap-2 items-center justify-start">
                       <ChainIcon size="lg" name={network.chainIconFileName} />
 

@@ -8,6 +8,7 @@ import {
   LsNetworkId,
   LsProtocolId,
 } from '../../../constants/liquidStaking/types';
+import useBalances from '../../../data/balances/useBalances';
 import useParachainBalances from '../../../data/liquidStaking/useParachainBalances';
 import usePolling from '../../../data/liquidStaking/usePolling';
 import useContractReadOnce from '../../../data/liquifier/useContractReadOnce';
@@ -50,6 +51,7 @@ const useLsAgnosticBalance = (isNative: boolean, protocolId: LsProtocolId) => {
   const activeAccountAddress = useActiveAccountAddress();
   const evmAddress20 = useEvmAddress20();
   const { nativeBalances, liquidBalances } = useParachainBalances();
+  const { free: tangleBalance } = useBalances();
 
   // TODO: Why not use the subscription hook variants (useContractRead) instead of manually utilizing usePolling?
   const readErc20 = useContractReadOnce(erc20Abi);
@@ -115,6 +117,8 @@ const useLsAgnosticBalance = (isNative: boolean, protocolId: LsProtocolId) => {
     effect: isAccountConnected ? erc20BalanceFetcher : null,
   });
 
+  // Update balance to the parachain balance when the restaking
+  // parachain is the active network.
   useEffect(() => {
     if (
       protocol.networkId !== LsNetworkId.TANGLE_RESTAKING_PARACHAIN ||
@@ -127,6 +131,19 @@ const useLsAgnosticBalance = (isNative: boolean, protocolId: LsProtocolId) => {
 
     setBalance(createBalanceStateUpdater(newBalance));
   }, [parachainBalances, protocol.token, protocol.networkId]);
+
+  // Update the balance to the Tangle balance when the Tangle
+  // network is the active network.
+  useEffect(() => {
+    if (
+      protocol.networkId !== LsNetworkId.TANGLE_MAINNET ||
+      tangleBalance === null
+    ) {
+      return;
+    }
+
+    setBalance(createBalanceStateUpdater(tangleBalance));
+  }, [protocol.networkId, tangleBalance]);
 
   return { balance, isRefreshing };
 };

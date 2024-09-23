@@ -74,6 +74,8 @@ const getDataType = (chain: LsProtocolId): LiquidStakingItem | null => {
     case LsProtocolId.LIVEPEER:
     case LsProtocolId.POLYGON:
     case LsProtocolId.THE_GRAPH:
+    case LsProtocolId.TANGLE_MAINNET:
+    case LsProtocolId.TANGLE_TESTNET:
       return null;
   }
 };

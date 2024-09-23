@@ -1,6 +1,7 @@
 import assert from 'assert';
 
 import { LS_PROTOCOLS } from '../../constants/liquidStaking/constants';
+import { LsTangleNetworkDef } from '../../constants/liquidStaking/types';
 import {
   LsLiquifierProtocolDef,
   LsParachainChainDef,
@@ -10,7 +11,9 @@ import {
 
 type IdToDefMap<T extends LsProtocolId> = T extends LsParachainChainId
   ? LsParachainChainDef
-  : LsLiquifierProtocolDef;
+  : T extends LsProtocolId.TANGLE_MAINNET
+    ? LsTangleNetworkDef
+    : LsLiquifierProtocolDef;
 
 const getLsProtocolDef = <T extends LsProtocolId>(id: T): IdToDefMap<T> => {
   const result = LS_PROTOCOLS.find((def) => def.id === id);

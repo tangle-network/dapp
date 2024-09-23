@@ -12,7 +12,10 @@ import {
 import { PolkadotValidator } from '../../data/liquidStaking/adapters/polkadot';
 import { SubstrateAddress } from '../../types/utils';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
-import { TANGLE_MAINNET_NETWORK } from '../../../../libs/webb-ui-components/src/constants/networks';
+import {
+  TANGLE_MAINNET_NETWORK,
+  TANGLE_TESTNET_NATIVE_NETWORK,
+} from '../../../../libs/webb-ui-components/src/constants/networks';
 
 export enum LsProtocolId {
   POLKADOT,
@@ -24,7 +27,8 @@ export enum LsProtocolId {
   THE_GRAPH,
   LIVEPEER,
   POLYGON,
-  TANGLE,
+  TANGLE_MAINNET,
+  TANGLE_TESTNET,
 }
 
 export type LsLiquifierProtocolId =
@@ -42,6 +46,7 @@ export enum LsToken {
   ASTAR = 'ASTR',
   PHALA = 'PHALA',
   TNT = 'TNT',
+  TTNT = 'tTNT',
   LINK = 'LINK',
   GRT = 'GRT',
   LPT = 'LPT',
@@ -54,7 +59,12 @@ export type LsLiquifierProtocolToken =
   | LsToken.LPT
   | LsToken.POL;
 
-export type LsParachainToken = Exclude<LsToken, LsLiquifierProtocolToken>;
+export type LsParachainToken =
+  | LsToken.DOT
+  | LsToken.GLMR
+  | LsToken.MANTA
+  | LsToken.ASTAR
+  | LsToken.PHALA;
 
 type ProtocolDefCommon = {
   name: string;
@@ -65,18 +75,24 @@ type ProtocolDefCommon = {
 };
 
 export enum LsNetworkId {
+  TANGLE_TESTNET,
   TANGLE_MAINNET,
   TANGLE_RESTAKING_PARACHAIN,
   ETHEREUM_MAINNET_LIQUIFIER,
 }
 
-export interface LsTangleMainnetDef extends ProtocolDefCommon {
-  networkId: LsNetworkId.TANGLE_MAINNET;
-  id: LsProtocolId.TANGLE;
-  token: LsToken.TNT;
+export interface LsTangleNetworkDef extends ProtocolDefCommon {
+  networkId: LsNetworkId.TANGLE_MAINNET | LsNetworkId.TANGLE_TESTNET;
+  id: LsProtocolId.TANGLE_MAINNET | LsProtocolId.TANGLE_TESTNET;
+  token: LsToken.TNT | LsToken.TTNT;
   rpcEndpoint: string;
-  ss58Prefix: typeof TANGLE_MAINNET_NETWORK.ss58Prefix;
+  ss58Prefix:
+    | typeof TANGLE_MAINNET_NETWORK.ss58Prefix
+    | typeof TANGLE_TESTNET_NATIVE_NETWORK.ss58Prefix;
   adapter: LsNetworkEntityAdapter<PolkadotValidator>;
+  tangleNetwork:
+    | typeof TANGLE_MAINNET_NETWORK
+    | typeof TANGLE_TESTNET_NATIVE_NETWORK;
 }
 
 export interface LsParachainChainDef<T extends ProtocolEntity = ProtocolEntity>
@@ -104,7 +120,7 @@ export interface LsLiquifierProtocolDef extends ProtocolDefCommon {
 export type LsProtocolDef =
   | LsParachainChainDef
   | LsLiquifierProtocolDef
-  | LsTangleMainnetDef;
+  | LsTangleNetworkDef;
 
 export type LsCardSearchParams = {
   amount: BN;
@@ -148,7 +164,7 @@ export type LsParachainSimpleTimeUnit = {
 };
 
 export type LsNetwork = {
-  type: LsNetworkId;
+  id: LsNetworkId;
   networkName: string;
   chainIconFileName: string;
   defaultProtocolId: LsProtocolId;
