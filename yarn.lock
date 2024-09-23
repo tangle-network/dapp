@@ -7920,7 +7920,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hyperlane-xyz/utils@npm:5.1.0, @hyperlane-xyz/utils@npm:^5.0.0":
+"@hyperlane-xyz/utils@npm:5.1.0":
   version: 5.1.0
   resolution: "@hyperlane-xyz/utils@npm:5.1.0"
   dependencies:
@@ -7932,6 +7932,21 @@ __metadata:
     pino: "npm:^8.19.0"
     yaml: "npm:^2.4.1"
   checksum: 10c0/2f1313b510c20b6be42310b1bcd4e6762f5e63fae0d7e4df19cc6dcab062a378a67cec40d2739e8bdd80e84ae3221942c335eb54f2938d7f6e3da8d28f3284c8
+  languageName: node
+  linkType: hard
+
+"@hyperlane-xyz/utils@npm:^5.0.0":
+  version: 5.2.1
+  resolution: "@hyperlane-xyz/utils@npm:5.2.1"
+  dependencies:
+    "@cosmjs/encoding": "npm:^0.32.4"
+    "@solana/web3.js": "npm:^1.78.0"
+    bignumber.js: "npm:^9.1.1"
+    ethers: "npm:^5.7.2"
+    lodash-es: "npm:^4.17.21"
+    pino: "npm:^8.19.0"
+    yaml: "npm:2.4.5"
+  checksum: 10c0/ae8b3601f63f03a285fbf18a7ffcd1057afd3e17f83e861d4ab4ff3768ebce810ff471c768b40412e7c79a555d9ead346f4e9b8a1fe7999e923952da1e278937
   languageName: node
   linkType: hard
 
@@ -47981,6 +47996,15 @@ __metadata:
   version: 0.0.43
   resolution: "yaml-ast-parser@npm:0.0.43"
   checksum: 10c0/4d2f1e761067b2c6abdd882279a406f879258787af470a6d4a659cb79cb2ab056b870b25f1f80f46ed556e8b499d611d247806376f53edf3412f72c0a8ea2e98
+  languageName: node
+  linkType: hard
+
+"yaml@npm:2.4.5":
+  version: 2.4.5
+  resolution: "yaml@npm:2.4.5"
+  bin:
+    yaml: bin.mjs
+  checksum: 10c0/e1ee78b381e5c710f715cc4082fd10fc82f7f5c92bd6f075771d20559e175616f56abf1c411f545ea0e9e16e4f84a83a50b42764af5f16ec006328ba9476bb31
   languageName: node
   linkType: hard
 
