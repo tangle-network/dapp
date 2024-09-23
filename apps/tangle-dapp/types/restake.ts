@@ -64,6 +64,7 @@ export type OperatorMetadata = {
   readonly bondLessRequest: OperatorBondLessRequest | null;
   readonly delegations: Array<OperatorDelegatorBond>;
   readonly status: OperatorStatus;
+  readonly restakersCount: number;
 };
 
 /**
