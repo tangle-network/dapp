@@ -22,11 +22,12 @@ import {
   LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
+import useLsPoolJoinTx from '../../../data/liquidStaking/tangle/useLsPoolJoinTx';
 import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useMintTx from '../../../data/liquidStaking/useMintTx';
+import useMintTx from '../../../data/liquidStaking/parachain/useMintTx';
 import useLiquifierDeposit from '../../../data/liquifier/useLiquifierDeposit';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamState from '../../../hooks/useSearchParamState';
@@ -51,10 +52,15 @@ const LsStakeCard: FC = () => {
     stringify: (value) => value?.toString(),
   });
 
-  const { selectedProtocolId, setSelectedProtocolId, selectedNetworkId } =
-    useLsStore();
+  const {
+    selectedProtocolId,
+    setSelectedProtocolId,
+    selectedNetworkId,
+    selectedPoolId,
+  } = useLsStore();
 
-  const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
+  const { execute: executeTanglePoolJoinTx } = useLsPoolJoinTx();
+  const { execute: executeParachainMintTx, status: mintTxStatus } = useMintTx();
   const performLiquifierDeposit = useLiquifierDeposit();
   const activeAccountAddress = useActiveAccountAddress();
 
@@ -86,14 +92,16 @@ const LsStakeCard: FC = () => {
   const {
     exchangeRate: exchangeRateOrError,
     isRefreshing: isRefreshingExchangeRate,
-  } = useLsExchangeRate(
-    ExchangeRateType.NativeToDerivative,
-    selectedProtocolId,
-  );
+  } = useLsExchangeRate(ExchangeRateType.NativeToDerivative);
 
   // TODO: Properly handle the error state.
   const exchangeRate =
     exchangeRateOrError instanceof Error ? null : exchangeRateOrError;
+
+  const isTangleNetwork =
+    selectedNetworkId === LsNetworkId.TANGLE_LOCAL ||
+    selectedNetworkId === LsNetworkId.TANGLE_MAINNET ||
+    selectedNetworkId === LsNetworkId.TANGLE_TESTNET;
 
   const handleStakeClick = useCallback(async () => {
     // Not ready yet; no amount given.
@@ -103,9 +111,9 @@ const LsStakeCard: FC = () => {
 
     if (
       selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeMintTx !== null
+      executeParachainMintTx !== null
     ) {
-      executeMintTx({
+      executeParachainMintTx({
         amount: fromAmount,
         currency: selectedProtocol.currency,
       });
@@ -114,8 +122,25 @@ const LsStakeCard: FC = () => {
       performLiquifierDeposit !== null
     ) {
       await performLiquifierDeposit(selectedProtocol.id, fromAmount);
+    } else if (
+      isTangleNetwork &&
+      executeTanglePoolJoinTx !== null &&
+      selectedPoolId !== null
+    ) {
+      executeTanglePoolJoinTx({
+        amount: fromAmount,
+        poolId: selectedPoolId,
+      });
     }
-  }, [executeMintTx, fromAmount, performLiquifierDeposit, selectedProtocol]);
+  }, [
+    executeParachainMintTx,
+    executeTanglePoolJoinTx,
+    fromAmount,
+    isTangleNetwork,
+    performLiquifierDeposit,
+    selectedProtocol,
+    selectedPoolId,
+  ]);
 
   const toAmount = useMemo(() => {
     if (fromAmount === null || exchangeRate === null) {
@@ -128,13 +153,15 @@ const LsStakeCard: FC = () => {
   const canCallStake =
     (fromAmount !== null &&
       selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeMintTx !== null) ||
+      executeParachainMintTx !== null) ||
     (selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
-      performLiquifierDeposit !== null);
+      performLiquifierDeposit !== null) ||
+    (isTangleNetwork &&
+      executeTanglePoolJoinTx !== null &&
+      selectedPoolId !== null);
 
   const walletBalance = (
     <LsAgnosticBalance
-      protocolId={selectedProtocolId}
       tooltip="Click to use all available balance"
       onClick={() => {
         if (maxSpendable !== null) {
@@ -187,7 +214,6 @@ const LsStakeCard: FC = () => {
         <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
 
         <ExchangeRateDetailItem
-          protocolId={selectedProtocolId}
           token={selectedProtocol.token}
           type={ExchangeRateType.NativeToDerivative}
         />

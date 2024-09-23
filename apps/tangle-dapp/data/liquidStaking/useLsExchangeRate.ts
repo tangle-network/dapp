@@ -8,7 +8,6 @@ import LIQUIFIER_TG_TOKEN_ABI from '../../constants/liquidStaking/liquifierTgTok
 import {
   LsNetworkId,
   LsParachainCurrencyKey,
-  LsProtocolId,
 } from '../../constants/liquidStaking/types';
 import useApiRx from '../../hooks/useApiRx';
 import calculateBnRatio from '../../utils/calculateBnRatio';
@@ -16,6 +15,7 @@ import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import useContractRead from '../liquifier/useContractRead';
 import { ContractReadOptions } from '../liquifier/useContractReadOnce';
 import usePolling from './usePolling';
+import { useLsStore } from './useLsStore';
 
 export enum ExchangeRateType {
   NativeToDerivative,
@@ -47,13 +47,11 @@ const computeExchangeRate = (
 
 const MAX_BN_OPERATION_NUMBER = 2 ** 26 - 1;
 
-const useLsExchangeRate = (
-  type: ExchangeRateType,
-  protocolId: LsProtocolId,
-) => {
+const useLsExchangeRate = (type: ExchangeRateType) => {
   const [exchangeRate, setExchangeRate] = useState<number | Error | null>(null);
+  const { selectedProtocolId, selectedNetworkId } = useLsStore();
 
-  const protocol = getLsProtocolDef(protocolId);
+  const protocol = getLsProtocolDef(selectedProtocolId);
 
   const { result: tokenPoolAmount } = useApiRx((api) => {
     if (protocol.networkId !== LsNetworkId.TANGLE_RESTAKING_PARACHAIN) {
@@ -144,10 +142,20 @@ const useLsExchangeRate = (
   }, [liquifierTotalShares, tgTokenTotalSupply, type]);
 
   const fetch = useCallback(async () => {
-    const promise =
-      protocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN
-        ? parachainExchangeRate
-        : fetchLiquifierExchangeRate();
+    let promise: Promise<number | Error | null>;
+
+    switch (selectedNetworkId) {
+      case LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER:
+        promise = fetchLiquifierExchangeRate();
+      case LsNetworkId.TANGLE_RESTAKING_PARACHAIN:
+        promise = parachainExchangeRate;
+      // Tangle networks with the `lst` pallet have a fixed exchange
+      // rate of 1:1.
+      case LsNetworkId.TANGLE_LOCAL:
+      case LsNetworkId.TANGLE_MAINNET:
+      case LsNetworkId.TANGLE_TESTNET:
+        promise = Promise.resolve(1);
+    }
 
     const newExchangeRate = await promise;
 

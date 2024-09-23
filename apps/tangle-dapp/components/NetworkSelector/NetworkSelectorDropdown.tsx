@@ -30,14 +30,14 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
 }) => {
   return (
     <div className="flex flex-col items-center justify-between">
-      {/* Mainnet network */}
+      {/* Tangle Mainnet */}
       <NetworkOption
         isSelected={selectedNetwork?.id === TANGLE_MAINNET_NETWORK.id}
         name={TANGLE_MAINNET_NETWORK.name}
         onClick={() => onNetworkChange(TANGLE_MAINNET_NETWORK)}
       />
 
-      {/* Testnet network */}
+      {/* Tangle Testnet */}
       <NetworkOption
         isSelected={selectedNetwork?.id === TANGLE_TESTNET_NATIVE_NETWORK.id}
         name={TANGLE_TESTNET_NATIVE_NETWORK.name}
@@ -46,7 +46,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
 
       <hr className="w-full h-0 border-t border-mono-40 dark:border-mono-120" />
 
-      {/* Local dev network */}
+      {/* Tangle Local Dev */}
       <NetworkOption
         isSelected={selectedNetwork?.id === TANGLE_LOCAL_DEV_NETWORK.id}
         name={TANGLE_LOCAL_DEV_NETWORK.name}

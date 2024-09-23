@@ -232,8 +232,7 @@ export function useSubstrateTxWithNotification<Context = void>(
     overrideRpcEndpoint,
   );
 
-  const { notifyProcessing, notifySuccess, notifyError } =
-    useTxNotification(txName);
+  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 
   const execute = useCallback(
     (context: Context) => {

@@ -20,7 +20,7 @@ import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useRedeemTx from '../../../data/liquidStaking/useRedeemTx';
+import useRedeemTx from '../../../data/liquidStaking/parachain/useRedeemTx';
 import useLiquifierUnlock from '../../../data/liquifier/useLiquifierUnlock';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
@@ -80,10 +80,7 @@ const LsUnstakeCard: FC = () => {
   const {
     exchangeRate: exchangeRateOrError,
     isRefreshing: isRefreshingExchangeRate,
-  } = useLsExchangeRate(
-    ExchangeRateType.DerivativeToNative,
-    selectedProtocol.id,
-  );
+  } = useLsExchangeRate(ExchangeRateType.DerivativeToNative);
 
   // TODO: Properly handle the error state.
   const exchangeRate =
@@ -159,7 +156,6 @@ const LsUnstakeCard: FC = () => {
   const stakedWalletBalance = (
     <LsAgnosticBalance
       isNative={false}
-      protocolId={selectedProtocol.id}
       tooltip="Click to use all staked balance"
       onClick={() => setFromAmount(maxSpendable)}
     />
@@ -213,7 +209,6 @@ const LsUnstakeCard: FC = () => {
         <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
 
         <ExchangeRateDetailItem
-          protocolId={selectedProtocolId}
           token={selectedProtocol.token}
           type={ExchangeRateType.DerivativeToNative}
         />

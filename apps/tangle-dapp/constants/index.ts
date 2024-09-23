@@ -61,6 +61,7 @@ export enum TxName {
   LS_LIQUIFIER_DEPOSIT = 'liquifier deposit',
   LS_LIQUIFIER_UNLOCK = 'liquifier unlock',
   LS_LIQUIFIER_WITHDRAW = 'liquifier withdraw',
+  LS_TANGLE_POOL_JOIN = 'join liquid staking pool',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

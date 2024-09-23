@@ -30,7 +30,6 @@ const TotalDetailItem: FC<TotalDetailItemProps> = ({
     isMinting
       ? ExchangeRateType.NativeToDerivative
       : ExchangeRateType.DerivativeToNative,
-    protocolId,
   );
 
   const protocol = getLsProtocolDef(protocolId);

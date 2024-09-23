@@ -99,7 +99,7 @@ export const TANGLE_LOCAL_DEV_NETWORK = {
   id: NetworkId.TANGLE_LOCAL_DEV,
   substrateChainId: SubstrateChainId.TangleLocalNative,
   evmChainId: EVMChainId.TangleLocalEVM,
-  name: 'Local endpoint',
+  name: 'Tangle Local Dev',
   tokenSymbol: TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
   nodeType: 'standalone',
   subqueryEndpoint: 'http://localhost:4000/graphql',

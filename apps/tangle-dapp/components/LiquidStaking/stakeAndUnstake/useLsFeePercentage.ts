@@ -6,7 +6,7 @@ import {
   LsNetworkId,
   LsProtocolId,
 } from '../../../constants/liquidStaking/types';
-import useParachainLsFees from '../../../data/liquidStaking/useParachainLsFees';
+import useParachainLsFees from '../../../data/liquidStaking/parachain/useParachainLsFees';
 import useContractRead from '../../../data/liquifier/useContractRead';
 import { ContractReadOptions } from '../../../data/liquifier/useContractReadOnce';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';

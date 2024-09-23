@@ -52,10 +52,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({
 
   // Filter out networks that don't support liquid staking yet.
   const supportedLsNetworks = LS_NETWORKS.filter((network) => {
-    // TODO: Check whether the restaking parachain supports liquid staking instead of hardcoding it.
-    if (network.id === LsNetworkId.TANGLE_RESTAKING_PARACHAIN) {
-      return true;
-    } else if (network.id === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER) {
+    if (network.id === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER) {
       return true;
     }
     // Exclude the local Tangle network in production.
