@@ -41,12 +41,5 @@ jobs:
       - name: Build Storybook
         run: yarn nx build-storybook webb-ui-components
 
-        # 👇 Adds Chromatic as a step in the workflow
       - name: Publish to Chromatic
-        uses: chromaui/action@v11.10.2
-        # Chromatic GitHub Action options
-        with:
-          # 👇 Chromatic projectToken, refer to the manage page to obtain it.
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          exitZeroOnChanges: true # 👈 Option to prevent the workflow from failing
-          storybookBuildDir: 'dist/storybook/webb-ui-components'
+        run: npx --no-install chromatic --project-token ${{ secrets.CHROMATIC_PROJECT_TOKEN }} --storybook-build-dir dist/storybook/webb-ui-components --exitZeroOnChanges
