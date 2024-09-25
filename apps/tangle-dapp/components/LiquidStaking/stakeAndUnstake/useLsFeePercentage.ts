@@ -63,9 +63,18 @@ const useLsFeePercentage = (
         ? null
         : Number(rawLiquifierFeeOrError) / 100;
 
-  return protocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN
-    ? parachainFee
-    : liquifierFeePercentageOrError;
+  switch (protocol.networkId) {
+    case LsNetworkId.TANGLE_RESTAKING_PARACHAIN:
+      return parachainFee;
+    case LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER:
+      return liquifierFeePercentageOrError;
+    // Tangle networks with the `lst` pallet have no fees for
+    // joining or leaving pools as of now.
+    case LsNetworkId.TANGLE_LOCAL:
+    case LsNetworkId.TANGLE_MAINNET:
+    case LsNetworkId.TANGLE_TESTNET:
+      return 0;
+  }
 };
 
 export default useLsFeePercentage;

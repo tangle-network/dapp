@@ -14,8 +14,8 @@ import calculateBnRatio from '../../utils/calculateBnRatio';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import useContractRead from '../liquifier/useContractRead';
 import { ContractReadOptions } from '../liquifier/useContractReadOnce';
-import usePolling from './usePolling';
 import { useLsStore } from './useLsStore';
+import usePolling from './usePolling';
 
 export enum ExchangeRateType {
   NativeToDerivative,
@@ -147,8 +147,12 @@ const useLsExchangeRate = (type: ExchangeRateType) => {
     switch (selectedNetworkId) {
       case LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER:
         promise = fetchLiquifierExchangeRate();
+
+        break;
       case LsNetworkId.TANGLE_RESTAKING_PARACHAIN:
         promise = parachainExchangeRate;
+
+        break;
       // Tangle networks with the `lst` pallet have a fixed exchange
       // rate of 1:1.
       case LsNetworkId.TANGLE_LOCAL:
@@ -166,7 +170,7 @@ const useLsExchangeRate = (type: ExchangeRateType) => {
     }
 
     setExchangeRate(newExchangeRate);
-  }, [fetchLiquifierExchangeRate, parachainExchangeRate, protocol]);
+  }, [fetchLiquifierExchangeRate, parachainExchangeRate, selectedNetworkId]);
 
   // Pause or resume ERC20-based exchange rate fetching based
   // on whether the requested protocol is a parachain or an ERC20 token.

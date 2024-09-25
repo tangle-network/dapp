@@ -39,7 +39,17 @@ export type LsLiquifierProtocolId =
   | LsProtocolId.LIVEPEER
   | LsProtocolId.POLYGON;
 
-export type LsParachainChainId = Exclude<LsProtocolId, LsLiquifierProtocolId>;
+export type LsParachainChainId =
+  | LsProtocolId.POLKADOT
+  | LsProtocolId.PHALA
+  | LsProtocolId.MOONBEAM
+  | LsProtocolId.ASTAR
+  | LsProtocolId.MANTA;
+
+export type LsTangleNetworkId =
+  | LsProtocolId.TANGLE_MAINNET
+  | LsProtocolId.TANGLE_TESTNET
+  | LsProtocolId.TANGLE_LOCAL;
 
 export enum LsToken {
   DOT = 'DOT',

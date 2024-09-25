@@ -24,9 +24,11 @@ type Store = State & Actions;
 
 export const useLsStore = create<Store>((set) => ({
   selectedPoolId: null,
-  selectedNetworkId: LsNetworkId.TANGLE_RESTAKING_PARACHAIN,
-  selectedProtocolId: LsProtocolId.POLKADOT,
   selectedNetworkEntities: new Set<string>(),
+  // Default the selected network and protocol to the Tangle testnet,
+  // and tTNT, until liquid staking pools are deployed to mainnet.
+  selectedNetworkId: LsNetworkId.TANGLE_TESTNET,
+  selectedProtocolId: LsProtocolId.TANGLE_TESTNET,
   setSelectedPoolId: (selectedPoolId) => set({ selectedPoolId }),
   setSelectedProtocolId: (selectedProtocolId) => set({ selectedProtocolId }),
   setSelectedNetworkEntities: (selectedNetworkEntities) =>

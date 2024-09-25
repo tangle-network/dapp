@@ -22,12 +22,12 @@ import {
   LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
+import useMintTx from '../../../data/liquidStaking/parachain/useMintTx';
 import useLsPoolJoinTx from '../../../data/liquidStaking/tangle/useLsPoolJoinTx';
 import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useMintTx from '../../../data/liquidStaking/parachain/useMintTx';
 import useLiquifierDeposit from '../../../data/liquifier/useLiquifierDeposit';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamState from '../../../hooks/useSearchParamState';
@@ -59,8 +59,10 @@ const LsStakeCard: FC = () => {
     selectedPoolId,
   } = useLsStore();
 
-  const { execute: executeTanglePoolJoinTx } = useLsPoolJoinTx();
-  const { execute: executeParachainMintTx, status: mintTxStatus } = useMintTx();
+  const { execute: executeTanglePoolJoinTx, status: tanglePoolJoinTxStatus } =
+    useLsPoolJoinTx();
+  const { execute: executeParachainMintTx, status: parachainMintTxStatus } =
+    useMintTx();
   const performLiquifierDeposit = useLiquifierDeposit();
   const activeAccountAddress = useActiveAccountAddress();
 
@@ -242,7 +244,10 @@ const LsStakeCard: FC = () => {
           fromAmount === null ||
           fromAmount.isZero()
         }
-        isLoading={mintTxStatus === TxStatus.PROCESSING}
+        isLoading={
+          parachainMintTxStatus === TxStatus.PROCESSING ||
+          tanglePoolJoinTxStatus === TxStatus.PROCESSING
+        }
         loadingText="Processing"
         onClick={handleStakeClick}
         isFullWidth
