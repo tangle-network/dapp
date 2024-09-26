@@ -25,7 +25,7 @@ const TANGLE_TESTNET = {
     ? TANGLE_MAINNET_NETWORK.wsRpcEndpoint
     : TANGLE_LOCAL_DEV_NETWORK.wsRpcEndpoint,
   timeUnit: CrossChainTimeUnit.POLKADOT_ERA,
-  unstakingPeriod: 28,
+  unstakingPeriod: 14,
   ss58Prefix: TANGLE_MAINNET_NETWORK.ss58Prefix,
   tangleNetwork: TANGLE_TESTNET_NATIVE_NETWORK,
 } as const satisfies LsTangleNetworkDef;

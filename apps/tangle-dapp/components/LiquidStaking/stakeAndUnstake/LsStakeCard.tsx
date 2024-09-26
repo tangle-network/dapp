@@ -61,8 +61,10 @@ const LsStakeCard: FC = () => {
 
   const { execute: executeTanglePoolJoinTx, status: tanglePoolJoinTxStatus } =
     useLsPoolJoinTx();
+
   const { execute: executeParachainMintTx, status: parachainMintTxStatus } =
     useMintTx();
+
   const performLiquifierDeposit = useLiquifierDeposit();
   const activeAccountAddress = useActiveAccountAddress();
 

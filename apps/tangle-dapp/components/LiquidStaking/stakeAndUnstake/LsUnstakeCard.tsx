@@ -16,11 +16,12 @@ import {
   LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
+import useRedeemTx from '../../../data/liquidStaking/parachain/useRedeemTx';
+import useLsPoolUnbondTx from '../../../data/liquidStaking/tangle/useLsPoolUnbondTx';
 import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useRedeemTx from '../../../data/liquidStaking/parachain/useRedeemTx';
 import useLiquifierUnlock from '../../../data/liquifier/useLiquifierUnlock';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
@@ -34,7 +35,6 @@ import LsInput from './LsInput';
 import SelectTokenModal from './SelectTokenModal';
 import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
-import UnstakeRequestSubmittedModal from './UnstakeRequestSubmittedModal';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
@@ -44,14 +44,12 @@ const LsUnstakeCard: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();
   const tryChangeNetwork = useLsChangeNetwork();
 
-  const { selectedProtocolId, setSelectedProtocolId, selectedNetworkId } =
-    useLsStore();
-
-  const [didLiquifierUnlockSucceed, setDidLiquifierUnlockSucceed] =
-    useState(false);
-
-  const [isRequestSubmittedModalOpen, setIsRequestSubmittedModalOpen] =
-    useState(false);
+  const {
+    selectedProtocolId,
+    setSelectedProtocolId,
+    selectedNetworkId,
+    selectedPoolId,
+  } = useLsStore();
 
   // TODO: Won't both of these hooks be attempting to update the same state?
   useSearchParamSync({
@@ -62,11 +60,11 @@ const LsUnstakeCard: FC = () => {
     setValue: setSelectedProtocolId,
   });
 
-  const {
-    execute: executeRedeemTx,
-    status: redeemTxStatus,
-    txHash: redeemTxHash,
-  } = useRedeemTx();
+  const { execute: executeParachainRedeemTx, status: parachainRedeemTxStatus } =
+    useRedeemTx();
+
+  const { execute: executeTangleUnbondTx, status: tangleUnbondTxStatus } =
+    useLsPoolUnbondTx();
 
   const performLiquifierUnlock = useLiquifierUnlock();
 
@@ -94,6 +92,11 @@ const LsUnstakeCard: FC = () => {
     stringify: (value) => value?.toString(),
   });
 
+  const isTangleNetwork =
+    selectedNetworkId === LsNetworkId.TANGLE_LOCAL ||
+    selectedNetworkId === LsNetworkId.TANGLE_MAINNET ||
+    selectedNetworkId === LsNetworkId.TANGLE_TESTNET;
+
   const handleUnstakeClick = useCallback(async () => {
     // Cannot perform transaction: Amount not set.
     if (fromAmount === null) {
@@ -102,9 +105,9 @@ const LsUnstakeCard: FC = () => {
 
     if (
       selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeRedeemTx !== null
+      executeParachainRedeemTx !== null
     ) {
-      executeRedeemTx({
+      return executeParachainRedeemTx({
         amount: fromAmount,
         currency: selectedProtocol.currency,
       });
@@ -112,16 +115,28 @@ const LsUnstakeCard: FC = () => {
       selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
       performLiquifierUnlock !== null
     ) {
-      setDidLiquifierUnlockSucceed(false);
-
-      const success = await performLiquifierUnlock(
-        selectedProtocol.id,
-        fromAmount,
-      );
-
-      setDidLiquifierUnlockSucceed(success);
+      return performLiquifierUnlock(selectedProtocol.id, fromAmount);
     }
-  }, [executeRedeemTx, fromAmount, performLiquifierUnlock, selectedProtocol]);
+
+    if (
+      isTangleNetwork &&
+      executeTangleUnbondTx !== null &&
+      selectedPoolId !== null
+    ) {
+      return executeTangleUnbondTx({
+        points: fromAmount,
+        poolId: selectedPoolId,
+      });
+    }
+  }, [
+    executeParachainRedeemTx,
+    executeTangleUnbondTx,
+    fromAmount,
+    isTangleNetwork,
+    performLiquifierUnlock,
+    selectedPoolId,
+    selectedProtocol,
+  ]);
 
   const toAmount = useMemo(() => {
     if (fromAmount === null || exchangeRate === null) {
@@ -140,14 +155,6 @@ const LsUnstakeCard: FC = () => {
     return [{ address: '0x123456' as any, amount: new BN(100), decimals: 18 }];
   }, []);
 
-  // Open the request submitted modal when the redeem
-  // transaction is complete.
-  useEffect(() => {
-    if (redeemTxStatus === TxStatus.COMPLETE || didLiquifierUnlockSucceed) {
-      setIsRequestSubmittedModalOpen(true);
-    }
-  }, [didLiquifierUnlockSucceed, redeemTxStatus]);
-
   // Reset the input amount when the network changes.
   useEffect(() => {
     setFromAmount(null);
@@ -161,12 +168,15 @@ const LsUnstakeCard: FC = () => {
     />
   );
 
-  // TODO: Also check if the user has enough balance to unstake.
+  // TODO: Also check if the user has enough balance to unstake. Convert this into a self-executing function to break down the complexity of a one-liner.
   const canCallUnstake =
     (selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeRedeemTx !== null) ||
+      executeParachainRedeemTx !== null) ||
     (selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
-      performLiquifierUnlock !== null);
+      performLiquifierUnlock !== null) ||
+    (isTangleNetwork &&
+      executeTangleUnbondTx !== null &&
+      selectedPoolId !== null);
 
   return (
     <>
@@ -237,7 +247,10 @@ const LsUnstakeCard: FC = () => {
           fromAmount === null ||
           fromAmount.isZero()
         }
-        isLoading={redeemTxStatus === TxStatus.PROCESSING}
+        isLoading={
+          parachainRedeemTxStatus === TxStatus.PROCESSING ||
+          tangleUnbondTxStatus === TxStatus.PROCESSING
+        }
         loadingText="Processing"
         onClick={handleUnstakeClick}
         isFullWidth
@@ -250,12 +263,6 @@ const LsUnstakeCard: FC = () => {
         isOpen={isSelectTokenModalOpen}
         onClose={() => setIsSelectTokenModalOpen(false)}
         onTokenSelect={handleTokenSelect}
-      />
-
-      <UnstakeRequestSubmittedModal
-        isOpen={isRequestSubmittedModalOpen}
-        onClose={() => setIsRequestSubmittedModalOpen(false)}
-        txHash={redeemTxHash}
       />
     </>
   );

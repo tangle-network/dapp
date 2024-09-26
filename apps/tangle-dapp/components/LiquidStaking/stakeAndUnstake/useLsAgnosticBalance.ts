@@ -7,12 +7,13 @@ import LIQUIFIER_TG_TOKEN_ABI from '../../../constants/liquidStaking/liquifierTg
 import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import useBalances from '../../../data/balances/useBalances';
 import useParachainBalances from '../../../data/liquidStaking/parachain/useParachainBalances';
+import useLsPoolBalance from '../../../data/liquidStaking/tangle/useLsPoolBalance';
+import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import usePolling from '../../../data/liquidStaking/usePolling';
 import useContractReadOnce from '../../../data/liquifier/useContractReadOnce';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useEvmAddress20 from '../../../hooks/useEvmAddress';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 
 type BalanceUpdater = (
   prevBalance: BN | null | typeof EMPTY_VALUE_PLACEHOLDER,
@@ -51,6 +52,7 @@ const useLsAgnosticBalance = (isNative: boolean) => {
   const { nativeBalances, liquidBalances } = useParachainBalances();
   const { free: tangleFreeBalance } = useBalances();
   const { selectedProtocolId, selectedNetworkId } = useLsStore();
+  const tangleAssetBalance = useLsPoolBalance();
 
   // TODO: Why not use the subscription hook variants (useContractRead) instead of manually utilizing usePolling?
   const readErc20 = useContractReadOnce(erc20Abi);
@@ -139,12 +141,29 @@ const useLsAgnosticBalance = (isNative: boolean) => {
   // Update the balance to the Tangle balance when the Tangle
   // network is the active network.
   useEffect(() => {
-    if (!isLsTangleNetwork || tangleFreeBalance === null) {
+    if (!isLsTangleNetwork) {
+      return;
+    }
+    // Relevant balance hasn't loaded yet or isn't available.
+    else if (
+      (isNative && tangleFreeBalance === null) ||
+      (!isNative && tangleAssetBalance === null)
+    ) {
       return;
     }
 
-    setBalance(createBalanceStateUpdater(tangleFreeBalance));
-  }, [protocol.networkId, tangleFreeBalance, isLsTangleNetwork]);
+    setBalance(
+      createBalanceStateUpdater(
+        isNative ? tangleFreeBalance : tangleAssetBalance,
+      ),
+    );
+  }, [
+    protocol.networkId,
+    tangleFreeBalance,
+    isLsTangleNetwork,
+    tangleAssetBalance,
+    isNative,
+  ]);
 
   return { balance, isRefreshing };
 };

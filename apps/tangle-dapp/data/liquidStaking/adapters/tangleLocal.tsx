@@ -18,7 +18,7 @@ const TANGLE_LOCAL = {
   decimals: TANGLE_TOKEN_DECIMALS,
   rpcEndpoint: TANGLE_LOCAL_DEV_NETWORK.wsRpcEndpoint,
   timeUnit: CrossChainTimeUnit.POLKADOT_ERA,
-  unstakingPeriod: 28,
+  unstakingPeriod: 14,
   ss58Prefix: TANGLE_LOCAL_DEV_NETWORK.ss58Prefix,
   tangleNetwork: TANGLE_LOCAL_DEV_NETWORK,
 } as const satisfies LsTangleNetworkDef;

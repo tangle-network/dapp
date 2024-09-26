@@ -14,10 +14,10 @@ import { twMerge } from 'tailwind-merge';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import { LsNetworkId } from '../../../constants/liquidStaking/types';
+import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import useLsAgnosticBalance from './useLsAgnosticBalance';
-import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 
 export type LsAgnosticBalanceProps = {
   isNative?: boolean;
