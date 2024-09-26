@@ -7,8 +7,10 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
+  TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
+import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';
@@ -17,7 +19,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FC, useMemo, useState } from 'react';
+import { ComponentProps, FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath } from '../../types';
@@ -62,9 +64,17 @@ const columns = [
 
 const BlueprintListing: FC = () => {
   const blueprints = useBlueprintListing();
+
   const [searchValue, setSearchValue] = useState('');
+
   const [filteredCategory, setFilteredCategory] =
     useState<BlueprintCategory | null>(null);
+
+  const isLoading = false;
+
+  const isEmpty = true;
+
+  const error = null;
 
   const categoryItems = useMemo(
     () => [
@@ -82,48 +92,43 @@ const BlueprintListing: FC = () => {
     [filteredCategory],
   );
 
-  const table = useReactTable({
-    data: blueprints,
-    columns,
-    filterFns: {
-      fuzzy: fuzzyFilter,
-    },
-    globalFilterFn: fuzzyFilter,
-    initialState: {
-      columnVisibility: {
-        category: false,
-      },
-      pagination: {
-        pageSize: 12,
-      },
-      sorting: [
-        {
-          id: 'address',
-          desc: false,
+  const table = useReactTable(
+    useMemo<TableOptions<Blueprint>>(
+      () => ({
+        data: blueprints,
+        columns,
+        filterFns: {
+          fuzzy: fuzzyFilter,
         },
-      ],
-    },
-    state: {
-      columnFilters: [
-        {
-          id: 'address',
-          value: searchValue,
+        globalFilterFn: fuzzyFilter,
+        initialState: {
+          columnVisibility: {
+            category: false,
+          },
+          pagination: {
+            pageSize: 12,
+          },
         },
-        ...(filteredCategory
-          ? [
-              {
-                id: 'category',
-                value: filteredCategory,
-              },
-            ]
-          : []),
-      ],
-    },
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    autoResetPageIndex: false,
-  });
+        state: {
+          columnFilters: [
+            ...(filteredCategory
+              ? [
+                  {
+                    id: 'category',
+                    value: filteredCategory,
+                  },
+                ]
+              : []),
+          ],
+        },
+        getCoreRowModel: getCoreRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        autoResetPageIndex: false,
+      }),
+      [blueprints, filteredCategory],
+    ),
+  );
 
   return (
     <div className="space-y-5">
@@ -138,9 +143,9 @@ const BlueprintListing: FC = () => {
           id="search-blueprints"
           placeholder="Search"
           value={searchValue}
-          onChange={(val) => setSearchValue(val)}
+          onChange={setSearchValue}
           isControlled
-          className="flex-1 rounded-full overflow-hidden"
+          className="flex-1 overflow-hidden rounded-full"
           inputClassName="border-0 bg-mono-20 dark:bg-mono-200"
         />
         <Button variant="secondary">Search</Button>
@@ -176,40 +181,73 @@ const BlueprintListing: FC = () => {
         <div className="h-0.5 bg-mono-80 dark:bg-mono-170" />
       </div>
 
-      {/* Blueprint list */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {table.getRowModel().rows.map((row) => (
-          <div key={row.id}>
-            {row
-              .getVisibleCells()
-              .map((cell) =>
-                flexRender(cell.column.columnDef.cell, cell.getContext()),
-              )}
-          </div>
-        ))}
-      </div>
+      {isLoading ? (
+        <GalleryContainer>
+          {Array.from({ length: 6 }).map((_, idx) => (
+            <SkeletonLoader key={idx} className="h-80" />
+          ))}
+        </GalleryContainer>
+      ) : error ? (
+        <Typography
+          ta="center"
+          variant="body1"
+          className="flex items-center justify-center h-40"
+        >
+          {error}
+        </Typography>
+      ) : isEmpty ? (
+        <Typography
+          ta="center"
+          variant="body1"
+          className="flex items-center justify-center h-36"
+        >
+          No blueprints found. Check back later or try a different category.
+        </Typography>
+      ) : (
+        <>
+          {/* Blueprint list */}
+          <GalleryContainer>
+            {table.getRowModel().rows.map((row) => (
+              <div key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <div key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </GalleryContainer>
 
-      {/* Pagination */}
-      <Pagination
-        itemsPerPage={table.getState().pagination.pageSize}
-        totalItems={Math.max(
-          table.getPrePaginationRowModel().rows.length,
-          blueprints.length,
-        )}
-        page={table.getState().pagination.pageIndex + 1}
-        totalPages={table.getPageCount()}
-        canPreviousPage={table.getCanPreviousPage()}
-        previousPage={table.previousPage}
-        canNextPage={table.getCanNextPage()}
-        nextPage={table.nextPage}
-        setPageIndex={table.setPageIndex}
-        title="Blueprints"
-      />
+          {/* Pagination */}
+          <Pagination
+            itemsPerPage={table.getState().pagination.pageSize}
+            totalItems={table.getRowCount()}
+            page={table.getState().pagination.pageIndex + 1}
+            totalPages={table.getPageCount()}
+            canPreviousPage={table.getCanPreviousPage()}
+            previousPage={table.previousPage}
+            canNextPage={table.getCanNextPage()}
+            nextPage={table.nextPage}
+            setPageIndex={table.setPageIndex}
+            title="Blueprints"
+          />
+        </>
+      )}
     </div>
   );
 };
 
 export default BlueprintListing;
+
+const GalleryContainer = ({ className, ...props }: ComponentProps<'div'>) => (
+  <div
+    {...props}
+    className={twMerge(
+      'grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3',
+      className,
+    )}
+  />
+);
 
 const BlueprintItem: FC<Blueprint> = ({
   name,
@@ -249,18 +287,18 @@ const BlueprintItem: FC<Blueprint> = ({
           )}
         >
           <div className="space-y-3">
-            <div className="py-2 flex items-center gap-2 border-b border-mono-60 dark:border-mono-170">
+            <div className="flex items-center gap-2 py-2 border-b border-mono-60 dark:border-mono-170">
               <Image
                 src={imgUrl}
                 width={72}
                 height={72}
                 alt={name}
-                className="rounded-full bg-center flex-shrink-0"
+                className="flex-shrink-0 bg-center rounded-full"
                 fill={false}
               />
-              <div className="min-w-0 flex-1">
+              <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <div className="min-w-0 flex-1">
+                  <div className="flex-1 min-w-0">
                     <Typography
                       variant="h5"
                       className="truncate text-mono-180 dark:text-mono-20 group-hover:text-mono-200 dark:group-hover:text-mono-0"
@@ -287,7 +325,7 @@ const BlueprintItem: FC<Blueprint> = ({
             </Typography>
           </div>
 
-          <div className="w-full flex gap-1">
+          <div className="flex w-full gap-1">
             <div className="flex-1 space-y-2">
               <Typography
                 variant="body2"
