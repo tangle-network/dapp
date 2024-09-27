@@ -4,16 +4,15 @@ import { useCallback } from 'react';
 
 import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import { NETWORK_FEATURE_MAP } from '../../../constants/networks';
-import useNetworkStore from '../../../context/useNetworkStore';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
+import useNetworkSwitcher from '../../../hooks/useNetworkSwitcher';
 import { NetworkFeature } from '../../../types';
 import getLsNetwork from '../../../utils/liquidStaking/getLsNetwork';
 import getLsTangleNetwork from '../../../utils/liquidStaking/getLsTangleNetwork';
-import testRpcEndpointConnection from '../../NetworkSelector/testRpcEndpointConnection';
 
 const useLsChangeNetwork = () => {
   const { selectedNetworkId, setSelectedNetworkId } = useLsStore();
-  const { setNetwork } = useNetworkStore();
+  const { switchNetwork } = useNetworkSwitcher();
   const { notificationApi } = useWebbUI();
 
   const tryChangeNetwork = useCallback(
@@ -48,24 +47,11 @@ const useLsChangeNetwork = () => {
         return;
       }
 
-      // Try connecting to the new network.
-      const isRpcUp = await testRpcEndpointConnection(
-        tangleNetwork.wsRpcEndpoint,
-      );
-
-      if (!isRpcUp) {
-        notificationApi({
-          message: 'Failed to connect to the network',
-          variant: 'error',
-        });
-
-        return;
+      if (await switchNetwork(tangleNetwork, false)) {
+        setSelectedNetworkId(newNetworkId);
       }
-
-      setSelectedNetworkId(newNetworkId);
-      setNetwork(tangleNetwork);
     },
-    [notificationApi, selectedNetworkId, setNetwork, setSelectedNetworkId],
+    [notificationApi, selectedNetworkId, setSelectedNetworkId, switchNetwork],
   );
 
   return tryChangeNetwork;

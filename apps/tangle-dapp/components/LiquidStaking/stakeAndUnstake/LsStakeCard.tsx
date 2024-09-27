@@ -76,6 +76,11 @@ const LsStakeCard: FC = () => {
   const selectedProtocol = getLsProtocolDef(selectedProtocolId);
   const tryChangeNetwork = useLsChangeNetwork();
 
+  const isTangleNetwork =
+    selectedNetworkId === LsNetworkId.TANGLE_LOCAL ||
+    selectedNetworkId === LsNetworkId.TANGLE_MAINNET ||
+    selectedNetworkId === LsNetworkId.TANGLE_TESTNET;
+
   // TODO: Not loading the correct protocol for: '?amount=123000000000000000000&protocol=7&network=1&action=stake'. When network=1, it switches to protocol=5 on load. Could this be because the protocol is reset to its default once the network is switched?
   useSearchParamSync({
     key: LsSearchParamKey.PROTOCOL_ID,
@@ -101,11 +106,6 @@ const LsStakeCard: FC = () => {
   // TODO: Properly handle the error state.
   const exchangeRate =
     exchangeRateOrError instanceof Error ? null : exchangeRateOrError;
-
-  const isTangleNetwork =
-    selectedNetworkId === LsNetworkId.TANGLE_LOCAL ||
-    selectedNetworkId === LsNetworkId.TANGLE_MAINNET ||
-    selectedNetworkId === LsNetworkId.TANGLE_TESTNET;
 
   const handleStakeClick = useCallback(async () => {
     // Not ready yet; no amount given.

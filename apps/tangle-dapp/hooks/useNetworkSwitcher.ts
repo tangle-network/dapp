@@ -75,7 +75,7 @@ const useNetworkSwitcher = () => {
     async (newNetwork: Network, isCustom: boolean) => {
       // Already on the requested network.
       if (network.id === newNetwork.id) {
-        return;
+        return true;
       }
       // Test connection to the new network.
       else if (!(await testRpcEndpointConnection(newNetwork.wsRpcEndpoint))) {
@@ -84,7 +84,7 @@ const useNetworkSwitcher = () => {
           message: `Unable to connect to the requested network: ${newNetwork.wsRpcEndpoint}`,
         });
 
-        return;
+        return false;
       }
 
       if (activeWallet !== undefined) {
@@ -122,6 +122,8 @@ const useNetworkSwitcher = () => {
 
       setIsCustom(isCustom);
       setNetwork(newNetwork);
+
+      return true;
     },
     [
       activeWallet,
