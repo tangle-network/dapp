@@ -13,7 +13,7 @@ import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 
 const useLsFeePercentage = (
   protocolId: LsProtocolId,
-  isMinting: boolean,
+  isStaking: boolean,
 ): number | Error | null => {
   const { result: parachainFees } = useParachainLsFees();
 
@@ -22,7 +22,7 @@ const useLsFeePercentage = (
   const parachainFee =
     parachainFees === null
       ? null
-      : isMinting
+      : isStaking
         ? parachainFees.mintFeePercentage
         : parachainFees.redeemFeePercentage;
 

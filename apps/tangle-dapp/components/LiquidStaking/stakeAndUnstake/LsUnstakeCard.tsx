@@ -27,15 +27,16 @@ import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
+import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
 import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
 import SelectTokenModal from './SelectTokenModal';
-import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
+import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
 const LsUnstakeCard: FC = () => {
@@ -138,13 +139,21 @@ const LsUnstakeCard: FC = () => {
     selectedProtocol,
   ]);
 
+  const feePercentage = useLsFeePercentage(selectedProtocolId, false);
+
   const toAmount = useMemo(() => {
-    if (fromAmount === null || exchangeRate === null) {
+    if (
+      fromAmount === null ||
+      exchangeRate === null ||
+      typeof feePercentage !== 'number'
+    ) {
       return null;
     }
 
-    return fromAmount.muln(exchangeRate);
-  }, [exchangeRate, fromAmount]);
+    const feeAmount = scaleAmountByPercentage(fromAmount, feePercentage);
+
+    return fromAmount.divn(exchangeRate).sub(feeAmount);
+  }, [exchangeRate, feePercentage, fromAmount]);
 
   const handleTokenSelect = useCallback(() => {
     setIsSelectTokenModalOpen(false);
@@ -225,13 +234,7 @@ const LsUnstakeCard: FC = () => {
 
         <FeeDetailItem
           protocolId={selectedProtocolId}
-          isMinting={false}
-          inputAmount={fromAmount}
-        />
-
-        <TotalDetailItem
-          isMinting={false}
-          protocolId={selectedProtocolId}
+          isStaking={false}
           inputAmount={fromAmount}
         />
       </div>

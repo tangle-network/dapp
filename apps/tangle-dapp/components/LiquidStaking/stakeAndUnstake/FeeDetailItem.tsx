@@ -10,17 +10,17 @@ import DetailItem from './DetailItem';
 import useLsFeePercentage from './useLsFeePercentage';
 
 export type FeeDetailItemProps = {
-  isMinting: boolean;
+  isStaking: boolean;
   inputAmount: BN | null;
   protocolId: LsProtocolId;
 };
 
 const FeeDetailItem: FC<FeeDetailItemProps> = ({
-  isMinting,
+  isStaking,
   inputAmount,
   protocolId,
 }) => {
-  const feePercentage = useLsFeePercentage(protocolId, isMinting);
+  const feePercentage = useLsFeePercentage(protocolId, isStaking);
 
   const protocol = getLsProtocolDef(protocolId);
 

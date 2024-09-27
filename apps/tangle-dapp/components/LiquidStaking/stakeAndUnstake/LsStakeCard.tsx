@@ -34,14 +34,15 @@ import useSearchParamState from '../../../hooks/useSearchParamState';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
+import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
 import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
-import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
+import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
 const LsStakeCard: FC = () => {
@@ -146,13 +147,21 @@ const LsStakeCard: FC = () => {
     selectedPoolId,
   ]);
 
+  const feePercentage = useLsFeePercentage(selectedProtocolId, true);
+
   const toAmount = useMemo(() => {
-    if (fromAmount === null || exchangeRate === null) {
+    if (
+      fromAmount === null ||
+      exchangeRate === null ||
+      typeof feePercentage !== 'number'
+    ) {
       return null;
     }
 
-    return fromAmount.muln(exchangeRate);
-  }, [fromAmount, exchangeRate]);
+    const feeAmount = scaleAmountByPercentage(fromAmount, feePercentage);
+
+    return fromAmount.muln(exchangeRate).sub(feeAmount);
+  }, [fromAmount, exchangeRate, feePercentage]);
 
   const canCallStake =
     (fromAmount !== null &&
@@ -224,14 +233,8 @@ const LsStakeCard: FC = () => {
 
         <FeeDetailItem
           inputAmount={fromAmount}
-          isMinting
+          isStaking
           protocolId={selectedProtocolId}
-        />
-
-        <TotalDetailItem
-          isMinting
-          protocolId={selectedProtocolId}
-          inputAmount={fromAmount}
         />
       </div>
 
