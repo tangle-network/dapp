@@ -4,6 +4,12 @@ import {
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
+import {
+  TANGLE_LOCAL_DEV_NETWORK,
+  TANGLE_MAINNET_NETWORK,
+  TANGLE_TESTNET_NATIVE_NETWORK,
+} from '@webb-tools/webb-ui-components/constants/networks';
+import { Network as TangleNetwork } from '@webb-tools/webb-ui-components/constants/networks';
 
 import {
   LsNetworkEntityAdapter,
@@ -11,12 +17,6 @@ import {
 } from '../../data/liquidStaking/adapter';
 import { SubstrateAddress } from '../../types/utils';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
-import {
-  TANGLE_LOCAL_DEV_NETWORK,
-  TANGLE_MAINNET_NETWORK,
-  TANGLE_TESTNET_NATIVE_NETWORK,
-  Network as TangleNetwork,
-} from '../../../../libs/webb-ui-components/src/constants/networks';
 
 export enum LsProtocolId {
   POLKADOT,
@@ -99,10 +99,7 @@ export interface LsTangleNetworkDef extends ProtocolDefCommon {
     | LsNetworkId.TANGLE_MAINNET
     | LsNetworkId.TANGLE_TESTNET
     | LsNetworkId.TANGLE_LOCAL;
-  id:
-    | LsProtocolId.TANGLE_MAINNET
-    | LsProtocolId.TANGLE_TESTNET
-    | LsProtocolId.TANGLE_LOCAL;
+  id: LsTangleNetworkId;
   token: LsToken.TNT | LsToken.TTNT;
   rpcEndpoint: string;
   ss58Prefix:

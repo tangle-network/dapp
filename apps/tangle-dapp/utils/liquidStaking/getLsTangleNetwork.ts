@@ -7,8 +7,8 @@ import {
   TANGLE_TESTNET_NATIVE_NETWORK,
 } from '@webb-tools/webb-ui-components/constants/networks';
 
-import { LsNetworkId } from '../../constants/liquidStaking/types';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
+import { LsNetworkId } from '../../constants/liquidStaking/types';
 
 // TODO: Obtain the Tangle network directly from the adapter's `tangleNetwork` property instead of using this helper method.
 const getLsTangleNetwork = (networkId: LsNetworkId): Network | null => {
