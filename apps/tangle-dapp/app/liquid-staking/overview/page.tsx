@@ -1,12 +1,52 @@
-import { LsProtocolsTable, Typography } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+'use client';
 
+import { LsProtocolsTable, Typography } from '@webb-tools/webb-ui-components';
+import { FC, useEffect } from 'react';
+
+import LsStakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LsStakeCard';
+import LsUnstakeCard from '../../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
 import StatItem from '../../../components/StatItem';
+import { LsSearchParamKey } from '../../../constants/liquidStaking/types';
 import LsMyPoolsTable from '../../../containers/LsMyPoolsTable';
+import useNetworkStore from '../../../context/useNetworkStore';
+import { useLsStore } from '../../../data/liquidStaking/useLsStore';
+import useNetworkSwitcher from '../../../hooks/useNetworkSwitcher';
+import useSearchParamState from '../../../hooks/useSearchParamState';
+import getLsTangleNetwork from '../../../utils/liquidStaking/getLsTangleNetwork';
+import TabListItem from '../../restake/TabListItem';
+import TabsList from '../../restake/TabsList';
+
+enum SearchParamAction {
+  STAKE = 'stake',
+  UNSTAKE = 'unstake',
+}
 
 const LiquidStakingPage: FC = () => {
+  const [isStaking, setIsStaking] = useSearchParamState({
+    defaultValue: true,
+    key: LsSearchParamKey.ACTION,
+    parser: (value) => value === SearchParamAction.STAKE,
+    stringify: (value) =>
+      value ? SearchParamAction.STAKE : SearchParamAction.UNSTAKE,
+  });
+
+  const { selectedNetworkId } = useLsStore();
+  const { network } = useNetworkStore();
+  const { switchNetwork } = useNetworkSwitcher();
+
+  const lsTangleNetwork = getLsTangleNetwork(selectedNetworkId);
+
+  // Sync the network with the selected liquid staking network on load.
+  // It might differ initially if the user navigates to the page and
+  // the active network differs from the default liquid staking network.
+  useEffect(() => {
+    if (lsTangleNetwork !== null && lsTangleNetwork.id !== network.id) {
+      switchNetwork(lsTangleNetwork, false);
+    }
+  }, [lsTangleNetwork, network.id, selectedNetworkId, switchNetwork]);
+
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex items-stretch flex-col gap-10">
       <div className="p-6 space-y-0 rounded-2xl flex flex-row items-center justify-between w-full overflow-x-auto bg-liquid_staking_banner dark:bg-liquid_staking_banner_dark">
         <div className="flex flex-col gap-2">
           <Typography variant="h5" fw="bold">
@@ -28,9 +68,26 @@ const LiquidStakingPage: FC = () => {
         </div>
       </div>
 
-      <LsProtocolsTable />
+      <div className="flex flex-col self-center gap-4 w-full min-w-[450px] max-w-[600px]">
+        <TabsList className="w-full">
+          <TabListItem isActive={isStaking} onClick={() => setIsStaking(true)}>
+            Stake
+          </TabListItem>
+
+          <TabListItem
+            isActive={!isStaking}
+            onClick={() => setIsStaking(false)}
+          >
+            Unstake
+          </TabListItem>
+        </TabsList>
+
+        {isStaking ? <LsStakeCard /> : <LsUnstakeCard />}
+      </div>
 
       <LsMyPoolsTable />
+
+      <LsProtocolsTable />
     </div>
   );
 };
