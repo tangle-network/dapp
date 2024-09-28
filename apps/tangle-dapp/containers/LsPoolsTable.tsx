@@ -98,18 +98,6 @@ const COLUMNS = [
         </AvatarGroup>
       ),
   }),
-  COLUMN_HELPER.accessor('ownerStake', {
-    header: () => "Owner's Stake",
-    cell: (props) => {
-      const ownerStake = props.getValue();
-
-      if (ownerStake === undefined) {
-        return EMPTY_VALUE_PLACEHOLDER;
-      }
-
-      return <TokenAmountCell amount={ownerStake} className="text-left" />;
-    },
-  }),
   COLUMN_HELPER.accessor('totalStaked', {
     header: () => 'Total Staked (TVL)',
     cell: (props) => (

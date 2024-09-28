@@ -1,7 +1,6 @@
-import { Typography } from '@webb-tools/webb-ui-components';
+import { LsProtocolsTable, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import VaultsAndAssetsTable from '../../../components/LiquidStaking/VaultsAndAssetsTable';
 import StatItem from '../../../components/StatItem';
 
 const LiquidStakingPage: FC = () => {
@@ -28,7 +27,7 @@ const LiquidStakingPage: FC = () => {
         </div>
       </div>
 
-      <VaultsAndAssetsTable />
+      <LsProtocolsTable />
     </div>
   );
 };

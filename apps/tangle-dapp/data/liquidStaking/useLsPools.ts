@@ -1,4 +1,4 @@
-import { BN, BN_ZERO, u8aToString } from '@polkadot/util';
+import { BN_ZERO, u8aToString } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
 import { LsPool } from '../../constants/liquidStaking/types';
@@ -57,21 +57,20 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
           ? undefined
           : u8aToString(metadataEntryBytes);
 
-      // Root role can be `None` if its roles are updated, and the root
-      // role is removed.
+      // Roles can be `None` if updated and removed.
       const ownerAddress = tanglePool.roles.root.isNone
         ? undefined
         : assertSubstrateAddress(tanglePool.roles.root.unwrap().toString());
 
-      let ownerStake: BN | undefined = undefined;
+      const nominatorAddress = tanglePool.roles.nominator.isNone
+        ? undefined
+        : assertSubstrateAddress(
+            tanglePool.roles.nominator.unwrap().toString(),
+          );
 
-      if (ownerAddress !== undefined && poolMembers !== null) {
-        ownerStake = poolMembers
-          .find(([id, memberAddress]) => {
-            return id === poolId && memberAddress === ownerAddress;
-          })?.[2]
-          .balance.toBn();
-      }
+      const bouncerAddress = tanglePool.roles.bouncer.isNone
+        ? undefined
+        : assertSubstrateAddress(tanglePool.roles.bouncer.unwrap().toString());
 
       const memberBalances = poolMembers?.filter(([id]) => {
         return id === poolId;
@@ -96,10 +95,11 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         id: poolId,
         metadata,
         ownerAddress,
+        nominatorAddress,
+        bouncerAddress,
         commissionPercentage,
         validators,
         totalStaked,
-        ownerStake,
         apyPercentage,
       };
 

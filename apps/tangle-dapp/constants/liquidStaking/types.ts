@@ -189,7 +189,8 @@ export type LsPool = {
   id: number;
   metadata?: string;
   ownerAddress?: SubstrateAddress;
-  ownerStake?: BN;
+  nominatorAddress?: SubstrateAddress;
+  bouncerAddress?: SubstrateAddress;
   validators: SubstrateAddress[];
   totalStaked: BN;
   apyPercentage?: number;
