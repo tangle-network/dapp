@@ -1,4 +1,7 @@
-import { PalletIdentityLegacyIdentityInfo } from '@polkadot/types/lookup';
+import type {
+  PalletIdentityLegacyIdentityInfo,
+  PalletIdentityRegistration,
+} from '@polkadot/types/lookup';
 
 import { getApiPromise } from './api';
 
@@ -40,37 +43,54 @@ export const extractDataFromIdentityInfo = (
   return null;
 };
 
+export const extractIdentityInfo = (
+  identityRegistration: PalletIdentityRegistration,
+): IdentityType => {
+  const info = identityRegistration.info;
+
+  const name = extractDataFromIdentityInfo(info, IdentityDataType.NAME);
+  const email = extractDataFromIdentityInfo(info, IdentityDataType.EMAIL);
+  const web = extractDataFromIdentityInfo(info, IdentityDataType.WEB);
+
+  const twitterName = extractDataFromIdentityInfo(
+    info,
+    IdentityDataType.TWITTER,
+  );
+
+  const twitter =
+    twitterName === null ? null : `https://x.com/${twitterName.substring(1)}`;
+
+  return {
+    name,
+    email,
+    web,
+    twitter,
+  } satisfies IdentityType;
+};
+
 export async function getAccountInfo(rpcEndpoint: string, address: string) {
   const api = await getApiPromise(rpcEndpoint);
   const identityData = await api.query.identity.identityOf(address);
 
-  if (identityData.isSome) {
-    const identity = identityData.unwrap();
-    const info = identity[0]?.info;
+  if (identityData.isNone) return null;
 
-    if (info) {
-      const name = extractDataFromIdentityInfo(info, IdentityDataType.NAME);
-      const email = extractDataFromIdentityInfo(info, IdentityDataType.EMAIL);
-      const web = extractDataFromIdentityInfo(info, IdentityDataType.WEB);
+  const [identityRegistration] = identityData.unwrap();
 
-      const twitterName = extractDataFromIdentityInfo(
-        info,
-        IdentityDataType.TWITTER,
-      );
+  return extractIdentityInfo(identityRegistration);
+}
 
-      const twitter =
-        twitterName === null
-          ? null
-          : `https://twitter.com/${twitterName.substring(1)}`;
+export async function getMultipleAccountInfo(
+  rpcEndpoint: string,
+  addresses: string[],
+) {
+  const api = await getApiPromise(rpcEndpoint);
+  const identityData = await api.query.identity.identityOf.multi(addresses);
 
-      return {
-        name,
-        email,
-        web,
-        twitter,
-      } satisfies IdentityType;
-    }
-  }
+  return identityData.map((data) => {
+    if (data.isNone) return null;
 
-  return null;
+    const [registration] = data.unwrap();
+
+    return extractIdentityInfo(registration);
+  });
 }

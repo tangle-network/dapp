@@ -5,24 +5,18 @@ export type Blueprint = {
   id: string;
   name: string;
   author: string;
-  imgUrl: string;
-  category: BlueprintCategory;
-  description: string;
-  restakersCount: number;
-  operatorsCount: number;
-  tvl: string; // NOTE: put as string for faster UI development, might need to update later
+  imgUrl: string | null;
+  category: string | null;
+  description: string | null;
+  restakersCount: number | null;
+  operatorsCount: number | null;
+  tvl: string | null;
   isBoosted?: boolean;
-  githubUrl?: string;
-  websiteUrl?: string;
-  twitterUrl?: string;
-  email?: string;
+  githubUrl?: string | null;
+  websiteUrl?: string | null;
+  twitterUrl?: string | null;
+  email?: string | null;
 };
-
-export enum BlueprintCategory {
-  CATEGORY_1 = 'Category 1',
-  CATEGORY_2 = 'Category 2',
-  CATEGORY_3 = 'Category 3',
-}
 
 export type Operator = BasicAccountInfo & {
   restakersCount: number;

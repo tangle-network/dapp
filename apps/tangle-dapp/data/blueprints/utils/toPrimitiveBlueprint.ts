@@ -1,4 +1,9 @@
 import type { Bytes, Option } from '@polkadot/types';
+import {
+  TanglePrimitivesServicesFieldFieldType,
+  TanglePrimitivesServicesJobDefinition,
+  TanglePrimitivesServicesServiceBlueprint,
+} from '@polkadot/types/lookup';
 import { u8aToString } from '@polkadot/util';
 import type {
   Architecture,
@@ -32,7 +37,7 @@ export function toPrimitiveBlueprint({
   requestHook,
   requestParams,
   gadget,
-}: ServiceBlueprint) {
+}: ServiceBlueprint | TanglePrimitivesServicesServiceBlueprint) {
   return {
     metadata: toPrimitiveServiceMetadata(metadata),
     jobs: jobs.map(toPrimitiveJobDefinition),
@@ -71,7 +76,7 @@ function toPrimitiveJobDefinition({
   params,
   result,
   verifier,
-}: JobDefinition) {
+}: JobDefinition | TanglePrimitivesServicesJobDefinition) {
   return {
     metadata: toPrimitiveJobMetadata(metadata),
     params: params.map(toPrimitiveFieldType),
@@ -253,10 +258,11 @@ type PrimitiveFieldType =
   | { Array: [number, PrimitiveFieldType] }
   | { List: PrimitiveFieldType }
   | { Struct: [PrimitiveFieldType, [PrimitiveFieldType, PrimitiveFieldType][]] }
-  | FieldFieldType['type'];
+  | FieldFieldType['type']
+  | TanglePrimitivesServicesFieldFieldType['type'];
 
 export function toPrimitiveFieldType(
-  fieldType: FieldFieldType,
+  fieldType: FieldFieldType | TanglePrimitivesServicesFieldFieldType,
 ): PrimitiveFieldType {
   if (fieldType.type === 'Optional') {
     return {

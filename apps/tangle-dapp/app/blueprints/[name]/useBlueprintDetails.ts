@@ -1,6 +1,6 @@
 'use client';
 
-import { Blueprint, BlueprintCategory } from '../../../types/blueprint';
+import { Blueprint } from '../../../types/blueprint';
 
 export default function useBlueprintDetails(_: string): Blueprint {
   //   TODO: implement logic (get from local storage first if available)
@@ -9,7 +9,7 @@ export default function useBlueprintDetails(_: string): Blueprint {
     id: '0',
     name: 'Groth16 ZK-SaaS',
     author: 'Webb Technologies Inc.',
-    category: BlueprintCategory.CATEGORY_1,
+    category: 'Category 1',
     imgUrl:
       'https://images.unsplash.com/photo-1641194255129-bd39dd8112de?q=80&w=2380&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     description:

@@ -10,22 +10,26 @@ import {
   TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
+import isSubstrateAddress from '@webb-tools/dapp-types/utils/isSubstrateAddress';
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';
 import { Pagination } from '@webb-tools/webb-ui-components/components/Pagination';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { shortenHex } from '@webb-tools/webb-ui-components/utils';
+import {
+  shortenHex,
+  shortenString,
+} from '@webb-tools/webb-ui-components/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ComponentProps, FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import useBlueprintListing from '../../data/blueprints/useBlueprintListing';
 import { PagePath } from '../../types';
-import { Blueprint, BlueprintCategory } from '../../types/blueprint';
+import type { Blueprint } from '../../types/blueprint';
 import BoostedChip from './BoostedChip';
-import useBlueprintListing from './useBlueprintListing';
 
 const columnHelper = createColumnHelper<Blueprint>();
 
@@ -38,7 +42,7 @@ const columns = [
       return (
         name.toLowerCase().includes(filterValue.toLowerCase()) ||
         author.toLowerCase().includes(filterValue.toLowerCase()) ||
-        description.toLowerCase().includes(filterValue.toLowerCase())
+        (description?.toLowerCase() ?? '').includes(filterValue.toLowerCase())
       );
     },
     sortingFn: (rowA, rowB) => {
@@ -63,33 +67,44 @@ const columns = [
 ];
 
 const BlueprintListing: FC = () => {
-  const blueprints = useBlueprintListing();
+  const { blueprints, isLoading, error } = useBlueprintListing();
 
   const [searchValue, setSearchValue] = useState('');
 
-  const [filteredCategory, setFilteredCategory] =
-    useState<BlueprintCategory | null>(null);
+  const [filteredCategory, setFilteredCategory] = useState<
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    'View All' | (string & {})
+  >('View All');
 
-  const isLoading = false;
+  const isEmpty = blueprints.length === 0;
 
-  const isEmpty = true;
-
-  const error = null;
+  const categories = useMemo(
+    () =>
+      Array.from(
+        blueprints.reduce((acc, { category }) => {
+          if (category) {
+            acc.add(category);
+          }
+          return acc;
+        }, new Set<string>()),
+      ),
+    [blueprints],
+  );
 
   const categoryItems = useMemo(
     () => [
       {
         label: 'View All',
-        onClick: () => setFilteredCategory(null),
-        isActive: filteredCategory === null,
+        onClick: () => setFilteredCategory('View All'),
+        isActive: filteredCategory === 'View All',
       },
-      ...Object.values(BlueprintCategory).map((category) => ({
+      ...categories.map((category) => ({
         label: category,
         onClick: () => setFilteredCategory(category),
         isActive: filteredCategory === category,
       })),
     ],
-    [filteredCategory],
+    [categories, filteredCategory],
   );
 
   const table = useReactTable(
@@ -193,7 +208,7 @@ const BlueprintListing: FC = () => {
           variant="body1"
           className="flex items-center justify-center h-40"
         >
-          {error}
+          {error.message}
         </Typography>
       ) : isEmpty ? (
         <Typography
@@ -288,14 +303,16 @@ const BlueprintItem: FC<Blueprint> = ({
         >
           <div className="space-y-3">
             <div className="flex items-center gap-2 py-2 border-b border-mono-60 dark:border-mono-170">
-              <Image
-                src={imgUrl}
-                width={72}
-                height={72}
-                alt={name}
-                className="flex-shrink-0 bg-center rounded-full"
-                fill={false}
-              />
+              {imgUrl && (
+                <Image
+                  src={imgUrl}
+                  width={72}
+                  height={72}
+                  alt={name}
+                  className="flex-shrink-0 bg-center rounded-full"
+                  fill={false}
+                />
+              )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <div className="flex-1 min-w-0">
@@ -312,7 +329,12 @@ const BlueprintItem: FC<Blueprint> = ({
                   variant="body2"
                   className="line-clamp-1 text-mono-120 dark:text-mono-100"
                 >
-                  {isEthereumAddress(author) ? shortenHex(author) : author}
+                  {/* Author can be name or address */}
+                  {isEthereumAddress(author)
+                    ? shortenHex(author)
+                    : isSubstrateAddress(author)
+                      ? shortenString(author)
+                      : author}
                 </Typography>
               </div>
             </div>
