@@ -1,4 +1,5 @@
 import {
+  PalletAssetsAssetAccount,
   TanglePrimitivesCurrencyTokenSymbol,
   TanglePrimitivesTimeUnit,
 } from '@polkadot/types/lookup';
@@ -195,4 +196,5 @@ export type LsPool = {
   totalStaked: BN;
   apyPercentage?: number;
   commissionPercentage?: number;
+  members: Map<SubstrateAddress, PalletAssetsAssetAccount>;
 };

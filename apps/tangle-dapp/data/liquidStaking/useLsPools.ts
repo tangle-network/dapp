@@ -39,6 +39,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
       bondedPools === null ||
       poolNominations === null ||
       compoundApys === null ||
+      poolMembers === null ||
       !isSupported
     ) {
       return null;
@@ -72,14 +73,13 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         ? undefined
         : assertSubstrateAddress(tanglePool.roles.bouncer.unwrap().toString());
 
-      const memberBalances = poolMembers?.filter(([id]) => {
+      const memberBalances = poolMembers.filter(([id]) => {
         return id === poolId;
       });
 
-      const totalStaked =
-        memberBalances?.reduce((acc, [, , account]) => {
-          return acc.add(account.balance.toBn());
-        }, BN_ZERO) ?? BN_ZERO;
+      const totalStaked = memberBalances.reduce((acc, [, , account]) => {
+        return acc.add(account.balance.toBn());
+      }, BN_ZERO);
 
       const commissionPercentage = tanglePool.commission.current.isNone
         ? undefined
@@ -91,6 +91,12 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
       const apyPercentage =
         apyEntry === undefined ? undefined : Number(apyEntry.toFixed(2));
 
+      const membersKeyValuePairs = poolMembers.map(
+        ([, address, account]) => [address, account] as const,
+      );
+
+      const membersMap = new Map(membersKeyValuePairs);
+
       const pool: LsPool = {
         id: poolId,
         metadata,
@@ -101,6 +107,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         validators,
         totalStaked,
         apyPercentage,
+        members: membersMap,
       };
 
       return [poolId, pool] as const;

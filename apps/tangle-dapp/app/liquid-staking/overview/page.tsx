@@ -2,6 +2,7 @@ import { LsProtocolsTable, Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import StatItem from '../../../components/StatItem';
+import LsMyPoolsTable from '../../../containers/LsMyPoolsTable';
 
 const LiquidStakingPage: FC = () => {
   return (
@@ -28,6 +29,8 @@ const LiquidStakingPage: FC = () => {
       </div>
 
       <LsProtocolsTable />
+
+      <LsMyPoolsTable />
     </div>
   );
 };

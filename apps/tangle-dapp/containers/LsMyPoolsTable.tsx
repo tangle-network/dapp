@@ -9,27 +9,32 @@ import {
   getPaginationRowModel,
   createColumnHelper,
 } from '@tanstack/react-table';
-import { Table } from '../../../../libs/webb-ui-components/src/components/Table';
-import { Pagination } from '../../../../libs/webb-ui-components/src/components/Pagination';
-import { twMerge } from 'tailwind-merge';
-import { LsPool } from '../../constants/liquidStaking/types';
+import { Table } from '../../../libs/webb-ui-components/src/components/Table';
+import { Pagination } from '../../../libs/webb-ui-components/src/components/Pagination';
+import { LsPool } from '../constants/liquidStaking/types';
 import {
+  ActionsDropdown,
   Avatar,
   Button,
   getRoundedAmountString,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
-import pluralize from '../../utils/pluralize';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
+import TokenAmountCell from '../components/tableCells/TokenAmountCell';
+import pluralize from '../utils/pluralize';
+import { EMPTY_VALUE_PLACEHOLDER } from '../constants';
 import { ArrowRight } from '@webb-tools/icons';
+import useLsPools from '../data/liquidStaking/useLsPools';
+import useSubstrateAddress from '../hooks/useSubstrateAddress';
+import { BN } from '@polkadot/util';
 
-export interface LsPoolsTable2Props {
-  pools: LsPool[];
-  isShown: boolean;
-}
+type MyLsPoolRow = LsPool & {
+  myStake: BN;
+  isRoot: boolean;
+  isNominator: boolean;
+  isBouncer: boolean;
+};
 
-const COLUMN_HELPER = createColumnHelper<LsPool>();
+const COLUMN_HELPER = createColumnHelper<MyLsPoolRow>();
 
 const POOL_COLUMNS = [
   COLUMN_HELPER.accessor('id', {
@@ -71,6 +76,10 @@ const POOL_COLUMNS = [
     // TODO: Decimals.
     cell: (props) => <TokenAmountCell amount={props.getValue()} />,
   }),
+  COLUMN_HELPER.accessor('myStake', {
+    header: () => 'My Stake',
+    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+  }),
   COLUMN_HELPER.accessor('apyPercentage', {
     header: () => 'APY',
     cell: (props) => {
@@ -97,14 +106,45 @@ const POOL_COLUMNS = [
     cell: (props) => (
       <div>
         <Button rightIcon={<ArrowRight />} variant="utility">
-          Stake
+          Unstake
         </Button>
+
+        {/**
+         * Show management actions if the active user has any role in
+         * the pool.
+         */}
+        {props.row.original.isRoot ||
+          props.row.original.isNominator ||
+          (props.row.original.isBouncer && (
+            <ActionsDropdown
+              buttonText="Manage"
+              // TODO: Conditionally render actions based on the user's roles.
+              actionItems={[
+                {
+                  label: 'Update Nominations',
+                  // TODO: Proper onClick handler.
+                  onClick: () => void 0,
+                },
+                {
+                  label: 'Update Commission',
+                  // TODO: Proper onClick handler.
+                  onClick: () => void 0,
+                },
+                {
+                  label: 'Update Roles',
+                  // TODO: Proper onClick handler.
+                  onClick: () => void 0,
+                },
+              ]}
+            />
+          ))}
       </div>
     ),
   }),
 ];
 
-const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
+const LsMyPoolsTable: FC = () => {
+  const substrateAddress = useSubstrateAddress();
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const [{ pageIndex, pageSize }, setPagination] = useState({
@@ -120,8 +160,18 @@ const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
     [pageIndex, pageSize],
   );
 
+  const lsPoolsMap = useLsPools();
+
+  const lsPools =
+    lsPoolsMap instanceof Map ? Array.from(lsPoolsMap.values()) : lsPoolsMap;
+
+  const myPools =
+    substrateAddress === null || !Array.isArray(lsPools)
+      ? null
+      : lsPools.filter((lsPool) => lsPool.members.has(substrateAddress));
+
   const table = useReactTable({
-    data: pools,
+    data: myPools ?? [],
     columns: POOL_COLUMNS,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -141,10 +191,7 @@ const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
       <Table
         tableProps={table}
         title="Assets"
-        className={twMerge(
-          'rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3',
-          isShown ? 'animate-slide-down' : 'animate-slide-up',
-        )}
+        className="rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3"
         thClassName="py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160"
         tbodyClassName="!bg-transparent"
         tdClassName="!bg-inherit border-t-0"
@@ -152,7 +199,7 @@ const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
 
       <Pagination
         itemsPerPage={pageSize}
-        totalItems={pools.length}
+        totalItems={myPools.length}
         page={pageIndex + 1}
         totalPages={table.getPageCount()}
         canPreviousPage={table.getCanPreviousPage()}
@@ -160,11 +207,11 @@ const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
         canNextPage={table.getCanNextPage()}
         nextPage={table.nextPage}
         setPageIndex={table.setPageIndex}
-        title={pluralize('pool', pools.length === 0 || pools.length > 1)}
+        title={pluralize('pool', myPools.length === 0 || myPools.length > 1)}
         className="border-t-0 py-5"
       />
     </div>
   );
 };
 
-export default LsPoolsTable2;
+export default LsMyPoolsTable;
