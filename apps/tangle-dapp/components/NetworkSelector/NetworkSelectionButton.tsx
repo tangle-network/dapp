@@ -60,7 +60,9 @@ const NetworkSelectionButton: FC = () => {
 
   // Disable network switching when in Liquid Staking page,
   // since it would have no effect there.
-  const isInLiquidStakingPath = pathname.startsWith(PagePath.LIQUID_STAKING);
+  const isInLiquidStakingPage =
+    pathname.startsWith(PagePath.LIQUID_STAKING) &&
+    !pathname.startsWith(PagePath.LIQUID_STAKING_OVERVIEW);
 
   const isInBridgePath = useMemo(
     () => pathname.startsWith(PagePath.BRIDGE),
@@ -96,8 +98,8 @@ const NetworkSelectionButton: FC = () => {
     return null;
   }
   // Network can't be switched from the Tangle Restaking Parachain while
-  // on liquid staking page.
-  else if (isInLiquidStakingPath) {
+  // on the liquid staking page.
+  else if (isInLiquidStakingPage) {
     // Special case when the liquifier is selected.
     const lsNetworkName = isLiquifierProtocolId(selectedProtocolId)
       ? IS_PRODUCTION_ENV

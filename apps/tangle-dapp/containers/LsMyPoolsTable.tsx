@@ -26,6 +26,7 @@ import { ArrowRight } from '@webb-tools/icons';
 import useLsPools from '../data/liquidStaking/useLsPools';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { BN } from '@polkadot/util';
+import assert from 'assert';
 
 type MyLsPoolRow = LsPool & {
   myStake: BN;
@@ -165,13 +166,30 @@ const LsMyPoolsTable: FC = () => {
   const lsPools =
     lsPoolsMap instanceof Map ? Array.from(lsPoolsMap.values()) : lsPoolsMap;
 
-  const myPools =
-    substrateAddress === null || !Array.isArray(lsPools)
-      ? null
-      : lsPools.filter((lsPool) => lsPool.members.has(substrateAddress));
+  const rows: MyLsPoolRow[] = useMemo(() => {
+    if (substrateAddress === null || !Array.isArray(lsPools)) {
+      return [];
+    }
+
+    return lsPools
+      .filter((lsPool) => lsPool.members.has(substrateAddress))
+      .map((lsPool) => {
+        const account = lsPool.members.get(substrateAddress);
+
+        assert(account !== undefined);
+
+        return {
+          ...lsPool,
+          myStake: account.balance.toBn(),
+          isRoot: lsPool.ownerAddress === substrateAddress,
+          isNominator: lsPool.nominatorAddress === substrateAddress,
+          isBouncer: lsPool.bouncerAddress === substrateAddress,
+        };
+      });
+  }, []);
 
   const table = useReactTable({
-    data: myPools ?? [],
+    data: rows,
     columns: POOL_COLUMNS,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -199,7 +217,7 @@ const LsMyPoolsTable: FC = () => {
 
       <Pagination
         itemsPerPage={pageSize}
-        totalItems={myPools.length}
+        totalItems={rows.length}
         page={pageIndex + 1}
         totalPages={table.getPageCount()}
         canPreviousPage={table.getCanPreviousPage()}
@@ -207,7 +225,7 @@ const LsMyPoolsTable: FC = () => {
         canNextPage={table.getCanNextPage()}
         nextPage={table.nextPage}
         setPageIndex={table.setPageIndex}
-        title={pluralize('pool', myPools.length === 0 || myPools.length > 1)}
+        title={pluralize('pool', rows.length === 0 || rows.length > 1)}
         className="border-t-0 py-5"
       />
     </div>
