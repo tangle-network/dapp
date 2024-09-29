@@ -1,37 +1,53 @@
 'use client';
 
-import { ArrowRight, GithubFill } from '@webb-tools/icons';
+import { ArrowRight, GithubFill, Spinner } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { ErrorFallback } from '@webb-tools/webb-ui-components/components/ErrorFallback';
 import { SocialChip } from '@webb-tools/webb-ui-components/components/SocialChip';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Image from 'next/image';
+import { notFound } from 'next/navigation';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import BoostedChip from '../BoostedChip';
 import useBlueprintDetails from './useBlueprintDetails';
 
 interface BlueprintHeaderProps {
-  blueprintName: string;
+  blueprintId: string;
 }
 
-const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprintName }) => {
+const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprintId }) => {
+  const { result, isLoading, error } = useBlueprintDetails(blueprintId);
+
+  if (isLoading) {
+    return <Spinner size="xl" />;
+  }
+
+  if (error) {
+    return <ErrorFallback title={error.name} />;
+  }
+
+  if (result === null) {
+    notFound();
+  }
+
   const {
-    id: _,
-    name,
-    author,
-    category,
-    imgUrl,
-    description,
-    restakersCount,
-    operatorsCount,
-    tvl,
     isBoosted,
+    imgUrl,
+    name,
     githubUrl,
+    author,
+    description,
     websiteUrl,
     twitterUrl,
     email,
-  } = useBlueprintDetails(blueprintName);
+    operatorsCount,
+    restakersCount,
+    tvl,
+    category,
+  } = result;
 
   return (
     <div
@@ -54,31 +70,39 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprintName }) => {
       )}
 
       <div className="px-8 py-6 space-y-4">
-        <div className="pb-4 flex flex-col md:flex-row gap-4 border-b border-mono-60 dark:border-mono-160">
-          <div className="flex-1 flex gap-3">
-            <div className="flex gap-3">
-              <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0">
-                <Image
-                  src={imgUrl}
-                  width={80}
-                  height={80}
-                  alt={name}
-                  className="aspect-square bg-center"
-                />
+        <div className="flex flex-col gap-4 pb-4 border-b md:flex-row border-mono-60 dark:border-mono-160">
+          <div className="flex flex-1 gap-3">
+            {imgUrl && (
+              <div className="flex gap-3">
+                <div className="flex-shrink-0 w-20 h-20 overflow-hidden rounded-full">
+                  <Image
+                    src={imgUrl}
+                    width={80}
+                    height={80}
+                    alt={name}
+                    className="bg-center aspect-square"
+                  />
+                </div>
               </div>
-            </div>
+            )}
             <div className="space-y-4">
               <div>
                 <div className="flex items-center gap-1">
                   <Typography variant="h4" fw="bold">
                     {name}
                   </Typography>
-                  <a href={githubUrl} target="_blank" rel="noopener noreferrer">
-                    <GithubFill
-                      size="lg"
-                      className="!fill-mono-200 dark:!fill-mono-0 hover:!fill-mono-120 dark:hover:!fill-mono-80"
-                    />
-                  </a>
+                  {githubUrl && (
+                    <a
+                      href={githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <GithubFill
+                        size="lg"
+                        className="!fill-mono-200 dark:!fill-mono-0 hover:!fill-mono-120 dark:hover:!fill-mono-80"
+                      />
+                    </a>
+                  )}
                   {isBoosted && <BoostedChip />}
                 </div>
                 <div className="flex items-center">
@@ -100,7 +124,7 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprintName }) => {
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col justify-between md:items-end gap-3">
+          <div className="flex flex-col justify-between flex-1 gap-3 md:items-end">
             <Typography
               variant="body1"
               className="line-clamp-3 text-mono-120 dark:text-mono-100 group-hover:text-mono-200 dark:group-hover:text-mono-0"
@@ -130,7 +154,7 @@ export default BlueprintHeader;
 
 interface StatsItemProps {
   label: string;
-  value: string | number;
+  value: string | number | null;
 }
 
 const StatsItem: FC<StatsItemProps> = ({ label, value }) => {
@@ -144,7 +168,7 @@ const StatsItem: FC<StatsItemProps> = ({ label, value }) => {
         {label}
       </Typography>
       <Typography variant="h4" fw="bold">
-        {value}
+        {value ?? EMPTY_VALUE_PLACEHOLDER}
       </Typography>
     </div>
   );

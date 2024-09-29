@@ -41,6 +41,7 @@ export default function useBlueprintListing() {
           switchMap(async ([blueprintEntries, operatorEntries]) => {
             const { blueprintsMap, ownerSet } =
               extractBlueprintsData(blueprintEntries);
+
             const ownerIdentitiesMap = await fetchOwnerIdentities(
               rpcEndpoint,
               ownerSet,

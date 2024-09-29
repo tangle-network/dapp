@@ -126,7 +126,7 @@ const BlueprintListing: FC = () => {
         },
         state: {
           columnFilters: [
-            ...(filteredCategory
+            ...(filteredCategory !== 'View All'
               ? [
                   {
                     id: 'category',
@@ -265,6 +265,7 @@ const GalleryContainer = ({ className, ...props }: ComponentProps<'div'>) => (
 );
 
 const BlueprintItem: FC<Blueprint> = ({
+  id,
   name,
   author,
   imgUrl,
@@ -275,7 +276,7 @@ const BlueprintItem: FC<Blueprint> = ({
   isBoosted,
 }) => {
   return (
-    <Link href={`${PagePath.BLUEPRINTS}/${name}`}>
+    <Link href={`${PagePath.BLUEPRINTS}/${id}`}>
       <div
         className={twMerge(
           'h-[364px] overflow-hidden rounded-xl flex flex-col cursor-pointer group',

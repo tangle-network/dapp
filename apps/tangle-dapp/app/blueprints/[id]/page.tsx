@@ -6,14 +6,14 @@ import VaultsAndAssetsTable from './VaultsAndAssetsTable';
 
 type Props = {
   params: {
-    name: string;
+    id: string;
   };
 };
 
-const BlueprintDetailsPage: FC<Props> = ({ params: { name } }) => {
+const BlueprintDetailsPage: FC<Props> = ({ params: { id } }) => {
   return (
     <div className="space-y-5">
-      <BlueprintHeader blueprintName={name} />
+      <BlueprintHeader blueprintId={id} />
       <VaultsAndAssetsTable />
       <OperatorsTable />
     </div>
