@@ -16,6 +16,8 @@ type Props = {
   };
 };
 
+export const dynamic = 'force-static';
+
 const BlueprintDetailsPage: FC<Props> = ({ params: { id } }) => {
   const { result, isLoading, error } = useBlueprintDetails(id);
 
