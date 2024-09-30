@@ -1,7 +1,7 @@
 import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesOperatorPreferences } from '@polkadot/types/lookup';
 import { useCallback } from 'react';
-import { combineLatest, of, switchMap } from 'rxjs';
+import { combineLatest, switchMap } from 'rxjs';
 import { formatUnits } from 'viem';
 
 import useNetworkStore from '../../../context/useNetworkStore';
@@ -37,7 +37,7 @@ export default function useBlueprintDetails(id: string) {
           apiRx.query.services?.blueprints === undefined ||
           apiRx.query.services?.operators === undefined
         )
-          return of(null);
+          return null;
 
         const blueprintDetails$ = apiRx.query.services.blueprints(id);
         const operatorEntries$ =
