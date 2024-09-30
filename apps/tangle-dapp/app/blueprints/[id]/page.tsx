@@ -1,7 +1,8 @@
 'use client';
 
-import { Spinner } from '@webb-tools/icons/Spinner';
 import { ErrorFallback } from '@webb-tools/webb-ui-components/components/ErrorFallback';
+import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
@@ -19,7 +20,17 @@ const BlueprintDetailsPage: FC<Props> = ({ params: { id } }) => {
   const { result, isLoading, error } = useBlueprintDetails(id);
 
   if (isLoading) {
-    return <Spinner size="xl" />;
+    return (
+      <div className="space-y-5">
+        <SkeletonLoader className="min-h-64" />
+
+        <Typography variant="h4" fw="bold">
+          Operators running
+        </Typography>
+
+        <SkeletonLoader className="min-h-52" />
+      </div>
+    );
   }
 
   if (error) {
