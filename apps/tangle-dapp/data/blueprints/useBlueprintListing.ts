@@ -1,11 +1,10 @@
 import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesOperatorPreferences } from '@polkadot/types/lookup';
 import { useCallback } from 'react';
-import { combineLatest, of, switchMap } from 'rxjs';
+import { combineLatest, switchMap } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
-import type { Blueprint } from '../../types/blueprint';
 import { useOperatorTVL } from '../restake/useOperatorTVL';
 import useRestakeAssetMap from '../restake/useRestakeAssetMap';
 import useRestakeOperatorMap from '../restake/useRestakeOperatorMap';
@@ -28,8 +27,9 @@ export default function useBlueprintListing() {
         if (
           apiRx.query.services?.blueprints === undefined ||
           apiRx.query.services?.operators === undefined
-        )
-          return of<Blueprint[]>([]);
+        ) {
+          return null;
+        }
 
         const blueprintEntries$ = apiRx.query.services.blueprints.entries();
         const operatorEntries$ =
