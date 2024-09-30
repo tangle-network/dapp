@@ -9,7 +9,7 @@ export function useOperatorTVL(operatorMap: OperatorMap, assetMap: AssetMap) {
     (input$) =>
       input$.pipe(
         switchMap(([operatorMap, assetMap]) => {
-          const { operatorTVL, poolTVL } = Object.entries(operatorMap).reduce(
+          const { operatorTVL, vaultTVL } = Object.entries(operatorMap).reduce(
             (acc, [operatorId, operatorData]) => {
               const operatorTVL = operatorData.delegations.reduce(
                 (sum, delegation) => {
@@ -34,11 +34,12 @@ export function useOperatorTVL(operatorMap: OperatorMap, assetMap: AssetMap) {
                   // Calculate operator TVL
                   sum += formattedAmount * assetPrice;
 
-                  // Calculate pool TVL
-                  const poolId = asset.poolId;
-                  if (poolId !== null) {
-                    acc.poolTVL[poolId] =
-                      (acc.poolTVL[poolId] || 0) + formattedAmount * assetPrice;
+                  // Calculate vault TVL
+                  const vaultId = asset.vaultId;
+                  if (vaultId !== null) {
+                    acc.vaultTVL[vaultId] =
+                      (acc.vaultTVL[vaultId] || 0) +
+                      formattedAmount * assetPrice;
                   }
 
                   return sum;
@@ -51,15 +52,15 @@ export function useOperatorTVL(operatorMap: OperatorMap, assetMap: AssetMap) {
             },
             {
               operatorTVL: {} as Record<string, number>,
-              poolTVL: {} as Record<string, number>,
+              vaultTVL: {} as Record<string, number>,
             },
           );
 
-          return of({ operatorTVL, poolTVL });
+          return of({ operatorTVL, vaultTVL });
         }),
       ),
     [operatorMap, assetMap],
   );
 
-  return useObservableState(tvl$, { operatorTVL: {}, poolTVL: {} });
+  return useObservableState(tvl$, { operatorTVL: {}, vaultTVL: {} });
 }

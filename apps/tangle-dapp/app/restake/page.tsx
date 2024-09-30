@@ -35,7 +35,7 @@ export default function RestakePage() {
     delegatorTVL,
     operatorConcentration,
     operatorTVL,
-    poolTVL,
+    vaultTVL,
     totalDelegatorTVL,
     totalNetworkTVL,
   } = useRestakeTVL(operatorMap, delegatorInfo);
@@ -103,7 +103,7 @@ export default function RestakePage() {
         operatorMap={operatorMap}
         delegatorInfo={delegatorInfo}
         operatorTVL={operatorTVL}
-        vaultTVL={poolTVL}
+        vaultTVL={vaultTVL}
         operatorConcentration={operatorConcentration}
       />
     </div>

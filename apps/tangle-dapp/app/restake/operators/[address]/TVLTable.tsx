@@ -36,19 +36,19 @@ const TVLTable: FC<Props> = ({
     delegations.forEach(({ assetId }) => {
       if (assetMap[assetId] === undefined) return;
 
-      if (assetMap[assetId].poolId === null) return;
+      if (assetMap[assetId].vaultId === null) return;
 
-      const poolId = assetMap[assetId].poolId;
-      if (vaults[poolId] === undefined) {
-        // TODO: Find out a proper way to get the pool name, now it's the first token name
+      const vaultId = assetMap[assetId].vaultId;
+      if (vaults[vaultId] === undefined) {
+        // TODO: Find out a proper way to get the vault name, now it's the first token name
         const name = assetMap[assetId].name;
-        // TODO: Find out a proper way to get the pool symbol, now it's the first token symbol
+        // TODO: Find out a proper way to get the vault symbol, now it's the first token symbol
         const representToken = assetMap[assetId].symbol;
-        const apyPercentage = rewardConfig.configs[poolId]?.apy ?? null;
-        const tvlInUsd = vaultTVL?.[poolId] ?? null;
+        const apyPercentage = rewardConfig.configs[vaultId]?.apy ?? null;
+        const tvlInUsd = vaultTVL?.[vaultId] ?? null;
 
-        vaults[poolId] = {
-          id: poolId,
+        vaults[vaultId] = {
+          id: vaultId,
           apyPercentage,
           name,
           representToken,
@@ -56,7 +56,7 @@ const TVLTable: FC<Props> = ({
           tvlInUsd,
         };
       } else {
-        vaults[poolId].tokensCount += 1;
+        vaults[vaultId].tokensCount += 1;
       }
     });
 
@@ -88,9 +88,9 @@ const TVLTable: FC<Props> = ({
         return row.toggleExpanded();
       },
       getExpandedRowContent(row) {
-        const poolId = row.original.id;
+        const vaultId = row.original.id;
         const vaultAssets = Object.values(assetMap)
-          .filter((asset) => asset.poolId === poolId)
+          .filter((asset) => asset.vaultId === vaultId)
           .map((asset) => {
             const selfStake =
               delegatorTotalRestakedAssets[asset.id] ?? ZERO_BIG_INT;

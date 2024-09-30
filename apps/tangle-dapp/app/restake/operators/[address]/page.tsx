@@ -16,7 +16,7 @@ export const dynamic = 'force-static';
 const Page = ({ params: { address } }: { params: { address: string } }) => {
   const { operatorMap } = useRestakeOperatorMap();
   const { delegatorInfo } = useRestakeDelegatorInfo();
-  const { operatorTVL, poolTVL, delegatorTVL } = useRestakeTVL(
+  const { operatorTVL, vaultTVL, delegatorTVL } = useRestakeTVL(
     operatorMap,
     delegatorInfo,
   );
@@ -70,7 +70,7 @@ const Page = ({ params: { address } }: { params: { address: string } }) => {
 
         <TVLTable
           operatorData={operatorMap[address]}
-          vaultTVL={poolTVL}
+          vaultTVL={vaultTVL}
           delegatorInfo={delegatorInfo}
           delegatorTVL={delegatorTVL}
         />
