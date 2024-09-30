@@ -26,6 +26,7 @@ import Link from 'next/link';
 import { ComponentProps, FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useBlueprintListing from '../../data/blueprints/useBlueprintListing';
 import { PagePath } from '../../types';
 import type { Blueprint } from '../../types/blueprint';
@@ -216,7 +217,7 @@ const BlueprintListing: FC = () => {
           variant="body1"
           className="flex items-center justify-center h-36"
         >
-          No blueprints found. Check back later or try a different category.
+          No blueprints found. Check back later or try a different network.
         </Typography>
       ) : (
         <>
@@ -356,7 +357,9 @@ const BlueprintItem: FC<Blueprint> = ({
               >
                 Restakers
               </Typography>
-              <Typography variant="h5">{restakersCount}</Typography>
+              <Typography variant="h5">
+                {restakersCount ?? EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
             </div>
             <div className="flex-1 space-y-2">
               <Typography
@@ -365,7 +368,9 @@ const BlueprintItem: FC<Blueprint> = ({
               >
                 Operators
               </Typography>
-              <Typography variant="h5">{operatorsCount}</Typography>
+              <Typography variant="h5">
+                {operatorsCount ?? EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
             </div>
             <div className="flex-1 space-y-2">
               <Typography
@@ -374,7 +379,9 @@ const BlueprintItem: FC<Blueprint> = ({
               >
                 TVL
               </Typography>
-              <Typography variant="h5">{tvl}</Typography>
+              <Typography variant="h5">
+                {tvl ?? EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
             </div>
           </div>
         </div>
