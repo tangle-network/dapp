@@ -15,6 +15,16 @@ const nextConfigBase = require('../../next.config.cjs');
 const nextConfig = {
   ...nextConfigBase,
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+  },
+
+  // https://answers.netlify.com/t/inconsistent-build-failures-for-next-js-app-on-netlify-exited-with-signal-sigkill/124903/4
   experimental: {
     cpus: 1,
   },
