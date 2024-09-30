@@ -5,6 +5,7 @@ import { combineLatest, switchMap } from 'rxjs';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
+import { TangleError, TangleErrorCode } from '../../types/error';
 import { useOperatorTVL } from '../restake/useOperatorTVL';
 import useRestakeAssetMap from '../restake/useRestakeAssetMap';
 import useRestakeOperatorMap from '../restake/useRestakeOperatorMap';
@@ -27,9 +28,9 @@ export default function useBlueprintListing() {
         if (
           apiRx.query.services?.blueprints === undefined ||
           apiRx.query.services?.operators === undefined
-        ) {
-          return null;
-        }
+        )
+          // TODO: Should return the error here instead of throw it
+          throw new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
 
         const blueprintEntries$ = apiRx.query.services.blueprints.entries();
         const operatorEntries$ =

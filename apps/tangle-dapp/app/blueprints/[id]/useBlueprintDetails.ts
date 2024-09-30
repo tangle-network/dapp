@@ -13,6 +13,7 @@ import useRestakeOperatorMap from '../../../data/restake/useRestakeOperatorMap';
 import useRestakeTVL from '../../../data/restake/useRestakeTVL';
 import useApiRx from '../../../hooks/useApiRx';
 import type { Blueprint, Operator } from '../../../types/blueprint';
+import { TangleError, TangleErrorCode } from '../../../types/error';
 import type { AssetMap, OperatorMap } from '../../../types/restake';
 import {
   getAccountInfo,
@@ -37,7 +38,8 @@ export default function useBlueprintDetails(id: string) {
           apiRx.query.services?.blueprints === undefined ||
           apiRx.query.services?.operators === undefined
         )
-          return null;
+          // TODO: Should return the error here instead of throw it
+          throw new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
 
         const blueprintDetails$ = apiRx.query.services.blueprints(id);
         const operatorEntries$ =
