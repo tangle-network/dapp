@@ -1,38 +1,20 @@
-'use client';
-
-import { ArrowRight, GithubFill, Spinner } from '@webb-tools/icons';
+import { ArrowRight, GithubFill } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { ErrorFallback } from '@webb-tools/webb-ui-components/components/ErrorFallback';
 import { SocialChip } from '@webb-tools/webb-ui-components/components/SocialChip';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
+import type { Blueprint } from '../../../types/blueprint';
 import BoostedChip from '../BoostedChip';
-import useBlueprintDetails from './useBlueprintDetails';
 
 interface BlueprintHeaderProps {
-  blueprintId: string;
+  blueprint: Blueprint;
 }
 
-const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprintId }) => {
-  const { result, isLoading, error } = useBlueprintDetails(blueprintId);
-
-  if (isLoading) {
-    return <Spinner size="xl" />;
-  }
-
-  if (error) {
-    return <ErrorFallback title={error.name} />;
-  }
-
-  if (result === null) {
-    notFound();
-  }
-
+const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprint }) => {
   const {
     isBoosted,
     imgUrl,
@@ -47,7 +29,7 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprintId }) => {
     restakersCount,
     tvl,
     category,
-  } = result;
+  } = blueprint;
 
   return (
     <div

@@ -1,5 +1,4 @@
-import { BasicAccountInfo } from '.';
-import { LiquidStakingToken } from './liquidStaking';
+import type { OperatorData } from '../components/tables/Operators/types';
 
 export type Blueprint = {
   id: string;
@@ -18,31 +17,4 @@ export type Blueprint = {
   email?: string | null;
 };
 
-export type Operator = BasicAccountInfo & {
-  restakersCount: number;
-  concentration: number;
-  liquidity: {
-    amount: number; // NOTE: put as number for faster UI development, might need to update later
-    usdValue: number; // NOTE: put as number for faster UI development, might need to update later
-  };
-  vaults: LiquidStakingToken[];
-};
-
-export type Vault = {
-  lstToken: LiquidStakingToken;
-  name: string;
-  apy: number;
-  tokensCount: number;
-  liquidity: {
-    amount: number; // NOTE: put as number for faster UI development, might need to update later
-    usdValue: number; // NOTE: put as number for faster UI development, might need to update later
-  };
-  assets: Asset[];
-};
-
-export type Asset = {
-  id: string;
-  symbol: string;
-  tvl: number; // NOTE: put as number for faster UI development, might need to update later
-  myStake: number; // NOTE: put as number for faster UI development, might need to update later
-};
+export type Operator = OperatorData;

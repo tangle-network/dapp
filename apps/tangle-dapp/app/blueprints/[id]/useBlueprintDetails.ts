@@ -2,22 +2,33 @@ import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesOperatorPreferences } from '@polkadot/types/lookup';
 import { useCallback } from 'react';
 import { combineLatest, of, switchMap } from 'rxjs';
+import { formatUnits } from 'viem';
 
 import useNetworkStore from '../../../context/useNetworkStore';
 import { extractOperatorData } from '../../../data/blueprints/utils/blueprintHelpers';
 import { toPrimitiveBlueprint } from '../../../data/blueprints/utils/toPrimitiveBlueprint';
-import { useOperatorTVL } from '../../../data/restake/useOperatorTVL';
 import useRestakeAssetMap from '../../../data/restake/useRestakeAssetMap';
+import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '../../../data/restake/useRestakeOperatorMap';
+import useRestakeTVL from '../../../data/restake/useRestakeTVL';
 import useApiRx from '../../../hooks/useApiRx';
-import type { Blueprint } from '../../../types/blueprint';
-import { getAccountInfo } from '../../../utils/polkadot';
+import type { Blueprint, Operator } from '../../../types/blueprint';
+import type { AssetMap, OperatorMap } from '../../../types/restake';
+import {
+  getAccountInfo,
+  getMultipleAccountInfo,
+} from '../../../utils/polkadot';
 
 export default function useBlueprintDetails(id: string) {
   const { rpcEndpoint } = useNetworkStore();
-  const { operatorMap } = useRestakeOperatorMap();
   const { assetMap } = useRestakeAssetMap();
-  const { operatorTVL } = useOperatorTVL(operatorMap, assetMap);
+
+  const { operatorMap } = useRestakeOperatorMap();
+  const { delegatorInfo } = useRestakeDelegatorInfo();
+  const { operatorTVL, operatorConcentration } = useRestakeTVL(
+    operatorMap,
+    delegatorInfo,
+  );
 
   return useApiRx(
     useCallback(
@@ -51,7 +62,9 @@ export default function useBlueprintDetails(id: string) {
 
             const info = await getAccountInfo(rpcEndpoint, owner);
 
-            return {
+            const operatorsSet = blueprintOperatorMap.get(idNumber);
+
+            const details = {
               id,
               name: metadata.name,
               description: metadata.description,
@@ -59,7 +72,7 @@ export default function useBlueprintDetails(id: string) {
               imgUrl: metadata.logo,
               category: metadata.category,
               restakersCount: blueprintRestakersMap.get(idNumber)?.size ?? null,
-              operatorsCount: blueprintOperatorMap.get(idNumber)?.size ?? null,
+              operatorsCount: operatorsSet?.size ?? null,
               tvl: (() => {
                 const blueprintTVL = blueprintTVLMap.get(idNumber);
 
@@ -74,10 +87,73 @@ export default function useBlueprintDetails(id: string) {
               // TODO: Determine `isBoosted` value.
               isBoosted: false,
             } satisfies Blueprint;
+
+            const operators =
+              operatorsSet !== undefined
+                ? await getBlueprintOperators(
+                    rpcEndpoint,
+                    assetMap,
+                    operatorsSet,
+                    operatorMap,
+                    operatorTVL,
+                    operatorConcentration,
+                  )
+                : [];
+
+            return {
+              details,
+              operators,
+            };
           }),
         );
       },
-      [id, operatorMap, operatorTVL, rpcEndpoint],
+      // prettier-ignore
+      [assetMap, id, operatorConcentration, operatorMap, operatorTVL, rpcEndpoint],
     ),
   );
+}
+
+async function getBlueprintOperators(
+  rpcEndpoint: string,
+  assetMap: AssetMap,
+  operatorAccountSet: Set<string>,
+  operatorMap: OperatorMap,
+  operatorTVL: Record<string, number>,
+  operatorConcentration: Record<string, number | null>,
+) {
+  const operatorAccountArr = Array.from(operatorAccountSet);
+
+  const accountInfoArr = await getMultipleAccountInfo(
+    rpcEndpoint,
+    operatorAccountArr,
+  );
+
+  return operatorAccountArr.map((address, idx) => {
+    const info = accountInfoArr[idx];
+    const concentrationPercentage = operatorConcentration[address] ?? null;
+    const tvlInUsd = operatorTVL[address] ?? null;
+    const delegations = operatorMap[address].delegations ?? [];
+
+    return {
+      address,
+      identityName: info?.name ?? 'Unknown',
+      concentrationPercentage,
+      restakersCount: operatorMap[address]?.restakersCount,
+      tvlInUsd,
+      vaultTokens: delegations
+        .map(({ amount, assetId }) => {
+          const asset = assetMap[assetId];
+          if (asset === undefined) return null;
+
+          return {
+            name: asset.name,
+            symbol: asset.symbol,
+            amount: +formatUnits(amount, asset.decimals),
+          } satisfies Operator['vaultTokens'][number];
+        })
+        .filter((token): token is Operator['vaultTokens'][number] =>
+          Boolean(token),
+        ),
+    } satisfies Operator;
+  });
 }

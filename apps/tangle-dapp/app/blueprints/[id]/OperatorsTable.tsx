@@ -1,35 +1,22 @@
-'use client';
-
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import type { FC } from 'react';
 
 import OperatorsTableUI from '../../../components/tables/Operators';
-import useOperators from './useOperators';
+import type { Operator } from '../../../types/blueprint';
 
-const OperatorsTable: FC = () => {
-  const operators = useOperators();
+type Props = {
+  blueprintName: string;
+  operators: Operator[];
+};
 
+const OperatorsTable: FC<Props> = ({ blueprintName, operators }) => {
   return (
     <div className="space-y-5">
-      {/* TODO: add name here */}
       <Typography variant="h4" fw="bold">
-        Operators
+        Operators running {blueprintName}
       </Typography>
 
-      <OperatorsTableUI
-        data={operators.map((o) => ({
-          address: o.address,
-          identityName: o.identityName,
-          restakersCount: o.restakersCount,
-          concentrationPercentage: o.concentration,
-          tvlInUsd: o.liquidity.usdValue,
-          vaultTokens: o.vaults.map((v) => ({
-            name: v,
-            symbol: v,
-            amount: 0,
-          })),
-        }))}
-      />
+      <OperatorsTableUI data={operators} />
     </div>
   );
 };
