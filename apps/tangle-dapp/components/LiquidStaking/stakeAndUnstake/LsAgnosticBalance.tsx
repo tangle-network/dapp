@@ -13,17 +13,14 @@ import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
-import {
-  LsNetworkId,
-  LsProtocolId,
-} from '../../../constants/liquidStaking/types';
+import { LsNetworkId } from '../../../constants/liquidStaking/types';
+import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import useLsAgnosticBalance from './useLsAgnosticBalance';
 
 export type LsAgnosticBalanceProps = {
   isNative?: boolean;
-  protocolId: LsProtocolId;
   tooltip?: string;
   onlyShowTooltipWhenBalanceIsSet?: boolean;
   onClick?: () => void;
@@ -31,14 +28,14 @@ export type LsAgnosticBalanceProps = {
 
 const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
   isNative = true,
-  protocolId,
   tooltip,
   onlyShowTooltipWhenBalanceIsSet = true,
   onClick,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
-  const { balance, isRefreshing } = useLsAgnosticBalance(isNative, protocolId);
-  const protocol = getLsProtocolDef(protocolId);
+  const { balance, isRefreshing } = useLsAgnosticBalance(isNative);
+  const { selectedProtocolId } = useLsStore();
+  const protocol = getLsProtocolDef(selectedProtocolId);
 
   // Special case for liquid tokens on the `TgToken.sol` contract.
   // See: https://github.com/webb-tools/tnt-core/blob/1f371959884352e7af68e6091c5bb330fcaa58b8/src/lst/liquidtoken/TgToken.sol#L26
@@ -58,7 +55,6 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
     }
 
     const formattedBalance = formatBn(balance, decimals, {
-      fractionMaxLength: undefined,
       includeCommas: true,
     });
 

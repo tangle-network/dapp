@@ -1,6 +1,7 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { FC, useMemo } from 'react';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
@@ -36,6 +37,8 @@ const FeeDetailItem: FC<FeeDetailItemProps> = ({
     // Propagate error or loading state.
     if (!(feeAmount instanceof BN)) {
       return feeAmount;
+    } else if (feeAmount.isZero()) {
+      return EMPTY_VALUE_PLACEHOLDER;
     }
 
     const formattedAmount = formatBn(feeAmount, protocol.decimals, {

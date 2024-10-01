@@ -158,7 +158,7 @@ const DEFAULT_PAGINATION_STATE: PaginationState = {
 };
 
 const LsPoolsTable: FC = () => {
-  const { setSelectedParachainPoolId } = useLsStore();
+  const { setSelectedPoolId: setSelectedParachainPoolId } = useLsStore();
   const [searchQuery, setSearchQuery] = useState('');
 
   const [paginationState, setPaginationState] = useState<PaginationState>(
@@ -183,7 +183,7 @@ const LsPoolsTable: FC = () => {
       const selectedRow = selectedRowIds.at(0);
 
       assert(selectedRow !== undefined, 'One row must always be selected');
-      setSelectedParachainPoolId(selectedRow);
+      setSelectedParachainPoolId(parseInt(selectedRow, 10));
       setRowSelectionState(newSelectionState);
     },
     [rowSelectionState, setSelectedParachainPoolId],

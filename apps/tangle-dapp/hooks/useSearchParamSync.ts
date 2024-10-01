@@ -11,15 +11,16 @@ export type UseSearchParamSyncOptions<T> = {
   setValue: (value: T) => unknown;
 };
 
-const createHref = (newSearchParams: ReadonlyURLSearchParams): string => {
+const createHref = (newSearchParams?: ReadonlyURLSearchParams): string => {
   const newUrl = new URL(window.location.href);
 
-  for (const [key] of newUrl.searchParams) {
-    newUrl.searchParams.delete(key);
-  }
+  // Remove existing search params.
+  newUrl.search = '';
 
-  for (const [key, value] of newSearchParams) {
-    newUrl.searchParams.set(key, value);
+  if (newSearchParams !== undefined) {
+    for (const [key, value] of newSearchParams) {
+      newUrl.searchParams.set(key, value);
+    }
   }
 
   return newUrl.toString();
@@ -114,7 +115,7 @@ const useSearchParamSync = <T>({
     }
 
     const newSearchParams = updateSearchParam(key, stringifiedValue);
-    const href = createHref(new ReadonlyURLSearchParams(newSearchParams));
+    const href = createHref(newSearchParams);
 
     console.debug('Syncing URL search param', key, stringifiedValue, href);
     router.push(href);

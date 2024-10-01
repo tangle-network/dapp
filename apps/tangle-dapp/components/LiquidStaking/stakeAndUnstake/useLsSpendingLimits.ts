@@ -20,7 +20,7 @@ const useLsSpendingLimits = (
   isNative: boolean,
   protocolId: LsProtocolId,
 ): LsSpendingLimits => {
-  const { balance } = useLsAgnosticBalance(isNative, protocolId);
+  const { balance } = useLsAgnosticBalance(isNative);
 
   const { result: existentialDepositAmount } = useApi(
     useCallback((api) => api.consts.balances.existentialDeposit, []),

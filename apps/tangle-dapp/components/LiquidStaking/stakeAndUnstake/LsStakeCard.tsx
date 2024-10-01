@@ -13,7 +13,7 @@ import {
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { z } from 'zod';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
@@ -22,11 +22,12 @@ import {
   LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
+import useMintTx from '../../../data/liquidStaking/parachain/useMintTx';
+import useLsPoolJoinTx from '../../../data/liquidStaking/tangle/useLsPoolJoinTx';
 import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useMintTx from '../../../data/liquidStaking/useMintTx';
 import useLiquifierDeposit from '../../../data/liquifier/useLiquifierDeposit';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamState from '../../../hooks/useSearchParamState';
@@ -40,6 +41,7 @@ import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
 import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
+import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
 const LsStakeCard: FC = () => {
@@ -54,10 +56,15 @@ const LsStakeCard: FC = () => {
     selectedProtocolId,
     setSelectedProtocolId,
     selectedNetworkId,
-    setSelectedNetworkId,
+    selectedPoolId,
   } = useLsStore();
 
-  const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
+  const { execute: executeTanglePoolJoinTx, status: tanglePoolJoinTxStatus } =
+    useLsPoolJoinTx();
+
+  const { execute: executeParachainMintTx, status: parachainMintTxStatus } =
+    useMintTx();
+
   const performLiquifierDeposit = useLiquifierDeposit();
   const activeAccountAddress = useActiveAccountAddress();
 
@@ -67,6 +74,12 @@ const LsStakeCard: FC = () => {
   );
 
   const selectedProtocol = getLsProtocolDef(selectedProtocolId);
+  const tryChangeNetwork = useLsChangeNetwork();
+
+  const isTangleNetwork =
+    selectedNetworkId === LsNetworkId.TANGLE_LOCAL ||
+    selectedNetworkId === LsNetworkId.TANGLE_MAINNET ||
+    selectedNetworkId === LsNetworkId.TANGLE_TESTNET;
 
   // TODO: Not loading the correct protocol for: '?amount=123000000000000000000&protocol=7&network=1&action=stake'. When network=1, it switches to protocol=5 on load. Could this be because the protocol is reset to its default once the network is switched?
   useSearchParamSync({
@@ -82,16 +95,13 @@ const LsStakeCard: FC = () => {
     value: selectedNetworkId,
     parse: (value) => z.nativeEnum(LsNetworkId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
-    setValue: setSelectedNetworkId,
+    setValue: tryChangeNetwork,
   });
 
   const {
     exchangeRate: exchangeRateOrError,
     isRefreshing: isRefreshingExchangeRate,
-  } = useLsExchangeRate(
-    ExchangeRateType.NativeToDerivative,
-    selectedProtocolId,
-  );
+  } = useLsExchangeRate(ExchangeRateType.NativeToDerivative);
 
   // TODO: Properly handle the error state.
   const exchangeRate =
@@ -105,9 +115,9 @@ const LsStakeCard: FC = () => {
 
     if (
       selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeMintTx !== null
+      executeParachainMintTx !== null
     ) {
-      executeMintTx({
+      executeParachainMintTx({
         amount: fromAmount,
         currency: selectedProtocol.currency,
       });
@@ -116,8 +126,25 @@ const LsStakeCard: FC = () => {
       performLiquifierDeposit !== null
     ) {
       await performLiquifierDeposit(selectedProtocol.id, fromAmount);
+    } else if (
+      isTangleNetwork &&
+      executeTanglePoolJoinTx !== null &&
+      selectedPoolId !== null
+    ) {
+      executeTanglePoolJoinTx({
+        amount: fromAmount,
+        poolId: selectedPoolId,
+      });
     }
-  }, [executeMintTx, fromAmount, performLiquifierDeposit, selectedProtocol]);
+  }, [
+    executeParachainMintTx,
+    executeTanglePoolJoinTx,
+    fromAmount,
+    isTangleNetwork,
+    performLiquifierDeposit,
+    selectedProtocol,
+    selectedPoolId,
+  ]);
 
   const toAmount = useMemo(() => {
     if (fromAmount === null || exchangeRate === null) {
@@ -130,13 +157,15 @@ const LsStakeCard: FC = () => {
   const canCallStake =
     (fromAmount !== null &&
       selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeMintTx !== null) ||
+      executeParachainMintTx !== null) ||
     (selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
-      performLiquifierDeposit !== null);
+      performLiquifierDeposit !== null) ||
+    (isTangleNetwork &&
+      executeTanglePoolJoinTx !== null &&
+      selectedPoolId !== null);
 
   const walletBalance = (
     <LsAgnosticBalance
-      protocolId={selectedProtocolId}
       tooltip="Click to use all available balance"
       onClick={() => {
         if (maxSpendable !== null) {
@@ -145,6 +174,11 @@ const LsStakeCard: FC = () => {
       }}
     />
   );
+
+  // Reset the input amount when the network changes.
+  useEffect(() => {
+    setFromAmount(null);
+  }, [setFromAmount, selectedNetworkId]);
 
   return (
     <>
@@ -161,7 +195,7 @@ const LsStakeCard: FC = () => {
         setProtocolId={setSelectedProtocolId}
         minAmount={minSpendable ?? undefined}
         maxAmount={maxSpendable ?? undefined}
-        setNetworkId={setSelectedNetworkId}
+        setNetworkId={tryChangeNetwork}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
@@ -184,7 +218,6 @@ const LsStakeCard: FC = () => {
         <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
 
         <ExchangeRateDetailItem
-          protocolId={selectedProtocolId}
           token={selectedProtocol.token}
           type={ExchangeRateType.NativeToDerivative}
         />
@@ -213,7 +246,10 @@ const LsStakeCard: FC = () => {
           fromAmount === null ||
           fromAmount.isZero()
         }
-        isLoading={mintTxStatus === TxStatus.PROCESSING}
+        isLoading={
+          parachainMintTxStatus === TxStatus.PROCESSING ||
+          tanglePoolJoinTxStatus === TxStatus.PROCESSING
+        }
         loadingText="Processing"
         onClick={handleStakeClick}
         isFullWidth

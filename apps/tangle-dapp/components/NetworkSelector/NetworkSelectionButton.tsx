@@ -16,7 +16,6 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { usePathname } from 'next/navigation';
 import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -99,11 +98,12 @@ const NetworkSelectionButton: FC = () => {
   // Network can't be switched from the Tangle Restaking Parachain while
   // on liquid staking page.
   else if (isInLiquidStakingPath) {
-    const liquidStakingNetworkName = isLiquifierProtocolId(selectedProtocolId)
+    // Special case when the liquifier is selected.
+    const lsNetworkName = isLiquifierProtocolId(selectedProtocolId)
       ? IS_PRODUCTION_ENV
         ? 'Ethereum Mainnet'
         : 'Sepolia Testnet'
-      : TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.name;
+      : networkName;
 
     const chainIconName = isLiquifierProtocolId(selectedProtocolId)
       ? 'ethereum'
@@ -115,7 +115,7 @@ const NetworkSelectionButton: FC = () => {
           <Dropdown>
             <TriggerButton
               className="opacity-60 cursor-not-allowed hover:!bg-none dark:hover:!bg-none"
-              networkName={liquidStakingNetworkName}
+              networkName={lsNetworkName}
               chainIconName={chainIconName}
               isLocked
             />

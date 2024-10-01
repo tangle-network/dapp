@@ -32,7 +32,7 @@ export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | null;
  */
 function useApiRx<T>(
   factory: ObservableFactory<T>,
-  overrideRpcEndpoint?: string,
+  rpcEndpointOverride?: string,
 ) {
   const [result, setResult] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
@@ -43,8 +43,8 @@ function useApiRx<T>(
 
   const { result: apiRx } = usePromise(
     useCallback(
-      () => getApiRx(overrideRpcEndpoint ?? rpcEndpoint),
-      [overrideRpcEndpoint, rpcEndpoint],
+      () => getApiRx(rpcEndpointOverride ?? rpcEndpoint),
+      [rpcEndpointOverride, rpcEndpoint],
     ),
     null,
   );

@@ -320,18 +320,19 @@ const UnstakeRequestsTable: FC = () => {
               />
             )}
 
+            {/* TODO: Assert that the id is either parachain or liquifier, if it isn't then we might need to hide this unstake requests table and show a specific one for Tangle networks (LS pools). */}
             {isLsParachainChainId(selectedProtocolId) ? (
               <WithdrawLstUnstakeRequestButton
                 canWithdraw={canWithdrawAllSelected}
                 currenciesAndUnlockIds={parachainCurrenciesAndUnlockIds}
               />
-            ) : (
+            ) : isLiquifierProtocolId(selectedProtocolId) ? (
               <WithdrawUnlockNftButton
                 tokenId={selectedProtocolId}
                 canWithdraw={canWithdrawAllSelected}
                 unlockIds={nftUnlockIds}
               />
-            )}
+            ) : undefined}
           </div>
         )}
       </GlassCard>

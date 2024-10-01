@@ -6,12 +6,12 @@ import { Bytes } from '@polkadot/types';
 import { BN } from '@polkadot/util';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
-import { TxName } from '../../constants';
+import { TxName } from '../../../constants';
 import {
   LsParachainCurrencyKey,
   ParachainCurrency,
-} from '../../constants/liquidStaking/types';
-import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
+} from '../../../constants/liquidStaking/types';
+import { useSubstrateTxWithNotification } from '../../../hooks/useSubstrateTx';
 
 export type MintTxContext = {
   amount: BN;

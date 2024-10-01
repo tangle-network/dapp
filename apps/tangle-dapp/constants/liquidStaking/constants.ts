@@ -6,6 +6,9 @@ import MOONBEAM from '../../data/liquidStaking/adapters/moonbeam';
 import PHALA from '../../data/liquidStaking/adapters/phala';
 import POLKADOT from '../../data/liquidStaking/adapters/polkadot';
 import POLYGON from '../../data/liquidStaking/adapters/polygon';
+import TANGLE_LOCAL from '../../data/liquidStaking/adapters/tangleLocal';
+import TANGLE_MAINNET from '../../data/liquidStaking/adapters/tangleMainnet';
+import TANGLE_TESTNET from '../../data/liquidStaking/adapters/tangleTestnet';
 import THE_GRAPH from '../../data/liquidStaking/adapters/theGraph';
 import { IS_PRODUCTION_ENV } from '../env';
 import {
@@ -50,6 +53,9 @@ export const LS_LIQUIFIER_PROTOCOL_MAP: Record<
 export const LS_PROTOCOLS: LsProtocolDef[] = [
   ...Object.values(LS_PARACHAIN_CHAIN_MAP),
   ...Object.values(LS_LIQUIFIER_PROTOCOL_MAP),
+  TANGLE_MAINNET,
+  TANGLE_TESTNET,
+  TANGLE_LOCAL,
 ];
 
 export const LS_LIQUIFIER_PROTOCOL_IDS = [
@@ -71,7 +77,6 @@ export const LS_PARACHAIN_TOKENS = [
   LsToken.MANTA,
   LsToken.ASTAR,
   LsToken.PHALA,
-  LsToken.TNT,
 ] as const satisfies LsParachainToken[];
 
 export const TVS_TOOLTIP =
@@ -80,7 +85,7 @@ export const TVS_TOOLTIP =
 export const LS_DERIVATIVE_TOKEN_PREFIX = 'tg';
 
 export const LS_ETHEREUM_MAINNET_LIQUIFIER: LsNetwork = {
-  type: LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER,
+  id: LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER,
   networkName: IS_PRODUCTION_ENV ? 'Ethereum Mainnet' : 'Sepolia Testnet',
   chainIconFileName: 'ethereum',
   defaultProtocolId: LsProtocolId.CHAINLINK,
@@ -88,7 +93,7 @@ export const LS_ETHEREUM_MAINNET_LIQUIFIER: LsNetwork = {
 };
 
 export const LS_TANGLE_RESTAKING_PARACHAIN: LsNetwork = {
-  type: LsNetworkId.TANGLE_RESTAKING_PARACHAIN,
+  id: LsNetworkId.TANGLE_RESTAKING_PARACHAIN,
   networkName: 'Tangle Parachain',
   chainIconFileName: 'tangle',
   defaultProtocolId: LsProtocolId.POLKADOT,
@@ -96,9 +101,36 @@ export const LS_TANGLE_RESTAKING_PARACHAIN: LsNetwork = {
   protocols: [POLKADOT, PHALA, MOONBEAM, ASTAR, MANTA] as LsProtocolDef[],
 };
 
+export const LS_TANGLE_MAINNET = {
+  id: LsNetworkId.TANGLE_MAINNET,
+  networkName: 'Tangle Mainnet',
+  chainIconFileName: 'tangle',
+  defaultProtocolId: LsProtocolId.TANGLE_MAINNET,
+  protocols: [TANGLE_MAINNET],
+} as const satisfies LsNetwork;
+
+export const LS_TANGLE_TESTNET = {
+  id: LsNetworkId.TANGLE_MAINNET,
+  networkName: 'Tangle Testnet',
+  chainIconFileName: 'tangle',
+  defaultProtocolId: LsProtocolId.TANGLE_MAINNET,
+  protocols: [TANGLE_MAINNET],
+} as const satisfies LsNetwork;
+
+export const LS_TANGLE_LOCAL = {
+  id: LsNetworkId.TANGLE_LOCAL,
+  networkName: 'Tangle Local Dev',
+  chainIconFileName: 'tangle',
+  defaultProtocolId: LsProtocolId.TANGLE_LOCAL,
+  protocols: [TANGLE_LOCAL],
+} as const satisfies LsNetwork;
+
 export const LS_NETWORKS: LsNetwork[] = [
-  LS_ETHEREUM_MAINNET_LIQUIFIER,
+  LS_TANGLE_MAINNET,
+  LS_TANGLE_TESTNET,
+  LS_TANGLE_LOCAL,
   LS_TANGLE_RESTAKING_PARACHAIN,
+  LS_ETHEREUM_MAINNET_LIQUIFIER,
 ];
 
 /**
