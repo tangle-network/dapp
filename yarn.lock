@@ -18533,16 +18533,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/protocol-substrate-types@file:/Volumes/tins_ssd/webb/tangle/types::locator=webb-monorepo%40workspace%3A.":
-  version: 0.5.12
-  resolution: "@webb-tools/protocol-substrate-types@file:/Volumes/tins_ssd/webb/tangle/types#/Volumes/tins_ssd/webb/tangle/types::hash=8b61c6&locator=webb-monorepo%40workspace%3A."
+"@webb-tools/protocol-substrate-types@npm:@webb-tools/tangle-substrate-types@^0.9.0, @webb-tools/tangle-substrate-types@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "@webb-tools/tangle-substrate-types@npm:0.9.0"
   dependencies:
     "@polkadot/api": "npm:^13.2.1"
     "@polkadot/typegen": "npm:^13.2.1"
     "@polkadot/types": "npm:^13.2.1"
     ecpair: "npm:^2.1.0"
     tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/e1bebb78773a0c3b58bdba1419af91f1f934b7b851dbb4aeb38164b3a42b7b9ca7e7efc08e1aa8697bc658064912b155f6a9a3e8b0ca4acfcc5b23f49b9443ed
+  checksum: 10c0/0cc9624d78d0a41e1cb37c5081336a60d7ea4cda68ebed7eeb634497ad43402bf24041156b8628c3d5dba041379066896bad94692477ac2df91dc068fee94f38
   languageName: node
   linkType: hard
 
@@ -18602,19 +18602,6 @@ __metadata:
     mkdirp: "npm:^3.0.1"
     tiny-secp256k1: "npm:^2.2.3"
   checksum: 10c0/78eb2677437354e3b928ab877a7b9f58a9f35b4862919fe9efa4af7477a624a798777fd7d766ee8b27d268d2b630e86415c97c5552de0575cdd37f4210075255
-  languageName: node
-  linkType: hard
-
-"@webb-tools/tangle-substrate-types@file:/Volumes/tins_ssd/webb/tangle/types::locator=webb-monorepo%40workspace%3A.":
-  version: 0.5.12
-  resolution: "@webb-tools/tangle-substrate-types@file:/Volumes/tins_ssd/webb/tangle/types#/Volumes/tins_ssd/webb/tangle/types::hash=e935e7&locator=webb-monorepo%40workspace%3A."
-  dependencies:
-    "@polkadot/api": "npm:^13.2.1"
-    "@polkadot/typegen": "npm:^13.2.1"
-    "@polkadot/types": "npm:^13.2.1"
-    ecpair: "npm:^2.1.0"
-    tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/d424a7bbcd78d3a323e3f120cc7cfde3f062f59068595dc04e069c51430df0d6dd88aab8e2457d768d16b5410aeb1ed0578134050ead83bc82f7ed352869358b
   languageName: node
   linkType: hard
 
@@ -46812,7 +46799,7 @@ __metadata:
     "@webb-tools/proposals": "npm:^1.0.11"
     "@webb-tools/sdk-core": "npm:0.1.4-127"
     "@webb-tools/tangle-restaking-types": "npm:^0.1.0"
-    "@webb-tools/tangle-substrate-types": "file:/Volumes/tins_ssd/webb/tangle/types"
+    "@webb-tools/tangle-substrate-types": "npm:^0.9.0"
     "@webb-tools/test-utils": "npm:0.1.8"
     "@webb-tools/tokens": "npm:1.0.11"
     "@webb-tools/utils": "npm:1.0.11"
