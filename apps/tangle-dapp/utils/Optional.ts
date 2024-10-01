@@ -19,9 +19,9 @@
  *
  * @example
  * ```
- * const value = new Optional(42);
+ * const valueOpt = Optional.new(42);
  *
- * if (value.value !== null) {
+ * if (valueOpt.value !== null) {
  *   console.log(value.value);
  * } else {
  *   console.log('Value is not present!');
@@ -29,6 +29,14 @@
  * ```
  */
 class Optional<T extends NonNullable<unknown>> {
+  static empty<T extends NonNullable<unknown>>(): Optional<T> {
+    return new Optional();
+  }
+
+  static new<T extends NonNullable<unknown>>(value: T): Optional<T> {
+    return new Optional(value);
+  }
+
   readonly value: T | null;
 
   constructor(value?: T) {
@@ -37,10 +45,18 @@ class Optional<T extends NonNullable<unknown>> {
 
   map<U extends NonNullable<unknown>>(f: (value: T) => U): Optional<U> {
     if (this.value === null) {
-      return new Optional();
+      return Optional.empty();
     }
 
-    return new Optional(f(this.value));
+    return Optional.new(f(this.value));
+  }
+
+  unwrapOrThrow(): T {
+    if (this.value === null) {
+      throw new Error('Value is not present!');
+    }
+
+    return this.value;
   }
 
   get isPresent(): boolean {

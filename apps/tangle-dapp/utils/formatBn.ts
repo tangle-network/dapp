@@ -29,7 +29,7 @@ const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
   trimTrailingZeroes: true,
 };
 
-// TODO: Break this function down into smaller local functions for improved legibility and modularity, since its logic is getting complex. Consider making it functional instead of modifying the various variables: Return {integerPart, fractionalPart} per transformation/function, so that it can be easily chainable monad-style.
+// TODO: Break this function down into smaller local functions for improved legibility and modularity, since its logic is getting complex. Consider making it functional instead of modifying the various variables: Return {integerPart, fractionalPart} per transformation/function, so that it can be easily chainable monad-style. Also, prefer usage of Decimal.js instead of BN for better decimal handling without needing to manually handle the edge cases.
 function formatBn(
   amount: BN,
   decimals: number,

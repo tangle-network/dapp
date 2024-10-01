@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
@@ -35,19 +35,24 @@ const ProtocolSelector: FC<ProtocolSelectorProps> = ({
   const protocol = getLsProtocolDef(selectedProtocolId);
   const network = getLsNetwork(selectedNetworkId);
 
-  const trySetProtocolId = (newProtocolId: LsProtocolId) => {
-    return () => {
-      if (setProtocolId === undefined) {
-        return;
-      }
+  const trySetProtocolId = useCallback(
+    (newProtocolId: LsProtocolId) => {
+      return () => {
+        if (setProtocolId === undefined) {
+          return;
+        }
 
-      setProtocolId(newProtocolId);
-    };
-  };
+        setProtocolId(newProtocolId);
+      };
+    },
+    [setProtocolId],
+  );
 
   return (
     <Dropdown>
-      <DropdownMenuTrigger disabled={setProtocolId === undefined}>
+      <DropdownMenuTrigger
+        disabled={setProtocolId === undefined || network.protocols.length === 1}
+      >
         <div className="group flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-170 px-4 py-2 rounded-lg">
           <LsTokenIcon name={protocol.token} />
 
@@ -56,7 +61,9 @@ const ProtocolSelector: FC<ProtocolSelectorProps> = ({
             {protocol.token}
           </Typography>
 
-          {setProtocolId !== undefined && <DropdownChevronIcon isLarge />}
+          {setProtocolId !== undefined && network.protocols.length > 1 && (
+            <DropdownChevronIcon isLarge />
+          )}
         </div>
       </DropdownMenuTrigger>
 

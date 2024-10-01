@@ -21,7 +21,6 @@ import { IS_PRODUCTION_ENV } from '../../constants/env';
 import ApiDevStatsContainer from '../DebugMetricsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
 import { WalletModalContainer } from '../WalletModalContainer';
-import FeedbackBanner from './FeedbackBanner';
 
 // Some specific overrides for the social links for use in the
 // footer in Tangle dApp, since it defaults to the Webb socials.
@@ -51,8 +50,6 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
       <Sidebar isExpandedAtDefault={isSidebarInitiallyExpanded} />
 
       <main className="flex-1 h-full overflow-y-auto scrollbar-hide">
-        <FeedbackBanner />
-
         <div className="h-full max-w-[1448px] lg:px-10 md:px-8 px-4 m-auto flex flex-col justify-between">
           <div className="flex flex-col space-y-5 grow">
             <div className="flex items-center justify-between py-6">

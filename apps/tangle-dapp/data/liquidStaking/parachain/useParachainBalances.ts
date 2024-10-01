@@ -8,10 +8,10 @@ import { BN } from '@polkadot/util';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useMemo } from 'react';
 
-import { LsParachainToken } from '../../constants/liquidStaking/types';
-import useApiRx from '../../hooks/useApiRx';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import isLsParachainToken from '../../utils/liquidStaking/isLsParachainToken';
+import { LsParachainToken } from '../../../constants/liquidStaking/types';
+import useApiRx from '../../../hooks/useApiRx';
+import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
+import isLsParachainToken from '../../../utils/liquidStaking/isLsParachainToken';
 
 const useParachainBalances = () => {
   const activeSubstrateAddress = useSubstrateAddress();
