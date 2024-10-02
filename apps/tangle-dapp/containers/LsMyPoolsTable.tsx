@@ -205,44 +205,33 @@ const LsMyPoolsTable: FC = () => {
     enableSortingRemoval: false,
   });
 
-  // Don't render if the user is not involved in any pools.
-  if (rows.length === 0) {
-    return;
-  }
-
   return (
-    <div className="space-y-5">
-      <Typography variant="h4" fw="bold">
-        Your Pools
-      </Typography>
+    <GlassCard>
+      <div className="flex flex-col">
+        <Table
+          tableProps={table}
+          title="Assets"
+          className="rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3"
+          thClassName="py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160"
+          tbodyClassName="!bg-transparent"
+          tdClassName="!bg-inherit border-t-0"
+        />
 
-      <GlassCard>
-        <div className="flex flex-col">
-          <Table
-            tableProps={table}
-            title="Assets"
-            className="rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3"
-            thClassName="py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160"
-            tbodyClassName="!bg-transparent"
-            tdClassName="!bg-inherit border-t-0"
-          />
-
-          <Pagination
-            itemsPerPage={pageSize}
-            totalItems={rows.length}
-            page={pageIndex + 1}
-            totalPages={table.getPageCount()}
-            canPreviousPage={table.getCanPreviousPage()}
-            previousPage={table.previousPage}
-            canNextPage={table.getCanNextPage()}
-            nextPage={table.nextPage}
-            setPageIndex={table.setPageIndex}
-            title={pluralize('pool', rows.length === 0 || rows.length > 1)}
-            className="border-t-0 py-5"
-          />
-        </div>
-      </GlassCard>
-    </div>
+        <Pagination
+          itemsPerPage={pageSize}
+          totalItems={rows.length}
+          page={pageIndex + 1}
+          totalPages={table.getPageCount()}
+          canPreviousPage={table.getCanPreviousPage()}
+          previousPage={table.previousPage}
+          canNextPage={table.getCanNextPage()}
+          nextPage={table.nextPage}
+          setPageIndex={table.setPageIndex}
+          title={pluralize('pool', rows.length === 0 || rows.length > 1)}
+          className="border-t-0 py-5"
+        />
+      </div>
+    </GlassCard>
   );
 };
 

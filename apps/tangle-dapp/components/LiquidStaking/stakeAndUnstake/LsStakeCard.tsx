@@ -27,6 +27,7 @@ import useLsPoolJoinTx from '../../../data/liquidStaking/tangle/useLsPoolJoinTx'
 import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
+import useLsPoolMembers from '../../../data/liquidStaking/useLsPoolMembers';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useLiquifierDeposit from '../../../data/liquifier/useLiquifierDeposit';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
@@ -76,6 +77,22 @@ const LsStakeCard: FC = () => {
 
   const selectedProtocol = getLsProtocolDef(selectedProtocolId);
   const tryChangeNetwork = useLsChangeNetwork();
+  const lsPoolMembers = useLsPoolMembers();
+
+  const actionText = useMemo(() => {
+    const defaultText = 'Stake';
+
+    if (lsPoolMembers === null) {
+      return defaultText;
+    }
+
+    const isMember = lsPoolMembers.some(
+      ([poolId, accountAddress]) =>
+        poolId === selectedPoolId && accountAddress === activeAccountAddress,
+    );
+
+    return isMember ? 'Increase Stake' : defaultText;
+  }, [activeAccountAddress, lsPoolMembers, selectedPoolId]);
 
   const isTangleNetwork =
     selectedNetworkId === LsNetworkId.TANGLE_LOCAL ||
@@ -257,7 +274,7 @@ const LsStakeCard: FC = () => {
         onClick={handleStakeClick}
         isFullWidth
       >
-        Stake
+        {actionText}
       </Button>
     </>
   );

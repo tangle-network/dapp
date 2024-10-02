@@ -164,27 +164,21 @@ function LsProtocolsTable({ initialSorting = [] }: LsProtocolsTableProps) {
   );
 
   return (
-    <div className="space-y-5">
-      <Typography variant="h4" fw="bold">
-        Liquid Staking Protocols
-      </Typography>
-
-      <Table
-        tableProps={table}
-        getExpandedRowContent={getExpandedRowContent}
-        onRowClick={onRowClick}
-        className={twMerge(
-          'px-6 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160',
-          'bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)]',
-          'dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]',
-        )}
-        tableClassName="border-separate border-spacing-y-3 pt-3"
-        thClassName="py-0 border-t-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0"
-        tbodyClassName="!bg-transparent"
-        trClassName="group cursor-pointer overflow-hidden rounded-xl"
-        tdClassName="border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden"
-      />
-    </div>
+    <Table
+      tableProps={table}
+      getExpandedRowContent={getExpandedRowContent}
+      onRowClick={onRowClick}
+      className={twMerge(
+        'px-6 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160',
+        'bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)]',
+        'dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]',
+      )}
+      tableClassName="border-separate border-spacing-y-3 pt-3"
+      thClassName="py-0 border-t-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0"
+      tbodyClassName="!bg-transparent"
+      trClassName="group cursor-pointer overflow-hidden rounded-xl"
+      tdClassName="border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden"
+    />
   );
 }
 

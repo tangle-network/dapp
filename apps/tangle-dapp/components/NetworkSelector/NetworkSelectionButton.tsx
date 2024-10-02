@@ -60,9 +60,7 @@ const NetworkSelectionButton: FC = () => {
 
   // Disable network switching when in Liquid Staking page,
   // since it would have no effect there.
-  const isInLiquidStakingPage =
-    pathname.startsWith(PagePath.LIQUID_STAKING) &&
-    !pathname.startsWith(PagePath.LIQUID_STAKING_OVERVIEW);
+  const isInLiquidStakingPage = pathname.startsWith(PagePath.LIQUID_STAKING);
 
   const isInBridgePath = useMemo(
     () => pathname.startsWith(PagePath.BRIDGE),

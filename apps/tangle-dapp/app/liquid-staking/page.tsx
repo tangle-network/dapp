@@ -1,19 +1,25 @@
 'use client';
 
+import {
+  LsProtocolsTable,
+  TabContent,
+  TabsList as WebbTabsList,
+  TabsRoot,
+  TabTrigger,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { FC, useEffect } from 'react';
 
-import { LsValidatorTable } from '../../components/LiquidStaking/LsValidatorTable';
 import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeCard';
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
-import UnstakeRequestsTable from '../../components/LiquidStaking/unstakeRequestsTable/UnstakeRequestsTable';
+import StatItem from '../../components/StatItem';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
-import LsPoolsTable from '../../containers/LsPoolsTable';
+import LsMyPoolsTable from '../../containers/LsMyPoolsTable';
 import useNetworkStore from '../../context/useNetworkStore';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
 import useSearchParamState from '../../hooks/useSearchParamState';
 import getLsTangleNetwork from '../../utils/liquidStaking/getLsTangleNetwork';
-import isLsParachainChainId from '../../utils/liquidStaking/isLsParachainChainId';
 import TabListItem from '../restake/TabListItem';
 import TabsList from '../restake/TabsList';
 
@@ -22,7 +28,12 @@ enum SearchParamAction {
   UNSTAKE = 'unstake',
 }
 
-const LiquidStakingTokenPage: FC = () => {
+enum Tab {
+  ALL_POOLS = 'All Pools',
+  MY_POOLS = 'My Pools',
+}
+
+const LiquidStakingPage: FC = () => {
   const [isStaking, setIsStaking] = useSearchParamState({
     defaultValue: true,
     key: LsSearchParamKey.ACTION,
@@ -31,12 +42,11 @@ const LiquidStakingTokenPage: FC = () => {
       value ? SearchParamAction.STAKE : SearchParamAction.UNSTAKE,
   });
 
-  const { selectedProtocolId, selectedNetworkId } = useLsStore();
+  const { selectedNetworkId } = useLsStore();
   const { network } = useNetworkStore();
   const { switchNetwork } = useNetworkSwitcher();
 
   const lsTangleNetwork = getLsTangleNetwork(selectedNetworkId);
-  const isParachainChain = isLsParachainChainId(selectedProtocolId);
 
   // Sync the network with the selected liquid staking network on load.
   // It might differ initially if the user navigates to the page and
@@ -48,8 +58,29 @@ const LiquidStakingTokenPage: FC = () => {
   }, [lsTangleNetwork, network.id, selectedNetworkId, switchNetwork]);
 
   return (
-    <div className="flex flex-wrap gap-12">
-      <div className="flex flex-col gap-4 w-full min-w-[450px] max-w-[600px]">
+    <div className="flex items-stretch flex-col gap-10">
+      <div className="p-6 space-y-0 rounded-2xl flex flex-row items-center justify-between w-full overflow-x-auto bg-liquid_staking_banner dark:bg-liquid_staking_banner_dark">
+        <div className="flex flex-col gap-2">
+          <Typography variant="h5" fw="bold">
+            Tangle Liquid Staking
+          </Typography>
+
+          <Typography
+            variant="body1"
+            fw="normal"
+            className="text-mono-120 dark:text-mono-100"
+          >
+            Get Liquid Staking Tokens (LSTs) to earn & unleash restaking on
+            Tangle Mainnet via delegation.
+          </Typography>
+        </div>
+
+        <div className="flex gap-6 h-full">
+          <StatItem title="$123.01" subtitle="My Total Staking" largeSubtitle />
+        </div>
+      </div>
+
+      <div className="flex flex-col self-center gap-4 w-full min-w-[450px] max-w-[600px]">
         <TabsList className="w-full">
           <TabListItem isActive={isStaking} onClick={() => setIsStaking(true)}>
             Stake
@@ -66,19 +97,38 @@ const LiquidStakingTokenPage: FC = () => {
         {isStaking ? <LsStakeCard /> : <LsUnstakeCard />}
       </div>
 
-      <div className="flex flex-col flex-grow w-min gap-4 min-w-[370px]">
-        {isStaking ? (
-          isParachainChain ? (
-            <LsPoolsTable />
-          ) : (
-            <LsValidatorTable />
-          )
-        ) : (
-          <UnstakeRequestsTable />
-        )}
-      </div>
+      <TabsRoot defaultValue={Tab.ALL_POOLS} className="space-y-4">
+        <div className="flex justify-between items-center gap-4">
+          {/* Tabs List on the left */}
+          <WebbTabsList className="space-x-4">
+            {Object.values(Tab).map((tab, idx) => {
+              return (
+                <TabTrigger
+                  key={idx}
+                  value={tab}
+                  isDisableStyle
+                  className="text-mono-100 radix-state-active:text-mono-200 dark:radix-state-active:!text-mono-0"
+                >
+                  <Typography variant="h5" fw="bold" className="!text-inherit">
+                    {tab}
+                  </Typography>
+                </TabTrigger>
+              );
+            })}
+          </WebbTabsList>
+        </div>
+
+        {/* Tabs Content */}
+        <TabContent value={Tab.ALL_POOLS}>
+          <LsProtocolsTable />
+        </TabContent>
+
+        <TabContent value={Tab.MY_POOLS}>
+          <LsMyPoolsTable />
+        </TabContent>
+      </TabsRoot>
     </div>
   );
 };
 
-export default LiquidStakingTokenPage;
+export default LiquidStakingPage;

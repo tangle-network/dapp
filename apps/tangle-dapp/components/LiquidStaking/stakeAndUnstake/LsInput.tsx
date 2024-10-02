@@ -16,6 +16,7 @@ import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
 import NetworkSelector from './NetworkSelector';
 import ProtocolSelector from './ProtocolSelector';
+import SelectedPoolIndicator from './SelectedPoolIndicator';
 
 export type LsInputProps = {
   id: string;
@@ -132,6 +133,8 @@ const LsInput: FC<LsInputProps> = ({
             setProtocolId={setProtocolId}
             isDerivativeVariant={isDerivativeVariant}
           />
+
+          <SelectedPoolIndicator />
         </div>
       </div>
 

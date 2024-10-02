@@ -23,6 +23,7 @@ import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import pluralize from '../../utils/pluralize';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { ArrowRight } from '@webb-tools/icons';
+import { useLsStore } from '../../data/liquidStaking/useLsStore';
 
 export interface LsPoolsTable2Props {
   pools: LsPool[];
@@ -30,79 +31,6 @@ export interface LsPoolsTable2Props {
 }
 
 const COLUMN_HELPER = createColumnHelper<LsPool>();
-
-const POOL_COLUMNS = [
-  COLUMN_HELPER.accessor('id', {
-    header: () => 'Name/id',
-    cell: (props) => (
-      <Typography
-        variant="body2"
-        fw="normal"
-        className="text-mono-200 dark:text-mono-0"
-      >
-        {props.row.original.metadata}#{props.getValue()}
-      </Typography>
-    ),
-  }),
-  COLUMN_HELPER.accessor('token', {
-    header: () => 'Token',
-    cell: (props) => (
-      <Typography
-        variant="body2"
-        fw="normal"
-        className="text-mono-200 dark:text-mono-0"
-      >
-        {props.getValue()}
-      </Typography>
-    ),
-  }),
-  COLUMN_HELPER.accessor('ownerAddress', {
-    header: () => 'Owner',
-    cell: (props) => (
-      <Avatar
-        sourceVariant="address"
-        value={props.row.original.ownerAddress}
-        theme="substrate"
-      />
-    ),
-  }),
-  COLUMN_HELPER.accessor('totalStaked', {
-    header: () => 'TVL',
-    // TODO: Decimals.
-    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
-  }),
-  COLUMN_HELPER.accessor('apyPercentage', {
-    header: () => 'APY',
-    cell: (props) => {
-      const apy = props.getValue();
-
-      if (apy === undefined) {
-        return EMPTY_VALUE_PLACEHOLDER;
-      }
-
-      return (
-        <Typography
-          variant="body2"
-          fw="normal"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          {getRoundedAmountString(props.getValue()) + '%'}
-        </Typography>
-      );
-    },
-  }),
-  COLUMN_HELPER.display({
-    id: 'actions',
-    header: () => 'Actions',
-    cell: (props) => (
-      <div>
-        <Button rightIcon={<ArrowRight />} variant="utility">
-          Stake
-        </Button>
-      </div>
-    ),
-  }),
-];
 
 const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -112,6 +40,8 @@ const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
     pageSize: 5,
   });
 
+  const { selectedPoolId, setSelectedPoolId } = useLsStore();
+
   const pagination = useMemo(
     () => ({
       pageIndex,
@@ -120,9 +50,87 @@ const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
     [pageIndex, pageSize],
   );
 
+  const columns = [
+    COLUMN_HELPER.accessor('id', {
+      header: () => 'Name/id',
+      cell: (props) => (
+        <Typography
+          variant="body2"
+          fw="normal"
+          className="text-mono-200 dark:text-mono-0"
+        >
+          {props.row.original.metadata}#{props.getValue()}
+        </Typography>
+      ),
+    }),
+    COLUMN_HELPER.accessor('token', {
+      header: () => 'Token',
+      cell: (props) => (
+        <Typography
+          variant="body2"
+          fw="normal"
+          className="text-mono-200 dark:text-mono-0"
+        >
+          {props.getValue()}
+        </Typography>
+      ),
+    }),
+    COLUMN_HELPER.accessor('ownerAddress', {
+      header: () => 'Owner',
+      cell: (props) => (
+        <Avatar
+          sourceVariant="address"
+          value={props.row.original.ownerAddress}
+          theme="substrate"
+        />
+      ),
+    }),
+    COLUMN_HELPER.accessor('totalStaked', {
+      header: () => 'TVL',
+      // TODO: Decimals.
+      cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+    }),
+    COLUMN_HELPER.accessor('apyPercentage', {
+      header: () => 'APY',
+      cell: (props) => {
+        const apy = props.getValue();
+
+        if (apy === undefined) {
+          return EMPTY_VALUE_PLACEHOLDER;
+        }
+
+        return (
+          <Typography
+            variant="body2"
+            fw="normal"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {getRoundedAmountString(props.getValue()) + '%'}
+          </Typography>
+        );
+      },
+    }),
+    COLUMN_HELPER.display({
+      id: 'actions',
+      cell: (props) => (
+        <div className="flex items-center justify-end">
+          <Button
+            isDisabled={selectedPoolId === props.row.original.id}
+            onClick={() => setSelectedPoolId(props.row.original.id)}
+            rightIcon={<ArrowRight />}
+            variant="utility"
+            size="sm"
+          >
+            Stake
+          </Button>
+        </div>
+      ),
+    }),
+  ];
+
   const table = useReactTable({
     data: pools,
-    columns: POOL_COLUMNS,
+    columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
