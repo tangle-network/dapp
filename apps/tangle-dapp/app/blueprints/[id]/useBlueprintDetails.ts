@@ -2,7 +2,6 @@ import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesOperatorPreferences } from '@polkadot/types/lookup';
 import { useCallback } from 'react';
 import { combineLatest, switchMap } from 'rxjs';
-import { formatUnits } from 'viem';
 
 import useNetworkStore from '../../../context/useNetworkStore';
 import { extractOperatorData } from '../../../data/blueprints/utils/blueprintHelpers';
@@ -19,6 +18,7 @@ import {
   getAccountInfo,
   getMultipleAccountInfo,
 } from '../../../utils/polkadot';
+import { delegationsToVaultTokens } from '../../restake/utils';
 
 export default function useBlueprintDetails(id: string) {
   const { rpcEndpoint } = useNetworkStore();
@@ -142,20 +142,7 @@ async function getBlueprintOperators(
       concentrationPercentage,
       restakersCount: operatorMap[address]?.restakersCount,
       tvlInUsd,
-      vaultTokens: delegations
-        .map(({ amount, assetId }) => {
-          const asset = assetMap[assetId];
-          if (asset === undefined) return null;
-
-          return {
-            name: asset.name,
-            symbol: asset.symbol,
-            amount: +formatUnits(amount, asset.decimals),
-          } satisfies Operator['vaultTokens'][number];
-        })
-        .filter((token): token is Operator['vaultTokens'][number] =>
-          Boolean(token),
-        ),
+      vaultTokens: delegationsToVaultTokens(delegations, assetMap),
     } satisfies Operator;
   });
 }

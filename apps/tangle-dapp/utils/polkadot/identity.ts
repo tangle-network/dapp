@@ -79,10 +79,19 @@ export async function getAccountInfo(rpcEndpoint: string, address: string) {
   return extractIdentityInfo(identityRegistration);
 }
 
+/**
+ * Retrieves identity information for multiple accounts.
+ *
+ * @param rpcEndpoint - The RPC endpoint URL for the Polkadot node.
+ * @param addresses - An array of account addresses to fetch identity information for.
+ * @returns A Promise that resolves to an array of IdentityType objects or null values.
+ *          Each element corresponds to an address in the input array.
+ *          If an address has no identity information, the corresponding element will be null.
+ */
 export async function getMultipleAccountInfo(
   rpcEndpoint: string,
   addresses: string[],
-) {
+): Promise<(IdentityType | null)[]> {
   const api = await getApiPromise(rpcEndpoint);
   const identityData = await api.query.identity.identityOf.multi(addresses);
 

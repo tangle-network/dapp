@@ -52,27 +52,27 @@ function usePromise<T>(factory: () => Promise<T>, fallbackValue: T) {
     // The `isMounted` ref checks if the component is mounted globally,
     // while `isSubscribe` flag manages the subscription state for this specific effect.
     // `isMounted` prevents updates after component unmount,
-    // `isSubscribe` allows proper cleanup if the effect re-runs before the promise resolves.
-    let isSubscribe = true;
+    // `isSubscribed` allows proper cleanup if the effect re-runs before the promise resolves.
+    let isSubscribed = true;
     setIsLoading(true);
 
     factory()
       .then((newResult) => {
-        if (!isMounted.current || !isSubscribe) {
+        if (!isMounted.current || !isSubscribed) {
           return;
         }
 
         setResult(newResult);
       })
       .catch((possibleError: unknown) => {
-        if (!isMounted.current || !isSubscribe) {
+        if (!isMounted.current || !isSubscribed) {
           return;
         }
 
         setError(ensureError(possibleError));
       })
       .finally(() => {
-        if (!isMounted.current || !isSubscribe) {
+        if (!isMounted.current || !isSubscribed) {
           return;
         }
 
@@ -80,7 +80,7 @@ function usePromise<T>(factory: () => Promise<T>, fallbackValue: T) {
       });
 
     return () => {
-      isSubscribe = false;
+      isSubscribed = false;
     };
   }, [factory, isMounted]);
 

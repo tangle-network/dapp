@@ -51,6 +51,8 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
               status: toPrimitiveStatus(operator.status),
             } satisfies OperatorMetadata;
 
+            // Object.assign creates a new object, combining existing operatorsMap
+            // with the new operator entry, maintaining immutability in the reduce pattern.
             return Object.assign(operatorsMap, {
               [accountId.toString()]: operatorMetadataPrimitive,
             } satisfies OperatorMap);

@@ -16,6 +16,12 @@ const nextConfig = {
   ...nextConfigBase,
 
   images: {
+    // Configure Next.js Image component to accept any hostname
+    // This allows rendering of external image URLs (e.g., user-defined images)
+    // Without this, Next.js would throw an "Unconfigured Host" error
+    // We use a wildcard '**' to permit all hostnames, enabling flexibility
+    // but consider security implications and restrict to known domains if possible
+    // @see https://nextjs.org/docs/messages/next-image-unconfigured-host
     remotePatterns: [
       {
         protocol: 'https',

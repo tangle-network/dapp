@@ -6,8 +6,8 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
+import OperatorsTable from '../../../components/tables/Operators';
 import BlueprintHeader from './BlueprintHeader';
-import OperatorsTable from './OperatorsTable';
 import useBlueprintDetails from './useBlueprintDetails';
 
 type Props = {
@@ -47,10 +47,13 @@ const BlueprintDetailsPage: FC<Props> = ({ params: { id } }) => {
     <div className="space-y-5">
       <BlueprintHeader blueprint={result.details} />
 
-      <OperatorsTable
-        blueprintName={result.details.name}
-        operators={result.operators}
-      />
+      <div className="space-y-5">
+        <Typography variant="h4" fw="bold">
+          Operators running {result.details.name}
+        </Typography>
+
+        <OperatorsTable data={result.operators} />
+      </div>
     </div>
   );
 };

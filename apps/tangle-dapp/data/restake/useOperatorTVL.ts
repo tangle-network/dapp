@@ -25,21 +25,21 @@ export function useOperatorTVL(operatorMap: OperatorMap, assetMap: AssetMap) {
                     asset.decimals,
                   );
 
-                  if (!result.sucess) {
+                  if (!result.success) {
                     return sum;
                   }
 
-                  const formattedAmount = Number(result.value);
+                  const amount = Number(result.value);
 
                   // Calculate operator TVL
-                  sum += formattedAmount * assetPrice;
+                  sum += amount * assetPrice;
 
                   // Calculate vault TVL
                   const vaultId = asset.vaultId;
+
                   if (vaultId !== null) {
                     acc.vaultTVL[vaultId] =
-                      (acc.vaultTVL[vaultId] || 0) +
-                      formattedAmount * assetPrice;
+                      (acc.vaultTVL[vaultId] || 0) + amount * assetPrice;
                   }
 
                   return sum;

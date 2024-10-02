@@ -43,7 +43,7 @@ const TableTabs: FC<Props> = ({
 
   const { rewardConfig } = useRestakeRewardConfig();
 
-  // Recalculate vaults (vaults) data from assetMap
+  // Recalculate vaults data from assetMap
   const vaults = useMemo(() => {
     const vaults: Record<string, VaultUI> = {};
 

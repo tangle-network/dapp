@@ -88,33 +88,39 @@ function toPrimitiveJobDefinition({
 export function toPrimitiveServiceRegistrationHook(
   registrationHook: ServiceRegistrationHook,
 ) {
-  if (registrationHook.type === 'Evm') {
-    return {
-      Evm: registrationHook.asEvm.toHex(),
-    } as const;
-  }
+  switch (registrationHook.type) {
+    case 'Evm':
+      return {
+        Evm: registrationHook.asEvm.toHex(),
+      } as const;
 
-  return registrationHook.type;
+    default:
+      return registrationHook.type;
+  }
 }
 
 export function toPrimitiveServiceRequestHook(requestHook: ServiceRequestHook) {
-  if (requestHook.type === 'Evm') {
-    return {
-      Evm: requestHook.asEvm.toHex(),
-    } as const;
-  }
+  switch (requestHook.type) {
+    case 'Evm':
+      return {
+        Evm: requestHook.asEvm.toHex(),
+      } as const;
 
-  return requestHook.type;
+    default:
+      return requestHook.type;
+  }
 }
 
 export function toPrimitiveJobResultVerifier(verifier: JobResultVerifier) {
-  if (verifier.type === 'Evm') {
-    return {
-      Evm: verifier.asEvm.toHex(),
-    } as const;
-  }
+  switch (verifier.type) {
+    case 'Evm':
+      return {
+        Evm: verifier.asEvm.toHex(),
+      } as const;
 
-  return verifier.type;
+    default:
+      return verifier.type;
+  }
 }
 
 export function toPrimitiveJobMetadata({ name, description }: JobMetadata) {
@@ -125,19 +131,19 @@ export function toPrimitiveJobMetadata({ name, description }: JobMetadata) {
 }
 
 export function toPrimitiveGadget(gadget: Gadget) {
-  if (gadget.type === 'Container') {
-    return toPrimitiveContainerGadget(gadget.asContainer);
-  }
+  switch (gadget.type) {
+    case 'Container':
+      return toPrimitiveContainerGadget(gadget.asContainer);
 
-  if (gadget.type === 'Native') {
-    return toPrimitiveNativeGadget(gadget.asNative);
-  }
+    case 'Native':
+      return toPrimitiveNativeGadget(gadget.asNative);
 
-  if (gadget.type === 'Wasm') {
-    return toPrimitiveWasmGadget(gadget.asWasm);
-  }
+    case 'Wasm':
+      return toPrimitiveWasmGadget(gadget.asWasm);
 
-  throw new Error('Unknown Gadget type');
+    default:
+      throw new Error('Unknown Gadget type');
+  }
 }
 
 export function toPrimitiveWasmGadget({ runtime, sources }: WasmGadget) {
@@ -170,27 +176,30 @@ export function toPrimitiveGadgetSource(source: GadgetSource) {
 }
 
 export function toPrimitiveGadgetSourceFetcher(fetcher: GadgetSourceFetcher) {
-  if (fetcher.type === 'ContainerImage')
-    return {
-      ContainerImage: toPrimitiveContainerImage(fetcher.asContainerImage),
-    } as const;
+  switch (fetcher.type) {
+    case 'ContainerImage':
+      return {
+        ContainerImage: toPrimitiveContainerImage(fetcher.asContainerImage),
+      } as const;
 
-  if (fetcher.type === 'Github')
-    return {
-      Github: toPrimitiveGithubFetcher(fetcher.asGithub),
-    } as const;
+    case 'Github':
+      return {
+        Github: toPrimitiveGithubFetcher(fetcher.asGithub),
+      } as const;
 
-  if (fetcher.type === 'Ipfs')
-    return {
-      Ipfs: u8aToString(fetcher.asIpfs),
-    } as const;
+    case 'Ipfs':
+      return {
+        Ipfs: u8aToString(fetcher.asIpfs),
+      } as const;
 
-  if (fetcher.type === 'Testing')
-    return {
-      Testing: toPrimitiveTestingFetcher(fetcher.asTesting),
-    } as const;
+    case 'Testing':
+      return {
+        Testing: toPrimitiveTestingFetcher(fetcher.asTesting),
+      } as const;
 
-  throw new Error('Unknown GadgetSourceFetcher type');
+    default:
+      throw new Error('Unknown GadgetSourceFetcher type');
+  }
 }
 
 export function toPrimitiveContainerImage({
@@ -264,45 +273,44 @@ type PrimitiveFieldType =
 export function toPrimitiveFieldType(
   fieldType: FieldFieldType | TanglePrimitivesServicesFieldFieldType,
 ): PrimitiveFieldType {
-  if (fieldType.type === 'Optional') {
-    return {
-      Optional: toPrimitiveFieldType(fieldType.asOptional),
-    } as const;
+  switch (fieldType.type) {
+    case 'Optional':
+      return {
+        Optional: toPrimitiveFieldType(fieldType.asOptional),
+      } as const;
+
+    case 'Array':
+      return {
+        Array: [
+          fieldType.asArray[0].toNumber(),
+          toPrimitiveFieldType(fieldType.asArray[1]),
+        ],
+      } as const;
+
+    case 'List':
+      return {
+        List: toPrimitiveFieldType(fieldType.asList),
+      } as const;
+
+    case 'Struct': {
+      const [first, second] = fieldType.asStruct;
+      return {
+        Struct: [
+          toPrimitiveFieldType(first),
+          second.map<[PrimitiveFieldType, PrimitiveFieldType]>(
+            ([first, second]) =>
+              [
+                toPrimitiveFieldType(first),
+                toPrimitiveFieldType(second),
+              ] as const,
+          ),
+        ],
+      } as const;
+    }
+
+    default:
+      return fieldType.type;
   }
-
-  if (fieldType.type === 'Array') {
-    return {
-      Array: [
-        fieldType.asArray[0].toNumber(),
-        toPrimitiveFieldType(fieldType.asArray[1]),
-      ],
-    } as const;
-  }
-
-  if (fieldType.type === 'List') {
-    return {
-      List: toPrimitiveFieldType(fieldType.asList),
-    } as const;
-  }
-
-  if (fieldType.type === 'Struct') {
-    const [first, second] = fieldType.asStruct;
-
-    return {
-      Struct: [
-        toPrimitiveFieldType(first),
-        second.map<[PrimitiveFieldType, PrimitiveFieldType]>(
-          ([first, second]) =>
-            [
-              toPrimitiveFieldType(first),
-              toPrimitiveFieldType(second),
-            ] as const,
-        ),
-      ],
-    } as const;
-  }
-
-  return fieldType.type;
 }
 
 const optionalBytesToString = (bytes: Option<Bytes>) =>

@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { catchError, map, of } from 'rxjs';
 
 import useApiRx from '../../hooks/useApiRx';
+import { TangleError, TangleErrorCode } from '../../types/error';
 import { toPrimitiveBlueprint } from './utils/toPrimitiveBlueprint';
 import toPrimitiveService from './utils/toPrimitiveService';
 
@@ -18,9 +19,9 @@ const useOperatorBlueprints = (operatorAccount: string) => {
         if (
           apiRx.rpc?.services?.queryServicesWithBlueprintsByOperator ===
           undefined
-        ) {
-          return of<OperatorBlueprint[]>([]);
-        }
+        )
+          // TODO: Should return the error here instead of throw it
+          throw new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
 
         return apiRx.rpc.services
           .queryServicesWithBlueprintsByOperator(operatorAccount)
@@ -42,6 +43,7 @@ const useOperatorBlueprints = (operatorAccount: string) => {
                 error,
               );
 
+              // TODO: Should return the error here
               return of<OperatorBlueprint[]>([]);
             }),
           );

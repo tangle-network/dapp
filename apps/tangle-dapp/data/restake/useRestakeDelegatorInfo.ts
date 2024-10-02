@@ -27,12 +27,14 @@ export default function useRestakeDelegatorInfo() {
     (input$) =>
       input$.pipe(
         switchMap(([activeAddress, apiRx]) => {
-          if (apiRx.query.multiAssetDelegation?.delegators === undefined) {
+          if (
+            apiRx.query.multiAssetDelegation?.delegators === undefined ||
+            activeAddress === null
+          )
             return of(null);
-          }
 
           return apiRx.query.multiAssetDelegation
-            ?.delegators(activeAddress ?? '')
+            ?.delegators(activeAddress)
             .pipe(
               map((delegatorInfo) => {
                 if (delegatorInfo.isNone) {

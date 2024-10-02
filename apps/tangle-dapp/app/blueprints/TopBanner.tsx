@@ -1,10 +1,9 @@
 import { ArrowRight } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { BLUEPRINT_DOCS } from '@webb-tools/webb-ui-components/constants/tangleDocs';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { BLUEPRINT_DOCS } from '../../constants/links';
 
 const TopBanner: FC = () => {
   return (
