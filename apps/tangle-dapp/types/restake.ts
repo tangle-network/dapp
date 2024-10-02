@@ -1,7 +1,7 @@
 /**
  * TODO:
  * - Asset ID should has a better type than string.
- * - Pool ID should has a better type than string.
+ * - Vault ID should has a better type than string.
  * - Account ID should has a better type than string.
  * - Amount should has a better type than string.
  *
@@ -74,8 +74,8 @@ export type OperatorMap = {
   readonly [accountId: string]: OperatorMetadata;
 };
 
-export type RewardPoolMap = {
-  [poolId: string]: string[] | null;
+export type RewardVaultMap = {
+  [vaultId: string]: string[] | null;
 };
 
 /**
@@ -96,7 +96,7 @@ export type AssetMetadata = {
    */
   readonly status: TransformEnum<PalletAssetsAssetStatus>;
 
-  readonly poolId: string | null;
+  readonly vaultId: string | null;
 
   readonly priceInUsd: number | null;
 };
@@ -223,7 +223,7 @@ export type RewardConfig = {
    * A map of asset IDs to their respective reward configurations.
    */
   configs: {
-    [poolId: string]: RewardConfigForAsset;
+    [vaultId: string]: RewardConfigForAsset;
   };
 
   /**

@@ -61,7 +61,7 @@ const mapAssetDetails = async (
   if (
     nonNativeAssetIds.length === 0 ||
     !hasAssetsPallet(api, 'query', ['asset', 'metadata']) ||
-    api.query.multiAssetDelegation?.assetLookupRewardPools === undefined
+    api.query.multiAssetDelegation?.assetLookupRewardVaults === undefined
   ) {
     return hasNative
       ? await (async () => {
@@ -92,27 +92,27 @@ const mapAssetDetails = async (
     [] as [typeof api.query.assets.metadata, string][],
   );
 
-  // Batch queries for asset pool ID
-  const assetPoolIdQueries = nonNativeAssetIds.reduce(
+  // Batch queries for asset vault ID
+  const assetVaultIdQueries = nonNativeAssetIds.reduce(
     (batchQueries, assetId) =>
       batchQueries.concat([
         [
-          api.query.multiAssetDelegation.assetLookupRewardPools,
+          api.query.multiAssetDelegation.assetLookupRewardVaults,
           assetId,
         ] as const,
       ]),
     [] as [
-      typeof api.query.multiAssetDelegation.assetLookupRewardPools,
+      typeof api.query.multiAssetDelegation.assetLookupRewardVaults,
       string,
     ][],
   );
 
   // For TypeScript simplicity, we make 2 separate queries
   // instead of combining them into a single query
-  const [assetDetails, assetMetadatas, assetPoolIds] = await Promise.all([
+  const [assetDetails, assetMetadatas, assetVaultIds] = await Promise.all([
     api.queryMulti<Option<PalletAssetsAssetDetails>[]>(assetDetailQueries),
     api.queryMulti<PalletAssetsAssetMetadata[]>(assetMetadataQueries),
-    api.queryMulti<Option<u128>[]>(assetPoolIdQueries),
+    api.queryMulti<Option<u128>[]>(assetVaultIdQueries),
   ] as const);
 
   // Get list of token symbols for fetching the prices
@@ -142,7 +142,7 @@ const mapAssetDetails = async (
 
     const detail = assetDetails[idx].unwrap();
     const metadata = assetMetadatas[idx];
-    const poolId = assetPoolIds[idx];
+    const vaultId = assetVaultIds[idx];
 
     let name = hexToString(metadata.name.toHex());
     // If the name is empty, we set it to the asset id by default
@@ -162,7 +162,7 @@ const mapAssetDetails = async (
         symbol,
         decimals: metadata.decimals.toNumber(),
         status: detail.status.type,
-        poolId: u128ToPoolId(poolId),
+        vaultId: u128ToVaultId(vaultId),
         priceInUsd:
           typeof tokenPrices[idx] === 'number' ? tokenPrices[idx] : null,
       },
@@ -170,7 +170,7 @@ const mapAssetDetails = async (
   }, initialAssetMap);
 };
 
-const u128ToPoolId = (u128: Option<u128>) => {
+const u128ToVaultId = (u128: Option<u128>) => {
   if (u128.isNone) return null;
 
   return u128.unwrap().toString();
@@ -182,11 +182,8 @@ const getNativeAsset = async (
 ) => {
   const assetId = '0';
 
-  // TODO: Remove this on `tangle-substrate-types` v0.5.11
-  const poolId =
-    await api.query.multiAssetDelegation.assetLookupRewardPools<Option<u128>>(
-      assetId,
-    );
+  const vaultId =
+    await api.query.multiAssetDelegation.assetLookupRewardVaults(assetId);
 
   const priceInUsd = await fetchSingleTokenPrice(nativeCurrency.symbol);
 
@@ -194,7 +191,7 @@ const getNativeAsset = async (
     ...nativeCurrency,
     id: assetId,
     status: 'Live',
-    poolId: u128ToPoolId(poolId),
+    vaultId: u128ToVaultId(vaultId),
     priceInUsd: typeof priceInUsd === 'number' ? priceInUsd : null,
   } satisfies AssetMetadata;
 };

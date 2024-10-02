@@ -6,7 +6,7 @@ import type { TableStatus } from '../../TableStatus';
 export type VaultToken = {
   name: string;
   symbol: string;
-  amount: number;
+  amount: number | string;
 };
 
 export type OperatorData = {

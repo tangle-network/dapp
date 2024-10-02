@@ -1,11 +1,7 @@
 import { useCallback, useMemo } from 'react';
 
 import useApiRx from '../hooks/useApiRx';
-import {
-  extractDataFromIdentityInfo,
-  IdentityDataType,
-  IdentityType,
-} from '../utils/polkadot';
+import { extractIdentityInfo } from '../utils/polkadot';
 
 const useIdentities = (
   singleOrMultipleValidatorAddresses: string | string[],
@@ -33,26 +29,9 @@ const useIdentities = (
         return [addresses[idx], null] as const;
       }
 
-      const identityInfo = identityResult.unwrap()[0].info;
+      const info = extractIdentityInfo(identityResult.unwrap()[0]);
 
-      return [
-        addresses[idx],
-        {
-          name: extractDataFromIdentityInfo(
-            identityInfo,
-            IdentityDataType.NAME,
-          ),
-          web: extractDataFromIdentityInfo(identityInfo, IdentityDataType.WEB),
-          email: extractDataFromIdentityInfo(
-            identityInfo,
-            IdentityDataType.EMAIL,
-          ),
-          twitter: extractDataFromIdentityInfo(
-            identityInfo,
-            IdentityDataType.TWITTER,
-          ),
-        } satisfies IdentityType,
-      ] as const;
+      return [addresses[idx], info] as const;
     });
   }, [addresses, result]);
 

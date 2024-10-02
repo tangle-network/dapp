@@ -1,7 +1,7 @@
 import type { WalletConfig } from '@webb-tools/dapp-config/wallets/wallet-config.interface';
 import type { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
 import type { IconBase } from '@webb-tools/icons/types';
-import type { JSXElementConstructor } from 'react';
+import type { HTMLAttributeAnchorTarget, JSXElementConstructor } from 'react';
 import type {
   IWebbComponentBase,
   PropsOf,
@@ -76,7 +76,7 @@ export interface ButtonProps extends ButtonBase, IWebbComponentBase {
   href?: string | undefined;
 
   /** Anchor target, when rendering an anchor as a button */
-  target?: string | undefined;
+  target?: HTMLAttributeAnchorTarget | undefined;
 
   rel?: string | undefined;
 
