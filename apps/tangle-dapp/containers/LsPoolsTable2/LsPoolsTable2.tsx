@@ -86,7 +86,7 @@ const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
       ),
     }),
     COLUMN_HELPER.accessor('totalStaked', {
-      header: () => 'TVL',
+      header: () => 'Total Staked (TVL)',
       // TODO: Decimals.
       cell: (props) => <TokenAmountCell amount={props.getValue()} />,
     }),
@@ -117,11 +117,15 @@ const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
           <Button
             isDisabled={selectedPoolId === props.row.original.id}
             onClick={() => setSelectedPoolId(props.row.original.id)}
-            rightIcon={<ArrowRight />}
+            rightIcon={
+              selectedPoolId !== props.row.original.id ? (
+                <ArrowRight />
+              ) : undefined
+            }
             variant="utility"
             size="sm"
           >
-            Stake
+            {selectedPoolId === props.row.original.id ? 'Selected' : 'Stake'}
           </Button>
         </div>
       ),

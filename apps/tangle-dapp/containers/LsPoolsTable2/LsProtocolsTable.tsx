@@ -36,10 +36,10 @@ export type LsProtocolRow = {
   pools: LsPool[];
 };
 
-const PROTOCOL_COLUMN_HELPER = createColumnHelper<LsProtocolRow>();
+const COLUMN_HELPER = createColumnHelper<LsProtocolRow>();
 
 const PROTOCOL_COLUMNS = [
-  PROTOCOL_COLUMN_HELPER.accessor('name', {
+  COLUMN_HELPER.accessor('name', {
     header: () => 'Token',
     cell: (props) => (
       <TableCellWrapper className="pl-3">
@@ -58,7 +58,7 @@ const PROTOCOL_COLUMNS = [
     },
     sortDescFirst: true,
   }),
-  PROTOCOL_COLUMN_HELPER.accessor('tvl', {
+  COLUMN_HELPER.accessor('tvl', {
     header: () => 'Total Staked (TVL)',
     cell: (props) => (
       <TableCellWrapper>
@@ -70,7 +70,7 @@ const PROTOCOL_COLUMNS = [
       </TableCellWrapper>
     ),
   }),
-  PROTOCOL_COLUMN_HELPER.accessor('pools', {
+  COLUMN_HELPER.accessor('pools', {
     header: () => 'Pools',
     cell: (props) => {
       const length = props.getValue().length;
@@ -86,7 +86,7 @@ const PROTOCOL_COLUMNS = [
       );
     },
   }),
-  PROTOCOL_COLUMN_HELPER.display({
+  COLUMN_HELPER.display({
     id: 'expand/collapse',
     header: () => null,
     cell: ({ row }) => (

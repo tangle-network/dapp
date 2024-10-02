@@ -221,6 +221,7 @@ const LsStakeCard: FC = () => {
         minAmount={minSpendable ?? undefined}
         maxAmount={maxSpendable ?? undefined}
         setNetworkId={tryChangeNetwork}
+        showPoolIndicator={false}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />

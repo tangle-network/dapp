@@ -206,6 +206,7 @@ const LsUnstakeCard: FC = () => {
         maxAmount={maxSpendable ?? undefined}
         maxErrorMessage="Not enough stake to redeem"
         onTokenClick={() => setIsSelectTokenModalOpen(true)}
+        showPoolIndicator={false}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />

@@ -37,6 +37,8 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
     const keyValuePairs = bondedPools.map(([poolId, tanglePool]) => {
       const metadata = metadatas.get(poolId);
 
+      // TODO: `tanglePool.metadata.name` should be available based on the latest changes to Tangle. Need to regenerate the types. Might want to prefer that method vs. the metadata query.
+
       // Roles can be `None` if updated and removed.
       const ownerAddress = tanglePool.roles.root.isNone
         ? undefined

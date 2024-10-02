@@ -5,9 +5,14 @@ import { useLsStore } from './useLsStore';
 const useSelectedPoolDisplayName = (): LsPoolDisplayName | null => {
   const { selectedPoolId } = useLsStore();
   const lsPoolsMetadata = useLsPoolsMetadata();
+
+  if (selectedPoolId === null) {
+    return null;
+  }
+
   const name = lsPoolsMetadata?.get(selectedPoolId) ?? '';
 
-  return selectedPoolId === null ? null : `${name}#${selectedPoolId}`;
+  return `${name}#${selectedPoolId}`;
 };
 
 export default useSelectedPoolDisplayName;

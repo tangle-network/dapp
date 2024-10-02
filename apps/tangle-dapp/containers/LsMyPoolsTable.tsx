@@ -74,7 +74,7 @@ const POOL_COLUMNS = [
     ),
   }),
   COLUMN_HELPER.accessor('totalStaked', {
-    header: () => 'TVL',
+    header: () => 'Total Staked (TVL)',
     // TODO: Decimals.
     cell: (props) => <TokenAmountCell amount={props.getValue()} />,
   }),
