@@ -40,7 +40,7 @@ const COLUMN_HELPER = createColumnHelper<MyLsPoolRow>();
 
 const POOL_COLUMNS = [
   COLUMN_HELPER.accessor('id', {
-    header: () => 'Name/id',
+    header: () => 'ID',
     cell: (props) => (
       <Typography
         variant="body2"

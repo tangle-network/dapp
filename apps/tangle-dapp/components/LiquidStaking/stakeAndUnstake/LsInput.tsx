@@ -12,16 +12,17 @@ import {
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
+import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
+import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import NetworkSelector from './NetworkSelector';
-import ProtocolSelector from './ProtocolSelector';
 import SelectedPoolIndicator from './SelectedPoolIndicator';
+import TokenChip from './TokenChip';
 
 export type LsInputProps = {
   id: string;
   networkId: LsNetworkId;
-  protocolId: LsProtocolId;
   decimals: number;
   amount: BN | null;
   isReadOnly?: boolean;
@@ -33,6 +34,7 @@ export type LsInputProps = {
   maxAmount?: BN;
   maxErrorMessage?: string;
   className?: string;
+  showPoolIndicator?: boolean;
   onAmountChange?: (newAmount: BN | null) => void;
   setProtocolId?: (newProtocolId: LsProtocolId) => void;
   setNetworkId?: (newNetworkId: LsNetworkId) => void;
@@ -47,17 +49,20 @@ const LsInput: FC<LsInputProps> = ({
   placeholder = '0',
   isDerivativeVariant = false,
   rightElement,
-  protocolId,
   networkId,
   token,
   minAmount,
   maxAmount,
   maxErrorMessage = ERROR_NOT_ENOUGH_BALANCE,
   onAmountChange,
-  setProtocolId,
   setNetworkId,
   className,
+  showPoolIndicator = true,
 }) => {
+  const { selectedProtocolId } = useLsStore();
+
+  const selectedProtocol = getLsProtocolDef(selectedProtocolId);
+
   const minErrorMessage = ((): string | undefined => {
     if (minAmount === undefined) {
       return undefined;
@@ -127,14 +132,14 @@ const LsInput: FC<LsInputProps> = ({
             readOnly={isReadOnly}
           />
 
-          <ProtocolSelector
-            selectedNetworkId={networkId}
-            selectedProtocolId={protocolId}
-            setProtocolId={setProtocolId}
-            isDerivativeVariant={isDerivativeVariant}
-          />
-
-          <SelectedPoolIndicator />
+          {showPoolIndicator ? (
+            <SelectedPoolIndicator />
+          ) : (
+            <TokenChip
+              isDerivativeVariant={isDerivativeVariant}
+              token={selectedProtocol.token}
+            />
+          )}
         </div>
       </div>
 

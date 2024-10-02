@@ -211,7 +211,6 @@ const LsStakeCard: FC = () => {
       <LsInput
         id="liquid-staking-stake-from"
         networkId={selectedNetworkId}
-        protocolId={selectedProtocolId}
         token={selectedProtocol.token}
         amount={fromAmount}
         decimals={selectedProtocol.decimals}
@@ -229,7 +228,6 @@ const LsStakeCard: FC = () => {
       <LsInput
         id="liquid-staking-stake-to"
         networkId={selectedNetworkId}
-        protocolId={selectedProtocolId}
         placeholder={`0 ${LS_DERIVATIVE_TOKEN_PREFIX}${selectedProtocol.token}`}
         decimals={selectedProtocol.decimals}
         amount={toAmount}

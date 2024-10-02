@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -21,8 +21,8 @@ import StatItem from '../../components/StatItem';
 import { Button, getRoundedAmountString } from '@webb-tools/webb-ui-components';
 import { ChevronUp } from '@webb-tools/icons';
 import { LsPool } from '../../constants/liquidStaking/types';
-import { BN } from '@polkadot/util';
 import pluralize from '../../utils/pluralize';
+import useLsPools from '../../data/liquidStaking/useLsPools';
 
 export interface LsProtocolsTableProps {
   initialSorting?: SortingState;
@@ -124,25 +124,28 @@ function LsProtocolsTable({ initialSorting = [] }: LsProtocolsTableProps) {
     [],
   );
 
-  const rows: LsProtocolRow[] = [
+  const lsPools = useLsPools();
+
+  const pools = useMemo<LsPool[]>(() => {
+    if (!(lsPools instanceof Map)) {
+      return [];
+    }
+
+    return Array.from(lsPools.values());
+  }, []);
+
+  const protocols: LsProtocolRow[] = [
     {
-      name: 'Tangle',
       iconName: 'tangle',
-      pools: [
-        {
-          id: 1,
-          totalStaked: new BN(4234932942394239),
-          validators: [],
-          metadata: 'test',
-        },
-      ],
-      tvl: 123.01,
-      tvlInUsd: 123.01,
+      name: 'Tangle',
+      pools: pools,
+      tvl: 123.4567,
+      tvlInUsd: 123.3456,
     },
   ];
 
   const table = useReactTable({
-    data: rows,
+    data: protocols,
     columns: PROTOCOL_COLUMNS,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),

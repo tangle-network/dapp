@@ -52,7 +52,7 @@ const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
 
   const columns = [
     COLUMN_HELPER.accessor('id', {
-      header: () => 'Name/id',
+      header: () => 'ID',
       cell: (props) => (
         <Typography
           variant="body2"

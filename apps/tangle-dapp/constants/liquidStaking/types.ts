@@ -198,3 +198,5 @@ export type LsPool = {
   commissionPercentage?: number;
   members: Map<SubstrateAddress, PalletAssetsAssetAccount>;
 };
+
+export type LsPoolDisplayName = `${string}#${number}`;

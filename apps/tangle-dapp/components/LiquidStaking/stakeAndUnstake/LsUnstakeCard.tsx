@@ -194,7 +194,6 @@ const LsUnstakeCard: FC = () => {
         id="liquid-staking-unstake-from"
         networkId={selectedNetworkId}
         setNetworkId={tryChangeNetwork}
-        protocolId={selectedProtocolId}
         setProtocolId={setSelectedProtocolId}
         token={selectedProtocol.token}
         amount={fromAmount}
@@ -214,7 +213,6 @@ const LsUnstakeCard: FC = () => {
       <LsInput
         id="liquid-staking-unstake-to"
         networkId={selectedNetworkId}
-        protocolId={selectedProtocolId}
         amount={toAmount}
         decimals={selectedProtocol.decimals}
         placeholder={`0 ${selectedProtocol.token}`}
