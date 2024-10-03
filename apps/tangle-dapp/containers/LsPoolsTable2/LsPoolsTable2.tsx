@@ -15,8 +15,8 @@ import { twMerge } from 'tailwind-merge';
 import { LsPool } from '../../constants/liquidStaking/types';
 import {
   Avatar,
+  AvatarGroup,
   Button,
-  getRoundedAmountString,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
@@ -24,6 +24,7 @@ import pluralize from '../../utils/pluralize';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { ArrowRight } from '@webb-tools/icons';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
+import PercentageCell from '../../components/tableCells/PercentageCell';
 
 export interface LsPoolsTable2Props {
   pools: LsPool[];
@@ -63,18 +64,6 @@ const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
         </Typography>
       ),
     }),
-    COLUMN_HELPER.accessor('token', {
-      header: () => 'Token',
-      cell: (props) => (
-        <Typography
-          variant="body2"
-          fw="normal"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          {props.getValue()}
-        </Typography>
-      ),
-    }),
     COLUMN_HELPER.accessor('ownerAddress', {
       header: () => 'Owner',
       cell: (props) => (
@@ -85,30 +74,36 @@ const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
         />
       ),
     }),
+    COLUMN_HELPER.accessor('validators', {
+      header: () => 'Validators',
+      cell: (props) =>
+        props.row.original.validators.length === 0 ? (
+          EMPTY_VALUE_PLACEHOLDER
+        ) : (
+          <AvatarGroup total={props.row.original.validators.length}>
+            {props.row.original.validators.map((substrateAddress) => (
+              <Avatar
+                key={substrateAddress}
+                sourceVariant="address"
+                value={substrateAddress}
+                theme="substrate"
+              />
+            ))}
+          </AvatarGroup>
+        ),
+    }),
     COLUMN_HELPER.accessor('totalStaked', {
       header: () => 'Total Staked (TVL)',
       // TODO: Decimals.
       cell: (props) => <TokenAmountCell amount={props.getValue()} />,
     }),
+    COLUMN_HELPER.accessor('commissionPercentage', {
+      header: () => 'Commission',
+      cell: (props) => <PercentageCell percentage={props.getValue()} />,
+    }),
     COLUMN_HELPER.accessor('apyPercentage', {
       header: () => 'APY',
-      cell: (props) => {
-        const apy = props.getValue();
-
-        if (apy === undefined) {
-          return EMPTY_VALUE_PLACEHOLDER;
-        }
-
-        return (
-          <Typography
-            variant="body2"
-            fw="normal"
-            className="text-mono-200 dark:text-mono-0"
-          >
-            {getRoundedAmountString(props.getValue()) + '%'}
-          </Typography>
-        );
-      },
+      cell: (props) => <PercentageCell percentage={props.getValue()} />,
     }),
     COLUMN_HELPER.display({
       id: 'actions',

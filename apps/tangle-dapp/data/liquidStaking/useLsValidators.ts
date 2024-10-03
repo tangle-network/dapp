@@ -84,8 +84,6 @@ const useLsValidators = (selectedChain: LsProtocolId) => {
           );
           break;
 
-        // TODO: Add cases for ERC20 tokens/networks (Chainlink, etc.).
-
         default:
           fetchedItems = [];
           break;
