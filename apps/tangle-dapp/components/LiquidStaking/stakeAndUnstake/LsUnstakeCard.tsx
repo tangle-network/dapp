@@ -7,7 +7,7 @@ import '@webb-tools/tangle-restaking-types';
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Button } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
@@ -43,6 +43,7 @@ const LsUnstakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
   const activeAccountAddress = useActiveAccountAddress();
   const tryChangeNetwork = useLsChangeNetwork();
+  const fromLsInputRef = useRef<HTMLInputElement>(null);
 
   const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId } = useLsStore();
 
@@ -153,6 +154,13 @@ const LsUnstakeCard: FC = () => {
     setFromAmount(null);
   }, [setFromAmount, lsNetworkId]);
 
+  // On mount, set the focus on the from input.
+  useEffect(() => {
+    if (fromLsInputRef.current !== null) {
+      fromLsInputRef.current.focus();
+    }
+  }, []);
+
   const stakedWalletBalance = (
     <LsAgnosticBalance
       isNative={false}
@@ -171,6 +179,7 @@ const LsUnstakeCard: FC = () => {
     <>
       {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
       <LsInput
+        ref={fromLsInputRef}
         id="liquid-staking-unstake-from"
         networkId={lsNetworkId}
         setNetworkId={tryChangeNetwork}

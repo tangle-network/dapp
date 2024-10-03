@@ -13,7 +13,7 @@ import {
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { z } from 'zod';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
@@ -71,6 +71,7 @@ const LsStakeCard: FC = () => {
   const selectedProtocol = getLsProtocolDef(lsProtocolId);
   const tryChangeNetwork = useLsChangeNetwork();
   const lsPoolMembers = useLsPoolMembers();
+  const fromLsInputRef = useRef<HTMLInputElement>(null);
 
   const actionText = useMemo(() => {
     const defaultText = 'Join Pool & Stake';
@@ -189,9 +190,17 @@ const LsStakeCard: FC = () => {
     setFromAmount(null);
   }, [setFromAmount, lsNetworkId]);
 
+  // On mount, set the focus on the from input.
+  useEffect(() => {
+    if (fromLsInputRef.current !== null) {
+      fromLsInputRef.current.focus();
+    }
+  }, []);
+
   return (
     <>
       <LsInput
+        ref={fromLsInputRef}
         id="liquid-staking-stake-from"
         networkId={lsNetworkId}
         token={selectedProtocol.token}
