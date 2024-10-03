@@ -78,16 +78,11 @@ const COLUMNS = [
   COLUMN_HELPER.accessor('unlockId', {
     header: () => <HeaderCell title="Unlock ID" className="justify-start" />,
     cell: (props) => {
-      const canSelect =
-        props.row.original.type === 'liquifierUnlockNft'
-          ? props.row.original.progress === 1
-          : true;
-
       return (
         <div className="flex items-center justify-start gap-2">
           <CheckBox
             isChecked={props.row.getIsSelected()}
-            isDisabled={!props.row.getCanSelect() || !canSelect}
+            isDisabled={!props.row.getCanSelect()}
             onChange={props.row.getToggleSelectedHandler()}
             wrapperClassName="pt-0.5 flex items-center justify-center"
           />
@@ -137,11 +132,7 @@ const COLUMNS = [
     header: () => <HeaderCell title="Amount" className="justify-center" />,
     cell: (props) => {
       const unstakeRequest = props.row.original;
-
-      const tokenSymbol =
-        unstakeRequest.type === 'parachainUnstakeRequest'
-          ? unstakeRequest.currency.toUpperCase()
-          : unstakeRequest.symbol;
+      const tokenSymbol = unstakeRequest.currency.toUpperCase();
 
       return (
         <TokenAmountCell
@@ -255,9 +246,7 @@ const UnstakeRequestsTable: FC = () => {
 
       // If the remaining time unit is undefined, it means that the
       // request has completed its unlocking period.
-      return request.type === 'parachainUnstakeRequest'
-        ? request.progress === undefined
-        : request.progress === 1;
+      return request.progress === undefined;
     });
   }, [selectedRowsUnlockIds, rows]);
 
