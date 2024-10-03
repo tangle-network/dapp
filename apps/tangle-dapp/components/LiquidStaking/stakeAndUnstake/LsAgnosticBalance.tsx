@@ -33,8 +33,8 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
 }) => {
   const [isHovering, setIsHovering] = useState(false);
   const balance = useLsAgnosticBalance(isNative);
-  const { selectedProtocolId } = useLsStore();
-  const protocol = getLsProtocolDef(selectedProtocolId);
+  const { lsProtocolId } = useLsStore();
+  const protocol = getLsProtocolDef(lsProtocolId);
 
   const formattedBalance = useMemo(() => {
     // No account is active; display a placeholder instead of a loading state.

@@ -45,7 +45,7 @@ const useLsAgnosticBalance = (isNative: boolean) => {
   const activeAccountAddress = useActiveAccountAddress();
   const { nativeBalances, liquidBalances } = useParachainBalances();
   const { free: tangleFreeBalance } = useBalances();
-  const { selectedProtocolId, selectedNetworkId } = useLsStore();
+  const { lsProtocolId, lsNetworkId } = useLsStore();
   const tangleAssetBalance = useLsPoolBalance();
 
   const [balance, setBalance] = useState<
@@ -54,7 +54,7 @@ const useLsAgnosticBalance = (isNative: boolean) => {
 
   const parachainBalances = isNative ? nativeBalances : liquidBalances;
   const isAccountConnected = activeAccountAddress !== null;
-  const protocol = getLsProtocolDef(selectedProtocolId);
+  const protocol = getLsProtocolDef(lsProtocolId);
 
   // Reset balance to a placeholder when the active account is
   // disconnected, and to a loading state once an account is
@@ -68,7 +68,7 @@ const useLsAgnosticBalance = (isNative: boolean) => {
     if (isAccountConnected) {
       setBalance(null);
     }
-  }, [isAccountConnected, isNative, selectedProtocolId]);
+  }, [isAccountConnected, isNative, lsProtocolId]);
 
   // Update balance to the parachain balance when the restaking
   // parachain is the active network.
@@ -86,9 +86,9 @@ const useLsAgnosticBalance = (isNative: boolean) => {
   }, [parachainBalances, protocol.token, protocol.networkId]);
 
   const isLsTangleNetwork =
-    selectedNetworkId === LsNetworkId.TANGLE_LOCAL ||
-    selectedNetworkId === LsNetworkId.TANGLE_MAINNET ||
-    selectedNetworkId === LsNetworkId.TANGLE_TESTNET;
+    lsNetworkId === LsNetworkId.TANGLE_LOCAL ||
+    lsNetworkId === LsNetworkId.TANGLE_MAINNET ||
+    lsNetworkId === LsNetworkId.TANGLE_TESTNET;
 
   // Update the balance to the Tangle balance when the Tangle
   // network is the active network.

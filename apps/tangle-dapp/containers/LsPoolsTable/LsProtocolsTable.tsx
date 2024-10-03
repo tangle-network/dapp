@@ -14,7 +14,7 @@ import {
 import { Table } from '../../../../libs/webb-ui-components/src/components/Table';
 import { Typography } from '../../../../libs/webb-ui-components/src/typography';
 import { twMerge } from 'tailwind-merge';
-import LsPoolsTable from './LsPoolsTable2';
+import LsPoolsTable from './LsPoolsTable';
 import TableCellWrapper from '../../components/tables/TableCellWrapper';
 import LsTokenIcon from '../../components/LsTokenIcon';
 import StatItem from '../../components/StatItem';

@@ -59,9 +59,9 @@ const LsInput: FC<LsInputProps> = ({
   className,
   showPoolIndicator = true,
 }) => {
-  const { selectedProtocolId } = useLsStore();
+  const { lsProtocolId } = useLsStore();
 
-  const selectedProtocol = getLsProtocolDef(selectedProtocolId);
+  const selectedProtocol = getLsProtocolDef(lsProtocolId);
 
   const minErrorMessage = ((): string | undefined => {
     if (minAmount === undefined) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, FC } from 'react';
+import { useState, useMemo, FC, useCallback } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -17,6 +17,8 @@ import {
   Avatar,
   AvatarGroup,
   Button,
+  IconButton,
+  TANGLE_DOCS_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import TokenAmountCell from '../components/tableCells/TokenAmountCell';
@@ -26,9 +28,12 @@ import useLsPools from '../data/liquidStaking/useLsPools';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { BN } from '@polkadot/util';
 import assert from 'assert';
-import { GlassCard } from '../components';
+import { GlassCard, TableStatus } from '../components';
 import PercentageCell from '../components/tableCells/PercentageCell';
 import { EMPTY_VALUE_PLACEHOLDER } from '../constants';
+import { ActionItemType } from '@webb-tools/webb-ui-components/components/ActionsDropdown/types';
+import { MinusCircledIcon } from '@radix-ui/react-icons';
+import { useLsStore } from '../data/liquidStaking/useLsStore';
 
 type MyLsPoolRow = LsPool & {
   myStake: BN;
@@ -38,107 +43,6 @@ type MyLsPoolRow = LsPool & {
 };
 
 const COLUMN_HELPER = createColumnHelper<MyLsPoolRow>();
-
-const POOL_COLUMNS = [
-  COLUMN_HELPER.accessor('id', {
-    header: () => 'ID',
-    cell: (props) => (
-      <Typography
-        variant="body2"
-        fw="normal"
-        className="text-mono-200 dark:text-mono-0"
-      >
-        {props.row.original.metadata}#{props.getValue()}
-      </Typography>
-    ),
-  }),
-  COLUMN_HELPER.accessor('ownerAddress', {
-    header: () => 'Owner',
-    cell: (props) => (
-      <Avatar
-        sourceVariant="address"
-        value={props.row.original.ownerAddress}
-        theme="substrate"
-      />
-    ),
-  }),
-  COLUMN_HELPER.accessor('validators', {
-    header: () => 'Validators',
-    cell: (props) =>
-      props.row.original.validators.length === 0 ? (
-        EMPTY_VALUE_PLACEHOLDER
-      ) : (
-        <AvatarGroup total={props.row.original.validators.length}>
-          {props.row.original.validators.map((substrateAddress) => (
-            <Avatar
-              key={substrateAddress}
-              sourceVariant="address"
-              value={substrateAddress}
-              theme="substrate"
-            />
-          ))}
-        </AvatarGroup>
-      ),
-  }),
-  COLUMN_HELPER.accessor('totalStaked', {
-    header: () => 'Total Staked (TVL)',
-    // TODO: Decimals.
-    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
-  }),
-  COLUMN_HELPER.accessor('myStake', {
-    header: () => 'My Stake',
-    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
-  }),
-  COLUMN_HELPER.accessor('commissionPercentage', {
-    header: () => 'Commission',
-    cell: (props) => <PercentageCell percentage={props.getValue()} />,
-  }),
-  COLUMN_HELPER.accessor('apyPercentage', {
-    header: () => 'APY',
-    cell: (props) => <PercentageCell percentage={props.getValue()} />,
-  }),
-  COLUMN_HELPER.display({
-    id: 'actions',
-    header: () => 'Actions',
-    cell: (props) => (
-      <div>
-        <Button rightIcon={<ArrowRight />} variant="utility">
-          Unstake
-        </Button>
-
-        {/**
-         * Show management actions if the active user has any role in
-         * the pool.
-         */}
-        {props.row.original.isRoot ||
-          props.row.original.isNominator ||
-          (props.row.original.isBouncer && (
-            <ActionsDropdown
-              buttonText="Manage"
-              // TODO: Conditionally render actions based on the user's roles.
-              actionItems={[
-                {
-                  label: 'Update Nominations',
-                  // TODO: Proper onClick handler.
-                  onClick: () => void 0,
-                },
-                {
-                  label: 'Update Commission',
-                  // TODO: Proper onClick handler.
-                  onClick: () => void 0,
-                },
-                {
-                  label: 'Update Roles',
-                  // TODO: Proper onClick handler.
-                  onClick: () => void 0,
-                },
-              ]}
-            />
-          ))}
-      </div>
-    ),
-  }),
-];
 
 const LsMyPoolsTable: FC = () => {
   const substrateAddress = useSubstrateAddress();
@@ -184,9 +88,129 @@ const LsMyPoolsTable: FC = () => {
       });
   }, []);
 
+  const handleUnstakeClick = useCallback((poolId: number) => {}, []);
+
+  const columns = [
+    COLUMN_HELPER.accessor('id', {
+      header: () => 'ID',
+      cell: (props) => (
+        <Typography
+          variant="body2"
+          fw="normal"
+          className="text-mono-200 dark:text-mono-0"
+        >
+          {props.row.original.metadata}#{props.getValue()}
+        </Typography>
+      ),
+    }),
+    COLUMN_HELPER.accessor('ownerAddress', {
+      header: () => 'Owner',
+      cell: (props) => (
+        <Avatar
+          sourceVariant="address"
+          value={props.row.original.ownerAddress}
+          theme="substrate"
+        />
+      ),
+    }),
+    COLUMN_HELPER.accessor('validators', {
+      header: () => 'Validators',
+      cell: (props) =>
+        props.row.original.validators.length === 0 ? (
+          EMPTY_VALUE_PLACEHOLDER
+        ) : (
+          <AvatarGroup total={props.row.original.validators.length}>
+            {props.row.original.validators.map((substrateAddress) => (
+              <Avatar
+                key={substrateAddress}
+                sourceVariant="address"
+                value={substrateAddress}
+                theme="substrate"
+              />
+            ))}
+          </AvatarGroup>
+        ),
+    }),
+    COLUMN_HELPER.accessor('totalStaked', {
+      header: () => 'Total Staked (TVL)',
+      // TODO: Decimals.
+      cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+    }),
+    COLUMN_HELPER.accessor('myStake', {
+      header: () => 'My Stake',
+      cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+    }),
+    COLUMN_HELPER.accessor('commissionPercentage', {
+      header: () => 'Commission',
+      cell: (props) => <PercentageCell percentage={props.getValue()} />,
+    }),
+    COLUMN_HELPER.accessor('apyPercentage', {
+      header: () => 'APY',
+      cell: (props) => <PercentageCell percentage={props.getValue()} />,
+    }),
+    COLUMN_HELPER.display({
+      id: 'actions',
+      cell: (props) => {
+        const hasAnyRole =
+          props.row.original.isRoot ||
+          props.row.original.isNominator ||
+          props.row.original.isBouncer;
+
+        const actionItems: ActionItemType[] = [];
+
+        if (props.row.original.isNominator) {
+          actionItems.push({
+            label: 'Update Nominations',
+            onClick: () => void 0,
+          });
+        }
+
+        if (props.row.original.isBouncer) {
+          actionItems.push({
+            label: 'Update Commission',
+            onClick: () => void 0,
+          });
+        }
+
+        if (props.row.original.isRoot) {
+          actionItems.push({
+            label: 'Update Roles',
+            onClick: () => void 0,
+          });
+        }
+
+        // If the user has any role in the pool, show the short button style
+        // to avoid taking up too much space.
+        const isShortButtonStyle = hasAnyRole;
+
+        return (
+          <div className="flex justify-end">
+            {isShortButtonStyle ? (
+              <IconButton tooltip="Unstake">
+                <MinusCircledIcon />
+              </IconButton>
+            ) : (
+              <Button rightIcon={<ArrowRight />} variant="utility">
+                Unstake
+              </Button>
+            )}
+
+            {/**
+             * Show management actions if the active user has any role in
+             * the pool.
+             */}
+            {hasAnyRole && (
+              <ActionsDropdown buttonText="Manage" actionItems={actionItems} />
+            )}
+          </div>
+        );
+      },
+    }),
+  ];
+
   const table = useReactTable({
     data: rows,
-    columns: POOL_COLUMNS,
+    columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -199,6 +223,22 @@ const LsMyPoolsTable: FC = () => {
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
+
+  if (rows.length === 0) {
+    return (
+      <TableStatus
+        title="No active pools"
+        description="You haven't staked in any pools yet. Select a pool and start liquid staking to earn rewards! Once you've staked or created a pool, you'll be able to manage your stake and configure the pool here."
+        icon="🔍"
+        buttonText="Learn More"
+        buttonProps={{
+          // TODO: Link to liquid staking pools docs page once implemented.
+          href: TANGLE_DOCS_URL,
+          target: '_blank',
+        }}
+      />
+    );
+  }
 
   return (
     <GlassCard>

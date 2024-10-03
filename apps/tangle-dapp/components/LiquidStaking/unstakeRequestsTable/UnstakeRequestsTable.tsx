@@ -147,7 +147,7 @@ const COLUMNS = [
 ];
 
 const UnstakeRequestsTable: FC = () => {
-  const { selectedProtocolId } = useLsStore();
+  const { lsProtocolId } = useLsStore();
   const activeAccountAddress = useActiveAccountAddress();
   const rows = useLstUnlockRequestTableRows();
 
@@ -276,7 +276,7 @@ const UnstakeRequestsTable: FC = () => {
 
         {isDataState && (
           <div className="flex gap-3 items-center justify-center">
-            {isLsParachainChainId(selectedProtocolId) && (
+            {isLsParachainChainId(lsProtocolId) && (
               <RebondLstUnstakeRequestButton
                 // Can only rebond if there are selected rows.
                 isDisabled={selectedRowsUnlockIds.size === 0}
@@ -285,7 +285,7 @@ const UnstakeRequestsTable: FC = () => {
             )}
 
             {/* TODO: Assert that the id is either parachain or liquifier, if it isn't then we might need to hide this unstake requests table and show a specific one for Tangle networks (LS pools). */}
-            {isLsParachainChainId(selectedProtocolId) && (
+            {isLsParachainChainId(lsProtocolId) && (
               <WithdrawLstUnstakeRequestButton
                 canWithdraw={canWithdrawAllSelected}
                 currenciesAndUnlockIds={parachainCurrenciesAndUnlockIds}

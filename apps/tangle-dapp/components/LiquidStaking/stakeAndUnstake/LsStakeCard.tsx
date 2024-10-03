@@ -53,12 +53,7 @@ const LsStakeCard: FC = () => {
     stringify: (value) => value?.toString(),
   });
 
-  const {
-    selectedProtocolId,
-    setSelectedProtocolId,
-    selectedNetworkId,
-    selectedPoolId,
-  } = useLsStore();
+  const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId } = useLsStore();
 
   const { execute: executeTanglePoolJoinTx, status: tanglePoolJoinTxStatus } =
     useLsPoolJoinTx();
@@ -70,10 +65,10 @@ const LsStakeCard: FC = () => {
 
   const { maxSpendable, minSpendable } = useLsSpendingLimits(
     true,
-    selectedProtocolId,
+    lsProtocolId,
   );
 
-  const selectedProtocol = getLsProtocolDef(selectedProtocolId);
+  const selectedProtocol = getLsProtocolDef(lsProtocolId);
   const tryChangeNetwork = useLsChangeNetwork();
   const lsPoolMembers = useLsPoolMembers();
 
@@ -86,29 +81,29 @@ const LsStakeCard: FC = () => {
 
     const isMember = lsPoolMembers.some(
       ([poolId, accountAddress]) =>
-        poolId === selectedPoolId && accountAddress === activeAccountAddress,
+        poolId === lsPoolId && accountAddress === activeAccountAddress,
     );
 
     return isMember ? 'Increase Stake' : defaultText;
-  }, [activeAccountAddress, lsPoolMembers, selectedPoolId]);
+  }, [activeAccountAddress, lsPoolMembers, lsPoolId]);
 
   const isTangleNetwork =
-    selectedNetworkId === LsNetworkId.TANGLE_LOCAL ||
-    selectedNetworkId === LsNetworkId.TANGLE_MAINNET ||
-    selectedNetworkId === LsNetworkId.TANGLE_TESTNET;
+    lsNetworkId === LsNetworkId.TANGLE_LOCAL ||
+    lsNetworkId === LsNetworkId.TANGLE_MAINNET ||
+    lsNetworkId === LsNetworkId.TANGLE_TESTNET;
 
   // TODO: Not loading the correct protocol for: '?amount=123000000000000000000&protocol=7&network=1&action=stake'. When network=1, it switches to protocol=5 on load. Could this be because the protocol is reset to its default once the network is switched?
   useSearchParamSync({
     key: LsSearchParamKey.PROTOCOL_ID,
-    value: selectedProtocolId,
+    value: lsProtocolId,
     parse: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
-    setValue: setSelectedProtocolId,
+    setValue: setLsProtocolId,
   });
 
   useSearchParamSync({
     key: LsSearchParamKey.NETWORK_ID,
-    value: selectedNetworkId,
+    value: lsNetworkId,
     parse: (value) => z.nativeEnum(LsNetworkId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
     setValue: tryChangeNetwork,
@@ -140,11 +135,11 @@ const LsStakeCard: FC = () => {
     } else if (
       isTangleNetwork &&
       executeTanglePoolJoinTx !== null &&
-      selectedPoolId !== null
+      lsPoolId !== null
     ) {
       executeTanglePoolJoinTx({
         amount: fromAmount,
-        poolId: selectedPoolId,
+        poolId: lsPoolId,
       });
     }
   }, [
@@ -153,10 +148,10 @@ const LsStakeCard: FC = () => {
     fromAmount,
     isTangleNetwork,
     selectedProtocol,
-    selectedPoolId,
+    lsPoolId,
   ]);
 
-  const feePercentage = useLsFeePercentage(selectedProtocolId, true);
+  const feePercentage = useLsFeePercentage(lsProtocolId, true);
 
   const toAmount = useMemo(() => {
     if (
@@ -176,9 +171,7 @@ const LsStakeCard: FC = () => {
     (fromAmount !== null &&
       selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
       executeParachainMintTx !== null) ||
-    (isTangleNetwork &&
-      executeTanglePoolJoinTx !== null &&
-      selectedPoolId !== null);
+    (isTangleNetwork && executeTanglePoolJoinTx !== null && lsPoolId !== null);
 
   const walletBalance = (
     <LsAgnosticBalance
@@ -194,20 +187,20 @@ const LsStakeCard: FC = () => {
   // Reset the input amount when the network changes.
   useEffect(() => {
     setFromAmount(null);
-  }, [setFromAmount, selectedNetworkId]);
+  }, [setFromAmount, lsNetworkId]);
 
   return (
     <>
       <LsInput
         id="liquid-staking-stake-from"
-        networkId={selectedNetworkId}
+        networkId={lsNetworkId}
         token={selectedProtocol.token}
         amount={fromAmount}
         decimals={selectedProtocol.decimals}
         onAmountChange={setFromAmount}
         placeholder={`0 ${selectedProtocol.token}`}
         rightElement={walletBalance}
-        setProtocolId={setSelectedProtocolId}
+        setProtocolId={setLsProtocolId}
         minAmount={minSpendable ?? undefined}
         maxAmount={maxSpendable ?? undefined}
         setNetworkId={tryChangeNetwork}
@@ -218,7 +211,7 @@ const LsStakeCard: FC = () => {
 
       <LsInput
         id="liquid-staking-stake-to"
-        networkId={selectedNetworkId}
+        networkId={lsNetworkId}
         placeholder={`0 ${LS_DERIVATIVE_TOKEN_PREFIX}${selectedProtocol.token}`}
         decimals={selectedProtocol.decimals}
         amount={toAmount}
@@ -230,7 +223,7 @@ const LsStakeCard: FC = () => {
 
       {/* Details */}
       <div className="flex flex-col gap-2 p-3">
-        <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
+        <UnstakePeriodDetailItem protocolId={lsProtocolId} />
 
         <ExchangeRateDetailItem
           token={selectedProtocol.token}
@@ -240,11 +233,11 @@ const LsStakeCard: FC = () => {
         <FeeDetailItem
           inputAmount={fromAmount}
           isStaking
-          protocolId={selectedProtocolId}
+          protocolId={lsProtocolId}
         />
       </div>
 
-      <LsFeeWarning isMinting selectedProtocolId={selectedProtocolId} />
+      <LsFeeWarning isMinting selectedProtocolId={lsProtocolId} />
 
       <Button
         isDisabled={

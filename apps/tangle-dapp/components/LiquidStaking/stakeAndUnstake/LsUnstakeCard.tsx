@@ -44,20 +44,15 @@ const LsUnstakeCard: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();
   const tryChangeNetwork = useLsChangeNetwork();
 
-  const {
-    selectedProtocolId,
-    setSelectedProtocolId,
-    selectedNetworkId,
-    selectedPoolId,
-  } = useLsStore();
+  const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId } = useLsStore();
 
   // TODO: Won't both of these hooks be attempting to update the same state?
   useSearchParamSync({
     key: LsSearchParamKey.PROTOCOL_ID,
-    value: selectedProtocolId,
+    value: lsProtocolId,
     parse: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
-    setValue: setSelectedProtocolId,
+    setValue: setLsProtocolId,
   });
 
   const { execute: executeParachainRedeemTx, status: parachainRedeemTxStatus } =
@@ -68,10 +63,10 @@ const LsUnstakeCard: FC = () => {
 
   const { minSpendable, maxSpendable } = useLsSpendingLimits(
     false,
-    selectedProtocolId,
+    lsProtocolId,
   );
 
-  const selectedProtocol = getLsProtocolDef(selectedProtocolId);
+  const selectedProtocol = getLsProtocolDef(lsProtocolId);
 
   const {
     exchangeRate: exchangeRateOrError,
@@ -91,9 +86,9 @@ const LsUnstakeCard: FC = () => {
   });
 
   const isTangleNetwork =
-    selectedNetworkId === LsNetworkId.TANGLE_LOCAL ||
-    selectedNetworkId === LsNetworkId.TANGLE_MAINNET ||
-    selectedNetworkId === LsNetworkId.TANGLE_TESTNET;
+    lsNetworkId === LsNetworkId.TANGLE_LOCAL ||
+    lsNetworkId === LsNetworkId.TANGLE_MAINNET ||
+    lsNetworkId === LsNetworkId.TANGLE_TESTNET;
 
   const handleUnstakeClick = useCallback(async () => {
     // Cannot perform transaction: Amount not set.
@@ -112,11 +107,11 @@ const LsUnstakeCard: FC = () => {
     } else if (
       isTangleNetwork &&
       executeTangleUnbondTx !== null &&
-      selectedPoolId !== null
+      lsPoolId !== null
     ) {
       return executeTangleUnbondTx({
         points: fromAmount,
-        poolId: selectedPoolId,
+        poolId: lsPoolId,
       });
     }
   }, [
@@ -124,11 +119,11 @@ const LsUnstakeCard: FC = () => {
     executeTangleUnbondTx,
     fromAmount,
     isTangleNetwork,
-    selectedPoolId,
+    lsPoolId,
     selectedProtocol,
   ]);
 
-  const feePercentage = useLsFeePercentage(selectedProtocolId, false);
+  const feePercentage = useLsFeePercentage(lsProtocolId, false);
 
   const toAmount = useMemo(() => {
     if (
@@ -156,7 +151,7 @@ const LsUnstakeCard: FC = () => {
   // Reset the input amount when the network changes.
   useEffect(() => {
     setFromAmount(null);
-  }, [setFromAmount, selectedNetworkId]);
+  }, [setFromAmount, lsNetworkId]);
 
   const stakedWalletBalance = (
     <LsAgnosticBalance
@@ -170,18 +165,16 @@ const LsUnstakeCard: FC = () => {
   const canCallUnstake =
     (selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
       executeParachainRedeemTx !== null) ||
-    (isTangleNetwork &&
-      executeTangleUnbondTx !== null &&
-      selectedPoolId !== null);
+    (isTangleNetwork && executeTangleUnbondTx !== null && lsPoolId !== null);
 
   return (
     <>
       {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
       <LsInput
         id="liquid-staking-unstake-from"
-        networkId={selectedNetworkId}
+        networkId={lsNetworkId}
         setNetworkId={tryChangeNetwork}
-        setProtocolId={setSelectedProtocolId}
+        setProtocolId={setLsProtocolId}
         token={selectedProtocol.token}
         amount={fromAmount}
         decimals={selectedProtocol.decimals}
@@ -200,7 +193,7 @@ const LsUnstakeCard: FC = () => {
 
       <LsInput
         id="liquid-staking-unstake-to"
-        networkId={selectedNetworkId}
+        networkId={lsNetworkId}
         amount={toAmount}
         decimals={selectedProtocol.decimals}
         placeholder={`0 ${selectedProtocol.token}`}
@@ -211,7 +204,7 @@ const LsUnstakeCard: FC = () => {
 
       {/* Details */}
       <div className="flex flex-col gap-2 p-3">
-        <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
+        <UnstakePeriodDetailItem protocolId={lsProtocolId} />
 
         <ExchangeRateDetailItem
           token={selectedProtocol.token}
@@ -219,13 +212,13 @@ const LsUnstakeCard: FC = () => {
         />
 
         <FeeDetailItem
-          protocolId={selectedProtocolId}
+          protocolId={lsProtocolId}
           isStaking={false}
           inputAmount={fromAmount}
         />
       </div>
 
-      <LsFeeWarning isMinting={false} selectedProtocolId={selectedProtocolId} />
+      <LsFeeWarning isMinting={false} selectedProtocolId={lsProtocolId} />
 
       <Button
         isDisabled={

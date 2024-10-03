@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  LsProtocolsTable,
   TabContent,
   TabsList as WebbTabsList,
   TabsRoot,
@@ -15,6 +14,7 @@ import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnst
 import StatItem from '../../components/StatItem';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
 import LsMyPoolsTable from '../../containers/LsMyPoolsTable';
+import { LsProtocolsTable } from '../../containers/LsPoolsTable';
 import useNetworkStore from '../../context/useNetworkStore';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
@@ -42,11 +42,11 @@ const LiquidStakingPage: FC = () => {
       value ? SearchParamAction.STAKE : SearchParamAction.UNSTAKE,
   });
 
-  const { selectedNetworkId } = useLsStore();
+  const { lsNetworkId } = useLsStore();
   const { network } = useNetworkStore();
   const { switchNetwork } = useNetworkSwitcher();
 
-  const lsTangleNetwork = getLsTangleNetwork(selectedNetworkId);
+  const lsTangleNetwork = getLsTangleNetwork(lsNetworkId);
 
   // Sync the network with the selected liquid staking network on load.
   // It might differ initially if the user navigates to the page and
@@ -55,7 +55,7 @@ const LiquidStakingPage: FC = () => {
     if (lsTangleNetwork !== null && lsTangleNetwork.id !== network.id) {
       switchNetwork(lsTangleNetwork, false);
     }
-  }, [lsTangleNetwork, network.id, selectedNetworkId, switchNetwork]);
+  }, [lsTangleNetwork, network.id, lsNetworkId, switchNetwork]);
 
   return (
     <div className="flex items-stretch flex-col gap-10">

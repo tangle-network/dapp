@@ -44,9 +44,9 @@ const MAX_BN_OPERATION_NUMBER = 2 ** 26 - 1;
 
 const useLsExchangeRate = (type: ExchangeRateType) => {
   const [exchangeRate, setExchangeRate] = useState<number | Error | null>(null);
-  const { selectedProtocolId, selectedNetworkId } = useLsStore();
+  const { lsProtocolId, lsNetworkId } = useLsStore();
 
-  const protocol = getLsProtocolDef(selectedProtocolId);
+  const protocol = getLsProtocolDef(lsProtocolId);
 
   const { result: tokenPoolAmount } = useApiRx((api) => {
     if (protocol.networkId !== LsNetworkId.TANGLE_RESTAKING_PARACHAIN) {
@@ -81,7 +81,7 @@ const useLsExchangeRate = (type: ExchangeRateType) => {
   const fetch = useCallback(async () => {
     let promise: Promise<number | Error | null>;
 
-    switch (selectedNetworkId) {
+    switch (lsNetworkId) {
       case LsNetworkId.TANGLE_RESTAKING_PARACHAIN:
         promise = parachainExchangeRate;
 
@@ -103,7 +103,7 @@ const useLsExchangeRate = (type: ExchangeRateType) => {
     }
 
     setExchangeRate(newExchangeRate);
-  }, [parachainExchangeRate, selectedNetworkId]);
+  }, [parachainExchangeRate, lsNetworkId]);
 
   const isRefreshing = usePolling({ effect: fetch });
 

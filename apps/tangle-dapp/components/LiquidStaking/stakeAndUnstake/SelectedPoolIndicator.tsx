@@ -7,8 +7,8 @@ import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import LsTokenIcon from '../../LsTokenIcon';
 
 const SelectedPoolIndicator: FC = () => {
-  const { selectedProtocolId } = useLsStore();
-  const selectedProtocol = getLsProtocolDef(selectedProtocolId);
+  const { lsProtocolId } = useLsStore();
+  const selectedProtocol = getLsProtocolDef(lsProtocolId);
   const selectedPoolDisplayName = useSelectedPoolDisplayName();
 
   return (

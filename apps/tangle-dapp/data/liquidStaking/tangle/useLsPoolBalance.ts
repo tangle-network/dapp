@@ -11,7 +11,7 @@ const useLsPoolBalance = () => {
   const substrateAddress = useSubstrateAddress();
   const networkFeatures = useNetworkFeatures();
   const isSupported = networkFeatures.includes(NetworkFeature.LsPools);
-  const { selectedPoolId } = useLsStore();
+  const { lsPoolId } = useLsStore();
 
   const { result: tanglePoolAssetAccountOpt } = useApiRx(
     useCallback(
@@ -19,17 +19,13 @@ const useLsPoolBalance = () => {
         // The liquid staking pools functionality isn't available on the active
         // network, the user hasn't selected a pool yet, or there is no active
         // account.
-        if (
-          !isSupported ||
-          selectedPoolId === null ||
-          substrateAddress === null
-        ) {
+        if (!isSupported || lsPoolId === null || substrateAddress === null) {
           return null;
         }
 
-        return api.query.assets.account(selectedPoolId, substrateAddress);
+        return api.query.assets.account(lsPoolId, substrateAddress);
       },
-      [isSupported, selectedPoolId, substrateAddress],
+      [isSupported, lsPoolId, substrateAddress],
     ),
   );
 

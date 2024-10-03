@@ -9,14 +9,14 @@ import { NetworkFeature } from '../../../types';
 import getLsTangleNetwork from '../../../utils/liquidStaking/getLsTangleNetwork';
 
 const useLsChangeNetwork = () => {
-  const { selectedNetworkId, setSelectedNetworkId } = useLsStore();
+  const { lsNetworkId, setSelectedNetworkId } = useLsStore();
   const { switchNetwork } = useNetworkSwitcher();
   const { notificationApi } = useWebbUI();
 
   const tryChangeNetwork = useCallback(
     async (newNetworkId: LsNetworkId) => {
       // No need to change network if it's already selected.
-      if (selectedNetworkId === newNetworkId) {
+      if (lsNetworkId === newNetworkId) {
         return;
       }
 
@@ -36,7 +36,7 @@ const useLsChangeNetwork = () => {
         setSelectedNetworkId(newNetworkId);
       }
     },
-    [notificationApi, selectedNetworkId, setSelectedNetworkId, switchNetwork],
+    [notificationApi, lsNetworkId, setSelectedNetworkId, switchNetwork],
   );
 
   return tryChangeNetwork;

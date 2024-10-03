@@ -43,7 +43,7 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
     pageSize: 5,
   });
 
-  const { selectedPoolId, setSelectedPoolId } = useLsStore();
+  const { lsPoolId, setLsPoolId } = useLsStore();
 
   const pagination = useMemo(
     () => ({
@@ -112,17 +112,15 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
       cell: (props) => (
         <div className="flex items-center justify-end">
           <Button
-            isDisabled={selectedPoolId === props.row.original.id}
-            onClick={() => setSelectedPoolId(props.row.original.id)}
+            isDisabled={lsPoolId === props.row.original.id}
+            onClick={() => setLsPoolId(props.row.original.id)}
             rightIcon={
-              selectedPoolId !== props.row.original.id ? (
-                <ArrowRight />
-              ) : undefined
+              lsPoolId !== props.row.original.id ? <ArrowRight /> : undefined
             }
             variant="utility"
             size="sm"
           >
-            {selectedPoolId === props.row.original.id ? 'Selected' : 'Stake'}
+            {lsPoolId === props.row.original.id ? 'Selected' : 'Stake'}
           </Button>
         </div>
       ),
@@ -146,18 +144,20 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
   });
 
   if (pools.length === 0) {
-    <TableStatus
-      className="bg-transparent dark:bg-transparent border-none"
-      title="No pools available yet"
-      description="Looks like there are currently no liquid staking pools available for this protocol. Try creating your own pool to get started!"
-      icon="🔍"
-      buttonText="Learn More"
-      buttonProps={{
-        // TODO: Link to liquid staking pools docs page once implemented.
-        href: TANGLE_DOCS_URL,
-        target: '_blank',
-      }}
-    />;
+    return (
+      <TableStatus
+        className="bg-transparent dark:bg-transparent border-none"
+        title="No pools available yet"
+        description="Looks like there are currently no liquid staking pools available for this protocol. Try creating your own pool to get started!"
+        icon="🔍"
+        buttonText="Learn More"
+        buttonProps={{
+          // TODO: Link to liquid staking pools docs page once implemented.
+          href: TANGLE_DOCS_URL,
+          target: '_blank',
+        }}
+      />
+    );
   }
 
   return (

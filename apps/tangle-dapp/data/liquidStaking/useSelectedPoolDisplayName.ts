@@ -3,16 +3,16 @@ import useLsPoolsMetadata from './useLsPoolsMetadata';
 import { useLsStore } from './useLsStore';
 
 const useSelectedPoolDisplayName = (): LsPoolDisplayName | null => {
-  const { selectedPoolId } = useLsStore();
+  const { lsPoolId } = useLsStore();
   const lsPoolsMetadata = useLsPoolsMetadata();
 
-  if (selectedPoolId === null) {
+  if (lsPoolId === null) {
     return null;
   }
 
-  const name = lsPoolsMetadata?.get(selectedPoolId) ?? '';
+  const name = lsPoolsMetadata?.get(lsPoolId) ?? '';
 
-  return `${name}#${selectedPoolId}`;
+  return `${name}#${lsPoolId}`;
 };
 
 export default useSelectedPoolDisplayName;
