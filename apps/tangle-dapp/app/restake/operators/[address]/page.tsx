@@ -1,7 +1,9 @@
 'use client';
 
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { ComponentProps, useMemo } from 'react';
 
+import useOperatorBlueprints from '../../../../data/blueprints/useOperatorBlueprints';
 import useRestakeDelegatorInfo from '../../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '../../../../data/restake/useRestakeOperatorMap';
 import useRestakeTVL from '../../../../data/restake/useRestakeTVL';
@@ -14,9 +16,31 @@ export const dynamic = 'force-static';
 const Page = ({ params: { address } }: { params: { address: string } }) => {
   const { operatorMap } = useRestakeOperatorMap();
   const { delegatorInfo } = useRestakeDelegatorInfo();
-  const { operatorTVL, poolTVL, delegatorTVL } = useRestakeTVL(
+  const { operatorTVL, vaultTVL, delegatorTVL } = useRestakeTVL(
     operatorMap,
     delegatorInfo,
+  );
+
+  const { isLoading, blueprints, error } = useOperatorBlueprints(address);
+
+  const blueprintsUI = useMemo<
+    ComponentProps<typeof RegisteredBlueprintsCard>['blueprints']
+  >(
+    () =>
+      blueprints.map(
+        ({
+          blueprint: {
+            metadata: { name, logo, codeRepository },
+          },
+          blueprintId,
+        }) => ({
+          id: blueprintId.toString(),
+          avatarUrl: logo,
+          name,
+          githubUrl: codeRepository,
+        }),
+      ),
+    [blueprints],
   );
 
   return (
@@ -31,11 +55,12 @@ const Page = ({ params: { address } }: { params: { address: string } }) => {
           operatorTVL={operatorTVL}
         />
 
-        {/**
-         * TODO: Integrate API to get the blueprint detail.
-         * The backend team is still working on adding these APIs.
-         */}
-        <RegisteredBlueprintsCard className="flex-1" blueprints={[]} />
+        <RegisteredBlueprintsCard
+          className="flex-1"
+          blueprints={blueprintsUI}
+          isLoading={isLoading}
+          error={error && error.message}
+        />
       </div>
 
       <div>
@@ -45,7 +70,7 @@ const Page = ({ params: { address } }: { params: { address: string } }) => {
 
         <TVLTable
           operatorData={operatorMap[address]}
-          vaultTVL={poolTVL}
+          vaultTVL={vaultTVL}
           delegatorInfo={delegatorInfo}
           delegatorTVL={delegatorTVL}
         />

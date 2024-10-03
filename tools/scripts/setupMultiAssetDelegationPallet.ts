@@ -186,10 +186,10 @@ await api.tx.balances
   .signAndSend(ALICE_SUDO, { nonce });
 success('Native token transferred to multi-asset-delegation pallet!');
 
-info('Create and set reward for pool...');
+info('Create and set reward for vault...');
 await batchTxes([
-  api.tx.multiAssetDelegation.manageAssetInPool(POOL_ID, tgTEST.id, 'Add'),
-  api.tx.multiAssetDelegation.manageAssetInPool(POOL_ID, tgtTNT.id, 'Add'),
+  api.tx.multiAssetDelegation.manageAssetInVault(POOL_ID, tgTEST.id, 'Add'),
+  api.tx.multiAssetDelegation.manageAssetInVault(POOL_ID, tgtTNT.id, 'Add'),
   api.tx.sudo.sudo(
     api.tx.multiAssetDelegation.setIncentiveApyAndCap(POOL_ID, APY, CAP),
   ),

@@ -3,6 +3,7 @@
 import { ExternalLinkLine, GithubFill } from '@webb-tools/icons';
 import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
+import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import type { EventFor } from '@webb-tools/webb-ui-components/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Link from 'next/link';
@@ -13,12 +14,14 @@ import GlassCard from '../../../../components/GlassCard/GlassCard';
 import { PagePath } from '../../../../types';
 
 interface Props extends Partial<ComponentProps<typeof GlassCard>> {
+  isLoading?: boolean;
+  error?: string | null;
   blueprints:
     | {
         id: string;
         name: string;
-        avatarUrl: string;
-        githubUrl: string;
+        avatarUrl: string | null;
+        githubUrl: string | null;
       }[]
     | undefined;
 }
@@ -36,6 +39,8 @@ const bgClassName = twMerge(
 
 const RegisteredBlueprintsCard: FC<Props> = ({
   className,
+  isLoading,
+  error,
   blueprints = [],
   ...props
 }) => {
@@ -50,7 +55,21 @@ const RegisteredBlueprintsCard: FC<Props> = ({
         Registered Blueprints
       </Typography>
 
-      {isEmpty ? (
+      {isLoading ? (
+        <div className="px-2 space-y-2">
+          {Array.from({ length: 3 }).map((_, idx) => (
+            <SkeletonLoader key={idx} className="h-14" />
+          ))}
+        </div>
+      ) : error ? (
+        <Typography
+          variant="body2"
+          ta="center"
+          className="flex items-center justify-center flex-grow text-mono-100 dark:text-mono-120"
+        >
+          {error}
+        </Typography>
+      ) : isEmpty ? (
         <Typography
           variant="body2"
           ta="center"
@@ -73,7 +92,11 @@ const RegisteredBlueprintsCard: FC<Props> = ({
                       target="_blank"
                       className="flex items-center flex-grow gap-2"
                     >
-                      <Avatar src={avatarUrl} size="lg" />
+                      <Avatar
+                        src={avatarUrl ?? undefined}
+                        fallback={name}
+                        size="lg"
+                      />
 
                       <Typography
                         variant="h5"

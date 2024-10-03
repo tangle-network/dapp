@@ -9,6 +9,8 @@ export const metadata: Metadata = createPageMetadata({
   title: 'Blueprints',
 });
 
+export const dynamic = 'force-static';
+
 const BlueprintsPage: FC = () => {
   return (
     <div className="space-y-5">
