@@ -11,19 +11,22 @@ import {
 } from '@tanstack/react-table';
 import { Table } from '../../../libs/webb-ui-components/src/components/Table';
 import { Pagination } from '../../../libs/webb-ui-components/src/components/Pagination';
-import { LsPool } from '../constants/liquidStaking/types';
+import { LsPool, LsProtocolId } from '../constants/liquidStaking/types';
 import {
   ActionsDropdown,
   Avatar,
   AvatarGroup,
   Button,
-  IconButton,
   TANGLE_DOCS_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import TokenAmountCell from '../components/tableCells/TokenAmountCell';
 import pluralize from '../utils/pluralize';
-import { ArrowRight } from '@webb-tools/icons';
+import {
+  ArrowRight,
+  SubtractCircleLineIcon,
+  TokenIcon,
+} from '@webb-tools/icons';
 import useLsPools from '../data/liquidStaking/useLsPools';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { BN } from '@polkadot/util';
@@ -32,11 +35,14 @@ import { GlassCard, TableStatus } from '../components';
 import PercentageCell from '../components/tableCells/PercentageCell';
 import { EMPTY_VALUE_PLACEHOLDER } from '../constants';
 import { ActionItemType } from '@webb-tools/webb-ui-components/components/ActionsDropdown/types';
-import { MinusCircledIcon } from '@radix-ui/react-icons';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
+import BlueIconButton from '../components/BlueIconButton';
+import getLsProtocolDef from '../utils/liquidStaking/getLsProtocolDef';
+import useIsAccountConnected from '../hooks/useIsAccountConnected';
 
 type MyLsPoolRow = LsPool & {
   myStake: BN;
+  lsProtocolId: LsProtocolId;
   isRoot: boolean;
   isNominator: boolean;
   isBouncer: boolean;
@@ -45,8 +51,10 @@ type MyLsPoolRow = LsPool & {
 const COLUMN_HELPER = createColumnHelper<MyLsPoolRow>();
 
 const LsMyPoolsTable: FC = () => {
+  const isAccountConnected = useIsAccountConnected();
   const substrateAddress = useSubstrateAddress();
   const [sorting, setSorting] = useState<SortingState>([]);
+  const { setIsStaking, setLsPoolId, lsPoolId, isStaking } = useLsStore();
 
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
@@ -84,11 +92,16 @@ const LsMyPoolsTable: FC = () => {
           isRoot: lsPool.ownerAddress === substrateAddress,
           isNominator: lsPool.nominatorAddress === substrateAddress,
           isBouncer: lsPool.bouncerAddress === substrateAddress,
-        };
+          // TODO: Obtain which protocol this pool is associated with. For the parachain, there'd need to be some query to see what pools are associated with which parachain protocols. For Tangle networks, it's simply its own protocol. For now, using dummy data.
+          lsProtocolId: LsProtocolId.TANGLE_LOCAL,
+        } satisfies MyLsPoolRow;
       });
   }, []);
 
-  const handleUnstakeClick = useCallback((poolId: number) => {}, []);
+  const handleUnstakeClick = useCallback((poolId: number) => {
+    setIsStaking(false);
+    setLsPoolId(poolId);
+  }, []);
 
   const columns = [
     COLUMN_HELPER.accessor('id', {
@@ -102,6 +115,14 @@ const LsMyPoolsTable: FC = () => {
           {props.row.original.metadata}#{props.getValue()}
         </Typography>
       ),
+    }),
+    COLUMN_HELPER.accessor('lsProtocolId', {
+      header: () => 'Protocol',
+      cell: (props) => {
+        const lsProtocol = getLsProtocolDef(props.getValue());
+
+        return <TokenIcon name={lsProtocol.chainIconFileName} />;
+      },
     }),
     COLUMN_HELPER.accessor('ownerAddress', {
       header: () => 'Owner',
@@ -161,6 +182,7 @@ const LsMyPoolsTable: FC = () => {
         if (props.row.original.isNominator) {
           actionItems.push({
             label: 'Update Nominations',
+            // TODO: Implement onClick handler.
             onClick: () => void 0,
           });
         }
@@ -168,6 +190,7 @@ const LsMyPoolsTable: FC = () => {
         if (props.row.original.isBouncer) {
           actionItems.push({
             label: 'Update Commission',
+            // TODO: Implement onClick handler.
             onClick: () => void 0,
           });
         }
@@ -175,22 +198,41 @@ const LsMyPoolsTable: FC = () => {
         if (props.row.original.isRoot) {
           actionItems.push({
             label: 'Update Roles',
+            // TODO: Implement onClick handler.
             onClick: () => void 0,
           });
+        }
+
+        // Sanity check against logic errors.
+        if (hasAnyRole) {
+          assert(actionItems.length > 0);
         }
 
         // If the user has any role in the pool, show the short button style
         // to avoid taking up too much space.
         const isShortButtonStyle = hasAnyRole;
 
+        // Disable the stake button if the pool is currently selected,
+        // and the active intent is to unstake.
+        const isUnstakeDisabled =
+          lsPoolId === props.row.original.id && !isStaking;
+
         return (
           <div className="flex justify-end">
             {isShortButtonStyle ? (
-              <IconButton tooltip="Unstake">
-                <MinusCircledIcon />
-              </IconButton>
+              <BlueIconButton
+                isDisabled={isUnstakeDisabled}
+                onClick={() => handleUnstakeClick(props.row.original.id)}
+                tooltip="Unstake"
+                Icon={SubtractCircleLineIcon}
+              />
             ) : (
-              <Button rightIcon={<ArrowRight />} variant="utility">
+              <Button
+                isDisabled={isUnstakeDisabled}
+                onClick={() => handleUnstakeClick(props.row.original.id)}
+                rightIcon={<ArrowRight />}
+                variant="utility"
+              >
                 Unstake
               </Button>
             )}
@@ -224,7 +266,22 @@ const LsMyPoolsTable: FC = () => {
     enableSortingRemoval: false,
   });
 
-  if (rows.length === 0) {
+  // TODO: Missing error and loading state. Should ideally abstract all these states into an abstract Table component, since it's getting reused in multiple places.
+  if (!isAccountConnected) {
+    return (
+      <TableStatus
+        title="Connect a wallet to continue"
+        description="Once you've connected an account, you'll be able to see and manage your liquid staking pools here."
+        icon="🔍"
+        buttonText="Learn More"
+        buttonProps={{
+          // TODO: Link to liquid staking pools docs page once implemented.
+          href: TANGLE_DOCS_URL,
+          target: '_blank',
+        }}
+      />
+    );
+  } else if (rows.length === 0) {
     return (
       <TableStatus
         title="No active pools"

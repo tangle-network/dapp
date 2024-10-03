@@ -42,7 +42,12 @@ const LiquidStakingPage: FC = () => {
       value ? SearchParamAction.STAKE : SearchParamAction.UNSTAKE,
   });
 
-  const { lsNetworkId } = useLsStore();
+  const {
+    lsNetworkId,
+    setIsStaking: setIsStakingInStore,
+    isStaking: isStakingInStore,
+  } = useLsStore();
+
   const { network } = useNetworkStore();
   const { switchNetwork } = useNetworkSwitcher();
 
@@ -56,6 +61,18 @@ const LiquidStakingPage: FC = () => {
       switchNetwork(lsTangleNetwork, false);
     }
   }, [lsTangleNetwork, network.id, lsNetworkId, switchNetwork]);
+
+  // Sync the Zustand store state of whether liquid staking or unstaking with
+  // the URL param state.
+  useEffect(() => {
+    setIsStakingInStore(isStaking);
+  }, [isStaking, setIsStakingInStore]);
+
+  // Sync the URL param state of whether liquid staking or unstaking with
+  // the Zustand store state.
+  useEffect(() => {
+    setIsStaking(isStakingInStore);
+  }, [isStakingInStore, setIsStaking]);
 
   return (
     <div className="flex items-stretch flex-col gap-10">
