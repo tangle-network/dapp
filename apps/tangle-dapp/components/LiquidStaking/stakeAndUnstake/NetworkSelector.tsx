@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
 import { FC } from 'react';
 
 import { IS_PRODUCTION_ENV } from '../../../constants/env';
@@ -52,18 +51,12 @@ const NetworkSelector: FC<NetworkSelectorProps> = ({
 
   // Filter out networks that don't support liquid staking yet.
   const supportedLsNetworks = LS_NETWORKS.filter((network) => {
-    if (network.id === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER) {
-      return true;
-    }
-    // Exclude the local Tangle network in production.
-    else if (network.id === LsNetworkId.TANGLE_LOCAL && IS_PRODUCTION_ENV) {
+    if (network.id === LsNetworkId.TANGLE_LOCAL && IS_PRODUCTION_ENV) {
       return false;
     }
 
     // TODO: Obtain the Tangle network from the LS Network's properties instead.
     const tangleNetwork = getLsTangleNetwork(network.id);
-
-    assert(tangleNetwork !== null);
 
     return NETWORK_FEATURE_MAP[tangleNetwork.id].includes(
       NetworkFeature.LsPools,

@@ -75,7 +75,6 @@ export enum LsNetworkId {
   TANGLE_TESTNET,
   TANGLE_MAINNET,
   TANGLE_RESTAKING_PARACHAIN,
-  ETHEREUM_MAINNET_LIQUIFIER,
 }
 
 export interface LsTangleNetworkDef extends ProtocolDefCommon {

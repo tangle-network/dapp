@@ -13,7 +13,6 @@ import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
-import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
@@ -37,13 +36,6 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
   const { selectedProtocolId } = useLsStore();
   const protocol = getLsProtocolDef(selectedProtocolId);
 
-  // Special case for liquid tokens on the `TgToken.sol` contract.
-  // See: https://github.com/webb-tools/tnt-core/blob/1f371959884352e7af68e6091c5bb330fcaa58b8/src/lst/liquidtoken/TgToken.sol#L26
-  const decimals =
-    !isNative && protocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER
-      ? 18
-      : protocol.decimals;
-
   const formattedBalance = useMemo(() => {
     // No account is active; display a placeholder instead of a loading state.
     if (balance === EMPTY_VALUE_PLACEHOLDER) {
@@ -54,14 +46,14 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
       return null;
     }
 
-    const formattedBalance = formatBn(balance, decimals, {
+    const formattedBalance = formatBn(balance, protocol.decimals, {
       includeCommas: true,
     });
 
     const derivativePrefix = isNative ? '' : LS_DERIVATIVE_TOKEN_PREFIX;
 
     return `${formattedBalance} ${derivativePrefix}${protocol.token}`;
-  }, [balance, decimals, isNative, protocol.token]);
+  }, [balance, protocol.decimals, isNative, protocol.token]);
 
   const isClickable =
     onlyShowTooltipWhenBalanceIsSet &&

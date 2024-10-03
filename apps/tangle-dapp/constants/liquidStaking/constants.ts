@@ -1,15 +1,11 @@
 import ASTAR from '../../data/liquidStaking/adapters/astar';
-import CHAINLINK from '../../data/liquidStaking/adapters/chainlink';
-import LIVEPEER from '../../data/liquidStaking/adapters/livepeer';
 import MANTA from '../../data/liquidStaking/adapters/manta';
 import MOONBEAM from '../../data/liquidStaking/adapters/moonbeam';
 import PHALA from '../../data/liquidStaking/adapters/phala';
 import POLKADOT from '../../data/liquidStaking/adapters/polkadot';
-import POLYGON from '../../data/liquidStaking/adapters/polygon';
 import TANGLE_LOCAL from '../../data/liquidStaking/adapters/tangleLocal';
 import TANGLE_MAINNET from '../../data/liquidStaking/adapters/tangleMainnet';
 import TANGLE_TESTNET from '../../data/liquidStaking/adapters/tangleTestnet';
-import THE_GRAPH from '../../data/liquidStaking/adapters/theGraph';
 import { IS_PRODUCTION_ENV } from '../env';
 import {
   LsNetwork,
@@ -66,14 +62,6 @@ export const TVS_TOOLTIP =
 
 export const LS_DERIVATIVE_TOKEN_PREFIX = 'tg';
 
-export const LS_ETHEREUM_MAINNET_LIQUIFIER: LsNetwork = {
-  id: LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER,
-  networkName: IS_PRODUCTION_ENV ? 'Ethereum Mainnet' : 'Sepolia Testnet',
-  chainIconFileName: 'ethereum',
-  defaultProtocolId: LsProtocolId.CHAINLINK,
-  protocols: [CHAINLINK, THE_GRAPH, LIVEPEER, POLYGON],
-};
-
 export const LS_TANGLE_RESTAKING_PARACHAIN: LsNetwork = {
   id: LsNetworkId.TANGLE_RESTAKING_PARACHAIN,
   networkName: 'Tangle Parachain',
@@ -112,7 +100,6 @@ export const LS_NETWORKS: LsNetwork[] = [
   LS_TANGLE_TESTNET,
   LS_TANGLE_LOCAL,
   LS_TANGLE_RESTAKING_PARACHAIN,
-  LS_ETHEREUM_MAINNET_LIQUIFIER,
 ];
 
 /**
