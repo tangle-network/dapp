@@ -80,7 +80,6 @@ export * from './Tooltip';
 export * from './TransactionInputCard';
 export * from './TxProgressor';
 export { default as TxConfirmationRing } from './TxConfirmationRing';
-export * from '../../../../apps/tangle-dapp/containers/LsPoolsTable2';
 export * from './WalletConnectionCard';
 export * from './WalletModal';
 export * from './WebsiteFooter';

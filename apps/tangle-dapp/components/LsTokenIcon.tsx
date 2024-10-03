@@ -5,11 +5,16 @@ import { twMerge } from 'tailwind-merge';
 type LsTokenIconSize = 'md' | 'lg';
 
 interface LsTokenIconProps {
-  name: string;
+  name?: string;
   size?: LsTokenIconSize;
+  hasTangleBorder?: boolean;
 }
 
-const LsTokenIcon: FC<LsTokenIconProps> = ({ name, size = 'md' }) => {
+const LsTokenIcon: FC<LsTokenIconProps> = ({
+  name,
+  size = 'md',
+  hasTangleBorder = true,
+}) => {
   const { wrapperSizeClassName, iconSizeClassName, borderSize } =
     getSizeValues(size);
 
@@ -21,22 +26,25 @@ const LsTokenIcon: FC<LsTokenIconProps> = ({ name, size = 'md' }) => {
         wrapperSizeClassName,
       )}
     >
-      <TokenIcon
-        name={name}
-        className={twMerge(
-          'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full',
-          iconSizeClassName,
-        )}
-        customLoadingCmp={
-          <div
-            className={twMerge(
-              'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
-              'z-10 rounded-full bg-mono-60 dark:bg-mono-140',
-              size === 'md' ? 'h-[25px] w-[25px]' : 'h-[50px] w-[50px]',
-            )}
-          />
-        }
-      />
+      {name !== undefined && (
+        <TokenIcon
+          name={name}
+          className={twMerge(
+            'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full',
+            iconSizeClassName,
+          )}
+          customLoadingCmp={
+            <div
+              className={twMerge(
+                'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
+                'z-10 rounded-full bg-mono-60 dark:bg-mono-140',
+                size === 'md' ? 'h-[25px] w-[25px]' : 'h-[50px] w-[50px]',
+              )}
+            />
+          }
+        />
+      )}
+
       <svg
         width={borderSize}
         height={borderSize}
@@ -52,6 +60,7 @@ const LsTokenIcon: FC<LsTokenIconProps> = ({ name, size = 'md' }) => {
           stroke="url(#paint0_linear_257_3557)"
           strokeWidth="1.25"
         />
+
         <defs>
           <linearGradient
             id="paint0_linear_257_3557"

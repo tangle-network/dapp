@@ -13,7 +13,12 @@ const SelectedPoolIndicator: FC = () => {
 
   return (
     <div className="group flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-170 px-4 py-2 rounded-lg">
-      <LsTokenIcon name={selectedProtocol.token} />
+      <LsTokenIcon
+        hasTangleBorder={false}
+        name={
+          selectedPoolDisplayName === null ? undefined : selectedProtocol.token
+        }
+      />
 
       <Typography variant="h5" fw="bold" className="whitespace-nowrap">
         {selectedPoolDisplayName === null

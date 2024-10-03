@@ -26,7 +26,9 @@ const TokenChip: FC<TokenChipProps> = ({
         onClick !== undefined && 'cursor-pointer',
       )}
     >
-      {token && <LsTokenIcon name={token} />}
+      {token && (
+        <LsTokenIcon hasTangleBorder={isDerivativeVariant} name={token} />
+      )}
 
       <Typography variant="h5" fw="bold">
         {isDerivativeVariant && LS_DERIVATIVE_TOKEN_PREFIX}

@@ -14,7 +14,7 @@ import {
 import { Table } from '../../../../libs/webb-ui-components/src/components/Table';
 import { Typography } from '../../../../libs/webb-ui-components/src/typography';
 import { twMerge } from 'tailwind-merge';
-import LsPoolsTable2 from './LsPoolsTable2';
+import LsPoolsTable from './LsPoolsTable2';
 import TableCellWrapper from '../../components/tables/TableCellWrapper';
 import LsTokenIcon from '../../components/LsTokenIcon';
 import StatItem from '../../components/StatItem';
@@ -115,7 +115,7 @@ function LsProtocolsTable({ initialSorting = [] }: LsProtocolsTableProps) {
   const getExpandedRowContent = useCallback(
     (row: Row<LsProtocolRow>) => (
       <div className="bg-mono-0 dark:bg-mono-190 -mt-7 pt-3 rounded-b-xl -mx-px px-3">
-        <LsPoolsTable2
+        <LsPoolsTable
           pools={row.original.pools}
           isShown={row.getIsExpanded()}
         />

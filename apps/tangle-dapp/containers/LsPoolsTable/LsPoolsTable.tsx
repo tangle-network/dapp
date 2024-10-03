@@ -17,6 +17,7 @@ import {
   Avatar,
   AvatarGroup,
   Button,
+  TANGLE_DOCS_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
@@ -25,15 +26,16 @@ import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { ArrowRight } from '@webb-tools/icons';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import PercentageCell from '../../components/tableCells/PercentageCell';
+import { TableStatus } from '../../components';
 
-export interface LsPoolsTable2Props {
+export type LsPoolsTableProps = {
   pools: LsPool[];
   isShown: boolean;
-}
+};
 
 const COLUMN_HELPER = createColumnHelper<LsPool>();
 
-const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
+const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const [{ pageIndex, pageSize }, setPagination] = useState({
@@ -143,6 +145,21 @@ const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
     enableSortingRemoval: false,
   });
 
+  if (pools.length === 0) {
+    <TableStatus
+      className="bg-transparent dark:bg-transparent border-none"
+      title="No pools available yet"
+      description="Looks like there are currently no liquid staking pools available for this protocol. Try creating your own pool to get started!"
+      icon="🔍"
+      buttonText="Learn More"
+      buttonProps={{
+        // TODO: Link to liquid staking pools docs page once implemented.
+        href: TANGLE_DOCS_URL,
+        target: '_blank',
+      }}
+    />;
+  }
+
   return (
     <div className="flex flex-col">
       <Table
@@ -174,4 +191,4 @@ const LsPoolsTable2: FC<LsPoolsTable2Props> = ({ pools, isShown }) => {
   );
 };
 
-export default LsPoolsTable2;
+export default LsPoolsTable;

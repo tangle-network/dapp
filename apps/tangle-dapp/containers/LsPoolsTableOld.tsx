@@ -145,7 +145,7 @@ const DEFAULT_PAGINATION_STATE: PaginationState = {
   pageSize: 10,
 };
 
-const LsPoolsTable: FC = () => {
+const LsPoolsTableOld: FC = () => {
   const { setSelectedPoolId: setSelectedParachainPoolId } = useLsStore();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -275,4 +275,4 @@ const LsPoolsTable: FC = () => {
   );
 };
 
-export default LsPoolsTable;
+export default LsPoolsTableOld;

@@ -78,7 +78,7 @@ const LsStakeCard: FC = () => {
   const lsPoolMembers = useLsPoolMembers();
 
   const actionText = useMemo(() => {
-    const defaultText = 'Stake';
+    const defaultText = 'Join Pool & Stake';
 
     if (lsPoolMembers === null) {
       return defaultText;
