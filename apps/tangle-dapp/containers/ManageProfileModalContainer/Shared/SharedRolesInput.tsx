@@ -4,7 +4,6 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import BaseInput from '../../../components/AmountInput/BaseInput';
-import useApi from '../../../hooks/useApi';
 import { RestakingService } from '../../../types';
 import {
   getChartDataAreaColorByServiceType,
@@ -28,17 +27,6 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
 }) => {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
-  const { result: maxRolesPerAccount } = useApi(
-    useCallback(
-      (api) => Promise.resolve(api.consts.roles.maxRolesPerAccount),
-      [],
-    ),
-  );
-
-  const canSelectMoreRoles =
-    maxRolesPerAccount !== null &&
-    maxRolesPerAccount.gtn(selectedServices.length);
-
   const handleDeselectService = useCallback(
     (service: RestakingService) => {
       onToggleRole(service);
@@ -48,19 +36,18 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
 
   const handleSelectService = useCallback(
     (service: RestakingService) => {
-      if (!canSelectMoreRoles || selectedServices.includes(service)) {
+      if (selectedServices.includes(service)) {
         return;
       }
 
       onToggleRole(service);
     },
-    [canSelectMoreRoles, onToggleRole, selectedServices],
+    [onToggleRole, selectedServices],
   );
 
   const determineIfLocked = useCallback(
-    (service: RestakingService): boolean =>
-      !canSelectMoreRoles && !selectedServices.includes(service),
-    [canSelectMoreRoles, selectedServices],
+    (service: RestakingService): boolean => !selectedServices.includes(service),
+    [selectedServices],
   );
 
   const dropdownBody = useMemo(

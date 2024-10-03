@@ -27,11 +27,11 @@ export default function TxDetails({ watch }: Props) {
     }
 
     const asset = assetMap[assetId];
-    if (asset === undefined || asset.poolId === null) {
+    if (asset === undefined || asset.vaultId === null) {
       return null;
     }
 
-    return rewardConfig.configs[asset.poolId]?.apy ?? null;
+    return rewardConfig.configs[asset.vaultId]?.apy ?? null;
   }, [assetId, assetMap, rewardConfig.configs]);
 
   return (

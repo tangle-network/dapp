@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation';
 import { IS_PRODUCTION_ENV } from '../../../constants/env';
 import InfoCard from './InfoCard';
 import NodeSpecificationsTable from './NodeSpecificationsTable';
-import ServiceTableTabs from './ServiceTableTabs';
 
 export const dynamic = 'force-static';
 
@@ -31,8 +30,6 @@ export default function ValidatorDetails({
       {!IS_PRODUCTION_ENV && (
         <NodeSpecificationsTable validatorAddress={validatorAddress} />
       )}
-
-      <ServiceTableTabs validatorAddress={validatorAddress} />
     </div>
   );
 }

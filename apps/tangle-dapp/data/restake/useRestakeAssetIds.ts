@@ -3,7 +3,7 @@ import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { map, type Observable } from 'rxjs';
 
-import useRestakeRewardPoolMap from './useRestakeRewardPoolMap';
+import useRestakeRewardVaultMap from './useRestakeRewardVaultMap';
 
 export type UseRestakeAssetIdsReturnType = {
   assetIds: string[];
@@ -15,13 +15,13 @@ export type UseRestakeAssetIdsReturnType = {
  * The hook returns an object containing the asset IDs and an observable to refresh the asset IDs.
  */
 export default function useRestakeAssetIds(): Evaluate<UseRestakeAssetIdsReturnType> {
-  const { rewardPoolMap$ } = useRestakeRewardPoolMap();
+  const { rewardVaultMap$ } = useRestakeRewardVaultMap();
 
   const assetIds$ = useMemo(
     () =>
-      rewardPoolMap$.pipe(
-        map((rewardPoolMap) => {
-          const assetIds = Object.values(rewardPoolMap)
+      rewardVaultMap$.pipe(
+        map((rewardVaultMap) => {
+          const assetIds = Object.values(rewardVaultMap)
             .flat()
             .filter((assetId): assetId is string => assetId !== null);
 
@@ -29,7 +29,7 @@ export default function useRestakeAssetIds(): Evaluate<UseRestakeAssetIdsReturnT
           return Array.from(new Set(assetIds));
         }),
       ),
-    [rewardPoolMap$],
+    [rewardVaultMap$],
   );
 
   const assetIds = useObservableState(assetIds$, []);

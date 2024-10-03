@@ -11866,6 +11866,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot/typegen@npm:^13.2.1":
+  version: 13.2.1
+  resolution: "@polkadot/typegen@npm:13.2.1"
+  dependencies:
+    "@polkadot/api": "npm:13.2.1"
+    "@polkadot/api-augment": "npm:13.2.1"
+    "@polkadot/rpc-augment": "npm:13.2.1"
+    "@polkadot/rpc-provider": "npm:13.2.1"
+    "@polkadot/types": "npm:13.2.1"
+    "@polkadot/types-augment": "npm:13.2.1"
+    "@polkadot/types-codec": "npm:13.2.1"
+    "@polkadot/types-create": "npm:13.2.1"
+    "@polkadot/types-support": "npm:13.2.1"
+    "@polkadot/util": "npm:^13.1.1"
+    "@polkadot/util-crypto": "npm:^13.1.1"
+    "@polkadot/x-ws": "npm:^13.1.1"
+    handlebars: "npm:^4.7.8"
+    tslib: "npm:^2.7.0"
+    yargs: "npm:^17.7.2"
+  bin:
+    polkadot-types-chain-info: scripts/polkadot-types-chain-info.mjs
+    polkadot-types-from-chain: scripts/polkadot-types-from-chain.mjs
+    polkadot-types-from-defs: scripts/polkadot-types-from-defs.mjs
+    polkadot-types-internal-interfaces: scripts/polkadot-types-internal-interfaces.mjs
+    polkadot-types-internal-metadata: scripts/polkadot-types-internal-metadata.mjs
+  checksum: 10c0/b208e8fe3fd2cbbd03f82da15c4bc9a353678ce9510ece6c4a9c1376be355a808d7e58e39a9fe549212a0f928af9d8fa8e66e365ae185ec42c75a0673b4ba550
+  languageName: node
+  linkType: hard
+
 "@polkadot/types-augment@npm:^11.0.2":
   version: 11.3.1
   resolution: "@polkadot/types-augment@npm:11.3.1"
@@ -12170,6 +12199,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@polkadot/x-global@npm:13.1.1":
+  version: 13.1.1
+  resolution: "@polkadot/x-global@npm:13.1.1"
+  dependencies:
+    tslib: "npm:^2.7.0"
+  checksum: 10c0/07a69f24a94c6bd8934dc39f52dee620f9a0cbac368f0a8e6b5e4637f8e90ba48e110fa4cf8ac1d6b8e80f4acd41af8be5c493d89abe7fe29c0523d7aac3eefb
+  languageName: node
+  linkType: hard
+
 "@polkadot/x-global@npm:9.7.2":
   version: 9.7.2
   resolution: "@polkadot/x-global@npm:9.7.2"
@@ -12231,6 +12269,17 @@ __metadata:
     tslib: "npm:^2.6.2"
     ws: "npm:^8.16.0"
   checksum: 10c0/87b01c6eb52945a6d4f6cb1af6a093cc170230d8bcedd069b226dd041d80e87f6e233fbe19f36f1a9ae00d2f5e9c1b6b901eae5bd3369ab889eaa0ff5c1b723e
+  languageName: node
+  linkType: hard
+
+"@polkadot/x-ws@npm:^13.1.1":
+  version: 13.1.1
+  resolution: "@polkadot/x-ws@npm:13.1.1"
+  dependencies:
+    "@polkadot/x-global": "npm:13.1.1"
+    tslib: "npm:^2.7.0"
+    ws: "npm:^8.16.0"
+  checksum: 10c0/6d485fb62218beee0ea38e3dc275385ad9fa64677f451833447a5e54bbf70c3827e5a4d4e7d9531988109e8f1760437f854c7cb19e2df488f35b4c20bf8a6b1e
   languageName: node
   linkType: hard
 
@@ -18484,44 +18533,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/protocol-substrate-types@npm:@webb-tools/tangle-substrate-types@0.5.9":
-  version: 0.5.9
-  resolution: "@webb-tools/tangle-substrate-types@npm:0.5.9"
+"@webb-tools/protocol-substrate-types@npm:@webb-tools/tangle-substrate-types@^0.9.0, @webb-tools/tangle-substrate-types@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "@webb-tools/tangle-substrate-types@npm:0.9.0"
   dependencies:
-    "@babel/cli": "npm:^7.23.9"
-    "@babel/core": "npm:^7.24.0"
-    "@babel/plugin-proposal-nullish-coalescing-operator": "npm:^7.18.6"
-    "@babel/plugin-proposal-numeric-separator": "npm:^7.18.6"
-    "@babel/plugin-proposal-optional-chaining": "npm:^7.20.7"
-    "@babel/plugin-syntax-bigint": "npm:^7.8.3"
-    "@babel/plugin-syntax-dynamic-import": "npm:^7.8.3"
-    "@babel/plugin-syntax-import-assertions": "npm:^7.23.3"
-    "@babel/plugin-syntax-import-meta": "npm:^7.10.4"
-    "@babel/plugin-syntax-top-level-await": "npm:^7.14.5"
-    "@babel/plugin-transform-regenerator": "npm:^7.23.3"
-    "@babel/plugin-transform-runtime": "npm:^7.24.0"
-    "@babel/preset-env": "npm:^7.24.0"
-    "@babel/preset-react": "npm:^7.23.3"
-    "@babel/preset-typescript": "npm:^7.23.3"
-    "@babel/register": "npm:^7.23.7"
-    "@babel/runtime": "npm:^7.24.0"
-    "@open-web3/orml-types": "npm:^2.0.1"
-    "@polkadot/api": "npm:^11.0.2"
-    "@polkadot/dev": "npm:^0.78.11"
-    "@polkadot/typegen": "npm:^11.0.2"
-    "@polkadot/types": "npm:^11.0.2"
-    babel-jest: "npm:^29.7.0"
-    babel-plugin-module-extension-resolver: "npm:^1.0.0"
-    babel-plugin-module-resolver: "npm:^5.0.0"
-    babel-plugin-styled-components: "npm:^2.1.4"
+    "@polkadot/api": "npm:^13.2.1"
+    "@polkadot/typegen": "npm:^13.2.1"
+    "@polkadot/types": "npm:^13.2.1"
     ecpair: "npm:^2.1.0"
-    elliptic: "npm:^6.5.5"
-    fs-extra: "npm:^11.2.0"
-    glob2base: "npm:^0.0.12"
-    minimatch: "npm:^9.0.3"
-    mkdirp: "npm:^3.0.1"
     tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/075512a206ec1924b0d85e08618c724c82d25856f5ca282b356a23a7c1fada88a8649f19f5eb7eaf79d0bb45776c8a9d04b663ecfcae7bc9e7b6050ecb160772
+  checksum: 10c0/0cc9624d78d0a41e1cb37c5081336a60d7ea4cda68ebed7eeb634497ad43402bf24041156b8628c3d5dba041379066896bad94692477ac2df91dc068fee94f38
   languageName: node
   linkType: hard
 
@@ -18581,47 +18602,6 @@ __metadata:
     mkdirp: "npm:^3.0.1"
     tiny-secp256k1: "npm:^2.2.3"
   checksum: 10c0/78eb2677437354e3b928ab877a7b9f58a9f35b4862919fe9efa4af7477a624a798777fd7d766ee8b27d268d2b630e86415c97c5552de0575cdd37f4210075255
-  languageName: node
-  linkType: hard
-
-"@webb-tools/tangle-substrate-types@npm:0.5.12":
-  version: 0.5.12
-  resolution: "@webb-tools/tangle-substrate-types@npm:0.5.12"
-  dependencies:
-    "@babel/cli": "npm:^7.23.9"
-    "@babel/core": "npm:^7.24.0"
-    "@babel/plugin-proposal-nullish-coalescing-operator": "npm:^7.18.6"
-    "@babel/plugin-proposal-numeric-separator": "npm:^7.18.6"
-    "@babel/plugin-proposal-optional-chaining": "npm:^7.20.7"
-    "@babel/plugin-syntax-bigint": "npm:^7.8.3"
-    "@babel/plugin-syntax-dynamic-import": "npm:^7.8.3"
-    "@babel/plugin-syntax-import-assertions": "npm:^7.23.3"
-    "@babel/plugin-syntax-import-meta": "npm:^7.10.4"
-    "@babel/plugin-syntax-top-level-await": "npm:^7.14.5"
-    "@babel/plugin-transform-regenerator": "npm:^7.23.3"
-    "@babel/plugin-transform-runtime": "npm:^7.24.0"
-    "@babel/preset-env": "npm:^7.24.0"
-    "@babel/preset-react": "npm:^7.23.3"
-    "@babel/preset-typescript": "npm:^7.23.3"
-    "@babel/register": "npm:^7.23.7"
-    "@babel/runtime": "npm:^7.24.0"
-    "@open-web3/orml-types": "npm:^2.0.1"
-    "@polkadot/api": "npm:^11.0.2"
-    "@polkadot/dev": "npm:^0.78.11"
-    "@polkadot/typegen": "npm:^11.0.2"
-    "@polkadot/types": "npm:^11.0.2"
-    babel-jest: "npm:^29.7.0"
-    babel-plugin-module-extension-resolver: "npm:^1.0.0"
-    babel-plugin-module-resolver: "npm:^5.0.0"
-    babel-plugin-styled-components: "npm:^2.1.4"
-    ecpair: "npm:^2.1.0"
-    elliptic: "npm:^6.5.5"
-    fs-extra: "npm:^11.2.0"
-    glob2base: "npm:^0.0.12"
-    minimatch: "npm:^9.0.3"
-    mkdirp: "npm:^3.0.1"
-    tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/03521ed872493700c3d6145da1c5895fb0107400e8f5160d874e29c42122acfc4c2b9b1f4a496cab86aa0ecbb483de124781dd4a8d82bd2e32ead9a8be533235
   languageName: node
   linkType: hard
 
@@ -44708,7 +44688,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.5.0, tslib@npm:^2.5.2, tslib@npm:^2.6.1, tslib@npm:^2.6.2, tslib@npm:^2.6.3":
+"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.5.0, tslib@npm:^2.5.2, tslib@npm:^2.6.1, tslib@npm:^2.6.2, tslib@npm:^2.6.3, tslib@npm:^2.7.0":
   version: 2.7.0
   resolution: "tslib@npm:2.7.0"
   checksum: 10c0/469e1d5bf1af585742128827000711efa61010b699cb040ab1800bcd3ccdd37f63ec30642c9e07c4439c1db6e46345582614275daca3e0f4abae29b0083f04a6
@@ -46819,7 +46799,7 @@ __metadata:
     "@webb-tools/proposals": "npm:^1.0.11"
     "@webb-tools/sdk-core": "npm:0.1.4-127"
     "@webb-tools/tangle-restaking-types": "npm:^0.1.0"
-    "@webb-tools/tangle-substrate-types": "npm:0.5.12"
+    "@webb-tools/tangle-substrate-types": "npm:^0.9.0"
     "@webb-tools/test-utils": "npm:0.1.8"
     "@webb-tools/tokens": "npm:1.0.11"
     "@webb-tools/utils": "npm:1.0.11"
