@@ -4,7 +4,6 @@ import {
   TanglePrimitivesTimeUnit,
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
-import { HexString } from '@polkadot/util/types';
 import {
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
@@ -34,12 +33,6 @@ export enum LsProtocolId {
   TANGLE_LOCAL,
 }
 
-export type LsLiquifierProtocolId =
-  | LsProtocolId.CHAINLINK
-  | LsProtocolId.THE_GRAPH
-  | LsProtocolId.LIVEPEER
-  | LsProtocolId.POLYGON;
-
 export type LsParachainChainId =
   | LsProtocolId.POLKADOT
   | LsProtocolId.PHALA
@@ -60,17 +53,7 @@ export enum LsToken {
   PHALA = 'PHALA',
   TNT = 'TNT',
   TTNT = 'tTNT',
-  LINK = 'LINK',
-  GRT = 'GRT',
-  LPT = 'LPT',
-  POL = 'POL',
 }
-
-export type LsLiquifierProtocolToken =
-  | LsToken.LINK
-  | LsToken.GRT
-  | LsToken.LPT
-  | LsToken.POL;
 
 export type LsParachainToken =
   | LsToken.DOT
@@ -122,20 +105,7 @@ export interface LsParachainChainDef<T extends ProtocolEntity = ProtocolEntity>
   adapter: LsNetworkEntityAdapter<T>;
 }
 
-export interface LsLiquifierProtocolDef extends ProtocolDefCommon {
-  networkId: LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER;
-  id: LsLiquifierProtocolId;
-  token: LsLiquifierProtocolToken;
-  erc20TokenAddress: HexString;
-  liquifierContractAddress: HexString;
-  tgTokenContractAddress: HexString;
-  unlocksContractAddress: HexString;
-}
-
-export type LsProtocolDef =
-  | LsParachainChainDef
-  | LsLiquifierProtocolDef
-  | LsTangleNetworkDef;
+export type LsProtocolDef = LsParachainChainDef | LsTangleNetworkDef;
 
 export type LsCardSearchParams = {
   amount: BN;

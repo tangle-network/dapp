@@ -32,12 +32,8 @@ import {
   ParachainCurrency,
 } from '../../../constants/liquidStaking/types';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useLiquifierNftUnlocks, {
-  LiquifierUnlockNftMetadata,
-} from '../../../data/liquifier/useLiquifierNftUnlocks';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import addCommasToNumber from '../../../utils/addCommasToNumber';
-import isLiquifierProtocolId from '../../../utils/liquidStaking/isLiquifierProtocolId';
 import isLsParachainChainId from '../../../utils/liquidStaking/isLsParachainChainId';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
 import GlassCard from '../../GlassCard';
@@ -48,7 +44,6 @@ import TableRowsSkeleton from '../TableRowsSkeleton';
 import RebondLstUnstakeRequestButton from './RebondLstUnstakeRequestButton';
 import useLstUnlockRequestTableRows from './useLstUnlockRequestTableRows';
 import WithdrawLstUnstakeRequestButton from './WithdrawLstUnstakeRequestButton';
-import WithdrawUnlockNftButton from './WithdrawUnlockNftButton';
 
 export type BaseUnstakeRequest = {
   unlockId: number;
@@ -75,9 +70,7 @@ export type ParachainUnstakeRequest = BaseUnstakeRequest & {
   progress?: LsParachainSimpleTimeUnit;
 };
 
-type UnstakeRequestTableRow =
-  | LiquifierUnlockNftMetadata
-  | ParachainUnstakeRequest;
+type UnstakeRequestTableRow = ParachainUnstakeRequest;
 
 const COLUMN_HELPER = createColumnHelper<UnstakeRequestTableRow>();
 
@@ -165,15 +158,7 @@ const COLUMNS = [
 const UnstakeRequestsTable: FC = () => {
   const { selectedProtocolId } = useLsStore();
   const activeAccountAddress = useActiveAccountAddress();
-  const parachainRows = useLstUnlockRequestTableRows();
-  const liquifierRows = useLiquifierNftUnlocks();
-
-  // Select the table rows based on whether the selected protocol
-  // is an EVM-based chain (liquifier contract) or a parachain-based
-  // Substrate chain.
-  const rows = isLiquifierProtocolId(selectedProtocolId)
-    ? liquifierRows
-    : parachainRows;
+  const rows = useLstUnlockRequestTableRows();
 
   const tableOptions = useMemo<TableOptions<UnstakeRequestTableRow>>(
     () => ({
@@ -288,16 +273,6 @@ const UnstakeRequestsTable: FC = () => {
     });
   }, [selectedRows]);
 
-  const nftUnlockIds = useMemo<number[]>(() => {
-    return selectedRows.flatMap((row) => {
-      if (row.original.type !== 'liquifierUnlockNft') {
-        return [];
-      }
-
-      return [row.original.unlockId];
-    });
-  }, [selectedRows]);
-
   const isDataState =
     rows !== null && rows.length > 0 && activeAccountAddress !== null;
 
@@ -321,18 +296,12 @@ const UnstakeRequestsTable: FC = () => {
             )}
 
             {/* TODO: Assert that the id is either parachain or liquifier, if it isn't then we might need to hide this unstake requests table and show a specific one for Tangle networks (LS pools). */}
-            {isLsParachainChainId(selectedProtocolId) ? (
+            {isLsParachainChainId(selectedProtocolId) && (
               <WithdrawLstUnstakeRequestButton
                 canWithdraw={canWithdrawAllSelected}
                 currenciesAndUnlockIds={parachainCurrenciesAndUnlockIds}
               />
-            ) : isLiquifierProtocolId(selectedProtocolId) ? (
-              <WithdrawUnlockNftButton
-                tokenId={selectedProtocolId}
-                canWithdraw={canWithdrawAllSelected}
-                unlockIds={nftUnlockIds}
-              />
-            ) : undefined}
+            )}
           </div>
         )}
       </GlassCard>

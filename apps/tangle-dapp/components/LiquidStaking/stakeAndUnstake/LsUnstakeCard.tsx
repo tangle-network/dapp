@@ -22,7 +22,6 @@ import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useLiquifierUnlock from '../../../data/liquifier/useLiquifierUnlock';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
@@ -66,8 +65,6 @@ const LsUnstakeCard: FC = () => {
 
   const { execute: executeTangleUnbondTx, status: tangleUnbondTxStatus } =
     useLsPoolUnbondTx();
-
-  const performLiquifierUnlock = useLiquifierUnlock();
 
   const { minSpendable, maxSpendable } = useLsSpendingLimits(
     false,
@@ -113,13 +110,6 @@ const LsUnstakeCard: FC = () => {
         currency: selectedProtocol.currency,
       });
     } else if (
-      selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
-      performLiquifierUnlock !== null
-    ) {
-      return performLiquifierUnlock(selectedProtocol.id, fromAmount);
-    }
-
-    if (
       isTangleNetwork &&
       executeTangleUnbondTx !== null &&
       selectedPoolId !== null
@@ -134,7 +124,6 @@ const LsUnstakeCard: FC = () => {
     executeTangleUnbondTx,
     fromAmount,
     isTangleNetwork,
-    performLiquifierUnlock,
     selectedPoolId,
     selectedProtocol,
   ]);
@@ -181,8 +170,6 @@ const LsUnstakeCard: FC = () => {
   const canCallUnstake =
     (selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
       executeParachainRedeemTx !== null) ||
-    (selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
-      performLiquifierUnlock !== null) ||
     (isTangleNetwork &&
       executeTangleUnbondTx !== null &&
       selectedPoolId !== null);

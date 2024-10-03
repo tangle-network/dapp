@@ -12,8 +12,6 @@ import TANGLE_TESTNET from '../../data/liquidStaking/adapters/tangleTestnet';
 import THE_GRAPH from '../../data/liquidStaking/adapters/theGraph';
 import { IS_PRODUCTION_ENV } from '../env';
 import {
-  LsLiquifierProtocolDef,
-  LsLiquifierProtocolId,
   LsNetwork,
   LsNetworkId,
   LsParachainChainDef,
@@ -40,36 +38,20 @@ export const LS_PARACHAIN_CHAIN_MAP: Record<
   [LsProtocolId.MANTA]: MANTA,
 } as Record<LsParachainChainId, LsParachainChainDef>;
 
-export const LS_LIQUIFIER_PROTOCOL_MAP: Record<
-  LsLiquifierProtocolId,
-  LsLiquifierProtocolDef
-> = {
-  [LsProtocolId.CHAINLINK]: CHAINLINK,
-  [LsProtocolId.THE_GRAPH]: THE_GRAPH,
-  [LsProtocolId.LIVEPEER]: LIVEPEER,
-  [LsProtocolId.POLYGON]: POLYGON,
-};
-
 export const LS_PROTOCOLS: LsProtocolDef[] = [
   ...Object.values(LS_PARACHAIN_CHAIN_MAP),
-  ...Object.values(LS_LIQUIFIER_PROTOCOL_MAP),
   TANGLE_MAINNET,
   TANGLE_TESTNET,
   TANGLE_LOCAL,
 ];
 
-export const LS_LIQUIFIER_PROTOCOL_IDS = [
-  LsProtocolId.CHAINLINK,
-  LsProtocolId.THE_GRAPH,
-  LsProtocolId.LIVEPEER,
-  LsProtocolId.POLYGON,
-] as const satisfies LsLiquifierProtocolId[];
-
-export const LS_PARACHAIN_CHAIN_IDS = Object.values(LsProtocolId).filter(
-  (value): value is LsParachainChainId =>
-    typeof value !== 'string' &&
-    !LS_LIQUIFIER_PROTOCOL_IDS.includes(value as LsLiquifierProtocolId),
-) satisfies LsParachainChainId[];
+export const LS_PARACHAIN_PROTOCOL_IDS = [
+  LsProtocolId.ASTAR,
+  LsProtocolId.PHALA,
+  LsProtocolId.MANTA,
+  LsProtocolId.MOONBEAM,
+  LsProtocolId.POLKADOT,
+] as const satisfies LsParachainChainId[];
 
 export const LS_PARACHAIN_TOKENS = [
   LsToken.DOT,

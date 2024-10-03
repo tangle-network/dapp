@@ -1,4 +1,4 @@
-import { LS_PARACHAIN_CHAIN_IDS } from '../../constants/liquidStaking/constants';
+import { LS_PARACHAIN_PROTOCOL_IDS } from '../../constants/liquidStaking/constants';
 import {
   LsParachainChainId,
   LsProtocolId,
@@ -7,7 +7,7 @@ import {
 function isLsParachainChainId(
   protocolId: LsProtocolId,
 ): protocolId is LsParachainChainId {
-  return LS_PARACHAIN_CHAIN_IDS.includes(protocolId as LsParachainChainId);
+  return LS_PARACHAIN_PROTOCOL_IDS.includes(protocolId as LsParachainChainId);
 }
 
 export default isLsParachainChainId;

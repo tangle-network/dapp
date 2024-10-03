@@ -33,7 +33,7 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
   onClick,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
-  const { balance, isRefreshing } = useLsAgnosticBalance(isNative);
+  const balance = useLsAgnosticBalance(isNative);
   const { selectedProtocolId } = useLsStore();
   const protocol = getLsProtocolDef(selectedProtocolId);
 
@@ -85,7 +85,6 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
       className={twMerge(
         'group flex gap-1 items-center justify-center',
         isClickable && 'cursor-pointer',
-        isRefreshing && 'animate-pulse',
       )}
     >
       {isHovering && isClickable ? (

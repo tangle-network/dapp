@@ -29,7 +29,6 @@ import useLsExchangeRate, {
 } from '../../../data/liquidStaking/useLsExchangeRate';
 import useLsPoolMembers from '../../../data/liquidStaking/useLsPoolMembers';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useLiquifierDeposit from '../../../data/liquifier/useLiquifierDeposit';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamState from '../../../hooks/useSearchParamState';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
@@ -67,7 +66,6 @@ const LsStakeCard: FC = () => {
   const { execute: executeParachainMintTx, status: parachainMintTxStatus } =
     useMintTx();
 
-  const performLiquifierDeposit = useLiquifierDeposit();
   const activeAccountAddress = useActiveAccountAddress();
 
   const { maxSpendable, minSpendable } = useLsSpendingLimits(
@@ -140,11 +138,6 @@ const LsStakeCard: FC = () => {
         currency: selectedProtocol.currency,
       });
     } else if (
-      selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
-      performLiquifierDeposit !== null
-    ) {
-      await performLiquifierDeposit(selectedProtocol.id, fromAmount);
-    } else if (
       isTangleNetwork &&
       executeTanglePoolJoinTx !== null &&
       selectedPoolId !== null
@@ -159,7 +152,6 @@ const LsStakeCard: FC = () => {
     executeTanglePoolJoinTx,
     fromAmount,
     isTangleNetwork,
-    performLiquifierDeposit,
     selectedProtocol,
     selectedPoolId,
   ]);
@@ -184,8 +176,6 @@ const LsStakeCard: FC = () => {
     (fromAmount !== null &&
       selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
       executeParachainMintTx !== null) ||
-    (selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
-      performLiquifierDeposit !== null) ||
     (isTangleNetwork &&
       executeTanglePoolJoinTx !== null &&
       selectedPoolId !== null);

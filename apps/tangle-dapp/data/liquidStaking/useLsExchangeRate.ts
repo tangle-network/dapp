@@ -12,8 +12,8 @@ import {
 import useApiRx from '../../hooks/useApiRx';
 import calculateBnRatio from '../../utils/calculateBnRatio';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
-import useContractRead from '../liquifier/useContractRead';
-import { ContractReadOptions } from '../liquifier/useContractReadOnce';
+import useContractRead from '../evm/useContractRead';
+import { ContractReadOptions } from '../evm/useContractReadOnce';
 import { useLsStore } from './useLsStore';
 import usePolling from './usePolling';
 
