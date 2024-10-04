@@ -1,32 +1,31 @@
 'use client';
 
-import { useState, useCallback, useMemo, FC } from 'react';
+import { BN } from '@polkadot/util';
 import {
-  useReactTable,
+  createColumnHelper,
   getCoreRowModel,
   getExpandedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
   Row,
-  createColumnHelper,
+  SortingState,
+  useReactTable,
 } from '@tanstack/react-table';
-import { Table } from '../../../../libs/webb-ui-components/src/components/Table';
-import { Typography } from '../../../../libs/webb-ui-components/src/typography';
+import { ChevronUp } from '@webb-tools/icons';
+import { Button, Table, Typography } from '@webb-tools/webb-ui-components';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import LsPoolsTable from './LsPoolsTable';
-import TableCellWrapper from '../../components/tables/TableCellWrapper';
+
 import LsTokenIcon from '../../components/LsTokenIcon';
 import StatItem from '../../components/StatItem';
-import { Button } from '@webb-tools/webb-ui-components';
-import { ChevronUp } from '@webb-tools/icons';
+import TableCellWrapper from '../../components/tables/TableCellWrapper';
 import { LsPool, LsToken } from '../../constants/liquidStaking/types';
-import pluralize from '../../utils/pluralize';
 import useLsPools from '../../data/liquidStaking/useLsPools';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
-import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
-import { BN } from '@polkadot/util';
 import formatBn from '../../utils/formatBn';
+import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
+import pluralize from '../../utils/pluralize';
+import LsPoolsTable from './LsPoolsTable';
 
 export type LsProtocolRow = {
   name: string;

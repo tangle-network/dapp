@@ -1,33 +1,34 @@
 'use client';
 
-import { useState, useMemo, FC } from 'react';
 import {
-  useReactTable,
+  createColumnHelper,
   getCoreRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   SortingState,
-  getPaginationRowModel,
-  createColumnHelper,
+  useReactTable,
 } from '@tanstack/react-table';
-import { Table } from '../../../../libs/webb-ui-components/src/components/Table';
-import { Pagination } from '../../../../libs/webb-ui-components/src/components/Pagination';
-import { twMerge } from 'tailwind-merge';
-import { LsPool, LsPoolDisplayName } from '../../constants/liquidStaking/types';
+import { ArrowRight } from '@webb-tools/icons';
 import {
   Avatar,
   AvatarGroup,
   Button,
+  Pagination,
+  Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
-import pluralize from '../../utils/pluralize';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
-import { ArrowRight } from '@webb-tools/icons';
-import { useLsStore } from '../../data/liquidStaking/useLsStore';
-import PercentageCell from '../../components/tableCells/PercentageCell';
+import { FC, useMemo, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
+
 import { TableStatus } from '../../components';
+import PercentageCell from '../../components/tableCells/PercentageCell';
+import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../../components/tables/shared';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
+import { LsPool, LsPoolDisplayName } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
+import { useLsStore } from '../../data/liquidStaking/useLsStore';
+import pluralize from '../../utils/pluralize';
 
 export type LsPoolsTableProps = {
   pools: LsPool[];

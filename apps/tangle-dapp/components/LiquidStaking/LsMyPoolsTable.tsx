@@ -1,42 +1,43 @@
 'use client';
 
-import { useState, useMemo, FC } from 'react';
+import { BN } from '@polkadot/util';
 import {
-  useReactTable,
+  createColumnHelper,
   getCoreRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   SortingState,
-  getPaginationRowModel,
-  createColumnHelper,
+  useReactTable,
 } from '@tanstack/react-table';
-import { Table } from '../../../../libs/webb-ui-components/src/components/Table';
+import { AddCircleLineIcon, SubtractCircleLineIcon } from '@webb-tools/icons';
+import {
+  ActionsDropdown,
+  Avatar,
+  AvatarGroup,
+  Table,
+  TANGLE_DOCS_LIQUID_STAKING_URL,
+  Typography,
+} from '@webb-tools/webb-ui-components';
+import { ActionItemType } from '@webb-tools/webb-ui-components/components/ActionsDropdown/types';
+import assert from 'assert';
+import { FC, useMemo, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
+
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import {
   LsPool,
   LsPoolDisplayName,
   LsProtocolId,
 } from '../../constants/liquidStaking/types';
-import {
-  ActionsDropdown,
-  Avatar,
-  AvatarGroup,
-  TANGLE_DOCS_LIQUID_STAKING_URL,
-  Typography,
-} from '@webb-tools/webb-ui-components';
-import TokenAmountCell from '../tableCells/TokenAmountCell';
-import { AddCircleLineIcon, SubtractCircleLineIcon } from '@webb-tools/icons';
-import { BN } from '@polkadot/util';
-import assert from 'assert';
-import { TableStatus } from '..';
-import PercentageCell from '../tableCells/PercentageCell';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
-import { ActionItemType } from '@webb-tools/webb-ui-components/components/ActionsDropdown/types';
-import { useLsStore } from '../../data/liquidStaking/useLsStore';
-import BlueIconButton from '../BlueIconButton';
-import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import { twMerge } from 'tailwind-merge';
-import pluralize from '../../utils/pluralize';
-import { sharedTableStatusClxs } from '../tables/shared';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
+import { useLsStore } from '../../data/liquidStaking/useLsStore';
+import useIsAccountConnected from '../../hooks/useIsAccountConnected';
+import pluralize from '../../utils/pluralize';
+import { TableStatus } from '..';
+import BlueIconButton from '../BlueIconButton';
+import PercentageCell from '../tableCells/PercentageCell';
+import TokenAmountCell from '../tableCells/TokenAmountCell';
+import { sharedTableStatusClxs } from '../tables/shared';
 
 export type LsMyPoolRow = LsPool & {
   myStake: BN;

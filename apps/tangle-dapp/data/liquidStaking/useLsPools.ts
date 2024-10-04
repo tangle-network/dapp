@@ -66,9 +66,9 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
       const apyPercentage =
         apyEntry === undefined ? undefined : Number(apyEntry.toFixed(2));
 
-      const membersKeyValuePairs = poolMembers.map(
-        ([, address, account]) => [address, account] as const,
-      );
+      const membersKeyValuePairs = poolMembers
+        .filter(([memberPoolId]) => memberPoolId === poolId)
+        .map(([, address, account]) => [address, account] as const);
 
       const membersMap = new Map(membersKeyValuePairs);
       const name = u8aToString(tanglePool.metadata.name);
