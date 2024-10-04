@@ -146,7 +146,6 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
   if (pools.length === 0) {
     return (
       <TableStatus
-        className="bg-transparent dark:bg-transparent border-none"
         title="No pools available yet"
         description="Looks like there are currently no liquid staking pools available for this protocol. Try creating your own pool to get started!"
         icon="🔍"

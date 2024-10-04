@@ -18,18 +18,23 @@ import LsPoolsTable from './LsPoolsTable';
 import TableCellWrapper from '../../components/tables/TableCellWrapper';
 import LsTokenIcon from '../../components/LsTokenIcon';
 import StatItem from '../../components/StatItem';
-import { Button, getRoundedAmountString } from '@webb-tools/webb-ui-components';
+import { Button } from '@webb-tools/webb-ui-components';
 import { ChevronUp } from '@webb-tools/icons';
-import { LsPool } from '../../constants/liquidStaking/types';
+import { LsPool, LsToken } from '../../constants/liquidStaking/types';
 import pluralize from '../../utils/pluralize';
 import useLsPools from '../../data/liquidStaking/useLsPools';
+import { useLsStore } from '../../data/liquidStaking/useLsStore';
+import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
+import { BN } from '@polkadot/util';
+import formatBn from '../../utils/formatBn';
 
 export type LsProtocolRow = {
   name: string;
-  tvl: number;
+  tvl: BN;
   tvlInUsd: number;
-  iconName: string;
+  token: LsToken;
   pools: LsPool[];
+  decimals: number;
 };
 
 const COLUMN_HELPER = createColumnHelper<LsProtocolRow>();
@@ -40,7 +45,7 @@ const PROTOCOL_COLUMNS = [
     cell: (props) => (
       <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-2">
-          <LsTokenIcon name={props.row.original.iconName} size="lg" />
+          <LsTokenIcon name={props.row.original.token} size="lg" />
 
           <Typography variant="h5" className="whitespace-nowrap">
             {props.getValue()}
@@ -56,15 +61,22 @@ const PROTOCOL_COLUMNS = [
   }),
   COLUMN_HELPER.accessor('tvl', {
     header: () => 'Total Staked (TVL)',
-    cell: (props) => (
-      <TableCellWrapper>
-        <StatItem
-          title={`${getRoundedAmountString(props.getValue())} UNIT HERE`}
-          subtitle={`$${props.row.original.tvlInUsd}`}
-          removeBorder
-        />
-      </TableCellWrapper>
-    ),
+    cell: (props) => {
+      const formattedTvl = formatBn(
+        props.getValue(),
+        props.row.original.decimals,
+      );
+
+      return (
+        <TableCellWrapper>
+          <StatItem
+            title={`${formattedTvl} ${props.row.original.token}`}
+            subtitle={`$${props.row.original.tvlInUsd}`}
+            removeBorder
+          />
+        </TableCellWrapper>
+      );
+    },
   }),
   COLUMN_HELPER.accessor('pools', {
     header: () => 'Pools',
@@ -108,6 +120,9 @@ const PROTOCOL_COLUMNS = [
 // TODO: Have the first row be expanded by default.
 const LsProtocolsTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const { lsNetworkId } = useLsStore();
+
+  const lsNetwork = getLsNetwork(lsNetworkId);
 
   const getExpandedRowContent = useCallback(
     (row: Row<LsProtocolRow>) => (
@@ -127,18 +142,24 @@ const LsProtocolsTable: FC = () => {
   }, [lsPools]);
 
   // TODO: Dummy data. Need to load actual protocol data or list it if it's hardcoded/limited to a few.
-  const protocols: LsProtocolRow[] = [
-    {
-      iconName: 'tangle',
-      name: 'Tangle',
-      pools: pools,
-      tvl: 123.4567,
-      tvlInUsd: 123.3456,
-    },
-  ];
+  const rows = useMemo<LsProtocolRow[]>(() => {
+    return lsNetwork.protocols.map(
+      (lsProtocol) =>
+        ({
+          name: lsProtocol.name,
+          // TODO: Reduce the TVL of the pools associated with this protocol.
+          tvl: new BN(485348583485348),
+          token: lsProtocol.token,
+          pools: pools,
+          // TODO: Calculate the USD value of the TVL.
+          tvlInUsd: 123.3456,
+          decimals: lsProtocol.decimals,
+        }) satisfies LsProtocolRow,
+    );
+  }, [lsNetwork.protocols, pools]);
 
   const table = useReactTable({
-    data: protocols,
+    data: rows,
     columns: PROTOCOL_COLUMNS,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),

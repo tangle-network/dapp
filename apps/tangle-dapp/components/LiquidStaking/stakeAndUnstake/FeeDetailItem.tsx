@@ -52,7 +52,7 @@ const FeeDetailItem: FC<FeeDetailItemProps> = ({
   const feeTitle =
     typeof feePercentage !== 'number'
       ? 'Fee'
-      : `Fee (${formatPercentage(feePercentage * 100)}%)`;
+      : `Fee (${formatPercentage(feePercentage * 100)})`;
 
   return <DetailItem title={feeTitle} value={formattedFeeAmount} />;
 };
