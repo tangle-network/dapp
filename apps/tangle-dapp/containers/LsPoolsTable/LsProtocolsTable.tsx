@@ -135,7 +135,7 @@ const LsProtocolsTable: FC<LsProtocolsTableProps> = ({
     }
 
     return Array.from(lsPools.values());
-  }, []);
+  }, [lsPools]);
 
   // TODO: Dummy data. Need to load actual protocol data or list it if it's hardcoded/limited to a few.
   const protocols: LsProtocolRow[] = [

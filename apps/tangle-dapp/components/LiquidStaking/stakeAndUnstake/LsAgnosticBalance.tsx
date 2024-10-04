@@ -12,7 +12,7 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
-import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
+import useLsActivePoolDisplayName from '../../../data/liquidStaking/useLsActivePoolDisplayName';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
@@ -34,6 +34,7 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
   const [isHovering, setIsHovering] = useState(false);
   const balance = useLsAgnosticBalance(isNative);
   const { lsProtocolId } = useLsStore();
+  const lsActivePoolDisplayName = useLsActivePoolDisplayName();
   const protocol = getLsProtocolDef(lsProtocolId);
 
   const formattedBalance = useMemo(() => {
@@ -50,10 +51,16 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
       includeCommas: true,
     });
 
-    const derivativePrefix = isNative ? '' : LS_DERIVATIVE_TOKEN_PREFIX;
+    const unit = isNative ? protocol.token : lsActivePoolDisplayName;
 
-    return `${formattedBalance} ${derivativePrefix}${protocol.token}`;
-  }, [balance, protocol.decimals, isNative, protocol.token]);
+    return `${formattedBalance} ${unit}`;
+  }, [
+    balance,
+    protocol.decimals,
+    protocol.token,
+    isNative,
+    lsActivePoolDisplayName,
+  ]);
 
   const isClickable =
     onlyShowTooltipWhenBalanceIsSet &&

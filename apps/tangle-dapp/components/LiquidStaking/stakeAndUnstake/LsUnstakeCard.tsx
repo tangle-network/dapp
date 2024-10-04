@@ -10,6 +10,7 @@ import { Button } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
   LsNetworkId,
   LsProtocolId,
@@ -36,7 +37,6 @@ import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 
 const LsUnstakeCard: FC = () => {
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
@@ -142,7 +142,7 @@ const LsUnstakeCard: FC = () => {
 
   const handleTokenSelect = useCallback(() => {
     setIsSelectTokenModalOpen(false);
-  }, []);
+  }, [setIsSelectTokenModalOpen]);
 
   const selectTokenModalOptions = useMemo(() => {
     // TODO: Dummy data.
@@ -195,7 +195,6 @@ const LsUnstakeCard: FC = () => {
         maxAmount={maxSpendable ?? undefined}
         maxErrorMessage="Not enough stake to redeem"
         onTokenClick={() => setIsSelectTokenModalOpen(true)}
-        showPoolIndicator={false}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
@@ -209,6 +208,7 @@ const LsUnstakeCard: FC = () => {
         token={selectedProtocol.token}
         isReadOnly
         className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
+        showPoolIndicator={false}
       />
 
       {/* Details */}

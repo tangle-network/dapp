@@ -16,6 +16,7 @@ import {
 import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { z } from 'zod';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
   LsNetworkId,
   LsProtocolId,
@@ -43,7 +44,6 @@ import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 
 const LsStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useSearchParamState<BN | null>({

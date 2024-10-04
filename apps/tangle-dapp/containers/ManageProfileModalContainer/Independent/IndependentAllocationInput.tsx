@@ -51,10 +51,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
   // TODO: This is misleading, because it defaults to `false` when `servicesWithJobs` is still loading. It needs to default to `null` and have its loading state handled appropriately.
   const hasActiveJob = false;
 
-  const substrateAllocationAmount = useMemo(() => {
-    return null;
-  }, []);
-
+  const substrateAllocationAmount = null;
   const min = substrateAllocationAmount;
 
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);

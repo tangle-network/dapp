@@ -2,7 +2,7 @@ import { LsPoolDisplayName } from '../../constants/liquidStaking/types';
 import useLsPoolsMetadata from './useLsPoolsMetadata';
 import { useLsStore } from './useLsStore';
 
-const useSelectedPoolDisplayName = (): LsPoolDisplayName | null => {
+const useLsActivePoolDisplayName = (): LsPoolDisplayName | null => {
   const { lsPoolId } = useLsStore();
   const lsPoolsMetadata = useLsPoolsMetadata();
 
@@ -15,4 +15,4 @@ const useSelectedPoolDisplayName = (): LsPoolDisplayName | null => {
   return `${name}#${lsPoolId}`;
 };
 
-export default useSelectedPoolDisplayName;
+export default useLsActivePoolDisplayName;

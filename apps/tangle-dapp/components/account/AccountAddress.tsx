@@ -63,7 +63,7 @@ const AccountAddress: FC = () => {
   // Switch between EVM & Substrate addresses.
   const handleAddressTypeToggle = useCallback(() => {
     setIsDisplayingEvmAddress((previous) => !previous);
-  }, []);
+  }, [setIsDisplayingEvmAddress]);
 
   const iconFillColorClass = 'dark:!fill-mono-80 !fill-mono-160';
 

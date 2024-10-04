@@ -158,4 +158,6 @@ const LsInput = forwardRef<HTMLInputElement, LsInputProps>(
   },
 );
 
+LsInput.displayName = 'LsInput';
+
 export default LsInput;

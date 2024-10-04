@@ -7,7 +7,7 @@ import useBalances from '../../../data/balances/useBalances';
 import useParachainBalances from '../../../data/liquidStaking/parachain/useParachainBalances';
 import useLsPoolBalance from '../../../data/liquidStaking/tangle/useLsPoolBalance';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
+import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 
 type BalanceUpdater = (
@@ -42,7 +42,6 @@ const createBalanceStateUpdater = (
 };
 
 const useLsAgnosticBalance = (isNative: boolean) => {
-  const activeAccountAddress = useActiveAccountAddress();
   const { nativeBalances, liquidBalances } = useParachainBalances();
   const { free: tangleFreeBalance } = useBalances();
   const { lsProtocolId, lsNetworkId } = useLsStore();
@@ -53,7 +52,7 @@ const useLsAgnosticBalance = (isNative: boolean) => {
   >(EMPTY_VALUE_PLACEHOLDER);
 
   const parachainBalances = isNative ? nativeBalances : liquidBalances;
-  const isAccountConnected = activeAccountAddress !== null;
+  const isAccountConnected = useIsAccountConnected();
   const protocol = getLsProtocolDef(lsProtocolId);
 
   // Reset balance to a placeholder when the active account is

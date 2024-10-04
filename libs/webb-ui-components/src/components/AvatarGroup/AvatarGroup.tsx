@@ -30,27 +30,22 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
       ) as AvatarChildElement[];
     }, [childrenProp]);
 
-    const totalAvatars = useMemo(
-      () => total || children.length,
-      [children.length, total],
-    );
-
-    const extraAvatars = useMemo(() => totalAvatars - max, [totalAvatars, max]);
-
-    const mergedClsx = useMemo(
-      () => twMerge('flex items-center space-x-1', className),
-      [className],
-    );
+    const totalAvatars = total || children.length;
+    const extraAvatars = totalAvatars - max;
 
     return (
-      <div {...props} className={mergedClsx} ref={ref}>
+      <div
+        {...props}
+        className={twMerge('flex items-center space-x-1', className)}
+        ref={ref}
+      >
         <div className="translate-x-1">
           {children.slice(0, max).map((child, index) => {
             return React.cloneElement(child, {
               key: index,
               ...child.props,
               size: 'md',
-              className: 'mx-[-4px] last:mx-0',
+              className: 'relative mx-[-4px] last:mx-0 hover:z-10',
             });
           })}
         </div>

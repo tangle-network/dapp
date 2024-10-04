@@ -16,7 +16,6 @@ import {
   ActionsDropdown,
   Avatar,
   AvatarGroup,
-  Button,
   ErrorFallback,
   TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
@@ -24,7 +23,7 @@ import {
 import TokenAmountCell from '../components/tableCells/TokenAmountCell';
 import pluralize from '../utils/pluralize';
 import {
-  ArrowRight,
+  AddCircleLineIcon,
   SubtractCircleLineIcon,
   TokenIcon,
 } from '@webb-tools/icons';
@@ -98,13 +97,25 @@ const LsMyPoolsTable: FC = () => {
           lsProtocolId: LsProtocolId.TANGLE_LOCAL,
         } satisfies MyLsPoolRow;
       });
-  }, []);
+  }, [lsPools, substrateAddress]);
 
   // TODO: Need to also switch network/protocol to the selected pool's network/protocol.
-  const handleUnstakeClick = useCallback((poolId: number) => {
-    setIsStaking(false);
-    setLsPoolId(poolId);
-  }, []);
+  const handleUnstakeClick = useCallback(
+    (poolId: number) => {
+      setIsStaking(false);
+      setLsPoolId(poolId);
+    },
+    [setIsStaking, setLsPoolId],
+  );
+
+  // TODO: Need to also switch network/protocol to the selected pool's network/protocol.
+  const handleIncreaseStakeClick = useCallback(
+    (poolId: number) => {
+      setIsStaking(true);
+      setLsPoolId(poolId);
+    },
+    [setIsStaking, setLsPoolId],
+  );
 
   const columns = [
     COLUMN_HELPER.accessor('id', {
@@ -124,7 +135,13 @@ const LsMyPoolsTable: FC = () => {
       cell: (props) => {
         const lsProtocol = getLsProtocolDef(props.getValue());
 
-        return <TokenIcon name={lsProtocol.chainIconFileName} />;
+        return (
+          <div className="flex items-center justify-start gap-2">
+            <TokenIcon size="lg" name={lsProtocol.token} />
+
+            {lsProtocol.name}
+          </div>
+        );
       },
     }),
     COLUMN_HELPER.accessor('ownerAddress', {
@@ -147,6 +164,8 @@ const LsMyPoolsTable: FC = () => {
             {props.row.original.validators.map((substrateAddress) => (
               <Avatar
                 key={substrateAddress}
+                // TODO: In the future, it'd be better if we show the identity of the validator, rather than just the address.
+                tooltip={substrateAddress}
                 sourceVariant="address"
                 value={substrateAddress}
                 theme="substrate"
@@ -211,35 +230,18 @@ const LsMyPoolsTable: FC = () => {
           assert(actionItems.length > 0);
         }
 
-        // If the user has any role in the pool, show the short button style
-        // to avoid taking up too much space.
-        const isShortButtonStyle = hasAnyRole;
-
-        // Disable the stake button if the pool is currently selected,
+        // Disable the unstake button if the pool is currently selected,
         // and the active intent is to unstake.
-        const isUnstakeDisabled =
+        const isUnstakeActionDisabled =
           lsPoolId === props.row.original.id && !isStaking;
 
-        return (
-          <div className="flex justify-end">
-            {isShortButtonStyle ? (
-              <BlueIconButton
-                isDisabled={isUnstakeDisabled}
-                onClick={() => handleUnstakeClick(props.row.original.id)}
-                tooltip="Unstake"
-                Icon={SubtractCircleLineIcon}
-              />
-            ) : (
-              <Button
-                isDisabled={isUnstakeDisabled}
-                onClick={() => handleUnstakeClick(props.row.original.id)}
-                rightIcon={<ArrowRight />}
-                variant="utility"
-              >
-                Unstake
-              </Button>
-            )}
+        // Disable the stake button if the pool is currently selected,
+        // and the active intent is to stake.
+        const isStakeActionDisabled =
+          lsPoolId === props.row.original.id && isStaking;
 
+        return (
+          <div className="flex justify-end gap-1">
             {/**
              * Show management actions if the active user has any role in
              * the pool.
@@ -247,6 +249,20 @@ const LsMyPoolsTable: FC = () => {
             {hasAnyRole && (
               <ActionsDropdown buttonText="Manage" actionItems={actionItems} />
             )}
+
+            <BlueIconButton
+              isDisabled={isUnstakeActionDisabled}
+              onClick={() => handleUnstakeClick(props.row.original.id)}
+              tooltip="Unstake"
+              Icon={SubtractCircleLineIcon}
+            />
+
+            <BlueIconButton
+              isDisabled={isStakeActionDisabled}
+              onClick={() => handleIncreaseStakeClick(props.row.original.id)}
+              tooltip="Increase Stake"
+              Icon={AddCircleLineIcon}
+            />
           </div>
         );
       },
@@ -284,7 +300,7 @@ const LsMyPoolsTable: FC = () => {
       />
     );
   } else if (lsPools === null) {
-    return <TableRowsSkeleton />;
+    return <TableRowsSkeleton className="h-[55px]" />;
   } else if (lsPools instanceof Error) {
     return (
       <ErrorFallback
@@ -292,7 +308,7 @@ const LsMyPoolsTable: FC = () => {
         description={[lsPools.message]}
       />
     );
-  } else if (lsPools.length === 0) {
+  } else if (rows.length === 0) {
     return (
       <TableStatus
         title="No active pools"

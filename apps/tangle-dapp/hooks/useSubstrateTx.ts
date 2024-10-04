@@ -174,7 +174,7 @@ function useSubstrateTx<Context = void>(
     setStatus(TxStatus.NOT_YET_INITIATED);
     setTxHash(null);
     setError(null);
-  }, []);
+  }, [setStatus, setTxHash, setError]);
 
   // Timeout the transaction if it's taking too long. This
   // won't cancel it, but it will alert the user that something
