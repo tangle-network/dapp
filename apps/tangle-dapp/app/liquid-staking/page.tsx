@@ -20,10 +20,9 @@ import { FC, useEffect } from 'react';
 import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeCard';
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
 import OnboardingItem from '../../components/OnboardingModal/OnboardingItem';
-import OnboardingModal, {
-  OnboardingPageKey,
-} from '../../components/OnboardingModal/OnboardingModal';
+import OnboardingModal from '../../components/OnboardingModal/OnboardingModal';
 import StatItem from '../../components/StatItem';
+import { OnboardingPageKey } from '../../constants';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
 import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
 import { LsProtocolsTable } from '../../containers/LsPoolsTable';
@@ -89,8 +88,9 @@ const LiquidStakingPage: FC = () => {
   return (
     <div>
       <OnboardingModal
+        title="Get Started with Liquid Staking"
         pageKey={OnboardingPageKey.LIQUID_STAKING}
-        linkHref={TANGLE_DOCS_LIQUID_STAKING_URL}
+        learnMoreHref={TANGLE_DOCS_LIQUID_STAKING_URL}
       >
         <OnboardingItem
           Icon={Search}
@@ -149,7 +149,7 @@ const LiquidStakingPage: FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-col self-center gap-4 w-full min-w-[450px] max-w-[600px]">
+        <div className="flex flex-col self-center gap-4 w-full min-w-[450px] max-w-[532px]">
           <TabsList className="w-full">
             <TabListItem
               isActive={isStaking}

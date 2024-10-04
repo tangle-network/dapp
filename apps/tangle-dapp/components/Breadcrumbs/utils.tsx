@@ -34,6 +34,7 @@ const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
 const BREADCRUMB_LABELS: Partial<Record<PagePath, string>> = {
   [PagePath.SERVICES]: 'Service Overview',
   [PagePath.CLAIM_AIRDROP]: 'Claim Airdrop',
+  [PagePath.LIQUID_STAKING]: 'Liquid Staking',
 };
 
 const isSubstrateAddress = (address: string): boolean => {

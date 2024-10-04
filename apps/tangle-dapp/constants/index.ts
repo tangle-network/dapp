@@ -105,3 +105,11 @@ export const EMPTY_VALUE_PLACEHOLDER = '—';
  * The default debounce delay in milliseconds.
  */
 export const DEFAULT_DEBOUNCE_DELAY = 500;
+
+export enum OnboardingPageKey {
+  BRIDGE,
+  LIQUID_STAKING,
+  RESTAKE,
+  BLUEPRINTS,
+  NOMINATE,
+}

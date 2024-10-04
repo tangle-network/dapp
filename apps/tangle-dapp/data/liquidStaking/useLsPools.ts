@@ -1,4 +1,4 @@
-import { BN_ZERO } from '@polkadot/util';
+import { BN_ZERO, u8aToString } from '@polkadot/util';
 import { useMemo } from 'react';
 
 import { LsPool } from '../../constants/liquidStaking/types';
@@ -10,17 +10,15 @@ import useLsPoolCompoundApys from './apy/useLsPoolCompoundApys';
 import useLsBondedPools from './useLsBondedPools';
 import useLsPoolMembers from './useLsPoolMembers';
 import useLsPoolNominations from './useLsPoolNominations';
-import useLsPoolsMetadata from './useLsPoolsMetadata';
 
 const useLsPools = (): Map<number, LsPool> | null | Error => {
   const networkFeatures = useNetworkFeatures();
   const poolNominations = useLsPoolNominations();
-  const isSupported = networkFeatures.includes(NetworkFeature.LsPools);
-
-  const metadatas = useLsPoolsMetadata();
   const bondedPools = useLsBondedPools();
   const poolMembers = useLsPoolMembers();
   const compoundApys = useLsPoolCompoundApys();
+
+  const isSupported = networkFeatures.includes(NetworkFeature.LsPools);
 
   const poolsMap = useMemo(() => {
     if (
@@ -28,17 +26,12 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
       poolNominations === null ||
       compoundApys === null ||
       poolMembers === null ||
-      metadatas === null ||
       !isSupported
     ) {
       return null;
     }
 
     const keyValuePairs = bondedPools.map(([poolId, tanglePool]) => {
-      const metadata = metadatas.get(poolId);
-
-      // TODO: `tanglePool.metadata.name` should be available based on the latest changes to Tangle. Need to regenerate the types. Might want to prefer that method vs. the metadata query.
-
       // Roles can be `None` if updated and removed.
       const ownerAddress = tanglePool.roles.root.isNone
         ? undefined
@@ -78,10 +71,11 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
       );
 
       const membersMap = new Map(membersKeyValuePairs);
+      const name = u8aToString(tanglePool.metadata.name);
 
       const pool: LsPool = {
         id: poolId,
-        metadata,
+        name,
         ownerAddress,
         nominatorAddress,
         bouncerAddress,
@@ -96,14 +90,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
     });
 
     return new Map(keyValuePairs);
-  }, [
-    bondedPools,
-    poolNominations,
-    compoundApys,
-    poolMembers,
-    metadatas,
-    isSupported,
-  ]);
+  }, [bondedPools, poolNominations, compoundApys, poolMembers, isSupported]);
 
   // In case that the user connects to testnet or mainnet, but the network
   // doesn't have the liquid staking pools feature.

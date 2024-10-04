@@ -12,12 +12,11 @@ import {
 import { Table } from '../../../../libs/webb-ui-components/src/components/Table';
 import { Pagination } from '../../../../libs/webb-ui-components/src/components/Pagination';
 import { twMerge } from 'tailwind-merge';
-import { LsPool } from '../../constants/liquidStaking/types';
+import { LsPool, LsPoolDisplayName } from '../../constants/liquidStaking/types';
 import {
   Avatar,
   AvatarGroup,
   Button,
-  TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
@@ -27,6 +26,7 @@ import { ArrowRight } from '@webb-tools/icons';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import PercentageCell from '../../components/tableCells/PercentageCell';
 import { TableStatus } from '../../components';
+import { sharedTableStatusClxs } from '../../components/tables/shared';
 
 export type LsPoolsTableProps = {
   pools: LsPool[];
@@ -62,7 +62,9 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
           fw="normal"
           className="text-mono-200 dark:text-mono-0"
         >
-          {props.row.original.metadata}#{props.getValue()}
+          {(
+            `${props.row.original.name}#${props.getValue()}` satisfies LsPoolDisplayName
+          ).toUpperCase()}
         </Typography>
       ),
     }),
@@ -146,14 +148,10 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
   if (pools.length === 0) {
     return (
       <TableStatus
+        className={sharedTableStatusClxs}
         title="No pools available yet"
         description="Looks like there are currently no liquid staking pools available for this protocol. Try creating your own pool to get started!"
         icon="🔍"
-        buttonText="Learn More"
-        buttonProps={{
-          href: TANGLE_DOCS_LIQUID_STAKING_URL,
-          target: '_blank',
-        }}
       />
     );
   }

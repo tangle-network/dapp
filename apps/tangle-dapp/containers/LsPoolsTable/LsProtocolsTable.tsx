@@ -45,7 +45,11 @@ const PROTOCOL_COLUMNS = [
     cell: (props) => (
       <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-2">
-          <LsTokenIcon name={props.row.original.token} size="lg" />
+          <LsTokenIcon
+            name={props.row.original.token}
+            hasRainbowBorder
+            size="lg"
+          />
 
           <Typography variant="h5" className="whitespace-nowrap">
             {props.getValue()}

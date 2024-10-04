@@ -43,6 +43,10 @@ module.exports = {
           'linear-gradient(180deg, rgba(255, 255, 255, 0.5) -428.82%, rgba(255, 255, 255, 0) 180.01%)',
         liquid_staking_tokens_table_dark:
           'linear-gradient(180deg, rgba(43, 47, 64, 0.5) -428.82%, rgba(43, 47, 64, 0) 180.01%)',
+        liquid_staking_input:
+          'linear-gradient(360deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.6) 100%)',
+        liquid_staking_input_dark:
+          'linear-gradient(180deg, rgba(43, 47, 64, 0.4) 0%, rgba(112, 122, 166, 0.04) 100%)',
       },
     },
   },

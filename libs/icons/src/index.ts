@@ -150,6 +150,7 @@ export * from './WaterDropletIcon';
 export { default as WebbLogoIcon } from './WebbLogoIcon';
 export * from './YouTubeFill';
 export * from './SubtractCircleLineIcon';
+export * from './ArrowDownIcon';
 
 // Wallet icons
 export * from './wallets';

@@ -41,7 +41,7 @@ const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({
         )}
       >
         1 {token} = {exchangeRateElement}{' '}
-        {lsActivePoolDisplayName ?? EMPTY_VALUE_PLACEHOLDER}
+        {lsActivePoolDisplayName?.toUpperCase() ?? EMPTY_VALUE_PLACEHOLDER}
       </div>
     );
 

@@ -27,7 +27,7 @@ const TokenChip: FC<TokenChipProps> = ({
       )}
     >
       {token && (
-        <LsTokenIcon hasTangleBorder={isDerivativeVariant} name={token} />
+        <LsTokenIcon hasRainbowBorder={isDerivativeVariant} name={token} />
       )}
 
       <Typography variant="h5" fw="bold">

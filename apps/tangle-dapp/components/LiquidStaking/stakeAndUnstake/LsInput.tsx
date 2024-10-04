@@ -107,7 +107,7 @@ const LsInput = forwardRef<HTMLInputElement, LsInputProps>(
       <>
         <div
           className={twMerge(
-            'flex flex-col gap-3 bg-mono-20 dark:bg-mono-180 p-3 rounded-lg border border-mono-40 dark:border-mono-160',
+            'flex flex-col gap-3 bg-liquid_staking_input dark:bg-liquid_staking_input_dark p-4 rounded-lg border border-transparent',
             isError && 'border-red-70 dark:border-red-50',
           )}
         >

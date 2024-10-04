@@ -1,6 +1,6 @@
 import { IconBase } from '@webb-tools/icons/types';
 import { Typography } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, JSX } from 'react';
 
 export type OnboardingItemProps = {
   Icon: (props: IconBase) => JSX.Element;

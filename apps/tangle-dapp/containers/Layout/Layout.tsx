@@ -17,6 +17,7 @@ import {
   Sidebar,
   SidebarMenu,
 } from '../../components';
+import OnboardingHelpButton from '../../components/OnboardingModal/OnboardingHelpButton';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import ApiDevStatsContainer from '../DebugMetricsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
@@ -61,7 +62,10 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
 
               <div className="flex items-center gap-2">
                 <WalletAndChainContainer />
+
                 <BridgeTxQueueDropdown />
+
+                <OnboardingHelpButton />
               </div>
             </div>
 

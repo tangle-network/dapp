@@ -3,7 +3,7 @@
 import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
 
-import { OnboardingPageKey } from '../components/OnboardingModal';
+import { OnboardingPageKey } from '../constants';
 import { Payout, TangleTokenSymbol } from '../types';
 import { BridgeQueueTxItem } from '../types/bridge';
 import {

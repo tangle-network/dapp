@@ -10,7 +10,11 @@ import {
   createColumnHelper,
 } from '@tanstack/react-table';
 import { Table } from '../../../../libs/webb-ui-components/src/components/Table';
-import { LsPool, LsProtocolId } from '../../constants/liquidStaking/types';
+import {
+  LsPool,
+  LsPoolDisplayName,
+  LsProtocolId,
+} from '../../constants/liquidStaking/types';
 import {
   ActionsDropdown,
   Avatar,
@@ -31,6 +35,7 @@ import BlueIconButton from '../BlueIconButton';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import { twMerge } from 'tailwind-merge';
 import pluralize from '../../utils/pluralize';
+import { sharedTableStatusClxs } from '../tables/shared';
 
 export type LsMyPoolRow = LsPool & {
   myStake: BN;
@@ -92,7 +97,9 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
           fw="normal"
           className="text-mono-200 dark:text-mono-0"
         >
-          {props.row.original.metadata}#{props.getValue()}
+          {(
+            `${props.row.original.name}#${props.getValue()}` satisfies LsPoolDisplayName
+          ).toUpperCase()}
         </Typography>
       ),
     }),
@@ -241,14 +248,10 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
   if (!isAccountConnected) {
     return (
       <TableStatus
+        className={sharedTableStatusClxs}
         title="Connect a wallet to continue"
         description="Once you've connected an account, you'll be able to see and manage your liquid staking pools here."
         icon="🔍"
-        buttonText="Learn More"
-        buttonProps={{
-          href: TANGLE_DOCS_LIQUID_STAKING_URL,
-          target: '_blank',
-        }}
       />
     );
   } else if (pools.length === 0) {

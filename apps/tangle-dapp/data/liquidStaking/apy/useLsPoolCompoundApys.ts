@@ -1,4 +1,3 @@
-import assert from 'assert';
 import Decimal from 'decimal.js';
 import { useCallback, useMemo } from 'react';
 
@@ -56,10 +55,9 @@ const useLsPoolCompoundApys = (): Map<number, Decimal> | null => {
       // use a counter, since some eras are skipped due to missing data.
       let actualErasConsidered = 0;
 
-      assert(
-        poolBondedAccountAddress !== undefined,
-        'Each pool id should always have a corresponding bonded account entry',
-      );
+      if (poolBondedAccountAddress === undefined) {
+        continue;
+      }
 
       // Calculate the avg. per-era return rate for the last max eras (history depth)
       // for the current pool.

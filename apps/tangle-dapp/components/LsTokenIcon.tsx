@@ -7,13 +7,13 @@ type LsTokenIconSize = 'md' | 'lg';
 interface LsTokenIconProps {
   name?: string;
   size?: LsTokenIconSize;
-  hasTangleBorder?: boolean;
+  hasRainbowBorder?: boolean;
 }
 
 const LsTokenIcon: FC<LsTokenIconProps> = ({
   name,
   size = 'md',
-  hasTangleBorder = true,
+  hasRainbowBorder = false,
 }) => {
   const { wrapperSizeClassName, iconSizeClassName, borderSize } =
     getSizeValues(size);
@@ -45,36 +45,38 @@ const LsTokenIcon: FC<LsTokenIconProps> = ({
         />
       )}
 
-      <svg
-        width={borderSize}
-        height={borderSize}
-        viewBox="0 0 25 26"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle
-          id="border"
-          cx="12.5"
-          cy="13"
-          r="11.875"
-          stroke="url(#paint0_linear_257_3557)"
-          strokeWidth="1.25"
-        />
+      {hasRainbowBorder && (
+        <svg
+          width={borderSize}
+          height={borderSize}
+          viewBox="0 0 25 26"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            id="border"
+            cx="12.5"
+            cy="13"
+            r="11.875"
+            stroke="url(#paint0_linear_257_3557)"
+            strokeWidth="1.25"
+          />
 
-        <defs>
-          <linearGradient
-            id="paint0_linear_257_3557"
-            x1="1.58333"
-            y1="23.6374"
-            x2="23.3337"
-            y2="1.88742"
-            gradientUnits="userSpaceOnUse"
-          >
-            <stop stopColor="#8E59FF" />
-            <stop offset="1" stopColor="#6888F9" />
-          </linearGradient>
-        </defs>
-      </svg>
+          <defs>
+            <linearGradient
+              id="paint0_linear_257_3557"
+              x1="1.58333"
+              y1="23.6374"
+              x2="23.3337"
+              y2="1.88742"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#8E59FF" />
+              <stop offset="1" stopColor="#6888F9" />
+            </linearGradient>
+          </defs>
+        </svg>
+      )}
     </div>
   );
 };

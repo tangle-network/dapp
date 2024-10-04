@@ -5,8 +5,7 @@
 import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
-import { ArrowDownIcon } from '@radix-ui/react-icons';
-import { Search } from '@webb-tools/icons';
+import { ArrowDownIcon, Search } from '@webb-tools/icons';
 import {
   Button,
   Chip,
@@ -198,7 +197,7 @@ const LsStakeCard: FC = () => {
   }, []);
 
   return (
-    <>
+    <div className="flex flex-col items-stretch justify-center gap-2">
       <LsInput
         ref={fromLsInputRef}
         id="liquid-staking-stake-from"
@@ -267,7 +266,7 @@ const LsStakeCard: FC = () => {
       >
         {actionText}
       </Button>
-    </>
+    </div>
   );
 };
 

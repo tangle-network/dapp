@@ -51,9 +51,11 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
       includeCommas: true,
     });
 
-    const unit = isNative ? protocol.token : lsActivePoolDisplayName;
+    const unit = isNative
+      ? protocol.token
+      : (lsActivePoolDisplayName?.toUpperCase() ?? EMPTY_VALUE_PLACEHOLDER);
 
-    return `${formattedBalance} ${unit}`;
+    return `${formattedBalance} ${unit}`.trim();
   }, [
     balance,
     protocol.decimals,
