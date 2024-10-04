@@ -40,7 +40,7 @@ const COLUMN_HELPER = createColumnHelper<LsProtocolRow>();
 
 const PROTOCOL_COLUMNS = [
   COLUMN_HELPER.accessor('name', {
-    header: () => 'Token',
+    header: () => 'Network & Token',
     cell: (props) => (
       <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-2">
@@ -51,7 +51,7 @@ const PROTOCOL_COLUMNS = [
           />
 
           <Typography variant="h5" className="whitespace-nowrap">
-            {props.getValue()}
+            {props.getValue()} &mdash; {props.row.original.token}
           </Typography>
         </div>
       </TableCellWrapper>
