@@ -9,39 +9,30 @@ import {
   getPaginationRowModel,
   createColumnHelper,
 } from '@tanstack/react-table';
-import { Table } from '../../../libs/webb-ui-components/src/components/Table';
-import { Pagination } from '../../../libs/webb-ui-components/src/components/Pagination';
-import { LsPool, LsProtocolId } from '../constants/liquidStaking/types';
+import { Table } from '../../../../libs/webb-ui-components/src/components/Table';
+import { LsPool, LsProtocolId } from '../../constants/liquidStaking/types';
 import {
   ActionsDropdown,
   Avatar,
   AvatarGroup,
-  ErrorFallback,
   TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import TokenAmountCell from '../components/tableCells/TokenAmountCell';
-import pluralize from '../utils/pluralize';
-import {
-  AddCircleLineIcon,
-  SubtractCircleLineIcon,
-  TokenIcon,
-} from '@webb-tools/icons';
-import useLsPools from '../data/liquidStaking/useLsPools';
-import useSubstrateAddress from '../hooks/useSubstrateAddress';
+import TokenAmountCell from '../tableCells/TokenAmountCell';
+import { AddCircleLineIcon, SubtractCircleLineIcon } from '@webb-tools/icons';
 import { BN } from '@polkadot/util';
 import assert from 'assert';
-import { GlassCard, TableStatus } from '../components';
-import PercentageCell from '../components/tableCells/PercentageCell';
-import { EMPTY_VALUE_PLACEHOLDER } from '../constants';
+import { TableStatus } from '..';
+import PercentageCell from '../tableCells/PercentageCell';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { ActionItemType } from '@webb-tools/webb-ui-components/components/ActionsDropdown/types';
-import { useLsStore } from '../data/liquidStaking/useLsStore';
-import BlueIconButton from '../components/BlueIconButton';
-import getLsProtocolDef from '../utils/liquidStaking/getLsProtocolDef';
-import useIsAccountConnected from '../hooks/useIsAccountConnected';
-import TableRowsSkeleton from '../components/LiquidStaking/TableRowsSkeleton';
+import { useLsStore } from '../../data/liquidStaking/useLsStore';
+import BlueIconButton from '../BlueIconButton';
+import useIsAccountConnected from '../../hooks/useIsAccountConnected';
+import { twMerge } from 'tailwind-merge';
+import pluralize from '../../utils/pluralize';
 
-type MyLsPoolRow = LsPool & {
+export type LsMyPoolRow = LsPool & {
   myStake: BN;
   lsProtocolId: LsProtocolId;
   isRoot: boolean;
@@ -49,11 +40,15 @@ type MyLsPoolRow = LsPool & {
   isBouncer: boolean;
 };
 
-const COLUMN_HELPER = createColumnHelper<MyLsPoolRow>();
+const COLUMN_HELPER = createColumnHelper<LsMyPoolRow>();
 
-const LsMyPoolsTable: FC = () => {
+export type LsMyPoolsTableProps = {
+  pools: LsMyPoolRow[];
+  isShown: boolean;
+};
+
+const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
   const isAccountConnected = useIsAccountConnected();
-  const substrateAddress = useSubstrateAddress();
   const [sorting, setSorting] = useState<SortingState>([]);
   const { setIsStaking, setLsPoolId, lsPoolId, isStaking } = useLsStore();
 
@@ -69,35 +64,6 @@ const LsMyPoolsTable: FC = () => {
     }),
     [pageIndex, pageSize],
   );
-
-  const lsPoolsMap = useLsPools();
-
-  const lsPools =
-    lsPoolsMap instanceof Map ? Array.from(lsPoolsMap.values()) : lsPoolsMap;
-
-  const rows: MyLsPoolRow[] = useMemo(() => {
-    if (substrateAddress === null || !Array.isArray(lsPools)) {
-      return [];
-    }
-
-    return lsPools
-      .filter((lsPool) => lsPool.members.has(substrateAddress))
-      .map((lsPool) => {
-        const account = lsPool.members.get(substrateAddress);
-
-        assert(account !== undefined);
-
-        return {
-          ...lsPool,
-          myStake: account.balance.toBn(),
-          isRoot: lsPool.ownerAddress === substrateAddress,
-          isNominator: lsPool.nominatorAddress === substrateAddress,
-          isBouncer: lsPool.bouncerAddress === substrateAddress,
-          // TODO: Obtain which protocol this pool is associated with. For the parachain, there'd need to be some query to see what pools are associated with which parachain protocols. For Tangle networks, it's simply its own protocol. For now, using dummy data.
-          lsProtocolId: LsProtocolId.TANGLE_LOCAL,
-        } satisfies MyLsPoolRow;
-      });
-  }, [lsPools, substrateAddress]);
 
   // TODO: Need to also switch network/protocol to the selected pool's network/protocol.
   const handleUnstakeClick = useCallback(
@@ -129,20 +95,6 @@ const LsMyPoolsTable: FC = () => {
           {props.row.original.metadata}#{props.getValue()}
         </Typography>
       ),
-    }),
-    COLUMN_HELPER.accessor('lsProtocolId', {
-      header: () => 'Protocol',
-      cell: (props) => {
-        const lsProtocol = getLsProtocolDef(props.getValue());
-
-        return (
-          <div className="flex items-center justify-start gap-2">
-            <TokenIcon size="lg" name={lsProtocol.token} />
-
-            {lsProtocol.name}
-          </div>
-        );
-      },
     }),
     COLUMN_HELPER.accessor('ownerAddress', {
       header: () => 'Owner',
@@ -270,7 +222,7 @@ const LsMyPoolsTable: FC = () => {
   ];
 
   const table = useReactTable({
-    data: rows,
+    data: pools,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -299,16 +251,7 @@ const LsMyPoolsTable: FC = () => {
         }}
       />
     );
-  } else if (lsPools === null) {
-    return <TableRowsSkeleton className="h-[55px]" />;
-  } else if (lsPools instanceof Error) {
-    return (
-      <ErrorFallback
-        title="Unable to display your pools"
-        description={[lsPools.message]}
-      />
-    );
-  } else if (rows.length === 0) {
+  } else if (pools.length === 0) {
     return (
       <TableStatus
         title="No active pools"
@@ -324,32 +267,18 @@ const LsMyPoolsTable: FC = () => {
   }
 
   return (
-    <GlassCard>
-      <div className="flex flex-col">
-        <Table
-          tableProps={table}
-          title="Assets"
-          className="rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3"
-          thClassName="py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160"
-          tbodyClassName="!bg-transparent"
-          tdClassName="!bg-inherit border-t-0"
-        />
-
-        <Pagination
-          itemsPerPage={pageSize}
-          totalItems={rows.length}
-          page={pageIndex + 1}
-          totalPages={table.getPageCount()}
-          canPreviousPage={table.getCanPreviousPage()}
-          previousPage={table.previousPage}
-          canNextPage={table.getCanNextPage()}
-          nextPage={table.nextPage}
-          setPageIndex={table.setPageIndex}
-          title={pluralize('pool', rows.length === 0 || rows.length > 1)}
-          className="border-t-0 py-5"
-        />
-      </div>
-    </GlassCard>
+    <Table
+      tableProps={table}
+      title={pluralize('pool', pools.length > 1 || pools.length === 0)}
+      className={twMerge(
+        'rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3',
+        isShown ? 'animate-slide-down' : 'animate-slide-up',
+      )}
+      thClassName="py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160"
+      tbodyClassName="!bg-transparent"
+      tdClassName="!bg-inherit border-t-0"
+      isPaginated
+    />
   );
 };
 

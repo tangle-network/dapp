@@ -25,7 +25,7 @@ import OnboardingModal, {
 } from '../../components/OnboardingModal/OnboardingModal';
 import StatItem from '../../components/StatItem';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
-import LsMyPoolsTable from '../../containers/LsMyPoolsTable';
+import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
 import { LsProtocolsTable } from '../../containers/LsPoolsTable';
 import useNetworkStore from '../../context/useNetworkStore';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
@@ -200,7 +200,7 @@ const LiquidStakingPage: FC = () => {
           </TabContent>
 
           <TabContent value={Tab.MY_POOLS}>
-            <LsMyPoolsTable />
+            <LsMyProtocolsTable />
           </TabContent>
         </TabsRoot>
       </div>

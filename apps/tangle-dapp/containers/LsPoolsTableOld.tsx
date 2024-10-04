@@ -30,7 +30,7 @@ import { FC, useCallback, useMemo, useState } from 'react';
 
 import { GlassCard, TableStatus } from '../components';
 import TableRowsSkeleton from '../components/LiquidStaking/TableRowsSkeleton';
-import { StringCell } from '../components/tableCells';
+import PercentageCell from '../components/tableCells/PercentageCell';
 import TokenAmountCell from '../components/tableCells/TokenAmountCell';
 import { EMPTY_VALUE_PLACEHOLDER } from '../constants';
 import { LsPool } from '../constants/liquidStaking/types';
@@ -113,12 +113,7 @@ const COLUMNS = [
         return EMPTY_VALUE_PLACEHOLDER;
       }
 
-      return (
-        <StringCell
-          value={`${(commissionPercentage * 100).toFixed(2)}%`}
-          className="text-start"
-        />
-      );
+      return <PercentageCell percentage={commissionPercentage * 100} />;
     },
   }),
   COLUMN_HELPER.accessor('apyPercentage', {
@@ -130,12 +125,7 @@ const COLUMNS = [
         return EMPTY_VALUE_PLACEHOLDER;
       }
 
-      return (
-        <StringCell
-          value={`${(apyPercentage * 100).toFixed(2)}%`}
-          className="text-start"
-        />
-      );
+      return <PercentageCell percentage={apyPercentage * 100} />;
     },
   }),
 ];

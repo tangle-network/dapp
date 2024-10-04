@@ -4,6 +4,7 @@ import { FC, useMemo } from 'react';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import formatBn from '../../../utils/formatBn';
+import formatPercentage from '../../../utils/formatPercentage';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
 import DetailItem from './DetailItem';
@@ -51,7 +52,7 @@ const FeeDetailItem: FC<FeeDetailItemProps> = ({
   const feeTitle =
     typeof feePercentage !== 'number'
       ? 'Fee'
-      : `Fee (${(feePercentage * 100).toFixed(2)}%)`;
+      : `Fee (${formatPercentage(feePercentage * 100)}%)`;
 
   return <DetailItem title={feeTitle} value={formattedFeeAmount} />;
 };

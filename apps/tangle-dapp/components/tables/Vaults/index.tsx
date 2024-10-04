@@ -19,6 +19,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { PagePath, QueryParamKey } from '../../../types';
+import formatPercentage from '../../../utils/formatPercentage';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import LsTokenIcon from '../../LsTokenIcon';
 import { TableStatus } from '../../TableStatus';
@@ -61,8 +62,7 @@ const columns = [
           >
             {typeof value !== 'number'
               ? EMPTY_VALUE_PLACEHOLDER
-              : value.toFixed(2)}
-            %
+              : formatPercentage(value)}
           </Typography>
         </TableCellWrapper>
       );
@@ -85,7 +85,7 @@ const columns = [
   columnHelper.accessor('tvlInUsd', {
     header: () => 'TVL',
     cell: (props) => (
-      <TableCellWrapper removeBorder>
+      <TableCellWrapper removeRightBorder>
         <Typography
           variant="body1"
           className="text-mono-120 dark:text-mono-100"
@@ -99,7 +99,7 @@ const columns = [
     id: 'actions',
     header: () => null,
     cell: ({ row }) => (
-      <TableCellWrapper removeBorder>
+      <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1 gap-2">
           <Button
             as={Link}

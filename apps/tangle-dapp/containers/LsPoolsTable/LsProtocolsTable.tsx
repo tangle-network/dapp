@@ -24,10 +24,6 @@ import { LsPool } from '../../constants/liquidStaking/types';
 import pluralize from '../../utils/pluralize';
 import useLsPools from '../../data/liquidStaking/useLsPools';
 
-export interface LsProtocolsTableProps {
-  initialSorting?: SortingState;
-}
-
 export type LsProtocolRow = {
   name: string;
   tvl: number;
@@ -76,7 +72,7 @@ const PROTOCOL_COLUMNS = [
       const length = props.getValue().length;
 
       return (
-        <TableCellWrapper>
+        <TableCellWrapper removeRightBorder>
           <StatItem
             title={length.toString()}
             subtitle={pluralize('Pool', length === 0 || length > 1)}
@@ -90,16 +86,16 @@ const PROTOCOL_COLUMNS = [
     id: 'expand/collapse',
     header: () => null,
     cell: ({ row }) => (
-      <TableCellWrapper removeBorder>
+      <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1">
           <Button variant="utility" isJustIcon>
             <div
               className={twMerge(
                 '!text-current transition-transform duration-300 ease-in-out',
-                row.getIsExpanded() ? 'rotate-180' : '',
+                row.getIsExpanded() && 'rotate-180',
               )}
             >
-              <ChevronUp className={twMerge('!fill-current')} />
+              <ChevronUp className="!fill-current" />
             </div>
           </Button>
         </div>
@@ -110,19 +106,12 @@ const PROTOCOL_COLUMNS = [
 ];
 
 // TODO: Have the first row be expanded by default.
-const LsProtocolsTable: FC<LsProtocolsTableProps> = ({
-  initialSorting = [],
-}) => {
-  const [sorting, setSorting] = useState<SortingState>(initialSorting);
+const LsProtocolsTable: FC = () => {
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const getExpandedRowContent = useCallback(
     (row: Row<LsProtocolRow>) => (
-      <div className="bg-mono-0 dark:bg-mono-190 -mt-7 pt-3 rounded-b-xl -mx-px px-3">
-        <LsPoolsTable
-          pools={row.original.pools}
-          isShown={row.getIsExpanded()}
-        />
-      </div>
+      <LsPoolsTable pools={row.original.pools} isShown={row.getIsExpanded()} />
     ),
     [],
   );

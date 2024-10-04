@@ -69,6 +69,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
       const validators = poolNominations.get(poolId) ?? [];
       const apyEntry = compoundApys.get(poolId);
 
+      // TODO: Losing precision here by fixing it to two decimal places. Should be handling this instead on the UI side, not on this data fetching hook?
       const apyPercentage =
         apyEntry === undefined ? undefined : Number(apyEntry.toFixed(2));
 

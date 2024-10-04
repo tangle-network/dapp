@@ -21,6 +21,7 @@ import assertSubstrateAddress from '../../../utils/assertSubstrateAddress';
 import calculateCommission from '../../../utils/calculateCommission';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
 import formatBn from '../../../utils/formatBn';
+import formatPercentage from '../../../utils/formatPercentage';
 import { GetTableColumnsFn } from '../adapter';
 import {
   sortCommission,
@@ -184,7 +185,7 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
             fw="normal"
             className="text-mono-200 dark:text-mono-0"
           >
-            {calculateCommission(props.getValue()).toFixed(2) + '%'}
+            {formatPercentage(calculateCommission(props.getValue()))}
           </Typography>
         </div>
       ),
