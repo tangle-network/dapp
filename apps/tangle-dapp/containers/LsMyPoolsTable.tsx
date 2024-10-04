@@ -17,7 +17,8 @@ import {
   Avatar,
   AvatarGroup,
   Button,
-  TANGLE_DOCS_URL,
+  ErrorFallback,
+  TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import TokenAmountCell from '../components/tableCells/TokenAmountCell';
@@ -39,6 +40,7 @@ import { useLsStore } from '../data/liquidStaking/useLsStore';
 import BlueIconButton from '../components/BlueIconButton';
 import getLsProtocolDef from '../utils/liquidStaking/getLsProtocolDef';
 import useIsAccountConnected from '../hooks/useIsAccountConnected';
+import TableRowsSkeleton from '../components/LiquidStaking/TableRowsSkeleton';
 
 type MyLsPoolRow = LsPool & {
   myStake: BN;
@@ -98,6 +100,7 @@ const LsMyPoolsTable: FC = () => {
       });
   }, []);
 
+  // TODO: Need to also switch network/protocol to the selected pool's network/protocol.
   const handleUnstakeClick = useCallback((poolId: number) => {
     setIsStaking(false);
     setLsPoolId(poolId);
@@ -275,13 +278,21 @@ const LsMyPoolsTable: FC = () => {
         icon="🔍"
         buttonText="Learn More"
         buttonProps={{
-          // TODO: Link to liquid staking pools docs page once implemented.
-          href: TANGLE_DOCS_URL,
+          href: TANGLE_DOCS_LIQUID_STAKING_URL,
           target: '_blank',
         }}
       />
     );
-  } else if (rows.length === 0) {
+  } else if (lsPools === null) {
+    return <TableRowsSkeleton />;
+  } else if (lsPools instanceof Error) {
+    return (
+      <ErrorFallback
+        title="Unable to display your pools"
+        description={[lsPools.message]}
+      />
+    );
+  } else if (lsPools.length === 0) {
     return (
       <TableStatus
         title="No active pools"
@@ -289,8 +300,7 @@ const LsMyPoolsTable: FC = () => {
         icon="🔍"
         buttonText="Learn More"
         buttonProps={{
-          // TODO: Link to liquid staking pools docs page once implemented.
-          href: TANGLE_DOCS_URL,
+          href: TANGLE_DOCS_LIQUID_STAKING_URL,
           target: '_blank',
         }}
       />

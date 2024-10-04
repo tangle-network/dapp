@@ -59,6 +59,10 @@ class Optional<T extends NonNullable<unknown>> {
     return this.value;
   }
 
+  orElse(value: T): T {
+    return this.value ?? value;
+  }
+
   get isPresent(): boolean {
     return this.value !== null;
   }

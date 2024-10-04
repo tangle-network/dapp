@@ -10,7 +10,6 @@ import { Button } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
 
-import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
   LsNetworkId,
   LsProtocolId,
@@ -37,6 +36,7 @@ import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 
 const LsUnstakeCard: FC = () => {
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
@@ -188,7 +188,7 @@ const LsUnstakeCard: FC = () => {
         amount={fromAmount}
         decimals={selectedProtocol.decimals}
         onAmountChange={setFromAmount}
-        placeholder={`0 ${LS_DERIVATIVE_TOKEN_PREFIX}${selectedProtocol.token}`}
+        placeholder="Enter amount to unstake"
         rightElement={stakedWalletBalance}
         isDerivativeVariant
         minAmount={minSpendable ?? undefined}
@@ -205,7 +205,7 @@ const LsUnstakeCard: FC = () => {
         networkId={lsNetworkId}
         amount={toAmount}
         decimals={selectedProtocol.decimals}
-        placeholder={`0 ${selectedProtocol.token}`}
+        placeholder={EMPTY_VALUE_PLACEHOLDER}
         token={selectedProtocol.token}
         isReadOnly
         className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}

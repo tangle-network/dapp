@@ -22,7 +22,7 @@ import {
   fuzzyFilter,
   Input,
   Table,
-  TANGLE_DOCS_URL,
+  TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
@@ -243,8 +243,7 @@ const LsPoolsTableOld: FC = () => {
             icon="🔍"
             buttonText="Learn More"
             buttonProps={{
-              // TODO: Link to liquid staking pools docs page once implemented.
-              href: TANGLE_DOCS_URL,
+              href: TANGLE_DOCS_LIQUID_STAKING_URL,
               target: '_blank',
             }}
           />

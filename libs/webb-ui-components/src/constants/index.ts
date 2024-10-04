@@ -42,6 +42,8 @@ export const TANGLE_PRESS_KIT_URL = 'https://www.tangle.tools/press-kit';
 export const TANGLE_DOCS_URL = 'https://docs.tangle.tools/';
 export const TANGLE_DOCS_STAKING_URL =
   'https://docs.tangle.tools/restake/staking-intro';
+export const TANGLE_DOCS_LIQUID_STAKING_URL =
+  'https://docs.tangle.tools/restake/lst-concepts';
 export const TANGLE_GITHUB_URL = 'https://github.com/webb-tools/tangle';
 
 export const WEBB_DOCS_URL = 'https://docs.webb.tools/';

@@ -1,16 +1,28 @@
 'use client';
 
 import {
+  CoinIcon,
+  EditLine,
+  Search,
+  SparklingIcon,
+  WaterDropletIcon,
+} from '@webb-tools/icons';
+import {
   TabContent,
   TabsList as WebbTabsList,
   TabsRoot,
   TabTrigger,
+  TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useEffect } from 'react';
 
 import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeCard';
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
+import OnboardingItem from '../../components/OnboardingModal/OnboardingItem';
+import OnboardingModal, {
+  OnboardingPageKey,
+} from '../../components/OnboardingModal/OnboardingModal';
 import StatItem from '../../components/StatItem';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
 import LsMyPoolsTable from '../../containers/LsMyPoolsTable';
@@ -75,75 +87,123 @@ const LiquidStakingPage: FC = () => {
   }, [isStakingInStore, setIsStaking]);
 
   return (
-    <div className="flex items-stretch flex-col gap-10">
-      <div className="p-6 space-y-0 rounded-2xl flex flex-row items-center justify-between w-full overflow-x-auto bg-liquid_staking_banner dark:bg-liquid_staking_banner_dark">
-        <div className="flex flex-col gap-2">
-          <Typography variant="h5" fw="bold">
-            Tangle Liquid Staking
-          </Typography>
+    <div>
+      <OnboardingModal
+        pageKey={OnboardingPageKey.LIQUID_STAKING}
+        linkHref={TANGLE_DOCS_LIQUID_STAKING_URL}
+      >
+        <OnboardingItem
+          Icon={Search}
+          title="Explore Liquid Staking Pools"
+          description="Browse existing liquid staking pools on Tangle or the Restaking Parachain. Sort them by APY, TVL, or create your own pool."
+        />
 
-          <Typography
-            variant="body1"
-            fw="normal"
-            className="text-mono-120 dark:text-mono-100"
-          >
-            Get Liquid Staking Tokens (LSTs) to earn & unleash restaking on
-            Tangle Mainnet via delegation.
-          </Typography>
+        <OnboardingItem
+          Icon={WaterDropletIcon}
+          title="Stake Your Assets"
+          description="Select a pool, enter the amount you'd like to stake, and click 'Stake' to start staking in the pool."
+        />
+
+        <OnboardingItem
+          Icon={EditLine}
+          title="View and Manage Your Pools"
+          description="After staking, use the 'My Pools' tab to view, increase stake, unstake, or manage your pools."
+        />
+
+        <OnboardingItem
+          Icon={CoinIcon}
+          title="Obtain derivative tokens"
+          description="When you join a pool, you'll automatically receive its derivative asset, which can be traded and used within Tangle's restaking infrastructure."
+        />
+
+        <OnboardingItem
+          Icon={SparklingIcon}
+          title="Earn Rewards While Staying Liquid"
+          description="Use or trade your derivative tokens while automatically earning staking rewards. That's the magic of liquid staking!"
+        />
+      </OnboardingModal>
+
+      <div className="flex items-stretch flex-col gap-10">
+        <div className="p-6 space-y-0 rounded-2xl flex flex-row items-center justify-between w-full overflow-x-auto bg-liquid_staking_banner dark:bg-liquid_staking_banner_dark">
+          <div className="flex flex-col gap-2">
+            <Typography variant="h5" fw="bold">
+              Tangle Liquid Staking
+            </Typography>
+
+            <Typography
+              variant="body1"
+              fw="normal"
+              className="text-mono-120 dark:text-mono-100"
+            >
+              Get Liquid Staking Tokens (LSTs) to earn & unleash restaking on
+              Tangle Mainnet via delegation.
+            </Typography>
+          </div>
+
+          <div className="flex gap-6 h-full">
+            <StatItem
+              title="$123.01"
+              subtitle="My Total Staking"
+              largeSubtitle
+            />
+          </div>
         </div>
 
-        <div className="flex gap-6 h-full">
-          <StatItem title="$123.01" subtitle="My Total Staking" largeSubtitle />
+        <div className="flex flex-col self-center gap-4 w-full min-w-[450px] max-w-[600px]">
+          <TabsList className="w-full">
+            <TabListItem
+              isActive={isStaking}
+              onClick={() => setIsStaking(true)}
+            >
+              Stake
+            </TabListItem>
+
+            <TabListItem
+              isActive={!isStaking}
+              onClick={() => setIsStaking(false)}
+            >
+              Unstake
+            </TabListItem>
+          </TabsList>
+
+          {isStaking ? <LsStakeCard /> : <LsUnstakeCard />}
         </div>
+
+        <TabsRoot defaultValue={Tab.ALL_POOLS} className="space-y-4">
+          <div className="flex justify-between items-center gap-4">
+            {/* Tabs List on the left */}
+            <WebbTabsList className="space-x-4">
+              {Object.values(Tab).map((tab, idx) => {
+                return (
+                  <TabTrigger
+                    key={idx}
+                    value={tab}
+                    isDisableStyle
+                    className="text-mono-100 radix-state-active:text-mono-200 dark:radix-state-active:!text-mono-0"
+                  >
+                    <Typography
+                      variant="h5"
+                      fw="bold"
+                      className="!text-inherit"
+                    >
+                      {tab}
+                    </Typography>
+                  </TabTrigger>
+                );
+              })}
+            </WebbTabsList>
+          </div>
+
+          {/* Tabs Content */}
+          <TabContent value={Tab.ALL_POOLS}>
+            <LsProtocolsTable />
+          </TabContent>
+
+          <TabContent value={Tab.MY_POOLS}>
+            <LsMyPoolsTable />
+          </TabContent>
+        </TabsRoot>
       </div>
-
-      <div className="flex flex-col self-center gap-4 w-full min-w-[450px] max-w-[600px]">
-        <TabsList className="w-full">
-          <TabListItem isActive={isStaking} onClick={() => setIsStaking(true)}>
-            Stake
-          </TabListItem>
-
-          <TabListItem
-            isActive={!isStaking}
-            onClick={() => setIsStaking(false)}
-          >
-            Unstake
-          </TabListItem>
-        </TabsList>
-
-        {isStaking ? <LsStakeCard /> : <LsUnstakeCard />}
-      </div>
-
-      <TabsRoot defaultValue={Tab.ALL_POOLS} className="space-y-4">
-        <div className="flex justify-between items-center gap-4">
-          {/* Tabs List on the left */}
-          <WebbTabsList className="space-x-4">
-            {Object.values(Tab).map((tab, idx) => {
-              return (
-                <TabTrigger
-                  key={idx}
-                  value={tab}
-                  isDisableStyle
-                  className="text-mono-100 radix-state-active:text-mono-200 dark:radix-state-active:!text-mono-0"
-                >
-                  <Typography variant="h5" fw="bold" className="!text-inherit">
-                    {tab}
-                  </Typography>
-                </TabTrigger>
-              );
-            })}
-          </WebbTabsList>
-        </div>
-
-        {/* Tabs Content */}
-        <TabContent value={Tab.ALL_POOLS}>
-          <LsProtocolsTable />
-        </TabContent>
-
-        <TabContent value={Tab.MY_POOLS}>
-          <LsMyPoolsTable />
-        </TabContent>
-      </TabsRoot>
     </div>
   );
 };

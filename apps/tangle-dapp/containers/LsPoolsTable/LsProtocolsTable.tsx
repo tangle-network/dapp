@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, FC } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -109,7 +109,10 @@ const PROTOCOL_COLUMNS = [
   }),
 ];
 
-function LsProtocolsTable({ initialSorting = [] }: LsProtocolsTableProps) {
+// TODO: Have the first row be expanded by default.
+const LsProtocolsTable: FC<LsProtocolsTableProps> = ({
+  initialSorting = [],
+}) => {
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
 
   const getExpandedRowContent = useCallback(
@@ -134,6 +137,7 @@ function LsProtocolsTable({ initialSorting = [] }: LsProtocolsTableProps) {
     return Array.from(lsPools.values());
   }, []);
 
+  // TODO: Dummy data. Need to load actual protocol data or list it if it's hardcoded/limited to a few.
   const protocols: LsProtocolRow[] = [
     {
       iconName: 'tangle',
@@ -183,6 +187,6 @@ function LsProtocolsTable({ initialSorting = [] }: LsProtocolsTableProps) {
       tdClassName="border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden"
     />
   );
-}
+};
 
 export default LsProtocolsTable;

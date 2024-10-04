@@ -16,7 +16,6 @@ import {
 import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { z } from 'zod';
 
-import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import {
   LsNetworkId,
   LsProtocolId,
@@ -44,6 +43,7 @@ import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 
 const LsStakeCard: FC = () => {
   const [fromAmount, setFromAmount] = useSearchParamState<BN | null>({
@@ -207,7 +207,7 @@ const LsStakeCard: FC = () => {
         amount={fromAmount}
         decimals={selectedProtocol.decimals}
         onAmountChange={setFromAmount}
-        placeholder={`0 ${selectedProtocol.token}`}
+        placeholder="Enter amount to stake"
         rightElement={walletBalance}
         setProtocolId={setLsProtocolId}
         minAmount={minSpendable ?? undefined}
@@ -221,7 +221,7 @@ const LsStakeCard: FC = () => {
       <LsInput
         id="liquid-staking-stake-to"
         networkId={lsNetworkId}
-        placeholder={`0 ${LS_DERIVATIVE_TOKEN_PREFIX}${selectedProtocol.token}`}
+        placeholder={EMPTY_VALUE_PLACEHOLDER}
         decimals={selectedProtocol.decimals}
         amount={toAmount}
         isReadOnly

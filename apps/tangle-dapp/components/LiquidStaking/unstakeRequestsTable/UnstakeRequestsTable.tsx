@@ -18,7 +18,7 @@ import {
   CheckBox,
   fuzzyFilter,
   Table,
-  TANGLE_DOCS_URL,
+  TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
@@ -297,7 +297,10 @@ const UnstakeRequestsTable: FC = () => {
 
       {rows !== null && rows.length === 0 && (
         <div className="flex items-center justify-end w-full">
-          <ExternalLink Icon={ArrowRightUp} href={TANGLE_DOCS_URL}>
+          <ExternalLink
+            Icon={ArrowRightUp}
+            href={TANGLE_DOCS_LIQUID_STAKING_URL}
+          >
             View Docs
           </ExternalLink>
         </div>
