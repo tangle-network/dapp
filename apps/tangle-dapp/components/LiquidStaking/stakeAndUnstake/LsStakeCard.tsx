@@ -106,6 +106,7 @@ const LsStakeCard: FC = () => {
     value: lsNetworkId,
     parse: (value) => z.nativeEnum(LsNetworkId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
+    // TODO: This might be causing many requests to try to change the network. Bug.
     setValue: tryChangeNetwork,
   });
 

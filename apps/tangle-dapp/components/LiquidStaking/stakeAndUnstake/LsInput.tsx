@@ -16,7 +16,7 @@ import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import NetworkSelector from './NetworkSelector';
+import LsNetworkSwitcher from './LsNetworkSwitcher';
 import SelectedPoolIndicator from './SelectedPoolIndicator';
 import TokenChip from './TokenChip';
 
@@ -112,8 +112,8 @@ const LsInput = forwardRef<HTMLInputElement, LsInputProps>(
           )}
         >
           <div className="flex justify-between">
-            <NetworkSelector
-              selectedNetworkId={networkId}
+            <LsNetworkSwitcher
+              activeLsNetworkId={networkId}
               setNetworkId={setNetworkId}
             />
 

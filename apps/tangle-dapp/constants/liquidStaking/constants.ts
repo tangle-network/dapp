@@ -80,11 +80,11 @@ export const LS_TANGLE_MAINNET = {
 } as const satisfies LsNetwork;
 
 export const LS_TANGLE_TESTNET = {
-  id: LsNetworkId.TANGLE_MAINNET,
+  id: LsNetworkId.TANGLE_TESTNET,
   networkName: 'Tangle Testnet',
   chainIconFileName: 'tangle',
-  defaultProtocolId: LsProtocolId.TANGLE_MAINNET,
-  protocols: [TANGLE_MAINNET],
+  defaultProtocolId: LsProtocolId.TANGLE_TESTNET,
+  protocols: [TANGLE_TESTNET],
 } as const satisfies LsNetwork;
 
 export const LS_TANGLE_LOCAL = {

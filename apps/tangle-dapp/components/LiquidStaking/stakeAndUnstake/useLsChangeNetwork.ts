@@ -14,16 +14,19 @@ const useLsChangeNetwork = () => {
   const { notificationApi } = useWebbUI();
 
   const tryChangeNetwork = useCallback(
-    async (newNetworkId: LsNetworkId) => {
+    async (newLsNetworkId: LsNetworkId) => {
       // No need to change network if it's already selected.
-      if (lsNetworkId === newNetworkId) {
+      if (lsNetworkId === newLsNetworkId) {
         return;
       }
 
-      const tangleNetwork = getLsTangleNetwork(newNetworkId);
-      const networkFeatures = NETWORK_FEATURE_MAP[tangleNetwork.id];
+      const tangleNetwork = getLsTangleNetwork(newLsNetworkId);
 
-      if (!networkFeatures.includes(NetworkFeature.LsPools)) {
+      const supportsLiquidStaking = NETWORK_FEATURE_MAP[
+        tangleNetwork.id
+      ].includes(NetworkFeature.LsPools);
+
+      if (!supportsLiquidStaking) {
         notificationApi({
           message: 'Network does not support liquid staking yet',
           variant: 'error',
@@ -33,7 +36,7 @@ const useLsChangeNetwork = () => {
       }
 
       if (await switchNetwork(tangleNetwork, false)) {
-        setSelectedNetworkId(newNetworkId);
+        setSelectedNetworkId(newLsNetworkId);
       }
     },
     [notificationApi, lsNetworkId, setSelectedNetworkId, switchNetwork],

@@ -12,8 +12,8 @@ import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
 const TANGLE_TESTNET = {
   networkId: LsNetworkId.TANGLE_TESTNET,
   id: LsProtocolId.TANGLE_TESTNET,
-  name: 'Tangle',
-  token: LsToken.TNT,
+  name: 'Tangle Testnet',
+  token: LsToken.TTNT,
   chainIconFileName: 'tangle',
   decimals: TANGLE_TOKEN_DECIMALS,
   rpcEndpoint: TANGLE_TESTNET_NATIVE_NETWORK.wsRpcEndpoint,

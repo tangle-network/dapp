@@ -144,14 +144,18 @@ const LsProtocolsTable: FC = () => {
     return Array.from(lsPools.values());
   }, [lsPools]);
 
-  // TODO: Dummy data. Need to load actual protocol data or list it if it's hardcoded/limited to a few.
   const rows = useMemo<LsProtocolRow[]>(() => {
+    // TODO: Filter out the pools that are not associated with the protocol.
+    const tvl = pools.reduce(
+      (acc, pool) => acc.add(pool.totalStaked),
+      new BN(0),
+    );
+
     return lsNetwork.protocols.map(
       (lsProtocol) =>
         ({
           name: lsProtocol.name,
-          // TODO: Reduce the TVL of the pools associated with this protocol.
-          tvl: new BN(485348583485348),
+          tvl,
           token: lsProtocol.token,
           pools: pools,
           // TODO: Calculate the USD value of the TVL.

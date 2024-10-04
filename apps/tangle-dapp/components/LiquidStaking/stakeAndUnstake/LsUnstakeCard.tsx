@@ -182,6 +182,7 @@ const LsUnstakeCard: FC = () => {
         ref={fromLsInputRef}
         id="liquid-staking-unstake-from"
         networkId={lsNetworkId}
+        // TODO: This might be causing many requests to try to change the network. Bug.
         setNetworkId={tryChangeNetwork}
         setProtocolId={setLsProtocolId}
         token={selectedProtocol.token}

@@ -8,7 +8,7 @@ import { NetworkFeature } from '../types';
 export const DEFAULT_NETWORK = TANGLE_MAINNET_NETWORK;
 
 export const NETWORK_FEATURE_MAP: Record<NetworkId, NetworkFeature[]> = {
-  [NetworkId.TANGLE_TESTNET]: [NetworkFeature.Faucet],
+  [NetworkId.TANGLE_TESTNET]: [NetworkFeature.Faucet, NetworkFeature.LsPools],
   [NetworkId.TANGLE_MAINNET]: [NetworkFeature.EraStakersOverview],
   [NetworkId.TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV]: [],
   [NetworkId.TANGLE_RESTAKING_PARACHAIN_TESTNET]: [],
