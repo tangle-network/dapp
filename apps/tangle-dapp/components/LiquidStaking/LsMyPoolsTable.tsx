@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, FC, useCallback } from 'react';
+import { useState, useMemo, FC } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -36,6 +36,7 @@ import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import { twMerge } from 'tailwind-merge';
 import pluralize from '../../utils/pluralize';
 import { sharedTableStatusClxs } from '../tables/shared';
+import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 
 export type LsMyPoolRow = LsPool & {
   myStake: BN;
@@ -55,7 +56,8 @@ export type LsMyPoolsTableProps = {
 const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
   const isAccountConnected = useIsAccountConnected();
   const [sorting, setSorting] = useState<SortingState>([]);
-  const { setIsStaking, setLsPoolId, lsPoolId, isStaking } = useLsStore();
+  const { lsPoolId, isStaking } = useLsStore();
+  const setLsStakingIntent = useLsSetStakingIntent();
 
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
@@ -68,24 +70,6 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       pageSize,
     }),
     [pageIndex, pageSize],
-  );
-
-  // TODO: Need to also switch network/protocol to the selected pool's network/protocol.
-  const handleUnstakeClick = useCallback(
-    (poolId: number) => {
-      setIsStaking(false);
-      setLsPoolId(poolId);
-    },
-    [setIsStaking, setLsPoolId],
-  );
-
-  // TODO: Need to also switch network/protocol to the selected pool's network/protocol.
-  const handleIncreaseStakeClick = useCallback(
-    (poolId: number) => {
-      setIsStaking(true);
-      setLsPoolId(poolId);
-    },
-    [setIsStaking, setLsPoolId],
   );
 
   const columns = [
@@ -211,14 +195,14 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
 
             <BlueIconButton
               isDisabled={isUnstakeActionDisabled}
-              onClick={() => handleUnstakeClick(props.row.original.id)}
+              onClick={() => setLsStakingIntent(props.row.original.id, false)}
               tooltip="Unstake"
               Icon={SubtractCircleLineIcon}
             />
 
             <BlueIconButton
               isDisabled={isStakeActionDisabled}
-              onClick={() => handleIncreaseStakeClick(props.row.original.id)}
+              onClick={() => setLsStakingIntent(props.row.original.id, true)}
               tooltip="Increase Stake"
               Icon={AddCircleLineIcon}
             />

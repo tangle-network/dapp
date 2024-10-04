@@ -27,6 +27,7 @@ import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import PercentageCell from '../../components/tableCells/PercentageCell';
 import { TableStatus } from '../../components';
 import { sharedTableStatusClxs } from '../../components/tables/shared';
+import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 
 export type LsPoolsTableProps = {
   pools: LsPool[];
@@ -43,7 +44,8 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
     pageSize: 5,
   });
 
-  const { lsPoolId, setLsPoolId } = useLsStore();
+  const { lsPoolId } = useLsStore();
+  const setLsStakingIntent = useLsSetStakingIntent();
 
   const pagination = useMemo(
     () => ({
@@ -115,7 +117,7 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
         <div className="flex items-center justify-end">
           <Button
             isDisabled={lsPoolId === props.row.original.id}
-            onClick={() => setLsPoolId(props.row.original.id)}
+            onClick={() => setLsStakingIntent(props.row.original.id, true)}
             rightIcon={
               lsPoolId !== props.row.original.id ? <ArrowRight /> : undefined
             }
