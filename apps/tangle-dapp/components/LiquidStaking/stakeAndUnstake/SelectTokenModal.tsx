@@ -95,7 +95,7 @@ const TokenListItem: FC<TokenListItemProps> = ({
   onClick,
 }) => {
   const formattedAmount = useMemo(() => {
-    return formatBn(amount, decimals);
+    return formatBn(amount, decimals, { includeCommas: true });
   }, [amount, decimals]);
 
   return (

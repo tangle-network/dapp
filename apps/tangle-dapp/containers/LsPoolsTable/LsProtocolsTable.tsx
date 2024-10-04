@@ -68,6 +68,7 @@ const PROTOCOL_COLUMNS = [
       const formattedTvl = formatBn(
         props.getValue(),
         props.row.original.decimals,
+        { includeCommas: true },
       );
 
       return (
