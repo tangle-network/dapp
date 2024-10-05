@@ -11,7 +11,7 @@ import { IS_PRODUCTION_ENV } from '../../constants/env';
 import { LsNetworkId } from '../../constants/liquidStaking/types';
 
 // TODO: Obtain the Tangle network directly from the adapter's `tangleNetwork` property instead of using this helper method.
-const getLsTangleNetwork = (networkId: LsNetworkId): Network | null => {
+const getLsTangleNetwork = (networkId: LsNetworkId): Network => {
   switch (networkId) {
     case LsNetworkId.TANGLE_MAINNET:
       return TANGLE_MAINNET_NETWORK;
@@ -23,8 +23,6 @@ const getLsTangleNetwork = (networkId: LsNetworkId): Network | null => {
       return IS_PRODUCTION_ENV
         ? TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK
         : TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK;
-    case LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER:
-      return null;
   }
 };
 

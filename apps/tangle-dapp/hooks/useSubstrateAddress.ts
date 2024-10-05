@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import useNetworkStore from '../context/useNetworkStore';
+import { SubstrateAddress } from '../types/utils';
 import { toSubstrateAddress } from '../utils';
 import useActiveAccountAddress from './useActiveAccountAddress';
 
@@ -14,7 +15,7 @@ import useActiveAccountAddress from './useActiveAccountAddress';
  * If the active account is an EVM account, its EVM address will be
  * converted into a Substrate address via hashing.
  */
-const useSubstrateAddress = (): string | null => {
+const useSubstrateAddress = (): SubstrateAddress | null => {
   const activeAccountAddress = useActiveAccountAddress();
   const { network } = useNetworkStore();
 

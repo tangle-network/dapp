@@ -21,6 +21,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { PagePath, QueryParamKey } from '../../../types';
+import formatPercentage from '../../../utils/formatPercentage';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import { getSortAddressOrIdentityFnc } from '../../../utils/table';
 import { TableStatus } from '../../TableStatus';
@@ -93,7 +94,7 @@ const columns = [
           >
             {typeof value !== 'number'
               ? EMPTY_VALUE_PLACEHOLDER
-              : `${value.toFixed(2)}%`}
+              : formatPercentage(value)}
           </Typography>
         </TableCellWrapper>
       );
@@ -118,7 +119,7 @@ const columns = [
       const tokensList = props.getValue();
 
       return (
-        <TableCellWrapper removeBorder>
+        <TableCellWrapper removeRightBorder>
           {tokensList.length > 0 ? (
             <VaultsDropdown vaultTokens={tokensList} />
           ) : (
@@ -133,7 +134,7 @@ const columns = [
     id: 'actions',
     header: () => null,
     cell: (props) => (
-      <TableCellWrapper removeBorder>
+      <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1 gap-2">
           <Button
             as={Link}

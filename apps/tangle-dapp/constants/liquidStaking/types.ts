@@ -1,9 +1,9 @@
 import {
+  PalletAssetsAssetAccount,
   TanglePrimitivesCurrencyTokenSymbol,
   TanglePrimitivesTimeUnit,
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
-import { HexString } from '@polkadot/util/types';
 import {
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
@@ -24,20 +24,10 @@ export enum LsProtocolId {
   MOONBEAM,
   ASTAR,
   MANTA,
-  CHAINLINK,
-  THE_GRAPH,
-  LIVEPEER,
-  POLYGON,
   TANGLE_MAINNET,
   TANGLE_TESTNET,
   TANGLE_LOCAL,
 }
-
-export type LsLiquifierProtocolId =
-  | LsProtocolId.CHAINLINK
-  | LsProtocolId.THE_GRAPH
-  | LsProtocolId.LIVEPEER
-  | LsProtocolId.POLYGON;
 
 export type LsParachainChainId =
   | LsProtocolId.POLKADOT
@@ -59,17 +49,7 @@ export enum LsToken {
   PHALA = 'PHALA',
   TNT = 'TNT',
   TTNT = 'tTNT',
-  LINK = 'LINK',
-  GRT = 'GRT',
-  LPT = 'LPT',
-  POL = 'POL',
 }
-
-export type LsLiquifierProtocolToken =
-  | LsToken.LINK
-  | LsToken.GRT
-  | LsToken.LPT
-  | LsToken.POL;
 
 export type LsParachainToken =
   | LsToken.DOT
@@ -91,7 +71,6 @@ export enum LsNetworkId {
   TANGLE_TESTNET,
   TANGLE_MAINNET,
   TANGLE_RESTAKING_PARACHAIN,
-  ETHEREUM_MAINNET_LIQUIFIER,
 }
 
 export interface LsTangleNetworkDef extends ProtocolDefCommon {
@@ -121,20 +100,7 @@ export interface LsParachainChainDef<T extends ProtocolEntity = ProtocolEntity>
   adapter: LsNetworkEntityAdapter<T>;
 }
 
-export interface LsLiquifierProtocolDef extends ProtocolDefCommon {
-  networkId: LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER;
-  id: LsLiquifierProtocolId;
-  token: LsLiquifierProtocolToken;
-  erc20TokenAddress: HexString;
-  liquifierContractAddress: HexString;
-  tgTokenContractAddress: HexString;
-  unlocksContractAddress: HexString;
-}
-
-export type LsProtocolDef =
-  | LsParachainChainDef
-  | LsLiquifierProtocolDef
-  | LsTangleNetworkDef;
+export type LsProtocolDef = LsParachainChainDef | LsTangleNetworkDef;
 
 export type LsCardSearchParams = {
   amount: BN;
@@ -187,11 +153,15 @@ export type LsNetwork = {
 
 export type LsPool = {
   id: number;
-  metadata?: string;
+  name?: string;
   ownerAddress?: SubstrateAddress;
-  ownerStake?: BN;
+  nominatorAddress?: SubstrateAddress;
+  bouncerAddress?: SubstrateAddress;
   validators: SubstrateAddress[];
   totalStaked: BN;
   apyPercentage?: number;
   commissionPercentage?: number;
+  members: Map<SubstrateAddress, PalletAssetsAssetAccount>;
 };
+
+export type LsPoolDisplayName = `${string}#${number}`;

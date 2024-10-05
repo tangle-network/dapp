@@ -48,6 +48,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
 
       // Otherwise, calculate the remaining items on the last page
       const remainingItems = totalItems ? totalItems % (itemsPerPage ?? 1) : 0;
+
       return remainingItems > 0
         ? remainingItems.toLocaleString()
         : (itemsPerPage?.toLocaleString() ?? '-');
@@ -67,7 +68,9 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       <div {...props} className={mergedClsx} ref={ref}>
         {/** Left label */}
         <p className="body1 text-mono-160 dark:text-mono-100">
-          Showing {showingItemsCount} {title} out of {totalItems ?? '-'}
+          {totalItems === 0
+            ? 'No items'
+            : `Showing ${showingItemsCount} ${title} out of ${totalItems ?? '-'}`}
         </p>
 
         {/** Right buttons */}

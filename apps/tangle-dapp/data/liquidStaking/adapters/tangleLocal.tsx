@@ -12,7 +12,7 @@ import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
 const TANGLE_LOCAL = {
   networkId: LsNetworkId.TANGLE_LOCAL,
   id: LsProtocolId.TANGLE_LOCAL,
-  name: 'Tangle Local',
+  name: 'Tangle',
   token: LsToken.TTNT,
   chainIconFileName: 'tangle',
   decimals: TANGLE_TOKEN_DECIMALS,

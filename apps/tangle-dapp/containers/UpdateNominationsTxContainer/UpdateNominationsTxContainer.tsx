@@ -98,15 +98,18 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   // so we need to handle the conversion between set <> array
   const handleSelectedValidatorsChange = useCallback<
     Dispatch<SetStateAction<Set<string>>>
-  >((nextValueOrUpdater) => {
-    if (typeof nextValueOrUpdater === 'function') {
-      setSelectedValidators((prev) => {
-        return Array.from(nextValueOrUpdater(new Set(prev)));
-      });
-    } else {
-      setSelectedValidators(Array.from(nextValueOrUpdater));
-    }
-  }, []);
+  >(
+    (nextValueOrUpdater) => {
+      if (typeof nextValueOrUpdater === 'function') {
+        setSelectedValidators((prev) => {
+          return Array.from(nextValueOrUpdater(new Set(prev)));
+        });
+      } else {
+        setSelectedValidators(Array.from(nextValueOrUpdater));
+      }
+    },
+    [setSelectedValidators],
+  );
 
   return (
     <Modal open>

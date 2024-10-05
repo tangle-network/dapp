@@ -45,9 +45,9 @@ const SELECTED_ITEMS_COLUMN_SORT = {
 } as const satisfies ColumnSort;
 
 export const LsValidatorTable = () => {
-  const { selectedProtocolId, setSelectedNetworkEntities: setSelectedItems } =
-    useLsStore();
-  const { isLoading, data, dataType } = useLsValidators(selectedProtocolId);
+  const { lsProtocolId, setNetworkEntities } = useLsStore();
+
+  const { isLoading, data, dataType } = useLsValidators(lsProtocolId);
   const [searchValue, setSearchValue] = useState('');
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
@@ -63,8 +63,8 @@ export const LsValidatorTable = () => {
   >(null);
 
   useEffect(() => {
-    setSelectedItems(new Set(Object.keys(rowSelection)));
-  }, [rowSelection, setSelectedItems]);
+    setNetworkEntities(new Set(Object.keys(rowSelection)));
+  }, [rowSelection, setNetworkEntities]);
 
   const columns = useLsValidatorSelectionTableColumns(
     toggleSortSelectionHandlerRef,

@@ -31,4 +31,5 @@ export interface AvatarProps extends IWebbComponentBase, IdenticonBaseProps {
    * @default "address"
    * */
   sourceVariant?: 'address' | 'uri';
+  tooltip?: string;
 }

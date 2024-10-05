@@ -3,10 +3,10 @@ import { twMerge } from 'tailwind-merge';
 
 const TableCellWrapper: FC<
   PropsWithChildren & {
-    removeBorder?: boolean;
+    removeRightBorder?: boolean;
     className?: string;
   }
-> = ({ children, className, removeBorder = false }) => {
+> = ({ children, className, removeRightBorder = false }) => {
   return (
     <div
       className={twMerge(
@@ -15,7 +15,7 @@ const TableCellWrapper: FC<
       )}
     >
       {children}
-      {!removeBorder && (
+      {!removeRightBorder && (
         <div className="w-px h-[51px] bg-mono-60 dark:bg-mono-140" />
       )}
     </div>

@@ -1,11 +1,8 @@
 import React, {
   Dispatch,
-  FC,
-  ReactNode,
   SetStateAction,
   useCallback,
   useContext,
-  useState,
 } from 'react';
 
 const ErrorSetContext = React.createContext<{
@@ -17,20 +14,6 @@ const ErrorSetContext = React.createContext<{
     //
   },
 });
-
-export const ErrorSetContextProvider: FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const [errorSet, setErrorSet] = useState(new Set<string>());
-
-  return (
-    <ErrorSetContext.Provider
-      value={{ errors: errorSet, setErrors: setErrorSet }}
-    >
-      {children}
-    </ErrorSetContext.Provider>
-  );
-};
 
 /**
  * Useful for inputs of a form or any other component that

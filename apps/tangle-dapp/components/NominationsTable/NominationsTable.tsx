@@ -27,6 +27,7 @@ import {
   sortBnValueForNomineeOrValidator,
 } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
+import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 
 const columnHelper = createColumnHelper<Nominee>();
@@ -92,10 +93,7 @@ const columns = [
   columnHelper.accessor('commission', {
     header: () => <HeaderCell title="Commission" className="justify-center" />,
     cell: (props) => (
-      <StringCell
-        value={calculateCommission(props.getValue()).toFixed(2) + '%'}
-        className="text-start"
-      />
+      <PercentageCell percentage={calculateCommission(props.getValue())} />
     ),
     sortingFn: sortBnValueForNomineeOrValidator,
   }),

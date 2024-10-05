@@ -18,7 +18,7 @@ import {
   CheckBox,
   fuzzyFilter,
   Table,
-  TANGLE_DOCS_URL,
+  TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
@@ -32,12 +32,9 @@ import {
   ParachainCurrency,
 } from '../../../constants/liquidStaking/types';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useLiquifierNftUnlocks, {
-  LiquifierUnlockNftMetadata,
-} from '../../../data/liquifier/useLiquifierNftUnlocks';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import addCommasToNumber from '../../../utils/addCommasToNumber';
-import isLiquifierProtocolId from '../../../utils/liquidStaking/isLiquifierProtocolId';
+import formatPercentage from '../../../utils/formatPercentage';
 import isLsParachainChainId from '../../../utils/liquidStaking/isLsParachainChainId';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
 import GlassCard from '../../GlassCard';
@@ -48,7 +45,6 @@ import TableRowsSkeleton from '../TableRowsSkeleton';
 import RebondLstUnstakeRequestButton from './RebondLstUnstakeRequestButton';
 import useLstUnlockRequestTableRows from './useLstUnlockRequestTableRows';
 import WithdrawLstUnstakeRequestButton from './WithdrawLstUnstakeRequestButton';
-import WithdrawUnlockNftButton from './WithdrawUnlockNftButton';
 
 export type BaseUnstakeRequest = {
   unlockId: number;
@@ -75,9 +71,7 @@ export type ParachainUnstakeRequest = BaseUnstakeRequest & {
   progress?: LsParachainSimpleTimeUnit;
 };
 
-type UnstakeRequestTableRow =
-  | LiquifierUnlockNftMetadata
-  | ParachainUnstakeRequest;
+type UnstakeRequestTableRow = ParachainUnstakeRequest;
 
 const COLUMN_HELPER = createColumnHelper<UnstakeRequestTableRow>();
 
@@ -85,16 +79,11 @@ const COLUMNS = [
   COLUMN_HELPER.accessor('unlockId', {
     header: () => <HeaderCell title="Unlock ID" className="justify-start" />,
     cell: (props) => {
-      const canSelect =
-        props.row.original.type === 'liquifierUnlockNft'
-          ? props.row.original.progress === 1
-          : true;
-
       return (
         <div className="flex items-center justify-start gap-2">
           <CheckBox
             isChecked={props.row.getIsSelected()}
-            isDisabled={!props.row.getCanSelect() || !canSelect}
+            isDisabled={!props.row.getCanSelect()}
             onChange={props.row.getToggleSelectedHandler()}
             wrapperClassName="pt-0.5 flex items-center justify-center"
           />
@@ -119,7 +108,7 @@ const COLUMNS = [
             return undefined;
           }
 
-          return (progress * 100).toFixed(2) + '%';
+          return formatPercentage(progress * 100);
         }
         // Otherwise, it must be a Parachain unstake request's
         // remaining time unit.
@@ -144,11 +133,7 @@ const COLUMNS = [
     header: () => <HeaderCell title="Amount" className="justify-center" />,
     cell: (props) => {
       const unstakeRequest = props.row.original;
-
-      const tokenSymbol =
-        unstakeRequest.type === 'parachainUnstakeRequest'
-          ? unstakeRequest.currency.toUpperCase()
-          : unstakeRequest.symbol;
+      const tokenSymbol = unstakeRequest.currency.toUpperCase();
 
       return (
         <TokenAmountCell
@@ -163,17 +148,9 @@ const COLUMNS = [
 ];
 
 const UnstakeRequestsTable: FC = () => {
-  const { selectedProtocolId } = useLsStore();
+  const { lsProtocolId } = useLsStore();
   const activeAccountAddress = useActiveAccountAddress();
-  const parachainRows = useLstUnlockRequestTableRows();
-  const liquifierRows = useLiquifierNftUnlocks();
-
-  // Select the table rows based on whether the selected protocol
-  // is an EVM-based chain (liquifier contract) or a parachain-based
-  // Substrate chain.
-  const rows = isLiquifierProtocolId(selectedProtocolId)
-    ? liquifierRows
-    : parachainRows;
+  const rows = useLstUnlockRequestTableRows();
 
   const tableOptions = useMemo<TableOptions<UnstakeRequestTableRow>>(
     () => ({
@@ -270,9 +247,7 @@ const UnstakeRequestsTable: FC = () => {
 
       // If the remaining time unit is undefined, it means that the
       // request has completed its unlocking period.
-      return request.type === 'parachainUnstakeRequest'
-        ? request.progress === undefined
-        : request.progress === 1;
+      return request.progress === undefined;
     });
   }, [selectedRowsUnlockIds, rows]);
 
@@ -285,16 +260,6 @@ const UnstakeRequestsTable: FC = () => {
       }
 
       return [[row.original.currency, row.original.unlockId]];
-    });
-  }, [selectedRows]);
-
-  const nftUnlockIds = useMemo<number[]>(() => {
-    return selectedRows.flatMap((row) => {
-      if (row.original.type !== 'liquifierUnlockNft') {
-        return [];
-      }
-
-      return [row.original.unlockId];
     });
   }, [selectedRows]);
 
@@ -312,7 +277,7 @@ const UnstakeRequestsTable: FC = () => {
 
         {isDataState && (
           <div className="flex gap-3 items-center justify-center">
-            {isLsParachainChainId(selectedProtocolId) && (
+            {isLsParachainChainId(lsProtocolId) && (
               <RebondLstUnstakeRequestButton
                 // Can only rebond if there are selected rows.
                 isDisabled={selectedRowsUnlockIds.size === 0}
@@ -321,25 +286,22 @@ const UnstakeRequestsTable: FC = () => {
             )}
 
             {/* TODO: Assert that the id is either parachain or liquifier, if it isn't then we might need to hide this unstake requests table and show a specific one for Tangle networks (LS pools). */}
-            {isLsParachainChainId(selectedProtocolId) ? (
+            {isLsParachainChainId(lsProtocolId) && (
               <WithdrawLstUnstakeRequestButton
                 canWithdraw={canWithdrawAllSelected}
                 currenciesAndUnlockIds={parachainCurrenciesAndUnlockIds}
               />
-            ) : isLiquifierProtocolId(selectedProtocolId) ? (
-              <WithdrawUnlockNftButton
-                tokenId={selectedProtocolId}
-                canWithdraw={canWithdrawAllSelected}
-                unlockIds={nftUnlockIds}
-              />
-            ) : undefined}
+            )}
           </div>
         )}
       </GlassCard>
 
       {rows !== null && rows.length === 0 && (
         <div className="flex items-center justify-end w-full">
-          <ExternalLink Icon={ArrowRightUp} href={TANGLE_DOCS_URL}>
+          <ExternalLink
+            Icon={ArrowRightUp}
+            href={TANGLE_DOCS_LIQUID_STAKING_URL}
+          >
             View Docs
           </ExternalLink>
         </div>

@@ -6,7 +6,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  TANGLE_DOCS_URL,
+  TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
@@ -68,7 +68,9 @@ const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
             tokens.
           </Typography>
 
-          <ExternalLink href={TANGLE_DOCS_URL}>Learn More</ExternalLink>
+          <ExternalLink href={TANGLE_DOCS_LIQUID_STAKING_URL}>
+            Learn More
+          </ExternalLink>
         </div>
 
         <ModalFooter className="flex items-center gap-2">

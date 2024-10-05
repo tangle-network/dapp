@@ -59,7 +59,7 @@ function useEvmPrecompileFeeFetcher<PrecompileT extends Precompile>() {
   const resetStates = useCallback(() => {
     setStatus('idle');
     setError(null);
-  }, []);
+  }, [setStatus, setError]);
 
   return {
     status,

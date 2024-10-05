@@ -17,7 +17,6 @@ export enum PagePath {
   RESTAKE_STAKE = '/restake/stake',
   RESTAKE_OPERATOR = '/restake/operators',
   LIQUID_STAKING = '/liquid-staking',
-  LIQUID_STAKING_OVERVIEW = '/liquid-staking/overview',
 }
 
 export enum QueryParamKey {

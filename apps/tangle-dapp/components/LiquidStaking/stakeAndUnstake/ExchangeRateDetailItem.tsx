@@ -2,8 +2,9 @@ import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { LsToken } from '../../../constants/liquidStaking/types';
+import useLsActivePoolDisplayName from '../../../data/liquidStaking/useLsActivePoolDisplayName';
 import { ExchangeRateType } from '../../../data/liquidStaking/useLsExchangeRate';
 import useLsExchangeRate from '../../../data/liquidStaking/useLsExchangeRate';
 import DetailItem from './DetailItem';
@@ -17,6 +18,7 @@ const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({
   type,
   token,
 }) => {
+  const lsActivePoolDisplayName = useLsActivePoolDisplayName();
   const { exchangeRate, isRefreshing } = useLsExchangeRate(type);
 
   const exchangeRateElement =
@@ -38,8 +40,8 @@ const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({
           isRefreshing && 'animate-pulse',
         )}
       >
-        1 {token} = {exchangeRateElement} {LS_DERIVATIVE_TOKEN_PREFIX}
-        {token}
+        1 {token} = {exchangeRateElement}{' '}
+        {lsActivePoolDisplayName?.toUpperCase() ?? EMPTY_VALUE_PLACEHOLDER}
       </div>
     );
 

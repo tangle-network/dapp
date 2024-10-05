@@ -12,8 +12,7 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
-import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
-import { LsNetworkId } from '../../../constants/liquidStaking/types';
+import useLsActivePoolDisplayName from '../../../data/liquidStaking/useLsActivePoolDisplayName';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
@@ -33,16 +32,10 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
   onClick,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
-  const { balance, isRefreshing } = useLsAgnosticBalance(isNative);
-  const { selectedProtocolId } = useLsStore();
-  const protocol = getLsProtocolDef(selectedProtocolId);
-
-  // Special case for liquid tokens on the `TgToken.sol` contract.
-  // See: https://github.com/webb-tools/tnt-core/blob/1f371959884352e7af68e6091c5bb330fcaa58b8/src/lst/liquidtoken/TgToken.sol#L26
-  const decimals =
-    !isNative && protocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER
-      ? 18
-      : protocol.decimals;
+  const balance = useLsAgnosticBalance(isNative);
+  const { lsProtocolId } = useLsStore();
+  const lsActivePoolDisplayName = useLsActivePoolDisplayName();
+  const protocol = getLsProtocolDef(lsProtocolId);
 
   const formattedBalance = useMemo(() => {
     // No account is active; display a placeholder instead of a loading state.
@@ -54,14 +47,22 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
       return null;
     }
 
-    const formattedBalance = formatBn(balance, decimals, {
+    const formattedBalance = formatBn(balance, protocol.decimals, {
       includeCommas: true,
     });
 
-    const derivativePrefix = isNative ? '' : LS_DERIVATIVE_TOKEN_PREFIX;
+    const unit = isNative
+      ? protocol.token
+      : (lsActivePoolDisplayName?.toUpperCase() ?? EMPTY_VALUE_PLACEHOLDER);
 
-    return `${formattedBalance} ${derivativePrefix}${protocol.token}`;
-  }, [balance, decimals, isNative, protocol.token]);
+    return `${formattedBalance} ${unit}`.trim();
+  }, [
+    balance,
+    protocol.decimals,
+    protocol.token,
+    isNative,
+    lsActivePoolDisplayName,
+  ]);
 
   const isClickable =
     onlyShowTooltipWhenBalanceIsSet &&
@@ -85,7 +86,6 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
       className={twMerge(
         'group flex gap-1 items-center justify-center',
         isClickable && 'cursor-pointer',
-        isRefreshing && 'animate-pulse',
       )}
     >
       {isHovering && isClickable ? (

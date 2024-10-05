@@ -4,23 +4,24 @@ import { FC, useMemo } from 'react';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import formatBn from '../../../utils/formatBn';
+import formatPercentage from '../../../utils/formatPercentage';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
 import DetailItem from './DetailItem';
 import useLsFeePercentage from './useLsFeePercentage';
 
 export type FeeDetailItemProps = {
-  isMinting: boolean;
+  isStaking: boolean;
   inputAmount: BN | null;
   protocolId: LsProtocolId;
 };
 
 const FeeDetailItem: FC<FeeDetailItemProps> = ({
-  isMinting,
+  isStaking,
   inputAmount,
   protocolId,
 }) => {
-  const feePercentage = useLsFeePercentage(protocolId, isMinting);
+  const feePercentage = useLsFeePercentage(protocolId, isStaking);
 
   const protocol = getLsProtocolDef(protocolId);
 
@@ -51,7 +52,7 @@ const FeeDetailItem: FC<FeeDetailItemProps> = ({
   const feeTitle =
     typeof feePercentage !== 'number'
       ? 'Fee'
-      : `Fee (${(feePercentage * 100).toFixed(2)}%)`;
+      : `Fee (${formatPercentage(feePercentage * 100)})`;
 
   return <DetailItem title={feeTitle} value={formattedFeeAmount} />;
 };

@@ -1,19 +1,13 @@
 import ASTAR from '../../data/liquidStaking/adapters/astar';
-import CHAINLINK from '../../data/liquidStaking/adapters/chainlink';
-import LIVEPEER from '../../data/liquidStaking/adapters/livepeer';
 import MANTA from '../../data/liquidStaking/adapters/manta';
 import MOONBEAM from '../../data/liquidStaking/adapters/moonbeam';
 import PHALA from '../../data/liquidStaking/adapters/phala';
 import POLKADOT from '../../data/liquidStaking/adapters/polkadot';
-import POLYGON from '../../data/liquidStaking/adapters/polygon';
 import TANGLE_LOCAL from '../../data/liquidStaking/adapters/tangleLocal';
 import TANGLE_MAINNET from '../../data/liquidStaking/adapters/tangleMainnet';
 import TANGLE_TESTNET from '../../data/liquidStaking/adapters/tangleTestnet';
-import THE_GRAPH from '../../data/liquidStaking/adapters/theGraph';
 import { IS_PRODUCTION_ENV } from '../env';
 import {
-  LsLiquifierProtocolDef,
-  LsLiquifierProtocolId,
   LsNetwork,
   LsNetworkId,
   LsParachainChainDef,
@@ -40,36 +34,20 @@ export const LS_PARACHAIN_CHAIN_MAP: Record<
   [LsProtocolId.MANTA]: MANTA,
 } as Record<LsParachainChainId, LsParachainChainDef>;
 
-export const LS_LIQUIFIER_PROTOCOL_MAP: Record<
-  LsLiquifierProtocolId,
-  LsLiquifierProtocolDef
-> = {
-  [LsProtocolId.CHAINLINK]: CHAINLINK,
-  [LsProtocolId.THE_GRAPH]: THE_GRAPH,
-  [LsProtocolId.LIVEPEER]: LIVEPEER,
-  [LsProtocolId.POLYGON]: POLYGON,
-};
-
 export const LS_PROTOCOLS: LsProtocolDef[] = [
   ...Object.values(LS_PARACHAIN_CHAIN_MAP),
-  ...Object.values(LS_LIQUIFIER_PROTOCOL_MAP),
   TANGLE_MAINNET,
   TANGLE_TESTNET,
   TANGLE_LOCAL,
 ];
 
-export const LS_LIQUIFIER_PROTOCOL_IDS = [
-  LsProtocolId.CHAINLINK,
-  LsProtocolId.THE_GRAPH,
-  LsProtocolId.LIVEPEER,
-  LsProtocolId.POLYGON,
-] as const satisfies LsLiquifierProtocolId[];
-
-export const LS_PARACHAIN_CHAIN_IDS = Object.values(LsProtocolId).filter(
-  (value): value is LsParachainChainId =>
-    typeof value !== 'string' &&
-    !LS_LIQUIFIER_PROTOCOL_IDS.includes(value as LsLiquifierProtocolId),
-) satisfies LsParachainChainId[];
+export const LS_PARACHAIN_PROTOCOL_IDS = [
+  LsProtocolId.ASTAR,
+  LsProtocolId.PHALA,
+  LsProtocolId.MANTA,
+  LsProtocolId.MOONBEAM,
+  LsProtocolId.POLKADOT,
+] as const satisfies LsParachainChainId[];
 
 export const LS_PARACHAIN_TOKENS = [
   LsToken.DOT,
@@ -83,14 +61,6 @@ export const TVS_TOOLTIP =
   "Total Value Staked (TVS) refers to the total value of assets that are currently staked for this network in fiat currency. Generally used as an indicator of a network's security and trustworthiness.";
 
 export const LS_DERIVATIVE_TOKEN_PREFIX = 'tg';
-
-export const LS_ETHEREUM_MAINNET_LIQUIFIER: LsNetwork = {
-  id: LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER,
-  networkName: IS_PRODUCTION_ENV ? 'Ethereum Mainnet' : 'Sepolia Testnet',
-  chainIconFileName: 'ethereum',
-  defaultProtocolId: LsProtocolId.CHAINLINK,
-  protocols: [CHAINLINK, THE_GRAPH, LIVEPEER, POLYGON],
-};
 
 export const LS_TANGLE_RESTAKING_PARACHAIN: LsNetwork = {
   id: LsNetworkId.TANGLE_RESTAKING_PARACHAIN,
@@ -110,11 +80,11 @@ export const LS_TANGLE_MAINNET = {
 } as const satisfies LsNetwork;
 
 export const LS_TANGLE_TESTNET = {
-  id: LsNetworkId.TANGLE_MAINNET,
+  id: LsNetworkId.TANGLE_TESTNET,
   networkName: 'Tangle Testnet',
   chainIconFileName: 'tangle',
-  defaultProtocolId: LsProtocolId.TANGLE_MAINNET,
-  protocols: [TANGLE_MAINNET],
+  defaultProtocolId: LsProtocolId.TANGLE_TESTNET,
+  protocols: [TANGLE_TESTNET],
 } as const satisfies LsNetwork;
 
 export const LS_TANGLE_LOCAL = {
@@ -130,7 +100,6 @@ export const LS_NETWORKS: LsNetwork[] = [
   LS_TANGLE_TESTNET,
   LS_TANGLE_LOCAL,
   LS_TANGLE_RESTAKING_PARACHAIN,
-  LS_ETHEREUM_MAINNET_LIQUIFIER,
 ];
 
 /**

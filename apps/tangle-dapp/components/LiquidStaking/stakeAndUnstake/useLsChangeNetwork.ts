@@ -1,5 +1,4 @@
 import { useWebbUI } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
 import { useCallback } from 'react';
 
 import { LsNetworkId } from '../../../constants/liquidStaking/types';
@@ -7,38 +6,27 @@ import { NETWORK_FEATURE_MAP } from '../../../constants/networks';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useNetworkSwitcher from '../../../hooks/useNetworkSwitcher';
 import { NetworkFeature } from '../../../types';
-import getLsNetwork from '../../../utils/liquidStaking/getLsNetwork';
 import getLsTangleNetwork from '../../../utils/liquidStaking/getLsTangleNetwork';
 
 const useLsChangeNetwork = () => {
-  const { selectedNetworkId, setSelectedNetworkId } = useLsStore();
+  const { lsNetworkId, setSelectedNetworkId } = useLsStore();
   const { switchNetwork } = useNetworkSwitcher();
   const { notificationApi } = useWebbUI();
 
   const tryChangeNetwork = useCallback(
-    async (newNetworkId: LsNetworkId) => {
+    async (newLsNetworkId: LsNetworkId) => {
       // No need to change network if it's already selected.
-      if (selectedNetworkId === newNetworkId) {
+      if (lsNetworkId === newLsNetworkId) {
         return;
       }
 
-      const lsNetwork = getLsNetwork(newNetworkId);
+      const tangleNetwork = getLsTangleNetwork(newLsNetworkId);
 
-      // Don't check connection to Ethereum mainnet liquifier;
-      // only verify RPC connection to Tangle networks.
-      if (lsNetwork.id === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER) {
-        setSelectedNetworkId(newNetworkId);
+      const supportsLiquidStaking = NETWORK_FEATURE_MAP[
+        tangleNetwork.id
+      ].includes(NetworkFeature.LsPools);
 
-        return;
-      }
-
-      const tangleNetwork = getLsTangleNetwork(newNetworkId);
-
-      assert(tangleNetwork !== null);
-
-      const networkFeatures = NETWORK_FEATURE_MAP[tangleNetwork.id];
-
-      if (!networkFeatures.includes(NetworkFeature.LsPools)) {
+      if (!supportsLiquidStaking) {
         notificationApi({
           message: 'Network does not support liquid staking yet',
           variant: 'error',
@@ -48,10 +36,10 @@ const useLsChangeNetwork = () => {
       }
 
       if (await switchNetwork(tangleNetwork, false)) {
-        setSelectedNetworkId(newNetworkId);
+        setSelectedNetworkId(newLsNetworkId);
       }
     },
-    [notificationApi, selectedNetworkId, setSelectedNetworkId, switchNetwork],
+    [notificationApi, lsNetworkId, setSelectedNetworkId, switchNetwork],
   );
 
   return tryChangeNetwork;
