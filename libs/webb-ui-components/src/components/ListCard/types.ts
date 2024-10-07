@@ -362,3 +362,20 @@ export interface TokenListCardProps
 
   overrideScrollAreaProps?: ComponentProps<typeof ScrollArea>;
 }
+
+export interface OperatorType {
+  accountId: string;
+  identityName: string;
+  status: string;
+}
+
+export interface OperatorListCardProps {
+  operators: OperatorType[];
+  selectedOperatorAccountId?: string;
+  onChange?: (operator: OperatorType) => void;
+  onClose?: () => void;
+  onResetSelection?: () => void;
+  title?: string;
+  overrideInputProps?: Partial<InputProps>;
+  overrideScrollAreaProps?: Partial<ComponentProps<typeof ScrollArea>>;
+}

@@ -31,7 +31,7 @@ export async function hyperlaneTransfer(params?: {
   if (!routeAddress) throw new Error('Token address not found');
 
   const hyperlaneToken = tryFindToken(
-    getHyperlaneChainName(sourceTypedChainId), // the name is getting from chainsConfig, convert to match with Hyperlane registry
+    getHyperlaneChainName(sourceTypedChainId),
     routeAddress,
   );
   if (!hyperlaneToken) throw new Error('Token not found');
@@ -46,6 +46,17 @@ export async function hyperlaneTransfer(params?: {
     });
   if (!isCollateralSufficient) {
     throw new Error('Insufficient destination collateral');
+  }
+
+  const errors = await warpCore.validateTransfer({
+    originTokenAmount,
+    destination,
+    recipient: recipientAddress,
+    sender: senderAddress,
+  });
+  if (errors) {
+    console.debug('Error validating transfer', JSON.stringify(errors));
+    throw new Error('Error validating transfer');
   }
 
   const txs = await warpCore.getTransferRemoteTxs({
@@ -78,8 +89,8 @@ export async function hyperlaneTransfer(params?: {
 
 function getHyperlaneChainName(typedChainId: number) {
   switch (typedChainId) {
-    case PresetTypedChainId.Sepolia:
-      return 'sepolia';
+    case PresetTypedChainId.TangleTestnetEVM:
+      return 'tangletestnet';
     case PresetTypedChainId.Holesky:
       return 'holesky';
     default:

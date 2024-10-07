@@ -44,16 +44,16 @@ export const BRIDGE_SUPPORTED_TOKENS: Record<BridgeTokenId, BridgeTokenType> = {
       default: 18,
     },
     erc20TokenContractAddress: {
-      [PresetTypedChainId.Sepolia]:
-        '0x0F4C1d951295Fe17c1514eB3020dFA6EedAd0137',
       [PresetTypedChainId.Holesky]:
-        '0x94373a4919B3240D86eA41593D5eBa789FEF3848',
+      '0x94373a4919B3240D86eA41593D5eBa789FEF3848',
+      [PresetTypedChainId.TangleTestnetEVM]:
+        '0x200DE548e393c38ee80482e9c5c186CBA7096ad4',
     },
     hyperlaneRouteContractAddress: {
-      [PresetTypedChainId.Sepolia]:
-        '0x9DB8ebb2666E2e9f6864A82272199632eE45d182',
       [PresetTypedChainId.Holesky]:
-        '0x9DB8ebb2666E2e9f6864A82272199632eE45d182',
+      '0xdFe0fbA0F8C62278DF4A9fDc787F9cFF28522FD3',
+      [PresetTypedChainId.TangleTestnetEVM]:
+        '0x200DE548e393c38ee80482e9c5c186CBA7096ad4',
     },
   },
 };
@@ -94,14 +94,14 @@ export const BRIDGE: BridgeType = {
     [PresetTypedChainId.TangleTestnetNative]: {
       supportedTokens: ['sygUSD'],
     },
-    // TODO: remove this (this is for testing Hyperlane only)
-    [PresetTypedChainId.Holesky]: {
+  },
+  [PresetTypedChainId.Holesky]: {
+    [PresetTypedChainId.TangleTestnetEVM]: {
       supportedTokens: ['WETH'],
     },
   },
-  // TODO: remove this (this is for testing Hyperlane only)
-  [PresetTypedChainId.Holesky]: {
-    [PresetTypedChainId.Sepolia]: {
+  [PresetTypedChainId.TangleTestnetEVM]: {
+    [PresetTypedChainId.Holesky]: {
       supportedTokens: ['WETH'],
     },
   },

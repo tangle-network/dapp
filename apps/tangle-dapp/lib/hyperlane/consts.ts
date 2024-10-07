@@ -14,12 +14,13 @@ export const customChains: ChainMap<ChainMetadata> = {};
 export const customWarpRouteConfigs: WarpCoreConfig = {
   tokens: [
     {
-      addressOrDenom: '0x9DB8ebb2666E2e9f6864A82272199632eE45d182',
+      addressOrDenom: '0xdFe0fbA0F8C62278DF4A9fDc787F9cFF28522FD3',
       chainName: 'holesky',
       collateralAddressOrDenom: '0x94373a4919B3240D86eA41593D5eBa789FEF3848',
       connections: [
         {
-          token: 'ethereum|sepolia|0x0F4C1d951295Fe17c1514eB3020dFA6EedAd0137',
+          token:
+            'ethereum|tangletestnet|0x200DE548e393c38ee80482e9c5c186CBA7096ad4',
         },
       ],
       decimals: 18,
@@ -28,11 +29,11 @@ export const customWarpRouteConfigs: WarpCoreConfig = {
       symbol: 'WETH',
     },
     {
-      addressOrDenom: '0x0F4C1d951295Fe17c1514eB3020dFA6EedAd0137',
-      chainName: 'sepolia',
+      addressOrDenom: '0x200DE548e393c38ee80482e9c5c186CBA7096ad4',
+      chainName: 'tangletestnet',
       connections: [
         {
-          token: 'ethereum|holesky|0x9DB8ebb2666E2e9f6864A82272199632eE45d182',
+          token: 'ethereum|holesky|0xdFe0fbA0F8C62278DF4A9fDc787F9cFF28522FD3',
         },
       ],
       decimals: 18,
@@ -48,5 +49,5 @@ export const customWarpRouteConfigs: WarpCoreConfig = {
 // If left null, all warp routes in the configured registry will be included
 // If set to a list (including an empty list), only the specified routes will be included
 export const warpRouteWhitelist: Array<string> | null = [
-  'WETH/holesky-sepolia',
+  'WETH/holesky-tangletestnet',
 ];

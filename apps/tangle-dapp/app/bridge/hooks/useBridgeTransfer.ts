@@ -141,6 +141,7 @@ export default function useBridgeTransfer({
           }
 
           const receipt = await res.wait();
+
           if (txHash !== undefined) {
             if (receipt.status === 1) {
               updateTxState(txHash, BridgeTxState.Executed);
