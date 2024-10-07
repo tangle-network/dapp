@@ -70,10 +70,9 @@ const getDataType = (chain: LsProtocolId): LiquidStakingItem | null => {
       return LiquidStakingItem.VAULT_OR_STAKE_POOL;
     case LsProtocolId.ASTAR:
       return LiquidStakingItem.DAPP;
-    case LsProtocolId.CHAINLINK:
-    case LsProtocolId.LIVEPEER:
-    case LsProtocolId.POLYGON:
-    case LsProtocolId.THE_GRAPH:
+    case LsProtocolId.TANGLE_MAINNET:
+    case LsProtocolId.TANGLE_TESTNET:
+    case LsProtocolId.TANGLE_LOCAL:
       return null;
   }
 };

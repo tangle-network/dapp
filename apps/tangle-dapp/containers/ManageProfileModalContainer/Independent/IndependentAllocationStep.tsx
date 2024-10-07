@@ -12,7 +12,6 @@ import {
 import { z } from 'zod';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
-import useApi from '../../../hooks/useApi';
 import { RestakingService } from '../../../types';
 import { AllocationChartVariant } from '../AllocationChart';
 import AllocationStepContainer from '../AllocationStepContainer';
@@ -49,10 +48,6 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
 
   const [newAllocationAmount, setNewAllocationAmount] = useState<BN | null>(
     null,
-  );
-
-  const { result: maxRolesPerAccount } = useApi(
-    useCallback((api) => api.consts.roles.maxRolesPerAccount, []),
   );
 
   const [newAllocationRole, setNewAllocationRole] =
@@ -138,10 +133,7 @@ const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
     [allocations],
   );
 
-  const canAddNewAllocation =
-    availableRoles.length > 0 &&
-    maxRolesPerAccount !== null &&
-    maxRolesPerAccount.gtn(filteredAllocations.length);
+  const canAddNewAllocation = availableRoles.length > 0;
 
   return (
     <AllocationStepContainer

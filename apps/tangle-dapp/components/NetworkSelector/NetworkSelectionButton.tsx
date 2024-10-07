@@ -16,18 +16,14 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { usePathname } from 'next/navigation';
 import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useNetworkStore from '../../context/useNetworkStore';
-import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
 import { PagePath } from '../../types';
 import createCustomNetwork from '../../utils/createCustomNetwork';
-import isLiquifierProtocolId from '../../utils/liquidStaking/isLiquifierProtocolId';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
 // TODO: Currently hard-coded, but shouldn't it always be the Tangle icon, since it's not switching chains but rather networks within Tangle? If so, find some constant somewhere instead of having it hard-coded here.
@@ -40,7 +36,6 @@ const NetworkSelectionButton: FC = () => {
   const { network } = useNetworkStore();
   const { switchNetwork, isCustom } = useNetworkSwitcher();
   const pathname = usePathname();
-  const { selectedProtocolId } = useLsStore();
 
   // TODO: Handle switching network on EVM wallet here.
   const switchToCustomNetwork = useCallback(
@@ -61,7 +56,7 @@ const NetworkSelectionButton: FC = () => {
 
   // Disable network switching when in Liquid Staking page,
   // since it would have no effect there.
-  const isInLiquidStakingPath = pathname.startsWith(PagePath.LIQUID_STAKING);
+  const isInLiquidStakingPage = pathname.startsWith(PagePath.LIQUID_STAKING);
 
   const isInBridgePath = useMemo(
     () => pathname.startsWith(PagePath.BRIDGE),
@@ -96,27 +91,16 @@ const NetworkSelectionButton: FC = () => {
   if (isInBridgePath) {
     return null;
   }
-  // Network can't be switched from the Tangle Restaking Parachain while
-  // on liquid staking page.
-  else if (isInLiquidStakingPath) {
-    const liquidStakingNetworkName = isLiquifierProtocolId(selectedProtocolId)
-      ? IS_PRODUCTION_ENV
-        ? 'Ethereum Mainnet'
-        : 'Sepolia Testnet'
-      : TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.name;
-
-    const chainIconName = isLiquifierProtocolId(selectedProtocolId)
-      ? 'ethereum'
-      : TANGLE_TESTNET_CHAIN_NAME;
-
+  // Network can't be manually switched while on the liquid
+  // staking page.
+  else if (isInLiquidStakingPage) {
     return (
       <Tooltip>
         <TooltipTrigger asChild>
           <Dropdown>
             <TriggerButton
               className="opacity-60 cursor-not-allowed hover:!bg-none dark:hover:!bg-none"
-              networkName={liquidStakingNetworkName}
-              chainIconName={chainIconName}
+              networkName={networkName}
               isLocked
             />
           </Dropdown>

@@ -5,41 +5,43 @@
 import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
-import { ArrowDownIcon } from '@radix-ui/react-icons';
-import { Search } from '@webb-tools/icons';
+import { ArrowDownIcon, Search } from '@webb-tools/icons';
 import {
   Button,
   Chip,
   Input,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { z } from 'zod';
 
-import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
   LsNetworkId,
   LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
+import useMintTx from '../../../data/liquidStaking/parachain/useMintTx';
+import useLsPoolJoinTx from '../../../data/liquidStaking/tangle/useLsPoolJoinTx';
 import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
+import useLsPoolMembers from '../../../data/liquidStaking/useLsPoolMembers';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useMintTx from '../../../data/liquidStaking/useMintTx';
-import useLiquifierDeposit from '../../../data/liquifier/useLiquifierDeposit';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamState from '../../../hooks/useSearchParamState';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
+import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
 import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
-import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
+import useLsChangeNetwork from './useLsChangeNetwork';
+import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
 const LsStakeCard: FC = () => {
@@ -50,48 +52,68 @@ const LsStakeCard: FC = () => {
     stringify: (value) => value?.toString(),
   });
 
-  const {
-    selectedProtocolId,
-    setSelectedProtocolId,
-    selectedNetworkId,
-    setSelectedNetworkId,
-  } = useLsStore();
+  const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId } = useLsStore();
 
-  const { execute: executeMintTx, status: mintTxStatus } = useMintTx();
-  const performLiquifierDeposit = useLiquifierDeposit();
+  const { execute: executeTanglePoolJoinTx, status: tanglePoolJoinTxStatus } =
+    useLsPoolJoinTx();
+
+  const { execute: executeParachainMintTx, status: parachainMintTxStatus } =
+    useMintTx();
+
   const activeAccountAddress = useActiveAccountAddress();
 
   const { maxSpendable, minSpendable } = useLsSpendingLimits(
     true,
-    selectedProtocolId,
+    lsProtocolId,
   );
 
-  const selectedProtocol = getLsProtocolDef(selectedProtocolId);
+  const selectedProtocol = getLsProtocolDef(lsProtocolId);
+  const tryChangeNetwork = useLsChangeNetwork();
+  const lsPoolMembers = useLsPoolMembers();
+  const fromLsInputRef = useRef<HTMLInputElement>(null);
+
+  const actionText = useMemo(() => {
+    const defaultText = 'Join Pool & Stake';
+
+    if (lsPoolMembers === null) {
+      return defaultText;
+    }
+
+    const isMember = lsPoolMembers.some(
+      ([poolId, accountAddress]) =>
+        poolId === lsPoolId && accountAddress === activeAccountAddress,
+    );
+
+    return isMember ? 'Increase Stake' : defaultText;
+  }, [activeAccountAddress, lsPoolMembers, lsPoolId]);
+
+  const isTangleNetwork =
+    lsNetworkId === LsNetworkId.TANGLE_LOCAL ||
+    lsNetworkId === LsNetworkId.TANGLE_MAINNET ||
+    lsNetworkId === LsNetworkId.TANGLE_TESTNET;
 
   // TODO: Not loading the correct protocol for: '?amount=123000000000000000000&protocol=7&network=1&action=stake'. When network=1, it switches to protocol=5 on load. Could this be because the protocol is reset to its default once the network is switched?
   useSearchParamSync({
     key: LsSearchParamKey.PROTOCOL_ID,
-    value: selectedProtocolId,
+    value: lsProtocolId,
     parse: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
-    setValue: setSelectedProtocolId,
+    setValue: setLsProtocolId,
   });
 
   useSearchParamSync({
     key: LsSearchParamKey.NETWORK_ID,
-    value: selectedNetworkId,
+    value: lsNetworkId,
     parse: (value) => z.nativeEnum(LsNetworkId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
-    setValue: setSelectedNetworkId,
+    // TODO: This might be causing many requests to try to change the network. Bug.
+    setValue: tryChangeNetwork,
   });
 
   const {
     exchangeRate: exchangeRateOrError,
     isRefreshing: isRefreshingExchangeRate,
-  } = useLsExchangeRate(
-    ExchangeRateType.NativeToDerivative,
-    selectedProtocolId,
-  );
+  } = useLsExchangeRate(ExchangeRateType.NativeToDerivative);
 
   // TODO: Properly handle the error state.
   const exchangeRate =
@@ -105,38 +127,55 @@ const LsStakeCard: FC = () => {
 
     if (
       selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeMintTx !== null
+      executeParachainMintTx !== null
     ) {
-      executeMintTx({
+      executeParachainMintTx({
         amount: fromAmount,
         currency: selectedProtocol.currency,
       });
     } else if (
-      selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
-      performLiquifierDeposit !== null
+      isTangleNetwork &&
+      executeTanglePoolJoinTx !== null &&
+      lsPoolId !== null
     ) {
-      await performLiquifierDeposit(selectedProtocol.id, fromAmount);
+      executeTanglePoolJoinTx({
+        amount: fromAmount,
+        poolId: lsPoolId,
+      });
     }
-  }, [executeMintTx, fromAmount, performLiquifierDeposit, selectedProtocol]);
+  }, [
+    executeParachainMintTx,
+    executeTanglePoolJoinTx,
+    fromAmount,
+    isTangleNetwork,
+    selectedProtocol,
+    lsPoolId,
+  ]);
+
+  const feePercentage = useLsFeePercentage(lsProtocolId, true);
 
   const toAmount = useMemo(() => {
-    if (fromAmount === null || exchangeRate === null) {
+    if (
+      fromAmount === null ||
+      exchangeRate === null ||
+      typeof feePercentage !== 'number'
+    ) {
       return null;
     }
 
-    return fromAmount.muln(exchangeRate);
-  }, [fromAmount, exchangeRate]);
+    const feeAmount = scaleAmountByPercentage(fromAmount, feePercentage);
+
+    return fromAmount.muln(exchangeRate).sub(feeAmount);
+  }, [fromAmount, exchangeRate, feePercentage]);
 
   const canCallStake =
     (fromAmount !== null &&
       selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeMintTx !== null) ||
-    (selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
-      performLiquifierDeposit !== null);
+      executeParachainMintTx !== null) ||
+    (isTangleNetwork && executeTanglePoolJoinTx !== null && lsPoolId !== null);
 
   const walletBalance = (
     <LsAgnosticBalance
-      protocolId={selectedProtocolId}
       tooltip="Click to use all available balance"
       onClick={() => {
         if (maxSpendable !== null) {
@@ -146,31 +185,43 @@ const LsStakeCard: FC = () => {
     />
   );
 
+  // Reset the input amount when the network changes.
+  useEffect(() => {
+    setFromAmount(null);
+  }, [setFromAmount, lsNetworkId]);
+
+  // On mount, set the focus on the from input.
+  useEffect(() => {
+    if (fromLsInputRef.current !== null) {
+      fromLsInputRef.current.focus();
+    }
+  }, []);
+
   return (
-    <>
+    <div className="flex flex-col items-stretch justify-center gap-2">
       <LsInput
+        ref={fromLsInputRef}
         id="liquid-staking-stake-from"
-        networkId={selectedNetworkId}
-        protocolId={selectedProtocolId}
+        networkId={lsNetworkId}
         token={selectedProtocol.token}
         amount={fromAmount}
         decimals={selectedProtocol.decimals}
         onAmountChange={setFromAmount}
-        placeholder={`0 ${selectedProtocol.token}`}
+        placeholder="Enter amount to stake"
         rightElement={walletBalance}
-        setProtocolId={setSelectedProtocolId}
+        setProtocolId={setLsProtocolId}
         minAmount={minSpendable ?? undefined}
         maxAmount={maxSpendable ?? undefined}
-        setNetworkId={setSelectedNetworkId}
+        setNetworkId={tryChangeNetwork}
+        showPoolIndicator={false}
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
 
       <LsInput
         id="liquid-staking-stake-to"
-        networkId={selectedNetworkId}
-        protocolId={selectedProtocolId}
-        placeholder={`0 ${LS_DERIVATIVE_TOKEN_PREFIX}${selectedProtocol.token}`}
+        networkId={lsNetworkId}
+        placeholder={EMPTY_VALUE_PLACEHOLDER}
         decimals={selectedProtocol.decimals}
         amount={toAmount}
         isReadOnly
@@ -181,28 +232,21 @@ const LsStakeCard: FC = () => {
 
       {/* Details */}
       <div className="flex flex-col gap-2 p-3">
-        <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
+        <UnstakePeriodDetailItem protocolId={lsProtocolId} />
 
         <ExchangeRateDetailItem
-          protocolId={selectedProtocolId}
           token={selectedProtocol.token}
           type={ExchangeRateType.NativeToDerivative}
         />
 
         <FeeDetailItem
           inputAmount={fromAmount}
-          isMinting
-          protocolId={selectedProtocolId}
-        />
-
-        <TotalDetailItem
-          isMinting
-          protocolId={selectedProtocolId}
-          inputAmount={fromAmount}
+          isStaking
+          protocolId={lsProtocolId}
         />
       </div>
 
-      <LsFeeWarning isMinting selectedProtocolId={selectedProtocolId} />
+      <LsFeeWarning isMinting selectedProtocolId={lsProtocolId} />
 
       <Button
         isDisabled={
@@ -213,14 +257,17 @@ const LsStakeCard: FC = () => {
           fromAmount === null ||
           fromAmount.isZero()
         }
-        isLoading={mintTxStatus === TxStatus.PROCESSING}
+        isLoading={
+          parachainMintTxStatus === TxStatus.PROCESSING ||
+          tanglePoolJoinTxStatus === TxStatus.PROCESSING
+        }
         loadingText="Processing"
         onClick={handleStakeClick}
         isFullWidth
       >
-        Stake
+        {actionText}
       </Button>
-    </>
+    </div>
   );
 };
 

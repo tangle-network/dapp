@@ -6,6 +6,9 @@ import {
 import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import assert from 'assert';
 
+import { SubstrateAddress } from '../types/utils';
+import assertSubstrateAddress from './assertSubstrateAddress';
+
 /**
  * Converts an EVM address to a Substrate address.
  *
@@ -25,12 +28,12 @@ import assert from 'assert';
 export const toSubstrateAddress = (
   address: string,
   ss58Format?: number,
-): string => {
+): SubstrateAddress => {
   // If it's an EVM address, convert it to a Substrate address.
   if (isEthereumAddress(address)) {
     // Different SS58 formats can be used for different networks,
     // which still represents the same account, but look different.
-    return evmToAddress(address, ss58Format);
+    return assertSubstrateAddress(evmToAddress(address, ss58Format));
   }
 
   // Otherwise, it must be a valid Substrate address.
@@ -42,5 +45,5 @@ export const toSubstrateAddress = (
   // Process the address with the given SS58 format, in
   // case that the SS58 format given differs from that of the
   // address.
-  return encodeAddress(address, ss58Format);
+  return assertSubstrateAddress(encodeAddress(address, ss58Format));
 };

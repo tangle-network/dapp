@@ -1,9 +1,15 @@
 import {
+  PalletAssetsAssetAccount,
   TanglePrimitivesCurrencyTokenSymbol,
   TanglePrimitivesTimeUnit,
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
-import { HexString } from '@polkadot/util/types';
+import {
+  TANGLE_LOCAL_DEV_NETWORK,
+  TANGLE_MAINNET_NETWORK,
+  TANGLE_TESTNET_NATIVE_NETWORK,
+} from '@webb-tools/webb-ui-components/constants/networks';
+import { Network as TangleNetwork } from '@webb-tools/webb-ui-components/constants/networks';
 
 import {
   LsNetworkEntityAdapter,
@@ -18,19 +24,22 @@ export enum LsProtocolId {
   MOONBEAM,
   ASTAR,
   MANTA,
-  CHAINLINK,
-  THE_GRAPH,
-  LIVEPEER,
-  POLYGON,
+  TANGLE_MAINNET,
+  TANGLE_TESTNET,
+  TANGLE_LOCAL,
 }
 
-export type LsLiquifierProtocolId =
-  | LsProtocolId.CHAINLINK
-  | LsProtocolId.THE_GRAPH
-  | LsProtocolId.LIVEPEER
-  | LsProtocolId.POLYGON;
+export type LsParachainChainId =
+  | LsProtocolId.POLKADOT
+  | LsProtocolId.PHALA
+  | LsProtocolId.MOONBEAM
+  | LsProtocolId.ASTAR
+  | LsProtocolId.MANTA;
 
-export type LsParachainChainId = Exclude<LsProtocolId, LsLiquifierProtocolId>;
+export type LsTangleNetworkId =
+  | LsProtocolId.TANGLE_MAINNET
+  | LsProtocolId.TANGLE_TESTNET
+  | LsProtocolId.TANGLE_LOCAL;
 
 export enum LsToken {
   DOT = 'DOT',
@@ -39,19 +48,15 @@ export enum LsToken {
   ASTAR = 'ASTR',
   PHALA = 'PHALA',
   TNT = 'TNT',
-  LINK = 'LINK',
-  GRT = 'GRT',
-  LPT = 'LPT',
-  POL = 'POL',
+  TTNT = 'tTNT',
 }
 
-export type LsLiquifierProtocolToken =
-  | LsToken.LINK
-  | LsToken.GRT
-  | LsToken.LPT
-  | LsToken.POL;
-
-export type LsParachainToken = Exclude<LsToken, LsLiquifierProtocolToken>;
+export type LsParachainToken =
+  | LsToken.DOT
+  | LsToken.GLMR
+  | LsToken.MANTA
+  | LsToken.ASTAR
+  | LsToken.PHALA;
 
 type ProtocolDefCommon = {
   name: string;
@@ -62,8 +67,25 @@ type ProtocolDefCommon = {
 };
 
 export enum LsNetworkId {
+  TANGLE_LOCAL,
+  TANGLE_TESTNET,
+  TANGLE_MAINNET,
   TANGLE_RESTAKING_PARACHAIN,
-  ETHEREUM_MAINNET_LIQUIFIER,
+}
+
+export interface LsTangleNetworkDef extends ProtocolDefCommon {
+  networkId:
+    | LsNetworkId.TANGLE_MAINNET
+    | LsNetworkId.TANGLE_TESTNET
+    | LsNetworkId.TANGLE_LOCAL;
+  id: LsTangleNetworkId;
+  token: LsToken.TNT | LsToken.TTNT;
+  rpcEndpoint: string;
+  ss58Prefix:
+    | typeof TANGLE_MAINNET_NETWORK.ss58Prefix
+    | typeof TANGLE_TESTNET_NATIVE_NETWORK.ss58Prefix
+    | typeof TANGLE_LOCAL_DEV_NETWORK.ss58Prefix;
+  tangleNetwork: TangleNetwork;
 }
 
 export interface LsParachainChainDef<T extends ProtocolEntity = ProtocolEntity>
@@ -78,17 +100,7 @@ export interface LsParachainChainDef<T extends ProtocolEntity = ProtocolEntity>
   adapter: LsNetworkEntityAdapter<T>;
 }
 
-export interface LsLiquifierProtocolDef extends ProtocolDefCommon {
-  networkId: LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER;
-  id: LsLiquifierProtocolId;
-  token: LsLiquifierProtocolToken;
-  erc20TokenAddress: HexString;
-  liquifierContractAddress: HexString;
-  tgTokenContractAddress: HexString;
-  unlocksContractAddress: HexString;
-}
-
-export type LsProtocolDef = LsParachainChainDef | LsLiquifierProtocolDef;
+export type LsProtocolDef = LsParachainChainDef | LsTangleNetworkDef;
 
 export type LsCardSearchParams = {
   amount: BN;
@@ -132,7 +144,7 @@ export type LsParachainSimpleTimeUnit = {
 };
 
 export type LsNetwork = {
-  type: LsNetworkId;
+  id: LsNetworkId;
   networkName: string;
   chainIconFileName: string;
   defaultProtocolId: LsProtocolId;
@@ -141,11 +153,15 @@ export type LsNetwork = {
 
 export type LsPool = {
   id: number;
-  metadata?: string;
+  name?: string;
   ownerAddress?: SubstrateAddress;
-  ownerStake?: BN;
+  nominatorAddress?: SubstrateAddress;
+  bouncerAddress?: SubstrateAddress;
   validators: SubstrateAddress[];
   totalStaked: BN;
   apyPercentage?: number;
   commissionPercentage?: number;
+  members: Map<SubstrateAddress, PalletAssetsAssetAccount>;
 };
+
+export type LsPoolDisplayName = `${string}#${number}`;

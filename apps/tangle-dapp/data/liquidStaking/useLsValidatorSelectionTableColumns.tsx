@@ -27,6 +27,7 @@ import {
 } from '../../types/liquidStaking';
 import calculateCommission from '../../utils/calculateCommission';
 import formatBn from '../../utils/formatBn';
+import formatPercentage from '../../utils/formatPercentage';
 
 const validatorColumnHelper = createColumnHelper<Validator>();
 const dappColumnHelper = createColumnHelper<Dapp>();
@@ -138,7 +139,7 @@ export const useLsValidatorSelectionTableColumns = (
               fw="normal"
               className="text-mono-200 dark:text-mono-0"
             >
-              {calculateCommission(props.getValue()).toFixed(2) + '%'}
+              {formatPercentage(calculateCommission(props.getValue()))}
             </Typography>
           </div>
         ),
@@ -355,7 +356,7 @@ export const useLsValidatorSelectionTableColumns = (
               fw="normal"
               className="text-mono-200 dark:text-mono-0"
             >
-              {(Number(props.getValue().toString()) / 10000).toFixed(2)}%
+              {(Number(props.getValue().toString()) / 10_000).toFixed(2)}%
             </Typography>
           </div>
         ),

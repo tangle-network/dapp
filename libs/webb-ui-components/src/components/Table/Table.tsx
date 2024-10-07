@@ -155,10 +155,7 @@ export const Table = <T extends RowData>({
       {isPaginated && (
         <Pagination
           itemsPerPage={table.getState().pagination.pageSize}
-          totalItems={Math.max(
-            table.getPrePaginationRowModel().rows.length,
-            totalRecords,
-          )}
+          totalItems={Math.max(table.getRowCount(), totalRecords)}
           page={table.getState().pagination.pageIndex + 1}
           totalPages={table.getPageCount()}
           canPreviousPage={table.getCanPreviousPage()}

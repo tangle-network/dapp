@@ -7,85 +7,72 @@ import '@webb-tools/tangle-restaking-types';
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Button } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
 
-import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
   LsNetworkId,
   LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
+import useRedeemTx from '../../../data/liquidStaking/parachain/useRedeemTx';
+import useLsPoolUnbondTx from '../../../data/liquidStaking/tangle/useLsPoolUnbondTx';
 import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useRedeemTx from '../../../data/liquidStaking/useRedeemTx';
-import useLiquifierUnlock from '../../../data/liquifier/useLiquifierUnlock';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
+import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
 import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
 import SelectTokenModal from './SelectTokenModal';
-import TotalDetailItem from './TotalDetailItem';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
-import UnstakeRequestSubmittedModal from './UnstakeRequestSubmittedModal';
+import useLsChangeNetwork from './useLsChangeNetwork';
+import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
 const LsUnstakeCard: FC = () => {
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
   const activeAccountAddress = useActiveAccountAddress();
+  const tryChangeNetwork = useLsChangeNetwork();
+  const fromLsInputRef = useRef<HTMLInputElement>(null);
 
-  const {
-    selectedProtocolId,
-    setSelectedProtocolId,
-    selectedNetworkId,
-    setSelectedNetworkId,
-  } = useLsStore();
-
-  const [didLiquifierUnlockSucceed, setDidLiquifierUnlockSucceed] =
-    useState(false);
-
-  const [isRequestSubmittedModalOpen, setIsRequestSubmittedModalOpen] =
-    useState(false);
+  const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId } = useLsStore();
 
   // TODO: Won't both of these hooks be attempting to update the same state?
   useSearchParamSync({
     key: LsSearchParamKey.PROTOCOL_ID,
-    value: selectedProtocolId,
+    value: lsProtocolId,
     parse: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
     stringify: (value) => value.toString(),
-    setValue: setSelectedProtocolId,
+    setValue: setLsProtocolId,
   });
 
-  const {
-    execute: executeRedeemTx,
-    status: redeemTxStatus,
-    txHash: redeemTxHash,
-  } = useRedeemTx();
+  const { execute: executeParachainRedeemTx, status: parachainRedeemTxStatus } =
+    useRedeemTx();
 
-  const performLiquifierUnlock = useLiquifierUnlock();
+  const { execute: executeTangleUnbondTx, status: tangleUnbondTxStatus } =
+    useLsPoolUnbondTx();
 
   const { minSpendable, maxSpendable } = useLsSpendingLimits(
     false,
-    selectedProtocolId,
+    lsProtocolId,
   );
 
-  const selectedProtocol = getLsProtocolDef(selectedProtocolId);
+  const selectedProtocol = getLsProtocolDef(lsProtocolId);
 
   const {
     exchangeRate: exchangeRateOrError,
     isRefreshing: isRefreshingExchangeRate,
-  } = useLsExchangeRate(
-    ExchangeRateType.DerivativeToNative,
-    selectedProtocol.id,
-  );
+  } = useLsExchangeRate(ExchangeRateType.DerivativeToNative);
 
   // TODO: Properly handle the error state.
   const exchangeRate =
@@ -99,6 +86,11 @@ const LsUnstakeCard: FC = () => {
     stringify: (value) => value?.toString(),
   });
 
+  const isTangleNetwork =
+    lsNetworkId === LsNetworkId.TANGLE_LOCAL ||
+    lsNetworkId === LsNetworkId.TANGLE_MAINNET ||
+    lsNetworkId === LsNetworkId.TANGLE_TESTNET;
+
   const handleUnstakeClick = useCallback(async () => {
     // Cannot perform transaction: Amount not set.
     if (fromAmount === null) {
@@ -107,82 +99,97 @@ const LsUnstakeCard: FC = () => {
 
     if (
       selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeRedeemTx !== null
+      executeParachainRedeemTx !== null
     ) {
-      executeRedeemTx({
+      return executeParachainRedeemTx({
         amount: fromAmount,
         currency: selectedProtocol.currency,
       });
     } else if (
-      selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
-      performLiquifierUnlock !== null
+      isTangleNetwork &&
+      executeTangleUnbondTx !== null &&
+      lsPoolId !== null
     ) {
-      setDidLiquifierUnlockSucceed(false);
-
-      const success = await performLiquifierUnlock(
-        selectedProtocol.id,
-        fromAmount,
-      );
-
-      setDidLiquifierUnlockSucceed(success);
+      return executeTangleUnbondTx({
+        points: fromAmount,
+        poolId: lsPoolId,
+      });
     }
-  }, [executeRedeemTx, fromAmount, performLiquifierUnlock, selectedProtocol]);
+  }, [
+    executeParachainRedeemTx,
+    executeTangleUnbondTx,
+    fromAmount,
+    isTangleNetwork,
+    lsPoolId,
+    selectedProtocol,
+  ]);
+
+  const feePercentage = useLsFeePercentage(lsProtocolId, false);
 
   const toAmount = useMemo(() => {
-    if (fromAmount === null || exchangeRate === null) {
+    if (
+      fromAmount === null ||
+      exchangeRate === null ||
+      typeof feePercentage !== 'number'
+    ) {
       return null;
     }
 
-    return fromAmount.muln(exchangeRate);
-  }, [exchangeRate, fromAmount]);
+    const feeAmount = scaleAmountByPercentage(fromAmount, feePercentage);
+
+    return fromAmount.divn(exchangeRate).sub(feeAmount);
+  }, [exchangeRate, feePercentage, fromAmount]);
 
   const handleTokenSelect = useCallback(() => {
     setIsSelectTokenModalOpen(false);
-  }, []);
+  }, [setIsSelectTokenModalOpen]);
 
   const selectTokenModalOptions = useMemo(() => {
     // TODO: Dummy data.
     return [{ address: '0x123456' as any, amount: new BN(100), decimals: 18 }];
   }, []);
 
-  // Open the request submitted modal when the redeem
-  // transaction is complete.
+  // Reset the input amount when the network changes.
   useEffect(() => {
-    if (redeemTxStatus === TxStatus.COMPLETE || didLiquifierUnlockSucceed) {
-      setIsRequestSubmittedModalOpen(true);
+    setFromAmount(null);
+  }, [setFromAmount, lsNetworkId]);
+
+  // On mount, set the focus on the from input.
+  useEffect(() => {
+    if (fromLsInputRef.current !== null) {
+      fromLsInputRef.current.focus();
     }
-  }, [didLiquifierUnlockSucceed, redeemTxStatus]);
+  }, []);
 
   const stakedWalletBalance = (
     <LsAgnosticBalance
       isNative={false}
-      protocolId={selectedProtocol.id}
       tooltip="Click to use all staked balance"
       onClick={() => setFromAmount(maxSpendable)}
     />
   );
 
-  // TODO: Also check if the user has enough balance to unstake.
+  // TODO: Also check if the user has enough balance to unstake. Convert this into a self-executing function to break down the complexity of a one-liner.
   const canCallUnstake =
     (selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeRedeemTx !== null) ||
-    (selectedProtocol.networkId === LsNetworkId.ETHEREUM_MAINNET_LIQUIFIER &&
-      performLiquifierUnlock !== null);
+      executeParachainRedeemTx !== null) ||
+    (isTangleNetwork && executeTangleUnbondTx !== null && lsPoolId !== null);
 
   return (
     <>
       {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
       <LsInput
+        ref={fromLsInputRef}
         id="liquid-staking-unstake-from"
-        networkId={selectedNetworkId}
-        setNetworkId={setSelectedNetworkId}
-        protocolId={selectedProtocolId}
-        setProtocolId={setSelectedProtocolId}
+        networkId={lsNetworkId}
+        // TODO: This might be causing many requests to try to change the network. Bug.
+        setNetworkId={tryChangeNetwork}
+        setProtocolId={setLsProtocolId}
         token={selectedProtocol.token}
         amount={fromAmount}
         decimals={selectedProtocol.decimals}
         onAmountChange={setFromAmount}
-        placeholder={`0 ${LS_DERIVATIVE_TOKEN_PREFIX}${selectedProtocol.token}`}
+        placeholder="Enter amount to unstake"
         rightElement={stakedWalletBalance}
         isDerivativeVariant
         minAmount={minSpendable ?? undefined}
@@ -195,40 +202,33 @@ const LsUnstakeCard: FC = () => {
 
       <LsInput
         id="liquid-staking-unstake-to"
-        networkId={selectedNetworkId}
-        protocolId={selectedProtocolId}
+        networkId={lsNetworkId}
         amount={toAmount}
         decimals={selectedProtocol.decimals}
-        placeholder={`0 ${selectedProtocol.token}`}
+        placeholder={EMPTY_VALUE_PLACEHOLDER}
         token={selectedProtocol.token}
         isReadOnly
         className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
+        showPoolIndicator={false}
       />
 
       {/* Details */}
       <div className="flex flex-col gap-2 p-3">
-        <UnstakePeriodDetailItem protocolId={selectedProtocolId} />
+        <UnstakePeriodDetailItem protocolId={lsProtocolId} />
 
         <ExchangeRateDetailItem
-          protocolId={selectedProtocolId}
           token={selectedProtocol.token}
           type={ExchangeRateType.DerivativeToNative}
         />
 
         <FeeDetailItem
-          protocolId={selectedProtocolId}
-          isMinting={false}
-          inputAmount={fromAmount}
-        />
-
-        <TotalDetailItem
-          isMinting={false}
-          protocolId={selectedProtocolId}
+          protocolId={lsProtocolId}
+          isStaking={false}
           inputAmount={fromAmount}
         />
       </div>
 
-      <LsFeeWarning isMinting={false} selectedProtocolId={selectedProtocolId} />
+      <LsFeeWarning isMinting={false} selectedProtocolId={lsProtocolId} />
 
       <Button
         isDisabled={
@@ -239,7 +239,10 @@ const LsUnstakeCard: FC = () => {
           fromAmount === null ||
           fromAmount.isZero()
         }
-        isLoading={redeemTxStatus === TxStatus.PROCESSING}
+        isLoading={
+          parachainRedeemTxStatus === TxStatus.PROCESSING ||
+          tangleUnbondTxStatus === TxStatus.PROCESSING
+        }
         loadingText="Processing"
         onClick={handleUnstakeClick}
         isFullWidth
@@ -252,12 +255,6 @@ const LsUnstakeCard: FC = () => {
         isOpen={isSelectTokenModalOpen}
         onClose={() => setIsSelectTokenModalOpen(false)}
         onTokenSelect={handleTokenSelect}
-      />
-
-      <UnstakeRequestSubmittedModal
-        isOpen={isRequestSubmittedModalOpen}
-        onClose={() => setIsRequestSubmittedModalOpen(false)}
-        txHash={redeemTxHash}
       />
     </>
   );

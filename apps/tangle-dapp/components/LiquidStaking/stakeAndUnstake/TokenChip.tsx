@@ -9,11 +9,15 @@ import DropdownChevronIcon from './DropdownChevronIcon';
 
 type TokenChipProps = {
   token?: LsToken;
-  isLiquidVariant: boolean;
+  isDerivativeVariant: boolean;
   onClick?: () => void;
 };
 
-const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
+const TokenChip: FC<TokenChipProps> = ({
+  token,
+  isDerivativeVariant,
+  onClick,
+}) => {
   return (
     <div
       onClick={onClick}
@@ -22,10 +26,12 @@ const TokenChip: FC<TokenChipProps> = ({ token, isLiquidVariant, onClick }) => {
         onClick !== undefined && 'cursor-pointer',
       )}
     >
-      {token && <LsTokenIcon name={token} />}
+      {token && (
+        <LsTokenIcon hasRainbowBorder={isDerivativeVariant} name={token} />
+      )}
 
       <Typography variant="h5" fw="bold">
-        {isLiquidVariant && LS_DERIVATIVE_TOKEN_PREFIX}
+        {isDerivativeVariant && LS_DERIVATIVE_TOKEN_PREFIX}
         {token}
       </Typography>
 

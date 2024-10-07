@@ -122,14 +122,14 @@ const WithdrawModal = ({
                   {fmtAmount}
                 </Typography>
 
-                {asset.poolId && (
+                {asset.vaultId && (
                   <Typography
                     ta="right"
                     variant="body3"
                     fw="semibold"
                     className="!text-mono-100 mt-1"
                   >
-                    Pool ID: {asset.poolId}
+                    Vault ID: {asset.vaultId}
                   </Typography>
                 )}
               </div>

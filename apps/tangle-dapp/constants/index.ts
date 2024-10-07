@@ -61,6 +61,8 @@ export enum TxName {
   LS_LIQUIFIER_DEPOSIT = 'liquifier deposit',
   LS_LIQUIFIER_UNLOCK = 'liquifier unlock',
   LS_LIQUIFIER_WITHDRAW = 'liquifier withdraw',
+  LS_TANGLE_POOL_JOIN = 'join liquid staking pool',
+  LS_TANGLE_POOL_UNBOND = 'unbond from liquid staking pool',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =
@@ -103,3 +105,11 @@ export const EMPTY_VALUE_PLACEHOLDER = '—';
  * The default debounce delay in milliseconds.
  */
 export const DEFAULT_DEBOUNCE_DELAY = 500;
+
+export enum OnboardingPageKey {
+  BRIDGE,
+  LIQUID_STAKING,
+  RESTAKE,
+  BLUEPRINTS,
+  NOMINATE,
+}

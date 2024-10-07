@@ -3,6 +3,7 @@
 import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
 
+import { OnboardingPageKey } from '../constants';
 import { Payout, TangleTokenSymbol } from '../types';
 import { BridgeQueueTxItem } from '../types/bridge';
 import {
@@ -22,11 +23,11 @@ export enum LocalStorageKey {
   PAYOUTS = 'payouts',
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   KNOWN_NETWORK_ID = 'knownNetworkId',
-  WAS_BANNER_DISMISSED = 'wasBannerDismissed',
   SERVICES_CACHE = 'servicesCache',
   SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
   BRIDGE_TX_QUEUE_BY_ACC = 'bridgeTxQueue',
   LIQUID_STAKING_TABLE_DATA = 'liquidStakingTableData',
+  ONBOARDING_MODALS_SEEN = 'onboardingModalsSeen',
 }
 
 export type PayoutsCache = {
@@ -72,14 +73,14 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
                 ? string
                 : T extends LocalStorageKey.KNOWN_NETWORK_ID
                   ? number
-                  : T extends LocalStorageKey.WAS_BANNER_DISMISSED
-                    ? boolean
-                    : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
-                      ? SubstrateWalletsMetadataCache
-                      : T extends LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC
-                        ? TxQueueByAccount
-                        : T extends LocalStorageKey.LIQUID_STAKING_TABLE_DATA
-                          ? LiquidStakingTableData
+                  : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
+                    ? SubstrateWalletsMetadataCache
+                    : T extends LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC
+                      ? TxQueueByAccount
+                      : T extends LocalStorageKey.LIQUID_STAKING_TABLE_DATA
+                        ? LiquidStakingTableData
+                        : T extends LocalStorageKey.ONBOARDING_MODALS_SEEN
+                          ? OnboardingPageKey[]
                           : never;
 
 export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(

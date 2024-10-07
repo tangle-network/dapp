@@ -36,11 +36,15 @@ const columns = [
         Amount
       </Typography>
     ),
-    cell: (props) => (
-      <Typography variant="body1" ta="right">
-        {getRoundedAmountString(props.getValue())}
-      </Typography>
-    ),
+    cell: (props) => {
+      const value = props.getValue();
+
+      return (
+        <Typography variant="body1" ta="right">
+          {typeof value === 'string' ? value : getRoundedAmountString(value)}
+        </Typography>
+      );
+    },
   }),
 ];
 

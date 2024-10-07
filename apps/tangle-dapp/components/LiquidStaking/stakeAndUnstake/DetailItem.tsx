@@ -21,7 +21,7 @@ const DetailItem: FC<DetailItemProps> = ({ title, tooltip, value }) => {
   return (
     <div className="flex gap-2 justify-between w-full">
       <div className="flex items-center gap-1">
-        <Typography variant="body1" fw="normal">
+        <Typography variant="body2" fw="normal">
           {title}
         </Typography>
 

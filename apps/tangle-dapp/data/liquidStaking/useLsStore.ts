@@ -4,39 +4,41 @@ import { LsNetworkId, LsProtocolId } from '../../constants/liquidStaking/types';
 import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
 
 type State = {
-  selectedNetworkId: LsNetworkId;
-  selectedProtocolId: LsProtocolId;
-  selectedNetworkEntities: Set<string>;
-  selectedParachainPoolId: string | null;
+  isStaking: boolean;
+  lsNetworkId: LsNetworkId;
+  lsProtocolId: LsProtocolId;
+  networkEntities: Set<string>;
+  lsPoolId: number | null;
 };
 
 type Actions = {
-  setSelectedProtocolId: (newProtocolId: State['selectedProtocolId']) => void;
-  setSelectedNetworkId: (newNetworkId: State['selectedNetworkId']) => void;
-  setSelectedParachainPoolId: (parachainPoolId: string) => void;
-
-  setSelectedNetworkEntities: (
-    selectedNetworkEntities: State['selectedNetworkEntities'],
-  ) => void;
+  setIsStaking: (isStaking: State['isStaking']) => void;
+  setLsProtocolId: (newProtocolId: State['lsProtocolId']) => void;
+  setSelectedNetworkId: (newNetworkId: State['lsNetworkId']) => void;
+  setLsPoolId: (poolId: number) => void;
+  setNetworkEntities: (networkEntities: State['networkEntities']) => void;
 };
 
 type Store = State & Actions;
 
 export const useLsStore = create<Store>((set) => ({
-  selectedParachainPoolId: null,
-  selectedNetworkId: LsNetworkId.TANGLE_RESTAKING_PARACHAIN,
-  selectedProtocolId: LsProtocolId.POLKADOT,
-  selectedNetworkEntities: new Set<string>(),
-  setSelectedParachainPoolId: (selectedParachainPoolId) =>
-    set({ selectedParachainPoolId }),
-  setSelectedProtocolId: (selectedChainId) =>
-    set({ selectedProtocolId: selectedChainId }),
-  setSelectedNetworkEntities: (selectedNetworkEntities) =>
-    set({ selectedNetworkEntities }),
-  setSelectedNetworkId: (selectedNetworkId) => {
-    const network = getLsNetwork(selectedNetworkId);
-    const defaultProtocolId = network.defaultProtocolId;
+  isStaking: true,
+  lsPoolId: null,
+  networkEntities: new Set<string>(),
+  // Default the selected network and protocol to the Tangle testnet,
+  // and tTNT, until liquid staking pools are deployed to mainnet.
+  lsNetworkId: LsNetworkId.TANGLE_TESTNET,
+  lsProtocolId: LsProtocolId.TANGLE_TESTNET,
+  setIsStaking: (isStaking) => set({ isStaking }),
+  setLsPoolId: (lsPoolId) => set({ lsPoolId }),
+  setLsProtocolId: (lsProtocolId) => set({ lsProtocolId }),
+  setNetworkEntities: (networkEntities) => set({ networkEntities }),
+  setSelectedNetworkId: (lsNetworkId) => {
+    const network = getLsNetwork(lsNetworkId);
 
-    set({ selectedNetworkId, selectedProtocolId: defaultProtocolId });
+    set({
+      lsNetworkId,
+      lsProtocolId: network.defaultProtocolId,
+    });
   },
 }));

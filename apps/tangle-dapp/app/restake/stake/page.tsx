@@ -159,9 +159,9 @@ export default function Page() {
           symbol: asset.symbol,
           assetBalanceProps: {
             balance: +formatUnits(amount, asset.decimals),
-            ...(asset.poolId
+            ...(asset.vaultId
               ? {
-                  subContent: `Pool ID: ${asset.poolId}`,
+                  subContent: `Vault ID: ${asset.vaultId}`,
                 }
               : {}),
           },

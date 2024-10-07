@@ -76,7 +76,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     },
   });
 
-  const [poolIdParam, setPoolIdParam] = useQueryState(
+  const [vaultIdParam, setVaultIdParam] = useQueryState(
     QueryParamKey.RESTAKE_VAULT,
   );
 
@@ -115,10 +115,10 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   }, [activeTypedChainId, resetField]);
 
   useEffect(() => {
-    if (!poolIdParam) return;
+    if (!vaultIdParam) return;
 
     const defaultAsset = assetWithBalances
-      .filter((asset) => asset.metadata.poolId === poolIdParam)
+      .filter((asset) => asset.metadata.vaultId === vaultIdParam)
       .sort((a, b) => {
         const aBalance = a.balance?.balance ?? ZERO_BIG_INT;
         const bBalance = b.balance?.balance ?? ZERO_BIG_INT;
@@ -135,7 +135,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
 
     if (!defaultAsset?.balance?.balance) return;
 
-    // Select the first asset in the pool by default
+    // Select the first asset in the vault by default
     setValue('depositAssetId', defaultAsset.assetId);
     setValue(
       'amount',
@@ -143,8 +143,8 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     );
 
     // Remove the param to prevent reuse after initial load
-    setPoolIdParam(null);
-  }, [assetWithBalances, poolIdParam, setPoolIdParam, setValue]);
+    setVaultIdParam(null);
+  }, [assetWithBalances, vaultIdParam, setVaultIdParam, setValue]);
 
   const sourceTypedChainId = watch('sourceTypedChainId');
 
@@ -186,9 +186,9 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
                     balance.balance,
                     asset.metadata.decimals,
                   ),
-                  ...(asset.metadata.poolId
+                  ...(asset.metadata.vaultId
                     ? {
-                        subContent: `Pool ID: ${asset.metadata.poolId}`,
+                        subContent: `Vault ID: ${asset.metadata.vaultId}`,
                       }
                     : {}),
                 },

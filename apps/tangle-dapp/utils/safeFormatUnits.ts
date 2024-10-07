@@ -14,23 +14,23 @@ export default function safeFormatUnits(
   decimals: number = DEFAULT_DECIMALS,
 ):
   | {
-      sucess: true;
+      success: true;
       value: string;
     }
   | {
-      sucess: false;
+      success: false;
       error: string;
     } {
   try {
     const formatted = formatUnits(value, decimals);
 
     return {
-      sucess: true,
+      success: true,
       value: formatted,
     };
   } catch (error) {
     return {
-      sucess: false,
+      success: false,
       error: ensureError(error).message,
     };
   }

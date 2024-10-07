@@ -2,7 +2,10 @@ import assert from 'assert';
 
 import { LS_PROTOCOLS } from '../../constants/liquidStaking/constants';
 import {
-  LsLiquifierProtocolDef,
+  LsTangleNetworkDef,
+  LsTangleNetworkId,
+} from '../../constants/liquidStaking/types';
+import {
   LsParachainChainDef,
   LsParachainChainId,
   LsProtocolId,
@@ -10,7 +13,9 @@ import {
 
 type IdToDefMap<T extends LsProtocolId> = T extends LsParachainChainId
   ? LsParachainChainDef
-  : LsLiquifierProtocolDef;
+  : T extends LsTangleNetworkId
+    ? LsTangleNetworkDef
+    : never;
 
 const getLsProtocolDef = <T extends LsProtocolId>(id: T): IdToDefMap<T> => {
   const result = LS_PROTOCOLS.find((def) => def.id === id);

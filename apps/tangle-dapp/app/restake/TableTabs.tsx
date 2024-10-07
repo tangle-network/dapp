@@ -43,29 +43,29 @@ const TableTabs: FC<Props> = ({
 
   const { rewardConfig } = useRestakeRewardConfig();
 
-  // Recalculate vaults (pools) data from assetMap
+  // Recalculate vaults data from assetMap
   const vaults = useMemo(() => {
     const vaults: Record<string, VaultUI> = {};
 
-    for (const { poolId, name, symbol } of Object.values(assetMap)) {
-      if (poolId === null) continue;
+    for (const { vaultId, name, symbol } of Object.values(assetMap)) {
+      if (vaultId === null) continue;
 
-      if (vaults[poolId] === undefined) {
-        const apyPercentage = rewardConfig.configs[poolId]?.apy ?? null;
-        const tvlInUsd = vaultTVL?.[poolId] ?? null;
+      if (vaults[vaultId] === undefined) {
+        const apyPercentage = rewardConfig.configs[vaultId]?.apy ?? null;
+        const tvlInUsd = vaultTVL?.[vaultId] ?? null;
 
-        vaults[poolId] = {
-          id: poolId,
+        vaults[vaultId] = {
+          id: vaultId,
           apyPercentage,
-          // TODO: Find out a proper way to get the pool name, now it's the first token name
+          // TODO: Find out a proper way to get the vault name, now it's the first token name
           name: name,
-          // TODO: Find out a proper way to get the pool symbol, now it's the first token symbol
+          // TODO: Find out a proper way to get the vault symbol, now it's the first token symbol
           representToken: symbol,
           tokensCount: 1,
           tvlInUsd,
         };
       } else {
-        vaults[poolId].tokensCount += 1;
+        vaults[vaultId].tokensCount += 1;
       }
     }
 
@@ -97,9 +97,9 @@ const TableTabs: FC<Props> = ({
         return row.toggleExpanded();
       },
       getExpandedRowContent(row) {
-        const poolId = row.original.id;
+        const vaultId = row.original.id;
         const vaultAssets = Object.values(assetMap)
-          .filter((asset) => asset.poolId === poolId)
+          .filter((asset) => asset.vaultId === vaultId)
           .map((asset) => {
             const selfStake =
               delegatorTotalRestakedAssets[asset.id] ?? ZERO_BIG_INT;
