@@ -74,7 +74,7 @@
     "@hyperlane-xyz/utils": "^5.0.0",
     "@ngneat/falso": "^7.2.0",
     "@octokit/request": "^9.1.3",
-    "@polkadot/api": "^12.4.2",
+    "@polkadot/api": "^14.0.1",
     "@polkadot/apps-config": "^0.143.2",
     "@polkadot/extension-dapp": "0.52.3",
     "@polkadot/extension-inject": "0.52.3",
