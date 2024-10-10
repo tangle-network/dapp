@@ -1,9 +1,12 @@
 'use client';
 
-import { ProviderType } from '@hyperlane-xyz/sdk';
+import { IMailbox__factory } from '@hyperlane-xyz/core';
+import { HyperlaneCore, ProviderType } from '@hyperlane-xyz/sdk';
+import { useQuery } from '@tanstack/react-query';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { chainsConfig } from '@webb-tools/dapp-config';
 import { providers } from 'ethers';
+import { useCallback, useState } from 'react';
 
 import { useBridge } from '../../../context/BridgeContext';
 import { useBridgeTxQueue } from '../../../context/BridgeTxQueueContext';
@@ -42,9 +45,65 @@ export default function useBridgeTransfer({
   const { sourceTypedChainId, destinationTypedChainId } = useTypedChainId();
   const { sourceAmountInDecimals, destinationAmountInDecimals } =
     useAmountInDecimals();
-
   const { addTxToQueue, addSygmaTxId, updateTxState, addTxExplorerUrl } =
     useBridgeTxQueue();
+
+  const tangleTestnetMailboxAddress =
+    '0x0FDc2400B5a50637880dbEfB25d631c957620De8';
+  const [messageId, setMessageId] = useState<string>('');
+  const ethersProviderDestination = useEthersProvider('dest');
+  const checkMessageDelivery = useCallback(
+    async (messageId: string, mailboxAddress: string) => {
+      if (!ethersProviderDestination) {
+        throw new Error('Destination Ethers provider not available');
+      }
+      const mailbox = IMailbox__factory.connect(
+        mailboxAddress,
+        ethersProviderDestination,
+      );
+      const isDelivered = await mailbox.delivered(messageId);
+      console.debug(`Mailbox delivery status for ${messageId}: ${isDelivered}`);
+
+      let delivaryStatus = {
+        isDelivered: false,
+        transactionHash: '',
+      };
+
+      if (isDelivered === true) {
+        console.debug(`Searching for process logs for messageId ${messageId}`);
+        const fromBlock =
+          (await ethersProviderDestination.getBlockNumber()) - 1_000;
+        const logs = await mailbox.queryFilter(
+          mailbox.filters.ProcessId(messageId),
+          fromBlock,
+          'latest',
+        );
+        if (logs?.length) {
+          console.debug(`Found process log for ${messageId}}`);
+          const log = logs[0];
+          console.log('Transaction Hash:', log.transactionHash);
+
+          delivaryStatus = {
+            isDelivered: true,
+            transactionHash: log.transactionHash,
+          };
+        }
+      }
+
+      delivaryStatus.isDelivered = isDelivered;
+
+      return delivaryStatus;
+    },
+    [ethersProviderDestination],
+  );
+  const { data: delivaryStatus } = useQuery({
+    queryKey: ['messageDelivery', messageId],
+    queryFn: () => checkMessageDelivery(messageId, tangleTestnetMailboxAddress),
+    refetchInterval: 5000,
+    refetchIntervalInBackground: true,
+    enabled: !!messageId && !!ethersProviderDestination,
+    retry: true,
+  });
 
   return async () => {
     if (activeAccountAddress === null) {
@@ -78,6 +137,7 @@ export default function useBridgeTransfer({
           recipientAddress: destinationAddress,
           token: selectedToken,
           amount: amountInStr,
+          ethersProvider: ethersProviderDestination,
         });
 
         if (!hyperlaneResult) throw new Error('Hyperlane transfer failed');
@@ -141,6 +201,13 @@ export default function useBridgeTransfer({
           }
 
           const receipt = await res.wait();
+
+          const message = HyperlaneCore.getDispatchedMessages(receipt);
+
+          if (message.length > 0) {
+            const messageId = message[0].id;
+            setMessageId(messageId);
+          }
 
           if (txHash !== undefined) {
             if (receipt.status === 1) {

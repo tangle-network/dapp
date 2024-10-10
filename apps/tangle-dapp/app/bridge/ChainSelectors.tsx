@@ -89,7 +89,7 @@ const ChainSelectors: FC = () => {
         </DropdownBody>
       </Dropdown>
 
-      <Dropdown className="flex-1 w-full md:w-auto">
+      {/* <Dropdown className="flex-1 w-full md:w-auto">
         <DropdownTrigger asChild>
           <ChainOrTokenButton
             value={selectedToken?.symbol || 'Select Token'}
@@ -104,7 +104,7 @@ const ChainSelectors: FC = () => {
             isOpen={isTokenListOpen}
           />
         </DropdownBody>
-      </Dropdown>
+      </Dropdown> */}
     </div>
   );
 };

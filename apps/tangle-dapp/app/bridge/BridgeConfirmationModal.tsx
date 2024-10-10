@@ -1,5 +1,6 @@
 'use client';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ArrowRight, ChainIcon, TokenIcon } from '@webb-tools/icons';
 import {
   Button,
@@ -49,6 +50,8 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
 
   useFees();
 
+  const queryClient = new QueryClient();
+
   const cleanUpWhenSubmit = useCallback(() => {
     handleClose();
     setAmount(null);
@@ -77,61 +80,63 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
   }, [transfer, notificationApi, setIsTransferring]);
 
   return (
-    <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isOpen}
-        className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px]"
-      >
-        <ModalHeader onClose={handleClose}>Bridge Confirmation</ModalHeader>
+    <QueryClientProvider client={queryClient}>
+      <Modal open>
+        <ModalContent
+          isCenter
+          isOpen={isOpen}
+          className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px]"
+        >
+          <ModalHeader onClose={handleClose}>Bridge Confirmation</ModalHeader>
 
-        <div className="p-9 space-y-8">
-          <div className="flex flex-col items-center gap-4">
-            <ConfirmationItem
-              type="source"
-              chainName={selectedSourceChain.name}
-              accAddress={activeAccountAddress ?? ''}
-              amount={sourceAmountInDecimals?.toString() ?? ''}
-              tokenName={selectedToken.symbol}
-            />
+          <div className="p-9 space-y-8">
+            <div className="flex flex-col items-center gap-4">
+              <ConfirmationItem
+                type="source"
+                chainName={selectedSourceChain.name}
+                accAddress={activeAccountAddress ?? ''}
+                amount={sourceAmountInDecimals?.toString() ?? ''}
+                tokenName={selectedToken.symbol}
+              />
 
-            <ArrowRight size="lg" className="rotate-90" />
+              <ArrowRight size="lg" className="rotate-90" />
 
-            <ConfirmationItem
-              type="destination"
-              chainName={selectedDestinationChain.name}
-              accAddress={destinationAddress}
-              amount={destinationAmountInDecimals?.toString() ?? ''}
-              tokenName={selectedToken.symbol}
-            />
+              <ConfirmationItem
+                type="destination"
+                chainName={selectedDestinationChain.name}
+                accAddress={destinationAddress}
+                amount={destinationAmountInDecimals?.toString() ?? ''}
+                tokenName={selectedToken.symbol}
+              />
+            </div>
+
+            <FeeDetails />
           </div>
 
-          <FeeDetails />
-        </div>
-
-        <ModalFooter className="flex items-center gap-2">
-          <Button
-            isFullWidth
-            isLoading={isTransferring}
-            onClick={() => {
-              bridgeTx();
-              handleClose(); // TODO: handle clear form
-            }}
-            isDisabled={
-              feeItems.sygmaBridge?.isLoading ||
-              feeItems.hyperlaneInterchain?.isLoading ||
-              feeItems.gas?.isLoading ||
-              feeItems.gas?.amount === null ||
-              !sourceAmountInDecimals ||
-              !destinationAmountInDecimals ||
-              !destinationAddress
-            }
-          >
-            Confirm
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+          <ModalFooter className="flex items-center gap-2">
+            <Button
+              isFullWidth
+              isLoading={isTransferring}
+              onClick={() => {
+                bridgeTx();
+                handleClose(); // TODO: handle clear form
+              }}
+              isDisabled={
+                feeItems.sygmaBridge?.isLoading ||
+                feeItems.hyperlaneInterchain?.isLoading ||
+                feeItems.gas?.isLoading ||
+                feeItems.gas?.amount === null ||
+                !sourceAmountInDecimals ||
+                !destinationAmountInDecimals ||
+                !destinationAddress
+              }
+            >
+              Confirm
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </QueryClientProvider>
   );
 };
 

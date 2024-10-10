@@ -1,7 +1,8 @@
+import { IMailbox__factory } from '@hyperlane-xyz/core';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
 import { BridgeTokenType } from '../../types/bridge';
-import { getHyperlaneWarpCore } from './context';
+import { getHyperlaneWarpContext, getHyperlaneWarpCore } from './context';
 import { tryFindToken } from './utils';
 
 export async function hyperlaneTransfer(params?: {
@@ -11,8 +12,11 @@ export async function hyperlaneTransfer(params?: {
   recipientAddress: string;
   token: BridgeTokenType;
   amount: string;
+  ethersProvider: any;
 }) {
   if (!params) return null;
+
+  const warpContext = await getHyperlaneWarpContext();
 
   const warpCore = getHyperlaneWarpCore();
   if (!warpCore) throw new Error('Hyperlane Warp Core not initialized');
@@ -24,6 +28,7 @@ export async function hyperlaneTransfer(params?: {
     recipientAddress,
     token,
     amount,
+    ethersProvider,
   } = params;
 
   const routeAddress =
@@ -71,6 +76,26 @@ export async function hyperlaneTransfer(params?: {
     destination,
     sender: senderAddress,
   });
+
+  // const messageId =
+  //   '0x67f7e2e4763a0af7392609d8d98036c8bd49ccaf4226271f57f6f3ef1162c954';
+  // const destinationChainId = 3799;
+  // const tangleTestnetMailboxAddress =
+  //   '0x0FDc2400B5a50637880dbEfB25d631c957620De8';
+
+  // console.debug('messageId', messageId);
+  // console.debug('destinationChainId', destinationChainId);
+  // console.debug('tangleTestnetMailboxAddress', tangleTestnetMailboxAddress);
+
+  // const provider = warpContext?.multiProvider.getProvider(destinationChainId);
+  // const mailbox = IMailbox__factory.connect(
+  //   tangleTestnetMailboxAddress,
+  //   ethersProvider,
+  // );
+
+  // console.debug(`Querying mailbox about message ${messageId}`);
+  // const isDelivered = await mailbox.delivered(messageId);
+  // console.debug(`Mailbox delivery status for ${messageId}: ${isDelivered}`);
 
   return {
     txs,
