@@ -5,6 +5,7 @@ import { HyperlaneCore, ProviderType } from '@hyperlane-xyz/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { chainsConfig } from '@webb-tools/dapp-config';
+import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
 import { providers } from 'ethers';
 import { useCallback, useState } from 'react';
 
@@ -45,65 +46,133 @@ export default function useBridgeTransfer({
   const { sourceTypedChainId, destinationTypedChainId } = useTypedChainId();
   const { sourceAmountInDecimals, destinationAmountInDecimals } =
     useAmountInDecimals();
-  const { addTxToQueue, addSygmaTxId, updateTxState, addTxExplorerUrl } =
-    useBridgeTxQueue();
+  const {
+    addTxToQueue,
+    addSygmaTxId,
+    updateTxState,
+    updateTxDestinationTxState,
+    addTxDestinationTxExplorerUrl,
+    addTxExplorerUrl,
+  } = useBridgeTxQueue();
 
   const tangleTestnetMailboxAddress =
     '0x0FDc2400B5a50637880dbEfB25d631c957620De8';
-  const [messageId, setMessageId] = useState<string>('');
+  const holeskyMailboxAddress = '0x57529d3663bb44e8ab3335743dd42d2e1E3b46BA';
+
+  const [destinationTxHashAndMessageId, setDestinationTxHashAndMessageId] =
+    useState<{ txHash: string; messageId: string }>({
+      txHash: '',
+      messageId: '',
+    });
+
+  const [destinationTxIsExecutedOrFailed, setDestinationTxIsExecutedOrFailed] =
+    useState<boolean>(false);
+
   const ethersProviderDestination = useEthersProvider('dest');
+
   const checkMessageDelivery = useCallback(
-    async (messageId: string, mailboxAddress: string) => {
+    async (txHash: string, messageId: string, mailboxAddress: string) => {
       if (!ethersProviderDestination) {
         throw new Error('Destination Ethers provider not available');
       }
+
       const mailbox = IMailbox__factory.connect(
         mailboxAddress,
         ethersProviderDestination,
       );
-      const isDelivered = await mailbox.delivered(messageId);
-      console.debug(`Mailbox delivery status for ${messageId}: ${isDelivered}`);
 
-      let delivaryStatus = {
-        isDelivered: false,
-        transactionHash: '',
-      };
+      const isDelivered = await mailbox.delivered(messageId);
 
       if (isDelivered === true) {
-        console.debug(`Searching for process logs for messageId ${messageId}`);
+        updateTxDestinationTxState(
+          txHash,
+          '',
+          BridgeTxState.HyperlaneDelivered,
+        );
+
         const fromBlock =
           (await ethersProviderDestination.getBlockNumber()) - 1_000;
+
         const logs = await mailbox.queryFilter(
           mailbox.filters.ProcessId(messageId),
           fromBlock,
           'latest',
         );
-        if (logs?.length) {
-          console.debug(`Found process log for ${messageId}}`);
-          const log = logs[0];
-          console.log('Transaction Hash:', log.transactionHash);
 
-          delivaryStatus = {
-            isDelivered: true,
-            transactionHash: log.transactionHash,
-          };
+        if (logs?.length) {
+          const log = logs[0];
+
+          const receipt = await ethersProviderDestination.getTransactionReceipt(
+            log.transactionHash,
+          );
+
+          let destinationTxExplorerUrl = '';
+
+          if (chainsConfig[destinationTypedChainId].blockExplorers) {
+            destinationTxExplorerUrl = getExplorerURI(
+              chainsConfig[destinationTypedChainId].blockExplorers.default.url,
+              receipt.transactionHash,
+              'tx',
+              'web3',
+            ).toString();
+          }
+
+          if (destinationTxExplorerUrl) {
+            addTxDestinationTxExplorerUrl(txHash, destinationTxExplorerUrl);
+          }
+
+          if (receipt.status === 1) {
+            updateTxDestinationTxState(
+              txHash,
+              receipt.transactionHash,
+              BridgeTxState.HyperlaneExecuted,
+            );
+            setDestinationTxIsExecutedOrFailed(true);
+          } else {
+            updateTxDestinationTxState(
+              txHash,
+              receipt.transactionHash,
+              BridgeTxState.HyperlaneFailed,
+            );
+            setDestinationTxIsExecutedOrFailed(true);
+          }
         }
+      } else {
+        updateTxDestinationTxState(txHash, '', BridgeTxState.HyperlanePending);
       }
 
-      delivaryStatus.isDelivered = isDelivered;
-
-      return delivaryStatus;
+      return isDelivered;
     },
-    [ethersProviderDestination],
+    [
+      addTxDestinationTxExplorerUrl,
+      destinationTypedChainId,
+      ethersProviderDestination,
+      updateTxDestinationTxState,
+      setDestinationTxIsExecutedOrFailed,
+    ],
   );
-  const { data: delivaryStatus } = useQuery({
-    queryKey: ['messageDelivery', messageId],
-    queryFn: () => checkMessageDelivery(messageId, tangleTestnetMailboxAddress),
+
+  const { data: isDelivered } = useQuery({
+    queryKey: ['messageDelivery', destinationTxHashAndMessageId.messageId],
+    queryFn: () =>
+      checkMessageDelivery(
+        destinationTxHashAndMessageId.txHash,
+        destinationTxHashAndMessageId.messageId,
+        selectedDestinationChain.id === EVMChainId.Holesky
+          ? holeskyMailboxAddress
+          : tangleTestnetMailboxAddress,
+      ),
     refetchInterval: 5000,
     refetchIntervalInBackground: true,
-    enabled: !!messageId && !!ethersProviderDestination,
+    enabled:
+      !destinationTxIsExecutedOrFailed &&
+      !!ethersProviderDestination &&
+      (selectedDestinationChain.id === EVMChainId.Holesky ||
+        selectedDestinationChain.id === EVMChainId.TangleTestnetEVM),
     retry: true,
   });
+
+  console.log('isDelivered', isDelivered);
 
   return async () => {
     if (activeAccountAddress === null) {
@@ -120,6 +189,12 @@ export default function useBridgeTransfer({
     ) {
       throw new Error('Amounts must be defined');
     }
+
+    setDestinationTxHashAndMessageId({
+      txHash: '',
+      messageId: '',
+    });
+    setDestinationTxIsExecutedOrFailed(false);
 
     switch (bridgeType) {
       case BridgeType.HYPERLANE_EVM_TO_EVM: {
@@ -204,19 +279,34 @@ export default function useBridgeTransfer({
 
           const message = HyperlaneCore.getDispatchedMessages(receipt);
 
-          if (message.length > 0) {
-            const messageId = message[0].id;
-            setMessageId(messageId);
-          }
-
           if (txHash !== undefined) {
+            const messageId = message[0].id;
+
             if (receipt.status === 1) {
+              if (message.length > 0) {
+                setDestinationTxHashAndMessageId({
+                  txHash,
+                  messageId,
+                });
+              }
+
               updateTxState(txHash, BridgeTxState.Executed);
+              updateTxDestinationTxState(
+                txHash,
+                '',
+                BridgeTxState.HyperlanePending,
+              );
             } else {
               updateTxState(txHash, BridgeTxState.Failed);
+              updateTxDestinationTxState(
+                txHash,
+                '',
+                BridgeTxState.HyperlaneFailed,
+              );
             }
           }
         }
+
         break;
       }
 

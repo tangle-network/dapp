@@ -72,15 +72,23 @@ export enum BridgeWalletError {
 export enum BridgeTxState {
   Initializing = 'Initializing', // The tx is being initialized
   Sending = 'Sending', // The user is signing the tx
-  SygmaIndexing = 'SygmaIndexing', // The tx is being indexed (Sygma txs only)
-  SygmaPending = 'SygmaPending', // The tx is done indexing but still pending (Sygma txs only)
   Executed = 'Executed', // The tx is executed successfully
   Failed = 'Failed', // The tx is failed
+
+  SygmaIndexing = 'SygmaIndexing', // The tx is being indexed (Sygma txs only)
+  SygmaPending = 'SygmaPending', // The tx is done indexing but still pending (Sygma txs only)
+
+  HyperlanePending = 'HyperlanePending', // The tx is done indexing but still pending (Hyperlane txs only)
+  HyperlaneIndexing = 'HyperlaneIndexing', // The tx is being indexed (Hyperlane txs only)
+  HyperlaneDelivered = 'HyperlaneDelivered', // The tx is delivered to the destination chain (Hyperlane txs only)
+  HyperlaneExecuted = 'HyperlaneExecuted', // The tx is executed on the destination chain (Hyperlane txs only)
+  HyperlaneFailed = 'HyperlaneFailed', // The tx is failed on the destination chain (Hyperlane txs only)
 }
 
 export type BridgeQueueTxItem = {
   hash: string;
   sygmaTxId?: string;
+  hyperlaneTxId?: string;
   env: 'live' | 'test' | 'dev';
   sourceTypedChainId: number;
   destinationTypedChainId: number;
@@ -93,6 +101,9 @@ export type BridgeQueueTxItem = {
   state: BridgeTxState;
   type: BridgeType;
   explorerUrl?: string;
+  destinationTxHash?: string;
+  destinationTxState?: BridgeTxState;
+  destinationTxExplorerUrl?: string;
 };
 
 export enum BridgeFeeType {

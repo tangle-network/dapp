@@ -25,6 +25,15 @@ interface BridgeTxQueueContextProps {
   addSygmaTxId: (txHash: string, sygmaTxId: string) => void;
   addTxExplorerUrl: (txHash: string, explorerUrl: string) => void;
   updateTxState: (txHash: string, state: BridgeTxState) => void;
+  updateTxDestinationTxState: (
+    txHash: string,
+    destinationTxHash: string,
+    destinationTxState: BridgeTxState,
+  ) => void;
+  addTxDestinationTxExplorerUrl: (
+    txHash: string,
+    destinationTxExplorerUrl: string,
+  ) => void;
   isOpenQueueDropdown: boolean;
   setIsOpenQueueDropdown: (isOpen: boolean) => void;
 }
@@ -40,10 +49,16 @@ const BridgeTxQueueContext = createContext<BridgeTxQueueContextProps>({
   updateTxState: () => {
     return;
   },
+  updateTxDestinationTxState: () => {
+    return;
+  },
   addSygmaTxId: () => {
     return;
   },
   addTxExplorerUrl: () => {
+    return;
+  },
+  addTxDestinationTxExplorerUrl: () => {
     return;
   },
   isOpenQueueDropdown: false,
@@ -203,6 +218,56 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
     [activeAccountAddress, setCachedBridgeTxQueueByAcc],
   );
 
+  const updateTxDestinationTxState = useCallback(
+    (
+      txHash: string,
+      destinationTxHash: string,
+      destinationTxState: BridgeTxState,
+    ) => {
+      if (!activeAccountAddress) return;
+      setCachedBridgeTxQueueByAcc((cache) => {
+        const currTxQueue = getTxQueueFromLocalStorage(
+          activeAccountAddress,
+          cache,
+        );
+        const updatedTxQueue = currTxQueue.map((txItem) => {
+          if (txItem.hash === txHash) {
+            return { ...txItem, destinationTxHash, destinationTxState };
+          }
+          return txItem;
+        });
+        return {
+          ...(cache?.value ?? {}),
+          [activeAccountAddress]: updatedTxQueue,
+        };
+      });
+    },
+    [activeAccountAddress, setCachedBridgeTxQueueByAcc],
+  );
+
+  const addTxDestinationTxExplorerUrl = useCallback(
+    (txHash: string, destinationTxExplorerUrl: string) => {
+      if (!activeAccountAddress) return;
+      setCachedBridgeTxQueueByAcc((cache) => {
+        const currTxQueue = getTxQueueFromLocalStorage(
+          activeAccountAddress,
+          cache,
+        );
+        const updatedTxQueue = currTxQueue.map((txItem) => {
+          if (txItem.hash === txHash) {
+            return { ...txItem, destinationTxExplorerUrl };
+          }
+          return txItem;
+        });
+        return {
+          ...(cache?.value ?? {}),
+          [activeAccountAddress]: updatedTxQueue,
+        };
+      });
+    },
+    [activeAccountAddress, setCachedBridgeTxQueueByAcc],
+  );
+
   return (
     <BridgeTxQueueContext.Provider
       value={{
@@ -211,6 +276,8 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
         deleteTxFromQueue,
         addSygmaTxId,
         updateTxState,
+        updateTxDestinationTxState,
+        addTxDestinationTxExplorerUrl,
         addTxExplorerUrl,
         isOpenQueueDropdown,
         setIsOpenQueueDropdown,

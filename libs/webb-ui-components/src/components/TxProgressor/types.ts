@@ -107,4 +107,21 @@ export interface TxProgressorFooterProps extends PropsOf<'div'> {
    * The action props to display the action button
    */
   actionCmp?: React.ReactNode;
+
+  /**
+   * The destination tx status of the transaction
+   * @default 'info'
+   */
+  destinationTxStatus?: StatusIndicatorProps['variant'];
+
+  /**
+   * The destination tx status message of the transaction
+   * to describe the current status
+   */
+  destinationTxStatusMessage?: string;
+
+  /**
+   * The destination tx explorer url to display the external link
+   */
+  destinationTxExplorerUrl?: URL;
 }

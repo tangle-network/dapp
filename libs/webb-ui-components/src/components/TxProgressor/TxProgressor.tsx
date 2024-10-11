@@ -185,6 +185,9 @@ const TxProgressorFooter = forwardRef<
       steppedProgressProps,
       statusMessage,
       externalUrl,
+      destinationTxStatus,
+      destinationTxStatusMessage,
+      destinationTxExplorerUrl,
       actionCmp,
       ...props
     },
@@ -198,30 +201,62 @@ const TxProgressorFooter = forwardRef<
       >
         {steppedProgressProps && <SteppedProgress {...steppedProgressProps} />}
 
-        <div className="flex items-center justify-between">
-          <p className="flex items-center gap-1">
-            <StatusIndicator animated size={14} variant={status} />
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-1">
+            <div className="flex items-center gap-1">
+              <StatusIndicator animated size={14} variant={status} />
 
-            {statusMessage && (
-              <Typography
-                variant="body1"
-                component="span"
-                className="inline-block"
-              >
-                {statusMessage}
-              </Typography>
-            )}
+              {statusMessage && (
+                <Typography
+                  variant="body1"
+                  component="span"
+                  className="inline-block"
+                >
+                  {statusMessage}
+                </Typography>
+              )}
 
-            {externalUrl && (
-              <a
-                href={externalUrl.toString()}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                <ExternalLinkLine />
-              </a>
-            )}
-          </p>
+              {externalUrl && (
+                <a
+                  href={externalUrl.toString()}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <ExternalLinkLine />
+                </a>
+              )}
+            </div>
+
+            <div className="flex items-center gap-1">
+              {destinationTxStatus && (
+                <StatusIndicator
+                  animated
+                  size={14}
+                  variant={destinationTxStatus}
+                />
+              )}
+
+              {destinationTxStatusMessage && (
+                <Typography
+                  variant="body1"
+                  component="span"
+                  className="inline-block"
+                >
+                  {destinationTxStatusMessage}
+                </Typography>
+              )}
+
+              {destinationTxExplorerUrl && (
+                <a
+                  href={destinationTxExplorerUrl.toString()}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <ExternalLinkLine />
+                </a>
+              )}
+            </div>
+          </div>
 
           {actionCmp ?? null}
         </div>
