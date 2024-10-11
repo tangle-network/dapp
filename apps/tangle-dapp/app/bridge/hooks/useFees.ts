@@ -185,7 +185,7 @@ export default function useFees() {
     ],
     async ([args]) => {
       if (!args) return null;
-      const result = await hyperlaneTransfer(args);
+      const result = await hyperlaneTransfer({ ...args, ethersProvider });
       if (!result) return null;
       return {
         gasFee: {
