@@ -45,13 +45,13 @@ export const BRIDGE_SUPPORTED_TOKENS: Record<BridgeTokenId, BridgeTokenType> = {
     },
     erc20TokenContractAddress: {
       [PresetTypedChainId.Holesky]:
-      '0x94373a4919B3240D86eA41593D5eBa789FEF3848',
+        '0x94373a4919B3240D86eA41593D5eBa789FEF3848',
       [PresetTypedChainId.TangleTestnetEVM]:
         '0x200DE548e393c38ee80482e9c5c186CBA7096ad4',
     },
     hyperlaneRouteContractAddress: {
       [PresetTypedChainId.Holesky]:
-      '0xdFe0fbA0F8C62278DF4A9fDc787F9cFF28522FD3',
+        '0xdFe0fbA0F8C62278DF4A9fDc787F9cFF28522FD3',
       [PresetTypedChainId.TangleTestnetEVM]:
         '0x200DE548e393c38ee80482e9c5c186CBA7096ad4',
     },
