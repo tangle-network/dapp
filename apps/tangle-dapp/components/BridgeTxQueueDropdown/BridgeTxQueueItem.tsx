@@ -159,25 +159,21 @@ const getActiveStep = (state: BridgeTxState, type: BridgeType): number => {
     case BridgeTxState.Sending:
       return 2;
     case BridgeTxState.SygmaIndexing:
-      if (!isSygma) throw new Error('Invalid state for non-Sygma tx');
-      return 3;
+      return isSygma ? 3 : 1;
     case BridgeTxState.SygmaPending:
-      if (!isSygma) throw new Error('Invalid state for non-Sygma tx');
-      return 4;
+      return isSygma ? 4 : 1;
     case BridgeTxState.Executed:
     case BridgeTxState.Failed:
       return isSygma ? 5 : 3;
     case BridgeTxState.HyperlanePending:
     case BridgeTxState.HyperlaneIndexing:
-      if (!isHyperlane) throw new Error('Invalid state for non-Hyperlane tx');
-      return 2;
+      return isHyperlane ? 2 : 1;
     case BridgeTxState.HyperlaneDelivered:
     case BridgeTxState.HyperlaneExecuted:
     case BridgeTxState.HyperlaneFailed:
-      if (!isHyperlane) throw new Error('Invalid state for non-Hyperlane tx');
-      return 3;
+      return isHyperlane ? 3 : 1;
     default:
-      throw new Error(`Unhandled BridgeTxState: ${state}`);
+      return 1;
   }
 };
 

@@ -51,3 +51,8 @@ export const customWarpRouteConfigs: WarpCoreConfig = {
 export const warpRouteWhitelist: Array<string> | null = [
   'WETH/holesky-tangletestnet',
 ];
+
+export const mailboxAddress = {
+  holesky: '0x57529d3663bb44e8ab3335743dd42d2e1E3b46BA',
+  tangletestnet: '0x0FDc2400B5a50637880dbEfB25d631c957620De8',
+};

@@ -13,6 +13,7 @@ import { useBridge } from '../../../context/BridgeContext';
 import { useBridgeTxQueue } from '../../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSubstrateInjectedExtension from '../../../hooks/useSubstrateInjectedExtension';
+import { mailboxAddress } from '../../../lib/hyperlane/consts';
 import { hyperlaneTransfer } from '../../../lib/hyperlane/transfer';
 import { BridgeTxState, BridgeType } from '../../../types/bridge';
 import sygmaEvm from '../lib/transfer/sygmaEvm';
@@ -54,10 +55,6 @@ export default function useBridgeTransfer({
     addTxDestinationTxExplorerUrl,
     addTxExplorerUrl,
   } = useBridgeTxQueue();
-
-  const tangleTestnetMailboxAddress =
-    '0x0FDc2400B5a50637880dbEfB25d631c957620De8';
-  const holeskyMailboxAddress = '0x57529d3663bb44e8ab3335743dd42d2e1E3b46BA';
 
   const [destinationTxHashAndMessageId, setDestinationTxHashAndMessageId] =
     useState<{ txHash: string; messageId: string }>({
@@ -159,8 +156,8 @@ export default function useBridgeTransfer({
         destinationTxHashAndMessageId.txHash,
         destinationTxHashAndMessageId.messageId,
         selectedDestinationChain.id === EVMChainId.Holesky
-          ? holeskyMailboxAddress
-          : tangleTestnetMailboxAddress,
+          ? mailboxAddress.holesky
+          : mailboxAddress.tangletestnet,
       ),
     refetchInterval: 5000,
     refetchIntervalInBackground: true,
