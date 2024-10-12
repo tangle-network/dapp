@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
 import { chainsConfig } from '@webb-tools/dapp-config';
 import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
+import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { providers } from 'ethers';
 import { useCallback, useState } from 'react';
 
@@ -55,15 +56,16 @@ export default function useBridgeTransfer({
     addTxDestinationTxExplorerUrl,
     addTxExplorerUrl,
   } = useBridgeTxQueue();
+  const { notificationApi } = useWebbUI();
 
   const [destinationTxHashAndMessageId, setDestinationTxHashAndMessageId] =
-    useState<{ txHash: string; messageId: string }>({
-      txHash: '',
-      messageId: '',
+    useState<{ txHash: string | null; messageId: string | null }>({
+      txHash: null,
+      messageId: null,
     });
 
   const [destinationTxIsExecutedOrFailed, setDestinationTxIsExecutedOrFailed] =
-    useState<boolean>(false);
+    useState(false);
 
   const ethersProviderDestination = useEthersProvider('dest');
 
@@ -149,16 +151,23 @@ export default function useBridgeTransfer({
     ],
   );
 
-  const { data: isDelivered } = useQuery({
+  useQuery({
     queryKey: ['messageDelivery', destinationTxHashAndMessageId.messageId],
-    queryFn: () =>
-      checkMessageDelivery(
+    queryFn: async () => {
+      if (
+        !destinationTxHashAndMessageId.txHash ||
+        !destinationTxHashAndMessageId.messageId
+      ) {
+        return null;
+      }
+      return checkMessageDelivery(
         destinationTxHashAndMessageId.txHash,
         destinationTxHashAndMessageId.messageId,
         selectedDestinationChain.id === EVMChainId.Holesky
           ? mailboxAddress.holesky
           : mailboxAddress.tangletestnet,
-      ),
+      );
+    },
     refetchInterval: 5000,
     refetchIntervalInBackground: true,
     enabled:
@@ -168,8 +177,6 @@ export default function useBridgeTransfer({
         selectedDestinationChain.id === EVMChainId.TangleTestnetEVM),
     retry: true,
   });
-
-  console.log('isDelivered', isDelivered);
 
   return async () => {
     if (activeAccountAddress === null) {
@@ -188,8 +195,8 @@ export default function useBridgeTransfer({
     }
 
     setDestinationTxHashAndMessageId({
-      txHash: '',
-      messageId: '',
+      txHash: null,
+      messageId: null,
     });
     setDestinationTxIsExecutedOrFailed(false);
 
@@ -209,10 +216,17 @@ export default function useBridgeTransfer({
           recipientAddress: destinationAddress,
           token: selectedToken,
           amount: amountInStr,
-          ethersProvider: ethersProviderDestination,
         });
 
-        if (!hyperlaneResult) throw new Error('Hyperlane transfer failed');
+        if (!hyperlaneResult) {
+          notificationApi({
+            variant: 'error',
+            message: 'Bridge transfer failed',
+          });
+
+          return;
+        }
+
         const { txs } = hyperlaneResult;
 
         for (const tx of txs) {

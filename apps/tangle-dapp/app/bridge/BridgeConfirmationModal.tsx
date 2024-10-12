@@ -72,7 +72,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
     } catch {
       notificationApi({
         variant: 'error',
-        message: 'Bridge Failed',
+        message: 'Bridge transfer failed',
       });
     } finally {
       setIsTransferring(false);

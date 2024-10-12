@@ -181,13 +181,13 @@ const getStatus = (state: BridgeTxState): StatusVariant => {
   switch (state) {
     case BridgeTxState.Initializing:
     case BridgeTxState.Sending:
-    case BridgeTxState.SygmaIndexing:
-    case BridgeTxState.SygmaPending:
-      return 'info';
     case BridgeTxState.Executed:
       return 'success';
     case BridgeTxState.Failed:
       return 'error';
+    case BridgeTxState.SygmaIndexing:
+    case BridgeTxState.SygmaPending:
+      return 'info';
     case BridgeTxState.HyperlanePending:
       return 'info';
     case BridgeTxState.HyperlaneIndexing:
@@ -198,8 +198,6 @@ const getStatus = (state: BridgeTxState): StatusVariant => {
       return 'success';
     case BridgeTxState.HyperlaneFailed:
       return 'error';
-    default:
-      return 'info';
   }
 };
 
@@ -219,14 +217,14 @@ const getStatusMessage = (state: BridgeTxState): string => {
       return 'Pending';
     case BridgeTxState.HyperlanePending:
       return 'Pending';
+    case BridgeTxState.HyperlaneIndexing:
+      return 'Indexing';
     case BridgeTxState.HyperlaneDelivered:
       return 'Delivered';
     case BridgeTxState.HyperlaneExecuted:
       return 'Executed';
     case BridgeTxState.HyperlaneFailed:
       return 'Failed';
-    default:
-      return '';
   }
 };
 

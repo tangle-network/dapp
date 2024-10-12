@@ -11,7 +11,6 @@ export async function hyperlaneTransfer(params?: {
   recipientAddress: string;
   token: BridgeTokenType;
   amount: string;
-  ethersProvider: any;
 }) {
   if (!params) return null;
 
@@ -55,8 +54,9 @@ export async function hyperlaneTransfer(params?: {
     recipient: recipientAddress,
     sender: senderAddress,
   });
+
   if (errors) {
-    throw new Error('Error validating transfer');
+    return null;
   }
 
   const txs = await warpCore.getTransferRemoteTxs({

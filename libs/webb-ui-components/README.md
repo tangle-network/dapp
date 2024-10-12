@@ -23,7 +23,7 @@ This is the official component library for the Webb Ecosystem! It utilizes [nx.d
 To view the available components, check out the official documentation [here](https://tangle-network.github.io/dapp/). If you have feedback or questions, head to the [Webb Dapp Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/webb-dapp-feedback). Contributions through PRs are welcomed!
 
 ## Prerequisites
-x
+
 This library makes use of yarn, nodejs, and requires version node v18. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/. Once node.js is installed you may proceed to install [`yarn`](https://classic.yarnpkg.com/en/docs/install):
 
 ```bash

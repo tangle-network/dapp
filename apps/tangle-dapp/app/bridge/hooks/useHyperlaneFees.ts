@@ -38,7 +38,6 @@ export default function useHyperlaneFees() {
             recipientAddress: destinationAddress,
             token: selectedToken,
             amount: amountInStr,
-            ethersProvider,
           }
         : undefined,
     ],

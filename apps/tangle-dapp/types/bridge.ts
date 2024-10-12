@@ -70,19 +70,38 @@ export enum BridgeWalletError {
 }
 
 export enum BridgeTxState {
-  Initializing = 'Initializing', // The tx is being initialized
-  Sending = 'Sending', // The user is signing the tx
-  Executed = 'Executed', // The tx is executed successfully
-  Failed = 'Failed', // The tx is failed
+  /** The tx is being initialized */
+  Initializing = 'Initializing',
 
-  SygmaIndexing = 'SygmaIndexing', // The tx is being indexed (Sygma txs only)
-  SygmaPending = 'SygmaPending', // The tx is done indexing but still pending (Sygma txs only)
+  /** The user is signing the tx */
+  Sending = 'Sending',
 
-  HyperlanePending = 'HyperlanePending', // The tx is done indexing but still pending (Hyperlane txs only)
-  HyperlaneIndexing = 'HyperlaneIndexing', // The tx is being indexed (Hyperlane txs only)
-  HyperlaneDelivered = 'HyperlaneDelivered', // The tx is delivered to the destination chain (Hyperlane txs only)
-  HyperlaneExecuted = 'HyperlaneExecuted', // The tx is executed on the destination chain (Hyperlane txs only)
-  HyperlaneFailed = 'HyperlaneFailed', // The tx is failed on the destination chain (Hyperlane txs only)
+  /** The tx executed successfully */
+  Executed = 'Executed',
+
+  /** The tx has failed */
+  Failed = 'Failed',
+
+  /** The tx is being indexed (Sygma txs only) */
+  SygmaIndexing = 'SygmaIndexing',
+
+  /** The tx is done indexing but still pending (Sygma txs only) */
+  SygmaPending = 'SygmaPending',
+
+  /** The tx is done indexing but still pending (Hyperlane txs only) */
+  HyperlanePending = 'HyperlanePending',
+
+  /** The tx is being indexed (Hyperlane txs only) */
+  HyperlaneIndexing = 'HyperlaneIndexing',
+
+  /** The tx is delivered to the destination chain (Hyperlane txs only) */
+  HyperlaneDelivered = 'HyperlaneDelivered',
+
+  /** The tx is executed on the destination chain (Hyperlane txs only) */
+  HyperlaneExecuted = 'HyperlaneExecuted',
+
+  /** The tx has failed on the destination chain (Hyperlane txs only) */
+  HyperlaneFailed = 'HyperlaneFailed',
 }
 
 export type BridgeQueueTxItem = {
