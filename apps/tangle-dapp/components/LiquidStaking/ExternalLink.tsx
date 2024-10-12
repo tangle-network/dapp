@@ -21,9 +21,7 @@ const ExternalLink: FC<ExternalLinkProps> = ({
       target="_blank"
       size="sm"
       variant="link"
-      rightIcon={
-        <Icon className="dark:fill-blue-50 group-hover:dark:fill-blue-30" />
-      }
+      rightIcon={<Icon className="fill-current dark:fill-current" />}
     >
       {children}
     </Button>

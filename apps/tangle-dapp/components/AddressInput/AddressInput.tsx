@@ -17,6 +17,7 @@ export type AddressInputProps = {
   id: string;
   title: string;
   placeholder?: string;
+  tooltip?: string;
   type: AddressType;
   showPasteButton?: boolean;
   value: string;
@@ -29,6 +30,7 @@ export type AddressInputProps = {
 const AddressInput: FC<AddressInputProps> = ({
   id,
   title,
+  tooltip,
   placeholder,
   type,
   value,
@@ -104,6 +106,7 @@ const AddressInput: FC<AddressInputProps> = ({
     <BaseInput
       id={id}
       title={title}
+      tooltip={tooltip}
       errorMessage={errorMessage ?? undefined}
       {...baseInputOverrides}
       actions={actions}

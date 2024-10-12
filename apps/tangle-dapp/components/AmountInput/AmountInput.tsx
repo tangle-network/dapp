@@ -36,7 +36,8 @@ const AmountInput: FC<AmountInputProps> = ({
   setAmount,
   min = null,
   max = null,
-  decimals = TANGLE_TOKEN_DECIMALS, // Default to the Tangle token decimals.
+  // Default to the Tangle token decimals.
+  decimals = TANGLE_TOKEN_DECIMALS,
   minErrorMessage,
   maxErrorMessage,
   showMaxAction = true,
