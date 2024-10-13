@@ -1,6 +1,5 @@
 import {
   ExchangeFunds,
-  LockLineIcon,
   TokenSwapLineIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
@@ -39,15 +38,9 @@ const Bridge: FC = () => {
         />
 
         <OnboardingItem
-          Icon={LockLineIcon}
-          title="Powered by Hyperlane"
-          description="Enjoy smooth and secure bridging powered by Hyperlane."
-        />
-
-        <OnboardingItem
           Icon={TokenSwapLineIcon}
           title="Restake Your Assets"
-          description="After bridging, use the restaking page to restake your assets."
+          description="After bridging, use the restake page to leverage your bridged assets in restaking in order to earn yield and help secure and power Blueprint services on Tangle."
         />
       </OnboardingModal>
 
