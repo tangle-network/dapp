@@ -210,7 +210,7 @@ const OperatorsTable: FC<Props> = ({
     return (
       <TableStatus
         title="No operators found"
-        description="It looks like there is no operator running at the moment."
+        description="It looks like there are no operators running at the moment."
         icon="⚙️"
         {...emptyTableProps}
         className={twMerge(sharedTableStatusClxs, emptyTableProps?.className)}

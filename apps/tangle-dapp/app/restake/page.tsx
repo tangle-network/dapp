@@ -1,6 +1,11 @@
 'use client';
 
-import { AddCircleLineIcon, Search, SparklingIcon } from '@webb-tools/icons';
+import {
+  AddCircleLineIcon,
+  Search,
+  SparklingIcon,
+  UserLineIcon,
+} from '@webb-tools/icons';
 import { TANGLE_DOCS_RESTAKING_URL } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
@@ -65,7 +70,7 @@ export default function RestakePage() {
         />
 
         <OnboardingItem
-          Icon={AddCircleLineIcon}
+          Icon={UserLineIcon}
           title="Choose an Operator"
           description="Select an operator to delegate your deposited assets. This step is crucial for securing service instances on Tangle."
         />
@@ -125,9 +130,9 @@ export default function RestakePage() {
               <Typography variant="body1">{CONTENT.HOW_IT_WORKS}</Typography>
             </div>
 
-            {/** TODO: Determine read more link here */}
             <Button
-              href="#"
+              href={TANGLE_DOCS_RESTAKING_URL}
+              target="_blank"
               variant="link"
               size="sm"
               className="inline-block ml-auto"
