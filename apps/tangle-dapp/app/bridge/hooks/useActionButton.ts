@@ -142,9 +142,9 @@ export default function useActionButton({
   ]);
 
   const buttonText = useMemo(() => {
+    if (isRequiredToConnectWallet) return 'Connect';
     if (isWalletAndSourceChainMismatch) return 'Switch Wallet';
     if (isSelectedNetworkAndSourceChainMismatch) return 'Switch Chain';
-    if (isRequiredToConnectWallet) return 'Connect';
     if (isTransferring) return 'Transferring...';
     return 'Transfer';
   }, [
@@ -172,6 +172,7 @@ export default function useActionButton({
         : isInputInsufficient ||
           isAmountInputError ||
           isAddressInputError ||
+          !feeItems.hyperlaneInterchain ||
           feeItems.sygmaBridge?.isLoading ||
           feeItems.hyperlaneInterchain?.isLoading ||
           feeItems.gas?.isLoading ||

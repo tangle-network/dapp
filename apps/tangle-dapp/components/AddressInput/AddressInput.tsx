@@ -121,6 +121,7 @@ const AddressInput: FC<AddressInputProps> = ({
         isInvalid={errorMessage !== null}
         isDisabled={isDisabled}
         isControlled
+        spellCheck={false}
       />
     </BaseInput>
   );

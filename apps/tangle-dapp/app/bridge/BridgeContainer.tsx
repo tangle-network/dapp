@@ -95,34 +95,15 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
             {!hideFeeDetails && <FeeDetails />}
           </div>
 
-          <div className="flex flex-col items-end gap-2">
-            {/* {errorMessage && (
-              <div className="flex items-center gap-1">
-                <Typography
-                  variant="body2"
-                  className="text-red-70 dark:text-red-50"
-                >
-                  * {errorMessage.text}
-                </Typography>
-                {errorMessage.tooltip && (
-                  <InfoIconWithTooltip
-                    content={errorMessage.tooltip}
-                    className="fill-red-70 dark:fill-red-50"
-                    overrideTooltipBodyProps={{ className: 'max-w-[200px]' }}
-                  />
-                )}
-              </div>
-            )} */}
-            <Button
-              isFullWidth
-              isDisabled={isDisabled}
-              isLoading={isLoading}
-              onClick={buttonAction}
-              loadingText={buttonLoadingText}
-            >
-              {buttonText}
-            </Button>
-          </div>
+          <Button
+            isFullWidth
+            isDisabled={isDisabled}
+            isLoading={isLoading}
+            onClick={buttonAction}
+            loadingText={buttonLoadingText}
+          >
+            {buttonText}
+          </Button>
         </div>
       </div>
 
