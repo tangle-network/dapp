@@ -11,6 +11,7 @@ import { hyperlaneTransfer } from '../../../lib/hyperlane/transfer';
 import { BridgeFeeType, BridgeType } from '../../../types/bridge';
 import useAmountInStr from './useAmountInStr';
 import useDecimals from './useDecimals';
+import useEthersProvider from './useEthersProvider';
 import useSelectedToken from './useSelectedToken';
 import useTypedChainId from './useTypedChainId';
 
@@ -21,13 +22,15 @@ export default function useHyperlaneFees() {
   const selectedToken = useSelectedToken();
   const amountInStr = useAmountInStr();
   const decimals = useDecimals();
+  const ethersProvider = useEthersProvider();
 
   const { data: fees, isLoading } = useSWR(
     [
       activeAccountAddress !== null &&
       isEthereumAddress(activeAccountAddress) &&
       bridgeType === BridgeType.HYPERLANE_EVM_TO_EVM &&
-      destinationAddress
+      destinationAddress &&
+      ethersProvider
         ? {
             sourceTypedChainId,
             destinationTypedChainId,
@@ -38,8 +41,8 @@ export default function useHyperlaneFees() {
           }
         : undefined,
     ],
-    async ([...args]) => {
-      const result = await hyperlaneTransfer(...args);
+    async ([args]) => {
+      const result = await hyperlaneTransfer(args);
       if (!result) return null;
       return {
         gasFee: {

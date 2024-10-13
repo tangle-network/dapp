@@ -8,14 +8,25 @@ import { isEVMChain } from '../../../utils/bridge';
 import viemNetworkClientToEthersProvider from '../../../utils/viemNetworkClientToEthersProvider';
 import useTypedChainId from './useTypedChainId';
 
-export default function useEthersProvider() {
-  const { selectedSourceChain } = useBridge();
-  const { sourceTypedChainId } = useTypedChainId();
+export default function useEthersProvider(chainType: 'src' | 'dest' = 'src') {
+  const { selectedSourceChain, selectedDestinationChain } = useBridge();
+  const { sourceTypedChainId, destinationTypedChainId } = useTypedChainId();
 
   const ethersProvider = useMemo(() => {
-    if (!isEVMChain(selectedSourceChain)) return null;
-    return viemNetworkClientToEthersProvider(getViemClient(sourceTypedChainId));
-  }, [selectedSourceChain, sourceTypedChainId]);
+    const selectedChain =
+      chainType === 'src' ? selectedSourceChain : selectedDestinationChain;
+    const typedChainId =
+      chainType === 'src' ? sourceTypedChainId : destinationTypedChainId;
+
+    if (!isEVMChain(selectedChain)) return null;
+    return viemNetworkClientToEthersProvider(getViemClient(typedChainId));
+  }, [
+    chainType,
+    selectedSourceChain,
+    selectedDestinationChain,
+    sourceTypedChainId,
+    destinationTypedChainId,
+  ]);
 
   return ethersProvider;
 }

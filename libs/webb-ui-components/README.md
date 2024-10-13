@@ -20,7 +20,7 @@
 
 This is the official component library for the Webb Ecosystem! It utilizes [nx.dev](https://nx.dev/) for a fast and extensible build system, and enables developers to build beautiful user interfaces for Web3 applications quickly. The library includes components that are documented using [Storybook](https://storybook.js.org/).
 
-To view the available components, check out the official documentation [here](https://webb-tools.github.io/webb-dapp/). If you have feedback or questions, head to the [Webb Dapp Feedback Discussion](https://github.com/webb-tools/feedback/discussions/categories/webb-dapp-feedback). Contributions through PRs are welcomed!
+To view the available components, check out the official documentation [here](https://tangle-network.github.io/dapp/). If you have feedback or questions, head to the [Webb Dapp Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/webb-dapp-feedback). Contributions through PRs are welcomed!
 
 ## Prerequisites
 
@@ -127,7 +127,7 @@ If you have a contribution in mind, please check out our [Contribution Guide](..
 
 ### New Component Proposals
 
-We welcome and encourage new component proposals from all developers! If you'd like to kick off a new component proposal, please submit an issue using the [issue template](https://github.com/webb-tools/webb-dapp/issues/new/choose) and we will get in touch!
+We welcome and encourage new component proposals from all developers! If you'd like to kick off a new component proposal, please submit an issue using the [issue template](https://github.com/tangle-network/webb-dapp/issues/new/choose) and we will get in touch!
 
 ### Lint before you push!
 
@@ -153,6 +153,6 @@ yarn build
 
 <h2 id="license"> License </h2>
 
-Licensed under <a href="https://github.com/webb-tools/webb-dapp/blob/develop/LICENSE">Apache 2.0 license</a>.
+Licensed under <a href="https://github.com/tangle-network/webb-dapp/blob/develop/LICENSE">Apache 2.0 license</a>.
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this crate by you, as defined in the Apache 2.0 license, shall be licensed as above, without any additional terms or conditions.
