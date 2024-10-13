@@ -4,8 +4,8 @@ import { isAddress } from '@polkadot/util-crypto';
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
-import { isEvmAddress } from '../../utils/isEvmAddress';
-import BaseInput, { BaseInputProps } from '../AmountInput/BaseInput';
+import { isEvmAddress } from '../utils/isEvmAddress';
+import InputWrapper, { InputWrapperProps } from './InputWrapper';
 
 export enum AddressType {
   EVM,
@@ -22,7 +22,7 @@ export type AddressInputProps = {
   showPasteButton?: boolean;
   value: string;
   isDisabled?: boolean;
-  baseInputOverrides?: Partial<BaseInputProps>;
+  wrapperOverrides?: Partial<InputWrapperProps>;
   setValue: (newValue: string) => void;
   setErrorMessage?: (error: string | null) => void;
 };
@@ -37,7 +37,7 @@ const AddressInput: FC<AddressInputProps> = ({
   setValue,
   showPasteButton = true,
   isDisabled = false,
-  baseInputOverrides,
+  wrapperOverrides,
   setErrorMessage: setErrorMessageOnParent,
 }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -64,7 +64,7 @@ const AddressInput: FC<AddressInputProps> = ({
         </Button>
       )}
 
-      {baseInputOverrides?.actions}
+      {wrapperOverrides?.actions}
     </>
   );
 
@@ -103,12 +103,12 @@ const AddressInput: FC<AddressInputProps> = ({
   }, [errorMessage, setErrorMessageOnParent]);
 
   return (
-    <BaseInput
+    <InputWrapper
       id={id}
       title={title}
       tooltip={tooltip}
       errorMessage={errorMessage ?? undefined}
-      {...baseInputOverrides}
+      {...wrapperOverrides}
       actions={actions}
     >
       <Input
@@ -125,7 +125,7 @@ const AddressInput: FC<AddressInputProps> = ({
         isDisabled={isDisabled}
         isControlled
       />
-    </BaseInput>
+    </InputWrapper>
   );
 };
 

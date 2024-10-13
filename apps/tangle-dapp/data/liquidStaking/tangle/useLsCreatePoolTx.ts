@@ -43,7 +43,7 @@ const useLsCreatePoolTx = () => {
 
   // TODO: Add EVM support once precompile(s) for the `lst` pallet are implemented on Tangle.
   return useSubstrateTxWithNotification(
-    TxName.LS_TANGLE_POOL_JOIN,
+    TxName.LS_TANGLE_POOL_CREATE,
     substrateTxFactory,
   );
 };

@@ -23,10 +23,8 @@ import {
 } from 'react';
 import { isHex } from 'viem';
 
-import AddressInput, {
-  AddressType,
-} from '../../components/AddressInput/AddressInput';
-import AmountInput from '../../components/AmountInput/AmountInput';
+import AddressInput, { AddressType } from '../../components/AddressInput';
+import AmountInput from '../../components/AmountInput';
 import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useExistentialDeposit from '../../data/balances/useExistentialDeposit';
@@ -211,7 +209,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               isDisabled={!isReady}
               amount={amount}
               setAmount={setAmount}
-              baseInputOverrides={{
+              wrapperOverrides={{
                 isFullWidth: true,
                 tooltip: transferableBalanceTooltip,
               }}
@@ -228,7 +226,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               type={AddressType.Both}
               title="Receiver Address"
               placeholder="EVM or Substrate"
-              baseInputOverrides={{ isFullWidth: true }}
+              wrapperOverrides={{ isFullWidth: true }}
               value={receiverAddress}
               setValue={setReceiverAddress}
               isDisabled={!isReady}

@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { type FC, useCallback } from 'react';
 import z from 'zod';
 
-import AmountInput from '../../components/AmountInput/AmountInput';
+import AmountInput from '../../components/AmountInput';
 import {
   STAKING_PAYEE_TEXT_TO_VALUE_MAP,
   STAKING_PAYEE_VALUE_TO_TEXT_MAP,
@@ -77,7 +77,7 @@ const BondTokens: FC<BondTokensProps> = ({
           max={freeBalance ?? undefined}
           amount={amountToBond}
           setAmount={setAmountToBond}
-          baseInputOverrides={{ isFullWidth: true }}
+          wrapperOverrides={{ isFullWidth: true }}
           maxErrorMessage="Not enough available balance"
           setErrorMessage={handleAmountToBondError}
         />
