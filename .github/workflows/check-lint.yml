@@ -82,7 +82,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Link Checker
-        uses: lycheeverse/lychee-action@v1.10.0
+        uses: lycheeverse/lychee-action@v2.0.2
         with:
           # Ignore the README.md file as some social sharing links are not valid
           args: --verbose --no-progress --exclude-path 'README.md' './**/*.md' './**/*.html' './**/*.rst'
