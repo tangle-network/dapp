@@ -23493,6 +23493,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cssstyle@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "cssstyle@npm:4.1.0"
+  dependencies:
+    rrweb-cssom: "npm:^0.7.1"
+  checksum: 10c0/05c6597e5d3e0ec6b15221f2c0ce9a0443a46cc50a6089a3ba9ee1ac27f83ff86a445a8f95435137dadd859f091fc61b6d342abaf396d3c910471b5b33cfcbfa
+  languageName: node
+  linkType: hard
+
 "csstype@npm:3.1.3, csstype@npm:^3.0.2":
   version: 3.1.3
   resolution: "csstype@npm:3.1.3"
@@ -32367,7 +32376,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdom@npm:^24.0.0, jsdom@npm:~24.1.1":
+"jsdom@npm:^24.0.0":
   version: 24.1.3
   resolution: "jsdom@npm:24.1.3"
   dependencies:
@@ -32398,6 +32407,40 @@ __metadata:
     canvas:
       optional: true
   checksum: 10c0/e48b342afacd7418a23dac204a62deea729c50f4d072a7c04c09fd32355fdb4335f8779fa79fd0277a2dbeb2d356250a950955719d00047324b251233b11277f
+  languageName: node
+  linkType: hard
+
+"jsdom@npm:~25.0.1":
+  version: 25.0.1
+  resolution: "jsdom@npm:25.0.1"
+  dependencies:
+    cssstyle: "npm:^4.1.0"
+    data-urls: "npm:^5.0.0"
+    decimal.js: "npm:^10.4.3"
+    form-data: "npm:^4.0.0"
+    html-encoding-sniffer: "npm:^4.0.0"
+    http-proxy-agent: "npm:^7.0.2"
+    https-proxy-agent: "npm:^7.0.5"
+    is-potential-custom-element-name: "npm:^1.0.1"
+    nwsapi: "npm:^2.2.12"
+    parse5: "npm:^7.1.2"
+    rrweb-cssom: "npm:^0.7.1"
+    saxes: "npm:^6.0.0"
+    symbol-tree: "npm:^3.2.4"
+    tough-cookie: "npm:^5.0.0"
+    w3c-xmlserializer: "npm:^5.0.0"
+    webidl-conversions: "npm:^7.0.0"
+    whatwg-encoding: "npm:^3.1.1"
+    whatwg-mimetype: "npm:^4.0.0"
+    whatwg-url: "npm:^14.0.0"
+    ws: "npm:^8.18.0"
+    xml-name-validator: "npm:^5.0.0"
+  peerDependencies:
+    canvas: ^2.11.2
+  peerDependenciesMeta:
+    canvas:
+      optional: true
+  checksum: 10c0/6bda32a6dfe4e37a30568bf51136bdb3ba9c0b72aadd6356280404275a34c9e097c8c25b5eb3c742e602623741e172da977ff456684befd77c9042ed9bf8c2b4
   languageName: node
   linkType: hard
 
@@ -44228,6 +44271,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tldts-core@npm:^6.1.51":
+  version: 6.1.51
+  resolution: "tldts-core@npm:6.1.51"
+  checksum: 10c0/ac65902670327002cc96e804a55cf4ca09d7ef4e55b886af610f26e0f56da62b8d78b1acf32b94b20f8c2ad7954ea2fd23abcadbd25f28832cb9a109cb70c4f9
+  languageName: node
+  linkType: hard
+
+"tldts@npm:^6.1.32":
+  version: 6.1.51
+  resolution: "tldts@npm:6.1.51"
+  dependencies:
+    tldts-core: "npm:^6.1.51"
+  bin:
+    tldts: bin/cli.js
+  checksum: 10c0/5bfcf4e7545a3297a851fb4cf114e4856296806fb2a4464d24382eb4d1ae18f108e9f3c32a5f8bdcf3b85f44ed0a52110fd27b920156b68a15ebdd65c96a0384
+  languageName: node
+  linkType: hard
+
 "tmp-promise@npm:^3.0.2, tmp-promise@npm:^3.0.3":
   version: 3.0.3
   resolution: "tmp-promise@npm:3.0.3"
@@ -44344,6 +44405,15 @@ __metadata:
     universalify: "npm:^0.2.0"
     url-parse: "npm:^1.5.3"
   checksum: 10c0/aca7ff96054f367d53d1e813e62ceb7dd2eda25d7752058a74d64b7266fd07be75908f3753a32ccf866a2f997604b414cfb1916d6e7f69bc64d9d9939b0d6c45
+  languageName: node
+  linkType: hard
+
+"tough-cookie@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "tough-cookie@npm:5.0.0"
+  dependencies:
+    tldts: "npm:^6.1.32"
+  checksum: 10c0/4a69c885bf6f45c5a64e60262af99e8c0d58a33bd3d0ce5da62121eeb9c00996d0128a72df8fc4614cbde59cc8b70aa3e21e4c3c98c2bbde137d7aba7fa00124
   languageName: node
   linkType: hard
 
@@ -46850,7 +46920,7 @@ __metadata:
     husky: "npm:^9.1.5"
     jest: "npm:29.7.0"
     jest-environment-jsdom: "npm:29.7.0"
-    jsdom: "npm:~24.1.1"
+    jsdom: "npm:~25.0.1"
     listr2: "npm:^8.2.4"
     lodash: "npm:^4.17.21"
     lottie-react: "npm:^2.4.0"
