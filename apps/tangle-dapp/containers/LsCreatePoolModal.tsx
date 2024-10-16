@@ -23,7 +23,6 @@ import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { TxStatus } from '../hooks/useSubstrateTx';
 import assertSubstrateAddress from '../utils/assertSubstrateAddress';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
-import getLsProtocolDef from '../utils/liquidStaking/getLsProtocolDef';
 import { ERROR_NOT_ENOUGH_BALANCE } from './ManageProfileModalContainer/Independent/IndependentAllocationInput';
 
 export type LsCreatePoolModalProps = {
@@ -46,8 +45,6 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
   const [initialBondAmount, setInitialBondAmount] = useState<BN | null>(null);
   const [protocolId, setProtocolId] = useState<LsProtocolId | null>(null);
   const { lsNetworkId } = useLsStore();
-
-  const lsProtocol = protocolId === null ? null : getLsProtocolDef(protocolId);
 
   const lsNetwork = getLsNetwork(lsNetworkId);
 
