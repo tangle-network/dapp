@@ -1,4 +1,5 @@
-import { Input } from '@webb-tools/webb-ui-components';
+import BackspaceDeleteFillIcon from '@webb-tools/icons/BackspaceDeleteFillIcon';
+import { Button, Input } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import InputWrapper, { InputWrapperProps } from './InputWrapper';
@@ -10,7 +11,7 @@ export type TextInputProps = {
   setValue: (newValue: string) => void;
   placeholder?: string;
   isDisabled?: boolean;
-  baseInputOverrides?: Partial<InputWrapperProps>;
+  wrapperOverrides?: Partial<InputWrapperProps>;
 };
 
 const TextInput: FC<TextInputProps> = ({
@@ -20,14 +21,22 @@ const TextInput: FC<TextInputProps> = ({
   setValue,
   placeholder,
   isDisabled = false,
-  baseInputOverrides,
+  wrapperOverrides,
 }) => {
+  const clearAction =
+    value === '' ? undefined : (
+      <Button size="sm" variant="utility" onClick={() => setValue('')}>
+        <BackspaceDeleteFillIcon className="fill-current dark:fill-current" />
+      </Button>
+    );
+
   return (
     <InputWrapper
       id={id}
       title={title}
       isDisabled={isDisabled}
-      {...baseInputOverrides}
+      actions={clearAction}
+      {...wrapperOverrides}
     >
       <Input
         id={id}

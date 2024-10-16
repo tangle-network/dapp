@@ -1,6 +1,7 @@
 import { BN } from '@polkadot/util';
 import { useCallback, useEffect, useState } from 'react';
 
+import cleanNumericInputString from '../utils/cleanNumericInputString';
 import formatBn, { FormatOptions } from '../utils/formatBn';
 import parseChainUnits, {
   ChainUnitParsingError,
@@ -73,21 +74,7 @@ const useInputAmount = ({
 
   const handleChange = useCallback(
     (newAmountString: string) => {
-      let wasPeriodSeen = false;
-
-      const cleanAmountString = newAmountString
-        .split('')
-        .filter((char) => {
-          if (char === '.' && !wasPeriodSeen) {
-            wasPeriodSeen = true;
-
-            return true;
-          }
-
-          // Only consider digits. Ignore any other characters.
-          return char.match(/\d/);
-        })
-        .join('');
+      const cleanAmountString = cleanNumericInputString(newAmountString);
 
       // Nothing to do.
       if (displayAmount === cleanAmountString) {

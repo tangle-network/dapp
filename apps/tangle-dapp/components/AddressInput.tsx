@@ -1,7 +1,7 @@
 'use client';
 
 import { isAddress } from '@polkadot/util-crypto';
-import { Button, Input } from '@webb-tools/webb-ui-components';
+import { Avatar, Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 import { isEvmAddress } from '../utils/isEvmAddress';
@@ -49,11 +49,10 @@ const AddressInput: FC<AddressInputProps> = ({
     });
   }, [setValue]);
 
-  const actions: ReactNode = (
-    <>
-      {showPasteButton && (
+  const actions: ReactNode =
+    value === '' && showPasteButton ? (
+      <>
         <Button
-          isDisabled={value !== ''}
           key="paste"
           size="sm"
           variant="utility"
@@ -62,17 +61,19 @@ const AddressInput: FC<AddressInputProps> = ({
         >
           Paste
         </Button>
-      )}
 
-      {wrapperOverrides?.actions}
-    </>
-  );
+        {wrapperOverrides?.actions}
+      </>
+    ) : (
+      wrapperOverrides?.actions
+    );
 
   const handleChange = useCallback(
     (newValue: string) => {
+      setValue(newValue);
+
       if (newValue === '') {
         setErrorMessage(null);
-        setValue(newValue);
 
         return;
       }
@@ -89,8 +90,6 @@ const AddressInput: FC<AddressInputProps> = ({
       } else {
         setErrorMessage(null);
       }
-
-      setValue(newValue);
     },
     [setValue, type],
   );
@@ -102,19 +101,25 @@ const AddressInput: FC<AddressInputProps> = ({
     }
   }, [errorMessage, setErrorMessageOnParent]);
 
+  const isEvm = isEvmAddress(value);
+
   return (
     <InputWrapper
       id={id}
       title={title}
       tooltip={tooltip}
       errorMessage={errorMessage ?? undefined}
+      bodyClassName="flex items-center gap-1"
       {...wrapperOverrides}
       actions={actions}
     >
+      <Avatar theme={isEvm ? 'ethereum' : 'substrate'} value={value} />
+
       <Input
         id={id}
         inputRef={inputRef}
-        inputClassName="placeholder:text-md"
+        className="w-full"
+        inputClassName="placeholder:text-md text-sm"
         type="text"
         placeholder={placeholder}
         size="sm"

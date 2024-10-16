@@ -1,6 +1,5 @@
 import { BN } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import {
   Alert,
   Button,
@@ -14,12 +13,12 @@ import { FC, useCallback, useEffect, useState } from 'react';
 
 import AddressInput, { AddressType } from '../components/AddressInput';
 import AmountInput from '../components/AmountInput';
+import LsProtocolDropdownInput from '../components/LiquidStaking/LsProtocolDropdownInput';
 import TextInput from '../components/TextInput';
 import { LsNetworkId, LsProtocolId } from '../constants/liquidStaking/types';
 import useBalances from '../data/balances/useBalances';
 import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
-import useInputAmount from '../hooks/useInputAmount';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { TxStatus } from '../hooks/useSubstrateTx';
 import assertSubstrateAddress from '../utils/assertSubstrateAddress';
@@ -45,21 +44,12 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
   const [bouncerAddress, setBouncerAddress] = useState('');
 
   const [initialBondAmount, setInitialBondAmount] = useState<BN | null>(null);
-  const [lsProtocolId, setLsProtocolId] = useState<LsProtocolId | null>(null);
+  const [protocolId, setProtocolId] = useState<LsProtocolId | null>(null);
   const { lsNetworkId } = useLsStore();
 
-  const lsProtocol =
-    lsProtocolId === null ? null : getLsProtocolDef(lsProtocolId);
+  const lsProtocol = protocolId === null ? null : getLsProtocolDef(protocolId);
 
   const lsNetwork = getLsNetwork(lsNetworkId);
-
-  const { displayAmount, errorMessage } = useInputAmount({
-    amount: initialBondAmount,
-    setAmount: setInitialBondAmount,
-    // Default to TNT's decimals if the protocol hasn't been selected
-    // yet.
-    decimals: lsProtocol?.decimals ?? TANGLE_TOKEN_DECIMALS,
-  });
 
   // TODO: Also add Restaking Parachain when its non-testnet version is available.
   const isLiveNetwork = lsNetworkId === LsNetworkId.TANGLE_MAINNET;
@@ -118,7 +108,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
 
   return (
     <Modal open={isOpen}>
-      <ModalContent isCenter isOpen={isOpen} className="w-full max-w-[600px]">
+      <ModalContent isCenter isOpen={isOpen} className="w-full max-w-[740px]">
         <ModalHeader onClose={() => setIsOpen(false)}>
           Create a Liquid Staking Pool
         </ModalHeader>
@@ -133,19 +123,28 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
             {!isLiveNetwork && (
               <Alert
                 type="info"
-                title="Note"
                 description={`This liquid staking pool will be created on ${lsNetwork.networkName} and will not be accessible on other networks.`}
               />
             )}
 
-            <TextInput
-              id="ls-create-pool-name"
-              title="Pool Name"
-              placeholder="Choose a unique name for your pool"
-              value={name}
-              setValue={setName}
-              baseInputOverrides={{ isFullWidth: true }}
-            />
+            <div className="flex items-center justify-stretch gap-2">
+              <TextInput
+                id="ls-create-pool-name"
+                title="Pool Name"
+                placeholder="Choose a name"
+                value={name}
+                setValue={setName}
+                wrapperOverrides={{ isFullWidth: true }}
+              />
+
+              <LsProtocolDropdownInput
+                id="ls-create-pool-protocol"
+                networkId={lsNetworkId}
+                protocolId={protocolId ?? lsNetwork.defaultProtocolId}
+                setProtocolId={setProtocolId}
+                isDerivativeVariant={false}
+              />
+            </div>
 
             {/** TODO: Protocol selection dropdown. */}
 
