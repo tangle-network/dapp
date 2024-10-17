@@ -151,6 +151,8 @@ export { default as WebbLogoIcon } from './WebbLogoIcon';
 export * from './YouTubeFill';
 export * from './SubtractCircleLineIcon';
 export * from './ArrowDownIcon';
+export * from './AddLineIcon';
+export * from './BackspaceDeleteFillIcon';
 
 // Wallet icons
 export * from './wallets';

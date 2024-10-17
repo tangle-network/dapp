@@ -15,7 +15,7 @@ import Decimal from 'decimal.js';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import AmountInput from '../../components/AmountInput/AmountInput';
+import AmountInput from '../../components/AmountInput';
 import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
 import { useBridge } from '../../context/BridgeContext';
 import convertDecimalToBn from '../../utils/convertDecimalToBn';
@@ -68,7 +68,7 @@ const AmountAndTokenInput: FC = () => {
           title="Amount"
           amount={amount}
           setAmount={setAmount}
-          baseInputOverrides={{
+          wrapperOverrides={{
             isFullWidth: true,
           }}
           placeholder=""

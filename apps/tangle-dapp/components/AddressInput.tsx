@@ -1,11 +1,11 @@
 'use client';
 
 import { isAddress } from '@polkadot/util-crypto';
-import { Button, Input } from '@webb-tools/webb-ui-components';
+import { Avatar, Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
-import { isEvmAddress } from '../../utils/isEvmAddress';
-import BaseInput, { BaseInputProps } from '../AmountInput/BaseInput';
+import { isEvmAddress } from '../utils/isEvmAddress';
+import InputWrapper, { InputWrapperProps } from './InputWrapper';
 
 export enum AddressType {
   EVM,
@@ -17,11 +17,12 @@ export type AddressInputProps = {
   id: string;
   title: string;
   placeholder?: string;
+  tooltip?: string;
   type: AddressType;
   showPasteButton?: boolean;
   value: string;
   isDisabled?: boolean;
-  baseInputOverrides?: Partial<BaseInputProps>;
+  wrapperOverrides?: Partial<InputWrapperProps>;
   setValue: (newValue: string) => void;
   setErrorMessage?: (error: string | null) => void;
 };
@@ -29,13 +30,14 @@ export type AddressInputProps = {
 const AddressInput: FC<AddressInputProps> = ({
   id,
   title,
+  tooltip,
   placeholder,
   type,
   value,
   setValue,
   showPasteButton = true,
   isDisabled = false,
-  baseInputOverrides,
+  wrapperOverrides,
   setErrorMessage: setErrorMessageOnParent,
 }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -47,11 +49,10 @@ const AddressInput: FC<AddressInputProps> = ({
     });
   }, [setValue]);
 
-  const actions: ReactNode = (
-    <>
-      {showPasteButton && (
+  const actions: ReactNode =
+    value === '' && showPasteButton ? (
+      <>
         <Button
-          isDisabled={value !== ''}
           key="paste"
           size="sm"
           variant="utility"
@@ -60,17 +61,19 @@ const AddressInput: FC<AddressInputProps> = ({
         >
           Paste
         </Button>
-      )}
 
-      {baseInputOverrides?.actions}
-    </>
-  );
+        {wrapperOverrides?.actions}
+      </>
+    ) : (
+      wrapperOverrides?.actions
+    );
 
   const handleChange = useCallback(
     (newValue: string) => {
+      setValue(newValue);
+
       if (newValue === '') {
         setErrorMessage(null);
-        setValue(newValue);
 
         return;
       }
@@ -87,8 +90,6 @@ const AddressInput: FC<AddressInputProps> = ({
       } else {
         setErrorMessage(null);
       }
-
-      setValue(newValue);
     },
     [setValue, type],
   );
@@ -100,18 +101,25 @@ const AddressInput: FC<AddressInputProps> = ({
     }
   }, [errorMessage, setErrorMessageOnParent]);
 
+  const isEvm = isEvmAddress(value);
+
   return (
-    <BaseInput
+    <InputWrapper
       id={id}
       title={title}
+      tooltip={tooltip}
       errorMessage={errorMessage ?? undefined}
-      {...baseInputOverrides}
+      bodyClassName="flex items-center gap-1"
+      {...wrapperOverrides}
       actions={actions}
     >
+      <Avatar theme={isEvm ? 'ethereum' : 'substrate'} value={value} />
+
       <Input
         id={id}
         inputRef={inputRef}
-        inputClassName="placeholder:text-md"
+        className="w-full"
+        inputClassName="placeholder:text-md text-sm"
         type="text"
         placeholder={placeholder}
         size="sm"
@@ -123,7 +131,7 @@ const AddressInput: FC<AddressInputProps> = ({
         isControlled
         spellCheck={false}
       />
-    </BaseInput>
+    </InputWrapper>
   );
 };
 

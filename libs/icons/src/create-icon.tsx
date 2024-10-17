@@ -60,7 +60,7 @@ export function createIcon(options: CreateIconOptions) {
   const path_ = Children.toArray(path);
   const size_ = getIconSizeInPixel(size);
 
-  const className_ = colorUsingStroke
+  const colorClassName = colorUsingStroke
     ? getStrokeColor(darkMode)
     : getFillColor(darkMode);
 
@@ -76,7 +76,7 @@ export function createIcon(options: CreateIconOptions) {
       height={size_}
       style={{ minWidth: size_, minHeight: size_ }}
       className={twMerge(
-        className_,
+        colorClassName,
         colorUsingStroke ? 'fill-transparent' : 'stroke-transparent',
         minSizeClassName,
         className,

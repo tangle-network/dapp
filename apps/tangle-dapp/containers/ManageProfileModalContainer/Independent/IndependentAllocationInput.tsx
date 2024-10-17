@@ -4,7 +4,7 @@ import { Close, LockLineIcon } from '@webb-tools/icons';
 import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 
-import BaseInput from '../../../components/AmountInput/BaseInput';
+import InputWrapper from '../../../components/InputWrapper';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useInputAmount from '../../../hooks/useInputAmount';
 import { RestakingService } from '../../../types';
@@ -150,7 +150,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
   const hasDropdownBody = !hasActiveJob && setService !== undefined;
 
   return (
-    <BaseInput
+    <InputWrapper
       id={id}
       isDropdownVisible={isDropdownVisible}
       setIsDropdownVisible={setIsDropdownVisible}
@@ -177,7 +177,7 @@ const IndependentAllocationInput: FC<IndependentAllocationInputProps> = ({
         isReadOnly={availableBalance === null}
         isControlled
       />
-    </BaseInput>
+    </InputWrapper>
   );
 };
 

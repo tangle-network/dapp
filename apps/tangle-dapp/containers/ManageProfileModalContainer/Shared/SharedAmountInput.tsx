@@ -3,7 +3,7 @@ import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle'
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, useRef } from 'react';
 
-import BaseInput from '../../../components/AmountInput/BaseInput';
+import InputWrapper from '../../../components/InputWrapper';
 import useNetworkStore from '../../../context/useNetworkStore';
 import useInputAmount from '../../../hooks/useInputAmount';
 import {
@@ -58,7 +58,7 @@ const SharedAmountInput: FC<SharedAmountInputProps> = ({
   ];
 
   return (
-    <BaseInput
+    <InputWrapper
       id={id}
       title={title}
       actions={actions}
@@ -77,7 +77,7 @@ const SharedAmountInput: FC<SharedAmountInputProps> = ({
         isInvalid={errorMessage !== null}
         isControlled
       />
-    </BaseInput>
+    </InputWrapper>
   );
 };
 

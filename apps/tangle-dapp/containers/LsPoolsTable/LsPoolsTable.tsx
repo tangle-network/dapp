@@ -120,7 +120,9 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
             isDisabled={lsPoolId === props.row.original.id}
             onClick={() => setLsStakingIntent(props.row.original.id, true)}
             rightIcon={
-              lsPoolId !== props.row.original.id ? <ArrowRight /> : undefined
+              lsPoolId !== props.row.original.id ? (
+                <ArrowRight className="fill-current dark:fill-current" />
+              ) : undefined
             }
             variant="utility"
             size="sm"

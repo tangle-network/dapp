@@ -16,10 +16,10 @@ import {
 } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import InputAction from '../../containers/ManageProfileModalContainer/InputAction';
-import { useErrorCountContext } from '../../context/ErrorsContext';
+import InputAction from '../containers/ManageProfileModalContainer/InputAction';
+import { useErrorCountContext } from '../context/ErrorsContext';
 
-export type BaseInputProps = {
+export type InputWrapperProps = {
   title: string;
   id: string;
   children: ReactNode;
@@ -40,7 +40,7 @@ export type BaseInputProps = {
   tooltip?: ReactNode;
 };
 
-const BaseInput: FC<BaseInputProps> = ({
+const InputWrapper: FC<InputWrapperProps> = ({
   id,
   title,
   children,
@@ -172,4 +172,4 @@ const BaseInput: FC<BaseInputProps> = ({
   );
 };
 
-export default BaseInput;
+export default InputWrapper;

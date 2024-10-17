@@ -177,7 +177,7 @@ const VaultsTable: FC<Props> = ({
     return (
       <TableStatus
         title="No vaults found"
-        description="It looks like there is no vaults at the moment."
+        description="It looks like there are no vaults at the moment."
         icon="🔍"
         {...emptyTableProps}
         className={twMerge(sharedTableStatusClxs, emptyTableProps?.className)}

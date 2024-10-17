@@ -13,7 +13,7 @@ import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constant
 import { type FC, useCallback, useState } from 'react';
 
 import { BondedTokensBalanceInfo } from '../../components';
-import AmountInput from '../../components/AmountInput/AmountInput';
+import AmountInput from '../../components/AmountInput';
 import useUnbondedAmount from '../../data/NominatorStats/useUnbondedAmount';
 import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useRebondTx from '../../data/staking/useRebondTx';
@@ -87,7 +87,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
             max={totalUnbondingAmount?.value ?? undefined}
             amount={amountToRebond}
             setAmount={setAmountToRebond}
-            baseInputOverrides={{ isFullWidth: true }}
+            wrapperOverrides={{ isFullWidth: true }}
             maxErrorMessage="Not enough unbonding balance"
             setErrorMessage={handleSetErrorMessage}
             isDisabled={rebondTxStatus === TxStatus.PROCESSING}

@@ -3,7 +3,7 @@ import { CheckBox, Chip, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import BaseInput from '../../../components/AmountInput/BaseInput';
+import InputWrapper from '../../../components/InputWrapper';
 import { RestakingService } from '../../../types';
 import {
   getChartDataAreaColorByServiceType,
@@ -110,7 +110,7 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
   );
 
   return (
-    <BaseInput
+    <InputWrapper
       title={title}
       id={id}
       dropdownBody={dropdownBody}
@@ -147,7 +147,7 @@ const SharedRolesInput: FC<SharedRolesInputProps> = ({
           Select Role(s)
         </Chip>
       )}
-    </BaseInput>
+    </InputWrapper>
   );
 };
 

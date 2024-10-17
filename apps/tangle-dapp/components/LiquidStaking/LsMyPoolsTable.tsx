@@ -243,6 +243,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
     return (
       <TableStatus
         title="No active pools"
+        className={sharedTableStatusClxs}
         description="You haven't staked in any pools yet. Select a pool and start liquid staking to earn rewards! Once you've staked or created a pool, you'll be able to manage your stake and configure the pool here."
         icon="🔍"
         buttonText="Learn More"
