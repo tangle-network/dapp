@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  AddLineIcon,
   CoinIcon,
   EditLine,
   Search,
@@ -8,6 +9,7 @@ import {
   WaterDropletIcon,
 } from '@webb-tools/icons';
 import {
+  Button,
   TabContent,
   TabsList as WebbTabsList,
   TabsRoot,
@@ -15,7 +17,7 @@ import {
   TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeCard';
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
@@ -24,6 +26,7 @@ import OnboardingModal from '../../components/OnboardingModal/OnboardingModal';
 import StatItem from '../../components/StatItem';
 import { OnboardingPageKey } from '../../constants';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
+import LsCreatePoolModal from '../../containers/LsCreatePoolModal';
 import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
 import { LsProtocolsTable } from '../../containers/LsPoolsTable';
 import useNetworkStore from '../../context/useNetworkStore';
@@ -61,6 +64,7 @@ const LiquidStakingPage: FC = () => {
 
   const { network } = useNetworkStore();
   const { switchNetwork } = useNetworkSwitcher();
+  const [isCreatePoolModalOpen, setIsCreatePoolModalOpen] = useState(false);
 
   const lsTangleNetwork = getLsTangleNetwork(lsNetworkId);
 
@@ -87,6 +91,11 @@ const LiquidStakingPage: FC = () => {
 
   return (
     <div>
+      <LsCreatePoolModal
+        isOpen={isCreatePoolModalOpen}
+        setIsOpen={setIsCreatePoolModalOpen}
+      />
+
       <OnboardingModal
         title="Get Started with Liquid Staking"
         pageKey={OnboardingPageKey.LIQUID_STAKING}
@@ -141,11 +150,7 @@ const LiquidStakingPage: FC = () => {
           </div>
 
           <div className="flex gap-6 h-full">
-            <StatItem
-              title="$123.01"
-              subtitle="My Total Staking"
-              largeSubtitle
-            />
+            <StatItem title="$123.01" subtitle="My Total Staking" />
           </div>
         </div>
 
@@ -192,6 +197,20 @@ const LiquidStakingPage: FC = () => {
                 );
               })}
             </WebbTabsList>
+
+            {/**
+             * TODO: Check what's the min. amount required to create a new pool. If the free balance doesn't meet the min, disable the button and show a tooltip with the reason.
+             */}
+            <Button
+              onClick={() => setIsCreatePoolModalOpen(true)}
+              variant="utility"
+              size="sm"
+              rightIcon={
+                <AddLineIcon className="fill-current dark:fill-current" />
+              }
+            >
+              Create Pool
+            </Button>
           </div>
 
           {/* Tabs Content */}

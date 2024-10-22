@@ -13,7 +13,7 @@ import {
 import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useEffect, useState } from 'react';
 
-import AmountInput from '../../components/AmountInput/AmountInput';
+import AmountInput from '../../components/AmountInput';
 import useTokenWalletFreeBalance from '../../data/NominatorStats/useTokenWalletFreeBalance';
 import useBondExtraTx from '../../data/staking/useBondExtraTx';
 import { BondMoreTxContainerProps } from './types';
@@ -92,7 +92,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
             max={walletBalance?.value1 ?? undefined}
             amount={amountToBond}
             setAmount={setAmountToBond}
-            baseInputOverrides={{ isFullWidth: true }}
+            wrapperOverrides={{ isFullWidth: true }}
             maxErrorMessage="Not enough available balance"
             setErrorMessage={handleSetErrorMessage}
             isDisabled={isBondMoreTxLoading}

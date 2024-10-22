@@ -8,7 +8,7 @@ import Decimal from 'decimal.js';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import AmountInput from '../../components/AmountInput/AmountInput';
+import AmountInput from '../../components/AmountInput';
 import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
 import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
 import { useBridge } from '../../context/BridgeContext';
@@ -132,7 +132,7 @@ const AmountAndTokenInput: FC = () => {
           title="Amount"
           amount={amount}
           setAmount={setAmount}
-          baseInputOverrides={{
+          wrapperOverrides={{
             isFullWidth: true,
           }}
           placeholder=""

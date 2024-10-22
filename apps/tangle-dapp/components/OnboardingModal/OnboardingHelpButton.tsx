@@ -9,6 +9,7 @@ const PAGES_WITH_ONBOARDING: PagePath[] = [
   PagePath.LIQUID_STAKING,
   PagePath.RESTAKE,
   PagePath.NOMINATION,
+  PagePath.BRIDGE,
 ];
 
 const OnboardingHelpButton: FC = () => {

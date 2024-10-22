@@ -44,6 +44,8 @@ export const TANGLE_DOCS_STAKING_URL =
   'https://docs.tangle.tools/restake/staking-intro';
 export const TANGLE_DOCS_LIQUID_STAKING_URL =
   'https://docs.tangle.tools/restake/lst-concepts';
+export const TANGLE_DOCS_LS_CREATE_POOL_URL =
+  'https://docs.tangle.tools/restake/lst-pool-create#introduction-to-liquid-staking-pools';
 export const TANGLE_DOCS_RESTAKING_URL =
   'https://docs.tangle.tools/restake/restake-introduction';
 export const TANGLE_GITHUB_URL = 'https://github.com/webb-tools/tangle';

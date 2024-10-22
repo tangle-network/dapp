@@ -3,9 +3,9 @@ import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle'
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import useInputAmount from '../../hooks/useInputAmount';
-import BaseInput, { BaseInputProps } from './BaseInput';
+import useNetworkStore from '../context/useNetworkStore';
+import useInputAmount from '../hooks/useInputAmount';
+import InputWrapper, { InputWrapperProps } from './InputWrapper';
 
 export type AmountInputProps = {
   id: string;
@@ -18,7 +18,7 @@ export type AmountInputProps = {
   amount: BN | null;
   decimals?: number;
   isDisabled?: boolean;
-  baseInputOverrides?: Partial<BaseInputProps>;
+  wrapperOverrides?: Partial<InputWrapperProps>;
   errorOnEmptyValue?: boolean;
   setAmount: (newAmount: BN | null) => void;
   setErrorMessage?: (error: string | null) => void;
@@ -36,12 +36,13 @@ const AmountInput: FC<AmountInputProps> = ({
   setAmount,
   min = null,
   max = null,
-  decimals = TANGLE_TOKEN_DECIMALS, // Default to the Tangle token decimals.
+  // Default to the Tangle token decimals.
+  decimals = TANGLE_TOKEN_DECIMALS,
   minErrorMessage,
   maxErrorMessage,
   showMaxAction = true,
   isDisabled = false,
-  baseInputOverrides,
+  wrapperOverrides,
   errorOnEmptyValue = false,
   setErrorMessage,
   placeholder,
@@ -95,19 +96,19 @@ const AmountInput: FC<AmountInputProps> = ({
           </Button>
         )}
 
-        {baseInputOverrides?.actions}
+        {wrapperOverrides?.actions}
       </>
     ),
-    [max, showMaxAction, amount, isDisabled, setMaxAmount, baseInputOverrides],
+    [max, showMaxAction, amount, isDisabled, setMaxAmount, wrapperOverrides],
   );
 
   return (
-    <BaseInput
+    <InputWrapper
       id={id}
       title={title}
       errorMessage={errorMessage ?? undefined}
       isDisabled={isDisabled}
-      {...baseInputOverrides}
+      {...wrapperOverrides}
       actions={actions}
       wrapperClassName={wrapperClassName}
       bodyClassName={bodyClassName}
@@ -128,7 +129,7 @@ const AmountInput: FC<AmountInputProps> = ({
         isDisabled={isDisabled}
         isControlled
       />
-    </BaseInput>
+    </InputWrapper>
   );
 };
 

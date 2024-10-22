@@ -4,9 +4,7 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import AddressInput, {
-  AddressType,
-} from '../../components/AddressInput/AddressInput';
+import AddressInput, { AddressType } from '../../components/AddressInput';
 import { useBridge } from '../../context/BridgeContext';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { isEVMChain } from '../../utils/bridge';
@@ -77,7 +75,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
                   : AddressType.Substrate
               }
               title="Receiver Address"
-              baseInputOverrides={{ isFullWidth: true }}
+              wrapperOverrides={{ isFullWidth: true }}
               value={destinationAddress}
               setValue={setDestinationAddress}
               setErrorMessage={(error) =>
