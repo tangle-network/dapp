@@ -96,7 +96,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
           >
             <TitleWithInfo
               title={title ?? 'Fees'}
-              className="text-mono-120 dark:text-mono-100"
+              className="text-mono-120 dark:text-mono-120"
               titleClassName={cx('!text-inherit')}
               info={info}
             />

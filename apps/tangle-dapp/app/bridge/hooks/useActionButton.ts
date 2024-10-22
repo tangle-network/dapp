@@ -48,6 +48,8 @@ export default function useActionButton({
     setDestinationAddress,
   } = useBridge();
 
+  console.debug('feeItems', feeItems);
+
   const isNoActiveAccountOrWallet = useMemo(() => {
     return !activeAccount || !activeWallet;
   }, [activeAccount, activeWallet]);

@@ -87,7 +87,7 @@ const FeeDetails = () => {
           },
         ].filter((item) => Boolean(item)) as Array<FeeItem>
       }
-      className="!bg-mono-20 dark:!bg-mono-160"
+      className="!bg-mono-20 dark:!bg-mono-170"
       titleClassName="!text-mono-100 dark:!text-mono-80"
       itemTitleClassName="!text-mono-100 dark:!text-mono-80"
     />
