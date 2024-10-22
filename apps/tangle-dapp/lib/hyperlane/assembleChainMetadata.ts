@@ -3,6 +3,7 @@ import {
   ChainMap,
   ChainMetadata,
   ChainMetadataSchema,
+  ChainTechnicalStack,
 } from '@hyperlane-xyz/sdk';
 import { ProtocolType } from '@hyperlane-xyz/utils';
 import { z } from 'zod';
@@ -34,6 +35,17 @@ export default async function assembleChainMetadata() {
   }
 
   const chains = { ...defaultChainMetadata, ...customChainMetadata };
+
+  // Handle invalid ChainTechnicalStack values - ex: opstack
+  Object.entries(chains).forEach(([_chainName, chain]) => {
+    if (
+      typeof chain.technicalStack === 'string' &&
+      !Object.values(ChainTechnicalStack).includes(chain.technicalStack)
+    ) {
+      chain.technicalStack = ChainTechnicalStack.Other;
+    }
+  });
+
   return { chains, registry };
 }
 

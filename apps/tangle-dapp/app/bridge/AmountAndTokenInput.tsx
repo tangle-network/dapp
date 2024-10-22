@@ -29,7 +29,6 @@ const AmountAndTokenInput: FC = () => {
     tokenIdOptions,
     setIsAmountInputError,
     isAmountInputError,
-    feeItems,
     selectedSourceChain,
   } = useBridge();
   const selectedToken = useSelectedToken();
@@ -45,14 +44,13 @@ const AmountAndTokenInput: FC = () => {
     const destChainTransactionFee =
       selectedToken.destChainTransactionFee[sourceTypedChainId];
 
-    return (existentialDeposit ?? new Decimal(0))
-      .add(destChainTransactionFee ?? new Decimal(0))
-      .add(feeItems.sygmaBridge?.amount ?? new Decimal(0));
+    return (existentialDeposit ?? new Decimal(0)).add(
+      destChainTransactionFee ?? new Decimal(0),
+    );
   }, [
     selectedToken.existentialDeposit,
     selectedToken.destChainTransactionFee,
     sourceTypedChainId,
-    feeItems.sygmaBridge?.amount,
   ]);
 
   const {

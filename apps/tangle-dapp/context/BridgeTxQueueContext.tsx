@@ -22,7 +22,6 @@ interface BridgeTxQueueContextProps {
   txQueue: BridgeQueueTxItem[];
   addTxToQueue: (tx: Omit<BridgeQueueTxItem, 'state'>) => void;
   deleteTxFromQueue: (txHash: string) => void;
-  addSygmaTxId: (txHash: string, sygmaTxId: string) => void;
   addTxExplorerUrl: (txHash: string, explorerUrl: string) => void;
   updateTxState: (txHash: string, state: BridgeTxState) => void;
   updateTxDestinationTxState: (
@@ -50,9 +49,6 @@ const BridgeTxQueueContext = createContext<BridgeTxQueueContextProps>({
     return;
   },
   updateTxDestinationTxState: () => {
-    return;
-  },
-  addSygmaTxId: () => {
     return;
   },
   addTxExplorerUrl: () => {
@@ -140,29 +136,6 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
         const updatedTxQueue = currTxQueue.filter(
           (txItem) => txItem.hash !== txHash,
         );
-        return {
-          ...(cache?.value ?? {}),
-          [activeAccountAddress]: updatedTxQueue,
-        };
-      });
-    },
-    [activeAccountAddress, setCachedBridgeTxQueueByAcc],
-  );
-
-  const addSygmaTxId = useCallback(
-    (txHash: string, sygmaTxId: string) => {
-      if (!activeAccountAddress) return;
-      setCachedBridgeTxQueueByAcc((cache) => {
-        const currTxQueue = getTxQueueFromLocalStorage(
-          activeAccountAddress,
-          cache,
-        );
-        const updatedTxQueue = currTxQueue.map((txItem) => {
-          if (txItem.hash === txHash) {
-            return { ...txItem, sygmaTxId };
-          }
-          return txItem;
-        });
         return {
           ...(cache?.value ?? {}),
           [activeAccountAddress]: updatedTxQueue,
@@ -274,7 +247,6 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
         txQueue,
         addTxToQueue,
         deleteTxFromQueue,
-        addSygmaTxId,
         updateTxState,
         updateTxDestinationTxState,
         addTxDestinationTxExplorerUrl,

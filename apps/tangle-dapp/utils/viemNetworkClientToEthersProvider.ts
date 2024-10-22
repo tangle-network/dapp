@@ -4,7 +4,6 @@ import type { Chain, PublicClient, Transport } from 'viem';
 /**
  * Converts a Viem network client to an ethers provider.
  * Code from https://wagmi.sh/react/guides/ethers
- * Notes: Sygma SDK currently only works with ethers version 5
  * @param client The Viem network client to convert.
  * @returns The converted ethers provider.
  */

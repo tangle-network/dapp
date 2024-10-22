@@ -26,7 +26,7 @@ import {
   BridgeType,
   BridgeWalletError,
 } from '../types/bridge';
-import { isEVMChain, isSubstrateChain } from '../utils/bridge';
+import { isEVMChain } from '../utils/bridge';
 
 const BRIDGE_SOURCE_CHAIN_OPTIONS = sortChainOptions(
   Object.keys(BRIDGE).map(
@@ -135,7 +135,6 @@ const BridgeContext = createContext<BridgeContextProps>({
 
   feeItems: {
     gas: null,
-    sygmaBridge: null,
     hyperlaneInterchain: null,
   },
   updateFeeItem: () => {
@@ -163,7 +162,6 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
     Record<BridgeFeeType, BridgeFeeItem | null>
   >({
     gas: null,
-    sygmaBridge: null,
     hyperlaneInterchain: null,
   });
 
@@ -225,32 +223,7 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
       isEVMChain(selectedSourceChain) &&
       isEVMChain(selectedDestinationChain)
     ) {
-      // TODO: Temporarily get Hyperlane for EVM to EVM
       return BridgeType.HYPERLANE_EVM_TO_EVM;
-    }
-
-    // EVM to Substrate
-    if (
-      isEVMChain(selectedSourceChain) &&
-      isSubstrateChain(selectedDestinationChain)
-    ) {
-      return BridgeType.SYGMA_EVM_TO_SUBSTRATE;
-    }
-
-    // Substrate to EVM
-    if (
-      isSubstrateChain(selectedSourceChain) &&
-      isEVMChain(selectedDestinationChain)
-    ) {
-      return BridgeType.SYGMA_SUBSTRATE_TO_EVM;
-    }
-
-    // Substrate to Substrate
-    if (
-      isSubstrateChain(selectedSourceChain) &&
-      isSubstrateChain(selectedDestinationChain)
-    ) {
-      return BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE;
     }
 
     return null;
@@ -281,7 +254,6 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const clearFeeItems = useCallback(() => {
     setFeeItems({
       gas: null,
-      sygmaBridge: null,
       hyperlaneInterchain: null,
     });
   }, []);
@@ -316,34 +288,10 @@ const BridgeProvider: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     if (
-      activeWallet?.platform === 'Substrate' &&
-      isEVMChain(selectedSourceChain)
-    ) {
-      setWalletError(BridgeWalletError.WalletMismatchEvm);
-      return;
-    }
-
-    if (
       activeWallet?.platform === 'EVM' &&
-      isSubstrateChain(selectedSourceChain)
-    ) {
-      setWalletError(BridgeWalletError.WalletMismatchSubstrate);
-      return;
-    }
-
-    if (
-      isEVMChain(selectedSourceChain) &&
       activeChain?.id !== selectedSourceChain.id
     ) {
       setWalletError(BridgeWalletError.NetworkMismatchEvm);
-      return;
-    }
-
-    if (
-      isSubstrateChain(selectedSourceChain) &&
-      activeChain?.id !== selectedSourceChain.id
-    ) {
-      setWalletError(BridgeWalletError.NetworkMismatchSubstrate);
       return;
     }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { isAddress, isEthereumAddress } from '@polkadot/util-crypto';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 import Decimal from 'decimal.js';
 import { useEffect } from 'react';
 import useSWR from 'swr';
@@ -14,14 +14,11 @@ import {
   BridgeType,
 } from '../../../types/bridge';
 import { getEthersGasPrice } from '../lib/fee';
-import sygmaEvm from '../lib/transfer/sygmaEvm';
-import sygmaSubstrate from '../lib/transfer/sygmaSubstrate';
 import useAmountInStr from './useAmountInStr';
 import useDecimals from './useDecimals';
 import useEthersProvider from './useEthersProvider';
 import useEthersSigner from './useEthersSigner';
 import useSelectedToken from './useSelectedToken';
-import useSubstrateApi from './useSubstrateApi';
 import useTypedChainId from './useTypedChainId';
 
 export default function useFees() {
@@ -36,63 +33,9 @@ export default function useFees() {
   const selectedToken = useSelectedToken();
   const ethersProvider = useEthersProvider();
   const ethersSigner = useEthersSigner();
-  const api = useSubstrateApi();
   const amountInStr = useAmountInStr();
   const decimals = useDecimals();
   const { sourceTypedChainId, destinationTypedChainId } = useTypedChainId();
-
-  // Sygma EVM Fee
-  const { data: evmSygmaFee, isLoading: isLoadingEvmSygmaFee } = useSWR(
-    [
-      activeAccountAddress !== null &&
-      bridgeType !== null &&
-      ethersProvider !== null
-        ? {
-            senderAddress: activeAccountAddress,
-            recipientAddress: destinationAddress,
-            provider: ethersProvider,
-            sourceChain: selectedSourceChain,
-            destinationChain: selectedDestinationChain,
-            token: selectedToken,
-            amount: amountInStr,
-          }
-        : null,
-    ],
-    async ([args]) => {
-      if (!args) return null;
-      const sygmaEvmTransfer = await sygmaEvm(args);
-      if (sygmaEvmTransfer === null) return null;
-      return new Decimal(sygmaEvmTransfer.fee.fee.toString()).div(
-        Decimal.pow(10, decimals),
-      );
-    },
-  );
-
-  // Sygma Substrate Fee
-  const { data: substrateSygmaFee, isLoading: isLoadingSubstrateSygmaFee } =
-    useSWR(
-      [
-        activeAccountAddress !== null && bridgeType !== null && api !== null
-          ? {
-              senderAddress: activeAccountAddress,
-              recipientAddress: destinationAddress,
-              api,
-              sourceChain: selectedSourceChain,
-              destinationChain: selectedDestinationChain,
-              token: selectedToken,
-              amount: amountInStr,
-            }
-          : null,
-      ],
-      async ([args]) => {
-        if (!args) return null;
-        const sygmaSubstrateTransfer = await sygmaSubstrate(args);
-        if (sygmaSubstrateTransfer === null) return null;
-        return new Decimal(sygmaSubstrateTransfer.fee.fee.toString()).div(
-          Decimal.pow(10, decimals),
-        );
-      },
-    );
 
   // Ethers Gas Price
   const { data: ethersGasPrice, isLoading: isLoadingEthersGasPrice } = useSWR(
@@ -128,41 +71,9 @@ export default function useFees() {
     ],
     async ([args]) => {
       if (!args || !ethersSigner) return null;
-      const sygmaEvmTransfer = await sygmaEvm(args);
-      if (sygmaEvmTransfer === null) return null;
-      const { tx } = sygmaEvmTransfer;
-      return new Decimal((await ethersSigner.estimateGas(tx)).toString());
-    },
-  );
-
-  // Substrate Estimated Gas Fee
-  const {
-    data: substrateEstimatedGasFee,
-    isLoading: isLoadingSubstrateEstimatedGasFee,
-  } = useSWR(
-    [
-      activeAccountAddress !== null &&
-      isAddress(activeAccountAddress) &&
-      bridgeType !== null &&
-      api !== null
-        ? {
-            senderAddress: activeAccountAddress,
-            recipientAddress: destinationAddress,
-            api,
-            sourceChain: selectedSourceChain,
-            destinationChain: selectedDestinationChain,
-            token: selectedToken,
-            amount: amountInStr,
-          }
-        : null,
-    ],
-    async ([args]) => {
-      if (!args || !activeAccountAddress) return null;
-      const sygmaSubstrateTransfer = await sygmaSubstrate(args);
-      if (sygmaSubstrateTransfer === null) return null;
-      const { tx } = sygmaSubstrateTransfer;
-      const { partialFee } = await tx.paymentInfo(activeAccountAddress);
-      return new Decimal(partialFee.toString()).div(Decimal.pow(10, decimals));
+      // Implement EVM gas estimation logic here
+      // This is a placeholder and should be replaced with actual implementation
+      return new Decimal('21000'); // Placeholder value
     },
   );
 
@@ -205,55 +116,16 @@ export default function useFees() {
   );
 
   useEffect(() => {
-    function calculateBridgeFee(): BridgeFeeItem | null {
-      let fee = null;
-      let isLoading = false;
-
-      switch (bridgeType) {
-        case BridgeType.SYGMA_EVM_TO_EVM:
-        case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
-          fee = evmSygmaFee ?? null;
-          isLoading = isLoadingEvmSygmaFee;
-          break;
-        case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
-        case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
-          fee = substrateSygmaFee ?? null;
-          isLoading = isLoadingSubstrateSygmaFee;
-          break;
-      }
-
-      if (fee === null) {
-        return null;
-      }
-
-      return {
-        amount: fee,
-        isLoading,
-        symbol: selectedSourceChain.nativeCurrency.symbol,
-      };
-    }
-
     function calculateGasFee(): BridgeFeeItem | null {
       let fee = null;
       let isLoading = false;
 
-      switch (bridgeType) {
-        case BridgeType.HYPERLANE_EVM_TO_EVM:
-          fee = hyperlaneFees?.gasFee.amount ?? null;
-          isLoading = isLoadingHyperlaneFees;
-          break;
-        case BridgeType.SYGMA_EVM_TO_EVM:
-        case BridgeType.SYGMA_EVM_TO_SUBSTRATE:
-          if (ethersGasPrice && evmEstimatedGasPrice) {
-            fee = ethersGasPrice.times(evmEstimatedGasPrice);
-          }
-          isLoading = isLoadingEthersGasPrice || isLoadingEvmEstimatedGasPrice;
-          break;
-        case BridgeType.SYGMA_SUBSTRATE_TO_SUBSTRATE:
-        case BridgeType.SYGMA_SUBSTRATE_TO_EVM:
-          fee = substrateEstimatedGasFee ?? null;
-          isLoading = isLoadingSubstrateEstimatedGasFee;
-          break;
+      if (bridgeType === BridgeType.HYPERLANE_EVM_TO_EVM) {
+        fee = hyperlaneFees?.gasFee.amount ?? null;
+        isLoading = isLoadingHyperlaneFees;
+      } else if (ethersGasPrice && evmEstimatedGasPrice) {
+        fee = ethersGasPrice.times(evmEstimatedGasPrice);
+        isLoading = isLoadingEthersGasPrice || isLoadingEvmEstimatedGasPrice;
       }
 
       if (fee === null) {
@@ -279,10 +151,6 @@ export default function useFees() {
       };
     }
 
-    // Bridge Fee
-    const bridgeFee = calculateBridgeFee();
-    updateFeeItem(BridgeFeeType.SygmaBridge, bridgeFee);
-
     // Gas Fee
     const gasFee = calculateGasFee();
     updateFeeItem(BridgeFeeType.Gas, gasFee);
@@ -292,28 +160,19 @@ export default function useFees() {
     updateFeeItem(BridgeFeeType.HyperlaneInterchain, interchainFee);
   }, [
     bridgeType,
-    evmSygmaFee,
-    substrateSygmaFee,
     ethersGasPrice,
     evmEstimatedGasPrice,
-    substrateEstimatedGasFee,
     hyperlaneFees,
     updateFeeItem,
     selectedSourceChain.nativeCurrency.symbol,
-    isLoadingEvmSygmaFee,
-    isLoadingSubstrateSygmaFee,
     isLoadingHyperlaneFees,
     isLoadingEthersGasPrice,
     isLoadingEvmEstimatedGasPrice,
-    isLoadingSubstrateEstimatedGasFee,
   ]);
 
   const isLoading =
-    isLoadingEvmSygmaFee ||
-    isLoadingSubstrateSygmaFee ||
     isLoadingEthersGasPrice ||
     isLoadingEvmEstimatedGasPrice ||
-    isLoadingSubstrateEstimatedGasFee ||
     isLoadingHyperlaneFees;
 
   return isLoading;

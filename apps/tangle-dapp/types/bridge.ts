@@ -2,18 +2,12 @@ import type { HexString } from '@polkadot/util/types';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import Decimal from 'decimal.js';
 
-// NOTE: might need to add cases when Sygma SDK does not support
 export enum BridgeType {
   HYPERLANE_EVM_TO_EVM = 'hyperlane-evmToEvm',
-  SYGMA_EVM_TO_EVM = 'sygma-evmToEvm',
-  SYGMA_EVM_TO_SUBSTRATE = 'sygma-evmToSubstrate',
-  SYGMA_SUBSTRATE_TO_EVM = 'sygma-substrateToEvm',
-  SYGMA_SUBSTRATE_TO_SUBSTRATE = 'sygma-substrateToSubstrate',
 }
 
 // Supported tokens to be used in the bridge
-// TODO: remove WETH later (this is for testing Hyperlane only)
-export type BridgeTokenId = 'tTNT' | 'TNT' | 'sygUSD' | 'WETH';
+export type BridgeTokenId = 'WETH';
 
 export type ChainId = PresetTypedChainId;
 
@@ -42,7 +36,6 @@ export type BridgeTokenType = {
 
   /**
    * Address of the ERC20 contract of the token on the EVM chain
-   * TODO: might need type only for EVM Chain Id
    */
   erc20TokenContractAddress?: Partial<Record<ChainId, HexString>>;
 
@@ -55,11 +48,6 @@ export type BridgeTokenType = {
    * The id of an asset on Substrate chain pallet
    */
   substrateAssetId?: Partial<Record<ChainId, number>>;
-
-  /**
-   * The id of the token provided in the SygmaSDK docs
-   */
-  sygmaResourceId?: string;
 };
 
 export enum BridgeWalletError {
@@ -82,12 +70,6 @@ export enum BridgeTxState {
   /** The tx has failed */
   Failed = 'Failed',
 
-  /** The tx is being indexed (Sygma txs only) */
-  SygmaIndexing = 'SygmaIndexing',
-
-  /** The tx is done indexing but still pending (Sygma txs only) */
-  SygmaPending = 'SygmaPending',
-
   /** The tx is done indexing but still pending (Hyperlane txs only) */
   HyperlanePending = 'HyperlanePending',
 
@@ -106,7 +88,6 @@ export enum BridgeTxState {
 
 export type BridgeQueueTxItem = {
   hash: string;
-  sygmaTxId?: string;
   hyperlaneTxId?: string;
   env: 'live' | 'test' | 'dev';
   sourceTypedChainId: number;
@@ -127,7 +108,6 @@ export type BridgeQueueTxItem = {
 
 export enum BridgeFeeType {
   Gas = 'gas',
-  SygmaBridge = 'sygmaBridge',
   HyperlaneInterchain = 'hyperlaneInterchain',
 }
 
