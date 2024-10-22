@@ -5,7 +5,7 @@ import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interfa
 import { AddressType } from '@webb-tools/dapp-config/types';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import Decimal from 'decimal.js';
-import { useCallback,useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 
 import { useBridge } from '../../../context/BridgeContext';
