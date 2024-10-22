@@ -21,17 +21,17 @@ const FeeDetails = () => {
     [destinationTypedChainId, selectedToken.destChainTransactionFee],
   );
 
-  const totalFeeCmp = useMemo(
-    () =>
-      formatTotalAmount({
-        ...feeItems,
-        destChainTransactionFee:
-          destChainTransactionFee !== null
-            ? { amount: destChainTransactionFee, symbol: selectedToken.symbol }
-            : null,
-      }),
-    [feeItems, destChainTransactionFee, selectedToken.symbol],
-  );
+  const totalFeeCmp = useMemo(() => {
+    const totalFee = formatTotalAmount({
+      ...feeItems,
+      destChainTransactionFee:
+        destChainTransactionFee !== null
+          ? { amount: destChainTransactionFee, symbol: selectedToken.symbol }
+          : null,
+    });
+
+    return `~ ${totalFee}`;
+  }, [feeItems, destChainTransactionFee, selectedToken.symbol]);
 
   return (
     <FeeDetailsCmp

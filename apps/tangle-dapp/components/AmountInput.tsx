@@ -118,7 +118,7 @@ const AmountInput: FC<AmountInputProps> = ({
       <Input
         id={id}
         inputRef={inputRef}
-        inputClassName="placeholder:text-md"
+        inputClassName="placeholder:text-lg text-lg"
         type="text"
         placeholder={placeholder ?? `0 ${nativeTokenSymbol}`}
         size="sm"

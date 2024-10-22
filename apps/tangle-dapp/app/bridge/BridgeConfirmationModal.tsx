@@ -181,7 +181,7 @@ const ConfirmationItem: FC<{
           variant="body1"
           className="max-w-[65%] break-words text-right text-mono-200 dark:text-mono-0"
         >
-          {shortenHex(accAddress, 5)}
+          {shortenHex(accAddress, 10)}
         </Typography>
       </div>
       <div className="flex justify-between items-center">

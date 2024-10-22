@@ -113,13 +113,15 @@ const AddressInput: FC<AddressInputProps> = ({
       {...wrapperOverrides}
       actions={actions}
     >
-      <Avatar theme={isEvm ? 'ethereum' : 'substrate'} value={value} />
+      {value && (
+        <Avatar theme={isEvm ? 'ethereum' : 'substrate'} value={value} />
+      )}
 
       <Input
         id={id}
         inputRef={inputRef}
         className="w-full"
-        inputClassName="placeholder:text-md text-sm"
+        inputClassName="placeholder:text-lg text-lg"
         type="text"
         placeholder={placeholder}
         size="sm"

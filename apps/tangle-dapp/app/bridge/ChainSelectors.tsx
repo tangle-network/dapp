@@ -95,7 +95,8 @@ const ChainSelectors: FC = () => {
         </Label>
         <ChainOrTokenButton
           value={selectedSourceChain.name}
-          className="w-full !p-4 bg-mono-20 dark:bg-mono-170 border-0 hover:bg-mono-20 dark:hover:bg-mono-170"
+          textClassName="text-xl"
+          className="w-full !p-4 bg-mono-20 dark:bg-mono-170 border-0 hover:bg-mono-20 dark:hover:bg-mono-170 text-nowrap"
           iconType="chain"
           onClick={openSourceChainModal}
         />
@@ -115,7 +116,8 @@ const ChainSelectors: FC = () => {
         </Label>
         <ChainOrTokenButton
           value={selectedDestinationChain.name}
-          className="w-full !p-4 bg-mono-20 dark:bg-mono-170 border-0 hover:bg-mono-20 dark:hover:bg-mono-170"
+          textClassName="text-xl"
+          className="w-full !p-4 bg-mono-20 dark:bg-mono-170 border-0 hover:bg-mono-20 dark:hover:bg-mono-170 text-nowrap"
           iconType="chain"
           onClick={openDestinationChainModal}
         />

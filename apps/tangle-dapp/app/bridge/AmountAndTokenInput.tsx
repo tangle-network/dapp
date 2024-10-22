@@ -153,7 +153,7 @@ const AmountAndTokenInput: FC = () => {
           value={selectedToken.symbol}
           iconType="token"
           onClick={openTokenModal}
-          className="w-[130px] border-0 px-3 bg-[#EFF3F6] dark:bg-mono-140"
+          className="w-[130px] border-0 px-3 bg-mono-40 dark:bg-mono-140"
           status="success"
         />
       </div>
