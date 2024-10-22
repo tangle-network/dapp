@@ -41,17 +41,19 @@ const FeeDetails = () => {
       isDefaultOpen={true}
       items={
         [
-          feeItems.hyperlaneInterchain !== null && {
-            name: 'Interchain Fee',
-            value: (
-              <FeeValueCmp
-                fee={feeItems.hyperlaneInterchain.amount}
-                symbol={feeItems.hyperlaneInterchain.symbol}
-              />
-            ),
-            isLoading: feeItems.hyperlaneInterchain.isLoading,
-            info: "This transaction will charge a bridge fee to cover the destination chain's gas fee.",
-          },
+          feeItems.hyperlaneInterchain !== null &&
+            feeItems.hyperlaneInterchain.amount !== null &&
+            !feeItems.hyperlaneInterchain.amount.isZero() && {
+              name: 'Interchain Fee',
+              value: (
+                <FeeValueCmp
+                  fee={feeItems.hyperlaneInterchain.amount}
+                  symbol={feeItems.hyperlaneInterchain.symbol}
+                />
+              ),
+              isLoading: feeItems.hyperlaneInterchain.isLoading,
+              info: "This transaction will charge a bridge fee to cover the destination chain's gas fee.",
+            },
           destChainTransactionFee !== null
             ? {
                 name: 'Bridge Fee',
@@ -76,9 +78,9 @@ const FeeDetails = () => {
           },
         ].filter((item) => Boolean(item)) as Array<FeeItem>
       }
-      className="!bg-mono-20 dark:!bg-mono-170"
-      titleClassName="!text-mono-100 dark:!text-mono-80"
-      itemTitleClassName="!text-mono-100 dark:!text-mono-80"
+      className="!bg-mono-20 dark:!bg-mono-170 mb-6"
+      titleClassName="!text-mono-120 dark:!text-mono-120"
+      itemTitleClassName="!text-mono-120 dark:!text-mono-120"
     />
   );
 };
@@ -90,7 +92,7 @@ const FeeValueCmp: FC<{ fee: Decimal | null; symbol: string }> = ({
   symbol,
 }) => {
   return (
-    <Typography variant="body1" className="!text-mono-120 dark:!text-mono-100">
+    <Typography variant="body1" className="!text-mono-200 dark:!text-mono-0">
       {fee ? `${fee.toDecimalPlaces(5).toString()} ${symbol}` : 'N/A'}
     </Typography>
   );

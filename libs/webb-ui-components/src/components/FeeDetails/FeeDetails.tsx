@@ -157,7 +157,7 @@ const FeeDetails = forwardRef<HTMLDivElement, FeeDetailsProps>(
                   index,
                 ) => (
                   <div
-                    className="flex items-center justify-between text-mono-120 dark:text-mono-100"
+                    className="flex items-center justify-between text-mono-120 dark:text-mono-120"
                     key={`${name}-${index}`}
                   >
                     <div className="flex items-center gap-[2px] !text-current">
