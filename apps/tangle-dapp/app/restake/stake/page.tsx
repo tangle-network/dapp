@@ -1,11 +1,10 @@
 'use client';
 
+import { ChainConfig } from '@webb-tools/dapp-config';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import type {
-  ChainType,
-  TokenListCardProps,
-} from '@webb-tools/webb-ui-components/components/ListCard/types';
+import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
@@ -17,6 +16,11 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 
+import AvatarWithText from '../../../components/AvatarWithText';
+import {
+  OperatorConfig,
+  OperatorList,
+} from '../../../components/Lists/OperatorList';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import {
   DelegatorStakeContext,
@@ -35,10 +39,8 @@ import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { PagePath, QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
-import AvatarWithText from '../AvatarWithText';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
-import OperatorList from '../OperatorList';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
@@ -178,19 +180,12 @@ export default function Page() {
   );
 
   const handleChainChange = useCallback(
-    async ({ typedChainId }: ChainType) => {
+    async (chain: ChainConfig) => {
+      const typedChainId = calculateTypedChainId(chain.chainType, chain.id);
       await switchChain(typedChainId);
       closeChainModal();
     },
     [closeChainModal, switchChain],
-  );
-
-  const handleOperatorAccountIdChange = useCallback(
-    (operatorAccountId: string) => {
-      setValue('operatorAccountId', operatorAccountId);
-      closeOperatorModal();
-    },
-    [closeOperatorModal, setValue],
   );
 
   const options = useMemo<Props<DelegatorStakeContext>>(() => {
@@ -238,6 +233,22 @@ export default function Page() {
       );
     },
     [assetMap, delegate, txEventHandlers],
+  );
+
+  const operators = useMemo(() => {
+    return Object.entries(operatorMap).map(([accountId, _operator]) => ({
+      accountId,
+      name: operatorIdentities?.[accountId]?.name || '<Unknown>',
+      status: 'active',
+    }));
+  }, [operatorMap, operatorIdentities]);
+
+  const handleOnSelectOperator = useCallback(
+    (operator: OperatorConfig) => {
+      setValue('operatorAccountId', operator.accountId);
+      closeOperatorModal();
+    },
+    [closeOperatorModal, setValue],
   );
 
   return (
@@ -288,10 +299,10 @@ export default function Page() {
           onInteractOutside={closeOperatorModal}
         >
           <OperatorList
-            selectedOperatorAccountId={watch('operatorAccountId')}
-            onOperatorAccountIdChange={handleOperatorAccountIdChange}
+            operators={operators}
             operatorMap={operatorMap}
             operatorIdentities={operatorIdentities}
+            onSelectOperator={handleOnSelectOperator}
             onClose={closeOperatorModal}
           />
         </ModalContent>

@@ -4,7 +4,6 @@ import type { Account, Chain, Client, Transport } from 'viem';
 /**
  * Converts a Viem Connector client to an ethers signer
  * Code from https://wagmi.sh/react/guides/ethers
- * Notes: Sygma SDK currently only works with ethers version 5
  * @param client The Viem Connector client to convert
  * @returns The converted ethers signer
  */

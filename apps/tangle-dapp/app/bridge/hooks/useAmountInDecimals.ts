@@ -18,15 +18,11 @@ export default function useAmountInDecimals() {
   }, [amount, decimals]);
 
   const subtractedAmount = useMemo(() => {
-    if (token.symbol === feeItems.sygmaBridge?.symbol)
-      return feeItems.sygmaBridge?.amount;
     if (token.symbol === feeItems.hyperlaneInterchain?.symbol)
       return feeItems.hyperlaneInterchain?.amount;
     return null;
   }, [
     token.symbol,
-    feeItems.sygmaBridge?.symbol,
-    feeItems.sygmaBridge?.amount,
     feeItems.hyperlaneInterchain?.symbol,
     feeItems.hyperlaneInterchain?.amount,
   ]);

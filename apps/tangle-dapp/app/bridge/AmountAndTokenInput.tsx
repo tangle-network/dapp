@@ -1,25 +1,22 @@
 'use client';
 
-import { DropdownMenuTrigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
-import { TokenIcon } from '@webb-tools/icons/TokenIcon';
+import { Modal, ModalContent, useModal } from '@webb-tools/webb-ui-components';
 import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/buttons/ChainOrTokenButton';
-import {
-  Dropdown,
-  DropdownBody,
-  DropdownMenuItem,
-} from '@webb-tools/webb-ui-components/components/Dropdown';
-import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Decimal from 'decimal.js';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import AmountInput from '../../components/AmountInput';
+import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
 import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
 import { useBridge } from '../../context/BridgeContext';
+import useExplorerUrl from '../../hooks/useExplorerUrl';
+import { BridgeTokenId } from '../../types/bridge';
 import convertDecimalToBn from '../../utils/convertDecimalToBn';
 import useBalance from './hooks/useBalance';
+import { useTokenBalances } from './hooks/useBalance';
 import useDecimals from './hooks/useDecimals';
 import useSelectedToken from './hooks/useSelectedToken';
 import useTypedChainId from './hooks/useTypedChainId';
@@ -32,12 +29,14 @@ const AmountAndTokenInput: FC = () => {
     tokenIdOptions,
     setIsAmountInputError,
     isAmountInputError,
-    feeItems,
+    selectedSourceChain,
   } = useBridge();
   const selectedToken = useSelectedToken();
   const { balance, isLoading } = useBalance();
   const decimals = useDecimals();
   const { sourceTypedChainId } = useTypedChainId();
+
+  const getExplorerUrl = useExplorerUrl();
 
   const minAmount = useMemo(() => {
     const existentialDeposit =
@@ -45,21 +44,86 @@ const AmountAndTokenInput: FC = () => {
     const destChainTransactionFee =
       selectedToken.destChainTransactionFee[sourceTypedChainId];
 
-    return (existentialDeposit ?? new Decimal(0))
-      .add(destChainTransactionFee ?? new Decimal(0))
-      .add(feeItems.sygmaBridge?.amount ?? new Decimal(0));
+    return (existentialDeposit ?? new Decimal(0)).add(
+      destChainTransactionFee ?? new Decimal(0),
+    );
   }, [
     selectedToken.existentialDeposit,
     selectedToken.destChainTransactionFee,
     sourceTypedChainId,
-    feeItems.sygmaBridge?.amount,
   ]);
+
+  const {
+    status: isTokenModalOpen,
+    open: openTokenModal,
+    close: closeTokenModal,
+  } = useModal(false);
+
+  const { getTokenBalance } = useTokenBalances();
+  const [tokenBalances, setTokenBalances] = useState<
+    Record<string, Decimal | null>
+  >({});
+
+  const fetchBalances = useCallback(async () => {
+    const balances: Record<string, Decimal | null> = {};
+    for (const tokenId of tokenIdOptions) {
+      const token = BRIDGE_SUPPORTED_TOKENS[tokenId];
+      const erc20TokenContractAddress =
+        token.erc20TokenContractAddress?.[sourceTypedChainId];
+      balances[tokenId] = await getTokenBalance(
+        erc20TokenContractAddress ?? '0x0',
+        token.decimals[sourceTypedChainId] ?? 18,
+      );
+    }
+    setTokenBalances(balances);
+  }, [tokenIdOptions, getTokenBalance, sourceTypedChainId]);
+
+  useEffect(() => {
+    fetchBalances();
+  }, [fetchBalances]);
+
+  const assets: AssetConfig[] = useMemo(() => {
+    return tokenIdOptions.map((tokenId) => {
+      const token = BRIDGE_SUPPORTED_TOKENS[tokenId];
+      const erc20TokenContractAddress =
+        token.erc20TokenContractAddress?.[sourceTypedChainId];
+      const selectedChainExplorerUrl =
+        selectedSourceChain.blockExplorers?.default;
+      const explorerUrl = getExplorerUrl(
+        erc20TokenContractAddress ?? '0x0',
+        'address',
+        'web3',
+        selectedChainExplorerUrl?.url,
+        false,
+      );
+      return {
+        symbol: token.symbol,
+        balance: tokenBalances[tokenId] ?? new Decimal(0),
+        explorerUrl: explorerUrl?.toString(),
+      };
+    });
+  }, [
+    tokenIdOptions,
+    sourceTypedChainId,
+    selectedSourceChain.blockExplorers?.default,
+    getExplorerUrl,
+    tokenBalances,
+  ]);
+
+  const onSelectAsset = (asset: AssetConfig) => {
+    setSelectedTokenId(asset.symbol as BridgeTokenId);
+    closeTokenModal();
+  };
+
+  const selectedAssetBalance = useMemo(() => {
+    return tokenBalances[selectedToken.id] ?? new Decimal(0);
+  }, [tokenBalances, selectedToken.id]);
 
   return (
     <div className="relative">
       <div
         className={twMerge(
-          'w-full flex items-center gap-2 bg-mono-20 dark:bg-mono-160 rounded-lg pr-4',
+          'w-full flex items-center gap-2 bg-mono-20 dark:bg-mono-170 rounded-lg pr-4',
           isAmountInputError && 'border border-red-70 dark:border-red-50',
         )}
       >
@@ -83,39 +147,15 @@ const AmountAndTokenInput: FC = () => {
           }
           errorMessageClassName="absolute left-0 bottom-[-24px] !text-[14px] !leading-[21px]"
         />
-        <Dropdown>
-          <DropdownTrigger asChild>
-            <ChainOrTokenButton
-              value={selectedToken.symbol}
-              status="success"
-              className={twMerge(
-                'w-[130px] border-0 px-3 bg-[#EFF3F6] dark:bg-mono-140',
-                'hover:bg-[#EFF3F6] dark:hover:bg-mono-140',
-              )}
-              iconType="token"
-            />
-          </DropdownTrigger>
-          <DropdownBody className="border-0 w-[119px] min-w-fit mr-[11px]">
-            <ScrollArea className="max-h-[300px] w-[130px]">
-              <ul>
-                {tokenIdOptions.map((tokenId) => {
-                  const token = BRIDGE_SUPPORTED_TOKENS[tokenId];
-                  return (
-                    <li key={tokenId}>
-                      <DropdownMenuItem
-                        leftIcon={<TokenIcon size="lg" name={token.symbol} />}
-                        onSelect={() => setSelectedTokenId(tokenId)}
-                        className="px-3 normal-case"
-                      >
-                        {token.symbol}
-                      </DropdownMenuItem>
-                    </li>
-                  );
-                })}
-              </ul>
-            </ScrollArea>
-          </DropdownBody>
-        </Dropdown>
+
+        {/* Token Selector */}
+        <ChainOrTokenButton
+          value={selectedToken.symbol}
+          iconType="token"
+          onClick={openTokenModal}
+          className="w-[130px] border-0 px-3 bg-mono-40 dark:bg-mono-140"
+          status="success"
+        />
       </div>
 
       {isLoading ? (
@@ -129,11 +169,27 @@ const AmountAndTokenInput: FC = () => {
           className="absolute right-0 bottom-[-24px] text-mono-120 dark:text-mono-100"
         >
           Balance:{' '}
-          {balance !== null
-            ? `${balance.toString()} ${selectedToken.symbol}`
+          {selectedAssetBalance !== null
+            ? `${selectedAssetBalance.toString()} ${selectedToken.symbol}`
             : 'N/A'}
         </Typography>
       )}
+
+      <Modal>
+        {/* Token Selector Modal */}
+        <ModalContent
+          isCenter
+          isOpen={isTokenModalOpen}
+          onInteractOutside={closeTokenModal}
+          className="w-[500px] h-[600px]"
+        >
+          <AssetList
+            onClose={closeTokenModal}
+            assets={assets}
+            onSelectAsset={onSelectAsset}
+          />
+        </ModalContent>
+      </Modal>
     </div>
   );
 };

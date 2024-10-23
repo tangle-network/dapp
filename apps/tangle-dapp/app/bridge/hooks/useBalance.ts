@@ -2,9 +2,10 @@
 
 import { isAddress } from '@polkadot/util-crypto';
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
+import { AddressType } from '@webb-tools/dapp-config/types';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import Decimal from 'decimal.js';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 
 import { useBridge } from '../../../context/BridgeContext';
@@ -191,4 +192,45 @@ function checkNativeToken(tokenSymbol: string, chainConfig: ChainConfig) {
     tokenSymbol.toLowerCase() ===
     chainConfig.nativeCurrency.symbol.toLowerCase()
   );
+}
+
+export function useTokenBalances() {
+  const ethersProvider = useEthersProvider();
+  const activeAccountAddress = useActiveAccountAddress();
+  const { sourceTypedChainId } = useTypedChainId();
+
+  const getTokenBalance = useCallback(
+    async (erc20TokenContractAddress: AddressType, tokenDecimals: number) => {
+      if (
+        !ethersProvider ||
+        !activeAccountAddress ||
+        !isEvmAddress(activeAccountAddress)
+      ) {
+        return null;
+      }
+
+      if (!erc20TokenContractAddress) {
+        return null;
+      }
+
+      try {
+        const balance = await getEvmContractBalance({
+          provider: ethersProvider,
+          contractAddress: erc20TokenContractAddress,
+          accAddress: activeAccountAddress,
+          decimals: tokenDecimals,
+        });
+        return balance;
+      } catch (error) {
+        console.error(
+          `Error fetching balance for token ${erc20TokenContractAddress}:`,
+          error,
+        );
+        return null;
+      }
+    },
+    [ethersProvider, activeAccountAddress, sourceTypedChainId],
+  );
+
+  return { getTokenBalance };
 }

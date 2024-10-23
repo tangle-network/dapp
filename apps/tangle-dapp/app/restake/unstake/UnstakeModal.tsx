@@ -6,10 +6,10 @@ import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatUnits } from 'viem';
 
+import AvatarWithText from '../../../components/AvatarWithText';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import { DelegatorInfo } from '../../../types/restake';
 import type { IdentityType } from '../../../utils/polkadot';
-import AvatarWithText from '../AvatarWithText';
 import ModalContent from '../ModalContent';
 import ModalContentList from '../ModalContentList';
 

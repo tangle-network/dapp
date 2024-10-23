@@ -1,20 +1,22 @@
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
+import { chainsConfig } from '@webb-tools/dapp-config';
 import type { ComponentProps } from 'react';
+import React from 'react';
 
+import { ChainList } from '../../components/Lists/ChainList';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../constants/restake';
-import useActiveTypedChainId from '../../hooks/useActiveTypedChainId';
-import ChainList from './ChainList';
 import ModalContent from './ModalContent';
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onChainChange: ComponentProps<typeof ChainList>['onChange'];
+  onChainChange: ComponentProps<typeof ChainList>['onSelectChain'];
 };
 
-const SupportedChainModal = ({ isOpen, onChainChange, onClose }: Props) => {
-  const activeTypedChainId = useActiveTypedChainId();
-
+const SupportedChainModal: React.FC<Props> = ({
+  isOpen,
+  onChainChange,
+  onClose,
+}) => {
   return (
     <ModalContent
       isOpen={isOpen}
@@ -23,13 +25,15 @@ const SupportedChainModal = ({ isOpen, onChainChange, onClose }: Props) => {
       onInteractOutside={onClose}
     >
       <ChainList
-        selectedTypedChainId={activeTypedChainId}
-        className="h-full"
+        chains={SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.map(
+          (typedChainId) => ({
+            ...chainsConfig[typedChainId],
+            typedChainId,
+          }),
+        )}
         onClose={onClose}
-        onChange={onChainChange}
-        defaultCategory={
-          chainsPopulated[SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0]].tag
-        }
+        onSelectChain={onChainChange}
+        chainType="source"
       />
     </ModalContent>
   );

@@ -93,8 +93,8 @@ const InputWrapper: FC<InputWrapperProps> = ({
           'px-2.5 lg:px-4 py-2',
           'flex items-center justify-between gap-2',
           'w-[356px] max-w-[356px]',
-          'bg-mono-20 dark:bg-mono-160',
-          'border border-mono-20 dark:border-mono-160',
+          'bg-mono-20 dark:bg-mono-170',
+          'border border-mono-40 dark:border-mono-170',
           hasError && 'border-red-70 dark:border-red-50',
           isFullWidth && 'w-full max-w-full',
           wrapperClassName,
@@ -103,7 +103,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
         <div className="flex flex-col gap-1 w-full mr-auto">
           <div className="flex gap-1">
             <Label
-              className="text-mono-100 dark:text-mono-80 font-bold"
+              className="text-mono-120 dark:text-mono-120 font-bold"
               htmlFor={id}
             >
               {title}

@@ -4,6 +4,7 @@ import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
@@ -14,6 +15,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 
+import AvatarWithText from '../../../components/AvatarWithText';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
@@ -33,7 +35,6 @@ import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import ActionButtonBase from '../ActionButtonBase';
 import AssetPlaceholder from '../AssetPlaceholder';
-import AvatarWithText from '../AvatarWithText';
 import ErrorMessage from '../ErrorMessage';
 import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
@@ -363,7 +364,11 @@ const Page = () => {
         <SupportedChainModal
           isOpen={isChainModalOpen}
           onClose={closeChainModal}
-          onChainChange={async ({ typedChainId }) => {
+          onChainChange={async (chainConfig) => {
+            const typedChainId = calculateTypedChainId(
+              chainConfig.chainType,
+              chainConfig.id,
+            );
             await switchChain(typedChainId);
             closeChainModal();
           }}

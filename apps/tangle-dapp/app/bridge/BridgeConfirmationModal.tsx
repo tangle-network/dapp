@@ -11,6 +11,7 @@ import {
   Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
+import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { FC, useCallback } from 'react';
 
 import { useBridge } from '../../context/BridgeContext';
@@ -122,7 +123,6 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
                 handleClose(); // TODO: handle clear form
               }}
               isDisabled={
-                feeItems.sygmaBridge?.isLoading ||
                 feeItems.hyperlaneInterchain?.isLoading ||
                 feeItems.gas?.isLoading ||
                 feeItems.gas?.amount === null ||
@@ -150,33 +150,62 @@ const ConfirmationItem: FC<{
   tokenName: string;
 }> = ({ type, chainName, accAddress, amount, tokenName }) => {
   return (
-    <div className="bg-mono-20 dark:bg-mono-160 w-full space-y-2 p-4 rounded-xl">
+    <div className="bg-mono-20 dark:bg-mono-170 w-full space-y-2 p-4 rounded-xl">
       <div className="flex justify-between items-center">
-        <Typography variant="body1">
+        <Typography
+          variant="body1"
+          className="text-mono-120 dark:text-mono-120"
+          fw="bold"
+        >
           {type === 'source' ? 'From' : 'To'}
         </Typography>
         <div className="flex items-center gap-1.5">
           <ChainIcon name={chainName} />
-          <Typography variant="body1">{chainName}</Typography>
+          <Typography
+            variant="body1"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {chainName}
+          </Typography>
         </div>
       </div>
       <div className="flex justify-between items-center">
-        <Typography variant="body1">Account</Typography>
         <Typography
           variant="body1"
-          className="max-w-[65%] break-words text-right"
+          fw="bold"
+          className="text-mono-120 dark:text-mono-120"
         >
-          {accAddress}
+          Account
+        </Typography>
+        <Typography
+          variant="body1"
+          className="max-w-[65%] break-words text-right text-mono-200 dark:text-mono-0"
+        >
+          {shortenHex(accAddress, 10)}
         </Typography>
       </div>
       <div className="flex justify-between items-center">
-        <Typography variant="body1">Amount</Typography>
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="text-mono-120 dark:text-mono-120"
+        >
+          Amount
+        </Typography>
         <div className="flex items-center gap-1.5">
-          <Typography variant="body1" fw="bold">
+          <Typography
+            variant="body1"
+            className="text-mono-200 dark:text-mono-0"
+          >
             {amount}
           </Typography>
           <TokenIcon name={tokenName} />
-          <Typography variant="body1">{tokenName}</Typography>
+          <Typography
+            variant="body1"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {tokenName}
+          </Typography>
         </div>
       </div>
     </div>

@@ -11,6 +11,7 @@ import type {
 } from 'react-hook-form';
 import { formatUnits } from 'viem';
 
+import AvatarWithText from '../../../components/AvatarWithText';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import type {
@@ -21,7 +22,6 @@ import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import type { IdentityType } from '../../../utils/polkadot';
 import AssetPlaceholder from '../AssetPlaceholder';
-import AvatarWithText from '../AvatarWithText';
 import ErrorMessage from '../ErrorMessage';
 
 type Props = {

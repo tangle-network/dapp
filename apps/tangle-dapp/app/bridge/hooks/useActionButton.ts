@@ -173,7 +173,6 @@ export default function useActionButton({
           isAmountInputError ||
           isAddressInputError ||
           !feeItems.hyperlaneInterchain ||
-          feeItems.sygmaBridge?.isLoading ||
           feeItems.hyperlaneInterchain?.isLoading ||
           feeItems.gas?.isLoading ||
           feeItems.gas?.amount === null ||
