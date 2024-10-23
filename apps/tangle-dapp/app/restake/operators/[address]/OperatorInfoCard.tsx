@@ -11,6 +11,7 @@ import { type ComponentProps, type FC, type ReactNode, useMemo } from 'react';
 import useSWRImmutable from 'swr/immutable';
 import { twMerge } from 'tailwind-merge';
 
+import AvatarWithText from '../../../../components/AvatarWithText';
 import GlassCard from '../../../../components/GlassCard/GlassCard';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../../constants';
@@ -22,7 +23,6 @@ import type {
 } from '../../../../types/restake';
 import getTVLToDisplay from '../../../../utils/getTVLToDisplay';
 import { getAccountInfo } from '../../../../utils/polkadot';
-import AvatarWithText from '../../AvatarWithText';
 
 interface Props extends Partial<ComponentProps<typeof GlassCard>> {
   operatorAddress: string;

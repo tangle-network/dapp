@@ -18,12 +18,12 @@ import cx from 'classnames';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 
+import AvatarWithText from '../../../components/AvatarWithText';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
 import type { DelegatorUnstakeRequest } from '../../../types/restake';
 import type { IdentityType } from '../../../utils/polkadot';
-import AvatarWithText from '../AvatarWithText';
 import TableCell from '../TableCell';
 import { calculateTimeRemaining } from '../utils';
 import type { UnstakeRequestTableData } from './types';

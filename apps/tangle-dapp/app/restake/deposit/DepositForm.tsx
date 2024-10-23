@@ -1,12 +1,12 @@
 'use client';
 
+import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { ChainConfig } from '@webb-tools/dapp-config';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { ArrowRight } from '@webb-tools/icons/ArrowRight';
-import {
-  ChainType,
-  type TokenListCardProps,
-} from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { useQueryState } from 'nuqs';
@@ -23,6 +23,12 @@ import { formatUnits, parseUnits } from 'viem';
 import useRestakeTxEventHandlersWithNoti, {
   type Props,
 } from '../../..//data/restake/useRestakeTxEventHandlersWithNoti';
+import AvatarWithText from '../../../components/AvatarWithText';
+import { ChainList } from '../../../components/Lists/ChainList';
+import {
+  OperatorConfig,
+  OperatorList,
+} from '../../../components/Lists/OperatorList';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import {
@@ -38,11 +44,8 @@ import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { QueryParamKey } from '../../../types';
 import { DepositFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
-import AvatarWithText from '../AvatarWithText';
-import ChainList from '../ChainList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
-import OperatorList from '../OperatorList';
 import ActionButton from './ActionButton';
 import DestChainInput from './DestChainInput';
 import SourceChainInput from './SourceChainInput';
@@ -59,6 +62,8 @@ export type DepositFormProps = ComponentProps<'form'>;
 
 const DepositForm = ({ ...props }: DepositFormProps) => {
   const formRef = useRef<HTMLFormElement>(null);
+
+  const { apiConfig } = useWebContext();
 
   const activeTypedChainId = useActiveTypedChainId();
 
@@ -237,14 +242,6 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
 
   const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
 
-  const handleChainChange = useCallback(
-    ({ typedChainId }: ChainType) => {
-      setValue('sourceTypedChainId', typedChainId);
-      closeChainModal();
-    },
-    [closeChainModal, setValue],
-  );
-
   const handleTokenChange = useCallback(
     (token: TokenListCardProps['selectTokens'][number]) => {
       setValue('depositAssetId', token.id);
@@ -253,18 +250,21 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     [closeTokenModal, setValue],
   );
 
-  const handleOperatorAccountIdChange = useCallback(
-    (operatorAccountId: string) => {
-      setValue('operatorAccountId', operatorAccountId);
+  const operators = useMemo(() => {
+    return Object.entries(operatorMap).map(([accountId, _operator]) => ({
+      accountId,
+      name: operatorIdentities?.[accountId]?.name || '<Unknown>',
+      status: 'active',
+    }));
+  }, [operatorMap, operatorIdentities]);
+
+  const handleOnSelectOperator = useCallback(
+    (operator: OperatorConfig) => {
+      setValue('operatorAccountId', operator.accountId);
       closeOperatorModal();
     },
     [closeOperatorModal, setValue],
   );
-
-  const handleResetOperator = useCallback(() => {
-    resetField('operatorAccountId');
-    closeOperatorModal();
-  }, [closeOperatorModal, resetField]);
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
     async (data) => {
@@ -283,6 +283,26 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
       );
     },
     [assetMap, deposit, txEventHandlers],
+  );
+
+  const sourceChainOptions = useMemo(() => {
+    return SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.map(
+      (typedChainId) => [typedChainId, apiConfig.chains[typedChainId]] as const,
+    )
+      .filter(([, chain]) => Boolean(chain))
+      .map(([typedChainId, chain]) => ({
+        ...chain,
+        typedChainId,
+      }));
+  }, [apiConfig.chains]);
+
+  const handleOnSelectChain = useCallback(
+    (chain: ChainConfig) => {
+      const typedChainId = calculateTypedChainId(chain.chainType, chain.id);
+      setValue('sourceTypedChainId', typedChainId);
+      closeChainModal();
+    },
+    [closeChainModal, setValue],
   );
 
   return (
@@ -328,9 +348,10 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
           onInteractOutside={closeChainModal}
         >
           <ChainList
-            selectedTypedChainId={watch('sourceTypedChainId')}
             onClose={closeChainModal}
-            onChange={handleChainChange}
+            chains={sourceChainOptions}
+            onSelectChain={handleOnSelectChain}
+            chainType="source"
           />
         </ModalContent>
 
@@ -354,12 +375,11 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
           onInteractOutside={closeOperatorModal}
         >
           <OperatorList
-            selectedOperatorAccountId={watch('operatorAccountId') ?? ''}
-            onOperatorAccountIdChange={handleOperatorAccountIdChange}
+            onClose={closeOperatorModal}
             operatorMap={operatorMap}
             operatorIdentities={operatorIdentities}
-            onClose={closeOperatorModal}
-            onResetSelection={handleResetOperator}
+            onSelectOperator={handleOnSelectOperator}
+            operators={operators}
           />
         </ModalContent>
       </Modal>

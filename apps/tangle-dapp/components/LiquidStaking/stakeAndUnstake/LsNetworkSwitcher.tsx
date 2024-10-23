@@ -1,11 +1,15 @@
-import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { ChainConfig } from '@webb-tools/dapp-config';
+import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import { ChainIcon } from '@webb-tools/icons';
 import {
-  Dropdown,
-  DropdownBody,
-  DropdownMenuItem,
+  calculateTypedChainId,
+  ChainType,
+} from '@webb-tools/sdk-core/typed-chain-id';
+import {
+  Modal,
+  ModalContent,
   Typography,
+  useModal,
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
@@ -16,6 +20,7 @@ import { NETWORK_FEATURE_MAP } from '../../../constants/networks';
 import { NetworkFeature } from '../../../types';
 import getLsNetwork from '../../../utils/liquidStaking/getLsNetwork';
 import getLsTangleNetwork from '../../../utils/liquidStaking/getLsTangleNetwork';
+import { ChainList } from '../../Lists/ChainList';
 import DropdownChevronIcon from './DropdownChevronIcon';
 
 type LsNetworkSwitcherProps = {
@@ -35,6 +40,12 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
   const isReadOnly = setNetworkId === undefined;
   const activeLsNetwork = getLsNetwork(activeLsNetworkId);
 
+  const {
+    status: isLsNetworkSwitcherOpen,
+    open: openLsNetworkSwitcher,
+    close: closeLsNetworkSwitcher,
+  } = useModal(false);
+
   const base = (
     <div className="group flex gap-1 items-center justify-center">
       <div className="flex gap-2 items-center justify-center">
@@ -45,7 +56,12 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
         </Typography>
       </div>
 
-      {!isReadOnly && <DropdownChevronIcon isLarge />}
+      {!isReadOnly && (
+        <DropdownChevronIcon
+          isLarge
+          onClick={!isReadOnly ? openLsNetworkSwitcher : undefined}
+        />
+      )}
     </div>
   );
 
@@ -70,38 +86,46 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
     );
   });
 
-  return setNetworkId !== undefined ? (
-    <Dropdown>
-      <DropdownMenuTrigger>{base}</DropdownMenuTrigger>
+  const networkOptions: ChainConfig[] = supportedLsNetworks.map((network) => {
+    const tangleNetwork = getLsTangleNetwork(network.id);
+    const typedChainId = calculateTypedChainId(
+      tangleNetwork.substrateChainId ? ChainType.Substrate : ChainType.EVM,
+      tangleNetwork.substrateChainId ?? tangleNetwork.evmChainId ?? 0,
+    );
+    const chainConfig = chainsConfig[typedChainId];
 
-      <DropdownBody>
-        <ScrollArea>
-          <ul className="max-h-[300px]">
-            {supportedLsNetworks.map((network) => {
-              return (
-                <li key={network.id}>
-                  <DropdownMenuItem onClick={() => setNetworkId(network.id)}>
-                    <div className="flex gap-2 items-center justify-start">
-                      <ChainIcon size="lg" name={network.chainIconFileName} />
+    return {
+      ...chainConfig,
+      name: network.networkName,
+      id: network.id,
+    };
+  });
 
-                      <Typography
-                        variant="h5"
-                        fw="bold"
-                        className="dark:text-mono-40"
-                      >
-                        {network.networkName}
-                      </Typography>
-                    </div>
-                  </DropdownMenuItem>
-                </li>
-              );
-            })}
-          </ul>
-        </ScrollArea>
-      </DropdownBody>
-    </Dropdown>
-  ) : (
-    base
+  const handleOnSelectNetwork = (chain: ChainConfig) => {
+    setNetworkId?.(chain.id as LsNetworkId);
+    closeLsNetworkSwitcher();
+  };
+
+  return (
+    <>
+      {base}
+
+      <Modal>
+        <ModalContent
+          isCenter
+          isOpen={isLsNetworkSwitcherOpen}
+          onInteractOutside={closeLsNetworkSwitcher}
+          className="w-[500px] h-[600px]"
+        >
+          <ChainList
+            onClose={closeLsNetworkSwitcher}
+            chains={networkOptions}
+            onSelectChain={handleOnSelectNetwork}
+            chainType="source"
+          />
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 

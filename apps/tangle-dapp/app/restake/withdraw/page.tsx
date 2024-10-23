@@ -6,6 +6,7 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
@@ -333,7 +334,11 @@ const Page = () => {
         <SupportedChainModal
           isOpen={isChainModalOpen}
           onClose={closeChainModal}
-          onChainChange={async ({ typedChainId }) => {
+          onChainChange={async (chainConfig) => {
+            const typedChainId = calculateTypedChainId(
+              chainConfig.chainType,
+              chainConfig.id,
+            );
             await switchChain(typedChainId);
             closeChainModal();
           }}

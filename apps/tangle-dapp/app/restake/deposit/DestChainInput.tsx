@@ -7,11 +7,11 @@ import { useMemo } from 'react';
 import type { UseFormWatch } from 'react-hook-form';
 import { formatUnits } from 'viem';
 
+import AvatarWithText from '../../../components/AvatarWithText';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import type { DepositFormFields } from '../../../types/restake';
 import type { IdentityType } from '../../../utils/polkadot';
-import AvatarWithText from '../AvatarWithText';
 import SelectorPlaceholder from '../SelectorPlaceholder';
 
 type Props = {
