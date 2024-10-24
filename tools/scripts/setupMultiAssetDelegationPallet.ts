@@ -45,6 +45,11 @@ const argv = yargs(process.argv.slice(2))
       desc: 'The EVM account that will be funded with pallet assets',
       requiresArg: false,
     },
+    substrateAccount: {
+      type: 'string',
+      desc: 'The substrate account that will funded with the pallet assets',
+      requiresArg: false,
+    },
   })
   .parseSync();
 
@@ -128,29 +133,48 @@ await batchTxes([
   ),
 ]);
 
-info('Minting asests to Alice and Bob...');
-await batchTxes([
-  api.tx.assets.mint(
-    tgTEST.id,
-    ALICE_SUDO.address,
-    parseUnits(MINT_AMOUNT, tgTEST.decimals),
-  ),
-  api.tx.assets.mint(
-    tgtTNT.id,
-    ALICE_SUDO.address,
-    parseUnits(MINT_AMOUNT, tgtTNT.decimals),
-  ),
-  api.tx.assets.mint(
-    tgTEST.id,
-    BOB.address,
-    parseUnits(MINT_AMOUNT, tgTEST.decimals),
-  ),
-  api.tx.assets.mint(
-    tgtTNT.id,
-    BOB.address,
-    parseUnits(MINT_AMOUNT, tgtTNT.decimals),
-  ),
-]);
+info('Minting asests to accounts...');
+await batchTxes(
+  [
+    api.tx.assets.mint(
+      tgTEST.id,
+      ALICE_SUDO.address,
+      parseUnits(MINT_AMOUNT, tgTEST.decimals),
+    ),
+    api.tx.assets.mint(
+      tgtTNT.id,
+      ALICE_SUDO.address,
+      parseUnits(MINT_AMOUNT, tgtTNT.decimals),
+    ),
+    api.tx.assets.mint(
+      tgTEST.id,
+      BOB.address,
+      parseUnits(MINT_AMOUNT, tgTEST.decimals),
+    ),
+    api.tx.assets.mint(
+      tgtTNT.id,
+      BOB.address,
+      parseUnits(MINT_AMOUNT, tgtTNT.decimals),
+    ),
+    argv.substrateAccount &&
+      api.tx.balances.transferKeepAlive(
+        argv.substrateAccount,
+        parseUnits(MINIMUM_BALANCE_UINT, decimals),
+      ),
+    argv.substrateAccount &&
+      api.tx.assets.mint(
+        tgTEST.id,
+        argv.substrateAccount,
+        parseUnits(MINT_AMOUNT, tgTEST.decimals),
+      ),
+    argv.substrateAccount &&
+      api.tx.assets.mint(
+        tgtTNT.id,
+        argv.substrateAccount,
+        parseUnits(MINT_AMOUNT, tgtTNT.decimals),
+      ),
+  ].filter((tx) => tx !== undefined),
+);
 success('Assets created and minted successfully!');
 
 if (argv.evmAccount) {
