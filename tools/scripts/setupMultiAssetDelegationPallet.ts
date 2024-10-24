@@ -157,6 +157,11 @@ await batchTxes(
       parseUnits(MINT_AMOUNT, tgtTNT.decimals),
     ),
     argv.substrateAccount &&
+      api.tx.balances.transferKeepAlive(
+        argv.substrateAccount,
+        parseUnits(MINIMUM_BALANCE_UINT, decimals),
+      ),
+    argv.substrateAccount &&
       api.tx.assets.mint(
         tgTEST.id,
         argv.substrateAccount,
