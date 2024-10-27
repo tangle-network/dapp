@@ -13,7 +13,7 @@ export type PercentageInputProps = {
   setValue: (newValue: number | null) => void;
   placeholder?: string;
   isDisabled?: boolean;
-  wrapperOverrides?: Partial<InputWrapperProps>;
+  wrapperProps?: Partial<InputWrapperProps>;
   useStandardBoundaries?: boolean;
 };
 
@@ -24,7 +24,7 @@ const PercentageInput: FC<PercentageInputProps> = ({
   setValue: setValueOnParent,
   placeholder,
   isDisabled = false,
-  wrapperOverrides,
+  wrapperProps,
   useStandardBoundaries = true,
 }) => {
   const parsePercentage = useCallback(
@@ -53,13 +53,18 @@ const PercentageInput: FC<PercentageInputProps> = ({
     [],
   );
 
-  const { displayValue, setDisplayValue, errorMessage, setValue } =
-    useCustomInputValue<number>({
-      setValue: setValueOnParent,
-      format: formatPercentage,
-      parse: parsePercentage,
-      suffix: '%',
-    });
+  const {
+    displayValue,
+    setDisplayValue,
+    errorMessage,
+    setValue,
+    handleKeyDown,
+  } = useCustomInputValue<number>({
+    setValue: setValueOnParent,
+    format: formatPercentage,
+    parse: parsePercentage,
+    suffix: '%',
+  });
 
   const clearAction =
     value === null ? undefined : (
@@ -75,7 +80,7 @@ const PercentageInput: FC<PercentageInputProps> = ({
       isDisabled={isDisabled}
       errorMessage={errorMessage ?? undefined}
       actions={clearAction}
-      {...wrapperOverrides}
+      {...wrapperProps}
     >
       <Input
         id={id}
@@ -86,6 +91,7 @@ const PercentageInput: FC<PercentageInputProps> = ({
         autoComplete="off"
         value={displayValue}
         onChange={setDisplayValue}
+        onKeyDown={handleKeyDown}
         isDisabled={isDisabled}
         isControlled
       />

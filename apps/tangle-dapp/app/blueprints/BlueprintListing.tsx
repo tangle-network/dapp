@@ -181,7 +181,6 @@ const BlueprintListing: FC = () => {
             >
               <Typography
                 variant="h5"
-                fw="normal"
                 className={twMerge(
                   'text-mono-140 dark:text-mono-100',
                   !isActive &&

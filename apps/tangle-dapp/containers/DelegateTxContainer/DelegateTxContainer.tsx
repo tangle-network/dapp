@@ -23,6 +23,7 @@ import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { StakingRewardsDestination } from '../../types';
+import pluralize from '../../utils/pluralize';
 import SelectValidators from '../UpdateNominationsTxContainer/SelectValidators';
 import BondTokens from './BondTokens';
 import { DelegateTxContainerProps, DelegateTxSteps } from './types';
@@ -191,7 +192,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
             <Alert
               type="error"
               className="mt-4"
-              description={`You can only nominate up to ${maxNominationQuota} validators.`}
+              description={`You can only nominate up to ${maxNominationQuota} ${pluralize('validator', maxNominationQuota !== 1)}.`}
             />
           )}
         </div>

@@ -109,7 +109,12 @@ const InputWrapper: FC<InputWrapperProps> = ({
               {title}
             </Label>
 
-            {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
+            {tooltip !== undefined && (
+              <InfoIconWithTooltip
+                content={tooltip}
+                className="fill-mono-120 dark:fill-mono-120"
+              />
+            )}
           </div>
 
           <div className={bodyClassName}>{children}</div>
@@ -163,7 +168,6 @@ const InputWrapper: FC<InputWrapperProps> = ({
             errorMessageClassName,
           )}
           variant="body1"
-          fw="normal"
         >
           * {errorMessage}
         </Typography>

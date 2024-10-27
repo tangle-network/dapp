@@ -208,7 +208,7 @@ const LsMyProtocolsTable: FC = () => {
           myStake: myStake,
           pools: myPools,
           // TODO: Calculate the USD value of the TVL.
-          tvlInUsd: 123.3456,
+          tvlInUsd: 0,
           token: lsProtocol.token,
           decimals: lsProtocol.decimals,
         }) satisfies LsMyProtocolRow,

@@ -5,3 +5,4 @@ export * from './ModalFooter';
 export * from './ModalHeader';
 export * from './ModalTitle';
 export * from './ModalTrigger';
+export * from './ModalBody';

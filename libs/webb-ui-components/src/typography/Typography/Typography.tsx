@@ -8,7 +8,7 @@ import {
   getTextAlignClassName,
 } from '../utils';
 
-const defaultComponent = {
+const DEFAULT_COMPONENT = {
   h1: 'h1' as const,
   h2: 'h2' as const,
   h3: 'h3' as const,
@@ -55,23 +55,18 @@ const defaultComponent = {
  * <Typography variant="h2" component="h3">This is heading 3 with variant h2</Typography>
  * ```
  */
-export const Typography: React.FC<WebbTypographyProps> = (props) => {
-  const {
-    children,
-    className,
-    component,
-    fw = 'normal',
-    ta = 'left',
-    variant,
-    ...restProps
-  } = props;
+export const Typography: React.FC<WebbTypographyProps> = ({
+  children,
+  className,
+  component,
+  fw = 'normal',
+  ta = 'left',
+  variant,
+  ...restProps
+}) => {
+  const component_ = component ?? DEFAULT_COMPONENT[variant];
 
-  const _component = useMemo(
-    () => component ?? defaultComponent[variant],
-    [component, variant],
-  );
-
-  const _className = useMemo(() => {
+  const className_ = useMemo(() => {
     return twMerge(
       `${variant}` as const,
       getTextAlignClassName(ta),
@@ -82,8 +77,8 @@ export const Typography: React.FC<WebbTypographyProps> = (props) => {
   }, [className, fw, ta, variant]);
 
   return createElement(
-    _component,
-    { ...restProps, className: _className },
+    component_,
+    { ...restProps, className: className_ },
     children,
   );
 };

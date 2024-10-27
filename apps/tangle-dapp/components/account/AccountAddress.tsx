@@ -87,9 +87,7 @@ const AccountAddress: FC = () => {
     <div className="flex items-center gap-1">
       <IconWithTooltip icon={avatarIcon} content="Account public key" />
 
-      <Typography variant="body1" fw="normal">
-        Address:
-      </Typography>
+      <Typography variant="body1">Address:</Typography>
 
       <Tooltip>
         <TooltipTrigger className="cursor-default">

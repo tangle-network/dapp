@@ -39,6 +39,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
             className="fixed inset-0 z-20 bg-black/50"
           />
         </TransitionChild>
+
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
