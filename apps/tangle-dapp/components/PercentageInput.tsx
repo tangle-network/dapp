@@ -1,5 +1,6 @@
 import BackspaceDeleteFillIcon from '@webb-tools/icons/BackspaceDeleteFillIcon';
 import { Button, Input } from '@webb-tools/webb-ui-components';
+import Decimal from 'decimal.js';
 import { FC, useCallback } from 'react';
 
 import useCustomInputValue from '../hooks/useCustomInputValue';
@@ -30,11 +31,11 @@ const PercentageInput: FC<PercentageInputProps> = ({
   const parsePercentage = useCallback(
     (string: string) => {
       try {
-        const parsedValue = parseFloat(string) / 100;
-
-        if (isNaN(parsedValue)) {
+        if (isNaN(parseFloat(string))) {
           return new Error('Invalid percentage');
         }
+
+        const parsedValue = new Decimal(string).div(100).toNumber();
 
         // Limit the value between 0 to 100% if requested.
         // This is the most common percentage behavior.
@@ -49,7 +50,7 @@ const PercentageInput: FC<PercentageInputProps> = ({
   );
 
   const formatPercentage = useCallback(
-    (value: number): string => (value * 100).toString(),
+    (value: number): string => new Decimal(value).times(100).toString(),
     [],
   );
 

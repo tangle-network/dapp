@@ -108,7 +108,18 @@ function useCustomInputValue<T>({
   // the input, while considering the suffix.
   const handleKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>(
     (e) => {
-      if (displayValue === '' || e.key !== 'Backspace') {
+      const isCursorAtEnd =
+        e.currentTarget.selectionStart === displayValue.length;
+
+      const hasTextSelected =
+        e.currentTarget.selectionStart !== e.currentTarget.selectionEnd;
+
+      if (
+        displayValue === '' ||
+        e.key !== 'Backspace' ||
+        !isCursorAtEnd ||
+        hasTextSelected
+      ) {
         return;
       }
 
