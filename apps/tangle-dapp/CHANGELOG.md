@@ -1,3 +1,11 @@
+## 0.0.15 (2024-10-28)
+
+### 🚀 Features
+
+- **tangle-dapp:** Added bridge page
+
+- **tangle-dapp:** Added liquid staking pools functionality
+
 ## 0.0.14 (2024-09-19)
 
 ### 🚀 Features
@@ -60,7 +68,7 @@
 
 ### 🩹 Fixes
 
-- **tangle-dapp:** Disable reskate pages generation
+- **tangle-dapp:** Disable restake pages generation
 
 ### ❤️ Thank You
 
