@@ -45,10 +45,10 @@ export const TANGLE_DOCS_STAKING_URL =
 export const TANGLE_DOCS_LIQUID_STAKING_URL =
   'https://docs.tangle.tools/restake/lst-concepts';
 export const TANGLE_DOCS_LS_CREATE_POOL_URL =
-  'https://docs.tangle.tools/restake/lst-pool-create#introduction-to-liquid-staking-pools';
+  'https://docs.tangle.tools/restake/create_a_pool/lst-pool-create-tangle';
 export const TANGLE_DOCS_RESTAKING_URL =
   'https://docs.tangle.tools/restake/restake-introduction';
-export const TANGLE_GITHUB_URL = 'https://github.com/webb-tools/tangle';
+export const TANGLE_GITHUB_URL = 'https://github.com/tangle-network/tangle';
 
 export const WEBB_DOCS_URL = 'https://docs.webb.tools/';
 export const WEBB_BLOG_URL = 'https://blog.webb.tools';
