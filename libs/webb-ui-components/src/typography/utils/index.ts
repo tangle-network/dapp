@@ -83,7 +83,7 @@ export function isMonospaceVariant(
 }
 
 export function getDefaultTextColor(variant: WebbTypographyVariant) {
-  return variant.startsWith('h' || 'mkt-h')
+  return variant.startsWith('h') || variant.startsWith('mkt-h')
     ? 'text-mono-200 dark:text-mono-00'
     : 'text-mono-160 dark:text-mono-80';
 }
