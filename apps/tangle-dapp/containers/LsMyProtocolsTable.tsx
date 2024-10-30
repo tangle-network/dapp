@@ -230,6 +230,8 @@ const LsMyProtocolsTable: FC = () => {
     onSortingChange: setSorting,
     state: {
       sorting,
+      // Expand the first row by default.
+      expanded: { 0: true },
     },
     autoResetPageIndex: false,
     enableSortingRemoval: false,
