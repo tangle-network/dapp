@@ -29,7 +29,8 @@
     "../../apps/tangle-cloud/.next/types/**/*.ts",
     "../../dist/apps/tangle-cloud/.next/types/**/*.ts",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "../../types/global.d.ts",
   ],
   "exclude": [
     "node_modules",
