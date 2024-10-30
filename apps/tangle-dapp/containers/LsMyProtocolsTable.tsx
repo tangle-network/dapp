@@ -35,7 +35,7 @@ export type LsMyProtocolRow = {
   name: string;
   tvl: BN;
   myStake: BN;
-  tvlInUsd: number;
+  tvlInUsd?: number;
   iconName: string;
   pools: LsMyPoolRow[];
   decimals: number;
@@ -77,11 +77,16 @@ const PROTOCOL_COLUMNS = [
         { includeCommas: true },
       );
 
+      const subtitle =
+        props.row.original.tvlInUsd === undefined
+          ? undefined
+          : `$${props.row.original.tvlInUsd}`;
+
       return (
         <TableCellWrapper>
           <StatItem
             title={`${formattedTvl} ${props.row.original.token}`}
-            subtitle={`$${props.row.original.tvlInUsd}`}
+            subtitle={subtitle}
             removeBorder
           />
         </TableCellWrapper>
@@ -208,7 +213,7 @@ const LsMyProtocolsTable: FC = () => {
           myStake: myStake,
           pools: myPools,
           // TODO: Calculate the USD value of the TVL.
-          tvlInUsd: 123.3456,
+          tvlInUsd: undefined,
           token: lsProtocol.token,
           decimals: lsProtocol.decimals,
         }) satisfies LsMyProtocolRow,

@@ -23,7 +23,6 @@ import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeC
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
 import OnboardingItem from '../../components/OnboardingModal/OnboardingItem';
 import OnboardingModal from '../../components/OnboardingModal/OnboardingModal';
-import StatItem from '../../components/StatItem';
 import { OnboardingPageKey } from '../../constants';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
 import LsCreatePoolModal from '../../containers/LsCreatePoolModal';
@@ -149,9 +148,10 @@ const LiquidStakingPage: FC = () => {
             </Typography>
           </div>
 
-          <div className="flex gap-6 h-full">
+          {/** TODO: Waiting for price fetching API before showing this part. */}
+          {/* <div className="flex gap-6 h-full">
             <StatItem title="$123.01" subtitle="My Total Staking" />
-          </div>
+          </div> */}
         </div>
 
         <div className="flex flex-col self-center gap-4 w-full min-w-[450px] max-w-[532px]">

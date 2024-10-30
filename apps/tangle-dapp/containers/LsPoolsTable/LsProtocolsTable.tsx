@@ -30,7 +30,7 @@ import LsPoolsTable from './LsPoolsTable';
 export type LsProtocolRow = {
   name: string;
   tvl: BN;
-  tvlInUsd: number;
+  tvlInUsd?: number;
   token: LsToken;
   pools: LsPool[];
   decimals: number;
@@ -71,11 +71,16 @@ const PROTOCOL_COLUMNS = [
         { includeCommas: true },
       );
 
+      const subtitle =
+        props.row.original.tvlInUsd === undefined
+          ? undefined
+          : `$${props.row.original.tvlInUsd}`;
+
       return (
         <TableCellWrapper>
           <StatItem
             title={`${formattedTvl} ${props.row.original.token}`}
-            subtitle={`$${props.row.original.tvlInUsd}`}
+            subtitle={subtitle}
             removeBorder
           />
         </TableCellWrapper>
@@ -160,7 +165,7 @@ const LsProtocolsTable: FC = () => {
           token: lsProtocol.token,
           pools: pools,
           // TODO: Calculate the USD value of the TVL.
-          tvlInUsd: 123.3456,
+          tvlInUsd: undefined,
           decimals: lsProtocol.decimals,
         }) satisfies LsProtocolRow,
     );

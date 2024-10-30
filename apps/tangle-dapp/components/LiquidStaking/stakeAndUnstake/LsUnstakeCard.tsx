@@ -154,6 +154,13 @@ const LsUnstakeCard: FC = () => {
     setFromAmount(null);
   }, [setFromAmount, lsNetworkId]);
 
+  // Reset the input amount when the transaction is processed.
+  useEffect(() => {
+    if (tangleUnbondTxStatus === TxStatus.COMPLETE) {
+      setFromAmount(null);
+    }
+  }, [setFromAmount, tangleUnbondTxStatus]);
+
   // On mount, set the focus on the from input.
   useEffect(() => {
     if (fromLsInputRef.current !== null) {
