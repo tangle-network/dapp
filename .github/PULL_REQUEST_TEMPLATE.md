@@ -8,7 +8,8 @@ _Provide a detailed description of proposed changes._
 
 _Put an `x` in the boxes that apply._
 
-- [x] `apps/tangle-dapp`
+- [ ] `apps/tangle-dapp`
+- [ ] `apps/tangle-cloud`
 - [ ] `libs/webb-ui-components`
 
 ### Associated issue(s)
@@ -21,8 +22,6 @@ _Specify any issues that can be closed from these changes (e.g. `Closes #233`)._
 
 _If possible provide screenshots and/or a screen recording of proposed change._
 
-
-
 ---
 
 ### Optional Checklist
@@ -34,4 +33,4 @@ _If possible provide screenshots and/or a screen recording of proposed change._
 - [ ] For UI changes, I've checked both light and dark mode.
 - [ ] I've checked the console for any errors that might have been accidentally introduced by my changes.
 - [ ] If important TODOs were left, I've created corresponding issues for them.
-- [ ] If new flows or features were introduced, I've updated, added, or intend to add corresponding documentation including screenshots and/or screen recordings for them on the [Webb Docs](https://github.com/webb-tools/webb-docs) repository.
+- [ ] If new flows or features were introduced, I've updated, added, or intend to add corresponding documentation including screenshots and/or screen recordings for them on the [Webb Docs](https://github.com/tangle-network/webb-docs) repository.
