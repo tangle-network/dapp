@@ -1,4 +1,11 @@
-import './global.css';
+import '@webb-tools/webb-ui-components/tailwind.css';
+import '../styles/globals.css';
+
+import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+import { headers } from 'next/headers';
+import { Suspense } from 'react';
+import { cookieToInitialState } from 'wagmi';
+import Providers from './providers';
 
 export const metadata = {
   title: 'Welcome to tangle-cloud',
@@ -10,9 +17,18 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const initialState = cookieToInitialState(
+    getWagmiConfig({ isSSR: true }),
+    headers().get('cookie'),
+  );
+
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <Suspense>
+          <Providers wagmiInitialState={initialState}>{children}</Providers>
+        </Suspense>
+      </body>
     </html>
   );
 }
