@@ -22,7 +22,7 @@ jobs:
   Build-Publish:
     name: Build-Publish
     needs: pre-ci
-    if: "!startsWith(github.event.head_commit.message, '[SKIP CI]') && startsWith(github.event.head_commit.message, '[RELEASE]') && github.repository == 'webb-tools/webb-dapp'"
+    if: "!startsWith(github.event.head_commit.message, '[SKIP CI]') && startsWith(github.event.head_commit.message, '[RELEASE]') && github.repository == 'tangle-network/dapp'"
     runs-on: ubuntu-latest
     steps:
       #Check out
