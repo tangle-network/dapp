@@ -8,7 +8,8 @@ _Provide a detailed description of proposed changes._
 
 _Put an `x` in the boxes that apply._
 
-- [x] `apps/tangle-dapp`
+- [ ] `apps/tangle-dapp`
+- [ ] `apps/tangle-cloud`
 - [ ] `libs/webb-ui-components`
 
 ### Associated issue(s)

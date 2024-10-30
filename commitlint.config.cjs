@@ -16,6 +16,7 @@ module.exports = {
         'hubble-stats',
         'stats-dapp',
         'tangle-dapp',
+        'tangle-cloud',
         'testnet-leaderboard',
         'zk-explorer',
         'webb-ui',

@@ -56,7 +56,7 @@ function parseOnChainData(data: any) {
       );
 
       // Iterate through the anchor metadata and add them to the config
-      anchorMetadata.forEach((metadata) => {
+      anchorMetadata.forEach((metadata: AnchorMetadata) => {
         const {
           address: anchorAddress,
           fungibleCurrency,
@@ -77,7 +77,7 @@ function parseOnChainData(data: any) {
         const wrappableIdSet = new Set<number>();
 
         // Iterate through the wrappable currencies and add them to the config
-        wrappableCurrencies.forEach((wrappableCurrency) => {
+        wrappableCurrencies.forEach((wrappableCurrency: ICurrency) => {
           const wrappableConfig = addCurrencyToConfig(
             currencies,
             wrappableCurrency,
