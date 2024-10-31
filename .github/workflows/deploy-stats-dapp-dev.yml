@@ -70,7 +70,7 @@ jobs:
 
             |  Name | Link |
             |---------------------------------|------------------------|
-            |<span aria-hidden="true">🔨</span> Latest commit | [${{ github.event.pull_request.head.sha }}](https://github.com/webb-tools/webb-dapp/commit/${{ github.event.pull_request.head.sha }}) |
+            |<span aria-hidden="true">🔨</span> Latest commit | [${{ github.event.pull_request.head.sha }}](https://github.com/tangle-dapp/dapp/commit/${{ github.event.pull_request.head.sha }}) |
             |<span aria-hidden="true">🔍</span> Latest deploy log | ${{ steps.deploy-netlify.outputs.NETLIFY_LOGS_URL }} |
             |<span aria-hidden="true">😎</span> Deploy Preview | [${{ steps.deploy-netlify.outputs.NETLIFY_URL }}](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}) |
             ---
