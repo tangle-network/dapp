@@ -1,6 +1,6 @@
 import type { ChipClassNames, ChipColors } from './types';
 
-const classNames: ChipClassNames = {
+const CLASS_NAMES: ChipClassNames = {
   blue: {
     active: 'text-blue-90 bg-blue-10 dark:text-blue-30 dark:bg-blue-120',
     disabled: 'bg-blue-10 text-blue-40 dark:bg-blue-120 dark:text-blue-90',
@@ -54,7 +54,8 @@ export function getChipClassName(
   isDisabled?: boolean,
   isSelected?: boolean,
 ) {
-  const { active, disabled, selected } = classNames[color];
+  const { active, disabled, selected } = CLASS_NAMES[color];
+
   return {
     activeOrDisable: isDisabled ? disabled : active,
     selected: isSelected ? selected : '',

@@ -16,6 +16,8 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import type { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import useWalletAccounts from '../../hooks/useWalletAccounts';
+
 type Props = {
   activeAccountAddress: string;
   isDisabled?: boolean;
@@ -25,8 +27,9 @@ const ClaimingAccountInput: FC<Props> = ({
   activeAccountAddress,
   isDisabled,
 }) => {
-  const { activeApi, accounts, setActiveAccount } = useWebContext();
+  const { activeApi, setActiveAccount } = useWebContext();
   const { notificationApi } = useWebbUI();
+  const accounts = useWalletAccounts();
 
   const handleEvmSwitch = async (
     walletClient: WebbWeb3Provider['walletClient'],
@@ -34,11 +37,9 @@ const ClaimingAccountInput: FC<Props> = ({
     try {
       await walletClient.requestPermissions({ eth_accounts: {} });
     } catch (error) {
-      let message = WebbError.from(WebbErrorCodes.SwitchAccountFailed).message;
-
-      if (isViemError(error)) {
-        message = error.shortMessage;
-      }
+      const message = isViemError(error)
+        ? error.shortMessage
+        : WebbError.from(WebbErrorCodes.SwitchAccountFailed).message;
 
       notificationApi({ variant: 'error', message });
     }
@@ -77,7 +78,7 @@ const ClaimingAccountInput: FC<Props> = ({
           <DropdownButton
             disabled={isDisabled}
             size="sm"
-            className="w-full px-4 py-4 rounded-full"
+            className="w-full px-4 py-4 rounded-full normal-case"
             icon={<Avatar theme="substrate" value={activeAccountAddress} />}
             label={activeAccountAddress}
           />
@@ -87,9 +88,7 @@ const ClaimingAccountInput: FC<Props> = ({
               return {
                 address: item.address,
                 name: item.name,
-                onClick: () => {
-                  setActiveAccount(item);
-                },
+                onClick: () => setActiveAccount(item),
               };
             })}
           />

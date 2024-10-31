@@ -36,7 +36,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
         >
           <DialogPrimitive.Overlay
             forceMount
-            className="fixed inset-0 z-20 bg-black/50"
+            className="fixed inset-0 z-20 bg-black/65"
           />
         </TransitionChild>
 

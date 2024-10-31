@@ -14,7 +14,7 @@ export const metadata: Metadata = createPageMetadata({
   title: 'Claim Airdrop',
   imageUrl: OpenGraphPageImageUrl.ClaimAirdrop,
   description:
-    'Eligible for TNT tokens? Tangle Network rewards early testnet participants, Edgeware community, and DOT validators. Check now!',
+    'Eligible for the TNT tokens airdrop? Tangle Network rewards early testnet participants, Edgeware community, and DOT validators. Check now!',
 });
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {

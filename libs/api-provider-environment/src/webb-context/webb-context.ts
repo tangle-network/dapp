@@ -16,36 +16,29 @@ import type { TransactionQueueApi } from '../transaction';
 import noop from 'lodash/noop';
 
 export interface WebbContextState<T = unknown> {
-  /** Boolean indicating if the app is loading */
+  /** Whether the app is loading */
   loading: boolean;
 
-  /** All preconfigured wallets */
+  /** All pre-configured wallets */
   wallets: Record<number, Wallet>;
 
-  /** All preconfigured chains */
+  /** All pre-configured chains */
   chains: Record<number, Chain>;
 
-  /** Active api */
   activeApi?: WebbApiProvider<T>;
 
-  /** Active wallet */
   activeWallet?: Wallet;
 
   /**
-   * Active chain
    * - `undefined` means no chain is active
    * - `null` means the active chain is unsupported
    * - `Chain` means the active chain is supported
    */
   activeChain?: Nullable<Maybe<Chain>>;
 
-  /**
-   * Active note manager
-   */
   noteManager: Nullable<NoteManager>;
 
   /**
-   * Login note account
    * @param key the key to login
    * @param walletAddress the wallet address to login
    */
@@ -55,7 +48,6 @@ export interface WebbContextState<T = unknown> {
   ): Promise<Nullable<NoteManager>>;
 
   /**
-   * Logout note account
    * @param walletAddress the wallet address to logout
    */
   logoutNoteAccount(walletAddress: string): Promise<void>;
@@ -66,46 +58,37 @@ export interface WebbContextState<T = unknown> {
    */
   purgeNoteAccount(walletAddress: string): Promise<void>;
 
-  /** apiConfig contains all preconfigured & on-chain data */
+  /** All pre-configured & on-chain data */
   apiConfig: ApiConfig;
 
-  /** Active accounts list */
   accounts: Account[];
 
-  /** Active account */
   activeAccount: Nullable<Account>;
 
-  /** Boolean indicating if the app is connecting */
+  /** Whether the app is connecting */
   isConnecting: boolean;
 
-  /** Function to set active account and store it in local storage */
+  /** Set the active account and store it in local storage */
   setActiveAccount<T extends Account>(account: T): Promise<void>;
 
-  /** Function to inactivate api */
   inactivateApi(): Promise<void>;
 
-  /** Function to switch chain */
   switchChain(
     chain: Chain,
     wallet: Wallet,
     bridge?: Bridge,
   ): Promise<Nullable<WebbApiProvider<T>>>;
 
-  /** The active feedback */
   activeFeedback: Nullable<InteractiveFeedback>;
 
-  /** Function to register interactive feedback */
   registerInteractiveFeedback: (
     interactiveFeedback: InteractiveFeedback,
   ) => void;
 
-  /** The application's name */
   appName: string;
 
-  /** App event */
   appEvent: TAppEvent;
 
-  /** App transaction queue */
   txQueue: TransactionQueueApi;
 }
 

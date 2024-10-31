@@ -40,20 +40,20 @@ export default function ClaimPage() {
   const { title, subTitle } = useMemo(() => {
     if (claimInfo === null) {
       return {
-        title: `Claim your $TNT airdrop`,
+        title: `Check Eligibility`,
         subTitle: 'CLAIM AIRDROP',
       };
     }
 
     if (claimInfo || isClaiming) {
       return {
-        title: `You have unclaimed $TNT airdrop!`,
-        subTitle: 'GREAT NEWS!',
+        title: `Unclaimed Airdrop`,
+        subTitle: 'CONGRATULATIONS!',
       };
     }
 
     return {
-      title: `You are not eligible for $TNT airdrop`,
+      title: `Not Eligible`,
       subTitle: 'OOPS!',
     };
   }, [claimInfo, isClaiming]);
@@ -143,20 +143,21 @@ export default function ClaimPage() {
         >
           {claimInfo === null ? (
             <>
-              As part of {"Tangle's"} initial launch, the Tangle Network is
+              As part of {"Tangle's"} initial launch, the Tangle network is
               distributing 5 million TNT tokens to the community. Check
-              eligibility below to see if you qualify for TNT airdrop!
+              eligibility below to see if your account qualifies for the TNT
+              airdrop!
             </>
           ) : claimInfo || isClaiming ? (
             <>
-              You are eligible for $TNT airdrop! View your tokens below, and
-              start the claiming process.
+              This account is eligible for the $TNT airdrop! Review details
+              below, and start the claiming process.
             </>
           ) : (
             <>
-              You are not eligible for $TNT airdrop. You can still participate
-              in the Tangle Network by acquiring $TNT or you can try again with
-              a different account by disconnecting your current wallet.
+              This account is not eligible for the $TNT airdrop. You can still
+              participate in the Tangle network by acquiring $TNT or try again
+              with a different account by disconnecting your current wallet.
             </>
           )}
         </AppTemplate.Description>
