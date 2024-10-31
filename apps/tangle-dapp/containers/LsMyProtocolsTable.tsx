@@ -157,6 +157,7 @@ const LsMyProtocolsTable: FC = () => {
   const substrateAddress = useSubstrateAddress();
   const [sorting, setSorting] = useState<SortingState>([]);
   const { lsNetworkId } = useLsStore();
+  const lsPools = useLsPools();
 
   const lsNetwork = getLsNetwork(lsNetworkId);
 
@@ -169,8 +170,6 @@ const LsMyProtocolsTable: FC = () => {
     ),
     [],
   );
-
-  const lsPools = useLsPools();
 
   const myPools: LsMyPoolRow[] = useMemo(() => {
     if (substrateAddress === null || !(lsPools instanceof Map)) {

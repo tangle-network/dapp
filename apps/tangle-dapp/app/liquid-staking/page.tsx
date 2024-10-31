@@ -30,6 +30,7 @@ import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
 import { LsProtocolsTable } from '../../containers/LsPoolsTable';
 import useNetworkStore from '../../context/useNetworkStore';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
+import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
 import useSearchParamState from '../../hooks/useSearchParamState';
 import getLsTangleNetwork from '../../utils/liquidStaking/getLsTangleNetwork';
@@ -61,6 +62,7 @@ const LiquidStakingPage: FC = () => {
     isStaking: isStakingInStore,
   } = useLsStore();
 
+  const isAccountConnected = useIsAccountConnected();
   const { network } = useNetworkStore();
   const { switchNetwork } = useNetworkSwitcher();
   const [isCreatePoolModalOpen, setIsCreatePoolModalOpen] = useState(false);
@@ -205,6 +207,7 @@ const LiquidStakingPage: FC = () => {
               onClick={() => setIsCreatePoolModalOpen(true)}
               variant="utility"
               size="sm"
+              isDisabled={!isAccountConnected}
               rightIcon={
                 <AddLineIcon className="fill-current dark:fill-current" />
               }
