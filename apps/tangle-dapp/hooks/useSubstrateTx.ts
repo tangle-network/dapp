@@ -254,6 +254,8 @@ export function useSubstrateTxWithNotification<Context = void>(
     }
   }, [activeAccountAddress, reset]);
 
+  // Automatically notify the user via a notification toast
+  // on the status of the transaction, when the status changes.
   useEffect(() => {
     if (
       status === TxStatus.NOT_YET_INITIATED ||
@@ -267,15 +269,8 @@ export function useSubstrateTxWithNotification<Context = void>(
     } else if (txHash !== null) {
       notifySuccess(txName, txHash, successMessage);
     }
-  }, [
-    status,
-    error,
-    txHash,
-    notifyError,
-    notifySuccess,
-    successMessage,
-    txName,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   return {
     // Prevent the consumer from executing the transaction if

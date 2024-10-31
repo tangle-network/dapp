@@ -19,6 +19,7 @@ import { LsNetworkId, LsProtocolId } from '../constants/liquidStaking/types';
 import useBalances from '../data/balances/useBalances';
 import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
+import useApiRx from '../hooks/useApiRx';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { TxStatus } from '../hooks/useSubstrateTx';
 import assertSubstrateAddress from '../utils/assertSubstrateAddress';
@@ -47,6 +48,12 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
   const { lsNetworkId } = useLsStore();
 
   const lsNetwork = getLsNetwork(lsNetworkId);
+
+  const { result: createPoolMinBond } = useApiRx(
+    useCallback((api) => {
+      return api.query.lst.minCreateBond();
+    }, []),
+  );
 
   // TODO: Also add Restaking Parachain when its non-testnet version is available.
   const isLiveNetwork = lsNetworkId === LsNetworkId.TANGLE_MAINNET;
@@ -149,6 +156,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
               id="ls-create-pool-initial-bond-amount"
               amount={initialBondAmount}
               setAmount={setInitialBondAmount}
+              min={createPoolMinBond?.toBn() ?? null}
               max={freeBalance}
               maxErrorMessage={ERROR_NOT_ENOUGH_BALANCE}
               title="Initial Bond Amount"
