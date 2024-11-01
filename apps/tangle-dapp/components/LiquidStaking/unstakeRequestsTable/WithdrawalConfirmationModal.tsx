@@ -1,4 +1,5 @@
 import { HexString } from '@polkadot/util/types';
+import { getExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { CheckboxCircleLine, WalletLineIcon } from '@webb-tools/icons';
 import {
   Button,
@@ -11,8 +12,7 @@ import {
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { FC, useMemo } from 'react';
 
-import useExplorerUrl from '../../../hooks/useExplorerUrl';
-import ModalIcon, { ModalIconCommonVariant } from '..//ModalIcon';
+import ModalIcon, { ModalIconCommonVariant } from '../ModalIcon';
 
 export type WithdrawalConfirmationModalProps = {
   isOpen: boolean;
@@ -25,8 +25,6 @@ const WithdrawalConfirmationModal: FC<WithdrawalConfirmationModalProps> = ({
   txHash,
   onClose,
 }) => {
-  const getExplorerUrl = useExplorerUrl();
-
   const viewExplorerHref = useMemo(() => {
     // The hash is not available, so the URL cannot be generated.
     if (txHash === null) {
@@ -34,13 +32,12 @@ const WithdrawalConfirmationModal: FC<WithdrawalConfirmationModalProps> = ({
     }
 
     return getExplorerUrl(
+      TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.polkadotJsDashboardUrl,
       txHash,
       'tx',
-      undefined,
-      TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.wsRpcEndpoint,
-      true,
+      'polkadot',
     );
-  }, [getExplorerUrl, txHash]);
+  }, [txHash]);
 
   return (
     <Modal open>

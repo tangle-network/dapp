@@ -9,7 +9,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
+import { getExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import {
   Avatar,
   Button,
@@ -117,7 +117,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
         cell: (props) => {
           const address = props.getValue();
           const identity = props.row.original.identityName;
-          const accountExplorerLink = getExplorerURI(
+          const accountExplorerLink = getExplorerUrl(
             network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl,
             address,
             'address',

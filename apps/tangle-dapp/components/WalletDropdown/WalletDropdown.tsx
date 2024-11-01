@@ -23,7 +23,7 @@ import {
 import { FC, useCallback, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import useExplorerUrl from '../../hooks/useExplorerUrl';
+import useSubstrateExplorerUrl from '../../hooks/useSubstrateExplorerUrl';
 
 export const WalletDropdown: FC<{
   accountName?: string;
@@ -31,7 +31,7 @@ export const WalletDropdown: FC<{
   wallet: WalletConfig;
 }> = ({ accountAddress, accountName, wallet }) => {
   const { inactivateApi } = useWebContext();
-  const getExplorerUrl = useExplorerUrl();
+  const getExplorerUrl = useSubstrateExplorerUrl();
 
   const { notificationApi } = useWebbUI();
 

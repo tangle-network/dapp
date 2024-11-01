@@ -15,12 +15,12 @@ import {
   STAKING_PAYEE_VALUE_TO_TEXT_MAP,
 } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
+import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { StakingRewardsDestinationDisplayText } from '../../types/index';
 import { BondTokensProps } from './types';
 
 const BondTokens: FC<BondTokensProps> = ({
   isBondedOrNominating,
-  nominatorAddress,
   amountToBond,
   setAmountToBond,
   payeeOptions,
@@ -28,6 +28,7 @@ const BondTokens: FC<BondTokensProps> = ({
   setPayee,
   handleAmountToBondError,
 }) => {
+  const activeAccountAddress = useActiveAccountAddress();
   const { free: freeBalance } = useBalances();
 
   const handleSetPayee = useCallback(
@@ -49,19 +50,21 @@ const BondTokens: FC<BondTokensProps> = ({
           <InputField.Input
             title="Account"
             isAddressType
-            value={nominatorAddress}
+            value={activeAccountAddress ?? ''}
             type="text"
             readOnly
           />
 
-          <InputField.Slot>
-            <CopyWithTooltip
-              textToCopy={nominatorAddress}
-              isButton={false}
-              iconSize="lg"
-              className="text-mono-160 dark:text-mono-80"
-            />
-          </InputField.Slot>
+          {activeAccountAddress !== null && (
+            <InputField.Slot>
+              <CopyWithTooltip
+                textToCopy={activeAccountAddress}
+                isButton={false}
+                iconSize="lg"
+                className="text-mono-160 dark:text-mono-80"
+              />
+            </InputField.Slot>
+          )}
         </InputField.Root>
 
         <Typography variant="body1" fw="normal" className="!max-w-[365px]">

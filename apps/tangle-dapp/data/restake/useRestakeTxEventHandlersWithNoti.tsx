@@ -1,4 +1,3 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
 import { isPolkadotJsDashboard } from '@webb-tools/api-provider-environment/transaction/utils';
 import type { Evaluate } from '@webb-tools/dapp-types/utils/types';
 import Spinner from '@webb-tools/icons/Spinner';
@@ -9,7 +8,8 @@ import type React from 'react';
 import { useCallback, useMemo } from 'react';
 import type { Hash } from 'viem';
 
-import useExplorerUrl from '../../hooks/useExplorerUrl';
+import useNetworkStore from '../../context/useNetworkStore';
+import useSubstrateExplorerUrl from '../../hooks/useSubstrateExplorerUrl';
 import { TxEvent, type TxEventHandlers } from './RestakeTx/base';
 import ViewTxOnExplorer from './ViewTxOnExplorer';
 
@@ -51,34 +51,23 @@ const extractNotiOptions = <Context extends Record<string, unknown>>(
 export default function useRestakeTxEventHandlersWithNoti<
   Context extends Record<string, unknown>,
 >({ options = {}, ...props }: Props<Context> = {}) {
-  const { activeChain } = useWebContext();
+  const { network } = useNetworkStore();
   const { notificationApi } = useWebbUI();
-  const getExplorerUrl = useExplorerUrl();
+  const getExplorerUrl = useSubstrateExplorerUrl();
 
-  const blockExplorer = useMemo(
-    () => activeChain?.blockExplorers?.default.url,
-    [activeChain?.blockExplorers?.default.url],
-  );
+  const networkBlockExplorerUrl = network.nativeExplorerUrl;
 
   const getTxUrl = useCallback(
-    (txHash: Hash, blockHash: Hash, blockExplorer?: string) => {
-      // if the block explorer is the Polkadot Portal
-      // we use block hash instead of the tx hash.
-      // @see https://polkadot.js.org/docs/api/FAQ/#which-api-can-i-use-to-query-by-transaction-hash
-      if (isPolkadotJsDashboard(blockExplorer)) {
-        const url = getExplorerUrl(
-          blockHash,
-          'block',
-          undefined,
-          blockExplorer,
-          true,
-        );
-        return url;
-      }
-
-      return getExplorerUrl(txHash, 'tx', undefined, blockExplorer);
+    (txHash: Hash, blockHash: Hash) => {
+      // If the block explorer is the Polkadot Portal,
+      // use block hash instead of the tx hash.
+      // See https://polkadot.js.org/docs/api/FAQ/#which-api-can-i-use-to-query-by-transaction-hash.
+      return networkBlockExplorerUrl !== undefined &&
+        isPolkadotJsDashboard(networkBlockExplorerUrl)
+        ? getExplorerUrl(blockHash, 'block')
+        : getExplorerUrl(txHash, 'tx');
     },
-    [getExplorerUrl],
+    [networkBlockExplorerUrl, getExplorerUrl],
   );
 
   return useMemo<TxEventHandlers<Context>>(
@@ -94,13 +83,15 @@ export default function useRestakeTxEventHandlersWithNoti<
           persist: true,
           ...extractNotiOptions(context, options[key]),
         });
+
         props?.onTxSending?.(context);
       },
       onTxInBlock: (txHash, blockHash, context) => {
         const key = TxEvent.IN_BLOCK;
-        const url = getTxUrl(txHash, blockHash, blockExplorer);
+        const url = getTxUrl(txHash, blockHash);
 
         notificationApi.remove(TxEvent.SENDING);
+
         notificationApi.addToQueue({
           key,
           Icon: <Spinner size="lg" />,
@@ -115,7 +106,7 @@ export default function useRestakeTxEventHandlersWithNoti<
       },
       onTxSuccess: (txHash, blockHash, context) => {
         const key = TxEvent.SUCCESS;
-        const url = getTxUrl(txHash, blockHash, blockExplorer);
+        const url = getTxUrl(txHash, blockHash);
 
         notificationApi.remove(TxEvent.SENDING);
         notificationApi.remove(TxEvent.IN_BLOCK);
@@ -156,6 +147,6 @@ export default function useRestakeTxEventHandlersWithNoti<
         props?.onTxFailed?.(error, context);
       },
     }),
-    [blockExplorer, getTxUrl, notificationApi, options, props],
+    [getTxUrl, notificationApi, options, props],
   );
 }

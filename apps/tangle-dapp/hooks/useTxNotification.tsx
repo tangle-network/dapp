@@ -1,4 +1,5 @@
 import { HexString } from '@polkadot/util/types';
+import { getExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import capitalize from 'lodash/capitalize';
 import { useSnackbar } from 'notistack';
@@ -6,7 +7,7 @@ import { useCallback } from 'react';
 
 import { TxName } from '../constants';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
-import useExplorerUrl from './useExplorerUrl';
+import useSubstrateExplorerUrl from './useSubstrateExplorerUrl';
 
 const SUCCESS_TIMEOUT = 10_000;
 
@@ -49,17 +50,20 @@ export type NotificationSteps = {
   total: number;
 };
 
-// TODO: Use a ref for the key to permit multiple rapid fire transactions from stacking under the same key. Otherwise, use a global state counter via Zustand.
 const useTxNotification = (explorerUrl?: string) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const getTxExplorerUrl = useExplorerUrl();
+  const getActiveNetworkExplorerUrl = useSubstrateExplorerUrl();
   const { isEvm: isEvmActiveAccount } = useAgnosticAccountInfo();
-
-  // TODO: Consider warning the user if they attempt to close the browser window. The transaction won't fail, but they won't be able to see the result. Might need a global store to track the event listener, to prevent multiple listeners from being added.
 
   const notifySuccess = useCallback(
     (txName: TxName, txHash: HexString, successMessage?: string | null) => {
       closeSnackbar(makeKey(txName));
+
+      // TODO: Finish handling EVM accounts case.
+      const explorerUrl_ =
+        explorerUrl === undefined
+          ? getActiveNetworkExplorerUrl(txHash, 'tx')
+          : getExplorerUrl(explorerUrl, txHash, 'tx', 'polkadot');
 
       // In case that the EVM account status is unavailable,
       // default to not display the transaction explorer URL,
@@ -67,10 +71,8 @@ const useTxNotification = (explorerUrl?: string) => {
       // this allows the user to still see the success message if
       // for example, they disconnect their account while the
       // transaction is still processing.
-      const txExplorerUrl =
-        isEvmActiveAccount === null
-          ? null
-          : getTxExplorerUrl(txHash, 'tx', undefined, explorerUrl);
+      const finalExplorerUrl =
+        isEvmActiveAccount === null ? null : explorerUrl_;
 
       // Currently using SnackbarProvider for managing NotificationStacked
       // For one-off configurations, must use enqueueSnackbar.
@@ -82,11 +84,11 @@ const useTxNotification = (explorerUrl?: string) => {
             <Typography variant="body1">{successMessage}</Typography>
           )}
 
-          {txExplorerUrl !== null && (
+          {finalExplorerUrl !== null && (
             <Button
               variant="link"
               size="sm"
-              href={txExplorerUrl.toString()}
+              href={finalExplorerUrl.toString()}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -103,7 +105,7 @@ const useTxNotification = (explorerUrl?: string) => {
     [
       closeSnackbar,
       enqueueSnackbar,
-      getTxExplorerUrl,
+      getActiveNetworkExplorerUrl,
       isEvmActiveAccount,
       explorerUrl,
     ],
