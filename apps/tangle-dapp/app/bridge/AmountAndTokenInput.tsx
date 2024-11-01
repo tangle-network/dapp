@@ -1,6 +1,6 @@
 'use client';
 
-import { getExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
+import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { Modal, ModalContent, useModal } from '@webb-tools/webb-ui-components';
 import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/buttons/ChainOrTokenButton';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
@@ -95,7 +95,7 @@ const AmountAndTokenInput: FC = () => {
         selectedChainExplorerUrl === undefined ||
         erc20TokenContractAddress === undefined
           ? undefined
-          : getExplorerUrl(
+          : makeExplorerUrl(
               selectedChainExplorerUrl.url,
               erc20TokenContractAddress,
               'address',

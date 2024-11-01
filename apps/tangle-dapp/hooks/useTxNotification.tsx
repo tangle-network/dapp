@@ -1,5 +1,3 @@
-import { HexString } from '@polkadot/util/types';
-import { getExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import capitalize from 'lodash/capitalize';
 import { useSnackbar } from 'notistack';
@@ -7,7 +5,6 @@ import { useCallback } from 'react';
 
 import { TxName } from '../constants';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
-import useSubstrateExplorerUrl from './useSubstrateExplorerUrl';
 
 const SUCCESS_TIMEOUT = 10_000;
 
@@ -50,20 +47,15 @@ export type NotificationSteps = {
   total: number;
 };
 
-const useTxNotification = (explorerUrl?: string) => {
+const useTxNotification = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const getActiveNetworkExplorerUrl = useSubstrateExplorerUrl();
   const { isEvm: isEvmActiveAccount } = useAgnosticAccountInfo();
 
   const notifySuccess = useCallback(
-    (txName: TxName, txHash: HexString, successMessage?: string | null) => {
+    (txName: TxName, explorerUrl: string, successMessage?: string | null) => {
       closeSnackbar(makeKey(txName));
 
       // TODO: Finish handling EVM accounts case.
-      const explorerUrl_ =
-        explorerUrl === undefined
-          ? getActiveNetworkExplorerUrl(txHash, 'tx')
-          : getExplorerUrl(explorerUrl, txHash, 'tx', 'polkadot');
 
       // In case that the EVM account status is unavailable,
       // default to not display the transaction explorer URL,
@@ -71,8 +63,7 @@ const useTxNotification = (explorerUrl?: string) => {
       // this allows the user to still see the success message if
       // for example, they disconnect their account while the
       // transaction is still processing.
-      const finalExplorerUrl =
-        isEvmActiveAccount === null ? null : explorerUrl_;
+      const finalExplorerUrl = isEvmActiveAccount === null ? null : explorerUrl;
 
       // Currently using SnackbarProvider for managing NotificationStacked
       // For one-off configurations, must use enqueueSnackbar.
@@ -92,7 +83,7 @@ const useTxNotification = (explorerUrl?: string) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              View Transaction
+              View Explorer
             </Button>
           )}
         </div>,
@@ -102,13 +93,7 @@ const useTxNotification = (explorerUrl?: string) => {
         },
       );
     },
-    [
-      closeSnackbar,
-      enqueueSnackbar,
-      getActiveNetworkExplorerUrl,
-      isEvmActiveAccount,
-      explorerUrl,
-    ],
+    [closeSnackbar, enqueueSnackbar, isEvmActiveAccount],
   );
 
   const notifyError = useCallback(

@@ -6,7 +6,7 @@ export const isPolkadotJsDashboard = (explorerUrl: string): boolean => {
   return explorerUrl.includes('polkadot.js.org/apps');
 };
 
-const substrateExplorerAndChainIdMap = Object.keys(
+const SUBSTRATE_EXPLORER_AND_CHAIN_ID_MAP = Object.keys(
   substrateChainsConfig,
 ).reduce(
   (acc, key) => {
@@ -23,29 +23,11 @@ const substrateExplorerAndChainIdMap = Object.keys(
 
 export type ExplorerVariant = 'tx' | 'address' | 'block';
 
-export const getExplorerUrl = (
-  baseUrl: string,
-  pathOrHash: string,
-  variant: ExplorerVariant,
-  environment: WebbProviderType,
-): URL => {
-  switch (environment) {
-    case 'web3':
-      return new URL(`${variant}/${pathOrHash}`, baseUrl);
-
-    case 'polkadot': {
-      const path = getSubstrateExplorerPath(variant, baseUrl, pathOrHash);
-
-      return new URL(path, baseUrl);
-    }
-  }
-};
-
-const getSubstrateExplorerPath = (
+const makeSubstrateExplorerPath = (
   variant: ExplorerVariant,
   explorerUri: string,
   pathOrHash: string,
-) => {
+): string => {
   // PolkadotJS explorer cannot link to a transaction directly.
   // Instead, link to the block details, which contains the transaction.
   if (variant === 'tx') {
@@ -53,8 +35,11 @@ const getSubstrateExplorerPath = (
   } else if (variant === 'address') {
     // Encode address for all available substrate chains.
     const encodedAddress =
-      typeof substrateExplorerAndChainIdMap[explorerUri] === 'number'
-        ? encodeAddress(pathOrHash, substrateExplorerAndChainIdMap[explorerUri])
+      typeof SUBSTRATE_EXPLORER_AND_CHAIN_ID_MAP[explorerUri] === 'number'
+        ? encodeAddress(
+            pathOrHash,
+            SUBSTRATE_EXPLORER_AND_CHAIN_ID_MAP[explorerUri],
+          )
         : pathOrHash;
 
     return `#/accounts/${encodedAddress}`;
@@ -67,4 +52,22 @@ const getSubstrateExplorerPath = (
     : `#/blocks/${pathOrHash}`;
 };
 
-export default getExplorerUrl;
+export const makeExplorerUrl = (
+  baseUrl: string,
+  pathOrHash: string,
+  variant: ExplorerVariant,
+  environment: WebbProviderType,
+): string => {
+  switch (environment) {
+    case 'web3':
+      return new URL(`${variant}/${pathOrHash}`, baseUrl).toString();
+
+    case 'polkadot': {
+      const path = makeSubstrateExplorerPath(variant, baseUrl, pathOrHash);
+
+      return new URL(path, baseUrl).toString();
+    }
+  }
+};
+
+export default makeExplorerUrl;

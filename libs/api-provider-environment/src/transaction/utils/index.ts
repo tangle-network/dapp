@@ -1,2 +1,2 @@
-export { default as getExplorerUrl } from './getExplorerUrl';
-export * from './getExplorerUrl';
+export { default as makeExplorerUrl } from './makeExplorerUrl';
+export * from './makeExplorerUrl';

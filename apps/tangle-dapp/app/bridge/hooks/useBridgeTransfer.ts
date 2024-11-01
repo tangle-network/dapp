@@ -3,7 +3,7 @@
 import { IMailbox__factory } from '@hyperlane-xyz/core';
 import { HyperlaneCore, ProviderType } from '@hyperlane-xyz/sdk';
 import { useQuery } from '@tanstack/react-query';
-import { getExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
+import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { chainsConfig } from '@webb-tools/dapp-config';
 import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
@@ -101,7 +101,7 @@ export default function useBridgeTransfer({
           let destinationTxExplorerUrl = '';
 
           if (chainsConfig[destinationTypedChainId].blockExplorers) {
-            destinationTxExplorerUrl = getExplorerUrl(
+            destinationTxExplorerUrl = makeExplorerUrl(
               chainsConfig[destinationTypedChainId].blockExplorers.default.url,
               receipt.transactionHash,
               'tx',
@@ -259,7 +259,7 @@ export default function useBridgeTransfer({
           if (chainsConfig[sourceTypedChainId].blockExplorers) {
             addTxExplorerUrl(
               txHash,
-              getExplorerUrl(
+              makeExplorerUrl(
                 chainsConfig[sourceTypedChainId].blockExplorers.default.url,
                 txHash,
                 'tx',

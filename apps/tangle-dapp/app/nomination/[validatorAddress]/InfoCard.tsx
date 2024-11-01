@@ -1,6 +1,6 @@
 'use client';
 
-import { getExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
+import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import {
   Avatar,
   Chip,
@@ -77,7 +77,7 @@ const InfoCard: FC<InfoCardProps> = ({
               />
 
               <ExternalLinkIcon
-                href={getExplorerUrl(
+                href={makeExplorerUrl(
                   network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl,
                   validatorAddress,
                   'address',

@@ -1,4 +1,4 @@
-import { getExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
+import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { CheckboxCircleLine, WalletLineIcon } from '@webb-tools/icons';
 import {
   Button,
@@ -33,7 +33,7 @@ const UnstakeRequestSubmittedModal: FC<UnstakeRequestSubmittedModalProps> = ({
       return null;
     }
 
-    return getExplorerUrl(
+    return makeExplorerUrl(
       TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK.polkadotJsDashboardUrl,
       txHash,
       'tx',

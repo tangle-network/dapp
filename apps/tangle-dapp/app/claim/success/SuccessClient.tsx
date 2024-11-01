@@ -11,9 +11,9 @@ import { type FC } from 'react';
 import useSubstrateExplorerUrl from '../../../hooks/useSubstrateExplorerUrl';
 
 const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
-  const getExplorerUrl = useSubstrateExplorerUrl();
+  const { getExplorerUrl } = useSubstrateExplorerUrl();
 
-  const txExplorerUrl = getExplorerUrl(blockHash, 'tx');
+  const txExplorerUrl = getExplorerUrl(blockHash, 'block');
 
   return (
     <AppTemplate.Content>

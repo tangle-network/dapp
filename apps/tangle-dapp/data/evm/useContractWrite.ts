@@ -97,7 +97,7 @@ const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
         });
 
         if (txReceipt.status === 'success') {
-          notifySuccess(options.txName, txHash);
+          notifySuccess(options.txName, txHash, txBlockHash);
         } else {
           // TODO: Improve UX by at least providing a link to the transaction hash. The idea is that if there was an error, it would have been caught by the try-catch, so this part here is sort of an 'unreachable' section.
           notifyError(
