@@ -3,6 +3,7 @@
 import { BN } from '@polkadot/util';
 import {
   createColumnHelper,
+  ExpandedState,
   getCoreRowModel,
   getExpandedRowModel,
   getPaginationRowModel,
@@ -96,7 +97,7 @@ const PROTOCOL_COLUMNS = [
         <TableCellWrapper removeRightBorder>
           <StatItem
             title={length.toString()}
-            subtitle={pluralize('Pool', length === 0 || length > 1)}
+            subtitle={pluralize('Pool', length !== 1)}
             removeBorder
           />
         </TableCellWrapper>
@@ -126,10 +127,14 @@ const PROTOCOL_COLUMNS = [
   }),
 ];
 
-// TODO: Have the first row be expanded by default.
 const LsProtocolsTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const { lsNetworkId } = useLsStore();
+
+  // Expand the first row by default.
+  const [expanded, setExpanded] = useState<ExpandedState>({
+    0: true,
+  });
 
   const lsNetwork = getLsNetwork(lsNetworkId);
 
@@ -179,21 +184,18 @@ const LsProtocolsTable: FC = () => {
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
+    onExpandedChange: setExpanded,
     state: {
       sorting,
-      // Expand the first row by default.
-      expanded: { 0: true },
+      expanded,
     },
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
 
-  const onRowClick = useCallback(
-    (row: Row<LsProtocolRow>) => {
-      table.setExpanded({ [row.id]: !row.getIsExpanded() });
-    },
-    [table],
-  );
+  const onRowClick = useCallback((row: Row<LsProtocolRow>) => {
+    row.toggleExpanded();
+  }, []);
 
   return (
     <Table
