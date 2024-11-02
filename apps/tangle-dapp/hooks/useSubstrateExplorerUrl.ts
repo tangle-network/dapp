@@ -1,5 +1,6 @@
 import {
   ExplorerVariant,
+  isPolkadotJsDashboard,
   makeExplorerUrl,
 } from '@webb-tools/api-provider-environment/transaction/utils';
 import { useCallback } from 'react';
@@ -7,7 +8,6 @@ import { Hash } from 'viem';
 
 import useNetworkStore from '../context/useNetworkStore';
 import { ExplorerType } from '../types';
-import { isPolkadotJsDashboard } from '../../../libs/api-provider-environment/src/transaction/utils/makeExplorerUrl';
 
 const useSubstrateExplorerUrl = () => {
   const { network } = useNetworkStore();
@@ -46,7 +46,7 @@ const useSubstrateExplorerUrl = () => {
         ? getExplorerUrl(txBlockHash, 'block')
         : getExplorerUrl(txHash, 'tx');
     },
-    [],
+    [getExplorerUrl, network.nativeExplorerUrl, network.polkadotJsDashboardUrl],
   );
 
   return { getExplorerUrl, resolveExplorerUrl };
