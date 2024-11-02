@@ -1,3 +1,4 @@
+import { ExternalLinkLine } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import capitalize from 'lodash/capitalize';
 import { useSnackbar } from 'notistack';
@@ -52,7 +53,7 @@ const useTxNotification = () => {
   const { isEvm: isEvmActiveAccount } = useAgnosticAccountInfo();
 
   const notifySuccess = useCallback(
-    (txName: TxName, explorerUrl: string, successMessage?: string | null) => {
+    (txName: TxName, explorerUrl?: string, successMessage?: string | null) => {
       closeSnackbar(makeKey(txName));
 
       // TODO: Finish handling EVM accounts case.
@@ -63,7 +64,10 @@ const useTxNotification = () => {
       // this allows the user to still see the success message if
       // for example, they disconnect their account while the
       // transaction is still processing.
-      const finalExplorerUrl = isEvmActiveAccount === null ? null : explorerUrl;
+      const finalExplorerUrl =
+        explorerUrl === undefined || isEvmActiveAccount === null
+          ? null
+          : explorerUrl;
 
       // Currently using SnackbarProvider for managing NotificationStacked
       // For one-off configurations, must use enqueueSnackbar.
@@ -82,6 +86,9 @@ const useTxNotification = () => {
               href={finalExplorerUrl.toString()}
               target="_blank"
               rel="noopener noreferrer"
+              rightIcon={
+                <ExternalLinkLine className="fill-current dark:fill-current" />
+              }
             >
               View Explorer
             </Button>
