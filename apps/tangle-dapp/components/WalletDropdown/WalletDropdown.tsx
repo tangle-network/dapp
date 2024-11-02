@@ -23,7 +23,7 @@ import {
 import { FC, useCallback, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import useExplorerUrl from '../../hooks/useExplorerUrl';
+import useSubstrateExplorerUrl from '../../hooks/useSubstrateExplorerUrl';
 
 export const WalletDropdown: FC<{
   accountName?: string;
@@ -31,23 +31,16 @@ export const WalletDropdown: FC<{
   wallet: WalletConfig;
 }> = ({ accountAddress, accountName, wallet }) => {
   const { inactivateApi } = useWebContext();
-  const getExplorerUrl = useExplorerUrl();
-
+  const { getExplorerUrl } = useSubstrateExplorerUrl();
   const { notificationApi } = useWebbUI();
-
-  // Get all managed wallets
   const { wallets } = useWallets();
 
   const currentManagedWallet = useMemo<ManagedWallet | undefined>(() => {
-    return wallets.find((w) => w.connected);
+    return wallets.find((wallet) => wallet.connected);
   }, [wallets]);
 
-  const accountExplorerUrl = useMemo(
-    () => getExplorerUrl(accountAddress, 'address'),
-    [getExplorerUrl, accountAddress],
-  );
+  const accountExplorerUrl = getExplorerUrl(accountAddress, 'address');
 
-  // Disconnect function
   const handleDisconnect = useCallback(async () => {
     try {
       if (currentManagedWallet && currentManagedWallet.canEndSession) {
@@ -85,7 +78,7 @@ export const WalletDropdown: FC<{
 
             <div>
               <Typography variant="h5" fw="bold" className="capitalize">
-                {accountName || wallet.name}
+                {accountName ?? wallet.name}
               </Typography>
 
               <div className="flex items-center space-x-1">
@@ -99,7 +92,7 @@ export const WalletDropdown: FC<{
                   displayCharCount={5}
                 />
 
-                {accountExplorerUrl && (
+                {accountExplorerUrl !== null && (
                   <ExternalLinkIcon href={accountExplorerUrl.toString()} />
                 )}
               </div>
@@ -111,7 +104,10 @@ export const WalletDropdown: FC<{
             <Button
               onClick={handleDisconnect}
               leftIcon={
-                <LoginBoxLineIcon className="!fill-current" size="lg" />
+                <LoginBoxLineIcon
+                  className="fill-current dark:fill-current"
+                  size="lg"
+                />
               }
               variant="link"
             >
@@ -130,9 +126,8 @@ const SwitchAccountButton: FC = () => {
 
   const { notificationApi } = useWebbUI();
 
-  // Function to switch account within the connected wallet
   const handleSwitchAccount = useCallback(async () => {
-    // Switch account only support on web3 provider
+    // Switch account only support on web3 provider.
     if (!activeApi) {
       return;
     }
@@ -172,7 +167,12 @@ const SwitchAccountButton: FC = () => {
     <Dropdown>
       <DropdownTrigger asChild>
         <Button
-          leftIcon={<WalletLineIcon className="!fill-current" size="lg" />}
+          leftIcon={
+            <WalletLineIcon
+              className="fill-current dark:fill-current"
+              size="lg"
+            />
+          }
           variant="link"
         >
           Switch
@@ -180,19 +180,17 @@ const SwitchAccountButton: FC = () => {
       </DropdownTrigger>
 
       <AccountDropdownBody
+        addressShortenFn={shortenString}
+        className="mt-2"
         accountItems={accounts.map((item) => {
           return {
             // Attempt to re-encode the address to match the active network's
             // SS58 prefix, if it's available.
             address: encodeAddress(item.address, network.ss58Prefix),
             name: item.name,
-            onClick: () => {
-              setActiveAccount(item);
-            },
+            onClick: () => setActiveAccount(item),
           };
         })}
-        addressShortenFn={shortenString}
-        className="mt-2"
       />
     </Dropdown>
   );

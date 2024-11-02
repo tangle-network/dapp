@@ -23,7 +23,6 @@ import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeC
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
 import OnboardingItem from '../../components/OnboardingModal/OnboardingItem';
 import OnboardingModal from '../../components/OnboardingModal/OnboardingModal';
-import StatItem from '../../components/StatItem';
 import { OnboardingPageKey } from '../../constants';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
 import LsCreatePoolModal from '../../containers/LsCreatePoolModal';
@@ -31,6 +30,7 @@ import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
 import { LsProtocolsTable } from '../../containers/LsPoolsTable';
 import useNetworkStore from '../../context/useNetworkStore';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
+import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
 import useSearchParamState from '../../hooks/useSearchParamState';
 import getLsTangleNetwork from '../../utils/liquidStaking/getLsTangleNetwork';
@@ -62,6 +62,7 @@ const LiquidStakingPage: FC = () => {
     isStaking: isStakingInStore,
   } = useLsStore();
 
+  const isAccountConnected = useIsAccountConnected();
   const { network } = useNetworkStore();
   const { switchNetwork } = useNetworkSwitcher();
   const [isCreatePoolModalOpen, setIsCreatePoolModalOpen] = useState(false);
@@ -149,9 +150,10 @@ const LiquidStakingPage: FC = () => {
             </Typography>
           </div>
 
-          <div className="flex gap-6 h-full">
+          {/** TODO: Waiting for price fetching API before showing this part. */}
+          {/* <div className="flex gap-6 h-full">
             <StatItem title="$123.01" subtitle="My Total Staking" />
-          </div>
+          </div> */}
         </div>
 
         <div className="flex flex-col self-center gap-4 w-full min-w-[450px] max-w-[532px]">
@@ -205,6 +207,7 @@ const LiquidStakingPage: FC = () => {
               onClick={() => setIsCreatePoolModalOpen(true)}
               variant="utility"
               size="sm"
+              isDisabled={!isAccountConnected}
               rightIcon={
                 <AddLineIcon className="fill-current dark:fill-current" />
               }

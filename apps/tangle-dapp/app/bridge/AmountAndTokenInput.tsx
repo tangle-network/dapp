@@ -1,5 +1,6 @@
 'use client';
 
+import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { Modal, ModalContent, useModal } from '@webb-tools/webb-ui-components';
 import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/buttons/ChainOrTokenButton';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
@@ -12,7 +13,6 @@ import AmountInput from '../../components/AmountInput';
 import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
 import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
 import { useBridge } from '../../context/BridgeContext';
-import useExplorerUrl from '../../hooks/useExplorerUrl';
 import { BridgeTokenId } from '../../types/bridge';
 import convertDecimalToBn from '../../utils/convertDecimalToBn';
 import useBalance from './hooks/useBalance';
@@ -31,12 +31,11 @@ const AmountAndTokenInput: FC = () => {
     isAmountInputError,
     selectedSourceChain,
   } = useBridge();
+
   const selectedToken = useSelectedToken();
   const { balance, isLoading } = useBalance();
   const decimals = useDecimals();
   const { sourceTypedChainId } = useTypedChainId();
-
-  const getExplorerUrl = useExplorerUrl();
 
   const minAmount = useMemo(() => {
     const existentialDeposit =
@@ -85,17 +84,24 @@ const AmountAndTokenInput: FC = () => {
   const assets: AssetConfig[] = useMemo(() => {
     return tokenIdOptions.map((tokenId) => {
       const token = BRIDGE_SUPPORTED_TOKENS[tokenId];
+
       const erc20TokenContractAddress =
         token.erc20TokenContractAddress?.[sourceTypedChainId];
+
       const selectedChainExplorerUrl =
         selectedSourceChain.blockExplorers?.default;
-      const explorerUrl = getExplorerUrl(
-        erc20TokenContractAddress ?? '0x0',
-        'address',
-        'web3',
-        selectedChainExplorerUrl?.url,
-        false,
-      );
+
+      const explorerUrl =
+        selectedChainExplorerUrl === undefined ||
+        erc20TokenContractAddress === undefined
+          ? undefined
+          : makeExplorerUrl(
+              selectedChainExplorerUrl.url,
+              erc20TokenContractAddress,
+              'address',
+              'web3',
+            );
+
       return {
         symbol: token.symbol,
         balance: tokenBalances[tokenId] ?? new Decimal(0),
@@ -106,7 +112,6 @@ const AmountAndTokenInput: FC = () => {
     tokenIdOptions,
     sourceTypedChainId,
     selectedSourceChain.blockExplorers?.default,
-    getExplorerUrl,
     tokenBalances,
   ]);
 

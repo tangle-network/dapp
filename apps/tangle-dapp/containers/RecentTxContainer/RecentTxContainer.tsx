@@ -1,6 +1,6 @@
 'use client';
 
-import { getExplorerURI } from '@webb-tools/api-provider-environment/transaction/utils';
+import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC, useMemo } from 'react';
@@ -29,7 +29,7 @@ const RecentTxContainer: FC = () => {
 
   const accountExplorerUrl = useMemo(() => {
     return activeAccountAddress && explorerUrl
-      ? getExplorerURI(
+      ? makeExplorerUrl(
           explorerUrl,
           activeAccountAddress,
           'address',

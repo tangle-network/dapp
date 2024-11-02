@@ -1,7 +1,10 @@
 import { TESTNET_LEADERBOARD_URL } from '@webb-tools/webb-ui-components/constants';
 import type { FAQItem } from '@webb-tools/webb-ui-components/containers/FAQSection';
+
 const EDGEWARE_URL = 'https://www.edgeware.io/';
-const ALLOCATION_DOC = 'https://docs.tangle.tools/docs/tokenomics/allocation/';
+
+const ALLOCATION_DOCS_URL =
+  'https://docs.tangle.tools/network/tokenomics/allocation';
 
 const FAQ = [
   {
@@ -25,7 +28,7 @@ const FAQ = [
         {
           ' genesis or 2023 snapshot participant, you are also eligible to qualify for the airdrop. DOT Validators are also eligible from a March 2024 snapshot. For the full details on the allocation, '
         }
-        <a href={ALLOCATION_DOC} target="_blank" rel="noopener noreferrer">
+        <a href={ALLOCATION_DOCS_URL} target="_blank" rel="noopener noreferrer">
           see our documentation.
         </a>
       </>
@@ -56,7 +59,7 @@ const FAQ = [
         {
           ' 2023 Snapshot participants. For the full details on the allocation, '
         }
-        <a href={ALLOCATION_DOC} target="_blank" rel="noopener noreferrer">
+        <a href={ALLOCATION_DOCS_URL} target="_blank" rel="noopener noreferrer">
           see our documentation.
         </a>
       </>
@@ -69,7 +72,7 @@ const FAQ = [
         {
           'Upon claiming, 5% of your airdropped TNT tokens will be immediately liquid. The remaining 95% will be locked for 2 years with a 1-month cliff, after which tokens will vest linearly on a monthly basis.\n\nThis means participants will receive a portion of their vested tokens each month until the full amount has been distributed over the two-year period. For the full details on the allocation, '
         }
-        <a href={ALLOCATION_DOC} target="_blank" rel="noopener noreferrer">
+        <a href={ALLOCATION_DOCS_URL} target="_blank" rel="noopener noreferrer">
           see our documentation.
         </a>
       </>

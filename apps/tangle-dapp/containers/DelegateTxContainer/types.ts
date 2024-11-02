@@ -13,7 +13,6 @@ export type DelegateTxContainerProps = {
 
 export type BondTokensProps = {
   isBondedOrNominating: boolean;
-  nominatorAddress: string;
   amountToBondError?: string;
   payeeOptions: StakingRewardsDestinationDisplayText[];
   payee: StakingRewardsDestination;

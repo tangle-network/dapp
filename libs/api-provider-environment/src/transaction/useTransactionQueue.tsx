@@ -20,7 +20,7 @@ import {
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BehaviorSubject } from 'rxjs';
-import { getExplorerURI } from './utils';
+import { makeExplorerUrl } from './utils';
 
 export function transactionItemStatusFromTxStatus(
   txStatus: TransactionState,
@@ -70,7 +70,7 @@ function mapTxToPayload(
     currentStep,
     amount: getRoundedAmountString(amount),
     getExplorerURI: (addOrTxHash: string, variant: 'tx' | 'address') =>
-      getExplorerURI(
+      makeExplorerUrl(
         explorerUri,
         addOrTxHash,
         variant,
