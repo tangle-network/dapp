@@ -244,7 +244,7 @@ const EligibleSection: FC<Props> = ({
               </Typography>
 
               {/* Vesting: based on Tangle Genesis Allocations */}
-              {/* https://docs.tangle.tools/docs/tokenomics/allocation/ */}
+              {/* https://docs.tangle.tools/network/tokenomics/allocation */}
               <Typography variant="body1" fw="bold" ta="center">
                 {`${formatTangleBalance(vestingAmount, nativeTokenSymbol)}`}{' '}
                 will be vested over 24 months with a 1 month cliff.
