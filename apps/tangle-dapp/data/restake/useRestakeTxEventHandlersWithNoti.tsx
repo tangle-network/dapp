@@ -49,7 +49,7 @@ export default function useRestakeTxEventHandlersWithNoti<
   Context extends Record<string, unknown>,
 >({ options = {}, ...props }: Props<Context> = {}) {
   const { notificationApi } = useWebbUI();
-  const { resolveExplorerUrl: resoleExplorerUrl } = useSubstrateExplorerUrl();
+  const { resolveExplorerUrl } = useSubstrateExplorerUrl();
 
   return useMemo<TxEventHandlers<Context>>(
     () => ({
@@ -69,7 +69,7 @@ export default function useRestakeTxEventHandlersWithNoti<
       },
       onTxInBlock: (txHash, blockHash, context) => {
         const key = TxEvent.IN_BLOCK;
-        const url = resoleExplorerUrl(txHash, blockHash);
+        const url = resolveExplorerUrl(txHash, blockHash);
 
         notificationApi.remove(TxEvent.SENDING);
 
@@ -87,7 +87,7 @@ export default function useRestakeTxEventHandlersWithNoti<
       },
       onTxSuccess: (txHash, blockHash, context) => {
         const key = TxEvent.SUCCESS;
-        const url = resoleExplorerUrl(txHash, blockHash);
+        const url = resolveExplorerUrl(txHash, blockHash);
 
         notificationApi.remove(TxEvent.SENDING);
         notificationApi.remove(TxEvent.IN_BLOCK);
@@ -128,6 +128,6 @@ export default function useRestakeTxEventHandlersWithNoti<
         props?.onTxFailed?.(error, context);
       },
     }),
-    [notificationApi, options, props, resoleExplorerUrl],
+    [notificationApi, options, props, resolveExplorerUrl],
   );
 }
