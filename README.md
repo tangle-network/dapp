@@ -56,7 +56,6 @@ Great! Now your **Node** environment is ready!
 <h2 id="apps"> Applications </h2>
 
 - [tangle-dapp](./apps/tangle-dapp/README.md): the central hub to managing Tangle Network assets and MPC (Multi-Party Computation) services.
-- [bridge-dapp](./apps/bridge-dapp/README.md): an interface for interacting and bridging assets cross-chain using Webb's Asset Protocol.
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 

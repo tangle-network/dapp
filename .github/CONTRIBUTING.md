@@ -58,11 +58,11 @@ This repository adheres to the [Conventional Commits](https://www.conventionalco
 
 * All rules from [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 * Commit body is disabled completely: Since it has not been used in this repository, it is disabled to avoid confusion and maintain consistency.
-* Scope should be one of the following: `bridge-dapp`, `tangle-dapp`, `testnet-leaderboard`, `webb-ui`, `icons`, `tools`.
+* Scope should be one of the following: `tangle-dapp`, `testnet-leaderboard`, `webb-ui`, `icons`, `tools`.
 
 Here are some examples to follow:
 
-* `feat(bridge-dapp): Fixed a certain bug (#123)`
+* `feat(tangle-dapp): Fixed a certain bug (#123)`
 * `docs: Added documentation for commit message guidelines`
 * `chore: Bump X dependency to latest version`
 

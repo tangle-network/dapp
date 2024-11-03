@@ -11,7 +11,6 @@ module.exports = {
       'always',
       [
         'repo',
-        'bridge-dapp',
         'tangle-dapp',
         'tangle-cloud',
         'testnet-leaderboard',

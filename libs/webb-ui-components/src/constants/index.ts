@@ -12,12 +12,7 @@ import {
   YouTubeFill,
 } from '@webb-tools/icons';
 import type { IconBase } from '@webb-tools/icons/types';
-import type {
-  ExternalLink,
-  FooterNavsType,
-  Link,
-  SocialConfigsType,
-} from '../types';
+import type { FooterNavsType, Link, SocialConfigsType } from '../types';
 
 /** TODO: Determine the best way to put thess configs to share across the project */
 const commonExternalProps = {
@@ -137,19 +132,7 @@ export const WEBB_DOC_ROUTES_RECORD = {
       },
     },
   },
-  projects: {
-    'hubble-bridge': {
-      overview: '/docs/projects/hubble-bridge/overview',
-      'usage-guide': {
-        route: '/docs/projects/hubble-bridge/usage-guide',
-        account: '/docs/projects/hubble-bridge/usage-guide/account',
-        transfer: {
-          '#6-input-recipient-shielded-address':
-            '/docs/projects/hubble-bridge/usage-guide/transfer#6-input-recipient-shielded-address',
-        },
-      },
-    },
-  },
+  projects: {},
   'ecosystem-roles': {
     relayer: {
       'running-relayer': {
@@ -214,12 +197,6 @@ export const SOCIAL_ICONS_RECORD = {
 export const tangleLogoConfig: Link = {
   name: 'Tangle Logo',
   path: TANGLE_MKT_URL,
-};
-
-export const webbAppConfig: ExternalLink = {
-  name: 'Hubble Bridge',
-  href: BRIDGE_URL,
-  ...commonExternalProps,
 };
 
 export const headerNavs: Link[] = [
