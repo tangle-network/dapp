@@ -4,6 +4,9 @@ import { dirname, join } from 'node:path';
 
 export default {
   stories: [],
+  core: {
+    disableTelemetry: true,
+  },
   addons: [
     getAbsolutePath('@storybook/addon-actions'),
     getAbsolutePath('@storybook/addon-essentials'),

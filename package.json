@@ -11,7 +11,6 @@
     "commit": "commit",
     "start": "nx run-many --all --target=serve",
     "build": "nx run-many --all --target=build",
-    "test": "nx run-many --all --target=test",
     "lint": "nx run-many --all --target=lint",
     "fetch:onChainConfig": "tsx --tsconfig ./tools/tsconfig.json --no-warnings ./tools/scripts/fetchingOnChainConfig.ts",
     "setup:multiAssetDelegationPallet": "tsx --tsconfig ./tools/tsconfig.json --no-warnings ./tools/scripts/setupMultiAssetDelegationPallet.ts",
@@ -128,6 +127,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
+    "@babel/preset-react": "7.25.9",
     "@chromatic-com/storybook": "^1.9.0",
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
@@ -153,6 +153,7 @@
     "@storybook/channels": "^8.3.6",
     "@storybook/components": "^8.3.6",
     "@storybook/core-events": "^8.3.6",
+    "@storybook/core-server": "^8.3.6",
     "@storybook/manager-api": "^8.3.6",
     "@storybook/nextjs": "^8.3.6",
     "@storybook/preview-api": "^8.3.6",
