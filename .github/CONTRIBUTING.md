@@ -58,7 +58,7 @@ This repository adheres to the [Conventional Commits](https://www.conventionalco
 
 * All rules from [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 * Commit body is disabled completely: Since it has not been used in this repository, it is disabled to avoid confusion and maintain consistency.
-* Scope should be one of the following: `bridge-dapp`, `faucet`, `hubble-stats`, `stats-dapp`, `tangle-dapp`, `testnet-leaderboard`, `zk-explorer`, `webb-ui`, `icons`, `tools`.
+* Scope should be one of the following: `bridge-dapp`, `hubble-stats`, `stats-dapp`, `tangle-dapp`, `testnet-leaderboard`, `zk-explorer`, `webb-ui`, `icons`, `tools`.
 
 Here are some examples to follow:
 

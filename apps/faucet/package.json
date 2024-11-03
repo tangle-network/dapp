@@ -1,7 +1,0 @@
-{
-  "name": "@webb-tools/faucet",
-  "version": "0.0.13",
-  "license": "Apache-2.0",
-  "description": "Official Webb Faucet",
-  "type": "module"
-}

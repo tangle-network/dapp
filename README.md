@@ -57,7 +57,6 @@ Great! Now your **Node** environment is ready!
 
 - [tangle-dapp](./apps/tangle-dapp/README.md): the central hub to managing Tangle Network assets and MPC (Multi-Party Computation) services.
 - [bridge-dapp](./apps/bridge-dapp/README.md): an interface for interacting and bridging assets cross-chain using Webb's Asset Protocol.
-- [faucet](./apps/faucet/README.md): an interface for requesting cryptocurrencies (assets) on the Webb Protocol System.
 - [hubble-stats](./apps/hubble-stats/README.md): an interface for displaying statistical data of the Cross-chain Bridging System.
 - [stats-dapp](./apps/stats-dapp/README.md): an interface for displaying statistical data of Webb's Tangle Network (DKG system).
 - [zk-explorer](./apps/zk-explorer/README.md): a platform for discovering and learning about zero-knowledge proof projects and circuits, featuring detailed project insights, filtering options, and more.

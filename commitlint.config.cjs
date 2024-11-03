@@ -12,7 +12,6 @@ module.exports = {
       [
         'repo',
         'bridge-dapp',
-        'faucet',
         'hubble-stats',
         'stats-dapp',
         'tangle-dapp',
