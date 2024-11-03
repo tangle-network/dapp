@@ -133,9 +133,7 @@ yarn format
 yarn build
 ```
 
-Additionally, to ensure commit message consistency, this repository uses [commitlint](https://commitlint.js.org/#/) and [husky](https://typicode.github.io/husky/#/). Please refer to the [Commit Message Guidelines](./.github/CONTRIBUTING.md#commit-message-guidelines) for more information.
-
-Without proper linting, formatting, or commit message, husky will prevent you from either committing or pushing your changes.
+Additionally, to ensure commit message consistency, this repository uses [commitlint](https://commitlint.js.org/#/). Please refer to the [Commit Message Guidelines](./.github/CONTRIBUTING.md#commit-message-guidelines) for more information.
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
