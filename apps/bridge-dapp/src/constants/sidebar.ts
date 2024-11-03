@@ -8,7 +8,6 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { Logo } from '@webb-tools/webb-ui-components/components/Logo';
 import {
-  HUBBLE_STATS_URL,
   TANGLE_MKT_URL,
   WEBB_DOCS_URL,
   WEBB_FAUCET_URL,
@@ -32,11 +31,6 @@ const items: SideBarItemProps[] = [
         name: 'Wrapper',
         isInternal: true,
         href: `/${WRAPPER_PATH}`,
-      },
-      {
-        name: 'Explorer',
-        isInternal: false,
-        href: HUBBLE_STATS_URL,
       },
       {
         name: 'Faucet',
