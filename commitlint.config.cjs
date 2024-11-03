@@ -17,7 +17,6 @@ module.exports = {
         'tangle-dapp',
         'tangle-cloud',
         'testnet-leaderboard',
-        'zk-explorer',
         'webb-ui',
         'icons',
         'tools',
