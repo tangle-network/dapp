@@ -1,19 +1,19 @@
 'use client';
 
-import type { HexString } from '@polkadot/util/types';
 import { ExternalLinkLine, ShieldedCheckLineIcon } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { type FC } from 'react';
+import { Hash } from 'viem';
 
-import useExplorerUrl from '../../../hooks/useExplorerUrl';
-import { ExplorerType } from '../../../types';
+import useSubstrateExplorerUrl from '../../../hooks/useSubstrateExplorerUrl';
 
-const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
-  const getExplorerUrl = useExplorerUrl();
-  const txExplorerUrl = getExplorerUrl(blockHash, 'tx', ExplorerType.Substrate);
+const SuccessClient: FC<{ blockHash: Hash }> = ({ blockHash }) => {
+  const { getExplorerUrl } = useSubstrateExplorerUrl();
+
+  const txExplorerUrl = getExplorerUrl(blockHash, 'block');
 
   return (
     <AppTemplate.Content>
@@ -35,8 +35,8 @@ const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
 
           <Typography variant="body1" ta="center">
             You have successfully claimed TNT airdrop! Your transaction has been
-            confirmed on the Tangle Network. You can view your transaction on
-            the explorer below.
+            confirmed on the Tangle network. View transaction details on the
+            explorer link below.
           </Typography>
 
           {txExplorerUrl ? (
@@ -46,9 +46,11 @@ const SuccessClient: FC<{ blockHash: HexString }> = ({ blockHash }) => {
               size="sm"
               variant="link"
               className="mx-auto"
-              rightIcon={<ExternalLinkLine className="!fill-current" />}
+              rightIcon={
+                <ExternalLinkLine className="fill-current dark:fill-current" />
+              }
             >
-              Open Explorer
+              View Explorer
             </Button>
           ) : blockHash ? (
             <KeyValueWithButton

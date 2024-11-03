@@ -174,8 +174,6 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
           {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
             <BondTokens
               isBondedOrNominating={isBondedOrNominating}
-              // TODO: Don't default to a random address in order to satisfy to the type system. Handle the `null` case explicitly.
-              nominatorAddress={activeAccountAddress ?? '0x0'}
               amountToBond={amountToBond}
               setAmountToBond={setAmountToBond}
               payeeOptions={PAYEE_OPTIONS}

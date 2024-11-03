@@ -1,4 +1,8 @@
-import { forwardRef as reactForwardRef } from 'react';
+import {
+  ForwardRefRenderFunction,
+  PropsWithoutRef,
+  forwardRef as reactForwardRef,
+} from 'react';
 
 /**
  * The React forwardRef function not working well with
@@ -7,5 +11,7 @@ import { forwardRef as reactForwardRef } from 'react';
 export default function forwardRef<T, P = Record<string, never>>(
   render: (props: P, ref: React.Ref<T>) => React.ReactNode,
 ): (props: P & React.RefAttributes<T>) => React.ReactNode {
-  return reactForwardRef(render) as any;
+  return reactForwardRef(
+    render as ForwardRefRenderFunction<T, PropsWithoutRef<P>>,
+  ) as any;
 }

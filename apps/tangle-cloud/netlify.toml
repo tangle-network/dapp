@@ -1,0 +1,3 @@
+[build]
+command = "yarn nx build tangle-cloud"
+publish = "./dist/apps/tangle-cloud/.next"

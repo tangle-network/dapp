@@ -7,7 +7,7 @@ import { FC } from 'react';
 
 export type StatItemProps = {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   tooltip?: string;
   removeBorder?: boolean;
 };
@@ -28,16 +28,18 @@ const StatItem: FC<StatItemProps> = ({
         {title}
       </Typography>
 
-      <div className="flex gap-1 items-start justify-start">
-        <Typography
-          variant="body2"
-          className="text-mono-120 dark:text-mono-100"
-        >
-          {subtitle}
-        </Typography>
+      {subtitle !== undefined && (
+        <div className="flex gap-1 items-start justify-start">
+          <Typography
+            variant="body2"
+            className="text-mono-120 dark:text-mono-100"
+          >
+            {subtitle}
+          </Typography>
 
-        {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
-      </div>
+          {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
+        </div>
+      )}
     </div>
   );
 };

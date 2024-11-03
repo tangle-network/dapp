@@ -190,6 +190,13 @@ const LsStakeCard: FC = () => {
     setFromAmount(null);
   }, [setFromAmount, lsNetworkId]);
 
+  // Reset the input amount when the transaction is processed.
+  useEffect(() => {
+    if (tanglePoolJoinTxStatus === TxStatus.COMPLETE) {
+      setFromAmount(null);
+    }
+  }, [setFromAmount, tanglePoolJoinTxStatus]);
+
   // On mount, set the focus on the from input.
   useEffect(() => {
     if (fromLsInputRef.current !== null) {

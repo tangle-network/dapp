@@ -46,7 +46,6 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     isNext: true,
     Icon: ShuffleLine,
     subItems: [],
-    environments: ['development', 'staging', 'test'],
   },
   {
     name: 'Blueprints',
@@ -76,7 +75,6 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
   {
     name: 'Liquid Stake',
     href: PagePath.LIQUID_STAKING,
-    environments: ['development', 'staging', 'test'],
     isInternal: true,
     isNext: true,
     Icon: WaterDropletIcon,

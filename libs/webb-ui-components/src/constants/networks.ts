@@ -19,6 +19,7 @@ import {
 } from '@webb-tools/dapp-config/constants/tangle';
 
 import { SUBQUERY_ENDPOINT } from './index';
+import getPolkadotJsDashboardUrl from '@webb-tools/dapp-config/utils/getPolkadotJsDashboardUrl';
 
 export type NetworkNodeType = 'parachain' | 'standalone';
 
@@ -115,7 +116,7 @@ export const TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK = {
   nodeType: 'parachain',
   tokenSymbol: 'TNT',
   wsRpcEndpoint: 'ws://localhost:30337',
-  polkadotJsDashboardUrl: 'https://polkadot.js.org/apps/',
+  polkadotJsDashboardUrl: getPolkadotJsDashboardUrl('ws://localhost:30337'),
 } as const satisfies Network;
 
 export const TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK = {
@@ -124,7 +125,9 @@ export const TANGLE_RESTAKING_PARACHAIN_TESTNET_NETWORK = {
   nodeType: 'parachain',
   tokenSymbol: 'tTNT',
   wsRpcEndpoint: 'wss://testnet-parachain.tangle.tools',
-  polkadotJsDashboardUrl: 'https://polkadot.js.org/apps/',
+  polkadotJsDashboardUrl: getPolkadotJsDashboardUrl(
+    'wss://testnet-parachain.tangle.tools',
+  ),
 } as const satisfies Network;
 
 export const NETWORK_MAP: Partial<Record<NetworkId, Network>> = {

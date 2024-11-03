@@ -70,9 +70,9 @@ async function publishRelease(releaseInfo) {
     headers: {
       authorization: `token ${process.env.REPO_TOKEN}`,
     },
-    owner: 'webb-tools',
+    owner: 'tangle-network',
     name: `[${version}] ${repoName}`,
-    repo: 'webb-dapp',
+    repo: 'dapp',
     tag_name: `${packageName[1]}/${version}`,
     body: releaseInfo,
   }).catch((err) => {

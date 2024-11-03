@@ -68,7 +68,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
         <p className="body1 text-mono-160 dark:text-mono-100">
           {totalItems === 0
             ? 'No items'
-            : `Showing ${showingItemsCount} ${title ?? ''} out of ${totalItems ?? '-'}`}
+            : `Showing ${showingItemsCount} ${title ?? ''}out of ${totalItems ?? '-'}`}
         </p>
 
         {/** Right buttons */}

@@ -1,10 +1,10 @@
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
-import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
+import { Hash } from 'viem';
 
 import { TxName } from '../constants';
 import useNetworkStore from '../context/useNetworkStore';
@@ -16,6 +16,7 @@ import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useIsMountedRef from './useIsMountedRef';
 import useSubstrateAddress from './useSubstrateAddress';
+import useSubstrateExplorerUrl from './useSubstrateExplorerUrl';
 import useSubstrateInjectedExtension from './useSubstrateInjectedExtension';
 import useTxNotification from './useTxNotification';
 
@@ -40,7 +41,8 @@ function useSubstrateTx<Context = void>(
   overrideRpcEndpoint?: string,
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
-  const [txHash, setTxHash] = useState<HexString | null>(null);
+  const [txHash, setTxHash] = useState<Hash | null>(null);
+  const [txBlockHash, setTxBlockHash] = useState<Hash | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -82,7 +84,6 @@ function useSubstrateTx<Context = void>(
 
       const api = await getApiPromise(overrideRpcEndpoint ?? rpcEndpoint);
       let tx: SubmittableExtrinsic<'promise', ISubmittableResult> | null;
-      let newTxHash: HexString;
 
       // TODO: Consider resetting state here, before executing the tx. Or is it fine to keep the old state?
 
@@ -97,6 +98,7 @@ function useSubstrateTx<Context = void>(
         setError(error);
         setStatus(TxStatus.ERROR);
         setTxHash(null);
+        setTxBlockHash(null);
 
         return;
       }
@@ -116,6 +118,7 @@ function useSubstrateTx<Context = void>(
       // Reset the status and error, and begin the transaction.
       setError(null);
       setTxHash(null);
+      setTxBlockHash(null);
       setStatus(TxStatus.PROCESSING);
 
       const handleStatusUpdate = (status: ISubmittableResult) => {
@@ -126,8 +129,8 @@ function useSubstrateTx<Context = void>(
           return;
         }
 
-        newTxHash = status.txHash.toHex();
-        setTxHash(newTxHash);
+        setTxHash(status.txHash.toHex());
+        setTxBlockHash(status.status.asInBlock.toHex());
 
         const error = extractErrorFromTxStatus(status);
 
@@ -173,8 +176,9 @@ function useSubstrateTx<Context = void>(
   const reset = useCallback(() => {
     setStatus(TxStatus.NOT_YET_INITIATED);
     setTxHash(null);
+    setTxBlockHash(null);
     setError(null);
-  }, [setStatus, setTxHash, setError]);
+  }, [setStatus, setTxHash, setTxBlockHash, setError]);
 
   // Timeout the transaction if it's taking too long. This
   // won't cancel it, but it will alert the user that something
@@ -204,6 +208,7 @@ function useSubstrateTx<Context = void>(
     status,
     error,
     txHash,
+    txBlockHash,
     successMessage,
   };
 }
@@ -216,7 +221,10 @@ export function useSubstrateTxWithNotification<Context = void>(
   getSuccessMessageFnc?: GetSuccessMessageFunction<Context>,
   overrideRpcEndpoint?: string,
 ) {
+  const { resolveExplorerUrl } = useSubstrateExplorerUrl();
   const activeAccountAddress = useActiveAccountAddress();
+
+  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 
   const {
     execute: execute_,
@@ -224,6 +232,7 @@ export function useSubstrateTxWithNotification<Context = void>(
     status,
     error,
     txHash,
+    txBlockHash,
     successMessage,
   } = useSubstrateTx(
     factory,
@@ -231,8 +240,6 @@ export function useSubstrateTxWithNotification<Context = void>(
     undefined,
     overrideRpcEndpoint,
   );
-
-  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 
   const execute = useCallback(
     (context: Context) => {
@@ -254,6 +261,8 @@ export function useSubstrateTxWithNotification<Context = void>(
     }
   }, [activeAccountAddress, reset]);
 
+  // Automatically notify the user via a notification toast
+  // on the status of the transaction, when the status changes.
   useEffect(() => {
     if (
       status === TxStatus.NOT_YET_INITIATED ||
@@ -264,18 +273,13 @@ export function useSubstrateTxWithNotification<Context = void>(
 
     if (error !== null) {
       notifyError(txName, error);
-    } else if (txHash !== null) {
-      notifySuccess(txName, txHash, successMessage);
+    } else if (txHash !== null && txBlockHash !== null) {
+      const explorerUrl = resolveExplorerUrl(txHash, txBlockHash);
+
+      notifySuccess(txName, explorerUrl, successMessage);
     }
-  }, [
-    status,
-    error,
-    txHash,
-    notifyError,
-    notifySuccess,
-    successMessage,
-    txName,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   return {
     // Prevent the consumer from executing the transaction if

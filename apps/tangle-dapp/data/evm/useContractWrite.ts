@@ -1,5 +1,6 @@
 import { HexString } from '@polkadot/util/types';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import {
   calculateTypedChainId,
@@ -97,7 +98,18 @@ const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
         });
 
         if (txReceipt.status === 'success') {
-          notifySuccess(options.txName, txHash);
+          let explorerUrl: string | undefined = undefined;
+
+          if (activeChain?.blockExplorers?.default !== undefined) {
+            explorerUrl = makeExplorerUrl(
+              activeChain.blockExplorers.default.url,
+              txHash,
+              'tx',
+              'web3',
+            );
+          }
+
+          notifySuccess(options.txName, explorerUrl);
         } else {
           // TODO: Improve UX by at least providing a link to the transaction hash. The idea is that if there was an error, it would have been caught by the try-catch, so this part here is sort of an 'unreachable' section.
           notifyError(

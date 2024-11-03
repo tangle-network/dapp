@@ -1,0 +1,57 @@
+{
+  "name": "tangle-cloud",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/tangle-cloud",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/tangle-cloud"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/tangle-cloud"
+        },
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "tangle-cloud:build",
+        "dev": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "tangle-cloud:build:development",
+          "dev": true
+        },
+        "production": {
+          "buildTarget": "tangle-cloud:build:production",
+          "dev": false
+        }
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "tangle-cloud:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/tangle-cloud/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

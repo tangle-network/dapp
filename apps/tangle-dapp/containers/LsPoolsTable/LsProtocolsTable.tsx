@@ -3,6 +3,7 @@
 import { BN } from '@polkadot/util';
 import {
   createColumnHelper,
+  ExpandedState,
   getCoreRowModel,
   getExpandedRowModel,
   getPaginationRowModel,
@@ -30,7 +31,7 @@ import LsPoolsTable from './LsPoolsTable';
 export type LsProtocolRow = {
   name: string;
   tvl: BN;
-  tvlInUsd: number;
+  tvlInUsd?: number;
   token: LsToken;
   pools: LsPool[];
   decimals: number;
@@ -71,11 +72,16 @@ const PROTOCOL_COLUMNS = [
         { includeCommas: true },
       );
 
+      const subtitle =
+        props.row.original.tvlInUsd === undefined
+          ? undefined
+          : `$${props.row.original.tvlInUsd}`;
+
       return (
         <TableCellWrapper>
           <StatItem
             title={`${formattedTvl} ${props.row.original.token}`}
-            subtitle={`$${props.row.original.tvlInUsd}`}
+            subtitle={subtitle}
             removeBorder
           />
         </TableCellWrapper>
@@ -91,7 +97,7 @@ const PROTOCOL_COLUMNS = [
         <TableCellWrapper removeRightBorder>
           <StatItem
             title={length.toString()}
-            subtitle={pluralize('Pool', length === 0 || length > 1)}
+            subtitle={pluralize('Pool', length !== 1)}
             removeBorder
           />
         </TableCellWrapper>
@@ -121,10 +127,14 @@ const PROTOCOL_COLUMNS = [
   }),
 ];
 
-// TODO: Have the first row be expanded by default.
 const LsProtocolsTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const { lsNetworkId } = useLsStore();
+
+  // Expand the first row by default.
+  const [expanded, setExpanded] = useState<ExpandedState>({
+    0: true,
+  });
 
   const lsNetwork = getLsNetwork(lsNetworkId);
 
@@ -160,7 +170,7 @@ const LsProtocolsTable: FC = () => {
           token: lsProtocol.token,
           pools: pools,
           // TODO: Calculate the USD value of the TVL.
-          tvlInUsd: 123.3456,
+          tvlInUsd: undefined,
           decimals: lsProtocol.decimals,
         }) satisfies LsProtocolRow,
     );
@@ -174,19 +184,18 @@ const LsProtocolsTable: FC = () => {
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
+    onExpandedChange: setExpanded,
     state: {
       sorting,
+      expanded,
     },
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
 
-  const onRowClick = useCallback(
-    (row: Row<LsProtocolRow>) => {
-      table.setExpanded({ [row.id]: !row.getIsExpanded() });
-    },
-    [table],
-  );
+  const onRowClick = useCallback((row: Row<LsProtocolRow>) => {
+    row.toggleExpanded();
+  }, []);
 
   return (
     <Table

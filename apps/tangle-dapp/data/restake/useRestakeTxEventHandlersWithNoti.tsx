@@ -1,15 +1,12 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { isPolkadotJsDashboard } from '@webb-tools/api-provider-environment/transaction/utils';
 import type { Evaluate } from '@webb-tools/dapp-types/utils/types';
 import Spinner from '@webb-tools/icons/Spinner';
 import { type SnackBarOpts } from '@webb-tools/webb-ui-components/components/Notification/NotificationContext';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import type React from 'react';
-import { useCallback, useMemo } from 'react';
-import type { Hash } from 'viem';
+import { useMemo } from 'react';
 
-import useExplorerUrl from '../../hooks/useExplorerUrl';
+import useSubstrateExplorerUrl from '../../hooks/useSubstrateExplorerUrl';
 import { TxEvent, type TxEventHandlers } from './RestakeTx/base';
 import ViewTxOnExplorer from './ViewTxOnExplorer';
 
@@ -51,35 +48,8 @@ const extractNotiOptions = <Context extends Record<string, unknown>>(
 export default function useRestakeTxEventHandlersWithNoti<
   Context extends Record<string, unknown>,
 >({ options = {}, ...props }: Props<Context> = {}) {
-  const { activeChain } = useWebContext();
   const { notificationApi } = useWebbUI();
-  const getExplorerUrl = useExplorerUrl();
-
-  const blockExplorer = useMemo(
-    () => activeChain?.blockExplorers?.default.url,
-    [activeChain?.blockExplorers?.default.url],
-  );
-
-  const getTxUrl = useCallback(
-    (txHash: Hash, blockHash: Hash, blockExplorer?: string) => {
-      // if the block explorer is the Polkadot Portal
-      // we use block hash instead of the tx hash.
-      // @see https://polkadot.js.org/docs/api/FAQ/#which-api-can-i-use-to-query-by-transaction-hash
-      if (isPolkadotJsDashboard(blockExplorer)) {
-        const url = getExplorerUrl(
-          blockHash,
-          'block',
-          undefined,
-          blockExplorer,
-          true,
-        );
-        return url;
-      }
-
-      return getExplorerUrl(txHash, 'tx', undefined, blockExplorer);
-    },
-    [getExplorerUrl],
-  );
+  const { resolveExplorerUrl } = useSubstrateExplorerUrl();
 
   return useMemo<TxEventHandlers<Context>>(
     () => ({
@@ -94,13 +64,15 @@ export default function useRestakeTxEventHandlersWithNoti<
           persist: true,
           ...extractNotiOptions(context, options[key]),
         });
+
         props?.onTxSending?.(context);
       },
       onTxInBlock: (txHash, blockHash, context) => {
         const key = TxEvent.IN_BLOCK;
-        const url = getTxUrl(txHash, blockHash, blockExplorer);
+        const url = resolveExplorerUrl(txHash, blockHash);
 
         notificationApi.remove(TxEvent.SENDING);
+
         notificationApi.addToQueue({
           key,
           Icon: <Spinner size="lg" />,
@@ -115,7 +87,7 @@ export default function useRestakeTxEventHandlersWithNoti<
       },
       onTxSuccess: (txHash, blockHash, context) => {
         const key = TxEvent.SUCCESS;
-        const url = getTxUrl(txHash, blockHash, blockExplorer);
+        const url = resolveExplorerUrl(txHash, blockHash);
 
         notificationApi.remove(TxEvent.SENDING);
         notificationApi.remove(TxEvent.IN_BLOCK);
@@ -156,6 +128,6 @@ export default function useRestakeTxEventHandlersWithNoti<
         props?.onTxFailed?.(error, context);
       },
     }),
-    [blockExplorer, getTxUrl, notificationApi, options, props],
+    [notificationApi, options, props, resolveExplorerUrl],
   );
 }
