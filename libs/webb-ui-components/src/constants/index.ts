@@ -149,9 +149,6 @@ export const WEBB_DOC_ROUTES_RECORD = {
         },
       },
     },
-    'stats-dapp': {
-      overview: '/docs/projects/stats-dapp/overview',
-    },
   },
   'ecosystem-roles': {
     relayer: {

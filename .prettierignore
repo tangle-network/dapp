@@ -4,12 +4,10 @@
 /coverage
 /build
 /apps/bridge-dapp/build/**/*
-/apps/stats-dapp/build/**/*
 /node_modules
 /.vscode
 /**/.next
 /**/.netlify
-apps/stats-dapp/graphql.schema.json
 /**/generated
 
 /.nx/cache

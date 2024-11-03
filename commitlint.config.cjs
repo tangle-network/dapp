@@ -13,7 +13,6 @@ module.exports = {
         'repo',
         'bridge-dapp',
         'hubble-stats',
-        'stats-dapp',
         'tangle-dapp',
         'tangle-cloud',
         'testnet-leaderboard',

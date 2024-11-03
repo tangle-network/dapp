@@ -8,7 +8,6 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { Logo } from '@webb-tools/webb-ui-components/components/Logo';
 import {
-  DKG_STATS_URL,
   HUBBLE_STATS_URL,
   TANGLE_MKT_URL,
   WEBB_DOCS_URL,
@@ -52,11 +51,6 @@ const items: SideBarItemProps[] = [
     href: '',
     Icon: Tangle,
     subItems: [
-      {
-        name: 'DKG Explorer',
-        isInternal: false,
-        href: DKG_STATS_URL,
-      },
       {
         name: 'Homepage',
         isInternal: false,
