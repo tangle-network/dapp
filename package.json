@@ -12,7 +12,6 @@
     "start": "nx run-many --all --target=serve",
     "build": "nx run-many --all --target=build",
     "lint": "nx run-many --all --target=lint",
-    "fetch:onChainConfig": "tsx --tsconfig ./tools/tsconfig.json --no-warnings ./tools/scripts/fetchingOnChainConfig.ts",
     "setup:multiAssetDelegationPallet": "tsx --tsconfig ./tools/tsconfig.json --no-warnings ./tools/scripts/setupMultiAssetDelegationPallet.ts",
     "build:tangle-dapp": "nx build tangle-dapp",
     "build:tangle-cloud": "nx build tangle-cloud",

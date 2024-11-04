@@ -13,14 +13,7 @@
         "tsConfig": "libs/api-provider-environment/tsconfig.lib.json",
         "assets": ["libs/api-provider-environment/*.md"]
       },
-      "dependsOn": ["fetch-on-chain-config", "^build"]
-    },
-    "fetch-on-chain-config": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn fetch:onChainConfig",
-        "color": true
-      }
+      "dependsOn": ["^build"]
     },
     "lint": {
       "executor": "@nx/eslint:lint",

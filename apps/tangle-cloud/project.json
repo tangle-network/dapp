@@ -24,7 +24,8 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "tangle-cloud:build",
-        "dev": true
+        "dev": true,
+        "port": 4300
       },
       "configurations": {
         "development": {

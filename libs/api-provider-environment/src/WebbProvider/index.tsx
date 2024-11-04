@@ -66,7 +66,6 @@ import 'zustand/middleware';
 import type { TAppEvent } from '../app-event';
 import { insufficientApiInterface } from '../error/interactive-errors/insufficient-api-interface';
 import { unsupportedChain } from '../error/interactive-errors/unsupported-chain';
-import onChainDataJson from '../generated/on-chain-config.json';
 import ModalQueueManagerProvider from '../modal-queue-manager/ModalQueueManagerProvider';
 import { StoreProvider } from '../store';
 import { useTxApiQueue } from '../transaction';
@@ -88,8 +87,8 @@ interface WebbProviderInnerProps extends BareProps {
 const chains = chainsPopulated;
 const logger = LoggerService.get('WebbProvider');
 
-const { currencies, anchors, fungibleToWrappableMap } =
-  parseOnChainData(onChainDataJson);
+// TODO: We should find a way to replace or remove the on-chain data
+const { currencies, anchors, fungibleToWrappableMap } = parseOnChainData({});
 
 const apiConfig = ApiConfig.init({
   anchors,
