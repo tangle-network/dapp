@@ -56,11 +56,6 @@ Great! Now your **Node** environment is ready!
 <h2 id="apps"> Applications </h2>
 
 - [tangle-dapp](./apps/tangle-dapp/README.md): the central hub to managing Tangle Network assets and MPC (Multi-Party Computation) services.
-- [bridge-dapp](./apps/bridge-dapp/README.md): an interface for interacting and bridging assets cross-chain using Webb's Asset Protocol.
-- [faucet](./apps/faucet/README.md): an interface for requesting cryptocurrencies (assets) on the Webb Protocol System.
-- [hubble-stats](./apps/hubble-stats/README.md): an interface for displaying statistical data of the Cross-chain Bridging System.
-- [stats-dapp](./apps/stats-dapp/README.md): an interface for displaying statistical data of Webb's Tangle Network (DKG system).
-- [zk-explorer](./apps/zk-explorer/README.md): a platform for discovering and learning about zero-knowledge proof projects and circuits, featuring detailed project insights, filtering options, and more.
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
@@ -138,9 +133,7 @@ yarn format
 yarn build
 ```
 
-Additionally, to ensure commit message consistency, this repository uses [commitlint](https://commitlint.js.org/#/) and [husky](https://typicode.github.io/husky/#/). Please refer to the [Commit Message Guidelines](./.github/CONTRIBUTING.md#commit-message-guidelines) for more information.
-
-Without proper linting, formatting, or commit message, husky will prevent you from either committing or pushing your changes.
+Additionally, to ensure commit message consistency, this repository uses [commitlint](https://commitlint.js.org/#/). Please refer to the [Commit Message Guidelines](./.github/CONTRIBUTING.md#commit-message-guidelines) for more information.
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 

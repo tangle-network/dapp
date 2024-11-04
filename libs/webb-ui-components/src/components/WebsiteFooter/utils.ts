@@ -1,7 +1,5 @@
 import capitalize from 'lodash/capitalize';
 import {
-  BRIDGE_URL,
-  DKG_STATS_URL,
   SOCIAL_ICONS_RECORD,
   SOCIAL_URLS_RECORD,
   TANGLE_DOCS_URL,
@@ -58,16 +56,6 @@ export function getNavLinks(websiteType: WebsiteType) {
         {
           label: 'Tangle',
           url: TANGLE_MKT_URL,
-          isInternal: false,
-        },
-        {
-          label: 'DKG Explorer',
-          url: DKG_STATS_URL,
-          isInternal: false,
-        },
-        {
-          label: 'Hubble Bridge',
-          url: BRIDGE_URL,
           isInternal: false,
         },
       ],
