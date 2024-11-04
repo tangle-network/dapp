@@ -204,7 +204,7 @@
     "css-loader": "7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.0",
     "cypress": "13.15.1",
-    "date-fns": "^3.6.0",
+    "date-fns": "^4.1.0",
     "dotenv": "16.4.5",
     "encoding": "^0.1.13",
     "eslint": "^8.57.1",
