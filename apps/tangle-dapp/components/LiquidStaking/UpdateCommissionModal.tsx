@@ -7,8 +7,10 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 
+import useLsUpdateCommissionTx from '../../data/liquidStaking/tangle/useLsUpdateCommissionTx';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 import PercentageInput from '../PercentageInput';
 
 export type UpdateCommissionModalProps = {
@@ -25,6 +27,19 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
   setIsOpen,
 }) => {
   const [commission, setCommission] = useState<number | null>(0);
+  const { execute, status } = useLsUpdateCommissionTx();
+
+  const handleUpdateCommissionClick = useCallback(() => {
+    if (
+      execute === null ||
+      commission === null ||
+      commission === currentCommission
+    ) {
+      return;
+    }
+
+    return execute({ poolId, commission });
+  }, [commission, currentCommission, execute, poolId]);
 
   return (
     <Modal>
@@ -53,6 +68,7 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
           <Button
             isFullWidth
             variant="secondary"
+            isDisabled={status === TxStatus.PROCESSING}
             onClick={() => setIsOpen(false)}
           >
             Cancel
@@ -60,9 +76,17 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
 
           <Button
             isFullWidth
-            isDisabled={commission === null || commission === currentCommission}
+            onClick={handleUpdateCommissionClick}
+            isLoading={status === TxStatus.PROCESSING}
+            loadingText="Processing"
+            isDisabled={
+              execute === null ||
+              commission === null ||
+              commission === currentCommission ||
+              status === TxStatus.PROCESSING
+            }
           >
-            Update
+            Update Commission
           </Button>
         </ModalFooter>
       </ModalContent>
