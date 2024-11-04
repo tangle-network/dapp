@@ -60,7 +60,6 @@
       "@webb-tools/relayer-manager-factory/*": [
         "libs/relayer-manager-factory/src/*"
       ],
-      "@webb-tools/stats-dapp/*": ["apps/stats-dapp/src/*"],
       "@webb-tools/tailwind-preset": ["libs/tailwind-preset/index.js"],
       "@webb-tools/web3-api-provider": ["libs/web3-api-provider/src/index.ts"],
       "@webb-tools/web3-api-provider/*": ["libs/web3-api-provider/src/*"],
