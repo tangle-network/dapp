@@ -1,7 +1,7 @@
 import type { AppEnvironment } from '@webb-tools/dapp-config/types';
 import type { DialogContentProps } from '@radix-ui/react-dialog';
 import type { IconBase } from '@webb-tools/icons/types';
-import { MouseEventHandler } from 'react';
+import { FunctionComponent, MouseEventHandler } from 'react';
 import type { LogoProps } from '../Logo/types';
 
 export type SideBarFooterType = {
@@ -58,7 +58,7 @@ export type SideBarItemProps = {
   href: string;
 
   /** The item icon */
-  Icon: (props: IconBase) => JSX.Element;
+  Icon: ((props: IconBase) => JSX.Element) | FunctionComponent;
 
   /** The extra info tooltip for the item */
   info?: string | React.ReactElement;

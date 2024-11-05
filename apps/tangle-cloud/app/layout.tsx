@@ -6,6 +6,8 @@ import { headers } from 'next/headers';
 import { Suspense } from 'react';
 import { cookieToInitialState } from 'wagmi';
 import Providers from './providers';
+import Layout from '../components/Layout';
+import { getSidebarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
 
 export const metadata = {
   title: 'Welcome to tangle-cloud',
@@ -22,11 +24,17 @@ export default function RootLayout({
     headers().get('cookie'),
   );
 
+  const isSidebarInitiallyExpanded = getSidebarStateFromCookie();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
         <Suspense>
-          <Providers wagmiInitialState={initialState}>{children}</Providers>
+          <Providers wagmiInitialState={initialState}>
+            <Layout isSidebarInitiallyExpanded={isSidebarInitiallyExpanded}>
+              {children}
+            </Layout>
+          </Providers>
         </Suspense>
       </body>
     </html>
