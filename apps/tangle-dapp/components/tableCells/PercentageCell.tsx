@@ -2,14 +2,14 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
-import formatPercentage from '../../utils/formatPercentage';
+import formatFractional from '../../utils/formatFractional';
 
 export type PercentageCellProps = {
-  percentage?: number;
+  fractional?: number;
 };
 
-const PercentageCell: FC<PercentageCellProps> = ({ percentage }) => {
-  if (percentage === undefined) {
+const PercentageCell: FC<PercentageCellProps> = ({ fractional }) => {
+  if (fractional === undefined) {
     return EMPTY_VALUE_PLACEHOLDER;
   }
 
@@ -19,7 +19,7 @@ const PercentageCell: FC<PercentageCellProps> = ({ percentage }) => {
       fw="normal"
       className="text-mono-200 dark:text-mono-0"
     >
-      {formatPercentage(percentage)}
+      {formatFractional(fractional)}
     </Typography>
   );
 };

@@ -160,7 +160,7 @@ export type LsPool = {
   validators: SubstrateAddress[];
   totalStaked: BN;
   apyPercentage?: number;
-  commissionPercentage?: number;
+  commissionFractional?: number;
   members: Map<SubstrateAddress, PalletAssetsAssetAccount>;
   protocolId: LsProtocolId;
 };

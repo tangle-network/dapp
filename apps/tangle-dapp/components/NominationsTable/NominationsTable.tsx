@@ -93,7 +93,7 @@ const columns = [
   columnHelper.accessor('commission', {
     header: () => <HeaderCell title="Commission" className="justify-center" />,
     cell: (props) => (
-      <PercentageCell percentage={calculateCommission(props.getValue())} />
+      <PercentageCell fractional={calculateCommission(props.getValue())} />
     ),
     sortingFn: sortBnValueForNomineeOrValidator,
   }),

@@ -133,13 +133,13 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
         header: () => 'My Stake',
         cell: (props) => <TokenAmountCell amount={props.getValue()} />,
       }),
-      COLUMN_HELPER.accessor('commissionPercentage', {
+      COLUMN_HELPER.accessor('commissionFractional', {
         header: () => 'Commission',
-        cell: (props) => <PercentageCell percentage={props.getValue()} />,
+        cell: (props) => <PercentageCell fractional={props.getValue()} />,
       }),
       COLUMN_HELPER.accessor('apyPercentage', {
         header: () => 'APY',
-        cell: (props) => <PercentageCell percentage={props.getValue()} />,
+        cell: (props) => <PercentageCell fractional={props.getValue()} />,
       }),
       COLUMN_HELPER.display({
         id: 'actions',
@@ -256,7 +256,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
 
     return selectedPool === undefined
       ? null
-      : (selectedPool.commissionPercentage ?? null);
+      : (selectedPool.commissionFractional ?? null);
   }, [pools, selectedPoolId]);
 
   // Reset the selected pool's ID after all the management

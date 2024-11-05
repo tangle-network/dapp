@@ -19,7 +19,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { PagePath, QueryParamKey } from '../../../types';
-import formatPercentage from '../../../utils/formatPercentage';
+import formatFractional from '../../../utils/formatFractional';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import LsTokenIcon from '../../LsTokenIcon';
 import { TableStatus } from '../../TableStatus';
@@ -62,7 +62,7 @@ const columns = [
           >
             {typeof value !== 'number'
               ? EMPTY_VALUE_PLACEHOLDER
-              : formatPercentage(value)}
+              : formatFractional(value)}
           </Typography>
         </TableCellWrapper>
       );

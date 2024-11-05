@@ -38,7 +38,7 @@ import React, {
 
 import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import formatPercentage from '../../utils/formatPercentage';
+import formatFractional from '../../utils/formatFractional';
 import {
   getSortAddressOrIdentityFnc,
   sortBnValueForNomineeOrValidator,
@@ -188,7 +188,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         cell: (props) => (
           <div className="flex items-center justify-start">
             <Chip color="dark-grey">
-              {formatPercentage(calculateCommission(props.getValue()))}
+              {formatFractional(calculateCommission(props.getValue()))}
             </Chip>
           </div>
         ),

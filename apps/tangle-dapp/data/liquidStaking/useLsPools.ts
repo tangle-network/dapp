@@ -5,7 +5,7 @@ import { LsPool, LsProtocolId } from '../../constants/liquidStaking/types';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
 import assertSubstrateAddress from '../../utils/assertSubstrateAddress';
-import permillToPercentage from '../../utils/permillToPercentage';
+import perbillToFractional from '../../utils/perbillToFractional';
 import useLsPoolCompoundApys from './apy/useLsPoolCompoundApys';
 import useLsBondedPools from './useLsBondedPools';
 import useLsPoolMembers from './useLsPoolMembers';
@@ -55,9 +55,9 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         return acc.add(account.balance.toBn());
       }, BN_ZERO);
 
-      const commissionPercentage = tanglePool.commission.current.isNone
+      const commissionFractional = tanglePool.commission.current.isNone
         ? undefined
-        : permillToPercentage(tanglePool.commission.current.unwrap()[0]);
+        : perbillToFractional(tanglePool.commission.current.unwrap()[0]);
 
       const validators = poolNominations.get(poolId) ?? [];
       const apyEntry = compoundApys.get(poolId);
@@ -79,7 +79,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         ownerAddress,
         nominatorAddress,
         bouncerAddress,
-        commissionPercentage,
+        commissionFractional,
         validators,
         totalStaked,
         apyPercentage,

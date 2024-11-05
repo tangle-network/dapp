@@ -34,9 +34,8 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
   const { execute, status } = useLsSetCommissionTx();
   const [isDestinationInputError, setIsDestinationInputError] = useState(false);
 
-  const [destinationAccountAddress, setDestinationAccountAddress] = useState<
-    string | null
-  >(null);
+  const [destinationAccountAddress, setDestinationAccountAddress] =
+    useState<string>('');
 
   const isReady =
     poolId !== null &&
@@ -44,7 +43,7 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
     commission !== null &&
     commission !== currentCommissionFractional &&
     status !== TxStatus.PROCESSING &&
-    destinationAccountAddress !== null &&
+    destinationAccountAddress !== '' &&
     !isDestinationInputError;
 
   const handleUpdateCommissionClick = useCallback(() => {
@@ -91,7 +90,7 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
             id="ls-update-commission-reward-destination-address"
             type={AddressType.Both}
             title="Reward Destination Address"
-            value={destinationAccountAddress ?? ''}
+            value={destinationAccountAddress}
             setValue={setDestinationAccountAddress}
             wrapperOverrides={{ isFullWidth: true }}
             setErrorMessage={(error) =>

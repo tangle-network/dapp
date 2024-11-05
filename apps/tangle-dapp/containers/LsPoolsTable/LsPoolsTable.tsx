@@ -104,13 +104,13 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
       // TODO: Decimals.
       cell: (props) => <TokenAmountCell amount={props.getValue()} />,
     }),
-    COLUMN_HELPER.accessor('commissionPercentage', {
+    COLUMN_HELPER.accessor('commissionFractional', {
       header: () => 'Commission',
-      cell: (props) => <PercentageCell percentage={props.getValue()} />,
+      cell: (props) => <PercentageCell fractional={props.getValue()} />,
     }),
     COLUMN_HELPER.accessor('apyPercentage', {
       header: () => 'APY',
-      cell: (props) => <PercentageCell percentage={props.getValue()} />,
+      cell: (props) => <PercentageCell fractional={props.getValue()} />,
     }),
     COLUMN_HELPER.display({
       id: 'actions',
