@@ -20,7 +20,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ActionItemType } from '@webb-tools/webb-ui-components/components/ActionsDropdown/types';
 import assert from 'assert';
-import { FC, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
@@ -60,6 +60,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const { lsPoolId, isStaking } = useLsStore();
   const setLsStakingIntent = useLsSetStakingIntent();
+  const [selectedPoolId, setSelectedPoolId] = useState<number | null>(null);
 
   const [isUpdateCommissionModalOpen, setIsUpdateCommissionModalOpen] =
     useState(false);
@@ -163,7 +164,10 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
           if (props.row.original.isRoot) {
             actionItems.push({
               label: 'Update Commission',
-              onClick: () => setIsUpdateCommissionModalOpen(true),
+              onClick: () => {
+                setSelectedPoolId(props.row.original.id);
+                setIsUpdateCommissionModalOpen(true);
+              },
             });
 
             actionItems.push({
@@ -243,6 +247,26 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
     enableSortingRemoval: false,
   });
 
+  const selectedPoolCommission = useMemo(() => {
+    if (selectedPoolId === null) {
+      return null;
+    }
+
+    const selectedPool = pools.find((pool) => pool.id === selectedPoolId);
+
+    return selectedPool === undefined
+      ? null
+      : (selectedPool.commissionPercentage ?? null);
+  }, [pools, selectedPoolId]);
+
+  // Reset the selected pool's ID after all the management
+  // modals are closed.
+  useEffect(() => {
+    if (!isUpdateCommissionModalOpen) {
+      setSelectedPoolId(null);
+    }
+  }, [isUpdateCommissionModalOpen]);
+
   // TODO: Missing error and loading state. Should ideally abstract all these states into an abstract Table component, since it's getting reused in multiple places.
   if (!isAccountConnected) {
     return (
@@ -285,8 +309,8 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       />
 
       <UpdateCommissionModal
-        poolId={0}
-        currentCommission={0}
+        poolId={selectedPoolId}
+        currentCommissionFractional={selectedPoolCommission}
         isOpen={isUpdateCommissionModalOpen}
         setIsOpen={setIsUpdateCommissionModalOpen}
       />
