@@ -30,7 +30,7 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
   isOpen,
   setIsOpen,
 }) => {
-  const [commission, setCommission] = useState<number | null>(0);
+  const [commission, setCommission] = useState<number | null>(null);
   const { execute, status } = useLsSetCommissionTx();
   const [isDestinationInputError, setIsDestinationInputError] = useState(false);
 

@@ -13,7 +13,7 @@ const TANGLE_LOCAL = {
   networkId: LsNetworkId.TANGLE_LOCAL,
   id: LsProtocolId.TANGLE_LOCAL,
   name: 'Tangle',
-  token: LsToken.TTNT,
+  token: LsToken.T_TNT,
   chainIconFileName: 'tangle',
   decimals: TANGLE_TOKEN_DECIMALS,
   rpcEndpoint: TANGLE_LOCAL_DEV_NETWORK.wsRpcEndpoint,

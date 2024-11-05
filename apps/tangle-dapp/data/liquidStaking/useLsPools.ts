@@ -1,7 +1,7 @@
 import { BN_ZERO, u8aToString } from '@polkadot/util';
 import { useMemo } from 'react';
 
-import { LsPool } from '../../constants/liquidStaking/types';
+import { LsPool, LsProtocolId } from '../../constants/liquidStaking/types';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
 import assertSubstrateAddress from '../../utils/assertSubstrateAddress';
@@ -84,6 +84,8 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         totalStaked,
         apyPercentage,
         members: membersMap,
+        // TODO: Hardcoded for now. Determine the protocol ID.
+        protocolId: LsProtocolId.TANGLE_LOCAL,
       };
 
       return [poolId, pool] as const;

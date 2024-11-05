@@ -43,11 +43,38 @@ const AddressInput: FC<AddressInputProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const updateError = useCallback(
+    (newValue: string) => {
+      if (newValue === '') {
+        setErrorMessage(null);
+
+        return;
+      }
+
+      const isEvm = isEvmAddress(newValue);
+      const isSubstrate = isAddress(newValue);
+
+      if (!isEvm && !isSubstrate) {
+        setErrorMessage('Invalid address');
+      } else if (type === AddressType.EVM && !isEvm) {
+        setErrorMessage('Invalid EVM address');
+      } else if (type === AddressType.Substrate && !isSubstrate) {
+        setErrorMessage('Invalid Substrate address');
+      } else {
+        setErrorMessage(null);
+      }
+    },
+    [type],
+  );
+
   const handlePasteAction = useCallback(() => {
     navigator.clipboard.readText().then((text) => {
-      setValue(text.trim());
+      const newValue = text.trim();
+
+      setValue(newValue);
+      updateError(newValue);
     });
-  }, [setValue]);
+  }, [setValue, updateError]);
 
   const actions: ReactNode =
     value === '' && showPasteButton ? (
@@ -71,27 +98,9 @@ const AddressInput: FC<AddressInputProps> = ({
   const handleChange = useCallback(
     (newValue: string) => {
       setValue(newValue);
-
-      if (newValue === '') {
-        setErrorMessage(null);
-
-        return;
-      }
-
-      const isEvm = isEvmAddress(newValue);
-      const isSubstrate = isAddress(newValue);
-
-      if (!isEvm && !isSubstrate) {
-        setErrorMessage('Invalid address');
-      } else if (type === AddressType.EVM && !isEvm) {
-        setErrorMessage('Invalid EVM address');
-      } else if (type === AddressType.Substrate && !isSubstrate) {
-        setErrorMessage('Invalid Substrate address');
-      } else {
-        setErrorMessage(null);
-      }
+      updateError(newValue);
     },
-    [setValue, type],
+    [setValue, updateError],
   );
 
   // Set the error message in the parent component.

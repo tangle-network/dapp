@@ -102,12 +102,16 @@ const PROTOCOL_COLUMNS = [
         props.row.original.decimals,
       );
 
+      const subtitle =
+        props.row.original.tvlInUsd === undefined
+          ? undefined
+          : `$${props.row.original.tvlInUsd}`;
+
       return (
         <TableCellWrapper>
           <StatItem
             title={`${formattedMyStake} ${props.row.original.token}`}
-            // TODO: Calculate the USD value of the stake.
-            subtitle={`$${props.row.original.tvlInUsd}`}
+            subtitle={subtitle}
             removeBorder
           />
         </TableCellWrapper>
@@ -207,21 +211,23 @@ const LsMyProtocolsTable: FC = () => {
   }, [myPools]);
 
   const rows = useMemo<LsMyProtocolRow[]>(() => {
-    return lsNetwork.protocols.map(
-      (lsProtocol) =>
-        ({
-          name: lsProtocol.name,
-          // TODO: Reduce the TVL of the pools associated with this protocol.
-          tvl: new BN(485348583485348),
-          iconName: lsProtocol.token,
-          myStake: myStake,
-          pools: myPools,
-          // TODO: Calculate the USD value of the TVL.
-          tvlInUsd: undefined,
-          token: lsProtocol.token,
-          decimals: lsProtocol.decimals,
-        }) satisfies LsMyProtocolRow,
-    );
+    return lsNetwork.protocols.map((lsProtocol) => {
+      const tvl = myPools
+        .filter((myPool) => myPool.protocolId === lsProtocol.id)
+        .reduce((acc, pool) => acc.add(pool.totalStaked), new BN(0));
+
+      return {
+        name: lsProtocol.name,
+        tvl,
+        iconName: lsProtocol.token,
+        myStake: myStake,
+        pools: myPools,
+        // TODO: Calculate the USD value of the TVL.
+        tvlInUsd: undefined,
+        token: lsProtocol.token,
+        decimals: lsProtocol.decimals,
+      } satisfies LsMyProtocolRow;
+    });
   }, [lsNetwork.protocols, myPools, myStake]);
 
   const table = useReactTable({
