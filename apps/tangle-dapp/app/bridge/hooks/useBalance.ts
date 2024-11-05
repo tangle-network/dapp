@@ -197,7 +197,6 @@ function checkNativeToken(tokenSymbol: string, chainConfig: ChainConfig) {
 export function useTokenBalances() {
   const ethersProvider = useEthersProvider();
   const activeAccountAddress = useActiveAccountAddress();
-  const { sourceTypedChainId } = useTypedChainId();
 
   const getTokenBalance = useCallback(
     async (erc20TokenContractAddress: AddressType, tokenDecimals: number) => {
@@ -229,7 +228,7 @@ export function useTokenBalances() {
         return null;
       }
     },
-    [ethersProvider, activeAccountAddress, sourceTypedChainId],
+    [ethersProvider, activeAccountAddress],
   );
 
   return { getTokenBalance };

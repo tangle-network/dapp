@@ -1,7 +1,7 @@
 'use client';
 
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { FC, useMemo, useState } from 'react';
+import { FC, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import AddressInput, { AddressType } from '../../components/AddressInput';
@@ -28,6 +28,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
     isAmountInputError,
     isAddressInputError,
   } = useBridge();
+
   const activeAccountAddress = useActiveAccountAddress();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
