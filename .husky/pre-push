@@ -1,0 +1,8 @@
+yarn run lint
+
+yarn run format:check
+
+if [ $? -ne 0 ]; then
+  echo "Lint or format check(s) failed, aborting push."
+  exit 1
+fi

@@ -29461,6 +29461,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"husky@npm:^9.1.6":
+  version: 9.1.6
+  resolution: "husky@npm:9.1.6"
+  bin:
+    husky: bin.js
+  checksum: 10c0/705673db4a247c1febd9c5df5f6a3519106cf0335845027bb50a15fba9b1f542cb2610932ede96fd08008f6d9f49db0f15560509861808b0031cdc0e7c798bac
+  languageName: node
+  linkType: hard
+
 "hyperdyperid@npm:^1.2.0":
   version: 1.2.0
   resolution: "hyperdyperid@npm:1.2.0"
@@ -45507,6 +45516,7 @@ __metadata:
     ethers: "npm:5.7.2"
     framer-motion: "npm:^11.11.10"
     graphql: "npm:^16.9.0"
+    husky: "npm:^9.1.6"
     jest: "npm:29.7.0"
     jsdom: "npm:~24.1.3"
     listr2: "npm:^8.2.5"
