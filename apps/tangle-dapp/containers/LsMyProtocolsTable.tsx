@@ -206,15 +206,15 @@ const LsMyProtocolsTable: FC = () => {
       });
   }, [lsPools, substrateAddress]);
 
-  const myStake = useMemo(() => {
-    return myPools.reduce((acc, pool) => acc.add(pool.myStake), new BN(0));
-  }, [myPools]);
-
   const rows = useMemo<LsMyProtocolRow[]>(() => {
     return lsNetwork.protocols.map((lsProtocol) => {
       const tvl = myPools
         .filter((myPool) => myPool.protocolId === lsProtocol.id)
         .reduce((acc, pool) => acc.add(pool.totalStaked), new BN(0));
+
+      const myStake = myPools
+        .filter((myPool) => myPool.protocolId === lsProtocol.id)
+        .reduce((acc, pool) => acc.add(pool.myStake), new BN(0));
 
       return {
         name: lsProtocol.name,
@@ -228,7 +228,7 @@ const LsMyProtocolsTable: FC = () => {
         decimals: lsProtocol.decimals,
       } satisfies LsMyProtocolRow;
     });
-  }, [lsNetwork.protocols, myPools, myStake]);
+  }, [lsNetwork.protocols, myPools]);
 
   const table = useReactTable({
     data: rows,
