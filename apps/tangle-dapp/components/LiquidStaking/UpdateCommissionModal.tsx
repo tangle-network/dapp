@@ -34,7 +34,7 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
   const { execute, status } = useLsSetCommissionTx();
   const [isDestinationInputError, setIsDestinationInputError] = useState(false);
 
-  const [payeeAccountAddress, setPayeeAccountAddress] = useState<string>('');
+  const [payeeAccountAddress, setPayeeAccountAddress] = useState('');
 
   const isReady =
     poolId !== null &&
@@ -95,7 +95,7 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
             setErrorMessage={(error) =>
               setIsDestinationInputError(error !== null)
             }
-            tooltip="The address provided can be either a Substrate or EVM address. If an EVM address is provided, it will be converted to its Substrate equivalent."
+            tooltip="The account address that will receive the commission rewards. This can be your active account address or another address."
           />
 
           <PercentageInput
