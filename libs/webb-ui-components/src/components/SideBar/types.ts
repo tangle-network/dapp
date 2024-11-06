@@ -26,6 +26,7 @@ export interface SideBarLogoProps {
 export interface SidebarProps extends SideBarLogoProps {
   ClosedLogo?: React.FC<LogoProps>;
   items: SideBarItemProps[];
+  actionButton?: React.ReactElement;
   footer: SideBarFooterType;
   className?: string;
   overrideContentProps?: DialogContentProps;
@@ -36,6 +37,7 @@ export interface SidebarProps extends SideBarLogoProps {
 
 export interface SideBarItemsProps {
   items: SideBarItemProps[];
+  actionButton?: React.ReactElement;
   isExpanded: boolean;
   className?: string;
   pathnameOrHash?: string;

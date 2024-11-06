@@ -5,6 +5,7 @@ import CommandFillIcon from '@webb-tools/icons/CommandFillIcon';
 import { DocumentationIcon } from '@webb-tools/icons/DocumentationIcon';
 import GlobalLine from '@webb-tools/icons/GlobalLine';
 import { GridFillIcon } from '@webb-tools/icons/GridFillIcon';
+import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import {
   SideBar as SideBarCmp,
   SideBarFooterType,
@@ -21,6 +22,7 @@ import { setSidebarCookieOnToggle } from '@webb-tools/webb-ui-components/next-ut
 import { usePathname } from 'next/navigation';
 import { FC } from 'react';
 import { PagePath } from '../types';
+import { ArrowRight } from '@webb-tools/icons';
 
 type Props = {
   isExpandedAtDefault?: boolean;
@@ -70,6 +72,14 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
   useNextThemesForThemeToggle: true,
 };
 
+const ActionButton = () => {
+  return (
+    <Button isFullWidth rightIcon={<ArrowRight />}>
+      Operate
+    </Button>
+  );
+};
+
 const Sidebar: FC<Props> = ({ isExpandedAtDefault }) => {
   const pathname = usePathname();
 
@@ -86,6 +96,7 @@ const Sidebar: FC<Props> = ({ isExpandedAtDefault }) => {
         className="hidden lg:block"
         isExpandedAtDefault={isExpandedAtDefault}
         onSideBarToggle={setSidebarCookieOnToggle}
+        actionButton={<ActionButton />}
       />
 
       {/* Small screen sidebar */}
@@ -97,6 +108,7 @@ const Sidebar: FC<Props> = ({ isExpandedAtDefault }) => {
         logoLink={pathname}
         pathnameOrHash={pathname}
         className="fixed top-4 left-5 lg:hidden"
+        actionButton={<ActionButton />}
       />
     </>
   );

@@ -43,6 +43,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
       isExpandedAtDefault = true,
       onSideBarToggle,
       pathnameOrHash,
+      actionButton,
       ...props
     },
     ref,
@@ -90,6 +91,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
             </div>
 
             <SideBarItems
+              actionButton={actionButton}
               pathnameOrHash={pathnameOrHash}
               items={items.filter((item) => item.isInternal)}
               isExpanded={isSidebarOpen}
