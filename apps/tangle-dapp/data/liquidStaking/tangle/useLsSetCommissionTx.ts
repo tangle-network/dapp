@@ -35,7 +35,7 @@ const useLsSetCommissionTx = () => {
       [],
     );
 
-  // TODO: Add EVM support once precompile(s) for the `lst` pallet are implemented on Tangle.
+  // TODO: The LST EVM precompile is missing the `setCommission` function. Implement EVM support once the precompile adds it.
   return useSubstrateTxWithNotification(
     TxName.LST_UPDATE_COMMISSION,
     substrateTxFactory,

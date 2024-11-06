@@ -45,6 +45,7 @@ export type AbiCall<PrecompileT extends Precompile> = {
 
 export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
   context: Context,
+  activeEvmAddress: Address,
 ) => PromiseOrT<AbiCall<PrecompileT>> | null;
 
 /**
@@ -92,7 +93,9 @@ function useEvmPrecompileAbiCall<
       }
 
       const factoryResult =
-        factory instanceof Function ? await factory(context) : factory;
+        factory instanceof Function
+          ? await factory(context, activeEvmAddress20)
+          : factory;
 
       // Factory isn't ready yet.
       if (factoryResult === null) {
