@@ -34,8 +34,7 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
   const { execute, status } = useLsSetCommissionTx();
   const [isDestinationInputError, setIsDestinationInputError] = useState(false);
 
-  const [destinationAccountAddress, setDestinationAccountAddress] =
-    useState<string>('');
+  const [payeeAccountAddress, setPayeeAccountAddress] = useState<string>('');
 
   const isReady =
     poolId !== null &&
@@ -43,7 +42,7 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
     commission !== null &&
     commission !== currentCommissionFractional &&
     status !== TxStatus.PROCESSING &&
-    destinationAccountAddress !== '' &&
+    payeeAccountAddress !== '' &&
     !isDestinationInputError;
 
   const handleUpdateCommissionClick = useCallback(() => {
@@ -54,16 +53,16 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
     // If it's ready, then the address must be either a valid
     // Substrate or EVM address.
     assert(
-      isSubstrateAddress2(destinationAccountAddress) ||
-        isAddress(destinationAccountAddress),
+      isSubstrateAddress2(payeeAccountAddress) ||
+        isAddress(payeeAccountAddress),
     );
 
     return execute({
       poolId,
       commissionFractional: commission,
-      rewardDestinationAccountAddress: destinationAccountAddress,
+      payeeAccountAddress,
     });
-  }, [isReady, destinationAccountAddress, execute, poolId, commission]);
+  }, [isReady, payeeAccountAddress, execute, poolId, commission]);
 
   // Automatically close the modal if the transaction was successful.
   useEffect(() => {
@@ -87,11 +86,11 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
           </Typography>
 
           <AddressInput
-            id="ls-update-commission-reward-destination-address"
+            id="ls-update-commission-payee-address"
             type={AddressType.Both}
-            title="Reward Destination Address"
-            value={destinationAccountAddress}
-            setValue={setDestinationAccountAddress}
+            title="Commission Payee Address"
+            value={payeeAccountAddress}
+            setValue={setPayeeAccountAddress}
             wrapperOverrides={{ isFullWidth: true }}
             setErrorMessage={(error) =>
               setIsDestinationInputError(error !== null)
