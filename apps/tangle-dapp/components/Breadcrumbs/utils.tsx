@@ -15,7 +15,7 @@ import capitalize from 'lodash/capitalize';
 import { JSX } from 'react';
 
 import { PagePath } from '../../types';
-import isSubstrateAddress2 from '../../utils/isSubstrateAddress2';
+import isSubstrateAddress from '../../utils/isSubstrateAddress';
 
 const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
   [PagePath.CLAIM_AIRDROP]: GiftLineIcon,
@@ -92,7 +92,7 @@ export const getBreadcrumbLabel = (
 
   // In the case that the pathname is a Substrate address, shorten it
   // to a more readable format, and to prevent overflow.
-  if (isSubstrateAddress2(pathName)) {
+  if (isSubstrateAddress(pathName)) {
     return shortenString(pathName);
   }
 

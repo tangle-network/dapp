@@ -259,8 +259,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       : (selectedPool.commissionFractional ?? null);
   }, [pools, selectedPoolId]);
 
-  // Reset the selected pool's ID after all the management
-  // modals are closed.
+  // Reset the selected pool's ID after all the management modals are closed.
   useEffect(() => {
     if (!isUpdateCommissionModalOpen) {
       setSelectedPoolId(null);

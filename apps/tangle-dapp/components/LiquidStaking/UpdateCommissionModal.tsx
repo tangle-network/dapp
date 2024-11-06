@@ -13,7 +13,7 @@ import { isAddress } from 'viem';
 
 import useLsSetCommissionTx from '../../data/liquidStaking/tangle/useLsSetCommissionTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import isSubstrateAddress2 from '../../utils/isSubstrateAddress2';
+import isSubstrateAddress from '../../utils/isSubstrateAddress';
 import AddressInput, { AddressType } from '../AddressInput';
 import PercentageInput from '../PercentageInput';
 
@@ -53,8 +53,7 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
     // If it's ready, then the address must be either a valid
     // Substrate or EVM address.
     assert(
-      isSubstrateAddress2(payeeAccountAddress) ||
-        isAddress(payeeAccountAddress),
+      isSubstrateAddress(payeeAccountAddress) || isAddress(payeeAccountAddress),
     );
 
     return execute({

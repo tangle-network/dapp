@@ -1,7 +1,6 @@
 import { MetadataDef } from '@polkadot/extension-inject/types';
 import { HexString } from '@polkadot/util/types';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
-import isSubstrateAddress from '@webb-tools/dapp-types/utils/isSubstrateAddress';
 import { RefreshLineIcon } from '@webb-tools/icons';
 import {
   IconButton,
@@ -21,6 +20,7 @@ import useLocalStorage, {
 } from '../hooks/useLocalStorage';
 import usePromise from '../hooks/usePromise';
 import useSubstrateInjectedExtension from '../hooks/useSubstrateInjectedExtension';
+import isSubstrateAddress from '../utils/isSubstrateAddress';
 import { getApiPromise } from '../utils/polkadot';
 
 const UpdateMetadataButton: FC = () => {

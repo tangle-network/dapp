@@ -5,8 +5,7 @@ const HeaderCell: FC<{ title: string }> = ({ title }) => {
   return (
     <Typography
       variant="body1"
-      fw="semibold"
-      className="block border-b dark:border-mono-140 px-3 pb-3 capitalize whitespace-nowrap"
+      className="block border-b dark:border-mono-140 px-3 pb-3 capitalize whitespace-nowrap text-mono-160 dark:text-mono-80"
     >
       {title}
     </Typography>
