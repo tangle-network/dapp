@@ -10,6 +10,7 @@ import useEvmPrecompileAbiCall, {
   AbiCall,
   EvmTxFactory,
 } from './useEvmPrecompileAbiCall';
+import useSubstrateExplorerUrl from './useSubstrateExplorerUrl';
 import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
 import useTxNotification from './useTxNotification';
 
@@ -57,6 +58,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
 
   const activeAccountAddress = useActiveAccountAddress();
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
+  const { resolveExplorerUrl } = useSubstrateExplorerUrl();
 
   const {
     execute: executeSubstrateTx,
@@ -64,6 +66,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     error: substrateError,
     reset: substrateReset,
     txHash: substrateTxHash,
+    txBlockHash: substrateTxBlockHash,
     successMessage: substrateSuccessMessage,
   } = useSubstrateTx(substrateTxFactory, getSuccessMessageFnc);
 
@@ -146,11 +149,16 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     // React's setState is asynchronous and the state might
     // not have been updated yet.
     if (txHash !== null) {
-      notifySuccess(
-        name,
-        txHash,
-        isEvmAccount ? evmSuccessMessage : substrateSuccessMessage,
-      );
+      const successMessage = isEvmAccount
+        ? evmSuccessMessage
+        : substrateSuccessMessage;
+
+      const explorerUrl =
+        substrateTxBlockHash == null
+          ? undefined
+          : resolveExplorerUrl(txHash, substrateTxBlockHash);
+
+      notifySuccess(name, explorerUrl, successMessage);
     } else if (error !== null) {
       notifyError(name, error);
     }
