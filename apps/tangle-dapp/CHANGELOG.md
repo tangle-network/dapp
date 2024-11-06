@@ -1,3 +1,15 @@
+## 0.0.16 (2024-11-04)
+
+### 🚀 Features
+
+- **tangle-dapp:** Setup Tangle Cloud dApp
+
+### 🩹 Fixes
+
+- **tangle-dapp:** Fix liquid staking pool bugs
+
+- **tangle-dapp:** Cleanup unused dependencies and remove legacy dApps
+
 ## 0.0.15 (2024-10-28)
 
 ### 🚀 Features
