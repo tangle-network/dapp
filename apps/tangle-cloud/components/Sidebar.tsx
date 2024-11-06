@@ -1,6 +1,8 @@
 'use client';
 
+import cx from 'classnames';
 import { HomeIcon } from '@radix-ui/react-icons';
+import { ArrowRight } from '@webb-tools/icons';
 import CommandFillIcon from '@webb-tools/icons/CommandFillIcon';
 import { DocumentationIcon } from '@webb-tools/icons/DocumentationIcon';
 import GlobalLine from '@webb-tools/icons/GlobalLine';
@@ -22,7 +24,6 @@ import { setSidebarCookieOnToggle } from '@webb-tools/webb-ui-components/next-ut
 import { usePathname } from 'next/navigation';
 import { FC } from 'react';
 import { PagePath } from '../types';
-import { ArrowRight } from '@webb-tools/icons';
 
 type Props = {
   isExpandedAtDefault?: boolean;
@@ -72,10 +73,15 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
   useNextThemesForThemeToggle: true,
 };
 
-const ActionButton = () => {
+const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
   return (
-    <Button isFullWidth rightIcon={<ArrowRight />}>
-      Operate
+    <Button
+      title="Operate"
+      isFullWidth
+      rightIcon={<ArrowRight size="lg" className="!fill-mono-0" />}
+      className={cx(!isExpanded && '!p-2')}
+    >
+      {isExpanded ? 'Operate' : ''}
     </Button>
   );
 };
@@ -96,7 +102,7 @@ const Sidebar: FC<Props> = ({ isExpandedAtDefault }) => {
         className="hidden lg:block"
         isExpandedAtDefault={isExpandedAtDefault}
         onSideBarToggle={setSidebarCookieOnToggle}
-        actionButton={<ActionButton />}
+        ActionButton={ActionButton}
       />
 
       {/* Small screen sidebar */}
@@ -108,7 +114,7 @@ const Sidebar: FC<Props> = ({ isExpandedAtDefault }) => {
         logoLink={pathname}
         pathnameOrHash={pathname}
         className="fixed top-4 left-5 lg:hidden"
-        actionButton={<ActionButton />}
+        ActionButton={ActionButton}
       />
     </>
   );

@@ -106,7 +106,7 @@ function ButtonContent(props: ButtonContentProps) {
       {leftIcon && (
         <span
           className={cx(
-            variant === 'link' ? 'mr-1' : 'mr-2',
+            children ? (variant === 'link' ? 'mr-1' : 'mr-2') : null,
             'block !text-inherit',
             'grow-0 shrink-0',
             getFlexBasic(leftIcon.props.size),
@@ -122,7 +122,7 @@ function ButtonContent(props: ButtonContentProps) {
       {rightIcon && (
         <span
           className={cx(
-            variant === 'link' ? 'ml-1' : 'ml-2',
+            children ? (variant === 'link' ? 'ml-1' : 'ml-2') : null,
             'block !text-inherit',
             'grow-0 shrink-0',
             getFlexBasic(rightIcon.props.size),

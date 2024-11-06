@@ -12,7 +12,7 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
   pathnameOrHash,
   isExpanded,
   className,
-  actionButton,
+  ActionButton,
 }) => {
   const [activeItem, setActiveItem] = useState<number>(() => {
     const activeItemIndex = items.findIndex((item) => {
@@ -48,7 +48,7 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
 
   return (
     <div className={twMerge('flex flex-col mt-11 gap-4', className)}>
-      {actionButton}
+      {ActionButton && <ActionButton isExpanded={isExpanded} />}
 
       {items.map((itemProps, idx) => {
         return (

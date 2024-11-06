@@ -1,17 +1,19 @@
 'use client';
 
+import { DoubleArrowLeftIcon } from '@radix-ui/react-icons';
 import { TangleIcon, WebbLogoIcon } from '@webb-tools/icons';
 import cx from 'classnames';
-import { type FC, forwardRef, useEffect } from 'react';
+import { type FC, forwardRef, useCallback, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useLocalStorageState from 'use-local-storage-state';
-import { SideBarLogo } from './Logo';
-import { SideBarItems } from './Items';
-import { SideBarFooter } from './Footer';
 import { SIDEBAR_OPEN_KEY } from '../../constants';
-import { LogoProps } from '../Logo/types';
-import { SidebarProps } from './types';
 import getCookieItem from '../../utils/getCookieItem';
+import IconButton from '../buttons/IconButton';
+import { LogoProps } from '../Logo/types';
+import { SideBarFooter } from './Footer';
+import { SideBarItems } from './Items';
+import { SideBarLogo } from './Logo';
+import { SidebarProps } from './types';
 
 /**
  * Sidebar Navigation Menu Component
@@ -43,7 +45,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
       isExpandedAtDefault = true,
       onSideBarToggle,
       pathnameOrHash,
-      actionButton,
+      ActionButton,
       ...props
     },
     ref,
@@ -68,6 +70,11 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
       setIsSidebarOpen(isSideBarOpen);
     }, [isExpandedAtDefault, setIsSidebarOpen]);
 
+    const handleToggleSidebar = useCallback(() => {
+      setIsSidebarOpen(!isSidebarOpen);
+      onSideBarToggle && onSideBarToggle();
+    }, [isSidebarOpen, onSideBarToggle, setIsSidebarOpen]);
+
     return (
       <div
         className={cx('flex gap-2 top-0 left-0 z-50 relative', className)}
@@ -82,29 +89,44 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
           )}
         >
           <div>
-            <div className={isSidebarOpen ? 'px-2' : ''}>
+            <div
+              className={cx(
+                'flex items-center',
+                isSidebarOpen ? 'justify-between' : 'justify-center',
+                isSidebarOpen && 'px-2',
+              )}
+            >
               <SideBarLogo
                 logoLink={logoLink}
                 Logo={!isSidebarOpen ? ClosedLogo : Logo}
                 isExpanded={isSidebarOpen}
               />
+
+              <IconButton
+                onClick={handleToggleSidebar}
+                className={cx(
+                  'transition-[right] duration-300 ease-in-out',
+                  !isSidebarOpen
+                    ? 'absolute -right-[calc(50%_+_8px)]'
+                    : 'right-full',
+                )}
+              >
+                <DoubleArrowLeftIcon
+                  className={cx(
+                    'transition-transform duration-300 ease-in-out',
+                    isSidebarOpen ? 'rotate-0' : 'rotate-180',
+                  )}
+                />
+              </IconButton>
             </div>
 
             <SideBarItems
-              actionButton={actionButton}
+              ActionButton={ActionButton}
               pathnameOrHash={pathnameOrHash}
               items={items.filter((item) => item.isInternal)}
               isExpanded={isSidebarOpen}
             />
           </div>
-
-          <div
-            className="flex-grow"
-            onClick={() => {
-              setIsSidebarOpen(!isSidebarOpen);
-              onSideBarToggle && onSideBarToggle();
-            }}
-          />
 
           <div className="space-y-2">
             <SideBarItems
