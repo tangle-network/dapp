@@ -1,5 +1,6 @@
 import { HexString } from '@polkadot/util/types';
 import { encodeAddress } from '@polkadot/util-crypto';
+import { Account } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useMemo } from 'react';
 
@@ -11,6 +12,7 @@ import { isEvmAddress } from '../utils/isEvmAddress';
 export type WalletAccount = {
   name: string;
   address: HexString | SubstrateAddress;
+  originalAccount: Account;
 };
 
 const useWalletAccounts = (): WalletAccount[] => {
@@ -34,7 +36,11 @@ const useWalletAccounts = (): WalletAccount[] => {
         address = assertSubstrateAddress(encodedSubstrateAddress);
       }
 
-      return { name: account.name, address } satisfies WalletAccount;
+      return {
+        name: account.name,
+        address,
+        originalAccount: account,
+      } satisfies WalletAccount;
     });
   }, [network.ss58Prefix, webContextAccounts]);
 

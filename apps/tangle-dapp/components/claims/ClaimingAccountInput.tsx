@@ -88,7 +88,7 @@ const ClaimingAccountInput: FC<Props> = ({
               return {
                 address: item.address,
                 name: item.name,
-                onClick: () => setActiveAccount(item),
+                onClick: () => setActiveAccount(item.originalAccount),
               };
             })}
           />
