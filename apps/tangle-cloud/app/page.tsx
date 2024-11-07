@@ -10,7 +10,7 @@ export default function Index() {
     <Typography
       variant="h3"
       ta="center"
-      className="flex items-center justify-center min-h-screen"
+      className="flex items-center justify-center min-h-full"
     >
       Hello there, Welcome tangle-cloud 👋
     </Typography>
