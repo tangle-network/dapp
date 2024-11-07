@@ -41,11 +41,7 @@ const Balance: FC = () => {
               <HiddenValue numberOfStars={4}>{prefix}</HiddenValue>
             </Typography>
 
-            <Typography
-              variant="h4"
-              fw="normal"
-              className="!leading-none pb-1 flex gap-2"
-            >
+            <Typography variant="h4" className="!leading-none pb-1 flex gap-2">
               {suffix}
             </Typography>
           </div>

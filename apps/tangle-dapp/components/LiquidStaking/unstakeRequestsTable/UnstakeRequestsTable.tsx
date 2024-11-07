@@ -34,7 +34,7 @@ import {
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import addCommasToNumber from '../../../utils/addCommasToNumber';
-import formatPercentage from '../../../utils/formatPercentage';
+import formatFractional from '../../../utils/formatFractional';
 import isLsParachainChainId from '../../../utils/liquidStaking/isLsParachainChainId';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
 import GlassCard from '../../GlassCard';
@@ -108,7 +108,7 @@ const COLUMNS = [
             return undefined;
           }
 
-          return formatPercentage(progress * 100);
+          return formatFractional(progress * 100);
         }
         // Otherwise, it must be a Parachain unstake request's
         // remaining time unit.

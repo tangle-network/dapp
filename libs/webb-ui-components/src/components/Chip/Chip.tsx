@@ -41,6 +41,7 @@ export const Chip = React.forwardRef<HTMLSpanElement, ChipProps>(
         isDisabled,
         isSelected,
       );
+
       return twMerge(baseClsx, activeOrDisable, selected, classNameProp);
     }, [baseClsx, color, isDisabled, isSelected, classNameProp]);
 

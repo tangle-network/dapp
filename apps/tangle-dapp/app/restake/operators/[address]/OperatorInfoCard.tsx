@@ -157,11 +157,7 @@ const StatsItem: FC<StatsItemProps> = ({ label, value, info }) => {
         {value}
       </Typography>
 
-      <Typography
-        variant="h5"
-        fw="normal"
-        className="text-mono-120 dark:text-mono-100"
-      >
+      <Typography variant="h5" className="text-mono-120 dark:text-mono-100">
         {label}
         {info && (
           <InfoIconWithTooltip

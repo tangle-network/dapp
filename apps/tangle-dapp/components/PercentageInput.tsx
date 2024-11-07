@@ -1,5 +1,6 @@
 import BackspaceDeleteFillIcon from '@webb-tools/icons/BackspaceDeleteFillIcon';
 import { Button, Input } from '@webb-tools/webb-ui-components';
+import Decimal from 'decimal.js';
 import { FC, useCallback } from 'react';
 
 import useCustomInputValue from '../hooks/useCustomInputValue';
@@ -13,7 +14,7 @@ export type PercentageInputProps = {
   setValue: (newValue: number | null) => void;
   placeholder?: string;
   isDisabled?: boolean;
-  wrapperOverrides?: Partial<InputWrapperProps>;
+  wrapperProps?: Partial<InputWrapperProps>;
   useStandardBoundaries?: boolean;
 };
 
@@ -24,17 +25,17 @@ const PercentageInput: FC<PercentageInputProps> = ({
   setValue: setValueOnParent,
   placeholder,
   isDisabled = false,
-  wrapperOverrides,
+  wrapperProps,
   useStandardBoundaries = true,
 }) => {
   const parsePercentage = useCallback(
     (string: string) => {
       try {
-        const parsedValue = parseFloat(string) / 100;
-
-        if (isNaN(parsedValue)) {
+        if (isNaN(parseFloat(string))) {
           return new Error('Invalid percentage');
         }
+
+        const parsedValue = new Decimal(string).div(100).toNumber();
 
         // Limit the value between 0 to 100% if requested.
         // This is the most common percentage behavior.
@@ -49,17 +50,22 @@ const PercentageInput: FC<PercentageInputProps> = ({
   );
 
   const formatPercentage = useCallback(
-    (value: number): string => (value * 100).toString(),
+    (value: number): string => new Decimal(value).times(100).toString(),
     [],
   );
 
-  const { displayValue, setDisplayValue, errorMessage, setValue } =
-    useCustomInputValue<number>({
-      setValue: setValueOnParent,
-      format: formatPercentage,
-      parse: parsePercentage,
-      suffix: '%',
-    });
+  const {
+    displayValue,
+    setDisplayValue,
+    errorMessage,
+    setValue,
+    handleKeyDown,
+  } = useCustomInputValue<number>({
+    setValue: setValueOnParent,
+    format: formatPercentage,
+    parse: parsePercentage,
+    suffix: '%',
+  });
 
   const clearAction =
     value === null ? undefined : (
@@ -75,7 +81,7 @@ const PercentageInput: FC<PercentageInputProps> = ({
       isDisabled={isDisabled}
       errorMessage={errorMessage ?? undefined}
       actions={clearAction}
-      {...wrapperOverrides}
+      {...wrapperProps}
     >
       <Input
         id={id}
@@ -86,6 +92,7 @@ const PercentageInput: FC<PercentageInputProps> = ({
         autoComplete="off"
         value={displayValue}
         onChange={setDisplayValue}
+        onKeyDown={handleKeyDown}
         isDisabled={isDisabled}
         isControlled
       />

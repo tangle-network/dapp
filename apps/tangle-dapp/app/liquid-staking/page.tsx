@@ -142,11 +142,10 @@ const LiquidStakingPage: FC = () => {
 
             <Typography
               variant="body1"
-              fw="normal"
               className="text-mono-120 dark:text-mono-100"
             >
-              Get Liquid Staking Tokens (LSTs) to earn & unleash restaking on
-              Tangle Mainnet via delegation.
+              Mint Liquid Staking Tokens (LSTs) to earn rewards & restake on
+              Tangle Mainnet.
             </Typography>
           </div>
 

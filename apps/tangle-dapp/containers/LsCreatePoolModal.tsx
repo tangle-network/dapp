@@ -150,8 +150,6 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
               />
             </div>
 
-            {/** TODO: Protocol selection dropdown. */}
-
             <AmountInput
               id="ls-create-pool-initial-bond-amount"
               amount={initialBondAmount}

@@ -1,6 +1,7 @@
 'use client';
 
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
+import { ExternalLinkLine } from '@webb-tools/icons';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC, useMemo } from 'react';
@@ -49,6 +50,9 @@ const RecentTxContainer: FC = () => {
           target="_blank"
           href={accountExplorerUrl}
           isDisabled={!accountExplorerUrl}
+          rightIcon={
+            <ExternalLinkLine className="fill-current dark:fill-current" />
+          }
         >
           Open Explorer
         </Button>

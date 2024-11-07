@@ -5,6 +5,7 @@ import { FC } from 'react';
 import useOnboardingStore from '../../context/useOnboardingStore';
 import { PagePath } from '../../types';
 
+// TODO: Edge case: Restake -> Deposit page is missing proper handling (the question mark / reopen button shows up, but has no effect).
 const PAGES_WITH_ONBOARDING: PagePath[] = [
   PagePath.LIQUID_STAKING,
   PagePath.RESTAKE,

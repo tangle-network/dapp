@@ -31,6 +31,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.LST_REDEEM]: 'Redeem request submitted',
   [TxName.LST_REBOND]: 'Unstake request cancelled',
   [TxName.LST_WITHDRAW_REDEEM]: 'Unstake request executed',
+  [TxName.LST_UPDATE_COMMISSION]: 'Updated commission rate',
   [TxName.LS_LIQUIFIER_DEPOSIT]: 'Liquifier deposit successful',
   [TxName.LS_LIQUIFIER_APPROVE]: 'Liquifier approval successful',
   [TxName.LS_LIQUIFIER_UNLOCK]: 'Liquifier unlock successful',
