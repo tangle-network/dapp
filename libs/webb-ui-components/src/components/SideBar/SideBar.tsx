@@ -85,6 +85,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
           className={twMerge(
             'h-full flex flex-col justify-between py-6',
             'bg-mono-0 dark:bg-mono-200 transition-all duration-200 ease-in-out',
+            'dark:border-r dark:border-mono-160',
             isSidebarOpen ? 'w-72 px-4' : 'w-16 px-2',
           )}
         >
