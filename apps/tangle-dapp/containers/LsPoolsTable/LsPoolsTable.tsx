@@ -31,6 +31,7 @@ import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { LsPool, LsPoolDisplayName } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
+import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
 
 export type LsPoolsTableProps = {
@@ -76,19 +77,32 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
     }),
     COLUMN_HELPER.accessor('ownerAddress', {
       header: () => 'Owner',
-      cell: (props) => (
-        <Tooltip>
-          <TooltipTrigger>
-            <Avatar
-              sourceVariant="address"
-              value={props.getValue()}
-              theme="substrate"
-            />
-          </TooltipTrigger>
+      cell: (props) => {
+        const ownerAddress = props.getValue();
 
-          <TooltipBody className="max-w-none">{props.getValue()}</TooltipBody>
-        </Tooltip>
-      ),
+        if (ownerAddress === undefined) {
+          return EMPTY_VALUE_PLACEHOLDER;
+        }
+
+        return (
+          <Tooltip>
+            <TooltipTrigger>
+              <Avatar
+                sourceVariant="address"
+                value={props.getValue()}
+                theme="substrate"
+              />
+            </TooltipTrigger>
+
+            <TooltipBody className="max-w-none">
+              {tryEncodeAddressWithPrefix(
+                ownerAddress,
+                props.row.original.protocolId,
+              )}
+            </TooltipBody>
+          </Tooltip>
+        );
+      },
     }),
     COLUMN_HELPER.accessor('validators', {
       header: () => 'Validators',
@@ -108,7 +122,10 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
                 </TooltipTrigger>
 
                 <TooltipBody className="max-w-none">
-                  {substrateAddress}
+                  {tryEncodeAddressWithPrefix(
+                    substrateAddress,
+                    props.row.original.protocolId,
+                  )}
                 </TooltipBody>
               </Tooltip>
             ))}

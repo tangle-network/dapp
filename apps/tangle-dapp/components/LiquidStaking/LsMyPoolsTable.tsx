@@ -35,6 +35,7 @@ import {
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
+import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
 import { TableStatus } from '..';
 import BlueIconButton from '../BlueIconButton';
@@ -99,19 +100,32 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       }),
       COLUMN_HELPER.accessor('ownerAddress', {
         header: () => 'Owner',
-        cell: (props) => (
-          <Tooltip>
-            <TooltipTrigger>
-              <Avatar
-                sourceVariant="address"
-                value={props.getValue()}
-                theme="substrate"
-              />
-            </TooltipTrigger>
+        cell: (props) => {
+          const ownerAddress = props.getValue();
 
-            <TooltipBody className="max-w-none">{props.getValue()}</TooltipBody>
-          </Tooltip>
-        ),
+          if (ownerAddress === undefined) {
+            return EMPTY_VALUE_PLACEHOLDER;
+          }
+
+          return (
+            <Tooltip>
+              <TooltipTrigger>
+                <Avatar
+                  sourceVariant="address"
+                  value={props.getValue()}
+                  theme="substrate"
+                />
+              </TooltipTrigger>
+
+              <TooltipBody className="max-w-none">
+                {tryEncodeAddressWithPrefix(
+                  ownerAddress,
+                  props.row.original.protocolId,
+                )}
+              </TooltipBody>
+            </Tooltip>
+          );
+        },
       }),
       COLUMN_HELPER.accessor('validators', {
         header: () => 'Validators',
@@ -131,7 +145,10 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
                   </TooltipTrigger>
 
                   <TooltipBody className="max-w-none">
-                    {substrateAddress}
+                    {tryEncodeAddressWithPrefix(
+                      substrateAddress,
+                      props.row.original.protocolId,
+                    )}
                   </TooltipBody>
                 </Tooltip>
               ))}
