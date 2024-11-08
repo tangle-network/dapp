@@ -16,6 +16,9 @@ import {
   AvatarGroup,
   Table,
   TANGLE_DOCS_LIQUID_STAKING_URL,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ActionItemType } from '@webb-tools/webb-ui-components/components/ActionsDropdown/types';
@@ -97,11 +100,17 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       COLUMN_HELPER.accessor('ownerAddress', {
         header: () => 'Owner',
         cell: (props) => (
-          <Avatar
-            sourceVariant="address"
-            value={props.row.original.ownerAddress}
-            theme="substrate"
-          />
+          <Tooltip>
+            <TooltipTrigger>
+              <Avatar
+                sourceVariant="address"
+                value={props.getValue()}
+                theme="substrate"
+              />
+            </TooltipTrigger>
+
+            <TooltipBody className="max-w-none">{props.getValue()}</TooltipBody>
+          </Tooltip>
         ),
       }),
       COLUMN_HELPER.accessor('validators', {
@@ -112,14 +121,19 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
           ) : (
             <AvatarGroup total={props.row.original.validators.length}>
               {props.row.original.validators.map((substrateAddress) => (
-                <Avatar
-                  key={substrateAddress}
-                  // TODO: In the future, it'd be better if we show the identity of the validator, rather than just the address.
-                  tooltip={substrateAddress}
-                  sourceVariant="address"
-                  value={substrateAddress}
-                  theme="substrate"
-                />
+                <Tooltip key={substrateAddress}>
+                  <TooltipTrigger>
+                    <Avatar
+                      sourceVariant="address"
+                      value={substrateAddress}
+                      theme="substrate"
+                    />
+                  </TooltipTrigger>
+
+                  <TooltipBody className="max-w-none">
+                    {substrateAddress}
+                  </TooltipBody>
+                </Tooltip>
               ))}
             </AvatarGroup>
           ),

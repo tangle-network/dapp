@@ -15,6 +15,9 @@ import {
   Button,
   Pagination,
   Table,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useMemo, useState } from 'react';
@@ -74,11 +77,17 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
     COLUMN_HELPER.accessor('ownerAddress', {
       header: () => 'Owner',
       cell: (props) => (
-        <Avatar
-          sourceVariant="address"
-          value={props.row.original.ownerAddress}
-          theme="substrate"
-        />
+        <Tooltip>
+          <TooltipTrigger>
+            <Avatar
+              sourceVariant="address"
+              value={props.getValue()}
+              theme="substrate"
+            />
+          </TooltipTrigger>
+
+          <TooltipBody className="max-w-none">{props.getValue()}</TooltipBody>
+        </Tooltip>
       ),
     }),
     COLUMN_HELPER.accessor('validators', {
@@ -89,12 +98,19 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
         ) : (
           <AvatarGroup total={props.row.original.validators.length}>
             {props.row.original.validators.map((substrateAddress) => (
-              <Avatar
-                key={substrateAddress}
-                sourceVariant="address"
-                value={substrateAddress}
-                theme="substrate"
-              />
+              <Tooltip key={substrateAddress}>
+                <TooltipTrigger>
+                  <Avatar
+                    sourceVariant="address"
+                    value={substrateAddress}
+                    theme="substrate"
+                  />
+                </TooltipTrigger>
+
+                <TooltipBody className="max-w-none">
+                  {substrateAddress}
+                </TooltipBody>
+              </Tooltip>
             ))}
           </AvatarGroup>
         ),
