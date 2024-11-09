@@ -34,13 +34,20 @@ const makeSubstrateExplorerPath = (
     return `#/explorer/query/${pathOrHash}`;
   } else if (variant === 'address') {
     // Encode address for all available substrate chains.
-    const encodedAddress =
-      typeof SUBSTRATE_EXPLORER_AND_CHAIN_ID_MAP[explorerUri] === 'number'
-        ? encodeAddress(
-            pathOrHash,
-            SUBSTRATE_EXPLORER_AND_CHAIN_ID_MAP[explorerUri],
-          )
-        : pathOrHash;
+    let encodedAddress: string;
+
+    try {
+      encodedAddress =
+        typeof SUBSTRATE_EXPLORER_AND_CHAIN_ID_MAP[explorerUri] === 'number'
+          ? encodeAddress(
+              pathOrHash,
+              SUBSTRATE_EXPLORER_AND_CHAIN_ID_MAP[explorerUri],
+            )
+          : pathOrHash;
+    } catch (error) {
+      console.error('Failed to encode address:', error);
+      return `#/invalid-address/${pathOrHash}`;
+    }
 
     return `#/accounts/${encodedAddress}`;
   }
