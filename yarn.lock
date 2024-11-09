@@ -17879,17 +17879,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/evm-contract-metadata@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@webb-tools/evm-contract-metadata@npm:1.0.0"
-  dependencies:
-    "@hyperlane-xyz/sdk": "npm:^5.6.2"
-    "@hyperlane-xyz/utils": "npm:^5.6.2"
-    vite-plugin-dts: "npm:^4.3.0"
-  checksum: 10c0/2b6dcdeab8ee5c60e513ec8d9c67274e9c1a138a6c307b294d018431f942ea870f7c54cc8e1d734571cefdced034bb54e1231d3b789e97bfadb2f83f8d57dda1
-  languageName: node
-  linkType: hard
-
 "@webb-tools/interfaces@npm:1.0.11, @webb-tools/interfaces@npm:^1.0.11":
   version: 1.0.11
   resolution: "@webb-tools/interfaces@npm:1.0.11"
@@ -44782,7 +44771,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-dts@npm:^4.3.0, vite-plugin-dts@npm:~4.3.0":
+"vite-plugin-dts@npm:~4.3.0":
   version: 4.3.0
   resolution: "vite-plugin-dts@npm:4.3.0"
   dependencies:
@@ -45477,7 +45466,6 @@ __metadata:
     "@webb-tools/api-derive": "npm:0.1.4-127"
     "@webb-tools/app-util": "npm:0.1.8"
     "@webb-tools/contracts": "npm:1.0.11"
-    "@webb-tools/evm-contract-metadata": "npm:^1.0.0"
     "@webb-tools/interfaces": "npm:1.0.11"
     "@webb-tools/sdk-core": "npm:0.1.4-127"
     "@webb-tools/tangle-restaking-types": "npm:^0.1.0"
