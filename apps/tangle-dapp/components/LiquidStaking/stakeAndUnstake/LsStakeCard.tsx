@@ -81,7 +81,7 @@ const LsStakeCard: FC = () => {
   const fromLsInputRef = useRef<HTMLInputElement>(null);
 
   const actionText = useMemo(() => {
-    const defaultText = 'Join Pool & Stake';
+    const defaultText = 'Mint';
 
     if (lsPoolMembers === null) {
       return defaultText;
