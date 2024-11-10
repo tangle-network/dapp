@@ -32,11 +32,12 @@ import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
 import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
-import SelectTokenModal from './SelectTokenModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
+import LsSelectLstModal from './LsSelectLstModal';
+import useLsMyPools from '../../../data/liquidStaking/useLsMyPools';
 
 const LsUnstakeCard: FC = () => {
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
@@ -44,8 +45,10 @@ const LsUnstakeCard: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();
   const tryChangeNetwork = useLsChangeNetwork();
   const fromLsInputRef = useRef<HTMLInputElement>(null);
+  const myPools = useLsMyPools();
 
-  const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId } = useLsStore();
+  const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId, setLsPoolId } =
+    useLsStore();
 
   // TODO: Won't both of these hooks be attempting to update the same state?
   useSearchParamSync({
@@ -139,15 +142,6 @@ const LsUnstakeCard: FC = () => {
 
     return fromAmount.divn(exchangeRate).sub(feeAmount);
   }, [exchangeRate, feePercentage, fromAmount]);
-
-  const handleTokenSelect = useCallback(() => {
-    setIsSelectTokenModalOpen(false);
-  }, [setIsSelectTokenModalOpen]);
-
-  const selectTokenModalOptions = useMemo(() => {
-    // TODO: Dummy data.
-    return [{ address: '0x123456' as any, amount: new BN(100), decimals: 18 }];
-  }, []);
 
   // Reset the input amount when the network changes.
   useEffect(() => {
@@ -257,11 +251,12 @@ const LsUnstakeCard: FC = () => {
         Schedule Unstake
       </Button>
 
-      <SelectTokenModal
-        options={selectTokenModalOptions}
+      {/** TODO: Show balance ("myStake") on the right instead of the pool's APY, since it's no longer relevant when unstaking. */}
+      <LsSelectLstModal
+        pools={myPools}
         isOpen={isSelectTokenModalOpen}
-        onClose={() => setIsSelectTokenModalOpen(false)}
-        onTokenSelect={handleTokenSelect}
+        setIsOpen={setIsSelectTokenModalOpen}
+        onSelect={setLsPoolId}
       />
     </>
   );

@@ -118,6 +118,8 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
           className="w-[500px] h-[600px]"
         >
           <ChainList
+            searchInputId="ls-network-switcher-search"
+            showSearchInput={false}
             onClose={closeLsNetworkSwitcher}
             chains={networkOptions}
             onSelectChain={handleOnSelectNetwork}

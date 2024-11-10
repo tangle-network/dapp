@@ -60,6 +60,7 @@ const LsInput = forwardRef<HTMLInputElement, LsInputProps>(
       setNetworkId,
       className,
       showPoolIndicator = true,
+      onTokenClick,
     },
     ref,
   ) => {
@@ -138,11 +139,12 @@ const LsInput = forwardRef<HTMLInputElement, LsInputProps>(
             />
 
             {showPoolIndicator ? (
-              <SelectedPoolIndicator />
+              <SelectedPoolIndicator onClick={onTokenClick} />
             ) : (
               <TokenChip
                 isDerivativeVariant={isDerivativeVariant}
                 token={selectedProtocol.token}
+                onClick={onTokenClick}
               />
             )}
           </div>

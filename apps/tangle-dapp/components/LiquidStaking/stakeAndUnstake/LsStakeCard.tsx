@@ -5,14 +5,16 @@
 import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
-import { ArrowDownIcon, Search } from '@webb-tools/icons';
-import {
-  Button,
-  Chip,
-  Input,
-  Typography,
-} from '@webb-tools/webb-ui-components';
-import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
+import { ArrowDownIcon } from '@webb-tools/icons';
+import { Button } from '@webb-tools/webb-ui-components';
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { z } from 'zod';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
@@ -27,6 +29,7 @@ import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
 import useLsPoolMembers from '../../../data/liquidStaking/useLsPoolMembers';
+import useLsPools from '../../../data/liquidStaking/useLsPools';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamState from '../../../hooks/useSearchParamState';
@@ -39,12 +42,16 @@ import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
 import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
+import LsSelectLstModal from './LsSelectLstModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
 const LsStakeCard: FC = () => {
+  const lsPools = useLsPools();
+  const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
+
   const [fromAmount, setFromAmount] = useSearchParamState<BN | null>({
     defaultValue: null,
     key: LsSearchParamKey.AMOUNT,
@@ -52,7 +59,8 @@ const LsStakeCard: FC = () => {
     stringify: (value) => value?.toString(),
   });
 
-  const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId } = useLsStore();
+  const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId, setLsPoolId } =
+    useLsStore();
 
   const { execute: executeTanglePoolJoinTx, status: tanglePoolJoinTxStatus } =
     useLsPoolJoinTx();
@@ -204,6 +212,14 @@ const LsStakeCard: FC = () => {
     }
   }, []);
 
+  const allPools = useMemo(() => {
+    if (!(lsPools instanceof Map)) {
+      return null;
+    }
+
+    return Array.from(lsPools.values());
+  }, [lsPools]);
+
   return (
     <div className="flex flex-col items-stretch justify-center gap-2">
       <LsInput
@@ -234,6 +250,7 @@ const LsStakeCard: FC = () => {
         isReadOnly
         isDerivativeVariant
         token={selectedProtocol.token}
+        onTokenClick={() => setIsSelectTokenModalOpen(true)}
         className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
       />
 
@@ -274,54 +291,13 @@ const LsStakeCard: FC = () => {
       >
         {actionText}
       </Button>
-    </div>
-  );
-};
 
-type ParachainItem = {
-  id: number;
-  name: string;
-  icon: string;
-  isConnected: boolean;
-};
-
-type SelectParachainContentProps = {
-  parachains: ParachainItem[];
-};
-
-// TODO: Not yet used. Exported on purpose to avoid getting warnings. However, this is a local component.
-/** @internal */
-export const SelectParachainContent: FC<SelectParachainContentProps> = ({
-  parachains,
-}) => {
-  return (
-    <div className="flex flex-col gap-3">
-      <Typography variant="h5" fw="bold">
-        Select Parachain
-      </Typography>
-
-      <Input
-        id="select-parachain-content-search"
-        placeholder="Search parachains..."
-        rightIcon={<Search />}
+      <LsSelectLstModal
+        pools={allPools}
+        isOpen={isSelectTokenModalOpen}
+        setIsOpen={setIsSelectTokenModalOpen}
+        onSelect={setLsPoolId}
       />
-
-      <div className="flex flex-col gap-2 p-2">
-        {parachains.map((parachain) => (
-          <div
-            key={parachain.id}
-            className="flex items-center justify-between gap-1 px-4 py-3"
-          >
-            <div className="flex gap-2 items-center">
-              <Typography variant="h5" fw="bold" className="dark:text-mono-0">
-                {parachain.name}
-              </Typography>
-            </div>
-
-            {parachain.isConnected && <Chip color="green">Connected</Chip>}
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
