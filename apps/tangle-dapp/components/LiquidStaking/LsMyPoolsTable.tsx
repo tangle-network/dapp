@@ -16,6 +16,9 @@ import {
   AvatarGroup,
   Table,
   TANGLE_DOCS_LIQUID_STAKING_URL,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ActionItemType } from '@webb-tools/webb-ui-components/components/ActionsDropdown/types';
@@ -32,6 +35,7 @@ import {
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
+import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
 import { TableStatus } from '..';
 import BlueIconButton from '../BlueIconButton';
@@ -96,13 +100,32 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       }),
       COLUMN_HELPER.accessor('ownerAddress', {
         header: () => 'Owner',
-        cell: (props) => (
-          <Avatar
-            sourceVariant="address"
-            value={props.row.original.ownerAddress}
-            theme="substrate"
-          />
-        ),
+        cell: (props) => {
+          const ownerAddress = props.getValue();
+
+          if (ownerAddress === undefined) {
+            return EMPTY_VALUE_PLACEHOLDER;
+          }
+
+          return (
+            <Tooltip>
+              <TooltipTrigger>
+                <Avatar
+                  sourceVariant="address"
+                  value={props.getValue()}
+                  theme="substrate"
+                />
+              </TooltipTrigger>
+
+              <TooltipBody className="max-w-none">
+                {tryEncodeAddressWithPrefix(
+                  ownerAddress,
+                  props.row.original.protocolId,
+                )}
+              </TooltipBody>
+            </Tooltip>
+          );
+        },
       }),
       COLUMN_HELPER.accessor('validators', {
         header: () => 'Validators',
@@ -112,14 +135,22 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
           ) : (
             <AvatarGroup total={props.row.original.validators.length}>
               {props.row.original.validators.map((substrateAddress) => (
-                <Avatar
-                  key={substrateAddress}
-                  // TODO: In the future, it'd be better if we show the identity of the validator, rather than just the address.
-                  tooltip={substrateAddress}
-                  sourceVariant="address"
-                  value={substrateAddress}
-                  theme="substrate"
-                />
+                <Tooltip key={substrateAddress}>
+                  <TooltipTrigger>
+                    <Avatar
+                      sourceVariant="address"
+                      value={substrateAddress}
+                      theme="substrate"
+                    />
+                  </TooltipTrigger>
+
+                  <TooltipBody className="max-w-none">
+                    {tryEncodeAddressWithPrefix(
+                      substrateAddress,
+                      props.row.original.protocolId,
+                    )}
+                  </TooltipBody>
+                </Tooltip>
               ))}
             </AvatarGroup>
           ),

@@ -43,7 +43,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
 
       // If not the last page, return the itemsPerPage
       if (!isLastPage) {
-        return itemsPerPage?.toLocaleString() ?? '-';
+        return itemsPerPage?.toLocaleString() ?? '—';
       }
 
       // Otherwise, calculate the remaining items on the last page
@@ -51,8 +51,10 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
 
       return remainingItems > 0
         ? remainingItems.toLocaleString()
-        : (itemsPerPage?.toLocaleString() ?? '-');
+        : (itemsPerPage?.toLocaleString() ?? '—');
     }, [currentPage, itemsPerPage, totalItems, totalPages]);
+
+    const titleSection = title !== undefined ? `${title} ` : '';
 
     return (
       <div
@@ -68,7 +70,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
         <p className="body1 text-mono-160 dark:text-mono-100">
           {totalItems === 0
             ? 'No items'
-            : `Showing ${showingItemsCount} ${title ?? ''}out of ${totalItems ?? '-'}`}
+            : `Showing ${showingItemsCount} ${titleSection}out of ${totalItems ?? '—'}`}
         </p>
 
         {/** Right buttons */}
