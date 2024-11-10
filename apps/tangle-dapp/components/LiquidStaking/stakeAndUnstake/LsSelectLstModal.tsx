@@ -27,6 +27,7 @@ export type LsSelectLstModalProps = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   onSelect: (lsPoolId: number) => void;
+  isSelfStaked?: boolean;
 };
 
 const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
@@ -34,6 +35,7 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
   isOpen,
   onSelect,
   setIsOpen,
+  isSelfStaked = false,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -98,6 +100,7 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
               ) : (
                 <ListItems
                   pools={sortedPools}
+                  isSelfStaked={isSelfStaked}
                   onSelect={(poolId: number) => {
                     onSelect(poolId);
                     setIsOpen(false);
@@ -114,11 +117,12 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
 
 type ListItemsProps = {
   pools: LsPool[] | null;
+  isSelfStaked: boolean;
   onSelect: (lsPoolId: number) => void;
 };
 
 /** @internal */
-const ListItems: FC<ListItemsProps> = ({ pools, onSelect }) => {
+const ListItems: FC<ListItemsProps> = ({ pools, onSelect, isSelfStaked }) => {
   return pools === null ? (
     <div className="p-8">
       <SkeletonRows rowCount={7} className="h-[40px]" />
@@ -172,7 +176,7 @@ const ListItems: FC<ListItemsProps> = ({ pools, onSelect }) => {
                 variant="body1"
                 className="block text-mono-140 dark:text-mono-120"
               >
-                {stakeText} staked
+                {stakeText} {isSelfStaked && 'self '}staked
               </Typography>
             </div>
           </div>

@@ -88,10 +88,12 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
 
   const networkOptions: ChainConfig[] = supportedLsNetworks.map((network) => {
     const tangleNetwork = getLsTangleNetwork(network.id);
+
     const typedChainId = calculateTypedChainId(
       tangleNetwork.substrateChainId ? ChainType.Substrate : ChainType.EVM,
       tangleNetwork.substrateChainId ?? tangleNetwork.evmChainId ?? 0,
     );
+
     const chainConfig = chainsConfig[typedChainId];
 
     return {

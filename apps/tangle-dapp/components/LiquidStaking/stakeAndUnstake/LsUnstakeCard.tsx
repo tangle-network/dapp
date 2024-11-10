@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
   LsNetworkId,
+  LsPool,
   LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
@@ -38,14 +39,29 @@ import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
+import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
 
 const LsUnstakeCard: FC = () => {
+  const isAccountConnected = useIsAccountConnected();
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
   const activeAccountAddress = useActiveAccountAddress();
   const tryChangeNetwork = useLsChangeNetwork();
   const fromLsInputRef = useRef<HTMLInputElement>(null);
   const myPools = useLsMyPools();
+
+  // TODO: This is a BIT of a hack. Find a better, more explicit way to handle this.
+  // Map the pools to replace the total staked property with the
+  // self stake property instead. This is so that the Select LST
+  // modal shows the self stake amount instead of the total staked,
+  // which is more relevant when unstaking.
+  const myPoolsWithSelfStake = useMemo<LsPool[] | null>(() => {
+    if (myPools === null) {
+      return null;
+    }
+
+    return myPools.map((pool) => ({ ...pool, staked: pool.myStake }));
+  }, [myPools]);
 
   const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId, setLsPoolId } =
     useLsStore();
@@ -196,7 +212,12 @@ const LsUnstakeCard: FC = () => {
         minAmount={minSpendable ?? undefined}
         maxAmount={maxSpendable ?? undefined}
         maxErrorMessage="Not enough stake to redeem"
-        onTokenClick={() => setIsSelectTokenModalOpen(true)}
+        // Disable the token click if there's no account connected
+        // since it won't be possible to fetch the user's pools
+        // then.
+        onTokenClick={
+          isAccountConnected ? () => setIsSelectTokenModalOpen(true) : undefined
+        }
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
@@ -251,12 +272,12 @@ const LsUnstakeCard: FC = () => {
         Schedule Unstake
       </Button>
 
-      {/** TODO: Show balance ("myStake") on the right instead of the pool's APY, since it's no longer relevant when unstaking. */}
       <LsSelectLstModal
-        pools={myPools}
+        pools={myPoolsWithSelfStake}
         isOpen={isSelectTokenModalOpen}
         setIsOpen={setIsSelectTokenModalOpen}
         onSelect={setLsPoolId}
+        isSelfStaked
       />
     </>
   );
