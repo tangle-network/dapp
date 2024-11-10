@@ -1,7 +1,7 @@
 'use client';
 
 // This will override global types and provide type definitions for
-// the `lstMinting` pallet for this file only.
+// the LST pallet for this file only.
 import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';

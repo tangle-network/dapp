@@ -24,11 +24,11 @@ import LsTokenIcon from '../components/LsTokenIcon';
 import StatItem from '../components/StatItem';
 import TableCellWrapper from '../components/tables/TableCellWrapper';
 import { LsToken } from '../constants/liquidStaking/types';
+import useLsMyPools from '../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
 import formatBn from '../utils/formatBn';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
 import pluralize from '../utils/pluralize';
-import useLsMyPools from '../data/liquidStaking/useLsMyPools';
 
 export type LsMyProtocolRow = {
   name: string;

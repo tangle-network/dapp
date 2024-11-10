@@ -1,7 +1,7 @@
 'use client';
 
 // This will override global types and provide type definitions for
-// the `lstMinting` pallet for this file only.
+// the LST pallet for this file only.
 import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
@@ -21,6 +21,7 @@ import useLsPoolUnbondTx from '../../../data/liquidStaking/tangle/useLsPoolUnbon
 import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
+import useLsMyPools from '../../../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
@@ -32,12 +33,11 @@ import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
 import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
+import LsSelectLstModal from './LsSelectLstModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
-import LsSelectLstModal from './LsSelectLstModal';
-import useLsMyPools from '../../../data/liquidStaking/useLsMyPools';
 
 const LsUnstakeCard: FC = () => {
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);

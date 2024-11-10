@@ -8,6 +8,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import { FC, useMemo, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
@@ -16,7 +17,6 @@ import {
 } from '../../../constants/liquidStaking/types';
 import { ListCardWrapper } from '../../Lists/ListCardWrapper';
 import SkeletonRows from '../SkeletonRows';
-import { twMerge } from 'tailwind-merge';
 
 export type LsSelectLstModalProps = {
   pools: LsPool[] | null;
