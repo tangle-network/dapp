@@ -1,7 +1,7 @@
 import { BN_ZERO, u8aToString } from '@polkadot/util';
 import { useMemo } from 'react';
 
-import { LsPool, LsProtocolId } from '../../constants/liquidStaking/types';
+import { LsPool } from '../../constants/liquidStaking/types';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
 import assertSubstrateAddress from '../../utils/assertSubstrateAddress';
@@ -10,6 +10,7 @@ import useLsPoolCompoundApys from './apy/useLsPoolCompoundApys';
 import useLsBondedPools from './useLsBondedPools';
 import useLsPoolMembers from './useLsPoolMembers';
 import useLsPoolNominations from './useLsPoolNominations';
+import { useLsStore } from './useLsStore';
 
 const useLsPools = (): Map<number, LsPool> | null | Error => {
   const networkFeatures = useNetworkFeatures();
@@ -17,6 +18,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
   const bondedPools = useLsBondedPools();
   const poolMembers = useLsPoolMembers();
   const compoundApys = useLsPoolCompoundApys();
+  const { lsProtocolId } = useLsStore();
 
   const isSupported = networkFeatures.includes(NetworkFeature.LsPools);
 
@@ -84,15 +86,22 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         totalStaked,
         apyPercentage,
         members: membersMap,
-        // TODO: Hardcoded for now. Determine the protocol ID.
-        protocolId: LsProtocolId.TANGLE_LOCAL,
+        // TODO: Ensure that this also works for the Restaking Parachain, once it's implemented.
+        protocolId: lsProtocolId,
       };
 
       return [poolId, pool] as const;
     });
 
     return new Map(keyValuePairs);
-  }, [bondedPools, poolNominations, compoundApys, poolMembers, isSupported]);
+  }, [
+    bondedPools,
+    poolNominations,
+    compoundApys,
+    poolMembers,
+    isSupported,
+    lsProtocolId,
+  ]);
 
   // In case that the user connects to testnet or mainnet, but the network
   // doesn't have the liquid staking pools feature.
