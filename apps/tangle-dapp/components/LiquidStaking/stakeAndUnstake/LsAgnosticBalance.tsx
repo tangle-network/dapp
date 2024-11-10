@@ -34,7 +34,7 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
   const [isHovering, setIsHovering] = useState(false);
   const balance = useLsAgnosticBalance(isNative);
   const { lsProtocolId } = useLsStore();
-  const lsActivePoolDisplayName = useLsActivePoolDisplayName();
+  const { displayName: lsActivePoolDisplayName } = useLsActivePoolDisplayName();
   const protocol = getLsProtocolDef(lsProtocolId);
 
   const formattedBalance = useMemo(() => {

@@ -177,7 +177,7 @@ const LsMyProtocolsTable: FC = () => {
   );
 
   const myPoolsOrNull = useLsMyPools();
-  const myPools = myPoolsOrNull ?? [];
+  const myPools = useMemo(() => myPoolsOrNull ?? [], [myPoolsOrNull]);
 
   const rows = useMemo<LsMyProtocolRow[]>(() => {
     return lsNetwork.protocols.map((lsProtocol) => {

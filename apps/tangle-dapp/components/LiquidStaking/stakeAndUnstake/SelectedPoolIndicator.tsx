@@ -15,7 +15,7 @@ export type SelectedPoolIndicatorProps = {
 const SelectedPoolIndicator: FC<SelectedPoolIndicatorProps> = ({ onClick }) => {
   const { lsProtocolId } = useLsStore();
   const selectedProtocol = getLsProtocolDef(lsProtocolId);
-  const activeLsPoolDisplayName = useLsActivePoolDisplayName();
+  const { name, id } = useLsActivePoolDisplayName();
 
   return (
     <div
@@ -26,14 +26,19 @@ const SelectedPoolIndicator: FC<SelectedPoolIndicatorProps> = ({ onClick }) => {
           'cursor-pointer hover:bg-mono-20 hover:dark:bg-mono-160',
       )}
     >
-      {activeLsPoolDisplayName !== null && (
+      {name !== null && (
         <LsTokenIcon hasRainbowBorder name={selectedProtocol.token} />
       )}
 
       <Typography variant="h5" fw="bold" className="whitespace-nowrap">
-        {activeLsPoolDisplayName === null
-          ? 'Select LST'
-          : activeLsPoolDisplayName.toUpperCase()}
+        {name === null ? (
+          'Select LST'
+        ) : (
+          <>
+            {name.toUpperCase()}
+            <span className="text-mono-180 dark:text-mono-120">#{id}</span>
+          </>
+        )}
       </Typography>
 
       {onClick !== undefined && (
