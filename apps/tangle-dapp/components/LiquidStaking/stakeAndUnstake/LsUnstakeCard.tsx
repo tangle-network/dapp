@@ -25,6 +25,7 @@ import useLsExchangeRate, {
 import useLsMyPools from '../../../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
+import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
@@ -39,7 +40,6 @@ import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
-import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
 
 const LsUnstakeCard: FC = () => {
   const isAccountConnected = useIsAccountConnected();
