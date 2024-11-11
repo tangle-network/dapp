@@ -28,7 +28,7 @@ import { OnboardingPageKey } from '../../constants';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
 import LsCreatePoolModal from '../../containers/LsCreatePoolModal';
 import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
-import { LsProtocolsTable } from '../../containers/LsPoolsTable';
+import { LsAllProtocolsTable } from '../../containers/LsPoolsTable';
 import useNetworkStore from '../../context/useNetworkStore';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
@@ -44,8 +44,8 @@ enum SearchParamAction {
 }
 
 enum Tab {
-  ALL_POOLS = 'All Pools',
-  MY_POOLS = 'My Pools',
+  ALL_POOLS = 'All LSTs',
+  MY_POOLS = 'My LSTs',
   UNBONDING = 'Unbonding',
 }
 
@@ -213,13 +213,13 @@ const LiquidStakingPage: FC = () => {
                 <AddLineIcon className="fill-current dark:fill-current" />
               }
             >
-              Create Pool
+              Create LST
             </Button>
           </div>
 
           {/* Tabs' Content */}
           <TabContent value={Tab.ALL_POOLS}>
-            <LsProtocolsTable />
+            <LsAllProtocolsTable />
           </TabContent>
 
           <TabContent value={Tab.MY_POOLS}>

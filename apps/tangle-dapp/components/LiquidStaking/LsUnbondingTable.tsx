@@ -12,10 +12,10 @@ import {
 import {
   CheckboxCircleFill,
   CheckboxCircleLine,
-  SubtractCircleLineIcon,
   TimeFillIcon,
 } from '@webb-tools/icons';
 import {
+  Button,
   Table,
   TANGLE_DOCS_LIQUID_STAKING_URL,
 } from '@webb-tools/webb-ui-components';
@@ -27,11 +27,9 @@ import addCommasToNumber from '../../utils/addCommasToNumber';
 import stringifyTimeUnit from '../../utils/liquidStaking/stringifyTimeUnit';
 import pluralize from '../../utils/pluralize';
 import { TableStatus } from '..';
-import BlueIconButton from '../BlueIconButton';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../tables/shared';
-import CancelUnstakeModal from './unstakeRequestsTable/CancelUnstakeModal';
 import ExecuteUnstakeRequestModal from './unstakeRequestsTable/ExecuteUnstakeRequestModal';
 
 const COLUMN_HELPER = createColumnHelper<LsPoolUnstakeRequest>();
@@ -40,9 +38,6 @@ const LsUnbondingTable: FC = () => {
   const isAccountConnected = useIsAccountConnected();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [selectedPoolId, setSelectedPoolId] = useState<number | null>(null);
-
-  const [isCancelUnstakeModalOpen, setIsCancelUnstakeModalOpen] =
-    useState(false);
 
   const [isExecuteUnstakeModalOpen, setIsExecuteUnstakeModalOpen] =
     useState(false);
@@ -122,30 +117,22 @@ const LsUnbondingTable: FC = () => {
       COLUMN_HELPER.display({
         id: 'actions',
         cell: (props) => {
-          // TODO: Disable buttons depending on the request's state/progress.
-
           return (
-            <div className="flex justify-end gap-1">
-              <BlueIconButton
-                // isDisabled={isUnstakeActionDisabled}
-                onClick={() => {
-                  setSelectedPoolId(props.row.original.poolId);
-                  setIsCancelUnstakeModalOpen(true);
-                }}
-                tooltip="Cancel"
-                Icon={SubtractCircleLineIcon}
-              />
-
-              <BlueIconButton
-                // isDisabled={isStakeActionDisabled}
-                onClick={() => {
-                  setSelectedPoolId(props.row.original.poolId);
-                  setIsExecuteUnstakeModalOpen(true);
-                }}
-                tooltip="Execute"
-                Icon={CheckboxCircleLine}
-              />
-            </div>
+            <Button
+              // TODO: Disable button depending on the request's state/progress.
+              // isDisabled={isStakeActionDisabled}
+              onClick={() => {
+                setSelectedPoolId(props.row.original.poolId);
+                setIsExecuteUnstakeModalOpen(true);
+              }}
+              rightIcon={
+                <CheckboxCircleLine className="fill-current dark:fill-current" />
+              }
+              variant="utility"
+              size="sm"
+            >
+              Withdraw
+            </Button>
           );
         },
       }),
@@ -235,12 +222,6 @@ const LsUnbondingTable: FC = () => {
         lsPoolId={selectedPoolId}
         isOpen={isExecuteUnstakeModalOpen}
         setIsOpen={setIsExecuteUnstakeModalOpen}
-      />
-
-      <CancelUnstakeModal
-        lsPoolId={selectedPoolId}
-        isOpen={isCancelUnstakeModalOpen}
-        setIsOpen={setIsCancelUnstakeModalOpen}
       />
     </>
   );

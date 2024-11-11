@@ -217,7 +217,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
             loadingText="Processing"
             isFullWidth
           >
-            Create Pool
+            Create LST
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -21,7 +21,6 @@ import {
   TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
 import BN from 'bn.js';
 import { FC, ReactNode, useMemo } from 'react';
 import React from 'react';
@@ -31,20 +30,16 @@ import {
   LsParachainSimpleTimeUnit,
   ParachainCurrency,
 } from '../../../constants/liquidStaking/types';
-import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import addCommasToNumber from '../../../utils/addCommasToNumber';
 import formatFractional from '../../../utils/formatFractional';
-import isLsParachainChainId from '../../../utils/liquidStaking/isLsParachainChainId';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
 import GlassCard from '../../GlassCard';
 import { HeaderCell } from '../../tableCells';
 import TokenAmountCell from '../../tableCells/TokenAmountCell';
 import ExternalLink from '../ExternalLink';
 import SkeletonRows from '../SkeletonRows';
-import RebondLstUnstakeRequestButton from './RebondLstUnstakeRequestButton';
 import useLstUnlockRequestTableRows from './useLstUnlockRequestTableRows';
-import WithdrawLstUnstakeRequestButton from './WithdrawLstUnstakeRequestButton';
 
 export type BaseUnstakeRequest = {
   unlockId: number;
@@ -148,7 +143,6 @@ const COLUMNS = [
 ];
 
 const UnstakeRequestsTable: FC = () => {
-  const { lsProtocolId } = useLsStore();
   const activeAccountAddress = useActiveAccountAddress();
   const rows = useLstUnlockRequestTableRows();
 
@@ -174,13 +168,6 @@ const UnstakeRequestsTable: FC = () => {
   );
 
   const tableProps = useReactTable(tableOptions);
-  const selectedRows = tableProps.getSelectedRowModel().rows;
-
-  const selectedRowsUnlockIds = useMemo<Set<number>>(() => {
-    const selectedRowsIds = selectedRows.map((row) => row.original.unlockId);
-
-    return new Set(selectedRowsIds);
-  }, [selectedRows]);
 
   // Note that memoizing this will cause the table to not update
   // when the selected rows change.
@@ -227,41 +214,6 @@ const UnstakeRequestsTable: FC = () => {
 
   // Can only withdraw all selected unstake requests if they
   // have all completed their unlocking period.
-  const canWithdrawAllSelected = useMemo(() => {
-    // No rows selected or not loaded yet.
-    if (selectedRowsUnlockIds.size === 0 || rows === null) {
-      return false;
-    }
-
-    const unlockIds = Array.from(selectedRowsUnlockIds);
-
-    // Check that all selected rows have completed their unlocking
-    // period.
-    return unlockIds.every((unlockId) => {
-      const request = rows.find((request) => request.unlockId === unlockId);
-
-      assert(
-        request !== undefined,
-        'All unlock ids should have a corresponding request',
-      );
-
-      // If the remaining time unit is undefined, it means that the
-      // request has completed its unlocking period.
-      return request.progress === undefined;
-    });
-  }, [selectedRowsUnlockIds, rows]);
-
-  const parachainCurrenciesAndUnlockIds = useMemo<
-    [ParachainCurrency, number][]
-  >(() => {
-    return selectedRows.flatMap((row) => {
-      if (row.original.type !== 'parachainUnstakeRequest') {
-        return [];
-      }
-
-      return [[row.original.currency, row.original.unlockId]];
-    });
-  }, [selectedRows]);
 
   const isDataState =
     rows !== null && rows.length > 0 && activeAccountAddress !== null;
@@ -274,26 +226,6 @@ const UnstakeRequestsTable: FC = () => {
         )}
       >
         {table}
-
-        {isDataState && (
-          <div className="flex gap-3 items-center justify-center">
-            {isLsParachainChainId(lsProtocolId) && (
-              <RebondLstUnstakeRequestButton
-                // Can only rebond if there are selected rows.
-                isDisabled={selectedRowsUnlockIds.size === 0}
-                currenciesAndUnlockIds={parachainCurrenciesAndUnlockIds}
-              />
-            )}
-
-            {/* TODO: Assert that the id is either parachain or liquifier, if it isn't then we might need to hide this unstake requests table and show a specific one for Tangle networks (LS pools). */}
-            {isLsParachainChainId(lsProtocolId) && (
-              <WithdrawLstUnstakeRequestButton
-                canWithdraw={canWithdrawAllSelected}
-                currenciesAndUnlockIds={parachainCurrenciesAndUnlockIds}
-              />
-            )}
-          </div>
-        )}
       </GlassCard>
 
       {rows !== null && rows.length === 0 && (

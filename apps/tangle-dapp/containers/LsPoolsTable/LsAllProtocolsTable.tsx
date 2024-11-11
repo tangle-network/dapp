@@ -89,7 +89,7 @@ const PROTOCOL_COLUMNS = [
     },
   }),
   COLUMN_HELPER.accessor('pools', {
-    header: () => 'Pools',
+    header: () => 'LSTs',
     cell: (props) => {
       const length = props.getValue().length;
 
@@ -97,7 +97,7 @@ const PROTOCOL_COLUMNS = [
         <TableCellWrapper removeRightBorder>
           <StatItem
             title={length.toString()}
-            subtitle={pluralize('Pool', length !== 1)}
+            subtitle={pluralize('LST', length !== 1)}
             removeBorder
           />
         </TableCellWrapper>
@@ -127,7 +127,7 @@ const PROTOCOL_COLUMNS = [
   }),
 ];
 
-const LsProtocolsTable: FC = () => {
+const LsAllProtocolsTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const { lsNetworkId } = useLsStore();
 
@@ -213,4 +213,4 @@ const LsProtocolsTable: FC = () => {
   );
 };
 
-export default LsProtocolsTable;
+export default LsAllProtocolsTable;
