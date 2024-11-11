@@ -14511,11 +14511,11 @@ __metadata:
   linkType: hard
 
 "@storybook/channels@npm:^8.3.6":
-  version: 8.4.1
-  resolution: "@storybook/channels@npm:8.4.1"
+  version: 8.4.2
+  resolution: "@storybook/channels@npm:8.4.2"
   peerDependencies:
     storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10c0/e4f8dad26a6c3a22020912a68a27e5ffcbd322c764f664eb1c575dda908de437026dcb99e0914204d1b6ac6434ebabc06fa0ee6a175130041e67adb0729d2dd1
+  checksum: 10c0/2ffe92b5935349e0520eb02a4cc31cd60ab5f0361e2ccca708f1f35c226ed110481aca1fce73b9b8445bc327e1731cd6a0b2200c1901263bc76985d6dcd4abe9
   languageName: node
   linkType: hard
 
