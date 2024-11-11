@@ -1,7 +1,7 @@
 'use client';
 
 // This will override global types and provide type definitions for
-// the `lstMinting` pallet for this file only.
+// the LST pallet for this file only.
 import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
   LsNetworkId,
+  LsPool,
   LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
@@ -21,8 +22,10 @@ import useLsPoolUnbondTx from '../../../data/liquidStaking/tangle/useLsPoolUnbon
 import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
+import useLsMyPools from '../../../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
+import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
 import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
@@ -32,20 +35,36 @@ import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
 import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
-import SelectTokenModal from './SelectTokenModal';
+import LsSelectLstModal from './LsSelectLstModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
 
 const LsUnstakeCard: FC = () => {
+  const isAccountConnected = useIsAccountConnected();
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
   const [fromAmount, setFromAmount] = useState<BN | null>(null);
   const activeAccountAddress = useActiveAccountAddress();
   const tryChangeNetwork = useLsChangeNetwork();
   const fromLsInputRef = useRef<HTMLInputElement>(null);
+  const myPools = useLsMyPools();
 
-  const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId } = useLsStore();
+  // TODO: This is a BIT of a hack. Find a better, more explicit way to handle this.
+  // Map the pools to replace the total staked property with the
+  // self stake property instead. This is so that the Select LST
+  // modal shows the self stake amount instead of the total staked,
+  // which is more relevant when unstaking.
+  const myPoolsWithSelfStake = useMemo<LsPool[] | null>(() => {
+    if (myPools === null) {
+      return null;
+    }
+
+    return myPools.map((pool) => ({ ...pool, staked: pool.myStake }));
+  }, [myPools]);
+
+  const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId, setLsPoolId } =
+    useLsStore();
 
   // TODO: Won't both of these hooks be attempting to update the same state?
   useSearchParamSync({
@@ -140,15 +159,6 @@ const LsUnstakeCard: FC = () => {
     return fromAmount.divn(exchangeRate).sub(feeAmount);
   }, [exchangeRate, feePercentage, fromAmount]);
 
-  const handleTokenSelect = useCallback(() => {
-    setIsSelectTokenModalOpen(false);
-  }, [setIsSelectTokenModalOpen]);
-
-  const selectTokenModalOptions = useMemo(() => {
-    // TODO: Dummy data.
-    return [{ address: '0x123456' as any, amount: new BN(100), decimals: 18 }];
-  }, []);
-
   // Reset the input amount when the network changes.
   useEffect(() => {
     setFromAmount(null);
@@ -202,7 +212,12 @@ const LsUnstakeCard: FC = () => {
         minAmount={minSpendable ?? undefined}
         maxAmount={maxSpendable ?? undefined}
         maxErrorMessage="Not enough stake to redeem"
-        onTokenClick={() => setIsSelectTokenModalOpen(true)}
+        // Disable the token click if there's no account connected
+        // since it won't be possible to fetch the user's pools
+        // then.
+        onTokenClick={
+          isAccountConnected ? () => setIsSelectTokenModalOpen(true) : undefined
+        }
       />
 
       <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
@@ -257,11 +272,12 @@ const LsUnstakeCard: FC = () => {
         Schedule Unstake
       </Button>
 
-      <SelectTokenModal
-        options={selectTokenModalOptions}
+      <LsSelectLstModal
+        pools={myPoolsWithSelfStake}
         isOpen={isSelectTokenModalOpen}
-        onClose={() => setIsSelectTokenModalOpen(false)}
-        onTokenSelect={handleTokenSelect}
+        setIsOpen={setIsSelectTokenModalOpen}
+        onSelect={setLsPoolId}
+        isSelfStaked
       />
     </>
   );

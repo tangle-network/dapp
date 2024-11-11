@@ -27,11 +27,7 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
-import {
-  LsPool,
-  LsPoolDisplayName,
-  LsProtocolId,
-} from '../../constants/liquidStaking/types';
+import { LsPool, LsProtocolId } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
@@ -44,13 +40,13 @@ import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../tables/shared';
 import UpdateCommissionModal from './UpdateCommissionModal';
 
-export type LsMyPoolRow = LsPool & {
+export interface LsMyPoolRow extends LsPool {
   myStake: BN;
   lsProtocolId: LsProtocolId;
   isRoot: boolean;
   isNominator: boolean;
   isBouncer: boolean;
-};
+}
 
 const COLUMN_HELPER = createColumnHelper<LsMyPoolRow>();
 
@@ -92,9 +88,10 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
             fw="normal"
             className="text-mono-200 dark:text-mono-0"
           >
-            {(
-              `${props.row.original.name}#${props.getValue()}` satisfies LsPoolDisplayName
-            ).toUpperCase()}
+            {props.row.original.name?.toUpperCase()}
+            <span className="text-mono-180 dark:text-mono-120">
+              #{props.getValue()}
+            </span>
           </Typography>
         ),
       }),

@@ -28,7 +28,7 @@ import PercentageCell from '../../components/tableCells/PercentageCell';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../../components/tables/shared';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
-import { LsPool, LsPoolDisplayName } from '../../constants/liquidStaking/types';
+import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
@@ -69,9 +69,10 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
           fw="normal"
           className="text-mono-200 dark:text-mono-0"
         >
-          {(
-            `${props.row.original.name}#${props.getValue()}` satisfies LsPoolDisplayName
-          ).toUpperCase()}
+          {props.row.original.name?.toUpperCase()}
+          <span className="text-mono-180 dark:text-mono-120">
+            #{props.getValue()}
+          </span>
         </Typography>
       ),
     }),

@@ -348,6 +348,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
           onInteractOutside={closeChainModal}
         >
           <ChainList
+            searchInputId="restake-deposit-form-search"
             onClose={closeChainModal}
             chains={sourceChainOptions}
             onSelectChain={handleOnSelectChain}

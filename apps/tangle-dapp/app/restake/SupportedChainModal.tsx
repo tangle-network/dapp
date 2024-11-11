@@ -25,6 +25,7 @@ const SupportedChainModal: React.FC<Props> = ({
       onInteractOutside={onClose}
     >
       <ChainList
+        searchInputId="restake-supported-chain-search"
         chains={SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.map(
           (typedChainId) => ({
             ...chainsConfig[typedChainId],

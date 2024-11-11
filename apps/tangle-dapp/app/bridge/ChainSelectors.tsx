@@ -132,6 +132,7 @@ const ChainSelectors: FC = () => {
           className="w-[500px] h-[600px]"
         >
           <ChainList
+            searchInputId="bridge-source-chain-search"
             onClose={closeSourceChainModal}
             chains={sourceChainOptions}
             onSelectChain={setSelectedSourceChain}
@@ -147,6 +148,7 @@ const ChainSelectors: FC = () => {
           className="w-[500px] h-[600px]"
         >
           <ChainList
+            searchInputId="bridge-destination-chain-search"
             onClose={closeDestinationChainModal}
             chains={destinationChainOptions}
             onSelectChain={setSelectedDestinationChain}

@@ -41,7 +41,7 @@ import GlassCard from '../../GlassCard';
 import { HeaderCell } from '../../tableCells';
 import TokenAmountCell from '../../tableCells/TokenAmountCell';
 import ExternalLink from '../ExternalLink';
-import TableRowsSkeleton from '../TableRowsSkeleton';
+import SkeletonRows from '../SkeletonRows';
 import RebondLstUnstakeRequestButton from './RebondLstUnstakeRequestButton';
 import useLstUnlockRequestTableRows from './useLstUnlockRequestTableRows';
 import WithdrawLstUnstakeRequestButton from './WithdrawLstUnstakeRequestButton';
@@ -199,7 +199,7 @@ const UnstakeRequestsTable: FC = () => {
       return (
         <Notice
           title="Unstake requests"
-          content={<TableRowsSkeleton rowCount={5} />}
+          content={<SkeletonRows rowCount={5} />}
         />
       );
     }
