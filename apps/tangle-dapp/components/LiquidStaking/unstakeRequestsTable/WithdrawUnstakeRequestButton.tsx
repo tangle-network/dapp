@@ -1,6 +1,7 @@
 import { ArrowRight } from '@webb-tools/icons';
 import { Button } from '@webb-tools/webb-ui-components';
 import { FC, useCallback } from 'react';
+
 import useLsWithdrawUnbondedTx from '../../../data/liquidStaking/useLsWithdrawUnbondedTx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 
@@ -22,7 +23,7 @@ const WithdrawUnstakeRequestButton: FC<WithdrawUnstakeRequestButtonProps> = ({
 
     // TODO: Slashing spans.
     await execute({ poolId: lsPoolId, slashingSpans: 0 });
-  }, [isReady]);
+  }, [execute, isReady, lsPoolId]);
 
   return (
     <Button
