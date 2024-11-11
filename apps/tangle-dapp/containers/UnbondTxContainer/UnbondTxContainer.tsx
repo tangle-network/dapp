@@ -1,6 +1,7 @@
 'use client';
 
 import { BN, BN_ZERO } from '@polkadot/util';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   Button,
   Modal,
@@ -14,7 +15,6 @@ import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constant
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import AmountInput from '../../components/AmountInput';
-import useNetworkStore from '../../context/useNetworkStore';
 import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
 import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useUnbondTx from '../../data/staking/useUnbondTx';

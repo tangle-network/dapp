@@ -9,9 +9,9 @@ import {
 import { BN_ZERO } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useCallback, useEffect, useMemo } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';

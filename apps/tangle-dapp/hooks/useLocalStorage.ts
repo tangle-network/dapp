@@ -1,10 +1,11 @@
 'use client';
 
 import { HexString } from '@polkadot/util/types';
+import { TangleTokenSymbol } from '@webb-tools/tangle-shared-ui/types';
 import { useCallback, useEffect, useState } from 'react';
 
 import { OnboardingPageKey } from '../constants';
-import { Payout, TangleTokenSymbol } from '../types';
+import { Payout } from '../types';
 import { BridgeQueueTxItem } from '../types/bridge';
 import {
   Collator,

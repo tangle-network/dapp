@@ -3,6 +3,7 @@ import { HexString } from '@polkadot/util/types';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import isSubstrateAddress from '@webb-tools/dapp-types/utils/isSubstrateAddress';
 import { RefreshLineIcon } from '@webb-tools/icons';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   IconButton,
   Tooltip,
@@ -13,7 +14,6 @@ import { NetworkId } from '@webb-tools/webb-ui-components/constants/networks';
 import isEqual from 'lodash/isEqual';
 import { FC, useCallback, useMemo, useState } from 'react';
 
-import useNetworkStore from '../context/useNetworkStore';
 import useActiveAccountAddress from '../hooks/useActiveAccountAddress';
 import useLocalStorage, {
   LocalStorageKey,

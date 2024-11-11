@@ -7,6 +7,7 @@ import {
   calculateTypedChainId,
   ChainType,
 } from '@webb-tools/sdk-core/typed-chain-id';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   Dropdown,
   DropdownBasicButton,
@@ -20,7 +21,6 @@ import { usePathname } from 'next/navigation';
 import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import useNetworkStore from '../../context/useNetworkStore';
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
 import { PagePath } from '../../types';
 import createCustomNetwork from '../../utils/createCustomNetwork';

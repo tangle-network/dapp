@@ -1,7 +1,7 @@
 import { encodeAddress } from '@polkadot/util-crypto';
 import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 
-import useNetworkStore from '../context/useNetworkStore';
 import { isEvmAddress } from '../utils/isEvmAddress';
 
 const useActiveAccountAddress = (): string | null => {

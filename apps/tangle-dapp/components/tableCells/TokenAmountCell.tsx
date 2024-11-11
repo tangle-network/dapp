@@ -1,8 +1,8 @@
 import { BN } from '@polkadot/util';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import useNetworkStore from '../../context/useNetworkStore';
 import formatBn from '../../utils/formatBn';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 

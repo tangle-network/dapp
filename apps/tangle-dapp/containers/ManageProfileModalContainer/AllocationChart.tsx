@@ -1,4 +1,5 @@
 import { BN, BN_ZERO } from '@polkadot/util';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { Typography, useNextDarkMode } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import {
@@ -14,7 +15,6 @@ import {
 
 import BnChartTooltip from '../../components/BnChartTooltip';
 import { ChartColor } from '../../constants';
-import useNetworkStore from '../../context/useNetworkStore';
 import { RestakingService } from '../../types';
 import { getChartDataAreaColorByServiceType } from '../../utils';
 import formatTangleBalance from '../../utils/formatTangleBalance';

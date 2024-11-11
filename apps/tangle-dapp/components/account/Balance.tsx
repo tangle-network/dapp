@@ -1,3 +1,4 @@
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   HiddenValue,
   HiddenValueEye,
@@ -6,7 +7,6 @@ import {
 import { FC } from 'react';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
-import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 

@@ -3,9 +3,9 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import RefundLineIcon from '@webb-tools/icons/RefundLineIcon';
 import Spinner from '@webb-tools/icons/Spinner';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { FC, useCallback, useMemo } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
 import useEvmBalanceWithdrawTx from '../../data/balances/useEvmBalanceWithdrawTx';
 import usePendingEvmBalance from '../../data/balances/usePendingEvmBalance';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';

@@ -1,11 +1,11 @@
 import { assert, BN } from '@polkadot/util';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { TooltipProps } from 'recharts';
 import { z } from 'zod';
 
 import { RestakingAllocationMap } from '../containers/ManageProfileModalContainer/types';
 import { AllocationChartEntryName } from '../containers/ManageProfileModalContainer/useAllocationChartEntries';
-import useNetworkStore from '../context/useNetworkStore';
 import { RestakingService } from '../types';
 import formatTangleBalance from '../utils/formatTangleBalance';
 
@@ -50,7 +50,7 @@ const BnChartTooltip = (
     return (
       <div
         key={entryName}
-        className="px-4 py-2 rounded-lg bg-mono-0 dark:bg-mono-180 text-mono-120 dark:text-mono-80 text-center"
+        className="px-4 py-2 text-center rounded-lg bg-mono-0 dark:bg-mono-180 text-mono-120 dark:text-mono-80"
       >
         <Typography variant="body2" fw="semibold">
           {entryName}

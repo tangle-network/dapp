@@ -1,10 +1,10 @@
 'use client';
 
 import { BN_ZERO } from '@polkadot/util';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
-import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { calculateInflation } from '../../utils';
 import ensureError from '../../utils/ensureError';

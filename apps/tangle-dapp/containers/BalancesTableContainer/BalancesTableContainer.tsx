@@ -6,6 +6,7 @@ import {
   CoinsStackedLineIcon,
   SendPlanLineIcon,
 } from '@webb-tools/icons';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   InfoIconWithTooltip,
   Typography,
@@ -14,7 +15,6 @@ import { FC, useCallback, useEffect, useState } from 'react';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
 import TangleTokenIcon from '../../components/TangleTokenIcon';
-import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useApiRx from '../../hooks/useApiRx';

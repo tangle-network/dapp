@@ -3,10 +3,10 @@ import {
   isPolkadotJsDashboard,
   makeExplorerUrl,
 } from '@webb-tools/api-provider-environment/transaction/utils';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useCallback } from 'react';
 import { Hash } from 'viem';
 
-import useNetworkStore from '../context/useNetworkStore';
 import { ExplorerType } from '../types';
 
 const useSubstrateExplorerUrl = () => {

@@ -1,7 +1,7 @@
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useEffect, useState } from 'react';
 import { createPublicClient, http, type PublicClient } from 'viem';
 
-import useNetworkStore from '../context/useNetworkStore';
 import createTangleViemChainFromNetwork from '../utils/evm/createTangleViemChainFromNetwork';
 
 const useViemPublicClient = () => {

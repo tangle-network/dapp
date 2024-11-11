@@ -1,16 +1,13 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { InformationLine } from '@webb-tools/icons';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { TangleTokenSymbol } from '@webb-tools/tangle-shared-ui/types';
 import { Chip, Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import useNetworkStore from '../../context/useNetworkStore';
-import {
-  RestakingProfileType,
-  RestakingService,
-  TangleTokenSymbol,
-} from '../../types';
+import { RestakingProfileType, RestakingService } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import { filterAllocations } from './Independent/IndependentAllocationStep';
@@ -60,7 +57,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
   );
 
   return (
-    <div className="flex flex-col sm:flex-row items-start gap-2 w-full">
+    <div className="flex flex-col items-start w-full gap-2 sm:flex-row">
       <div className={cardBaseClassName}>
         <div className="flex justify-between">
           <Typography variant="body2" fw="semibold">
@@ -97,7 +94,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
             <Typography
               variant="body2"
               fw="normal"
-              className="w-full text-center bg-mono-40 dark:bg-mono-140 rounded-lg px-3 py-2"
+              className="w-full px-3 py-2 text-center rounded-lg bg-mono-40 dark:bg-mono-140"
             >
               No allocations
             </Typography>
@@ -141,7 +138,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
             Active Service Lock-In:
           </Typography>
 
-          <ul className="list-disc pl-2">
+          <ul className="pl-2 list-disc">
             <li className="ml-4 list-outside">
               <Typography
                 variant="body3"
@@ -164,7 +161,7 @@ const ConfirmAllocationsStep: FC<ConfirmAllocationsStepProps> = ({
             Switching to Shared Profile:
           </Typography>
 
-          <ul className="list-disc pl-2">
+          <ul className="pl-2 list-disc">
             <li className="ml-4 list-outside">
               <Typography
                 variant="body3"
@@ -196,8 +193,8 @@ const AllocationItem: FC<AllocationItemProps> = ({
   tokenSymbol,
 }) => {
   return (
-    <div className="flex items-center justify-between bg-mono-40 dark:bg-mono-140 rounded-lg px-3 py-2">
-      <div className="flex gap-1 flex-wrap">
+    <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-mono-40 dark:bg-mono-140">
+      <div className="flex flex-wrap gap-1">
         {services.map((service) => (
           <Chip
             key={service}
@@ -213,7 +210,7 @@ const AllocationItem: FC<AllocationItemProps> = ({
         <Typography
           variant="body2"
           fw="semibold"
-          className="dark:text-mono-0 text-right"
+          className="text-right dark:text-mono-0"
         >
           {formatTangleBalance(amount, tokenSymbol)}
         </Typography>

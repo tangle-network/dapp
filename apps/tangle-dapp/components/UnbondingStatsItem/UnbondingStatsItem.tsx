@@ -1,11 +1,11 @@
 'use client';
 
 import { BN_ZERO } from '@polkadot/util';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { type FC, useMemo } from 'react';
 
 import useActiveAccountAddress from '../..//hooks/useActiveAccountAddress';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
-import useNetworkStore from '../../context/useNetworkStore';
 import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useUnbonding from '../../data/staking/useUnbonding';
 import addCommasToNumber from '../../utils/addCommasToNumber';
@@ -34,7 +34,7 @@ const UnbondingStatsItem: FC = () => {
 
     const elements = unbondingEntriesOpt.value.map((entry, index) => {
       return (
-        <div key={index} className="text-center mb-2">
+        <div key={index} className="mb-2 text-center">
           <p>
             {entry.remainingEras.gtn(0) ? 'Unbonding' : 'Unbonded'}{' '}
             {formatTangleBalance(entry.amount, nativeTokenSymbol)}

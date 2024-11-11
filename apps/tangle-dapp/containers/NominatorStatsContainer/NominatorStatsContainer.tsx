@@ -2,6 +2,7 @@
 
 import { BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { Button, Divider } from '@webb-tools/webb-ui-components';
 import {
   SOCIAL_URLS_RECORD,
@@ -15,7 +16,6 @@ import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
-import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useTotalPayoutRewards from '../../data/NominatorStats/useTotalPayoutRewards';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';

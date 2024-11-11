@@ -1,5 +1,6 @@
 import { BN } from '@polkadot/util';
 import StatusIndicator from '@webb-tools/icons/StatusIndicator';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   HiddenValue,
   SkeletonLoader,
@@ -11,7 +12,6 @@ import {
 import { FC, ReactNode } from 'react';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
-import useNetworkStore from '../../context/useNetworkStore';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 

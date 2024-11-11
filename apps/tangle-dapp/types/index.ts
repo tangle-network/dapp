@@ -236,8 +236,6 @@ export type ExposureMap = Record<
   }
 >;
 
-export type TangleTokenSymbol = 'tTNT' | 'TNT';
-
 /**
  * Represents a function type that takes a context parameter and returns a success message.
  * @param context The context parameter.

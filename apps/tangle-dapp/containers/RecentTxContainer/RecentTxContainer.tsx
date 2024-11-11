@@ -1,12 +1,12 @@
 'use client';
 
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import { FC, useMemo } from 'react';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
-import useNetworkStore from '../../context/useNetworkStore';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import { ExplorerType } from '../../types';

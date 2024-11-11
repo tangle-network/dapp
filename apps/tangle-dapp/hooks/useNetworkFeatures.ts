@@ -1,5 +1,6 @@
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+
 import { NETWORK_FEATURE_MAP } from '../constants/networks';
-import useNetworkStore from '../context/useNetworkStore';
 import { NetworkFeature } from '../types';
 
 const useNetworkFeatures = (): Readonly<NetworkFeature[]> => {

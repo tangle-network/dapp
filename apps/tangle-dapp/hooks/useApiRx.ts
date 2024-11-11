@@ -1,10 +1,10 @@
 'use client';
 
 import { ApiRx } from '@polkadot/api';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useCallback, useEffect, useState } from 'react';
 import { catchError, Observable } from 'rxjs';
 
-import useNetworkStore from '../context/useNetworkStore';
 import ensureError from '../utils/ensureError';
 import { getApiRx } from '../utils/polkadot';
 import usePromise from './usePromise';

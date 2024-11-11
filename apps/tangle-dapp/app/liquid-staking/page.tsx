@@ -8,6 +8,7 @@ import {
   SparklingIcon,
   WaterDropletIcon,
 } from '@webb-tools/icons';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   Button,
   TabContent,
@@ -28,7 +29,6 @@ import { LsSearchParamKey } from '../../constants/liquidStaking/types';
 import LsCreatePoolModal from '../../containers/LsCreatePoolModal';
 import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
 import { LsProtocolsTable } from '../../containers/LsPoolsTable';
-import useNetworkStore from '../../context/useNetworkStore';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
@@ -133,8 +133,8 @@ const LiquidStakingPage: FC = () => {
         />
       </OnboardingModal>
 
-      <div className="flex items-stretch flex-col gap-10">
-        <div className="p-6 space-y-0 rounded-2xl flex flex-row items-center justify-between w-full overflow-x-auto bg-liquid_staking_banner dark:bg-liquid_staking_banner_dark">
+      <div className="flex flex-col items-stretch gap-10">
+        <div className="flex flex-row items-center justify-between w-full p-6 space-y-0 overflow-x-auto rounded-2xl bg-liquid_staking_banner dark:bg-liquid_staking_banner_dark">
           <div className="flex flex-col gap-2">
             <Typography variant="h5" fw="bold">
               Tangle Liquid Staking
@@ -151,7 +151,7 @@ const LiquidStakingPage: FC = () => {
           </div>
 
           {/** TODO: Waiting for price fetching API before showing this part. */}
-          {/* <div className="flex gap-6 h-full">
+          {/* <div className="flex h-full gap-6">
             <StatItem title="$123.01" subtitle="My Total Staking" />
           </div> */}
         </div>
@@ -177,7 +177,7 @@ const LiquidStakingPage: FC = () => {
         </div>
 
         <TabsRoot defaultValue={Tab.ALL_POOLS} className="space-y-4">
-          <div className="flex justify-between items-center gap-4">
+          <div className="flex items-center justify-between gap-4">
             {/* Tabs List on the left */}
             <WebbTabsList className="space-x-4">
               {Object.values(Tab).map((tab, idx) => {

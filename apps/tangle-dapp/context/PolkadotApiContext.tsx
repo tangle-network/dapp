@@ -4,6 +4,7 @@ import { WsProvider } from '@polkadot/api';
 import { ApiPromise } from '@polkadot/api/promise';
 import { ApiRx } from '@polkadot/api/rx';
 import type { Maybe } from '@webb-tools/dapp-types/utils/types';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import noop from 'lodash/noop';
 import {
   createContext,
@@ -18,7 +19,6 @@ import useSWRImmutable from 'swr/immutable';
 import { Prettify } from 'viem/chains';
 
 import { getApiPromise, getApiRx } from '../utils/polkadot';
-import useNetworkStore from './useNetworkStore';
 
 export type PolkadotApiContextProps = Prettify<{
   apiPromise: ApiPromise;

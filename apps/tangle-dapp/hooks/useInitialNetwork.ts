@@ -1,3 +1,4 @@
+import { DEFAULT_NETWORK } from '@webb-tools/tangle-shared-ui/constants/networks';
 import {
   Network,
   NETWORK_MAP,
@@ -7,7 +8,6 @@ import { useCallback } from 'react';
 import { z } from 'zod';
 
 import testRpcEndpointConnection from '../components/NetworkSelector/testRpcEndpointConnection';
-import { DEFAULT_NETWORK } from '../constants/networks';
 import createCustomNetwork from '../utils/createCustomNetwork';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
 

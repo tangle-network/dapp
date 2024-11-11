@@ -1,11 +1,11 @@
 'use client';
 
 import { Expand } from '@webb-tools/icons';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import useDebugMetricsStore from '../../context/useDebugMetricsStore';
-import useNetworkStore from '../../context/useNetworkStore';
 import usePromise from '../../hooks/usePromise';
 import { getApiPromise, getApiRx } from '../../utils/polkadot';
 

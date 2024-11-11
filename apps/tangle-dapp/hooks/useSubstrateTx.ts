@@ -2,12 +2,12 @@ import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
 import { Hash } from 'viem';
 
 import { TxName } from '../constants';
-import useNetworkStore from '../context/useNetworkStore';
 import { GetSuccessMessageFunction } from '../types';
 import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';

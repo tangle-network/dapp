@@ -3,10 +3,10 @@
 import { u128 } from '@polkadot/types';
 import { BN } from '@polkadot/util';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useEffect, useState } from 'react';
 import { type Subscription } from 'rxjs';
 
-import useNetworkStore from '../../context/useNetworkStore';
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { getApiRx } from '../../utils/polkadot';

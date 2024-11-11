@@ -1,6 +1,7 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   Alert,
   BridgeInputGroup,
@@ -25,7 +26,6 @@ import { isHex } from 'viem';
 
 import AddressInput, { AddressType } from '../../components/AddressInput';
 import AmountInput from '../../components/AmountInput';
-import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useExistentialDeposit from '../../data/balances/useExistentialDeposit';
 import useTransferTx from '../../data/balances/useTransferTx';
