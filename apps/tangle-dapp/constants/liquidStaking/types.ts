@@ -165,4 +165,18 @@ export type LsPool = {
   protocolId: LsProtocolId;
 };
 
+export type LsPoolUnstakeRequest = {
+  poolId: number;
+  unlockId: number;
+  decimals: number;
+  progress?: LsParachainSimpleTimeUnit;
+  currency: ParachainCurrency;
+
+  /**
+   * The underlying stake tokens amount represented by the unlock
+   * request.
+   */
+  amount: BN;
+};
+
 export type LsPoolDisplayName = `${string}#${number}`;

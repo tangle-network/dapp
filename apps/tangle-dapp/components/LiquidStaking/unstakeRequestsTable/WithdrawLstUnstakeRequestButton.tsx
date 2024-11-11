@@ -5,7 +5,7 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { ParachainCurrency } from '../../../constants/liquidStaking/types';
 import useLstWithdrawRedeemTx from '../../../data/liquidStaking/useLstWithdrawRedeemTx';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
-import WithdrawalConfirmationModal from './WithdrawalConfirmationModal';
+import ExecuteUnstakeRequestModal from './ExecuteUnstakeRequestModal';
 
 export type WithdrawLstUnstakeRequestButtonProps = {
   canWithdraw: boolean;
@@ -57,7 +57,7 @@ const WithdrawLstUnstakeRequestButton: FC<
         Withdraw
       </Button>
 
-      <WithdrawalConfirmationModal
+      <ExecuteUnstakeRequestModal
         isOpen={isConfirmationModalOpen}
         onClose={() => setIsConfirmationModalOpen(false)}
         txHash={withdrawRedeemTxHash}

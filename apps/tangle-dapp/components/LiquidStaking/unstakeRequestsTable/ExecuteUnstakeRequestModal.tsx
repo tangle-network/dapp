@@ -1,4 +1,4 @@
-import { CloseCircleLineIcon } from '@webb-tools/icons';
+import { CheckboxCircleLine } from '@webb-tools/icons';
 import {
   Button,
   Modal,
@@ -13,13 +13,13 @@ import { FC, useCallback } from 'react';
 import ExternalLink from '../ExternalLink';
 import ModalIcon from '../ModalIcon';
 
-export type CancelUnstakeModalProps = {
+export type ExecuteUnstakeRequestModalProps = {
   lsPoolId: number | null;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 };
 
-const CancelUnstakeModal: FC<CancelUnstakeModalProps> = ({
+const ExecuteUnstakeRequestModal: FC<ExecuteUnstakeRequestModalProps> = ({
   lsPoolId,
   isOpen,
   setIsOpen,
@@ -49,7 +49,7 @@ const CancelUnstakeModal: FC<CancelUnstakeModalProps> = ({
         </ModalHeader>
 
         <div className="flex flex-col items-center justify-center gap-2 p-9">
-          <ModalIcon Icon={CloseCircleLineIcon} />
+          <ModalIcon Icon={CheckboxCircleLine} />
 
           <Typography
             className="dark:text-mono-0 text-center"
@@ -92,4 +92,4 @@ const CancelUnstakeModal: FC<CancelUnstakeModalProps> = ({
   );
 };
 
-export default CancelUnstakeModal;
+export default ExecuteUnstakeRequestModal;

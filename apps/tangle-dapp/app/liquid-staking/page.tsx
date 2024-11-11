@@ -19,6 +19,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useEffect, useState } from 'react';
 
+import LsUnbondingTable from '../../components/LiquidStaking/LsUnbondingTable';
 import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeCard';
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
 import OnboardingItem from '../../components/OnboardingModal/OnboardingItem';
@@ -45,6 +46,7 @@ enum SearchParamAction {
 enum Tab {
   ALL_POOLS = 'All Pools',
   MY_POOLS = 'My Pools',
+  UNBONDING = 'Unbonding',
 }
 
 const LiquidStakingPage: FC = () => {
@@ -215,13 +217,17 @@ const LiquidStakingPage: FC = () => {
             </Button>
           </div>
 
-          {/* Tabs Content */}
+          {/* Tabs' Content */}
           <TabContent value={Tab.ALL_POOLS}>
             <LsProtocolsTable />
           </TabContent>
 
           <TabContent value={Tab.MY_POOLS}>
             <LsMyProtocolsTable />
+          </TabContent>
+
+          <TabContent value={Tab.UNBONDING}>
+            <LsUnbondingTable />
           </TabContent>
         </TabsRoot>
       </div>
