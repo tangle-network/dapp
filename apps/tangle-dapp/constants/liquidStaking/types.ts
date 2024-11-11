@@ -166,8 +166,9 @@ export type LsPool = {
 };
 
 export type LsPoolUnstakeRequest = {
+  poolName?: string;
   poolId: number;
-  unlockId: number;
+  unbondingEra: number;
   decimals: number;
   progress?: LsParachainSimpleTimeUnit;
   currency: ParachainCurrency;

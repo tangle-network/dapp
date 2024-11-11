@@ -56,7 +56,7 @@ export enum TxName {
   LST_MINT = 'mint',
   LST_REDEEM = 'redeem',
   LST_REBOND = 'cancel unstake request',
-  LST_WITHDRAW_REDEEM = 'withdraw redeemed tokens',
+  LS_WITHDRAW_UNBONDED = 'withdraw unbonded tokens',
   LST_UPDATE_COMMISSION = 'update commission',
   LS_LIQUIFIER_APPROVE = 'approve spending for liquifier',
   LS_LIQUIFIER_DEPOSIT = 'liquifier deposit',

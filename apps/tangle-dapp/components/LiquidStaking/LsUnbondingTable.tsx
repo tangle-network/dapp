@@ -9,15 +9,11 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import { CheckboxCircleFill, TimeFillIcon } from '@webb-tools/icons';
 import {
-  CheckboxCircleFill,
-  CheckboxCircleLine,
-  TimeFillIcon,
-} from '@webb-tools/icons';
-import {
-  Button,
   Table,
   TANGLE_DOCS_LIQUID_STAKING_URL,
+  Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useMemo, useState } from 'react';
 
@@ -30,17 +26,13 @@ import { TableStatus } from '..';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../tables/shared';
-import ExecuteUnstakeRequestModal from './unstakeRequestsTable/ExecuteUnstakeRequestModal';
+import WithdrawUnstakeRequestButton from './unstakeRequestsTable/WithdrawUnstakeRequestButton';
 
 const COLUMN_HELPER = createColumnHelper<LsPoolUnstakeRequest>();
 
 const LsUnbondingTable: FC = () => {
   const isAccountConnected = useIsAccountConnected();
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [selectedPoolId, setSelectedPoolId] = useState<number | null>(null);
-
-  const [isExecuteUnstakeModalOpen, setIsExecuteUnstakeModalOpen] =
-    useState(false);
 
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
@@ -60,17 +52,16 @@ const LsUnbondingTable: FC = () => {
       COLUMN_HELPER.accessor('poolId', {
         header: () => 'LST',
         cell: (props) => (
-          <div className="flex items-center justify-start gap-2">
-            #{addCommasToNumber(props.getValue())}
-          </div>
-        ),
-      }),
-      COLUMN_HELPER.accessor('unlockId', {
-        header: () => 'Request ID',
-        cell: (props) => (
-          <div className="flex items-center justify-start gap-2">
-            #{addCommasToNumber(props.getValue())}
-          </div>
+          <Typography
+            variant="body2"
+            fw="normal"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {props.row.original.poolName?.toUpperCase()}
+            <span className="text-mono-180 dark:text-mono-120">
+              #{props.getValue()}
+            </span>
+          </Typography>
         ),
       }),
       COLUMN_HELPER.accessor('amount', {
@@ -88,6 +79,14 @@ const LsUnbondingTable: FC = () => {
           );
         },
         // TODO: Maturity date (time left) columns. Also add an info icon tooltip for the maturity date to show the exact unlock date on hover.
+      }),
+      COLUMN_HELPER.accessor('unbondingEra', {
+        header: () => 'Unlock Era',
+        cell: (props) => (
+          <div className="flex items-center justify-start">
+            #{addCommasToNumber(props.getValue())}
+          </div>
+        ),
       }),
       COLUMN_HELPER.accessor('progress', {
         header: () => <HeaderCell title="Status" className="justify-center" />,
@@ -118,21 +117,11 @@ const LsUnbondingTable: FC = () => {
         id: 'actions',
         cell: (props) => {
           return (
-            <Button
-              // TODO: Disable button depending on the request's state/progress.
-              // isDisabled={isStakeActionDisabled}
-              onClick={() => {
-                setSelectedPoolId(props.row.original.poolId);
-                setIsExecuteUnstakeModalOpen(true);
-              }}
-              rightIcon={
-                <CheckboxCircleLine className="fill-current dark:fill-current" />
-              }
-              variant="utility"
-              size="sm"
-            >
-              Withdraw
-            </Button>
+            <div className="flex items-center justify-end">
+              <WithdrawUnstakeRequestButton
+                lsPoolId={props.row.original.poolId}
+              />
+            </div>
           );
         },
       }),
@@ -143,24 +132,26 @@ const LsUnbondingTable: FC = () => {
   const unstakeRequests: LsPoolUnstakeRequest[] = [
     {
       poolId: 1,
-      unlockId: 1,
       decimals: 18,
       amount: new BN('854854385848358348538'),
       currency: 'Eth',
+      unbondingEra: 1320,
     },
     {
       poolId: 2,
-      unlockId: 2,
       decimals: 18,
       amount: new BN('854854385848358348538'),
       currency: 'Bnc',
+      poolName: 'pepe',
+      unbondingEra: 1930,
     },
     {
       poolId: 3,
-      unlockId: 3,
       decimals: 18,
       amount: new BN('454353467576'),
       currency: 'Ksm',
+      poolName: 'lion',
+      unbondingEra: 1209,
     },
   ];
 
@@ -207,23 +198,15 @@ const LsUnbondingTable: FC = () => {
   }
 
   return (
-    <>
-      <Table
-        tableProps={table}
-        title={pluralize('unstake request', unstakeRequests.length !== 1)}
-        className="rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3"
-        thClassName="py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160"
-        tbodyClassName="!bg-transparent"
-        tdClassName="!bg-inherit border-t-0"
-        isPaginated
-      />
-
-      <ExecuteUnstakeRequestModal
-        lsPoolId={selectedPoolId}
-        isOpen={isExecuteUnstakeModalOpen}
-        setIsOpen={setIsExecuteUnstakeModalOpen}
-      />
-    </>
+    <Table
+      tableProps={table}
+      title={pluralize('unstake request', unstakeRequests.length !== 1)}
+      className="rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3"
+      thClassName="py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160"
+      tbodyClassName="!bg-transparent"
+      tdClassName="!bg-inherit border-t-0"
+      isPaginated
+    />
   );
 };
 
