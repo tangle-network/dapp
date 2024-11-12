@@ -1,13 +1,14 @@
 'use client';
 
 import { isEthereumAddress } from '@polkadot/util-crypto';
+import { BridgeType } from '@webb-tools/tangle-shared-ui/types/bridge';
 import Decimal from 'decimal.js';
 import { useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 
 import { useBridge } from '../../../context/BridgeContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
-import { BridgeFeeType, BridgeType } from '../../../types/bridge';
+import { BridgeFeeType } from '../../../types/bridge';
 import { getEthersGasPrice } from '../lib/fee';
 import useAmountInStr from './useAmountInStr';
 import useEthersProvider from './useEthersProvider';

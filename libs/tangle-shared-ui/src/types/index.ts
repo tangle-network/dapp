@@ -2,7 +2,7 @@ import type { BN } from '@polkadot/util';
 
 export type TangleTokenSymbol = 'tTNT' | 'TNT';
 
-type AddressWithIdentity = {
+export type AddressWithIdentity = {
   address: string;
   identity: string;
 };

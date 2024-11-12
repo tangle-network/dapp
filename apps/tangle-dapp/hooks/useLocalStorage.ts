@@ -4,9 +4,9 @@ import { HexString } from '@polkadot/util/types';
 import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
 import { TangleTokenSymbol } from '@webb-tools/tangle-shared-ui/types';
 import { Payout } from '@webb-tools/tangle-shared-ui/types';
+import { BridgeQueueTxItem } from '@webb-tools/tangle-shared-ui/types/bridge';
 import { useCallback, useEffect, useState } from 'react';
 
-import { BridgeQueueTxItem } from '../types/bridge';
 import {
   Collator,
   Dapp,
