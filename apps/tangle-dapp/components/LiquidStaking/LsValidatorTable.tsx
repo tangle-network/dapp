@@ -15,6 +15,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Search, Spinner } from '@webb-tools/icons';
+import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   fuzzyFilter,
   Input,
@@ -27,10 +28,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useLsValidators from '../../data/liquidStaking/useLsValidators';
 import { useLsValidatorSelectionTableColumns } from '../../data/liquidStaking/useLsValidatorSelectionTableColumns';
-import {
-  LiquidStakingItem,
-  LiquidStakingItemType,
-} from '../../types/liquidStaking';
+import { LiquidStakingItemType } from '../../types/liquidStaking';
 import pluralize from '../../utils/pluralize';
 
 const DEFAULT_PAGINATION: PaginationState = {

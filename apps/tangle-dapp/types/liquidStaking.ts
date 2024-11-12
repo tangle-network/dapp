@@ -1,5 +1,8 @@
 import { BN } from '@polkadot/util';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import {
+  LiquidStakingItem,
+  LsProtocolId,
+} from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 
 // All chains
 export type StakingItem = {
@@ -44,13 +47,6 @@ export type Collator = {
   collatorIdentity: string;
   collatorDelegationCount: number;
 } & StakingItem;
-
-export enum LiquidStakingItem {
-  VALIDATOR = 'validator',
-  VAULT_OR_STAKE_POOL = 'vaultOrStakePool',
-  DAPP = 'dapp',
-  COLLATOR = 'collator',
-}
 
 export type LiquidStakingItemType =
   | Validator

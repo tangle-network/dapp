@@ -8,3 +8,10 @@ export enum LsProtocolId {
   TANGLE_TESTNET,
   TANGLE_LOCAL,
 }
+
+export enum LiquidStakingItem {
+  VALIDATOR = 'validator',
+  VAULT_OR_STAKE_POOL = 'vaultOrStakePool',
+  DAPP = 'dapp',
+  COLLATOR = 'collator',
+}

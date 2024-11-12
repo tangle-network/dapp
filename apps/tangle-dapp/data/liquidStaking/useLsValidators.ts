@@ -1,5 +1,6 @@
 import { BN_ZERO } from '@polkadot/util';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { LsNetworkId } from '../../constants/liquidStaking/types';
@@ -7,7 +8,6 @@ import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import {
   Collator,
   Dapp,
-  LiquidStakingItem,
   PhalaVaultOrStakePool,
   Validator,
 } from '../../types/liquidStaking';

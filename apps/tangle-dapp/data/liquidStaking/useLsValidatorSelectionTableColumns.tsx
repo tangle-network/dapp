@@ -4,6 +4,7 @@ import {
   Row,
   SortingFnOption,
 } from '@tanstack/react-table';
+import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   Avatar,
   CheckBox,
@@ -21,7 +22,6 @@ import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import {
   Collator,
   Dapp,
-  LiquidStakingItem,
   PhalaVaultOrStakePool,
   Validator,
 } from '../../types/liquidStaking';

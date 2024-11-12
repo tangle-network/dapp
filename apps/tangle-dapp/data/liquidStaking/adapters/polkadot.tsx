@@ -1,6 +1,7 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { createColumnHelper, SortingFnOption } from '@tanstack/react-table';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   Avatar,
   CheckBox,
@@ -15,7 +16,6 @@ import {
   LsParachainChainDef,
   LsToken,
 } from '../../../constants/liquidStaking/types';
-import { LiquidStakingItem } from '../../../types/liquidStaking';
 import { SubstrateAddress } from '../../../types/utils';
 import assertSubstrateAddress from '../../../utils/assertSubstrateAddress';
 import calculateCommission from '../../../utils/calculateCommission';
