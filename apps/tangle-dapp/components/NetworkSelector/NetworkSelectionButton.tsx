@@ -8,6 +8,7 @@ import {
   ChainType,
 } from '@webb-tools/sdk-core/typed-chain-id';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useNetworkSwitcher from '@webb-tools/tangle-shared-ui/hooks/useNetworkSwitcher';
 import createCustomNetwork from '@webb-tools/tangle-shared-ui/utils/createCustomNetwork';
 import {
   Dropdown,
@@ -22,7 +23,6 @@ import { usePathname } from 'next/navigation';
 import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import useNetworkSwitcher from '@webb-tools/tangle-shared-ui/hooks/useNetworkSwitcher';
 import { PagePath } from '../../types';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
