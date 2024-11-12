@@ -1,7 +1,6 @@
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import useIsMountedRef from '@webb-tools/webb-ui-components/hooks/useIsMountedRef';
 import { useEffect, useState } from 'react';
-
-import useIsMountedRef from './useIsMountedRef';
 
 /**
  * An utility hook that simplifies working with Promise objects
