@@ -24,9 +24,9 @@ const useLsWithdrawUnbondedTx = () => {
   const evmTxFactory: EvmTxFactory<
     Precompile.LST,
     LsWithdrawUnbondedTxContext
-  > = useCallback((context, activeEvmAddress) => {
-    // TODO: Convert to EVM address 32.
-    const activeEvmAddress32 = activeEvmAddress;
+  > = useCallback((context, activeEvmAddress20) => {
+    // TODO: Convert to EVM address 32. The smart contract function expects EVM address 32 bytes.
+    const activeEvmAddress32 = activeEvmAddress20;
 
     return {
       functionName: 'withdrawUnbonded',

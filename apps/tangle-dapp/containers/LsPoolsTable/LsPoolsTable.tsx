@@ -188,8 +188,8 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
     return (
       <TableStatus
         className={sharedTableStatusClxs}
-        title="No LSTs available yet"
-        description="Looks like there are currently no liquid staking tokens available for this protocol. Try creating your own LST to get started!"
+        title="No pools available yet"
+        description="Looks like there are currently no liquid staking pools available for this protocol. Try creating your own pool to get started!"
         icon="🔍"
       />
     );

@@ -89,7 +89,7 @@ const PROTOCOL_COLUMNS = [
     },
   }),
   COLUMN_HELPER.accessor('pools', {
-    header: () => 'LSTs',
+    header: () => 'Pools',
     cell: (props) => {
       const length = props.getValue().length;
 
@@ -97,7 +97,7 @@ const PROTOCOL_COLUMNS = [
         <TableCellWrapper removeRightBorder>
           <StatItem
             title={length.toString()}
-            subtitle={pluralize('LST', length !== 1)}
+            subtitle={pluralize('Pool', length !== 1)}
             removeBorder
           />
         </TableCellWrapper>

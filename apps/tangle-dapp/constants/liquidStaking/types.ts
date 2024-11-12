@@ -168,10 +168,11 @@ export type LsPool = {
 export type LsPoolUnstakeRequest = {
   poolName?: string;
   poolId: number;
-  unbondingEra: number;
   decimals: number;
-  progress?: LsParachainSimpleTimeUnit;
   token: LsToken;
+  unlockEra: number;
+  erasLeftToUnlock?: number;
+  isReadyToWithdraw: boolean;
 
   /**
    * The underlying stake tokens amount represented by the unlock

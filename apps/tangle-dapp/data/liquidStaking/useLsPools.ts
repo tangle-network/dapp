@@ -1,4 +1,4 @@
-import { BN_ZERO, u8aToString } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 import { useMemo } from 'react';
 
 import { LsPool } from '../../constants/liquidStaking/types';
@@ -73,7 +73,15 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         .map(([, address, account]) => [address, account] as const);
 
       const membersMap = new Map(membersKeyValuePairs);
-      const name = u8aToString(tanglePool.metadata.name);
+
+      let name: string | undefined;
+
+      // TODO: Something about Polkadot's types is causing this to throw an error, saying that `.toUtf8` is not a function. Using this temporary workaround for now.
+      try {
+        name = tanglePool.metadata.name.toUtf8();
+      } catch {
+        name = undefined;
+      }
 
       const pool: LsPool = {
         id: poolId,

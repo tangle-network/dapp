@@ -45,7 +45,7 @@ export type AbiCall<PrecompileT extends Precompile> = {
 
 export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
   context: Context,
-  activeEvmAddress: Address,
+  activeEvmAddress20: Address,
 ) => PromiseOrT<AbiCall<PrecompileT>> | null;
 
 /**

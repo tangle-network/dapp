@@ -44,8 +44,8 @@ enum SearchParamAction {
 }
 
 enum Tab {
-  ALL_POOLS = 'All LSTs',
-  MY_POOLS = 'My LSTs',
+  ALL_POOLS = 'All Pools',
+  MY_POOLS = 'My Pools',
   UNBONDING = 'Unbonding',
 }
 
@@ -107,25 +107,25 @@ const LiquidStakingPage: FC = () => {
         <OnboardingItem
           Icon={Search}
           title="Explore Liquid Staking Pools"
-          description="Browse existing liquid staking pools on Tangle or the Restaking Parachain. Sort them by APY, TVL, or create your own pool."
+          description="Browse existing liquid staking tokens (LSTs) on Tangle or Tangle Restaking Parachain. Sort them by APY, TVL, or create your own LST."
         />
 
         <OnboardingItem
           Icon={WaterDropletIcon}
           title="Stake Your Assets"
-          description="Select a pool, enter the amount you'd like to stake, and click 'Stake' to start staking in the pool."
+          description="Select a pool, enter the amount you'd like to mint, and click 'Mint' to start staking in the pool and receive an LST."
         />
 
         <OnboardingItem
           Icon={EditLine}
-          title="View and Manage Your Pools"
-          description="After staking, use the 'My Pools' tab to view, increase stake, unstake, or manage your pools."
+          title="View and Manage Your LSTs"
+          description="After staking, use the 'My Pools' tab to view, increase stake, unstake, or manage your LST positions."
         />
 
         <OnboardingItem
           Icon={CoinIcon}
           title="Obtain derivative tokens"
-          description="When you join a pool, you'll automatically receive its derivative asset, which can be traded and used within Tangle's restaking infrastructure."
+          description="When you join a pool, you'll automatically receive its derivative asset (LST), which can be traded and used within Tangle's restaking infrastructure."
         />
 
         <OnboardingItem
@@ -213,7 +213,7 @@ const LiquidStakingPage: FC = () => {
                 <AddLineIcon className="fill-current dark:fill-current" />
               }
             >
-              Create LST
+              Create Pool
             </Button>
           </div>
 

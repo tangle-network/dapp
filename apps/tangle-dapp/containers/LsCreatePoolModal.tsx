@@ -127,14 +127,14 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
             {!isLiveNetwork && (
               <Alert
                 type="info"
-                description={`This liquid staking pool will be created on ${lsNetwork.networkName} and will not be accessible on other networks.`}
+                description={`This liquid staking token will be created on ${lsNetwork.networkName} and will not be accessible on other networks.`}
               />
             )}
 
             <div className="flex items-center justify-stretch gap-2">
               <TextInput
                 id="ls-create-pool-name"
-                title="Pool Name"
+                title="Name"
                 placeholder="Choose a name"
                 value={name}
                 setValue={setName}
@@ -217,7 +217,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
             loadingText="Processing"
             isFullWidth
           >
-            Create LST
+            Confirm
           </Button>
         </ModalFooter>
       </ModalContent>

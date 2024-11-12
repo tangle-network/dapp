@@ -20,7 +20,6 @@ import { LsPoolUnstakeRequest } from '../../constants/liquidStaking/types';
 import useLsUnbonding from '../../data/liquidStaking/useLsUnbonding';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import addCommasToNumber from '../../utils/addCommasToNumber';
-import stringifyTimeUnit from '../../utils/liquidStaking/stringifyTimeUnit';
 import pluralize from '../../utils/pluralize';
 import { TableStatus } from '..';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
@@ -50,7 +49,7 @@ const LsUnbondingTable: FC = () => {
   const columns = useMemo(
     () => [
       COLUMN_HELPER.accessor('poolId', {
-        header: () => 'LST',
+        header: () => 'Pool ID',
         cell: (props) => (
           <Typography
             variant="body2"
@@ -79,31 +78,23 @@ const LsUnbondingTable: FC = () => {
         },
         // TODO: Maturity date (time left) columns. Also add an info icon tooltip for the maturity date to show the exact unlock date on hover.
       }),
-      COLUMN_HELPER.accessor('unbondingEra', {
-        header: () => 'Unlock Era',
-        cell: (props) => (
-          <div className="flex items-center justify-start">
-            #{addCommasToNumber(props.getValue())}
-          </div>
-        ),
-      }),
-      COLUMN_HELPER.accessor('progress', {
+      COLUMN_HELPER.accessor('erasLeftToUnlock', {
         header: () => 'Status',
         cell: (props) => {
-          const progress = props.getValue();
+          const erasLeftToUnlock = props.getValue();
 
-          const progressString = (() => {
-            return progress === undefined
+          const progressText = (() => {
+            return erasLeftToUnlock === undefined
               ? undefined
-              : stringifyTimeUnit(progress).join(' ');
+              : `${addCommasToNumber(erasLeftToUnlock)} ${pluralize('era', erasLeftToUnlock !== 1)} left`;
           })();
 
           const content =
-            progressString === undefined ? (
+            progressText === undefined ? (
               <CheckboxCircleFill className="dark:fill-green-50" />
             ) : (
               <div className="flex gap-1 items-center justify-center">
-                <TimeFillIcon className="dark:fill-blue-50" /> {progressString}
+                <TimeFillIcon className="dark:fill-blue-50" /> {progressText}
               </div>
             );
 
@@ -112,12 +103,21 @@ const LsUnbondingTable: FC = () => {
           );
         },
       }),
+      COLUMN_HELPER.accessor('unlockEra', {
+        header: () => 'Unlocks At Era',
+        cell: (props) => (
+          <div className="flex items-center justify-start">
+            #{addCommasToNumber(props.getValue())}
+          </div>
+        ),
+      }),
       COLUMN_HELPER.display({
         id: 'actions',
         cell: (props) => {
           return (
             <div className="flex items-center justify-end">
               <WithdrawUnstakeRequestButton
+                isReadyToWithdraw={props.row.original.isReadyToWithdraw}
                 lsPoolId={props.row.original.poolId}
               />
             </div>

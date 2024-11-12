@@ -7,10 +7,12 @@ import { TxStatus } from '../../../hooks/useSubstrateTx';
 
 export type WithdrawUnstakeRequestButtonProps = {
   lsPoolId: number;
+  isReadyToWithdraw: boolean;
 };
 
 const WithdrawUnstakeRequestButton: FC<WithdrawUnstakeRequestButtonProps> = ({
   lsPoolId,
+  isReadyToWithdraw,
 }) => {
   const { status, execute } = useLsWithdrawUnbondedTx();
 
@@ -27,7 +29,7 @@ const WithdrawUnstakeRequestButton: FC<WithdrawUnstakeRequestButtonProps> = ({
 
   return (
     <Button
-      isDisabled={!isReady}
+      isDisabled={!isReady || !isReadyToWithdraw}
       onClick={handleConfirmClick}
       rightIcon={<ArrowRight className="fill-current dark:fill-current" />}
       variant="utility"

@@ -93,7 +93,7 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
             <ul>
               {pools !== null && pools.length === 0 ? (
                 <EmptyList
-                  title="No LSTs available"
+                  title="No pools available"
                   description="Create your own to get started!"
                   className="my-16"
                 />
