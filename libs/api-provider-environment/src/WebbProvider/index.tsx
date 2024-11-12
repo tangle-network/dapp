@@ -76,7 +76,8 @@ import {
   registerInteractiveFeedback,
   useNoteAccount,
 } from './private';
-import { useActiveAccount, useActiveChain, useActiveWallet } from './subjects';
+import { useActiveChain, useActiveWallet } from './subjects';
+import { useActiveAccount } from '../hooks/useActiveAccount';
 
 interface WebbProviderInnerProps extends BareProps {
   appEvent: TAppEvent;
