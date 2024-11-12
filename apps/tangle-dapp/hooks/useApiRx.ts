@@ -3,10 +3,10 @@
 import { ApiRx } from '@polkadot/api';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import { getApiRx } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import { useCallback, useEffect, useState } from 'react';
 import { catchError, Observable } from 'rxjs';
 
-import { getApiRx } from '../utils/polkadot';
 import usePromise from './usePromise';
 
 export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | null;

@@ -13,6 +13,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment/webb-context
 import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
@@ -30,7 +31,6 @@ import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import getStatement, { Statement } from '../../utils/getStatement';
-import { getApiPromise } from '../../utils/polkadot';
 import type { ClaimInfoType } from './types';
 
 enum Step {

@@ -2,8 +2,7 @@ import type {
   PalletIdentityLegacyIdentityInfo,
   PalletIdentityRegistration,
 } from '@polkadot/types/lookup';
-
-import { getApiPromise } from './api';
+import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 
 export type IdentityType = {
   name: string | null;

@@ -14,11 +14,11 @@ import useLocalStorage, {
   LocalStorageKey,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import { Payout } from '@webb-tools/tangle-shared-ui/types';
+import { getApiPromise as getPolkadotApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import { getApiPromise as getPolkadotApiPromise } from '../../utils/polkadot';
 import useEraTotalRewards from '../payouts/useEraTotalRewards';
 import useNominationsUnclaimedRewards from '../payouts/useNominationsUnclaimedRewards';
 import { usePayoutsStore } from '../payouts/usePayoutsStore';

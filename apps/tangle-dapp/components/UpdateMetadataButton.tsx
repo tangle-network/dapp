@@ -8,6 +8,7 @@ import useLocalStorage, {
   LocalStorageKey,
   SubstrateWalletsMetadataEntry,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
+import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import {
   IconButton,
   Tooltip,
@@ -21,7 +22,6 @@ import { FC, useCallback, useMemo, useState } from 'react';
 import useActiveAccountAddress from '../hooks/useActiveAccountAddress';
 import usePromise from '../hooks/usePromise';
 import useSubstrateInjectedExtension from '../hooks/useSubstrateInjectedExtension';
-import { getApiPromise } from '../utils/polkadot';
 
 const UpdateMetadataButton: FC = () => {
   const [isHidden, setIsHidden] = useState(false);

@@ -1,7 +1,7 @@
 import { InjectedExtension } from '@polkadot/extension-inject/types';
+import { findInjectorForAddress } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import { useCallback } from 'react';
 
-import { findInjectorForAddress } from '../utils/polkadot';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import usePromise from './usePromise';
 

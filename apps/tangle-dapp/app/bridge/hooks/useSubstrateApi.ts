@@ -1,11 +1,11 @@
 'use client';
 
 import { ApiPromise } from '@polkadot/api';
+import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import { useCallback, useMemo } from 'react';
 
 import { useBridge } from '../../../context/BridgeContext';
 import usePromise from '../../../hooks/usePromise';
-import { getApiPromise } from '../../../utils/polkadot/api';
 
 export default function useSubstrateApi() {
   const { selectedSourceChain } = useBridge();

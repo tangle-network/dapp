@@ -1,4 +1,5 @@
-import { getApiPromise } from './api';
+import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
+
 import { getAccountInfo } from './identity';
 
 export const getValidatorIdentityName = async (

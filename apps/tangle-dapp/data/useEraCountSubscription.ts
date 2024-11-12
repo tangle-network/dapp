@@ -2,11 +2,11 @@
 
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { getApiRx } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import { useEffect, useState } from 'react';
 import type { Subscription } from 'rxjs';
 
 import useFormatReturnType from '../hooks/useFormatReturnType';
-import { getApiRx } from '../utils/polkadot';
 
 export default function useEraCountSubscription(
   defaultValue: number | null = null,

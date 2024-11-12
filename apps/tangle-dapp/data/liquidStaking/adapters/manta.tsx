@@ -2,6 +2,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { createColumnHelper, SortingFnOption } from '@tanstack/react-table';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import {
   Avatar,
   CheckBox,
@@ -18,7 +19,6 @@ import {
 } from '../../../constants/liquidStaking/types';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
 import formatBn from '../../../utils/formatBn';
-import { getApiPromise } from '../../../utils/polkadot';
 import { FetchProtocolEntitiesFn, GetTableColumnsFn } from '../adapter';
 import {
   sortDelegationCount,
