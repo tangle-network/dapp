@@ -1,5 +1,5 @@
 import { encodeAddress } from '@polkadot/util-crypto';
-import { useActiveAccount } from '@webb-tools/api-provider-environment/WebbProvider/subjects';
+import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 
 import { isEvmAddress } from '../utils/isEvmAddress';
