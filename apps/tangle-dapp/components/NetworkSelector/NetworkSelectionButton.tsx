@@ -22,7 +22,7 @@ import { usePathname } from 'next/navigation';
 import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
+import useNetworkSwitcher from '@webb-tools/tangle-shared-ui/hooks/useNetworkSwitcher';
 import { PagePath } from '../../types';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 

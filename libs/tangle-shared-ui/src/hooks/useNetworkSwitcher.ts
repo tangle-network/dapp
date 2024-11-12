@@ -7,14 +7,6 @@ import {
 } from '@webb-tools/dapp-config';
 import { DEFAULT_SS58 } from '@webb-tools/dapp-config/constants/polkadot';
 import getWalletsForTypedChainId from '@webb-tools/dapp-config/utils/getWalletIdsForTypedChainId';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import useInitialNetwork from '@webb-tools/tangle-shared-ui/hooks/useInitialNetwork';
-import useLocalStorage, {
-  LocalStorageKey,
-} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
-import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
-import testRpcEndpointConnection from '@webb-tools/tangle-shared-ui/utils/testRpcEndpointConnection';
 import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import {
@@ -23,6 +15,12 @@ import {
 } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useEffect, useState } from 'react';
 import { createPublicClient, fallback, http, webSocket } from 'viem';
+import useNetworkStore from '../context/useNetworkStore';
+import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
+import useInitialNetwork from './useInitialNetwork';
+import testRpcEndpointConnection from '../utils/testRpcEndpointConnection';
+import ensureError from '../utils/ensureError';
+import { getApiPromise } from '../utils/polkadot/api';
 
 const useNetworkSwitcher = () => {
   const { switchChain, activeWallet } = useWebContext();

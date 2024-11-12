@@ -10,6 +10,7 @@ import {
 } from '@webb-tools/icons';
 import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useNetworkSwitcher from '@webb-tools/tangle-shared-ui/hooks/useNetworkSwitcher';
 import {
   Button,
   TabContent,
@@ -31,7 +32,6 @@ import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
 import { LsProtocolsTable } from '../../containers/LsPoolsTable';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
 import useSearchParamState from '../../hooks/useSearchParamState';
 import getLsTangleNetwork from '../../utils/liquidStaking/getLsTangleNetwork';
 import TabListItem from '../restake/TabListItem';
