@@ -1,8 +1,8 @@
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import assert from 'assert';
 import { useMemo } from 'react';
 
 import { LsMyPoolRow } from '../../components/LiquidStaking/LsMyPoolsTable';
-import { LsProtocolId } from '../../constants/liquidStaking/types';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import useLsPools from './useLsPools';
 

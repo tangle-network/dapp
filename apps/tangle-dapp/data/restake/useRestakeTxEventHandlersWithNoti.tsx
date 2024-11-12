@@ -1,12 +1,12 @@
 import type { Evaluate } from '@webb-tools/dapp-types/utils/types';
 import Spinner from '@webb-tools/icons/Spinner';
+import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubstrateExplorerUrl';
 import { type SnackBarOpts } from '@webb-tools/webb-ui-components/components/Notification/NotificationContext';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import type React from 'react';
 import { useMemo } from 'react';
 
-import useSubstrateExplorerUrl from '../../hooks/useSubstrateExplorerUrl';
 import { TxEvent, type TxEventHandlers } from './RestakeTx/base';
 import ViewTxOnExplorer from './ViewTxOnExplorer';
 

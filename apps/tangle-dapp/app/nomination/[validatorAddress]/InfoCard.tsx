@@ -2,6 +2,7 @@
 
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { ExplorerType } from '@webb-tools/tangle-shared-ui/types';
 import {
   Avatar,
   Chip,
@@ -17,7 +18,6 @@ import { TangleCard } from '../../../components';
 import ValidatorSocials from '../../../components/ValidatorSocials';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useValidatorInfoCard from '../../../data/validatorDetails/useValidatorInfoCard';
-import { ExplorerType } from '../../../types';
 import ValueSkeleton from './ValueSkeleton';
 
 interface InfoCardProps {

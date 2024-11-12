@@ -7,7 +7,6 @@ import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { LoginBoxLineIcon, WalletLineIcon } from '@webb-tools/icons';
 import { useWallets } from '@webb-tools/react-hooks';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { isViemError, WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import {
   AccountDropdownBody,
@@ -24,8 +23,9 @@ import {
 import { FC, useCallback, useMemo } from 'react';
 
 import useSubstrateExplorerUrl from '../../hooks/useSubstrateExplorerUrl';
+import useNetworkStore from '../../context/useNetworkStore';
 
-export const WalletDropdown: FC<{
+const WalletDropdown: FC<{
   accountName?: string;
   accountAddress: string;
   wallet: WalletConfig;
@@ -195,3 +195,5 @@ const SwitchAccountButton: FC = () => {
     </Dropdown>
   );
 };
+
+export default WalletDropdown;

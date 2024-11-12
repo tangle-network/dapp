@@ -17,4 +17,3 @@ export { default as TangleCard } from './TangleCard';
 export * from './UnbondingStatsItem';
 export * from './ValidatorSelectionTable';
 export * from './ValidatorTable';
-export * from './WalletDropdown';

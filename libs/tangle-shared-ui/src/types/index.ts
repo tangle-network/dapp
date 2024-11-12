@@ -1,4 +1,5 @@
 import type { BN } from '@polkadot/util';
+import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 
 export type TangleTokenSymbol = 'tTNT' | 'TNT';
 
@@ -16,3 +17,8 @@ export type Payout = {
   nominatorTotalReward: BN;
   nominatorTotalRewardRaw: BN;
 };
+
+export const ExplorerType = {
+  Substrate: 'polkadot' as WebbProviderType,
+  EVM: 'web3' as WebbProviderType,
+} as const;

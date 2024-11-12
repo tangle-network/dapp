@@ -3,7 +3,6 @@ import type {
   SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
-import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 
 export enum PagePath {
   NOMINATION = '/nomination',
@@ -207,11 +206,6 @@ export enum NetworkFeature {
   EraStakersOverview,
   LsPools,
 }
-
-export const ExplorerType = {
-  Substrate: 'polkadot' as WebbProviderType,
-  EVM: 'web3' as WebbProviderType,
-} as const;
 
 export type ExposureMap = Record<
   string,
