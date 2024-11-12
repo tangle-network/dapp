@@ -38,7 +38,7 @@ export enum LsToken {
   ASTAR = 'ASTR',
   PHALA = 'PHALA',
   TNT = 'TNT',
-  TTNT = 'tTNT',
+  T_TNT = 'tTNT',
 }
 
 export type LsParachainToken =
@@ -69,7 +69,7 @@ export interface LsTangleNetworkDef extends ProtocolDefCommon {
     | LsNetworkId.TANGLE_TESTNET
     | LsNetworkId.TANGLE_LOCAL;
   id: LsTangleNetworkId;
-  token: LsToken.TNT | LsToken.TTNT;
+  token: LsToken.TNT | LsToken.T_TNT;
   rpcEndpoint: string;
   ss58Prefix:
     | typeof TANGLE_MAINNET_NETWORK.ss58Prefix
@@ -150,8 +150,9 @@ export type LsPool = {
   validators: SubstrateAddress[];
   totalStaked: BN;
   apyPercentage?: number;
-  commissionPercentage?: number;
+  commissionFractional?: number;
   members: Map<SubstrateAddress, PalletAssetsAssetAccount>;
+  protocolId: LsProtocolId;
 };
 
 export type LsPoolDisplayName = `${string}#${number}`;

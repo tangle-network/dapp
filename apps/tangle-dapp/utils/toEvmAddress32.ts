@@ -1,6 +1,8 @@
 import { u8aToHex } from '@polkadot/util';
-import { decodeAddress, isAddress } from '@polkadot/util-crypto';
+import { decodeAddress } from '@polkadot/util-crypto';
 import { AddressType } from '@webb-tools/dapp-config/types';
+
+import isSubstrateAddress from './isSubstrateAddress';
 
 /**
  * An EVM address that is 32 bytes long.
@@ -9,7 +11,7 @@ import { AddressType } from '@webb-tools/dapp-config/types';
  * of the usual 20-byte `address` type.
  */
 const toEvmAddress32 = (substrateAddress: string): AddressType => {
-  if (!isAddress(substrateAddress)) {
+  if (!isSubstrateAddress(substrateAddress)) {
     throw new Error('Provided address is not a Substrate address');
   }
 

@@ -20,16 +20,18 @@ export const HeaderChip: FC<HeaderChipItemProps> = ({
     () => (
       <Chip color="blue">
         <Icon size="lg" className="stroke-blue-90 dark:stroke-blue-30" />
+
         <ChipText label={label} />
       </Chip>
     ),
     [Icon, label],
   );
 
-  if (hasTooltip && tooltipContent) {
+  if (hasTooltip && tooltipContent !== undefined) {
     return (
       <Tooltip>
         <TooltipTrigger>{mainContent}</TooltipTrigger>
+
         <TooltipBody>
           <Typography variant="body2">{tooltipContent}</Typography>
         </TooltipBody>

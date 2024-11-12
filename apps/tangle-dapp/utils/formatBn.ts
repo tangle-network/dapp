@@ -1,4 +1,4 @@
-import { BN } from '@polkadot/util';
+import { BN, formatBalance } from '@polkadot/util';
 
 import addCommasToNumber from './addCommasToNumber';
 
@@ -21,21 +21,38 @@ export type FormatOptions = {
   includeCommas: boolean;
   fractionMaxLength?: number;
   trimTrailingZeroes: boolean;
+  withSi?: boolean;
 };
 
 const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
   fractionMaxLength: 4,
   includeCommas: false,
   trimTrailingZeroes: true,
+  withSi: false,
 };
 
 // TODO: Break this function down into smaller local functions for improved legibility and modularity, since its logic is getting complex. Consider making it functional instead of modifying the various variables: Return {integerPart, fractionalPart} per transformation/function, so that it can be easily chainable monad-style. Also, prefer usage of Decimal.js instead of BN for better decimal handling without needing to manually handle the edge cases.
 function formatBn(
   amount: BN,
   decimals: number,
-  options?: Partial<FormatOptions>,
+  partialOptions?: Partial<FormatOptions>,
 ): string {
-  const finalOptions: FormatOptions = { ...DEFAULT_FORMAT_OPTIONS, ...options };
+  const options: FormatOptions = {
+    ...DEFAULT_FORMAT_OPTIONS,
+    ...partialOptions,
+  };
+
+  if (options.withSi) {
+    // Replace the space with an empty string to remove the
+    // space between the number and the SI unit.
+    return formatBalance(amount, {
+      decimals,
+      withSi: true,
+      withUnit: false,
+      withZero: false,
+    }).replace(' ', '');
+  }
+
   const chainUnitFactorBn = getChainUnitFactor(decimals);
   const isNegative = amount.isNeg();
 
@@ -53,8 +70,8 @@ function formatBn(
   // fraction max length, then don't use the default value for the fraction
   // max length. Instead keep it undefined. This is so that small, fractional
   // amounts are always shown, which would otherwise be cut-off and shown as '0'.
-  if (integerPart === '0' && options?.fractionMaxLength === undefined) {
-    finalOptions.fractionMaxLength = undefined;
+  if (integerPart === '0' && partialOptions?.fractionMaxLength === undefined) {
+    options.fractionMaxLength = undefined;
   }
 
   // Check for missing leading zeros in the fraction part. This
@@ -74,27 +91,27 @@ function formatBn(
 
   // Pad the end of the fraction part with zeros if applicable,
   // ex. 0.001 -> 0.0010 when the requested fraction length is 4.
-  if (!finalOptions.trimTrailingZeroes) {
+  if (!options.trimTrailingZeroes) {
     fractionPart = fractionPart.padEnd(
-      finalOptions.fractionMaxLength ?? decimals,
+      options.fractionMaxLength ?? decimals,
       '0',
     );
   }
 
   // Trim the fraction part to the desired length.
-  if (finalOptions.fractionMaxLength !== undefined) {
-    fractionPart = fractionPart.substring(0, finalOptions.fractionMaxLength);
+  if (options.fractionMaxLength !== undefined) {
+    fractionPart = fractionPart.substring(0, options.fractionMaxLength);
   }
 
   // Remove trailing zeroes if applicable.
-  if (finalOptions.trimTrailingZeroes) {
+  if (options.trimTrailingZeroes) {
     while (fractionPart.endsWith('0')) {
       fractionPart = fractionPart.substring(0, fractionPart.length - 1);
     }
   }
 
   // Insert commas in the integer part if requested.
-  if (finalOptions.includeCommas) {
+  if (options.includeCommas) {
     integerPart = addCommasToNumber(integerPart);
   }
 

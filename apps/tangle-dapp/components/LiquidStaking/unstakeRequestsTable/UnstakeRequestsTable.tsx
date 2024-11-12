@@ -34,14 +34,14 @@ import {
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import addCommasToNumber from '../../../utils/addCommasToNumber';
-import formatPercentage from '../../../utils/formatPercentage';
+import formatFractional from '../../../utils/formatFractional';
 import isLsParachainChainId from '../../../utils/liquidStaking/isLsParachainChainId';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
 import GlassCard from '../../GlassCard';
 import { HeaderCell } from '../../tableCells';
 import TokenAmountCell from '../../tableCells/TokenAmountCell';
 import ExternalLink from '../ExternalLink';
-import TableRowsSkeleton from '../TableRowsSkeleton';
+import SkeletonRows from '../SkeletonRows';
 import RebondLstUnstakeRequestButton from './RebondLstUnstakeRequestButton';
 import useLstUnlockRequestTableRows from './useLstUnlockRequestTableRows';
 import WithdrawLstUnstakeRequestButton from './WithdrawLstUnstakeRequestButton';
@@ -108,7 +108,7 @@ const COLUMNS = [
             return undefined;
           }
 
-          return formatPercentage(progress * 100);
+          return formatFractional(progress * 100);
         }
         // Otherwise, it must be a Parachain unstake request's
         // remaining time unit.
@@ -199,7 +199,7 @@ const UnstakeRequestsTable: FC = () => {
       return (
         <Notice
           title="Unstake requests"
-          content={<TableRowsSkeleton rowCount={5} />}
+          content={<SkeletonRows rowCount={5} />}
         />
       );
     }

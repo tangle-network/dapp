@@ -3,11 +3,11 @@ import {
   evmToAddress,
   isEthereumAddress,
 } from '@polkadot/util-crypto';
-import { isSubstrateAddress } from '@webb-tools/dapp-types';
 import assert from 'assert';
 
 import { SubstrateAddress } from '../types/utils';
 import assertSubstrateAddress from './assertSubstrateAddress';
+import isSubstrateAddress from './isSubstrateAddress';
 
 /**
  * Converts an EVM address to a Substrate address.

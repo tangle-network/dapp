@@ -142,11 +142,7 @@ interface StatsItemProps {
 const StatsItem: FC<StatsItemProps> = ({ label, value }) => {
   return (
     <div className="space-y-2">
-      <Typography
-        variant="h5"
-        fw="normal"
-        className="text-mono-120 dark:text-mono-100"
-      >
+      <Typography variant="h5" className="text-mono-120 dark:text-mono-100">
         {label}
       </Typography>
       <Typography variant="h4" fw="bold">

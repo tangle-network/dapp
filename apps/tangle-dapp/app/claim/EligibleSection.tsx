@@ -10,7 +10,6 @@ import {
 } from '@polkadot/util-crypto';
 import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import isValidAddress from '@webb-tools/dapp-types/utils/isValidAddress';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
@@ -31,6 +30,7 @@ import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import getStatement, { Statement } from '../../utils/getStatement';
+import isValidAddress from '../../utils/isValidAddress';
 import type { ClaimInfoType } from './types';
 
 enum Step {

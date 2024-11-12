@@ -30,7 +30,7 @@ const BalanceCell: FC<{
     <div className="flex flex-row p-3 gap-2">
       {formattedBalance !== null ? (
         // If the balance is not null, display it.
-        <Typography variant="body1" fw="semibold">
+        <Typography variant="h5" className="text-mono-160 dark:text-mono-80">
           <HiddenValue numberOfStars={4}>{formattedBalance}</HiddenValue>
         </Typography>
       ) : isAccountActive ? (
@@ -39,7 +39,7 @@ const BalanceCell: FC<{
         <SkeletonLoader className="max-w-[128px]" size="md" />
       ) : (
         // If there is no active account, show a placeholder value.
-        <Typography variant="body1" fw="semibold">
+        <Typography variant="h5" className="text-mono-160 dark:text-mono-80">
           {EMPTY_VALUE_PLACEHOLDER}
         </Typography>
       )}

@@ -13,9 +13,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChevronUp } from '@webb-tools/icons';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { Button, Table, Typography } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -26,9 +24,8 @@ import LsTokenIcon from '../components/LsTokenIcon';
 import StatItem from '../components/StatItem';
 import TableCellWrapper from '../components/tables/TableCellWrapper';
 import { LsToken } from '../constants/liquidStaking/types';
-import useLsPools from '../data/liquidStaking/useLsPools';
+import useLsMyPools from '../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
-import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import formatBn from '../utils/formatBn';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
 import pluralize from '../utils/pluralize';
@@ -103,12 +100,16 @@ const PROTOCOL_COLUMNS = [
         props.row.original.decimals,
       );
 
+      const subtitle =
+        props.row.original.tvlInUsd === undefined
+          ? undefined
+          : `$${props.row.original.tvlInUsd}`;
+
       return (
         <TableCellWrapper>
           <StatItem
             title={`${formattedMyStake} ${props.row.original.token}`}
-            // TODO: Calculate the USD value of the stake.
-            subtitle={`$${props.row.original.tvlInUsd}`}
+            subtitle={subtitle}
             removeBorder
           />
         </TableCellWrapper>
@@ -155,10 +156,8 @@ const PROTOCOL_COLUMNS = [
 ];
 
 const LsMyProtocolsTable: FC = () => {
-  const substrateAddress = useSubstrateAddress();
   const [sorting, setSorting] = useState<SortingState>([]);
   const { lsNetworkId } = useLsStore();
-  const lsPools = useLsPools();
 
   // Expand the first row by default.
   const [expanded, setExpanded] = useState<ExpandedState>({
@@ -177,53 +176,32 @@ const LsMyProtocolsTable: FC = () => {
     [],
   );
 
-  const myPools: LsMyPoolRow[] = useMemo(() => {
-    if (substrateAddress === null || !(lsPools instanceof Map)) {
-      return [];
-    }
-
-    const lsPoolsArray = Array.from(lsPools.values());
-
-    return lsPoolsArray
-      .filter((lsPool) => lsPool.members.has(substrateAddress))
-      .map((lsPool) => {
-        const account = lsPool.members.get(substrateAddress);
-
-        assert(account !== undefined);
-
-        return {
-          ...lsPool,
-          myStake: account.balance.toBn(),
-          isRoot: lsPool.ownerAddress === substrateAddress,
-          isNominator: lsPool.nominatorAddress === substrateAddress,
-          isBouncer: lsPool.bouncerAddress === substrateAddress,
-          // TODO: Obtain which protocol this pool is associated with. For the parachain, there'd need to be some query to see what pools are associated with which parachain protocols. For Tangle networks, it's simply its own protocol. For now, using dummy data.
-          lsProtocolId: LsProtocolId.TANGLE_LOCAL,
-        } satisfies LsMyPoolRow;
-      });
-  }, [lsPools, substrateAddress]);
-
-  const myStake = useMemo(() => {
-    return myPools.reduce((acc, pool) => acc.add(pool.myStake), new BN(0));
-  }, [myPools]);
+  const myPoolsOrNull = useLsMyPools();
+  const myPools = useMemo(() => myPoolsOrNull ?? [], [myPoolsOrNull]);
 
   const rows = useMemo<LsMyProtocolRow[]>(() => {
-    return lsNetwork.protocols.map(
-      (lsProtocol) =>
-        ({
-          name: lsProtocol.name,
-          // TODO: Reduce the TVL of the pools associated with this protocol.
-          tvl: new BN(485348583485348),
-          iconName: lsProtocol.token,
-          myStake: myStake,
-          pools: myPools,
-          // TODO: Calculate the USD value of the TVL.
-          tvlInUsd: undefined,
-          token: lsProtocol.token,
-          decimals: lsProtocol.decimals,
-        }) satisfies LsMyProtocolRow,
-    );
-  }, [lsNetwork.protocols, myPools, myStake]);
+    return lsNetwork.protocols.map((lsProtocol) => {
+      const tvl = myPools
+        .filter((myPool) => myPool.protocolId === lsProtocol.id)
+        .reduce((acc, pool) => acc.add(pool.totalStaked), new BN(0));
+
+      const myStake = myPools
+        .filter((myPool) => myPool.protocolId === lsProtocol.id)
+        .reduce((acc, pool) => acc.add(pool.myStake), new BN(0));
+
+      return {
+        name: lsProtocol.name,
+        tvl,
+        iconName: lsProtocol.token,
+        myStake: myStake,
+        pools: myPools,
+        // TODO: Calculate the USD value of the TVL.
+        tvlInUsd: undefined,
+        token: lsProtocol.token,
+        decimals: lsProtocol.decimals,
+      } satisfies LsMyProtocolRow;
+    });
+  }, [lsNetwork.protocols, myPools]);
 
   const table = useReactTable({
     data: rows,

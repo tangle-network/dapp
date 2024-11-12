@@ -156,24 +156,21 @@ const LsProtocolsTable: FC = () => {
   }, [lsPools]);
 
   const rows = useMemo<LsProtocolRow[]>(() => {
-    // TODO: Filter out the pools that are not associated with the protocol.
-    const tvl = pools.reduce(
-      (acc, pool) => acc.add(pool.totalStaked),
-      new BN(0),
-    );
+    return lsNetwork.protocols.map((lsProtocol) => {
+      const tvl = pools
+        .filter((pool) => pool.protocolId === lsProtocol.id)
+        .reduce((acc, pool) => acc.add(pool.totalStaked), new BN(0));
 
-    return lsNetwork.protocols.map(
-      (lsProtocol) =>
-        ({
-          name: lsProtocol.name,
-          tvl,
-          token: lsProtocol.token,
-          pools: pools,
-          // TODO: Calculate the USD value of the TVL.
-          tvlInUsd: undefined,
-          decimals: lsProtocol.decimals,
-        }) satisfies LsProtocolRow,
-    );
+      return {
+        name: lsProtocol.name,
+        tvl,
+        token: lsProtocol.token,
+        pools: pools,
+        // TODO: Calculate the USD value of the TVL.
+        tvlInUsd: undefined,
+        decimals: lsProtocol.decimals,
+      } satisfies LsProtocolRow;
+    });
   }, [lsNetwork.protocols, pools]);
 
   const table = useReactTable({

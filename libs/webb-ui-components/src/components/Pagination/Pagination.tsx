@@ -21,7 +21,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
       siblingCount,
       totalItems,
       totalPages,
-      title = '',
+      title,
       iconSize = 'lg',
       ...props
     },
@@ -43,7 +43,7 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
 
       // If not the last page, return the itemsPerPage
       if (!isLastPage) {
-        return itemsPerPage?.toLocaleString() ?? '-';
+        return itemsPerPage?.toLocaleString() ?? '—';
       }
 
       // Otherwise, calculate the remaining items on the last page
@@ -51,38 +51,42 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
 
       return remainingItems > 0
         ? remainingItems.toLocaleString()
-        : (itemsPerPage?.toLocaleString() ?? '-');
+        : (itemsPerPage?.toLocaleString() ?? '—');
     }, [currentPage, itemsPerPage, totalItems, totalPages]);
 
-    const mergedClsx = useMemo(
-      () =>
-        twMerge(
+    const titleSection = title !== undefined ? `${title} ` : '';
+
+    return (
+      <div
+        {...props}
+        className={twMerge(
           'flex items-center justify-between px-3 py-4',
           'border-mono-40 dark:border-mono-140 border-t',
           className,
-        ),
-      [className],
-    );
-
-    return (
-      <div {...props} className={mergedClsx} ref={ref}>
+        )}
+        ref={ref}
+      >
         {/** Left label */}
         <p className="body1 text-mono-160 dark:text-mono-100">
           {totalItems === 0
             ? 'No items'
-            : `Showing ${showingItemsCount} ${title ? `${title} ` : ''}out of ${totalItems ?? '-'}`}
+            : `Showing ${showingItemsCount} ${titleSection}out of ${totalItems ?? '—'}`}
         </p>
 
         {/** Right buttons */}
         <div className="flex items-center space-x-1">
           <ChevronLeft
-            className={cx('cursor-pointer')}
+            size={iconSize}
+            className={
+              canPreviousPage && previousPage
+                ? 'cursor-pointer'
+                : 'cursor-not-allowed'
+            }
             onClick={() => {
               if (canPreviousPage && previousPage) {
                 previousPage();
               }
             }}
-            size={iconSize}
           />
 
           {paginationDisplayItems.map((page, idx) =>
@@ -110,13 +114,15 @@ export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
           )}
 
           <ChevronRight
-            className={cx('cursor-pointer')}
+            size={iconSize}
+            className={
+              canNextPage && nextPage ? 'cursor-pointer' : 'cursor-not-allowed'
+            }
             onClick={() => {
               if (canNextPage && nextPage) {
                 nextPage();
               }
             }}
-            size={iconSize}
           />
         </div>
       </div>

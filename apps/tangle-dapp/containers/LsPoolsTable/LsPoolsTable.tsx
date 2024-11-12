@@ -15,6 +15,9 @@ import {
   Button,
   Pagination,
   Table,
+  Tooltip,
+  TooltipBody,
+  TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useMemo, useState } from 'react';
@@ -25,9 +28,10 @@ import PercentageCell from '../../components/tableCells/PercentageCell';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../../components/tables/shared';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
-import { LsPool, LsPoolDisplayName } from '../../constants/liquidStaking/types';
+import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
+import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
 
 export type LsPoolsTableProps = {
@@ -65,21 +69,41 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
           fw="normal"
           className="text-mono-200 dark:text-mono-0"
         >
-          {(
-            `${props.row.original.name}#${props.getValue()}` satisfies LsPoolDisplayName
-          ).toUpperCase()}
+          {props.row.original.name?.toUpperCase()}
+          <span className="text-mono-180 dark:text-mono-120">
+            #{props.getValue()}
+          </span>
         </Typography>
       ),
     }),
     COLUMN_HELPER.accessor('ownerAddress', {
       header: () => 'Owner',
-      cell: (props) => (
-        <Avatar
-          sourceVariant="address"
-          value={props.row.original.ownerAddress}
-          theme="substrate"
-        />
-      ),
+      cell: (props) => {
+        const ownerAddress = props.getValue();
+
+        if (ownerAddress === undefined) {
+          return EMPTY_VALUE_PLACEHOLDER;
+        }
+
+        return (
+          <Tooltip>
+            <TooltipTrigger>
+              <Avatar
+                sourceVariant="address"
+                value={props.getValue()}
+                theme="substrate"
+              />
+            </TooltipTrigger>
+
+            <TooltipBody className="max-w-none">
+              {tryEncodeAddressWithPrefix(
+                ownerAddress,
+                props.row.original.protocolId,
+              )}
+            </TooltipBody>
+          </Tooltip>
+        );
+      },
     }),
     COLUMN_HELPER.accessor('validators', {
       header: () => 'Validators',
@@ -89,12 +113,22 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
         ) : (
           <AvatarGroup total={props.row.original.validators.length}>
             {props.row.original.validators.map((substrateAddress) => (
-              <Avatar
-                key={substrateAddress}
-                sourceVariant="address"
-                value={substrateAddress}
-                theme="substrate"
-              />
+              <Tooltip key={substrateAddress}>
+                <TooltipTrigger>
+                  <Avatar
+                    sourceVariant="address"
+                    value={substrateAddress}
+                    theme="substrate"
+                  />
+                </TooltipTrigger>
+
+                <TooltipBody className="max-w-none">
+                  {tryEncodeAddressWithPrefix(
+                    substrateAddress,
+                    props.row.original.protocolId,
+                  )}
+                </TooltipBody>
+              </Tooltip>
             ))}
           </AvatarGroup>
         ),
@@ -104,13 +138,13 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
       // TODO: Decimals.
       cell: (props) => <TokenAmountCell amount={props.getValue()} />,
     }),
-    COLUMN_HELPER.accessor('commissionPercentage', {
+    COLUMN_HELPER.accessor('commissionFractional', {
       header: () => 'Commission',
-      cell: (props) => <PercentageCell percentage={props.getValue()} />,
+      cell: (props) => <PercentageCell fractional={props.getValue()} />,
     }),
     COLUMN_HELPER.accessor('apyPercentage', {
       header: () => 'APY',
-      cell: (props) => <PercentageCell percentage={props.getValue()} />,
+      cell: (props) => <PercentageCell fractional={props.getValue()} />,
     }),
     COLUMN_HELPER.display({
       id: 'actions',

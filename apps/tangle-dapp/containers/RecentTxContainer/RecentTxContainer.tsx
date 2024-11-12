@@ -1,6 +1,7 @@
 'use client';
 
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
+import { ExternalLinkLine } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
@@ -49,13 +50,16 @@ const RecentTxContainer: FC = () => {
           target="_blank"
           href={accountExplorerUrl}
           isDisabled={!accountExplorerUrl}
+          rightIcon={
+            <ExternalLinkLine className="fill-current dark:fill-current" />
+          }
         >
           Open Explorer
         </Button>
       </div>
 
-      <div className="flex flex-col gap-5 justify-center items-center h-full text-center">
-        <Typography variant="body1" className="text-center max-w-lg">
+      <div className="flex flex-col items-center justify-center h-full gap-5 text-center">
+        <Typography variant="body1" className="max-w-lg text-center">
           Welcome to Tangle dApp &mdash; Your portal to managing Tangle Network
           assets and upcoming AVS Blueprints in Tangle&apos;s modular restaking
           infrastructure.

@@ -13,6 +13,7 @@ import { Hash } from 'viem';
 
 import { TxName } from '../constants';
 import { GetSuccessMessageFunction } from '../types';
+import { SubstrateAddress } from '../types/utils';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
@@ -30,7 +31,7 @@ export enum TxStatus {
 
 export type SubstrateTxFactory<Context = void> = (
   api: ApiPromise,
-  activeSubstrateAddress: string,
+  activeSubstrateAddress: SubstrateAddress,
   context: Context,
 ) => PromiseOrT<SubmittableExtrinsic<'promise', ISubmittableResult> | null>;
 

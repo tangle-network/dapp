@@ -10,7 +10,6 @@ import {
   TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import isSubstrateAddress from '@webb-tools/dapp-types/utils/isSubstrateAddress';
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
@@ -30,6 +29,7 @@ import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useBlueprintListing from '../../data/blueprints/useBlueprintListing';
 import { PagePath } from '../../types';
 import type { Blueprint } from '../../types/blueprint';
+import isSubstrateAddress from '../../utils/isSubstrateAddress';
 import BoostedChip from './BoostedChip';
 
 const columnHelper = createColumnHelper<Blueprint>();
@@ -181,7 +181,6 @@ const BlueprintListing: FC = () => {
             >
               <Typography
                 variant="h5"
-                fw="normal"
                 className={twMerge(
                   'text-mono-140 dark:text-mono-100',
                   !isActive &&

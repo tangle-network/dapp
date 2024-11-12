@@ -1,8 +1,8 @@
 import { MetadataDef } from '@polkadot/extension-inject/types';
+import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
 import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
-import isSubstrateAddress from '@webb-tools/dapp-types/utils/isSubstrateAddress';
 import { RefreshLineIcon } from '@webb-tools/icons';
 import {
   IconButton,
@@ -14,13 +14,13 @@ import { NetworkId } from '@webb-tools/webb-ui-components/constants/networks';
 import isEqual from 'lodash/isEqual';
 import { FC, useCallback, useMemo, useState } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';
-import usePromise from '../../hooks/usePromise';
-import useSubstrateInjectedExtension from '../../hooks/useSubstrateInjectedExtension';
-import { getApiPromise } from '../../utils/polkadot/api';
 import useLocalStorage, {
   LocalStorageKey,
   SubstrateWalletsMetadataEntry,
 } from '../../hooks/useLocalStorage';
+import usePromise from '../../hooks/usePromise';
+import useSubstrateInjectedExtension from '../../hooks/useSubstrateInjectedExtension';
+import { getApiPromise } from '../../utils/polkadot/api';
 
 const UpdateMetadataButton: FC = () => {
   const [isHidden, setIsHidden] = useState(false);

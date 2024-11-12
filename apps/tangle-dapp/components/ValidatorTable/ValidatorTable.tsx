@@ -71,7 +71,7 @@ const getTableColumns = (isWaiting?: boolean) => [
   columnHelper.accessor('commission', {
     header: () => <HeaderCell title="Commission" />,
     cell: (props) => (
-      <PercentageCell percentage={calculateCommission(props.getValue())} />
+      <PercentageCell fractional={calculateCommission(props.getValue())} />
     ),
     sortingFn: sortBnValueForNomineeOrValidator,
   }),

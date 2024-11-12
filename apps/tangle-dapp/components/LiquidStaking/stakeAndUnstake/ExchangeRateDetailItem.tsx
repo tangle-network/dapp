@@ -18,7 +18,7 @@ const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({
   type,
   token,
 }) => {
-  const lsActivePoolDisplayName = useLsActivePoolDisplayName();
+  const { displayName: lsActivePoolDisplayName } = useLsActivePoolDisplayName();
   const { exchangeRate, isRefreshing } = useLsExchangeRate(type);
 
   const exchangeRateElement =

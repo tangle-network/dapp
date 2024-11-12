@@ -14,6 +14,8 @@ import { twMerge } from 'tailwind-merge';
 import { ListCardWrapper } from './ListCardWrapper';
 
 type ChainListProps = {
+  searchInputId: string;
+  showSearchInput?: boolean;
   chainType: 'source' | 'destination';
   title?: string;
   onClose: () => void;
@@ -23,6 +25,8 @@ type ChainListProps = {
 };
 
 export const ChainList = ({
+  searchInputId,
+  showSearchInput = true,
   chains,
   onClose,
   title = 'Select Network',
@@ -42,16 +46,19 @@ export const ChainList = ({
 
   return (
     <ListCardWrapper title={title} onClose={onClose}>
-      <div className="px-4 md:px-9 pb-[10px] border-b border-mono-40 dark:border-mono-170">
-        <Input
-          id="chain"
-          rightIcon={<Search />}
-          placeholder="Search chains"
-          value={'hello'}
-          onChange={(value) => setSearchText(value)}
-          inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120"
-        />
-      </div>
+      {showSearchInput && (
+        <div className="px-4 md:px-9 pb-4 border-b border-mono-40 dark:border-mono-170">
+          <Input
+            id={searchInputId}
+            isControlled
+            rightIcon={<Search />}
+            placeholder="Search chains"
+            value={searchText}
+            onChange={setSearchText}
+            inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120"
+          />
+        </div>
+      )}
 
       <ScrollArea
         {...overrideScrollAreaProps}

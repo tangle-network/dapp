@@ -1,9 +1,10 @@
-import { addressToEvm, isAddress } from '@polkadot/util-crypto';
+import { addressToEvm } from '@polkadot/util-crypto';
 import { AddressType } from '@webb-tools/dapp-config/types';
 import { toHex } from '@webb-tools/utils';
 import assert from 'assert';
 
 import { isEvmAddress } from './isEvmAddress';
+import isSubstrateAddress from './isSubstrateAddress';
 
 /**
  * Converts a Substrate address to a standard EVM address of 20 bytes.
@@ -22,7 +23,7 @@ import { isEvmAddress } from './isEvmAddress';
  * it will be returned as is.
  */
 export const toEvmAddress20 = (substrateAddress: string): AddressType => {
-  if (!isAddress(substrateAddress)) {
+  if (!isSubstrateAddress(substrateAddress)) {
     throw new Error('Provided address is not a Substrate address');
   }
 

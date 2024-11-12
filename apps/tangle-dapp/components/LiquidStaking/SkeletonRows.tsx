@@ -2,15 +2,12 @@ import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-export type SkeletonLoaderSetProps = {
+export type SkeletonRowsProps = {
   rowCount?: number;
   className?: string;
 };
 
-const TableRowsSkeleton: FC<SkeletonLoaderSetProps> = ({
-  rowCount = 10,
-  className,
-}) => {
+const SkeletonRows: FC<SkeletonRowsProps> = ({ rowCount = 10, className }) => {
   return (
     <div className={twMerge('flex flex-col gap-2 w-full')}>
       {Array.from({ length: rowCount }).map((_, index) => (
@@ -23,4 +20,4 @@ const TableRowsSkeleton: FC<SkeletonLoaderSetProps> = ({
   );
 };
 
-export default TableRowsSkeleton;
+export default SkeletonRows;

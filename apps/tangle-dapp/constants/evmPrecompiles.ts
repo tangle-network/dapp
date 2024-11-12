@@ -6,6 +6,7 @@ export enum Precompile {
   VESTING,
   BATCH,
   BALANCES_ERC20,
+  LST,
 }
 
 export type AbiFunctionName<T extends Precompile> = T extends Precompile.STAKING
@@ -36,7 +37,20 @@ export type AbiFunctionName<T extends Precompile> = T extends Precompile.STAKING
       ? 'batchAll' | 'batchSome' | 'batchSomeUntilFailure'
       : T extends Precompile.BALANCES_ERC20
         ? 'transfer'
-        : never;
+        : T extends Precompile.LST
+          ?
+              | 'join'
+              | 'bondExtra'
+              | 'unbond'
+              | 'poolWithdrawUnbonded'
+              | 'withdrawUnbonded'
+              | 'create'
+              | 'createWithPoolId'
+              | 'nominate'
+              | 'setState'
+              | 'setMetadata'
+              | 'setConfigs'
+          : never;
 
 type AbiType =
   | 'uint256'
@@ -113,6 +127,7 @@ export enum PrecompileAddress {
   VESTING = '0x0000000000000000000000000000000000000801',
   BATCH = '0x0000000000000000000000000000000000000808',
   BALANCES_ERC20 = '0x0000000000000000000000000000000000000802',
+  LST = '0x0000000000000000000000000000000000000809',
 }
 
 export const STAKING_PRECOMPILE_ABI: AbiFunction<Precompile.STAKING>[] = [
@@ -522,6 +537,323 @@ export const BALANCES_ERC20_PRECOMPILE_ABI: AbiFunction<Precompile.BALANCES_ERC2
     },
   ];
 
+export const LST_PRECOMPILE_ABI: AbiFunction<Precompile.LST>[] = [
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'poolId',
+        type: 'uint256',
+      },
+    ],
+    name: 'join',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'poolId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint8',
+        name: 'extraType',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint256',
+        name: 'extra',
+        type: 'uint256',
+      },
+    ],
+    name: 'bondExtra',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'memberAccount',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'uint256',
+        name: 'poolId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'unbondingPoints',
+        type: 'uint256',
+      },
+    ],
+    name: 'unbond',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'poolId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint32',
+        name: 'numSlashingSpans',
+        type: 'uint32',
+      },
+    ],
+    name: 'poolWithdrawUnbonded',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'memberAccount',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'uint256',
+        name: 'poolId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint32',
+        name: 'numSlashingSpans',
+        type: 'uint32',
+      },
+    ],
+    name: 'withdrawUnbonded',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'root',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'nominator',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'bouncer',
+        type: 'bytes32',
+      },
+    ],
+    name: 'create',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'root',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'nominator',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'bouncer',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'uint256',
+        name: 'poolId',
+        type: 'uint256',
+      },
+    ],
+    name: 'createWithPoolId',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'poolId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32[]',
+        name: 'validators',
+        type: 'bytes32[]',
+      },
+    ],
+    name: 'nominate',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'poolId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint8',
+        name: 'state',
+        type: 'uint8',
+      },
+    ],
+    name: 'setState',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'poolId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes',
+        name: 'metadata',
+        type: 'bytes',
+      },
+    ],
+    name: 'setMetadata',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'minJoinBond',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'minCreateBond',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint32',
+        name: 'maxPools',
+        type: 'uint32',
+      },
+      {
+        internalType: 'uint32',
+        name: 'globalMaxCommission',
+        type: 'uint32',
+      },
+    ],
+    name: 'setConfigs',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+];
+
 export function getPrecompileAddress(
   precompile: Precompile,
 ): PrecompileAddress {
@@ -534,6 +866,8 @@ export function getPrecompileAddress(
       return PrecompileAddress.BATCH;
     case Precompile.BALANCES_ERC20:
       return PrecompileAddress.BALANCES_ERC20;
+    case Precompile.LST:
+      return PrecompileAddress.LST;
   }
 }
 
@@ -549,5 +883,7 @@ export function getPrecompileAbi(
       return BATCH_PRECOMPILE_ABI;
     case Precompile.BALANCES_ERC20:
       return BALANCES_ERC20_PRECOMPILE_ABI;
+    case Precompile.LST:
+      return LST_PRECOMPILE_ABI;
   }
 }

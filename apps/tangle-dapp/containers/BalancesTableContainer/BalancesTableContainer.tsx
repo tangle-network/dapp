@@ -50,7 +50,10 @@ const BalancesTableContainer: FC = () => {
   const { result: locks } = useApiRx(
     useCallback(
       (api) => {
-        if (!activeSubstrateAddress) return null;
+        if (!activeSubstrateAddress) {
+          return null;
+        }
+
         return api.query.balances.locks(activeSubstrateAddress);
       },
       [activeSubstrateAddress],
@@ -186,13 +189,16 @@ const AssetCell: FC<{
       <div className="flex flex-row items-center gap-1">
         <TangleTokenIcon size="lg" />
 
-        <Typography variant="body1" fw="semibold" className="dark:text-mono-0">
+        <Typography variant="h5" className="text-mono-160 dark:text-mono-80">
           {nativeTokenSymbol}
         </Typography>
       </div>
 
       <div className="flex gap-1">
-        <Typography variant="body1" fw="semibold" className="whitespace-nowrap">
+        <Typography
+          variant="h5"
+          className="whitespace-nowrap text-mono-160 dark:text-mono-80"
+        >
           {title}
         </Typography>
 

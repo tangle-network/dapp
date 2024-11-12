@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { KeyboardEventHandler, useCallback, useEffect, useState } from 'react';
 
 import cleanNumericInputString from '../utils/cleanNumericInputString';
 
@@ -104,11 +104,40 @@ function useCustomInputValue<T>({
     [setValueOnConsumer, formatDisplayValue],
   );
 
+  // Handle the backspace key to erase the content of
+  // the input, while considering the suffix.
+  const handleKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>(
+    (e) => {
+      const isCursorAtEnd =
+        e.currentTarget.selectionStart === displayValue.length;
+
+      const hasTextSelected =
+        e.currentTarget.selectionStart !== e.currentTarget.selectionEnd;
+
+      if (
+        displayValue === '' ||
+        e.key !== 'Backspace' ||
+        !isCursorAtEnd ||
+        hasTextSelected
+      ) {
+        return;
+      }
+
+      const eraseLength = suffix?.length ?? 1;
+
+      setDisplayValue(
+        displayValue.substring(0, displayValue.length - eraseLength),
+      );
+    },
+    [displayValue, suffix?.length],
+  );
+
   return {
     displayValue,
     setDisplayValue,
     setValue,
     errorMessage,
+    handleKeyDown,
   };
 }
 

@@ -1,4 +1,3 @@
-import { isAddress } from '@polkadot/util-crypto';
 import {
   CodeFill,
   CoinLine,
@@ -16,6 +15,7 @@ import capitalize from 'lodash/capitalize';
 import { JSX } from 'react';
 
 import { PagePath } from '../../types';
+import isSubstrateAddress from '../../utils/isSubstrateAddress';
 
 const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
   [PagePath.CLAIM_AIRDROP]: GiftLineIcon,
@@ -35,10 +35,6 @@ const BREADCRUMB_LABELS: Partial<Record<PagePath, string>> = {
   [PagePath.SERVICES]: 'Service Overview',
   [PagePath.CLAIM_AIRDROP]: 'Claim Airdrop',
   [PagePath.LIQUID_STAKING]: 'Liquid Staking',
-};
-
-const isSubstrateAddress = (address: string): boolean => {
-  return isAddress(address);
 };
 
 const isPagePath = (pathName: string): pathName is PagePath => {

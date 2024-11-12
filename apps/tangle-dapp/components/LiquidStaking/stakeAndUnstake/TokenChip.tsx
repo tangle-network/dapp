@@ -23,7 +23,8 @@ const TokenChip: FC<TokenChipProps> = ({
       onClick={onClick}
       className={twMerge(
         'group flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-170 px-4 py-2 rounded-lg',
-        onClick !== undefined && 'cursor-pointer',
+        onClick !== undefined &&
+          'cursor-pointer hover:bg-mono-20 hover:dark:bg-mono-160',
       )}
     >
       {token && (
