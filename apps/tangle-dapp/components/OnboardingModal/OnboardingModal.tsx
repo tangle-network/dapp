@@ -1,5 +1,6 @@
 'use client';
 
+import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
 import {
   Button,
   Modal,
@@ -10,7 +11,6 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, ReactElement, useEffect, useRef, useState } from 'react';
 
-import { OnboardingPageKey } from '../../constants';
 import useOnboardingStore from '../../context/useOnboardingStore';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { OnboardingItemProps } from './OnboardingItem';

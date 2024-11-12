@@ -8,6 +8,7 @@ import {
   SparklingIcon,
   WaterDropletIcon,
 } from '@webb-tools/icons';
+import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   Button,
@@ -24,7 +25,6 @@ import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeC
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
 import OnboardingItem from '../../components/OnboardingModal/OnboardingItem';
 import OnboardingModal from '../../components/OnboardingModal/OnboardingModal';
-import { OnboardingPageKey } from '../../constants';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
 import LsCreatePoolModal from '../../containers/LsCreatePoolModal';
 import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
