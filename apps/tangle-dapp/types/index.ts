@@ -82,21 +82,6 @@ export enum StakingRewardsDestinationDisplayText {
   NONE = 'None',
 }
 
-export type AddressWithIdentity = {
-  address: string;
-  identity: string;
-};
-
-export type Payout = {
-  era: number;
-  validator: AddressWithIdentity;
-  validatorTotalStake: BN;
-  nominators: AddressWithIdentity[];
-  validatorTotalReward: BN;
-  nominatorTotalReward: BN;
-  nominatorTotalRewardRaw: BN;
-};
-
 /**
  * Utility type to remove trailing slash from a string.
  *
