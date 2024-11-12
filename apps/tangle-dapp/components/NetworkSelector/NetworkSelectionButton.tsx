@@ -8,6 +8,7 @@ import {
   ChainType,
 } from '@webb-tools/sdk-core/typed-chain-id';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import createCustomNetwork from '@webb-tools/tangle-shared-ui/utils/createCustomNetwork';
 import {
   Dropdown,
   DropdownBasicButton,
@@ -23,7 +24,6 @@ import { twMerge } from 'tailwind-merge';
 
 import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
 import { PagePath } from '../../types';
-import createCustomNetwork from '../../utils/createCustomNetwork';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
 // TODO: Currently hard-coded, but shouldn't it always be the Tangle icon, since it's not switching chains but rather networks within Tangle? If so, find some constant somewhere instead of having it hard-coded here.

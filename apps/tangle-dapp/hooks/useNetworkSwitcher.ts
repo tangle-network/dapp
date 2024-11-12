@@ -8,9 +8,11 @@ import {
 import { DEFAULT_SS58 } from '@webb-tools/dapp-config/constants/polkadot';
 import getWalletsForTypedChainId from '@webb-tools/dapp-config/utils/getWalletIdsForTypedChainId';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useInitialNetwork from '@webb-tools/tangle-shared-ui/hooks/useInitialNetwork';
 import useLocalStorage, {
   LocalStorageKey,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
+import testRpcEndpointConnection from '@webb-tools/tangle-shared-ui/utils/testRpcEndpointConnection';
 import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import {
@@ -20,10 +22,8 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { createPublicClient, fallback, http, webSocket } from 'viem';
 
-import testRpcEndpointConnection from '../components/NetworkSelector/testRpcEndpointConnection';
 import ensureError from '../utils/ensureError';
 import { getApiPromise } from '../utils/polkadot';
-import useInitialNetwork from './useInitialNetwork';
 
 const useNetworkSwitcher = () => {
   const { switchChain, activeWallet } = useWebContext();
