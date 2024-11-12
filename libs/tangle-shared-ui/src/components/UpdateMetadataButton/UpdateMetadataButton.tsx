@@ -1,3 +1,5 @@
+'use client';
+
 import { MetadataDef } from '@polkadot/extension-inject/types';
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';

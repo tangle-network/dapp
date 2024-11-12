@@ -10,12 +10,12 @@ import {
   calculateTypedChainId,
   ChainType,
 } from '@webb-tools/sdk-core/typed-chain-id';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useWebbUI, WalletModal } from '@webb-tools/webb-ui-components';
 import { Network } from '@webb-tools/webb-ui-components/constants/networks';
 import { useMemo } from 'react';
+import useNetworkStore from '../../context/useNetworkStore';
 
-export const WalletModalContainer = () => {
+const WalletModalContainer = () => {
   const {
     connectingWalletId,
     failedWalletId,
@@ -79,3 +79,5 @@ const networkToTypedChainIds = (network: Network) => {
 
   return { evm, substrate };
 };
+
+export default WalletModalContainer;

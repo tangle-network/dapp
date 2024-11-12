@@ -1,6 +1,6 @@
 'use client';
 
-import NetworkSelectorButtonComp from '@webb-tools/tangle-shared-ui/components/NetworkSelectorDropdown';
+import NetworkSelectorDropdown from '@webb-tools/tangle-shared-ui/components/NetworkSelectorDropdown';
 import { usePathname } from 'next/navigation';
 import { type FC, useMemo } from 'react';
 
@@ -23,9 +23,7 @@ const NetworkSelectorButton: FC = () => {
   }
 
   return (
-    <NetworkSelectorButtonComp
-      isNetworkSwitchDisabled={isInLiquidStakingPage}
-    />
+    <NetworkSelectorDropdown isNetworkSwitchDisabled={isInLiquidStakingPage} />
   );
 };
 
