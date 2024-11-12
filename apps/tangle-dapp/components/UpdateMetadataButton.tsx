@@ -4,6 +4,10 @@ import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import isSubstrateAddress from '@webb-tools/dapp-types/utils/isSubstrateAddress';
 import { RefreshLineIcon } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useLocalStorage, {
+  LocalStorageKey,
+  SubstrateWalletsMetadataEntry,
+} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import {
   IconButton,
   Tooltip,
@@ -15,10 +19,6 @@ import isEqual from 'lodash/isEqual';
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import useActiveAccountAddress from '../hooks/useActiveAccountAddress';
-import useLocalStorage, {
-  LocalStorageKey,
-  SubstrateWalletsMetadataEntry,
-} from '../hooks/useLocalStorage';
 import usePromise from '../hooks/usePromise';
 import useSubstrateInjectedExtension from '../hooks/useSubstrateInjectedExtension';
 import { getApiPromise } from '../utils/polkadot';

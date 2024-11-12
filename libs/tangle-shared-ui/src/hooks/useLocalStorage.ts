@@ -1,17 +1,18 @@
 'use client';
 
 import { HexString } from '@polkadot/util/types';
-import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
-import { Payout, TangleTokenSymbol } from '@webb-tools/tangle-shared-ui/types';
-import { BridgeQueueTxItem } from '@webb-tools/tangle-shared-ui/types/bridge';
+import { useCallback, useEffect, useState } from 'react';
+
+import Optional from '../utils/Optional';
+import { Payout, TangleTokenSymbol } from '../types';
 import {
   Collator,
   Dapp,
   PhalaVaultOrStakePool,
   Validator,
-} from '@webb-tools/tangle-shared-ui/types/liquidStaking';
-import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
-import { useCallback, useEffect, useState } from 'react';
+} from '../types/liquidStaking';
+import { BridgeQueueTxItem } from '../types/bridge';
+import { OnboardingPageKey } from '../constants';
 
 export enum LocalStorageKey {
   IS_BALANCES_TABLE_DETAILS_COLLAPSED = 'isBalancesTableDetailsCollapsed',

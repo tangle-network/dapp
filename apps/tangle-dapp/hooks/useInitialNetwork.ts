@@ -1,4 +1,7 @@
 import { DEFAULT_NETWORK } from '@webb-tools/tangle-shared-ui/constants/networks';
+import useLocalStorage, {
+  LocalStorageKey,
+} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import {
   Network,
   NETWORK_MAP,
@@ -9,7 +12,6 @@ import { z } from 'zod';
 
 import testRpcEndpointConnection from '../components/NetworkSelector/testRpcEndpointConnection';
 import createCustomNetwork from '../utils/createCustomNetwork';
-import useLocalStorage, { LocalStorageKey } from './useLocalStorage';
 
 const useCachedNetworkId = (): ((
   cachedNetworkId: number,

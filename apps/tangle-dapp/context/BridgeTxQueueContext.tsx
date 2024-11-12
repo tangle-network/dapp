@@ -1,5 +1,9 @@
 'use client';
 
+import useLocalStorage, {
+  LocalStorageKey,
+  TxQueueByAccount,
+} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import {
   BridgeQueueTxItem,
   BridgeTxState,
@@ -16,10 +20,6 @@ import {
 } from 'react';
 
 import useActiveAccountAddress from '../hooks/useActiveAccountAddress';
-import useLocalStorage, {
-  LocalStorageKey,
-  TxQueueByAccount,
-} from '../hooks/useLocalStorage';
 
 interface BridgeTxQueueContextProps {
   txQueue: BridgeQueueTxItem[];

@@ -1,8 +1,9 @@
 import { Save, SaveWithBg } from '@webb-tools/icons';
+import useLocalStorage, {
+  LocalStorageKey,
+} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import { Input } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
-
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 
 export type CustomRpcEndpointInputProps = {
   id: string;
@@ -47,7 +48,7 @@ const CustomRpcEndpointInput: FC<CustomRpcEndpointInputProps> = ({
     value !== '' ? (
       <SaveWithBg className="cursor-pointer" onClick={handleSave} />
     ) : (
-      <Save className="opacity-60 cursor-not-allowed" />
+      <Save className="cursor-not-allowed opacity-60" />
     );
 
   return (

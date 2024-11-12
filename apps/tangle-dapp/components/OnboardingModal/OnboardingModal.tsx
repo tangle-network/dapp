@@ -1,6 +1,9 @@
 'use client';
 
 import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
+import useLocalStorage, {
+  LocalStorageKey,
+} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import {
   Button,
   Modal,
@@ -12,7 +15,6 @@ import {
 import { FC, ReactElement, useEffect, useRef, useState } from 'react';
 
 import useOnboardingStore from '../../context/useOnboardingStore';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { OnboardingItemProps } from './OnboardingItem';
 
 export type OnboardingModalProps = {
@@ -82,7 +84,7 @@ const OnboardingModal: FC<OnboardingModalProps> = ({
       <ModalContent isCenter isOpen={isOpen} className="w-[750px]">
         <ModalHeader onClose={() => setIsOpen(false)}>{title}</ModalHeader>
 
-        <div className="p-9 space-y-6">{children}</div>
+        <div className="space-y-6 p-9">{children}</div>
 
         <ModalFooter className="flex gap-2">
           <Button
