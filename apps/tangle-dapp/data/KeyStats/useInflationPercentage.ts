@@ -2,12 +2,12 @@
 
 import { BN_ZERO } from '@polkadot/util';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
 
 import useFormatReturnType from '../../hooks/useFormatReturnType';
 import { calculateInflation } from '../../utils';
-import ensureError from '../../utils/ensureError';
 import { getApiPromise, getApiRx } from '../../utils/polkadot';
 
 export default function useInflationPercentage(

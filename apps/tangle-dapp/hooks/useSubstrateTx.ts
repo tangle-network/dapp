@@ -3,13 +3,13 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
 import { Hash } from 'viem';
 
 import { TxName } from '../constants';
 import { GetSuccessMessageFunction } from '../types';
-import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import { getApiPromise } from '../utils/polkadot';
 import useActiveAccountAddress from './useActiveAccountAddress';

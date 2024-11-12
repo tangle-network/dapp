@@ -1,8 +1,8 @@
 import { ApiPromise } from '@polkadot/api';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { useCallback, useEffect, useState } from 'react';
 
-import ensureError from '../utils/ensureError';
 import { getApiPromise } from '../utils/polkadot';
 import usePromise from './usePromise';
 

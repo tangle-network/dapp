@@ -12,6 +12,7 @@ import useInitialNetwork from '@webb-tools/tangle-shared-ui/hooks/useInitialNetw
 import useLocalStorage, {
   LocalStorageKey,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import testRpcEndpointConnection from '@webb-tools/tangle-shared-ui/utils/testRpcEndpointConnection';
 import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
 import { notificationApi } from '@webb-tools/webb-ui-components';
@@ -22,7 +23,6 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { createPublicClient, fallback, http, webSocket } from 'viem';
 
-import ensureError from '../utils/ensureError';
 import { getApiPromise } from '../utils/polkadot';
 
 const useNetworkSwitcher = () => {

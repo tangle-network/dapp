@@ -1,6 +1,6 @@
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { useEffect, useState } from 'react';
 
-import ensureError from '../utils/ensureError';
 import useIsMountedRef from './useIsMountedRef';
 
 /**

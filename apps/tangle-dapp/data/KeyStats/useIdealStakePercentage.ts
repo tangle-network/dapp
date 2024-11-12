@@ -2,10 +2,10 @@
 
 import { BN_ZERO } from '@polkadot/util';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { useEffect, useState } from 'react';
 
 import { calculateInflation } from '../../utils';
-import ensureError from '../../utils/ensureError';
 import { getApiPromise } from '../../utils/polkadot';
 
 export default function useIdealStakedPercentage(

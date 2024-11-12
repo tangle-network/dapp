@@ -1,4 +1,5 @@
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { useCallback, useState } from 'react';
 import {
   Abi as ViemAbi,
@@ -9,7 +10,6 @@ import {
 import { mainnet, sepolia } from 'viem/chains';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
-import ensureError from '../../utils/ensureError';
 import usePolling from '../liquidStaking/usePolling';
 import { ContractReadOptions } from './useContractReadOnce';
 import useViemPublicClientWithChain from './useViemPublicClientWithChain';
