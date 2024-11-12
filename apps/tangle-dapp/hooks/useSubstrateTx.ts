@@ -3,6 +3,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useSubstrateInjectedExtension from '@webb-tools/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import useIsMountedRef from '@webb-tools/webb-ui-components/hooks/useIsMountedRef';
@@ -17,7 +18,6 @@ import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useSubstrateAddress from './useSubstrateAddress';
 import useSubstrateExplorerUrl from './useSubstrateExplorerUrl';
-import useSubstrateInjectedExtension from './useSubstrateInjectedExtension';
 import useTxNotification from './useTxNotification';
 
 export enum TxStatus {

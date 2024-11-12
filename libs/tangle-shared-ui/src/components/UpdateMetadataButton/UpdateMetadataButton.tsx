@@ -1,14 +1,9 @@
 import { MetadataDef } from '@polkadot/extension-inject/types';
 import { HexString } from '@polkadot/util/types';
+import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import isSubstrateAddress from '@webb-tools/dapp-types/utils/isSubstrateAddress';
 import { RefreshLineIcon } from '@webb-tools/icons';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import useLocalStorage, {
-  LocalStorageKey,
-  SubstrateWalletsMetadataEntry,
-} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
-import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import {
   IconButton,
   Tooltip,
@@ -18,15 +13,19 @@ import {
 import { NetworkId } from '@webb-tools/webb-ui-components/constants/networks';
 import isEqual from 'lodash/isEqual';
 import { FC, useCallback, useMemo, useState } from 'react';
-
-import useActiveAccountAddress from '../hooks/useActiveAccountAddress';
-import usePromise from '../hooks/usePromise';
-import useSubstrateInjectedExtension from '../hooks/useSubstrateInjectedExtension';
+import useNetworkStore from '../../context/useNetworkStore';
+import usePromise from '../../hooks/usePromise';
+import useSubstrateInjectedExtension from '../../hooks/useSubstrateInjectedExtension';
+import { getApiPromise } from '../../utils/polkadot/api';
+import useLocalStorage, {
+  LocalStorageKey,
+  SubstrateWalletsMetadataEntry,
+} from '../../hooks/useLocalStorage';
 
 const UpdateMetadataButton: FC = () => {
   const [isHidden, setIsHidden] = useState(false);
 
-  const activeAccountAddress = useActiveAccountAddress();
+  const [activeAccount] = useActiveAccount();
   const injector = useSubstrateInjectedExtension();
   const { network } = useNetworkStore();
 
@@ -82,16 +81,14 @@ const UpdateMetadataButton: FC = () => {
 
   const isSubstrateAccount = useMemo(
     () =>
-      activeAccountAddress !== null
-        ? isSubstrateAddress(activeAccountAddress)
-        : null,
-    [activeAccountAddress],
+      activeAccount !== null ? isSubstrateAddress(activeAccount.address) : null,
+    [activeAccount],
   );
 
   const handleClick = async () => {
     if (
       injector === null ||
-      activeAccountAddress === null ||
+      activeAccount === null ||
       network.ss58Prefix === undefined
     ) {
       return;

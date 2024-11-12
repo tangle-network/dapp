@@ -5,6 +5,7 @@ import {
   useWebContext,
 } from '@webb-tools/api-provider-environment';
 import { ComputerIcon } from '@webb-tools/icons';
+import UpdateMetadataButton from '@webb-tools/tangle-shared-ui/components/UpdateMetadataButton';
 import {
   Button,
   ConnectWalletMobileButton,
@@ -15,7 +16,6 @@ import { type FC } from 'react';
 
 import { WalletDropdown } from '../../components';
 import NetworkSelectionButton from '../../components/NetworkSelectorButton';
-import UpdateMetadataButton from '../../components/UpdateMetadataButton';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 
 const WalletAndChainContainer: FC = () => {
