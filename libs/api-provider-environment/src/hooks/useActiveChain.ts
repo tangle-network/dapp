@@ -1,22 +1,9 @@
-import type { Chain, WalletConfig } from '@webb-tools/dapp-config';
+import type { Chain } from '@webb-tools/dapp-config';
 import { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
 import { useObservableState } from 'observable-hooks';
 import { BehaviorSubject } from 'rxjs';
 
-/** Active wallet subject */
-const activeWalletSubject = new BehaviorSubject<Maybe<WalletConfig>>(undefined);
-
-/** Active wallet setter */
-const setActiveWallet = (wallet: Maybe<WalletConfig>) =>
-  activeWalletSubject.next(wallet);
-
-/** Hook for sharing the actvie wallet subject & setter */
-export function useActiveWallet() {
-  const activeWallet = useObservableState(activeWalletSubject);
-  return [activeWallet, setActiveWallet] as const;
-}
-
-/** Hook for sharing the active account subject & setter */
+/** Hook for sharing the active chain subject & setter */
 /**
  * Active chain subject
  * - `undefined` means no chain is active

@@ -66,6 +66,9 @@ import 'zustand/middleware';
 import type { TAppEvent } from '../app-event';
 import { insufficientApiInterface } from '../error/interactive-errors/insufficient-api-interface';
 import { unsupportedChain } from '../error/interactive-errors/unsupported-chain';
+import { useActiveAccount } from '../hooks/useActiveAccount';
+import { useActiveChain } from '../hooks/useActiveChain';
+import { useActiveWallet } from '../hooks/useActiveWallet';
 import ModalQueueManagerProvider from '../modal-queue-manager/ModalQueueManagerProvider';
 import { StoreProvider } from '../store';
 import { useTxApiQueue } from '../transaction';
@@ -76,8 +79,6 @@ import {
   registerInteractiveFeedback,
   useNoteAccount,
 } from './private';
-import { useActiveChain, useActiveWallet } from './subjects';
-import { useActiveAccount } from '../hooks/useActiveAccount';
 
 interface WebbProviderInnerProps extends BareProps {
   appEvent: TAppEvent;
@@ -302,6 +303,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           }
           break;
         case WebbErrorCodes.UnselectedChain:
+        case WebbErrorCodes.NoAccountAvailable:
           break;
         case WebbErrorCodes.MetaMaskExtensionNotInstalled:
         case WebbErrorCodes.RainbowExtensionNotInstalled:
@@ -342,6 +344,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       _bridge?: Bridge | undefined,
       abortSignal?: AbortSignal,
     ) => {
+      console.log('switchChain', chain, wallet);
       const nextTypedChainId = calculateTypedChainId(chain.chainType, chain.id);
 
       const sharedWalletConnectionPayload = {

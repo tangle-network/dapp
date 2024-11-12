@@ -277,7 +277,9 @@ export function useSubstrateTxWithNotification<Context = void>(
     } else if (txHash !== null && txBlockHash !== null) {
       const explorerUrl = resolveExplorerUrl(txHash, txBlockHash);
 
-      notifySuccess(txName, explorerUrl, successMessage);
+      if (explorerUrl !== null) {
+        notifySuccess(txName, explorerUrl, successMessage);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);

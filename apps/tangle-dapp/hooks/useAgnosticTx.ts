@@ -155,7 +155,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
 
       const explorerUrl =
         substrateTxBlockHash == null
-          ? undefined
+          ? null
           : resolveExplorerUrl(txHash, substrateTxBlockHash);
 
       notifySuccess(name, explorerUrl, successMessage);
