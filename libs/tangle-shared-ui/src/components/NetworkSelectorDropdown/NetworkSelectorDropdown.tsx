@@ -13,7 +13,6 @@ import {
 import { FC, ReactNode, useCallback } from 'react';
 
 import CustomRpcEndpointInput from './CustomRpcEndpointInput';
-import { TANGLE_TESTNET_CHAIN_NAME } from './NetworkSelectionButton';
 
 export type NetworkSelectorDropdownProps = {
   selectedNetwork: Network | null;
@@ -68,7 +67,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
         tooltip="Connect to a custom network by specifying its RPC endpoint URL"
       />
 
-      <div className="px-4 pb-2 pt-1 w-full">
+      <div className="w-full px-4 pt-1 pb-2">
         <CustomRpcEndpointInput
           id="custom-rpc-endpoint"
           placeholder="RPC endpoint URL"
@@ -102,7 +101,7 @@ const NetworkOption: FC<NetworkOptionProps> = ({
 
   return (
     <DropdownMenuItem
-      leftIcon={<ChainIcon size="lg" name={TANGLE_TESTNET_CHAIN_NAME} />}
+      leftIcon={<ChainIcon size="lg" name={name} />}
       onClick={handleClick}
       className="w-full py-3"
       isActive={isSelected}

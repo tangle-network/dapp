@@ -7,9 +7,6 @@ import {
   calculateTypedChainId,
   ChainType,
 } from '@webb-tools/sdk-core/typed-chain-id';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import useNetworkSwitcher from '@webb-tools/tangle-shared-ui/hooks/useNetworkSwitcher';
-import createCustomNetwork from '@webb-tools/tangle-shared-ui/utils/createCustomNetwork';
 import {
   Dropdown,
   DropdownBasicButton,
@@ -19,23 +16,25 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { usePathname } from 'next/navigation';
 import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { PagePath } from '../../types';
+import useNetworkStore from '../../context/useNetworkStore';
+import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
+import createCustomNetwork from '../../utils/createCustomNetwork';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
-// TODO: Currently hard-coded, but shouldn't it always be the Tangle icon, since it's not switching chains but rather networks within Tangle? If so, find some constant somewhere instead of having it hard-coded here.
-export const TANGLE_TESTNET_CHAIN_NAME = 'Tangle Testnet Native';
+export type NetworkSelectionButtonProps = {
+  isNetworkSwitchDisabled?: boolean;
+};
 
-const NetworkSelectionButton: FC = () => {
+const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
+  isNetworkSwitchDisabled = false,
+}) => {
   const { activeChain, activeWallet, isConnecting, loading, switchChain } =
     useWebContext();
 
   const { network } = useNetworkStore();
   const { switchNetwork, isCustom } = useNetworkSwitcher();
-  const pathname = usePathname();
 
   // TODO: Handle switching network on EVM wallet here.
   const switchToCustomNetwork = useCallback(
@@ -53,15 +52,6 @@ const NetworkSelectionButton: FC = () => {
 
     return network?.name ?? 'Unknown Network';
   }, [isConnecting, loading, network?.name]);
-
-  // Disable network switching when in Liquid Staking page,
-  // since it would have no effect there.
-  const isInLiquidStakingPage = pathname.startsWith(PagePath.LIQUID_STAKING);
-
-  const isInBridgePath = useMemo(
-    () => pathname.startsWith(PagePath.BRIDGE),
-    [pathname],
-  );
 
   const isWrongEvmNetwork = useMemo(() => {
     const isEvmWallet = activeWallet?.platform === 'EVM';
@@ -88,12 +78,7 @@ const NetworkSelectionButton: FC = () => {
     switchChain(targetChain, activeWallet);
   }, [activeWallet, network.evmChainId, switchChain]);
 
-  if (isInBridgePath) {
-    return null;
-  }
-  // Network can't be manually switched while on the liquid
-  // staking page.
-  else if (isInLiquidStakingPage) {
+  if (isNetworkSwitchDisabled) {
     return (
       <Tooltip>
         <TooltipTrigger asChild>
@@ -160,7 +145,6 @@ type TriggerButtonProps = {
   className?: string;
   networkName: string;
   isLoading?: boolean;
-  chainIconName?: string;
   isLocked?: boolean;
 };
 
@@ -168,7 +152,6 @@ const TriggerButton: FC<TriggerButtonProps> = ({
   isLoading = false,
   networkName,
   className,
-  chainIconName = TANGLE_TESTNET_CHAIN_NAME,
   isLocked = false,
 }) => {
   return (
@@ -188,7 +171,7 @@ const TriggerButton: FC<TriggerButtonProps> = ({
       {isLoading ? (
         <Spinner size="lg" />
       ) : (
-        <ChainIcon size="lg" className="shrink-0 grow-0" name={chainIconName} />
+        <ChainIcon size="lg" className="shrink-0 grow-0" name={networkName} />
       )}
 
       <div className="flex items-center gap-0">

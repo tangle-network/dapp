@@ -11,17 +11,12 @@ import {
   Typography,
   useCheckMobile,
 } from '@webb-tools/webb-ui-components';
-import dynamic from 'next/dynamic';
 import { type FC } from 'react';
 
 import { WalletDropdown } from '../../components';
+import NetworkSelectionButton from '../../components/NetworkSelectorButton';
 import UpdateMetadataButton from '../../components/UpdateMetadataButton';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-
-const NetworkSelectionButton = dynamic(
-  () => import('../../components/NetworkSelector/NetworkSelectionButton'),
-  { ssr: false },
-);
 
 const WalletAndChainContainer: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();
