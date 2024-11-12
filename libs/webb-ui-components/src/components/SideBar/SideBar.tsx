@@ -77,7 +77,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
 
     return (
       <div
-        className={cx('flex gap-2 top-0 left-0 z-50 relative', className)}
+        className={cx('flex gap-2 relative', className)}
         {...props}
         ref={ref}
       >
