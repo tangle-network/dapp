@@ -5,14 +5,14 @@ import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
 import { TangleTokenSymbol } from '@webb-tools/tangle-shared-ui/types';
 import { Payout } from '@webb-tools/tangle-shared-ui/types';
 import { BridgeQueueTxItem } from '@webb-tools/tangle-shared-ui/types/bridge';
-import { useCallback, useEffect, useState } from 'react';
-
 import {
   Collator,
   Dapp,
   PhalaVaultOrStakePool,
   Validator,
-} from '../types/liquidStaking';
+} from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { useCallback, useEffect, useState } from 'react';
+
 import Optional from '../utils/Optional';
 
 export enum LocalStorageKey {
