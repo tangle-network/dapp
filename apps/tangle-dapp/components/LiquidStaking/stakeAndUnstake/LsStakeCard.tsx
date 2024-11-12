@@ -6,6 +6,7 @@ import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon, Search } from '@webb-tools/icons';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   Button,
   Chip,
@@ -18,7 +19,6 @@ import { z } from 'zod';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
   LsNetworkId,
-  LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
 import useMintTx from '../../../data/liquidStaking/parachain/useMintTx';
@@ -223,7 +223,7 @@ const LsStakeCard: FC = () => {
         showPoolIndicator={false}
       />
 
-      <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
+      <ArrowDownIcon className="self-center dark:fill-mono-0 w-7 h-7" />
 
       <LsInput
         id="liquid-staking-stake-to"
@@ -312,7 +312,7 @@ export const SelectParachainContent: FC<SelectParachainContentProps> = ({
             key={parachain.id}
             className="flex items-center justify-between gap-1 px-4 py-3"
           >
-            <div className="flex gap-2 items-center">
+            <div className="flex items-center gap-2">
               <Typography variant="h5" fw="bold" className="dark:text-mono-0">
                 {parachain.name}
               </Typography>

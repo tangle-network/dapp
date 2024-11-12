@@ -1,7 +1,7 @@
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { Alert } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import useLsFeePercentage from './useLsFeePercentage';
 
 // 10%.

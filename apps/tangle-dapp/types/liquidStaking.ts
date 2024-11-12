@@ -1,6 +1,5 @@
 import { BN } from '@polkadot/util';
-
-import { LsProtocolId } from '../constants/liquidStaking/types';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 
 // All chains
 export type StakingItem = {

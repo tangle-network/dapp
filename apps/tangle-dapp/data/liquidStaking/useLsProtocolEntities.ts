@@ -1,6 +1,7 @@
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { useCallback, useEffect, useState } from 'react';
 
-import { LsNetworkId, LsProtocolId } from '../../constants/liquidStaking/types';
+import { LsNetworkId } from '../../constants/liquidStaking/types';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import { LiquidStakingItem } from '../../types/liquidStaking';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';

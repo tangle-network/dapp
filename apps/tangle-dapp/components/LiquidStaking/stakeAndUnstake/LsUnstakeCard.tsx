@@ -6,6 +6,7 @@ import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { Button } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
@@ -13,7 +14,6 @@ import { z } from 'zod';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
   LsNetworkId,
-  LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
 import useRedeemTx from '../../../data/liquidStaking/parachain/useRedeemTx';
@@ -205,7 +205,7 @@ const LsUnstakeCard: FC = () => {
         onTokenClick={() => setIsSelectTokenModalOpen(true)}
       />
 
-      <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
+      <ArrowDownIcon className="self-center dark:fill-mono-0 w-7 h-7" />
 
       <LsInput
         id="liquid-staking-unstake-to"

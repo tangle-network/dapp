@@ -1,3 +1,4 @@
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import assert from 'assert';
 
 import { LS_PROTOCOLS } from '../../constants/liquidStaking/constants';
@@ -8,7 +9,6 @@ import {
 import {
   LsParachainChainDef,
   LsParachainChainId,
-  LsProtocolId,
 } from '../../constants/liquidStaking/types';
 
 type IdToDefMap<T extends LsProtocolId> = T extends LsParachainChainId

@@ -13,6 +13,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChevronUp } from '@webb-tools/icons';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { Button, Table, Typography } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import { FC, useCallback, useMemo, useState } from 'react';
@@ -24,7 +25,7 @@ import LsMyPoolsTable, {
 import LsTokenIcon from '../components/LsTokenIcon';
 import StatItem from '../components/StatItem';
 import TableCellWrapper from '../components/tables/TableCellWrapper';
-import { LsProtocolId, LsToken } from '../constants/liquidStaking/types';
+import { LsToken } from '../constants/liquidStaking/types';
 import useLsPools from '../data/liquidStaking/useLsPools';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
