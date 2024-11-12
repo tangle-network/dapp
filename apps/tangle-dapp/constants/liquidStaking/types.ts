@@ -171,7 +171,7 @@ export type LsPoolUnstakeRequest = {
   unbondingEra: number;
   decimals: number;
   progress?: LsParachainSimpleTimeUnit;
-  currency: ParachainCurrency;
+  token: LsToken;
 
   /**
    * The underlying stake tokens amount represented by the unlock

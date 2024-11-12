@@ -1,6 +1,5 @@
 'use client';
 
-import { BN } from '@polkadot/util';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -18,12 +17,12 @@ import {
 import { FC, useMemo, useState } from 'react';
 
 import { LsPoolUnstakeRequest } from '../../constants/liquidStaking/types';
+import useLsUnbonding from '../../data/liquidStaking/useLsUnbonding';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import addCommasToNumber from '../../utils/addCommasToNumber';
 import stringifyTimeUnit from '../../utils/liquidStaking/stringifyTimeUnit';
 import pluralize from '../../utils/pluralize';
 import { TableStatus } from '..';
-import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../tables/shared';
 import WithdrawUnstakeRequestButton from './unstakeRequestsTable/WithdrawUnstakeRequestButton';
@@ -31,6 +30,7 @@ import WithdrawUnstakeRequestButton from './unstakeRequestsTable/WithdrawUnstake
 const COLUMN_HELPER = createColumnHelper<LsPoolUnstakeRequest>();
 
 const LsUnbondingTable: FC = () => {
+  const unstakeRequests = useLsUnbonding();
   const isAccountConnected = useIsAccountConnected();
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -65,15 +65,14 @@ const LsUnbondingTable: FC = () => {
         ),
       }),
       COLUMN_HELPER.accessor('amount', {
-        header: () => <HeaderCell title="Amount" className="justify-center" />,
+        header: () => 'Amount',
         cell: (props) => {
           const unstakeRequest = props.row.original;
-          const tokenSymbol = unstakeRequest.currency.toUpperCase();
 
           return (
             <TokenAmountCell
               amount={props.getValue()}
-              symbol={tokenSymbol}
+              symbol={unstakeRequest.token}
               decimals={props.row.original.decimals}
             />
           );
@@ -89,7 +88,7 @@ const LsUnbondingTable: FC = () => {
         ),
       }),
       COLUMN_HELPER.accessor('progress', {
-        header: () => <HeaderCell title="Status" className="justify-center" />,
+        header: () => 'Status',
         cell: (props) => {
           const progress = props.getValue();
 
@@ -129,34 +128,10 @@ const LsUnbondingTable: FC = () => {
     [],
   );
 
-  const unstakeRequests: LsPoolUnstakeRequest[] = [
-    {
-      poolId: 1,
-      decimals: 18,
-      amount: new BN('854854385848358348538'),
-      currency: 'Eth',
-      unbondingEra: 1320,
-    },
-    {
-      poolId: 2,
-      decimals: 18,
-      amount: new BN('854854385848358348538'),
-      currency: 'Bnc',
-      poolName: 'pepe',
-      unbondingEra: 1930,
-    },
-    {
-      poolId: 3,
-      decimals: 18,
-      amount: new BN('454353467576'),
-      currency: 'Ksm',
-      poolName: 'lion',
-      unbondingEra: 1209,
-    },
-  ];
+  const rows = useMemo(() => unstakeRequests ?? [], [unstakeRequests]);
 
   const table = useReactTable({
-    data: unstakeRequests,
+    data: rows,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -181,7 +156,7 @@ const LsUnbondingTable: FC = () => {
         icon="🔍"
       />
     );
-  } else if (unstakeRequests.length === 0) {
+  } else if (rows.length === 0) {
     return (
       <TableStatus
         title="No unstake requests"
@@ -200,11 +175,16 @@ const LsUnbondingTable: FC = () => {
   return (
     <Table
       tableProps={table}
-      title={pluralize('unstake request', unstakeRequests.length !== 1)}
-      className="rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3"
+      title={pluralize('unstake request', rows.length !== 1)}
+      className="px-6 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160 bg-mono-20 dark:bg-mono-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)] dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]"
       thClassName="py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160"
       tbodyClassName="!bg-transparent"
       tdClassName="!bg-inherit border-t-0"
+      // tableClassName="border-separate border-spacing-y-3 pt-3"
+      // thClassName="py-0 border-t-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0"
+      // tbodyClassName="!bg-transparent"
+      // trClassName="group cursor-pointer overflow-hidden rounded-xl"
+      // tdClassName="border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden"
       isPaginated
     />
   );
