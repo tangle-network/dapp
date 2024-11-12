@@ -2,6 +2,7 @@
 
 import { Expand } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import usePromise from '@webb-tools/tangle-shared-ui/hooks/usePromise';
 import {
   getApiPromise,
   getApiRx,
@@ -10,7 +11,6 @@ import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import useDebugMetricsStore from '../../context/useDebugMetricsStore';
-import usePromise from '../../hooks/usePromise';
 
 /**
  * Format bytes to megabytes, rounded to two decimal places
