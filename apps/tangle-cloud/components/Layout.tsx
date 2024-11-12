@@ -34,7 +34,7 @@ const Layout: FC<PropsWithChildren<Props>> = ({
           socialsLinkOverrides={TANGLE_SOCIAL_URLS_RECORD}
           bottomLinkOverrides={BOTTOM_LINK_OVERRIDES}
           isMinimal
-          className="px-6 py-12"
+          className="px-6 py-8"
         />
       </div>
     </div>
