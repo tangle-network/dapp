@@ -1,8 +1,8 @@
 import { BN } from '@polkadot/util';
+import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
 
 import { RestakingProfileType } from '../../types';
 import { RestakingService } from '../../types';
-import Optional from '../../utils/Optional';
 
 export type ManageProfileModalContainerProps = {
   hasExistingProfile: boolean | null;

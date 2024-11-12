@@ -2,8 +2,7 @@
 
 import { HexString } from '@polkadot/util/types';
 import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
-import { TangleTokenSymbol } from '@webb-tools/tangle-shared-ui/types';
-import { Payout } from '@webb-tools/tangle-shared-ui/types';
+import { Payout, TangleTokenSymbol } from '@webb-tools/tangle-shared-ui/types';
 import { BridgeQueueTxItem } from '@webb-tools/tangle-shared-ui/types/bridge';
 import {
   Collator,
@@ -11,9 +10,8 @@ import {
   PhalaVaultOrStakePool,
   Validator,
 } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
 import { useCallback, useEffect, useState } from 'react';
-
-import Optional from '../utils/Optional';
 
 export enum LocalStorageKey {
   IS_BALANCES_TABLE_DETAILS_COLLAPSED = 'isBalancesTableDetailsCollapsed',

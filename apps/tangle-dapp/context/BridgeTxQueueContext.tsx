@@ -4,6 +4,7 @@ import {
   BridgeQueueTxItem,
   BridgeTxState,
 } from '@webb-tools/tangle-shared-ui/types/bridge';
+import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
 import {
   createContext,
   FC,
@@ -19,7 +20,6 @@ import useLocalStorage, {
   LocalStorageKey,
   TxQueueByAccount,
 } from '../hooks/useLocalStorage';
-import Optional from '../utils/Optional';
 
 interface BridgeTxQueueContextProps {
   txQueue: BridgeQueueTxItem[];

@@ -1,13 +1,13 @@
 'use client';
 
 import { PalletStakingRewardDestination } from '@polkadot/types/lookup';
+import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { StakingRewardsDestination } from '../../types';
-import Optional from '../../utils/Optional';
 
 const STAKING_SUBSTRATE_PAYEE_TO_LOCAL_PAYEE_MAP: Record<
   PalletStakingRewardDestination['type'],
