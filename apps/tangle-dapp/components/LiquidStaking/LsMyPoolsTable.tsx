@@ -39,6 +39,7 @@ import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../tables/shared';
 import UpdateCommissionModal from './UpdateCommissionModal';
+import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 
 export interface LsMyPoolRow extends LsPool {
   myStake: BN;
@@ -154,8 +155,16 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       }),
       COLUMN_HELPER.accessor('totalStaked', {
         header: () => 'Total Staked (TVL)',
-        // TODO: Decimals.
-        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        cell: (props) => {
+          const lsProtocol = getLsProtocolDef(props.row.original.protocolId);
+
+          return (
+            <TokenAmountCell
+              amount={props.getValue()}
+              decimals={lsProtocol.decimals}
+            />
+          );
+        },
       }),
       COLUMN_HELPER.accessor('myStake', {
         header: () => 'My Stake',

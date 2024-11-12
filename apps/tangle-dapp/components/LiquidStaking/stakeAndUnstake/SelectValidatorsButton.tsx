@@ -2,7 +2,7 @@ import { SettingsFillIcon } from '@webb-tools/icons';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import DropdownChevronIcon from './DropdownChevronIcon';
+import DropdownChevronIcon from '../../DropdownChevronIcon';
 
 const SelectValidatorsButton: FC = () => {
   return (

@@ -9,7 +9,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode } from 'react';
 
-import ExternalLink from '../ExternalLink';
+import ExternalLink from '../../ExternalLink';
 
 type DetailItemProps = {
   title: string;

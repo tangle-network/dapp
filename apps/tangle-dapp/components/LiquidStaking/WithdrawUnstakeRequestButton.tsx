@@ -2,8 +2,8 @@ import { ArrowRight } from '@webb-tools/icons';
 import { Button } from '@webb-tools/webb-ui-components';
 import { FC, useCallback } from 'react';
 
-import useLsWithdrawUnbondedTx from '../../../data/liquidStaking/useLsWithdrawUnbondedTx';
-import { TxStatus } from '../../../hooks/useSubstrateTx';
+import useLsWithdrawUnbondedTx from '../../data/liquidStaking/useLsWithdrawUnbondedTx';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 
 export type WithdrawUnstakeRequestButtonProps = {
   lsPoolId: number;

@@ -21,10 +21,10 @@ import useLsUnbonding from '../../data/liquidStaking/useLsUnbonding';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import addCommasToNumber from '../../utils/addCommasToNumber';
 import pluralize from '../../utils/pluralize';
-import { TableStatus } from '..';
+import { ContainerSkeleton, TableStatus } from '..';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../tables/shared';
-import WithdrawUnstakeRequestButton from './unstakeRequestsTable/WithdrawUnstakeRequestButton';
+import WithdrawUnstakeRequestButton from './WithdrawUnstakeRequestButton';
 
 const COLUMN_HELPER = createColumnHelper<LsPoolUnstakeRequest>();
 
@@ -76,7 +76,6 @@ const LsUnbondingTable: FC = () => {
             />
           );
         },
-        // TODO: Maturity date (time left) columns. Also add an info icon tooltip for the maturity date to show the exact unlock date on hover.
       }),
       COLUMN_HELPER.accessor('erasLeftToUnlock', {
         header: () => 'Status',
@@ -146,8 +145,9 @@ const LsUnbondingTable: FC = () => {
     enableSortingRemoval: false,
   });
 
-  // TODO: Missing error and loading state. Should ideally abstract all these states into an abstract Table component, since it's getting reused in multiple places.
-  if (!isAccountConnected) {
+  if (unstakeRequests === null) {
+    return <ContainerSkeleton />;
+  } else if (!isAccountConnected) {
     return (
       <TableStatus
         className={sharedTableStatusClxs}
