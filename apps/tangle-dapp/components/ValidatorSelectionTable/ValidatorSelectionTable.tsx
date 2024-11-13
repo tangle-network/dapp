@@ -38,6 +38,7 @@ import React, {
 
 import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
+import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import formatFractional from '../../utils/formatFractional';
 import {
   getSortAddressOrIdentityFnc,
@@ -45,9 +46,7 @@ import {
 } from '../../utils/table';
 import { ContainerSkeleton } from '..';
 import { HeaderCell } from '../tableCells';
-import TokenAmountCell, {
-  AmountFormatStyle,
-} from '../tableCells/TokenAmountCell';
+import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorSelectionTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();

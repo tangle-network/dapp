@@ -32,15 +32,14 @@ import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
+import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
 import { TableStatus } from '..';
 import BlueIconButton from '../BlueIconButton';
 import PercentageCell from '../tableCells/PercentageCell';
-import TokenAmountCell, {
-  AmountFormatStyle,
-} from '../tableCells/TokenAmountCell';
+import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../tables/shared';
 import UpdateCommissionModal from './UpdateCommissionModal';
 

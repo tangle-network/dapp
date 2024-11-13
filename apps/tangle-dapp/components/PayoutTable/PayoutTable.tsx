@@ -28,11 +28,10 @@ import {
 import { type FC, useState } from 'react';
 
 import PayoutTxContainer from '../../containers/PayoutTxContainer/PayoutTxContainer';
+import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import { sortBnValueForPayout } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
-import TokenAmountCell, {
-  AmountFormatStyle,
-} from '../tableCells/TokenAmountCell';
+import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { PayoutTableProps } from './types';
 
 const columnHelper = createColumnHelper<Payout>();

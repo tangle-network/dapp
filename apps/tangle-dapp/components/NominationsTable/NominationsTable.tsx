@@ -22,15 +22,14 @@ import { FC, useState } from 'react';
 
 import { Nominee } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
+import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import {
   getSortAddressOrIdentityFnc,
   sortBnValueForNomineeOrValidator,
 } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
-import TokenAmountCell, {
-  AmountFormatStyle,
-} from '../tableCells/TokenAmountCell';
+import TokenAmountCell from '../tableCells/TokenAmountCell';
 
 const columnHelper = createColumnHelper<Nominee>();
 

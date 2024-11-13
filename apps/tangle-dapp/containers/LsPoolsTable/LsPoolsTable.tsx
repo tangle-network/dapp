@@ -25,14 +25,13 @@ import { twMerge } from 'tailwind-merge';
 
 import { TableStatus } from '../../components';
 import PercentageCell from '../../components/tableCells/PercentageCell';
-import TokenAmountCell, {
-  AmountFormatStyle,
-} from '../../components/tableCells/TokenAmountCell';
+import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../../components/tables/shared';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
+import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
