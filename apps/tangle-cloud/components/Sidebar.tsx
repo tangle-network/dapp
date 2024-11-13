@@ -1,14 +1,11 @@
 'use client';
 
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { HomeIcon, PersonIcon } from '@radix-ui/react-icons';
-import { ArrowRight } from '@webb-tools/icons';
+import { CaretSortIcon, HomeIcon } from '@radix-ui/react-icons';
 import CommandFillIcon from '@webb-tools/icons/CommandFillIcon';
 import { DocumentationIcon } from '@webb-tools/icons/DocumentationIcon';
 import GlobalLine from '@webb-tools/icons/GlobalLine';
 import { GridFillIcon } from '@webb-tools/icons/GridFillIcon';
-import { getIconSizeInPixel } from '@webb-tools/icons/utils';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import {
   Dropdown,
   DropdownBody,
@@ -31,7 +28,7 @@ import cx from 'classnames';
 import capitalize from 'lodash/capitalize';
 import { usePathname } from 'next/navigation';
 import { FC, useMemo } from 'react';
-import useRoleStore, { Role } from '../stores/roleStore';
+import useRoleStore, { Role, ROLE_ICON_MAP } from '../stores/roleStore';
 import { PagePath } from '../types';
 
 type Props = {
@@ -89,8 +86,19 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
 
   return (
     <Dropdown>
-      <DropdownMenuTrigger asChild>
-        <Button
+      <DropdownMenuTrigger
+        className={cx(
+          'flex items-center',
+          'rounded-full text-mono-100 dark:text-mono-120 px-2 py-3 block w-full',
+          'focus:text-mono-200 focus:dark:text-mono-0',
+          'focus:bg-mono-20 focus:dark:bg-mono-190',
+          'hover:bg-mono-20 dark:hover:bg-mono-190',
+          'data-[state=open]:bg-mono-20 data-[state=open]:dark:bg-mono-190',
+          'data-[state=open]:text-mono-200 data-[state=open]:dark:text-mono-0',
+          isExpanded ? 'justify-between' : 'justify-center',
+        )}
+      >
+        {/* <Button
           title={capitalizedRole}
           isFullWidth
           rightIcon={
@@ -106,22 +114,28 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
           className={cx(!isExpanded && '!p-2')}
         >
           {isExpanded ? capitalizedRole : ''}
-        </Button>
+        </Button> */}
+
+        <div className="flex items-center gap-2 !text-inherit">
+          {ROLE_ICON_MAP[role]({ size: 'lg' })}
+          {isExpanded ? capitalizedRole : ''}
+        </div>
+
+        {isExpanded && <CaretSortIcon width={24} height={24} />}
       </DropdownMenuTrigger>
 
-      <DropdownBody
-        className={cx('mt-2', isExpanded && 'w-[248px]')}
-        align="center"
-      >
+      <DropdownBody className="ml-2" side="right" align="center">
         <DropdownMenuItem
           isActive={role === Role.OPERATOR}
           onClick={() => setRole(Role.OPERATOR)}
+          leftIcon={ROLE_ICON_MAP[Role.OPERATOR]()}
         >
           Operate
         </DropdownMenuItem>
         <DropdownMenuItem
           isActive={role === Role.DEPLOYER}
           onClick={() => setRole(Role.DEPLOYER)}
+          leftIcon={ROLE_ICON_MAP[Role.DEPLOYER]()}
         >
           Deploy
         </DropdownMenuItem>
