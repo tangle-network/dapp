@@ -176,15 +176,10 @@ const LsUnbondingTable: FC = () => {
     <Table
       tableProps={table}
       title={pluralize('unstake request', rows.length !== 1)}
-      className="px-6 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160 bg-mono-20 dark:bg-mono-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)] dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]"
+      className="rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3"
       thClassName="py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160"
       tbodyClassName="!bg-transparent"
       tdClassName="!bg-inherit border-t-0"
-      // tableClassName="border-separate border-spacing-y-3 pt-3"
-      // thClassName="py-0 border-t-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0"
-      // tbodyClassName="!bg-transparent"
-      // trClassName="group cursor-pointer overflow-hidden rounded-xl"
-      // tdClassName="border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden"
       isPaginated
     />
   );
