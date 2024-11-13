@@ -25,12 +25,15 @@ import { twMerge } from 'tailwind-merge';
 
 import { TableStatus } from '../../components';
 import PercentageCell from '../../components/tableCells/PercentageCell';
-import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
+import TokenAmountCell, {
+  AmountFormatStyle,
+} from '../../components/tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../../components/tables/shared';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
+import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
 
@@ -135,8 +138,17 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
     }),
     COLUMN_HELPER.accessor('totalStaked', {
       header: () => 'Total Staked (TVL)',
-      // TODO: Decimals.
-      cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+      cell: (props) => {
+        const lsProtocol = getLsProtocolDef(props.row.original.protocolId);
+
+        return (
+          <TokenAmountCell
+            amount={props.getValue()}
+            decimals={lsProtocol.decimals}
+            formatStyle={AmountFormatStyle.SHORT}
+          />
+        );
+      },
     }),
     COLUMN_HELPER.accessor('commissionFractional', {
       header: () => 'Commission',

@@ -30,7 +30,9 @@ import { type FC, useState } from 'react';
 import PayoutTxContainer from '../../containers/PayoutTxContainer/PayoutTxContainer';
 import { sortBnValueForPayout } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
-import TokenAmountCell from '../tableCells/TokenAmountCell';
+import TokenAmountCell, {
+  AmountFormatStyle,
+} from '../tableCells/TokenAmountCell';
 import { PayoutTableProps } from './types';
 
 const columnHelper = createColumnHelper<Payout>();
@@ -105,7 +107,12 @@ const PayoutTable: FC<PayoutTableProps> = ({
         header: () => (
           <HeaderCell title="Total Stake" className="justify-start" />
         ),
-        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        cell: (props) => (
+          <TokenAmountCell
+            amount={props.getValue()}
+            formatStyle={AmountFormatStyle.SHORT}
+          />
+        ),
         sortingFn: sortBnValueForPayout,
       }),
       columnHelper.accessor('nominators', {
@@ -134,7 +141,12 @@ const PayoutTable: FC<PayoutTableProps> = ({
         header: () => (
           <HeaderCell title="Total Rewards" className="justify-start" />
         ),
-        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        cell: (props) => (
+          <TokenAmountCell
+            amount={props.getValue()}
+            formatStyle={AmountFormatStyle.SHORT}
+          />
+        ),
         sortingFn: sortBnValueForPayout,
       }),
       columnHelper.accessor('nominatorTotalReward', {

@@ -18206,16 +18206,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/protocol-substrate-types@npm:@webb-tools/tangle-substrate-types@^0.9.0, @webb-tools/tangle-substrate-types@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "@webb-tools/tangle-substrate-types@npm:0.9.0"
+"@webb-tools/protocol-substrate-types@npm:@webb-tools/tangle-substrate-types@^0.9.3, @webb-tools/tangle-substrate-types@npm:^0.9.3":
+  version: 0.9.3
+  resolution: "@webb-tools/tangle-substrate-types@npm:0.9.3"
   dependencies:
     "@polkadot/api": "npm:^13.2.1"
     "@polkadot/typegen": "npm:^13.2.1"
     "@polkadot/types": "npm:^13.2.1"
     ecpair: "npm:^2.1.0"
     tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/0cc9624d78d0a41e1cb37c5081336a60d7ea4cda68ebed7eeb634497ad43402bf24041156b8628c3d5dba041379066896bad94692477ac2df91dc068fee94f38
+  checksum: 10c0/3178de3982543bdb7cde4c2bcd8d4b93c7f178e6d32961165c73f272c81b85b8ebe534422586cabbd26bb15bc5f679732b86f1334f7f43bb7af53d9d245ffd46
   languageName: node
   linkType: hard
 
@@ -46064,7 +46064,7 @@ __metadata:
     "@webb-tools/interfaces": "npm:1.0.11"
     "@webb-tools/sdk-core": "npm:0.1.4-127"
     "@webb-tools/tangle-restaking-types": "npm:^0.1.0"
-    "@webb-tools/tangle-substrate-types": "npm:^0.9.0"
+    "@webb-tools/tangle-substrate-types": "npm:^0.9.3"
     "@webb-tools/test-utils": "npm:0.1.8"
     "@webb-tools/tokens": "npm:1.0.11"
     "@webb-tools/utils": "npm:1.0.11"

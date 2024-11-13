@@ -3,7 +3,9 @@ import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStor
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import formatBn from '../../utils/formatBn';
+import formatDisplayAmount, {
+  AmountFormatStyle,
+} from '../../utils/formatDisplayAmount';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 
 export type TokenAmountCellProps = {
@@ -11,6 +13,7 @@ export type TokenAmountCellProps = {
   className?: string;
   symbol?: string;
   decimals?: number;
+  formatStyle?: AmountFormatStyle;
 };
 
 const TokenAmountCell: FC<TokenAmountCellProps> = ({
@@ -18,6 +21,7 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({
   className,
   symbol,
   decimals,
+  formatStyle: format = AmountFormatStyle.EXACT,
 }) => {
   const { nativeTokenSymbol } = useNetworkStore();
 
@@ -27,10 +31,8 @@ const TokenAmountCell: FC<TokenAmountCellProps> = ({
       return formatTangleBalance(amount);
     }
 
-    return formatBn(amount, decimals, {
-      includeCommas: true,
-    });
-  }, [amount, decimals]);
+    return formatDisplayAmount(amount, decimals, format);
+  }, [amount, decimals, format]);
 
   const parts = formattedBalance.split('.');
   const integerPart = parts[0];

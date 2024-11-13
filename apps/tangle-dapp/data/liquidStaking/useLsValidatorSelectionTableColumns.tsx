@@ -24,7 +24,9 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { StakingItemExternalLinkButton } from '../../components/LiquidStaking/StakingItemExternalLinkButton';
-import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
+import TokenAmountCell, {
+  AmountFormatStyle,
+} from '../../components/tableCells/TokenAmountCell';
 import calculateCommission from '../../utils/calculateCommission';
 import formatBn from '../../utils/formatBn';
 import formatFractional from '../../utils/formatFractional';
@@ -113,6 +115,7 @@ export const useLsValidatorSelectionTableColumns = (
             amount={props.getValue()}
             decimals={props.row.original.chainDecimals}
             symbol={props.row.original.chainTokenSymbol}
+            formatStyle={AmountFormatStyle.SHORT}
           />
         ),
         sortingFn: sortValueStaked,
@@ -223,6 +226,7 @@ export const useLsValidatorSelectionTableColumns = (
             amount={props.getValue()}
             decimals={props.row.original.chainDecimals}
             symbol={props.row.original.chainTokenSymbol}
+            formatStyle={AmountFormatStyle.SHORT}
           />
         ),
         sortingFn: sortValueStaked,
@@ -330,6 +334,7 @@ export const useLsValidatorSelectionTableColumns = (
             amount={props.getValue()}
             decimals={props.row.original.chainDecimals}
             symbol={props.row.original.chainTokenSymbol}
+            formatStyle={AmountFormatStyle.SHORT}
           />
         ),
         sortingFn: sortValueStaked,

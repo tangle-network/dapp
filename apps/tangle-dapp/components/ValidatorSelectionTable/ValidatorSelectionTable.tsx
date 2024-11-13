@@ -45,7 +45,9 @@ import {
 } from '../../utils/table';
 import { ContainerSkeleton } from '..';
 import { HeaderCell } from '../tableCells';
-import TokenAmountCell from '../tableCells/TokenAmountCell';
+import TokenAmountCell, {
+  AmountFormatStyle,
+} from '../tableCells/TokenAmountCell';
 import { ValidatorSelectionTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
@@ -149,6 +151,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
               <TokenAmountCell
                 amount={props.getValue()}
                 className="text-mono-0"
+                formatStyle={AmountFormatStyle.SHORT}
               />
             </Chip>
           </div>

@@ -153,6 +153,7 @@ export type LsPool = {
   commissionFractional?: number;
   members: Map<SubstrateAddress, PalletAssetsAssetAccount>;
   protocolId: LsProtocolId;
+  iconUrl?: string;
 };
 
 export type LsPoolUnstakeRequest = {

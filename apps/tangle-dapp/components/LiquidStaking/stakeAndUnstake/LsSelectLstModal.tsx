@@ -1,4 +1,4 @@
-import { Search, TokenIcon } from '@webb-tools/icons';
+import { Search } from '@webb-tools/icons';
 import {
   Input,
   ListItem,
@@ -21,6 +21,7 @@ import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import EmptyList from '../../EmptyList';
 import { ListCardWrapper } from '../../Lists/ListCardWrapper';
 import SkeletonRows from '../../SkeletonRows';
+import LstIcon, { LstIconSize } from '../LstIcon';
 
 export type LsSelectLstModalProps = {
   pools: LsPool[] | null;
@@ -152,12 +153,11 @@ const ListItems: FC<ListItemsProps> = ({ pools, onSelect, isSelfStaked }) => {
           onClick={() => onSelect(pool.id)}
           className="w-full flex items-center gap-4 justify-between max-w-full min-h-[60px] py-3 cursor-pointer"
         >
-          <div className="flex items-center gap-1">
-            {/** TODO: Set token based on protocol. */}
-            <TokenIcon
-              size="md"
-              name="TNT"
-              className="mr-2 w-[38px] h-[38px]"
+          <div className="flex items-center gap-3">
+            <LstIcon
+              lsProtocolId={pool.protocolId}
+              iconUrl={pool.iconUrl}
+              size={LstIconSize.LG}
             />
 
             <div className="flex flex-col">

@@ -34,7 +34,9 @@ import {
 } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
-import TokenAmountCell from '../tableCells/TokenAmountCell';
+import TokenAmountCell, {
+  AmountFormatStyle,
+} from '../tableCells/TokenAmountCell';
 import { ValidatorTableProps } from './types';
 
 const columnHelper = createColumnHelper<Validator>();
@@ -52,7 +54,12 @@ const getTableColumns = (isWaiting?: boolean) => [
               className="justify-start"
             />
           ),
-          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+          cell: (props) => (
+            <TokenAmountCell
+              amount={props.getValue()}
+              formatStyle={AmountFormatStyle.SHORT}
+            />
+          ),
           sortingFn: sortBnValueForNomineeOrValidator,
         }),
         columnHelper.accessor('selfStakeAmount', {

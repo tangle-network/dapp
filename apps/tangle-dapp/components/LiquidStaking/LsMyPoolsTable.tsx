@@ -38,7 +38,9 @@ import pluralize from '../../utils/pluralize';
 import { TableStatus } from '..';
 import BlueIconButton from '../BlueIconButton';
 import PercentageCell from '../tableCells/PercentageCell';
-import TokenAmountCell from '../tableCells/TokenAmountCell';
+import TokenAmountCell, {
+  AmountFormatStyle,
+} from '../tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../tables/shared';
 import UpdateCommissionModal from './UpdateCommissionModal';
 
@@ -163,13 +165,23 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
             <TokenAmountCell
               amount={props.getValue()}
               decimals={lsProtocol.decimals}
+              formatStyle={AmountFormatStyle.SI}
             />
           );
         },
       }),
       COLUMN_HELPER.accessor('myStake', {
         header: () => 'My Stake',
-        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        cell: (props) => {
+          const lsProtocol = getLsProtocolDef(props.row.original.protocolId);
+
+          return (
+            <TokenAmountCell
+              amount={props.getValue()}
+              decimals={lsProtocol.decimals}
+            />
+          );
+        },
       }),
       COLUMN_HELPER.accessor('commissionFractional', {
         header: () => 'Commission',
