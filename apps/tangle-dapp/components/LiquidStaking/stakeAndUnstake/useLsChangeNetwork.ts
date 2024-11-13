@@ -1,10 +1,10 @@
+import useNetworkSwitcher from '@webb-tools/tangle-shared-ui/hooks/useNetworkSwitcher';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback } from 'react';
 
 import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import { NETWORK_FEATURE_MAP } from '../../../constants/networks';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useNetworkSwitcher from '../../../hooks/useNetworkSwitcher';
 import { NetworkFeature } from '../../../types';
 import getLsTangleNetwork from '../../../utils/liquidStaking/getLsTangleNetwork';
 

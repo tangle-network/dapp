@@ -1,16 +1,13 @@
 'use client';
 
 import { BN } from '@polkadot/util';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { forwardRef, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
-import {
-  LsNetworkId,
-  LsProtocolId,
-  LsToken,
-} from '../../../constants/liquidStaking/types';
+import { LsNetworkId, LsToken } from '../../../constants/liquidStaking/types';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useInputAmount from '../../../hooks/useInputAmount';

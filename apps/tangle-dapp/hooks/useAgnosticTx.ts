@@ -1,4 +1,5 @@
 import { assert } from '@polkadot/util';
+import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubstrateExplorerUrl';
 import { useCallback, useEffect, useState } from 'react';
 
 import { TxName } from '../constants';
@@ -10,7 +11,6 @@ import useEvmPrecompileAbiCall, {
   AbiCall,
   EvmTxFactory,
 } from './useEvmPrecompileAbiCall';
-import useSubstrateExplorerUrl from './useSubstrateExplorerUrl';
 import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
 import useTxNotification from './useTxNotification';
 
@@ -155,7 +155,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
 
       const explorerUrl =
         substrateTxBlockHash == null
-          ? undefined
+          ? null
           : resolveExplorerUrl(txHash, substrateTxBlockHash);
 
       notifySuccess(name, explorerUrl, successMessage);

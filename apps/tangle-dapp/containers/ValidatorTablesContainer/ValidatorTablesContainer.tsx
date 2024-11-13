@@ -1,6 +1,7 @@
 'use client';
 
 import { Search } from '@webb-tools/icons';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   Input,
   TabContent,
@@ -9,7 +10,6 @@ import {
 import { useState } from 'react';
 
 import { ContainerSkeleton, TableStatus } from '../../components';
-import useNetworkStore from '../../context/useNetworkStore';
 import useActiveValidators from '../../data/ValidatorTables/useActiveValidators';
 import useWaitingValidators from '../../data/ValidatorTables/useWaitingValidators';
 import ValidatorTableContainer from './ValidatorTableContainer';

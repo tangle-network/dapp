@@ -10,6 +10,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { ExplorerType } from '@webb-tools/tangle-shared-ui/types';
 import {
   Avatar,
   Button,
@@ -24,8 +26,7 @@ import Link from 'next/link';
 import { FC, useMemo, useState } from 'react';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
-import useNetworkStore from '../../context/useNetworkStore';
-import { ExplorerType, PagePath, Validator } from '../../types';
+import { PagePath, Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
 import {
   getSortAddressOrIdentityFnc,

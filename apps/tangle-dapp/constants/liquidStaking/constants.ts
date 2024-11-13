@@ -1,3 +1,5 @@
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+
 import ASTAR from '../../data/liquidStaking/adapters/astar';
 import MANTA from '../../data/liquidStaking/adapters/manta';
 import MOONBEAM from '../../data/liquidStaking/adapters/moonbeam';
@@ -14,7 +16,6 @@ import {
   LsParachainChainId,
   LsParachainToken,
   LsProtocolDef,
-  LsProtocolId,
   LsToken,
 } from './types';
 

@@ -1,4 +1,5 @@
 import { HexString } from '@polkadot/util/types';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import assert from 'assert';
 import { useCallback } from 'react';
 import {
@@ -11,7 +12,6 @@ import { ReadContractReturnType } from 'wagmi/actions';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useDebugMetricsStore from '../../context/useDebugMetricsStore';
-import ensureError from '../../utils/ensureError';
 import useViemPublicClientWithChain from './useViemPublicClientWithChain';
 
 export type ContractReadOptions<

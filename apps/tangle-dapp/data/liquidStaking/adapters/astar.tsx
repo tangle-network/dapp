@@ -1,5 +1,7 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { createColumnHelper, SortingFnOption } from '@tanstack/react-table';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   Avatar,
   CopyWithTooltip,
@@ -11,10 +13,8 @@ import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking
 import {
   LsNetworkId,
   LsParachainChainDef,
-  LsProtocolId,
   LsToken,
 } from '../../../constants/liquidStaking/types';
-import { LiquidStakingItem } from '../../../types/liquidStaking';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
 import formatBn from '../../../utils/formatBn';
 import { GetTableColumnsFn } from '../adapter';

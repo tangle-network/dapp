@@ -1,7 +1,8 @@
 import { BN } from '@polkadot/util';
 import { SortingFn } from '@tanstack/react-table';
+import { Payout } from '@webb-tools/tangle-shared-ui/types';
 
-import { BasicAccountInfo, Nominee, Payout } from '../types';
+import { BasicAccountInfo, Nominee } from '../types';
 
 // Utility type to extract keys of type T that have value type U
 type KeysOfType<T, U> = {

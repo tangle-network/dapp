@@ -1,10 +1,9 @@
+import { TangleTokenSymbol } from '@webb-tools/tangle-shared-ui/types';
 import {
   Network,
   NetworkId,
 } from '@webb-tools/webb-ui-components/constants/networks';
 import { Chain } from 'viem';
-
-import { TangleTokenSymbol } from '../../types';
 
 const createTangleViemChainFromNetwork = (
   network: Network & { evmChainId: number; httpRpcEndpoint: string },

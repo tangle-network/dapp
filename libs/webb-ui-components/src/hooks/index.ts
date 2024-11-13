@@ -3,6 +3,7 @@ export * from './useCheckMobile';
 export * from './useCopyable';
 export * from './useDarkMode';
 export * from './useHiddenValue';
+export { default as useIsMountedRef } from './useIsMountedRef';
 export { default as useMediaQuery } from './useMediaQuery';
 export * from './useModal';
 export * from './useTimeAgo';

@@ -2,23 +2,23 @@ import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubstrateExplorerUrl';
+import useSubstrateInjectedExtension from '@webb-tools/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
+import useIsMountedRef from '@webb-tools/webb-ui-components/hooks/useIsMountedRef';
 import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
 import { Hash } from 'viem';
 
 import { TxName } from '../constants';
-import useNetworkStore from '../context/useNetworkStore';
 import { GetSuccessMessageFunction } from '../types';
 import { SubstrateAddress } from '../types/utils';
-import ensureError from '../utils/ensureError';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
-import { getApiPromise } from '../utils/polkadot';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
-import useIsMountedRef from './useIsMountedRef';
 import useSubstrateAddress from './useSubstrateAddress';
-import useSubstrateExplorerUrl from './useSubstrateExplorerUrl';
-import useSubstrateInjectedExtension from './useSubstrateInjectedExtension';
 import useTxNotification from './useTxNotification';
 
 export enum TxStatus {

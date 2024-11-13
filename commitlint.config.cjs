@@ -13,6 +13,7 @@ module.exports = {
         'repo',
         'tangle-dapp',
         'tangle-cloud',
+        'tangle-shared-ui',
         'testnet-leaderboard',
         'webb-ui',
         'icons',

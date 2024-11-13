@@ -1,7 +1,6 @@
-import {
-  LsNetworkId,
-  LsProtocolId,
-} from '../../../constants/liquidStaking/types';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+
+import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import useParachainLsFees from '../../../data/liquidStaking/parachain/useParachainLsFees';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 

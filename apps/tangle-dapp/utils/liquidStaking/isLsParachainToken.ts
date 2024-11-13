@@ -1,8 +1,7 @@
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+
 import { LS_PARACHAIN_TOKENS } from '../../constants/liquidStaking/constants';
-import {
-  LsParachainToken,
-  LsProtocolId,
-} from '../../constants/liquidStaking/types';
+import { LsParachainToken } from '../../constants/liquidStaking/types';
 
 function isLsParachainToken(
   tokenSymbol: string | LsProtocolId,

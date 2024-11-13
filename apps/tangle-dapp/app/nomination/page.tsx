@@ -4,6 +4,7 @@ import {
   Search,
   SparklingIcon,
 } from '@webb-tools/icons';
+import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
 import {
   TANGLE_DOCS_STAKING_URL,
   Typography,
@@ -12,7 +13,6 @@ import { Metadata } from 'next';
 
 import OnboardingItem from '../../components/OnboardingModal/OnboardingItem';
 import OnboardingModal from '../../components/OnboardingModal/OnboardingModal';
-import { OnboardingPageKey } from '../../constants';
 import { OpenGraphPageImageUrl } from '../../constants/openGraph';
 import {
   HeaderChipsContainer,

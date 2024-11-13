@@ -10,5 +10,4 @@ export * from './UnbondTxContainer';
 export * from './UpdatePayeeTxContainer';
 export * from './ValidatorTablesContainer';
 export * from './WalletAndChainContainer';
-export * from './WalletModalContainer';
 export * from './WithdrawUnbondedTxContainer';

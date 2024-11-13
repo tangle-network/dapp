@@ -6,6 +6,7 @@ import {
   SparklingIcon,
   UserLineIcon,
 } from '@webb-tools/icons';
+import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
 import { TANGLE_DOCS_RESTAKING_URL } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
@@ -15,7 +16,6 @@ import GlassCard from '../../components/GlassCard/GlassCard';
 import OnboardingItem from '../../components/OnboardingModal/OnboardingItem';
 import OnboardingModal from '../../components/OnboardingModal/OnboardingModal';
 import StatItem from '../../components/StatItem';
-import { OnboardingPageKey } from '../../constants';
 import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '../../data/restake/useRestakeOperatorMap';
 import useRestakeTVL from '../../data/restake/useRestakeTVL';

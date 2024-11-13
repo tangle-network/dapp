@@ -57,22 +57,26 @@ export const WalletModal: FC<WalletModalProps> = ({
     }
   }, [getCurrentWallet, platformId]);
 
-  const handleTryAgainBtnClick = useCallback(async () => {
-    if (connectError instanceof WalletNotInstalledError) {
-      return;
-    }
+  const handleTryAgainBtnClick = useCallback(
+    async () => {
+      if (connectError instanceof WalletNotInstalledError) {
+        return;
+      }
 
-    if (!selectedWallet) {
-      notificationApi.addToQueue({
-        variant: 'warning',
-        message: 'Failed to switch wallet',
-        secondaryMessage: 'No wallet selected. Please try again.',
-      });
-      return;
-    }
+      if (!selectedWallet) {
+        notificationApi.addToQueue({
+          variant: 'warning',
+          message: 'Failed to switch wallet',
+          secondaryMessage: 'No wallet selected. Please try again.',
+        });
+        return;
+      }
 
-    await connectWallet(selectedWallet);
-  }, [connectWallet, notificationApi, selectedWallet, connectError]);
+      await connectWallet(selectedWallet, targetTypedChainIds);
+    },
+    // prettier-ignore
+    [connectError, selectedWallet, connectWallet, targetTypedChainIds, notificationApi],
+  );
 
   return (
     <Modal open={isModalOpen} onOpenChange={handleOpenChange}>

@@ -6,6 +6,8 @@ import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWa
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { Spinner } from '@webb-tools/icons';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { getApiRx } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
@@ -13,9 +15,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { useEffect, useMemo, useState } from 'react';
 import { combineLatest, Subscription } from 'rxjs';
 
-import useNetworkStore from '../../context/useNetworkStore';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import { getApiRx } from '../../utils/polkadot';
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
 import type { ClaimInfoType } from './types';

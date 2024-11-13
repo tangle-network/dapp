@@ -1,6 +1,6 @@
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useMemo } from 'react';
 
-import useNetworkStore from '../context/useNetworkStore';
 import { SubstrateAddress } from '../types/utils';
 import { toSubstrateAddress } from '../utils';
 import useActiveAccountAddress from './useActiveAccountAddress';

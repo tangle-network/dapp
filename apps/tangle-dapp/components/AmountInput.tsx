@@ -1,9 +1,9 @@
 import { BN } from '@polkadot/util';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 
-import useNetworkStore from '../context/useNetworkStore';
 import useInputAmount from '../hooks/useInputAmount';
 import InputWrapper, { InputWrapperProps } from './InputWrapper';
 

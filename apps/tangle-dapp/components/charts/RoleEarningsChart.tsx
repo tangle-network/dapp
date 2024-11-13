@@ -1,5 +1,6 @@
 'use client';
 
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   getRoundedAmountString,
   Typography,
@@ -17,7 +18,6 @@ import {
 } from 'recharts';
 
 import { ChartColor } from '../../constants';
-import useNetworkStore from '../../context/useNetworkStore';
 import type { RoleEarningsChartProps } from './types';
 
 const RoleEarningsChart: FC<RoleEarningsChartProps> = ({ data }) => {

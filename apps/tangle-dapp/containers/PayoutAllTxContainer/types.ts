@@ -1,4 +1,4 @@
-import { Payout } from '../../types';
+import { Payout } from '@webb-tools/tangle-shared-ui/types';
 
 export type PayoutTxProps = {
   validatorSubstrateAddress: string;

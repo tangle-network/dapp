@@ -6,6 +6,10 @@ import {
   CoinsStackedLineIcon,
   SendPlanLineIcon,
 } from '@webb-tools/icons';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useLocalStorage, {
+  LocalStorageKey,
+} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import {
   InfoIconWithTooltip,
   Typography,
@@ -14,11 +18,9 @@ import { FC, useCallback, useEffect, useState } from 'react';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
 import TangleTokenIcon from '../../components/TangleTokenIcon';
-import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useApiRx from '../../hooks/useApiRx';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { StaticSearchQueryPath } from '../../types';
 import TransferTxContainer from '../TransferTxContainer/TransferTxContainer';

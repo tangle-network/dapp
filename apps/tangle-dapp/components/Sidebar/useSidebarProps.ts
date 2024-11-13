@@ -1,8 +1,8 @@
 'use client';
 
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useMemo } from 'react';
 
-import useNetworkStore from '../../context/useNetworkStore';
 import getSidebarProps from './sidebarProps';
 
 export default function useSidebarProps() {

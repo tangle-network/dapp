@@ -2,6 +2,7 @@
 
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import { LoopRightFillIcon } from '@webb-tools/icons';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   CopyWithTooltip,
   shortenHex,
@@ -18,7 +19,6 @@ import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
-import useNetworkStore from '../../context/useNetworkStore';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { toSubstrateAddress } from '../../utils';
 

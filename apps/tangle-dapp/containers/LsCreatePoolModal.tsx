@@ -1,5 +1,6 @@
 import { BN } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   Alert,
   Button,
@@ -15,7 +16,7 @@ import AddressInput, { AddressType } from '../components/AddressInput';
 import AmountInput from '../components/AmountInput';
 import LsProtocolDropdownInput from '../components/LiquidStaking/LsProtocolDropdownInput';
 import TextInput from '../components/TextInput';
-import { LsNetworkId, LsProtocolId } from '../constants/liquidStaking/types';
+import { LsNetworkId } from '../constants/liquidStaking/types';
 import useBalances from '../data/balances/useBalances';
 import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
@@ -117,7 +118,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
           Create a Liquid Staking Pool
         </ModalHeader>
 
-        <div className="p-9 space-y-8">
+        <div className="space-y-8 p-9">
           <div className="flex flex-col items-stretch justify-center gap-4">
             {/**
              * In case that a testnet is selected, it's helpful to let the users
@@ -131,7 +132,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
               />
             )}
 
-            <div className="flex items-center justify-stretch gap-2">
+            <div className="flex items-center gap-2 justify-stretch">
               <TextInput
                 id="ls-create-pool-name"
                 title="Pool Name"

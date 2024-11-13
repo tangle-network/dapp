@@ -6,21 +6,14 @@ import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@webb-tools/icons';
-import { Button } from '@webb-tools/webb-ui-components';
-import React, {
-  FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
   LsNetworkId,
-  LsProtocolId,
   LsSearchParamKey,
 } from '../../../constants/liquidStaking/types';
 import useMintTx from '../../../data/liquidStaking/parachain/useMintTx';
@@ -239,7 +232,7 @@ const LsStakeCard: FC = () => {
         showPoolIndicator={false}
       />
 
-      <ArrowDownIcon className="dark:fill-mono-0 self-center w-7 h-7" />
+      <ArrowDownIcon className="self-center dark:fill-mono-0 w-7 h-7" />
 
       <LsInput
         id="liquid-staking-stake-to"

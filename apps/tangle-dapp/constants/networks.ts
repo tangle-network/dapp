@@ -1,11 +1,6 @@
-import {
-  NetworkId,
-  TANGLE_MAINNET_NETWORK,
-} from '@webb-tools/webb-ui-components/constants/networks';
+import { NetworkId } from '@webb-tools/webb-ui-components/constants/networks';
 
 import { NetworkFeature } from '../types';
-
-export const DEFAULT_NETWORK = TANGLE_MAINNET_NETWORK;
 
 export const NETWORK_FEATURE_MAP: Record<NetworkId, NetworkFeature[]> = {
   [NetworkId.TANGLE_TESTNET]: [NetworkFeature.Faucet, NetworkFeature.LsPools],

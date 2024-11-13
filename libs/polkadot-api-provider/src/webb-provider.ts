@@ -276,6 +276,11 @@ export class WebbPolkadot
       wallet,
     );
 
+    const accountsFromExtension = await injectedExtension.accounts.get();
+    if (accountsFromExtension.length === 0) {
+      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
+    }
+
     const provider = new PolkadotProvider(
       apiPromise,
       injectedExtension,

@@ -1,7 +1,7 @@
 import { DeriveSessionProgress } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
+import { Payout } from '@webb-tools/tangle-shared-ui/types';
 
-import { Payout } from '../../types';
 export interface PayoutTableProps {
   data?: Payout[];
   pageSize: number;

@@ -1,8 +1,11 @@
+import useLocalStorage, {
+  LocalStorageKey,
+} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { useCallback, useEffect, useState } from 'react';
 
-import { LsNetworkId, LsProtocolId } from '../../constants/liquidStaking/types';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
-import { LiquidStakingItem } from '../../types/liquidStaking';
+import { LsNetworkId } from '../../constants/liquidStaking/types';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import { ProtocolEntity } from './adapter';
 

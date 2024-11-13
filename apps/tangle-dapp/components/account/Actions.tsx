@@ -7,10 +7,10 @@ import {
   GiftLineIcon,
   LockUnlockLineIcon,
 } from '@webb-tools/icons';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { FC, useState } from 'react';
 
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
-import useNetworkStore from '../../context/useNetworkStore';
 import useBalances from '../../data/balances/useBalances';
 import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';

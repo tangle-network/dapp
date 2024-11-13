@@ -1,10 +1,9 @@
 import { ApiPromise } from '@polkadot/api';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import usePromise from '@webb-tools/tangle-shared-ui/hooks/usePromise';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import { useCallback, useEffect, useState } from 'react';
-
-import useNetworkStore from '../context/useNetworkStore';
-import ensureError from '../utils/ensureError';
-import { getApiPromise } from '../utils/polkadot';
-import usePromise from './usePromise';
 
 export type ApiFetcher<T> = (api: ApiPromise) => Promise<T> | T;
 
