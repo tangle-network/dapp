@@ -23,11 +23,13 @@ import useLocalStorage, {
 import usePromise from '../../hooks/usePromise';
 import useSubstrateInjectedExtension from '../../hooks/useSubstrateInjectedExtension';
 import { getApiPromise } from '../../utils/polkadot/api';
+import { useActiveWallet } from '@webb-tools/api-provider-environment/hooks/useActiveWallet';
 
 const UpdateMetadataButton: FC = () => {
   const [isHidden, setIsHidden] = useState(false);
 
   const [activeAccount] = useActiveAccount();
+  const [activeWallet] = useActiveWallet();
   const injector = useSubstrateInjectedExtension();
   const { network } = useNetworkStore();
 
@@ -52,40 +54,43 @@ const UpdateMetadataButton: FC = () => {
     [setCache],
   );
 
-  const isMetadataUpToDate = useMemo(() => {
-    // Only update metadata for the mainnet. This is because
-    // the testnet and local networks have the same genesis hash,
-    // so they represent the same network. Only the mainnet's metadata
-    // is relevant.
-    if (apiPromise === null || network.id !== NetworkId.TANGLE_MAINNET) {
-      return null;
-    }
+  const isMetadataUpToDate = useMemo(
+    () => {
+      // Only update metadata for the mainnet. This is because
+      // the testnet and local networks have the same genesis hash,
+      // so they represent the same network. Only the mainnet's metadata
+      // is relevant.
+      if (apiPromise === null || network.id !== NetworkId.TANGLE_MAINNET) {
+        return null;
+      }
 
-    const genesisHash = apiPromise.genesisHash.toHex();
-    const cachedEntry = cachedMetadata?.value?.[genesisHash];
+      // If the active wallet is an EVM wallet, we don't need to update the metadata
+      if (activeWallet?.platform === 'EVM') {
+        return null;
+      }
 
-    if (cachedEntry === undefined) {
-      return false;
-    }
+      const genesisHash = apiPromise.genesisHash.toHex();
+      const cachedEntry = cachedMetadata?.value?.[genesisHash];
 
-    return isEqual(cachedEntry, {
-      ss58Prefix: network.ss58Prefix,
-      tokenSymbol: network.tokenSymbol,
-      tokenDecimals: TANGLE_TOKEN_DECIMALS,
-    });
-  }, [
-    apiPromise,
-    cachedMetadata?.value,
-    network.id,
-    network.ss58Prefix,
-    network.tokenSymbol,
-  ]);
+      if (cachedEntry === undefined) {
+        return false;
+      }
 
-  const isSubstrateAccount = useMemo(
-    () =>
-      activeAccount !== null ? isSubstrateAddress(activeAccount.address) : null,
-    [activeAccount],
+      return isEqual(cachedEntry, {
+        ss58Prefix: network.ss58Prefix,
+        tokenSymbol: network.tokenSymbol,
+        tokenDecimals: TANGLE_TOKEN_DECIMALS,
+      });
+    },
+    // prettier-ignore
+    [activeWallet?.platform, apiPromise, cachedMetadata?.value, network.id, network.ss58Prefix, network.tokenSymbol],
   );
+
+  const isSubstrateAccount = useMemo(() => {
+    return activeAccount !== null
+      ? isSubstrateAddress(activeAccount.address)
+      : null;
+  }, [activeAccount]);
 
   const handleClick = async () => {
     if (
