@@ -32,6 +32,7 @@ import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
+import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
 import { TableStatus } from '..';
@@ -40,7 +41,6 @@ import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../tables/shared';
 import UpdateCommissionModal from './UpdateCommissionModal';
-import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 
 export interface LsMyPoolRow extends LsPool {
   myStake: BN;

@@ -30,13 +30,13 @@ import OnboardingModal from '../../components/OnboardingModal/OnboardingModal';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
 import LsCreatePoolModal from '../../containers/LsCreatePoolModal';
 import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
+import { LsAllProtocolsTable } from '../../containers/LsPoolsTable';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import useSearchParamState from '../../hooks/useSearchParamState';
 import getLsTangleNetwork from '../../utils/liquidStaking/getLsTangleNetwork';
 import TabListItem from '../restake/TabListItem';
 import TabsList from '../restake/TabsList';
-import { LsAllProtocolsTable } from '../../containers/LsPoolsTable';
 
 enum SearchParamAction {
   STAKE = 'stake',

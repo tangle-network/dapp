@@ -5,8 +5,8 @@ import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import useCurrentEra from '../staking/useCurrentEra';
-import { useLsStore } from './useLsStore';
 import useLsPools from './useLsPools';
+import { useLsStore } from './useLsStore';
 
 const useLsUnbonding = () => {
   const pools = useLsPools();
@@ -64,7 +64,7 @@ const useLsUnbonding = () => {
         } satisfies LsPoolUnstakeRequest;
       })
       .toArray();
-  }, [lsProtocol.decimals, lsProtocol.token, unbondingOpt]);
+  }, [currentEra, lsProtocol.decimals, lsProtocol.token, pools, unbondingOpt]);
 
   return unstakeRequests;
 };

@@ -1,4 +1,3 @@
-import { u8aToString } from '@polkadot/util';
 import { useMemo } from 'react';
 
 import { LsPoolDisplayName } from '../../constants/liquidStaking/types';
@@ -30,7 +29,7 @@ const useLsActivePoolDisplayName = (): ActivePoolDisplayNameReturn => {
       return null;
     }
 
-    return u8aToString(activePool[1].metadata.name);
+    return activePool[1].metadata.name.toUtf8();
   }, [activePool]);
 
   const displayName = useMemo<LsPoolDisplayName | null>(() => {

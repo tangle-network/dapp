@@ -14,8 +14,8 @@ import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import LsNetworkSwitcher from './LsNetworkSwitcher';
-import SelectedPoolIndicator from './SelectedPoolIndicator';
 import LsTokenChip from './LsTokenChip';
+import SelectedPoolIndicator from './SelectedPoolIndicator';
 
 export type LsInputProps = {
   id: string;

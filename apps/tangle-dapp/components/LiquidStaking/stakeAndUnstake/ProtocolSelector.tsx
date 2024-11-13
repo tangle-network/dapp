@@ -14,8 +14,8 @@ import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/con
 import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import getLsNetwork from '../../../utils/liquidStaking/getLsNetwork';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import LsTokenIcon from '../../LsTokenIcon';
 import DropdownChevronIcon from '../../DropdownChevronIcon';
+import LsTokenIcon from '../../LsTokenIcon';
 
 type ProtocolSelectorProps = {
   selectedNetworkId: LsNetworkId;

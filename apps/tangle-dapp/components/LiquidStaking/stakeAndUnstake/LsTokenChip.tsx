@@ -4,8 +4,8 @@ import { twMerge } from 'tailwind-merge';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import { LsToken } from '../../../constants/liquidStaking/types';
-import LsTokenIcon from '../../LsTokenIcon';
 import DropdownChevronIcon from '../../DropdownChevronIcon';
+import LsTokenIcon from '../../LsTokenIcon';
 
 type LsTokenChipProps = {
   token?: LsToken;

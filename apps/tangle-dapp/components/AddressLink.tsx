@@ -1,7 +1,7 @@
 import { HexString } from '@polkadot/util/types';
 import { ExternalLinkLine } from '@webb-tools/icons';
 import { shortenString, Typography } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, MouseEvent } from 'react';
+import { FC, MouseEvent, useCallback } from 'react';
 
 import { SubstrateAddress } from '../types/utils';
 
