@@ -4,14 +4,13 @@ import { BLUEPRINT_DOCS } from '@webb-tools/webb-ui-components/constants/tangleD
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
+import './top-banner.css';
 
 const TopBanner: FC = () => {
   return (
     <div
       className={twMerge(
-        'px-6 py-9 rounded-xl bg-center bg-cover bg-no-repeat',
-        'bg-[url(/static/assets/blueprints/top-banner.png)]',
-        'dark:bg-[url(/static/assets/blueprints/top-banner-dark.png)]',
+        'px-6 py-9 rounded-xl bg-center bg-cover bg-no-repeat bg-top-banner',
       )}
     >
       <div className="max-w-[415px] space-y-3">
