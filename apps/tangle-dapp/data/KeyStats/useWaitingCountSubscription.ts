@@ -1,11 +1,10 @@
 'use client';
 
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { getApiRx } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import { useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
-
-import useNetworkStore from '../../context/useNetworkStore';
-import { getApiRx } from '../../utils/polkadot';
 
 export default function useWaitingCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {

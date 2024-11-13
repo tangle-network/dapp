@@ -11,6 +11,8 @@ import {
 import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
@@ -24,13 +26,11 @@ import { isHex } from 'viem';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
 import ClaimRecipientInput from '../../components/claims/ClaimRecipientInput';
-import useNetworkStore from '../../context/useNetworkStore';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import getStatement, { Statement } from '../../utils/getStatement';
 import isValidAddress from '../../utils/isValidAddress';
-import { getApiPromise } from '../../utils/polkadot';
 import type { ClaimInfoType } from './types';
 
 enum Step {

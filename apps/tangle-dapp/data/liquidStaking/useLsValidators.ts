@@ -1,15 +1,18 @@
 import { BN_ZERO } from '@polkadot/util';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-
-import { LsNetworkId, LsProtocolId } from '../../constants/liquidStaking/types';
-import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
+import useLocalStorage, {
+  LocalStorageKey,
+} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   Collator,
   Dapp,
-  LiquidStakingItem,
   PhalaVaultOrStakePool,
   Validator,
-} from '../../types/liquidStaking';
+} from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { LsNetworkId } from '../../constants/liquidStaking/types';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import {
   fetchChainDecimals,

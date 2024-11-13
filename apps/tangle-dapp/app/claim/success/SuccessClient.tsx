@@ -1,14 +1,13 @@
 'use client';
 
 import { ExternalLinkLine, ShieldedCheckLineIcon } from '@webb-tools/icons';
+import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubstrateExplorerUrl';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { type FC } from 'react';
 import { Hash } from 'viem';
-
-import useSubstrateExplorerUrl from '../../../hooks/useSubstrateExplorerUrl';
 
 const SuccessClient: FC<{ blockHash: Hash }> = ({ blockHash }) => {
   const { getExplorerUrl } = useSubstrateExplorerUrl();

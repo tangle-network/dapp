@@ -54,7 +54,11 @@ const useTxNotification = () => {
   const { isEvm: isEvmActiveAccount } = useAgnosticAccountInfo();
 
   const notifySuccess = useCallback(
-    (txName: TxName, explorerUrl?: string, successMessage?: string | null) => {
+    (
+      txName: TxName,
+      explorerUrl?: string | null,
+      successMessage?: string | null,
+    ) => {
       closeSnackbar(makeKey(txName));
 
       // TODO: Finish handling EVM accounts case.
@@ -66,7 +70,9 @@ const useTxNotification = () => {
       // for example, they disconnect their account while the
       // transaction is still processing.
       const finalExplorerUrl =
-        explorerUrl === undefined || isEvmActiveAccount === null
+        explorerUrl === undefined ||
+        explorerUrl === null ||
+        isEvmActiveAccount === null
           ? null
           : explorerUrl;
 

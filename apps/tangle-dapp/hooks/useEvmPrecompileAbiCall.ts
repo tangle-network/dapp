@@ -1,6 +1,7 @@
 import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { useCallback, useEffect, useState } from 'react';
 import type { Address, Hash } from 'viem';
 import {
@@ -17,7 +18,6 @@ import {
   Precompile,
   PrecompileAddress,
 } from '../constants/evmPrecompiles';
-import ensureError from '../utils/ensureError';
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 

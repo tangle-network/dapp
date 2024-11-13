@@ -1,11 +1,9 @@
 import { BN } from '@polkadot/util';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useMemo } from 'react';
 
-import {
-  LsNetworkId,
-  LsProtocolId,
-} from '../../../constants/liquidStaking/types';
+import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import useApi from '../../../hooks/useApi';
 import useApiRx from '../../../hooks/useApiRx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';

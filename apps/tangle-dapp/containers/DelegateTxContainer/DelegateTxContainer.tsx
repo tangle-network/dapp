@@ -1,6 +1,7 @@
 'use client';
 
 import { BN, BN_ZERO } from '@polkadot/util';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   Alert,
   Button,
@@ -14,7 +15,6 @@ import assert from 'assert';
 import { type FC, useCallback, useState } from 'react';
 
 import { PAYMENT_DESTINATION_OPTIONS as PAYEE_OPTIONS } from '../../constants';
-import useNetworkStore from '../../context/useNetworkStore';
 import useStakingRewardsDestination from '../../data/NominatorStats/useStakingRewardsDestination';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import useSetupNominatorTx from '../../data/staking/useSetupNominatorTx';

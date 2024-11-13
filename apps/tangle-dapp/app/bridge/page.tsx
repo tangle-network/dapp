@@ -3,13 +3,13 @@ import {
   TokenSwapLineIcon,
   WalletLineIcon,
 } from '@webb-tools/icons';
+import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components';
 import { Metadata } from 'next';
 import { FC } from 'react';
 
 import OnboardingItem from '../../components/OnboardingModal/OnboardingItem';
 import OnboardingModal from '../../components/OnboardingModal/OnboardingModal';
-import { OnboardingPageKey } from '../../constants';
 import createPageMetadata from '../../utils/createPageMetadata';
 import BridgeContainer from './BridgeContainer';
 

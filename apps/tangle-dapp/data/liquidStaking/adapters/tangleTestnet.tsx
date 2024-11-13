@@ -1,9 +1,9 @@
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { TANGLE_TESTNET_NATIVE_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
 import {
   LsNetworkId,
-  LsProtocolId,
   LsTangleNetworkDef,
   LsToken,
 } from '../../../constants/liquidStaking/types';

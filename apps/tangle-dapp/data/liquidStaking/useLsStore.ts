@@ -1,6 +1,7 @@
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { create } from 'zustand';
 
-import { LsNetworkId, LsProtocolId } from '../../constants/liquidStaking/types';
+import { LsNetworkId } from '../../constants/liquidStaking/types';
 import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
 
 type State = {

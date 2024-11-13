@@ -1,8 +1,8 @@
 import { isHex } from '@polkadot/util';
+import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import { redirect } from 'next/navigation';
 
 import { PagePath } from '../../../types';
-import { getApiPromise } from '../../../utils/polkadot';
 import SuccessClient from './SuccessClient';
 
 const isBlockHashExistOnChain = async (

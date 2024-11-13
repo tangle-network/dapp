@@ -61,6 +61,8 @@
         "libs/relayer-manager-factory/src/*"
       ],
       "@webb-tools/tailwind-preset": ["libs/tailwind-preset/index.js"],
+      "@webb-tools/tangle-shared-ui": ["libs/tangle-shared-ui/src/index.ts"],
+      "@webb-tools/tangle-shared-ui/*": ["libs/tangle-shared-ui/src/*"],
       "@webb-tools/web3-api-provider": ["libs/web3-api-provider/src/index.ts"],
       "@webb-tools/web3-api-provider/*": ["libs/web3-api-provider/src/*"],
       "@webb-tools/webb-ui-components": [

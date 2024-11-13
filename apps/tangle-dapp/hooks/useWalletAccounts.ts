@@ -2,9 +2,9 @@ import { HexString } from '@polkadot/util/types';
 import { encodeAddress } from '@polkadot/util-crypto';
 import { Account } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useMemo } from 'react';
 
-import useNetworkStore from '../context/useNetworkStore';
 import { SubstrateAddress } from '../types/utils';
 import assertSubstrateAddress from '../utils/assertSubstrateAddress';
 import { isEvmAddress } from '../utils/isEvmAddress';

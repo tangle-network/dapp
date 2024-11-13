@@ -1,9 +1,9 @@
 import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesOperatorPreferences } from '@polkadot/types/lookup';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useCallback } from 'react';
 import { combineLatest, switchMap } from 'rxjs';
 
-import useNetworkStore from '../../../context/useNetworkStore';
 import { extractOperatorData } from '../../../data/blueprints/utils/blueprintHelpers';
 import { toPrimitiveBlueprint } from '../../../data/blueprints/utils/toPrimitiveBlueprint';
 import useRestakeAssetMap from '../../../data/restake/useRestakeAssetMap';

@@ -1,13 +1,16 @@
 'use client';
 
 import { Expand } from '@webb-tools/icons';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import usePromise from '@webb-tools/tangle-shared-ui/hooks/usePromise';
+import {
+  getApiPromise,
+  getApiRx,
+} from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import useDebugMetricsStore from '../../context/useDebugMetricsStore';
-import useNetworkStore from '../../context/useNetworkStore';
-import usePromise from '../../hooks/usePromise';
-import { getApiPromise, getApiRx } from '../../utils/polkadot';
 
 /**
  * Format bytes to megabytes, rounded to two decimal places
@@ -99,7 +102,7 @@ const DebugMetrics: FC = () => {
 
   return (
     <div
-      className="cursor-pointer fixed left-3 bottom-3 z-10 bg-mono-20 dark:bg-mono-180 border border-mono-140 rounded-md shadow-md px-4 py-2 transition-opacity opacity-50 hover:opacity-100 flex flex-row gap-4 max-w-lg overflow-x-auto"
+      className="fixed z-10 flex flex-row max-w-lg gap-4 px-4 py-2 overflow-x-auto transition-opacity border rounded-md shadow-md opacity-50 cursor-pointer left-3 bottom-3 bg-mono-20 dark:bg-mono-180 border-mono-140 hover:opacity-100"
       onClick={() => setIsCollapsed((isCollapsed) => !isCollapsed)}
     >
       {isCollapsed ? (

@@ -4,6 +4,13 @@ import {
   Row,
   SortingFnOption,
 } from '@tanstack/react-table';
+import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import {
+  Collator,
+  Dapp,
+  PhalaVaultOrStakePool,
+  Validator,
+} from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   Avatar,
   CheckBox,
@@ -18,13 +25,6 @@ import { twMerge } from 'tailwind-merge';
 
 import { StakingItemExternalLinkButton } from '../../components/LiquidStaking/StakingItemExternalLinkButton';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
-import {
-  Collator,
-  Dapp,
-  LiquidStakingItem,
-  PhalaVaultOrStakePool,
-  Validator,
-} from '../../types/liquidStaking';
 import calculateCommission from '../../utils/calculateCommission';
 import formatBn from '../../utils/formatBn';
 import formatFractional from '../../utils/formatFractional';

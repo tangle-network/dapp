@@ -1,7 +1,7 @@
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 
-import { LsProtocolId } from '../../../constants/liquidStaking/types';
 import CrossChainTime from '../../../utils/CrossChainTime';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import pluralize from '../../../utils/pluralize';

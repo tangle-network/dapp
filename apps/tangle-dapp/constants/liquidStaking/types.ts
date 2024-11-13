@@ -4,6 +4,7 @@ import {
   TanglePrimitivesTimeUnit,
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
@@ -17,17 +18,6 @@ import {
 } from '../../data/liquidStaking/adapter';
 import { SubstrateAddress } from '../../types/utils';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
-
-export enum LsProtocolId {
-  POLKADOT,
-  PHALA,
-  MOONBEAM,
-  ASTAR,
-  MANTA,
-  TANGLE_MAINNET,
-  TANGLE_TESTNET,
-  TANGLE_LOCAL,
-}
 
 export type LsParachainChainId =
   | LsProtocolId.POLKADOT

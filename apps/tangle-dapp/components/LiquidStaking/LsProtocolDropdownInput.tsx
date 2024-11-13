@@ -1,5 +1,6 @@
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { ChainIcon } from '@webb-tools/icons';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   Dropdown,
   DropdownBody,
@@ -10,7 +11,7 @@ import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea
 import { FC, useCallback } from 'react';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../constants/liquidStaking/constants';
-import { LsNetworkId, LsProtocolId } from '../../constants/liquidStaking/types';
+import { LsNetworkId } from '../../constants/liquidStaking/types';
 import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import InputWrapper from '../InputWrapper';
@@ -56,7 +57,7 @@ const LsProtocolDropdownInput: FC<LsProtocolDropdownInputProps> = ({
             setProtocolId === undefined || network.protocols.length === 1
           }
         >
-          <div className="flex gap-2 justify-center items-center rounded-lg">
+          <div className="flex items-center justify-center gap-2 rounded-lg">
             <LsTokenIcon name={protocol.token} />
 
             <Typography variant="h5" fw="bold">
@@ -77,7 +78,7 @@ const LsProtocolDropdownInput: FC<LsProtocolDropdownInputProps> = ({
                 return (
                   <li key={protocol.id}>
                     <DropdownMenuItem onClick={trySetProtocolId(protocol.id)}>
-                      <div className="flex gap-2 items-center justify-start">
+                      <div className="flex items-center justify-start gap-2">
                         <ChainIcon
                           size="lg"
                           name={protocol.chainIconFileName}

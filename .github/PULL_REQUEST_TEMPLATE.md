@@ -10,6 +10,7 @@ _Put an `x` in the boxes that apply._
 
 - [ ] `apps/tangle-dapp`
 - [ ] `apps/tangle-cloud`
+- [ ] `libs/tangle-shared-ui`
 - [ ] `libs/webb-ui-components`
 
 ### Associated issue(s)

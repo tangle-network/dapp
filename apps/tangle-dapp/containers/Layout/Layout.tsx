@@ -21,7 +21,6 @@ import OnboardingHelpButton from '../../components/OnboardingModal/OnboardingHel
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import ApiDevStatsContainer from '../DebugMetricsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
-import { WalletModalContainer } from '../WalletModalContainer';
 
 // Some specific overrides for the social links for use in the
 // footer in Tangle dApp, since it defaults to the Webb socials.
@@ -72,8 +71,6 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
             <Breadcrumbs className="md:hidden !mt-0" />
 
             {children}
-
-            <WalletModalContainer />
           </div>
 
           <Footer

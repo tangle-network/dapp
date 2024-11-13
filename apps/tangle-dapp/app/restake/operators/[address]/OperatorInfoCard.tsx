@@ -1,6 +1,7 @@
 import { isHex } from '@polkadot/util';
 import isValidUrl from '@webb-tools/dapp-types/utils/isValidUrl';
 import { ExternalLinkLine } from '@webb-tools/icons/ExternalLinkLine';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
 import InfoIconWithTooltip from '@webb-tools/webb-ui-components/components/IconWithTooltip/InfoIconWithTooltip';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
@@ -15,7 +16,6 @@ import AvatarWithText from '../../../../components/AvatarWithText';
 import GlassCard from '../../../../components/GlassCard/GlassCard';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../../constants';
-import useNetworkStore from '../../../../context/useNetworkStore';
 import type {
   DelegatorInfo,
   OperatorMap,

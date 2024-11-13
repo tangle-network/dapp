@@ -1,10 +1,10 @@
 import BackspaceDeleteFillIcon from '@webb-tools/icons/BackspaceDeleteFillIcon';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import Decimal from 'decimal.js';
 import { FC, useCallback } from 'react';
 
 import useCustomInputValue from '../hooks/useCustomInputValue';
-import ensureError from '../utils/ensureError';
 import InputWrapper, { InputWrapperProps } from './InputWrapper';
 
 export type PercentageInputProps = {

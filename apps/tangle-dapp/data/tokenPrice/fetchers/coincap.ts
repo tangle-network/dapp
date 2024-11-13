@@ -1,7 +1,7 @@
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import axios from 'axios';
 import z from 'zod';
 
-import ensureError from '../../../utils/ensureError';
 import type { TokenPriceFetcher } from '../types';
 
 export const coincapTokenPriceFetcher = {

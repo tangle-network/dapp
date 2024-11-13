@@ -21,6 +21,7 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
       className,
       overrideContentProps,
       pathnameOrHash,
+      ActionButton,
       ...props
     },
     ref,
@@ -51,9 +52,16 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
                 overrideContentProps?.className,
               )}
             >
+              <Dialog.Title className="sr-only">Sidebar Menu</Dialog.Title>
+
+              <Dialog.Description className="sr-only">
+                Sidebar Menu
+              </Dialog.Description>
+
               <div>
                 <SideBarLogo logoLink={logoLink} Logo={Logo} isExpanded />
                 <SideBarItems
+                  ActionButton={ActionButton}
                   items={items}
                   isExpanded
                   pathnameOrHash={pathnameOrHash}

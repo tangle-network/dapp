@@ -1,6 +1,5 @@
 import { ISubmittableResult } from '@polkadot/types/types';
-
-import ensureError from './ensureError';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 
 function extractErrorFromTxStatus(status: ISubmittableResult): Error | null {
   if (

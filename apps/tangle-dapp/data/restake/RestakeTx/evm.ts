@@ -1,3 +1,4 @@
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import {
   type Abi,
   type Account,
@@ -20,7 +21,6 @@ import {
   BATCH_PRECOMPILE_ABI,
   PrecompileAddress,
 } from '../../../constants/evmPrecompiles';
-import ensureError from '../../../utils/ensureError';
 import createEvmBatchCallArgs from '../../../utils/staking/createEvmBatchCallArgs';
 import toEvmAddress32 from '../../../utils/toEvmAddress32';
 import restakeAbi from './abi';

@@ -1,9 +1,10 @@
 'use client';
 
+import { BridgeType } from '@webb-tools/tangle-shared-ui/types/bridge';
 import { useEffect } from 'react';
 
 import { useBridge } from '../../../context/BridgeContext';
-import { BridgeFeeType, BridgeType } from '../../../types/bridge';
+import { BridgeFeeType } from '../../../types/bridge';
 import useSelectedToken from './useSelectedToken';
 
 export default function useBridgeFee() {

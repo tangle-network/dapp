@@ -6,6 +6,10 @@ import { useQuery } from '@tanstack/react-query';
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { chainsConfig } from '@webb-tools/dapp-config';
 import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
+import {
+  BridgeTxState,
+  BridgeType,
+} from '@webb-tools/tangle-shared-ui/types/bridge';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { providers } from 'ethers';
 import { useCallback, useState } from 'react';
@@ -15,7 +19,6 @@ import { useBridgeTxQueue } from '../../../context/BridgeTxQueueContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import { mailboxAddress } from '../../../lib/hyperlane/consts';
 import { hyperlaneTransfer } from '../../../lib/hyperlane/transfer';
-import { BridgeTxState, BridgeType } from '../../../types/bridge';
 import useAmountInDecimals from './useAmountInDecimals';
 import useAmountInStr from './useAmountInStr';
 import useEthersProvider from './useEthersProvider';

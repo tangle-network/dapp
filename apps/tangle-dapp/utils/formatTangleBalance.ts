@@ -1,8 +1,7 @@
 import { BN, formatBalance } from '@polkadot/util';
 import { ToBn } from '@polkadot/util/types';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
-
-import { TangleTokenSymbol } from '../types';
+import { TangleTokenSymbol } from '@webb-tools/tangle-shared-ui/types';
 
 const formatTangleBalance = (
   balance: BN | bigint | ToBn,

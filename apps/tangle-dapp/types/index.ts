@@ -3,7 +3,6 @@ import type {
   SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
-import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 
 export enum PagePath {
   NOMINATION = '/nomination',
@@ -81,21 +80,6 @@ export enum StakingRewardsDestinationDisplayText {
   ACCOUNT = 'Specific Account',
   NONE = 'None',
 }
-
-export type AddressWithIdentity = {
-  address: string;
-  identity: string;
-};
-
-export type Payout = {
-  era: number;
-  validator: AddressWithIdentity;
-  validatorTotalStake: BN;
-  nominators: AddressWithIdentity[];
-  validatorTotalReward: BN;
-  nominatorTotalReward: BN;
-  nominatorTotalRewardRaw: BN;
-};
 
 /**
  * Utility type to remove trailing slash from a string.
@@ -223,11 +207,6 @@ export enum NetworkFeature {
   LsPools,
 }
 
-export const ExplorerType = {
-  Substrate: 'polkadot' as WebbProviderType,
-  EVM: 'web3' as WebbProviderType,
-} as const;
-
 export type ExposureMap = Record<
   string,
   {
@@ -235,8 +214,6 @@ export type ExposureMap = Record<
     exposureMeta: SpStakingPagedExposureMetadata;
   }
 >;
-
-export type TangleTokenSymbol = 'tTNT' | 'TNT';
 
 /**
  * Represents a function type that takes a context parameter and returns a success message.

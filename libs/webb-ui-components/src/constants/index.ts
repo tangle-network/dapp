@@ -172,6 +172,7 @@ export const SOCIAL_URLS_RECORD = {
 };
 
 export const TANGLE_SOCIAL_URLS_RECORD = {
+  telegram: 'https://t.me/tanglenet',
   commonwealth: 'https://commonwealth.im/tangle',
   twitter: TANGLE_TWITTER_URL,
   youTube: 'https://www.youtube.com/@TangleNetwork',

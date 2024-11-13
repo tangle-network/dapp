@@ -1,17 +1,17 @@
 'use client';
 
 import { StatusVariant } from '@webb-tools/icons/StatusIndicator/types';
+import {
+  BridgeTxState,
+  BridgeType,
+} from '@webb-tools/tangle-shared-ui/types/bridge';
+import { BridgeQueueTxItem } from '@webb-tools/tangle-shared-ui/types/bridge';
 import { TxProgressor } from '@webb-tools/webb-ui-components/components/TxProgressor';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Decimal from 'decimal.js';
 import { FC, useEffect } from 'react';
 
 import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
-import {
-  BridgeQueueTxItem,
-  BridgeTxState,
-  BridgeType,
-} from '../../types/bridge';
 
 interface BridgeTxQueueItemProps {
   tx: BridgeQueueTxItem;
@@ -69,7 +69,7 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
             onClick={() => {
               deleteTxFromQueue(tx.hash);
             }}
-            className="text-red-70 dark:text-red-50 cursor-pointer text-right"
+            className="text-right cursor-pointer text-red-70 dark:text-red-50"
           >
             Close
           </Typography>

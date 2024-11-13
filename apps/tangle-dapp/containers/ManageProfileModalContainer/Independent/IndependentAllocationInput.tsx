@@ -1,11 +1,11 @@
 import { BN } from '@polkadot/util';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
 import { Close, LockLineIcon } from '@webb-tools/icons';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { Chip, Input, SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo, useState } from 'react';
 
 import InputWrapper from '../../../components/InputWrapper';
-import useNetworkStore from '../../../context/useNetworkStore';
 import useInputAmount from '../../../hooks/useInputAmount';
 import { RestakingService } from '../../../types';
 import { getChipColorOfServiceType } from '../../../utils';

@@ -6,6 +6,7 @@ import {
   calculateTypedChainId,
   ChainType,
 } from '@webb-tools/sdk-core/typed-chain-id';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import assert from 'assert';
 import { useCallback } from 'react';
 import {
@@ -27,7 +28,6 @@ import useEvmAddress20 from '../../hooks/useEvmAddress';
 import useTxNotification, {
   NotificationSteps,
 } from '../../hooks/useTxNotification';
-import ensureError from '../../utils/ensureError';
 
 export type ContractWriteOptions<
   Abi extends ViemAbi,

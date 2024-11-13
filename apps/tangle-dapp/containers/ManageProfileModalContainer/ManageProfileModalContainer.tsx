@@ -6,11 +6,11 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import useIsMountedRef from '@webb-tools/webb-ui-components/hooks/useIsMountedRef';
 import assert from 'assert';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import { useErrorCountContext } from '../../context/ErrorsContext';
-import useIsMountedRef from '../../hooks/useIsMountedRef';
 import { RestakingProfileType } from '../../types';
 import AllocationStep from './AllocationStep';
 import useSharedRestakeAmountState from './Shared/useSharedRestakeAmountState';

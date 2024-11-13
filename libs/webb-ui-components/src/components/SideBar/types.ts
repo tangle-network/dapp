@@ -1,7 +1,7 @@
 import type { AppEnvironment } from '@webb-tools/dapp-config/types';
 import type { DialogContentProps } from '@radix-ui/react-dialog';
 import type { IconBase } from '@webb-tools/icons/types';
-import { MouseEventHandler } from 'react';
+import { FunctionComponent, MouseEventHandler } from 'react';
 import type { LogoProps } from '../Logo/types';
 
 export type SideBarFooterType = {
@@ -26,6 +26,7 @@ export interface SideBarLogoProps {
 export interface SidebarProps extends SideBarLogoProps {
   ClosedLogo?: React.FC<LogoProps>;
   items: SideBarItemProps[];
+  ActionButton?: React.FC<{ isExpanded: boolean }>;
   footer: SideBarFooterType;
   className?: string;
   overrideContentProps?: DialogContentProps;
@@ -36,6 +37,7 @@ export interface SidebarProps extends SideBarLogoProps {
 
 export interface SideBarItemsProps {
   items: SideBarItemProps[];
+  ActionButton?: SidebarProps['ActionButton'];
   isExpanded: boolean;
   className?: string;
   pathnameOrHash?: string;
@@ -58,7 +60,7 @@ export type SideBarItemProps = {
   href: string;
 
   /** The item icon */
-  Icon: (props: IconBase) => JSX.Element;
+  Icon: ((props: IconBase) => JSX.Element) | FunctionComponent;
 
   /** The extra info tooltip for the item */
   info?: string | React.ReactElement;
