@@ -8,7 +8,7 @@ import { encodeAddress, isEthereumAddress } from '@polkadot/util-crypto';
  * @param {number} [ss58Prefix] - Optional ss58 prefix for encoding the address.
  * @returns {string | null} - The formatted account address or null if the input address is invalid.
  */
-export default function getDisplayAccountAddress(
+export default function tryEncodeSubstrateAddress(
   address: string | null | undefined,
   ss58Prefix?: number,
 ): string | null {

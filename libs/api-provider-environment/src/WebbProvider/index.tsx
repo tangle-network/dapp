@@ -344,7 +344,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       _bridge?: Bridge | undefined,
       abortSignal?: AbortSignal,
     ) => {
-      console.log('switchChain', chain, wallet);
       const nextTypedChainId = calculateTypedChainId(chain.chainType, chain.id);
 
       const sharedWalletConnectionPayload = {

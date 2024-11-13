@@ -3,16 +3,12 @@ export enum BridgeType {
 }
 
 export enum BridgeTxState {
-  /** The tx is being initialized */
   Initializing = 'Initializing',
 
-  /** The user is signing the tx */
   Sending = 'Sending',
 
-  /** The tx executed successfully */
   Executed = 'Executed',
 
-  /** The tx has failed */
   Failed = 'Failed',
 
   /** The tx is done indexing but still pending (Hyperlane txs only) */

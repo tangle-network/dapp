@@ -7,7 +7,7 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { ConnectWalletMobileButton } from '@webb-tools/webb-ui-components/components/ConnectWalletMobileButton';
 import { useCheckMobile } from '@webb-tools/webb-ui-components/hooks/useCheckMobile';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import getDisplayAccountAddress from '@webb-tools/webb-ui-components/utils/getDisplayAccountAddress';
+import tryEncodeSubstrateAddress from '@webb-tools/webb-ui-components/utils/tryEncodeSubstrateAddress';
 import { useMemo } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';
 import UpdateMetadataButton from '../UpdateMetadataButton';
@@ -23,20 +23,17 @@ const ConnectWalletButton = () => {
   const { isMobile } = useCheckMobile();
 
   const accountAddress = useMemo(
-    () =>
-      getDisplayAccountAddress(activeAccount?.address, network.ss58Prefix) ??
-      '',
+    () => tryEncodeSubstrateAddress(activeAccount?.address, network.ss58Prefix),
     [activeAccount?.address, network.ss58Prefix],
   );
+
+  const isReady =
+    !isConnecting && !loading && activeWallet && activeAccount !== null;
 
   return (
     <>
       <div>
-        {isConnecting ||
-        loading ||
-        !activeWallet ||
-        !activeAccount ||
-        activeAccount === null ? (
+        {!isReady || !accountAddress ? (
           isMobile ? (
             <ConnectWalletMobileButton>
               <div className="flex flex-col items-center justify-center gap-4 py-9">

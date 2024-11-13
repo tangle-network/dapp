@@ -14,7 +14,6 @@ const activeChainSubject = new BehaviorSubject<Nullable<Maybe<Chain>>>(
   undefined,
 );
 
-/** Active chain setter */
 const setActiveChain = (chain: Nullable<Maybe<Chain>>) =>
   activeChainSubject.next(chain);
 

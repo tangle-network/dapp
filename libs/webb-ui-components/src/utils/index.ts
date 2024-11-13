@@ -4,7 +4,7 @@ export * from './formatDateToUtc';
 export * from './formatTokenAmount';
 export { default as forwardRef } from './forwardRef';
 export { default as getCookieItem } from './getCookieItem';
-export { default as getDisplayAccountAddress } from './getDisplayAccountAddress';
+export { default as tryEncodeSubstrateAddress } from './tryEncodeSubstrateAddress';
 export * from './getHumanFileSize';
 export * from './getPaginationItems';
 export * from './getRoundedAmountString';
