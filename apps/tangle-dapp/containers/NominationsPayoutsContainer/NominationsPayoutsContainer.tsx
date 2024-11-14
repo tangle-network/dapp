@@ -29,6 +29,7 @@ import {
 } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
+import { MAX_PAYOUTS_BATCH_SIZE } from '../../data/payouts/usePayoutAllTx';
 import { usePayoutsStore } from '../../data/payouts/usePayoutsStore';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import { PayoutsEraRange } from '../../data/types';
@@ -121,6 +122,10 @@ const DelegationsPayoutsContainer: FC = () => {
     return [];
   }, [payoutsData, maxEras]);
 
+  const limitedPayouts = useMemo(() => {
+    return fetchedPayouts.slice(0, MAX_PAYOUTS_BATCH_SIZE);
+  }, [fetchedPayouts]);
+
   // Scroll to the table when the tab changes, or when the page
   // is first loaded with a tab query parameter present.
   useEffect(() => {
@@ -173,6 +178,8 @@ const DelegationsPayoutsContainer: FC = () => {
                   onClick={() => setIsPayoutAllModalOpen(true)}
                 >
                   Payout All
+                  {fetchedPayouts.length >= MAX_PAYOUTS_BATCH_SIZE &&
+                    ` ${MAX_PAYOUTS_BATCH_SIZE} max`}
                 </Button>
               </div>
             )
@@ -290,7 +297,9 @@ const DelegationsPayoutsContainer: FC = () => {
         isModalOpen={isPayoutAllModalOpen}
         setIsModalOpen={setIsPayoutAllModalOpen}
         validatorsAndEras={validatorAndEras}
-        payouts={fetchedPayouts}
+        // Pass the fetched payouts capped to the max batch
+        // size to avoid exceeding the block weight limit.
+        payouts={limitedPayouts}
       />
     </div>
   );

@@ -15,11 +15,21 @@ export type PayoutAllTxContext = {
   validatorEraPairs: { validatorSubstrateAddress: string; era: number }[];
 };
 
+// Limit the number of batch calls to avoid exceeding
+// the block weight limit. This means that the user will need
+// to click the `Payout All` button multiple times if there
+// are more pending payouts. Use an optimistic count instead
+// of calculating the exact tx weight, since there's always
+// the possibility that other transactions are included in the
+// same block, which would cause the batch payout to fail anyway.
+export const MAX_PAYOUTS_BATCH_SIZE = 40;
+
 const usePayoutAllTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.BATCH, PayoutAllTxContext> =
     useCallback((context) => {
-      const batchCalls = context.validatorEraPairs.map(
-        ({ validatorSubstrateAddress, era }) => {
+      const batchCalls = context.validatorEraPairs
+        .slice(0, MAX_PAYOUTS_BATCH_SIZE - 1)
+        .map(({ validatorSubstrateAddress, era }) => {
           // The precompile function expects a 32-byte address.
           const validatorEvmAddress32 = toEvmAddress32(
             validatorSubstrateAddress,
@@ -29,8 +39,7 @@ const usePayoutAllTx = () => {
             validatorEvmAddress32,
             era,
           ]);
-        },
-      );
+        });
 
       return {
         functionName: 'batchAll',
@@ -40,16 +49,15 @@ const usePayoutAllTx = () => {
 
   const substrateTxFactory: SubstrateTxFactory<PayoutAllTxContext> =
     useCallback((api, _activeSubstrateAddress, context) => {
-      const txs = context.validatorEraPairs.map(
-        ({ validatorSubstrateAddress: validatorAddress, era }) => {
+      const txs = context.validatorEraPairs
+        .slice(0, MAX_PAYOUTS_BATCH_SIZE - 1)
+        .map(({ validatorSubstrateAddress: validatorAddress, era }) => {
           const validatorSubstrateAddress =
             toSubstrateAddress(validatorAddress);
 
           return api.tx.staking.payoutStakers(validatorSubstrateAddress, era);
-        },
-      );
+        });
 
-      // TODO: Will need to split tx into multiple batch calls if there are too many, this is because it will otherwise fail with "1010: Invalid Transaction: Transaction would exhaust the block limits," due to the block weight limit.
       return optimizeTxBatch(api, txs);
     }, []);
 

@@ -13,6 +13,7 @@ import {
 import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo } from 'react';
 
+import { MAX_PAYOUTS_BATCH_SIZE } from '../../data/payouts/usePayoutAllTx';
 import usePayoutStakersTx from '../../data/payouts/usePayoutStakersTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { PayoutTxContainerProps } from './types';
@@ -114,8 +115,8 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
             </Typography>
 
             <Typography variant="body1" fw="normal">
-              The UI puts a limit of 40 payouts at a time, where each payout is
-              a single validator for a single era.
+              The UI puts a limit of {MAX_PAYOUTS_BATCH_SIZE} payouts at a time,
+              where each payout is a single validator for a single era.
             </Typography>
           </div>
         </div>

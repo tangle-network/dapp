@@ -13,7 +13,9 @@ import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea
 import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { type FC, useCallback, useMemo } from 'react';
 
-import usePayoutAllTx from '../../data/payouts/usePayoutAllTx';
+import usePayoutAllTx, {
+  MAX_PAYOUTS_BATCH_SIZE,
+} from '../../data/payouts/usePayoutAllTx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { PayoutAllTxContainerProps } from './types';
@@ -130,6 +132,12 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
             <Typography variant="body1" fw="normal">
               All the listed validators and all their nominators will receive
               their rewards.
+            </Typography>
+
+            <Typography variant="body1" fw="normal">
+              At most, {MAX_PAYOUTS_BATCH_SIZE} payouts can be requested at a
+              time. If you have more than {MAX_PAYOUTS_BATCH_SIZE} pending
+              payouts, click on the Payout All button multiple times.
             </Typography>
           </div>
         </div>
