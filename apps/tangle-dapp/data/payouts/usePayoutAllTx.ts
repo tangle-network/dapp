@@ -28,7 +28,7 @@ const usePayoutAllTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.BATCH, PayoutAllTxContext> =
     useCallback((context) => {
       const batchCalls = context.validatorEraPairs
-        .slice(0, MAX_PAYOUTS_BATCH_SIZE - 1)
+        .slice(0, MAX_PAYOUTS_BATCH_SIZE)
         .map(({ validatorSubstrateAddress, era }) => {
           // The precompile function expects a 32-byte address.
           const validatorEvmAddress32 = toEvmAddress32(
@@ -50,7 +50,7 @@ const usePayoutAllTx = () => {
   const substrateTxFactory: SubstrateTxFactory<PayoutAllTxContext> =
     useCallback((api, _activeSubstrateAddress, context) => {
       const txs = context.validatorEraPairs
-        .slice(0, MAX_PAYOUTS_BATCH_SIZE - 1)
+        .slice(0, MAX_PAYOUTS_BATCH_SIZE)
         .map(({ validatorSubstrateAddress: validatorAddress, era }) => {
           const validatorSubstrateAddress =
             toSubstrateAddress(validatorAddress);

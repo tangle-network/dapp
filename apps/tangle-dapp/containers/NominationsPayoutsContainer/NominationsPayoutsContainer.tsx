@@ -60,6 +60,9 @@ function assertTab(tab: string): NominationsAndPayoutsTab {
 }
 
 const DelegationsPayoutsContainer: FC = () => {
+  const [payoutsStartIndex, setPayoutsStartIndex] = useState(0);
+  const { isMobile } = useCheckMobile();
+  const { toggleModal } = useConnectWallet();
   const tableRef = useRef<HTMLDivElement>(null);
   const { activeAccount, loading, isConnecting } = useWebContext();
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
@@ -122,9 +125,18 @@ const DelegationsPayoutsContainer: FC = () => {
     return [];
   }, [payoutsData, maxEras]);
 
-  const limitedPayouts = useMemo(() => {
-    return fetchedPayouts.slice(0, MAX_PAYOUTS_BATCH_SIZE);
-  }, [fetchedPayouts]);
+  const nextPayoutBatch = useMemo(() => {
+    // No more payouts to process.
+    if (payoutsStartIndex >= fetchedPayouts.length) {
+      return [];
+    }
+
+    return fetchedPayouts.slice(payoutsStartIndex, MAX_PAYOUTS_BATCH_SIZE);
+  }, [fetchedPayouts, payoutsStartIndex]);
+
+  const increasePayoutsStartIndex = useCallback(() => {
+    setPayoutsStartIndex((prev) => prev + MAX_PAYOUTS_BATCH_SIZE);
+  }, []);
 
   // Scroll to the table when the tab changes, or when the page
   // is first loaded with a tab query parameter present.
@@ -144,9 +156,6 @@ const DelegationsPayoutsContainer: FC = () => {
       })),
     [fetchedPayouts],
   );
-
-  const { isMobile } = useCheckMobile();
-  const { toggleModal } = useConnectWallet();
 
   return (
     <div ref={tableRef}>
@@ -179,7 +188,7 @@ const DelegationsPayoutsContainer: FC = () => {
                 >
                   Payout All
                   {fetchedPayouts.length >= MAX_PAYOUTS_BATCH_SIZE &&
-                    ` ${MAX_PAYOUTS_BATCH_SIZE} max`}
+                    ` (${MAX_PAYOUTS_BATCH_SIZE} max)`}
                 </Button>
               </div>
             )
@@ -299,7 +308,10 @@ const DelegationsPayoutsContainer: FC = () => {
         validatorsAndEras={validatorAndEras}
         // Pass the fetched payouts capped to the max batch
         // size to avoid exceeding the block weight limit.
-        payouts={limitedPayouts}
+        payouts={nextPayoutBatch}
+        // Increase the start index to fetch the next batch
+        // of payouts, and avoid stale data.
+        onComplete={increasePayoutsStartIndex}
       />
     </div>
   );
