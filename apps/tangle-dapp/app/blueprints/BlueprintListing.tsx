@@ -16,6 +16,7 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';
 import { Pagination } from '@webb-tools/webb-ui-components/components/Pagination';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import {
   shortenHex,
@@ -26,7 +27,6 @@ import Link from 'next/link';
 import { ComponentProps, FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useBlueprintListing from '../../data/blueprints/useBlueprintListing';
 import { PagePath } from '../../types';
 import type { Blueprint } from '../../types/blueprint';

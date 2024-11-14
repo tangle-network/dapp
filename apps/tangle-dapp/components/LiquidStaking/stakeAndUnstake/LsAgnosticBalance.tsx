@@ -8,10 +8,10 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useLsActivePoolDisplayName from '../../../data/liquidStaking/useLsActivePoolDisplayName';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import formatBn from '../../../utils/formatBn';
@@ -97,7 +97,7 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
       )}
 
       {formattedBalance === null ? (
-        <SkeletonLoader className="rounded-2xl w-12" size="md" />
+        <SkeletonLoader className="w-12 rounded-2xl" size="md" />
       ) : (
         <Typography
           variant="body1"

@@ -5,6 +5,7 @@ import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStor
 import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
 import InfoIconWithTooltip from '@webb-tools/webb-ui-components/components/IconWithTooltip/InfoIconWithTooltip';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
@@ -15,7 +16,6 @@ import { twMerge } from 'tailwind-merge';
 import AvatarWithText from '../../../../components/AvatarWithText';
 import GlassCard from '../../../../components/GlassCard/GlassCard';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../../constants';
 import type {
   DelegatorInfo,
   OperatorMap,

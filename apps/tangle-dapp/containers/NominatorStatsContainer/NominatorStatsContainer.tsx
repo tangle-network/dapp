@@ -9,13 +9,13 @@ import {
   TANGLE_DOCS_STAKING_URL,
   WEBB_DISCORD_CHANNEL_URL,
 } from '@webb-tools/webb-ui-components/constants';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
 import useTotalPayoutRewards from '../../data/NominatorStats/useTotalPayoutRewards';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';

@@ -12,12 +12,12 @@ import {
 import { ChevronUp } from '@webb-tools/icons/ChevronUp';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { PagePath, QueryParamKey } from '../../../types';
 import formatFractional from '../../../utils/formatFractional';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';

@@ -8,10 +8,10 @@ import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { Button } from '@webb-tools/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
   LsNetworkId,
   LsPool,

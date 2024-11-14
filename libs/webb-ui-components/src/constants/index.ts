@@ -300,3 +300,5 @@ export const defaultSocialConfigs: SocialConfigsType[] =
  * The key for the sidebar open state in the cookie and localStorage
  */
 export const SIDEBAR_OPEN_KEY = 'isSidebarOpen';
+
+export const EMPTY_VALUE_PLACEHOLDER = '—';
