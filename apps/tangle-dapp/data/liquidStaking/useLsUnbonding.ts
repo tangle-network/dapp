@@ -7,6 +7,7 @@ import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import useCurrentEra from '../staking/useCurrentEra';
 import useLsPools from './useLsPools';
 import { useLsStore } from './useLsStore';
+import assert from 'assert';
 
 const useLsUnbonding = () => {
   const pools = useLsPools();
@@ -50,6 +51,10 @@ const useLsUnbonding = () => {
         // TODO: Awaiting bug fix on Tangle.
         const poolId = unbonding.poolId.toNumber();
 
+        const pool = pools.get(poolId);
+
+        assert(pool !== undefined);
+
         return {
           unlockEra: era.toNumber(),
           erasLeftToUnlock:
@@ -59,8 +64,10 @@ const useLsUnbonding = () => {
           token: lsProtocol.token,
           decimals: lsProtocol.decimals,
           poolId,
-          poolName: pools.get(poolId)?.name,
+          poolName: pool.name,
           isReadyToWithdraw: erasLeftToUnlock <= 0,
+          poolIconUrl: pool.iconUrl,
+          poolProtocolId: pool.protocolId,
         } satisfies LsPoolUnstakeRequest;
       })
       .toArray();

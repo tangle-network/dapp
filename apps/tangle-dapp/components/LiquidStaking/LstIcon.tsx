@@ -7,7 +7,7 @@ import { twMerge } from 'tailwind-merge';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 
 export enum LstIconSize {
-  MD = 24,
+  MD = 30,
   LG = 38,
 }
 
@@ -20,7 +20,7 @@ export type LstIconProps = {
 const getTailwindSize = (size: LstIconSize) => {
   switch (size) {
     case LstIconSize.MD:
-      return 'w-[24px] h-[24px]';
+      return 'w-[30px] h-[30px]';
     case LstIconSize.LG:
       return 'w-[38px] h-[38px]';
   }

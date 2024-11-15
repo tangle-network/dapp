@@ -159,6 +159,8 @@ export type LsPool = {
 export type LsPoolUnstakeRequest = {
   poolName?: string;
   poolId: number;
+  poolIconUrl?: string;
+  poolProtocolId: LsProtocolId;
   decimals: number;
   token: LsToken;
   unlockEra: number;

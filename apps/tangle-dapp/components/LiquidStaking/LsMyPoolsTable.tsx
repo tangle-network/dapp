@@ -42,6 +42,7 @@ import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../tables/shared';
 import UpdateCommissionModal from './UpdateCommissionModal';
+import LstIcon from './LstIcon';
 
 export interface LsMyPoolRow extends LsPool {
   myStake: BN;
@@ -86,16 +87,23 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       COLUMN_HELPER.accessor('id', {
         header: () => 'ID',
         cell: (props) => (
-          <Typography
-            variant="body2"
-            fw="normal"
-            className="text-mono-200 dark:text-mono-0"
-          >
-            {props.row.original.name?.toUpperCase()}
-            <span className="text-mono-180 dark:text-mono-120">
-              #{props.getValue()}
-            </span>
-          </Typography>
+          <div className="flex gap-2 items-center justify-start">
+            <LstIcon
+              lsProtocolId={props.row.original.protocolId}
+              iconUrl={props.row.original.iconUrl}
+            />
+
+            <Typography
+              variant="body2"
+              fw="normal"
+              className="text-mono-200 dark:text-mono-0"
+            >
+              {props.row.original.name?.toUpperCase()}
+              <span className="text-mono-180 dark:text-mono-120">
+                #{props.getValue()}
+              </span>
+            </Typography>
+          </div>
         ),
       }),
       COLUMN_HELPER.accessor('ownerAddress', {

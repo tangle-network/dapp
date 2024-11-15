@@ -25,6 +25,7 @@ import { ContainerSkeleton, TableStatus } from '..';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../tables/shared';
 import WithdrawUnstakeRequestButton from './WithdrawUnstakeRequestButton';
+import LstIcon from './LstIcon';
 
 const COLUMN_HELPER = createColumnHelper<LsPoolUnstakeRequest>();
 
@@ -51,16 +52,23 @@ const LsUnbondingTable: FC = () => {
       COLUMN_HELPER.accessor('poolId', {
         header: () => 'Pool ID',
         cell: (props) => (
-          <Typography
-            variant="body2"
-            fw="normal"
-            className="text-mono-200 dark:text-mono-0"
-          >
-            {props.row.original.poolName?.toUpperCase()}
-            <span className="text-mono-180 dark:text-mono-120">
-              #{props.getValue()}
-            </span>
-          </Typography>
+          <div className="flex gap-2 items-center justify-start">
+            <LstIcon
+              lsProtocolId={props.row.original.poolProtocolId}
+              iconUrl={props.row.original.poolIconUrl}
+            />
+
+            <Typography
+              variant="body2"
+              fw="normal"
+              className="text-mono-200 dark:text-mono-0"
+            >
+              {props.row.original.poolName?.toUpperCase()}
+              <span className="text-mono-180 dark:text-mono-120">
+                #{props.getValue()}
+              </span>
+            </Typography>
+          </div>
         ),
       }),
       COLUMN_HELPER.accessor('amount', {

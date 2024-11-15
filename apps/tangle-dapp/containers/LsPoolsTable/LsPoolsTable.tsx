@@ -24,6 +24,7 @@ import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { TableStatus } from '../../components';
+import LstIcon from '../../components/LiquidStaking/LstIcon';
 import PercentageCell from '../../components/tableCells/PercentageCell';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../../components/tables/shared';
@@ -66,16 +67,23 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
     COLUMN_HELPER.accessor('id', {
       header: () => 'ID',
       cell: (props) => (
-        <Typography
-          variant="body2"
-          fw="normal"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          {props.row.original.name?.toUpperCase()}
-          <span className="text-mono-180 dark:text-mono-120">
-            #{props.getValue()}
-          </span>
-        </Typography>
+        <div className="flex gap-2 items-center justify-start">
+          <LstIcon
+            lsProtocolId={props.row.original.protocolId}
+            iconUrl={props.row.original.iconUrl}
+          />
+
+          <Typography
+            variant="body2"
+            fw="normal"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {props.row.original.name?.toUpperCase()}
+            <span className="text-mono-180 dark:text-mono-120">
+              #{props.getValue()}
+            </span>
+          </Typography>
+        </div>
       ),
     }),
     COLUMN_HELPER.accessor('ownerAddress', {
