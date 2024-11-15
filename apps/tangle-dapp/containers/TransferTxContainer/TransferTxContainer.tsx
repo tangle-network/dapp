@@ -7,6 +7,7 @@ import {
   BridgeInputGroup,
   Button,
   Modal,
+  ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -167,7 +168,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   return (
     <Modal>
       <ModalContent
-        isCenter
         isOpen={isModalOpen}
         className="w-full max-w-[550px]"
         onCloseAutoFocus={reset}
@@ -176,7 +176,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           Transfer {nativeTokenSymbol} Tokens
         </ModalHeader>
 
-        <div className="flex flex-col gap-4 p-9 overflow-clip">
+        <ModalBody className="overflow-clip">
           <Typography variant="body1" fw="normal">
             Quickly transfer your {nativeTokenSymbol} tokens to an account on
             the Tangle Network. You can choose to send to either an EVM or a
@@ -250,7 +250,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               description={txError.message}
             />
           )}
-        </div>
+        </ModalBody>
 
         <ModalFooter className="flex items-center gap-2">
           <Button

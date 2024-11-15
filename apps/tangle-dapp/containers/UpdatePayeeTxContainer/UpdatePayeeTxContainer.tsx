@@ -3,6 +3,7 @@
 import {
   Button,
   Modal,
+  ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -55,22 +56,18 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isModalOpen}
-        className="w-full max-w-[416px]"
-      >
+      <ModalContent isOpen={isModalOpen} className="w-full max-w-[416px]">
         <ModalHeader onClose={closeModalAndReset}>
           Change Reward Destination
         </ModalHeader>
 
-        <div className="p-9">
+        <ModalBody>
           <UpdatePayee
             payeeOptions={PAYMENT_DESTINATION_OPTIONS}
             selectedPayee={selectedPayee}
             setSelectedPayee={setSelectedPayee}
           />
-        </div>
+        </ModalBody>
 
         <ModalFooter className="flex items-center gap-2">
           <Button

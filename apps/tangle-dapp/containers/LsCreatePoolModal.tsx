@@ -3,10 +3,10 @@ import { isAddress } from '@polkadot/util-crypto';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   Alert,
-  Button,
   Modal,
+  ModalBody,
   ModalContent,
-  ModalFooter,
+  ModalFooterTxActions,
   ModalHeader,
   TANGLE_DOCS_LS_CREATE_POOL_URL,
 } from '@webb-tools/webb-ui-components';
@@ -113,114 +113,98 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
 
   return (
     <Modal open={isOpen}>
-      <ModalContent isCenter isOpen={isOpen} className="w-full max-w-[740px]">
+      <ModalContent isOpen={isOpen} className="w-full max-w-[740px]">
         <ModalHeader onClose={() => setIsOpen(false)}>
           Create a Liquid Staking Pool
         </ModalHeader>
 
-        <div className="space-y-8 p-9">
-          <div className="flex flex-col items-stretch justify-center gap-4">
-            {/**
-             * In case that a testnet is selected, it's helpful to let the users
-             * know that the pool will be created on the testnet, and that
-             * it won't be accessible on other networks.
-             */}
-            {!isLiveNetwork && (
-              <Alert
-                type="info"
-                description={`This liquid staking pool will be created on ${lsNetwork.networkName} and will not be accessible on other networks.`}
-              />
-            )}
+        <ModalBody>
+          {/**
+           * In case that a testnet is selected, it's helpful to let the users
+           * know that the pool will be created on the testnet, and that
+           * it won't be accessible on other networks.
+           */}
+          {!isLiveNetwork && (
+            <Alert
+              type="info"
+              description={`This liquid staking pool will be created on ${lsNetwork.networkName} and will not be accessible on other networks.`}
+            />
+          )}
 
-            <div className="flex items-center gap-2 justify-stretch">
-              <TextInput
-                id="ls-create-pool-name"
-                title="Pool Name"
-                placeholder="Choose a name"
-                value={name}
-                setValue={setName}
-                wrapperOverrides={{ isFullWidth: true }}
-              />
-
-              <LsProtocolDropdownInput
-                id="ls-create-pool-protocol"
-                networkId={lsNetworkId}
-                protocolId={protocolId ?? lsNetwork.defaultProtocolId}
-                setProtocolId={setProtocolId}
-                isDerivativeVariant={false}
-              />
-            </div>
-
-            <AmountInput
-              id="ls-create-pool-initial-bond-amount"
-              amount={initialBondAmount}
-              setAmount={setInitialBondAmount}
-              min={createPoolMinBond?.toBn() ?? null}
-              max={freeBalance}
-              maxErrorMessage={ERROR_NOT_ENOUGH_BALANCE}
-              title="Initial Bond Amount"
-              wrapperClassName="w-full"
+          <div className="flex items-center gap-2 justify-stretch">
+            <TextInput
+              id="ls-create-pool-name"
+              title="Pool Name"
+              placeholder="Choose a name"
+              value={name}
+              setValue={setName}
               wrapperOverrides={{ isFullWidth: true }}
             />
 
-            <AddressInput
-              id="ls-create-pool-root-address"
-              title="Root Address"
-              tooltip="The root is the administrator of the pool with full control over its operations, including updating roles, and commission setup"
-              type={AddressType.Substrate}
-              value={rootAddress}
-              setValue={setRootAddress}
-              wrapperOverrides={{ isFullWidth: true }}
-            />
-
-            <AddressInput
-              id="ls-create-pool-nominator-address"
-              title="Nominator Address"
-              tooltip="The nominator is responsible for selecting validators on behalf of the pool. Their role is critical in optimizing rewards for the pool members by choosing high-performing and secure validators."
-              type={AddressType.Substrate}
-              value={nominatorAddress ?? ''}
-              setValue={setNominatorAddress}
-              wrapperOverrides={{ isFullWidth: true }}
-            />
-
-            <AddressInput
-              id="ls-create-pool-bouncer-address"
-              title="Bouncer Address"
-              tooltip="The bouncer is responsible for managing the entry and exit of participants into the pool. They can block or allow participants, as well as manage pool access settings."
-              type={AddressType.Substrate}
-              value={bouncerAddress ?? ''}
-              setValue={setBouncerAddress}
-              wrapperOverrides={{ isFullWidth: true }}
+            <LsProtocolDropdownInput
+              id="ls-create-pool-protocol"
+              networkId={lsNetworkId}
+              protocolId={protocolId ?? lsNetwork.defaultProtocolId}
+              setProtocolId={setProtocolId}
+              isDerivativeVariant={false}
             />
           </div>
-        </div>
 
-        <ModalFooter className="flex items-center gap-2">
-          <Button
-            isFullWidth
-            variant="secondary"
-            target="_blank"
-            href={TANGLE_DOCS_LS_CREATE_POOL_URL}
-          >
-            Learn More
-          </Button>
+          <AmountInput
+            id="ls-create-pool-initial-bond-amount"
+            amount={initialBondAmount}
+            setAmount={setInitialBondAmount}
+            min={createPoolMinBond?.toBn() ?? null}
+            max={freeBalance}
+            maxErrorMessage={ERROR_NOT_ENOUGH_BALANCE}
+            title="Initial Bond Amount"
+            wrapperClassName="w-full"
+            wrapperOverrides={{ isFullWidth: true }}
+          />
 
-          <Button
-            isDisabled={
-              !isSubstrateAddresses ||
-              activeSubstrateAddress === null ||
-              initialBondAmount === null ||
-              name === '' ||
-              execute === null
-            }
-            onClick={handleCreatePoolClick}
-            isLoading={execute === null || status === TxStatus.PROCESSING}
-            loadingText="Processing"
-            isFullWidth
-          >
-            Create Pool
-          </Button>
-        </ModalFooter>
+          <AddressInput
+            id="ls-create-pool-root-address"
+            title="Root Address"
+            tooltip="The root is the administrator of the pool with full control over its operations, including updating roles, and commission setup"
+            type={AddressType.Substrate}
+            value={rootAddress}
+            setValue={setRootAddress}
+            wrapperOverrides={{ isFullWidth: true }}
+          />
+
+          <AddressInput
+            id="ls-create-pool-nominator-address"
+            title="Nominator Address"
+            tooltip="The nominator is responsible for selecting validators on behalf of the pool. Their role is critical in optimizing rewards for the pool members by choosing high-performing and secure validators."
+            type={AddressType.Substrate}
+            value={nominatorAddress ?? ''}
+            setValue={setNominatorAddress}
+            wrapperOverrides={{ isFullWidth: true }}
+          />
+
+          <AddressInput
+            id="ls-create-pool-bouncer-address"
+            title="Bouncer Address"
+            tooltip="The bouncer is responsible for managing the entry and exit of participants into the pool. They can block or allow participants, as well as manage pool access settings."
+            type={AddressType.Substrate}
+            value={bouncerAddress ?? ''}
+            setValue={setBouncerAddress}
+            wrapperOverrides={{ isFullWidth: true }}
+          />
+        </ModalBody>
+
+        <ModalFooterTxActions
+          learnMoreLinkHref={TANGLE_DOCS_LS_CREATE_POOL_URL}
+          isProcessing={status === TxStatus.PROCESSING}
+          onConfirm={handleCreatePoolClick}
+          isDisabled={
+            !isSubstrateAddresses ||
+            activeSubstrateAddress === null ||
+            initialBondAmount === null ||
+            name === '' ||
+            execute === null
+          }
+        />
       </ModalContent>
     </Modal>
   );

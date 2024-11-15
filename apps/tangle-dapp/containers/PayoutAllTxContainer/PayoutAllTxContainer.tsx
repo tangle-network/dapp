@@ -66,11 +66,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isModalOpen}
-        className="w-full max-w-[838px]"
-      >
+      <ModalContent isOpen={isModalOpen} className="w-full max-w-[838px]">
         <ModalHeader onClose={closeModal}>Payout Stakers</ModalHeader>
 
         <div className="grid grid-cols-2 gap-9 p-9">

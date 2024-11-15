@@ -2,17 +2,16 @@
 
 import { Transition, TransitionChild } from '@headlessui/react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import cx from 'classnames';
 import { forwardRef, Fragment } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ModalContentProps } from './types';
+import useIsBreakpoint from '../../hooks/useIsBreakpoint';
 
 export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
   (
     {
       children,
       isOpen = false,
-      isCenter,
       usePortal,
       className,
       overrideTransitionContentProps,
@@ -22,6 +21,8 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
     },
     ref,
   ) => {
+    const isMobile = useIsBreakpoint('md', true);
+
     const inner = (
       <Transition show={isOpen} {...overrideTransitionRootProps}>
         <TransitionChild
@@ -55,12 +56,9 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
             {...props}
             className={twMerge(
               'fixed z-50',
-              cx(
-                isCenter
-                  ? '-translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'
-                  : 'top-0 left-0',
-              ),
               'bg-mono-0 dark:bg-mono-180 rounded-2xl',
+              '-translate-x-1/2 left-1/2',
+              isMobile ? 'bottom-0 rounded-b-none' : 'top-1/2 -translate-y-1/2',
               className,
             )}
             ref={ref}

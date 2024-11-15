@@ -10,11 +10,6 @@ export interface ModalContentProps extends DialogContentProps {
   isOpen: boolean;
 
   /**
-   * Centered the modal
-   */
-  isCenter?: boolean;
-
-  /**
    * Whether using portal to render modal
    */
   usePortal?: boolean;

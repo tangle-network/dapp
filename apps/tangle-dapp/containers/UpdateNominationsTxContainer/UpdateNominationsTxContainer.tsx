@@ -113,11 +113,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isModalOpen}
-        className="w-full max-w-[1000px]"
-      >
+      <ModalContent isOpen={isModalOpen} className="w-full max-w-[1000px]">
         <ModalHeader onClose={closeModal}>Update Nominations</ModalHeader>
 
         <div className="px-8 py-6">

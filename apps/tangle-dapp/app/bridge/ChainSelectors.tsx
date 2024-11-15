@@ -56,6 +56,7 @@ const ChainSelectors: FC = () => {
       ) !== undefined,
       'New source chain is not available in source chain options when switching chains',
     );
+
     setSelectedSourceChain(newSelectedSourceChain);
 
     const newDestinationChainOptions =
@@ -65,14 +66,17 @@ const ChainSelectors: FC = () => {
           newSelectedSourceChain.id,
         )
       ];
+
     const newDestinationChainPresetTypedChainId = calculateTypedChainId(
       newSelectedDestinationChain.chainType,
       newSelectedDestinationChain.id,
     );
+
     assert(
       newDestinationChainPresetTypedChainId in newDestinationChainOptions,
       'New destination chain is not available in destination chain options when switching chains',
     );
+
     setSelectedDestinationChain(newSelectedDestinationChain);
   }, [
     setSelectedSourceChain,
@@ -93,6 +97,7 @@ const ChainSelectors: FC = () => {
         >
           From
         </Label>
+
         <ChainOrTokenButton
           value={selectedSourceChain.name}
           textClassName="text-xl"
@@ -114,6 +119,7 @@ const ChainSelectors: FC = () => {
         >
           To
         </Label>
+
         <ChainOrTokenButton
           value={selectedDestinationChain.name}
           textClassName="text-xl"
@@ -126,7 +132,6 @@ const ChainSelectors: FC = () => {
       <Modal>
         {/* Source Chain Modal */}
         <ModalContent
-          isCenter
           isOpen={isSourceChainModalOpen}
           onInteractOutside={closeSourceChainModal}
           className="w-[500px] h-[600px]"
@@ -142,7 +147,6 @@ const ChainSelectors: FC = () => {
 
         {/* Destination Chain Modal */}
         <ModalContent
-          isCenter
           isOpen={isDestinationChainModalOpen}
           onInteractOutside={closeDestinationChainModal}
           className="w-[500px] h-[600px]"

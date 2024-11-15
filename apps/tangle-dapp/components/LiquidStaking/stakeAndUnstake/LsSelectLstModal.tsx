@@ -65,7 +65,6 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
   return (
     <Modal>
       <ModalContent
-        isCenter
         isOpen={isOpen}
         className={twMerge(
           'w-[550px] max-h-[600px]',

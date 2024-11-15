@@ -5,6 +5,7 @@ import {
   Button,
   InputField,
   Modal,
+  ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -58,14 +59,10 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isModalOpen}
-        className="w-full max-w-[838px]"
-      >
+      <ModalContent isOpen={isModalOpen} className="w-full max-w-[838px]">
         <ModalHeader onClose={closeModal}>Payout Stakers</ModalHeader>
 
-        <div className="grid grid-cols-2 gap-9 p-9">
+        <ModalBody className="grid grid-cols-2 gap-9">
           <div className="flex flex-col gap-9">
             {/* Initiator */}
             <InputField.Root>
@@ -118,7 +115,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
               a single validator for a single era.
             </Typography>
           </div>
-        </div>
+        </ModalBody>
 
         <ModalFooter className="flex items-center gap-2">
           <Button

@@ -58,11 +58,7 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
   return (
     <>
       <Modal open>
-        <ModalContent
-          isCenter
-          isOpen={isModalOpen}
-          className="w-full max-w-[416px]"
-        >
+        <ModalContent isOpen={isModalOpen} className="w-full max-w-[416px]">
           <ModalHeader onClose={closeModal}>Withdraw Funds</ModalHeader>
 
           <div className="p-9 space-y-6">

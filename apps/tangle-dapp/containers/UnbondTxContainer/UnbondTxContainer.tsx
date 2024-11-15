@@ -5,6 +5,7 @@ import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStor
 import {
   Button,
   Modal,
+  ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -110,14 +111,10 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isModalOpen}
-        className="w-full max-w-[416px]"
-      >
+      <ModalContent isOpen={isModalOpen} className="w-full max-w-[416px]">
         <ModalHeader onClose={closeModalAndReset}>Unbond Stake</ModalHeader>
 
-        <div className="space-y-4 p-9">
+        <ModalBody>
           <AmountInput
             id="unbond-input"
             title="Amount"
@@ -129,6 +126,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
             setErrorMessage={handleSetErrorMessage}
             isDisabled={unbondTxStatus === TxStatus.PROCESSING}
           />
+
           <Typography variant="body1" fw="normal">
             Once unbonding, you must wait certain number of eras for your funds
             to become available.
@@ -138,7 +136,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
             You can check the remaining eras for your funds to become available
             in the Unbonding {nativeTokenSymbol} tooltip.
           </Typography>
-        </div>
+        </ModalBody>
 
         <ModalFooter className="flex items-center gap-2">
           <Button

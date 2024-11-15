@@ -4,6 +4,7 @@ import { ProhibitedLineIcon } from '@webb-tools/icons';
 import {
   Button,
   Modal,
+  ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -39,16 +40,12 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isModalOpen}
-        className="w-full max-w-[416px]"
-      >
+      <ModalContent isOpen={isModalOpen} className="w-full max-w-[416px]">
         <ModalHeader onClose={closeModal} className="mb-4">
           Stop Nominations
         </ModalHeader>
 
-        <div className="block m-auto p-9">
+        <ModalBody>
           <ProhibitedLineIcon className="m-auto fill-blue-50 dark:fill-blue-50" />
 
           <Typography variant="body1" className="mt-4 text-center">
@@ -56,9 +53,9 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
             removed from current validator nominations and cease rewards from
             the next era, your tokens will stay bonded.
           </Typography>
-        </div>
+        </ModalBody>
 
-        <ModalFooter className="flex items-center gap-2">
+        <ModalFooter>
           <Button
             isFullWidth
             variant="secondary"

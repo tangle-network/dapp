@@ -39,7 +39,6 @@ const CancelUnstakeModal: FC<CancelUnstakeModalProps> = ({
   return (
     <Modal open>
       <ModalContent
-        isCenter
         isOpen={isOpen}
         className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px]"
       >

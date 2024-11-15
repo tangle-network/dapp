@@ -72,7 +72,7 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
 
   return (
     <Modal>
-      <ModalContent isCenter isOpen={isOpen} className="w-full max-w-[550px]">
+      <ModalContent isOpen={isOpen} className="w-full max-w-[550px]">
         <ModalHeader onClose={() => setIsOpen(false)}>
           Update Pool Commission
         </ModalHeader>

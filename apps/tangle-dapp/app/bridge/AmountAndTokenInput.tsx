@@ -183,7 +183,6 @@ const AmountAndTokenInput: FC = () => {
       <Modal>
         {/* Token Selector Modal */}
         <ModalContent
-          isCenter
           isOpen={isTokenModalOpen}
           onInteractOutside={closeTokenModal}
           className="w-[500px] h-[600px]"

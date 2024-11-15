@@ -114,7 +114,6 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
 
       <Modal>
         <ModalContent
-          isCenter
           isOpen={isLsNetworkSwitcherOpen}
           onInteractOutside={closeLsNetworkSwitcher}
           className="w-[500px] h-[600px]"

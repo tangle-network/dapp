@@ -4,6 +4,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import {
   Button,
   Modal,
+  ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -68,14 +69,10 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isModalOpen}
-        className="w-full max-w-[416px]"
-      >
+      <ModalContent isOpen={isModalOpen} className="w-full max-w-[416px]">
         <ModalHeader onClose={closeModalAndReset}>Rebond Funds</ModalHeader>
 
-        <div className="space-y-4 p-9">
+        <ModalBody>
           <Typography variant="body1" fw="normal">
             Rebond to return unbonding or unbonded tokens to staking without
             withdrawing.
@@ -104,9 +101,9 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
               value={totalUnbondingAmount?.value ?? BN_ZERO}
             />
           </div>
-        </div>
+        </ModalBody>
 
-        <ModalFooter className="flex items-center gap-2">
+        <ModalFooter>
           <Button
             isFullWidth
             variant="secondary"

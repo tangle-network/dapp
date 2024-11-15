@@ -78,11 +78,7 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isModalOpen}
-        className="w-full max-w-[416px]"
-      >
+      <ModalContent isOpen={isModalOpen} className="w-full max-w-[416px]">
         <ModalHeader onClose={closeModalAndReset}>Add Stake</ModalHeader>
 
         <div className="space-y-4 p-9">
