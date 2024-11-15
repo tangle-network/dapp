@@ -2,10 +2,9 @@
 
 import {
   Alert,
-  Button,
   Modal,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
 import isEqual from 'lodash/isEqual';
@@ -113,7 +112,11 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent isOpen={isModalOpen} className="w-full max-w-[1000px]">
+      <ModalContent
+        onInteractOutside={() => setIsModalOpen(false)}
+        isOpen={isModalOpen}
+        className="w-full max-w-[1000px]"
+      >
         <ModalHeader onClose={closeModal}>Update Nominations</ModalHeader>
 
         <div className="px-8 py-6">
@@ -131,21 +134,12 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
           )}
         </div>
 
-        <ModalFooter className="flex items-center gap-2">
-          <Button isFullWidth variant="secondary" onClick={closeModal}>
-            Cancel
-          </Button>
-
-          <Button
-            isFullWidth
-            isDisabled={!canSubmitTx}
-            isLoading={nominateTxStatus === TxStatus.PROCESSING}
-            onClick={submitTx}
-            className="!mt-0"
-          >
-            Confirm Nomination
-          </Button>
-        </ModalFooter>
+        <ModalFooterActions
+          onClose={closeModal}
+          isProcessing={nominateTxStatus === TxStatus.PROCESSING}
+          isConfirmDisabled={!canSubmitTx}
+          onConfirm={submitTx}
+        />
       </ModalContent>
     </Modal>
   );

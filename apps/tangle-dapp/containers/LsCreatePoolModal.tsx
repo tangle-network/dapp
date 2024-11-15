@@ -6,7 +6,7 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooterTxActions,
+  ModalFooterActions,
   ModalHeader,
   TANGLE_DOCS_LS_CREATE_POOL_URL,
 } from '@webb-tools/webb-ui-components';
@@ -113,7 +113,11 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
 
   return (
     <Modal open={isOpen}>
-      <ModalContent isOpen={isOpen} className="w-full max-w-[740px]">
+      <ModalContent
+        onInteractOutside={() => setIsOpen(false)}
+        isOpen={isOpen}
+        className="w-full max-w-[740px]"
+      >
         <ModalHeader onClose={() => setIsOpen(false)}>
           Create a Liquid Staking Pool
         </ModalHeader>
@@ -193,11 +197,11 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
           />
         </ModalBody>
 
-        <ModalFooterTxActions
+        <ModalFooterActions
           learnMoreLinkHref={TANGLE_DOCS_LS_CREATE_POOL_URL}
           isProcessing={status === TxStatus.PROCESSING}
           onConfirm={handleCreatePoolClick}
-          isDisabled={
+          isConfirmDisabled={
             !isSubstrateAddresses ||
             activeSubstrateAddress === null ||
             initialBondAmount === null ||

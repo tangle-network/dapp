@@ -7,6 +7,7 @@ import { twMerge } from 'tailwind-merge';
 import { ModalContentProps } from './types';
 import useIsBreakpoint from '../../hooks/useIsBreakpoint';
 
+// TODO: Accept a 'size' prop to control the size of the modal in a standardized way
 export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
   (
     {
@@ -21,7 +22,8 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
     },
     ref,
   ) => {
-    const isMobile = useIsBreakpoint('md', true);
+    const isMobileSm = useIsBreakpoint('sm', true);
+    const isMobileMd = useIsBreakpoint('md', true);
 
     const inner = (
       <Transition show={isOpen} {...overrideTransitionRootProps}>
@@ -44,11 +46,13 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
-          enterFrom="opacity-0 scale-95"
-          enterTo="opacity-100 scale-100"
+          enterFrom={twMerge(
+            isMobileMd ? '-bottom-full' : 'opacity-0 scale-95',
+          )}
+          enterTo={twMerge(isMobileMd ? 'bottom-0' : 'opacity-100 scale-100')}
           leave="ease-in duration-200"
-          leaveFrom="opacity-100 scale-100"
-          leaveTo="opacity-0 scale-95"
+          leaveFrom={twMerge(isMobileMd ? 'bottom-0' : 'opacity-100 scale-100')}
+          leaveTo={twMerge(isMobileMd ? '-bottom-full' : 'opacity-0 scale-95')}
           {...overrideTransitionContentProps}
         >
           <DialogPrimitive.Content
@@ -58,8 +62,11 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
               'fixed z-50',
               'bg-mono-0 dark:bg-mono-180 rounded-2xl',
               '-translate-x-1/2 left-1/2',
-              isMobile ? 'bottom-0 rounded-b-none' : 'top-1/2 -translate-y-1/2',
+              isMobileMd
+                ? 'bottom-0 rounded-b-none'
+                : 'top-1/2 -translate-y-1/2',
               className,
+              isMobileSm && 'w-full max-w-full',
             )}
             ref={ref}
           >

@@ -2,12 +2,11 @@
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
-  Button,
   InputField,
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -59,7 +58,11 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent isOpen={isModalOpen} className="w-full max-w-[838px]">
+      <ModalContent
+        onInteractOutside={() => setIsModalOpen(false)}
+        isOpen={isModalOpen}
+        className="w-full max-w-[838px]"
+      >
         <ModalHeader onClose={closeModal}>Payout Stakers</ModalHeader>
 
         <ModalBody className="grid grid-cols-2 gap-9">
@@ -117,26 +120,12 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
           </div>
         </ModalBody>
 
-        <ModalFooter className="flex items-center gap-2">
-          <Button
-            isFullWidth
-            variant="secondary"
-            href={TANGLE_DOCS_STAKING_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn More
-          </Button>
-
-          <Button
-            isFullWidth
-            isDisabled={!canSubmitTx}
-            isLoading={payoutStakersTxStatus === TxStatus.PROCESSING}
-            onClick={submitTx}
-          >
-            Confirm
-          </Button>
-        </ModalFooter>
+        <ModalFooterActions
+          learnMoreLinkHref={TANGLE_DOCS_STAKING_URL}
+          isConfirmDisabled={!canSubmitTx}
+          isProcessing={payoutStakersTxStatus === TxStatus.PROCESSING}
+          onConfirm={submitTx}
+        />
       </ModalContent>
     </Modal>
   );

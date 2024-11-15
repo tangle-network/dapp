@@ -2,11 +2,10 @@
 
 import { ProhibitedLineIcon } from '@webb-tools/icons';
 import {
-  Button,
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -40,7 +39,11 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent isOpen={isModalOpen} className="w-full max-w-[416px]">
+      <ModalContent
+        onInteractOutside={() => setIsModalOpen(false)}
+        isOpen={isModalOpen}
+        className="w-full max-w-[416px]"
+      >
         <ModalHeader onClose={closeModal} className="mb-4">
           Stop Nominations
         </ModalHeader>
@@ -55,25 +58,12 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
           </Typography>
         </ModalBody>
 
-        <ModalFooter>
-          <Button
-            isFullWidth
-            variant="secondary"
-            href={TANGLE_DOCS_STAKING_URL}
-            target="_blank"
-          >
-            Learn More
-          </Button>
-
-          <Button
-            isFullWidth
-            isDisabled={isNominating === null || !isNominating}
-            isLoading={chillTxStatus === TxStatus.PROCESSING}
-            onClick={submitTx}
-          >
-            Confirm
-          </Button>
-        </ModalFooter>
+        <ModalFooterActions
+          learnMoreLinkHref={TANGLE_DOCS_STAKING_URL}
+          isProcessing={chillTxStatus === TxStatus.PROCESSING}
+          isConfirmDisabled={isNominating === null || !isNominating}
+          onConfirm={submitTx}
+        />
       </ModalContent>
     </Modal>
   );

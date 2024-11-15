@@ -85,6 +85,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
       <Modal open>
         <ModalContent
           isOpen={isOpen}
+          onInteractOutside={handleClose}
           className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px]"
         >
           <ModalHeader onClose={handleClose}>Bridge Confirmation</ModalHeader>

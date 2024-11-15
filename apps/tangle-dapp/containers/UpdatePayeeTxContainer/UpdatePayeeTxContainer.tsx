@@ -1,11 +1,10 @@
 'use client';
 
 import {
-  Button,
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
@@ -56,7 +55,11 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent isOpen={isModalOpen} className="w-full max-w-[416px]">
+      <ModalContent
+        onInteractOutside={() => setIsModalOpen(false)}
+        isOpen={isModalOpen}
+        className="w-full max-w-[416px]"
+      >
         <ModalHeader onClose={closeModalAndReset}>
           Change Reward Destination
         </ModalHeader>
@@ -69,26 +72,12 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
           />
         </ModalBody>
 
-        <ModalFooter className="flex items-center gap-2">
-          <Button
-            isFullWidth
-            variant="secondary"
-            href={TANGLE_DOCS_STAKING_URL}
-            target="_blank"
-          >
-            Learn More
-          </Button>
-
-          <Button
-            isFullWidth
-            isLoading={setPayeeTxStatus === TxStatus.PROCESSING}
-            onClick={submitTx}
-            isDisabled={!canSubmitTx}
-            className="!m-0"
-          >
-            Confirm
-          </Button>
-        </ModalFooter>
+        <ModalFooterActions
+          learnMoreLinkHref={TANGLE_DOCS_STAKING_URL}
+          isProcessing={setPayeeTxStatus === TxStatus.PROCESSING}
+          onConfirm={submitTx}
+          isConfirmDisabled={!canSubmitTx}
+        />
       </ModalContent>
     </Modal>
   );

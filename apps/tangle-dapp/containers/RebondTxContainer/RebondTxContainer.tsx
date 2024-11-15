@@ -2,11 +2,10 @@
 
 import { BN, BN_ZERO } from '@polkadot/util';
 import {
-  Button,
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -69,7 +68,11 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent isOpen={isModalOpen} className="w-full max-w-[416px]">
+      <ModalContent
+        onInteractOutside={() => setIsModalOpen(false)}
+        isOpen={isModalOpen}
+        className="w-full max-w-[416px]"
+      >
         <ModalHeader onClose={closeModalAndReset}>Rebond Funds</ModalHeader>
 
         <ModalBody>
@@ -103,25 +106,12 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
           </div>
         </ModalBody>
 
-        <ModalFooter>
-          <Button
-            isFullWidth
-            variant="secondary"
-            href={TANGLE_DOCS_STAKING_URL}
-            target="_blank"
-          >
-            Learn More
-          </Button>
-
-          <Button
-            isFullWidth
-            isDisabled={!canSubmitTx}
-            isLoading={rebondTxStatus === TxStatus.PROCESSING}
-            onClick={submitTx}
-          >
-            Confirm
-          </Button>
-        </ModalFooter>
+        <ModalFooterActions
+          learnMoreLinkHref={TANGLE_DOCS_STAKING_URL}
+          isConfirmDisabled={!canSubmitTx}
+          isProcessing={rebondTxStatus === TxStatus.PROCESSING}
+          onConfirm={submitTx}
+        />
       </ModalContent>
     </Modal>
   );

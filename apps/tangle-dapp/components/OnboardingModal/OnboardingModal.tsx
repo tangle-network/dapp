@@ -5,15 +5,13 @@ import useLocalStorage, {
   LocalStorageKey,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import {
-  Button,
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
   TANGLE_DOCS_URL,
 } from '@webb-tools/webb-ui-components';
-import useIsBreakpoint from '@webb-tools/webb-ui-components/hooks/useIsBreakpoint';
 import { FC, ReactElement, useEffect, useRef, useState } from 'react';
 
 import useOnboardingStore from '../../context/useOnboardingStore';
@@ -39,7 +37,6 @@ const OnboardingModal: FC<OnboardingModalProps> = ({
 
   const [isOpen, setIsOpen] = useState(false);
   const seenRef = useRef(false);
-  const isMobile = useIsBreakpoint('md', true);
 
   const { setWithPreviousValue, refresh } = useLocalStorage(
     LocalStorageKey.ONBOARDING_MODALS_SEEN,
@@ -84,28 +81,20 @@ const OnboardingModal: FC<OnboardingModalProps> = ({
 
   return (
     <Modal open>
-      <ModalContent isOpen={isOpen} className="w-full max-w-[750px]">
+      <ModalContent
+        onInteractOutside={() => setIsOpen(false)}
+        isOpen={isOpen}
+        className="w-full max-w-[750px]"
+      >
         <ModalHeader onClose={() => setIsOpen(false)}>{title}</ModalHeader>
 
         <ModalBody>{children}</ModalBody>
 
-        <ModalFooter>
-          {!isMobile && (
-            <Button
-              href={learnMoreHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              variant="secondary"
-              isFullWidth
-            >
-              Learn More
-            </Button>
-          )}
-
-          <Button isFullWidth onClick={() => setIsOpen(false)}>
-            Got It
-          </Button>
-        </ModalFooter>
+        <ModalFooterActions
+          learnMoreLinkHref={learnMoreHref}
+          onConfirm={() => setIsOpen(false)}
+          confirmButtonText="Got It"
+        />
       </ModalContent>
     </Modal>
   );

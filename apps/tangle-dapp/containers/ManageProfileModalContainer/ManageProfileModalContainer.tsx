@@ -235,7 +235,11 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
 
   return (
     <Modal open>
-      <ModalContent isOpen={isModalOpen} className="w-full max-w-[800px]">
+      <ModalContent
+        onInteractOutside={() => setIsModalOpen(false)}
+        isOpen={isModalOpen}
+        className="w-full max-w-[800px]"
+      >
         <ModalHeader onClose={() => setIsModalOpen(false)}>
           {getStepTitle(step, profileType, isCreatingProfile)}
         </ModalHeader>

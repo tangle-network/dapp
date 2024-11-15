@@ -5,11 +5,10 @@ import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStor
 import {
   Alert,
   BridgeInputGroup,
-  Button,
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
   TxConfirmationRing,
   Typography,
@@ -38,21 +37,6 @@ export type TransferTxContainerProps = {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
 };
-
-function getTxStatusText(status: TxStatus): string {
-  switch (status) {
-    case TxStatus.NOT_YET_INITIATED:
-      return 'Not initiated';
-    case TxStatus.PROCESSING:
-      return 'Processing';
-    case TxStatus.ERROR:
-      return 'Error';
-    case TxStatus.COMPLETE:
-      return 'Complete';
-    case TxStatus.TIMED_OUT:
-      return 'Timed out';
-  }
-}
 
 function getTypedChainIdFromAddr(address: string | null): number | undefined {
   // Default to undefined if the address is null, which
@@ -149,10 +133,14 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     receiverAddress !== '' &&
     !hasErrors;
 
-  const canInitiateTx = isReady && isDataValid;
-
   const isValidReceiverAddress =
     isAddress(receiverAddress) || isHex(receiverAddress);
+
+  const canInitiateTx =
+    isReady &&
+    isDataValid &&
+    executeTransferTx !== null &&
+    isValidReceiverAddress;
 
   const transferableBalanceTooltip: ReactNode = transferableBalance !==
     null && (
@@ -168,6 +156,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   return (
     <Modal>
       <ModalContent
+        onInteractOutside={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
         className="w-full max-w-[550px]"
         onCloseAutoFocus={reset}
@@ -252,30 +241,13 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
           )}
         </ModalBody>
 
-        <ModalFooter className="flex items-center gap-2">
-          <Button
-            isFullWidth
-            variant="secondary"
-            href={TANGLE_DOCS_URL}
-            target="_blank"
-          >
-            Learn More
-          </Button>
-
-          <Button
-            isFullWidth
-            isLoading={!isReady}
-            loadingText={getTxStatusText(status)}
-            onClick={handleSend}
-            isDisabled={
-              !canInitiateTx ||
-              executeTransferTx === null ||
-              !isValidReceiverAddress
-            }
-          >
-            Send
-          </Button>
-        </ModalFooter>
+        <ModalFooterActions
+          learnMoreLinkHref={TANGLE_DOCS_URL}
+          isProcessing={status === TxStatus.PROCESSING}
+          isConfirmDisabled={!canInitiateTx}
+          onConfirm={handleSend}
+          confirmButtonText="Send"
+        />
       </ModalContent>
     </Modal>
   );

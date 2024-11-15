@@ -66,6 +66,7 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
     <Modal>
       <ModalContent
         isOpen={isOpen}
+        onInteractOutside={() => setIsOpen(false)}
         className={twMerge(
           'w-[550px] max-h-[600px]',
           pools !== null && pools.length > 0 && 'h-full',

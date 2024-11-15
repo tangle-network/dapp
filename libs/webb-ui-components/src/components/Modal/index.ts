@@ -6,4 +6,4 @@ export * from './ModalHeader';
 export * from './ModalTitle';
 export * from './ModalTrigger';
 export * from './ModalBody';
-export * from './ModalFooterTxActions';
+export * from './ModalFooterActions';
