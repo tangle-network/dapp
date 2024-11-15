@@ -131,12 +131,17 @@ const DelegationsPayoutsContainer: FC = () => {
       return [];
     }
 
-    return fetchedPayouts.slice(payoutsStartIndex, MAX_PAYOUTS_BATCH_SIZE);
+    return fetchedPayouts.slice(
+      payoutsStartIndex,
+      payoutsStartIndex + MAX_PAYOUTS_BATCH_SIZE,
+    );
   }, [fetchedPayouts, payoutsStartIndex]);
 
   const increasePayoutsStartIndex = useCallback(() => {
-    setPayoutsStartIndex((prev) => prev + MAX_PAYOUTS_BATCH_SIZE);
-  }, []);
+    setPayoutsStartIndex((prev) =>
+      Math.min(prev + MAX_PAYOUTS_BATCH_SIZE, fetchedPayouts.length),
+    );
+  }, [fetchedPayouts.length]);
 
   // Scroll to the table when the tab changes, or when the page
   // is first loaded with a tab query parameter present.
