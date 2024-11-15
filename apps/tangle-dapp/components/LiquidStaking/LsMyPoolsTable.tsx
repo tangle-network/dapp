@@ -41,8 +41,8 @@ import BlueIconButton from '../BlueIconButton';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../tables/shared';
-import UpdateCommissionModal from './UpdateCommissionModal';
 import LstIcon from './LstIcon';
+import UpdateCommissionModal from './UpdateCommissionModal';
 
 export interface LsMyPoolRow extends LsPool {
   myStake: BN;
