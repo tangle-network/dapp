@@ -153,9 +153,7 @@ const LsUnbondingTable: FC = () => {
     enableSortingRemoval: false,
   });
 
-  if (unstakeRequests === null) {
-    return <ContainerSkeleton />;
-  } else if (!isAccountConnected) {
+  if (!isAccountConnected) {
     return (
       <TableStatus
         className={sharedTableStatusClxs}
@@ -164,6 +162,8 @@ const LsUnbondingTable: FC = () => {
         icon="🔍"
       />
     );
+  } else if (unstakeRequests === null) {
+    return <ContainerSkeleton />;
   } else if (rows.length === 0) {
     return (
       <TableStatus
