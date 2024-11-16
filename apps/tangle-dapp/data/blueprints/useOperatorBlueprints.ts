@@ -1,7 +1,7 @@
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback } from 'react';
 import { catchError, map, of } from 'rxjs';
 
-import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
 import { toPrimitiveBlueprint } from './utils/toPrimitiveBlueprint';
 import toPrimitiveService from './utils/toPrimitiveService';

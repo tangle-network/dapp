@@ -1,6 +1,5 @@
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback, useMemo } from 'react';
-
-import useApiRx from '../../hooks/useApiRx';
 
 const useLsAssetDetails = () => {
   const { result: tangleAssetDetails } = useApiRx(

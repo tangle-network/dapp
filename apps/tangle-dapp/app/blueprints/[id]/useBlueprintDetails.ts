@@ -1,6 +1,7 @@
 import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesOperatorPreferences } from '@polkadot/types/lookup';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback } from 'react';
 import { combineLatest, switchMap } from 'rxjs';
 
@@ -10,7 +11,6 @@ import useRestakeAssetMap from '../../../data/restake/useRestakeAssetMap';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '../../../data/restake/useRestakeOperatorMap';
 import useRestakeTVL from '../../../data/restake/useRestakeTVL';
-import useApiRx from '../../../hooks/useApiRx';
 import type { Blueprint, Operator } from '../../../types/blueprint';
 import { TangleError, TangleErrorCode } from '../../../types/error';
 import type { AssetMap, OperatorMap } from '../../../types/restake';

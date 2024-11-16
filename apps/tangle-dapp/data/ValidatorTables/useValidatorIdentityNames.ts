@@ -2,10 +2,10 @@ import { Bytes, Option, StorageKey } from '@polkadot/types';
 import { AccountId32 } from '@polkadot/types/interfaces';
 import { PalletIdentityRegistration } from '@polkadot/types/lookup';
 import { ITuple } from '@polkadot/types/types';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
-import useApiRx from '../../hooks/useApiRx';
 import useEntryMap from '../../hooks/useEntryMap';
 import {
   extractDataFromIdentityInfo,
