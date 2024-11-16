@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, ChevronUp, ExternalLinkLine } from '@webb-tools/icons';
+import { ArrowRightUp, ChevronDown, ChevronUp } from '@webb-tools/icons';
 import { FC, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -98,7 +98,7 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
                   ? 'text-mono-200 dark:text-mono-0'
                   : 'text-mono-100 dark:text-mono-120',
                 isExpanded && 'hover:bg-mono-20 dark:hover:bg-mono-190',
-                isExpanded ? 'justify-between px-2 py-3' : 'justify-center',
+                isExpanded ? 'justify-between px-4 py-3' : 'justify-center',
                 isActive &&
                   (subItems.length === 0 || !isExpanded) &&
                   'bg-mono-20 dark:bg-mono-190',
@@ -121,7 +121,10 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
 
               {isExpanded &&
                 (!isInternal && href && subItems.length <= 0 ? (
-                  <ExternalLinkLine className="hidden group-hover:block !fill-current" />
+                  <ArrowRightUp
+                    size="lg"
+                    className="hidden group-hover:block fill-current dark:fill-current"
+                  />
                 ) : subItems.length > 0 ? (
                   isDropdownOpen ? (
                     <ChevronDown className="!fill-current" />

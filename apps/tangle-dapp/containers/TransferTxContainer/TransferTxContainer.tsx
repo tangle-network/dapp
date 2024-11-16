@@ -158,7 +158,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
       <ModalContent
         onInteractOutside={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        className="w-full max-w-[550px]"
+        size="md"
         onCloseAutoFocus={reset}
       >
         <ModalHeader onClose={() => setIsModalOpen(false)}>

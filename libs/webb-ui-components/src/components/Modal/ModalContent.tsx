@@ -7,7 +7,17 @@ import { twMerge } from 'tailwind-merge';
 import { ModalContentProps } from './types';
 import useIsBreakpoint from '../../hooks/useIsBreakpoint';
 
-// TODO: Accept a 'size' prop to control the size of the modal in a standardized way
+const getTailwindSizeClass = (size: ModalContentProps['size']) => {
+  switch (size) {
+    case 'sm':
+      return 'max-w-[420px]';
+    case 'md':
+      return 'max-w-[600px]';
+    case 'lg':
+      return 'max-w-[840px]';
+  }
+};
+
 export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
   (
     {
@@ -18,6 +28,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
       overrideTransitionContentProps,
       overrideTransitionOverlayProps,
       overrideTransitionRootProps,
+      size = 'md',
       ...props
     },
     ref,
@@ -65,11 +76,20 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
               isMobileMd
                 ? 'bottom-0 rounded-b-none'
                 : 'top-1/2 -translate-y-1/2',
+              getTailwindSizeClass(size),
               className,
               isMobileSm && 'w-full max-w-full',
             )}
             ref={ref}
           >
+            <DialogPrimitive.Title className="sr-only">
+              Modal
+            </DialogPrimitive.Title>
+
+            <DialogPrimitive.Description className="sr-only">
+              Modal
+            </DialogPrimitive.Description>
+
             {children}
           </DialogPrimitive.Content>
         </TransitionChild>

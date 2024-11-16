@@ -1,8 +1,9 @@
-import { ExternalLinkLine, Search, TokenIcon } from '@webb-tools/icons';
+import { ArrowRightUp, Search, TokenIcon } from '@webb-tools/icons';
 import {
   getRoundedAmountString,
   Input,
   ListItem,
+  shortenHex,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
@@ -10,13 +11,16 @@ import Decimal from 'decimal.js';
 import Link from 'next/link';
 import { ComponentProps, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Address } from 'viem';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { ListCardWrapper } from './ListCardWrapper';
 
 export type AssetConfig = {
   symbol: string;
   balance?: Decimal;
   explorerUrl?: string;
+  address?: Address;
 };
 
 type AssetListProps = {
@@ -30,17 +34,17 @@ type AssetListProps = {
 export const AssetList = ({
   assets,
   onClose,
-  title = 'Select Network',
+  title = 'Select Asset',
   overrideScrollAreaProps,
   onSelectAsset,
 }: AssetListProps) => {
-  const [searchText, setSearchText] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const filteredAssets = useMemo(() => {
     return assets.filter((asset) =>
-      asset.symbol.toLowerCase().includes(searchText.toLowerCase()),
+      asset.symbol.toLowerCase().includes(searchQuery.toLowerCase()),
     );
-  }, [assets, searchText]);
+  }, [assets, searchQuery]);
 
   return (
     <ListCardWrapper title={title} onClose={onClose}>
@@ -48,9 +52,10 @@ export const AssetList = ({
         <Input
           id="chain"
           rightIcon={<Search />}
-          placeholder="Search chains"
-          value={searchText}
-          onChange={(val) => setSearchText(val.toString())}
+          placeholder="Search assets by name"
+          isControlled
+          value={searchQuery}
+          onChange={setSearchQuery}
           inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120 "
         />
       </div>
@@ -85,19 +90,22 @@ export const AssetList = ({
                     {asset.symbol}
                   </Typography>
 
-                  {asset.explorerUrl && (
+                  {asset.explorerUrl !== undefined && (
                     <Link
                       href={asset.explorerUrl}
                       target="_blank"
-                      className="flex items-center gap-1 z-20"
+                      className="flex items-center gap-1 z-20 text-mono-120 dark:text-mono-100 dark:hover:text-mono-80"
                     >
                       <Typography
                         variant="body1"
-                        className="text-mono-120 dark:text-mono-100"
+                        className="text-current dark:text-current dark:hover:text-current"
                       >
-                        token address
+                        {asset.address !== undefined
+                          ? shortenHex(asset.address)
+                          : 'View Explorer'}
                       </Typography>
-                      <ExternalLinkLine />
+
+                      <ArrowRightUp className="fill-current dark:fill-current" />
                     </Link>
                   )}
                 </div>
@@ -110,7 +118,7 @@ export const AssetList = ({
               >
                 {asset.balance
                   ? `${getRoundedAmountString(asset.balance.toNumber(), 4)} ${asset.symbol}`
-                  : 'N/A'}
+                  : EMPTY_VALUE_PLACEHOLDER}
               </Typography>
             </ListItem>
           ))}

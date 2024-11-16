@@ -83,11 +83,7 @@ const BridgeConfirmationModal: FC<BridgeConfirmationModalProps> = ({
   return (
     <QueryClientProvider client={queryClient}>
       <Modal open>
-        <ModalContent
-          isOpen={isOpen}
-          onInteractOutside={handleClose}
-          className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px]"
-        >
+        <ModalContent isOpen={isOpen} onInteractOutside={handleClose} size="md">
           <ModalHeader onClose={handleClose}>Bridge Confirmation</ModalHeader>
 
           <div className="p-9 space-y-8">

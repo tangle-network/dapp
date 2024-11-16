@@ -155,7 +155,7 @@ const LiquidStakingPage: FC = () => {
           </div> */}
         </div>
 
-        <div className="flex flex-col self-center gap-4 w-full min-w-[450px] max-w-[532px]">
+        <div className="flex flex-col self-center gap-4 w-full max-w-[532px]">
           <TabsList className="w-full">
             <TabListItem
               isActive={isStaking}

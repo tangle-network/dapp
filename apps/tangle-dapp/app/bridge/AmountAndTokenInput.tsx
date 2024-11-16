@@ -81,7 +81,7 @@ const AmountAndTokenInput: FC = () => {
     fetchBalances();
   }, [fetchBalances]);
 
-  const assets: AssetConfig[] = useMemo(() => {
+  const assets = useMemo<AssetConfig[]>(() => {
     return tokenIdOptions.map((tokenId) => {
       const token = BRIDGE_SUPPORTED_TOKENS[tokenId];
 
@@ -106,7 +106,8 @@ const AmountAndTokenInput: FC = () => {
         symbol: token.symbol,
         balance: tokenBalances[tokenId] ?? new Decimal(0),
         explorerUrl: explorerUrl?.toString(),
-      };
+        address: erc20TokenContractAddress,
+      } satisfies AssetConfig;
     });
   }, [
     tokenIdOptions,

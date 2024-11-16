@@ -15,9 +15,9 @@ import {
   WaterDropletIcon,
 } from '@webb-tools/icons';
 import {
+  MobileSidebarProps,
   SideBarFooterType,
   SideBarItemProps,
-  MobileSidebarProps,
   TangleLogo,
 } from '@webb-tools/webb-ui-components';
 import { SidebarTangleClosedIcon } from '@webb-tools/webb-ui-components/components';

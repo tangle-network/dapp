@@ -28,6 +28,8 @@ export interface ModalContentProps extends DialogContentProps {
    * Props to override the transition content component
    */
   overrideTransitionContentProps?: Partial<PropsOf<typeof TransitionChild>>;
+
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export interface ModalHeaderProps extends PropsOf<'div'> {

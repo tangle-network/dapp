@@ -42,7 +42,7 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
       <ModalContent
         onInteractOutside={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        className="w-full max-w-[416px]"
+        size="sm"
       >
         <ModalHeader onClose={closeModal} className="mb-4">
           Stop Nominations

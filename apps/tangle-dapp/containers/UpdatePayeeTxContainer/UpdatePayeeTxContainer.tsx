@@ -58,7 +58,7 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
       <ModalContent
         onInteractOutside={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        className="w-full max-w-[416px]"
+        size="sm"
       >
         <ModalHeader onClose={closeModalAndReset}>
           Change Reward Destination

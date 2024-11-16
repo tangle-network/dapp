@@ -113,7 +113,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
       <ModalContent
         onInteractOutside={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        className="w-full max-w-[416px]"
+        size="sm"
       >
         <ModalHeader onClose={closeModalAndReset}>Unbond Stake</ModalHeader>
 

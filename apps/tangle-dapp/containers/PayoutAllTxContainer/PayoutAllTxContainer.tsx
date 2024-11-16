@@ -68,7 +68,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
       <ModalContent
         onInteractOutside={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        className="w-full max-w-[838px]"
+        size="lg"
       >
         <ModalHeader onClose={closeModal}>Payout Stakers</ModalHeader>
 

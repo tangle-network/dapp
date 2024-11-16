@@ -84,7 +84,7 @@ const OnboardingModal: FC<OnboardingModalProps> = ({
       <ModalContent
         onInteractOutside={() => setIsOpen(false)}
         isOpen={isOpen}
-        className="w-full max-w-[750px]"
+        size="lg"
       >
         <ModalHeader onClose={() => setIsOpen(false)}>{title}</ModalHeader>
 

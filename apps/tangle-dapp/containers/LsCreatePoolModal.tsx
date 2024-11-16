@@ -116,7 +116,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
       <ModalContent
         onInteractOutside={() => setIsOpen(false)}
         isOpen={isOpen}
-        className="w-full max-w-[740px]"
+        size="lg"
       >
         <ModalHeader onClose={() => setIsOpen(false)}>
           Create a Liquid Staking Pool

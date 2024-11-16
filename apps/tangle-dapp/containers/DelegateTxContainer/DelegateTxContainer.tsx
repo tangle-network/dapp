@@ -164,7 +164,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
       <ModalContent
         onInteractOutside={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        className="w-full max-w-[838px]"
+        size="lg"
       >
         <ModalHeader onClose={closeModalAndReset}>
           Setup Nomination {currentStep}

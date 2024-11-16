@@ -71,7 +71,7 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
       <ModalContent
         onInteractOutside={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        className="w-full max-w-[416px]"
+        size="sm"
       >
         <ModalHeader onClose={closeModalAndReset}>Rebond Funds</ModalHeader>
 

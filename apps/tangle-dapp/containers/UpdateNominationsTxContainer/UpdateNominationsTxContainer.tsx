@@ -115,7 +115,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
       <ModalContent
         onInteractOutside={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        className="w-full max-w-[1000px]"
+        size="lg"
       >
         <ModalHeader onClose={closeModal}>Update Nominations</ModalHeader>
 

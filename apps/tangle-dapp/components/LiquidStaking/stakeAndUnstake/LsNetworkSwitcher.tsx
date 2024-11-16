@@ -116,7 +116,8 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
         <ModalContent
           isOpen={isLsNetworkSwitcherOpen}
           onInteractOutside={closeLsNetworkSwitcher}
-          className="w-[500px] h-[600px]"
+          className="h-[600px]"
+          size="md"
         >
           <ChainList
             searchInputId="ls-network-switcher-search"

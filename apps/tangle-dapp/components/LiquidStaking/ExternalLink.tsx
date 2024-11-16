@@ -1,4 +1,4 @@
-import { ExternalLinkLine } from '@webb-tools/icons';
+import { ArrowRightUp } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 import { Button } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode } from 'react';
@@ -12,7 +12,7 @@ export type ExternalLinkProps = {
 const ExternalLink: FC<ExternalLinkProps> = ({
   href,
   children,
-  Icon = ExternalLinkLine,
+  Icon = ArrowRightUp,
 }) => {
   return (
     <Button

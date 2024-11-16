@@ -1,7 +1,7 @@
 'use client';
 
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
-import { ExternalLinkLine } from '@webb-tools/icons';
+import { ArrowRightUp } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { ExplorerType } from '@webb-tools/tangle-shared-ui/types';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
@@ -51,7 +51,7 @@ const RecentTxContainer: FC = () => {
           href={accountExplorerUrl}
           isDisabled={!accountExplorerUrl}
           rightIcon={
-            <ExternalLinkLine className="fill-current dark:fill-current" />
+            <ArrowRightUp className="fill-current dark:fill-current" />
           }
         >
           Open Explorer

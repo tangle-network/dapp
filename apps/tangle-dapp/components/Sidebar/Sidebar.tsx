@@ -20,7 +20,7 @@ const Sidebar: FC<SidebarProps> = ({ isExpandedAtDefault }) => {
       {...sidebarProps}
       pathnameOrHash={pathname}
       className="hidden lg:block !z-0"
-      isExpandedAtDefault={isExpandedAtDefault}
+      isExpandedByDefault={isExpandedAtDefault}
       onSideBarToggle={setSidebarCookieOnToggle}
     />
   );

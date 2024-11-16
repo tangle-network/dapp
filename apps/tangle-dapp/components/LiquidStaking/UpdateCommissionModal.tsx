@@ -76,7 +76,7 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
       <ModalContent
         onInteractOutside={() => setIsOpen(false)}
         isOpen={isOpen}
-        className="w-full max-w-[550px]"
+        size="md"
       >
         <ModalHeader onClose={() => setIsOpen(false)}>
           Update Pool Commission
