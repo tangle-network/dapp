@@ -11,7 +11,7 @@ import {
   Typography,
   useModal,
 } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 
 import { IS_PRODUCTION_ENV } from '../../../constants/env';
 import { LS_NETWORKS } from '../../../constants/liquidStaking/constants';
@@ -70,10 +70,6 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
     if (network.id === LsNetworkId.TANGLE_LOCAL && IS_PRODUCTION_ENV) {
       return false;
     }
-    // Filter out the selected network.
-    else if (activeLsNetwork.id === network.id) {
-      return false;
-    }
 
     // TODO: Obtain the Tangle network from the LS Network's properties instead.
     const tangleNetwork = getLsTangleNetwork(network.id);
@@ -86,27 +82,32 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
     );
   });
 
-  const networkOptions: ChainConfig[] = supportedLsNetworks.map((network) => {
-    const tangleNetwork = getLsTangleNetwork(network.id);
+  const networkOptions = useMemo<ChainConfig[]>(() => {
+    return supportedLsNetworks.map((network) => {
+      const tangleNetwork = getLsTangleNetwork(network.id);
 
-    const typedChainId = calculateTypedChainId(
-      tangleNetwork.substrateChainId ? ChainType.Substrate : ChainType.EVM,
-      tangleNetwork.substrateChainId ?? tangleNetwork.evmChainId ?? 0,
-    );
+      const typedChainId = calculateTypedChainId(
+        tangleNetwork.substrateChainId ? ChainType.Substrate : ChainType.EVM,
+        tangleNetwork.substrateChainId ?? tangleNetwork.evmChainId ?? 0,
+      );
 
-    const chainConfig = chainsConfig[typedChainId];
+      const chainConfig = chainsConfig[typedChainId];
 
-    return {
-      ...chainConfig,
-      name: network.networkName,
-      id: network.id,
-    };
-  });
+      return {
+        ...chainConfig,
+        name: network.networkName,
+        id: network.id,
+      } satisfies ChainConfig;
+    });
+  }, [supportedLsNetworks]);
 
-  const handleOnSelectNetwork = (chain: ChainConfig) => {
-    setNetworkId?.(chain.id as LsNetworkId);
-    closeLsNetworkSwitcher();
-  };
+  const handleOnSelectNetwork = useCallback(
+    (chain: ChainConfig) => {
+      setNetworkId?.(chain.id as LsNetworkId);
+      closeLsNetworkSwitcher();
+    },
+    [closeLsNetworkSwitcher, setNetworkId],
+  );
 
   return (
     <>
@@ -116,8 +117,7 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
         <ModalContent
           isOpen={isLsNetworkSwitcherOpen}
           onInteractOutside={closeLsNetworkSwitcher}
-          className="h-[600px]"
-          size="md"
+          size="sm"
         >
           <ChainList
             searchInputId="ls-network-switcher-search"
@@ -126,6 +126,7 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
             chains={networkOptions}
             onSelectChain={handleOnSelectNetwork}
             chainType="source"
+            title="Switch Network"
           />
         </ModalContent>
       </Modal>

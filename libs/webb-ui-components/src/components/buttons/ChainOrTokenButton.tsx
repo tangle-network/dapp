@@ -1,9 +1,10 @@
 import { ChainIcon, ChevronDown, TokenIcon } from '@webb-tools/icons';
 import { getFlexBasic } from '@webb-tools/icons/utils';
 import cx from 'classnames';
-import { forwardRef, useMemo } from 'react';
+import { forwardRef, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChainOrTokenButtonProps } from './types';
+import { EventFor } from '../../types';
 
 const ChainOrTokenButton = forwardRef<
   HTMLButtonElement,
@@ -18,21 +19,28 @@ const ChainOrTokenButton = forwardRef<
       disabled,
       placeholder = 'Select Chain',
       iconType,
+      onClick,
       ...props
     },
     ref,
   ) => {
-    const textClsx = useMemo(() => {
-      return twMerge('font-bold', textClassName);
-    }, [textClassName]);
+    const IconCmp = iconType === 'chain' ? ChainIcon : TokenIcon;
 
-    const IconCmp = useMemo(() => {
-      return iconType === 'chain' ? ChainIcon : TokenIcon;
-    }, [iconType]);
+    const handleClick = useCallback(
+      (e: EventFor<'button', 'onClick'>) => {
+        if (disabled || onClick === undefined) {
+          return;
+        }
+
+        onClick(e);
+      },
+      [disabled, onClick],
+    );
 
     return (
       <button
         {...props}
+        onClick={handleClick}
         type="button"
         className={twMerge(
           'rounded-lg border-2 p-2 pl-4',
@@ -40,6 +48,7 @@ const ChainOrTokenButton = forwardRef<
           'hover:bg-mono-0/30',
           'dark:bg-mono-0/5 dark:border-mono-140',
           'dark:hover:bg-mono-0/10',
+          (onClick === undefined || disabled) && 'cursor-default',
           className,
         )}
         ref={ref}
@@ -54,7 +63,9 @@ const ChainOrTokenButton = forwardRef<
                 name={value}
               />
             )}
-            <p className={textClsx}>{value ?? placeholder}</p>
+            <p className={twMerge('font-bold', textClassName)}>
+              {value ?? placeholder}
+            </p>
           </div>
           {!disabled && (
             <ChevronDown

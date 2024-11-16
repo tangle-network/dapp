@@ -48,7 +48,7 @@ export const AssetList = ({
 
   return (
     <ListCardWrapper title={title} onClose={onClose}>
-      <div className="px-4 md:px-9 pb-[10px] border-b border-mono-40 dark:border-mono-170">
+      <div className="px-4 md:px-9 pb-4 border-b border-mono-40 dark:border-mono-170">
         <Input
           id="chain"
           rightIcon={<Search />}
@@ -62,7 +62,10 @@ export const AssetList = ({
 
       <ScrollArea
         {...overrideScrollAreaProps}
-        className={twMerge('w-full h-full', overrideScrollAreaProps?.className)}
+        className={twMerge(
+          'w-full h-full pt-4',
+          overrideScrollAreaProps?.className,
+        )}
       >
         <ul>
           {filteredAssets.map((asset, idx) => (

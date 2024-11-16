@@ -104,6 +104,7 @@ const ChainSelectors: FC = () => {
           className="w-full !p-4 bg-mono-20 dark:bg-mono-170 border-0 hover:bg-mono-20 dark:hover:bg-mono-170 text-nowrap"
           iconType="chain"
           onClick={openSourceChainModal}
+          disabled={sourceChainOptions.length <= 1}
         />
       </div>
 
@@ -126,6 +127,7 @@ const ChainSelectors: FC = () => {
           className="w-full !p-4 bg-mono-20 dark:bg-mono-170 border-0 hover:bg-mono-20 dark:hover:bg-mono-170 text-nowrap"
           iconType="chain"
           onClick={openDestinationChainModal}
+          disabled={destinationChainOptions.length <= 1}
         />
       </div>
 
@@ -134,7 +136,7 @@ const ChainSelectors: FC = () => {
         <ModalContent
           isOpen={isSourceChainModalOpen}
           onInteractOutside={closeSourceChainModal}
-          className="w-[500px] h-[600px]"
+          size="sm"
         >
           <ChainList
             searchInputId="bridge-source-chain-search"
@@ -149,7 +151,7 @@ const ChainSelectors: FC = () => {
         <ModalContent
           isOpen={isDestinationChainModalOpen}
           onInteractOutside={closeDestinationChainModal}
-          className="w-[500px] h-[600px]"
+          size="sm"
         >
           <ChainList
             searchInputId="bridge-destination-chain-search"

@@ -90,7 +90,7 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
             />
           </div>
 
-          <ScrollArea className="w-full h-full">
+          <ScrollArea className="w-full h-full pt-4">
             <ul>
               {pools !== null && pools.length === 0 ? (
                 <EmptyList

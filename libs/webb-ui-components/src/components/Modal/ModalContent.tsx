@@ -70,7 +70,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
             forceMount
             {...props}
             className={twMerge(
-              'fixed z-50',
+              'fixed z-50 w-full',
               'bg-mono-0 dark:bg-mono-180 rounded-2xl',
               '-translate-x-1/2 left-1/2',
               isMobileMd
@@ -78,7 +78,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
                 : 'top-1/2 -translate-y-1/2',
               getTailwindSizeClass(size),
               className,
-              isMobileSm && 'w-full max-w-full',
+              isMobileSm && 'max-w-full',
             )}
             ref={ref}
           >
