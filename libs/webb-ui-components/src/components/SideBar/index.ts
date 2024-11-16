@@ -1,5 +1,5 @@
 export * from './SideBar';
-export * from './SideBarMenu';
+export * from './MobileSidebar';
 
 export * from './Footer';
 export * from './Logo';

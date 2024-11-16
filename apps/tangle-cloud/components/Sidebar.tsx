@@ -18,7 +18,7 @@ import {
   SideBar as SideBarCmp,
   SideBarFooterType,
   SideBarItemProps,
-  SideBarMenu,
+  MobileSidebar,
   SidebarTangleClosedIcon,
 } from '@webb-tools/webb-ui-components/components/SideBar';
 import { TangleCloudLogo } from '@webb-tools/webb-ui-components/components/TangleCloudLogo';
@@ -150,7 +150,7 @@ const Sidebar: FC<Props> = ({ isExpandedAtDefault }) => {
       />
 
       {/* Small screen sidebar */}
-      <SideBarMenu
+      <MobileSidebar
         ClosedLogo={SidebarTangleClosedIcon}
         items={SIDEBAR_ITEMS}
         footer={SIDEBAR_FOOTER}

@@ -23,7 +23,7 @@ export interface SideBarLogoProps {
   isExpanded?: boolean;
 }
 
-export interface SidebarProps extends SideBarLogoProps {
+export interface MobileSidebarProps extends SideBarLogoProps {
   ClosedLogo?: React.FC<LogoProps>;
   items: SideBarItemProps[];
   ActionButton?: React.FC<{ isExpanded: boolean }>;
@@ -37,7 +37,7 @@ export interface SidebarProps extends SideBarLogoProps {
 
 export interface SideBarItemsProps {
   items: SideBarItemProps[];
-  ActionButton?: SidebarProps['ActionButton'];
+  ActionButton?: MobileSidebarProps['ActionButton'];
   isExpanded: boolean;
   className?: string;
   pathnameOrHash?: string;

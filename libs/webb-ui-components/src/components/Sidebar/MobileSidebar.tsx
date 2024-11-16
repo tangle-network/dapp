@@ -8,9 +8,9 @@ import { HamburgerMenu } from '@webb-tools/icons';
 import { SideBarLogo } from './Logo';
 import { SideBarItems } from './Items';
 import { SideBarFooter } from './Footer';
-import { SidebarProps } from './types';
+import { MobileSidebarProps } from './types';
 
-export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
+export const MobileSidebar = forwardRef<HTMLDivElement, MobileSidebarProps>(
   (
     {
       Logo,
@@ -60,6 +60,7 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
 
               <div>
                 <SideBarLogo logoLink={logoLink} Logo={Logo} isExpanded />
+
                 <SideBarItems
                   ActionButton={ActionButton}
                   items={items}

@@ -13,7 +13,7 @@ import { LogoProps } from '../Logo/types';
 import { SideBarFooter } from './Footer';
 import { SideBarItems } from './Items';
 import { SideBarLogo } from './Logo';
-import { SidebarProps } from './types';
+import { MobileSidebarProps } from './types';
 
 /**
  * Sidebar Navigation Menu Component
@@ -33,7 +33,7 @@ import { SidebarProps } from './types';
  *  />
  * ```
  */
-export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
+export const SideBar = forwardRef<HTMLDivElement, MobileSidebarProps>(
   (
     {
       Logo,
