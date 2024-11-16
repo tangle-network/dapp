@@ -122,7 +122,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
           Create a Liquid Staking Pool
         </ModalHeader>
 
-        <ModalBody>
+        <ModalBody className="gap-4">
           {/**
            * In case that a testnet is selected, it's helpful to let the users
            * know that the pool will be created on the testnet, and that
@@ -135,7 +135,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
             />
           )}
 
-          <div className="flex items-center gap-2 justify-stretch">
+          <div className="flex flex-col sm:flex-row items-center gap-4 justify-stretch">
             <TextInput
               id="ls-create-pool-name"
               title="Pool Name"
