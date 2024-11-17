@@ -17,27 +17,28 @@ export interface SideBarFooterProps extends SideBarFooterType {
   className?: string;
 }
 
-export interface SideBarLogoProps {
+export interface SidebarLogoProps {
   Logo: React.FC<LogoProps>;
   logoLink?: string;
   isExpanded?: boolean;
+  className?: string;
 }
 
-export interface SidebarProps extends SideBarLogoProps {
+export interface MobileSidebarProps extends SidebarLogoProps {
   ClosedLogo?: React.FC<LogoProps>;
   items: SideBarItemProps[];
   ActionButton?: React.FC<{ isExpanded: boolean }>;
   footer: SideBarFooterType;
   className?: string;
   overrideContentProps?: DialogContentProps;
-  isExpandedAtDefault?: boolean;
+  isExpandedByDefault?: boolean;
   onSideBarToggle?: () => void;
   pathnameOrHash?: string;
 }
 
 export interface SideBarItemsProps {
   items: SideBarItemProps[];
-  ActionButton?: SidebarProps['ActionButton'];
+  ActionButton?: MobileSidebarProps['ActionButton'];
   isExpanded: boolean;
   className?: string;
   pathnameOrHash?: string;

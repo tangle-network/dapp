@@ -18,7 +18,7 @@ import {
   SideBar as SideBarCmp,
   SideBarFooterType,
   SideBarItemProps,
-  SideBarMenu,
+  MobileSidebar,
   SidebarTangleClosedIcon,
 } from '@webb-tools/webb-ui-components/components/SideBar';
 import { TangleCloudLogo } from '@webb-tools/webb-ui-components/components/TangleCloudLogo';
@@ -35,7 +35,7 @@ import useRoleStore, { Role } from '../stores/roleStore';
 import { PagePath } from '../types';
 
 type Props = {
-  isExpandedAtDefault?: boolean;
+  isExpandedByDefault?: boolean;
 };
 
 const SIDEBAR_ITEMS: SideBarItemProps[] = [
@@ -130,7 +130,7 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
   );
 };
 
-const Sidebar: FC<Props> = ({ isExpandedAtDefault }) => {
+const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
   const pathname = usePathname();
 
   return (
@@ -144,13 +144,13 @@ const Sidebar: FC<Props> = ({ isExpandedAtDefault }) => {
         logoLink={pathname}
         pathnameOrHash={pathname}
         className="hidden lg:block"
-        isExpandedAtDefault={isExpandedAtDefault}
+        isExpandedByDefault={isExpandedByDefault}
         onSideBarToggle={setSidebarCookieOnToggle}
         ActionButton={ActionButton}
       />
 
       {/* Small screen sidebar */}
-      <SideBarMenu
+      <MobileSidebar
         ClosedLogo={SidebarTangleClosedIcon}
         items={SIDEBAR_ITEMS}
         footer={SIDEBAR_FOOTER}

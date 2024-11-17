@@ -1,17 +1,17 @@
 'use client';
 
-import { SideBarMenu as SideBarMenuCmp } from '@webb-tools/webb-ui-components';
+import { MobileSidebar as MobileSidebarCmp } from '@webb-tools/webb-ui-components';
 import { usePathname } from 'next/navigation';
 import { FC } from 'react';
 
 import useSidebarProps from './useSidebarProps';
 
-const SidebarMenu: FC = () => {
+const MobileSidebar: FC = () => {
   const pathname = usePathname();
   const sidebarProps = useSidebarProps();
 
   return (
-    <SideBarMenuCmp
+    <MobileSidebarCmp
       {...sidebarProps}
       pathnameOrHash={pathname}
       className="lg:hidden"
@@ -19,4 +19,4 @@ const SidebarMenu: FC = () => {
   );
 };
 
-export default SidebarMenu;
+export default MobileSidebar;

@@ -10,11 +10,6 @@ export interface ModalContentProps extends DialogContentProps {
   isOpen: boolean;
 
   /**
-   * Centered the modal
-   */
-  isCenter?: boolean;
-
-  /**
    * Whether using portal to render modal
    */
   usePortal?: boolean;
@@ -33,6 +28,8 @@ export interface ModalContentProps extends DialogContentProps {
    * Props to override the transition content component
    */
   overrideTransitionContentProps?: Partial<PropsOf<typeof TransitionChild>>;
+
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export interface ModalHeaderProps extends PropsOf<'div'> {

@@ -14,8 +14,8 @@ import { type FC, type PropsWithChildren } from 'react';
 import {
   Breadcrumbs,
   BridgeTxQueueDropdown,
+  MobileSidebar,
   Sidebar,
-  SidebarMenu,
 } from '../../components';
 import OnboardingHelpButton from '../../components/OnboardingModal/OnboardingHelpButton';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
@@ -47,14 +47,14 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
 
   return (
     <div className={`flex h-screen ${layoutBgClassname}`}>
-      <Sidebar isExpandedAtDefault={isSidebarInitiallyExpanded} />
+      <Sidebar isExpandedByDefault={isSidebarInitiallyExpanded} />
 
       <main className="flex-1 h-full overflow-y-auto scrollbar-hide">
         <div className="h-full max-w-[1448px] lg:px-10 md:px-8 px-4 m-auto flex flex-col justify-between">
           <div className="flex flex-col space-y-5 grow">
             <div className="flex items-center justify-between py-6">
               <div className="flex items-center space-x-4 lg:space-x-0">
-                <SidebarMenu />
+                <MobileSidebar />
 
                 <Breadcrumbs className="hidden md:block" />
               </div>

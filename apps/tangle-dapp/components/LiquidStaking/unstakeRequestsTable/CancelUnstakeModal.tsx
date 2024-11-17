@@ -1,9 +1,8 @@
 import { CloseCircleLineIcon } from '@webb-tools/icons';
 import {
-  Button,
   Modal,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
   TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
@@ -38,11 +37,7 @@ const CancelUnstakeModal: FC<CancelUnstakeModalProps> = ({
 
   return (
     <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isOpen}
-        className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px]"
-      >
+      <ModalContent onInteractOutside={onClose} isOpen={isOpen} size="md">
         <ModalHeader onClose={onClose}>Cancel Unstake</ModalHeader>
 
         <div className="flex flex-col items-center justify-center gap-2 p-9">
@@ -63,26 +58,11 @@ const CancelUnstakeModal: FC<CancelUnstakeModalProps> = ({
           </ExternalLink>
         </div>
 
-        <ModalFooter className="flex items-center gap-2">
-          <Button
-            onClick={onClose}
-            isFullWidth
-            variant="secondary"
-            isDisabled={isProcessingTx}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            onClick={onConfirm}
-            isFullWidth
-            variant="primary"
-            isLoading={isProcessingTx}
-            loadingText="Processing"
-          >
-            Confirm
-          </Button>
-        </ModalFooter>
+        <ModalFooterActions
+          onClose={onClose}
+          isProcessing={isProcessingTx}
+          onConfirm={onConfirm}
+        />
       </ModalContent>
     </Modal>
   );

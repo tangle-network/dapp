@@ -15,9 +15,9 @@ import {
   WaterDropletIcon,
 } from '@webb-tools/icons';
 import {
+  MobileSidebarProps,
   SideBarFooterType,
   SideBarItemProps,
-  SidebarProps,
   TangleLogo,
 } from '@webb-tools/webb-ui-components';
 import { SidebarTangleClosedIcon } from '@webb-tools/webb-ui-components/components';
@@ -106,7 +106,7 @@ export default function getSidebarProps({
   polkadotJsDashboardUrl: string;
   nativeExplorerUrl?: string;
   evmExplorerUrl?: string;
-}): SidebarProps {
+}): MobileSidebarProps {
   const currentEnv = isAppEnvironmentType(process.env.NODE_ENV)
     ? process.env.NODE_ENV
     : 'development';
@@ -160,5 +160,5 @@ export default function getSidebarProps({
     footer: SIDEBAR_FOOTER,
     items,
     logoLink: TANGLE_MKT_URL,
-  } satisfies SidebarProps;
+  } satisfies MobileSidebarProps;
 }
