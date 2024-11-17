@@ -22,6 +22,7 @@ type ChainListProps = {
   chains: ChainConfig[];
   onSelectChain: (chain: ChainConfig) => void;
   overrideScrollAreaProps?: ComponentProps<typeof ScrollArea>;
+  disableSelectedChain?: boolean;
 };
 
 export const ChainList = ({
@@ -35,6 +36,7 @@ export const ChainList = ({
   overrideScrollAreaProps,
   onSelectChain,
   chainType,
+  disableSelectedChain = false,
 }: ChainListProps) => {
   const [searchText, setSearchText] = useState('');
 
@@ -74,28 +76,29 @@ export const ChainList = ({
             const isConnected =
               chainType === 'source' && activeChain?.id === chain.id;
 
+            const isDisabled = disableSelectedChain && isConnected;
+
             return (
               <ListItem
                 key={`${chain.id}-${idx}`}
-                isDisabled={isConnected}
-                className="cursor-pointer w-full flex items-center justify-between max-w-full min-h-[60px] py-3"
+                isDisabled={isDisabled}
+                className={twMerge(
+                  'w-full flex items-center justify-between max-w-full min-h-[60px] py-3',
+                  !isDisabled && 'cursor-pointer',
+                )}
                 onClick={() => {
+                  if (isDisabled) {
+                    return;
+                  }
+
                   onSelectChain(chain);
                   onClose?.();
                 }}
               >
                 <div className="flex items-center gap-4 justify-start">
-                  <ChainIcon
-                    size="lg"
-                    name={chain.name}
-                    className="cursor-pointer"
-                  />
+                  <ChainIcon size="lg" name={chain.name} />
 
-                  <Typography
-                    variant="h5"
-                    fw="bold"
-                    className="capitalize cursor-pointer"
-                  >
+                  <Typography variant="h5" fw="bold" className="capitalize">
                     {chain.name}
                   </Typography>
                 </div>
