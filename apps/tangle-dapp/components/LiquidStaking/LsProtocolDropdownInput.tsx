@@ -50,7 +50,7 @@ const LsProtocolDropdownInput: FC<LsProtocolDropdownInputProps> = ({
   );
 
   return (
-    <InputWrapper title="Protocol" id={id}>
+    <InputWrapper title="Protocol" id={id} isFullWidth>
       <Dropdown>
         <DropdownMenuTrigger
           disabled={
