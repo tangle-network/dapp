@@ -194,7 +194,7 @@ const AmountAndTokenInput: FC = () => {
         <ModalContent
           isOpen={isTokenModalOpen}
           onInteractOutside={closeTokenModal}
-          className="w-[500px] h-[600px]"
+          className="h-full max-h-[600px]"
         >
           <AssetList
             onClose={closeTokenModal}
