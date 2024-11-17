@@ -47,7 +47,7 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
 
   return (
     <div className={`flex h-screen ${layoutBgClassname}`}>
-      <Sidebar isExpandedAtDefault={isSidebarInitiallyExpanded} />
+      <Sidebar isExpandedByDefault={isSidebarInitiallyExpanded} />
 
       <main className="flex-1 h-full overflow-y-auto scrollbar-hide">
         <div className="h-full max-w-[1448px] lg:px-10 md:px-8 px-4 m-auto flex flex-col justify-between">

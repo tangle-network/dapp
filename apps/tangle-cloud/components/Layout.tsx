@@ -25,7 +25,7 @@ const Layout: FC<PropsWithChildren<Props>> = ({
 }) => {
   return (
     <div className={`flex min-h-screen bg-body body-bg`}>
-      <Sidebar isExpandedAtDefault={isSidebarInitiallyExpanded} />
+      <Sidebar isExpandedByDefault={isSidebarInitiallyExpanded} />
 
       <div className="flex flex-col flex-1 min-h-screen overflow-y-auto scrollbar-hide">
         <main className="flex-1">{children}</main>

@@ -8,10 +8,10 @@ import { type FC } from 'react';
 import useSidebarProps from './useSidebarProps';
 
 interface SidebarProps {
-  isExpandedAtDefault?: boolean;
+  isExpandedByDefault?: boolean;
 }
 
-const Sidebar: FC<SidebarProps> = ({ isExpandedAtDefault }) => {
+const Sidebar: FC<SidebarProps> = ({ isExpandedByDefault }) => {
   const pathname = usePathname();
   const sidebarProps = useSidebarProps();
 
@@ -20,7 +20,7 @@ const Sidebar: FC<SidebarProps> = ({ isExpandedAtDefault }) => {
       {...sidebarProps}
       pathnameOrHash={pathname}
       className="hidden lg:block !z-0"
-      isExpandedByDefault={isExpandedAtDefault}
+      isExpandedByDefault={isExpandedByDefault}
       onSideBarToggle={setSidebarCookieOnToggle}
     />
   );
