@@ -2,10 +2,13 @@ import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesOperatorPreferences } from '@polkadot/types/lookup';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import {
+  TangleError,
+  TangleErrorCode,
+} from '@webb-tools/tangle-shared-ui/types/error';
 import { useCallback } from 'react';
 import { combineLatest, switchMap } from 'rxjs';
 
-import { TangleError, TangleErrorCode } from '../../types/error';
 import { useOperatorTVL } from '../restake/useOperatorTVL';
 import useRestakeAssetMap from '../restake/useRestakeAssetMap';
 import useRestakeOperatorMap from '../restake/useRestakeOperatorMap';
