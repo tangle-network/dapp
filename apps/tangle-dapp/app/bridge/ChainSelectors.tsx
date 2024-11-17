@@ -88,7 +88,7 @@ const ChainSelectors: FC = () => {
   ]);
 
   return (
-    <div className="flex flex-col md:flex-row justify-between items-end gap-3">
+    <div className="flex flex-col md:flex-row justify-center md:justify-between items-center md:items-end md:gap-3">
       {/* Source Chain Selector */}
       <div className="flex flex-col gap-2 w-full">
         <Label
@@ -108,7 +108,10 @@ const ChainSelectors: FC = () => {
         />
       </div>
 
-      <div className="cursor-pointer px-1 pb-[20px]" onClick={onSwitchChains}>
+      <div
+        className="cursor-pointer px-1 pt-5 md:pt-0 md:pb-5"
+        onClick={onSwitchChains}
+      >
         <ArrowRight size="lg" className="rotate-90 md:rotate-0" />
       </div>
 
