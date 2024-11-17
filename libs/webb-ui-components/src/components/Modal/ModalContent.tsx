@@ -33,8 +33,8 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
     },
     ref,
   ) => {
-    const isMobileSm = useIsBreakpoint('sm', true);
-    const isMobileMd = useIsBreakpoint('md', true);
+    const isSmOrLess = useIsBreakpoint('sm', true);
+    const isMdOrLess = useIsBreakpoint('md', true);
 
     const inner = (
       <Transition show={isOpen} {...overrideTransitionRootProps}>
@@ -58,12 +58,18 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom={twMerge(
-            isMobileMd ? '-bottom-full' : 'opacity-0 scale-95',
+            isMdOrLess ? 'translate-y-full' : 'opacity-0 scale-95',
           )}
-          enterTo={twMerge(isMobileMd ? 'bottom-0' : 'opacity-100 scale-100')}
+          enterTo={twMerge(
+            isMdOrLess ? 'translate-y-0' : 'opacity-100 scale-100',
+          )}
           leave="ease-in duration-200"
-          leaveFrom={twMerge(isMobileMd ? 'bottom-0' : 'opacity-100 scale-100')}
-          leaveTo={twMerge(isMobileMd ? '-bottom-full' : 'opacity-0 scale-95')}
+          leaveFrom={twMerge(
+            isMdOrLess ? 'translate-y-0' : 'opacity-100 scale-100',
+          )}
+          leaveTo={twMerge(
+            isMdOrLess ? 'translate-y-full' : 'opacity-0 scale-95',
+          )}
           {...overrideTransitionContentProps}
         >
           <DialogPrimitive.Content
@@ -73,12 +79,12 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
               'fixed z-50 w-full',
               'bg-mono-0 dark:bg-mono-180 rounded-2xl',
               '-translate-x-1/2 left-1/2',
-              isMobileMd
+              isMdOrLess
                 ? 'bottom-0 rounded-b-none'
                 : 'top-1/2 -translate-y-1/2',
               getTailwindSizeClass(size),
               className,
-              isMobileSm && 'max-w-full',
+              isSmOrLess && 'max-w-full',
             )}
             ref={ref}
           >
