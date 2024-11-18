@@ -56,6 +56,7 @@ const ChainSelectors: FC = () => {
       ) !== undefined,
       'New source chain is not available in source chain options when switching chains',
     );
+
     setSelectedSourceChain(newSelectedSourceChain);
 
     const newDestinationChainOptions =
@@ -65,14 +66,17 @@ const ChainSelectors: FC = () => {
           newSelectedSourceChain.id,
         )
       ];
+
     const newDestinationChainPresetTypedChainId = calculateTypedChainId(
       newSelectedDestinationChain.chainType,
       newSelectedDestinationChain.id,
     );
+
     assert(
       newDestinationChainPresetTypedChainId in newDestinationChainOptions,
       'New destination chain is not available in destination chain options when switching chains',
     );
+
     setSelectedDestinationChain(newSelectedDestinationChain);
   }, [
     setSelectedSourceChain,
@@ -84,7 +88,7 @@ const ChainSelectors: FC = () => {
   ]);
 
   return (
-    <div className="flex flex-col md:flex-row justify-between items-end gap-3">
+    <div className="flex flex-col md:flex-row justify-center md:justify-between items-center md:items-end md:gap-3">
       {/* Source Chain Selector */}
       <div className="flex flex-col gap-2 w-full">
         <Label
@@ -93,16 +97,21 @@ const ChainSelectors: FC = () => {
         >
           From
         </Label>
+
         <ChainOrTokenButton
           value={selectedSourceChain.name}
           textClassName="text-xl"
           className="w-full !p-4 bg-mono-20 dark:bg-mono-170 border-0 hover:bg-mono-20 dark:hover:bg-mono-170 text-nowrap"
           iconType="chain"
           onClick={openSourceChainModal}
+          disabled={sourceChainOptions.length <= 1}
         />
       </div>
 
-      <div className="cursor-pointer px-1 pb-[20px]" onClick={onSwitchChains}>
+      <div
+        className="cursor-pointer px-1 pt-5 md:pt-0 md:pb-5"
+        onClick={onSwitchChains}
+      >
         <ArrowRight size="lg" className="rotate-90 md:rotate-0" />
       </div>
 
@@ -114,22 +123,23 @@ const ChainSelectors: FC = () => {
         >
           To
         </Label>
+
         <ChainOrTokenButton
           value={selectedDestinationChain.name}
           textClassName="text-xl"
           className="w-full !p-4 bg-mono-20 dark:bg-mono-170 border-0 hover:bg-mono-20 dark:hover:bg-mono-170 text-nowrap"
           iconType="chain"
           onClick={openDestinationChainModal}
+          disabled={destinationChainOptions.length <= 1}
         />
       </div>
 
       <Modal>
         {/* Source Chain Modal */}
         <ModalContent
-          isCenter
           isOpen={isSourceChainModalOpen}
           onInteractOutside={closeSourceChainModal}
-          className="w-[500px] h-[600px]"
+          size="sm"
         >
           <ChainList
             searchInputId="bridge-source-chain-search"
@@ -142,10 +152,9 @@ const ChainSelectors: FC = () => {
 
         {/* Destination Chain Modal */}
         <ModalContent
-          isCenter
           isOpen={isDestinationChainModalOpen}
           onInteractOutside={closeDestinationChainModal}
-          className="w-[500px] h-[600px]"
+          size="sm"
         >
           <ChainList
             searchInputId="bridge-destination-chain-search"

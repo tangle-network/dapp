@@ -41,11 +41,7 @@ const WithdrawalConfirmationModal: FC<WithdrawalConfirmationModalProps> = ({
 
   return (
     <Modal open>
-      <ModalContent
-        isCenter
-        isOpen={isOpen}
-        className="w-full max-w-[calc(100vw-40px)] md:max-w-[500px]"
-      >
+      <ModalContent onInteractOutside={onClose} isOpen={isOpen} size="md">
         <ModalHeader onClose={onClose}>Withdrawal Success</ModalHeader>
 
         <div className="flex flex-col items-center justify-center gap-2 p-9">

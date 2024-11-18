@@ -13,13 +13,14 @@ function useMediaQuery(query: string) {
 
   useIsomorphicEffect(() => {
     const mediaQuery = window.matchMedia(query);
+
     setMatches(mediaQuery.matches);
 
     const handler = (event: MediaQueryListEvent) => {
       setMatches(event.matches);
     };
 
-    // Add event listener for old safari browsers
+    // Add event listener for old Safari browsers.
     if ('addEventListener' in mediaQuery) {
       mediaQuery.addEventListener('change', handler);
     }

@@ -4,7 +4,7 @@ import { Wallet } from '@webb-tools/dapp-config';
 import { Close, Spinner, WalletLineIcon } from '@webb-tools/icons';
 import { FC, cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import useBreakpoint from '../../hooks/useBreakpoint';
+import useIsBreakpoint from '../../hooks/useIsBreakpoint';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
 import { ListItem } from '../ListCard/ListItem';
@@ -37,7 +37,7 @@ export const WalletConnectionCard = forwardRef<
     },
     ref,
   ) => {
-    const isDesktop = useBreakpoint('md');
+    const isDesktop = useIsBreakpoint('md');
 
     const connectingWallet = useMemo(() => {
       if (!connectingWalletId) {

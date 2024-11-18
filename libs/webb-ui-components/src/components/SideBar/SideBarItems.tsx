@@ -47,7 +47,7 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
   }, [items, pathnameOrHash]);
 
   return (
-    <div className={twMerge('flex flex-col mt-11 gap-4', className)}>
+    <div className={twMerge('flex flex-col gap-2', className)}>
       {ActionButton && <ActionButton isExpanded={isExpanded} />}
 
       {items.map((itemProps, idx) => {

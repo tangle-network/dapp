@@ -65,10 +65,11 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
   return (
     <Modal>
       <ModalContent
-        isCenter
         isOpen={isOpen}
+        onInteractOutside={() => setIsOpen(false)}
+        size="md"
         className={twMerge(
-          'w-[550px] max-h-[600px]',
+          'max-h-[600px]',
           pools !== null && pools.length > 0 && 'h-full',
         )}
       >
@@ -89,7 +90,7 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
             />
           </div>
 
-          <ScrollArea className="w-full h-full">
+          <ScrollArea className="w-full h-full pt-4">
             <ul>
               {pools !== null && pools.length === 0 ? (
                 <EmptyList

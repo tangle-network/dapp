@@ -5,10 +5,10 @@ import useLocalStorage, {
   LocalStorageKey,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import {
-  Button,
   Modal,
+  ModalBody,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
   TANGLE_DOCS_URL,
 } from '@webb-tools/webb-ui-components';
@@ -81,26 +81,20 @@ const OnboardingModal: FC<OnboardingModalProps> = ({
 
   return (
     <Modal open>
-      <ModalContent isCenter isOpen={isOpen} className="w-[750px]">
+      <ModalContent
+        onInteractOutside={() => setIsOpen(false)}
+        isOpen={isOpen}
+        size="md"
+      >
         <ModalHeader onClose={() => setIsOpen(false)}>{title}</ModalHeader>
 
-        <div className="space-y-6 p-9">{children}</div>
+        <ModalBody>{children}</ModalBody>
 
-        <ModalFooter className="flex gap-2">
-          <Button
-            href={learnMoreHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            isFullWidth
-            variant="secondary"
-          >
-            Learn More
-          </Button>
-
-          <Button isFullWidth onClick={() => setIsOpen(false)}>
-            Got It
-          </Button>
-        </ModalFooter>
+        <ModalFooterActions
+          learnMoreLinkHref={learnMoreHref}
+          onConfirm={() => setIsOpen(false)}
+          confirmButtonText="Got It"
+        />
       </ModalContent>
     </Modal>
   );

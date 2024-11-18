@@ -59,21 +59,26 @@ const AmountAndTokenInput: FC = () => {
   } = useModal(false);
 
   const { getTokenBalance } = useTokenBalances();
+
   const [tokenBalances, setTokenBalances] = useState<
     Record<string, Decimal | null>
   >({});
 
   const fetchBalances = useCallback(async () => {
     const balances: Record<string, Decimal | null> = {};
+
     for (const tokenId of tokenIdOptions) {
       const token = BRIDGE_SUPPORTED_TOKENS[tokenId];
+
       const erc20TokenContractAddress =
         token.erc20TokenContractAddress?.[sourceTypedChainId];
+
       balances[tokenId] = await getTokenBalance(
         erc20TokenContractAddress ?? '0x0',
         token.decimals[sourceTypedChainId] ?? 18,
       );
     }
+
     setTokenBalances(balances);
   }, [tokenIdOptions, getTokenBalance, sourceTypedChainId]);
 
@@ -81,7 +86,7 @@ const AmountAndTokenInput: FC = () => {
     fetchBalances();
   }, [fetchBalances]);
 
-  const assets: AssetConfig[] = useMemo(() => {
+  const assets = useMemo<AssetConfig[]>(() => {
     return tokenIdOptions.map((tokenId) => {
       const token = BRIDGE_SUPPORTED_TOKENS[tokenId];
 
@@ -106,7 +111,8 @@ const AmountAndTokenInput: FC = () => {
         symbol: token.symbol,
         balance: tokenBalances[tokenId] ?? new Decimal(0),
         explorerUrl: explorerUrl?.toString(),
-      };
+        address: erc20TokenContractAddress,
+      } satisfies AssetConfig;
     });
   }, [
     tokenIdOptions,
@@ -115,10 +121,13 @@ const AmountAndTokenInput: FC = () => {
     tokenBalances,
   ]);
 
-  const onSelectAsset = (asset: AssetConfig) => {
-    setSelectedTokenId(asset.symbol as BridgeTokenId);
-    closeTokenModal();
-  };
+  const onSelectAsset = useCallback(
+    (asset: AssetConfig) => {
+      setSelectedTokenId(asset.symbol as BridgeTokenId);
+      closeTokenModal();
+    },
+    [closeTokenModal, setSelectedTokenId],
+  );
 
   const selectedAssetBalance = useMemo(() => {
     return tokenBalances[selectedToken.id] ?? new Decimal(0);
@@ -183,10 +192,9 @@ const AmountAndTokenInput: FC = () => {
       <Modal>
         {/* Token Selector Modal */}
         <ModalContent
-          isCenter
           isOpen={isTokenModalOpen}
           onInteractOutside={closeTokenModal}
-          className="w-[500px] h-[600px]"
+          className="h-full max-h-[600px]"
         >
           <AssetList
             onClose={closeTokenModal}

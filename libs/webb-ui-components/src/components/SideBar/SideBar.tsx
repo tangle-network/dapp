@@ -11,9 +11,9 @@ import getCookieItem from '../../utils/getCookieItem';
 import IconButton from '../buttons/IconButton';
 import { LogoProps } from '../Logo/types';
 import { SideBarFooter } from './Footer';
-import { SideBarItems } from './Items';
+import { SideBarItems } from './SideBarItems';
 import { SideBarLogo } from './Logo';
-import { SidebarProps } from './types';
+import { MobileSidebarProps } from './types';
 
 /**
  * Sidebar Navigation Menu Component
@@ -33,7 +33,7 @@ import { SidebarProps } from './types';
  *  />
  * ```
  */
-export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
+export const SideBar = forwardRef<HTMLDivElement, MobileSidebarProps>(
   (
     {
       Logo,
@@ -42,7 +42,7 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
       items,
       footer,
       className,
-      isExpandedAtDefault = true,
+      isExpandedByDefault = true,
       onSideBarToggle,
       pathnameOrHash,
       ActionButton,
@@ -53,26 +53,30 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
     const [isSidebarOpen, setIsSidebarOpen] = useLocalStorageState(
       SIDEBAR_OPEN_KEY,
       {
-        defaultValue: isExpandedAtDefault,
+        defaultValue: isExpandedByDefault,
       },
     );
 
     // Make sure sidebar state in local storage match with cookie when page is loaded
     useEffect(() => {
       const sideBarStateFromCookie = getCookieItem(SIDEBAR_OPEN_KEY);
+
       const isSideBarOpen =
         sideBarStateFromCookie === 'true'
           ? true
           : sideBarStateFromCookie === 'false'
             ? false
-            : isExpandedAtDefault;
+            : isExpandedByDefault;
 
       setIsSidebarOpen(isSideBarOpen);
-    }, [isExpandedAtDefault, setIsSidebarOpen]);
+    }, [isExpandedByDefault, setIsSidebarOpen]);
 
     const handleToggleSidebar = useCallback(() => {
       setIsSidebarOpen(!isSidebarOpen);
-      onSideBarToggle && onSideBarToggle();
+
+      if (onSideBarToggle !== undefined) {
+        onSideBarToggle();
+      }
     }, [isSidebarOpen, onSideBarToggle, setIsSidebarOpen]);
 
     return (
@@ -89,12 +93,12 @@ export const SideBar = forwardRef<HTMLDivElement, SidebarProps>(
             isSidebarOpen ? 'w-72 px-4' : 'w-16 px-2',
           )}
         >
-          <div>
+          <div className="space-y-6">
             <div
               className={cx(
                 'flex items-center',
                 isSidebarOpen ? 'justify-between' : 'justify-center',
-                isSidebarOpen && 'px-2',
+                isSidebarOpen && 'px-3',
               )}
             >
               <SideBarLogo

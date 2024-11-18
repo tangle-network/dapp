@@ -1,6 +1,7 @@
 import {
   Button,
   Modal,
+  ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -235,15 +236,15 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
   return (
     <Modal open>
       <ModalContent
-        isCenter
+        onInteractOutside={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        className="w-full max-w-[800px]"
+        size="lg"
       >
         <ModalHeader onClose={() => setIsModalOpen(false)}>
           {getStepTitle(step, profileType, isCreatingProfile)}
         </ModalHeader>
 
-        <div className="flex flex-col gap-4 py-3 px-9">
+        <ModalBody className="py-3">
           {stepDescription !== null && (
             <Typography variant="body2" fw="normal">
               {stepDescription}
@@ -260,24 +261,16 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
             setAllocations={setAllocations}
             setAllocationsDispatch={setAllocationsDispatch}
           />
-        </div>
+        </ModalBody>
 
         <ModalFooter className="flex flex-col-reverse gap-2 sm:flex-row">
-          <Button
-            isFullWidth
-            variant="secondary"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handlePreviousStep}
-          >
+          <Button isFullWidth variant="secondary" onClick={handlePreviousStep}>
             {getStepPreviousButtonLabel(step)}
           </Button>
 
           <Button
             onClick={handleNextStep}
             isFullWidth
-            target="_blank"
-            rel="noopener noreferrer"
             className="!mt-0"
             // Prevent the user from continuing or making changes while
             // the existing allocations are being fetched, while transactions

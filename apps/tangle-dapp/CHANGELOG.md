@@ -1,3 +1,22 @@
+## 0.0.17 (2024-11-13)
+
+
+### 🚀 Features
+
+- **tangle-dapp:** Implement LS pool modal: Update commission ([#2630](https://github.com/webb-tools/webb-dapp/pull/2630))
+
+- **tangle-dapp:** Show validator address when avatar is hovered ([#2641](https://github.com/webb-tools/webb-dapp/pull/2641))
+
+- **tangle-dapp:** Add LST selection modal ([#2644](https://github.com/webb-tools/webb-dapp/pull/2644))
+
+- **tangle-cloud:** Configure Layout, Network, and Wallet ([#2651](https://github.com/webb-tools/webb-dapp/pull/2651))
+
+
+### ❤️  Thank You
+
+- Trung-Tin Pham @AtelyPham
+- Yurixander @yurixander
+
 ## 0.0.16 (2024-11-04)
 
 ### 🚀 Features

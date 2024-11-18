@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ExternalLinkLine } from '@webb-tools/icons';
+import { ArrowRightUp } from '@webb-tools/icons';
 
 import { Typography } from '../../typography/Typography';
 import { Link } from '../Link';
@@ -47,12 +47,11 @@ export const SideBarFooter: FC<SideBarFooterProps> = ({
             </div>
 
             {!isInternal ? (
-              <div className={isExpanded ? 'pl-[20px]' : ''}>
+              <div className={isExpanded ? 'pl-1' : ''}>
                 <Link href={href} target="_blank">
-                  <ExternalLinkLine
+                  <ArrowRightUp
                     className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
-                    width={24}
-                    height={24}
+                    size="lg"
                   />
                 </Link>
               </div>

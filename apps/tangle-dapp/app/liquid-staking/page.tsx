@@ -5,7 +5,6 @@ import {
   CoinIcon,
   EditLine,
   Search,
-  SparklingIcon,
   WaterDropletIcon,
 } from '@webb-tools/icons';
 import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
@@ -122,14 +121,8 @@ const LiquidStakingPage: FC = () => {
 
         <OnboardingItem
           Icon={CoinIcon}
-          title="Obtain derivative tokens"
-          description="When you join a pool, you'll automatically receive its derivative asset, which can be traded and used within Tangle's restaking infrastructure."
-        />
-
-        <OnboardingItem
-          Icon={SparklingIcon}
-          title="Earn Rewards While Staying Liquid"
-          description="Use or trade your derivative tokens while automatically earning staking rewards. That's the magic of liquid staking!"
+          title="Obtain LSTs"
+          description="When you join a pool, you'll automatically receive its derivative asset, which can be traded and used within Tangle's restaking infrastructure while automatically earning staking rewards."
         />
       </OnboardingModal>
 
@@ -155,7 +148,7 @@ const LiquidStakingPage: FC = () => {
           </div> */}
         </div>
 
-        <div className="flex flex-col self-center gap-4 w-full min-w-[450px] max-w-[532px]">
+        <div className="flex flex-col self-center gap-4 w-full max-w-[532px]">
           <TabsList className="w-full">
             <TabListItem
               isActive={isStaking}

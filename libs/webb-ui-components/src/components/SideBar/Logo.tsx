@@ -1,14 +1,20 @@
 import { FC } from 'react';
 
-import { SideBarLogoProps } from './types';
+import { SidebarLogoProps } from './types';
 
-export const SideBarLogo: FC<SideBarLogoProps> = ({
+export const SideBarLogo: FC<SidebarLogoProps> = ({
   logoLink,
   Logo,
   isExpanded,
+  className,
 }) => {
   return (
-    <a href={logoLink ?? '/'} target="_blank" rel="noopener noreferrer">
+    <a
+      href={logoLink ?? '/'}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+    >
       <Logo className={!isExpanded ? 'mx-auto' : ''} size="md" />
     </a>
   );

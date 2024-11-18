@@ -6,11 +6,11 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { HamburgerMenu } from '@webb-tools/icons';
 
 import { SideBarLogo } from './Logo';
-import { SideBarItems } from './Items';
+import { SideBarItems } from './SideBarItems';
 import { SideBarFooter } from './Footer';
-import { SidebarProps } from './types';
+import { MobileSidebarProps } from './types';
 
-export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
+export const MobileSidebar = forwardRef<HTMLDivElement, MobileSidebarProps>(
   (
     {
       Logo,
@@ -41,14 +41,15 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
           </Dialog.Trigger>
 
           <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 bg-[rgba(0,0,0,0.1)] animate-[showDialogOverlay_150ms]" />
+            <Dialog.Overlay className="fixed inset-0 bg-black/65 animate-[showDialogOverlay_150ms]" />
+
             <Dialog.Content
               {...overrideContentProps}
               className={twMerge(
                 'w-[280px] h-full outline-none overflow-auto py-6 px-4',
-                'bg-mono-0 dark:bg-mono-180 fixed left-0 top-0',
+                'bg-mono-0 dark:bg-mono-200 fixed left-0 top-0',
                 'animate-[sideBarSlideLeftToRight_400ms]',
-                'flex flex-col justify-between',
+                'flex flex-col gap-6 justify-between',
                 overrideContentProps?.className,
               )}
             >
@@ -58,8 +59,14 @@ export const SideBarMenu = forwardRef<HTMLDivElement, SidebarProps>(
                 Sidebar Menu
               </Dialog.Description>
 
-              <div>
-                <SideBarLogo logoLink={logoLink} Logo={Logo} isExpanded />
+              <div className="space-y-6">
+                <SideBarLogo
+                  logoLink={logoLink}
+                  Logo={Logo}
+                  isExpanded
+                  className="block px-3"
+                />
+
                 <SideBarItems
                   ActionButton={ActionButton}
                   items={items}

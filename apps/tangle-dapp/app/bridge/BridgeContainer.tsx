@@ -67,7 +67,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
                   ? AddressType.EVM
                   : AddressType.Substrate
               }
-              title="Receiver Address"
+              title="Recipient Address"
               wrapperOverrides={{ isFullWidth: true }}
               value={destinationAddress}
               setValue={setDestinationAddress}

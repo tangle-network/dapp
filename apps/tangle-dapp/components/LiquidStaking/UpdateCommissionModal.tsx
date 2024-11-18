@@ -4,6 +4,7 @@ import {
   ModalBody,
   ModalContent,
   ModalFooter,
+  ModalFooterActions,
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -72,7 +73,11 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
 
   return (
     <Modal>
-      <ModalContent isCenter isOpen={isOpen} className="w-full max-w-[550px]">
+      <ModalContent
+        onInteractOutside={() => setIsOpen(false)}
+        isOpen={isOpen}
+        size="md"
+      >
         <ModalHeader onClose={() => setIsOpen(false)}>
           Update Pool Commission
         </ModalHeader>
@@ -106,6 +111,13 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
             wrapperProps={{ isFullWidth: true }}
           />
         </ModalBody>
+
+        <ModalFooterActions
+          onClose={() => setIsOpen(false)}
+          isProcessing={status === TxStatus.PROCESSING}
+          onConfirm={handleUpdateCommissionClick}
+          isConfirmDisabled={!isReady}
+        />
 
         <ModalFooter className="flex items-center gap-2">
           <Button
