@@ -7223,13 +7223,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hyperlane-xyz/registry@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@hyperlane-xyz/registry@npm:2.5.0"
+"@hyperlane-xyz/registry@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "@hyperlane-xyz/registry@npm:6.1.0"
   dependencies:
-    yaml: "npm:^2"
+    yaml: "npm:2.4.5"
     zod: "npm:^3.21.2"
-  checksum: 10c0/3943ea2b244325e592700faefddded93f5c8ee6761407ae3464f397efa89f7b3f9779fa3da9d08544c9ce4d694e17601e780f2d0f5c1a135ea66eab377909430
+  checksum: 10c0/58f4a437e97830290de11707ca00e441e0e4a5c21e358b83385a05b94f4058a1b4e6799801db8186d92c52ef021c3a783acc72ea9f41af861dab2df2d9a817f3
   languageName: node
   linkType: hard
 
@@ -45968,7 +45968,7 @@ __metadata:
     "@ethersproject/abi": "npm:^5.7.0"
     "@ethersproject/providers": "npm:^5.7.2"
     "@headlessui/react": "npm:^2.2.0"
-    "@hyperlane-xyz/registry": "npm:^2.5.0"
+    "@hyperlane-xyz/registry": "npm:^6.1.0"
     "@hyperlane-xyz/sdk": "npm:^5.6.2"
     "@hyperlane-xyz/utils": "npm:^5.6.2"
     "@next/bundle-analyzer": "npm:^14.2.16"
@@ -47266,7 +47266,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2, yaml@npm:^2.1.3, yaml@npm:^2.3.4":
+"yaml@npm:^2.1.3, yaml@npm:^2.3.4":
   version: 2.5.0
   resolution: "yaml@npm:2.5.0"
   bin:
