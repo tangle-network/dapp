@@ -14,65 +14,8 @@ import type {
   PalletAssetsAssetStatus,
   PalletAssetsExistenceReason,
   PalletMultiAssetDelegationDelegatorDelegatorStatus,
-  PalletMultiAssetDelegationOperatorOperatorStatus,
 } from '@polkadot/types/lookup';
-
-import { TransformEnum } from './utils';
-
-/**
- * A request scheduled to change the operator self-bond.
- * @name PalletMultiAssetDelegationOperatorOperatorBondLessRequest (737)
- */
-export type OperatorBondLessRequest = {
-  readonly amount: bigint;
-  readonly requestTime: number;
-};
-
-/**
- * Represents a bond for an operator from a delegator.
- * @name PalletMultiAssetDelegationOperatorDelegatorBond (739)
- */
-export type OperatorDelegatorBond = {
-  readonly delegatorAccountId: string;
-  readonly amount: bigint;
-  readonly assetId: string;
-};
-
-/**
- * The activity status of the operator.
- * @name PalletMultiAssetDelegationOperatorOperatorStatus (740)
- *
- * @field Active - Committed to be online.
- * @field Inactive - Temporarily inactive and excused for inactivity.
- * @field { Leaving: number } - Bonded until the specified round.
- */
-export type OperatorStatus =
-  TransformEnum<PalletMultiAssetDelegationOperatorOperatorStatus>;
-
-/**
- * Metadata of an operator, including bond, delegations, and status.
- * @name PalletMultiAssetDelegationOperatorOperatorMetadata (735)
- */
-export type OperatorMetadata = {
-  readonly stake: bigint;
-  readonly delegationCount: number;
-
-  /**
-   * An optional pending request to decrease the operator's self-bond,
-   * with only one allowed at any given time.
-   */
-  readonly bondLessRequest: OperatorBondLessRequest | null;
-  readonly delegations: Array<OperatorDelegatorBond>;
-  readonly status: OperatorStatus;
-  readonly restakersCount: number;
-};
-
-/**
- * A map of operator metadata keyed by the operator's account ID.
- */
-export type OperatorMap = {
-  readonly [accountId: string]: OperatorMetadata;
-};
+import { TransformEnum } from '@webb-tools/tangle-shared-ui/types/utils';
 
 export type RewardVaultMap = {
   [vaultId: string]: string[] | null;

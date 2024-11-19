@@ -2,6 +2,10 @@ import { isHex } from '@polkadot/util';
 import isValidUrl from '@webb-tools/dapp-types/utils/isValidUrl';
 import { ExternalLinkLine } from '@webb-tools/icons/ExternalLinkLine';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import type {
+  OperatorMap,
+  OperatorMetadata,
+} from '@webb-tools/tangle-shared-ui/types/restake';
 import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
 import InfoIconWithTooltip from '@webb-tools/webb-ui-components/components/IconWithTooltip/InfoIconWithTooltip';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
@@ -16,11 +20,7 @@ import { twMerge } from 'tailwind-merge';
 import AvatarWithText from '../../../../components/AvatarWithText';
 import GlassCard from '../../../../components/GlassCard/GlassCard';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
-import type {
-  DelegatorInfo,
-  OperatorMap,
-  OperatorMetadata,
-} from '../../../../types/restake';
+import type { DelegatorInfo } from '../../../../types/restake';
 import getTVLToDisplay from '../../../../utils/getTVLToDisplay';
 import { getAccountInfo } from '../../../../utils/polkadot';
 

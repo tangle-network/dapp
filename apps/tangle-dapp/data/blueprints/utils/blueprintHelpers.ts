@@ -5,10 +5,10 @@ import type {
   TanglePrimitivesServicesServiceBlueprint,
 } from '@polkadot/types/lookup';
 import type { ITuple } from '@polkadot/types/types';
+import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import merge from 'lodash/merge';
 
 import type { Blueprint } from '../../../types/blueprint';
-import type { OperatorMap } from '../../../types/restake';
 import {
   getMultipleAccountInfo,
   type IdentityType,
