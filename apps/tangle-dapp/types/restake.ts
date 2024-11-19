@@ -11,44 +11,14 @@
 
 import type {
   PalletAssetsAccountStatus,
-  PalletAssetsAssetStatus,
   PalletAssetsExistenceReason,
   PalletMultiAssetDelegationDelegatorDelegatorStatus,
 } from '@polkadot/types/lookup';
-import { TransformEnum } from '@webb-tools/tangle-shared-ui/types/utils';
+import type { AssetMetadata } from '@webb-tools/tangle-shared-ui/types/restake';
+import type { TransformEnum } from '@webb-tools/tangle-shared-ui/types/utils';
 
 export type RewardVaultMap = {
   [vaultId: string]: string[] | null;
-};
-
-/**
- * Metadata of an asset, including ID, name, symbol, denomination, and status.
- */
-export type AssetMetadata = {
-  readonly id: string;
-  readonly name: string;
-  readonly symbol: string;
-  readonly decimals: number;
-
-  /**
-   * The status of the asset.
-   *
-   * @field Live - The asset is live and can be staked.
-   * @field Frozen - The asset is frozen and cannot be staked.
-   * @field Destroying - The asset is being destroyed and cannot be staked.
-   */
-  readonly status: TransformEnum<PalletAssetsAssetStatus>;
-
-  readonly vaultId: string | null;
-
-  readonly priceInUsd: number | null;
-};
-
-/**
- * A map of asset metadata keyed by the asset's ID.
- */
-export type AssetMap = {
-  readonly [assetId: string]: AssetMetadata;
 };
 
 export type DelegatorWithdrawRequest = {

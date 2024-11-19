@@ -1,9 +1,9 @@
+import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import { rewardVaultRxQuery } from '@webb-tools/tangle-shared-ui/queries/restake/rewardVault';
 import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { map } from 'rxjs';
 
-import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { RewardVaultMap } from '../../types/restake';
 
 export default function useRestakeRewardVaultMap() {

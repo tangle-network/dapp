@@ -1,8 +1,8 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import { assetDetailsRxQuery } from '@webb-tools/tangle-shared-ui/queries/restake/assetDetails';
 import { useObservableState } from 'observable-hooks';
 
-import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useRestakeAssetIds from './useRestakeAssetIds';
 
 /**

@@ -3,11 +3,11 @@
 import type { ApiRx } from '@polkadot/api';
 import type { Option } from '@polkadot/types';
 import type { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
+import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import filterNativeAsset from '@webb-tools/tangle-shared-ui/utils/restake/filterNativeAsset';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { combineLatest, map, of, switchMap } from 'rxjs';
 
-import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import type { AssetBalance, AssetBalanceMap } from '../../types/restake';
 import hasAssetsPallet from '../../utils/hasAssetsPallet';

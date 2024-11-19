@@ -1,4 +1,7 @@
-import { PalletMultiAssetDelegationOperatorOperatorStatus } from '@polkadot/types/lookup';
+import {
+  PalletAssetsAssetStatus,
+  PalletMultiAssetDelegationOperatorOperatorStatus,
+} from '@polkadot/types/lookup';
 import { TransformEnum } from './utils';
 
 /**
@@ -39,4 +42,28 @@ export type OperatorMetadata = {
 
 export type OperatorMap = {
   readonly [accountId: string]: OperatorMetadata;
+};
+
+export type AssetMetadata = {
+  readonly id: string;
+  readonly name: string;
+  readonly symbol: string;
+  readonly decimals: number;
+
+  /**
+   * The status of the asset.
+   *
+   * @field Live - The asset is live and can be staked.
+   * @field Frozen - The asset is frozen and cannot be staked.
+   * @field Destroying - The asset is being destroyed and cannot be staked.
+   */
+  readonly status: TransformEnum<PalletAssetsAssetStatus>;
+
+  readonly vaultId: string | null;
+
+  readonly priceInUsd: number | null;
+};
+
+export type AssetMap = {
+  readonly [assetId: string]: AssetMetadata;
 };

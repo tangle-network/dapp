@@ -6,7 +6,8 @@ import type {
 } from '@polkadot/types/lookup';
 import { formatBalance, hexToString } from '@polkadot/util';
 import type { Chain } from '@webb-tools/dapp-config';
-import { combineLatest, map, of, switchMap } from 'rxjs';
+import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
+import type { AssetMap, AssetMetadata } from '../../types/restake';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
 import { fetchSingleTokenPrice, fetchTokenPrices } from '../tokenPrice';
 
@@ -27,26 +28,6 @@ function isApiSupported(api: ApiPromise | ApiRx) {
     !isMetadataQueryUndefined &&
     !isVaultsQueryUndefined
   );
-}
-
-// New type definitions
-/* interface AssetQueries {
-  assetDetailQueries: [typeof api.query.assets.asset, string][];
-  assetMetadataQueries: [typeof api.query.assets.metadata, string][];
-  assetVaultIdQueries: [
-    typeof api.query.multiAssetDelegation.assetLookupRewardVaults,
-    string,
-  ][];
-} */
-
-interface ProcessedAsset {
-  id: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-  status: string;
-  vaultId: string | null;
-  priceInUsd: number | null;
 }
 
 const DEFAULT_NATIVE_CURRENCY = {
@@ -71,7 +52,7 @@ function createAssetEntry(
   metadata: PalletAssetsAssetMetadata,
   vaultId: Option<u128>,
   priceInUsd: number | null,
-): ProcessedAsset {
+): AssetMetadata {
   const { name, symbol, decimals } = processAssetMetadata(assetId, metadata);
 
   return {
@@ -140,14 +121,12 @@ function processAssetDetailsRx(
   assetVaultIds: Option<u128>[],
   hasNative: boolean,
   nativeCurrentcy: Chain['nativeCurrency'],
-) {
+): Observable<AssetMap> {
   return hasNative
     ? getNativeAssetRx(nativeCurrentcy, api).pipe(
         map((nativeAsset) => ({ [nativeAsset.id]: nativeAsset })),
       )
-    : of<{
-        [assetId: string]: Awaited<ReturnType<typeof getNativeAsset>>;
-      }>({}).pipe(
+    : of<AssetMap>({}).pipe(
         switchMap(async (initialAssetMap) => {
           const tokenPrices = await queryTokenPrices(
             nonNativeAssetIds,
@@ -189,10 +168,13 @@ async function getNativeAsset(
     status: 'Live',
     vaultId: u128ToVaultId(vaultId),
     priceInUsd: typeof priceInUsd === 'number' ? priceInUsd : null,
-  };
+  } as AssetMetadata;
 }
 
-function getNativeAssetRx(nativeCurrency: Chain['nativeCurrency'], api: ApiRx) {
+function getNativeAssetRx(
+  nativeCurrency: Chain['nativeCurrency'],
+  api: ApiRx,
+): Observable<AssetMetadata> {
   const assetId = '0';
 
   return api.query.multiAssetDelegation.assetLookupRewardVaults(assetId).pipe(
@@ -202,7 +184,7 @@ function getNativeAssetRx(nativeCurrency: Chain['nativeCurrency'], api: ApiRx) {
       return {
         ...nativeCurrency,
         id: assetId,
-        status: 'Live',
+        status: 'Live' as const,
         vaultId: u128ToVaultId(vaultId),
         priceInUsd: typeof priceInUsd === 'number' ? priceInUsd : null,
       };
