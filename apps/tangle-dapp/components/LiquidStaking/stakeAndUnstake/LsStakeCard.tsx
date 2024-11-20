@@ -30,6 +30,7 @@ import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
+import DetailsContainer from '../../DetailsContainer';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
@@ -248,7 +249,7 @@ const LsStakeCard: FC = () => {
       />
 
       {/* Details */}
-      <div className="flex flex-col gap-2 p-3">
+      <DetailsContainer>
         <UnstakePeriodDetailItem protocolId={lsProtocolId} />
 
         <ExchangeRateDetailItem
@@ -261,7 +262,7 @@ const LsStakeCard: FC = () => {
           isStaking
           protocolId={lsProtocolId}
         />
-      </div>
+      </DetailsContainer>
 
       <LsFeeWarning isMinting selectedProtocolId={lsProtocolId} />
 

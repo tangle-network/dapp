@@ -94,7 +94,7 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
   Icon: DocumentationIcon,
   href: TANGLE_DOCS_URL,
   isInternal: false,
-  name: 'Tangle Docs',
+  name: 'Docs',
   useNextThemesForThemeToggle: true,
 };
 

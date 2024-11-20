@@ -1,20 +1,11 @@
 'use client';
 
-import {
-  AddCircleLineIcon,
-  Search,
-  SparklingIcon,
-  UserLineIcon,
-} from '@webb-tools/icons';
-import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
 import { TANGLE_DOCS_RESTAKING_URL } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { twMerge } from 'tailwind-merge';
 
 import GlassCard from '../../components/GlassCard/GlassCard';
-import OnboardingItem from '../../components/OnboardingModal/OnboardingItem';
-import OnboardingModal from '../../components/OnboardingModal/OnboardingModal';
 import StatItem from '../../components/StatItem';
 import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '../../data/restake/useRestakeOperatorMap';
@@ -52,36 +43,6 @@ export default function RestakePage() {
 
   return (
     <>
-      <OnboardingModal
-        title="Get Started with Restaking"
-        pageKey={OnboardingPageKey.RESTAKE}
-        learnMoreHref={TANGLE_DOCS_RESTAKING_URL}
-      >
-        <OnboardingItem
-          Icon={Search}
-          title="Discover and Select Vaults"
-          description="Dive into our selection of vaults and assets. Sort by Total Value Locked (TVL) or Annual Percentage Yield (APY) to find the vault that best suits your needs—whether you're looking for reliability or high returns."
-        />
-
-        <OnboardingItem
-          Icon={AddCircleLineIcon}
-          title="Deposit Your Assets"
-          description="Once you've chosen your vault and asset, deposit your assets to begin the restaking process. You can even combine this step with delegation for a seamless experience."
-        />
-
-        <OnboardingItem
-          Icon={UserLineIcon}
-          title="Choose an Operator"
-          description="Select an operator to delegate your deposited assets. This step is crucial for securing service instances on Tangle."
-        />
-
-        <OnboardingItem
-          Icon={SparklingIcon}
-          title="Earn Rewards"
-          description="Enjoy earning rewards that are proportional to the performance of the services on Tangle. Maximize your earnings while supporting the network. Ready to start restaking?"
-        />
-      </OnboardingModal>
-
       <div className="space-y-5">
         <div className="flex flex-col gap-5 md:flex-row">
           <GlassCard

@@ -17,7 +17,6 @@ import {
   MobileSidebar,
   Sidebar,
 } from '../../components';
-import OnboardingHelpButton from '../../components/OnboardingModal/OnboardingHelpButton';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import ApiDevStatsContainer from '../DebugMetricsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
@@ -63,8 +62,6 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
                 <WalletAndChainContainer />
 
                 <BridgeTxQueueDropdown />
-
-                <OnboardingHelpButton />
               </div>
             </div>
 
