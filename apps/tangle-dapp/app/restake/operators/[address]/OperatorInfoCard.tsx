@@ -6,6 +6,7 @@ import type {
   OperatorMap,
   OperatorMetadata,
 } from '@webb-tools/tangle-shared-ui/types/restake';
+import { getAccountInfo } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
 import InfoIconWithTooltip from '@webb-tools/webb-ui-components/components/IconWithTooltip/InfoIconWithTooltip';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
@@ -22,7 +23,6 @@ import GlassCard from '../../../../components/GlassCard/GlassCard';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
 import type { DelegatorInfo } from '../../../../types/restake';
 import getTVLToDisplay from '../../../../utils/getTVLToDisplay';
-import { getAccountInfo } from '../../../../utils/polkadot';
 
 interface Props extends Partial<ComponentProps<typeof GlassCard>> {
   operatorAddress: string;

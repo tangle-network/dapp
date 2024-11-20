@@ -6,22 +6,23 @@ import { toPrimitiveBlueprint } from '@webb-tools/tangle-shared-ui/data/blueprin
 import useRestakeAssetMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetMap';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import type { Blueprint } from '@webb-tools/tangle-shared-ui/types/blueprint';
 import {
   TangleError,
   TangleErrorCode,
 } from '@webb-tools/tangle-shared-ui/types/error';
 import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import type { AssetMap } from '@webb-tools/tangle-shared-ui/types/restake';
+import {
+  getAccountInfo,
+  getMultipleAccountInfo,
+} from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import { useCallback } from 'react';
 import { combineLatest, switchMap } from 'rxjs';
 
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeTVL from '../../../data/restake/useRestakeTVL';
-import type { Blueprint, Operator } from '../../../types/blueprint';
-import {
-  getAccountInfo,
-  getMultipleAccountInfo,
-} from '../../../utils/polkadot';
+import type { Operator } from '../../../types/blueprint';
 import { delegationsToVaultTokens } from '../../restake/utils';
 
 export default function useBlueprintDetails(id: string) {

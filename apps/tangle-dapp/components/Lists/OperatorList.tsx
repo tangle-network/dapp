@@ -2,6 +2,7 @@
 
 import { Search } from '@webb-tools/icons';
 import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
+import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import {
   Input,
   KeyValueWithButton,
@@ -13,7 +14,6 @@ import { keys, omitBy, pick } from 'lodash';
 import { ComponentProps, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import type { IdentityType } from '../../utils/polkadot';
 import AvatarWithText from '../AvatarWithText';
 import { ListCardWrapper } from './ListCardWrapper';
 
