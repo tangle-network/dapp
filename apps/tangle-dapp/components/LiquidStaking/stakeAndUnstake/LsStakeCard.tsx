@@ -34,7 +34,6 @@ import DetailsContainer from '../../DetailsContainer';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
-import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
 import LsSelectLstModal from './LsSelectLstModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
@@ -263,8 +262,6 @@ const LsStakeCard: FC = () => {
           protocolId={lsProtocolId}
         />
       </DetailsContainer>
-
-      <LsFeeWarning isMinting selectedProtocolId={lsProtocolId} />
 
       <Button
         isDisabled={

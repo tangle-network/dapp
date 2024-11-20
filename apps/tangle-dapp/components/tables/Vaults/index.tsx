@@ -23,7 +23,6 @@ import formatFractional from '../../../utils/formatFractional';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import LsTokenIcon from '../../LsTokenIcon';
 import { TableStatus } from '../../TableStatus';
-import { sharedTableStatusClxs } from '../shared';
 import TableCellWrapper from '../TableCellWrapper';
 import type { Props, VaultData } from './types';
 
@@ -164,11 +163,11 @@ const VaultsTable: FC<Props> = ({
   if (isLoading) {
     return (
       <TableStatus
-        title="Loading vaults..."
+        title="Loading Vaults"
         description="Please wait while we load the vaults."
         icon="🔄"
         {...loadingTableProps}
-        className={twMerge(sharedTableStatusClxs, loadingTableProps?.className)}
+        className={loadingTableProps?.className}
       />
     );
   }
@@ -176,11 +175,11 @@ const VaultsTable: FC<Props> = ({
   if (data.length === 0) {
     return (
       <TableStatus
-        title="No vaults found"
+        title="No Vaults Found"
         description="It looks like there are no vaults at the moment."
         icon="🔍"
         {...emptyTableProps}
-        className={twMerge(sharedTableStatusClxs, emptyTableProps?.className)}
+        className={emptyTableProps?.className}
       />
     );
   }

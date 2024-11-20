@@ -10,7 +10,7 @@ import Link from 'next/link';
 import type { ComponentProps, FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import GlassCard from '../../../../components/GlassCard/GlassCard';
+import GlassCard from '../../../../components/GlassCard';
 import { PagePath } from '../../../../types';
 
 interface Props extends Partial<ComponentProps<typeof GlassCard>> {

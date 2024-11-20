@@ -29,7 +29,7 @@ const classes: {
 
 const StatusIndicator = forwardRef<SVGSVGElement, StatusIndicatorProps>(
   ({ animated, variant = 'info', size = 12, ...props }, ref) => {
-    // We use haft size to make sure the component is corectly centered
+    // We use haft size to make sure the component is correctly centered.
     const haftSize = size / 2;
 
     return (

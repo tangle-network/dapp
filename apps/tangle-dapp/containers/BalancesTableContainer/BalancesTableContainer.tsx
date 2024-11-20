@@ -16,7 +16,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import GlassCard from '../../components/GlassCard/GlassCard';
+import GlassCard from '../../components/GlassCard';
 import TangleTokenIcon from '../../components/TangleTokenIcon';
 import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';

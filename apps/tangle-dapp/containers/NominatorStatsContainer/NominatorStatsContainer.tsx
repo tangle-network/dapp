@@ -9,12 +9,15 @@ import {
   TANGLE_DOCS_STAKING_URL,
   WEBB_DISCORD_CHANNEL_URL,
 } from '@webb-tools/webb-ui-components/constants';
-import cx from 'classnames';
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 import React from 'react';
 
-import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
+import {
+  GlassCard,
+  NominatorStatsItem,
+  UnbondingStatsItem,
+} from '../../components';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
 import useTotalPayoutRewards from '../../data/NominatorStats/useTotalPayoutRewards';
@@ -67,13 +70,7 @@ const NominatorStatsContainer: FC = () => {
   return (
     <div>
       <div className="flex flex-col w-full gap-4 md:flex-row">
-        <div
-          className={cx(
-            'w-full rounded-2xl overflow-hidden h-min-[204px] p-4',
-            'bg-glass dark:bg-glass_dark',
-            'border-2 border-mono-0 dark:border-mono-160',
-          )}
-        >
+        <GlassCard className="w-full rounded-2xl overflow-hidden h-min-[204px] gap-4 p-4">
           <div className="grid grid-cols-2 gap-2">
             <NominatorStatsItem
               title="Free Balance"
@@ -134,15 +131,9 @@ const NominatorStatsContainer: FC = () => {
               </Button>
             )}
           </div>
-        </div>
+        </GlassCard>
 
-        <div
-          className={cx(
-            'w-full rounded-2xl overflow-hidden h-min-[204px] p-4',
-            'bg-glass dark:bg-glass_dark',
-            'border-2 border-mono-0 dark:border-mono-160',
-          )}
-        >
+        <GlassCard className="w-full rounded-2xl overflow-hidden h-min-[204px] gap-4 p-4">
           <div className="grid grid-cols-2 gap-2">
             <NominatorStatsItem
               title={`Total Staked ${nativeTokenSymbol}`}
@@ -224,7 +215,7 @@ const NominatorStatsContainer: FC = () => {
               </div>
             )}
           </div>
-        </div>
+        </GlassCard>
       </div>
 
       <DelegateTxContainer

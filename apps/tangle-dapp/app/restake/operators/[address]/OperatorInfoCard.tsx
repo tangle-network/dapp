@@ -13,7 +13,7 @@ import useSWRImmutable from 'swr/immutable';
 import { twMerge } from 'tailwind-merge';
 
 import AvatarWithText from '../../../../components/AvatarWithText';
-import GlassCard from '../../../../components/GlassCard/GlassCard';
+import GlassCard from '../../../../components/GlassCard';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../../../constants';
 import type {

@@ -4,7 +4,6 @@ import {
   ChipColors,
   InfoIconWithTooltip,
   Label,
-  Typography,
 } from '@webb-tools/webb-ui-components';
 import {
   Dispatch,
@@ -16,6 +15,7 @@ import {
 } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import ErrorMessage from '../app/restake/ErrorMessage';
 import InputAction from '../containers/ManageProfileModalContainer/InputAction';
 import { useErrorCountContext } from '../context/ErrorsContext';
 
@@ -34,7 +34,6 @@ export type InputWrapperProps = {
   wrapperClassName?: string;
   bodyClassName?: string;
   dropdownBodyClassName?: string;
-  errorMessageClassName?: string;
   isFullWidth?: boolean;
   isDisabled?: boolean;
   tooltip?: ReactNode;
@@ -55,7 +54,6 @@ const InputWrapper: FC<InputWrapperProps> = ({
   wrapperClassName,
   bodyClassName,
   dropdownBodyClassName,
-  errorMessageClassName,
   isFullWidth = false,
   isDisabled = false,
   tooltip,
@@ -83,7 +81,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
   return (
     <div
       className={twMerge(
-        'flex flex-col gap-1 w-full max-w-[356px]',
+        'flex flex-col w-full max-w-[356px]',
         isFullWidth && 'max-w-full',
       )}
     >
@@ -161,17 +159,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
         )}
       </div>
 
-      {hasError && (
-        <Typography
-          className={twMerge(
-            'text-red-70 dark:text-red-50',
-            errorMessageClassName,
-          )}
-          variant="body1"
-        >
-          * {errorMessage}
-        </Typography>
-      )}
+      {hasError && <ErrorMessage>{errorMessage}</ErrorMessage>}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { twMerge } from 'tailwind-merge';
 
+import { GlassCard } from '../../components';
 import ActiveValidatorsKeyStat from './ActiveValidatorsKeyStat';
 import ActualStakedPercentageKeyStat from './ActualStakedPercentageKeyStat';
 import IdealStakedPercentageKeyStat from './IdealStakedPercentageKeyStat';
@@ -9,10 +10,9 @@ import WaitingValidatorsKeyStat from './WaitingValidatorsKeyStat';
 
 export const KeyStatsContainer = () => {
   return (
-    <div
+    <GlassCard
       className={twMerge(
-        'w-full rounded-lg overflow-hidden',
-        'bg-glass dark:bg-glass_dark',
+        'w-full rounded-lg overflow-hidden p-0',
         'border-2 border-mono-0 dark:border-mono-160',
       )}
     >
@@ -37,6 +37,6 @@ export const KeyStatsContainer = () => {
 
         <InflationPercentageKeyStat />
       </div>
-    </div>
+    </GlassCard>
   );
 };

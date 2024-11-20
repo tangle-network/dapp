@@ -1,4 +1,4 @@
-import { ChainIcon } from '@webb-tools/icons';
+import { ChainIcon, StatusIndicator } from '@webb-tools/icons';
 import {
   DropdownMenuItem,
   InfoIconWithTooltip,
@@ -103,7 +103,7 @@ const NetworkOption: FC<NetworkOptionProps> = ({
     <DropdownMenuItem
       leftIcon={<ChainIcon size="lg" name={name} />}
       onClick={handleClick}
-      className="w-full py-3"
+      className="flex justify-between w-full py-3"
       isActive={isSelected}
     >
       <div className="flex items-center gap-2">
@@ -112,6 +112,8 @@ const NetworkOption: FC<NetworkOptionProps> = ({
         </Typography>
         {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
       </div>
+
+      {isSelected && <StatusIndicator variant="success" />}
     </DropdownMenuItem>
   );
 };

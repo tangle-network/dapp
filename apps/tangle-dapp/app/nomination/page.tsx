@@ -22,24 +22,22 @@ export const metadata: Metadata = createPageMetadata({
 
 export default async function NominationPage() {
   return (
-    <>
-      <div className="space-y-6 md:space-y-9 lg:space-y-12">
-        <div className="flex items-center justify-between">
-          <Typography variant="h4" fw="bold">
-            Overview
-          </Typography>
+    <div className="space-y-6 md:space-y-9 lg:space-y-12">
+      <div className="flex items-center justify-between">
+        <Typography variant="h4" fw="bold">
+          Overview
+        </Typography>
 
-          <HeaderChipsContainer />
-        </div>
-
-        <KeyStatsContainer />
-
-        <NominatorStatsContainer />
-
-        <NominationsPayoutsContainer />
-
-        <ValidatorTablesContainer />
+        <HeaderChipsContainer />
       </div>
-    </>
+
+      <KeyStatsContainer />
+
+      <NominatorStatsContainer />
+
+      <NominationsPayoutsContainer />
+
+      <ValidatorTablesContainer />
+    </div>
   );
 }

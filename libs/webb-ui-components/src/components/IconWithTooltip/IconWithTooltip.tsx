@@ -25,7 +25,7 @@ const IconWithTooltip: FC<IconWithTooltipProp> = ({
       </TooltipTrigger>
 
       <TooltipBody {...overrideTooltipBodyProps}>
-        <Typography variant="body3" className="text-center break-normal">
+        <Typography variant="body2" className="text-center break-normal">
           {content}
         </Typography>
       </TooltipBody>

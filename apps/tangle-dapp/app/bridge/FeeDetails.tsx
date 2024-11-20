@@ -6,6 +6,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import Decimal from 'decimal.js';
 import { FC, useMemo } from 'react';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { useBridge } from '../../context/BridgeContext';
 import useSelectedToken from './hooks/useSelectedToken';
 import useTypedChainId from './hooks/useTypedChainId';
@@ -93,7 +94,9 @@ const FeeValueCmp: FC<{ fee: Decimal | null; symbol: string }> = ({
 }) => {
   return (
     <Typography variant="body1" className="!text-mono-200 dark:!text-mono-0">
-      {fee ? `${fee.toDecimalPlaces(5).toString()} ${symbol}` : 'N/A'}
+      {fee
+        ? `${fee.toDecimalPlaces(5).toString()} ${symbol}`
+        : EMPTY_VALUE_PLACEHOLDER}
     </Typography>
   );
 };
@@ -104,9 +107,16 @@ function formatTotalAmount(
   const symbolTotals: Record<string, Decimal> = {};
 
   for (const [, item] of Object.entries(feeItems)) {
-    if (item === null) continue;
+    if (item === null) {
+      continue;
+    }
+
     const { amount, symbol } = item;
-    if (!amount) continue;
+
+    if (!amount) {
+      continue;
+    }
+
     symbolTotals[symbol] = (symbolTotals[symbol] ?? new Decimal(0)).plus(
       amount,
     );

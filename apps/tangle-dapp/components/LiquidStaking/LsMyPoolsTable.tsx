@@ -38,7 +38,6 @@ import { TableStatus } from '..';
 import BlueIconButton from '../BlueIconButton';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
-import { sharedTableStatusClxs } from '../tables/shared';
 import UpdateCommissionModal from './UpdateCommissionModal';
 
 export interface LsMyPoolRow extends LsPool {
@@ -299,8 +298,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
   if (!isAccountConnected) {
     return (
       <TableStatus
-        className={sharedTableStatusClxs}
-        title="Connect a wallet to continue"
+        title="Wallet Not Connected"
         description="Once you've connected an account, you'll be able to see and manage your liquid staking pools here."
         icon="🔍"
       />
@@ -308,8 +306,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
   } else if (pools.length === 0) {
     return (
       <TableStatus
-        title="No active pools"
-        className={sharedTableStatusClxs}
+        title="No Active Pools"
         description="You haven't staked in any pools yet. Select a pool and start liquid staking to earn rewards! Once you've staked or created a pool, you'll be able to manage your stake and configure the pool here."
         icon="🔍"
         buttonText="Learn More"

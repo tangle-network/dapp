@@ -60,7 +60,7 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
       <div className="flex items-center gap-0.5">
         <Typography
           variant="body1"
-          className="text-mono-140 dark:text-mono-40 whitespace-nowrap"
+          className="text-mono-140 dark:text-mono-80 whitespace-nowrap"
         >
           {title}
         </Typography>

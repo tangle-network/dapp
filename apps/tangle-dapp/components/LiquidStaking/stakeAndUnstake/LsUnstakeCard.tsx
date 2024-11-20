@@ -33,7 +33,6 @@ import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
-import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
 import LsSelectLstModal from './LsSelectLstModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
@@ -249,8 +248,6 @@ const LsUnstakeCard: FC = () => {
           inputAmount={fromAmount}
         />
       </div>
-
-      <LsFeeWarning isMinting={false} selectedProtocolId={lsProtocolId} />
 
       <Button
         isDisabled={

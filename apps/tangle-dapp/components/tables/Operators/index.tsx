@@ -25,7 +25,6 @@ import formatFractional from '../../../utils/formatFractional';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import { getSortAddressOrIdentityFnc } from '../../../utils/table';
 import { TableStatus } from '../../TableStatus';
-import { sharedTableStatusClxs } from '../shared';
 import TableCellWrapper from '../TableCellWrapper';
 import type { OperatorData, Props } from './types';
 import VaultsDropdown from './VaultsDropdown';
@@ -197,11 +196,11 @@ const OperatorsTable: FC<Props> = ({
   if (isLoading) {
     return (
       <TableStatus
-        title="Loading operators..."
+        title="Loading Operators"
         description="Please wait while we load the operators."
         icon="🔄"
         {...loadingTableProps}
-        className={twMerge(sharedTableStatusClxs, loadingTableProps?.className)}
+        className={loadingTableProps?.className}
       />
     );
   }
@@ -209,11 +208,11 @@ const OperatorsTable: FC<Props> = ({
   if (data.length === 0) {
     return (
       <TableStatus
-        title="No operators found"
+        title="No Operators Found"
         description="It looks like there are no operators running at the moment."
         icon="⚙️"
         {...emptyTableProps}
-        className={twMerge(sharedTableStatusClxs, emptyTableProps?.className)}
+        className={emptyTableProps?.className}
       />
     );
   }

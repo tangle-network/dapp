@@ -23,13 +23,7 @@ import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
 import createCustomNetwork from '../../utils/createCustomNetwork';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
-export type NetworkSelectionButtonProps = {
-  isNetworkSwitchDisabled?: boolean;
-};
-
-const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
-  isNetworkSwitchDisabled = false,
-}) => {
+const NetworkSelectionButton: FC = () => {
   const { activeChain, activeWallet, isConnecting, loading, switchChain } =
     useWebContext();
 
@@ -77,26 +71,6 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
 
     switchChain(targetChain, activeWallet);
   }, [activeWallet, network.evmChainId, switchChain]);
-
-  if (isNetworkSwitchDisabled) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Dropdown>
-            <TriggerButton
-              className="opacity-60 cursor-not-allowed hover:!bg-none dark:hover:!bg-none"
-              networkName={networkName}
-              isLocked
-            />
-          </Dropdown>
-        </TooltipTrigger>
-
-        <TooltipBody side="bottom">
-          Network can&apos;t be changed while you&apos;re in this page.
-        </TooltipBody>
-      </Tooltip>
-    );
-  }
 
   return (
     <div className="flex items-center gap-1">

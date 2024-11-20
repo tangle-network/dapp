@@ -9,11 +9,7 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 const Bridge: FC = () => {
-  return (
-    <div>
-      <BridgeContainer className="mx-auto" />
-    </div>
-  );
+  return <BridgeContainer className="mx-auto" />;
 };
 
 export default Bridge;

@@ -28,7 +28,7 @@ export default function ErrorMessage({
       )}
     >
       {isDefined(children) ? (
-        <InformationLine size="md" className="!fill-current" />
+        <InformationLine size="md" className="fill-current dark:fill-current" />
       ) : null}
 
       <Typography

@@ -1,11 +1,21 @@
 import { FC, PropsWithChildren } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-const DarkContainer: FC<PropsWithChildren> = ({ children }) => {
+export type ContainerProps = PropsWithChildren<{
+  className?: string;
+}>;
+
+const Container: FC<ContainerProps> = ({ children, className }) => {
   return (
-    <div className="bg-mono-0 dark:bg-mono-200 p-6 rounded-xl border border-mono-60 dark:border-mono-170">
+    <div
+      className={twMerge(
+        'bg-mono-0 dark:bg-mono-200 p-6 rounded-xl border border-mono-60 dark:border-mono-170',
+        className,
+      )}
+    >
       {children}
     </div>
   );
 };
 
-export default DarkContainer;
+export default Container;

@@ -23,7 +23,7 @@ import useRestakeTxEventHandlersWithNoti, {
   type Props,
 } from '../../..//data/restake/useRestakeTxEventHandlersWithNoti';
 import AvatarWithText from '../../../components/AvatarWithText';
-import DarkContainer from '../../../components/Container';
+import Container from '../../../components/Container';
 import { ChainList } from '../../../components/Lists/ChainList';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
@@ -279,7 +279,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   );
 
   return (
-    <DarkContainer>
+    <Container>
       <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col h-full space-y-4 grow">
           <div className="space-y-2">
@@ -336,7 +336,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
           </ModalContent>
         </Modal>
       </Form>
-    </DarkContainer>
+    </Container>
   );
 };
 

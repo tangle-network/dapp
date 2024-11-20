@@ -26,7 +26,6 @@ import { twMerge } from 'tailwind-merge';
 import { TableStatus } from '../../components';
 import PercentageCell from '../../components/tableCells/PercentageCell';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
-import { sharedTableStatusClxs } from '../../components/tables/shared';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
@@ -187,9 +186,8 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
   if (pools.length === 0) {
     return (
       <TableStatus
-        className={sharedTableStatusClxs}
-        title="No pools available yet"
-        description="Looks like there are currently no liquid staking pools available for this protocol. Try creating your own pool to get started!"
+        title="No Pools Available"
+        description="Looks like there are currently no liquid staking pools available for this protocol yet. Try creating your own pool to get started!"
         icon="🔍"
       />
     );

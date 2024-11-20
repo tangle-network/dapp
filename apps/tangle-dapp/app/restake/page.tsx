@@ -5,7 +5,7 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { twMerge } from 'tailwind-merge';
 
-import GlassCard from '../../components/GlassCard/GlassCard';
+import GlassCard from '../../components/GlassCard';
 import StatItem from '../../components/StatItem';
 import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '../../data/restake/useRestakeOperatorMap';
