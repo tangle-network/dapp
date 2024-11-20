@@ -1,11 +1,11 @@
 'use client';
 
+import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { ComponentProps, useMemo } from 'react';
 
 import useOperatorBlueprints from '../../../../data/blueprints/useOperatorBlueprints';
 import useRestakeDelegatorInfo from '../../../../data/restake/useRestakeDelegatorInfo';
-import useRestakeOperatorMap from '../../../../data/restake/useRestakeOperatorMap';
 import useRestakeTVL from '../../../../data/restake/useRestakeTVL';
 import OperatorInfoCard from './OperatorInfoCard';
 import RegisteredBlueprintsCard from './RegisteredBlueprintsCard';

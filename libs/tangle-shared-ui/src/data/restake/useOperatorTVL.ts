@@ -1,8 +1,6 @@
-import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
-import type { AssetMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { of, switchMap } from 'rxjs';
-
+import { AssetMap, OperatorMap } from '../../types/restake';
 import safeFormatUnits from '../../utils/safeFormatUnits';
 
 export function useOperatorTVL(operatorMap: OperatorMap, assetMap: AssetMap) {

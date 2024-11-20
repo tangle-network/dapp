@@ -5,14 +5,11 @@ import type {
   PalletMultiAssetDelegationOperatorOperatorStatus,
 } from '@polkadot/types/lookup';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import type {
-  OperatorMap,
-  OperatorMetadata,
-} from '@webb-tools/tangle-shared-ui/types/restake';
 import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { map, type Observable, of } from 'rxjs';
+import usePolkadotApi from '../../hooks/usePolkadotApi';
+import { OperatorMap, OperatorMetadata } from '../../types/restake';
 
 type UseRestakeOperatorMapReturnType = {
   operatorMap: OperatorMap;

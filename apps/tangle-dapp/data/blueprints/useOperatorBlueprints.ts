@@ -1,3 +1,5 @@
+import { toPrimitiveBlueprint } from '@webb-tools/tangle-shared-ui/data/blueprints/utils/toPrimitiveBlueprint';
+import toPrimitiveService from '@webb-tools/tangle-shared-ui/data/blueprints/utils/toPrimitiveService';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import {
   TangleError,
@@ -5,9 +7,6 @@ import {
 } from '@webb-tools/tangle-shared-ui/types/error';
 import { useCallback } from 'react';
 import { catchError, map, of } from 'rxjs';
-
-import { toPrimitiveBlueprint } from './utils/toPrimitiveBlueprint';
-import toPrimitiveService from './utils/toPrimitiveService';
 
 type OperatorBlueprint = {
   blueprintId: number;

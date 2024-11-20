@@ -1,8 +1,8 @@
 import type { OperatorDelegatorBond } from '@webb-tools/tangle-shared-ui/types/restake';
 import type { AssetMap } from '@webb-tools/tangle-shared-ui/types/restake';
+import safeFormatUnits from '@webb-tools/tangle-shared-ui/utils/safeFormatUnits';
 
 import type { VaultToken } from '../../components/tables/Operators/types';
-import safeFormatUnits from '../../utils/safeFormatUnits';
 
 export function calculateTimeRemaining(
   currentRound: number,
