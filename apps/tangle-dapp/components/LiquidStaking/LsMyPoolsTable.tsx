@@ -325,13 +325,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
         variant={TableVariant.GLASS_INNER}
         tableProps={table}
         title={pluralize('pool', pools.length > 1 || pools.length === 0)}
-        className={twMerge(
-          'rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3',
-          isShown ? 'animate-slide-down' : 'animate-slide-up',
-        )}
-        thClassName="py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160"
-        tbodyClassName="!bg-transparent"
-        tdClassName="!bg-inherit border-t-0"
+        className={twMerge(isShown ? 'animate-slide-down' : 'animate-slide-up')}
         isPaginated
       />
 

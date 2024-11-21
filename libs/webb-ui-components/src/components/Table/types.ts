@@ -9,6 +9,7 @@ export enum TableVariant {
   DEFAULT,
   GLASS_INNER,
   GLASS_OUTER,
+  NESTED_IN_MODAL,
 }
 
 /**

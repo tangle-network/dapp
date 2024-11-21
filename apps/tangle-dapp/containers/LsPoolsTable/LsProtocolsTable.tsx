@@ -201,8 +201,6 @@ const LsProtocolsTable: FC = () => {
       tableProps={table}
       getExpandedRowContent={getExpandedRowContent}
       onRowClick={onRowClick}
-      tableClassName="border-separate border-spacing-y-3 pt-3"
-      tbodyClassName="!bg-transparent"
     />
   );
 };

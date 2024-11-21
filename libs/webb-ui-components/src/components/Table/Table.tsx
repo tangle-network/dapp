@@ -25,6 +25,8 @@ const getVariantThClass = (variant: TableVariant) => {
       return 'py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160';
     case TableVariant.GLASS_OUTER:
       return 'py-0 border-t-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0';
+    case TableVariant.NESTED_IN_MODAL:
+      return 'z-10 border-t-0 py-3 sticky top-0';
     case TableVariant.DEFAULT:
       return '';
   }
@@ -36,6 +38,8 @@ const getVariantTdClass = (variant: TableVariant) => {
       return '!bg-inherit border-t-0';
     case TableVariant.GLASS_OUTER:
       return 'border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden';
+    case TableVariant.NESTED_IN_MODAL:
+      return 'py-2 border-t-0';
     case TableVariant.DEFAULT:
       return '';
   }
@@ -45,6 +49,16 @@ const getVariantTrClass = (variant: TableVariant) => {
   switch (variant) {
     case TableVariant.GLASS_OUTER:
       return 'border-b border-mono-0 dark:border-mono-160 cursor-pointer';
+    case TableVariant.GLASS_INNER:
+    case TableVariant.DEFAULT:
+      return '';
+  }
+};
+
+const getVariantTableClass = (variant: TableVariant) => {
+  switch (variant) {
+    case TableVariant.GLASS_OUTER:
+      return 'border-separate border-spacing-y-3 py-3';
     case TableVariant.GLASS_INNER:
     case TableVariant.DEFAULT:
       return '';
@@ -96,6 +110,7 @@ export const Table = <T extends RowData>({
         <table
           className={twMerge(
             'w-full border-collapse table-auto',
+            getVariantTableClass(variant),
             tableClassName,
           )}
         >

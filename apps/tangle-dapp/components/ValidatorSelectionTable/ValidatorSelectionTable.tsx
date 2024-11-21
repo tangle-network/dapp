@@ -26,6 +26,7 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import cx from 'classnames';
 import React, {
   FC,
@@ -280,10 +281,9 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
             </div>
           ) : (
             <Table
+              variant={TableVariant.NESTED_IN_MODAL}
               tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
-              thClassName="z-10 border-t-0 py-3 sticky top-0"
               trClassName="cursor-pointer"
-              tdClassName="py-2 border-t-0"
               paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
               tableWrapperClassName="max-h-[340px] overflow-y-scroll"
               tableProps={table}
