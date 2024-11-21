@@ -14,7 +14,7 @@ const getTailwindSizeClass = (size: ModalContentProps['size']) => {
     case 'md':
       return 'max-w-[600px]';
     case 'lg':
-      return 'max-w-[840px]';
+      return 'max-w-[800px]';
   }
 };
 

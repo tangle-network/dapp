@@ -21,6 +21,7 @@ import {
   TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import assert from 'assert';
 import BN from 'bn.js';
 import { FC, ReactNode, useMemo } from 'react';
@@ -198,7 +199,7 @@ const UnstakeRequestsTable: FC = () => {
     else if (rows === null) {
       return (
         <Notice
-          title="Unstake requests"
+          title="Unstake Requests"
           content={<SkeletonRows rowCount={5} />}
         />
       );
@@ -207,7 +208,7 @@ const UnstakeRequestsTable: FC = () => {
     else if (rows.length === 0) {
       return (
         <Notice
-          title="No unstake requests"
+          title="No Unstake Requests"
           content="You will be able to withdraw your tokens after the unstake request has been processed. Schedule an unstake request to get started."
         />
       );
@@ -215,9 +216,7 @@ const UnstakeRequestsTable: FC = () => {
 
     return (
       <Table
-        thClassName="!bg-inherit border-t-0 bg-mono-0 !px-3 !py-2 whitespace-nowrap"
-        trClassName="!bg-inherit"
-        tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
+        variant={TableVariant.DEFAULT}
         tableProps={tableProps}
         totalRecords={rows.length}
         isPaginated

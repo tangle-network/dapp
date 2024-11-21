@@ -22,11 +22,11 @@ const getVariantContainerClass = (variant: TableVariant) => {
 const getVariantThClass = (variant: TableVariant) => {
   switch (variant) {
     case TableVariant.GLASS_INNER:
-      return 'py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160';
+      return 'py-3 !font-normal !bg-transparent border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160';
     case TableVariant.GLASS_OUTER:
-      return 'py-0 border-t-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0';
+      return 'py-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0';
     case TableVariant.NESTED_IN_MODAL:
-      return 'z-10 border-t-0 py-3 sticky top-0';
+      return 'z-10 py-3 sticky top-0';
     case TableVariant.DEFAULT:
       return '';
   }
@@ -35,11 +35,11 @@ const getVariantThClass = (variant: TableVariant) => {
 const getVariantTdClass = (variant: TableVariant) => {
   switch (variant) {
     case TableVariant.GLASS_INNER:
-      return '!bg-inherit border-t-0';
+      return '!bg-inherit';
     case TableVariant.GLASS_OUTER:
       return 'border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden';
     case TableVariant.NESTED_IN_MODAL:
-      return 'py-2 border-t-0';
+      return 'py-2';
     case TableVariant.DEFAULT:
       return '';
   }

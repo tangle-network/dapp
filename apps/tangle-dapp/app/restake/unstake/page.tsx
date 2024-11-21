@@ -326,7 +326,7 @@ const Page = () => {
           />
         ) : (
           <>
-            <RestakeDetailCard.Header title="No unstake requests found" />
+            <RestakeDetailCard.Header title="No Unstake Requests" />
 
             <Typography
               variant="body2"
@@ -334,7 +334,7 @@ const Page = () => {
             >
               You will be able to withdraw your tokens after the unstake request
               has been processed. To unstake your tokens go to the unstake tab
-              to schedule request.
+              to schedule a request.
             </Typography>
           </>
         )}
