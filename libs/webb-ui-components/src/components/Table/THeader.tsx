@@ -12,7 +12,7 @@ export const THeader = forwardRef<HTMLTableCellElement, THeaderProps>(
       <th
         {...props}
         className={twMerge(
-          'px-2 py-5 text-left border-b body1 first:pl-6 last:pr-6 border-mono-40 dark:border-mono-140 text-mono-140 dark:text-mono-60 bg-mono-0 dark:bg-mono-180',
+          'p-2 text-left border-b body1 first:pl-6 last:pr-6 border-mono-40 dark:border-mono-140 text-mono-140 dark:text-mono-60 bg-mono-0 dark:bg-mono-180',
           className,
         )}
         ref={ref}

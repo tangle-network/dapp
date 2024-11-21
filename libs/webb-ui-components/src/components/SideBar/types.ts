@@ -42,6 +42,7 @@ export interface SideBarItemsProps {
   isExpanded: boolean;
   className?: string;
   pathnameOrHash?: string;
+  onItemClick?: () => void;
 }
 
 export type SideBarItemProps = {

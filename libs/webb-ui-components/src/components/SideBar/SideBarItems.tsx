@@ -13,6 +13,7 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
   isExpanded,
   className,
   ActionButton,
+  onItemClick,
 }) => {
   const [activeItem, setActiveItem] = useState<number>(() => {
     const activeItemIndex = items.findIndex((item) => {
@@ -59,6 +60,7 @@ export const SideBarItems: FC<SideBarItemsProps> = ({
             isExpanded={isExpanded}
             isActive={activeItem === idx}
             setIsActive={() => setActiveItem(idx)}
+            onClick={onItemClick}
           />
         );
       })}

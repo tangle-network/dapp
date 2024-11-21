@@ -23,7 +23,6 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
     {
       children,
       isOpen = false,
-      usePortal,
       className,
       overrideTransitionContentProps,
       overrideTransitionOverlayProps,
@@ -36,39 +35,43 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
     const isSmOrLess = useIsBreakpoint('sm', true);
     const isMdOrLess = useIsBreakpoint('md', true);
 
-    const inner = (
+    return (
       <Transition show={isOpen} {...overrideTransitionRootProps}>
         <TransitionChild
           as={Fragment}
-          enter="ease-out duration-300"
+          enter="ease-out duration-200"
           enterFrom="opacity-0"
           enterTo="opacity-100"
-          leave="ease-in duration-200"
+          leave="ease-in duration-100"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
           {...overrideTransitionOverlayProps}
         >
           <DialogPrimitive.Overlay
             forceMount
-            className="fixed inset-0 z-20 bg-black/65"
+            className="fixed inset-0 z-20 bg-black/65 backdrop-blur-[1px]"
           />
         </TransitionChild>
 
         <TransitionChild
           as={Fragment}
-          enter="ease-out duration-300"
+          enter={twMerge(
+            'ease-out',
+            isMdOrLess ? 'duration-300' : 'duration-200',
+          )}
           enterFrom={twMerge(
-            isMdOrLess ? 'translate-y-full' : 'opacity-0 scale-95',
+            isMdOrLess ? 'translate-y-full' : 'opacity-0 top-[calc(50%+15px)]',
           )}
-          enterTo={twMerge(
-            isMdOrLess ? 'translate-y-0' : 'opacity-100 scale-100',
+          enterTo={twMerge(isMdOrLess ? 'translate-y-0' : 'opacity-100 top-0')}
+          leave={twMerge(
+            'ease-in',
+            isMdOrLess ? 'duration-200' : 'duration-100',
           )}
-          leave="ease-in duration-200"
           leaveFrom={twMerge(
-            isMdOrLess ? 'translate-y-0' : 'opacity-100 scale-100',
+            isMdOrLess ? 'translate-y-0' : 'opacity-100 scale-100 top-0',
           )}
           leaveTo={twMerge(
-            isMdOrLess ? 'translate-y-full' : 'opacity-0 scale-95',
+            isMdOrLess ? 'translate-y-full' : 'opacity-0 top-[calc(50%+15px)]',
           )}
           {...overrideTransitionContentProps}
         >
@@ -101,11 +104,5 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
         </TransitionChild>
       </Transition>
     );
-
-    if (usePortal) {
-      return <DialogPrimitive.Portal>{inner}</DialogPrimitive.Portal>;
-    }
-
-    return inner;
   },
 );

@@ -10,11 +10,6 @@ export interface ModalContentProps extends DialogContentProps {
   isOpen: boolean;
 
   /**
-   * Whether using portal to render modal
-   */
-  usePortal?: boolean;
-
-  /**
    * Props to override the transition component
    */
   overrideTransitionRootProps?: Partial<PropsOf<typeof Transition>>;

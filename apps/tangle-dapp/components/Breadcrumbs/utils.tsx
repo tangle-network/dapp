@@ -3,11 +3,11 @@ import {
   CoinLine,
   GiftLineIcon,
   GridFillIcon,
+  HomeFillIcon,
   ShuffleLine,
   TokenSwapFill,
   WaterDropletIcon,
 } from '@webb-tools/icons';
-import { UserFillIcon } from '@webb-tools/icons';
 import { IconBase } from '@webb-tools/icons/types';
 import { shortenString } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
@@ -19,7 +19,7 @@ import isSubstrateAddress from '../../utils/isSubstrateAddress';
 
 const BREADCRUMB_ICONS: Record<PagePath, (props: IconBase) => JSX.Element> = {
   [PagePath.CLAIM_AIRDROP]: GiftLineIcon,
-  [PagePath.ACCOUNT]: UserFillIcon,
+  [PagePath.ACCOUNT]: HomeFillIcon,
   [PagePath.NOMINATION]: CoinLine,
   [PagePath.BLUEPRINTS]: GridFillIcon,
   [PagePath.SERVICES]: GridFillIcon,

@@ -59,13 +59,14 @@ const OperatorsTable: FC<Props> = ({
       <Input
         id="search-validators"
         rightIcon={<Search className="mr-2" />}
-        placeholder="Search identity or address"
+        placeholder="Search by identity or address..."
         className="w-1/3 mb-1.5 ml-auto -mt-[54px]"
         isControlled
         debounceTime={500}
         value={globalFilter}
         onChange={setGlobalFilter}
       />
+
       <OperatorsTableUI
         globalFilter={globalFilter}
         onGlobalFilterChange={setGlobalFilter}

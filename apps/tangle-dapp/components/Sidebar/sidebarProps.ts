@@ -8,10 +8,10 @@ import {
   GiftLineIcon,
   GlobalLine,
   GridFillIcon,
+  HomeFillIcon,
   PolkadotJs,
   ShuffleLine,
   TokenSwapFill,
-  UserFillIcon,
   WaterDropletIcon,
 } from '@webb-tools/icons';
 import {
@@ -36,7 +36,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     href: PagePath.ACCOUNT,
     isInternal: true,
     isNext: true,
-    Icon: UserFillIcon,
+    Icon: HomeFillIcon,
     subItems: [],
   },
   {

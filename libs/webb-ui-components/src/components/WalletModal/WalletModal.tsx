@@ -80,7 +80,11 @@ export const WalletModal: FC<WalletModalProps> = ({
 
   return (
     <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
-      <ModalContent isOpen={isModalOpen} onCloseAutoFocus={() => resetState()}>
+      <ModalContent
+        isOpen={isModalOpen}
+        onCloseAutoFocus={() => resetState()}
+        onInteractOutside={() => handleOpenChange(false)}
+      >
         <WalletConnectionCard
           wallets={supportedWallets}
           onWalletSelect={(nextWallet) =>
