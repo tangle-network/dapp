@@ -1,7 +1,6 @@
 'use client';
 
-import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { CaretSortIcon, HomeIcon } from '@radix-ui/react-icons';
+import { HomeIcon } from '@radix-ui/react-icons';
 import CommandFillIcon from '@webb-tools/icons/CommandFillIcon';
 import { DocumentationIcon } from '@webb-tools/icons/DocumentationIcon';
 import GlobalLine from '@webb-tools/icons/GlobalLine';
@@ -9,13 +8,14 @@ import { GridFillIcon } from '@webb-tools/icons/GridFillIcon';
 import {
   Dropdown,
   DropdownBody,
+  DropdownButton,
   DropdownMenuItem,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
 import {
+  MobileSidebar,
   SideBar as SideBarCmp,
   SideBarFooterType,
   SideBarItemProps,
-  MobileSidebar,
   SidebarTangleClosedIcon,
 } from '@webb-tools/webb-ui-components/components/SideBar';
 import { TangleCloudLogo } from '@webb-tools/webb-ui-components/components/TangleCloudLogo';
@@ -86,43 +86,14 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
 
   return (
     <Dropdown>
-      <DropdownMenuTrigger
-        className={cx(
-          'flex items-center',
-          'rounded-full text-mono-100 dark:text-mono-120 px-2 py-3 block w-full',
-          'focus:text-mono-200 focus:dark:text-mono-0',
-          'focus:bg-mono-20 focus:dark:bg-mono-190',
-          'hover:bg-mono-20 dark:hover:bg-mono-190',
-          'data-[state=open]:bg-mono-20 data-[state=open]:dark:bg-mono-190',
-          'data-[state=open]:text-mono-200 data-[state=open]:dark:text-mono-0',
-          isExpanded ? 'justify-between' : 'justify-center',
-        )}
-      >
-        {/* <Button
-          title={capitalizedRole}
-          isFullWidth
-          rightIcon={
-            isExpanded ? (
-              <ArrowRight size="lg" className="!fill-mono-0" />
-            ) : (
-              <PersonIcon
-                width={getIconSizeInPixel('lg')}
-                height={getIconSizeInPixel('lg')}
-              />
-            )
-          }
-          className={cx(!isExpanded && '!p-2')}
-        >
-          {isExpanded ? capitalizedRole : ''}
-        </Button> */}
-
-        <div className="flex items-center gap-2 !text-inherit">
-          {ROLE_ICON_MAP[role]({ size: 'lg' })}
-          {isExpanded ? capitalizedRole : ''}
-        </div>
-
-        {isExpanded && <CaretSortIcon width={24} height={24} />}
-      </DropdownMenuTrigger>
+      <DropdownButton
+        isFullWidth
+        size="sm"
+        icon={ROLE_ICON_MAP[role]({ size: 'lg' })}
+        hideChevron={!isExpanded}
+        label={isExpanded ? capitalizedRole : ''}
+        className={cx('min-w-0 mx-auto', !isExpanded && 'px-2 w-fit')}
+      />
 
       <DropdownBody className="ml-2" side="right" align="center">
         <DropdownMenuItem
@@ -157,7 +128,7 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         Logo={TangleCloudLogo}
         logoLink={pathname}
         pathnameOrHash={pathname}
-        className="hidden lg:block"
+        className="hidden h-screen lg:block"
         isExpandedByDefault={isExpandedByDefault}
         onSideBarToggle={setSidebarCookieOnToggle}
         ActionButton={ActionButton}
