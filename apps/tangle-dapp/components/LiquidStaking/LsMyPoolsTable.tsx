@@ -23,6 +23,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ActionItemType } from '@webb-tools/webb-ui-components/components/ActionsDropdown/types';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import assert from 'assert';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -299,7 +300,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
     return (
       <TableStatus
         title="Wallet Not Connected"
-        description="Once you've connected an account, you'll be able to see and manage your liquid staking pools here."
+        description="Once you've connected an account, you'll be able to increase stake, unstake, and manage your liquid staking pools here."
         icon="🔍"
       />
     );
@@ -321,6 +322,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
   return (
     <>
       <Table
+        variant={TableVariant.GLASS_INNER}
         tableProps={table}
         title={pluralize('pool', pools.length > 1 || pools.length === 0)}
         className={twMerge(

@@ -16,7 +16,7 @@ const ChipText = ({ label }: Props) => {
     <Typography
       variant="body2"
       fw="bold"
-      className="text-current dark:text-current"
+      className="text-current dark:text-current flex gap-1 items-center justify-center"
     >
       {label}:{' '}
       {isLoading ? (

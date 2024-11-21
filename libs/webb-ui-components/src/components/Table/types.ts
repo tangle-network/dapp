@@ -5,6 +5,12 @@ import type {
   WebbComponentBase,
 } from '../../types';
 
+export enum TableVariant {
+  DEFAULT,
+  GLASS_INNER,
+  GLASS_OUTER,
+}
+
 /**
  * The `Table` props
  */
@@ -88,6 +94,8 @@ export interface TableProps<T extends RowData, E extends HTMLElement>
    * The optional function to get the expanded row content
    */
   getExpandedRowContent?: (row: Row<T>) => React.ReactNode;
+
+  variant: TableVariant;
 }
 
 /**

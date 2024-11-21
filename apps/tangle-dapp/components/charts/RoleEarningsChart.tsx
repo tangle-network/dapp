@@ -119,6 +119,7 @@ const TooltipContent = ({
       <Typography variant="body2" fw="semibold" className="whitespace-nowrap">
         Era: {era}
       </Typography>
+
       <div className="flex items-center gap-1">
         <div
           className="w-2 h-2 rounded-full"
@@ -126,6 +127,7 @@ const TooltipContent = ({
             backgroundColor: ChartColor.LAVENDER,
           }}
         />
+
         <Typography variant="body2" className="whitespace-nowrap">
           Reward: {getRoundedAmountString(reward)} {suffix ?? ''}
         </Typography>
