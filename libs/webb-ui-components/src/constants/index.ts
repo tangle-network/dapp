@@ -302,3 +302,5 @@ export const defaultSocialConfigs: SocialConfigsType[] =
 export const SIDEBAR_OPEN_KEY = 'isSidebarOpen';
 
 export const EMPTY_VALUE_PLACEHOLDER = '—';
+
+export const TANGLE_CLOUD_URL = 'https://cloud.tangle.tools';
