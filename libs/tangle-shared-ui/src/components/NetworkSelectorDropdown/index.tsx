@@ -39,9 +39,9 @@ const NetworkSelectionButton: FC = () => {
 
   const networkName = useMemo(() => {
     if (isConnecting) {
-      return 'Connecting...';
+      return 'Connecting';
     } else if (loading) {
-      return 'Loading...';
+      return 'Loading';
     }
 
     return network?.name ?? 'Unknown Network';

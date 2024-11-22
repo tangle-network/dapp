@@ -189,7 +189,7 @@ const DelegationsPayoutsContainer: FC = () => {
               buttonProps={{
                 isLoading: loading || isConnecting,
                 isDisabled: isMobile,
-                loadingText: isConnecting ? 'Connecting...' : 'Loading...',
+                loadingText: isConnecting ? 'Connecting' : 'Loading...',
                 onClick: () => toggleModal(true),
               }}
               icon="🔗"
@@ -224,7 +224,7 @@ const DelegationsPayoutsContainer: FC = () => {
               buttonProps={{
                 isLoading: loading || isConnecting,
                 isDisabled: isMobile,
-                loadingText: isConnecting ? 'Connecting...' : 'Loading...',
+                loadingText: isConnecting ? 'Connecting' : undefined,
                 onClick: () => toggleModal(true),
               }}
               icon="🔗"

@@ -51,11 +51,11 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
         className={twMerge(
           'w-full max-w-[550px]',
           'shadow-webb-lg dark:shadow-webb-lg-dark',
-          'flex flex-col gap-10',
+          'flex flex-col gap-7',
           className,
         )}
       >
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-7">
           <ChainSelectors />
 
           <AmountAndTokenInput />

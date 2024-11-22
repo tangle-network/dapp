@@ -30,6 +30,7 @@ import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
+import Container from '../../Container';
 import DetailsContainer from '../../DetailsContainer';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeeDetailItem from './FeeDetailItem';
@@ -214,7 +215,7 @@ const LsStakeCard: FC = () => {
   }, [lsPools]);
 
   return (
-    <div className="flex flex-col items-stretch justify-center gap-2">
+    <Container className="flex flex-col items-stretch justify-center gap-2">
       <LsInput
         ref={fromLsInputRef}
         id="liquid-staking-stake-from"
@@ -289,7 +290,7 @@ const LsStakeCard: FC = () => {
         setIsOpen={setIsSelectTokenModalOpen}
         onSelect={setLsPoolId}
       />
-    </div>
+    </Container>
   );
 };
 

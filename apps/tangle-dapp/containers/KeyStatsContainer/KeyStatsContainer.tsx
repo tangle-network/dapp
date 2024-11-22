@@ -19,10 +19,10 @@ export const KeyStatsContainer = () => {
       <div
         className={twMerge(
           'grid grid-cols-2 lg:grid-cols-3',
-          '[&>div]:border-r [&>div]:border-r-mono-40 [&>div]:dark:border-r-mono-160',
+          '[&>div]:border-r [&>div]:border-r-mono-80 [&>div]:dark:border-r-mono-160',
           '[&>div]:even:border-none lg:[&>div]:even:border-r',
           'lg:[&>div]:inline-block lg:[&>div]:basis-0 lg:[&>div]:grow',
-          '[&>div]:border-b [&>div]:border-b-mono-40 [&>div]:dark:border-b-mono-160',
+          '[&>div]:border-b [&>div]:border-b-mono-80 [&>div]:dark:border-b-mono-160',
         )}
       >
         <ValidatorCountKeyStat />

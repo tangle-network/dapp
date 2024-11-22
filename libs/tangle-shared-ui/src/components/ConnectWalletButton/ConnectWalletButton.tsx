@@ -49,7 +49,7 @@ const ConnectWalletButton = () => {
           ) : (
             <Button
               isLoading={isConnecting || loading}
-              loadingText={isConnecting ? 'Connecting...' : 'Loading...'}
+              loadingText={isConnecting ? 'Connecting' : undefined}
               onClick={() => toggleModal(true)}
               className="flex items-center justify-center px-6"
             >
