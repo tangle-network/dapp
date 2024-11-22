@@ -12,11 +12,11 @@ import {
   fuzzyFilter,
   Table,
 } from '@webb-tools/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import cx from 'classnames';
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { PagePath, type Service } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';

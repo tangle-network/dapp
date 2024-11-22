@@ -7,13 +7,13 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import Decimal from 'decimal.js';
 import Link from 'next/link';
 import { ComponentProps, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Address } from 'viem';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { ListCardWrapper } from './ListCardWrapper';
 
 export type AssetConfig = {
@@ -48,7 +48,7 @@ export const AssetList = ({
 
   return (
     <ListCardWrapper title={title} onClose={onClose}>
-      <div className="px-4 md:px-9 pb-4 border-b border-mono-40 dark:border-mono-170">
+      <div className="px-4 pb-4 border-b md:px-9 border-mono-40 dark:border-mono-170">
         <Input
           id="chain"
           rightIcon={<Search />}
@@ -97,7 +97,7 @@ export const AssetList = ({
                     <Link
                       href={asset.explorerUrl}
                       target="_blank"
-                      className="flex items-center gap-1 z-20 text-mono-120 dark:text-mono-100 dark:hover:text-mono-80"
+                      className="z-20 flex items-center gap-1 text-mono-120 dark:text-mono-100 dark:hover:text-mono-80"
                     >
                       <Typography
                         variant="body1"

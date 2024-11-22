@@ -8,9 +8,8 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { map, type Observable, of } from 'rxjs';
-
 import usePolkadotApi from '../../hooks/usePolkadotApi';
-import type { OperatorMap, OperatorMetadata } from '../../types/restake';
+import { OperatorMap, OperatorMetadata } from '../../types/restake';
 
 type UseRestakeOperatorMapReturnType = {
   operatorMap: OperatorMap;

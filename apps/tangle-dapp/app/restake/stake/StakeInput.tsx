@@ -1,6 +1,7 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
+import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useCallback, useMemo } from 'react';
@@ -20,7 +21,6 @@ import type {
 } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
-import type { IdentityType } from '../../../utils/polkadot';
 import AssetPlaceholder from '../AssetPlaceholder';
 import ErrorMessage from '../ErrorMessage';
 

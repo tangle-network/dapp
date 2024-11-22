@@ -1,24 +1,21 @@
 'use client';
 
-import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { HomeIcon, PersonIcon } from '@radix-ui/react-icons';
-import { ArrowRight } from '@webb-tools/icons';
+import { HomeIcon } from '@radix-ui/react-icons';
 import CommandFillIcon from '@webb-tools/icons/CommandFillIcon';
 import { DocumentationIcon } from '@webb-tools/icons/DocumentationIcon';
 import GlobalLine from '@webb-tools/icons/GlobalLine';
 import { GridFillIcon } from '@webb-tools/icons/GridFillIcon';
-import { getIconSizeInPixel } from '@webb-tools/icons/utils';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import {
   Dropdown,
   DropdownBody,
+  DropdownButton,
   DropdownMenuItem,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
 import {
+  MobileSidebar,
   SideBar as SideBarCmp,
   SideBarFooterType,
   SideBarItemProps,
-  MobileSidebar,
   SidebarTangleClosedIcon,
 } from '@webb-tools/webb-ui-components/components/SideBar';
 import { TangleCloudLogo } from '@webb-tools/webb-ui-components/components/TangleCloudLogo';
@@ -31,7 +28,7 @@ import cx from 'classnames';
 import capitalize from 'lodash/capitalize';
 import { usePathname } from 'next/navigation';
 import { FC, useMemo } from 'react';
-import useRoleStore, { Role } from '../stores/roleStore';
+import useRoleStore, { Role, ROLE_ICON_MAP } from '../stores/roleStore';
 import { PagePath } from '../types';
 
 type Props = {
@@ -89,39 +86,27 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
 
   return (
     <Dropdown>
-      <DropdownMenuTrigger asChild>
-        <Button
-          title={capitalizedRole}
-          isFullWidth
-          rightIcon={
-            isExpanded ? (
-              <ArrowRight size="lg" className="!fill-mono-0" />
-            ) : (
-              <PersonIcon
-                width={getIconSizeInPixel('lg')}
-                height={getIconSizeInPixel('lg')}
-              />
-            )
-          }
-          className={cx(!isExpanded && '!p-2')}
-        >
-          {isExpanded ? capitalizedRole : ''}
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownButton
+        isFullWidth
+        size="sm"
+        icon={ROLE_ICON_MAP[role]({ size: 'lg' })}
+        hideChevron={!isExpanded}
+        label={isExpanded ? capitalizedRole : ''}
+        className={cx('min-w-0 mx-auto', !isExpanded && 'px-2 w-fit')}
+      />
 
-      <DropdownBody
-        className={cx('mt-2', isExpanded && 'w-[248px]')}
-        align="center"
-      >
+      <DropdownBody className="ml-2" side="right" align="center">
         <DropdownMenuItem
           isActive={role === Role.OPERATOR}
           onClick={() => setRole(Role.OPERATOR)}
+          leftIcon={ROLE_ICON_MAP[Role.OPERATOR]()}
         >
           Operate
         </DropdownMenuItem>
         <DropdownMenuItem
           isActive={role === Role.DEPLOYER}
           onClick={() => setRole(Role.DEPLOYER)}
+          leftIcon={ROLE_ICON_MAP[Role.DEPLOYER]()}
         >
           Deploy
         </DropdownMenuItem>
@@ -143,7 +128,7 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         Logo={TangleCloudLogo}
         logoLink={pathname}
         pathnameOrHash={pathname}
-        className="hidden lg:block"
+        className="hidden h-screen lg:block"
         isExpandedByDefault={isExpandedByDefault}
         onSideBarToggle={setSidebarCookieOnToggle}
         ActionButton={ActionButton}

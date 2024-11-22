@@ -1,8 +1,10 @@
+import { useOperatorTVL } from '@webb-tools/tangle-shared-ui/data/restake/useOperatorTVL';
+import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
+
 import { useRestakeContext } from '../../context/RestakeContext';
-import type { DelegatorInfo, OperatorMap } from '../../types/restake';
+import type { DelegatorInfo } from '../../types/restake';
 import { useDelegatorTVL } from './useDelegatorTVL';
 import { useOperatorConcentration } from './useOperatorConcentration';
-import { useOperatorTVL } from './useOperatorTVL';
 
 export default function useRestakeTVL(
   operatorMap: OperatorMap,

@@ -1,9 +1,9 @@
 import { Option } from '@polkadot/types';
 import { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
-import useApiRx from '../../hooks/useApiRx';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
 import { SubstrateAddress } from '../../types/utils';

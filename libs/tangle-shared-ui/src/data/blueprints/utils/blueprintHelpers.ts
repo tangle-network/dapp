@@ -6,13 +6,12 @@ import type {
 } from '@polkadot/types/lookup';
 import type { ITuple } from '@polkadot/types/types';
 import merge from 'lodash/merge';
-
 import type { Blueprint } from '../../../types/blueprint';
-import type { OperatorMap } from '../../../types/restake';
+import { OperatorMap } from '../../../types/restake';
 import {
   getMultipleAccountInfo,
-  type IdentityType,
-} from '../../../utils/polkadot';
+  IdentityType,
+} from '../../../utils/polkadot/identity';
 import { toPrimitiveBlueprint } from './toPrimitiveBlueprint';
 
 export function extractBlueprintsData(

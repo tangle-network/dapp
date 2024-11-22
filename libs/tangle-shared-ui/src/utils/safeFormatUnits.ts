@@ -1,6 +1,6 @@
 import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config/constants';
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { formatUnits } from 'viem';
+import ensureError from './ensureError';
 
 /**
  * A safe version of formatUnits that returns an error message instead of throwing

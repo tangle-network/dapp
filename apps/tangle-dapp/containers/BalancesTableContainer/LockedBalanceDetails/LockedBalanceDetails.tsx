@@ -1,9 +1,10 @@
 import { BN_ZERO, formatDecimal } from '@polkadot/util';
 import { ArrowRightUp } from '@webb-tools/icons';
 import { Chip, Typography } from '@webb-tools/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useMemo } from 'react';
 
-import { EMPTY_VALUE_PLACEHOLDER, SubstrateLockId } from '../../../constants';
+import { SubstrateLockId } from '../../../constants';
 import useBalancesLock from '../../../data/balances/useBalancesLock';
 import useDemocracy from '../../../data/democracy/useDemocracy';
 import useCurrentEra from '../../../data/staking/useCurrentEra';
@@ -58,7 +59,7 @@ const LockedBalanceDetails: FC = () => {
     <div className="flex flex-row bg-glass dark:bg-none dark:bg-mono-180 px-3 py-2 pt-6 rounded-lg min-w-[630px]">
       <div className="flex flex-row w-full">
         {/* Type */}
-        <div className="flex flex-col w-full h-full items-start">
+        <div className="flex flex-col items-start w-full h-full">
           <div className="self-stretch">
             <HeaderCell title="Lock Type" />
           </div>
@@ -140,7 +141,7 @@ const LockedBalanceDetails: FC = () => {
           </div>
 
           {showNomination && (
-            <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-row items-center justify-between">
               <TextCell text={EMPTY_VALUE_PLACEHOLDER} />
 
               {visitNominationPageAction}
@@ -152,7 +153,7 @@ const LockedBalanceDetails: FC = () => {
             unbondingEntries.map((_entry, index) => (
               <div
                 key={index}
-                className="flex flex-row justify-between items-center"
+                className="flex flex-row items-center justify-between"
               >
                 <TextCell text={EMPTY_VALUE_PLACEHOLDER} />
 

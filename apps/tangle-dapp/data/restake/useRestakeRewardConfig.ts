@@ -1,10 +1,10 @@
 import type { Option } from '@polkadot/types';
 import type { PalletMultiAssetDelegationRewardsRewardConfig } from '@polkadot/types/lookup';
+import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { map, of } from 'rxjs';
 
-import usePolkadotApi from '../../hooks/usePolkadotApi';
 import type { RewardConfig, RewardConfigForAsset } from '../../types/restake';
 import hasQuery from '../../utils/hasQuery';
 

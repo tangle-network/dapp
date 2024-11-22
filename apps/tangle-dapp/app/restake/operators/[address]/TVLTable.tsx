@@ -1,4 +1,5 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
+import type { OperatorMetadata } from '@webb-tools/tangle-shared-ui/types/restake';
 import { ComponentProps, type FC, useMemo } from 'react';
 
 import VaultAssetsTable from '../../../../components/tables/VaultAssets';
@@ -7,10 +8,7 @@ import VaultsTable from '../../../../components/tables/Vaults';
 import type { VaultData } from '../../../../components/tables/Vaults/types';
 import { useRestakeContext } from '../../../../context/RestakeContext';
 import useRestakeRewardConfig from '../../../../data/restake/useRestakeRewardConfig';
-import type {
-  DelegatorInfo,
-  OperatorMetadata,
-} from '../../../../types/restake';
+import type { DelegatorInfo } from '../../../../types/restake';
 
 type Props = {
   operatorData: OperatorMetadata | undefined;

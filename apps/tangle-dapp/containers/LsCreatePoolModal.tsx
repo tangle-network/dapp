@@ -1,5 +1,6 @@
 import { BN } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   Alert,
@@ -20,7 +21,6 @@ import { LsNetworkId } from '../constants/liquidStaking/types';
 import useBalances from '../data/balances/useBalances';
 import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
-import useApiRx from '../hooks/useApiRx';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { TxStatus } from '../hooks/useSubstrateTx';
 import assertSubstrateAddress from '../utils/assertSubstrateAddress';

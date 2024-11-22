@@ -1,8 +1,8 @@
 import { DEFAULT_FLAGS_WAITING } from '@webb-tools/dapp-config';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
-import useApiRx from '../../hooks/useApiRx';
 import { useValidators } from './useValidators';
 
 const useWaitingValidators = () => {
