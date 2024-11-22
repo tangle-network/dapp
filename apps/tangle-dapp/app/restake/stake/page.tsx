@@ -3,6 +3,8 @@
 import { ChainConfig } from '@webb-tools/dapp-config';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
+import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
@@ -27,7 +29,6 @@ import {
   TxEvent,
 } from '../../../data/restake/RestakeTx/base';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
-import useRestakeOperatorMap from '../../../data/restake/useRestakeOperatorMap';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import useRestakeTxEventHandlersWithNoti, {
   type Props,
@@ -35,7 +36,6 @@ import useRestakeTxEventHandlersWithNoti, {
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
-import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { PagePath, QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';

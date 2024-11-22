@@ -101,8 +101,6 @@ export const STAKING_PAYEE_VALUE_TO_TEXT_MAP: Record<
   [StakingRewardsDestination.NONE]: StakingRewardsDestinationDisplayText.NONE,
 };
 
-export const EMPTY_VALUE_PLACEHOLDER = '—';
-
 /**
  * The default debounce delay in milliseconds.
  */

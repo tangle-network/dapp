@@ -23,11 +23,11 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ActionItemType } from '@webb-tools/webb-ui-components/components/ActionsDropdown/types';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import assert from 'assert';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';

@@ -10,13 +10,13 @@ import {
   ExternalLinkIcon,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { TangleCard } from '../../../components';
 import ValidatorSocials from '../../../components/ValidatorSocials';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useValidatorInfoCard from '../../../data/validatorDetails/useValidatorInfoCard';
 import ValueSkeleton from './ValueSkeleton';
 

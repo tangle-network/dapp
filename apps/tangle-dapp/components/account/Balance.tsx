@@ -4,9 +4,9 @@ import {
   HiddenValueEye,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC } from 'react';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 

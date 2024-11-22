@@ -1,4 +1,5 @@
-import useApiRx from '../../hooks/useApiRx';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
 const useSlashingSpans = () => {

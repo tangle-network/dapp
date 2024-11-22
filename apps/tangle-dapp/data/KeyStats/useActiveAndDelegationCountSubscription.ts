@@ -2,10 +2,9 @@
 
 import { formatNumber } from '@polkadot/util';
 import { DEFAULT_FLAGS_ELECTED } from '@webb-tools/dapp-config/constants/tangle';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback, useEffect, useState } from 'react';
 import { map } from 'rxjs';
-
-import useApiRx from '../../hooks/useApiRx';
 
 export default function useActiveAndDelegationCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {

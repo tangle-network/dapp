@@ -1,7 +1,6 @@
+import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { map, of, switchMap } from 'rxjs';
-
-import usePolkadotApi from '../../hooks/usePolkadotApi';
 
 export default function useRestakeCurrentRound() {
   const { apiRx } = usePolkadotApi();

@@ -1,10 +1,10 @@
 import { ApiRx } from '@polkadot/api';
 import type { PalletStakingStakingLedger } from '@polkadot/types/lookup';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
 import { useCallback } from 'react';
 import { map, of } from 'rxjs';
 
-import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 
 /**

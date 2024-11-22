@@ -1,7 +1,7 @@
 import { BN, BN_ZERO } from '@polkadot/util';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { useEffect, useState } from 'react';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import useBalances from '../../../data/balances/useBalances';
 import useParachainBalances from '../../../data/liquidStaking/parachain/useParachainBalances';

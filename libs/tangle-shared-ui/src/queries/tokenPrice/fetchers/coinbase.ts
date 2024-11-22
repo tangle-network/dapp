@@ -1,11 +1,11 @@
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import axios from 'axios';
 import z from 'zod';
+import ensureError from '../../../utils/ensureError';
 
 import type { TokenPriceFetcher } from '../types';
 
-export const coincapTokenPriceFetcher = {
-  endpoint: 'https://api.coincap.io/v2/assets',
+export const coinbaseTokenPriceFetcher = {
+  endpoint: 'https://api.coinbase.com/v2/exchange-rates',
 
   isBatchSupported: false,
 
@@ -13,26 +13,23 @@ export const coincapTokenPriceFetcher = {
     try {
       const response = await axios.get(this.endpoint, {
         params: {
-          search: token,
+          currency: token,
         },
       });
 
       const Schema = z.object({
-        data: z.array(
-          z.object({
-            priceUsd: z.string(),
+        data: z.object({
+          rates: z.object({
+            USD: z.string(),
           }),
-        ),
+        }),
       });
 
       const result = Schema.safeParse(response.data);
       if (result.success === false)
-        throw new Error('Invalid response from coincap');
+        throw new Error('Invalid response from coinbase');
 
-      if (result.data.data.length === 0)
-        throw new Error('Token not found on coincap');
-
-      return Number(result.data.data[0].priceUsd);
+      return Number(result.data.data.rates.USD);
     } catch (error) {
       return ensureError(error);
     }

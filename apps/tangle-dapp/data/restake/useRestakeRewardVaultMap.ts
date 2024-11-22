@@ -1,40 +1,29 @@
-import { useObservable, useObservableState } from 'observable-hooks';
-import { map, of, switchMap } from 'rxjs';
+import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
+import { rewardVaultRxQuery } from '@webb-tools/tangle-shared-ui/queries/restake/rewardVault';
+import { useObservableState } from 'observable-hooks';
+import { useMemo } from 'react';
+import { map } from 'rxjs';
 
-import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { RewardVaultMap } from '../../types/restake';
 
 export default function useRestakeRewardVaultMap() {
   const { apiRx } = usePolkadotApi();
 
-  const rewardVaultMap$ = useObservable(
-    (input$) =>
-      input$.pipe(
-        switchMap(([apiRx]) => {
-          if (apiRx.query.multiAssetDelegation?.rewardVaults === undefined) {
-            return of({} as RewardVaultMap);
-          }
+  const rewardVaultMap$ = useMemo(
+    () =>
+      rewardVaultRxQuery(apiRx).pipe(
+        map((entries) => {
+          return entries.reduce((acc, [vaultId, assetIds]) => {
+            if (assetIds === null) {
+              acc[vaultId.toString()] = assetIds;
+            } else {
+              acc[vaultId.toString()] = assetIds.map((assetId) =>
+                assetId.toString(),
+              );
+            }
 
-          return apiRx.query.multiAssetDelegation.rewardVaults.entries().pipe(
-            map((rewardVaultEntries) =>
-              rewardVaultEntries.reduce(
-                (acc, [vaultIdKey, optionalAssetId]) => {
-                  const assetIds = optionalAssetId.isSome
-                    ? optionalAssetId
-                        .unwrap()
-                        .map((assetId) => assetId.toString())
-                    : null;
-
-                  const vaultId = vaultIdKey.args[0].toString();
-
-                  acc[vaultId] = assetIds;
-
-                  return acc;
-                },
-                {} as RewardVaultMap,
-              ),
-            ),
-          );
+            return acc;
+          }, {} as RewardVaultMap);
         }),
       ),
     [apiRx],

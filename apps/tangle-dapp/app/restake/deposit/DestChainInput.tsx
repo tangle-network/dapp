@@ -1,6 +1,7 @@
 'use client';
 
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useMemo } from 'react';
@@ -11,7 +12,6 @@ import AvatarWithText from '../../../components/AvatarWithText';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import type { DepositFormFields } from '../../../types/restake';
-import type { IdentityType } from '../../../utils/polkadot';
 import SelectorPlaceholder from '../SelectorPlaceholder';
 
 type Props = {

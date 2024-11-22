@@ -20,6 +20,7 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -27,7 +28,6 @@ import { TableStatus } from '../../components';
 import PercentageCell from '../../components/tableCells/PercentageCell';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import { sharedTableStatusClxs } from '../../components/tables/shared';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
@@ -220,7 +220,7 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
         nextPage={table.nextPage}
         setPageIndex={table.setPageIndex}
         title={pluralize('pool', pools.length === 0 || pools.length > 1)}
-        className="border-t-0 py-5"
+        className="py-5 border-t-0"
       />
     </div>
   );

@@ -1,6 +1,6 @@
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback, useMemo } from 'react';
 
-import useApiRx from '../../hooks/useApiRx';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
 

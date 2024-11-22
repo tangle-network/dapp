@@ -1,7 +1,6 @@
 import type { ApiRx } from '@polkadot/api';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { map } from 'rxjs';
-
-import useApiRx from '../../hooks/useApiRx';
 
 /**
  * Get all the entries of the staking.erasRewardPoints storage

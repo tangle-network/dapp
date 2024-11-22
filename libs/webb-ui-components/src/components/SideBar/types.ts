@@ -1,7 +1,7 @@
 import type { AppEnvironment } from '@webb-tools/dapp-config/types';
 import type { DialogContentProps } from '@radix-ui/react-dialog';
 import type { IconBase } from '@webb-tools/icons/types';
-import { FunctionComponent, MouseEventHandler } from 'react';
+import { ComponentProps, FunctionComponent, MouseEventHandler } from 'react';
 import type { LogoProps } from '../Logo/types';
 
 export type SideBarFooterType = {
@@ -80,6 +80,12 @@ export type SideBarItemProps = {
    */
   environments?: AppEnvironment[];
 };
+
+export type StyledSideBarItemProps = ComponentProps<'div'> &
+  Pick<SideBarItemProps, 'isDisabled'> &
+  Pick<SideBarExtraItemProps, 'isActive' | 'isExpanded'> & {
+    subItemsCount?: number;
+  };
 
 export type SideBarExtraItemProps = {
   isExpanded?: boolean;

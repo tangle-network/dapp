@@ -1,9 +1,9 @@
 import { formatDecimal } from '@polkadot/util';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { FC, useCallback } from 'react';
 
 import useVestingInfo from '../../../data/vesting/useVestingInfo';
 import useApi from '../../../hooks/useApi';
-import useApiRx from '../../../hooks/useApiRx';
 import calculateTimeRemaining from '../../../utils/calculateTimeRemaining';
 import getBlockDate from '../../../utils/getBlockDate';
 import TextCell from './TextCell';

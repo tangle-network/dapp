@@ -7,6 +7,7 @@ import {
   SendPlanLineIcon,
 } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import useLocalStorage, {
   LocalStorageKey,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
@@ -20,7 +21,6 @@ import GlassCard from '../../components/GlassCard/GlassCard';
 import TangleTokenIcon from '../../components/TangleTokenIcon';
 import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
-import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { StaticSearchQueryPath } from '../../types';
 import TransferTxContainer from '../TransferTxContainer/TransferTxContainer';

@@ -3,15 +3,15 @@ import { AccountId32, Perbill } from '@polkadot/types/interfaces';
 import { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
+import {
+  extractDataFromIdentityInfo,
+  IdentityDataType,
+} from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 
 import {
   PalletDappStakingV3ContractStakeAmount,
   PalletDappStakingV3DAppInfo,
 } from '../../types/astarDappStaking';
-import {
-  extractDataFromIdentityInfo,
-  IdentityDataType,
-} from '../../utils/polkadot';
 
 export const fetchValidators = async (
   rpcEndpoint: string,
