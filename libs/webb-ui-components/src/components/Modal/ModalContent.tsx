@@ -1,7 +1,7 @@
 'use client';
 
 import { Transition, TransitionChild } from '@headlessui/react';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
+import * as Dialog from '@radix-ui/react-dialog';
 import { forwardRef, Fragment } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ModalContentProps } from './types';
@@ -47,7 +47,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
           leaveTo="opacity-0"
           {...overrideTransitionOverlayProps}
         >
-          <DialogPrimitive.Overlay
+          <Dialog.Overlay
             forceMount
             className="fixed inset-0 z-20 bg-black/65 backdrop-blur-[1px]"
           />
@@ -75,7 +75,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
           )}
           {...overrideTransitionContentProps}
         >
-          <DialogPrimitive.Content
+          <Dialog.Content
             forceMount
             {...props}
             className={twMerge(
@@ -91,16 +91,12 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
             )}
             ref={ref}
           >
-            <DialogPrimitive.Title className="sr-only">
-              Modal
-            </DialogPrimitive.Title>
+            <Dialog.Title className="sr-only">Modal</Dialog.Title>
 
-            <DialogPrimitive.Description className="sr-only">
-              Modal
-            </DialogPrimitive.Description>
+            <Dialog.Description className="sr-only">Modal</Dialog.Description>
 
             {children}
-          </DialogPrimitive.Content>
+          </Dialog.Content>
         </TransitionChild>
       </Transition>
     );

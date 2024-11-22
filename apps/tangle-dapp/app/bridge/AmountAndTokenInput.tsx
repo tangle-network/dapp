@@ -11,6 +11,7 @@ import { twMerge } from 'tailwind-merge';
 
 import AmountInput from '../../components/AmountInput';
 import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
 import { useBridge } from '../../context/BridgeContext';
 import { BridgeTokenId } from '../../types/bridge';
@@ -134,10 +135,10 @@ const AmountAndTokenInput: FC = () => {
   }, [tokenBalances, selectedToken.id]);
 
   return (
-    <div className="relative">
+    <div className="flex flex-col gap-2 justify-center items-end">
       <div
         className={twMerge(
-          'w-full flex items-center gap-2 bg-mono-20 dark:bg-mono-170 rounded-lg pr-4',
+          'w-full flex items-center gap-2 bg-mono-20 dark:bg-mono-180 rounded-lg pr-4',
           isAmountInputError && 'border border-red-70 dark:border-red-50',
         )}
       >
@@ -159,7 +160,6 @@ const AmountAndTokenInput: FC = () => {
           setErrorMessage={(error) =>
             setIsAmountInputError(error ? true : false)
           }
-          errorMessageClassName="absolute left-0 bottom-[-24px] !text-[14px] !leading-[21px]"
         />
 
         {/* Token Selector */}
@@ -167,7 +167,7 @@ const AmountAndTokenInput: FC = () => {
           value={selectedToken.symbol}
           iconType="token"
           onClick={openTokenModal}
-          className="w-[130px] border-0 px-3 bg-mono-40 dark:bg-mono-140"
+          className="min-w-[130px]"
           status="success"
         />
       </div>
@@ -178,14 +178,11 @@ const AmountAndTokenInput: FC = () => {
           className="w-[100px] absolute right-0 bottom-[-24px]"
         />
       ) : (
-        <Typography
-          variant="body2"
-          className="absolute right-0 bottom-[-24px] text-mono-120 dark:text-mono-100"
-        >
+        <Typography variant="body2">
           Balance:{' '}
           {selectedAssetBalance !== null
             ? `${selectedAssetBalance.toString()} ${selectedToken.symbol}`
-            : 'N/A'}
+            : EMPTY_VALUE_PLACEHOLDER}
         </Typography>
       )}
 

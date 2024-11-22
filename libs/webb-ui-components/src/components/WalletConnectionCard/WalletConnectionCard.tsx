@@ -65,7 +65,7 @@ export const WalletConnectionCard = forwardRef<
           )}
           ref={ref}
         >
-          <div className="w-[288px] lg:border-r border-r-mono-40 dark:border-r-mono-160">
+          <div className="w-[288px] md:border-r border-r-mono-40 dark:border-r-mono-160">
             <div className="px-6 py-4">
               <ModalTitle asChild>
                 <Typography variant="h5" fw="bold">
@@ -120,7 +120,7 @@ export const WalletConnectionCard = forwardRef<
       <div
         {...props}
         className={twMerge(
-          'max-w-full w-[356px] min-h-[448px] mx-9 rounded-lg bg-mono-0 dark:bg-mono-180',
+          'w-full md:max-w-[356px]',
           'flex flex-col',
           className,
         )}
@@ -153,7 +153,7 @@ export const WalletConnectionCard = forwardRef<
             className="w-full grow"
           />
         ) : (
-          <div className="flex items-center justify-center grow">
+          <div className="flex items-center justify-center grow py-4">
             <WalletContent
               failedWallet={failedWallet}
               connectingWallet={connectingWallet}
@@ -302,35 +302,23 @@ const WalletList: FC<
   }
 > = ({ wallets, onWalletSelect, className }) => {
   return (
-    <div className={className}>
-      <div className="pb-4">
-        <Typography
-          variant="body2"
-          fw="semibold"
-          className="px-6 py-2 text-mono-100 dark:text-mono-40"
+    <ul className={className}>
+      {wallets.map((wallet) => (
+        <ListItem
+          key={wallet.id}
+          className="cursor-pointer bg-mono-0 dark:bg-mono-180"
+          onClick={() => onWalletSelect?.(wallet)}
         >
-          Select below
-        </Typography>
+          <div className="flex items-center gap-2">
+            {wallet.Logo}
 
-        <ul>
-          {wallets.map((wallet) => (
-            <ListItem
-              key={wallet.id}
-              className="cursor-pointer bg-mono-0 dark:bg-mono-180"
-              onClick={() => onWalletSelect?.(wallet)}
-            >
-              <div className="flex items-center gap-2">
-                {wallet.Logo}
-
-                <Typography variant="body1" fw="bold">
-                  {wallet.title}
-                </Typography>
-              </div>
-            </ListItem>
-          ))}
-        </ul>
-      </div>
-    </div>
+            <Typography variant="body1" fw="bold">
+              {wallet.title}
+            </Typography>
+          </div>
+        </ListItem>
+      ))}
+    </ul>
   );
 };
 
@@ -341,7 +329,7 @@ const DownloadWallet: FC<
   }
 > = ({ downloadWalletURL, getHelpURL, connectingWallet, failedWallet }) => {
   return downloadWalletURL || getHelpURL ? (
-    <div className="flex items-center justify-between w-full px-6 py-4">
+    <div className="hidden md:flex items-center justify-between w-full px-6 py-4">
       <Typography
         variant="body2"
         fw="bold"
