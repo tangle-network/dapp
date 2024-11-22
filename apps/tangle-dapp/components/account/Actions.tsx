@@ -1,11 +1,11 @@
 'use client';
 
 import {
-  ArrowLeftRightLineIcon,
   CoinsLineIcon,
   CoinsStackedLineIcon,
   GiftLineIcon,
   LockUnlockLineIcon,
+  SendPlanLineIcon,
 } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { FC, useState } from 'react';
@@ -50,8 +50,8 @@ const Actions: FC = () => {
     <>
       <div className="flex items-center justify-start gap-6 overflow-x-auto">
         <ActionItem
-          label="Transfer"
-          Icon={ArrowLeftRightLineIcon}
+          label="Send"
+          Icon={SendPlanLineIcon}
           onClick={() => setIsTransferModalOpen(true)}
           // Disable while no account is connected, or when the active
           // account has no funds.

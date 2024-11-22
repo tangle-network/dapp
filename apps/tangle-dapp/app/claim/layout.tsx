@@ -4,7 +4,7 @@ import FAQSection from '@webb-tools/webb-ui-components/containers/FAQSection';
 import { Metadata } from 'next';
 import type { FC, PropsWithChildren } from 'react';
 
-import Container from '../../components/Container';
+import { GlassCard } from '../../components';
 import faqItems from '../../constants/faq';
 import { OpenGraphPageImageUrl } from '../../constants/openGraph';
 import createPageMetadata from '../../utils/createPageMetadata';
@@ -21,7 +21,7 @@ export const metadata: Metadata = createPageMetadata({
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <AppTemplate.Root className="border-none p-0 rounded-none">
-      <Container>
+      <GlassCard className="space-y-4 py-8">
         {children}
 
         <Divider className="my-16 bg-mono-180 dark:bg-mono-120" />
@@ -32,7 +32,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             answerClassName="[&_a:hover]:text-mono-100 [&_a]:underline"
           />
         </AppTemplate.Content>
-      </Container>
+      </GlassCard>
     </AppTemplate.Root>
   );
 };
