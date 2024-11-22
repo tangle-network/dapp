@@ -12,7 +12,6 @@ import { useLayoutBgClassName } from '@webb-tools/webb-ui-components/next-utils'
 import { type FC, type PropsWithChildren } from 'react';
 
 import {
-  Breadcrumbs,
   BridgeTxQueueDropdown,
   MobileSidebar,
   Sidebar,
@@ -54,8 +53,6 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
             <div className="flex items-center justify-between py-6">
               <div className="flex items-center space-x-4 lg:space-x-0">
                 <MobileSidebar />
-
-                <Breadcrumbs className="hidden md:block" />
               </div>
 
               <div className="flex items-center gap-2">
@@ -64,8 +61,6 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
                 <BridgeTxQueueDropdown />
               </div>
             </div>
-
-            <Breadcrumbs className="md:hidden !mt-0" />
 
             {children}
           </div>

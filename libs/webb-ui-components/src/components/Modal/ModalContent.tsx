@@ -68,7 +68,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
             isMdOrLess ? 'duration-200' : 'duration-100',
           )}
           leaveFrom={twMerge(
-            isMdOrLess ? 'translate-y-0' : 'opacity-100 scale-100 top-0',
+            isMdOrLess ? 'translate-y-0' : 'opacity-100 top-0',
           )}
           leaveTo={twMerge(
             isMdOrLess ? 'translate-y-full' : 'opacity-0 top-[calc(50%+15px)]',
