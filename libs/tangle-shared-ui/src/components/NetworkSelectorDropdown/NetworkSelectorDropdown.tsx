@@ -104,17 +104,22 @@ const NetworkOption: FC<NetworkOptionProps> = ({
       leftIcon={<ChainIcon size="lg" name={name} />}
       onClick={handleClick}
       className="flex justify-between w-full py-3"
-      isActive={isSelected}
     >
-      <div className="flex items-center gap-2">
-        <Typography variant="body1" fw="semibold" className="dark:text-mono-0">
-          {name}
-        </Typography>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Typography
+            variant="body1"
+            fw="semibold"
+            className="dark:text-mono-0"
+          >
+            {name}
+          </Typography>
 
-        {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
+          {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
+        </div>
+
+        {isSelected && <StatusIndicator variant="success" />}
       </div>
-
-      {isSelected && <StatusIndicator variant="success" />}
     </DropdownMenuItem>
   );
 };

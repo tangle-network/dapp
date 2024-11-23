@@ -208,7 +208,7 @@ const LsStakeCard: FC = () => {
 
   const allPools = useMemo(() => {
     if (!(lsPools instanceof Map)) {
-      return null;
+      return lsPools;
     }
 
     return Array.from(lsPools.values());
