@@ -23,7 +23,7 @@ const SelectedPoolIndicator: FC<SelectedPoolIndicatorProps> = ({ onClick }) => {
       className={twMerge(
         'group flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-170 px-4 py-2 rounded-lg',
         onClick !== undefined &&
-          'cursor-pointer hover:bg-mono-20 hover:dark:bg-mono-160',
+          'cursor-pointer hover:bg-mono-60 hover:hover:dark:bg-mono-160',
       )}
     >
       {name !== null && (

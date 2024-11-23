@@ -18,11 +18,10 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
         type="button"
         ref={ref}
         className={twMerge(
-          'rounded-lg border-2 py-2 px-4 max-w-52',
-          'bg-mono-0/10 border-mono-60',
-          'hover:bg-mono-0/30',
-          'dark:bg-mono-0/5 dark:border-mono-140',
-          'dark:hover:bg-mono-0/10',
+          'rounded-lg py-2 px-4 max-w-56',
+          'bg-mono-0/10 dark:bg-mono-0/5',
+          'hover:bg-mono-100/10 dark:hover:bg-mono-0/10',
+          'border-2 border-mono-60 dark:border-mono-140',
           className,
         )}
       >

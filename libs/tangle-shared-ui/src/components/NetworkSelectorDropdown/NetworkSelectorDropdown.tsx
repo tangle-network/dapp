@@ -110,6 +110,7 @@ const NetworkOption: FC<NetworkOptionProps> = ({
         <Typography variant="body1" fw="semibold" className="dark:text-mono-0">
           {name}
         </Typography>
+
         {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
       </div>
 

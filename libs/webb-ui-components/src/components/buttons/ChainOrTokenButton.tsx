@@ -62,10 +62,12 @@ const ChainOrTokenButton = forwardRef<
                 name={value}
               />
             )}
+
             <p className={twMerge('font-bold', textClassName)}>
               {value ?? placeholder}
             </p>
           </div>
+
           {!disabled && (
             <ChevronDown
               size="lg"

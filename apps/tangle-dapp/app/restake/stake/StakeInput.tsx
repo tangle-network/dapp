@@ -22,7 +22,7 @@ import type {
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import AssetPlaceholder from '../AssetPlaceholder';
-import ErrorMessage from '../ErrorMessage';
+import ErrorMessage from '../../../components/ErrorMessage';
 
 type Props = {
   amountError: string | undefined;

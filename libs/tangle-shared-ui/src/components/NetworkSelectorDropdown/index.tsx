@@ -80,10 +80,9 @@ const NetworkSelectionButton: FC = () => {
             <div
               className={twMerge(
                 'cursor-pointer p-2 rounded-full',
-                'bg-mono-0/10 border-mono-60',
-                'dark:bg-mono-0/5 dark:border-mono-140',
-                'hover:bg-mono-0/30',
-                'dark:hover:bg-mono-0/10',
+                'bg-mono-0/10 dark:bg-mono-0/5',
+                'hover:bg-mono-0/30 dark:hover:bg-mono-0/10',
+                'border-mono-60 dark:border-mono-140',
               )}
               onClick={switchToCorrectEvmChain}
             >
@@ -133,11 +132,10 @@ const TriggerButton: FC<TriggerButtonProps> = ({
       type="button"
       disabled={isLoading}
       className={twMerge(
-        'rounded-lg border-2 p-2',
-        'bg-mono-0/10 dark:bg-mono-0/5',
-        'hover:bg-mono-200 dark:hover:bg-mono-0/10',
-        'border-mono-60 dark:border-mono-140',
-        'flex items-center gap-2',
+        'flex items-center gap-2 rounded-lg p-2',
+        'bg-transparent dark:bg-transparent',
+        'hover:bg-mono-100/10 dark:hover:bg-mono-0/10',
+        'border-2 border-mono-60 dark:border-mono-140',
         className,
       )}
     >

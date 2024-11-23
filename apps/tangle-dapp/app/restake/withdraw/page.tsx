@@ -35,7 +35,7 @@ import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import ActionButtonBase from '../ActionButtonBase';
 import AssetPlaceholder from '../AssetPlaceholder';
-import ErrorMessage from '../ErrorMessage';
+import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
