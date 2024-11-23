@@ -12,6 +12,7 @@ import {
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
@@ -20,7 +21,6 @@ import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 
 import AvatarWithText from '../../../components/AvatarWithText';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';

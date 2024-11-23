@@ -13,6 +13,7 @@ import toEvmAddress32 from '../../../utils/toEvmAddress32';
 
 export type LsCreatePoolTxContext = {
   name: string;
+  iconUrl?: string;
   initialBondAmount: BN;
   rootAddress: Address | SubstrateAddress;
   nominatorAddress: Address | SubstrateAddress;
@@ -28,6 +29,7 @@ const useLsCreatePoolTx = () => {
         toSubstrateAddress(context.nominatorAddress),
         toSubstrateAddress(context.bouncerAddress),
         context.name,
+        context.iconUrl ?? null,
       );
     }, []);
 

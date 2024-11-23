@@ -1,5 +1,6 @@
 'use client';
 
+import { BN } from '@polkadot/util';
 import { WalletFillIcon, WalletLineIcon } from '@webb-tools/icons';
 import {
   SkeletonLoader,
@@ -66,8 +67,7 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
 
   const isClickable =
     onlyShowTooltipWhenBalanceIsSet &&
-    balance !== null &&
-    typeof balance !== 'string' &&
+    balance instanceof BN &&
     !balance.isZero();
 
   const handleClick = useCallback(() => {

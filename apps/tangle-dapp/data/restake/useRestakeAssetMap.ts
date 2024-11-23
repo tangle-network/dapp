@@ -5,12 +5,6 @@ import { useObservableState } from 'observable-hooks';
 
 import useRestakeAssetIds from './useRestakeAssetIds';
 
-/**
- * Hook to retrieve the asset map for restaking.
- * @returns
- *  - `assetMap`: The asset map.
- *  - `assetMap$`: The observable for the asset map.
- */
 export default function useRestakeAssetMap() {
   const { apiRx } = usePolkadotApi();
   const { activeChain } = useWebContext();

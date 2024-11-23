@@ -11,6 +11,7 @@ import { twMerge } from 'tailwind-merge';
 
 import formatTangleBalance from '../../../utils/formatTangleBalance';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
+import pluralize from '../../../utils/pluralize';
 import type { Props, VaultAssetData } from './types';
 
 const columnHelper = createColumnHelper<VaultAssetData>();
@@ -37,7 +38,7 @@ const columns = [
   }),
 ];
 
-const VaultAssetsTable: FC<Props> = ({ data = [], isShown }) => {
+const VaultAssetsTable: FC<Props> = ({ data, isShown }) => {
   const table = useReactTable(
     useMemo(
       () =>
@@ -59,7 +60,7 @@ const VaultAssetsTable: FC<Props> = ({ data = [], isShown }) => {
   return (
     <Table
       tableProps={table}
-      title="Assets"
+      title={pluralize('asset', data.length !== 1)}
       className={twMerge(
         'rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200',
         isShown ? 'animate-slide-down' : 'animate-slide-up',

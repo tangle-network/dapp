@@ -1,12 +1,12 @@
 'use client';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
 import FeeDetailsCmp from '@webb-tools/webb-ui-components/components/FeeDetails';
 import type { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Decimal from 'decimal.js';
 import { FC, useMemo } from 'react';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { useBridge } from '../../context/BridgeContext';
 import useSelectedToken from './hooks/useSelectedToken';
 import useTypedChainId from './hooks/useTypedChainId';

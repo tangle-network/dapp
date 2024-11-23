@@ -1,5 +1,4 @@
 export * from './BondedTokensBalanceInfo';
-export * from './Breadcrumbs';
 export { default as BridgeTxQueueDropdown } from './BridgeTxQueueDropdown';
 export { default as GlassCard } from './GlassCard';
 export { default as GlassCardWithLogo } from './GlassCardWithLogo';
@@ -9,7 +8,6 @@ export * from './NominationsTable';
 export * from './NominatorStatsItem';
 export * from './PayoutTable';
 export * from './ServicesKeyMetricItem';
-export * from './ServiceTable';
 export * from './Sidebar';
 export * from './skeleton';
 export * from './TableStatus';

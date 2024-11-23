@@ -1,11 +1,11 @@
 'use client';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
 import { useMemo } from 'react';
 import { UseFormWatch } from 'react-hook-form';
 
 import DetailsContainer from '../../../components/DetailsContainer';
 import DetailItem from '../../../components/LiquidStaking/stakeAndUnstake/DetailItem';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeRewardConfig from '../../../data/restake/useRestakeRewardConfig';

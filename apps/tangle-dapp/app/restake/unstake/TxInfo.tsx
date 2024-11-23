@@ -1,6 +1,7 @@
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
+
 import DetailsContainer from '../../../components/DetailsContainer';
 import DetailItem from '../../../components/LiquidStaking/stakeAndUnstake/DetailItem';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 
 const TxInfo = () => {

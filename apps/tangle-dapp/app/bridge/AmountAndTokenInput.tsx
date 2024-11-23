@@ -1,7 +1,12 @@
 'use client';
 
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
-import { Modal, ModalContent, useModal } from '@webb-tools/webb-ui-components';
+import {
+  EMPTY_VALUE_PLACEHOLDER,
+  Modal,
+  ModalContent,
+  useModal,
+} from '@webb-tools/webb-ui-components';
 import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/buttons/ChainOrTokenButton';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
@@ -11,7 +16,6 @@ import { twMerge } from 'tailwind-merge';
 
 import AmountInput from '../../components/AmountInput';
 import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import { BRIDGE_SUPPORTED_TOKENS } from '../../constants/bridge';
 import { useBridge } from '../../context/BridgeContext';
 import { BridgeTokenId } from '../../types/bridge';

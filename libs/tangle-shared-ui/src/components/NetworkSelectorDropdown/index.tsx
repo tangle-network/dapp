@@ -134,10 +134,9 @@ const TriggerButton: FC<TriggerButtonProps> = ({
       disabled={isLoading}
       className={twMerge(
         'rounded-lg border-2 p-2',
-        'bg-mono-0/10 border-mono-60',
-        'hover:bg-mono-0/30',
-        'dark:bg-mono-0/5 dark:border-mono-140',
-        'dark:hover:bg-mono-0/10',
+        'bg-mono-0/10 dark:bg-mono-0/5',
+        'hover:bg-mono-200 dark:hover:bg-mono-0/10',
+        'border-mono-60 dark:border-mono-140',
         'flex items-center gap-2',
         className,
       )}
