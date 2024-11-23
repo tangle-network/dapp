@@ -58,12 +58,12 @@ export const WalletConnectionCard = forwardRef<
         )}
         ref={ref}
       >
-        <div className="min-w-[250px] md:border-r border-mono-40 dark:border-mono-160">
+        <div className="w-full md:min-w-[250px] md:min-h-[400px] md:border-r border-mono-40 dark:border-mono-160">
           <WalletList wallets={wallets} onWalletSelect={onWalletSelect} />
         </div>
 
         {/** Wallet frame */}
-        <div className="w-full flex flex-col items-center justify-center">
+        <div className="w-full hidden md:flex flex-col items-center justify-center">
           {/** Content */}
           <WalletContent
             failedWallet={failedWallet}

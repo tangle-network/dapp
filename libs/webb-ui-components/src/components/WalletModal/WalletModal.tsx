@@ -84,7 +84,7 @@ export const WalletModal: FC<WalletModalProps> = ({
         isOpen={isModalOpen}
         onCloseAutoFocus={() => resetState()}
         onInteractOutside={() => handleOpenChange(false)}
-        className="overflow-hidden min-h-[450px]"
+        className="overflow-hidden"
       >
         <ModalHeader
           onClose={() => handleOpenChange(false)}
