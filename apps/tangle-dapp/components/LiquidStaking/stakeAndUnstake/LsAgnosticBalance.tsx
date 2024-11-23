@@ -97,7 +97,7 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
       )}
 
       {formattedBalance === null ? (
-        <SkeletonLoader className="w-12 rounded-2xl" size="md" />
+        <SkeletonLoader className="w-12 rounded-2xl bg-mono-60" size="md" />
       ) : (
         <Typography
           variant="body1"

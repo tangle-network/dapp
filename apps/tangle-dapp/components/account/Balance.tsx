@@ -32,7 +32,7 @@ const Balance: FC = () => {
             Transferable Balance
           </Typography>
 
-          <HiddenValueEye />
+          <HiddenValueEye className="hover:bg-mono-40" />
         </div>
 
         <div className="flex items-center">
