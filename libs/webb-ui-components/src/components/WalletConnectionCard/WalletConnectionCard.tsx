@@ -1,7 +1,7 @@
 'use client';
 
 import { Wallet } from '@webb-tools/dapp-config';
-import { Spinner, WalletLineIcon } from '@webb-tools/icons';
+import { ArrowRightUp, Spinner, WalletLineIcon } from '@webb-tools/icons';
 import { FC, cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { PropsOf } from '../../types';
@@ -9,6 +9,7 @@ import { Typography } from '../../typography';
 import { ListItem } from '../ListCard/ListItem';
 import { Button } from '../buttons';
 import { WalletConnectionCardProps } from './types';
+import useIsBreakpoint from '../../hooks/useIsBreakpoint';
 
 export const WalletConnectionCard = forwardRef<
   HTMLDivElement,
@@ -33,6 +34,8 @@ export const WalletConnectionCard = forwardRef<
     },
     ref,
   ) => {
+    const isMdOrLess = useIsBreakpoint('md', true);
+
     const connectingWallet = useMemo(() => {
       if (!connectingWalletId) {
         return;
@@ -49,40 +52,43 @@ export const WalletConnectionCard = forwardRef<
       return wallets.find((wallet) => wallet.id === failedWalletId);
     }, [failedWalletId, wallets]);
 
+    const showList = !isMdOrLess || (!connectingWallet && !failedWallet);
+
+    const showContent = !isMdOrLess || connectingWallet || failedWallet;
+
     return (
-      <div
-        {...props}
-        className={twMerge(
-          'flex w-full rounded-lg bg-mono-0 dark:bg-mono-180',
-          className,
+      <div {...props} className={twMerge('flex w-full', className)} ref={ref}>
+        {showList && (
+          <div className="flex-grow md:max-w-[220px] md:min-h-[400px] md:border-r border-mono-40 dark:border-mono-160">
+            <WalletList wallets={wallets} onWalletSelect={onWalletSelect} />
+          </div>
         )}
-        ref={ref}
-      >
-        <div className="w-full md:min-w-[250px] md:min-h-[400px] md:border-r border-mono-40 dark:border-mono-160">
-          <WalletList wallets={wallets} onWalletSelect={onWalletSelect} />
-        </div>
 
-        {/** Wallet frame */}
-        <div className="w-full hidden md:flex flex-col items-center justify-center">
-          {/** Content */}
-          <WalletContent
-            failedWallet={failedWallet}
-            connectingWallet={connectingWallet}
-            errorBtnText={errorBtnText}
-            errorMessage={errorMessage}
-            onTryAgainBtnClick={onTryAgainBtnClick}
-            contentDefaultText={contentDefaultText}
-            tryAgainBtnProps={tryAgainBtnProps}
-          />
+        {showContent && (
+          <div className="flex-grow flex flex-col items-stretch justify-center py-6 md:py-0">
+            {/** Content */}
+            <WalletContent
+              className="flex flex-col gap-2 items-center justify-center flex-grow self-center"
+              failedWallet={failedWallet}
+              connectingWallet={connectingWallet}
+              errorBtnText={errorBtnText}
+              errorMessage={errorMessage}
+              onTryAgainBtnClick={onTryAgainBtnClick}
+              contentDefaultText={contentDefaultText}
+              tryAgainBtnProps={tryAgainBtnProps}
+            />
 
-          {/** Bottom */}
-          <DownloadWallet
-            downloadWalletURL={downloadWalletURL}
-            getHelpURL={getHelpURL}
-            connectingWallet={connectingWallet}
-            failedWallet={failedWallet}
-          />
-        </div>
+            {/** Bottom */}
+            <div className="hidden md:flex flex-shrink items-center justify-end">
+              <DownloadWallet
+                downloadWalletURL={downloadWalletURL}
+                getHelpURL={getHelpURL}
+                connectingWallet={connectingWallet}
+                failedWallet={failedWallet}
+              />
+            </div>
+          </div>
+        )}
       </div>
     );
   },
@@ -122,11 +128,7 @@ const WalletContent = forwardRef<
     ref,
   ) => {
     return (
-      <div
-        {...props}
-        className={twMerge('space-y-2 w-[320px]', className)}
-        ref={ref}
-      >
+      <div {...props} className={twMerge('max-w-[320px]', className)} ref={ref}>
         {/** Display failed wallet */}
         {failedWallet && (
           <>
@@ -217,7 +219,7 @@ const WalletList: FC<
       {wallets.map((wallet) => (
         <ListItem
           key={wallet.id}
-          className="cursor-pointer bg-mono-0 dark:bg-mono-180"
+          className="cursor-pointer"
           onClick={() => onWalletSelect?.(wallet)}
         >
           <div className="flex items-center gap-2">
@@ -240,7 +242,7 @@ const DownloadWallet: FC<
   }
 > = ({ downloadWalletURL, getHelpURL, connectingWallet, failedWallet }) => {
   return downloadWalletURL || getHelpURL ? (
-    <div className="hidden md:flex items-center justify-between w-full px-6 py-4">
+    <div className="flex items-center justify-between w-full px-6 py-4">
       <Typography
         variant="body2"
         fw="bold"
@@ -249,12 +251,16 @@ const DownloadWallet: FC<
         Don't have{' '}
         {connectingWallet?.title ?? failedWallet?.title ?? 'the wallet'}?
       </Typography>
+
       {downloadWalletURL ? (
         <Button
           variant="utility"
           size="sm"
           target="_blank"
           href={downloadWalletURL.toString()}
+          rightIcon={
+            <ArrowRightUp className="fill-current dark:fill-current" />
+          }
         >
           Download
         </Button>

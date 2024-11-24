@@ -13,13 +13,13 @@ import type {
 } from 'react-hook-form';
 import { formatUnits } from 'viem';
 
+import ErrorMessage from '../../../components/ErrorMessage';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import { DepositFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import AssetPlaceholder from '../AssetPlaceholder';
-import ErrorMessage from '../../../components/ErrorMessage';
 
 type Props = {
   amountError?: string;

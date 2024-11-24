@@ -17,6 +17,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 
+import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
@@ -35,7 +36,6 @@ import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import ActionButtonBase from '../ActionButtonBase';
 import AssetPlaceholder from '../AssetPlaceholder';
-import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
