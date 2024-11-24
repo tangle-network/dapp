@@ -1,11 +1,11 @@
 'use client';
 
+import { Card } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { FC, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import AddressInput, { AddressType } from '../../components/AddressInput';
-import Container from '../../components/Container';
 import { useBridge } from '../../context/BridgeContext';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { isEVMChain } from '../../utils/bridge';
@@ -15,9 +15,9 @@ import ChainSelectors from './ChainSelectors';
 import FeeDetails from './FeeDetails';
 import useActionButton from './hooks/useActionButton';
 
-interface BridgeContainerProps {
+type BridgeContainerProps = {
   className?: string;
-}
+};
 
 const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
   const {
@@ -47,11 +47,9 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
 
   return (
     <>
-      <Container
+      <Card
         className={twMerge(
-          'w-full max-w-[550px]',
-          'shadow-webb-lg dark:shadow-webb-lg-dark',
-          'flex flex-col gap-7',
+          'flex flex-col gap-7 w-full max-w-[590px]',
           className,
         )}
       >
@@ -88,7 +86,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
         >
           {buttonText}
         </Button>
-      </Container>
+      </Card>
 
       <BridgeConfirmationModal
         isOpen={isConfirmModalOpen}

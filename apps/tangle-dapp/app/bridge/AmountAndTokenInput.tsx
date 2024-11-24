@@ -142,7 +142,8 @@ const AmountAndTokenInput: FC = () => {
     <div className="flex flex-col gap-2 justify-center items-end">
       <div
         className={twMerge(
-          'w-full flex items-center gap-2 bg-mono-20 dark:bg-mono-180 rounded-lg pr-4',
+          'w-full flex items-center gap-2 rounded-lg pr-4',
+          'bg-mono-20 dark:bg-mono-180',
           isAmountInputError && 'border border-red-70 dark:border-red-50',
         )}
       >

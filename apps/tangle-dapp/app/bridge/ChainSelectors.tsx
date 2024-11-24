@@ -90,7 +90,7 @@ const ChainSelectors: FC = () => {
   return (
     <div className="flex flex-col md:flex-row justify-center md:justify-between items-center md:items-end md:gap-3">
       {/* Source Chain Selector */}
-      <div className="flex flex-col gap-2 w-full">
+      <div className="flex flex-col gap-2 flex-1">
         <Label
           className="text-mono-120 dark:text-mono-120 font-bold"
           htmlFor="bridge-source-chain-selector"
@@ -100,8 +100,7 @@ const ChainSelectors: FC = () => {
 
         <ChainOrTokenButton
           value={selectedSourceChain.name}
-          textClassName="text-xl"
-          className="w-full text-nowrap min-h-[72px] bg-mono-20 dark:bg-mono-180"
+          className="w-full min-h-[72px]"
           iconType="chain"
           onClick={openSourceChainModal}
           disabled={sourceChainOptions.length <= 1}
@@ -109,14 +108,14 @@ const ChainSelectors: FC = () => {
       </div>
 
       <div
-        className="cursor-pointer px-1 pt-5 md:pt-0 md:pb-5"
+        className="flex-shrink cursor-pointer px-1 pt-5 md:pt-0 md:pb-5"
         onClick={onSwitchChains}
       >
         <ArrowRight size="lg" className="rotate-90 md:rotate-0" />
       </div>
 
       {/* Destination Chain Selector */}
-      <div className="flex flex-col gap-2 w-full">
+      <div className="flex flex-col gap-2 flex-1">
         <Label
           className="text-mono-120 dark:text-mono-120 font-bold"
           htmlFor="bridge-destination-chain-selector"
@@ -126,8 +125,7 @@ const ChainSelectors: FC = () => {
 
         <ChainOrTokenButton
           value={selectedDestinationChain.name}
-          textClassName="text-xl"
-          className="w-full text-nowrap min-h-[72px] bg-mono-20 dark:bg-mono-180"
+          className="w-full min-h-[72px]"
           iconType="chain"
           onClick={openDestinationChainModal}
           disabled={destinationChainOptions.length <= 1}

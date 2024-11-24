@@ -15,9 +15,9 @@ import {
 } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import ErrorMessage from './ErrorMessage';
 import InputAction from '../containers/ManageProfileModalContainer/InputAction';
 import { useErrorCountContext } from '../context/ErrorsContext';
+import ErrorMessage from './ErrorMessage';
 
 export type InputWrapperProps = {
   title: string;
@@ -91,7 +91,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
           'px-2.5 lg:px-4 py-2',
           'flex items-center justify-between gap-2',
           'w-[356px] max-w-[356px]',
-          'bg-mono-20 dark:bg-mono-160',
+          'bg-mono-20 dark:bg-mono-180',
           'border border-transparent',
           hasError && 'border-red-70 dark:border-red-50',
           isFullWidth && 'w-full max-w-full',
