@@ -7,6 +7,7 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
+import { Card } from '@webb-tools/webb-ui-components';
 import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
@@ -25,7 +26,6 @@ import useRestakeTxEventHandlersWithNoti, {
   type Props,
 } from '../../..//data/restake/useRestakeTxEventHandlersWithNoti';
 import AvatarWithText from '../../../components/AvatarWithText';
-import Container from '../../../components/Container';
 import { ChainList } from '../../../components/Lists/ChainList';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
@@ -279,7 +279,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   );
 
   return (
-    <Container>
+    <Card>
       <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col h-full space-y-4 grow">
           <div className="space-y-2">
@@ -336,7 +336,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
           </ModalContent>
         </Modal>
       </Form>
-    </Container>
+    </Card>
   );
 };
 

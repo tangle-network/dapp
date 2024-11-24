@@ -3,7 +3,12 @@
 import { BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { Button, Divider } from '@webb-tools/webb-ui-components';
+import {
+  Button,
+  Card,
+  CardVariant,
+  Divider,
+} from '@webb-tools/webb-ui-components';
 import {
   SOCIAL_URLS_RECORD,
   TANGLE_DOCS_STAKING_URL,
@@ -14,11 +19,7 @@ import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 import React from 'react';
 
-import {
-  GlassCard,
-  NominatorStatsItem,
-  UnbondingStatsItem,
-} from '../../components';
+import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import useBalances from '../../data/balances/useBalances';
 import useTotalPayoutRewards from '../../data/NominatorStats/useTotalPayoutRewards';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
@@ -70,7 +71,10 @@ const NominatorStatsContainer: FC = () => {
   return (
     <div>
       <div className="flex flex-col w-full gap-4 md:flex-row">
-        <GlassCard className="w-full rounded-2xl overflow-hidden h-min-[204px] gap-4 p-4">
+        <Card
+          variant={CardVariant.GLASS}
+          className="w-full rounded-2xl overflow-hidden h-min-[204px] gap-4 p-4"
+        >
           <div className="grid grid-cols-2 gap-2">
             <NominatorStatsItem
               title="Free Balance"
@@ -131,9 +135,12 @@ const NominatorStatsContainer: FC = () => {
               </Button>
             )}
           </div>
-        </GlassCard>
+        </Card>
 
-        <GlassCard className="w-full rounded-2xl overflow-hidden h-min-[204px] gap-4 p-4">
+        <Card
+          variant={CardVariant.GLASS}
+          className="w-full rounded-2xl overflow-hidden h-min-[204px] gap-4 p-4"
+        >
           <div className="grid grid-cols-2 gap-2">
             <NominatorStatsItem
               title={`Total Staked ${nativeTokenSymbol}`}
@@ -215,7 +222,7 @@ const NominatorStatsContainer: FC = () => {
               </div>
             )}
           </div>
-        </GlassCard>
+        </Card>
       </div>
 
       <DelegateTxContainer

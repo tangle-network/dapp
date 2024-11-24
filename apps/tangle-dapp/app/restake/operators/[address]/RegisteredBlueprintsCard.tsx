@@ -1,6 +1,7 @@
 'use client';
 
 import { ExternalLinkLine, GithubFill } from '@webb-tools/icons';
+import { Card, CardVariant } from '@webb-tools/webb-ui-components';
 import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
@@ -10,10 +11,9 @@ import Link from 'next/link';
 import type { ComponentProps, FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import GlassCard from '../../../../components/GlassCard';
 import { PagePath } from '../../../../types';
 
-interface Props extends Partial<ComponentProps<typeof GlassCard>> {
+interface Props extends Partial<ComponentProps<typeof Card>> {
   isLoading?: boolean;
   error?: string | null;
   blueprints:
@@ -47,7 +47,8 @@ const RegisteredBlueprintsCard: FC<Props> = ({
   const isEmpty = blueprints.length === 0;
 
   return (
-    <GlassCard
+    <Card
+      variant={CardVariant.GLASS}
       {...props}
       className={twMerge(bgClassName, bgDarkClassName, 'gap-3', className)}
     >
@@ -127,7 +128,7 @@ const RegisteredBlueprintsCard: FC<Props> = ({
           </ul>
         </ScrollArea>
       )}
-    </GlassCard>
+    </Card>
   );
 };
 

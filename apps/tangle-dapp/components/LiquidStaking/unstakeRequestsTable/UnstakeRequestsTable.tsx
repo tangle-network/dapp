@@ -15,6 +15,8 @@ import {
   TimeFillIcon,
 } from '@webb-tools/icons';
 import {
+  Card,
+  CardVariant,
   CheckBox,
   fuzzyFilter,
   Table,
@@ -38,7 +40,6 @@ import addCommasToNumber from '../../../utils/addCommasToNumber';
 import formatFractional from '../../../utils/formatFractional';
 import isLsParachainChainId from '../../../utils/liquidStaking/isLsParachainChainId';
 import stringifyTimeUnit from '../../../utils/liquidStaking/stringifyTimeUnit';
-import GlassCard from '../../GlassCard';
 import { HeaderCell } from '../../tableCells';
 import TokenAmountCell from '../../tableCells/TokenAmountCell';
 import ExternalLink from '../ExternalLink';
@@ -267,7 +268,8 @@ const UnstakeRequestsTable: FC = () => {
 
   return (
     <div className="space-y-4 flex-grow max-w-[700px]">
-      <GlassCard
+      <Card
+        variant={CardVariant.GLASS}
         className={twMerge(
           isDataState && 'flex flex-col justify-between min-h-[500px]',
         )}
@@ -293,7 +295,7 @@ const UnstakeRequestsTable: FC = () => {
             )}
           </div>
         )}
-      </GlassCard>
+      </Card>
 
       {rows !== null && rows.length === 0 && (
         <div className="flex items-center justify-end w-full">

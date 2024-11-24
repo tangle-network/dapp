@@ -1,9 +1,12 @@
 import { IconBase } from '@webb-tools/icons/types';
-import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
+import {
+  Card,
+  CardVariant,
+  SkeletonLoader,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import GlassCard from '../GlassCard';
 
 export type PillCardProps = {
   isFirst?: boolean;
@@ -37,7 +40,8 @@ const PillCard: FC<PillCardProps> = ({
     : 'border-b md:border-r';
 
   return (
-    <GlassCard
+    <Card
+      variant={CardVariant.GLASS}
       className={twMerge('rounded-none', firstBorderClass, lastBorderClass)}
     >
       <div className="flex flex-col gap-2">
@@ -53,7 +57,7 @@ const PillCard: FC<PillCardProps> = ({
           {value !== null ? value : <SkeletonLoader size="lg" />}
         </Typography>
       </div>
-    </GlassCard>
+    </Card>
   );
 };
 

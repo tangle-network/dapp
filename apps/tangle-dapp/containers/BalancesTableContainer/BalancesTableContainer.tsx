@@ -12,12 +12,13 @@ import useLocalStorage, {
   LocalStorageKey,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import {
+  Card,
+  CardVariant,
   InfoIconWithTooltip,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import GlassCard from '../../components/GlassCard';
 import TangleTokenIcon from '../../components/TangleTokenIcon';
 import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
@@ -84,7 +85,7 @@ const BalancesTableContainer: FC = () => {
 
   return (
     <>
-      <GlassCard className="overflow-x-auto">
+      <Card variant={CardVariant.GLASS} className="overflow-x-auto">
         <div className="flex flex-row min-w-[630px]">
           {/* Asset column */}
           <div className="flex flex-col justify-between w-full">
@@ -167,7 +168,7 @@ const BalancesTableContainer: FC = () => {
         </div>
 
         {hasLocks && !isDetailsCollapsed && <LockedBalanceDetails />}
-      </GlassCard>
+      </Card>
 
       <TransferTxContainer
         isModalOpen={isTransferModalOpen}

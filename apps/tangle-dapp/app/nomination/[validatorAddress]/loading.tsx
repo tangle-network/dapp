@@ -1,7 +1,12 @@
 import { Spinner } from '@webb-tools/icons';
-import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
+import {
+  Card,
+  CardVariant,
+  SkeletonLoader,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 
-import { GlassCard, GlassCardWithLogo } from '../../../components';
+import { GlassCardWithLogo } from '../../../components';
 import ValueSkeleton from './ValueSkeleton';
 
 export default function Loading() {
@@ -35,7 +40,7 @@ export default function Loading() {
           </div>
         </GlassCardWithLogo>
 
-        <GlassCard>
+        <Card variant={CardVariant.GLASS}>
           <Typography variant="h5" fw="bold">
             Role Distribution
           </Typography>
@@ -43,7 +48,7 @@ export default function Loading() {
           <div className="min-h-[200px] flex items-center justify-center">
             <Spinner size="xl" />
           </div>
-        </GlassCard>
+        </Card>
       </div>
 
       <div className="space-y-4">

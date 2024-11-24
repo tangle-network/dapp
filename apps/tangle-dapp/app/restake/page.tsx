@@ -1,12 +1,15 @@
 'use client';
 
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import { TANGLE_DOCS_RESTAKING_URL } from '@webb-tools/webb-ui-components';
+import {
+  Card,
+  CardVariant,
+  TANGLE_DOCS_RESTAKING_URL,
+} from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { twMerge } from 'tailwind-merge';
 
-import GlassCard from '../../components/GlassCard';
 import StatItem from '../../components/StatItem';
 import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
 import useRestakeTVL from '../../data/restake/useRestakeTVL';
@@ -45,7 +48,8 @@ export default function RestakePage() {
     <>
       <div className="space-y-5">
         <div className="flex flex-col gap-5 md:flex-row">
-          <GlassCard
+          <Card
+            variant={CardVariant.GLASS}
             className={twMerge(
               'justify-between',
               minHeightClsx,
@@ -71,9 +75,10 @@ export default function RestakePage() {
                 subtitle="Network TVL"
               />
             </div>
-          </GlassCard>
+          </Card>
 
-          <GlassCard
+          <Card
+            variant={CardVariant.GLASS}
             className={twMerge(
               minHeightClsx,
               'md:max-w-[442px] justify-between',
@@ -100,7 +105,7 @@ export default function RestakePage() {
             >
               Read more
             </Button>
-          </GlassCard>
+          </Card>
         </div>
 
         <TableTabs

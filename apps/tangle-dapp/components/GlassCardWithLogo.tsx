@@ -1,32 +1,26 @@
-import { ComponentProps, type ElementRef, forwardRef } from 'react';
+import { Card, CardVariant } from '@webb-tools/webb-ui-components';
+import { FC, PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import GlassCard from './GlassCard';
 import TangleBigLogo from './TangleBigLogo';
 
-export type GlassCardWithLogoProps = ComponentProps<'div'>;
+const GlassCardWithLogo: FC<PropsWithChildren<{ className?: string }>> = ({
+  children,
+  className,
+}) => {
+  return (
+    <Card
+      variant={CardVariant.GLASS}
+      className={twMerge(
+        'relative w-full flex items-center md:max-w-[556px] overflow-hidden shadow-sm',
+        className,
+      )}
+    >
+      {children}
 
-const GlassCardWithLogo = forwardRef<ElementRef<'div'>, GlassCardWithLogoProps>(
-  ({ children, className, ...props }, ref) => {
-    return (
-      <GlassCard
-        {...props}
-        ref={ref}
-        className={twMerge(
-          'w-full flex items-center md:max-w-[556px] overflow-hidden space-y-0',
-          'relative rounded-2xl shadow-sm border p-6',
-          'border-mono-0 dark:border-mono-160',
-          className,
-        )}
-      >
-        {children}
-
-        <TangleBigLogo className="absolute top-1/2 -translate-y-1/2 right-0 rounded-br-2xl" />
-      </GlassCard>
-    );
-  },
-);
-
-GlassCardWithLogo.displayName = 'GlassCardWithLogo';
+      <TangleBigLogo className="absolute top-1/2 -translate-y-1/2 right-0 rounded-br-2xl" />
+    </Card>
+  );
+};
 
 export default GlassCardWithLogo;

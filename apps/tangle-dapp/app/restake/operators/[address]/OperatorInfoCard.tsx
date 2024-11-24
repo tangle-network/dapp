@@ -7,6 +7,7 @@ import type {
   OperatorMetadata,
 } from '@webb-tools/tangle-shared-ui/types/restake';
 import { getAccountInfo } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
+import { Card, CardVariant } from '@webb-tools/webb-ui-components';
 import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
 import InfoIconWithTooltip from '@webb-tools/webb-ui-components/components/IconWithTooltip/InfoIconWithTooltip';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
@@ -19,12 +20,11 @@ import useSWRImmutable from 'swr/immutable';
 import { twMerge } from 'tailwind-merge';
 
 import AvatarWithText from '../../../../components/AvatarWithText';
-import GlassCard from '../../../../components/GlassCard';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
 import type { DelegatorInfo } from '../../../../types/restake';
 import getTVLToDisplay from '../../../../utils/getTVLToDisplay';
 
-interface Props extends Partial<ComponentProps<typeof GlassCard>> {
+interface Props extends Partial<ComponentProps<typeof Card>> {
   operatorAddress: string;
   operatorData: OperatorMetadata | undefined;
   operatorMap: OperatorMap;
@@ -104,7 +104,11 @@ const OperatorInfoCard: FC<Props> = ({
   }, [operatorInfo?.email, operatorInfo?.twitter, operatorInfo?.web]);
 
   return (
-    <GlassCard {...props} className={twMerge('gap-10', className)}>
+    <Card
+      variant={CardVariant.GLASS}
+      {...props}
+      className={twMerge('gap-10', className)}
+    >
       <div className="flex items-start justify-between">
         <AvatarWithText
           overrideAvatarProps={{
@@ -138,7 +142,7 @@ const OperatorInfoCard: FC<Props> = ({
       </div>
 
       <ValidatorSocials {...validatorSocials} />
-    </GlassCard>
+    </Card>
   );
 };
 
