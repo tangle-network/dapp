@@ -126,7 +126,6 @@ const Actions: FC = () => {
         <WithdrawEvmBalanceAction />
       </div>
 
-      {/* TODO: Might be better to use a hook instead of doing it this way. */}
       <div className="!m-0">
         <TransferTxContainer
           isModalOpen={isTransferModalOpen}

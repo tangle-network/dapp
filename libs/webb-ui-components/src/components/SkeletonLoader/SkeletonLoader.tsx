@@ -1,18 +1,46 @@
 import { type FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { getSkeletonClassNamesBySize } from './utils';
-import type { SkeletonLoaderProps } from './types';
+export type SkeletonSize = 'md' | 'lg' | 'xl';
+
+export interface SkeletonLoaderProps {
+  /**
+   * The icon size, possible values: `md` (16px), `lg` (24px), `xl` (48px)
+   * @default "md"
+   */
+  size?: SkeletonSize;
+
+  className?: string;
+
+  as?: 'div' | 'span';
+}
+
+export function getHeightBySize(size: SkeletonSize) {
+  switch (size) {
+    case 'xl': {
+      return 'h-12' as const;
+    }
+    case 'lg': {
+      return 'h-6' as const;
+    }
+    case 'md': {
+      return 'h-4' as const;
+    }
+  }
+}
 
 const SkeletonLoader: FC<SkeletonLoaderProps> = ({
   size = 'md',
   className,
+  as = 'div',
 }) => {
+  const Component = as;
+
   return (
-    <div
+    <Component
       className={twMerge(
         'animate-pulse bg-mono-20 dark:bg-mono-160 w-full rounded-md',
-        getSkeletonClassNamesBySize(size),
+        getHeightBySize(size),
         className,
       )}
     />

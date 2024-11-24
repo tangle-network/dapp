@@ -21,7 +21,7 @@ const GlassCardWithLogo = forwardRef<ElementRef<'div'>, GlassCardWithLogoProps>(
       >
         {children}
 
-        <TangleBigLogo className="absolute top-[50%] translate-y-[-50%] right-0 rounded-br-2xl" />
+        <TangleBigLogo className="absolute top-1/2 -translate-y-1/2 right-0 rounded-br-2xl" />
       </GlassCard>
     );
   },

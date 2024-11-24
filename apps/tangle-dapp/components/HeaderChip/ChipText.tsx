@@ -20,7 +20,7 @@ const ChipText = ({ label }: Props) => {
     >
       {label}:{' '}
       {isLoading ? (
-        <SkeletonLoader className="w-[40px]" />
+        <SkeletonLoader as="span" className="w-[40px]" />
       ) : error ? (
         'Error'
       ) : data === null ? null : (
