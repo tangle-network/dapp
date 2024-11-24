@@ -215,7 +215,10 @@ const LsStakeCard: FC = () => {
   }, [lsPools]);
 
   return (
-    <Card className="flex flex-col items-stretch justify-center gap-2">
+    <Card
+      withShadow
+      className="flex flex-col items-stretch justify-center gap-2"
+    >
       <LsInput
         ref={fromLsInputRef}
         id="liquid-staking-stake-from"

@@ -156,7 +156,7 @@ const AmountAndTokenInput: FC = () => {
             isFullWidth: true,
           }}
           placeholder=""
-          wrapperClassName="!pr-0 !border-0"
+          wrapperClassName="!pr-0 !border-0 dark:bg-mono-180"
           max={balance ? convertDecimalToBn(balance, decimals) : null}
           maxErrorMessage="Insufficient balance"
           min={minAmount ? convertDecimalToBn(minAmount, decimals) : null}

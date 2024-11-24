@@ -279,7 +279,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   );
 
   return (
-    <Card>
+    <Card withShadow>
       <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col h-full space-y-4 grow">
           <div className="space-y-2">

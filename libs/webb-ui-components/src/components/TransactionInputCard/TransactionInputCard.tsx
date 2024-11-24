@@ -70,7 +70,7 @@ const TransactionInputCardRoot = forwardRef<
         ref={ref}
         className={twMerge(
           'w-full rounded-xl p-4 space-y-2',
-          'bg-mono-20 dark:bg-mono-180',
+          'bg-mono-20 dark:bg-mono-170',
           className,
         )}
       >

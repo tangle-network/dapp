@@ -100,7 +100,7 @@ const ChainSelectors: FC = () => {
 
         <ChainOrTokenButton
           value={selectedSourceChain.name}
-          className="w-full min-h-[72px]"
+          className="w-full min-h-[72px] dark:bg-mono-180"
           iconType="chain"
           onClick={openSourceChainModal}
           disabled={sourceChainOptions.length <= 1}
@@ -125,7 +125,7 @@ const ChainSelectors: FC = () => {
 
         <ChainOrTokenButton
           value={selectedDestinationChain.name}
-          className="w-full min-h-[72px]"
+          className="w-full min-h-[72px] dark:bg-mono-180"
           iconType="chain"
           onClick={openDestinationChainModal}
           disabled={destinationChainOptions.length <= 1}

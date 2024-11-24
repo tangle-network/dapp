@@ -9,12 +9,13 @@ export enum CardVariant {
 
 export type CardProps = WebbComponentBase & {
   variant?: CardVariant;
+  withShadow?: boolean;
 };
 
 const getVariantClass = (variant: CardVariant) => {
   switch (variant) {
     case CardVariant.GLASS:
-      return 'p-6 space-y-0 rounded-2xl border border-mono-0 dark:border-mono-160 bg-glass dark:bg-glass_dark backdrop-blur-2xl';
+      return 'p-6 rounded-2xl border border-mono-0 dark:border-mono-160 bg-glass dark:bg-glass_dark backdrop-blur-2xl';
     case CardVariant.DEFAULT:
       return '';
   }
@@ -42,7 +43,16 @@ const getVariantClass = (variant: CardVariant) => {
  * ```
  */
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ children, className, variant = CardVariant.DEFAULT, ...props }, ref) => {
+  (
+    {
+      children,
+      className,
+      withShadow = false,
+      variant = CardVariant.DEFAULT,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <div
         {...props}
@@ -50,7 +60,7 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
           'p-6 rounded-xl',
           'bg-mono-0 dark:bg-mono-200',
           'border border-mono-60 dark:border-mono-170',
-          'shadow-webb-lg dark:shadow-webb-lg-dark',
+          withShadow && 'shadow-webb-lg dark:shadow-webb-lg-dark',
           getVariantClass(variant),
           className,
         )}

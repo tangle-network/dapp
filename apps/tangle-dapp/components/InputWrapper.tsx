@@ -91,7 +91,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
           'px-2.5 lg:px-4 py-2',
           'flex items-center justify-between gap-2',
           'w-[356px] max-w-[356px]',
-          'bg-mono-20 dark:bg-mono-180',
+          'bg-mono-20 dark:bg-mono-170',
           'border border-transparent',
           hasError && 'border-red-70 dark:border-red-50',
           isFullWidth && 'w-full max-w-full',

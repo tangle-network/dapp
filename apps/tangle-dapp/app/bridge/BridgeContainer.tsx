@@ -48,6 +48,7 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
   return (
     <>
       <Card
+        withShadow
         className={twMerge(
           'flex flex-col gap-7 w-full max-w-[590px]',
           className,
@@ -66,7 +67,10 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
                 : AddressType.Substrate
             }
             title="Recipient Address"
-            wrapperOverrides={{ isFullWidth: true }}
+            wrapperOverrides={{
+              isFullWidth: true,
+              wrapperClassName: 'dark:bg-mono-180',
+            }}
             value={destinationAddress}
             setValue={setDestinationAddress}
             setErrorMessage={(error) =>

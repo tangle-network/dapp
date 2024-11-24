@@ -193,7 +193,10 @@ const LsUnstakeCard: FC = () => {
 
   return (
     <>
-      <Card className="flex flex-col items-stretch justify-center gap-2">
+      <Card
+        withShadow
+        className="flex flex-col items-stretch justify-center gap-2"
+      >
         {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
         <LsInput
           ref={fromLsInputRef}
