@@ -2,11 +2,11 @@
 // the `lstMinting` pallet, allowing us to use the `mint` extrinsic.
 import '@webb-tools/tangle-restaking-types';
 
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useMemo } from 'react';
 
 import { LsParachainCurrencyKey } from '../../constants/liquidStaking/types';
-import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import tangleTimeUnitToSimpleInstance from '../../utils/liquidStaking/tangleTimeUnitToSimpleInstance';
 

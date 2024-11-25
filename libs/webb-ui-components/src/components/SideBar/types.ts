@@ -1,7 +1,7 @@
 import type { AppEnvironment } from '@webb-tools/dapp-config/types';
 import type { DialogContentProps } from '@radix-ui/react-dialog';
 import type { IconBase } from '@webb-tools/icons/types';
-import { FunctionComponent, MouseEventHandler } from 'react';
+import { ComponentProps, FunctionComponent, MouseEventHandler } from 'react';
 import type { LogoProps } from '../Logo/types';
 
 export type SideBarFooterType = {
@@ -17,30 +17,32 @@ export interface SideBarFooterProps extends SideBarFooterType {
   className?: string;
 }
 
-export interface SideBarLogoProps {
+export interface SidebarLogoProps {
   Logo: React.FC<LogoProps>;
   logoLink?: string;
   isExpanded?: boolean;
+  className?: string;
 }
 
-export interface SidebarProps extends SideBarLogoProps {
+export interface MobileSidebarProps extends SidebarLogoProps {
   ClosedLogo?: React.FC<LogoProps>;
   items: SideBarItemProps[];
   ActionButton?: React.FC<{ isExpanded: boolean }>;
   footer: SideBarFooterType;
   className?: string;
   overrideContentProps?: DialogContentProps;
-  isExpandedAtDefault?: boolean;
+  isExpandedByDefault?: boolean;
   onSideBarToggle?: () => void;
   pathnameOrHash?: string;
 }
 
 export interface SideBarItemsProps {
   items: SideBarItemProps[];
-  ActionButton?: SidebarProps['ActionButton'];
+  ActionButton?: MobileSidebarProps['ActionButton'];
   isExpanded: boolean;
   className?: string;
   pathnameOrHash?: string;
+  onItemClick?: () => void;
 }
 
 export type SideBarItemProps = {
@@ -79,6 +81,12 @@ export type SideBarItemProps = {
    */
   environments?: AppEnvironment[];
 };
+
+export type StyledSideBarItemProps = ComponentProps<'div'> &
+  Pick<SideBarItemProps, 'isDisabled'> &
+  Pick<SideBarExtraItemProps, 'isActive' | 'isExpanded'> & {
+    subItemsCount?: number;
+  };
 
 export type SideBarExtraItemProps = {
   isExpanded?: boolean;

@@ -1,8 +1,8 @@
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
-import useApiRx from '../../../hooks/useApiRx';
 import permillToPercentage from '../../../utils/permillToPercentage';
 
 const useParachainLsFees = () => {

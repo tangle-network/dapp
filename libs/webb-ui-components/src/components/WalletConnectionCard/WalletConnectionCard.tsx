@@ -1,18 +1,15 @@
 'use client';
 
 import { Wallet } from '@webb-tools/dapp-config';
-import { Close, Spinner, WalletLineIcon } from '@webb-tools/icons';
+import { ArrowRightUp, Spinner, WalletLineIcon } from '@webb-tools/icons';
 import { FC, cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import useBreakpoint from '../../hooks/useBreakpoint';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
 import { ListItem } from '../ListCard/ListItem';
 import { Button } from '../buttons';
 import { WalletConnectionCardProps } from './types';
-import { ModalTitle } from '../Modal/ModalTitle';
-import { DialogClose } from '@radix-ui/react-dialog';
-import { ModalDescription } from '../Modal/ModalDescription';
+import useIsBreakpoint from '../../hooks/useIsBreakpoint';
 
 export const WalletConnectionCard = forwardRef<
   HTMLDivElement,
@@ -23,7 +20,7 @@ export const WalletConnectionCard = forwardRef<
       className,
       connectingWalletId,
       errorBtnText = 'Try Again',
-      errorMessage = 'Connection Failed! Please try again.',
+      errorMessage = 'Connection failed, please try again.',
       failedWalletId,
       onWalletSelect,
       onClose,
@@ -37,7 +34,7 @@ export const WalletConnectionCard = forwardRef<
     },
     ref,
   ) => {
-    const isDesktop = useBreakpoint('md');
+    const isMdOrLess = useIsBreakpoint('md', true);
 
     const connectingWallet = useMemo(() => {
       if (!connectingWalletId) {
@@ -55,106 +52,23 @@ export const WalletConnectionCard = forwardRef<
       return wallets.find((wallet) => wallet.id === failedWalletId);
     }, [failedWalletId, wallets]);
 
-    if (isDesktop) {
-      return (
-        <div
-          {...props}
-          className={twMerge(
-            'flex max-w-max rounded-lg bg-mono-0 dark:bg-mono-180',
-            className,
-          )}
-          ref={ref}
-        >
-          <div className="w-[288px] lg:border-r border-r-mono-40 dark:border-r-mono-160">
-            <div className="px-6 py-4">
-              <ModalTitle asChild>
-                <Typography variant="h5" fw="bold">
-                  Connect a Wallet
-                </Typography>
-              </ModalTitle>
+    const showList = !isMdOrLess || (!connectingWallet && !failedWallet);
 
-              <ModalDescription className="sr-only">
-                Select a wallet from the list below
-              </ModalDescription>
-            </div>
-            <WalletList wallets={wallets} onWalletSelect={onWalletSelect} />
-          </div>
-
-          {/** Wallet frame */}
-          <div className="w-[432px] h-[504px] flex flex-col">
-            {/** Top */}
-            <div className="w-full h-[60px] flex justify-end items-center px-4">
-              <DialogClose asChild>
-                <button onClick={onClose}>
-                  <Close size="lg" />
-                </button>
-              </DialogClose>
-            </div>
-
-            {/** Content */}
-            <div className="flex items-center justify-center grow">
-              <WalletContent
-                failedWallet={failedWallet}
-                connectingWallet={connectingWallet}
-                errorBtnText={errorBtnText}
-                errorMessage={errorMessage}
-                onTryAgainBtnClick={onTryAgainBtnClick}
-                contentDefaultText={contentDefaultText}
-                tryAgainBtnProps={tryAgainBtnProps}
-              />
-            </div>
-
-            {/** Bottom */}
-            <DownloadWallet
-              downloadWalletURL={downloadWalletURL}
-              getHelpURL={getHelpURL}
-              connectingWallet={connectingWallet}
-              failedWallet={failedWallet}
-            />
-          </div>
-        </div>
-      );
-    }
+    const showContent = !isMdOrLess || connectingWallet || failedWallet;
 
     return (
-      <div
-        {...props}
-        className={twMerge(
-          'max-w-full w-[356px] min-h-[448px] mx-9 rounded-lg bg-mono-0 dark:bg-mono-180',
-          'flex flex-col',
-          className,
-        )}
-        ref={ref}
-      >
-        <div className="flex items-center justify-between px-6 py-4">
-          <div>
-            <ModalTitle asChild>
-              <Typography variant="h5" fw="bold" className="flex-1">
-                Connect a Wallet
-              </Typography>
-            </ModalTitle>
-
-            <ModalDescription className="sr-only">
-              Select a wallet from the list below
-            </ModalDescription>
+      <div {...props} className={twMerge('flex w-full', className)} ref={ref}>
+        {showList && (
+          <div className="flex-grow md:max-w-[220px] md:min-h-[400px] md:border-r border-mono-40 dark:border-mono-160">
+            <WalletList wallets={wallets} onWalletSelect={onWalletSelect} />
           </div>
+        )}
 
-          <DialogClose asChild>
-            <button onClick={onClose}>
-              <Close size="lg" />
-            </button>
-          </DialogClose>
-        </div>
-
-        {!failedWallet && !connectingWallet ? (
-          <WalletList
-            wallets={wallets}
-            onWalletSelect={onWalletSelect}
-            className="w-full grow"
-          />
-        ) : (
-          <div className="flex items-center justify-center grow">
+        {showContent && (
+          <div className="flex-grow flex flex-col items-stretch justify-center py-6 md:py-0">
+            {/** Content */}
             <WalletContent
+              className="flex flex-col gap-2 items-center justify-center flex-grow self-center"
               failedWallet={failedWallet}
               connectingWallet={connectingWallet}
               errorBtnText={errorBtnText}
@@ -163,15 +77,18 @@ export const WalletConnectionCard = forwardRef<
               contentDefaultText={contentDefaultText}
               tryAgainBtnProps={tryAgainBtnProps}
             />
+
+            {/** Bottom */}
+            <div className="hidden md:flex flex-shrink items-center justify-end">
+              <DownloadWallet
+                downloadWalletURL={downloadWalletURL}
+                getHelpURL={getHelpURL}
+                connectingWallet={connectingWallet}
+                failedWallet={failedWallet}
+              />
+            </div>
           </div>
         )}
-
-        <DownloadWallet
-          downloadWalletURL={downloadWalletURL}
-          getHelpURL={getHelpURL}
-          connectingWallet={connectingWallet}
-          failedWallet={failedWallet}
-        />
       </div>
     );
   },
@@ -211,11 +128,7 @@ const WalletContent = forwardRef<
     ref,
   ) => {
     return (
-      <div
-        {...props}
-        className={twMerge('space-y-2 w-[320px]', className)}
-        ref={ref}
-      >
+      <div {...props} className={twMerge('max-w-[320px]', className)} ref={ref}>
         {/** Display failed wallet */}
         {failedWallet && (
           <>
@@ -302,35 +215,23 @@ const WalletList: FC<
   }
 > = ({ wallets, onWalletSelect, className }) => {
   return (
-    <div className={className}>
-      <div className="pb-4">
-        <Typography
-          variant="body2"
-          fw="semibold"
-          className="px-6 py-2 text-mono-100 dark:text-mono-40"
+    <ul className={twMerge('pt-4', className)}>
+      {wallets.map((wallet) => (
+        <ListItem
+          key={wallet.id}
+          className="cursor-pointer"
+          onClick={() => onWalletSelect?.(wallet)}
         >
-          Select below
-        </Typography>
+          <div className="flex items-center gap-2">
+            {wallet.Logo}
 
-        <ul>
-          {wallets.map((wallet) => (
-            <ListItem
-              key={wallet.id}
-              className="cursor-pointer bg-mono-0 dark:bg-mono-180"
-              onClick={() => onWalletSelect?.(wallet)}
-            >
-              <div className="flex items-center gap-2">
-                {wallet.Logo}
-
-                <Typography variant="body1" fw="bold">
-                  {wallet.title}
-                </Typography>
-              </div>
-            </ListItem>
-          ))}
-        </ul>
-      </div>
-    </div>
+            <Typography variant="body1" fw="bold">
+              {wallet.title}
+            </Typography>
+          </div>
+        </ListItem>
+      ))}
+    </ul>
   );
 };
 
@@ -350,12 +251,16 @@ const DownloadWallet: FC<
         Don't have{' '}
         {connectingWallet?.title ?? failedWallet?.title ?? 'the wallet'}?
       </Typography>
+
       {downloadWalletURL ? (
         <Button
           variant="utility"
           size="sm"
           target="_blank"
           href={downloadWalletURL.toString()}
+          rightIcon={
+            <ArrowRightUp className="fill-current dark:fill-current" />
+          }
         >
           Download
         </Button>

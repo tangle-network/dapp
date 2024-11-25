@@ -14,8 +14,8 @@ import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import cx from 'classnames';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 
@@ -156,12 +156,7 @@ const WithdrawRequestTable = ({ withdrawRequests }: Props) => {
 
   return (
     <>
-      <Table
-        tableProps={table}
-        isPaginated
-        thClassName={cx('!border-t-transparent !bg-transparent px-3 py-2')}
-        tdClassName={cx('!border-transparent !bg-transparent px-3 py-2')}
-      />
+      <Table variant={TableVariant.DEFAULT} tableProps={table} isPaginated />
 
       <div className="flex items-center gap-3">
         <WithdrawRequestTableActions

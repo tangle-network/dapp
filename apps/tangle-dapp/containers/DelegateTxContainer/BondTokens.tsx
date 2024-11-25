@@ -19,6 +19,9 @@ import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { StakingRewardsDestinationDisplayText } from '../../types/index';
 import { BondTokensProps } from './types';
 
+const RESPONSIVE_DUO_GRID_CLASS =
+  'grid grid-rows-2 md:grid-rows-1 md:grid-cols-2 gap-1 md:gap-4 items-center';
+
 const BondTokens: FC<BondTokensProps> = ({
   isBondedOrNominating,
   amountToBond,
@@ -43,8 +46,8 @@ const BondTokens: FC<BondTokensProps> = ({
   );
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-2 gap-9 items-center">
+    <div className="flex flex-col gap-3 md:gap-6">
+      <div className={RESPONSIVE_DUO_GRID_CLASS}>
         {/* Account */}
         <InputField.Root>
           <InputField.Input
@@ -67,13 +70,13 @@ const BondTokens: FC<BondTokensProps> = ({
           )}
         </InputField.Root>
 
-        <Typography variant="body1" fw="normal" className="!max-w-[365px]">
+        <Typography variant="body1" fw="normal" className="md:!max-w-[365px]">
           By staking tokens and nominating validators, you are bonding your
           tokens to secure the network.
         </Typography>
       </div>
 
-      <div className="grid grid-cols-2 gap-9 items-center">
+      <div className={RESPONSIVE_DUO_GRID_CLASS}>
         <AmountInput
           id="nominate-bond-token"
           title={!isBondedOrNominating ? 'Amount' : 'Amount (optional)'}
@@ -85,13 +88,13 @@ const BondTokens: FC<BondTokensProps> = ({
           setErrorMessage={handleAmountToBondError}
         />
 
-        <Typography variant="body1" fw="normal" className="!max-w-[365px]">
+        <Typography variant="body1" fw="normal" className="md:!max-w-[365px]">
           To unbond staked tokens, a duration of 28 eras (apprx. 28 days) where
           they remain inactive and will not earn rewards.
         </Typography>
       </div>
 
-      <div className="grid grid-cols-2 gap-9 items-center">
+      <div className={RESPONSIVE_DUO_GRID_CLASS}>
         {/* Payment Destination */}
         {amountToBond !== null && amountToBond.gt(BN_ZERO) && (
           <>
@@ -102,7 +105,11 @@ const BondTokens: FC<BondTokensProps> = ({
               setSelectedItem={handleSetPayee}
             />
 
-            <Typography variant="body1" fw="normal" className="!max-w-[365px]">
+            <Typography
+              variant="body1"
+              fw="normal"
+              className="md:!max-w-[365px]"
+            >
               {`By selecting 'Increase the amount at stake', your rewards will be
               automatically reinvested to maximize compounding.`}
             </Typography>

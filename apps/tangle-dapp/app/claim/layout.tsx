@@ -1,3 +1,4 @@
+import { Card, CardVariant } from '@webb-tools/webb-ui-components';
 import { Divider } from '@webb-tools/webb-ui-components/components/Divider';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import FAQSection from '@webb-tools/webb-ui-components/containers/FAQSection';
@@ -19,17 +20,19 @@ export const metadata: Metadata = createPageMetadata({
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <AppTemplate.Root className="bg-glass dark:bg-glass_dark">
-      {children}
+    <AppTemplate.Root className="border-none p-0 rounded-none">
+      <Card variant={CardVariant.GLASS} className="space-y-4 py-8">
+        {children}
 
-      <Divider className="my-16 bg-mono-180 dark:bg-mono-120" />
+        <Divider className="my-16 bg-mono-180 dark:bg-mono-120" />
 
-      <AppTemplate.Content>
-        <FAQSection
-          items={faqItems}
-          answerClassName="[&_a:hover]:text-mono-100 [&_a]:underline"
-        />
-      </AppTemplate.Content>
+        <AppTemplate.Content className="w-full">
+          <FAQSection
+            items={faqItems}
+            answerClassName="[&_a:hover]:text-mono-100 [&_a]:underline"
+          />
+        </AppTemplate.Content>
+      </Card>
     </AppTemplate.Root>
   );
 };

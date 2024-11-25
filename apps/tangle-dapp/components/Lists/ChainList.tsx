@@ -22,17 +22,21 @@ type ChainListProps = {
   chains: ChainConfig[];
   onSelectChain: (chain: ChainConfig) => void;
   overrideScrollAreaProps?: ComponentProps<typeof ScrollArea>;
+  disableSelectedChain?: boolean;
 };
 
 export const ChainList = ({
   searchInputId,
-  showSearchInput = true,
+  // There's usually a small amount of chains, so avoid
+  // showing the search input by default.
+  showSearchInput = false,
   chains,
   onClose,
   title = 'Select Network',
   overrideScrollAreaProps,
   onSelectChain,
   chainType,
+  disableSelectedChain = false,
 }: ChainListProps) => {
   const [searchText, setSearchText] = useState('');
 
@@ -47,7 +51,7 @@ export const ChainList = ({
   return (
     <ListCardWrapper title={title} onClose={onClose}>
       {showSearchInput && (
-        <div className="px-4 md:px-9 pb-4 border-b border-mono-40 dark:border-mono-170">
+        <div className="px-4 md:px-9 pb-4">
           <Input
             id={searchInputId}
             isControlled
@@ -62,34 +66,39 @@ export const ChainList = ({
 
       <ScrollArea
         {...overrideScrollAreaProps}
-        className={twMerge('w-full h-full', overrideScrollAreaProps?.className)}
+        className={twMerge(
+          'w-full h-full border-t border-mono-40 dark:border-mono-170 pt-4',
+          overrideScrollAreaProps?.className,
+        )}
       >
         <ul>
           {filteredChains.map((chain, idx) => {
             const isConnected =
-              chainType === 'source' && activeChain?.name === chain.name;
+              chainType === 'source' && activeChain?.id === chain.id;
+
+            const isDisabled = disableSelectedChain && isConnected;
 
             return (
               <ListItem
                 key={`${chain.id}-${idx}`}
+                isDisabled={isDisabled}
+                className={twMerge(
+                  'w-full flex items-center justify-between max-w-full min-h-[60px] py-3',
+                  !isDisabled && 'cursor-pointer',
+                )}
                 onClick={() => {
+                  if (isDisabled) {
+                    return;
+                  }
+
                   onSelectChain(chain);
                   onClose?.();
                 }}
-                className="cursor-pointer w-full flex items-center justify-between max-w-full min-h-[60px] py-[12px]"
               >
                 <div className="flex items-center gap-4 justify-start">
-                  <ChainIcon
-                    size="lg"
-                    name={chain.name}
-                    className="cursor-pointer"
-                  />
+                  <ChainIcon size="lg" name={chain.name} />
 
-                  <Typography
-                    variant="h5"
-                    fw="bold"
-                    className="capitalize cursor-pointer"
-                  >
+                  <Typography variant="h5" fw="bold" className="capitalize">
                     {chain.name}
                   </Typography>
                 </div>

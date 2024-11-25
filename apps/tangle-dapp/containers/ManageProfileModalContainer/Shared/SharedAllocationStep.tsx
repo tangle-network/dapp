@@ -1,9 +1,9 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { Typography } from '@webb-tools/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { RestakingService } from '../../../types';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
 import { AllocationChartVariant } from '../AllocationChart';

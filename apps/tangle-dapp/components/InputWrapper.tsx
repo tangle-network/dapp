@@ -4,7 +4,6 @@ import {
   ChipColors,
   InfoIconWithTooltip,
   Label,
-  Typography,
 } from '@webb-tools/webb-ui-components';
 import {
   Dispatch,
@@ -18,6 +17,7 @@ import { twMerge } from 'tailwind-merge';
 
 import InputAction from '../containers/ManageProfileModalContainer/InputAction';
 import { useErrorCountContext } from '../context/ErrorsContext';
+import ErrorMessage from './ErrorMessage';
 
 export type InputWrapperProps = {
   title: string;
@@ -34,7 +34,6 @@ export type InputWrapperProps = {
   wrapperClassName?: string;
   bodyClassName?: string;
   dropdownBodyClassName?: string;
-  errorMessageClassName?: string;
   isFullWidth?: boolean;
   isDisabled?: boolean;
   tooltip?: ReactNode;
@@ -55,7 +54,6 @@ const InputWrapper: FC<InputWrapperProps> = ({
   wrapperClassName,
   bodyClassName,
   dropdownBodyClassName,
-  errorMessageClassName,
   isFullWidth = false,
   isDisabled = false,
   tooltip,
@@ -83,7 +81,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
   return (
     <div
       className={twMerge(
-        'flex flex-col gap-1 w-full max-w-[356px]',
+        'flex flex-col w-full max-w-[356px]',
         isFullWidth && 'max-w-full',
       )}
     >
@@ -94,7 +92,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
           'flex items-center justify-between gap-2',
           'w-[356px] max-w-[356px]',
           'bg-mono-20 dark:bg-mono-170',
-          'border border-mono-40 dark:border-mono-170',
+          'border border-transparent',
           hasError && 'border-red-70 dark:border-red-50',
           isFullWidth && 'w-full max-w-full',
           wrapperClassName,
@@ -161,17 +159,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
         )}
       </div>
 
-      {hasError && (
-        <Typography
-          className={twMerge(
-            'text-red-70 dark:text-red-50',
-            errorMessageClassName,
-          )}
-          variant="body1"
-        >
-          * {errorMessage}
-        </Typography>
-      )}
+      {hasError && <ErrorMessage>{errorMessage}</ErrorMessage>}
     </div>
   );
 };

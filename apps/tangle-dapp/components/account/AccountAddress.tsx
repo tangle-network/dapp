@@ -14,11 +14,11 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
 import { IconWithTooltip } from '@webb-tools/webb-ui-components/components/IconWithTooltip';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { toSubstrateAddress } from '../../utils';
 

@@ -18,7 +18,6 @@ const ModalContent = ({
 }) => {
   return (
     <ModalContentCmp
-      isCenter
       {...props}
       className={twMerge(
         'w-full h-full max-w-xl max-h-[var(--restake-modal-max-height)]',

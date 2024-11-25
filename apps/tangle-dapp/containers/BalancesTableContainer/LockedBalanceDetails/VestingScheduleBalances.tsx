@@ -1,9 +1,9 @@
 import { PalletVestingVestingInfo } from '@polkadot/types/lookup';
 import { BN, BN_ZERO, formatDecimal } from '@polkadot/util';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { FC, useCallback } from 'react';
 
 import useVestingInfo from '../../../data/vesting/useVestingInfo';
-import useApiRx from '../../../hooks/useApiRx';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
 import BalanceCell from '../BalanceCell';
 

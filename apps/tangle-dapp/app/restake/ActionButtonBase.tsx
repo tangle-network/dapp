@@ -24,13 +24,12 @@ export default function ActionButtonBase({
     if (loading)
       return {
         isLoading: true,
-        loadingText: 'Loading...',
       };
 
     if (isConnecting)
       return {
         isLoading: true,
-        loadingText: 'Connecting...',
+        loadingText: 'Connecting',
       };
 
     return {

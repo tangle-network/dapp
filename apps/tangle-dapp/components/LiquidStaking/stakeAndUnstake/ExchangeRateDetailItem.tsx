@@ -1,8 +1,8 @@
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { LsToken } from '../../../constants/liquidStaking/types';
 import useLsActivePoolDisplayName from '../../../data/liquidStaking/useLsActivePoolDisplayName';
 import { ExchangeRateType } from '../../../data/liquidStaking/useLsExchangeRate';

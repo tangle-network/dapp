@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, ChevronUp, ExternalLinkLine } from '@webb-tools/icons';
+import { ArrowRightUp, ChevronDown, ChevronUp } from '@webb-tools/icons';
 import { FC, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -11,6 +11,7 @@ import { SubItem } from './SubItem';
 import WithInfo from './WithInfo';
 import { SideBarExtraItemProps, SideBarItemProps } from './types';
 import useLinkProps from './useLinkProps';
+import StyledItem from './StyledItem';
 
 const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   name,
@@ -89,20 +90,11 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
           className={isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}
         >
           <Link {...linkProps}>
-            <div
-              className={twMerge(
-                'group select-none rounded-full',
-                isDisabled && 'pointer-events-none',
-                !isExpanded ? 'px-2 py-3' : 'flex items-center',
-                isActive && (subItems.length === 0 || !isExpanded)
-                  ? 'text-mono-200 dark:text-mono-0'
-                  : 'text-mono-100 dark:text-mono-120',
-                isExpanded && 'hover:bg-mono-20 dark:hover:bg-mono-190',
-                isExpanded ? 'justify-between px-2 py-3' : 'justify-center',
-                isActive &&
-                  (subItems.length === 0 || !isExpanded) &&
-                  'bg-mono-20 dark:bg-mono-190',
-              )}
+            <StyledItem
+              isActive={isActive}
+              isDisabled={isDisabled}
+              isExpanded={isExpanded}
+              subItemsCount={subItems.length}
             >
               <div
                 className={twMerge(
@@ -121,7 +113,10 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
 
               {isExpanded &&
                 (!isInternal && href && subItems.length <= 0 ? (
-                  <ExternalLinkLine className="hidden group-hover:block !fill-current" />
+                  <ArrowRightUp
+                    size="lg"
+                    className="hidden fill-current group-hover:block dark:fill-current"
+                  />
                 ) : subItems.length > 0 ? (
                   isDropdownOpen ? (
                     <ChevronDown className="!fill-current" />
@@ -129,7 +124,7 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
                     <ChevronUp className="!fill-current" />
                   )
                 ) : null)}
-            </div>
+            </StyledItem>
           </Link>
         </div>
       </WithInfo>

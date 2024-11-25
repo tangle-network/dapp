@@ -2,10 +2,10 @@
 
 import { BN, BN_ZERO } from '@polkadot/util';
 import {
-  Button,
   Modal,
+  ModalBody,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -69,13 +69,13 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
   return (
     <Modal open>
       <ModalContent
-        isCenter
+        onInteractOutside={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        className="w-full max-w-[416px]"
+        size="sm"
       >
         <ModalHeader onClose={closeModalAndReset}>Rebond Funds</ModalHeader>
 
-        <div className="space-y-4 p-9">
+        <ModalBody>
           <Typography variant="body1" fw="normal">
             Rebond to return unbonding or unbonded tokens to staking without
             withdrawing.
@@ -104,27 +104,14 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
               value={totalUnbondingAmount?.value ?? BN_ZERO}
             />
           </div>
-        </div>
+        </ModalBody>
 
-        <ModalFooter className="flex items-center gap-2">
-          <Button
-            isFullWidth
-            variant="secondary"
-            href={TANGLE_DOCS_STAKING_URL}
-            target="_blank"
-          >
-            Learn More
-          </Button>
-
-          <Button
-            isFullWidth
-            isDisabled={!canSubmitTx}
-            isLoading={rebondTxStatus === TxStatus.PROCESSING}
-            onClick={submitTx}
-          >
-            Confirm
-          </Button>
-        </ModalFooter>
+        <ModalFooterActions
+          learnMoreLinkHref={TANGLE_DOCS_STAKING_URL}
+          isConfirmDisabled={!canSubmitTx}
+          isProcessing={rebondTxStatus === TxStatus.PROCESSING}
+          onConfirm={submitTx}
+        />
       </ModalContent>
     </Modal>
   );

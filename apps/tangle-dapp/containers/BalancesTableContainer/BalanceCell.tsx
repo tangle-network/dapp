@@ -9,9 +9,9 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, ReactNode } from 'react';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 
@@ -27,7 +27,7 @@ const BalanceCell: FC<{
     amount !== null ? formatTangleBalance(amount, nativeTokenSymbol) : null;
 
   return (
-    <div className="flex flex-row p-3 gap-2">
+    <div className="flex flex-row gap-2 p-3">
       {formattedBalance !== null ? (
         // If the balance is not null, display it.
         <Typography variant="h5" className="text-mono-160 dark:text-mono-80">

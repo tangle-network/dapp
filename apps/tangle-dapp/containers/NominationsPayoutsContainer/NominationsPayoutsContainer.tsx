@@ -208,12 +208,12 @@ const DelegationsPayoutsContainer: FC = () => {
           {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
-              description="Connect your wallet to view and manage your staking details."
+              description="Connect your wallet to view and manage your nominations."
               buttonText="Connect"
               buttonProps={{
                 isLoading: loading || isConnecting,
                 isDisabled: isMobile,
-                loadingText: isConnecting ? 'Connecting...' : 'Loading...',
+                loadingText: isConnecting ? 'Connecting' : 'Loading...',
                 onClick: () => toggleModal(true),
               }}
               icon="🔗"
@@ -243,12 +243,12 @@ const DelegationsPayoutsContainer: FC = () => {
           {!activeAccount ? (
             <TableStatus
               title="Wallet Not Connected"
-              description="Connect your wallet to view and manage your staking details."
+              description="Connect your wallet to view and request your nomination payouts."
               buttonText="Connect"
               buttonProps={{
                 isLoading: loading || isConnecting,
                 isDisabled: isMobile,
-                loadingText: isConnecting ? 'Connecting...' : 'Loading...',
+                loadingText: isConnecting ? 'Connecting' : undefined,
                 onClick: () => toggleModal(true),
               }}
               icon="🔗"

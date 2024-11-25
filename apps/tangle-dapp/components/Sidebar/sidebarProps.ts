@@ -8,16 +8,16 @@ import {
   GiftLineIcon,
   GlobalLine,
   GridFillIcon,
+  HomeFillIcon,
   PolkadotJs,
   ShuffleLine,
   TokenSwapFill,
-  UserFillIcon,
   WaterDropletIcon,
 } from '@webb-tools/icons';
 import {
+  MobileSidebarProps,
   SideBarFooterType,
   SideBarItemProps,
-  SidebarProps,
   TangleLogo,
 } from '@webb-tools/webb-ui-components';
 import { SidebarTangleClosedIcon } from '@webb-tools/webb-ui-components/components';
@@ -36,7 +36,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     href: PagePath.ACCOUNT,
     isInternal: true,
     isNext: true,
-    Icon: UserFillIcon,
+    Icon: HomeFillIcon,
     subItems: [],
   },
   {
@@ -94,7 +94,7 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
   Icon: DocumentationIcon,
   href: TANGLE_DOCS_URL,
   isInternal: false,
-  name: 'Tangle Docs',
+  name: 'Docs',
   useNextThemesForThemeToggle: true,
 };
 
@@ -106,7 +106,7 @@ export default function getSidebarProps({
   polkadotJsDashboardUrl: string;
   nativeExplorerUrl?: string;
   evmExplorerUrl?: string;
-}): SidebarProps {
+}): MobileSidebarProps {
   const currentEnv = isAppEnvironmentType(process.env.NODE_ENV)
     ? process.env.NODE_ENV
     : 'development';
@@ -160,5 +160,5 @@ export default function getSidebarProps({
     footer: SIDEBAR_FOOTER,
     items,
     logoLink: TANGLE_MKT_URL,
-  } satisfies SidebarProps;
+  } satisfies MobileSidebarProps;
 }

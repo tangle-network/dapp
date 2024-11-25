@@ -18,6 +18,7 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { FC, useState } from 'react';
 
 import { Nominee } from '../../types';
@@ -145,6 +146,7 @@ const NominationsTable: FC<NominationsTableProps> = ({
   return (
     <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
       <Table
+        variant={TableVariant.DEFAULT}
         thClassName="border-t-0 bg-mono-0"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table}

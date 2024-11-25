@@ -12,18 +12,18 @@ import {
 import { ChevronUp } from '@webb-tools/icons/ChevronUp';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Link from 'next/link';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { PagePath, QueryParamKey } from '../../../types';
 import formatFractional from '../../../utils/formatFractional';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import LsTokenIcon from '../../LsTokenIcon';
 import { TableStatus } from '../../TableStatus';
-import { sharedTableStatusClxs } from '../shared';
 import TableCellWrapper from '../TableCellWrapper';
 import type { Props, VaultData } from './types';
 
@@ -164,11 +164,11 @@ const VaultsTable: FC<Props> = ({
   if (isLoading) {
     return (
       <TableStatus
-        title="Loading vaults..."
+        title="Loading Vaults"
         description="Please wait while we load the vaults."
         icon="🔄"
         {...loadingTableProps}
-        className={twMerge(sharedTableStatusClxs, loadingTableProps?.className)}
+        className={loadingTableProps?.className}
       />
     );
   }
@@ -176,25 +176,25 @@ const VaultsTable: FC<Props> = ({
   if (data.length === 0) {
     return (
       <TableStatus
-        title="No vaults found"
+        title="No Vaults Found"
         description="It looks like there are no vaults at the moment."
         icon="🔍"
         {...emptyTableProps}
-        className={twMerge(sharedTableStatusClxs, emptyTableProps?.className)}
+        className={emptyTableProps?.className}
       />
     );
   }
 
+  // TODO: Check styling after max depth issue is fixed.
   return (
     <Table
+      variant={TableVariant.GLASS_OUTER}
       title="Vaults"
       isPaginated
       {...tableProps}
       tableProps={table}
       className={twMerge(
         'px-6 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160',
-        'bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)]',
-        'dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]',
         tableProps?.className,
       )}
       tableClassName={twMerge(

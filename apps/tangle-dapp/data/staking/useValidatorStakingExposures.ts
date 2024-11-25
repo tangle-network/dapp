@@ -7,10 +7,9 @@ import {
   DEFAULT_FLAGS_ELECTED,
   DEFAULT_FLAGS_WAITING,
 } from '@webb-tools/dapp-config/constants/tangle';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback, useMemo } from 'react';
 import { map, Observable } from 'rxjs';
-
-import useApiRx from '../../hooks/useApiRx';
 
 export type ExposureMapEntry = {
   exposure: SpStakingExposurePage | null;

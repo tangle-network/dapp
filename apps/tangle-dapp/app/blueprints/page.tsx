@@ -1,9 +1,9 @@
+import TopBanner from '@webb-tools/tangle-shared-ui/components/blueprints/TopBanner';
 import { Metadata } from 'next';
 import { FC } from 'react';
 
 import createPageMetadata from '../../utils/createPageMetadata';
 import BlueprintListing from './BlueprintListing';
-import TopBanner from './TopBanner';
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Blueprints',

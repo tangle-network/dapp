@@ -13,13 +13,13 @@ import type {
 } from 'react-hook-form';
 import { formatUnits } from 'viem';
 
+import ErrorMessage from '../../../components/ErrorMessage';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import { DepositFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import AssetPlaceholder from '../AssetPlaceholder';
-import ErrorMessage from '../ErrorMessage';
 
 type Props = {
   amountError?: string;
@@ -119,30 +119,32 @@ const SourceChainInput = ({
 
   return (
     // Pass token symbol to root here to share between max amount & token selection button
-    <TransactionInputCard.Root
-      tokenSymbol={asset?.symbol}
-      errorMessage={amountError}
-    >
-      <TransactionInputCard.Header>
-        <TransactionInputCard.ChainSelector
-          typedChainId={sourceTypedChainId}
-          onClick={handleChainSelectorClick}
-        />
-        <TransactionInputCard.MaxAmountButton
-          maxAmount={
-            typeof maxFormatted === 'string' ? +maxFormatted : undefined
-          }
-          onAmountChange={handleAmountChange}
-        />
-      </TransactionInputCard.Header>
+    <div className="flex flex-col items-start justify-stretch">
+      <TransactionInputCard.Root
+        tokenSymbol={asset?.symbol}
+        errorMessage={amountError}
+      >
+        <TransactionInputCard.Header>
+          <TransactionInputCard.ChainSelector
+            typedChainId={sourceTypedChainId}
+            onClick={handleChainSelectorClick}
+          />
+          <TransactionInputCard.MaxAmountButton
+            maxAmount={
+              typeof maxFormatted === 'string' ? +maxFormatted : undefined
+            }
+            onAmountChange={handleAmountChange}
+          />
+        </TransactionInputCard.Header>
 
-      <TransactionInputCard.Body
-        tokenSelectorProps={tokenSelectorProps}
-        customAmountProps={customAmountProps}
-      />
+        <TransactionInputCard.Body
+          tokenSelectorProps={tokenSelectorProps}
+          customAmountProps={customAmountProps}
+        />
+      </TransactionInputCard.Root>
 
       <ErrorMessage>{amountError}</ErrorMessage>
-    </TransactionInputCard.Root>
+    </div>
   );
 };
 

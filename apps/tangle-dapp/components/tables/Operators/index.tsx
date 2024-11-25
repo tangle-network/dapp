@@ -15,17 +15,18 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import Link from 'next/link';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { PagePath, QueryParamKey } from '../../../types';
 import formatFractional from '../../../utils/formatFractional';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
+import pluralize from '../../../utils/pluralize';
 import { getSortAddressOrIdentityFnc } from '../../../utils/table';
 import { TableStatus } from '../../TableStatus';
-import { sharedTableStatusClxs } from '../shared';
 import TableCellWrapper from '../TableCellWrapper';
 import type { OperatorData, Props } from './types';
 import VaultsDropdown from './VaultsDropdown';
@@ -197,11 +198,11 @@ const OperatorsTable: FC<Props> = ({
   if (isLoading) {
     return (
       <TableStatus
-        title="Loading operators..."
+        title="Loading Operators"
         description="Please wait while we load the operators."
         icon="🔄"
         {...loadingTableProps}
-        className={twMerge(sharedTableStatusClxs, loadingTableProps?.className)}
+        className={loadingTableProps?.className}
       />
     );
   }
@@ -209,48 +210,32 @@ const OperatorsTable: FC<Props> = ({
   if (data.length === 0) {
     return (
       <TableStatus
-        title="No operators found"
+        title="No Operators Found"
         description="It looks like there are no operators running at the moment."
         icon="⚙️"
         {...emptyTableProps}
-        className={twMerge(sharedTableStatusClxs, emptyTableProps?.className)}
+        className={emptyTableProps?.className}
       />
     );
   }
 
   return (
     <Table
-      title="Operators"
+      title={pluralize('operator', data.length !== 1)}
+      variant={TableVariant.GLASS_OUTER}
       isPaginated
       {...tableProps}
       tableProps={table}
-      className={twMerge(
-        'px-6 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160',
-        'bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)]',
-        'dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]',
-        tableProps?.className,
-      )}
-      tableClassName={twMerge(
-        'border-separate border-spacing-y-3 pt-3',
-        tableProps?.tableClassName,
-      )}
-      thClassName={twMerge(
-        'py-0 border-t-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0',
-        tableProps?.thClassName,
-      )}
-      tbodyClassName={twMerge('!bg-transparent', tableProps?.tbodyClassName)}
+      className={tableProps?.className}
+      tableClassName={tableProps?.tableClassName}
+      thClassName={tableProps?.thClassName}
+      tbodyClassName={tableProps?.tbodyClassName}
       trClassName={twMerge(
-        'group cursor-pointer overflow-hidden rounded-xl',
+        'group cursor-pointer overflow-hidden',
         tableProps?.trClassName,
       )}
-      tdClassName={twMerge(
-        'border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden',
-        tableProps?.tdClassName,
-      )}
-      paginationClassName={twMerge(
-        '!bg-transparent dark:!bg-transparent pl-6 border-t-0 -mt-2',
-        tableProps?.paginationClassName,
-      )}
+      tdClassName={tableProps?.tdClassName}
+      paginationClassName={tableProps?.paginationClassName}
     />
   );
 };

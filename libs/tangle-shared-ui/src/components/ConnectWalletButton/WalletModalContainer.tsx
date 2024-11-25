@@ -61,7 +61,7 @@ const WalletModalContainer = () => {
       notificationApi={notificationApi}
       apiConfig={apiConfig}
       targetTypedChainIds={targetTypedChainIds}
-      contentDefaultText="Connect your EVM or Substrate wallet to interact on the Tangle Network"
+      contentDefaultText="Connect your EVM or Substrate wallet to interact with the Tangle Network."
     />
   );
 };
