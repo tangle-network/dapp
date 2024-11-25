@@ -7,20 +7,21 @@ import {
   SendPlanLineIcon,
 } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import useLocalStorage, {
   LocalStorageKey,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import {
+  Card,
+  CardVariant,
   InfoIconWithTooltip,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import GlassCard from '../../components/GlassCard/GlassCard';
 import TangleTokenIcon from '../../components/TangleTokenIcon';
 import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
-import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { StaticSearchQueryPath } from '../../types';
 import TransferTxContainer from '../TransferTxContainer/TransferTxContainer';
@@ -84,7 +85,7 @@ const BalancesTableContainer: FC = () => {
 
   return (
     <>
-      <GlassCard className="overflow-x-auto">
+      <Card variant={CardVariant.GLASS} className="overflow-x-auto">
         <div className="flex flex-row min-w-[630px]">
           {/* Asset column */}
           <div className="flex flex-col justify-between w-full">
@@ -167,7 +168,7 @@ const BalancesTableContainer: FC = () => {
         </div>
 
         {hasLocks && !isDetailsCollapsed && <LockedBalanceDetails />}
-      </GlassCard>
+      </Card>
 
       <TransferTxContainer
         isModalOpen={isTransferModalOpen}

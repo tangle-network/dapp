@@ -2,7 +2,6 @@
 
 import { BN } from '@polkadot/util';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
-import { Typography } from '@webb-tools/webb-ui-components';
 import { forwardRef, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -13,6 +12,7 @@ import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useInputAmount from '../../../hooks/useInputAmount';
 import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
+import ErrorMessage from '../../ErrorMessage';
 import LsNetworkSwitcher from './LsNetworkSwitcher';
 import LsTokenChip from './LsTokenChip';
 import SelectedPoolIndicator from './SelectedPoolIndicator';
@@ -105,7 +105,7 @@ const LsInput = forwardRef<HTMLInputElement, LsInputProps>(
       <div className="flex flex-col items-stretch justify-start gap-2">
         <div
           className={twMerge(
-            'flex flex-col gap-3 bg-liquid_staking_input dark:bg-liquid_staking_input_dark p-4 rounded-lg border border-transparent',
+            'flex flex-col gap-3 bg-mono-20 dark:bg-mono-180 p-4 rounded-lg border border-transparent',
             isError && 'border-red-70 dark:border-red-50',
           )}
         >
@@ -147,11 +147,7 @@ const LsInput = forwardRef<HTMLInputElement, LsInputProps>(
           </div>
         </div>
 
-        {errorMessage !== null && (
-          <Typography variant="body2" className="text-red-70 dark:text-red-50">
-            * {errorMessage}
-          </Typography>
-        )}
+        {errorMessage !== null && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </div>
     );
   },

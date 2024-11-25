@@ -98,6 +98,7 @@ const WalletDropdown: FC<{
               </div>
             </div>
           </div>
+
           <div className="flex items-center md:justify-end space-x-2.5">
             <SwitchAccountButton />
 

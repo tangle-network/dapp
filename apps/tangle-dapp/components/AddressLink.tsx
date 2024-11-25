@@ -1,5 +1,5 @@
 import { HexString } from '@polkadot/util/types';
-import { ExternalLinkLine } from '@webb-tools/icons';
+import { ArrowRightUp } from '@webb-tools/icons';
 import { shortenString, Typography } from '@webb-tools/webb-ui-components';
 import { FC, MouseEvent, useCallback } from 'react';
 
@@ -29,7 +29,7 @@ const AddressLink: FC<AddressLinkProps> = ({ address }) => {
         {shortenString(address, 6)}
       </Typography>
 
-      <ExternalLinkLine className="dark:fill-mono-0" />
+      <ArrowRightUp className="dark:fill-mono-0" />
     </a>
   );
 };

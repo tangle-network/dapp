@@ -26,6 +26,7 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import cx from 'classnames';
 import React, {
   FC,
@@ -39,6 +40,7 @@ import React, {
 import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
 import formatFractional from '../../utils/formatFractional';
+import pluralize from '../../utils/pluralize';
 import {
   getSortAddressOrIdentityFnc,
   sortBnValueForNomineeOrValidator,
@@ -57,13 +59,15 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   setSelectedValidators,
   pageSize = 20,
 }) => {
-  const [searchValue, setSearchValue] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
     defaultSelectedValidators.reduce((acc, address) => {
       acc[address] = true;
       return acc;
     }, {} as RowSelectionState),
   );
+
   const [sorting, setSorting] = useState<SortingState>([
     {
       id: 'totalStakeAmount',
@@ -77,7 +81,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
     SortingColumn<Validator>['toggleSorting'] | null
   >(null);
 
-  // Sync the selected validators with the parent state
+  // Sync the selected validators with the parent state.
   useEffect(() => {
     startTransition(() => {
       setSelectedValidators(new Set(Object.keys(rowSelection)));
@@ -124,7 +128,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           );
         },
         sortingFn: (rowA, rowB, columnId) =>
-          sortValidatorsBasedOnSortingFn(
+          sortValidatorsBy(
             rowA,
             rowB,
             columnId,
@@ -154,7 +158,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           </div>
         ),
         sortingFn: (rowA, rowB, columnId) =>
-          sortValidatorsBasedOnSortingFn(
+          sortValidatorsBy(
             rowA,
             rowB,
             columnId,
@@ -172,7 +176,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           </div>
         ),
         sortingFn: (rowA, rowB, columnId) =>
-          sortValidatorsBasedOnSortingFn(
+          sortValidatorsBy(
             rowA,
             rowB,
             columnId,
@@ -193,7 +197,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           </div>
         ),
         sortingFn: (rowA, rowB, columnId) =>
-          sortValidatorsBasedOnSortingFn(
+          sortValidatorsBy(
             rowA,
             rowB,
             columnId,
@@ -227,7 +231,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         columnFilters: [
           {
             id: 'address',
-            value: searchValue,
+            value: searchQuery,
           },
         ],
       },
@@ -251,7 +255,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
       autoResetPageIndex: false,
       enableSortingRemoval: false,
     }),
-    [allValidators, columns, rowSelection, searchValue, sorting, pageSize],
+    [allValidators, columns, rowSelection, searchQuery, sorting, pageSize],
   );
 
   const table = useReactTable(tableProps);
@@ -263,8 +267,8 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           id="search-validators-selection"
           rightIcon={<Search className="mr-2" />}
           placeholder="Search validators..."
-          value={searchValue}
-          onChange={(val) => setSearchValue(val)}
+          value={searchQuery}
+          onChange={setSearchQuery}
           className="mb-1"
           isControlled
         />
@@ -280,14 +284,13 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
             </div>
           ) : (
             <Table
+              variant={TableVariant.NESTED_IN_MODAL}
               tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
-              thClassName="z-10 border-t-0 py-3 sticky top-0"
-              trClassName="cursor-pointer"
-              tdClassName="py-2 border-t-0"
               paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
               tableWrapperClassName="max-h-[340px] overflow-y-scroll"
               tableProps={table}
               isPaginated
+              title={pluralize('validator', allValidators.length !== 1)}
             />
           ))}
 
@@ -306,21 +309,24 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   );
 };
 
-export default React.memo(ValidatorSelectionTable);
-
-function sortValidatorsBasedOnSortingFn(
+const sortValidatorsBy = (
   rowA: Row<Validator>,
   rowB: Row<Validator>,
   columnId: string,
   sortFn: SortingFn<Validator>,
   isDesc: boolean,
-) {
+) => {
   const rowASelected = rowA.getIsSelected();
   const rowBSelected = rowB.getIsSelected();
 
-  // Prioritize selected validators
-  if (rowASelected && !rowBSelected) return isDesc ? 1 : -1;
-  if (!rowASelected && rowBSelected) return isDesc ? -1 : 1;
+  // Prioritize selected validators by pinning them to the top.
+  if (rowASelected && !rowBSelected) {
+    return isDesc ? 1 : -1;
+  } else if (!rowASelected && rowBSelected) {
+    return isDesc ? -1 : 1;
+  }
 
   return sortFn(rowA, rowB, columnId);
-}
+};
+
+export default React.memo(ValidatorSelectionTable);

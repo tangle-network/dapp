@@ -68,13 +68,13 @@ export const Input: React.FC<InputProps> = (props) => {
   const [value, setValue] = useState('');
   const [cursor, setCursor] = useState<number | null>(null);
 
-  const controlledValue = useMemo(
-    () => (isControlled ? propValue : value),
-    [isControlled, propValue, value],
-  );
+  const controlledValue = isControlled ? propValue : value;
 
   useEffect(() => {
-    if (!debounceTime) return;
+    if (!debounceTime) {
+      return;
+    }
+
     const timeout = setTimeout(() => {
       onChange?.(controlledValue ?? '');
     }, debounceTime);
@@ -86,18 +86,19 @@ export const Input: React.FC<InputProps> = (props) => {
     inputRef?.current?.setSelectionRange(cursor, cursor);
   }, [inputRef, cursor, controlledValue]);
 
-  // Override the size of left icon prop to 'md'
+  // Override the size of left icon prop to 'md'.
   const leftIcon = useMemo(() => {
     if (!leftIconProp) {
       return;
     }
+
     return React.cloneElement(leftIconProp, {
       ...leftIconProp.props,
       size: 'md',
     });
   }, [leftIconProp]);
 
-  // Override the size of right icon prop to 'md'
+  // Override the size of right icon prop to 'md'.
   const rightIcon = useMemo(() => {
     if (!rightIconProp) {
       return;
@@ -108,22 +109,16 @@ export const Input: React.FC<InputProps> = (props) => {
     });
   }, [rightIconProp]);
 
-  const isInvalid = useMemo(
-    () => isInvalidProp || errorMessage,
-    [isInvalidProp, errorMessage],
-  );
+  const isInvalid = isInvalidProp || errorMessage;
 
-  const paddingX = useMemo(
-    () =>
-      leftIconProp && rightIconProp
-        ? ('px-8' as const)
-        : leftIconProp
-          ? ('pl-8 pr-4' as const)
-          : rightIconProp
-            ? ('pl-4 pr-8' as const)
-            : ('px-4' as const),
-    [leftIconProp, rightIconProp],
-  );
+  const paddingX =
+    leftIconProp && rightIconProp
+      ? ('px-8' as const)
+      : leftIconProp
+        ? ('pl-8 pr-4' as const)
+        : rightIconProp
+          ? ('pl-4 pr-8' as const)
+          : ('px-4' as const);
 
   const inputClsxBase = useMemo(
     () =>
@@ -136,20 +131,14 @@ export const Input: React.FC<InputProps> = (props) => {
       ),
     [isInvalid, paddingX],
   );
-  const inputClsxHover = useMemo(
-    () => 'hover:border-blue-40 dark:hover:border-blue-70',
-    [],
-  );
-  const inputClsxFocus = useMemo(
-    () =>
-      'focus:bg-blue-0 focus:border-blue-40 dark:focus:bg-blue-120 dark:focus:border-blue-70',
-    [],
-  );
-  const inputClsxDisabled = useMemo(
-    () =>
-      'disabled:text-mono-100 dark:disabled:text-mono-120 disabled:bg-mono-40 dark:disabled:bg-mono-160 disabled:cursor-not-allowed disabled:hover:border-mono-80 dark:disabled:hover:border-mono-120',
-    [],
-  );
+
+  const inputClsxHover = 'hover:border-blue-40 dark:hover:border-blue-70';
+
+  const inputClsxFocus =
+    'focus:bg-blue-0 focus:border-blue-40 dark:focus:bg-blue-120 dark:focus:border-blue-70';
+
+  const inputClsxDisabled =
+    'disabled:text-mono-100 dark:disabled:text-mono-120 disabled:bg-mono-40 dark:disabled:bg-mono-160 disabled:cursor-not-allowed disabled:hover:border-mono-80 dark:disabled:hover:border-mono-120';
 
   const mergedInputClsx = useMemo(
     () =>
@@ -178,15 +167,9 @@ export const Input: React.FC<InputProps> = (props) => {
     ],
   );
 
-  const iconClsx = useMemo(
-    () =>
-      cx(
-        twMerge(
-          'text-mono-140 dark:text-mono-40',
-          isDisabled ? 'text-mono-100 dark:text-mono-120' : '',
-        ),
-      ),
-    [isDisabled],
+  const iconClsx = twMerge(
+    'text-mono-140 dark:text-mono-40',
+    isDisabled && 'text-mono-100 dark:text-mono-120',
   );
 
   return (
@@ -225,7 +208,7 @@ export const Input: React.FC<InputProps> = (props) => {
         )}
       </div>
 
-      {errorMessage && (
+      {errorMessage !== undefined && (
         <Typography
           component="p"
           variant="body4"

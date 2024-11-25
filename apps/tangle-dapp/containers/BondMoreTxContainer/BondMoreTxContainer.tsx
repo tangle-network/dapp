@@ -2,10 +2,9 @@
 
 import { BN, BN_ZERO } from '@polkadot/util';
 import {
-  Button,
   Modal,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
   Typography,
   useWebbUI,
@@ -79,9 +78,9 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
   return (
     <Modal open>
       <ModalContent
-        isCenter
+        onInteractOutside={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        className="w-full max-w-[416px]"
+        size="sm"
       >
         <ModalHeader onClose={closeModalAndReset}>Add Stake</ModalHeader>
 
@@ -103,25 +102,12 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
           </Typography>
         </div>
 
-        <ModalFooter className="flex items-center gap-2">
-          <Button
-            isFullWidth
-            variant="secondary"
-            href={TANGLE_DOCS_STAKING_URL}
-            target="_blank"
-          >
-            Learn More
-          </Button>
-
-          <Button
-            isFullWidth
-            isDisabled={!canSubmitTx}
-            isLoading={isBondMoreTxLoading}
-            onClick={submitAndSignTx}
-          >
-            Confirm
-          </Button>
-        </ModalFooter>
+        <ModalFooterActions
+          learnMoreLinkHref={TANGLE_DOCS_STAKING_URL}
+          isConfirmDisabled={!canSubmitTx}
+          isProcessing={isBondMoreTxLoading}
+          onConfirm={submitAndSignTx}
+        />
       </ModalContent>
     </Modal>
   );

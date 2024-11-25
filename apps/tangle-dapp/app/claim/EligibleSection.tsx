@@ -215,21 +215,23 @@ const EligibleSection: FC<Props> = ({
           />
         </div>
 
-        <div className="space-y-6 p-4 border rounded-xl border-mono-0 dark:border-mono-180 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)] bg-glass dark:bg-glass_dark">
-          <Typography variant="body1" fw="bold" ta="center">
-            You will receive the total balance of...
-          </Typography>
+        <div className="space-y-4 p-4 border rounded-xl border-mono-0 dark:border-mono-180 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.08)] bg-glass dark:bg-glass_dark">
+          <div>
+            <Typography variant="body1" fw="bold" ta="center">
+              You will receive the total balance of...
+            </Typography>
 
-          <Typography variant="h4" fw="bold" ta="center">
-            {`${formatTangleBalance(totalAmount, nativeTokenSymbol)} `}
-            {isValidAddress(recipient)
-              ? `to ${
-                  isHex(recipient)
-                    ? shortenHex(recipient)
-                    : shortenString(recipient)
-                }`
-              : ''}
-          </Typography>
+            <Typography variant="h4" fw="bold" ta="center">
+              {`${formatTangleBalance(totalAmount, nativeTokenSymbol)} `}
+              {isValidAddress(recipient)
+                ? `to ${
+                    isHex(recipient)
+                      ? shortenHex(recipient)
+                      : shortenString(recipient)
+                  }`
+                : ''}
+            </Typography>
+          </div>
 
           {/* Only show this when there's vesting amount */}
           {vestingAmount.gt(BN_ZERO) && (
@@ -260,7 +262,7 @@ const EligibleSection: FC<Props> = ({
       </div>
 
       {statement !== null && (
-        <div className="flex gap-2">
+        <div className="flex items-start justify-center gap-2">
           <CheckBox
             isChecked={hasReadStatement}
             onChange={() => {

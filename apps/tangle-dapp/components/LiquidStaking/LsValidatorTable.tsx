@@ -23,6 +23,7 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
@@ -194,9 +195,7 @@ export const LsValidatorTable = () => {
               />
 
               <Table
-                thClassName="!bg-inherit border-t-0 bg-mono-0 !px-3 !py-2 whitespace-nowrap"
-                trClassName="!bg-inherit"
-                tdClassName="!bg-inherit !px-3 !py-2 whitespace-nowrap"
+                variant={TableVariant.DEFAULT}
                 tableProps={table}
                 totalRecords={tableData.length}
               />

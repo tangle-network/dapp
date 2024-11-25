@@ -1,7 +1,7 @@
 'use client';
 
 import { FC, useCallback, useMemo } from 'react';
-import { Modal, ModalContent } from '../Modal';
+import { Modal, ModalContent, ModalHeader } from '../Modal';
 import { WalletConnectionCard } from '../WalletConnectionCard';
 import { WalletModalProps } from './types';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
@@ -82,9 +82,17 @@ export const WalletModal: FC<WalletModalProps> = ({
     <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
       <ModalContent
         isOpen={isModalOpen}
-        isCenter
         onCloseAutoFocus={() => resetState()}
+        onInteractOutside={() => handleOpenChange(false)}
+        className="overflow-hidden"
       >
+        <ModalHeader
+          onClose={() => handleOpenChange(false)}
+          className="border-b border-mono-40 dark:border-mono-160 pb-4"
+        >
+          Connect Wallet
+        </ModalHeader>
+
         <WalletConnectionCard
           wallets={supportedWallets}
           onWalletSelect={(nextWallet) =>

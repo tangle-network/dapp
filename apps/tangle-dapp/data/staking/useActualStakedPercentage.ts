@@ -1,7 +1,6 @@
 import { BN_MILLION, BN_ZERO } from '@polkadot/util';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback, useMemo } from 'react';
-
-import useApiRx from '../../hooks/useApiRx';
 
 const DEFAULT_FLAGS_ELECTED = {
   withController: true,

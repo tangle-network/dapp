@@ -3,6 +3,9 @@
 import { ChainConfig } from '@webb-tools/dapp-config';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
+import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
+import { Card } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
@@ -27,7 +30,6 @@ import {
   TxEvent,
 } from '../../../data/restake/RestakeTx/base';
 import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
-import useRestakeOperatorMap from '../../../data/restake/useRestakeOperatorMap';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import useRestakeTxEventHandlersWithNoti, {
   type Props,
@@ -35,7 +37,6 @@ import useRestakeTxEventHandlersWithNoti, {
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
-import { useRpcSubscription } from '../../../hooks/usePolkadotApi';
 import { PagePath, QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
@@ -252,68 +253,70 @@ export default function Page() {
   );
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col h-full space-y-4 grow">
-        <StakeInput
-          amountError={errors.amount?.message}
-          delegatorInfo={delegatorInfo}
-          openAssetModal={openAssetModal}
-          openOperatorModal={openOperatorModal}
-          register={register}
-          setValue={setValue}
-          watch={watch}
-        />
-
-        <div className="flex flex-col justify-between gap-4 grow">
-          <Info />
-
-          <ActionButton
-            errors={errors}
-            isValid={isValid}
-            openChainModal={openChainModal}
+    <Card withShadow>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-col h-full space-y-4 grow">
+          <StakeInput
+            amountError={errors.amount?.message}
+            delegatorInfo={delegatorInfo}
+            openAssetModal={openAssetModal}
+            openOperatorModal={openOperatorModal}
+            register={register}
+            setValue={setValue}
             watch={watch}
-            isSubmitting={isSubmitting}
           />
+
+          <div className="flex flex-col justify-between gap-4 grow">
+            <Info />
+
+            <ActionButton
+              errors={errors}
+              isValid={isValid}
+              openChainModal={openChainModal}
+              watch={watch}
+              isSubmitting={isSubmitting}
+            />
+          </div>
         </div>
-      </div>
 
-      <Modal>
-        <ModalContent
-          isOpen={isAssetModalOpen}
-          title="Select Asset"
-          description="Select the asset you want to delegate"
-          onInteractOutside={closeAssetModal}
-        >
-          <AssetList
-            selectTokens={selectableTokens}
-            onChange={handleAssetChange}
-            onClose={closeAssetModal}
-            renderEmpty={EmptyAsset}
+        <Modal>
+          <ModalContent
+            isOpen={isAssetModalOpen}
+            title="Select Asset"
+            description="Select the asset you want to delegate"
+            onInteractOutside={closeAssetModal}
+          >
+            <AssetList
+              selectTokens={selectableTokens}
+              onChange={handleAssetChange}
+              onClose={closeAssetModal}
+              renderEmpty={EmptyAsset}
+            />
+          </ModalContent>
+
+          <ModalContent
+            isOpen={isOperatorModalOpen}
+            title="Select Operator"
+            description="Select the operator you want to stake with"
+            onInteractOutside={closeOperatorModal}
+          >
+            <OperatorList
+              operators={operators}
+              operatorMap={operatorMap}
+              operatorIdentities={operatorIdentities}
+              onSelectOperator={handleOnSelectOperator}
+              onClose={closeOperatorModal}
+            />
+          </ModalContent>
+
+          <SupportedChainModal
+            isOpen={isChainModalOpen}
+            onClose={closeChainModal}
+            onChainChange={handleChainChange}
           />
-        </ModalContent>
-
-        <ModalContent
-          isOpen={isOperatorModalOpen}
-          title="Select Operator"
-          description="Select the operator you want to stake with"
-          onInteractOutside={closeOperatorModal}
-        >
-          <OperatorList
-            operators={operators}
-            operatorMap={operatorMap}
-            operatorIdentities={operatorIdentities}
-            onSelectOperator={handleOnSelectOperator}
-            onClose={closeOperatorModal}
-          />
-        </ModalContent>
-
-        <SupportedChainModal
-          isOpen={isChainModalOpen}
-          onClose={closeChainModal}
-          onChainChange={handleChainChange}
-        />
-      </Modal>
-    </Form>
+        </Modal>
+      </Form>
+    </Card>
   );
 }
 

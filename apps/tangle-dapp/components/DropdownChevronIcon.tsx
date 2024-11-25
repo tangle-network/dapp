@@ -1,5 +1,6 @@
 import { ChevronDown } from '@webb-tools/icons';
 import { FC } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export type DropdownChevronIconProps = {
   onClick?: () => void;
@@ -12,7 +13,10 @@ const DropdownChevronIcon: FC<DropdownChevronIconProps> = ({
 }) => {
   return (
     <div
-      className="p-1 rounded-lg group-hover:dark:bg-mono-160"
+      className={twMerge(
+        'p-1 rounded-lg group-hover:bg-mono-40 group-hover:dark:bg-mono-160',
+        onClick !== undefined && 'cursor-pointer',
+      )}
       onClick={onClick}
     >
       <ChevronDown

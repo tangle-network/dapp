@@ -1,9 +1,10 @@
 import type { Evaluate } from '@webb-tools/dapp-types/utils/types';
+import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
+import { assetIdsQuery } from '@webb-tools/tangle-shared-ui/queries/restake/assetIds';
+import { rewardVaultRxQuery } from '@webb-tools/tangle-shared-ui/queries/restake/rewardVault';
 import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { map, type Observable } from 'rxjs';
-
-import useRestakeRewardVaultMap from './useRestakeRewardVaultMap';
 
 export type UseRestakeAssetIdsReturnType = {
   assetIds: string[];
@@ -15,21 +16,16 @@ export type UseRestakeAssetIdsReturnType = {
  * The hook returns an object containing the asset IDs and an observable to refresh the asset IDs.
  */
 export default function useRestakeAssetIds(): Evaluate<UseRestakeAssetIdsReturnType> {
-  const { rewardVaultMap$ } = useRestakeRewardVaultMap();
+  const { apiRx } = usePolkadotApi();
 
   const assetIds$ = useMemo(
     () =>
-      rewardVaultMap$.pipe(
-        map((rewardVaultMap) => {
-          const assetIds = Object.values(rewardVaultMap)
-            .flat()
-            .filter((assetId): assetId is string => assetId !== null);
-
-          // Remove duplicates
-          return Array.from(new Set(assetIds));
-        }),
+      rewardVaultRxQuery(apiRx).pipe(
+        map((rewardVaults) =>
+          assetIdsQuery(rewardVaults).map((id) => id.toString()),
+        ),
       ),
-    [rewardVaultMap$],
+    [apiRx],
   );
 
   const assetIds = useObservableState(assetIds$, []);

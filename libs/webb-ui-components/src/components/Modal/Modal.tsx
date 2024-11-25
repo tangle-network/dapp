@@ -1,9 +1,9 @@
 'use client';
 
-import * as DialogPrimitive from '@radix-ui/react-dialog';
+import * as Dialog from '@radix-ui/react-dialog';
 import { FC, useCallback, useState } from 'react';
 
-export const Modal: FC<DialogPrimitive.DialogProps> = ({
+export const Modal: FC<Dialog.DialogProps> = ({
   children,
   open,
   defaultOpen = false,
@@ -21,8 +21,8 @@ export const Modal: FC<DialogPrimitive.DialogProps> = ({
   );
 
   return (
-    <DialogPrimitive.Root open={isOpen} onOpenChange={onOpenChange} {...props}>
+    <Dialog.Root open={isOpen} onOpenChange={onOpenChange} {...props}>
       {children}
-    </DialogPrimitive.Root>
+    </Dialog.Root>
   );
 };

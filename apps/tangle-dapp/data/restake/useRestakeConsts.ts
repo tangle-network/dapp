@@ -1,6 +1,6 @@
+import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import { useMemo } from 'react';
 
-import usePolkadotApi from '../../hooks/usePolkadotApi';
 import getModuleConstant from '../../utils/getModuleConstant';
 
 export default function useRestakeConsts() {

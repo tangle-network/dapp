@@ -1,6 +1,6 @@
 'use client';
 
-import { ExternalLinkLine, ShieldedCheckLineIcon } from '@webb-tools/icons';
+import { ArrowRightUp, ShieldedCheckLineIcon } from '@webb-tools/icons';
 import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubstrateExplorerUrl';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
@@ -46,7 +46,7 @@ const SuccessClient: FC<{ blockHash: Hash }> = ({ blockHash }) => {
               variant="link"
               className="mx-auto"
               rightIcon={
-                <ExternalLinkLine className="fill-current dark:fill-current" />
+                <ArrowRightUp className="fill-current dark:fill-current" />
               }
             >
               View Explorer

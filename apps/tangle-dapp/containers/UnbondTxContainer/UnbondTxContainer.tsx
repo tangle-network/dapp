@@ -3,10 +3,10 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
-  Button,
   Modal,
+  ModalBody,
   ModalContent,
-  ModalFooter,
+  ModalFooterActions,
   ModalHeader,
   Typography,
   useWebbUI,
@@ -111,13 +111,13 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   return (
     <Modal open>
       <ModalContent
-        isCenter
+        onInteractOutside={() => setIsModalOpen(false)}
         isOpen={isModalOpen}
-        className="w-full max-w-[416px]"
+        size="sm"
       >
         <ModalHeader onClose={closeModalAndReset}>Unbond Stake</ModalHeader>
 
-        <div className="space-y-4 p-9">
+        <ModalBody>
           <AmountInput
             id="unbond-input"
             title="Amount"
@@ -129,6 +129,7 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
             setErrorMessage={handleSetErrorMessage}
             isDisabled={unbondTxStatus === TxStatus.PROCESSING}
           />
+
           <Typography variant="body1" fw="normal">
             Once unbonding, you must wait certain number of eras for your funds
             to become available.
@@ -138,27 +139,14 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
             You can check the remaining eras for your funds to become available
             in the Unbonding {nativeTokenSymbol} tooltip.
           </Typography>
-        </div>
+        </ModalBody>
 
-        <ModalFooter className="flex items-center gap-2">
-          <Button
-            isFullWidth
-            variant="secondary"
-            href={TANGLE_DOCS_STAKING_URL}
-            target="_blank"
-          >
-            Learn More
-          </Button>
-
-          <Button
-            isFullWidth
-            isDisabled={!canSubmitTx}
-            isLoading={unbondTxStatus === TxStatus.PROCESSING}
-            onClick={submitTx}
-          >
-            Confirm
-          </Button>
-        </ModalFooter>
+        <ModalFooterActions
+          learnMoreLinkHref={TANGLE_DOCS_STAKING_URL}
+          isProcessing={unbondTxStatus === TxStatus.PROCESSING}
+          isConfirmDisabled={!canSubmitTx}
+          onConfirm={submitTx}
+        />
       </ModalContent>
     </Modal>
   );

@@ -2,6 +2,7 @@
 
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import { FileCopyLine } from '@webb-tools/icons';
+import { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
 import {
   Tooltip,
@@ -12,8 +13,6 @@ import { useCopyable } from '@webb-tools/webb-ui-components/hooks/useCopyable';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import { type FC } from 'react';
-
-import { IdentityType } from './types';
 
 const IdentityCell: FC<{ address: string; identity: IdentityType }> = ({
   address,

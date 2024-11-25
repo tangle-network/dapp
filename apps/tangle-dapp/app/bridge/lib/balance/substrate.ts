@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import Decimal from 'decimal.js';
 
-import { calculateTransferrableBalance } from '../../../../utils/polkadot/balance';
+import { calculateTransferableBalance } from '../../../../utils/polkadot/balance';
 
 export async function getSubstrateNativeTransferable(params?: {
   api: ApiPromise;
@@ -10,7 +10,7 @@ export async function getSubstrateNativeTransferable(params?: {
   if (!params) return null;
   const { api, accAddress } = params;
   const accInfo = (await api.query.system.account(accAddress)).data;
-  const transferable = calculateTransferrableBalance(accInfo);
+  const transferable = calculateTransferableBalance(accInfo);
 
   // Convert to the right format based on the chain's decimals
   return new Decimal(transferable.toString()).div(

@@ -69,12 +69,8 @@ const TransactionInputCardRoot = forwardRef<
         {...props}
         ref={ref}
         className={twMerge(
-          'w-full rounded-xl px-3 py-1.5 space-y-2',
-          'bg-gradient-to-b',
-          'from-[rgba(255,_255,_255,_0.18)] to-[rgba(255,_255,_255,_0.6)]',
-          'hover:from-[rgba(255,_255,_255,_0.3)] hover:to-mono-0',
-          'dark:from-[rgba(43,_47,_64,_0.4)] dark:to-[rgba(112,_122,_166,_0.04)]',
-          'dark:hover:from-[rgba(43,_47,_64,_0.5)] dark:hover:to-[rgba(112,_122,_166,_0.05)]',
+          'w-full rounded-xl p-4 space-y-2',
+          'bg-mono-20 dark:bg-mono-170',
           className,
         )}
       >
@@ -97,6 +93,7 @@ const TransactionInputCardRoot = forwardRef<
     );
   },
 );
+
 TransactionInputCardRoot.displayName = 'TransactionInputCardRoot';
 
 const TransactionChainSelector = forwardRef(
@@ -221,12 +218,15 @@ const TransactionMaxAmountButton = forwardRef<
 
     const buttonCnt = useMemo(() => {
       const amount =
-        typeof maxAmount === 'number' ? toFixed(maxAmount, 5) : '--';
-      const fmtAmount =
+        // TODO: Use empty placeholder constant instead, once it's moved to Webb UI lib.
+        typeof maxAmount === 'number' ? toFixed(maxAmount, 5) : '—';
+
+      const formattedAmount =
         typeof amount === 'number' ? getRoundedAmountString(amount, 5) : amount;
+
       const tokenSym = tokenSymbol ?? '';
 
-      return `${fmtAmount} ${tokenSym}`.trim();
+      return `${formattedAmount} ${tokenSym}`.trim();
     }, [maxAmount, tokenSymbol]);
 
     const disabled = useMemo(
@@ -304,6 +304,7 @@ const TransactionMaxAmountButton = forwardRef<
             {buttonCnt}
           </TransactionButton>
         </TooltipTrigger>
+
         <TooltipBody>
           {tooltipBody === undefined
             ? accountType === 'note'

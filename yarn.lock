@@ -7223,13 +7223,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hyperlane-xyz/registry@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@hyperlane-xyz/registry@npm:2.5.0"
+"@hyperlane-xyz/registry@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "@hyperlane-xyz/registry@npm:6.1.0"
   dependencies:
-    yaml: "npm:^2"
+    yaml: "npm:2.4.5"
     zod: "npm:^3.21.2"
-  checksum: 10c0/3943ea2b244325e592700faefddded93f5c8ee6761407ae3464f397efa89f7b3f9779fa3da9d08544c9ce4d694e17601e780f2d0f5c1a135ea66eab377909430
+  checksum: 10c0/58f4a437e97830290de11707ca00e441e0e4a5c21e358b83385a05b94f4058a1b4e6799801db8186d92c52ef021c3a783acc72ea9f41af861dab2df2d9a817f3
   languageName: node
   linkType: hard
 
@@ -18206,7 +18206,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/protocol-substrate-types@npm:@webb-tools/tangle-substrate-types@^0.9.0, @webb-tools/tangle-substrate-types@npm:^0.9.0":
+"@webb-tools/protocol-substrate-types@npm:@webb-tools/tangle-substrate-types@^0.9.0, @webb-tools/tangle-substrate-types@npm:0.9.0":
   version: 0.9.0
   resolution: "@webb-tools/tangle-substrate-types@npm:0.9.0"
   dependencies:
@@ -26068,16 +26068,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-storybook@npm:^0.10.1":
-  version: 0.10.1
-  resolution: "eslint-plugin-storybook@npm:0.10.1"
+"eslint-plugin-storybook@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "eslint-plugin-storybook@npm:0.11.0"
   dependencies:
     "@storybook/csf": "npm:^0.1.11"
     "@typescript-eslint/utils": "npm:^8.8.1"
     ts-dedent: "npm:^2.2.0"
   peerDependencies:
     eslint: ">=6"
-  checksum: 10c0/9694b0fa3eb7b4b47a7105cb0356ddb2308555cb8035684e0910966f900bf66525caae14d34e01c21b0135b738221e73877d1a651d5669f3ea4a395cf943b396
+  checksum: 10c0/e132d67942fe9f826dbeda5023f8483a71d59dea135d53196dc20132c405aba0155f7dca51f443ed05097287864294f7c9b332771d123e7f6609a0571440b61e
   languageName: node
   linkType: hard
 
@@ -45968,7 +45968,7 @@ __metadata:
     "@ethersproject/abi": "npm:^5.7.0"
     "@ethersproject/providers": "npm:^5.7.2"
     "@headlessui/react": "npm:^2.2.0"
-    "@hyperlane-xyz/registry": "npm:^2.5.0"
+    "@hyperlane-xyz/registry": "npm:^6.1.0"
     "@hyperlane-xyz/sdk": "npm:^5.6.2"
     "@hyperlane-xyz/utils": "npm:^5.6.2"
     "@next/bundle-analyzer": "npm:^14.2.16"
@@ -46064,7 +46064,7 @@ __metadata:
     "@webb-tools/interfaces": "npm:1.0.11"
     "@webb-tools/sdk-core": "npm:0.1.4-127"
     "@webb-tools/tangle-restaking-types": "npm:^0.1.0"
-    "@webb-tools/tangle-substrate-types": "npm:^0.9.0"
+    "@webb-tools/tangle-substrate-types": "npm:0.9.0"
     "@webb-tools/test-utils": "npm:0.1.8"
     "@webb-tools/tokens": "npm:1.0.11"
     "@webb-tools/utils": "npm:1.0.11"
@@ -46097,7 +46097,7 @@ __metadata:
     eslint-plugin-react: "npm:7.35.0"
     eslint-plugin-react-hooks: "npm:^4.6.2"
     eslint-plugin-simple-import-sort: "npm:^12.1.1"
-    eslint-plugin-storybook: "npm:^0.10.1"
+    eslint-plugin-storybook: "npm:^0.11.0"
     eslint-plugin-unused-imports: "npm:^4.1.4"
     ethers: "npm:5.7.2"
     framer-motion: "npm:^11.11.10"
@@ -47266,7 +47266,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2, yaml@npm:^2.1.3, yaml@npm:^2.3.4":
+"yaml@npm:^2.1.3, yaml@npm:^2.3.4":
   version: 2.5.0
   resolution: "yaml@npm:2.5.0"
   bin:

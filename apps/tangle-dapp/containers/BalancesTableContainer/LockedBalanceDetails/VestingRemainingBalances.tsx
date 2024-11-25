@@ -1,8 +1,8 @@
 import { BN, BN_ZERO } from '@polkadot/util';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { FC, useCallback } from 'react';
 
 import useVestingInfo from '../../../data/vesting/useVestingInfo';
-import useApiRx from '../../../hooks/useApiRx';
 import BalanceCell from '../BalanceCell';
 import { sortVestingSchedulesAscending } from './VestingScheduleBalances';
 

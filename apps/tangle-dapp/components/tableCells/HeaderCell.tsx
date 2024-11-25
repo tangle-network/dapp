@@ -11,21 +11,26 @@ const HeaderCell: FC<HeaderCellProps> = ({
   title,
   tooltip,
   className,
-  titleVariant = 'body1',
+  titleVariant = 'body2',
 }) => {
   return (
     <Typography
       variant={titleVariant}
-      fw="bold"
+      fw="normal"
       className={twMerge(
-        'whitespace-nowrap text-mono-140 dark:text-mono-40',
+        'whitespace-nowrap text-mono-140 dark:text-mono-100',
         'flex items-center gap-0.5',
         className,
       )}
     >
       {title}
 
-      {tooltip && <InfoIconWithTooltip content={tooltip} />}
+      {tooltip !== undefined && (
+        <InfoIconWithTooltip
+          className="fill-current dark:fill-current"
+          content={tooltip}
+        />
+      )}
     </Typography>
   );
 };

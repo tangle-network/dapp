@@ -12,10 +12,8 @@ export const ListItem = forwardRef<
     <li
       {...props}
       className={twMerge(
-        'group max-w-lg px-[34px] py-2',
+        'group px-8 py-2',
         'flex items-center justify-between',
-        'bg-mono-0 dark:bg-mono-190',
-
         cx({
           'hover:bg-blue-0 dark:hover:bg-mono-170': !isDisabled,
           'opacity-50': isDisabled,

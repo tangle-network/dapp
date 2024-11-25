@@ -1,7 +1,12 @@
 'use client';
 
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
-import { Modal, ModalContent, useModal } from '@webb-tools/webb-ui-components';
+import {
+  EMPTY_VALUE_PLACEHOLDER,
+  Modal,
+  ModalContent,
+  useModal,
+} from '@webb-tools/webb-ui-components';
 import ChainOrTokenButton from '@webb-tools/webb-ui-components/components/buttons/ChainOrTokenButton';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
@@ -59,21 +64,26 @@ const AmountAndTokenInput: FC = () => {
   } = useModal(false);
 
   const { getTokenBalance } = useTokenBalances();
+
   const [tokenBalances, setTokenBalances] = useState<
     Record<string, Decimal | null>
   >({});
 
   const fetchBalances = useCallback(async () => {
     const balances: Record<string, Decimal | null> = {};
+
     for (const tokenId of tokenIdOptions) {
       const token = BRIDGE_SUPPORTED_TOKENS[tokenId];
+
       const erc20TokenContractAddress =
         token.erc20TokenContractAddress?.[sourceTypedChainId];
+
       balances[tokenId] = await getTokenBalance(
         erc20TokenContractAddress ?? '0x0',
         token.decimals[sourceTypedChainId] ?? 18,
       );
     }
+
     setTokenBalances(balances);
   }, [tokenIdOptions, getTokenBalance, sourceTypedChainId]);
 
@@ -81,7 +91,7 @@ const AmountAndTokenInput: FC = () => {
     fetchBalances();
   }, [fetchBalances]);
 
-  const assets: AssetConfig[] = useMemo(() => {
+  const assets = useMemo<AssetConfig[]>(() => {
     return tokenIdOptions.map((tokenId) => {
       const token = BRIDGE_SUPPORTED_TOKENS[tokenId];
 
@@ -106,7 +116,8 @@ const AmountAndTokenInput: FC = () => {
         symbol: token.symbol,
         balance: tokenBalances[tokenId] ?? new Decimal(0),
         explorerUrl: explorerUrl?.toString(),
-      };
+        address: erc20TokenContractAddress,
+      } satisfies AssetConfig;
     });
   }, [
     tokenIdOptions,
@@ -115,20 +126,24 @@ const AmountAndTokenInput: FC = () => {
     tokenBalances,
   ]);
 
-  const onSelectAsset = (asset: AssetConfig) => {
-    setSelectedTokenId(asset.symbol as BridgeTokenId);
-    closeTokenModal();
-  };
+  const onSelectAsset = useCallback(
+    (asset: AssetConfig) => {
+      setSelectedTokenId(asset.symbol as BridgeTokenId);
+      closeTokenModal();
+    },
+    [closeTokenModal, setSelectedTokenId],
+  );
 
   const selectedAssetBalance = useMemo(() => {
     return tokenBalances[selectedToken.id] ?? new Decimal(0);
   }, [tokenBalances, selectedToken.id]);
 
   return (
-    <div className="relative">
+    <div className="flex flex-col gap-2 justify-center items-end">
       <div
         className={twMerge(
-          'w-full flex items-center gap-2 bg-mono-20 dark:bg-mono-170 rounded-lg pr-4',
+          'w-full flex items-center gap-2 rounded-lg pr-4',
+          'bg-mono-20 dark:bg-mono-180',
           isAmountInputError && 'border border-red-70 dark:border-red-50',
         )}
       >
@@ -141,7 +156,7 @@ const AmountAndTokenInput: FC = () => {
             isFullWidth: true,
           }}
           placeholder=""
-          wrapperClassName="!pr-0 !border-0"
+          wrapperClassName="!pr-0 !border-0 dark:bg-mono-180"
           max={balance ? convertDecimalToBn(balance, decimals) : null}
           maxErrorMessage="Insufficient balance"
           min={minAmount ? convertDecimalToBn(minAmount, decimals) : null}
@@ -150,7 +165,6 @@ const AmountAndTokenInput: FC = () => {
           setErrorMessage={(error) =>
             setIsAmountInputError(error ? true : false)
           }
-          errorMessageClassName="absolute left-0 bottom-[-24px] !text-[14px] !leading-[21px]"
         />
 
         {/* Token Selector */}
@@ -158,7 +172,7 @@ const AmountAndTokenInput: FC = () => {
           value={selectedToken.symbol}
           iconType="token"
           onClick={openTokenModal}
-          className="w-[130px] border-0 px-3 bg-mono-40 dark:bg-mono-140"
+          className="min-w-[130px]"
           status="success"
         />
       </div>
@@ -169,24 +183,20 @@ const AmountAndTokenInput: FC = () => {
           className="w-[100px] absolute right-0 bottom-[-24px]"
         />
       ) : (
-        <Typography
-          variant="body2"
-          className="absolute right-0 bottom-[-24px] text-mono-120 dark:text-mono-100"
-        >
+        <Typography variant="body2">
           Balance:{' '}
           {selectedAssetBalance !== null
             ? `${selectedAssetBalance.toString()} ${selectedToken.symbol}`
-            : 'N/A'}
+            : EMPTY_VALUE_PLACEHOLDER}
         </Typography>
       )}
 
       <Modal>
         {/* Token Selector Modal */}
         <ModalContent
-          isCenter
           isOpen={isTokenModalOpen}
           onInteractOutside={closeTokenModal}
-          className="w-[500px] h-[600px]"
+          className="h-full max-h-[600px]"
         >
           <AssetList
             onClose={closeTokenModal}

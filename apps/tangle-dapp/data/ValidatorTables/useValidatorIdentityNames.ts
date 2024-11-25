@@ -2,15 +2,15 @@ import { Bytes, Option, StorageKey } from '@polkadot/types';
 import { AccountId32 } from '@polkadot/types/interfaces';
 import { PalletIdentityRegistration } from '@polkadot/types/lookup';
 import { ITuple } from '@polkadot/types/types';
-import { useCallback } from 'react';
-import { map } from 'rxjs';
-
-import useApiRx from '../../hooks/useApiRx';
-import useEntryMap from '../../hooks/useEntryMap';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import {
   extractDataFromIdentityInfo,
   IdentityDataType,
-} from '../../utils/polkadot/identity';
+} from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
+import { useCallback } from 'react';
+import { map } from 'rxjs';
+
+import useEntryMap from '../../hooks/useEntryMap';
 
 const mapIdentitiesToNames = (
   identities: [

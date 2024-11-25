@@ -1,5 +1,6 @@
 'use client';
 
+import { Card } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { FC, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -14,9 +15,9 @@ import ChainSelectors from './ChainSelectors';
 import FeeDetails from './FeeDetails';
 import useActionButton from './hooks/useActionButton';
 
-interface BridgeContainerProps {
+type BridgeContainerProps = {
   className?: string;
-}
+};
 
 const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
   const {
@@ -46,50 +47,50 @@ const BridgeContainer: FC<BridgeContainerProps> = ({ className }) => {
 
   return (
     <>
-      <div
+      <Card
+        withShadow
         className={twMerge(
-          'max-w-[640px] min-h-[580px] bg-mono-0 dark:bg-mono-190 p-5 md:p-8 rounded-xl',
-          'shadow-webb-lg dark:shadow-webb-lg-dark',
-          'flex flex-col',
+          'flex flex-col gap-7 w-full max-w-[590px]',
           className,
         )}
       >
-        <div className="flex flex-col justify-between flex-1">
-          <div className="flex flex-col gap-10">
-            <ChainSelectors />
+        <div className="flex flex-col gap-7">
+          <ChainSelectors />
 
-            <AmountAndTokenInput />
+          <AmountAndTokenInput />
 
-            <AddressInput
-              id="bridge-destination-address-input"
-              type={
-                isEVMChain(selectedDestinationChain)
-                  ? AddressType.EVM
-                  : AddressType.Substrate
-              }
-              title="Receiver Address"
-              wrapperOverrides={{ isFullWidth: true }}
-              value={destinationAddress}
-              setValue={setDestinationAddress}
-              setErrorMessage={(error) =>
-                setIsAddressInputError(error ? true : false)
-              }
-            />
+          <AddressInput
+            id="bridge-destination-address-input"
+            type={
+              isEVMChain(selectedDestinationChain)
+                ? AddressType.EVM
+                : AddressType.Substrate
+            }
+            title="Recipient Address"
+            wrapperOverrides={{
+              isFullWidth: true,
+              wrapperClassName: 'dark:bg-mono-180',
+            }}
+            value={destinationAddress}
+            setValue={setDestinationAddress}
+            setErrorMessage={(error) =>
+              setIsAddressInputError(error ? true : false)
+            }
+          />
 
-            {!hideFeeDetails && <FeeDetails />}
-          </div>
-
-          <Button
-            isFullWidth
-            isDisabled={isDisabled}
-            isLoading={isLoading}
-            onClick={buttonAction}
-            loadingText={buttonLoadingText}
-          >
-            {buttonText}
-          </Button>
+          {!hideFeeDetails && <FeeDetails />}
         </div>
-      </div>
+
+        <Button
+          isFullWidth
+          isDisabled={isDisabled}
+          isLoading={isLoading}
+          onClick={buttonAction}
+          loadingText={buttonLoadingText}
+        >
+          {buttonText}
+        </Button>
+      </Card>
 
       <BridgeConfirmationModal
         isOpen={isConfirmModalOpen}

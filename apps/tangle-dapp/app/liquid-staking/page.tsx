@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  AddLineIcon,
-  CoinIcon,
-  EditLine,
-  Search,
-  SparklingIcon,
-  WaterDropletIcon,
-} from '@webb-tools/icons';
-import { OnboardingPageKey } from '@webb-tools/tangle-shared-ui/constants';
+import { AddLineIcon } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import useNetworkSwitcher from '@webb-tools/tangle-shared-ui/hooks/useNetworkSwitcher';
 import {
@@ -17,7 +9,6 @@ import {
   TabsList as WebbTabsList,
   TabsRoot,
   TabTrigger,
-  TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useEffect, useState } from 'react';
@@ -25,8 +16,6 @@ import { FC, useEffect, useState } from 'react';
 import LsUnbondingTable from '../../components/LiquidStaking/LsUnbondingTable';
 import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeCard';
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
-import OnboardingItem from '../../components/OnboardingModal/OnboardingItem';
-import OnboardingModal from '../../components/OnboardingModal/OnboardingModal';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
 import LsCreatePoolModal from '../../containers/LsCreatePoolModal';
 import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
@@ -99,65 +88,8 @@ const LiquidStakingPage: FC = () => {
         setIsOpen={setIsCreatePoolModalOpen}
       />
 
-      <OnboardingModal
-        title="Get Started with Liquid Staking"
-        pageKey={OnboardingPageKey.LIQUID_STAKING}
-        learnMoreHref={TANGLE_DOCS_LIQUID_STAKING_URL}
-      >
-        <OnboardingItem
-          Icon={Search}
-          title="Explore Liquid Staking Pools"
-          description="Browse existing liquid staking tokens (LSTs) on Tangle or Tangle Restaking Parachain. Sort them by APY, TVL, or create your own LST."
-        />
-
-        <OnboardingItem
-          Icon={WaterDropletIcon}
-          title="Stake Your Assets"
-          description="Select a pool, enter the amount you'd like to mint, and click 'Mint' to start staking in the pool and receive an LST."
-        />
-
-        <OnboardingItem
-          Icon={EditLine}
-          title="View and Manage Your LSTs"
-          description="After staking, use the 'My Pools' tab to view, increase stake, unstake, or manage your LST positions."
-        />
-
-        <OnboardingItem
-          Icon={CoinIcon}
-          title="Obtain derivative tokens"
-          description="When you join a pool, you'll automatically receive its derivative asset (LST), which can be traded and used within Tangle's restaking infrastructure."
-        />
-
-        <OnboardingItem
-          Icon={SparklingIcon}
-          title="Earn Rewards While Staying Liquid"
-          description="Use or trade your derivative tokens while automatically earning staking rewards. That's the magic of liquid staking!"
-        />
-      </OnboardingModal>
-
       <div className="flex flex-col items-stretch gap-10">
-        <div className="flex flex-row items-center justify-between w-full p-6 space-y-0 overflow-x-auto rounded-2xl bg-liquid_staking_banner dark:bg-liquid_staking_banner_dark">
-          <div className="flex flex-col gap-2">
-            <Typography variant="h5" fw="bold">
-              Tangle Liquid Staking
-            </Typography>
-
-            <Typography
-              variant="body1"
-              className="text-mono-120 dark:text-mono-100"
-            >
-              Mint Liquid Staking Tokens (LSTs) to earn rewards & restake on
-              Tangle Mainnet.
-            </Typography>
-          </div>
-
-          {/** TODO: Waiting for price fetching API before showing this part. */}
-          {/* <div className="flex h-full gap-6">
-            <StatItem title="$123.01" subtitle="My Total Staking" />
-          </div> */}
-        </div>
-
-        <div className="flex flex-col self-center gap-4 w-full min-w-[450px] max-w-[532px]">
+        <div className="flex flex-col self-center gap-4 w-full max-w-[532px]">
           <TabsList className="w-full">
             <TabListItem
               isActive={isStaking}

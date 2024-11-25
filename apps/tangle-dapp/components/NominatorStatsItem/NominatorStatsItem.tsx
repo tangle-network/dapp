@@ -3,10 +3,16 @@ import {
   SkeletonLoader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { NominatorStatsItemProps } from './types';
+export type NominatorStatsItemProps = {
+  title: string;
+  tooltip?: string | ReactNode;
+  className?: string;
+  children: ReactNode | null;
+  isError: boolean;
+};
 
 export const NominatorStatsItem: FC<NominatorStatsItemProps> = ({
   title,
@@ -16,7 +22,7 @@ export const NominatorStatsItem: FC<NominatorStatsItemProps> = ({
   isError,
 }) => {
   return (
-    <div className={twMerge('flex flex-col gap-4', className)}>
+    <div className={twMerge('flex flex-col gap-2', className)}>
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center">
         <div className="flex items-center gap-0.5">
           {children === null ? (

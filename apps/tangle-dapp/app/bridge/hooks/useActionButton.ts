@@ -155,9 +155,11 @@ export default function useActionButton({
   ]);
 
   const buttonLoadingText = useMemo(() => {
-    if (isRequiredToConnectWallet || isSelectedNetworkAndSourceChainMismatch)
-      return 'Connecting...';
-    if (isTransferring) return 'Transferring...';
+    if (isRequiredToConnectWallet || isSelectedNetworkAndSourceChainMismatch) {
+      return 'Connecting';
+    } else if (isTransferring) {
+      return 'Transferring';
+    }
   }, [
     isRequiredToConnectWallet,
     isSelectedNetworkAndSourceChainMismatch,

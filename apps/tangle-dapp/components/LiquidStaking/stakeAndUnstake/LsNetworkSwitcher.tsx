@@ -11,7 +11,8 @@ import {
   Typography,
   useModal,
 } from '@webb-tools/webb-ui-components';
-import { FC } from 'react';
+import { FC, useCallback, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { IS_PRODUCTION_ENV } from '../../../constants/env';
 import { LS_NETWORKS } from '../../../constants/liquidStaking/constants';
@@ -47,7 +48,13 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
   } = useModal(false);
 
   const base = (
-    <div className="group flex gap-1 items-center justify-center">
+    <div
+      onClick={isReadOnly ? undefined : openLsNetworkSwitcher}
+      className={twMerge(
+        'group flex gap-1 items-center justify-center',
+        !isReadOnly && 'cursor-pointer',
+      )}
+    >
       <div className="flex gap-2 items-center justify-center">
         <ChainIcon size="lg" name={activeLsNetwork.chainIconFileName} />
 
@@ -56,22 +63,13 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
         </Typography>
       </div>
 
-      {!isReadOnly && (
-        <DropdownChevronIcon
-          isLarge
-          onClick={!isReadOnly ? openLsNetworkSwitcher : undefined}
-        />
-      )}
+      {!isReadOnly && <DropdownChevronIcon isLarge />}
     </div>
   );
 
   // Filter out networks that don't support liquid staking yet.
   const supportedLsNetworks = LS_NETWORKS.filter((network) => {
     if (network.id === LsNetworkId.TANGLE_LOCAL && IS_PRODUCTION_ENV) {
-      return false;
-    }
-    // Filter out the selected network.
-    else if (activeLsNetwork.id === network.id) {
       return false;
     }
 
@@ -86,27 +84,32 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
     );
   });
 
-  const networkOptions: ChainConfig[] = supportedLsNetworks.map((network) => {
-    const tangleNetwork = getLsTangleNetwork(network.id);
+  const networkOptions = useMemo<ChainConfig[]>(() => {
+    return supportedLsNetworks.map((network) => {
+      const tangleNetwork = getLsTangleNetwork(network.id);
 
-    const typedChainId = calculateTypedChainId(
-      tangleNetwork.substrateChainId ? ChainType.Substrate : ChainType.EVM,
-      tangleNetwork.substrateChainId ?? tangleNetwork.evmChainId ?? 0,
-    );
+      const typedChainId = calculateTypedChainId(
+        tangleNetwork.substrateChainId ? ChainType.Substrate : ChainType.EVM,
+        tangleNetwork.substrateChainId ?? tangleNetwork.evmChainId ?? 0,
+      );
 
-    const chainConfig = chainsConfig[typedChainId];
+      const chainConfig = chainsConfig[typedChainId];
 
-    return {
-      ...chainConfig,
-      name: network.networkName,
-      id: network.id,
-    };
-  });
+      return {
+        ...chainConfig,
+        name: network.networkName,
+        id: network.id,
+      } satisfies ChainConfig;
+    });
+  }, [supportedLsNetworks]);
 
-  const handleOnSelectNetwork = (chain: ChainConfig) => {
-    setNetworkId?.(chain.id as LsNetworkId);
-    closeLsNetworkSwitcher();
-  };
+  const handleOnSelectNetwork = useCallback(
+    (chain: ChainConfig) => {
+      setNetworkId?.(chain.id as LsNetworkId);
+      closeLsNetworkSwitcher();
+    },
+    [closeLsNetworkSwitcher, setNetworkId],
+  );
 
   return (
     <>
@@ -114,10 +117,9 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
 
       <Modal>
         <ModalContent
-          isCenter
           isOpen={isLsNetworkSwitcherOpen}
           onInteractOutside={closeLsNetworkSwitcher}
-          className="w-[500px] h-[600px]"
+          size="sm"
         >
           <ChainList
             searchInputId="ls-network-switcher-search"
@@ -126,6 +128,7 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
             chains={networkOptions}
             onSelectChain={handleOnSelectNetwork}
             chainType="source"
+            title="Switch Network"
           />
         </ModalContent>
       </Modal>

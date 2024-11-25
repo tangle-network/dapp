@@ -1,7 +1,7 @@
 import { AccountId32 } from '@polkadot/types/interfaces';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback, useMemo } from 'react';
 
-import useApiRx from '../../hooks/useApiRx';
 import { Validator } from '../../types';
 import createValidator from '../../utils/staking/createValidator';
 import useValidatorPrefs from '../staking/useValidatorPrefs';

@@ -7,10 +7,10 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
   LsPool,
   LsPoolDisplayName,
@@ -18,12 +18,12 @@ import {
 import formatBn from '../../../utils/formatBn';
 import formatFractional from '../../../utils/formatFractional';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import EmptyList from '../../EmptyList';
 import { ListCardWrapper } from '../../Lists/ListCardWrapper';
+import ListStatus from '../../ListStatus';
 import SkeletonRows from '../../SkeletonRows';
 
 export type LsSelectLstModalProps = {
-  pools: LsPool[] | null;
+  pools: LsPool[] | Error | null;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   onSelect: (lsPoolId: number) => void;
@@ -40,8 +40,8 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredPools = useMemo(() => {
-    if (pools === null) {
-      return null;
+    if (!Array.isArray(pools)) {
+      return pools;
     }
 
     return pools.filter((pool) => {
@@ -53,8 +53,8 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
 
   // Sort pools by highest TVL in descending order.
   const sortedPools = useMemo(() => {
-    if (filteredPools === null) {
-      return null;
+    if (!Array.isArray(filteredPools)) {
+      return filteredPools;
     }
 
     return filteredPools.toSorted((a, b) => {
@@ -65,11 +65,12 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
   return (
     <Modal>
       <ModalContent
-        isCenter
         isOpen={isOpen}
+        onInteractOutside={() => setIsOpen(false)}
+        size="md"
         className={twMerge(
-          'w-[550px] max-h-[600px]',
-          pools !== null && pools.length > 0 && 'h-full',
+          'max-h-[600px]',
+          Array.isArray(pools) && pools.length > 0 && 'h-full',
         )}
       >
         <ListCardWrapper
@@ -77,7 +78,7 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
           onClose={() => setIsOpen(false)}
           className="w-full max-w-none"
         >
-          <div className="px-4 md:px-9 pb-4 border-b border-mono-40 dark:border-mono-170">
+          <div className="px-4 pb-4 border-b md:px-9 border-mono-40 dark:border-mono-170">
             <Input
               id="ls-select-lst-search"
               isControlled
@@ -89,12 +90,22 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
             />
           </div>
 
-          <ScrollArea className="w-full h-full">
+          <ScrollArea className="w-full h-full pt-4">
             <ul>
-              {pools !== null && pools.length === 0 ? (
-                <EmptyList
-                  title="No pools available"
-                  description="Create your own to get started!"
+              {sortedPools instanceof Error ? (
+                <ListStatus title="Error" description={sortedPools.message} />
+              ) : Array.isArray(sortedPools) &&
+                sortedPools.length === 0 &&
+                searchQuery.length > 0 ? (
+                <ListStatus
+                  title="Nothing Found"
+                  description="No LSTs found matching your search query."
+                  className="my-16"
+                />
+              ) : Array.isArray(sortedPools) && sortedPools.length === 0 ? (
+                <ListStatus
+                  title="No LSTs Available"
+                  description="Create your own pool to get started!"
                   className="my-16"
                 />
               ) : (

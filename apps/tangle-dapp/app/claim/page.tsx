@@ -40,20 +40,20 @@ export default function ClaimPage() {
   const { title, subTitle } = useMemo(() => {
     if (claimInfo === null) {
       return {
-        title: `Check Eligibility`,
+        title: 'Check Eligibility',
         subTitle: 'CLAIM AIRDROP',
       };
     }
 
     if (claimInfo || isClaiming) {
       return {
-        title: `Unclaimed Airdrop`,
+        title: 'Airdrop Available',
         subTitle: 'CONGRATULATIONS!',
       };
     }
 
     return {
-      title: `Not Eligible`,
+      title: 'Not Eligible',
       subTitle: 'OOPS!',
     };
   }, [claimInfo, isClaiming]);
