@@ -1,7 +1,7 @@
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback, useMemo } from 'react';
 
 import { LsPoolUnstakeRequest } from '../../constants/liquidStaking/types';
-import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import useCurrentEra from '../staking/useCurrentEra';

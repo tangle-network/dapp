@@ -14,6 +14,7 @@ import {
   TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { FC, useMemo, useState } from 'react';
 
 import { LsPoolUnstakeRequest } from '../../constants/liquidStaking/types';
@@ -23,7 +24,6 @@ import addCommasToNumber from '../../utils/addCommasToNumber';
 import pluralize from '../../utils/pluralize';
 import { ContainerSkeleton, TableStatus } from '..';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
-import { sharedTableStatusClxs } from '../tables/shared';
 import WithdrawUnstakeRequestButton from './WithdrawUnstakeRequestButton';
 
 const COLUMN_HELPER = createColumnHelper<LsPoolUnstakeRequest>();
@@ -150,7 +150,6 @@ const LsUnbondingTable: FC = () => {
   } else if (!isAccountConnected) {
     return (
       <TableStatus
-        className={sharedTableStatusClxs}
         title="Connect a wallet to continue"
         description="Once you've connected an account, you'll be able to see and manage your liquid staking pools' unstaking requests here."
         icon="🔍"
@@ -159,8 +158,7 @@ const LsUnbondingTable: FC = () => {
   } else if (rows.length === 0) {
     return (
       <TableStatus
-        title="No unstake requests"
-        className={sharedTableStatusClxs}
+        title="No Unstake Requests"
         description="Once you've scheduled an unstake request, you'll see information about it here."
         icon="🔍"
         buttonText="Learn More"
@@ -174,12 +172,9 @@ const LsUnbondingTable: FC = () => {
 
   return (
     <Table
+      variant={TableVariant.DEFAULT}
       tableProps={table}
       title={pluralize('unstake request', rows.length !== 1)}
-      className="rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3"
-      thClassName="py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160"
-      tbodyClassName="!bg-transparent"
-      tdClassName="!bg-inherit border-t-0"
       isPaginated
     />
   );
