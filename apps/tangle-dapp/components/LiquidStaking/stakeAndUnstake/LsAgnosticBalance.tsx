@@ -1,5 +1,6 @@
 'use client';
 
+import { BN } from '@polkadot/util';
 import { WalletFillIcon, WalletLineIcon } from '@webb-tools/icons';
 import {
   SkeletonLoader,
@@ -8,10 +9,10 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import useLsActivePoolDisplayName from '../../../data/liquidStaking/useLsActivePoolDisplayName';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import formatBn from '../../../utils/formatBn';
@@ -66,8 +67,7 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
 
   const isClickable =
     onlyShowTooltipWhenBalanceIsSet &&
-    balance !== null &&
-    typeof balance !== 'string' &&
+    balance instanceof BN &&
     !balance.isZero();
 
   const handleClick = useCallback(() => {
@@ -97,7 +97,7 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
       )}
 
       {formattedBalance === null ? (
-        <SkeletonLoader className="rounded-2xl w-12" size="md" />
+        <SkeletonLoader className="w-12 rounded-2xl bg-mono-60" size="md" />
       ) : (
         <Typography
           variant="body1"

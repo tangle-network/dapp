@@ -1,21 +1,13 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-/**
- * Options for `useDynamicSVGImport` to import cryptocurrency icon dynamically
- */
 export interface DynamicSVGImportOptions {
-  /**
-   * A optional function which is called when finish loading SVG icon
-   */
   onCompleted?: (
     name: string,
     SvgIcon: React.FC<React.SVGProps<SVGElement>> | undefined,
   ) => void;
-  /**
-   * An optional function for handle error when loading SVG icon
-   */
+
   onError?: React.ReactEventHandler<SVGElement>;
 
   /**
@@ -38,33 +30,34 @@ export function useDynamicSVGImport(
   const [importedIcon, setImportedIcon] = useState<
     React.ReactElement<React.SVGProps<SVGElement>, 'svg'> | undefined
   >();
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error>();
 
   const { onCompleted, onError } = options;
 
-  const _name = useMemo(
-    () =>
-      typeof name === 'string' ? name.trim().toLowerCase() : 'placeholder',
-    [name],
-  );
+  const name_ =
+    typeof name === 'string' ? name.trim().toLowerCase() : 'placeholder';
 
-  const type = useMemo(() => options.type ?? 'token', [options]);
+  const type = options.type ?? 'token';
 
   useEffect(() => {
     setLoading(true);
+
     const importIcon = async (): Promise<void> => {
       try {
-        const mod = await getIcon(type, _name);
+        const mod = await getIcon(type, name_);
         const Icon = mod.default;
+
         setImportedIcon(<Icon />);
-        onCompleted?.(_name, Icon);
+        onCompleted?.(name_, Icon);
       } catch (err) {
         if ((err as any).message.includes('Cannot find module')) {
           const mod = await getDefaultIcon(type);
           const Icon = mod.default;
+
           setImportedIcon(<Icon />);
-          onCompleted?.(_name, Icon);
+          onCompleted?.(name_, Icon);
         } else {
           console.error('IMPORT ERROR', (err as any).message);
           onError?.(err as any);
@@ -74,8 +67,9 @@ export function useDynamicSVGImport(
         setLoading(false);
       }
     };
+
     importIcon();
-  }, [_name, onCompleted, onError, type]);
+  }, [name_, onCompleted, onError, type]);
 
   return { error, loading, svgElement: importedIcon };
 }

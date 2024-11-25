@@ -1,5 +1,6 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import assert from 'assert';
 import {
   Dispatch,
@@ -11,7 +12,6 @@ import {
 } from 'react';
 import { z } from 'zod';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import { RestakingService } from '../../../types';
 import { AllocationChartVariant } from '../AllocationChart';
 import AllocationStepContainer from '../AllocationStepContainer';

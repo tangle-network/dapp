@@ -162,13 +162,13 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
         onCloseAutoFocus={reset}
       >
         <ModalHeader onClose={() => setIsModalOpen(false)}>
-          Transfer {nativeTokenSymbol} Tokens
+          Send {nativeTokenSymbol} Tokens
         </ModalHeader>
 
         <ModalBody className="overflow-clip">
           <Typography variant="body1" fw="normal">
             Quickly transfer your {nativeTokenSymbol} tokens to an account on
-            the Tangle Network. You can choose to send to either an EVM or a
+            the Tangle network. You can choose to send to either an EVM or a
             Substrate address.
           </Typography>
 

@@ -6,7 +6,64 @@ import { twMerge } from 'tailwind-merge';
 import { Pagination } from '../Pagination';
 import { TDataMemo as TData } from './TData';
 import { THeaderMemo as THeader } from './THeader';
-import { TableProps } from './types';
+import { TableProps, TableVariant } from './types';
+
+const getVariantContainerClass = (variant: TableVariant) => {
+  switch (variant) {
+    case TableVariant.DEFAULT:
+      return 'overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160';
+    case TableVariant.GLASS_INNER:
+      return 'rounded-2xl overflow-hidden bg-mono-0 dark:bg-mono-180 px-3';
+    case TableVariant.GLASS_OUTER:
+      return 'px-6 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160 bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)] dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)] backdrop-blur-2xl';
+  }
+};
+
+const getVariantThClass = (variant: TableVariant) => {
+  switch (variant) {
+    case TableVariant.GLASS_INNER:
+      return 'py-3 !font-normal !bg-transparent border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160';
+    case TableVariant.GLASS_OUTER:
+      return 'py-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0';
+    case TableVariant.NESTED_IN_MODAL:
+      return 'z-10 py-3 sticky top-0';
+    case TableVariant.DEFAULT:
+      return '';
+  }
+};
+
+const getVariantTdClass = (variant: TableVariant) => {
+  switch (variant) {
+    case TableVariant.GLASS_INNER:
+      return '!bg-inherit border-t-0';
+    case TableVariant.GLASS_OUTER:
+      return 'border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden';
+    case TableVariant.NESTED_IN_MODAL:
+      return 'py-2 border-t-0';
+    case TableVariant.DEFAULT:
+      return '';
+  }
+};
+
+const getVariantTrClass = (variant: TableVariant) => {
+  switch (variant) {
+    case TableVariant.GLASS_OUTER:
+      return 'border-b border-mono-0 dark:border-mono-160 cursor-pointer';
+    case TableVariant.GLASS_INNER:
+    case TableVariant.DEFAULT:
+      return '';
+  }
+};
+
+const getVariantTableClass = (variant: TableVariant) => {
+  switch (variant) {
+    case TableVariant.GLASS_OUTER:
+      return 'border-separate border-spacing-y-3 py-3';
+    case TableVariant.GLASS_INNER:
+    case TableVariant.DEFAULT:
+      return '';
+  }
+};
 
 export const Table = <T extends RowData>({
   isDisabledRowHoverStyle,
@@ -25,6 +82,8 @@ export const Table = <T extends RowData>({
   trClassName,
   ref,
   getExpandedRowContent,
+  className,
+  variant,
   ...props
 }: TableProps<T, HTMLDivElement>) => {
   const getRowClickHandler = useCallback(
@@ -42,11 +101,16 @@ export const Table = <T extends RowData>({
   );
 
   return (
-    <div {...props} ref={ref}>
+    <div
+      className={twMerge(getVariantContainerClass(variant), className)}
+      {...props}
+      ref={ref}
+    >
       <div className={twMerge('w-full overflow-x-auto', tableWrapperClassName)}>
         <table
           className={twMerge(
             'w-full border-collapse table-auto',
+            getVariantTableClass(variant),
             tableClassName,
           )}
         >
@@ -55,7 +119,7 @@ export const Table = <T extends RowData>({
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <THeader
-                    className={thClassName}
+                    className={twMerge(getVariantThClass(variant), thClassName)}
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
                     title={
@@ -99,17 +163,25 @@ export const Table = <T extends RowData>({
               </tr>
             ))}
           </thead>
+
           <tbody className={tbodyClassName}>
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
                 <tr
-                  className={twMerge('group/tr', trClassName)}
+                  className={twMerge(
+                    'group/tr',
+                    getVariantTrClass(variant),
+                    trClassName,
+                  )}
                   onClick={getRowClickHandler(row)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TData
                       isDisabledHoverStyle={isDisabledRowHoverStyle}
-                      className={tdClassName}
+                      className={twMerge(
+                        getVariantTdClass(variant),
+                        tdClassName,
+                      )}
                       key={cell.id}
                     >
                       {flexRender(
@@ -130,6 +202,7 @@ export const Table = <T extends RowData>({
               </Fragment>
             ))}
           </tbody>
+
           {isDisplayFooter && (
             <tfoot>
               {table.getFooterGroups().map((footerGroup) => (

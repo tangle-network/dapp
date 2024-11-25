@@ -14,7 +14,7 @@ const DropdownChevronIcon: FC<DropdownChevronIconProps> = ({
   return (
     <div
       className={twMerge(
-        'p-1 rounded-lg group-hover:dark:bg-mono-160',
+        'p-1 rounded-lg group-hover:bg-mono-40 group-hover:dark:bg-mono-160',
         onClick !== undefined && 'cursor-pointer',
       )}
       onClick={onClick}

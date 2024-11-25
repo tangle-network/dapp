@@ -25,9 +25,11 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { type FC, useState } from 'react';
 
 import PayoutTxContainer from '../../containers/PayoutTxContainer/PayoutTxContainer';
+import pluralize from '../../utils/pluralize';
 import { sortBnValueForPayout } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
@@ -231,11 +233,11 @@ const PayoutTable: FC<PayoutTableProps> = ({
     <>
       <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
         <Table
-          thClassName="border-t-0 bg-mono-0"
-          paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
+          variant={TableVariant.DEFAULT}
           tableProps={table}
           isPaginated
           totalRecords={data.length}
+          title={pluralize('payout', data.length !== 1)}
         />
       </div>
 

@@ -25,7 +25,6 @@ export default function ActionButton({
   watch,
 }: Props) {
   const sourceTypedChainId = watch('sourceTypedChainId');
-  const operatorAccountId = watch('operatorAccountId');
 
   const activeTypedChainId = useActiveTypedChainId();
   const switchChain = useSwitchChain();
@@ -79,9 +78,7 @@ export default function ActionButton({
             isDisabled={!isValid || displayError !== undefined}
             isFullWidth
           >
-            {(displayError ?? operatorAccountId)
-              ? 'Deposit + Delegate'
-              : 'Deposit'}
+            Deposit
           </Button>
         );
       }}

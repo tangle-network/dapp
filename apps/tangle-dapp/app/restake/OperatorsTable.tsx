@@ -1,13 +1,13 @@
 'use client';
 
 import { Search } from '@webb-tools/icons/Search';
+import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';
 import { type ComponentProps, type FC, useMemo, useState } from 'react';
 
 import OperatorsTableUI from '../../components/tables/Operators';
 import { useRestakeContext } from '../../context/RestakeContext';
 import useIdentities from '../../data/useIdentities';
-import type { OperatorMap } from '../../types/restake';
 import { delegationsToVaultTokens } from './utils';
 
 type OperatorUI = NonNullable<
@@ -59,13 +59,14 @@ const OperatorsTable: FC<Props> = ({
       <Input
         id="search-validators"
         rightIcon={<Search className="mr-2" />}
-        placeholder="Search identity or address"
+        placeholder="Search by identity or address..."
         className="w-1/3 mb-1.5 ml-auto -mt-[54px]"
         isControlled
         debounceTime={500}
         value={globalFilter}
         onChange={setGlobalFilter}
       />
+
       <OperatorsTableUI
         globalFilter={globalFilter}
         onGlobalFilterChange={setGlobalFilter}

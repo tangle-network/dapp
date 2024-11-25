@@ -1,4 +1,5 @@
 import { TanglePrimitivesCurrencyCurrencyId } from '@polkadot/types/lookup';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useMemo } from 'react';
 
@@ -6,7 +7,6 @@ import {
   LsParachainSimpleTimeUnit,
   ParachainCurrency,
 } from '../../constants/liquidStaking/types';
-import useApiRx from '../../hooks/useApiRx';
 import tangleTimeUnitToSimpleInstance from '../../utils/liquidStaking/tangleTimeUnitToSimpleInstance';
 import getValueOfTangleCurrency from './getValueOfTangleCurrency';
 

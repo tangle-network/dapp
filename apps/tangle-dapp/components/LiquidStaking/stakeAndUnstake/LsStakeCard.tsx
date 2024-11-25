@@ -7,11 +7,12 @@ import '@webb-tools/tangle-restaking-types';
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@webb-tools/icons';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { Card } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
 
-import { EMPTY_VALUE_PLACEHOLDER } from '../../../constants';
 import {
   LsNetworkId,
   LsSearchParamKey,
@@ -30,10 +31,10 @@ import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
+import DetailsContainer from '../../DetailsContainer';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
-import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
 import LsSelectLstModal from './LsSelectLstModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
@@ -74,7 +75,7 @@ const LsStakeCard: FC = () => {
   const fromLsInputRef = useRef<HTMLInputElement>(null);
 
   const actionText = useMemo(() => {
-    const defaultText = 'Mint';
+    const defaultText = 'Stake';
 
     if (lsPoolMembers === null) {
       return defaultText;
@@ -207,14 +208,17 @@ const LsStakeCard: FC = () => {
 
   const allPools = useMemo(() => {
     if (!(lsPools instanceof Map)) {
-      return null;
+      return lsPools;
     }
 
     return Array.from(lsPools.values());
   }, [lsPools]);
 
   return (
-    <div className="flex flex-col items-stretch justify-center gap-2">
+    <Card
+      withShadow
+      className="flex flex-col items-stretch justify-center gap-2"
+    >
       <LsInput
         ref={fromLsInputRef}
         id="liquid-staking-stake-from"
@@ -248,7 +252,7 @@ const LsStakeCard: FC = () => {
       />
 
       {/* Details */}
-      <div className="flex flex-col gap-2 p-3">
+      <DetailsContainer>
         <UnstakePeriodDetailItem protocolId={lsProtocolId} />
 
         <ExchangeRateDetailItem
@@ -261,9 +265,7 @@ const LsStakeCard: FC = () => {
           isStaking
           protocolId={lsProtocolId}
         />
-      </div>
-
-      <LsFeeWarning isMinting selectedProtocolId={lsProtocolId} />
+      </DetailsContainer>
 
       <Button
         isDisabled={
@@ -291,7 +293,7 @@ const LsStakeCard: FC = () => {
         setIsOpen={setIsSelectTokenModalOpen}
         onSelect={setLsPoolId}
       />
-    </div>
+    </Card>
   );
 };
 

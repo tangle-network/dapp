@@ -1,7 +1,6 @@
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
-
-import useApiRx from '../../hooks/useApiRx';
 
 const useCurrentEra = () => {
   return useApiRx(

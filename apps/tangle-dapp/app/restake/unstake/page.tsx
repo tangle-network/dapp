@@ -5,6 +5,7 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import { Card } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
@@ -16,6 +17,7 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 
 import AvatarWithText from '../../../components/AvatarWithText';
+import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
@@ -35,7 +37,6 @@ import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import ActionButtonBase from '../ActionButtonBase';
 import AssetPlaceholder from '../AssetPlaceholder';
-import ErrorMessage from '../ErrorMessage';
 import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
@@ -229,92 +230,94 @@ const Page = () => {
       <div className="max-w-lg">
         <RestakeTabs />
 
-        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-          <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
-            <TransactionInputCard.Header>
-              <TransactionInputCard.ChainSelector
-                placeholder="Select"
-                onClick={openOperatorModal}
-                {...(selectedOperatorAccountId
-                  ? {
-                      renderBody: () => (
-                        <AvatarWithText
-                          accountAddress={selectedOperatorAccountId}
-                          identityName={
-                            operatorIdentities?.[selectedOperatorAccountId]
-                              ?.name
-                          }
-                          overrideTypographyProps={{ variant: 'h5' }}
-                        />
-                      ),
-                    }
-                  : {})}
-              />
-              <TransactionInputCard.MaxAmountButton
-                maxAmount={formattedMaxAmount}
-                tooltipBody="Staked Balance"
-                Icon={
+        <Card withShadow>
+          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+            <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
+              <TransactionInputCard.Header>
+                <TransactionInputCard.ChainSelector
+                  placeholder="Select"
+                  onClick={openOperatorModal}
+                  {...(selectedOperatorAccountId
+                    ? {
+                        renderBody: () => (
+                          <AvatarWithText
+                            accountAddress={selectedOperatorAccountId}
+                            identityName={
+                              operatorIdentities?.[selectedOperatorAccountId]
+                                ?.name
+                            }
+                            overrideTypographyProps={{ variant: 'h5' }}
+                          />
+                        ),
+                      }
+                    : {})}
+                />
+                <TransactionInputCard.MaxAmountButton
+                  maxAmount={formattedMaxAmount}
+                  tooltipBody="Staked Balance"
+                  Icon={
+                    useRef({
+                      enabled: <LockLineIcon />,
+                      disabled: <LockFillIcon />,
+                    }).current
+                  }
+                />
+              </TransactionInputCard.Header>
+
+              <TransactionInputCard.Body
+                customAmountProps={customAmountProps}
+                tokenSelectorProps={
                   useRef({
-                    enabled: <LockLineIcon />,
-                    disabled: <LockFillIcon />,
+                    placeholder: <AssetPlaceholder />,
+                    isDisabled: true,
                   }).current
                 }
               />
-            </TransactionInputCard.Header>
 
-            <TransactionInputCard.Body
-              customAmountProps={customAmountProps}
-              tokenSelectorProps={
-                useRef({
-                  placeholder: <AssetPlaceholder />,
-                  isDisabled: true,
-                }).current
-              }
-            />
+              <ErrorMessage>{errors.amount?.message}</ErrorMessage>
+            </TransactionInputCard.Root>
 
-            <ErrorMessage>{errors.amount?.message}</ErrorMessage>
-          </TransactionInputCard.Root>
+            <TxInfo />
 
-          <TxInfo />
+            <ActionButtonBase>
+              {(isLoading, loadingText) => {
+                const activeChainSupported =
+                  isDefined(activeTypedChainId) &&
+                  SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(
+                    activeTypedChainId,
+                  );
 
-          <ActionButtonBase>
-            {(isLoading, loadingText) => {
-              const activeChainSupported =
-                isDefined(activeTypedChainId) &&
-                SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(
-                  activeTypedChainId,
-                );
+                if (!activeChainSupported) {
+                  return (
+                    <Button
+                      isFullWidth
+                      type="button"
+                      isLoading={isLoading}
+                      loadingText={loadingText}
+                      onClick={openChainModal}
+                    >
+                      Switch to supported chain
+                    </Button>
+                  );
+                }
 
-              if (!activeChainSupported) {
                 return (
                   <Button
+                    isDisabled={!isValid || isDefined(displayError)}
+                    type="submit"
                     isFullWidth
-                    type="button"
-                    isLoading={isLoading}
-                    loadingText={loadingText}
-                    onClick={openChainModal}
+                    isLoading={isSubmitting || isLoading}
+                    loadingText={
+                      isSubmitting ? 'Sending transaction...' : loadingText
+                    }
                   >
-                    Switch to supported chain
+                    {displayError ?? 'Schedule Unstake'}
                   </Button>
                 );
-              }
-
-              return (
-                <Button
-                  isDisabled={!isValid || isDefined(displayError)}
-                  type="submit"
-                  isFullWidth
-                  isLoading={isSubmitting || isLoading}
-                  loadingText={
-                    isSubmitting ? 'Sending transaction...' : loadingText
-                  }
-                >
-                  {displayError ?? 'Schedule Unstake'}
-                </Button>
-              );
-            }}
-          </ActionButtonBase>
-        </form>
+              }}
+            </ActionButtonBase>
+          </form>
+        </Card>
       </div>
 
       {/** Hardcoded for the margin top to ensure the component is align to same card content */}
@@ -326,7 +329,7 @@ const Page = () => {
           />
         ) : (
           <>
-            <RestakeDetailCard.Header title="No unstake requests found" />
+            <RestakeDetailCard.Header title="No Unstake Requests" />
 
             <Typography
               variant="body2"
@@ -334,7 +337,7 @@ const Page = () => {
             >
               You will be able to withdraw your tokens after the unstake request
               has been processed. To unstake your tokens go to the unstake tab
-              to schedule request.
+              to schedule a request.
             </Typography>
           </>
         )}

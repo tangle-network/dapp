@@ -32,6 +32,8 @@ export interface DropdownButtonProps
    * If true, the button will be rendered as a full width button
    */
   isFullWidth?: boolean;
+
+  hideChevron?: boolean;
 }
 
 type DropdownBodyPickedKeys = 'size';

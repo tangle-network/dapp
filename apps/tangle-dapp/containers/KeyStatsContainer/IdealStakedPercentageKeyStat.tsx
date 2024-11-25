@@ -1,9 +1,9 @@
 'use client';
 
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC } from 'react';
 
 import KeyStatsItem from '../../components/KeyStatsItem/KeyStatsItem';
-import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 import useIdealStakePercentage from '../../data/KeyStats/useIdealStakePercentage';
 
 const IdealStakedPercentageKeyStat: FC = () => {

@@ -10,7 +10,7 @@ const TableCellWrapper: FC<
   return (
     <div
       className={twMerge(
-        'py-3 pr-3 flex h-[75px] items-center justify-between bg-mono-0 dark:bg-mono-190',
+        'py-3 pr-3 flex min-h-[75px] items-center justify-between',
         className,
       )}
     >

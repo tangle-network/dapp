@@ -33,7 +33,7 @@ const InputFieldRoot = forwardRef<React.ElementRef<'div'>, InputFieldRootProps>(
           ref={forwardedRef}
           className={twMerge(
             'group flex items-center justify-between gap-1 px-4 py-2 w-full h-[74px] rounded-lg',
-            'bg-mono-20 dark:bg-mono-160',
+            'bg-mono-20 dark:bg-mono-170',
             'outline outline-1 outline-offset-1 outline-transparent',
             cx({
               'outline-red-40 dark:outline-red-90': error,

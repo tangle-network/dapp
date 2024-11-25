@@ -8,6 +8,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import ExternalLink from '../ExternalLink';
 
@@ -15,9 +16,15 @@ type DetailItemProps = {
   title: string;
   tooltip?: string;
   value: Error | ReactNode | string | null;
+  className?: string;
 };
 
-const DetailItem: FC<DetailItemProps> = ({ title, tooltip, value }) => {
+const DetailItem: FC<DetailItemProps> = ({
+  title,
+  tooltip,
+  value,
+  className,
+}) => {
   return (
     <div className="flex gap-2 justify-between w-full">
       <div className="flex items-center gap-1">
@@ -39,7 +46,11 @@ const DetailItem: FC<DetailItemProps> = ({ title, tooltip, value }) => {
       </div>
 
       {typeof value === 'string' ? (
-        <Typography className="dark:text-mono-0" variant="body1" fw="bold">
+        <Typography
+          className={twMerge('dark:text-mono-0', className)}
+          variant="body1"
+          fw="bold"
+        >
           {value}
         </Typography>
       ) : value === null ? (

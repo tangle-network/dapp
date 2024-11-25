@@ -1,0 +1,7 @@
+.bg-top-banner {
+  background-image: url('../../assets/blueprints/top-banner.png');
+}
+
+.dark .bg-top-banner {
+  background-image: url('../../assets/blueprints/top-banner-dark.png');
+}
