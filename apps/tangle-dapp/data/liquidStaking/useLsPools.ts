@@ -73,10 +73,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         .map(([, address, account]) => [address, account] as const);
 
       const membersMap = new Map(membersKeyValuePairs);
-
-      const name = tanglePool.metadata.name.isNone
-        ? undefined
-        : tanglePool.metadata.name.unwrap().toUtf8();
+      const name = tanglePool.metadata.name.toUtf8();
 
       const pool: LsPool = {
         id: poolId,
