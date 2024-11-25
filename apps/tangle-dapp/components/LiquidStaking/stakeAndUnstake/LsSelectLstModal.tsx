@@ -20,7 +20,7 @@ import formatFractional from '../../../utils/formatFractional';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import { ListCardWrapper } from '../../Lists/ListCardWrapper';
 import ListStatus from '../../ListStatus';
-import SkeletonRows from '../SkeletonRows';
+import SkeletonRows from '../../SkeletonRows';
 
 export type LsSelectLstModalProps = {
   pools: LsPool[] | Error | null;

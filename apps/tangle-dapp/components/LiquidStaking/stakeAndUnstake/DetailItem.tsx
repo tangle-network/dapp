@@ -10,7 +10,7 @@ import {
 import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import ExternalLink from '../ExternalLink';
+import ExternalLink from '../../ExternalLink';
 
 type DetailItemProps = {
   title: string;

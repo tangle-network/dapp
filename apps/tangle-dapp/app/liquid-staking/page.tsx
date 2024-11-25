@@ -13,12 +13,13 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useEffect, useState } from 'react';
 
+import LsUnbondingTable from '../../components/LiquidStaking/LsUnbondingTable';
 import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeCard';
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
 import { LsSearchParamKey } from '../../constants/liquidStaking/types';
 import LsCreatePoolModal from '../../containers/LsCreatePoolModal';
 import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
-import { LsProtocolsTable } from '../../containers/LsPoolsTable';
+import { LsAllProtocolsTable } from '../../containers/LsPoolsTable';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import useSearchParamState from '../../hooks/useSearchParamState';
@@ -34,6 +35,7 @@ enum SearchParamAction {
 enum Tab {
   ALL_POOLS = 'All Pools',
   MY_POOLS = 'My Pools',
+  UNBONDING = 'Unbonding',
 }
 
 const LiquidStakingPage: FC = () => {
@@ -147,13 +149,17 @@ const LiquidStakingPage: FC = () => {
             </Button>
           </div>
 
-          {/* Tabs Content */}
+          {/* Tabs' Content */}
           <TabContent value={Tab.ALL_POOLS}>
-            <LsProtocolsTable />
+            <LsAllProtocolsTable />
           </TabContent>
 
           <TabContent value={Tab.MY_POOLS}>
             <LsMyProtocolsTable />
+          </TabContent>
+
+          <TabContent value={Tab.UNBONDING}>
+            <LsUnbondingTable />
           </TabContent>
         </TabsRoot>
       </div>

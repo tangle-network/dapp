@@ -1,9 +1,9 @@
 import { HexString } from '@polkadot/util/types';
 import { ArrowRightUp } from '@webb-tools/icons';
 import { shortenString, Typography } from '@webb-tools/webb-ui-components';
-import { FC, useCallback } from 'react';
+import { FC, MouseEvent, useCallback } from 'react';
 
-import { SubstrateAddress } from '../../types/utils';
+import { SubstrateAddress } from '../types/utils';
 
 export type AddressLinkProps = {
   address: SubstrateAddress | HexString;
@@ -14,7 +14,7 @@ const AddressLink: FC<AddressLinkProps> = ({ address }) => {
   const href = '#';
 
   // Stop propagation to prevent a parent modal (if any) from closing.
-  const handleClick = useCallback((event: any) => {
+  const handleClick = useCallback((event: MouseEvent<HTMLAnchorElement>) => {
     event.stopPropagation();
   }, []);
 

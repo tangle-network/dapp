@@ -21,8 +21,8 @@ import { NETWORK_FEATURE_MAP } from '../../../constants/networks';
 import { NetworkFeature } from '../../../types';
 import getLsNetwork from '../../../utils/liquidStaking/getLsNetwork';
 import getLsTangleNetwork from '../../../utils/liquidStaking/getLsTangleNetwork';
+import DropdownChevronIcon from '../../DropdownChevronIcon';
 import { ChainList } from '../../Lists/ChainList';
-import DropdownChevronIcon from './DropdownChevronIcon';
 
 type LsNetworkSwitcherProps = {
   activeLsNetworkId: LsNetworkId;

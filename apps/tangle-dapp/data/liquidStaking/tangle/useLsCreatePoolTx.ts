@@ -33,6 +33,7 @@ const useLsCreatePoolTx = () => {
 
   const evmTxFactory: EvmTxFactory<Precompile.LST, LsCreatePoolTxContext> =
     useCallback((context) => {
+      // TODO: This will fail if the address is an EVM address.
       const rootEvmAddress32 = toEvmAddress32(context.rootAddress);
       const nominatorEvmAddress32 = toEvmAddress32(context.nominatorAddress);
       const bouncerEvmAddress32 = toEvmAddress32(context.bouncerAddress);

@@ -1,1 +1,1 @@
-export { default as LsProtocolsTable } from './LsProtocolsTable';
+export { default as LsAllProtocolsTable } from './LsAllProtocolsTable';
