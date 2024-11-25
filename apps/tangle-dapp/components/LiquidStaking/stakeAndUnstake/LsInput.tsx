@@ -125,7 +125,7 @@ const LsInput = forwardRef<HTMLInputElement, LsInputProps>(
               ref={ref}
               id={id}
               className={twMerge(
-                'w-full bg-transparent border-none text-xl font-bold outline-none focus:ring-0',
+                'flex-grow bg-transparent border-none text-xl font-bold outline-none focus:ring-0',
                 className,
               )}
               type="text"

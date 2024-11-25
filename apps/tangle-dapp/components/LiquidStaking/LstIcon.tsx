@@ -2,7 +2,6 @@ import { TokenIcon } from '@webb-tools/icons';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import Image from 'next/image';
 import { FC } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 
@@ -41,12 +40,8 @@ const LstIcon: FC<LstIconProps> = ({
     />
   ) : (
     <Image
-      className={twMerge(
-        'rounded-full bg-mono-40 dark:bg-mono-160',
-        getTailwindSize(size),
-      )}
+      className="rounded-full bg-mono-40 dark:bg-mono-160"
       src={iconUrl}
-      objectFit="cover"
       alt={`${lsProtocol.name} icon`}
       width={size}
       height={size}
