@@ -8,5 +8,5 @@ export type VaultAssetData = {
 
 export type Props = {
   isShown?: boolean;
-  data?: VaultAssetData[];
+  data: VaultAssetData[];
 };

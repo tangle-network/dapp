@@ -123,18 +123,6 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
         </ModalHeader>
 
         <ModalBody className="gap-4">
-          {/**
-           * In case that a testnet is selected, it's helpful to let the users
-           * know that the pool will be created on the testnet, and that
-           * it won't be accessible on other networks.
-           */}
-          {!isLiveNetwork && (
-            <Alert
-              type="info"
-              description={`This liquid staking pool will be created on ${lsNetwork.networkName} and will not be accessible on other networks.`}
-            />
-          )}
-
           <div className="flex flex-col sm:flex-row items-center gap-4 justify-stretch">
             <TextInput
               id="ls-create-pool-name"
@@ -195,6 +183,18 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
             setValue={setBouncerAddress}
             wrapperOverrides={{ isFullWidth: true }}
           />
+
+          {/**
+           * In case that a testnet is selected, it's helpful to let the users
+           * know that the pool will be created on the testnet, and that
+           * it won't be accessible on other networks.
+           */}
+          {!isLiveNetwork && (
+            <Alert
+              type="info"
+              description={`This liquid staking pool will be created on ${lsNetwork.networkName} and will not be accessible on other networks.`}
+            />
+          )}
         </ModalBody>
 
         <ModalFooterActions

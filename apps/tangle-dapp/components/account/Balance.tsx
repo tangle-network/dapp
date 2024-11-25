@@ -27,12 +27,12 @@ const Balance: FC = () => {
         <div className="flex items-center gap-2">
           <Typography
             variant="body1"
-            className="text-mono-120 dark:text-mono-40"
+            className="text-mono-120 dark:text-mono-80"
           >
             Transferable Balance
           </Typography>
 
-          <HiddenValueEye />
+          <HiddenValueEye className="hover:bg-mono-40" />
         </div>
 
         <div className="flex items-center">

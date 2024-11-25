@@ -12,10 +12,11 @@ import {
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
-import cx from 'classnames';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 
@@ -74,7 +75,7 @@ const columns = [
               ready
             </span>
           ) : value < 0 ? (
-            'N/A'
+            EMPTY_VALUE_PLACEHOLDER
           ) : (
             <span className="flex items-center gap-1">
               <TimeFillIcon className="!fill-blue-50" />
@@ -166,12 +167,7 @@ const UnstakeRequestTable = ({
 
   return (
     <>
-      <Table
-        tableProps={table}
-        isPaginated
-        thClassName={cx('!border-t-transparent !bg-transparent px-3 py-2')}
-        tdClassName={cx('!border-transparent !bg-transparent px-3 py-2')}
-      />
+      <Table variant={TableVariant.DEFAULT} tableProps={table} isPaginated />
 
       <div className="flex items-center gap-3">
         <UnstakeRequestTableActions

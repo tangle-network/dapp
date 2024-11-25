@@ -12,6 +12,7 @@ import {
   useModal,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { IS_PRODUCTION_ENV } from '../../../constants/env';
 import { LS_NETWORKS } from '../../../constants/liquidStaking/constants';
@@ -47,7 +48,13 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
   } = useModal(false);
 
   const base = (
-    <div className="group flex gap-1 items-center justify-center">
+    <div
+      onClick={isReadOnly ? undefined : openLsNetworkSwitcher}
+      className={twMerge(
+        'group flex gap-1 items-center justify-center',
+        !isReadOnly && 'cursor-pointer',
+      )}
+    >
       <div className="flex gap-2 items-center justify-center">
         <ChainIcon size="lg" name={activeLsNetwork.chainIconFileName} />
 
@@ -56,12 +63,7 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
         </Typography>
       </div>
 
-      {!isReadOnly && (
-        <DropdownChevronIcon
-          isLarge
-          onClick={!isReadOnly ? openLsNetworkSwitcher : undefined}
-        />
-      )}
+      {!isReadOnly && <DropdownChevronIcon isLarge />}
     </div>
   );
 

@@ -19,7 +19,7 @@ export const TData = forwardRef<HTMLTableCellElement, TDataProps>(
             'text-mono-140 dark:text-mono-60',
             'bg-mono-0 dark:bg-mono-180',
             !isDisabledHoverStyle &&
-              'group-hover/tr:bg-blue-0 dark:group-hover/tr:bg-mono-160',
+              'group-hover/tr:bg-blue-0 dark:group-hover/tr:bg-mono-170',
           ),
           className,
         )}

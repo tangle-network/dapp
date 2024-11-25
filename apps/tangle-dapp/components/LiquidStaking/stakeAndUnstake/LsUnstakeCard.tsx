@@ -7,7 +7,7 @@ import '@webb-tools/tangle-restaking-types';
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
-import { Button } from '@webb-tools/webb-ui-components';
+import { Button, Card } from '@webb-tools/webb-ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { z } from 'zod';
@@ -33,7 +33,6 @@ import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
-import LsFeeWarning from './LsFeeWarning';
 import LsInput from './LsInput';
 import LsSelectLstModal from './LsSelectLstModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
@@ -194,83 +193,88 @@ const LsUnstakeCard: FC = () => {
 
   return (
     <>
-      {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
-      <LsInput
-        ref={fromLsInputRef}
-        id="liquid-staking-unstake-from"
-        networkId={lsNetworkId}
-        // TODO: This might be causing many requests to try to change the network. Bug.
-        setNetworkId={tryChangeNetwork}
-        setProtocolId={setLsProtocolId}
-        token={selectedProtocol.token}
-        amount={fromAmount}
-        decimals={selectedProtocol.decimals}
-        onAmountChange={setFromAmount}
-        placeholder="Enter amount to unstake"
-        rightElement={stakedWalletBalance}
-        isDerivativeVariant
-        minAmount={minSpendable ?? undefined}
-        maxAmount={maxSpendable ?? undefined}
-        maxErrorMessage="Not enough stake to redeem"
-        // Disable the token click if there's no account connected
-        // since it won't be possible to fetch the user's pools
-        // then.
-        onTokenClick={
-          isAccountConnected ? () => setIsSelectTokenModalOpen(true) : undefined
-        }
-      />
-
-      <ArrowDownIcon className="self-center dark:fill-mono-0 w-7 h-7" />
-
-      <LsInput
-        id="liquid-staking-unstake-to"
-        networkId={lsNetworkId}
-        amount={toAmount}
-        decimals={selectedProtocol.decimals}
-        placeholder={EMPTY_VALUE_PLACEHOLDER}
-        token={selectedProtocol.token}
-        isReadOnly
-        className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
-        showPoolIndicator={false}
-      />
-
-      {/* Details */}
-      <div className="flex flex-col gap-2 p-3">
-        <UnstakePeriodDetailItem protocolId={lsProtocolId} />
-
-        <ExchangeRateDetailItem
-          token={selectedProtocol.token}
-          type={ExchangeRateType.DerivativeToNative}
-        />
-
-        <FeeDetailItem
-          protocolId={lsProtocolId}
-          isStaking={false}
-          inputAmount={fromAmount}
-        />
-      </div>
-
-      <LsFeeWarning isMinting={false} selectedProtocolId={lsProtocolId} />
-
-      <Button
-        isDisabled={
-          // No active account.
-          activeAccountAddress === null ||
-          !canCallUnstake ||
-          // Amount not yet provided or is zero.
-          fromAmount === null ||
-          fromAmount.isZero()
-        }
-        isLoading={
-          parachainRedeemTxStatus === TxStatus.PROCESSING ||
-          tangleUnbondTxStatus === TxStatus.PROCESSING
-        }
-        loadingText="Processing"
-        onClick={handleUnstakeClick}
-        isFullWidth
+      <Card
+        withShadow
+        className="flex flex-col items-stretch justify-center gap-2"
       >
-        Schedule Unstake
-      </Button>
+        {/* TODO: Have a way to trigger a refresh of the amount once the wallet balance (max) button is clicked. Need to signal to the liquid staking input to update its display amount based on the `fromAmount` prop. */}
+        <LsInput
+          ref={fromLsInputRef}
+          id="liquid-staking-unstake-from"
+          networkId={lsNetworkId}
+          // TODO: This might be causing many requests to try to change the network. Bug.
+          setNetworkId={tryChangeNetwork}
+          setProtocolId={setLsProtocolId}
+          token={selectedProtocol.token}
+          amount={fromAmount}
+          decimals={selectedProtocol.decimals}
+          onAmountChange={setFromAmount}
+          placeholder="Enter amount to unstake"
+          rightElement={stakedWalletBalance}
+          isDerivativeVariant
+          minAmount={minSpendable ?? undefined}
+          maxAmount={maxSpendable ?? undefined}
+          maxErrorMessage="Not enough stake to redeem"
+          // Disable the token click if there's no account connected
+          // since it won't be possible to fetch the user's pools
+          // then.
+          onTokenClick={
+            isAccountConnected
+              ? () => setIsSelectTokenModalOpen(true)
+              : undefined
+          }
+        />
+
+        <ArrowDownIcon className="self-center dark:fill-mono-0 w-7 h-7" />
+
+        <LsInput
+          id="liquid-staking-unstake-to"
+          networkId={lsNetworkId}
+          amount={toAmount}
+          decimals={selectedProtocol.decimals}
+          placeholder={EMPTY_VALUE_PLACEHOLDER}
+          token={selectedProtocol.token}
+          isReadOnly
+          className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
+          showPoolIndicator={false}
+        />
+
+        {/* Details */}
+        <div className="flex flex-col gap-2 p-3">
+          <UnstakePeriodDetailItem protocolId={lsProtocolId} />
+
+          <ExchangeRateDetailItem
+            token={selectedProtocol.token}
+            type={ExchangeRateType.DerivativeToNative}
+          />
+
+          <FeeDetailItem
+            protocolId={lsProtocolId}
+            isStaking={false}
+            inputAmount={fromAmount}
+          />
+        </div>
+
+        <Button
+          isDisabled={
+            // No active account.
+            activeAccountAddress === null ||
+            !canCallUnstake ||
+            // Amount not yet provided or is zero.
+            fromAmount === null ||
+            fromAmount.isZero()
+          }
+          isLoading={
+            parachainRedeemTxStatus === TxStatus.PROCESSING ||
+            tangleUnbondTxStatus === TxStatus.PROCESSING
+          }
+          loadingText="Processing"
+          onClick={handleUnstakeClick}
+          isFullWidth
+        >
+          Schedule Unstake
+        </Button>
+      </Card>
 
       <LsSelectLstModal
         pools={myPoolsWithSelfStake}

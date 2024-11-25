@@ -2,6 +2,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import formatBn from '../../../utils/formatBn';
 import formatFractional from '../../../utils/formatFractional';
@@ -54,7 +55,17 @@ const FeeDetailItem: FC<FeeDetailItemProps> = ({
       ? 'Fee'
       : `Fee (${formatFractional(feePercentage * 100)})`;
 
-  return <DetailItem title={feeTitle} value={formattedFeeAmount} />;
+  return (
+    <DetailItem
+      title={feeTitle}
+      value={formattedFeeAmount}
+      className={twMerge(
+        typeof feePercentage === 'number' &&
+          feePercentage > 0.1 &&
+          'text-yellow-500',
+      )}
+    />
+  );
 };
 
 export default FeeDetailItem;

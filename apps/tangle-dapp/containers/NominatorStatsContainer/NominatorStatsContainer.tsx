@@ -3,14 +3,18 @@
 import { BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { Button, Divider } from '@webb-tools/webb-ui-components';
+import {
+  Button,
+  Card,
+  CardVariant,
+  Divider,
+} from '@webb-tools/webb-ui-components';
 import {
   SOCIAL_URLS_RECORD,
   TANGLE_DOCS_STAKING_URL,
   WEBB_DISCORD_CHANNEL_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import cx from 'classnames';
 import Link from 'next/link';
 import { type FC, useCallback, useMemo, useState } from 'react';
 import React from 'react';
@@ -64,16 +68,13 @@ const NominatorStatsContainer: FC = () => {
     );
   }, [bondedAmountOpt, nativeTokenSymbol]);
 
+  const cardClass =
+    'w-full space-y-4 rounded-2xl overflow-hidden h-min-[204px] p-4';
+
   return (
     <div>
       <div className="flex flex-col w-full gap-4 md:flex-row">
-        <div
-          className={cx(
-            'w-full rounded-2xl overflow-hidden h-min-[204px] p-4',
-            'bg-glass dark:bg-glass_dark',
-            'border-2 border-mono-0 dark:border-mono-160',
-          )}
-        >
+        <Card variant={CardVariant.GLASS} className={cardClass}>
           <div className="grid grid-cols-2 gap-2">
             <NominatorStatsItem
               title="Free Balance"
@@ -134,15 +135,9 @@ const NominatorStatsContainer: FC = () => {
               </Button>
             )}
           </div>
-        </div>
+        </Card>
 
-        <div
-          className={cx(
-            'w-full rounded-2xl overflow-hidden h-min-[204px] p-4',
-            'bg-glass dark:bg-glass_dark',
-            'border-2 border-mono-0 dark:border-mono-160',
-          )}
-        >
+        <Card variant={CardVariant.GLASS} className={cardClass}>
           <div className="grid grid-cols-2 gap-2">
             <NominatorStatsItem
               title={`Total Staked ${nativeTokenSymbol}`}
@@ -224,7 +219,7 @@ const NominatorStatsContainer: FC = () => {
               </div>
             )}
           </div>
-        </div>
+        </Card>
       </div>
 
       <DelegateTxContainer

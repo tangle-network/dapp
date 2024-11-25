@@ -43,12 +43,10 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
       () =>
         twMerge(
           cx(
-            'group px-2 md:px-4 py-2 rounded-lg',
+            'group p-2 md:px-4 rounded-lg',
             'flex items-center gap-2 max-w-fit',
-            'bg-[#E2E5EB]/30 dark:bg-mono-160',
-            'border border-transparent',
-            'enabled:hover:border-mono-60',
-            'dark:enabled:hover:border-mono-140',
+            'bg-mono-40 dark:bg-mono-170',
+            'enabled:hover:bg-mono-20 enabled:hover:dark:bg-mono-160',
             'disabled:bg-[#E2E5EB]/20 dark:disabled:bg-[#3A3E53]/70',
           ),
           className,
@@ -56,10 +54,7 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
       [className],
     );
 
-    const disabled = useMemo(
-      () => isActive || isDisabled,
-      [isDisabled, isActive],
-    );
+    const disabled = isActive || isDisabled;
 
     return (
       <button {...props} disabled={disabled} className={mergedClsx} ref={ref}>

@@ -23,6 +23,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { ActionItemType } from '@webb-tools/webb-ui-components/components/ActionsDropdown/types';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import assert from 'assert';
 import { FC, useEffect, useMemo, useState } from 'react';
@@ -38,7 +39,6 @@ import { TableStatus } from '..';
 import BlueIconButton from '../BlueIconButton';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
-import { sharedTableStatusClxs } from '../tables/shared';
 import UpdateCommissionModal from './UpdateCommissionModal';
 
 export interface LsMyPoolRow extends LsPool {
@@ -299,17 +299,15 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
   if (!isAccountConnected) {
     return (
       <TableStatus
-        className={sharedTableStatusClxs}
-        title="Connect a wallet to continue"
-        description="Once you've connected an account, you'll be able to see and manage your liquid staking pools here."
+        title="Wallet Not Connected"
+        description="Once you've connected an account, you'll be able to increase stake, unstake, and manage your liquid staking pools here."
         icon="🔍"
       />
     );
   } else if (pools.length === 0) {
     return (
       <TableStatus
-        title="No active pools"
-        className={sharedTableStatusClxs}
+        title="No Active Pools"
         description="You haven't staked in any pools yet. Select a pool and start liquid staking to earn rewards! Once you've staked or created a pool, you'll be able to manage your stake and configure the pool here."
         icon="🔍"
         buttonText="Learn More"
@@ -324,15 +322,10 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
   return (
     <>
       <Table
+        variant={TableVariant.GLASS_INNER}
         tableProps={table}
         title={pluralize('pool', pools.length > 1 || pools.length === 0)}
-        className={twMerge(
-          'rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3',
-          isShown ? 'animate-slide-down' : 'animate-slide-up',
-        )}
-        thClassName="py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160"
-        tbodyClassName="!bg-transparent"
-        tdClassName="!bg-inherit border-t-0"
+        className={twMerge(isShown ? 'animate-slide-down' : 'animate-slide-up')}
         isPaginated
       />
 

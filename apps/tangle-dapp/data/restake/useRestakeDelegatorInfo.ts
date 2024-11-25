@@ -12,12 +12,6 @@ import { map, of, switchMap } from 'rxjs';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import type { DelegatorInfo } from '../../types/restake';
 
-/**
- * Hook to retrieve the delegator info for restaking.
- * @returns
- *  - `delegatorInfo`: The delegator info.
- *  - `delegatorInfo$`: The observable for the delegator info.
- */
 export default function useRestakeDelegatorInfo() {
   const activeAddress = useSubstrateAddress();
 
@@ -132,9 +126,7 @@ function getStatus(
 ): DelegatorInfo['status'] {
   if (status.isActive) {
     return 'Active';
-  }
-
-  if (status.isLeavingScheduled) {
+  } else if (status.isLeavingScheduled) {
     return {
       LeavingScheduled: status.asLeavingScheduled.toNumber(),
     };

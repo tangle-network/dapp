@@ -1,18 +1,19 @@
 'use client';
 
-import type { PropsOf } from '@webb-tools/webb-ui-components/types';
-import type { ElementRef } from 'react';
-import { forwardRef } from 'react';
+import { FC, useState } from 'react';
 
-import TangleCard from '../TangleCard';
+import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
+import GlassCardWithLogo from '../GlassCardWithLogo';
 import AccountAddress from './AccountAddress';
 import Actions from './Actions';
 import Balance from './Balance';
 
-const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
-  (props, ref) => {
-    return (
-      <TangleCard {...props} ref={ref}>
+const AccountSummaryCard: FC<{ className?: string }> = ({ className }) => {
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+
+  return (
+    <>
+      <GlassCardWithLogo className={className}>
         <div className="w-full space-y-5">
           <header>
             <AccountAddress />
@@ -20,13 +21,22 @@ const AccountSummaryCard = forwardRef<ElementRef<'div'>, PropsOf<'div'>>(
 
           <Balance />
 
-          <Actions />
+          <Actions openTransferModal={() => setIsTransferModalOpen(true)} />
         </div>
-      </TangleCard>
-    );
-  },
-);
+      </GlassCardWithLogo>
 
-AccountSummaryCard.displayName = 'AccountSummaryCard';
+      {/**
+       * Keep transfer modal outside to prevent it getting stuck
+       * within the card. Interestingly, the modal gets caught within
+       * the card due to the backdrop filter applied to the glass card
+       * due to some internal CSS logic regarding stacking contexts.
+       */}
+      <TransferTxContainer
+        isModalOpen={isTransferModalOpen}
+        setIsModalOpen={setIsTransferModalOpen}
+      />
+    </>
+  );
+};
 
 export default AccountSummaryCard;

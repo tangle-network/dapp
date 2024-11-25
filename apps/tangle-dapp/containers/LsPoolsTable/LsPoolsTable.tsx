@@ -20,6 +20,7 @@ import {
   TooltipTrigger,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -27,7 +28,6 @@ import { twMerge } from 'tailwind-merge';
 import { TableStatus } from '../../components';
 import PercentageCell from '../../components/tableCells/PercentageCell';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
-import { sharedTableStatusClxs } from '../../components/tables/shared';
 import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
@@ -187,9 +187,8 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
   if (pools.length === 0) {
     return (
       <TableStatus
-        className={sharedTableStatusClxs}
-        title="No pools available yet"
-        description="Looks like there are currently no liquid staking pools available for this protocol. Try creating your own pool to get started!"
+        title="No Pools Available"
+        description="Looks like there are currently no liquid staking pools available for this protocol yet. Try creating your own pool to get started!"
         icon="🔍"
       />
     );
@@ -198,15 +197,10 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
   return (
     <div className="flex flex-col">
       <Table
+        variant={TableVariant.GLASS_INNER}
         tableProps={table}
         title="Assets"
-        className={twMerge(
-          'rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200 px-3',
-          isShown ? 'animate-slide-down' : 'animate-slide-up',
-        )}
-        thClassName="py-3 !font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100 border-mono-60 dark:border-mono-160"
-        tbodyClassName="!bg-transparent"
-        tdClassName="!bg-inherit border-t-0"
+        className={twMerge(isShown ? 'animate-slide-down' : 'animate-slide-up')}
       />
 
       <Pagination
@@ -220,7 +214,7 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
         nextPage={table.nextPage}
         setPageIndex={table.setPageIndex}
         title={pluralize('pool', pools.length === 0 || pools.length > 1)}
-        className="py-5 border-t-0"
+        className="border-t-0"
       />
     </div>
   );

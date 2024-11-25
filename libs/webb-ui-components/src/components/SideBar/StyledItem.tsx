@@ -27,7 +27,7 @@ const StyledItem = forwardRef<HTMLDivElement, StyledSideBarItemProps>(
             ? 'text-mono-200 dark:text-mono-0'
             : 'text-mono-100 dark:text-mono-120',
           isExpanded && 'hover:bg-mono-20 dark:hover:bg-mono-190',
-          isExpanded ? 'justify-between px-2 py-3' : 'justify-center',
+          isExpanded ? 'justify-between px-4 py-3' : 'justify-center',
           isActive &&
             (subItemsCount === 0 || !isExpanded) &&
             'bg-mono-20 dark:bg-mono-190',

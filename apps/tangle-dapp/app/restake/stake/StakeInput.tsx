@@ -13,6 +13,7 @@ import type {
 import { formatUnits } from 'viem';
 
 import AvatarWithText from '../../../components/AvatarWithText';
+import ErrorMessage from '../../../components/ErrorMessage';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import type {
@@ -22,7 +23,6 @@ import type {
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import AssetPlaceholder from '../AssetPlaceholder';
-import ErrorMessage from '../ErrorMessage';
 
 type Props = {
   amountError: string | undefined;

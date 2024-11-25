@@ -4,10 +4,10 @@ import { useWebContext } from '@webb-tools/api-provider-environment/webb-context
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import { ArrowRight } from '@webb-tools/icons/ArrowRight';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
+import { Card } from '@webb-tools/webb-ui-components';
 import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
@@ -27,10 +27,6 @@ import useRestakeTxEventHandlersWithNoti, {
 } from '../../..//data/restake/useRestakeTxEventHandlersWithNoti';
 import AvatarWithText from '../../../components/AvatarWithText';
 import { ChainList } from '../../../components/Lists/ChainList';
-import {
-  OperatorConfig,
-  OperatorList,
-} from '../../../components/Lists/OperatorList';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import {
@@ -47,7 +43,6 @@ import AssetList from '../AssetList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
 import ActionButton from './ActionButton';
-import DestChainInput from './DestChainInput';
 import SourceChainInput from './SourceChainInput';
 import TxDetails from './TxDetails';
 
@@ -164,12 +159,6 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   } = useModal();
 
   const {
-    status: operatorModalOpen,
-    close: closeOperatorModal,
-    open: openOperatorModal,
-  } = useModal();
-
-  const {
     status: tokenModalOpen,
     close: closeTokenModal,
     open: openTokenModal,
@@ -250,22 +239,6 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     [closeTokenModal, setValue],
   );
 
-  const operators = useMemo(() => {
-    return Object.entries(operatorMap).map(([accountId, _operator]) => ({
-      accountId,
-      name: operatorIdentities?.[accountId]?.name || '<Unknown>',
-      status: 'active',
-    }));
-  }, [operatorMap, operatorIdentities]);
-
-  const handleOnSelectOperator = useCallback(
-    (operator: OperatorConfig) => {
-      setValue('operatorAccountId', operator.accountId);
-      closeOperatorModal();
-    },
-    [closeOperatorModal, setValue],
-  );
-
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
     async (data) => {
       const { amount, depositAssetId, operatorAccountId } = data;
@@ -306,85 +279,64 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   );
 
   return (
-    <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col h-full space-y-4 grow">
-        <div className="space-y-2">
-          <SourceChainInput
-            amountError={errors.amount?.message}
-            openChainModal={openChainModal}
-            openTokenModal={openTokenModal}
-            register={register}
-            setValue={setValue}
-            watch={watch}
-          />
+    <Card withShadow>
+      <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-col h-full space-y-4 grow">
+          <div className="space-y-2">
+            <SourceChainInput
+              amountError={errors.amount?.message}
+              openChainModal={openChainModal}
+              openTokenModal={openTokenModal}
+              register={register}
+              setValue={setValue}
+              watch={watch}
+            />
+          </div>
 
-          <ArrowRight size="lg" className="mx-auto rotate-90" />
+          <div className="flex flex-col justify-between gap-4 grow">
+            <TxDetails watch={watch} />
 
-          <DestChainInput
-            openOperatorModal={openOperatorModal}
-            watch={watch}
-            operatorIdentities={operatorIdentities}
-          />
+            <ActionButton
+              errors={errors}
+              formRef={formRef}
+              isSubmitting={isSubmitting}
+              isValid={isValid}
+              watch={watch}
+            />
+          </div>
         </div>
 
-        <div className="flex flex-col justify-between gap-4 grow">
-          <TxDetails watch={watch} />
+        <Modal>
+          <ModalContent
+            isOpen={chainModalOpen}
+            title="Select Chain"
+            description="Select the chain you want to deposit from."
+            onInteractOutside={closeChainModal}
+          >
+            <ChainList
+              searchInputId="restake-deposit-form-search"
+              onClose={closeChainModal}
+              chains={sourceChainOptions}
+              onSelectChain={handleOnSelectChain}
+              chainType="source"
+            />
+          </ModalContent>
 
-          <ActionButton
-            errors={errors}
-            formRef={formRef}
-            isSubmitting={isSubmitting}
-            isValid={isValid}
-            watch={watch}
-          />
-        </div>
-      </div>
-
-      <Modal>
-        <ModalContent
-          isOpen={chainModalOpen}
-          title="Select Chain"
-          description="Select the chain you want to deposit from."
-          onInteractOutside={closeChainModal}
-        >
-          <ChainList
-            searchInputId="restake-deposit-form-search"
-            onClose={closeChainModal}
-            chains={sourceChainOptions}
-            onSelectChain={handleOnSelectChain}
-            chainType="source"
-          />
-        </ModalContent>
-
-        <ModalContent
-          isOpen={tokenModalOpen}
-          title="Select Asset"
-          description="Select the asset you want to deposit."
-          onInteractOutside={closeTokenModal}
-        >
-          <AssetList
-            selectTokens={selectableTokens}
-            onChange={handleTokenChange}
-            onClose={closeTokenModal}
-          />
-        </ModalContent>
-
-        <ModalContent
-          isOpen={operatorModalOpen}
-          title="Select Operator"
-          description="Select the operator you want to delegate to"
-          onInteractOutside={closeOperatorModal}
-        >
-          <OperatorList
-            onClose={closeOperatorModal}
-            operatorMap={operatorMap}
-            operatorIdentities={operatorIdentities}
-            onSelectOperator={handleOnSelectOperator}
-            operators={operators}
-          />
-        </ModalContent>
-      </Modal>
-    </Form>
+          <ModalContent
+            isOpen={tokenModalOpen}
+            title="Select Asset"
+            description="Select the asset you want to deposit."
+            onInteractOutside={closeTokenModal}
+          >
+            <AssetList
+              selectTokens={selectableTokens}
+              onChange={handleTokenChange}
+              onClose={closeTokenModal}
+            />
+          </ModalContent>
+        </Modal>
+      </Form>
+    </Card>
   );
 };
 

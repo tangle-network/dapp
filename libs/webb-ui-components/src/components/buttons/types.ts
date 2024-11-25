@@ -176,29 +176,20 @@ export type ButtonClassNames = {
   } & Record<ButtonSize, string>;
 };
 
-/**
- * The ChainOrTokenButtonProps component props
- */
 export type ChainOrTokenButtonProps = PropsOf<'button'> & {
+  placeholder?: string;
+  iconClassName?: string;
+  iconType: 'chain' | 'token';
+
   /**
    * The text to display in the button
    */
   value?: string;
 
   /**
-   * The placeholder to display when the value is not set
-   */
-  placeholder?: string;
-
-  /**
    * The status of the button
    */
   status?: StatusIndicatorProps['variant'];
-
-  /**
-   * The className of the icon
-   */
-  iconClassName?: string;
 
   /**
    * The className of the chain name
@@ -209,11 +200,6 @@ export type ChainOrTokenButtonProps = PropsOf<'button'> & {
    * The className of the dropdown icon
    */
   dropdownClassName?: string;
-
-  /**
-   * The icon's type
-   */
-  iconType: 'chain' | 'token';
 };
 
 /**

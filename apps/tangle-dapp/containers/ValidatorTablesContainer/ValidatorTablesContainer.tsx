@@ -35,9 +35,9 @@ const ValidatorTablesContainer = () => {
       headerClassName="w-full"
       additionalActionsCmp={
         <Input
-          id="search-validators"
+          id="nomination-search-validators"
           rightIcon={<Search className="mr-2" />}
-          placeholder="Search validators..."
+          placeholder="Search validators by identity or address..."
           value={searchValue}
           onChange={(val) => setSearchValue(val)}
           isControlled

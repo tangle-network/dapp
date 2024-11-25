@@ -25,6 +25,7 @@ const ChainOrTokenButton = forwardRef<
     ref,
   ) => {
     const IconCmp = iconType === 'chain' ? ChainIcon : TokenIcon;
+    const isToken = iconType === 'token';
 
     const handleClick = useCallback(
       (e: EventFor<'button', 'onClick'>) => {
@@ -37,18 +38,25 @@ const ChainOrTokenButton = forwardRef<
       [disabled, onClick],
     );
 
+    const isClickable = onClick !== undefined && !disabled;
+
     return (
       <button
         {...props}
         onClick={handleClick}
         type="button"
         className={twMerge(
-          'rounded-lg border-2 p-2 pl-4',
-          'bg-mono-0/10 border-mono-60',
-          'hover:bg-mono-0/30',
-          'dark:bg-mono-0/5 dark:border-mono-140',
-          'dark:hover:bg-mono-0/10',
-          (onClick === undefined || disabled) && 'cursor-default',
+          'rounded-lg px-4 py-2',
+          !isClickable && 'cursor-default',
+          // Use a different background for embedded icon buttons
+          // for contrast.
+          isToken
+            ? 'bg-mono-40 dark:bg-mono-170'
+            : 'bg-mono-20 dark:bg-mono-180',
+          isClickable &&
+            (isToken
+              ? 'hover:bg-mono-60 hover:dark:bg-mono-160'
+              : 'hover:bg-mono-40 hover:dark:bg-mono-170'),
           className,
         )}
         ref={ref}
@@ -63,10 +71,12 @@ const ChainOrTokenButton = forwardRef<
                 name={value}
               />
             )}
+
             <p className={twMerge('font-bold', textClassName)}>
               {value ?? placeholder}
             </p>
           </div>
+
           {!disabled && (
             <ChevronDown
               size="lg"

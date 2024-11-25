@@ -2,13 +2,13 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-export type EmptyListProps = {
+export type ListStatusProps = {
   className?: string;
   title: string;
   description: string;
 };
 
-const EmptyList: FC<EmptyListProps> = ({ title, description, className }) => {
+const ListStatus: FC<ListStatusProps> = ({ title, description, className }) => {
   return (
     <div
       className={twMerge(
@@ -35,4 +35,4 @@ const EmptyList: FC<EmptyListProps> = ({ title, description, className }) => {
   );
 };
 
-export default EmptyList;
+export default ListStatus;

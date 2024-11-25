@@ -22,12 +22,14 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import Link from 'next/link';
 import { FC, useMemo, useState } from 'react';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import { PagePath, Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
+import pluralize from '../../utils/pluralize';
 import {
   getSortAddressOrIdentityFnc,
   sortBnValueForNomineeOrValidator,
@@ -195,15 +197,13 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
   });
 
   return (
-    <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
-      <Table
-        thClassName="border-t-0 bg-mono-0"
-        trClassName={IS_PRODUCTION_ENV ? '' : 'cursor-pointer'}
-        paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
-        tableProps={table}
-        isPaginated
-      />
-    </div>
+    <Table
+      variant={TableVariant.DEFAULT}
+      trClassName={IS_PRODUCTION_ENV ? '' : 'cursor-pointer'}
+      tableProps={table}
+      isPaginated
+      title={pluralize('validator', data.length !== 1)}
+    />
   );
 };
 

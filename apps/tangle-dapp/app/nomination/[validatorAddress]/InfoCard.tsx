@@ -15,7 +15,7 @@ import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenStrin
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { TangleCard } from '../../../components';
+import { GlassCardWithLogo } from '../../../components';
 import ValidatorSocials from '../../../components/ValidatorSocials';
 import useValidatorInfoCard from '../../../data/validatorDetails/useValidatorInfoCard';
 import ValueSkeleton from './ValueSkeleton';
@@ -35,7 +35,7 @@ const InfoCard: FC<InfoCardProps> = ({
     useValidatorInfoCard(rpcEndpoint, validatorAddress);
 
   return (
-    <TangleCard className={twMerge('min-h-[300px]', className)}>
+    <GlassCardWithLogo className={twMerge('min-h-[300px]', className)}>
       <div className="w-full space-y-9">
         <div className="flex gap-2">
           <Avatar
@@ -114,7 +114,7 @@ const InfoCard: FC<InfoCardProps> = ({
           location={undefined}
         />
       </div>
-    </TangleCard>
+    </GlassCardWithLogo>
   );
 };
 
