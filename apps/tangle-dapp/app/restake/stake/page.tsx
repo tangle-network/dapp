@@ -5,6 +5,7 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
+import useQueryState from '@webb-tools/tangle-shared-ui/hooks/useQueryState';
 import { Card } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
@@ -14,7 +15,6 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import entries from 'lodash/entries';
 import keys from 'lodash/keys';
 import Link from 'next/link';
-import { useQueryState } from 'nuqs';
 import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -118,7 +118,7 @@ export default function Page() {
   }, [defaultAssetId, setValue]);
 
   useEffect(() => {
-    if (!operatorParam) return;
+    if (!operatorParam || typeof operatorParam !== 'string') return;
 
     if (!operatorMap[operatorParam]) return;
 

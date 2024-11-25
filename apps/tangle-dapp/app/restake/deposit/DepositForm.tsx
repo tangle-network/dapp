@@ -7,11 +7,11 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
+import useQueryState from '@webb-tools/tangle-shared-ui/hooks/useQueryState';
 import { Card } from '@webb-tools/webb-ui-components';
 import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
-import { useQueryState } from 'nuqs';
 import {
   type ComponentProps,
   useCallback,
