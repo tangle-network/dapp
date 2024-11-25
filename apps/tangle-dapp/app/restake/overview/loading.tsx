@@ -5,7 +5,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import type { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import GlassCard from '../../components/GlassCard';
+import GlassCard from '../../../components/GlassCard';
 import { CONTENT } from './shared';
 
 const LoadingPage: FC = () => {

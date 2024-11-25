@@ -198,8 +198,8 @@ const Page = () => {
   );
 
   return (
-    <div className="grid items-start grid-cols-1 gap-4 sm:grid-cols-2 justify-stretch">
-      <div className="max-w-lg">
+    <div className="flex flex-col items-center justify-center gap-4 sm:items-start sm:flex-row">
+      <div className="flex-1 w-full max-w-lg">
         <RestakeTabs />
 
         <Card withShadow>
@@ -296,7 +296,7 @@ const Page = () => {
       </div>
 
       {/** Hardcoded for the margin top to ensure the component is align to same card content */}
-      <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
+      <RestakeDetailCard.Root className="w-full max-w-lg flex-1 sm:mt-[61px]">
         {withdrawRequests.length > 0 ? (
           <WithdrawRequestTable withdrawRequests={withdrawRequests} />
         ) : (

@@ -36,6 +36,7 @@ import type { UnstakeFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import ActionButtonBase from '../ActionButtonBase';
+import AnimatedPageWrapper from '../AnimatedPageWrapper';
 import AssetPlaceholder from '../AssetPlaceholder';
 import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
@@ -226,8 +227,8 @@ const Page = () => {
   );
 
   return (
-    <div className="grid items-start grid-cols-1 gap-4 sm:grid-cols-2 justify-stretch">
-      <div className="max-w-lg">
+    <div className="flex flex-col items-center justify-center gap-4 sm:items-start sm:flex-row">
+      <div className="flex-1 w-full max-w-lg">
         <RestakeTabs />
 
         <Card withShadow>
@@ -320,28 +321,30 @@ const Page = () => {
         </Card>
       </div>
 
-      {/** Hardcoded for the margin top to ensure the component is align to same card content */}
-      <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
-        {unstakeRequests.length > 0 ? (
-          <UnstakeRequestTable
-            operatorIdentities={operatorIdentities}
-            unstakeRequests={unstakeRequests}
-          />
-        ) : (
-          <>
-            <RestakeDetailCard.Header title="No Unstake Requests" />
+      <AnimatedPageWrapper className="max-w-lg">
+        {/** Hardcoded for the margin top to ensure the component is align to same card content */}
+        <RestakeDetailCard.Root className="w-full max-w-lg flex-1 sm:mt-[61px]">
+          {unstakeRequests.length > 0 ? (
+            <UnstakeRequestTable
+              operatorIdentities={operatorIdentities}
+              unstakeRequests={unstakeRequests}
+            />
+          ) : (
+            <>
+              <RestakeDetailCard.Header title="No Unstake Requests" />
 
-            <Typography
-              variant="body2"
-              className="text-mono-120 dark:text-mono-100"
-            >
-              You will be able to withdraw your tokens after the unstake request
-              has been processed. To unstake your tokens go to the unstake tab
-              to schedule a request.
-            </Typography>
-          </>
-        )}
-      </RestakeDetailCard.Root>
+              <Typography
+                variant="body2"
+                className="text-mono-120 dark:text-mono-100"
+              >
+                You will be able to withdraw your tokens after the unstake
+                request has been processed. To unstake your tokens go to the
+                unstake tab to schedule a request.
+              </Typography>
+            </>
+          )}
+        </RestakeDetailCard.Root>
+      </AnimatedPageWrapper>
 
       <Modal>
         <UnstakeModal

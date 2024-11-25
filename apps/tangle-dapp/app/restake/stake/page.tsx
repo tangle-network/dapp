@@ -42,6 +42,7 @@ import type { DelegationFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
+import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
@@ -253,7 +254,8 @@ export default function Page() {
   );
 
   return (
-    <Card withShadow>
+    <Card withShadow className="w-full max-w-lg mx-auto">
+      <RestakeTabs />
       <Form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col h-full space-y-4 grow">
           <StakeInput
