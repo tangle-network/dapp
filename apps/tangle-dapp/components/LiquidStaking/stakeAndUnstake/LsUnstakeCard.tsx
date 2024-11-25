@@ -6,17 +6,11 @@ import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { Button, Card } from '@webb-tools/webb-ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { z } from 'zod';
 
-import {
-  LsNetworkId,
-  LsPool,
-  LsSearchParamKey,
-} from '../../../constants/liquidStaking/types';
+import { LsNetworkId, LsPool } from '../../../constants/liquidStaking/types';
 import useRedeemTx from '../../../data/liquidStaking/parachain/useRedeemTx';
 import useLsPoolUnbondTx from '../../../data/liquidStaking/tangle/useLsPoolUnbondTx';
 import useLsExchangeRate, {
@@ -26,7 +20,6 @@ import useLsMyPools from '../../../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
-import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
@@ -65,15 +58,6 @@ const LsUnstakeCard: FC = () => {
   const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId, setLsPoolId } =
     useLsStore();
 
-  // TODO: Won't both of these hooks be attempting to update the same state?
-  useSearchParamSync({
-    key: LsSearchParamKey.PROTOCOL_ID,
-    value: lsProtocolId,
-    parse: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
-    stringify: (value) => value.toString(),
-    setValue: setLsProtocolId,
-  });
-
   const { execute: executeParachainRedeemTx, status: parachainRedeemTxStatus } =
     useRedeemTx();
 
@@ -95,14 +79,6 @@ const LsUnstakeCard: FC = () => {
   // TODO: Properly handle the error state.
   const exchangeRate =
     exchangeRateOrError instanceof Error ? null : exchangeRateOrError;
-
-  useSearchParamSync({
-    key: LsSearchParamKey.AMOUNT,
-    value: fromAmount,
-    setValue: setFromAmount,
-    parse: (value) => new BN(value),
-    stringify: (value) => value?.toString(),
-  });
 
   const isTangleNetwork =
     lsNetworkId === LsNetworkId.TANGLE_LOCAL ||

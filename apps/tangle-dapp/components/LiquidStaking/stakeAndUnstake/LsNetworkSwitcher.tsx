@@ -68,21 +68,20 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
   );
 
   // Filter out networks that don't support liquid staking yet.
-  const supportedLsNetworks = LS_NETWORKS.filter((network) => {
-    if (network.id === LsNetworkId.TANGLE_LOCAL && IS_PRODUCTION_ENV) {
-      return false;
-    }
+  const supportedLsNetworks = useMemo(() => {
+    return LS_NETWORKS.filter((network) => {
+      if (network.id === LsNetworkId.TANGLE_LOCAL && IS_PRODUCTION_ENV) {
+        return false;
+      }
 
-    // TODO: Obtain the Tangle network from the LS Network's properties instead.
-    const tangleNetwork = getLsTangleNetwork(network.id);
+      // TODO: Obtain the Tangle network from the LS Network's properties instead.
+      const tangleNetwork = getLsTangleNetwork(network.id);
 
-    // TODO: This is getting spammed, likely many requests to this function are being made by a bug. Might have to do with the URL param sync, check the consumers of this hook.
-    // console.debug('TANGLE NETWORK', tangleNetwork);
-
-    return NETWORK_FEATURE_MAP[tangleNetwork.id].includes(
-      NetworkFeature.LsPools,
-    );
-  });
+      return NETWORK_FEATURE_MAP[tangleNetwork.id].includes(
+        NetworkFeature.LsPools,
+      );
+    });
+  }, []);
 
   const networkOptions = useMemo<ChainConfig[]>(() => {
     return supportedLsNetworks.map((network) => {
