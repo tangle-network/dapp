@@ -174,4 +174,20 @@ export type LsPoolUnstakeRequest = {
   amount: BN;
 };
 
+export type LsPoolUnstakeRequest = {
+  poolName?: string;
+  poolId: number;
+  decimals: number;
+  token: LsToken;
+  unlockEra: number;
+  erasLeftToUnlock?: number;
+  isReadyToWithdraw: boolean;
+
+  /**
+   * The underlying stake tokens amount represented by the unlock
+   * request.
+   */
+  amount: BN;
+};
+
 export type LsPoolDisplayName = `${string}#${number}`;
