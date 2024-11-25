@@ -45,12 +45,9 @@ const useLsUnbonding = () => {
 
     return unbonding.unbondingEras
       .entries()
-      .map(([era, points]) => {
+      .map(([era, [rawPoolId, points]]) => {
         const erasLeftToUnlock = era.toNumber() - currentEra;
-
-        // TODO: Awaiting bug fix on Tangle.
-        const poolId = unbonding.poolId.toNumber();
-
+        const poolId = rawPoolId.toNumber();
         const pool = pools.get(poolId);
 
         assert(pool !== undefined);

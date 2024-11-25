@@ -48,7 +48,7 @@
     "@polkadot/util": "^12.6.2",
     "@polkadot/util-crypto": "^12.6.2",
     "webpack": "5.91.0",
-    "@webb-tools/protocol-substrate-types": "npm:@webb-tools/tangle-substrate-types@^0.9.3"
+    "@webb-tools/protocol-substrate-types": "npm:@webb-tools/tangle-substrate-types@^0.9.4"
   },
   "dependencies": {
     "@actions/core": "^1.11.1",
@@ -192,7 +192,7 @@
     "@webb-tools/interfaces": "1.0.11",
     "@webb-tools/sdk-core": "0.1.4-127",
     "@webb-tools/tangle-restaking-types": "^0.1.0",
-    "@webb-tools/tangle-substrate-types": "^0.9.3",
+    "@webb-tools/tangle-substrate-types": "^0.9.4",
     "@webb-tools/test-utils": "0.1.8",
     "@webb-tools/tokens": "1.0.11",
     "@webb-tools/utils": "1.0.11",
