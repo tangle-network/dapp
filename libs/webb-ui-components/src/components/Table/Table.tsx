@@ -35,11 +35,11 @@ const getVariantThClass = (variant: TableVariant) => {
 const getVariantTdClass = (variant: TableVariant) => {
   switch (variant) {
     case TableVariant.GLASS_INNER:
-      return '!bg-inherit';
+      return '!bg-inherit border-t-0';
     case TableVariant.GLASS_OUTER:
       return 'border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden';
     case TableVariant.NESTED_IN_MODAL:
-      return 'py-2';
+      return 'py-2 border-t-0';
     case TableVariant.DEFAULT:
       return '';
   }

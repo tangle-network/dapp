@@ -12,6 +12,7 @@ import {
 import { ChevronUp } from '@webb-tools/icons/ChevronUp';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Link from 'next/link';
@@ -184,16 +185,16 @@ const VaultsTable: FC<Props> = ({
     );
   }
 
+  // TODO: Check styling after max depth issue is fixed.
   return (
     <Table
+      variant={TableVariant.GLASS_OUTER}
       title="Vaults"
       isPaginated
       {...tableProps}
       tableProps={table}
       className={twMerge(
         'px-6 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160',
-        'bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)]',
-        'dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]',
         tableProps?.className,
       )}
       tableClassName={twMerge(

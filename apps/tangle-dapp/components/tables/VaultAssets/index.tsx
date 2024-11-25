@@ -6,6 +6,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
+import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -57,8 +58,10 @@ const VaultAssetsTable: FC<Props> = ({ data, isShown }) => {
     ),
   );
 
+  // TODO: Check styling after max depth issue is fixed.
   return (
     <Table
+      variant={TableVariant.DEFAULT}
       tableProps={table}
       title={pluralize('asset', data.length !== 1)}
       className={twMerge(
