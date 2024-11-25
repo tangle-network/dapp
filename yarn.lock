@@ -2713,7 +2713,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/template@npm:^7.25.9":
+"@babel/template@npm:^7.25.9, @babel/template@npm:^7.4.4":
   version: 7.25.9
   resolution: "@babel/template@npm:7.25.9"
   dependencies:
@@ -20070,6 +20070,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"babel-plugin-transform-import-meta@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "babel-plugin-transform-import-meta@npm:2.2.1"
+  dependencies:
+    "@babel/template": "npm:^7.4.4"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    "@babel/core": ^7.10.0
+  checksum: 10c0/9d8c73b767bbd13abc288f98866251e44b58d8fbcb0186aa7166d1be021db05f7bdb993342e38956ab144987255ded9558d22fed8d9a54ea1dc3df34fa8a981e
+  languageName: node
+  linkType: hard
+
 "babel-plugin-transform-typescript-metadata@npm:^0.3.1":
   version: 0.3.2
   resolution: "babel-plugin-transform-typescript-metadata@npm:0.3.2"
@@ -21592,19 +21604,6 @@ __metadata:
     ethers: "npm:^5.5.1"
     ffjavascript: "npm:^0.2.45"
   checksum: 10c0/ce618d8d245b6c834a171c0c3b3ba46b9ca7f47eb21b77b59469d100145cc51e820817450ef14897488b883b6038a0cfd85d43c900be4467c543f079a09617ff
-  languageName: node
-  linkType: hard
-
-"circomlibjs@npm:^0.0.8":
-  version: 0.0.8
-  resolution: "circomlibjs@npm:0.0.8"
-  dependencies:
-    blake-hash: "npm:^2.0.0"
-    blake2b: "npm:^2.1.3"
-    ffjavascript: "npm:^0.2.38"
-    web3: "npm:^1.6.0"
-    web3-utils: "npm:^1.6.0"
-  checksum: 10c0/64d73007a995c76f2b6360d88cea46d1a0b47036e4dd03459eea077d0f5ae427bd1586c500e5154325275f591fb4fbc7f4054410f49ae197fbca9bc0d5df0985
   languageName: node
   linkType: hard
 
@@ -27406,7 +27405,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ffjavascript@npm:^0.2.38, ffjavascript@npm:^0.2.45, ffjavascript@npm:^0.2.57":
+"ffjavascript@npm:^0.2.45, ffjavascript@npm:^0.2.57":
   version: 0.2.63
   resolution: "ffjavascript@npm:0.2.63"
   dependencies:
@@ -34644,13 +34643,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mitt@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "mitt@npm:3.0.1"
-  checksum: 10c0/3ab4fdecf3be8c5255536faa07064d05caa3dd332bd318ff02e04621f7b3069ca1de9106cfe8e7ced675abfc2bec2ce4c4ef321c4a1bb1fb29df8ae090741913
-  languageName: node
-  linkType: hard
-
 "mkdirp-classic@npm:^0.5.2, mkdirp-classic@npm:^0.5.3":
   version: 0.5.3
   resolution: "mkdirp-classic@npm:0.5.3"
@@ -35797,27 +35789,6 @@ __metadata:
   dependencies:
     bignumber.js: "npm:^8 || ^9"
   checksum: 10c0/5fce44fb0e9dd9e3d48b74f0f29910af515284ac35eff0c14911ccaa7a666c2b95a55be02d2605f30fd3fac7d522ffecb5c1f24acb91c1a1880eb53b268a2ccc
-  languageName: node
-  linkType: hard
-
-"nuqs@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "nuqs@npm:2.0.4"
-  dependencies:
-    mitt: "npm:^3.0.1"
-  peerDependencies:
-    "@remix-run/react": ">= 2"
-    next: ">= 14.2.0"
-    react: ">= 18.2.0"
-    react-router-dom: ">= 6"
-  peerDependenciesMeta:
-    "@remix-run/react":
-      optional: true
-    next:
-      optional: true
-    react-router-dom:
-      optional: true
-  checksum: 10c0/5df69ad5676a4e00ba595f226c114106930b908de59305d25df415cd6772a323fc9fbe517b6fde972cc8ca90e0c3f758105c4b96283ccb66d51b479c78e6bd38
   languageName: node
   linkType: hard
 
@@ -45903,7 +45874,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web3-utils@npm:1.10.4, web3-utils@npm:^1.6.0, web3-utils@npm:^1.8.1":
+"web3-utils@npm:1.10.4, web3-utils@npm:^1.8.1":
   version: 1.10.4
   resolution: "web3-utils@npm:1.10.4"
   dependencies:
@@ -45919,7 +45890,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web3@npm:^1.6.0, web3@npm:^1.8.1":
+"web3@npm:^1.8.1":
   version: 1.10.4
   resolution: "web3@npm:1.10.4"
   dependencies:
@@ -46072,6 +46043,7 @@ __metadata:
     "@webb-tools/wasm-utils": "npm:0.1.4-127"
     autoprefixer: "npm:^10.4.20"
     babel-jest: "npm:29.7.0"
+    babel-plugin-transform-import-meta: "npm:^2.2.1"
     bn.js: "npm:^5.2.1"
     chromatic: "npm:^11.16.1"
     circomlibjs: "npm:0.1.7"
@@ -46113,7 +46085,6 @@ __metadata:
     next-themes: "npm:^0.3.0"
     notistack: "npm:^3.0.1"
     numbro: "npm:^2.5.0"
-    nuqs: "npm:^2.0.4"
     nx: "npm:19.8.8"
     observable-hooks: "npm:^4.2.4"
     postcss: "npm:8.4.47"

@@ -48,6 +48,7 @@
     "@polkadot/util": "^12.6.2",
     "@polkadot/util-crypto": "^12.6.2",
     "webpack": "5.91.0",
+    "circomlibjs": "0.1.7",
     "@webb-tools/protocol-substrate-types": "npm:@webb-tools/tangle-substrate-types@^0.9.0"
   },
   "dependencies": {
@@ -104,7 +105,6 @@
     "next-secure-headers": "^2.2.0",
     "next-themes": "^0.3.0",
     "notistack": "^3.0.1",
-    "nuqs": "^2.0.4",
     "observable-hooks": "^4.2.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -200,6 +200,7 @@
     "@webb-tools/wasm-utils": "0.1.4-127",
     "autoprefixer": "^10.4.20",
     "babel-jest": "29.7.0",
+    "babel-plugin-transform-import-meta": "^2.2.1",
     "classnames": "^2.5.1",
     "copy-to-clipboard": "^3.3.3",
     "copy-webpack-plugin": "^12.0.2",
