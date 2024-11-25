@@ -102,7 +102,7 @@ const LsInput = forwardRef<HTMLInputElement, LsInputProps>(
     const isError = errorMessage !== null;
 
     return (
-      <div className="flex flex-col items-stretch justify-start gap-2">
+      <div className="flex flex-col items-stretch justify-start">
         <div
           className={twMerge(
             'flex flex-col gap-3 bg-mono-20 dark:bg-mono-180 p-4 rounded-lg border border-transparent',

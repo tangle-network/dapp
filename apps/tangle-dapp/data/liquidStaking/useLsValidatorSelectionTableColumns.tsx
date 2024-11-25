@@ -24,11 +24,10 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { StakingItemExternalLinkButton } from '../../components/LiquidStaking/StakingItemExternalLinkButton';
-import TokenAmountCell, {
-  AmountFormatStyle,
-} from '../../components/tableCells/TokenAmountCell';
+import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import calculateCommission from '../../utils/calculateCommission';
 import formatBn from '../../utils/formatBn';
+import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import formatFractional from '../../utils/formatFractional';
 
 const validatorColumnHelper = createColumnHelper<Validator>();
