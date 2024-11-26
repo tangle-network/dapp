@@ -16,21 +16,14 @@ import { FC, useEffect, useState } from 'react';
 import LsUnbondingTable from '../../components/LiquidStaking/LsUnbondingTable';
 import LsStakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsStakeCard';
 import LsUnstakeCard from '../../components/LiquidStaking/stakeAndUnstake/LsUnstakeCard';
-import { LsSearchParamKey } from '../../constants/liquidStaking/types';
 import LsCreatePoolModal from '../../containers/LsCreatePoolModal';
 import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
 import { LsAllProtocolsTable } from '../../containers/LsPoolsTable';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import useSearchParamState from '../../hooks/useSearchParamState';
 import getLsTangleNetwork from '../../utils/liquidStaking/getLsTangleNetwork';
 import TabListItem from '../restake/TabListItem';
 import TabsList from '../restake/TabsList';
-
-enum SearchParamAction {
-  STAKE = 'stake',
-  UNSTAKE = 'unstake',
-}
 
 enum Tab {
   ALL_POOLS = 'All Pools',
@@ -39,13 +32,7 @@ enum Tab {
 }
 
 const LiquidStakingPage: FC = () => {
-  const [isStaking, setIsStaking] = useSearchParamState({
-    defaultValue: true,
-    key: LsSearchParamKey.ACTION,
-    parser: (value) => value === SearchParamAction.STAKE,
-    stringify: (value) =>
-      value ? SearchParamAction.STAKE : SearchParamAction.UNSTAKE,
-  });
+  const [isStaking, setIsStaking] = useState(true);
 
   const {
     lsNetworkId,
@@ -64,10 +51,13 @@ const LiquidStakingPage: FC = () => {
   // It might differ initially if the user navigates to the page and
   // the active network differs from the default liquid staking network.
   useEffect(() => {
-    if (lsTangleNetwork !== null && lsTangleNetwork.id !== network.id) {
+    if (network.id !== lsTangleNetwork.id) {
       switchNetwork(lsTangleNetwork, false);
     }
-  }, [lsTangleNetwork, network.id, lsNetworkId, switchNetwork]);
+
+    // Run once on load.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Sync the Zustand store state of whether liquid staking or unstaking with
   // the URL param state.
