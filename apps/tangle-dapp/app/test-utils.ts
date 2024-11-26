@@ -1,4 +1,3 @@
-// Mock useRouter, usePathname, and useSearchParams
 jest.mock('next/navigation', () => ({
   useRouter() {
     return {
@@ -6,7 +5,8 @@ jest.mock('next/navigation', () => ({
       replace: jest.fn(),
     };
   },
-  usePathname: () => '/restake/withdraw',
+
+  usePathname: () => '/',
 
   useSearchParams: () => new URLSearchParams(),
 }));

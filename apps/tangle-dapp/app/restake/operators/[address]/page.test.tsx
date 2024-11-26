@@ -1,6 +1,6 @@
 import { act, render } from '@testing-library/react';
 
-import { mockMatchMedia } from '../../test-utils';
+import { mockMatchMedia } from '../../../test-utils';
 import Page from './page';
 
 const address = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
