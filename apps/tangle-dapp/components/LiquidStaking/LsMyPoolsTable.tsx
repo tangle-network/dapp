@@ -33,6 +33,7 @@ import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
+import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
 import { TableStatus } from '..';
@@ -155,8 +156,16 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       }),
       COLUMN_HELPER.accessor('totalStaked', {
         header: () => 'Total Staked (TVL)',
-        // TODO: Decimals.
-        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        cell: (props) => {
+          const lsProtocol = getLsProtocolDef(props.row.original.protocolId);
+
+          return (
+            <TokenAmountCell
+              amount={props.getValue()}
+              decimals={lsProtocol.decimals}
+            />
+          );
+        },
       }),
       COLUMN_HELPER.accessor('myStake', {
         header: () => 'My Stake',

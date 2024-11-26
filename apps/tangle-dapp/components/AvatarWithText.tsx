@@ -35,7 +35,6 @@ const AvatarWithText = ({
       )}
     >
       <Avatar
-        // TODO: Determine the theme instead of hardcoding it
         theme={isEthereumAddress(accountAddress) ? 'ethereum' : 'substrate'}
         value={accountAddress}
         {...overrideAvatarProps}

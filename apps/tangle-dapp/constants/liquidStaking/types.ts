@@ -97,13 +97,6 @@ export type LsCardSearchParams = {
   protocolId: LsProtocolId;
 };
 
-export enum LsSearchParamKey {
-  AMOUNT = 'amount',
-  PROTOCOL_ID = 'protocol',
-  ACTION = 'action',
-  NETWORK_ID = 'network',
-}
-
 // TODO: These should be moved/managed in libs/webb-ui-components/src/constants/networks.ts and not here. This is just a temporary solution.
 export type Network = {
   name: string;
@@ -153,6 +146,22 @@ export type LsPool = {
   commissionFractional?: number;
   members: Map<SubstrateAddress, PalletAssetsAssetAccount>;
   protocolId: LsProtocolId;
+};
+
+export type LsPoolUnstakeRequest = {
+  poolName?: string;
+  poolId: number;
+  decimals: number;
+  token: LsToken;
+  unlockEra: number;
+  erasLeftToUnlock?: number;
+  isReadyToWithdraw: boolean;
+
+  /**
+   * The underlying stake tokens amount represented by the unlock
+   * request.
+   */
+  amount: BN;
 };
 
 export type LsPoolDisplayName = `${string}#${number}`;

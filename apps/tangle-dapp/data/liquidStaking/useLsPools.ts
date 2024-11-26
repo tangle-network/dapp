@@ -73,7 +73,15 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         .map(([, address, account]) => [address, account] as const);
 
       const membersMap = new Map(membersKeyValuePairs);
-      const name = tanglePool.metadata.name.toUtf8();
+
+      let name: string | undefined;
+
+      // TODO: Something about Polkadot's types is causing this to throw an error, saying that `.toUtf8` is not a function. Using this temporary workaround for now.
+      try {
+        name = tanglePool.metadata.name.toUtf8();
+      } catch {
+        name = undefined;
+      }
 
       const pool: LsPool = {
         id: poolId,

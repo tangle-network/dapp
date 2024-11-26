@@ -14,9 +14,9 @@ import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../constants/liquidStaking/consta
 import { LsNetworkId } from '../../constants/liquidStaking/types';
 import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
+import DropdownChevronIcon from '../DropdownChevronIcon';
 import InputWrapper from '../InputWrapper';
 import LsTokenIcon from '../LsTokenIcon';
-import DropdownChevronIcon from './stakeAndUnstake/DropdownChevronIcon';
 
 type LsProtocolDropdownInputProps = {
   id: string;

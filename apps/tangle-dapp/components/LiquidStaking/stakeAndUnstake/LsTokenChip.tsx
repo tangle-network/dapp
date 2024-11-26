@@ -4,16 +4,16 @@ import { twMerge } from 'tailwind-merge';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import { LsToken } from '../../../constants/liquidStaking/types';
+import DropdownChevronIcon from '../../DropdownChevronIcon';
 import LsTokenIcon from '../../LsTokenIcon';
-import DropdownChevronIcon from './DropdownChevronIcon';
 
-type TokenChipProps = {
+type LsTokenChipProps = {
   token?: LsToken;
   isDerivativeVariant: boolean;
   onClick?: () => void;
 };
 
-const TokenChip: FC<TokenChipProps> = ({
+const LsTokenChip: FC<LsTokenChipProps> = ({
   token,
   isDerivativeVariant,
   onClick,
@@ -41,4 +41,4 @@ const TokenChip: FC<TokenChipProps> = ({
   );
 };
 
-export default TokenChip;
+export default LsTokenChip;

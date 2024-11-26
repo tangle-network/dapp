@@ -1,13 +1,19 @@
 import { BN } from '@polkadot/util';
+import Decimal from 'decimal.js';
 
-const STAKING_COMMISSION_FACTOR = new BN(10_000_000);
+const PERBILL_FACTOR = 1_000_000_000;
 
-const calculateCommission = (commissionRate: BN): number => {
-  // TODO: Need to ensure that the conversion to number here will never fail.
-  return commissionRate
-    .muln(100)
-    .div(STAKING_COMMISSION_FACTOR)
-    .divn(100)
+/**
+ * @returns Commission in fractional form (0-1 decimal
+ * representing a percentage).
+ */
+const calculateCommission = (commissionPerbill: BN): number => {
+  if (commissionPerbill.isZero()) {
+    return 0;
+  }
+
+  return new Decimal(commissionPerbill.toString())
+    .div(PERBILL_FACTOR)
     .toNumber();
 };
 

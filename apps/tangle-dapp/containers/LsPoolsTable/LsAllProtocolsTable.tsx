@@ -128,7 +128,7 @@ const PROTOCOL_COLUMNS = [
   }),
 ];
 
-const LsProtocolsTable: FC = () => {
+const LsAllProtocolsTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const { lsNetworkId } = useLsStore();
 
@@ -205,4 +205,4 @@ const LsProtocolsTable: FC = () => {
   );
 };
 
-export default LsProtocolsTable;
+export default LsAllProtocolsTable;

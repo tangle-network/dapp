@@ -66,8 +66,6 @@ const useLsSpendingLimits = (
     : minimumRedeemAmount;
 
   const minSpendable = useMemo(() => {
-    // TODO: Add liquifier cases as well (enough to cover fees?).
-
     if (
       mintingOrRedeemingAmount === null ||
       existentialDepositAmount === null

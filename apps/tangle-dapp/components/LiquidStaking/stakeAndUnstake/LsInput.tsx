@@ -14,8 +14,8 @@ import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import ErrorMessage from '../../ErrorMessage';
 import LsNetworkSwitcher from './LsNetworkSwitcher';
+import LsTokenChip from './LsTokenChip';
 import SelectedPoolIndicator from './SelectedPoolIndicator';
-import TokenChip from './TokenChip';
 
 export type LsInputProps = {
   id: string;
@@ -138,7 +138,7 @@ const LsInput = forwardRef<HTMLInputElement, LsInputProps>(
             {showPoolIndicator ? (
               <SelectedPoolIndicator onClick={onTokenClick} />
             ) : (
-              <TokenChip
+              <LsTokenChip
                 isDerivativeVariant={isDerivativeVariant}
                 token={selectedProtocol.token}
                 onClick={onTokenClick}
