@@ -3,7 +3,7 @@ import { act, render } from '@testing-library/react';
 import { mockMatchMedia } from '../test-utils';
 import Page from './page';
 
-describe('Deposit Page', () => {
+describe('Stake Page', () => {
   beforeAll(() => {
     mockMatchMedia();
   });
