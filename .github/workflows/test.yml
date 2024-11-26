@@ -1,0 +1,48 @@
+name: build 🏗️
+
+on:
+  pull_request:
+    branches: [develop, staging, master, feature/**]
+
+  push:
+    branches: [develop, staging, master, feature/**]
+
+  workflow_dispatch:
+
+jobs:
+  build_code:
+    name: run
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['>=18.12.x']
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v4
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+          corepack prepare yarn@4.2.2 --activate
+          yarn set version 4.2.2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4.0.4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: yarn
+
+      - name: Install deps
+        run: yarn install
+
+      - name: Run tests
+        run: yarn nx run-many --all --target=test
+        # Fix: JavaScript heap out of memory
+        # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
