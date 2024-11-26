@@ -1,9 +1,7 @@
 import {
-  Button,
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
   ModalFooterActions,
   ModalHeader,
   Typography,
@@ -118,27 +116,6 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
           onConfirm={handleUpdateCommissionClick}
           isConfirmDisabled={!isReady}
         />
-
-        <ModalFooter className="flex items-center gap-2">
-          <Button
-            isFullWidth
-            variant="secondary"
-            isDisabled={status === TxStatus.PROCESSING}
-            onClick={() => setIsOpen(false)}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            isFullWidth
-            onClick={handleUpdateCommissionClick}
-            isLoading={status === TxStatus.PROCESSING}
-            loadingText="Processing"
-            isDisabled={!isReady}
-          >
-            Confirm
-          </Button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );

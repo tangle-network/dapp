@@ -61,15 +61,15 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
 
   const { execute, status } = useLsCreatePoolTx();
 
-  const isSubstrateAddresses =
+  const areSubstrateAddresses =
     isAddress(rootAddress) &&
     isAddress(nominatorAddress) &&
     isAddress(bouncerAddress);
 
-  const handleCreatePoolClick = useCallback(async () => {
+  const handleConfirmClick = useCallback(async () => {
     if (
       initialBondAmount === null ||
-      !isSubstrateAddresses ||
+      !areSubstrateAddresses ||
       execute === null
     ) {
       return;
@@ -86,7 +86,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
     bouncerAddress,
     execute,
     initialBondAmount,
-    isSubstrateAddresses,
+    areSubstrateAddresses,
     name,
     nominatorAddress,
     rootAddress,
@@ -157,7 +157,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
           <AddressInput
             id="ls-create-pool-root-address"
             title="Root Address"
-            tooltip="The root is the administrator of the pool with full control over its operations, including updating roles, and commission setup"
+            tooltip="The root is the administrator of the pool with full control over its operations, including updating roles, and commission setup."
             type={AddressType.Substrate}
             value={rootAddress}
             setValue={setRootAddress}
@@ -200,9 +200,9 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
         <ModalFooterActions
           learnMoreLinkHref={TANGLE_DOCS_LS_CREATE_POOL_URL}
           isProcessing={status === TxStatus.PROCESSING}
-          onConfirm={handleCreatePoolClick}
+          onConfirm={handleConfirmClick}
           isConfirmDisabled={
-            !isSubstrateAddresses ||
+            !areSubstrateAddresses ||
             activeSubstrateAddress === null ||
             initialBondAmount === null ||
             name === '' ||

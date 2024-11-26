@@ -65,6 +65,7 @@ export enum TxName {
   LS_TANGLE_POOL_JOIN = 'mint LST',
   LS_TANGLE_POOL_UNBOND = 'redeem LST',
   LS_TANGLE_POOL_CREATE = 'create LST',
+  LS_TANGLE_POOL_UPDATE_ROLES = 'update pool roles',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

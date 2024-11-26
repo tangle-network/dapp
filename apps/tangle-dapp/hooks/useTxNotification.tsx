@@ -39,6 +39,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.LS_TANGLE_POOL_JOIN]: 'Joined liquid staking pool',
   [TxName.LS_TANGLE_POOL_UNBOND]: 'Unbonded from liquid staking pool',
   [TxName.LS_TANGLE_POOL_CREATE]: 'Created liquid staking pool',
+  [TxName.LS_TANGLE_POOL_UPDATE_ROLES]: 'Updated pool roles',
 };
 
 const makeKey = (txName: TxName): `${TxName}-tx-notification` =>
