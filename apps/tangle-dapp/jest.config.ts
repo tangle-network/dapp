@@ -22,5 +22,6 @@ export default {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   moduleNameMapper: {
     '\\.svg$': '<rootDir>/../../__mocks__/svg.js',
+    '\\.svg\\?url$': '<rootDir>/../../__mocks__/svgUrl.js',
   },
 } satisfies Config;
