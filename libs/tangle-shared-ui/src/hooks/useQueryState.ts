@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/router';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
 export enum HistoryUpdateType {
   PUSH = 'push',
@@ -12,37 +12,38 @@ function useQueryState(
   key: string,
   historyUpdateType: HistoryUpdateType = HistoryUpdateType.PUSH,
 ) {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const router = useRouter();
   const [value, setValue] = useState(() => {
-    return router.query[key] || null;
+    return searchParams.get(key) || null;
   });
 
   useEffect(() => {
-    const currentValue = router.query[key];
+    const currentValue = searchParams.get(key);
     if (currentValue !== value) {
       setValue(currentValue || null);
     }
-  }, [router.query, key, value]);
+  }, [searchParams, key, value]);
 
   const updateValue = useCallback(
-    (newValue: string | string[] | null) => {
+    (newValue: string | null) => {
       setValue(newValue);
-      const newQuery = { ...router.query };
+      const newSearchParams = new URLSearchParams(searchParams.toString());
       if (newValue) {
-        newQuery[key] = newValue;
+        newSearchParams.set(key, newValue);
       } else {
-        delete newQuery[key];
+        newSearchParams.delete(key);
       }
 
-      router[historyUpdateType](
-        { pathname: router.pathname, query: newQuery },
-        undefined,
-        {
-          shallow: true,
-        },
-      );
+      const url = `${pathname}?${newSearchParams.toString()}`;
+      if (historyUpdateType === HistoryUpdateType.PUSH) {
+        router.push(url);
+      } else {
+        router.replace(url);
+      }
     },
-    [key, router, historyUpdateType],
+    [key, pathname, router, searchParams, historyUpdateType],
   );
 
   return [value, updateValue] as const;
