@@ -1,8 +1,8 @@
 'use client';
 
 import { ChainConfig } from '@webb-tools/dapp-config';
+import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import useQueryState from '@webb-tools/tangle-shared-ui/hooks/useQueryState';

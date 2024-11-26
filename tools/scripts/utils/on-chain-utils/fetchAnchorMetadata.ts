@@ -5,18 +5,19 @@ import {
   PalletAssetRegistryAssetMetadata,
   PalletLinkableTreeEdgeMetadata,
 } from '@polkadot/types/lookup';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
 import {
   ERC20__factory,
   FungibleTokenWrapper__factory,
   VAnchor__factory,
 } from '@webb-tools/contracts';
 import { anchorDeploymentBlock } from '@webb-tools/dapp-config/anchors';
-import { anchorSignatureBridge } from '@webb-tools/dapp-config/signature-bridges';
 import {
   DEFAULT_DECIMALS,
   DEFAULT_NATIVE_INDEX,
   ZERO_BIG_INT,
 } from '@webb-tools/dapp-config/constants';
+import { anchorSignatureBridge } from '@webb-tools/dapp-config/signature-bridges';
 import {
   AddressType,
   AnchorMetadata,
@@ -24,7 +25,6 @@ import {
 } from '@webb-tools/dapp-config/types';
 import ensureHex from '@webb-tools/dapp-config/utils/ensureHex';
 import { ResourceId } from '@webb-tools/sdk-core/proposals/ResourceId.js';
-import { hexToU8a, u8aToHex } from '@webb-tools/utils';
 import getViemClient from '@webb-tools/web3-api-provider/utils/getViemClient';
 import assert from 'assert';
 import { getContract } from 'viem';

@@ -1,6 +1,6 @@
+import { u8aToHex } from '@polkadot/util';
 import { addressToEvm } from '@polkadot/util-crypto';
 import { AddressType } from '@webb-tools/dapp-config/types';
-import { toHex } from '@webb-tools/utils';
 import assert from 'assert';
 
 import { isEvmAddress } from './isEvmAddress';
@@ -28,7 +28,7 @@ export const toEvmAddress20 = (substrateAddress: string): AddressType => {
   }
 
   // EVM addresses are 20 bytes long.
-  const conversionResult = toHex(addressToEvm(substrateAddress), 20);
+  const conversionResult = u8aToHex(addressToEvm(substrateAddress), 20);
 
   assert(
     isEvmAddress(conversionResult),

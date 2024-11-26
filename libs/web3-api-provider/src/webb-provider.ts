@@ -20,11 +20,7 @@ import {
 } from '@webb-tools/abstract-api-provider';
 import calculateProgressPercentage from '@webb-tools/abstract-api-provider/utils/calculateProgressPercentage';
 import { EventBus } from '@webb-tools/app-util';
-import {
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-  retryPromise,
-} from '@webb-tools/browser-utils';
+import { retryPromise } from '@webb-tools/browser-utils';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import {
@@ -48,8 +44,9 @@ import { NoteManager } from '@webb-tools/note-manager';
 import {
   CircomUtxo,
   Keypair,
-  buildVariableWitnessCalculator,
   toFixedHex,
+  Utxo,
+  UtxoGenInput,
 } from '@webb-tools/sdk-core';
 import { Note } from '@webb-tools/sdk-core/note';
 import {
@@ -57,8 +54,6 @@ import {
   calculateTypedChainId,
   parseTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
-import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core/utxo';
-import { Backend, ZkComponents, hexToU8a } from '@webb-tools/utils';
 import assert from 'assert';
 import flatten from 'lodash/flatten';
 import groupBy from 'lodash/groupBy';
@@ -112,15 +107,9 @@ export class WebbWeb3Provider
   // Map to store the vAnchor levels for each tree id
   private readonly vAnchorLevels = new Map<string, number>();
 
-  private smallFixtures: ZkComponents | null = null;
-
-  private largeFixtures: ZkComponents | null = null;
-
   private unsubscribeFns: Set<() => void>;
 
   readonly typedChainidSubject: BehaviorSubject<number>;
-
-  readonly backend: Backend = 'Circom';
 
   readonly methods: WebbMethods<'web3', WebbApiProvider<WebbWeb3Provider>>;
 
@@ -527,7 +516,7 @@ export class WebbWeb3Provider
 
         return await NoteManager.noteFromUtxo(
           utxo,
-          this.backend,
+          'Circom',
           typedChainId,
           anchorId,
           anchorId,
@@ -634,57 +623,6 @@ export class WebbWeb3Provider
     });
   }
 
-  async getZkFixtures(
-    maxEdges: number,
-    isSmall = false,
-  ): Promise<ZkComponents> {
-    const dummyAbortSignal = new AbortController().signal;
-
-    if (isSmall) {
-      if (this.smallFixtures) {
-        return this.smallFixtures;
-      }
-
-      const smallKey = await fetchVAnchorKeyFromAws(maxEdges, isSmall);
-
-      const smallWasm = await fetchVAnchorWasmFromAws(
-        maxEdges,
-        isSmall,
-        dummyAbortSignal,
-      );
-
-      const smallFixtures = {
-        zkey: smallKey,
-        wasm: Buffer.from(smallWasm),
-        witnessCalculator: buildVariableWitnessCalculator,
-      };
-
-      this.smallFixtures = smallFixtures;
-      return smallFixtures;
-    }
-
-    if (this.largeFixtures) {
-      return this.largeFixtures;
-    }
-
-    const largeKey = await fetchVAnchorKeyFromAws(maxEdges, isSmall);
-
-    const largeWasm = await fetchVAnchorWasmFromAws(
-      maxEdges,
-      isSmall,
-      dummyAbortSignal,
-    );
-
-    const largeFixtures = {
-      zkey: largeKey,
-      wasm: Buffer.from(largeWasm),
-      witnessCalculator: buildVariableWitnessCalculator,
-    };
-
-    this.largeFixtures = largeFixtures;
-    return largeFixtures;
-  }
-
   async getVAnchorMaxEdges(
     vAnchorAddress: string,
     provider?: ViemClient | ApiPromise,
@@ -754,21 +692,8 @@ export class WebbWeb3Provider
     useDummyFixtures?: boolean,
   ): Promise<VAnchor> {
     if (useDummyFixtures) {
-      const dummyFixtures = {
-        wasm: Buffer.from(''),
-        zkey: new Uint8Array(),
-        witnessCalculator: null,
-      } satisfies ZkComponents;
-
-      return VAnchor.connect(
-        ensureHex(address),
-        dummyFixtures,
-        dummyFixtures,
-        provider,
-      );
+      return VAnchor.connect(ensureHex(address), provider);
     }
-
-    const maxEdges = await this.getVAnchorMaxEdges(address, provider);
 
     const fixturesList = new Map<string, FixturesStatus>();
 
@@ -776,8 +701,6 @@ export class WebbWeb3Provider
     tx?.next(TransactionState.FetchingFixtures, {
       fixturesList,
     });
-
-    const smallZkFixtures = await this.getZkFixtures(maxEdges, true);
 
     fixturesList.set('small fixtures', 'Done');
     tx?.next(TransactionState.FetchingFixtures, {
@@ -789,19 +712,12 @@ export class WebbWeb3Provider
       fixturesList,
     });
 
-    const largeZkFixtures = await this.getZkFixtures(maxEdges, false);
-
     fixturesList.set('large fixtures', 'Done');
     tx?.next(TransactionState.FetchingFixtures, {
       fixturesList,
     });
 
-    return VAnchor.connect(
-      ensureHex(address),
-      smallZkFixtures,
-      largeZkFixtures,
-      provider,
-    );
+    return VAnchor.connect(ensureHex(address), provider);
   }
 
   /**
@@ -1004,9 +920,7 @@ export class WebbWeb3Provider
       ),
     );
 
-    const filteredUtxos = utxosWithNull.filter(
-      (utxo): utxo is Utxo => utxo !== null,
-    );
+    const filteredUtxos = utxosWithNull.filter((utxo) => utxo !== null);
 
     const spendableUtxos = await this.validateIsSpent(
       filteredUtxos,
@@ -1025,37 +939,11 @@ export class WebbWeb3Provider
    * @returns the decrypted output if the validation passes, otherwise `null`
    */
   private async validateAmountEncryptedOutput(
-    owner: Keypair,
-    encryptedOutput: Hash,
-    leafIndex: bigint,
-  ): Promise<Utxo | null> {
-    try {
-      const decryptedUtxo = await CircomUtxo.decrypt(owner, encryptedOutput);
-
-      // In order to properly calculate the nullifier, an index is required.
-      // The decrypt function generates a utxo without an index, and the index is a readonly property.
-      // So, regenerate the utxo with the proper index.
-      const regeneratedUtxo = await this.generateUtxo({
-        amount: decryptedUtxo.amount,
-        backend: 'Circom',
-        blinding: hexToU8a(decryptedUtxo.blinding),
-        chainId: decryptedUtxo.chainId,
-        curve: 'Bn254',
-        keypair: owner,
-      });
-
-      const idx = decryptedUtxo.index || +leafIndex.toString();
-
-      regeneratedUtxo.setIndex(idx);
-
-      if (BigInt(regeneratedUtxo.amount) === ZERO_BIG_INT) {
-        return null;
-      }
-
-      return regeneratedUtxo;
-    } catch {
-      return null;
-    }
+    _owner: Keypair,
+    _encryptedOutput: Hash,
+    _leafIndex: bigint,
+  ): Promise<null | Utxo> {
+    return null;
   }
 
   /**
