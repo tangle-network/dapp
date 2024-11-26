@@ -1,18 +1,22 @@
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import {
+  Card,
+  CardVariant,
+} from '@webb-tools/webb-ui-components/components/Card';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { TANGLE_DOCS_RESTAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import type { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import GlassCard from '../../../components/GlassCard';
 import { CONTENT } from './shared';
 
 const LoadingPage: FC = () => {
   return (
     <div className="space-y-5">
       <div className="flex flex-col gap-5 md:flex-row">
-        <GlassCard
+        <Card
+          variant={CardVariant.GLASS}
           className={twMerge(
             'justify-between min-h-60',
             '[background:linear-gradient(79deg,_#b6b8dd_8.85%,_#d9ddf2_55.91%,_#dbbdcd_127.36%),_#fff]',
@@ -31,9 +35,10 @@ const LoadingPage: FC = () => {
 
             <SkeletonLoader className="w-full h-11" />
           </div>
-        </GlassCard>
+        </Card>
 
-        <GlassCard
+        <Card
+          variant={CardVariant.GLASS}
           className={twMerge('min-h-60, md:max-w-[442px] justify-between')}
         >
           <div>
@@ -57,7 +62,7 @@ const LoadingPage: FC = () => {
           >
             Read more
           </Button>
-        </GlassCard>
+        </Card>
       </div>
 
       <SkeletonLoader className="w-full h-64" />

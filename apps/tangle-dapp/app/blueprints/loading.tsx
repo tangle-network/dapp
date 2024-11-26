@@ -1,8 +1,7 @@
+import TopBanner from '@webb-tools/tangle-shared-ui/components/blueprints/TopBanner';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import type { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import TopBanner from './TopBanner';
 
 const LoadingPage: FC = () => {
   return (
