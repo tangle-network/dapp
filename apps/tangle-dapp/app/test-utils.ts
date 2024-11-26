@@ -9,6 +9,8 @@ jest.mock('next/navigation', () => ({
   usePathname: () => '/',
 
   useSearchParams: () => new URLSearchParams(),
+
+  ReadonlyURLSearchParams: URLSearchParams,
 }));
 
 export function mockMatchMedia() {
@@ -24,5 +26,17 @@ export function mockMatchMedia() {
       removeEventListener: jest.fn(),
       dispatchEvent: jest.fn(),
     })),
+  });
+}
+
+export function mockFetch(data: any) {
+  Object.defineProperty(window, 'fetch', {
+    writable: true,
+    value: jest.fn().mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(data),
+      }),
+    ),
   });
 }

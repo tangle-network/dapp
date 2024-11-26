@@ -4,7 +4,7 @@ import Providers from '../providers';
 import { mockFetch, mockMatchMedia } from '../test-utils';
 import Page from './page';
 
-describe('Nomination Page', () => {
+describe('Liquid Staking Page', () => {
   beforeAll(() => {
     mockMatchMedia();
     mockFetch({ country_code: 'US', state: 'CA' });
