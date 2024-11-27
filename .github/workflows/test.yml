@@ -1,13 +1,14 @@
-name: build 🏗️
+name: test 🧪
 
 on:
-  pull_request:
-    branches: [develop, staging, master, feature/**]
-
-  push:
-    branches: [develop, staging, master, feature/**]
-
   workflow_dispatch:
+
+  # TODO: Re-enable once @webb-tools/sdk-core is removed
+  # pull_request:
+  #   branches: [develop, staging, master, feature/**]
+
+  # push:
+  #   branches: [develop, staging, master, feature/**]
 
 jobs:
   build_code:
