@@ -1,6 +1,6 @@
 'use client';
 
-import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
+import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import { useMemo } from 'react';
 
 import { useBridge } from '../../../context/BridgeContext';

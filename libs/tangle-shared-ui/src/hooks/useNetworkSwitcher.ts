@@ -7,7 +7,10 @@ import {
 } from '@webb-tools/dapp-config';
 import { DEFAULT_SS58 } from '@webb-tools/dapp-config/constants/polkadot';
 import getWalletsForTypedChainId from '@webb-tools/dapp-config/utils/getWalletIdsForTypedChainId';
-import { calculateTypedChainId, ChainType } from '@webb-tools/utils';
+import {
+  ChainType,
+  calculateTypedChainId,
+} from '@webb-tools/dapp-types/TypedChainId';
 import { notificationApi } from '@webb-tools/webb-ui-components';
 import {
   Network,

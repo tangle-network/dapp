@@ -2,7 +2,7 @@ import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { DEFAULT_SS58 } from '@webb-tools/dapp-config/constants/polkadot';
 import getPolkadotJsDashboardUrl from '@webb-tools/dapp-config/utils/getPolkadotJsDashboardUrl';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
-import { ChainType } from '@webb-tools/utils';
+import { ChainType } from '@webb-tools/dapp-types/TypedChainId';
 import {
   Network,
   NetworkId,

@@ -1,7 +1,7 @@
 'use client';
 
+import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import { ArrowRight } from '@webb-tools/icons/ArrowRight';
-import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import {
   Label,
   Modal,
@@ -88,11 +88,11 @@ const ChainSelectors: FC = () => {
   ]);
 
   return (
-    <div className="flex flex-col md:flex-row justify-center md:justify-between items-center md:items-end md:gap-3">
+    <div className="flex flex-col items-center justify-center md:flex-row md:justify-between md:items-end md:gap-3">
       {/* Source Chain Selector */}
-      <div className="flex flex-col gap-2 flex-1">
+      <div className="flex flex-col flex-1 gap-2">
         <Label
-          className="text-mono-120 dark:text-mono-120 font-bold"
+          className="font-bold text-mono-120 dark:text-mono-120"
           htmlFor="bridge-source-chain-selector"
         >
           From
@@ -108,16 +108,16 @@ const ChainSelectors: FC = () => {
       </div>
 
       <div
-        className="flex-shrink cursor-pointer px-1 pt-5 md:pt-0 md:pb-5"
+        className="flex-shrink px-1 pt-5 cursor-pointer md:pt-0 md:pb-5"
         onClick={onSwitchChains}
       >
         <ArrowRight size="lg" className="rotate-90 md:rotate-0" />
       </div>
 
       {/* Destination Chain Selector */}
-      <div className="flex flex-col gap-2 flex-1">
+      <div className="flex flex-col flex-1 gap-2">
         <Label
-          className="text-mono-120 dark:text-mono-120 font-bold"
+          className="font-bold text-mono-120 dark:text-mono-120"
           htmlFor="bridge-destination-chain-selector"
         >
           To
