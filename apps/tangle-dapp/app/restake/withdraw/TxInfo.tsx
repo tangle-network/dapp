@@ -17,7 +17,7 @@ const TxInfo = () => {
         title="Withdraw delay"
         value={
           isDefined(leaveDelegatorsDelay)
-            ? `${leaveDelegatorsDelay} rounds`
+            ? `${leaveDelegatorsDelay} sessions`
             : leaveDelegatorsDelay
         }
       />

@@ -12,20 +12,20 @@ const Info = memo(() => {
     <DetailsContainer>
       <DetailItem
         title="Unstake period"
-        tooltip="Number of rounds that delegators remain bonded before the exit request is executable."
+        tooltip="Number of sessions that delegators remain bonded before the exit request is executable."
         value={
           isDefined(leaveDelegatorsDelay)
-            ? `${leaveDelegatorsDelay} rounds`
+            ? `${leaveDelegatorsDelay} sessions`
             : leaveDelegatorsDelay
         }
       />
 
       <DetailItem
         title="Bond less delay"
-        tooltip="Number of rounds that delegation bond less requests must wait before being executable."
+        tooltip="Number of sessions that delegation bond less requests must wait before being executable."
         value={
           isDefined(delegationBondLessDelay)
-            ? `${delegationBondLessDelay} rounds`
+            ? `${delegationBondLessDelay} sessions`
             : delegationBondLessDelay
         }
       />
