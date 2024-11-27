@@ -3,7 +3,6 @@
 
 import { HexString } from '@polkadot/util/types';
 import { RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
-import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import { Hash, Hex } from 'viem';
 import { ActiveWebbRelayer, WebbRelayer } from './webb-relayer';
 
@@ -219,27 +218,6 @@ type SubstrateProofData = {
 };
 
 /**
- * External data for the VAnchor on any chain
- *
- * @param recipient -  Recipient identifier of the withdrawn funds
- * @param relayer - Relayer identifier of the transaction
- * @param extAmount - External amount being deposited or withdrawn withdrawn
- * @param fee - Fee to pay the relayer
- * @param encryptedOutput1 - First encrypted output commitment
- * @param encryptedOutput2 - Second encrypted output commitment
- * */
-type SubstrateExtData = {
-  recipient: string;
-  relayer: string;
-  extAmount: string;
-  fee: string;
-  encryptedOutput1: string;
-  encryptedOutput2: string;
-  refund: string;
-  token: number;
-};
-
-/**
  * Contains data that is relayed to the VAnchors
  * @param chain_id - The chain_id of a supported chain of this relayer
  * @param id - The tree id of the vanchor's underlying tree
@@ -250,7 +228,6 @@ type VAnchorSubstrateRelayTransaction = {
   chainId: number;
   id: number | string;
   proofData: SubstrateProofData;
-  extData: SubstrateExtData;
 };
 
 /**
@@ -284,7 +261,6 @@ type VAnchorEVMRelayTransaction = {
   chainId: number;
   id: number | string;
   proofData: EVMProofData;
-  extData: IVariableAnchorExtData;
 };
 
 /**

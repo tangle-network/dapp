@@ -5,7 +5,7 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import getChainFromConfig from '@webb-tools/dapp-config/utils/getChainFromConfig';
-import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
+import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import { BridgeType } from '@webb-tools/tangle-shared-ui/types/bridge';
 import assert from 'assert';
 import {

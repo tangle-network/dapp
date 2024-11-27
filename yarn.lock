@@ -2713,7 +2713,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/template@npm:^7.25.9":
+"@babel/template@npm:^7.25.9, @babel/template@npm:^7.4.4":
   version: 7.25.9
   resolution: "@babel/template@npm:7.25.9"
   dependencies:
@@ -8039,16 +8039,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/abi-utils@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@metamask/abi-utils@npm:1.2.0"
-  dependencies:
-    "@metamask/utils": "npm:^3.4.1"
-    superstruct: "npm:^1.0.3"
-  checksum: 10c0/d805e17d6c1ca8026a625a87440f063a49cf2c1bd09677b93184b998f9a6008162ee9bb47b1b318e032d9abc4802a4ab8b76c72b6af8838d814ebdff9845d564
-  languageName: node
-  linkType: hard
-
 "@metamask/eth-json-rpc-provider@npm:^1.0.0":
   version: 1.0.1
   resolution: "@metamask/eth-json-rpc-provider@npm:1.0.1"
@@ -8071,21 +8061,6 @@ __metadata:
     tweetnacl: "npm:^1.0.3"
     tweetnacl-util: "npm:^0.15.1"
   checksum: 10c0/6ed9b7a0355e6d4dbbf52360acb2490c96b82ee81230d4f7de18bf2ec6baacf000ac52308eb398dc6512f5e0546ae2916359f396cdd7a1ed7290940912552652
-  languageName: node
-  linkType: hard
-
-"@metamask/eth-sig-util@npm:^6.0.0":
-  version: 6.0.2
-  resolution: "@metamask/eth-sig-util@npm:6.0.2"
-  dependencies:
-    "@ethereumjs/util": "npm:^8.1.0"
-    "@metamask/abi-utils": "npm:^1.2.0"
-    "@metamask/utils": "npm:^5.0.2"
-    ethereum-cryptography: "npm:^2.1.2"
-    ethjs-util: "npm:^0.1.6"
-    tweetnacl: "npm:^1.0.3"
-    tweetnacl-util: "npm:^0.15.1"
-  checksum: 10c0/72a8a03b1c8a18da8fadb06e42c3ea9a8ec214072f837ad7b742eee6013fd8fba14f493e533633fbf4419a6c05267ad4c54a0b45712230d0342ff5ffa3771b8f
   languageName: node
   linkType: hard
 
@@ -8269,19 +8244,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/utils@npm:^3.4.1":
-  version: 3.6.0
-  resolution: "@metamask/utils@npm:3.6.0"
-  dependencies:
-    "@types/debug": "npm:^4.1.7"
-    debug: "npm:^4.3.4"
-    semver: "npm:^7.3.8"
-    superstruct: "npm:^1.0.3"
-  checksum: 10c0/4efcdb04d65dabada1c6918a76a2b7ee226bea309a351670d46737e58bf8d9fb17dfe1b707eaee69f865ccc237dcd6df75b487ccdbe6dd77de52c4cd9ee08cf8
-  languageName: node
-  linkType: hard
-
-"@metamask/utils@npm:^5.0.1, @metamask/utils@npm:^5.0.2":
+"@metamask/utils@npm:^5.0.1":
   version: 5.0.2
   resolution: "@metamask/utils@npm:5.0.2"
   dependencies:
@@ -18103,23 +18066,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/anchors@npm:1.0.11":
-  version: 1.0.11
-  resolution: "@webb-tools/anchors@npm:1.0.11"
-  dependencies:
-    "@webb-tools/contracts": "npm:^1.0.11"
-    "@webb-tools/create2-utils": "npm:^1.0.11"
-    "@webb-tools/interfaces": "npm:^1.0.11"
-    "@webb-tools/tokens": "npm:^1.0.11"
-    "@webb-tools/utils": "npm:^1.0.11"
-    circomlibjs: "npm:^0.0.8"
-    ethers: "npm:5.7.0"
-    jssha: "npm:^3.2.0"
-    snarkjs: "npm:^0.7.2"
-  checksum: 10c0/c73afea6794b044a5bb7256cb33c039171039210672a00ec65848a3df7a9ee60c7f033c44a4e8ae7798ea9714d26e64ebb9e31a6bbe6e2128526d23284ac2108
-  languageName: node
-  linkType: hard
-
 "@webb-tools/api-derive@npm:0.1.4-127":
   version: 0.1.4-127
   resolution: "@webb-tools/api-derive@npm:0.1.4-127"
@@ -18175,7 +18121,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/contracts@npm:1.0.11, @webb-tools/contracts@npm:^1.0.11":
+"@webb-tools/contracts@npm:1.0.11":
   version: 1.0.11
   resolution: "@webb-tools/contracts@npm:1.0.11"
   dependencies:
@@ -18184,25 +18130,6 @@ __metadata:
     ethers: "npm:^5.7.0"
     typescript: "npm:^5.0.4"
   checksum: 10c0/83947e3a230f917930d47cad0cc1c0269ca1271c0a9ae9258753210558b3cca48619bf7f95b7e7deb4b3cd4a2c4e76b9c53c91f8c9a80872ef84e5ad8108b5a9
-  languageName: node
-  linkType: hard
-
-"@webb-tools/create2-utils@npm:^1.0.11":
-  version: 1.0.11
-  resolution: "@webb-tools/create2-utils@npm:1.0.11"
-  dependencies:
-    "@webb-tools/contracts": "npm:^1.0.11"
-    ethers: "npm:5.7.0"
-  checksum: 10c0/79b351400b9e3a386af7f82057eb737dc07335d68b653004ada1cd5e9b74f3826912d62ee3b8c9534523dd0ebd0afabb1e7d7ef5931350e7415aa89ce13f6f9a
-  languageName: node
-  linkType: hard
-
-"@webb-tools/interfaces@npm:1.0.11, @webb-tools/interfaces@npm:^1.0.11":
-  version: 1.0.11
-  resolution: "@webb-tools/interfaces@npm:1.0.11"
-  dependencies:
-    "@webb-tools/utils": "npm:^1.0.11"
-  checksum: 10c0/2f34a187d17af8b6b34e8bcfd7c5d740c8c82b0a7f764ebbabf1e9ea128763af641162955676664aabd815994d94984ed3ab90622fbb1c0994b890b67e46a07f
   languageName: node
   linkType: hard
 
@@ -18293,18 +18220,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/tokens@npm:1.0.11, @webb-tools/tokens@npm:^1.0.11":
-  version: 1.0.11
-  resolution: "@webb-tools/tokens@npm:1.0.11"
-  dependencies:
-    "@webb-tools/contracts": "npm:^1.0.11"
-    "@webb-tools/create2-utils": "npm:^1.0.11"
-    "@webb-tools/utils": "npm:^1.0.11"
-    ethers: "npm:5.7.0"
-  checksum: 10c0/975d3de3cc59aaf46037fe9fe1883cdda908d9a50aca5f51cead4e892a792a0e55564cea653202699d780c72b57be3ddd77c47f5373061d9660ee7d1c60beb0f
-  languageName: node
-  linkType: hard
-
 "@webb-tools/types@npm:0.1.8":
   version: 0.1.8
   resolution: "@webb-tools/types@npm:0.1.8"
@@ -18315,19 +18230,6 @@ __metadata:
     "@polkadot/typegen": "npm:8.1.1"
     "@polkadot/types": "npm:8.1.1"
   checksum: 10c0/6be36f2a723266df26b74a9e7b84c6fa093b699ccad5426abe736ca0bfebea4e3db522e0aecdb02997f07afc87b7f13dc917c19d85372d47fcd2da0e34c2ce52
-  languageName: node
-  linkType: hard
-
-"@webb-tools/utils@npm:1.0.11, @webb-tools/utils@npm:^1.0.11":
-  version: 1.0.11
-  resolution: "@webb-tools/utils@npm:1.0.11"
-  dependencies:
-    "@metamask/eth-sig-util": "npm:^6.0.0"
-    circomlibjs: "npm:^0.0.8"
-    elliptic: "npm:6.5.4"
-    ethers: "npm:5.7.0"
-    snarkjs: "npm:^0.7.2"
-  checksum: 10c0/04c85a1e771dabe60ef54d2e9b60a823bf4e665b55535802fdf2056b16ebb7d2ded9a44292000ecc5a85976d59b71a7895e2a0428aa98e4eb9a3ef6dffaac760
   languageName: node
   linkType: hard
 
@@ -20067,6 +19969,18 @@ __metadata:
   version: 7.0.0-beta.0
   resolution: "babel-plugin-syntax-trailing-function-commas@npm:7.0.0-beta.0"
   checksum: 10c0/67e3d6a706637097526b2d3046d3124d3efd3aac28b47af940c2f8df01b8d7ffeb4cdf5648f3b5eac3f098f5b61c4845e306f34301c869e5e14db6ae8b77f699
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-import-meta@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "babel-plugin-transform-import-meta@npm:2.2.1"
+  dependencies:
+    "@babel/template": "npm:^7.4.4"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    "@babel/core": ^7.10.0
+  checksum: 10c0/9d8c73b767bbd13abc288f98866251e44b58d8fbcb0186aa7166d1be021db05f7bdb993342e38956ab144987255ded9558d22fed8d9a54ea1dc3df34fa8a981e
   languageName: node
   linkType: hard
 
@@ -32355,13 +32269,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jssha@npm:^3.2.0":
-  version: 3.3.1
-  resolution: "jssha@npm:3.3.1"
-  checksum: 10c0/dccd89d1cb9ffdf27e34edfff6ca261a0b130554839ae1a9601e6c959d050daaac8095f02971ee0e13c624c886cad3e0e4fc52b056f53251a99094fde2a41188
-  languageName: node
-  linkType: hard
-
 "jsx-ast-utils@npm:^2.4.1 || ^3.0.0, jsx-ast-utils@npm:^3.3.5":
   version: 3.3.5
   resolution: "jsx-ast-utils@npm:3.3.5"
@@ -34644,13 +34551,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mitt@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "mitt@npm:3.0.1"
-  checksum: 10c0/3ab4fdecf3be8c5255536faa07064d05caa3dd332bd318ff02e04621f7b3069ca1de9106cfe8e7ced675abfc2bec2ce4c4ef321c4a1bb1fb29df8ae090741913
-  languageName: node
-  linkType: hard
-
 "mkdirp-classic@npm:^0.5.2, mkdirp-classic@npm:^0.5.3":
   version: 0.5.3
   resolution: "mkdirp-classic@npm:0.5.3"
@@ -35797,27 +35697,6 @@ __metadata:
   dependencies:
     bignumber.js: "npm:^8 || ^9"
   checksum: 10c0/5fce44fb0e9dd9e3d48b74f0f29910af515284ac35eff0c14911ccaa7a666c2b95a55be02d2605f30fd3fac7d522ffecb5c1f24acb91c1a1880eb53b268a2ccc
-  languageName: node
-  linkType: hard
-
-"nuqs@npm:^2.0.4":
-  version: 2.0.4
-  resolution: "nuqs@npm:2.0.4"
-  dependencies:
-    mitt: "npm:^3.0.1"
-  peerDependencies:
-    "@remix-run/react": ">= 2"
-    next: ">= 14.2.0"
-    react: ">= 18.2.0"
-    react-router-dom: ">= 6"
-  peerDependenciesMeta:
-    "@remix-run/react":
-      optional: true
-    next:
-      optional: true
-    react-router-dom:
-      optional: true
-  checksum: 10c0/5df69ad5676a4e00ba595f226c114106930b908de59305d25df415cd6772a323fc9fbe517b6fde972cc8ca90e0c3f758105c4b96283ccb66d51b479c78e6bd38
   languageName: node
   linkType: hard
 
@@ -46063,22 +45942,19 @@ __metadata:
     "@vitejs/plugin-react-swc": "npm:^3.7.1"
     "@vitest/coverage-v8": "npm:^2.1.4"
     "@vitest/ui": "npm:^2.1.4"
-    "@webb-tools/anchors": "npm:1.0.11"
     "@webb-tools/api": "npm:0.1.4-127"
     "@webb-tools/api-derive": "npm:0.1.4-127"
     "@webb-tools/app-util": "npm:0.1.8"
     "@webb-tools/contracts": "npm:1.0.11"
-    "@webb-tools/interfaces": "npm:1.0.11"
     "@webb-tools/sdk-core": "npm:0.1.4-127"
     "@webb-tools/tangle-restaking-types": "npm:^0.1.0"
     "@webb-tools/tangle-substrate-types": "npm:0.9.0"
     "@webb-tools/test-utils": "npm:0.1.8"
-    "@webb-tools/tokens": "npm:1.0.11"
-    "@webb-tools/utils": "npm:1.0.11"
     "@webb-tools/vanchor-client": "npm:0.1.27"
     "@webb-tools/wasm-utils": "npm:0.1.4-127"
     autoprefixer: "npm:^10.4.20"
     babel-jest: "npm:29.7.0"
+    babel-plugin-transform-import-meta: "npm:^2.2.1"
     bn.js: "npm:^5.2.1"
     chromatic: "npm:^11.16.1"
     circomlibjs: "npm:0.1.7"
@@ -46120,7 +45996,6 @@ __metadata:
     next-themes: "npm:^0.3.0"
     notistack: "npm:^3.0.1"
     numbro: "npm:^2.5.0"
-    nuqs: "npm:^2.0.4"
     nx: "npm:19.8.8"
     observable-hooks: "npm:^4.2.4"
     postcss: "npm:8.4.47"

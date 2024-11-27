@@ -4,7 +4,7 @@ import {
   useConnectWallet,
   useWebContext,
 } from '@webb-tools/api-provider-environment';
-import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
+import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import { useCallback, useMemo } from 'react';
 
 import { useBridge } from '../../../context/BridgeContext';

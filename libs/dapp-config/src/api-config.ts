@@ -10,7 +10,6 @@ import {
   ChainType,
   calculateTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
-import { u8aToHex } from '@webb-tools/utils';
 import assert from 'assert';
 import { PublicClient } from 'viem';
 import { parsedAnchorConfig } from './anchors';
@@ -28,6 +27,7 @@ import { WalletConfig } from './wallets/wallet-config.interface';
 import values from 'lodash/values';
 import keys from 'lodash/keys';
 import { AddressType, isAppEnvironmentType } from './types';
+import { u8aToHex } from '@polkadot/util';
 
 export type Chain = ChainConfig & {
   wallets: Array<Wallet['id']>;

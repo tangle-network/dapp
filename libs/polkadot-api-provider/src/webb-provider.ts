@@ -29,17 +29,14 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
-import { NoteManager } from '@webb-tools/note-manager';
 import {
   ChainType,
-  CircomUtxo,
-  Utxo,
-  UtxoGenInput,
-  buildVariableWitnessCalculator,
   calculateTypedChainId,
   parseTypedChainId,
   toFixedHex,
-} from '@webb-tools/sdk-core';
+} from '@webb-tools/dapp-types/TypedChainId';
+import { NoteManager } from '@webb-tools/note-manager';
+import { CircomUtxo, Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
 import {
@@ -48,20 +45,11 @@ import {
 } from '@polkadot/extension-inject/types';
 
 import { VoidFn } from '@polkadot/api/types';
-import {
-  BridgeStorage,
-  fetchVAnchorKeyFromAws,
-  fetchVAnchorWasmFromAws,
-} from '@webb-tools/browser-utils';
+import { u8aToHex } from '@polkadot/util';
+import { BridgeStorage } from '@webb-tools/browser-utils';
 import Storage from '@webb-tools/dapp-types/Storage';
-import {
-  Backend,
-  ZERO_BYTES32,
-  ZkComponents,
-  u8aToHex,
-} from '@webb-tools/utils';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { PublicClient } from 'viem';
+import { PublicClient, zeroAddress } from 'viem';
 import { PolkadotProvider } from './ext-provider';
 import { getLeaves } from './mt-utils';
 import { PolkaTXBuilder } from './transaction';
@@ -93,8 +81,6 @@ export class WebbPolkadot
 
   readonly typedChainidSubject: BehaviorSubject<number>;
 
-  readonly backend: Backend = 'Circom';
-
   private _newBlock = new BehaviorSubject<null | bigint>(null);
 
   // Map to store the max edges for each tree id
@@ -102,10 +88,6 @@ export class WebbPolkadot
 
   // Map to store the vAnchor levels for each tree id
   private readonly vAnchorLevels = new Map<string, number>();
-
-  private smallFixtures: ZkComponents | null = null;
-
-  private largeFixtures: ZkComponents | null = null;
 
   private constructor(
     readonly apiPromise: ApiPromise,
@@ -416,7 +398,7 @@ export class WebbPolkadot
 
       const leavesFromChainHex = leavesFromChain
         .map((leaf) => u8aToHex(leaf))
-        .filter((leaf) => leaf !== ZERO_BYTES32); // Filter out zero leaves
+        .filter((leaf) => leaf !== zeroAddress); // Filter out zero leaves
 
       // Merge the leaves from chain with the stored leaves
       // and fixed them to 32 bytes
@@ -457,53 +439,6 @@ export class WebbPolkadot
     }
 
     return leavesFromRelayers;
-  }
-
-  /**
-   * Get the zero knowledge fixtures
-   * @param maxEdges the max number of edges in the merkle tree
-   * @param isSmall whether fixtures are for small inputs (less than or equal to 2 inputs)
-   * @returns zk components
-   */
-  async getZkFixtures(
-    maxEdges: number,
-    isSmall?: boolean,
-  ): Promise<ZkComponents> {
-    if (isSmall) {
-      if (this.smallFixtures) {
-        return this.smallFixtures;
-      }
-
-      const smallKey = await fetchVAnchorKeyFromAws(maxEdges, isSmall);
-
-      const smallWasm = await fetchVAnchorWasmFromAws(maxEdges, isSmall);
-
-      const smallFixtures = {
-        zkey: smallKey,
-        wasm: Buffer.from(smallWasm),
-        witnessCalculator: buildVariableWitnessCalculator,
-      };
-
-      this.smallFixtures = smallFixtures;
-      return smallFixtures;
-    }
-
-    if (this.largeFixtures) {
-      return this.largeFixtures;
-    }
-
-    const largeKey = await fetchVAnchorKeyFromAws(maxEdges, isSmall);
-
-    const largeWasm = await fetchVAnchorWasmFromAws(maxEdges, isSmall);
-
-    const largeFixtures = {
-      zkey: largeKey,
-      wasm: Buffer.from(largeWasm),
-      witnessCalculator: buildVariableWitnessCalculator,
-    };
-
-    this.largeFixtures = largeFixtures;
-    return largeFixtures;
   }
 
   async getVAnchorMaxEdges(
