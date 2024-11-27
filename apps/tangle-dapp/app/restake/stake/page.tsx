@@ -43,6 +43,7 @@ import AssetList from '../AssetList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
 import RestakeTabs from '../RestakeTabs';
+import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
@@ -254,71 +255,74 @@ export default function Page() {
   );
 
   return (
-    <Card withShadow className="w-full max-w-lg mx-auto">
+    <StyleContainer>
       <RestakeTabs />
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col h-full space-y-4 grow">
-          <StakeInput
-            amountError={errors.amount?.message}
-            delegatorInfo={delegatorInfo}
-            openAssetModal={openAssetModal}
-            openOperatorModal={openOperatorModal}
-            register={register}
-            setValue={setValue}
-            watch={watch}
-          />
 
-          <div className="flex flex-col justify-between gap-4 grow">
-            <Info />
-
-            <ActionButton
-              errors={errors}
-              isValid={isValid}
-              openChainModal={openChainModal}
+      <Card withShadow>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col h-full space-y-4 grow">
+            <StakeInput
+              amountError={errors.amount?.message}
+              delegatorInfo={delegatorInfo}
+              openAssetModal={openAssetModal}
+              openOperatorModal={openOperatorModal}
+              register={register}
+              setValue={setValue}
               watch={watch}
-              isSubmitting={isSubmitting}
             />
+
+            <div className="flex flex-col justify-between gap-4 grow">
+              <Info />
+
+              <ActionButton
+                errors={errors}
+                isValid={isValid}
+                openChainModal={openChainModal}
+                watch={watch}
+                isSubmitting={isSubmitting}
+              />
+            </div>
           </div>
-        </div>
 
-        <Modal>
-          <ModalContent
-            isOpen={isAssetModalOpen}
-            title="Select Asset"
-            description="Select the asset you want to delegate"
-            onInteractOutside={closeAssetModal}
-          >
-            <AssetList
-              selectTokens={selectableTokens}
-              onChange={handleAssetChange}
-              onClose={closeAssetModal}
-              renderEmpty={EmptyAsset}
+          <Modal>
+            <ModalContent
+              isOpen={isAssetModalOpen}
+              title="Select Asset"
+              description="Select the asset you want to delegate"
+              onInteractOutside={closeAssetModal}
+            >
+              <AssetList
+                selectTokens={selectableTokens}
+                onChange={handleAssetChange}
+                onClose={closeAssetModal}
+                renderEmpty={EmptyAsset}
+              />
+            </ModalContent>
+
+            <ModalContent
+              isOpen={isOperatorModalOpen}
+              title="Select Operator"
+              description="Select the operator you want to stake with"
+              onInteractOutside={closeOperatorModal}
+            >
+              <OperatorList
+                operators={operators}
+                operatorMap={operatorMap}
+                operatorIdentities={operatorIdentities}
+                onSelectOperator={handleOnSelectOperator}
+                onClose={closeOperatorModal}
+              />
+            </ModalContent>
+
+            <SupportedChainModal
+              isOpen={isChainModalOpen}
+              onClose={closeChainModal}
+              onChainChange={handleChainChange}
             />
-          </ModalContent>
-
-          <ModalContent
-            isOpen={isOperatorModalOpen}
-            title="Select Operator"
-            description="Select the operator you want to stake with"
-            onInteractOutside={closeOperatorModal}
-          >
-            <OperatorList
-              operators={operators}
-              operatorMap={operatorMap}
-              operatorIdentities={operatorIdentities}
-              onSelectOperator={handleOnSelectOperator}
-              onClose={closeOperatorModal}
-            />
-          </ModalContent>
-
-          <SupportedChainModal
-            isOpen={isChainModalOpen}
-            onClose={closeChainModal}
-            onChainChange={handleChainChange}
-          />
-        </Modal>
-      </Form>
-    </Card>
+          </Modal>
+        </Form>
+      </Card>
+    </StyleContainer>
   );
 }
 

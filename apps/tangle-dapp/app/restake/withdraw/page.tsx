@@ -38,6 +38,7 @@ import { getAmountValidation } from '../../../utils/getAmountValidation';
 import ActionButtonBase from '../ActionButtonBase';
 import AssetPlaceholder from '../AssetPlaceholder';
 import RestakeTabs from '../RestakeTabs';
+import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
@@ -199,7 +200,7 @@ const Page = () => {
 
   return (
     <div className="flex flex-col items-center justify-center gap-4 sm:items-start sm:flex-row">
-      <div className="flex-1 w-full max-w-lg">
+      <StyleContainer className="flex-1 mx-0">
         <RestakeTabs />
 
         <Card withShadow>
@@ -293,7 +294,7 @@ const Page = () => {
             </ActionButtonBase>
           </form>
         </Card>
-      </div>
+      </StyleContainer>
 
       {/** Hardcoded for the margin top to ensure the component is align to same card content */}
       <RestakeDetailCard.Root className="w-full max-w-lg flex-1 sm:mt-[61px]">

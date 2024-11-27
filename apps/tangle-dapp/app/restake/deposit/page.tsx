@@ -1,13 +1,14 @@
 import RestakeTabs from '../RestakeTabs';
+import StyleContainer from '../StyleContainer';
 import DepositForm from './DepositForm';
 
 export const dynamic = 'force-static';
 
 export default function DepositPage() {
   return (
-    <div className="w-full max-w-lg mx-auto">
+    <StyleContainer>
       <RestakeTabs />
       <DepositForm />
-    </div>
+    </StyleContainer>
   );
 }
