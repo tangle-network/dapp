@@ -1,18 +1,28 @@
 'use client';
 
+import { Cross1Icon, DoubleArrowRightIcon } from '@radix-ui/react-icons';
+import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
 import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { Card } from '@webb-tools/webb-ui-components';
+import {
+  Card,
+  IconButton,
+  Tooltip,
+  TooltipBody,
+  useBreakpointValue,
+} from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import cx from 'classnames';
+import { motion } from 'framer-motion';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 
@@ -48,6 +58,11 @@ import UnstakeRequestTable from './UnstakeRequestTable';
 export const dynamic = 'force-static';
 
 const Page = () => {
+  const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
+    useState(false);
+
+  const isMediumScreen = useBreakpointValue('md', true, false);
+
   const {
     register,
     setValue: setFormValue,
@@ -227,11 +242,41 @@ const Page = () => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 sm:items-start sm:flex-row">
-      <StyleContainer className="flex-1 mx-0">
+    <div
+      className={cx(
+        'grid gap-4 place-content-center',
+        !isMediumScreen
+          ? 'grid-cols-1'
+          : isUnstakeRequestTableOpen
+            ? 'grid-cols-2'
+            : 'grid-cols-1',
+      )}
+    >
+      <StyleContainer
+        className={cx(
+          isUnstakeRequestTableOpen && isMediumScreen
+            ? 'ml-auto mr-0'
+            : 'mx-auto',
+        )}
+      >
         <RestakeTabs />
 
-        <Card withShadow>
+        <Card withShadow className="relative">
+          {!isUnstakeRequestTableOpen && isMediumScreen && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <IconButton
+                  className="absolute top-0 -right-10"
+                  onClick={() => setIsUnstakeRequestTableOpen(true)}
+                >
+                  <DoubleArrowRightIcon />
+                </IconButton>
+              </TooltipTrigger>
+
+              <TooltipBody>Open unstake requests table</TooltipBody>
+            </Tooltip>
+          )}
+
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
               <TransactionInputCard.Header>
@@ -321,28 +366,54 @@ const Page = () => {
         </Card>
       </StyleContainer>
 
-      {/** Hardcoded for the margin top to ensure the component is align to same card content */}
-      <RestakeDetailCard.Root className="w-full max-w-lg flex-1 sm:mt-[61px]">
-        {unstakeRequests.length > 0 ? (
-          <UnstakeRequestTable
-            operatorIdentities={operatorIdentities}
-            unstakeRequests={unstakeRequests}
-          />
-        ) : (
-          <>
-            <RestakeDetailCard.Header title="No Unstake Requests" />
+      {(isUnstakeRequestTableOpen || !isMediumScreen) && (
+        <motion.div
+          key="unstake-request-table"
+          className={cx(
+            'w-full max-w-lg md:mt-[61px]',
+            isUnstakeRequestTableOpen && isMediumScreen
+              ? 'mr-auto ml-0'
+              : 'mx-auto',
+          )}
+          style={{
+            transformOrigin: '0 0 0',
+          }}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <RestakeDetailCard.Root>
+            <div className="flex items-center justify-between">
+              <RestakeDetailCard.Header
+                title={
+                  unstakeRequests.length > 0
+                    ? 'Unstake Requests'
+                    : 'No Unstake Requests'
+                }
+              />
 
-            <Typography
-              variant="body2"
-              className="text-mono-120 dark:text-mono-100"
-            >
-              You will be able to withdraw your tokens after the unstake request
-              has been processed. To unstake your tokens go to the unstake tab
-              to schedule a request.
-            </Typography>
-          </>
-        )}
-      </RestakeDetailCard.Root>
+              <IconButton onClick={() => setIsUnstakeRequestTableOpen(false)}>
+                <Cross1Icon />
+              </IconButton>
+            </div>
+
+            {unstakeRequests.length > 0 ? (
+              <UnstakeRequestTable
+                operatorIdentities={operatorIdentities}
+                unstakeRequests={unstakeRequests}
+              />
+            ) : (
+              <Typography
+                variant="body2"
+                className="text-mono-120 dark:text-mono-100"
+              >
+                You will be able to withdraw your tokens after the unstake
+                request has been processed. To unstake your tokens go to the
+                unstake tab to schedule a request.
+              </Typography>
+            )}
+          </RestakeDetailCard.Root>
+        </motion.div>
+      )}
 
       <Modal>
         <UnstakeModal
