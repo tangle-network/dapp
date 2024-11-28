@@ -21,12 +21,20 @@ export type ChainGroup =
   | 'polygon'
   | 'scroll'
   | 'tangle'
+  | 'bsc'
+  | 'base'
+  | 'linea'
   | 'webb-dev';
 
 /**
  * The extended chain interface that includes the chain type and group
  */
 export type WebbExtendedChain = {
+  /**
+   * The display name of the chain
+   */
+  displayName?: string;
+
   /**
    * The type of chain (e.g EVM, Substrate, etc)
    */

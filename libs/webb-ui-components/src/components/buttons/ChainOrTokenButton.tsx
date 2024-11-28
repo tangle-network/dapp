@@ -14,6 +14,7 @@ const ChainOrTokenButton = forwardRef<
     {
       className,
       value,
+      displayValue,
       status,
       textClassName,
       disabled,
@@ -73,7 +74,7 @@ const ChainOrTokenButton = forwardRef<
             )}
 
             <p className={twMerge('font-bold', textClassName)}>
-              {value ?? placeholder}
+              {displayValue ?? value ?? placeholder}
             </p>
           </div>
 

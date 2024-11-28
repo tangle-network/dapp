@@ -96,10 +96,10 @@ export const ChainList = ({
                 }}
               >
                 <div className="flex items-center gap-4 justify-start">
-                  <ChainIcon size="lg" name={chain.name} />
+                  <ChainIcon size="lg" name={chain.displayName ?? chain.name} />
 
                   <Typography variant="h5" fw="bold" className="capitalize">
-                    {chain.name}
+                    {chain.displayName ?? chain.name}
                   </Typography>
                 </div>
 

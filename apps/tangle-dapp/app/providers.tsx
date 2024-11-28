@@ -11,9 +11,6 @@ import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
 import z from 'zod';
 
-import BridgeTxQueueProvider from '../context/BridgeTxQueueContext';
-import HyperlaneWarpContext from '../context/HyperlaneWarpContext';
-
 const appEvent = new AppEvent();
 
 const envSchema = z.object({
@@ -52,9 +49,7 @@ const Providers = ({
             blockedRegions={blockedRegions}
             blockedCountryCodes={blockedCountryCodes}
           >
-            <HyperlaneWarpContext>
-              <BridgeTxQueueProvider>{children}</BridgeTxQueueProvider>
-            </HyperlaneWarpContext>
+            {children}
           </OFACFilterProvider>
         </WebbProvider>
       </WebbUIProvider>

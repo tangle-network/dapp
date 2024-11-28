@@ -18,6 +18,7 @@ import { ListCardWrapper } from './ListCardWrapper';
 
 export type AssetConfig = {
   symbol: string;
+  optionalSymbol?: string;
   balance?: Decimal;
   explorerUrl?: string;
   address?: Address;
@@ -90,7 +91,7 @@ export const AssetList = ({
                     fw="bold"
                     className="block cursor-default text-mono-200 dark:text-mono-0"
                   >
-                    {asset.symbol}
+                    {asset.optionalSymbol ?? asset.symbol}
                   </Typography>
 
                   {asset.explorerUrl !== undefined && (
