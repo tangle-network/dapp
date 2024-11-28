@@ -14,7 +14,7 @@ export default function useRestakeAssetMap() {
 
   const assetMap$ = useMemo(
     () => assetDetailsRxQuery(apiRx, assetIds, activeChain?.nativeCurrency),
-    [activeChain?.nativeCurrency, apiRx, assetIds],
+    [apiRx, assetIds, activeChain?.nativeCurrency],
   );
 
   const assetMap = useObservableState(assetMap$, {});

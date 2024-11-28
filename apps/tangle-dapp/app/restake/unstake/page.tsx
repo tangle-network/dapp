@@ -3,10 +3,10 @@
 import { Cross1Icon, DoubleArrowRightIcon } from '@radix-ui/react-icons';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
+import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import {
   Card,
   IconButton,

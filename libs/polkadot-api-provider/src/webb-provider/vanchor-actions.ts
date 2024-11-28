@@ -28,7 +28,6 @@ import {
   ensureHex,
 } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { IVariableAnchorExtData } from '@webb-tools/interfaces';
 import {
   ChainType,
   FIELD_SIZE,
@@ -39,26 +38,25 @@ import {
   Utxo,
   buildVariableWitnessCalculator,
   parseTypedChainId,
-  randomBN,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import { ZERO_ADDRESS, hexToU8a, u8aToHex } from '@webb-tools/utils';
 import BN from 'bn.js';
 import { firstValueFrom } from 'rxjs';
 import { groth16, zKey } from 'snarkjs';
 
 import { ApiPromise } from '@polkadot/api';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
 import type { HexString } from '@polkadot/util/types';
 import { NeighborEdge } from '@webb-tools/abstract-api-provider/vanchor/types';
 import { bridgeStorageFactory } from '@webb-tools/browser-utils';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
+import { AddressType } from '@webb-tools/dapp-config/types';
 import assert from 'assert';
-import { formatUnits } from 'viem';
+import { formatUnits, zeroAddress } from 'viem';
 import { getLeafIndex } from '../mt-utils';
 import { Groth16Proof, IVAnchorPublicInputs } from '../types';
 import { getVAnchorExtDataHash, groth16ProofToBytes } from '../utils';
 import { WebbPolkadot } from '../webb-provider';
-import { AddressType } from '@webb-tools/dapp-config/types';
 
 export class PolkadotVAnchorActions extends VAnchorActions<
   'polkadot',
@@ -134,7 +132,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     txArgs: ParametersOfTransactMethod<'polkadot'>,
     changeNotes: Note[],
   ): Promise<HexString> {
-    const [tx, anchorId, rawInputUtxos, rawOutputUtxos, ...restArgs] = txArgs;
+    const [tx, anchorId, inputUtxos, outputUtxos, ...restArgs] = txArgs;
 
     const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
@@ -149,10 +147,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       name: chainId.toString(),
     };
 
-    // Pad the input & output utxo
-    const inputUtxos = await this.padUtxos(rawInputUtxos, 16); // 16 is the require number of inputs (for 8-sided bridge)
-    const outputUtxos = await this.padUtxos(rawOutputUtxos, 2); // 2 is the require number of outputs (for 8-sided bridge)
-
     const setupTransactionArgs = [
       tx,
       inputUtxos,
@@ -162,7 +156,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       anchorId,
     ] as Parameters<typeof this.setupTransaction>;
 
-    const { extData, publicInputs: proofData } = await this.setupTransaction(
+    const { publicInputs: proofData } = await this.setupTransaction(
       ...setupTransactionArgs,
     );
 
@@ -172,10 +166,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     >(chainInfo, {
       chainId,
       id: +anchorId,
-      extData: {
-        ...extData,
-        token: parseInt(extData.token, 16),
-      },
       proofData: {
         ...proofData,
         extensionRoots: [],
@@ -266,10 +256,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     if (!activeAccount) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
-
-    // 16 inputs and 2 outputs
-    inputs = await this.padUtxos(inputs, 16);
-    outputs = await this.padUtxos(outputs, 2);
 
     const { extData, publicInputs } = await this.setupTransaction(
       tx,
@@ -495,13 +481,13 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
 
     const relayer =
-      this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+      this.inner.relayerManager.activeRelayer?.beneficiary ?? zeroAddress;
 
     // Fee only applies if relayer is set
-    const actualFee = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : feeAmount;
+    const actualFee = relayer === zeroAddress ? ZERO_BIG_INT : feeAmount;
 
     // Refund only applies if relayer is set
-    const actualRefund = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : refundAmount;
+    const actualRefund = relayer === zeroAddress ? ZERO_BIG_INT : refundAmount;
 
     return Promise.resolve([
       tx, // tx
@@ -527,10 +513,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
 
     const relayer =
-      this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+      this.inner.relayerManager.activeRelayer?.beneficiary ?? zeroAddress;
 
     // Fee only applies if relayer is set
-    const actualFee = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : feeAmount;
+    const actualFee = relayer === zeroAddress ? ZERO_BIG_INT : feeAmount;
     return Promise.resolve([
       tx, // tx
       notes[0].note.targetIdentifyingData, // contractAddress
@@ -538,7 +524,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       [changeUtxo, transferUtxo], // outputs
       actualFee, // fee
       ZERO_BIG_INT, // refund
-      ZERO_ADDRESS, // recipient
+      zeroAddress, // recipient
       relayer, // relayer
       wrapUnwrapAssetId, // wrapUnwrapAssetId
       leavesMap, // leavesMap
@@ -628,14 +614,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     const fixturesList = new Map<string, FixturesStatus>();
     tx.next(TransactionState.FetchingFixtures, { fixturesList });
 
-    const maxEdges = await this.inner.getVAnchorMaxEdges(treeId);
-
     // Proving key
     fixturesList.set('vanchor key', 'Waiting');
-    const { zkey, wasm } = await this.inner.getZkFixtures(
-      maxEdges,
-      inputs.length <= 2,
-    );
+    const { zkey, wasm } = {
+      zkey: new Uint8Array(),
+      wasm: Buffer.from(''),
+    };
     fixturesList.set('vanchor key', 'Done');
 
     tx.next(TransactionState.GeneratingZk, undefined);
@@ -733,16 +717,13 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     wrapUnwrapToken: string,
     encryptedOutput1: string,
     encryptedOutput2: string,
-  ): {
-    extData: IVariableAnchorExtData;
-    extDataHash: bigint;
-  } {
+  ) {
     // i128 is a signed 128-bit integer
     const extAmountBN = new BN(extAmount.toString()).toTwos(128).toString();
     const feeBN = new BN(fee.toString()).toTwos(128).toString();
     const refundBN = new BN(refund.toString()).toTwos(128).toString();
 
-    const extData: IVariableAnchorExtData = {
+    const extData = {
       // For recipient, since it is an AccountId (32 bytes) we use toFixedHex to pad it to 32 bytes.
       recipient: toFixedHex(u8aToHex(decodeAddress(recipient))),
       // For relayer, since it is an AccountId (32 bytes) we use toFixedHex to pad it to 32 bytes.
@@ -1053,30 +1034,5 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     );
 
     return fee + outAmount - inAmount;
-  }
-
-  // https://github.com/webb-tools/protocol-solidity/blob/65d8e7ca7b7ba227d8cd97f2773fefc378655944/packages/anchors/src/Common.ts#L247-L269
-  private async padUtxos(utxos: Utxo[], maxLen: number): Promise<Utxo[]> {
-    const typedChainId = this.inner.typedChainId;
-    const randomKeypair = new Keypair();
-
-    while (utxos.length !== 2 && utxos.length < maxLen) {
-      utxos.push(
-        await this.inner.generateUtxo({
-          curve: 'Bn254',
-          backend: this.inner.backend,
-          chainId: typedChainId.toString(),
-          originChainId: typedChainId.toString(),
-          amount: '0',
-          blinding: hexToU8a(randomBN(31).toHexString()),
-          keypair: randomKeypair,
-          index: this.inner.state.defaultUtxoIndex.toString(),
-        }),
-      );
-    }
-    if (utxos.length !== 2 && utxos.length !== maxLen) {
-      throw new Error('Invalid utxo length');
-    }
-    return utxos;
   }
 }

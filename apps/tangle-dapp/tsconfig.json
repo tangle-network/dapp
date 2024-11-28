@@ -31,7 +31,8 @@
     "next-env.d.ts",
     "index.d.ts",
     "../../types/global.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "../../jest.setup.ts"
   ],
   "exclude": [
     "node_modules",

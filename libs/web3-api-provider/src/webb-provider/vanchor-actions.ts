@@ -30,7 +30,12 @@ import {
   FungibleTokenWrapper__factory,
   VAnchor__factory,
 } from '@webb-tools/contracts';
-import { ApiConfig, ZERO_BIG_INT, ensureHex } from '@webb-tools/dapp-config';
+import {
+  ApiConfig,
+  ZERO_BIG_INT,
+  ZERO_BYTES32,
+  ensureHex,
+} from '@webb-tools/dapp-config';
 import gasLimitConfig from '@webb-tools/dapp-config/gasLimitConfig';
 import {
   WebbError,
@@ -46,7 +51,6 @@ import {
   parseTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import { ZERO_ADDRESS, ZERO_BYTES32, hexToU8a } from '@webb-tools/utils';
 import {
   Address,
   GetContractReturnType,
@@ -54,10 +58,11 @@ import {
   PublicClient,
   Client as ViemClient,
   getContract,
+  zeroAddress,
 } from 'viem';
 import { getPublicClient, getWalletClient } from 'wagmi/actions';
-import { handleVAnchorTxState } from '../utils';
 import { WebbWeb3Provider } from '../webb-provider';
+import { hexToU8a } from '@polkadot/util';
 
 export class Web3VAnchorActions extends VAnchorActions<
   'web3',
@@ -148,7 +153,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     const inputUtxos = await vAnchor.padUtxos(rawInputUtxos, 16); // 16 is the require number of inputs (for 8-sided bridge)
     const outputUtxos = await vAnchor.padUtxos(rawOutputUtxos, 2); // 2 is the require number of outputs (for 8-sided bridge)
 
-    const { extAmount, extData, publicInputs } = await vAnchor.setupTransaction(
+    const { publicInputs } = await vAnchor.setupTransaction(
       inputUtxos,
       [outputUtxos[0], outputUtxos[1]],
       ...restArgs,
@@ -165,16 +170,6 @@ export class Web3VAnchorActions extends VAnchorActions<
       >(chainInfo, {
         chainId: +chainId.toString(),
         id: contractAddress,
-        extData: {
-          recipient: extData.recipient,
-          relayer: extData.relayer,
-          extAmount: toFixedHex(extAmount).replace('0x', ''),
-          fee: toFixedHex(extData.fee),
-          refund: toFixedHex(extData.refund),
-          token: extData.token,
-          encryptedOutput1: extData.encryptedOutput1,
-          encryptedOutput2: extData.encryptedOutput2,
-        },
         proofData: {
           proof: publicInputs.proof,
           extensionRoots: publicInputs.extensionRoots,
@@ -281,9 +276,6 @@ export class Web3VAnchorActions extends VAnchorActions<
       {
         gas: gasLimit,
         walletClient,
-        onTransactionState(state, payload) {
-          handleVAnchorTxState(tx, state, payload);
-        },
       },
     );
 
@@ -677,8 +669,8 @@ export class Web3VAnchorActions extends VAnchorActions<
       [depositUtxo], // outputs
       ZERO_BIG_INT, // fee
       ZERO_BIG_INT, // refund
-      ZERO_ADDRESS, // recipient
-      ZERO_ADDRESS, // relayer
+      zeroAddress, // recipient
+      zeroAddress, // relayer
       wrapToken, // wrapUnwrapToken
       {}, // leavesMap,
     ]);
@@ -694,10 +686,10 @@ export class Web3VAnchorActions extends VAnchorActions<
     const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
 
     const relayer =
-      this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+      this.inner.relayerManager.activeRelayer?.beneficiary ?? zeroAddress;
 
     // If no relayer is set, then the fee is 0, otherwise it is the fee amount
-    const fee = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : feeAmount;
+    const fee = relayer === zeroAddress ? ZERO_BIG_INT : feeAmount;
 
     return Promise.resolve([
       tx, // tx
@@ -730,17 +722,17 @@ export class Web3VAnchorActions extends VAnchorActions<
     const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
 
     const relayer =
-      this.inner.relayerManager.activeRelayer?.beneficiary ?? ZERO_ADDRESS;
+      this.inner.relayerManager.activeRelayer?.beneficiary ?? zeroAddress;
 
     // If no relayer is set, then the fee is 0, otherwise it is the fee amount
-    const feeValue = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : feeAmount;
-    const refundValue = relayer === ZERO_ADDRESS ? ZERO_BIG_INT : refundAmount;
+    const feeValue = relayer === zeroAddress ? ZERO_BIG_INT : feeAmount;
+    const refundValue = relayer === zeroAddress ? ZERO_BIG_INT : refundAmount;
 
     // The recipient is the refund recipient
     // if the relayer is set and the refund recipient is set
     const refundRecipient =
-      relayer === ZERO_ADDRESS || _refundRecipient.length === 0
-        ? ZERO_ADDRESS
+      relayer === zeroAddress || _refundRecipient.length === 0
+        ? zeroAddress
         : _refundRecipient;
 
     // set the anchor to make the transfer on (where the notes are being spent for the transfer)

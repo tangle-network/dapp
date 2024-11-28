@@ -2,11 +2,11 @@
 
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
+import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import { Card } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
