@@ -1,5 +1,6 @@
 'use client';
 
+import { Cross1Icon } from '@radix-ui/react-icons';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
@@ -7,14 +8,19 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
-import { Card } from '@webb-tools/webb-ui-components';
+import {
+  Card,
+  IconButton,
+  useBreakpointValue,
+} from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import cx from 'classnames';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 
@@ -36,7 +42,9 @@ import type { WithdrawFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import ActionButtonBase from '../ActionButtonBase';
+import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
+import { ExpandTableButton } from '../ExpandTableButton';
 import RestakeTabs from '../RestakeTabs';
 import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
@@ -75,6 +83,11 @@ const Page = () => {
     open: openChainModal,
     close: closeChainModal,
   } = useModal();
+
+  const [isWithdrawRequestTableOpen, setIsWithdrawRequestTableOpen] =
+    useState(false);
+
+  const isMediumScreen = useBreakpointValue('md', true, false);
 
   // Register form fields on mount
   useEffect(() => {
@@ -199,11 +212,30 @@ const Page = () => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 sm:items-start sm:flex-row">
-      <StyleContainer className="flex-1 mx-0">
+    <div
+      className={cx(
+        'grid gap-4 place-content-center',
+        !isMediumScreen ? 'grid-cols-1' : 'grid-flow-col auto-cols-fr',
+      )}
+    >
+      <StyleContainer
+        className={cx(
+          isWithdrawRequestTableOpen && isMediumScreen
+            ? 'ml-auto mr-0'
+            : 'mx-auto',
+        )}
+      >
         <RestakeTabs />
 
-        <Card withShadow>
+        <Card withShadow className="relative">
+          {!isWithdrawRequestTableOpen && isMediumScreen && (
+            <ExpandTableButton
+              className="absolute top-0 -right-10"
+              tooltipContent="Open withdraw requests table"
+              onClick={() => setIsWithdrawRequestTableOpen(true)}
+            />
+          )}
+
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
               <TransactionInputCard.Header>
@@ -296,14 +328,28 @@ const Page = () => {
         </Card>
       </StyleContainer>
 
-      {/** Hardcoded for the margin top to ensure the component is align to same card content */}
-      <RestakeDetailCard.Root className="w-full max-w-lg flex-1 sm:mt-[61px]">
-        {withdrawRequests.length > 0 ? (
-          <WithdrawRequestTable withdrawRequests={withdrawRequests} />
-        ) : (
-          <>
-            <RestakeDetailCard.Header title="No withdraw requests found" />
+      <AnimatedTable
+        isTableOpen={isWithdrawRequestTableOpen}
+        isMediumScreen={isMediumScreen}
+      >
+        <RestakeDetailCard.Root className="md:mt-[61px]">
+          <div className="flex items-center justify-between">
+            <RestakeDetailCard.Header
+              title={
+                withdrawRequests.length > 0
+                  ? 'Withdraw Requests'
+                  : 'No Withdraw Requests'
+              }
+            />
 
+            <IconButton onClick={() => setIsWithdrawRequestTableOpen(false)}>
+              <Cross1Icon />
+            </IconButton>
+          </div>
+
+          {withdrawRequests.length > 0 ? (
+            <WithdrawRequestTable withdrawRequests={withdrawRequests} />
+          ) : (
             <Typography
               variant="body2"
               className="text-mono-120 dark:text-mono-100"
@@ -312,9 +358,9 @@ const Page = () => {
               schedule is completed. To unstake your tokens go to the unstake
               tab to schedule request.
             </Typography>
-          </>
-        )}
-      </RestakeDetailCard.Root>
+          )}
+        </RestakeDetailCard.Root>
+      </AnimatedTable>
 
       <Modal>
         <WithdrawModal

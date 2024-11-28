@@ -258,6 +258,7 @@ const Page = () => {
         <Card withShadow className="relative">
           {!isUnstakeRequestTableOpen && isMediumScreen && (
             <ExpandTableButton
+              className="absolute top-0 -right-10"
               tooltipContent="Open unstake requests table"
               onClick={() => setIsUnstakeRequestTableOpen(true)}
             />
@@ -356,7 +357,7 @@ const Page = () => {
         isTableOpen={isUnstakeRequestTableOpen}
         isMediumScreen={isMediumScreen}
       >
-        <RestakeDetailCard.Root>
+        <RestakeDetailCard.Root className="md:mt-[61px]">
           <div className="flex items-center justify-between">
             <RestakeDetailCard.Header
               title={

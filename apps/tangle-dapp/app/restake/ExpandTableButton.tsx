@@ -35,16 +35,12 @@ const colorClasses = {
 export function ExpandTableButton({
   notificationVariant,
   tooltipContent,
-  className,
   ...props
 }: ExpandTableButtonProps) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <IconButton
-          {...props}
-          className={twMerge('absolute top-0 -right-10', className)}
-        >
+        <IconButton {...props}>
           <DoubleArrowRightIcon />
 
           {notificationVariant && (

@@ -18,7 +18,7 @@ export function AnimatedTable({
         <motion.div
           key="unstake-request-table"
           className={cx(
-            'w-full max-w-lg md:mt-[61px] origin-[0_0_0]',
+            'w-full max-w-lg origin-[0_0_0]',
             isTableOpen && isMediumScreen ? 'mr-auto ml-0' : 'mx-auto',
           )}
           transition={{ duration: 0.15 }}
