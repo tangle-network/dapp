@@ -1,0 +1,14 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="12" fill="white" />
+    <g clip-path="url(#clip0_linea)">
+        <path d="M15.884 18H6v-10h2.273v8.432h7.611V18z" fill="#121212" />
+        <path
+            d="M15.884 10.273c1.125 0 2.037-.912 2.037-2.037S17.01 6.2 15.884 6.2c-1.124 0-2.036.912-2.036 2.036 0 1.125.912 2.037 2.036 2.037z"
+            fill="#121212" />
+    </g>
+    <defs>
+        <clipPath id="clip0_linea">
+            <rect width="12" height="12" fill="white" transform="translate(6 6)" />
+        </clipPath>
+    </defs>
+</svg>
