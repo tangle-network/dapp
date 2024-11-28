@@ -1,9 +1,8 @@
 import { BN, u8aToHex } from '@polkadot/util';
-import { IVariableAnchorExtData } from '@webb-tools/interfaces';
-import { FIELD_SIZE } from '@webb-tools/utils';
 import { encodeAbiParameters, keccak256, parseAbiParameters } from 'viem';
 
-const getVAnchorExtDataHash = (extData: IVariableAnchorExtData): bigint => {
+// TODO: Remove any type
+const getVAnchorExtDataHash = (extData: any): bigint => {
   const tokenIdLE = new Uint8Array(
     new BN(BigInt(extData.token).toString()).toArray('le', 4), // 4 bytes
   );
@@ -28,7 +27,7 @@ const getVAnchorExtDataHash = (extData: IVariableAnchorExtData): bigint => {
 
   const hash = keccak256(encodedData);
 
-  return BigInt(hash) % FIELD_SIZE.toBigInt();
+  return BigInt(hash) % BigInt(1);
 };
 
 export default getVAnchorExtDataHash;

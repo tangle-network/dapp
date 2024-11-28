@@ -20,7 +20,7 @@ export const metadata: Metadata = createPageMetadata({
     'Elevate your TNT tokens through NPoS by nominating validators on Tangle Network. Stake on EVM and Substrate to support network security and enjoy rewards.',
 });
 
-export default async function NominationPage() {
+export default function NominationPage() {
   return (
     <div className="space-y-6 md:space-y-9 lg:space-y-12">
       <div className="flex items-center justify-between">

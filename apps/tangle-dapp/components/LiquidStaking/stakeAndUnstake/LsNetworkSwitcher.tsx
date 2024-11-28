@@ -1,10 +1,10 @@
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
-import { ChainIcon } from '@webb-tools/icons';
 import {
   calculateTypedChainId,
   ChainType,
-} from '@webb-tools/sdk-core/typed-chain-id';
+} from '@webb-tools/dapp-types/TypedChainId';
+import { ChainIcon } from '@webb-tools/icons';
 import {
   Modal,
   ModalContent,
@@ -55,7 +55,7 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
         !isReadOnly && 'cursor-pointer',
       )}
     >
-      <div className="flex gap-2 items-center justify-center">
+      <div className="flex items-center justify-center gap-2">
         <ChainIcon size="lg" name={activeLsNetwork.chainIconFileName} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">
@@ -68,21 +68,20 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
   );
 
   // Filter out networks that don't support liquid staking yet.
-  const supportedLsNetworks = LS_NETWORKS.filter((network) => {
-    if (network.id === LsNetworkId.TANGLE_LOCAL && IS_PRODUCTION_ENV) {
-      return false;
-    }
+  const supportedLsNetworks = useMemo(() => {
+    return LS_NETWORKS.filter((network) => {
+      if (network.id === LsNetworkId.TANGLE_LOCAL && IS_PRODUCTION_ENV) {
+        return false;
+      }
 
-    // TODO: Obtain the Tangle network from the LS Network's properties instead.
-    const tangleNetwork = getLsTangleNetwork(network.id);
+      // TODO: Obtain the Tangle network from the LS Network's properties instead.
+      const tangleNetwork = getLsTangleNetwork(network.id);
 
-    // TODO: This is getting spammed, likely many requests to this function are being made by a bug. Might have to do with the URL param sync, check the consumers of this hook.
-    // console.debug('TANGLE NETWORK', tangleNetwork);
-
-    return NETWORK_FEATURE_MAP[tangleNetwork.id].includes(
-      NetworkFeature.LsPools,
-    );
-  });
+      return NETWORK_FEATURE_MAP[tangleNetwork.id].includes(
+        NetworkFeature.LsPools,
+      );
+    });
+  }, []);
 
   const networkOptions = useMemo<ChainConfig[]>(() => {
     return supportedLsNetworks.map((network) => {

@@ -5,7 +5,7 @@ import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import {
   calculateTypedChainId,
   ChainType,
-} from '@webb-tools/sdk-core/typed-chain-id';
+} from '@webb-tools/dapp-types/TypedChainId';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import assert from 'assert';
 import { useCallback } from 'react';

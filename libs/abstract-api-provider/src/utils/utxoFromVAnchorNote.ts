@@ -1,5 +1,5 @@
+import { hexToU8a } from '@polkadot/util';
 import { CircomUtxo, Keypair, Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
-import { hexToU8a } from '@webb-tools/utils';
 import { JsNote } from '@webb-tools/wasm-utils';
 
 async function utxoFromVAnchorNote(note: JsNote, leafIndex = 0): Promise<Utxo> {

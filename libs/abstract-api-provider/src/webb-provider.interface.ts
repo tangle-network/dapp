@@ -10,7 +10,6 @@ import { type RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
 import { InteractiveFeedback, Storage } from '@webb-tools/dapp-types';
 import { NoteManager } from '@webb-tools/note-manager';
 import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
-import { ZkComponents, Backend } from '@webb-tools/utils';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
   GetContractReturnType,
@@ -28,10 +27,10 @@ import {
   NewNotesTxResult,
   TransactionExecutor,
 } from './transaction/transactionExecutor';
+import { WebbProviderType } from './types';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
-import { WebbProviderType } from './types';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -204,7 +203,6 @@ export type NotificationHandler = ((
  * @param {AccountsAdapter} accounts - Accounts Adapter will have all methods related to the provider accounts.
  * @param {WebbState} state - State of the provider
  * @param {WebbMethods} methods - All of the available methods  of the API provider.
- * @param {Backend} backend - Backend for the provider
  * @param {() => Promise<void> | void} destroy -  A hook will be called to drop the provider and do cleanup listeners etc.
  * @param {ProvideCapabilities} capabilities - Manifesto of the supported actions of the provider.
  * @param {() => Promise<void> | undefined} endSession - Clean up for the provider that will remove the side effects.
@@ -217,7 +215,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<unknown>;
   state: WebbState;
   methods: WebbMethods<WebbProviderType, WebbApiProvider<T>>;
-  backend: Backend;
 
   relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;
   noteManager: NoteManager | null;
@@ -251,9 +248,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
 
   /** Get the latest block number */
   getBlockNumber(): bigint | null;
-
-  // get zk fixtures
-  getZkFixtures: (maxEdges: number, isSmall?: boolean) => Promise<ZkComponents>;
 
   // get vanchor max edges
   getVAnchorMaxEdges: (

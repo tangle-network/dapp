@@ -97,13 +97,6 @@ export type LsCardSearchParams = {
   protocolId: LsProtocolId;
 };
 
-export enum LsSearchParamKey {
-  AMOUNT = 'amount',
-  PROTOCOL_ID = 'protocol',
-  ACTION = 'action',
-  NETWORK_ID = 'network',
-}
-
 // TODO: These should be moved/managed in libs/webb-ui-components/src/constants/networks.ts and not here. This is just a temporary solution.
 export type Network = {
   name: string;

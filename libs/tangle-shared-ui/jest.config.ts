@@ -1,6 +1,6 @@
 export default {
   displayName: 'tangle-shared-ui',
-  preset: '../../jest.preset.js',
+  preset: '../../jest.preset.cjs',
   transform: {
     '^.+\\.[tj]sx?$': [
       '@swc/jest',

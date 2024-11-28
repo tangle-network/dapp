@@ -154,11 +154,10 @@ class RelayedWithdraw {
       const tx = Object.values(payload)[0];
       const anchorIdentifier = tx.vAnchor['contract'];
 
-      const extData = tx.vAnchor['extData'];
       const proofData = tx.vAnchor['proofData'];
 
       const uri = this.getSendTxUri(baseOn, chainId, anchorIdentifier);
-      const body = JSON.stringify({ extData, proofData });
+      const body = JSON.stringify({ proofData });
 
       try {
         this.logger.info(

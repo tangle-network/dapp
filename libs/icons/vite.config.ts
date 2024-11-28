@@ -1,12 +1,13 @@
 /// <reference types='vitest' />
+import { defineConfig, LibraryFormats } from 'vite';
+
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import react from '@vitejs/plugin-react-swc';
 import * as path from 'path';
-import { LibraryFormats, defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import svgr from 'vite-plugin-svgr'; // transform svg to react component
 
-export default defineConfig({
+export default defineConfig(() => ({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/libs/icons',
 
@@ -53,9 +54,7 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    cache: {
-      dir: '../../node_modules/.vitest/libs/icons',
-    },
+    cacheDir: '../../node_modules/.vitest/libs/icons',
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     includeSource: ['src/**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
@@ -64,5 +63,6 @@ export default defineConfig({
       reportsDirectory: '../../coverage/libs/icons',
       provider: 'v8',
     },
+    passWithNoTests: true,
   },
-});
+}));

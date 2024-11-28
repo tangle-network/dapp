@@ -1,6 +1,6 @@
 import { addressToEvm } from '@polkadot/util-crypto';
 import { AddressType } from '@webb-tools/dapp-config/types';
-import { toHex } from '@webb-tools/utils';
+import { toHex } from '@webb-tools/sdk-core';
 import assert from 'assert';
 
 import { isEvmAddress } from './isEvmAddress';
@@ -32,7 +32,7 @@ export const toEvmAddress20 = (substrateAddress: string): AddressType => {
 
   assert(
     isEvmAddress(conversionResult),
-    'Conversion to EVM address should not fail when a valid Substrate address is provided',
+    `Conversion to EVM address should not fail when a valid Substrate address is provided, got: ${conversionResult}`,
   );
 
   return conversionResult;

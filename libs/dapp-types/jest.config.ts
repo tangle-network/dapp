@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'dapp-types',
-  preset: '../../jest.preset.js',
+  preset: '../../jest.preset.cjs',
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',

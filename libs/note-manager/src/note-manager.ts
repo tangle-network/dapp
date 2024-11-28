@@ -20,11 +20,11 @@ import {
   UtxoGenInput,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import { hexToU8a, Backend } from '@webb-tools/utils';
 import mergeWith from 'lodash/mergeWith';
 import transform from 'lodash/transform';
 import uniqBy from 'lodash/uniqBy';
 import { BehaviorSubject } from 'rxjs';
+import { hexToU8a } from '@polkadot/util';
 
 type DefaultNoteGenInput = Pick<
   NoteGenInput,
@@ -248,7 +248,7 @@ export class NoteManager {
 
   static async noteFromUtxo(
     utxo: Utxo,
-    backend: Backend,
+    backend: 'Circom',
     srcTypedChainId: number,
     srcAnchorId: string,
     destAnchorId: string,
@@ -462,7 +462,7 @@ export class NoteManager {
    * @returns The generated note
    */
   async generateNote(
-    backend: Backend,
+    backend: 'Circom',
     sourceTypedChainId: number,
     sourceAnchorAddress: string,
     destTypedChainId: number,

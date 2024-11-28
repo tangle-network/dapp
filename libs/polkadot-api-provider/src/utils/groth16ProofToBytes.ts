@@ -1,7 +1,7 @@
-import { hexToU8a } from '@webb-tools/utils';
 import { groth16 } from 'snarkjs';
 import { encodeAbiParameters, parseAbiParameters } from 'viem';
 import { Groth16Proof } from '../types';
+import { hexToU8a } from '@polkadot/util';
 
 async function groth16ProofToBytes(proof: Groth16Proof): Promise<Uint8Array> {
   const callData = await groth16.exportSolidityCallData(

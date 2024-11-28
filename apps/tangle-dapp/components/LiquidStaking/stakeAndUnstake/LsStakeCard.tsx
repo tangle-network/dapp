@@ -6,17 +6,12 @@ import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@webb-tools/icons';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { Card } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { z } from 'zod';
 
-import {
-  LsNetworkId,
-  LsSearchParamKey,
-} from '../../../constants/liquidStaking/types';
+import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import useMintTx from '../../../data/liquidStaking/parachain/useMintTx';
 import useLsPoolJoinTx from '../../../data/liquidStaking/tangle/useLsPoolJoinTx';
 import useLsExchangeRate, {
@@ -26,8 +21,6 @@ import useLsPoolMembers from '../../../data/liquidStaking/useLsPoolMembers';
 import useLsPools from '../../../data/liquidStaking/useLsPools';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
-import useSearchParamState from '../../../hooks/useSearchParamState';
-import useSearchParamSync from '../../../hooks/useSearchParamSync';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
@@ -45,13 +38,7 @@ import useLsSpendingLimits from './useLsSpendingLimits';
 const LsStakeCard: FC = () => {
   const lsPools = useLsPools();
   const [isSelectTokenModalOpen, setIsSelectTokenModalOpen] = useState(false);
-
-  const [fromAmount, setFromAmount] = useSearchParamState<BN | null>({
-    defaultValue: null,
-    key: LsSearchParamKey.AMOUNT,
-    parser: (value) => new BN(value),
-    stringify: (value) => value?.toString(),
-  });
+  const [fromAmount, setFromAmount] = useState<BN | null>(null);
 
   const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId, setLsPoolId } =
     useLsStore();
@@ -93,24 +80,6 @@ const LsStakeCard: FC = () => {
     lsNetworkId === LsNetworkId.TANGLE_LOCAL ||
     lsNetworkId === LsNetworkId.TANGLE_MAINNET ||
     lsNetworkId === LsNetworkId.TANGLE_TESTNET;
-
-  // TODO: Not loading the correct protocol for: '?amount=123000000000000000000&protocol=7&network=1&action=stake'. When network=1, it switches to protocol=5 on load. Could this be because the protocol is reset to its default once the network is switched?
-  useSearchParamSync({
-    key: LsSearchParamKey.PROTOCOL_ID,
-    value: lsProtocolId,
-    parse: (value) => z.nativeEnum(LsProtocolId).parse(parseInt(value)),
-    stringify: (value) => value.toString(),
-    setValue: setLsProtocolId,
-  });
-
-  useSearchParamSync({
-    key: LsSearchParamKey.NETWORK_ID,
-    value: lsNetworkId,
-    parse: (value) => z.nativeEnum(LsNetworkId).parse(parseInt(value)),
-    stringify: (value) => value.toString(),
-    // TODO: This might be causing many requests to try to change the network. Bug.
-    setValue: tryChangeNetwork,
-  });
 
   const {
     exchangeRate: exchangeRateOrError,
