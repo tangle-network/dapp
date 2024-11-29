@@ -1,4 +1,5 @@
 import { ChevronDown } from '@webb-tools/icons';
+import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -6,7 +7,6 @@ import { twMerge } from 'tailwind-merge';
 import useLsActivePoolDisplayName from '../../../data/liquidStaking/useLsActivePoolDisplayName';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import LsTokenIcon from '../../LsTokenIcon';
 
 export type SelectedPoolIndicatorProps = {
   onClick?: () => void;

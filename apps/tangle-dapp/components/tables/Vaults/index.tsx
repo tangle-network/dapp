@@ -10,6 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChevronUp } from '@webb-tools/icons/ChevronUp';
+import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
 import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
@@ -24,7 +25,6 @@ import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath, QueryParamKey } from '../../../types';
-import LsTokenIcon from '../../LsTokenIcon';
 import type { Props, VaultData } from './types';
 
 const columnHelper = createColumnHelper<VaultData>();

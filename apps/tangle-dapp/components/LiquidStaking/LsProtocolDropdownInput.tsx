@@ -1,5 +1,6 @@
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { ChainIcon } from '@webb-tools/icons';
+import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   Dropdown,
@@ -16,7 +17,6 @@ import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import DropdownChevronIcon from '../DropdownChevronIcon';
 import InputWrapper from '../InputWrapper';
-import LsTokenIcon from '../LsTokenIcon';
 
 type LsProtocolDropdownInputProps = {
   id: string;
