@@ -35,3 +35,18 @@ export interface Nominee extends BasicAccountInfo {
   totalStakeAmount: BN;
   nominatorCount: number;
 }
+
+export type VaultToken = {
+  name: string;
+  symbol: string;
+  amount: number | string;
+};
+
+export type OperatorData = {
+  address: string;
+  identityName: string;
+  restakersCount: number;
+  concentrationPercentage: number | null;
+  tvlInUsd: number | null;
+  vaultTokens: VaultToken[];
+};

@@ -11,6 +11,7 @@ import {
 import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import { getSortAddressOrIdentityFnc } from '@webb-tools/tangle-shared-ui/components/tables/utils';
+import { OperatorData } from '@webb-tools/tangle-shared-ui/types';
 import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
 import {
   Avatar,
@@ -28,7 +29,7 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath, QueryParamKey } from '../../../types';
-import type { OperatorData, Props } from './types';
+import type { Props } from './types';
 import VaultsDropdown from './VaultsDropdown';
 
 const columnHelper = createColumnHelper<OperatorData>();
