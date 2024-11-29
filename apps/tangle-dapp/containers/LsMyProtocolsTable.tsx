@@ -13,6 +13,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChevronUp } from '@webb-tools/icons';
+import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
 import { Button, Table, Typography } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
@@ -24,7 +25,6 @@ import LsMyPoolsTable, {
 } from '../components/LiquidStaking/LsMyPoolsTable';
 import LsTokenIcon from '../components/LsTokenIcon';
 import StatItem from '../components/StatItem';
-import TableCellWrapper from '../components/tables/TableCellWrapper';
 import { LsToken } from '../constants/liquidStaking/types';
 import useLsMyPools from '../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
