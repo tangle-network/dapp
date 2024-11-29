@@ -2,10 +2,10 @@ import { BN } from '@polkadot/util';
 import useApiRx, {
   ObservableFactory,
 } from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { useCallback } from 'react';
 import { map } from 'rxjs/operators';
 
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { calculateTransferableBalance } from '../../utils/polkadot/balance';
 
 export type AccountBalances = {

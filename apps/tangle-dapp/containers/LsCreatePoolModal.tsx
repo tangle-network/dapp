@@ -1,6 +1,7 @@
 import { BN } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import assertSubstrateAddress from '@webb-tools/tangle-shared-ui/utils/assertSubstrateAddress';
 import {
@@ -22,7 +23,6 @@ import { LsNetworkId } from '../constants/liquidStaking/types';
 import useBalances from '../data/balances/useBalances';
 import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
-import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { TxStatus } from '../hooks/useSubstrateTx';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
 import { ERROR_NOT_ENOUGH_BALANCE } from './ManageProfileModalContainer/Independent/IndependentAllocationInput';

@@ -1,5 +1,6 @@
 'use client';
 
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import {
   InputField,
   Modal,
@@ -13,7 +14,6 @@ import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constant
 import { type FC, useCallback, useMemo } from 'react';
 
 import usePayoutAllTx from '../../data/payouts/usePayoutAllTx';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { PayoutAllTxContainerProps } from './types';
 

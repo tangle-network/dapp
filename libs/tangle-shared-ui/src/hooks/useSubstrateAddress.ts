@@ -1,9 +1,8 @@
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
-import toSubstrateAddress from '@webb-tools/tangle-shared-ui/utils/toSubstrateAddress';
 import { useMemo } from 'react';
-
-import useActiveAccountAddress from './useActiveAccountAddress';
+import { SubstrateAddress } from '../types/utils';
+import useNetworkStore from '../context/useNetworkStore';
+import toSubstrateAddress from '../utils/toSubstrateAddress';
+import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
 
 /**
  * Obtain the Substrate address of the active account, if any.
@@ -16,20 +15,20 @@ import useActiveAccountAddress from './useActiveAccountAddress';
  * converted into a Substrate address via hashing.
  */
 const useSubstrateAddress = (): SubstrateAddress | null => {
-  const activeAccountAddress = useActiveAccountAddress();
+  const [activeAccount] = useActiveAccount();
   const { network } = useNetworkStore();
 
   const substrateAddress = useMemo(() => {
     // Wait for the active account address to be set.
-    if (activeAccountAddress === null) {
+    if (activeAccount === null) {
       return null;
     }
 
     // Note that this handles both EVM and Substrate addresses,
     // so there's no need to check if the address is an EVM address
     // or not.
-    return toSubstrateAddress(activeAccountAddress, network.ss58Prefix);
-  }, [activeAccountAddress, network.ss58Prefix]);
+    return toSubstrateAddress(activeAccount.address, network.ss58Prefix);
+  }, [activeAccount, network.ss58Prefix]);
 
   return substrateAddress;
 };
