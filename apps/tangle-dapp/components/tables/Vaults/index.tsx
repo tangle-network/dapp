@@ -10,6 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChevronUp } from '@webb-tools/icons/ChevronUp';
+import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
@@ -21,7 +22,6 @@ import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath, QueryParamKey } from '../../../types';
-import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import LsTokenIcon from '../../LsTokenIcon';
 import { TableStatus } from '../../TableStatus';
 import TableCellWrapper from '../TableCellWrapper';

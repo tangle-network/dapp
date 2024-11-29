@@ -1,6 +1,7 @@
 'use client';
 
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
+import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
 import {
   Card,
   CardVariant,
@@ -13,7 +14,6 @@ import { twMerge } from 'tailwind-merge';
 import StatItem from '../../components/StatItem';
 import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
 import useRestakeTVL from '../../data/restake/useRestakeTVL';
-import getTVLToDisplay from '../../utils/getTVLToDisplay';
 import TableTabs from './TableTabs';
 
 export const dynamic = 'force-static';
