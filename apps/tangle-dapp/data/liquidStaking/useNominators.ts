@@ -1,7 +1,7 @@
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
 import { useCallback, useMemo } from 'react';
 
-import { SubstrateAddress } from '../../types/utils';
 import assertSubstrateAddress from '../../utils/assertSubstrateAddress';
 
 const useNominators = (): Map<SubstrateAddress, SubstrateAddress[]> | null => {

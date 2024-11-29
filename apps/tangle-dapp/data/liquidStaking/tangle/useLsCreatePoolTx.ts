@@ -1,4 +1,5 @@
 import { BN } from '@polkadot/util';
+import { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
 import { useCallback } from 'react';
 import { Address } from 'viem';
 
@@ -7,7 +8,6 @@ import { Precompile } from '../../../constants/evmPrecompiles';
 import useAgnosticTx from '../../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../../hooks/useSubstrateTx';
-import { SubstrateAddress } from '../../../types/utils';
 import { toSubstrateAddress } from '../../../utils';
 import toEvmAddress32 from '../../../utils/toEvmAddress32';
 

@@ -2,9 +2,9 @@ import { Option, StorageKey, u32 } from '@polkadot/types';
 import { AccountId32 } from '@polkadot/types/interfaces';
 import { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
 import { useCallback, useMemo } from 'react';
 
-import { SubstrateAddress } from '../../types/utils';
 import assertSubstrateAddress from '../../utils/assertSubstrateAddress';
 
 export type StakingExposureEntry = {

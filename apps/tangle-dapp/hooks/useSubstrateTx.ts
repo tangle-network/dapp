@@ -5,6 +5,7 @@ import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubstrateExplorerUrl';
 import useSubstrateInjectedExtension from '@webb-tools/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
+import { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import useIsMountedRef from '@webb-tools/webb-ui-components/hooks/useIsMountedRef';
@@ -14,7 +15,6 @@ import { Hash } from 'viem';
 
 import { TxName } from '../constants';
 import { GetSuccessMessageFunction } from '../types';
-import { SubstrateAddress } from '../types/utils';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';

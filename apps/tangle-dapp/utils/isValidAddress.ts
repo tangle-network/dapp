@@ -1,7 +1,7 @@
 import { isEthereumAddress } from '@polkadot/util-crypto';
+import { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
 import { Address } from 'viem';
 
-import { SubstrateAddress } from '../types/utils';
 import isSubstrateAddress from './isSubstrateAddress';
 
 /**

@@ -5,6 +5,7 @@ import {
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import type { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
 import {
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
@@ -16,7 +17,6 @@ import {
   LsNetworkEntityAdapter,
   ProtocolEntity,
 } from '../../data/liquidStaking/adapter';
-import { SubstrateAddress } from '../../types/utils';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 
 export type LsParachainChainId =

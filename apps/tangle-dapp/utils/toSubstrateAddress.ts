@@ -3,9 +3,9 @@ import {
   evmToAddress,
   isEthereumAddress,
 } from '@polkadot/util-crypto';
+import { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
 import assert from 'assert';
 
-import { SubstrateAddress } from '../types/utils';
 import assertSubstrateAddress from './assertSubstrateAddress';
 import isSubstrateAddress from './isSubstrateAddress';
 

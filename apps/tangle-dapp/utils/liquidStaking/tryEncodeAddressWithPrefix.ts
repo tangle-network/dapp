@@ -1,6 +1,6 @@
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
 
-import { SubstrateAddress } from '../../types/utils';
 import { toSubstrateAddress } from '../toSubstrateAddress';
 import getLsProtocolDef from './getLsProtocolDef';
 import getLsTangleNetwork from './getLsTangleNetwork';
