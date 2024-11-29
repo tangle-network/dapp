@@ -1,6 +1,25 @@
 {
   "name": "@webb-tools/tangle-dapp",
-  "version": "0.0.17",
-  "license": "Apache-2.0",
-  "type": "commonjs"
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/tangle-dapp",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/tangle-dapp"
+      }
+    },
+    "serve": {
+      "executor": "@nx/vite:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "tangle-dapp:build"
+      }
+    }
+  }
 }

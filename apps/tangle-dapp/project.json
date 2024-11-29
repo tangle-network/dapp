@@ -5,41 +5,49 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/next:build",
+      "executor": "@nx/vite:build",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/tangle-dapp"
+        "outputPath": "dist/apps/tangle-dapp",
+        "configFile": "apps/tangle-dapp/vite.config.ts"
       },
       "configurations": {
         "development": {
-          "outputPath": "apps/tangle-dapp"
+          "mode": "development",
+          "sourcemap": true
         },
-        "production": {}
+        "production": {
+          "mode": "production",
+          "sourcemap": false,
+          "optimization": true
+        }
       }
     },
     "serve": {
-      "executor": "@nx/next:server",
+      "executor": "@nx/vite:dev-server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "tangle-dapp:build",
-        "dev": true
+        "port": 4200,
+        "host": true
       },
       "configurations": {
         "development": {
           "buildTarget": "tangle-dapp:build:development",
-          "dev": true
+          "hmr": true
         },
         "production": {
           "buildTarget": "tangle-dapp:build:production",
-          "dev": false
+          "hmr": false
         }
       }
     },
-    "export": {
-      "executor": "@nx/next:export",
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "tangle-dapp:build:production"
+        "buildTarget": "tangle-dapp:build"
       }
     },
     "test": {
@@ -54,12 +62,6 @@
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
-    },
-    "bundle-analyzer": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "ANALYZE=true nx build tangle-dapp --prod"
-      }
     }
   },
   "tags": []
