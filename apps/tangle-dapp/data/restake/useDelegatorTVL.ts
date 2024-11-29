@@ -1,9 +1,8 @@
 import type { AssetMap } from '@webb-tools/tangle-shared-ui/types/restake';
+import type { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
 import safeFormatUnits from '@webb-tools/tangle-shared-ui/utils/safeFormatUnits';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { of, switchMap } from 'rxjs';
-
-import type { DelegatorInfo } from '../../types/restake';
 
 export function useDelegatorTVL(
   delegatorInfo: DelegatorInfo | null,

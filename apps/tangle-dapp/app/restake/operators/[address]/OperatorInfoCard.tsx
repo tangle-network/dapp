@@ -6,6 +6,7 @@ import type {
   OperatorMap,
   OperatorMetadata,
 } from '@webb-tools/tangle-shared-ui/types/restake';
+import type { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
 import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
 import { getAccountInfo } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import { Card, CardVariant } from '@webb-tools/webb-ui-components';
@@ -22,7 +23,6 @@ import { twMerge } from 'tailwind-merge';
 
 import AvatarWithText from '../../../../components/AvatarWithText';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
-import type { DelegatorInfo } from '../../../../types/restake';
 
 interface Props extends Partial<ComponentProps<typeof Card>> {
   operatorAddress: string;

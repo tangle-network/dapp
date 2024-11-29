@@ -1,5 +1,6 @@
 import {
   PalletAssetsAssetStatus,
+  PalletMultiAssetDelegationDelegatorDelegatorStatus,
   PalletMultiAssetDelegationOperatorOperatorStatus,
 } from '@polkadot/types/lookup';
 import { TransformEnum } from './utils';
@@ -66,4 +67,49 @@ export type AssetMetadata = {
 
 export type AssetMap = {
   readonly [assetId: string]: AssetMetadata;
+};
+
+export type DelegatorWithdrawRequest = {
+  readonly assetId: string;
+  readonly amount: bigint;
+  readonly requestedRound: number;
+};
+
+export type DelegatorBondInfo = {
+  readonly operatorAccountId: string;
+  readonly amountBonded: bigint;
+  readonly assetId: string;
+};
+
+export type DelegatorUnstakeRequest = {
+  readonly operatorAccountId: string;
+  readonly assetId: string;
+  readonly amount: bigint;
+  readonly requestedRound: number;
+};
+
+/**
+ * The status of a delegator.
+ * @name PalletMultiAssetDelegationDelegatorDelegatorStatus (752)
+ *
+ * @field Active - The delegator is active.
+ * @field { readonly LeavingScheduled: number } - The delegator has scheduled an exit to revoke all ongoing delegations.
+ */
+export type DelegatorStatus =
+  TransformEnum<PalletMultiAssetDelegationDelegatorDelegatorStatus>;
+
+export type DelegatorInfo = {
+  readonly deposits: {
+    readonly [assetId: string]: {
+      amount: bigint;
+    };
+  };
+
+  readonly withdrawRequests: Array<DelegatorWithdrawRequest>;
+
+  readonly delegations: Array<DelegatorBondInfo>;
+
+  readonly unstakeRequests: Array<DelegatorUnstakeRequest>;
+
+  readonly status: DelegatorStatus;
 };

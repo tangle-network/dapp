@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-table';
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
+import type { DelegatorUnstakeRequest } from '@webb-tools/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
@@ -24,7 +25,6 @@ import AvatarWithText from '../../../components/AvatarWithText';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
-import type { DelegatorUnstakeRequest } from '../../../types/restake';
 import TableCell from '../TableCell';
 import { calculateTimeRemaining } from '../utils';
 import type { UnstakeRequestTableData } from './types';

@@ -5,7 +5,7 @@ import { type RefObject } from 'react';
 import type { FieldErrors, UseFormWatch } from 'react-hook-form';
 
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
-import { DepositFormFields } from '../../../types/restake';
+import type { DepositFormFields } from '../../../types/restake';
 import ActionButtonBase from '../ActionButtonBase';
 import useSwitchChain from '../useSwitchChain';
 
