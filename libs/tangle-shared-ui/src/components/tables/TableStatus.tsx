@@ -1,7 +1,16 @@
-import { Button, Typography } from '@webb-tools/webb-ui-components';
+import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { ButtonProps } from '@webb-tools/webb-ui-components/components/buttons/types';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { twMerge } from 'tailwind-merge';
 
-import { TableStatusProps } from './types';
+export type TableStatusProps = {
+  icon?: string;
+  title: string;
+  description: string;
+  buttonText?: string;
+  buttonProps?: ButtonProps;
+  className?: string;
+};
 
 const GRID_BACKGROUND_CLASS = twMerge(
   'relative px-6 py-10 rounded-2xl !bg-[unset] border-mono-0 dark:border-mono-160 backdrop-blur-2xl',

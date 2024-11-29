@@ -1,6 +1,7 @@
 'use client';
 
 import { Search } from '@webb-tools/icons';
+import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   Input,
@@ -9,7 +10,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { useState } from 'react';
 
-import { ContainerSkeleton, TableStatus } from '../../components';
+import { ContainerSkeleton } from '../../components';
 import useActiveValidators from '../../data/ValidatorTables/useActiveValidators';
 import useWaitingValidators from '../../data/ValidatorTables/useWaitingValidators';
 import ValidatorTableContainer from './ValidatorTableContainer';

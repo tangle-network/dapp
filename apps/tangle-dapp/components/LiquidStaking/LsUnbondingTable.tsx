@@ -9,6 +9,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { CheckboxCircleFill, TimeFillIcon } from '@webb-tools/icons';
+import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import {
   Table,
   TANGLE_DOCS_LIQUID_STAKING_URL,
@@ -22,7 +23,7 @@ import { LsPoolUnstakeRequest } from '../../constants/liquidStaking/types';
 import useLsUnbonding from '../../data/liquidStaking/useLsUnbonding';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import addCommasToNumber from '../../utils/addCommasToNumber';
-import { ContainerSkeleton, TableStatus } from '..';
+import { ContainerSkeleton } from '..';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import WithdrawUnstakeRequestButton from './WithdrawUnstakeRequestButton';
 

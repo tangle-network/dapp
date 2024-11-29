@@ -1,7 +1,6 @@
+import { TableStatusProps } from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import type { Table } from '@webb-tools/webb-ui-components/components/Table';
 import type { ComponentProps } from 'react';
-
-import type { TableStatus } from '../../TableStatus';
 
 export type VaultToken = {
   name: string;
@@ -23,7 +22,7 @@ export type Props = {
   data?: OperatorData[];
   globalFilter?: string;
   onGlobalFilterChange?: (value: string) => void;
-  loadingTableProps?: Partial<ComponentProps<typeof TableStatus>>;
-  emptyTableProps?: Partial<ComponentProps<typeof TableStatus>>;
+  loadingTableProps?: Partial<TableStatusProps>;
+  emptyTableProps?: Partial<TableStatusProps>;
   tableProps?: Partial<ComponentProps<typeof Table>>;
 };
