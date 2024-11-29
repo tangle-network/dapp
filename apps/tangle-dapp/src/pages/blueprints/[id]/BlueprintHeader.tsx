@@ -5,7 +5,6 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { SocialChip } from '@webb-tools/webb-ui-components/components/SocialChip';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import Image from 'next/image';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -56,7 +55,7 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprint }) => {
             {imgUrl && (
               <div className="flex gap-3">
                 <div className="flex-shrink-0 w-20 h-20 overflow-hidden rounded-full">
-                  <Image
+                  <img
                     src={imgUrl}
                     width={80}
                     height={80}

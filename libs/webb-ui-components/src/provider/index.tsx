@@ -10,7 +10,7 @@ import {
 
 import { WebbUIErrorBoudary } from '../containers/WebbUIErrorBoudary';
 import {
-  useNextDarkMode,
+  useDarkMode,
   useDarkMode as useNormalDarkMode,
 } from '../hooks/useDarkMode';
 import { IWebbUIContext, WebbUIProviderProps } from './types';
@@ -38,7 +38,7 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
   isNextApp = false,
 }) => {
   const useDarkMode = useMemo(
-    () => (isNextApp ? useNextDarkMode : useNormalDarkMode),
+    () => (isNextApp ? useDarkMode : useNormalDarkMode),
     [isNextApp],
   );
 

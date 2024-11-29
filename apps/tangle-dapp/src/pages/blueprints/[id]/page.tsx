@@ -1,24 +1,20 @@
-'use client';
-
 import { ErrorFallback } from '@webb-tools/webb-ui-components/components/ErrorFallback';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { notFound } from 'next/navigation';
 import { FC } from 'react';
+import { useParams, Navigate } from 'react-router-dom';
 
 import OperatorsTable from '../../../components/tables/Operators';
 import BlueprintHeader from './BlueprintHeader';
 import useBlueprintDetails from './useBlueprintDetails';
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
+const BlueprintDetailsPage: FC = () => {
+  const { id } = useParams<{ id: string }>();
 
-export const dynamic = 'force-static';
+  if (!id) {
+    return <Navigate to="/blueprints" replace />;
+  }
 
-const BlueprintDetailsPage: FC<Props> = ({ params: { id } }) => {
   const { result, isLoading, error } = useBlueprintDetails(id);
 
   if (isLoading) {
@@ -40,7 +36,7 @@ const BlueprintDetailsPage: FC<Props> = ({ params: { id } }) => {
   }
 
   if (result === null) {
-    notFound();
+    return <Navigate to="/blueprints" replace />;
   }
 
   return (

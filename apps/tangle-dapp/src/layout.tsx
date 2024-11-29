@@ -3,44 +3,57 @@ import '../styles/globals.css';
 
 import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import Suspense from '@webb-tools/webb-ui-components/components/Suspense';
-import { getSidebarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
-import type React from 'react';
 import { cookieToInitialState } from 'wagmi';
+import { FC, ReactNode, useEffect } from 'react';
 
-import { Layout } from '../containers';
+import { Layout as LayoutContainer } from '../containers';
 import Providers from './providers';
 
-// Set viewport theme color via meta tag
-const themeColorMeta = document.createElement('meta');
-themeColorMeta.name = 'theme-color';
-const setThemeColor = () => {
-  themeColorMeta.content = window.matchMedia('(prefers-color-scheme: dark)')
-    .matches
-    ? '#252836'
-    : '#fff';
-};
-setThemeColor();
-window
-  .matchMedia('(prefers-color-scheme: dark)')
-  .addEventListener('change', setThemeColor);
-document.head.appendChild(themeColorMeta);
+interface LayoutProps {
+  children: ReactNode;
+}
 
-export const Layout: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const Layout: FC<LayoutProps> = ({ children }) => {
+  useEffect(() => {
+    // Set viewport theme color via meta tag
+    const themeColorMeta = document.createElement('meta');
+    themeColorMeta.name = 'theme-color';
+
+    const setThemeColor = () => {
+      themeColorMeta.content = window.matchMedia('(prefers-color-scheme: dark)')
+        .matches
+        ? '#252836'
+        : '#fff';
+    };
+
+    setThemeColor();
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', setThemeColor);
+    document.head.appendChild(themeColorMeta);
+
+    return () => {
+      mediaQuery.removeEventListener('change', setThemeColor);
+      document.head.removeChild(themeColorMeta);
+    };
+  }, []);
+
   const initialState = cookieToInitialState(
     getWagmiConfig({ isSSR: false }),
     document.cookie,
   );
 
-  const isSidebarInitiallyExpanded = getSidebarStateFromCookie();
+  // Get sidebar state from localStorage instead of cookies
+  const isSidebarInitiallyExpanded =
+    localStorage.getItem('sidebarExpanded') === 'true';
 
   return (
     <Suspense>
       <Providers wagmiInitialState={initialState}>
-        <Layout isSidebarInitiallyExpanded={isSidebarInitiallyExpanded}>
+        <LayoutContainer
+          isSidebarInitiallyExpanded={isSidebarInitiallyExpanded}
+        >
           {children}
-        </Layout>
+        </LayoutContainer>
       </Providers>
     </Suspense>
   );

@@ -1,23 +1,30 @@
 import TopBanner from '@webb-tools/tangle-shared-ui/components/blueprints/TopBanner';
-import { Metadata } from 'next';
 import { FC } from 'react';
+import { Helmet } from 'react-helmet-async';
 
-import createPageMetadata from '../../utils/createPageMetadata';
+import { PageLayout } from '@/components/layout/PageLayout';
 import BlueprintListing from './BlueprintListing';
 
-export const metadata: Metadata = createPageMetadata({
+const pageConfig = {
   title: 'Blueprints',
-});
-
-export const dynamic = 'force-static';
+  metadata: {
+    title: 'Blueprints | Tangle Network',
+    description: 'View and manage Tangle Network blueprints',
+    openGraph: {
+      title: 'Blueprints | Tangle Network',
+      description: 'View and manage Tangle Network blueprints',
+    },
+  },
+};
 
 const BlueprintsPage: FC = () => {
   return (
-    <div className="space-y-5">
-      <TopBanner />
-
-      <BlueprintListing />
-    </div>
+    <PageLayout title={pageConfig.title} metadata={pageConfig.metadata}>
+      <div className="space-y-5">
+        <TopBanner />
+        <BlueprintListing />
+      </div>
+    </PageLayout>
   );
 };
 

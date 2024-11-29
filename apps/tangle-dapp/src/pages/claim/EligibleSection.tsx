@@ -1,5 +1,3 @@
-'use client';
-
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import { BN_ZERO, hexToU8a, stringToU8a, u8aToString } from '@polkadot/util';
@@ -20,7 +18,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import assert from 'assert';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
@@ -56,8 +54,8 @@ const EligibleSection: FC<Props> = ({
   const { activeApi } = useWebContext();
   const { toggleModal } = useConnectWallet();
   const { notificationApi } = useWebbUI();
-  const searchParams = useSearchParams();
-  const router = useRouter();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
   const activeAccountAddress = useActiveAccountAddress();
 
@@ -160,12 +158,11 @@ const EligibleSection: FC<Props> = ({
       const txReceiptHash = await sendTransaction(tx);
       const newSearchParams = new URLSearchParams(searchParams.toString());
 
-      // TODO: Need to centralize these search parameters in an enum, in case they ever change.
       newSearchParams.set('h', txReceiptHash);
       newSearchParams.set('rpcEndpoint', rpcEndpoint);
 
-      router.push(`claim/success?${newSearchParams.toString()}`, {
-        scroll: true,
+      navigate(`/claim/success?${newSearchParams.toString()}`, {
+        replace: true,
       });
     } catch (error) {
       setIsClaiming(false);
@@ -191,7 +188,7 @@ const EligibleSection: FC<Props> = ({
     recipient,
     statement?.sentence,
     searchParams,
-    router,
+    navigate,
   ]);
 
   if (activeAccountAddress === null) {

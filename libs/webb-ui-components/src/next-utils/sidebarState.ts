@@ -1,24 +1,31 @@
-'use server';
-
-import { cookies } from 'next/headers';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { SIDEBAR_OPEN_KEY } from '../constants';
 
-export const setSidebarCookieOnToggle = () => {
-  const sideBarStateFromCookie = cookies().get(SIDEBAR_OPEN_KEY);
+interface SidebarState {
+  isOpen: boolean;
+  toggle: () => void;
+  setOpen: (open: boolean) => void;
+}
 
-  if (sideBarStateFromCookie?.value === 'false') {
-    cookies().set(SIDEBAR_OPEN_KEY, 'true');
-  } else {
-    cookies().set(SIDEBAR_OPEN_KEY, 'false');
-  }
+export const useSidebarStore = create<SidebarState>()(
+  persist(
+    (set) => ({
+      isOpen: true,
+      toggle: () => set((state) => ({ isOpen: !state.isOpen })),
+      setOpen: (open: boolean) => set({ isOpen: open }),
+    }),
+    {
+      name: SIDEBAR_OPEN_KEY,
+    },
+  ),
+);
+
+// Optional: Export these for backwards compatibility
+export const setSidebarCookieOnToggle = () => {
+  useSidebarStore.getState().toggle();
 };
 
 export const getSidebarStateFromCookie = () => {
-  const sidebarStateFromCookie = cookies().get(SIDEBAR_OPEN_KEY);
-
-  return sidebarStateFromCookie === undefined
-    ? undefined
-    : sidebarStateFromCookie.value === 'true'
-      ? true
-      : false;
+  return useSidebarStore.getState().isOpen;
 };

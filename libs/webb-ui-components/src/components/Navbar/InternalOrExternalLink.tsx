@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { FC, PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
 

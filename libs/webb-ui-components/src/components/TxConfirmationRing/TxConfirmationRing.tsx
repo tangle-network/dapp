@@ -9,7 +9,7 @@ import { Typography } from '../../typography';
 import AddressChip from '../AddressChip';
 import {
   useDarkMode as useNormalDarkMode,
-  useNextDarkMode,
+  useDarkMode,
 } from '../../hooks/useDarkMode';
 import { shortenHex } from '../../utils';
 
@@ -27,7 +27,7 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
     },
     ref,
   ) => {
-    const useDarkMode = isInNextApp ? useNextDarkMode : useNormalDarkMode;
+    const useDarkMode = isInNextApp ? useDarkMode : useNormalDarkMode;
     const [isDarkMode] = useDarkMode();
 
     return (

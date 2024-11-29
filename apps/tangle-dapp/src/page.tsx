@@ -1,29 +1,57 @@
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography/Typography';
-import { Metadata } from 'next';
-import { FC } from 'react';
+import { Suspense } from 'react';
+import { Typography } from '@webb-tools/webb-ui-components';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
+import { PageLayout } from '@/components/layout/PageLayout';
+import { AccountSummaryCard } from '@/components/account/AccountSummaryCard';
+import { BalancesTableContainer } from '@/containers/BalancesTableContainer';
 
-import AccountSummaryCard from '../components/account/AccountSummaryCard';
-import BalancesTableContainer from '../containers/BalancesTableContainer/BalancesTableContainer';
-import createPageMetadata from '../utils/createPageMetadata';
-
-export const dynamic = 'force-static';
-
-export const metadata: Metadata = createPageMetadata({
+// Keep metadata configuration for SEO
+export const pageConfig = {
   title: 'Account',
   isHomepage: true,
-});
+  metadata: {
+    title: 'Account | Tangle Network',
+    description: 'View and manage your Tangle Network account',
+    openGraph: {
+      title: 'Account | Tangle Network',
+      description: 'View and manage your Tangle Network account',
+    },
+  },
+} as const;
 
-const AccountPage: FC = () => {
+const AccountPage = () => {
   return (
-    <div className="flex flex-col gap-5">
-      <AccountSummaryCard className="max-w-full md:max-w-full" />
+    <PageLayout
+      title={pageConfig.title}
+      metadata={pageConfig.metadata}
+      className="flex flex-col gap-5"
+    >
+      <ErrorBoundary
+        fallback={
+          <Typography variant="body1" color="error">
+            Error loading account summary
+          </Typography>
+        }
+      >
+        <AccountSummaryCard className="max-w-full md:max-w-full" />
+      </ErrorBoundary>
 
-      <Typography variant="h4" fw="bold">
-        Balances
-      </Typography>
+      <div className="space-y-4">
+        <Typography variant="h4" fw="bold">
+          Balances
+        </Typography>
 
-      <BalancesTableContainer />
-    </div>
+        <ErrorBoundary
+          fallback={
+            <Typography variant="body1" color="error">
+              Error loading balances
+            </Typography>
+          }
+        >
+          <BalancesTableContainer />
+        </ErrorBoundary>
+      </div>
+    </PageLayout>
   );
 };
 

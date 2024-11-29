@@ -1,6 +1,6 @@
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { ComponentProps } from 'react';
 import { twMerge } from 'tailwind-merge';
 

@@ -2,21 +2,25 @@ import { Card, CardVariant } from '@webb-tools/webb-ui-components';
 import { Divider } from '@webb-tools/webb-ui-components/components/Divider';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 import FAQSection from '@webb-tools/webb-ui-components/containers/FAQSection';
-import { Metadata } from 'next';
 import type { FC, PropsWithChildren } from 'react';
 
 import faqItems from '../../constants/faq';
 import { OpenGraphPageImageUrl } from '../../constants/openGraph';
-import createPageMetadata from '../../utils/createPageMetadata';
 
-export const dynamic = 'force-static';
-
-export const metadata: Metadata = createPageMetadata({
+const pageConfig = {
   title: 'Claim Airdrop',
-  imageUrl: OpenGraphPageImageUrl.ClaimAirdrop,
-  description:
-    'Eligible for the TNT tokens airdrop? Tangle Network rewards early testnet participants, Edgeware community, and DOT validators. Check now!',
-});
+  metadata: {
+    title: 'Claim Airdrop | Tangle Network',
+    description:
+      'Eligible for the TNT tokens airdrop? Tangle Network rewards early testnet participants, Edgeware community, and DOT validators. Check now!',
+    openGraph: {
+      title: 'Claim Airdrop | Tangle Network',
+      description:
+        'Eligible for the TNT tokens airdrop? Tangle Network rewards early testnet participants, Edgeware community, and DOT validators. Check now!',
+      images: [{ url: OpenGraphPageImageUrl.ClaimAirdrop }],
+    },
+  },
+};
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
   return (

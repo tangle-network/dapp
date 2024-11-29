@@ -2,7 +2,6 @@
 
 import BlueprintGallery from '@webb-tools/tangle-shared-ui/components/blueprints/BlueprintGallery';
 import useBlueprintListing from '@webb-tools/tangle-shared-ui/data/blueprints/useBlueprintListing';
-import Image from 'next/image';
 import { FC } from 'react';
 
 import { PagePath } from '../../types';
@@ -16,7 +15,7 @@ const BlueprintListing: FC = () => {
         ...blueprint,
         renderImage(imageUrl) {
           return (
-            <Image
+            <img
               src={imageUrl}
               width={72}
               height={72}

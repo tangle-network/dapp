@@ -7,7 +7,7 @@ import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import type { EventFor } from '@webb-tools/webb-ui-components/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import type { ComponentProps, FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

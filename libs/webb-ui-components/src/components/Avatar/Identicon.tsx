@@ -1,7 +1,3 @@
-'use client';
+import { lazy } from 'react';
 
-import dynamic from 'next/dynamic';
-
-export const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
-  ssr: false,
-});
+export const Identicon = lazy(() => import('@polkadot/react-identicon'));

@@ -9,7 +9,7 @@ import {
 } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { twMerge } from 'tailwind-merge';
 import {
-  useNextDarkMode,
+  useDarkMode,
   useDarkMode as useNormalDarkMode,
 } from '../../hooks/useDarkMode';
 import { Typography } from '../../typography';
@@ -27,7 +27,7 @@ const CodeFile: FC<CodeFileProps> = ({
   className,
 }) => {
   const useDarkMode = useMemo(
-    () => (isInNextProject ? useNextDarkMode : useNormalDarkMode),
+    () => (isInNextProject ? useDarkMode : useNormalDarkMode),
     [isInNextProject],
   );
   const [isDarkMode] = useDarkMode();

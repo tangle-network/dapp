@@ -4,11 +4,12 @@ import { MoonLine, SunLine } from '@webb-tools/icons';
 import cx from 'classnames';
 import { FC, useEffect, useMemo, useState } from 'react';
 import {
-  useNextDarkMode,
+  useDarkMode,
   useDarkMode as useNormalDarkMode,
 } from '../../hooks/useDarkMode';
 
 import { ThemeToggleProps } from './types';
+import { UseDarkModeType, useNormalDarkMode } from '../../hooks/useDarkMode';
 
 /**
  * ThemeToggle (Dark/Light) Component
@@ -22,13 +23,13 @@ import { ThemeToggleProps } from './types';
 export const ThemeToggle: FC<ThemeToggleProps> = ({
   useNextThemes = false,
 }) => {
-  const useDarkMode = useMemo(
-    () => (useNextThemes ? useNextDarkMode : useNormalDarkMode),
+  const darkModeHook: UseDarkModeType = useMemo(
+    () => (useNextThemes ? useDarkMode : useNormalDarkMode),
     [useNextThemes],
   );
 
   const [isMounted, setIsMounted] = useState(false);
-  const [isDarkMode, toggleThemeMode] = useDarkMode();
+  const [isDarkMode, toggleThemeMode] = darkModeHook;
 
   // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {

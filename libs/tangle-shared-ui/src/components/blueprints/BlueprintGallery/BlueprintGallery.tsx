@@ -19,7 +19,7 @@ import { ComponentProps, FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import BlueprintItem from './BlueprintItem';
 import { BlueprintGalleryProps, BlueprintItemProps } from './types';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 
 const columnHelper = createColumnHelper<BlueprintItemProps>();
 

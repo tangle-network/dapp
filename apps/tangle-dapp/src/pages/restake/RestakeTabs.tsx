@@ -1,7 +1,5 @@
-'use client';
-
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { usePathname } from 'next/navigation';
+import { useLocation } from 'react-router-dom';
 import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -13,13 +11,11 @@ export type TabsListProps = PropsOf<'ul'>;
 export const tabs = ['deposit', 'stake', 'unstake', 'withdraw'] as const;
 
 const RestakeTabs = (props: TabsListProps) => {
-  const pathname = usePathname();
+  const { pathname } = useLocation();
 
   const activeTab = useMemo(() => {
     const paths = pathname.split('/');
-
     const activeTab = tabs.find((tab) => paths.some((path) => path === tab));
-
     return activeTab;
   }, [pathname]);
 

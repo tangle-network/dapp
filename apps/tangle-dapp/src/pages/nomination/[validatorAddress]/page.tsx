@@ -1,35 +1,45 @@
 import { isAddress } from '@polkadot/util-crypto';
-import { notFound } from 'next/navigation';
+import { FC } from 'react';
+import { useParams, Navigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 import { IS_PRODUCTION_ENV } from '../../../constants/env';
 import InfoCard from './InfoCard';
 import NodeSpecificationsTable from './NodeSpecificationsTable';
 
-export const dynamic = 'force-static';
+const pageConfig = {
+  metadata: {
+    title: 'Validator Details | Tangle Network',
+    description: 'View detailed information about a Tangle Network validator',
+  },
+};
 
-// TODO: might need to add metadata here
+const ValidatorDetails: FC = () => {
+  const { validatorAddress } = useParams<{ validatorAddress: string }>();
 
-export default function ValidatorDetails({
-  params,
-}: {
-  params: { validatorAddress: string };
-}) {
-  const { validatorAddress } = params;
-
-  if (!isAddress(validatorAddress)) {
-    notFound();
+  if (!validatorAddress || !isAddress(validatorAddress)) {
+    return <Navigate to="/nomination" replace />;
   }
 
   return (
-    <div className="my-5 space-y-10">
-      <div className="flex flex-col items-stretch gap-5 lg:flex-row">
-        <InfoCard validatorAddress={validatorAddress} className="flex-1" />
-      </div>
+    <>
+      <Helmet>
+        <title>{pageConfig.metadata.title}</title>
+        <meta name="description" content={pageConfig.metadata.description} />
+      </Helmet>
 
-      {/* TODO: Hide this for now */}
-      {!IS_PRODUCTION_ENV && (
-        <NodeSpecificationsTable validatorAddress={validatorAddress} />
-      )}
-    </div>
+      <div className="my-5 space-y-10">
+        <div className="flex flex-col items-stretch gap-5 lg:flex-row">
+          <InfoCard validatorAddress={validatorAddress} className="flex-1" />
+        </div>
+
+        {/* TODO: Hide this for now */}
+        {!IS_PRODUCTION_ENV && (
+          <NodeSpecificationsTable validatorAddress={validatorAddress} />
+        )}
+      </div>
+    </>
   );
-}
+};
+
+export default ValidatorDetails;

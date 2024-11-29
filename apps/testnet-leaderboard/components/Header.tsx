@@ -1,6 +1,6 @@
 import { TANGLE_MKT_URL } from '@webb-tools/webb-ui-components/constants';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { ComponentProps, ElementRef, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 

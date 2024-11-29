@@ -4,16 +4,19 @@ import cx from 'classnames';
 import { forwardRef, useCallback } from 'react';
 
 import {
-  useNextDarkMode,
+  useDarkMode,
   useDarkMode as useNormalDarkMode,
 } from '../../hooks/useDarkMode';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import type { ChainRingItemType, ChainsRingProps } from './types';
+import { UseDarkModeType } from '../../hooks/useDarkMode';
 
 const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
   ({ circleContent, additionalSvgContent, chainItems, isInNextApp }, ref) => {
-    const useDarkMode = isInNextApp ? useNextDarkMode : useNormalDarkMode;
-    const [isDarkMode] = useDarkMode();
+    const darkModeHook: UseDarkModeType = isInNextApp
+      ? useDarkMode
+      : useNormalDarkMode;
+    const [isDarkMode] = darkModeHook();
 
     const getStrokeColor = useCallback(
       (item?: ChainRingItemType) => {

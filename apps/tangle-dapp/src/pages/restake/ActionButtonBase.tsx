@@ -4,7 +4,7 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { ConnectWalletMobileButton } from '@webb-tools/webb-ui-components/components/ConnectWalletMobileButton';
 import { useCheckMobile } from '@webb-tools/webb-ui-components/hooks/useCheckMobile';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { type ReactNode, useMemo } from 'react';
 
 type Props = {

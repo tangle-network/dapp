@@ -1,7 +1,5 @@
-'use client';
-
 import { useState, useEffect, useCallback } from 'react';
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 
 export enum HistoryUpdateType {
   PUSH = 'push',
@@ -12,9 +10,10 @@ function useQueryState(
   key: string,
   historyUpdateType: HistoryUpdateType = HistoryUpdateType.PUSH,
 ) {
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const router = useRouter();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
   const [value, setValue] = useState(() => {
     return searchParams.get(key) || null;
   });
@@ -30,6 +29,7 @@ function useQueryState(
     (newValue: string | null) => {
       setValue(newValue);
       const newSearchParams = new URLSearchParams(searchParams.toString());
+
       if (newValue) {
         newSearchParams.set(key, newValue);
       } else {
@@ -37,13 +37,14 @@ function useQueryState(
       }
 
       const url = `${pathname}?${newSearchParams.toString()}`;
+
       if (historyUpdateType === HistoryUpdateType.PUSH) {
-        router.push(url);
+        navigate(url);
       } else {
-        router.replace(url);
+        navigate(url, { replace: true });
       }
     },
-    [key, pathname, router, searchParams, historyUpdateType],
+    [key, pathname, navigate, searchParams, historyUpdateType],
   );
 
   return [value, updateValue] as const;

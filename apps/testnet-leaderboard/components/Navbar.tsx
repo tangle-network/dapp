@@ -21,7 +21,7 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import type { ComponentProps } from 'react';
 
 type NavItem = ComponentProps<typeof Link> & {

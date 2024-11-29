@@ -1,19 +1,40 @@
-import { Metadata } from 'next';
 import { FC, PropsWithChildren } from 'react';
+import { Helmet } from 'react-helmet-async';
 
-import createPageMetadata from '../../utils/createPageMetadata';
 import Providers from './providers';
 
-export const dynamic = 'force-static';
-
-export const metadata: Metadata = createPageMetadata({
+const pageConfig = {
   title: 'Restake',
-  description:
-    "Explore vaults, deposit assets, and select operators to earn rewards with Tangle's restaking infrastructure.",
-});
+  metadata: {
+    title: 'Restake | Tangle Network',
+    description:
+      "Explore vaults, deposit assets, and select operators to earn rewards with Tangle's restaking infrastructure.",
+    openGraph: {
+      title: 'Restake | Tangle Network',
+      description:
+        "Explore vaults, deposit assets, and select operators to earn rewards with Tangle's restaking infrastructure.",
+    },
+  },
+};
 
 const RestakeLayout: FC<PropsWithChildren> = ({ children }) => {
-  return <Providers>{children}</Providers>;
+  return (
+    <Providers>
+      <Helmet>
+        <title>{pageConfig.metadata.title}</title>
+        <meta name="description" content={pageConfig.metadata.description} />
+        <meta
+          property="og:title"
+          content={pageConfig.metadata.openGraph.title}
+        />
+        <meta
+          property="og:description"
+          content={pageConfig.metadata.openGraph.description}
+        />
+      </Helmet>
+      {children}
+    </Providers>
+  );
 };
 
 export default RestakeLayout;
