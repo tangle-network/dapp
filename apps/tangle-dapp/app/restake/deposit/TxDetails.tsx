@@ -1,6 +1,7 @@
 'use client';
 
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { useMemo } from 'react';
 import { UseFormWatch } from 'react-hook-form';
 
@@ -10,7 +11,6 @@ import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeRewardConfig from '../../../data/restake/useRestakeRewardConfig';
 import { DepositFormFields } from '../../../types/restake';
-import pluralize from '../../../utils/pluralize';
 
 type Props = {
   watch: UseFormWatch<DepositFormFields>;

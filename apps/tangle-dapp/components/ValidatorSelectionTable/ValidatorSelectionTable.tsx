@@ -28,6 +28,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import cx from 'classnames';
 import React, {
   FC,
@@ -40,7 +41,6 @@ import React, {
 
 import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import pluralize from '../../utils/pluralize';
 import {
   getSortAddressOrIdentityFnc,
   sortBnValueForNomineeOrValidator,

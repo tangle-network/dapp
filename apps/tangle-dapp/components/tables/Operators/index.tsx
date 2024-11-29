@@ -19,12 +19,12 @@ import {
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import Link from 'next/link';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath, QueryParamKey } from '../../../types';
-import pluralize from '../../../utils/pluralize';
 import { getSortAddressOrIdentityFnc } from '../../../utils/table';
 import { TableStatus } from '../../TableStatus';
 import TableCellWrapper from '../TableCellWrapper';

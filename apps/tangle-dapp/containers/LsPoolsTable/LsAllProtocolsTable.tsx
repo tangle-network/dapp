@@ -15,6 +15,7 @@ import {
 import { ChevronUp } from '@webb-tools/icons';
 import { Button, Table, Typography } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -26,7 +27,6 @@ import useLsPools from '../../data/liquidStaking/useLsPools';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import formatBn from '../../utils/formatBn';
 import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
-import pluralize from '../../utils/pluralize';
 import LsPoolsTable from './LsPoolsTable';
 
 export type LsProtocolRow = {

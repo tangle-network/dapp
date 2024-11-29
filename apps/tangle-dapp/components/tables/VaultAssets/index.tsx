@@ -8,11 +8,11 @@ import {
 import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import formatTangleBalance from '../../../utils/formatTangleBalance';
-import pluralize from '../../../utils/pluralize';
 import type { Props, VaultAssetData } from './types';
 
 const columnHelper = createColumnHelper<VaultAssetData>();

@@ -23,13 +23,13 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import Link from 'next/link';
 import { FC, useMemo, useState } from 'react';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import { PagePath, Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import pluralize from '../../utils/pluralize';
 import {
   getSortAddressOrIdentityFnc,
   sortBnValueForNomineeOrValidator,

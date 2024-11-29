@@ -15,13 +15,13 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { FC, useMemo, useState } from 'react';
 
 import { LsPoolUnstakeRequest } from '../../constants/liquidStaking/types';
 import useLsUnbonding from '../../data/liquidStaking/useLsUnbonding';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import addCommasToNumber from '../../utils/addCommasToNumber';
-import pluralize from '../../utils/pluralize';
 import { ContainerSkeleton, TableStatus } from '..';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import WithdrawUnstakeRequestButton from './WithdrawUnstakeRequestButton';
@@ -92,7 +92,7 @@ const LsUnbondingTable: FC = () => {
             progressText === undefined ? (
               <CheckboxCircleFill className="dark:fill-green-50" />
             ) : (
-              <div className="flex gap-1 items-center justify-center">
+              <div className="flex items-center justify-center gap-1">
                 <TimeFillIcon className="dark:fill-blue-50" /> {progressText}
               </div>
             );
