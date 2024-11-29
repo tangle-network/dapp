@@ -3,7 +3,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import type { VaultToken } from '@webb-tools/tangle-shared-ui/types';
 import {
   Dropdown,
   DropdownBasicButton,
@@ -16,6 +15,7 @@ import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/get
 import cx from 'classnames';
 import { FC } from 'react';
 
+import { VaultToken } from '../../../types';
 import LsTokenIcon from '../../LsTokenIcon';
 
 const columnHelper = createColumnHelper<VaultToken>();

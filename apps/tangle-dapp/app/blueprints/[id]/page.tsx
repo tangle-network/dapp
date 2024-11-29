@@ -1,12 +1,14 @@
 'use client';
 
+import OperatorsTable from '@webb-tools/tangle-shared-ui/components/tables/Operators';
 import { ErrorFallback } from '@webb-tools/webb-ui-components/components/ErrorFallback';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
-import OperatorsTable from '../../../components/tables/Operators';
+import getRestakeOperatorLink from '../../../utils/getRestakeOperatorLink';
+import getViewOperatorLink from '../../../utils/getViewOperatorLink';
 import BlueprintHeader from './BlueprintHeader';
 import useBlueprintDetails from './useBlueprintDetails';
 
@@ -52,7 +54,11 @@ const BlueprintDetailsPage: FC<Props> = ({ params: { id } }) => {
           Operators running {result.details.name}
         </Typography>
 
-        <OperatorsTable data={result.operators} />
+        <OperatorsTable
+          getRestakeOperatorLink={getRestakeOperatorLink}
+          getViewOperatorLink={getViewOperatorLink}
+          data={result.operators}
+        />
       </div>
     </div>
   );

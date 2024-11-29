@@ -1,7 +1,7 @@
-import type { TableStatusProps } from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
-import type { OperatorData } from '@webb-tools/tangle-shared-ui/types';
 import type { Table } from '@webb-tools/webb-ui-components/components/Table';
 import type { ComponentProps } from 'react';
+import type { TableStatusProps } from '../../../components/tables/TableStatus';
+import type { OperatorData } from '../../../types';
 
 export type Props = {
   isLoading?: boolean;
@@ -11,4 +11,6 @@ export type Props = {
   loadingTableProps?: Partial<TableStatusProps>;
   emptyTableProps?: Partial<TableStatusProps>;
   tableProps?: Partial<ComponentProps<typeof Table>>;
+  getViewOperatorLink?: (address: string) => string;
+  getRestakeOperatorLink?: (address: string) => string;
 };

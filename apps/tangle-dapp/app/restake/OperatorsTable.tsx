@@ -1,13 +1,15 @@
 'use client';
 
 import { Search } from '@webb-tools/icons/Search';
+import OperatorsTableUI from '@webb-tools/tangle-shared-ui/components/tables/Operators';
 import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';
 import { type ComponentProps, type FC, useMemo, useState } from 'react';
 
-import OperatorsTableUI from '../../components/tables/Operators';
 import { useRestakeContext } from '../../context/RestakeContext';
 import useIdentities from '../../data/useIdentities';
+import getRestakeOperatorLink from '../../utils/getRestakeOperatorLink';
+import getViewOperatorLink from '../../utils/getViewOperatorLink';
 import { delegationsToVaultTokens } from './utils';
 
 type OperatorUI = NonNullable<
@@ -71,6 +73,8 @@ const OperatorsTable: FC<Props> = ({
         globalFilter={globalFilter}
         onGlobalFilterChange={setGlobalFilter}
         data={operators}
+        getRestakeOperatorLink={getRestakeOperatorLink}
+        getViewOperatorLink={getViewOperatorLink}
       />
     </>
   );

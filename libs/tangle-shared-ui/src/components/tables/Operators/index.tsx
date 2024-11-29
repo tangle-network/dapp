@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  ColumnDef,
   createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
@@ -8,11 +9,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
-import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
-import { getSortAddressOrIdentityFnc } from '@webb-tools/tangle-shared-ui/components/tables/utils';
-import { OperatorData } from '@webb-tools/tangle-shared-ui/types';
-import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
 import {
   Avatar,
   Button,
@@ -25,16 +21,20 @@ import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constant
 import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import TableCellWrapper from '../../../components/tables/TableCellWrapper';
+import TableStatus from '../../../components/tables/TableStatus';
+import { getSortAddressOrIdentityFnc } from '../../../components/tables/utils';
+import { OperatorData } from '../../../types';
+import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 
-import { PagePath, QueryParamKey } from '../../../types';
 import type { Props } from './types';
 import VaultsDropdown from './VaultsDropdown';
 
 const columnHelper = createColumnHelper<OperatorData>();
 
-const columns = [
+const staticColumns: ColumnDef<OperatorData, any>[] = [
   columnHelper.accessor('address', {
     header: () => 'Identity',
     cell: (props) => {
@@ -132,34 +132,6 @@ const columns = [
     },
     enableSorting: false,
   }),
-  columnHelper.display({
-    id: 'actions',
-    header: () => null,
-    cell: (props) => (
-      <TableCellWrapper removeRightBorder>
-        <div className="flex items-center justify-end flex-1 gap-2">
-          <Button
-            as={Link}
-            href={`${PagePath.RESTAKE_OPERATOR}/${props.row.original.address}`}
-            variant="utility"
-            className="uppercase body4"
-          >
-            View
-          </Button>
-
-          <Button
-            as={Link}
-            href={`${PagePath.RESTAKE_STAKE}?${QueryParamKey.RESTAKE_OPERATOR}=${props.row.original.address}`}
-            variant="utility"
-            className="uppercase body4"
-          >
-            Restake
-          </Button>
-        </div>
-      </TableCellWrapper>
-    ),
-    enableSorting: false,
-  }),
 ];
 
 const OperatorsTable: FC<Props> = ({
@@ -170,7 +142,48 @@ const OperatorsTable: FC<Props> = ({
   tableProps,
   globalFilter,
   onGlobalFilterChange,
+  getViewOperatorLink,
+  getRestakeOperatorLink,
 }) => {
+  const columns = useMemo(
+    () =>
+      staticColumns.concat([
+        columnHelper.display({
+          id: 'actions',
+          header: () => null,
+          cell: (props) => (
+            <TableCellWrapper removeRightBorder>
+              <div className="flex items-center justify-end flex-1 gap-2">
+                {getViewOperatorLink && (
+                  <Button
+                    as={Link}
+                    href={getViewOperatorLink(props.row.original.address)}
+                    variant="utility"
+                    className="uppercase body4"
+                  >
+                    View
+                  </Button>
+                )}
+
+                {getRestakeOperatorLink && (
+                  <Button
+                    as={Link}
+                    href={getRestakeOperatorLink(props.row.original.address)}
+                    variant="utility"
+                    className="uppercase body4"
+                  >
+                    Restake
+                  </Button>
+                )}
+              </div>
+            </TableCellWrapper>
+          ),
+          enableSorting: false,
+        }) satisfies ColumnDef<OperatorData>,
+      ]),
+    [getViewOperatorLink, getRestakeOperatorLink],
+  );
+
   const table = useReactTable({
     data,
     columns,
