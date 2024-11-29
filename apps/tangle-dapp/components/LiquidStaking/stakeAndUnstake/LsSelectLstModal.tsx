@@ -8,6 +8,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -16,7 +17,6 @@ import {
   LsPoolDisplayName,
 } from '../../../constants/liquidStaking/types';
 import formatBn from '../../../utils/formatBn';
-import formatFractional from '../../../utils/formatFractional';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import { ListCardWrapper } from '../../Lists/ListCardWrapper';
 import ListStatus from '../../ListStatus';

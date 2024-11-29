@@ -19,6 +19,7 @@ import {
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
 import { useMemo } from 'react';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -27,7 +28,6 @@ import { StakingItemExternalLinkButton } from '../../components/LiquidStaking/St
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import calculateCommission from '../../utils/calculateCommission';
 import formatBn from '../../utils/formatBn';
-import formatFractional from '../../utils/formatFractional';
 
 const validatorColumnHelper = createColumnHelper<Validator>();
 const dappColumnHelper = createColumnHelper<Dapp>();

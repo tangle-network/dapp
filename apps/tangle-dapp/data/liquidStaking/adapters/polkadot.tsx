@@ -9,6 +9,7 @@ import {
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
 
 import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking/StakingItemExternalLinkButton';
 import {
@@ -21,7 +22,6 @@ import assertSubstrateAddress from '../../../utils/assertSubstrateAddress';
 import calculateCommission from '../../../utils/calculateCommission';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
 import formatBn from '../../../utils/formatBn';
-import formatFractional from '../../../utils/formatFractional';
 import { GetTableColumnsFn } from '../adapter';
 import {
   sortCommission,
