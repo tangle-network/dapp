@@ -8,6 +8,7 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
+import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import {
   Card,
   IconButton,
@@ -32,7 +33,6 @@ import {
   type ScheduleWithdrawContext,
   TxEvent,
 } from '../../../data/restake/RestakeTx/base';
-import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import type { Props } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';

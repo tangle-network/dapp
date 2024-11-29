@@ -1,5 +1,6 @@
 'use client';
 
+import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
@@ -12,7 +13,6 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { twMerge } from 'tailwind-merge';
 
 import StatItem from '../../../components/StatItem';
-import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeTVL from '../../../data/restake/useRestakeTVL';
 import { CONTENT } from './shared';
 import TableTabs from './TableTabs';

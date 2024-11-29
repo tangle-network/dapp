@@ -6,6 +6,7 @@ import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
+import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import {
   Card,
   IconButton,
@@ -31,7 +32,6 @@ import {
   type ScheduleDelegatorUnstakeContext,
   TxEvent,
 } from '../../../data/restake/RestakeTx/base';
-import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import type { Props } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';

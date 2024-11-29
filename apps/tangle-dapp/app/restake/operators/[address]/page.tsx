@@ -5,7 +5,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { ComponentProps, useMemo } from 'react';
 
 import useOperatorBlueprints from '../../../../data/blueprints/useOperatorBlueprints';
-import useRestakeDelegatorInfo from '../../../../data/restake/useRestakeDelegatorInfo';
+import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeTVL from '../../../../data/restake/useRestakeTVL';
 import OperatorInfoCard from './OperatorInfoCard';
 import RegisteredBlueprintsCard from './RegisteredBlueprintsCard';

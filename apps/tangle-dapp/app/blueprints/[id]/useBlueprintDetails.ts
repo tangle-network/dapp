@@ -4,6 +4,7 @@ import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStor
 import { extractOperatorData } from '@webb-tools/tangle-shared-ui/data/blueprints/utils/blueprintHelpers';
 import { toPrimitiveBlueprint } from '@webb-tools/tangle-shared-ui/data/blueprints/utils/toPrimitiveBlueprint';
 import useRestakeAssetMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetMap';
+import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import type { Blueprint } from '@webb-tools/tangle-shared-ui/types/blueprint';
@@ -20,7 +21,6 @@ import {
 import { useCallback } from 'react';
 import { combineLatest, switchMap } from 'rxjs';
 
-import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeTVL from '../../../data/restake/useRestakeTVL';
 import type { Operator } from '../../../types/blueprint';
 import { delegationsToVaultTokens } from '../../restake/utils';
