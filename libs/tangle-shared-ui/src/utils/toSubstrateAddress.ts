@@ -1,13 +1,12 @@
 import {
   encodeAddress,
   evmToAddress,
+  isAddress,
   isEthereumAddress,
 } from '@polkadot/util-crypto';
-import { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
-import assertSubstrateAddress from '@webb-tools/tangle-shared-ui/utils/assertSubstrateAddress';
 import assert from 'assert';
-
-import isSubstrateAddress from './isSubstrateAddress';
+import { SubstrateAddress } from '../types/utils';
+import assertSubstrateAddress from './assertSubstrateAddress';
 
 /**
  * Converts an EVM address to a Substrate address.
@@ -25,7 +24,7 @@ import isSubstrateAddress from './isSubstrateAddress';
  * @returns The converted Substrate address. If the address is already a
  * Substrate address, it will be returned as is.
  */
-export const toSubstrateAddress = (
+const toSubstrateAddress = (
   address: string,
   ss58Format?: number,
 ): SubstrateAddress => {
@@ -38,7 +37,7 @@ export const toSubstrateAddress = (
 
   // Otherwise, it must be a valid Substrate address.
   assert(
-    isSubstrateAddress(address),
+    isAddress(address),
     'Address that is neither an EVM nor a Substrate address was provided (did you forget to validate an input address from the user?)',
   );
 
@@ -47,3 +46,5 @@ export const toSubstrateAddress = (
   // address.
   return assertSubstrateAddress(encodeAddress(address, ss58Format));
 };
+
+export default toSubstrateAddress;

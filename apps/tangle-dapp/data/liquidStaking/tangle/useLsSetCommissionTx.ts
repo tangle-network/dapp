@@ -1,4 +1,5 @@
 import { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
+import toSubstrateAddress from '@webb-tools/tangle-shared-ui/utils/toSubstrateAddress';
 import { useCallback } from 'react';
 import { Address } from 'viem';
 
@@ -7,7 +8,6 @@ import {
   SubstrateTxFactory,
   useSubstrateTxWithNotification,
 } from '../../../hooks/useSubstrateTx';
-import { toSubstrateAddress } from '../../../utils';
 
 export type LsPoolSetCommissionTxContext = {
   poolId: number;
