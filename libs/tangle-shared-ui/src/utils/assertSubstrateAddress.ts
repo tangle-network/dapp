@@ -1,6 +1,6 @@
 import { isAddress } from '@polkadot/util-crypto';
-import { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
 import assert from 'assert';
+import type { SubstrateAddress } from '../types/utils';
 
 const assertSubstrateAddress = (address: string): SubstrateAddress => {
   assert(isAddress(address), 'Address should be a valid Substrate address');

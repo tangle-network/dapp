@@ -1,8 +1,8 @@
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import type { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
+import assertSubstrateAddress from '@webb-tools/tangle-shared-ui/utils/assertSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 
-import assertSubstrateAddress from '../../../utils/assertSubstrateAddress';
 import useActiveEraIndex from './useActiveEraIndex';
 
 export type EraRewardPointsEntry = {

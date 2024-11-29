@@ -2,12 +2,12 @@ import { Option } from '@polkadot/types';
 import { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
+import assertSubstrateAddress from '@webb-tools/tangle-shared-ui/utils/assertSubstrateAddress';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
-import assertSubstrateAddress from '../../utils/assertSubstrateAddress';
 
 const useLsPoolMembers = ():
   | Readonly<[number, SubstrateAddress, PalletAssetsAssetAccount]>[]

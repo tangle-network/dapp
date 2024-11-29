@@ -2,6 +2,7 @@ import { BN } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import assertSubstrateAddress from '@webb-tools/tangle-shared-ui/utils/assertSubstrateAddress';
 import {
   Alert,
   Modal,
@@ -23,7 +24,6 @@ import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { TxStatus } from '../hooks/useSubstrateTx';
-import assertSubstrateAddress from '../utils/assertSubstrateAddress';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
 import { ERROR_NOT_ENOUGH_BALANCE } from './ManageProfileModalContainer/Independent/IndependentAllocationInput';
 
@@ -123,7 +123,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
         </ModalHeader>
 
         <ModalBody className="gap-4">
-          <div className="flex flex-col sm:flex-row items-center gap-4 justify-stretch">
+          <div className="flex flex-col items-center gap-4 sm:flex-row justify-stretch">
             <TextInput
               id="ls-create-pool-name"
               title="Pool Name"
