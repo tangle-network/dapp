@@ -1,48 +1,254 @@
-import type { Bytes, Option } from '@polkadot/types';
+import type {
+  Bytes,
+  Enum,
+  Option,
+  Struct,
+  u64,
+  U8aFixed,
+  Vec,
+} from '@polkadot/types';
+import { H160 } from '@polkadot/types/interfaces';
 import {
   TanglePrimitivesServicesFieldFieldType,
   TanglePrimitivesServicesJobDefinition,
   TanglePrimitivesServicesServiceBlueprint,
 } from '@polkadot/types/lookup';
+import { ITuple } from '@polkadot/types/types';
 import { u8aToString } from '@polkadot/util';
-import type {
-  Architecture,
-  ContainerGadget,
-  FieldFieldType,
-  Gadget,
-  GadgetBinary,
-  GadgetSource,
-  GadgetSourceFetcher,
-  GithubFetcher,
-  ImageRegistryFetcher,
-  JobDefinition,
-  JobMetadata,
-  JobResultVerifier,
-  NativeGadget,
-  OperatingSystem,
-  ServiceBlueprint,
-  ServiceMetadata,
-  ServiceRegistrationHook,
-  ServiceRequestHook,
-  TestFetcher,
-  WasmGadget,
-  WasmRuntime,
-} from '@webb-tools/tangle-substrate-types';
+
+/** @name WasmRuntime */
+interface WasmRuntime extends Enum {
+  readonly isWasmtime: boolean;
+  readonly isWasmer: boolean;
+  readonly type: 'Wasmtime' | 'Wasmer';
+}
+
+/** @name WasmGadget */
+interface WasmGadget extends Struct {
+  readonly runtime: WasmRuntime;
+  readonly sources: Vec<GadgetSource>;
+}
+
+/** @name TestFetcher */
+interface TestFetcher extends Struct {
+  readonly cargoPackage: Bytes;
+  readonly cargoBin: Bytes;
+  readonly basePath: Bytes;
+}
+
+/** @name ServiceRequestHook */
+interface ServiceRequestHook extends Enum {
+  readonly isNone: boolean;
+  readonly isEvm: boolean;
+  readonly asEvm: H160;
+  readonly type: 'None' | 'Evm';
+}
+
+/** @name ServiceRegistrationHook */
+interface ServiceRegistrationHook extends Enum {
+  readonly isNone: boolean;
+  readonly isEvm: boolean;
+  readonly asEvm: H160;
+  readonly type: 'None' | 'Evm';
+}
+
+/** @name ServiceMetadata */
+interface ServiceMetadata extends Struct {
+  readonly name: Bytes;
+  readonly description: Option<Bytes>;
+  readonly author: Option<Bytes>;
+  readonly category: Option<Bytes>;
+  readonly codeRepository: Option<Bytes>;
+  readonly logo: Option<Bytes>;
+  readonly website: Option<Bytes>;
+  readonly license: Option<Bytes>;
+}
+
+/** @name ServiceBlueprint */
+interface ServiceBlueprint extends Struct {
+  readonly metadata: ServiceMetadata;
+  readonly jobs: Vec<JobDefinition>;
+  readonly registrationHook: ServiceRegistrationHook;
+  readonly registrationParams: Vec<FieldFieldType>;
+  readonly requestHook: ServiceRequestHook;
+  readonly requestParams: Vec<FieldFieldType>;
+  readonly gadget: Gadget;
+}
+
+/** @name OperatingSystem */
+interface OperatingSystem extends Enum {
+  readonly isUnknown: boolean;
+  readonly isLinux: boolean;
+  readonly isWindows: boolean;
+  readonly isMacOS: boolean;
+  readonly isBsd: boolean;
+  readonly type: 'Unknown' | 'Linux' | 'Windows' | 'MacOS' | 'Bsd';
+}
+
+/** @name NativeGadget */
+interface NativeGadget extends Struct {
+  readonly sources: Vec<GadgetSource>;
+}
+
+/** @name JobResultVerifier */
+interface JobResultVerifier extends Enum {
+  readonly isNone: boolean;
+  readonly isEvm: boolean;
+  readonly asEvm: H160;
+  readonly type: 'None' | 'Evm';
+}
+
+/** @name JobMetadata */
+interface JobMetadata extends Struct {
+  readonly name: Bytes;
+  readonly description: Option<Bytes>;
+}
+
+/** @name JobDefinition */
+interface JobDefinition extends Struct {
+  readonly metadata: JobMetadata;
+  readonly params: Vec<FieldFieldType>;
+  readonly result: Vec<FieldFieldType>;
+  readonly verifier: JobResultVerifier;
+}
+
+/** @name ImageRegistryFetcher */
+interface ImageRegistryFetcher extends Struct {
+  readonly registry_: Bytes;
+  readonly image: Bytes;
+  readonly tag: Bytes;
+}
+
+/** @name GithubFetcher */
+interface GithubFetcher extends Struct {
+  readonly owner: Bytes;
+  readonly repo: Bytes;
+  readonly tag: Bytes;
+  readonly binaries: Vec<GadgetBinary>;
+}
+
+/** @name GadgetSource */
+interface GadgetSource extends Struct {
+  readonly fetcher: GadgetSourceFetcher;
+}
+
+/** @name GadgetSourceFetcher */
+interface GadgetSourceFetcher extends Enum {
+  readonly isIpfs: boolean;
+  readonly asIpfs: Bytes;
+  readonly isGithub: boolean;
+  readonly asGithub: GithubFetcher;
+  readonly isContainerImage: boolean;
+  readonly asContainerImage: ImageRegistryFetcher;
+  readonly isTesting: boolean;
+  readonly asTesting: TestFetcher;
+  readonly type: 'Ipfs' | 'Github' | 'ContainerImage' | 'Testing';
+}
+
+/** @name GadgetBinary */
+interface GadgetBinary extends Struct {
+  readonly arch: Architecture;
+  readonly os: OperatingSystem;
+  readonly name: Bytes;
+  readonly sha256: U8aFixed;
+}
+
+/** @name Architecture */
+interface Architecture extends Enum {
+  readonly isWasm: boolean;
+  readonly isWasm64: boolean;
+  readonly isWasi: boolean;
+  readonly isWasi64: boolean;
+  readonly isAmd: boolean;
+  readonly isAmd64: boolean;
+  readonly isArm: boolean;
+  readonly isArm64: boolean;
+  readonly isRiscV: boolean;
+  readonly isRiscV64: boolean;
+  readonly type:
+    | 'Wasm'
+    | 'Wasm64'
+    | 'Wasi'
+    | 'Wasi64'
+    | 'Amd'
+    | 'Amd64'
+    | 'Arm'
+    | 'Arm64'
+    | 'RiscV'
+    | 'RiscV64';
+}
+
+/** @name Gadget */
+interface Gadget extends Enum {
+  readonly isWasm: boolean;
+  readonly asWasm: WasmGadget;
+  readonly isNative: boolean;
+  readonly asNative: NativeGadget;
+  readonly isContainer: boolean;
+  readonly asContainer: ContainerGadget;
+  readonly type: 'Wasm' | 'Native' | 'Container';
+}
+
+/** @name ContainerGadget */
+interface ContainerGadget extends Struct {
+  readonly sources: Vec<GadgetSource>;
+}
+
+/** @name FieldFieldType */
+interface FieldFieldType extends Enum {
+  readonly isVoid: boolean;
+  readonly isBool: boolean;
+  readonly isUint8: boolean;
+  readonly isInt8: boolean;
+  readonly isUint16: boolean;
+  readonly isInt16: boolean;
+  readonly isUint32: boolean;
+  readonly isInt32: boolean;
+  readonly isUint64: boolean;
+  readonly isInt64: boolean;
+  readonly isText: boolean;
+  readonly isBytes: boolean;
+  readonly isOptional: boolean;
+  readonly asOptional: FieldFieldType;
+  readonly isArray: boolean;
+  readonly asArray: ITuple<[u64, FieldFieldType]>;
+  readonly isList: boolean;
+  readonly asList: FieldFieldType;
+  readonly isStruct: boolean;
+  readonly asStruct: ITuple<
+    [FieldFieldType, Vec<ITuple<[FieldFieldType, FieldFieldType]>>]
+  >;
+  readonly isAccountId: boolean;
+  readonly type:
+    | 'Void'
+    | 'Bool'
+    | 'Uint8'
+    | 'Int8'
+    | 'Uint16'
+    | 'Int16'
+    | 'Uint32'
+    | 'Int32'
+    | 'Uint64'
+    | 'Int64'
+    | 'Text'
+    | 'Bytes'
+    | 'Optional'
+    | 'Array'
+    | 'List'
+    | 'Struct'
+    | 'AccountId';
+}
 
 export function toPrimitiveBlueprint({
   metadata,
   jobs,
-  registrationHook,
   registrationParams,
-  requestHook,
   requestParams,
   gadget,
 }: ServiceBlueprint | TanglePrimitivesServicesServiceBlueprint) {
   return {
     metadata: toPrimitiveServiceMetadata(metadata),
     jobs: jobs.map(toPrimitiveJobDefinition),
-    registrationHook: toPrimitiveServiceRegistrationHook(registrationHook),
-    requestHook: toPrimitiveServiceRequestHook(requestHook),
     registrationParams: registrationParams.map(toPrimitiveFieldType),
     requestParams: requestParams.map(toPrimitiveFieldType),
     gadget: toPrimitiveGadget(gadget),
@@ -75,13 +281,11 @@ function toPrimitiveJobDefinition({
   metadata,
   params,
   result,
-  verifier,
 }: JobDefinition | TanglePrimitivesServicesJobDefinition) {
   return {
     metadata: toPrimitiveJobMetadata(metadata),
     params: params.map(toPrimitiveFieldType),
     result: result.map(toPrimitiveFieldType),
-    verifier: toPrimitiveJobResultVerifier(verifier),
   } as const;
 }
 
