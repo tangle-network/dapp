@@ -96,7 +96,6 @@ const UnstakeRequestTableActions = ({
   return (
     <>
       <Button
-        className="flex-1"
         isLoading={isCanceling}
         loadingText="Canceling..."
         isDisabled={!canCancelUnstake || isExecuting}
@@ -108,7 +107,6 @@ const UnstakeRequestTableActions = ({
       </Button>
 
       <Button
-        className="flex-1"
         isLoading={isExecuting}
         loadingText="Executing..."
         isDisabled={!canExecuteUnstake || isCanceling}

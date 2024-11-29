@@ -32,15 +32,27 @@ export type PolkadotApiContextProps = Prettify<{
 
 const DEFAULT_ENDPOINT = useNetworkStore.getState().rpcEndpoint;
 
-const DEFAULT_API_PROMISE = new ApiPromise({
-  provider: new WsProvider(DEFAULT_ENDPOINT),
-  noInitWarn: true,
-});
+const DEFAULT_API_PROMISE = (() => {
+  try {
+    return new ApiPromise({
+      provider: new WsProvider(DEFAULT_ENDPOINT),
+      noInitWarn: true,
+    });
+  } catch {
+    return new ApiPromise();
+  }
+})();
 
-const DEFAULT_API_RX = new ApiRx({
-  provider: new WsProvider(DEFAULT_ENDPOINT),
-  noInitWarn: true,
-});
+const DEFAULT_API_RX = (() => {
+  try {
+    return new ApiRx({
+      provider: new WsProvider(DEFAULT_ENDPOINT),
+      noInitWarn: true,
+    });
+  } catch {
+    return new ApiRx();
+  }
+})();
 
 export const PolkadotApiContext = createContext<PolkadotApiContextProps>({
   apiPromise: DEFAULT_API_PROMISE,
