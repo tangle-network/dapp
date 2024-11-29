@@ -1,8 +1,6 @@
 import { BN } from '@polkadot/util';
-import { SortingFn } from '@tanstack/react-table';
-import { Payout } from '@webb-tools/tangle-shared-ui/types';
-
-import { BasicAccountInfo, Nominee } from '../types';
+import type { SortingFn } from '@tanstack/react-table';
+import type { BasicAccountInfo, Nominee, Payout } from '../../types';
 
 // Utility type to extract keys of type T that have value type U
 type KeysOfType<T, U> = {
@@ -44,6 +42,7 @@ const sortBnValue =
 
 export const sortBnValueForNomineeOrValidator =
   sortBnValue<Nominee>(nomineeBnFieldsArray);
+
 export const sortBnValueForPayout = sortBnValue<Payout>(payoutBnFieldsArray);
 
 export const getSortAddressOrIdentityFnc = <

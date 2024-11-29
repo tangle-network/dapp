@@ -16,6 +16,10 @@ import {
 } from '@tanstack/react-table';
 import { Search } from '@webb-tools/icons';
 import {
+  getSortAddressOrIdentityFnc,
+  sortBnValueForNomineeOrValidator,
+} from '@webb-tools/tangle-shared-ui/components/tables/utils';
+import {
   Avatar,
   CheckBox,
   Chip,
@@ -41,10 +45,6 @@ import React, {
 
 import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import {
-  getSortAddressOrIdentityFnc,
-  sortBnValueForNomineeOrValidator,
-} from '../../utils/table';
 import { ContainerSkeleton } from '..';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';

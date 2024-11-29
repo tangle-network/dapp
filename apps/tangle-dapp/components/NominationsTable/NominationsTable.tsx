@@ -10,6 +10,11 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
+  getSortAddressOrIdentityFnc,
+  sortBnValueForNomineeOrValidator,
+} from '@webb-tools/tangle-shared-ui/components/tables/utils';
+import { Nominee } from '@webb-tools/tangle-shared-ui/types';
+import {
   Avatar,
   Chip,
   CopyWithTooltip,
@@ -21,12 +26,7 @@ import {
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { FC, useState } from 'react';
 
-import { Nominee } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import {
-  getSortAddressOrIdentityFnc,
-  sortBnValueForNomineeOrValidator,
-} from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';

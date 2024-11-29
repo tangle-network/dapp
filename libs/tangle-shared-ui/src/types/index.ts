@@ -22,3 +22,16 @@ export const ExplorerType = {
   Substrate: 'polkadot' as WebbProviderType,
   EVM: 'web3' as WebbProviderType,
 } as const;
+
+export type BasicAccountInfo = {
+  address: string;
+  identityName: string;
+};
+
+export interface Nominee extends BasicAccountInfo {
+  isActive: boolean;
+  commission: BN;
+  selfStakeAmount: BN;
+  totalStakeAmount: BN;
+  nominatorCount: number;
+}

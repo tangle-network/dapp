@@ -1,11 +1,11 @@
 'use client';
 
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import { Nominee } from '@webb-tools/tangle-shared-ui/types';
 import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
 import { useCallback, useMemo } from 'react';
 
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import { Nominee } from '../../types/index';
 import createNominee from '../../utils/staking/createNominee';
 import useStakingExposures from '../staking/useStakingExposures';
 import useValidatorPrefs from '../staking/useValidatorPrefs';

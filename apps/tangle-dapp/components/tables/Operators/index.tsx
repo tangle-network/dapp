@@ -8,6 +8,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { getSortAddressOrIdentityFnc } from '@webb-tools/tangle-shared-ui/components/tables/utils';
 import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
 import {
   Avatar,
@@ -25,7 +26,6 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath, QueryParamKey } from '../../../types';
-import { getSortAddressOrIdentityFnc } from '../../../utils/table';
 import { TableStatus } from '../../TableStatus';
 import TableCellWrapper from '../TableCellWrapper';
 import type { OperatorData, Props } from './types';

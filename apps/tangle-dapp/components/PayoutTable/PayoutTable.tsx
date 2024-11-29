@@ -12,6 +12,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { WalletPayIcon } from '@webb-tools/icons';
+import { sortBnValueForPayout } from '@webb-tools/tangle-shared-ui/components/tables/utils';
 import {
   AddressWithIdentity,
   Payout,
@@ -30,7 +31,6 @@ import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { type FC, useState } from 'react';
 
 import PayoutTxContainer from '../../containers/PayoutTxContainer/PayoutTxContainer';
-import { sortBnValueForPayout } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { PayoutTableProps } from './types';
