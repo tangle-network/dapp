@@ -1,30 +1,28 @@
-import FeeDetails from '@webb-tools/webb-ui-components/components/FeeDetails';
-import type { FeeItem } from '@webb-tools/webb-ui-components/components/FeeDetails/types';
-import { useMemo } from 'react';
+import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 
+import DetailsContainer from '../../../components/DetailsContainer';
+import DetailItem from '../../../components/LiquidStaking/stakeAndUnstake/DetailItem';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 
 const TxInfo = () => {
   const { leaveDelegatorsDelay } = useRestakeConsts();
 
-  const items = useMemo<FeeItem[]>(
-    () => [
-      // TOOD: Add fee value
-      {
-        name: 'Fee',
-      },
-      {
-        name: 'Withdraw Delay',
-        value:
-          typeof leaveDelegatorsDelay === 'number'
-            ? `${leaveDelegatorsDelay} rounds`
-            : null,
-      },
-    ],
-    [leaveDelegatorsDelay],
-  );
+  return (
+    <DetailsContainer>
+      {/* TODO: Add fee value */}
+      <DetailItem title="Fee" value={EMPTY_VALUE_PLACEHOLDER} />
 
-  return <FeeDetails isDisabledBgColor disabled isDefaultOpen items={items} />;
+      <DetailItem
+        title="Withdraw delay"
+        value={
+          isDefined(leaveDelegatorsDelay)
+            ? `${leaveDelegatorsDelay} sessions`
+            : leaveDelegatorsDelay
+        }
+      />
+    </DetailsContainer>
+  );
 };
 
 export default TxInfo;
