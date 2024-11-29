@@ -147,6 +147,8 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
         operatorAccount,
         assetId,
         amount,
+        // TODO: Tin: Check if this is the correct value.
+        { All: 'All' },
       ),
     ]);
 
@@ -172,6 +174,8 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
       operatorAccount,
       assetId,
       amount,
+      // TODO: Tin: Check if this is the correct value.
+      { All: 'All' },
     );
 
     eventHandlers?.onTxSending?.(context);

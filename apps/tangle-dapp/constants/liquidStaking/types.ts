@@ -146,11 +146,14 @@ export type LsPool = {
   commissionFractional?: number;
   members: Map<SubstrateAddress, PalletAssetsAssetAccount>;
   protocolId: LsProtocolId;
+  iconUrl?: string;
 };
 
 export type LsPoolUnstakeRequest = {
   poolName?: string;
   poolId: number;
+  poolIconUrl?: string;
+  poolProtocolId: LsProtocolId;
   decimals: number;
   token: LsToken;
   unlockEra: number;

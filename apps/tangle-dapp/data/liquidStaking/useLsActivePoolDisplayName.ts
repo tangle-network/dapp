@@ -29,7 +29,9 @@ const useLsActivePoolDisplayName = (): ActivePoolDisplayNameReturn => {
       return null;
     }
 
-    return activePool[1].metadata.name.toUtf8();
+    const nameOpt = activePool[1].metadata.name;
+
+    return nameOpt.isNone ? null : nameOpt.unwrap().toUtf8();
   }, [activePool]);
 
   const displayName = useMemo<LsPoolDisplayName | null>(() => {

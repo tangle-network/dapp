@@ -39,6 +39,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
   const activeSubstrateAddress = useSubstrateAddress();
   // TODO: Use form validation for the properties/inputs.
   const [name, setName] = useState('');
+  const [iconUrl, setIconUrl] = useState('');
   const { free: freeBalance } = useBalances();
   const [rootAddress, setRootAddress] = useState('');
   const [nominatorAddress, setNominatorAddress] = useState('');
@@ -66,17 +67,24 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
     isAddress(nominatorAddress) &&
     isAddress(bouncerAddress);
 
+  // Name and icon aren't required.
+  const isReady =
+    isSubstrateAddresses &&
+    activeSubstrateAddress !== null &&
+    initialBondAmount !== null &&
+    execute !== null;
+
   const handleCreatePoolClick = useCallback(async () => {
-    if (
-      initialBondAmount === null ||
-      !isSubstrateAddresses ||
-      execute === null
-    ) {
+    if (!isReady) {
       return;
     }
 
+    const finalName = name.trim() === '' ? undefined : name.trim();
+    const finalIconUrl = iconUrl.trim() === '' ? undefined : iconUrl.trim();
+
     await execute({
-      name,
+      name: finalName,
+      iconUrl: finalIconUrl,
       initialBondAmount,
       rootAddress: assertSubstrateAddress(rootAddress),
       nominatorAddress: assertSubstrateAddress(nominatorAddress),
@@ -85,8 +93,9 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
   }, [
     bouncerAddress,
     execute,
+    iconUrl,
     initialBondAmount,
-    isSubstrateAddresses,
+    isReady,
     name,
     nominatorAddress,
     rootAddress,
@@ -126,10 +135,33 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
           <div className="flex flex-col sm:flex-row items-center gap-4 justify-stretch">
             <TextInput
               id="ls-create-pool-name"
-              title="Pool Name"
+              title="Pool Name (Optional)"
               placeholder="Choose a name"
               value={name}
               setValue={setName}
+              wrapperOverrides={{ isFullWidth: true }}
+            />
+
+            <TextInput
+              id="ls-create-pool-icon-url"
+              title="Icon URL (Optional)"
+              placeholder="https://example.com/icon.png"
+              value={iconUrl}
+              setValue={setIconUrl}
+              wrapperOverrides={{ isFullWidth: true }}
+            />
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center gap-4 justify-stretch">
+            <AmountInput
+              id="ls-create-pool-initial-bond-amount"
+              amount={initialBondAmount}
+              setAmount={setInitialBondAmount}
+              min={createPoolMinBond?.toBn() ?? null}
+              max={freeBalance}
+              maxErrorMessage={ERROR_NOT_ENOUGH_BALANCE}
+              title="Initial Bond Amount"
+              wrapperClassName="w-full"
               wrapperOverrides={{ isFullWidth: true }}
             />
 
@@ -141,18 +173,6 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
               isDerivativeVariant={false}
             />
           </div>
-
-          <AmountInput
-            id="ls-create-pool-initial-bond-amount"
-            amount={initialBondAmount}
-            setAmount={setInitialBondAmount}
-            min={createPoolMinBond?.toBn() ?? null}
-            max={freeBalance}
-            maxErrorMessage={ERROR_NOT_ENOUGH_BALANCE}
-            title="Initial Bond Amount"
-            wrapperClassName="w-full"
-            wrapperOverrides={{ isFullWidth: true }}
-          />
 
           <AddressInput
             id="ls-create-pool-root-address"
@@ -201,13 +221,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
           learnMoreLinkHref={TANGLE_DOCS_LS_CREATE_POOL_URL}
           isProcessing={status === TxStatus.PROCESSING}
           onConfirm={handleCreatePoolClick}
-          isConfirmDisabled={
-            !isSubstrateAddresses ||
-            activeSubstrateAddress === null ||
-            initialBondAmount === null ||
-            name === '' ||
-            execute === null
-          }
+          isConfirmDisabled={!isReady}
         />
       </ModalContent>
     </Modal>

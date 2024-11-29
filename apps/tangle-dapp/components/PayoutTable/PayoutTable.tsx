@@ -29,6 +29,7 @@ import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/ty
 import { type FC, useState } from 'react';
 
 import PayoutTxContainer from '../../containers/PayoutTxContainer/PayoutTxContainer';
+import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import pluralize from '../../utils/pluralize';
 import { sortBnValueForPayout } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
@@ -107,7 +108,12 @@ const PayoutTable: FC<PayoutTableProps> = ({
         header: () => (
           <HeaderCell title="Total Stake" className="justify-start" />
         ),
-        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        cell: (props) => (
+          <TokenAmountCell
+            amount={props.getValue()}
+            formatStyle={AmountFormatStyle.SHORT}
+          />
+        ),
         sortingFn: sortBnValueForPayout,
       }),
       columnHelper.accessor('nominators', {
@@ -136,7 +142,12 @@ const PayoutTable: FC<PayoutTableProps> = ({
         header: () => (
           <HeaderCell title="Total Rewards" className="justify-start" />
         ),
-        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        cell: (props) => (
+          <TokenAmountCell
+            amount={props.getValue()}
+            formatStyle={AmountFormatStyle.SHORT}
+          />
+        ),
         sortingFn: sortBnValueForPayout,
       }),
       columnHelper.accessor('nominatorTotalReward', {

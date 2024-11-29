@@ -74,14 +74,13 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
 
       const membersMap = new Map(membersKeyValuePairs);
 
-      let name: string | undefined;
+      const name = tanglePool.metadata.name.isNone
+        ? undefined
+        : tanglePool.metadata.name.unwrap().toUtf8();
 
-      // TODO: Something about Polkadot's types is causing this to throw an error, saying that `.toUtf8` is not a function. Using this temporary workaround for now.
-      try {
-        name = tanglePool.metadata.name.toUtf8();
-      } catch {
-        name = undefined;
-      }
+      const iconUrl = tanglePool.metadata.icon.isNone
+        ? undefined
+        : tanglePool.metadata.icon.unwrap().toUtf8();
 
       const pool: LsPool = {
         id: poolId,
@@ -96,6 +95,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         members: membersMap,
         // TODO: Ensure that this also works for the Restaking Parachain, once it's implemented.
         protocolId: lsProtocolId,
+        iconUrl,
       };
 
       return [poolId, pool] as const;
