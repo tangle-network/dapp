@@ -2,7 +2,6 @@
 
 import {
   AppEvent,
-  NextThemeProvider,
   OFACFilterProvider,
   WebbProvider,
 } from '@webb-tools/api-provider-environment';
@@ -39,26 +38,24 @@ const Providers = ({
   } = envSchema.parse(process.env);
 
   return (
-    <NextThemeProvider>
-      <WebbUIProvider hasErrorBoudary isNextApp>
-        <WebbProvider
-          appEvent={appEvent}
-          applicationName="Tangle dApp"
-          isSSR
-          wagmiInitialState={wagmiInitialState}
+    <WebbUIProvider hasErrorBoudary isNextApp>
+      <WebbProvider
+        appEvent={appEvent}
+        applicationName="Tangle dApp"
+        isSSR
+        wagmiInitialState={wagmiInitialState}
+      >
+        <OFACFilterProvider
+          isActivated={process.env.NODE_ENV !== 'development'}
+          blockedRegions={blockedRegions}
+          blockedCountryCodes={blockedCountryCodes}
         >
-          <OFACFilterProvider
-            isActivated={process.env.NODE_ENV !== 'development'}
-            blockedRegions={blockedRegions}
-            blockedCountryCodes={blockedCountryCodes}
-          >
-            <HyperlaneWarpContext>
-              <BridgeTxQueueProvider>{children}</BridgeTxQueueProvider>
-            </HyperlaneWarpContext>
-          </OFACFilterProvider>
-        </WebbProvider>
-      </WebbUIProvider>
-    </NextThemeProvider>
+          <HyperlaneWarpContext>
+            <BridgeTxQueueProvider>{children}</BridgeTxQueueProvider>
+          </HyperlaneWarpContext>
+        </OFACFilterProvider>
+      </WebbProvider>
+    </WebbUIProvider>
   );
 };
 

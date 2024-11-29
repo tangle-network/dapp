@@ -1,4 +1,3 @@
-export { default as NextThemeProvider } from './NextThemeProvider';
 export { default as OFACFilterProvider } from './OFACFilterProvider';
 export { default as RequireNoteAccountRoute } from './RequireNoteAccountRoute';
 export * from './RouterProvider';

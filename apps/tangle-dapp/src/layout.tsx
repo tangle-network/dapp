@@ -4,51 +4,46 @@ import '../styles/globals.css';
 import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import Suspense from '@webb-tools/webb-ui-components/components/Suspense';
 import { getSidebarStateFromCookie } from '@webb-tools/webb-ui-components/next-utils';
-import type { Metadata, Viewport } from 'next';
-import { headers } from 'next/headers';
 import type React from 'react';
 import { cookieToInitialState } from 'wagmi';
 
-import { DEFAULT_OPENGRAPH_METADATA } from '../constants/openGraph';
 import { Layout } from '../containers';
 import Providers from './providers';
 
-export const dynamic = 'force-static';
-
-export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#fff' },
-    { media: '(prefers-color-scheme: dark)', color: '#252836' },
-  ],
+// Set viewport theme color via meta tag
+const themeColorMeta = document.createElement('meta');
+themeColorMeta.name = 'theme-color';
+const setThemeColor = () => {
+  themeColorMeta.content = window.matchMedia('(prefers-color-scheme: dark)')
+    .matches
+    ? '#252836'
+    : '#fff';
 };
+setThemeColor();
+window
+  .matchMedia('(prefers-color-scheme: dark)')
+  .addEventListener('change', setThemeColor);
+document.head.appendChild(themeColorMeta);
 
-// Provide default OpenGraph metadata unless specific pages
-// override it.
-export const metadata: Metadata = DEFAULT_OPENGRAPH_METADATA;
-
-export default function RootLayout({
+export const Layout: React.FC<{ children: React.ReactNode }> = ({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}) => {
   const initialState = cookieToInitialState(
-    getWagmiConfig({ isSSR: true }),
-    headers().get('cookie'),
+    getWagmiConfig({ isSSR: false }),
+    document.cookie,
   );
 
   const isSidebarInitiallyExpanded = getSidebarStateFromCookie();
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <Suspense>
-          <Providers wagmiInitialState={initialState}>
-            <Layout isSidebarInitiallyExpanded={isSidebarInitiallyExpanded}>
-              {children}
-            </Layout>
-          </Providers>
-        </Suspense>
-      </body>
-    </html>
+    <Suspense>
+      <Providers wagmiInitialState={initialState}>
+        <Layout isSidebarInitiallyExpanded={isSidebarInitiallyExpanded}>
+          {children}
+        </Layout>
+      </Providers>
+    </Suspense>
   );
-}
+};
+
+export default Layout;
