@@ -25,6 +25,10 @@ export default TangleTokenIcon;
 /* @internal */
 function getIconSize(size: IconSize) {
   switch (size) {
+    case '2xl': {
+      return 64;
+    }
+
     case 'xl': {
       return 48;
     }

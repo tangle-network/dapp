@@ -7,6 +7,10 @@ import { IconSize } from '@webb-tools/icons/types';
  */
 export function getIconsSpacingClassName(size: IconSize) {
   switch (size) {
+    case '2xl': {
+      return '-space-x-4' as const;
+    }
+
     case 'xl': {
       return '-space-x-3' as const;
     }

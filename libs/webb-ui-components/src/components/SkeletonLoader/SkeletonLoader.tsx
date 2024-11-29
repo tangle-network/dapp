@@ -1,11 +1,11 @@
 import { type FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-export type SkeletonSize = 'md' | 'lg' | 'xl';
+export type SkeletonSize = 'md' | 'lg' | 'xl' | '2xl';
 
 export interface SkeletonLoaderProps {
   /**
-   * The icon size, possible values: `md` (16px), `lg` (24px), `xl` (48px)
+   * The icon size, possible values: `md` (16px), `lg` (24px), `xl` (48px), `2xl` (64px)
    * @default "md"
    */
   size?: SkeletonSize;
@@ -17,6 +17,10 @@ export interface SkeletonLoaderProps {
 
 export function getHeightBySize(size: SkeletonSize) {
   switch (size) {
+    case '2xl': {
+      return 'h-24' as const;
+    }
+
     case 'xl': {
       return 'h-12' as const;
     }
