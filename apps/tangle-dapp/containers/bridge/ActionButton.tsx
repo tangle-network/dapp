@@ -23,9 +23,7 @@ export const ActionButton: React.FC<ActionButtonProps> = ({
       className={twMerge(
         'w-full p-4 rounded-xl transition-all',
         'text-lg font-semibold',
-        disabled
-          ? 'bg-mono-60 dark:bg-mono-120 text-mono-100 dark:text-mono-80 cursor-not-allowed'
-          : 'bg-primary-70 hover:bg-primary-60 dark:bg-primary-50 dark:hover:bg-primary-40 text-mono-0',
+        'bg-mono-60 dark:bg-mono-120 text-mono-100 dark:text-mono-80 cursor-not-allowed',
         loading && 'opacity-80',
         className,
       )}

@@ -38,7 +38,6 @@ export const TokenAmountInput: React.FC<TokenAmountInputProps> = ({
         className={twMerge(
           'p-4 rounded-xl transition-colors',
           'bg-mono-20 dark:bg-mono-160',
-          error && 'ring-2 ring-red-70 dark:ring-red-50',
           className,
         )}
       >

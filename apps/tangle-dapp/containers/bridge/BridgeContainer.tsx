@@ -33,6 +33,7 @@ import { ActionButton } from './ActionButton';
 import { IconButton } from './IconButton';
 import { SelectCard } from './SelectCard';
 import { TokenAmountInput } from './TokenAmountInput';
+import { BN } from 'bn.js';
 
 interface BridgeContainerProps {
   className?: string;
@@ -191,8 +192,9 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
         setAmount(newAmount);
 
         // Just check if amount exceeds balance but don't prevent input
-        if (selectedTokenBalance?.balance && newAmount) {
-          setIsAmountInputError(newAmount.gt(selectedTokenBalance.balance));
+        const myBalance = selectedTokenBalance?.balance || new BN(0);
+        if (newAmount) {
+          setIsAmountInputError(newAmount.gt(myBalance));
         } else {
           setIsAmountInputError(false);
         }
