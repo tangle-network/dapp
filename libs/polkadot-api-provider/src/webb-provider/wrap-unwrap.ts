@@ -12,6 +12,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { lastValueFrom, Observable, Subject } from 'rxjs';
 import { parseUnits } from 'viem';
 import { WebbPolkadot } from '../webb-provider';
+import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config';
 
 export type PolkadotWrapPayload = Amount;
 export type PolkadotUnwrapPayload = Amount;
@@ -27,24 +28,19 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
       return false;
     }
     const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
-    const wrappableToken = this.inner.state.wrappableCurrency;
 
-    if (!fungibleToken || !wrappableToken) {
+    if (!fungibleToken) {
       return false;
     }
 
-    const bnAmount = parseUnits(
-      amountNumber.toString(),
-      wrappableToken.getDecimals(),
-    );
+    const bnAmount = parseUnits(amountNumber.toString(), DEFAULT_DECIMALS);
     const chainID = this.inner.typedChainId;
     const fungibleTokenId = fungibleToken.getAddress(chainID);
-    const wrappableTokenId = wrappableToken.getAddress(chainID);
-
-    if (!fungibleTokenId || !wrappableTokenId) {
+    if (!fungibleTokenId) {
       return false;
     }
 
+    const wrappableTokenId = '0';
     const poolShare =
       await this.inner.api.query.assetRegistry.assets(fungibleTokenId);
     const poolShareExistentialBalance = (poolShare as any)
@@ -73,19 +69,15 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
   async unwrap(payload: PolkadotUnwrapPayload): Promise<string> {
     const { amount: amountNumber } = payload;
     const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
-    const wrappableToken = this.inner.state.wrappableCurrency;
 
-    if (!fungibleToken || !wrappableToken) {
+    if (!fungibleToken) {
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
-    const bnAmount = parseUnits(
-      amountNumber.toString(),
-      wrappableToken.getDecimals(),
-    );
+    const bnAmount = parseUnits(amountNumber.toString(), DEFAULT_DECIMALS);
     const chainID = this.inner.typedChainId;
     const governableATreeId = fungibleToken.getAddress(chainID);
-    const wrappableTokenId = wrappableToken.getAddress(chainID);
+    const wrappableTokenId = '0';
 
     const account = await this.inner.accounts.activeOrDefault;
     if (!account) {
@@ -112,18 +104,15 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
   async wrap(payload: PolkadotWrapPayload): Promise<string> {
     const { amount: amountNumber } = payload;
     const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
-    const wrappableToken = this.inner.state.wrappableCurrency;
-    if (!fungibleToken || !wrappableToken) {
+
+    if (!fungibleToken) {
       throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
     }
 
-    const bnAmount = parseUnits(
-      amountNumber.toString(),
-      wrappableToken.getDecimals(),
-    );
+    const bnAmount = parseUnits(amountNumber.toString(), DEFAULT_DECIMALS);
     const chainID = this.inner.typedChainId;
     const wrappedTokenId = fungibleToken.getAddress(chainID);
-    const wrappableTokenId = wrappableToken.getAddress(chainID);
+    const wrappableTokenId = '0';
 
     const account = await this.inner.accounts.activeOrDefault;
     if (!account) {
@@ -155,20 +144,17 @@ export class PolkadotWrapUnwrap extends WrapUnwrap<WebbPolkadot> {
       return false;
     }
     const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
-    const wrappableToken = this.inner.state.wrappableCurrency;
-    if (!fungibleToken || !wrappableToken) {
+
+    if (!fungibleToken) {
       return false;
     }
 
-    const bnAmount = parseUnits(
-      amountNumber.toString(),
-      wrappableToken.getDecimals(),
-    );
+    const bnAmount = parseUnits(amountNumber.toString(), DEFAULT_DECIMALS);
     const chainID = this.inner.typedChainId;
     const fungibleTokenId = fungibleToken.getAddress(chainID);
-    const wrappableTokenId = wrappableToken.getAddress(chainID);
+    const wrappableTokenId = '0';
 
-    if (!fungibleTokenId || !wrappableTokenId) {
+    if (!fungibleTokenId) {
       return false;
     }
 

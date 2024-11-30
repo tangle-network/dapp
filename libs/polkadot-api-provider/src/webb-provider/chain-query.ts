@@ -9,6 +9,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { BN } from 'bn.js';
 import { Observable, of, switchMap } from 'rxjs';
 import { WebbPolkadot } from '../webb-provider';
+import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config';
 
 export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
   constructor(protected inner: WebbPolkadot) {
@@ -24,7 +25,7 @@ export class PolkadotChainQuery extends ChainQuery<WebbPolkadot> {
     return this.inner.newBlock.pipe(
       switchMap(async () => {
         const activeAccount = await this.inner.accounts.activeOrDefault;
-        const decimals = this.inner.state.defaultDecimalPlaces;
+        const decimals = DEFAULT_DECIMALS;
 
         if (!activeAccount) {
           return '';

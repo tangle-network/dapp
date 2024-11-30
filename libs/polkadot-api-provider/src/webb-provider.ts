@@ -16,7 +16,7 @@ import {
   calculateProvingLeavesAndCommitmentIndex,
 } from '@webb-tools/abstract-api-provider';
 import { AccountsAdapter } from '@webb-tools/abstract-api-provider/account/Accounts.adapter';
-import { Bridge, WebbState } from '@webb-tools/abstract-api-provider/state';
+import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { EventBus } from '@webb-tools/app-util';
 import { ApiConfig, Wallet } from '@webb-tools/dapp-config';
 import {
@@ -62,8 +62,6 @@ export class WebbPolkadot
   implements WebbApiProvider<WebbPolkadot>
 {
   readonly type = 'polkadot';
-
-  state: WebbState;
 
   readonly methods: WebbMethods<'polkadot', WebbApiProvider<WebbPolkadot>>;
 
@@ -153,17 +151,6 @@ export class WebbPolkadot
         }
       }
     }
-
-    this.state = new WebbState(
-      initialSupportedCurrencies,
-      initialSupportedBridges,
-    );
-
-    // set the available bridges of the new chain
-    this.state.setBridgeOptions(initialSupportedBridges);
-
-    // Select a reasonable default bridge
-    this.state.activeBridge = Object.values(initialSupportedBridges)[0] ?? null;
   }
 
   capabilities?: ProvideCapabilities | undefined;

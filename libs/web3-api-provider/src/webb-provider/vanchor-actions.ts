@@ -608,7 +608,6 @@ export class Web3VAnchorActions extends VAnchorActions<
       chainId: payload.note.targetChainId.toString(),
       keypair: new Keypair(`0x${secrets[2]}`),
       blinding: hexToU8a(`0x${secrets[3]}`),
-      index: this.inner.state.defaultUtxoIndex.toString(),
     });
 
     return Promise.resolve([

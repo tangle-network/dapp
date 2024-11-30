@@ -523,10 +523,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
                     }
                   }
 
-                  // set the available bridges of the new chain
-                  webbWeb3Provider.state.setBridgeOptions(bridgeOptions);
-                  webbWeb3Provider.state.activeBridge = defaultBridge;
-
                   appEvent.send('networkSwitched', [
                     {
                       chainType: activeChain.chainType,
@@ -539,7 +535,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
                   // TODO mark the api as not ready
                   setActiveChain(undefined);
                   setActiveWallet(wallet);
-                  webbWeb3Provider.state.activeBridge = null;
                   if (e instanceof WebbError) {
                     /// Catching the errors for the switcher from the event
                     catchWebbError(e);
@@ -596,11 +591,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           ...sharedWalletConnectionPayload,
           status: 'sucess',
         });
-
-        // If the _bridge is passed in, set it as the active bridge
-        if (localActiveApi?.state && _bridge) {
-          localActiveApi.state.activeBridge = _bridge;
-        }
 
         return localActiveApi;
       } catch (e) {

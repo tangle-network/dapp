@@ -10,49 +10,36 @@ export type AnchorBase = {
   // Neighbors are indexed on their typedChainId
   neighbours: Record<number, string | number>;
 };
-/**
- * The BridgeApi is meant for interactions on the WebbState's activeBridge.
- * Most of the state in the dApp is derived from the selected activeBridge.
- **/
+
 export abstract class BridgeApi<
   T extends WebbApiProvider<any> = WebbApiProvider<any>,
 > {
   public constructor(protected inner: T) {}
 
   getCurrency(): Currency | null {
-    return this.inner.state.activeBridge?.currency ?? null;
+    return null;
   }
 
   getBridge(): Bridge | null {
-    return this.inner.state.activeBridge;
+    return null;
   }
 
-  getCurrencyById(currencyId: number) {
-    const bridgeCurrency = Object.values(this.inner.state.getCurrencies()).find(
-      (currency) => {
-        return currency.id === currencyId;
-      },
-    );
-    return bridgeCurrency ?? null;
+  getCurrencyById(_currencyId: number) {
+    return null;
   }
 
   get bridges(): Bridge[] {
-    return Object.values(this.inner.state.getBridgeOptions());
+    return [];
   }
 
-  setActiveBridge(entry: Bridge) {
-    this.inner.state.activeBridge = entry;
+  setActiveBridge(_entry: Bridge) {
+    // TODO: Remove this method
   }
 
   setBridgeByCurrency(currency: Currency | null) {
     if (!currency) {
-      this.inner.state.activeBridge = null;
       return;
     }
-    this.inner.state.activeBridge =
-      this.bridges.find((bridge) => {
-        return bridge.currency.id === currency.id;
-      }) ?? null;
   }
 
   getTokenTarget(typedChainId: number): string | null {
@@ -63,13 +50,7 @@ export abstract class BridgeApi<
   }
 
   async getVAnchors(): Promise<AnchorBase[]> {
-    return this.inner.state.activeBridge
-      ? [
-          {
-            neighbours: this.inner.state.activeBridge.targets,
-          },
-        ]
-      : [];
+    return [];
   }
 
   abstract fetchWrappableAssets(typedChainId: number): Promise<Currency[]>;

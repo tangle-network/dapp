@@ -4,7 +4,6 @@ export * from './note';
 export * from './relayer/useRelayers';
 export * from './types';
 export * from './useAccounts';
-export * from './useCurrentResourceId';
 export * from './useFetch';
 export * from './useIp';
 export * from './useWallets';

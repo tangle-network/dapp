@@ -20,7 +20,6 @@ import { ChainQuery } from './chain-query';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
 import { ECDSAClaims } from './ecdsa-claims';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
-import { WebbState } from './state';
 import { WebbProviderType } from './types';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
@@ -195,7 +194,6 @@ export type NotificationHandler = ((
  * The representation of an api provider
  *
  * @param {AccountsAdapter} accounts - Accounts Adapter will have all methods related to the provider accounts.
- * @param {WebbState} state - State of the provider
  * @param {WebbMethods} methods - All of the available methods  of the API provider.
  * @param {() => Promise<void> | void} destroy -  A hook will be called to drop the provider and do cleanup listeners etc.
  * @param {ProvideCapabilities} capabilities - Manifesto of the supported actions of the provider.
@@ -207,7 +205,6 @@ export type NotificationHandler = ((
  **/
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<unknown>;
-  state: WebbState;
   methods: WebbMethods<WebbProviderType, WebbApiProvider<T>>;
 
   relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;

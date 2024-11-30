@@ -7,17 +7,9 @@ import {
   WrappingEvent,
   WrapUnwrap,
 } from '@webb-tools/abstract-api-provider';
-import {
-  ERC20__factory,
-  FungibleTokenWrapper__factory,
-} from '@webb-tools/contracts';
+import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
 import { ensureHex } from '@webb-tools/dapp-config';
-import {
-  CurrencyType,
-  WebbError,
-  WebbErrorCodes,
-  zeroAddress,
-} from '@webb-tools/dapp-types';
+import { zeroAddress } from '@webb-tools/dapp-types';
 import { calculateTypedChainId, ChainType } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import {
@@ -120,8 +112,7 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
 
     const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
 
-    const wrappableToken = this.inner.state.wrappableCurrency;
-    if (!fungibleToken || !wrappableToken) {
+    if (!fungibleToken) {
       return '';
     }
 
@@ -131,185 +122,28 @@ export class Web3WrapUnwrap extends WrapUnwrap<WebbWeb3Provider> {
     }
 
     try {
-      this.inner.notificationHandler({
-        description: `Unwrapping ${amountNumber} of ${fungibleToken.view.name} to
-        ${wrappableToken.view.name}`,
-        key: 'unwrap-asset',
-        level: 'loading',
-        message: 'FungibleTokenwrapper:unwrap',
-        name: 'Transaction',
-      });
-      const wrappableTokenAddress = wrappableToken.getAddress(
-        await this.inner.getChainId(),
-      );
-
-      if (!wrappableTokenAddress) {
-        throw new Error(
-          `No wrappable token address for ${wrappableToken.view.name} on selected chain`,
-        );
-      }
-
       const account = this.inner.walletClient.account;
       const { request } = await webbFungibleToken.simulate.unwrap(
-        [ensureHex(wrappableTokenAddress), amount],
+        [zeroAddress, amount],
         { account: account?.address },
       );
 
       const txHash = await this.inner.walletClient.writeContract(request);
 
-      this.inner.notificationHandler({
-        description: `Unwrapping ${amountNumber} of ${fungibleToken.view.name} to
-        ${wrappableToken.view.name}`,
-        key: 'unwrap-asset',
-        level: 'success',
-        message: 'FungibleTokenwrapper:unwrap',
-        name: 'Transaction',
-      });
-
       return txHash;
     } catch (e) {
       console.log('error while unwrapping: ', e);
-      this.inner.notificationHandler({
-        description: `Failed to unwrap ${amountNumber} of ${fungibleToken.view.name} to
-        ${wrappableToken.view.name}`,
-        key: 'unwrap-asset',
-        level: 'error',
-        message: 'FungibleTokenwrapper:unwrap',
-        name: 'Transaction',
-      });
 
       return '';
     }
   }
 
   async canWrap(): Promise<boolean> {
-    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
-    const wrappableToken = this.inner.state.wrappableCurrency;
-    if (!fungibleToken || !wrappableToken) {
-      return false;
-    }
-    const webbFungibleToken = this.fungibleTokenwrapper(fungibleToken);
-    if (!webbFungibleToken) {
-      return false;
-    }
-
-    if (wrappableToken.view.type === CurrencyType.NATIVE) {
-      return webbFungibleToken.read.isNativeAllowed();
-    } else {
-      if (!this.currentChainId) {
-        return false;
-      }
-
-      const tokenAddress = wrappableToken.getAddress(this.currentChainId);
-      if (!tokenAddress) {
-        return false;
-      }
-
-      return webbFungibleToken.read.isValidToken([ensureHex(tokenAddress)]);
-    }
+    return false;
   }
 
-  async wrap(wrapPayload: Web3WrapPayload): Promise<string> {
-    const { amount: amountNumber } = wrapPayload;
-    const fungibleToken = this.inner.methods.bridgeApi.getBridge()?.currency;
-    const wrappableToken = this.inner.state.wrappableCurrency;
-    if (!fungibleToken || !wrappableToken) {
-      return '';
-    }
-
-    const webbFungibleToken = this.fungibleTokenwrapper(fungibleToken);
-    if (!webbFungibleToken) {
-      return '';
-    }
-
-    const wrappableAddress = this.getAddressFromCurrency(wrappableToken);
-    if (!wrappableAddress) {
-      return '';
-    }
-
-    const amount = parseEther(String(amountNumber));
-
-    try {
-      this.inner.notificationHandler({
-        description: `Wrapping ${amountNumber} of ${wrappableToken.view.name} to
-        ${fungibleToken.view.name}`,
-        key: 'wrap-asset',
-        level: 'loading',
-        message: 'FungibleTokenwrapper:wrap',
-        name: 'Transaction',
-      });
-
-      const account = this.inner.walletClient.account;
-      if (!account) {
-        throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
-      }
-
-      // If wrapping an erc20, check for approvals
-      if (wrappableAddress !== zeroAddress) {
-        const wrappableTokenInstance = getContract({
-          address: ensureHex(wrappableAddress),
-          abi: ERC20__factory.abi,
-          client: this.inner.publicClient,
-        });
-
-        const wrappableTokenAllowance =
-          await wrappableTokenInstance.read.allowance([
-            account.address,
-            wrappableTokenInstance.address,
-          ]);
-
-        if (wrappableTokenAllowance < BigInt(amount)) {
-          this.inner.notificationHandler({
-            description: 'Waiting for token approval',
-            key: 'waiting-approval',
-            level: 'info',
-            message: 'Waiting for token approval',
-            name: 'Transaction',
-            persist: true,
-          });
-
-          const { request } = await wrappableTokenInstance.simulate.approve(
-            [webbFungibleToken.address, amount],
-            { account: account.address },
-          );
-
-          // TODO: Fix type casting here
-          await this.inner.walletClient.writeContract(request as any);
-
-          this.inner.notificationHandler.remove('waiting-approval');
-        }
-      }
-
-      const { request } = await webbFungibleToken.simulate.wrap(
-        [wrappableAddress, amount],
-        { account: account.address },
-      );
-
-      const txHash = await this.inner.walletClient.writeContract(request);
-
-      this.inner.notificationHandler({
-        description: `Wrapping ${amountNumber} of ${wrappableToken.view.name} to
-        ${fungibleToken.view.name}`,
-        key: 'wrap-asset',
-        level: 'success',
-        message: 'FungibleTokenwrapper:wrap',
-        name: 'Transaction',
-      });
-
-      return txHash;
-    } catch (e) {
-      console.log('error while wrapping: ', e);
-      this.inner.notificationHandler({
-        description: `Failed to wrap ${amountNumber} of ${wrappableToken.view.name} to
-        ${fungibleToken.view.name}`,
-        key: 'wrap-asset',
-        level: 'error',
-        message: 'FungibleTokenwrapper:wrap',
-        name: 'Transaction',
-      });
-
-      return '';
-    }
+  async wrap(_wrapPayload: Web3WrapPayload): Promise<string> {
+    return zeroAddress;
   }
 
   private getAddressFromCurrency(currency: Currency): Address | undefined {

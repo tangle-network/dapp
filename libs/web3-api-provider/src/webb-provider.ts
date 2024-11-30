@@ -11,7 +11,6 @@ import {
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
-  WebbState,
 } from '@webb-tools/abstract-api-provider';
 import { EventBus } from '@webb-tools/app-util';
 import { retryPromise } from '@webb-tools/browser-utils';
@@ -89,8 +88,6 @@ export class WebbWeb3Provider
   implements WebbApiProvider<WebbWeb3Provider>
 {
   readonly type = 'web3';
-
-  state: WebbState;
 
   private readonly _newBlock = new BehaviorSubject<null | bigint>(null);
 
@@ -205,14 +202,6 @@ export class WebbWeb3Provider
         }
       }
     }
-
-    this.state = new WebbState(
-      initialSupportedCurrencies,
-      initialSupportedBridges,
-    );
-
-    // Select a reasonable default bridge
-    this.state.activeBridge = Object.values(initialSupportedBridges)[0] ?? null;
   }
 
   // Init web3 provider with the `Web3Accounts` as the default account provider

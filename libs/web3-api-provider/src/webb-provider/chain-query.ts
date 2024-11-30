@@ -24,33 +24,13 @@ export class Web3ChainQuery extends ChainQuery<WebbWeb3Provider> {
 
   // Returns the balance formatted in ETH units.
   tokenBalanceByCurrencyId(
-    typedChainId: number,
-    currencyId: number,
-    accountAddressArg?: string,
+    _typedChainId: number,
+    _currencyId: number,
+    _accountAddressArg?: string,
   ): Observable<string> {
     return this.inner.newBlock.pipe(
       switchMap(async () => {
-        const currency = this.inner.state.getCurrencies()[currencyId];
-        if (!currency) {
-          return '';
-        }
-
-        const account = await this.getAccountAddress(accountAddressArg);
-        if (!account) {
-          console.error('No account selected');
-          return '';
-        }
-
-        const accountAddress: Address = ensureHex(account);
-        const tknAddr = currency.getAddressOfChain(typedChainId);
-
-        const balance = await this.fetchAccountBalance(
-          accountAddress,
-          typedChainId,
-          tknAddr ? ensureHex(tknAddr) : undefined,
-        );
-
-        return formatEther(balance.value);
+        return '0';
       }),
       catchError(() => of('')), // Return empty string when error
     );

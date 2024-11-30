@@ -91,22 +91,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     payload: TransactionPayloadType,
     wrapUnwrapAssetId: string,
   ): Promise<ParametersOfTransactMethod<'polkadot'>> | never {
-    // If the wrapUnwrapAssetId is empty, we use the bridge fungible token
-    if (!wrapUnwrapAssetId) {
-      const activeBridge = this.inner.state.activeBridge;
-      if (!activeBridge) {
-        throw WebbError.from(WebbErrorCodes.NoActiveBridge);
-      }
-
-      const fungibleAsset = activeBridge.currency;
-      const assetId = fungibleAsset.getAddress(this.inner.typedChainId);
-      if (!assetId) {
-        throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
-      }
-
-      wrapUnwrapAssetId = assetId;
-    }
-
     if (isVAnchorDepositPayload(payload)) {
       return this.prepareDepositTransaction(payload, wrapUnwrapAssetId);
     } else if (isVAnchorWithdrawPayload(payload)) {
@@ -189,60 +173,17 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   }
 
   async transact(
-    treeId: string,
-    inputs: Utxo[],
-    outputs: Utxo[],
-    fee: bigint,
-    refund: bigint,
-    recipient: string,
-    relayer: string,
-    wrapUnwrapAssetId: string,
-    leavesMap: Record<string, Uint8Array[]>,
+    _treeId: string,
+    _inputs: Utxo[],
+    _outputs: Utxo[],
+    _fee: bigint,
+    _refund: bigint,
+    _recipient: string,
+    _relayer: string,
+    _wrapUnwrapAssetId: string,
+    _leavesMap: Record<string, Uint8Array[]>,
   ) {
-    // Get active bridge and currency fungible asset
-    const activeBridge = this.inner.state.activeBridge;
-    if (!activeBridge) {
-      throw WebbError.from(WebbErrorCodes.NoActiveBridge);
-    }
-
-    const fungibleAsset = activeBridge.currency;
-    const fungibleAssetId = fungibleAsset.getAddress(this.inner.typedChainId);
-    if (!fungibleAssetId) {
-      throw WebbError.from(WebbErrorCodes.NoFungibleTokenAvailable);
-    }
-
-    // Get active account
-    const activeAccount = await this.inner.accounts.activeOrDefault;
-    if (!activeAccount) {
-      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
-    }
-
-    const { extData, publicInputs } = await this.setupTransaction(
-      inputs,
-      outputs,
-      fee,
-      refund,
-      recipient,
-      relayer,
-      wrapUnwrapAssetId,
-      leavesMap,
-      treeId,
-    );
-
-    // now we call the vanchor transact on substrate
-    const polkadotTx = this.inner.txBuilder.buildWithoutNotification(
-      [
-        {
-          method: 'transact',
-          section: 'vAnchorBn254',
-        },
-      ],
-      [[treeId, publicInputs, extData]],
-    );
-
-    const txHash = await polkadotTx.call(activeAccount.address);
-
-    return ensureHex(txHash);
+    return ensureHex(zeroAddress);
   }
 
   async waitForFinalization(_hash: AddressType): Promise<void> {
