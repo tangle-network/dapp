@@ -9,7 +9,6 @@ import {
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { LoggerService } from '@webb-tools/browser-utils/logger';
 import {
-  multipleKeypairStorageFactory,
   netStorageFactory,
   type NetworkStorage,
 } from '@webb-tools/browser-utils/storage';
@@ -33,7 +32,6 @@ import {
 } from '@webb-tools/dapp-types';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
-import { NoteManager } from '@webb-tools/note-manager';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
 import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
 import {
@@ -74,11 +72,7 @@ import { StoreProvider } from '../store';
 import { useTxApiQueue } from '../transaction';
 import waitForConfigReady from '../utils/waitForConfigReady';
 import { WebbContext } from '../webb-context';
-import {
-  notificationHandler,
-  registerInteractiveFeedback,
-  useNoteAccount,
-} from './private';
+import { notificationHandler, registerInteractiveFeedback } from './private';
 
 interface WebbProviderInnerProps extends BareProps {
   appEvent: TAppEvent;
@@ -126,15 +120,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
   >([]);
 
   const { notificationApi } = useWebbUI();
-
-  const {
-    loginIfExist,
-    loginNoteAccount,
-    logoutNoteAccount,
-    noteManager,
-    purgeNoteAccount,
-    setNoteManager,
-  } = useNoteAccount(activeApi);
 
   const { connectAsync, connectors } = useConnect();
 
@@ -204,9 +189,8 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       }
 
       setActiveAccount(account);
-      await loginIfExist(account.address);
     },
-    [activeApi, activeChain, loginIfExist, setActiveAccount],
+    [activeApi, activeChain, setActiveAccount],
   );
 
   /**
@@ -222,7 +206,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         setActiveApi(nextActiveApi);
         setAccounts([]);
         setActiveAccount(null);
-        setNoteManager(null);
         return;
       }
 
@@ -246,7 +229,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         if (defaultFromSettings) {
           setActiveAccount(defaultFromSettings);
           await nextActiveApi.accounts.setActiveAccount(defaultFromSettings);
-          await loginIfExist(defaultFromSettings.address);
           hasSetFromStorage = true;
         }
       }
@@ -278,8 +260,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         });
       });
     },
-    // prettier-ignore
-    [loginIfExist, setActiveAccount, setActiveAccountWithStorage, setNoteManager],
+    [setActiveAccount, setActiveAccountWithStorage],
   );
 
   /**
@@ -431,10 +412,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
 
               localActiveApi = webbPolkadot;
 
-              if (noteManager) {
-                localActiveApi.noteManager = noteManager;
-              }
-
               appEvent.send('walletConnectionState', {
                 ...sharedWalletConnectionPayload,
                 status: 'sucess',
@@ -478,7 +455,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
                 connector,
                 chain.id,
                 relayerManager,
-                noteManager,
                 apiConfig,
                 notificationHandler,
               );
@@ -675,7 +651,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       }
     },
     // prettier-ignore
-    [activeApi, appEvent, applicationName, catchWebbError, connectAsync, connectors, noteManager, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet],
+    [activeApi, appEvent, applicationName, catchWebbError, connectAsync, connectors, notificationApi, setActiveApiWithAccounts, setActiveChain, setActiveWallet],
   );
 
   /**
@@ -792,26 +768,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           logger.info(`Default account from settings`, defaultFromSettings);
 
           if (defaultFromSettings) {
-            const defaultAddr = defaultFromSettings.address;
-
-            // NoteManager configuration
-            const multipleKeyPairStorage =
-              await multipleKeypairStorageFactory();
-            const storedKeypair = await multipleKeyPairStorage.get(defaultAddr);
-            let createdNoteManager: NoteManager | null = null;
-
-            // Create the NoteManager if the stored keypair exists.
-            if (storedKeypair) {
-              createdNoteManager = await loginNoteAccount(
-                storedKeypair,
-                defaultAddr,
-              );
-            }
-
-            if (!activeApi.noteManager) {
-              activeApi.noteManager = createdNoteManager;
-            }
-
             setActiveAccountWithStorage(defaultFromSettings, {
               networkStorage: _networkStorage,
               chain: chainConfig,
@@ -860,7 +816,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       };
     },
     // prettier-ignore
-    [loginNoteAccount, setActiveAccountWithStorage, setActiveChain, switchChain, wagmiHydrated],
+    [setActiveAccountWithStorage, setActiveChain, switchChain, wagmiHydrated],
   );
 
   // App event listeners
@@ -895,10 +851,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         loading,
         wallets: walletsConfig,
         chains: chains,
-        noteManager,
-        loginNoteAccount,
-        logoutNoteAccount,
-        purgeNoteAccount,
         activeWallet,
         activeChain,
         activeApi,
@@ -911,7 +863,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         async inactivateApi(): Promise<void> {
           setAccounts([]);
           setActiveAccount(null);
-          setNoteManager(null);
           setActiveWallet(undefined);
           setActiveChain(activeChain);
 

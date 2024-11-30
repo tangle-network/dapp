@@ -1,4 +1,3 @@
-export * from './useBalancesFromNotes';
 export * from './useCurrencies';
 export * from './useCurrenciesBalances';
 export * from './useCurrencyBalance';

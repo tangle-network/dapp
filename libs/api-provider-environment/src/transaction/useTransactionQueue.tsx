@@ -3,19 +3,16 @@
 import {
   NewNotesTxResult,
   TransactionExecutor,
-  TransactionState,
-  TransactionStatusMap,
-  TransactionStatusValue,
   TransactionName,
+  TransactionState,
+  TransactionStatusValue,
 } from '@webb-tools/abstract-api-provider/transaction';
-import calculateProgressPercentage from '@webb-tools/abstract-api-provider/utils/calculateProgressPercentage';
 import { ApiConfig, ChainConfig } from '@webb-tools/dapp-config';
 import { ChainIcon } from '@webb-tools/icons';
 import {
   TransactionItemStatus,
   TransactionPayload,
   getRoundedAmountString,
-  toFixed,
 } from '@webb-tools/webb-ui-components';
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -238,12 +235,7 @@ export function useTxApiQueue(apiConfig: ApiConfig): TransactionQueueApi {
           const nextStatus = transactionItemStatusFromTxStatus(nextTxState);
           let nextMessage = getTxMessageFromStatus(nextTxState, nextTxData);
           if (nextTxState === TransactionState.FetchingLeaves) {
-            const { current, end, start } =
-              nextTxData as TransactionStatusMap<unknown>[TransactionState.FetchingLeaves];
-
-            const percentage = calculateProgressPercentage(start, end, current);
-            const formattedPercentage = toFixed(percentage);
-            nextMessage = `Fetching transaction leaves on chain... ${formattedPercentage}%`;
+            nextMessage = `Fetching transaction leaves on chain...`;
           }
 
           if (

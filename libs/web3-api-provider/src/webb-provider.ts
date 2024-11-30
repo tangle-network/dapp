@@ -18,7 +18,6 @@ import {
   WebbState,
   calculateProvingLeavesAndCommitmentIndex,
 } from '@webb-tools/abstract-api-provider';
-import calculateProgressPercentage from '@webb-tools/abstract-api-provider/utils/calculateProgressPercentage';
 import { EventBus } from '@webb-tools/app-util';
 import { retryPromise } from '@webb-tools/browser-utils';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
@@ -40,13 +39,12 @@ import {
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
 import Storage from '@webb-tools/dapp-types/Storage';
-import { NoteManager } from '@webb-tools/note-manager';
 import {
   CircomUtxo,
   Keypair,
-  toFixedHex,
   Utxo,
   UtxoGenInput,
+  toFixedHex,
 } from '@webb-tools/sdk-core';
 import { Note } from '@webb-tools/sdk-core/note';
 import {
@@ -131,7 +129,6 @@ export class WebbWeb3Provider
     readonly walletClient: WalletClient<Transport, Chain, Account>,
     protected chainId: number,
     readonly relayerManager: Web3RelayerManager,
-    readonly noteManager: NoteManager | null,
     readonly config: ApiConfig,
     readonly notificationHandler: NotificationHandler,
     readonly accounts: Web3Accounts,
@@ -228,7 +225,6 @@ export class WebbWeb3Provider
     connector: Connector,
     chainId: number,
     relayerManager: Web3RelayerManager,
-    noteManager: NoteManager | null,
     appConfig: ApiConfig,
     notification: NotificationHandler,
   ) {
@@ -245,7 +241,6 @@ export class WebbWeb3Provider
       walletClient,
       chainId,
       relayerManager,
-      noteManager,
       appConfig,
       notification,
       accounts,
@@ -488,19 +483,7 @@ export class WebbWeb3Provider
       owner,
       startingBlock,
       vAnchorContract,
-      (fromBlock, toBlock, currenctBlock) => {
-        const fromBlockNumber = +fromBlock.toString();
-        const toBlockNumber = +toBlock.toString();
-        const currenctBlockNumber = +currenctBlock.toString();
-
-        const progress = calculateProgressPercentage(
-          fromBlockNumber,
-          toBlockNumber,
-          currenctBlockNumber,
-        );
-
-        NoteManager.syncNotesProgress = progress;
-      },
+      undefined,
       abortSignal,
     );
 
@@ -508,29 +491,7 @@ export class WebbWeb3Provider
 
     abortSignal?.throwIfAborted();
 
-    const notes = Promise.all(
-      utxos.map(async (utxo) => {
-        abortSignal?.throwIfAborted();
-
-        console.log(utxo.serialize());
-
-        return await NoteManager.noteFromUtxo(
-          utxo,
-          'Circom',
-          typedChainId,
-          anchorId,
-          anchorId,
-          tokenSymbol.view.symbol,
-        );
-      }),
-    );
-
-    // Reset the progress
-    NoteManager.syncNotesProgress = Number.NaN;
-
-    abortSignal?.throwIfAborted();
-
-    return notes;
+    return [];
   }
 
   get typedChainId(): number {

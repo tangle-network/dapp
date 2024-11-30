@@ -7,9 +7,7 @@ export * from './useAccounts';
 export * from './useCurrentResourceId';
 export * from './useFetch';
 export * from './useIp';
-export * from './useNoteAccount';
 export * from './useWallets';
-export * from './vanchor/useVAnchor';
 
 export { default as useScrollActions } from './useScrollActions';
 export { default as useCurrentTypedChainId } from './useCurrentTypedChainId';

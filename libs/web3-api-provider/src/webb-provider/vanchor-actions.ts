@@ -202,20 +202,6 @@ export class Web3VAnchorActions extends VAnchorActions<
           });
           break;
         case RelayedWithdrawResult.Errored: {
-          changeNotes.forEach(async (note) => {
-            const { chainId, chainType } = parseTypedChainId(
-              +note.note.targetChainId,
-            );
-
-            const resourceId =
-              await this.inner.methods.variableAnchor.actions.inner.getResourceId(
-                note.note.targetIdentifyingData,
-                chainId,
-                chainType,
-              );
-
-            this.inner.noteManager?.removeNote(resourceId, note);
-          });
           break;
         }
       }
@@ -952,17 +938,6 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     // Notification failed transaction if not enough balance
     if (!hasBalance) {
-      const { chainId, chainType } = parseTypedChainId(
-        +payload.note.targetChainId,
-      );
-      const resourceId = await this.getResourceId(
-        payload.note.targetIdentifyingData,
-        chainId,
-        chainType,
-      );
-
-      this.emit('stateChange', TransactionState.Failed);
-      await this.inner.noteManager?.removeNote(resourceId, payload);
       throw new Error('Not enough balance');
     }
   }

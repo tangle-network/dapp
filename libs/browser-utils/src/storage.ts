@@ -60,34 +60,6 @@ export type MultipleKeyPairStorage = {
   [walletAddress: string]: string | null;
 };
 
-export const multipleKeypairStorageFactory = () =>
-  Storage.newFromCache<MultipleKeyPairStorage>('keypairs', {
-    async commit(key: string, data: MultipleKeyPairStorage): Promise<void> {
-      if (!isBrowser()) {
-        return;
-      }
-
-      localStorage.setItem(key, JSON.stringify(data));
-    },
-    async fetch(key: string): Promise<MultipleKeyPairStorage> {
-      const defaultResult =
-        {} satisfies MultipleKeyPairStorage as MultipleKeyPairStorage;
-      if (!isBrowser()) {
-        return defaultResult;
-      }
-
-      const storageCached = localStorage.getItem(key);
-
-      if (storageCached) {
-        return {
-          ...JSON.parse(storageCached),
-        };
-      }
-
-      return defaultResult;
-    },
-  });
-
 /**
  * The `NoteStorage` is used to store the encrypted notes of the user.
  * The key is the resource id.

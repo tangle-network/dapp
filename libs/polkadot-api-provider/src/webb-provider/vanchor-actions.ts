@@ -37,7 +37,6 @@ import {
   ResourceId,
   Utxo,
   buildVariableWitnessCalculator,
-  parseTypedChainId,
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import BN from 'bn.js';
@@ -189,24 +188,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
           });
           break;
         case RelayedWithdrawResult.Errored: {
-          console.log('Change notes', changeNotes);
-          await Promise.all(
-            changeNotes.map(async (note) => {
-              const { chainId, chainType } = parseTypedChainId(
-                +note.note.targetChainId,
-              );
-
-              const resourceId =
-                await this.inner.methods.variableAnchor.actions.inner.getResourceId(
-                  note.note.targetIdentifyingData,
-                  chainId,
-                  chainType,
-                );
-
-              this.inner.noteManager?.removeNote(resourceId, note);
-              return true;
-            }),
-          );
           tx.fail(message ? message : 'Transaction failed');
           break;
         }
@@ -543,17 +524,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     );
 
     if (Number(balance) < Number(amount)) {
-      const { chainId, chainType } = parseTypedChainId(
-        +payload.note.targetChainId,
-      );
-      const resourceId = await this.getResourceId(
-        payload.note.targetIdentifyingData,
-        chainId,
-        chainType,
-      );
-
       this.emit('stateChange', TransactionState.Failed);
-      await this.inner.noteManager?.removeNote(resourceId, payload);
       throw new Error('Not enough balance');
     }
   }

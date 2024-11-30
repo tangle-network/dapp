@@ -35,7 +35,6 @@ import {
   parseTypedChainId,
   toFixedHex,
 } from '@webb-tools/dapp-types/TypedChainId';
-import { NoteManager } from '@webb-tools/note-manager';
 import { CircomUtxo, Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
@@ -68,7 +67,6 @@ export class WebbPolkadot
   readonly type = 'polkadot';
 
   state: WebbState;
-  noteManager: NoteManager | null = null;
 
   readonly methods: WebbMethods<'polkadot', WebbApiProvider<WebbPolkadot>>;
 

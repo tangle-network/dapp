@@ -9,7 +9,6 @@ import type {
 import { ApiConfig, type Chain, type Wallet } from '@webb-tools/dapp-config';
 import type { InteractiveFeedback } from '@webb-tools/dapp-types';
 import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
-import type { NoteManager } from '@webb-tools/note-manager';
 import React from 'react';
 import { AppEvent, type TAppEvent } from '../app-event';
 import type { TransactionQueueApi } from '../transaction';
@@ -35,28 +34,6 @@ export interface WebbContextState<T = unknown> {
    * - `Chain` means the active chain is supported
    */
   activeChain?: Nullable<Maybe<Chain>>;
-
-  noteManager: Nullable<NoteManager>;
-
-  /**
-   * @param key the key to login
-   * @param walletAddress the wallet address to login
-   */
-  loginNoteAccount(
-    key: string,
-    walletAddress: string,
-  ): Promise<Nullable<NoteManager>>;
-
-  /**
-   * @param walletAddress the wallet address to logout
-   */
-  logoutNoteAccount(walletAddress: string): Promise<void>;
-
-  /**
-   * Clear note account corresponding to the wallet address
-   * @param walletAddress the wallet address to purge
-   */
-  purgeNoteAccount(walletAddress: string): Promise<void>;
 
   /** All pre-configured & on-chain data */
   apiConfig: ApiConfig;
@@ -97,16 +74,6 @@ export const WebbContext = React.createContext<WebbContextState<unknown>>({
   accounts: [],
   loading: true,
   activeAccount: null,
-  noteManager: null,
-  loginNoteAccount() {
-    return Promise.resolve(null);
-  },
-  logoutNoteAccount() {
-    return Promise.resolve();
-  },
-  purgeNoteAccount() {
-    return Promise.resolve();
-  },
   isConnecting: false,
   setActiveAccount() {
     return Promise.resolve();

@@ -1,17 +1,7 @@
-import type {
-  NotificationPayload,
-  WebbApiProvider,
-} from '@webb-tools/abstract-api-provider';
-import {
-  multipleKeypairStorageFactory,
-  resetMultiAccountNoteStorage,
-} from '@webb-tools/browser-utils/storage';
+import type { NotificationPayload } from '@webb-tools/abstract-api-provider';
 import type { InteractiveFeedback } from '@webb-tools/dapp-types';
 import { Spinner } from '@webb-tools/icons/Spinner';
-import { NoteManager } from '@webb-tools/note-manager';
-import { Keypair } from '@webb-tools/sdk-core';
 import { Typography, notificationApi } from '@webb-tools/webb-ui-components';
-import { useCallback, useState } from 'react';
 
 export const registerInteractiveFeedback = (
   setter: (update: (p: InteractiveFeedback[]) => InteractiveFeedback[]) => any,
@@ -86,89 +76,3 @@ export function notificationHandler(notification: NotificationPayload) {
 notificationHandler.remove = (key: string | number) => {
   notificationApi.remove(key);
 };
-
-export function useNoteAccount<T>(activeApi: WebbApiProvider<T> | undefined) {
-  const [noteManager, setNoteManager] = useState<NoteManager | null>(null);
-
-  const loginNoteAccount = useCallback(
-    async (key: string, walletAddress: string): Promise<NoteManager> => {
-      // Set the keypair
-      const accountKeypair = new Keypair(key);
-
-      const multipleKeypairStorage = await multipleKeypairStorageFactory();
-      multipleKeypairStorage.set(walletAddress, key);
-
-      // create a NoteManager instance
-      const noteManager = await NoteManager.initAndDecryptNotes(accountKeypair);
-
-      // set the noteManager instance on the activeApi if it exists
-      if (activeApi) {
-        activeApi.noteManager = noteManager;
-      }
-
-      setNoteManager(noteManager);
-      return noteManager;
-    },
-    [activeApi],
-  );
-
-  const logoutNoteAccount = useCallback(
-    async (walletAddress: string) => {
-      const multipleKeypairStorage = await multipleKeypairStorageFactory();
-      multipleKeypairStorage.set(walletAddress, null);
-
-      // clear the noteManager instance on the activeApi if it exists
-      if (activeApi) {
-        activeApi.noteManager = null;
-      }
-      setNoteManager(null);
-    },
-    [activeApi],
-  );
-
-  const purgeNoteAccount = useCallback(
-    async (walletAddress: string) => {
-      const multipleKeypairStorage = await multipleKeypairStorageFactory();
-      const currentPrivKey = await multipleKeypairStorage.get(walletAddress);
-
-      if (!currentPrivKey) {
-        return;
-      }
-
-      resetMultiAccountNoteStorage(new Keypair(currentPrivKey).getPubKey());
-
-      multipleKeypairStorage.set(walletAddress, null);
-
-      // clear the noteManager instance on the activeApi if it exists
-      if (activeApi) {
-        activeApi.noteManager = null;
-      }
-      setNoteManager(null);
-    },
-    [activeApi],
-  );
-
-  const loginIfExist = useCallback(
-    async (walletAddress: string) => {
-      const multipleKeypairStorage = await multipleKeypairStorageFactory();
-      const currentPrivKey = await multipleKeypairStorage.get(walletAddress);
-
-      if (!currentPrivKey) {
-        setNoteManager(null);
-        return;
-      }
-
-      await loginNoteAccount(currentPrivKey, walletAddress);
-    },
-    [loginNoteAccount],
-  );
-
-  return {
-    loginIfExist,
-    loginNoteAccount,
-    logoutNoteAccount,
-    noteManager,
-    purgeNoteAccount,
-    setNoteManager,
-  };
-}
