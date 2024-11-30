@@ -9,7 +9,6 @@ import {
   Currency,
   NotificationHandler,
   ProvideCapabilities,
-  RelayChainMethods,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -51,7 +50,6 @@ import { getLeaves } from './mt-utils';
 import { PolkaTXBuilder } from './transaction';
 import { PolkadotBridgeApi } from './webb-provider/bridge-api';
 import { PolkadotChainQuery } from './webb-provider/chain-query';
-import { PolkadotCrowdloan } from './webb-provider/crowdloan';
 import { PolkadotECDSAClaims } from './webb-provider/ecdsa-claims';
 import { PolkadotRelayerManager } from './webb-provider/relayer-manager';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
@@ -64,8 +62,6 @@ export class WebbPolkadot
   readonly type = 'polkadot';
 
   readonly methods: WebbMethods<'polkadot', WebbApiProvider<WebbPolkadot>>;
-
-  readonly relayChainMethods: RelayChainMethods<WebbApiProvider<WebbPolkadot>>;
 
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
@@ -99,13 +95,6 @@ export class WebbPolkadot
     this.accounts = this.provider.accounts;
     this.api = this.provider.api;
     this.txBuilder = this.provider.txBuilder;
-
-    this.relayChainMethods = {
-      crowdloan: {
-        enabled: true,
-        inner: new PolkadotCrowdloan(this),
-      },
-    };
 
     this.methods = {
       bridgeApi: new PolkadotBridgeApi(this),

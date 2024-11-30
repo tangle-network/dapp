@@ -17,18 +17,12 @@ import {
 } from 'viem';
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { ChainQuery } from './chain-query';
-import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
 import { ECDSAClaims } from './ecdsa-claims';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { WebbProviderType } from './types';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 import { WrapUnwrap } from './wrap-unwrap';
-
-export interface RelayChainMethods<T extends WebbApiProvider<any>> {
-  // Crowdloan API
-  crowdloan: WebbMethod<Crowdloan<T, ContributePayload>, CrowdloanEvent>;
-}
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<
@@ -206,8 +200,6 @@ export type NotificationHandler = ((
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<unknown>;
   methods: WebbMethods<WebbProviderType, WebbApiProvider<T>>;
-
-  relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;
 
   typedChainidSubject: BehaviorSubject<number>;
 

@@ -7,7 +7,6 @@ import {
   Currency,
   NotificationHandler,
   ProvideCapabilities,
-  RelayChainMethods,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -103,10 +102,6 @@ export class WebbWeb3Provider
 
   readonly methods: WebbMethods<'web3', WebbApiProvider<WebbWeb3Provider>>;
 
-  readonly relayChainMethods: RelayChainMethods<
-    WebbApiProvider<WebbWeb3Provider>
-  > | null;
-
   /**
    * The current public client instance of the connected chain.
    */
@@ -150,8 +145,6 @@ export class WebbWeb3Provider
 
     this.unsubscribeFns.add(unsub);
 
-    // There are no relay chain methods for Web3 chains
-    this.relayChainMethods = null;
     this.methods = {
       claim: {
         enabled: false,
