@@ -18,11 +18,6 @@ import {
   parseTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
 
-import {
-  NewNotesTxResult,
-  TransactionExecutor,
-  TransactionState,
-} from '@webb-tools/abstract-api-provider';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import { LOCALNET_CHAIN_IDS } from '@webb-tools/dapp-config';
 import { GetContractReturnType, Client as ViemClient } from 'viem';
@@ -149,13 +144,12 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
       treeHeight: number;
       targetRoot: string;
       commitment: bigint;
-      tx?: TransactionExecutor<NewNotesTxResult>;
     },
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
   } | null> {
-    const { treeHeight, targetRoot, commitment, tx } = options;
+    const { treeHeight, targetRoot, commitment } = options;
 
     const sourceEvmId = await vanchorContract.read.getChainId();
 
@@ -170,7 +164,6 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
         const { leaves, lastQueriedBlock } = await relayers[i].getLeaves(
           typedChainId,
           vanchorContract.address,
-          tx?.cancelToken.abortSignal,
         );
 
         console.log(
@@ -182,7 +175,6 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
           leaves,
           targetRoot,
           commitment,
-          tx,
         );
 
         if (!result || result.commitmentIndex === -1) {
@@ -200,7 +192,6 @@ export class Web3RelayerManager extends WebbRelayerManager<'web3', 'evm'> {
         return result;
       } catch (e) {
         console.error('Error fetching leaves from relayer', e);
-        tx?.next(TransactionState.ValidatingLeaves, false);
         continue;
       }
     }

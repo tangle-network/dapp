@@ -1,13 +1,10 @@
 import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
   ActiveWebbRelayer,
-  NewNotesTxResult,
   ParametersOfTransactMethod,
   RelayedChainInput,
   RelayedWithdrawResult,
-  TransactionExecutor,
   TransactionPayloadType,
-  TransactionState,
   VAnchorActions,
   calculateProvingLeavesAndCommitmentIndex,
   generateCircomCommitment,
@@ -36,7 +33,6 @@ import {
   ZERO_BYTES32,
   ensureHex,
 } from '@webb-tools/dapp-config';
-import gasLimitConfig from '@webb-tools/dapp-config/gasLimitConfig';
 import {
   WebbError,
   WebbErrorCodes,
@@ -103,18 +99,15 @@ export class Web3VAnchorActions extends VAnchorActions<
   }
 
   async prepareTransaction(
-    tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapToken: string,
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
-    tx.next(TransactionState.Intermediate, { name: 'Preparing transaction' });
-
     if (isVAnchorDepositPayload(payload)) {
-      return this.prepareDeposit(tx, payload, wrapUnwrapToken);
+      return this.prepareDeposit(payload, wrapUnwrapToken);
     } else if (isVAnchorWithdrawPayload(payload)) {
-      return this.prepareWithdraw(tx, payload, wrapUnwrapToken);
+      return this.prepareWithdraw(payload, wrapUnwrapToken);
     } else if (isVAnchorTransferPayload(payload)) {
-      return this.prepareTransfer(tx, payload, wrapUnwrapToken);
+      return this.prepareTransfer(payload, wrapUnwrapToken);
     } else {
       // Handle by outer try/catch
       throw new Error('Invalid payload');
@@ -124,15 +117,13 @@ export class Web3VAnchorActions extends VAnchorActions<
   async transactWithRelayer(
     activeRelayer: ActiveWebbRelayer,
     txArgs: ParametersOfTransactMethod<'web3'>,
-    changeNotes: Note[],
+    _changeNotes: Note[],
   ): Promise<Hash> | never {
-    const [tx, contractAddress, rawInputUtxos, rawOutputUtxos, ...restArgs] =
+    const [contractAddress, rawInputUtxos, rawOutputUtxos, ...restArgs] =
       txArgs;
 
     const vAnchorContract =
       this.inner.getVAnchorContractByAddress(contractAddress);
-
-    tx.next(TransactionState.GeneratingZk, undefined);
 
     const chainId = await vAnchorContract.read.getChainId();
 
@@ -146,7 +137,6 @@ export class Web3VAnchorActions extends VAnchorActions<
     const vAnchor = await this.inner.getVAnchorInstance(
       contractAddress,
       this.inner.publicClient,
-      tx,
     );
 
     // Pad the input & output utxo
@@ -158,8 +148,6 @@ export class Web3VAnchorActions extends VAnchorActions<
       [outputUtxos[0], outputUtxos[1]],
       ...restArgs,
     );
-
-    tx.next(TransactionState.InitializingTransaction, undefined);
 
     const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
@@ -189,17 +177,12 @@ export class Web3VAnchorActions extends VAnchorActions<
     relayedVAnchorWithdraw.watcher.subscribe(([results]) => {
       switch (results) {
         case RelayedWithdrawResult.PreFlight:
-          tx.next(TransactionState.SendingTransaction, '');
           break;
         case RelayedWithdrawResult.OnFlight:
           break;
         case RelayedWithdrawResult.Continue:
           break;
         case RelayedWithdrawResult.CleanExit:
-          tx.next(TransactionState.Done, {
-            txHash,
-            outputNotes: changeNotes,
-          });
           break;
         case RelayedWithdrawResult.Errored: {
           break;
@@ -207,19 +190,13 @@ export class Web3VAnchorActions extends VAnchorActions<
       }
     });
 
-    tx.next(TransactionState.Intermediate, {
-      name: 'Sending TX to relayer',
-    });
-
     // Send the transaction to the relayer.
     relayedVAnchorWithdraw.send(relayedDepositTxPayload, +`${chainId}`);
     const [, txHash = ''] = await relayedVAnchorWithdraw.await();
-    tx.txHash = txHash;
     return ensureHex(txHash);
   }
 
   async transact(
-    tx: TransactionExecutor<NewNotesTxResult>,
     contractAddress: Address,
     inputs: Utxo[],
     outputs: Utxo[],
@@ -233,18 +210,11 @@ export class Web3VAnchorActions extends VAnchorActions<
     const vAnchor = await this.inner.getVAnchorInstance(
       contractAddress,
       this.inner.publicClient,
-      tx,
     );
-
-    tx.txHash = '';
 
     const typedChainId = this.inner.typedChainId;
 
     let gasLimit: bigint | undefined;
-    if (tx.name !== 'Deposit') {
-      gasLimit = gasLimitConfig[typedChainId] ?? gasLimitConfig.default;
-    }
-
     const walletClient = await getWalletClient(getWagmiConfig(), {
       chainId: parseTypedChainId(typedChainId).chainId,
       connector: this.inner.connector,
@@ -264,8 +234,6 @@ export class Web3VAnchorActions extends VAnchorActions<
         walletClient,
       },
     );
-
-    tx.txHash = hash;
 
     return hash;
   }
@@ -459,10 +427,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     );
   }
 
-  async commitmentsSetup(
-    notes: Note[],
-    tx?: TransactionExecutor<NewNotesTxResult>,
-  ) {
+  async commitmentsSetup(notes: Note[]) {
     if (notes.length === 0) {
       throw new Error('No notes to deposit');
     }
@@ -488,7 +453,6 @@ export class Web3VAnchorActions extends VAnchorActions<
         leavesMap,
         destVAnchor,
         treeHeight,
-        tx,
       );
 
       notesLeaves.push(noteLeaves);
@@ -622,7 +586,6 @@ export class Web3VAnchorActions extends VAnchorActions<
   // ================== PRIVATE METHODS ===================
 
   private async prepareDeposit(
-    tx: TransactionExecutor<NewNotesTxResult>,
     payload: Note,
     wrapToken: string,
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
@@ -634,7 +597,7 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     await this.checkHasBalance(payload, wrapToken);
 
-    await this.checkApproval(tx, payload, wrapToken, tokenWrapper);
+    await this.checkApproval(payload, wrapToken, tokenWrapper);
 
     const secrets = payload.note.secrets.split(':');
     const depositUtxo = await this.inner.generateUtxo({
@@ -649,7 +612,6 @@ export class Web3VAnchorActions extends VAnchorActions<
     });
 
     return Promise.resolve([
-      tx, // tx
       ensureHex(payload.note.sourceIdentifyingData), // contractAddress
       [], // inputs
       [depositUtxo], // outputs
@@ -663,13 +625,12 @@ export class Web3VAnchorActions extends VAnchorActions<
   }
 
   private async prepareWithdraw(
-    tx: TransactionExecutor<NewNotesTxResult>,
     payload: WithdrawTransactionPayloadType,
     unwrapToken: string,
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
     const { changeUtxo, notes, recipient, refundAmount, feeAmount } = payload;
 
-    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
+    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes);
 
     const relayer =
       this.inner.relayerManager.activeRelayer?.beneficiary ?? zeroAddress;
@@ -678,7 +639,6 @@ export class Web3VAnchorActions extends VAnchorActions<
     const fee = relayer === zeroAddress ? ZERO_BIG_INT : feeAmount;
 
     return Promise.resolve([
-      tx, // tx
       ensureHex(notes[0].note.targetIdentifyingData), // contractAddress
       inputUtxos, // inputs
       [changeUtxo], // outputs
@@ -692,7 +652,6 @@ export class Web3VAnchorActions extends VAnchorActions<
   }
 
   private async prepareTransfer(
-    tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransferTransactionPayloadType,
     _unwrapToken: string,
   ): Promise<ParametersOfTransactMethod<'web3'>> | never {
@@ -705,7 +664,7 @@ export class Web3VAnchorActions extends VAnchorActions<
       refundRecipient: _refundRecipient,
     } = payload;
 
-    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
+    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes);
 
     const relayer =
       this.inner.relayerManager.activeRelayer?.beneficiary ?? zeroAddress;
@@ -723,7 +682,6 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     // set the anchor to make the transfer on (where the notes are being spent for the transfer)
     return Promise.resolve([
-      tx, // tx
       ensureHex(notes[0].note.targetIdentifyingData), // contractAddress
       inputUtxos, // inputs
       [changeUtxo, transferUtxo], // outputs
@@ -741,13 +699,7 @@ export class Web3VAnchorActions extends VAnchorActions<
     leavesMap: Record<string, Uint8Array[]>,
     destVAnchor: GetContractReturnType<typeof VAnchor__factory.abi, ViemClient>,
     treeHeight: number,
-    tx?: TransactionExecutor<NewNotesTxResult>,
   ): Promise<{ leafIndex: number; utxo: Utxo; amount: bigint }> | never {
-    if (tx) {
-      // Fetching leaves from relayer initially
-      tx.next(TransactionState.FetchingLeavesFromRelayer, undefined);
-    }
-
     const parsedNote = note.note;
     const amount = BigInt(parsedNote.amount);
 
@@ -801,7 +753,6 @@ export class Web3VAnchorActions extends VAnchorActions<
           treeHeight,
           targetRoot: destRelayedRoot,
           commitment,
-          tx,
         });
 
       // Validate that the commitment is in the tree
@@ -821,7 +772,6 @@ export class Web3VAnchorActions extends VAnchorActions<
         toFixedHex(leaf),
       );
 
-      tx?.next(TransactionState.ValidatingLeaves, undefined);
       const { provingLeaves, leafIndex } =
         await calculateProvingLeavesAndCommitmentIndex(
           treeHeight,
@@ -836,8 +786,6 @@ export class Web3VAnchorActions extends VAnchorActions<
           WebbError.from(WebbErrorCodes.CommitmentNotInTree),
         );
       }
-
-      tx?.next(TransactionState.ValidatingLeaves, true);
 
       commitmentIndex = leafIndex;
 
@@ -943,7 +891,6 @@ export class Web3VAnchorActions extends VAnchorActions<
   }
 
   private async checkApproval(
-    tx: TransactionExecutor<NewNotesTxResult>,
     payload: Note,
     wrapUnwrapToken: string,
     tokenWrapper: GetContractReturnType<
@@ -951,13 +898,6 @@ export class Web3VAnchorActions extends VAnchorActions<
       PublicClient
     >,
   ): Promise<void> | never {
-    tx.next(TransactionState.Intermediate, {
-      name: 'Checking approval',
-      data: {
-        tokenAddress: wrapUnwrapToken,
-      },
-    });
-
     const { note } = payload;
     const { amount } = note;
 
@@ -969,7 +909,6 @@ export class Web3VAnchorActions extends VAnchorActions<
     const srcVAnchor = await this.inner.getVAnchorInstance(
       ensureHex(payload.note.sourceIdentifyingData),
       this.inner.publicClient,
-      tx,
       true,
     );
 
@@ -997,13 +936,6 @@ export class Web3VAnchorActions extends VAnchorActions<
 
       if (isRequiredApproval) {
         let approvalHash: Hash;
-
-        tx.next(TransactionState.Intermediate, {
-          name: 'Approval is required for depositing',
-          data: {
-            tokenAddress: wrapUnwrapToken,
-          },
-        });
 
         if (isWrapOrUnwrap) {
           // approve the wrappable asset
@@ -1043,13 +975,6 @@ export class Web3VAnchorActions extends VAnchorActions<
 
         await this.inner.publicClient.waitForTransactionReceipt({
           hash: approvalHash,
-        });
-
-        tx.next(TransactionState.Intermediate, {
-          name: 'Approved',
-          data: {
-            txHash: approvalHash,
-          },
         });
       }
     }

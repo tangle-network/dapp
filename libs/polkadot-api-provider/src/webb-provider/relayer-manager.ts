@@ -3,11 +3,6 @@
 
 import { ApiPromise } from '@polkadot/api';
 import {
-  NewNotesTxResult,
-  TransactionExecutor,
-  TransactionState,
-} from '@webb-tools/abstract-api-provider';
-import {
   OptionalActiveRelayer,
   OptionalRelayer,
   RelayedChainConfig,
@@ -138,16 +133,12 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
       commitment: bigint;
       treeId: number;
       palletId: number;
-      tx?: TransactionExecutor<NewNotesTxResult>;
     },
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
   } | null> {
-    const { treeId, palletId, treeHeight, targetRoot, commitment, tx } =
-      options;
-
-    const abortSignal = tx?.cancelToken?.abortSignal;
+    const { treeId, palletId, treeHeight, targetRoot, commitment } = options;
 
     const chainId = parseInt(
       api.consts.linkableTreeBn254.chainIdentifier.toHex(),
@@ -160,7 +151,6 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
         const { leaves, lastQueriedBlock } = await relayer.getLeaves(
           typedChainId,
           { treeId, palletId },
-          abortSignal,
         );
 
         const result = await this.validateRelayerLeaves(
@@ -168,7 +158,6 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
           leaves,
           targetRoot,
           commitment,
-          tx,
         );
 
         if (!result) {
@@ -182,7 +171,6 @@ export class PolkadotRelayerManager extends WebbRelayerManager<
         // Return the leaves for proving
         return result;
       } catch {
-        tx?.next(TransactionState.ValidatingLeaves, false);
         continue;
       }
     }

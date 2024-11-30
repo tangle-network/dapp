@@ -69,7 +69,6 @@ import { useActiveChain } from '../hooks/useActiveChain';
 import { useActiveWallet } from '../hooks/useActiveWallet';
 import ModalQueueManagerProvider from '../modal-queue-manager/ModalQueueManagerProvider';
 import { StoreProvider } from '../store';
-import { useTxApiQueue } from '../transaction';
 import waitForConfigReady from '../utils/waitForConfigReady';
 import { WebbContext } from '../webb-context';
 import { notificationHandler, registerInteractiveFeedback } from './private';
@@ -842,8 +841,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
     });
   }, [appEvent, setActiveAccountWithStorage, switchChainAndStore]);
 
-  const txQueue = useTxApiQueue(apiConfig);
-
   return (
     <WebbContext.Provider
       value={{
@@ -891,7 +888,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           );
         },
         appEvent,
-        txQueue,
       }}
     >
       <ModalQueueManagerProvider>

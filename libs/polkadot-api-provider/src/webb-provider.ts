@@ -7,12 +7,9 @@ import '@webb-tools/api-derive';
 import {
   ApiInitHandler,
   Currency,
-  NewNotesTxResult,
   NotificationHandler,
   ProvideCapabilities,
   RelayChainMethods,
-  TransactionExecutor,
-  TransactionState,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
@@ -329,14 +326,12 @@ export class WebbPolkadot
       commitment: bigint;
       treeId?: number;
       palletId?: number;
-      tx?: TransactionExecutor<NewNotesTxResult>;
     },
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
   }> {
-    const { treeHeight, targetRoot, commitment, treeId, palletId, tx } =
-      options;
+    const { treeHeight, targetRoot, commitment, treeId, palletId } = options;
 
     if (typeof treeId === 'undefined' || typeof palletId === 'undefined') {
       throw WebbError.from(WebbErrorCodes.InvalidArguments);
@@ -367,12 +362,6 @@ export class WebbPolkadot
 
     // If unable to fetch leaves from the relayers, get them from chain
     if (!leavesFromRelayers) {
-      tx?.next(TransactionState.FetchingLeaves, {
-        start: 0, // Dummy values
-        current: 0, // Dummy values
-        end: 0,
-      });
-
       // check if we already cached some values.
       const lastQueriedBlock = await storage.get('lastQueriedBlock');
       const storedLeaves = await storage.get('leaves');
@@ -406,7 +395,6 @@ export class WebbPolkadot
 
       console.log(`Got ${leaves.length} leaves from chain`);
 
-      tx?.next(TransactionState.ValidatingLeaves, undefined);
       // Validate the leaves
       const { leafIndex, provingLeaves } =
         await calculateProvingLeavesAndCommitmentIndex(
@@ -415,14 +403,6 @@ export class WebbPolkadot
           targetRoot,
           commitment.toString(),
         );
-
-      // If the leafIndex is -1, it means the commitment is not in the tree
-      // and we should continue to the next relayer
-      if (leafIndex === -1) {
-        tx?.next(TransactionState.ValidatingLeaves, false);
-      } else {
-        tx?.next(TransactionState.ValidatingLeaves, true);
-      }
 
       // Cached the new leaves if not local chain
       if (chain?.tag !== 'dev') {

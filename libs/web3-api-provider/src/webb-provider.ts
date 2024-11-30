@@ -5,18 +5,13 @@ import { ApiPromise } from '@polkadot/api';
 import {
   Bridge,
   Currency,
-  FixturesStatus,
-  NewNotesTxResult,
   NotificationHandler,
   ProvideCapabilities,
   RelayChainMethods,
-  TransactionExecutor,
-  TransactionState,
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
   WebbState,
-  calculateProvingLeavesAndCommitmentIndex,
 } from '@webb-tools/abstract-api-provider';
 import { EventBus } from '@webb-tools/app-util';
 import { retryPromise } from '@webb-tools/browser-utils';
@@ -327,14 +322,11 @@ export class WebbWeb3Provider
       treeHeight: number;
       targetRoot: string;
       commitment: bigint;
-      tx?: TransactionExecutor<NewNotesTxResult>;
     },
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
   }> {
-    const { tx, commitment, targetRoot, treeHeight } = options;
-
     const evmId = await vAnchorContract.read.getChainId();
 
     const typedChainId = calculateTypedChainId(
@@ -398,13 +390,6 @@ export class WebbWeb3Provider
         // TODO: Fix type casting here
         publicClient as any,
         vAnchorContract,
-        (fromBlock, toBlock, currentBlock) => {
-          tx?.next(TransactionState.FetchingLeaves, {
-            start: +fromBlock.toString(),
-            end: +toBlock.toString(),
-            current: +currentBlock.toString(),
-          });
-        },
       );
 
       // Merge the leaves from chain with the stored leaves
@@ -414,24 +399,6 @@ export class WebbWeb3Provider
       );
 
       console.log(`Got ${leaves.length} leaves from chain`);
-
-      tx?.next(TransactionState.ValidatingLeaves, undefined);
-      // Validate the leaves
-      const { leafIndex, provingLeaves } =
-        await calculateProvingLeavesAndCommitmentIndex(
-          treeHeight,
-          leaves,
-          targetRoot,
-          commitment.toString(),
-        );
-
-      // If the leafIndex is -1, it means the commitment is not in the tree
-      // and we should continue to the next relayer
-      if (leafIndex === -1) {
-        tx?.next(TransactionState.ValidatingLeaves, false);
-      } else {
-        tx?.next(TransactionState.ValidatingLeaves, true);
-      }
 
       // Cached all the leaves to re-use them later if not localnet
       if (!isLocal) {
@@ -444,8 +411,8 @@ export class WebbWeb3Provider
 
       // Return the leaves for proving and the commitment index
       return {
-        provingLeaves,
-        commitmentIndex: leafIndex,
+        provingLeaves: leaves,
+        commitmentIndex: -1,
       };
     }
 
@@ -649,34 +616,11 @@ export class WebbWeb3Provider
   async getVAnchorInstance(
     address: string,
     provider: ViemClient,
-    tx?: TransactionExecutor<NewNotesTxResult>,
     useDummyFixtures?: boolean,
   ): Promise<VAnchor> {
     if (useDummyFixtures) {
       return VAnchor.connect(ensureHex(address), provider);
     }
-
-    const fixturesList = new Map<string, FixturesStatus>();
-
-    fixturesList.set('small fixtures', 'Waiting');
-    tx?.next(TransactionState.FetchingFixtures, {
-      fixturesList,
-    });
-
-    fixturesList.set('small fixtures', 'Done');
-    tx?.next(TransactionState.FetchingFixtures, {
-      fixturesList,
-    });
-
-    fixturesList.set('large fixtures', 'Waiting');
-    tx?.next(TransactionState.FetchingFixtures, {
-      fixturesList,
-    });
-
-    fixturesList.set('large fixtures', 'Done');
-    tx?.next(TransactionState.FetchingFixtures, {
-      fixturesList,
-    });
 
     return VAnchor.connect(ensureHex(address), provider);
   }

@@ -13,12 +13,6 @@ import {
 import { Address, Hash } from 'viem';
 import { CancellationToken } from '../cancelation-token';
 import { ActiveWebbRelayer } from '../relayer';
-import {
-  ActionEvent,
-  NewNotesTxResult,
-  TransactionExecutor,
-  TransactionState,
-} from '../transaction/transactionExecutor';
 import { WebbProviderType } from '../types';
 import type { WebbApiProvider } from '../webb-provider.interface';
 import { NeighborEdge } from './types';
@@ -123,8 +117,7 @@ export const isVAnchorTransferPayload = (
 
 export abstract class AbstractState<
   T extends WebbApiProvider<unknown>,
-> extends EventBus<ActionEvent> {
-  state: TransactionState = TransactionState.Ideal;
+> extends EventBus<NonNullable<unknown>> {
   cancelToken: CancellationToken = new CancellationToken();
 
   constructor(protected inner: T) {
@@ -133,15 +126,8 @@ export abstract class AbstractState<
 
   cancel(): Promise<void> {
     this.cancelToken.cancel();
-    this.state = TransactionState.Cancelling;
-    this.emit('stateChange', TransactionState.Cancelling);
 
     return Promise.resolve(undefined);
-  }
-
-  change(state: TransactionState): void {
-    this.state = state;
-    this.emit('stateChange', state);
   }
 }
 
@@ -203,7 +189,6 @@ export abstract class VAnchorActions<
 
   // A function to prepare the parameters for a transaction
   abstract prepareTransaction(
-    tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapToken: string,
   ): Promise<ParametersOfTransactMethod<ProviderType>> | never;
@@ -225,7 +210,6 @@ export abstract class VAnchorActions<
    * @return {string} The transaction hash
    */
   abstract transact(
-    tx: TransactionExecutor<NewNotesTxResult>,
     contractAddress: ProviderType extends 'web3' ? Address : string,
     inputs: Utxo[],
     outputs: Utxo[],

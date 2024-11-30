@@ -8,11 +8,6 @@ import Storage from '@webb-tools/dapp-types/Storage';
 import { Note } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { GetContractReturnType, Client as ViemClient } from 'viem';
-import {
-  NewNotesTxResult,
-  TransactionExecutor,
-  TransactionState,
-} from '../transaction/transactionExecutor';
 import calculateProvingLeavesAndCommitmentIndex from '../utils/calculateProvingLeavesAndCommitmentIndex';
 import { WebbProviderType } from '../types';
 import { OptionalActiveRelayer, OptionalRelayer, RelayerQuery } from './types';
@@ -98,7 +93,6 @@ export abstract class WebbRelayerManager<
       importMetaUrl: string; // the url of the import.meta.url
       treeId: Provider extends 'polkadot' ? number : never;
       palletId: Provider extends 'polkadot' ? number : never;
-      tx?: TransactionExecutor<NewNotesTxResult>;
     },
   ): Promise<{
     provingLeaves: string[];
@@ -114,12 +108,10 @@ export abstract class WebbRelayerManager<
     leaves: string[],
     targetRoot: string,
     commitment: bigint,
-    tx?: TransactionExecutor<NewNotesTxResult>,
   ): Promise<{
     provingLeaves: string[];
     commitmentIndex: number;
   } | null> {
-    tx?.next(TransactionState.ValidatingLeaves, undefined);
     const { leafIndex, provingLeaves } =
       await calculateProvingLeavesAndCommitmentIndex(
         treeHeight,
@@ -131,10 +123,7 @@ export abstract class WebbRelayerManager<
     // If the leafIndex is -1, it means the commitment is not in the tree
     // and we should continue to the next relayer
     if (leafIndex === -1) {
-      tx?.next(TransactionState.ValidatingLeaves, false);
       return null;
-    } else {
-      tx?.next(TransactionState.ValidatingLeaves, true);
     }
 
     return {

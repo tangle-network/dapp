@@ -3,19 +3,14 @@ import { decodeAddress } from '@polkadot/util-crypto';
 import {
   ActiveWebbRelayer,
   CMDSwitcher,
-  FixturesStatus,
-  NewNotesTxResult,
   ParametersOfTransactMethod,
   RelayedChainInput,
   RelayedWithdrawResult,
-  TransactionExecutor,
   TransactionPayloadType,
-  TransactionState,
   TransferTransactionPayloadType,
   VAnchorActions,
   WithdrawRelayerArgs,
   WithdrawTransactionPayloadType,
-  calculateProvingLeavesAndCommitmentIndex,
   generateCircomCommitment,
   isVAnchorDepositPayload,
   isVAnchorTransferPayload,
@@ -93,12 +88,9 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   }
 
   prepareTransaction(
-    tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransactionPayloadType,
     wrapUnwrapAssetId: string,
   ): Promise<ParametersOfTransactMethod<'polkadot'>> | never {
-    tx.next(TransactionState.Intermediate, { name: 'Preparing transaction' });
-
     // If the wrapUnwrapAssetId is empty, we use the bridge fungible token
     if (!wrapUnwrapAssetId) {
       const activeBridge = this.inner.state.activeBridge;
@@ -116,11 +108,11 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     }
 
     if (isVAnchorDepositPayload(payload)) {
-      return this.prepareDepositTransaction(tx, payload, wrapUnwrapAssetId);
+      return this.prepareDepositTransaction(payload, wrapUnwrapAssetId);
     } else if (isVAnchorWithdrawPayload(payload)) {
-      return this.prepareWithdrawTransaction(tx, payload, wrapUnwrapAssetId);
+      return this.prepareWithdrawTransaction(payload, wrapUnwrapAssetId);
     } else if (isVAnchorTransferPayload(payload)) {
-      return this.prepareTransferTransaction(tx, payload, wrapUnwrapAssetId);
+      return this.prepareTransferTransaction(payload, wrapUnwrapAssetId);
     }
 
     throw new Error('Unsupported payload type');
@@ -129,9 +121,9 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   async transactWithRelayer(
     activeRelayer: ActiveWebbRelayer,
     txArgs: ParametersOfTransactMethod<'polkadot'>,
-    changeNotes: Note[],
+    _changeNotes: Note[],
   ): Promise<HexString> {
-    const [tx, anchorId, inputUtxos, outputUtxos, ...restArgs] = txArgs;
+    const [anchorId, inputUtxos, outputUtxos, ...restArgs] = txArgs;
 
     const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
 
@@ -147,7 +139,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     };
 
     const setupTransactionArgs = [
-      tx,
       inputUtxos,
       outputUtxos,
       // Ignore the override option if provided
@@ -172,30 +163,20 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     } satisfies WithdrawRelayerArgs<'substrate', CMDSwitcher<'substrate'>>);
 
     // Subscribe to the relayer's transaction status.
-    relayedVAnchorWithdraw.watcher.subscribe(async ([results, message]) => {
+    relayedVAnchorWithdraw.watcher.subscribe(async ([results]) => {
       switch (results) {
         case RelayedWithdrawResult.PreFlight:
-          tx.next(TransactionState.SendingTransaction, '');
           break;
         case RelayedWithdrawResult.OnFlight:
           break;
         case RelayedWithdrawResult.Continue:
           break;
         case RelayedWithdrawResult.CleanExit:
-          tx.next(TransactionState.Done, {
-            txHash,
-            outputNotes: changeNotes,
-          });
           break;
         case RelayedWithdrawResult.Errored: {
-          tx.fail(message ? message : 'Transaction failed');
           break;
         }
       }
-    });
-
-    tx.next(TransactionState.Intermediate, {
-      name: 'Sending TX to relayer',
     });
 
     console.log('Relay tx payload', relayTxPayload);
@@ -204,12 +185,10 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     relayedVAnchorWithdraw.send(relayTxPayload, chainId);
 
     const [, txHash = ''] = await relayedVAnchorWithdraw.await();
-    tx.txHash = txHash;
     return ensureHex(txHash);
   }
 
   async transact(
-    tx: TransactionExecutor<NewNotesTxResult>,
     treeId: string,
     inputs: Utxo[],
     outputs: Utxo[],
@@ -239,7 +218,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     }
 
     const { extData, publicInputs } = await this.setupTransaction(
-      tx,
       inputs,
       outputs,
       fee,
@@ -249,11 +227,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       wrapUnwrapAssetId,
       leavesMap,
       treeId,
-    );
-
-    tx.next(
-      TransactionState.SendingTransaction,
-      'Sending transaction to vanchor',
     );
 
     // now we call the vanchor transact on substrate
@@ -357,10 +330,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     return createSubstrateResourceId(chainId, +treeId, palletId.toString());
   }
 
-  async commitmentsSetup(
-    notes: Note[],
-    tx?: TransactionExecutor<NewNotesTxResult>,
-  ) {
+  async commitmentsSetup(notes: Note[]) {
     if (notes.length === 0) {
       throw new Error('No notes to deposit');
     }
@@ -372,7 +342,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     const leavesMap: Record<string, Uint8Array[]> = {};
 
     const notesLeaves = await Promise.all(
-      notes.map((note) => this.fetchNoteLeaves(note, leavesMap, destApi, tx)),
+      notes.map((note) => this.fetchNoteLeaves(note, leavesMap, destApi)),
     );
 
     // Keep track of the leafindices for each note
@@ -415,7 +385,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   // ------------------ Private ------------------
 
   private async prepareDepositTransaction(
-    tx: TransactionExecutor<NewNotesTxResult>,
     payload: Note,
     wrapUnwrapAssetId: string,
   ): Promise<ParametersOfTransactMethod<'polkadot'>> {
@@ -439,7 +408,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     leavesMap[+payload.note.sourceChainId] = [];
 
     return [
-      tx,
       payload.note.sourceIdentifyingData,
       inputUtxos,
       [depositUtxo],
@@ -453,13 +421,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   }
 
   private async prepareWithdrawTransaction(
-    tx: TransactionExecutor<NewNotesTxResult>,
     payload: WithdrawTransactionPayloadType,
     wrapUnwrapAssetId: string,
   ): Promise<ParametersOfTransactMethod<'polkadot'>> {
     const { changeUtxo, notes, recipient, refundAmount, feeAmount } = payload;
 
-    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
+    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes);
 
     const relayer =
       this.inner.relayerManager.activeRelayer?.beneficiary ?? zeroAddress;
@@ -471,7 +438,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     const actualRefund = relayer === zeroAddress ? ZERO_BIG_INT : refundAmount;
 
     return Promise.resolve([
-      tx, // tx
       notes[0].note.targetIdentifyingData, // contractAddress
       inputUtxos, // inputs
       [changeUtxo], // outputs
@@ -485,13 +451,12 @@ export class PolkadotVAnchorActions extends VAnchorActions<
   }
 
   private async prepareTransferTransaction(
-    tx: TransactionExecutor<NewNotesTxResult>,
     payload: TransferTransactionPayloadType,
     wrapUnwrapAssetId: string,
   ): Promise<ParametersOfTransactMethod<'polkadot'>> {
     const { notes, changeUtxo, transferUtxo, feeAmount } = payload;
 
-    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes, tx);
+    const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes);
 
     const relayer =
       this.inner.relayerManager.activeRelayer?.beneficiary ?? zeroAddress;
@@ -499,7 +464,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     // Fee only applies if relayer is set
     const actualFee = relayer === zeroAddress ? ZERO_BIG_INT : feeAmount;
     return Promise.resolve([
-      tx, // tx
       notes[0].note.targetIdentifyingData, // contractAddress
       inputUtxos, // inputs
       [changeUtxo, transferUtxo], // outputs
@@ -524,7 +488,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     );
 
     if (Number(balance) < Number(amount)) {
-      this.emit('stateChange', TransactionState.Failed);
       throw new Error('Not enough balance');
     }
   }
@@ -542,7 +505,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
    * @param treeId the treeId of the tree being used
    */
   private async setupTransaction(
-    tx: TransactionExecutor<NewNotesTxResult>,
     inputs: Utxo[],
     outputs: Utxo[],
     fee: bigint,
@@ -582,19 +544,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       hexToU8a(outputs[1].encrypt()),
     ];
 
-    const fixturesList = new Map<string, FixturesStatus>();
-    tx.next(TransactionState.FetchingFixtures, { fixturesList });
-
-    // Proving key
-    fixturesList.set('vanchor key', 'Waiting');
-    const { zkey, wasm } = {
-      zkey: new Uint8Array(),
-      wasm: Buffer.from(''),
-    };
-    fixturesList.set('vanchor key', 'Done');
-
-    tx.next(TransactionState.GeneratingZk, undefined);
-
     const fieldSize = FIELD_SIZE.toBigInt();
     const publicAmount = (extAmount - feeBigInt + fieldSize) % fieldSize;
 
@@ -620,6 +569,9 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       extDataHash,
       leavesMap,
     );
+
+    const wasm = Buffer.from('');
+    const zkey = new Uint8Array();
 
     const witness = await this.getSnarkJsWitness(proofInputs, wasm);
 
@@ -856,16 +808,7 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     note: Note,
     leavesMap: Record<string, Uint8Array[]>,
     destApi: ApiPromise,
-    tx?: TransactionExecutor<NewNotesTxResult>,
   ): Promise<{ leafIndex: number; utxo: Utxo; amount: BN }> | never {
-    if (tx) {
-      tx.next(TransactionState.FetchingLeaves, {
-        start: 0, // Dummy value
-        end: 0, // Dummy value
-        current: 0, // Dummy value
-      });
-    }
-
     const {
       amount,
       sourceChainId: sourceTypedChainId,
@@ -902,8 +845,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
     // The commitment of the note
     const commitment = await generateCircomCommitment(note.note);
 
-    let commitmentIndex: number;
-
     // Fetch leaves of the source chain if not already fetched
     if (!leavesMap[sourceTypedChainId]) {
       const sourceChainConfig = this.inner.config.chains[+sourceTypedChainId];
@@ -931,57 +872,28 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       );
 
       const leafStorage = await bridgeStorageFactory(resourceId.toString());
-      const { provingLeaves, commitmentIndex: leafIndex } =
-        await this.inner.getVAnchorLeaves(api, leafStorage, {
+      const { provingLeaves } = await this.inner.getVAnchorLeaves(
+        api,
+        leafStorage,
+        {
           treeHeight,
           targetRoot: destRelayedRoot,
           commitment,
           palletId,
           treeId: +sourceTreeId,
-        });
+        },
+      );
 
       leavesMap[sourceTypedChainId] = provingLeaves.map((leaf) => {
         return hexToU8a(leaf);
       });
-
-      commitmentIndex = leafIndex;
-    } else {
-      const leaves = leavesMap[sourceTypedChainId].map((leaf) =>
-        u8aToHex(leaf),
-      );
-
-      tx?.next(TransactionState.ValidatingLeaves, undefined);
-      const { provingLeaves, leafIndex } =
-        await calculateProvingLeavesAndCommitmentIndex(
-          treeHeight,
-          leaves,
-          destRelayedRoot,
-          commitment.toString(),
-        );
-      tx?.next(TransactionState.ValidatingLeaves, true);
-
-      commitmentIndex = leafIndex;
-
-      // If the proving leaves are more than the leaves we have,
-      // that means the commitment is not in the leaves we have
-      // so we need to reset the leaves
-      if (provingLeaves.length > leaves.length) {
-        leavesMap[sourceTypedChainId] = provingLeaves.map((leaf) =>
-          hexToU8a(leaf),
-        );
-      }
     }
 
     // Validate that the commitment is in the tree
-    if (commitmentIndex === -1) {
-      // Outer try/catch will handle this
-      throw WebbError.from(WebbErrorCodes.CommitmentNotInTree);
-    }
-
-    const utxo = await utxoFromVAnchorNote(note.note, commitmentIndex);
+    const utxo = await utxoFromVAnchorNote(note.note);
 
     return {
-      leafIndex: commitmentIndex,
+      leafIndex: -1,
       utxo,
       amount: amountBN,
     };

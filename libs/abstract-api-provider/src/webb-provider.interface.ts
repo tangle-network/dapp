@@ -21,11 +21,6 @@ import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
 import { ECDSAClaims } from './ecdsa-claims';
 import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { WebbState } from './state';
-import {
-  ActionEvent,
-  NewNotesTxResult,
-  TransactionExecutor,
-} from './transaction/transactionExecutor';
 import { WebbProviderType } from './types';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
@@ -74,7 +69,7 @@ export interface WebbVariableAnchor<
   ProviderType extends WebbProviderType,
   T extends WebbApiProvider<any>,
 > {
-  actions: WebbMethod<VAnchorActions<ProviderType, T>, ActionEvent>;
+  actions: WebbMethod<VAnchorActions<ProviderType, T>, NonNullable<unknown>>;
 }
 
 export interface WrapAndUnwrap<T> {
@@ -275,7 +270,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
       importMetaUrl: string;
       treeId?: number;
       palletId?: number;
-      tx?: TransactionExecutor<NewNotesTxResult>;
     },
   ): Promise<{
     provingLeaves: string[];

@@ -3,16 +3,14 @@
 import type {
   Account,
   Bridge,
-  TransactionExecutor,
   WebbApiProvider,
 } from '@webb-tools/abstract-api-provider';
 import { ApiConfig, type Chain, type Wallet } from '@webb-tools/dapp-config';
 import type { InteractiveFeedback } from '@webb-tools/dapp-types';
 import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
+import noop from 'lodash/noop';
 import React from 'react';
 import { AppEvent, type TAppEvent } from '../app-event';
-import type { TransactionQueueApi } from '../transaction';
-import noop from 'lodash/noop';
 
 export interface WebbContextState<T = unknown> {
   /** Whether the app is loading */
@@ -65,8 +63,6 @@ export interface WebbContextState<T = unknown> {
   appName: string;
 
   appEvent: TAppEvent;
-
-  txQueue: TransactionQueueApi;
 }
 
 export const WebbContext = React.createContext<WebbContextState<unknown>>({
@@ -90,28 +86,6 @@ export const WebbContext = React.createContext<WebbContextState<unknown>>({
   registerInteractiveFeedback: noop,
   appName: '',
   appEvent: new AppEvent(),
-  txQueue: {
-    txQueue: [],
-    currentTxId: null,
-    txPayloads: [],
-    api: {
-      startNewTransaction() {
-        return;
-      },
-      cancelTransaction(_id: string) {
-        return;
-      },
-      dismissTransaction(_id: string) {
-        return;
-      },
-      registerTransaction(_tx: TransactionExecutor<any>) {
-        return;
-      },
-      getLatestTransaction(_name: 'Deposit' | 'Withdraw' | 'Transfer') {
-        return null;
-      },
-    },
-  },
 });
 
 export const useWebContext = () => {
