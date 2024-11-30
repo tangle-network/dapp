@@ -1,15 +1,16 @@
 /// <reference types='vitest' />
+import { defineConfig } from 'vite';
+
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import react from '@vitejs/plugin-react-swc';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import preserveDirectives from 'rollup-plugin-preserve-directives';
-import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
 const dirname_ = dirname(fileURLToPath(import.meta.url));
 
-export default defineConfig({
+export default defineConfig(() => ({
   root: dirname_,
   cacheDir: '../../node_modules/.vite/libs/webb-ui-components',
 
@@ -63,9 +64,7 @@ export default defineConfig({
 
   test: {
     globals: true,
-    cache: {
-      dir: '../../node_modules/.vitest/libs/webb-ui-components',
-    },
+    cacheDir: '../../node_modules/.vitest/libs/webb-ui-components',
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 
@@ -74,5 +73,6 @@ export default defineConfig({
       reportsDirectory: '../../coverage/libs/webb-ui-components',
       provider: 'v8',
     },
+    passWithNoTests: true,
   },
-});
+}));

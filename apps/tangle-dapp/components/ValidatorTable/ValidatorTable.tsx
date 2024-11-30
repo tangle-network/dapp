@@ -29,6 +29,7 @@ import { FC, useMemo, useState } from 'react';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import { PagePath, Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
+import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import pluralize from '../../utils/pluralize';
 import {
   getSortAddressOrIdentityFnc,
@@ -54,7 +55,12 @@ const getTableColumns = (isWaiting?: boolean) => [
               className="justify-start"
             />
           ),
-          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+          cell: (props) => (
+            <TokenAmountCell
+              amount={props.getValue()}
+              formatStyle={AmountFormatStyle.SHORT}
+            />
+          ),
           sortingFn: sortBnValueForNomineeOrValidator,
         }),
         columnHelper.accessor('selfStakeAmount', {

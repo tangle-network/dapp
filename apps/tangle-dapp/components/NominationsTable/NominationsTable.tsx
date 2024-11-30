@@ -23,6 +23,7 @@ import { FC, useState } from 'react';
 
 import { Nominee } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
+import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import {
   getSortAddressOrIdentityFnc,
   sortBnValueForNomineeOrValidator,
@@ -82,7 +83,12 @@ const columns = [
     header: () => (
       <HeaderCell title="Effective amount staked" className="justify-center" />
     ),
-    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+    cell: (props) => (
+      <TokenAmountCell
+        amount={props.getValue()}
+        formatStyle={AmountFormatStyle.SHORT}
+      />
+    ),
     sortingFn: sortBnValueForNomineeOrValidator,
   }),
   columnHelper.accessor('nominatorCount', {

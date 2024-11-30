@@ -5,10 +5,10 @@ import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';
 import { type ComponentProps, type FC, useMemo, useState } from 'react';
 
-import OperatorsTableUI from '../../components/tables/Operators';
-import { useRestakeContext } from '../../context/RestakeContext';
-import useIdentities from '../../data/useIdentities';
-import { delegationsToVaultTokens } from './utils';
+import OperatorsTableUI from '../../../components/tables/Operators';
+import { useRestakeContext } from '../../../context/RestakeContext';
+import useIdentities from '../../../data/useIdentities';
+import { delegationsToVaultTokens } from '../utils';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']

@@ -1,10 +1,10 @@
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
-import { ChainIcon } from '@webb-tools/icons';
 import {
   calculateTypedChainId,
   ChainType,
-} from '@webb-tools/sdk-core/typed-chain-id';
+} from '@webb-tools/dapp-types/TypedChainId';
+import { ChainIcon } from '@webb-tools/icons';
 import {
   Modal,
   ModalContent,
@@ -55,7 +55,7 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
         !isReadOnly && 'cursor-pointer',
       )}
     >
-      <div className="flex gap-2 items-center justify-center">
+      <div className="flex items-center justify-center gap-2">
         <ChainIcon size="lg" name={activeLsNetwork.chainIconFileName} />
 
         <Typography variant="h5" fw="bold" className="dark:text-mono-40">

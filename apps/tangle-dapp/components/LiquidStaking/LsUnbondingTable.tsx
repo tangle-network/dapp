@@ -24,6 +24,7 @@ import addCommasToNumber from '../../utils/addCommasToNumber';
 import pluralize from '../../utils/pluralize';
 import { ContainerSkeleton, TableStatus } from '..';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
+import LstIcon from './LstIcon';
 import WithdrawUnstakeRequestButton from './WithdrawUnstakeRequestButton';
 
 const COLUMN_HELPER = createColumnHelper<LsPoolUnstakeRequest>();
@@ -51,16 +52,23 @@ const LsUnbondingTable: FC = () => {
       COLUMN_HELPER.accessor('poolId', {
         header: () => 'Pool ID',
         cell: (props) => (
-          <Typography
-            variant="body2"
-            fw="normal"
-            className="text-mono-200 dark:text-mono-0"
-          >
-            {props.row.original.poolName?.toUpperCase()}
-            <span className="text-mono-180 dark:text-mono-120">
-              #{props.getValue()}
-            </span>
-          </Typography>
+          <div className="flex gap-2 items-center justify-start">
+            <LstIcon
+              lsProtocolId={props.row.original.poolProtocolId}
+              iconUrl={props.row.original.poolIconUrl}
+            />
+
+            <Typography
+              variant="body2"
+              fw="normal"
+              className="text-mono-200 dark:text-mono-0"
+            >
+              {props.row.original.poolName?.toUpperCase()}
+              <span className="text-mono-180 dark:text-mono-120">
+                #{props.getValue()}
+              </span>
+            </Typography>
+          </div>
         ),
       }),
       COLUMN_HELPER.accessor('amount', {
@@ -145,9 +153,7 @@ const LsUnbondingTable: FC = () => {
     enableSortingRemoval: false,
   });
 
-  if (unstakeRequests === null) {
-    return <ContainerSkeleton />;
-  } else if (!isAccountConnected) {
+  if (!isAccountConnected) {
     return (
       <TableStatus
         title="Connect a wallet to continue"
@@ -155,6 +161,8 @@ const LsUnbondingTable: FC = () => {
         icon="🔍"
       />
     );
+  } else if (unstakeRequests === null) {
+    return <ContainerSkeleton />;
   } else if (rows.length === 0) {
     return (
       <TableStatus

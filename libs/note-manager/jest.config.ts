@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'note-manager',
-  preset: '../../jest.preset.js',
+  preset: '../../jest.preset.cjs',
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',

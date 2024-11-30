@@ -4,8 +4,7 @@ import {
   VAnchor__factory,
 } from '@webb-tools/contracts';
 import { ChainType, parseTypedChainId } from '@webb-tools/sdk-core';
-import { ZERO_ADDRESS } from '@webb-tools/utils';
-import { getContract, type PublicClient } from 'viem';
+import { getContract, type PublicClient, zeroAddress } from 'viem';
 import { ChainAddressConfig } from '../../anchors';
 import { chainsConfig } from '../../chains';
 import { ZERO_BIG_INT } from '../../constants';
@@ -169,7 +168,7 @@ export class EVMOnChainConfig extends OnChainConfigBase {
         if (nativeCurrency) {
           wrappableCurrencies.push({
             ...nativeCurrency,
-            address: ZERO_ADDRESS,
+            address: zeroAddress,
           });
         }
       }
@@ -230,73 +229,12 @@ export class EVMOnChainConfig extends OnChainConfigBase {
       };
     }
 
-    const nativeCurrencies = evmTypedChainIds.map((typedChainId) => ({
-      typedChainId: +typedChainId,
-      nativeCurrency: {
-        address: ZERO_ADDRESS,
-        ...chainsConfig[+typedChainId]?.nativeCurrency,
-      } satisfies ICurrency,
-    }));
-
-    // Fetch all fungible currencies
-    const fungibleCurrenciesWithNull = await Promise.allSettled(
-      nativeCurrencies.map(
-        async ({ typedChainId, nativeCurrency: nativeCurrency }) => {
-          const provider = await providerFactory(typedChainId);
-
-          // Support multiple anchor addresses for the same chain
-          const anchorAddresses = anchorConfig[typedChainId];
-          if (!anchorAddresses || anchorAddresses.length === 0) {
-            console.error('No anchor address found for chain', typedChainId);
-            return [];
-          }
-
-          // Fetch the fungible currency
-          const fungibleCurrencies = await Promise.all(
-            anchorAddresses.map(async (address) => {
-              const fungible = await this.fetchFungibleCurrency(
-                typedChainId,
-                address,
-                provider,
-              );
-
-              return {
-                typedChainId,
-                nativeCurrency,
-                fungibleCurrency: fungible,
-                anchorAddressOrTreeId: address,
-              };
-            }),
-          );
-
-          return fungibleCurrencies;
-        },
-      ),
-    );
-
-    const fungibleCurrencies = fungibleCurrenciesWithNull
-      .map((resp) => (resp.status === 'fulfilled' ? resp.value : null))
-      .filter(
-        (
-          currencies,
-        ): currencies is {
-          anchorAddressOrTreeId: string;
-          fungibleCurrency: ICurrency | null;
-          nativeCurrency: ICurrency;
-          typedChainId: number;
-        }[] => !!currencies && currencies.length > 0,
-      )
-      .reduce((acc, currencies) => [...acc, ...currencies], [])
-      .filter(
-        (
-          currency,
-        ): currency is {
-          anchorAddressOrTreeId: string;
-          fungibleCurrency: ICurrency;
-          nativeCurrency: ICurrency;
-          typedChainId: number;
-        } => currency.fungibleCurrency !== null,
-      );
+    const fungibleCurrencies = [] as {
+      anchorAddressOrTreeId: string;
+      fungibleCurrency: ICurrency;
+      nativeCurrency: ICurrency;
+      typedChainId: number;
+    }[];
 
     // Fetch all wrappable currencies
     const wrappableCurrenciesWithNull = await Promise.allSettled(

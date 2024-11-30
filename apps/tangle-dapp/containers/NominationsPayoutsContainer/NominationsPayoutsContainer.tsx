@@ -29,6 +29,7 @@ import {
 } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
+import { MAX_PAYOUTS_BATCH_SIZE } from '../../data/payouts/usePayoutAllTx';
 import { usePayoutsStore } from '../../data/payouts/usePayoutsStore';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import { PayoutsEraRange } from '../../data/types';
@@ -59,6 +60,9 @@ function assertTab(tab: string): NominationsAndPayoutsTab {
 }
 
 const DelegationsPayoutsContainer: FC = () => {
+  const [payoutsStartIndex, setPayoutsStartIndex] = useState(0);
+  const { isMobile } = useCheckMobile();
+  const { toggleModal } = useConnectWallet();
   const tableRef = useRef<HTMLDivElement>(null);
   const { activeAccount, loading, isConnecting } = useWebContext();
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
@@ -121,6 +125,24 @@ const DelegationsPayoutsContainer: FC = () => {
     return [];
   }, [payoutsData, maxEras]);
 
+  const nextPayoutBatch = useMemo(() => {
+    // No more payouts to process.
+    if (payoutsStartIndex >= fetchedPayouts.length) {
+      return [];
+    }
+
+    return fetchedPayouts.slice(
+      payoutsStartIndex,
+      payoutsStartIndex + MAX_PAYOUTS_BATCH_SIZE,
+    );
+  }, [fetchedPayouts, payoutsStartIndex]);
+
+  const increasePayoutsStartIndex = useCallback(() => {
+    setPayoutsStartIndex((prev) =>
+      Math.min(prev + MAX_PAYOUTS_BATCH_SIZE, fetchedPayouts.length),
+    );
+  }, [fetchedPayouts.length]);
+
   // Scroll to the table when the tab changes, or when the page
   // is first loaded with a tab query parameter present.
   useEffect(() => {
@@ -139,9 +161,6 @@ const DelegationsPayoutsContainer: FC = () => {
       })),
     [fetchedPayouts],
   );
-
-  const { isMobile } = useCheckMobile();
-  const { toggleModal } = useConnectWallet();
 
   return (
     <div ref={tableRef}>
@@ -169,10 +188,15 @@ const DelegationsPayoutsContainer: FC = () => {
                 <Button
                   variant="utility"
                   size="sm"
-                  isDisabled={fetchedPayouts.length === 0}
+                  isDisabled={
+                    fetchedPayouts.length === 0 ||
+                    payoutsStartIndex >= fetchedPayouts.length
+                  }
                   onClick={() => setIsPayoutAllModalOpen(true)}
                 >
                   Payout All
+                  {fetchedPayouts.length >= MAX_PAYOUTS_BATCH_SIZE &&
+                    ` (${MAX_PAYOUTS_BATCH_SIZE} max)`}
                 </Button>
               </div>
             )
@@ -290,7 +314,12 @@ const DelegationsPayoutsContainer: FC = () => {
         isModalOpen={isPayoutAllModalOpen}
         setIsModalOpen={setIsPayoutAllModalOpen}
         validatorsAndEras={validatorAndEras}
-        payouts={fetchedPayouts}
+        // Pass the fetched payouts capped to the max batch
+        // size to avoid exceeding the block weight limit.
+        payouts={nextPayoutBatch}
+        // Increase the start index to fetch the next batch
+        // of payouts, and avoid stale data.
+        onComplete={increasePayoutsStartIndex}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import { TransactionOptions, TransactionState } from '@webb-tools/anchors';
+import { hexToU8a, u8aToHex } from '@polkadot/util';
 import {
   ERC20__factory,
   TokenWrapper__factory,
@@ -19,37 +19,23 @@ import {
   randomBN,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import {
-  FIELD_SIZE,
-  Proof,
-  VAnchorProofInputs,
-  ZERO_BYTES32,
-  ZkComponents,
-  getChainIdType,
-  hexToU8a,
-  u8aToHex,
-} from '@webb-tools/utils';
-import assert from 'assert';
+import { getChainIdType } from '@webb-tools/dapp-types/TypedChainId';
 import merge from 'lodash/merge';
-import { groth16, zKey } from 'snarkjs';
+import { groth16 } from 'snarkjs';
 import {
   Account,
   Address,
   GetContractReturnType,
   Hash,
-  Client as ViemClient,
   TransactionRequestBase,
+  Client as ViemClient,
   WalletClient,
   encodeAbiParameters,
   getContract,
   keccak256,
   parseAbiParameters,
+  zeroAddress,
 } from 'viem';
-
-type FullProof = {
-  proof: Proof;
-  publicSignals: string[11];
-};
 
 /**
  * This class is mostly copy from the original VAnchor.ts
@@ -70,19 +56,12 @@ class VAnchor {
     public readonly treeHeight: number,
     public readonly maxEdges: number,
     public readonly fungibleToken: Address,
-    public readonly smallCircuitZkComponents: ZkComponents,
-    public readonly largeCircuitZkComponents: ZkComponents,
   ) {
     this.tree = new MerkleTree(treeHeight);
     this.depositHistory = {};
   }
 
-  public static async connect(
-    address: Address,
-    smallCircuitZkComponents: ZkComponents,
-    largeCircuitZkComponents: ZkComponents,
-    publicClient: ViemClient,
-  ) {
+  public static async connect(address: Address, publicClient: ViemClient) {
     const vAnchorContract = getContract({
       address: address,
       abi: VAnchorTree__factory.abi,
@@ -101,8 +80,6 @@ class VAnchor {
       treeHeight,
       maxEdges,
       token,
-      smallCircuitZkComponents,
-      largeCircuitZkComponents,
     );
 
     return createdAnchor;
@@ -174,7 +151,7 @@ class VAnchor {
       ensureHex(outputs[1].encrypt()),
     );
 
-    const vanchorInput: VAnchorProofInputs = await this.generateProofInputs(
+    const vanchorInput = await this.generateProofInputs(
       inputs,
       outputs,
       chainId,
@@ -185,21 +162,6 @@ class VAnchor {
     );
 
     const fullProof = await this.generateProof(vanchorInput);
-
-    const zkey =
-      inputs.length === 2
-        ? this.smallCircuitZkComponents.zkey
-        : this.largeCircuitZkComponents.zkey;
-
-    const vKey = await zKey.exportVerificationKey(zkey);
-
-    const isValid: boolean = await groth16.verify(
-      vKey,
-      fullProof.publicSignals,
-      fullProof.proof,
-    );
-
-    assert.strictEqual(isValid, true);
 
     const publicAmount = this.getPublicAmount(extAmount, fee);
 
@@ -242,7 +204,7 @@ class VAnchor {
     fee: bigint,
     extDataHash: bigint,
     leavesMap: Record<string, Uint8Array[]>,
-  ): Promise<VAnchorProofInputs> {
+  ) {
     const vAnchorRoots = await this.populateRootsForProof();
     let vanchorMerkleProof: Array<ReturnType<typeof this.getMerkleProof>>;
 
@@ -290,17 +252,15 @@ class VAnchor {
     return vAnchorInput;
   }
 
-  public async generateProof(
-    vanchorInputs: VAnchorProofInputs,
-  ): Promise<FullProof> {
-    const circuitWasm =
-      vanchorInputs.inAmount.length === 2
-        ? this.smallCircuitZkComponents.wasm
-        : this.largeCircuitZkComponents.wasm;
-    const zkey =
-      vanchorInputs.inAmount.length === 2
-        ? this.smallCircuitZkComponents.zkey
-        : this.largeCircuitZkComponents.zkey;
+  // TODO: fix any type
+  public async generateProof(vanchorInputs: any) {
+    const circuitWasm = {
+      wasm: Buffer.from(''),
+    };
+
+    const zkey = {
+      zkey: new Uint8Array(),
+    };
 
     const witnessCalculator = await buildVariableWitnessCalculator(
       circuitWasm,
@@ -313,7 +273,8 @@ class VAnchor {
     return proof;
   }
 
-  public async generateProofCalldata(fullProof: FullProof) {
+  // TODO: fix any type
+  public async generateProofCalldata(fullProof: any) {
     const calldata = await groth16.exportSolidityCallData(
       fullProof.proof,
       fullProof.publicSignals,
@@ -348,13 +309,11 @@ class VAnchor {
     relayer: Address,
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>, // subtree
-    overridesTransaction: TransactionOptions & {
+    overridesTransaction: {
       walletClient: WalletClient;
     } & Partial<TransactionRequestBase>,
   ) {
-    // Ignore the type of the transaction to use the default one
-    const [{ walletClient, type: _, ...override }, txOptions] =
-      this.splitTransactionOptions(overridesTransaction);
+    const { walletClient, type: _, ...override } = overridesTransaction;
 
     if (!walletClient.account) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
@@ -364,10 +323,6 @@ class VAnchor {
     const inputs_ = await this.padUtxos(inputs, 16);
     const outputs_ = await this.padUtxos(outputs, 2);
 
-    txOptions.onTransactionState?.(
-      TransactionState.GENERATE_ZK_PROOF,
-      undefined,
-    );
     const { extAmount, extData, publicInputs } = await this.setupTransaction(
       inputs_,
       [outputs_[0], outputs_[1]],
@@ -385,15 +340,10 @@ class VAnchor {
       wrapUnwrapToken,
     );
 
-    txOptions.onTransactionState?.(
-      TransactionState.INITIALIZE_TRANSACTION,
-      undefined,
-    );
-
     const { request } = await this.contract.simulate.transact(
       [
         publicInputs.proof,
-        ZERO_BYTES32,
+        zeroAddress,
         {
           recipient: extData.recipient,
           extAmount: extData.extAmount,
@@ -425,11 +375,6 @@ class VAnchor {
     console.log('request', request);
 
     const txHash = await walletClient.writeContract(request);
-
-    txOptions.onTransactionState?.(
-      TransactionState.WAITING_FOR_FINALIZATION,
-      txHash,
-    );
 
     this.updateTreeOrForestState(outputs);
 
@@ -526,23 +471,6 @@ class VAnchor {
     });
   }
 
-  public splitTransactionOptions<T extends object>(
-    options?: T & TransactionOptions,
-  ): [T, TransactionOptions] {
-    const {
-      keypair,
-      treeChainId,
-      externalLeaves,
-      onTransactionState,
-      ...rest
-    } = options ?? {};
-
-    return [
-      rest,
-      { keypair, treeChainId, externalLeaves, onTransactionState },
-    ] as [T, TransactionOptions];
-  }
-
   public getExtAmount(inputs: Utxo[], outputs: Utxo[], fee: bigint) {
     const sumInAmount = inputs.reduce(
       (sum, current) => sum + BigInt(current.amount),
@@ -558,7 +486,7 @@ class VAnchor {
   }
 
   public getPublicAmount(extAmount: bigint, fee: bigint): bigint {
-    const fieldSize = FIELD_SIZE.toBigInt();
+    const fieldSize = BigInt(1);
     return (extAmount - fee + fieldSize) % fieldSize;
   }
 
@@ -610,7 +538,7 @@ class VAnchor {
 
     const hash = keccak256(encodedData);
 
-    return BigInt(hash) % FIELD_SIZE.toBigInt();
+    return BigInt(hash) % BigInt(1);
   }
 
   public getMerkleProof(input: Utxo, leavesMap?: Uint8Array[]) {

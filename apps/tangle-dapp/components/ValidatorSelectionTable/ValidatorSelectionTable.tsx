@@ -39,6 +39,7 @@ import React, {
 
 import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
+import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import formatFractional from '../../utils/formatFractional';
 import pluralize from '../../utils/pluralize';
 import {
@@ -153,6 +154,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
               <TokenAmountCell
                 amount={props.getValue()}
                 className="text-mono-0"
+                formatStyle={AmountFormatStyle.SHORT}
               />
             </Chip>
           </div>

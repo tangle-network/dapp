@@ -10,4 +10,5 @@ export type PayoutAllTxContainerProps = {
   setIsModalOpen: (isModalOpen: boolean) => void;
   validatorsAndEras: PayoutTxProps[];
   payouts: Payout[];
+  onComplete: () => void;
 };
