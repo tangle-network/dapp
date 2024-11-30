@@ -1,7 +1,6 @@
 import { isAddress } from '@polkadot/util-crypto';
 import assert from 'assert';
-
-import { SubstrateAddress } from '../types/utils';
+import { SubstrateAddress } from '../types/address';
 
 const assertSubstrateAddress = (address: string): SubstrateAddress => {
   assert(isAddress(address), 'Address should be a valid Substrate address');

@@ -1,20 +1,19 @@
+import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
+import toEvmAddress32 from '@webb-tools/webb-ui-components/utils/toEvmAddress32';
 import { useCallback } from 'react';
-import { Address } from 'viem';
 
 import { TxName } from '../../../constants';
 import { Precompile } from '../../../constants/evmPrecompiles';
 import useAgnosticTx from '../../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../../hooks/useSubstrateTx';
-import { SubstrateAddress } from '../../../types/utils';
 import { toSubstrateAddress } from '../../../utils';
-import toEvmAddress32 from '../../../utils/toEvmAddress32';
 
 export type LsUpdateRolesTxContext = {
   poolId: number;
-  rootAddress?: Address | SubstrateAddress;
-  nominatorAddress?: Address | SubstrateAddress;
-  bouncerAddress?: Address | SubstrateAddress;
+  rootAddress?: AnyAddress;
+  nominatorAddress?: AnyAddress;
+  bouncerAddress?: AnyAddress;
 };
 
 const useLsUpdateRolesTx = () => {
@@ -47,14 +46,35 @@ const useLsUpdateRolesTx = () => {
 
   const evmTxFactory: EvmTxFactory<Precompile.LST, LsUpdateRolesTxContext> =
     useCallback((context) => {
-      // TODO: This will fail if the address is an EVM address.
-      const rootEvmAddress32 = toEvmAddress32(context.rootAddress);
-      const nominatorEvmAddress32 = toEvmAddress32(context.nominatorAddress);
-      const bouncerEvmAddress32 = toEvmAddress32(context.bouncerAddress);
+      if (
+        context.rootAddress === undefined &&
+        context.nominatorAddress === undefined &&
+        context.bouncerAddress === undefined
+      ) {
+        throw new Error('At least one address change must occur');
+      }
+
+      const noop = '0x';
+
+      // TODO: If the address is already an EVM address, need to figure out how to extend it from EVM address 20 -> 32.
+
+      const rootEvmAddress32 =
+        context.rootAddress === undefined
+          ? noop
+          : toEvmAddress32(context.rootAddress);
+
+      const nominatorEvmAddress32 =
+        context.nominatorAddress === undefined
+          ? noop
+          : toEvmAddress32(context.nominatorAddress);
+
+      const bouncerEvmAddress32 =
+        context.bouncerAddress === undefined
+          ? noop
+          : toEvmAddress32(context.bouncerAddress);
 
       return {
         functionName: 'updateRoles',
-        // TODO: What's going on with the pool name? It's not accepted by the precompile function it seems.
         arguments: [
           context.poolId,
           rootEvmAddress32,

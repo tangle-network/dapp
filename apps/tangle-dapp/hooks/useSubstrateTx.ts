@@ -8,13 +8,13 @@ import useSubstrateInjectedExtension from '@webb-tools/tangle-shared-ui/hooks/us
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import useIsMountedRef from '@webb-tools/webb-ui-components/hooks/useIsMountedRef';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
 import { Hash } from 'viem';
 
 import { TxName } from '../constants';
 import { GetSuccessMessageFunction } from '../types';
-import { SubstrateAddress } from '../types/utils';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';

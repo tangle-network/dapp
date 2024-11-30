@@ -1,3 +1,4 @@
+import toEvmAddress32 from '@webb-tools/webb-ui-components/utils/toEvmAddress32';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -9,7 +10,6 @@ import { toSubstrateAddress } from '../../utils';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
-import toEvmAddress32 from '../../utils/toEvmAddress32';
 
 export type PayoutAllTxContext = {
   validatorEraPairs: { validatorSubstrateAddress: string; era: number }[];

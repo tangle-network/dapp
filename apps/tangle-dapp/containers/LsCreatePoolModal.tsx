@@ -23,7 +23,7 @@ import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { TxStatus } from '../hooks/useSubstrateTx';
-import assertSubstrateAddress from '../utils/assertSubstrateAddress';
+import assertSubstrateAddress from '../../../libs/webb-ui-components/src/utils/assertSubstrateAddress';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
 import { ERROR_NOT_ENOUGH_BALANCE } from './ManageProfileModalContainer/Independent/IndependentAllocationInput';
 

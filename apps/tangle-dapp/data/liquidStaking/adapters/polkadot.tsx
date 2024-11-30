@@ -16,8 +16,7 @@ import {
   LsParachainChainDef,
   LsToken,
 } from '../../../constants/liquidStaking/types';
-import { SubstrateAddress } from '../../../types/utils';
-import assertSubstrateAddress from '../../../utils/assertSubstrateAddress';
+import assertSubstrateAddress from '../../../../../libs/webb-ui-components/src/utils/assertSubstrateAddress';
 import calculateCommission from '../../../utils/calculateCommission';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
 import formatFractional from '../../../utils/formatFractional';
@@ -38,6 +37,7 @@ import {
   fetchMappedValidatorsTotalValueStaked,
   fetchTokenSymbol,
 } from '../fetchHelpers';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 const DECIMALS = 18;
 

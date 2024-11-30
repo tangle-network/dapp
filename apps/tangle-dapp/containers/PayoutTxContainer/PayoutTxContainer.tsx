@@ -26,6 +26,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   const { activeAccount } = useWebContext();
 
   const walletAddress = useMemo(() => {
+    // TODO: Don't default to dummy addresses in order to circumvent the type system.
     if (!activeAccount?.address) {
       return '0x0';
     }

@@ -5,6 +5,8 @@ import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStor
 import {
   Alert,
   BridgeInputGroup,
+  isEvmAddress20,
+  isSubstrateAddress,
   Modal,
   ModalBody,
   ModalContent,
@@ -14,14 +16,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
-import {
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
 import AddressInput, { AddressType } from '../../components/AddressInput';
@@ -67,7 +62,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const existentialDeposit = useExistentialDeposit();
 
   const [amount, setAmount] = useState<BN | null>(null);
-  const [receiverAddress, setReceiverAddress] = useState('');
+  const [recipientAddress, setRecipientAddress] = useState('');
   const [hasErrors, setHasErrors] = useState(false);
 
   const {
@@ -81,7 +76,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const reset = useCallback(() => {
     setIsModalOpen(false);
     setAmount(null);
-    setReceiverAddress('');
+    setRecipientAddress('');
     resetTransferTx?.();
   }, [resetTransferTx, setIsModalOpen]);
 
@@ -92,31 +87,40 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     }
   }, [reset, status]);
 
-  const isMaxAmount = useMemo(
-    () =>
-      transferableBalance !== null &&
-      amount !== null &&
-      transferableBalance.eq(amount),
-    [amount, transferableBalance],
-  );
+  const isMaxAmount =
+    transferableBalance !== null &&
+    amount !== null &&
+    transferableBalance.eq(amount);
+
+  const isValidReceiverAddress =
+    isSubstrateAddress(recipientAddress) || isEvmAddress20(recipientAddress);
+
+  const isReady =
+    status !== TxStatus.PROCESSING &&
+    executeTransferTx !== null &&
+    amount !== null &&
+    amount.gt(BN_ZERO) &&
+    isValidReceiverAddress &&
+    !hasErrors &&
+    transferableBalance !== null;
 
   const handleSend = useCallback(() => {
-    // TODO: Check that the address is valid, or return.
-    // Transaction not yet ready, or data is invalid.
-    if (
-      executeTransferTx === null ||
-      amount === null ||
-      transferableBalance === null
-    ) {
+    if (!isReady) {
       return;
     }
 
     executeTransferTx({
-      receiverAddress,
+      recipientAddress,
       amount,
       maxAmount: transferableBalance,
     });
-  }, [amount, executeTransferTx, receiverAddress, transferableBalance]);
+  }, [
+    amount,
+    executeTransferTx,
+    isReady,
+    recipientAddress,
+    transferableBalance,
+  ]);
 
   const handleSetErrorMessage = useCallback(
     (error: string | null) => {
@@ -124,23 +128,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     },
     [setHasErrors],
   );
-
-  const isReady = status !== TxStatus.PROCESSING;
-
-  const isDataValid =
-    amount !== null &&
-    amount.gt(BN_ZERO) &&
-    receiverAddress !== '' &&
-    !hasErrors;
-
-  const isValidReceiverAddress =
-    isAddress(receiverAddress) || isHex(receiverAddress);
-
-  const canInitiateTx =
-    isReady &&
-    isDataValid &&
-    executeTransferTx !== null &&
-    isValidReceiverAddress;
 
   const transferableBalanceTooltip: ReactNode = transferableBalance !==
     null && (
@@ -180,8 +167,8 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               typedChainId: getTypedChainIdFromAddr(activeAccountAddress),
             }}
             dest={{
-              address: receiverAddress,
-              typedChainId: getTypedChainIdFromAddr(receiverAddress),
+              address: recipientAddress,
+              typedChainId: getTypedChainIdFromAddr(recipientAddress),
             }}
           />
 
@@ -216,8 +203,8 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               title="Receiver Address"
               placeholder="EVM or Substrate"
               wrapperOverrides={{ isFullWidth: true }}
-              value={receiverAddress}
-              setValue={setReceiverAddress}
+              value={recipientAddress}
+              setValue={setRecipientAddress}
               isDisabled={!isReady}
               setErrorMessage={handleSetErrorMessage}
             />
@@ -244,7 +231,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
         <ModalFooterActions
           learnMoreLinkHref={TANGLE_DOCS_URL}
           isProcessing={status === TxStatus.PROCESSING}
-          isConfirmDisabled={!canInitiateTx}
+          isConfirmDisabled={!isReady}
           onConfirm={handleSend}
           confirmButtonText="Send"
         />

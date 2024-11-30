@@ -35,6 +35,7 @@ import { sortBnValueForPayout } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { PayoutTableProps } from './types';
+import { PayoutTxProps } from '../../containers/PayoutTxContainer/types';
 
 const columnHelper = createColumnHelper<Payout>();
 
@@ -51,14 +52,9 @@ const PayoutTable: FC<PayoutTableProps> = ({
     { id: 'era', desc: true },
   ]);
 
-  const [payoutTxProps, setPayoutTxProps] = useState<{
-    validatorAddress: string;
-    era: number;
-  }>({
-    // TODO: Should be using `null` for both values. Avoid using empty strings to circumvent TypeScript type checking.
-    validatorAddress: '',
-    era: 0,
-  });
+  const [payoutTxProps, setPayoutTxProps] = useState<PayoutTxProps | null>(
+    null,
+  );
 
   const table = useReactTable({
     data,
@@ -209,6 +205,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
                   validatorAddress: rowData.validator.address,
                   era: rowData.era,
                 });
+
                 setIsModalOpen(true);
               }}
               className="flex items-center justify-center w-full"

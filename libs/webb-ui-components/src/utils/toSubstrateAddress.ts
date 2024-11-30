@@ -5,9 +5,9 @@ import {
 } from '@polkadot/util-crypto';
 import assert from 'assert';
 
-import { SubstrateAddress } from '../types/utils';
+import { SubstrateAddress } from '../types/address';
 import assertSubstrateAddress from './assertSubstrateAddress';
-import isSubstrateAddress from './isSubstrateAddress';
+import { isSubstrateAddress } from './isSubstrateAddress';
 
 /**
  * Converts an EVM address to a Substrate address.

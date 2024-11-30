@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { LsPool } from '../../constants/liquidStaking/types';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
-import assertSubstrateAddress from '../../utils/assertSubstrateAddress';
+import assertSubstrateAddress from '../../../../libs/webb-ui-components/src/utils/assertSubstrateAddress';
 import perbillToFractional from '../../utils/perbillToFractional';
 import useLsPoolCompoundApys from './apy/useLsPoolCompoundApys';
 import useLsBondedPools from './useLsBondedPools';

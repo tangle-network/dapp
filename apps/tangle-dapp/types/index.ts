@@ -3,6 +3,7 @@ import type {
   SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 export enum PagePath {
   NOMINATION = '/nomination',
@@ -41,7 +42,7 @@ export enum DelegationsAndPayoutsTab {
 }
 
 export type BasicAccountInfo = {
-  address: string;
+  address: SubstrateAddress;
   identityName: string;
 };
 

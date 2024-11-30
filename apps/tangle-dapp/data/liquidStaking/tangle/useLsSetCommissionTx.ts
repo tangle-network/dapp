@@ -1,3 +1,4 @@
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { useCallback } from 'react';
 import { Address } from 'viem';
 
@@ -6,7 +7,6 @@ import {
   SubstrateTxFactory,
   useSubstrateTxWithNotification,
 } from '../../../hooks/useSubstrateTx';
-import { SubstrateAddress } from '../../../types/utils';
 import { toSubstrateAddress } from '../../../utils';
 
 export type LsPoolSetCommissionTxContext = {

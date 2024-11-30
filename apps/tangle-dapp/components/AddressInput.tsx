@@ -4,7 +4,7 @@ import { isAddress } from '@polkadot/util-crypto';
 import { Avatar, Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
-import { isEvmAddress } from '../utils/isEvmAddress';
+import { isEvmAddress } from '../../../libs/webb-ui-components/src/utils/isEvmAddress';
 import InputWrapper, { InputWrapperProps } from './InputWrapper';
 
 export enum AddressType {

@@ -35,7 +35,17 @@
     "../../jest.setup.ts",
     "../../libs/webb-ui-components/src/utils/formatBn.ts",
     "../../libs/webb-ui-components/src/utils/formatDisplayAmount.ts",
-    "../../libs/webb-ui-components/src/utils/addCommasToNumber.ts"
+    "../../libs/webb-ui-components/src/utils/addCommasToNumber.ts",
+    "../../libs/webb-ui-components/src/utils/isEvmAddress.ts",
+    "../../libs/webb-ui-components/src/utils/isEvmAddress20.ts",
+    "../../libs/webb-ui-components/src/utils/isEvmAddress32.ts",
+    "../../libs/webb-ui-components/src/utils/isSubstrateAddress.ts",
+    "../../libs/webb-ui-components/src/utils/isValidAddress.ts",
+    "../../libs/webb-ui-components/src/utils/evmAddress20To32.ts",
+    "../../libs/webb-ui-components/src/utils/toEvmAddress20.ts",
+    "../../libs/webb-ui-components/src/utils/toEvmAddress32.ts",
+    "../../libs/webb-ui-components/src/utils/toSubstrateAddress.ts",
+    "../../libs/webb-ui-components/src/utils/assertSubstrateAddress.ts"
   ],
   "exclude": [
     "node_modules",

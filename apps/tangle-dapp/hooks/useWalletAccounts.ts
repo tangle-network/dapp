@@ -5,9 +5,9 @@ import { useWebContext } from '@webb-tools/api-provider-environment';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useMemo } from 'react';
 
-import { SubstrateAddress } from '../types/utils';
-import assertSubstrateAddress from '../utils/assertSubstrateAddress';
-import { isEvmAddress } from '../utils/isEvmAddress';
+import assertSubstrateAddress from '../../../libs/webb-ui-components/src/utils/assertSubstrateAddress';
+import { isEvmAddress } from '../../../libs/webb-ui-components/src/utils/isEvmAddress';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 export type WalletAccount = {
   name: string;

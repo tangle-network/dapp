@@ -50,6 +50,7 @@ export type AbiFunctionName<T extends Precompile> = T extends Precompile.STAKING
               | 'setState'
               | 'setMetadata'
               | 'setConfigs'
+              | 'updateRoles'
           : never;
 
 type AbiType =
@@ -88,7 +89,7 @@ export type AbiFunctionArgs = {
     bondExtra: [BN];
     chill: [];
     currentEra: [];
-    erasTotalStake: [BN];
+    erasTotalStake: [number];
     isNominator: [AddressType];
     isValidator: [AddressType];
     maxNominatorCount: [];
@@ -97,13 +98,13 @@ export type AbiFunctionArgs = {
     minNominatorBond: [];
     minValidatorBond: [];
     nominate: [AddressType[]];
-    payoutStakers: [AddressType, BN];
+    payoutStakers: [AddressType, number];
     rebond: [BN];
     setController: [];
-    setPayee: [BN];
+    setPayee: [number];
     unbond: [BN];
     validatorCount: [];
-    withdrawUnbonded: [BN];
+    withdrawUnbonded: [number];
   };
 
   [Precompile.VESTING]: {
@@ -118,6 +119,19 @@ export type AbiFunctionArgs = {
 
   [Precompile.BALANCES_ERC20]: {
     transfer: [AddressType, BN];
+  };
+
+  [Precompile.LST]: {
+    join: [BN, BN];
+    bondExtra: [BN, number, BN];
+    unbond: [AddressType, BN, BN];
+    poolWithdrawUnbonded: [BN, number];
+    withdrawUnbonded: [AddressType, BN, number];
+    create: [BN, AddressType, AddressType, AddressType];
+    nominate: [BN, AddressType[]];
+    setMetadata: [BN, string];
+    setConfigs: [BN, BN, number, number];
+    updateRoles: [number, AddressType, AddressType, AddressType];
   };
 };
 
@@ -711,45 +725,6 @@ export const LST_PRECOMPILE_ABI: AbiFunction<Precompile.LST>[] = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes32',
-        name: 'root',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bytes32',
-        name: 'nominator',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bytes32',
-        name: 'bouncer',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'uint256',
-        name: 'poolId',
-        type: 'uint256',
-      },
-    ],
-    name: 'createWithPoolId',
-    outputs: [
-      {
-        internalType: 'uint8',
-        name: '',
-        type: 'uint8',
-      },
-    ],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
         name: 'poolId',
         type: 'uint256',
       },
@@ -842,6 +817,40 @@ export const LST_PRECOMPILE_ABI: AbiFunction<Precompile.LST>[] = [
       },
     ],
     name: 'setConfigs',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'poolId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'root',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'nominator',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'bouncer',
+        type: 'bytes32',
+      },
+    ],
+    name: 'updateRoles',
     outputs: [
       {
         internalType: 'uint8',

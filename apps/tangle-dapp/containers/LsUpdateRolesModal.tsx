@@ -14,7 +14,7 @@ import AddressInput, { AddressType } from '../components/AddressInput';
 import useLsUpdateRolesTx from '../data/liquidStaking/tangle/useLsUpdateRolesTx';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { TxStatus } from '../hooks/useSubstrateTx';
-import assertSubstrateAddress from '../utils/assertSubstrateAddress';
+import assertSubstrateAddress from '../../../libs/webb-ui-components/src/utils/assertSubstrateAddress';
 
 export type LsUpdateRolesModalProps = {
   poolId: number | null;

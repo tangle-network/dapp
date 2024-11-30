@@ -11,7 +11,7 @@ import usePendingEvmBalance from '../../data/balances/usePendingEvmBalance';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import formatTangleBalance from '../../utils/formatTangleBalance';
-import { toEvmAddress20 } from '../../utils/toEvmAddress20';
+import { toEvmAddress20 } from '../../../../libs/webb-ui-components/src/utils/toEvmAddress20';
 import ActionItem from './ActionItem';
 
 const WithdrawEvmBalanceAction: FC = () => {

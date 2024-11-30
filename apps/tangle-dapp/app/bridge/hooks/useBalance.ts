@@ -11,7 +11,7 @@ import useSWR from 'swr';
 
 import { useBridge } from '../../../context/BridgeContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
-import { isEvmAddress } from '../../../utils/isEvmAddress';
+import { isEvmAddress } from '../../../../../libs/webb-ui-components/src/utils/isEvmAddress';
 import {
   getEvmContractBalance,
   getEvmNativeBalance,

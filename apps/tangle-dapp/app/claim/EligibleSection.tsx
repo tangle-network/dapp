@@ -30,7 +30,7 @@ import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import getStatement, { Statement } from '../../utils/getStatement';
-import isValidAddress from '../../utils/isValidAddress';
+import isValidAddress from '../../../../libs/webb-ui-components/src/utils/isValidAddress';
 import type { ClaimInfoType } from './types';
 
 enum Step {

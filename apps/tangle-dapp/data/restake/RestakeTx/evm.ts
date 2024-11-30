@@ -22,7 +22,7 @@ import {
   PrecompileAddress,
 } from '../../../constants/evmPrecompiles';
 import createEvmBatchCallArgs from '../../../utils/staking/createEvmBatchCallArgs';
-import toEvmAddress32 from '../../../utils/toEvmAddress32';
+import toEvmAddress32 from '../../../../../libs/webb-ui-components/src/utils/toEvmAddress32';
 import restakeAbi from './abi';
 import {
   type CancelDelegatorUnstakeRequestContext,

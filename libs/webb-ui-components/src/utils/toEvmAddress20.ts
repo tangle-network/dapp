@@ -1,10 +1,8 @@
 import { addressToEvm } from '@polkadot/util-crypto';
-import { AddressType } from '@webb-tools/dapp-config/types';
 import { toHex } from '@webb-tools/sdk-core';
 import assert from 'assert';
-
-import { isEvmAddress } from './isEvmAddress';
-import isSubstrateAddress from './isSubstrateAddress';
+import { EvmAddress20, SubstrateAddress } from '../types/address';
+import { isEvmAddress20 } from './isEvmAddress20';
 
 /**
  * Converts a Substrate address to a standard EVM address of 20 bytes.
@@ -17,23 +15,26 @@ import isSubstrateAddress from './isSubstrateAddress';
  * and not inverses. This means that if you convert a Substrate address
  * to an EVM address, you cannot convert it back to the **same** Substrate address.
  *
- * @param substrateAddress - The address to be converted, which can be either a Substrate
+ * @param address - The address to be converted, which can be either a Substrate
  * or an EVM address.
  * @returns The converted EVM address. If the address is already an EVM address,
  * it will be returned as is.
  */
-export const toEvmAddress20 = (substrateAddress: string): AddressType => {
-  if (!isSubstrateAddress(substrateAddress)) {
-    throw new Error('Provided address is not a Substrate address');
+export const toEvmAddress20 = (
+  address: SubstrateAddress | EvmAddress20,
+): EvmAddress20 => {
+  // Nothing to do. Have this option for convenience.
+  if (isEvmAddress20(address)) {
+    return address;
   }
 
   // EVM addresses are 20 bytes long.
-  const conversionResult = toHex(addressToEvm(substrateAddress), 20);
+  const result = toHex(addressToEvm(address), 20);
 
   assert(
-    isEvmAddress(conversionResult),
-    `Conversion to EVM address should not fail when a valid Substrate address is provided, got: ${conversionResult}`,
+    isEvmAddress20(result),
+    `Conversion to EVM address should not fail when a valid Substrate address is provided, got: ${result}`,
   );
 
-  return conversionResult;
+  return result;
 };

@@ -65,6 +65,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
     defaultSelectedValidators.reduce((acc, address) => {
       acc[address] = true;
+
       return acc;
     }, {} as RowSelectionState),
   );

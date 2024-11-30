@@ -1,4 +1,5 @@
 import {
+  isSubstrateAddress,
   Modal,
   ModalBody,
   ModalContent,
@@ -12,7 +13,6 @@ import { isAddress } from 'viem';
 
 import useLsSetCommissionTx from '../../data/liquidStaking/tangle/useLsSetCommissionTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import isSubstrateAddress from '../../utils/isSubstrateAddress';
 import AddressInput, { AddressType } from '../AddressInput';
 import PercentageInput from '../PercentageInput';
 

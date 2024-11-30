@@ -15,12 +15,10 @@ export default function tryEncodeSubstrateAddress(
   if (address === null || address === undefined || address.length === 0) {
     return null;
   }
-
   // If the active account is an EVM address, return it as is.
   else if (isEthereumAddress(address)) {
     return address;
   }
-
   // If the active network has an associated ss58 prefix, encode
   // the address using that ss58 prefix.
   else if (ss58Prefix !== undefined) {
