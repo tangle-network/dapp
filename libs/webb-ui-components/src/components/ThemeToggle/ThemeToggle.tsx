@@ -2,14 +2,10 @@
 
 import { MoonLine, SunLine } from '@webb-tools/icons';
 import cx from 'classnames';
-import { FC, useEffect, useMemo, useState } from 'react';
-import {
-  useDarkMode,
-  useDarkMode as useNormalDarkMode,
-} from '../../hooks/useDarkMode';
+import { FC, useEffect, useState } from 'react';
+import { useNormalDarkMode } from '../../hooks/useDarkMode';
 
 import { ThemeToggleProps } from './types';
-import { UseDarkModeType, useNormalDarkMode } from '../../hooks/useDarkMode';
 
 /**
  * ThemeToggle (Dark/Light) Component
@@ -20,16 +16,11 @@ import { UseDarkModeType, useNormalDarkMode } from '../../hooks/useDarkMode';
  * ```
  */
 
-export const ThemeToggle: FC<ThemeToggleProps> = ({
-  useNextThemes = false,
-}) => {
-  const darkModeHook: UseDarkModeType = useMemo(
-    () => (useNextThemes ? useDarkMode : useNormalDarkMode),
-    [useNextThemes],
-  );
+export const ThemeToggle: FC<ThemeToggleProps> = () => {
+  const darkModeHook = useNormalDarkMode;
 
   const [isMounted, setIsMounted] = useState(false);
-  const [isDarkMode, toggleThemeMode] = darkModeHook;
+  const [isDarkMode, toggleThemeMode] = darkModeHook();
 
   // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
@@ -40,7 +31,7 @@ export const ThemeToggle: FC<ThemeToggleProps> = ({
   // until the compoennt is mounted, this prevents
   // hydration mismatch
   // Check: https://github.com/pacocoursey/next-themes#avoid-hydration-mismatch
-  if (!isMounted && useNextThemes) {
+  if (!isMounted) {
     return null;
   }
 

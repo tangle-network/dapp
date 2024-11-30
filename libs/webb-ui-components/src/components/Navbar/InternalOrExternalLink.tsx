@@ -10,7 +10,7 @@ export const InternalOrExternalLink: FC<
   const className = twMerge('text-inherit block', props.className);
 
   return isInternal ? (
-    <Link {...props} href={url} className={className}>
+    <Link {...props} to={url} className={className}>
       {children}
     </Link>
   ) : (

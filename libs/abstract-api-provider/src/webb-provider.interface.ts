@@ -1,36 +1,14 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ApiPromise } from '@polkadot/api';
 import { EventBus } from '@webb-tools/app-util';
-import { BridgeStorage } from '@webb-tools/browser-utils';
-import { VAnchor__factory } from '@webb-tools/contracts';
 import { ApiConfig } from '@webb-tools/dapp-config';
-import { type RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
-import { InteractiveFeedback, Storage } from '@webb-tools/dapp-types';
-import { NoteManager } from '@webb-tools/note-manager';
-import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import {
-  GetContractReturnType,
-  PublicClient,
-  Client as ViemClient,
-} from 'viem';
+import { InteractiveFeedback } from '@webb-tools/dapp-types';
 import { AccountsAdapter } from './account/Accounts.adapter';
-import { ChainQuery } from './chain-query';
 import { ContributePayload, Crowdloan, CrowdloanEvent } from './crowdloan';
 import { ECDSAClaims } from './ecdsa-claims';
-import { WebbRelayerManager } from './relayer/webb-relayer-manager';
-import { WebbState } from './state';
-import {
-  ActionEvent,
-  NewNotesTxResult,
-  TransactionExecutor,
-} from './transaction/transactionExecutor';
 import { WebbProviderType } from './types';
-import { BridgeApi } from './vanchor';
-import { VAnchorActions } from './vanchor/vanchor-actions';
-import { WrapUnwrap } from './wrap-unwrap';
+import { Observable } from 'rxjs';
 
 export interface RelayChainMethods<T extends WebbApiProvider<any>> {
   // Crowdloan API
@@ -38,18 +16,7 @@ export interface RelayChainMethods<T extends WebbApiProvider<any>> {
 }
 
 /// list of the apis that are available for  the provider
-export interface WebbMethods<
-  ProviderType extends WebbProviderType,
-  T extends WebbApiProvider<any>,
-> {
-  // Variable Anchor API
-  variableAnchor: WebbVariableAnchor<ProviderType, T>;
-  // Wrap and unwrap API
-  wrapUnwrap: WrapAndUnwrap<T>;
-  // Chain query : an API for querying chain storage used currently for balances
-  chainQuery: ChainQuery<T>;
-  // Methods for querying information about the current bridge
-  bridgeApi: BridgeApi<T>;
+export interface WebbMethods<T extends WebbApiProvider<any>> {
   // Claims
   claim: {
     core: ECDSAClaims<T>;
@@ -70,20 +37,6 @@ export type WebbTransactionMethod<T> = {
   inner: T;
   enabled: boolean;
 };
-
-export interface WebbVariableAnchor<
-  ProviderType extends WebbProviderType,
-  T extends WebbApiProvider<any>,
-> {
-  actions: WebbMethod<VAnchorActions<ProviderType, T>, ActionEvent>;
-}
-
-export interface WrapAndUnwrap<T> {
-  core: {
-    inner: WrapUnwrap<T>;
-    enabled: boolean;
-  };
-}
 
 /// TODO improve this and add a spec
 /// An interface for Apis pre-initialization
@@ -148,7 +101,6 @@ export type TXNotificationPayload<T = undefined> = {
   // notification key
   key: NotificationKey;
   address: string;
-  // More metadata for the transaction path (EX Anchor::Deposit ,VAnchor::Withdraw)
   path: MethodPath;
 };
 /**
@@ -213,12 +165,9 @@ export type NotificationHandler = ((
  **/
 export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<unknown>;
-  state: WebbState;
-  methods: WebbMethods<WebbProviderType, WebbApiProvider<T>>;
+  methods: WebbMethods<WebbApiProvider<T>>;
 
   relayChainMethods: RelayChainMethods<WebbApiProvider<T>> | null;
-  noteManager: NoteManager | null;
-  typedChainidSubject: BehaviorSubject<number>;
 
   type: WebbProviderType;
 
@@ -227,8 +176,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   capabilities?: ProvideCapabilities;
 
   endSession?(): Promise<void>;
-
-  relayerManager: WebbRelayerManager<WebbProviderType, RelayerCMDBase>;
 
   getProvider(): any;
 
@@ -248,40 +195,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
 
   /** Get the latest block number */
   getBlockNumber(): bigint | null;
-
-  // get vanchor max edges
-  getVAnchorMaxEdges: (
-    vAnchorAddress: string,
-    provider?: PublicClient | ApiPromise,
-  ) => Promise<number>;
-
-  // get vanchor levels
-  getVAnchorLevels: (
-    vAnchorAddressOrTreeId: string,
-    providerOrApi?: PublicClient | ApiPromise,
-  ) => Promise<number>;
-
-  // generate utxo
-  generateUtxo: (input: UtxoGenInput) => Promise<Utxo>;
-
-  getVAnchorLeaves(
-    vanchor:
-      | GetContractReturnType<typeof VAnchor__factory.abi, ViemClient>
-      | ApiPromise,
-    storage: Storage<BridgeStorage>,
-    options: {
-      treeHeight: number;
-      targetRoot: string;
-      commitment: bigint;
-      importMetaUrl: string;
-      treeId?: number;
-      palletId?: number;
-      tx?: TransactionExecutor<NewNotesTxResult>;
-    },
-  ): Promise<{
-    provingLeaves: string[];
-    commitmentIndex: number;
-  }>;
 
   sign(message: string): Promise<string>;
 }

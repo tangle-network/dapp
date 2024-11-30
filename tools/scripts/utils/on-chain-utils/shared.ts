@@ -1,13 +1,4 @@
-import EVMChainId from '@webb-tools/dapp-types/src/EVMChainId';
 import { zeroAddress } from '@webb-tools/dapp-types';
-
-// Constants
-
-export const LOCALNET_CHAIN_IDS = [
-  EVMChainId.HermesLocalnet,
-  EVMChainId.AthenaLocalnet,
-  EVMChainId.DemeterLocalnet,
-] as const;
 
 export const SELF_HOSTED_CHAIN_IDS = [] as const;
 

@@ -1,6 +1,6 @@
 import { HexString } from '@polkadot/util/types';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
+import { makeExplorerUrl } from '@webb-tools/api-provider-environment/utils';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import {
   calculateTypedChainId,

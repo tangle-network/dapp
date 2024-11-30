@@ -1,7 +1,4 @@
-'use client';
-
 import { useCallback, useEffect, useMemo } from 'react';
-import { useTheme } from 'next-themes';
 import useLocalStorageState from 'use-local-storage-state';
 
 type SupportTheme = 'light' | 'dark';
@@ -23,7 +20,7 @@ export type ToggleThemeModeFunc = (
  * Hook to get the current theme mode and a function to toggle the theme mode
  * @returns `[isDarkMode, toggleThemeMode]`
  */
-export function useDarkMode(
+export function useNormalDarkMode(
   defaultTheme: SupportTheme = 'dark',
 ): [boolean, ToggleThemeModeFunc] {
   const [theme, setTheme] = useLocalStorageState('theme', {
@@ -55,7 +52,7 @@ export function useDarkMode(
       if (!isBrowser()) return;
 
       const _nextThemeMode =
-        (nextThemeMode ?? theme === 'dark') ? 'light' : 'dark';
+        nextThemeMode ?? (theme === 'dark' ? 'light' : 'dark');
 
       if (_nextThemeMode === theme) return;
 
@@ -78,3 +75,9 @@ export function useDarkMode(
 
   return [isDarkMode, toggleThemeMode];
 }
+
+// Export a type that can be used for dark mode hooks
+export type UseDarkModeType = typeof useNormalDarkMode;
+
+// Re-export the hook as the default dark mode implementation
+export const useDarkMode = useNormalDarkMode;

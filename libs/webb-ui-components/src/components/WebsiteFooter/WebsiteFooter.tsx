@@ -89,7 +89,7 @@ export const WebsiteFooter = forwardRef<
       <div className="w-full max-w-[900px] flex flex-col gap-9 px-4 py-12 mx-auto">
         {/** Logo and links */}
         <div className="flex flex-col items-center space-y-4 md:items-start md:space-y-0 md:space-x-8 md:flex-row md:justify-between">
-          <Link href="/">{<TangleLogo />}</Link>
+          <Link to="/">{<TangleLogo />}</Link>
           {getNavLinks(websiteType).map(({ group, links }) => (
             <div className="hidden md:!flex md:flex-col flex-[1]" key={group}>
               <Typography

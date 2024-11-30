@@ -35,9 +35,6 @@ export default defineConfig({
       },
     },
   },
-  optimizeDeps: {
-    exclude: ['@webb-tools/protocol-substrate-types'],
-  },
   server: {
     port: 4200,
     open: true,
@@ -45,6 +42,5 @@ export default defineConfig({
     fs: {
       allow: ['..'],
     },
-    historyApiFallback: true,
   },
 });

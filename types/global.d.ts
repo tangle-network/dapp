@@ -1,7 +1,3 @@
-declare module 'circomlibjs';
-
-declare module 'snarkjs';
-
 /**
  * SVG files can be imported as React components
  * @see https://react-svgr.com/docs/next/#typescript

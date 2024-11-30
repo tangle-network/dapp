@@ -7,7 +7,6 @@ import chainData from './fixtures/native.json';
 import {
   DEFAULT_EVM_CURRENCY,
   DEFAULT_NATIVE_INDEX,
-  LOCALNET_CHAIN_IDS,
   SELF_HOSTED_CHAIN_IDS,
 } from './shared';
 
@@ -17,12 +16,6 @@ async function fetchEVMNativeCurrency(
   typedChainId: number,
 ): Promise<ICurrency> {
   const { chainId } = parseTypedChainId(typedChainId);
-
-  // Maybe evn localnet or self hosted
-  const customChainIds = LOCALNET_CHAIN_IDS.concat(SELF_HOSTED_CHAIN_IDS);
-  if (customChainIds.includes(chainId)) {
-    return DEFAULT_EVM_CURRENCY;
-  }
 
   const chain = chainData.find((currency) => currency.chainId === chainId);
 

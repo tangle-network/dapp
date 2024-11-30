@@ -15,7 +15,6 @@ export const SubItem: React.FC<
   name,
   isInternal,
   href,
-  isNext,
   isActive: isActiveProp,
   isDisabled,
   setItemIsActive,
@@ -24,7 +23,7 @@ export const SubItem: React.FC<
   onClick,
   pathnameOrHash,
 }) => {
-  const linkProps = useLinkProps({ href, isInternal, isNext, isDisabled });
+  const linkProps = useLinkProps({ href, isInternal, isDisabled });
 
   const setIsActive = (event: EventFor<'a', 'onClick'>) => {
     onClick?.(event);

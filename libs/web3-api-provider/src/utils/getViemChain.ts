@@ -2,7 +2,6 @@ import {
   LOCALNET_CHAIN_IDS,
   chainsConfig,
 } from '@webb-tools/dapp-config/chains';
-import { DEFAULT_EVM_CURRENCY } from '@webb-tools/dapp-config/currencies';
 import * as chains from 'viem/chains';
 
 // At the time of writing, Viem does not support multicall for these chains.
@@ -43,7 +42,11 @@ function defineViemChain(typedChainId: number): chains.Chain {
     id: chain.id,
     name: chain.name,
     testnet: true,
-    nativeCurrency: DEFAULT_EVM_CURRENCY,
+    nativeCurrency: {
+      name: 'Tangle Network Token',
+      symbol: 'TNT',
+      decimals: 18,
+    },
     rpcUrls: chain.rpcUrls,
     blockExplorers: chain.blockExplorers,
     contracts: chain.contracts,

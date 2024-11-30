@@ -8,7 +8,6 @@ import {
   MetadataDef,
 } from '@polkadot/extension-inject/types';
 import { ApiInitHandler } from '@webb-tools/abstract-api-provider';
-import { options as apiOptions } from '@webb-tools/api';
 import { EventBus } from '@webb-tools/app-util';
 import { LoggerService } from '@webb-tools/browser-utils';
 import { Wallet } from '@webb-tools/dapp-config';
@@ -224,12 +223,9 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       },
     );
 
-    const apiPromise = await ApiPromise.create(
-      apiOptions({
-        provider: wsProvider,
-        noInitWarn: true,
-      }),
-    );
+    const apiPromise = await ApiPromise.create({
+      provider: wsProvider,
+    });
 
     return apiPromise;
   }

@@ -1,17 +1,14 @@
 'use client';
 
 import { Alert } from '@webb-tools/icons/Alert';
-import { useMemo, type FC } from 'react';
+import { type FC } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import {
   oneDark,
   oneLight,
 } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { twMerge } from 'tailwind-merge';
-import {
-  useDarkMode,
-  useDarkMode as useNormalDarkMode,
-} from '../../hooks/useDarkMode';
+import { useDarkMode as useNormalDarkMode } from '../../hooks/useDarkMode';
 import { Typography } from '../../typography';
 import SkeletonLoader from '../SkeletonLoader/SkeletonLoader';
 import Button from '../buttons/Button';
@@ -23,14 +20,9 @@ const CodeFile: FC<CodeFileProps> = ({
   error,
   language,
   fetchCodeFnc,
-  isInNextProject,
   className,
 }) => {
-  const useDarkMode = useMemo(
-    () => (isInNextProject ? useDarkMode : useNormalDarkMode),
-    [isInNextProject],
-  );
-  const [isDarkMode] = useDarkMode();
+  const [isDarkMode] = useNormalDarkMode();
 
   if (isLoading) {
     return (

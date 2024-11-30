@@ -19,7 +19,6 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   href,
   Icon,
   subItems,
-  isNext,
   isExpanded,
   isActive,
   setIsActive,
@@ -74,7 +73,6 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   const linkProps = useLinkProps({
     href,
     isInternal,
-    isNext,
     isDisabled,
     hasSubItem: subItems.length > 0,
     onClick,

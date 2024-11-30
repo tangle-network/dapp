@@ -1,7 +1,0 @@
-{
-  "name": "@webb-tools/note-manager",
-  "version": "0.0.1",
-  "type": "module",
-  "types": "./src/index.d.ts",
-  "typings": "./src/index.d.ts"
-}

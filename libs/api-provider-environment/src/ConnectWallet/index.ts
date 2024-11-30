@@ -266,7 +266,7 @@ function useMemoValues(
     typedChainId?: number;
   } & Parameters<typeof useConnectWallet>[0],
 ) {
-  const { walletState, selectedWallet, typedChainId, useAllWallets } = props;
+  const { walletState, selectedWallet, typedChainId } = props;
   const { apiConfig, activeWallet, loading } = useWebContext();
 
   const connectingWalletId = useMemo<number | undefined>(
@@ -286,11 +286,8 @@ function useMemoValues(
   );
 
   const supportedWallets = useMemo(
-    () =>
-      apiConfig.getSupportedWallets(typedChainId, {
-        filterByActiveAnchor: !useAllWallets,
-      }),
-    [apiConfig, typedChainId, useAllWallets],
+    () => apiConfig.getSupportedWallets(typedChainId),
+    [apiConfig, typedChainId],
   );
 
   return {

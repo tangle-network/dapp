@@ -1,29 +1,24 @@
-'use client';
-
 import { Fragment } from 'react';
 import { Link as ReactRouterLink } from 'react-router-dom';
-import { LinkProps } from './types';
+import { LinkProps, isReactRouterLinkProps } from './types';
 
-interface CommonLinkProps {
-  href?: string;
-  children: React.ReactNode;
-  className?: string;
-  isInternal?: boolean;
-}
-
-type LinkProps = CommonLinkProps &
-  Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof CommonLinkProps>;
-
-export const Link: React.FC<LinkProps> = ({ isInternal, ...props }) => {
-  const restProps = props as any; // temporary type assertion while migrating
-
-  if (isInternal) {
-    return <ReactRouterLink to={props.href ?? ''} {...restProps} />;
+export const Link: React.FC<LinkProps> = (props) => {
+  if (isReactRouterLinkProps(props)) {
+    return <ReactRouterLink {...extractInternalProp(props)} />;
   }
 
   if (!props.href?.length) {
-    return props.children;
+    return <Fragment key={props.key}>{props.children}</Fragment>;
   }
 
-  return <a {...props}>{props.children}</a>;
+  const internalProps = extractInternalProp(props);
+
+  return <a {...internalProps}>{internalProps.children}</a>;
 };
+
+function extractInternalProp<T extends LinkProps>(
+  props: T,
+): Omit<T, 'isInternal'> {
+  const { isInternal, ...restProps } = props;
+  return restProps;
+}

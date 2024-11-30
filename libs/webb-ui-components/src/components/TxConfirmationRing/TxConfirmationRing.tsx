@@ -7,10 +7,7 @@ import ChainsRing from '../ChainsRing';
 import { TxConfirmationRingProps } from './types';
 import { Typography } from '../../typography';
 import AddressChip from '../AddressChip';
-import {
-  useDarkMode as useNormalDarkMode,
-  useDarkMode,
-} from '../../hooks/useDarkMode';
+import { UseDarkModeType, useNormalDarkMode } from '../../hooks/useDarkMode';
 import { shortenHex } from '../../utils';
 
 const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
@@ -27,8 +24,8 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
     },
     ref,
   ) => {
-    const useDarkMode = isInNextApp ? useDarkMode : useNormalDarkMode;
-    const [isDarkMode] = useDarkMode();
+    const darkModeHook: UseDarkModeType = useNormalDarkMode;
+    const [isDarkMode] = darkModeHook();
 
     return (
       <div

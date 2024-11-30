@@ -90,7 +90,7 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
               {isNext ? (
                 <Link
                   className="block"
-                  href={
+                  to={
                     logoType === 'tangle'
                       ? constants.tangleLogoConfig.path
                       : constants.logoConfig.path
