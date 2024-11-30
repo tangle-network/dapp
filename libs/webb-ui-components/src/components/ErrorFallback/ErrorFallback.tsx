@@ -105,11 +105,10 @@ export const ErrorFallback = forwardRef<HTMLDivElement, ErrorFallbackProps>(
           ...refreshPageButtonProps,
           ...commonButtonProps,
           variant: 'primary',
-          children: 'Refresh Page',
+          children: 'Reload page',
         },
         {
           onClick: handleClearCache,
-          ...refreshPageButtonProps,
           ...commonButtonProps,
           variant: 'secondary',
           children: 'Clear cache',

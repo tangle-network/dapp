@@ -62,9 +62,9 @@ export enum TxName {
   LS_LIQUIFIER_DEPOSIT = 'liquifier deposit',
   LS_LIQUIFIER_UNLOCK = 'liquifier unlock',
   LS_LIQUIFIER_WITHDRAW = 'liquifier withdraw',
-  LS_TANGLE_POOL_JOIN = 'mint LST',
-  LS_TANGLE_POOL_UNBOND = 'redeem LST',
-  LS_TANGLE_POOL_CREATE = 'create LST',
+  LS_TANGLE_POOL_JOIN = 'join liquid staking pool',
+  LS_TANGLE_POOL_UNBOND = 'unstake from liquid staking pool',
+  LS_TANGLE_POOL_CREATE = 'create liquid staking pool',
   LS_TANGLE_POOL_UPDATE_ROLES = 'update pool roles',
 }
 

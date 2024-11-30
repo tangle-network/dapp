@@ -6,6 +6,7 @@ import {
   ModalFooterActions,
   ModalHeader,
   TANGLE_DOCS_LS_UPDATE_ROLES_URL,
+  Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
@@ -85,6 +86,12 @@ const LsUpdateRolesModal: FC<LsUpdateRolesModalProps> = ({
         </ModalHeader>
 
         <ModalBody className="gap-4">
+          <Typography variant="body1">
+            Changing the root role is equivalent to ownership transfer. Please
+            be cautious and double check the address(es) to avoid accidentally
+            losing control over the pool.
+          </Typography>
+
           <AddressInput
             id="ls-update-pool-roles-root-address"
             title="Root Address (Optional)"

@@ -180,7 +180,7 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
             variant="utility"
             size="sm"
           >
-            {lsPoolId === props.row.original.id ? 'Selected' : 'Mint'}
+            {lsPoolId === props.row.original.id ? 'Selected' : 'Stake'}
           </Button>
         </div>
       ),
