@@ -37,7 +37,7 @@ const DEFAULT_FORMAT_OPTIONS: FormatOptions = {
 };
 
 type State = {
-  suffix: string;
+  prefix: string;
   integerPart: string;
   fractionPart: string;
   amount: BN;
@@ -54,7 +54,7 @@ type StateTransition = (state: State) => Partial<State> | undefined;
  * that the amount is not actually zero, just really small.
  */
 const nearZeroEdgeCase: StateTransition = ({
-  suffix,
+  prefix,
   integerPart,
   fractionPart,
   amount,
@@ -70,7 +70,7 @@ const nearZeroEdgeCase: StateTransition = ({
     );
 
     return {
-      suffix: `${suffix}<`,
+      prefix: `${prefix}<`,
       integerPart: '0',
       fractionPart: `${nextFractionPart}1`,
     };
@@ -125,9 +125,9 @@ const addCommasToIntegerPart: StateTransition = ({ integerPart, options }) => {
   }
 };
 
-const addPolarity: StateTransition = ({ amount, suffix }) => {
+const addPolarity: StateTransition = ({ amount, prefix }) => {
   if (amount.isNeg()) {
-    return { suffix: `-${suffix}` };
+    return { prefix: `-${prefix}` };
   }
 };
 
@@ -201,7 +201,7 @@ export function formatBn(
   const fractionPart = remainderBn.abs().toString(10).padStart(decimals, '0');
 
   let state: State = {
-    suffix: '',
+    prefix: '',
     integerPart,
     fractionPart,
     amount,
@@ -227,6 +227,6 @@ export function formatBn(
   // Combine the integer and fraction parts. Only include the fraction
   // part if it's available.
   return state.fractionPart !== ''
-    ? `${state.suffix}${state.integerPart}.${state.fractionPart}`
-    : `${state.suffix}${state.integerPart}`;
+    ? `${state.prefix}${state.integerPart}.${state.fractionPart}`
+    : `${state.prefix}${state.integerPart}`;
 }

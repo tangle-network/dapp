@@ -1,22 +1,20 @@
-import { encodeAddress, isEthereumAddress } from '@polkadot/util-crypto';
+import { encodeAddress } from '@polkadot/util-crypto';
+import { AnyAddress } from '../types/address';
+import { isEvmAddress } from './isEvmAddress';
 
 /**
- * Unifying the way we display account addresses, ensure we always return
- * the same format for an account address.
- *
- * @param {string | null | undefined} address - The account address to be formatted.
- * @param {number} [ss58Prefix] - Optional ss58 prefix for encoding the address.
- * @returns {string | null} - The formatted account address or null if the input address is invalid.
+ * If the address happens to be a Substrate address, encode it using the
+ * provided ss58 prefix. Otherwise, return the address as is.
  */
-export default function tryEncodeSubstrateAddress(
-  address: string | null | undefined,
+export const tryEncodeSubstrateAddress = (
+  address: AnyAddress | null | undefined,
   ss58Prefix?: number,
-): string | null {
+): AnyAddress | null => {
   if (address === null || address === undefined || address.length === 0) {
     return null;
   }
   // If the active account is an EVM address, return it as is.
-  else if (isEthereumAddress(address)) {
+  else if (isEvmAddress(address)) {
     return address;
   }
   // If the active network has an associated ss58 prefix, encode
@@ -27,4 +25,4 @@ export default function tryEncodeSubstrateAddress(
 
   // Otherwise, return the address as is.
   return address;
-}
+};

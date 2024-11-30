@@ -1,3 +1,4 @@
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import toEvmAddress32 from '@webb-tools/webb-ui-components/utils/toEvmAddress32';
 import { useCallback } from 'react';
 
@@ -12,7 +13,10 @@ import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
 
 export type PayoutAllTxContext = {
-  validatorEraPairs: { validatorSubstrateAddress: string; era: number }[];
+  validatorEraPairs: {
+    validatorAddress: SubstrateAddress;
+    era: number;
+  }[];
 };
 
 // Limit the number of batch calls to avoid exceeding
@@ -29,11 +33,9 @@ const usePayoutAllTx = () => {
     useCallback((context) => {
       const batchCalls = context.validatorEraPairs
         .slice(0, MAX_PAYOUTS_BATCH_SIZE)
-        .map(({ validatorSubstrateAddress, era }) => {
+        .map(({ validatorAddress, era }) => {
           // The precompile function expects a 32-byte address.
-          const validatorEvmAddress32 = toEvmAddress32(
-            validatorSubstrateAddress,
-          );
+          const validatorEvmAddress32 = toEvmAddress32(validatorAddress);
 
           return createEvmBatchCallData(Precompile.STAKING, 'payoutStakers', [
             validatorEvmAddress32,
@@ -51,7 +53,7 @@ const usePayoutAllTx = () => {
     useCallback((api, _activeSubstrateAddress, context) => {
       const txs = context.validatorEraPairs
         .slice(0, MAX_PAYOUTS_BATCH_SIZE)
-        .map(({ validatorSubstrateAddress: validatorAddress, era }) => {
+        .map(({ validatorAddress, era }) => {
           const validatorSubstrateAddress =
             toSubstrateAddress(validatorAddress);
 

@@ -156,7 +156,7 @@ const DelegationsPayoutsContainer: FC = () => {
   const validatorAndEras = useMemo(
     () =>
       fetchedPayouts.map((payout) => ({
-        validatorSubstrateAddress: payout.validator.address,
+        validatorAddress: payout.validator.address,
         era: payout.era,
       })),
     [fetchedPayouts],

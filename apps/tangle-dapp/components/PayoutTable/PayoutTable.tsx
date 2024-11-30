@@ -249,12 +249,14 @@ const PayoutTable: FC<PayoutTableProps> = ({
         />
       </div>
 
-      <PayoutTxContainer
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-        payoutTxProps={payoutTxProps}
-        payouts={data}
-      />
+      {payoutTxProps !== null && (
+        <PayoutTxContainer
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          payoutTxProps={payoutTxProps}
+          payouts={data}
+        />
+      )}
     </>
   );
 };
