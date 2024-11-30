@@ -9,7 +9,7 @@ import {
 } from 'viem';
 import { mainnet, sepolia } from 'viem/chains';
 
-import { IS_PRODUCTION_ENV } from '../../constants/env';
+import { IS_PRODUCTION_ENV } from '../../constants';
 import usePolling from '../liquidStaking/usePolling';
 import { ContractReadOptions } from './useContractReadOnce';
 import useViemPublicClientWithChain from './useViemPublicClientWithChain';

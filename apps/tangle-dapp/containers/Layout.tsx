@@ -8,11 +8,13 @@ import {
   TANGLE_TERMS_OF_SERVICE_URL,
   WEBB_AVAILABLE_SOCIALS,
 } from '@webb-tools/webb-ui-components/constants';
-import { useLayoutBgClassName } from '@webb-tools/webb-ui-components/next-utils';
+import { usePathname } from 'next/navigation';
 import { type FC, type PropsWithChildren } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { BridgeTxQueueDropdown, MobileSidebar, Sidebar } from '../components';
-import { IS_PRODUCTION_ENV } from '../constants/env';
+import { IS_PRODUCTION_ENV } from '../constants';
+import { PagePath } from '../types';
 import DebugMetrics from './DebugMetrics';
 import WalletAndChainContainer from './WalletAndChainContainer';
 
@@ -33,14 +35,22 @@ interface LayoutProps {
   isSidebarInitiallyExpanded: boolean | undefined;
 }
 
+const useLayoutBgClass = () => {
+  const pathname = usePathname();
+
+  return pathname.startsWith(PagePath.LIQUID_STAKING)
+    ? 'ls-bg-body'
+    : 'bg-body';
+};
+
 const Layout: FC<PropsWithChildren<LayoutProps>> = ({
   isSidebarInitiallyExpanded,
   children,
 }) => {
-  const layoutBgClassname = useLayoutBgClassName();
+  const layoutBgClass = useLayoutBgClass();
 
   return (
-    <div className={`flex h-screen ${layoutBgClassname}`}>
+    <div className={twMerge('flex h-screen', layoutBgClass)}>
       <Sidebar isExpandedByDefault={isSidebarInitiallyExpanded} />
 
       <main className="flex-1 h-full overflow-y-auto scrollbar-hide">

@@ -10,7 +10,7 @@ import {
 import { mainnet, sepolia } from 'viem/chains';
 import { ReadContractReturnType } from 'wagmi/actions';
 
-import { IS_PRODUCTION_ENV } from '../../constants/env';
+import { IS_PRODUCTION_ENV } from '../../constants';
 import useDebugMetricsStore from '../../context/useDebugMetricsStore';
 import useViemPublicClientWithChain from './useViemPublicClientWithChain';
 

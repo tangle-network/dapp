@@ -8,7 +8,7 @@ import POLKADOT from '../../data/liquidStaking/adapters/polkadot';
 import TANGLE_LOCAL from '../../data/liquidStaking/adapters/tangleLocal';
 import TANGLE_MAINNET from '../../data/liquidStaking/adapters/tangleMainnet';
 import TANGLE_TESTNET from '../../data/liquidStaking/adapters/tangleTestnet';
-import { IS_PRODUCTION_ENV } from '../env';
+import { IS_PRODUCTION_ENV } from '..';
 import {
   LsNetwork,
   LsNetworkId,

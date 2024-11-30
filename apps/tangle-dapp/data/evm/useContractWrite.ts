@@ -23,7 +23,7 @@ import { mainnet, sepolia } from 'viem/chains';
 import { useConnectorClient } from 'wagmi';
 
 import { TxName } from '../../constants';
-import { IS_PRODUCTION_ENV } from '../../constants/env';
+import { IS_PRODUCTION_ENV } from '../../constants';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import useTxNotification, {
   NotificationSteps,
