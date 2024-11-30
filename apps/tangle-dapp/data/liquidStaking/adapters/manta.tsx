@@ -4,9 +4,11 @@ import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import {
+  AmountFormatStyle,
   Avatar,
   CheckBox,
   CopyWithTooltip,
+  formatDisplayAmount,
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -18,7 +20,6 @@ import {
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
-import formatBn from '../../../utils/formatBn';
 import { FetchProtocolEntitiesFn, GetTableColumnsFn } from '../adapter';
 import {
   sortDelegationCount,
@@ -155,7 +156,11 @@ const getTableColumns: GetTableColumnsFn<MantaCollator> = (
             fw="normal"
             className="text-mono-200 dark:text-mono-0"
           >
-            {formatBn(props.getValue(), DECIMALS) + ` ${LsToken.GLMR}`}
+            {formatDisplayAmount(
+              props.getValue(),
+              DECIMALS,
+              AmountFormatStyle.SI,
+            ) + ` ${LsToken.GLMR}`}
           </Typography>
         </div>
       ),

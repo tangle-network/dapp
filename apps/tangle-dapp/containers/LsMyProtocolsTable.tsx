@@ -13,7 +13,14 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChevronUp } from '@webb-tools/icons';
-import { Button, Table, Typography } from '@webb-tools/webb-ui-components';
+import {
+  AmountFormatStyle,
+  Button,
+  formatBn,
+  formatDisplayAmount,
+  Table,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -27,7 +34,6 @@ import TableCellWrapper from '../components/tables/TableCellWrapper';
 import { LsToken } from '../constants/liquidStaking/types';
 import useLsMyPools from '../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
-import formatBn from '../utils/formatBn';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
 import pluralize from '../utils/pluralize';
 
@@ -96,9 +102,10 @@ const PROTOCOL_COLUMNS = [
   COLUMN_HELPER.accessor('myStake', {
     header: () => 'My Stake (Total)',
     cell: (props) => {
-      const formattedMyStake = formatBn(
+      const formattedMyStake = formatDisplayAmount(
         props.getValue(),
         props.row.original.decimals,
+        AmountFormatStyle.SHORT,
       );
 
       const subtitle =

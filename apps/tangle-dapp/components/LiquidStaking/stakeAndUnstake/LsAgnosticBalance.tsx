@@ -3,6 +3,8 @@
 import { BN } from '@polkadot/util';
 import { WalletFillIcon, WalletLineIcon } from '@webb-tools/icons';
 import {
+  AmountFormatStyle,
+  formatDisplayAmount,
   SkeletonLoader,
   Tooltip,
   TooltipBody,
@@ -15,7 +17,6 @@ import { twMerge } from 'tailwind-merge';
 
 import useLsActivePoolDisplayName from '../../../data/liquidStaking/useLsActivePoolDisplayName';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import formatBn from '../../../utils/formatBn';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import useLsAgnosticBalance from './useLsAgnosticBalance';
 
@@ -48,9 +49,11 @@ const LsAgnosticBalance: FC<LsAgnosticBalanceProps> = ({
       return null;
     }
 
-    const formattedBalance = formatBn(balance, protocol.decimals, {
-      includeCommas: true,
-    });
+    const formattedBalance = formatDisplayAmount(
+      balance,
+      protocol.decimals,
+      AmountFormatStyle.SHORT,
+    );
 
     const unit = isNative
       ? protocol.token

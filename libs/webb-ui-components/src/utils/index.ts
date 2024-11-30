@@ -17,3 +17,5 @@ export * from './range';
 export * from './shortenHex';
 export * from './shortenString';
 export { default as toFixed } from './toFixed';
+export * from './formatDisplayAmount';
+export * from './formatBn';

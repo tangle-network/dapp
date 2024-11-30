@@ -3,7 +3,7 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 
-import addCommasToNumber from '../../utils/addCommasToNumber';
+import addCommasToNumber from '../../../../libs/webb-ui-components/src/utils/addCommasToNumber';
 import dataHooks from './dataHooks';
 import type { HeaderChipItemProps } from './types';
 

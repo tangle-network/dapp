@@ -32,7 +32,10 @@
     "index.d.ts",
     "../../types/global.d.ts",
     ".next/types/**/*.ts",
-    "../../jest.setup.ts"
+    "../../jest.setup.ts",
+    "../../libs/webb-ui-components/src/utils/formatBn.ts",
+    "../../libs/webb-ui-components/src/utils/formatDisplayAmount.ts",
+    "../../libs/webb-ui-components/src/utils/addCommasToNumber.ts"
   ],
   "exclude": [
     "node_modules",

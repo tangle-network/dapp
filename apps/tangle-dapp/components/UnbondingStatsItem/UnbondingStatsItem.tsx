@@ -8,7 +8,7 @@ import { type FC, useMemo } from 'react';
 import useActiveAccountAddress from '../..//hooks/useActiveAccountAddress';
 import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useUnbonding from '../../data/staking/useUnbonding';
-import addCommasToNumber from '../../utils/addCommasToNumber';
+import addCommasToNumber from '../../../../libs/webb-ui-components/src/utils/addCommasToNumber';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import { NominatorStatsItem } from '../NominatorStatsItem';
 

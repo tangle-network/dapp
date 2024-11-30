@@ -23,7 +23,7 @@ import { FC, useState } from 'react';
 
 import { Nominee } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
+import { AmountFormatStyle } from '../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
 import {
   getSortAddressOrIdentityFnc,
   sortBnValueForNomineeOrValidator,

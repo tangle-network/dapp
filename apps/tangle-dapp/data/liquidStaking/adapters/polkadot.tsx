@@ -20,9 +20,12 @@ import { SubstrateAddress } from '../../../types/utils';
 import assertSubstrateAddress from '../../../utils/assertSubstrateAddress';
 import calculateCommission from '../../../utils/calculateCommission';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
-import formatBn from '../../../utils/formatBn';
 import formatFractional from '../../../utils/formatFractional';
 import { GetTableColumnsFn } from '../adapter';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '../../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
 import {
   sortCommission,
   sortSelected,
@@ -157,7 +160,11 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
             fw="normal"
             className="text-mono-200 dark:text-mono-0"
           >
-            {formatBn(props.getValue(), DECIMALS) + ` ${LsToken.DOT}`}
+            {formatDisplayAmount(
+              props.getValue(),
+              DECIMALS,
+              AmountFormatStyle.SI,
+            ) + ` ${LsToken.DOT}`}
           </Typography>
         </div>
       ),

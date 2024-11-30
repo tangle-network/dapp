@@ -29,7 +29,7 @@ import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/ty
 import { type FC, useState } from 'react';
 
 import PayoutTxContainer from '../../containers/PayoutTxContainer/PayoutTxContainer';
-import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
+import { AmountFormatStyle } from '../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
 import pluralize from '../../utils/pluralize';
 import { sortBnValueForPayout } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';

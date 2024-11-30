@@ -16,11 +16,14 @@ import {
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
-import formatBn from '../../../utils/formatBn';
 import { GetTableColumnsFn } from '../adapter';
 import { sortSelected, sortValueStaked } from '../columnSorting';
 import { fetchMappedDappsTotalValueStaked } from '../fetchHelpers';
 import RadioInput from '../useLsValidatorSelectionTableColumns';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '../../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
 
 const DECIMALS = 18;
 
@@ -155,7 +158,11 @@ const getTableColumns: GetTableColumnsFn<AstarDapp> = (
             fw="normal"
             className="text-mono-200 dark:text-mono-0"
           >
-            {formatBn(props.getValue(), DECIMALS) + ` ${LsToken.ASTAR}`}
+            {formatDisplayAmount(
+              props.getValue(),
+              DECIMALS,
+              AmountFormatStyle.SI,
+            ) + ` ${LsToken.ASTAR}`}
           </Typography>
         </div>
       ),

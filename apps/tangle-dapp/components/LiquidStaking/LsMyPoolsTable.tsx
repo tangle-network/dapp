@@ -34,7 +34,7 @@ import LsUpdateRolesModal from '../../containers/LsUpdateRolesModal';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
+import { AmountFormatStyle } from '../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
@@ -188,6 +188,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
             <TokenAmountCell
               amount={props.getValue()}
               decimals={lsProtocol.decimals}
+              formatStyle={AmountFormatStyle.SHORT}
             />
           );
         },

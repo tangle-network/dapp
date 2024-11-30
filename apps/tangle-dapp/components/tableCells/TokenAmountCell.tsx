@@ -1,11 +1,12 @@
 import { BN } from '@polkadot/util';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@webb-tools/webb-ui-components';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import formatDisplayAmount, {
-  AmountFormatStyle,
-} from '../../utils/formatDisplayAmount';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 
 export type TokenAmountCellProps = {

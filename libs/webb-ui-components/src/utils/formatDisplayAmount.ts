@@ -1,6 +1,5 @@
 import { BN } from '@polkadot/util';
-
-import formatBn from './formatBn';
+import { formatBn } from './formatBn';
 
 export enum AmountFormatStyle {
   /**
@@ -15,7 +14,7 @@ export enum AmountFormatStyle {
    * Use SI units for large or small values.
    *
    * Useful for displaying balances that don't require high precision,
-   * such as TVL, total supply, market cat, etc.
+   * such as TVL, total supply, market cap, etc.
    */
   SI,
 
@@ -34,7 +33,7 @@ export enum AmountFormatStyle {
  * This should be the preferred, standardized way to format balances
  * for UI display.
  */
-const formatDisplayAmount = (
+export const formatDisplayAmount = (
   amount: BN,
   decimals: number,
   style: AmountFormatStyle,
@@ -45,5 +44,3 @@ const formatDisplayAmount = (
     fractionMaxLength: style === AmountFormatStyle.SHORT ? 4 : undefined,
   });
 };
-
-export default formatDisplayAmount;
