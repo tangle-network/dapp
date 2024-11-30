@@ -5,19 +5,11 @@ import {
   InfoIconWithTooltip,
   Label,
 } from '@webb-tools/webb-ui-components';
-import {
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useEffect,
-} from 'react';
+import { Dispatch, FC, ReactNode, SetStateAction, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import InputAction from '../containers/ManageProfileModalContainer/InputAction';
-import { useErrorCountContext } from '../context/ErrorsContext';
 import ErrorMessage from './ErrorMessage';
+import InputAction from './InputAction';
 
 export type InputWrapperProps = {
   title: string;
@@ -58,22 +50,11 @@ const InputWrapper: FC<InputWrapperProps> = ({
   isDisabled = false,
   tooltip,
 }) => {
-  const { addError, removeError } = useErrorCountContext();
-
   const toggleDropdown = useCallback(() => {
     if (dropdownBody !== undefined && setIsDropdownVisible !== undefined) {
       setIsDropdownVisible((isVisible) => !isVisible);
     }
   }, [dropdownBody, setIsDropdownVisible]);
-
-  // TODO: Do not set error (or remove it if already set) if the input is disabled.
-  useEffect(() => {
-    if (errorMessage !== undefined) {
-      addError(id);
-    } else {
-      removeError(id);
-    }
-  }, [addError, errorMessage, id, removeError]);
 
   // Do not consider the input as having an error if it's disabled.
   const hasError = errorMessage !== undefined && !isDisabled;

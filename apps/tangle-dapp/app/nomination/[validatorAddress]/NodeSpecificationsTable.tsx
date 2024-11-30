@@ -13,9 +13,9 @@ import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/ty
 import cx from 'classnames';
 import { FC } from 'react';
 
-import { TableStatus } from '../../../components';
 import ContainerSkeleton from '../../../components/skeleton/ContainerSkeleton';
 import { HeaderCell } from '../../../components/tableCells';
+import TableStatus from '../../../components/TableStatus';
 import useNodeSpecifications from '../../../data/validatorDetails/useNodeSpecifications';
 import { NodeSpecification } from '../../../types';
 

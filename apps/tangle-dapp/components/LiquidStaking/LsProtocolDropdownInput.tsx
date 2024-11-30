@@ -16,7 +16,7 @@ import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import DropdownChevronIcon from '../DropdownChevronIcon';
 import InputWrapper from '../InputWrapper';
-import LsTokenIcon from '../LsTokenIcon';
+import LsTokenIcon from './LsTokenIcon';
 
 type LsProtocolDropdownInputProps = {
   id: string;

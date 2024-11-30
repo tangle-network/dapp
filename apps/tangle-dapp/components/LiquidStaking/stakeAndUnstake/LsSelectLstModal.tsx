@@ -19,8 +19,8 @@ import formatBn from '../../../utils/formatBn';
 import formatFractional from '../../../utils/formatFractional';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import { ListCardWrapper } from '../../Lists/ListCardWrapper';
-import ListStatus from '../../ListStatus';
-import SkeletonRows from '../../SkeletonRows';
+import ListStatus from '../../Lists/ListStatus';
+import SkeletonRows from '../../skeleton/SkeletonRows';
 import LstIcon, { LstIconSize } from '../LstIcon';
 
 export type LsSelectLstModalProps = {

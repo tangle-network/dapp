@@ -1,7 +1,7 @@
 import type { Table } from '@webb-tools/webb-ui-components/components/Table';
 import type { ComponentProps } from 'react';
 
-import type { TableStatus } from '../../TableStatus';
+import TableStatus from '../../TableStatus';
 
 export type VaultToken = {
   name: string;

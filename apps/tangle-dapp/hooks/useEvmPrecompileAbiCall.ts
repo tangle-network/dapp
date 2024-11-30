@@ -17,7 +17,7 @@ import {
   getPrecompileAddress,
   Precompile,
   PrecompileAddress,
-} from '../constants/evmPrecompiles';
+} from '../constants/precompiles';
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 

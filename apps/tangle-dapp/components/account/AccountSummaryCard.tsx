@@ -2,7 +2,7 @@
 
 import { FC, useState } from 'react';
 
-import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
+import TransferTxModal from '../../containers/TransferTxModal';
 import GlassCardWithLogo from '../GlassCardWithLogo';
 import AccountAddress from './AccountAddress';
 import Actions from './Actions';
@@ -31,7 +31,7 @@ const AccountSummaryCard: FC<{ className?: string }> = ({ className }) => {
        * the card due to the backdrop filter applied to the glass card
        * due to some internal CSS logic regarding stacking contexts.
        */}
-      <TransferTxContainer
+      <TransferTxModal
         isModalOpen={isTransferModalOpen}
         setIsModalOpen={setIsTransferModalOpen}
       />

@@ -2,7 +2,10 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { StringCellProps } from './types';
+export interface StringCellProps {
+  value: string;
+  className?: string;
+}
 
 const StringCell: FC<StringCellProps> = ({ value, className }) => {
   return (

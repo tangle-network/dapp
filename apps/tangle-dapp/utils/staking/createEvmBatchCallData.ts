@@ -5,7 +5,7 @@ import {
   getPrecompileAbi,
   getPrecompileAddress,
   Precompile,
-} from '../../constants/evmPrecompiles';
+} from '../../constants/precompiles';
 import { AbiEncodeableValue } from '../../hooks/useEvmPrecompileAbiCall';
 import {
   AbiBatchCallArgs,

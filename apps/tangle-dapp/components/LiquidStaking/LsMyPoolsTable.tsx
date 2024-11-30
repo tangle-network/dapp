@@ -37,10 +37,10 @@ import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
-import { TableStatus } from '..';
 import BlueIconButton from '../BlueIconButton';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
+import TableStatus from '../TableStatus';
 import LstIcon from './LstIcon';
 import UpdateCommissionModal from './UpdateCommissionModal';
 

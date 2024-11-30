@@ -26,7 +26,7 @@ import formatFractional from '../../../utils/formatFractional';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import pluralize from '../../../utils/pluralize';
 import { getSortAddressOrIdentityFnc } from '../../../utils/table';
-import { TableStatus } from '../../TableStatus';
+import TableStatus from '../../TableStatus';
 import TableCellWrapper from '../TableCellWrapper';
 import type { OperatorData, Props } from './types';
 import VaultsDropdown from './VaultsDropdown';

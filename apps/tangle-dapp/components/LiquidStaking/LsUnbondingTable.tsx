@@ -22,8 +22,9 @@ import useLsUnbonding from '../../data/liquidStaking/useLsUnbonding';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import addCommasToNumber from '../../utils/addCommasToNumber';
 import pluralize from '../../utils/pluralize';
-import { ContainerSkeleton, TableStatus } from '..';
+import { ContainerSkeleton } from '..';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
+import TableStatus from '../TableStatus';
 import LstIcon from './LstIcon';
 import WithdrawUnstakeRequestButton from './WithdrawUnstakeRequestButton';
 

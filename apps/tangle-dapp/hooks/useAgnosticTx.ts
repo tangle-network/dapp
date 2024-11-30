@@ -3,7 +3,7 @@ import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubst
 import { useCallback, useEffect, useState } from 'react';
 
 import { TxName } from '../constants';
-import { Precompile } from '../constants/evmPrecompiles';
+import { Precompile } from '../constants/precompiles';
 import { GetSuccessMessageFunction } from '../types';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';

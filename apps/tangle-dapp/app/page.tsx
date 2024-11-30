@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { FC } from 'react';
 
 import AccountSummaryCard from '../components/account/AccountSummaryCard';
-import BalancesTableContainer from '../containers/BalancesTableContainer/BalancesTableContainer';
+import BalancesTableContainer from '../containers/account/balances/BalancesTableContainer';
 import createPageMetadata from '../utils/createPageMetadata';
 
 export const dynamic = 'force-static';

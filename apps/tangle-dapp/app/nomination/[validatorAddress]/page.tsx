@@ -1,7 +1,7 @@
 import { isAddress } from '@polkadot/util-crypto';
 import { notFound } from 'next/navigation';
 
-import { IS_PRODUCTION_ENV } from '../../../constants/env';
+import { IS_PRODUCTION_ENV } from '../../../constants';
 import InfoCard from './InfoCard';
 import NodeSpecificationsTable from './NodeSpecificationsTable';
 

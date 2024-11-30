@@ -22,8 +22,8 @@ import { twMerge } from 'tailwind-merge';
 import { PagePath, QueryParamKey } from '../../../types';
 import formatFractional from '../../../utils/formatFractional';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
-import LsTokenIcon from '../../LsTokenIcon';
-import { TableStatus } from '../../TableStatus';
+import LsTokenIcon from '../../LiquidStaking/LsTokenIcon';
+import TableStatus from '../../TableStatus';
 import TableCellWrapper from '../TableCellWrapper';
 import type { Props, VaultData } from './types';
 

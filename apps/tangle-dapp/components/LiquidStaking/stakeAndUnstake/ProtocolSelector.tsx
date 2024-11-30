@@ -15,7 +15,7 @@ import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import getLsNetwork from '../../../utils/liquidStaking/getLsNetwork';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import DropdownChevronIcon from '../../DropdownChevronIcon';
-import LsTokenIcon from '../../LsTokenIcon';
+import LsTokenIcon from '../LsTokenIcon';
 
 type ProtocolSelectorProps = {
   selectedNetworkId: LsNetworkId;

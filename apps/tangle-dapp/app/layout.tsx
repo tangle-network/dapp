@@ -10,7 +10,7 @@ import type React from 'react';
 import { cookieToInitialState } from 'wagmi';
 
 import { DEFAULT_OPENGRAPH_METADATA } from '../constants/openGraph';
-import { Layout } from '../containers';
+import Layout from '../containers/Layout';
 import Providers from './providers';
 
 export const dynamic = 'force-static';

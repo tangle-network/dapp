@@ -3,6 +3,8 @@ import {
   StakingRewardsDestinationDisplayText,
 } from '../types';
 
+export const IS_PRODUCTION_ENV = process.env.NODE_ENV === 'production';
+
 /**
  * The lock ids are always 8 characters long, due to their representation
  * as a `U8aFixed` in the Substrate runtime. That is why the enum values

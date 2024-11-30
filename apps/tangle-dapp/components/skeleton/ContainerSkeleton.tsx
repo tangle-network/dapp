@@ -2,7 +2,11 @@ import { type FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import SkeletonRow from './SkeletonRow';
-import { ContainerSkeletonProps } from './types';
+
+export interface ContainerSkeletonProps {
+  numOfRows?: number;
+  className?: string;
+}
 
 const ContainerSkeleton: FC<ContainerSkeletonProps> = ({
   numOfRows = 4,

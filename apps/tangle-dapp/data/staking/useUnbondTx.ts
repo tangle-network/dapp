@@ -2,7 +2,7 @@ import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { Precompile } from '../../constants/evmPrecompiles';
+import { Precompile } from '../../constants/precompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';

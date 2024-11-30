@@ -20,7 +20,7 @@ import {
 import {
   BATCH_PRECOMPILE_ABI,
   PrecompileAddress,
-} from '../../../constants/evmPrecompiles';
+} from '../../../constants/precompiles';
 import createEvmBatchCallArgs from '../../../utils/staking/createEvmBatchCallArgs';
 import toEvmAddress32 from '../../../utils/toEvmAddress32';
 import restakeAbi from './abi';
