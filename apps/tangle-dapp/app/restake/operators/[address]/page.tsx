@@ -1,7 +1,9 @@
 'use client';
 
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
+import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { notFound } from 'next/navigation';
 import { ComponentProps, useMemo } from 'react';
 
 import useOperatorBlueprints from '../../../../data/blueprints/useOperatorBlueprints';
@@ -42,6 +44,10 @@ const Page = ({ params: { address } }: { params: { address: string } }) => {
       ),
     [blueprints],
   );
+
+  if (!isSubstrateAddress(address)) {
+    return notFound();
+  }
 
   return (
     <div className="space-y-10">

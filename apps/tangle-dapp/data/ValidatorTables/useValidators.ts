@@ -1,5 +1,6 @@
 import { AccountId32 } from '@polkadot/types/interfaces';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 
 import { Validator } from '../../types';
@@ -39,7 +40,7 @@ export const useValidators = (
 
     return addresses.map((accountId) =>
       createValidator({
-        address: accountId.toString(),
+        address: assertSubstrateAddress(accountId.toString()),
         isActive,
         identities: identityNames,
         prefs: validatorPrefs,

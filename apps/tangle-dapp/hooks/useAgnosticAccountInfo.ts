@@ -2,6 +2,7 @@ import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { isEvmAddress } from '../../../libs/webb-ui-components/src/utils/isEvmAddress';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import { EvmAddress32 } from '../../../libs/webb-ui-components/src/types/address';
+import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
 
 type ReturnType = {
   isEvm: boolean | null;
@@ -17,8 +18,12 @@ const useAgnosticAccountInfo = (): ReturnType => {
 
   return {
     isEvm,
-    substrateAddress: isEvm ? null : activeAccountAddress,
-    evmAddress: isEvm ? activeAccountAddress : null,
+    substrateAddress: isSubstrateAddress(activeAccountAddress)
+      ? activeAccountAddress
+      : null,
+    evmAddress: isEvmAddress(activeAccountAddress)
+      ? activeAccountAddress
+      : null,
   };
 };
 

@@ -13,6 +13,8 @@ import {
   IdentityType,
 } from '../../../utils/polkadot/identity';
 import { toPrimitiveBlueprint } from './toPrimitiveBlueprint';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 
 export function extractBlueprintsData(
   blueprintEntries: [
@@ -50,7 +52,7 @@ export function extractOperatorData(
   operatorMap: OperatorMap,
   operatorTVL: Record<string, number>,
 ) {
-  const blueprintOperatorMap = new Map<number, Set<string>>();
+  const blueprintOperatorMap = new Map<number, Set<SubstrateAddress>>();
   const blueprintRestakersMap = new Map<number, Set<string>>();
   const blueprintTVLMap = new Map<number, number>();
 
@@ -59,7 +61,10 @@ export function extractOperatorData(
 
     const [blueprintIdU64, operatorAccountId32] = key.args;
     const blueprintId = blueprintIdU64.toNumber();
-    const operatorAccount = operatorAccountId32.toString();
+
+    const operatorAccount = assertSubstrateAddress(
+      operatorAccountId32.toString(),
+    );
 
     const operatorSet = blueprintOperatorMap.get(blueprintId);
 

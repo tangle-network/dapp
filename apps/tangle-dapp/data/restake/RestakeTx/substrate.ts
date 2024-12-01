@@ -1,6 +1,7 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult, Signer } from '@polkadot/types/types';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import noop from 'lodash/noop';
 import type { Hash } from 'viem';
 
@@ -158,7 +159,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   };
 
   stake = async (
-    operatorAccount: string,
+    operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
     eventHandlers?: TxEventHandlers<DelegatorStakeContext>,
@@ -184,7 +185,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   };
 
   scheduleDelegatorUnstake = async (
-    operatorAccount: string,
+    operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
     eventHandlers?: TxEventHandlers<ScheduleDelegatorUnstakeContext>,

@@ -1,4 +1,5 @@
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import toEvmAddress32 from '@webb-tools/webb-ui-components/utils/toEvmAddress32';
 import {
   type Abi,
@@ -118,7 +119,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
   deposit = async (
     assetId: string,
     amount: bigint,
-    operatorAccount?: string,
+    operatorAccount?: SubstrateAddress,
     eventHandlers?: TxEventHandlers<DepositContext>,
   ) => {
     const context = { assetId, amount, operatorAccount } as DepositContext;
@@ -169,7 +170,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
   };
 
   stake = async (
-    operatorAccount: string,
+    operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
     eventHandlers?: TxEventHandlers<DelegatorStakeContext>,
@@ -191,7 +192,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
   };
 
   scheduleDelegatorUnstake = async (
-    operatorAccount: string,
+    operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
     eventHandlers?: TxEventHandlers<ScheduleDelegatorUnstakeContext>,

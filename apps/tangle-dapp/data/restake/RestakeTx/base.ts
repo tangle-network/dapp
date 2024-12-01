@@ -1,3 +1,4 @@
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import type { Hash } from 'viem';
 
 export enum TxEvent {
@@ -35,7 +36,7 @@ export type DepositContext = {
 };
 
 export type DelegatorStakeContext = {
-  operatorAccount: string;
+  operatorAccount: SubstrateAddress;
   assetId: string;
   amount: bigint;
 };
@@ -46,7 +47,7 @@ export type ExecuteAllDelegatorUnstakeRequestContext = Record<string, unknown>;
 
 export type CancelDelegatorUnstakeRequestContext = {
   unstakeRequests: {
-    operatorAccount: string;
+    operatorAccount: SubstrateAddress;
     assetId: string;
     amount: bigint;
   }[];
@@ -84,14 +85,14 @@ export abstract class RestakeTxBase {
   ): Promise<Hash | null>;
 
   abstract stake(
-    operatorAccount: string,
+    operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
     eventHandlers?: TxEventHandlers<DelegatorStakeContext>,
   ): Promise<Hash | null>;
 
   abstract scheduleDelegatorUnstake(
-    operatorAccount: string,
+    operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
     eventHandlers?: TxEventHandlers<ScheduleDelegatorUnstakeContext>,

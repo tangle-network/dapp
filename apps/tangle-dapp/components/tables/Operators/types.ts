@@ -1,4 +1,5 @@
 import type { Table } from '@webb-tools/webb-ui-components/components/Table';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import type { ComponentProps } from 'react';
 
 import type { TableStatus } from '../../TableStatus';
@@ -10,7 +11,7 @@ export type VaultToken = {
 };
 
 export type OperatorData = {
-  address: string;
+  address: SubstrateAddress;
   identityName: string;
   restakersCount: number;
   concentrationPercentage: number | null;
