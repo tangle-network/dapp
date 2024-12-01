@@ -4,9 +4,9 @@ import { Metadata } from 'next';
 import { OpenGraphPageImageUrl } from '../../constants/openGraph';
 import { KeyStatsContainer } from '../../containers';
 import HeaderChipsContainer from '../../containers/HeaderChipsContainer';
+import ActiveAndWaitingValidatorTables from '../../containers/nomination/ActiveAndWaitingValidatorTables';
 import NominationsPayoutsContainer from '../../containers/nomination/NominationsPayoutsContainer';
 import NominatorStatsContainer from '../../containers/nomination/NominatorStatsContainer';
-import ActiveAndWaitingValidatorTables from '../../containers/nomination/ActiveAndWaitingValidatorTables';
 import createPageMetadata from '../../utils/createPageMetadata';
 
 export const dynamic = 'force-static';
