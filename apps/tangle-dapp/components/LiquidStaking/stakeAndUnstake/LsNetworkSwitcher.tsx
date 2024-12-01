@@ -14,7 +14,7 @@ import {
 import { FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { IS_PRODUCTION_ENV } from '../../../constants/env';
+import { IS_PRODUCTION_ENV } from '../../../constants';
 import { LS_NETWORKS } from '../../../constants/liquidStaking/constants';
 import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import { NETWORK_FEATURE_MAP } from '../../../constants/networks';

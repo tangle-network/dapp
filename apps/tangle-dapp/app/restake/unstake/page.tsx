@@ -24,6 +24,7 @@ import { formatUnits, parseUnits } from 'viem';
 
 import AvatarWithText from '../../../components/AvatarWithText';
 import ErrorMessage from '../../../components/ErrorMessage';
+import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import {
