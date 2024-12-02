@@ -127,11 +127,6 @@ export class WebbWeb3Provider
     this.unsubscribeFns.add(unsub);
 
     this.methods = {
-      claim: {
-        enabled: false,
-        // TODO: Fix type casting here
-        core: {} as any,
-      },
       bridgeApi: new Web3BridgeApi(this),
       chainQuery: new Web3ChainQuery(this),
       variableAnchor: {

@@ -16,7 +16,6 @@ import {
 } from 'viem';
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { ChainQuery } from './chain-query';
-import { ECDSAClaims } from './ecdsa-claims';
 import { WebbProviderType } from './types';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
@@ -35,11 +34,6 @@ export interface WebbMethods<
   chainQuery: ChainQuery<T>;
   // Methods for querying information about the current bridge
   bridgeApi: BridgeApi<T>;
-  // Claims
-  claim: {
-    core: ECDSAClaims<T>;
-    enabled: boolean;
-  };
 }
 
 export type WebbMethod<

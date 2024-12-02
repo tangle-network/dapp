@@ -42,7 +42,6 @@ import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
 import { PolkadotBridgeApi } from './webb-provider/bridge-api';
 import { PolkadotChainQuery } from './webb-provider/chain-query';
-import { PolkadotECDSAClaims } from './webb-provider/ecdsa-claims';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
 
@@ -89,10 +88,6 @@ export class WebbPolkadot
     this.methods = {
       bridgeApi: new PolkadotBridgeApi(this),
       chainQuery: new PolkadotChainQuery(this),
-      claim: {
-        core: new PolkadotECDSAClaims(this),
-        enabled: true,
-      },
       variableAnchor: {
         actions: {
           enabled: true,
