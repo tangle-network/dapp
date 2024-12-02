@@ -5,7 +5,6 @@
 import '@webb-tools/api-derive';
 
 import {
-  ProvideCapabilities,
   WebbApiProvider,
   WebbProviderEvents,
 } from '@webb-tools/abstract-api-provider';
@@ -55,8 +54,6 @@ export class WebbPolkadot
     this.api = this.provider.api;
   }
 
-  capabilities?: ProvideCapabilities | undefined;
-
   getProvider() {
     return this.provider;
   }
@@ -80,20 +77,6 @@ export class WebbPolkadot
     /// delay some time till the UI is instantiated and then check if the dApp needs to update extension meta data
     await new Promise((resolve) => setTimeout(resolve, 3000));
     await this.provider.checkMetaDataUpdate();
-  }
-
-  async ensureApiInterface() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const merkleRPC = Boolean(this.api.rpc.mt.getLeaves);
-    // merkle rpc
-    const merklePallet = this.api.query.merkleTreeBn254;
-    const vAnchorPallet = this.api.query.vAnchorBn254;
-    if (!merklePallet || !merkleRPC || !vAnchorPallet) {
-      throw WebbError.from(WebbErrorCodes.InsufficientProviderInterface);
-    }
-
-    return true;
   }
 
   static async init(
@@ -128,7 +111,6 @@ export class WebbPolkadot
     await instance.awaitMetaDataCheck();
     await apiPromise.isReady;
 
-    // await instance.ensureApiInterface();
     const unsub = await instance.listenerBlocks();
     instance.newBlockSub.add(unsub);
 

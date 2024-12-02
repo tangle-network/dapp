@@ -13,13 +13,6 @@ export type WebbProviderEvents<T = any> = {
   newAccounts: AccountsAdapter<any>;
 };
 
-export type ProvideCapabilities = {
-  addNetworkRpc: boolean;
-  listenForAccountChange: boolean;
-  listenForChainChane: boolean;
-  hasSessions: boolean;
-};
-
 export interface WebbApiProvider extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<unknown>;
 
@@ -27,15 +20,9 @@ export interface WebbApiProvider extends EventBus<WebbProviderEvents> {
 
   destroy(): Promise<void> | void;
 
-  capabilities?: ProvideCapabilities;
-
   endSession?(): Promise<void>;
 
   getProvider(): any;
-
-  // Used by frontend to prevent unsupported actions
-  // e.g. attempting to fetch available tokens from a DKG chain.
-  ensureApiInterface(): Promise<boolean>;
 
   // Configuration passed to the ApiProvider on initialization.
   // Then, the config is used as state for the provider.

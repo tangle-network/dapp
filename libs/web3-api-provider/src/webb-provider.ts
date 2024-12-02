@@ -2,14 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-  ProvideCapabilities,
   WebbApiProvider,
   WebbProviderEvents,
 } from '@webb-tools/abstract-api-provider';
 import { EventBus } from '@webb-tools/app-util';
-import { ApiConfig, walletsConfig } from '@webb-tools/dapp-config';
+import { ApiConfig } from '@webb-tools/dapp-config';
 import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
-import { WalletId, WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
   ChainType,
   calculateTypedChainId,
@@ -119,11 +118,6 @@ export class WebbWeb3Provider
     return this._newBlock.getValue();
   }
 
-  // Web3 has the evm, so the "api interface" should always be available.
-  async ensureApiInterface() {
-    return Promise.resolve(true);
-  }
-
   setChainListener() {
     const unsub = watchChainId(getWagmiConfig(), {
       onChange: (chainId) => {
@@ -164,26 +158,6 @@ export class WebbWeb3Provider
 
   get typedChainId(): number {
     return this.typedChainidSubject.getValue();
-  }
-
-  get capabilities(): ProvideCapabilities {
-    const connector = this.connector;
-
-    if (connector.name === walletsConfig[WalletId.WalletConnectV2].name) {
-      return {
-        addNetworkRpc: false,
-        hasSessions: true,
-        listenForAccountChange: false,
-        listenForChainChane: false,
-      } satisfies ProvideCapabilities;
-    } else {
-      return {
-        addNetworkRpc: true,
-        hasSessions: false,
-        listenForAccountChange: true,
-        listenForChainChane: true,
-      } satisfies ProvideCapabilities;
-    }
   }
 
   async endSession(): Promise<void> {
