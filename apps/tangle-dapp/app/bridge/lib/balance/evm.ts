@@ -1,7 +1,7 @@
 import type { HexString } from '@polkadot/util/types';
-import { FungibleTokenWrapper__factory } from '@webb-tools/contracts';
 import Decimal from 'decimal.js';
 import { ethers } from 'ethers';
+import { erc20Abi } from 'viem';
 
 export const getEvmNativeBalance = async (params?: {
   provider: ethers.providers.BaseProvider;
@@ -24,11 +24,7 @@ export const getEvmContractBalance = async (params?: {
   if (!params) return null;
   const { provider, contractAddress, accAddress, decimals } = params;
 
-  const contract = new ethers.Contract(
-    contractAddress,
-    FungibleTokenWrapper__factory.abi,
-    provider,
-  );
+  const contract = new ethers.Contract(contractAddress, erc20Abi, provider);
 
   const balance = await contract.balanceOf(accAddress);
 

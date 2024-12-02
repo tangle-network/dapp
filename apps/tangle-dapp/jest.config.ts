@@ -15,7 +15,7 @@ export default {
     ],
   },
   transformIgnorePatterns: [
-    'node_modules/(?!@webb-tools/app-util|use-local-storage-state|react-syntax-highlighter|@mangatax-highlighter|wagmi|@wagmi/core|@mangata-finance/type-definitions|@hyperlane-xyz/sdk|@hyperlane-xyz/utils|@hyperlane-xyz/core|@hyperlane-xyz/registry|lodash-es)',
+    'node_modules/(?!use-local-storage-state|react-syntax-highlighter|@mangatax-highlighter|wagmi|@wagmi/core|@mangata-finance/type-definitions|@hyperlane-xyz/sdk|@hyperlane-xyz/utils|@hyperlane-xyz/core|@hyperlane-xyz/registry|lodash-es)',
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/tangle-dapp',

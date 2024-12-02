@@ -6,7 +6,7 @@ import { Alert, ChainIcon, ChevronDown, Spinner } from '@webb-tools/icons';
 import {
   calculateTypedChainId,
   ChainType,
-} from '@webb-tools/sdk-core/typed-chain-id';
+} from '@webb-tools/dapp-types/TypedChainId';
 import {
   Dropdown,
   DropdownBasicButton,

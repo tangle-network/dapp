@@ -1,8 +1,8 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { EventBus } from '@webb-tools/app-util';
 import { ApiConfig } from '@webb-tools/dapp-config';
+import { EventBus } from '@webb-tools/dapp-types/EventBus';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AccountsAdapter } from './account/Accounts.adapter';
 

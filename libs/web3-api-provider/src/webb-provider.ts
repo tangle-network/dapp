@@ -5,14 +5,14 @@ import {
   WebbApiProvider,
   WebbProviderEvents,
 } from '@webb-tools/abstract-api-provider';
-import { EventBus } from '@webb-tools/app-util';
 import { ApiConfig } from '@webb-tools/dapp-config';
 import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { EventBus } from '@webb-tools/dapp-types/EventBus';
 import {
   ChainType,
   calculateTypedChainId,
-} from '@webb-tools/sdk-core/typed-chain-id';
+} from '@webb-tools/dapp-types/TypedChainId';
 import assert from 'assert';
 import values from 'lodash/values';
 import { BehaviorSubject } from 'rxjs';

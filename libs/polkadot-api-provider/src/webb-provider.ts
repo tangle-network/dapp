@@ -2,16 +2,15 @@
 
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
-import '@webb-tools/api-derive';
-
+import '@webb-tools/tangle-substrate-types';
 import {
   WebbApiProvider,
   WebbProviderEvents,
 } from '@webb-tools/abstract-api-provider';
 import { AccountsAdapter } from '@webb-tools/abstract-api-provider/account/Accounts.adapter';
-import { EventBus } from '@webb-tools/app-util';
 import { ApiConfig, Wallet } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { EventBus } from '@webb-tools/dapp-types/EventBus';
 import { parseTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 
 import { ApiPromise } from '@polkadot/api';

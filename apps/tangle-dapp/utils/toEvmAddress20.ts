@@ -1,5 +1,5 @@
+import { u8aToHex } from '@polkadot/util';
 import { addressToEvm } from '@polkadot/util-crypto';
-import { toHex } from '@webb-tools/sdk-core';
 import assert from 'assert';
 import { Address } from 'viem';
 
@@ -27,8 +27,8 @@ export const toEvmAddress20 = (substrateAddress: string): Address => {
     throw new Error('Provided address is not a Substrate address');
   }
 
-  // EVM addresses are 20 bytes long.
-  const conversionResult = toHex(addressToEvm(substrateAddress), 20);
+  // EVM addresses are 20 bytes (160 bits) long.
+  const conversionResult = u8aToHex(addressToEvm(substrateAddress), 160);
 
   assert(
     isEvmAddress(conversionResult),

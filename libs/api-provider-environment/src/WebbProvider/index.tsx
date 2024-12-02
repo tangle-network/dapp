@@ -31,7 +31,7 @@ import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
 import {
   ChainType,
   calculateTypedChainId,
-} from '@webb-tools/sdk-core/typed-chain-id';
+} from '@webb-tools/dapp-types/TypedChainId';
 import {
   WebbWeb3Provider,
   isErrorInstance,

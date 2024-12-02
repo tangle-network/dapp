@@ -1,7 +1,7 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { EventBus } from '@webb-tools/app-util';
+import { EventBus } from './EventBus';
 
 export interface StorageHandler<T> {
   inner: T;

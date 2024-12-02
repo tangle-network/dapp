@@ -7,12 +7,11 @@ import {
   InjectedExtension,
   MetadataDef,
 } from '@polkadot/extension-inject/types';
-import { options as apiOptions } from '@webb-tools/api';
-import { EventBus } from '@webb-tools/app-util';
 import { LoggerService } from '@webb-tools/browser-utils';
 import { Wallet } from '@webb-tools/dapp-config';
 import getPolkadotBasedWallet from '@webb-tools/dapp-config/utils/getPolkadotBasedWallet';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
+import { EventBus } from '@webb-tools/dapp-types/EventBus';
 import lodash from 'lodash';
 import { isValidAddress } from './is-valid-address';
 import { PolkadotAccount, PolkadotAccounts } from './polkadot-accounts';
@@ -160,12 +159,10 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       },
     );
 
-    const apiPromise = await ApiPromise.create(
-      apiOptions({
-        provider: wsProvider,
-        noInitWarn: true,
-      }),
-    );
+    const apiPromise = await ApiPromise.create({
+      provider: wsProvider,
+      noInitWarn: true,
+    });
 
     return apiPromise;
   }

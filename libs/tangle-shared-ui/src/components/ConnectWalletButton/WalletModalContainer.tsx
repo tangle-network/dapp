@@ -9,7 +9,7 @@ import { WalletId } from '@webb-tools/dapp-types';
 import {
   calculateTypedChainId,
   ChainType,
-} from '@webb-tools/sdk-core/typed-chain-id';
+} from '@webb-tools/dapp-types/TypedChainId';
 import { useWebbUI, WalletModal } from '@webb-tools/webb-ui-components';
 import { Network } from '@webb-tools/webb-ui-components/constants/networks';
 import { useMemo } from 'react';

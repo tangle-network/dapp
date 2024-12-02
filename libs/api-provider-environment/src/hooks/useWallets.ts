@@ -48,7 +48,7 @@ export const useWallets = () => {
                       ]);
                     }
                   },
-                  canEndSession: Boolean(activeApi?.capabilities?.hasSessions),
+                  canEndSession: true,
                 };
               }
 
