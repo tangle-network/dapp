@@ -15,7 +15,6 @@ import {
   Client as ViemClient,
 } from 'viem';
 import { AccountsAdapter } from './account/Accounts.adapter';
-import { ChainQuery } from './chain-query';
 import { WebbProviderType } from './types';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 
@@ -26,8 +25,6 @@ export interface WebbMethods<
 > {
   // Variable Anchor API
   variableAnchor: WebbVariableAnchor<ProviderType, T>;
-  // Chain query : an API for querying chain storage used currently for balances
-  chainQuery: ChainQuery<T>;
 }
 
 export type WebbMethod<

@@ -40,7 +40,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { PublicClient } from 'viem';
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
-import { PolkadotChainQuery } from './webb-provider/chain-query';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 
 export class WebbPolkadot
@@ -84,7 +83,6 @@ export class WebbPolkadot
     this.txBuilder = this.provider.txBuilder;
 
     this.methods = {
-      chainQuery: new PolkadotChainQuery(this),
       variableAnchor: {
         actions: {
           enabled: true,

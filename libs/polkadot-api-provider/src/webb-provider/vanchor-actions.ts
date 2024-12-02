@@ -25,7 +25,6 @@ import {
   toFixedHex,
 } from '@webb-tools/sdk-core';
 import BN from 'bn.js';
-import { firstValueFrom } from 'rxjs';
 
 import { ApiPromise } from '@polkadot/api';
 import { hexToU8a } from '@polkadot/util';
@@ -33,7 +32,7 @@ import { NeighborEdge } from '@webb-tools/abstract-api-provider/vanchor/types';
 import { bridgeStorageFactory } from '@webb-tools/browser-utils';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { AddressType } from '@webb-tools/dapp-config/types';
-import { formatUnits, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
 import { getLeafIndex } from '../mt-utils';
 import { WebbPolkadot } from '../webb-provider';
 
@@ -248,8 +247,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       throw new Error('No active account');
     }
 
-    await this.checkHasBalance(payload, wrapUnwrapAssetId);
-
     const address = activeAccount.address;
 
     const depositUtxo = await utxoFromVAnchorNote(
@@ -312,22 +309,6 @@ export class PolkadotVAnchorActions extends VAnchorActions<
       wrapUnwrapAssetId, // wrapUnwrapAssetId
       leavesMap, // leavesMap
     ]);
-  }
-
-  private async checkHasBalance(payload: Note, wrapUnwrapAssetId: string) {
-    // Check if the user has enough balance
-    const balance = await firstValueFrom(
-      this.inner.methods.chainQuery.tokenBalanceByAddress(wrapUnwrapAssetId),
-    );
-
-    const amount = formatUnits(
-      BigInt(payload.note.amount),
-      +payload.note.denomination,
-    );
-
-    if (Number(balance) < Number(amount)) {
-      throw new Error('Not enough balance');
-    }
   }
 
   private async fetchNoteLeaves(

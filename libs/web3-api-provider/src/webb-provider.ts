@@ -59,7 +59,6 @@ import {
 } from 'wagmi/actions';
 import VAnchor from './VAnchor';
 import { Web3Accounts } from './ext-provider';
-import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 
 export class WebbWeb3Provider
@@ -125,7 +124,6 @@ export class WebbWeb3Provider
     this.unsubscribeFns.add(unsub);
 
     this.methods = {
-      chainQuery: new Web3ChainQuery(this),
       variableAnchor: {
         actions: {
           enabled: true,
