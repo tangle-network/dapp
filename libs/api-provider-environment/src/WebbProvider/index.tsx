@@ -61,8 +61,6 @@ import { unsupportedChain } from '../error/interactive-errors/unsupported-chain'
 import { useActiveAccount } from '../hooks/useActiveAccount';
 import { useActiveChain } from '../hooks/useActiveChain';
 import { useActiveWallet } from '../hooks/useActiveWallet';
-import ModalQueueManagerProvider from '../modal-queue-manager/ModalQueueManagerProvider';
-import { StoreProvider } from '../store';
 import waitForConfigReady from '../utils/waitForConfigReady';
 import { WebbContext } from '../webb-context';
 import { notificationHandler, registerInteractiveFeedback } from './private';
@@ -814,9 +812,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         appEvent,
       }}
     >
-      <ModalQueueManagerProvider>
-        <StoreProvider>{children}</StoreProvider>
-      </ModalQueueManagerProvider>
+      {children}
     </WebbContext.Provider>
   );
 };
