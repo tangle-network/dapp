@@ -19,7 +19,6 @@ import { ChainQuery } from './chain-query';
 import { WebbProviderType } from './types';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
-import { WrapUnwrap } from './wrap-unwrap';
 
 /// list of the apis that are available for  the provider
 export interface WebbMethods<
@@ -28,8 +27,6 @@ export interface WebbMethods<
 > {
   // Variable Anchor API
   variableAnchor: WebbVariableAnchor<ProviderType, T>;
-  // Wrap and unwrap API
-  wrapUnwrap: WrapAndUnwrap<T>;
   // Chain query : an API for querying chain storage used currently for balances
   chainQuery: ChainQuery<T>;
   // Methods for querying information about the current bridge
@@ -55,13 +52,6 @@ export interface WebbVariableAnchor<
   T extends WebbApiProvider<any>,
 > {
   actions: WebbMethod<VAnchorActions<ProviderType, T>, NonNullable<unknown>>;
-}
-
-export interface WrapAndUnwrap<T> {
-  core: {
-    inner: WrapUnwrap<T>;
-    enabled: boolean;
-  };
 }
 
 /// TODO improve this and add a spec

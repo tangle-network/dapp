@@ -6,7 +6,6 @@ export * from './vanchor';
 export * from './chain-query';
 export * from './currency';
 export * from './state';
-export * from './wrap-unwrap';
 
 export * from './cancelation-token';
 export * from './webb-provider.interface';

@@ -43,7 +43,6 @@ import { PolkaTXBuilder } from './transaction';
 import { PolkadotBridgeApi } from './webb-provider/bridge-api';
 import { PolkadotChainQuery } from './webb-provider/chain-query';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
-import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
@@ -92,12 +91,6 @@ export class WebbPolkadot
         actions: {
           enabled: true,
           inner: new PolkadotVAnchorActions(this),
-        },
-      },
-      wrapUnwrap: {
-        core: {
-          enabled: true,
-          inner: new PolkadotWrapUnwrap(this),
         },
       },
     };

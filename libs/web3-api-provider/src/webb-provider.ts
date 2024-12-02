@@ -62,7 +62,6 @@ import { Web3Accounts } from './ext-provider';
 import { Web3BridgeApi } from './webb-provider/bridge-api';
 import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
-import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
 
 export class WebbWeb3Provider
   extends EventBus<WebbProviderEvents<[number]>>
@@ -133,12 +132,6 @@ export class WebbWeb3Provider
         actions: {
           enabled: true,
           inner: new Web3VAnchorActions(this),
-        },
-      },
-      wrapUnwrap: {
-        core: {
-          enabled: true,
-          inner: new Web3WrapUnwrap(this),
         },
       },
     };
