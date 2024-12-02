@@ -1,52 +1,11 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ApiPromise } from '@polkadot/api';
 import { EventBus } from '@webb-tools/app-util';
-import { BridgeStorage } from '@webb-tools/browser-utils';
-import { VAnchor__factory } from '@webb-tools/contracts';
 import { ApiConfig } from '@webb-tools/dapp-config';
-import { InteractiveFeedback, Storage } from '@webb-tools/dapp-types';
-import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
+import { InteractiveFeedback } from '@webb-tools/dapp-types';
 import { BehaviorSubject, Observable } from 'rxjs';
-import {
-  GetContractReturnType,
-  PublicClient,
-  Client as ViemClient,
-} from 'viem';
 import { AccountsAdapter } from './account/Accounts.adapter';
-import { WebbProviderType } from './types';
-import { VAnchorActions } from './vanchor/vanchor-actions';
-
-/// list of the apis that are available for  the provider
-export interface WebbMethods<
-  ProviderType extends WebbProviderType,
-  T extends WebbApiProvider<any>,
-> {
-  // Variable Anchor API
-  variableAnchor: WebbVariableAnchor<ProviderType, T>;
-}
-
-export type WebbMethod<
-  T extends EventBus<K>,
-  K extends Record<string, unknown>,
-> = {
-  // The underlying provider for the methods
-  inner: T;
-  enabled: boolean;
-};
-
-export type WebbTransactionMethod<T> = {
-  inner: T;
-  enabled: boolean;
-};
-
-export interface WebbVariableAnchor<
-  ProviderType extends WebbProviderType,
-  T extends WebbApiProvider<any>,
-> {
-  actions: WebbMethod<VAnchorActions<ProviderType, T>, NonNullable<unknown>>;
-}
 
 /// TODO improve this and add a spec
 /// An interface for Apis pre-initialization
@@ -75,57 +34,6 @@ export type ProvideCapabilities = {
   hasSessions: boolean;
 };
 
-export type NotificationKey = string | number;
-export type VariantType = 'default' | 'error' | 'success' | 'warning' | 'info';
-/**
- * Notification data
- *
- * @param persist - Either the Notification is kept for future manual removal or by an event
- * @param message - Main message/ title for the notification
- * @param description - Description about the Notification
- * @param variant - Notification variant that can be used to style the notification
- * @param action - Arbitrary action that can be used  for clicking the notification (Not implemented)
- **/
-export type NotificationData = {
-  persist: boolean;
-  message: string;
-  description: string;
-  variant: VariantType;
-  action: string;
-};
-
-export type NotificationApi = {
-  addToQueue(data: NotificationData): NotificationKey;
-  remove(key: NotificationKey): void;
-};
-type MethodPath = {
-  // Main section for the Transaction
-  section: string;
-  // The call name
-  method: string;
-};
-
-export type TXNotificationPayload<T = undefined> = {
-  // Generic data for the transaction payload
-  data: T;
-  // notification key
-  key: NotificationKey;
-  address: string;
-  // More metadata for the transaction path (EX Anchor::Deposit ,VAnchor::Withdraw)
-  path: MethodPath;
-};
-/**
- * Transaction notification provider
- *
- * @param loading - Transaction status is in progress
- * @param failed - Transaction failed
- * @param finalize - Transaction Done with success
- **/
-export type TXNotification = {
-  loading(payload: TXNotificationPayload<any>): NotificationKey;
-  failed(payload: TXNotificationPayload<any>): NotificationKey;
-  finalize(payload: TXNotificationPayload<any>): NotificationKey;
-};
 export type NotificationLevel =
   | 'loading'
   | 'error'
@@ -160,25 +68,10 @@ export type NotificationHandler = ((
   remove(key: string | number): void;
 };
 
-/**
- * The representation of an api provider
- *
- * @param {AccountsAdapter} accounts - Accounts Adapter will have all methods related to the provider accounts.
- * @param {WebbMethods} methods - All of the available methods  of the API provider.
- * @param {() => Promise<void> | void} destroy -  A hook will be called to drop the provider and do cleanup listeners etc.
- * @param {ProvideCapabilities} capabilities - Manifesto of the supported actions of the provider.
- * @param {() => Promise<void> | undefined} endSession - Clean up for the provider that will remove the side effects.
- * @param {any} getProvider - A getter method for getting the underlying provider
- * @param {NotificationHandler} notificationHandler - Function for emitting notification of the current provider process
- *
- **/
-export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
+export interface WebbApiProvider extends EventBus<WebbProviderEvents> {
   accounts: AccountsAdapter<unknown>;
-  methods: WebbMethods<WebbProviderType, WebbApiProvider<T>>;
 
   typedChainidSubject: BehaviorSubject<number>;
-
-  type: WebbProviderType;
 
   destroy(): Promise<void> | void;
 
@@ -204,39 +97,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
 
   /** Get the latest block number */
   getBlockNumber(): bigint | null;
-
-  // get vanchor max edges
-  getVAnchorMaxEdges: (
-    vAnchorAddress: string,
-    provider?: PublicClient | ApiPromise,
-  ) => Promise<number>;
-
-  // get vanchor levels
-  getVAnchorLevels: (
-    vAnchorAddressOrTreeId: string,
-    providerOrApi?: PublicClient | ApiPromise,
-  ) => Promise<number>;
-
-  // generate utxo
-  generateUtxo: (input: UtxoGenInput) => Promise<Utxo>;
-
-  getVAnchorLeaves(
-    vanchor:
-      | GetContractReturnType<typeof VAnchor__factory.abi, ViemClient>
-      | ApiPromise,
-    storage: Storage<BridgeStorage>,
-    options: {
-      treeHeight: number;
-      targetRoot: string;
-      commitment: bigint;
-      importMetaUrl: string;
-      treeId?: number;
-      palletId?: number;
-    },
-  ): Promise<{
-    provingLeaves: string[];
-    commitmentIndex: number;
-  }>;
 
   sign(message: string): Promise<string>;
 }

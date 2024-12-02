@@ -5,4 +5,3 @@ export * from './useIp';
 export * from './useWallets';
 
 export { default as useScrollActions } from './useScrollActions';
-export { default as useCurrentTypedChainId } from './useCurrentTypedChainId';

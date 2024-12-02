@@ -102,8 +102,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
   const [activeChain, setActiveChain] = useActiveChain();
   const [activeAccount, setActiveAccount] = useActiveAccount();
 
-  const [activeApi, setActiveApi] =
-    useState<Maybe<WebbApiProvider<unknown>>>(undefined);
+  const [activeApi, setActiveApi] = useState<Maybe<WebbApiProvider>>(undefined);
 
   const [loading, setLoading] = useState(false);
 
@@ -157,7 +156,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       options: {
         networkStorage?: NetworkStorage | undefined | null;
         chain?: Chain | undefined;
-        activeApi?: Maybe<WebbApiProvider<unknown>>;
+        activeApi?: Maybe<WebbApiProvider>;
       } = {},
     ) => {
       const innerNetworkStorage =
@@ -195,7 +194,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
    */
   const setActiveApiWithAccounts = useCallback(
     async (
-      nextActiveApi: WebbApiProvider<unknown> | undefined,
+      nextActiveApi: WebbApiProvider | undefined,
       chain: Chain,
       _networkStorage?: NetworkStorage | null,
     ): Promise<void> => {
@@ -348,7 +347,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           _networkStorage ?? (await appNetworkStoragePromise);
 
         /// init the active api value
-        let localActiveApi: Nullable<WebbApiProvider<unknown>> = null;
+        let localActiveApi: Nullable<WebbApiProvider> = null;
 
         abortSignal?.throwIfAborted();
 

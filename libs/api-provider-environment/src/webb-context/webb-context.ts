@@ -12,7 +12,7 @@ import noop from 'lodash/noop';
 import React from 'react';
 import { AppEvent, type TAppEvent } from '../app-event';
 
-export interface WebbContextState<T = unknown> {
+export interface WebbContextState {
   /** Whether the app is loading */
   loading: boolean;
 
@@ -22,7 +22,7 @@ export interface WebbContextState<T = unknown> {
   /** All pre-configured chains */
   chains: Record<number, Chain>;
 
-  activeApi?: WebbApiProvider<T>;
+  activeApi?: WebbApiProvider;
 
   activeWallet?: Wallet;
 
@@ -52,7 +52,7 @@ export interface WebbContextState<T = unknown> {
     chain: Chain,
     wallet: Wallet,
     bridge?: Bridge,
-  ): Promise<Nullable<WebbApiProvider<T>>>;
+  ): Promise<Nullable<WebbApiProvider>>;
 
   activeFeedback: Nullable<InteractiveFeedback>;
 
@@ -65,7 +65,7 @@ export interface WebbContextState<T = unknown> {
   appEvent: TAppEvent;
 }
 
-export const WebbContext = React.createContext<WebbContextState<unknown>>({
+export const WebbContext = React.createContext<WebbContextState>({
   chains: {},
   accounts: [],
   loading: true,

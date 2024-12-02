@@ -3,5 +3,4 @@
 
 export * from './ext-provider';
 export * from './utils';
-export * from './webb-provider/vanchor-actions';
 export * from './webb-provider';

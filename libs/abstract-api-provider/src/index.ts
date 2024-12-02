@@ -2,13 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export * from './account';
-export * from './vanchor';
 export * from './currency';
 export * from './state';
 
 export * from './cancelation-token';
 export * from './webb-provider.interface';
-
-export { default as generateCircomCommitment } from './utils/generateCircomCommitment';
-export { default as calculateProvingLeavesAndCommitmentIndex } from './utils/calculateProvingLeavesAndCommitmentIndex';
-export { default as utxoFromVAnchorNote } from './utils/utxoFromVAnchorNote';

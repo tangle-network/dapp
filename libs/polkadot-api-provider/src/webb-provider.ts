@@ -10,7 +10,6 @@ import {
   NotificationHandler,
   ProvideCapabilities,
   WebbApiProvider,
-  WebbMethods,
   WebbProviderEvents,
 } from '@webb-tools/abstract-api-provider';
 import { AccountsAdapter } from '@webb-tools/abstract-api-provider/account/Accounts.adapter';
@@ -25,7 +24,6 @@ import {
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
 import { parseTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
-import { CircomUtxo, Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
 import {
@@ -34,21 +32,15 @@ import {
 } from '@polkadot/extension-inject/types';
 
 import { VoidFn } from '@polkadot/api/types';
-import { BridgeStorage } from '@webb-tools/browser-utils';
-import Storage from '@webb-tools/dapp-types/Storage';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { PublicClient } from 'viem';
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
-import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
-  implements WebbApiProvider<WebbPolkadot>
+  implements WebbApiProvider
 {
   readonly type = 'polkadot';
-
-  readonly methods: WebbMethods<'polkadot', WebbApiProvider<WebbPolkadot>>;
 
   readonly api: ApiPromise;
   readonly txBuilder: PolkaTXBuilder;
@@ -58,12 +50,6 @@ export class WebbPolkadot
   readonly typedChainidSubject: BehaviorSubject<number>;
 
   private _newBlock = new BehaviorSubject<null | bigint>(null);
-
-  // Map to store the max edges for each tree id
-  private readonly vAnchorMaxEdges = new Map<string, number>();
-
-  // Map to store the vAnchor levels for each tree id
-  private readonly vAnchorLevels = new Map<string, number>();
 
   private constructor(
     readonly apiPromise: ApiPromise,
@@ -81,15 +67,6 @@ export class WebbPolkadot
     this.accounts = this.provider.accounts;
     this.api = this.provider.api;
     this.txBuilder = this.provider.txBuilder;
-
-    this.methods = {
-      variableAnchor: {
-        actions: {
-          enabled: true,
-          inner: new PolkadotVAnchorActions(this),
-        },
-      },
-    };
 
     // Take the configured values in the config and create objects used in the
     // api (e.g. Record<number, CurrencyConfig> => Currency[])
@@ -263,88 +240,6 @@ export class WebbPolkadot
 
   get typedChainId(): number {
     return this.typedChainidSubject.getValue();
-  }
-
-  async getVAnchorLeaves(
-    _api: ApiPromise,
-    _storage: Storage<BridgeStorage>,
-    _options: {
-      treeHeight: number;
-      targetRoot: string;
-      commitment: bigint;
-      treeId?: number;
-      palletId?: number;
-    },
-  ): Promise<{
-    provingLeaves: string[];
-    commitmentIndex: number;
-  }> {
-    return {
-      provingLeaves: [],
-      commitmentIndex: 0,
-    };
-  }
-
-  async getVAnchorMaxEdges(
-    treeId: string,
-    provider?: PublicClient | ApiPromise,
-  ): Promise<number> {
-    // If provider is not instance of ApiPromise, display error and use `this.api` instead
-    if (!(provider instanceof ApiPromise)) {
-      console.error(
-        '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`',
-      );
-      provider = this.api;
-    }
-
-    const storedMaxEdges = this.vAnchorMaxEdges.get(treeId);
-    if (storedMaxEdges) {
-      return storedMaxEdges;
-    }
-
-    const api = provider || this.api;
-    const maxEdges = await api.query.linkableTreeBn254.maxEdges(treeId);
-    if (maxEdges.isEmpty) {
-      console.error(`Max edges for tree ${treeId} is empty`);
-      return 0;
-    }
-
-    this.vAnchorMaxEdges.set(treeId, parseInt(maxEdges.toHex()));
-    return parseInt(maxEdges.toHex());
-  }
-
-  async getVAnchorLevels(
-    treeId: string,
-    provider?: PublicClient | ApiPromise,
-  ): Promise<number> {
-    if (!(provider instanceof ApiPromise)) {
-      console.error(
-        '`provider` of the type `providers.Provider` is not supported in polkadot provider overriding to `this.api`',
-      );
-      provider = this.api;
-    }
-
-    const storedLevels = this.vAnchorLevels.get(treeId);
-    if (storedLevels) {
-      return storedLevels;
-    }
-
-    const api = provider || this.api;
-    const treeData = await api.query.merkleTreeBn254.trees(treeId);
-    if (treeData.isEmpty) {
-      throw WebbError.from(WebbErrorCodes.AnchorIdNotFound);
-    }
-
-    const treeMedata = (treeData as any).unwrap();
-    const levels = treeMedata.depth.toNumber();
-
-    this.vAnchorLevels.set(treeId, levels);
-
-    return levels;
-  }
-
-  generateUtxo(input: UtxoGenInput): Promise<Utxo> {
-    return CircomUtxo.generateUtxo(input);
   }
 
   async sign(message: string): Promise<string> {
