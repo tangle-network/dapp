@@ -40,7 +40,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { PublicClient } from 'viem';
 import { PolkadotProvider } from './ext-provider';
 import { PolkaTXBuilder } from './transaction';
-import { PolkadotBridgeApi } from './webb-provider/bridge-api';
 import { PolkadotChainQuery } from './webb-provider/chain-query';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 
@@ -85,7 +84,6 @@ export class WebbPolkadot
     this.txBuilder = this.provider.txBuilder;
 
     this.methods = {
-      bridgeApi: new PolkadotBridgeApi(this),
       chainQuery: new PolkadotChainQuery(this),
       variableAnchor: {
         actions: {

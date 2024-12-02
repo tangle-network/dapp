@@ -697,35 +697,12 @@ export class Web3VAnchorActions extends VAnchorActions<
   }
 
   private async getVAnchor(
-    payload: Note,
-    isDestAnchor = false,
+    _payload: Note,
+    _isDestAnchor = false,
   ):
     | Promise<GetContractReturnType<typeof VAnchor__factory.abi, ViemClient>>
     | never {
-    const { note } = payload;
-    const { sourceChainId, targetChainId } = note;
-    const vanchors = await this.inner.methods.bridgeApi.getVAnchors();
-
-    if (vanchors.length === 0) {
-      throw new Error('No variable anchor configured for selected token');
-    }
-
-    const vanchor = vanchors[0];
-
-    // Get the contract address for the src chain
-    let vanchorAddress: string;
-
-    if (isDestAnchor) {
-      vanchorAddress = vanchor.neighbours[+targetChainId] as string;
-    } else {
-      vanchorAddress = vanchor.neighbours[+sourceChainId] as string;
-    }
-
-    if (!vanchorAddress) {
-      throw new Error(`No Anchor for the chain ${note.targetChainId}`);
-    }
-
-    return this.inner.getVAnchorContractByAddress(vanchorAddress);
+    return this.inner.getVAnchorContractByAddress(zeroAddress);
   }
 
   private async getTokenWrapperContract(payload: Note, isDest = false) {

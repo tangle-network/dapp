@@ -17,7 +17,6 @@ import {
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { ChainQuery } from './chain-query';
 import { WebbProviderType } from './types';
-import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
 
 /// list of the apis that are available for  the provider
@@ -29,8 +28,6 @@ export interface WebbMethods<
   variableAnchor: WebbVariableAnchor<ProviderType, T>;
   // Chain query : an API for querying chain storage used currently for balances
   chainQuery: ChainQuery<T>;
-  // Methods for querying information about the current bridge
-  bridgeApi: BridgeApi<T>;
 }
 
 export type WebbMethod<

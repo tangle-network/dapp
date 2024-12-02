@@ -1,4 +1,3 @@
-export * from './bridge/useBridge';
 export * from './currency';
 export * from './note';
 export * from './types';

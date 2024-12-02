@@ -59,7 +59,6 @@ import {
 } from 'wagmi/actions';
 import VAnchor from './VAnchor';
 import { Web3Accounts } from './ext-provider';
-import { Web3BridgeApi } from './webb-provider/bridge-api';
 import { Web3ChainQuery } from './webb-provider/chain-query';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 
@@ -126,7 +125,6 @@ export class WebbWeb3Provider
     this.unsubscribeFns.add(unsub);
 
     this.methods = {
-      bridgeApi: new Web3BridgeApi(this),
       chainQuery: new Web3ChainQuery(this),
       variableAnchor: {
         actions: {
