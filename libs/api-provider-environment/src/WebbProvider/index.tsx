@@ -33,7 +33,6 @@ import {
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
 import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
-import { getRelayerManagerFactory } from '@webb-tools/relayer-manager-factory';
 import {
   ChainType,
   calculateTypedChainId,
@@ -42,7 +41,6 @@ import {
   WebbWeb3Provider,
   isErrorInstance,
   isViemError,
-  type Web3RelayerManager,
 } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import useWagmiHydration from '@webb-tools/webb-ui-components/hooks/useWagmiHydration';
@@ -304,8 +302,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
             );
           }
           break;
-        case WebbErrorCodes.RelayerMisbehaving:
-          break;
         default:
           alert(code);
       }
@@ -348,10 +344,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
 
         abortSignal?.throwIfAborted();
 
-        const relayerManagerFactory = await getRelayerManagerFactory({
-          isLazyFetch: true,
-        });
-
         const networkStorage =
           _networkStorage ?? (await appNetworkStoragePromise);
 
@@ -365,9 +357,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           case WalletId.Talisman:
           case WalletId.SubWallet:
             {
-              const relayerManager =
-                await relayerManagerFactory.getRelayerManager('substrate');
-
               abortSignal?.throwIfAborted();
 
               const webSocketUrls = chain.rpcUrls.default.webSocket;
@@ -394,7 +383,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
                     });
                   },
                 },
-                relayerManager,
                 apiConfig,
                 notificationHandler,
                 nextTypedChainId,
@@ -443,17 +431,11 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
 
               abortSignal?.throwIfAborted();
 
-              const relayerManager =
-                (await relayerManagerFactory.getRelayerManager(
-                  'evm',
-                )) as Web3RelayerManager;
-
               abortSignal?.throwIfAborted();
 
               const webbWeb3Provider = await WebbWeb3Provider.init(
                 connector,
                 chain.id,
-                relayerManager,
                 apiConfig,
                 notificationHandler,
               );

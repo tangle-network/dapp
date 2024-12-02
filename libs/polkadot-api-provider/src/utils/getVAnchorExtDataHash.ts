@@ -1,5 +1,10 @@
 import { BN, u8aToHex } from '@polkadot/util';
-import { encodeAbiParameters, keccak256, parseAbiParameters } from 'viem';
+import {
+  encodeAbiParameters,
+  keccak256,
+  parseAbiParameters,
+  zeroAddress,
+} from 'viem';
 
 // TODO: Remove any type
 const getVAnchorExtDataHash = (extData: any): bigint => {
@@ -15,7 +20,7 @@ const getVAnchorExtDataHash = (extData: any): bigint => {
       {
         recipient: `0x${extData.recipient.replace(/^0x/, '')}`,
         extAmount: BigInt(extData.extAmount),
-        relayer: `0x${extData.relayer.replace(/^0x/, '')}`,
+        relayer: zeroAddress,
         fee: BigInt(extData.fee),
         refund: BigInt(extData.refund),
         token: u8aToHex(tokenIdLE), // AbiCoder encode bytes as little endian

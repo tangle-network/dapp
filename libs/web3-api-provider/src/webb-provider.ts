@@ -15,14 +15,7 @@ import { EventBus } from '@webb-tools/app-util';
 import { retryPromise } from '@webb-tools/browser-utils';
 import { BridgeStorage } from '@webb-tools/browser-utils/storage';
 import { VAnchor__factory } from '@webb-tools/contracts';
-import {
-  ApiConfig,
-  LOCALNET_CHAIN_IDS,
-  ZERO_BIG_INT,
-  ensureHex,
-  getAnchorDeploymentBlockNumber,
-  walletsConfig,
-} from '@webb-tools/dapp-config';
+import { ApiConfig, ensureHex, walletsConfig } from '@webb-tools/dapp-config';
 import maxBlockStepCfg from '@webb-tools/dapp-config/maxBlockStepConfig';
 import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
@@ -32,22 +25,13 @@ import {
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
 import Storage from '@webb-tools/dapp-types/Storage';
-import {
-  CircomUtxo,
-  Keypair,
-  Utxo,
-  UtxoGenInput,
-  toFixedHex,
-} from '@webb-tools/sdk-core';
+import { CircomUtxo, Keypair, Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 import { Note } from '@webb-tools/sdk-core/note';
 import {
   ChainType,
   calculateTypedChainId,
-  parseTypedChainId,
 } from '@webb-tools/sdk-core/typed-chain-id';
 import assert from 'assert';
-import flatten from 'lodash/flatten';
-import groupBy from 'lodash/groupBy';
 import values from 'lodash/values';
 import { BehaviorSubject } from 'rxjs';
 import {
@@ -58,7 +42,6 @@ import {
   type Client,
   type GetContractReturnType,
   type GetLogsReturnType,
-  type Hash,
   type PublicClient,
   type Transport,
   type Client as ViemClient,
@@ -78,7 +61,6 @@ import VAnchor from './VAnchor';
 import { Web3Accounts } from './ext-provider';
 import { Web3BridgeApi } from './webb-provider/bridge-api';
 import { Web3ChainQuery } from './webb-provider/chain-query';
-import { Web3RelayerManager } from './webb-provider/relayer-manager';
 import { Web3VAnchorActions } from './webb-provider/vanchor-actions';
 import { Web3WrapUnwrap } from './webb-provider/wrap-unwrap';
 
@@ -115,7 +97,6 @@ export class WebbWeb3Provider
     readonly connector: Connector,
     readonly walletClient: WalletClient<Transport, Chain, Account>,
     protected chainId: number,
-    readonly relayerManager: Web3RelayerManager,
     readonly config: ApiConfig,
     readonly notificationHandler: NotificationHandler,
     readonly accounts: Web3Accounts,
@@ -201,7 +182,6 @@ export class WebbWeb3Provider
   static async init(
     connector: Connector,
     chainId: number,
-    relayerManager: Web3RelayerManager,
     appConfig: ApiConfig,
     notification: NotificationHandler,
   ) {
@@ -217,7 +197,6 @@ export class WebbWeb3Provider
       connector,
       walletClient,
       chainId,
-      relayerManager,
       appConfig,
       notification,
       accounts,
@@ -295,12 +274,12 @@ export class WebbWeb3Provider
   }
 
   async getVAnchorLeaves(
-    vAnchorContract: GetContractReturnType<
+    _vAnchorContract: GetContractReturnType<
       typeof VAnchor__factory.abi,
       ViemClient
     >,
-    storage: Storage<BridgeStorage>,
-    options: {
+    _storage: Storage<BridgeStorage>,
+    _options: {
       treeHeight: number;
       targetRoot: string;
       commitment: bigint;
@@ -309,137 +288,21 @@ export class WebbWeb3Provider
     provingLeaves: string[];
     commitmentIndex: number;
   }> {
-    const evmId = await vAnchorContract.read.getChainId();
-
-    const typedChainId = calculateTypedChainId(
-      ChainType.EVM,
-      +evmId.toString(),
-    );
-
-    const anchorId = vAnchorContract.address;
-
-    // First, try to fetch the leaves from the supported relayers
-    const relayers = await this.relayerManager.getRelayersByChainAndAddress(
-      typedChainId,
-      anchorId,
-    );
-
-    const leavesFromRelayers =
-      await this.relayerManager.fetchLeavesFromRelayers(
-        relayers,
-        vAnchorContract,
-        storage,
-        options,
-      );
-
-    // If unable to fetch leaves from the relayers, get them from chain
-    if (!leavesFromRelayers || leavesFromRelayers.commitmentIndex === -1) {
-      const isLocal = LOCALNET_CHAIN_IDS.includes(+`${evmId}`);
-
-      // check if we already cached some values in the storage and the chain id is not local
-      let lastQueriedBlock = !isLocal
-        ? await storage.get('lastQueriedBlock')
-        : 0;
-      let storedLeaves = !isLocal ? await storage.get('leaves') : [];
-
-      if (!isLocal) {
-        const storedContractInfo: BridgeStorage = {
-          lastQueriedBlock:
-            (lastQueriedBlock ||
-              getAnchorDeploymentBlockNumber(typedChainId, anchorId)) ??
-            0,
-          leaves: storedLeaves || [],
-        };
-
-        console.log('Stored contract info: ', storedContractInfo);
-
-        lastQueriedBlock = storedContractInfo.lastQueriedBlock;
-        storedLeaves = storedContractInfo.leaves;
-      }
-
-      const publicClient = getPublicClient(getWagmiConfig(), {
-        chainId: +evmId.toString(),
-      });
-
-      assert(
-        publicClient,
-        WebbError.from(WebbErrorCodes.NoClientAvailable).message,
-      );
-
-      const leavesFromChain = await this.getDepositLeaves(
-        BigInt(lastQueriedBlock + 1),
-        ZERO_BIG_INT,
-        // TODO: Fix type casting here
-        publicClient as any,
-        vAnchorContract,
-      );
-
-      // Merge the leaves from chain with the stored leaves
-      // and fixed them to 32 bytes
-      const leaves = [...storedLeaves, ...leavesFromChain.newLeaves].map(
-        (leaf) => toFixedHex(leaf),
-      );
-
-      console.log(`Got ${leaves.length} leaves from chain`);
-
-      // Cached all the leaves to re-use them later if not localnet
-      if (!isLocal) {
-        await storage.set(
-          'lastQueriedBlock',
-          +leavesFromChain.lastQueriedBlock.toString(),
-        );
-        await storage.set('leaves', leaves);
-      }
-
-      // Return the leaves for proving and the commitment index
-      return {
-        provingLeaves: leaves,
-        commitmentIndex: -1,
-      };
-    }
-
-    return leavesFromRelayers;
+    return {
+      provingLeaves: [],
+      commitmentIndex: 0,
+    };
   }
 
   async getVAnchorNotesFromChain(
-    vAnchorContract: GetContractReturnType<
+    _vAnchorContract: GetContractReturnType<
       typeof VAnchor__factory.abi,
       ViemClient
     >,
-    owner: Keypair,
-    startingBlockArg?: bigint,
-    abortSignal?: AbortSignal,
+    _owner: Keypair,
+    _startingBlockArg?: bigint,
+    _abortSignal?: AbortSignal,
   ): Promise<Note[]> {
-    const evmId = await vAnchorContract.read.getChainId();
-    const typedChainId = calculateTypedChainId(
-      ChainType.EVM,
-      +evmId.toString(),
-    );
-
-    const tokenSymbol = this.methods.bridgeApi.getCurrency();
-    if (!tokenSymbol) {
-      throw new Error('Currency not found'); // Development error
-    }
-
-    abortSignal?.throwIfAborted();
-
-    const anchorId = vAnchorContract.address;
-    const startingBlock =
-      startingBlockArg ??
-      BigInt(getAnchorDeploymentBlockNumber(typedChainId, anchorId) || 1);
-
-    const utxos = await this.getSpendableUtxosFromChain(
-      owner,
-      startingBlock,
-      vAnchorContract,
-      undefined,
-      abortSignal,
-    );
-
-    console.log(`Found ${utxos.length} UTXOs on chain`);
-
-    abortSignal?.throwIfAborted();
-
     return [];
   }
 
@@ -709,196 +572,5 @@ export class WebbWeb3Provider
     }
 
     return logs;
-  }
-
-  // ================== PRIVATE METHODS ===================
-
-  /**
-   * Refactor from https://github.com/webb-tools/protocol-solidity/blob/main/packages/anchors/src/VAnchor.ts#L663
-   * when migrating to wagmi and viem
-   */
-  private async getDepositLeaves<
-    transport extends Transport,
-    chain extends Chain,
-    TClient extends PublicClient<transport, chain>,
-    TVAnchorContract extends GetContractReturnType<
-      typeof VAnchor__factory.abi,
-      Client
-    >,
-  >(
-    startingBlock: bigint,
-    finalBlockArg: bigint,
-    publicClient: TClient,
-    vAnchorContract: TVAnchorContract,
-    onBlockProcessed?: (
-      fromBlock: bigint,
-      toBlock: bigint,
-      currentBlock: bigint,
-    ) => void,
-  ): Promise<{ lastQueriedBlock: bigint; newLeaves: Array<Hash> }> {
-    const latestBlock = finalBlockArg || (await publicClient.getBlockNumber());
-
-    const logs = await this.getNewCommitmentLogs(
-      // TODO: Fix type casting here
-      publicClient as any,
-      vAnchorContract,
-      startingBlock,
-      latestBlock,
-      (currentBlock) =>
-        onBlockProcessed?.(startingBlock, latestBlock, currentBlock),
-    );
-
-    return {
-      lastQueriedBlock: latestBlock,
-      newLeaves: logs.map((log) => ensureHex(log.args.commitment.toString(16))),
-    };
-  }
-
-  /**
-   * Refactor from https://github.com/webb-tools/protocol-solidity/blob/main/packages/anchors/src/VAnchor.ts#L716
-   * when migrating to wagmi and viem
-   */
-  private async getSpendableUtxosFromChain(
-    owner: Keypair,
-    startingBlock: bigint,
-    vAnchorContract: GetContractReturnType<
-      typeof VAnchor__factory.abi,
-      ViemClient
-    >,
-    onBlockProcessed?: (
-      fromBlock: bigint,
-      toBlock: bigint,
-      currentBlock: bigint,
-    ) => void,
-    abortSignal?: AbortSignal,
-  ): Promise<Array<Utxo>> {
-    const chainId = await vAnchorContract.read.getChainId();
-    const publicClient = getPublicClient(getWagmiConfig(), {
-      chainId: +chainId.toString(),
-    });
-
-    if (!publicClient) {
-      throw WebbError.from(WebbErrorCodes.NoClientAvailable);
-    }
-
-    const latestBlock = await publicClient.getBlockNumber();
-
-    const logs = await this.getNewCommitmentLogs(
-      // TODO: Fix type casting here
-      publicClient as any,
-      vAnchorContract,
-      startingBlock,
-      latestBlock,
-      (currentBlock) =>
-        onBlockProcessed?.(startingBlock, latestBlock, currentBlock),
-      abortSignal,
-    );
-
-    const parsedLogs = logs.map((log) => ({
-      encryptedOutput: log.args.encryptedOutput,
-      leafIndex: log.args.leafIndex,
-    }));
-
-    abortSignal?.throwIfAborted();
-
-    const utxosWithNull = await Promise.all(
-      parsedLogs.map(({ encryptedOutput, leafIndex }) =>
-        this.validateAmountEncryptedOutput(owner, encryptedOutput, leafIndex),
-      ),
-    );
-
-    const filteredUtxos = utxosWithNull.filter((utxo) => utxo !== null);
-
-    const spendableUtxos = await this.validateIsSpent(
-      filteredUtxos,
-      vAnchorContract.address,
-    );
-
-    abortSignal?.throwIfAborted();
-
-    return spendableUtxos;
-  }
-
-  /**
-   * Validates the on-chain encrypted output whether the amount is not `0
-   * @param encryptedOutput the fetched encrypted output from the chain
-   * @param vAnchorContract the vAnchor contract instance
-   * @returns the decrypted output if the validation passes, otherwise `null`
-   */
-  private async validateAmountEncryptedOutput(
-    _owner: Keypair,
-    _encryptedOutput: Hash,
-    _leafIndex: bigint,
-  ): Promise<null | Utxo> {
-    return null;
-  }
-
-  /**
-   * Validates the on-chain nullifier whether it is spent or not
-   * @param nullifiers the list of nullifiers to validate
-   * @param vAnchorContract the current connected vAnchor contract
-   * @returns an array of boolean values, where `true` means the nullifier is spent, otherwise `false`
-   */
-  private async validateIsSpent(
-    utxos: ReadonlyArray<Utxo>,
-    vAnchorIdentifier: string,
-  ): Promise<Array<Utxo>> {
-    // Get record of chainId -> Utxos
-    const utxosByChainId = groupBy(
-      utxos,
-      (utxo) => parseTypedChainId(+utxo.chainId).chainId,
-    );
-
-    // Get record of chainId -> contract instance
-    const vAnchorContractsByChainId = Object.keys(utxosByChainId).reduce(
-      (acc, chainIdStr) => {
-        const chainId = +chainIdStr;
-
-        const client = getPublicClient(getWagmiConfig(), {
-          chainId,
-        });
-
-        if (!client) {
-          throw WebbError.from(WebbErrorCodes.NoClientAvailable);
-        }
-
-        if (!acc[chainId]) {
-          acc[chainId] = getContract({
-            address: ensureHex(vAnchorIdentifier),
-            abi: VAnchor__factory.abi,
-            client,
-          });
-        }
-
-        return acc;
-      },
-      {} as Record<
-        number,
-        GetContractReturnType<typeof VAnchor__factory.abi, ViemClient>
-      >,
-    );
-
-    // Use the contract instance to validate the nullifiers
-    // by calling isSpentArray and get the non-spent utxos
-    const nonSpentUtxosByChainId = await Promise.all(
-      Object.entries(vAnchorContractsByChainId).map(
-        async ([chainId, vAnchorContract]) => {
-          const nullifiers = utxosByChainId[chainId].map((utxo) =>
-            BigInt(ensureHex(utxo.nullifier)),
-          );
-
-          const isSpentArray = await vAnchorContract.read.isSpentArray([
-            nullifiers,
-          ]);
-
-          return utxosByChainId[chainId].filter(
-            (_, index) => !isSpentArray[index],
-          );
-        },
-      ),
-    );
-
-    // Flatten the array of arrays
-    return flatten(nonSpentUtxosByChainId);
   }
 }

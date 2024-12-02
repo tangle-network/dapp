@@ -12,7 +12,6 @@ import {
 } from '@webb-tools/sdk-core';
 import { Address, Hash } from 'viem';
 import { CancellationToken } from '../cancelation-token';
-import { ActiveWebbRelayer } from '../relayer';
 import { WebbProviderType } from '../types';
 import type { WebbApiProvider } from '../webb-provider.interface';
 import { NeighborEdge } from './types';
@@ -194,18 +193,6 @@ export abstract class VAnchorActions<
   ): Promise<ParametersOfTransactMethod<ProviderType>> | never;
 
   /**
-   * A function to send a transaction to the relayer
-   * @param activeRelayer The active relayer.
-   * @param txArgs The transaction payload.
-   * @param changeNotes The change notes.
-   */
-  abstract transactWithRelayer(
-    activeRelayer: ActiveWebbRelayer,
-    txArgs: ParametersOfTransactMethod<ProviderType>,
-    changeNotes: Note[],
-  ): Promise<Hash>;
-
-  /**
    * The transact function
    * @return {string} The transaction hash
    */
@@ -216,7 +203,6 @@ export abstract class VAnchorActions<
     fee: bigint,
     refund: bigint,
     recipient: ProviderType extends 'web3' ? Address : string,
-    relayer: ProviderType extends 'web3' ? Address : string,
     wrapUnwrapToken: string,
     leavesMap: Record<string, Uint8Array[]>,
   ): Promise<Hash>;

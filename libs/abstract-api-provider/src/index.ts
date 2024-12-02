@@ -5,7 +5,6 @@ export * from './account';
 export * from './vanchor';
 export * from './chain-query';
 export * from './currency';
-export * from './relayer';
 export * from './state';
 export * from './wrap-unwrap';
 

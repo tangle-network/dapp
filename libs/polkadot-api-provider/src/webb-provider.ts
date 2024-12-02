@@ -12,7 +12,6 @@ import {
   WebbApiProvider,
   WebbMethods,
   WebbProviderEvents,
-  calculateProvingLeavesAndCommitmentIndex,
 } from '@webb-tools/abstract-api-provider';
 import { AccountsAdapter } from '@webb-tools/abstract-api-provider/account/Accounts.adapter';
 import { Bridge } from '@webb-tools/abstract-api-provider/state';
@@ -25,12 +24,7 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@webb-tools/dapp-types';
-import {
-  ChainType,
-  calculateTypedChainId,
-  parseTypedChainId,
-  toFixedHex,
-} from '@webb-tools/dapp-types/TypedChainId';
+import { parseTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import { CircomUtxo, Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 
 import { ApiPromise } from '@polkadot/api';
@@ -40,18 +34,15 @@ import {
 } from '@polkadot/extension-inject/types';
 
 import { VoidFn } from '@polkadot/api/types';
-import { u8aToHex } from '@polkadot/util';
 import { BridgeStorage } from '@webb-tools/browser-utils';
 import Storage from '@webb-tools/dapp-types/Storage';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { PublicClient, zeroAddress } from 'viem';
+import { PublicClient } from 'viem';
 import { PolkadotProvider } from './ext-provider';
-import { getLeaves } from './mt-utils';
 import { PolkaTXBuilder } from './transaction';
 import { PolkadotBridgeApi } from './webb-provider/bridge-api';
 import { PolkadotChainQuery } from './webb-provider/chain-query';
 import { PolkadotECDSAClaims } from './webb-provider/ecdsa-claims';
-import { PolkadotRelayerManager } from './webb-provider/relayer-manager';
 import { PolkadotVAnchorActions } from './webb-provider/vanchor-actions';
 import { PolkadotWrapUnwrap } from './webb-provider/wrap-unwrap';
 
@@ -82,7 +73,6 @@ export class WebbPolkadot
     readonly apiPromise: ApiPromise,
     typedChainId: number,
     readonly injectedExtension: InjectedExtension,
-    readonly relayerManager: PolkadotRelayerManager,
     readonly config: ApiConfig,
     readonly notificationHandler: NotificationHandler,
     private readonly provider: PolkadotProvider,
@@ -216,7 +206,6 @@ export class WebbPolkadot
     appName: string, // App name, arbitrary name
     endpoints: string[], // Endpoints of the substrate node
     errorHandler: ApiInitHandler, // Error handler that will be used to catch errors while initializing the provider
-    relayerBuilder: PolkadotRelayerManager, // Webb Relayer builder for relaying withdraw
     apiConfig: ApiConfig, // The whole and current app configuration
     notification: NotificationHandler, // Notification handler that will be used for the provider
     typedChainId: number,
@@ -244,7 +233,6 @@ export class WebbPolkadot
       apiPromise,
       typedChainId,
       injectedExtension,
-      relayerBuilder,
       apiConfig,
       notification,
       provider,
@@ -294,9 +282,9 @@ export class WebbPolkadot
   }
 
   async getVAnchorLeaves(
-    api: ApiPromise,
-    storage: Storage<BridgeStorage>,
-    options: {
+    _api: ApiPromise,
+    _storage: Storage<BridgeStorage>,
+    _options: {
       treeHeight: number;
       targetRoot: string;
       commitment: bigint;
@@ -307,92 +295,10 @@ export class WebbPolkadot
     provingLeaves: string[];
     commitmentIndex: number;
   }> {
-    const { treeHeight, targetRoot, commitment, treeId, palletId } = options;
-
-    if (typeof treeId === 'undefined' || typeof palletId === 'undefined') {
-      throw WebbError.from(WebbErrorCodes.InvalidArguments);
-    }
-
-    const chainId = parseInt(
-      api.consts.linkableTreeBn254.chainIdentifier.toHex(),
-    );
-    const typedChainId = calculateTypedChainId(ChainType.Substrate, chainId);
-    const chain = this.config.chains[typedChainId];
-
-    const relayers = this.relayerManager.getRelayers({
-      baseOn: 'substrate',
-      chainId,
-    });
-
-    const leavesFromRelayers =
-      await this.relayerManager.fetchLeavesFromRelayers(
-        relayers,
-        api,
-        storage,
-        {
-          ...options,
-          palletId,
-          treeId,
-        },
-      );
-
-    // If unable to fetch leaves from the relayers, get them from chain
-    if (!leavesFromRelayers) {
-      // check if we already cached some values.
-      const lastQueriedBlock = await storage.get('lastQueriedBlock');
-      const storedLeaves = await storage.get('leaves');
-      // The end block number is the current block number
-      const endBlock = await api.derive.chain.bestNumber();
-
-      const queryBlock = lastQueriedBlock ? lastQueriedBlock + 1 : 0;
-
-      console.log(
-        `Query leaves from chain ${
-          chain?.name ?? 'Unknown'
-        } of tree id ${treeId} from block ${queryBlock} to ${endBlock.toNumber()}`,
-      );
-
-      const leavesFromChain = await getLeaves(
-        api,
-        treeId,
-        queryBlock,
-        endBlock.toNumber(),
-      );
-
-      const leavesFromChainHex = leavesFromChain
-        .map((leaf) => u8aToHex(leaf))
-        .filter((leaf) => leaf !== zeroAddress); // Filter out zero leaves
-
-      // Merge the leaves from chain with the stored leaves
-      // and fixed them to 32 bytes
-      const leaves = [...storedLeaves, ...leavesFromChainHex].map((leaf) =>
-        toFixedHex(leaf),
-      );
-
-      console.log(`Got ${leaves.length} leaves from chain`);
-
-      // Validate the leaves
-      const { leafIndex, provingLeaves } =
-        await calculateProvingLeavesAndCommitmentIndex(
-          treeHeight,
-          leaves,
-          targetRoot,
-          commitment.toString(),
-        );
-
-      // Cached the new leaves if not local chain
-      if (chain?.tag !== 'dev') {
-        await storage.set('lastQueriedBlock', endBlock.toNumber());
-        await storage.set('leaves', leaves);
-      }
-
-      return {
-        provingLeaves,
-        commitmentIndex: leafIndex,
-      };
-    }
-
-    return leavesFromRelayers;
+    return {
+      provingLeaves: [],
+      commitmentIndex: 0,
+    };
   }
 
   async getVAnchorMaxEdges(

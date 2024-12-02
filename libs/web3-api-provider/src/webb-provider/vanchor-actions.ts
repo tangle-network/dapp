@@ -1,9 +1,6 @@
-import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+import { hexToU8a } from '@polkadot/util';
 import {
-  ActiveWebbRelayer,
   ParametersOfTransactMethod,
-  RelayedChainInput,
-  RelayedWithdrawResult,
   TransactionPayloadType,
   VAnchorActions,
   calculateProvingLeavesAndCommitmentIndex,
@@ -11,7 +8,6 @@ import {
   isVAnchorDepositPayload,
   isVAnchorTransferPayload,
   isVAnchorWithdrawPayload,
-  padHexString,
   utxoFromVAnchorNote,
   type TransferTransactionPayloadType,
   type WithdrawTransactionPayloadType,
@@ -33,6 +29,7 @@ import {
   ZERO_BYTES32,
   ensureHex,
 } from '@webb-tools/dapp-config';
+import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
   WebbError,
   WebbErrorCodes,
@@ -58,7 +55,6 @@ import {
 } from 'viem';
 import { getPublicClient, getWalletClient } from 'wagmi/actions';
 import { WebbWeb3Provider } from '../webb-provider';
-import { hexToU8a } from '@polkadot/util';
 
 export class Web3VAnchorActions extends VAnchorActions<
   'web3',
@@ -114,88 +110,6 @@ export class Web3VAnchorActions extends VAnchorActions<
     }
   }
 
-  async transactWithRelayer(
-    activeRelayer: ActiveWebbRelayer,
-    txArgs: ParametersOfTransactMethod<'web3'>,
-    _changeNotes: Note[],
-  ): Promise<Hash> | never {
-    const [contractAddress, rawInputUtxos, rawOutputUtxos, ...restArgs] =
-      txArgs;
-
-    const vAnchorContract =
-      this.inner.getVAnchorContractByAddress(contractAddress);
-
-    const chainId = await vAnchorContract.read.getChainId();
-
-    const chainInfo: RelayedChainInput = {
-      baseOn: 'evm',
-      contractAddress: contractAddress,
-      endpoint: '',
-      name: chainId.toString(),
-    };
-
-    const vAnchor = await this.inner.getVAnchorInstance(
-      contractAddress,
-      this.inner.publicClient,
-    );
-
-    // Pad the input & output utxo
-    const inputUtxos = await vAnchor.padUtxos(rawInputUtxos, 16); // 16 is the require number of inputs (for 8-sided bridge)
-    const outputUtxos = await vAnchor.padUtxos(rawOutputUtxos, 2); // 2 is the require number of outputs (for 8-sided bridge)
-
-    const { publicInputs } = await vAnchor.setupTransaction(
-      inputUtxos,
-      [outputUtxos[0], outputUtxos[1]],
-      ...restArgs,
-    );
-
-    const relayedVAnchorWithdraw = await activeRelayer.initWithdraw('vAnchor');
-
-    const relayedDepositTxPayload =
-      relayedVAnchorWithdraw.generateWithdrawRequest<
-        typeof chainInfo,
-        'vAnchor'
-      >(chainInfo, {
-        chainId: +chainId.toString(),
-        id: contractAddress,
-        proofData: {
-          proof: publicInputs.proof,
-          extensionRoots: publicInputs.extensionRoots,
-          extDataHash: toFixedHex(publicInputs.extDataHash),
-          publicAmount: publicInputs.publicAmount,
-          roots: publicInputs.roots,
-          outputCommitments: publicInputs.outputCommitments.map((output) =>
-            padHexString(ensureHex(output.toString(16))),
-          ),
-          inputNullifiers: publicInputs.inputNullifiers.map((nullifier) =>
-            padHexString(ensureHex(nullifier.toString(16))),
-          ),
-        },
-      });
-
-    // Subscribe to the relayer's transaction status.
-    relayedVAnchorWithdraw.watcher.subscribe(([results]) => {
-      switch (results) {
-        case RelayedWithdrawResult.PreFlight:
-          break;
-        case RelayedWithdrawResult.OnFlight:
-          break;
-        case RelayedWithdrawResult.Continue:
-          break;
-        case RelayedWithdrawResult.CleanExit:
-          break;
-        case RelayedWithdrawResult.Errored: {
-          break;
-        }
-      }
-    });
-
-    // Send the transaction to the relayer.
-    relayedVAnchorWithdraw.send(relayedDepositTxPayload, +`${chainId}`);
-    const [, txHash = ''] = await relayedVAnchorWithdraw.await();
-    return ensureHex(txHash);
-  }
-
   async transact(
     contractAddress: Address,
     inputs: Utxo[],
@@ -203,7 +117,6 @@ export class Web3VAnchorActions extends VAnchorActions<
     fee: bigint,
     refund: bigint,
     recipient: Address,
-    relayer: Address,
     wrapUnwrapToken: Address,
     leavesMap: Record<string, Uint8Array[]>,
   ) {
@@ -226,7 +139,6 @@ export class Web3VAnchorActions extends VAnchorActions<
       fee,
       refund,
       recipient,
-      relayer,
       wrapUnwrapToken,
       leavesMap,
       {
@@ -274,8 +186,6 @@ export class Web3VAnchorActions extends VAnchorActions<
     account: string,
     keyData: string,
   ): Promise<boolean> {
-    // Check the localStorage for now.
-    // TODO: Implement a query on relayers?
     const registration = await registrationStorageFactory(account);
     const registeredKeydatas = await registration.get(anchorAddress);
     if (
@@ -401,7 +311,7 @@ export class Web3VAnchorActions extends VAnchorActions<
         option.fee,
         option.refund,
         option.recipient,
-        option.relayer,
+        zeroAddress,
         option.wrapUnwrapToken,
         option.leavesMap,
       );
@@ -617,7 +527,6 @@ export class Web3VAnchorActions extends VAnchorActions<
       ZERO_BIG_INT, // fee
       ZERO_BIG_INT, // refund
       zeroAddress, // recipient
-      zeroAddress, // relayer
       wrapToken, // wrapUnwrapToken
       {}, // leavesMap,
     ]);
@@ -631,20 +540,13 @@ export class Web3VAnchorActions extends VAnchorActions<
 
     const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes);
 
-    const relayer =
-      this.inner.relayerManager.activeRelayer?.beneficiary ?? zeroAddress;
-
-    // If no relayer is set, then the fee is 0, otherwise it is the fee amount
-    const fee = relayer === zeroAddress ? ZERO_BIG_INT : feeAmount;
-
     return Promise.resolve([
       ensureHex(notes[0].note.targetIdentifyingData), // contractAddress
       inputUtxos, // inputs
       [changeUtxo], // outputs
-      fee, // fee
+      feeAmount, // fee
       refundAmount, // refund
       ensureHex(recipient), // recipient
-      ensureHex(relayer), // relayer
       unwrapToken, // wrapUnwrapToken
       leavesMap, // leavesMap
     ]);
@@ -660,34 +562,19 @@ export class Web3VAnchorActions extends VAnchorActions<
       notes,
       feeAmount,
       refundAmount,
-      refundRecipient: _refundRecipient,
+      refundRecipient,
     } = payload;
 
     const { inputUtxos, leavesMap } = await this.commitmentsSetup(notes);
-
-    const relayer =
-      this.inner.relayerManager.activeRelayer?.beneficiary ?? zeroAddress;
-
-    // If no relayer is set, then the fee is 0, otherwise it is the fee amount
-    const feeValue = relayer === zeroAddress ? ZERO_BIG_INT : feeAmount;
-    const refundValue = relayer === zeroAddress ? ZERO_BIG_INT : refundAmount;
-
-    // The recipient is the refund recipient
-    // if the relayer is set and the refund recipient is set
-    const refundRecipient =
-      relayer === zeroAddress || _refundRecipient.length === 0
-        ? zeroAddress
-        : _refundRecipient;
 
     // set the anchor to make the transfer on (where the notes are being spent for the transfer)
     return Promise.resolve([
       ensureHex(notes[0].note.targetIdentifyingData), // contractAddress
       inputUtxos, // inputs
       [changeUtxo, transferUtxo], // outputs
-      feeValue, // fee
-      refundValue, // refund
+      feeAmount, // fee
+      refundAmount, // refund
       ensureHex(refundRecipient), // recipient
-      ensureHex(relayer), // relayer
       '', // wrapUnwrapToken (not used for transfers)
       leavesMap, // leavesMap,
     ]);

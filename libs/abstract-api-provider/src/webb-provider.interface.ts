@@ -6,7 +6,6 @@ import { EventBus } from '@webb-tools/app-util';
 import { BridgeStorage } from '@webb-tools/browser-utils';
 import { VAnchor__factory } from '@webb-tools/contracts';
 import { ApiConfig } from '@webb-tools/dapp-config';
-import { type RelayerCMDBase } from '@webb-tools/dapp-config/relayer-config';
 import { InteractiveFeedback, Storage } from '@webb-tools/dapp-types';
 import { Utxo, UtxoGenInput } from '@webb-tools/sdk-core';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -18,7 +17,6 @@ import {
 import { AccountsAdapter } from './account/Accounts.adapter';
 import { ChainQuery } from './chain-query';
 import { ECDSAClaims } from './ecdsa-claims';
-import { WebbRelayerManager } from './relayer/webb-relayer-manager';
 import { WebbProviderType } from './types';
 import { BridgeApi } from './vanchor';
 import { VAnchorActions } from './vanchor/vanchor-actions';
@@ -192,7 +190,6 @@ export type NotificationHandler = ((
  * @param {() => Promise<void> | void} destroy -  A hook will be called to drop the provider and do cleanup listeners etc.
  * @param {ProvideCapabilities} capabilities - Manifesto of the supported actions of the provider.
  * @param {() => Promise<void> | undefined} endSession - Clean up for the provider that will remove the side effects.
- * @param {WebbRelayerManager} relayingManager - Object used by the provider for sending transactions or queries to a compatible relayer.
  * @param {any} getProvider - A getter method for getting the underlying provider
  * @param {NotificationHandler} notificationHandler - Function for emitting notification of the current provider process
  *
@@ -210,8 +207,6 @@ export interface WebbApiProvider<T> extends EventBus<WebbProviderEvents> {
   capabilities?: ProvideCapabilities;
 
   endSession?(): Promise<void>;
-
-  relayerManager: WebbRelayerManager<WebbProviderType, RelayerCMDBase>;
 
   getProvider(): any;
 

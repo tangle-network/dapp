@@ -5,11 +5,8 @@ import {
   VAnchorTree__factory,
 } from '@webb-tools/contracts';
 import { ZERO_BIG_INT, ensureHex } from '@webb-tools/dapp-config';
-import {
-  WebbError,
-  WebbErrorCodes,
-  checkNativeAddress,
-} from '@webb-tools/dapp-types';
+import { checkNativeAddress } from '@webb-tools/dapp-types';
+import { getChainIdType } from '@webb-tools/dapp-types/TypedChainId';
 import {
   CircomUtxo,
   Keypair,
@@ -19,8 +16,6 @@ import {
   randomBN,
   toFixedHex,
 } from '@webb-tools/sdk-core';
-import { getChainIdType } from '@webb-tools/dapp-types/TypedChainId';
-import merge from 'lodash/merge';
 import { groth16 } from 'snarkjs';
 import {
   Account,
@@ -301,84 +296,18 @@ class VAnchor {
   }
 
   public async transact(
-    inputs: Utxo[],
-    outputs: Utxo[],
-    fee: bigint,
-    refund: bigint,
-    recipient: Address,
-    relayer: Address,
-    wrapUnwrapToken: string,
-    leavesMap: Record<string, Uint8Array[]>, // subtree
-    overridesTransaction: {
+    _inputs: Utxo[],
+    _outputs: Utxo[],
+    _fee: bigint,
+    _refund: bigint,
+    _recipient: Address,
+    _wrapUnwrapToken: string,
+    _leavesMap: Record<string, Uint8Array[]>, // subtree
+    _overridesTransaction: {
       walletClient: WalletClient;
     } & Partial<TransactionRequestBase>,
   ) {
-    const { walletClient, type: _, ...override } = overridesTransaction;
-
-    if (!walletClient.account) {
-      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
-    }
-
-    // Default UTXO chain ID will match with the configured signer's chain ID
-    const inputs_ = await this.padUtxos(inputs, 16);
-    const outputs_ = await this.padUtxos(outputs, 2);
-
-    const { extAmount, extData, publicInputs } = await this.setupTransaction(
-      inputs_,
-      [outputs_[0], outputs_[1]],
-      fee,
-      refund,
-      recipient,
-      relayer,
-      wrapUnwrapToken,
-      leavesMap,
-    );
-
-    const txValueOption = await this.getWrapUnwrapOptions(
-      extAmount,
-      refund,
-      wrapUnwrapToken,
-    );
-
-    const { request } = await this.contract.simulate.transact(
-      [
-        publicInputs.proof,
-        zeroAddress,
-        {
-          recipient: extData.recipient,
-          extAmount: extData.extAmount,
-          relayer: extData.relayer,
-          fee: extData.fee,
-          refund: extData.refund,
-          token: extData.token,
-        },
-        {
-          roots: publicInputs.roots,
-          // extensionRoots: isForest ? [] :  publicInputs.extensionRoots ,
-          extensionRoots: publicInputs.extensionRoots,
-          inputNullifiers: publicInputs.inputNullifiers,
-          outputCommitments: [
-            publicInputs.outputCommitments[0],
-            publicInputs.outputCommitments[1],
-          ],
-          publicAmount: BigInt(publicInputs.publicAmount),
-          extDataHash: publicInputs.extDataHash,
-        },
-        {
-          encryptedOutput1: extData.encryptedOutput1,
-          encryptedOutput2: extData.encryptedOutput2,
-        },
-      ],
-      merge({ account: walletClient.account.address }, txValueOption, override),
-    );
-
-    console.log('request', request);
-
-    const txHash = await walletClient.writeContract(request);
-
-    this.updateTreeOrForestState(outputs);
-
-    return txHash;
+    return zeroAddress;
   }
 
   public async getWrapUnwrapOptions(
