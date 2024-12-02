@@ -2,12 +2,12 @@
 
 import { isAddress } from '@polkadot/util-crypto';
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
-import { AddressType } from '@webb-tools/dapp-config/types';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import Decimal from 'decimal.js';
 import { useCallback, useEffect, useMemo } from 'react';
 import useSWR from 'swr';
+import { Address } from 'viem';
 
 import { useBridge } from '../../../context/BridgeContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
@@ -199,7 +199,7 @@ export function useTokenBalances() {
   const activeAccountAddress = useActiveAccountAddress();
 
   const getTokenBalance = useCallback(
-    async (erc20TokenContractAddress: AddressType, tokenDecimals: number) => {
+    async (erc20TokenContractAddress: Address, tokenDecimals: number) => {
       if (
         !ethersProvider ||
         !activeAccountAddress ||

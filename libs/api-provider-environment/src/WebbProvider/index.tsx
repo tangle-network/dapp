@@ -14,7 +14,6 @@ import {
   ApiConfig,
   chainsConfig,
   chainsPopulated,
-  parseOnChainData,
   walletsConfig,
   type Chain,
   type Wallet,
@@ -77,14 +76,8 @@ interface WebbProviderInnerProps extends BareProps {
 const chains = chainsPopulated;
 const logger = LoggerService.get('WebbProvider');
 
-// TODO: We should find a way to replace or remove the on-chain data
-const { currencies, anchors, fungibleToWrappableMap } = parseOnChainData({});
-
 const apiConfig = ApiConfig.init({
-  anchors,
   chains: chainsConfig,
-  currencies,
-  fungibleToWrappableMap,
   wallets: walletsConfig,
 });
 

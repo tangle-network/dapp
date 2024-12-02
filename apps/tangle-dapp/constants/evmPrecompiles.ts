@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import { AddressType } from '@webb-tools/dapp-config/types';
+import { Address } from 'viem';
 
 export enum Precompile {
   STAKING,
@@ -84,20 +84,20 @@ export type AbiFunction<T extends Precompile> = {
  */
 export type AbiFunctionArgs = {
   [Precompile.STAKING]: {
-    bond: [BN, AddressType];
+    bond: [BN, Address];
     bondExtra: [BN];
     chill: [];
     currentEra: [];
     erasTotalStake: [BN];
-    isNominator: [AddressType];
-    isValidator: [AddressType];
+    isNominator: [Address];
+    isValidator: [Address];
     maxNominatorCount: [];
     maxValidatorCount: [];
     minActiveStake: [];
     minNominatorBond: [];
     minValidatorBond: [];
-    nominate: [AddressType[]];
-    payoutStakers: [AddressType, BN];
+    nominate: [Address[]];
+    payoutStakers: [Address, BN];
     rebond: [BN];
     setController: [];
     setPayee: [BN];
@@ -111,13 +111,13 @@ export type AbiFunctionArgs = {
   };
 
   [Precompile.BATCH]: {
-    batchAll: [AddressType[], BN[], string[], BN[]];
-    batchSome: [AddressType[], BN[], string[], BN[]];
-    batchSomeUntilFailure: [AddressType[], BN[], string[], BN[]];
+    batchAll: [Address[], BN[], string[], BN[]];
+    batchSome: [Address[], BN[], string[], BN[]];
+    batchSomeUntilFailure: [Address[], BN[], string[], BN[]];
   };
 
   [Precompile.BALANCES_ERC20]: {
-    transfer: [AddressType, BN];
+    transfer: [Address, BN];
   };
 };
 

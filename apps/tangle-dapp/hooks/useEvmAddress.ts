@@ -1,5 +1,5 @@
-import { AddressType } from '@webb-tools/dapp-config/types';
 import { useMemo } from 'react';
+import { Address } from 'viem';
 
 import { isEvmAddress } from '../utils/isEvmAddress';
 import useActiveAccountAddress from './useActiveAccountAddress';
@@ -10,7 +10,7 @@ import useActiveAccountAddress from './useActiveAccountAddress';
  * @remarks
  * If there is no active account, `null` will be returned instead.
  */
-const useEvmAddress20 = (): AddressType | null => {
+const useEvmAddress20 = (): Address | null => {
   const activeAccountAddress = useActiveAccountAddress();
 
   const evmAddress = useMemo(() => {

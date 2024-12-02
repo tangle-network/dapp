@@ -85,12 +85,8 @@ export type UseConnectWalletReturnType = {
 /**
  * Hook contains the logic to connect open the wallet modal
  * and connect to a wallet
- * @param options.useAllWallet - Boolean to use all supported wallets,
- * if false, only use the wallets that contains the active anchor
  */
-const useConnectWallet = (options?: {
-  useAllWallets?: boolean;
-}): UseConnectWalletReturnType => {
+const useConnectWallet = (): UseConnectWalletReturnType => {
   // Get the states from the subjects
   const isModalOpen = useObservableState(subjects.isWalletModalOpenSubject);
   const selectedWallet = useObservableState(subjects.selectedWalletSubject);
@@ -240,7 +236,6 @@ const useConnectWallet = (options?: {
     walletState,
     typedChainId,
     selectedWallet,
-    ...options,
   });
 
   return {
@@ -259,14 +254,12 @@ const useConnectWallet = (options?: {
 export { useConnectWallet };
 
 /** @internal */
-function useMemoValues(
-  props: {
-    walletState: WalletState;
-    selectedWallet?: WalletConfig;
-    typedChainId?: number;
-  } & Parameters<typeof useConnectWallet>[0],
-) {
-  const { walletState, selectedWallet, typedChainId, useAllWallets } = props;
+function useMemoValues(props: {
+  walletState: WalletState;
+  selectedWallet?: WalletConfig;
+  typedChainId?: number;
+}) {
+  const { walletState, selectedWallet, typedChainId } = props;
   const { apiConfig, activeWallet, loading } = useWebContext();
 
   const connectingWalletId = useMemo<number | undefined>(
@@ -286,11 +279,8 @@ function useMemoValues(
   );
 
   const supportedWallets = useMemo(
-    () =>
-      apiConfig.getSupportedWallets(typedChainId, {
-        filterByActiveAnchor: !useAllWallets,
-      }),
-    [apiConfig, typedChainId, useAllWallets],
+    () => apiConfig.getSupportedWallets(typedChainId),
+    [apiConfig, typedChainId],
   );
 
   return {

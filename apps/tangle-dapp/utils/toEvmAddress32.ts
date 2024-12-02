@@ -1,6 +1,6 @@
 import { u8aToHex } from '@polkadot/util';
 import { decodeAddress } from '@polkadot/util-crypto';
-import { AddressType } from '@webb-tools/dapp-config/types';
+import { Address } from 'viem';
 
 import isSubstrateAddress from './isSubstrateAddress';
 
@@ -10,7 +10,7 @@ import isSubstrateAddress from './isSubstrateAddress';
  * Certain precompile functions require `bytes32` addresses instead
  * of the usual 20-byte `address` type.
  */
-const toEvmAddress32 = (substrateAddress: string): AddressType => {
+const toEvmAddress32 = (substrateAddress: string): Address => {
   if (!isSubstrateAddress(substrateAddress)) {
     throw new Error('Provided address is not a Substrate address');
   }

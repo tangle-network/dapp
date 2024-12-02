@@ -1,7 +1,7 @@
 import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
 import { defineChain } from 'viem';
 
-import { DEFAULT_EVM_CURRENCY } from '../../../currencies';
+import { DEFAULT_EVM_CURRENCY } from '../../../constants';
 
 const localOrbitMulticall3Address =
   process.env.BRIDGE_DAPP_LOCAL_ORBIT_MULTICALL3_ADDRESS;
