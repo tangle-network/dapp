@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-  Bridge,
-  Currency,
   NotificationHandler,
   ProvideCapabilities,
   WebbApiProvider,
@@ -12,12 +10,7 @@ import {
 import { EventBus } from '@webb-tools/app-util';
 import { ApiConfig, walletsConfig } from '@webb-tools/dapp-config';
 import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
-import {
-  CurrencyRole,
-  WalletId,
-  WebbError,
-  WebbErrorCodes,
-} from '@webb-tools/dapp-types';
+import { WalletId, WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import {
   ChainType,
   calculateTypedChainId,
@@ -95,35 +88,6 @@ export class WebbWeb3Provider
     });
 
     this.unsubscribeFns.add(unsub);
-
-    // Take the configured values in the config and create objects used in the
-    // api (e.g. Record<number, CurrencyConfig> => Currency[])
-    const initialSupportedCurrencies: Record<number, Currency> = {};
-    for (const currencyConfig of Object.values(config.currencies)) {
-      initialSupportedCurrencies[currencyConfig.id] = new Currency(
-        currencyConfig,
-      );
-    }
-
-    // All supported bridges are supplied by the config, before passing to the state.
-    const initialSupportedBridges: Record<number, Bridge> = {};
-
-    for (const bridgeConfig of Object.values(config.bridgeByAsset)) {
-      if (
-        Object.keys(bridgeConfig.anchors).includes(
-          calculateTypedChainId(ChainType.EVM, chainId).toString(),
-        )
-      ) {
-        const bridgeCurrency = initialSupportedCurrencies[bridgeConfig.asset];
-        const bridgeTargets = bridgeConfig.anchors;
-        if (bridgeCurrency.getRole() === CurrencyRole.Governable) {
-          initialSupportedBridges[bridgeConfig.asset] = new Bridge(
-            bridgeCurrency,
-            bridgeTargets,
-          );
-        }
-      }
-    }
   }
 
   // Init web3 provider with the `Web3Accounts` as the default account provider
@@ -258,24 +222,6 @@ export class WebbWeb3Provider
         nativeCurrency: chain.nativeCurrency,
         blockExplorerUrls,
         rpcUrls,
-      },
-    });
-  }
-
-  async watchAsset(currency: Currency, imgUrl?: string) {
-    const addr = currency.getAddressOfChain(this.typedChainId);
-    if (!addr) {
-      throw WebbError.from(WebbErrorCodes.NoCurrencyAvailable);
-    }
-
-    return this.walletClient.watchAsset({
-      type: 'ERC20',
-      options: {
-        address: addr,
-        decimals: currency.getDecimals(),
-        // Slice the symbol to 10 characters to avoid overflow
-        symbol: currency.view.symbol.slice(0, 10),
-        image: imgUrl,
       },
     });
   }

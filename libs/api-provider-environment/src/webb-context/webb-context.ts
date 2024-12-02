@@ -2,7 +2,6 @@
 
 import type {
   Account,
-  Bridge,
   WebbApiProvider,
 } from '@webb-tools/abstract-api-provider';
 import { ApiConfig, type Chain, type Wallet } from '@webb-tools/dapp-config';
@@ -48,11 +47,7 @@ export interface WebbContextState {
 
   inactivateApi(): Promise<void>;
 
-  switchChain(
-    chain: Chain,
-    wallet: Wallet,
-    bridge?: Bridge,
-  ): Promise<Nullable<WebbApiProvider>>;
+  switchChain(chain: Chain, wallet: Wallet): Promise<Nullable<WebbApiProvider>>;
 
   activeFeedback: Nullable<InteractiveFeedback>;
 

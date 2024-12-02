@@ -6,19 +6,16 @@ import '@webb-tools/api-derive';
 
 import {
   ApiInitHandler,
-  Currency,
   NotificationHandler,
   ProvideCapabilities,
   WebbApiProvider,
   WebbProviderEvents,
 } from '@webb-tools/abstract-api-provider';
 import { AccountsAdapter } from '@webb-tools/abstract-api-provider/account/Accounts.adapter';
-import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { EventBus } from '@webb-tools/app-util';
 import { ApiConfig, Wallet } from '@webb-tools/dapp-config';
 import {
   ActionsBuilder,
-  CurrencyRole,
   InteractiveFeedback,
   WebbError,
   WebbErrorCodes,
@@ -64,30 +61,6 @@ export class WebbPolkadot
 
     this.accounts = this.provider.accounts;
     this.api = this.provider.api;
-
-    // Take the configured values in the config and create objects used in the
-    // api (e.g. Record<number, CurrencyConfig> => Currency[])
-    const initialSupportedCurrencies: Record<number, Currency> = {};
-    for (const currencyConfig of Object.values(config.currencies)) {
-      initialSupportedCurrencies[currencyConfig.id] = new Currency(
-        currencyConfig,
-      );
-    }
-
-    // All supported bridges are supplied by the config, before passing to the state.
-    const initialSupportedBridges: Record<number, Bridge> = {};
-    for (const bridgeConfig of Object.values(config.bridgeByAsset)) {
-      if (Object.keys(bridgeConfig.anchors).includes(typedChainId.toString())) {
-        const bridgeCurrency = initialSupportedCurrencies[bridgeConfig.asset];
-        const bridgeTargets = bridgeConfig.anchors;
-        if (bridgeCurrency.getRole() === CurrencyRole.Governable) {
-          initialSupportedBridges[bridgeConfig.asset] = new Bridge(
-            bridgeCurrency,
-            bridgeTargets,
-          );
-        }
-      }
-    }
   }
 
   capabilities?: ProvideCapabilities | undefined;

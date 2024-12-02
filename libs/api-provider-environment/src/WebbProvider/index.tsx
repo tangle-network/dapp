@@ -2,11 +2,9 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
-  Currency,
   type Account,
   type WebbApiProvider,
 } from '@webb-tools/abstract-api-provider';
-import { Bridge } from '@webb-tools/abstract-api-provider/state';
 import { LoggerService } from '@webb-tools/browser-utils/logger';
 import {
   netStorageFactory,
@@ -23,7 +21,6 @@ import {
 } from '@webb-tools/dapp-config';
 import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import {
-  CurrencyRole,
   WalletId,
   WebbError,
   WebbErrorCodes,
@@ -316,7 +313,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       chain: Chain,
       wallet: Wallet,
       _networkStorage?: NetworkStorage | undefined,
-      _bridge?: Bridge | undefined,
       abortSignal?: AbortSignal,
     ) => {
       const nextTypedChainId = calculateTypedChainId(chain.chainType, chain.id);
@@ -469,41 +465,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
                   setActiveWallet(wallet);
                   setActiveChain(activeChain);
 
-                  const bridgeOptions: Record<number, Bridge> = {};
-
-                  // Set a reasonable default bridge and change available bridges based on the new chain
-                  let defaultBridge: Bridge | null = null;
-                  for (const bridgeConfig of Object.values(
-                    webbWeb3Provider.config.bridgeByAsset,
-                  )) {
-                    if (
-                      Object.keys(bridgeConfig.anchors).includes(
-                        newTypedChainId.toString(),
-                      )
-                    ) {
-                      // List the bridge as supported by the new chain
-                      const bridgeCurrencyConfig =
-                        webbWeb3Provider.config.currencies[bridgeConfig.asset];
-                      const bridgeCurrency = new Currency(bridgeCurrencyConfig);
-                      if (
-                        bridgeCurrency.getRole() !== CurrencyRole.Governable
-                      ) {
-                        continue;
-                      }
-                      const bridgeTargets = bridgeConfig.anchors;
-                      const supportedBridge = new Bridge(
-                        bridgeCurrency,
-                        bridgeTargets,
-                      );
-                      bridgeOptions[bridgeCurrency.id] = supportedBridge;
-
-                      // Set the first compatible bridge encountered.
-                      if (!defaultBridge) {
-                        defaultBridge = supportedBridge;
-                      }
-                    }
-                  }
-
                   appEvent.send('networkSwitched', [
                     {
                       chainType: activeChain.chainType,
@@ -628,11 +589,11 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
    * A util will store the network/wallet config before switching
    */
   const switchChainAndStore = useCallback(
-    async (chain: Chain, wallet: Wallet, bridge?: Bridge) => {
+    async (chain: Chain, wallet: Wallet) => {
       setIsConnecting(true);
 
       try {
-        const provider = await switchChain(chain, wallet, undefined, bridge);
+        const provider = await switchChain(chain, wallet);
         /** TODO: `networkStorage` can be `null` here.
          * Suggestion: use `useRef` instead of `useState`
          * for the `networkStorage` because state update asynchronous
@@ -720,7 +681,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           chainConfig,
           walletCfg,
           _networkStorage,
-          undefined,
           abortController.signal,
         );
 
