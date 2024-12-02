@@ -1,6 +1,6 @@
 import { ManagedWallet } from '@webb-tools/dapp-config/wallets';
-import { useWebContext } from '@webb-tools/api-provider-environment';
 import { useEffect, useState } from 'react';
+import { useWebContext } from '../webb-context';
 
 /**
  * @name useWallets

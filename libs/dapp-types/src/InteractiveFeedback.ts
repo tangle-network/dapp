@@ -4,6 +4,7 @@
 import { EventBus } from '@webb-tools/app-util';
 
 export type FeedbackLevel = 'error' | 'info' | 'warning' | 'success';
+
 export type Action = {
   /// indication for the Action level to show action controller in a meaning way
   level: FeedbackLevel;
@@ -28,6 +29,7 @@ export type FeedbackEntry = {
   /// A function that will return a dynamic value
   any?(): any;
 };
+
 /// an object will be used to build the feedback UI
 export type FeedbackBody = FeedbackEntry[];
 

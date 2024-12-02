@@ -33,8 +33,7 @@ import {
 
 import { VoidFn } from '@polkadot/api/types';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { PolkadotProvider } from './ext-provider';
-import { PolkaTXBuilder } from './transaction';
+import { PolkadotAccounts, PolkadotProvider } from './ext-provider';
 
 export class WebbPolkadot
   extends EventBus<WebbProviderEvents>
@@ -43,7 +42,6 @@ export class WebbPolkadot
   readonly type = 'polkadot';
 
   readonly api: ApiPromise;
-  readonly txBuilder: PolkaTXBuilder;
 
   readonly newBlockSub = new Set<VoidFn>();
 
@@ -66,7 +64,6 @@ export class WebbPolkadot
 
     this.accounts = this.provider.accounts;
     this.api = this.provider.api;
-    this.txBuilder = this.provider.txBuilder;
 
     // Take the configured values in the config and create objects used in the
     // api (e.g. Record<number, CurrencyConfig> => Currency[])
@@ -184,12 +181,8 @@ export class WebbPolkadot
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
 
-    const provider = new PolkadotProvider(
-      apiPromise,
-      injectedExtension,
-      new PolkaTXBuilder(apiPromise, notification, injectedExtension),
-    );
-    const accounts = provider.accounts;
+    const provider = new PolkadotProvider(apiPromise, injectedExtension);
+    const accounts = new PolkadotAccounts(injectedExtension);
     const instance = new WebbPolkadot(
       apiPromise,
       typedChainId,

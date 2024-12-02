@@ -16,7 +16,6 @@ import getPolkadotBasedWallet from '@webb-tools/dapp-config/utils/getPolkadotBas
 import { InteractiveFeedback } from '@webb-tools/dapp-types';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import lodash from 'lodash';
-import { PolkaTXBuilder } from '../transaction';
 import { isValidAddress } from './is-valid-address';
 import { PolkadotAccount, PolkadotAccounts } from './polkadot-accounts';
 
@@ -44,7 +43,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   constructor(
     protected apiPromise: ApiPromise,
     protected injectedExtension: InjectedExtension,
-    readonly txBuilder: PolkaTXBuilder,
   ) {
     super();
     this.hookListeners();
@@ -63,7 +61,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     appName: string,
     endPoints: string[],
     apiInitHandler: ApiInitHandler,
-    txBuilder: PolkaTXBuilder,
     wallet: Wallet,
   ): Promise<PolkadotProvider> {
     const [endPoint, ...allEndPoints] = endPoints;
@@ -74,7 +71,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       wallet,
     );
 
-    return new PolkadotProvider(apiPromise, currentExtensions, txBuilder);
+    return new PolkadotProvider(apiPromise, currentExtensions);
   }
 
   /**

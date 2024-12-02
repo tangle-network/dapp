@@ -9,7 +9,6 @@ export * from './Storage';
 export { default as Storage } from './Storage';
 export * from './WalletId';
 export * from './WebbError';
-export * from './appMode';
 export * from './utils';
 
 export const zeroAddress = '0x0000000000000000000000000000000000000000';

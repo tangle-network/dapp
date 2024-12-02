@@ -3,10 +3,10 @@
 import { encodeAddress } from '@polkadot/util-crypto';
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { useWallets } from '@webb-tools/api-provider-environment/hooks/useWallets';
 import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { LoginBoxLineIcon, WalletLineIcon } from '@webb-tools/icons';
-import { useWallets } from '@webb-tools/react-hooks';
 import { isViemError, WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import {
   AccountDropdownBody,
@@ -22,8 +22,8 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
-import useSubstrateExplorerUrl from '../../hooks/useSubstrateExplorerUrl';
 import useNetworkStore from '../../context/useNetworkStore';
+import useSubstrateExplorerUrl from '../../hooks/useSubstrateExplorerUrl';
 
 const WalletDropdown: FC<{
   accountName?: string;
