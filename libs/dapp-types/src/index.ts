@@ -3,7 +3,6 @@
 
 export * from './ChainId';
 export * from './Currency';
-export * from './InteractiveFeedback';
 export * from './Props';
 export * from './Storage';
 export { default as Storage } from './Storage';

@@ -24,7 +24,6 @@ import {
   WebbError,
   WebbErrorCodes,
   type BareProps,
-  type InteractiveFeedback,
 } from '@webb-tools/dapp-types';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
@@ -40,14 +39,7 @@ import {
 } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import useWagmiHydration from '@webb-tools/webb-ui-components/hooks/useWagmiHydration';
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type FC,
-} from 'react';
+import { useCallback, useEffect, useRef, useState, type FC } from 'react';
 import {
   BaseError as WagmiBaseError,
   WagmiProvider,
@@ -56,14 +48,11 @@ import {
 } from 'wagmi';
 import 'zustand/middleware';
 import type { TAppEvent } from '../app-event';
-import { insufficientApiInterface } from '../error/interactive-errors/insufficient-api-interface';
-import { unsupportedChain } from '../error/interactive-errors/unsupported-chain';
 import { useActiveAccount } from '../hooks/useActiveAccount';
 import { useActiveChain } from '../hooks/useActiveChain';
 import { useActiveWallet } from '../hooks/useActiveWallet';
 import waitForConfigReady from '../utils/waitForConfigReady';
 import { WebbContext } from '../webb-context';
-import { notificationHandler, registerInteractiveFeedback } from './private';
 
 interface WebbProviderInnerProps extends BareProps {
   appEvent: TAppEvent;
@@ -98,41 +87,11 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
 
   const [isConnecting, setIsConnecting] = useState(false);
 
-  // Storing all interactive feedbacks to show the modals
-  const [interactiveFeedbacks, setInteractiveFeedbacks] = useState<
-    InteractiveFeedback[]
-  >([]);
-
   const { notificationApi } = useWebbUI();
 
   const { connectAsync, connectors } = useConnect();
 
   const wagmiHydrated = useWagmiHydration();
-
-  // An effect/hook will be called every time the active api is switched, it will cancel all the interactive feedbacks
-  useEffect(() => {
-    setInteractiveFeedbacks([]);
-    const off = activeApi?.on('interactiveFeedback', (feedback) => {
-      registerInteractiveFeedback(setInteractiveFeedbacks, feedback);
-    });
-    return () => {
-      off && off();
-      setInteractiveFeedbacks((p) => {
-        p.forEach((p) => p.cancel());
-        return [];
-      });
-
-      appEvent.send('changeNetworkSwitcherVisibility', false);
-    };
-  }, [activeApi, appEvent]);
-
-  /** The active feedback is the last one */
-  const activeFeedback = useMemo(() => {
-    if (interactiveFeedbacks.length === 0) {
-      return null;
-    }
-    return interactiveFeedbacks[interactiveFeedbacks.length - 1];
-  }, [interactiveFeedbacks]);
 
   /**
    * Callback for setting active account
@@ -258,13 +217,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         case WebbErrorCodes.UnsupportedChain:
           {
             setActiveChain(undefined);
-            const interactiveFeedback = unsupportedChain(apiConfig);
-            if (interactiveFeedback) {
-              registerInteractiveFeedback(
-                setInteractiveFeedbacks,
-                interactiveFeedback,
-              );
-            }
           }
           break;
         case WebbErrorCodes.UnselectedChain:
@@ -282,18 +234,13 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         case WebbErrorCodes.InsufficientProviderInterface:
           {
             setActiveChain(undefined);
-            const interactiveFeedback = insufficientApiInterface(appEvent);
-            registerInteractiveFeedback(
-              setInteractiveFeedbacks,
-              interactiveFeedback,
-            );
           }
           break;
         default:
           alert(code);
       }
     },
-    [appEvent, setActiveChain],
+    [setActiveChain],
   );
 
   /**
@@ -357,20 +304,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
               const webbPolkadot = await WebbPolkadot.init(
                 applicationName,
                 Array.from(webSocketUrls),
-                {
-                  onError: (feedback: InteractiveFeedback) => {
-                    registerInteractiveFeedback(
-                      setInteractiveFeedbacks,
-                      feedback,
-                    );
-                    appEvent.send('walletConnectionState', {
-                      ...sharedWalletConnectionPayload,
-                      status: 'failed',
-                    });
-                  },
-                },
                 apiConfig,
-                notificationHandler,
                 nextTypedChainId,
                 wallet,
               );
@@ -423,7 +357,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
                 connector,
                 chain.id,
                 apiConfig,
-                notificationHandler,
               );
 
               const providerUpdateHandler = async ([
@@ -799,15 +732,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
               setActiveApi(undefined);
             }
           }
-        },
-        activeFeedback,
-        registerInteractiveFeedback: (
-          interactiveFeedback: InteractiveFeedback,
-        ) => {
-          registerInteractiveFeedback(
-            setInteractiveFeedbacks,
-            interactiveFeedback,
-          );
         },
         appEvent,
       }}

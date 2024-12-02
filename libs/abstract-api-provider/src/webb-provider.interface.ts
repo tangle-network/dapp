@@ -3,24 +3,10 @@
 
 import { EventBus } from '@webb-tools/app-util';
 import { ApiConfig } from '@webb-tools/dapp-config';
-import { InteractiveFeedback } from '@webb-tools/dapp-types';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AccountsAdapter } from './account/Accounts.adapter';
 
-/// TODO improve this and add a spec
-/// An interface for Apis pre-initialization
-export type ApiInitHandler = {
-  /// an error handler for the Api before init
-  /*
-   * For instance Polkadot provider the dApp will prepare the parameters for the provider
-   * This process may have an error
-   **/
-  onError(error: InteractiveFeedback): any;
-};
-
 export type WebbProviderEvents<T = any> = {
-  /// event is trigger to show an interactiveFeedback related to the provider
-  interactiveFeedback: InteractiveFeedback;
   /// The provider is updated and an action is required to handle this update
   providerUpdate: T;
   /// accountsChange
@@ -32,40 +18,6 @@ export type ProvideCapabilities = {
   listenForAccountChange: boolean;
   listenForChainChane: boolean;
   hasSessions: boolean;
-};
-
-export type NotificationLevel =
-  | 'loading'
-  | 'error'
-  | 'success'
-  | 'warning'
-  | 'info';
-/**
- * Notification emitted from the webb provider
- *
- * @param message - Title of the notification
- * @param description - details about the notification
- * @param name - Event name/ event identifier
- * @param key - key for a given notification can be used to remove/dismiss a notification
- * @param level - level
- * @param data - Record for more metadata
- * @param persist - if true the notification will be dismissed by the user or with another action
- **/
-export type NotificationPayload = {
-  message: string;
-  description: string;
-  name: 'Transaction';
-  key: string;
-  level: NotificationLevel;
-  data?: Record<string, string>;
-  persist?: boolean;
-};
-// Function call to register a notification
-export type NotificationHandler = ((
-  notification: NotificationPayload,
-) => string | number) & {
-  // remove the notification programmatically
-  remove(key: string | number): void;
 };
 
 export interface WebbApiProvider extends EventBus<WebbProviderEvents> {
@@ -88,9 +40,6 @@ export interface WebbApiProvider extends EventBus<WebbProviderEvents> {
   // Configuration passed to the ApiProvider on initialization.
   // Then, the config is used as state for the provider.
   config: ApiConfig;
-
-  // Notification handler
-  notificationHandler: NotificationHandler;
 
   // new block observable
   newBlock: Observable<bigint | null>;

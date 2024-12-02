@@ -7,13 +7,11 @@ import {
   InjectedExtension,
   MetadataDef,
 } from '@polkadot/extension-inject/types';
-import { ApiInitHandler } from '@webb-tools/abstract-api-provider';
 import { options as apiOptions } from '@webb-tools/api';
 import { EventBus } from '@webb-tools/app-util';
 import { LoggerService } from '@webb-tools/browser-utils';
 import { Wallet } from '@webb-tools/dapp-config';
 import getPolkadotBasedWallet from '@webb-tools/dapp-config/utils/getPolkadotBasedWallet';
-import { InteractiveFeedback } from '@webb-tools/dapp-types';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import lodash from 'lodash';
 import { isValidAddress } from './is-valid-address';
@@ -60,14 +58,12 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   static async fromExtension(
     appName: string,
     endPoints: string[],
-    apiInitHandler: ApiInitHandler,
     wallet: Wallet,
   ): Promise<PolkadotProvider> {
     const [endPoint, ...allEndPoints] = endPoints;
     const [apiPromise, currentExtensions] = await PolkadotProvider.getParams(
       appName,
       [endPoint, ...allEndPoints],
-      apiInitHandler.onError,
       wallet,
     );
 
@@ -81,7 +77,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
    **/
   static async getApiPromise(
     endPoints: string[],
-    onError: ApiInitHandler['onError'],
     options?: {
       ignoreLog?: boolean;
       maxTries?: number;
@@ -93,7 +88,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
         let wsProvider: WsProvider;
         let tryNumber = 0;
         let keepRetrying = true;
-        let reportNewInteractiveError = true;
 
         // Listen for events from the websocket provider to the connect and disconnect and return a promise for blocking
         const connectWs = async (wsProvider: WsProvider) => {
@@ -112,14 +106,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
             });
           });
         };
-
-        /**
-         *  Infinite Looping till
-         *  1- The ws connection is established
-         *  2- The user killed the connection, no other retires
-         **/
-        // global interActiveFeedback for access on multiple scopes
-        let interactiveFeedback: InteractiveFeedback | undefined = undefined;
 
         if (!options?.ignoreLog) {
           logger.trace('Trying to connect to ', endPoints, `Try: ${tryNumber}`);
@@ -155,11 +141,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
             /// no need to call `.connect` the Promise api will handle this
             resolve(new WsProvider(endPoints));
 
-            if (typeof interactiveFeedback !== 'undefined') {
-              /// cancel the feedback as  the connection is established
-              interactiveFeedback.cancelWithoutHandler();
-            }
-
             break;
           } catch (_) {
             // If the maxTries is reached then exit the loop
@@ -174,48 +155,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
             }
 
             tryNumber++;
-
-            if (!reportNewInteractiveError) {
-              await wsProvider.disconnect();
-              continue;
-            }
-
-            const body = InteractiveFeedback.feedbackEntries([
-              {
-                header: 'Failed to establish WS connection',
-              },
-              {
-                content: `Attempt to retry (${tryNumber}) after 6s..`,
-              },
-            ]);
-
-            const actions = InteractiveFeedback.actionsBuilder()
-              .action('Wait for connection', () => {
-                interactiveFeedback?.cancelWithoutHandler();
-                reportNewInteractiveError = false;
-              })
-              .actions();
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            /// if the connection is established from the first time then there's no interActiveFeedback instance
-            if (typeof interactiveFeedback !== 'undefined') {
-              /// After failure there user is prompted that there is a connection failure the feedback from the previous attempt is canceled (dismissed)
-              interactiveFeedback.cancelWithoutHandler();
-            }
-
-            interactiveFeedback = new InteractiveFeedback(
-              'error',
-              actions,
-              async () => {
-                await wsProvider.disconnect();
-                keepRetrying = false;
-                reject(new Error('Disconnected'));
-              },
-              body,
-            );
-
-            onError(interactiveFeedback);
           }
         }
       },
@@ -241,7 +180,6 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   static async getParams(
     appName: string,
     endPoints: string[],
-    onError: ApiInitHandler['onError'],
     wallet: Wallet,
   ): Promise<[ApiPromise, InjectedExtension]> {
     // Check whether the extension is existed or not
@@ -253,11 +191,9 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     }
 
     // Initialize an ApiPromise
-    const apiPromise = await PolkadotProvider.getApiPromise(
-      endPoints,
-      onError,
-      { maxTries: 3 },
-    );
+    const apiPromise = await PolkadotProvider.getApiPromise(endPoints, {
+      maxTries: 3,
+    });
 
     return [apiPromise, currentExtension];
   }

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-  NotificationHandler,
   ProvideCapabilities,
   WebbApiProvider,
   WebbProviderEvents,
@@ -61,7 +60,6 @@ export class WebbWeb3Provider
     readonly walletClient: WalletClient<Transport, Chain, Account>,
     protected chainId: number,
     readonly config: ApiConfig,
-    readonly notificationHandler: NotificationHandler,
     readonly accounts: Web3Accounts,
   ) {
     super();
@@ -95,7 +93,6 @@ export class WebbWeb3Provider
     connector: Connector,
     chainId: number,
     appConfig: ApiConfig,
-    notification: NotificationHandler,
   ) {
     const accounts = new Web3Accounts(connector);
 
@@ -110,7 +107,6 @@ export class WebbWeb3Provider
       walletClient,
       chainId,
       appConfig,
-      notification,
       accounts,
     );
   }
@@ -158,7 +154,6 @@ export class WebbWeb3Provider
   async destroy() {
     await this.endSession();
     this.subscriptions = {
-      interactiveFeedback: [],
       providerUpdate: [],
     };
   }

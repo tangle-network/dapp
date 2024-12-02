@@ -5,8 +5,6 @@
 import '@webb-tools/api-derive';
 
 import {
-  ApiInitHandler,
-  NotificationHandler,
   ProvideCapabilities,
   WebbApiProvider,
   WebbProviderEvents,
@@ -14,12 +12,7 @@ import {
 import { AccountsAdapter } from '@webb-tools/abstract-api-provider/account/Accounts.adapter';
 import { EventBus } from '@webb-tools/app-util';
 import { ApiConfig, Wallet } from '@webb-tools/dapp-config';
-import {
-  ActionsBuilder,
-  InteractiveFeedback,
-  WebbError,
-  WebbErrorCodes,
-} from '@webb-tools/dapp-types';
+import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { parseTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 
 import { ApiPromise } from '@polkadot/api';
@@ -51,7 +44,6 @@ export class WebbPolkadot
     typedChainId: number,
     readonly injectedExtension: InjectedExtension,
     readonly config: ApiConfig,
-    readonly notificationHandler: NotificationHandler,
     private readonly provider: PolkadotProvider,
     readonly accounts: AccountsAdapter<InjectedExtension, InjectedAccount>,
   ) {
@@ -87,36 +79,7 @@ export class WebbPolkadot
   async awaitMetaDataCheck() {
     /// delay some time till the UI is instantiated and then check if the dApp needs to update extension meta data
     await new Promise((resolve) => setTimeout(resolve, 3000));
-    const metaData = await this.provider.checkMetaDataUpdate();
-
-    if (metaData) {
-      /// feedback body
-      const feedbackEntries = InteractiveFeedback.feedbackEntries([
-        {
-          header: 'Update Polkadot MetaData',
-        },
-      ]);
-      /// feedback actions
-      const actions = ActionsBuilder.init()
-        /// update extension metadata
-        .action(
-          'Update MetaData',
-          () => this.provider.updateMetaData(metaData),
-          'success',
-        )
-        .actions();
-      const feedback = new InteractiveFeedback(
-        'info',
-        actions,
-        () => {
-          return null;
-        },
-        feedbackEntries,
-      );
-
-      /// emit the feedback object
-      this.emit('interactiveFeedback', feedback);
-    }
+    await this.provider.checkMetaDataUpdate();
   }
 
   async ensureApiInterface() {
@@ -136,16 +99,13 @@ export class WebbPolkadot
   static async init(
     appName: string, // App name, arbitrary name
     endpoints: string[], // Endpoints of the substrate node
-    errorHandler: ApiInitHandler, // Error handler that will be used to catch errors while initializing the provider
     apiConfig: ApiConfig, // The whole and current app configuration
-    notification: NotificationHandler, // Notification handler that will be used for the provider
     typedChainId: number,
     wallet: Wallet, // Current wallet to initialize
   ): Promise<WebbPolkadot> {
     const [apiPromise, injectedExtension] = await PolkadotProvider.getParams(
       appName,
       endpoints,
-      errorHandler.onError,
       wallet,
     );
 
@@ -161,7 +121,6 @@ export class WebbPolkadot
       typedChainId,
       injectedExtension,
       apiConfig,
-      notification,
       provider,
       accounts,
     );
@@ -177,11 +136,7 @@ export class WebbPolkadot
   }
 
   static async getApiPromise(endpoint: string): Promise<ApiPromise> {
-    return new Promise((resolve, reject) => {
-      resolve(
-        PolkadotProvider.getApiPromise([endpoint], (error) => reject(error)),
-      );
-    });
+    return PolkadotProvider.getApiPromise([endpoint]);
   }
 
   async destroy(): Promise<void> {
