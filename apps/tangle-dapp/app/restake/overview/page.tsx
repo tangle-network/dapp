@@ -66,7 +66,10 @@ export default function RestakePage() {
 
           <Card
             variant={CardVariant.GLASS}
-            className={twMerge('min-h-60 flex-1', 'md:max-w-[442px] justify-between')}
+            className={twMerge(
+              'min-h-60 flex-1',
+              'md:max-w-[442px] justify-between',
+            )}
           >
             <div>
               <Typography
