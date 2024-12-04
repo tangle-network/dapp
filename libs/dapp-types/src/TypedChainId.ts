@@ -45,9 +45,11 @@ export function toFixedHex(
 ): string {
   let result =
     '0x' +
-    (number instanceof Buffer
-      ? number.toString('hex')
-      : BigInt(number).toString(16).replace('0x', '')
+    (typeof number === 'bigint' ||
+    typeof number === 'string' ||
+    typeof number === 'number'
+      ? BigInt(number).toString(16).replace('0x', '')
+      : number.toString('hex')
     ).padStart(length * 2, '0');
 
   if (result.indexOf('-') > -1) {
