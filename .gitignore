@@ -101,3 +101,5 @@ tmp
 
 # TypeScript build info
 /**/tsconfig.tsbuildinfo
+
+vite.config.*.timestamp*
