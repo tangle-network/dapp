@@ -11,7 +11,6 @@ export default {
     getAbsolutePath('@storybook/addon-actions'),
     getAbsolutePath('@storybook/addon-essentials'),
     getAbsolutePath('@storybook/addon-interactions'),
-    getAbsolutePath('storybook-addon-remix-react-router'),
     getAbsolutePath('@storybook/theming'),
     getAbsolutePath('@storybook/addon-a11y'),
     getAbsolutePath('@storybook/addon-webpack5-compiler-swc'),

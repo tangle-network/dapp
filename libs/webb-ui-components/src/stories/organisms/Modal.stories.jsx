@@ -1,4 +1,3 @@
-import { withRouter } from 'storybook-addon-remix-react-router';
 import { useState } from 'react';
 import { Modal } from '../../components/Modal/Modal';
 import { ModalTrigger } from '../../components/Modal/ModalTrigger';
@@ -44,11 +43,8 @@ const wallets = Object.values(walletsConfig);
 export default {
   title: 'Design System/Organisms/Modal',
   component: Modal,
-  decorators: [withRouter],
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 };
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -68,5 +64,5 @@ const Template = () => {
 };
 
 export const Default = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
+
 Default.args = {};
