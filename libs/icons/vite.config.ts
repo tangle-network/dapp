@@ -7,7 +7,7 @@ import * as path from 'path';
 import dts from 'vite-plugin-dts';
 import svgr from 'vite-plugin-svgr'; // transform svg to react component
 
-export default defineConfig(() => ({
+export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/libs/icons',
 
@@ -54,7 +54,9 @@ export default defineConfig(() => ({
   },
   test: {
     globals: true,
-    cacheDir: '../../node_modules/.vitest/libs/icons',
+    cache: {
+      dir: '../../node_modules/.vitest/libs/icons',
+    },
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     includeSource: ['src/**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
@@ -65,4 +67,4 @@ export default defineConfig(() => ({
     },
     passWithNoTests: true,
   },
-}));
+});

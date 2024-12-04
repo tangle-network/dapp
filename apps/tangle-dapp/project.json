@@ -6,35 +6,15 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/next:build",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "outputPath": "dist/apps/tangle-dapp"
-      },
       "configurations": {
-        "development": {
-          "outputPath": "apps/tangle-dapp"
-        },
-        "production": {}
+        "development": {}
       }
     },
     "serve": {
-      "executor": "@nx/next:server",
       "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "tangle-dapp:build",
-        "dev": true
-      },
       "configurations": {
-        "development": {
-          "buildTarget": "tangle-dapp:build:development",
-          "dev": true
-        },
-        "production": {
-          "buildTarget": "tangle-dapp:build:production",
-          "dev": false
-        }
+        "development": {},
+        "production": {}
       }
     },
     "export": {
@@ -44,17 +24,24 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/jest.preset.js",
+        {
+          "externalDependencies": ["jest"]
+        }
+      ],
       "options": {
-        "jestConfig": "apps/tangle-dapp/jest.config.ts",
         "passWithNoTests": true,
         "detectOpenHandles": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
     },
     "bundle-analyzer": {
       "executor": "nx:run-commands",

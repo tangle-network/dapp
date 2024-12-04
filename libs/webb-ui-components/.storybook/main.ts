@@ -1,42 +1,26 @@
 import type { StorybookConfig } from '@storybook/nextjs';
-import path from 'node:path';
-import remarkGfm from 'remark-gfm';
-
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import rootMain from '../../../.storybook/main';
+import path, { dirname, join } from 'node:path';
 
 export default {
+  core: {
+    disableTelemetry: true,
+  },
   stories: [
-    ...rootMain.stories,
     '../src/stories/**/*.mdx',
     '../src/stories/**/*.stories.@(js|jsx|ts|tsx)',
   ],
   addons: [
-    ...rootMain.addons,
-    {
-      name: '@storybook/addon-docs',
-      options: {
-        mdxPluginOptions: {
-          mdxCompileOptions: {
-            remarkPlugins: [remarkGfm],
-          },
-        },
-      },
-    },
-    '@storybook/addon-themes',
+    getAbsolutePath('@storybook/addon-actions'),
+    getAbsolutePath('@storybook/addon-essentials'),
+    getAbsolutePath('@storybook/addon-interactions'),
+    getAbsolutePath('@storybook/theming'),
+    getAbsolutePath('@storybook/addon-a11y'),
+    getAbsolutePath('@storybook/addon-webpack5-compiler-swc'),
+    getAbsolutePath('@chromatic-com/storybook'),
+    getAbsolutePath('@storybook/addon-themes'),
     '@nx/react/plugins/storybook',
   ],
-  webpackFinal: async (config, { configType }) => {
-    // apply any global webpack configs that might have been specified in .storybook/main.js
-    if (
-      'webpackFinal' in rootMain &&
-      typeof rootMain.webpackFinal === 'function'
-    ) {
-      config = await rootMain.webpackFinal(config, {
-        configType,
-      });
-    }
-
+  webpackFinal: async (config) => {
     config.module?.rules?.push({
       test: /\.css$/,
       use: [
@@ -94,3 +78,8 @@ export default {
     },
   }),
 } satisfies StorybookConfig;
+
+function getAbsolutePath(value: string) {
+  const absolutePath = dirname(require.resolve(join(value, 'package.json')));
+  return absolutePath;
+}

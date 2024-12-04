@@ -5,15 +5,15 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    },
     "build": {
-      "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{projectRoot}/{options.outDir}",
+        "{workspaceRoot}/dist/apps/tangle-dapp/.next",
+        "{workspaceRoot}/dist/apps/testnet-leaderboard/.next"
+      ],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/libs/webb-ui-components"
+        "outDir": "../../dist/libs/webb-ui-components"
       },
       "configurations": {
         "development": {
@@ -32,10 +32,12 @@
       "dependsOn": ["build"]
     },
     "test": {
-      "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{projectRoot}/{options.coverage.reportsDirectory}",
+        "{workspaceRoot}/coverage/libs/webb-ui-components"
+      ],
       "options": {
-        "reportsDirectory": "../../coverage/libs/webb-ui-components"
+        "coverage.reportsDirectory": "../../coverage/libs/webb-ui-components"
       }
     },
     "storybook": {

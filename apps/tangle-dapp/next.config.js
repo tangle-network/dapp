@@ -9,6 +9,19 @@ const withBundleAnalyzer = require('@next/bundle-analyzer');
 const { composePlugins, withNx } = require('@nx/next');
 const nextConfigBase = require('../../next.config.cjs');
 
+const configValues = {
+  default: {},
+  development: {},
+};
+
+const configuration = process.env.NX_TASK_TARGET_CONFIGURATION || 'default';
+
+const options = {
+  ...configValues.default,
+  // @ts-expect-error: Ignore TypeScript error for indexing configValues with a dynamic key
+  ...configValues[configuration],
+};
+
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
@@ -52,6 +65,8 @@ const nextConfig = {
     // Set this to true if you would like to use SVGR
     // See: https://github.com/gregberge/svgr
     svgr: false,
+
+    ...options,
   },
 
   // Follow wasm example from next.js repo: https://github.com/vercel/next.js/blob/canary/examples/with-webassembly/next.config.js
@@ -114,6 +129,8 @@ const nextConfig = {
 
     return config;
   },
+
+  distDir: process.env.NODE_ENV === 'production' ? 'dist' : 'dist-dev',
 };
 
 /** @type {(import('@nx/next').withNx | ReturnType<import('@next/bundle-analyzer')>)[]} */
