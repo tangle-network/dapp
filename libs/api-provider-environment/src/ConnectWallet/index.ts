@@ -121,7 +121,9 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
         }
 
         case 'loading': {
-          isSubscribed && subjects.setWalletState(WalletState.CONNECTING);
+          if (isSubscribed) {
+            subjects.setWalletState(WalletState.CONNECTING);
+          }
           break;
         }
 
@@ -135,7 +137,9 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
         }
 
         case 'idle': {
-          isSubscribed && subjects.setWalletState(WalletState.IDLE);
+          if (isSubscribed) {
+            subjects.setWalletState(WalletState.IDLE);
+          }
           break;
         }
 

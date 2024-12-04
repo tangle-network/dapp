@@ -39,7 +39,7 @@ const walletsConfig = {
   },
 };
 
-let wallets = Object.values(walletsConfig);
+const wallets = Object.values(walletsConfig);
 
 export default {
   title: 'Design System/Organisms/Modal',

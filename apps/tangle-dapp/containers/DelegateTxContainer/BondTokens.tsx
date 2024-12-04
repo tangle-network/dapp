@@ -5,7 +5,6 @@ import {
   InputField,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import _ from 'lodash';
 import { type FC, useCallback } from 'react';
 import z from 'zod';
 
