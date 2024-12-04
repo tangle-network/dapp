@@ -1,6 +1,18 @@
 import type { StorybookConfig } from '@storybook/nextjs';
 import path, { dirname, join } from 'node:path';
 
+// These options were migrated by @nx/storybook:convert-to-inferred from the project.json file.
+const configValues = { default: {}, ci: {} };
+
+// Determine the correct configValue to use based on the configuration
+const nxConfiguration = process.env.NX_TASK_TARGET_CONFIGURATION ?? 'default';
+
+const options = {
+  ...configValues.default,
+  // @ts-expect-error: Ignore TypeScript error for indexing configValues with a dynamic key
+  ...(configValues[nxConfiguration] ?? {}),
+};
+
 export default {
   core: {
     disableTelemetry: true,

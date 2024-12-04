@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "useInferencePlugins": false,
+  "useInferencePlugins": true,
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
@@ -159,6 +159,15 @@
         "testTargetName": "test",
         "serveStaticTargetName": "serve-static",
         "typecheckTargetName": "typecheck"
+      }
+    },
+    {
+      "plugin": "@nx/storybook/plugin",
+      "options": {
+        "buildStorybookTargetName": "build-storybook",
+        "serveStorybookTargetName": "storybook",
+        "staticStorybookTargetName": "static-storybook",
+        "testStorybookTargetName": "test-storybook"
       }
     }
   ]
