@@ -1,5 +1,4 @@
 import { BN } from '@polkadot/util';
-import { isAddress } from '@polkadot/util-crypto';
 import {
   toEvmAddress20,
   toSubstrateAddress,
@@ -36,10 +35,7 @@ const useTransferTx = () => {
   > = useCallback(
     async ({ recipientAddress, amount, maxAmount }) => {
       const isMaxAmount = amount.eq(maxAmount);
-
-      const recipientEvmAddress20 = isAddress(recipientAddress)
-        ? toEvmAddress20(recipientAddress)
-        : recipientAddress;
+      const recipientEvmAddress20 = toEvmAddress20(recipientAddress);
 
       const sharedAbiCallData: AbiCall<Precompile.BALANCES_ERC20> = {
         functionName: 'transfer',

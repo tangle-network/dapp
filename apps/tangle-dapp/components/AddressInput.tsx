@@ -1,11 +1,11 @@
 'use client';
 
-import { isAddress } from '@polkadot/util-crypto';
 import {
   Avatar,
   Button,
   Input,
   isEvmAddress,
+  isSubstrateAddress,
 } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
@@ -56,7 +56,7 @@ const AddressInput: FC<AddressInputProps> = ({
       }
 
       const isEvm = isEvmAddress(newValue);
-      const isSubstrate = isAddress(newValue);
+      const isSubstrate = isSubstrateAddress(newValue);
 
       if (!isEvm && !isSubstrate) {
         setErrorMessage('Invalid address');

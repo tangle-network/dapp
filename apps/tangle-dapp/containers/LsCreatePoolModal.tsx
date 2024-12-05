@@ -1,9 +1,9 @@
 import { BN } from '@polkadot/util';
-import { isAddress } from '@polkadot/util-crypto';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   Alert,
+  isValidAddress,
   Modal,
   ModalBody,
   ModalContent,
@@ -62,14 +62,14 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
 
   const { execute, status } = useLsCreatePoolTx();
 
-  const areSubstrateAddresses =
-    isAddress(rootAddress) &&
-    isAddress(nominatorAddress) &&
-    isAddress(bouncerAddress);
+  const areAddressesValid =
+    isValidAddress(rootAddress) &&
+    isValidAddress(nominatorAddress) &&
+    isValidAddress(bouncerAddress);
 
   // Name and icon aren't required.
   const isReady =
-    areSubstrateAddresses &&
+    areAddressesValid &&
     activeSubstrateAddress !== null &&
     initialBondAmount !== null &&
     execute !== null;

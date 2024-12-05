@@ -1,6 +1,5 @@
-import { isAddress } from '@polkadot/util-crypto';
 import {
-  isSubstrateAddress,
+  isValidAddress,
   Modal,
   ModalBody,
   ModalContent,
@@ -34,10 +33,10 @@ const LsUpdateRolesModal: FC<LsUpdateRolesModalProps> = ({
 
   const { execute, status } = useLsUpdateRolesTx();
 
-  const areSubstrateAddresses =
-    isAddress(rootAddress) ||
-    isAddress(nominatorAddress) ||
-    isAddress(bouncerAddress);
+  const areAddressesValid =
+    isValidAddress(rootAddress) ||
+    isValidAddress(nominatorAddress) ||
+    isValidAddress(bouncerAddress);
 
   const atLeastOneGiven =
     rootAddress.trim() !== '' ||
@@ -46,7 +45,7 @@ const LsUpdateRolesModal: FC<LsUpdateRolesModalProps> = ({
 
   const isReady =
     atLeastOneGiven &&
-    areSubstrateAddresses &&
+    areAddressesValid &&
     activeSubstrateAddress !== null &&
     execute !== null &&
     poolId !== null;
@@ -56,23 +55,21 @@ const LsUpdateRolesModal: FC<LsUpdateRolesModalProps> = ({
       return;
     }
 
-    const rootSubstrateAddress = isSubstrateAddress(rootAddress)
-      ? rootAddress
-      : undefined;
+    const rootAddress_ = isValidAddress(rootAddress) ? rootAddress : undefined;
 
-    const nominatorSubstrateAddress = isSubstrateAddress(nominatorAddress)
+    const nominatorAddress_ = isValidAddress(nominatorAddress)
       ? nominatorAddress
       : undefined;
 
-    const bouncerSubstrateAddress = isSubstrateAddress(bouncerAddress)
+    const bouncerAddress_ = isValidAddress(bouncerAddress)
       ? bouncerAddress
       : undefined;
 
     await execute({
       poolId,
-      rootAddress: rootSubstrateAddress,
-      nominatorAddress: nominatorSubstrateAddress,
-      bouncerAddress: bouncerSubstrateAddress,
+      rootAddress: rootAddress_,
+      nominatorAddress: nominatorAddress_,
+      bouncerAddress: bouncerAddress_,
     });
   }, [bouncerAddress, execute, isReady, poolId, nominatorAddress, rootAddress]);
 

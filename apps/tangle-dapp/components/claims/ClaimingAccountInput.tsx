@@ -84,11 +84,11 @@ const ClaimingAccountInput: FC<Props> = ({
           />
 
           <AccountDropdownBody
-            accountItems={accounts.map((item) => {
+            accountItems={accounts.map((account) => {
               return {
-                address: item.address,
-                name: item.name,
-                onClick: () => setActiveAccount(item.originalAccount),
+                address: account.address,
+                name: account.name,
+                onClick: () => setActiveAccount(account.originalAccount),
               };
             })}
           />

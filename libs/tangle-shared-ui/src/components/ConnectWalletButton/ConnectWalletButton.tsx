@@ -10,7 +10,7 @@ import WalletDropdown from './WalletDropdown';
 import WalletModalContainer from './WalletModalContainer';
 import {
   isSubstrateAddress,
-  tryEncodeSubstrateAddress,
+  toSubstrateAddress,
 } from '@webb-tools/webb-ui-components';
 
 const ConnectWalletButton = () => {
@@ -25,12 +25,11 @@ const ConnectWalletButton = () => {
       return null;
     } else if (!isSubstrateAddress(activeAccount.address)) {
       return activeAccount.address;
+    } else if (network.ss58Prefix === undefined) {
+      return activeAccount.address;
     }
 
-    return tryEncodeSubstrateAddress(
-      activeAccount?.address,
-      network.ss58Prefix,
-    );
+    return toSubstrateAddress(activeAccount.address, network.ss58Prefix);
   }, [activeAccount?.address, network.ss58Prefix]);
 
   const isReady =

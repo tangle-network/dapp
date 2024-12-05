@@ -1,5 +1,4 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import { isAddress } from '@polkadot/util-crypto';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
@@ -45,7 +44,7 @@ function getTypedChainIdFromAddr(address: string | null): number | undefined {
     return PresetTypedChainId.TangleTestnetEVM;
   }
   // Otherwise, check if the address is a valid Substrate address.
-  else if (isAddress(address)) {
+  else if (isSubstrateAddress(address)) {
     return PresetTypedChainId.TangleTestnetNative;
   }
 
@@ -182,7 +181,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
                   : null
               }
               min={existentialDeposit}
-              isDisabled={!isReady}
               amount={amount}
               setAmount={setAmount}
               wrapperOverrides={{
@@ -205,7 +203,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               wrapperOverrides={{ isFullWidth: true }}
               value={recipientAddress}
               setValue={setRecipientAddress}
-              isDisabled={!isReady}
               setErrorMessage={handleSetErrorMessage}
             />
           </BridgeInputGroup>

@@ -1,5 +1,5 @@
-import { AddressType } from '@webb-tools/dapp-config/types';
-import { isEvmAddress } from '@webb-tools/webb-ui-components';
+import { isEvmAddress32, toEvmAddress20 } from '@webb-tools/webb-ui-components';
+import { EvmAddress20 } from '@webb-tools/webb-ui-components/types/address';
 import { useMemo } from 'react';
 
 import useActiveAccountAddress from './useActiveAccountAddress';
@@ -10,18 +10,21 @@ import useActiveAccountAddress from './useActiveAccountAddress';
  * @remarks
  * If there is no active account, `null` will be returned instead.
  */
-const useEvmAddress20 = (): AddressType | null => {
+const useEvmAddress20 = (): EvmAddress20 | null => {
   const activeAccountAddress = useActiveAccountAddress();
 
   const evmAddress = useMemo(() => {
     // Wait for the active account to be set, and ensure
     // that the active account is an EVM account.
-    if (activeAccountAddress === null || !isEvmAddress(activeAccountAddress)) {
+    if (
+      activeAccountAddress === null ||
+      !isEvmAddress32(activeAccountAddress)
+    ) {
       return null;
     }
 
     // TODO: May need to convert to an EVM address, in case that the active account is a EVM account. See https://github.com/webb-tools/tangle/issues/379 for more details.
-    return activeAccountAddress;
+    return toEvmAddress20(activeAccountAddress);
   }, [activeAccountAddress]);
 
   return evmAddress;

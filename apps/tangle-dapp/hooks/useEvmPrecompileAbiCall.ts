@@ -148,8 +148,14 @@ function useEvmPrecompileAbiCall<
         setError(error);
       }
     },
-    // prettier-ignore
-    [activeEvmAddress20, status, connectorClient, factory, precompile, getSuccessMessageFnc],
+    [
+      activeEvmAddress20,
+      status,
+      connectorClient,
+      factory,
+      precompile,
+      getSuccessMessageFnc,
+    ],
   );
 
   const reset = useCallback(() => {

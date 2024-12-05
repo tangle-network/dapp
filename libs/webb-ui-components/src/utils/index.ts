@@ -28,4 +28,3 @@ export * from './isValidAddress';
 export * from './toEvmAddress20';
 export * from './toEvmAddress32';
 export * from './toSubstrateAddress';
-export * from './tryEncodeSubstrateAddress';
