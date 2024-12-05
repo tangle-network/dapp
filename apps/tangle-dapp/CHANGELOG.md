@@ -1,3 +1,29 @@
+## 0.0.18 (2024-12-03)
+
+
+### 🚀 Features
+
+- **tangle-cloud:** Blueprint Marketplace ([#2661](https://github.com/tangle-network/dapp/pull/2661))
+
+- **tangle-dapp:** Create LS `Unbonding` tab ([#2646](https://github.com/tangle-network/dapp/pull/2646))
+
+- **tangle-dapp:** Setup Tests, Fix Infinite Render on Restaking ([#2674](https://github.com/tangle-network/dapp/pull/2674))
+
+- **tangle-dapp:** Show LST icons from pool metadata, if set ([#2653](https://github.com/tangle-network/dapp/pull/2653))
+
+
+### 🩹 Fixes
+
+- **tangle-dapp:** Fix network switch glitch in Liquid Staking page ([#2671](https://github.com/tangle-network/dapp/pull/2671))
+
+- **tangle-dapp:** Enhance Animation and Add Loading Pages ([#2676](https://github.com/tangle-network/dapp/pull/2676))
+
+
+### ❤️  Thank You
+
+- Trung-Tin Pham @AtelyPham
+- Yurixander @yurixander
+
 ## 0.0.17 (2024-11-13)
 
 
