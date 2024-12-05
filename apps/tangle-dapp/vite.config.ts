@@ -8,7 +8,7 @@ import svgr from 'vite-plugin-svgr';
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/apps/tangle-dapp-vite',
+  cacheDir: '../../node_modules/.vite/apps/tangle-dapp',
   server: {
     port: 4200,
     host: 'localhost',
@@ -31,7 +31,7 @@ export default defineConfig({
   //  plugins: [ nxViteTsPaths() ],
   // },
   build: {
-    outDir: '../../dist/apps/tangle-dapp-vite',
+    outDir: '../../dist/apps/tangle-dapp',
     emptyOutDir: true,
     reportCompressedSize: true,
     commonjsOptions: {
@@ -61,7 +61,7 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../coverage/apps/tangle-dapp-vite',
+      reportsDirectory: '../../coverage/apps/tangle-dapp',
       provider: 'v8',
     },
   },

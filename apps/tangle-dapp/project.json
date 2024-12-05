@@ -1,0 +1,9 @@
+{
+  "name": "tangle-dapp",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/tangle-dapp/src",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project tangle-dapp --web",
+  "targets": {}
+}

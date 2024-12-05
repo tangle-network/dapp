@@ -8,7 +8,7 @@
     "build": {
       "outputs": [
         "{projectRoot}/{options.outDir}",
-        "{workspaceRoot}/dist/apps/tangle-dapp/.next",
+        "{workspaceRoot}/dist/apps/tangle-dapp",
         "{workspaceRoot}/dist/apps/testnet-leaderboard/.next"
       ],
       "defaultConfiguration": "production",

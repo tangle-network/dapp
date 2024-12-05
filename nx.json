@@ -6,7 +6,7 @@
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
       "outputs": [
-        "{workspaceRoot}/dist/apps/tangle-dapp/.next",
+        "{workspaceRoot}/dist/apps/tangle-dapp",
         "{workspaceRoot}/dist/apps/testnet-leaderboard/.next"
       ],
       "cache": true
@@ -145,11 +145,7 @@
         "startTargetName": "start",
         "serveStaticTargetName": "serve-static"
       },
-      "include": [
-        "apps/tangle-cloud/**/*",
-        "apps/tangle-dapp/**/*",
-        "apps/testnet-leaderboard/**/*"
-      ]
+      "include": ["apps/tangle-cloud/**/*", "apps/testnet-leaderboard/**/*"]
     },
     {
       "plugin": "@nx/vite/plugin",
