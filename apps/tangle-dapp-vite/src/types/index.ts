@@ -6,6 +6,7 @@ import type { BN } from '@polkadot/util';
 
 export enum PagePath {
   NOMINATION = '/nomination',
+  NOMINATION_VALIDATOR = '/nomination/:validatorAddress',
   CLAIM_AIRDROP = '/claim',
   CLAIM_AIRDROP_SUCCESS = '/claim/success',
   ACCOUNT = '/',

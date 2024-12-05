@@ -1,5 +1,3 @@
-'use client';
-
 import { createContext, FC, PropsWithChildren, useContext } from 'react';
 
 import useBalances from '../data/balances/useBalances';
