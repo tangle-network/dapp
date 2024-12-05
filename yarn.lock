@@ -45274,6 +45274,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"vite-plugin-wasm@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "vite-plugin-wasm@npm:3.3.0"
+  peerDependencies:
+    vite: ^2 || ^3 || ^4 || ^5
+  checksum: 10c0/382ba2f2ffef31dde717ad43a69427bc930a6e2ec453d17b700ef7937b48996893a61657fdee3122654e027b1933341548493b35e6469520a8d4ae6c522d1ee2
+  languageName: node
+  linkType: hard
+
 "vite@npm:^5.0.0":
   version: 5.4.2
   resolution: "vite@npm:5.4.2"
@@ -46036,6 +46045,7 @@ __metadata:
     vite: "npm:~5.4.10"
     vite-plugin-dts: "npm:~4.3.0"
     vite-plugin-svgr: "npm:^4.2.0"
+    vite-plugin-wasm: "npm:^3.3.0"
     vitest: "npm:^2.1.4"
     wagmi: "npm:^2.12.25"
     webpack: "npm:5.95.0"
