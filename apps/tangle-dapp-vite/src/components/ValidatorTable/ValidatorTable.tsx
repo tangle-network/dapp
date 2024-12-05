@@ -111,10 +111,13 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
 }) => {
   const { network } = useNetworkStore();
 
-  const [sorting, setSorting] = useState<SortingState>([
-    // Default sorting by total stake amount in descending order
-    { id: 'totalStakeAmount', desc: true },
-  ]);
+  const [sorting, setSorting] = useState<SortingState>(() => {
+    if (isWaiting) {
+      return [];
+    }
+
+    return [{ id: 'totalStakeAmount', desc: true }];
+  });
 
   const columns = useMemo(
     () => [

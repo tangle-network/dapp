@@ -14,7 +14,7 @@ type OperatorBlueprint = {
   services: Array<ReturnType<typeof toPrimitiveService>>;
 };
 
-const useOperatorBlueprints = (operatorAccount: string) => {
+const useOperatorBlueprints = (operatorAccount?: string) => {
   const { result, ...rest } = useApiRx(
     useCallback(
       (apiRx) => {
@@ -24,6 +24,8 @@ const useOperatorBlueprints = (operatorAccount: string) => {
         )
           // TODO: Should return the error here instead of throw it
           throw new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
+
+        if (!operatorAccount) return of<OperatorBlueprint[]>([]);
 
         return apiRx.rpc.services
           .queryServicesWithBlueprintsByOperator(operatorAccount)
