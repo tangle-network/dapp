@@ -1,3 +1,0 @@
-[build]
-command = "yarn nx build tangle-dapp"
-publish = "./dist/apps/tangle-dapp/.next"
