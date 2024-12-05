@@ -1,33 +1,35 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles.css';
 
-import { Route, Routes, Link } from 'react-router';
-import Providers from './providers';
+import { Route, Routes } from 'react-router';
 import { Layout } from '../containers';
 import AccountPage from '../pages/account';
+import ClaimPage from '../pages/claim';
+import ClaimLayout from '../pages/claim/layout';
+import ClaimSuccessPage from '../pages/claim/success';
+import { PagePath } from '../types';
+import Providers from './providers';
 
 export function App() {
   return (
     <div>
-      {/* START: routes */}
-      {/* These routes and navigation have been generated for you */}
-      {/* Feel free to move and update them to fit your needs */}
       <Providers>
         <Layout>
+          {/* START: routes */}
           <Routes>
-            <Route path="/" element={<AccountPage />} />
-            <Route
-              path="/page-2"
-              element={
-                <div>
-                  <Link to="/">Click here to go back to root page.</Link>
-                </div>
-              }
-            />
+            <Route path={PagePath.ACCOUNT} element={<AccountPage />} />
+
+            <Route path={PagePath.CLAIM_AIRDROP} element={<ClaimLayout />}>
+              <Route index element={<ClaimPage />} />
+              <Route
+                path={PagePath.CLAIM_AIRDROP_SUCCESS}
+                element={<ClaimSuccessPage />}
+              />
+            </Route>
           </Routes>
+          {/* END: routes */}
         </Layout>
       </Providers>
-      {/* END: routes */}
     </div>
   );
 }

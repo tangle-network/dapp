@@ -7,6 +7,7 @@ import type { BN } from '@polkadot/util';
 export enum PagePath {
   NOMINATION = '/nomination',
   CLAIM_AIRDROP = '/claim',
+  CLAIM_AIRDROP_SUCCESS = '/claim/success',
   ACCOUNT = '/',
   BRIDGE = '/bridge',
   BLUEPRINTS = '/blueprints',
