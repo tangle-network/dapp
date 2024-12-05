@@ -4,8 +4,9 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { ConnectWalletMobileButton } from '@webb-tools/webb-ui-components/components/ConnectWalletMobileButton';
 import { useCheckMobile } from '@webb-tools/webb-ui-components/hooks/useCheckMobile';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import Link from 'next/link';
+import { Link } from 'react-router';
 import { type ReactNode, useMemo } from 'react';
+import { PagePath } from '../../types';
 
 type Props = {
   targetTypedChainId?: number;
@@ -47,9 +48,9 @@ export default function ActionButtonBase({
         <Typography variant="body1">
           Visit the link on desktop below to start transacting privately!
         </Typography>
-        <Button as={Link} href="deposit" variant="link">
-          {window.location.href}
-        </Button>
+        <Link to={PagePath.RESTAKE_DEPOSIT}>
+          <Button variant="link">{window.location.href}</Button>
+        </Link>
       </ConnectWalletMobileButton>
     );
   }
