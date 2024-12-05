@@ -12,6 +12,7 @@ export enum PagePath {
   ACCOUNT = '/',
   BRIDGE = '/bridge',
   BLUEPRINTS = '/blueprints',
+  BLUEPRINTS_DETAILS = '/blueprints/:id',
   SERVICES = '/services',
   RESTAKE = '/restake',
   RESTAKE_OVERVIEW = '/restake/overview',
