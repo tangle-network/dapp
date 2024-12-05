@@ -16,6 +16,10 @@ export type LsUpdateRolesTxContext = {
   bouncerAddress?: AnyAddress;
 };
 
+// The precompile logic will interpret the 32-byte zero address as a no-op.
+const PRECOMPILE_NOOP_ADDRESS =
+  '0x0000000000000000000000000000000000000000000000000000000000000000';
+
 const useLsUpdateRolesTx = () => {
   const substrateTxFactory: SubstrateTxFactory<LsUpdateRolesTxContext> =
     useCallback(async (api, _activeSubstrateAddress, context) => {
@@ -54,22 +58,19 @@ const useLsUpdateRolesTx = () => {
         throw new Error('At least one address change must occur');
       }
 
-      // The precompile logic will interpret a 0x address as a no-op.
-      const noop = '0x';
-
       const rootEvmAddress32 =
         context.rootAddress === undefined
-          ? noop
+          ? PRECOMPILE_NOOP_ADDRESS
           : toEvmAddress32(context.rootAddress);
 
       const nominatorEvmAddress32 =
         context.nominatorAddress === undefined
-          ? noop
+          ? PRECOMPILE_NOOP_ADDRESS
           : toEvmAddress32(context.nominatorAddress);
 
       const bouncerEvmAddress32 =
         context.bouncerAddress === undefined
-          ? noop
+          ? PRECOMPILE_NOOP_ADDRESS
           : toEvmAddress32(context.bouncerAddress);
 
       return {
