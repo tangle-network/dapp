@@ -17,6 +17,7 @@ import Providers from './providers';
 import BlueprintLayout from '../pages/blueprints/layout';
 import BlueprintsPage from '../pages/blueprints';
 import BlueprintDetailsPage from '../pages/blueprints/[id]';
+import LiquidStakingPage from '../pages/liquid-staking';
 
 // TODO: Add metadata tags for SEO
 
@@ -57,6 +58,11 @@ export function App() {
                 element={<BlueprintDetailsPage />}
               />
             </Route>
+
+            <Route
+              path={PagePath.LIQUID_STAKING}
+              element={<LiquidStakingPage />}
+            />
           </Routes>
           {/* END: routes */}
         </Layout>
