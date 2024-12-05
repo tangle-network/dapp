@@ -17,6 +17,7 @@ import {
   Payout,
 } from '@webb-tools/tangle-shared-ui/types';
 import {
+  AmountFormatStyle,
   Avatar,
   AvatarGroup,
   CopyWithTooltip,
@@ -29,13 +30,12 @@ import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/ty
 import { type FC, useState } from 'react';
 
 import PayoutTxContainer from '../../containers/PayoutTxContainer/PayoutTxContainer';
-import { AmountFormatStyle } from '../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
+import { PayoutTxProps } from '../../containers/PayoutTxContainer/types';
 import pluralize from '../../utils/pluralize';
 import { sortBnValueForPayout } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { PayoutTableProps } from './types';
-import { PayoutTxProps } from '../../containers/PayoutTxContainer/types';
 
 const columnHelper = createColumnHelper<Payout>();
 

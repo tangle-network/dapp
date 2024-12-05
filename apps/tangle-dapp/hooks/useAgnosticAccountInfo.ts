@@ -1,8 +1,13 @@
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import { isEvmAddress } from '../../../libs/webb-ui-components/src/utils/isEvmAddress';
+import {
+  isEvmAddress,
+  isSubstrateAddress,
+} from '@webb-tools/webb-ui-components';
+import {
+  EvmAddress32,
+  SubstrateAddress,
+} from '@webb-tools/webb-ui-components/types/address';
+
 import useActiveAccountAddress from './useActiveAccountAddress';
-import { EvmAddress32 } from '../../../libs/webb-ui-components/src/types/address';
-import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
 
 type ReturnType = {
   isEvm: boolean | null;

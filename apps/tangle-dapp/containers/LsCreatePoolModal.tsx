@@ -11,6 +11,7 @@ import {
   ModalHeader,
   TANGLE_DOCS_LS_CREATE_POOL_URL,
 } from '@webb-tools/webb-ui-components';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import AddressInput, { AddressType } from '../components/AddressInput';
@@ -23,7 +24,6 @@ import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { TxStatus } from '../hooks/useSubstrateTx';
-import assertSubstrateAddress from '../../../libs/webb-ui-components/src/utils/assertSubstrateAddress';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
 import { ERROR_NOT_ENOUGH_BALANCE } from './ManageProfileModalContainer/Independent/IndependentAllocationInput';
 

@@ -12,10 +12,12 @@ import {
   Validator,
 } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
+  AmountFormatStyle,
   Avatar,
   CheckBox,
   Chip,
   CopyWithTooltip,
+  formatDisplayAmount,
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -26,10 +28,6 @@ import { twMerge } from 'tailwind-merge';
 import { StakingItemExternalLinkButton } from '../../components/LiquidStaking/StakingItemExternalLinkButton';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import calculateCommission from '../../utils/calculateCommission';
-import {
-  AmountFormatStyle,
-  formatDisplayAmount,
-} from '../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
 import formatFractional from '../../utils/formatFractional';
 
 const validatorColumnHelper = createColumnHelper<Validator>();

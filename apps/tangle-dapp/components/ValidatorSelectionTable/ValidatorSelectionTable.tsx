@@ -16,6 +16,7 @@ import {
 } from '@tanstack/react-table';
 import { Search } from '@webb-tools/icons';
 import {
+  AmountFormatStyle,
   Avatar,
   CheckBox,
   Chip,
@@ -27,6 +28,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import cx from 'classnames';
 import React, {
   FC,
@@ -39,7 +41,6 @@ import React, {
 
 import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import { AmountFormatStyle } from '../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
 import formatFractional from '../../utils/formatFractional';
 import pluralize from '../../utils/pluralize';
 import {
@@ -50,7 +51,6 @@ import { ContainerSkeleton } from '..';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorSelectionTableProps } from './types';
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 
 const columnHelper = createColumnHelper<Validator>();
 

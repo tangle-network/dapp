@@ -3,12 +3,12 @@
 import { BN_ZERO } from '@polkadot/util';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import { type FC, useMemo } from 'react';
 
 import useActiveAccountAddress from '../..//hooks/useActiveAccountAddress';
 import useUnbondingAmount from '../../data/NominatorStats/useUnbondingAmount';
 import useUnbonding from '../../data/staking/useUnbonding';
-import addCommasToNumber from '../../../../libs/webb-ui-components/src/utils/addCommasToNumber';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import { NominatorStatsItem } from '../NominatorStatsItem';
 

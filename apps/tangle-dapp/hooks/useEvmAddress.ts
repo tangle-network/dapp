@@ -1,7 +1,7 @@
 import { AddressType } from '@webb-tools/dapp-config/types';
+import { isEvmAddress } from '@webb-tools/webb-ui-components';
 import { useMemo } from 'react';
 
-import { isEvmAddress } from '../../../libs/webb-ui-components/src/utils/isEvmAddress';
 import useActiveAccountAddress from './useActiveAccountAddress';
 
 /**

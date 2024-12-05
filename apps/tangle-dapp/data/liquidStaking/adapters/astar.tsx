@@ -3,8 +3,10 @@ import { createColumnHelper, SortingFnOption } from '@tanstack/react-table';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
+  AmountFormatStyle,
   Avatar,
   CopyWithTooltip,
+  formatDisplayAmount,
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -20,10 +22,6 @@ import { GetTableColumnsFn } from '../adapter';
 import { sortSelected, sortValueStaked } from '../columnSorting';
 import { fetchMappedDappsTotalValueStaked } from '../fetchHelpers';
 import RadioInput from '../useLsValidatorSelectionTableColumns';
-import {
-  AmountFormatStyle,
-  formatDisplayAmount,
-} from '../../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
 
 const DECIMALS = 18;
 

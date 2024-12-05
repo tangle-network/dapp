@@ -6,12 +6,12 @@ import {
   type TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
+import { AmountFormatStyle } from '@webb-tools/webb-ui-components';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { AmountFormatStyle } from '../../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import pluralize from '../../../utils/pluralize';
 import TokenAmountCell from '../../tableCells/TokenAmountCell';

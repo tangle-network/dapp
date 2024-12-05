@@ -8,13 +8,13 @@ import {
   TANGLE_DOCS_LS_UPDATE_ROLES_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import AddressInput, { AddressType } from '../components/AddressInput';
 import useLsUpdateRolesTx from '../data/liquidStaking/tangle/useLsUpdateRolesTx';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { TxStatus } from '../hooks/useSubstrateTx';
-import assertSubstrateAddress from '../../../libs/webb-ui-components/src/utils/assertSubstrateAddress';
 
 export type LsUpdateRolesModalProps = {
   poolId: number | null;

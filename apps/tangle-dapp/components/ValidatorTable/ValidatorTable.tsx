@@ -13,6 +13,7 @@ import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transactio
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { ExplorerType } from '@webb-tools/tangle-shared-ui/types';
 import {
+  AmountFormatStyle,
   Avatar,
   Button,
   CopyWithTooltip,
@@ -29,7 +30,6 @@ import { FC, useMemo, useState } from 'react';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import { PagePath, Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import { AmountFormatStyle } from '../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
 import pluralize from '../../utils/pluralize';
 import {
   getSortAddressOrIdentityFnc,

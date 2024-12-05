@@ -3,11 +3,10 @@ import { encodeAddress } from '@polkadot/util-crypto';
 import { Account } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { useMemo } from 'react';
-
-import assertSubstrateAddress from '../../../libs/webb-ui-components/src/utils/assertSubstrateAddress';
-import { isEvmAddress } from '../../../libs/webb-ui-components/src/utils/isEvmAddress';
+import { isEvmAddress } from '@webb-tools/webb-ui-components';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
+import { useMemo } from 'react';
 
 export type WalletAccount = {
   name: string;

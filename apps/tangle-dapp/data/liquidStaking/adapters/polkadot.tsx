@@ -3,12 +3,16 @@ import { createColumnHelper, SortingFnOption } from '@tanstack/react-table';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
+  AmountFormatStyle,
   Avatar,
   CheckBox,
   CopyWithTooltip,
+  formatDisplayAmount,
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 
 import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking/StakingItemExternalLinkButton';
 import {
@@ -16,15 +20,10 @@ import {
   LsParachainChainDef,
   LsToken,
 } from '../../../constants/liquidStaking/types';
-import assertSubstrateAddress from '../../../../../libs/webb-ui-components/src/utils/assertSubstrateAddress';
 import calculateCommission from '../../../utils/calculateCommission';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
 import formatFractional from '../../../utils/formatFractional';
 import { GetTableColumnsFn } from '../adapter';
-import {
-  AmountFormatStyle,
-  formatDisplayAmount,
-} from '../../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
 import {
   sortCommission,
   sortSelected,
@@ -37,7 +36,6 @@ import {
   fetchMappedValidatorsTotalValueStaked,
   fetchTokenSymbol,
 } from '../fetchHelpers';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 const DECIMALS = 18;
 

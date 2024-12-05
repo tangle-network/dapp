@@ -15,12 +15,12 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import { FC, useMemo, useState } from 'react';
 
 import { LsPoolUnstakeRequest } from '../../constants/liquidStaking/types';
 import useLsUnbonding from '../../data/liquidStaking/useLsUnbonding';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import addCommasToNumber from '../../../../libs/webb-ui-components/src/utils/addCommasToNumber';
 import pluralize from '../../utils/pluralize';
 import { ContainerSkeleton, TableStatus } from '..';
 import TokenAmountCell from '../tableCells/TokenAmountCell';

@@ -1,9 +1,9 @@
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
-import { toSubstrateAddress } from '../../../../libs/webb-ui-components/src/utils/toSubstrateAddress';
 import getLsProtocolDef from './getLsProtocolDef';
 import getLsTangleNetwork from './getLsTangleNetwork';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 const tryEncodeAddressWithPrefix = (
   address: SubstrateAddress,
