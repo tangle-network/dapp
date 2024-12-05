@@ -1,10 +1,7 @@
-import '@webb-tools/webb-ui-components/tailwind.css';
-import '../styles.css';
-
-import { Link, Route, Routes } from 'react-router';
+import { Route, Routes, Link } from 'react-router';
+import Providers from './providers';
 import { Layout } from '../containers';
 import AccountPage from '../pages/account';
-import Providers from './providers';
 
 export function App() {
   return (
