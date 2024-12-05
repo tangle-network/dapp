@@ -46,9 +46,7 @@ const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
     ) : (
       <div>
         {unlockPeriod.isEstimate && '~'}
-        <strong>
-          {unlockPeriod.value.toString()}
-        </strong> {unlockPeriod.unit}
+        <strong>{unlockPeriod.value.toString()}</strong> {unlockPeriod.unit}
       </div>
     );
 

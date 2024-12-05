@@ -37,13 +37,13 @@ import useRestakeTxEventHandlersWithNoti, {
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
+import useSwitchChain from '../../../hooks/useSwitchChain';
 import { PagePath, QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
 import SupportedChainModal from '../SupportedChainModal';
-import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Info from './Info';
 import StakeInput from './StakeInput';

@@ -4,7 +4,7 @@ import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useCallback } from 'react';
 
-import chainToNetwork from '../../utils/chainToNetwork';
+import chainToNetwork from '../utils/chainToNetwork';
 
 export default function useSwitchChain() {
   const { activeWallet, activeApi, switchChain } = useWebContext();

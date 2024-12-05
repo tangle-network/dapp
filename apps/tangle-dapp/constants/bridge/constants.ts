@@ -11,36 +11,34 @@ import {
 } from '../../types/bridge/types';
 
 export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
-  [PresetTypedChainId.TangleTestnetEVM]: [
-    {
-      tokenSymbol: 'hypWETH',
-      tokenType: EVMTokenEnum.WETH,
-      bridgeType: EVMTokenBridgeEnum.Hyperlane,
-      address: EVMTokens.tangletestnet.hyperlane.WETH.address,
-      abi: EVMTokens.tangletestnet.hyperlane.WETH.abi,
-      decimals: EVMTokens.tangletestnet.hyperlane.WETH.decimals,
-    },
-  ],
-  [PresetTypedChainId.Holesky]: [
-    {
-      tokenSymbol: 'WETH',
-      tokenType: EVMTokenEnum.WETH,
-      bridgeType: EVMTokenBridgeEnum.None,
-      address: EVMTokens.holesky.none.WETH.address,
-      abi: EVMTokens.holesky.none.WETH.abi,
-      decimals: EVMTokens.holesky.none.WETH.decimals,
-    },
-    {
-      tokenSymbol: 'hypWETH',
-      tokenType: EVMTokenEnum.WETH,
-      bridgeType: EVMTokenBridgeEnum.Hyperlane,
-      // TODO: Add these to @webb-tools/evm-contract-metadata 👇
-      // TODO: Should be EVMTokens.holesky.hyperlane 👇
-      address: '0xdFe0fbA0F8C62278DF4A9fDc787F9cFF28522FD3',
-      abi: EVMTokens.tangletestnet.hyperlane.WETH.abi,
-      decimals: EVMTokens.tangletestnet.hyperlane.WETH.decimals,
-    },
-  ],
+  // [PresetTypedChainId.TangleTestnetEVM]: [
+  //   {
+  //     tokenSymbol: 'hypWETH',
+  //     tokenType: EVMTokenEnum.WETH,
+  //     bridgeType: EVMTokenBridgeEnum.Hyperlane,
+  //     address: EVMTokens.tangletestnet.hyperlane.WETH.address,
+  //     abi: EVMTokens.tangletestnet.hyperlane.WETH.abi,
+  //     decimals: EVMTokens.tangletestnet.hyperlane.WETH.decimals,
+  //   },
+  // ],
+  // [PresetTypedChainId.Holesky]: [
+  //   {
+  //     tokenSymbol: 'WETH',
+  //     tokenType: EVMTokenEnum.WETH,
+  //     bridgeType: EVMTokenBridgeEnum.None,
+  //     address: EVMTokens.holesky.none.WETH.address,
+  //     abi: EVMTokens.holesky.none.WETH.abi,
+  //     decimals: EVMTokens.holesky.none.WETH.decimals,
+  //   },
+  //   {
+  //     tokenSymbol: 'hypWETH',
+  //     tokenType: EVMTokenEnum.WETH,
+  //     bridgeType: EVMTokenBridgeEnum.Hyperlane,
+  //     address: EVMTokens.holesky.hyperlane.WETH.address,
+  //     abi: EVMTokens.holesky.hyperlane.WETH.abi,
+  //     decimals: EVMTokens.holesky.hyperlane.WETH.decimals,
+  //   },
+  // ],
   [PresetTypedChainId.EthereumMainNet]: [
     {
       tokenSymbol: 'routerTNT',
@@ -49,6 +47,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       address: EVMTokens.ethereum.router.TNT.address,
       abi: EVMTokens.ethereum.router.TNT.abi,
       decimals: EVMTokens.ethereum.router.TNT.decimals,
+      chainId: PresetTypedChainId.EthereumMainNet,
     },
   ],
   [PresetTypedChainId.Polygon]: [
@@ -59,6 +58,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       address: EVMTokens.polygon.router.TNT.address,
       abi: EVMTokens.polygon.router.TNT.abi,
       decimals: EVMTokens.polygon.router.TNT.decimals,
+      chainId: PresetTypedChainId.Polygon,
     },
   ],
   [PresetTypedChainId.Arbitrum]: [
@@ -69,6 +69,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       address: EVMTokens.arbitrum.router.TNT.address,
       abi: EVMTokens.arbitrum.router.TNT.abi,
       decimals: EVMTokens.arbitrum.router.TNT.decimals,
+      chainId: PresetTypedChainId.Arbitrum,
     },
   ],
   [PresetTypedChainId.Optimism]: [
@@ -79,6 +80,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       address: EVMTokens.optimism.router.TNT.address,
       abi: EVMTokens.optimism.router.TNT.abi,
       decimals: EVMTokens.optimism.router.TNT.decimals,
+      chainId: PresetTypedChainId.Optimism,
     },
   ],
   [PresetTypedChainId.Linea]: [
@@ -89,6 +91,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       address: EVMTokens.linea.router.TNT.address,
       abi: EVMTokens.linea.router.TNT.abi,
       decimals: EVMTokens.linea.router.TNT.decimals,
+      chainId: PresetTypedChainId.Linea,
     },
   ],
   [PresetTypedChainId.Base]: [
@@ -99,6 +102,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       address: EVMTokens.base.router.TNT.address,
       abi: EVMTokens.base.router.TNT.abi,
       decimals: EVMTokens.base.router.TNT.decimals,
+      chainId: PresetTypedChainId.Base,
     },
   ],
   [PresetTypedChainId.BSC]: [
@@ -109,12 +113,12 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       address: EVMTokens.bsc.router.TNT.address,
       abi: EVMTokens.bsc.router.TNT.abi,
       decimals: EVMTokens.bsc.router.TNT.decimals,
+      chainId: PresetTypedChainId.BSC,
     },
   ],
 };
 
 export const BRIDGE_CHAINS: BridgeChainsConfigType = {
-  // TODO: Deploy Hyperlane contracts on these testnets
   // [PresetTypedChainId.Holesky]: {
   //   [PresetTypedChainId.TangleTestnetEVM]: {
   //     supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.TangleTestnetEVM],
@@ -145,6 +149,41 @@ export const BRIDGE_CHAINS: BridgeChainsConfigType = {
       supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.Base],
     },
     [PresetTypedChainId.BSC]: {
+      supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.BSC],
+    },
+  },
+  [PresetTypedChainId.EthereumMainNet]: {
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.EthereumMainNet],
+    },
+  },
+  [PresetTypedChainId.Polygon]: {
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.Polygon],
+    },
+  },
+  [PresetTypedChainId.Arbitrum]: {
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.Arbitrum],
+    },
+  },
+  [PresetTypedChainId.Optimism]: {
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.Optimism],
+    },
+  },
+  [PresetTypedChainId.Linea]: {
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.Linea],
+    },
+  },
+  [PresetTypedChainId.Base]: {
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.Base],
+    },
+  },
+  [PresetTypedChainId.BSC]: {
+    [PresetTypedChainId.TangleMainnetEVM]: {
       supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.BSC],
     },
   },

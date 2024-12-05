@@ -55,10 +55,7 @@ const ServicesKeyMetricItem: FC<ServicesKeyMetricItemProps> = ({
                   )}
                 >
                   {changeRate >= 0 ? `+` : `-`}
-                  {getRoundedAmountString(
-                    Math.abs(changeRate),
-                    2,
-                  )}%
+                  {getRoundedAmountString(Math.abs(changeRate), 2)}%
                 </Typography>
                 <ArrowRight
                   className={twMerge(

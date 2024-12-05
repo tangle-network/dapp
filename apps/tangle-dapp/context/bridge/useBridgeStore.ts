@@ -1,6 +1,7 @@
 import { BN } from '@polkadot/util';
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
 import { create } from 'zustand';
 
@@ -24,13 +25,13 @@ const DEFAULT_DESTINATION_CHAINS = sortChainOptions(
 );
 
 const getDefaultTokens = (): BridgeTokenType[] => {
-  const firstSourceChain = DEFAULT_SOURCE_CHAINS[0];
+  const firstSourceChain = chainsConfig[PresetTypedChainId.TangleMainnetEVM];
   const firstSourceChainId = calculateTypedChainId(
     firstSourceChain.chainType,
     firstSourceChain.id,
   );
 
-  const firstDestChain = DEFAULT_DESTINATION_CHAINS[0];
+  const firstDestChain = chainsConfig[PresetTypedChainId.EthereumMainNet];
   const firstDestChainId = calculateTypedChainId(
     firstDestChain.chainType,
     firstDestChain.id,
@@ -42,11 +43,7 @@ const getDefaultTokens = (): BridgeTokenType[] => {
 };
 
 const DEFAULT_TOKENS = getDefaultTokens();
-const DEFAULT_SELECTED_TOKEN = DEFAULT_TOKENS[0] ?? {
-  tokenType: 'WETH',
-  bridgeType: 'Hyperlane',
-  decimals: 18,
-};
+const DEFAULT_SELECTED_TOKEN = DEFAULT_TOKENS[0];
 
 interface BridgeStore {
   sourceChains: ChainConfig[];
@@ -69,14 +66,17 @@ interface BridgeStore {
 
   isAmountInputError: boolean;
   setIsAmountInputError: (isAmountInputError: boolean) => void;
+
+  destinationAddress: string | null;
+  setDestinationAddress: (destinationAddress: string | null) => void;
 }
 
 const useBridgeStore = create<BridgeStore>((set) => ({
   sourceChains: DEFAULT_SOURCE_CHAINS,
   destinationChains: DEFAULT_DESTINATION_CHAINS,
 
-  selectedSourceChain: DEFAULT_SOURCE_CHAINS[0],
-  selectedDestinationChain: DEFAULT_DESTINATION_CHAINS[0],
+  selectedSourceChain: chainsConfig[PresetTypedChainId.TangleMainnetEVM],
+  selectedDestinationChain: chainsConfig[PresetTypedChainId.EthereumMainNet],
 
   setSelectedSourceChain: (chain) =>
     set(() => {
@@ -86,10 +86,20 @@ const useBridgeStore = create<BridgeStore>((set) => ({
         ).map((presetTypedChainId) => chainsConfig[+presetTypedChainId]),
       );
 
+      const tokens =
+        BRIDGE_CHAINS[calculateTypedChainId(chain.chainType, chain.id)][
+          calculateTypedChainId(
+            availableDestinations[0].chainType,
+            availableDestinations[0].id,
+          )
+        ].supportedTokens;
+
       return {
         selectedSourceChain: chain,
         destinationChains: availableDestinations,
         selectedDestinationChain: availableDestinations[0],
+        tokens,
+        selectedToken: tokens[0],
       };
     }),
   setSelectedDestinationChain: (chain) =>
@@ -106,6 +116,9 @@ const useBridgeStore = create<BridgeStore>((set) => ({
 
   isAmountInputError: false,
   setIsAmountInputError: (isAmountInputError) => set({ isAmountInputError }),
+
+  destinationAddress: null,
+  setDestinationAddress: (destinationAddress) => set({ destinationAddress }),
 }));
 
 export default useBridgeStore;

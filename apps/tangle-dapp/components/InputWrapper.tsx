@@ -93,7 +93,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
           'w-[356px] max-w-[356px]',
           'bg-mono-20 dark:bg-mono-170',
           'border border-transparent',
-          hasError && 'border-red-70 dark:border-red-50',
+          // hasError && 'border-red-70 dark:border-red-50',
           isFullWidth && 'w-full max-w-full',
           wrapperClassName,
         )}

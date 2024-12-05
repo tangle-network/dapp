@@ -12,6 +12,7 @@ export interface BridgeTokenType {
   address: AddressType;
   abi: any;
   decimals: number;
+  chainId: PresetTypedChainId;
 }
 
 export type BridgeChainsConfigType = Record<

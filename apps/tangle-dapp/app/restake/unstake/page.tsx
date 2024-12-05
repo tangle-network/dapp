@@ -32,6 +32,7 @@ import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeT
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
+import useSwitchChain from '../../../hooks/useSwitchChain';
 import type { UnstakeFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
@@ -39,7 +40,6 @@ import ActionButtonBase from '../ActionButtonBase';
 import AssetPlaceholder from '../AssetPlaceholder';
 import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
-import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
 import UnstakeModal from './UnstakeModal';
 import UnstakeRequestTable from './UnstakeRequestTable';

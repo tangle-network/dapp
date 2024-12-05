@@ -1,6 +1,5 @@
 import { ArrowRightUp, Search, TokenIcon } from '@webb-tools/icons';
 import {
-  getRoundedAmountString,
   Input,
   ListItem,
   shortenHex,
@@ -8,7 +7,6 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import Decimal from 'decimal.js';
 import Link from 'next/link';
 import { ComponentProps, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -19,9 +17,10 @@ import { ListCardWrapper } from './ListCardWrapper';
 export type AssetConfig = {
   symbol: string;
   optionalSymbol?: string;
-  balance?: Decimal;
+  balance?: string;
   explorerUrl?: string;
   address?: Address;
+  assetBridgeType?: string;
 };
 
 type AssetListProps = {
@@ -91,7 +90,8 @@ export const AssetList = ({
                     fw="bold"
                     className="block cursor-default text-mono-200 dark:text-mono-0"
                   >
-                    {asset.optionalSymbol ?? asset.symbol}
+                    {asset.symbol}{' '}
+                    {asset.assetBridgeType}
                   </Typography>
 
                   {asset.explorerUrl !== undefined && (
@@ -121,7 +121,7 @@ export const AssetList = ({
                 className="cursor-default text-mono-200 dark:text-mono-0"
               >
                 {asset.balance
-                  ? `${getRoundedAmountString(asset.balance.toNumber(), 4)} ${asset.symbol}`
+                  ? `${asset.balance} ${asset.symbol}`
                   : EMPTY_VALUE_PLACEHOLDER}
               </Typography>
             </ListItem>

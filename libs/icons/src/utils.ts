@@ -48,7 +48,7 @@ export function getIconSizeInPixel(size: IconSize) {
     }
 
     case 'lg': {
-      return '24px' as const;
+      return '32px' as const;
     }
 
     case 'md': {
@@ -72,7 +72,7 @@ export function getFlexBasic(size: IconSize = 'md') {
     }
 
     case 'lg': {
-      return 'basis-6' as const;
+      return 'basis-8' as const;
     }
 
     case 'md': {
@@ -92,7 +92,7 @@ export function getMinSizeClassName(size: IconSize) {
     }
 
     case 'lg': {
-      return 'min-w-6 min-h-6' as const;
+      return 'min-w-8 min-h-8' as const;
     }
 
     case 'xl': {

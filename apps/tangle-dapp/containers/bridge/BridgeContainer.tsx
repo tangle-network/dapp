@@ -1,61 +1,61 @@
 'use client';
 
-import {
-  ArrowDownIcon,
-  ClipboardIcon,
-  Cog6ToothIcon,
-  ExclamationTriangleIcon,
-} from '@heroicons/react/24/outline';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import { ArrowRight, ChainIcon, TokenIcon } from '@webb-tools/icons';
+import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
+import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useActiveChain';
+import { ArrowRight } from '@webb-tools/icons';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   Card,
+  EMPTY_VALUE_PLACEHOLDER,
   ChainOrTokenButton,
   Label,
   Modal,
   ModalContent,
-  notificationApi,
   useModal,
+  Typography,
+  Button,
 } from '@webb-tools/webb-ui-components';
 import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Decimal } from 'decimal.js';
 
 import AmountInput from '../../components/AmountInput';
-import { AssetConfig } from '../../components/Lists/AssetList';
+import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
 import { ChainList } from '../../components/Lists/ChainList';
-import { BRIDGE_CHAINS } from '../../constants/bridge/constants';
 import useBridgeStore from '../../context/bridge/useBridgeStore';
+import useBalances from '../../data/balances/useBalances';
 import { useEVMBalances } from '../../data/bridge/useEVMBalances';
 import { TokenBalanceType } from '../../data/bridge/useEVMBalances';
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import { ActionButton } from './ActionButton';
-import { IconButton } from './IconButton';
-import { SelectCard } from './SelectCard';
-import { TokenAmountInput } from './TokenAmountInput';
-import { BN } from 'bn.js';
+import useSwitchChain from '../../hooks/useSwitchChain';
+import formatTangleBalance from '../../utils/formatTangleBalance';
+import useActiveTypedChainId from '../../hooks/useActiveTypedChainId';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import {
+  EVMTokenBridgeEnum,
+  EVMTokenEnum,
+} from '@webb-tools/evm-contract-metadata';
+import AddressInput, { AddressType } from '../../components/AddressInput';
+import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
+import convertDecimalToBn from '../../utils/convertDecimalToBn';
 
 interface BridgeContainerProps {
   className?: string;
 }
 
 export default function BridgeContainer({ className }: BridgeContainerProps) {
-  const activeAccountAddress = useActiveAccountAddress();
+  const [activeChain] = useActiveChain();
+  const [activeAccount] = useActiveAccount();
+  const switchChain = useSwitchChain();
+  const activeTypedChainId = useActiveTypedChainId();
+  const { transferable: balance } = useBalances();
+  const { nativeTokenSymbol } = useNetworkStore();
 
-  const { balances, isLoading, error } = useEVMBalances();
+  const accountBalance = balance
+    ? formatTangleBalance(balance, nativeTokenSymbol).split(' ')[0]
+    : '';
 
-  if (!isLoading && !error) {
-    // const b = balances[PresetTypedChainId.Polygon];
-    // if (b) {
-    //   b.forEach((token) => {
-    //     console.debug(token.tokenSymbol, token.balance.toString());
-    //   });
-    // }
-    // console.debug('balances', balances);
-  }
-
-  console.debug('isLoading', isLoading);
-  console.debug('error', error);
+  const { balances } = useEVMBalances();
 
   const sourceChains = useBridgeStore((state) => state.sourceChains);
   const destinationChains = useBridgeStore((state) => state.destinationChains);
@@ -82,11 +82,12 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   const setIsAmountInputError = useBridgeStore(
     (state) => state.setIsAmountInputError,
   );
-
-  // console.debug('sourceChains', sourceChains);
-  // console.debug('destinationChains', destinationChains);
-  // console.debug('selectedSourceChain', selectedSourceChain.name);
-  // console.debug('selectedDestinationChain', selectedDestinationChain.name);
+  const destinationAddress = useBridgeStore(
+    (state) => state.destinationAddress,
+  );
+  const setDestinationAddress = useBridgeStore(
+    (state) => state.setDestinationAddress,
+  );
 
   const {
     status: isSourceChainModalOpen,
@@ -105,222 +106,235 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   } = useModal(false);
 
   const onSwitchChains = () => {
-    const selectedDestinationChainPresetTypedChainId = calculateTypedChainId(
-      selectedDestinationChain.chainType,
-      selectedDestinationChain.id,
-    );
-
-    if (
-      Object.keys(BRIDGE_CHAINS).includes(
-        selectedDestinationChainPresetTypedChainId.toString(),
-      )
-    ) {
-      setSelectedSourceChain(selectedDestinationChain);
-    } else {
-      notificationApi({
-        variant: 'warning',
-        message: `Bridging from ${selectedDestinationChain.name} is not supported`,
-      });
-    }
+    setSelectedSourceChain(selectedDestinationChain);
+    setSelectedDestinationChain(selectedSourceChain);
   };
-
-  console.debug('tokens', tokens);
 
   const assets: AssetConfig[] = useMemo(() => {
     const tokenConfigs = tokens.map((token) => {
-      const typedChainId = calculateTypedChainId(
+      const sourceTypedChainId = calculateTypedChainId(
         selectedSourceChain.chainType,
         selectedSourceChain.id,
       );
 
-      const balance = balances?.[typedChainId]?.find(
-        (tokenBalance: TokenBalanceType) =>
-          tokenBalance.address === token.address,
-      )?.balance;
+      const balance =
+        sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
+          ? accountBalance
+          : balances?.[sourceTypedChainId]?.find(
+              (tokenBalance: TokenBalanceType) =>
+                tokenBalance.address === token.address,
+            )?.balance;
+
+      const selectedChainExplorerUrl =
+        selectedSourceChain.blockExplorers?.default;
+
+      const tokenExplorerUrl = makeExplorerUrl(
+        selectedChainExplorerUrl?.url ?? '',
+        token.address,
+        'address',
+        'web3',
+      );
 
       return {
         symbol: token.tokenType,
         optionalSymbol: token.tokenSymbol,
-        balance: balance ?? undefined,
-        explorerUrl: '',
+        balance: balance ? parseFloat(balance.toString()).toFixed(3) : '',
+        explorerUrl:
+          sourceTypedChainId !== PresetTypedChainId.TangleMainnetEVM
+            ? tokenExplorerUrl
+            : undefined,
         address: token.address,
+        assetBridgeType:
+          sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
+            ? ''
+            : token.bridgeType === EVMTokenBridgeEnum.Router
+              ? '(Router Protocol)'
+              : token.bridgeType === EVMTokenBridgeEnum.Hyperlane
+                ? '(Hyperlane)'
+                : '',
       };
     });
 
     return tokenConfigs;
-  }, [tokens, balances, selectedSourceChain]);
+  }, [tokens, selectedSourceChain.chainType, selectedSourceChain.id, balances]);
 
-  const selectedTokenBalance = useMemo(() => {
-    const typedChainId = calculateTypedChainId(
+  const onSelectToken = (asset: AssetConfig) => {
+    const tokenConfig = tokens.find((token) => token.address === asset.address);
+    if (tokenConfig) {
+      setSelectedToken(tokenConfig);
+    }
+  };
+
+  const selectedTokenBalanceOnSourceChain = useMemo(() => {
+    const balance = assets.find(
+      (asset) => asset.address === selectedToken.address,
+    )?.balance;
+
+    return balance ? parseFloat(balance) : 0;
+  }, [selectedSourceChain, selectedToken, assets]);
+
+  const balanceBridgeType = useMemo(() => {
+    const sourceTypedChainId = calculateTypedChainId(
       selectedSourceChain.chainType,
       selectedSourceChain.id,
     );
 
-    console.debug('balances?.[typedChainId]', typedChainId);
-
-    return balances?.[typedChainId]?.find(
-      (tokenBalance: TokenBalanceType) =>
-        tokenBalance.address === selectedToken.address,
-    );
-  }, [balances, selectedSourceChain, selectedToken]);
-
-  console.debug('selectedTokenBalance', selectedTokenBalance);
-
-  const handleSwitchChains = () => {
-    const tempSourceChain = selectedSourceChain;
-    const destChainTypedId = calculateTypedChainId(
-      selectedDestinationChain.chainType,
-      selectedDestinationChain.id,
-    );
-
-    if (Object.keys(BRIDGE_CHAINS).includes(destChainTypedId.toString())) {
-      setSelectedSourceChain(selectedDestinationChain);
-      setSelectedDestinationChain(tempSourceChain);
-    } else {
-      notificationApi({
-        variant: 'warning',
-        message: `Bridging from ${selectedDestinationChain.name} is not supported`,
-      });
-    }
-  };
-
-  const handleAmountChange = (value: string) => {
-    // Allow any numeric input
-    if (value === '' || /^\d*\.?\d*$/.test(value)) {
-      try {
-        const newAmount = value === '' ? null : new BN(value);
-        setAmount(newAmount);
-
-        // Just check if amount exceeds balance but don't prevent input
-        const myBalance = selectedTokenBalance?.balance || new BN(0);
-        if (newAmount) {
-          setIsAmountInputError(newAmount.gt(myBalance));
-        } else {
-          setIsAmountInputError(false);
-        }
-      } catch (e) {
-        // Handle invalid number conversion
-        setIsAmountInputError(true);
-      }
-    }
-  };
-
-  const handleMaxClick = () => {
-    if (selectedTokenBalance?.balance) {
-      setAmount(selectedTokenBalance.balance);
-      setIsAmountInputError(false);
-    }
-  };
+    return sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
+      ? ''
+      : selectedToken.bridgeType === EVMTokenBridgeEnum.Router
+        ? '(Router Protocol)'
+        : selectedToken.bridgeType === EVMTokenBridgeEnum.Hyperlane
+          ? '(Hyperlane)'
+          : '';
+  }, [selectedSourceChain, selectedToken]);
 
   return (
-    <div className="container mx-auto px-4 py-4">
+    <>
       <Card
         withShadow
         className={twMerge(
-          'w-full max-w-[480px] mx-auto p-4',
-          'bg-mono-0 dark:bg-mono-180',
+          'flex flex-col gap-7 w-full max-w-[560px] mx-auto',
           className,
         )}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-bold text-mono-200 dark:text-mono-0">
-            Bridge
-          </h1>
-        </div>
-
-        {/* Chain Selectors */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex-1">
-            <SelectCard
-              label="From"
-              icon={<ChainIcon name={selectedSourceChain.name} size="2xl" />}
-              title={
-                selectedSourceChain.displayName ?? selectedSourceChain.name
-              }
-              onClick={openSourceChainModal}
-              // Remove the disabled condition
-              disabled={false}
-            />
+        <div className="flex flex-col gap-7">
+          {/* Source and Destination Chain Selector */}
+          <div className="flex flex-col md:flex-row justify-center md:justify-between items-center md:items-end md:gap-3">
+            <div className="flex flex-col gap-2 flex-1 w-full">
+              <Label
+                className="text-mono-120 dark:text-mono-120 font-bold text-lg"
+                htmlFor="bridge-source-chain-selector"
+              >
+                From
+              </Label>
+              <ChainOrTokenButton
+                value={
+                  selectedSourceChain.displayName ?? selectedSourceChain.name
+                }
+                className="w-full min-h-[70px] dark:bg-mono-180 py-0"
+                iconType="chain"
+                onClick={openSourceChainModal}
+                disabled={sourceChains.length <= 1}
+                textClassName="leading-8 text-[20px]"
+              />
+            </div>
+            <div
+              className="flex-shrink cursor-pointer px-1 pt-5 md:pt-0 md:pb-5"
+              onClick={onSwitchChains}
+            >
+              <ArrowRight size="lg" className="rotate-90 md:rotate-0" />
+            </div>
+            <div className="flex flex-col gap-2 flex-1 w-full">
+              <Label
+                className="text-mono-120 dark:text-mono-120 font-bold text-lg"
+                htmlFor="bridge-destination-chain-selector"
+              >
+                To
+              </Label>
+              <ChainOrTokenButton
+                value={
+                  selectedDestinationChain.displayName ??
+                  selectedDestinationChain.name
+                }
+                className="w-full min-h-[70px] dark:bg-mono-180 py-0"
+                iconType="chain"
+                onClick={openDestinationChainModal}
+                disabled={destinationChains.length <= 1}
+                textClassName="leading-8 text-[20px]"
+              />
+            </div>
           </div>
 
-          <button
-            onClick={handleSwitchChains}
-            className="p-2 rounded-full bg-mono-20 hover:bg-mono-40 dark:bg-mono-160 dark:hover:bg-mono-140 transition-colors mt-7"
-            disabled={!selectedDestinationChain || sourceChains.length <= 1}
+          {/* Sending Amount and Token Selector */}
+          <div className="flex flex-col gap-2">
+            <div
+              className={twMerge(
+                'w-full flex items-center gap-2 rounded-lg pr-4',
+                'bg-mono-20 dark:bg-mono-180',
+                isAmountInputError && 'border border-red-70 dark:border-red-50',
+              )}
+            >
+              <AmountInput
+                id="bridge-amount-input"
+                title="Send"
+                amount={amount}
+                setAmount={setAmount}
+                wrapperOverrides={{
+                  isFullWidth: true,
+                }}
+                placeholder=""
+                wrapperClassName="!pr-0 !border-0 dark:bg-mono-180"
+                max={
+                  balance
+                    ? convertDecimalToBn(
+                        new Decimal(selectedTokenBalanceOnSourceChain),
+                        selectedToken.decimals,
+                      )
+                    : null
+                }
+                maxErrorMessage="Insufficient balance"
+                // min={}
+                decimals={selectedToken.decimals}
+                minErrorMessage="Amount too small"
+                setErrorMessage={(error) =>
+                  setIsAmountInputError(error ? true : false)
+                }
+              />
+              <ChainOrTokenButton
+                value={selectedToken.tokenType}
+                iconType="token"
+                onClick={openTokenModal}
+                className="w-fit py-2"
+                status="success"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1 justify-center items-end">
+              <Typography variant="body1">
+                Balance:{' '}
+                {selectedTokenBalanceOnSourceChain !== null
+                  ? `${Number(selectedTokenBalanceOnSourceChain).toFixed(3)} ${selectedToken.tokenType} ${balanceBridgeType}`
+                  : EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
+            </div>
+          </div>
+
+          {/* Address Input */}
+          <AddressInput
+            id="bridge-destination-address-input"
+            type={AddressType.EVM}
+            title="Recipient"
+            wrapperOverrides={{
+              isFullWidth: true,
+              wrapperClassName: 'dark:bg-mono-180',
+            }}
+            value={destinationAddress ?? ''}
+            setValue={setDestinationAddress}
+            // setErrorMessage={(error) =>
+            //   setIsAddressInputError(error ? true : false)
+            // }
+          />
+
+          {/* Bridge Button */}
+          <Button
+            isFullWidth
+            // isDisabled={isDisabled}
+            // isLoading={isLoading}
+            // onClick={buttonAction}
+            // loadingText={buttonLoadingText}
           >
-            <ArrowDownIcon className="w-4 h-4 text-mono-200 dark:text-mono-0 -rotate-90" />
-          </button>
-
-          <div className="flex-1">
-            <SelectCard
-              label="To"
-              icon={
-                selectedDestinationChain ? (
-                  <ChainIcon
-                    name={selectedDestinationChain.displayName}
-                    size="2xl"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-mono-40 dark:bg-mono-140" />
-                )
-              }
-              title={
-                selectedDestinationChain
-                  ? (selectedDestinationChain.displayName ??
-                    selectedDestinationChain.name)
-                  : 'Select chain'
-              }
-              onClick={openDestinationChainModal}
-              disabled={destinationChains.length <= 1}
-            />
-          </div>
+            Bridge
+            {/* {buttonText} */}
+          </Button>
         </div>
-
-        {/* Amount Input */}
-        <TokenAmountInput
-          tokenIcon={<TokenIcon name={selectedToken.tokenType} size="2xl" />}
-          tokenSymbol={selectedToken.tokenSymbol}
-          onTokenClick={openTokenModal}
-          amount={amount?.toString() ?? ''}
-          onAmountChange={handleAmountChange}
-          balance={selectedTokenBalance?.balance.toString()}
-          maxAmount={selectedTokenBalance?.balance.toString()}
-          onMaxClick={handleMaxClick}
-          error={isAmountInputError}
-          usdValue={amount ? `$${0.0}` : undefined} // TODO: Implement price calculation
-        />
-
-        {/* Error Message */}
-        {isAmountInputError && (
-          <div className="flex items-center gap-2 p-2 mt-2 rounded-lg bg-red-10 dark:bg-red-120/20">
-            <ExclamationTriangleIcon className="w-4 h-4 text-red-70 dark:text-red-50" />
-            <span className="text-sm text-red-70 dark:text-red-50">
-              Insufficient funds
-            </span>
-          </div>
-        )}
-
-        {/* Bridge Button */}
-        <ActionButton
-          onClick={() => {
-            /* TODO: Implement bridge action */
-          }}
-          disabled={!amount || amount.isZero() || !selectedDestinationChain}
-          loading={false}
-          className="mt-4"
-        >
-          {isAmountInputError ? 'Insufficient funds' : 'Bridge'}
-        </ActionButton>
       </Card>
-      {/* Modals */}
+
       <Modal>
         {/* Source Chain Selector */}
         <ModalContent
           isOpen={isSourceChainModalOpen}
           onInteractOutside={closeSourceChainModal}
-          size="sm"
-          className="bg-mono-0 dark:bg-mono-180"
+          size="md"
         >
           <ChainList
             searchInputId="bridge-source-chain-search"
@@ -335,8 +349,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
         <ModalContent
           isOpen={isDestinationChainModalOpen}
           onInteractOutside={closeDestinationChainModal}
-          size="sm"
-          className="bg-mono-0 dark:bg-mono-180"
+          size="md"
         >
           <ChainList
             searchInputId="bridge-destination-chain-search"
@@ -351,16 +364,15 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
         <ModalContent
           isOpen={isTokenModalOpen}
           onInteractOutside={closeTokenModal}
-          size="sm"
-          className="bg-mono-0 dark:bg-mono-180"
+          size="md"
         >
-          {/* <AssetList
+          <AssetList
             onClose={closeTokenModal}
             assets={assets}
-            onSelectAsset={setSelectedToken}
-          /> */}
+            onSelectAsset={onSelectToken}
+          />
         </ModalContent>
       </Modal>
-    </div>
+    </>
   );
 }
