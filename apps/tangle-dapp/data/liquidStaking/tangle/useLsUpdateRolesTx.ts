@@ -54,9 +54,8 @@ const useLsUpdateRolesTx = () => {
         throw new Error('At least one address change must occur');
       }
 
+      // The precompile logic will interpret a 0x address as a no-op.
       const noop = '0x';
-
-      // TODO: If the address is already an EVM address, need to figure out how to extend it from EVM address 20 -> 32.
 
       const rootEvmAddress32 =
         context.rootAddress === undefined

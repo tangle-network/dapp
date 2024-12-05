@@ -1,5 +1,6 @@
 import { isAddress } from '@polkadot/util-crypto';
 import {
+  isSubstrateAddress,
   Modal,
   ModalBody,
   ModalContent,
@@ -8,7 +9,6 @@ import {
   TANGLE_DOCS_LS_UPDATE_ROLES_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import AddressInput, { AddressType } from '../components/AddressInput';
@@ -56,13 +56,23 @@ const LsUpdateRolesModal: FC<LsUpdateRolesModalProps> = ({
       return;
     }
 
-    // TODO: Handle each address, if at least one is set.
+    const rootSubstrateAddress = isSubstrateAddress(rootAddress)
+      ? rootAddress
+      : undefined;
+
+    const nominatorSubstrateAddress = isSubstrateAddress(nominatorAddress)
+      ? nominatorAddress
+      : undefined;
+
+    const bouncerSubstrateAddress = isSubstrateAddress(bouncerAddress)
+      ? bouncerAddress
+      : undefined;
 
     await execute({
       poolId,
-      rootAddress: assertSubstrateAddress(rootAddress),
-      nominatorAddress: assertSubstrateAddress(nominatorAddress),
-      bouncerAddress: assertSubstrateAddress(bouncerAddress),
+      rootAddress: rootSubstrateAddress,
+      nominatorAddress: nominatorSubstrateAddress,
+      bouncerAddress: bouncerSubstrateAddress,
     });
   }, [bouncerAddress, execute, isReady, poolId, nominatorAddress, rootAddress]);
 
