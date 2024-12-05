@@ -18,7 +18,7 @@ export default defineConfig({
       entryRoot: './',
       tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
     }),
-    svgr(),
+    svgr({ svgrOptions: { exportType: 'default' }, include: '**/*.svg' }),
   ],
 
   // Uncomment this if you are using workers.

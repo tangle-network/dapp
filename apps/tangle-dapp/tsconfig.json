@@ -18,10 +18,7 @@
         "name": "next"
       }
     ],
-    "types": [
-      "jest",
-      "node"
-    ],
+    "types": ["jest", "node"],
     "skipLibCheck": true
   },
   "include": [
@@ -36,8 +33,7 @@
     "../../types/global.d.ts",
     ".next/types/**/*.ts",
     "../../jest.setup.ts",
-    "eslint.config.cjs",
-    "dist/types/**/*.ts"
+    "eslint.config.cjs"
   ],
   "exclude": [
     "node_modules",

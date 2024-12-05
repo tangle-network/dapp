@@ -129,8 +129,6 @@ const nextConfig = {
 
     return config;
   },
-
-  distDir: process.env.NODE_ENV === 'production' ? 'dist' : 'dist-dev',
 };
 
 /** @type {(import('@nx/next').withNx | ReturnType<import('@next/bundle-analyzer')>)[]} */
