@@ -1,5 +1,5 @@
 import {
-  isSubstrateAddress,
+  isValidAddress,
   Modal,
   ModalBody,
   ModalContent,
@@ -7,9 +7,7 @@ import {
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { isAddress } from 'viem';
 
 import useLsSetCommissionTx from '../../data/liquidStaking/tangle/useLsSetCommissionTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
@@ -42,18 +40,13 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
     commission !== currentCommissionFractional &&
     status !== TxStatus.PROCESSING &&
     payeeAccountAddress !== '' &&
-    !isDestinationInputError;
+    !isDestinationInputError &&
+    isValidAddress(payeeAccountAddress);
 
   const handleUpdateCommissionClick = useCallback(() => {
     if (!isReady) {
       return;
     }
-
-    // If it's ready, then the address must be either a valid
-    // Substrate or EVM address.
-    assert(
-      isSubstrateAddress(payeeAccountAddress) || isAddress(payeeAccountAddress),
-    );
 
     return execute({
       poolId,

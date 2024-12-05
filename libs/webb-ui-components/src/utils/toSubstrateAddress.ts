@@ -1,13 +1,8 @@
-import {
-  encodeAddress,
-  evmToAddress,
-  isEthereumAddress,
-} from '@polkadot/util-crypto';
-import assert from 'assert';
+import { encodeAddress, evmToAddress } from '@polkadot/util-crypto';
 
-import { SubstrateAddress } from '../types/address';
+import { AnyAddress, SubstrateAddress } from '../types/address';
 import assertSubstrateAddress from './assertSubstrateAddress';
-import { isSubstrateAddress } from './isSubstrateAddress';
+import { isEvmAddress } from './isEvmAddress';
 
 /**
  * Converts an EVM address to a Substrate address.
@@ -26,24 +21,20 @@ import { isSubstrateAddress } from './isSubstrateAddress';
  * Substrate address, it will be returned as is.
  */
 export const toSubstrateAddress = (
-  address: string,
+  address: AnyAddress,
   ss58Format?: number,
 ): SubstrateAddress => {
   // If it's an EVM address, convert it to a Substrate address.
-  if (isEthereumAddress(address)) {
+  if (isEvmAddress(address)) {
     // Different SS58 formats can be used for different networks,
     // which still represents the same account, but look different.
     return assertSubstrateAddress(evmToAddress(address, ss58Format));
   }
-
-  // Otherwise, it must be a valid Substrate address.
-  assert(
-    isSubstrateAddress(address),
-    'Address that is neither an EVM nor a Substrate address was provided (did you forget to validate an input address from the user?)',
-  );
-
-  // Process the address with the given SS58 format, in
-  // case that the SS58 format given differs from that of the
-  // address.
-  return assertSubstrateAddress(encodeAddress(address, ss58Format));
+  // Otherwise, it must be a Substrate address.
+  else {
+    // Process the address with the given SS58 format, in
+    // case that the SS58 format given differs from that of the
+    // address.
+    return assertSubstrateAddress(encodeAddress(address, ss58Format));
+  }
 };

@@ -13,6 +13,14 @@ type ReturnType = {
 const useAgnosticAccountInfo = (): ReturnType => {
   const activeAccountAddress = useActiveAccountAddress();
 
+  if (activeAccountAddress === null) {
+    return {
+      isEvm: null,
+      substrateAddress: null,
+      evmAddress: null,
+    };
+  }
+
   const isEvm =
     activeAccountAddress === null ? null : isEvmAddress(activeAccountAddress);
 

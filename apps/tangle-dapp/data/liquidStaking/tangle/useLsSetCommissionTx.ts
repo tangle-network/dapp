@@ -1,6 +1,5 @@
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
 import { useCallback } from 'react';
-import { Address } from 'viem';
 
 import { TxName } from '../../../constants';
 import {
@@ -12,7 +11,7 @@ import { toSubstrateAddress } from '../../../utils';
 export type LsPoolSetCommissionTxContext = {
   poolId: number;
   commissionFractional: number;
-  payeeAccountAddress: SubstrateAddress | Address;
+  payeeAccountAddress: AnyAddress;
 };
 
 const useLsSetCommissionTx = () => {

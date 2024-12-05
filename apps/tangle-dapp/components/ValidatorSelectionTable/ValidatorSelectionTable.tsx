@@ -50,6 +50,7 @@ import { ContainerSkeleton } from '..';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorSelectionTableProps } from './types';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 
 const columnHelper = createColumnHelper<Validator>();
 
@@ -86,7 +87,9 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   // Sync the selected validators with the parent state.
   useEffect(() => {
     startTransition(() => {
-      setSelectedValidators(new Set(Object.keys(rowSelection)));
+      setSelectedValidators(
+        new Set(Object.keys(rowSelection).map(assertSubstrateAddress)),
+      );
     });
   }, [rowSelection, setSelectedValidators]);
 
