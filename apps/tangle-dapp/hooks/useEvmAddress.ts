@@ -1,4 +1,4 @@
-import { isEvmAddress32, toEvmAddress20 } from '@webb-tools/webb-ui-components';
+import { isEvmAddress20, toEvmAddress20 } from '@webb-tools/webb-ui-components';
 import { EvmAddress20 } from '@webb-tools/webb-ui-components/types/address';
 import { useMemo } from 'react';
 
@@ -18,12 +18,11 @@ const useEvmAddress20 = (): EvmAddress20 | null => {
     // that the active account is an EVM account.
     if (
       activeAccountAddress === null ||
-      !isEvmAddress32(activeAccountAddress)
+      !isEvmAddress20(activeAccountAddress)
     ) {
       return null;
     }
 
-    // TODO: May need to convert to an EVM address, in case that the active account is a EVM account. See https://github.com/webb-tools/tangle/issues/379 for more details.
     return toEvmAddress20(activeAccountAddress);
   }, [activeAccountAddress]);
 
