@@ -16,7 +16,9 @@ const ListStatus: FC<ListStatusProps> = ({ title, description, className }) => {
         className,
       )}
     >
-      🔍
+      <span role="img" aria-label={title}>
+        🔍
+      </span>
       <Typography
         variant="h5"
         fw="bold"

@@ -21,9 +21,10 @@ const AddressLink: FC<AddressLinkProps> = ({ address }) => {
   return (
     <a
       href={href}
+      rel="noopener noreferrer"
       target="_blank"
       onClick={handleClick}
-      className="flex gap-1 items-center justify-start hover:underline"
+      className="flex items-center justify-start gap-1 hover:underline"
     >
       <Typography variant="body1" fw="normal" className="dark:text-mono-0">
         {shortenString(address, 6)}

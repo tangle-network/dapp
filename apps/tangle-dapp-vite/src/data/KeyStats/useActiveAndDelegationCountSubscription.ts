@@ -49,7 +49,7 @@ export default function useActiveAndDelegationCountSubscription(
                   continue;
                 }
 
-                exposure.others.map(({ who }) => {
+                exposure.others.forEach(({ who }) => {
                   nominators.add(who.toString());
                 });
               }

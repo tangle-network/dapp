@@ -129,6 +129,8 @@ const nextConfig = {
 
     return config;
   },
+
+  distDir: '../../dist/apps/tangle-dapp',
 };
 
 /** @type {(import('@nx/next').withNx | ReturnType<import('@next/bundle-analyzer')>)[]} */

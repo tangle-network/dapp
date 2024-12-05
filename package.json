@@ -176,6 +176,7 @@
     "classnames": "^2.5.1",
     "copy-to-clipboard": "^3.3.3",
     "date-fns": "^4.1.0",
+    "esbuild": "^0.24.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.19",
     "eslint-config-prettier": "^9.1.0",

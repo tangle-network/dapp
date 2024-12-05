@@ -19,7 +19,7 @@ const HyperlaneWarpContext: FC<PropsWithChildren> = ({ children }) => {
     initHyperlane();
   }, []);
 
-  return <>{children}</>;
+  return children;
 };
 
 export default HyperlaneWarpContext;

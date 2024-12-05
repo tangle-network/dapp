@@ -75,19 +75,17 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
           ) : error !== null ? (
             'Error'
           ) : children === null ? null : (
-            <>
-              <Typography
-                variant="h4"
-                fw="bold"
-                className="text-mono-140 dark:text-mono-40"
-              >
-                {prefix}
+            <Typography
+              variant="h4"
+              fw="bold"
+              className="text-mono-140 dark:text-mono-40"
+            >
+              {prefix}
 
-                {children}
+              {children}
 
-                {suffix}
-              </Typography>
-            </>
+              {suffix}
+            </Typography>
           )}
         </div>
       </div>

@@ -98,6 +98,8 @@ const nextConfig = {
 
     return config;
   },
+
+  distDir: '../../dist/apps/tangle-cloud',
 };
 
 /** @type {(import('@nx/next').withNx | ReturnType<import('@next/bundle-analyzer')>)[]} */

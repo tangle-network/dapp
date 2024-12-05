@@ -18724,7 +18724,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0":
+"esbuild@npm:^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0, esbuild@npm:^0.24.0":
   version: 0.24.0
   resolution: "esbuild@npm:0.24.0"
   dependencies:
@@ -33932,6 +33932,7 @@ __metadata:
     date-fns: "npm:^4.1.0"
     decimal.js: "npm:^10.4.3"
     detect-browser: "npm:^5.3.0"
+    esbuild: "npm:^0.24.0"
     eslint: "npm:^8.57.1"
     eslint-config-next: "npm:^14.2.19"
     eslint-config-prettier: "npm:^9.1.0"

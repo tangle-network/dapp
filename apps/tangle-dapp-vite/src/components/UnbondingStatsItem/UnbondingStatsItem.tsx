@@ -47,7 +47,7 @@ const UnbondingStatsItem: FC = () => {
       );
     });
 
-    return <>{elements}</>;
+    return elements;
   }, [unbondingEntriesOpt, nativeTokenSymbol]);
 
   const balance =

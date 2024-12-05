@@ -263,51 +263,49 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   const table = useReactTable(tableProps);
 
   return (
-    <>
-      <div className="flex flex-col gap-2">
-        <Input
-          id="search-validators-selection"
-          rightIcon={<Search className="mr-2" />}
-          placeholder="Search validators..."
-          value={searchQuery}
-          onChange={setSearchQuery}
-          className="mb-1"
-          isControlled
-        />
+    <div className="flex flex-col gap-2">
+      <Input
+        id="search-validators-selection"
+        rightIcon={<Search className="mr-2" />}
+        placeholder="Search validators..."
+        value={searchQuery}
+        onChange={setSearchQuery}
+        className="mb-1"
+        isControlled
+      />
 
-        {isLoading && <ContainerSkeleton className="h-[340px] w-full" />}
+      {isLoading && <ContainerSkeleton className="h-[340px] w-full" />}
 
-        {!isLoading &&
-          (allValidators.length === 0 ? (
-            <div className="h-[340px] flex items-center justify-center">
-              <Typography variant="body1" fw="normal">
-                No results found
-              </Typography>
-            </div>
-          ) : (
-            <Table
-              variant={TableVariant.NESTED_IN_MODAL}
-              tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
-              paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
-              tableWrapperClassName="max-h-[340px] overflow-y-scroll"
-              tableProps={table}
-              isPaginated
-              title={pluralize('validator', allValidators.length !== 1)}
-            />
-          ))}
+      {!isLoading &&
+        (allValidators.length === 0 ? (
+          <div className="h-[340px] flex items-center justify-center">
+            <Typography variant="body1" fw="normal">
+              No results found
+            </Typography>
+          </div>
+        ) : (
+          <Table
+            variant={TableVariant.NESTED_IN_MODAL}
+            tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
+            paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
+            tableWrapperClassName="max-h-[340px] overflow-y-scroll"
+            tableProps={table}
+            isPaginated
+            title={pluralize('validator', allValidators.length !== 1)}
+          />
+        ))}
 
-        {!isLoading && allValidators.length > 0 && (
-          <Typography
-            variant="body1"
-            fw="normal"
-            className="text-mono-200 dark:text-mono-0"
-          >
-            Selected: {Object.keys(rowSelection).length}/
-            {table.getPreFilteredRowModel().rows.length}
-          </Typography>
-        )}
-      </div>
-    </>
+      {!isLoading && allValidators.length > 0 && (
+        <Typography
+          variant="body1"
+          fw="normal"
+          className="text-mono-200 dark:text-mono-0"
+        >
+          Selected: {Object.keys(rowSelection).length}/
+          {table.getPreFilteredRowModel().rows.length}
+        </Typography>
+      )}
+    </div>
   );
 };
 
