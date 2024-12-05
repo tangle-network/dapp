@@ -15,7 +15,6 @@ import { combineLatest, Subscription } from 'rxjs';
 
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import EligibleSection from './EligibleSection';
-import Layout from './layout';
 import NotEligibleSection from './NotEligibleSection';
 import type { ClaimInfoType } from './types';
 

@@ -10,6 +10,8 @@ import ClaimSuccessPage from '../pages/claim/success';
 import NominationPage from '../pages/nomination';
 import ValidatorDetailsPage from '../pages/nomination/[validatorAddress]';
 import NominationLayout from '../pages/nomination/layout';
+import BridgeLayout from '../pages/bridge/layout';
+import BridgePage from '../pages/bridge';
 import { PagePath } from '../types';
 import Providers from './providers';
 
@@ -39,6 +41,10 @@ export function App() {
                 path={PagePath.NOMINATION_VALIDATOR}
                 element={<ValidatorDetailsPage />}
               />
+            </Route>
+
+            <Route path={PagePath.BRIDGE} element={<BridgeLayout />}>
+              <Route index element={<BridgePage />} />
             </Route>
           </Routes>
           {/* END: routes */}
