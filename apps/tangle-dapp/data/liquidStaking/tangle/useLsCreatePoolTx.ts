@@ -1,4 +1,5 @@
 import { BN } from '@polkadot/util';
+import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
 import toEvmAddress32 from '@webb-tools/webb-ui-components/utils/toEvmAddress32';
 import { useCallback } from 'react';
@@ -8,7 +9,6 @@ import { Precompile } from '../../../constants/evmPrecompiles';
 import useAgnosticTx from '../../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../../hooks/useSubstrateTx';
-import { toSubstrateAddress } from '../../../utils';
 
 export type LsCreatePoolTxContext = {
   name?: string;

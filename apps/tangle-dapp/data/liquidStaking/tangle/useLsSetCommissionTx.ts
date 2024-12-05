@@ -1,3 +1,4 @@
+import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
 import { useCallback } from 'react';
 
@@ -6,7 +7,6 @@ import {
   SubstrateTxFactory,
   useSubstrateTxWithNotification,
 } from '../../../hooks/useSubstrateTx';
-import { toSubstrateAddress } from '../../../utils';
 
 export type LsPoolSetCommissionTxContext = {
   poolId: number;

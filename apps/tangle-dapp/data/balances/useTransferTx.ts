@@ -1,6 +1,10 @@
 import { BN } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 import {
+  toEvmAddress20,
+  toSubstrateAddress,
+} from '@webb-tools/webb-ui-components';
+import {
   EvmAddress20,
   SubstrateAddress,
 } from '@webb-tools/webb-ui-components/types/address';
@@ -15,7 +19,6 @@ import useEvmPrecompileFeeFetcher from '../../hooks/useEvmPrecompileFee';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { GetSuccessMessageFunction } from '../../types';
-import { toEvmAddress20, toSubstrateAddress } from '../../utils';
 
 type TransferTxContext = {
   recipientAddress: SubstrateAddress | EvmAddress20;

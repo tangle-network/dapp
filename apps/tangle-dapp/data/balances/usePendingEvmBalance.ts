@@ -1,9 +1,9 @@
 import usePromise from '@webb-tools/tangle-shared-ui/hooks/usePromise';
+import { toEvmAddress20 } from '@webb-tools/webb-ui-components';
 import { useCallback, useMemo } from 'react';
 
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import useViemPublicClient from '../../hooks/useViemPublicClient';
-import { toEvmAddress20 } from '../../utils';
 
 /**
  * See more here:
