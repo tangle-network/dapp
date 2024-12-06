@@ -62,7 +62,7 @@ export function useDynamicSVGImport(
           setImportedIcon(<Icon />);
           onCompleted?.(name_, Icon);
         } else {
-          console.error('IMPORT ERROR', (err as any).message);
+          console.error('IMPORT ERROR', err);
           onError?.(err as any);
           setError(err as Error);
         }
@@ -71,7 +71,7 @@ export function useDynamicSVGImport(
       }
     };
 
-    importIcon();
+    importIcon().catch(console.error);
   }, [name_, onCompleted, onError, type]);
 
   return { error, loading, svgElement: importedIcon };

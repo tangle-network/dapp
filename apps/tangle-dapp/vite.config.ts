@@ -3,9 +3,12 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import react from '@vitejs/plugin-react-swc';
-import path from 'path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig, UserConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   root: __dirname,
@@ -65,5 +68,6 @@ export default defineConfig({
       reportsDirectory: '../../coverage/apps/tangle-dapp',
       provider: 'v8',
     },
+    setupFiles: [resolve(__dirname, 'src/utils/setupTest.ts')],
   },
 });
