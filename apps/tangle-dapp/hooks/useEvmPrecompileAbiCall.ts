@@ -21,7 +21,7 @@ import {
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 
-export type AbiCallArg = string | number | BN | boolean;
+export type AbiCallArg = string | number | BN | boolean | AbiCallArg[];
 
 export type AbiEncodeableValue = string | number | boolean | bigint;
 

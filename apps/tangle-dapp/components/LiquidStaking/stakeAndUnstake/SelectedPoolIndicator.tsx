@@ -27,7 +27,6 @@ const SelectedPoolIndicator: FC<SelectedPoolIndicatorProps> = ({ onClick }) => {
     >
       {activePool !== null && (
         <LstIcon lsProtocolId={lsProtocolId} iconUrl={activePool.iconUrl} />
-        // <LsTokenIcon hasRainbowBorder name={selectedProtocol.token} />
       )}
 
       <Typography variant="h5" fw="bold" className="whitespace-nowrap">

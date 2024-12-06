@@ -724,14 +724,14 @@ export const LST_PRECOMPILE_ABI: AbiFunction<Precompile.LST>[] = [
         type: 'bytes32',
       },
       {
-        internalType: 'bytes',
+        internalType: 'uint8[]',
         name: 'name',
-        type: 'bytes',
+        type: 'uint8[]',
       },
       {
-        internalType: 'bytes',
+        internalType: 'uint8[]',
         name: 'icon',
-        type: 'bytes',
+        type: 'uint8[]',
       },
     ],
     name: 'create',

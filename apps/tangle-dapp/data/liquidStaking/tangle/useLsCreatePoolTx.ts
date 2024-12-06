@@ -3,7 +3,6 @@ import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
 import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
 import { useCallback } from 'react';
-import { toHex } from 'viem';
 
 import { TxName } from '../../../constants';
 import { Precompile } from '../../../constants/evmPrecompiles';
@@ -36,12 +35,22 @@ const useLsCreatePoolTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.LST, LsCreatePoolTxContext> =
     useCallback((context) => {
       const rootEvmAddress32 = toSubstrateBytes32Address(context.rootAddress);
+
       const nominatorEvmAddress32 = toSubstrateBytes32Address(
         context.nominatorAddress,
       );
+
       const bouncerEvmAddress32 = toSubstrateBytes32Address(
         context.bouncerAddress,
       );
+
+      // Use TextEncoder to handle non-ASCII characters.
+      const encoder = new TextEncoder();
+
+      const name = context.name ?? '';
+      const iconUrl = context.iconUrl ?? '';
+      const nameArray = Array.from(encoder.encode(name));
+      const iconUrlArray = Array.from(encoder.encode(iconUrl));
 
       return {
         functionName: 'create',
@@ -50,10 +59,8 @@ const useLsCreatePoolTx = () => {
           rootEvmAddress32,
           nominatorEvmAddress32,
           bouncerEvmAddress32,
-          // Strings are NOT automatically encoded to bytes in Viem.
-          // Manually convert them to hex here.
-          toHex(context.name ?? ''),
-          toHex(context.iconUrl ?? ''),
+          nameArray,
+          iconUrlArray,
         ],
       };
     }, []);

@@ -11,7 +11,6 @@ import {
   ModalHeader,
   TANGLE_DOCS_LS_CREATE_POOL_URL,
 } from '@webb-tools/webb-ui-components';
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import AddressInput, { AddressType } from '../components/AddressInput';
@@ -86,9 +85,9 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
       name: finalName,
       iconUrl: finalIconUrl,
       initialBondAmount,
-      rootAddress: assertSubstrateAddress(rootAddress),
-      nominatorAddress: assertSubstrateAddress(nominatorAddress),
-      bouncerAddress: assertSubstrateAddress(bouncerAddress),
+      rootAddress,
+      nominatorAddress,
+      bouncerAddress,
     });
   }, [
     bouncerAddress,
@@ -178,7 +177,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
             id="ls-create-pool-root-address"
             title="Root Address"
             tooltip="The root is the administrator of the pool with full control over its operations, including updating roles, and commission setup."
-            type={AddressType.Substrate}
+            type={AddressType.Both}
             value={rootAddress}
             setValue={setRootAddress}
             wrapperOverrides={{ isFullWidth: true }}
@@ -188,7 +187,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
             id="ls-create-pool-nominator-address"
             title="Nominator Address"
             tooltip="The nominator is responsible for selecting validators on behalf of the pool. Their role is critical in optimizing rewards for the pool members by choosing high-performing and secure validators."
-            type={AddressType.Substrate}
+            type={AddressType.Both}
             value={nominatorAddress ?? ''}
             setValue={setNominatorAddress}
             wrapperOverrides={{ isFullWidth: true }}
@@ -198,7 +197,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
             id="ls-create-pool-bouncer-address"
             title="Bouncer Address"
             tooltip="The bouncer is responsible for managing the entry and exit of participants into the pool. They can block or allow participants, as well as manage pool access settings."
-            type={AddressType.Substrate}
+            type={AddressType.Both}
             value={bouncerAddress ?? ''}
             setValue={setBouncerAddress}
             wrapperOverrides={{ isFullWidth: true }}
