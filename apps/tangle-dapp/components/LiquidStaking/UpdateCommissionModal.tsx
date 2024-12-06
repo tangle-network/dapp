@@ -1,20 +1,16 @@
 import {
-  Button,
+  isValidAddress,
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
   ModalFooterActions,
   ModalHeader,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { isAddress } from 'viem';
 
 import useLsSetCommissionTx from '../../data/liquidStaking/tangle/useLsSetCommissionTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import isSubstrateAddress from '../../utils/isSubstrateAddress';
 import AddressInput, { AddressType } from '../AddressInput';
 import PercentageInput from '../PercentageInput';
 
@@ -44,18 +40,13 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
     commission !== currentCommissionFractional &&
     status !== TxStatus.PROCESSING &&
     payeeAccountAddress !== '' &&
-    !isDestinationInputError;
+    !isDestinationInputError &&
+    isValidAddress(payeeAccountAddress);
 
   const handleUpdateCommissionClick = useCallback(() => {
     if (!isReady) {
       return;
     }
-
-    // If it's ready, then the address must be either a valid
-    // Substrate or EVM address.
-    assert(
-      isSubstrateAddress(payeeAccountAddress) || isAddress(payeeAccountAddress),
-    );
 
     return execute({
       poolId,
@@ -118,27 +109,6 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
           onConfirm={handleUpdateCommissionClick}
           isConfirmDisabled={!isReady}
         />
-
-        <ModalFooter className="flex items-center gap-2">
-          <Button
-            isFullWidth
-            variant="secondary"
-            isDisabled={status === TxStatus.PROCESSING}
-            onClick={() => setIsOpen(false)}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            isFullWidth
-            onClick={handleUpdateCommissionClick}
-            isLoading={status === TxStatus.PROCESSING}
-            loadingText="Processing"
-            isDisabled={!isReady}
-          >
-            Confirm
-          </Button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );

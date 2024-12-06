@@ -13,7 +13,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChevronUp } from '@webb-tools/icons';
-import { Button, Table, Typography } from '@webb-tools/webb-ui-components';
+import {
+  AmountFormatStyle,
+  Button,
+  formatDisplayAmount,
+  Table,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -24,7 +30,6 @@ import TableCellWrapper from '../../components/tables/TableCellWrapper';
 import { LsPool, LsToken } from '../../constants/liquidStaking/types';
 import useLsPools from '../../data/liquidStaking/useLsPools';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
-import formatBn from '../../utils/formatBn';
 import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
 import pluralize from '../../utils/pluralize';
 import LsPoolsTable from './LsPoolsTable';
@@ -67,10 +72,10 @@ const PROTOCOL_COLUMNS = [
   COLUMN_HELPER.accessor('tvl', {
     header: () => 'Total Staked (TVL)',
     cell: (props) => {
-      const formattedTvl = formatBn(
+      const formattedTvl = formatDisplayAmount(
         props.getValue(),
         props.row.original.decimals,
-        { includeCommas: true },
+        AmountFormatStyle.SHORT,
       );
 
       const subtitle =

@@ -1,5 +1,7 @@
 import { Search } from '@webb-tools/icons';
 import {
+  AmountFormatStyle,
+  formatDisplayAmount,
   Input,
   ListItem,
   Modal,
@@ -15,7 +17,6 @@ import {
   LsPool,
   LsPoolDisplayName,
 } from '../../../constants/liquidStaking/types';
-import formatBn from '../../../utils/formatBn';
 import formatFractional from '../../../utils/formatFractional';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import { ListCardWrapper } from '../../Lists/ListCardWrapper';
@@ -148,12 +149,10 @@ const ListItems: FC<ListItemsProps> = ({ pools, onSelect, isSelfStaked }) => {
 
       const lsProtocol = getLsProtocolDef(pool.protocolId);
 
-      const stakeAmountString = formatBn(
+      const stakeAmountString = formatDisplayAmount(
         pool.totalStaked,
         lsProtocol.decimals,
-        {
-          withSi: true,
-        },
+        AmountFormatStyle.SI,
       );
 
       const stakeText = `${stakeAmountString} ${lsProtocol.token}`;

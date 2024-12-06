@@ -11,12 +11,12 @@ import {
   TANGLE_TESTNET_NATIVE_NETWORK,
 } from '@webb-tools/webb-ui-components/constants/networks';
 import { Network as TangleNetwork } from '@webb-tools/webb-ui-components/constants/networks';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 import {
   LsNetworkEntityAdapter,
   ProtocolEntity,
 } from '../../data/liquidStaking/adapter';
-import { SubstrateAddress } from '../../types/utils';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 
 export type LsParachainChainId =

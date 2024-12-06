@@ -1,3 +1,4 @@
+import { BN } from '@polkadot/util';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -5,14 +6,15 @@ import {
   type TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
+import { AmountFormatStyle } from '@webb-tools/webb-ui-components';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import formatTangleBalance from '../../../utils/formatTangleBalance';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import pluralize from '../../../utils/pluralize';
+import TokenAmountCell from '../../tableCells/TokenAmountCell';
 import type { Props, VaultAssetData } from './types';
 
 const columnHelper = createColumnHelper<VaultAssetData>();
@@ -32,10 +34,13 @@ const columns = [
   }),
   columnHelper.accessor('selfStake', {
     header: () => 'My Stake',
-    cell: (props) =>
-      formatTangleBalance(props.getValue(), undefined, {
-        decimals: props.row.original.decimals,
-      }),
+    cell: (props) => (
+      <TokenAmountCell
+        amount={new BN(props.getValue().toString())}
+        decimals={props.row.original.decimals}
+        formatStyle={AmountFormatStyle.SHORT}
+      />
+    ),
   }),
 ];
 

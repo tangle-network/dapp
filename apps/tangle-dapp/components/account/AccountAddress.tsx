@@ -9,6 +9,7 @@ import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
+  toSubstrateAddress,
   Typography,
   useHiddenValue,
 } from '@webb-tools/webb-ui-components';
@@ -20,7 +21,6 @@ import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
-import { toSubstrateAddress } from '../../utils';
 
 const AccountAddress: FC = () => {
   const { network } = useNetworkStore();

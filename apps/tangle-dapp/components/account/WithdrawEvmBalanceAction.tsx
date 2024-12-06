@@ -4,6 +4,7 @@ import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import RefundLineIcon from '@webb-tools/icons/RefundLineIcon';
 import Spinner from '@webb-tools/icons/Spinner';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { toEvmAddress } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
 import useEvmBalanceWithdrawTx from '../../data/balances/useEvmBalanceWithdrawTx';
@@ -11,7 +12,6 @@ import usePendingEvmBalance from '../../data/balances/usePendingEvmBalance';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import formatTangleBalance from '../../utils/formatTangleBalance';
-import { toEvmAddress20 } from '../../utils/toEvmAddress20';
 import ActionItem from './ActionItem';
 
 const WithdrawEvmBalanceAction: FC = () => {
@@ -25,7 +25,7 @@ const WithdrawEvmBalanceAction: FC = () => {
       return null;
     }
 
-    return toEvmAddress20(substrateAddress);
+    return toEvmAddress(substrateAddress);
   }, [isEvm, substrateAddress]);
 
   const tokenAmountStr = useMemo(

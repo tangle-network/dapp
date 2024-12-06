@@ -7,9 +7,11 @@ import {
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
+  AmountFormatStyle,
   Avatar,
   Chip,
   CopyWithTooltip,
+  formatDisplayAmount,
   Typography,
 } from '@webb-tools/webb-ui-components';
 
@@ -20,7 +22,6 @@ import {
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
-import formatBn from '../../../utils/formatBn';
 import { FetchProtocolEntitiesFn, GetTableColumnsFn } from '../adapter';
 import {
   sortCommission,
@@ -170,7 +171,11 @@ const getTableColumns: GetTableColumnsFn<PhalaVaultOrStakePool> = (
             fw="normal"
             className="text-mono-200 dark:text-mono-0"
           >
-            {formatBn(props.getValue(), DECIMALS) + ` ${LsToken.PHALA}`}
+            {formatDisplayAmount(
+              props.getValue(),
+              DECIMALS,
+              AmountFormatStyle.SI,
+            ) + ` ${LsToken.PHALA}`}
           </Typography>
         </div>
       ),

@@ -10,6 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
+  AmountFormatStyle,
   Avatar,
   Chip,
   CopyWithTooltip,
@@ -23,7 +24,6 @@ import { FC, useState } from 'react';
 
 import { Nominee } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import {
   getSortAddressOrIdentityFnc,
   sortBnValueForNomineeOrValidator,

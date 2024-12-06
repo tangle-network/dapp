@@ -1,3 +1,6 @@
+import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -5,14 +8,15 @@ import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { toSubstrateAddress } from '../../utils';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
-import toEvmAddress32 from '../../utils/toEvmAddress32';
 
 export type PayoutAllTxContext = {
-  validatorEraPairs: { validatorSubstrateAddress: string; era: number }[];
+  validatorEraPairs: {
+    validatorAddress: SubstrateAddress;
+    era: number;
+  }[];
 };
 
 // Limit the number of batch calls to avoid exceeding
@@ -29,11 +33,10 @@ const usePayoutAllTx = () => {
     useCallback((context) => {
       const batchCalls = context.validatorEraPairs
         .slice(0, MAX_PAYOUTS_BATCH_SIZE)
-        .map(({ validatorSubstrateAddress, era }) => {
+        .map(({ validatorAddress, era }) => {
           // The precompile function expects a 32-byte address.
-          const validatorEvmAddress32 = toEvmAddress32(
-            validatorSubstrateAddress,
-          );
+          const validatorEvmAddress32 =
+            toSubstrateBytes32Address(validatorAddress);
 
           return createEvmBatchCallData(Precompile.STAKING, 'payoutStakers', [
             validatorEvmAddress32,
@@ -51,7 +54,7 @@ const usePayoutAllTx = () => {
     useCallback((api, _activeSubstrateAddress, context) => {
       const txs = context.validatorEraPairs
         .slice(0, MAX_PAYOUTS_BATCH_SIZE)
-        .map(({ validatorSubstrateAddress: validatorAddress, era }) => {
+        .map(({ validatorAddress, era }) => {
           const validatorSubstrateAddress =
             toSubstrateAddress(validatorAddress);
 

@@ -1,5 +1,7 @@
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+
 export type ValidatorReward = {
-  validatorAddress: string;
+  validatorAddress: SubstrateAddress;
   era: number;
   eraTotalRewardPoints: number;
   validatorRewardPoints: number;

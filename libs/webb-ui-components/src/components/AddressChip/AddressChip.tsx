@@ -1,4 +1,4 @@
-import { isAddress, isEthereumAddress } from '@polkadot/util-crypto';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import WalletLineIcon from '@webb-tools/icons/WalletLineIcon';
@@ -8,7 +8,8 @@ import { AddressChipProps } from './types';
 import { Typography } from '../../typography/Typography';
 import { Chip } from '../Chip';
 import SkeletonLoader from '../SkeletonLoader';
-import { shortenHex, shortenString } from '../../utils';
+import { isSubstrateAddress, shortenHex, shortenString } from '../../utils';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 
 const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
   ({ className: classNameProp, address, isNoteAccount = false }, ref) => {
@@ -38,9 +39,9 @@ const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
             {/* Eth: 0xXX...XX; Substrate: XXX...XXX, Not an Address: N/A */}
             {isEthereumAddress(address)
               ? shortenHex(address, 2)
-              : isAddress(address)
+              : isSubstrateAddress(address)
                 ? shortenString(address, 3)
-                : 'N/A'}
+                : EMPTY_VALUE_PLACEHOLDER}
           </Typography>
         ) : (
           <SkeletonLoader />

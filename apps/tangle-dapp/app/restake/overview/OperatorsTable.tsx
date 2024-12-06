@@ -3,6 +3,7 @@
 import { Search } from '@webb-tools/icons/Search';
 import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { type ComponentProps, type FC, useMemo, useState } from 'react';
 
 import OperatorsTableUI from '../../../components/tables/Operators';
@@ -36,7 +37,8 @@ const OperatorsTable: FC<Props> = ({
   const operators = useMemo(
     () =>
       Object.entries(operatorMap).map<OperatorUI>(
-        ([address, { delegations, restakersCount }]) => {
+        ([addressString, { delegations, restakersCount }]) => {
+          const address = assertSubstrateAddress(addressString);
           const tvlInUsd = operatorTVL?.[address] ?? null;
           const concentrationPercentage =
             operatorConcentration?.[address] ?? null;

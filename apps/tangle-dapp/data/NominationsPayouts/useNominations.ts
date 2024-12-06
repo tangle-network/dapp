@@ -2,6 +2,7 @@
 
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
@@ -50,7 +51,9 @@ const useNominations = () => {
     const nomineeAccountIds = nominationInfoOpt.unwrap().targets;
 
     const nominees = nomineeAccountIds.map((nomineeAccountId) => {
-      const nomineeAddress = nomineeAccountId.toString();
+      const nomineeAddress = assertSubstrateAddress(
+        nomineeAccountId.toString(),
+      );
 
       // TODO: Turn this into a set, and then use `has` instead of `some`.
       const isActive = sessionValidators.some(
