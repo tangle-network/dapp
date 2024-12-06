@@ -2,7 +2,7 @@ import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { Address, Hash } from 'viem';
 import {
   simulateContract,
@@ -75,13 +75,6 @@ function useEvmPrecompileAbiCall<
   const activeEvmAddress20 = useEvmAddress20();
   const { data: connectorClient } = useConnectorClient();
 
-  // Useful for debugging.
-  useEffect(() => {
-    if (error !== null) {
-      console.error(error);
-    }
-  }, [error]);
-
   const execute = useCallback(
     async (context: Context) => {
       if (
@@ -142,6 +135,9 @@ function useEvmPrecompileAbiCall<
           );
         }
       } catch (possibleError) {
+        // Useful for debugging.
+        console.debug(possibleError);
+
         const error = ensureError(possibleError);
 
         setStatus(TxStatus.ERROR);

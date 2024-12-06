@@ -3,6 +3,7 @@ import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
 import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
 import { useCallback } from 'react';
+import { toHex } from 'viem';
 
 import { TxName } from '../../../constants';
 import { Precompile } from '../../../constants/evmPrecompiles';
@@ -49,8 +50,10 @@ const useLsCreatePoolTx = () => {
           rootEvmAddress32,
           nominatorEvmAddress32,
           bouncerEvmAddress32,
-          context.name ?? '',
-          context.iconUrl ?? '',
+          // Strings are NOT automatically encoded to bytes in Viem.
+          // Manually convert them to hex here.
+          toHex(context.name ?? ''),
+          toHex(context.iconUrl ?? ''),
         ],
       };
     }, []);
