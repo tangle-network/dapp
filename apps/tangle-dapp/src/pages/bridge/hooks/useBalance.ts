@@ -3,6 +3,7 @@
 import { isAddress } from '@polkadot/util-crypto';
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import { isEvmAddress } from '@webb-tools/webb-ui-components';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import Decimal from 'decimal.js';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -11,7 +12,6 @@ import { Address } from 'viem';
 
 import { useBridge } from '../../../context/BridgeContext';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
-import { isEvmAddress } from '../../../utils/isEvmAddress';
 import {
   getEvmContractBalance,
   getEvmNativeBalance,

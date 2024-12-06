@@ -41,6 +41,8 @@ export const TANGLE_DOCS_LIQUID_STAKING_URL =
   'https://docs.tangle.tools/restake/lst-concepts';
 export const TANGLE_DOCS_LS_CREATE_POOL_URL =
   'https://docs.tangle.tools/restake/create_a_pool/lst-pool-create-tangle';
+export const TANGLE_DOCS_LS_UPDATE_ROLES_URL =
+  'https://docs.tangle.tools/restake/create_a_pool/pool-roles#roles-in-a-liquid-staking-pool';
 export const TANGLE_DOCS_RESTAKING_URL =
   'https://docs.tangle.tools/restake/restake-introduction';
 export const TANGLE_GITHUB_URL = 'https://github.com/tangle-network/tangle';

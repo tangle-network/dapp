@@ -13,6 +13,7 @@ import { AddCircleLineIcon, SubtractCircleLineIcon } from '@webb-tools/icons';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   ActionsDropdown,
+  AmountFormatStyle,
   Avatar,
   AvatarGroup,
   Table,
@@ -30,10 +31,10 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { LsPool } from '../../constants/liquidStaking/types';
+import LsUpdateRolesModal from '../../containers/LsUpdateRolesModal';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
@@ -68,6 +69,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
 
   const [isUpdateCommissionModalOpen, setIsUpdateCommissionModalOpen] =
     useState(false);
+  const [isUpdateRolesModalOpen, setIsUpdateRolesModalOpen] = useState(false);
 
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
@@ -186,6 +188,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
             <TokenAmountCell
               amount={props.getValue()}
               decimals={lsProtocol.decimals}
+              formatStyle={AmountFormatStyle.SHORT}
             />
           );
         },
@@ -229,8 +232,10 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
 
             actionItems.push({
               label: 'Update Roles',
-              // TODO: Implement onClick handler.
-              onClick: () => void 0,
+              onClick: () => {
+                setSelectedPoolId(props.row.original.id);
+                setIsUpdateRolesModalOpen(true);
+              },
             });
           }
 
@@ -318,10 +323,10 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
 
   // Reset the selected pool's ID after all the management modals are closed.
   useEffect(() => {
-    if (!isUpdateCommissionModalOpen) {
+    if (!isUpdateCommissionModalOpen && !isUpdateRolesModalOpen) {
       setSelectedPoolId(null);
     }
-  }, [isUpdateCommissionModalOpen]);
+  }, [isUpdateCommissionModalOpen, isUpdateRolesModalOpen]);
 
   // TODO: Missing error and loading state. Should ideally abstract all these states into an abstract Table component, since it's getting reused in multiple places.
   if (!isAccountConnected) {
@@ -355,6 +360,12 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
         title={pluralize('pool', pools.length > 1 || pools.length === 0)}
         className={twMerge(isShown ? 'animate-slide-down' : 'animate-slide-up')}
         isPaginated
+      />
+
+      <LsUpdateRolesModal
+        poolId={selectedPoolId}
+        isOpen={isUpdateRolesModalOpen}
+        setIsOpen={setIsUpdateRolesModalOpen}
       />
 
       <UpdateCommissionModal

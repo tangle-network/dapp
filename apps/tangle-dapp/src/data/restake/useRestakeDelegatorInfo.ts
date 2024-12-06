@@ -6,6 +6,7 @@ import type {
 } from '@polkadot/types/lookup';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { map, of, switchMap } from 'rxjs';
 
@@ -60,7 +61,9 @@ export default function useRestakeDelegatorInfo() {
                   return {
                     assetId: assetIdStr,
                     amountBonded: amountBigInt,
-                    operatorAccountId: delegation.operator.toString(),
+                    operatorAccountId: assertSubstrateAddress(
+                      delegation.operator.toString(),
+                    ),
                   };
                 });
 
@@ -113,7 +116,7 @@ function getUnstakeRequests(
         amount: req.amount.toBigInt(),
         assetId: req.assetId.toString(),
         requestedRound: req.requestedRound.toNumber(),
-        operatorAccountId: req.operator.toString(),
+        operatorAccountId: assertSubstrateAddress(req.operator.toString()),
       }) satisfies DelegatorInfo['unstakeRequests'][number],
   );
 }

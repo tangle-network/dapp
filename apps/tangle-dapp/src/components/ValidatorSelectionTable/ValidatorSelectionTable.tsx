@@ -16,6 +16,7 @@ import {
 } from '@tanstack/react-table';
 import { Search } from '@webb-tools/icons';
 import {
+  AmountFormatStyle,
   Avatar,
   CheckBox,
   Chip,
@@ -27,6 +28,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import cx from 'classnames';
 import React, {
   FC,
@@ -39,7 +41,6 @@ import React, {
 
 import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import formatFractional from '../../utils/formatFractional';
 import pluralize from '../../utils/pluralize';
 import {
@@ -65,6 +66,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(
     defaultSelectedValidators.reduce((acc, address) => {
       acc[address] = true;
+
       return acc;
     }, {} as RowSelectionState),
   );
@@ -85,7 +87,9 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
   // Sync the selected validators with the parent state.
   useEffect(() => {
     startTransition(() => {
-      setSelectedValidators(new Set(Object.keys(rowSelection)));
+      setSelectedValidators(
+        new Set(Object.keys(rowSelection).map(assertSubstrateAddress)),
+      );
     });
   }, [rowSelection, setSelectedValidators]);
 

@@ -1,3 +1,4 @@
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { Dispatch, SetStateAction } from 'react';
 
 import { Validator } from '../../types';
@@ -5,8 +6,8 @@ import { Validator } from '../../types';
 export type ValidatorSelectionTableProps = {
   allValidators: Validator[];
   isLoading: boolean;
-  defaultSelectedValidators: string[];
-  setSelectedValidators: Dispatch<SetStateAction<Set<string>>>;
+  defaultSelectedValidators: SubstrateAddress[];
+  setSelectedValidators: Dispatch<SetStateAction<Set<SubstrateAddress>>>;
   pageSize?: number;
 };
 

@@ -6,7 +6,7 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import useQueryState from '@webb-tools/tangle-shared-ui/hooks/useQueryState';
-import { Card } from '@webb-tools/webb-ui-components';
+import { Card, isSubstrateAddress } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
@@ -118,7 +118,13 @@ export default function Page() {
   }, [defaultAssetId, setValue]);
 
   useEffect(() => {
-    if (!operatorParam || typeof operatorParam !== 'string') return;
+    if (
+      !operatorParam ||
+      typeof operatorParam !== 'string' ||
+      !isSubstrateAddress(operatorParam)
+    ) {
+      return;
+    }
 
     if (!operatorMap[operatorParam]) return;
 

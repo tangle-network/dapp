@@ -1,9 +1,8 @@
 import { HexString } from '@polkadot/util/types';
 import { ArrowRightUp } from '@webb-tools/icons';
 import { shortenString, Typography } from '@webb-tools/webb-ui-components';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { FC, MouseEvent, useCallback } from 'react';
-
-import { SubstrateAddress } from '../types/utils';
 
 export type AddressLinkProps = {
   address: SubstrateAddress | HexString;

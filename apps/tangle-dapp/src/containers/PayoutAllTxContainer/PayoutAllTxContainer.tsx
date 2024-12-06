@@ -30,9 +30,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   const allValidators = useMemo(() => {
     const uniqueValidatorAddresses = [
       // Use a set to filter out duplicate validator addresses.
-      ...new Set(
-        validatorsAndEras.map((payout) => payout.validatorSubstrateAddress),
-      ),
+      ...new Set(validatorsAndEras.map((payout) => payout.validatorAddress)),
     ];
 
     return uniqueValidatorAddresses;

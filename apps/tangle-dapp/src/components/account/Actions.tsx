@@ -8,8 +8,9 @@ import {
   SendPlanLineIcon,
 } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
+import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useBalances from '../../data/balances/useBalances';
 import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
@@ -22,9 +23,7 @@ import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
 
-const Actions: FC<{ openTransferModal: () => void }> = ({
-  openTransferModal,
-}) => {
+const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
 
   const { execute: executeVestTx, status: vestTxStatus } = useVestTx();
@@ -34,6 +33,7 @@ const Actions: FC<{ openTransferModal: () => void }> = ({
   const activeAccountAddress = useActiveAccountAddress();
 
   const { transferable: transferableBalance } = useBalances();
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
   const {
     isVesting,
@@ -51,7 +51,7 @@ const Actions: FC<{ openTransferModal: () => void }> = ({
       <ActionItem
         label="Send"
         Icon={SendPlanLineIcon}
-        onClick={openTransferModal}
+        onClick={() => setIsTransferModalOpen(true)}
         // Disable while no account is connected, or when the active
         // account has no funds.
         isDisabled={
@@ -122,6 +122,11 @@ const Actions: FC<{ openTransferModal: () => void }> = ({
       )}
 
       <WithdrawEvmBalanceAction />
+
+      <TransferTxContainer
+        isModalOpen={isTransferModalOpen}
+        setIsModalOpen={setIsTransferModalOpen}
+      />
     </div>
   );
 };

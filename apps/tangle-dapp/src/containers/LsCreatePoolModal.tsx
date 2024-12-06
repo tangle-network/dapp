@@ -1,9 +1,9 @@
 import { BN } from '@polkadot/util';
-import { isAddress } from '@polkadot/util-crypto';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   Alert,
+  isValidAddress,
   Modal,
   ModalBody,
   ModalContent,
@@ -23,7 +23,6 @@ import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
 import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { TxStatus } from '../hooks/useSubstrateTx';
-import assertSubstrateAddress from '../utils/assertSubstrateAddress';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
 import { ERROR_NOT_ENOUGH_BALANCE } from './ManageProfileModalContainer/Independent/IndependentAllocationInput';
 
@@ -62,14 +61,14 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
 
   const { execute, status } = useLsCreatePoolTx();
 
-  const isSubstrateAddresses =
-    isAddress(rootAddress) &&
-    isAddress(nominatorAddress) &&
-    isAddress(bouncerAddress);
+  const areAddressesValid =
+    isValidAddress(rootAddress) &&
+    isValidAddress(nominatorAddress) &&
+    isValidAddress(bouncerAddress);
 
   // Name and icon aren't required.
   const isReady =
-    isSubstrateAddresses &&
+    areAddressesValid &&
     activeSubstrateAddress !== null &&
     initialBondAmount !== null &&
     execute !== null;
@@ -86,9 +85,9 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
       name: finalName,
       iconUrl: finalIconUrl,
       initialBondAmount,
-      rootAddress: assertSubstrateAddress(rootAddress),
-      nominatorAddress: assertSubstrateAddress(nominatorAddress),
-      bouncerAddress: assertSubstrateAddress(bouncerAddress),
+      rootAddress,
+      nominatorAddress,
+      bouncerAddress,
     });
   }, [
     bouncerAddress,
@@ -177,8 +176,8 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
           <AddressInput
             id="ls-create-pool-root-address"
             title="Root Address"
-            tooltip="The root is the administrator of the pool with full control over its operations, including updating roles, and commission setup"
-            type={AddressType.Substrate}
+            tooltip="The root is the administrator of the pool with full control over its operations, including updating roles, and commission setup."
+            type={AddressType.Both}
             value={rootAddress}
             setValue={setRootAddress}
             wrapperOverrides={{ isFullWidth: true }}
@@ -188,7 +187,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
             id="ls-create-pool-nominator-address"
             title="Nominator Address"
             tooltip="The nominator is responsible for selecting validators on behalf of the pool. Their role is critical in optimizing rewards for the pool members by choosing high-performing and secure validators."
-            type={AddressType.Substrate}
+            type={AddressType.Both}
             value={nominatorAddress ?? ''}
             setValue={setNominatorAddress}
             wrapperOverrides={{ isFullWidth: true }}
@@ -198,7 +197,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
             id="ls-create-pool-bouncer-address"
             title="Bouncer Address"
             tooltip="The bouncer is responsible for managing the entry and exit of participants into the pool. They can block or allow participants, as well as manage pool access settings."
-            type={AddressType.Substrate}
+            type={AddressType.Both}
             value={bouncerAddress ?? ''}
             setValue={setBouncerAddress}
             wrapperOverrides={{ isFullWidth: true }}

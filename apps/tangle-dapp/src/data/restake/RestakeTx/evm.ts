@@ -1,4 +1,6 @@
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
 import {
   type Abi,
   type Account,
@@ -22,7 +24,6 @@ import {
   PrecompileAddress,
 } from '../../../constants/evmPrecompiles';
 import createEvmBatchCallArgs from '../../../utils/staking/createEvmBatchCallArgs';
-import toEvmAddress32 from '../../../utils/toEvmAddress32';
 import restakeAbi from './abi';
 import {
   type CancelDelegatorUnstakeRequestContext,
@@ -118,7 +119,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
   deposit = async (
     assetId: string,
     amount: bigint,
-    operatorAccount?: string,
+    operatorAccount?: SubstrateAddress,
     eventHandlers?: TxEventHandlers<DepositContext>,
   ) => {
     const context = { assetId, amount, operatorAccount } as DepositContext;
@@ -149,7 +150,11 @@ export default class EVMRestakeTx extends RestakeTxBase {
           callData: encodeFunctionData({
             abi: restakeAbi,
             functionName: 'delegate',
-            args: [toEvmAddress32(operatorAccount), assetIdBigInt, amount],
+            args: [
+              toSubstrateBytes32Address(operatorAccount),
+              assetIdBigInt,
+              amount,
+            ],
           }),
           gasLimit: 0,
           to: MULTI_ASSET_DELEGATION_EVM_ADDRESS,
@@ -169,7 +174,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
   };
 
   stake = async (
-    operatorAccount: string,
+    operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
     eventHandlers?: TxEventHandlers<DelegatorStakeContext>,
@@ -184,14 +189,14 @@ export default class EVMRestakeTx extends RestakeTxBase {
       restakeAbi,
       MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'delegate',
-      [toEvmAddress32(operatorAccount), BigInt(assetId), amount],
+      [toSubstrateBytes32Address(operatorAccount), BigInt(assetId), amount],
       context,
       eventHandlers,
     );
   };
 
   scheduleDelegatorUnstake = async (
-    operatorAccount: string,
+    operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
     eventHandlers?: TxEventHandlers<ScheduleDelegatorUnstakeContext>,
@@ -206,7 +211,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
       restakeAbi,
       MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'scheduleDelegatorUnstake',
-      [toEvmAddress32(operatorAccount), BigInt(assetId), amount],
+      [toSubstrateBytes32Address(operatorAccount), BigInt(assetId), amount],
       context,
       eventHandlers,
     );
@@ -238,7 +243,11 @@ export default class EVMRestakeTx extends RestakeTxBase {
         callData: encodeFunctionData({
           abi: restakeAbi,
           functionName: 'cancelDelegatorUnstake',
-          args: [toEvmAddress32(operatorAccount), BigInt(assetId), amount],
+          args: [
+            toSubstrateBytes32Address(operatorAccount),
+            BigInt(assetId),
+            amount,
+          ],
         }),
         gasLimit: 0,
         to: MULTI_ASSET_DELEGATION_EVM_ADDRESS,

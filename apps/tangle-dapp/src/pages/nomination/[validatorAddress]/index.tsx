@@ -1,5 +1,5 @@
-import { isAddress } from '@polkadot/util-crypto';
-import { useParams } from 'react-router';
+import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
+import { notFound } from 'next/navigation';
 
 import { IS_PRODUCTION_ENV } from '../../../constants/env';
 import InfoCard from './InfoCard';
@@ -8,9 +8,8 @@ import NodeSpecificationsTable from './NodeSpecificationsTable';
 export default function ValidatorDetailsPage() {
   const { validatorAddress } = useParams();
 
-  if (!isAddress(validatorAddress)) {
-    // TODO: Redirect to 404 page
-    return null;
+  if (!isSubstrateAddress(validatorAddress)) {
+    notFound();
   }
 
   return (

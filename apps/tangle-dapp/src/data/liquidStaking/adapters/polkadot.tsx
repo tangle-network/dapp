@@ -3,12 +3,16 @@ import { createColumnHelper, SortingFnOption } from '@tanstack/react-table';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
+  AmountFormatStyle,
   Avatar,
   CheckBox,
   CopyWithTooltip,
+  formatDisplayAmount,
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 
 import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking/StakingItemExternalLinkButton';
 import {
@@ -16,11 +20,8 @@ import {
   LsParachainChainDef,
   LsToken,
 } from '../../../constants/liquidStaking/types';
-import { SubstrateAddress } from '../../../types/utils';
-import assertSubstrateAddress from '../../../utils/assertSubstrateAddress';
 import calculateCommission from '../../../utils/calculateCommission';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
-import formatBn from '../../../utils/formatBn';
 import formatFractional from '../../../utils/formatFractional';
 import { GetTableColumnsFn } from '../adapter';
 import {
@@ -157,7 +158,11 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
             fw="normal"
             className="text-mono-200 dark:text-mono-0"
           >
-            {formatBn(props.getValue(), DECIMALS) + ` ${LsToken.DOT}`}
+            {formatDisplayAmount(
+              props.getValue(),
+              DECIMALS,
+              AmountFormatStyle.SI,
+            ) + ` ${LsToken.DOT}`}
           </Typography>
         </div>
       ),

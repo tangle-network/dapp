@@ -1,8 +1,8 @@
 import { BN } from '@polkadot/util';
+import { formatBn, FormatOptions } from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useState } from 'react';
 
 import cleanNumericInputString from '../utils/cleanNumericInputString';
-import formatBn, { FormatOptions } from '../utils/formatBn';
 import parseChainUnits, {
   ChainUnitParsingError,
 } from '../utils/parseChainUnits';

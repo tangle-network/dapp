@@ -1,7 +1,7 @@
+import { isEvmAddress, toEvmAddress } from '@webb-tools/webb-ui-components';
+import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import { useMemo } from 'react';
-import { Address } from 'viem';
 
-import { isEvmAddress } from '../utils/isEvmAddress';
 import useActiveAccountAddress from './useActiveAccountAddress';
 
 /**
@@ -10,7 +10,7 @@ import useActiveAccountAddress from './useActiveAccountAddress';
  * @remarks
  * If there is no active account, `null` will be returned instead.
  */
-const useEvmAddress20 = (): Address | null => {
+const useEvmAddress20 = (): EvmAddress | null => {
   const activeAccountAddress = useActiveAccountAddress();
 
   const evmAddress = useMemo(() => {
@@ -20,8 +20,7 @@ const useEvmAddress20 = (): Address | null => {
       return null;
     }
 
-    // TODO: May need to convert to an EVM address, in case that the active account is a EVM account. See https://github.com/webb-tools/tangle/issues/379 for more details.
-    return activeAccountAddress;
+    return toEvmAddress(activeAccountAddress);
   }, [activeAccountAddress]);
 
   return evmAddress;

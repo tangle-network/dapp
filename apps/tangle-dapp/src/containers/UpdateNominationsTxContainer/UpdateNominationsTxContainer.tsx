@@ -7,6 +7,7 @@ import {
   ModalFooterActions,
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import isEqual from 'lodash/isEqual';
 import {
   type Dispatch,
@@ -26,7 +27,7 @@ import SelectValidators from './SelectValidators';
 export type UpdateNominationsTxContainerProps = {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
-  currentNominations: string[];
+  currentNominations: SubstrateAddress[];
 };
 
 const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
@@ -96,7 +97,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   // but the child select validators state is set of string
   // so we need to handle the conversion between set <> array
   const handleSelectedValidatorsChange = useCallback<
-    Dispatch<SetStateAction<Set<string>>>
+    Dispatch<SetStateAction<Set<SubstrateAddress>>>
   >(
     (nextValueOrUpdater) => {
       if (typeof nextValueOrUpdater === 'function') {

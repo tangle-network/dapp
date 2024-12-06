@@ -10,6 +10,7 @@ import {
 } from '@tanstack/react-table';
 import { ArrowRight } from '@webb-tools/icons';
 import {
+  AmountFormatStyle,
   Avatar,
   AvatarGroup,
   Button,
@@ -32,7 +33,6 @@ import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
-import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
@@ -180,7 +180,7 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
             variant="utility"
             size="sm"
           >
-            {lsPoolId === props.row.original.id ? 'Selected' : 'Mint'}
+            {lsPoolId === props.row.original.id ? 'Selected' : 'Stake'}
           </Button>
         </div>
       ),

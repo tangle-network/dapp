@@ -12,10 +12,12 @@ import {
   Validator,
 } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
+  AmountFormatStyle,
   Avatar,
   CheckBox,
   Chip,
   CopyWithTooltip,
+  formatDisplayAmount,
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -26,8 +28,6 @@ import { twMerge } from 'tailwind-merge';
 import { StakingItemExternalLinkButton } from '../../components/LiquidStaking/StakingItemExternalLinkButton';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import calculateCommission from '../../utils/calculateCommission';
-import formatBn from '../../utils/formatBn';
-import { AmountFormatStyle } from '../../utils/formatDisplayAmount';
 import formatFractional from '../../utils/formatFractional';
 
 const validatorColumnHelper = createColumnHelper<Validator>();
@@ -448,8 +448,11 @@ export const useLsValidatorSelectionTableColumns = (
               fw="normal"
               className="text-mono-200 dark:text-mono-0"
             >
-              {formatBn(props.getValue(), props.row.original.chainDecimals) +
-                ` ${props.row.original.chainTokenSymbol}`}
+              {formatDisplayAmount(
+                props.getValue(),
+                props.row.original.chainDecimals,
+                AmountFormatStyle.SI,
+              ) + ` ${props.row.original.chainTokenSymbol}`}
             </Typography>
           </div>
         ),

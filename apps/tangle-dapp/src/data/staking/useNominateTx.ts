@@ -1,3 +1,6 @@
+import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
+import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
+import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -5,11 +8,9 @@ import { Precompile } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { toSubstrateAddress } from '../../utils';
-import toEvmAddress32 from '../../utils/toEvmAddress32';
 
 type NominateTxContext = {
-  validatorAddresses: string[];
+  validatorAddresses: AnyAddress[];
 };
 
 const useNominateTx = () => {
@@ -21,7 +22,9 @@ const useNominateTx = () => {
 
       // Ensure that all addresses are expected format.
       // The nominate precompile function expects 32-byte addresses.
-      const evmAddresses32 = context.validatorAddresses.map(toEvmAddress32);
+      const evmAddresses32 = context.validatorAddresses.map(
+        toSubstrateBytes32Address,
+      );
 
       return { functionName: 'nominate', arguments: [evmAddresses32] };
     }, []);

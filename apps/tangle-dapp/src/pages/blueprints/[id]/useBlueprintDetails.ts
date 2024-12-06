@@ -17,6 +17,7 @@ import {
   getAccountInfo,
   getMultipleAccountInfo,
 } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { useCallback } from 'react';
 import { combineLatest, of, switchMap } from 'rxjs';
 
@@ -125,7 +126,7 @@ export default function useBlueprintDetails(id?: string) {
 async function getBlueprintOperators(
   rpcEndpoint: string,
   assetMap: AssetMap,
-  operatorAccountSet: Set<string>,
+  operatorAccountSet: Set<SubstrateAddress>,
   operatorMap: OperatorMap,
   operatorTVL: Record<string, number>,
   operatorConcentration: Record<string, number | null>,

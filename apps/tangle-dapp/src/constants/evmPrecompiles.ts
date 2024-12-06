@@ -1,4 +1,5 @@
 import { BN } from '@polkadot/util';
+import { SubstrateBytes32Address } from '@webb-tools/webb-ui-components/types/address';
 import { Address } from 'viem';
 
 export enum Precompile {
@@ -50,6 +51,7 @@ export type AbiFunctionName<T extends Precompile> = T extends Precompile.STAKING
               | 'setState'
               | 'setMetadata'
               | 'setConfigs'
+              | 'updateRoles'
           : never;
 
 type AbiType =
@@ -97,13 +99,13 @@ export type AbiFunctionArgs = {
     minNominatorBond: [];
     minValidatorBond: [];
     nominate: [Address[]];
-    payoutStakers: [Address, BN];
+    payoutStakers: [Address, number];
     rebond: [BN];
     setController: [];
-    setPayee: [BN];
+    setPayee: [number];
     unbond: [BN];
     validatorCount: [];
-    withdrawUnbonded: [BN];
+    withdrawUnbonded: [number];
   };
 
   [Precompile.VESTING]: {
@@ -119,6 +121,32 @@ export type AbiFunctionArgs = {
   [Precompile.BALANCES_ERC20]: {
     transfer: [Address, BN];
   };
+
+  [Precompile.LST]: {
+    join: [BN, BN];
+    bondExtra: [BN, number, BN];
+    unbond: [SubstrateBytes32Address, BN, BN];
+    poolWithdrawUnbonded: [BN, number];
+    withdrawUnbonded: [SubstrateBytes32Address, BN, number];
+    create: [
+      BN,
+      SubstrateBytes32Address,
+      SubstrateBytes32Address,
+      SubstrateBytes32Address,
+      string,
+      string,
+    ];
+    nominate: [BN, SubstrateBytes32Address[]];
+    setState: [BN, number];
+    setMetadata: [BN, string];
+    setConfigs: [BN, BN, number, number];
+    updateRoles: [
+      BN,
+      SubstrateBytes32Address,
+      SubstrateBytes32Address,
+      SubstrateBytes32Address,
+    ];
+  };
 };
 
 // See https://github.com/webb-tools/tangle/tree/main/precompiles for more details.
@@ -127,7 +155,7 @@ export enum PrecompileAddress {
   VESTING = '0x0000000000000000000000000000000000000801',
   BATCH = '0x0000000000000000000000000000000000000808',
   BALANCES_ERC20 = '0x0000000000000000000000000000000000000802',
-  LST = '0x0000000000000000000000000000000000000809',
+  LST = '0x0000000000000000000000000000000000000824',
 }
 
 export const STAKING_PRECOMPILE_ABI: AbiFunction<Precompile.STAKING>[] = [
@@ -695,47 +723,18 @@ export const LST_PRECOMPILE_ABI: AbiFunction<Precompile.LST>[] = [
         name: 'bouncer',
         type: 'bytes32',
       },
+      {
+        internalType: 'uint8[]',
+        name: 'name',
+        type: 'uint8[]',
+      },
+      {
+        internalType: 'uint8[]',
+        name: 'icon',
+        type: 'uint8[]',
+      },
     ],
     name: 'create',
-    outputs: [
-      {
-        internalType: 'uint8',
-        name: '',
-        type: 'uint8',
-      },
-    ],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes32',
-        name: 'root',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bytes32',
-        name: 'nominator',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bytes32',
-        name: 'bouncer',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'uint256',
-        name: 'poolId',
-        type: 'uint256',
-      },
-    ],
-    name: 'createWithPoolId',
     outputs: [
       {
         internalType: 'uint8',
@@ -842,6 +841,40 @@ export const LST_PRECOMPILE_ABI: AbiFunction<Precompile.LST>[] = [
       },
     ],
     name: 'setConfigs',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'poolId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'root',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'nominator',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'bouncer',
+        type: 'bytes32',
+      },
+    ],
+    name: 'updateRoles',
     outputs: [
       {
         internalType: 'uint8',

@@ -1,12 +1,13 @@
 import { Alert } from '@webb-tools/webb-ui-components';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import React, { Dispatch, type FC, SetStateAction } from 'react';
 
 import ValidatorSelectionTable from '../../components/ValidatorSelectionTable/ValidatorSelectionTable';
 import useAllValidators from '../../data/ValidatorTables/useAllValidators';
 
 export type SelectValidatorsProps = {
-  defaultSelectedValidators?: string[];
-  setSelectedValidators: Dispatch<SetStateAction<Set<string>>>;
+  defaultSelectedValidators?: SubstrateAddress[];
+  setSelectedValidators: Dispatch<SetStateAction<Set<SubstrateAddress>>>;
 };
 
 const SelectValidators: FC<SelectValidatorsProps> = ({

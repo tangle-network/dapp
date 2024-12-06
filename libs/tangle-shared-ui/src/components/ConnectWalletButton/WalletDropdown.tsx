@@ -14,6 +14,7 @@ import {
   Dropdown,
   DropdownBody,
   ExternalLinkIcon,
+  isSubstrateAddress,
   KeyValueWithButton,
   shortenString,
   Typography,
@@ -183,13 +184,18 @@ const SwitchAccountButton: FC = () => {
       <AccountDropdownBody
         addressShortenFn={shortenString}
         className="mt-2"
-        accountItems={accounts.map((item) => {
+        accountItems={accounts.map((account) => {
+          // Attempt to re-encode the address to match the active network's
+          // SS58 prefix, if it's available. Leave it as is if it's an EVM
+          // account address.
+          const address = isSubstrateAddress(account.address)
+            ? encodeAddress(account.address, network.ss58Prefix)
+            : account.address;
+
           return {
-            // Attempt to re-encode the address to match the active network's
-            // SS58 prefix, if it's available.
-            address: encodeAddress(item.address, network.ss58Prefix),
-            name: item.name,
-            onClick: () => setActiveAccount(item),
+            address,
+            name: account.name,
+            onClick: () => setActiveAccount(account),
           };
         })}
       />
