@@ -1,10 +1,10 @@
 import { BN } from '@polkadot/util';
 import {
-  toEvmAddress20,
+  toEvmAddress,
   toSubstrateAddress,
 } from '@webb-tools/webb-ui-components';
 import {
-  EvmAddress20,
+  EvmAddress,
   SubstrateAddress,
 } from '@webb-tools/webb-ui-components/types/address';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
@@ -20,7 +20,7 @@ import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { GetSuccessMessageFunction } from '../../types';
 
 type TransferTxContext = {
-  recipientAddress: SubstrateAddress | EvmAddress20;
+  recipientAddress: SubstrateAddress | EvmAddress;
   amount: BN;
   maxAmount: BN;
 };
@@ -35,7 +35,7 @@ const useTransferTx = () => {
   > = useCallback(
     async ({ recipientAddress, amount, maxAmount }) => {
       const isMaxAmount = amount.eq(maxAmount);
-      const recipientEvmAddress20 = toEvmAddress20(recipientAddress);
+      const recipientEvmAddress20 = toEvmAddress(recipientAddress);
 
       const sharedAbiCallData: AbiCall<Precompile.BALANCES_ERC20> = {
         functionName: 'transfer',

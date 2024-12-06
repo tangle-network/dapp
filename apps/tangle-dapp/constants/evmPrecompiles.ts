@@ -1,5 +1,6 @@
 import { BN } from '@polkadot/util';
 import { AddressType } from '@webb-tools/dapp-config/types';
+import { SubstrateBytes32Address } from '@webb-tools/webb-ui-components/types/address';
 
 export enum Precompile {
   STAKING,
@@ -124,14 +125,27 @@ export type AbiFunctionArgs = {
   [Precompile.LST]: {
     join: [BN, BN];
     bondExtra: [BN, number, BN];
-    unbond: [AddressType, BN, BN];
+    unbond: [SubstrateBytes32Address, BN, BN];
     poolWithdrawUnbonded: [BN, number];
-    withdrawUnbonded: [AddressType, BN, number];
-    create: [BN, AddressType, AddressType, AddressType];
-    nominate: [BN, AddressType[]];
+    withdrawUnbonded: [SubstrateBytes32Address, BN, number];
+    create: [
+      BN,
+      SubstrateBytes32Address,
+      SubstrateBytes32Address,
+      SubstrateBytes32Address,
+      string,
+      string,
+    ];
+    nominate: [BN, SubstrateBytes32Address[]];
+    setState: [BN, number];
     setMetadata: [BN, string];
     setConfigs: [BN, BN, number, number];
-    updateRoles: [number, AddressType, AddressType, AddressType];
+    updateRoles: [
+      BN,
+      SubstrateBytes32Address,
+      SubstrateBytes32Address,
+      SubstrateBytes32Address,
+    ];
   };
 };
 
@@ -141,7 +155,7 @@ export enum PrecompileAddress {
   VESTING = '0x0000000000000000000000000000000000000801',
   BATCH = '0x0000000000000000000000000000000000000808',
   BALANCES_ERC20 = '0x0000000000000000000000000000000000000802',
-  LST = '0x0000000000000000000000000000000000000809',
+  LST = '0x0000000000000000000000000000000000000824',
 }
 
 export const STAKING_PRECOMPILE_ABI: AbiFunction<Precompile.STAKING>[] = [
@@ -708,6 +722,16 @@ export const LST_PRECOMPILE_ABI: AbiFunction<Precompile.LST>[] = [
         internalType: 'bytes32',
         name: 'bouncer',
         type: 'bytes32',
+      },
+      {
+        internalType: 'bytes',
+        name: 'name',
+        type: 'bytes',
+      },
+      {
+        internalType: 'bytes',
+        name: 'icon',
+        type: 'bytes',
       },
     ],
     name: 'create',

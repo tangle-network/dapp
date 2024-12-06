@@ -1,5 +1,5 @@
-import { isEvmAddress20, toEvmAddress20 } from '@webb-tools/webb-ui-components';
-import { EvmAddress20 } from '@webb-tools/webb-ui-components/types/address';
+import { isEvmAddress, toEvmAddress } from '@webb-tools/webb-ui-components';
+import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import { useMemo } from 'react';
 
 import useActiveAccountAddress from './useActiveAccountAddress';
@@ -10,20 +10,17 @@ import useActiveAccountAddress from './useActiveAccountAddress';
  * @remarks
  * If there is no active account, `null` will be returned instead.
  */
-const useEvmAddress20 = (): EvmAddress20 | null => {
+const useEvmAddress20 = (): EvmAddress | null => {
   const activeAccountAddress = useActiveAccountAddress();
 
   const evmAddress = useMemo(() => {
     // Wait for the active account to be set, and ensure
     // that the active account is an EVM account.
-    if (
-      activeAccountAddress === null ||
-      !isEvmAddress20(activeAccountAddress)
-    ) {
+    if (activeAccountAddress === null || !isEvmAddress(activeAccountAddress)) {
       return null;
     }
 
-    return toEvmAddress20(activeAccountAddress);
+    return toEvmAddress(activeAccountAddress);
   }, [activeAccountAddress]);
 
   return evmAddress;

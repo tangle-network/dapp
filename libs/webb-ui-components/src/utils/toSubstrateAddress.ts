@@ -2,7 +2,7 @@ import { encodeAddress, evmToAddress } from '@polkadot/util-crypto';
 
 import { AnyAddress, SubstrateAddress } from '../types/address';
 import assertSubstrateAddress from './assertSubstrateAddress';
-import { isEvmAddress } from './isEvmAddress';
+import { isEvmAddress } from './isEvmAddress20';
 
 /**
  * Converts an EVM address to a Substrate address.

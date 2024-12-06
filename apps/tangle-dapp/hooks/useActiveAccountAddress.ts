@@ -1,17 +1,17 @@
 import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
-  isEvmAddress20,
+  isEvmAddress,
   isSubstrateAddress,
   toSubstrateAddress,
 } from '@webb-tools/webb-ui-components';
 import {
-  EvmAddress20,
+  EvmAddress,
   SubstrateAddress,
 } from '@webb-tools/webb-ui-components/types/address';
 import assert from 'assert';
 
-const useActiveAccountAddress = (): SubstrateAddress | EvmAddress20 | null => {
+const useActiveAccountAddress = (): SubstrateAddress | EvmAddress | null => {
   const { network } = useNetworkStore();
   const [activeAccount] = useActiveAccount();
 
@@ -21,7 +21,7 @@ const useActiveAccountAddress = (): SubstrateAddress | EvmAddress20 | null => {
     return null;
   }
 
-  assert(isEvmAddress20(address) || isSubstrateAddress(address));
+  assert(isEvmAddress(address) || isSubstrateAddress(address));
 
   // Encode it with the correct SS58 prefix in case that it is a
   // Substrate address.

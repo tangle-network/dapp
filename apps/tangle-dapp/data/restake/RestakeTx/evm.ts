@@ -1,6 +1,6 @@
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import toEvmAddress32 from '@webb-tools/webb-ui-components/utils/toEvmAddress32';
+import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
 import {
   type Abi,
   type Account,
@@ -150,7 +150,11 @@ export default class EVMRestakeTx extends RestakeTxBase {
           callData: encodeFunctionData({
             abi: restakeAbi,
             functionName: 'delegate',
-            args: [toEvmAddress32(operatorAccount), assetIdBigInt, amount],
+            args: [
+              toSubstrateBytes32Address(operatorAccount),
+              assetIdBigInt,
+              amount,
+            ],
           }),
           gasLimit: 0,
           to: MULTI_ASSET_DELEGATION_EVM_ADDRESS,
@@ -185,7 +189,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
       restakeAbi,
       MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'delegate',
-      [toEvmAddress32(operatorAccount), BigInt(assetId), amount],
+      [toSubstrateBytes32Address(operatorAccount), BigInt(assetId), amount],
       context,
       eventHandlers,
     );
@@ -207,7 +211,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
       restakeAbi,
       MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'scheduleDelegatorUnstake',
-      [toEvmAddress32(operatorAccount), BigInt(assetId), amount],
+      [toSubstrateBytes32Address(operatorAccount), BigInt(assetId), amount],
       context,
       eventHandlers,
     );
@@ -239,7 +243,11 @@ export default class EVMRestakeTx extends RestakeTxBase {
         callData: encodeFunctionData({
           abi: restakeAbi,
           functionName: 'cancelDelegatorUnstake',
-          args: [toEvmAddress32(operatorAccount), BigInt(assetId), amount],
+          args: [
+            toSubstrateBytes32Address(operatorAccount),
+            BigInt(assetId),
+            amount,
+          ],
         }),
         gasLimit: 0,
         to: MULTI_ASSET_DELEGATION_EVM_ADDRESS,

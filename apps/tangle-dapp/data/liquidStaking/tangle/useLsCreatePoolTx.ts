@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
 import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
-import toEvmAddress32 from '@webb-tools/webb-ui-components/utils/toEvmAddress32';
+import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
 import { useCallback } from 'react';
 
 import { TxName } from '../../../constants';
@@ -34,19 +34,23 @@ const useLsCreatePoolTx = () => {
 
   const evmTxFactory: EvmTxFactory<Precompile.LST, LsCreatePoolTxContext> =
     useCallback((context) => {
-      // TODO: This will fail if the address is an EVM address.
-      const rootEvmAddress32 = toEvmAddress32(context.rootAddress);
-      const nominatorEvmAddress32 = toEvmAddress32(context.nominatorAddress);
-      const bouncerEvmAddress32 = toEvmAddress32(context.bouncerAddress);
+      const rootEvmAddress32 = toSubstrateBytes32Address(context.rootAddress);
+      const nominatorEvmAddress32 = toSubstrateBytes32Address(
+        context.nominatorAddress,
+      );
+      const bouncerEvmAddress32 = toSubstrateBytes32Address(
+        context.bouncerAddress,
+      );
 
       return {
         functionName: 'create',
-        // TODO: What's going on with the pool name? It's not accepted by the precompile function it seems.
         arguments: [
           context.initialBondAmount,
           rootEvmAddress32,
           nominatorEvmAddress32,
           bouncerEvmAddress32,
+          context.name ?? '',
+          context.iconUrl ?? '',
         ],
       };
     }, []);

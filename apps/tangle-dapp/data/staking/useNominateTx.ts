@@ -1,6 +1,6 @@
 import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
-import toEvmAddress32 from '@webb-tools/webb-ui-components/utils/toEvmAddress32';
+import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -22,7 +22,9 @@ const useNominateTx = () => {
 
       // Ensure that all addresses are expected format.
       // The nominate precompile function expects 32-byte addresses.
-      const evmAddresses32 = context.validatorAddresses.map(toEvmAddress32);
+      const evmAddresses32 = context.validatorAddresses.map(
+        toSubstrateBytes32Address,
+      );
 
       return { functionName: 'nominate', arguments: [evmAddresses32] };
     }, []);

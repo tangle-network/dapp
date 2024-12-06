@@ -1,5 +1,5 @@
 import usePromise from '@webb-tools/tangle-shared-ui/hooks/usePromise';
-import { toEvmAddress20 } from '@webb-tools/webb-ui-components';
+import { toEvmAddress } from '@webb-tools/webb-ui-components';
 import { useCallback, useMemo } from 'react';
 
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
@@ -20,7 +20,7 @@ const usePendingEvmBalance = () => {
       return null;
     }
 
-    return toEvmAddress20(substrateAddress);
+    return toEvmAddress(substrateAddress);
   }, [isEvm, substrateAddress]);
 
   const { result: balance } = usePromise(

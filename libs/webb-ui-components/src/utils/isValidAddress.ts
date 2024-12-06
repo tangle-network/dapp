@@ -1,5 +1,5 @@
 import { EvmAddress, SubstrateAddress } from '../types/address';
-import { isEvmAddress } from './isEvmAddress';
+import { isEvmAddress } from './isEvmAddress20';
 import { isSubstrateAddress } from './isSubstrateAddress';
 
 /**

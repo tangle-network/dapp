@@ -1,6 +1,6 @@
 import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
-import toEvmAddress32 from '@webb-tools/webb-ui-components/utils/toEvmAddress32';
+import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
 import { useCallback } from 'react';
 
 import { TxName } from '../../../constants';
@@ -61,17 +61,17 @@ const useLsUpdateRolesTx = () => {
       const rootEvmAddress32 =
         context.rootAddress === undefined
           ? PRECOMPILE_NOOP_ADDRESS
-          : toEvmAddress32(context.rootAddress);
+          : toSubstrateBytes32Address(context.rootAddress);
 
       const nominatorEvmAddress32 =
         context.nominatorAddress === undefined
           ? PRECOMPILE_NOOP_ADDRESS
-          : toEvmAddress32(context.nominatorAddress);
+          : toSubstrateBytes32Address(context.nominatorAddress);
 
       const bouncerEvmAddress32 =
         context.bouncerAddress === undefined
           ? PRECOMPILE_NOOP_ADDRESS
-          : toEvmAddress32(context.bouncerAddress);
+          : toSubstrateBytes32Address(context.bouncerAddress);
 
       return {
         functionName: 'updateRoles',

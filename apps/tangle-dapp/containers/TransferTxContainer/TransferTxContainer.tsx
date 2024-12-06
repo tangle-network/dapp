@@ -4,7 +4,7 @@ import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStor
 import {
   Alert,
   BridgeInputGroup,
-  isEvmAddress20,
+  isEvmAddress,
   isSubstrateAddress,
   Modal,
   ModalBody,
@@ -92,7 +92,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     transferableBalance.eq(amount);
 
   const isValidReceiverAddress =
-    isSubstrateAddress(recipientAddress) || isEvmAddress20(recipientAddress);
+    isSubstrateAddress(recipientAddress) || isEvmAddress(recipientAddress);
 
   const isReady =
     status !== TxStatus.PROCESSING &&

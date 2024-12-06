@@ -1,7 +1,7 @@
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import toEvmAddress32 from '@webb-tools/webb-ui-components/utils/toEvmAddress32';
+import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -54,7 +54,7 @@ const useUpdateNominatorTx = () => {
       }
 
       const evmNomineeAddresses32 = Array.from(context.nominees).map(
-        toEvmAddress32,
+        toSubstrateBytes32Address,
       );
 
       // Push nominate call last. Although the order of calls
