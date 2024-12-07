@@ -23762,6 +23762,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-base64@npm:^3.7.7":
+  version: 3.7.7
+  resolution: "js-base64@npm:3.7.7"
+  checksum: 10c0/3c905a7e78b601e4751b5e710edd0d6d045ce2d23eb84c9df03515371e1b291edc72808dc91e081cb9855aef6758292a2407006f4608ec3705373dd8baf2f80f
+  languageName: node
+  linkType: hard
+
 "js-cleanup@npm:^1.2.0":
   version: 1.2.0
   resolution: "js-cleanup@npm:1.2.0"
@@ -33890,7 +33897,6 @@ __metadata:
     "@radix-ui/react-switch": "npm:^1.1.1"
     "@radix-ui/react-tabs": "npm:^1.1.1"
     "@radix-ui/react-tooltip": "npm:^1.1.4"
-    "@rollup/plugin-inject": "npm:^5.0.5"
     "@storybook/addon-a11y": "npm:^8.4.6"
     "@storybook/addon-actions": "npm:^8.4.6"
     "@storybook/addon-essentials": "npm:^8.4.6"
@@ -33936,7 +33942,6 @@ __metadata:
     autoprefixer: "npm:^10.4.20"
     babel-jest: "npm:29.7.0"
     babel-plugin-transform-import-meta: "npm:^2.2.1"
-    buffer: "npm:^6.0.3"
     chromatic: "npm:^11.20.0"
     classnames: "npm:^2.5.1"
     copy-to-clipboard: "npm:^3.3.3"
@@ -33958,6 +33963,7 @@ __metadata:
     framer-motion: "npm:^11.13.1"
     jest: "npm:29.7.0"
     jest-environment-jsdom: "npm:^29.7.0"
+    js-base64: "npm:^3.7.7"
     jsdom: "npm:~25.0.1"
     lodash: "npm:^4.17.21"
     next: "npm:^14.2.19"

@@ -15,6 +15,7 @@ import { EventBus } from '@webb-tools/dapp-types/EventBus';
 import lodash from 'lodash';
 import { isValidAddress } from './is-valid-address';
 import { PolkadotAccount, PolkadotAccounts } from './polkadot-accounts';
+import { fromUint8Array } from 'js-base64';
 
 const { isNumber } = lodash;
 
@@ -251,9 +252,9 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       chain: this.apiPromise.runtimeChain.toString(),
       genesisHash: this.apiPromise.genesisHash.toHex(),
       icon: 'substrate',
-      metaCalls: Buffer.from(
+      metaCalls: fromUint8Array(
         this.apiPromise.runtimeMetadata.asCallsOnly.toU8a(),
-      ).toString('base64'),
+      ),
       specVersion: this.apiPromise.runtimeVersion.specVersion.toNumber(),
       ss58Format: isNumber(this.apiPromise.registry.chainSS58)
         ? this.apiPromise.registry.chainSS58
