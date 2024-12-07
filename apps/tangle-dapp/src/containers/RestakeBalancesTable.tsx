@@ -3,68 +3,67 @@
 import { BN } from '@polkadot/util';
 import {
   createColumnHelper,
-  ExpandedState,
   getCoreRowModel,
   getExpandedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  Row,
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChevronUp } from '@webb-tools/icons';
 import {
   AmountFormatStyle,
   Button,
+  EMPTY_VALUE_PLACEHOLDER,
   formatBn,
   formatDisplayAmount,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import { FC, useCallback, useMemo, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
+import { FC, useMemo, useState } from 'react';
 
-import LsMyPoolsTable, {
-  LsMyPoolRow,
-} from '../components/LiquidStaking/LsMyPoolsTable';
 import LsTokenIcon from '../components/LsTokenIcon';
 import StatItem from '../components/StatItem';
 import TableCellWrapper from '../components/tables/TableCellWrapper';
-import { LsToken } from '../constants/liquidStaking/types';
 import useLsMyPools from '../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
-import pluralize from '../utils/pluralize';
+import { HeaderCell } from '../components/tableCells';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 
-export type LsMyProtocolRow = {
+export type RestakeBalanceRow = {
   name: string;
+  token: string;
   tvl: BN;
-  myStake: BN;
-  myStakeInUsd?: number;
   tvlInUsd?: number;
+  available: BN;
+  availableInUsd?: number;
+  locked: BN;
+  lockedInUsd?: number;
+  points?: number;
   iconName: string;
-  pools: LsMyPoolRow[];
   decimals: number;
-  token: LsToken;
 };
 
-const COLUMN_HELPER = createColumnHelper<LsMyProtocolRow>();
+const COLUMN_HELPER = createColumnHelper<RestakeBalanceRow>();
 
 const PROTOCOL_COLUMNS = [
   COLUMN_HELPER.accessor('name', {
-    header: () => 'Network & Token',
+    header: () => 'Asset',
     cell: (props) => (
       <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-2">
-          <LsTokenIcon
-            name={props.row.original.iconName}
-            hasRainbowBorder
-            size="lg"
-          />
+          <LsTokenIcon name={props.row.original.iconName} size="lg" />
 
           <Typography variant="h5" className="whitespace-nowrap">
-            {props.getValue()} &mdash; {props.row.original.token}
+            {props.getValue()}
+          </Typography>
+
+          <Typography
+            variant="body1"
+            className="whitespace-nowrap dark:text-mono-100"
+          >
+            {props.row.original.token}
           </Typography>
         </div>
       </TableCellWrapper>
@@ -75,8 +74,60 @@ const PROTOCOL_COLUMNS = [
     },
     sortDescFirst: true,
   }),
+  COLUMN_HELPER.accessor('available', {
+    header: () => 'Available',
+    cell: (props) => {
+      const formattedMyStake = formatDisplayAmount(
+        props.getValue(),
+        props.row.original.decimals,
+        AmountFormatStyle.SHORT,
+      );
+
+      const subtitle =
+        props.row.original.availableInUsd === undefined
+          ? undefined
+          : `$${props.row.original.availableInUsd}`;
+
+      return (
+        <TableCellWrapper>
+          <StatItem
+            title={`${formattedMyStake} ${props.row.original.token}`}
+            subtitle={subtitle}
+            removeBorder
+          />
+        </TableCellWrapper>
+      );
+    },
+  }),
+  COLUMN_HELPER.accessor('locked', {
+    header: () => 'Locked/Restaked',
+    cell: (props) => {
+      const formattedMyStake = formatDisplayAmount(
+        props.getValue(),
+        props.row.original.decimals,
+        AmountFormatStyle.SHORT,
+      );
+
+      const subtitle =
+        props.row.original.tvlInUsd === undefined
+          ? undefined
+          : `$${props.row.original.tvlInUsd}`;
+
+      return (
+        <TableCellWrapper>
+          <StatItem
+            title={`${formattedMyStake} ${props.row.original.token}`}
+            subtitle={subtitle}
+            removeBorder
+          />
+        </TableCellWrapper>
+      );
+    },
+  }),
   COLUMN_HELPER.accessor('tvl', {
-    header: () => 'Total Staked (TVL)',
+    header: () => (
+      <HeaderCell title="TVL/CAP" tooltip="Total value locked & market cap." />
+    ),
     cell: (props) => {
       const formattedTvl = formatBn(
         props.getValue(),
@@ -100,63 +151,34 @@ const PROTOCOL_COLUMNS = [
       );
     },
   }),
-  COLUMN_HELPER.accessor('myStake', {
-    header: () => 'My Stake (Total)',
+  COLUMN_HELPER.accessor('points', {
+    header: () => (
+      <HeaderCell
+        title="Points"
+        tooltip="Points are relevant for the upcoming airdrop campaign."
+      />
+    ),
     cell: (props) => {
-      const formattedMyStake = formatDisplayAmount(
-        props.getValue(),
-        props.row.original.decimals,
-        AmountFormatStyle.SHORT,
-      );
+      const points = props.getValue();
 
-      const subtitle =
-        props.row.original.myStakeInUsd === undefined
-          ? undefined
-          : `$${props.row.original.myStakeInUsd}`;
+      if (points === undefined) {
+        return EMPTY_VALUE_PLACEHOLDER;
+      }
 
       return (
         <TableCellWrapper>
-          <StatItem
-            title={`${formattedMyStake} ${props.row.original.token}`}
-            subtitle={subtitle}
-            removeBorder
-          />
-        </TableCellWrapper>
-      );
-    },
-  }),
-  COLUMN_HELPER.accessor('pools', {
-    header: () => 'Pools',
-    cell: (props) => {
-      const length = props.getValue().length;
-
-      return (
-        <TableCellWrapper removeRightBorder>
-          <StatItem
-            title={length.toString()}
-            subtitle={pluralize('Pool', length === 0 || length > 1)}
-            removeBorder
-          />
+          <Typography variant="h5">{addCommasToNumber(points)}</Typography>
         </TableCellWrapper>
       );
     },
   }),
   COLUMN_HELPER.display({
-    id: 'expand/collapse',
+    id: 'restake-action',
     header: () => null,
-    cell: ({ row }) => (
+    cell: () => (
       <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1">
-          <Button variant="utility" isJustIcon>
-            <div
-              className={twMerge(
-                '!text-current transition-transform duration-300 ease-in-out',
-                row.getIsExpanded() && 'rotate-180',
-              )}
-            >
-              <ChevronUp className="fill-current dark:fill-current" />
-            </div>
-          </Button>
+          <Button variant="utility">Restake</Button>
         </div>
       </TableCellWrapper>
     ),
@@ -164,31 +186,16 @@ const PROTOCOL_COLUMNS = [
   }),
 ];
 
-const LsMyProtocolsTable: FC = () => {
+const RestakeBalancesTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const { lsNetworkId } = useLsStore();
 
-  // Expand the first row by default.
-  const [expanded, setExpanded] = useState<ExpandedState>({
-    0: true,
-  });
-
   const lsNetwork = getLsNetwork(lsNetworkId);
-
-  const getExpandedRowContent = useCallback(
-    (row: Row<LsMyProtocolRow>) => (
-      <LsMyPoolsTable
-        pools={row.original.pools}
-        isShown={row.getIsExpanded()}
-      />
-    ),
-    [],
-  );
 
   const myPoolsOrNull = useLsMyPools();
   const myPools = useMemo(() => myPoolsOrNull ?? [], [myPoolsOrNull]);
 
-  const rows = useMemo<LsMyProtocolRow[]>(() => {
+  const rows = useMemo<RestakeBalanceRow[]>(() => {
     return lsNetwork.protocols.map((lsProtocol) => {
       const tvl = myPools
         .filter((myPool) => myPool.protocolId === lsProtocol.id)
@@ -202,13 +209,17 @@ const LsMyProtocolsTable: FC = () => {
         name: lsProtocol.name,
         tvl,
         iconName: lsProtocol.token,
-        myStake: myStake,
-        pools: myPools,
-        // TODO: Calculate the USD value of the TVL.
+        available: myStake,
+        // TODO: Calculate the USD value once appropriate hook is available.
+        availableInUsd: undefined,
+        locked: tvl.sub(myStake),
+        // TODO: Calculate the USD value once appropriate hook is available.
+        lockedInUsd: undefined,
+        // TODO: Calculate the USD value once appropriate hook is available.
         tvlInUsd: undefined,
         token: lsProtocol.token,
         decimals: lsProtocol.decimals,
-      } satisfies LsMyProtocolRow;
+      } satisfies RestakeBalanceRow;
     });
   }, [lsNetwork.protocols, myPools]);
 
@@ -220,28 +231,14 @@ const LsMyProtocolsTable: FC = () => {
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
-    onExpandedChange: setExpanded,
     state: {
       sorting,
-      // Expand the first row by default.
-      expanded,
     },
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
 
-  const onRowClick = useCallback((row: Row<LsMyProtocolRow>) => {
-    row.toggleExpanded();
-  }, []);
-
-  return (
-    <Table
-      variant={TableVariant.GLASS_OUTER}
-      tableProps={table}
-      getExpandedRowContent={getExpandedRowContent}
-      onRowClick={onRowClick}
-    />
-  );
+  return <Table variant={TableVariant.GLASS_OUTER} tableProps={table} />;
 };
 
-export default LsMyProtocolsTable;
+export default RestakeBalancesTable;

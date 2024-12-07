@@ -1,7 +1,6 @@
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
-  HiddenValue,
-  HiddenValueEye,
+  InfoIconWithTooltip,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
@@ -24,7 +23,7 @@ const Balance: FC = () => {
   return (
     <div className="flex flex-col w-full gap-5">
       <div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <Typography
             variant="body1"
             className="text-mono-120 dark:text-mono-80"
@@ -32,13 +31,13 @@ const Balance: FC = () => {
             Transferable Balance
           </Typography>
 
-          <HiddenValueEye className="hover:bg-mono-40" />
+          <InfoIconWithTooltip content="The amount that can be freely transferred to other accounts and that isn't subject to any locks." />
         </div>
 
         <div className="flex items-center">
           <div className="flex items-end gap-2 py-2">
             <Typography variant="h2" fw="bold" className="!leading-none">
-              <HiddenValue numberOfStars={4}>{prefix}</HiddenValue>
+              {prefix}
             </Typography>
 
             <Typography variant="h4" className="!leading-none pb-1 flex gap-2">

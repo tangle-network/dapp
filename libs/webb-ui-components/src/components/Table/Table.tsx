@@ -15,7 +15,7 @@ const getVariantContainerClass = (variant: TableVariant) => {
     case TableVariant.GLASS_INNER:
       return 'rounded-2xl overflow-hidden bg-mono-0 dark:bg-mono-180 px-3';
     case TableVariant.GLASS_OUTER:
-      return 'px-6 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160 bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)] dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]';
+      return 'px-4 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160 bg-[linear-gradient(180deg,rgba(255,255,255,0.20)0%,rgba(255,255,255,0.00)100%)] dark:bg-[linear-gradient(180deg,rgba(43,47,64,0.20)0%,rgba(43,47,64,0.00)100%)]';
   }
 };
 
@@ -28,7 +28,7 @@ const getVariantThClass = (variant: TableVariant) => {
     case TableVariant.NESTED_IN_MODAL:
       return 'z-10 py-3 sticky top-0';
     case TableVariant.DEFAULT:
-      return '';
+      return 'py-2 first:pl-6 last:pr-6';
   }
 };
 
@@ -58,7 +58,7 @@ const getVariantTrClass = (variant: TableVariant) => {
 const getVariantTableClass = (variant: TableVariant) => {
   switch (variant) {
     case TableVariant.GLASS_OUTER:
-      return 'border-separate border-spacing-y-3 py-3';
+      return 'border-separate border-spacing-y-2 py-3';
     case TableVariant.GLASS_INNER:
     case TableVariant.DEFAULT:
       return '';

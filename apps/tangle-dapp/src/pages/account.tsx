@@ -2,7 +2,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { FC } from 'react';
 
 import AccountSummaryCard from '../components/account/AccountSummaryCard';
-import BalancesTableContainer from '../containers/BalancesTableContainer/BalancesTableContainer';
+import RestakeBalancesTable from '../containers/RestakeBalancesTable';
 
 const AccountPage: FC = () => {
   return (
@@ -10,10 +10,10 @@ const AccountPage: FC = () => {
       <AccountSummaryCard className="max-w-full md:max-w-full" />
 
       <Typography variant="h4" fw="bold">
-        Balances
+        Assets &amp; Balances
       </Typography>
 
-      <BalancesTableContainer />
+      <RestakeBalancesTable />
     </div>
   );
 };
