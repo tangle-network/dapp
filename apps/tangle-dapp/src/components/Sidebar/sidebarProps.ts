@@ -1,6 +1,5 @@
 'use client';
 
-import { isAppEnvironmentType } from '@webb-tools/dapp-config/types';
 import {
   AppsLine,
   CoinLine,
@@ -54,7 +53,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     isNext: false,
     Icon: GridFillIcon,
     subItems: [],
-    environments: ['development', 'staging', 'test'],
+    hideInProduction: true,
   },
   {
     name: 'Restake',
@@ -107,9 +106,7 @@ export default function getSidebarProps({
   nativeExplorerUrl?: string;
   evmExplorerUrl?: string;
 }): MobileSidebarProps {
-  const currentEnv = isAppEnvironmentType(process.env.NODE_ENV)
-    ? process.env.NODE_ENV
-    : 'development';
+  const isProductionEnv = import.meta.env.PROD;
 
   const sideBarItems: SideBarItemProps[] = [
     ...SIDEBAR_STATIC_ITEMS,
@@ -147,11 +144,11 @@ export default function getSidebarProps({
   // Filter the sidebar items based on the current environment.
   // This is useful to keep development-only items hidden in production.
   const items = sideBarItems.filter((item) => {
-    if (item.environments === undefined) {
-      return true;
-    }
-
-    return item.environments.includes(currentEnv);
+    return (
+      item.hideInProduction === undefined ||
+      !item.hideInProduction ||
+      !isProductionEnv
+    );
   });
 
   return {

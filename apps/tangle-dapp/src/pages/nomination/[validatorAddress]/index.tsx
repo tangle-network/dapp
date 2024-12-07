@@ -4,11 +4,12 @@ import { notFound } from 'next/navigation';
 import { IS_PRODUCTION_ENV } from '../../../constants/env';
 import InfoCard from './InfoCard';
 import NodeSpecificationsTable from './NodeSpecificationsTable';
+import { useParams } from 'react-router';
 
 export default function ValidatorDetailsPage() {
   const { validatorAddress } = useParams();
 
-  if (!isSubstrateAddress(validatorAddress)) {
+  if (validatorAddress === undefined || !isSubstrateAddress(validatorAddress)) {
     notFound();
   }
 

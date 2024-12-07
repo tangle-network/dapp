@@ -3,7 +3,6 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import react from '@vitejs/plugin-react-swc';
-import path from 'path';
 import { defineConfig, UserConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 
@@ -13,9 +12,6 @@ export default defineConfig({
   server: {
     port: 4200,
     host: 'localhost',
-  },
-  define: {
-    'process.env': {},
   },
   preview: {
     port: 4300,
