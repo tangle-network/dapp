@@ -3,8 +3,10 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import react from '@vitejs/plugin-react-swc';
+import path from 'path';
 import { defineConfig, UserConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
+import inject from '@rollup/plugin-inject';
 
 export default defineConfig({
   root: __dirname,
@@ -25,6 +27,11 @@ export default defineConfig({
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md']),
     svgr({ svgrOptions: { exportType: 'default' }, include: '**/*.svg' }),
+    // Some legacy code on the Webb UI library requires the use
+    // of the `Buffer` global. This plugin will inject the `Buffer`.
+    inject({
+      Buffer: ['buffer', 'Buffer'],
+    }),
   ],
   // Uncomment this if you are using workers.
   // worker: {

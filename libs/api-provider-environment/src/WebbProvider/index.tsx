@@ -470,6 +470,9 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
 
         logger.error(e);
 
+        // Useful for debugging.
+        console.debug(e);
+
         let err: WebbError | undefined = undefined;
 
         if (e instanceof WebbError) {
