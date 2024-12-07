@@ -1,21 +1,20 @@
-const { createGlobPatternsForDependencies } = require('@nx/react/tailwind');
-const preset = require('../../tailwind.preset.cjs');
-const { join } = require('path');
-const plugin = require('tailwindcss/plugin');
+import { createGlobPatternsForDependencies } from '@nx/react/tailwind';
+import { join } from 'path';
+import plugin from 'tailwindcss/plugin';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import preset from '../../tailwind.preset.cjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   presets: [preset],
   content: [
-    join(
-      __dirname,
-      '{src,pages,components,containers,app}/**/*!(*.stories|*.spec).{ts,tsx,html}',
-    ),
-    join(
-      __dirname,
-      '../../libs/webb-ui-components',
-      'src/{pages,components}/**/*!(*.stories|*.spec).{ts,tsx,html}',
-    ),
+    join(__dirname, '{src,public}/**/*!(*.stories|*.spec).{ts,tsx,html}'),
     ...createGlobPatternsForDependencies(__dirname),
   ],
   theme: {

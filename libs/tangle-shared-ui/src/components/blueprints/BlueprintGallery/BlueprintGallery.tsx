@@ -32,7 +32,6 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
   const [searchValue, setSearchValue] = useState('');
 
   const [filteredCategory, setFilteredCategory] = useState<
-    // eslint-disable-next-line @typescript-eslint/ban-types
     'View All' | (string & {})
   >('View All');
 

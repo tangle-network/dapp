@@ -2,7 +2,7 @@
 
 import NextLink from 'next/link';
 import { Fragment } from 'react';
-import { Link as ReactRouterLink } from 'react-router-dom';
+import { Link as ReactRouterLink } from 'react-router';
 import { LinkProps, isNextLinkProps, isReactRouterLinkProps } from './types';
 
 export const Link: React.FC<LinkProps> = (props) => {

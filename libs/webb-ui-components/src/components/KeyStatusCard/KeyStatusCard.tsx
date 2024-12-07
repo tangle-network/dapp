@@ -1,7 +1,7 @@
 import { Avatar, AvatarGroup, Button, Card, Chip } from '..';
 import { Typography } from '../../typography/Typography';
 
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 import { KeyValueWithButton } from '../KeyValueWithButton';
 import { LabelWithValue } from '../LabelWithValue';

@@ -53,10 +53,6 @@ export enum WebbErrorCodes {
   InsufficientProviderInterface,
   /* EVM session already ended */
   EVMSessionAlreadyEnded,
-  /* Relayer does not support the functionality */
-  NoRelayerSupport,
-  /* Relayer is not operating properly (sending bad leaves, etc.) */
-  RelayerMisbehaving,
   /* Failed to parse the chainId */
   ChainIdTypeUnformatted,
   /* Invalid amount to withdraw, */
@@ -81,7 +77,7 @@ export enum WebbErrorCodes {
   SwitchAccountFailed,
   /* Switch chain failed */
   SwitchChainFailed,
-  /* Failed to send the transaction to the relayer */
+  /* Failed to send the transaction */
   FailedToSendTx,
   /** Failed to connect wallet */
   FailedToConnectWallet,
@@ -246,19 +242,6 @@ export class WebbError extends Error {
             "Attempt to end session and it' already ended or unknown error",
         };
 
-      case WebbErrorCodes.NoRelayerSupport:
-        return {
-          code,
-          message:
-            'Attempt to use a relayer which does not support the functionality',
-        };
-
-      case WebbErrorCodes.RelayerMisbehaving:
-        return {
-          code,
-          message: 'The selected relayer is not operating properly',
-        };
-
       case WebbErrorCodes.ChainIdTypeUnformatted:
         return {
           code,
@@ -370,7 +353,7 @@ export class WebbError extends Error {
       case WebbErrorCodes.FailedToSendTx:
         return {
           code,
-          message: 'Failed to send the transaction to the relayer',
+          message: 'Failed to send the transaction',
         };
 
       case WebbErrorCodes.KeyPairNotFound:

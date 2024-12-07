@@ -1,11 +1,11 @@
 import { LinkProps as InternalLinkProps } from 'next/link';
 import type { ComponentPropsWithoutRef } from 'react';
-import { Link as ReactRouterLink } from 'react-router-dom';
+import { Link as ReactRouterLink } from 'react-router';
 
 type WithInternal<T> = T & {
   /**
    * Boolean if the link should be rendered as an anchor tag instead of a
-   * `Link` component from `react-router-dom` or `next/link`.
+   * `Link` component from `react-router` or `next/link`.
    */
   isInternal?: boolean;
 };
