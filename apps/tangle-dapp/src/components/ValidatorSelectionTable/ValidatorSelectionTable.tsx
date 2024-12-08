@@ -291,7 +291,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         </div>
       ) : (
         <Table
-          variant={TableVariant.NESTED_IN_MODAL}
+          variant={TableVariant.EMBEDDED_IN_MODAL}
           tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
           paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
           tableWrapperClassName="max-h-[340px] overflow-y-scroll"
