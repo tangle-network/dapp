@@ -12,7 +12,7 @@ const InfoIconWithTooltip: FC<
     <IconWithTooltip
       icon={
         <InformationLine
-          className={twMerge('fill-mono-140 dark:fill-mono-40', className)}
+          className={twMerge('fill-current dark:fill-current', className)}
         />
       }
       {...props}

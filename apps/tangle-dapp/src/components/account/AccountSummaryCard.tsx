@@ -2,14 +2,14 @@
 
 import { FC } from 'react';
 
-import GlassCardWithLogo from '../GlassCardWithLogo';
+import CardWithTangleLogo from '../CardWithTangleLogo';
 import AccountAddress from './AccountAddress';
 import Actions from './Actions';
 import Balance from './Balance';
 
 const AccountSummaryCard: FC<{ className?: string }> = ({ className }) => {
   return (
-    <GlassCardWithLogo className={className}>
+    <CardWithTangleLogo className={className}>
       <div className="w-full space-y-5">
         <header>
           <AccountAddress />
@@ -19,7 +19,7 @@ const AccountSummaryCard: FC<{ className?: string }> = ({ className }) => {
 
         <Actions />
       </div>
-    </GlassCardWithLogo>
+    </CardWithTangleLogo>
   );
 };
 

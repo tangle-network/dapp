@@ -26,6 +26,7 @@ import LsTokenIcon from '../../LsTokenIcon';
 import { TableStatus } from '../../TableStatus';
 import TableCellWrapper from '../TableCellWrapper';
 import type { Props, VaultData } from './types';
+import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
 
 const columnHelper = createColumnHelper<VaultData>();
 
@@ -42,10 +43,7 @@ const columns = [
         </div>
       </TableCellWrapper>
     ),
-    sortingFn: (rowA, rowB) => {
-      // NOTE: the sorting is reversed by default
-      return rowB.original.name.localeCompare(rowA.original.name);
-    },
+    sortingFn: sortByLocaleCompare((row) => row.name),
     sortDescFirst: true,
   }),
   columnHelper.accessor('apyPercentage', {

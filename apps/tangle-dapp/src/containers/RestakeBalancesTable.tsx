@@ -30,6 +30,10 @@ import { useLsStore } from '../data/liquidStaking/useLsStore';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
 import { HeaderCell } from '../components/tableCells';
 import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+import { ArrowRight } from '@webb-tools/icons';
+import { PagePath } from '../types';
+import { Link } from 'react-router';
+import sortByLocaleCompare from '../utils/sortByLocaleCompare';
 
 export type RestakeBalanceRow = {
   name: string;
@@ -50,6 +54,8 @@ const COLUMN_HELPER = createColumnHelper<RestakeBalanceRow>();
 const PROTOCOL_COLUMNS = [
   COLUMN_HELPER.accessor('name', {
     header: () => 'Asset',
+    sortDescFirst: true,
+    sortingFn: sortByLocaleCompare((row) => row.name),
     cell: (props) => (
       <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-2">
@@ -68,11 +74,6 @@ const PROTOCOL_COLUMNS = [
         </div>
       </TableCellWrapper>
     ),
-    sortingFn: (rowA, rowB) => {
-      // NOTE: The sorting is reversed by default.
-      return rowB.original.name.localeCompare(rowA.original.name);
-    },
-    sortDescFirst: true,
   }),
   COLUMN_HELPER.accessor('available', {
     header: () => 'Available',
@@ -100,7 +101,7 @@ const PROTOCOL_COLUMNS = [
     },
   }),
   COLUMN_HELPER.accessor('locked', {
-    header: () => 'Locked/Restaked',
+    header: () => 'Locked/Deposited',
     cell: (props) => {
       const formattedMyStake = formatDisplayAmount(
         props.getValue(),
@@ -175,14 +176,24 @@ const PROTOCOL_COLUMNS = [
   COLUMN_HELPER.display({
     id: 'restake-action',
     header: () => null,
+    enableSorting: false,
     cell: () => (
       <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1">
-          <Button variant="utility">Restake</Button>
+          <Link to={PagePath.RESTAKE_DEPOSIT}>
+            <Button
+              variant="utility"
+              size="sm"
+              rightIcon={
+                <ArrowRight className="fill-current dark:fill-current" />
+              }
+            >
+              Restake
+            </Button>
+          </Link>
         </div>
       </TableCellWrapper>
     ),
-    enableSorting: false,
   }),
 ];
 

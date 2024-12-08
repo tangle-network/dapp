@@ -8,27 +8,37 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { Chip, Table, Typography } from '@webb-tools/webb-ui-components';
+import {
+  Chip,
+  EMPTY_VALUE_PLACEHOLDER,
+  InfoIconWithTooltip,
+  Table,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import { FC, useMemo, useState } from 'react';
-
-import { SubstrateLockId } from '../constants';
+import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
+import useLockRows from './useLockRows';
 import { BN } from '@polkadot/util';
-import TokenAmountCell from '../components/tableCells/TokenAmountCell';
-import { TableStatus } from '../components';
-import pluralize from '../utils/pluralize';
-import useIsAccountConnected from '../hooks/useIsAccountConnected';
+import { SubstrateLockId } from '../../constants';
+import useIsAccountConnected from '../../hooks/useIsAccountConnected';
+import { TableStatus } from '../../components';
+import pluralize from '../../utils/pluralize';
+import { CheckboxCircleFill } from '@webb-tools/icons';
 
 export enum LockUnlocksAtKind {
   ERA,
   BLOCK,
 }
 
-type BalanceLockRow = {
+export type BalanceLockRow = {
+  index?: number;
   type: SubstrateLockId;
-  unlocksAt: number;
+  unlocksAt?: BN;
   unlocksAtKind: LockUnlocksAtKind;
+  isUnlocked?: boolean;
+  unlocksAtTooltip?: string;
   totalLocked: BN;
   remaining: BN;
 };
@@ -39,6 +49,17 @@ const getLockUnlockKindText = (kind: LockUnlocksAtKind) => {
       return 'Era';
     case LockUnlocksAtKind.BLOCK:
       return 'Block';
+  }
+};
+
+const getSubstrateLockIdText = (lockId: SubstrateLockId) => {
+  switch (lockId) {
+    case SubstrateLockId.STAKING:
+      return 'Staking';
+    case SubstrateLockId.DEMOCRACY:
+      return 'Democracy';
+    case SubstrateLockId.VESTING:
+      return 'Vesting';
   }
 };
 
@@ -65,77 +86,67 @@ const LockedBalancesTable: FC = () => {
     () => [
       COLUMN_HELPER.accessor('type', {
         header: () => 'Type',
-        cell: (props) => (
-          <Chip color="purple">
-            <Typography
-              variant="body3"
-              fw="semibold"
-              className="uppercase text-purple-60 dark:text-purple-40"
-            >
-              {props.getValue()}
-            </Typography>
-          </Chip>
-        ),
+        cell: (props) => {
+          // Helps differentiate between locks of the same type.
+          const index =
+            props.row.original.index !== undefined
+              ? `#${props.row.original.index + 1}`
+              : '';
+
+          return (
+            <Chip color="purple">
+              <Typography
+                variant="body3"
+                fw="semibold"
+                className="uppercase text-purple-60 dark:text-purple-40"
+              >
+                {getSubstrateLockIdText(props.getValue())} {index}
+              </Typography>
+            </Chip>
+          );
+        },
       }),
       COLUMN_HELPER.accessor('totalLocked', {
         header: () => 'Total Locked',
         cell: (props) => <TokenAmountCell amount={props.getValue()} />,
       }),
+      COLUMN_HELPER.accessor('remaining', {
+        header: () => 'Remaining',
+        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+      }),
       COLUMN_HELPER.accessor('unlocksAt', {
         header: () => 'Unlocks At',
-        cell: (props) => (
-          <div className="flex items-center justify-start">
-            {getLockUnlockKindText(props.row.original.unlocksAtKind)} #
-            {addCommasToNumber(props.getValue())}
-          </div>
-        ),
+        cell: (props) => {
+          if (props.row.original.isUnlocked) {
+            return (
+              <CheckboxCircleFill className="fill-green-700 dark:fill-green-700" />
+            );
+          }
+
+          const unlocksAt = props.getValue();
+
+          if (unlocksAt === undefined) {
+            return EMPTY_VALUE_PLACEHOLDER;
+          }
+
+          return (
+            <div className="flex items-center justify-start gap-1">
+              {getLockUnlockKindText(props.row.original.unlocksAtKind)} #
+              {addCommasToNumber(unlocksAt)}
+              {props.row.original.unlocksAtTooltip && (
+                <InfoIconWithTooltip
+                  content={props.row.original.unlocksAtTooltip}
+                />
+              )}
+            </div>
+          );
+        },
       }),
-      // COLUMN_HELPER.display({
-      //   id: 'actions',
-      //   cell: (props) => {
-      //     return (
-      //       <div className="flex items-center justify-end">
-      //         <WithdrawUnstakeRequestButton
-      //           isReadyToWithdraw={props.row.original.isReadyToWithdraw}
-      //           lsPoolId={props.row.original.poolId}
-      //         />
-      //       </div>
-      //     );
-      //   },
-      // }),
     ],
     [],
   );
 
-  const rows = useMemo<BalanceLockRow[]>(
-    () => [
-      {
-        type: SubstrateLockId.STAKING,
-        symbol: 'tTNT',
-        unlocksAt: 100,
-        unlocksAtKind: LockUnlocksAtKind.BLOCK,
-        totalLocked: new BN(1204000500),
-        remaining: new BN(10000000),
-      },
-      {
-        type: SubstrateLockId.DEMOCRACY,
-        symbol: 'tTNT',
-        unlocksAt: 1231,
-        unlocksAtKind: LockUnlocksAtKind.BLOCK,
-        totalLocked: new BN(1204000500),
-        remaining: new BN(10000000),
-      },
-      {
-        type: SubstrateLockId.VESTING,
-        symbol: 'tTNT',
-        unlocksAt: 3234,
-        unlocksAtKind: LockUnlocksAtKind.BLOCK,
-        totalLocked: new BN(1204000500),
-        remaining: new BN(10000000),
-      },
-    ],
-    [],
-  );
+  const rows = useLockRows();
 
   const table = useReactTable({
     data: rows,

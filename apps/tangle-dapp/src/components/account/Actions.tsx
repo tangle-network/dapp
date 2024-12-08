@@ -4,7 +4,6 @@ import {
   CoinsLineIcon,
   CoinsStackedLineIcon,
   GiftLineIcon,
-  LockLineIcon,
   LockUnlockLineIcon,
   SendPlanLineIcon,
 } from '@webb-tools/icons';
@@ -23,7 +22,6 @@ import { PagePath, StaticSearchQueryPath } from '../../types';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
-import LockedBalanceDetailsModal from '../../containers/LockedBalanceDetailsModal';
 
 const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
@@ -36,9 +34,6 @@ const Actions: FC = () => {
 
   const { transferable: transferableBalance } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
-
-  const [isLockedBalanceDetailsModalOpen, setIsLockedBalanceDetailsModalOpen] =
-    useState(false);
 
   const {
     isVesting,
@@ -70,12 +65,6 @@ const Actions: FC = () => {
         label="Nominate"
         internalHref={StaticSearchQueryPath.NominationsTable}
         Icon={CoinsStackedLineIcon}
-      />
-
-      <ActionItem
-        label="Locked Balances"
-        Icon={LockLineIcon}
-        onClick={() => setIsLockedBalanceDetailsModalOpen(true)}
       />
 
       {isPayoutsAvailable && (
@@ -137,11 +126,6 @@ const Actions: FC = () => {
       <TransferTxContainer
         isModalOpen={isTransferModalOpen}
         setIsModalOpen={setIsTransferModalOpen}
-      />
-
-      <LockedBalanceDetailsModal
-        isOpen={isLockedBalanceDetailsModalOpen}
-        setIsOpen={setIsLockedBalanceDetailsModalOpen}
       />
     </div>
   );

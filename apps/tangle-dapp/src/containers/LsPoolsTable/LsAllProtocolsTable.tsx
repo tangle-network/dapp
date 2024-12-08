@@ -33,6 +33,7 @@ import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
 import pluralize from '../../utils/pluralize';
 import LsPoolsTable from './LsPoolsTable';
+import sortByLocaleCompare from '../../utils/sortByLocaleCompare';
 
 export type LsProtocolRow = {
   name: string;
@@ -48,6 +49,8 @@ const COLUMN_HELPER = createColumnHelper<LsProtocolRow>();
 const PROTOCOL_COLUMNS = [
   COLUMN_HELPER.accessor('name', {
     header: () => 'Network & Token',
+    sortingFn: sortByLocaleCompare((row) => row.name),
+    sortDescFirst: true,
     cell: (props) => (
       <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-2">
@@ -63,11 +66,6 @@ const PROTOCOL_COLUMNS = [
         </div>
       </TableCellWrapper>
     ),
-    sortingFn: (rowA, rowB) => {
-      // NOTE: The sorting is reversed by default.
-      return rowB.original.name.localeCompare(rowA.original.name);
-    },
-    sortDescFirst: true,
   }),
   COLUMN_HELPER.accessor('tvl', {
     header: () => 'Total Staked (TVL)',

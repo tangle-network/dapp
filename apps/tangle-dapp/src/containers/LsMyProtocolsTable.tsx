@@ -36,6 +36,7 @@ import useLsMyPools from '../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
 import pluralize from '../utils/pluralize';
+import sortByLocaleCompare from '../utils/sortByLocaleCompare';
 
 export type LsMyProtocolRow = {
   name: string;
@@ -54,6 +55,8 @@ const COLUMN_HELPER = createColumnHelper<LsMyProtocolRow>();
 const PROTOCOL_COLUMNS = [
   COLUMN_HELPER.accessor('name', {
     header: () => 'Network & Token',
+    sortingFn: sortByLocaleCompare((row) => row.name),
+    sortDescFirst: true,
     cell: (props) => (
       <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-2">
@@ -69,11 +72,6 @@ const PROTOCOL_COLUMNS = [
         </div>
       </TableCellWrapper>
     ),
-    sortingFn: (rowA, rowB) => {
-      // NOTE: The sorting is reversed by default.
-      return rowB.original.name.localeCompare(rowA.original.name);
-    },
-    sortDescFirst: true,
   }),
   COLUMN_HELPER.accessor('tvl', {
     header: () => 'Total Staked (TVL)',
@@ -144,6 +142,7 @@ const PROTOCOL_COLUMNS = [
   COLUMN_HELPER.display({
     id: 'expand/collapse',
     header: () => null,
+    enableSorting: false,
     cell: ({ row }) => (
       <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1">
@@ -160,7 +159,6 @@ const PROTOCOL_COLUMNS = [
         </div>
       </TableCellWrapper>
     ),
-    enableSorting: false,
   }),
 ];
 
