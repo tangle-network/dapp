@@ -6,6 +6,7 @@ import useWaitingValidators from './useWaitingValidators';
 const useAllValidators = () => {
   const { validators: activeValidators, isLoading: isLoadingActiveValidators } =
     useActiveValidators();
+
   const {
     validators: waitingValidators,
     isLoading: isLoadingWaitingValidators,

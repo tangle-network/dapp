@@ -84,6 +84,7 @@ export const Table = <T extends RowData>({
   getExpandedRowContent,
   className,
   variant,
+  paginationLabelOverride,
   ...props
 }: TableProps<T, HTMLDivElement>) => {
   const getRowClickHandler = useCallback(
@@ -238,6 +239,7 @@ export const Table = <T extends RowData>({
           setPageIndex={table.setPageIndex}
           title={title}
           className={paginationClassName}
+          labelOverride={paginationLabelOverride}
         />
       )}
     </div>

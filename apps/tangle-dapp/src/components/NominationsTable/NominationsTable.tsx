@@ -31,6 +31,7 @@ import {
 import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
+import pluralize from '../../utils/pluralize';
 
 const columnHelper = createColumnHelper<Nominee>();
 
@@ -152,6 +153,7 @@ const NominationsTable: FC<NominationsTableProps> = ({
         tableProps={table}
         isPaginated
         totalRecords={nominees.length}
+        title={pluralize('nomination', nominees.length !== 1)}
       />
     </div>
   );

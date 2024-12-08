@@ -56,4 +56,6 @@ export interface PaginationProps
    * Left and Right Icon size
    */
   iconSize?: IconSize;
+
+  labelOverride?: string;
 }
