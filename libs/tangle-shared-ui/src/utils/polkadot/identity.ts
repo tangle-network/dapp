@@ -3,6 +3,7 @@ import type {
   PalletIdentityRegistration,
 } from '@polkadot/types/lookup';
 import { getApiPromise } from './api';
+import { hexToString, isHex } from 'viem';
 
 export type IdentityType = {
   name: string | null;
@@ -33,10 +34,8 @@ export const extractDataFromIdentityInfo = (
   );
 
   // If the display name is in hex format, convert it to a string.
-  if (displayDataObject.raw !== undefined) {
-    const hexString = displayDataObject.raw;
-
-    return Buffer.from(hexString.slice(2), 'hex').toString('utf8');
+  if (displayDataObject.raw !== undefined && isHex(displayDataObject.raw)) {
+    return hexToString(displayDataObject.raw);
   }
 
   return null;

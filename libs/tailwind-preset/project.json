@@ -6,11 +6,14 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{projectRoot}/{options.outDir}",
+        "{workspaceRoot}/dist/apps/tangle-dapp",
+        "{workspaceRoot}/dist/apps/testnet-leaderboard/.next"
+      ],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/libs/tailwind-preset"
+        "outDir": "../../dist/libs/tailwind-preset"
       },
       "configurations": {
         "development": {
@@ -20,9 +23,6 @@
           "mode": "production"
         }
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
     }
   }
 }

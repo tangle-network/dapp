@@ -10,6 +10,7 @@ import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import type { Address, JsonRpcAccount } from 'viem';
 import type { Connector } from 'wagmi';
 import { getAccount } from 'wagmi/actions';
+
 export class Web3Account extends Account<JsonRpcAccount> {
   constructor(
     public readonly _inner: JsonRpcAccount,

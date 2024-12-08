@@ -8,6 +8,7 @@ export const PartyFill: React.FC<{ size?: IconSize; maxWidth?: number }> = ({
   const imageSize = getIconSizeInPixel(size);
   return (
     <img
+      alt="Party Fill"
       style={{
         maxWidth: imageSize,
         ...props,

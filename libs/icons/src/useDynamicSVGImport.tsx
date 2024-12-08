@@ -52,7 +52,10 @@ export function useDynamicSVGImport(
         setImportedIcon(<Icon />);
         onCompleted?.(name_, Icon);
       } catch (err) {
-        if ((err as any).message.includes('Cannot find module')) {
+        if (
+          (err as any).message.includes('Cannot find module') ||
+          (err as any).message.includes('Unknown variable dynamic import')
+        ) {
           const mod = await getDefaultIcon(type);
           const Icon = mod.default;
 

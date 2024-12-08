@@ -1,5 +1,5 @@
 import { PresetTypedChainId, SubstrateChainId } from '@webb-tools/dapp-types';
-import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
+import { ChainType } from '@webb-tools/dapp-types/TypedChainId';
 import {
   TANGLE_LOCAL_WS_RPC_ENDPOINT,
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,

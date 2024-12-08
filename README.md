@@ -70,7 +70,6 @@ Great! Now your **Node** environment is ready!
 - `note-manager`: contains all the logic for storing note account data.
 - `polkadot-api-provider`: the Substrate (or Polkadot) provider for the bridge.
 - `react-hooks`: contains all the sharable hooks across the apps.
-- `relayer-manager-factory`: contains all the logic for interacting with the relayer.
 - `tailwind-preset`: the Webb TailwindCSS preset for all the apps.
 - `web3-api-provider`: the EVM provider for the bridge.
 - [webb-ui-components](./libs/webb-ui-components/README.md): a collection of reusable components for building interfaces quickly.

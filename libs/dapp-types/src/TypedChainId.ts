@@ -40,15 +40,15 @@ export const byteArrayToNum = (arr: number[]): number => {
 };
 
 export function toFixedHex(
-  number: number | string | bigint | Buffer,
+  number: number | string | bigint,
   length = 32,
 ): string {
   let result =
     '0x' +
-    (number instanceof Buffer
-      ? number.toString('hex')
-      : BigInt(number).toString(16).replace('0x', '')
-    ).padStart(length * 2, '0');
+    BigInt(number)
+      .toString(16)
+      .replace('0x', '')
+      .padStart(length * 2, '0');
 
   if (result.indexOf('-') > -1) {
     result = '-' + result.replace('-', '');

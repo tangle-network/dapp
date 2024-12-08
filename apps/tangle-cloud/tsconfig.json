@@ -31,6 +31,8 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "../../types/global.d.ts",
+    "eslint.config.cjs",
+    "../../dist/apps/tangle-cloud/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

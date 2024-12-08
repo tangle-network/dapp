@@ -1,7 +1,7 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
+import { ChainType } from '@webb-tools/dapp-types/TypedChainId';
 import type { Chain } from 'viem/chains';
 
 import type { AppEnvironment } from '../types';

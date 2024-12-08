@@ -6,36 +6,18 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/next:build",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "outputPath": "dist/apps/tangle-cloud"
-      },
       "configurations": {
-        "development": {
-          "outputPath": "apps/tangle-cloud"
-        },
-        "production": {}
+        "development": {}
       }
     },
     "serve": {
-      "executor": "@nx/next:server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "tangle-cloud:build",
-        "dev": true,
         "port": 4300
       },
       "configurations": {
-        "development": {
-          "buildTarget": "tangle-cloud:build:development",
-          "dev": true
-        },
-        "production": {
-          "buildTarget": "tangle-cloud:build:production",
-          "dev": false
-        }
+        "development": {},
+        "production": {}
       }
     },
     "export": {
@@ -45,14 +27,23 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/jest.preset.js",
+        {
+          "externalDependencies": ["jest"]
+        }
+      ],
       "options": {
-        "jestConfig": "apps/tangle-cloud/jest.config.ts"
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
     }
   }
 }

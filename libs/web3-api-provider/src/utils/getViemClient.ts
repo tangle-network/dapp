@@ -1,5 +1,5 @@
 import { chainsConfig } from '@webb-tools/dapp-config/chains/evm';
-import { parseTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
+import { parseTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import {
   createPublicClient,
   fallback,
