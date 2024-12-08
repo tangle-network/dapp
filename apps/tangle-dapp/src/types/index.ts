@@ -6,11 +6,11 @@ import type { BN } from '@polkadot/util';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 export enum PagePath {
+  DASHBOARD = '/',
   NOMINATION = '/nomination',
   NOMINATION_VALIDATOR = '/nomination/:validatorAddress',
   CLAIM_AIRDROP = '/claim',
   CLAIM_AIRDROP_SUCCESS = '/claim/success',
-  ACCOUNT = '/',
   BRIDGE = '/bridge',
   BLUEPRINTS = '/blueprints',
   BLUEPRINTS_DETAILS = '/blueprints/:id',

@@ -34,6 +34,8 @@ import { ArrowRight } from '@webb-tools/icons';
 import { PagePath } from '../types';
 import { Link } from 'react-router';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
+import { twMerge } from 'tailwind-merge';
+import formatFractional from '../utils/formatFractional';
 
 export type RestakeBalanceRow = {
   name: string;
@@ -47,6 +49,7 @@ export type RestakeBalanceRow = {
   points?: number;
   iconName: string;
   decimals: number;
+  apyFractional?: number;
 };
 
 const COLUMN_HELPER = createColumnHelper<RestakeBalanceRow>();
@@ -152,6 +155,39 @@ const PROTOCOL_COLUMNS = [
       );
     },
   }),
+  COLUMN_HELPER.accessor('apyFractional', {
+    header: () => (
+      <HeaderCell
+        title="APY"
+        tooltip="Calculated based on recent performance and may vary over time. Newer assets with limited history may display inaccurate APY estimates."
+      />
+    ),
+    cell: (props) => {
+      const apyFractional = props.getValue();
+
+      if (apyFractional === undefined) {
+        return EMPTY_VALUE_PLACEHOLDER;
+      }
+
+      const isGain = apyFractional >= 0;
+
+      // Negative values already include the negative sign.
+      const polarity = isGain ? '+' : '';
+
+      return (
+        <TableCellWrapper>
+          <span
+            className={twMerge(
+              isGain ? 'dark:text-green-400' : 'dark:text-red-400',
+            )}
+          >
+            {polarity}
+            {formatFractional(apyFractional)}
+          </span>
+        </TableCellWrapper>
+      );
+    },
+  }),
   COLUMN_HELPER.accessor('points', {
     header: () => (
       <HeaderCell
@@ -228,6 +264,7 @@ const RestakeBalancesTable: FC = () => {
         lockedInUsd: undefined,
         // TODO: Calculate the USD value once appropriate hook is available.
         tvlInUsd: undefined,
+        apyFractional: +632.42949,
         token: lsProtocol.token,
         decimals: lsProtocol.decimals,
       } satisfies RestakeBalanceRow;

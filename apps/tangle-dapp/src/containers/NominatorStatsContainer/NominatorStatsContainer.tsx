@@ -113,7 +113,7 @@ const NominatorStatsContainer: FC = () => {
                 </Button>
               )}
 
-            <Link to={PagePath.ACCOUNT}>
+            <Link to={PagePath.DASHBOARD}>
               <Button
                 variant="utility"
                 className="!min-w-[100px]"
