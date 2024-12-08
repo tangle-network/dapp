@@ -3,11 +3,12 @@
 import { BN_ZERO } from '@polkadot/util';
 import {
   Button,
+  Caption,
   Modal,
+  ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Typography,
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback, useState } from 'react';
 
@@ -65,12 +66,8 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
         >
           <ModalHeader onClose={closeModal}>Withdraw Funds</ModalHeader>
 
-          <div className="p-9 space-y-6">
-            <Typography variant="body1" fw="normal">
-              {`Upon successful withdrawal, the funds will be moved from the 'unbonded' state to your account's available balance.`}
-            </Typography>
-
-            <div className="flex flex-col gap-2">
+          <ModalBody>
+            <div className="space-y-2">
               <BondedTokensBalanceInfo
                 type="unbonded"
                 value={totalUnbondedAmount?.value ?? BN_ZERO}
@@ -81,7 +78,12 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
                 value={totalUnbondingAmount?.value ?? BN_ZERO}
               />
             </div>
-          </div>
+
+            <Caption>
+              Funds withdrawn will be moved from the 'unbonded' state to your
+              account's available balance.
+            </Caption>
+          </ModalBody>
 
           <ModalFooter className="flex items-center gap-2">
             <Button isFullWidth onClick={onRebondClick} variant="secondary">

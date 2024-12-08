@@ -1,9 +1,9 @@
 import {
+  Caption,
   Modal,
   ModalBody,
   ModalContent,
   ModalHeader,
-  Typography,
 } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import LockedBalancesTable from './LockedBalancesTable';
@@ -29,13 +29,14 @@ const LockedBalanceDetailsModal: FC<LockedBalanceDetailsModalProps> = ({
           Locked Balance Details
         </ModalHeader>
 
-        <ModalBody className="overflow-clip">
-          <Typography variant="body1" fw="normal">
-            Below are your locked balances and the relevant details of each
-            lock.
-          </Typography>
-
+        <ModalBody>
           <LockedBalancesTable />
+
+          <Caption>
+            Most locks won't unlock automatically and will require manual action
+            to release them. For example, vesting schedules must be manually
+            claimed through a transaction.
+          </Caption>
         </ModalBody>
       </ModalContent>
     </Modal>

@@ -188,7 +188,7 @@ const LockedBalancesTable: FC = () => {
 
   return (
     <Table
-      variant={TableVariant.DEFAULT}
+      variant={TableVariant.EMBEDDED_IN_MODAL}
       tableProps={table}
       title={pluralize('lock', rows.length !== 1)}
       isPaginated
