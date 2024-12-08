@@ -19,7 +19,6 @@ import {
   AmountFormatStyle,
   Avatar,
   CheckBox,
-  Chip,
   CopyWithTooltip,
   fuzzyFilter,
   Input,
@@ -50,6 +49,7 @@ import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorSelectionTableProps } from './types';
 import SkeletonRows from '../SkeletonRows';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 
 const columnHelper = createColumnHelper<Validator>();
 
@@ -123,6 +123,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
                 </Typography>
 
                 <CopyWithTooltip
+                  copyLabel="Copy Address"
                   textToCopy={address}
                   isButton={false}
                   iconClassName="!fill-mono-160 dark:!fill-mono-80"
@@ -141,6 +142,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           ),
         filterFn: (row, _, filterValue) => {
           const { address, identityName } = row.original;
+
           return (
             address.toLowerCase().includes(filterValue.toLowerCase()) ||
             identityName.toLowerCase().includes(filterValue.toLowerCase())
@@ -152,15 +154,11 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           <HeaderCell title="Total Staked" className="justify-start" />
         ),
         cell: (props) => (
-          <div className="flex items-center justify-start">
-            <Chip color="dark-grey" className="normal-case">
-              <TokenAmountCell
-                amount={props.getValue()}
-                className="text-mono-0"
-                formatStyle={AmountFormatStyle.SHORT}
-              />
-            </Chip>
-          </div>
+          <TokenAmountCell
+            amount={props.getValue()}
+            className="text-mono-0"
+            formatStyle={AmountFormatStyle.SHORT}
+          />
         ),
         sortingFn: (rowA, rowB, columnId) =>
           sortValidatorsBy(
@@ -176,9 +174,9 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           <HeaderCell title="Nominations" className="justify-start" />
         ),
         cell: (props) => (
-          <div className="flex items-center justify-start">
-            <Chip color="dark-grey">{props.getValue()}</Chip>
-          </div>
+          <Typography variant="body1">
+            {addCommasToNumber(props.getValue())}
+          </Typography>
         ),
         sortingFn: (rowA, rowB, columnId) =>
           sortValidatorsBy(
@@ -195,11 +193,9 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           <HeaderCell title="Commission" className="justify-start" />
         ),
         cell: (props) => (
-          <div className="flex items-center justify-start">
-            <Chip color="dark-grey">
-              {formatFractional(calculateCommission(props.getValue()))}
-            </Chip>
-          </div>
+          <Typography variant="body1">
+            {formatFractional(calculateCommission(props.getValue()))}
+          </Typography>
         ),
         sortingFn: (rowA, rowB, columnId) =>
           sortValidatorsBy(
@@ -209,10 +205,6 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
             sortBnValueForNomineeOrValidator,
             isDesc,
           ),
-      }),
-      columnHelper.accessor('identityName', {
-        header: () => <HeaderCell title="Identity" />,
-        cell: (props) => props.getValue(),
       }),
     ],
     [isDesc],
@@ -293,7 +285,6 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         <Table
           variant={TableVariant.EMBEDDED_IN_MODAL}
           tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
-          paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
           tableWrapperClassName="max-h-[340px] overflow-y-scroll"
           tableProps={table}
           isPaginated

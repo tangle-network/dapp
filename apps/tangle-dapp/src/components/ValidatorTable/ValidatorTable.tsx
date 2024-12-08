@@ -148,6 +148,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
               </Typography>
 
               <CopyWithTooltip
+                copyLabel="Copy Address"
                 textToCopy={address}
                 isButton={false}
                 iconClassName="!fill-mono-160 dark:!fill-mono-80"
