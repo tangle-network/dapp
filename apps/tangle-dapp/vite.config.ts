@@ -16,6 +16,9 @@ export default defineConfig({
   server: {
     port: 4200,
     host: 'localhost',
+    fs: {
+      allow: ['../..'],
+    },
   },
   define: {
     'process.env': {},
