@@ -12,6 +12,7 @@
     "start": "nx run-many --all --target=serve",
     "build": "nx run-many --all --target=build",
     "lint": "nx run-many --all --target=lint",
+    "test": "nx run-many --all --target=test",
     "build:tangle-dapp": "nx build tangle-dapp",
     "build:tangle-cloud": "nx build tangle-cloud",
     "build:leaderboard": "nx build testnet-leaderboard",
