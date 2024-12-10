@@ -1,14 +1,21 @@
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="12" cy="12" r="12" fill="white" />
-    <g clip-path="url(#clip0_linea)">
-        <path d="M15.884 18H6v-10h2.273v8.432h7.611V18z" fill="#121212" />
-        <path
-            d="M15.884 10.273c1.125 0 2.037-.912 2.037-2.037S17.01 6.2 15.884 6.2c-1.124 0-2.036.912-2.036 2.036 0 1.125.912 2.037 2.036 2.037z"
-            fill="#121212" />
+<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_9699_42507)">
+        <path d="M23.928 0H0V24.9148H23.928V0Z" fill="white" />
+        <mask id="mask0_9699_42507" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="6"
+            y="5" width="12" height="14">
+            <path d="M17.9449 5.76001H6V18.2372H17.9449V5.76001Z" fill="white" />
+        </mask>
+        <g mask="url(#mask0_9699_42507)">
+            <path d="M15.9203 18.2372H6V7.78467H8.26976V16.2115H15.9203V18.2361V18.2372Z"
+                fill="#121212" />
+            <path
+                d="M15.9204 9.8093C17.0386 9.8093 17.945 8.90283 17.945 7.78466C17.945 6.66648 17.0386 5.76001 15.9204 5.76001C14.8021 5.76001 13.8958 6.66648 13.8958 7.78466C13.8958 8.90283 14.8021 9.8093 15.9204 9.8093Z"
+                fill="#121212" />
+        </g>
     </g>
     <defs>
-        <clipPath id="clip0_linea">
-            <rect width="12" height="12" fill="white" transform="translate(6 6)" />
+        <clipPath id="clip0_9699_42507">
+            <rect width="24" height="24" rx="4" fill="white" />
         </clipPath>
     </defs>
 </svg>

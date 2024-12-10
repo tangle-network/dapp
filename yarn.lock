@@ -17570,6 +17570,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@web3icons/common@npm:0.7.2":
+  version: 0.7.2
+  resolution: "@web3icons/common@npm:0.7.2"
+  peerDependencies:
+    typescript: ^5.0.0
+  checksum: 10c0/317fd9d5089f90ecc6e4da7f0ae1fe7c85efab0db807372cc0c94faf910c5c376a2835722d5ea1424307e5ee7b075448b0a32bf1180ad2830f33a3f50db3a1da
+  languageName: node
+  linkType: hard
+
+"@web3icons/react@npm:^3.13.2":
+  version: 3.13.2
+  resolution: "@web3icons/react@npm:3.13.2"
+  dependencies:
+    "@web3icons/common": "npm:0.7.2"
+    react: "npm:^18.2.0"
+  peerDependencies:
+    react: ^18.2.0
+  checksum: 10c0/17ed8f6d608993c390f38b7eb2d15a19d5ffa5113a99a78f3a153bc3a4b5f6186728c9373fe9079997a486d96dfd10c908b99a59230980613c1984c46088b62e
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/ast@npm:1.14.1, @webassemblyjs/ast@npm:^1.12.1":
   version: 1.14.1
   resolution: "@webassemblyjs/ast@npm:1.14.1"
@@ -19470,7 +19491,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.0, axios@npm:^1.7.4":
+"axios@npm:^1.6.0, axios@npm:^1.7.4, axios@npm:^1.7.9":
   version: 1.7.9
   resolution: "axios@npm:1.7.9"
   dependencies:
@@ -38848,7 +38869,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0, react@npm:^18.3.1":
+"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0, react@npm:^18.2.0, react@npm:^18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -45035,6 +45056,7 @@ __metadata:
     "@vitejs/plugin-react-swc": "npm:^3.7.1"
     "@vitest/coverage-v8": "npm:^2.1.4"
     "@vitest/ui": "npm:^2.1.4"
+    "@web3icons/react": "npm:^3.13.2"
     "@webb-tools/anchors": "npm:1.0.11"
     "@webb-tools/api": "npm:0.1.4-127"
     "@webb-tools/api-derive": "npm:0.1.4-127"
@@ -45051,6 +45073,7 @@ __metadata:
     "@webb-tools/vanchor-client": "npm:0.1.27"
     "@webb-tools/wasm-utils": "npm:0.1.4-127"
     autoprefixer: "npm:^10.4.20"
+    axios: "npm:^1.7.9"
     babel-jest: "npm:29.7.0"
     bn.js: "npm:^5.2.1"
     chromatic: "npm:^11.16.1"

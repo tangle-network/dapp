@@ -37,7 +37,7 @@ export const ListCardWrapper = forwardRef<HTMLDivElement, ListCardWrapperProps>(
         )}
         ref={ref}
       >
-        <div className="flex items-center justify-between mb-4 px-4 md:px-9 pt-4 md:pt-9">
+        <div className="flex items-center justify-between mb-4 px-4 md:px-6 pt-4 md:pt-6">
           <Typography variant="h4" fw="bold" {...overrideTitleProps}>
             {title}
           </Typography>

@@ -1,20 +1,54 @@
+import { chainsConfig } from '@webb-tools/dapp-config/chains';
+import { AddressType } from '@webb-tools/dapp-config/types';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import useLocalStorage, {
   LocalStorageKey,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import { Decimal } from 'decimal.js';
+import { BigNumberish } from 'ethers';
+import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
+import { Abi, createPublicClient, getContract, http } from 'viem';
 
 import { BRIDGE_TOKENS } from '../../constants/bridge/constants';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { BridgeTokenType } from '../../types/bridge/types';
-import { getEVMTokenBalance } from './getEVMTokenBalance';
 
 export type TokenBalanceType = BridgeTokenType & {
   balance: Decimal;
 };
 
 type BalanceType = Partial<Record<PresetTypedChainId, TokenBalanceType[]>>;
+
+export const getEVMTokenBalance = async (
+  accountAddress: string,
+  chainId: number,
+  tokenAddress: AddressType,
+  tokenAbi: Abi,
+  decimals: number,
+) => {
+  try {
+    const client = createPublicClient({
+      chain: chainsConfig[chainId],
+      transport: http(),
+    });
+
+    const contract = getContract({
+      address: tokenAddress,
+      abi: tokenAbi,
+      client,
+    });
+
+    const balance = await contract.read.balanceOf([accountAddress]);
+
+    return new Decimal(
+      ethers.utils.formatUnits(balance as BigNumberish, decimals),
+    );
+  } catch (error) {
+    console.error(error);
+    return new Decimal(0);
+  }
+};
 
 export const useEVMBalances = () => {
   const activeAccountAddress = useActiveAccountAddress();

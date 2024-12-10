@@ -3,6 +3,7 @@
 import { isAddress } from '@polkadot/util-crypto';
 import { Avatar, Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { isEvmAddress } from '../utils/isEvmAddress';
 import InputWrapper, { InputWrapperProps } from './InputWrapper';
@@ -25,6 +26,9 @@ export type AddressInputProps = {
   wrapperOverrides?: Partial<InputWrapperProps>;
   setValue: (newValue: string) => void;
   setErrorMessage?: (error: string | null) => void;
+  showErrorMessage?: boolean;
+  inputClassName?: string;
+  showAvatar?: boolean;
 };
 
 const AddressInput: FC<AddressInputProps> = ({
@@ -39,6 +43,9 @@ const AddressInput: FC<AddressInputProps> = ({
   isDisabled = false,
   wrapperOverrides,
   setErrorMessage: setErrorMessageOnParent,
+  showErrorMessage = true,
+  inputClassName,
+  showAvatar = true,
 }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -118,19 +125,24 @@ const AddressInput: FC<AddressInputProps> = ({
       title={title}
       tooltip={tooltip}
       errorMessage={errorMessage ?? undefined}
-      bodyClassName="flex items-center gap-1"
+      bodyClassName="flex items-center gap-2"
       {...wrapperOverrides}
       actions={actions}
+      showErrorMessage={showErrorMessage}
     >
-      {value && (
-        <Avatar theme={isEvm ? 'ethereum' : 'substrate'} value={value} />
+      {value && showAvatar && (
+        <Avatar
+          theme={isEvm ? 'ethereum' : 'substrate'}
+          value={value}
+          size="md"
+        />
       )}
 
       <Input
         id={id}
         inputRef={inputRef}
         className="w-full"
-        inputClassName="placeholder:text-lg text-lg"
+        inputClassName={twMerge('placeholder:text-lg text-lg', inputClassName)}
         type="text"
         placeholder={placeholder}
         size="sm"

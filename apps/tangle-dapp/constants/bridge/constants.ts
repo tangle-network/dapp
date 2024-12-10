@@ -188,3 +188,16 @@ export const BRIDGE_CHAINS: BridgeChainsConfigType = {
     },
   },
 };
+
+export const ROUTER_QUOTE_URL = `https://api-beta.pathfinder.routerprotocol.com/api/v2/quote`;
+
+export const ROUTER_TRANSACTION_URL = `https://api-beta.pathfinder.routerprotocol.com/api/v2/transaction`;
+
+export const ROUTER_NATIVE_TOKEN_ADDRESS =
+  '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+
+export const ROUTER_PARTNER_ID = 252;
+
+export enum ROUTER_ERROR_CODE {
+  LOW_AMOUNT_INPUT = 'AMOUNT-LOW-W-VALUE',
+}

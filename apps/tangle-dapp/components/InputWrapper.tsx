@@ -37,6 +37,7 @@ export type InputWrapperProps = {
   isFullWidth?: boolean;
   isDisabled?: boolean;
   tooltip?: ReactNode;
+  showErrorMessage?: boolean;
 };
 
 const InputWrapper: FC<InputWrapperProps> = ({
@@ -57,6 +58,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
   isFullWidth = false,
   isDisabled = false,
   tooltip,
+  showErrorMessage = true,
 }) => {
   const { addError, removeError } = useErrorCountContext();
 
@@ -93,7 +95,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
           'w-[356px] max-w-[356px]',
           'bg-mono-20 dark:bg-mono-170',
           'border border-transparent',
-          // hasError && 'border-red-70 dark:border-red-50',
+          hasError && showErrorMessage && 'border-red-70 dark:border-red-50',
           isFullWidth && 'w-full max-w-full',
           wrapperClassName,
         )}
@@ -101,7 +103,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
         <div className="flex flex-col gap-1 w-full mr-auto">
           <div className="flex gap-1">
             <Label
-              className="text-mono-120 dark:text-mono-120 font-bold"
+              className="text-mono-120 dark:text-mono-120 font-bold text-lg"
               htmlFor={id}
             >
               {title}
@@ -159,7 +161,9 @@ const InputWrapper: FC<InputWrapperProps> = ({
         )}
       </div>
 
-      {hasError && <ErrorMessage>{errorMessage}</ErrorMessage>}
+      {hasError && showErrorMessage && (
+        <ErrorMessage>{errorMessage}</ErrorMessage>
+      )}
     </div>
   );
 };

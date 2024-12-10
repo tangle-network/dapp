@@ -51,7 +51,7 @@ export const ChainList = ({
   return (
     <ListCardWrapper title={title} onClose={onClose}>
       {showSearchInput && (
-        <div className="px-4 md:px-9 pb-4">
+        <div className="px-4 md:px-6 pb-5">
           <Input
             id={searchInputId}
             isControlled
@@ -83,7 +83,7 @@ export const ChainList = ({
                 key={`${chain.id}-${idx}`}
                 isDisabled={isDisabled}
                 className={twMerge(
-                  'w-full flex items-center justify-between max-w-full min-h-[60px] py-3',
+                  'w-full flex items-center justify-between max-w-full min-h-[60px] py-3 px-6',
                   !isDisabled && 'cursor-pointer',
                 )}
                 onClick={() => {
@@ -96,7 +96,11 @@ export const ChainList = ({
                 }}
               >
                 <div className="flex items-center gap-4 justify-start">
-                  <ChainIcon size="lg" name={chain.displayName ?? chain.name} />
+                  <ChainIcon
+                    size="xl"
+                    name={chain.displayName ?? chain.name}
+                    spinnerSize="lg"
+                  />
 
                   <Typography variant="h5" fw="bold" className="capitalize">
                     {chain.displayName ?? chain.name}

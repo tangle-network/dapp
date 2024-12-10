@@ -69,6 +69,9 @@ interface BridgeStore {
 
   destinationAddress: string | null;
   setDestinationAddress: (destinationAddress: string | null) => void;
+
+  isAddressInputError: boolean;
+  setIsAddressInputError: (isAddressInputError: boolean) => void;
 }
 
 const useBridgeStore = create<BridgeStore>((set) => ({
@@ -103,7 +106,21 @@ const useBridgeStore = create<BridgeStore>((set) => ({
       };
     }),
   setSelectedDestinationChain: (chain) =>
-    set({ selectedDestinationChain: chain }),
+    set((state) => {
+      const tokens =
+        BRIDGE_CHAINS[
+          calculateTypedChainId(
+            state.selectedSourceChain.chainType,
+            state.selectedSourceChain.id,
+          )
+        ][calculateTypedChainId(chain.chainType, chain.id)].supportedTokens;
+
+      return {
+        selectedDestinationChain: chain,
+        tokens,
+        selectedToken: tokens[0],
+      };
+    }),
 
   tokens: DEFAULT_TOKENS,
   setTokens: (tokens) => set({ tokens }),
@@ -119,6 +136,9 @@ const useBridgeStore = create<BridgeStore>((set) => ({
 
   destinationAddress: null,
   setDestinationAddress: (destinationAddress) => set({ destinationAddress }),
+
+  isAddressInputError: false,
+  setIsAddressInputError: (isAddressInputError) => set({ isAddressInputError }),
 }));
 
 export default useBridgeStore;

@@ -1,3 +1,5 @@
+import { TokenROUTE } from '@web3icons/react';
+import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 import { ArrowRightUp, Search, TokenIcon } from '@webb-tools/icons';
 import {
   Input,
@@ -20,7 +22,7 @@ export type AssetConfig = {
   balance?: string;
   explorerUrl?: string;
   address?: Address;
-  assetBridgeType?: string;
+  assetBridgeType?: EVMTokenBridgeEnum;
 };
 
 type AssetListProps = {
@@ -48,7 +50,7 @@ export const AssetList = ({
 
   return (
     <ListCardWrapper title={title} onClose={onClose}>
-      <div className="px-4 pb-4 border-b md:px-9 border-mono-40 dark:border-mono-170">
+      <div className="px-4 pb-5 border-b md:px-6 border-mono-40 dark:border-mono-170">
         <Input
           id="chain"
           rightIcon={<Search />}
@@ -75,23 +77,37 @@ export const AssetList = ({
                 onSelectAsset(asset);
                 onClose?.();
               }}
-              className="cursor-pointer w-full flex items-center gap-4 justify-between max-w-full min-h-[60px] py-[12px]"
+              className="cursor-pointer w-full flex items-center gap-4 justify-between max-w-full min-h-[60px] py-[12px] px-6"
             >
               <div className="flex items-center gap-2">
                 <TokenIcon
-                  size="lg"
+                  size="xl"
                   name={asset.symbol}
-                  className="mr-2 w-[38px] h-[38px]"
+                  className="mr-2"
+                  spinnerSize="lg"
                 />
 
                 <div className="flex flex-col gap-1">
                   <Typography
                     variant="h5"
                     fw="bold"
-                    className="block cursor-default text-mono-200 dark:text-mono-0"
+                    className="cursor-default text-mono-200 dark:text-mono-0 flex items-center gap-1"
                   >
-                    {asset.symbol}{' '}
-                    {asset.assetBridgeType}
+                    {asset.symbol}
+
+                    {asset.assetBridgeType === EVMTokenBridgeEnum.Router ? (
+                      <span className="flex items-center gap-1">
+                        <TokenROUTE variant="branded" className="w-6 h-6" />{' '}
+                        Router
+                      </span>
+                    ) : asset.assetBridgeType ===
+                      EVMTokenBridgeEnum.Hyperlane ? (
+                      <span className="flex items-center gap-1">
+                        (Hyperlane)
+                      </span>
+                    ) : (
+                      <></>
+                    )}
                   </Typography>
 
                   {asset.explorerUrl !== undefined && (

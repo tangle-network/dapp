@@ -5,6 +5,7 @@ import { forwardRef, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChainOrTokenButtonProps } from './types';
 import { EventFor } from '../../types';
+import { Typography } from '@webb-tools/webb-ui-components';
 
 const ChainOrTokenButton = forwardRef<
   HTMLButtonElement,
@@ -21,6 +22,7 @@ const ChainOrTokenButton = forwardRef<
       placeholder = 'Select Chain',
       iconType,
       onClick,
+      showChevron = true,
       ...props
     },
     ref,
@@ -63,22 +65,23 @@ const ChainOrTokenButton = forwardRef<
         ref={ref}
       >
         <div className="flex items-center justify-between mr-1">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3 min-w-[120px]">
             {value && (
               <IconCmp
                 status={status}
-                size="lg"
-                className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
+                size="xl"
+                spinnerSize="lg"
+                className={cx(`shrink-0 grow-0 ${getFlexBasic('xl')}`)}
                 name={value}
               />
             )}
 
-            <p className={twMerge('font-bold', textClassName)}>
+            <Typography variant="h5" fw="bold" className={textClassName}>
               {displayValue ?? value ?? placeholder}
-            </p>
+            </Typography>
           </div>
 
-          {!disabled && (
+          {!disabled && showChevron && (
             <ChevronDown
               size="lg"
               className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
