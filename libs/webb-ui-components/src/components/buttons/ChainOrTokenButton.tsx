@@ -1,3 +1,4 @@
+import { Typography } from '../../typography';
 import { ChainIcon, ChevronDown, TokenIcon } from '@webb-tools/icons';
 import { getFlexBasic } from '@webb-tools/icons/utils';
 import cx from 'classnames';
@@ -5,7 +6,6 @@ import { forwardRef, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChainOrTokenButtonProps } from './types';
 import { EventFor } from '../../types';
-import { Typography } from '@webb-tools/webb-ui-components';
 
 const ChainOrTokenButton = forwardRef<
   HTMLButtonElement,

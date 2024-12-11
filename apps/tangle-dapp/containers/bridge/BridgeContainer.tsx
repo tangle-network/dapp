@@ -229,7 +229,13 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       },
       estimatedTime,
     };
-  }, [amount, routerQuote, selectedToken]);
+  }, [
+    amount,
+    routerQuote,
+    selectedToken,
+    setReceivingAmount,
+    setSendingAmount,
+  ]);
 
   const clearBridgeStore = () => {
     setAmount(null);

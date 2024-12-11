@@ -3,11 +3,11 @@ import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { calculateTypedChainId } from '@webb-tools/sdk-core/typed-chain-id';
+import Decimal from 'decimal.js';
 import { create } from 'zustand';
 
 import { BRIDGE_CHAINS } from '../../constants/bridge/constants';
 import { BridgeTokenType } from '../../types/bridge/types';
-import Decimal from 'decimal.js';
 
 const sortChainOptions = (chains: ChainConfig[]) => {
   return chains.sort((a, b) => a.name.localeCompare(b.name));

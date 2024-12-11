@@ -1,5 +1,6 @@
 'use client';
 
+import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 import { StatusVariant } from '@webb-tools/icons/StatusIndicator/types';
 import {
   BridgeQueueTxItem,
@@ -9,10 +10,9 @@ import { TxProgressor } from '@webb-tools/webb-ui-components/components/TxProgre
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Decimal from 'decimal.js';
 import { FC } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { useBridgeTxQueue } from '../../context/bridge/useBridgeTxQueue';
-import { twMerge } from 'tailwind-merge';
-import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 
 interface BridgeTxQueueItemProps {
   tx: BridgeQueueTxItem;

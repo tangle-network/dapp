@@ -1,5 +1,6 @@
 import { ArrowDownIcon } from '@heroicons/react/24/outline';
 import { ChainConfig, chainsConfig } from '@webb-tools/dapp-config/chains';
+import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import { getFlexBasic } from '@webb-tools/icons/utils';
@@ -19,12 +20,11 @@ import cx from 'classnames';
 import { FC, useCallback } from 'react';
 
 import { FeeDetail } from '../../components/bridge/FeeDetail';
+import { ROUTER_TX_EXPLORER_URL } from '../../constants/bridge/constants';
+import useBridgeStore from '../../context/bridge/useBridgeStore';
 import { useBridgeTxQueue } from '../../context/bridge/useBridgeTxQueue';
 import { useRouterTransfer } from '../../hooks/bridge/useRouterTransfer';
 import { BridgeTokenType } from '../../types/bridge/types';
-import useBridgeStore from '../../context/bridge/useBridgeStore';
-import { ROUTER_TX_EXPLORER_URL } from '../../constants/bridge/constants';
-import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 
 interface BridgeConfirmationModalProps {
   isOpen: boolean;
@@ -144,8 +144,8 @@ export const BridgeConfirmationModal = ({
       handleClose();
     }
   }, [
-    setIsOpenQueueDropdown,
     transferByRouterAsync,
+    handleClose,
     addTxToQueue,
     sourceChain.tag,
     sourceChain.chainType,
@@ -154,11 +154,11 @@ export const BridgeConfirmationModal = ({
     destinationChain.id,
     activeAccountAddress,
     destinationAddress,
-    feeDetails?.amounts.sending,
-    feeDetails?.amounts.receiving,
+    sendingAmount,
+    receivingAmount,
     token.tokenType,
+    setIsOpenQueueDropdown,
     updateTxState,
-    handleClose,
     addTxExplorerUrl,
     notificationApi,
   ]);
