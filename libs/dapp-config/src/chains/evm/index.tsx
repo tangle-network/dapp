@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
-import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
+import { ChainType } from '@webb-tools/dapp-types/TypedChainId';
 import {
   arbitrumGoerli,
   avalancheFuji,

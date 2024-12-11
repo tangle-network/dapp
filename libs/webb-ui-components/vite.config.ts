@@ -66,7 +66,7 @@ export default defineConfig(() => ({
 
   test: {
     globals: true,
-    cacheDir: '../../node_modules/.vitest/libs/webb-ui-components',
+    watch: false,
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 

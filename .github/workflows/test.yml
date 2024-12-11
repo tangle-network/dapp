@@ -3,12 +3,11 @@ name: test 🧪
 on:
   workflow_dispatch:
 
-  # TODO: Re-enable once @webb-tools/sdk-core is removed
-  # pull_request:
-  #   branches: [develop, staging, master, feature/**]
+  pull_request:
+    branches: [develop, staging, master, feature/**]
 
-  # push:
-  #   branches: [develop, staging, master, feature/**]
+  push:
+    branches: [develop, staging, master, feature/**]
 
 jobs:
   build_code:
@@ -42,7 +41,7 @@ jobs:
         run: yarn install
 
       - name: Run tests
-        run: yarn nx run-many --all --target=test
+        run: yarn test
         # Fix: JavaScript heap out of memory
         # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
         env:

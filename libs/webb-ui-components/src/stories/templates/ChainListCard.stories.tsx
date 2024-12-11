@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import ChainListCard from '../../components/ListCard/ChainListCard';
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
-import { ChainType } from '@webb-tools/sdk-core/typed-chain-id';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { ChainType } from '@webb-tools/dapp-types/TypedChainId';
+import ChainListCard from '../../components/ListCard/ChainListCard';
 
 const meta: Meta<typeof ChainListCard> = {
   title: 'Design System/Templates/ChainListCard',

@@ -34,7 +34,7 @@ const IdentityCell: FC<{ address: string; identity: IdentityType }> = ({
         fw="semibold"
         className="!normal-case truncate"
       >
-        {identity?.info.display || shortenString(address)}
+        {identity?.name || shortenString(address)}
       </Typography>
 
       <Tooltip>

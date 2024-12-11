@@ -1,8 +1,8 @@
 import { addressToEvm } from '@polkadot/util-crypto';
-import { toHex } from '@webb-tools/sdk-core';
 import assert from 'assert';
 import { EvmAddress, SubstrateAddress } from '../types/address';
 import { isEvmAddress } from './isEvmAddress20';
+import { toHex } from 'viem';
 
 /**
  * Converts a Substrate address to a standard EVM address of 20 bytes.
@@ -35,9 +35,7 @@ export const toEvmAddress = (
   // Truncate the first 20 bytes of the 32-byte account ID.
   const evmAddressBytes = substrateAccountId.subarray(0, 20);
 
-  // Convert to hex and ensure it is 20 bytes long by padding
-  // with zeroes if necessary.
-  const evmAddress = toHex(evmAddressBytes, 20);
+  const evmAddress = toHex(evmAddressBytes);
 
   assert(
     isEvmAddress(evmAddress),

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { FC, forwardRef, useMemo } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import * as constants from '../../constants';
 import type { ExternalLink, Link as ILink } from '../../types';
