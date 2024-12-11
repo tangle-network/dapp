@@ -980,7 +980,7 @@ export class WebbWeb3Provider
             address: ensureHex(vAnchorIdentifier),
             abi: VAnchor__factory.abi,
             client,
-          });
+          } as const) as any;
         }
 
         return acc;
