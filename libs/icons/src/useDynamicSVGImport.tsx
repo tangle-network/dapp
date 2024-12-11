@@ -62,7 +62,6 @@ export function useDynamicSVGImport(
           setImportedIcon(<Icon />);
           onCompleted?.(name_, Icon);
         } else {
-          console.error('IMPORT ERROR', err);
           onError?.(err as any);
           setError(err as Error);
         }
