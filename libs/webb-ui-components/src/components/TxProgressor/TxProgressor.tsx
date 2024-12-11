@@ -81,10 +81,7 @@ const TxProgressorHeader = forwardRef<
     >
       <Chip color={getChipColor(name)}>{name}</Chip>
 
-      <Typography
-        variant="body1"
-        className="text-mono-120 dark:text-mono-100"
-      >
+      <Typography variant="body1" className="text-mono-120 dark:text-mono-100">
         {timeAgo}
       </Typography>
     </div>

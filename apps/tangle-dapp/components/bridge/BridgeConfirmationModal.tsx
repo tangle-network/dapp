@@ -25,7 +25,6 @@ import { BridgeTokenType } from '../../types/bridge/types';
 import useBridgeStore from '../../context/bridge/useBridgeStore';
 import { ROUTER_TX_EXPLORER_URL } from '../../constants/bridge/constants';
 import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
-import { useEVMBalances } from '../../hooks/bridge/useEVMBalances';
 
 interface BridgeConfirmationModalProps {
   isOpen: boolean;
@@ -88,8 +87,6 @@ export const BridgeConfirmationModal = ({
 
   const { sendingAmount, receivingAmount } = useBridgeStore();
 
-  const { refetch: refetchEVMBalances } = useEVMBalances();
-
   const handleConfirm = useCallback(async () => {
     try {
       const response = await transferByRouterAsync();
@@ -134,30 +131,6 @@ export const BridgeConfirmationModal = ({
             ROUTER_TX_EXPLORER_URL + response.transactionHash,
           );
         }
-
-        let fetchCount = 0;
-        const FETCH_INTERVAL = 5 * 60 * 1000; // 5 minutes
-        const MAX_FETCHES = 3;
-
-        const intervalId = setInterval(() => {
-          fetchCount++;
-          console.log('🔄 Refetching EVM balances:', fetchCount);
-          refetchEVMBalances();
-
-          if (fetchCount >= MAX_FETCHES) {
-            console.log('✅ Completed balance refetch cycle');
-            clearInterval(intervalId);
-          }
-        }, FETCH_INTERVAL);
-
-        const cleanup = () => {
-          if (intervalId) {
-            clearInterval(intervalId);
-            console.log('🧹 Cleaned up balance refetch interval');
-          }
-        };
-
-        setTimeout(cleanup, MAX_FETCHES * FETCH_INTERVAL + 1000);
       }
 
       handleClose();
@@ -188,7 +161,6 @@ export const BridgeConfirmationModal = ({
     handleClose,
     addTxExplorerUrl,
     notificationApi,
-    refetchEVMBalances,
   ]);
 
   return (
