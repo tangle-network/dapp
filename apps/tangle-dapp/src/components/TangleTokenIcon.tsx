@@ -7,7 +7,7 @@ interface TangleTokenIconProps {
 }
 
 const TangleTokenIcon: FC<TangleTokenIconProps> = ({ size }) => {
-  return <TokenIcon size={size} />;
+  return <TokenIcon name="tnt" size={size} />;
 };
 
 export default TangleTokenIcon;

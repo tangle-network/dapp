@@ -7,7 +7,6 @@ import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import useQueryState from '@webb-tools/tangle-shared-ui/hooks/useQueryState';
 import { Card } from '@webb-tools/webb-ui-components';
 import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
@@ -21,6 +20,7 @@ import {
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
+import useQueryState from '../../../hooks/useQueryState';
 
 import useRestakeTxEventHandlersWithNoti, {
   type Props,

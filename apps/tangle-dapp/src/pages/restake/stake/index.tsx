@@ -5,7 +5,6 @@ import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import useQueryState from '@webb-tools/tangle-shared-ui/hooks/useQueryState';
 import { Card, isSubstrateAddress } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
@@ -14,10 +13,11 @@ import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import entries from 'lodash/entries';
 import keys from 'lodash/keys';
-import { Link } from 'react-router';
 import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { Link } from 'react-router';
 import { formatUnits, parseUnits } from 'viem';
+import useQueryState from '../../../hooks/useQueryState';
 
 import AvatarWithText from '../../../components/AvatarWithText';
 import {

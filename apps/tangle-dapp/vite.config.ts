@@ -1,11 +1,14 @@
 /// <reference types='vitest' />
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import react from '@vitejs/plugin-react-swc';
-import path from 'path';
-import { defineConfig, UserConfig } from 'vite';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { defineConfig } from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import svgr from 'vite-plugin-svgr';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   root: __dirname,
@@ -13,6 +16,9 @@ export default defineConfig({
   server: {
     port: 4200,
     host: 'localhost',
+    fs: {
+      allow: ['../..'],
+    },
   },
   define: {
     'process.env': {},
@@ -22,6 +28,9 @@ export default defineConfig({
     host: 'localhost',
   },
   plugins: [
+    nodePolyfills({
+      include: ['buffer', 'crypto', 'util', 'stream'],
+    }),
     react(),
     nxViteTsPaths(),
     nxCopyAssetsPlugin(['*.md']),
@@ -44,26 +53,19 @@ export default defineConfig({
       define: {
         global: 'globalThis',
       },
-      plugins: [
-        NodeGlobalsPolyfillPlugin({
-          buffer: true,
-        }) as NonNullable<
-          NonNullable<
-            NonNullable<UserConfig['optimizeDeps']>['esbuildOptions']
-          >['plugins']
-        >[number],
-      ],
     },
   },
   test: {
     watch: false,
     globals: true,
     environment: 'jsdom',
+    dangerouslyIgnoreUnhandledErrors: true,
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
       reportsDirectory: '../../coverage/apps/tangle-dapp',
       provider: 'v8',
     },
+    setupFiles: [resolve(__dirname, 'src/utils/setupTest.ts')],
   },
 });
