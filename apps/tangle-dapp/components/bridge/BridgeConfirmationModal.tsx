@@ -251,16 +251,16 @@ const ConfirmationItem: FC<{
         <Typography variant="body1" className="!text-lg">
           Amount
         </Typography>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
+          <Typography variant="h5" fw="bold" className="!text-lg">
+            {amount}
+          </Typography>
           <TokenIcon
             name={tokenName}
             size="lg"
             spinnersize="lg"
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
           />
-          <Typography variant="h5" fw="bold" className="!text-lg">
-            {amount}
-          </Typography>
         </div>
       </div>
     </div>
