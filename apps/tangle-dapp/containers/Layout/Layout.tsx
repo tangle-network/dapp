@@ -12,6 +12,7 @@ import { useLayoutBgClassName } from '@webb-tools/webb-ui-components/next-utils'
 import { type FC, type PropsWithChildren } from 'react';
 
 import { MobileSidebar, Sidebar } from '../../components';
+import BridgeTxQueueDropdown from '../../components/bridge/BridgeTxQueueDropdown';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import ApiDevStatsContainer from '../DebugMetricsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
@@ -53,6 +54,8 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
 
               <div className="flex items-center gap-2">
                 <WalletAndChainContainer />
+
+                <BridgeTxQueueDropdown />
               </div>
             </div>
 

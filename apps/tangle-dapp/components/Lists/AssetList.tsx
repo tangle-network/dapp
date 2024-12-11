@@ -1,4 +1,3 @@
-import { TokenROUTE } from '@web3icons/react';
 import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 import { ArrowRightUp, Search, TokenIcon } from '@webb-tools/icons';
 import {
@@ -84,7 +83,7 @@ export const AssetList = ({
                   size="xl"
                   name={asset.symbol}
                   className="mr-2"
-                  spinnerSize="lg"
+                  spinnersize="lg"
                 />
 
                 <div className="flex flex-col gap-1">
@@ -94,20 +93,6 @@ export const AssetList = ({
                     className="cursor-default text-mono-200 dark:text-mono-0 flex items-center gap-1"
                   >
                     {asset.symbol}
-
-                    {asset.assetBridgeType === EVMTokenBridgeEnum.Router ? (
-                      <span className="flex items-center gap-1">
-                        <TokenROUTE variant="branded" className="w-6 h-6" />{' '}
-                        Router
-                      </span>
-                    ) : asset.assetBridgeType ===
-                      EVMTokenBridgeEnum.Hyperlane ? (
-                      <span className="flex items-center gap-1">
-                        (Hyperlane)
-                      </span>
-                    ) : (
-                      <></>
-                    )}
                   </Typography>
 
                   {asset.explorerUrl !== undefined && (

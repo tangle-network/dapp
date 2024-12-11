@@ -119,11 +119,6 @@ export const useEVMBalances = () => {
         if (result.status === 'fulfilled') {
           const { chainId, tokenBalances } = result.value;
 
-          // Add chains that have tokens with non-zero balances
-          // if (tokenBalances.some((token) => !token.balance.isZero())) {
-          //   newBalances[chainId] = tokenBalances;
-          // }
-
           newBalances[chainId] = tokenBalances;
         }
       });

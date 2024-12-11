@@ -1,8 +1,11 @@
 import { ArrowDownIcon } from '@heroicons/react/24/outline';
-import { ChainConfig } from '@webb-tools/dapp-config/chains';
+import { ChainConfig, chainsConfig } from '@webb-tools/dapp-config/chains';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import { getFlexBasic } from '@webb-tools/icons/utils';
+import { calculateTypedChainId } from '@webb-tools/sdk-core';
+import { BridgeTxState } from '@webb-tools/tangle-shared-ui/types/bridge';
+import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { Button } from '@webb-tools/webb-ui-components/components/buttons';
 import {
   Modal,
@@ -16,9 +19,13 @@ import cx from 'classnames';
 import { FC, useCallback } from 'react';
 
 import { FeeDetail } from '../../components/bridge/FeeDetail';
+import { useBridgeTxQueue } from '../../context/bridge/useBridgeTxQueue';
 import { useRouterTransfer } from '../../hooks/bridge/useRouterTransfer';
 import { BridgeTokenType } from '../../types/bridge/types';
-import { useBridgeTxQueue } from '../../context/bridge/useBridgeTxQueue';
+import useBridgeStore from '../../context/bridge/useBridgeStore';
+import { ROUTER_TX_EXPLORER_URL } from '../../constants/bridge/constants';
+import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
+import { useEVMBalances } from '../../hooks/bridge/useEVMBalances';
 
 interface BridgeConfirmationModalProps {
   isOpen: boolean;
@@ -58,7 +65,10 @@ export const BridgeConfirmationModal = ({
   destinationAddress,
   transferData,
 }: BridgeConfirmationModalProps) => {
-  const { mutate: transferByRouter } = useRouterTransfer({
+  const {
+    mutateAsync: transferByRouterAsync,
+    isPending: isTransferByRouterPending,
+  } = useRouterTransfer({
     routerQuoteData: transferData.routerQuoteData,
     fromTokenAddress: transferData.fromTokenAddress,
     toTokenAddress: transferData.toTokenAddress,
@@ -67,11 +77,119 @@ export const BridgeConfirmationModal = ({
     refundAddress: transferData.refundAddress,
   });
 
-  const { addTxToQueue } = useBridgeTxQueue();
+  const { notificationApi } = useWebbUI();
+
+  const {
+    addTxToQueue,
+    setIsOpenQueueDropdown,
+    updateTxState,
+    addTxExplorerUrl,
+  } = useBridgeTxQueue();
+
+  const { sendingAmount, receivingAmount } = useBridgeStore();
+
+  const { refetch: refetchEVMBalances } = useEVMBalances();
 
   const handleConfirm = useCallback(async () => {
-    const res = await transferByRouter();
-  }, [transferByRouter, addTxToQueue]);
+    try {
+      const response = await transferByRouterAsync();
+
+      if (response) {
+        addTxToQueue({
+          hash: response.transactionHash,
+          env:
+            sourceChain.tag === 'live'
+              ? 'live'
+              : sourceChain.tag === 'test'
+                ? 'test'
+                : 'dev',
+          sourceTypedChainId: calculateTypedChainId(
+            sourceChain.chainType,
+            sourceChain.id,
+          ),
+          destinationTypedChainId: calculateTypedChainId(
+            destinationChain.chainType,
+            destinationChain.id,
+          ),
+          sourceAddress: activeAccountAddress,
+          recipientAddress: destinationAddress,
+          sourceAmount: sendingAmount?.toString() ?? '',
+          destinationAmount: receivingAmount?.toString() ?? '',
+          tokenSymbol: token.tokenType,
+          creationTimestamp: new Date().getTime(),
+          bridgeType: EVMTokenBridgeEnum.Router,
+        });
+
+        setIsOpenQueueDropdown(true);
+
+        updateTxState(response.transactionHash, BridgeTxState.Executed);
+
+        if (
+          chainsConfig[
+            calculateTypedChainId(sourceChain.chainType, sourceChain.id)
+          ].blockExplorers
+        ) {
+          addTxExplorerUrl(
+            response.transactionHash,
+            ROUTER_TX_EXPLORER_URL + response.transactionHash,
+          );
+        }
+
+        let fetchCount = 0;
+        const FETCH_INTERVAL = 5 * 60 * 1000; // 5 minutes
+        const MAX_FETCHES = 3;
+
+        const intervalId = setInterval(() => {
+          fetchCount++;
+          console.log('🔄 Refetching EVM balances:', fetchCount);
+          refetchEVMBalances();
+
+          if (fetchCount >= MAX_FETCHES) {
+            console.log('✅ Completed balance refetch cycle');
+            clearInterval(intervalId);
+          }
+        }, FETCH_INTERVAL);
+
+        const cleanup = () => {
+          if (intervalId) {
+            clearInterval(intervalId);
+            console.log('🧹 Cleaned up balance refetch interval');
+          }
+        };
+
+        setTimeout(cleanup, MAX_FETCHES * FETCH_INTERVAL + 1000);
+      }
+
+      handleClose();
+    } catch (error: unknown) {
+      console.error('❌ Transfer failed:', error);
+      notificationApi({
+        message: 'Transfer failed',
+        variant: 'error',
+      });
+
+      handleClose();
+    }
+  }, [
+    setIsOpenQueueDropdown,
+    transferByRouterAsync,
+    addTxToQueue,
+    sourceChain.tag,
+    sourceChain.chainType,
+    sourceChain.id,
+    destinationChain.chainType,
+    destinationChain.id,
+    activeAccountAddress,
+    destinationAddress,
+    feeDetails?.amounts.sending,
+    feeDetails?.amounts.receiving,
+    token.tokenType,
+    updateTxState,
+    handleClose,
+    addTxExplorerUrl,
+    notificationApi,
+    refetchEVMBalances,
+  ]);
 
   return (
     <Modal open>
@@ -105,14 +223,18 @@ export const BridgeConfirmationModal = ({
               estimatedTime={feeDetails.estimatedTime}
               amounts={feeDetails.amounts}
               className="bg-mono-20 dark:bg-mono-170 rounded-xl"
-              showTitle={false}
             />
           )}
         </div>
 
         <ModalFooter className="flex items-center gap-2">
-          <Button isFullWidth onClick={handleConfirm}>
-            Confirm
+          <Button
+            isFullWidth
+            onClick={handleConfirm}
+            isLoading={isTransferByRouterPending}
+            isDisabled={isTransferByRouterPending}
+          >
+            {isTransferByRouterPending ? 'Bridging...' : 'Bridge'}
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -137,7 +259,7 @@ const ConfirmationItem: FC<{
           <ChainIcon
             name={chainName}
             size="lg"
-            spinnerSize="lg"
+            spinnersize="lg"
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
           />
           <Typography variant="h5" fw="bold" className="!text-lg">
@@ -161,7 +283,7 @@ const ConfirmationItem: FC<{
           <TokenIcon
             name={tokenName}
             size="lg"
-            spinnerSize="lg"
+            spinnersize="lg"
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
           />
           <Typography variant="h5" fw="bold" className="!text-lg">

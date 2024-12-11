@@ -11,34 +11,6 @@ import {
 } from '../../types/bridge/types';
 
 export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
-  // [PresetTypedChainId.TangleTestnetEVM]: [
-  //   {
-  //     tokenSymbol: 'hypWETH',
-  //     tokenType: EVMTokenEnum.WETH,
-  //     bridgeType: EVMTokenBridgeEnum.Hyperlane,
-  //     address: EVMTokens.tangletestnet.hyperlane.WETH.address,
-  //     abi: EVMTokens.tangletestnet.hyperlane.WETH.abi,
-  //     decimals: EVMTokens.tangletestnet.hyperlane.WETH.decimals,
-  //   },
-  // ],
-  // [PresetTypedChainId.Holesky]: [
-  //   {
-  //     tokenSymbol: 'WETH',
-  //     tokenType: EVMTokenEnum.WETH,
-  //     bridgeType: EVMTokenBridgeEnum.None,
-  //     address: EVMTokens.holesky.none.WETH.address,
-  //     abi: EVMTokens.holesky.none.WETH.abi,
-  //     decimals: EVMTokens.holesky.none.WETH.decimals,
-  //   },
-  //   {
-  //     tokenSymbol: 'hypWETH',
-  //     tokenType: EVMTokenEnum.WETH,
-  //     bridgeType: EVMTokenBridgeEnum.Hyperlane,
-  //     address: EVMTokens.holesky.hyperlane.WETH.address,
-  //     abi: EVMTokens.holesky.hyperlane.WETH.abi,
-  //     decimals: EVMTokens.holesky.hyperlane.WETH.decimals,
-  //   },
-  // ],
   [PresetTypedChainId.EthereumMainNet]: [
     {
       tokenSymbol: 'routerTNT',
@@ -119,16 +91,6 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
 };
 
 export const BRIDGE_CHAINS: BridgeChainsConfigType = {
-  // [PresetTypedChainId.Holesky]: {
-  //   [PresetTypedChainId.TangleTestnetEVM]: {
-  //     supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.TangleTestnetEVM],
-  //   },
-  // },
-  // [PresetTypedChainId.TangleTestnetEVM]: {
-  //   [PresetTypedChainId.Holesky]: {
-  //     supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.Holesky],
-  //   },
-  // },
   [PresetTypedChainId.TangleMainnetEVM]: {
     [PresetTypedChainId.EthereumMainNet]: {
       supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.EthereumMainNet],
@@ -201,3 +163,5 @@ export const ROUTER_PARTNER_ID = 252;
 export enum ROUTER_ERROR_CODE {
   LOW_AMOUNT_INPUT = 'AMOUNT-LOW-W-VALUE',
 }
+
+export const ROUTER_TX_EXPLORER_URL = 'https://explorer.routernitro.com/tx/';

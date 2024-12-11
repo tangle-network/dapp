@@ -10,6 +10,7 @@ import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
 import z from 'zod';
+import BridgeTxQueueProvider from '../context/bridge/useBridgeTxQueue';
 
 const appEvent = new AppEvent();
 
@@ -49,7 +50,7 @@ const Providers = ({
             blockedRegions={blockedRegions}
             blockedCountryCodes={blockedCountryCodes}
           >
-            {children}
+            <BridgeTxQueueProvider>{children}</BridgeTxQueueProvider>
           </OFACFilterProvider>
         </WebbProvider>
       </WebbUIProvider>

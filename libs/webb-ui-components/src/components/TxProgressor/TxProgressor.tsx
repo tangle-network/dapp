@@ -2,8 +2,6 @@
 
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import {
-  ArrowRight,
-  ExternalLinkLine,
   ShieldedAssetIcon,
   StatusIndicator,
   TokenIcon,
@@ -11,6 +9,10 @@ import {
 import Decimal from 'decimal.js';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import {
+  ArrowTopRightOnSquareIcon,
+  ArrowRightIcon,
+} from '@heroicons/react/24/outline';
 
 import useTimeAgo from '../../hooks/useTimeAgo';
 import { PropsOf } from '../../types';
@@ -58,6 +60,8 @@ const getChipColor = (
       return 'purple';
     case 'Withdraw':
       return 'yellow';
+    case 'Bridge':
+      return 'blue';
     default:
       return 'dark-grey';
   }
@@ -77,7 +81,10 @@ const TxProgressorHeader = forwardRef<
     >
       <Chip color={getChipColor(name)}>{name}</Chip>
 
-      <Typography variant="body2" className="text-mono-120 dark:text-mono-100">
+      <Typography
+        variant="body1"
+        className="text-mono-120 dark:text-mono-100"
+      >
         {timeAgo}
       </Typography>
     </div>
@@ -104,7 +111,7 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
   }
 
   return (
-    <div {...props} className={twMerge('space-y-2', className)}>
+    <div {...props} className={twMerge('space-y-3', className)}>
       <TitleWithInfo
         title={isSource ? 'Source Chain' : 'Destination Chain'}
         variant="utility"
@@ -131,7 +138,7 @@ const TxProgressorBodyItem: React.FC<PropsOf<'div'> & TxInfo> = ({
         <Typography
           variant="h5"
           fw="semibold"
-          className="text-mono-200 dark:text-mono-0"
+          className="text-mono-200 dark:text-mono-0 !text-lg"
         >
           <b>
             {amount.greaterThan(new Decimal(0))
@@ -166,7 +173,7 @@ const TxProgressorBody = forwardRef<
     >
       <TxProgressorBodyItem {...txSourceInfo} isSource />
 
-      <ArrowRight size="lg" />
+      <ArrowRightIcon className="h-6 w-6" />
 
       <TxProgressorBodyItem {...txDestinationInfo} />
     </div>
@@ -197,11 +204,11 @@ const TxProgressorFooter = forwardRef<
       <div
         {...props}
         ref={ref}
-        className={twMerge('mt-4 space-y-3', className)}
+        className={twMerge('mt-4 space-y-2', className)}
       >
         {steppedProgressProps && <SteppedProgress {...steppedProgressProps} />}
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-1">
             <div className="flex items-center gap-1">
               <StatusIndicator animated size={14} variant={status} />
@@ -210,7 +217,7 @@ const TxProgressorFooter = forwardRef<
                 <Typography
                   variant="body1"
                   component="span"
-                  className="inline-block"
+                  className="inline-block !text-lg"
                 >
                   {statusMessage}
                 </Typography>
@@ -222,7 +229,7 @@ const TxProgressorFooter = forwardRef<
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  <ExternalLinkLine />
+                  <ArrowTopRightOnSquareIcon className="h-5 w-5" />
                 </a>
               )}
             </div>
@@ -240,7 +247,7 @@ const TxProgressorFooter = forwardRef<
                 <Typography
                   variant="body1"
                   component="span"
-                  className="inline-block"
+                  className="inline-block !text-lg"
                 >
                   {destinationTxStatusMessage}
                 </Typography>
@@ -252,7 +259,7 @@ const TxProgressorFooter = forwardRef<
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  <ExternalLinkLine />
+                  <ArrowTopRightOnSquareIcon className="h-5 w-5" />
                 </a>
               )}
             </div>

@@ -51,7 +51,11 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
       () =>
         chainName.toLowerCase().includes('tangle')
           ? 'tangle transparent'
-          : chainName,
+          : chainName.toLowerCase().includes('linea')
+            ? 'linea'
+            : chainName.toLowerCase().includes('bnb')
+              ? 'bsc'
+              : chainName,
       [chainName],
     );
 
@@ -62,7 +66,11 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
 
     // Short chain name
     const shortChainName = useMemo(() => {
-      return chainName.split(' ').pop();
+      return chainName.toLowerCase().includes('bnb')
+        ? 'BSC'
+        : chainName.toLowerCase().includes('linea')
+          ? 'Linea'
+          : chainName.split(' ').pop();
     }, [chainName]);
 
     return (

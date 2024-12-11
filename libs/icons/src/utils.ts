@@ -40,11 +40,11 @@ export function getFillColor(darkMode?: boolean) {
 export function getIconSizeInPixel(size: IconSize) {
   switch (size) {
     case '2xl': {
-      return '64px' as const;
+      return '48px' as const;
     }
 
     case 'xl': {
-      return '48px' as const;
+      return '40px' as const;
     }
 
     case 'lg': {
@@ -52,7 +52,7 @@ export function getIconSizeInPixel(size: IconSize) {
     }
 
     case 'md': {
-      return '16px' as const;
+      return '24px' as const;
     }
 
     default: {
@@ -64,11 +64,11 @@ export function getIconSizeInPixel(size: IconSize) {
 export function getFlexBasic(size: IconSize = 'md') {
   switch (size) {
     case '2xl': {
-      return 'basis-24' as const;
+      return 'basis-12' as const;
     }
 
     case 'xl': {
-      return 'basis-12' as const;
+      return 'basis-10' as const;
     }
 
     case 'lg': {
@@ -76,7 +76,7 @@ export function getFlexBasic(size: IconSize = 'md') {
     }
 
     case 'md': {
-      return 'basic-4' as const;
+      return 'basis-6' as const;
     }
 
     default: {

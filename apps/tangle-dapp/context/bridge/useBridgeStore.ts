@@ -7,6 +7,7 @@ import { create } from 'zustand';
 
 import { BRIDGE_CHAINS } from '../../constants/bridge/constants';
 import { BridgeTokenType } from '../../types/bridge/types';
+import Decimal from 'decimal.js';
 
 const sortChainOptions = (chains: ChainConfig[]) => {
   return chains.sort((a, b) => a.name.localeCompare(b.name));
@@ -65,13 +66,23 @@ interface BridgeStore {
   setAmount: (amount: BN | null) => void;
 
   isAmountInputError: boolean;
-  setIsAmountInputError: (isAmountInputError: boolean) => void;
+  setIsAmountInputError: (
+    isAmountInputError: boolean,
+    errorMessage: string | null,
+  ) => void;
+  amountInputErrorMessage: string | null;
 
   destinationAddress: string | null;
   setDestinationAddress: (destinationAddress: string | null) => void;
 
   isAddressInputError: boolean;
   setIsAddressInputError: (isAddressInputError: boolean) => void;
+
+  sendingAmount: Decimal | null;
+  setSendingAmount: (sendingAmount: Decimal | null) => void;
+
+  receivingAmount: Decimal | null;
+  setReceivingAmount: (receivingAmount: Decimal | null) => void;
 }
 
 const useBridgeStore = create<BridgeStore>((set) => ({
@@ -132,13 +143,21 @@ const useBridgeStore = create<BridgeStore>((set) => ({
   setAmount: (amount) => set({ amount }),
 
   isAmountInputError: false,
-  setIsAmountInputError: (isAmountInputError) => set({ isAmountInputError }),
+  setIsAmountInputError: (isAmountInputError, errorMessage) =>
+    set({ isAmountInputError, amountInputErrorMessage: errorMessage }),
+  amountInputErrorMessage: null,
 
   destinationAddress: null,
   setDestinationAddress: (destinationAddress) => set({ destinationAddress }),
 
   isAddressInputError: false,
   setIsAddressInputError: (isAddressInputError) => set({ isAddressInputError }),
+
+  sendingAmount: null,
+  setSendingAmount: (sendingAmount) => set({ sendingAmount }),
+
+  receivingAmount: null,
+  setReceivingAmount: (receivingAmount) => set({ receivingAmount }),
 }));
 
 export default useBridgeStore;

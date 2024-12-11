@@ -99,7 +99,7 @@ export const ChainList = ({
                   <ChainIcon
                     size="xl"
                     name={chain.displayName ?? chain.name}
-                    spinnerSize="lg"
+                    spinnersize="lg"
                   />
 
                   <Typography variant="h5" fw="bold" className="capitalize">

@@ -5,7 +5,7 @@ import {
   InformationCircleIcon,
   WalletIcon,
 } from '@heroicons/react/24/outline';
-import { TokenROUTE, WalletMetamask } from '@web3icons/react';
+import { WalletMetamask } from '@web3icons/react';
 import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
 import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
 import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useActiveChain';
@@ -71,7 +71,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       : '';
   }, [balance, nativeTokenSymbol]);
 
-  const { balances } = useEVMBalances();
+  const { balances, refetch: refetchEVMBalances } = useEVMBalances();
 
   const sourceChains = useBridgeStore((state) => state.sourceChains);
   const destinationChains = useBridgeStore((state) => state.destinationChains);
@@ -98,6 +98,9 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   const setIsAmountInputError = useBridgeStore(
     (state) => state.setIsAmountInputError,
   );
+  const amountInputErrorMessage = useBridgeStore(
+    (state) => state.amountInputErrorMessage,
+  );
   const destinationAddress = useBridgeStore(
     (state) => state.destinationAddress,
   );
@@ -109,6 +112,10 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   );
   const setIsAddressInputError = useBridgeStore(
     (state) => state.setIsAddressInputError,
+  );
+  const setSendingAmount = useBridgeStore((state) => state.setSendingAmount);
+  const setReceivingAmount = useBridgeStore(
+    (state) => state.setReceivingAmount,
   );
 
   const {
@@ -210,6 +217,9 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       ? `${Math.ceil(Number(routerQuote.estimatedTime) / 60)} min`
       : '';
 
+    setSendingAmount(new Decimal(sendingAmount));
+    setReceivingAmount(new Decimal(receivingAmount));
+
     return {
       token: selectedToken,
       amounts: {
@@ -221,13 +231,17 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     };
   }, [amount, routerQuote, selectedToken]);
 
+  const clearBridgeStore = () => {
+    setAmount(null);
+    setDestinationAddress(null);
+    setIsAmountInputError(false, null);
+    setIsAddressInputError(false);
+  };
+
   const onSwitchChains = () => {
     setSelectedSourceChain(selectedDestinationChain);
     setSelectedDestinationChain(selectedSourceChain);
-    setAmount(null);
-    setDestinationAddress(null);
-    setIsAmountInputError(false);
-    setIsAddressInputError(false);
+    clearBridgeStore();
   };
 
   const assets: AssetConfig[] = useMemo(() => {
@@ -334,7 +348,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   );
 
   const actionButtonLoadingText = useMemo(
-    () => (isRouterQuoteLoading ? 'Fetch bridge fee...' : ''),
+    () => (isRouterQuoteLoading ? 'Fetching bridge fee...' : ''),
     [isRouterQuoteLoading],
   );
 
@@ -409,9 +423,6 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   ]);
 
   const transferData = useMemo(() => {
-    console.debug('routerQuote', routerQuote);
-
-
     return {
       routerQuoteData: routerQuote,
       fromTokenAddress: routerQuoteParams.fromTokenAddress,
@@ -426,7 +437,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     if (!activeAccount || !activeWallet || !activeChain) {
       setAmount(null);
       setDestinationAddress(null);
-      setIsAmountInputError(false);
+      setIsAmountInputError(false, null);
       setIsAddressInputError(false);
     }
   }, [
@@ -438,6 +449,20 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     setIsAddressInputError,
     setIsAmountInputError,
   ]);
+
+  useEffect(() => {
+    const FETCH_INTERVAL = 2 * 60 * 1000;
+    
+    console.log('🔄 Starting EVM balance refresh interval');
+    const intervalId = setInterval(() => {
+      console.log('🔄 Refetching EVM balances');
+      refetchEVMBalances();
+    }, FETCH_INTERVAL);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [refetchEVMBalances]);
 
   return (
     <>
@@ -496,138 +521,130 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
             </div>
           </div>
 
-          {/* Sending Amount and Token Selector */}
           <div className="flex flex-col gap-2">
-            <div
-              className={twMerge(
-                'w-full flex items-center gap-2 rounded-lg pr-4',
-                'bg-mono-20 dark:bg-mono-180',
-              )}
-            >
-              <AmountInput
-                id="bridge-amount-input"
-                title="Send"
-                amount={amount}
-                setAmount={setAmount}
+            {/* Sending Amount and Token Selector */}
+            <div className="flex flex-col gap-2">
+              <div
+                className={twMerge(
+                  'w-full flex items-center gap-2 rounded-lg pr-4',
+                  'bg-mono-20 dark:bg-mono-180',
+                )}
+              >
+                <AmountInput
+                  id="bridge-amount-input"
+                  title="Send"
+                  amount={amount}
+                  setAmount={setAmount}
+                  wrapperOverrides={{
+                    isFullWidth: true,
+                  }}
+                  placeholder="0"
+                  wrapperClassName="!pr-0 !border-0 dark:bg-mono-180 !py-4"
+                  min={convertDecimalToBn(
+                    new Decimal(0.1),
+                    selectedToken.decimals,
+                  )}
+                  max={
+                    balance
+                      ? convertDecimalToBn(
+                          new Decimal(selectedTokenBalanceOnSourceChain),
+                          selectedToken.decimals,
+                        )
+                      : null
+                  }
+                  decimals={selectedToken.decimals}
+                  showMaxAction={true}
+                  setErrorMessage={(error) => {
+                    setIsAmountInputError(error ? true : false, error);
+                  }}
+                  showErrorMessage={false}
+                  inputClassName={cx(
+                    'placeholder:text-2xl !text-2xl',
+                    isAmountInputError ? 'text-red-70 dark:text-red-50' : '',
+                  )}
+                />
+                <ChainOrTokenButton
+                  value={selectedToken.tokenType}
+                  iconType="token"
+                  onClick={openTokenModal}
+                  className="w-fit py-2"
+                  status="success"
+                  showChevron={false}
+                />
+              </div>
+
+              <div className="flex justify-between items-center px-1">
+                <div className="flex gap-1 items-center">
+                  {isAmountInputError && (
+                    <InformationCircleIcon className="stroke-red-70 dark:stroke-red-50 w-6 h-6" />
+                  )}
+
+                  <Typography
+                    variant="body1"
+                    className="text-red-70 dark:text-red-50 !text-lg"
+                  >
+                    {isAmountInputError ? amountInputErrorMessage : ''}
+                  </Typography>
+                </div>
+
+                {activeAccount && (
+                  <Typography
+                    variant="h5"
+                    fw="bold"
+                    className="flex items-center gap-1 !text-lg"
+                  >
+                    {activeWallet?.id === 2 ? (
+                      <WalletMetamask className="w-6 h-6" variant="branded" />
+                    ) : (
+                      <WalletIcon className="w-6 h-6" />
+                    )}
+                    {selectedTokenBalanceOnSourceChain !== null
+                      ? `${Number(selectedTokenBalanceOnSourceChain).toFixed(3)} ${selectedToken.tokenType}`
+                      : EMPTY_VALUE_PLACEHOLDER}
+                  </Typography>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <AddressInput
+                id="bridge-destination-address-input"
+                type={AddressType.EVM}
+                title="Recipient"
                 wrapperOverrides={{
                   isFullWidth: true,
+                  wrapperClassName: 'bg-mono-20 dark:bg-mono-180 !py-4',
                 }}
-                placeholder="0"
-                wrapperClassName="!pr-0 !border-0 dark:bg-mono-180 !py-4"
-                max={
-                  balance
-                    ? convertDecimalToBn(
-                        new Decimal(selectedTokenBalanceOnSourceChain),
-                        selectedToken.decimals,
-                      )
-                    : null
-                }
-                decimals={selectedToken.decimals}
-                showMaxAction={true}
+                value={destinationAddress ?? ''}
+                setValue={setDestinationAddress}
+                placeholder="0x..."
                 setErrorMessage={(error) =>
-                  setIsAmountInputError(error ? true : false)
+                  setIsAddressInputError(error ? true : false)
                 }
                 showErrorMessage={false}
                 inputClassName={cx(
-                  'placeholder:text-2xl text-2xl',
-                  isAmountInputError ? 'text-red-70 dark:text-red-50' : '',
+                  'placeholder:text-2xl !text-2xl',
+                  isAddressInputError ? 'text-red-70 dark:text-red-50' : '',
                 )}
+                showAvatar={false}
               />
-              <ChainOrTokenButton
-                value={selectedToken.tokenType}
-                iconType="token"
-                onClick={openTokenModal}
-                className="w-fit py-2"
-                status="success"
-                showChevron={false}
-              />
-            </div>
 
-            <div className="flex justify-between items-center px-1">
-              {/* Amount Input Error */}
-              <div className="flex gap-2 items-center">
-                {isAmountInputError && (
-                  <InformationCircleIcon className="stroke-red-70 dark:stroke-red-50 w-6 h-6" />
+              <div className="flex gap-1 items-center">
+                {isAddressInputError && (
+                  <InformationCircleIcon
+                    className="stroke-red-70 dark:stroke-red-50 w-6 h-6"
+                    width={24}
+                    height={24}
+                  />
                 )}
 
                 <Typography
                   variant="body1"
                   className="text-red-70 dark:text-red-50 !text-lg"
                 >
-                  {isAmountInputError ? 'Insufficient balance' : ''}
+                  {isAddressInputError ? 'Invalid EVM address' : ''}
                 </Typography>
               </div>
-
-              {/* Token Balance */}
-              {activeAccount && (
-                <Typography
-                  variant="h5"
-                  fw="bold"
-                  className="flex items-center gap-1 !text-lg"
-                >
-                  {activeWallet?.id === 2 ? (
-                    <WalletMetamask className="w-6 h-6" variant="branded" />
-                  ) : (
-                    <WalletIcon className="w-6 h-6" />
-                  )}
-                  {selectedTokenBalanceOnSourceChain !== null
-                    ? `${Number(selectedTokenBalanceOnSourceChain).toFixed(3)} ${selectedToken.tokenType}`
-                    : EMPTY_VALUE_PLACEHOLDER}
-                  {sourceTypedChainId ===
-                  PresetTypedChainId.TangleMainnetEVM ? (
-                    <></>
-                  ) : selectedToken.bridgeType === EVMTokenBridgeEnum.Router ? (
-                    <span className="flex items-center gap-1">
-                      <TokenROUTE variant="branded" className="w-6 h-6" />{' '}
-                      Router
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1">(Hyperlane)</span>
-                  )}
-                </Typography>
-              )}
-            </div>
-          </div>
-
-          {/* Address Input */}
-          <div className="flex flex-col gap-2">
-            <AddressInput
-              id="bridge-destination-address-input"
-              type={AddressType.EVM}
-              title="Recipient"
-              wrapperOverrides={{
-                isFullWidth: true,
-                wrapperClassName: 'bg-mono-20 dark:bg-mono-180 !py-4',
-              }}
-              value={destinationAddress ?? ''}
-              setValue={setDestinationAddress}
-              placeholder="0x..."
-              setErrorMessage={(error) =>
-                setIsAddressInputError(error ? true : false)
-              }
-              showErrorMessage={false}
-              inputClassName={cx(
-                'placeholder:text-2xl text-2xl',
-                isAddressInputError ? 'text-red-70 dark:text-red-50' : '',
-              )}
-              showAvatar={false}
-            />
-
-            <div className="flex gap-2 items-center">
-              {isAddressInputError && (
-                <InformationCircleIcon
-                  className="stroke-red-70 dark:stroke-red-50 w-6 h-6"
-                  width={24}
-                  height={24}
-                />
-              )}
-
-              <Typography
-                variant="body1"
-                className="text-red-70 dark:text-red-50 !text-lg"
-              >
-                {isAddressInputError ? 'Invalid EVM address' : ''}
-              </Typography>
             </div>
           </div>
 
@@ -639,22 +656,21 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
             />
           )}
 
-          {routerQuoteError && (
-            <div className="flex gap-2 items-start">
-              <InformationCircleIcon className="stroke-red-70 dark:stroke-red-50 !w-6 !h-6" />
+          <div
+            className={cx(
+              'flex gap-2 items-start w-full',
+              routerQuoteError ? 'block' : 'hidden',
+            )}
+          >
+            <InformationCircleIcon className="stroke-red-70 dark:stroke-red-50 w-6 h-6 flex-shrink-0" />
 
-              <Typography
-                variant="body1"
-                className="text-red-70 dark:text-red-50 !text-lg !leading-none"
-              >
-                {routerQuoteError?.error
-                  ? routerQuoteError?.error
-                  : routerQuoteError
-                    ? routerQuoteError
-                    : ''}
-              </Typography>
-            </div>
-          )}
+            <Typography
+              variant="body1"
+              className="text-red-70 dark:text-red-50 !text-lg !leading-none"
+            >
+              {(routerQuoteError as any)?.error ?? routerQuoteError ?? ''}
+            </Typography>
+          </div>
 
           {/* Bridge Button */}
           <Button
@@ -719,7 +735,10 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
       <BridgeConfirmationModal
         isOpen={isConfirmBridgeModalOpen}
-        handleClose={closeConfirmBridgeModal}
+        handleClose={() => {
+          closeConfirmBridgeModal();
+          clearBridgeStore();
+        }}
         sourceChain={selectedSourceChain}
         destinationChain={selectedDestinationChain}
         token={selectedToken}

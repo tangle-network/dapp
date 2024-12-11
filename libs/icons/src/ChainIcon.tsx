@@ -9,9 +9,9 @@ import { getIconSizeInPixel } from './utils';
 export const ChainIcon: React.FC<
   TokenIconBase & {
     status?: StatusIndicatorProps['variant'];
-    spinnerSize?: TokenIconBase['size'];
+    spinnersize?: TokenIconBase['size'];
   }
-> = ({ status, spinnerSize = 'md', ...props }) => {
+> = ({ status, spinnersize = 'md', ...props }) => {
   const {
     className,
     name: nameProp,
@@ -40,7 +40,7 @@ export const ChainIcon: React.FC<
   }
 
   if (loading) {
-    return <Spinner {...props} size={spinnerSize} />;
+    return <Spinner {...props} size={spinnersize} />;
   }
 
   if (svgElement) {
