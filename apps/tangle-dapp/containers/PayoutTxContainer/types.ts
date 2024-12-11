@@ -1,7 +1,8 @@
 import { Payout } from '@webb-tools/tangle-shared-ui/types';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 export type PayoutTxProps = {
-  validatorAddress: string;
+  validatorAddress: SubstrateAddress;
   era: number;
 };
 

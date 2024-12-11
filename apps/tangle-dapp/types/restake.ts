@@ -2,10 +2,9 @@
  * TODO:
  * - Asset ID should has a better type than string.
  * - Vault ID should has a better type than string.
- * - Account ID should has a better type than string.
  * - Amount should has a better type than string.
  *
- * Maybe we can utize the `Brand` type in `apps/tangle-dapp/types/utils.ts`
+ * Maybe we can utilize the `Brand` type in `apps/tangle-dapp/types/utils.ts`
  * with some casting and assertion functions.
  */
 
@@ -16,6 +15,7 @@ import type {
 } from '@polkadot/types/lookup';
 import type { AssetMetadata } from '@webb-tools/tangle-shared-ui/types/restake';
 import type { TransformEnum } from '@webb-tools/tangle-shared-ui/types/utils';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 export type RewardVaultMap = {
   [vaultId: string]: string[] | null;
@@ -28,14 +28,14 @@ export type DelegatorWithdrawRequest = {
 };
 
 export type DelegatorUnstakeRequest = {
-  readonly operatorAccountId: string;
+  readonly operatorAccountId: SubstrateAddress;
   readonly assetId: string;
   readonly amount: bigint;
   readonly requestedRound: number;
 };
 
 export type DelegatorBondInfo = {
-  readonly operatorAccountId: string;
+  readonly operatorAccountId: SubstrateAddress;
   readonly amountBonded: bigint;
   readonly assetId: string;
 };
@@ -154,7 +154,7 @@ export type DepositFormFields = {
 
 export type DelegationFormFields = {
   amount: string;
-  operatorAccountId: string;
+  operatorAccountId: SubstrateAddress;
   assetId: string;
 };
 

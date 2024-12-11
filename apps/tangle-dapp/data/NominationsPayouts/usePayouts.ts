@@ -16,6 +16,7 @@ import useLocalStorage, {
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import { Payout } from '@webb-tools/tangle-shared-ui/types';
 import { getApiPromise as getPolkadotApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
@@ -247,7 +248,7 @@ const fetchPayouts = async (
           validatorIdentityNamesMap.get(nominator.who.toString()) ?? '';
 
         return {
-          address: nominator.who.toString(),
+          address: assertSubstrateAddress(nominator.who.toString()),
           identity: nominatorIdentity,
         };
       });

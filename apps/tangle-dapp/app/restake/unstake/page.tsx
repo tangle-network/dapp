@@ -1,18 +1,24 @@
 'use client';
 
+import { Cross1Icon } from '@radix-ui/react-icons';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
+import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
-import { Card } from '@webb-tools/webb-ui-components';
+import {
+  Card,
+  IconButton,
+  useBreakpointValue,
+} from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import cx from 'classnames';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 
@@ -37,8 +43,11 @@ import type { UnstakeFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import ActionButtonBase from '../ActionButtonBase';
+import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
+import { ExpandTableButton } from '../ExpandTableButton';
 import RestakeTabs from '../RestakeTabs';
+import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
 import TxInfo from './TxInfo';
 import UnstakeModal from './UnstakeModal';
@@ -47,6 +56,11 @@ import UnstakeRequestTable from './UnstakeRequestTable';
 export const dynamic = 'force-static';
 
 const Page = () => {
+  const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
+    useState(false);
+
+  const isMediumScreen = useBreakpointValue('md', true, false);
+
   const {
     register,
     setValue: setFormValue,
@@ -226,11 +240,30 @@ const Page = () => {
   );
 
   return (
-    <div className="grid items-start grid-cols-1 gap-4 sm:grid-cols-2 justify-stretch">
-      <div className="max-w-lg">
+    <div
+      className={cx(
+        'grid gap-4 place-content-center',
+        !isMediumScreen ? 'grid-cols-1' : 'grid-flow-col auto-cols-fr',
+      )}
+    >
+      <StyleContainer
+        className={cx(
+          isUnstakeRequestTableOpen && isMediumScreen
+            ? 'ml-auto mr-0'
+            : 'mx-auto',
+        )}
+      >
         <RestakeTabs />
 
-        <Card withShadow>
+        <Card withShadow className="relative">
+          {!isUnstakeRequestTableOpen && isMediumScreen && (
+            <ExpandTableButton
+              className="absolute top-0 -right-10"
+              tooltipContent="Open unstake requests table"
+              onClick={() => setIsUnstakeRequestTableOpen(true)}
+            />
+          )}
+
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
               <TransactionInputCard.Header>
@@ -318,19 +351,33 @@ const Page = () => {
             </ActionButtonBase>
           </form>
         </Card>
-      </div>
+      </StyleContainer>
 
-      {/** Hardcoded for the margin top to ensure the component is align to same card content */}
-      <RestakeDetailCard.Root className="max-w-lg sm:mt-[61px]">
-        {unstakeRequests.length > 0 ? (
-          <UnstakeRequestTable
-            operatorIdentities={operatorIdentities}
-            unstakeRequests={unstakeRequests}
-          />
-        ) : (
-          <>
-            <RestakeDetailCard.Header title="No Unstake Requests" />
+      <AnimatedTable
+        isTableOpen={isUnstakeRequestTableOpen}
+        isMediumScreen={isMediumScreen}
+      >
+        <RestakeDetailCard.Root className="md:mt-[61px]">
+          <div className="flex items-center justify-between">
+            <RestakeDetailCard.Header
+              title={
+                unstakeRequests.length > 0
+                  ? 'Unstake Requests'
+                  : 'No Unstake Requests'
+              }
+            />
 
+            <IconButton onClick={() => setIsUnstakeRequestTableOpen(false)}>
+              <Cross1Icon />
+            </IconButton>
+          </div>
+
+          {unstakeRequests.length > 0 ? (
+            <UnstakeRequestTable
+              operatorIdentities={operatorIdentities}
+              unstakeRequests={unstakeRequests}
+            />
+          ) : (
             <Typography
               variant="body2"
               className="text-mono-120 dark:text-mono-100"
@@ -339,9 +386,9 @@ const Page = () => {
               has been processed. To unstake your tokens go to the unstake tab
               to schedule a request.
             </Typography>
-          </>
-        )}
-      </RestakeDetailCard.Root>
+          )}
+        </RestakeDetailCard.Root>
+      </AnimatedTable>
 
       <Modal>
         <UnstakeModal

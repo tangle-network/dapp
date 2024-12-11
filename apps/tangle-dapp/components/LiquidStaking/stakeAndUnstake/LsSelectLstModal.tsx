@@ -1,5 +1,7 @@
-import { Search, TokenIcon } from '@webb-tools/icons';
+import { Search } from '@webb-tools/icons';
 import {
+  AmountFormatStyle,
+  formatDisplayAmount,
   Input,
   ListItem,
   Modal,
@@ -15,12 +17,12 @@ import {
   LsPool,
   LsPoolDisplayName,
 } from '../../../constants/liquidStaking/types';
-import formatBn from '../../../utils/formatBn';
 import formatFractional from '../../../utils/formatFractional';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import { ListCardWrapper } from '../../Lists/ListCardWrapper';
 import ListStatus from '../../ListStatus';
 import SkeletonRows from '../../SkeletonRows';
+import LstIcon, { LstIconSize } from '../LstIcon';
 
 export type LsSelectLstModalProps = {
   pools: LsPool[] | Error | null;
@@ -147,12 +149,10 @@ const ListItems: FC<ListItemsProps> = ({ pools, onSelect, isSelfStaked }) => {
 
       const lsProtocol = getLsProtocolDef(pool.protocolId);
 
-      const stakeAmountString = formatBn(
+      const stakeAmountString = formatDisplayAmount(
         pool.totalStaked,
         lsProtocol.decimals,
-        {
-          withSi: true,
-        },
+        AmountFormatStyle.SI,
       );
 
       const stakeText = `${stakeAmountString} ${lsProtocol.token}`;
@@ -163,12 +163,11 @@ const ListItems: FC<ListItemsProps> = ({ pools, onSelect, isSelfStaked }) => {
           onClick={() => onSelect(pool.id)}
           className="w-full flex items-center gap-4 justify-between max-w-full min-h-[60px] py-3 cursor-pointer"
         >
-          <div className="flex items-center gap-1">
-            {/** TODO: Set token based on protocol. */}
-            <TokenIcon
-              size="md"
-              name="TNT"
-              className="mr-2 w-[38px] h-[38px]"
+          <div className="flex items-center gap-3">
+            <LstIcon
+              lsProtocolId={pool.protocolId}
+              iconUrl={pool.iconUrl}
+              size={LstIconSize.LG}
             />
 
             <div className="flex flex-col">

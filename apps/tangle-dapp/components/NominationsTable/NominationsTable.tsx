@@ -10,6 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
+  AmountFormatStyle,
   Avatar,
   Chip,
   CopyWithTooltip,
@@ -82,7 +83,12 @@ const columns = [
     header: () => (
       <HeaderCell title="Effective amount staked" className="justify-center" />
     ),
-    cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+    cell: (props) => (
+      <TokenAmountCell
+        amount={props.getValue()}
+        formatStyle={AmountFormatStyle.SHORT}
+      />
+    ),
     sortingFn: sortBnValueForNomineeOrValidator,
   }),
   columnHelper.accessor('nominatorCount', {

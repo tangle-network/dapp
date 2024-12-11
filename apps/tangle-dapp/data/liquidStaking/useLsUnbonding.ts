@@ -1,4 +1,5 @@
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import assert from 'assert';
 import { useCallback, useMemo } from 'react';
 
 import { LsPoolUnstakeRequest } from '../../constants/liquidStaking/types';
@@ -44,11 +45,12 @@ const useLsUnbonding = () => {
 
     return unbonding.unbondingEras
       .entries()
-      .map(([era, points]) => {
+      .map(([era, [rawPoolId, points]]) => {
         const erasLeftToUnlock = era.toNumber() - currentEra;
+        const poolId = rawPoolId.toNumber();
+        const pool = pools.get(poolId);
 
-        // TODO: Awaiting bug fix on Tangle.
-        const poolId = unbonding.poolId.toNumber();
+        assert(pool !== undefined);
 
         return {
           unlockEra: era.toNumber(),
@@ -59,8 +61,10 @@ const useLsUnbonding = () => {
           token: lsProtocol.token,
           decimals: lsProtocol.decimals,
           poolId,
-          poolName: pools.get(poolId)?.name,
+          poolName: pool.name,
           isReadyToWithdraw: erasLeftToUnlock <= 0,
+          poolIconUrl: pool.iconUrl,
+          poolProtocolId: pool.protocolId,
         } satisfies LsPoolUnstakeRequest;
       })
       .toArray();

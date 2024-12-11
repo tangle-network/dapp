@@ -1,10 +1,11 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import { isAddress } from '@polkadot/util-crypto';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   Alert,
   BridgeInputGroup,
+  isEvmAddress,
+  isSubstrateAddress,
   Modal,
   ModalBody,
   ModalContent,
@@ -14,14 +15,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
-import {
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
 import AddressInput, { AddressType } from '../../components/AddressInput';
@@ -50,7 +44,7 @@ function getTypedChainIdFromAddr(address: string | null): number | undefined {
     return PresetTypedChainId.TangleTestnetEVM;
   }
   // Otherwise, check if the address is a valid Substrate address.
-  else if (isAddress(address)) {
+  else if (isSubstrateAddress(address)) {
     return PresetTypedChainId.TangleTestnetNative;
   }
 
@@ -67,21 +61,20 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   const existentialDeposit = useExistentialDeposit();
 
   const [amount, setAmount] = useState<BN | null>(null);
-  const [receiverAddress, setReceiverAddress] = useState('');
+  const [recipientAddress, setRecipientAddress] = useState('');
   const [hasErrors, setHasErrors] = useState(false);
 
   const {
     execute: executeTransferTx,
     status,
     reset: resetTransferTx,
-    error: txError,
   } = useTransferTx();
 
   // TODO: Likely would ideally want to control this from the parent component.
   const reset = useCallback(() => {
     setIsModalOpen(false);
     setAmount(null);
-    setReceiverAddress('');
+    setRecipientAddress('');
     resetTransferTx?.();
   }, [resetTransferTx, setIsModalOpen]);
 
@@ -92,31 +85,40 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     }
   }, [reset, status]);
 
-  const isMaxAmount = useMemo(
-    () =>
-      transferableBalance !== null &&
-      amount !== null &&
-      transferableBalance.eq(amount),
-    [amount, transferableBalance],
-  );
+  const isMaxAmount =
+    transferableBalance !== null &&
+    amount !== null &&
+    transferableBalance.eq(amount);
+
+  const isValidReceiverAddress =
+    isSubstrateAddress(recipientAddress) || isEvmAddress(recipientAddress);
+
+  const isReady =
+    status !== TxStatus.PROCESSING &&
+    executeTransferTx !== null &&
+    amount !== null &&
+    amount.gt(BN_ZERO) &&
+    isValidReceiverAddress &&
+    !hasErrors &&
+    transferableBalance !== null;
 
   const handleSend = useCallback(() => {
-    // TODO: Check that the address is valid, or return.
-    // Transaction not yet ready, or data is invalid.
-    if (
-      executeTransferTx === null ||
-      amount === null ||
-      transferableBalance === null
-    ) {
+    if (!isReady) {
       return;
     }
 
     executeTransferTx({
-      receiverAddress,
+      recipientAddress,
       amount,
       maxAmount: transferableBalance,
     });
-  }, [amount, executeTransferTx, receiverAddress, transferableBalance]);
+  }, [
+    amount,
+    executeTransferTx,
+    isReady,
+    recipientAddress,
+    transferableBalance,
+  ]);
 
   const handleSetErrorMessage = useCallback(
     (error: string | null) => {
@@ -124,23 +126,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
     },
     [setHasErrors],
   );
-
-  const isReady = status !== TxStatus.PROCESSING;
-
-  const isDataValid =
-    amount !== null &&
-    amount.gt(BN_ZERO) &&
-    receiverAddress !== '' &&
-    !hasErrors;
-
-  const isValidReceiverAddress =
-    isAddress(receiverAddress) || isHex(receiverAddress);
-
-  const canInitiateTx =
-    isReady &&
-    isDataValid &&
-    executeTransferTx !== null &&
-    isValidReceiverAddress;
 
   const transferableBalanceTooltip: ReactNode = transferableBalance !==
     null && (
@@ -180,8 +165,8 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               typedChainId: getTypedChainIdFromAddr(activeAccountAddress),
             }}
             dest={{
-              address: receiverAddress,
-              typedChainId: getTypedChainIdFromAddr(receiverAddress),
+              address: recipientAddress,
+              typedChainId: getTypedChainIdFromAddr(recipientAddress),
             }}
           />
 
@@ -195,7 +180,6 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
                   : null
               }
               min={existentialDeposit}
-              isDisabled={!isReady}
               amount={amount}
               setAmount={setAmount}
               wrapperOverrides={{
@@ -216,9 +200,8 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               title="Receiver Address"
               placeholder="EVM or Substrate"
               wrapperOverrides={{ isFullWidth: true }}
-              value={receiverAddress}
-              setValue={setReceiverAddress}
-              isDisabled={!isReady}
+              value={recipientAddress}
+              setValue={setRecipientAddress}
               setErrorMessage={handleSetErrorMessage}
             />
           </BridgeInputGroup>
@@ -230,21 +213,12 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
               description="Consider keeping a small amount for transaction fees and future transactions."
             />
           )}
-
-          {txError !== null && (
-            <Alert
-              type="error"
-              size="sm"
-              title={txError.name}
-              description={txError.message}
-            />
-          )}
         </ModalBody>
 
         <ModalFooterActions
           learnMoreLinkHref={TANGLE_DOCS_URL}
           isProcessing={status === TxStatus.PROCESSING}
-          isConfirmDisabled={!canInitiateTx}
+          isConfirmDisabled={!isReady}
           onConfirm={handleSend}
           confirmButtonText="Send"
         />

@@ -11,12 +11,12 @@ import {
   TANGLE_TESTNET_NATIVE_NETWORK,
 } from '@webb-tools/webb-ui-components/constants/networks';
 import { Network as TangleNetwork } from '@webb-tools/webb-ui-components/constants/networks';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 import {
   LsNetworkEntityAdapter,
   ProtocolEntity,
 } from '../../data/liquidStaking/adapter';
-import { SubstrateAddress } from '../../types/utils';
 import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
 
 export type LsParachainChainId =
@@ -97,13 +97,6 @@ export type LsCardSearchParams = {
   protocolId: LsProtocolId;
 };
 
-export enum LsSearchParamKey {
-  AMOUNT = 'amount',
-  PROTOCOL_ID = 'protocol',
-  ACTION = 'action',
-  NETWORK_ID = 'network',
-}
-
 // TODO: These should be moved/managed in libs/webb-ui-components/src/constants/networks.ts and not here. This is just a temporary solution.
 export type Network = {
   name: string;
@@ -153,11 +146,14 @@ export type LsPool = {
   commissionFractional?: number;
   members: Map<SubstrateAddress, PalletAssetsAssetAccount>;
   protocolId: LsProtocolId;
+  iconUrl?: string;
 };
 
 export type LsPoolUnstakeRequest = {
   poolName?: string;
   poolId: number;
+  poolIconUrl?: string;
+  poolProtocolId: LsProtocolId;
   decimals: number;
   token: LsToken;
   unlockEra: number;

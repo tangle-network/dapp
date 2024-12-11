@@ -3,6 +3,7 @@ import type {
   SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 export enum PagePath {
   NOMINATION = '/nomination',
@@ -12,6 +13,7 @@ export enum PagePath {
   BLUEPRINTS = '/blueprints',
   SERVICES = '/services',
   RESTAKE = '/restake',
+  RESTAKE_OVERVIEW = '/restake/overview',
   RESTAKE_DEPOSIT = '/restake/deposit',
   RESTAKE_STAKE = '/restake/stake',
   RESTAKE_OPERATOR = '/restake/operators',
@@ -40,7 +42,7 @@ export enum DelegationsAndPayoutsTab {
 }
 
 export type BasicAccountInfo = {
-  address: string;
+  address: SubstrateAddress;
   identityName: string;
 };
 

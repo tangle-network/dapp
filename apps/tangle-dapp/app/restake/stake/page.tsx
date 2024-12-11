@@ -1,11 +1,12 @@
 'use client';
 
 import { ChainConfig } from '@webb-tools/dapp-config';
+import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import { calculateTypedChainId } from '@webb-tools/sdk-core';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import { Card } from '@webb-tools/webb-ui-components';
+import useQueryState from '@webb-tools/tangle-shared-ui/hooks/useQueryState';
+import { Card, isSubstrateAddress } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
@@ -14,7 +15,6 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import entries from 'lodash/entries';
 import keys from 'lodash/keys';
 import Link from 'next/link';
-import { useQueryState } from 'nuqs';
 import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -43,6 +43,8 @@ import type { DelegationFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
 import Form from '../Form';
 import ModalContent from '../ModalContent';
+import RestakeTabs from '../RestakeTabs';
+import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
 import ActionButton from './ActionButton';
 import Info from './Info';
@@ -118,7 +120,13 @@ export default function Page() {
   }, [defaultAssetId, setValue]);
 
   useEffect(() => {
-    if (!operatorParam) return;
+    if (
+      !operatorParam ||
+      typeof operatorParam !== 'string' ||
+      !isSubstrateAddress(operatorParam)
+    ) {
+      return;
+    }
 
     if (!operatorMap[operatorParam]) return;
 
@@ -253,70 +261,74 @@ export default function Page() {
   );
 
   return (
-    <Card withShadow>
-      <Form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col h-full space-y-4 grow">
-          <StakeInput
-            amountError={errors.amount?.message}
-            delegatorInfo={delegatorInfo}
-            openAssetModal={openAssetModal}
-            openOperatorModal={openOperatorModal}
-            register={register}
-            setValue={setValue}
-            watch={watch}
-          />
+    <StyleContainer>
+      <RestakeTabs />
 
-          <div className="flex flex-col justify-between gap-4 grow">
-            <Info />
-
-            <ActionButton
-              errors={errors}
-              isValid={isValid}
-              openChainModal={openChainModal}
+      <Card withShadow>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col h-full space-y-4 grow">
+            <StakeInput
+              amountError={errors.amount?.message}
+              delegatorInfo={delegatorInfo}
+              openAssetModal={openAssetModal}
+              openOperatorModal={openOperatorModal}
+              register={register}
+              setValue={setValue}
               watch={watch}
-              isSubmitting={isSubmitting}
             />
+
+            <div className="flex flex-col justify-between gap-4 grow">
+              <Info />
+
+              <ActionButton
+                errors={errors}
+                isValid={isValid}
+                openChainModal={openChainModal}
+                watch={watch}
+                isSubmitting={isSubmitting}
+              />
+            </div>
           </div>
-        </div>
 
-        <Modal>
-          <ModalContent
-            isOpen={isAssetModalOpen}
-            title="Select Asset"
-            description="Select the asset you want to delegate"
-            onInteractOutside={closeAssetModal}
-          >
-            <AssetList
-              selectTokens={selectableTokens}
-              onChange={handleAssetChange}
-              onClose={closeAssetModal}
-              renderEmpty={EmptyAsset}
+          <Modal>
+            <ModalContent
+              isOpen={isAssetModalOpen}
+              title="Select Asset"
+              description="Select the asset you want to delegate"
+              onInteractOutside={closeAssetModal}
+            >
+              <AssetList
+                selectTokens={selectableTokens}
+                onChange={handleAssetChange}
+                onClose={closeAssetModal}
+                renderEmpty={EmptyAsset}
+              />
+            </ModalContent>
+
+            <ModalContent
+              isOpen={isOperatorModalOpen}
+              title="Select Operator"
+              description="Select the operator you want to stake with"
+              onInteractOutside={closeOperatorModal}
+            >
+              <OperatorList
+                operators={operators}
+                operatorMap={operatorMap}
+                operatorIdentities={operatorIdentities}
+                onSelectOperator={handleOnSelectOperator}
+                onClose={closeOperatorModal}
+              />
+            </ModalContent>
+
+            <SupportedChainModal
+              isOpen={isChainModalOpen}
+              onClose={closeChainModal}
+              onChainChange={handleChainChange}
             />
-          </ModalContent>
-
-          <ModalContent
-            isOpen={isOperatorModalOpen}
-            title="Select Operator"
-            description="Select the operator you want to stake with"
-            onInteractOutside={closeOperatorModal}
-          >
-            <OperatorList
-              operators={operators}
-              operatorMap={operatorMap}
-              operatorIdentities={operatorIdentities}
-              onSelectOperator={handleOnSelectOperator}
-              onClose={closeOperatorModal}
-            />
-          </ModalContent>
-
-          <SupportedChainModal
-            isOpen={isChainModalOpen}
-            onClose={closeChainModal}
-            onChainChange={handleChainChange}
-          />
-        </Modal>
-      </Form>
-    </Card>
+          </Modal>
+        </Form>
+      </Card>
+    </StyleContainer>
   );
 }
 

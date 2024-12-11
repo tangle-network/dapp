@@ -1,6 +1,6 @@
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { useMemo } from 'react';
 
-import { SubstrateAddress } from '../../types/utils';
 import useLsPoolBondedAccounts from './useLsPoolBondedAccounts';
 import useNominators from './useNominators';
 

@@ -1,4 +1,6 @@
 import { BN } from '@polkadot/util';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -16,12 +18,11 @@ import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
 import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';
 import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
-import toEvmAddress32 from '../../utils/toEvmAddress32';
 
 export type NominationOptionsContext = {
   bondAmount: BN;
   payee: StakingRewardsDestination;
-  nominees: Set<string>;
+  nominees: Set<SubstrateAddress>;
 };
 
 const useSetupNominatorTx = () => {
@@ -44,7 +45,7 @@ const useSetupNominatorTx = () => {
       ]);
 
       const evmNomineeAddresses32 = Array.from(context.nominees).map(
-        toEvmAddress32,
+        toSubstrateBytes32Address,
       );
 
       const nominateCall = createEvmBatchCallData(

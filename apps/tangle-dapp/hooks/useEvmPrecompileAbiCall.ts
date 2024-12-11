@@ -2,7 +2,7 @@ import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { Address, Hash } from 'viem';
 import {
   simulateContract,
@@ -21,7 +21,7 @@ import {
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 
-export type AbiCallArg = string | number | BN | boolean;
+export type AbiCallArg = string | number | number[] | BN | boolean;
 
 export type AbiEncodeableValue = string | number | boolean | bigint;
 
@@ -74,13 +74,6 @@ function useEvmPrecompileAbiCall<
 
   const activeEvmAddress20 = useEvmAddress20();
   const { data: connectorClient } = useConnectorClient();
-
-  // Useful for debugging.
-  useEffect(() => {
-    if (error !== null) {
-      console.error(error);
-    }
-  }, [error]);
 
   const execute = useCallback(
     async (context: Context) => {
@@ -142,14 +135,23 @@ function useEvmPrecompileAbiCall<
           );
         }
       } catch (possibleError) {
+        // Useful for debugging.
+        console.debug(possibleError);
+
         const error = ensureError(possibleError);
 
         setStatus(TxStatus.ERROR);
         setError(error);
       }
     },
-    // prettier-ignore
-    [activeEvmAddress20, status, connectorClient, factory, precompile, getSuccessMessageFnc],
+    [
+      activeEvmAddress20,
+      status,
+      connectorClient,
+      factory,
+      precompile,
+      getSuccessMessageFnc,
+    ],
   );
 
   const reset = useCallback(() => {

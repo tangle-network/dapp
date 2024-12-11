@@ -3,10 +3,9 @@ import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import useLsActivePoolDisplayName from '../../../data/liquidStaking/useLsActivePoolDisplayName';
+import useLsActivePool from '../../../data/liquidStaking/useLsActivePool';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import LsTokenIcon from '../../LsTokenIcon';
+import LstIcon from '../LstIcon';
 
 export type SelectedPoolIndicatorProps = {
   onClick?: () => void;
@@ -14,8 +13,7 @@ export type SelectedPoolIndicatorProps = {
 
 const SelectedPoolIndicator: FC<SelectedPoolIndicatorProps> = ({ onClick }) => {
   const { lsProtocolId } = useLsStore();
-  const selectedProtocol = getLsProtocolDef(lsProtocolId);
-  const { name, id } = useLsActivePoolDisplayName();
+  const activePool = useLsActivePool();
 
   return (
     <div
@@ -27,17 +25,19 @@ const SelectedPoolIndicator: FC<SelectedPoolIndicatorProps> = ({ onClick }) => {
           'cursor-pointer hover:bg-mono-60 hover:hover:dark:bg-mono-160',
       )}
     >
-      {name !== null && (
-        <LsTokenIcon hasRainbowBorder name={selectedProtocol.token} />
+      {activePool !== null && (
+        <LstIcon lsProtocolId={lsProtocolId} iconUrl={activePool.iconUrl} />
       )}
 
       <Typography variant="h5" fw="bold" className="whitespace-nowrap">
-        {name === null ? (
+        {activePool?.name === undefined ? (
           'Select LST'
         ) : (
           <>
-            {name.toUpperCase()}
-            <span className="text-mono-180 dark:text-mono-120">#{id}</span>
+            {activePool.name.toUpperCase()}
+            <span className="text-mono-180 dark:text-mono-120">
+              #{activePool.id}
+            </span>
           </>
         )}
       </Typography>

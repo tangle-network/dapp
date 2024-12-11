@@ -11,8 +11,9 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import { type FC, useCallback, useMemo } from 'react';
+import { type FC, useCallback, useEffect, useMemo } from 'react';
 
+import { MAX_PAYOUTS_BATCH_SIZE } from '../../data/payouts/usePayoutAllTx';
 import usePayoutStakersTx from '../../data/payouts/usePayoutStakersTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { PayoutTxContainerProps } from './types';
@@ -25,6 +26,7 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   const { activeAccount } = useWebContext();
 
   const walletAddress = useMemo(() => {
+    // TODO: Don't default to dummy addresses in order to circumvent the type system.
     if (!activeAccount?.address) {
       return '0x0';
     }
@@ -39,8 +41,11 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
   const { execute: executePayoutStakersTx, status: payoutStakersTxStatus } =
     usePayoutStakersTx();
 
+  // TODO: Why is the wallet address being used as a condition for readiness? Is it checking whether it's an empty string? Can it ever be an empty string?
+  const isReady = walletAddress && executePayoutStakersTx !== null;
+
   const submitTx = useCallback(async () => {
-    if (executePayoutStakersTx === null) {
+    if (!isReady) {
       return;
     }
 
@@ -48,13 +53,14 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
       era,
       validatorAddress,
     });
+  }, [era, executePayoutStakersTx, isReady, validatorAddress]);
 
-    closeModal();
-  }, [closeModal, era, executePayoutStakersTx, validatorAddress]);
-
-  // TODO: This validation doesn't make much sense because the values are never null or undefined, so why are they being used as booleans? In fact, the variable's inferred type is not a boolean.
-  const canSubmitTx =
-    walletAddress && validatorAddress && era && executePayoutStakersTx !== null;
+  // Automatically close the modal when the transaction is complete & successful.
+  useEffect(() => {
+    if (payoutStakersTxStatus === TxStatus.COMPLETE) {
+      closeModal();
+    }
+  }, [closeModal, payoutStakersTxStatus]);
 
   return (
     <Modal open>
@@ -114,15 +120,15 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
             </Typography>
 
             <Typography variant="body1" fw="normal">
-              The UI puts a limit of 40 payouts at a time, where each payout is
-              a single validator for a single era.
+              The UI puts a limit of {MAX_PAYOUTS_BATCH_SIZE} payouts at a time,
+              where each payout is a single validator for a single era.
             </Typography>
           </div>
         </ModalBody>
 
         <ModalFooterActions
           learnMoreLinkHref={TANGLE_DOCS_STAKING_URL}
-          isConfirmDisabled={!canSubmitTx}
+          isConfirmDisabled={!isReady}
           isProcessing={payoutStakersTxStatus === TxStatus.PROCESSING}
           onConfirm={submitTx}
         />

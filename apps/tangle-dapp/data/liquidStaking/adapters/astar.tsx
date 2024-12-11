@@ -3,8 +3,10 @@ import { createColumnHelper, SortingFnOption } from '@tanstack/react-table';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
+  AmountFormatStyle,
   Avatar,
   CopyWithTooltip,
+  formatDisplayAmount,
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -16,7 +18,6 @@ import {
   LsToken,
 } from '../../../constants/liquidStaking/types';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
-import formatBn from '../../../utils/formatBn';
 import { GetTableColumnsFn } from '../adapter';
 import { sortSelected, sortValueStaked } from '../columnSorting';
 import { fetchMappedDappsTotalValueStaked } from '../fetchHelpers';
@@ -155,7 +156,11 @@ const getTableColumns: GetTableColumnsFn<AstarDapp> = (
             fw="normal"
             className="text-mono-200 dark:text-mono-0"
           >
-            {formatBn(props.getValue(), DECIMALS) + ` ${LsToken.ASTAR}`}
+            {formatDisplayAmount(
+              props.getValue(),
+              DECIMALS,
+              AmountFormatStyle.SI,
+            ) + ` ${LsToken.ASTAR}`}
           </Typography>
         </div>
       ),

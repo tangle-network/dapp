@@ -10,6 +10,7 @@ import {
 } from '@tanstack/react-table';
 import { ArrowRight } from '@webb-tools/icons';
 import {
+  AmountFormatStyle,
   Avatar,
   AvatarGroup,
   Button,
@@ -26,11 +27,13 @@ import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { TableStatus } from '../../components';
+import LstIcon from '../../components/LiquidStaking/LstIcon';
 import PercentageCell from '../../components/tableCells/PercentageCell';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
+import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import pluralize from '../../utils/pluralize';
 
@@ -64,16 +67,23 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
     COLUMN_HELPER.accessor('id', {
       header: () => 'ID',
       cell: (props) => (
-        <Typography
-          variant="body2"
-          fw="normal"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          {props.row.original.name?.toUpperCase()}
-          <span className="text-mono-180 dark:text-mono-120">
-            #{props.getValue()}
-          </span>
-        </Typography>
+        <div className="flex gap-2 items-center justify-start">
+          <LstIcon
+            lsProtocolId={props.row.original.protocolId}
+            iconUrl={props.row.original.iconUrl}
+          />
+
+          <Typography
+            variant="body2"
+            fw="normal"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {props.row.original.name?.toUpperCase()}
+            <span className="text-mono-180 dark:text-mono-120">
+              #{props.getValue()}
+            </span>
+          </Typography>
+        </div>
       ),
     }),
     COLUMN_HELPER.accessor('ownerAddress', {
@@ -135,8 +145,17 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
     }),
     COLUMN_HELPER.accessor('totalStaked', {
       header: () => 'Total Staked (TVL)',
-      // TODO: Decimals.
-      cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+      cell: (props) => {
+        const lsProtocol = getLsProtocolDef(props.row.original.protocolId);
+
+        return (
+          <TokenAmountCell
+            amount={props.getValue()}
+            decimals={lsProtocol.decimals}
+            formatStyle={AmountFormatStyle.SHORT}
+          />
+        );
+      },
     }),
     COLUMN_HELPER.accessor('commissionFractional', {
       header: () => 'Commission',
@@ -161,7 +180,7 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
             variant="utility"
             size="sm"
           >
-            {lsPoolId === props.row.original.id ? 'Selected' : 'Mint'}
+            {lsPoolId === props.row.original.id ? 'Selected' : 'Stake'}
           </Button>
         </div>
       ),

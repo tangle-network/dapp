@@ -17,6 +17,7 @@ import {
   Payout,
 } from '@webb-tools/tangle-shared-ui/types';
 import {
+  AmountFormatStyle,
   Avatar,
   AvatarGroup,
   CopyWithTooltip,
@@ -29,6 +30,7 @@ import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/ty
 import { type FC, useState } from 'react';
 
 import PayoutTxContainer from '../../containers/PayoutTxContainer/PayoutTxContainer';
+import { PayoutTxProps } from '../../containers/PayoutTxContainer/types';
 import pluralize from '../../utils/pluralize';
 import { sortBnValueForPayout } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
@@ -50,14 +52,9 @@ const PayoutTable: FC<PayoutTableProps> = ({
     { id: 'era', desc: true },
   ]);
 
-  const [payoutTxProps, setPayoutTxProps] = useState<{
-    validatorAddress: string;
-    era: number;
-  }>({
-    // TODO: Should be using `null` for both values. Avoid using empty strings to circumvent TypeScript type checking.
-    validatorAddress: '',
-    era: 0,
-  });
+  const [payoutTxProps, setPayoutTxProps] = useState<PayoutTxProps | null>(
+    null,
+  );
 
   const table = useReactTable({
     data,
@@ -107,7 +104,12 @@ const PayoutTable: FC<PayoutTableProps> = ({
         header: () => (
           <HeaderCell title="Total Stake" className="justify-start" />
         ),
-        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        cell: (props) => (
+          <TokenAmountCell
+            amount={props.getValue()}
+            formatStyle={AmountFormatStyle.SHORT}
+          />
+        ),
         sortingFn: sortBnValueForPayout,
       }),
       columnHelper.accessor('nominators', {
@@ -136,7 +138,12 @@ const PayoutTable: FC<PayoutTableProps> = ({
         header: () => (
           <HeaderCell title="Total Rewards" className="justify-start" />
         ),
-        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        cell: (props) => (
+          <TokenAmountCell
+            amount={props.getValue()}
+            formatStyle={AmountFormatStyle.SHORT}
+          />
+        ),
         sortingFn: sortBnValueForPayout,
       }),
       columnHelper.accessor('nominatorTotalReward', {
@@ -198,6 +205,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
                   validatorAddress: rowData.validator.address,
                   era: rowData.era,
                 });
+
                 setIsModalOpen(true);
               }}
               className="flex items-center justify-center w-full"
@@ -241,12 +249,14 @@ const PayoutTable: FC<PayoutTableProps> = ({
         />
       </div>
 
-      <PayoutTxContainer
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-        payoutTxProps={payoutTxProps}
-        payouts={data}
-      />
+      {payoutTxProps !== null && (
+        <PayoutTxContainer
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          payoutTxProps={payoutTxProps}
+          payouts={data}
+        />
+      )}
     </>
   );
 };

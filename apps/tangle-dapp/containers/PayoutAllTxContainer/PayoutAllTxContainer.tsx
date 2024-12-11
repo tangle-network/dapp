@@ -10,9 +10,11 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import { type FC, useCallback, useMemo } from 'react';
+import { type FC, useCallback, useEffect, useMemo } from 'react';
 
-import usePayoutAllTx from '../../data/payouts/usePayoutAllTx';
+import usePayoutAllTx, {
+  MAX_PAYOUTS_BATCH_SIZE,
+} from '../../data/payouts/usePayoutAllTx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { PayoutAllTxContainerProps } from './types';
@@ -21,15 +23,14 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   isModalOpen,
   setIsModalOpen,
   validatorsAndEras,
+  onComplete,
 }) => {
   const substrateAddress = useSubstrateAddress();
 
   const allValidators = useMemo(() => {
     const uniqueValidatorAddresses = [
       // Use a set to filter out duplicate validator addresses.
-      ...new Set(
-        validatorsAndEras.map((payout) => payout.validatorSubstrateAddress),
-      ),
+      ...new Set(validatorsAndEras.map((payout) => payout.validatorAddress)),
     ];
 
     return uniqueValidatorAddresses;
@@ -48,6 +49,14 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
   const { execute: executePayoutAllTx, status: payoutAllTxStatus } =
     usePayoutAllTx();
 
+  // Automatically close the modal when the transaction is successful.
+  useEffect(() => {
+    if (payoutAllTxStatus === TxStatus.COMPLETE) {
+      closeModal();
+      onComplete();
+    }
+  }, [closeModal, onComplete, payoutAllTxStatus]);
+
   const submitTx = useCallback(async () => {
     if (executePayoutAllTx === null) {
       return;
@@ -56,9 +65,7 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     await executePayoutAllTx({
       validatorEraPairs: validatorsAndEras,
     });
-
-    closeModal();
-  }, [executePayoutAllTx, validatorsAndEras, closeModal]);
+  }, [executePayoutAllTx, validatorsAndEras]);
 
   const canSubmitTx =
     validatorsAndEras.length > 0 && executePayoutAllTx !== null;
@@ -129,6 +136,12 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
             <Typography variant="body1" fw="normal">
               All the listed validators and all their nominators will receive
               their rewards.
+            </Typography>
+
+            <Typography variant="body1" fw="normal">
+              At most, {MAX_PAYOUTS_BATCH_SIZE} payouts can be requested at a
+              time. If you have more than {MAX_PAYOUTS_BATCH_SIZE} pending
+              payouts, click on the Payout All button multiple times.
             </Typography>
           </div>
         </div>

@@ -2,11 +2,12 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import BoostedChip from '../BoostedChip';
-import { isAddress, isEthereumAddress } from '@polkadot/util-crypto';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { BlueprintItemProps } from './types';
+import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
 
 const BlueprintItem: FC<BlueprintItemProps> = ({
   name,
@@ -68,7 +69,7 @@ const BlueprintItem: FC<BlueprintItemProps> = ({
                 {/* Author can be name or address */}
                 {isEthereumAddress(author)
                   ? shortenHex(author)
-                  : isAddress(author)
+                  : isSubstrateAddress(author)
                     ? shortenString(author)
                     : author}
               </Typography>

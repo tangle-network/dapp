@@ -1,4 +1,4 @@
-import { isAddress } from '@polkadot/util-crypto';
+import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { notFound } from 'next/navigation';
 
 import { IS_PRODUCTION_ENV } from '../../../constants/env';
@@ -16,7 +16,7 @@ export default function ValidatorDetails({
 }) {
   const { validatorAddress } = params;
 
-  if (!isAddress(validatorAddress)) {
+  if (!isSubstrateAddress(validatorAddress)) {
     notFound();
   }
 

@@ -1,7 +1,8 @@
 import { Payout } from '@webb-tools/tangle-shared-ui/types';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 export type PayoutTxProps = {
-  validatorSubstrateAddress: string;
+  validatorAddress: SubstrateAddress;
   era: number;
 };
 
@@ -10,4 +11,5 @@ export type PayoutAllTxContainerProps = {
   setIsModalOpen: (isModalOpen: boolean) => void;
   validatorsAndEras: PayoutTxProps[];
   payouts: Payout[];
+  onComplete: () => void;
 };

@@ -13,6 +13,7 @@ import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transactio
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { ExplorerType } from '@webb-tools/tangle-shared-ui/types';
 import {
+  AmountFormatStyle,
   Avatar,
   Button,
   CopyWithTooltip,
@@ -54,7 +55,12 @@ const getTableColumns = (isWaiting?: boolean) => [
               className="justify-start"
             />
           ),
-          cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+          cell: (props) => (
+            <TokenAmountCell
+              amount={props.getValue()}
+              formatStyle={AmountFormatStyle.SHORT}
+            />
+          ),
           sortingFn: sortBnValueForNomineeOrValidator,
         }),
         columnHelper.accessor('selfStakeAmount', {

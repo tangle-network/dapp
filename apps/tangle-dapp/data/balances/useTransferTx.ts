@@ -1,5 +1,12 @@
 import { BN } from '@polkadot/util';
-import { isAddress } from '@polkadot/util-crypto';
+import {
+  toEvmAddress,
+  toSubstrateAddress,
+} from '@webb-tools/webb-ui-components';
+import {
+  EvmAddress,
+  SubstrateAddress,
+} from '@webb-tools/webb-ui-components/types/address';
 import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import { useCallback } from 'react';
 
@@ -11,10 +18,9 @@ import useEvmPrecompileFeeFetcher from '../../hooks/useEvmPrecompileFee';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { GetSuccessMessageFunction } from '../../types';
-import { toEvmAddress20, toSubstrateAddress } from '../../utils';
 
 type TransferTxContext = {
-  receiverAddress: string;
+  recipientAddress: SubstrateAddress | EvmAddress;
   amount: BN;
   maxAmount: BN;
 };
@@ -27,12 +33,9 @@ const useTransferTx = () => {
     Precompile.BALANCES_ERC20,
     TransferTxContext
   > = useCallback(
-    async ({ receiverAddress, amount, maxAmount }) => {
+    async ({ recipientAddress, amount, maxAmount }) => {
       const isMaxAmount = amount.eq(maxAmount);
-
-      const recipientEvmAddress20 = isAddress(receiverAddress)
-        ? toEvmAddress20(receiverAddress)
-        : receiverAddress;
+      const recipientEvmAddress20 = toEvmAddress(recipientAddress);
 
       const sharedAbiCallData: AbiCall<Precompile.BALANCES_ERC20> = {
         functionName: 'transfer',
@@ -77,11 +80,11 @@ const useTransferTx = () => {
     async (
       api,
       _activeSubstrateAddress,
-      { receiverAddress, amount, maxAmount },
+      { recipientAddress, amount, maxAmount },
     ) => {
       // Convert the EVM address to a Substrate address, in case
       // that it was provided as an EVM address.
-      const recipientSubstrateAddress = toSubstrateAddress(receiverAddress);
+      const recipientSubstrateAddress = toSubstrateAddress(recipientAddress);
 
       return amount.eq(maxAmount)
         ? api.tx.balances.transferAll(
@@ -101,7 +104,7 @@ const useTransferTx = () => {
 
   const getSuccessMessageFnc: GetSuccessMessageFunction<TransferTxContext> =
     useCallback(
-      ({ receiverAddress, amount }) =>
+      ({ recipientAddress: receiverAddress, amount }) =>
         `Successfully transferred ${formatNativeTokenAmount(
           amount,
         )} to ${shortenString(receiverAddress)}.`,

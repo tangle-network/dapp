@@ -1,6 +1,6 @@
 'use client';
 
-import { isAddress, isEthereumAddress } from '@polkadot/util-crypto';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -9,6 +9,7 @@ import { Typography } from '../../typography/Typography';
 import { DropdownBody } from './DropdownBody';
 import DropdownMenuItem from './DropdownMenuItem';
 import { AccountDropdownBodyProps } from './types';
+import { isSubstrateAddress } from '../../utils';
 
 const AccountDropdownBody: FC<AccountDropdownBodyProps> = ({
   accountItems,
@@ -33,7 +34,7 @@ const AccountDropdownBody: FC<AccountDropdownBodyProps> = ({
                   theme={
                     isEthereumAddress(address)
                       ? 'ethereum'
-                      : isAddress(address)
+                      : isSubstrateAddress(address)
                         ? 'substrate'
                         : undefined
                   }

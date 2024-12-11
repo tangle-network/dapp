@@ -1,9 +1,9 @@
+import { hexToU8a } from '@polkadot/util';
 import { Currency } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import { ensureHex } from '@webb-tools/dapp-config';
 import { CurrencyRole } from '@webb-tools/dapp-types';
 import { ResourceId, calculateTypedChainId } from '@webb-tools/sdk-core';
-import { hexToU8a } from '@webb-tools/utils';
 import { useMemo } from 'react';
 import { useNoteAccount } from '../useNoteAccount';
 

@@ -13,6 +13,7 @@ import { AddCircleLineIcon, SubtractCircleLineIcon } from '@webb-tools/icons';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   ActionsDropdown,
+  AmountFormatStyle,
   Avatar,
   AvatarGroup,
   Table,
@@ -30,6 +31,7 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { LsPool } from '../../constants/liquidStaking/types';
+import LsUpdateRolesModal from '../../containers/LsUpdateRolesModal';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
@@ -40,6 +42,7 @@ import { TableStatus } from '..';
 import BlueIconButton from '../BlueIconButton';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
+import LstIcon from './LstIcon';
 import UpdateCommissionModal from './UpdateCommissionModal';
 
 export interface LsMyPoolRow extends LsPool {
@@ -66,6 +69,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
 
   const [isUpdateCommissionModalOpen, setIsUpdateCommissionModalOpen] =
     useState(false);
+  const [isUpdateRolesModalOpen, setIsUpdateRolesModalOpen] = useState(false);
 
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
@@ -85,16 +89,23 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       COLUMN_HELPER.accessor('id', {
         header: () => 'ID',
         cell: (props) => (
-          <Typography
-            variant="body2"
-            fw="normal"
-            className="text-mono-200 dark:text-mono-0"
-          >
-            {props.row.original.name?.toUpperCase()}
-            <span className="text-mono-180 dark:text-mono-120">
-              #{props.getValue()}
-            </span>
-          </Typography>
+          <div className="flex gap-2 items-center justify-start">
+            <LstIcon
+              lsProtocolId={props.row.original.protocolId}
+              iconUrl={props.row.original.iconUrl}
+            />
+
+            <Typography
+              variant="body2"
+              fw="normal"
+              className="text-mono-200 dark:text-mono-0"
+            >
+              {props.row.original.name?.toUpperCase()}
+              <span className="text-mono-180 dark:text-mono-120">
+                #{props.getValue()}
+              </span>
+            </Typography>
+          </div>
         ),
       }),
       COLUMN_HELPER.accessor('ownerAddress', {
@@ -163,13 +174,24 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
             <TokenAmountCell
               amount={props.getValue()}
               decimals={lsProtocol.decimals}
+              formatStyle={AmountFormatStyle.SI}
             />
           );
         },
       }),
       COLUMN_HELPER.accessor('myStake', {
         header: () => 'My Stake',
-        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
+        cell: (props) => {
+          const lsProtocol = getLsProtocolDef(props.row.original.protocolId);
+
+          return (
+            <TokenAmountCell
+              amount={props.getValue()}
+              decimals={lsProtocol.decimals}
+              formatStyle={AmountFormatStyle.SHORT}
+            />
+          );
+        },
       }),
       COLUMN_HELPER.accessor('commissionFractional', {
         header: () => 'Commission',
@@ -210,8 +232,10 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
 
             actionItems.push({
               label: 'Update Roles',
-              // TODO: Implement onClick handler.
-              onClick: () => void 0,
+              onClick: () => {
+                setSelectedPoolId(props.row.original.id);
+                setIsUpdateRolesModalOpen(true);
+              },
             });
           }
 
@@ -299,10 +323,10 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
 
   // Reset the selected pool's ID after all the management modals are closed.
   useEffect(() => {
-    if (!isUpdateCommissionModalOpen) {
+    if (!isUpdateCommissionModalOpen && !isUpdateRolesModalOpen) {
       setSelectedPoolId(null);
     }
-  }, [isUpdateCommissionModalOpen]);
+  }, [isUpdateCommissionModalOpen, isUpdateRolesModalOpen]);
 
   // TODO: Missing error and loading state. Should ideally abstract all these states into an abstract Table component, since it's getting reused in multiple places.
   if (!isAccountConnected) {
@@ -336,6 +360,12 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
         title={pluralize('pool', pools.length > 1 || pools.length === 0)}
         className={twMerge(isShown ? 'animate-slide-down' : 'animate-slide-up')}
         isPaginated
+      />
+
+      <LsUpdateRolesModal
+        poolId={selectedPoolId}
+        isOpen={isUpdateRolesModalOpen}
+        setIsOpen={setIsUpdateRolesModalOpen}
       />
 
       <UpdateCommissionModal

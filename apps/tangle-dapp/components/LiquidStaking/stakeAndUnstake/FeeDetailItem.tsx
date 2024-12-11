@@ -1,10 +1,13 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@webb-tools/webb-ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import formatBn from '../../../utils/formatBn';
 import formatFractional from '../../../utils/formatFractional';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
@@ -43,9 +46,11 @@ const FeeDetailItem: FC<FeeDetailItemProps> = ({
       return EMPTY_VALUE_PLACEHOLDER;
     }
 
-    const formattedAmount = formatBn(feeAmount, protocol.decimals, {
-      includeCommas: true,
-    });
+    const formattedAmount = formatDisplayAmount(
+      feeAmount,
+      protocol.decimals,
+      AmountFormatStyle.EXACT,
+    );
 
     return `${formattedAmount} ${protocol.token}`;
   }, [feeAmount, protocol.decimals, protocol.token]);

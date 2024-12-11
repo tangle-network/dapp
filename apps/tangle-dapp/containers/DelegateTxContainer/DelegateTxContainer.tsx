@@ -11,6 +11,7 @@ import {
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import assert from 'assert';
 import { type FC, useCallback, useState } from 'react';
 
@@ -34,9 +35,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
 }) => {
   const maxNominationQuota = useMaxNominationQuota();
   const [amountToBond, setAmountToBond] = useState<BN | null>(null);
-  const [selectedValidators, setSelectedValidators] = useState<Set<string>>(
-    new Set(),
-  );
+  const [selectedValidators, setSelectedValidators] = useState<
+    Set<SubstrateAddress>
+  >(new Set());
   const { nativeTokenSymbol } = useNetworkStore();
   const [payee, setPayee] = useState(StakingRewardsDestination.STAKED);
   const [hasAmountToBondError, setHasAmountToBondError] = useState(false);
