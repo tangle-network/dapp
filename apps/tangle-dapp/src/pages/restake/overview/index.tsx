@@ -35,8 +35,7 @@ export default function RestakePage() {
           variant={CardVariant.GLASS}
           className={twMerge(
             'justify-between min-h-60 flex-1',
-            '[background:linear-gradient(79deg,_#b6b8dd_8.85%,_#d9ddf2_55.91%,_#dbbdcd_127.36%),_#fff]',
-            'dark:[background:linear-gradient(79deg,_rgba(30,_32,_65,_0.8)_8.85%,_rgba(38,_52,_116,_0.8)_55.91%,_rgba(113,_61,_89,_0.8)_127.36%)]',
+            'bg-purple_gradient dark:bg-purple_gradient_dark',
           )}
         >
           <Typography
