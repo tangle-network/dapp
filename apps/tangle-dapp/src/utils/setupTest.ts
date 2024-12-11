@@ -13,3 +13,9 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: vi.fn(),
   })),
 });
+
+process.on('unhandledRejection', (reason) => {
+  console.log('FAILED TO HANDLE PROMISE REJECTION');
+  console.log('REASON', reason);
+  throw reason;
+});
