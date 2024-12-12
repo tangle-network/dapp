@@ -3,23 +3,13 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/testnet-leaderboard",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "serve": {
-      "executor": "@nx/next:server",
       "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "testnet-leaderboard:build",
-        "dev": true
-      },
       "configurations": {
-        "development": {
-          "buildTarget": "testnet-leaderboard:build:development",
-          "dev": true
-        },
-        "production": {
-          "buildTarget": "testnet-leaderboard:build:production",
-          "dev": false
-        }
+        "development": {},
+        "production": {}
       }
     },
     "export": {
@@ -29,12 +19,26 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/jest.preset.js",
+        {
+          "externalDependencies": ["jest"]
+        }
+      ],
       "options": {
-        "jestConfig": "apps/testnet-leaderboard/jest.config.ts"
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
       }
+    },
+    "build": {
+      "executor": "nx:noop"
     }
-  },
-  "tags": []
+  }
 }

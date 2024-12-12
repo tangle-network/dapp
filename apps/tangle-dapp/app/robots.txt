@@ -1,8 +1,0 @@
-User-agent: *
-
-# Ensure important content accessibility
-Allow: /
-
-Disallow: /bridge
-Disallow: /liquid-staking
-Disallow: /restake

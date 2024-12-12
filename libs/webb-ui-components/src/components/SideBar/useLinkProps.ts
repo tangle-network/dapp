@@ -1,6 +1,6 @@
 import type NextLink from 'next/link';
 import { useMemo } from 'react';
-import type { Link as ReactLink } from 'react-router-dom';
+import type { Link as ReactLink } from 'react-router';
 import type { PropsOf } from '../../types';
 import type { SideBarExtraItemProps, SideBarItemProps } from './types';
 

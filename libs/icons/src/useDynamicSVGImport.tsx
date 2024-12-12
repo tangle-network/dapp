@@ -52,14 +52,16 @@ export function useDynamicSVGImport(
         setImportedIcon(<Icon />);
         onCompleted?.(name_, Icon);
       } catch (err) {
-        if ((err as any).message.includes('Cannot find module')) {
+        if (
+          (err as any).message.includes('Cannot find module') ||
+          (err as any).message.includes('Unknown variable dynamic import')
+        ) {
           const mod = await getDefaultIcon(type);
           const Icon = mod.default;
 
           setImportedIcon(<Icon />);
           onCompleted?.(name_, Icon);
         } else {
-          console.error('IMPORT ERROR', (err as any).message);
           onError?.(err as any);
           setError(err as Error);
         }
@@ -68,7 +70,7 @@ export function useDynamicSVGImport(
       }
     };
 
-    importIcon();
+    importIcon().catch(console.error);
   }, [name_, onCompleted, onError, type]);
 
   return { error, loading, svgElement: importedIcon };

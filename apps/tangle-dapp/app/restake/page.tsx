@@ -1,9 +1,0 @@
-import { redirect } from 'next/navigation';
-
-import { PagePath } from '../../types';
-
-export const dynamic = 'force-static';
-
-export default function RestakePage() {
-  return redirect(PagePath.RESTAKE_OVERVIEW);
-}
