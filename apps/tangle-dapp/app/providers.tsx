@@ -11,8 +11,7 @@ import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
 import z from 'zod';
 
-import BridgeTxQueueProvider from '../context/BridgeTxQueueContext';
-import HyperlaneWarpContext from '../context/HyperlaneWarpContext';
+import BridgeTxQueueProvider from '../context/bridge/useBridgeTxQueue';
 
 const appEvent = new AppEvent();
 
@@ -52,9 +51,7 @@ const Providers = ({
             blockedRegions={blockedRegions}
             blockedCountryCodes={blockedCountryCodes}
           >
-            <HyperlaneWarpContext>
-              <BridgeTxQueueProvider>{children}</BridgeTxQueueProvider>
-            </HyperlaneWarpContext>
+            <BridgeTxQueueProvider>{children}</BridgeTxQueueProvider>
           </OFACFilterProvider>
         </WebbProvider>
       </WebbUIProvider>

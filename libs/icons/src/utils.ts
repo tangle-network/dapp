@@ -39,16 +39,20 @@ export function getFillColor(darkMode?: boolean) {
  */
 export function getIconSizeInPixel(size: IconSize) {
   switch (size) {
-    case 'xl': {
+    case '2xl': {
       return '48px' as const;
     }
 
+    case 'xl': {
+      return '40px' as const;
+    }
+
     case 'lg': {
-      return '24px' as const;
+      return '32px' as const;
     }
 
     case 'md': {
-      return '16px' as const;
+      return '24px' as const;
     }
 
     default: {
@@ -59,16 +63,20 @@ export function getIconSizeInPixel(size: IconSize) {
 
 export function getFlexBasic(size: IconSize = 'md') {
   switch (size) {
-    case 'xl': {
+    case '2xl': {
       return 'basis-12' as const;
     }
 
+    case 'xl': {
+      return 'basis-10' as const;
+    }
+
     case 'lg': {
-      return 'basis-6' as const;
+      return 'basis-8' as const;
     }
 
     case 'md': {
-      return 'basic-4' as const;
+      return 'basis-6' as const;
     }
 
     default: {
@@ -84,11 +92,15 @@ export function getMinSizeClassName(size: IconSize) {
     }
 
     case 'lg': {
-      return 'min-w-6 min-h-6' as const;
+      return 'min-w-8 min-h-8' as const;
     }
 
     case 'xl': {
       return 'min-w-12 min-h-12' as const;
+    }
+
+    case '2xl': {
+      return 'min-w-24 min-h-24' as const;
     }
 
     default: {

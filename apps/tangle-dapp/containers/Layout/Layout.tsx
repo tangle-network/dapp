@@ -11,11 +11,8 @@ import {
 import { useLayoutBgClassName } from '@webb-tools/webb-ui-components/next-utils';
 import { type FC, type PropsWithChildren } from 'react';
 
-import {
-  BridgeTxQueueDropdown,
-  MobileSidebar,
-  Sidebar,
-} from '../../components';
+import { MobileSidebar, Sidebar } from '../../components';
+import BridgeTxQueueDropdown from '../../components/bridge/BridgeTxQueueDropdown';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import ApiDevStatsContainer from '../DebugMetricsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';

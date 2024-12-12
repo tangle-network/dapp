@@ -38,6 +38,7 @@ import type { Props } from '../../../data/restake/useRestakeTxEventHandlersWithN
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
+import useSwitchChain from '../../../hooks/useSwitchChain';
 import type { WithdrawFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
@@ -48,7 +49,6 @@ import { ExpandTableButton } from '../ExpandTableButton';
 import RestakeTabs from '../RestakeTabs';
 import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
-import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
 import WithdrawModal from './WithdrawModal';
 import WithdrawRequestTable from './WithdrawRequestTable';

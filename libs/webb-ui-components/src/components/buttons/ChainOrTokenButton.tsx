@@ -1,3 +1,4 @@
+import { Typography } from '../../typography';
 import { ChainIcon, ChevronDown, TokenIcon } from '@webb-tools/icons';
 import { getFlexBasic } from '@webb-tools/icons/utils';
 import cx from 'classnames';
@@ -14,12 +15,14 @@ const ChainOrTokenButton = forwardRef<
     {
       className,
       value,
+      displayValue,
       status,
       textClassName,
       disabled,
       placeholder = 'Select Chain',
       iconType,
       onClick,
+      showChevron = true,
       ...props
     },
     ref,
@@ -62,22 +65,23 @@ const ChainOrTokenButton = forwardRef<
         ref={ref}
       >
         <div className="flex items-center justify-between mr-1">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3 min-w-[120px]">
             {value && (
               <IconCmp
                 status={status}
-                size="lg"
-                className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
+                size="xl"
+                spinnersize="lg"
+                className={cx(`shrink-0 grow-0 ${getFlexBasic('xl')}`)}
                 name={value}
               />
             )}
 
-            <p className={twMerge('font-bold', textClassName)}>
-              {value ?? placeholder}
-            </p>
+            <Typography variant="h5" fw="bold" className={textClassName}>
+              {displayValue ?? value ?? placeholder}
+            </Typography>
           </div>
 
-          {!disabled && (
+          {!disabled && showChevron && (
             <ChevronDown
               size="lg"
               className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}

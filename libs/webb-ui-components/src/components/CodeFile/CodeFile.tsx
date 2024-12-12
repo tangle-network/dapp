@@ -2,7 +2,7 @@
 
 import { Alert } from '@webb-tools/icons/Alert';
 import { useMemo, type FC } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { Prism, SyntaxHighlighterProps } from 'react-syntax-highlighter';
 import {
   oneDark,
   oneLight,
@@ -16,6 +16,8 @@ import { Typography } from '../../typography';
 import SkeletonLoader from '../SkeletonLoader/SkeletonLoader';
 import Button from '../buttons/Button';
 import type { CodeFileProps } from './types';
+
+const SyntaxHighlighter = Prism as any as React.FC<SyntaxHighlighterProps>;
 
 const CodeFile: FC<CodeFileProps> = ({
   code,

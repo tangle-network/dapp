@@ -17,6 +17,12 @@ const getSizeProps = (size: IconBase['size']) => {
         height: 49,
       };
 
+    case '2xl':
+      return {
+        width: 60,
+        height: 74,
+      };
+
     default:
       return {
         width: 14,

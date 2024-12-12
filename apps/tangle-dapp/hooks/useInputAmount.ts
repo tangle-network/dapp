@@ -27,12 +27,18 @@ function safeParseInputAmount(
       case ChainUnitParsingError.EmptyAmount:
         return options.errorOnEmptyValue ? 'Amount is required' : null;
       case ChainUnitParsingError.ExceedsDecimals:
-        return `Amount cannot exceed ${options.decimals} decimal places`;
+        return `Max ${options.decimals} decimals`;
     }
   } else if (options.min !== null && result.lt(options.min)) {
-    return options.minErrorMessage ?? `Amount is below the minimum`;
+    return (
+      options.minErrorMessage ??
+      `Min amount required ${formatBn(options.min, options.decimals, INPUT_AMOUNT_FORMAT)}`
+    );
   } else if (options.max !== null && result.gt(options.max)) {
-    return options.maxErrorMessage ?? `Amount is above the maximum`;
+    return (
+      options.maxErrorMessage ??
+      `Max amount allowed ${formatBn(options.max, options.decimals, INPUT_AMOUNT_FORMAT)}`
+    );
   }
 
   return result;
