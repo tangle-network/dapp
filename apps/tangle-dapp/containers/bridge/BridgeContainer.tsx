@@ -457,6 +457,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   ]);
 
   useEffect(() => {
+    // Re-fetch every two minutes.
     const FETCH_INTERVAL = 2 * 60 * 1000;
 
     console.log('🔄 Starting EVM balance refresh interval');
