@@ -4,8 +4,10 @@ import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLo
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { FC } from 'react';
 import { useParams } from 'react-router';
-import getRestakeOperatorLink from '../../../utils/getRestakeOperatorLink';
-import getViewOperatorLink from '../../../utils/getViewOperatorLink';
+import {
+  RestakeOperatorWrapper,
+  ViewOperatorWrapper,
+} from '../../../components/tables/RestakeActionWrappers';
 import BlueprintHeader from './BlueprintHeader';
 import useBlueprintDetails from './useBlueprintDetails';
 
@@ -47,8 +49,8 @@ const BlueprintDetailsPage: FC = () => {
         </Typography>
 
         <OperatorsTable
-          getRestakeOperatorLink={getRestakeOperatorLink}
-          getViewOperatorLink={getViewOperatorLink}
+          ViewOperatorWrapper={ViewOperatorWrapper}
+          RestakeOperatorWrapper={RestakeOperatorWrapper}
           data={result.operators}
         />
       </div>

@@ -1,7 +1,8 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import PolkadotIdenticon from '@polkadot/react-identicon';
+import { ComponentProps } from 'react';
 
-export const Identicon = dynamic(() => import('@polkadot/react-identicon'), {
-  ssr: false,
-});
+export const Identicon = (props: ComponentProps<typeof PolkadotIdenticon>) => {
+  return <PolkadotIdenticon {...props} />;
+};

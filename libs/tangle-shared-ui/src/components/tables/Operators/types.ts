@@ -1,5 +1,5 @@
 import type { Table } from '@webb-tools/webb-ui-components/components/Table';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, PropsWithChildren } from 'react';
 import type { TableStatusProps } from '../../../components/tables/TableStatus';
 import type { OperatorData } from '../../../types';
 
@@ -11,6 +11,6 @@ export type Props = {
   loadingTableProps?: Partial<TableStatusProps>;
   emptyTableProps?: Partial<TableStatusProps>;
   tableProps?: Partial<ComponentProps<typeof Table>>;
-  getViewOperatorLink?: (address: string) => string;
-  getRestakeOperatorLink?: (address: string) => string;
+  ViewOperatorWrapper?: React.FC<PropsWithChildren<{ address: string }>>;
+  RestakeOperatorWrapper?: React.FC<PropsWithChildren<{ address: string }>>;
 };

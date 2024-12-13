@@ -2,9 +2,16 @@
 
 import BlueprintGallery from '@webb-tools/tangle-shared-ui/components/blueprints/BlueprintGallery';
 import useBlueprintListing from '@webb-tools/tangle-shared-ui/data/blueprints/useBlueprintListing';
-import { FC } from 'react';
-
+import { FC, PropsWithChildren } from 'react';
+import { Link } from 'react-router';
 import { PagePath } from '../../types';
+
+const BlueprintItemWrapper = ({
+  children,
+  id,
+}: PropsWithChildren<{ id: string }>) => {
+  return <Link to={`${PagePath.BLUEPRINTS}/${id}`}>{children}</Link>;
+};
 
 const BlueprintListing: FC = () => {
   const { blueprints, isLoading, error } = useBlueprintListing();
@@ -27,7 +34,7 @@ const BlueprintListing: FC = () => {
       }))}
       isLoading={isLoading}
       error={error}
-      getBlueprintUrl={(blueprint) => `${PagePath.BLUEPRINTS}/${blueprint.id}`}
+      BlueprintItemWrapper={BlueprintItemWrapper}
     />
   );
 };

@@ -5,11 +5,7 @@ import type {
   PalletMultiAssetDelegationDelegatorWithdrawRequest,
 } from '@polkadot/types/lookup';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-<<<<<<<< HEAD:libs/tangle-shared-ui/src/data/restake/useRestakeDelegatorInfo.ts
-========
-import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
->>>>>>>> develop:apps/tangle-dapp/src/data/restake/useRestakeDelegatorInfo.ts
 import { useObservable, useObservableState } from 'observable-hooks';
 import { map, of, switchMap } from 'rxjs';
 import usePolkadotApi from '../../hooks/usePolkadotApi';

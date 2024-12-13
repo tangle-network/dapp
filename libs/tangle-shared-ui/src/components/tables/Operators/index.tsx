@@ -18,15 +18,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-<<<<<<<< HEAD:libs/tangle-shared-ui/src/components/tables/Operators/index.tsx
 import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
-import Link from 'next/link';
 import { FC, useMemo } from 'react';
-========
-import { Link } from 'react-router';
-import { FC } from 'react';
->>>>>>>> develop:apps/tangle-dapp/src/components/tables/Operators/index.tsx
 import { twMerge } from 'tailwind-merge';
 import TableCellWrapper from '../../../components/tables/TableCellWrapper';
 import TableStatus from '../../../components/tables/TableStatus';
@@ -137,35 +131,6 @@ const staticColumns: ColumnDef<OperatorData, any>[] = [
     },
     enableSorting: false,
   }),
-<<<<<<<< HEAD:libs/tangle-shared-ui/src/components/tables/Operators/index.tsx
-========
-  columnHelper.display({
-    id: 'actions',
-    header: () => null,
-    cell: (props) => (
-      <TableCellWrapper removeRightBorder>
-        <div className="flex items-center justify-end flex-1 gap-2">
-          <Link
-            to={`${PagePath.RESTAKE_OPERATOR}/${props.row.original.address}`}
-          >
-            <Button variant="utility" className="uppercase body4">
-              View
-            </Button>
-          </Link>
-
-          <Link
-            to={`${PagePath.RESTAKE_STAKE}?${QueryParamKey.RESTAKE_OPERATOR}=${props.row.original.address}`}
-          >
-            <Button variant="utility" className="uppercase body4">
-              Restake
-            </Button>
-          </Link>
-        </div>
-      </TableCellWrapper>
-    ),
-    enableSorting: false,
-  }),
->>>>>>>> develop:apps/tangle-dapp/src/components/tables/Operators/index.tsx
 ];
 
 const OperatorsTable: FC<Props> = ({
@@ -176,8 +141,8 @@ const OperatorsTable: FC<Props> = ({
   tableProps,
   globalFilter,
   onGlobalFilterChange,
-  getViewOperatorLink,
-  getRestakeOperatorLink,
+  ViewOperatorWrapper,
+  RestakeOperatorWrapper,
 }) => {
   const columns = useMemo(
     () =>
@@ -188,24 +153,26 @@ const OperatorsTable: FC<Props> = ({
           cell: (props) => (
             <TableCellWrapper removeRightBorder>
               <div className="flex items-center justify-end flex-1 gap-2">
-                {getViewOperatorLink && (
-                  <Button
-                    as={Link}
-                    href={getViewOperatorLink(props.row.original.address)}
-                    variant="utility"
-                    className="uppercase body4"
-                  >
+                {ViewOperatorWrapper ? (
+                  <ViewOperatorWrapper address={props.row.original.address}>
+                    <Button variant="utility" className="uppercase body4">
+                      View
+                    </Button>
+                  </ViewOperatorWrapper>
+                ) : (
+                  <Button variant="utility" className="uppercase body4">
                     View
                   </Button>
                 )}
 
-                {getRestakeOperatorLink && (
-                  <Button
-                    as={Link}
-                    href={getRestakeOperatorLink(props.row.original.address)}
-                    variant="utility"
-                    className="uppercase body4"
-                  >
+                {RestakeOperatorWrapper ? (
+                  <RestakeOperatorWrapper address={props.row.original.address}>
+                    <Button variant="utility" className="uppercase body4">
+                      Restake
+                    </Button>
+                  </RestakeOperatorWrapper>
+                ) : (
+                  <Button variant="utility" className="uppercase body4">
                     Restake
                   </Button>
                 )}
@@ -215,7 +182,7 @@ const OperatorsTable: FC<Props> = ({
           enableSorting: false,
         }) satisfies ColumnDef<OperatorData>,
       ]),
-    [getViewOperatorLink, getRestakeOperatorLink],
+    [ViewOperatorWrapper, RestakeOperatorWrapper],
   );
 
   const table = useReactTable({

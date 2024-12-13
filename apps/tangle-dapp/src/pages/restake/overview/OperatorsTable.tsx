@@ -7,10 +7,12 @@ import { Input } from '@webb-tools/webb-ui-components/components/Input';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { type ComponentProps, type FC, useMemo, useState } from 'react';
 
+import {
+  RestakeOperatorWrapper,
+  ViewOperatorWrapper,
+} from '../../../components/tables/RestakeActionWrappers';
 import { useRestakeContext } from '../../../context/RestakeContext';
 import useIdentities from '../../../data/useIdentities';
-import getRestakeOperatorLink from '../../../utils/getRestakeOperatorLink';
-import getViewOperatorLink from '../../../utils/getViewOperatorLink';
 import { delegationsToVaultTokens } from '../utils';
 
 type OperatorUI = NonNullable<
@@ -75,8 +77,8 @@ const OperatorsTable: FC<Props> = ({
         globalFilter={globalFilter}
         onGlobalFilterChange={setGlobalFilter}
         data={operators}
-        getRestakeOperatorLink={getRestakeOperatorLink}
-        getViewOperatorLink={getViewOperatorLink}
+        ViewOperatorWrapper={ViewOperatorWrapper}
+        RestakeOperatorWrapper={RestakeOperatorWrapper}
       />
     </>
   );
