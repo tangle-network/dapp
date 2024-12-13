@@ -2,7 +2,7 @@ import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/use
 import { toSubstrateAddress } from '@webb-tools/webb-ui-components/utils/toSubstrateAddress';
 import { useMemo } from 'react';
 import useNetworkStore from '../context/useNetworkStore';
-import { SubstrateAddress } from '../types/utils';
+import type { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 /**
  * Obtain the Substrate address of the active account, if any.

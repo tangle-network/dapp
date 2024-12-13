@@ -5,14 +5,13 @@ import {
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
-import type { SubstrateAddress } from '@webb-tools/tangle-shared-ui/types/utils';
 import {
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
+  Network as TangleNetwork,
 } from '@webb-tools/webb-ui-components/constants/networks';
-import { Network as TangleNetwork } from '@webb-tools/webb-ui-components/constants/networks';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import type { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 import {
   LsNetworkEntityAdapter,

@@ -109,17 +109,7 @@ module.exports = [
       },
     })),
   {
-    ignores: [
-      '/**/tsconfig.base.json',
-      '/**/node_modules',
-      '/**/tailwind.config.js',
-      '/**/postcss.config.js',
-      '/**/next.config.js',
-      '/**/.eslintrc.js',
-      '/**/jest.config.ts',
-      '/**/.netlify',
-      '**/.next',
-    ],
+    ignores: ['**/.netlify', '**/.next'],
   },
   {
     files: ['**/eslint.config.cjs'],

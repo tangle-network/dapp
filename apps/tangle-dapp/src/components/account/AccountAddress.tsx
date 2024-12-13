@@ -3,7 +3,6 @@
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import { LoopRightFillIcon } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import toSubstrateAddress from '@webb-tools/tangle-shared-ui/utils/toSubstrateAddress';
 import {
   CopyWithTooltip,
   shortenHex,
