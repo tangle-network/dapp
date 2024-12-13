@@ -71,15 +71,8 @@ export type SideBarItemProps = {
   onClick?: MouseEventHandler<HTMLAnchorElement>;
 
   pathnameOrHash?: string;
-
-  /** The item sub items */
   subItems: SideBarSubItemProps[];
-
-  /**
-   * The environments the item is available in
-   * If not provided, the item is available in all environments
-   */
-  environments?: AppEnvironment[];
+  hideInProduction?: boolean;
 };
 
 export type StyledSideBarItemProps = ComponentProps<'div'> &

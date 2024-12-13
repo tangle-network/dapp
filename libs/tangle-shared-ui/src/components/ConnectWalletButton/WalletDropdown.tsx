@@ -3,10 +3,10 @@
 import { encodeAddress } from '@polkadot/util-crypto';
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { useWebContext } from '@webb-tools/api-provider-environment';
+import { useWallets } from '@webb-tools/api-provider-environment/hooks/useWallets';
 import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { LoginBoxLineIcon, WalletLineIcon } from '@webb-tools/icons';
-import { useWallets } from '@webb-tools/react-hooks';
 import { isViemError, WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import {
   AccountDropdownBody,
@@ -14,6 +14,7 @@ import {
   Dropdown,
   DropdownBody,
   ExternalLinkIcon,
+  isSubstrateAddress,
   KeyValueWithButton,
   shortenString,
   Typography,
@@ -22,8 +23,8 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
-import useSubstrateExplorerUrl from '../../hooks/useSubstrateExplorerUrl';
 import useNetworkStore from '../../context/useNetworkStore';
+import useSubstrateExplorerUrl from '../../hooks/useSubstrateExplorerUrl';
 
 const WalletDropdown: FC<{
   accountName?: string;
@@ -183,13 +184,18 @@ const SwitchAccountButton: FC = () => {
       <AccountDropdownBody
         addressShortenFn={shortenString}
         className="mt-2"
-        accountItems={accounts.map((item) => {
+        accountItems={accounts.map((account) => {
+          // Attempt to re-encode the address to match the active network's
+          // SS58 prefix, if it's available. Leave it as is if it's an EVM
+          // account address.
+          const address = isSubstrateAddress(account.address)
+            ? encodeAddress(account.address, network.ss58Prefix)
+            : account.address;
+
           return {
-            // Attempt to re-encode the address to match the active network's
-            // SS58 prefix, if it's available.
-            address: encodeAddress(item.address, network.ss58Prefix),
-            name: item.name,
-            onClick: () => setActiveAccount(item),
+            address,
+            name: account.name,
+            onClick: () => setActiveAccount(account),
           };
         })}
       />

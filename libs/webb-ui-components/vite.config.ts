@@ -7,6 +7,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import preserveDirectives from 'rollup-plugin-preserve-directives';
 import dts from 'vite-plugin-dts';
+import wasm from 'vite-plugin-wasm';
 
 const dirname_ = dirname(fileURLToPath(import.meta.url));
 
@@ -21,6 +22,7 @@ export default defineConfig(() => ({
       entryRoot: './',
       tsconfigPath: resolve(dirname_, 'tsconfig.lib.json'),
     }),
+    wasm(),
   ],
 
   // Uncomment this if you are using workers.
@@ -64,7 +66,7 @@ export default defineConfig(() => ({
 
   test: {
     globals: true,
-    cacheDir: '../../node_modules/.vitest/libs/webb-ui-components',
+    watch: false,
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 

@@ -60,7 +60,12 @@ const getColumns = (pageIndex: number, pageSize: number) => [
     cell: (cellCtx) => (
       <IdentityCell
         address={cellCtx.getValue()}
-        identity={cellCtx.row.original.identity}
+        identity={{
+          name: cellCtx.row.original.identity?.info.display || null,
+          email: cellCtx.row.original.identity?.info.email || null,
+          web: cellCtx.row.original.identity?.info.web || null,
+          twitter: cellCtx.row.original.identity?.info.twitter || null,
+        }}
       />
     ),
   }),

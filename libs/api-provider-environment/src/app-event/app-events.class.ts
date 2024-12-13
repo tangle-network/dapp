@@ -1,5 +1,5 @@
 import { Account } from '@webb-tools/abstract-api-provider';
-import { EventBus } from '@webb-tools/app-util';
+import { EventBus } from '@webb-tools/dapp-types/EventBus';
 import { Chain, Wallet } from '@webb-tools/dapp-config';
 import { TypedChainId, WalletId, WebbError } from '@webb-tools/dapp-types';
 

@@ -5,15 +5,15 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    },
     "build": {
-      "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{projectRoot}/{options.outDir}",
+        "{workspaceRoot}/dist/apps/tangle-dapp",
+        "{workspaceRoot}/dist/apps/testnet-leaderboard/.next"
+      ],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/libs/webb-ui-components"
+        "outDir": "../../dist/libs/webb-ui-components"
       },
       "configurations": {
         "development": {
@@ -32,30 +32,36 @@
       "dependsOn": ["build"]
     },
     "test": {
-      "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{projectRoot}/{options.coverage.reportsDirectory}",
+        "{workspaceRoot}/coverage/libs/webb-ui-components"
+      ],
       "options": {
-        "reportsDirectory": "../../coverage/libs/webb-ui-components"
+        "coverage.reportsDirectory": "../../coverage/libs/webb-ui-components"
       }
     },
     "storybook": {
-      "executor": "@nx/storybook:storybook",
       "options": {
-        "configDir": "libs/webb-ui-components/.storybook",
-        "port": 4400
+        "port": 4400,
+        "config-dir": ".storybook"
       },
       "configurations": {
         "ci": {
-          "quiet": true
+          "args": ["--quiet"]
         }
       }
     },
     "build-storybook": {
-      "executor": "@nx/storybook:build",
-      "outputs": ["{options.outputDir}"],
+      "outputs": [
+        "{projectRoot}/{options.output-dir}",
+        "{projectRoot}/storybook-static",
+        "{options.output-dir}",
+        "{options.outputDir}",
+        "{options.o}"
+      ],
       "options": {
-        "configDir": "libs/webb-ui-components/.storybook",
-        "outputDir": "dist/storybook/webb-ui-components"
+        "config-dir": ".storybook",
+        "output-dir": "../../dist/storybook/webb-ui-components"
       },
       "configurations": {
         "ci": {

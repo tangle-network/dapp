@@ -4,6 +4,7 @@ import {
   PalletMultiAssetDelegationOperatorOperatorStatus,
 } from '@polkadot/types/lookup';
 import { TransformEnum } from './utils';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 /**
  * The activity status of the operator.
@@ -42,7 +43,7 @@ export type OperatorMetadata = {
 };
 
 export type OperatorMap = {
-  readonly [accountId: string]: OperatorMetadata;
+  readonly [accountId: SubstrateAddress]: OperatorMetadata;
 };
 
 export type AssetMetadata = {

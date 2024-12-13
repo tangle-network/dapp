@@ -52,16 +52,15 @@ export const TokenIcon: React.FC<
     MouseEventHandler<SVGElement | HTMLDivElement> | undefined
   >(onClick);
 
-  if (error) {
+  if (error !== undefined) {
     return <span>{error.message}</span>;
-  }
-
-  if (loading) {
+  } else if (loading) {
     return customLoadingCmp ?? <Spinner {...props} />;
   }
 
   if (svgElement) {
     const sizeInPx = getIconSizeInPixel(size);
+
     const props: React.SVGProps<SVGElement> = {
       className,
       width: parseInt(sizeInPx),

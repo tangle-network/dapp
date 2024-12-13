@@ -32,17 +32,13 @@ import type {
 export function toPrimitiveBlueprint({
   metadata,
   jobs,
-  registrationHook,
   registrationParams,
-  requestHook,
   requestParams,
   gadget,
 }: ServiceBlueprint | TanglePrimitivesServicesServiceBlueprint) {
   return {
     metadata: toPrimitiveServiceMetadata(metadata),
     jobs: jobs.map(toPrimitiveJobDefinition),
-    registrationHook: toPrimitiveServiceRegistrationHook(registrationHook),
-    requestHook: toPrimitiveServiceRequestHook(requestHook),
     registrationParams: registrationParams.map(toPrimitiveFieldType),
     requestParams: requestParams.map(toPrimitiveFieldType),
     gadget: toPrimitiveGadget(gadget),
@@ -75,13 +71,11 @@ function toPrimitiveJobDefinition({
   metadata,
   params,
   result,
-  verifier,
 }: JobDefinition | TanglePrimitivesServicesJobDefinition) {
   return {
     metadata: toPrimitiveJobMetadata(metadata),
     params: params.map(toPrimitiveFieldType),
     result: result.map(toPrimitiveFieldType),
-    verifier: toPrimitiveJobResultVerifier(verifier),
   } as const;
 }
 

@@ -15,7 +15,7 @@ export type CardProps = WebbComponentBase & {
 const getVariantClass = (variant: CardVariant) => {
   switch (variant) {
     case CardVariant.GLASS:
-      return 'p-6 rounded-2xl border border-mono-0 dark:border-mono-160 bg-glass dark:bg-glass_dark backdrop-blur-2xl';
+      return 'p-6 rounded-2xl border border-mono-0 dark:border-mono-160 bg-glass dark:bg-glass_dark';
     case CardVariant.DEFAULT:
       return '';
   }

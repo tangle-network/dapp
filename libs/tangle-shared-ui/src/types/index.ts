@@ -1,10 +1,11 @@
 import type { BN } from '@polkadot/util';
 import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 export type TangleTokenSymbol = 'tTNT' | 'TNT';
 
 export type AddressWithIdentity = {
-  address: string;
+  address: SubstrateAddress;
   identity: string;
 };
 

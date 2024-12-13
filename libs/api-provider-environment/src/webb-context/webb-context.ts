@@ -2,20 +2,14 @@
 
 import type {
   Account,
-  Bridge,
-  TransactionExecutor,
   WebbApiProvider,
 } from '@webb-tools/abstract-api-provider';
 import { ApiConfig, type Chain, type Wallet } from '@webb-tools/dapp-config';
-import type { InteractiveFeedback } from '@webb-tools/dapp-types';
 import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
-import type { NoteManager } from '@webb-tools/note-manager';
 import React from 'react';
 import { AppEvent, type TAppEvent } from '../app-event';
-import type { TransactionQueueApi } from '../transaction';
-import noop from 'lodash/noop';
 
-export interface WebbContextState<T = unknown> {
+export interface WebbContextState {
   /** Whether the app is loading */
   loading: boolean;
 
@@ -25,7 +19,7 @@ export interface WebbContextState<T = unknown> {
   /** All pre-configured chains */
   chains: Record<number, Chain>;
 
-  activeApi?: WebbApiProvider<T>;
+  activeApi?: WebbApiProvider;
 
   activeWallet?: Wallet;
 
@@ -35,28 +29,6 @@ export interface WebbContextState<T = unknown> {
    * - `Chain` means the active chain is supported
    */
   activeChain?: Nullable<Maybe<Chain>>;
-
-  noteManager: Nullable<NoteManager>;
-
-  /**
-   * @param key the key to login
-   * @param walletAddress the wallet address to login
-   */
-  loginNoteAccount(
-    key: string,
-    walletAddress: string,
-  ): Promise<Nullable<NoteManager>>;
-
-  /**
-   * @param walletAddress the wallet address to logout
-   */
-  logoutNoteAccount(walletAddress: string): Promise<void>;
-
-  /**
-   * Clear note account corresponding to the wallet address
-   * @param walletAddress the wallet address to purge
-   */
-  purgeNoteAccount(walletAddress: string): Promise<void>;
 
   /** All pre-configured & on-chain data */
   apiConfig: ApiConfig;
@@ -73,40 +45,18 @@ export interface WebbContextState<T = unknown> {
 
   inactivateApi(): Promise<void>;
 
-  switchChain(
-    chain: Chain,
-    wallet: Wallet,
-    bridge?: Bridge,
-  ): Promise<Nullable<WebbApiProvider<T>>>;
-
-  activeFeedback: Nullable<InteractiveFeedback>;
-
-  registerInteractiveFeedback: (
-    interactiveFeedback: InteractiveFeedback,
-  ) => void;
+  switchChain(chain: Chain, wallet: Wallet): Promise<Nullable<WebbApiProvider>>;
 
   appName: string;
 
   appEvent: TAppEvent;
-
-  txQueue: TransactionQueueApi;
 }
 
-export const WebbContext = React.createContext<WebbContextState<unknown>>({
+export const WebbContext = React.createContext<WebbContextState>({
   chains: {},
   accounts: [],
   loading: true,
   activeAccount: null,
-  noteManager: null,
-  loginNoteAccount() {
-    return Promise.resolve(null);
-  },
-  logoutNoteAccount() {
-    return Promise.resolve();
-  },
-  purgeNoteAccount() {
-    return Promise.resolve();
-  },
   isConnecting: false,
   setActiveAccount() {
     return Promise.resolve();
@@ -118,33 +68,9 @@ export const WebbContext = React.createContext<WebbContextState<unknown>>({
     return Promise.resolve();
   },
   wallets: {},
-  activeFeedback: null,
   apiConfig: ApiConfig.init({}),
-  registerInteractiveFeedback: noop,
   appName: '',
   appEvent: new AppEvent(),
-  txQueue: {
-    txQueue: [],
-    currentTxId: null,
-    txPayloads: [],
-    api: {
-      startNewTransaction() {
-        return;
-      },
-      cancelTransaction(_id: string) {
-        return;
-      },
-      dismissTransaction(_id: string) {
-        return;
-      },
-      registerTransaction(_tx: TransactionExecutor<any>) {
-        return;
-      },
-      getLatestTransaction(_name: 'Deposit' | 'Withdraw' | 'Transfer') {
-        return null;
-      },
-    },
-  },
 });
 
 export const useWebContext = () => {

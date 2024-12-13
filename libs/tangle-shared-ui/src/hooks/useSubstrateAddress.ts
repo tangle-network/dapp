@@ -1,8 +1,17 @@
+<<<<<<<< HEAD:libs/tangle-shared-ui/src/hooks/useSubstrateAddress.ts
 import { useMemo } from 'react';
 import { SubstrateAddress } from '../types/utils';
 import useNetworkStore from '../context/useNetworkStore';
 import toSubstrateAddress from '../utils/toSubstrateAddress';
 import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
+========
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { useMemo } from 'react';
+
+import useActiveAccountAddress from './useActiveAccountAddress';
+>>>>>>>> develop:apps/tangle-dapp/src/hooks/useSubstrateAddress.ts
 
 /**
  * Obtain the Substrate address of the active account, if any.

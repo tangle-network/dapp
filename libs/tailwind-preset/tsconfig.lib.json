@@ -10,7 +10,8 @@
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
-    "../../types/**/*.d.ts"
+    "../../types/**/*.d.ts",
+    "eslint.config.cjs"
   ],
   "exclude": [
     "**/vite.config.ts",
