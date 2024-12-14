@@ -1,5 +1,3 @@
-'use client';
-
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';

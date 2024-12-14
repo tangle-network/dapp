@@ -1,5 +1,3 @@
-'use client';
-
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { AssetMap } from '@webb-tools/tangle-shared-ui/types/restake';

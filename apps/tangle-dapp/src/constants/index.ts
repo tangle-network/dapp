@@ -52,7 +52,6 @@ export enum TxName {
   UPDATE_NOMINATOR = 'update nominator',
   WITHDRAW_EVM_BALANCE = 'withdraw',
   UPDATE_RESTAKE_PROFILE = 'update restake profile',
-  BRIDGE_TRANSFER = 'bridge transfer',
   LST_MINT = 'mint',
   LST_REDEEM = 'redeem',
   LST_REBOND = 'cancel unstake request',

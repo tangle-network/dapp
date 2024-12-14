@@ -1,5 +1,3 @@
-'use client';
-
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { getApiRx } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';

@@ -3,6 +3,7 @@ import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle'
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { Button, Input } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import useInputAmount from '../hooks/useInputAmount';
 import InputWrapper, { InputWrapperProps } from './InputWrapper';
@@ -26,6 +27,8 @@ export type AmountInputProps = {
   wrapperClassName?: string;
   bodyClassName?: string;
   dropdownBodyClassName?: string;
+  showErrorMessage?: boolean;
+  inputClassName?: string;
 };
 
 const AmountInput: FC<AmountInputProps> = ({
@@ -48,6 +51,8 @@ const AmountInput: FC<AmountInputProps> = ({
   wrapperClassName,
   bodyClassName,
   dropdownBodyClassName,
+  showErrorMessage = true,
+  inputClassName,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { nativeTokenSymbol } = useNetworkStore();
@@ -111,11 +116,12 @@ const AmountInput: FC<AmountInputProps> = ({
       wrapperClassName={wrapperClassName}
       bodyClassName={bodyClassName}
       dropdownBodyClassName={dropdownBodyClassName}
+      showErrorMessage={showErrorMessage}
     >
       <Input
         id={id}
         inputRef={inputRef}
-        inputClassName="placeholder:text-lg text-lg"
+        inputClassName={twMerge('placeholder:text-lg text-lg', inputClassName)}
         type="text"
         placeholder={placeholder ?? `0 ${nativeTokenSymbol}`}
         size="sm"

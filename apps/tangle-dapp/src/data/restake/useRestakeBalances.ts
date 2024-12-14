@@ -1,5 +1,3 @@
-'use client';
-
 import type { ApiRx } from '@polkadot/api';
 import type { Option } from '@polkadot/types';
 import type { PalletAssetsAssetAccount } from '@polkadot/types/lookup';

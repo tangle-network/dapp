@@ -1,5 +1,3 @@
-'use client';
-
 import ConnectWalletButton from '@webb-tools/tangle-shared-ui/components/ConnectWalletButton';
 import { type FC } from 'react';
 

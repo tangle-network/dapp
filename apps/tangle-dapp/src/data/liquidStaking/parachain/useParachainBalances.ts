@@ -1,5 +1,3 @@
-'use client';
-
 // This will override global types and provide type definitions for
 // the Tangle Restaking Parachain's pallets and extrinsics.
 import '@webb-tools/tangle-restaking-types';

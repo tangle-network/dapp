@@ -1,5 +1,3 @@
-'use client';
-
 import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { Cell, RadialBar, RadialBarChart, Tooltip } from 'recharts';

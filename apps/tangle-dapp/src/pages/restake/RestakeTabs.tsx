@@ -1,5 +1,3 @@
-'use client';
-
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
 import { useLocation } from 'react-router';
 import { useMemo } from 'react';

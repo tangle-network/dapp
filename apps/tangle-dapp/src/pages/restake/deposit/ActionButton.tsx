@@ -1,5 +1,3 @@
-'use client';
-
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { type RefObject } from 'react';
 import type { FieldErrors, UseFormWatch } from 'react-hook-form';

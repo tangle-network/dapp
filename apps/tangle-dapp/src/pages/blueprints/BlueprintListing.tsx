@@ -1,5 +1,3 @@
-'use client';
-
 import BlueprintGallery from '@webb-tools/tangle-shared-ui/components/blueprints/BlueprintGallery';
 import useBlueprintListing from '@webb-tools/tangle-shared-ui/data/blueprints/useBlueprintListing';
 import { FC } from 'react';

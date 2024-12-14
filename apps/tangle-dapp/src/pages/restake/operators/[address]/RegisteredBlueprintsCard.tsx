@@ -1,5 +1,3 @@
-'use client';
-
 import { ExternalLinkLine, GithubFill } from '@webb-tools/icons';
 import { Card, CardVariant } from '@webb-tools/webb-ui-components';
 import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';

@@ -1,6 +1,7 @@
 import type { BN } from '@polkadot/util';
 import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 
 export type TangleTokenSymbol = 'tTNT' | 'TNT';
 
@@ -23,3 +24,29 @@ export const ExplorerType = {
   Substrate: 'polkadot' as WebbProviderType,
   EVM: 'web3' as WebbProviderType,
 } as const;
+
+export enum BridgeTxState {
+  Initializing = 'Initializing',
+  Sending = 'Sending',
+  Executed = 'Executed',
+  Failed = 'Failed',
+}
+
+export type BridgeQueueTxItem = {
+  hash: string;
+  env: 'live' | 'test' | 'dev';
+  sourceTypedChainId: number;
+  destinationTypedChainId: number;
+  sourceAddress: string;
+  recipientAddress: string;
+  sourceAmount: string;
+  destinationAmount: string;
+  tokenSymbol: string;
+  creationTimestamp: number;
+  state: BridgeTxState;
+  explorerUrl?: string;
+  destinationTxHash?: string;
+  destinationTxState?: BridgeTxState;
+  destinationTxExplorerUrl?: string;
+  bridgeType: EVMTokenBridgeEnum;
+};

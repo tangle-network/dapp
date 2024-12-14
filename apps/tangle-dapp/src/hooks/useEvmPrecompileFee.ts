@@ -1,5 +1,3 @@
-'use client';
-
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useCallback, useState } from 'react';
 

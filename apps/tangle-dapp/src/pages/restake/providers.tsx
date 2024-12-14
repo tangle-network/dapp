@@ -1,5 +1,3 @@
-'use client';
-
 import { PolkadotApiProvider } from '@webb-tools/tangle-shared-ui/context/PolkadotApiContext';
 import { type PropsWithChildren } from 'react';
 

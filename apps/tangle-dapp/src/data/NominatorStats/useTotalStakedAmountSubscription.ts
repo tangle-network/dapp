@@ -1,5 +1,3 @@
-'use client';
-
 import { u128 } from '@polkadot/types';
 import { BN } from '@polkadot/util';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';

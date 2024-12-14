@@ -1,5 +1,3 @@
-'use client';
-
 import { BN_ONE } from '@polkadot/util';
 import { useCallback, useEffect, useState } from 'react';
 

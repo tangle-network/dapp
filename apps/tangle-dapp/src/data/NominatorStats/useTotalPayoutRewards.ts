@@ -1,5 +1,3 @@
-'use client';
-
 import { BN } from '@polkadot/util';
 import { useMemo, useState } from 'react';
 

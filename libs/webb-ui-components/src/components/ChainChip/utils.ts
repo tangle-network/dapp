@@ -47,6 +47,15 @@ const classNames: ChainChipClassNames = {
   phala: {
     default: 'text-mono-200 dark:text-mono-200 bg-[#D1FF51]',
   },
+  base: {
+    default: 'text-mono-0 dark:text-mono-0 bg-[#0052FF]',
+  },
+  linea: {
+    default: 'text-mono-200 dark:text-mono-200 bg-[#ffffff]',
+  },
+  bsc: {
+    default: 'text-mono-0 dark:text-mono-0 bg-[#F0B90B]',
+  },
 };
 
 export function getChainChipClassName(chainType: ChainGroup) {
