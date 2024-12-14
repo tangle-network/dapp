@@ -20,7 +20,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import { FC, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 
 import LsTokenIcon from '../components/LsTokenIcon';
 import StatItem from '../components/StatItem';
@@ -39,10 +39,18 @@ import { TableStatus } from '../components';
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
 import useRestakeDelegatorInfo from '../data/restake/useRestakeDelegatorInfo';
 import useIsAccountConnected from '../hooks/useIsAccountConnected';
+import useLsPools from '../data/liquidStaking/useLsPools';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 
-export type RestakeBalanceRow = {
-  name: string;
-  token: string;
+enum RowType {
+  ASSET,
+  LS_POOL,
+}
+
+type Row = {
+  type: RowType;
+  name?: string;
+  tokenSymbol: string;
   tvl: BN;
   tvlInUsd?: number;
   available: BN;
@@ -55,31 +63,35 @@ export type RestakeBalanceRow = {
   apyFractional?: number;
 };
 
-const COLUMN_HELPER = createColumnHelper<RestakeBalanceRow>();
+const COLUMN_HELPER = createColumnHelper<Row>();
 
 const COLUMNS = [
-  COLUMN_HELPER.accessor('name', {
+  COLUMN_HELPER.accessor('tokenSymbol', {
     header: () => 'Asset',
     sortDescFirst: true,
-    sortingFn: sortByLocaleCompare((row) => row.name),
-    cell: (props) => (
+    sortingFn: sortByLocaleCompare((row) => row.name ?? row.tokenSymbol),
+    cell: (props) => {
+      const name = props.row.original.name;
+
       <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-2">
           <LsTokenIcon name={props.row.original.iconName} size="lg" />
 
-          <Typography variant="h5" className="whitespace-nowrap">
-            {props.getValue()}
-          </Typography>
+          {name !== undefined && (
+            <Typography variant="h5" className="whitespace-nowrap">
+              {name}
+            </Typography>
+          )}
 
           <Typography
             variant="body1"
             className="whitespace-nowrap dark:text-mono-100"
           >
-            {props.row.original.token}
+            {props.getValue()}
           </Typography>
         </div>
-      </TableCellWrapper>
-    ),
+      </TableCellWrapper>;
+    },
   }),
   COLUMN_HELPER.accessor('available', {
     header: () => 'Available',
@@ -98,7 +110,7 @@ const COLUMNS = [
       return (
         <TableCellWrapper>
           <StatItem
-            title={`${formattedMyStake} ${props.row.original.token}`}
+            title={`${formattedMyStake} ${props.row.original.tokenSymbol}`}
             subtitle={subtitle}
             removeBorder
           />
@@ -123,7 +135,7 @@ const COLUMNS = [
       return (
         <TableCellWrapper>
           <StatItem
-            title={`${formattedMyStake} ${props.row.original.token}`}
+            title={`${formattedMyStake} ${props.row.original.tokenSymbol}`}
             subtitle={subtitle}
             removeBorder
           />
@@ -150,7 +162,7 @@ const COLUMNS = [
       return (
         <TableCellWrapper>
           <StatItem
-            title={`${formattedTvl} ${props.row.original.token}`}
+            title={`${formattedTvl} ${props.row.original.tokenSymbol}`}
             subtitle={subtitle}
             removeBorder
           />
@@ -236,27 +248,21 @@ const COLUMNS = [
   }),
 ];
 
-const RestakeBalancesTable: FC = () => {
+const AssetsAndBalancesTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const { balances } = useRestakeBalances();
   const { assetMap } = useRestakeAssetMap();
   const { rewardConfig } = useRestakeRewardConfig();
   const { delegatorInfo } = useRestakeDelegatorInfo();
+  const allPools = useLsPools();
   const isAccountConnected = useIsAccountConnected();
 
-  const restakeBalanceRows = useMemo<RestakeBalanceRow[]>(() => {
-    return Object.entries(balances).flatMap(([assetId, balance]) => {
-      const assetDetails: (typeof assetMap)[string] | undefined =
-        assetMap[assetId];
-
-      if (assetDetails === undefined) {
-        return [];
-      }
-
+  const getTotalLockedInAsset = useCallback(
+    (assetId: number) => {
       const deposited = delegatorInfo?.deposits[assetId].amount;
 
       const delegated = delegatorInfo?.delegations.find((delegation) => {
-        return delegation.assetId === assetId;
+        return delegation.assetId === assetId.toString();
       });
 
       const depositedBn =
@@ -267,34 +273,66 @@ const RestakeBalancesTable: FC = () => {
           ? BN_ZERO
           : new BN(delegated.amountBonded.toString());
 
+      return depositedBn.add(delegatedBn);
+    },
+    [delegatorInfo?.delegations, delegatorInfo?.deposits],
+  );
+
+  const assetRows = useMemo<Row[]>(() => {
+    return Object.entries(balances).flatMap(([assetId, balance]) => {
+      const assetDetails: (typeof assetMap)[string] | undefined =
+        assetMap[assetId];
+
+      if (assetDetails === undefined) {
+        return [];
+      }
+
       return {
+        type: RowType.ASSET,
         name: assetDetails.name,
         // TODO: Calculate by issuance of asset.
         tvl: BN_ZERO,
         available: new BN(balance.balance.toString()),
-        // TODO: Calculate by deposit amount in restaking of asset.
-        locked: delegatedBn.add(depositedBn),
+        locked: getTotalLockedInAsset(parseInt(assetId)),
         // TODO: This won't work because reward config is PER VAULT not PER ASSET. But isn't each asset its own vault?
         apyFractional: rewardConfig.configs[assetId]?.apy,
-        token: assetDetails.symbol,
+        tokenSymbol: assetDetails.symbol,
         iconName: 'tnt',
         decimals: assetDetails.decimals,
-      } as RestakeBalanceRow;
+      } satisfies Row;
     });
-  }, [
-    assetMap,
-    balances,
-    delegatorInfo?.delegations,
-    delegatorInfo?.deposits,
-    rewardConfig.configs,
-  ]);
+  }, [assetMap, balances, getTotalLockedInAsset, rewardConfig.configs]);
 
-  const rows = useMemo<RestakeBalanceRow[]>(() => {
+  const lsPoolRows = useMemo<Row[]>(() => {
+    if (!(allPools instanceof Map)) {
+      return [];
+    }
+
+    const pools = Array.from(allPools.values());
+
+    return pools.map((pool) => {
+      const tokenSymbol = `${pool.name ?? 'Pool'}#${pool.id}`.toUpperCase();
+
+      return {
+        type: RowType.LS_POOL,
+        tokenSymbol,
+        tvl: pool.totalStaked,
+        // TODO: Should be 'my stake'.
+        available: pool.totalStaked,
+        locked: getTotalLockedInAsset(pool.id),
+        iconName: 'tnt',
+        decimals: TANGLE_TOKEN_DECIMALS,
+        apyFractional: pool.apyPercentage,
+      } satisfies Row;
+    });
+  }, [allPools, getTotalLockedInAsset]);
+
+  const rows = useMemo<Row[]>(() => {
     // Sort by highest available balance (descending).
-    return [...restakeBalanceRows].sort((a, b) => {
+    return [...assetRows, ...lsPoolRows].sort((a, b) => {
       return b.available.cmp(a.available);
     });
-  }, [restakeBalanceRows]);
+  }, [assetRows, lsPoolRows]);
 
   const table = useReactTable({
     data: rows,
@@ -330,4 +368,4 @@ const RestakeBalancesTable: FC = () => {
   return <Table variant={TableVariant.GLASS_OUTER} tableProps={table} />;
 };
 
-export default RestakeBalancesTable;
+export default AssetsAndBalancesTable;

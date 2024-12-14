@@ -2,7 +2,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { FC } from 'react';
 
 import AccountSummaryCard from '../components/account/AccountSummaryCard';
-import RestakeBalancesTable from '../containers/RestakeBalancesTable';
+import AssetsAndBalancesTable from '../containers/AssetsAndBalancesTable';
 import PointsReminder from '../components/account/PointsReminder';
 
 const AccountPage: FC = () => {
@@ -18,7 +18,7 @@ const AccountPage: FC = () => {
         Assets &amp; Balances
       </Typography>
 
-      <RestakeBalancesTable />
+      <AssetsAndBalancesTable />
     </div>
   );
 };
