@@ -173,7 +173,6 @@ const VaultsTable: FC<Props> = ({
       <TableStatus
         title="No Vaults Found"
         description="It looks like there are no vaults at the moment."
-        icon="🔍"
         {...emptyTableProps}
         className={emptyTableProps?.className}
       />

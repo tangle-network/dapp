@@ -1,6 +1,6 @@
 'use client';
 
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -25,9 +25,6 @@ import { FC, useMemo, useState } from 'react';
 import LsTokenIcon from '../components/LsTokenIcon';
 import StatItem from '../components/StatItem';
 import TableCellWrapper from '../components/tables/TableCellWrapper';
-import useLsMyPools from '../data/liquidStaking/useLsMyPools';
-import { useLsStore } from '../data/liquidStaking/useLsStore';
-import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
 import { HeaderCell } from '../components/tableCells';
 import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import { ArrowRight } from '@webb-tools/icons';
@@ -36,6 +33,12 @@ import { Link } from 'react-router';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
 import { twMerge } from 'tailwind-merge';
 import formatFractional from '../utils/formatFractional';
+import useRestakeBalances from '../data/restake/useRestakeBalances';
+import useRestakeAssetMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetMap';
+import { TableStatus } from '../components';
+import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
+import useRestakeDelegatorInfo from '../data/restake/useRestakeDelegatorInfo';
+import useIsAccountConnected from '../hooks/useIsAccountConnected';
 
 export type RestakeBalanceRow = {
   name: string;
@@ -54,7 +57,7 @@ export type RestakeBalanceRow = {
 
 const COLUMN_HELPER = createColumnHelper<RestakeBalanceRow>();
 
-const PROTOCOL_COLUMNS = [
+const COLUMNS = [
   COLUMN_HELPER.accessor('name', {
     header: () => 'Asset',
     sortDescFirst: true,
@@ -104,7 +107,7 @@ const PROTOCOL_COLUMNS = [
     },
   }),
   COLUMN_HELPER.accessor('locked', {
-    header: () => 'Locked/Deposited',
+    header: () => 'Locked',
     cell: (props) => {
       const formattedMyStake = formatDisplayAmount(
         props.getValue(),
@@ -235,45 +238,67 @@ const PROTOCOL_COLUMNS = [
 
 const RestakeBalancesTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const { lsNetworkId } = useLsStore();
+  const { balances } = useRestakeBalances();
+  const { assetMap } = useRestakeAssetMap();
+  const { rewardConfig } = useRestakeRewardConfig();
+  const { delegatorInfo } = useRestakeDelegatorInfo();
+  const isAccountConnected = useIsAccountConnected();
 
-  const lsNetwork = getLsNetwork(lsNetworkId);
+  const restakeBalanceRows = useMemo<RestakeBalanceRow[]>(() => {
+    return Object.entries(balances).flatMap(([assetId, balance]) => {
+      const assetDetails: (typeof assetMap)[string] | undefined =
+        assetMap[assetId];
 
-  const myPoolsOrNull = useLsMyPools();
-  const myPools = useMemo(() => myPoolsOrNull ?? [], [myPoolsOrNull]);
+      if (assetDetails === undefined) {
+        return [];
+      }
 
-  const rows = useMemo<RestakeBalanceRow[]>(() => {
-    return lsNetwork.protocols.map((lsProtocol) => {
-      const tvl = myPools
-        .filter((myPool) => myPool.protocolId === lsProtocol.id)
-        .reduce((acc, pool) => acc.add(pool.totalStaked), new BN(0));
+      const deposited = delegatorInfo?.deposits[assetId].amount;
 
-      const myStake = myPools
-        .filter((myPool) => myPool.protocolId === lsProtocol.id)
-        .reduce((acc, pool) => acc.add(pool.myStake), new BN(0));
+      const delegated = delegatorInfo?.delegations.find((delegation) => {
+        return delegation.assetId === assetId;
+      });
+
+      const depositedBn =
+        deposited === undefined ? BN_ZERO : new BN(deposited.toString());
+
+      const delegatedBn =
+        delegated === undefined
+          ? BN_ZERO
+          : new BN(delegated.amountBonded.toString());
 
       return {
-        name: lsProtocol.name,
-        tvl,
-        iconName: lsProtocol.token,
-        available: myStake,
-        // TODO: Calculate the USD value once appropriate hook is available.
-        availableInUsd: undefined,
-        locked: tvl.sub(myStake),
-        // TODO: Calculate the USD value once appropriate hook is available.
-        lockedInUsd: undefined,
-        // TODO: Calculate the USD value once appropriate hook is available.
-        tvlInUsd: undefined,
-        apyFractional: +632.42949,
-        token: lsProtocol.token,
-        decimals: lsProtocol.decimals,
-      } satisfies RestakeBalanceRow;
+        name: assetDetails.name,
+        // TODO: Calculate by issuance of asset.
+        tvl: BN_ZERO,
+        available: new BN(balance.balance.toString()),
+        // TODO: Calculate by deposit amount in restaking of asset.
+        locked: delegatedBn.add(depositedBn),
+        // TODO: This won't work because reward config is PER VAULT not PER ASSET. But isn't each asset its own vault?
+        apyFractional: rewardConfig.configs[assetId]?.apy,
+        token: assetDetails.symbol,
+        iconName: 'tnt',
+        decimals: assetDetails.decimals,
+      } as RestakeBalanceRow;
     });
-  }, [lsNetwork.protocols, myPools]);
+  }, [
+    assetMap,
+    balances,
+    delegatorInfo?.delegations,
+    delegatorInfo?.deposits,
+    rewardConfig.configs,
+  ]);
+
+  const rows = useMemo<RestakeBalanceRow[]>(() => {
+    // Sort by highest available balance (descending).
+    return [...restakeBalanceRows].sort((a, b) => {
+      return b.available.cmp(a.available);
+    });
+  }, [restakeBalanceRows]);
 
   const table = useReactTable({
     data: rows,
-    columns: PROTOCOL_COLUMNS,
+    columns: COLUMNS,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -285,6 +310,22 @@ const RestakeBalancesTable: FC = () => {
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
+
+  if (!isAccountConnected) {
+    return (
+      <TableStatus
+        title="Connect Wallet"
+        description="Please connect your wallet to view your restaking balances."
+      />
+    );
+  } else if (rows.length === 0) {
+    return (
+      <TableStatus
+        title="No Balances"
+        description="Create your first restaking deposit and check back here for the details."
+      />
+    );
+  }
 
   return <Table variant={TableVariant.GLASS_OUTER} tableProps={table} />;
 };

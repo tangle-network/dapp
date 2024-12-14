@@ -17,7 +17,6 @@ import {
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Link } from 'react-router';
 import { type FC, useCallback, useMemo, useState } from 'react';
-import React from 'react';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import useBalances from '../../data/balances/useBalances';

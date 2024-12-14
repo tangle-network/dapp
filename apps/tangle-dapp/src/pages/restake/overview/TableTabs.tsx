@@ -41,7 +41,6 @@ const TableTabs: FC<Props> = ({
   vaultTVL,
 }) => {
   const { assetMap } = useRestakeContext();
-
   const { rewardConfig } = useRestakeRewardConfig();
 
   // Recalculate vaults data from assetMap

@@ -158,7 +158,6 @@ const LsUnbondingTable: FC = () => {
       <TableStatus
         title="Connect a wallet to continue"
         description="Once you've connected an account, you'll be able to see and manage your liquid staking pools' unstaking requests here."
-        icon="🔍"
       />
     );
   } else if (unstakeRequests === null) {
@@ -168,7 +167,6 @@ const LsUnbondingTable: FC = () => {
       <TableStatus
         title="No Unstake Requests"
         description="Once you've scheduled an unstake request, you'll see information about it here."
-        icon="🔍"
         buttonText="Learn More"
         buttonProps={{
           href: TANGLE_DOCS_LIQUID_STAKING_URL,

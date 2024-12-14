@@ -108,7 +108,6 @@ const NodeSpecificationsTable: FC<NodeSpecificationsTableProps> = ({
         {/* No data */}
         {!isLoading && error === null && nodeSpecifications.length === 0 && (
           <TableStatus
-            icon="🔍"
             title="No Specifications"
             description="There is no node specifications associated with this specific validator."
           />

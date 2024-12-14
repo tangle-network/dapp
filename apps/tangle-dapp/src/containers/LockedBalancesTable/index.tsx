@@ -169,7 +169,6 @@ const LockedBalancesTable: FC = () => {
       <TableStatus
         title="Wallet Not Connected"
         description="Once you've connected an account, you'll be able to see information about your locked balances here."
-        icon="🔍"
       />
     );
   } else if (rows.length === 0) {
@@ -177,7 +176,6 @@ const LockedBalancesTable: FC = () => {
       <TableStatus
         title="No Locked Balances"
         description="This account doesn't current have any locks on its balances."
-        icon="🔍"
       />
     );
   }
