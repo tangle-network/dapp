@@ -13,15 +13,21 @@ export type HyperlaneQuoteProps = {
   recipientAddress: string;
 };
 
-export const getHyperlaneQuote = async ({
-  token,
-  amount,
-  sourceTypedChainId,
-  destinationTypedChainId,
-  senderAddress,
-  recipientAddress,
-}: HyperlaneQuoteProps) => {
+export const getHyperlaneQuote = async (props: HyperlaneQuoteProps | null) => {
   try {
+    if (!props) {
+      throw new Error('Hyperlane quote props are required');
+    }
+
+    const {
+      token,
+      amount,
+      sourceTypedChainId,
+      destinationTypedChainId,
+      senderAddress,
+      recipientAddress,
+    } = props;
+
     const warpCore = getHyperlaneWarpCore();
     if (!warpCore) {
       throw new Error('Hyperlane warp core not found');
@@ -86,7 +92,7 @@ export const getHyperlaneQuote = async ({
   }
 };
 
-export const useHyperlaneQuote = (props: HyperlaneQuoteProps) => {
+export const useHyperlaneQuote = (props: HyperlaneQuoteProps | null) => {
   return useQuery({
     queryKey: ['hyperlaneQuote', props],
     queryFn: () => getHyperlaneQuote(props),

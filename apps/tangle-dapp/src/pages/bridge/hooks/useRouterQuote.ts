@@ -11,14 +11,20 @@ export type RouterQuoteProps = {
   toTokenChainId: string;
 };
 
-export const getRouterQuote = async ({
-  fromTokenAddress,
-  toTokenAddress,
-  amountInWei,
-  fromTokenChainId,
-  toTokenChainId,
-}: RouterQuoteProps) => {
+export const getRouterQuote = async (props: RouterQuoteProps | null) => {
   try {
+    if (!props) {
+      throw new Error('Router quote props are required');
+    }
+
+    const {
+      fromTokenAddress,
+      toTokenAddress,
+      amountInWei,
+      fromTokenChainId,
+      toTokenChainId,
+    } = props;
+
     const res = await axios.get(ROUTER_QUOTE_URL, {
       params: {
         fromTokenAddress,
@@ -40,7 +46,7 @@ export const getRouterQuote = async ({
   }
 };
 
-export const useRouterQuote = (props: RouterQuoteProps) => {
+export const useRouterQuote = (props: RouterQuoteProps | null) => {
   return useQuery({
     queryKey: ['routerQuote', props],
     queryFn: () => getRouterQuote(props),

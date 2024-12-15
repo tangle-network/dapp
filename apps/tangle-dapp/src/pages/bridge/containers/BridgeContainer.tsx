@@ -151,7 +151,11 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     );
   }, [selectedDestinationChain]);
 
-  const routerQuoteParams: RouterQuoteProps = useMemo(() => {
+  const routerQuoteParams: RouterQuoteProps | null = useMemo(() => {
+    if (!amount) {
+      return null;
+    }
+
     const fromTokenAddress =
       sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
         ? ROUTER_NATIVE_TOKEN_ADDRESS
@@ -165,7 +169,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     const routerQuoteParams = {
       fromTokenAddress,
       toTokenAddress,
-      amountInWei: amount?.toString() ?? '',
+      amountInWei: amount.toString(),
       fromTokenChainId: selectedSourceChain.id.toString(),
       toTokenChainId: selectedDestinationChain.id.toString(),
     };
@@ -180,14 +184,18 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     selectedDestinationChain.id,
   ]);
 
-  const hyperlaneQuoteParams: HyperlaneQuoteProps = useMemo(() => {
+  const hyperlaneQuoteParams: HyperlaneQuoteProps | null = useMemo(() => {
+    if (!activeAccount || !activeAccount.address || !destinationAddress) {
+      return null;
+    }
+
     return {
       token: selectedToken,
       amount: Number(amount?.toString() ?? '0'),
       sourceTypedChainId,
       destinationTypedChainId,
-      senderAddress: activeAccount?.address ?? '',
-      recipientAddress: destinationAddress ?? '',
+      senderAddress: activeAccount.address,
+      recipientAddress: destinationAddress,
     };
   }, [
     amount,
@@ -510,13 +518,22 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   ]);
 
   const routerTransferData = useMemo(() => {
+    if (
+      !routerQuote ||
+      !routerQuoteParams ||
+      !activeAccount ||
+      !destinationAddress
+    ) {
+      return null;
+    }
+
     return {
       routerQuoteData: routerQuote,
       fromTokenAddress: routerQuoteParams.fromTokenAddress,
       toTokenAddress: routerQuoteParams.toTokenAddress,
-      senderAddress: activeAccount?.address ?? '',
-      receiverAddress: destinationAddress ?? '',
-      refundAddress: activeAccount?.address ?? '',
+      senderAddress: activeAccount.address,
+      receiverAddress: destinationAddress,
+      refundAddress: activeAccount.address,
     };
   }, [routerQuote, routerQuoteParams, activeAccount, destinationAddress]);
 
