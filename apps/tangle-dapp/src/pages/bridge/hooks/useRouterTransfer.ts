@@ -29,20 +29,24 @@ export type RouterTransferProps = {
   ethersSigner: JsonRpcSigner | null;
 };
 
-export const transferByRouter = async ({
-  routerQuoteData,
-  fromTokenAddress,
-  toTokenAddress,
-  senderAddress,
-  receiverAddress,
-  refundAddress,
-  ethersSigner,
-}: RouterTransferProps): Promise<TransactionReceipt | null> => {
-  if (!ethersSigner) {
-    return null;
-  }
-
+export const transferByRouter = async (
+  props: RouterTransferProps,
+): Promise<TransactionReceipt | null> => {
   try {
+    if (!props || !props.ethersSigner) {
+      throw new Error('Invalid props or ethers signer');
+    }
+
+    const {
+      routerQuoteData,
+      fromTokenAddress,
+      toTokenAddress,
+      senderAddress,
+      receiverAddress,
+      refundAddress,
+      ethersSigner,
+    } = props;
+
     const { data: transactionData } =
       await axios.post<RouterTransactionResponse>(ROUTER_TRANSACTION_URL, {
         ...routerQuoteData,

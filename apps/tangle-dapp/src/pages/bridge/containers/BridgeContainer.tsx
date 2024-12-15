@@ -49,6 +49,7 @@ import {
   HyperlaneQuoteProps,
   useHyperlaneQuote,
 } from '../hooks/useHyperlaneQuote';
+import { RouterTransferProps } from '../hooks/useRouterTransfer';
 
 interface BridgeContainerProps {
   className?: string;
@@ -517,25 +518,26 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     refetchRouterQuote,
   ]);
 
-  const routerTransferData = useMemo(() => {
-    if (
-      !routerQuote ||
-      !routerQuoteParams ||
-      !activeAccount ||
-      !destinationAddress
-    ) {
-      return null;
-    }
+  const routerTransferData: Omit<RouterTransferProps, 'ethersSigner'> | null =
+    useMemo(() => {
+      if (
+        !routerQuote ||
+        !routerQuoteParams ||
+        !activeAccount ||
+        !destinationAddress
+      ) {
+        return null;
+      }
 
-    return {
-      routerQuoteData: routerQuote,
-      fromTokenAddress: routerQuoteParams.fromTokenAddress,
-      toTokenAddress: routerQuoteParams.toTokenAddress,
-      senderAddress: activeAccount.address,
-      receiverAddress: destinationAddress,
-      refundAddress: activeAccount.address,
-    };
-  }, [routerQuote, routerQuoteParams, activeAccount, destinationAddress]);
+      return {
+        routerQuoteData: routerQuote,
+        fromTokenAddress: routerQuoteParams.fromTokenAddress,
+        toTokenAddress: routerQuoteParams.toTokenAddress,
+        senderAddress: activeAccount.address,
+        receiverAddress: destinationAddress,
+        refundAddress: activeAccount.address,
+      };
+    }, [routerQuote, routerQuoteParams, activeAccount, destinationAddress]);
 
   useEffect(() => {
     if (!activeAccount || !activeWallet || !activeChain) {
