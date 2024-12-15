@@ -1,5 +1,3 @@
-'use client';
-
 import { Search } from '@webb-tools/icons/Search';
 import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';

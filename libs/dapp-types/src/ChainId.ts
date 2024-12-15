@@ -1,7 +1,8 @@
 // Copyright 2024 @webb-tools/
 // SPDX-License-Identifier: Apache-2.0
 
-import { calculateTypedChainId, ChainType } from './TypedChainId';
+import { calculateTypedChainId } from './TypedChainId';
+import { ChainType } from './TypedChainId';
 
 import EVMChainId from './EVMChainId';
 import SubstrateChainId from './SubstrateChainId';
@@ -97,6 +98,18 @@ export enum PresetTypedChainId {
     ChainType.EVM,
     EVMChainId.ScrollSepolia,
   ),
+
+  Polygon = calculateTypedChainId(ChainType.EVM, EVMChainId.Polygon),
+
+  Arbitrum = calculateTypedChainId(ChainType.EVM, EVMChainId.Arbitrum),
+
+  Optimism = calculateTypedChainId(ChainType.EVM, EVMChainId.Optimism),
+
+  Linea = calculateTypedChainId(ChainType.EVM, EVMChainId.Linea),
+
+  Base = calculateTypedChainId(ChainType.EVM, EVMChainId.Base),
+
+  BSC = calculateTypedChainId(ChainType.EVM, EVMChainId.BSC),
 
   // Localnets
   HermesLocalnet = calculateTypedChainId(

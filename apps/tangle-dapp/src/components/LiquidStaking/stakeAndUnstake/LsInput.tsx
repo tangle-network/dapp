@@ -1,5 +1,3 @@
-'use client';
-
 import { BN } from '@polkadot/util';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { formatBn } from '@webb-tools/webb-ui-components';

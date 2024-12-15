@@ -1,5 +1,3 @@
-'use client';
-
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';

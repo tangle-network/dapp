@@ -1,5 +1,3 @@
-'use client';
-
 import {
   AppEvent,
   OFACFilterProvider,
@@ -10,8 +8,8 @@ import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
 import z from 'zod';
 
-import BridgeTxQueueProvider from '../context/BridgeTxQueueContext';
-import HyperlaneWarpContext from '../context/HyperlaneWarpContext';
+import HyperlaneWarpContext from '../pages/bridge/context/HyperlaneWarpContext';
+import BridgeTxQueueProvider from '../pages/bridge/context/useBridgeTxQueue';
 
 const appEvent = new AppEvent();
 

@@ -1,5 +1,3 @@
-'use client';
-
 import { FC } from 'react';
 
 import GlassCardWithLogo from '../GlassCardWithLogo';

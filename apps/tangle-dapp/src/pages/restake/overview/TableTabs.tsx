@@ -1,5 +1,3 @@
-'use client';
-
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';

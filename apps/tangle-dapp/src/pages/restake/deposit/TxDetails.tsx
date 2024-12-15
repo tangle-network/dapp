@@ -1,5 +1,3 @@
-'use client';
-
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
 import { useMemo } from 'react';
 import { UseFormWatch } from 'react-hook-form';

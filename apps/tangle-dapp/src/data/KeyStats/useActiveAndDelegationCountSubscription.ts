@@ -1,5 +1,3 @@
-'use client';
-
 import { formatNumber } from '@polkadot/util';
 import { DEFAULT_FLAGS_ELECTED } from '@webb-tools/dapp-config/constants/tangle';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';

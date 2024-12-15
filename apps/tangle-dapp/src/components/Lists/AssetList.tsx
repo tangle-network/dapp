@@ -1,6 +1,6 @@
+import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 import { ArrowRightUp, Search, TokenIcon } from '@webb-tools/icons';
 import {
-  getRoundedAmountString,
   Input,
   ListItem,
   shortenHex,
@@ -8,8 +8,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import Decimal from 'decimal.js';
-import { Link } from 'react-router';
+import Link from 'next/link';
 import { ComponentProps, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Address } from 'viem';
@@ -18,9 +17,11 @@ import { ListCardWrapper } from './ListCardWrapper';
 
 export type AssetConfig = {
   symbol: string;
-  balance?: Decimal;
+  optionalSymbol?: string;
+  balance?: string;
   explorerUrl?: string;
   address?: Address;
+  assetBridgeType?: EVMTokenBridgeEnum;
 };
 
 type AssetListProps = {
@@ -48,7 +49,7 @@ export const AssetList = ({
 
   return (
     <ListCardWrapper title={title} onClose={onClose}>
-      <div className="px-4 pb-4 border-b md:px-9 border-mono-40 dark:border-mono-170">
+      <div className="px-4 pb-5 border-b md:px-6 border-mono-40 dark:border-mono-170">
         <Input
           id="chain"
           rightIcon={<Search />}
@@ -75,27 +76,28 @@ export const AssetList = ({
                 onSelectAsset(asset);
                 onClose?.();
               }}
-              className="cursor-pointer w-full flex items-center gap-4 justify-between max-w-full min-h-[60px] py-[12px]"
+              className="cursor-pointer w-full flex items-center gap-4 justify-between max-w-full min-h-[60px] py-[12px] px-6"
             >
               <div className="flex items-center gap-2">
                 <TokenIcon
-                  size="lg"
+                  size="xl"
                   name={asset.symbol}
-                  className="mr-2 w-[38px] h-[38px]"
+                  className="mr-2"
+                  spinnersize="lg"
                 />
 
                 <div className="flex flex-col gap-1">
                   <Typography
                     variant="h5"
                     fw="bold"
-                    className="block cursor-default text-mono-200 dark:text-mono-0"
+                    className="cursor-default text-mono-200 dark:text-mono-0"
                   >
                     {asset.symbol}
                   </Typography>
 
                   {asset.explorerUrl !== undefined && (
                     <Link
-                      to={asset.explorerUrl}
+                      href={asset.explorerUrl}
                       target="_blank"
                       className="z-20 flex items-center gap-1 text-mono-120 dark:text-mono-100 dark:hover:text-mono-80"
                     >
@@ -120,7 +122,7 @@ export const AssetList = ({
                 className="cursor-default text-mono-200 dark:text-mono-0"
               >
                 {asset.balance
-                  ? `${getRoundedAmountString(asset.balance.toNumber(), 4)} ${asset.symbol}`
+                  ? `${asset.balance} ${asset.symbol}`
                   : EMPTY_VALUE_PLACEHOLDER}
               </Typography>
             </ListItem>

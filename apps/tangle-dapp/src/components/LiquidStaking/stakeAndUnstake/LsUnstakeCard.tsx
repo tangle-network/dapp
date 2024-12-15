@@ -1,5 +1,3 @@
-'use client';
-
 // This will override global types and provide type definitions for
 // the LST pallet for this file only.
 import '@webb-tools/tangle-restaking-types';

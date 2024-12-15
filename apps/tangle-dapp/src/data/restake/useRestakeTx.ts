@@ -1,5 +1,3 @@
-'use client';
-
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ensureHex } from '@webb-tools/dapp-config/utils';
 import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';

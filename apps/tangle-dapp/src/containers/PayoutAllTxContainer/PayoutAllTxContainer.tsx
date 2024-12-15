@@ -1,5 +1,3 @@
-'use client';
-
 import {
   InputField,
   Modal,

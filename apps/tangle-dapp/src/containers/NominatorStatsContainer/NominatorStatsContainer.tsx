@@ -1,5 +1,3 @@
-'use client';
-
 import { BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';

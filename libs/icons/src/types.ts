@@ -3,7 +3,7 @@ import type { DynamicSVGImportOptions } from './useDynamicSVGImport';
 
 type SVGBase = Omit<ComponentProps<'svg'>, 'path' | 'd' | 'onError'>;
 
-export type IconSize = 'md' | 'lg' | 'xl';
+export type IconSize = 'md' | 'lg' | 'xl' | '2xl';
 
 /**
  * Base interface for Webb Icon

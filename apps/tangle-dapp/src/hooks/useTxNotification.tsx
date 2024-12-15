@@ -26,7 +26,6 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.UPDATE_NOMINATOR]: 'Nominator updated',
   [TxName.WITHDRAW_EVM_BALANCE]: 'Withdrawal successful',
   [TxName.UPDATE_RESTAKE_PROFILE]: 'Restake profile updated',
-  [TxName.BRIDGE_TRANSFER]: 'Bridge transferred successful',
   [TxName.LST_MINT]: 'Minted tokens',
   [TxName.LST_REDEEM]: 'Redeem request submitted',
   [TxName.LST_REBOND]: 'Unstake request cancelled',

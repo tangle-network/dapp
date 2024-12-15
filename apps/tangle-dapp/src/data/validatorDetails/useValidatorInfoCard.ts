@@ -1,5 +1,3 @@
-'use client';
-
 import { Option } from '@polkadot/types';
 import { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
 import { getAccountInfo } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
