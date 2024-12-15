@@ -5,7 +5,7 @@ import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import { getFlexBasic } from '@webb-tools/icons/utils';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
-import { BridgeTxState } from '../types';
+import { BridgeTxState } from '@webb-tools/tangle-shared-ui/types';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { Button } from '@webb-tools/webb-ui-components/components/buttons';
 import {
