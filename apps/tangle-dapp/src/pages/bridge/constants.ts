@@ -13,7 +13,10 @@ import {
   HyperlaneWarpRouteConfig,
 } from '@webb-tools/evm-contract-metadata';
 
-import { BridgeChainsConfigType, BridgeTokenType } from './types';
+import {
+  BridgeChainsConfigType,
+  BridgeTokenType,
+} from '@webb-tools/tangle-shared-ui/types';
 import { Abi } from 'viem';
 
 const asAbi = (abi: any): Abi => abi as Abi;

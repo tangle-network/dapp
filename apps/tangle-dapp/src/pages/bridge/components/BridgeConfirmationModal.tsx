@@ -27,7 +27,7 @@ import useBridgeStore from '../context/useBridgeStore';
 import { useBridgeTxQueue } from '../context/useBridgeTxQueue';
 import { useRouterTransfer } from '../hooks/useRouterTransfer';
 import { useHyperlaneTransfer } from '../hooks/useHyperlaneTransfer';
-import { BridgeTokenType } from '../types';
+import { BridgeTokenType } from '@webb-tools/tangle-shared-ui/types';
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 
 interface BridgeConfirmationModalProps {

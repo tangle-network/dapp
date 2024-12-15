@@ -12,7 +12,7 @@ import {
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 
-import { BridgeTokenType } from '../types';
+import { BridgeTokenType } from '@webb-tools/tangle-shared-ui/types';
 
 export interface FeeDetailProps {
   token: BridgeTokenType;

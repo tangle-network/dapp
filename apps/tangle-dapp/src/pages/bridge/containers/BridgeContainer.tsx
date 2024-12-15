@@ -41,7 +41,7 @@ import { ROUTER_NATIVE_TOKEN_ADDRESS } from '../constants';
 import useBridgeStore from '../context/useBridgeStore';
 import useBalances from '../../../data/balances/useBalances';
 import { useEVMBalances } from '../hooks/useEVMBalances';
-import { TokenBalanceType } from '../hooks/useEVMBalances';
+import { TokenBalanceType } from '@webb-tools/tangle-shared-ui/types';
 import { RouterQuoteProps, useRouterQuote } from '../hooks/useRouterQuote';
 import convertDecimalToBn from '../../../utils/convertDecimalToBn';
 import formatTangleBalance from '../../../utils/formatTangleBalance';

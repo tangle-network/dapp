@@ -11,13 +11,11 @@ import { Abi, createPublicClient, getContract, http } from 'viem';
 
 import { BRIDGE_TOKENS } from '../constants';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
-import { BridgeTokenType } from '../types';
-
-export type TokenBalanceType = BridgeTokenType & {
-  balance: Decimal;
-};
-
-type BalanceType = Partial<Record<PresetTypedChainId, TokenBalanceType[]>>;
+import {
+  TokenBalanceType,
+  BalanceType,
+  BridgeTokenType,
+} from '@webb-tools/tangle-shared-ui/types';
 
 export const getEVMTokenBalance = async (
   accountAddress: string,
