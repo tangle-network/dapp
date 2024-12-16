@@ -14,8 +14,12 @@ import { ChevronUp } from '@webb-tools/icons';
 import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
 import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
 import {
-  AmountFormatStyle, Button, formatBn,
-  formatDisplayAmount, Table, Typography
+  AmountFormatStyle,
+  Button,
+  formatBn,
+  formatDisplayAmount,
+  Table,
+  Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';

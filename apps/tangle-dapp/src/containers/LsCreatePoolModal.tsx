@@ -2,7 +2,6 @@ import { BN } from '@polkadot/util';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
-import assertSubstrateAddress from '@webb-tools/tangle-shared-ui/utils/assertSubstrateAddress';
 import {
   Alert,
   isValidAddress,

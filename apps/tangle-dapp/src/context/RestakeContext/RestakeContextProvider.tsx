@@ -1,74 +1,13 @@
-<<<<<<<< HEAD:libs/tangle-shared-ui/src/context/RestakeContext.tsx
-'use client';
-
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-========
-import { PropsWithChildren, useMemo } from 'react';
-import useRestakeAssetMap from '../../data/restake/useRestakeAssetMap';
-import useRestakeBalances from '../../data/restake/useRestakeBalances';
-import { combineLatest, map } from 'rxjs';
->>>>>>>> develop:apps/tangle-dapp/src/context/RestakeContext/RestakeContextProvider.tsx
+import useRestakeAssetMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetMap';
+import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
+import { AssetWithBalance } from '@webb-tools/tangle-shared-ui/types/restake';
 import toPairs from 'lodash/toPairs';
-import { AssetWithBalance } from '../../types/restake';
-import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { useObservableState } from 'observable-hooks';
-<<<<<<<< HEAD:libs/tangle-shared-ui/src/context/RestakeContext.tsx
-import {
-  createContext,
-  type PropsWithChildren,
-  useContext,
-  useMemo,
-} from 'react';
-import { combineLatest, map, type Observable, of } from 'rxjs';
-import useRestakeAssetMap from '../data/restake/useRestakeAssetMap';
-import useRestakeBalances from '../data/restake/useRestakeBalances';
-import { AssetBalanceMap, AssetMap, AssetWithBalance } from '../types/restake';
-
-type RestakeContextType = {
-  /**
-   * The asset map for the current selected chain
-   */
-  assetMap: AssetMap;
-
-  /**
-   * An observable of the asset map for the current selected chain
-   */
-  assetMap$: Observable<AssetMap>;
-
-  /**
-   * The balances of the current active account
-   */
-  balances: AssetBalanceMap;
-
-  /**
-   * An observable of the balances of the current active account
-   */
-  balances$: Observable<AssetBalanceMap>;
-
-  /**
-   * An observable of assets with balances of the current active account
-   */
-  assetWithBalances$: Observable<Array<AssetWithBalance>>;
-
-  /**
-   * The assets with balances of the current active account
-   */
-  assetWithBalances: Array<AssetWithBalance>;
-};
-
-const Context = createContext<RestakeContextType>({
-  assetMap: {},
-  assetMap$: of<AssetMap>({}),
-  balances: {},
-  balances$: of<AssetBalanceMap>({}),
-  assetWithBalances: [],
-  assetWithBalances$: of([]),
-});
-========
+import { PropsWithChildren, useMemo } from 'react';
+import { combineLatest, map } from 'rxjs';
 import RestakeContext from './RestakeContext';
->>>>>>>> develop:apps/tangle-dapp/src/context/RestakeContext/RestakeContextProvider.tsx
 
 const RestakeContextProvider = (props: PropsWithChildren) => {
   const { assetMap, assetMap$ } = useRestakeAssetMap();
