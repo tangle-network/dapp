@@ -55,9 +55,15 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
             ? 'linea'
             : chainName.toLowerCase().includes('bnb')
               ? 'bsc'
-              : chainName,
+              : chainName.toLowerCase().includes('op')
+                ? 'optimism'
+                : chainName.toLowerCase().includes('arbitrum')
+                  ? 'arbitrum'
+                  : chainName,
       [chainName],
     );
+
+    console.log('iconName', iconName);
 
     const className = useMemo(() => {
       const chainChipClassNames = getChainChipClassName(chainType);
@@ -70,7 +76,11 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
         ? 'BSC'
         : chainName.toLowerCase().includes('linea')
           ? 'Linea'
-          : chainName.split(' ').pop();
+          : chainName.toLowerCase().includes('op')
+            ? 'Optimism'
+            : chainName.toLowerCase().includes('arbitrum')
+              ? 'Arbitrum'
+              : chainName.split(' ').pop();
     }, [chainName]);
 
     return (
