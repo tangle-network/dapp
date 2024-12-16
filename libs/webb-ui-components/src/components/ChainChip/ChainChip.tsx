@@ -63,8 +63,6 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
       [chainName],
     );
 
-    console.log('iconName', iconName);
-
     const className = useMemo(() => {
       const chainChipClassNames = getChainChipClassName(chainType);
       return twMerge(baseClsx, chainChipClassNames, classNameProp);
