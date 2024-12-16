@@ -3,6 +3,7 @@ const js = require('@eslint/js');
 const nxEslintPlugin = require('@nx/eslint-plugin');
 const eslintPluginImportX = require('eslint-plugin-import-x');
 const tsParser = require('@typescript-eslint/parser');
+const unusedImports = require('eslint-plugin-unused-imports');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -23,7 +24,7 @@ module.exports = [
     },
     rules: {},
   },
-  { plugins: { '@nx': nxEslintPlugin } },
+  { plugins: { '@nx': nxEslintPlugin, 'unused-imports': unusedImports } },
   {
     rules: {
       'storybook/no-uninstalled-addons': [

@@ -19423,15 +19423,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-simple-import-sort@npm:^12.1.1":
-  version: 12.1.1
-  resolution: "eslint-plugin-simple-import-sort@npm:12.1.1"
-  peerDependencies:
-    eslint: ">=5.0.0"
-  checksum: 10c0/0ad1907ad9ddbadd1db655db0a9d0b77076e274b793a77b982c8525d808d868e6ecfce24f3a411e8a1fa551077387f9ebb38c00956073970ebd7ee6a029ce2b3
-  languageName: node
-  linkType: hard
-
 "eslint-plugin-sort-destructure-keys@npm:^1.5.0":
   version: 1.6.0
   resolution: "eslint-plugin-sort-destructure-keys@npm:1.6.0"
@@ -34116,7 +34107,6 @@ __metadata:
     eslint-plugin-jsx-a11y: "npm:6.10.1"
     eslint-plugin-react: "npm:7.35.0"
     eslint-plugin-react-hooks: "npm:5.0.0"
-    eslint-plugin-simple-import-sort: "npm:^12.1.1"
     eslint-plugin-storybook: "npm:^0.11.1"
     eslint-plugin-unused-imports: "npm:^4.1.4"
     ethers: "npm:5.7.2"

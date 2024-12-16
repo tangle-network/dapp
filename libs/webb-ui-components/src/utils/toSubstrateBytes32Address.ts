@@ -16,7 +16,7 @@ const toSubstrateBytes32Address = (
   if (isEvmAddress(address)) {
     return toSubstrateBytes32Address(toSubstrateAddress(address));
   } else if (!isSubstrateAddress(address)) {
-    return address;
+    return address as SubstrateBytes32Address;
   }
 
   const result = u8aToHex(decodeAddress(address));
