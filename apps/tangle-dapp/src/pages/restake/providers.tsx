@@ -1,4 +1,4 @@
-import { PolkadotApiProvider } from '@webb-tools/tangle-shared-ui/context/PolkadotApiContext';
+import PolkadotApiProvider from '@webb-tools/tangle-shared-ui/context/PolkadotApiProvider';
 import { type PropsWithChildren } from 'react';
 
 import { RestakeContextProvider } from '../../context/RestakeContext';

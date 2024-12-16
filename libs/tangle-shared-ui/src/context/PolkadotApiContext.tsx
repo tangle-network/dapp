@@ -30,9 +30,9 @@ export type PolkadotApiContextProps = Prettify<{
   setCustomRpc: Dispatch<SetStateAction<Maybe<string>>>;
 }>;
 
-const DEFAULT_ENDPOINT = useNetworkStore.getState().rpcEndpoint;
+export const DEFAULT_ENDPOINT = useNetworkStore.getState().rpcEndpoint;
 
-const DEFAULT_API_PROMISE = (() => {
+export const DEFAULT_API_PROMISE = (() => {
   try {
     return new ApiPromise({
       provider: new WsProvider(DEFAULT_ENDPOINT),
@@ -43,7 +43,7 @@ const DEFAULT_API_PROMISE = (() => {
   }
 })();
 
-const DEFAULT_API_RX = (() => {
+export const DEFAULT_API_RX = (() => {
   try {
     return new ApiRx({
       provider: new WsProvider(DEFAULT_ENDPOINT),
@@ -63,54 +63,3 @@ export const PolkadotApiContext = createContext<PolkadotApiContextProps>({
   apiRxError: null,
   setCustomRpc: noop,
 });
-
-type Props = {
-  rpcEndpoint?: string;
-};
-
-export const PolkadotApiProvider: FC<PropsWithChildren<Props>> = ({
-  children,
-}) => {
-  const [customRpc, setCustomRpc] = useState<Maybe<string>>();
-
-  const { rpcEndpoint: rpcFromStore } = useNetworkStore();
-
-  const rpcEndpoint = useMemo(() => {
-    if (customRpc === undefined || customRpc.length === 0) return rpcFromStore;
-
-    return customRpc;
-  }, [customRpc, rpcFromStore]);
-
-  const {
-    data: apiPromise = DEFAULT_API_PROMISE,
-    isLoading: apiPromiseLoading,
-    error: apiPromiseError,
-  } = useSWRImmutable([rpcEndpoint, 'apiPromise'], ([endpoint]) =>
-    getApiPromise(endpoint),
-  );
-
-  const {
-    data: apiRx = DEFAULT_API_RX,
-    isLoading: apiRxLoading,
-    error: apiRxError,
-  } = useSWRImmutable([rpcEndpoint, 'apiRx'], ([endpoint]) =>
-    getApiRx(endpoint),
-  );
-
-  return (
-    <PolkadotApiContext.Provider
-      value={{
-        apiPromise,
-        apiPromiseLoading,
-        apiPromiseError,
-        apiRx,
-        apiRxLoading,
-        apiRxError,
-        customRpc,
-        setCustomRpc,
-      }}
-    >
-      {children}
-    </PolkadotApiContext.Provider>
-  );
-};

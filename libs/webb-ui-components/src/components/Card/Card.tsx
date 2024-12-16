@@ -1,11 +1,7 @@
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { WebbComponentBase } from '../../types';
-
-export enum CardVariant {
-  DEFAULT,
-  GLASS,
-}
+import CardVariant from './CardVariant';
 
 export type CardProps = WebbComponentBase & {
   variant?: CardVariant;

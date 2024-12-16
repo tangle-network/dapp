@@ -8,7 +8,7 @@ import {
 import type { ComponentProps, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-export enum NotificationVariant {
+enum NotificationVariant {
   PENDING = 'pending',
   SUCCESS = 'success',
 }

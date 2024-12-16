@@ -9,7 +9,7 @@ import type { State } from 'wagmi';
 import { z } from 'zod';
 
 import HyperlaneWarpContext from '../pages/bridge/context/HyperlaneWarpContext';
-import BridgeTxQueueProvider from '../pages/bridge/context/useBridgeTxQueue';
+import BridgeTxQueueProvider from '../pages/bridge/context/BridgeTxQueueContext/BridgeTxQueueProvider';
 
 const appEvent = new AppEvent();
 

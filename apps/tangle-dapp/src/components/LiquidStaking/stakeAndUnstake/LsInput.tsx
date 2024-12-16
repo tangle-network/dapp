@@ -6,7 +6,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import { LsNetworkId, LsToken } from '../../../constants/liquidStaking/types';
-import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/Independent/IndependentAllocationInput';
+import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/constants';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useInputAmount from '../../../hooks/useInputAmount';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';

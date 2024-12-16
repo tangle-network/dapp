@@ -12,7 +12,7 @@ const defaultTangleLogoSize = {
   viewBox: '0 0 114 28',
 };
 
-export const TangleLogo: React.FC<TangleLogoProps> = (props) => {
+const TangleLogo: React.FC<TangleLogoProps> = (props) => {
   const { darkMode, size = 'md', ...restProps } = props;
 
   const [isMounted, setIsMounted] = useState(false);
@@ -118,3 +118,5 @@ export const TangleLogo: React.FC<TangleLogoProps> = (props) => {
     viewBox: defaultTangleLogoSize.viewBox,
   });
 };
+
+export default TangleLogo;

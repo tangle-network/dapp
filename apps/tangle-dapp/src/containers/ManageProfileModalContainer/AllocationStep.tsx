@@ -5,9 +5,8 @@ import { RestakingProfileType } from '../../types';
 import ChooseMethodStep from './ChooseMethodStep';
 import ConfirmAllocationsStep from './ConfirmAllocationsStep';
 import IndependentAllocationStep from './Independent/IndependentAllocationStep';
-import { ManageProfileStep } from './ManageProfileModalContainer';
 import SharedAllocationStep from './Shared/SharedAllocationStep';
-import { RestakingAllocationMap } from './types';
+import { ManageProfileStep, RestakingAllocationMap } from './types';
 
 export type AllocationStepProps = {
   allocations: RestakingAllocationMap;

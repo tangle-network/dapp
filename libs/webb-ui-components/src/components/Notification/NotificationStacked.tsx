@@ -3,11 +3,9 @@
 import { SnackbarKey, useSnackbar } from 'notistack';
 import { useCallback, useEffect } from 'react';
 
-import {
-  NotificationContext,
-  NotificationCTXDefaultValue,
-  SnackBarOpts,
-} from './NotificationContext';
+import { NotificationContext } from './NotificationContext';
+import { NotificationCTXDefaultValue } from './NotificationCTXDefaultValue';
+import { SnackBarOpts } from './types';
 
 let _notificationApi = {
   ...NotificationCTXDefaultValue,
@@ -55,6 +53,7 @@ export const NotificationStacked: React.FC<{
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const notificationApi = (opts: Omit<SnackBarOpts, 'close'>) => {
   return _notificationApi.addToQueue(opts);
 };

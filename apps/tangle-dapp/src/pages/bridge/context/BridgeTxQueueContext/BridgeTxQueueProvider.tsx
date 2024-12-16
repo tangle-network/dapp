@@ -8,63 +8,21 @@ import {
   BridgeTxState,
 } from '@webb-tools/tangle-shared-ui/types';
 import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
-import {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
+import { FC, PropsWithChildren, useCallback, useMemo, useState } from 'react';
+import BridgeTxQueueContext from './BridgeTxQueueContext';
 
-interface BridgeTxQueueContextProps {
-  txQueue: BridgeQueueTxItem[];
-  addTxToQueue: (tx: Omit<BridgeQueueTxItem, 'state'>) => void;
-  deleteTxFromQueue: (txHash: string) => void;
-  addTxExplorerUrl: (txHash: string, explorerUrl: string) => void;
-  updateTxState: (txHash: string, state: BridgeTxState) => void;
-  updateTxDestinationTxState: (
-    txHash: string,
-    destinationTxHash: string,
-    destinationTxState: BridgeTxState,
-  ) => void;
-  addTxDestinationTxExplorerUrl: (
-    txHash: string,
-    destinationTxExplorerUrl: string,
-  ) => void;
-  isOpenQueueDropdown: boolean;
-  setIsOpenQueueDropdown: (isOpen: boolean) => void;
-}
+const getTxQueueFromLocalStorage = (
+  activeAccountAddress: string,
+  txQueueByAccFromLocalStorage: Optional<TxQueueByAccount> | null,
+) => {
+  const bridgeTxQueueByAcc = txQueueByAccFromLocalStorage
+    ? (txQueueByAccFromLocalStorage.value ?? null)
+    : null;
 
-const BridgeTxQueueContext = createContext<BridgeTxQueueContextProps>({
-  txQueue: [],
-  addTxToQueue: () => {
-    return;
-  },
-  deleteTxFromQueue: () => {
-    return;
-  },
-  updateTxState: () => {
-    return;
-  },
-  updateTxDestinationTxState: () => {
-    return;
-  },
-  addTxExplorerUrl: () => {
-    return;
-  },
-  addTxDestinationTxExplorerUrl: () => {
-    return;
-  },
-  isOpenQueueDropdown: false,
-  setIsOpenQueueDropdown: () => {
-    return;
-  },
-});
+  const cachedTxQueue = bridgeTxQueueByAcc?.[activeAccountAddress] ?? [];
 
-export const useBridgeTxQueue = () => {
-  return useContext(BridgeTxQueueContext);
+  if (cachedTxQueue.length === 0) return [];
+  return cachedTxQueue;
 };
 
 const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
@@ -261,17 +219,3 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
 };
 
 export default BridgeTxQueueProvider;
-
-const getTxQueueFromLocalStorage = (
-  activeAccountAddress: string,
-  txQueueByAccFromLocalStorage: Optional<TxQueueByAccount> | null,
-) => {
-  const bridgeTxQueueByAcc = txQueueByAccFromLocalStorage
-    ? (txQueueByAccFromLocalStorage.value ?? null)
-    : null;
-
-  const cachedTxQueue = bridgeTxQueueByAcc?.[activeAccountAddress] ?? [];
-
-  if (cachedTxQueue.length === 0) return [];
-  return cachedTxQueue;
-};

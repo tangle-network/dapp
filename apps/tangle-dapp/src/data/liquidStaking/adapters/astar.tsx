@@ -1,6 +1,9 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { createColumnHelper, SortingFnOption } from '@tanstack/react-table';
-import { LsProtocolId , LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import {
+  LiquidStakingItem,
+  LsProtocolId,
+} from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   AmountFormatStyle,
   Avatar,
@@ -20,7 +23,7 @@ import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
 import { GetTableColumnsFn } from '../adapter';
 import { sortSelected, sortValueStaked } from '../columnSorting';
 import { fetchMappedDappsTotalValueStaked } from '../fetchHelpers';
-import RadioInput from '../useLsValidatorSelectionTableColumns';
+import RadioInput from '../RadioInput';
 
 const DECIMALS = 18;
 

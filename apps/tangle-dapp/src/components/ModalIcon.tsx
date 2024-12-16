@@ -2,7 +2,7 @@ import { IconBase } from '@webb-tools/icons/types';
 import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-export enum ModalIconCommonVariant {
+enum ModalIconCommonVariant {
   SUCCESS,
 }
 

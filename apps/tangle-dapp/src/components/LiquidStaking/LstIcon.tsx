@@ -4,11 +4,7 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
-
-export enum LstIconSize {
-  MD = 30,
-  LG = 38,
-}
+import { LstIconSize } from './types';
 
 export type LstIconProps = {
   lsProtocolId: LsProtocolId;

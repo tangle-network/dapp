@@ -28,7 +28,7 @@ import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transactio
 import { FeeDetail, FeeDetailProps } from '../components/FeeDetail';
 import { ROUTER_TX_EXPLORER_URL } from '../constants';
 import useBridgeStore from '../context/useBridgeStore';
-import { useBridgeTxQueue } from '../context/useBridgeTxQueue';
+import { useBridgeTxQueue } from '../context/BridgeTxQueueContext';
 import { useHyperlaneTransfer } from '../hooks/useHyperlaneTransfer';
 import { useRouterTransfer } from '../hooks/useRouterTransfer';
 

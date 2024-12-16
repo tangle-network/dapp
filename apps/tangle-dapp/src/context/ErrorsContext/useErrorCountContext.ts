@@ -1,20 +1,5 @@
-import {
-  createContext,
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useContext,
-} from 'react';
-
-const ErrorSetContext = createContext<{
-  errors: Set<string>;
-  setErrors: Dispatch<SetStateAction<Set<string>>>;
-}>({
-  errors: new Set(),
-  setErrors: () => {
-    //
-  },
-});
+import { useCallback, useContext } from 'react';
+import ErrorSetContext from './ErrorsContext';
 
 /**
  * Useful for inputs of a form or any other component that
@@ -22,7 +7,7 @@ const ErrorSetContext = createContext<{
  * present, but that may be deeply nested in the component tree,
  * and would be impractical to pass the error count down through props.
  */
-export const useErrorCountContext = () => {
+const useErrorCountContext = () => {
   const { errors, setErrors } = useContext(ErrorSetContext);
 
   const addError = useCallback(
@@ -51,3 +36,5 @@ export const useErrorCountContext = () => {
 
   return { errors, addError, removeError, clearErrors };
 };
+
+export default useErrorCountContext;

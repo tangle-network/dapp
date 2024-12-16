@@ -1,7 +1,7 @@
 import type { Evaluate } from '@webb-tools/dapp-types/utils/types';
 import Spinner from '@webb-tools/icons/Spinner';
 import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubstrateExplorerUrl';
-import { type SnackBarOpts } from '@webb-tools/webb-ui-components/components/Notification/NotificationContext';
+import { type SnackBarOpts } from '@webb-tools/webb-ui-components/components/Notification/types';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useMemo } from 'react';
