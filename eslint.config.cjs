@@ -4,6 +4,7 @@ const nxEslintPlugin = require('@nx/eslint-plugin');
 const eslintPluginImportX = require('eslint-plugin-import-x');
 const tsParser = require('@typescript-eslint/parser');
 const unusedImports = require('eslint-plugin-unused-imports');
+const reactRefresh = require('eslint-plugin-react-refresh');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -14,6 +15,7 @@ module.exports = [
   ...compat.extends('plugin:storybook/recommended'),
   eslintPluginImportX.flatConfigs.recommended,
   eslintPluginImportX.flatConfigs.typescript,
+  reactRefresh.configs.recommended,
   {
     files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
     ignores: ['**/eslint.config.cjs'],
@@ -22,28 +24,6 @@ module.exports = [
       ecmaVersion: 'latest',
       sourceType: 'module',
     },
-    rules: {},
-  },
-  { plugins: { '@nx': nxEslintPlugin, 'unused-imports': unusedImports } },
-  {
-    rules: {
-      'storybook/no-uninstalled-addons': [
-        'error',
-        {
-          ignore: ['@nx/react/plugins/storybook'],
-        },
-      ],
-    },
-  },
-  {
-    files: [
-      '**/*.ts',
-      '**/*.tsx',
-      '**/*.js',
-      '**/*.jsx',
-      '**/*.mjs',
-      '**/*.cjs',
-    ],
     rules: {
       '@nx/enforce-module-boundaries': [
         'error',
@@ -70,6 +50,21 @@ module.exports = [
           destructuredArrayIgnorePattern: '^_',
           varsIgnorePattern: '^_',
           ignoreRestSiblings: true,
+        },
+      ],
+      'react-refresh/only-export-components': [
+        'error',
+        { allowExportNames: ['metadata', 'viewport', 'dynamic'] },
+      ],
+    },
+  },
+  { plugins: { '@nx': nxEslintPlugin, 'unused-imports': unusedImports } },
+  {
+    rules: {
+      'storybook/no-uninstalled-addons': [
+        'error',
+        {
+          ignore: ['@nx/react/plugins/storybook'],
         },
       ],
     },
@@ -124,7 +119,7 @@ module.exports = [
       },
     })),
   {
-    ignores: ['**/.netlify', '**/.next'],
+    ignores: ['**/.netlify/', '**/.next/'],
   },
   {
     files: ['**/eslint.config.cjs'],
