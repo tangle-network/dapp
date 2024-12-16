@@ -7,11 +7,10 @@ import {
 import { TANGLE_DOCS_RESTAKING_URL } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { twMerge } from 'tailwind-merge';
-
+import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
+import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
 import StatItem from '../../../components/StatItem';
-import useRestakeDelegatorInfo from '../../../data/restake/useRestakeDelegatorInfo';
 import useRestakeTVL from '../../../data/restake/useRestakeTVL';
-import getTVLToDisplay from '../../../utils/getTVLToDisplay';
 import { CONTENT } from './shared';
 import TableTabs from './TableTabs';
 
