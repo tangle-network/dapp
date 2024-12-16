@@ -1,5 +1,5 @@
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
-import React, { useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChainChipProps } from './types';
 import { getChainChipClassName } from './utils';
@@ -31,7 +31,7 @@ import { getChainChipClassName } from './utils';
  *  <ChainChip type="moonbeam" name="moonbeam alpha" />
  * ```
  */
-export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
+export const ChainChip = forwardRef<HTMLSpanElement, ChainChipProps>(
   (props, ref) => {
     const {
       className: classNameProp,

@@ -6,8 +6,8 @@ import type {
 } from '@webb-tools/abstract-api-provider';
 import { ApiConfig, type Chain, type Wallet } from '@webb-tools/dapp-config';
 import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
-import React from 'react';
 import { AppEvent, type TAppEvent } from '../app-event';
+import { createContext, useContext } from 'react';
 
 export interface WebbContextState {
   /** Whether the app is loading */
@@ -52,7 +52,7 @@ export interface WebbContextState {
   appEvent: TAppEvent;
 }
 
-export const WebbContext = React.createContext<WebbContextState>({
+export const WebbContext = createContext<WebbContextState>({
   chains: {},
   accounts: [],
   loading: true,
@@ -74,5 +74,5 @@ export const WebbContext = React.createContext<WebbContextState>({
 });
 
 export const useWebContext = () => {
-  return React.useContext(WebbContext);
+  return useContext(WebbContext);
 };

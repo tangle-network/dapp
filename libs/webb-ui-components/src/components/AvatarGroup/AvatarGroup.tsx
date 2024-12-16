@@ -1,4 +1,10 @@
-import React, { forwardRef, useMemo } from 'react';
+import {
+  Children,
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  useMemo,
+} from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { AvatarChildElement, AvatarGroupProps } from './types';
@@ -25,8 +31,8 @@ import { AvatarChildElement, AvatarGroupProps } from './types';
 export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
   ({ children: childrenProp, className, max = 3, total, ...props }, ref) => {
     const children: AvatarChildElement[] = useMemo(() => {
-      return React.Children.toArray(childrenProp).filter((child) =>
-        React.isValidElement(child),
+      return Children.toArray(childrenProp).filter((child) =>
+        isValidElement(child),
       ) as AvatarChildElement[];
     }, [childrenProp]);
 
@@ -41,7 +47,7 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
       >
         <div className="translate-x-1">
           {children.slice(0, max).map((child, index) => {
-            return React.cloneElement(child, {
+            return cloneElement(child, {
               key: index,
               ...child.props,
               size: 'md',

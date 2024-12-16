@@ -8,13 +8,8 @@ import {
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import InputWrapper, { InputWrapperProps } from './InputWrapper';
-
-export enum AddressType {
-  EVM,
-  Substrate,
-  Both,
-}
+import InputWrapper, { InputWrapperProps } from '../InputWrapper';
+import { AddressType } from './types';
 
 export type AddressInputProps = {
   id: string;

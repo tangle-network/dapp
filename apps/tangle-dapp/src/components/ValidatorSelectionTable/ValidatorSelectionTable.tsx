@@ -28,13 +28,14 @@ import {
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import cx from 'classnames';
-import React, {
+import {
   FC,
   startTransition,
   useEffect,
   useMemo,
   useRef,
   useState,
+  memo,
 } from 'react';
 
 import { Validator } from '../../types';
@@ -331,4 +332,4 @@ const sortValidatorsBy = (
   return sortFn(rowA, rowB, columnId);
 };
 
-export default React.memo(ValidatorSelectionTable);
+export default memo(ValidatorSelectionTable);

@@ -2,12 +2,13 @@ import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 import { TokenIcon } from '@webb-tools/icons';
 import { getFlexBasic } from '@webb-tools/icons/utils';
-import { Label, Typography } from '@webb-tools/webb-ui-components';
 import {
   Accordion,
   AccordionButtonBase,
   AccordionContent,
   AccordionItem,
+  Label,
+  Typography,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
@@ -52,7 +53,7 @@ export const FeeDetail = ({
           className={cx('group flex items-center justify-between w-full p-4')}
         >
           <Label
-            className="text-mono-120 dark:text-mono-120 font-bold text-lg"
+            className="text-lg font-bold text-mono-120 dark:text-mono-120"
             htmlFor="bridge-tx-detail"
           >
             Bridge Fee
@@ -98,8 +99,8 @@ export const FeeDetail = ({
             'radix-state-closed:animate-accordion-slide-up',
           )}
         >
-          <div className="px-4 pb-4 flex flex-col gap-4">
-            <div className="flex justify-between items-center">
+          <div className="flex flex-col gap-4 px-4 pb-4">
+            <div className="flex items-center justify-between">
               <Typography variant="body1" className="text-lg">
                 Bridge
               </Typography>
@@ -117,7 +118,7 @@ export const FeeDetail = ({
               </div>
             </div>
 
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <Typography variant="body1" className="text-lg">
                 Sending
               </Typography>
@@ -134,7 +135,7 @@ export const FeeDetail = ({
             </div>
 
             {estimatedTime && (
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <Typography variant="body1" className="text-lg">
                   Estimated Time
                 </Typography>
@@ -145,7 +146,7 @@ export const FeeDetail = ({
             )}
 
             {amounts.gasFee && (
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <Typography variant="body1" fw="bold" className="text-lg">
                   Gas Fee
                 </Typography>
@@ -165,7 +166,7 @@ export const FeeDetail = ({
 
             <div className="h-px bg-mono-40 dark:bg-mono-160" />
 
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <Typography variant="body1" fw="bold" className="text-lg">
                 Total Receiving
               </Typography>

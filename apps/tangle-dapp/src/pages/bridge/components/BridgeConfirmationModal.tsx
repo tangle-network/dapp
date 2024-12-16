@@ -1,11 +1,15 @@
 import { ArrowDownIcon } from '@heroicons/react/24/outline';
 import { ChainConfig, chainsConfig } from '@webb-tools/dapp-config/chains';
+import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import { getFlexBasic } from '@webb-tools/icons/utils';
-import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
-import { BridgeTxState } from '@webb-tools/tangle-shared-ui/types';
+import {
+  BridgeTxState,
+  BridgeTokenType,
+} from '@webb-tools/tangle-shared-ui/types';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { Button } from '@webb-tools/webb-ui-components/components/buttons';
 import {
@@ -19,16 +23,14 @@ import { Typography } from '@webb-tools/webb-ui-components/typography';
 import { shortenHex } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
 import { FC, useCallback } from 'react';
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 
+import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { FeeDetail, FeeDetailProps } from '../components/FeeDetail';
 import { ROUTER_TX_EXPLORER_URL } from '../constants';
 import useBridgeStore from '../context/useBridgeStore';
-import { useBridgeTxQueue } from '../context/useBridgeTxQueue';
-import { useRouterTransfer } from '../hooks/useRouterTransfer';
+import { useBridgeTxQueue } from '../context/BridgeTxQueueContext';
 import { useHyperlaneTransfer } from '../hooks/useHyperlaneTransfer';
-import { BridgeTokenType } from '@webb-tools/tangle-shared-ui/types';
-import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
+import { useRouterTransfer } from '../hooks/useRouterTransfer';
 
 interface BridgeConfirmationModalProps {
   isOpen: boolean;
@@ -295,8 +297,8 @@ const ConfirmationItem: FC<{
   tokenName: string;
 }> = ({ type, chainName, accAddress, amount, tokenName }) => {
   return (
-    <div className="bg-mono-20 dark:bg-mono-170 w-full space-y-2 p-4 rounded-xl">
-      <div className="flex justify-between items-center">
+    <div className="w-full p-4 space-y-2 bg-mono-20 dark:bg-mono-170 rounded-xl">
+      <div className="flex items-center justify-between">
         <Typography variant="body1" className="text-lg">
           {type === 'source' ? 'From' : 'To'}
         </Typography>
@@ -312,7 +314,7 @@ const ConfirmationItem: FC<{
           </Typography>
         </div>
       </div>
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <Typography variant="body1" className="text-lg">
           Account
         </Typography>
@@ -320,7 +322,7 @@ const ConfirmationItem: FC<{
           {shortenHex(accAddress, 10)}
         </Typography>
       </div>
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <Typography variant="body1" className="text-lg">
           Amount
         </Typography>

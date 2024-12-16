@@ -6,7 +6,7 @@ import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useApi from '../../hooks/useApi';
 import calculateTimeRemaining from '../../utils/calculateTimeRemaining';
 import getBlockDate from '../../utils/getBlockDate';
-import { sortVestingSchedulesAscending } from './LockedBalanceDetails/VestingScheduleBalances';
+import { sortVestingSchedulesAscending } from './LockedBalanceDetails/utils';
 
 const useLongestVestingScheduleTime = () => {
   const { result: babeExpectedBlockTime } = useApi(

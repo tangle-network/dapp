@@ -4,7 +4,7 @@ import { FC, useCallback } from 'react';
 
 import useVestingInfo from '../../../data/vesting/useVestingInfo';
 import BalanceCell from '../BalanceCell';
-import { sortVestingSchedulesAscending } from './VestingScheduleBalances';
+import { sortVestingSchedulesAscending } from './utils';
 
 const VestingRemainingBalances: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();

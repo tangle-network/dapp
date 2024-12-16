@@ -1,4 +1,4 @@
-export enum EVMChainId {
+enum EVMChainId {
   /* Default EVM Chains on MetaMask */
   EthereumMainNet = 1,
   Goerli = 5,

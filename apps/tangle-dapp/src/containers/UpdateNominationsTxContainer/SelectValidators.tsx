@@ -1,6 +1,6 @@
 import { Alert } from '@webb-tools/webb-ui-components';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import React, { Dispatch, type FC, SetStateAction } from 'react';
+import { Dispatch, type FC, SetStateAction, memo } from 'react';
 
 import ValidatorSelectionTable from '../../components/ValidatorSelectionTable/ValidatorSelectionTable';
 import useAllValidators from '../../data/ValidatorTables/useAllValidators';
@@ -33,4 +33,4 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
   );
 };
 
-export default React.memo(SelectValidators);
+export default memo(SelectValidators);

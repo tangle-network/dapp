@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import React, { useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { CheckBox } from '../CheckBox';
 import { CheckBoxMenuProps } from './types';
@@ -22,10 +22,7 @@ import { CheckBoxMenuProps } from './types';
  *  />
  * ```
  */
-export const CheckBoxMenu = React.forwardRef<
-  HTMLLabelElement,
-  CheckBoxMenuProps
->(
+export const CheckBoxMenu = forwardRef<HTMLLabelElement, CheckBoxMenuProps>(
   (
     {
       checkboxProps,

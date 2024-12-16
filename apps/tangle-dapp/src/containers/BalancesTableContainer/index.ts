@@ -1,1 +1,3 @@
-export * from './BalancesTableContainer';
+import BalancesTableContainer from './BalancesTableContainer';
+
+export default BalancesTableContainer;

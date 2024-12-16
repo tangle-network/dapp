@@ -15,21 +15,8 @@ import { useErrorCountContext } from '../../context/ErrorsContext';
 import { RestakingProfileType } from '../../types';
 import AllocationStep from './AllocationStep';
 import useSharedRestakeAmountState from './Shared/useSharedRestakeAmountState';
-import { ManageProfileModalContainerProps } from './types';
+import { ManageProfileModalContainerProps, ManageProfileStep } from './types';
 import useAllocationsState from './useAllocationsState';
-
-/**
- * The steps in the manage profile modal.
- *
- * @remarks
- * The order of the steps is important, as it determines
- * the flow of the modal.
- */
-export enum ManageProfileStep {
-  CHOOSE_METHOD,
-  ALLOCATION,
-  CONFIRM_ALLOCATIONS,
-}
 
 function getStepDiff(
   currentStep: ManageProfileStep,

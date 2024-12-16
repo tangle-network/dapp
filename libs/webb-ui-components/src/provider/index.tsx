@@ -1,8 +1,7 @@
 'use client';
 
-import { noop } from '@tanstack/react-table';
 import LoggerService from '@webb-tools/browser-utils/logger/LoggerService';
-import React, { createContext, useCallback, useMemo, useState } from 'react';
+import { createElement, useCallback, useMemo, useState } from 'react';
 import {
   NotificationProvider,
   notificationApi,
@@ -14,19 +13,7 @@ import {
   useDarkMode as useNormalDarkMode,
 } from '../hooks/useDarkMode';
 import { IWebbUIContext, WebbUIProviderProps } from './types';
-
-const initialContext: IWebbUIContext = {
-  customMainComponent: undefined,
-  notificationApi,
-  setMainComponent: noop,
-  logger: LoggerService.get('app'),
-  theme: {
-    isDarkMode: true,
-    toggleThemeMode: noop,
-  },
-};
-
-export const WebbUIContext = createContext<IWebbUIContext>(initialContext);
+import WebbUIContext from './WebbUIContext';
 
 const appLogger = LoggerService.new('Stats App');
 
@@ -67,7 +54,7 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
   );
 
   const WebbUIEErrorBoundaryElement = useMemo(() => {
-    return React.createElement(WebbUIErrorBoudary, {
+    return createElement(WebbUIErrorBoudary, {
       logger: appLogger,
       children,
     });

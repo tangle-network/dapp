@@ -3,16 +3,20 @@
 import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
 
-import Optional from '../utils/Optional';
-import { BalanceType, Payout, TangleTokenSymbol } from '../types';
+import { OnboardingPageKey } from '../constants';
+import {
+  BalanceType,
+  BridgeQueueTxItem,
+  Payout,
+  TangleTokenSymbol,
+} from '../types';
 import {
   Collator,
   Dapp,
   PhalaVaultOrStakePool,
   Validator,
 } from '../types/liquidStaking';
-import { BridgeQueueTxItem } from '../types';
-import { OnboardingPageKey } from '../constants';
+import Optional from '../utils/Optional';
 
 export enum LocalStorageKey {
   IS_BALANCES_TABLE_DETAILS_COLLAPSED = 'isBalancesTableDetailsCollapsed',

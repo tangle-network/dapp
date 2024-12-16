@@ -2,7 +2,7 @@
 
 import * as SliderPrimitive from '@radix-ui/react-slider';
 import cx from 'classnames';
-import React, { useCallback, useEffect, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { SliderProps, SliderThumbProps } from './types';
@@ -29,7 +29,7 @@ import { SliderProps, SliderThumbProps } from './types';
  *  <Slider className='mt-4' hasLabel defaultValue={[25, 75]} />
  * ```
  */
-export const Slider = React.forwardRef<HTMLSpanElement, SliderProps>(
+export const Slider = forwardRef<HTMLSpanElement, SliderProps>(
   (
     {
       className,

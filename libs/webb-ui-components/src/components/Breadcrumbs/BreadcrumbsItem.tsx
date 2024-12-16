@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import type { BreadcrumbsItemPropsType } from './types';
 import { Typography } from '../../typography';
@@ -18,7 +18,7 @@ import { Chip } from '../Chip';
  *  <BreadcrumbsItem icon={<GridFillIcon />} isLast>Tangle Explorer</BreadcrumbsItem>
  * ```
  */
-export const BreadcrumbsItem = React.forwardRef<
+export const BreadcrumbsItem = forwardRef<
   HTMLSpanElement,
   BreadcrumbsItemPropsType
 >((props, ref) => {

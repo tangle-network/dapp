@@ -1,5 +1,5 @@
-import React, { cloneElement, useMemo } from 'react';
-import { Spinner } from './Spinner';
+import { cloneElement, useMemo } from 'react';
+import Spinner from './Spinner';
 import StatusIndicator from './StatusIndicator/StatusIndicator';
 import { StatusIndicatorProps } from './StatusIndicator/types';
 import { useDynamicSVGImport } from './useDynamicSVGImport';
