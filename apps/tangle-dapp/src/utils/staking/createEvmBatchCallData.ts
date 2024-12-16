@@ -6,7 +6,8 @@ import {
   getPrecompileAddress,
   Precompile,
 } from '../../constants/evmPrecompiles';
-import { AbiEncodeableValue ,
+import {
+  AbiEncodeableValue,
   AbiBatchCallArgs,
   AbiBatchCallData,
 } from '../../hooks/useEvmPrecompileAbiCall';

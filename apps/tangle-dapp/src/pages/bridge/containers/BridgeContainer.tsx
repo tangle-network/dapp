@@ -31,9 +31,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatEther } from 'viem';
 
-import AddressInput, {
-  AddressType,
-} from '../../../components/AddressInput';
+import AddressInput, { AddressType } from '../../../components/AddressInput';
 import AmountInput from '../../../components/AmountInput';
 import { BridgeConfirmationModal } from '../components/BridgeConfirmationModal';
 import { FeeDetail, FeeDetailProps } from '../components/FeeDetail';
