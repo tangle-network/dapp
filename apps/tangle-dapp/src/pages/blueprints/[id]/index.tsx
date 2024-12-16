@@ -1,3 +1,4 @@
+import BlueprintHeader from '@webb-tools/tangle-shared-ui/components/blueprints/BlueprintHeader';
 import OperatorsTable from '@webb-tools/tangle-shared-ui/components/tables/Operators';
 import useBlueprintDetails from '@webb-tools/tangle-shared-ui/data/restake/useBlueprintDetails';
 import { ErrorFallback } from '@webb-tools/webb-ui-components/components/ErrorFallback';
@@ -9,7 +10,6 @@ import {
   RestakeOperatorWrapper,
   ViewOperatorWrapper,
 } from '../../../components/tables/RestakeActionWrappers';
-import BlueprintHeader from './BlueprintHeader';
 
 const BlueprintDetailsPage: FC = () => {
   const { id = '' } = useParams();
