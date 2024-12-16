@@ -1,5 +1,7 @@
 import {
+  PalletAssetsAccountStatus,
   PalletAssetsAssetStatus,
+  PalletAssetsExistenceReason,
   PalletMultiAssetDelegationDelegatorDelegatorStatus,
   PalletMultiAssetDelegationOperatorOperatorStatus,
 } from '@polkadot/types/lookup';
@@ -113,4 +115,47 @@ export type DelegatorInfo = {
   readonly unstakeRequests: Array<DelegatorUnstakeRequest>;
 
   readonly status: DelegatorStatus;
+};
+
+/**
+ * The reason for the existence of an asset account.
+ *
+ * @field "Consumer"
+ * @field "Sufficient"
+ * @field "DepositRefunded"
+ * @field "DepositBurned"
+ * @field { DepositHeld: string; }
+ * @field { DepositFrom: ITuple<[AccountId32, u128]>; }
+ */
+export type AssetAccountExistenceReason =
+  TransformEnum<PalletAssetsExistenceReason>;
+
+/**
+ * The account balance of an asset and its status.
+ * @name PalletAssetsAssetAccount
+ */
+export type AssetBalance = {
+  readonly assetId: string;
+  readonly balance: bigint;
+
+  /**
+   * The status of the account.
+   *
+   * @field "Frozen"
+   * @field "Liquid"
+   * @field "Blocked"
+   */
+  readonly status: TransformEnum<PalletAssetsAccountStatus>;
+
+  readonly existenceReason: AssetAccountExistenceReason;
+};
+
+export type AssetBalanceMap = {
+  readonly [assetId: string]: AssetBalance;
+};
+
+export type AssetWithBalance = {
+  assetId: string;
+  metadata: AssetMetadata;
+  balance: AssetBalance | null;
 };

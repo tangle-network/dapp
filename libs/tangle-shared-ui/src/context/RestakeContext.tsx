@@ -2,7 +2,6 @@
 
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import { AssetMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import toPairs from 'lodash/toPairs';
 import { useObservableState } from 'observable-hooks';
 import {
@@ -12,10 +11,9 @@ import {
   useMemo,
 } from 'react';
 import { combineLatest, map, type Observable, of } from 'rxjs';
-
 import useRestakeAssetMap from '../data/restake/useRestakeAssetMap';
 import useRestakeBalances from '../data/restake/useRestakeBalances';
-import type { AssetBalanceMap, AssetWithBalance } from '../types/restake';
+import { AssetBalanceMap, AssetMap, AssetWithBalance } from '../types/restake';
 
 type RestakeContextType = {
   /**

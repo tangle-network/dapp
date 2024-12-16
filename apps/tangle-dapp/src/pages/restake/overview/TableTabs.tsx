@@ -1,15 +1,16 @@
 'use client';
 
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
-import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
-import type { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
+import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
+import type {
+  DelegatorInfo,
+  OperatorMap,
+} from '@webb-tools/tangle-shared-ui/types/restake';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
 import { type ComponentProps, type FC, useMemo } from 'react';
-
 import VaultAssetsTable from '../../../components/tables/VaultAssets';
 import VaultsTable from '../../../components/tables/Vaults';
-import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeRewardConfig from '../../../data/restake/useRestakeRewardConfig';
 import OperatorsTable from './OperatorsTable';
 

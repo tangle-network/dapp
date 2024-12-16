@@ -3,6 +3,7 @@
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
@@ -18,14 +19,11 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link } from 'react-router';
 import { formatUnits, parseUnits } from 'viem';
-import useQueryState from '../../../hooks/useQueryState';
-
 import AvatarWithText from '../../../components/AvatarWithText';
 import {
   OperatorConfig,
   OperatorList,
 } from '../../../components/Lists/OperatorList';
-import { useRestakeContext } from '../../../context/RestakeContext';
 import {
   DelegatorStakeContext,
   TxEvent,
@@ -37,6 +35,7 @@ import useRestakeTxEventHandlersWithNoti, {
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
+import useQueryState from '../../../hooks/useQueryState';
 import { PagePath, QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';

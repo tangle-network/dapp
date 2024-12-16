@@ -1,8 +1,3 @@
-import type { VaultToken } from '@webb-tools/tangle-shared-ui/types';
-import type { OperatorDelegatorBond } from '@webb-tools/tangle-shared-ui/types/restake';
-import type { AssetMap } from '@webb-tools/tangle-shared-ui/types/restake';
-import safeFormatUnits from '@webb-tools/tangle-shared-ui/utils/safeFormatUnits';
-
 export function calculateTimeRemaining(
   currentRound: number,
   requestedRound: number,
@@ -18,28 +13,4 @@ export function calculateTimeRemaining(
 
 export function isScheduledRequestReady(timeRemaining: number) {
   return timeRemaining === 0;
-}
-
-export function delegationsToVaultTokens(
-  delegations: OperatorDelegatorBond[],
-  assetMap: AssetMap,
-) {
-  return delegations.reduce<VaultToken[]>(
-    (vaultTokenArr, { assetId, amount }) => {
-      const asset = assetMap[assetId];
-
-      if (asset === undefined) return vaultTokenArr;
-
-      const parsed = safeFormatUnits(amount, asset.decimals);
-
-      if (parsed.success === false) return vaultTokenArr;
-
-      return vaultTokenArr.concat({
-        name: asset.name,
-        symbol: asset.symbol,
-        amount: parsed.value,
-      });
-    },
-    [],
-  );
 }

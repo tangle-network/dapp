@@ -1,18 +1,11 @@
-import OperatorsTable from '@webb-tools/tangle-shared-ui/components/tables/Operators';
-import useBlueprintDetails from '@webb-tools/tangle-shared-ui/data/restake/useBlueprintDetails';
 import { ErrorFallback } from '@webb-tools/webb-ui-components/components/ErrorFallback';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { FC } from 'react';
-import { useParams } from 'react-router';
-import {
-  RestakeOperatorWrapper,
-  ViewOperatorWrapper,
-} from '../../../components/tables/RestakeActionWrappers';
-import BlueprintHeader from './BlueprintHeader';
 
-const BlueprintDetailsPage: FC = () => {
-  const { id = '' } = useParams();
+export const dynamic = 'force-static';
+
+const Page = ({ params }: { params: { id: string } }) => {
+  const { id } = params;
 
   const { result, isLoading, error } = useBlueprintDetails(id);
 
@@ -58,4 +51,4 @@ const BlueprintDetailsPage: FC = () => {
   );
 };
 
-export default BlueprintDetailsPage;
+export default Page;

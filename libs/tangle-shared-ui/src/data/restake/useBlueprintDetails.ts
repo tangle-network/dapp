@@ -1,30 +1,25 @@
 import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesOperatorPreferences } from '@polkadot/types/lookup';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { extractOperatorData } from '@webb-tools/tangle-shared-ui/data/blueprints/utils/blueprintHelpers';
-import { toPrimitiveBlueprint } from '@webb-tools/tangle-shared-ui/data/blueprints/utils/toPrimitiveBlueprint';
-import useRestakeAssetMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetMap';
-import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
-import type { Blueprint } from '@webb-tools/tangle-shared-ui/types/blueprint';
-import {
-  TangleError,
-  TangleErrorCode,
-} from '@webb-tools/tangle-shared-ui/types/error';
-import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
-import type { AssetMap } from '@webb-tools/tangle-shared-ui/types/restake';
-import {
-  getAccountInfo,
-  getMultipleAccountInfo,
-} from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { useCallback } from 'react';
 import { combineLatest, of, switchMap } from 'rxjs';
-
-import useRestakeTVL from '../../../data/restake/useRestakeTVL';
-import type { Operator } from '../../../types/blueprint';
-import { delegationsToVaultTokens } from '../../restake/utils';
+import useNetworkStore from '../../context/useNetworkStore';
+import { extractOperatorData } from '../../data/blueprints/utils/blueprintHelpers';
+import { toPrimitiveBlueprint } from '../../data/blueprints/utils/toPrimitiveBlueprint';
+import useRestakeAssetMap from '../../data/restake/useRestakeAssetMap';
+import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
+import useRestakeOperatorMap from '../../data/restake/useRestakeOperatorMap';
+import useRestakeTVL from '../../data/restake/useRestakeTVL';
+import useApiRx from '../../hooks/useApiRx';
+import { OperatorData } from '../../types';
+import type { Blueprint } from '../../types/blueprint';
+import { TangleError, TangleErrorCode } from '../../types/error';
+import type { AssetMap, OperatorMap } from '../../types/restake';
+import {
+  getAccountInfo,
+  getMultipleAccountInfo,
+} from '../../utils/polkadot/identity';
+import delegationsToVaultTokens from '../../utils/restake/delegationsToVaultTokens';
 
 export default function useBlueprintDetails(id?: string) {
   const { rpcEndpoint } = useNetworkStore();
@@ -151,6 +146,6 @@ async function getBlueprintOperators(
       restakersCount: operatorMap[address]?.restakersCount,
       tvlInUsd,
       vaultTokens: delegationsToVaultTokens(delegations, assetMap),
-    } satisfies Operator;
+    } satisfies OperatorData;
   });
 }
