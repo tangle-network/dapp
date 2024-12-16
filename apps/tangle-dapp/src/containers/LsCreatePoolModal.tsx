@@ -25,7 +25,7 @@ import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
 import { TxStatus } from '../hooks/useSubstrateTx';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
-import { ERROR_NOT_ENOUGH_BALANCE } from './ManageProfileModalContainer/Independent/IndependentAllocationInput';
+import { ERROR_NOT_ENOUGH_BALANCE } from './ManageProfileModalContainer/constants';
 
 export type LsCreatePoolModalProps = {
   isOpen: boolean;
@@ -152,7 +152,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-4 justify-stretch">
+          <div className="flex flex-col items-center gap-4 sm:flex-row justify-stretch">
             <AmountInput
               id="ls-create-pool-initial-bond-amount"
               amount={initialBondAmount}

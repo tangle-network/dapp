@@ -1,4 +1,4 @@
-import Decimal from 'decimal.js';
+import { Decimal } from 'decimal.js';
 import { useCallback, useMemo } from 'react';
 
 import useApi from '../../../hooks/useApi';

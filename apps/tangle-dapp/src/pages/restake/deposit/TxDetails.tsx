@@ -1,5 +1,3 @@
-'use client';
-
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
@@ -23,10 +23,7 @@ import { DropdownMenuItemProps } from './types';
  *  <DropdownMenuItem>Item 1</DropdownMenuItem>
  * ```
  */
-const DropdownMenuItem = React.forwardRef<
-  HTMLDivElement,
-  DropdownMenuItemProps
->(
+const DropdownMenuItem = forwardRef<HTMLDivElement, DropdownMenuItemProps>(
   (
     {
       children,

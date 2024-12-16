@@ -10,7 +10,7 @@ import { twMerge } from 'tailwind-merge';
 import { RestakingProfileType, RestakingService } from '../../types';
 import { getChipColorOfServiceType } from '../../utils';
 import formatTangleBalance from '../../utils/formatTangleBalance';
-import { filterAllocations } from './Independent/IndependentAllocationStep';
+import { filterAllocations } from './Independent/utils';
 import { RestakingAllocationMap } from './types';
 
 export type ConfirmAllocationsStepProps = {

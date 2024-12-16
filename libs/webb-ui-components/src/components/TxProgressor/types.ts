@@ -1,5 +1,5 @@
 import { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
-import Decimal from 'decimal.js';
+import { Decimal } from 'decimal.js';
 
 import { PropsOf, TokenType } from '../../types';
 import { SteppedProgressProps } from '../Progress/types';

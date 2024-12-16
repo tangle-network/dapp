@@ -1,6 +1,11 @@
 const { FlatCompat } = require('@eslint/eslintrc');
 const js = require('@eslint/js');
 const nxEslintPlugin = require('@nx/eslint-plugin');
+const eslintPluginImportX = require('eslint-plugin-import-x');
+const tsParser = require('@typescript-eslint/parser');
+const unusedImports = require('eslint-plugin-unused-imports');
+const reactRefresh = require('eslint-plugin-react-refresh');
+const eslintConfigPrettier = require('eslint-config-prettier');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -9,26 +14,17 @@ const compat = new FlatCompat({
 
 module.exports = [
   ...compat.extends('plugin:storybook/recommended'),
-  { plugins: { '@nx': nxEslintPlugin } },
+  eslintPluginImportX.flatConfigs.recommended,
+  eslintPluginImportX.flatConfigs.typescript,
+  reactRefresh.configs.recommended,
   {
-    rules: {
-      'storybook/no-uninstalled-addons': [
-        'error',
-        {
-          ignore: ['@nx/react/plugins/storybook'],
-        },
-      ],
+    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
+    ignores: ['**/eslint.config.cjs'],
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
     },
-  },
-  {
-    files: [
-      '**/*.ts',
-      '**/*.tsx',
-      '**/*.js',
-      '**/*.jsx',
-      '**/*.mjs',
-      '**/*.cjs',
-    ],
     rules: {
       '@nx/enforce-module-boundaries': [
         'error',
@@ -55,6 +51,21 @@ module.exports = [
           destructuredArrayIgnorePattern: '^_',
           varsIgnorePattern: '^_',
           ignoreRestSiblings: true,
+        },
+      ],
+      'react-refresh/only-export-components': [
+        'error',
+        { allowExportNames: ['metadata', 'viewport', 'dynamic'] },
+      ],
+    },
+  },
+  { plugins: { '@nx': nxEslintPlugin, 'unused-imports': unusedImports } },
+  {
+    rules: {
+      'storybook/no-uninstalled-addons': [
+        'error',
+        {
+          ignore: ['@nx/react/plugins/storybook'],
         },
       ],
     },
@@ -108,8 +119,9 @@ module.exports = [
         ...config.rules,
       },
     })),
+  eslintConfigPrettier,
   {
-    ignores: ['**/.netlify', '**/.next'],
+    ignores: ['**/.netlify/', '**/.next/'],
   },
   {
     files: ['**/eslint.config.cjs'],

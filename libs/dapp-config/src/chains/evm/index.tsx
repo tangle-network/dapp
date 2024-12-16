@@ -4,6 +4,7 @@
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { ChainType } from '@webb-tools/dapp-types/TypedChainId';
 import {
+  mainnet,
   arbitrumGoerli,
   avalancheFuji,
   goerli,
@@ -13,6 +14,12 @@ import {
   polygonMumbai,
   scrollSepolia,
   sepolia,
+  polygon,
+  arbitrum,
+  optimism,
+  linea,
+  base,
+  bsc,
 } from 'viem/chains';
 import type { ChainConfig } from '../chain-config.interface';
 import athenaLocalnet from './customChains/athenaLocalnet';
@@ -23,6 +30,7 @@ import tangleMainnetEVM from './customChains/tangleMainnetEVM';
 import tangleTestnetEVM from './customChains/tangleTestnetEVM';
 
 export const wagmiChains = [
+  mainnet,
   goerli,
   optimismGoerli,
   arbitrumGoerli,
@@ -38,9 +46,71 @@ export const wagmiChains = [
   athenaLocalnet,
   demeterLocalnet,
   holesky,
+  polygon,
+  arbitrum,
+  optimism,
+  linea,
+  base,
+  bsc,
 ] as const;
 
 export const chainsConfig = {
+  [PresetTypedChainId.EthereumMainNet]: {
+    ...mainnet,
+    chainType: ChainType.EVM,
+    group: 'ethereum',
+    tag: 'live',
+    displayName: 'Ethereum',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.Polygon]: {
+    ...polygon,
+    chainType: ChainType.EVM,
+    group: 'polygon',
+    tag: 'live',
+    displayName: 'Polygon',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.Arbitrum]: {
+    ...arbitrum,
+    chainType: ChainType.EVM,
+    group: 'arbitrum',
+    tag: 'live',
+    displayName: 'Arbitrum',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.Optimism]: {
+    ...optimism,
+    chainType: ChainType.EVM,
+    group: 'optimism',
+    tag: 'live',
+    displayName: 'Optimism',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.Linea]: {
+    ...linea,
+    chainType: ChainType.EVM,
+    group: 'linea',
+    tag: 'live',
+    displayName: 'Linea',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.Base]: {
+    ...base,
+    chainType: ChainType.EVM,
+    group: 'base',
+    tag: 'live',
+    displayName: 'Base',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.BSC]: {
+    ...bsc,
+    chainType: ChainType.EVM,
+    group: 'bsc',
+    tag: 'live',
+    displayName: 'BSC',
+  } satisfies ChainConfig,
+
   // Testnet
   [PresetTypedChainId.Goerli]: {
     ...goerli,
@@ -128,6 +198,7 @@ export const chainsConfig = {
     chainType: ChainType.EVM,
     group: 'tangle',
     tag: 'live',
+    displayName: 'Tangle',
   } satisfies ChainConfig,
 
   [PresetTypedChainId.TangleTestnetEVM]: {
@@ -135,6 +206,7 @@ export const chainsConfig = {
     chainType: ChainType.EVM,
     group: 'tangle',
     tag: 'test',
+    displayName: 'Tangle Testnet',
   } satisfies ChainConfig,
 
   [PresetTypedChainId.TangleLocalEVM]: {

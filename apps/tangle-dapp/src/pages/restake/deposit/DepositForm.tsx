@@ -1,5 +1,3 @@
-'use client';
-
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';

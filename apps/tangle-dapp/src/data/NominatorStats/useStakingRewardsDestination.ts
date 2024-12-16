@@ -1,5 +1,3 @@
-'use client';
-
 import { PalletStakingRewardDestination } from '@polkadot/types/lookup';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';

@@ -1,5 +1,10 @@
 import { BN } from '@polkadot/util';
-import { formatBn, FormatOptions } from '@webb-tools/webb-ui-components';
+import {
+  formatBn,
+  formatDisplayAmount,
+  AmountFormatStyle,
+  FormatOptions,
+} from '@webb-tools/webb-ui-components';
 import { useCallback, useEffect, useState } from 'react';
 
 import cleanNumericInputString from '../utils/cleanNumericInputString';
@@ -30,9 +35,23 @@ function safeParseInputAmount(
         return `Amount cannot exceed ${options.decimals} decimal places`;
     }
   } else if (options.min !== null && result.lt(options.min)) {
-    return options.minErrorMessage ?? `Amount is below the minimum`;
+    return (
+      options.minErrorMessage ??
+      `Min amount required ${formatDisplayAmount(
+        options.min,
+        options.decimals,
+        AmountFormatStyle.SHORT,
+      )}`
+    );
   } else if (options.max !== null && result.gt(options.max)) {
-    return options.maxErrorMessage ?? `Amount is above the maximum`;
+    return (
+      options.maxErrorMessage ??
+      `Max amount allowed ${formatDisplayAmount(
+        options.max,
+        options.decimals,
+        AmountFormatStyle.SHORT,
+      )}`
+    );
   }
 
   return result;

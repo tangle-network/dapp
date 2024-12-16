@@ -1,6 +1,6 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import safeParseUnits from '@webb-tools/tangle-shared-ui/utils/safeParseUnits';
-import Decimal from 'decimal.js';
+import { Decimal } from 'decimal.js';
 
 /**
  * Get the shared amount validation for react-hook-form

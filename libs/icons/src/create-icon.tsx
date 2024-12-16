@@ -1,4 +1,4 @@
-import React, { Children, ComponentProps } from 'react';
+import { Children, ComponentProps } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { IconBase } from './types';

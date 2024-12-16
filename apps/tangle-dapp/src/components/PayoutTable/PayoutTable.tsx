@@ -1,5 +1,3 @@
-'use client';
-
 import { DeriveSessionProgress } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
 import {

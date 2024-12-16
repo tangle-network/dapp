@@ -1,5 +1,3 @@
-'use client';
-
 import { ProhibitedLineIcon } from '@webb-tools/icons';
 import {
   Modal,

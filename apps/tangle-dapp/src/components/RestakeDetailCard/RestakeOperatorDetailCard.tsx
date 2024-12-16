@@ -1,5 +1,3 @@
-'use client';
-
 import GlobalLine from '@webb-tools/icons/GlobalLine';
 import { Mail } from '@webb-tools/icons/Mail';
 import MapPinLine from '@webb-tools/icons/MapPinLine';

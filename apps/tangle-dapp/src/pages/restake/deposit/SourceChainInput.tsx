@@ -1,5 +1,3 @@
-'use client';
-
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';

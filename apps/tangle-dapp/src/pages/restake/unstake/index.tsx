@@ -1,5 +1,3 @@
-'use client';
-
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';

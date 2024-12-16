@@ -1,5 +1,3 @@
-'use client';
-
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import {
   InputField,

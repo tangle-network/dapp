@@ -1,5 +1,3 @@
-'use client';
-
 import type { Option, u128 } from '@polkadot/types';
 import {
   PalletStakingValidatorPrefs,

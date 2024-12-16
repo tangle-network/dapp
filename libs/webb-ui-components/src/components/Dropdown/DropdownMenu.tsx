@@ -1,7 +1,7 @@
 'use client';
 
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import React, { useMemo } from 'react';
+import { cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Dropdown } from './Dropdown';
@@ -30,7 +30,7 @@ import { DropdownMenuProps } from './types';
  *  />
  * ```
  */
-const DropdownMenu = React.forwardRef<HTMLDivElement, DropdownMenuProps>(
+const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
   (props, ref) => {
     const {
       className,
@@ -47,7 +47,7 @@ const DropdownMenu = React.forwardRef<HTMLDivElement, DropdownMenuProps>(
         return;
       }
 
-      return React.cloneElement(iconProp, {
+      return cloneElement(iconProp, {
         ...iconProp.props,
         size: size === 'md' ? 'lg' : 'md',
         className: twMerge(

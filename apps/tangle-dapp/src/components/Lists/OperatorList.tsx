@@ -1,5 +1,3 @@
-'use client';
-
 import { Search } from '@webb-tools/icons';
 import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';

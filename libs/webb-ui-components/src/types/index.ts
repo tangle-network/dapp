@@ -7,7 +7,6 @@ import type {
   TableOptionsResolved,
 } from '@tanstack/react-table';
 import type { Nullable, Maybe } from '@webb-tools/dapp-types/utils/types';
-import type React from 'react';
 import { WEBB_AVAILABLE_SOCIALS } from '../constants';
 
 /******************

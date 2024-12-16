@@ -1,5 +1,3 @@
-'use client';
-
 import { BN, BN_ZERO } from '@polkadot/util';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {

@@ -1,4 +1,3 @@
-import { PalletVestingVestingInfo } from '@polkadot/types/lookup';
 import { BN, BN_ZERO, formatDecimal } from '@polkadot/util';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { FC, useCallback } from 'react';
@@ -6,21 +5,7 @@ import { FC, useCallback } from 'react';
 import useVestingInfo from '../../../data/vesting/useVestingInfo';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
 import BalanceCell from '../BalanceCell';
-
-/**
- * Sort by ending block number in ascending order. This will
- * effectively show the vesting schedules that will end/unlock
- * sooner first.
- */
-export const sortVestingSchedulesAscending = (
-  a: PalletVestingVestingInfo,
-  b: PalletVestingVestingInfo,
-): 0 | 1 | -1 => {
-  const endingBlockNumberOfA = a.startingBlock.add(a.locked.div(a.perBlock));
-  const endingBlockNumberOfB = b.startingBlock.add(b.locked.div(b.perBlock));
-
-  return endingBlockNumberOfA.cmp(endingBlockNumberOfB);
-};
+import { sortVestingSchedulesAscending } from './utils';
 
 const VestingScheduleBalances: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();

@@ -1,5 +1,3 @@
-'use client';
-
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';

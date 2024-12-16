@@ -1,5 +1,3 @@
-'use client';
-
 import { FC } from 'react';
 
 import KeyStatsItem from '../../components/KeyStatsItem/KeyStatsItem';

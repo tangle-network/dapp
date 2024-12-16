@@ -2,9 +2,8 @@ import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 
 import { RestakingService } from '../../types';
-import { AllocationChartVariant } from './AllocationChart';
-import { filterAllocations } from './Independent/IndependentAllocationStep';
-import { RestakingAllocationMap } from './types';
+import { filterAllocations } from './Independent/utils';
+import { AllocationChartVariant, RestakingAllocationMap } from './types';
 
 export type AllocationChartEntryName =
   | 'Remaining'

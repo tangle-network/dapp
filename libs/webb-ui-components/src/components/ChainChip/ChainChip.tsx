@@ -1,5 +1,5 @@
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
-import React, { useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChainChipProps } from './types';
 import { getChainChipClassName } from './utils';
@@ -31,7 +31,7 @@ import { getChainChipClassName } from './utils';
  *  <ChainChip type="moonbeam" name="moonbeam alpha" />
  * ```
  */
-export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
+export const ChainChip = forwardRef<HTMLSpanElement, ChainChipProps>(
   (props, ref) => {
     const {
       className: classNameProp,
@@ -51,7 +51,15 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
       () =>
         chainName.toLowerCase().includes('tangle')
           ? 'tangle transparent'
-          : chainName,
+          : chainName.toLowerCase().includes('linea')
+            ? 'linea'
+            : chainName.toLowerCase().includes('bnb')
+              ? 'bsc'
+              : chainName.toLowerCase().includes('op')
+                ? 'optimism'
+                : chainName.toLowerCase().includes('arbitrum')
+                  ? 'arbitrum'
+                  : chainName,
       [chainName],
     );
 
@@ -62,7 +70,15 @@ export const ChainChip = React.forwardRef<HTMLSpanElement, ChainChipProps>(
 
     // Short chain name
     const shortChainName = useMemo(() => {
-      return chainName.split(' ').pop();
+      return chainName.toLowerCase().includes('bnb')
+        ? 'BSC'
+        : chainName.toLowerCase().includes('linea')
+          ? 'Linea'
+          : chainName.toLowerCase().includes('op')
+            ? 'Optimism'
+            : chainName.toLowerCase().includes('arbitrum')
+              ? 'Arbitrum'
+              : chainName.split(' ').pop();
     }, [chainName]);
 
     return (

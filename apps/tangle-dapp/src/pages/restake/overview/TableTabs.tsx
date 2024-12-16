@@ -1,5 +1,3 @@
-'use client';
-
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import type {

@@ -1,5 +1,3 @@
-'use client';
-
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import RefundLineIcon from '@webb-tools/icons/RefundLineIcon';
 import Spinner from '@webb-tools/icons/Spinner';

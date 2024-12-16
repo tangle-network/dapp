@@ -10,28 +10,17 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { z } from 'zod';
 
 import { RestakingService } from '../../../types';
-import { AllocationChartVariant } from '../AllocationChart';
 import AllocationStepContainer from '../AllocationStepContainer';
-import { RestakingAllocationMap } from '../types';
+import { AllocationChartVariant, RestakingAllocationMap } from '../types';
 import IndependentAllocationInput from './IndependentAllocationInput';
+import { filterAllocations } from './utils';
 
 export type IndependentAllocationStepProps = {
   allocations: RestakingAllocationMap;
   setAllocations: Dispatch<SetStateAction<RestakingAllocationMap>>;
 };
-
-export function filterAllocations(
-  allocations: RestakingAllocationMap,
-): [RestakingService, BN][] {
-  return Object.entries(allocations).map(([serviceString, amount]) => {
-    const service = z.nativeEnum(RestakingService).parse(serviceString);
-
-    return [service, amount];
-  });
-}
 
 const IndependentAllocationStep: FC<IndependentAllocationStepProps> = ({
   allocations,

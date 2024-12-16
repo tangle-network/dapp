@@ -1,5 +1,3 @@
-'use client';
-
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { Nominee } from '@webb-tools/tangle-shared-ui/types';

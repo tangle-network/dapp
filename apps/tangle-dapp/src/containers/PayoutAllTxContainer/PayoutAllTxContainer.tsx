@@ -1,5 +1,3 @@
-'use client';
-
 import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import {
   InputField,

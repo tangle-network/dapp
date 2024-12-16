@@ -4,7 +4,6 @@ import {
   TooltipTriggerProps as RdxTooltipTriggerProps,
 } from '@radix-ui/react-tooltip';
 import { IWebbComponentBase } from '../../types';
-import React from 'react';
 
 type OmittedKeys =
   | 'open'

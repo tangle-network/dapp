@@ -1,5 +1,3 @@
-'use client';
-
 import { BN_ZERO } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
@@ -10,14 +8,13 @@ import {
   Divider,
 } from '@webb-tools/webb-ui-components';
 import {
+  EMPTY_VALUE_PLACEHOLDER,
   SOCIAL_URLS_RECORD,
   TANGLE_DOCS_STAKING_URL,
   WEBB_DISCORD_CHANNEL_URL,
 } from '@webb-tools/webb-ui-components/constants';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import { Link } from 'react-router';
 import { type FC, useCallback, useMemo, useState } from 'react';
-import React from 'react';
+import { Link } from 'react-router';
 
 import { NominatorStatsItem, UnbondingStatsItem } from '../../components';
 import useBalances from '../../data/balances/useBalances';

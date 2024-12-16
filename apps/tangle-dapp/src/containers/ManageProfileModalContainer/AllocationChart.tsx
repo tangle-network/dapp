@@ -9,8 +9,8 @@ import {
   PieProps,
   RadialBar,
   RadialBarChart,
-  ResponsiveContainer,
   Tooltip as RechartsTooltip,
+  ResponsiveContainer,
 } from 'recharts';
 
 import BnChartTooltip from '../../components/BnChartTooltip';
@@ -18,15 +18,10 @@ import { ChartColor } from '../../constants';
 import { RestakingService } from '../../types';
 import { getChartDataAreaColorByServiceType } from '../../utils';
 import formatTangleBalance from '../../utils/formatTangleBalance';
-import { RestakingAllocationMap } from './types';
+import { AllocationChartVariant, RestakingAllocationMap } from './types';
 import useAllocationChartEntries, {
   AllocationChartEntryName,
 } from './useAllocationChartEntries';
-
-export enum AllocationChartVariant {
-  INDEPENDENT,
-  SHARED,
-}
 
 export type AllocationChartProps = {
   variant: AllocationChartVariant;

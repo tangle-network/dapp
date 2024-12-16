@@ -1,6 +1,6 @@
 import { ExternalLinkLine } from '@webb-tools/icons';
 import cx from 'classnames';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import type { EventFor } from '../../types';
 import { Typography } from '../../typography/Typography';
 import isSideBarItemActive from '../../utils/isSideBarItemActive';

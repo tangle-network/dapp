@@ -1,5 +1,5 @@
 import axios from 'axios';
-import z from 'zod';
+import { z } from 'zod';
 import ensureError from '../../../utils/ensureError';
 
 import type { TokenPriceFetcher } from '../types';

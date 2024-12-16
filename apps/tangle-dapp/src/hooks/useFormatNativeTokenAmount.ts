@@ -1,5 +1,3 @@
-'use client';
-
 import { BN } from '@polkadot/util';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useCallback } from 'react';

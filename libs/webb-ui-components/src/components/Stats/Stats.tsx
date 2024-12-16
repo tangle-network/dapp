@@ -1,6 +1,6 @@
-import { Typography } from '../../typography';
-import React, { forwardRef, useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Typography } from '../../typography';
 
 import { TitleWithInfo } from '../TitleWithInfo';
 import { StatsProps } from './types';

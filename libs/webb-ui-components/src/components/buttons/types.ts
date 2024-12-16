@@ -180,6 +180,8 @@ export type ChainOrTokenButtonProps = PropsOf<'button'> & {
   placeholder?: string;
   iconClassName?: string;
   iconType: 'chain' | 'token';
+  displayValue?: string;
+  showChevron?: boolean;
 
   /**
    * The text to display in the button

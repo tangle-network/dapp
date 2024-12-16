@@ -1,1 +1,1 @@
-export * from './TangleLogo';
+export { default as TangleLogo } from './TangleLogo';

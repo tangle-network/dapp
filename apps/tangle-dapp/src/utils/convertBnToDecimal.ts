@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import Decimal from 'decimal.js';
+import { Decimal } from 'decimal.js';
 
 export default function convertBNToDecimal(bn: BN, decimals: number): Decimal {
   const decimalValue = new Decimal(bn.toString());

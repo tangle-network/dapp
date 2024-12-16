@@ -5,8 +5,9 @@ import { twMerge } from 'tailwind-merge';
 
 import { LsToken } from '../../../constants/liquidStaking/types';
 import useLsActivePoolDisplayName from '../../../data/liquidStaking/useLsActivePoolDisplayName';
-import { ExchangeRateType } from '../../../data/liquidStaking/useLsExchangeRate';
-import useLsExchangeRate from '../../../data/liquidStaking/useLsExchangeRate';
+import useLsExchangeRate, {
+  ExchangeRateType,
+} from '../../../data/liquidStaking/useLsExchangeRate';
 import DetailItem from './DetailItem';
 
 export type ExchangeRateDetailItemProps = {

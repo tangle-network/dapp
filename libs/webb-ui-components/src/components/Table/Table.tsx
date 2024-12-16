@@ -1,6 +1,6 @@
 import { type Row, type RowData, flexRender } from '@tanstack/react-table';
-import React, { Fragment, useCallback } from 'react';
 import { ArrowDropDownFill, ArrowDropUpFill } from '@webb-tools/icons';
+import { Fragment, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Pagination } from '../Pagination';

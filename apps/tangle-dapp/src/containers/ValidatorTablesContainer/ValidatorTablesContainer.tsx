@@ -1,5 +1,3 @@
-'use client';
-
 import { Search } from '@webb-tools/icons';
 import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';

@@ -22,7 +22,8 @@ import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import { ListCardWrapper } from '../../Lists/ListCardWrapper';
 import ListStatus from '../../ListStatus';
 import SkeletonRows from '../../SkeletonRows';
-import LstIcon, { LstIconSize } from '../LstIcon';
+import LstIcon from '../LstIcon';
+import { LstIconSize } from '../types';
 
 export type LsSelectLstModalProps = {
   pools: LsPool[] | Error | null;

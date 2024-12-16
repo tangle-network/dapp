@@ -98,6 +98,18 @@ export enum PresetTypedChainId {
     EVMChainId.ScrollSepolia,
   ),
 
+  Polygon = calculateTypedChainId(ChainType.EVM, EVMChainId.Polygon),
+
+  Arbitrum = calculateTypedChainId(ChainType.EVM, EVMChainId.Arbitrum),
+
+  Optimism = calculateTypedChainId(ChainType.EVM, EVMChainId.Optimism),
+
+  Linea = calculateTypedChainId(ChainType.EVM, EVMChainId.Linea),
+
+  Base = calculateTypedChainId(ChainType.EVM, EVMChainId.Base),
+
+  BSC = calculateTypedChainId(ChainType.EVM, EVMChainId.BSC),
+
   // Localnets
   HermesLocalnet = calculateTypedChainId(
     ChainType.EVM,

@@ -1,5 +1,3 @@
-'use client';
-
 import { Search } from '@webb-tools/icons/Search';
 import OperatorsTableUI from '@webb-tools/tangle-shared-ui/components/tables/Operators';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
