@@ -2,7 +2,7 @@
 
 import * as ProgressPrimitive from '@radix-ui/react-progress';
 import cx from 'classnames';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { ProgressClassName, ProgressProps } from './types';

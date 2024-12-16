@@ -4,8 +4,8 @@ import {
   Row,
   SortingFnOption,
 } from '@tanstack/react-table';
-import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
+  LiquidStakingItem,
   Collator,
   Dapp,
   PhalaVaultOrStakePool,
@@ -22,7 +22,6 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { useMemo } from 'react';
-import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { StakingItemExternalLinkButton } from '../../components/LiquidStaking/StakingItemExternalLinkButton';

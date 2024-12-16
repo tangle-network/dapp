@@ -11,8 +11,7 @@ import {
   TangleError,
   TangleErrorCode,
 } from '@webb-tools/tangle-shared-ui/types/error';
-import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
-import type { AssetMap } from '@webb-tools/tangle-shared-ui/types/restake';
+import type { OperatorMap , AssetMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import {
   getAccountInfo,
   getMultipleAccountInfo,

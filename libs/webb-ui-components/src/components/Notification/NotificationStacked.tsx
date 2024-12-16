@@ -1,7 +1,7 @@
 'use client';
 
 import { SnackbarKey, useSnackbar } from 'notistack';
-import React, { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import {
   NotificationContext,

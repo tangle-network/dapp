@@ -1,7 +1,7 @@
 'use client';
 
 import { OptionsObject, SnackbarKey, VariantType } from 'notistack';
-import React from 'react';
+import { createContext } from 'react';
 
 export type SnackBarOpts = {
   variant: VariantType;
@@ -29,5 +29,6 @@ export const NotificationCTXDefaultValue: NotificationContextProps = {
     // do nothing
   },
 } as const satisfies NotificationContextProps;
-export const NotificationContext =
-  React.createContext<NotificationContextProps>(NotificationCTXDefaultValue);
+export const NotificationContext = createContext<NotificationContextProps>(
+  NotificationCTXDefaultValue,
+);

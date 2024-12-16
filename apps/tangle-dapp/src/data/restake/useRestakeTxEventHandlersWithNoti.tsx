@@ -4,7 +4,6 @@ import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubst
 import { type SnackBarOpts } from '@webb-tools/webb-ui-components/components/Notification/NotificationContext';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import type React from 'react';
 import { useMemo } from 'react';
 
 import { TxEvent, type TxEventHandlers } from './RestakeTx/base';

@@ -8,8 +8,8 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import Link from 'next/link';
 import { ComponentProps, useMemo, useState } from 'react';
+import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { Address } from 'viem';
 
@@ -97,7 +97,7 @@ export const AssetList = ({
 
                   {asset.explorerUrl !== undefined && (
                     <Link
-                      href={asset.explorerUrl}
+                      to={asset.explorerUrl}
                       target="_blank"
                       className="z-20 flex items-center gap-1 text-mono-120 dark:text-mono-100 dark:hover:text-mono-80"
                     >

@@ -1,7 +1,7 @@
 'use client';
 
 import cx from 'classnames';
-import React, { useEffect, useMemo, useState } from 'react';
+import { cloneElement, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { InputProps } from './types';
@@ -92,7 +92,7 @@ export const Input: React.FC<InputProps> = (props) => {
       return;
     }
 
-    return React.cloneElement(leftIconProp, {
+    return cloneElement(leftIconProp, {
       ...leftIconProp.props,
       size: 'md',
     });
@@ -103,7 +103,7 @@ export const Input: React.FC<InputProps> = (props) => {
     if (!rightIconProp) {
       return;
     }
-    return React.cloneElement(rightIconProp, {
+    return cloneElement(rightIconProp, {
       ...rightIconProp.props,
       size: 'md',
     });

@@ -6,7 +6,7 @@ import {
 } from '@webb-tools/tangle-shared-ui/types';
 import { TxProgressor } from '@webb-tools/webb-ui-components/components/TxProgressor';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import Decimal from 'decimal.js';
+import { Decimal } from 'decimal.js';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

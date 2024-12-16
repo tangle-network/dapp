@@ -151,7 +151,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-4 justify-stretch">
+          <div className="flex flex-col items-center gap-4 sm:flex-row justify-stretch">
             <AmountInput
               id="ls-create-pool-initial-bond-amount"
               amount={initialBondAmount}

@@ -8,7 +8,7 @@ import {
   StatusIndicator,
   TokenIcon,
 } from '@webb-tools/icons';
-import Decimal from 'decimal.js';
+import { Decimal } from 'decimal.js';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 

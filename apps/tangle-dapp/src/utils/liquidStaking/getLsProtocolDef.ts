@@ -5,11 +5,9 @@ import { LS_PROTOCOLS } from '../../constants/liquidStaking/constants';
 import {
   LsTangleNetworkDef,
   LsTangleNetworkId,
-} from '../../constants/liquidStaking/types';
-import {
+
   LsParachainChainDef,
-  LsParachainChainId,
-} from '../../constants/liquidStaking/types';
+  LsParachainChainId} from '../../constants/liquidStaking/types';
 
 type IdToDefMap<T extends LsProtocolId> = T extends LsParachainChainId
   ? LsParachainChainDef

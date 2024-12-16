@@ -2,7 +2,13 @@
 
 import { noop } from '@tanstack/react-table';
 import LoggerService from '@webb-tools/browser-utils/logger/LoggerService';
-import React, { createContext, useCallback, useMemo, useState } from 'react';
+import {
+  createContext,
+  createElement,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import {
   NotificationProvider,
   notificationApi,
@@ -67,7 +73,7 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
   );
 
   const WebbUIEErrorBoundaryElement = useMemo(() => {
-    return React.createElement(WebbUIErrorBoudary, {
+    return createElement(WebbUIErrorBoudary, {
       logger: appLogger,
       children,
     });

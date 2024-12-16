@@ -1,5 +1,5 @@
 import { Close, FileShieldLine } from '@webb-tools/icons';
-import Decimal from 'decimal.js';
+import { Decimal } from 'decimal.js';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -14,7 +14,7 @@ import { TitleWithInfo } from '../../components/TitleWithInfo/TitleWithInfo';
 import { Typography } from '../../typography';
 import { TxProgressorBody } from '../../components/TxProgressor';
 import TxConfirmationRing from '../../components/TxConfirmationRing';
-import WrapperSection from './WrapperSection';
+import { WrapperSection } from './WrapperSection';
 import { formatTokenAmount } from './utils';
 import { WithdrawConfirmationProps } from './types';
 

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { TxProgressor } from '../../components/TxProgressor';
 import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
 import { randEthereumAddress } from '@ngneat/falso';
-import Decimal from 'decimal.js';
+import { Decimal } from 'decimal.js';
 
 const meta: Meta<typeof TxProgressor> = {
   title: 'Design System/Molecules/TxProgressor',

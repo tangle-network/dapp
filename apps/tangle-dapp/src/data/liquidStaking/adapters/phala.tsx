@@ -4,8 +4,7 @@ import {
   Row,
   SortingFnOption,
 } from '@tanstack/react-table';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
-import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { LsProtocolId , LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   AmountFormatStyle,
   Avatar,

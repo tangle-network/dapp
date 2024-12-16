@@ -1,6 +1,6 @@
 import { InformationLine } from '@webb-tools/icons/InformationLine';
 import cx from 'classnames';
-import React from 'react';
+import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip/Tooltip';
 import Button from '../buttons/Button';
@@ -28,7 +28,7 @@ import { CheckBoxProps } from './types';
  *  <CheckBox isDisabled>Check mark</CheckBox>
  * ```
  */
-export const CheckBox: React.FC<CheckBoxProps> = (props) => {
+export const CheckBox: FC<CheckBoxProps> = (props) => {
   const {
     children,
     className,

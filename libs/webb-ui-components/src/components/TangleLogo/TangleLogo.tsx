@@ -1,7 +1,7 @@
 'use client';
 
 import { createIcon } from '@webb-tools/icons/create-icon';
-import React, { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { randNumber } from '@ngneat/falso';
 
 import { TangleLogoProps } from './types';

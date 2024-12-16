@@ -1,7 +1,6 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { createColumnHelper, SortingFnOption } from '@tanstack/react-table';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
-import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { LsProtocolId , LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import {
   AmountFormatStyle,

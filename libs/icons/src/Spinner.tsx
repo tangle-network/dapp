@@ -1,10 +1,10 @@
-import React from 'react';
+import { memo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { createIcon } from './create-icon';
 import { IconBase } from './types';
 
-export const Spinner = React.memo<IconBase>((props) => {
+const Spinner = memo<IconBase>((props) => {
   return createIcon({
     ...props,
     className: twMerge(

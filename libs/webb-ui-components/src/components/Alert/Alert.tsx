@@ -4,7 +4,7 @@ import {
   InformationLineFill,
 } from '@webb-tools/icons';
 import cx from 'classnames';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { AlertProps } from './types';

@@ -1,6 +1,5 @@
 import type { AccordionSingleProps } from '@radix-ui/react-accordion';
 import type { IconBase } from '@webb-tools/icons/types';
-import type React from 'react';
 import type { TitleWithInfoProps } from '../TitleWithInfo/types';
 
 /**

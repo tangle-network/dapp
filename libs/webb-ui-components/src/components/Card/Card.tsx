@@ -1,4 +1,4 @@
-import React from 'react';
+import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { WebbComponentBase } from '../../types';
 
@@ -42,7 +42,7 @@ const getVariantClass = (variant: CardVariant) => {
  * </Card>;
  * ```
  */
-export const Card = React.forwardRef<HTMLDivElement, CardProps>(
+export const Card = forwardRef<HTMLDivElement, CardProps>(
   (
     {
       children,

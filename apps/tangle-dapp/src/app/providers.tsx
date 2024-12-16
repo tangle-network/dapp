@@ -6,7 +6,7 @@ import {
 import { WebbUIProvider } from '@webb-tools/webb-ui-components';
 import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
-import z from 'zod';
+import { z } from 'zod';
 
 import HyperlaneWarpContext from '../pages/bridge/context/HyperlaneWarpContext';
 import BridgeTxQueueProvider from '../pages/bridge/context/useBridgeTxQueue';
