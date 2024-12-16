@@ -5,6 +5,7 @@ const eslintPluginImportX = require('eslint-plugin-import-x');
 const tsParser = require('@typescript-eslint/parser');
 const unusedImports = require('eslint-plugin-unused-imports');
 const reactRefresh = require('eslint-plugin-react-refresh');
+const eslintConfigPrettier = require('eslint-config-prettier');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -118,6 +119,7 @@ module.exports = [
         ...config.rules,
       },
     })),
+  eslintConfigPrettier,
   {
     ignores: ['**/.netlify/', '**/.next/'],
   },
