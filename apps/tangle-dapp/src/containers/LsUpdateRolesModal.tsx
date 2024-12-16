@@ -10,9 +10,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import AddressInput, { AddressType } from '../components/AddressInput';
 import useLsUpdateRolesTx from '../data/liquidStaking/tangle/useLsUpdateRolesTx';
+import useSubstrateAddress from '../hooks/useSubstrateAddress';
 import { TxStatus } from '../hooks/useSubstrateTx';
 
 export type LsUpdateRolesModalProps = {

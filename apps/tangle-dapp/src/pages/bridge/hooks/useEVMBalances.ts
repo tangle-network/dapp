@@ -4,18 +4,17 @@ import useLocalStorage, {
   LocalStorageKey,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import { Decimal } from 'decimal.js';
-import { BigNumberish } from 'ethers';
-import { ethers } from 'ethers';
+import { BigNumberish, ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { Abi, createPublicClient, getContract, http } from 'viem';
 
-import { BRIDGE_TOKENS } from '../constants';
-import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import {
-  TokenBalanceType,
   BalanceType,
   BridgeTokenType,
+  TokenBalanceType,
 } from '@webb-tools/tangle-shared-ui/types';
+import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
+import { BRIDGE_TOKENS } from '../constants';
 
 export const getEVMTokenBalance = async (
   accountAddress: string,
