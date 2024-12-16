@@ -1,6 +1,8 @@
 const { FlatCompat } = require('@eslint/eslintrc');
 const js = require('@eslint/js');
 const nxEslintPlugin = require('@nx/eslint-plugin');
+const eslintPluginImportX = require('eslint-plugin-import-x');
+const tsParser = require('@typescript-eslint/parser');
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -9,6 +11,18 @@ const compat = new FlatCompat({
 
 module.exports = [
   ...compat.extends('plugin:storybook/recommended'),
+  eslintPluginImportX.flatConfigs.recommended,
+  eslintPluginImportX.flatConfigs.typescript,
+  {
+    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
+    ignores: ['**/eslint.config.cjs'],
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+    },
+    rules: {},
+  },
   { plugins: { '@nx': nxEslintPlugin } },
   {
     rules: {
