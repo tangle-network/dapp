@@ -55,7 +55,11 @@ export const ChainChip = forwardRef<HTMLSpanElement, ChainChipProps>(
             ? 'linea'
             : chainName.toLowerCase().includes('bnb')
               ? 'bsc'
-              : chainName,
+              : chainName.toLowerCase().includes('op')
+                ? 'optimism'
+                : chainName.toLowerCase().includes('arbitrum')
+                  ? 'arbitrum'
+                  : chainName,
       [chainName],
     );
 
@@ -70,7 +74,11 @@ export const ChainChip = forwardRef<HTMLSpanElement, ChainChipProps>(
         ? 'BSC'
         : chainName.toLowerCase().includes('linea')
           ? 'Linea'
-          : chainName.split(' ').pop();
+          : chainName.toLowerCase().includes('op')
+            ? 'Optimism'
+            : chainName.toLowerCase().includes('arbitrum')
+              ? 'Arbitrum'
+              : chainName.split(' ').pop();
     }, [chainName]);
 
     return (
