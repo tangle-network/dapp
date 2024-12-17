@@ -22,7 +22,6 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 import { StakingItemExternalLinkButton } from '../../components/LiquidStaking/StakingItemExternalLinkButton';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
