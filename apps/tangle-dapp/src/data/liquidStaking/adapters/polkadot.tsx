@@ -15,6 +15,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
+import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
 
 import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking/StakingItemExternalLinkButton';
 import {
@@ -24,7 +25,6 @@ import {
 } from '../../../constants/liquidStaking/types';
 import calculateCommission from '../../../utils/calculateCommission';
 import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
-import formatFractional from '../../../utils/formatFractional';
 import { GetTableColumnsFn } from '../adapter';
 import {
   sortCommission,

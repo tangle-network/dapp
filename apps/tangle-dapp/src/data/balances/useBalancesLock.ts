@@ -1,10 +1,10 @@
 import { PalletBalancesReasons } from '@polkadot/types/lookup';
 import { BN, BN_ZERO } from '@polkadot/util';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 
 import { SubstrateLockId } from '../../constants';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import getSubstrateLockId from '../../utils/getSubstrateLockId';
 
 export type BalancesLock = {

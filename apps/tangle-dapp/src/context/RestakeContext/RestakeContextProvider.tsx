@@ -1,12 +1,12 @@
-import { PropsWithChildren, useMemo } from 'react';
-import useRestakeAssetMap from '../../data/restake/useRestakeAssetMap';
-import useRestakeBalances from '../../data/restake/useRestakeBalances';
-import { combineLatest, map } from 'rxjs';
-import toPairs from 'lodash/toPairs';
-import { AssetWithBalance } from '../../types/restake';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
+import useRestakeAssetMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetMap';
+import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
+import { AssetWithBalance } from '@webb-tools/tangle-shared-ui/types/restake';
+import toPairs from 'lodash/toPairs';
 import { useObservableState } from 'observable-hooks';
+import { PropsWithChildren, useMemo } from 'react';
+import { combineLatest, map } from 'rxjs';
 import RestakeContext from './RestakeContext';
 
 const RestakeContextProvider = (props: PropsWithChildren) => {

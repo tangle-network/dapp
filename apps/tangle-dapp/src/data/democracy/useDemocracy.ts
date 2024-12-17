@@ -1,9 +1,9 @@
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 
 import { SubstrateLockId } from '../../constants';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import useBalancesLock from '../balances/useBalancesLock';
 
 const useDemocracy = () => {

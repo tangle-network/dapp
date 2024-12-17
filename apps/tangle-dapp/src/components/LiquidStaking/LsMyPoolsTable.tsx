@@ -8,6 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { AddCircleLineIcon, SubtractCircleLineIcon } from '@webb-tools/icons';
+import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
   ActionsDropdown,
@@ -24,6 +25,7 @@ import {
 import { ActionItemType } from '@webb-tools/webb-ui-components/components/ActionsDropdown/types';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import assert from 'assert';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -35,8 +37,6 @@ import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
-import pluralize from '../../utils/pluralize';
-import { TableStatus } from '..';
 import BlueIconButton from '../BlueIconButton';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';

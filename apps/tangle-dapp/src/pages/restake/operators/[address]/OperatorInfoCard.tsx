@@ -3,9 +3,11 @@ import isValidUrl from '@webb-tools/dapp-types/utils/isValidUrl';
 import { ExternalLinkLine } from '@webb-tools/icons/ExternalLinkLine';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import type {
+  DelegatorInfo,
   OperatorMap,
   OperatorMetadata,
 } from '@webb-tools/tangle-shared-ui/types/restake';
+import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
 import { getAccountInfo } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import { Card, CardVariant } from '@webb-tools/webb-ui-components';
 import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
@@ -21,8 +23,6 @@ import { twMerge } from 'tailwind-merge';
 
 import AvatarWithText from '../../../../components/AvatarWithText';
 import ValidatorSocials from '../../../../components/ValidatorSocials';
-import type { DelegatorInfo } from '../../../../types/restake';
-import getTVLToDisplay from '../../../../utils/getTVLToDisplay';
 
 interface Props extends Partial<ComponentProps<typeof Card>> {
   operatorAddress: string;

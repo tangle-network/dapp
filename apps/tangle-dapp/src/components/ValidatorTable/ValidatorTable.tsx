@@ -8,6 +8,10 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
+import {
+  getSortAddressOrIdentityFnc,
+  sortBnValueForNomineeOrValidator,
+} from '@webb-tools/tangle-shared-ui/components/tables/utils';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { ExplorerType } from '@webb-tools/tangle-shared-ui/types';
 import {
@@ -22,17 +26,13 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { Link } from 'react-router';
 import { FC, useMemo, useState } from 'react';
 
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import { PagePath, Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import pluralize from '../../utils/pluralize';
-import {
-  getSortAddressOrIdentityFnc,
-  sortBnValueForNomineeOrValidator,
-} from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';

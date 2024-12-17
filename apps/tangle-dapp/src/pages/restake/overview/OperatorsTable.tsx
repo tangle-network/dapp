@@ -1,13 +1,16 @@
 import { Search } from '@webb-tools/icons/Search';
+import OperatorsTableUI from '@webb-tools/tangle-shared-ui/components/tables/Operators';
+import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
+import delegationsToVaultTokens from '@webb-tools/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
 import { Input } from '@webb-tools/webb-ui-components/components/Input';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { type ComponentProps, type FC, useMemo, useState } from 'react';
-
-import OperatorsTableUI from '../../../components/tables/Operators';
-import { useRestakeContext } from '../../../context/RestakeContext';
+import {
+  RestakeOperatorWrapper,
+  ViewOperatorWrapper,
+} from '../../../components/tables/RestakeActionWrappers';
 import useIdentities from '../../../data/useIdentities';
-import { delegationsToVaultTokens } from '../utils';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
@@ -71,6 +74,8 @@ const OperatorsTable: FC<Props> = ({
         globalFilter={globalFilter}
         onGlobalFilterChange={setGlobalFilter}
         data={operators}
+        ViewOperatorWrapper={ViewOperatorWrapper}
+        RestakeOperatorWrapper={RestakeOperatorWrapper}
       />
     </>
   );

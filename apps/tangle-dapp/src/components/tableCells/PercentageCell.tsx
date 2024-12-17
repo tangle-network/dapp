@@ -1,8 +1,7 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
 import { FC } from 'react';
-
-import formatFractional from '../../utils/formatFractional';
 
 export type PercentageCellProps = {
   fractional?: number;

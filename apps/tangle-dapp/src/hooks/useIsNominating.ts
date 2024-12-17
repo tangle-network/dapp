@@ -1,7 +1,6 @@
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { useCallback } from 'react';
-
-import useSubstrateAddress from './useSubstrateAddress';
 
 const useIsNominating = () => {
   const activeSubstrateAddress = useSubstrateAddress();

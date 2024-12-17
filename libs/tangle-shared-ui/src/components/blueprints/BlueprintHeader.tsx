@@ -1,12 +1,12 @@
 import { ArrowRight, GithubFill } from '@webb-tools/icons';
-import BoostedChip from '@webb-tools/tangle-shared-ui/components/blueprints/BoostedChip';
-import type { Blueprint } from '@webb-tools/tangle-shared-ui/types/blueprint';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { SocialChip } from '@webb-tools/webb-ui-components/components/SocialChip';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
+import type { Blueprint } from '../../types/blueprint';
+import BoostedChip from './BoostedChip';
 
 interface BlueprintHeaderProps {
   blueprint: Blueprint;

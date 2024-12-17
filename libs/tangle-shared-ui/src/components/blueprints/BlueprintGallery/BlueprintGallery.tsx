@@ -19,7 +19,6 @@ import { ComponentProps, FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import BlueprintItem from './BlueprintItem';
 import { BlueprintGalleryProps, BlueprintItemProps } from './types';
-import Link from 'next/link';
 
 const columnHelper = createColumnHelper<BlueprintItemProps>();
 
@@ -27,7 +26,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
   blueprints,
   isLoading,
   error,
-  getBlueprintUrl,
+  BlueprintItemWrapper,
 }) => {
   const [searchValue, setSearchValue] = useState('');
 
@@ -71,12 +70,12 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
       columnHelper.accessor('name', {
         header: () => 'Project',
         cell: (props) =>
-          typeof getBlueprintUrl === 'undefined' ? (
+          typeof BlueprintItemWrapper === 'undefined' ? (
             <BlueprintItem {...props.row.original} />
           ) : (
-            <Link href={getBlueprintUrl(props.row.original)}>
+            <BlueprintItemWrapper {...props.row.original}>
               <BlueprintItem {...props.row.original} /> :
-            </Link>
+            </BlueprintItemWrapper>
           ),
         filterFn: (row, _, filterValue) => {
           const { name, author, description } = row.original;
@@ -108,7 +107,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
         },
       }),
     ],
-    [getBlueprintUrl],
+    [BlueprintItemWrapper],
   );
 
   const table = useReactTable(

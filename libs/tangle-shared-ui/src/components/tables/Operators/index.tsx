@@ -1,4 +1,5 @@
 import {
+  ColumnDef,
   createColumnHelper,
   getCoreRowModel,
   getFilteredRowModel,
@@ -15,23 +16,22 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import { Link } from 'react-router';
-import { FC } from 'react';
+import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { PagePath, QueryParamKey } from '../../../types';
-import formatFractional from '../../../utils/formatFractional';
+import TableCellWrapper from '../../../components/tables/TableCellWrapper';
+import TableStatus from '../../../components/tables/TableStatus';
+import { getSortAddressOrIdentityFnc } from '../../../components/tables/utils';
+import { OperatorData } from '../../../types';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
-import pluralize from '../../../utils/pluralize';
-import { getSortAddressOrIdentityFnc } from '../../../utils/table';
-import { TableStatus } from '../../TableStatus';
-import TableCellWrapper from '../TableCellWrapper';
-import type { OperatorData, Props } from './types';
+
+import type { Props } from './types';
 import VaultsDropdown from './VaultsDropdown';
 
 const columnHelper = createColumnHelper<OperatorData>();
 
-const columns = [
+const staticColumns: ColumnDef<OperatorData, any>[] = [
   columnHelper.accessor('address', {
     header: () => 'Identity',
     cell: (props) => {
@@ -129,32 +129,6 @@ const columns = [
     },
     enableSorting: false,
   }),
-  columnHelper.display({
-    id: 'actions',
-    header: () => null,
-    cell: (props) => (
-      <TableCellWrapper removeRightBorder>
-        <div className="flex items-center justify-end flex-1 gap-2">
-          <Link
-            to={`${PagePath.RESTAKE_OPERATOR}/${props.row.original.address}`}
-          >
-            <Button variant="utility" className="uppercase body4">
-              View
-            </Button>
-          </Link>
-
-          <Link
-            to={`${PagePath.RESTAKE_STAKE}?${QueryParamKey.RESTAKE_OPERATOR}=${props.row.original.address}`}
-          >
-            <Button variant="utility" className="uppercase body4">
-              Restake
-            </Button>
-          </Link>
-        </div>
-      </TableCellWrapper>
-    ),
-    enableSorting: false,
-  }),
 ];
 
 const OperatorsTable: FC<Props> = ({
@@ -165,7 +139,50 @@ const OperatorsTable: FC<Props> = ({
   tableProps,
   globalFilter,
   onGlobalFilterChange,
+  ViewOperatorWrapper,
+  RestakeOperatorWrapper,
 }) => {
+  const columns = useMemo(
+    () =>
+      staticColumns.concat([
+        columnHelper.display({
+          id: 'actions',
+          header: () => null,
+          cell: (props) => (
+            <TableCellWrapper removeRightBorder>
+              <div className="flex items-center justify-end flex-1 gap-2">
+                {ViewOperatorWrapper ? (
+                  <ViewOperatorWrapper address={props.row.original.address}>
+                    <Button variant="utility" className="uppercase body4">
+                      View
+                    </Button>
+                  </ViewOperatorWrapper>
+                ) : (
+                  <Button variant="utility" className="uppercase body4">
+                    View
+                  </Button>
+                )}
+
+                {RestakeOperatorWrapper ? (
+                  <RestakeOperatorWrapper address={props.row.original.address}>
+                    <Button variant="utility" className="uppercase body4">
+                      Restake
+                    </Button>
+                  </RestakeOperatorWrapper>
+                ) : (
+                  <Button variant="utility" className="uppercase body4">
+                    Restake
+                  </Button>
+                )}
+              </div>
+            </TableCellWrapper>
+          ),
+          enableSorting: false,
+        }) satisfies ColumnDef<OperatorData>,
+      ]),
+    [ViewOperatorWrapper, RestakeOperatorWrapper],
+  );
+
   const table = useReactTable({
     data,
     columns,

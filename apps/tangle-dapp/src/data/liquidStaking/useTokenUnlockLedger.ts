@@ -3,11 +3,11 @@
 import '@webb-tools/tangle-restaking-types';
 
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useMemo } from 'react';
 
 import { LsParachainCurrencyKey } from '../../constants/liquidStaking/types';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import tangleTimeUnitToSimpleInstance from '../../utils/liquidStaking/tangleTimeUnitToSimpleInstance';
 
 // TODO: Providing a key here doesn't make much sense; find a way to get all the entries for the current account, without needing to provide a key.

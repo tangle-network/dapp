@@ -5,9 +5,9 @@ import {
   SortingFnOption,
 } from '@tanstack/react-table';
 import {
-  LiquidStakingItem,
   Collator,
   Dapp,
+  LiquidStakingItem,
   PhalaVaultOrStakePool,
   Validator,
 } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
@@ -21,12 +21,11 @@ import {
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
+import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
 import { useMemo } from 'react';
-
 import { StakingItemExternalLinkButton } from '../../components/LiquidStaking/StakingItemExternalLinkButton';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import calculateCommission from '../../utils/calculateCommission';
-import formatFractional from '../../utils/formatFractional';
 import RadioInput from './RadioInput';
 
 const validatorColumnHelper = createColumnHelper<Validator>();

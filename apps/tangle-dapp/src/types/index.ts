@@ -3,7 +3,7 @@ import type {
   SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { Nominee } from '@webb-tools/tangle-shared-ui/types';
 
 export enum PagePath {
   NOMINATION = '/nomination',
@@ -44,19 +44,6 @@ export type QueryParamValueOf<Key extends QueryParamKey> =
 export enum DelegationsAndPayoutsTab {
   NOMINATIONS = 'Nominations',
   PAYOUTS = 'Payouts',
-}
-
-export type BasicAccountInfo = {
-  address: SubstrateAddress;
-  identityName: string;
-};
-
-export interface Nominee extends BasicAccountInfo {
-  isActive: boolean;
-  commission: BN;
-  selfStakeAmount: BN;
-  totalStakeAmount: BN;
-  nominatorCount: number;
 }
 
 export interface Validator extends Nominee {}

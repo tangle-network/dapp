@@ -5,13 +5,12 @@ import type {
   PalletMultiAssetDelegationDelegatorWithdrawRequest,
 } from '@polkadot/types/lookup';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { map, of, switchMap } from 'rxjs';
-
+import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import type { DelegatorInfo } from '../../types/restake';
+import { DelegatorInfo } from '../../types/restake';
 
 export default function useRestakeDelegatorInfo() {
   const activeAddress = useSubstrateAddress();
