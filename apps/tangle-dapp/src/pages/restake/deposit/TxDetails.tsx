@@ -1,14 +1,13 @@
+import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { useMemo } from 'react';
 import { UseFormWatch } from 'react-hook-form';
-
 import DetailsContainer from '../../../components/DetailsContainer';
 import DetailItem from '../../../components/LiquidStaking/stakeAndUnstake/DetailItem';
-import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeRewardConfig from '../../../data/restake/useRestakeRewardConfig';
 import { DepositFormFields } from '../../../types/restake';
-import pluralize from '../../../utils/pluralize';
 
 type Props = {
   watch: UseFormWatch<DepositFormFields>;

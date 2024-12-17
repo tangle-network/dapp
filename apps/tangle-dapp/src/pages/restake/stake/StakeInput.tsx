@@ -1,6 +1,8 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
+import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
+import type { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
@@ -11,15 +13,10 @@ import type {
   UseFormWatch,
 } from 'react-hook-form';
 import { formatUnits } from 'viem';
-
 import AvatarWithText from '../../../components/AvatarWithText';
 import ErrorMessage from '../../../components/ErrorMessage';
-import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
-import type {
-  DelegationFormFields,
-  DelegatorInfo,
-} from '../../../types/restake';
+import type { DelegationFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import AssetPlaceholder from '../AssetPlaceholder';

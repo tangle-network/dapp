@@ -22,13 +22,13 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useLsValidators from '../../data/liquidStaking/useLsValidators';
 import { useLsValidatorSelectionTableColumns } from '../../data/liquidStaking/useLsValidatorSelectionTableColumns';
 import { LiquidStakingItemType } from '../../types/liquidStaking';
-import pluralize from '../../utils/pluralize';
 
 const DEFAULT_PAGINATION: PaginationState = {
   pageIndex: 0,

@@ -1,10 +1,10 @@
 import type { Evaluate } from '@webb-tools/dapp-types/utils/types';
-import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import { assetIdsQuery } from '@webb-tools/tangle-shared-ui/queries/restake/assetIds';
-import { rewardVaultRxQuery } from '@webb-tools/tangle-shared-ui/queries/restake/rewardVault';
 import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { map, type Observable } from 'rxjs';
+import usePolkadotApi from '../../hooks/usePolkadotApi';
+import { assetIdsQuery } from '../../queries/restake/assetIds';
+import { rewardVaultRxQuery } from '../../queries/restake/rewardVault';
 
 export type UseRestakeAssetIdsReturnType = {
   assetIds: string[];

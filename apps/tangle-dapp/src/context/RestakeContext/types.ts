@@ -1,6 +1,9 @@
-import { AssetMap } from '@webb-tools/tangle-shared-ui/types/restake';
+import {
+  AssetBalanceMap,
+  AssetMap,
+  AssetWithBalance,
+} from '@webb-tools/tangle-shared-ui/types/restake';
 import { Observable } from 'rxjs';
-import { AssetBalanceMap, AssetWithBalance } from '../../types/restake';
 
 export type RestakeContextType = {
   /**

@@ -1,4 +1,6 @@
 import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config/constants';
+import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
+import { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
 import { ListItem } from '@webb-tools/webb-ui-components/components/ListCard/ListItem';
@@ -6,10 +8,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatUnits } from 'viem';
-
 import AvatarWithText from '../../../components/AvatarWithText';
-import { useRestakeContext } from '../../../context/RestakeContext';
-import { DelegatorInfo } from '../../../types/restake';
 import ModalContent from '../ModalContent';
 import ModalContentList from '../ModalContentList';
 

@@ -8,109 +8,10 @@
  * with some casting and assertion functions.
  */
 
-import type {
-  PalletAssetsAccountStatus,
-  PalletAssetsExistenceReason,
-  PalletMultiAssetDelegationDelegatorDelegatorStatus,
-} from '@polkadot/types/lookup';
-import type { AssetMetadata } from '@webb-tools/tangle-shared-ui/types/restake';
-import type { TransformEnum } from '@webb-tools/tangle-shared-ui/types/utils';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 export type RewardVaultMap = {
   [vaultId: string]: string[] | null;
-};
-
-export type DelegatorWithdrawRequest = {
-  readonly assetId: string;
-  readonly amount: bigint;
-  readonly requestedRound: number;
-};
-
-export type DelegatorUnstakeRequest = {
-  readonly operatorAccountId: SubstrateAddress;
-  readonly assetId: string;
-  readonly amount: bigint;
-  readonly requestedRound: number;
-};
-
-export type DelegatorBondInfo = {
-  readonly operatorAccountId: SubstrateAddress;
-  readonly amountBonded: bigint;
-  readonly assetId: string;
-};
-
-/**
- * The status of a delegator.
- * @name PalletMultiAssetDelegationDelegatorDelegatorStatus (752)
- *
- * @field Active - The delegator is active.
- * @field { readonly LeavingScheduled: number } - The delegator has scheduled an exit to revoke all ongoing delegations.
- */
-export type DelegatorStatus =
-  TransformEnum<PalletMultiAssetDelegationDelegatorDelegatorStatus>;
-
-/**
- * Info of a delegator, including deposits, delegations, and requests.
- * @name PalletMultiAssetDelegationDelegatorDelegatorMetadata (742)
- */
-export type DelegatorInfo = {
-  readonly deposits: {
-    readonly [assetId: string]: {
-      amount: bigint;
-    };
-  };
-
-  readonly withdrawRequests: Array<DelegatorWithdrawRequest>;
-
-  readonly delegations: Array<DelegatorBondInfo>;
-
-  readonly unstakeRequests: Array<DelegatorUnstakeRequest>;
-
-  readonly status: DelegatorStatus;
-};
-
-/**
- * The reason for the existence of an asset account.
- *
- * @field "Consumer"
- * @field "Sufficient"
- * @field "DepositRefunded"
- * @field "DepositBurned"
- * @field { DepositHeld: string; }
- * @field { DepositFrom: ITuple<[AccountId32, u128]>; }
- */
-export type AssetAccountExistenceReason =
-  TransformEnum<PalletAssetsExistenceReason>;
-
-/**
- * The account balance of an asset and its status.
- * @name PalletAssetsAssetAccount
- */
-export type AssetBalance = {
-  readonly assetId: string;
-  readonly balance: bigint;
-
-  /**
-   * The status of the account.
-   *
-   * @field "Frozen"
-   * @field "Liquid"
-   * @field "Blocked"
-   */
-  readonly status: TransformEnum<PalletAssetsAccountStatus>;
-
-  readonly existenceReason: AssetAccountExistenceReason;
-};
-
-export type AssetBalanceMap = {
-  readonly [assetId: string]: AssetBalance;
-};
-
-export type AssetWithBalance = {
-  assetId: string;
-  metadata: AssetMetadata;
-  balance: AssetBalance | null;
 };
 
 /**

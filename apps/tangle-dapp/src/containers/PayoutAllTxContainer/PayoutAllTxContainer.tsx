@@ -1,3 +1,4 @@
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import {
   InputField,
   Modal,
@@ -13,7 +14,6 @@ import { type FC, useCallback, useEffect, useMemo } from 'react';
 import usePayoutAllTx, {
   MAX_PAYOUTS_BATCH_SIZE,
 } from '../../data/payouts/usePayoutAllTx';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { PayoutAllTxContainerProps } from './types';
 

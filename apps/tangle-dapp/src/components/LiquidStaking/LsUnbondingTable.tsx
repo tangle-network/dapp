@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { CheckboxCircleFill, TimeFillIcon } from '@webb-tools/icons';
+import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import {
   Table,
   TANGLE_DOCS_LIQUID_STAKING_URL,
@@ -14,13 +15,13 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { FC, useMemo, useState } from 'react';
 
 import { LsPoolUnstakeRequest } from '../../constants/liquidStaking/types';
 import useLsUnbonding from '../../data/liquidStaking/useLsUnbonding';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import pluralize from '../../utils/pluralize';
-import { ContainerSkeleton, TableStatus } from '..';
+import ContainerSkeleton from '../skeleton/ContainerSkeleton';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import LstIcon from './LstIcon';
 import WithdrawUnstakeRequestButton from './WithdrawUnstakeRequestButton';
@@ -50,7 +51,7 @@ const LsUnbondingTable: FC = () => {
       COLUMN_HELPER.accessor('poolId', {
         header: () => 'Pool ID',
         cell: (props) => (
-          <div className="flex gap-2 items-center justify-start">
+          <div className="flex items-center justify-start gap-2">
             <LstIcon
               lsProtocolId={props.row.original.poolProtocolId}
               iconUrl={props.row.original.poolIconUrl}
@@ -98,7 +99,7 @@ const LsUnbondingTable: FC = () => {
             progressText === undefined ? (
               <CheckboxCircleFill className="dark:fill-green-50" />
             ) : (
-              <div className="flex gap-1 items-center justify-center">
+              <div className="flex items-center justify-center gap-1">
                 <TimeFillIcon className="dark:fill-blue-50" /> {progressText}
               </div>
             );

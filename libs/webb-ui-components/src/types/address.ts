@@ -28,4 +28,5 @@ export type SubstrateBytes32Address = Brand<
 export type AnyAddress =
   | SubstrateAddress
   | SubstrateBytes32Address
-  | EvmAddress;
+  | EvmAddress
+  | string;

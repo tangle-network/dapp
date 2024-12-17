@@ -1,10 +1,10 @@
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
+import { Nominee } from '@webb-tools/tangle-shared-ui/types';
 import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import { Nominee } from '../../types/index';
 import createNominee from '../../utils/staking/createNominee';
 import useStakingExposures from '../staking/useStakingExposures';
 import useValidatorPrefs from '../staking/useValidatorPrefs';

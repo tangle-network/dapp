@@ -9,6 +9,7 @@ import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import useLocalStorage, {
   LocalStorageKey,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import {
   Card,
   CardVariant,
@@ -20,7 +21,6 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import TangleTokenIcon from '../../components/TangleTokenIcon';
 import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { StaticSearchQueryPath } from '../../types';
 import TransferTxContainer from '../TransferTxContainer/TransferTxContainer';
 import BalanceAction from './BalanceAction';

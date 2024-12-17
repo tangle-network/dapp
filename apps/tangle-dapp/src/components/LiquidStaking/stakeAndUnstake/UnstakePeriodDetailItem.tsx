@@ -1,10 +1,10 @@
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { FC } from 'react';
 
 import CrossChainTime from '../../../utils/CrossChainTime';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import pluralize from '../../../utils/pluralize';
 import DetailItem from './DetailItem';
 
 export type UnstakePeriodDetailItemProps = {

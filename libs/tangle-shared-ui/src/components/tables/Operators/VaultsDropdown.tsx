@@ -15,8 +15,8 @@ import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/get
 import cx from 'classnames';
 import { FC } from 'react';
 
+import { VaultToken } from '../../../types';
 import LsTokenIcon from '../../LsTokenIcon';
-import type { VaultToken } from './types';
 
 const columnHelper = createColumnHelper<VaultToken>();
 

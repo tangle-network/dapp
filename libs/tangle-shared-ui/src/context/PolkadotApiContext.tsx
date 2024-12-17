@@ -5,19 +5,9 @@ import { ApiPromise } from '@polkadot/api/promise';
 import { ApiRx } from '@polkadot/api/rx';
 import type { Maybe } from '@webb-tools/dapp-types/utils/types';
 import noop from 'lodash/noop';
-import {
-  createContext,
-  type Dispatch,
-  type FC,
-  type PropsWithChildren,
-  type SetStateAction,
-  useMemo,
-  useState,
-} from 'react';
-import useSWRImmutable from 'swr/immutable';
+import { createContext, type Dispatch, type SetStateAction } from 'react';
 import { Prettify } from 'viem/chains';
 import useNetworkStore from './useNetworkStore';
-import { getApiPromise, getApiRx } from '../utils/polkadot/api';
 
 export type PolkadotApiContextProps = Prettify<{
   apiPromise: ApiPromise;

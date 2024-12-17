@@ -1,5 +1,6 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
+import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import type { TokenSelectorProps } from '@webb-tools/webb-ui-components/components/TokenSelector/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
@@ -10,9 +11,7 @@ import type {
   UseFormWatch,
 } from 'react-hook-form';
 import { formatUnits } from 'viem';
-
 import ErrorMessage from '../../../components/ErrorMessage';
-import { useRestakeContext } from '../../../context/RestakeContext';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import { DepositFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';

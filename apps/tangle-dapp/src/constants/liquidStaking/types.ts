@@ -11,7 +11,7 @@ import {
   TANGLE_TESTNET_NATIVE_NETWORK,
   Network as TangleNetwork,
 } from '@webb-tools/webb-ui-components/constants/networks';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import type { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 import {
   LsNetworkEntityAdapter,

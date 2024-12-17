@@ -7,7 +7,7 @@ import type {
 import { formatBalance, hexToString } from '@polkadot/util';
 import type { Chain } from '@webb-tools/dapp-config';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
-import type { AssetMap, AssetMetadata } from '../../types/restake';
+import { AssetMap, AssetMetadata } from '../../types/restake';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
 import { fetchSingleTokenPrice, fetchTokenPrices } from '../tokenPrice';
 

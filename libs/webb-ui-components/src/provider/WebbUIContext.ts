@@ -1,3 +1,5 @@
+'use client';
+
 import LoggerService from '@webb-tools/browser-utils/logger/LoggerService';
 import noop from 'lodash/noop';
 import { createContext } from 'react';
