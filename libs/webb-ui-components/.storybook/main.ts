@@ -28,7 +28,6 @@ export default {
     getAbsolutePath('@storybook/addon-interactions'),
     getAbsolutePath('@storybook/theming'),
     getAbsolutePath('@storybook/addon-a11y'),
-    getAbsolutePath('@storybook/addon-webpack5-compiler-swc'),
     getAbsolutePath('@chromatic-com/storybook'),
     getAbsolutePath('@storybook/addon-themes'),
     '@nx/react/plugins/storybook',
