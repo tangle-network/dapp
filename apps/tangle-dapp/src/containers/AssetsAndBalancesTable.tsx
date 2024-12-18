@@ -24,7 +24,6 @@ import { FC, useCallback, useMemo, useState } from 'react';
 
 import StatItem from '../components/StatItem';
 import { HeaderCell } from '../components/tableCells';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import { ArrowRight } from '@webb-tools/icons';
 import { PagePath } from '../types';
 import { Link } from 'react-router';
@@ -73,24 +72,25 @@ const COLUMNS = [
     cell: (props) => {
       const name = props.row.original.name;
 
-      <TableCellWrapper className="pl-3">
-        <div className="flex items-center gap-2">
-          <LsTokenIcon name={props.row.original.iconName} size="lg" />
+      return (
+        <TableCellWrapper className="pl-3">
+          <div className="flex items-center gap-2">
+            <LsTokenIcon name={props.row.original.iconName} size="lg" />
+            {name !== undefined && (
+              <Typography variant="h5" className="whitespace-nowrap">
+                {name} name here
+              </Typography>
+            )}
 
-          {name !== undefined && (
-            <Typography variant="h5" className="whitespace-nowrap">
-              {name}
+            <Typography
+              variant="body1"
+              className="whitespace-nowrap dark:text-mono-100"
+            >
+              {props.getValue()}
             </Typography>
-          )}
-
-          <Typography
-            variant="body1"
-            className="whitespace-nowrap dark:text-mono-100"
-          >
-            {props.getValue()}
-          </Typography>
-        </div>
-      </TableCellWrapper>;
+          </div>
+        </TableCellWrapper>
+      );
     },
   }),
   COLUMN_HELPER.accessor('available', {
@@ -203,27 +203,28 @@ const COLUMNS = [
       );
     },
   }),
-  COLUMN_HELPER.accessor('points', {
-    header: () => (
-      <HeaderCell
-        title="Points"
-        tooltip="Points are relevant for the upcoming airdrop campaign."
-      />
-    ),
-    cell: (props) => {
-      const points = props.getValue();
+  // TODO: Hiding for now. See #2708.
+  // COLUMN_HELPER.accessor('points', {
+  //   header: () => (
+  //     <HeaderCell
+  //       title="Points"
+  //       tooltip="Points are relevant for the upcoming airdrop campaign."
+  //     />
+  //   ),
+  //   cell: (props) => {
+  //     const points = props.getValue();
 
-      if (points === undefined) {
-        return EMPTY_VALUE_PLACEHOLDER;
-      }
+  //     if (points === undefined) {
+  //       return EMPTY_VALUE_PLACEHOLDER;
+  //     }
 
-      return (
-        <TableCellWrapper>
-          <Typography variant="h5">{addCommasToNumber(points)}</Typography>
-        </TableCellWrapper>
-      );
-    },
-  }),
+  //     return (
+  //       <TableCellWrapper>
+  //         <Typography variant="h5">{addCommasToNumber(points)}</Typography>
+  //       </TableCellWrapper>
+  //     );
+  //   },
+  // }),
   COLUMN_HELPER.display({
     id: 'restake-action',
     header: () => null,

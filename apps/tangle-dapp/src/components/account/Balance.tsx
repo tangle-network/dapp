@@ -63,7 +63,7 @@ const Balance: FC = () => {
           <Typography
             onClick={() => setIsLockedBalanceDetailsModalOpen(true)}
             variant="body1"
-            className="!leading-none pb-1 flex gap-1 cursor-pointer dark:hover:text-mono-40 dark:text-mono-100"
+            className="!leading-none pb-1 flex items-center gap-1 cursor-pointer dark:hover:text-mono-40 dark:text-mono-100"
           >
             <LockFillIcon className="fill-current dark:fill-current" />
             {formattedLockedBalance} locked
