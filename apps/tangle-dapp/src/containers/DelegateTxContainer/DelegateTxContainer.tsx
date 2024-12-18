@@ -1,5 +1,3 @@
-'use client';
-
 import { BN, BN_ZERO } from '@polkadot/util';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
@@ -12,6 +10,7 @@ import {
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import assert from 'assert';
 import { type FC, useCallback, useState } from 'react';
@@ -25,7 +24,6 @@ import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { StakingRewardsDestination } from '../../types';
-import pluralize from '../../utils/pluralize';
 import SelectValidators from '../UpdateNominationsTxContainer/SelectValidators';
 import BondTokens from './BondTokens';
 import { DelegateTxContainerProps, DelegateTxSteps } from './types';

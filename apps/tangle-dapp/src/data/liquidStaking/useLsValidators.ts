@@ -2,9 +2,9 @@ import { BN_ZERO } from '@polkadot/util';
 import useLocalStorage, {
   LocalStorageKey,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
-import { LiquidStakingItem } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
+  LsProtocolId,
+  LiquidStakingItem,
   Collator,
   Dapp,
   PhalaVaultOrStakePool,

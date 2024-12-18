@@ -1,3 +1,5 @@
+'use client';
+
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { useContext, useEffect } from 'react';

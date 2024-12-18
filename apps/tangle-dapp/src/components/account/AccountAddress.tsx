@@ -1,5 +1,3 @@
-'use client';
-
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import { LoopRightFillIcon } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';

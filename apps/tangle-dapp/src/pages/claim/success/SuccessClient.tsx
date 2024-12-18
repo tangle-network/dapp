@@ -1,5 +1,3 @@
-'use client';
-
 import { ArrowRightUp, ShieldedCheckLineIcon } from '@webb-tools/icons';
 import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubstrateExplorerUrl';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';

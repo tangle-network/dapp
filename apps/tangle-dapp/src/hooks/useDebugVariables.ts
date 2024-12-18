@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect } from 'react';
 
 export default function useDebugVariables(variables: Record<string, unknown>) {

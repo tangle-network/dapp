@@ -1,7 +1,7 @@
 'use client';
 
 import { SnackbarProvider } from 'notistack';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { NotificationItem } from './NotificationItem';
 import { NotificationStacked } from './NotificationStacked';

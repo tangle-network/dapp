@@ -1,4 +1,4 @@
-name: Auto Sync Master with Develop
+name: 'Auto Sync `master` with `develop`'
 
 on:
   push:

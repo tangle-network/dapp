@@ -8,7 +8,7 @@ import {
 import type { ComponentProps, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-export enum NotificationVariant {
+enum NotificationVariant {
   PENDING = 'pending',
   SUCCESS = 'success',
 }
@@ -44,22 +44,20 @@ export function ExpandTableButton({
           <DoubleArrowRightIcon />
 
           {notificationVariant && (
-            <>
-              <span className="absolute top-0 right-0 flex w-2 h-2 -mt-0.5 -mr-0.5">
-                <span
-                  className={twMerge(
-                    'absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping',
-                    colorClasses[notificationVariant].back,
-                  )}
-                />
-                <span
-                  className={twMerge(
-                    'relative inline-flex w-2 h-2 rounded-full',
-                    colorClasses[notificationVariant].front,
-                  )}
-                />
-              </span>
-            </>
+            <span className="absolute top-0 right-0 flex w-2 h-2 -mt-0.5 -mr-0.5">
+              <span
+                className={twMerge(
+                  'absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping',
+                  colorClasses[notificationVariant].back,
+                )}
+              />
+              <span
+                className={twMerge(
+                  'relative inline-flex w-2 h-2 rounded-full',
+                  colorClasses[notificationVariant].front,
+                )}
+              />
+            </span>
           )}
         </IconButton>
       </TooltipTrigger>

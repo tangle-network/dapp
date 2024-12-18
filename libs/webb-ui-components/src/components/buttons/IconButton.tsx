@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { IconButtonProps } from './types';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';

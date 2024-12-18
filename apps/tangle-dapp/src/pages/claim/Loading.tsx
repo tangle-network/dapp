@@ -1,4 +1,4 @@
-import { Spinner } from '@webb-tools/icons/Spinner';
+import Spinner from '@webb-tools/icons/Spinner';
 import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
 
 export default function Loading() {

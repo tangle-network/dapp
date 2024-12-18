@@ -28,7 +28,7 @@ import RestakeWithdrawPage from '../pages/restake/withdraw';
 
 // TODO: Add metadata tags for SEO
 
-export function App() {
+function App() {
   return (
     <div>
       <Providers>
@@ -115,4 +115,5 @@ export function App() {
     </div>
   );
 }
+
 export default App;

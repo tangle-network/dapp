@@ -1,5 +1,3 @@
-'use client';
-
 import { BN } from '@polkadot/util';
 
 import { useBalancesContext } from '../../context/BalancesContext';

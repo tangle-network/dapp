@@ -1,5 +1,3 @@
-'use client';
-
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -8,12 +6,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import { fuzzyFilter, Table, Typography } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import cx from 'classnames';
 import { FC } from 'react';
 
-import { TableStatus } from '../../../components';
 import ContainerSkeleton from '../../../components/skeleton/ContainerSkeleton';
 import { HeaderCell } from '../../../components/tableCells';
 import useNodeSpecifications from '../../../data/validatorDetails/useNodeSpecifications';

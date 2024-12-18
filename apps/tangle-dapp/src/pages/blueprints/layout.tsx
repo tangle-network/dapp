@@ -1,7 +1,7 @@
-import { PolkadotApiProvider } from '@webb-tools/tangle-shared-ui/context/PolkadotApiContext';
+import PolkadotApiProvider from '@webb-tools/tangle-shared-ui/context/PolkadotApiProvider';
+import { RestakeContextProvider } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 
 import { Outlet } from 'react-router';
-import { RestakeContextProvider } from '../../context/RestakeContext';
 
 export default function Layout() {
   return (

@@ -1,5 +1,3 @@
-'use client';
-
 import { BN } from '@polkadot/util';
 import { WalletFillIcon, WalletLineIcon } from '@webb-tools/icons';
 import {

@@ -1,5 +1,5 @@
 import { Close } from '@webb-tools/icons/Close';
-import React, { useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';
 import { Button } from '../buttons';
@@ -20,7 +20,7 @@ import { BannerPropsType } from './types';
   </Banner>
  * ```
  */
-export const Banner = React.forwardRef<HTMLDivElement, BannerPropsType>(
+export const Banner = forwardRef<HTMLDivElement, BannerPropsType>(
   (props, ref) => {
     const {
       onClose,

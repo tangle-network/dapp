@@ -5,7 +5,7 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import react from '@vitejs/plugin-react-swc';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import preserveDirectives from 'rollup-plugin-preserve-directives';
+import { preserveDirectives } from 'rollup-plugin-preserve-directives';
 import dts from 'vite-plugin-dts';
 import wasm from 'vite-plugin-wasm';
 

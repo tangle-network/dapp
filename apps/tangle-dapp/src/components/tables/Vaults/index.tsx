@@ -1,5 +1,3 @@
-'use client';
-
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -10,21 +8,21 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChevronUp } from '@webb-tools/icons/ChevronUp';
+import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
+import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
+import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
+import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
 import { Link } from 'react-router';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath, QueryParamKey } from '../../../types';
-import formatFractional from '../../../utils/formatFractional';
-import getTVLToDisplay from '../../../utils/getTVLToDisplay';
-import LsTokenIcon from '../../LsTokenIcon';
-import { TableStatus } from '../../TableStatus';
-import TableCellWrapper from '../TableCellWrapper';
 import type { Props, VaultData } from './types';
 import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
 import pluralize from '../../../utils/pluralize';

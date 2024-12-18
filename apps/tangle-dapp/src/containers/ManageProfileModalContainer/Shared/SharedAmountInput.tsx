@@ -9,7 +9,7 @@ import useInputAmount from '../../../hooks/useInputAmount';
 import {
   ERROR_MIN_RESTAKING_BOND,
   ERROR_NOT_ENOUGH_BALANCE,
-} from '../Independent/IndependentAllocationInput';
+} from '../constants';
 
 export type SharedAmountInputProps = {
   id: string;

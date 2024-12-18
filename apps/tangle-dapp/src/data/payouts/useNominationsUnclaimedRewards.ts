@@ -1,9 +1,9 @@
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import useCurrentEra from '../staking/useCurrentEra';
 import { ValidatorReward } from '../types';
 import useClaimedRewards from './useClaimedRewards';

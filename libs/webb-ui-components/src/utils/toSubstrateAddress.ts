@@ -1,7 +1,7 @@
 import { encodeAddress, evmToAddress } from '@polkadot/util-crypto';
+import assertSubstrateAddress from './assertSubstrateAddress';
 
 import { AnyAddress, SubstrateAddress } from '../types/address';
-import assertSubstrateAddress from './assertSubstrateAddress';
 import { isEvmAddress } from './isEvmAddress20';
 
 /**
@@ -38,3 +38,5 @@ export const toSubstrateAddress = (
     return assertSubstrateAddress(encodeAddress(address, ss58Format));
   }
 };
+
+export default toSubstrateAddress;

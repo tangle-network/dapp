@@ -1,5 +1,5 @@
 import { Close, FileShieldLine } from '@webb-tools/icons';
-import Decimal from 'decimal.js';
+import { Decimal } from 'decimal.js';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -14,7 +14,7 @@ import TxConfirmationRing from '../../components/TxConfirmationRing';
 import { formatTokenAmount } from './utils';
 import AmountInfo from './AmountInfo';
 import SpendNoteInput from './SpendNoteInput';
-import WrapperSection from './WrapperSection';
+import { WrapperSection } from './WrapperSection';
 import { DepositConfirmProps } from './types';
 
 export const DepositConfirm = forwardRef<HTMLDivElement, DepositConfirmProps>(

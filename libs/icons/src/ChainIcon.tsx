@@ -1,5 +1,5 @@
-import React, { cloneElement, useMemo } from 'react';
-import { Spinner } from './Spinner';
+import { cloneElement, useMemo } from 'react';
+import Spinner from './Spinner';
 import StatusIndicator from './StatusIndicator/StatusIndicator';
 import { StatusIndicatorProps } from './StatusIndicator/types';
 import { useDynamicSVGImport } from './useDynamicSVGImport';
@@ -7,8 +7,11 @@ import { TokenIconBase } from './types';
 import { getIconSizeInPixel } from './utils';
 
 export const ChainIcon: React.FC<
-  TokenIconBase & { status?: StatusIndicatorProps['variant'] }
-> = ({ status, ...props }) => {
+  TokenIconBase & {
+    status?: StatusIndicatorProps['variant'];
+    spinnersize?: TokenIconBase['size'];
+  }
+> = ({ status, spinnersize, ...props }) => {
   const {
     className,
     name: nameProp,
@@ -37,7 +40,7 @@ export const ChainIcon: React.FC<
   }
 
   if (loading) {
-    return <Spinner {...props} />;
+    return <Spinner {...props} size={spinnersize} />;
   }
 
   if (svgElement) {

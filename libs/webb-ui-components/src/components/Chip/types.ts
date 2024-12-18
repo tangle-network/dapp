@@ -1,4 +1,4 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import { WebbComponentBase } from '../../types';
 
 export type ChipColors =
@@ -27,7 +27,7 @@ export interface ChipProps extends WebbComponentBase {
    */
   isDisabled?: boolean;
   isSelected?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export type ChipClassNames = {

@@ -1,5 +1,3 @@
-'use client';
-
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -16,6 +14,10 @@ import {
 } from '@tanstack/react-table';
 import { Search } from '@webb-tools/icons';
 import {
+  getSortAddressOrIdentityFnc,
+  sortBnValueForNomineeOrValidator,
+} from '@webb-tools/tangle-shared-ui/components/tables/utils';
+import {
   AmountFormatStyle,
   Avatar,
   CheckBox,
@@ -27,24 +29,22 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import cx from 'classnames';
-import React, {
+import {
   FC,
   startTransition,
   useEffect,
   useMemo,
   useRef,
   useState,
+  memo,
 } from 'react';
 
 import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import formatFractional from '../../utils/formatFractional';
-import {
-  getSortAddressOrIdentityFnc,
-  sortBnValueForNomineeOrValidator,
-} from '../../utils/table';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorSelectionTableProps } from './types';
@@ -315,4 +315,4 @@ const sortValidatorsBy = (
   return sortFn(rowA, rowB, columnId);
 };
 
-export default React.memo(ValidatorSelectionTable);
+export default memo(ValidatorSelectionTable);

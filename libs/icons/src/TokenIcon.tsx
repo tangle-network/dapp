@@ -1,18 +1,18 @@
 'use client';
 
 import cx from 'classnames';
-import React, { MouseEventHandler, cloneElement, useMemo } from 'react';
-
-import { Spinner } from './Spinner';
-import { useDynamicSVGImport } from './useDynamicSVGImport';
-import { TokenIconBase } from './types';
-import { getIconSizeInPixel } from './utils';
+import { MouseEventHandler, cloneElement, useMemo, useRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import Spinner from './Spinner';
+import { TokenIconBase } from './types';
+import { useDynamicSVGImport } from './useDynamicSVGImport';
+import { getIconSizeInPixel } from './utils';
 
 export const TokenIcon: React.FC<
   TokenIconBase & {
     isActive?: boolean;
     customLoadingCmp?: React.ReactNode;
+    spinnersize?: TokenIconBase['size'];
   }
 > = (props) => {
   const {
@@ -24,6 +24,7 @@ export const TokenIcon: React.FC<
     size = 'md',
     onClick,
     customLoadingCmp,
+    spinnersize,
     ...restProps
   } = props;
 
@@ -48,14 +49,14 @@ export const TokenIcon: React.FC<
   );
 
   // Prevent infinite loop when the passed onClick not use useCallback
-  const onClickRef = React.useRef<
+  const onClickRef = useRef<
     MouseEventHandler<SVGElement | HTMLDivElement> | undefined
   >(onClick);
 
   if (error !== undefined) {
     return <span>{error.message}</span>;
   } else if (loading) {
-    return customLoadingCmp ?? <Spinner {...props} />;
+    return customLoadingCmp ?? <Spinner {...props} size={spinnersize} />;
   }
 
   if (svgElement) {

@@ -1,4 +1,4 @@
-import React, { createElement, useMemo } from 'react';
+import { createElement, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import type { WebbTypographyProps } from '../types';

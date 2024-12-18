@@ -1,9 +1,8 @@
-'use client';
-
 import {
   useConnectWallet,
   useWebContext,
 } from '@webb-tools/api-provider-environment';
+import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import {
   ActionsDropdown,
   Button,
@@ -25,7 +24,6 @@ import {
   ContainerSkeleton,
   NominationsTable,
   PayoutTable,
-  TableStatus,
 } from '../../components';
 import useNominations from '../../data/NominationsPayouts/useNominations';
 import usePayouts from '../../data/NominationsPayouts/usePayouts';
@@ -337,7 +335,7 @@ const ManageNominationsButton: FC<ManageNominationsButtonProps> = ({
   onStopNomination,
 }) => {
   return (
-    <div className="items-center space-x-2 flex">
+    <div className="flex items-center space-x-2">
       <ActionsDropdown
         buttonText="Manage"
         actionItems={[
@@ -381,7 +379,7 @@ function FilterByErasContainer() {
     });
 
   return (
-    <div className="items-center space-x-2 flex">
+    <div className="flex items-center space-x-2">
       <ActionsDropdown
         buttonText={`Last ${activeEraRange} eras`}
         actionItems={actionItems}

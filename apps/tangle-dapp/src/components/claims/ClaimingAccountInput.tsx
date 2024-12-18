@@ -1,5 +1,3 @@
-'use client';
-
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { ChevronDown } from '@webb-tools/icons';

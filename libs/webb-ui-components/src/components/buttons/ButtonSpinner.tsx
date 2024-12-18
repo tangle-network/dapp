@@ -1,9 +1,9 @@
-import { Spinner } from '@webb-tools/icons/Spinner';
-import React from 'react';
+import Spinner from '@webb-tools/icons/Spinner';
+import { type FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ButtonSpinnerProps } from './types';
 
-const ButtonSpinner: React.FC<ButtonSpinnerProps> = (props) => {
+const ButtonSpinner: FC<ButtonSpinnerProps> = (props) => {
   const {
     children = <Spinner darkMode={props.darkMode} className="w-5 h-5" />,
     className,

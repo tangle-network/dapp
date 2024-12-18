@@ -1,5 +1,3 @@
-'use client';
-
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -9,6 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ArrowRight } from '@webb-tools/icons';
+import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import {
   AmountFormatStyle,
   Avatar,
@@ -23,10 +22,10 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { TableStatus } from '../../components';
 import LstIcon from '../../components/LiquidStaking/LstIcon';
 import PercentageCell from '../../components/tableCells/PercentageCell';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
@@ -35,7 +34,6 @@ import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingInten
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
-import pluralize from '../../utils/pluralize';
 
 export type LsPoolsTableProps = {
   pools: LsPool[];
@@ -67,7 +65,7 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
     COLUMN_HELPER.accessor('id', {
       header: () => 'ID',
       cell: (props) => (
-        <div className="flex gap-2 items-center justify-start">
+        <div className="flex items-center justify-start gap-2">
           <LstIcon
             lsProtocolId={props.row.original.protocolId}
             iconUrl={props.row.original.iconUrl}

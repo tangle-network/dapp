@@ -1,8 +1,8 @@
 'use client';
 
-import { calculateDateProgress, formatDateToUtc } from '../../utils';
-import React, { useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { calculateDateProgress, formatDateToUtc } from '../../utils';
 
 import { LabelWithValue } from '../LabelWithValue';
 import { Progress } from '../Progress';
@@ -17,7 +17,7 @@ import { TimeProgressProps } from './types';
  *  <TimeProgress startTime="Sep 09 2022 (15:08:51 PM UTC)" endTime="Sep 09 2022 (15:08:51 PM UTC)" />
  * ```
  */
-export const TimeProgress = React.forwardRef<HTMLDivElement, TimeProgressProps>(
+export const TimeProgress = forwardRef<HTMLDivElement, TimeProgressProps>(
   ({ endTime, now, startTime, labelClassName, ...props }, ref) => {
     const [dateProgress, setDateProgress] = useState<number | null>(
       calculateDateProgress(startTime, endTime, now),

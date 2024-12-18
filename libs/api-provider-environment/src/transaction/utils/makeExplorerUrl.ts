@@ -76,5 +76,3 @@ export const makeExplorerUrl = (
     }
   }
 };
-
-export default makeExplorerUrl;

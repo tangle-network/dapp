@@ -1,5 +1,3 @@
-'use client';
-
 import { Footer } from '@webb-tools/webb-ui-components';
 import {
   bottomLinks,
@@ -11,14 +9,12 @@ import {
 import { useLayoutBgClassName } from '@webb-tools/tangle-shared-ui/hooks/useLayoutBgClassName';
 import { type FC, type PropsWithChildren } from 'react';
 
-import {
-  BridgeTxQueueDropdown,
-  MobileSidebar,
-  Sidebar,
-} from '../../components';
+import { MobileSidebar, Sidebar } from '../../components';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import ApiDevStatsContainer from '../DebugMetricsContainer';
 import WalletAndChainContainer from '../WalletAndChainContainer/WalletAndChainContainer';
+
+import BridgeTxQueueDropdown from '../../pages/bridge/components/BridgeTxQueueDropdown';
 
 // Some specific overrides for the social links for use in the
 // footer in Tangle dApp, since it defaults to the Webb socials.
@@ -58,7 +54,7 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
               <div className="flex items-center gap-2">
                 <WalletAndChainContainer />
 
-                <BridgeTxQueueDropdown />
+                <BridgeTxQueueDropdown dropdownButtonClassName="h-[52px]" />
               </div>
             </div>
 

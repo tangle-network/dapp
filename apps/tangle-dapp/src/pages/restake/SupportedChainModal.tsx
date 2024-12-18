@@ -1,6 +1,5 @@
 import { chainsConfig } from '@webb-tools/dapp-config';
-import type { ComponentProps } from 'react';
-import React from 'react';
+import type { ComponentProps, FC } from 'react';
 
 import { ChainList } from '../../components/Lists/ChainList';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../constants/restake';
@@ -12,11 +11,7 @@ type Props = {
   onChainChange: ComponentProps<typeof ChainList>['onSelectChain'];
 };
 
-const SupportedChainModal: React.FC<Props> = ({
-  isOpen,
-  onChainChange,
-  onClose,
-}) => {
+const SupportedChainModal: FC<Props> = ({ isOpen, onChainChange, onClose }) => {
   return (
     <ModalContent
       isOpen={isOpen}

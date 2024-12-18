@@ -7,7 +7,7 @@ import useApi from '../../../hooks/useApi';
 import calculateTimeRemaining from '../../../utils/calculateTimeRemaining';
 import getBlockDate from '../../../utils/getBlockDate';
 import TextCell from './TextCell';
-import { sortVestingSchedulesAscending } from './VestingScheduleBalances';
+import { sortVestingSchedulesAscending } from './utils';
 
 const VestingSchedulesUnlockingAt: FC = () => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();

@@ -15,7 +15,7 @@ export { default as ArrowLeftRightLineIcon } from './ArrowLeftRightLineIcon';
 export * from './ArrowRight';
 export * from './ArrowRightUp';
 export * from './AuctionLine';
-export * from './BackspaceDeleteFillIcon';
+export { default as BackspaceDeleteFillIcon } from './BackspaceDeleteFillIcon';
 export * from './BankLine';
 export * from './BellIcon';
 export { default as BillFillIcon } from './BillFillIcon';
@@ -87,6 +87,7 @@ export * from './GridFillIcon';
 export { default as GroupLine } from './GroupLine';
 export * from './HamburgerMenu';
 export * from './HelpLineIcon';
+export * from './HomeFillIcon';
 export * from './IndeterminateCircleFillIcon';
 export * from './IndeterminateCircleLineIcon';
 export * from './InformationLine';
@@ -119,14 +120,13 @@ export { default as SettingsFillIcon } from './SettingsFillIcon';
 export { default as ShieldedAssetIcon } from './ShieldedAssetIcon';
 export { default as ShieldedCheckLineIcon } from './ShieldedCheckLineIcon';
 export { default as ShieldKeyholeFillIcon } from './ShieldKeyholeFillIcon';
-export * from './ShieldKeyholeLineIcon';
 export { default as ShieldKeyholeLineIcon } from './ShieldKeyholeLineIcon';
 export * from './ShuffleLine';
 export { default as SideBarLine } from './SideBarLine';
 export * from './SosLineIcon';
 export { default as SpamLineIcon } from './SpamLineIcon';
 export * from './SparklingIcon';
-export * from './Spinner';
+export { default as Spinner } from './Spinner';
 export { default as StarLineIcon } from './StarLineIcon';
 export * from './SubtractCircleLineIcon';
 export * from './SunLine';
@@ -154,7 +154,6 @@ export { default as WalletPayIcon } from './WalletPayIcon';
 export * from './WaterDropletIcon';
 export { default as WebbLogoIcon } from './WebbLogoIcon';
 export * from './YouTubeFill';
-export * from './HomeFillIcon';
 
 // Wallet icons
 export * from './wallets';
@@ -168,7 +167,6 @@ export * from './PartyFill';
 export * from './Tangle';
 export * from './TangleIcon';
 
-export * from './StatusIndicator';
 export { default as StatusIndicator } from './StatusIndicator';
 
 // Proposal Badges

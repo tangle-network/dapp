@@ -1,4 +1,3 @@
-import React from 'react';
 import { TangleLogo } from '../TangleLogo';
 import { TangleLogoProps } from '../TangleLogo/types';
 import { Typography } from '../../typography/Typography/Typography';

@@ -5,7 +5,7 @@ export enum StakingEvmPayee {
   STASH = '0x0000000000000000000000000000000000000000000000000000000000000002',
 }
 
-export function getEvmPayeeValue(
+function getEvmPayeeValue(
   rewardsDestination: StakingRewardsDestination,
 ): StakingEvmPayee | null {
   switch (rewardsDestination) {

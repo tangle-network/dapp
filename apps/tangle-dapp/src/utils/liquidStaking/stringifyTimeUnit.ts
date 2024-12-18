@@ -1,5 +1,6 @@
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+
 import { LsParachainSimpleTimeUnit } from '../../constants/liquidStaking/types';
-import pluralize from '../pluralize';
 
 const stringifyTimeUnit = (
   timeUnit: LsParachainSimpleTimeUnit,

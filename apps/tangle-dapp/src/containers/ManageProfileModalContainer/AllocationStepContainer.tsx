@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 
 import AllocationChart, { AllocationChartProps } from './AllocationChart';
 
@@ -11,8 +11,8 @@ const AllocationStepContainer: FC<AllocationStepContainerProps> = ({
   ...allocationChartProps
 }) => {
   return (
-    <div className="flex flex-col-reverse sm:flex-row gap-5 items-center sm:items-start justify-center">
-      <div className="w-full flex flex-col gap-4 items-center justify-start min-w-max">
+    <div className="flex flex-col-reverse items-center justify-center gap-5 sm:flex-row sm:items-start">
+      <div className="flex flex-col items-center justify-start w-full gap-4 min-w-max">
         {children}
       </div>
 

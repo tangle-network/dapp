@@ -1,5 +1,3 @@
-'use client';
-
 import { BN, BN_ZERO } from '@polkadot/util';
 import {
   Caption,

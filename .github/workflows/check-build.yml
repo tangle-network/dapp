@@ -1,4 +1,4 @@
-name: build 🏗️
+name: 'Build 🏗️'
 
 on:
   pull_request:
@@ -35,31 +35,14 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: yarn
 
-      - name: create env file
-        run: |
-          touch .env
-          echo PRIVACY_POLICY_PAGE_ID=${{ secrets.PRIVACY_POLICY_PAGE_ID }} >> .env
-          echo TERMS_AND_CONDITIONS_PAGE_ID=${{ secrets.TERMS_AND_CONDITIONS_PAGE_ID }} >> .env
-
-          echo NOTION_TOKEN_V2=${{ secrets.NOTION_TOKEN_V2 }} >> .env
-          echo NOTION_ACTIVE_USER=${{ secrets.NOTION_ACTIVE_USER }} >> .env
-          echo NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_POSTS_DATABASE_ID }} >> .env
-          echo NOTION_BLOG_INTEGRATION_TOKEN=${{ secrets.NOTION_BLOG_INTEGRATION_TOKEN }} >> .env
-          echo NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID=${{ secrets.NOTION_BLOG_INTEGRATION_VIDEOS_DATABASE_ID }} >> .env
-
-          echo NEXT_PUBLIC_FAUCET_BACKEND_URL=${{ secrets.NEXT_PUBLIC_FAUCET_BACKEND_URL }} >> .env
-          echo NEXT_PUBLIC_TWITTER_CLIENT_ID=${{ secrets.NEXT_PUBLIC_TWITTER_CLIENT_ID }} >> .env
-          echo TWITTER_CLIENT_SECRET=${{ secrets.TWITTER_CLIENT_SECRET }} >> .env
-
-
-          echo BRIDGE_DAPP_DOMAIN=${{ secrets.BRIDGE_DAPP_DOMAIN }} >> .env
-          echo BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID=${{ secrets.BRIDGE_DAPP_WALLET_CONNECT_PROJECT_ID }} >> .env
-
       - name: Install deps
         run: yarn install
 
       - name: build
-        run: yarn nx run-many --all --target=build
+        run: |
+          yarn nx run-many --all --target=build
+          yarn nx build-storybook webb-ui-components
+
         # Fix: JavaScript heap out of memory
         # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
         env:

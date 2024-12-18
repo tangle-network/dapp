@@ -1,12 +1,12 @@
 import { ChevronLeft, ChevronRight } from '@webb-tools/icons';
-import { getPaginationItems } from '../../utils';
 import cx from 'classnames';
-import React, { useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { getPaginationItems } from '../../utils';
 
 import { PaginationProps } from './types';
 
-export const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
+export const Pagination = forwardRef<HTMLDivElement, PaginationProps>(
   (
     {
       boundaryCount,

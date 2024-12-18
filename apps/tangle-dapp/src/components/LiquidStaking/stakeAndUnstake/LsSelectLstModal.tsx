@@ -10,6 +10,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -17,12 +18,12 @@ import {
   LsPool,
   LsPoolDisplayName,
 } from '../../../constants/liquidStaking/types';
-import formatFractional from '../../../utils/formatFractional';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import { ListCardWrapper } from '../../Lists/ListCardWrapper';
 import ListStatus from '../../ListStatus';
 import SkeletonRows from '../../SkeletonRows';
-import LstIcon, { LstIconSize } from '../LstIcon';
+import LstIcon from '../LstIcon';
+import { LstIconSize } from '../types';
 
 export type LsSelectLstModalProps = {
   pools: LsPool[] | Error | null;

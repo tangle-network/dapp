@@ -1,4 +1,4 @@
-export enum EVMChainId {
+enum EVMChainId {
   /* Default EVM Chains on MetaMask */
   EthereumMainNet = 1,
   Goerli = 5,
@@ -17,6 +17,13 @@ export enum EVMChainId {
   MoonbaseAlpha = 1287,
   AvalancheFuji = 43113,
   ScrollSepolia = 534351,
+
+  Polygon = 137,
+  Arbitrum = 42161,
+  Optimism = 10,
+  Linea = 59144,
+  Base = 8453,
+  BSC = 56,
 
   TangleLocalEVM = 3287,
   TangleTestnetEVM = 3799,

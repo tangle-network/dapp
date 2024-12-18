@@ -7,6 +7,7 @@ const configValues = { default: {}, ci: {} };
 // Determine the correct configValue to use based on the configuration
 const nxConfiguration = process.env.NX_TASK_TARGET_CONFIGURATION ?? 'default';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const options = {
   ...configValues.default,
   // @ts-expect-error: Ignore TypeScript error for indexing configValues with a dynamic key
@@ -27,7 +28,6 @@ export default {
     getAbsolutePath('@storybook/addon-interactions'),
     getAbsolutePath('@storybook/theming'),
     getAbsolutePath('@storybook/addon-a11y'),
-    getAbsolutePath('@storybook/addon-webpack5-compiler-swc'),
     getAbsolutePath('@chromatic-com/storybook'),
     getAbsolutePath('@storybook/addon-themes'),
     '@nx/react/plugins/storybook',

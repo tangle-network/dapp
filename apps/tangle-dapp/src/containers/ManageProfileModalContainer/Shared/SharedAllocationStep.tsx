@@ -6,9 +6,8 @@ import { FC, useCallback, useEffect, useState } from 'react';
 
 import { RestakingService } from '../../../types';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
-import { AllocationChartVariant } from '../AllocationChart';
 import AllocationStepContainer from '../AllocationStepContainer';
-import { RestakingAllocationMap } from '../types';
+import { AllocationChartVariant, RestakingAllocationMap } from '../types';
 import SharedAmountInput from './SharedAmountInput';
 import SharedRolesInput from './SharedRolesInput';
 

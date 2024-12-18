@@ -1,5 +1,3 @@
-'use client';
-
 import { useSearchParams } from 'react-router';
 import { useCallback, useEffect, useRef } from 'react';
 import { create } from 'zustand';

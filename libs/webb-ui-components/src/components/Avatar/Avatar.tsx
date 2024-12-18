@@ -1,6 +1,6 @@
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import cx from 'classnames';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Typography } from '../../typography/Typography';

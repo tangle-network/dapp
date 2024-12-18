@@ -1,9 +1,9 @@
 import { FC } from 'react';
 
-import BridgeContainer from './BridgeContainer';
+import BridgeContainer from './containers/BridgeContainer';
 
 const Bridge: FC = () => {
-  return <BridgeContainer className="mx-auto" />;
+  return <BridgeContainer />;
 };
 
 export default Bridge;

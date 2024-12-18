@@ -1,5 +1,3 @@
-'use client';
-
 import { MobileSidebar as MobileSidebarCmp } from '@webb-tools/webb-ui-components';
 import { useLocation } from 'react-router';
 import { FC } from 'react';

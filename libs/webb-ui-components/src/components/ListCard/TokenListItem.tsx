@@ -7,7 +7,7 @@ import {
   ShieldedAssetIcon,
   TokenIcon,
 } from '@webb-tools/icons';
-import React, { ComponentProps, forwardRef, useMemo, useRef } from 'react';
+import { ComponentProps, forwardRef, useMemo, useRef } from 'react';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';

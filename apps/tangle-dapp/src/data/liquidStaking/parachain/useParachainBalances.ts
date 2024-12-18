@@ -1,16 +1,14 @@
-'use client';
-
 // This will override global types and provide type definitions for
 // the Tangle Restaking Parachain's pallets and extrinsics.
 import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 import { useCallback, useMemo } from 'react';
 
 import { LsParachainToken } from '../../../constants/liquidStaking/types';
-import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import isLsParachainToken from '../../../utils/liquidStaking/isLsParachainToken';
 
 const useParachainBalances = () => {

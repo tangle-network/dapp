@@ -1,5 +1,3 @@
-'use client';
-
 import { DeriveSessionProgress } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
 import {
@@ -12,6 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { WalletPayIcon } from '@webb-tools/icons';
+import { sortBnValueForPayout } from '@webb-tools/tangle-shared-ui/components/tables/utils';
 import {
   AddressWithIdentity,
   Payout,
@@ -27,12 +26,11 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { type FC, useState } from 'react';
 
 import PayoutTxContainer from '../../containers/PayoutTxContainer/PayoutTxContainer';
 import { PayoutTxProps } from '../../containers/PayoutTxContainer/types';
-import pluralize from '../../utils/pluralize';
-import { sortBnValueForPayout } from '../../utils/table';
 import { HeaderCell, StringCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { PayoutTableProps } from './types';

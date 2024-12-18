@@ -6,7 +6,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { type FC, useCallback } from 'react';
-import z from 'zod';
+import { z } from 'zod';
 
 import AmountInput from '../../components/AmountInput';
 import {

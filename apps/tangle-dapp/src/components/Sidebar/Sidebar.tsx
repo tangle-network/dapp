@@ -1,5 +1,3 @@
-'use client';
-
 import { SideBar as SideBarCmp } from '@webb-tools/webb-ui-components';
 import { setSidebarCookieOnToggle } from '@webb-tools/webb-ui-components/next-utils';
 import { useLocation } from 'react-router';

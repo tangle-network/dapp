@@ -1,5 +1,3 @@
-'use client';
-
 import NetworkSelectorDropdown from '@webb-tools/tangle-shared-ui/components/NetworkSelectorDropdown';
 import { useLocation } from 'react-router';
 import { type FC } from 'react';

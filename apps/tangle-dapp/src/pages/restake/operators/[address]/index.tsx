@@ -1,15 +1,12 @@
-'use client';
-
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { notFound } from 'next/navigation';
 import { ComponentProps, useMemo } from 'react';
 
+import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
+import useRestakeTVL from '@webb-tools/tangle-shared-ui/data/restake/useRestakeTVL';
 import { useParams } from 'react-router';
 import useOperatorBlueprints from '../../../../data/blueprints/useOperatorBlueprints';
-import useRestakeDelegatorInfo from '../../../../data/restake/useRestakeDelegatorInfo';
-import useRestakeTVL from '../../../../data/restake/useRestakeTVL';
 import OperatorInfoCard from './OperatorInfoCard';
 import RegisteredBlueprintsCard from './RegisteredBlueprintsCard';
 import TVLTable from './TVLTable';
@@ -45,8 +42,9 @@ const Page = () => {
     [blueprints],
   );
 
+  // TODO: Handle this better
   if (address === undefined || !isSubstrateAddress(address)) {
-    return notFound();
+    return null;
   }
 
   return (

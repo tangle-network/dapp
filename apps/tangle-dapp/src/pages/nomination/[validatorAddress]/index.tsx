@@ -1,5 +1,4 @@
 import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
-import { notFound } from 'next/navigation';
 
 import { IS_PRODUCTION_ENV } from '../../../constants/env';
 import InfoCard from './InfoCard';
@@ -9,8 +8,9 @@ import { useParams } from 'react-router';
 export default function ValidatorDetailsPage() {
   const { validatorAddress } = useParams();
 
+  // TODO: Handle this better
   if (validatorAddress === undefined || !isSubstrateAddress(validatorAddress)) {
-    notFound();
+    return null;
   }
 
   return (

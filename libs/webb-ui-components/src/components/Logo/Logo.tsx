@@ -1,5 +1,5 @@
 import { createIcon } from '@webb-tools/icons/create-icon';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { LogoProps } from './types';
 

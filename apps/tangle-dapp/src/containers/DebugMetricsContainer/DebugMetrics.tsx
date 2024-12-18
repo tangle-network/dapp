@@ -1,5 +1,3 @@
-'use client';
-
 import { Expand } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import usePromise from '@webb-tools/tangle-shared-ui/hooks/usePromise';

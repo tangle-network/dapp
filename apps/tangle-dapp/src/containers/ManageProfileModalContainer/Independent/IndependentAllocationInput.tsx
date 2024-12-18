@@ -11,6 +11,10 @@ import { RestakingService } from '../../../types';
 import { getChipColorOfServiceType } from '../../../utils';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
 import InputAction from '../InputAction';
+import {
+  ERROR_MIN_RESTAKING_BOND,
+  ERROR_NOT_ENOUGH_BALANCE,
+} from '../constants';
 
 export type IndependentAllocationInputProps = {
   amount: BN | null;
@@ -24,11 +28,6 @@ export type IndependentAllocationInputProps = {
   onDelete?: (service: RestakingService) => void;
   setService?: (service: RestakingService) => void;
 };
-
-export const ERROR_MIN_RESTAKING_BOND =
-  'Must be at least the minimum restaking bond';
-
-export const ERROR_NOT_ENOUGH_BALANCE = 'Not enough available balance';
 
 /**
  * A specialized input used to allocate roles for creating or

@@ -1,9 +1,9 @@
 import { BN_ZERO } from '@polkadot/util';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 
 import useNetworkFeatures from '../../../hooks/useNetworkFeatures';
-import useSubstrateAddress from '../../../hooks/useSubstrateAddress';
 import { NetworkFeature } from '../../../types';
 import { useLsStore } from '../useLsStore';
 

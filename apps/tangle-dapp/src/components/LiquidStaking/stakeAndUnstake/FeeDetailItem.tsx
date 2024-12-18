@@ -5,10 +5,10 @@ import {
   formatDisplayAmount,
 } from '@webb-tools/webb-ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import formatFractional from '../../../utils/formatFractional';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
 import DetailItem from './DetailItem';

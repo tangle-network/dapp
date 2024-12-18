@@ -1,5 +1,3 @@
-'use client';
-
 import {
   InfoIconWithTooltip,
   notificationApi,
@@ -8,12 +6,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-export enum KeyStatsItemVariant {
-  Left,
-  Center,
-  Right,
-}
+import KeyStatsItemVariant from './KeyStatsItemVariant';
 
 export type KeyStatsItemProps = {
   title: string;

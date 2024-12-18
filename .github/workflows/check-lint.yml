@@ -1,4 +1,4 @@
-name: clean 🧹
+name: 'Clean 🧹'
 
 on:
   pull_request:

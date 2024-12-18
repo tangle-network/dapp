@@ -1,10 +1,9 @@
-'use client';
-
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import { Card } from '@webb-tools/webb-ui-components';
@@ -20,15 +19,12 @@ import {
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
-import useQueryState from '../../../hooks/useQueryState';
-
 import useRestakeTxEventHandlersWithNoti, {
   type Props,
 } from '../../..//data/restake/useRestakeTxEventHandlersWithNoti';
 import AvatarWithText from '../../../components/AvatarWithText';
 import { ChainList } from '../../../components/Lists/ChainList';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import { useRestakeContext } from '../../../context/RestakeContext';
 import {
   type DepositContext,
   TxEvent,
@@ -37,6 +33,7 @@ import useRestakeTx from '../../../data/restake/useRestakeTx';
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
+import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import { DepositFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';

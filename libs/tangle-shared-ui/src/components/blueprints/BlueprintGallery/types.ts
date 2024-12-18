@@ -1,3 +1,5 @@
+import type { PropsWithChildren } from 'react';
+
 export type BlueprintItemProps = {
   id: string;
   name: string;
@@ -16,5 +18,7 @@ export type BlueprintGalleryProps = {
   blueprints: BlueprintItemProps[];
   isLoading: boolean;
   error: Error | null;
-  getBlueprintUrl?: (blueprint: BlueprintItemProps) => string;
+  BlueprintItemWrapper?: React.FC<
+    PropsWithChildren<Omit<BlueprintItemProps, 'renderImage'>>
+  >;
 };

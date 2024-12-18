@@ -1,5 +1,3 @@
-'use client';
-
 import { Typography } from '@webb-tools/webb-ui-components';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
