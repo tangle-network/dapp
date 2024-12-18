@@ -29,7 +29,7 @@ import calculateCommission from '../../utils/calculateCommission';
 import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
-import pluralize from '../../utils/pluralize';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
 const columnHelper = createColumnHelper<Nominee>();
 

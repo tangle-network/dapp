@@ -23,9 +23,9 @@ import useLockRows from './useLockRows';
 import { BN } from '@polkadot/util';
 import { SubstrateLockId } from '../../constants';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import { TableStatus } from '../../components';
-import pluralize from '../../utils/pluralize';
 import { CheckboxCircleFill } from '@webb-tools/icons';
+import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
 export enum LockUnlocksAtKind {
   ERA,

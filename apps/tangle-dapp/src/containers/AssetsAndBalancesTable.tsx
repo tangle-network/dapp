@@ -22,9 +22,7 @@ import {
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { FC, useCallback, useMemo, useState } from 'react';
 
-import LsTokenIcon from '../components/LsTokenIcon';
 import StatItem from '../components/StatItem';
-import TableCellWrapper from '../components/tables/TableCellWrapper';
 import { HeaderCell } from '../components/tableCells';
 import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import { ArrowRight } from '@webb-tools/icons';
@@ -32,15 +30,17 @@ import { PagePath } from '../types';
 import { Link } from 'react-router';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
 import { twMerge } from 'tailwind-merge';
-import formatFractional from '../utils/formatFractional';
-import useRestakeBalances from '../data/restake/useRestakeBalances';
 import useRestakeAssetMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetMap';
-import { TableStatus } from '../components';
-import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
-import useRestakeDelegatorInfo from '../data/restake/useRestakeDelegatorInfo';
 import useIsAccountConnected from '../hooks/useIsAccountConnected';
 import useLsPools from '../data/liquidStaking/useLsPools';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
+import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
+import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
+import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
+import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
+import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
+import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
+import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 
 enum RowType {
   ASSET,
@@ -327,6 +327,7 @@ const AssetsAndBalancesTable: FC = () => {
     });
   }, [allPools, getTotalLockedInAsset]);
 
+  // All rows combined.
   const rows = useMemo<Row[]>(() => {
     // Sort by highest available balance (descending).
     return [...assetRows, ...lsPoolRows].sort((a, b) => {

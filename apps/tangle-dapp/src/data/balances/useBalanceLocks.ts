@@ -1,5 +1,5 @@
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
-import useSubstrateAddress from '../../hooks/useSubstrateAddress';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { useCallback } from 'react';
 
 const useBalanceLocks = () => {

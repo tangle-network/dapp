@@ -25,7 +25,7 @@ import { twMerge } from 'tailwind-merge';
 import { PagePath, QueryParamKey } from '../../../types';
 import type { Props, VaultData } from './types';
 import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
-import pluralize from '../../../utils/pluralize';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
 const columnHelper = createColumnHelper<VaultData>();
 
