@@ -14,7 +14,7 @@ import { SideBarItems } from './SideBarItems';
 import { SideBarLogo } from './Logo';
 import { MobileSidebarProps } from './types';
 import { ThemeToggle } from '../ThemeToggle';
-import { Typography } from '@webb-tools/webb-ui-components';
+import { Typography } from '../../typography/Typography';
 import { Link } from '../Link';
 
 /**
