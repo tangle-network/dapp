@@ -71,7 +71,7 @@ const Actions: FC = () => {
           label="Payouts"
           Icon={CoinsLineIcon}
           internalHref={StaticSearchQueryPath.PayoutsTable}
-          tooltip="You have payouts available. Click here to visit the Payouts page."
+          tooltip="There are nomination payouts available to claim. Click here to visit the Payouts page."
         />
       )}
 

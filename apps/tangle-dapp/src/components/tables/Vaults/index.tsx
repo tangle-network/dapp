@@ -24,6 +24,8 @@ import { twMerge } from 'tailwind-merge';
 
 import { PagePath, QueryParamKey } from '../../../types';
 import type { Props, VaultData } from './types';
+import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
 const columnHelper = createColumnHelper<VaultData>();
 
@@ -40,10 +42,7 @@ const columns = [
         </div>
       </TableCellWrapper>
     ),
-    sortingFn: (rowA, rowB) => {
-      // NOTE: the sorting is reversed by default
-      return rowB.original.name.localeCompare(rowA.original.name);
-    },
+    sortingFn: sortByLocaleCompare((row) => row.name),
     sortDescFirst: true,
   }),
   columnHelper.accessor('apyPercentage', {
@@ -167,53 +166,31 @@ const VaultsTable: FC<Props> = ({
         className={loadingTableProps?.className}
       />
     );
-  }
-
-  if (data.length === 0) {
+  } else if (data.length === 0) {
     return (
       <TableStatus
         title="No Vaults Found"
         description="It looks like there are no vaults at the moment."
-        icon="🔍"
         {...emptyTableProps}
         className={emptyTableProps?.className}
       />
     );
   }
 
-  // TODO: Check styling after max depth issue is fixed.
   return (
     <Table
       variant={TableVariant.GLASS_OUTER}
-      title="Vaults"
+      title={pluralize('vault', data.length !== 1)}
       isPaginated
       {...tableProps}
       tableProps={table}
-      className={twMerge(
-        'px-6 rounded-2xl overflow-hidden border border-mono-0 dark:border-mono-160',
-        tableProps?.className,
-      )}
-      tableClassName={twMerge(
-        'border-separate border-spacing-y-3 pt-3',
-        tableProps?.tableClassName,
-      )}
-      thClassName={twMerge(
-        'py-0 border-t-0 !bg-transparent font-normal text-mono-120 dark:text-mono-100 border-b-0',
-        tableProps?.thClassName,
-      )}
-      tbodyClassName={twMerge('!bg-transparent', tableProps?.tbodyClassName)}
-      trClassName={twMerge(
-        'group cursor-pointer overflow-hidden rounded-xl',
-        tableProps?.trClassName,
-      )}
-      tdClassName={twMerge(
-        'border-0 !p-0 first:rounded-l-xl last:rounded-r-xl overflow-hidden',
-        tableProps?.tdClassName,
-      )}
-      paginationClassName={twMerge(
-        '!bg-transparent dark:!bg-transparent pl-6 border-t-0 -mt-2',
-        tableProps?.paginationClassName,
-      )}
+      className={tableProps?.className}
+      tableClassName={tableProps?.tableClassName}
+      thClassName={tableProps?.thClassName}
+      tbodyClassName={tableProps?.tbodyClassName}
+      trClassName={tableProps?.trClassName}
+      tdClassName={tableProps?.tdClassName}
+      paginationClassName={tableProps?.paginationClassName}
     />
   );
 };

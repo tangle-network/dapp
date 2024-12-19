@@ -63,7 +63,8 @@ function createAssetEntry(
     status: detail.status.type,
     vaultId: u128ToVaultId(vaultId),
     priceInUsd,
-  };
+    details: detail,
+  } satisfies AssetMetadata;
 }
 
 function queryTokenPrices(
@@ -84,14 +85,14 @@ async function processAssetDetails(
   assetMetadatas: PalletAssetsAssetMetadata[],
   assetVaultIds: Option<u128>[],
   hasNative: boolean,
-  nativeCurrentcy: Chain['nativeCurrency'],
+  nativeCurrency: Chain['nativeCurrency'],
 ) {
   const tokenPrices = await queryTokenPrices(nonNativeAssetIds, assetMetadatas);
 
   const initialAssetMap = hasNative
     ? {
-        [(await getNativeAsset(nativeCurrentcy, api)).id]: await getNativeAsset(
-          nativeCurrentcy,
+        [(await getNativeAsset(nativeCurrency, api)).id]: await getNativeAsset(
+          nativeCurrency,
           api,
         ),
       }
@@ -120,10 +121,10 @@ function processAssetDetailsRx(
   assetMetadatas: PalletAssetsAssetMetadata[],
   assetVaultIds: Option<u128>[],
   hasNative: boolean,
-  nativeCurrentcy: Chain['nativeCurrency'],
+  nativeCurrency: Chain['nativeCurrency'],
 ): Observable<AssetMap> {
   return hasNative
-    ? getNativeAssetRx(nativeCurrentcy, api).pipe(
+    ? getNativeAssetRx(nativeCurrency, api).pipe(
         map((nativeAsset) => ({ [nativeAsset.id]: nativeAsset })),
       )
     : of<AssetMap>({}).pipe(
@@ -245,7 +246,7 @@ export async function assetDetailsQuery(
 export function assetDetailsRxQuery(
   api: ApiRx,
   assetIds: string[],
-  nativeCurrentcy: Chain['nativeCurrency'] = DEFAULT_NATIVE_CURRENCY,
+  nativeCurrency: Chain['nativeCurrency'] = DEFAULT_NATIVE_CURRENCY,
 ) {
   const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
 
@@ -253,7 +254,7 @@ export function assetDetailsRxQuery(
 
   if (isNonNativeAssetsEmpty || !isApiSupported(api)) {
     if (hasNative) {
-      return getNativeAssetRx(nativeCurrentcy, api).pipe(
+      return getNativeAssetRx(nativeCurrency, api).pipe(
         map((nativeAsset) => ({ [nativeAsset.id]: nativeAsset })),
       );
     } else {
@@ -313,7 +314,7 @@ export function assetDetailsRxQuery(
         assetMetadatas,
         assetVaultIds,
         hasNative,
-        nativeCurrentcy,
+        nativeCurrency,
       );
     }),
   );

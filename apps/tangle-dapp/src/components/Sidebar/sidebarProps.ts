@@ -29,8 +29,8 @@ import { PagePath } from '../../types';
 // Only show the services dropdown if on development mode.
 const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
   {
-    name: 'Account',
-    href: PagePath.ACCOUNT,
+    name: 'Dashboard',
+    href: PagePath.DASHBOARD,
     isInternal: true,
     isNext: false,
     Icon: HomeFillIcon,

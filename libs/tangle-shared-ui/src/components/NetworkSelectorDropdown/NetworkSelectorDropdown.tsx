@@ -50,14 +50,6 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
         isSelected={selectedNetwork?.id === TANGLE_LOCAL_DEV_NETWORK.id}
         name={TANGLE_LOCAL_DEV_NETWORK.name}
         onClick={() => onNetworkChange(TANGLE_LOCAL_DEV_NETWORK)}
-        tooltip={
-          <>
-            Use this network if you are running a local Tangle node for
-            development purposes. This will attempt to connect to the node
-            running at <strong>{TANGLE_LOCAL_DEV_NETWORK.wsRpcEndpoint}</strong>
-            .
-          </>
-        }
       />
 
       {/* Custom network */}

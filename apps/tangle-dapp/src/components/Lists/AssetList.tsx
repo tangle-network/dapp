@@ -9,7 +9,6 @@ import {
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { ComponentProps, useMemo, useState } from 'react';
-import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { Address } from 'viem';
 
@@ -96,9 +95,10 @@ export const AssetList = ({
                   </Typography>
 
                   {asset.explorerUrl !== undefined && (
-                    <Link
-                      to={asset.explorerUrl}
+                    <a
+                      href={asset.explorerUrl}
                       target="_blank"
+                      rel="noreferrer"
                       className="z-20 flex items-center gap-1 text-mono-120 dark:text-mono-100 dark:hover:text-mono-80"
                     >
                       <Typography
@@ -111,7 +111,7 @@ export const AssetList = ({
                       </Typography>
 
                       <ArrowRightUp className="fill-current dark:fill-current" />
-                    </Link>
+                    </a>
                   )}
                 </div>
               </div>

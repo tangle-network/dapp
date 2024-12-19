@@ -63,19 +63,12 @@ const VaultAssetsTable: FC<Props> = ({ data, isShown }) => {
     ),
   );
 
-  // TODO: Check styling after max depth issue is fixed.
   return (
     <Table
-      variant={TableVariant.DEFAULT}
+      variant={TableVariant.GLASS_INNER}
       tableProps={table}
       title={pluralize('asset', data.length !== 1)}
-      className={twMerge(
-        'rounded-2xl overflow-hidden bg-mono-20 dark:bg-mono-200',
-        isShown ? 'animate-slide-down' : 'animate-slide-up',
-      )}
-      thClassName="font-normal !bg-transparent border-t-0 border-b text-mono-120 dark:text-mono-100"
-      tbodyClassName="!bg-transparent"
-      tdClassName="!bg-inherit border-t-0"
+      className={twMerge(isShown ? 'animate-slide-down' : 'animate-slide-up')}
     />
   );
 };

@@ -1,5 +1,6 @@
 import {
   PalletAssetsAccountStatus,
+  PalletAssetsAssetDetails,
   PalletAssetsAssetStatus,
   PalletAssetsExistenceReason,
   PalletMultiAssetDelegationDelegatorDelegatorStatus,
@@ -66,6 +67,8 @@ export type AssetMetadata = {
   readonly vaultId: string | null;
 
   readonly priceInUsd: number | null;
+
+  readonly details?: PalletAssetsAssetDetails;
 };
 
 export type AssetMap = {

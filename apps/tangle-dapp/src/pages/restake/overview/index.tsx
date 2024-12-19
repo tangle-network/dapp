@@ -13,6 +13,7 @@ import { twMerge } from 'tailwind-merge';
 import StatItem from '../../../components/StatItem';
 import { CONTENT } from './shared';
 import TableTabs from './TableTabs';
+import { ArrowRightUp, ExternalLinkLine } from '@webb-tools/icons';
 
 export default function RestakePage() {
   const { delegatorInfo } = useRestakeDelegatorInfo();
@@ -33,9 +34,8 @@ export default function RestakePage() {
         <Card
           variant={CardVariant.GLASS}
           className={twMerge(
-            'justify-between min-h-60 flex-1',
-            '[background:linear-gradient(79deg,_#b6b8dd_8.85%,_#d9ddf2_55.91%,_#dbbdcd_127.36%),_#fff]',
-            'dark:[background:linear-gradient(79deg,_rgba(30,_32,_65,_0.8)_8.85%,_rgba(38,_52,_116,_0.8)_55.91%,_rgba(113,_61,_89,_0.8)_127.36%)]',
+            'flex flex-col justify-between min-h-60 flex-1',
+            'bg-purple_gradient dark:bg-purple_gradient_dark',
           )}
         >
           <Typography
@@ -62,7 +62,7 @@ export default function RestakePage() {
           variant={CardVariant.GLASS}
           className={twMerge(
             'min-h-60 flex-1',
-            'md:max-w-[442px] justify-between',
+            'md:max-w-[442px] flex flex-col justify-between',
           )}
         >
           <div>
@@ -71,7 +71,7 @@ export default function RestakePage() {
               fw="bold"
               className="text-mono-200 dark:text-mono-0 mb-2.5"
             >
-              How it works
+              How It Works
             </Typography>
 
             <Typography variant="body1">{CONTENT.HOW_IT_WORKS}</Typography>
@@ -82,9 +82,11 @@ export default function RestakePage() {
             target="_blank"
             variant="link"
             size="sm"
-            className="inline-block ml-auto"
+            rightIcon={
+              <ArrowRightUp className="fill-current dark:fill-current" />
+            }
           >
-            Read more
+            Learn More
           </Button>
         </Card>
       </div>

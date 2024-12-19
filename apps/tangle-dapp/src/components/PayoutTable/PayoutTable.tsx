@@ -84,7 +84,11 @@ const PayoutTable: FC<PayoutTableProps> = ({
                 {identity === address ? shortenString(address, 6) : identity}
               </Typography>
 
-              <CopyWithTooltip textToCopy={address} isButton={false} />
+              <CopyWithTooltip
+                copyLabel="Copy Address"
+                textToCopy={address}
+                isButton={false}
+              />
             </div>
           );
         },

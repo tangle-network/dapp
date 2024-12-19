@@ -23,7 +23,7 @@ const GRID_BACKGROUND_CLASS = twMerge(
 const TableStatus = ({
   title,
   description,
-  icon,
+  icon = '🔍',
   buttonText,
   buttonProps,
   className,

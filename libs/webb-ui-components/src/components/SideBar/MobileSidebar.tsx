@@ -40,7 +40,7 @@ export const MobileSidebar = forwardRef<HTMLDivElement, MobileSidebarProps>(
         {...props}
         ref={ref}
       >
-        <Dialog.Root onOpenChange={setIsOpen}>
+        <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
           <Dialog.Trigger className="outline-none">
             <HamburgerMenu
               size="lg"

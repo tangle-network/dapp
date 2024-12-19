@@ -9,7 +9,7 @@ export enum TableVariant {
   DEFAULT,
   GLASS_INNER,
   GLASS_OUTER,
-  NESTED_IN_MODAL,
+  EMBEDDED_IN_MODAL,
 }
 
 /**
@@ -97,6 +97,7 @@ export interface TableProps<T extends RowData, E extends HTMLElement>
   getExpandedRowContent?: (row: Row<T>) => React.ReactNode;
 
   variant: TableVariant;
+  paginationLabelOverride?: string;
 }
 
 /**

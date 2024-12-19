@@ -10,6 +10,7 @@ import { z } from 'zod';
 
 import HyperlaneWarpContext from '../pages/bridge/context/HyperlaneWarpContext';
 import BridgeTxQueueProvider from '../pages/bridge/context/BridgeTxQueueContext/BridgeTxQueueProvider';
+import PolkadotApiProvider from '@webb-tools/tangle-shared-ui/context/PolkadotApiProvider';
 
 const appEvent = new AppEvent();
 
@@ -49,7 +50,9 @@ const Providers = ({
           blockedCountryCodes={blockedCountryCodes}
         >
           <HyperlaneWarpContext>
-            <BridgeTxQueueProvider>{children}</BridgeTxQueueProvider>
+            <BridgeTxQueueProvider>
+              <PolkadotApiProvider>{children}</PolkadotApiProvider>
+            </BridgeTxQueueProvider>
           </HyperlaneWarpContext>
         </OFACFilterProvider>
       </WebbProvider>

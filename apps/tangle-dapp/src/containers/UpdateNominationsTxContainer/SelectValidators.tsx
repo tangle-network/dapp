@@ -1,4 +1,3 @@
-import { Alert } from '@webb-tools/webb-ui-components';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { Dispatch, type FC, SetStateAction, memo } from 'react';
 
@@ -17,19 +16,12 @@ const SelectValidators: FC<SelectValidatorsProps> = ({
   const { validators, isLoading } = useAllValidators();
 
   return (
-    <div className="flex flex-col col-span-2 gap-2">
-      <ValidatorSelectionTable
-        defaultSelectedValidators={defaultSelectedValidators}
-        allValidators={validators}
-        setSelectedValidators={setSelectedValidators}
-        isLoading={isLoading}
-      />
-
-      <Alert
-        description="Submitting a new nomination will overwrite any existing nomination."
-        type="info"
-      />
-    </div>
+    <ValidatorSelectionTable
+      defaultSelectedValidators={defaultSelectedValidators}
+      allValidators={validators}
+      setSelectedValidators={setSelectedValidators}
+      isLoading={isLoading}
+    />
   );
 };
 

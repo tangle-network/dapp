@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 import TangleBigLogo from './TangleBigLogo';
 
-const GlassCardWithLogo: FC<PropsWithChildren<{ className?: string }>> = ({
+const CardWithTangleLogo: FC<PropsWithChildren<{ className?: string }>> = ({
   children,
   className,
 }) => {
@@ -23,4 +23,4 @@ const GlassCardWithLogo: FC<PropsWithChildren<{ className?: string }>> = ({
   );
 };
 
-export default GlassCardWithLogo;
+export default CardWithTangleLogo;

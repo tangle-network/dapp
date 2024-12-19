@@ -39,6 +39,7 @@ import {
   TransactionInputCardRootProps,
   TransactionMaxAmountButtonProps,
 } from './types';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 
 const TransactionInputCardContext =
   createContext<TransactionInputCardContextValue>({});
@@ -176,11 +177,7 @@ const TransactionButton = forwardRef<
           className: twMerge('!fill-current', Icon.props.className),
         })}
       {typeof children === 'string' || typeof children === 'number' ? (
-        <Typography
-          variant="body1"
-          fw="bold"
-          className="!text-inherit group-hover:group-enabled:underline"
-        >
+        <Typography variant="body1" fw="bold" className="!text-inherit">
           {children}
         </Typography>
       ) : (
@@ -218,8 +215,9 @@ const TransactionMaxAmountButton = forwardRef<
 
     const buttonCnt = useMemo(() => {
       const amount =
-        // TODO: Use empty placeholder constant instead, once it's moved to Webb UI lib.
-        typeof maxAmount === 'number' ? toFixed(maxAmount, 5) : '—';
+        typeof maxAmount === 'number'
+          ? toFixed(maxAmount, 5)
+          : EMPTY_VALUE_PLACEHOLDER;
 
       const formattedAmount =
         typeof amount === 'number' ? getRoundedAmountString(amount, 5) : amount;
@@ -229,10 +227,8 @@ const TransactionMaxAmountButton = forwardRef<
       return `${formattedAmount} ${tokenSym}`.trim();
     }, [maxAmount, tokenSymbol]);
 
-    const disabled = useMemo(
-      () => disabledProp ?? (typeof maxAmount !== 'number' || maxAmount <= 0),
-      [disabledProp, maxAmount],
-    );
+    const disabled =
+      disabledProp ?? (typeof maxAmount !== 'number' || maxAmount <= 0);
 
     const { iconDisabledClassName, iconEnabledClassName } = useMemo(
       () =>
