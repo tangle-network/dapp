@@ -8,8 +8,8 @@ import PointsReminder from '../components/account/PointsReminder';
 const AccountPage: FC = () => {
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex gap-6">
-        <AccountSummaryCard className="flex-1 max-w-full" />
+      <div className="flex flex-col lg:flex-row gap-6">
+        <AccountSummaryCard className="flex-1 md:max-w-none" />
 
         <PointsReminder className="flex-1" />
       </div>

@@ -33,7 +33,7 @@ export default function RestakePage() {
         <Card
           variant={CardVariant.GLASS}
           className={twMerge(
-            'justify-between min-h-60 flex-1',
+            'flex flex-col justify-between min-h-60 flex-1',
             'bg-purple_gradient dark:bg-purple_gradient_dark',
           )}
         >

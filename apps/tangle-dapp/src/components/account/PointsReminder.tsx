@@ -7,11 +7,16 @@ const PointsReminder: FC<{ className?: string }> = ({ className }) => {
   return (
     <Card
       className={twMerge(
-        'bg-purple_gradient dark:bg-purple_gradient_dark backdrop-blur-2xl flex flex-col justify-between',
+        'bg-purple_gradient dark:bg-purple_gradient_dark backdrop-blur-2xl flex flex-col gap-2',
         className,
       )}
     >
       <Typography variant="h4">Earn Points with Tangle</Typography>
+
+      <Typography variant="body1">
+        Participate in the campaign by completing the following tasks to earn
+        points which can be redeemed for rewards later on.
+      </Typography>
 
       <div>
         <ul className="list-disc list-inside">
@@ -23,7 +28,10 @@ const PointsReminder: FC<{ className?: string }> = ({ className }) => {
         </ul>
       </div>
 
-      <ExternalLink href="#">Get Started</ExternalLink>
+      <div className="mt-auto">
+        {/** TODO: Awaiting creation of the campaign docs page. Tracked by #2708. */}
+        <ExternalLink href="#">Get Started</ExternalLink>
+      </div>
     </Card>
   );
 };
