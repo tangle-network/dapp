@@ -1,4 +1,4 @@
-name: Close inactive issues
+name: 'Close Inactive Issues'
 on:
   schedule:
     # the workflow will run every day at 12:00 UTC
