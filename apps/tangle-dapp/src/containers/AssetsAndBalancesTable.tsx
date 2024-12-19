@@ -43,6 +43,7 @@ import { formatDisplayAmount } from '../../../../libs/webb-ui-components/src/uti
 import LstIcon from '../components/LiquidStaking/LstIcon';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { LstIconSize } from '../components/LiquidStaking/types';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 
 enum RowType {
   ASSET,
@@ -285,6 +286,7 @@ const AssetsAndBalancesTable: FC = () => {
   const allPools = useLsPools();
   const isAccountConnected = useIsAccountConnected();
   const nativeTokenSymbol = useNetworkStore((state) => state.nativeTokenSymbol);
+  const substrateAddress = useSubstrateAddress();
 
   const getTotalLockedInAsset = useCallback(
     (assetId: number) => {
@@ -351,13 +353,19 @@ const AssetsAndBalancesTable: FC = () => {
     return pools.map((pool) => {
       const name = `${pool.name ?? 'Pool'}#${pool.id}`.toUpperCase();
 
+      const membership =
+        substrateAddress === null
+          ? undefined
+          : pool.members.get(substrateAddress);
+
+      const myStake = membership?.balance.toBn() ?? BN_ZERO;
+
       return {
         type: RowType.LS_POOL,
         name,
         tokenSymbol: name,
         tvl: pool.totalStaked,
-        // TODO: Should be 'my stake'.
-        available: pool.totalStaked,
+        available: myStake,
         locked: getTotalLockedInAsset(pool.id),
         iconUrl: pool.iconUrl,
         decimals: TANGLE_TOKEN_DECIMALS,
