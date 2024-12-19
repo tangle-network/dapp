@@ -83,9 +83,9 @@ export const ThemeToggle: FC<ThemeToggleProps> = ({
         )}
       >
         {isDarkMode ? (
-          <MoonLine className="h-7 w-7 -ml-0.5 bg-mono-0 rounded-full p-[3px] !fill-mono-200" />
+          <MoonLine className="h-7 w-7 -ml-0.5 bg-mono-0 rounded-full p-[3px] !fill-mono-170" />
         ) : (
-          <SunLine className="h-7 w-7 ml-[3px] bg-mono-100 rounded-full p-0.5 !fill-mono-20" />
+          <SunLine className="h-7 w-7 ml-[3px] bg-mono-0 rounded-full p-0.5 !fill-purple-30" />
         )}
       </div>
     </div>

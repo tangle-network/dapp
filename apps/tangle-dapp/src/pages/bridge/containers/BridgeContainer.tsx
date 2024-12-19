@@ -27,7 +27,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { Decimal } from 'decimal.js';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatEther } from 'viem';
 
@@ -138,6 +138,10 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     close: closeConfirmBridgeModal,
   } = useModal(false);
 
+  const [addressInputErrorMessage, setAddressInputErrorMessage] = useState<
+    string | null
+  >(null);
+
   const sourceTypedChainId = useMemo(() => {
     return calculateTypedChainId(
       selectedSourceChain.chainType,
@@ -167,12 +171,17 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
         ? ROUTER_NATIVE_TOKEN_ADDRESS
         : selectedToken.address;
 
+    const toTokenChainId =
+      selectedDestinationChain.name === 'Solana'
+        ? 'solana'
+        : selectedDestinationChain.id.toString();
+
     const routerQuoteParams = {
       fromTokenAddress,
       toTokenAddress,
       amountInWei: amount.toString(),
       fromTokenChainId: selectedSourceChain.id.toString(),
-      toTokenChainId: selectedDestinationChain.id.toString(),
+      toTokenChainId,
     };
 
     return routerQuoteParams;
@@ -181,8 +190,9 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     sourceTypedChainId,
     selectedToken.address,
     destinationTypedChainId,
-    selectedSourceChain.id,
+    selectedDestinationChain.name,
     selectedDestinationChain.id,
+    selectedSourceChain.id,
   ]);
 
   const hyperlaneQuoteParams: HyperlaneQuoteProps | null = useMemo(() => {
@@ -361,7 +371,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
           sourceTypedChainId !== PresetTypedChainId.TangleMainnetEVM
             ? tokenExplorerUrl
             : undefined,
-        address: token.address,
+        address: token.address as `0x${string}`,
         assetBridgeType:
           sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
             ? EVMTokenBridgeEnum.None
@@ -708,7 +718,11 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
             <div className="flex flex-col gap-2">
               <AddressInput
                 id="bridge-destination-address-input"
-                type={AddressType.EVM}
+                type={
+                  selectedDestinationChain.name === 'Solana'
+                    ? AddressType.Solana
+                    : AddressType.EVM
+                }
                 title="Recipient"
                 wrapperOverrides={{
                   isFullWidth: true,
@@ -717,9 +731,10 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                 value={destinationAddress ?? ''}
                 setValue={setDestinationAddress}
                 placeholder="0x..."
-                setErrorMessage={(error) =>
-                  setIsAddressInputError(error ? true : false)
-                }
+                setErrorMessage={(error) => {
+                  setIsAddressInputError(error ? true : false);
+                  setAddressInputErrorMessage(error);
+                }}
                 showErrorMessage={false}
                 inputClassName={cx(
                   'placeholder:text-2xl !text-2xl',
@@ -741,7 +756,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                   variant="body1"
                   className="text-red-70 dark:text-red-50 text-lg"
                 >
-                  {isAddressInputError ? 'Invalid EVM address' : ''}
+                  {addressInputErrorMessage}
                 </Typography>
               </div>
             </div>

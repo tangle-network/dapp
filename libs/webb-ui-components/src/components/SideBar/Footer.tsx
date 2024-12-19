@@ -34,31 +34,16 @@ export const SideBarFooter: FC<SideBarFooterProps> = ({
         </Link>
 
         {isExpanded && (
-          <>
-            <div className={isExpanded ? 'pl-2' : ''}>
-              <Link href={href} target="_blank">
-                <Typography
-                  variant="body1"
-                  className="cursor-pointer text-mono-100 dark:text-mono-60 group-hover:text-mono-200 dark:group-hover:text-mono-0"
-                >
-                  {name}
-                </Typography>
-              </Link>
-            </div>
-
-            {!isInternal ? (
-              <div className={isExpanded ? 'pl-1' : ''}>
-                <Link href={href} target="_blank">
-                  <ArrowRightUp
-                    className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
-                    size="lg"
-                  />
-                </Link>
-              </div>
-            ) : (
-              ''
-            )}
-          </>
+          <div className={isExpanded ? 'pl-2' : ''}>
+            <Link href={href} target="_blank">
+              <Typography
+                variant="body1"
+                className="cursor-pointer text-mono-100 dark:text-mono-60 group-hover:text-mono-200 dark:group-hover:text-mono-0"
+              >
+                {name}
+              </Typography>
+            </Link>
+          </div>
         )}
       </div>
 
