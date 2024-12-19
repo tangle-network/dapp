@@ -54,7 +54,7 @@ type Row = {
   type: RowType;
   name?: string;
   tokenSymbol: string;
-  tvl: BN;
+  tvl?: BN;
   tvlInUsd?: number;
   available: BN;
   availableInUsd?: number;
@@ -111,6 +111,8 @@ const COLUMNS = [
   }),
   COLUMN_HELPER.accessor('available', {
     header: () => 'Available',
+    sortingFn: (rowA, rowB) =>
+      rowB.original.available.cmp(rowA.original.available),
     cell: (props) => {
       const formattedMyStake = formatDisplayAmount(
         props.getValue(),
@@ -136,6 +138,7 @@ const COLUMNS = [
   }),
   COLUMN_HELPER.accessor('locked', {
     header: () => 'Locked',
+    sortingFn: (rowA, rowB) => rowB.original.locked.cmp(rowA.original.locked),
     cell: (props) => {
       const formattedMyStake = formatDisplayAmount(
         props.getValue(),
@@ -160,6 +163,13 @@ const COLUMNS = [
     },
   }),
   COLUMN_HELPER.accessor('tvl', {
+    sortingFn: (rowA, rowB) => {
+      if (rowA.original.tvl === undefined || rowB.original.tvl === undefined) {
+        return 0;
+      }
+
+      return rowB.original.tvl.cmp(rowA.original.tvl);
+    },
     header: () => (
       <HeaderCell
         title="TVL & CAP"
@@ -167,8 +177,14 @@ const COLUMNS = [
       />
     ),
     cell: (props) => {
+      const tvl = props.getValue();
+
+      if (tvl === undefined) {
+        return EMPTY_VALUE_PLACEHOLDER;
+      }
+
       const formattedTvl = formatDisplayAmount(
-        props.getValue(),
+        tvl,
         props.row.original.decimals,
         AmountFormatStyle.SI,
       );
@@ -278,7 +294,11 @@ const COLUMNS = [
 ];
 
 const AssetsAndBalancesTable: FC = () => {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([
+    // Default sorting by TVL in descending order.
+    { id: 'tvl' satisfies keyof Row, desc: false },
+  ]);
+
   const { balances } = useRestakeBalances();
   const { assetMap } = useRestakeAssetMap();
   const { rewardConfig } = useRestakeRewardConfig();
@@ -321,15 +341,17 @@ const AssetsAndBalancesTable: FC = () => {
       const cap = rewardConfig.configs[assetId]?.cap;
       const capBn = cap === undefined ? undefined : new BN(cap.toString());
 
+      const tvl = assetDetails.details?.supply.toBn();
+
       return {
         type: RowType.ASSET,
         name: assetDetails.name,
-        // TODO: Calculate by issuance of asset.
-        tvl: BN_ZERO,
+        tvl,
         available: new BN(balance.balance.toString()),
         locked: getTotalLockedInAsset(parseInt(assetId)),
         // TODO: This won't work because reward config is PER VAULT not PER ASSET. But isn't each asset its own vault?
         apyFractional: rewardConfig.configs[assetId]?.apy,
+        // TODO: Each asset should have its own token symbol.
         tokenSymbol: nativeTokenSymbol,
         decimals: assetDetails.decimals,
         cap: capBn,
