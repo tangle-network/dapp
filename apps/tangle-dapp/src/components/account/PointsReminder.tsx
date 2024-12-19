@@ -14,9 +14,13 @@ const PointsReminder: FC<{ className?: string }> = ({ className }) => {
       <Typography variant="h4">Earn Points with Tangle</Typography>
 
       <div>
-        <Typography variant="h5">[Insert Campaign] Phase 0</Typography>
-
-        <Typography variant="body1">Description of the campaign.</Typography>
+        <ul className="list-disc list-inside">
+          <li>Deposit restaking assets</li>
+          <li>Build dApps</li>
+          <li>Develop blueprints</li>
+          <li>Deploy instances</li>
+          <li>Run a validator/operator</li>
+        </ul>
       </div>
 
       <ExternalLink href="#">Get Started</ExternalLink>

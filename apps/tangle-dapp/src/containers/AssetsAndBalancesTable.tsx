@@ -14,8 +14,6 @@ import {
   AmountFormatStyle,
   Button,
   EMPTY_VALUE_PLACEHOLDER,
-  formatBn,
-  formatDisplayAmount,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -40,6 +38,11 @@ import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRes
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { formatDisplayAmount } from '../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
+import LstIcon from '../components/LiquidStaking/LstIcon';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { LstIconSize } from '../components/LiquidStaking/types';
 
 enum RowType {
   ASSET,
@@ -57,9 +60,10 @@ type Row = {
   locked: BN;
   lockedInUsd?: number;
   points?: number;
-  iconName: string;
+  iconUrl?: string;
   decimals: number;
   apyFractional?: number;
+  cap?: BN;
 };
 
 const COLUMN_HELPER = createColumnHelper<Row>();
@@ -75,19 +79,30 @@ const COLUMNS = [
       return (
         <TableCellWrapper className="pl-3">
           <div className="flex items-center gap-2">
-            <LsTokenIcon name={props.row.original.iconName} size="lg" />
+            {props.row.original.iconUrl !== undefined ? (
+              <LstIcon
+                lsProtocolId={LsProtocolId.TANGLE_MAINNET}
+                iconUrl={props.row.original.iconUrl}
+                size={LstIconSize.LG}
+              />
+            ) : (
+              <LsTokenIcon name="tnt" size="lg" />
+            )}
+
             {name !== undefined && (
               <Typography variant="h5" className="whitespace-nowrap">
-                {name} name here
+                {name}
               </Typography>
             )}
 
-            <Typography
-              variant="body1"
-              className="whitespace-nowrap dark:text-mono-100"
-            >
-              {props.getValue()}
-            </Typography>
+            {props.row.original.type !== RowType.LS_POOL && (
+              <Typography
+                variant="body1"
+                className="whitespace-nowrap dark:text-mono-100"
+              >
+                {props.getValue()}
+              </Typography>
+            )}
           </div>
         </TableCellWrapper>
       );
@@ -128,9 +143,9 @@ const COLUMNS = [
       );
 
       const subtitle =
-        props.row.original.tvlInUsd === undefined
+        props.row.original.lockedInUsd === undefined
           ? undefined
-          : `$${props.row.original.tvlInUsd}`;
+          : `$${props.row.original.lockedInUsd}`;
 
       return (
         <TableCellWrapper>
@@ -145,25 +160,36 @@ const COLUMNS = [
   }),
   COLUMN_HELPER.accessor('tvl', {
     header: () => (
-      <HeaderCell title="TVL/CAP" tooltip="Total value locked & market cap." />
+      <HeaderCell
+        title="TVL & CAP"
+        tooltip="Total value locked & market cap."
+      />
     ),
     cell: (props) => {
-      const formattedTvl = formatBn(
+      const formattedTvl = formatDisplayAmount(
         props.getValue(),
         props.row.original.decimals,
-        { includeCommas: true },
+        AmountFormatStyle.SI,
       );
 
-      const subtitle =
-        props.row.original.tvlInUsd === undefined
+      const cap = props.row.original.cap;
+
+      const formattedCap =
+        cap === undefined
           ? undefined
-          : `$${props.row.original.tvlInUsd}`;
+          : formatDisplayAmount(
+              cap,
+              props.row.original.decimals,
+              AmountFormatStyle.SI,
+            );
 
       return (
         <TableCellWrapper>
           <StatItem
-            title={`${formattedTvl} ${props.row.original.tokenSymbol}`}
-            subtitle={subtitle}
+            title={`${formattedTvl} TVL`}
+            subtitle={
+              formattedCap === undefined ? undefined : `${formattedCap} CAP`
+            }
             removeBorder
           />
         </TableCellWrapper>
@@ -232,6 +258,7 @@ const COLUMNS = [
     cell: () => (
       <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1">
+          {/** TODO: Include asset ID in the URL. */}
           <Link to={PagePath.RESTAKE_DEPOSIT}>
             <Button
               variant="utility"
@@ -257,6 +284,7 @@ const AssetsAndBalancesTable: FC = () => {
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const allPools = useLsPools();
   const isAccountConnected = useIsAccountConnected();
+  const nativeTokenSymbol = useNetworkStore((state) => state.nativeTokenSymbol);
 
   const getTotalLockedInAsset = useCallback(
     (assetId: number) => {
@@ -288,6 +316,9 @@ const AssetsAndBalancesTable: FC = () => {
         return [];
       }
 
+      const cap = rewardConfig.configs[assetId]?.cap;
+      const capBn = cap === undefined ? undefined : new BN(cap.toString());
+
       return {
         type: RowType.ASSET,
         name: assetDetails.name,
@@ -297,12 +328,18 @@ const AssetsAndBalancesTable: FC = () => {
         locked: getTotalLockedInAsset(parseInt(assetId)),
         // TODO: This won't work because reward config is PER VAULT not PER ASSET. But isn't each asset its own vault?
         apyFractional: rewardConfig.configs[assetId]?.apy,
-        tokenSymbol: assetDetails.symbol,
-        iconName: 'tnt',
+        tokenSymbol: nativeTokenSymbol,
         decimals: assetDetails.decimals,
+        cap: capBn,
       } satisfies Row;
     });
-  }, [assetMap, balances, getTotalLockedInAsset, rewardConfig.configs]);
+  }, [
+    assetMap,
+    balances,
+    getTotalLockedInAsset,
+    nativeTokenSymbol,
+    rewardConfig.configs,
+  ]);
 
   const lsPoolRows = useMemo<Row[]>(() => {
     if (!(allPools instanceof Map)) {
@@ -312,21 +349,22 @@ const AssetsAndBalancesTable: FC = () => {
     const pools = Array.from(allPools.values());
 
     return pools.map((pool) => {
-      const tokenSymbol = `${pool.name ?? 'Pool'}#${pool.id}`.toUpperCase();
+      const name = `${pool.name ?? 'Pool'}#${pool.id}`.toUpperCase();
 
       return {
         type: RowType.LS_POOL,
-        tokenSymbol,
+        name,
+        tokenSymbol: name,
         tvl: pool.totalStaked,
         // TODO: Should be 'my stake'.
         available: pool.totalStaked,
         locked: getTotalLockedInAsset(pool.id),
-        iconName: 'tnt',
+        iconUrl: pool.iconUrl,
         decimals: TANGLE_TOKEN_DECIMALS,
         apyFractional: pool.apyPercentage,
       } satisfies Row;
     });
-  }, [allPools, getTotalLockedInAsset]);
+  }, [allPools, getTotalLockedInAsset, nativeTokenSymbol]);
 
   // All rows combined.
   const rows = useMemo<Row[]>(() => {
@@ -339,6 +377,8 @@ const AssetsAndBalancesTable: FC = () => {
   const table = useReactTable({
     data: rows,
     columns: COLUMNS,
+    autoResetPageIndex: false,
+    enableSortingRemoval: false,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -347,8 +387,6 @@ const AssetsAndBalancesTable: FC = () => {
     state: {
       sorting,
     },
-    autoResetPageIndex: false,
-    enableSortingRemoval: false,
   });
 
   if (!isAccountConnected) {
@@ -367,7 +405,13 @@ const AssetsAndBalancesTable: FC = () => {
     );
   }
 
-  return <Table variant={TableVariant.GLASS_OUTER} tableProps={table} />;
+  return (
+    <Table
+      variant={TableVariant.GLASS_OUTER}
+      tableProps={table}
+      trClassName="cursor-default"
+    />
+  );
 };
 
 export default AssetsAndBalancesTable;
