@@ -13,6 +13,7 @@ import { twMerge } from 'tailwind-merge';
 import StatItem from '../../../components/StatItem';
 import { CONTENT } from './shared';
 import TableTabs from './TableTabs';
+import { ArrowRightUp, ExternalLinkLine } from '@webb-tools/icons';
 
 export default function RestakePage() {
   const { delegatorInfo } = useRestakeDelegatorInfo();
@@ -61,7 +62,7 @@ export default function RestakePage() {
           variant={CardVariant.GLASS}
           className={twMerge(
             'min-h-60 flex-1',
-            'md:max-w-[442px] justify-between',
+            'md:max-w-[442px] flex flex-col justify-between',
           )}
         >
           <div>
@@ -70,7 +71,7 @@ export default function RestakePage() {
               fw="bold"
               className="text-mono-200 dark:text-mono-0 mb-2.5"
             >
-              How it works
+              How It Works
             </Typography>
 
             <Typography variant="body1">{CONTENT.HOW_IT_WORKS}</Typography>
@@ -81,9 +82,11 @@ export default function RestakePage() {
             target="_blank"
             variant="link"
             size="sm"
-            className="inline-block ml-auto"
+            rightIcon={
+              <ArrowRightUp className="fill-current dark:fill-current" />
+            }
           >
-            Read more
+            Learn More
           </Button>
         </Card>
       </div>
