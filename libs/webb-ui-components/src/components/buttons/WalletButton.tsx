@@ -18,7 +18,7 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
         type="button"
         ref={ref}
         className={twMerge(
-          'rounded-lg py-2 px-4 max-w-56',
+          'max-w-56 rounded-full border-2 py-2 px-4',
           'bg-mono-0/10 dark:bg-mono-0/5',
           'hover:bg-mono-100/10 dark:hover:bg-mono-0/10',
           'border-2 border-mono-60 dark:border-mono-140',
@@ -34,22 +34,18 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
             ),
           })}
 
-          <div className="flex items-center">
-            <Typography
-              variant="body1"
-              fw="bold"
-              component="p"
-              className={twMerge('truncate dark:text-mono-0', addressClassname)}
-            >
-              {accountName
-                ? accountName
-                : isHex(address)
-                  ? `${shortenHex(address)}`
-                  : `${shortenString(address)}`}
-            </Typography>
-
-            <ChevronDown size="lg" />
-          </div>
+          <Typography
+            variant="body1"
+            fw="bold"
+            component="p"
+            className={twMerge('truncate dark:text-mono-0', addressClassname)}
+          >
+            {accountName
+              ? accountName
+              : isHex(address)
+                ? `${shortenHex(address)}`
+                : `${shortenString(address)}`}
+          </Typography>
         </div>
       </button>
     );
