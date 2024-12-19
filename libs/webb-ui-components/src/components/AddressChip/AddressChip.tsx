@@ -8,7 +8,12 @@ import { AddressChipProps } from './types';
 import { Typography } from '../../typography/Typography';
 import { Chip } from '../Chip';
 import SkeletonLoader from '../SkeletonLoader';
-import { isSubstrateAddress, shortenHex, shortenString } from '../../utils';
+import {
+  isSolanaAddress,
+  isSubstrateAddress,
+  shortenHex,
+  shortenString,
+} from '../../utils';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 
 const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
@@ -39,7 +44,7 @@ const AddressChip = forwardRef<HTMLSpanElement, AddressChipProps>(
             {/* Eth: 0xXX...XX; Substrate: XXX...XXX, Not an Address: N/A */}
             {isEthereumAddress(address)
               ? shortenHex(address, 2)
-              : isSubstrateAddress(address)
+              : isSubstrateAddress(address) || isSolanaAddress(address)
                 ? shortenString(address, 3)
                 : EMPTY_VALUE_PLACEHOLDER}
           </Typography>

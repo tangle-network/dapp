@@ -20,7 +20,11 @@ import {
   ModalHeader,
 } from '@webb-tools/webb-ui-components/components/Modal';
 import { Typography } from '@webb-tools/webb-ui-components/typography';
-import { shortenHex } from '@webb-tools/webb-ui-components/utils';
+import {
+  isSolanaAddress,
+  shortenHex,
+  shortenString,
+} from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
 import { FC, useCallback } from 'react';
 
@@ -319,7 +323,9 @@ const ConfirmationItem: FC<{
           Account
         </Typography>
         <Typography variant="h5" fw="bold">
-          {shortenHex(accAddress, 10)}
+          {isSolanaAddress(accAddress)
+            ? shortenString(accAddress, 10)
+            : shortenHex(accAddress, 10)}
         </Typography>
       </div>
       <div className="flex items-center justify-between">

@@ -91,7 +91,7 @@ export interface BridgeTokenType {
   tokenSymbol: string;
   tokenType: EVMTokenEnum;
   bridgeType: EVMTokenBridgeEnum;
-  address: `0x${string}`;
+  address: string;
   abi: Abi;
   decimals: number;
   chainId: PresetTypedChainId;

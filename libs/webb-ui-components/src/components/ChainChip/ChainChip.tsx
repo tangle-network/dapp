@@ -59,7 +59,9 @@ export const ChainChip = forwardRef<HTMLSpanElement, ChainChipProps>(
                 ? 'optimism'
                 : chainName.toLowerCase().includes('arbitrum')
                   ? 'arbitrum'
-                  : chainName,
+                  : chainName.toLowerCase().includes('solana')
+                    ? 'solana'
+                    : chainName,
       [chainName],
     );
 
@@ -78,7 +80,9 @@ export const ChainChip = forwardRef<HTMLSpanElement, ChainChipProps>(
             ? 'Optimism'
             : chainName.toLowerCase().includes('arbitrum')
               ? 'Arbitrum'
-              : chainName.split(' ').pop();
+              : chainName.toLowerCase().includes('solana')
+                ? 'Solana'
+                : chainName.split(' ').pop();
     }, [chainName]);
 
     return (
