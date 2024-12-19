@@ -5,7 +5,6 @@ import { isHex } from 'viem';
 import { Typography } from '../../typography/Typography';
 import { shortenHex, shortenString } from '../../utils';
 import { WalletButtonProps } from './types';
-import { ChevronDown } from '@webb-tools/icons';
 
 const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
   (
