@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import useBalanceLocks from '../../data/balances/useBalanceLocks';
 import useBalancesLock from '../../data/balances/useBalancesLock';
-import { BalanceLockRow, LockUnlocksAtKind } from '.';
-import { SubstrateLockId } from '../../constants';
+import { BalanceLockRow } from '.';
+import { LockUnlocksAtKind, SubstrateLockId } from '../../constants';
 import { BN_ZERO } from '@polkadot/util';
 import useVestingLockRows from './useVestingLockRows';
 

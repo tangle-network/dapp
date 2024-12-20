@@ -15,6 +15,7 @@ import {
   AmountFormatStyle,
   Button,
   EMPTY_VALUE_PLACEHOLDER,
+  formatDisplayAmount,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -40,7 +41,6 @@ import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { formatDisplayAmount } from '../../../../libs/webb-ui-components/src/utils/formatDisplayAmount';
 import LstIcon from '../components/LiquidStaking/LstIcon';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { LstIconSize } from '../components/LiquidStaking/types';
@@ -364,7 +364,7 @@ const AssetsAndBalancesTable: FC = () => {
       } satisfies Row;
     });
   }, [
-    assetMap,
+    assets.assetMap,
     balances,
     getTotalLockedInAsset,
     nativeTokenSymbol,
@@ -400,7 +400,7 @@ const AssetsAndBalancesTable: FC = () => {
         apyFractional: pool.apyPercentage,
       } satisfies Row;
     });
-  }, [allPools, getTotalLockedInAsset, nativeTokenSymbol]);
+  }, [allPools, getTotalLockedInAsset, substrateAddress]);
 
   // All rows combined.
   const rows = useMemo<Row[]>(() => {
