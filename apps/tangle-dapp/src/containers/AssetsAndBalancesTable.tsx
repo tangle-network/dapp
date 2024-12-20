@@ -174,7 +174,7 @@ const COLUMNS = [
     header: () => (
       <HeaderCell
         title="TVL & CAP"
-        tooltip="Total value locked & market cap."
+        tooltip="Total value locked & supply cap."
       />
     ),
     cell: (props) => {
