@@ -1,4 +1,4 @@
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+import addCommasToNumber from './addCommasToNumber';
 
 const formatFractional = (fractional: number): `${string}%` => {
   const fractionalString = (fractional * 100).toFixed(2);
