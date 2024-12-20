@@ -40,7 +40,6 @@ const TableTabs: FC<Props> = ({
   vaultTVL,
 }) => {
   const { assetMap } = useRestakeContext();
-
   const { rewardConfig } = useRestakeRewardConfig();
 
   // Recalculate vaults data from assetMap
@@ -116,12 +115,7 @@ const TableTabs: FC<Props> = ({
           });
 
         return (
-          <div className="px-3 pt-4 pb-3 -mx-px bg-mono-0 dark:bg-mono-190 -mt-7 rounded-b-xl">
-            <VaultAssetsTable
-              isShown={row.getIsExpanded()}
-              data={vaultAssets}
-            />
-          </div>
+          <VaultAssetsTable isShown={row.getIsExpanded()} data={vaultAssets} />
         );
       },
     }),

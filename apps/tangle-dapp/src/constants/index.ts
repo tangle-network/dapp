@@ -105,3 +105,8 @@ export const STAKING_PAYEE_VALUE_TO_TEXT_MAP: Record<
  * The default debounce delay in milliseconds.
  */
 export const DEFAULT_DEBOUNCE_DELAY = 500;
+
+export enum LockUnlocksAtKind {
+  ERA,
+  BLOCK,
+}

@@ -17,7 +17,7 @@ const getTailwindSize = (size: LstIconSize) => {
     case LstIconSize.MD:
       return 'w-[30px] h-[30px]';
     case LstIconSize.LG:
-      return 'w-[38px] h-[38px]';
+      return 'w-[40px] h-[40px]';
   }
 };
 

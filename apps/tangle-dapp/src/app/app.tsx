@@ -35,10 +35,11 @@ function App() {
         <Layout>
           {/* START: routes */}
           <Routes>
-            <Route path={PagePath.ACCOUNT} element={<AccountPage />} />
+            <Route index path={PagePath.DASHBOARD} element={<AccountPage />} />
 
             <Route path={PagePath.CLAIM_AIRDROP} element={<ClaimLayout />}>
               <Route index element={<ClaimPage />} />
+
               <Route
                 path={PagePath.CLAIM_AIRDROP_SUCCESS}
                 element={<ClaimSuccessPage />}

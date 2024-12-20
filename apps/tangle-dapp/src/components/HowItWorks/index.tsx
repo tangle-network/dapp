@@ -27,7 +27,7 @@ const HowItWorks = forwardRef<HTMLDivElement, HowItWorksProps>(
         ref={ref}
       >
         <Typography variant="body1" fw="bold">
-          How it works
+          How It Works
         </Typography>
 
         <div>{children}</div>

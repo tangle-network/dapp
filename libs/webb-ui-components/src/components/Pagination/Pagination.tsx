@@ -23,6 +23,7 @@ export const Pagination = forwardRef<HTMLDivElement, PaginationProps>(
       totalPages,
       title,
       iconSize = 'lg',
+      labelOverride,
       ...props
     },
     ref,
@@ -67,11 +68,17 @@ export const Pagination = forwardRef<HTMLDivElement, PaginationProps>(
         ref={ref}
       >
         {/** Left label */}
-        <p className="body1 text-mono-160 dark:text-mono-100">
-          {totalItems === 0
-            ? 'No items'
-            : `Showing ${showingItemsCount} ${titleSection}out of ${totalItems ?? '—'}`}
-        </p>
+        {labelOverride === undefined ? (
+          <p className="body1 text-mono-160 dark:text-mono-100">
+            {totalItems === 0
+              ? 'No items'
+              : `Showing ${showingItemsCount} ${titleSection}out of ${totalItems ?? '—'}`}
+          </p>
+        ) : (
+          <p className="body1 text-mono-160 dark:text-mono-100">
+            {labelOverride}
+          </p>
+        )}
 
         {/** Right buttons */}
         <div className="flex items-center space-x-1">

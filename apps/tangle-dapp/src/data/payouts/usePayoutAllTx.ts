@@ -26,7 +26,7 @@ export type PayoutAllTxContext = {
 // of calculating the exact tx weight, since there's always
 // the possibility that other transactions are included in the
 // same block, which would cause the batch payout to fail anyway.
-export const MAX_PAYOUTS_BATCH_SIZE = 40;
+export const MAX_PAYOUTS_BATCH_SIZE = 30;
 
 const usePayoutAllTx = () => {
   const evmTxFactory: EvmTxFactory<Precompile.BATCH, PayoutAllTxContext> =

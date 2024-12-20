@@ -63,8 +63,6 @@ const LiquidStakingPage: FC = () => {
     setIsStakingInStore(isStaking);
   }, [isStaking, setIsStakingInStore]);
 
-  // Sync the URL param state of whether liquid staking or unstaking with
-  // the Zustand store state.
   useEffect(() => {
     setIsStaking(isStakingInStore);
   }, [isStakingInStore, setIsStaking]);
