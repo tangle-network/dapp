@@ -30,7 +30,6 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import cx from 'classnames';
 import {

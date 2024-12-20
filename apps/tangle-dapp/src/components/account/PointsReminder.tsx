@@ -30,7 +30,7 @@ const PointsReminder: FC<{ className?: string }> = ({ className }) => {
 
       <div className="mt-auto">
         {/** TODO: Awaiting creation of the campaign docs page. Tracked by #2708. */}
-        <ExternalLink href="#">Get Started</ExternalLink>
+        <ExternalLink href="#">Learn More</ExternalLink>
       </div>
     </Card>
   );

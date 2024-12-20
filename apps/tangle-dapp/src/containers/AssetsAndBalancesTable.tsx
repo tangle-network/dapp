@@ -307,6 +307,7 @@ const AssetsAndBalancesTable: FC = () => {
   const isAccountConnected = useIsAccountConnected();
   const nativeTokenSymbol = useNetworkStore((state) => state.nativeTokenSymbol);
   const substrateAddress = useSubstrateAddress();
+  const assets = useRestakeAssetMap();
 
   const getTotalLockedInAsset = useCallback(
     (assetId: number) => {
@@ -330,30 +331,30 @@ const AssetsAndBalancesTable: FC = () => {
   );
 
   const assetRows = useMemo<Row[]>(() => {
-    return Object.entries(balances).flatMap(([assetId, balance]) => {
-      const assetDetails: (typeof assetMap)[string] | undefined =
-        assetMap[assetId];
-
-      if (assetDetails === undefined) {
-        return [];
-      }
-
+    return Object.entries(assets.assetMap).flatMap(([assetId, metadata]) => {
       const cap = rewardConfig.configs[assetId]?.cap;
       const capBn = cap === undefined ? undefined : new BN(cap.toString());
+      const tvl = metadata.details?.supply.toBn();
 
-      const tvl = assetDetails.details?.supply.toBn();
+      const assetBalances: (typeof balances)[string] | undefined =
+        balances[assetId];
+
+      const available =
+        assetBalances?.balance !== undefined
+          ? new BN(assetBalances.balance.toString())
+          : BN_ZERO;
 
       return {
         type: RowType.ASSET,
-        name: assetDetails.name,
+        name: metadata.name,
         tvl,
-        available: new BN(balance.balance.toString()),
+        available,
         locked: getTotalLockedInAsset(parseInt(assetId)),
         // TODO: This won't work because reward config is PER VAULT not PER ASSET. But isn't each asset its own vault?
         apyFractional: rewardConfig.configs[assetId]?.apy,
         // TODO: Each asset should have its own token symbol.
         tokenSymbol: nativeTokenSymbol,
-        decimals: assetDetails.decimals,
+        decimals: metadata.decimals,
         cap: capBn,
       } satisfies Row;
     });
