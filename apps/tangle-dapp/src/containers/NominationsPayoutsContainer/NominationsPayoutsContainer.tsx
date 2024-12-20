@@ -19,6 +19,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 import {
   ContainerSkeleton,
@@ -42,6 +43,7 @@ import { PayoutAllTxContainer } from '../PayoutAllTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
 import { UpdateNominationsTxContainer } from '../UpdateNominationsTxContainer';
 import { UpdatePayeeTxContainer } from '../UpdatePayeeTxContainer';
+import type { DeriveSessionProgress } from '@polkadot/api-derive/session/types';
 
 const PAGE_SIZE = 10;
 
@@ -277,7 +279,7 @@ const DelegationsPayoutsContainer: FC = () => {
             <PayoutTable
               data={fetchedPayouts ?? []}
               pageSize={PAGE_SIZE}
-              sessionProgress={progress}
+              sessionProgress={progress as unknown as DeriveSessionProgress}
               historyDepth={historyDepth}
               epochDuration={epochDuration}
             />
@@ -294,7 +296,11 @@ const DelegationsPayoutsContainer: FC = () => {
         isModalOpen={isUpdateNominationsModalOpen}
         setIsModalOpen={setIsUpdateNominationsModalOpen}
         // TODO: Need to pass down the explicit `Optional<T>` type here, instead of defaulting to `[]`, because that will lead to a situation where the lower component things the value is still loading and displays a loading state forever.
-        currentNominations={currentNominationAddresses?.value ?? []}
+        currentNominations={
+          currentNominationAddresses?.value?.map(
+            (addr) => addr as SubstrateAddress,
+          ) ?? []
+        }
       />
 
       <UpdatePayeeTxContainer

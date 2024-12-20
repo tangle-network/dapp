@@ -123,6 +123,17 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       chainId: PresetTypedChainId.TangleTestnetEVM,
     },
   ],
+  [PresetTypedChainId.SolanaMainnet]: [
+    {
+      tokenSymbol: 'routerTNT',
+      tokenType: EVMTokenEnum.TNT,
+      bridgeType: EVMTokenBridgeEnum.Router,
+      address: 'FcermohxLgTo8xnJXpPyW6D2swUMepVjQVNiiNLw38pC',
+      abi: [],
+      decimals: 18,
+      chainId: PresetTypedChainId.SolanaMainnet,
+    },
+  ],
 };
 
 export const BRIDGE_CHAINS: BridgeChainsConfigType = {
@@ -147,6 +158,9 @@ export const BRIDGE_CHAINS: BridgeChainsConfigType = {
     },
     [PresetTypedChainId.BSC]: {
       supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.BSC],
+    },
+    [PresetTypedChainId.SolanaMainnet]: {
+      supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.SolanaMainnet],
     },
   },
   [PresetTypedChainId.EthereumMainNet]: {

@@ -10,10 +10,12 @@ import { SIDEBAR_OPEN_KEY } from '../../constants';
 import getCookieItem from '../../utils/getCookieItem';
 import IconButton from '../buttons/IconButton';
 import { LogoProps } from '../Logo/types';
-import { SideBarFooter } from './Footer';
 import { SideBarItems } from './SideBarItems';
 import { SideBarLogo } from './Logo';
 import { MobileSidebarProps } from './types';
+import { ThemeToggle } from '../ThemeToggle';
+import { Typography } from '../../typography/Typography';
+import { Link } from '../Link';
 
 /**
  * Sidebar Navigation Menu Component
@@ -79,6 +81,8 @@ export const SideBar = forwardRef<HTMLDivElement, MobileSidebarProps>(
       }
     }, [isSidebarOpen, onSideBarToggle, setIsSidebarOpen]);
 
+    console.log('items', items);
+
     return (
       <div
         className={cx('flex gap-2 relative', className)}
@@ -133,23 +137,58 @@ export const SideBar = forwardRef<HTMLDivElement, MobileSidebarProps>(
             />
           </div>
 
-          <div className="space-y-2">
-            <SideBarItems
-              pathnameOrHash={pathnameOrHash}
-              items={items.filter((item) => !item.isInternal)}
-              isExpanded={isSidebarOpen}
-              className="gap-2"
-            />
+          <div className="space-y-5">
+            <div
+              className={cx(
+                'flex items-center gap-2',
+                isSidebarOpen ? 'justify-between' : 'justify-center',
+              )}
+            >
+              <Link
+                href={footer.href}
+                target="_blank"
+                className="flex items-center gap-2"
+              >
+                <footer.Icon
+                  width={24}
+                  height={24}
+                  className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
+                />
 
-            <SideBarFooter
-              name={footer.name}
-              Icon={footer.Icon}
-              isInternal={footer.isInternal}
-              href={footer.href}
-              useNextThemesForThemeToggle={footer.useNextThemesForThemeToggle}
-              isExpanded={isSidebarOpen}
-              className={isSidebarOpen ? 'p-2' : ''}
-            />
+                {isSidebarOpen && (
+                  <Typography
+                    variant="body1"
+                    className="cursor-pointer text-mono-100 dark:text-mono-60 group-hover:text-mono-200 dark:group-hover:text-mono-0"
+                  >
+                    {footer.name}
+                  </Typography>
+                )}
+              </Link>
+            </div>
+
+            <div
+              className={cx(
+                'flex flex-col items-center justify-between gap-5',
+                isSidebarOpen ? '!flex-row' : '',
+              )}
+            >
+              {items
+                .filter((item) => !item.isInternal)
+                .map((item) => (
+                  <Link href={item.href} target="_blank">
+                    <item.Icon
+                      width={24}
+                      height={24}
+                      className="cursor-pointer !fill-mono-100 dark:!fill-mono-60 group-hover:!fill-mono-200 dark:group-hover:!fill-mono-0"
+                    />
+                  </Link>
+                ))}
+              {isSidebarOpen && (
+                <ThemeToggle
+                  useNextThemes={footer.useNextThemesForThemeToggle}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

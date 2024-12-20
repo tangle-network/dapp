@@ -3,6 +3,7 @@ import {
   Button,
   Input,
   isEvmAddress,
+  isSolanaAddress,
   isSubstrateAddress,
 } from '@webb-tools/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
@@ -57,13 +58,14 @@ const AddressInput: FC<AddressInputProps> = ({
 
       const isEvm = isEvmAddress(newValue);
       const isSubstrate = isSubstrateAddress(newValue);
+      const isSolana = isSolanaAddress(newValue);
 
-      if (!isEvm && !isSubstrate) {
-        setErrorMessage('Invalid address');
-      } else if (type === AddressType.EVM && !isEvm) {
+      if (type === AddressType.EVM && !isEvm) {
         setErrorMessage('Invalid EVM address');
       } else if (type === AddressType.Substrate && !isSubstrate) {
         setErrorMessage('Invalid Substrate address');
+      } else if (type === AddressType.Solana && !isSolana) {
+        setErrorMessage('Invalid Solana address');
       } else {
         setErrorMessage(null);
       }
