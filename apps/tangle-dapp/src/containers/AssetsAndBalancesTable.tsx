@@ -9,6 +9,7 @@ import {
   getSortedRowModel,
   SortingState,
   useReactTable,
+  VisibilityState,
 } from '@tanstack/react-table';
 import {
   AmountFormatStyle,
@@ -18,7 +19,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import StatItem from '../components/StatItem';
 import { HeaderCell } from '../components/tableCells';
@@ -233,7 +234,7 @@ const COLUMNS = [
       const polarity = isGain ? '+' : '';
 
       return (
-        <TableCellWrapper>
+        <TableCellWrapper removeRightBorder>
           <span
             className={twMerge(
               isGain ? 'dark:text-green-400' : 'dark:text-red-400',
@@ -298,6 +299,10 @@ const AssetsAndBalancesTable: FC = () => {
     // Default sorting by TVL in descending order.
     { id: 'tvl' satisfies keyof Row, desc: false },
   ]);
+
+  const [columnVisibility, setColumnVisibility] = useState<
+    VisibilityState & Partial<Record<keyof Row, boolean>>
+  >({});
 
   const { balances } = useRestakeBalances();
   const { assetMap } = useRestakeAssetMap();
@@ -415,23 +420,27 @@ const AssetsAndBalancesTable: FC = () => {
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
+      columnVisibility,
     },
   });
 
-  if (!isAccountConnected) {
+  // Show or hide the "Available" and "Locked" columns based on whether
+  // there is an account connected.
+  useEffect(() => {
+    setColumnVisibility({
+      available: isAccountConnected,
+      locked: isAccountConnected,
+    });
+  }, [isAccountConnected]);
+
+  if (rows.length === 0) {
     return (
       <TableStatus
-        title="Connect Wallet"
-        description="Please connect your wallet to view your restaking balances."
-      />
-    );
-  } else if (rows.length === 0) {
-    return (
-      <TableStatus
-        title="No Balances"
-        description="Create your first restaking deposit and check back here for the details."
+        title="No Assets"
+        description="There are no assets available yet. Get started by creating your own asset or liquid staking pool!"
       />
     );
   }
