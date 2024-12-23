@@ -13,9 +13,13 @@ import { twMerge } from 'tailwind-merge';
 import StatItem from '../../../components/StatItem';
 import { CONTENT } from './shared';
 import TableTabs from './TableTabs';
-import { ArrowRightUp, ExternalLinkLine } from '@webb-tools/icons';
+import { ArrowRightUp } from '@webb-tools/icons';
+import { useParams } from 'react-router';
+import { RestakeAction } from '../../../constants';
+import NotFoundPage from '../../notFound';
 
 export default function RestakePage() {
+  const { action } = useParams();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
 
@@ -27,6 +31,13 @@ export default function RestakePage() {
     totalDelegatorTVL,
     totalNetworkTVL,
   } = useRestakeTVL(operatorMap, delegatorInfo);
+
+  if (
+    action !== undefined &&
+    !Object.values(RestakeAction).includes(action as RestakeAction)
+  ) {
+    return <NotFoundPage />;
+  }
 
   return (
     <div className="space-y-5">

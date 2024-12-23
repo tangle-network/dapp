@@ -9,8 +9,8 @@ import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
-import ModalContent from '../ModalContent';
 import ModalContentList from '../ModalContentList';
+import { ModalContent } from '@webb-tools/webb-ui-components';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -46,7 +46,6 @@ const UnstakeModal = ({
     <ModalContent
       isOpen={isOpen}
       title="Select Operator"
-      description="Select the operator you want to unstake from"
       onInteractOutside={onClose}
     >
       <ModalContentList

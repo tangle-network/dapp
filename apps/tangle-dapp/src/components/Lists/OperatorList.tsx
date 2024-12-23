@@ -50,11 +50,16 @@ export const OperatorList = ({
   const isEmpty = Object.keys(activeOperator).length === 0;
 
   const filteredOperator = useMemo(() => {
-    if (searchText === '') return activeOperator;
+    if (searchText === '') {
+      return activeOperator;
+    }
 
     const pickedOperators = keys(activeOperator).filter((operator) => {
       const identity = operatorIdentities?.[operator]?.name;
-      if (!identity) return operator.includes(searchText);
+
+      if (!identity) {
+        return operator.includes(searchText);
+      }
 
       return (
         identity.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -102,7 +107,10 @@ export const OperatorList = ({
                 >
                   <AvatarWithText
                     accountAddress={operator}
-                    overrideAvatarProps={{ size: 'lg' }}
+                    overrideAvatarProps={{
+                      size: 'lg',
+                      className: 'basis-auto',
+                    }}
                     overrideTypographyProps={{ variant: 'h5' }}
                     identityName={
                       operatorIdentities?.[operator]?.name || '<Unknown>'

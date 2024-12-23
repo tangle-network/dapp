@@ -3,7 +3,7 @@ import type { ComponentProps, FC } from 'react';
 
 import { ChainList } from '../../components/Lists/ChainList';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../constants/restake';
-import ModalContent from './ModalContent';
+import { ModalContent } from '@webb-tools/webb-ui-components';
 
 type Props = {
   isOpen: boolean;
@@ -16,7 +16,6 @@ const SupportedChainModal: FC<Props> = ({ isOpen, onChainChange, onClose }) => {
     <ModalContent
       isOpen={isOpen}
       title="Select Chain"
-      description="Select the chain you want to delegate from"
       onInteractOutside={onClose}
     >
       <ChainList

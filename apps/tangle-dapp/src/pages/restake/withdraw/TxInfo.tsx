@@ -4,6 +4,7 @@ import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constant
 import DetailsContainer from '../../../components/DetailsContainer';
 import DetailItem from '../../../components/LiquidStaking/stakeAndUnstake/DetailItem';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
 const TxInfo = () => {
   const { leaveDelegatorsDelay } = useRestakeConsts();
@@ -17,7 +18,7 @@ const TxInfo = () => {
         title="Withdraw delay"
         value={
           isDefined(leaveDelegatorsDelay)
-            ? `${leaveDelegatorsDelay} sessions`
+            ? `${leaveDelegatorsDelay} ${pluralize('session', leaveDelegatorsDelay !== 1)}`
             : leaveDelegatorsDelay
         }
       />

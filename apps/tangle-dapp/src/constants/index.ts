@@ -110,3 +110,10 @@ export enum LockUnlocksAtKind {
   ERA,
   BLOCK,
 }
+
+export enum RestakeAction {
+  DEPOSIT = 'deposit',
+  STAKE = 'stake',
+  UNSTAKE = 'unstake',
+  WITHDRAW = 'withdraw',
+}

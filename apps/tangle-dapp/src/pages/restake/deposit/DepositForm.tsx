@@ -8,7 +8,10 @@ import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/use
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import { Card } from '@webb-tools/webb-ui-components';
 import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
+import {
+  Modal,
+  ModalContent,
+} from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import {
   type ComponentProps,
@@ -38,7 +41,6 @@ import { QueryParamKey } from '../../../types';
 import { DepositFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
 import Form from '../Form';
-import ModalContent from '../ModalContent';
 import ActionButton from './ActionButton';
 import SourceChainInput from './SourceChainInput';
 import TxDetails from './TxDetails';
@@ -276,7 +278,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   );
 
   return (
-    <Card withShadow>
+    <Card withShadow tightPadding>
       <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col h-full space-y-4 grow">
           <div className="space-y-2">
@@ -307,7 +309,6 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
           <ModalContent
             isOpen={chainModalOpen}
             title="Select Chain"
-            description="Select the chain you want to deposit from."
             onInteractOutside={closeChainModal}
           >
             <ChainList
@@ -322,7 +323,6 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
           <ModalContent
             isOpen={tokenModalOpen}
             title="Select Asset"
-            description="Select the asset you want to deposit."
             onInteractOutside={closeTokenModal}
           >
             <AssetList

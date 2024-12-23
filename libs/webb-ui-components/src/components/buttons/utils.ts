@@ -12,7 +12,7 @@ const classNames: ButtonClassNames = {
       active:
         'active:bg-purple-60 dark:active:bg-purple-70 dark:active:border-purple-70',
       disabled:
-        'disabled:bg-mono-80 dark:disabled:bg-mono-120 dark:disabled:border-transparent dark:disabled:text-mono-60',
+        'disabled:bg-mono-80 dark:disabled:bg-purple-110 dark:disabled:border-transparent dark:disabled:text-blue-60',
     },
     md: 'body1',
     sm: 'body3',

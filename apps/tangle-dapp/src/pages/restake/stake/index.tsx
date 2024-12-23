@@ -8,7 +8,10 @@ import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkad
 import { Card, isSubstrateAddress } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
+import {
+  Modal,
+  ModalContent,
+} from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import entries from 'lodash/entries';
@@ -38,7 +41,6 @@ import { PagePath, QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
 import AssetList from '../AssetList';
 import Form from '../Form';
-import ModalContent from '../ModalContent';
 import RestakeTabs from '../RestakeTabs';
 import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
@@ -259,7 +261,7 @@ export default function Page() {
     <StyleContainer>
       <RestakeTabs />
 
-      <Card withShadow>
+      <Card withShadow tightPadding>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col h-full space-y-4 grow">
             <StakeInput
@@ -289,7 +291,6 @@ export default function Page() {
             <ModalContent
               isOpen={isAssetModalOpen}
               title="Select Asset"
-              description="Select the asset you want to delegate"
               onInteractOutside={closeAssetModal}
             >
               <AssetList
@@ -303,7 +304,6 @@ export default function Page() {
             <ModalContent
               isOpen={isOperatorModalOpen}
               title="Select Operator"
-              description="Select the operator you want to stake with"
               onInteractOutside={closeOperatorModal}
             >
               <OperatorList

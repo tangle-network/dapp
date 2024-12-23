@@ -184,6 +184,7 @@ const LsStakeCard: FC = () => {
   return (
     <Card
       withShadow
+      tightPadding
       className="flex flex-col items-stretch justify-center gap-2"
     >
       <LsInput

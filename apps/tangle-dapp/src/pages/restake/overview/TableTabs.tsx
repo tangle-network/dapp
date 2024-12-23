@@ -11,10 +11,14 @@ import VaultAssetsTable from '../../../components/tables/VaultAssets';
 import VaultsTable from '../../../components/tables/Vaults';
 import useRestakeRewardConfig from '../../../data/restake/useRestakeRewardConfig';
 import OperatorsTable from './OperatorsTable';
+import DepositForm from '../deposit/DepositForm';
+import RestakeTabs from '../RestakeTabs';
 
-const RESTAKE_VAULTS_TAB = 'Restake Vaults';
-
-const OPERATORS_TAB = 'Operators';
+enum RestakeTab {
+  RESTAKE = 'Restake',
+  VAULTS = 'Vaults',
+  OPERATORS = 'Operators',
+}
 
 type VaultUI = NonNullable<ComponentProps<typeof VaultsTable>['data']>[number];
 
@@ -124,14 +128,23 @@ const TableTabs: FC<Props> = ({
 
   return (
     <TableAndChartTabs
-      tabs={[RESTAKE_VAULTS_TAB, OPERATORS_TAB]}
+      tabs={Object.values(RestakeTab)}
       headerClassName="w-full"
     >
-      <TabContent value={RESTAKE_VAULTS_TAB}>
+      <TabContent
+        value={RestakeTab.RESTAKE}
+        className="flex items-center justify-center"
+      >
+        <RestakeTabs />
+
+        <DepositForm />
+      </TabContent>
+
+      <TabContent value={RestakeTab.VAULTS}>
         <VaultsTable data={Object.values(vaults)} tableProps={tableProps} />
       </TabContent>
 
-      <TabContent value={OPERATORS_TAB}>
+      <TabContent value={RestakeTab.OPERATORS}>
         <OperatorsTable
           operatorConcentration={operatorConcentration}
           operatorMap={operatorMap}

@@ -222,7 +222,7 @@ const Page = () => {
       >
         <RestakeTabs />
 
-        <Card withShadow className="relative">
+        <Card withShadow tightPadding className="relative">
           {!isWithdrawRequestTableOpen && isMediumScreen && (
             <ExpandTableButton
               className="absolute top-0 -right-10"

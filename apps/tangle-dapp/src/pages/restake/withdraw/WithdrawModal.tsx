@@ -7,8 +7,8 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatUnits } from 'viem';
-import ModalContent from '../ModalContent';
 import ModalContentList from '../ModalContentList';
+import { ModalContent } from '@webb-tools/webb-ui-components';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -47,7 +47,6 @@ const WithdrawModal = ({
     <ModalContent
       isOpen={isOpen}
       title="Select Withdrawal Asset"
-      description="Select the asset you want to withdraw"
       onInteractOutside={onClose}
     >
       <ModalContentList

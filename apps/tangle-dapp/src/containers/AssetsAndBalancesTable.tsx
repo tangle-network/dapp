@@ -450,6 +450,7 @@ const AssetsAndBalancesTable: FC = () => {
       variant={TableVariant.GLASS_OUTER}
       tableProps={table}
       trClassName="cursor-default"
+      isPaginated
     />
   );
 };

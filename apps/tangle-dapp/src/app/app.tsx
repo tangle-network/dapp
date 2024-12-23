@@ -1,7 +1,7 @@
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles.css';
 
-import { Navigate, Route, Routes } from 'react-router';
+import { Route, Routes } from 'react-router';
 import { Layout } from '../containers';
 import AccountPage from '../pages/account';
 import ClaimPage from '../pages/claim';
@@ -25,6 +25,7 @@ import RestakeDepositPage from '../pages/restake/deposit';
 import RestakeStakePage from '../pages/restake/stake';
 import RestakeUnstakePage from '../pages/restake/unstake';
 import RestakeWithdrawPage from '../pages/restake/withdraw';
+import NotFoundPage from '../pages/notFound';
 
 // TODO: Add metadata tags for SEO
 
@@ -72,7 +73,17 @@ function App() {
               element={<LiquidStakingPage />}
             />
 
-            <Route path={PagePath.RESTAKE} element={<RestakeLayout />}>
+            <Route
+              path={`${PagePath.RESTAKE}`}
+              element={<RestakeOverviewPage />}
+            />
+
+            <Route
+              path={`${PagePath.RESTAKE}/:action`}
+              element={<RestakeOverviewPage />}
+            />
+
+            {/* <Route path={PagePath.RESTAKE} element={<RestakeLayout />}>
               <Route
                 index
                 element={<Navigate to={PagePath.RESTAKE_OVERVIEW} />}
@@ -107,7 +118,9 @@ function App() {
                 path={PagePath.RESTAKE_WITHDRAW}
                 element={<RestakeWithdrawPage />}
               />
-            </Route>
+            </Route> */}
+
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
           {/* END: routes */}
         </Layout>

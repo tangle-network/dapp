@@ -250,7 +250,7 @@ const Page = () => {
       >
         <RestakeTabs />
 
-        <Card withShadow className="relative">
+        <Card withShadow tightPadding className="relative">
           {!isUnstakeRequestTableOpen && isMediumScreen && (
             <ExpandTableButton
               className="absolute top-0 -right-10"
@@ -395,6 +395,7 @@ const Page = () => {
             closeOperatorModal();
 
             const { formattedAmount, assetId, operatorAccountId } = item;
+
             const commonOpts = {
               shouldDirty: true,
               shouldValidate: true,
