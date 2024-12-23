@@ -50,7 +50,7 @@ import TxInfo from './TxInfo';
 import UnstakeModal from './UnstakeModal';
 import UnstakeRequestTable from './UnstakeRequestTable';
 
-const Page = () => {
+const RestakeUnstakePage = () => {
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
     useState(false);
 
@@ -248,8 +248,6 @@ const Page = () => {
             : 'mx-auto',
         )}
       >
-        <RestakeTabs />
-
         <Card withShadow tightPadding className="relative">
           {!isUnstakeRequestTableOpen && isMediumScreen && (
             <ExpandTableButton
@@ -424,4 +422,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default RestakeUnstakePage;

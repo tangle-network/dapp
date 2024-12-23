@@ -6,13 +6,17 @@ import type {
 } from '@webb-tools/tangle-shared-ui/types/restake';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
-import { type ComponentProps, type FC, useMemo } from 'react';
+import { type ComponentProps, type FC, ReactNode, useMemo } from 'react';
 import VaultAssetsTable from '../../../components/tables/VaultAssets';
 import VaultsTable from '../../../components/tables/Vaults';
 import useRestakeRewardConfig from '../../../data/restake/useRestakeRewardConfig';
 import OperatorsTable from './OperatorsTable';
 import DepositForm from '../deposit/DepositForm';
 import RestakeTabs from '../RestakeTabs';
+import { RestakeAction } from '../../../constants';
+import RestakeWithdrawPage from '../withdraw';
+import RestakeStakePage from '../stake';
+import RestakeUnstakePage from '../unstake';
 
 enum RestakeTab {
   RESTAKE = 'Restake',
@@ -33,6 +37,20 @@ type Props = {
   operatorMap: OperatorMap;
   operatorTVL?: Record<string, number>;
   vaultTVL?: Record<string, number>;
+  action: RestakeAction;
+};
+
+const getFormOfRestakeAction = (action: RestakeAction): ReactNode => {
+  switch (action) {
+    case RestakeAction.DEPOSIT:
+      return <DepositForm />;
+    case RestakeAction.WITHDRAW:
+      return <RestakeWithdrawPage />;
+    case RestakeAction.STAKE:
+      return <RestakeStakePage />;
+    case RestakeAction.UNSTAKE:
+      return <RestakeUnstakePage />;
+  }
 };
 
 const TableTabs: FC<Props> = ({
@@ -42,6 +60,7 @@ const TableTabs: FC<Props> = ({
   operatorMap,
   operatorTVL,
   vaultTVL,
+  action,
 }) => {
   const { assetMap } = useRestakeContext();
   const { rewardConfig } = useRestakeRewardConfig();
@@ -101,6 +120,7 @@ const TableTabs: FC<Props> = ({
       },
       getExpandedRowContent(row) {
         const vaultId = row.original.id;
+
         const vaultAssets = Object.values(assetMap)
           .filter((asset) => asset.vaultId === vaultId)
           .map((asset) => {
@@ -133,11 +153,11 @@ const TableTabs: FC<Props> = ({
     >
       <TabContent
         value={RestakeTab.RESTAKE}
-        className="flex items-center justify-center"
+        className="flex flex-col items-stretch justify-center max-w-[500px] mx-auto"
       >
         <RestakeTabs />
 
-        <DepositForm />
+        {getFormOfRestakeAction(action)}
       </TabContent>
 
       <TabContent value={RestakeTab.VAULTS}>

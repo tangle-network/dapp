@@ -17,6 +17,7 @@ import { ArrowRightUp } from '@webb-tools/icons';
 import { useParams } from 'react-router';
 import { RestakeAction } from '../../../constants';
 import NotFoundPage from '../../notFound';
+import isEnumValue from '../../../utils/isEnumValue';
 
 export default function RestakePage() {
   const { action } = useParams();
@@ -32,10 +33,8 @@ export default function RestakePage() {
     totalNetworkTVL,
   } = useRestakeTVL(operatorMap, delegatorInfo);
 
-  if (
-    action !== undefined &&
-    !Object.values(RestakeAction).includes(action as RestakeAction)
-  ) {
+  // If provided, make sure that the action parameter is valid.
+  if (action !== undefined && !isEnumValue(action, RestakeAction)) {
     return <NotFoundPage />;
   }
 
@@ -109,6 +108,7 @@ export default function RestakePage() {
         operatorTVL={operatorTVL}
         vaultTVL={vaultTVL}
         operatorConcentration={operatorConcentration}
+        action={action ?? RestakeAction.DEPOSIT}
       />
     </div>
   );

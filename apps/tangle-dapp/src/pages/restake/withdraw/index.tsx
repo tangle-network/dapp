@@ -50,7 +50,7 @@ import TxInfo from './TxInfo';
 import WithdrawModal from './WithdrawModal';
 import WithdrawRequestTable from './WithdrawRequestTable';
 
-const Page = () => {
+const RestakeWithdrawPage = () => {
   const {
     register,
     setValue: setFormValue,
@@ -220,8 +220,6 @@ const Page = () => {
             : 'mx-auto',
         )}
       >
-        <RestakeTabs />
-
         <Card withShadow tightPadding className="relative">
           {!isWithdrawRequestTableOpen && isMediumScreen && (
             <ExpandTableButton
@@ -393,4 +391,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default RestakeWithdrawPage;

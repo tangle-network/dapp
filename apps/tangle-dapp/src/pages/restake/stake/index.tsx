@@ -49,7 +49,7 @@ import ActionButton from './ActionButton';
 import Info from './Info';
 import StakeInput from './StakeInput';
 
-export default function Page() {
+export default function RestakeStakePage() {
   const {
     register,
     setValue: setFormValue,
@@ -259,8 +259,6 @@ export default function Page() {
 
   return (
     <StyleContainer>
-      <RestakeTabs />
-
       <Card withShadow tightPadding>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col h-full space-y-4 grow">
