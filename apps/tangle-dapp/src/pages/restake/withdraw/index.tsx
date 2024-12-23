@@ -230,53 +230,55 @@ const RestakeWithdrawPage = () => {
           )}
 
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-            <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
-              <TransactionInputCard.Header>
-                <TransactionInputCard.ChainSelector
-                  placeholder="Active Chain"
-                  disabled
-                  {...(activeChain
-                    ? {
-                        renderBody: () => (
-                          <div className="flex items-center gap-2">
-                            <ChainIcon size="lg" name={activeChain.name} />
+            <div className="flex flex-col items-start justify-stretch">
+              <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
+                <TransactionInputCard.Header>
+                  <TransactionInputCard.ChainSelector
+                    placeholder="Active Chain"
+                    disabled
+                    {...(activeChain
+                      ? {
+                          renderBody: () => (
+                            <div className="flex items-center gap-2">
+                              <ChainIcon size="lg" name={activeChain.name} />
 
-                            <Typography
-                              variant="h5"
-                              fw="bold"
-                              className="text-mono-200 dark:text-mono-0"
-                            >
-                              {activeChain.name}
-                            </Typography>
-                          </div>
-                        ),
-                      }
-                    : {})}
-                />
-                <TransactionInputCard.MaxAmountButton
-                  maxAmount={formattedMaxAmount}
-                  tooltipBody="Deposited Balance"
-                  Icon={
+                              <Typography
+                                variant="h5"
+                                fw="bold"
+                                className="text-mono-200 dark:text-mono-0"
+                              >
+                                {activeChain.name}
+                              </Typography>
+                            </div>
+                          ),
+                        }
+                      : {})}
+                  />
+                  <TransactionInputCard.MaxAmountButton
+                    maxAmount={formattedMaxAmount}
+                    tooltipBody="Deposited Balance"
+                    Icon={
+                      useRef({
+                        enabled: <LockLineIcon />,
+                        disabled: <LockFillIcon />,
+                      }).current
+                    }
+                  />
+                </TransactionInputCard.Header>
+
+                <TransactionInputCard.Body
+                  customAmountProps={customAmountProps}
+                  tokenSelectorProps={
                     useRef({
-                      enabled: <LockLineIcon />,
-                      disabled: <LockFillIcon />,
+                      placeholder: <AssetPlaceholder />,
+                      onClick: openWithdrawModal,
                     }).current
                   }
                 />
-              </TransactionInputCard.Header>
-
-              <TransactionInputCard.Body
-                customAmountProps={customAmountProps}
-                tokenSelectorProps={
-                  useRef({
-                    placeholder: <AssetPlaceholder />,
-                    onClick: openWithdrawModal,
-                  }).current
-                }
-              />
+              </TransactionInputCard.Root>
 
               <ErrorMessage>{errors.amount?.message}</ErrorMessage>
-            </TransactionInputCard.Root>
+            </div>
 
             <TxInfo />
 

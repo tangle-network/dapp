@@ -6,6 +6,7 @@ export default function DepositPage() {
   return (
     <StyleContainer>
       <RestakeTabs />
+
       <DepositForm />
     </StyleContainer>
   );

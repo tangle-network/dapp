@@ -258,50 +258,52 @@ const RestakeUnstakePage = () => {
           )}
 
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-            <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
-              <TransactionInputCard.Header>
-                <TransactionInputCard.ChainSelector
-                  placeholder="Select"
-                  onClick={openOperatorModal}
-                  {...(selectedOperatorAccountId
-                    ? {
-                        renderBody: () => (
-                          <AvatarWithText
-                            accountAddress={selectedOperatorAccountId}
-                            identityName={
-                              operatorIdentities?.[selectedOperatorAccountId]
-                                ?.name
-                            }
-                            overrideTypographyProps={{ variant: 'h5' }}
-                          />
-                        ),
-                      }
-                    : {})}
-                />
-                <TransactionInputCard.MaxAmountButton
-                  maxAmount={formattedMaxAmount}
-                  tooltipBody="Staked Balance"
-                  Icon={
+            <div className="flex flex-col items-start justify-stretch">
+              <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
+                <TransactionInputCard.Header>
+                  <TransactionInputCard.ChainSelector
+                    placeholder="Select"
+                    onClick={openOperatorModal}
+                    {...(selectedOperatorAccountId
+                      ? {
+                          renderBody: () => (
+                            <AvatarWithText
+                              accountAddress={selectedOperatorAccountId}
+                              identityName={
+                                operatorIdentities?.[selectedOperatorAccountId]
+                                  ?.name
+                              }
+                              overrideTypographyProps={{ variant: 'h5' }}
+                            />
+                          ),
+                        }
+                      : {})}
+                  />
+                  <TransactionInputCard.MaxAmountButton
+                    maxAmount={formattedMaxAmount}
+                    tooltipBody="Staked Balance"
+                    Icon={
+                      useRef({
+                        enabled: <LockLineIcon />,
+                        disabled: <LockFillIcon />,
+                      }).current
+                    }
+                  />
+                </TransactionInputCard.Header>
+
+                <TransactionInputCard.Body
+                  customAmountProps={customAmountProps}
+                  tokenSelectorProps={
                     useRef({
-                      enabled: <LockLineIcon />,
-                      disabled: <LockFillIcon />,
+                      placeholder: <AssetPlaceholder />,
+                      isDisabled: true,
                     }).current
                   }
                 />
-              </TransactionInputCard.Header>
-
-              <TransactionInputCard.Body
-                customAmountProps={customAmountProps}
-                tokenSelectorProps={
-                  useRef({
-                    placeholder: <AssetPlaceholder />,
-                    isDisabled: true,
-                  }).current
-                }
-              />
+              </TransactionInputCard.Root>
 
               <ErrorMessage>{errors.amount?.message}</ErrorMessage>
-            </TransactionInputCard.Root>
+            </div>
 
             <TxInfo />
 
