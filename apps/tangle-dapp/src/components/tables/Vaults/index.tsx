@@ -99,7 +99,7 @@ const columns = [
       <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1 gap-2">
           <Link
-            to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_VAULT}=${row.original.id}`}
+            to={`${PagePath.RESTAKE}?${QueryParamKey.RESTAKE_VAULT}=${row.original.id}`}
           >
             <Button variant="utility" className="uppercase body4">
               Restake

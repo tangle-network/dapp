@@ -13,7 +13,7 @@ export type TabsListProps = PropsOf<'ul'>;
 const getTabRoute = (tab: RestakeAction): PagePath => {
   switch (tab) {
     case RestakeAction.DEPOSIT:
-      return PagePath.RESTAKE_DEPOSIT;
+      return PagePath.RESTAKE;
     case RestakeAction.STAKE:
       return PagePath.RESTAKE_STAKE;
     case RestakeAction.UNSTAKE:
@@ -27,10 +27,8 @@ const RestakeTabs = (props: TabsListProps) => {
   const location = useLocation();
 
   const activeTab = useMemo(() => {
-    const paths = location.pathname.split('/');
-
-    return Object.values(RestakeAction).find((tab) =>
-      paths.some((path) => path === tab),
+    return Object.values(RestakeAction).find(
+      (tab) => location.pathname === getTabRoute(tab),
     );
   }, [location.pathname]);
 

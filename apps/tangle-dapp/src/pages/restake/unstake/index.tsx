@@ -378,8 +378,7 @@ const RestakeUnstakePage = () => {
               className="text-mono-120 dark:text-mono-100"
             >
               You will be able to withdraw your tokens after the unstake request
-              has been processed. To unstake your tokens go to the unstake tab
-              to schedule a request.
+              has been processed.
             </Typography>
           )}
         </RestakeDetailCard.Root>

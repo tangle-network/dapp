@@ -277,7 +277,7 @@ const COLUMNS = [
       <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1">
           {/** TODO: Include asset ID in the URL. */}
-          <Link to={PagePath.RESTAKE_DEPOSIT}>
+          <Link to={PagePath.RESTAKE}>
             <Button
               variant="utility"
               size="sm"

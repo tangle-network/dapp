@@ -18,13 +18,7 @@ import BlueprintLayout from '../pages/blueprints/layout';
 import BlueprintsPage from '../pages/blueprints';
 import BlueprintDetailsPage from '../pages/blueprints/[id]';
 import LiquidStakingPage from '../pages/liquid-staking';
-import RestakeLayout from '../pages/restake/layout';
 import RestakeOverviewPage from '../pages/restake/overview';
-import RestakeOperatorPage from '../pages/restake/operators/[address]';
-import RestakeDepositPage from '../pages/restake/deposit';
-import RestakeStakePage from '../pages/restake/stake';
-import RestakeUnstakePage from '../pages/restake/unstake';
-import RestakeWithdrawPage from '../pages/restake/withdraw';
 import NotFoundPage from '../pages/notFound';
 
 // TODO: Add metadata tags for SEO
@@ -34,7 +28,6 @@ function App() {
     <div>
       <Providers>
         <Layout>
-          {/* START: routes */}
           <Routes>
             <Route index path={PagePath.DASHBOARD} element={<AccountPage />} />
 
@@ -62,6 +55,7 @@ function App() {
 
             <Route path={PagePath.BLUEPRINTS} element={<BlueprintLayout />}>
               <Route index element={<BlueprintsPage />} />
+
               <Route
                 path={PagePath.BLUEPRINTS_DETAILS}
                 element={<BlueprintDetailsPage />}
@@ -83,46 +77,8 @@ function App() {
               element={<RestakeOverviewPage />}
             />
 
-            {/* <Route path={PagePath.RESTAKE} element={<RestakeLayout />}>
-              <Route
-                index
-                element={<Navigate to={PagePath.RESTAKE_OVERVIEW} />}
-              />
-
-              <Route
-                path={PagePath.RESTAKE_OVERVIEW}
-                element={<RestakeOverviewPage />}
-              />
-
-              <Route
-                path={`${PagePath.RESTAKE_OPERATOR}/:address`}
-                element={<RestakeOperatorPage />}
-              />
-
-              <Route
-                path={PagePath.RESTAKE_DEPOSIT}
-                element={<RestakeDepositPage />}
-              />
-
-              <Route
-                path={PagePath.RESTAKE_STAKE}
-                element={<RestakeStakePage />}
-              />
-
-              <Route
-                path={PagePath.RESTAKE_UNSTAKE}
-                element={<RestakeUnstakePage />}
-              />
-
-              <Route
-                path={PagePath.RESTAKE_WITHDRAW}
-                element={<RestakeWithdrawPage />}
-              />
-            </Route> */}
-
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
-          {/* END: routes */}
         </Layout>
       </Providers>
     </div>

@@ -332,7 +332,7 @@ const EmptyAsset = () => (
       No assets available
     </Typography>
 
-    <Link to={PagePath.RESTAKE_DEPOSIT}>
+    <Link to={PagePath.RESTAKE}>
       <Button variant="link" className="block mx-auto text-center">
         Deposit now
       </Button>

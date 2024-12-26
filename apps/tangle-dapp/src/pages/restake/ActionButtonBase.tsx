@@ -48,7 +48,7 @@ export default function ActionButtonBase({
         <Typography variant="body1">
           Visit the link on desktop below to start transacting privately!
         </Typography>
-        <Link to={PagePath.RESTAKE_DEPOSIT}>
+        <Link to={PagePath.RESTAKE}>
           <Button variant="link">{window.location.href}</Button>
         </Link>
       </ConnectWalletMobileButton>
