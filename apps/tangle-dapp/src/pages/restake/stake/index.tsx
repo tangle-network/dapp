@@ -258,7 +258,9 @@ export default function RestakeStakePage() {
   );
 
   return (
-    <StyleContainer>
+    <StyleContainer className="min-w-[512px]">
+      <RestakeTabs />
+
       <Card withShadow tightPadding>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col h-full space-y-4 grow">

@@ -42,13 +42,13 @@ import ActionButtonBase from '../ActionButtonBase';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
-import RestakeTabs from '../RestakeTabs';
 import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
 import WithdrawModal from './WithdrawModal';
 import WithdrawRequestTable from './WithdrawRequestTable';
+import RestakeTabs from '../RestakeTabs';
 
 const RestakeWithdrawPage = () => {
   const {
@@ -220,6 +220,8 @@ const RestakeWithdrawPage = () => {
             : 'mx-auto',
         )}
       >
+        <RestakeTabs />
+
         <Card withShadow tightPadding className="relative">
           {!isWithdrawRequestTableOpen && isMediumScreen && (
             <ExpandTableButton

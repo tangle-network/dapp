@@ -44,6 +44,7 @@ import Form from '../Form';
 import ActionButton from './ActionButton';
 import SourceChainInput from './SourceChainInput';
 import TxDetails from './TxDetails';
+import RestakeTabs from '../RestakeTabs';
 
 function getDefaultTypedChainId(activeTypedChainId: number | null) {
   return isDefined(activeTypedChainId) &&
@@ -278,62 +279,66 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   );
 
   return (
-    <Card withShadow tightPadding>
-      <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col h-full space-y-4 grow">
-          <div className="space-y-2">
-            <SourceChainInput
-              amountError={errors.amount?.message}
-              openChainModal={openChainModal}
-              openTokenModal={openTokenModal}
-              register={register}
-              setValue={setValue}
-              watch={watch}
-            />
+    <div className="min-w-[512px]">
+      <RestakeTabs />
+
+      <Card withShadow tightPadding>
+        <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col h-full space-y-4 grow">
+            <div className="space-y-2">
+              <SourceChainInput
+                amountError={errors.amount?.message}
+                openChainModal={openChainModal}
+                openTokenModal={openTokenModal}
+                register={register}
+                setValue={setValue}
+                watch={watch}
+              />
+            </div>
+
+            <div className="flex flex-col justify-between gap-4 grow">
+              <TxDetails watch={watch} />
+
+              <ActionButton
+                errors={errors}
+                formRef={formRef}
+                isSubmitting={isSubmitting}
+                isValid={isValid}
+                watch={watch}
+              />
+            </div>
           </div>
 
-          <div className="flex flex-col justify-between gap-4 grow">
-            <TxDetails watch={watch} />
+          <Modal>
+            <ModalContent
+              isOpen={chainModalOpen}
+              title="Select Chain"
+              onInteractOutside={closeChainModal}
+            >
+              <ChainList
+                searchInputId="restake-deposit-form-search"
+                onClose={closeChainModal}
+                chains={sourceChainOptions}
+                onSelectChain={handleOnSelectChain}
+                chainType="source"
+              />
+            </ModalContent>
 
-            <ActionButton
-              errors={errors}
-              formRef={formRef}
-              isSubmitting={isSubmitting}
-              isValid={isValid}
-              watch={watch}
-            />
-          </div>
-        </div>
-
-        <Modal>
-          <ModalContent
-            isOpen={chainModalOpen}
-            title="Select Chain"
-            onInteractOutside={closeChainModal}
-          >
-            <ChainList
-              searchInputId="restake-deposit-form-search"
-              onClose={closeChainModal}
-              chains={sourceChainOptions}
-              onSelectChain={handleOnSelectChain}
-              chainType="source"
-            />
-          </ModalContent>
-
-          <ModalContent
-            isOpen={tokenModalOpen}
-            title="Select Asset"
-            onInteractOutside={closeTokenModal}
-          >
-            <AssetList
-              selectTokens={selectableTokens}
-              onChange={handleTokenChange}
-              onClose={closeTokenModal}
-            />
-          </ModalContent>
-        </Modal>
-      </Form>
-    </Card>
+            <ModalContent
+              isOpen={tokenModalOpen}
+              title="Select Asset"
+              onInteractOutside={closeTokenModal}
+            >
+              <AssetList
+                selectTokens={selectableTokens}
+                onChange={handleTokenChange}
+                onClose={closeTokenModal}
+              />
+            </ModalContent>
+          </Modal>
+        </Form>
+      </Card>
+    </div>
   );
 };
 

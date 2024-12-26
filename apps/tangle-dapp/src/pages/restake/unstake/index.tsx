@@ -248,7 +248,9 @@ const RestakeUnstakePage = () => {
             : 'mx-auto',
         )}
       >
-        <Card withShadow tightPadding className="relative">
+        <RestakeTabs />
+
+        <Card withShadow tightPadding className="relative max-w-[512px]">
           {!isUnstakeRequestTableOpen && isMediumScreen && (
             <ExpandTableButton
               className="absolute top-0 -right-10"

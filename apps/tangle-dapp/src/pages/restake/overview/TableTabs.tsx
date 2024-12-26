@@ -153,10 +153,8 @@ const TableTabs: FC<Props> = ({
     >
       <TabContent
         value={RestakeTab.RESTAKE}
-        className="flex flex-col items-stretch justify-center max-w-[480px] mx-auto"
+        className="flex justify-center min-w-[480px] mx-auto"
       >
-        <RestakeTabs />
-
         {getFormOfRestakeAction(action)}
       </TabContent>
 
