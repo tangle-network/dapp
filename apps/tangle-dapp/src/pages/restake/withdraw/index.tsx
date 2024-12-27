@@ -329,7 +329,7 @@ const RestakeWithdrawPage = () => {
         isTableOpen={isWithdrawRequestTableOpen}
         isMediumScreen={isMediumScreen}
       >
-        <RestakeDetailCard.Root className="md:mt-[61px]">
+        <RestakeDetailCard.Root>
           <div className="flex items-center justify-between">
             <RestakeDetailCard.Header
               title={

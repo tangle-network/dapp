@@ -14,10 +14,10 @@ const getTabRoute = (tab: RestakeAction): PagePath => {
   switch (tab) {
     case RestakeAction.DEPOSIT:
       return PagePath.RESTAKE;
-    case RestakeAction.STAKE:
-      return PagePath.RESTAKE_STAKE;
-    case RestakeAction.UNSTAKE:
-      return PagePath.RESTAKE_UNSTAKE;
+    case RestakeAction.DELEGATE:
+      return PagePath.RESTAKE_DELEGATE;
+    case RestakeAction.UNDELEGATE:
+      return PagePath.RESTAKE_UNDELEGATE;
     case RestakeAction.WITHDRAW:
       return PagePath.RESTAKE_WITHDRAW;
   }

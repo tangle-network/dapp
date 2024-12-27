@@ -9,7 +9,7 @@ export type CardProps = WebbComponentBase & {
   tightPadding?: boolean;
 };
 
-const getVariantClass = (variant: CardVariant) => {
+const getVariantClass = (variant: CardVariant): string => {
   switch (variant) {
     case CardVariant.GLASS:
       return 'p-6 rounded-2xl border border-mono-0 dark:border-mono-160 bg-glass dark:bg-glass_dark';

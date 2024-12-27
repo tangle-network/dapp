@@ -113,7 +113,7 @@ export enum LockUnlocksAtKind {
 
 export enum RestakeAction {
   DEPOSIT = 'deposit',
-  STAKE = 'stake',
-  UNSTAKE = 'unstake',
+  DELEGATE = 'delegate',
+  UNDELEGATE = 'undelegate',
   WITHDRAW = 'withdraw',
 }

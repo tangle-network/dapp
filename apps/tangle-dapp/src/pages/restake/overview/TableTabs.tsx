@@ -46,9 +46,9 @@ const getFormOfRestakeAction = (action: RestakeAction): ReactNode => {
       return <DepositForm />;
     case RestakeAction.WITHDRAW:
       return <RestakeWithdrawPage />;
-    case RestakeAction.STAKE:
+    case RestakeAction.DELEGATE:
       return <RestakeStakePage />;
-    case RestakeAction.UNSTAKE:
+    case RestakeAction.UNDELEGATE:
       return <RestakeUnstakePage />;
   }
 };
