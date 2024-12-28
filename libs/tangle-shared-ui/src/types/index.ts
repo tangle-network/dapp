@@ -59,8 +59,8 @@ export type OperatorData = {
   tvlInUsd: number | null;
   vaultTokens: VaultToken[];
 };
-// Bridge
 
+// Bridge
 export enum BridgeTxState {
   Initializing = 'Initializing',
   Sending = 'Sending',

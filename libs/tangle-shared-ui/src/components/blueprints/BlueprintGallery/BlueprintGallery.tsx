@@ -74,7 +74,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
             <BlueprintItem {...props.row.original} />
           ) : (
             <BlueprintItemWrapper {...props.row.original}>
-              <BlueprintItem {...props.row.original} /> :
+              <BlueprintItem {...props.row.original} />
             </BlueprintItemWrapper>
           ),
         filterFn: (row, _, filterValue) => {

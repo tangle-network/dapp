@@ -7,7 +7,7 @@ import {
   BLUEPRINTS_OPERATOR_HIGHLIGHTED_TEXT,
   BLUEPRINTS_OPERATOR_TITLE,
 } from '@webb-tools/tangle-shared-ui/constants';
-// import BlueprintListing from './BlueprintListing';
+import BlueprintListing from './BlueprintListing';
 
 export const dynamic = 'force-static';
 
@@ -31,14 +31,14 @@ const Page = () => {
   const { role } = useRoleStore();
 
   return (
-    <div className="px-4 space-y-5">
+    <div className="space-y-5">
       <TopBanner
         title={ROLE_TITLE[role]}
         highlightedText={ROLE_HIGHLIGHTED_TEXT[role]}
         description={ROLE_DESCRIPTION[role]}
       />
 
-      {/* <BlueprintListing /> */}
+      <BlueprintListing />
     </div>
   );
 };

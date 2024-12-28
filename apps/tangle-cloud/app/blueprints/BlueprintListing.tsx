@@ -1,7 +1,7 @@
 'use client';
 
 import BlueprintGallery from '@webb-tools/tangle-shared-ui/components/blueprints/BlueprintGallery';
-import useBlueprintListing from '@webb-tools/tangle-shared-ui/data/blueprints/useBlueprintListing';
+import useBlueprintListing from '@webb-tools/tangle-shared-ui/data/blueprints/useFakeBlueprintListing';
 import Image from 'next/image';
 import { FC, PropsWithChildren } from 'react';
 import Link from 'next/link';

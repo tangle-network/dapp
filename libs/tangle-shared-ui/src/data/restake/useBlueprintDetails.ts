@@ -1,3 +1,5 @@
+'use client';
+
 import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesOperatorPreferences } from '@polkadot/types/lookup';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
