@@ -12,7 +12,6 @@ import VaultsTable from '../../../components/tables/Vaults';
 import useRestakeRewardConfig from '../../../data/restake/useRestakeRewardConfig';
 import OperatorsTable from './OperatorsTable';
 import DepositForm from '../deposit/DepositForm';
-import RestakeTabs from '../RestakeTabs';
 import { RestakeAction } from '../../../constants';
 import RestakeWithdrawPage from '../withdraw';
 import RestakeStakePage from '../stake';
