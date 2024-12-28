@@ -1,6 +1,6 @@
-import { Typography } from '@webb-tools/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { Typography } from '../typography';
 
 export type ListStatusProps = {
   emoji?: string;
