@@ -258,7 +258,7 @@ export default function RestakeStakePage() {
   );
 
   return (
-    <StyleContainer className="min-w-[480px]">
+    <StyleContainer className="min-w-[512px]">
       <RestakeTabs />
 
       <Card withShadow tightPadding>

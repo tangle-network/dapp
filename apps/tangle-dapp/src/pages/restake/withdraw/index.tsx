@@ -207,22 +207,11 @@ const RestakeWithdrawPage = () => {
   );
 
   return (
-    <div
-      className={cx(
-        'grid gap-4 place-content-center',
-        !isMediumScreen ? 'grid-cols-1' : 'grid-flow-col auto-cols-fr',
-      )}
-    >
-      <StyleContainer
-        className={cx(
-          isWithdrawRequestTableOpen && isMediumScreen
-            ? 'ml-auto mr-0'
-            : 'mx-auto',
-        )}
-      >
+    <div className="flex items-start justify-center flex-wrap gap-4">
+      <StyleContainer>
         <RestakeTabs />
 
-        <Card withShadow tightPadding className="relative">
+        <Card withShadow tightPadding className="relative min-w-[512px]">
           {!isWithdrawRequestTableOpen && isMediumScreen && (
             <ExpandTableButton
               className="absolute top-0 -right-10"
