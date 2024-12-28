@@ -18,7 +18,7 @@ export const ListStatus: FC<ListStatusProps> = ({
   return (
     <div
       className={twMerge(
-        'flex flex-col items-center justify-center pb-16 pt-12',
+        'flex flex-col items-center justify-center gap-1',
         className,
       )}
     >
@@ -38,7 +38,7 @@ export const ListStatus: FC<ListStatusProps> = ({
         <Typography
           variant="body1"
           fw="semibold"
-          className="max-w-2xl text-center text-mono-120 dark:text-mono-80"
+          className="max-w-[480px] text-center text-mono-120 dark:text-mono-80"
         >
           {description}
         </Typography>

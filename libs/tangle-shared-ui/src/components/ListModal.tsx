@@ -127,13 +127,13 @@ const ListModal = <T,>({
             <ListStatus
               title={titleWhenEmpty}
               description={descriptionWhenEmpty}
-              className="p-8"
+              className="px-8 py-14"
             />
           ) : isSearching && processedItems.length === 0 ? (
             <ListStatus
               title="Nothing Found"
               description="No items found matching your search query."
-              className="p-8"
+              className="px-8 py-14"
             />
           ) : (
             <ScrollArea className="w-full h-full pt-4">

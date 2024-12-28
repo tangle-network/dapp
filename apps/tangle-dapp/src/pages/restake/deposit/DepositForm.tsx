@@ -332,7 +332,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             searchInputId="restake-deposit-assets-search"
             searchPlaceholder="Search assets..."
             titleWhenEmpty="No Assets Found"
-            descriptionWhenEmpty="No assets are available for deposit yet. Please try again later when they are added."
+            descriptionWhenEmpty="It seems that there are no available assets in this network yet. Please try again later."
             items={selectableTokens}
             renderItem={(i) => <div>{i.name}</div>}
             onSelect={handleTokenChange}

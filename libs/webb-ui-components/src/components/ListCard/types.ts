@@ -311,6 +311,5 @@ export interface TokenListCardProps
   descriptionWhenEmpty?: string;
 
   selectTokens: AssetType[];
-  unavailableTokens: AssetType[];
   overrideInputProps?: Partial<InputProps>;
 }

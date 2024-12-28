@@ -5,7 +5,6 @@ import { twMerge } from 'tailwind-merge';
 const AssetList = ({
   className,
   title = 'Select Asset',
-  unavailableTokens = [],
   selectTokens = [],
   ...props
 }: Partial<TokenListCardProps>) => {
@@ -16,13 +15,7 @@ const AssetList = ({
         variant: 'h4',
       }}
       {...props}
-      selectTokens={[
-        {
-          id: 'webb',
-          name: 'Webb',
-          symbol: 'WEBB',
-        },
-      ]}
+      selectTokens={selectTokens}
       title={title}
       className={twMerge(
         'h-full mx-auto dark:bg-[var(--restake-card-bg-dark)]',

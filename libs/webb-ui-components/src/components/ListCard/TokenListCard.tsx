@@ -19,7 +19,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       selectTokens,
       title = 'Select a Token',
       type = 'token',
-      unavailableTokens,
       value: selectedAsset,
       overrideInputProps,
       renderEmpty,
@@ -31,7 +30,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
   ) => {
     const [searchQuery, setSearchQuery] = useState('');
 
-    const isEmpty = !selectTokens.length && !unavailableTokens.length;
+    const isEmpty = !selectTokens.length;
 
     const getFilterList = useCallback(
       (list: AssetType[]) =>
@@ -49,9 +48,8 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
     const { filteredSelect } = useMemo(
       () => ({
         filteredSelect: getFilterList(selectTokens),
-        filteredUnavailable: getFilterList(unavailableTokens),
       }),
-      [getFilterList, selectTokens, unavailableTokens],
+      [getFilterList, selectTokens],
     );
 
     return (
@@ -97,32 +95,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
               </ScrollArea>
             </div>
           )}
-
-          {unavailableTokens.length ? (
-            <div>
-              <Typography
-                variant="body4"
-                className="uppercase text-mono-200 dark:text-mono-0"
-                fw="bold"
-              >
-                Unavailable {type}
-              </Typography>
-
-              {/** Token list */}
-              <ScrollArea className="h-full py-2">
-                <ul>
-                  {unavailableTokens.map((current, idx) => (
-                    <TokenListItem
-                      isDisabled
-                      className="px-4 bg-transparent dark:bg-transparent max-w-none"
-                      key={`${current.name}-${idx}`}
-                      {...current}
-                    />
-                  ))}
-                </ul>
-              </ScrollArea>
-            </div>
-          ) : null}
 
           {filteredSelect.length === 0 && (
             <div className="flex items-center justify-center h-full">

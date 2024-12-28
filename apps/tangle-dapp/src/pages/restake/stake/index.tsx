@@ -16,7 +16,7 @@ import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import entries from 'lodash/entries';
 import keys from 'lodash/keys';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link } from 'react-router';
 import { formatUnits, parseUnits } from 'viem';
@@ -48,6 +48,7 @@ import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Info from './Info';
 import StakeInput from './StakeInput';
+import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 
 export default function RestakeStakePage() {
   const {
@@ -139,17 +140,8 @@ export default function RestakeStakePage() {
     close: closeChainModal,
   } = useModal(false);
 
-  const {
-    status: isAssetModalOpen,
-    open: openAssetModal,
-    close: closeAssetModal,
-  } = useModal(false);
-
-  const {
-    status: isOperatorModalOpen,
-    open: openOperatorModal,
-    close: closeOperatorModal,
-  } = useModal(false);
+  const [isOperatorModalOpen, setIsOperatorModalOpen] = useState(false);
+  const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
 
   const selectableTokens = useMemo(() => {
     if (!isDefined(delegatorInfo)) {
@@ -180,9 +172,9 @@ export default function RestakeStakePage() {
   const handleAssetChange = useCallback(
     (asset: TokenListCardProps['selectTokens'][number]) => {
       setValue('assetId', asset.id);
-      closeAssetModal();
+      setIsAssetModalOpen(false);
     },
-    [closeAssetModal, setValue],
+    [setIsAssetModalOpen, setValue],
   );
 
   const handleChainChange = useCallback(
@@ -252,9 +244,9 @@ export default function RestakeStakePage() {
   const handleOnSelectOperator = useCallback(
     (operator: OperatorConfig) => {
       setValue('operatorAccountId', operator.accountId);
-      closeOperatorModal();
+      setIsOperatorModalOpen(false);
     },
-    [closeOperatorModal, setValue],
+    [setIsOperatorModalOpen, setValue],
   );
 
   return (
@@ -267,8 +259,8 @@ export default function RestakeStakePage() {
             <StakeInput
               amountError={errors.amount?.message}
               delegatorInfo={delegatorInfo}
-              openAssetModal={openAssetModal}
-              openOperatorModal={openOperatorModal}
+              openAssetModal={() => setIsAssetModalOpen(true)}
+              openOperatorModal={() => setIsOperatorModalOpen(true)}
               register={register}
               setValue={setValue}
               watch={watch}
@@ -287,21 +279,36 @@ export default function RestakeStakePage() {
             </div>
           </div>
 
-          <Modal>
-            <ModalContent
-              isOpen={isAssetModalOpen}
-              title="Select Asset"
-              onInteractOutside={closeAssetModal}
-            >
-              <AssetList
-                selectTokens={selectableTokens}
-                onChange={handleAssetChange}
-                onClose={closeAssetModal}
-                renderEmpty={EmptyAsset}
-              />
-            </ModalContent>
+          <ListModal
+            title="Select Asset"
+            isOpen={isAssetModalOpen}
+            setIsOpen={setIsAssetModalOpen}
+            titleWhenEmpty="No Assets Available"
+            descriptionWhenEmpty="Have you made a deposit on this network yet?"
+            items={selectableTokens}
+            searchInputId="restake-delegate-asset-search"
+            searchPlaceholder="Search for asset or enter token address"
+            getItemKey={(item) => item.id}
+            renderItem={(i) => <div>{i.name}</div>}
+            onSelect={handleAssetChange}
+          />
 
-            <ModalContent
+          <ListModal
+            title="Select Operator"
+            isOpen={isOperatorModalOpen}
+            setIsOpen={setIsOperatorModalOpen}
+            titleWhenEmpty="No Operators Available"
+            descriptionWhenEmpty="Looks like there aren't any registered operators in this network yet. Make the leap and become the first operator!"
+            items={operators}
+            searchInputId="restake-delegate-operator-search"
+            searchPlaceholder="Search for an operator..."
+            getItemKey={(item) => item.accountId}
+            renderItem={(i) => <div>{i.name}</div>}
+            onSelect={handleOnSelectOperator}
+          />
+
+          <Modal>
+            {/* <ModalContent
               isOpen={isOperatorModalOpen}
               title="Select Operator"
               onInteractOutside={closeOperatorModal}
@@ -313,7 +320,7 @@ export default function RestakeStakePage() {
                 onSelectOperator={handleOnSelectOperator}
                 onClose={closeOperatorModal}
               />
-            </ModalContent>
+            </ModalContent> */}
 
             <SupportedChainModal
               isOpen={isChainModalOpen}
@@ -326,18 +333,3 @@ export default function RestakeStakePage() {
     </StyleContainer>
   );
 }
-
-/** @internal */
-const EmptyAsset = () => (
-  <div className="space-y-4">
-    <Typography variant="h5" fw="bold" ta="center">
-      No assets available
-    </Typography>
-
-    <Link to={PagePath.RESTAKE}>
-      <Button variant="link" className="block mx-auto text-center">
-        Deposit now
-      </Button>
-    </Link>
-  </div>
-);
