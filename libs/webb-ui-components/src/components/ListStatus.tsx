@@ -3,22 +3,29 @@ import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export type ListStatusProps = {
+  emoji?: string;
   className?: string;
   title: string;
-  description: string;
+  description?: string;
 };
 
-const ListStatus: FC<ListStatusProps> = ({ title, description, className }) => {
+export const ListStatus: FC<ListStatusProps> = ({
+  emoji = '🔍',
+  title,
+  description,
+  className,
+}) => {
   return (
     <div
       className={twMerge(
-        'flex flex-col items-center justify-center',
+        'flex flex-col items-center justify-center pb-16 pt-12',
         className,
       )}
     >
       <span role="img" aria-label={title}>
-        🔍
+        {emoji}
       </span>
+
       <Typography
         variant="h5"
         fw="bold"
@@ -26,15 +33,16 @@ const ListStatus: FC<ListStatusProps> = ({ title, description, className }) => {
       >
         {title}
       </Typography>
-      <Typography
-        variant="body1"
-        fw="semibold"
-        className="max-w-2xl text-center text-mono-120 dark:text-mono-80"
-      >
-        {description}
-      </Typography>
+
+      {description !== undefined && (
+        <Typography
+          variant="body1"
+          fw="semibold"
+          className="max-w-2xl text-center text-mono-120 dark:text-mono-80"
+        >
+          {description}
+        </Typography>
+      )}
     </div>
   );
 };
-
-export default ListStatus;

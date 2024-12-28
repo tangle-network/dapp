@@ -46,11 +46,11 @@ const WithdrawModal = ({
   return (
     <ModalContent
       isOpen={isOpen}
-      title="Select Withdrawal Asset"
+      title="Select Asset"
       onInteractOutside={onClose}
     >
       <ModalContentList
-        title="Select Withdrawal Asset"
+        title="Select Asset"
         items={deposits}
         onClose={onClose}
         overrideSearchInputProps={{
@@ -71,7 +71,7 @@ const WithdrawModal = ({
           );
         }}
         renderEmpty={{
-          title: 'No Asset Found',
+          title: 'No Assets Found',
           description:
             'You can try to deposit or delegate an asset to an operator.',
         }}

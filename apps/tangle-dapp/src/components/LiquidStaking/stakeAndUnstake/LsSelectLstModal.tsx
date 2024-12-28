@@ -4,6 +4,7 @@ import {
   formatDisplayAmount,
   Input,
   ListItem,
+  ListStatus,
   Modal,
   ModalContent,
   Typography,
@@ -20,7 +21,6 @@ import {
 } from '../../../constants/liquidStaking/types';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import { ListCardWrapper } from '../../Lists/ListCardWrapper';
-import ListStatus from '../../ListStatus';
 import SkeletonRows from '../../SkeletonRows';
 import LstIcon from '../LstIcon';
 import { LstIconSize } from '../types';
@@ -103,13 +103,11 @@ const LsSelectLstModal: FC<LsSelectLstModalProps> = ({
                 <ListStatus
                   title="Nothing Found"
                   description="No LSTs found matching your search query."
-                  className="my-16"
                 />
               ) : Array.isArray(sortedPools) && sortedPools.length === 0 ? (
                 <ListStatus
                   title="No LSTs Available"
                   description="Create your own pool to get started!"
-                  className="my-16"
                 />
               ) : (
                 <ListItems

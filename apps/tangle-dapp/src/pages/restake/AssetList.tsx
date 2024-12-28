@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 const AssetList = ({
   className,
-  title = 'Select an asset',
+  title = 'Select Asset',
   popularTokens = [],
   unavailableTokens = [],
   selectTokens = [],

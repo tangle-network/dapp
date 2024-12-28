@@ -330,6 +330,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
               onInteractOutside={closeTokenModal}
             >
               <AssetList
+                emptyDescription="No assets are available for deposit yet. Please try again later when they are added."
                 selectTokens={selectableTokens}
                 onChange={handleTokenChange}
                 onClose={closeTokenModal}

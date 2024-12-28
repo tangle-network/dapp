@@ -11,6 +11,7 @@ import { ListCardWrapper } from './ListCardWrapper';
 import { AssetType, TokenListCardProps } from './types';
 import { Alert } from '../Alert';
 import { twMerge } from 'tailwind-merge';
+import { ListStatus } from '../ListStatus';
 
 export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
   (
@@ -25,6 +26,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       value: selectedAsset,
       overrideInputProps,
       renderEmpty,
+      emptyDescription,
       alertTitle,
       overrideScrollAreaProps,
       ...props
@@ -172,9 +174,10 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
               {typeof renderEmpty === 'function' ? (
                 renderEmpty()
               ) : (
-                <Typography variant="h5" fw="bold" ta="center">
-                  No {type} Found.
-                </Typography>
+                <ListStatus
+                  title={`No ${type[0].toUpperCase()}${type.substring(1)}s Found`}
+                  description={emptyDescription}
+                />
               )}
             </div>
           )}

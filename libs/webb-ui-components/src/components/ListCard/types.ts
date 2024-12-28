@@ -360,5 +360,10 @@ export interface TokenListCardProps
    */
   renderEmpty?: () => React.ReactNode;
 
+  /**
+   * The description to show when the list is empty.
+   */
+  emptyDescription?: string;
+
   overrideScrollAreaProps?: ComponentProps<typeof ScrollArea>;
 }
