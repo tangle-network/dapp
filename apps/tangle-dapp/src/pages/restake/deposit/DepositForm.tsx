@@ -7,10 +7,14 @@ import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeC
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import { Card } from '@webb-tools/webb-ui-components';
-import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import {
+  AssetType,
+  type TokenListCardProps,
+} from '@webb-tools/webb-ui-components/components/ListCard/types';
 import {
   Modal,
   ModalContent,
+  ModalHeader,
 } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import {
@@ -19,6 +23,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -45,6 +50,8 @@ import ActionButton from './ActionButton';
 import SourceChainInput from './SourceChainInput';
 import TxDetails from './TxDetails';
 import RestakeTabs from '../RestakeTabs';
+import ModalContentList from '../ModalContentList';
+import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 
 function getDefaultTypedChainId(activeTypedChainId: number | null) {
   return isDefined(activeTypedChainId) &&
@@ -158,11 +165,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     open: openChainModal,
   } = useModal();
 
-  const {
-    status: tokenModalOpen,
-    close: closeTokenModal,
-    open: openTokenModal,
-  } = useModal();
+  const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
 
   const selectableTokens = useMemo(
     () =>
@@ -234,9 +237,9 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   const handleTokenChange = useCallback(
     (token: TokenListCardProps['selectTokens'][number]) => {
       setValue('depositAssetId', token.id);
-      closeTokenModal();
+      setIsTokenModalOpen(false);
     },
-    [closeTokenModal, setValue],
+    [setIsTokenModalOpen, setValue],
   );
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
@@ -289,7 +292,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
               <SourceChainInput
                 amountError={errors.amount?.message}
                 openChainModal={openChainModal}
-                openTokenModal={openTokenModal}
+                openTokenModal={() => setIsTokenModalOpen(true)}
                 register={register}
                 setValue={setValue}
                 watch={watch}
@@ -323,20 +326,29 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
                 chainType="source"
               />
             </ModalContent>
+          </Modal>
 
-            <ModalContent
-              isOpen={tokenModalOpen}
-              title="Select Asset"
-              onInteractOutside={closeTokenModal}
-            >
-              <AssetList
-                emptyDescription="No assets are available for deposit yet. Please try again later when they are added."
+          <ListModal
+            title="Select Asset"
+            isOpen={isTokenModalOpen}
+            setIsOpen={setIsTokenModalOpen}
+            filterItems={(item, searchText) => {
+              return item.name.toLowerCase().includes(searchText.toLowerCase());
+            }}
+            searchInputId="restake-deposit-assets-search"
+            searchPlaceholder="Search assets..."
+            titleWhenEmpty="No Assets Found"
+            descriptionWhenEmpty="No assets are available for deposit yet. Please try again later when they are added."
+            items={selectableTokens}
+            renderItem={(i) => <div>{i.name}</div>}
+            onSelect={handleTokenChange}
+          />
+          {/* <AssetList
+                descriptionWhenEmpty="No assets are available for deposit yet. Please try again later when they are added."
                 selectTokens={selectableTokens}
                 onChange={handleTokenChange}
                 onClose={closeTokenModal}
-              />
-            </ModalContent>
-          </Modal>
+              /> */}
         </Form>
       </Card>
     </div>

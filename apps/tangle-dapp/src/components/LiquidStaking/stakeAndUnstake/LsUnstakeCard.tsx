@@ -8,7 +8,11 @@ import { Button, Card } from '@webb-tools/webb-ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { LsNetworkId, LsPool } from '../../../constants/liquidStaking/types';
+import {
+  LsNetworkId,
+  LsPool,
+  LsPoolDisplayName,
+} from '../../../constants/liquidStaking/types';
 import useRedeemTx from '../../../data/liquidStaking/parachain/useRedeemTx';
 import useLsPoolUnbondTx from '../../../data/liquidStaking/tangle/useLsPoolUnbondTx';
 import useLsExchangeRate, {
@@ -25,11 +29,12 @@ import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
 import LsInput from './LsInput';
-import LsSelectLstModal from './LsSelectLstModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
+import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
+import LstListItem from '../LstListItem';
 
 const LsUnstakeCard: FC = () => {
   const isAccountConnected = useIsAccountConnected();
@@ -251,12 +256,30 @@ const LsUnstakeCard: FC = () => {
         </Button>
       </Card>
 
-      <LsSelectLstModal
-        pools={myPoolsWithSelfStake}
+      <ListModal
+        title="Select LST"
+        searchInputId="ls-unstake-select-lst-search"
+        searchPlaceholder="Search liquid staking tokens by name or ID..."
+        items={myPoolsWithSelfStake}
         isOpen={isSelectTokenModalOpen}
         setIsOpen={setIsSelectTokenModalOpen}
-        onSelect={setLsPoolId}
-        isSelfStaked
+        titleWhenEmpty="No LSTs Available"
+        descriptionWhenEmpty="Create your own pool to get started!"
+        getItemKey={(pool) => pool.id.toString()}
+        renderItem={(pool) => <LstListItem pool={pool} isSelfStaked />}
+        onSelect={(pool) => {
+          setLsPoolId(pool.id);
+          setIsSelectTokenModalOpen(false);
+        }}
+        sorting={(a, b) => {
+          // Sort pools by highest TVL in descending order.
+          return b.totalStaked.sub(a.totalStaked).isNeg() ? -1 : 1;
+        }}
+        filterItems={(pool, query) => {
+          const displayName: LsPoolDisplayName = `${pool.name}#${pool.id}`;
+
+          return displayName.toLowerCase().includes(query.toLowerCase());
+        }}
       />
     </>
   );

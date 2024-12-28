@@ -37,7 +37,7 @@ const Providers = ({
   } = envSchema.parse(process.env);
 
   return (
-    <WebbUIProvider hasErrorBoudary>
+    <WebbUIProvider hasErrorBoundary>
       <WebbProvider
         appEvent={appEvent}
         applicationName="Tangle dApp"

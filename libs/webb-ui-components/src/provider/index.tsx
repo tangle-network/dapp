@@ -7,7 +7,7 @@ import {
   notificationApi,
 } from '../components/Notification';
 
-import { WebbUIErrorBoudary } from '../containers/WebbUIErrorBoudary';
+import { WebbUIErrorBoundary } from '../containers/WebbUIErrorBoundary';
 import {
   useNextDarkMode,
   useDarkMode as useNormalDarkMode,
@@ -20,7 +20,7 @@ const appLogger = LoggerService.new('Stats App');
 export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
   children,
   defaultThemeMode = 'dark',
-  hasErrorBoudary,
+  hasErrorBoundary,
   notificationOptions,
   isNextApp = false,
 }) => {
@@ -54,7 +54,7 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
   );
 
   const WebbUIEErrorBoundaryElement = useMemo(() => {
-    return createElement(WebbUIErrorBoudary, {
+    return createElement(WebbUIErrorBoundary, {
       logger: appLogger,
       children,
     });
@@ -71,7 +71,7 @@ export const WebbUIProvider: React.FC<WebbUIProviderProps> = ({
       }}
     >
       <NotificationProvider {...notificationOptions}>
-        {hasErrorBoudary ? WebbUIEErrorBoundaryElement : children}
+        {hasErrorBoundary ? WebbUIEErrorBoundaryElement : children}
       </NotificationProvider>
     </WebbUIContext.Provider>
   );

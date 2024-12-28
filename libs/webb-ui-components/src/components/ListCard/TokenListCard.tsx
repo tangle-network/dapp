@@ -5,12 +5,10 @@ import { Typography } from '../../typography';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { Input } from '../Input';
 import { ScrollArea } from '../ScrollArea';
-import TokenSelector from '../TokenSelector';
 import TokenListItem from './TokenListItem';
 import { ListCardWrapper } from './ListCardWrapper';
 import { AssetType, TokenListCardProps } from './types';
 import { Alert } from '../Alert';
-import { twMerge } from 'tailwind-merge';
 import { ListStatus } from '../ListStatus';
 
 export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
@@ -18,7 +16,6 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
     {
       onChange,
       onClose,
-      popularTokens,
       selectTokens,
       title = 'Select a Token',
       type = 'token',
@@ -26,85 +23,55 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
       value: selectedAsset,
       overrideInputProps,
       renderEmpty,
-      emptyDescription,
+      descriptionWhenEmpty,
       alertTitle,
-      overrideScrollAreaProps,
       ...props
     },
     ref,
   ) => {
-    // Search text
-    const [searchText, setSearchText] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
-    const isEmpty = useMemo(
-      () =>
-        !popularTokens.length &&
-        !selectTokens.length &&
-        !unavailableTokens.length,
-      [popularTokens, selectTokens, unavailableTokens],
-    );
+    const isEmpty = !selectTokens.length && !unavailableTokens.length;
 
     const getFilterList = useCallback(
       (list: AssetType[]) =>
         list.filter(
           (r) =>
-            r.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            r.symbol.toString().includes(searchText.toLowerCase()) ||
+            r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            r.symbol.toString().includes(searchQuery.toLowerCase()) ||
             r.assetBalanceProps?.balance
               ?.toString()
-              .includes(searchText.toLowerCase()),
+              .includes(searchQuery.toLowerCase()),
         ),
-      [searchText],
+      [searchQuery],
     );
 
-    const { filteredPopular, filteredSelect } = useMemo(
+    const { filteredSelect } = useMemo(
       () => ({
-        filteredPopular: getFilterList(popularTokens),
         filteredSelect: getFilterList(selectTokens),
         filteredUnavailable: getFilterList(unavailableTokens),
       }),
-      [getFilterList, popularTokens, selectTokens, unavailableTokens],
+      [getFilterList, selectTokens, unavailableTokens],
     );
 
     return (
       <ListCardWrapper {...props} title={title} onClose={onClose} ref={ref}>
-        {/** The search input */}
+        {/** Search input */}
         {!isEmpty && (
           <div className="py-4">
             <Input
               id="token"
               rightIcon={<Search />}
               placeholder="Search pool or enter token address"
-              value={searchText}
-              onChange={(val) => setSearchText(val.toString())}
+              value={searchQuery}
+              onChange={(val) => setSearchQuery(val.toString())}
               {...overrideInputProps}
             />
           </div>
         )}
 
-        {/** Popular tokens */}
-        {filteredPopular.length > 0 ? (
-          <div className="flex flex-col p-2 space-y-2">
-            <Typography variant="utility" className="uppercase mb-0.5">
-              Popular {type}
-            </Typography>
-
-            <div className="flex flex-wrap gap-2">
-              {filteredPopular.map((current, idx) => (
-                <TokenSelector
-                  key={`${current.name}-${idx}`}
-                  onClick={() => onChange?.(current)}
-                  isDropdown={false}
-                >
-                  {current.symbol}
-                </TokenSelector>
-              ))}
-            </div>
-          </div>
-        ) : null}
-
         {/** Select tokens */}
-        <div className="flex flex-col px-2 space-y-2 grow min-h-[320px]">
+        <div className="flex flex-col px-2 space-y-2 grow">
           {filteredSelect.length > 0 && (
             <div>
               <Typography
@@ -116,13 +83,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
               </Typography>
 
               {/** Token list */}
-              <ScrollArea
-                {...overrideScrollAreaProps}
-                className={twMerge(
-                  'h-full py-2',
-                  overrideScrollAreaProps?.className,
-                )}
-              >
+              <ScrollArea className="h-full py-2">
                 <ul>
                   {filteredSelect.map((current, idx) => (
                     <TokenListItem
@@ -148,13 +109,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
               </Typography>
 
               {/** Token list */}
-              <ScrollArea
-                {...overrideScrollAreaProps}
-                className={twMerge(
-                  'h-full py-2',
-                  overrideScrollAreaProps?.className,
-                )}
-              >
+              <ScrollArea className="h-full py-2">
                 <ul>
                   {unavailableTokens.map((current, idx) => (
                     <TokenListItem
@@ -176,7 +131,7 @@ export const TokenListCard = forwardRef<HTMLDivElement, TokenListCardProps>(
               ) : (
                 <ListStatus
                   title={`No ${type[0].toUpperCase()}${type.substring(1)}s Found`}
-                  description={emptyDescription}
+                  description={descriptionWhenEmpty}
                 />
               )}
             </div>

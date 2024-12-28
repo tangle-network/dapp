@@ -21,7 +21,7 @@ const Providers = ({
 }: PropsWithChildren<Props>): ReactNode => {
   return (
     <NextThemeProvider>
-      <WebbUIProvider hasErrorBoudary isNextApp>
+      <WebbUIProvider hasErrorBoundary isNextApp>
         <WebbProvider
           appEvent={appEvent}
           applicationName="Tangle dApp"

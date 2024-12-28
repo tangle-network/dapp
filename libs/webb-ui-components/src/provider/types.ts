@@ -21,17 +21,13 @@ export type WebbUIProviderProps = {
   /**
    * If `true`, the `WebbUIProvider` will provide a error handler for inside components
    */
-  hasErrorBoudary?: boolean;
+  hasErrorBoundary?: boolean;
 
   /**
-   * Default theme mode
    * @default "dark"
    */
   defaultThemeMode?: 'dark' | 'light';
 
-  /**
-   * Notification options
-   */
   notificationOptions?: Omit<
     ComponentProps<typeof NotificationProvider>,
     'children'
@@ -40,7 +36,7 @@ export type WebbUIProviderProps = {
   children?: React.ReactNode;
 
   /**
-   * Check if the provider is used in a Next.js app or not
+   * Check if the provider is used in a Next.js app or not.
    * @default false
    */
   isNextApp?: boolean;
