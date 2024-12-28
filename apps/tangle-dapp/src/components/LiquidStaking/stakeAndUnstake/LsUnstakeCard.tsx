@@ -264,7 +264,7 @@ const LsUnstakeCard: FC = () => {
         isOpen={isSelectTokenModalOpen}
         setIsOpen={setIsSelectTokenModalOpen}
         titleWhenEmpty="No LSTs Available"
-        descriptionWhenEmpty="Create your own pool to get started!"
+        descriptionWhenEmpty="You haven't staked in any pools yet."
         getItemKey={(pool) => pool.id.toString()}
         renderItem={(pool) => <LstListItem pool={pool} isSelfStaked />}
         onSelect={(pool) => {

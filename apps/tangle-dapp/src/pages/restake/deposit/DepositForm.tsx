@@ -7,14 +7,10 @@ import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeC
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import { Card } from '@webb-tools/webb-ui-components';
-import {
-  AssetType,
-  type TokenListCardProps,
-} from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import {
   Modal,
   ModalContent,
-  ModalHeader,
 } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import {
@@ -44,13 +40,11 @@ import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import { DepositFormFields } from '../../../types/restake';
-import AssetList from '../AssetList';
 import Form from '../Form';
 import ActionButton from './ActionButton';
 import SourceChainInput from './SourceChainInput';
 import TxDetails from './TxDetails';
 import RestakeTabs from '../RestakeTabs';
-import ModalContentList from '../ModalContentList';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 
 function getDefaultTypedChainId(activeTypedChainId: number | null) {
@@ -343,12 +337,6 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             renderItem={(i) => <div>{i.name}</div>}
             onSelect={handleTokenChange}
           />
-          {/* <AssetList
-                descriptionWhenEmpty="No assets are available for deposit yet. Please try again later when they are added."
-                selectTokens={selectableTokens}
-                onChange={handleTokenChange}
-                onClose={closeTokenModal}
-              /> */}
         </Form>
       </Card>
     </div>
