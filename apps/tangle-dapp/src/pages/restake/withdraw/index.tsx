@@ -19,7 +19,6 @@ import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/compone
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import cx from 'classnames';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -67,11 +66,7 @@ const RestakeWithdrawPage = () => {
   const { activeChain } = useWebContext();
   const { assetMap } = useRestakeContext();
 
-  const {
-    status: isWithdrawModalOpen,
-    open: openWithdrawModal,
-    close: closeWithdrawModal,
-  } = useModal();
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
 
   const {
     status: isChainModalOpen,
@@ -225,7 +220,7 @@ const RestakeWithdrawPage = () => {
               <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
                 <TransactionInputCard.Header>
                   <TransactionInputCard.ChainSelector
-                    placeholder="Active Chain"
+                    placeholder="Connecting..."
                     disabled
                     {...(activeChain
                       ? {
@@ -262,7 +257,7 @@ const RestakeWithdrawPage = () => {
                   tokenSelectorProps={
                     useRef({
                       placeholder: <AssetPlaceholder />,
-                      onClick: openWithdrawModal,
+                      onClick: () => setIsWithdrawModalOpen(true),
                     }).current
                   }
                 />
@@ -352,11 +347,12 @@ const RestakeWithdrawPage = () => {
         <WithdrawModal
           delegatorInfo={delegatorInfo}
           isOpen={isWithdrawModalOpen}
-          onClose={closeWithdrawModal}
+          setIsOpen={setIsWithdrawModalOpen}
           onItemSelected={(item) => {
-            closeWithdrawModal();
+            setIsWithdrawModalOpen(false);
 
             const { formattedAmount, assetId } = item;
+
             const commonOpts = {
               shouldDirty: true,
               shouldValidate: true,

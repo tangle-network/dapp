@@ -45,7 +45,7 @@ import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
-import UnstakeModal from './UnstakeModal';
+import SelectOperatorModal from './SelectOperatorModal';
 import UnstakeRequestTable from './UnstakeRequestTable';
 
 const RestakeUnstakePage = () => {
@@ -69,11 +69,7 @@ const RestakeUnstakePage = () => {
   const activeTypedChainId = useActiveTypedChainId();
   const { assetMap } = useRestakeContext();
 
-  const {
-    status: isOperatorModalOpen,
-    open: openOperatorModal,
-    close: closeOperatorModal,
-  } = useModal();
+  const [isOperatorModalOpen, setIsOperatorModalOpen] = useState(false);
 
   const {
     status: isChainModalOpen,
@@ -251,8 +247,8 @@ const RestakeUnstakePage = () => {
               <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
                 <TransactionInputCard.Header>
                   <TransactionInputCard.ChainSelector
-                    placeholder="Select"
-                    onClick={openOperatorModal}
+                    placeholder="Select Operator"
+                    onClick={() => setIsOperatorModalOpen(true)}
                     {...(selectedOperatorAccountId
                       ? {
                           renderBody: () => (
@@ -374,13 +370,13 @@ const RestakeUnstakePage = () => {
       </AnimatedTable>
 
       <Modal>
-        <UnstakeModal
+        <SelectOperatorModal
           delegatorInfo={delegatorInfo}
           isOpen={isOperatorModalOpen}
-          onClose={closeOperatorModal}
+          setIsOpen={setIsOperatorModalOpen}
           operatorIdentities={operatorIdentities}
           onItemSelected={(item) => {
-            closeOperatorModal();
+            setIsOperatorModalOpen(false);
 
             const { formattedAmount, assetId, operatorAccountId } = item;
 

@@ -5,26 +5,21 @@ import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeC
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import { Card, isSubstrateAddress } from '@webb-tools/webb-ui-components';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import {
-  Modal,
-  ModalContent,
-} from '@webb-tools/webb-ui-components/components/Modal';
+  assertSubstrateAddress,
+  Card,
+  isSubstrateAddress,
+} from '@webb-tools/webb-ui-components';
+import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import entries from 'lodash/entries';
 import keys from 'lodash/keys';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Link } from 'react-router';
 import { formatUnits, parseUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
-import {
-  OperatorConfig,
-  OperatorList,
-} from '../../../components/Lists/OperatorList';
+import { OperatorConfig } from '../../../components/Lists/OperatorList';
 import {
   DelegatorStakeContext,
   TxEvent,
@@ -37,9 +32,8 @@ import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
-import { PagePath, QueryParamKey } from '../../../types';
+import { QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
-import AssetList from '../AssetList';
 import Form from '../Form';
 import RestakeTabs from '../RestakeTabs';
 import StyleContainer from '../StyleContainer';
@@ -49,6 +43,7 @@ import ActionButton from './ActionButton';
 import Info from './Info';
 import StakeInput from './StakeInput';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
+import OperatorListItem from '../../../components/Lists/OperatorListItem';
 
 export default function RestakeStakePage() {
   const {
@@ -234,9 +229,9 @@ export default function RestakeStakePage() {
   );
 
   const operators = useMemo(() => {
-    return Object.entries(operatorMap).map(([accountId, _operator]) => ({
-      accountId,
-      name: operatorIdentities?.[accountId]?.name || '<Unknown>',
+    return Object.entries(operatorMap).map(([accountId]) => ({
+      accountId: assertSubstrateAddress(accountId),
+      identityName: operatorIdentities?.[accountId]?.name ?? undefined,
       status: 'active',
     }));
   }, [operatorMap, operatorIdentities]);
@@ -303,25 +298,16 @@ export default function RestakeStakePage() {
             searchInputId="restake-delegate-operator-search"
             searchPlaceholder="Search for an operator..."
             getItemKey={(item) => item.accountId}
-            renderItem={(i) => <div>{i.name}</div>}
             onSelect={handleOnSelectOperator}
+            renderItem={({ accountId, identityName }) => (
+              <OperatorListItem
+                accountAddress={accountId}
+                identity={identityName}
+              />
+            )}
           />
 
           <Modal>
-            {/* <ModalContent
-              isOpen={isOperatorModalOpen}
-              title="Select Operator"
-              onInteractOutside={closeOperatorModal}
-            >
-              <OperatorList
-                operators={operators}
-                operatorMap={operatorMap}
-                operatorIdentities={operatorIdentities}
-                onSelectOperator={handleOnSelectOperator}
-                onClose={closeOperatorModal}
-              />
-            </ModalContent> */}
-
             <SupportedChainModal
               isOpen={isChainModalOpen}
               onClose={closeChainModal}
