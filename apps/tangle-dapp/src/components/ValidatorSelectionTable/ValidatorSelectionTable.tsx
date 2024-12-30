@@ -47,8 +47,8 @@ import calculateCommission from '../../utils/calculateCommission';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorSelectionTableProps } from './types';
-import SkeletonRows from '../../../../../libs/tangle-shared-ui/src/components/SkeletonRows';
 import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+import SkeletonRows from '@webb-tools/tangle-shared-ui/components/SkeletonRows';
 
 const columnHelper = createColumnHelper<Validator>();
 
