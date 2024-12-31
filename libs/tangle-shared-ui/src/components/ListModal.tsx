@@ -118,7 +118,14 @@ const ListModal = <T,>({
 
           <hr className="w-full border-b border-mono-40 dark:border-mono-170" />
 
-          {isLoading ? (
+          {items instanceof Error ? (
+            <ListStatus
+              emoji="⚠️"
+              title="Unable to Display Items"
+              description={`There was an error while attempting to load the items: ${items.message}`}
+              className="px-8 py-14"
+            />
+          ) : isLoading ? (
             <div className="p-8">
               <SkeletonRows rowCount={7} className="h-[40px]" />
             </div>
