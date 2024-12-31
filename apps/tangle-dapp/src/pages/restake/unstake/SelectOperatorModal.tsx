@@ -61,6 +61,11 @@ const SelectOperatorModal = ({
       }}
       filterItem={(item, query) => {
         const asset = assetMap[item.assetId];
+
+        if (asset === undefined) {
+          return false;
+        }
+
         const assetSymbol = asset?.symbol;
         const identityName = operatorIdentities?.[item.operatorAccountId]?.name;
 

@@ -46,6 +46,7 @@ import OperatorListItem from '../../../components/Lists/OperatorListItem';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import { TokenIcon } from '@webb-tools/icons';
+import searchBy from '../../../utils/searchBy';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -325,6 +326,9 @@ export default function RestakeStakePage() {
             searchPlaceholder="Search for an operator..."
             getItemKey={(item) => item.accountId}
             onSelect={handleOnSelectOperator}
+            filterItem={(item, query) =>
+              searchBy(query, [item.accountId, item.identityName])
+            }
             renderItem={({ accountId, identityName }) => (
               <OperatorListItem
                 accountAddress={accountId}

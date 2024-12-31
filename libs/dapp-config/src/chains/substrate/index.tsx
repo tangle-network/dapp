@@ -44,7 +44,7 @@ export const chainsConfig = {
     group: 'tangle',
     tag: 'test',
     id: SubstrateChainId.TangleTestnetNative,
-    name: 'Tangle Testnet Native',
+    name: 'Tangle Testnet',
     nativeCurrency: {
       name: 'Tangle',
       symbol: TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
@@ -70,7 +70,7 @@ export const chainsConfig = {
     group: 'tangle',
     tag: 'dev',
     id: SubstrateChainId.TangleLocalNative,
-    name: 'Tangle Local Native',
+    name: 'Tangle Local',
     nativeCurrency: {
       name: 'Local Tangle Token',
       symbol: 'tTNT',
