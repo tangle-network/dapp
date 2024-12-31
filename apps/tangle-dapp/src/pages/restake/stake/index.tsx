@@ -47,6 +47,7 @@ import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import { TokenIcon } from '@webb-tools/icons';
 import searchBy from '../../../utils/searchBy';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -299,8 +300,9 @@ export default function RestakeStakePage() {
             searchInputId="restake-delegate-asset-search"
             searchPlaceholder="Search for asset or enter token address"
             getItemKey={(item) => item.id}
+            onSelect={handleAssetChange}
             renderItem={(asset) => {
-              const fmtBalance = `${asset.assetBalanceProps.balance} ${asset.symbol}`;
+              const fmtBalance = `${addCommasToNumber(asset.assetBalanceProps.balance)} ${asset.symbol}`;
 
               return (
                 <LogoListItem
@@ -312,7 +314,6 @@ export default function RestakeStakePage() {
                 />
               );
             }}
-            onSelect={handleAssetChange}
           />
 
           <ListModal

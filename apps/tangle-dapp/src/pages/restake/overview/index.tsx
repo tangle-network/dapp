@@ -1,7 +1,7 @@
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useRestakeTVL from '@webb-tools/tangle-shared-ui/data/restake/useRestakeTVL';
-import TableTabs from './TableTabs';
+import RestakeOverviewTabs from './RestakeOverviewTabs';
 import { useParams } from 'react-router';
 import { RestakeAction } from '../../../constants';
 import NotFoundPage from '../../notFound';
@@ -21,7 +21,7 @@ export default function RestakePage() {
   }
 
   return (
-    <TableTabs
+    <RestakeOverviewTabs
       delegatorTVL={delegatorTVL}
       operatorMap={operatorMap}
       delegatorInfo={delegatorInfo}

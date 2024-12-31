@@ -16,6 +16,7 @@ import { RestakeAction } from '../../../constants';
 import RestakeWithdrawPage from '../withdraw';
 import RestakeStakePage from '../stake';
 import RestakeUnstakePage from '../unstake';
+import useRestakeAssetMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetMap';
 
 enum RestakeTab {
   RESTAKE = 'Restake',
@@ -52,7 +53,7 @@ const getFormOfRestakeAction = (action: RestakeAction): ReactNode => {
   }
 };
 
-const TableTabs: FC<Props> = ({
+const RestakeOverviewTabs: FC<Props> = ({
   delegatorInfo,
   delegatorTVL,
   operatorConcentration,
@@ -63,6 +64,9 @@ const TableTabs: FC<Props> = ({
 }) => {
   const { assetMap } = useRestakeContext();
   const { rewardConfig } = useRestakeRewardConfig();
+  const assets = useRestakeAssetMap();
+
+  console.debug('assets', assets.assetMap);
 
   // Recalculate vaults data from assetMap
   const vaults = useMemo(() => {
@@ -172,4 +176,4 @@ const TableTabs: FC<Props> = ({
   );
 };
 
-export default TableTabs;
+export default RestakeOverviewTabs;

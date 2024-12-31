@@ -48,6 +48,8 @@ import RestakeTabs from '../RestakeTabs';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import { TokenIcon } from '@webb-tools/icons';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+import searchBy from '../../../utils/searchBy';
 
 function getDefaultTypedChainId(activeTypedChainId: number | null) {
   return isDefined(activeTypedChainId) &&
@@ -328,9 +330,9 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             title="Select Asset"
             isOpen={isTokenModalOpen}
             setIsOpen={setIsTokenModalOpen}
-            filterItem={(item, searchText) => {
-              return item.name.toLowerCase().includes(searchText.toLowerCase());
-            }}
+            filterItem={(asset, query) =>
+              searchBy(query, [asset.id, asset.name, asset.symbol])
+            }
             searchInputId="restake-deposit-assets-search"
             searchPlaceholder="Search assets..."
             titleWhenEmpty="No Assets Found"
@@ -339,7 +341,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             renderItem={(asset) => {
               const fmtBalance =
                 asset.assetBalanceProps?.balance !== undefined
-                  ? `${asset.assetBalanceProps.balance} ${asset.symbol}`
+                  ? `${addCommasToNumber(asset.assetBalanceProps.balance)} ${asset.symbol}`
                   : EMPTY_VALUE_PLACEHOLDER;
 
               return (

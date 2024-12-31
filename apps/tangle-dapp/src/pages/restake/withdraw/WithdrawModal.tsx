@@ -7,6 +7,7 @@ import { formatUnits } from 'viem';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import searchBy from '../../../utils/searchBy';
 import LogoListItem from '../../../components/Lists/LogoListItem';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -73,7 +74,9 @@ const WithdrawModal = ({
           return null;
         }
 
-        const fmtAmount = formatUnits(amount, asset.decimals);
+        const fmtAmount = addCommasToNumber(
+          formatUnits(amount, asset.decimals),
+        );
 
         return (
           <LogoListItem
