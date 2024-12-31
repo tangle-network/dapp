@@ -80,7 +80,7 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
             variant="h5"
             fw="bold"
             component="span"
-            className="block truncate text-mono-200 dark:text-mono-40"
+            className="block whitespace-nowrap text-mono-200 dark:text-mono-40"
           >
             {children || placeholder}
           </Typography>
