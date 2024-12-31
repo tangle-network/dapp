@@ -1,3 +1,4 @@
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import {
   StakingRewardsDestination,
   StakingRewardsDestinationDisplayText,

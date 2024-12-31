@@ -10,68 +10,52 @@ import { LsPool } from '../../constants/liquidStaking/types';
 import { LstIconSize } from './types';
 import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
+import LogoListItem from '../Lists/LogoListItem';
 
-type Props = { pool: LsPool; isSelfStaked: boolean };
+type Props = {
+  pool: LsPool;
+  isSelfStaked: boolean;
+};
 
 const LstListItem: FC<Props> = ({ pool, isSelfStaked }) => {
-  const commissionText =
-    pool.commissionFractional === undefined
-      ? undefined
-      : `${formatFractional(pool.commissionFractional)} commission`;
-
   const lsProtocol = getLsProtocolDef(pool.protocolId);
 
-  const stakeAmountString = formatDisplayAmount(
+  const fmtStakeAmount = formatDisplayAmount(
     pool.totalStaked,
     lsProtocol.decimals,
     AmountFormatStyle.SI,
   );
 
-  const stakeText = `${stakeAmountString} ${lsProtocol.token}`;
+  const fmtCommission =
+    pool.commissionFractional === undefined
+      ? undefined
+      : `${formatFractional(pool.commissionFractional)} commission`;
+
+  const stakeText = `${fmtStakeAmount} ${lsProtocol.token}`;
 
   return (
-    <>
-      <div className="flex items-center gap-3">
+    <LogoListItem
+      leftUpperContent={
+        <Typography
+          variant="body1"
+          fw="bold"
+          className="block text-mono-200 dark:text-mono-0"
+        >
+          {pool.name?.toUpperCase()}
+          <span className="text-mono-180 dark:text-mono-120">#{pool.id}</span>
+        </Typography>
+      }
+      leftBottomText={`${stakeText} ${isSelfStaked ? 'self ' : ''}staked`}
+      rightUpperText={`${pool.apyPercentage ?? EMPTY_VALUE_PLACEHOLDER}% APY`}
+      rightBottomText={fmtCommission}
+      logo={
         <LstIcon
           lsProtocolId={pool.protocolId}
           iconUrl={pool.iconUrl}
           size={LstIconSize.LG}
         />
-
-        <div className="flex flex-col">
-          <Typography
-            variant="body1"
-            fw="bold"
-            className="block text-mono-200 dark:text-mono-0"
-          >
-            {pool.name?.toUpperCase()}
-            <span className="text-mono-180 dark:text-mono-120">#{pool.id}</span>
-          </Typography>
-
-          <Typography
-            variant="body1"
-            className="block text-mono-140 dark:text-mono-120"
-          >
-            {stakeText} {isSelfStaked && 'self '}staked
-          </Typography>
-        </div>
-      </div>
-
-      <div className="flex flex-col items-end justify-center">
-        <Typography variant="body1">
-          {pool.apyPercentage ?? EMPTY_VALUE_PLACEHOLDER}% APY
-        </Typography>
-
-        {commissionText !== undefined && (
-          <Typography
-            variant="body1"
-            className="block text-mono-140 dark:text-mono-120"
-          >
-            {commissionText}
-          </Typography>
-        )}
-      </div>
-    </>
+      }
+    />
   );
 };
 

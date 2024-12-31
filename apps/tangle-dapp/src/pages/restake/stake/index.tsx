@@ -19,7 +19,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
-import { OperatorConfig } from '../../../components/Lists/OperatorList';
 import {
   DelegatorStakeContext,
   TxEvent,
@@ -44,6 +43,13 @@ import Info from './Info';
 import StakeInput from './StakeInput';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+
+type RestakeOperator = {
+  accountId: SubstrateAddress;
+  identityName?: string;
+  isActive: boolean;
+};
 
 export default function RestakeStakePage() {
   const {
@@ -228,16 +234,21 @@ export default function RestakeStakePage() {
     [assetMap, delegate, txEventHandlers],
   );
 
-  const operators = useMemo(() => {
-    return Object.entries(operatorMap).map(([accountId]) => ({
-      accountId: assertSubstrateAddress(accountId),
-      identityName: operatorIdentities?.[accountId]?.name ?? undefined,
-      status: 'active',
-    }));
+  const operators = useMemo<RestakeOperator[]>(() => {
+    return (
+      Object.entries(operatorMap)
+        // Include only active operators.
+        .filter(([, metadata]) => metadata.status === 'Active')
+        .map(([accountId]) => ({
+          accountId: assertSubstrateAddress(accountId),
+          identityName: operatorIdentities?.[accountId]?.name ?? undefined,
+          isActive: true,
+        }))
+    );
   }, [operatorMap, operatorIdentities]);
 
   const handleOnSelectOperator = useCallback(
-    (operator: OperatorConfig) => {
+    (operator: RestakeOperator) => {
       setValue('operatorAccountId', operator.accountId);
       setIsOperatorModalOpen(false);
     },
