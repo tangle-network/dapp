@@ -116,6 +116,7 @@ export default function StakeInput({
         tokenSymbol={selectedAsset?.symbol}
         maxAmount={maxFormatted}
         onAmountChange={handleAmountChange}
+        className="bg-mono-20 dark:bg-mono-180"
       >
         <TransactionInputCard.Header>
           <TransactionInputCard.ChainSelector

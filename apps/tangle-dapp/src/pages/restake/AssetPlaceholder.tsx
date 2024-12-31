@@ -1,17 +1,11 @@
-import { TokenIcon } from '@webb-tools/icons/TokenIcon';
-import type { ComponentProps } from 'react';
+import { Typography } from '@webb-tools/webb-ui-components';
+import { FC } from 'react';
 
-import SelectorPlaceholder from './SelectorPlaceholder';
-
-const AssetPlaceholder = ({
-  children = 'Asset',
-  Icon = <TokenIcon size="lg" className="mr-2" />,
-  ...props
-}: Partial<ComponentProps<typeof SelectorPlaceholder>>) => {
+const AssetPlaceholder: FC = () => {
   return (
-    <SelectorPlaceholder Icon={Icon} {...props}>
-      {children}
-    </SelectorPlaceholder>
+    <Typography variant="h5" fw="bold" component="span">
+      Select Asset
+    </Typography>
   );
 };
 

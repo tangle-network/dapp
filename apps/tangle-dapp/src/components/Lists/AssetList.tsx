@@ -82,7 +82,7 @@ export const AssetList = ({
                   size="xl"
                   name={asset.symbol}
                   className="mr-2"
-                  spinnersize="lg"
+                  spinnerSize="lg"
                 />
 
                 <div className="flex flex-col gap-1">

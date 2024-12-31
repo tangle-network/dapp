@@ -43,10 +43,11 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
       () =>
         twMerge(
           cx(
-            'group p-2 md:px-4 rounded-lg',
+            'group px-4 py-2 rounded-full',
             'flex items-center gap-2 max-w-fit',
+            'border border-mono-100 dark:border-mono-140',
             'bg-mono-40 dark:bg-mono-170',
-            'enabled:hover:bg-mono-20 enabled:hover:dark:bg-mono-160',
+            'enabled:hover:bg-mono-60 enabled:hover:dark:bg-mono-160',
             'disabled:bg-[#E2E5EB]/20 dark:disabled:bg-[#3A3E53]/70',
           ),
           className,

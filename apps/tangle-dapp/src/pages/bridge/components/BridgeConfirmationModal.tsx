@@ -339,7 +339,7 @@ const ConfirmationItem: FC<{
           <TokenIcon
             name={tokenName}
             size="lg"
-            spinnersize="lg"
+            spinnerSize="lg"
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
           />
         </div>

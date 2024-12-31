@@ -123,6 +123,7 @@ const SourceChainInput = ({
       <TransactionInputCard.Root
         tokenSymbol={asset?.symbol}
         errorMessage={amountError}
+        className="bg-mono-20 dark:bg-mono-180"
       >
         <TransactionInputCard.Header>
           <TransactionInputCard.ChainSelector

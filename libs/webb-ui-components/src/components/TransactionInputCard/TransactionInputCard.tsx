@@ -401,7 +401,8 @@ const TransactionInputCardBody = forwardRef<
               className="!bg-transparent grow"
             >
               <TextField.Input
-                placeholder="0.0"
+                className="text-xl"
+                placeholder="Enter amount"
                 min={0}
                 inputMode="decimal"
                 pattern="[0-9]*\.?[0-9]*"

@@ -244,7 +244,10 @@ const RestakeUnstakePage = () => {
 
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col items-start justify-stretch">
-              <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
+              <TransactionInputCard.Root
+                tokenSymbol={selectedAsset?.symbol}
+                className="bg-mono-20 dark:bg-mono-180"
+              >
                 <TransactionInputCard.Header>
                   <TransactionInputCard.ChainSelector
                     placeholder="Select Operator"

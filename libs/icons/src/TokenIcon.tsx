@@ -12,7 +12,7 @@ export const TokenIcon: React.FC<
   TokenIconBase & {
     isActive?: boolean;
     customLoadingCmp?: React.ReactNode;
-    spinnersize?: TokenIconBase['size'];
+    spinnerSize?: TokenIconBase['size'];
   }
 > = (props) => {
   const {
@@ -24,7 +24,7 @@ export const TokenIcon: React.FC<
     size = 'md',
     onClick,
     customLoadingCmp,
-    spinnersize,
+    spinnerSize,
     ...restProps
   } = props;
 
@@ -56,7 +56,7 @@ export const TokenIcon: React.FC<
   if (error !== undefined) {
     return <span>{error.message}</span>;
   } else if (loading) {
-    return customLoadingCmp ?? <Spinner {...props} size={spinnersize} />;
+    return customLoadingCmp ?? <Spinner {...props} size={spinnerSize} />;
   }
 
   if (svgElement) {
