@@ -81,8 +81,6 @@ export const SideBar = forwardRef<HTMLDivElement, MobileSidebarProps>(
       }
     }, [isSidebarOpen, onSideBarToggle, setIsSidebarOpen]);
 
-    console.log('items', items);
-
     return (
       <div
         className={cx('flex gap-2 relative', className)}
@@ -174,8 +172,8 @@ export const SideBar = forwardRef<HTMLDivElement, MobileSidebarProps>(
             >
               {items
                 .filter((item) => !item.isInternal)
-                .map((item) => (
-                  <Link href={item.href} target="_blank">
+                .map((item, index) => (
+                  <Link key={index} href={item.href} target="_blank">
                     <item.Icon
                       width={24}
                       height={24}

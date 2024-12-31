@@ -45,7 +45,7 @@ const LstListItem: FC<Props> = ({ pool, isSelfStaked }) => {
           <span className="text-mono-180 dark:text-mono-120">#{pool.id}</span>
         </Typography>
       }
-      leftBottomText={`${stakeText} ${isSelfStaked ? 'self ' : ''}staked`}
+      leftBottomContent={`${stakeText} ${isSelfStaked ? 'self ' : ''}staked`}
       rightUpperText={`${pool.apyPercentage ?? EMPTY_VALUE_PLACEHOLDER}% APY`}
       rightBottomText={fmtCommission}
       logo={

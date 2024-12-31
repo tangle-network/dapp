@@ -21,15 +21,17 @@ export type ListModalProps<T> = {
   searchPlaceholder: string;
   titleWhenEmpty: string;
   descriptionWhenEmpty: string;
-  renderItem: (item: T) => JSX.Element;
+  renderItem: (item: T) => JSX.Element | null;
   getItemKey?: (item: T) => string;
   onSelect: (item: T) => void;
   sorting?: (a: T, b: T) => number;
 
   /**
-   * If not defined, the search input will not be displayed.
+   * Provide a function to help determine whether to include an item in the list once a search query is provided.
+   *
+   * If not defined, the search input will not be displayed because it cannot be determined how to filter the items.
    */
-  filterItems?: (item: T, searchQuery: string) => boolean;
+  filterItem?: (item: T, searchQuery: string) => boolean;
 
   /**
    * The items to display in the list.
@@ -43,7 +45,7 @@ const ListModal = <T,>({
   title,
   isOpen,
   setIsOpen,
-  filterItems,
+  filterItem,
   sorting,
   titleWhenEmpty,
   descriptionWhenEmpty,
@@ -70,14 +72,14 @@ const ListModal = <T,>({
   const processedItems = useMemo(() => {
     if (
       !isSearching ||
-      filterItems === undefined ||
+      filterItem === undefined ||
       !Array.isArray(sortedItems)
     ) {
       return sortedItems;
     }
 
-    return sortedItems.filter((item) => filterItems(item, searchQuery));
-  }, [filterItems, isSearching, sortedItems, searchQuery]);
+    return sortedItems.filter((item) => filterItem(item, searchQuery));
+  }, [filterItem, isSearching, sortedItems, searchQuery]);
 
   const isLoading = !Array.isArray(processedItems);
   const isEmpty = !isSearching && !isLoading && processedItems.length === 0;
@@ -100,22 +102,19 @@ const ListModal = <T,>({
         </ModalHeader>
 
         <div>
-          {showSearch &&
-            filterItems !== undefined &&
-            !isEmpty &&
-            !isLoading && (
-              <div className="px-4 pb-4 md:px-9">
-                <Input
-                  id={searchInputId}
-                  isControlled
-                  rightIcon={<Search className="pr-2" />}
-                  placeholder={searchPlaceholder}
-                  value={searchQuery}
-                  onChange={setSearchQuery}
-                  inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120"
-                />
-              </div>
-            )}
+          {showSearch && filterItem !== undefined && !isEmpty && !isLoading && (
+            <div className="px-4 pb-4 md:px-9">
+              <Input
+                id={searchInputId}
+                isControlled
+                rightIcon={<Search className="pr-2" />}
+                placeholder={searchPlaceholder}
+                value={searchQuery}
+                onChange={setSearchQuery}
+                inputClassName="placeholder:text-mono-80 dark:placeholder:text-mono-120"
+              />
+            </div>
+          )}
 
           <hr className="w-full border-b border-mono-40 dark:border-mono-170" />
 
@@ -144,13 +143,20 @@ const ListModal = <T,>({
                       ? getItemKey(item)
                       : index.toString();
 
+                  const itemContent = renderItem(item);
+
+                  // Ignore the item if the render function returns `null`.
+                  if (itemContent === null) {
+                    return null;
+                  }
+
                   return (
                     <ListItem
                       key={key}
                       onClick={() => onSelect(item)}
                       className="w-full flex items-center gap-4 justify-between max-w-full min-h-[60px] py-3 cursor-pointer"
                     >
-                      {renderItem(item)}
+                      {itemContent}
                     </ListItem>
                   );
                 })}

@@ -326,7 +326,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             title="Select Asset"
             isOpen={isTokenModalOpen}
             setIsOpen={setIsTokenModalOpen}
-            filterItems={(item, searchText) => {
+            filterItem={(item, searchText) => {
               return item.name.toLowerCase().includes(searchText.toLowerCase());
             }}
             searchInputId="restake-deposit-assets-search"

@@ -279,7 +279,7 @@ const LsStakeCard: FC = () => {
           // Sort pools by highest TVL in descending order.
           return b.totalStaked.sub(a.totalStaked).isNeg() ? -1 : 1;
         }}
-        filterItems={(pool, query) => {
+        filterItem={(pool, query) => {
           const displayName: LsPoolDisplayName = `${pool.name}#${pool.id}`;
 
           return searchBy(query, [displayName]);

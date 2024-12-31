@@ -7,15 +7,15 @@ import { FC, ReactNode } from 'react';
 type Props = {
   logo: ReactNode;
   leftUpperContent: ReactNode | string;
-  leftBottomText?: ReactNode;
-  rightUpperText?: ReactNode;
-  rightBottomText?: ReactNode;
+  leftBottomContent?: ReactNode | string;
+  rightUpperText?: string;
+  rightBottomText?: string;
 };
 
 const LogoListItem: FC<Props> = ({
   logo,
   leftUpperContent,
-  leftBottomText,
+  leftBottomContent,
   rightUpperText,
   rightBottomText,
 }) => {
@@ -37,14 +37,18 @@ const LogoListItem: FC<Props> = ({
             leftUpperContent
           )}
 
-          {leftBottomText !== undefined && (
-            <Typography
-              variant="body1"
-              className="block text-mono-140 dark:text-mono-120"
-            >
-              {leftBottomText}
-            </Typography>
-          )}
+          {leftBottomContent !== undefined ? (
+            typeof leftBottomContent === 'string' ? (
+              <Typography
+                variant="body1"
+                className="block text-mono-140 dark:text-mono-120"
+              >
+                {leftBottomContent}
+              </Typography>
+            ) : (
+              leftBottomContent
+            )
+          ) : null}
         </div>
       </div>
 

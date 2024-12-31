@@ -59,7 +59,7 @@ const SelectOperatorModal = ({
           formattedAmount: fmtAmount,
         });
       }}
-      filterItems={(item, query) => {
+      filterItem={(item, query) => {
         const asset = assetMap[item.assetId];
         const assetSymbol = asset?.symbol;
         const identityName = operatorIdentities?.[item.operatorAccountId]?.name;
