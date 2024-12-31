@@ -44,6 +44,8 @@ import StakeInput from './StakeInput';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import LogoListItem from '../../../components/Lists/LogoListItem';
+import { TokenIcon } from '@webb-tools/icons';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -158,6 +160,7 @@ export default function RestakeStakePage() {
           id: asset.id,
           name: asset.name,
           symbol: asset.symbol,
+          decimals: asset.decimals,
           assetBalanceProps: {
             balance: +formatUnits(amount, asset.decimals),
             ...(asset.vaultId
@@ -166,7 +169,7 @@ export default function RestakeStakePage() {
                 }
               : {}),
           },
-        } satisfies TokenListCardProps['selectTokens'][number];
+        };
       });
   }, [assetMap, delegatorInfo]);
 
@@ -295,7 +298,19 @@ export default function RestakeStakePage() {
             searchInputId="restake-delegate-asset-search"
             searchPlaceholder="Search for asset or enter token address"
             getItemKey={(item) => item.id}
-            renderItem={(i) => <div>{i.name}</div>}
+            renderItem={(asset) => {
+              const fmtBalance = `${asset.assetBalanceProps.balance} ${asset.symbol}`;
+
+              return (
+                <LogoListItem
+                  logo={<TokenIcon size="xl" name={asset.symbol} />}
+                  leftUpperContent={`${asset.name} (${asset.symbol})`}
+                  leftBottomContent={`Asset ID: ${asset.id}`}
+                  rightUpperText={fmtBalance}
+                  rightBottomText="Balance"
+                />
+              );
+            }}
             onSelect={handleAssetChange}
           />
 

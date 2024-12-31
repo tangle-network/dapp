@@ -72,16 +72,19 @@ const SelectOperatorModal = ({
       }}
       renderItem={({ amountBonded, assetId, operatorAccountId }) => {
         const asset = assetMap[assetId];
-        const decimals = asset?.decimals ?? DEFAULT_DECIMALS;
-        const assetSymbol = asset?.symbol ?? 'Unknown';
-        const fmtAmount = formatUnits(amountBonded, decimals);
+
+        if (asset === undefined) {
+          return null;
+        }
+
+        const fmtAmount = formatUnits(amountBonded, asset.decimals);
         const identityName = operatorIdentities?.[operatorAccountId]?.name;
 
         return (
           <OperatorListItem
             accountAddress={operatorAccountId}
             identity={identityName ?? undefined}
-            rightUpperText={`${fmtAmount} ${assetSymbol}`}
+            rightUpperText={`${fmtAmount} ${asset.symbol}`}
             rightBottomText="Amount Bonded"
           />
         );

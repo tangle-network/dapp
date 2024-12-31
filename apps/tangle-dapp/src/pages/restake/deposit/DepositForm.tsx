@@ -6,7 +6,7 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import { Card } from '@webb-tools/webb-ui-components';
+import { Card, EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
 import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import {
   Modal,
@@ -46,6 +46,8 @@ import SourceChainInput from './SourceChainInput';
 import TxDetails from './TxDetails';
 import RestakeTabs from '../RestakeTabs';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
+import LogoListItem from '../../../components/Lists/LogoListItem';
+import { TokenIcon } from '@webb-tools/icons';
 
 function getDefaultTypedChainId(activeTypedChainId: number | null) {
   return isDefined(activeTypedChainId) &&
@@ -334,7 +336,22 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             titleWhenEmpty="No Assets Found"
             descriptionWhenEmpty="It seems that there are no available assets in this network yet. Please try again later."
             items={selectableTokens}
-            renderItem={(i) => <div>{i.name}</div>}
+            renderItem={(asset) => {
+              const fmtBalance =
+                asset.assetBalanceProps?.balance !== undefined
+                  ? `${asset.assetBalanceProps.balance} ${asset.symbol}`
+                  : EMPTY_VALUE_PLACEHOLDER;
+
+              return (
+                <LogoListItem
+                  logo={<TokenIcon size="xl" name={asset.symbol} />}
+                  leftUpperContent={`${asset.name} (${asset.symbol})`}
+                  leftBottomContent={`Asset ID: ${asset.id}`}
+                  rightBottomText="Balance"
+                  rightUpperText={fmtBalance}
+                />
+              );
+            }}
             onSelect={handleTokenChange}
           />
         </Form>
