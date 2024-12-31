@@ -70,6 +70,6 @@ export default function useBlueprintListing() {
 
   return {
     ...rest,
-    blueprints: result ?? [],
+    blueprints: result ?? {},
   };
 }

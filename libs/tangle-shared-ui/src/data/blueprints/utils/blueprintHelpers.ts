@@ -111,10 +111,10 @@ export function createBlueprintObjects(
   >['blueprintRestakersMap'],
   blueprintTVLMap: ReturnType<typeof extractOperatorData>['blueprintTVLMap'],
   ownerIdentitiesMap: Awaited<ReturnType<typeof fetchOwnerIdentities>>,
-): Blueprint[] {
-  return Array.from(blueprintsMap.entries()).map(
-    ([blueprintId, { metadata, owner }]) =>
-      ({
+): Record<string, Blueprint> {
+  return Array.from(blueprintsMap.entries()).reduce(
+    (acc, [blueprintId, { metadata, owner }]) => {
+      acc[blueprintId.toString()] = {
         id: blueprintId.toString(),
         name: metadata.name,
         author: metadata.author ?? owner,
@@ -130,7 +130,11 @@ export function createBlueprintObjects(
         email: ownerIdentitiesMap.get(owner)?.email,
         // TODO: Determine `isBoosted` value.
         isBoosted: false,
-      }) satisfies Blueprint,
+      };
+
+      return acc;
+    },
+    {} as Record<string, Blueprint>,
   );
 }
 

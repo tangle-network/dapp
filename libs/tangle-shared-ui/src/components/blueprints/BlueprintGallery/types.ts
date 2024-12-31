@@ -1,4 +1,5 @@
-import type { PropsWithChildren } from 'react';
+import type { RowSelectionState } from '@tanstack/table-core';
+import type { Dispatch, PropsWithChildren, SetStateAction } from 'react';
 
 export type BlueprintItemProps = {
   id: string;
@@ -12,6 +13,8 @@ export type BlueprintItemProps = {
   isBoosted?: boolean;
   category: string | null;
   renderImage: (imageUrl: string) => React.ReactNode;
+  isSelected?: boolean;
+  onSelectedChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export type BlueprintGalleryProps = {
@@ -21,4 +24,6 @@ export type BlueprintGalleryProps = {
   BlueprintItemWrapper?: React.FC<
     PropsWithChildren<Omit<BlueprintItemProps, 'renderImage'>>
   >;
+  rowSelection?: RowSelectionState;
+  onRowSelectionChange?: Dispatch<SetStateAction<RowSelectionState>>;
 };
