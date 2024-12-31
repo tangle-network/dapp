@@ -28,7 +28,7 @@ export type UseCopyableReturnType = {
  * @returns An object contains `isCopied`, `copiedText` and `copy` function
  */
 export const useCopyable = (display = 3000): UseCopyableReturnType => {
-  // Reference to to copied string
+  // Reference to copied string
   const ref = useRef<string>('');
 
   // Internal state to manage and reset the copy state
