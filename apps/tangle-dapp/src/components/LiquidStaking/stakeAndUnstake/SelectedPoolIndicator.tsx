@@ -44,7 +44,7 @@ const SelectedPoolIndicator: FC<SelectedPoolIndicatorProps> = ({ onClick }) => {
       </Typography>
 
       {onClick !== undefined && (
-        <ChevronDown className="fill-current dark:fill-current" />
+        <ChevronDown size="lg" className="fill-current dark:fill-current" />
       )}
     </div>
   );

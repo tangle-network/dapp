@@ -107,7 +107,7 @@ const ListModal = <T,>({
               <Input
                 id={searchInputId}
                 isControlled
-                rightIcon={<Search className="pr-2" />}
+                rightIcon={<Search className="mr-2" />}
                 placeholder={searchPlaceholder}
                 value={searchQuery}
                 onChange={setSearchQuery}
