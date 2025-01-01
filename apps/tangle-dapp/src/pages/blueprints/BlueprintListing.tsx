@@ -16,7 +16,7 @@ const BlueprintListing: FC = () => {
 
   return (
     <BlueprintGallery
-      blueprints={blueprints.map((blueprint) => ({
+      blueprints={Object.values(blueprints).map((blueprint) => ({
         ...blueprint,
         renderImage(imageUrl) {
           return (
