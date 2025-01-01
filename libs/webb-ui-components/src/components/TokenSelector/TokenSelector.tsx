@@ -57,36 +57,42 @@ const TokenSelector = forwardRef<HTMLButtonElement, TokenSelectorProps>(
 
     const disabled = isActive || isDisabled;
 
+    const icon =
+      tokenType === 'shielded' ? (
+        <ShieldedAssetIcon
+          displayPlaceholder={typeof children === 'undefined'}
+          size="lg"
+          className={twMerge('shrink-0 grow-0', getFlexBasic('lg'))}
+        />
+      ) : typeof children === 'string' ? (
+        <TokenIcon
+          name={children.toLowerCase()}
+          size="lg"
+          className={twMerge('shrink-0 grow-0', getFlexBasic('lg'))}
+        />
+      ) : Icon ? (
+        Icon
+      ) : null;
+
     return (
       <button {...props} disabled={disabled} className={mergedClsx} ref={ref}>
-        {tokenType === 'shielded' ? (
-          <ShieldedAssetIcon
-            displayPlaceholder={typeof children === 'undefined'}
-            size="lg"
-            className={twMerge('shrink-0 grow-0', getFlexBasic('lg'))}
-          />
-        ) : typeof children === 'string' ? (
-          <TokenIcon
-            name={children.toLowerCase()}
-            size="lg"
-            className={twMerge('shrink-0 grow-0', getFlexBasic('lg'))}
-          />
-        ) : Icon ? (
-          Icon
-        ) : null}
+        <div className="flex items-center gap-2">
+          {/** Wrap the icon in a div, otherwise strange width issues occur. */}
+          {icon !== null && <div>{icon}</div>}
 
-        {isPrimitive(children) ? (
-          <Typography
-            variant="h5"
-            fw="bold"
-            component="span"
-            className="block whitespace-nowrap text-mono-200 dark:text-mono-40"
-          >
-            {children || placeholder}
-          </Typography>
-        ) : (
-          children || placeholder
-        )}
+          {isPrimitive(children) ? (
+            <Typography
+              variant="h5"
+              fw="bold"
+              component="span"
+              className="block whitespace-nowrap text-mono-200 dark:text-mono-40"
+            >
+              {children || placeholder}
+            </Typography>
+          ) : (
+            children || placeholder
+          )}
+        </div>
 
         {isDropdown && (
           <ChevronDown
