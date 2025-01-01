@@ -10,12 +10,17 @@ import {
 } from '@webb-tools/tangle-shared-ui/constants';
 import useBlueprintListing from '@webb-tools/tangle-shared-ui/data/blueprints/useFakeBlueprintListing';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import {
+  Modal,
+  ModalTrigger,
+} from '@webb-tools/webb-ui-components/components/Modal';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useRoleStore, { Role } from '../../stores/roleStore';
 import BlueprintListing from './BlueprintListing';
+import PricingModal from './PricingModal';
 
 export const dynamic = 'force-static';
 
@@ -67,35 +72,41 @@ const Page = () => {
         onRowSelectionChange={setRowSelection}
       />
 
-      <AnimatePresence>
-        {size > 0 && (
-          <motion.div
-            className={twMerge(
-              'fixed bottom-2 w-screen max-w-4xl p-6 -translate-x-1/2 left-1/2 rounded-xl',
-              'flex items-center justify-between',
-              "bg-[url('/static/assets/blueprints/selected-blueprint-panel.png')]",
-            )}
-            initial={{ opacity: 0, bottom: -100 }}
-            animate={{ opacity: 1, bottom: 2 }}
-            exit={{ opacity: 0, bottom: -100 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="flex items-center gap-6">
-              <p className="font-bold text-mono-0 body1">
-                {size} {pluralize('Blueprint', size > 1)} selected
-              </p>
+      <Modal>
+        <AnimatePresence>
+          {size > 0 && (
+            <motion.div
+              className={twMerge(
+                'fixed bottom-2 w-screen max-w-4xl p-6 -translate-x-1/2 left-1/2 rounded-xl',
+                'flex items-center justify-between',
+                "bg-[url('/static/assets/blueprints/selected-blueprint-panel.png')]",
+              )}
+              initial={{ opacity: 0, bottom: -100 }}
+              animate={{ opacity: 1, bottom: 2 }}
+              exit={{ opacity: 0, bottom: -100 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex items-center gap-6">
+                <p className="font-bold text-mono-0 body1">
+                  {size} {pluralize('Blueprint', size > 1)} selected
+                </p>
 
-              <Button variant="link" onClick={() => setRowSelection({})}>
-                Clear
-              </Button>
-            </div>
+                <Button variant="link" onClick={() => setRowSelection({})}>
+                  Clear
+                </Button>
+              </div>
 
-            <Button rightIcon={<ArrowRightIcon width={24} height={24} />}>
-              Register
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <ModalTrigger asChild>
+                <Button rightIcon={<ArrowRightIcon width={24} height={24} />}>
+                  Register
+                </Button>
+              </ModalTrigger>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <PricingModal />
+      </Modal>
     </div>
   );
 };
