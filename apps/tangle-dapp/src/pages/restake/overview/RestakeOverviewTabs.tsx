@@ -16,7 +16,6 @@ import { RestakeAction } from '../../../constants';
 import RestakeWithdrawPage from '../withdraw';
 import RestakeStakePage from '../stake';
 import RestakeUnstakePage from '../unstake';
-import useRestakeAssetMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetMap';
 
 enum RestakeTab {
   RESTAKE = 'Restake',
@@ -64,9 +63,6 @@ const RestakeOverviewTabs: FC<Props> = ({
 }) => {
   const { assetMap } = useRestakeContext();
   const { rewardConfig } = useRestakeRewardConfig();
-  const assets = useRestakeAssetMap();
-
-  console.debug('assets', assets.assetMap);
 
   // Recalculate vaults data from assetMap
   const vaults = useMemo(() => {

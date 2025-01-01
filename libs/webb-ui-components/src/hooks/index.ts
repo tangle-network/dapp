@@ -1,5 +1,5 @@
 export { default as useBreakpointValue } from './useBreakpointValue';
-export * from './useCheckMobile';
+export * from './useIsMobile';
 export * from './useCopyable';
 export * from './useDarkMode';
 export * from './useHiddenValue';

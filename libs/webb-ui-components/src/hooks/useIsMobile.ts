@@ -2,24 +2,20 @@
 
 import { useState, useEffect } from 'react';
 
-export type UseCheckMobileReturnType = {
-  isMobile: boolean;
-};
-
-export const useCheckMobile = (): UseCheckMobileReturnType => {
+export const useIsMobile = (): boolean => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkIsMobile = () => {
-      const isMobileCheck =
+      const isMobileUserAgent =
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
           navigator.userAgent,
         );
-      setIsMobile(isMobileCheck);
+
+      setIsMobile(isMobileUserAgent);
     };
 
     checkIsMobile();
-
     window.addEventListener('resize', checkIsMobile);
 
     return () => {
@@ -27,5 +23,5 @@ export const useCheckMobile = (): UseCheckMobileReturnType => {
     };
   }, []);
 
-  return { isMobile };
+  return isMobile;
 };
