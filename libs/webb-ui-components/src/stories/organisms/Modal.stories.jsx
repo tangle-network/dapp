@@ -49,11 +49,11 @@ const Template = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Modal open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
+    <Modal open={isOpen} onOpenChange={setIsOpen}>
       <ModalTrigger asChild>
         <Button>Click me</Button>
       </ModalTrigger>
-      <ModalContent isOpen={isOpen}>
+      <ModalContent>
         <WalletConnectionCard
           onClose={() => setIsOpen(false)}
           wallets={wallets}

@@ -15,7 +15,6 @@ import ModalContentList from '../ModalContentList';
 type Props = {
   delegatorInfo: DelegatorInfo | null;
   operatorIdentities?: Record<string, IdentityType | null> | null;
-  isOpen: boolean;
   onClose: () => void;
   onItemSelected: (
     item: DelegatorInfo['delegations'][number] & {
@@ -26,7 +25,6 @@ type Props = {
 
 const UnstakeModal = ({
   delegatorInfo,
-  isOpen,
   onClose,
   onItemSelected,
   operatorIdentities,
@@ -44,10 +42,8 @@ const UnstakeModal = ({
 
   return (
     <ModalContent
-      isOpen={isOpen}
       title="Select Operator"
       description="Select the operator you want to unstake from"
-      onInteractOutside={onClose}
     >
       <ModalContentList
         title="Select Operator"

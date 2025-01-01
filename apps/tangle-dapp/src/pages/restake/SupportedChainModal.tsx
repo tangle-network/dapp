@@ -6,18 +6,15 @@ import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../constants/resta
 import ModalContent from './ModalContent';
 
 type Props = {
-  isOpen: boolean;
   onClose: () => void;
   onChainChange: ComponentProps<typeof ChainList>['onSelectChain'];
 };
 
-const SupportedChainModal: FC<Props> = ({ isOpen, onChainChange, onClose }) => {
+const SupportedChainModal: FC<Props> = ({ onChainChange, onClose }) => {
   return (
     <ModalContent
-      isOpen={isOpen}
       title="Select Chain"
       description="Select the chain you want to delegate from"
-      onInteractOutside={onClose}
     >
       <ChainList
         searchInputId="restake-supported-chain-search"

@@ -55,15 +55,11 @@ const WithdrawUnbondedTxContainer: FC<WithdrawUnbondedTxContainerProps> = ({
 
   return (
     <>
-      <Modal open>
-        <ModalContent
-          onInteractOutside={() => setIsModalOpen(false)}
-          isOpen={isModalOpen}
-          size="sm"
-        >
-          <ModalHeader onClose={closeModal}>Withdraw Funds</ModalHeader>
+      <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <ModalContent size="sm">
+          <ModalHeader>Withdraw Funds</ModalHeader>
 
-          <div className="p-9 space-y-6">
+          <div className="space-y-6 p-9">
             <Typography variant="body1" fw="normal">
               {`Upon successful withdrawal, the funds will be moved from the 'unbonded' state to your account's available balance.`}
             </Typography>

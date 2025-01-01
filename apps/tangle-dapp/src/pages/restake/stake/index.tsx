@@ -135,18 +135,21 @@ export default function Page() {
     status: isChainModalOpen,
     open: openChainModal,
     close: closeChainModal,
+    update: updateChainModal,
   } = useModal(false);
 
   const {
     status: isAssetModalOpen,
     open: openAssetModal,
     close: closeAssetModal,
+    update: updateAssetModal,
   } = useModal(false);
 
   const {
     status: isOperatorModalOpen,
     open: openOperatorModal,
     close: closeOperatorModal,
+    update: updateOperatorModal,
   } = useModal(false);
 
   const selectableTokens = useMemo(() => {
@@ -285,12 +288,10 @@ export default function Page() {
             </div>
           </div>
 
-          <Modal>
+          <Modal open={isAssetModalOpen} onOpenChange={updateAssetModal}>
             <ModalContent
-              isOpen={isAssetModalOpen}
               title="Select Asset"
               description="Select the asset you want to delegate"
-              onInteractOutside={closeAssetModal}
             >
               <AssetList
                 selectTokens={selectableTokens}
@@ -299,12 +300,12 @@ export default function Page() {
                 renderEmpty={EmptyAsset}
               />
             </ModalContent>
+          </Modal>
 
+          <Modal open={isOperatorModalOpen} onOpenChange={updateOperatorModal}>
             <ModalContent
-              isOpen={isOperatorModalOpen}
               title="Select Operator"
               description="Select the operator you want to stake with"
-              onInteractOutside={closeOperatorModal}
             >
               <OperatorList
                 operators={operators}
@@ -314,9 +315,10 @@ export default function Page() {
                 onClose={closeOperatorModal}
               />
             </ModalContent>
+          </Modal>
 
+          <Modal open={isChainModalOpen} onOpenChange={updateChainModal}>
             <SupportedChainModal
-              isOpen={isChainModalOpen}
               onClose={closeChainModal}
               onChainChange={handleChainChange}
             />

@@ -63,15 +63,9 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
   }, [setIsOpen, status]);
 
   return (
-    <Modal>
-      <ModalContent
-        onInteractOutside={() => setIsOpen(false)}
-        isOpen={isOpen}
-        size="md"
-      >
-        <ModalHeader onClose={() => setIsOpen(false)}>
-          Update Pool Commission
-        </ModalHeader>
+    <Modal open={isOpen} onOpenChange={setIsOpen}>
+      <ModalContent size="md">
+        <ModalHeader>Update Pool Commission</ModalHeader>
 
         <ModalBody>
           <Typography variant="body1">

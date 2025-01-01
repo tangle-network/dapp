@@ -153,12 +153,14 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     status: chainModalOpen,
     close: closeChainModal,
     open: openChainModal,
+    update: updateChainModal,
   } = useModal();
 
   const {
     status: tokenModalOpen,
     close: closeTokenModal,
     open: openTokenModal,
+    update: updateTokenModal,
   } = useModal();
 
   const selectableTokens = useMemo(
@@ -303,12 +305,10 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
           </div>
         </div>
 
-        <Modal>
+        <Modal open={chainModalOpen} onOpenChange={updateChainModal}>
           <ModalContent
-            isOpen={chainModalOpen}
             title="Select Chain"
             description="Select the chain you want to deposit from."
-            onInteractOutside={closeChainModal}
           >
             <ChainList
               searchInputId="restake-deposit-form-search"
@@ -318,12 +318,12 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
               chainType="source"
             />
           </ModalContent>
+        </Modal>
 
+        <Modal open={tokenModalOpen} onOpenChange={updateTokenModal}>
           <ModalContent
-            isOpen={tokenModalOpen}
             title="Select Asset"
             description="Select the asset you want to deposit."
-            onInteractOutside={closeTokenModal}
           >
             <AssetList
               selectTokens={selectableTokens}

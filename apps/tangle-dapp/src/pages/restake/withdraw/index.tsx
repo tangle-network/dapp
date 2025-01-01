@@ -71,12 +71,14 @@ const Page = () => {
     status: isWithdrawModalOpen,
     open: openWithdrawModal,
     close: closeWithdrawModal,
+    update: updateWithdrawModal,
   } = useModal();
 
   const {
     status: isChainModalOpen,
     open: openChainModal,
     close: closeChainModal,
+    update: updateChainModal,
   } = useModal();
 
   const [isWithdrawRequestTableOpen, setIsWithdrawRequestTableOpen] =
@@ -357,10 +359,9 @@ const Page = () => {
         </RestakeDetailCard.Root>
       </AnimatedTable>
 
-      <Modal>
+      <Modal open={isWithdrawModalOpen} onOpenChange={updateWithdrawModal}>
         <WithdrawModal
           delegatorInfo={delegatorInfo}
-          isOpen={isWithdrawModalOpen}
           onClose={closeWithdrawModal}
           onItemSelected={(item) => {
             closeWithdrawModal();
@@ -375,9 +376,10 @@ const Page = () => {
             setFormValue('amount', formattedAmount, commonOpts);
           }}
         />
+      </Modal>
 
+      <Modal open={isChainModalOpen} onOpenChange={updateChainModal}>
         <SupportedChainModal
-          isOpen={isChainModalOpen}
           onClose={closeChainModal}
           onChainChange={async (chainConfig) => {
             const typedChainId = calculateTypedChainId(

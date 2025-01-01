@@ -20,7 +20,6 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
   (
     {
       children,
-      isOpen = false,
       className,
       size = 'md',
       title = 'Modal',

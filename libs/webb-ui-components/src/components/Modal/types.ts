@@ -3,11 +3,6 @@ import type { PropsOf } from '../../types';
 import type { WebbTypographyVariant } from '../../typography/types';
 
 export interface ModalContentProps extends DialogContentProps {
-  /**
-   * Require prop for transition component
-   */
-  isOpen: boolean;
-
   size?: 'sm' | 'md' | 'lg';
 
   description?: string;

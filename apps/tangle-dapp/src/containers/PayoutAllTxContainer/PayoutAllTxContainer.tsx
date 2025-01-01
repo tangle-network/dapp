@@ -69,13 +69,9 @@ const PayoutAllTxContainer: FC<PayoutAllTxContainerProps> = ({
     validatorsAndEras.length > 0 && executePayoutAllTx !== null;
 
   return (
-    <Modal open>
-      <ModalContent
-        onInteractOutside={() => setIsModalOpen(false)}
-        isOpen={isModalOpen}
-        size="lg"
-      >
-        <ModalHeader onClose={closeModal}>Payout Stakers</ModalHeader>
+    <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <ModalContent size="lg">
+        <ModalHeader>Payout Stakers</ModalHeader>
 
         <div className="grid grid-cols-2 gap-9 p-9">
           <div className="flex flex-col gap-9">

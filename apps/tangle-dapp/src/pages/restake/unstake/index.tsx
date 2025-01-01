@@ -49,6 +49,7 @@ import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
 import UnstakeModal from './UnstakeModal';
 import UnstakeRequestTable from './UnstakeRequestTable';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 const Page = () => {
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
@@ -75,12 +76,14 @@ const Page = () => {
     status: isOperatorModalOpen,
     open: openOperatorModal,
     close: closeOperatorModal,
+    update: updateOperatorModal,
   } = useModal();
 
   const {
     status: isChainModalOpen,
     open: openChainModal,
     close: closeChainModal,
+    update: updateChainModal,
   } = useModal();
 
   // Register form fields on mount
@@ -385,10 +388,9 @@ const Page = () => {
         </RestakeDetailCard.Root>
       </AnimatedTable>
 
-      <Modal>
+      <Modal open={isOperatorModalOpen} onOpenChange={updateOperatorModal}>
         <UnstakeModal
           delegatorInfo={delegatorInfo}
-          isOpen={isOperatorModalOpen}
           onClose={closeOperatorModal}
           operatorIdentities={operatorIdentities}
           onItemSelected={(item) => {
@@ -400,14 +402,19 @@ const Page = () => {
               shouldValidate: true,
             };
 
-            setFormValue('operatorAccountId', operatorAccountId, commonOpts);
+            setFormValue(
+              'operatorAccountId',
+              operatorAccountId as SubstrateAddress,
+              commonOpts,
+            );
             setFormValue('assetId', assetId, commonOpts);
             setFormValue('amount', formattedAmount, commonOpts);
           }}
         />
+      </Modal>
 
+      <Modal open={isChainModalOpen} onOpenChange={updateChainModal}>
         <SupportedChainModal
-          isOpen={isChainModalOpen}
           onClose={closeChainModal}
           onChainChange={async (chainConfig) => {
             const typedChainId = calculateTypedChainId(

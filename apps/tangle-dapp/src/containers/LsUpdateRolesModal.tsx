@@ -82,15 +82,9 @@ const LsUpdateRolesModal: FC<LsUpdateRolesModalProps> = ({
   }, [setIsOpen, status]);
 
   return (
-    <Modal open={isOpen}>
-      <ModalContent
-        onInteractOutside={() => setIsOpen(false)}
-        isOpen={isOpen}
-        size="md"
-      >
-        <ModalHeader onClose={() => setIsOpen(false)}>
-          Update Pool Roles
-        </ModalHeader>
+    <Modal open={isOpen} onOpenChange={setIsOpen}>
+      <ModalContent size="md">
+        <ModalHeader>Update Pool Roles</ModalHeader>
 
         <ModalBody className="gap-4">
           <Typography variant="body1">

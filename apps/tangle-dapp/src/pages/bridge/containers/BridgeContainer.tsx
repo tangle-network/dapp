@@ -121,17 +121,23 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     status: isSourceChainModalOpen,
     open: openSourceChainModal,
     close: closeSourceChainModal,
+    update: updateSourceChainModal,
   } = useModal(false);
+
   const {
     status: isDestinationChainModalOpen,
     open: openDestinationChainModal,
     close: closeDestinationChainModal,
+    update: updateDestinationChainModal,
   } = useModal(false);
+
   const {
     status: isTokenModalOpen,
     open: openTokenModal,
     close: closeTokenModal,
+    update: updateTokenModal,
   } = useModal(false);
+
   const {
     status: isConfirmBridgeModalOpen,
     open: openConfirmBridgeModal,
@@ -580,10 +586,10 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       >
         <div className="flex flex-col gap-7">
           {/* Source and Destination Chain Selector */}
-          <div className="flex flex-col md:flex-row justify-center md:justify-between items-center md:items-end md:gap-2">
-            <div className="flex flex-col gap-2 flex-1 w-full">
+          <div className="flex flex-col items-center justify-center md:flex-row md:justify-between md:items-end md:gap-2">
+            <div className="flex flex-col flex-1 w-full gap-2">
               <Label
-                className="text-mono-120 dark:text-mono-120 font-bold text-lg"
+                className="text-lg font-bold text-mono-120 dark:text-mono-120"
                 htmlFor="bridge-source-chain-selector"
               >
                 From
@@ -600,14 +606,14 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
               />
             </div>
             <div
-              className="flex-shrink cursor-pointer px-1 pt-4 md:pt-0 md:pb-6"
+              className="flex-shrink px-1 pt-4 cursor-pointer md:pt-0 md:pb-6"
               onClick={onSwitchChains}
             >
               <ArrowsRightLeftIcon className="w-6 h-6 rotate-90 md:rotate-0" />
             </div>
-            <div className="flex flex-col gap-2 flex-1 w-full">
+            <div className="flex flex-col flex-1 w-full gap-2">
               <Label
-                className="text-mono-120 dark:text-mono-120 font-bold text-lg"
+                className="text-lg font-bold text-mono-120 dark:text-mono-120"
                 htmlFor="bridge-destination-chain-selector"
               >
                 To
@@ -668,22 +674,22 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                   value={selectedToken.tokenType}
                   iconType="token"
                   onClick={openTokenModal}
-                  className="w-fit py-2"
+                  className="py-2 w-fit"
                   status="success"
                   showChevron={false}
                 />
               </div>
 
-              <div className="flex justify-between items-center px-1">
-                <div className="flex gap-1 items-center">
+              <div className="flex items-center justify-between px-1">
+                <div className="flex items-center gap-1">
                   {isAmountInputError && (
-                    <InformationCircleIcon className="stroke-red-70 dark:stroke-red-50 w-6 h-6" />
+                    <InformationCircleIcon className="w-6 h-6 stroke-red-70 dark:stroke-red-50" />
                   )}
 
                   {isAmountInputError && (
                     <Typography
                       variant="body1"
-                      className="text-red-70 dark:text-red-50 text-lg"
+                      className="text-lg text-red-70 dark:text-red-50"
                     >
                       {amountInputErrorMessage}
                     </Typography>
@@ -728,10 +734,10 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                 showAvatar={false}
               />
 
-              <div className="flex gap-1 items-center">
+              <div className="flex items-center gap-1">
                 {isAddressInputError && (
                   <InformationCircleIcon
-                    className="stroke-red-70 dark:stroke-red-50 w-6 h-6"
+                    className="w-6 h-6 stroke-red-70 dark:stroke-red-50"
                     width={24}
                     height={24}
                   />
@@ -739,7 +745,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
                 <Typography
                   variant="body1"
-                  className="text-red-70 dark:text-red-50 text-lg"
+                  className="text-lg text-red-70 dark:text-red-50"
                 >
                   {isAddressInputError ? 'Invalid EVM address' : ''}
                 </Typography>
@@ -774,7 +780,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
               routerQuoteError ? 'block' : 'hidden',
             )}
           >
-            <InformationCircleIcon className="stroke-red-70 dark:stroke-red-50 w-6 h-6 flex-shrink-0" />
+            <InformationCircleIcon className="flex-shrink-0 w-6 h-6 stroke-red-70 dark:stroke-red-50" />
 
             <Typography
               variant="body1"
@@ -798,13 +804,12 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
         </div>
       </Card>
 
-      <Modal>
+      <Modal
+        open={isSourceChainModalOpen}
+        onOpenChange={updateSourceChainModal}
+      >
         {/* Source Chain Selector */}
-        <ModalContent
-          isOpen={isSourceChainModalOpen}
-          onInteractOutside={closeSourceChainModal}
-          size="md"
-        >
+        <ModalContent size="md">
           <ChainList
             searchInputId="bridge-source-chain-search"
             onClose={closeSourceChainModal}
@@ -814,13 +819,14 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
             showSearchInput
           />
         </ModalContent>
+      </Modal>
 
+      <Modal
+        open={isDestinationChainModalOpen}
+        onOpenChange={updateDestinationChainModal}
+      >
         {/* Destination Chain Selector */}
-        <ModalContent
-          isOpen={isDestinationChainModalOpen}
-          onInteractOutside={closeDestinationChainModal}
-          size="md"
-        >
+        <ModalContent size="md">
           <ChainList
             searchInputId="bridge-destination-chain-search"
             onClose={closeDestinationChainModal}
@@ -830,13 +836,11 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
             showSearchInput
           />
         </ModalContent>
+      </Modal>
 
+      <Modal open={isTokenModalOpen} onOpenChange={updateTokenModal}>
         {/* Token Selector */}
-        <ModalContent
-          isOpen={isTokenModalOpen}
-          onInteractOutside={closeTokenModal}
-          size="md"
-        >
+        <ModalContent size="md">
           <AssetList
             onClose={closeTokenModal}
             assets={assets}

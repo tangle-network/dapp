@@ -139,16 +139,9 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
   );
 
   return (
-    <Modal>
-      <ModalContent
-        onInteractOutside={() => setIsModalOpen(false)}
-        isOpen={isModalOpen}
-        size="md"
-        onCloseAutoFocus={reset}
-      >
-        <ModalHeader onClose={() => setIsModalOpen(false)}>
-          Send {nativeTokenSymbol} Tokens
-        </ModalHeader>
+    <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <ModalContent size="md" onCloseAutoFocus={reset}>
+        <ModalHeader>Send {nativeTokenSymbol} Tokens</ModalHeader>
 
         <ModalBody className="overflow-clip">
           <Typography variant="body1" fw="normal">

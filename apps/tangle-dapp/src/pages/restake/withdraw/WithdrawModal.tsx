@@ -12,7 +12,6 @@ import ModalContentList from '../ModalContentList';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
-  isOpen: boolean;
   onClose: () => void;
   onItemSelected: (item: {
     assetId: string;
@@ -21,12 +20,7 @@ type Props = {
   }) => void;
 };
 
-const WithdrawModal = ({
-  delegatorInfo,
-  isOpen,
-  onClose,
-  onItemSelected,
-}: Props) => {
+const WithdrawModal = ({ delegatorInfo, onClose, onItemSelected }: Props) => {
   const { assetMap } = useRestakeContext();
 
   // Aggregate the delegations based on the operator account id and asset id
@@ -45,10 +39,8 @@ const WithdrawModal = ({
 
   return (
     <ModalContent
-      isOpen={isOpen}
       title="Select Withdrawal Asset"
       description="Select the asset you want to withdraw"
-      onInteractOutside={onClose}
     >
       <ModalContentList
         title="Select Withdrawal Asset"
