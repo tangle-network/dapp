@@ -1,5 +1,8 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { TabsContent } from '@radix-ui/react-tabs';
+import { Alert } from '@webb-tools/webb-ui-components/components/Alert';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { Form } from '@webb-tools/webb-ui-components/components/form';
 import {
   ModalBody,
   ModalContent,
@@ -12,17 +15,31 @@ import {
   TabsTriggerWithAnimation,
 } from '@webb-tools/webb-ui-components/components/Tabs';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { OPERATOR_PRICING_URL } from '../../../constants/links';
-
-enum PricingType {
-  GLOBAL = 'global',
-  INDIVIDUAL = 'individual',
-}
+import GlobalPricingFields from './GlobalPricingFields';
+import { globalFormSchema, GlobalFormSchema, PricingType } from './types';
+import FormActions from './FormActions';
 
 export default function PricingModal() {
   const [pricingType, setPricingType] = useState<PricingType>(
     PricingType.GLOBAL,
   );
+
+  const form = useForm<GlobalFormSchema>({
+    resolver: zodResolver(globalFormSchema),
+    defaultValues: {
+      cpuPrice: '',
+      memPrice: '',
+      hddStoragePrice: '',
+      ssdStoragePrice: '',
+      nvmeStoragePrice: '',
+    },
+  });
+
+  function onSubmit(values: GlobalFormSchema) {
+    console.log(values);
+  }
 
   return (
     <ModalContent
@@ -31,10 +48,11 @@ export default function PricingModal() {
       title="Configure Pricing"
       description="Configure the pricing for your blueprint(s)"
     >
-      <ModalHeader>Configure Pricing</ModalHeader>
+      <ModalHeader className="pb-4">Configure Pricing</ModalHeader>
 
-      <ModalBody className="py-4 pb-0">
+      <ModalBody className="p-0">
         <TabsRoot
+          className="pt-4 px-9"
           value={pricingType}
           onValueChange={(type: string) => setPricingType(type as PricingType)}
         >
@@ -57,26 +75,27 @@ export default function PricingModal() {
           </TabsListWithAnimation>
 
           <TabsContent value={PricingType.GLOBAL}>
-            <div>Global Pricing</div>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-3 sm:space-y-4"
+              >
+                <GlobalPricingFields formControl={form.control} />
+
+                <Alert
+                  type="info"
+                  title="Once you set your pricing, it will automatically apply across every Blueprint you register for. Note that pricing updates will only affect future deployments, not currently active instances."
+                />
+
+                <FormActions />
+              </form>
+            </Form>
           </TabsContent>
 
           <TabsContent value={PricingType.INDIVIDUAL}>
             <div>Individual Pricing</div>
           </TabsContent>
         </TabsRoot>
-
-        <ModalFooter className="px-0">
-          <Button
-            href={OPERATOR_PRICING_URL}
-            target="_blank"
-            className="flex-1 max-w-none"
-            variant="secondary"
-          >
-            Learn More
-          </Button>
-
-          <Button className="flex-1 max-w-none">Save</Button>
-        </ModalFooter>
       </ModalBody>
     </ModalContent>
   );

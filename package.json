@@ -36,6 +36,7 @@
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
     "@heroicons/react": "^2.2.0",
+    "@hookform/resolvers": "^3.9.1",
     "@hyperlane-xyz/registry": "^6.2.0",
     "@hyperlane-xyz/sdk": "^5.7.0",
     "@hyperlane-xyz/utils": "^5.7.0",
