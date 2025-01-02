@@ -1,12 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TabsContent } from '@radix-ui/react-tabs';
+import { Blueprint } from '@webb-tools/tangle-shared-ui/types/blueprint';
 import { Alert } from '@webb-tools/webb-ui-components/components/Alert';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Form } from '@webb-tools/webb-ui-components/components/form';
 import {
   ModalBody,
   ModalContent,
-  ModalFooter,
   ModalHeader,
 } from '@webb-tools/webb-ui-components/components/Modal';
 import {
@@ -14,19 +13,30 @@ import {
   TabsRoot,
   TabsTriggerWithAnimation,
 } from '@webb-tools/webb-ui-components/components/Tabs';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { OPERATOR_PRICING_URL } from '../../../constants/links';
-import GlobalPricingFields from './GlobalPricingFields';
-import { globalFormSchema, GlobalFormSchema, PricingType } from './types';
 import FormActions from './FormActions';
+import GlobalPricingFields from './GlobalPricingFields';
+import IndividualPricingField from './IndividualPricingField';
+import {
+  globalFormSchema,
+  GlobalFormSchema,
+  individualFormSchema,
+  IndividualFormSchema,
+  PricingType,
+} from './types';
 
-export default function PricingModal() {
+type Props = {
+  blueprints: Blueprint[];
+  onOpenChange: (open: boolean) => void;
+};
+
+export default function PricingModal({ blueprints, onOpenChange }: Props) {
   const [pricingType, setPricingType] = useState<PricingType>(
     PricingType.GLOBAL,
   );
 
-  const form = useForm<GlobalFormSchema>({
+  const globalPricingForm = useForm<GlobalFormSchema>({
     resolver: zodResolver(globalFormSchema),
     defaultValues: {
       cpuPrice: '',
@@ -37,9 +47,34 @@ export default function PricingModal() {
     },
   });
 
-  function onSubmit(values: GlobalFormSchema) {
+  const onGlobalPricingFormSubmit = useCallback((values: GlobalFormSchema) => {
     console.log(values);
-  }
+  }, []);
+
+  const individualPricingFormSchema = useForm<IndividualFormSchema>({
+    resolver: zodResolver(individualFormSchema),
+    defaultValues: blueprints.reduce((acc, current) => {
+      acc[current.id] = {
+        cpuPrice: '',
+        memPrice: '',
+        hddStoragePrice: '',
+        ssdStoragePrice: '',
+        nvmeStoragePrice: '',
+      };
+
+      return acc;
+    }, {} as IndividualFormSchema),
+  });
+
+  const onIndividualFormSubmit = useCallback((values: IndividualFormSchema) => {
+    console.log(values);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    onOpenChange(false);
+    globalPricingForm.reset();
+    individualPricingFormSchema.reset();
+  }, [globalPricingForm, individualPricingFormSchema, onOpenChange]);
 
   return (
     <ModalContent
@@ -48,7 +83,9 @@ export default function PricingModal() {
       title="Configure Pricing"
       description="Configure the pricing for your blueprint(s)"
     >
-      <ModalHeader className="pb-4">Configure Pricing</ModalHeader>
+      <ModalHeader onClose={handleClose} className="pb-4">
+        Configure Pricing
+      </ModalHeader>
 
       <ModalBody className="p-0">
         <TabsRoot
@@ -75,12 +112,14 @@ export default function PricingModal() {
           </TabsListWithAnimation>
 
           <TabsContent value={PricingType.GLOBAL}>
-            <Form {...form}>
+            <Form {...globalPricingForm}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={globalPricingForm.handleSubmit(
+                  onGlobalPricingFormSubmit,
+                )}
                 className="space-y-3 sm:space-y-4"
               >
-                <GlobalPricingFields formControl={form.control} />
+                <GlobalPricingFields formControl={globalPricingForm.control} />
 
                 <Alert
                   type="info"
@@ -93,7 +132,22 @@ export default function PricingModal() {
           </TabsContent>
 
           <TabsContent value={PricingType.INDIVIDUAL}>
-            <div>Individual Pricing</div>
+            <Form {...individualPricingFormSchema}>
+              <form
+                onSubmit={individualPricingFormSchema.handleSubmit(
+                  onIndividualFormSubmit,
+                )}
+                className="space-y-6"
+              >
+                <IndividualPricingField
+                  blueprints={blueprints}
+                  formControl={individualPricingFormSchema.control}
+                  watch={individualPricingFormSchema.watch}
+                />
+
+                <FormActions />
+              </form>
+            </Form>
           </TabsContent>
         </TabsRoot>
       </ModalBody>

@@ -44,6 +44,7 @@ const Page = () => {
   const { role } = useRoleStore();
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   const { blueprints, isLoading, error } = useBlueprintListing();
 
@@ -72,7 +73,7 @@ const Page = () => {
         onRowSelectionChange={setRowSelection}
       />
 
-      <Modal>
+      <Modal open={isPricingModalOpen} onOpenChange={setIsPricingModalOpen}>
         <AnimatePresence>
           {size > 0 && (
             <motion.div
@@ -105,7 +106,10 @@ const Page = () => {
           )}
         </AnimatePresence>
 
-        <PricingModal />
+        <PricingModal
+          onOpenChange={setIsPricingModalOpen}
+          blueprints={selectedBlueprints}
+        />
       </Modal>
     </div>
   );

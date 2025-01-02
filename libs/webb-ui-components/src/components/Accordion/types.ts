@@ -13,7 +13,11 @@ export type AccordionProps = IWebbComponentBase &
 export interface AccordionButtonProps
   extends IWebbComponentBase,
     PropsOf<'button'>,
-    AccordionTriggerProps {}
+    AccordionTriggerProps {
+  Icon?: React.ReactNode;
+
+  RightIcon?: React.ReactNode;
+}
 
 export interface AccordionButtonBaseProps extends AccordionTriggerProps {}
 
