@@ -111,44 +111,47 @@ export default function StakeInput({
   );
 
   return (
-    <TransactionInputCard.Root
-      tokenSymbol={selectedAsset?.symbol}
-      maxAmount={maxFormatted}
-      onAmountChange={handleAmountChange}
-    >
-      <TransactionInputCard.Header>
-        <TransactionInputCard.ChainSelector
-          onClick={openOperatorModal}
-          placeholder="Select Operator"
-          {...(selectedOperatorAccountId
-            ? {
-                renderBody: () => (
-                  <AvatarWithText
-                    accountAddress={selectedOperatorAccountId}
-                    identityName={
-                      operatorIdentities?.[selectedOperatorAccountId]?.name
-                    }
-                    overrideTypographyProps={{ variant: 'h5' }}
-                  />
-                ),
-              }
-            : {})}
-        />
-        <TransactionInputCard.MaxAmountButton
-          accountType="note"
-          tooltipBody="Deposited Asset"
-        />
-      </TransactionInputCard.Header>
+    <div className="flex flex-col items-start justify-stretch">
+      <TransactionInputCard.Root
+        tokenSymbol={selectedAsset?.symbol}
+        maxAmount={maxFormatted}
+        onAmountChange={handleAmountChange}
+        className="bg-mono-20 dark:bg-mono-180"
+      >
+        <TransactionInputCard.Header>
+          <TransactionInputCard.ChainSelector
+            onClick={openOperatorModal}
+            placeholder="Select Operator"
+            {...(selectedOperatorAccountId
+              ? {
+                  renderBody: () => (
+                    <AvatarWithText
+                      accountAddress={selectedOperatorAccountId}
+                      identityName={
+                        operatorIdentities?.[selectedOperatorAccountId]?.name
+                      }
+                      overrideTypographyProps={{ variant: 'h5' }}
+                    />
+                  ),
+                }
+              : {})}
+          />
+          <TransactionInputCard.MaxAmountButton
+            accountType="note"
+            tooltipBody="Deposited Asset"
+          />
+        </TransactionInputCard.Header>
 
-      <TransactionInputCard.Body
-        tokenSelectorProps={{
-          onClick: openAssetModal,
-          placeholder: <AssetPlaceholder />,
-        }}
-        customAmountProps={customAmountProps}
-      />
+        <TransactionInputCard.Body
+          tokenSelectorProps={{
+            onClick: openAssetModal,
+            placeholder: <AssetPlaceholder />,
+          }}
+          customAmountProps={customAmountProps}
+        />
+      </TransactionInputCard.Root>
 
       <ErrorMessage>{amountError}</ErrorMessage>
-    </TransactionInputCard.Root>
+    </div>
   );
 }

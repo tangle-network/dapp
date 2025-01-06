@@ -3,6 +3,6 @@ export * from './ConfirmationCard';
 export { default as ContractDetailCard } from './GovernanceContractDetailCard';
 export * from './DepositCard';
 export * from './TransferCard';
-export * from './WebbUIErrorBoudary';
+export * from './WebbUIErrorBoundary';
 export * from './WithdrawCard';
 export * from './TransactionProgressCard';

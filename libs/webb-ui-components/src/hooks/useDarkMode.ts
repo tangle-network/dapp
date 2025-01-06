@@ -12,9 +12,6 @@ function isBrowser(): boolean {
   );
 }
 
-/**
- * Function to toggle or change the theme mode (possible value: `light`, `dark`, `undefined`)
- */
 export type ToggleThemeModeFunc = (
   nextThemeMode?: SupportTheme | undefined,
 ) => void;

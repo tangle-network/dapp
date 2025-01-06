@@ -140,7 +140,7 @@ const TriggerButton: FC<TriggerButtonProps> = ({
       )}
     >
       {isLoading ? (
-        <Spinner size="lg" />
+        <Spinner size="md" />
       ) : (
         <ChainIcon size="lg" className="shrink-0 grow-0" name={networkName} />
       )}

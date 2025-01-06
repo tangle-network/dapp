@@ -12,9 +12,7 @@ import {
   RecipientInput,
   RelayerInput,
   TokenInput,
-  ConnectWalletMobileButton,
 } from '../../components';
-import { useCheckMobile } from '../../hooks';
 import { Typography } from '../../typography';
 import { TransferCardProps } from './types';
 
@@ -40,7 +38,6 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
     },
     ref,
   ) => {
-    const { isMobile } = useCheckMobile();
     const bridgeAssetProps = useMemo(
       () => ({
         ...bridgeAssetInputProps,
@@ -89,17 +86,13 @@ export const TransferCard = forwardRef<HTMLDivElement, TransferCardProps>(
         </div>
 
         <div className="mt-4 space-y-2">
-          {!isMobile ? (
-            <Button
-              {...transferBtnProps}
-              isFullWidth
-              className={twMerge('flex justify-center')}
-            >
-              {transferBtnProps?.children ?? 'Transfer'}
-            </Button>
-          ) : (
-            <ConnectWalletMobileButton isFullWidth />
-          )}
+          <Button
+            {...transferBtnProps}
+            isFullWidth
+            className="flex justify-center"
+          >
+            {transferBtnProps?.children ?? 'Transfer'}
+          </Button>
 
           {buttonDesc && (
             <Typography

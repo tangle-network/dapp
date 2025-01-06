@@ -22,7 +22,9 @@ const LsTokenChip: FC<LsTokenChipProps> = ({
     <div
       onClick={onClick}
       className={twMerge(
-        'group flex gap-2 justify-center items-center bg-mono-40 dark:bg-mono-170 px-4 py-2 rounded-lg',
+        'group flex gap-2 justify-center items-center px-4 py-2 rounded-full',
+        'border border-mono-100 dark:border-mono-140',
+        'bg-mono-40 dark:bg-mono-170',
         onClick !== undefined &&
           'cursor-pointer hover:bg-mono-20 hover:dark:bg-mono-160',
       )}

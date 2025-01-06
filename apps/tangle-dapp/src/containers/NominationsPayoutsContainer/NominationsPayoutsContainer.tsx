@@ -8,7 +8,6 @@ import {
   Button,
   TabContent,
   TableAndChartTabs,
-  useCheckMobile,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import {
@@ -61,7 +60,6 @@ function assertTab(tab: string): NominationsAndPayoutsTab {
 
 const DelegationsPayoutsContainer: FC = () => {
   const [payoutsStartIndex, setPayoutsStartIndex] = useState(0);
-  const { isMobile } = useCheckMobile();
   const { toggleModal } = useConnectWallet();
   const tableRef = useRef<HTMLDivElement>(null);
   const { activeAccount, loading, isConnecting } = useWebContext();
@@ -212,7 +210,6 @@ const DelegationsPayoutsContainer: FC = () => {
               buttonText="Connect"
               buttonProps={{
                 isLoading: loading || isConnecting,
-                isDisabled: isMobile,
                 loadingText: isConnecting ? 'Connecting' : 'Loading...',
                 onClick: () => toggleModal(true),
               }}
@@ -246,7 +243,6 @@ const DelegationsPayoutsContainer: FC = () => {
               buttonText="Connect"
               buttonProps={{
                 isLoading: loading || isConnecting,
-                isDisabled: isMobile,
                 loadingText: isConnecting ? 'Connecting' : undefined,
                 onClick: () => toggleModal(true),
               }}

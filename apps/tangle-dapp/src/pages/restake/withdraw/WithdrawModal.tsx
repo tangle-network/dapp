@@ -2,18 +2,17 @@ import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config/constants';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
-import { ListItem } from '@webb-tools/webb-ui-components/components/ListCard/ListItem';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
 import { formatUnits } from 'viem';
-import ModalContent from '../ModalContent';
-import ModalContentList from '../ModalContentList';
+import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
+import searchBy from '../../../utils/searchBy';
+import LogoListItem from '../../../components/Lists/LogoListItem';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
   isOpen: boolean;
-  onClose: () => void;
+  setIsOpen: (isOpen: boolean) => void;
   onItemSelected: (item: {
     assetId: string;
     amount: bigint;
@@ -24,7 +23,7 @@ type Props = {
 const WithdrawModal = ({
   delegatorInfo,
   isOpen,
-  onClose,
+  setIsOpen,
   onItemSelected,
 }: Props) => {
   const { assetMap } = useRestakeContext();
@@ -44,99 +43,54 @@ const WithdrawModal = ({
   }, [delegatorInfo]);
 
   return (
-    <ModalContent
+    <ListModal
+      title="Select Asset"
       isOpen={isOpen}
-      title="Select Withdrawal Asset"
-      description="Select the asset you want to withdraw"
-      onInteractOutside={onClose}
-    >
-      <ModalContentList
-        title="Select Withdrawal Asset"
-        items={deposits}
-        onClose={onClose}
-        overrideSearchInputProps={{
-          id: 'search-withdraw-asset',
-          placeholder: 'Search Asset to Withdraw',
-        }}
-        searchFilter={({ amount, assetId }, searchText) => {
-          if (!searchText) {
-            return true;
-          }
+      setIsOpen={setIsOpen}
+      searchInputId="restake-withdraw-asset-search"
+      searchPlaceholder="Search assets..."
+      items={deposits}
+      titleWhenEmpty="No Assets Found"
+      descriptionWhenEmpty="This account has no assets to withdraw."
+      onSelect={(item) => {
+        const asset = assetMap[item.assetId];
+        const decimals = asset?.decimals || DEFAULT_DECIMALS;
+        const fmtAmount = formatUnits(item.amount, decimals);
 
-          const asset = assetMap[assetId];
-          const assetSymbol = asset?.symbol || 'Unknown';
+        onItemSelected({
+          ...item,
+          formattedAmount: fmtAmount,
+        });
+      }}
+      filterItem={({ assetId }, query) => {
+        const asset = assetMap[assetId];
 
-          return (
-            assetSymbol.toLowerCase().includes(searchText.toLowerCase()) ||
-            amount.toString().includes(searchText)
-          );
-        }}
-        renderEmpty={{
-          title: 'No Asset Found',
-          description:
-            'You can try to deposit or delegate an asset to an operator.',
-        }}
-        renderItem={(item) => {
-          const { amount, assetId } = item;
-          const asset = assetMap[assetId];
+        return searchBy(query, [asset?.name, asset?.id, asset?.vaultId]);
+      }}
+      renderItem={({ amount, assetId }) => {
+        const asset = assetMap[assetId];
 
-          const decimals = asset?.decimals || DEFAULT_DECIMALS;
-          const assetSymbol = asset?.symbol || 'Unknown';
+        if (asset === undefined) {
+          return null;
+        }
 
-          const fmtAmount = formatUnits(amount, decimals);
+        const fmtAmount = addCommasToNumber(
+          formatUnits(amount, asset.decimals),
+        );
 
-          return (
-            <ListItem
-              className={twMerge(
-                'cursor-pointer max-w-none dark:bg-transparent',
-                'flex items-center justify-between px-4',
-              )}
-              key={assetId}
-              onClick={() =>
-                onItemSelected({
-                  ...item,
-                  formattedAmount: fmtAmount,
-                })
-              }
-            >
-              <div className="flex items-center gap-2">
-                <TokenIcon size="xl" name={assetSymbol} />
-
-                <div>
-                  <Typography variant="h5" fw="bold">
-                    {assetSymbol}
-                  </Typography>
-
-                  <Typography
-                    variant="body2"
-                    className="text-mono-120 dark:text-mono-100"
-                  >
-                    Asset ID: {assetId}
-                  </Typography>
-                </div>
-              </div>
-
-              <div>
-                <Typography ta="right" variant="h5" fw="bold">
-                  {fmtAmount}
-                </Typography>
-
-                {asset.vaultId && (
-                  <Typography
-                    ta="right"
-                    variant="body3"
-                    fw="semibold"
-                    className="!text-mono-100 mt-1"
-                  >
-                    Vault ID: {asset.vaultId}
-                  </Typography>
-                )}
-              </div>
-            </ListItem>
-          );
-        }}
-      />
-    </ModalContent>
+        return (
+          <LogoListItem
+            logo={<TokenIcon size="xl" name={asset.symbol} />}
+            leftUpperContent={`${asset.name} (${asset.symbol})`}
+            leftBottomContent={`Asset ID: ${assetId}`}
+            rightUpperText={fmtAmount}
+            rightBottomText={
+              asset.vaultId !== null ? `Vault ID: ${asset.vaultId}` : undefined
+            }
+          />
+        );
+      }}
+    />
   );
 };
 

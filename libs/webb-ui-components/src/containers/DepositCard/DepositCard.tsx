@@ -7,13 +7,12 @@ import {
   BridgeInputGroup,
   Button,
   ChainInput,
-  ConnectWalletMobileButton,
   InfoItem,
   TokenInput,
 } from '../../components';
-import { useCheckMobile } from '../../hooks';
 import { getRoundedAmountString } from '../../utils';
 import { DepositCardProps } from './types';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 
 export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
   (
@@ -33,25 +32,26 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
     },
     ref,
   ) => {
-    const { isMobile } = useCheckMobile();
     const { amount } = useMemo(() => {
       const amount = !amountInputProps.amount
-        ? '--'
+        ? EMPTY_VALUE_PLACEHOLDER
         : `${getRoundedAmountString(Number(amountInputProps.amount), 3, {
             roundingFunction: Math.round,
           })} ${token ?? ''}`;
 
-      let fee = '--';
+      let fee = EMPTY_VALUE_PLACEHOLDER;
       const feeToken = feeTokenProp ?? '';
+
       if (feePercentage) {
         fee = `${
           parseFloat(amountInputProps.amount ?? '0') * feePercentage * 0.01
         } ${feeToken}`;
       } else if (feeValue && feeValue > 0) {
-        const formatedFee = getRoundedAmountString(feeValue, 3, {
+        const fmtFee = getRoundedAmountString(feeValue, 3, {
           roundingFunction: Math.round,
         });
-        fee = `${formatedFee} ${feeToken}`;
+
+        fee = `${fmtFee} ${feeToken}`;
       }
 
       return { amount, fee };
@@ -113,23 +113,19 @@ export const DepositCard = forwardRef<HTMLDivElement, DepositCardProps>(
           </div>
         </div>
 
-        {!isMobile ? (
-          <Button
-            {...buttonProps}
-            isFullWidth
-            className={twMerge('flex justify-center', buttonProps.className)}
-          >
-            {typeof buttonProps.children === 'string' ? (
-              <Typography variant="body1" fw="bold" className="!text-inherit">
-                {buttonProps.children}
-              </Typography>
-            ) : (
-              (buttonProps.children ?? 'Deposit')
-            )}
-          </Button>
-        ) : (
-          <ConnectWalletMobileButton isFullWidth />
-        )}
+        <Button
+          {...buttonProps}
+          isFullWidth
+          className={twMerge('flex justify-center', buttonProps.className)}
+        >
+          {typeof buttonProps.children === 'string' ? (
+            <Typography variant="body1" fw="bold" className="!text-inherit">
+              {buttonProps.children}
+            </Typography>
+          ) : (
+            (buttonProps.children ?? 'Deposit')
+          )}
+        </Button>
       </div>
     );
   },

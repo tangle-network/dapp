@@ -35,7 +35,7 @@ export default {
         validator_table_dark:
           'linear-gradient(180deg, #707AA600 0%, #2B2F4066 40%)',
         purple_gradient:
-          'linear-gradient(79deg, #b6b8dd 8.85%, #d9ddf2 55.91%, #dbbdcd 127.36%), #fff',
+          'linear-gradient(79deg, #b6b8dd 8.85%, #d9ddf2 55.91%, #dbbdcd 127.36%)',
         purple_gradient_dark:
           'linear-gradient(79deg, rgba(30, 32, 65, 0.8) 8.85%, rgba(38, 52, 116, 0.8) 55.91%, rgba(113, 61, 89, 0.8) 127.36%)',
       },

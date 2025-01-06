@@ -15,7 +15,7 @@ const AccountPage: FC = () => {
       </div>
 
       <Typography variant="h4" fw="bold">
-        Assets &amp; Balances
+        Restake Assets
       </Typography>
 
       <AssetsAndBalancesTable />

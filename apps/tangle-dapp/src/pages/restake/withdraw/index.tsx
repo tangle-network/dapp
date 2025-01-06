@@ -19,7 +19,6 @@ import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/compone
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import cx from 'classnames';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -42,15 +41,15 @@ import ActionButtonBase from '../ActionButtonBase';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
-import RestakeTabs from '../RestakeTabs';
 import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
 import WithdrawModal from './WithdrawModal';
 import WithdrawRequestTable from './WithdrawRequestTable';
+import RestakeTabs from '../RestakeTabs';
 
-const Page = () => {
+const RestakeWithdrawPage = () => {
   const {
     register,
     setValue: setFormValue,
@@ -67,11 +66,7 @@ const Page = () => {
   const { activeChain } = useWebContext();
   const { assetMap } = useRestakeContext();
 
-  const {
-    status: isWithdrawModalOpen,
-    open: openWithdrawModal,
-    close: closeWithdrawModal,
-  } = useModal();
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
 
   const {
     status: isChainModalOpen,
@@ -207,22 +202,11 @@ const Page = () => {
   );
 
   return (
-    <div
-      className={cx(
-        'grid gap-4 place-content-center',
-        !isMediumScreen ? 'grid-cols-1' : 'grid-flow-col auto-cols-fr',
-      )}
-    >
-      <StyleContainer
-        className={cx(
-          isWithdrawRequestTableOpen && isMediumScreen
-            ? 'ml-auto mr-0'
-            : 'mx-auto',
-        )}
-      >
+    <div className="flex items-start justify-center flex-wrap gap-4">
+      <StyleContainer>
         <RestakeTabs />
 
-        <Card withShadow className="relative">
+        <Card withShadow tightPadding className="relative min-w-[512px]">
           {!isWithdrawRequestTableOpen && isMediumScreen && (
             <ExpandTableButton
               className="absolute top-0 -right-10"
@@ -232,53 +216,58 @@ const Page = () => {
           )}
 
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-            <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
-              <TransactionInputCard.Header>
-                <TransactionInputCard.ChainSelector
-                  placeholder="Active Chain"
-                  disabled
-                  {...(activeChain
-                    ? {
-                        renderBody: () => (
-                          <div className="flex items-center gap-2">
-                            <ChainIcon size="lg" name={activeChain.name} />
+            <div className="flex flex-col items-start justify-stretch">
+              <TransactionInputCard.Root
+                tokenSymbol={selectedAsset?.symbol}
+                className="bg-mono-20 dark:bg-mono-180"
+              >
+                <TransactionInputCard.Header>
+                  <TransactionInputCard.ChainSelector
+                    placeholder="Connecting..."
+                    disabled
+                    {...(activeChain
+                      ? {
+                          renderBody: () => (
+                            <div className="flex items-center gap-2">
+                              <ChainIcon size="lg" name={activeChain.name} />
 
-                            <Typography
-                              variant="h5"
-                              fw="bold"
-                              className="text-mono-200 dark:text-mono-0"
-                            >
-                              {activeChain.name}
-                            </Typography>
-                          </div>
-                        ),
-                      }
-                    : {})}
-                />
-                <TransactionInputCard.MaxAmountButton
-                  maxAmount={formattedMaxAmount}
-                  tooltipBody="Deposited Balance"
-                  Icon={
+                              <Typography
+                                variant="h5"
+                                fw="bold"
+                                className="text-mono-200 dark:text-mono-0"
+                              >
+                                {activeChain.name}
+                              </Typography>
+                            </div>
+                          ),
+                        }
+                      : {})}
+                  />
+                  <TransactionInputCard.MaxAmountButton
+                    maxAmount={formattedMaxAmount}
+                    tooltipBody="Deposited Balance"
+                    Icon={
+                      useRef({
+                        enabled: <LockLineIcon />,
+                        disabled: <LockFillIcon />,
+                      }).current
+                    }
+                  />
+                </TransactionInputCard.Header>
+
+                <TransactionInputCard.Body
+                  customAmountProps={customAmountProps}
+                  tokenSelectorProps={
                     useRef({
-                      enabled: <LockLineIcon />,
-                      disabled: <LockFillIcon />,
+                      placeholder: <AssetPlaceholder />,
+                      onClick: () => setIsWithdrawModalOpen(true),
                     }).current
                   }
                 />
-              </TransactionInputCard.Header>
-
-              <TransactionInputCard.Body
-                customAmountProps={customAmountProps}
-                tokenSelectorProps={
-                  useRef({
-                    placeholder: <AssetPlaceholder />,
-                    onClick: openWithdrawModal,
-                  }).current
-                }
-              />
+              </TransactionInputCard.Root>
 
               <ErrorMessage>{errors.amount?.message}</ErrorMessage>
-            </TransactionInputCard.Root>
+            </div>
 
             <TxInfo />
 
@@ -327,7 +316,7 @@ const Page = () => {
         isTableOpen={isWithdrawRequestTableOpen}
         isMediumScreen={isMediumScreen}
       >
-        <RestakeDetailCard.Root className="md:mt-[61px]">
+        <RestakeDetailCard.Root>
           <div className="flex items-center justify-between">
             <RestakeDetailCard.Header
               title={
@@ -350,8 +339,8 @@ const Page = () => {
               className="text-mono-120 dark:text-mono-100"
             >
               You will be able to withdraw your tokens after the unstake
-              schedule is completed. To unstake your tokens go to the unstake
-              tab to schedule request.
+              schedule is completed. To unstake your tokens, use the unstake
+              tab.
             </Typography>
           )}
         </RestakeDetailCard.Root>
@@ -361,11 +350,12 @@ const Page = () => {
         <WithdrawModal
           delegatorInfo={delegatorInfo}
           isOpen={isWithdrawModalOpen}
-          onClose={closeWithdrawModal}
+          setIsOpen={setIsWithdrawModalOpen}
           onItemSelected={(item) => {
-            closeWithdrawModal();
+            setIsWithdrawModalOpen(false);
 
             const { formattedAmount, assetId } = item;
+
             const commonOpts = {
               shouldDirty: true,
               shouldValidate: true,
@@ -393,4 +383,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default RestakeWithdrawPage;

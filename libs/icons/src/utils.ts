@@ -32,29 +32,16 @@ export function getFillColor(darkMode?: boolean) {
   }
 }
 
-/**
- * Get the icon size in pixel based on text
- * @param size Represent the icon size in text
- * @returns The icon in pixel
- */
 export function getIconSizeInPixel(size: IconSize) {
   switch (size) {
-    case '2xl': {
+    case '2xl':
       return '48px' as const;
-    }
-
-    case 'xl': {
+    case 'xl':
       return '40px' as const;
-    }
-
-    case 'lg': {
-      return '32px' as const;
-    }
-
-    case 'md': {
+    case 'lg':
       return '24px' as const;
-    }
-
+    case 'md':
+      return '16px' as const;
     default: {
       throw new Error('Unknown icon size');
     }

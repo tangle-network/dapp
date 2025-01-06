@@ -70,7 +70,7 @@ const ChainOrTokenButton = forwardRef<
               <IconCmp
                 status={status}
                 size="xl"
-                spinnersize="lg"
+                spinnerSize="lg"
                 className={cx(`shrink-0 grow-0 ${getFlexBasic('xl')}`)}
                 name={value}
               />

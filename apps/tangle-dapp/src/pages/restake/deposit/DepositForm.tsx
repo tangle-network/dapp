@@ -6,9 +6,12 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import { Card } from '@webb-tools/webb-ui-components';
+import { Card, EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
 import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
-import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
+import {
+  Modal,
+  ModalContent,
+} from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import {
   type ComponentProps,
@@ -16,6 +19,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -36,12 +40,16 @@ import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import { DepositFormFields } from '../../../types/restake';
-import AssetList from '../AssetList';
 import Form from '../Form';
-import ModalContent from '../ModalContent';
 import ActionButton from './ActionButton';
 import SourceChainInput from './SourceChainInput';
 import TxDetails from './TxDetails';
+import RestakeTabs from '../RestakeTabs';
+import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
+import LogoListItem from '../../../components/Lists/LogoListItem';
+import { TokenIcon } from '@webb-tools/icons';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+import searchBy from '../../../utils/searchBy';
 
 function getDefaultTypedChainId(activeTypedChainId: number | null) {
   return isDefined(activeTypedChainId) &&
@@ -155,11 +163,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     open: openChainModal,
   } = useModal();
 
-  const {
-    status: tokenModalOpen,
-    close: closeTokenModal,
-    open: openTokenModal,
-  } = useModal();
+  const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
 
   const selectableTokens = useMemo(
     () =>
@@ -231,9 +235,9 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   const handleTokenChange = useCallback(
     (token: TokenListCardProps['selectTokens'][number]) => {
       setValue('depositAssetId', token.id);
-      closeTokenModal();
+      setIsTokenModalOpen(false);
     },
-    [closeTokenModal, setValue],
+    [setIsTokenModalOpen, setValue],
   );
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
@@ -276,64 +280,85 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   );
 
   return (
-    <Card withShadow>
-      <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col h-full space-y-4 grow">
-          <div className="space-y-2">
-            <SourceChainInput
-              amountError={errors.amount?.message}
-              openChainModal={openChainModal}
-              openTokenModal={openTokenModal}
-              register={register}
-              setValue={setValue}
-              watch={watch}
-            />
+    <div className="min-w-[512px]">
+      <RestakeTabs />
+
+      <Card withShadow tightPadding>
+        <Form {...props} ref={formRef} onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col h-full space-y-4 grow">
+            <div className="space-y-2">
+              <SourceChainInput
+                amountError={errors.amount?.message}
+                openChainModal={openChainModal}
+                openTokenModal={() => setIsTokenModalOpen(true)}
+                register={register}
+                setValue={setValue}
+                watch={watch}
+              />
+            </div>
+
+            <div className="flex flex-col justify-between gap-4 grow">
+              <TxDetails watch={watch} />
+
+              <ActionButton
+                errors={errors}
+                formRef={formRef}
+                isSubmitting={isSubmitting}
+                isValid={isValid}
+                watch={watch}
+              />
+            </div>
           </div>
 
-          <div className="flex flex-col justify-between gap-4 grow">
-            <TxDetails watch={watch} />
+          <Modal>
+            <ModalContent
+              isOpen={chainModalOpen}
+              title="Select Chain"
+              onInteractOutside={closeChainModal}
+            >
+              <ChainList
+                searchInputId="restake-deposit-form-search"
+                onClose={closeChainModal}
+                chains={sourceChainOptions}
+                onSelectChain={handleOnSelectChain}
+                chainType="source"
+              />
+            </ModalContent>
+          </Modal>
 
-            <ActionButton
-              errors={errors}
-              formRef={formRef}
-              isSubmitting={isSubmitting}
-              isValid={isValid}
-              watch={watch}
-            />
-          </div>
-        </div>
-
-        <Modal>
-          <ModalContent
-            isOpen={chainModalOpen}
-            title="Select Chain"
-            description="Select the chain you want to deposit from."
-            onInteractOutside={closeChainModal}
-          >
-            <ChainList
-              searchInputId="restake-deposit-form-search"
-              onClose={closeChainModal}
-              chains={sourceChainOptions}
-              onSelectChain={handleOnSelectChain}
-              chainType="source"
-            />
-          </ModalContent>
-
-          <ModalContent
-            isOpen={tokenModalOpen}
+          <ListModal
             title="Select Asset"
-            description="Select the asset you want to deposit."
-            onInteractOutside={closeTokenModal}
-          >
-            <AssetList
-              selectTokens={selectableTokens}
-              onChange={handleTokenChange}
-              onClose={closeTokenModal}
-            />
-          </ModalContent>
-        </Modal>
-      </Form>
-    </Card>
+            isOpen={isTokenModalOpen}
+            setIsOpen={setIsTokenModalOpen}
+            filterItem={(asset, query) =>
+              searchBy(query, [asset.id, asset.name, asset.symbol])
+            }
+            searchInputId="restake-deposit-assets-search"
+            searchPlaceholder="Search assets..."
+            titleWhenEmpty="No Assets Found"
+            descriptionWhenEmpty="It seems that there are no available assets in this network yet. Please try again later."
+            items={selectableTokens}
+            renderItem={(asset) => {
+              const fmtBalance =
+                asset.assetBalanceProps?.balance !== undefined
+                  ? `${addCommasToNumber(asset.assetBalanceProps.balance)} ${asset.symbol}`
+                  : EMPTY_VALUE_PLACEHOLDER;
+
+              return (
+                <LogoListItem
+                  logo={<TokenIcon size="xl" name={asset.symbol} />}
+                  leftUpperContent={`${asset.name} (${asset.symbol})`}
+                  leftBottomContent={`Asset ID: ${asset.id}`}
+                  rightBottomText="Balance"
+                  rightUpperText={fmtBalance}
+                />
+              );
+            }}
+            onSelect={handleTokenChange}
+          />
+        </Form>
+      </Card>
+    </div>
   );
 };
 

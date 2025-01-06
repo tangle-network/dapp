@@ -5,23 +5,20 @@ import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeC
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import { Card, isSubstrateAddress } from '@webb-tools/webb-ui-components';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import {
+  assertSubstrateAddress,
+  Card,
+  isSubstrateAddress,
+} from '@webb-tools/webb-ui-components';
 import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import entries from 'lodash/entries';
 import keys from 'lodash/keys';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Link } from 'react-router';
 import { formatUnits, parseUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
-import {
-  OperatorConfig,
-  OperatorList,
-} from '../../../components/Lists/OperatorList';
 import {
   DelegatorStakeContext,
   TxEvent,
@@ -34,11 +31,9 @@ import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
-import { PagePath, QueryParamKey } from '../../../types';
+import { QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
-import AssetList from '../AssetList';
 import Form from '../Form';
-import ModalContent from '../ModalContent';
 import RestakeTabs from '../RestakeTabs';
 import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
@@ -46,8 +41,21 @@ import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Info from './Info';
 import StakeInput from './StakeInput';
+import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
+import OperatorListItem from '../../../components/Lists/OperatorListItem';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import LogoListItem from '../../../components/Lists/LogoListItem';
+import { TokenIcon } from '@webb-tools/icons';
+import searchBy from '../../../utils/searchBy';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 
-export default function Page() {
+type RestakeOperator = {
+  accountId: SubstrateAddress;
+  identityName?: string;
+  isActive: boolean;
+};
+
+export default function RestakeStakePage() {
   const {
     register,
     setValue: setFormValue,
@@ -137,17 +145,8 @@ export default function Page() {
     close: closeChainModal,
   } = useModal(false);
 
-  const {
-    status: isAssetModalOpen,
-    open: openAssetModal,
-    close: closeAssetModal,
-  } = useModal(false);
-
-  const {
-    status: isOperatorModalOpen,
-    open: openOperatorModal,
-    close: closeOperatorModal,
-  } = useModal(false);
+  const [isOperatorModalOpen, setIsOperatorModalOpen] = useState(false);
+  const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
 
   const selectableTokens = useMemo(() => {
     if (!isDefined(delegatorInfo)) {
@@ -163,6 +162,7 @@ export default function Page() {
           id: asset.id,
           name: asset.name,
           symbol: asset.symbol,
+          decimals: asset.decimals,
           assetBalanceProps: {
             balance: +formatUnits(amount, asset.decimals),
             ...(asset.vaultId
@@ -171,16 +171,16 @@ export default function Page() {
                 }
               : {}),
           },
-        } satisfies TokenListCardProps['selectTokens'][number];
+        };
       });
   }, [assetMap, delegatorInfo]);
 
   const handleAssetChange = useCallback(
     (asset: TokenListCardProps['selectTokens'][number]) => {
       setValue('assetId', asset.id);
-      closeAssetModal();
+      setIsAssetModalOpen(false);
     },
-    [closeAssetModal, setValue],
+    [setIsAssetModalOpen, setValue],
   );
 
   const handleChainChange = useCallback(
@@ -239,34 +239,39 @@ export default function Page() {
     [assetMap, delegate, txEventHandlers],
   );
 
-  const operators = useMemo(() => {
-    return Object.entries(operatorMap).map(([accountId, _operator]) => ({
-      accountId,
-      name: operatorIdentities?.[accountId]?.name || '<Unknown>',
-      status: 'active',
-    }));
+  const operators = useMemo<RestakeOperator[]>(() => {
+    return (
+      Object.entries(operatorMap)
+        // Include only active operators.
+        .filter(([, metadata]) => metadata.status === 'Active')
+        .map(([accountId]) => ({
+          accountId: assertSubstrateAddress(accountId),
+          identityName: operatorIdentities?.[accountId]?.name ?? undefined,
+          isActive: true,
+        }))
+    );
   }, [operatorMap, operatorIdentities]);
 
   const handleOnSelectOperator = useCallback(
-    (operator: OperatorConfig) => {
+    (operator: RestakeOperator) => {
       setValue('operatorAccountId', operator.accountId);
-      closeOperatorModal();
+      setIsOperatorModalOpen(false);
     },
-    [closeOperatorModal, setValue],
+    [setIsOperatorModalOpen, setValue],
   );
 
   return (
-    <StyleContainer>
+    <StyleContainer className="min-w-[512px]">
       <RestakeTabs />
 
-      <Card withShadow>
+      <Card withShadow tightPadding>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col h-full space-y-4 grow">
             <StakeInput
               amountError={errors.amount?.message}
               delegatorInfo={delegatorInfo}
-              openAssetModal={openAssetModal}
-              openOperatorModal={openOperatorModal}
+              openAssetModal={() => setIsAssetModalOpen(true)}
+              openOperatorModal={() => setIsOperatorModalOpen(true)}
               register={register}
               setValue={setValue}
               watch={watch}
@@ -285,36 +290,55 @@ export default function Page() {
             </div>
           </div>
 
+          <ListModal
+            title="Select Asset"
+            isOpen={isAssetModalOpen}
+            setIsOpen={setIsAssetModalOpen}
+            titleWhenEmpty="No Assets Available"
+            descriptionWhenEmpty="Have you made a deposit on this network yet?"
+            items={selectableTokens}
+            searchInputId="restake-delegate-asset-search"
+            searchPlaceholder="Search for asset or enter token address"
+            getItemKey={(item) => item.id}
+            onSelect={handleAssetChange}
+            renderItem={(asset) => {
+              const fmtBalance = `${addCommasToNumber(asset.assetBalanceProps.balance)} ${asset.symbol}`;
+
+              return (
+                <LogoListItem
+                  logo={<TokenIcon size="xl" name={asset.symbol} />}
+                  leftUpperContent={`${asset.name} (${asset.symbol})`}
+                  leftBottomContent={`Asset ID: ${asset.id}`}
+                  rightUpperText={fmtBalance}
+                  rightBottomText="Balance"
+                />
+              );
+            }}
+          />
+
+          <ListModal
+            title="Select Operator"
+            isOpen={isOperatorModalOpen}
+            setIsOpen={setIsOperatorModalOpen}
+            titleWhenEmpty="No Operators Available"
+            descriptionWhenEmpty="Looks like there aren't any registered operators in this network yet. Make the leap and become the first operator!"
+            items={operators}
+            searchInputId="restake-delegate-operator-search"
+            searchPlaceholder="Search for an operator..."
+            getItemKey={(item) => item.accountId}
+            onSelect={handleOnSelectOperator}
+            filterItem={(item, query) =>
+              searchBy(query, [item.accountId, item.identityName])
+            }
+            renderItem={({ accountId, identityName }) => (
+              <OperatorListItem
+                accountAddress={accountId}
+                identity={identityName}
+              />
+            )}
+          />
+
           <Modal>
-            <ModalContent
-              isOpen={isAssetModalOpen}
-              title="Select Asset"
-              description="Select the asset you want to delegate"
-              onInteractOutside={closeAssetModal}
-            >
-              <AssetList
-                selectTokens={selectableTokens}
-                onChange={handleAssetChange}
-                onClose={closeAssetModal}
-                renderEmpty={EmptyAsset}
-              />
-            </ModalContent>
-
-            <ModalContent
-              isOpen={isOperatorModalOpen}
-              title="Select Operator"
-              description="Select the operator you want to stake with"
-              onInteractOutside={closeOperatorModal}
-            >
-              <OperatorList
-                operators={operators}
-                operatorMap={operatorMap}
-                operatorIdentities={operatorIdentities}
-                onSelectOperator={handleOnSelectOperator}
-                onClose={closeOperatorModal}
-              />
-            </ModalContent>
-
             <SupportedChainModal
               isOpen={isChainModalOpen}
               onClose={closeChainModal}
@@ -326,18 +350,3 @@ export default function Page() {
     </StyleContainer>
   );
 }
-
-/** @internal */
-const EmptyAsset = () => (
-  <div className="space-y-4">
-    <Typography variant="h5" fw="bold" ta="center">
-      No assets available
-    </Typography>
-
-    <Link to={PagePath.RESTAKE_DEPOSIT}>
-      <Button variant="link" className="block mx-auto text-center">
-        Deposit now
-      </Button>
-    </Link>
-  </div>
-);

@@ -17,10 +17,7 @@ export function AnimatedTable({
       {(!isMediumScreen || isTableOpen) && (
         <motion.div
           key="unstake-request-table"
-          className={cx(
-            'w-full max-w-lg origin-[0_0_0]',
-            isTableOpen && isMediumScreen ? 'mr-auto ml-0' : 'mx-auto',
-          )}
+          className={cx('max-w-lg origin-[0_0_0]')}
           transition={{ duration: 0.15 }}
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}

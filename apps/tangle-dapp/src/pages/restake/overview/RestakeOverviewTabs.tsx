@@ -6,15 +6,22 @@ import type {
 } from '@webb-tools/tangle-shared-ui/types/restake';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
-import { type ComponentProps, type FC, useMemo } from 'react';
+import { type ComponentProps, type FC, ReactNode, useMemo } from 'react';
 import VaultAssetsTable from '../../../components/tables/VaultAssets';
 import VaultsTable from '../../../components/tables/Vaults';
 import useRestakeRewardConfig from '../../../data/restake/useRestakeRewardConfig';
 import OperatorsTable from './OperatorsTable';
+import DepositForm from '../deposit/DepositForm';
+import { RestakeAction } from '../../../constants';
+import RestakeWithdrawPage from '../withdraw';
+import RestakeStakePage from '../stake';
+import RestakeUnstakePage from '../unstake';
 
-const RESTAKE_VAULTS_TAB = 'Restake Vaults';
-
-const OPERATORS_TAB = 'Operators';
+enum RestakeTab {
+  RESTAKE = 'Restake',
+  VAULTS = 'Vaults',
+  OPERATORS = 'Operators',
+}
 
 type VaultUI = NonNullable<ComponentProps<typeof VaultsTable>['data']>[number];
 
@@ -29,15 +36,30 @@ type Props = {
   operatorMap: OperatorMap;
   operatorTVL?: Record<string, number>;
   vaultTVL?: Record<string, number>;
+  action: RestakeAction;
 };
 
-const TableTabs: FC<Props> = ({
+const getFormOfRestakeAction = (action: RestakeAction): ReactNode => {
+  switch (action) {
+    case RestakeAction.DEPOSIT:
+      return <DepositForm />;
+    case RestakeAction.WITHDRAW:
+      return <RestakeWithdrawPage />;
+    case RestakeAction.DELEGATE:
+      return <RestakeStakePage />;
+    case RestakeAction.UNDELEGATE:
+      return <RestakeUnstakePage />;
+  }
+};
+
+const RestakeOverviewTabs: FC<Props> = ({
   delegatorInfo,
   delegatorTVL,
   operatorConcentration,
   operatorMap,
   operatorTVL,
   vaultTVL,
+  action,
 }) => {
   const { assetMap } = useRestakeContext();
   const { rewardConfig } = useRestakeRewardConfig();
@@ -97,6 +119,7 @@ const TableTabs: FC<Props> = ({
       },
       getExpandedRowContent(row) {
         const vaultId = row.original.id;
+
         const vaultAssets = Object.values(assetMap)
           .filter((asset) => asset.vaultId === vaultId)
           .map((asset) => {
@@ -124,14 +147,21 @@ const TableTabs: FC<Props> = ({
 
   return (
     <TableAndChartTabs
-      tabs={[RESTAKE_VAULTS_TAB, OPERATORS_TAB]}
+      tabs={Object.values(RestakeTab)}
       headerClassName="w-full"
     >
-      <TabContent value={RESTAKE_VAULTS_TAB}>
+      <TabContent
+        value={RestakeTab.RESTAKE}
+        className="flex justify-center min-w-[480px] mx-auto"
+      >
+        {getFormOfRestakeAction(action)}
+      </TabContent>
+
+      <TabContent value={RestakeTab.VAULTS}>
         <VaultsTable data={Object.values(vaults)} tableProps={tableProps} />
       </TabContent>
 
-      <TabContent value={OPERATORS_TAB}>
+      <TabContent value={RestakeTab.OPERATORS}>
         <OperatorsTable
           operatorConcentration={operatorConcentration}
           operatorMap={operatorMap}
@@ -142,4 +172,4 @@ const TableTabs: FC<Props> = ({
   );
 };
 
-export default TableTabs;
+export default RestakeOverviewTabs;

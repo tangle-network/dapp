@@ -13,7 +13,6 @@ import RestakeContext from './RestakeContext';
 
 const RestakeContextProvider = (props: PropsWithChildren) => {
   const { assetMap, assetMap$ } = useRestakeAssetMap();
-
   const { balances, balances$ } = useRestakeBalances();
 
   const assetWithBalances$ = useMemo(

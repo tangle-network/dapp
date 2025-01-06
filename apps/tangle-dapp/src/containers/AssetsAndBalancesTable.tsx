@@ -277,7 +277,7 @@ const COLUMNS = [
       <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1">
           {/** TODO: Include asset ID in the URL. */}
-          <Link to={PagePath.RESTAKE_DEPOSIT}>
+          <Link to={PagePath.RESTAKE}>
             <Button
               variant="utility"
               size="sm"
@@ -316,21 +316,29 @@ const AssetsAndBalancesTable: FC = () => {
 
   const getTotalLockedInAsset = useCallback(
     (assetId: number) => {
-      const deposited = delegatorInfo?.deposits[assetId].amount;
+      const deposit = delegatorInfo?.deposits[assetId];
 
-      const delegated = delegatorInfo?.delegations.find((delegation) => {
+      if (deposit === undefined) {
+        return BN_ZERO;
+      }
+
+      const depositAmount = delegatorInfo?.deposits[assetId].amount;
+
+      const delegation = delegatorInfo?.delegations.find((delegation) => {
         return delegation.assetId === assetId.toString();
       });
 
-      const depositedBn =
-        deposited === undefined ? BN_ZERO : new BN(deposited.toString());
-
-      const delegatedBn =
-        delegated === undefined
+      const depositAmountBn =
+        depositAmount === undefined
           ? BN_ZERO
-          : new BN(delegated.amountBonded.toString());
+          : new BN(depositAmount.toString());
 
-      return depositedBn.add(delegatedBn);
+      const delegationBn =
+        delegation === undefined
+          ? BN_ZERO
+          : new BN(delegation.amountBonded.toString());
+
+      return depositAmountBn.add(delegationBn);
     },
     [delegatorInfo?.delegations, delegatorInfo?.deposits],
   );
@@ -450,6 +458,7 @@ const AssetsAndBalancesTable: FC = () => {
       variant={TableVariant.GLASS_OUTER}
       tableProps={table}
       trClassName="cursor-default"
+      isPaginated
     />
   );
 };

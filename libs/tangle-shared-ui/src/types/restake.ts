@@ -82,13 +82,13 @@ export type DelegatorWithdrawRequest = {
 };
 
 export type DelegatorBondInfo = {
-  readonly operatorAccountId: string;
+  readonly operatorAccountId: SubstrateAddress;
   readonly amountBonded: bigint;
   readonly assetId: string;
 };
 
 export type DelegatorUnstakeRequest = {
-  readonly operatorAccountId: string;
+  readonly operatorAccountId: SubstrateAddress;
   readonly assetId: string;
   readonly amount: bigint;
   readonly requestedRound: number;

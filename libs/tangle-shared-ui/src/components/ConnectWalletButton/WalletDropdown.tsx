@@ -65,7 +65,6 @@ const WalletDropdown: FC<{
           accountName={accountName}
           wallet={wallet}
           address={accountAddress}
-          addressClassname="hidden lg:block"
         />
       </DropdownTrigger>
 

@@ -26,6 +26,7 @@ import TableCell from '../TableCell';
 import { calculateTimeRemaining } from '../utils';
 import type { UnstakeRequestTableData } from './types';
 import UnstakeRequestTableActions from './UnstakeRequestTableActions';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
 const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
 
@@ -130,10 +131,12 @@ const UnstakeRequestTable = ({
     [assetMap, currentRound, delegationBondLessDelay, operatorIdentities, unstakeRequests],
   );
 
+  const rows = useMemo(() => Object.values(dataWithId), [dataWithId]);
+
   const table = useReactTable(
     useMemo<TableOptions<UnstakeRequestTableData>>(
       () => ({
-        data: Object.values(dataWithId),
+        data: rows,
         columns,
         initialState: {
           pagination: {
@@ -151,7 +154,7 @@ const UnstakeRequestTable = ({
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
       }),
-      [dataWithId],
+      [rows],
     ),
   );
 
@@ -164,7 +167,12 @@ const UnstakeRequestTable = ({
 
   return (
     <>
-      <Table variant={TableVariant.DEFAULT} tableProps={table} isPaginated />
+      <Table
+        variant={TableVariant.DEFAULT}
+        tableProps={table}
+        isPaginated
+        title={pluralize('request', rows.length !== 1)}
+      />
 
       <div className="grid grid-cols-2 gap-3">
         <UnstakeRequestTableActions

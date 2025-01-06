@@ -11,6 +11,7 @@ import { z } from 'zod';
 import HyperlaneWarpContext from '../pages/bridge/context/HyperlaneWarpContext';
 import BridgeTxQueueProvider from '../pages/bridge/context/BridgeTxQueueContext/BridgeTxQueueProvider';
 import PolkadotApiProvider from '@webb-tools/tangle-shared-ui/context/PolkadotApiProvider';
+import { RestakeContextProvider } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 
 const appEvent = new AppEvent();
 
@@ -37,7 +38,7 @@ const Providers = ({
   } = envSchema.parse(process.env);
 
   return (
-    <WebbUIProvider hasErrorBoudary>
+    <WebbUIProvider hasErrorBoundary>
       <WebbProvider
         appEvent={appEvent}
         applicationName="Tangle dApp"
@@ -51,7 +52,9 @@ const Providers = ({
         >
           <HyperlaneWarpContext>
             <BridgeTxQueueProvider>
-              <PolkadotApiProvider>{children}</PolkadotApiProvider>
+              <PolkadotApiProvider>
+                <RestakeContextProvider>{children}</RestakeContextProvider>
+              </PolkadotApiProvider>
             </BridgeTxQueueProvider>
           </HyperlaneWarpContext>
         </OFACFilterProvider>
