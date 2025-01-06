@@ -1,25 +1,24 @@
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import useLocalStorage, {
-  LocalStorageKey,
-} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 import { Decimal } from 'decimal.js';
-import { BigNumberish, ethers } from 'ethers';
-import { useCallback, useEffect, useState } from 'react';
+import { BigNumber, ethers } from 'ethers';
+import { useCallback, useState } from 'react';
 import { Abi, createPublicClient, getContract, http } from 'viem';
 
 import {
-  BalanceType,
-  BridgeTokenType,
-  TokenBalanceType,
+  BridgeChainBalances,
+  BridgeToken,
+  BridgeTokenWithBalance,
 } from '@webb-tools/tangle-shared-ui/types';
-import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import { BRIDGE_TOKENS } from '../constants';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
+import useEvmAddress20 from '../../../hooks/useEvmAddress';
 
-export const getEVMTokenBalance = async (
+export const fetchEvmTokenBalance = async (
   accountAddress: string,
   chainId: number,
-  tokenAddress: `0x${string}`,
+  tokenAddress: EvmAddress,
   tokenAbi: Abi,
   decimals: number,
 ) => {
@@ -37,45 +36,52 @@ export const getEVMTokenBalance = async (
 
     const balance = await contract.read.balanceOf([accountAddress]);
 
-    return new Decimal(
-      ethers.utils.formatUnits(balance as BigNumberish, decimals),
-    );
+    if (!(balance instanceof BigNumber)) {
+      throw new Error(
+        `Bridge failed to read ERC-20 token balance: Unexpected balance type returned, expected BigNumber but got ${typeof balance} (${balance})`,
+      );
+    }
+
+    return new Decimal(ethers.utils.formatUnits(balance, decimals));
   } catch (error) {
-    console.error(error);
+    console.error('Bridge failed to fetch evm token balance:', error);
+
     return new Decimal(0);
   }
 };
 
-export const useEVMBalances = () => {
-  const activeAccountAddress = useActiveAccountAddress();
-  const [balances, setBalances] = useState<BalanceType>({});
+export const useBridgeEvmBalances = () => {
+  const accountEvmAddress = useEvmAddress20();
+  const [balances, setBalances] = useState<BridgeChainBalances>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { valueOpt: cachedBalances, set: setCachedBalances } = useLocalStorage(
-    LocalStorageKey.EVM_TOKEN_BALANCES,
-  );
-
   const fetchTokenBalance = useCallback(
     async (
-      token: BridgeTokenType,
+      token: BridgeToken,
       chainId: PresetTypedChainId,
-      address: string,
-    ): Promise<TokenBalanceType> => {
+      address: EvmAddress,
+    ): Promise<BridgeTokenWithBalance> => {
+      // TODO: Not all tokens are ERC20, ex. Solana. Handle the edge cases.
+
       try {
-        const balance = await getEVMTokenBalance(
+        const balance = await fetchEvmTokenBalance(
           address,
           chainId,
           token.address,
           token.abi,
           token.decimals,
         );
+
         return { ...token, balance };
-      } catch (err) {
+      } catch (possibleError) {
+        const error = ensureError(possibleError);
+
         console.error(
           `Failed to fetch balance for token ${token.tokenSymbol}:`,
-          err,
+          error,
         );
+
         return { ...token, balance: new Decimal(0) };
       }
     },
@@ -83,8 +89,8 @@ export const useEVMBalances = () => {
   );
 
   const fetchBalances = useCallback(async () => {
-    if (!activeAccountAddress) {
-      setBalances({});
+    // Can't fetch balances without an EVM account connected.
+    if (accountEvmAddress === null) {
       return;
     }
 
@@ -92,18 +98,17 @@ export const useEVMBalances = () => {
     setError(null);
 
     try {
-      const newBalances: BalanceType = {};
+      const newBalances: BridgeChainBalances = {};
       const chainEntries = Object.entries(BRIDGE_TOKENS);
 
-      // Fetch balances for all chains
+      // Fetch balances for all chains.
       const results = await Promise.allSettled(
         chainEntries.map(async ([chainIdStr, tokens]) => {
           const chainId = Number(chainIdStr) as PresetTypedChainId;
 
-          // Fetch all token balances for this chain
           const tokenBalances = await Promise.all(
             tokens.map((token) =>
-              fetchTokenBalance(token, chainId, activeAccountAddress),
+              fetchTokenBalance(token, chainId, accountEvmAddress),
             ),
           );
 
@@ -120,31 +125,15 @@ export const useEVMBalances = () => {
       });
 
       setBalances(newBalances);
-      // Store in local storage
-      setCachedBalances({ [activeAccountAddress]: newBalances });
-    } catch (err) {
-      console.error('Failed to fetch EVM balances:', err);
-      setError('Failed to fetch token balances');
+    } catch (possibleError) {
+      const error = ensureError(possibleError);
+
+      console.error('Bridge failed to fetch EVM balances:', error);
+      setError(`Failed to fetch token balances: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
-  }, [activeAccountAddress, fetchTokenBalance, setCachedBalances]);
-
-  useEffect(() => {
-    if (!activeAccountAddress) return;
-
-    const initializeBalances = async () => {
-      // Check if we have valid cached balances for this address
-      if (cachedBalances?.value?.[activeAccountAddress]) {
-        setBalances(cachedBalances.value[activeAccountAddress]);
-      } else {
-        // Only fetch if we don't have cached balances
-        await fetchBalances();
-      }
-    };
-
-    initializeBalances();
-  }, [activeAccountAddress, cachedBalances, fetchBalances]);
+  }, [accountEvmAddress, fetchTokenBalance]);
 
   return {
     balances,

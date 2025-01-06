@@ -6,7 +6,7 @@ import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import { Decimal } from 'decimal.js';
 import { create } from 'zustand';
 
-import { BridgeTokenType } from '@webb-tools/tangle-shared-ui/types';
+import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
 import { BRIDGE_CHAINS } from '../constants';
 
 const sortChainOptions = (chains: ChainConfig[]) => {
@@ -25,7 +25,7 @@ const DEFAULT_DESTINATION_CHAINS = sortChainOptions(
   ),
 );
 
-const getDefaultTokens = (): BridgeTokenType[] => {
+const getDefaultTokens = (): BridgeToken[] => {
   const firstSourceChain = chainsConfig[PresetTypedChainId.TangleMainnetEVM];
   const firstSourceChainId = calculateTypedChainId(
     firstSourceChain.chainType,
@@ -56,11 +56,11 @@ interface BridgeStore {
   setSelectedSourceChain: (chain: ChainConfig) => void;
   setSelectedDestinationChain: (chain: ChainConfig) => void;
 
-  tokens: BridgeTokenType[];
-  setTokens: (tokens: BridgeTokenType[]) => void;
+  tokens: BridgeToken[];
+  setTokens: (tokens: BridgeToken[]) => void;
 
-  selectedToken: BridgeTokenType;
-  setSelectedToken: (token: BridgeTokenType) => void;
+  selectedToken: BridgeToken;
+  setSelectedToken: (token: BridgeToken) => void;
 
   amount: BN | null;
   setAmount: (amount: BN | null) => void;

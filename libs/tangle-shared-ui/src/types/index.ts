@@ -1,6 +1,10 @@
 import type { BN } from '@polkadot/util';
 import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import {
+  EvmAddress,
+  SolanaAddress,
+  SubstrateAddress,
+} from '@webb-tools/webb-ui-components/types/address';
 
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import {
@@ -59,7 +63,6 @@ export type OperatorData = {
   tvlInUsd: number | null;
   vaultTokens: VaultToken[];
 };
-// Bridge
 
 export enum BridgeTxState {
   Initializing = 'Initializing',
@@ -87,15 +90,15 @@ export type BridgeQueueTxItem = {
   bridgeType: EVMTokenBridgeEnum;
 };
 
-export interface BridgeTokenType {
+export interface BridgeToken {
   tokenSymbol: string;
   tokenType: EVMTokenEnum;
   bridgeType: EVMTokenBridgeEnum;
-  address: string;
+  address: EvmAddress | SolanaAddress;
   abi: Abi;
   decimals: number;
   chainId: PresetTypedChainId;
-  hyperlaneRouteContractAddress?: `0x${string}`;
+  hyperlaneRouteContractAddress?: EvmAddress;
 }
 
 export type BridgeChainsConfigType = Record<
@@ -103,15 +106,15 @@ export type BridgeChainsConfigType = Record<
   Record<
     PresetTypedChainId,
     {
-      supportedTokens: BridgeTokenType[];
+      supportedTokens: BridgeToken[];
     }
   >
 >;
 
-export type TokenBalanceType = BridgeTokenType & {
+export type BridgeTokenWithBalance = BridgeToken & {
   balance: Decimal;
 };
 
-export type BalanceType = Partial<
-  Record<PresetTypedChainId, TokenBalanceType[]>
+export type BridgeChainBalances = Partial<
+  Record<PresetTypedChainId, BridgeTokenWithBalance[]>
 >;

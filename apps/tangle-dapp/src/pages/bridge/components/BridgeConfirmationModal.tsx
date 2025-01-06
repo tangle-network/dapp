@@ -5,10 +5,7 @@ import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import { getFlexBasic } from '@webb-tools/icons/utils';
-import {
-  BridgeTxState,
-  BridgeTokenType,
-} from '@webb-tools/tangle-shared-ui/types';
+import { BridgeTxState, BridgeToken } from '@webb-tools/tangle-shared-ui/types';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { Button } from '@webb-tools/webb-ui-components/components/buttons';
@@ -41,7 +38,7 @@ interface BridgeConfirmationModalProps {
   handleClose: () => void;
   sourceChain: ChainConfig;
   destinationChain: ChainConfig;
-  token: BridgeTokenType;
+  token: BridgeToken;
   feeDetails: FeeDetailProps | null;
   activeAccountAddress: string;
   destinationAddress: string;

@@ -13,10 +13,10 @@ import {
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 
-import { BridgeTokenType } from '@webb-tools/tangle-shared-ui/types';
+import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
 
 export interface FeeDetailProps {
-  token: BridgeTokenType;
+  token: BridgeToken;
   amounts: {
     sending: string;
     receiving: string;

@@ -40,8 +40,8 @@ import { ChainList } from '../../../components/Lists/ChainList';
 import { ROUTER_NATIVE_TOKEN_ADDRESS } from '../constants';
 import useBridgeStore from '../context/useBridgeStore';
 import useBalances from '../../../data/balances/useBalances';
-import { useEVMBalances } from '../hooks/useEVMBalances';
-import { TokenBalanceType } from '@webb-tools/tangle-shared-ui/types';
+import { useBridgeEvmBalances } from '../hooks/useBridgeEvmBalances';
+import { BridgeTokenWithBalance } from '@webb-tools/tangle-shared-ui/types';
 import { RouterQuoteProps, useRouterQuote } from '../hooks/useRouterQuote';
 import convertDecimalToBn from '../../../utils/convertDecimalToBn';
 import formatTangleBalance from '../../../utils/formatTangleBalance';
@@ -64,13 +64,13 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   const [activeWallet] = useActiveWallet();
   const { toggleModal } = useConnectWallet();
 
-  const accountBalance = useMemo(() => {
+  const fmtAccountBalance = useMemo(() => {
     return balance
       ? formatTangleBalance(balance, nativeTokenSymbol).split(' ')[0]
       : '';
   }, [balance, nativeTokenSymbol]);
 
-  const { balances, refetch: refetchEVMBalances } = useEVMBalances();
+  const { balances, refetch: refetchEVMBalances } = useBridgeEvmBalances();
 
   const sourceChains = useBridgeStore((state) => state.sourceChains);
   const destinationChains = useBridgeStore((state) => state.destinationChains);
@@ -342,9 +342,9 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     const tokenConfigs = tokens.map((token) => {
       const balance =
         sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
-          ? accountBalance
+          ? fmtAccountBalance
           : balances?.[sourceTypedChainId]?.find(
-              (tokenBalance: TokenBalanceType) =>
+              (tokenBalance: BridgeTokenWithBalance) =>
                 tokenBalance.address === token.address,
             )?.balance;
 
@@ -385,7 +385,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   }, [
     tokens,
     sourceTypedChainId,
-    accountBalance,
+    fmtAccountBalance,
     balances,
     selectedSourceChain.blockExplorers?.default,
     activeAccount,
