@@ -17,7 +17,9 @@ function toPrimitive(
               return BigInt(asset.asCustom.toBigInt());
             // TODO: Add support for ERC-20 case.
             case 'Erc20':
-              throw new Error('Unsupported asset type: Erc20');
+              throw new Error(
+                'Handling of ERC-20 assets is not yet implemented.',
+              );
             default: {
               const _exhaustive: never = asset.type;
 

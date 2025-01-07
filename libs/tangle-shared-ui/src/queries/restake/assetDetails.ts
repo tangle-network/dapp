@@ -270,18 +270,18 @@ export function assetDetailsRxQuery(
   const assetDetailQueries = nonNativeAssetIds.reduce(
     (batchQueries, assetId) =>
       batchQueries.concat([
-        [api.query.assets.asset, assetId.toString()] as const,
+        [api.query.assets.asset, { Custom: assetId.toString() }] as const,
       ]),
-    [] as [typeof api.query.assets.asset, string][],
+    [] as [typeof api.query.assets.asset, { Custom: string }][],
   );
 
   // Batch queries for asset metadata
   const assetMetadataQueries = nonNativeAssetIds.reduce(
     (batchQueries, assetId) =>
       batchQueries.concat([
-        [api.query.assets.metadata, assetId.toString()] as const,
+        [api.query.assets.metadata, { Custom: assetId.toString() }] as const,
       ]),
-    [] as [typeof api.query.assets.metadata, string][],
+    [] as [typeof api.query.assets.metadata, { Custom: string }][],
   );
 
   // Batch queries for asset vault ID
@@ -290,12 +290,12 @@ export function assetDetailsRxQuery(
       batchQueries.concat([
         [
           api.query.multiAssetDelegation.assetLookupRewardVaults,
-          assetId,
+          { Custom: assetId },
         ] as const,
       ]),
     [] as [
       typeof api.query.multiAssetDelegation.assetLookupRewardVaults,
-      string,
+      { Custom: string },
     ][],
   );
 

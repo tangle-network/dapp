@@ -305,14 +305,13 @@ const AssetsAndBalancesTable: FC = () => {
   >({});
 
   const { balances } = useRestakeBalances();
-  const { assetMap } = useRestakeAssetMap();
   const { rewardConfig } = useRestakeRewardConfig();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const allPools = useLsPools();
   const isAccountConnected = useIsAccountConnected();
   const nativeTokenSymbol = useNetworkStore((state) => state.nativeTokenSymbol);
   const substrateAddress = useSubstrateAddress();
-  const assets = useRestakeAssetMap();
+  const { assetMap } = useRestakeAssetMap();
 
   const getTotalLockedInAsset = useCallback(
     (assetId: number) => {
@@ -344,7 +343,7 @@ const AssetsAndBalancesTable: FC = () => {
   );
 
   const assetRows = useMemo<Row[]>(() => {
-    return Object.entries(assets.assetMap).flatMap(([assetId, metadata]) => {
+    return Object.entries(assetMap).flatMap(([assetId, metadata]) => {
       const cap = rewardConfig.configs[assetId]?.cap;
       const capBn = cap === undefined ? undefined : new BN(cap.toString());
       const tvl = metadata.details?.supply.toBn();
@@ -372,7 +371,7 @@ const AssetsAndBalancesTable: FC = () => {
       } satisfies Row;
     });
   }, [
-    assets.assetMap,
+    assetMap,
     balances,
     getTotalLockedInAsset,
     nativeTokenSymbol,

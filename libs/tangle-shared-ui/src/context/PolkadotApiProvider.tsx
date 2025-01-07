@@ -17,7 +17,6 @@ type Props = {
 
 const PolkadotApiProvider: FC<PropsWithChildren<Props>> = ({ children }) => {
   const [customRpc, setCustomRpc] = useState<Maybe<string>>();
-
   const { rpcEndpoint: rpcFromStore } = useNetworkStore();
 
   const rpcEndpoint = useMemo(() => {
