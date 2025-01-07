@@ -13,6 +13,7 @@ type Props = {
   delegatorInfo: DelegatorInfo | null;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+
   onItemSelected: (item: {
     assetId: string;
     amount: bigint;
@@ -48,17 +49,17 @@ const WithdrawModal = ({
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       searchInputId="restake-withdraw-asset-search"
-      searchPlaceholder="Search assets..."
+      searchPlaceholder="Search assets by ID or name..."
       items={deposits}
       titleWhenEmpty="No Assets Found"
-      descriptionWhenEmpty="This account has no assets to withdraw."
-      onSelect={(item) => {
-        const asset = assetMap[item.assetId];
+      descriptionWhenEmpty="This account has no assets available to withdraw."
+      onSelect={(deposit) => {
+        const asset = assetMap[deposit.assetId];
         const decimals = asset?.decimals || DEFAULT_DECIMALS;
-        const fmtAmount = formatUnits(item.amount, decimals);
+        const fmtAmount = formatUnits(deposit.amount, decimals);
 
         onItemSelected({
-          ...item,
+          ...deposit,
           formattedAmount: fmtAmount,
         });
       }}
@@ -68,24 +69,26 @@ const WithdrawModal = ({
         return searchBy(query, [asset?.name, asset?.id, asset?.vaultId]);
       }}
       renderItem={({ amount, assetId }) => {
-        const asset = assetMap[assetId];
+        const metadata = assetMap[assetId];
 
-        if (asset === undefined) {
+        if (metadata === undefined) {
           return null;
         }
 
         const fmtAmount = addCommasToNumber(
-          formatUnits(amount, asset.decimals),
+          formatUnits(amount, metadata.decimals),
         );
 
         return (
           <LogoListItem
-            logo={<TokenIcon size="xl" name={asset.symbol} />}
-            leftUpperContent={`${asset.name} (${asset.symbol})`}
+            logo={<TokenIcon size="xl" name={metadata.symbol} />}
+            leftUpperContent={`${metadata.name} (${metadata.symbol})`}
             leftBottomContent={`Asset ID: ${assetId}`}
             rightUpperText={fmtAmount}
             rightBottomText={
-              asset.vaultId !== null ? `Vault ID: ${asset.vaultId}` : undefined
+              metadata.vaultId !== null
+                ? `Vault ID: ${metadata.vaultId}`
+                : undefined
             }
           />
         );
