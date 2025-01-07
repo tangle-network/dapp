@@ -14,6 +14,7 @@ import { BRIDGE_TOKENS } from '../constants';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import useEvmAddress20 from '../../../hooks/useEvmAddress';
+import { isSolanaAddress } from '@webb-tools/webb-ui-components';
 
 export const fetchEvmTokenBalance = async (
   accountAddress: string,
@@ -62,7 +63,10 @@ export const useBridgeEvmBalances = () => {
       chainId: PresetTypedChainId,
       address: EvmAddress,
     ): Promise<BridgeTokenWithBalance> => {
-      // TODO: Not all tokens are ERC20, ex. Solana. Handle the edge cases.
+      // TODO: Not all tokens are ERC20, ex. Solana. Handle the edge cases. For now, just return a balance of 0.
+      if (isSolanaAddress(token.address)) {
+        return { ...token, balance: new Decimal(0) };
+      }
 
       try {
         const balance = await fetchEvmTokenBalance(

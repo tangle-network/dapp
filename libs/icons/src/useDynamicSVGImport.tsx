@@ -36,7 +36,7 @@ export function useDynamicSVGImport(
 
   const { onCompleted, onError } = options;
 
-  const name_ =
+  const normalizedName =
     typeof name === 'string' ? name.trim().toLowerCase() : 'placeholder';
 
   const type = options.type ?? 'token';
@@ -46,11 +46,11 @@ export function useDynamicSVGImport(
 
     const importIcon = async (): Promise<void> => {
       try {
-        const mod = await getIcon(type, name_);
+        const mod = await getIcon(type, normalizedName);
         const Icon = mod.default;
 
         setImportedIcon(<Icon />);
-        onCompleted?.(name_, Icon);
+        onCompleted?.(normalizedName, Icon);
       } catch (err) {
         if (
           (err as any).message.includes('Cannot find module') ||
@@ -60,7 +60,7 @@ export function useDynamicSVGImport(
           const Icon = mod.default;
 
           setImportedIcon(<Icon />);
-          onCompleted?.(name_, Icon);
+          onCompleted?.(normalizedName, Icon);
         } else {
           onError?.(err as any);
           setError(err as Error);
@@ -71,7 +71,7 @@ export function useDynamicSVGImport(
     };
 
     importIcon().catch(console.error);
-  }, [name_, onCompleted, onError, type]);
+  }, [normalizedName, onCompleted, onError, type]);
 
   return { error, loading, svgElement: importedIcon };
 }

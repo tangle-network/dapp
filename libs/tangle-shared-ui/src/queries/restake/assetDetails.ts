@@ -99,7 +99,9 @@ async function processAssetDetails(
     : {};
 
   return nonNativeAssetIds.reduce((assetMap, assetId, idx) => {
-    if (assetDetails[idx].isNone) return assetMap;
+    if (assetDetails[idx].isNone) {
+      return assetMap;
+    }
 
     return {
       ...assetMap,
@@ -197,15 +199,15 @@ function getNativeAssetRx(
 export async function assetDetailsQuery(
   api: ApiPromise,
   assetIds: string[],
-  nativeCurrentcy: Chain['nativeCurrency'] = DEFAULT_NATIVE_CURRENCY,
+  nativeCurrency: Chain['nativeCurrency'] = DEFAULT_NATIVE_CURRENCY,
 ) {
   const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
 
   if (nonNativeAssetIds.length === 0 || !isApiSupported(api)) {
     return hasNative
       ? {
-          [(await getNativeAsset(nativeCurrentcy, api)).id]:
-            await getNativeAsset(nativeCurrentcy, api),
+          [(await getNativeAsset(nativeCurrency, api)).id]:
+            await getNativeAsset(nativeCurrency, api),
         }
       : {};
   }
@@ -239,7 +241,7 @@ export async function assetDetailsQuery(
     assetMetadatas,
     assetVaultIds,
     hasNative,
-    nativeCurrentcy,
+    nativeCurrency,
   );
 }
 

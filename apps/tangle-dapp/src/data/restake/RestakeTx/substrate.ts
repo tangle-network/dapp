@@ -132,8 +132,9 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     // If no operator account is provided, just deposit the asset and return.
     if (!operatorAccount) {
       const extrinsic = this.provider.tx.multiAssetDelegation.deposit(
-        assetId,
+        { Custom: assetId },
         amount,
+        null,
       );
 
       eventHandlers?.onTxSending?.(context);
@@ -143,12 +144,16 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
 
     // Otherwise, batching the deposit & delegate transactions.
     const extrinsics = this.provider.tx.utility.batchAll([
-      this.provider.tx.multiAssetDelegation.deposit(assetId, amount),
+      this.provider.tx.multiAssetDelegation.deposit(
+        { Custom: assetId },
+        amount,
+        null,
+      ),
       this.provider.tx.multiAssetDelegation.delegate(
         operatorAccount,
-        assetId,
+        { Custom: assetId },
         amount,
-        // TODO: Tin: Check if this is the correct value.
+        // TODO: For now, select all the AVS' that the operator has. Later on, allow specific selection.
         { All: 'All' },
       ),
     ]);
@@ -173,9 +178,9 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     // Deposit the asset into the Substrate chain.
     const extrinsic = this.provider.tx.multiAssetDelegation.delegate(
       operatorAccount,
-      assetId,
+      { Custom: assetId },
       amount,
-      // TODO: Tin: Check if this is the correct value.
+      // TODO: For now, select all the AVS' that the operator has. Later on, allow specific selection.
       { All: 'All' },
     );
 
@@ -199,7 +204,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     const extrinsic =
       this.provider.tx.multiAssetDelegation.scheduleDelegatorUnstake(
         operatorAccount,
-        assetId,
+        { Custom: assetId },
         amount,
       );
 
@@ -235,7 +240,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
       unstakeRequests.map(({ amount, assetId, operatorAccount }) =>
         this.provider.tx.multiAssetDelegation.cancelDelegatorUnstake(
           operatorAccount,
-          assetId,
+          { Custom: assetId },
           amount,
         ),
       ),
@@ -257,7 +262,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     } satisfies ScheduleWithdrawContext;
 
     const extrinsic = this.provider.tx.multiAssetDelegation.scheduleWithdraw(
-      assetId,
+      { Custom: assetId },
       amount,
     );
 
@@ -271,7 +276,8 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   ) => {
     const context = {} satisfies ExecuteAllWithdrawRequestContext;
 
-    const extrinsic = this.provider.tx.multiAssetDelegation.executeWithdraw();
+    const extrinsic =
+      this.provider.tx.multiAssetDelegation.executeWithdraw(null);
 
     eventHandlers?.onTxSending?.(context);
 
@@ -288,7 +294,10 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
 
     const extrinsics = this.provider.tx.utility.batchAll(
       withdrawRequests.map(({ amount, assetId }) =>
-        this.provider.tx.multiAssetDelegation.cancelWithdraw(assetId, amount),
+        this.provider.tx.multiAssetDelegation.cancelWithdraw(
+          { Custom: assetId },
+          amount,
+        ),
       ),
     );
 
