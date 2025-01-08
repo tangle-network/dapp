@@ -24,7 +24,7 @@ const RestakeDetailCardRoot = forwardRef<
     <div
       {...props}
       className={twMerge(
-        'px-4 py-6 rounded-2xl bg-linear-table space-y-4',
+        'px-4 py-6 rounded-2xl bg-linear-table space-y-4 min-w-[600px]',
         className,
       )}
       ref={ref}
@@ -75,10 +75,7 @@ const RestakeDetailCardHeader = forwardRef(
     return (
       <div
         {...props}
-        className={twMerge(
-          'flex items-start justify-between pb-3 border-b border-mono-40 dark:border-mono-160',
-          className,
-        )}
+        className={twMerge('flex items-start justify-between', className)}
         ref={ref}
       >
         <div className="flex items-center gap-4">

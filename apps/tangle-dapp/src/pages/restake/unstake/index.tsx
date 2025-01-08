@@ -269,7 +269,7 @@ const RestakeUnstakePage = () => {
                   />
                   <TransactionInputCard.MaxAmountButton
                     maxAmount={formattedMaxAmount}
-                    tooltipBody="Staked Balance"
+                    tooltipBody="Delegated"
                     Icon={
                       useRef({
                         enabled: <LockLineIcon />,
@@ -345,8 +345,8 @@ const RestakeUnstakePage = () => {
             <RestakeDetailCard.Header
               title={
                 unstakeRequests.length > 0
-                  ? 'Unstake Requests'
-                  : 'No Unstake Requests'
+                  ? 'Undelegate Requests'
+                  : 'No Undelegate Requests'
               }
             />
 
@@ -362,11 +362,11 @@ const RestakeUnstakePage = () => {
             />
           ) : (
             <Typography
-              variant="body2"
+              variant="body1"
               className="text-mono-120 dark:text-mono-100"
             >
-              You will be able to withdraw your tokens after the unstake request
-              has been processed.
+              You will be able to withdraw your tokens after the undelegate
+              request has been processed.
             </Typography>
           )}
         </RestakeDetailCard.Root>

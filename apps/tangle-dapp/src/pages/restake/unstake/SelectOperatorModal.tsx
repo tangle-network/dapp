@@ -7,6 +7,11 @@ import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config';
 import { formatUnits } from 'viem';
 import searchBy from '../../../utils/searchBy';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@webb-tools/webb-ui-components';
+import { BN } from '@polkadot/util';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -59,18 +64,20 @@ const SelectOperatorModal = ({
           formattedAmount: fmtAmount,
         });
       }}
-      filterItem={(item, query) => {
-        const asset = assetMap[item.assetId];
+      filterItem={(delegation, query) => {
+        const metadata = assetMap[delegation.assetId];
 
-        if (asset === undefined) {
+        if (metadata === undefined) {
           return false;
         }
 
-        const assetSymbol = asset?.symbol;
-        const identityName = operatorIdentities?.[item.operatorAccountId]?.name;
+        const assetSymbol = metadata?.symbol;
+
+        const identityName =
+          operatorIdentities?.[delegation.operatorAccountId]?.name;
 
         return searchBy(query, [
-          item.operatorAccountId,
+          delegation.operatorAccountId,
           assetSymbol,
           identityName,
         ]);
@@ -82,7 +89,12 @@ const SelectOperatorModal = ({
           return null;
         }
 
-        const fmtAmount = formatUnits(amountBonded, asset.decimals);
+        const fmtAmount = formatDisplayAmount(
+          new BN(amountBonded.toString()),
+          asset.decimals,
+          AmountFormatStyle.SHORT,
+        );
+
         const identityName = operatorIdentities?.[operatorAccountId]?.name;
 
         return (
@@ -90,7 +102,7 @@ const SelectOperatorModal = ({
             accountAddress={operatorAccountId}
             identity={identityName ?? undefined}
             rightUpperText={`${fmtAmount} ${asset.symbol}`}
-            rightBottomText="Amount Bonded"
+            rightBottomText="Delegated"
           />
         );
       }}

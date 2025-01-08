@@ -39,7 +39,17 @@ export default function useRestakeDelegatorInfo() {
 
                 const deposits = Array.from(info.deposits.entries()).reduce(
                   (depositRecord, [assetId, amount]) => {
-                    const assetIdStr = assetId.toString();
+                    let assetIdStr: string;
+
+                    switch (assetId.type) {
+                      case 'Custom':
+                        assetIdStr = assetId.asCustom.toString();
+
+                        break;
+                      case 'Erc20':
+                        throw new Error('ERC-20 assets are not supported yet!');
+                    }
+
                     const amountBigInt = amount.toBigInt();
 
                     return Object.assign(depositRecord, {
@@ -55,7 +65,16 @@ export default function useRestakeDelegatorInfo() {
                   DelegatorInfo['delegations'][number]
                 >((delegation) => {
                   const amountBigInt = delegation.amount.toBigInt();
-                  const assetIdStr = delegation.assetId.toString();
+                  let assetIdStr: string;
+
+                  switch (delegation.assetId.type) {
+                    case 'Custom':
+                      assetIdStr = delegation.assetId.asCustom.toString();
+
+                      break;
+                    case 'Erc20':
+                      throw new Error('ERC-20 assets are not supported yet!');
+                  }
 
                   return {
                     assetId: assetIdStr,
@@ -93,14 +112,24 @@ export default function useRestakeDelegatorInfo() {
 function getWithdrawRequests(
   requests: Vec<PalletMultiAssetDelegationDelegatorWithdrawRequest>,
 ): DelegatorInfo['withdrawRequests'] {
-  return requests.map(
-    (req) =>
-      ({
-        amount: req.amount.toBigInt(),
-        assetId: req.assetId.toString(),
-        requestedRound: req.requestedRound.toNumber(),
-      }) satisfies DelegatorInfo['withdrawRequests'][number],
-  );
+  return requests.map((req) => {
+    let assetId: string;
+
+    switch (req.assetId.type) {
+      case 'Custom':
+        assetId = req.assetId.asCustom.toString();
+
+        break;
+      case 'Erc20':
+        throw new Error('ERC-20 assets are not supported yet!');
+    }
+
+    return {
+      amount: req.amount.toBigInt(),
+      assetId,
+      requestedRound: req.requestedRound.toNumber(),
+    } satisfies DelegatorInfo['withdrawRequests'][number];
+  });
 }
 
 /**
@@ -109,15 +138,25 @@ function getWithdrawRequests(
 function getUnstakeRequests(
   requests: Vec<PalletMultiAssetDelegationDelegatorBondLessRequest>,
 ): DelegatorInfo['unstakeRequests'] {
-  return requests.map(
-    (req) =>
-      ({
-        amount: req.amount.toBigInt(),
-        assetId: req.assetId.toString(),
-        requestedRound: req.requestedRound.toNumber(),
-        operatorAccountId: assertSubstrateAddress(req.operator.toString()),
-      }) satisfies DelegatorInfo['unstakeRequests'][number],
-  );
+  return requests.map((req) => {
+    let assetId: string;
+
+    switch (req.assetId.type) {
+      case 'Custom':
+        assetId = req.assetId.asCustom.toString();
+
+        break;
+      case 'Erc20':
+        throw new Error('ERC-20 assets are not supported yet!');
+    }
+
+    return {
+      amount: req.amount.toBigInt(),
+      assetId,
+      requestedRound: req.requestedRound.toNumber(),
+      operatorAccountId: assertSubstrateAddress(req.operator.toString()),
+    } satisfies DelegatorInfo['unstakeRequests'][number];
+  });
 }
 
 /**

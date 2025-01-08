@@ -40,11 +40,11 @@ import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRes
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import LstIcon from '../components/LiquidStaking/LstIcon';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { LstIconSize } from '../components/LiquidStaking/types';
 import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
 enum RowType {
   ASSET,
@@ -115,7 +115,7 @@ const COLUMNS = [
     sortingFn: (rowA, rowB) =>
       rowB.original.available.cmp(rowA.original.available),
     cell: (props) => {
-      const formattedMyStake = formatDisplayAmount(
+      const fmtAvailable = formatDisplayAmount(
         props.getValue(),
         props.row.original.decimals,
         AmountFormatStyle.SHORT,
@@ -128,11 +128,7 @@ const COLUMNS = [
 
       return (
         <TableCellWrapper>
-          <StatItem
-            title={`${formattedMyStake} ${props.row.original.tokenSymbol}`}
-            subtitle={subtitle}
-            removeBorder
-          />
+          <StatItem title={fmtAvailable} subtitle={subtitle} removeBorder />
         </TableCellWrapper>
       );
     },
@@ -141,7 +137,7 @@ const COLUMNS = [
     header: () => 'Locked',
     sortingFn: (rowA, rowB) => rowB.original.locked.cmp(rowA.original.locked),
     cell: (props) => {
-      const formattedMyStake = formatDisplayAmount(
+      const fmtLocked = formatDisplayAmount(
         props.getValue(),
         props.row.original.decimals,
         AmountFormatStyle.SHORT,
@@ -154,11 +150,7 @@ const COLUMNS = [
 
       return (
         <TableCellWrapper>
-          <StatItem
-            title={`${formattedMyStake} ${props.row.original.tokenSymbol}`}
-            subtitle={subtitle}
-            removeBorder
-          />
+          <StatItem title={fmtLocked} subtitle={subtitle} removeBorder />
         </TableCellWrapper>
       );
     },
@@ -228,21 +220,9 @@ const COLUMNS = [
         return EMPTY_VALUE_PLACEHOLDER;
       }
 
-      const isGain = apyFractional >= 0;
-
-      // Negative values already include the negative sign.
-      const polarity = isGain ? '+' : '';
-
       return (
         <TableCellWrapper removeRightBorder>
-          <span
-            className={twMerge(
-              isGain ? 'dark:text-green-400' : 'dark:text-red-400',
-            )}
-          >
-            {polarity}
-            {formatFractional(apyFractional)}
-          </span>
+          {formatFractional(apyFractional)}
         </TableCellWrapper>
       );
     },
@@ -309,7 +289,6 @@ const AssetsAndBalancesTable: FC = () => {
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const allPools = useLsPools();
   const isAccountConnected = useIsAccountConnected();
-  const nativeTokenSymbol = useNetworkStore((state) => state.nativeTokenSymbol);
   const substrateAddress = useSubstrateAddress();
   const { assetMap } = useRestakeAssetMap();
 
@@ -364,19 +343,12 @@ const AssetsAndBalancesTable: FC = () => {
         locked: getTotalLockedInAsset(parseInt(assetId)),
         // TODO: This won't work because reward config is PER VAULT not PER ASSET. But isn't each asset its own vault?
         apyFractional: rewardConfig.configs[assetId]?.apy,
-        // TODO: Each asset should have its own token symbol.
-        tokenSymbol: nativeTokenSymbol,
+        tokenSymbol: metadata.symbol,
         decimals: metadata.decimals,
         cap: capBn,
       } satisfies Row;
     });
-  }, [
-    assetMap,
-    balances,
-    getTotalLockedInAsset,
-    nativeTokenSymbol,
-    rewardConfig.configs,
-  ]);
+  }, [assetMap, balances, getTotalLockedInAsset, rewardConfig.configs]);
 
   const lsPoolRows = useMemo<Row[]>(() => {
     if (!(allPools instanceof Map)) {
@@ -455,6 +427,7 @@ const AssetsAndBalancesTable: FC = () => {
   return (
     <Table
       variant={TableVariant.GLASS_OUTER}
+      title={pluralize('asset', rows.length !== 1)}
       tableProps={table}
       trClassName="cursor-default"
       isPaginated

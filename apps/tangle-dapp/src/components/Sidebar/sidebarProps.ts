@@ -37,11 +37,11 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     subItems: [],
   },
   {
-    name: 'Bridge',
-    href: PagePath.BRIDGE,
+    name: 'Restake',
+    href: PagePath.RESTAKE,
     isInternal: true,
     isNext: false,
-    Icon: ShuffleLine,
+    Icon: TokenSwapFill,
     subItems: [],
   },
   {
@@ -54,11 +54,19 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     hideInProduction: true,
   },
   {
-    name: 'Restake',
-    href: PagePath.RESTAKE,
+    name: 'Liquid Stake',
+    href: PagePath.LIQUID_STAKING,
     isInternal: true,
     isNext: false,
-    Icon: TokenSwapFill,
+    Icon: WaterDropletIcon,
+    subItems: [],
+  },
+  {
+    name: 'Bridge',
+    href: PagePath.BRIDGE,
+    isInternal: true,
+    isNext: false,
+    Icon: ShuffleLine,
     subItems: [],
   },
   {
@@ -67,14 +75,6 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     isInternal: true,
     isNext: false,
     Icon: CoinLine,
-    subItems: [],
-  },
-  {
-    name: 'Liquid Stake',
-    href: PagePath.LIQUID_STAKING,
-    isInternal: true,
-    isNext: false,
-    Icon: WaterDropletIcon,
     subItems: [],
   },
   {

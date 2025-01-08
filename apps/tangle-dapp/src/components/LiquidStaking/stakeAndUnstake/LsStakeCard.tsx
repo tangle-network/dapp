@@ -150,7 +150,7 @@ const LsStakeCard: FC = () => {
 
   const walletBalance = (
     <LsAgnosticBalance
-      tooltip="Click to use all available balance"
+      tooltip="Available Balance"
       onClick={() => {
         if (maxSpendable !== null) {
           setFromAmount(maxSpendable);

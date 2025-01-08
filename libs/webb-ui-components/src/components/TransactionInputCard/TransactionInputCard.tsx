@@ -305,7 +305,7 @@ const TransactionMaxAmountButton = forwardRef<
           {tooltipBody === undefined
             ? accountType === 'note'
               ? 'Shielded Balance'
-              : 'Wallet Balance'
+              : 'Available Balance'
             : tooltipBody}
         </TooltipBody>
       </Tooltip>
