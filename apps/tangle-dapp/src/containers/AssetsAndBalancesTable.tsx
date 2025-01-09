@@ -28,14 +28,13 @@ import { ArrowRight } from '@webb-tools/icons';
 import { PagePath } from '../types';
 import { Link } from 'react-router';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
-import { twMerge } from 'tailwind-merge';
 import useRestakeAssetMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetMap';
 import useIsAccountConnected from '../hooks/useIsAccountConnected';
 import useLsPools from '../data/liquidStaking/useLsPools';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
 import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
-import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
+import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
 import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
@@ -45,6 +44,9 @@ import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { LstIconSize } from '../components/LiquidStaking/types';
 import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import useRestakeAssetsTvl from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import sortByBn from '../utils/sortByBn';
 
 enum RowType {
   ASSET,
@@ -64,7 +66,7 @@ type Row = {
   points?: number;
   iconUrl?: string;
   decimals: number;
-  apyFractional?: number;
+  apyPercentage?: number;
   cap?: BN;
 };
 
@@ -112,8 +114,7 @@ const COLUMNS = [
   }),
   COLUMN_HELPER.accessor('available', {
     header: () => 'Available',
-    sortingFn: (rowA, rowB) =>
-      rowB.original.available.cmp(rowA.original.available),
+    sortingFn: sortByBn((row) => row.available),
     cell: (props) => {
       const fmtAvailable = formatDisplayAmount(
         props.getValue(),
@@ -135,7 +136,7 @@ const COLUMNS = [
   }),
   COLUMN_HELPER.accessor('locked', {
     header: () => 'Locked',
-    sortingFn: (rowA, rowB) => rowB.original.locked.cmp(rowA.original.locked),
+    sortingFn: sortByBn((row) => row.locked),
     cell: (props) => {
       const fmtLocked = formatDisplayAmount(
         props.getValue(),
@@ -156,37 +157,25 @@ const COLUMNS = [
     },
   }),
   COLUMN_HELPER.accessor('tvl', {
-    sortingFn: (rowA, rowB) => {
-      if (rowA.original.tvl === undefined || rowB.original.tvl === undefined) {
-        return 0;
-      }
-
-      return rowB.original.tvl.cmp(rowA.original.tvl);
-    },
-    header: () => (
-      <HeaderCell
-        title="TVL & CAP"
-        tooltip="Total value locked & supply cap."
-      />
-    ),
+    sortingFn: sortByBn((row) => row.tvl),
+    header: () => <HeaderCell title="TVL & Cap" />,
     cell: (props) => {
       const tvl = props.getValue();
 
-      if (tvl === undefined) {
-        return EMPTY_VALUE_PLACEHOLDER;
-      }
-
-      const formattedTvl = formatDisplayAmount(
-        tvl,
-        props.row.original.decimals,
-        AmountFormatStyle.SI,
-      );
+      const fmtTvl =
+        tvl === undefined
+          ? undefined
+          : formatDisplayAmount(
+              tvl,
+              props.row.original.decimals,
+              AmountFormatStyle.SI,
+            );
 
       const cap = props.row.original.cap;
 
-      const formattedCap =
+      const fmtCap =
         cap === undefined
-          ? undefined
+          ? '∞'
           : formatDisplayAmount(
               cap,
               props.row.original.decimals,
@@ -195,34 +184,29 @@ const COLUMNS = [
 
       return (
         <TableCellWrapper>
-          <StatItem
-            title={`${formattedTvl} TVL`}
-            subtitle={
-              formattedCap === undefined ? undefined : `${formattedCap} CAP`
-            }
-            removeBorder
-          />
+          <div className="flex gap-1 items-center justify-center">
+            <StatItem
+              title={fmtTvl === undefined ? `${fmtCap} Cap` : `${fmtTvl} TVL`}
+              subtitle={fmtTvl === undefined ? undefined : `${fmtCap} Cap`}
+              removeBorder
+            />
+          </div>
         </TableCellWrapper>
       );
     },
   }),
-  COLUMN_HELPER.accessor('apyFractional', {
-    header: () => (
-      <HeaderCell
-        title="APY"
-        tooltip="Calculated based on recent performance and may vary over time. Newer assets with limited history may display inaccurate APY estimates."
-      />
-    ),
+  COLUMN_HELPER.accessor('apyPercentage', {
+    header: () => 'APY',
     cell: (props) => {
-      const apyFractional = props.getValue();
+      const apyPercentage = props.getValue();
 
-      if (apyFractional === undefined) {
+      if (apyPercentage === undefined) {
         return EMPTY_VALUE_PLACEHOLDER;
       }
 
       return (
         <TableCellWrapper removeRightBorder>
-          {formatFractional(apyFractional)}
+          {formatPercentage(apyPercentage)}
         </TableCellWrapper>
       );
     },
@@ -277,7 +261,7 @@ const COLUMNS = [
 const AssetsAndBalancesTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([
     // Default sorting by TVL in descending order.
-    { id: 'tvl' satisfies keyof Row, desc: false },
+    { id: 'tvl' satisfies keyof Row, desc: true },
   ]);
 
   const [columnVisibility, setColumnVisibility] = useState<
@@ -291,6 +275,7 @@ const AssetsAndBalancesTable: FC = () => {
   const isAccountConnected = useIsAccountConnected();
   const substrateAddress = useSubstrateAddress();
   const { assetMap } = useRestakeAssetMap();
+  const assetsTvl = useRestakeAssetsTvl();
 
   const getTotalLockedInAsset = useCallback(
     (assetId: number) => {
@@ -325,7 +310,12 @@ const AssetsAndBalancesTable: FC = () => {
     return Object.entries(assetMap).flatMap(([assetId, metadata]) => {
       const cap = rewardConfig.configs[assetId]?.cap;
       const capBn = cap === undefined ? undefined : new BN(cap.toString());
-      const tvl = metadata.details?.supply.toBn();
+
+      // TODO: Avoid using `as` to force cast here. This is a temporary workaround until the type of `assetId` is updated to be `RestakeAssetId`.
+      const tvl =
+        assetsTvl === null
+          ? undefined
+          : assetsTvl.get(assetId as RestakeAssetId);
 
       const assetBalances: (typeof balances)[string] | undefined =
         balances[assetId];
@@ -342,13 +332,19 @@ const AssetsAndBalancesTable: FC = () => {
         available,
         locked: getTotalLockedInAsset(parseInt(assetId)),
         // TODO: This won't work because reward config is PER VAULT not PER ASSET. But isn't each asset its own vault?
-        apyFractional: rewardConfig.configs[assetId]?.apy,
+        apyPercentage: rewardConfig.configs[assetId]?.apy,
         tokenSymbol: metadata.symbol,
         decimals: metadata.decimals,
         cap: capBn,
       } satisfies Row;
     });
-  }, [assetMap, balances, getTotalLockedInAsset, rewardConfig.configs]);
+  }, [
+    assetMap,
+    assetsTvl,
+    balances,
+    getTotalLockedInAsset,
+    rewardConfig.configs,
+  ]);
 
   const lsPoolRows = useMemo<Row[]>(() => {
     if (!(allPools instanceof Map)) {
@@ -376,16 +372,24 @@ const AssetsAndBalancesTable: FC = () => {
         locked: getTotalLockedInAsset(pool.id),
         iconUrl: pool.iconUrl,
         decimals: TANGLE_TOKEN_DECIMALS,
-        apyFractional: pool.apyPercentage,
+        apyPercentage: pool.apyPercentage,
       } satisfies Row;
     });
   }, [allPools, getTotalLockedInAsset, substrateAddress]);
 
-  // All rows combined.
+  // Combine all rows.
   const rows = useMemo<Row[]>(() => {
-    // Sort by highest available balance (descending).
     return [...assetRows, ...lsPoolRows].sort((a, b) => {
-      return b.available.cmp(a.available);
+      // Sort by available balance in descending order.
+      const availableCmp = b.available.cmp(a.available);
+
+      if (availableCmp !== 0) {
+        return availableCmp;
+      }
+
+      // If the available balance is the same, prioritize asset rows
+      // over liquid staking pool rows.
+      return a.type === b.type ? 0 : a.type === RowType.ASSET ? -1 : 1;
     });
   }, [assetRows, lsPoolRows]);
 

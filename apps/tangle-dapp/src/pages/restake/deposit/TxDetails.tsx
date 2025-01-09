@@ -43,7 +43,7 @@ export default function TxDetails({ watch }: Props) {
       />
 
       <DetailItem
-        title="Withdraw Period"
+        title="Withdraw period"
         value={
           bondDuration !== null
             ? `${bondDuration} ${pluralize('session', bondDuration !== 1)}`

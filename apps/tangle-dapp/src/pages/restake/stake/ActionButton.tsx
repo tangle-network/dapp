@@ -74,7 +74,7 @@ export default function ActionButton({
             type="submit"
             isFullWidth
             isLoading={isSubmitting || isLoading}
-            loadingText={isSubmitting ? 'Delegating...' : loadingText}
+            loadingText={loadingText}
           >
             {displayError ?? 'Delegate'}
           </Button>

@@ -16,7 +16,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
+import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -93,7 +93,7 @@ const staticColumns: ColumnDef<OperatorData, any>[] = [
           >
             {typeof value !== 'number'
               ? EMPTY_VALUE_PLACEHOLDER
-              : formatFractional(value)}
+              : formatPercentage(value)}
           </Typography>
         </TableCellWrapper>
       );

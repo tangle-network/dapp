@@ -98,7 +98,6 @@ function assetBalancesReducer(
       }
 
       const { balance, status, reason } = accountBalance.unwrap();
-
       const assetId = nonNativeAssetIds[idx];
 
       function toPrimitiveReason(
@@ -133,10 +132,7 @@ function assetBalancesReducer(
   );
 }
 
-/**
- * @internal
- * Get the native balance observable.
- */
+/** @internal */
 function getNativeBalance$(apiRx: ApiRx, activeAccount: string) {
   return apiRx.query.system.account(activeAccount).pipe(
     map(

@@ -299,9 +299,7 @@ const RestakeWithdrawPage = () => {
                     type="submit"
                     isFullWidth
                     isLoading={isSubmitting || isLoading}
-                    loadingText={
-                      isSubmitting ? 'Sending transaction...' : loadingText
-                    }
+                    loadingText={loadingText}
                   >
                     {displayError ?? 'Schedule Withdraw'}
                   </Button>

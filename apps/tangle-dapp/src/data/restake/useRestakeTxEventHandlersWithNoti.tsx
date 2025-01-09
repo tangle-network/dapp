@@ -58,7 +58,7 @@ export default function useRestakeTxEventHandlersWithNoti<
         notificationApi.addToQueue({
           key,
           Icon: <Spinner size="lg" />,
-          message: 'Sending transaction...',
+          message: 'Sending transaction',
           variant: 'info',
           persist: true,
           ...extractNotiOptions(context, options[key]),

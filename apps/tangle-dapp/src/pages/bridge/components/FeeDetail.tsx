@@ -52,12 +52,7 @@ export const FeeDetail = ({
         <AccordionButtonBase
           className={cx('group flex items-center justify-between w-full p-4')}
         >
-          <Label
-            className="text-lg font-bold text-mono-120 dark:text-mono-120"
-            htmlFor="bridge-tx-detail"
-          >
-            Bridge Fee
-          </Label>
+          <Label htmlFor="bridge-tx-detail">Bridge Fee</Label>
 
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2">

@@ -62,9 +62,9 @@ const AddressInput: FC<AddressInputProps> = ({
 
       if (type === AddressType.EVM && !isEvm) {
         setErrorMessage('Invalid EVM address');
-      } else if (type === AddressType.Substrate && !isSubstrate) {
+      } else if (type === AddressType.SUBSTRATE && !isSubstrate) {
         setErrorMessage('Invalid Substrate address');
-      } else if (type === AddressType.Solana && !isSolana) {
+      } else if (type === AddressType.SOLANA && !isSolana) {
         setErrorMessage('Invalid Solana address');
       } else {
         setErrorMessage(null);
@@ -141,7 +141,11 @@ const AddressInput: FC<AddressInputProps> = ({
         id={id}
         inputRef={inputRef}
         className="w-full"
-        inputClassName={twMerge('placeholder:text-lg text-lg', inputClassName)}
+        inputClassName={twMerge(
+          'placeholder:text-lg text-lg',
+          errorMessage !== null && 'text-red-70 dark:text-red-50',
+          inputClassName,
+        )}
         type="text"
         placeholder={placeholder}
         size="sm"

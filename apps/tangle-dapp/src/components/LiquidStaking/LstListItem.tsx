@@ -8,7 +8,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { LsPool } from '../../constants/liquidStaking/types';
 import { LstIconSize } from './types';
-import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
+import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import LogoListItem from '../Lists/LogoListItem';
 
@@ -29,7 +29,7 @@ const LstListItem: FC<Props> = ({ pool, isSelfStaked }) => {
   const fmtCommission =
     pool.commissionFractional === undefined
       ? undefined
-      : `${formatFractional(pool.commissionFractional)} commission`;
+      : `${formatPercentage(pool.commissionFractional)} commission`;
 
   const stakeText = `${fmtStakeAmount} ${lsProtocol.token}`;
 

@@ -31789,6 +31789,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-circular-progressbar@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "react-circular-progressbar@npm:2.1.0"
+  peerDependencies:
+    react: ^0.14.0 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: 10c0/4019235abdf588baa97491fb53e258e83e467aecce14672120bca687719fa025efd4a3b63b44c7a59867ebba547ee6edf035f3b883585d46332c5334cf505c85
+  languageName: node
+  linkType: hard
+
 "react-confetti@npm:^6.1.0":
   version: 6.1.0
   resolution: "react-confetti@npm:6.1.0"
@@ -37165,6 +37174,7 @@ __metadata:
     postcss-preset-env: "npm:^10.1.2"
     prettier: "npm:^3.4.2"
     react: "npm:^18.3.1"
+    react-circular-progressbar: "npm:^2.1.0"
     react-dom: "npm:^18.3.1"
     react-dropzone: "npm:^14.3.5"
     react-hook-form: "npm:^7.54.1"

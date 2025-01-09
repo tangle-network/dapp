@@ -21,7 +21,7 @@ import {
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
+import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
 import { useMemo } from 'react';
 import { StakingItemExternalLinkButton } from '../../components/LiquidStaking/StakingItemExternalLinkButton';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
@@ -139,7 +139,7 @@ export const useLsValidatorSelectionTableColumns = (
               fw="normal"
               className="text-mono-200 dark:text-mono-0"
             >
-              {formatFractional(calculateCommission(props.getValue()))}
+              {formatPercentage(calculateCommission(props.getValue()))}
             </Typography>
           </div>
         ),

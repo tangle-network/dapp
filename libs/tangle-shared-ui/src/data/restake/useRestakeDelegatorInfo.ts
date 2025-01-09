@@ -14,7 +14,6 @@ import { DelegatorInfo } from '../../types/restake';
 
 export default function useRestakeDelegatorInfo() {
   const activeAddress = useSubstrateAddress();
-
   const { apiRx } = usePolkadotApi();
 
   const delegatorInfo$ = useObservable(

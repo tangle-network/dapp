@@ -27,12 +27,14 @@ const DEFAULT_DESTINATION_CHAINS = sortChainOptions(
 
 const getDefaultTokens = (): BridgeToken[] => {
   const firstSourceChain = chainsConfig[PresetTypedChainId.TangleMainnetEVM];
+
   const firstSourceChainId = calculateTypedChainId(
     firstSourceChain.chainType,
     firstSourceChain.id,
   );
 
   const firstDestChain = chainsConfig[PresetTypedChainId.EthereumMainNet];
+
   const firstDestChainId = calculateTypedChainId(
     firstDestChain.chainType,
     firstDestChain.id,

@@ -323,9 +323,7 @@ const RestakeUnstakePage = () => {
                     type="submit"
                     isFullWidth
                     isLoading={isSubmitting || isLoading}
-                    loadingText={
-                      isSubmitting ? 'Sending transaction...' : loadingText
-                    }
+                    loadingText={loadingText}
                   >
                     {displayError ?? 'Schedule Unstake'}
                   </Button>

@@ -6,5 +6,11 @@ import { SolanaAddress } from '../types/address';
  * valid Solana address.
  */
 export function isSolanaAddress(address: string): address is SolanaAddress {
-  return PublicKey.isOnCurve(address);
+  try {
+    new PublicKey(address);
+
+    return true;
+  } catch {
+    return false;
+  }
 }

@@ -1,7 +1,7 @@
 import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { Decimal } from 'decimal.js';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { useCallback, useState } from 'react';
 import { Abi, createPublicClient, getContract, http } from 'viem';
 
@@ -15,6 +15,7 @@ import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import useEvmAddress20 from '../../../hooks/useEvmAddress';
 import { isSolanaAddress } from '@webb-tools/webb-ui-components';
+import assert from 'assert';
 
 export const fetchEvmTokenBalance = async (
   accountAddress: string,
@@ -37,11 +38,10 @@ export const fetchEvmTokenBalance = async (
 
     const balance = await contract.read.balanceOf([accountAddress]);
 
-    if (!(balance instanceof BigNumber)) {
-      throw new Error(
-        `Bridge failed to read ERC-20 token balance: Unexpected balance type returned, expected BigNumber but got ${typeof balance} (${balance})`,
-      );
-    }
+    assert(
+      typeof balance === 'bigint',
+      `Bridge failed to read ERC-20 token balance: Unexpected balance type returned, expected bigint but got ${typeof balance} (${balance})`,
+    );
 
     return new Decimal(ethers.utils.formatUnits(balance, decimals));
   } catch (error) {
