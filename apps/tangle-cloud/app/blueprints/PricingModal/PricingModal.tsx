@@ -23,15 +23,21 @@ import {
   GlobalFormSchema,
   individualFormSchema,
   IndividualFormSchema,
+  PricingFormResult,
   PricingType,
 } from './types';
 
 type Props = {
   blueprints: Blueprint[];
   onOpenChange: (open: boolean) => void;
+  onSubmit: (result: PricingFormResult) => void;
 };
 
-export default function PricingModal({ blueprints, onOpenChange }: Props) {
+export default function PricingModal({
+  blueprints,
+  onOpenChange,
+  onSubmit,
+}: Props) {
   const [pricingType, setPricingType] = useState<PricingType>(
     PricingType.GLOBAL,
   );
@@ -46,10 +52,6 @@ export default function PricingModal({ blueprints, onOpenChange }: Props) {
       nvmeStoragePrice: '',
     },
   });
-
-  const onGlobalPricingFormSubmit = useCallback((values: GlobalFormSchema) => {
-    console.log(values);
-  }, []);
 
   const individualPricingFormSchema = useForm<IndividualFormSchema>({
     resolver: zodResolver(individualFormSchema),
@@ -66,15 +68,33 @@ export default function PricingModal({ blueprints, onOpenChange }: Props) {
     }, {} as IndividualFormSchema),
   });
 
-  const onIndividualFormSubmit = useCallback((values: IndividualFormSchema) => {
-    console.log(values);
-  }, []);
-
   const handleClose = useCallback(() => {
     onOpenChange(false);
     globalPricingForm.reset();
     individualPricingFormSchema.reset();
   }, [globalPricingForm, individualPricingFormSchema, onOpenChange]);
+
+  const onGlobalPricingFormSubmit = useCallback(
+    (values: GlobalFormSchema) => {
+      handleClose();
+      onSubmit({
+        type: PricingType.GLOBAL,
+        values,
+      });
+    },
+    [handleClose, onSubmit],
+  );
+
+  const onIndividualFormSubmit = useCallback(
+    (values: IndividualFormSchema) => {
+      handleClose();
+      onSubmit({
+        type: PricingType.INDIVIDUAL,
+        values,
+      });
+    },
+    [handleClose, onSubmit],
+  );
 
   return (
     <ModalContent

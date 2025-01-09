@@ -16,11 +16,13 @@ import {
 } from '@webb-tools/webb-ui-components/components/Modal';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useRoleStore, { Role } from '../../stores/roleStore';
 import BlueprintListing from './BlueprintListing';
 import PricingModal from './PricingModal';
+import { PricingFormResult } from './PricingModal/types';
+import RegistrationReview from './RegistrationReview';
 
 export const dynamic = 'force-static';
 
@@ -43,8 +45,14 @@ const ROLE_DESCRIPTION = {
 const Page = () => {
   const { role } = useRoleStore();
 
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({
+    '0': true,
+  });
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+
+  const [isReviewOpen, setIsReviewOpen] = useState(true);
+  const [pricingSettings, setPricingSettings] =
+    useState<PricingFormResult | null>(null);
 
   const { blueprints, isLoading, error } = useBlueprintListing();
 
@@ -56,6 +64,25 @@ const Page = () => {
   }, [blueprints, rowSelection]);
 
   const size = Object.keys(selectedBlueprints).length;
+
+  const handlePricingFormSubmit = useCallback((result: PricingFormResult) => {
+    setPricingSettings(result);
+    setIsReviewOpen(true);
+  }, []);
+
+  const handleCloseReview = useCallback(() => {
+    setIsReviewOpen(false);
+  }, []);
+
+  if (isReviewOpen) {
+    return (
+      <RegistrationReview
+        selectedBlueprints={selectedBlueprints}
+        pricingSettings={pricingSettings}
+        onClose={handleCloseReview}
+      />
+    );
+  }
 
   return (
     <div className="space-y-5">
@@ -109,6 +136,7 @@ const Page = () => {
         <PricingModal
           onOpenChange={setIsPricingModalOpen}
           blueprints={selectedBlueprints}
+          onSubmit={handlePricingFormSubmit}
         />
       </Modal>
     </div>

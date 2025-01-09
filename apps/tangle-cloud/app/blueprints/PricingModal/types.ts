@@ -8,8 +8,39 @@ export enum PricingType {
 const getPriceSchema = (priceType: string) =>
   z
     .string()
-    .nonempty(`${priceType} price is required`)
-    .or(z.number().min(0, `${priceType} price must be greater than 0`));
+    .or(z.number())
+    .transform((value, context) => {
+      if (value === '') {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${priceType} price is required`,
+        });
+
+        return z.NEVER;
+      }
+
+      const parsed = Number(value);
+
+      if (isNaN(parsed)) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${priceType} price is invalid`,
+        });
+
+        return z.NEVER;
+      }
+
+      if (parsed < 0) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${priceType} price must be greater than 0`,
+        });
+
+        return z.NEVER;
+      }
+
+      return value;
+    });
 
 const priceSchema = z.object({
   cpuPrice: getPriceSchema('CPU'),
@@ -28,3 +59,13 @@ export type PriceFieldSchema = z.infer<typeof priceSchema>;
 export type GlobalFormSchema = z.infer<typeof globalFormSchema>;
 
 export type IndividualFormSchema = z.infer<typeof individualFormSchema>;
+
+export type PricingFormResult =
+  | {
+      type: PricingType.GLOBAL;
+      values: GlobalFormSchema;
+    }
+  | {
+      type: PricingType.INDIVIDUAL;
+      values: IndividualFormSchema;
+    };

@@ -5,6 +5,8 @@ import type {
   TanglePrimitivesServicesServiceBlueprint,
 } from '@polkadot/types/lookup';
 import type { ITuple } from '@polkadot/types/types';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import merge from 'lodash/merge';
 import type { Blueprint } from '../../../types/blueprint';
 import { OperatorMap } from '../../../types/restake';
@@ -13,8 +15,6 @@ import {
   IdentityType,
 } from '../../../utils/polkadot/identity';
 import { toPrimitiveBlueprint } from './toPrimitiveBlueprint';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 
 export function extractBlueprintsData(
   blueprintEntries: [
@@ -113,13 +113,14 @@ export function createBlueprintObjects(
   ownerIdentitiesMap: Awaited<ReturnType<typeof fetchOwnerIdentities>>,
 ): Record<string, Blueprint> {
   return Array.from(blueprintsMap.entries()).reduce(
-    (acc, [blueprintId, { metadata, owner }]) => {
+    (acc, [blueprintId, { metadata, owner, registrationParams }]) => {
       acc[blueprintId.toString()] = {
         id: blueprintId.toString(),
         name: metadata.name,
         author: metadata.author ?? owner,
-        description: metadata.description,
         imgUrl: metadata.logo,
+        description: metadata.description,
+        registrationParams,
         category: metadata.category,
         restakersCount: blueprintRestakersMap.get(blueprintId)?.size ?? null,
         operatorsCount: blueprintOperatorMap.get(blueprintId)?.size ?? null,

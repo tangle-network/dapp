@@ -8,6 +8,7 @@ import {
   randUserName,
 } from '@ngneat/falso';
 import { Blueprint } from '../../../types/blueprint';
+import { randFieldType } from './randFieldType';
 
 const categories = [
   'Bridge',
@@ -48,5 +49,9 @@ export default function randBlueprint(id: string) {
     websiteUrl: randUrl(),
     twitterUrl: `https://twitter.com/${randUserName()}`,
     email: randEmail(),
+    registrationParams: Array.from(
+      { length: randNumber({ min: 1, max: 5 }) },
+      () => randFieldType(false),
+    ),
   } satisfies Blueprint;
 }
