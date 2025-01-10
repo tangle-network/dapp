@@ -21,7 +21,6 @@ import {
   AmountFormatStyle,
   Avatar,
   CheckBox,
-  Chip,
   CopyWithTooltip,
   fuzzyFilter,
   Input,
@@ -30,8 +29,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import cx from 'classnames';
 import {
@@ -46,10 +44,11 @@ import {
 
 import { Validator } from '../../types';
 import calculateCommission from '../../utils/calculateCommission';
-import { ContainerSkeleton } from '..';
 import { HeaderCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorSelectionTableProps } from './types';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+import SkeletonRows from '@webb-tools/tangle-shared-ui/components/SkeletonRows';
 
 const columnHelper = createColumnHelper<Validator>();
 
@@ -123,6 +122,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
                 </Typography>
 
                 <CopyWithTooltip
+                  copyLabel="Copy Address"
                   textToCopy={address}
                   isButton={false}
                   iconClassName="!fill-mono-160 dark:!fill-mono-80"
@@ -141,6 +141,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           ),
         filterFn: (row, _, filterValue) => {
           const { address, identityName } = row.original;
+
           return (
             address.toLowerCase().includes(filterValue.toLowerCase()) ||
             identityName.toLowerCase().includes(filterValue.toLowerCase())
@@ -152,15 +153,11 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           <HeaderCell title="Total Staked" className="justify-start" />
         ),
         cell: (props) => (
-          <div className="flex items-center justify-start">
-            <Chip color="dark-grey" className="normal-case">
-              <TokenAmountCell
-                amount={props.getValue()}
-                className="text-mono-0"
-                formatStyle={AmountFormatStyle.SHORT}
-              />
-            </Chip>
-          </div>
+          <TokenAmountCell
+            amount={props.getValue()}
+            className="text-mono-0"
+            formatStyle={AmountFormatStyle.SHORT}
+          />
         ),
         sortingFn: (rowA, rowB, columnId) =>
           sortValidatorsBy(
@@ -176,9 +173,9 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           <HeaderCell title="Nominations" className="justify-start" />
         ),
         cell: (props) => (
-          <div className="flex items-center justify-start">
-            <Chip color="dark-grey">{props.getValue()}</Chip>
-          </div>
+          <Typography variant="body1">
+            {addCommasToNumber(props.getValue())}
+          </Typography>
         ),
         sortingFn: (rowA, rowB, columnId) =>
           sortValidatorsBy(
@@ -195,11 +192,9 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
           <HeaderCell title="Commission" className="justify-start" />
         ),
         cell: (props) => (
-          <div className="flex items-center justify-start">
-            <Chip color="dark-grey">
-              {formatFractional(calculateCommission(props.getValue()))}
-            </Chip>
-          </div>
+          <Typography variant="body1">
+            {formatPercentage(calculateCommission(props.getValue()))}
+          </Typography>
         ),
         sortingFn: (rowA, rowB, columnId) =>
           sortValidatorsBy(
@@ -209,10 +204,6 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
             sortBnValueForNomineeOrValidator,
             isDesc,
           ),
-      }),
-      columnHelper.accessor('identityName', {
-        header: () => <HeaderCell title="Identity" />,
-        cell: (props) => props.getValue(),
       }),
     ],
     [isDesc],
@@ -265,48 +256,39 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
 
   const table = useReactTable(tableProps);
 
+  if (isLoading) {
+    return <SkeletonRows />;
+  }
+
+  const paginationLabel = `Selected validators: ${Object.keys(rowSelection).length}/${table.getPreFilteredRowModel().rows.length}`;
+
   return (
     <div className="flex flex-col gap-2">
       <Input
         id="search-validators-selection"
         rightIcon={<Search className="mr-2" />}
-        placeholder="Search validators..."
+        placeholder="Search validators by identity or address..."
         value={searchQuery}
         onChange={setSearchQuery}
         className="mb-1"
         isControlled
       />
 
-      {isLoading && <ContainerSkeleton className="h-[340px] w-full" />}
-
-      {!isLoading &&
-        (allValidators.length === 0 ? (
-          <div className="h-[340px] flex items-center justify-center">
-            <Typography variant="body1" fw="normal">
-              No results found
-            </Typography>
-          </div>
-        ) : (
-          <Table
-            variant={TableVariant.NESTED_IN_MODAL}
-            tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
-            paginationClassName="bg-mono-0 dark:bg-mono-180 p-2"
-            tableWrapperClassName="max-h-[340px] overflow-y-scroll"
-            tableProps={table}
-            isPaginated
-            title={pluralize('validator', allValidators.length !== 1)}
-          />
-        ))}
-
-      {!isLoading && allValidators.length > 0 && (
-        <Typography
-          variant="body1"
-          fw="normal"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          Selected: {Object.keys(rowSelection).length}/
-          {table.getPreFilteredRowModel().rows.length}
-        </Typography>
+      {allValidators.length === 0 ? (
+        <div className="h-[340px] flex items-center justify-center">
+          <Typography variant="body1" fw="normal">
+            No results found
+          </Typography>
+        </div>
+      ) : (
+        <Table
+          variant={TableVariant.EMBEDDED_IN_MODAL}
+          tableClassName={cx('[&_tr]:[overflow-anchor:_none]')}
+          tableWrapperClassName="max-h-[340px] overflow-y-scroll"
+          tableProps={table}
+          isPaginated
+          paginationLabelOverride={paginationLabel}
+        />
       )}
     </div>
   );

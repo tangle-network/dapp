@@ -9,7 +9,10 @@ import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { LsNetworkId } from '../../../constants/liquidStaking/types';
+import {
+  LsNetworkId,
+  LsPoolDisplayName,
+} from '../../../constants/liquidStaking/types';
 import useMintTx from '../../../data/liquidStaking/parachain/useMintTx';
 import useLsPoolJoinTx from '../../../data/liquidStaking/tangle/useLsPoolJoinTx';
 import useLsExchangeRate, {
@@ -27,11 +30,13 @@ import ExchangeRateDetailItem from './ExchangeRateDetailItem';
 import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
 import LsInput from './LsInput';
-import LsSelectLstModal from './LsSelectLstModal';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
+import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
+import LstListItem from '../LstListItem';
+import searchBy from '../../../utils/searchBy';
 
 const LsStakeCard: FC = () => {
   const lsPools = useLsPools();
@@ -145,7 +150,7 @@ const LsStakeCard: FC = () => {
 
   const walletBalance = (
     <LsAgnosticBalance
-      tooltip="Click to use all available balance"
+      tooltip="Available Balance"
       onClick={() => {
         if (maxSpendable !== null) {
           setFromAmount(maxSpendable);
@@ -184,6 +189,7 @@ const LsStakeCard: FC = () => {
   return (
     <Card
       withShadow
+      tightPadding
       className="flex flex-col items-stretch justify-center gap-2"
     >
       <LsInput
@@ -254,11 +260,30 @@ const LsStakeCard: FC = () => {
         {actionText}
       </Button>
 
-      <LsSelectLstModal
-        pools={allPools}
+      <ListModal
+        title="Select LST"
+        searchInputId="ls-stake-select-lst-search"
+        searchPlaceholder="Search liquid staking tokens by name or ID..."
+        items={allPools}
         isOpen={isSelectTokenModalOpen}
         setIsOpen={setIsSelectTokenModalOpen}
-        onSelect={setLsPoolId}
+        titleWhenEmpty="No LSTs Available"
+        descriptionWhenEmpty="Create your own pool to get started!"
+        getItemKey={(pool) => pool.id.toString()}
+        renderItem={(pool) => <LstListItem pool={pool} isSelfStaked={false} />}
+        onSelect={(pool) => {
+          setLsPoolId(pool.id);
+          setIsSelectTokenModalOpen(false);
+        }}
+        sorting={(a, b) => {
+          // Sort pools by highest TVL in descending order.
+          return b.totalStaked.sub(a.totalStaked).isNeg() ? -1 : 1;
+        }}
+        filterItem={(pool, query) => {
+          const displayName: LsPoolDisplayName = `${pool.name}#${pool.id}`;
+
+          return searchBy(query, [displayName]);
+        }}
       />
     </Card>
   );

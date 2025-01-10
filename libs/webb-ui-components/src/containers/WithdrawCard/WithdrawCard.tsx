@@ -15,9 +15,7 @@ import {
   RelayerInput,
   Switcher,
   TokenInput,
-  ConnectWalletMobileButton,
 } from '../../components';
-import { useCheckMobile } from '../../hooks';
 import { Typography } from '../../typography';
 import { WithdrawCardProps } from './types';
 
@@ -46,13 +44,11 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
     },
     ref,
   ) => {
-    const { isMobile } = useCheckMobile();
-    // Internal switcher state
     const [switcherChecked, setSwitcherChecked] = useState(
       () => unwrapSwitcherProps?.defaultChecked || unwrapSwitcherProps?.checked,
     );
 
-    // Effect to reset the switcher state when props change
+    // Reset the switcher state when props change.
     useEffect(() => {
       let isSub = true;
 
@@ -148,20 +144,16 @@ export const WithdrawCard = forwardRef<HTMLDivElement, WithdrawCardProps>(
         </div>
 
         <div className="mt-4 space-y-2">
-          {!isMobile ? (
-            <Button
-              {...withdrawBtnProps}
-              isFullWidth
-              className={twMerge(
-                'flex justify-center',
-                withdrawBtnProps?.className,
-              )}
-            >
-              {withdrawBtnProps?.children ?? 'Withdraw'}
-            </Button>
-          ) : (
-            <ConnectWalletMobileButton isFullWidth />
-          )}
+          <Button
+            {...withdrawBtnProps}
+            isFullWidth
+            className={twMerge(
+              'flex justify-center',
+              withdrawBtnProps?.className,
+            )}
+          >
+            {withdrawBtnProps?.children ?? 'Withdraw'}
+          </Button>
 
           {buttonDesc && (
             <Typography

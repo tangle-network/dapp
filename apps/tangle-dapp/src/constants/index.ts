@@ -1,3 +1,4 @@
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import {
   StakingRewardsDestination,
   StakingRewardsDestinationDisplayText,
@@ -105,3 +106,15 @@ export const STAKING_PAYEE_VALUE_TO_TEXT_MAP: Record<
  * The default debounce delay in milliseconds.
  */
 export const DEFAULT_DEBOUNCE_DELAY = 500;
+
+export enum LockUnlocksAtKind {
+  ERA,
+  BLOCK,
+}
+
+export enum RestakeAction {
+  DEPOSIT = 'deposit',
+  DELEGATE = 'delegate',
+  UNDELEGATE = 'undelegate',
+  WITHDRAW = 'withdraw',
+}

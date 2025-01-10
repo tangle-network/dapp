@@ -6,9 +6,10 @@ import CardVariant from './CardVariant';
 export type CardProps = WebbComponentBase & {
   variant?: CardVariant;
   withShadow?: boolean;
+  tightPadding?: boolean;
 };
 
-const getVariantClass = (variant: CardVariant) => {
+const getVariantClass = (variant: CardVariant): string => {
   switch (variant) {
     case CardVariant.GLASS:
       return 'p-6 rounded-2xl border border-mono-0 dark:border-mono-160 bg-glass dark:bg-glass_dark';
@@ -44,6 +45,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       children,
       className,
       withShadow = false,
+      tightPadding = false,
       variant = CardVariant.DEFAULT,
       ...props
     },
@@ -53,10 +55,11 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         {...props}
         className={twMerge(
-          'p-6 rounded-xl',
+          'rounded-xl',
           'bg-mono-0 dark:bg-mono-200',
           'border border-mono-60 dark:border-mono-170',
           withShadow && 'shadow-webb-lg dark:shadow-webb-lg-dark',
+          tightPadding ? 'p-3' : 'p-6',
           getVariantClass(variant),
           className,
         )}

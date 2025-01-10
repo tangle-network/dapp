@@ -78,7 +78,7 @@ const getTableColumns = (isWaiting?: boolean) => [
   columnHelper.accessor('commission', {
     header: () => <HeaderCell title="Commission" />,
     cell: (props) => (
-      <PercentageCell fractional={calculateCommission(props.getValue())} />
+      <PercentageCell percentage={calculateCommission(props.getValue())} />
     ),
     sortingFn: sortBnValueForNomineeOrValidator,
   }),
@@ -146,6 +146,7 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
               </Typography>
 
               <CopyWithTooltip
+                copyLabel="Copy Address"
                 textToCopy={address}
                 isButton={false}
                 iconClassName="!fill-mono-160 dark:!fill-mono-80"

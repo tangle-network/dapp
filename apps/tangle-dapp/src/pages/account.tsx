@@ -2,18 +2,23 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { FC } from 'react';
 
 import AccountSummaryCard from '../components/account/AccountSummaryCard';
-import BalancesTableContainer from '../containers/BalancesTableContainer/BalancesTableContainer';
+import AssetsAndBalancesTable from '../containers/AssetsAndBalancesTable';
+import PointsReminder from '../components/account/PointsReminder';
 
 const AccountPage: FC = () => {
   return (
     <div className="flex flex-col gap-5">
-      <AccountSummaryCard className="max-w-full md:max-w-full" />
+      <div className="flex flex-col lg:flex-row gap-6">
+        <AccountSummaryCard className="flex-1 md:max-w-none" />
+
+        <PointsReminder className="flex-1" />
+      </div>
 
       <Typography variant="h4" fw="bold">
-        Balances
+        Restake Assets
       </Typography>
 
-      <BalancesTableContainer />
+      <AssetsAndBalancesTable />
     </div>
   );
 };

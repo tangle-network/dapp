@@ -25,3 +25,6 @@ export * from './toEvmAddress';
 export { default as toFixed } from './toFixed';
 export * from './toSubstrateAddress';
 export { default as toSubstrateBytes32Address } from './toSubstrateBytes32Address';
+export * from './isSolanaAddress';
+export * from './assertEvmAddress';
+export * from './assertAddressBy';

@@ -46,7 +46,7 @@ function safeParseInputAmount(
   } else if (options.max !== null && result.gt(options.max)) {
     return (
       options.maxErrorMessage ??
-      `Max amount allowed ${formatDisplayAmount(
+      `Max amount allowed is ${formatDisplayAmount(
         options.max,
         options.decimals,
         AmountFormatStyle.SHORT,

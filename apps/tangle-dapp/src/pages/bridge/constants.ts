@@ -15,20 +15,26 @@ import {
 
 import {
   BridgeChainsConfigType,
-  BridgeTokenType,
+  BridgeToken,
 } from '@webb-tools/tangle-shared-ui/types';
+import {
+  assertAddressBy,
+  assertEvmAddress,
+  isSolanaAddress,
+} from '@webb-tools/webb-ui-components';
 import { Abi } from 'viem';
 
-const asAbi = (abi: any): Abi => abi as Abi;
+// TODO: Include assertion logic, as the Abi type can't be directly imported from viem since the 'type' field clashes (string vs. 'function').
+const assertAbi = (abi: unknown): Abi => abi as Abi;
 
-export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
+export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
   [PresetTypedChainId.EthereumMainNet]: [
     {
       tokenSymbol: 'routerTNT',
       tokenType: EVMTokenEnum.TNT,
       bridgeType: EVMTokenBridgeEnum.Router,
-      address: EVMTokens.ethereum.router.TNT.address,
-      abi: asAbi(EVMTokens.ethereum.router.TNT.abi),
+      address: assertEvmAddress(EVMTokens.ethereum.router.TNT.address),
+      abi: assertAbi(EVMTokens.ethereum.router.TNT.abi),
       decimals: EVMTokens.ethereum.router.TNT.decimals,
       chainId: PresetTypedChainId.EthereumMainNet,
     },
@@ -38,8 +44,8 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       tokenSymbol: 'routerTNT',
       tokenType: EVMTokenEnum.TNT,
       bridgeType: EVMTokenBridgeEnum.Router,
-      address: EVMTokens.polygon.router.TNT.address,
-      abi: asAbi(EVMTokens.polygon.router.TNT.abi),
+      address: assertEvmAddress(EVMTokens.polygon.router.TNT.address),
+      abi: assertAbi(EVMTokens.polygon.router.TNT.abi),
       decimals: EVMTokens.polygon.router.TNT.decimals,
       chainId: PresetTypedChainId.Polygon,
     },
@@ -49,8 +55,8 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       tokenSymbol: 'routerTNT',
       tokenType: EVMTokenEnum.TNT,
       bridgeType: EVMTokenBridgeEnum.Router,
-      address: EVMTokens.arbitrum.router.TNT.address,
-      abi: asAbi(EVMTokens.arbitrum.router.TNT.abi),
+      address: assertEvmAddress(EVMTokens.arbitrum.router.TNT.address),
+      abi: assertAbi(EVMTokens.arbitrum.router.TNT.abi),
       decimals: EVMTokens.arbitrum.router.TNT.decimals,
       chainId: PresetTypedChainId.Arbitrum,
     },
@@ -60,8 +66,8 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       tokenSymbol: 'routerTNT',
       tokenType: EVMTokenEnum.TNT,
       bridgeType: EVMTokenBridgeEnum.Router,
-      address: EVMTokens.optimism.router.TNT.address,
-      abi: asAbi(EVMTokens.optimism.router.TNT.abi),
+      address: assertEvmAddress(EVMTokens.optimism.router.TNT.address),
+      abi: assertAbi(EVMTokens.optimism.router.TNT.abi),
       decimals: EVMTokens.optimism.router.TNT.decimals,
       chainId: PresetTypedChainId.Optimism,
     },
@@ -71,8 +77,8 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       tokenSymbol: 'routerTNT',
       tokenType: EVMTokenEnum.TNT,
       bridgeType: EVMTokenBridgeEnum.Router,
-      address: EVMTokens.linea.router.TNT.address,
-      abi: asAbi(EVMTokens.linea.router.TNT.abi),
+      address: assertEvmAddress(EVMTokens.linea.router.TNT.address),
+      abi: assertAbi(EVMTokens.linea.router.TNT.abi),
       decimals: EVMTokens.linea.router.TNT.decimals,
       chainId: PresetTypedChainId.Linea,
     },
@@ -82,8 +88,8 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       tokenSymbol: 'routerTNT',
       tokenType: EVMTokenEnum.TNT,
       bridgeType: EVMTokenBridgeEnum.Router,
-      address: EVMTokens.base.router.TNT.address,
-      abi: asAbi(EVMTokens.base.router.TNT.abi),
+      address: assertEvmAddress(EVMTokens.base.router.TNT.address),
+      abi: assertAbi(EVMTokens.base.router.TNT.abi),
       decimals: EVMTokens.base.router.TNT.decimals,
       chainId: PresetTypedChainId.Base,
     },
@@ -93,8 +99,8 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       tokenSymbol: 'routerTNT',
       tokenType: EVMTokenEnum.TNT,
       bridgeType: EVMTokenBridgeEnum.Router,
-      address: EVMTokens.bsc.router.TNT.address,
-      abi: asAbi(EVMTokens.bsc.router.TNT.abi),
+      address: assertEvmAddress(EVMTokens.bsc.router.TNT.address),
+      abi: assertAbi(EVMTokens.bsc.router.TNT.abi),
       decimals: EVMTokens.bsc.router.TNT.decimals,
       chainId: PresetTypedChainId.BSC,
     },
@@ -105,11 +111,13 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       tokenType: EVMTokenEnum.WETH,
       // This is a collateral token on Holesky but will be bridged using Hyperlane
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
-      address: EVMTokens.holesky.none.WETH.address,
-      abi: asAbi(EVMTokens.holesky.none.WETH.abi),
+      address: assertEvmAddress(EVMTokens.holesky.none.WETH.address),
+      abi: assertAbi(EVMTokens.holesky.none.WETH.abi),
       decimals: EVMTokens.holesky.none.WETH.decimals,
       chainId: PresetTypedChainId.Holesky,
-      hyperlaneRouteContractAddress: EVMTokens.holesky.hyperlane.WETH.address,
+      hyperlaneRouteContractAddress: assertEvmAddress(
+        EVMTokens.holesky.hyperlane.WETH.address,
+      ),
     },
   ],
   [PresetTypedChainId.TangleTestnetEVM]: [
@@ -117,10 +125,24 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeTokenType[]> = {
       tokenSymbol: 'hypWETH',
       tokenType: EVMTokenEnum.WETH,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
-      address: EVMTokens.tangletestnet.hyperlane.WETH.address,
-      abi: asAbi(EVMTokens.tangletestnet.hyperlane.WETH.abi),
+      address: assertEvmAddress(EVMTokens.tangletestnet.hyperlane.WETH.address),
+      abi: assertAbi(EVMTokens.tangletestnet.hyperlane.WETH.abi),
       decimals: EVMTokens.tangletestnet.hyperlane.WETH.decimals,
       chainId: PresetTypedChainId.TangleTestnetEVM,
+    },
+  ],
+  [PresetTypedChainId.SolanaMainnet]: [
+    {
+      tokenSymbol: 'routerTNT',
+      tokenType: EVMTokenEnum.TNT,
+      bridgeType: EVMTokenBridgeEnum.Router,
+      address: assertAddressBy(
+        'FcermohxLgTo8xnJXpPyW6D2swUMepVjQVNiiNLw38pC',
+        isSolanaAddress,
+      ),
+      abi: [],
+      decimals: 18,
+      chainId: PresetTypedChainId.SolanaMainnet,
     },
   ],
 };
@@ -147,6 +169,9 @@ export const BRIDGE_CHAINS: BridgeChainsConfigType = {
     },
     [PresetTypedChainId.BSC]: {
       supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.BSC],
+    },
+    [PresetTypedChainId.SolanaMainnet]: {
+      supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.SolanaMainnet],
     },
   },
   [PresetTypedChainId.EthereumMainNet]: {

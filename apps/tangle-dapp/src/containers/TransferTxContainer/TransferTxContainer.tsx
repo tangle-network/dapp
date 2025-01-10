@@ -188,7 +188,7 @@ const TransferTxContainer: FC<TransferTxContainerProps> = ({
 
             <AddressInput
               id="transfer-tx-receiver-input"
-              type={AddressType.Both}
+              type={AddressType.SUBSTRATE_OR_EVM}
               title="Receiver Address"
               placeholder="EVM or Substrate"
               wrapperOverrides={{ isFullWidth: true }}

@@ -81,13 +81,13 @@ const RebondTxContainer: FC<RebondTxContainerProps> = ({
         <ModalHeader>Rebond Funds</ModalHeader>
 
         <ModalBody>
-          <Typography variant="body1" fw="normal">
+          <Typography variant="body1">
             Rebond to return unbonding or unbonded tokens to staking without
             withdrawing.
           </Typography>
 
           <AmountInput
-            id="rebond-input"
+            id="nomination-rebond-amount"
             title="Amount"
             max={totalUnbondingAmount?.value ?? undefined}
             amount={amountToRebond}

@@ -20,7 +20,7 @@ export interface ContractDetailCardProps {
   governanceFncNames: string[];
 
   /**
-   * All the chain options to be be chosen
+   * All the chain options to be chosen
    */
   typedChainIdSelections: number[];
 }

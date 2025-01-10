@@ -29,6 +29,7 @@ import calculateCommission from '../../utils/calculateCommission';
 import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
 const columnHelper = createColumnHelper<Nominee>();
 
@@ -51,7 +52,11 @@ const columns = [
               : identityName}
           </Typography>
 
-          <CopyWithTooltip textToCopy={address} isButton={false} />
+          <CopyWithTooltip
+            copyLabel="Copy Address"
+            textToCopy={address}
+            isButton={false}
+          />
         </div>
       );
     },
@@ -98,7 +103,7 @@ const columns = [
   columnHelper.accessor('commission', {
     header: () => <HeaderCell title="Commission" className="justify-center" />,
     cell: (props) => (
-      <PercentageCell fractional={calculateCommission(props.getValue())} />
+      <PercentageCell percentage={calculateCommission(props.getValue())} />
     ),
     sortingFn: sortBnValueForNomineeOrValidator,
   }),
@@ -150,6 +155,7 @@ const NominationsTable: FC<NominationsTableProps> = ({
         tableProps={table}
         isPaginated
         totalRecords={nominees.length}
+        title={pluralize('nomination', nominees.length !== 1)}
       />
     </div>
   );

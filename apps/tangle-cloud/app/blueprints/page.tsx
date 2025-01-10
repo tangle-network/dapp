@@ -2,10 +2,9 @@
 
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { RowSelectionState } from '@tanstack/table-core';
-import TopBanner from '@webb-tools/tangle-shared-ui/components/blueprints/TopBanner';
+import RestakeBanner from '@webb-tools/tangle-shared-ui/components/blueprints/RestakeBanner';
 import {
   BLUEPRINTS_OPERATOR_DESCRIPTION,
-  BLUEPRINTS_OPERATOR_HIGHLIGHTED_TEXT,
   BLUEPRINTS_OPERATOR_TITLE,
 } from '@webb-tools/tangle-shared-ui/constants';
 import useBlueprintListing from '@webb-tools/tangle-shared-ui/data/blueprints/useFakeBlueprintListing';
@@ -14,6 +13,7 @@ import {
   Modal,
   ModalTrigger,
 } from '@webb-tools/webb-ui-components/components/Modal';
+import { BLUEPRINT_DOCS_LINK } from '@webb-tools/webb-ui-components/constants/tangleDocs';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useMemo, useState } from 'react';
@@ -29,11 +29,6 @@ export const dynamic = 'force-static';
 const ROLE_TITLE = {
   [Role.OPERATOR]: BLUEPRINTS_OPERATOR_TITLE,
   [Role.DEPLOYER]: 'Deploy your first',
-} satisfies Record<Role, string>;
-
-const ROLE_HIGHLIGHTED_TEXT = {
-  [Role.OPERATOR]: BLUEPRINTS_OPERATOR_HIGHLIGHTED_TEXT,
-  [Role.DEPLOYER]: 'Instance',
 } satisfies Record<Role, string>;
 
 const ROLE_DESCRIPTION = {
@@ -86,10 +81,11 @@ const Page = () => {
 
   return (
     <div className="space-y-5">
-      <TopBanner
+      <RestakeBanner
         title={ROLE_TITLE[role]}
-        highlightedText={ROLE_HIGHLIGHTED_TEXT[role]}
         description={ROLE_DESCRIPTION[role]}
+        buttonHref={BLUEPRINT_DOCS_LINK}
+        buttonText="Get Started"
       />
 
       <BlueprintListing

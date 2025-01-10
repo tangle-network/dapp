@@ -5,10 +5,11 @@ import { calculateTypedChainId, ChainType } from './TypedChainId';
 
 import EVMChainId from './EVMChainId';
 import SubstrateChainId from './SubstrateChainId';
+import SolanaChainId from './SolanaChainId';
 
 export interface TypedChainId {
   chainType: ChainType;
-  chainId: EVMChainId | SubstrateChainId;
+  chainId: EVMChainId | SubstrateChainId | SolanaChainId;
 }
 
 // Pre-calculated TypedChainId values that are supported in the dapp
@@ -140,6 +141,11 @@ export enum PresetTypedChainId {
     ChainType.EVM,
     EVMChainId.TangleMainnetEVM,
   ),
+
+  SolanaMainnet = calculateTypedChainId(
+    ChainType.Solana,
+    SolanaChainId.SolanaMainnet,
+  ),
 }
 
-export { EVMChainId, SubstrateChainId };
+export { EVMChainId, SubstrateChainId, SolanaChainId };

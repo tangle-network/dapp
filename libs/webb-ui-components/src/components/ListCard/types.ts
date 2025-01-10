@@ -6,15 +6,9 @@ import type { InputProps } from '../Input';
 import type { Typography } from '../../typography/Typography';
 
 export type ChainType = {
-  /**
-   * The typed chain id
-   */
   typedChainId: number;
-
-  /**
-   * The chain name
-   */
   name: string;
+  isDisabled?: boolean;
 
   /**
    * The chain tag (use to categorize the chain)
@@ -25,11 +19,6 @@ export type ChainType = {
    * Whether the current chain needs to switch wallet
    */
   needSwitchWallet?: boolean;
-
-  /**
-   * Whether the chain is disabled
-   */
-  isDisabled?: boolean;
 };
 
 export type RelayerType = {
@@ -45,25 +34,14 @@ export type RelayerType = {
   name?: string;
 
   /**
-   * External url
-   */
-  externalUrl: string;
-
-  /**
-   * Relayer percentage
-   */
-  percentage?: number;
-
-  /**
    * Relayer theme (use for Identicon theme)
    * @default 'polkadot'
    */
   theme?: AvatarProps['theme'];
 
-  /**
-   * Whether the relayer is disabled
-   */
+  percentage?: number;
   isDisabled?: boolean;
+  externalUrl: string;
 };
 
 export type AssetBalanceType = {
@@ -188,14 +166,7 @@ export interface ListCardWrapperProps
    */
   overrideTitleProps?: ComponentProps<typeof Typography>;
 
-  /**
-   * The callback involke when pressing the close button
-   */
   onClose?: () => void;
-
-  /**
-   * Hide Close buttonƒ
-   */
   hideCloseButton?: boolean;
 }
 
@@ -205,9 +176,6 @@ export interface ChainListCardProps extends Omit<PropsOf<'div'>, 'onChange'> {
    */
   chainType: 'source' | 'dest';
 
-  /**
-   * The callback involke when pressing the close button
-   */
   onClose?: () => void;
 
   /**
@@ -273,9 +241,6 @@ export interface RelayerListCardProps
    */
   isDisconnected?: boolean;
 
-  /**
-   * The callback involke when pressing the close button
-   */
   onClose?: () => void;
 
   /**
@@ -321,21 +286,6 @@ export interface TokenListCardProps
   type?: 'token' | 'pool' | 'asset';
 
   /**
-   * The popular token list
-   */
-  popularTokens: AssetType[];
-
-  /**
-   * The selected token list
-   */
-  selectTokens: AssetType[];
-
-  /**
-   * The unavailable token list
-   */
-  unavailableTokens: AssetType[];
-
-  /**
    * The current selected token, use to control the component
    */
   value?: AssetType;
@@ -351,14 +301,15 @@ export interface TokenListCardProps
   alertTitle?: string;
 
   /**
-   * Override the input props
-   */
-  overrideInputProps?: Partial<InputProps>;
-
-  /**
    * Function to render body when the list is empty
    */
   renderEmpty?: () => React.ReactNode;
 
-  overrideScrollAreaProps?: ComponentProps<typeof ScrollArea>;
+  /**
+   * The description to show when the list is empty.
+   */
+  descriptionWhenEmpty?: string;
+
+  selectTokens: AssetType[];
+  overrideInputProps?: Partial<InputProps>;
 }

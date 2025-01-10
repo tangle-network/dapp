@@ -12,13 +12,16 @@ import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import type { DelegatorUnstakeRequest } from '@webb-tools/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
+import {
+  AmountFormatStyle,
+  EMPTY_VALUE_PLACEHOLDER,
+  formatDisplayAmount,
+} from '@webb-tools/webb-ui-components';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { useMemo } from 'react';
-import { formatUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
@@ -26,6 +29,8 @@ import TableCell from '../TableCell';
 import { calculateTimeRemaining } from '../utils';
 import type { UnstakeRequestTableData } from './types';
 import UnstakeRequestTableActions from './UnstakeRequestTableActions';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import { BN } from '@polkadot/util';
 
 const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
 
@@ -33,7 +38,7 @@ const columns = [
   columnsHelper.accessor('operatorAccountId', {
     id: 'select',
     enableSorting: false,
-    header: () => <TableCell>Select request to cancel</TableCell>,
+    header: () => <TableCell>Request</TableCell>,
     cell: (props) => (
       <div className="flex items-center justify-start gap-2">
         <CheckBox
@@ -76,7 +81,7 @@ const columns = [
           ) : (
             <span className="flex items-center gap-1">
               <TimeFillIcon className="!fill-blue-50" />
-              {`${value} round${value > 1 ? 's' : ''}`}
+              {`${value} session${value > 1 ? 's' : ''}`}
             </span>
           )}
         </TableCell>
@@ -103,9 +108,17 @@ const UnstakeRequestTable = ({
       unstakeRequests.reduce(
         (acc, { assetId, amount, requestedRound, operatorAccountId }) => {
           const asset = assetMap[assetId];
-          if (!asset) return acc;
 
-          const formattedAmount = formatUnits(amount, asset.decimals);
+          if (!asset) {
+            return acc;
+          }
+
+          const fmtAmount = formatDisplayAmount(
+            new BN(amount.toString()),
+            asset.decimals,
+            AmountFormatStyle.SHORT,
+          );
+
           const timeRemaining = calculateTimeRemaining(
             currentRound,
             requestedRound,
@@ -113,7 +126,7 @@ const UnstakeRequestTable = ({
           );
 
           acc[getId({ assetId, operatorAccountId })] = {
-            amount: Number(formattedAmount),
+            amount: fmtAmount,
             amountRaw: amount,
             assetId: assetId,
             assetSymbol: asset.symbol,
@@ -130,10 +143,12 @@ const UnstakeRequestTable = ({
     [assetMap, currentRound, delegationBondLessDelay, operatorIdentities, unstakeRequests],
   );
 
+  const rows = useMemo(() => Object.values(dataWithId), [dataWithId]);
+
   const table = useReactTable(
     useMemo<TableOptions<UnstakeRequestTableData>>(
       () => ({
-        data: Object.values(dataWithId),
+        data: rows,
         columns,
         initialState: {
           pagination: {
@@ -151,7 +166,7 @@ const UnstakeRequestTable = ({
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
       }),
-      [dataWithId],
+      [rows],
     ),
   );
 
@@ -164,7 +179,12 @@ const UnstakeRequestTable = ({
 
   return (
     <>
-      <Table variant={TableVariant.DEFAULT} tableProps={table} isPaginated />
+      <Table
+        variant={TableVariant.DEFAULT}
+        tableProps={table}
+        isPaginated
+        title={pluralize('request', rows.length !== 1)}
+      />
 
       <div className="grid grid-cols-2 gap-3">
         <UnstakeRequestTableActions

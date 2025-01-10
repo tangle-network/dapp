@@ -7,16 +7,17 @@ import {
   AccordionButtonBase,
   AccordionContent,
   AccordionItem,
+  InfoIconWithTooltip,
   Label,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 
-import { BridgeTokenType } from '@webb-tools/tangle-shared-ui/types';
+import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
 
 export interface FeeDetailProps {
-  token: BridgeTokenType;
+  token: BridgeToken;
   amounts: {
     sending: string;
     receiving: string;
@@ -52,19 +53,10 @@ export const FeeDetail = ({
         <AccordionButtonBase
           className={cx('group flex items-center justify-between w-full p-4')}
         >
-          <Label
-            className="text-lg font-bold text-mono-120 dark:text-mono-120"
-            htmlFor="bridge-tx-detail"
-          >
-            Bridge Fee
-          </Label>
+          <Typography variant="body1">Fee</Typography>
 
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              <Typography variant="h5" fw="bold">
-                {amounts.bridgeFee}
-              </Typography>
-
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
               {token.bridgeType === EVMTokenBridgeEnum.Router ? (
                 <TokenIcon
                   size="lg"
@@ -78,6 +70,15 @@ export const FeeDetail = ({
                   className={cx(`shrink-0 ${getFlexBasic('lg')}`)}
                 />
               )}
+
+              <Typography
+                variant="body1"
+                className="text-mono-0 dark:text-mono-0 whitespace-nowrap"
+              >
+                {amounts.bridgeFee.split('.')[0]}.
+                {amounts.bridgeFee.split('.')[1].slice(0, 4)}{' '}
+                {bridgeFeeTokenType}
+              </Typography>
             </div>
 
             {isCollapsible && (
@@ -101,9 +102,7 @@ export const FeeDetail = ({
         >
           <div className="flex flex-col gap-4 px-4 pb-4">
             <div className="flex items-center justify-between">
-              <Typography variant="body1" className="text-lg">
-                Bridge
-              </Typography>
+              <Typography variant="body1">Bridge</Typography>
 
               <div className="flex items-center gap-1">
                 {token.bridgeType === EVMTokenBridgeEnum.Router ? (
@@ -111,7 +110,8 @@ export const FeeDetail = ({
                 ) : (
                   <TokenIcon name="hyperlane" size="lg" />
                 )}
-                <Typography variant="body1" fw="semibold" className="text-lg">
+
+                <Typography variant="body1">
                   {token.bridgeType.charAt(0).toUpperCase() +
                     token.bridgeType.slice(1)}
                 </Typography>
@@ -119,42 +119,49 @@ export const FeeDetail = ({
             </div>
 
             <div className="flex items-center justify-between">
-              <Typography variant="body1" className="text-lg">
-                Sending
-              </Typography>
-              <div className="flex items-center gap-2">
-                <Typography variant="h5" fw="bold">
-                  {amounts.sending}
-                </Typography>
+              <Typography variant="body1">Amount</Typography>
+
+              <div className="flex items-center gap-1">
                 <TokenIcon
                   size="lg"
                   name={token.tokenType.toLowerCase()}
                   className={cx(`shrink-0 ${getFlexBasic('lg')}`)}
                 />
+
+                <Typography
+                  variant="body1"
+                  className="text-mono-0 dark:text-mono-0 whitespace-nowrap"
+                >
+                  {amounts.sending}
+                </Typography>
               </div>
             </div>
 
-            {estimatedTime && (
+            {estimatedTime !== undefined && (
               <div className="flex items-center justify-between">
-                <Typography variant="body1" className="text-lg">
-                  Estimated Time
-                </Typography>
-                <Typography variant="h5" fw="bold">
-                  ~ {estimatedTime}
+                <Typography variant="body1">Estimated Time</Typography>
+
+                <Typography
+                  variant="body1"
+                  className="text-mono-0 dark:text-mono-0"
+                >
+                  ~30min or more
                 </Typography>
               </div>
             )}
 
             {amounts.gasFee && (
               <div className="flex items-center justify-between">
-                <Typography variant="body1" fw="bold" className="text-lg">
-                  Gas Fee
-                </Typography>
+                <Typography variant="body1">Gas Fee</Typography>
 
                 <div className="flex items-center gap-2">
-                  <Typography variant="h5" fw="bold">
+                  <Typography
+                    variant="body1"
+                    className="text-mono-0 dark:text-mono-0"
+                  >
                     {amounts.gasFee}
                   </Typography>
+
                   <TokenIcon
                     size="lg"
                     name={gasFeeTokenType?.toLowerCase()}
@@ -167,18 +174,23 @@ export const FeeDetail = ({
             <div className="h-px bg-mono-40 dark:bg-mono-160" />
 
             <div className="flex items-center justify-between">
-              <Typography variant="body1" fw="bold" className="text-lg">
-                Total Receiving
-              </Typography>
-              <div className="flex items-center gap-2">
-                <Typography variant="h5" fw="bold">
-                  {amounts.receiving}
-                </Typography>
+              <Typography variant="body1">Total Receiving</Typography>
+
+              <div className="flex items-center gap-1">
                 <TokenIcon
                   size="lg"
                   name={token.tokenType.toLowerCase()}
                   className={cx(`shrink-0 ${getFlexBasic('lg')}`)}
                 />
+
+                <Typography
+                  variant="body1"
+                  className="text-mono-0 dark:text-mono-0 whitespace-nowrap"
+                >
+                  {amounts.receiving.split('.')[0]}.
+                  {amounts.receiving.split('.')[1].slice(0, 4)}{' '}
+                  {bridgeFeeTokenType}
+                </Typography>
               </div>
             </div>
           </div>

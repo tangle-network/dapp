@@ -8,7 +8,6 @@ import {
   Button,
   TabContent,
   TableAndChartTabs,
-  useCheckMobile,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
 import {
@@ -19,6 +18,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 import {
   ContainerSkeleton,
@@ -42,6 +42,7 @@ import { PayoutAllTxContainer } from '../PayoutAllTxContainer';
 import { StopNominationTxContainer } from '../StopNominationTxContainer';
 import { UpdateNominationsTxContainer } from '../UpdateNominationsTxContainer';
 import { UpdatePayeeTxContainer } from '../UpdatePayeeTxContainer';
+import type { DeriveSessionProgress } from '@polkadot/api-derive/session/types';
 
 const PAGE_SIZE = 10;
 
@@ -59,7 +60,6 @@ function assertTab(tab: string): NominationsAndPayoutsTab {
 
 const DelegationsPayoutsContainer: FC = () => {
   const [payoutsStartIndex, setPayoutsStartIndex] = useState(0);
-  const { isMobile } = useCheckMobile();
   const { toggleModal } = useConnectWallet();
   const tableRef = useRef<HTMLDivElement>(null);
   const { activeAccount, loading, isConnecting } = useWebContext();
@@ -210,8 +210,7 @@ const DelegationsPayoutsContainer: FC = () => {
               buttonText="Connect"
               buttonProps={{
                 isLoading: loading || isConnecting,
-                isDisabled: isMobile,
-                loadingText: isConnecting ? 'Connecting' : 'Loading...',
+                loadingText: isConnecting ? 'Connecting' : 'Loading',
                 onClick: () => toggleModal(true),
               }}
               icon="🔗"
@@ -222,7 +221,6 @@ const DelegationsPayoutsContainer: FC = () => {
             <TableStatus
               title="Ready to Explore Nominations?"
               description="It looks like you haven't nominated any validators yet. Start by choosing a validator to support and earn rewards!"
-              icon="🔍"
               buttonText="Nominate"
               buttonProps={{
                 onClick: () => setIsDelegateModalOpen(true),
@@ -245,7 +243,6 @@ const DelegationsPayoutsContainer: FC = () => {
               buttonText="Connect"
               buttonProps={{
                 isLoading: loading || isConnecting,
-                isDisabled: isMobile,
                 loadingText: isConnecting ? 'Connecting' : undefined,
                 onClick: () => toggleModal(true),
               }}
@@ -278,7 +275,7 @@ const DelegationsPayoutsContainer: FC = () => {
             <PayoutTable
               data={fetchedPayouts ?? []}
               pageSize={PAGE_SIZE}
-              sessionProgress={progress}
+              sessionProgress={progress as unknown as DeriveSessionProgress}
               historyDepth={historyDepth}
               epochDuration={epochDuration}
             />
@@ -295,7 +292,11 @@ const DelegationsPayoutsContainer: FC = () => {
         isModalOpen={isUpdateNominationsModalOpen}
         setIsModalOpen={setIsUpdateNominationsModalOpen}
         // TODO: Need to pass down the explicit `Optional<T>` type here, instead of defaulting to `[]`, because that will lead to a situation where the lower component things the value is still loading and displays a loading state forever.
-        currentNominations={currentNominationAddresses?.value ?? []}
+        currentNominations={
+          currentNominationAddresses?.value?.map(
+            (addr) => addr as SubstrateAddress,
+          ) ?? []
+        }
       />
 
       <UpdatePayeeTxContainer

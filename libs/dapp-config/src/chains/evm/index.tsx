@@ -206,7 +206,7 @@ export const chainsConfig = {
     chainType: ChainType.EVM,
     group: 'tangle',
     tag: 'test',
-    displayName: 'Tangle Testnet',
+    displayName: 'Tangle Testnet (EVM)',
   } satisfies ChainConfig,
 
   [PresetTypedChainId.TangleLocalEVM]: {
@@ -214,6 +214,7 @@ export const chainsConfig = {
     chainType: ChainType.EVM,
     group: 'tangle',
     tag: 'dev',
+    displayName: 'Tangle Local (EVM)',
   } satisfies ChainConfig,
 
   // Localnet

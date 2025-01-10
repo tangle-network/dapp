@@ -1,27 +1,29 @@
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import { TokenIcon } from '@webb-tools/icons';
+import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import { Card, isSubstrateAddress } from '@webb-tools/webb-ui-components';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import {
+  assertSubstrateAddress,
+  Card,
+  isSubstrateAddress,
+} from '@webb-tools/webb-ui-components';
 import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import entries from 'lodash/entries';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import keys from 'lodash/keys';
 import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Link } from 'react-router';
 import { formatUnits, parseUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
-import {
-  OperatorConfig,
-  OperatorList,
-} from '../../../components/Lists/OperatorList';
+import LogoListItem from '../../../components/Lists/LogoListItem';
+import OperatorListItem from '../../../components/Lists/OperatorListItem';
 import {
   DelegatorStakeContext,
   TxEvent,
@@ -34,11 +36,10 @@ import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
-import { PagePath, QueryParamKey } from '../../../types';
+import { QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
-import AssetList from '../AssetList';
+import searchBy from '../../../utils/searchBy';
 import Form from '../Form';
-import ModalContent from '../ModalContent';
 import RestakeTabs from '../RestakeTabs';
 import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
@@ -47,7 +48,13 @@ import ActionButton from './ActionButton';
 import Info from './Info';
 import StakeInput from './StakeInput';
 
-export default function Page() {
+type RestakeOperator = {
+  accountId: SubstrateAddress;
+  identityName?: string;
+  isActive: boolean;
+};
+
+export default function RestakeStakePage() {
   const {
     register,
     setValue: setFormValue,
@@ -84,6 +91,7 @@ export default function Page() {
   const { stake: delegate } = useRestakeTx();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
+
   const { result: operatorIdentities } = useIdentities(
     useMemo(() => Object.keys(operatorMap), [operatorMap]),
   );
@@ -157,24 +165,25 @@ export default function Page() {
       return [];
     }
 
-    return entries(delegatorInfo.deposits)
-      .filter(([assetId]) => Boolean(assetMap[assetId]))
+    return Object.entries(delegatorInfo.deposits)
+      .filter(([assetId]) => Object.hasOwn(assetMap, assetId))
       .map(([assetId, { amount }]) => {
-        const asset = assetMap[assetId];
+        const metadata = assetMap[assetId];
 
         return {
-          id: asset.id,
-          name: asset.name,
-          symbol: asset.symbol,
+          id: metadata.id,
+          name: metadata.name,
+          symbol: metadata.symbol,
+          decimals: metadata.decimals,
           assetBalanceProps: {
-            balance: +formatUnits(amount, asset.decimals),
-            ...(asset.vaultId
+            balance: +formatUnits(amount, metadata.decimals),
+            ...(metadata.vaultId
               ? {
-                  subContent: `Vault ID: ${asset.vaultId}`,
+                  subContent: `Vault ID: ${metadata.vaultId}`,
                 }
               : {}),
           },
-        } satisfies TokenListCardProps['selectTokens'][number];
+        };
       });
   }, [assetMap, delegatorInfo]);
 
@@ -189,6 +198,7 @@ export default function Page() {
   const handleChainChange = useCallback(
     async (chain: ChainConfig) => {
       const typedChainId = calculateTypedChainId(chain.chainType, chain.id);
+
       await switchChain(typedChainId);
       closeChainModal();
     },
@@ -242,16 +252,21 @@ export default function Page() {
     [assetMap, delegate, txEventHandlers],
   );
 
-  const operators = useMemo(() => {
-    return Object.entries(operatorMap).map(([accountId, _operator]) => ({
-      accountId,
-      name: operatorIdentities?.[accountId]?.name || '<Unknown>',
-      status: 'active',
-    }));
+  const operators = useMemo<RestakeOperator[]>(() => {
+    return (
+      Object.entries(operatorMap)
+        // Include only active operators.
+        .filter(([, metadata]) => metadata.status === 'Active')
+        .map(([accountId]) => ({
+          accountId: assertSubstrateAddress(accountId),
+          identityName: operatorIdentities?.[accountId]?.name ?? undefined,
+          isActive: true,
+        }))
+    );
   }, [operatorMap, operatorIdentities]);
 
   const handleOnSelectOperator = useCallback(
-    (operator: OperatorConfig) => {
+    (operator: RestakeOperator) => {
       setValue('operatorAccountId', operator.accountId);
       closeOperatorModal();
     },
@@ -259,10 +274,10 @@ export default function Page() {
   );
 
   return (
-    <StyleContainer>
+    <StyleContainer className="min-w-[512px]">
       <RestakeTabs />
 
-      <Card withShadow>
+      <Card withShadow tightPadding>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col h-full space-y-4 grow">
             <StakeInput
@@ -288,34 +303,53 @@ export default function Page() {
             </div>
           </div>
 
-          <Modal open={isAssetModalOpen} onOpenChange={updateAssetModal}>
-            <ModalContent
-              title="Select Asset"
-              description="Select the asset you want to delegate"
-            >
-              <AssetList
-                selectTokens={selectableTokens}
-                onChange={handleAssetChange}
-                onClose={closeAssetModal}
-                renderEmpty={EmptyAsset}
-              />
-            </ModalContent>
-          </Modal>
+          <ListModal
+            title="Select Asset"
+            isOpen={isAssetModalOpen}
+            setIsOpen={updateAssetModal}
+            titleWhenEmpty="No Assets Available"
+            descriptionWhenEmpty="Have you made a deposit on this network yet?"
+            items={selectableTokens}
+            searchInputId="restake-delegate-asset-search"
+            searchPlaceholder="Search for asset or enter token address"
+            getItemKey={(item) => item.id}
+            onSelect={handleAssetChange}
+            renderItem={(asset) => {
+              const fmtBalance = `${addCommasToNumber(asset.assetBalanceProps.balance)} ${asset.symbol}`;
 
-          <Modal open={isOperatorModalOpen} onOpenChange={updateOperatorModal}>
-            <ModalContent
-              title="Select Operator"
-              description="Select the operator you want to stake with"
-            >
-              <OperatorList
-                operators={operators}
-                operatorMap={operatorMap}
-                operatorIdentities={operatorIdentities}
-                onSelectOperator={handleOnSelectOperator}
-                onClose={closeOperatorModal}
+              return (
+                <LogoListItem
+                  logo={<TokenIcon size="xl" name={asset.symbol} />}
+                  leftUpperContent={`${asset.name} (${asset.symbol})`}
+                  leftBottomContent={`Asset ID: ${asset.id}`}
+                  rightUpperText={fmtBalance}
+                  rightBottomText="Balance"
+                />
+              );
+            }}
+          />
+
+          <ListModal
+            title="Select Operator"
+            isOpen={isOperatorModalOpen}
+            setIsOpen={updateOperatorModal}
+            titleWhenEmpty="No Operators Available"
+            descriptionWhenEmpty="Looks like there aren't any registered operators in this network yet. Make the leap and become the first operator!"
+            items={operators}
+            searchInputId="restake-delegate-operator-search"
+            searchPlaceholder="Search for an operator..."
+            getItemKey={(item) => item.accountId}
+            onSelect={handleOnSelectOperator}
+            filterItem={(item, query) =>
+              searchBy(query, [item.accountId, item.identityName])
+            }
+            renderItem={({ accountId, identityName }) => (
+              <OperatorListItem
+                accountAddress={accountId}
+                identity={identityName}
               />
-            </ModalContent>
-          </Modal>
+            )}
+          />
 
           <Modal open={isChainModalOpen} onOpenChange={updateChainModal}>
             <SupportedChainModal
@@ -328,18 +362,3 @@ export default function Page() {
     </StyleContainer>
   );
 }
-
-/** @internal */
-const EmptyAsset = () => (
-  <div className="space-y-4">
-    <Typography variant="h5" fw="bold" ta="center">
-      No assets available
-    </Typography>
-
-    <Link to={PagePath.RESTAKE_DEPOSIT}>
-      <Button variant="link" className="block mx-auto text-center">
-        Deposit now
-      </Button>
-    </Link>
-  </div>
-);

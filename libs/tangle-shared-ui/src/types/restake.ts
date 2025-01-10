@@ -1,5 +1,6 @@
 import {
   PalletAssetsAccountStatus,
+  PalletAssetsAssetDetails,
   PalletAssetsAssetStatus,
   PalletAssetsExistenceReason,
   PalletMultiAssetDelegationDelegatorDelegatorStatus,
@@ -66,6 +67,8 @@ export type AssetMetadata = {
   readonly vaultId: string | null;
 
   readonly priceInUsd: number | null;
+
+  readonly details?: PalletAssetsAssetDetails;
 };
 
 export type AssetMap = {
@@ -79,13 +82,13 @@ export type DelegatorWithdrawRequest = {
 };
 
 export type DelegatorBondInfo = {
-  readonly operatorAccountId: string;
+  readonly operatorAccountId: SubstrateAddress;
   readonly amountBonded: bigint;
   readonly assetId: string;
 };
 
 export type DelegatorUnstakeRequest = {
-  readonly operatorAccountId: string;
+  readonly operatorAccountId: SubstrateAddress;
   readonly assetId: string;
   readonly amount: bigint;
   readonly requestedRound: number;

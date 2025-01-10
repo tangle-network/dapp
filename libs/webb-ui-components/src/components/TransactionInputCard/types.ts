@@ -94,7 +94,7 @@ export interface TransactionMaxAmountButtonProps
     > {
   /**
    * The tooltip body for the max amount button.
-   * @default "Shielded Balance" | "Wallet Balance" (based on the account type)
+   * @default "Shielded Balance" | "Available Balance" (based on the account type)
    */
   tooltipBody?: ReactNode;
 

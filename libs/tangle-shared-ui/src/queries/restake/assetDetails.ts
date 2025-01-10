@@ -63,7 +63,8 @@ function createAssetEntry(
     status: detail.status.type,
     vaultId: u128ToVaultId(vaultId),
     priceInUsd,
-  };
+    details: detail,
+  } satisfies AssetMetadata;
 }
 
 function queryTokenPrices(
@@ -84,21 +85,23 @@ async function processAssetDetails(
   assetMetadatas: PalletAssetsAssetMetadata[],
   assetVaultIds: Option<u128>[],
   hasNative: boolean,
-  nativeCurrentcy: Chain['nativeCurrency'],
+  nativeCurrency: Chain['nativeCurrency'],
 ) {
   const tokenPrices = await queryTokenPrices(nonNativeAssetIds, assetMetadatas);
 
   const initialAssetMap = hasNative
     ? {
-        [(await getNativeAsset(nativeCurrentcy, api)).id]: await getNativeAsset(
-          nativeCurrentcy,
+        [(await getNativeAsset(nativeCurrency, api)).id]: await getNativeAsset(
+          nativeCurrency,
           api,
         ),
       }
     : {};
 
   return nonNativeAssetIds.reduce((assetMap, assetId, idx) => {
-    if (assetDetails[idx].isNone) return assetMap;
+    if (assetDetails[idx].isNone) {
+      return assetMap;
+    }
 
     return {
       ...assetMap,
@@ -120,10 +123,10 @@ function processAssetDetailsRx(
   assetMetadatas: PalletAssetsAssetMetadata[],
   assetVaultIds: Option<u128>[],
   hasNative: boolean,
-  nativeCurrentcy: Chain['nativeCurrency'],
+  nativeCurrency: Chain['nativeCurrency'],
 ): Observable<AssetMap> {
   return hasNative
-    ? getNativeAssetRx(nativeCurrentcy, api).pipe(
+    ? getNativeAssetRx(nativeCurrency, api).pipe(
         map((nativeAsset) => ({ [nativeAsset.id]: nativeAsset })),
       )
     : of<AssetMap>({}).pipe(
@@ -196,15 +199,15 @@ function getNativeAssetRx(
 export async function assetDetailsQuery(
   api: ApiPromise,
   assetIds: string[],
-  nativeCurrentcy: Chain['nativeCurrency'] = DEFAULT_NATIVE_CURRENCY,
+  nativeCurrency: Chain['nativeCurrency'] = DEFAULT_NATIVE_CURRENCY,
 ) {
   const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
 
   if (nonNativeAssetIds.length === 0 || !isApiSupported(api)) {
     return hasNative
       ? {
-          [(await getNativeAsset(nativeCurrentcy, api)).id]:
-            await getNativeAsset(nativeCurrentcy, api),
+          [(await getNativeAsset(nativeCurrency, api)).id]:
+            await getNativeAsset(nativeCurrency, api),
         }
       : {};
   }
@@ -238,14 +241,14 @@ export async function assetDetailsQuery(
     assetMetadatas,
     assetVaultIds,
     hasNative,
-    nativeCurrentcy,
+    nativeCurrency,
   );
 }
 
 export function assetDetailsRxQuery(
   api: ApiRx,
   assetIds: string[],
-  nativeCurrentcy: Chain['nativeCurrency'] = DEFAULT_NATIVE_CURRENCY,
+  nativeCurrency: Chain['nativeCurrency'] = DEFAULT_NATIVE_CURRENCY,
 ) {
   const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
 
@@ -253,7 +256,7 @@ export function assetDetailsRxQuery(
 
   if (isNonNativeAssetsEmpty || !isApiSupported(api)) {
     if (hasNative) {
-      return getNativeAssetRx(nativeCurrentcy, api).pipe(
+      return getNativeAssetRx(nativeCurrency, api).pipe(
         map((nativeAsset) => ({ [nativeAsset.id]: nativeAsset })),
       );
     } else {
@@ -267,18 +270,18 @@ export function assetDetailsRxQuery(
   const assetDetailQueries = nonNativeAssetIds.reduce(
     (batchQueries, assetId) =>
       batchQueries.concat([
-        [api.query.assets.asset, assetId.toString()] as const,
+        [api.query.assets.asset, { Custom: assetId.toString() }] as const,
       ]),
-    [] as [typeof api.query.assets.asset, string][],
+    [] as [typeof api.query.assets.asset, { Custom: string }][],
   );
 
   // Batch queries for asset metadata
   const assetMetadataQueries = nonNativeAssetIds.reduce(
     (batchQueries, assetId) =>
       batchQueries.concat([
-        [api.query.assets.metadata, assetId.toString()] as const,
+        [api.query.assets.metadata, { Custom: assetId.toString() }] as const,
       ]),
-    [] as [typeof api.query.assets.metadata, string][],
+    [] as [typeof api.query.assets.metadata, { Custom: string }][],
   );
 
   // Batch queries for asset vault ID
@@ -287,12 +290,12 @@ export function assetDetailsRxQuery(
       batchQueries.concat([
         [
           api.query.multiAssetDelegation.assetLookupRewardVaults,
-          assetId,
+          { Custom: assetId },
         ] as const,
       ]),
     [] as [
       typeof api.query.multiAssetDelegation.assetLookupRewardVaults,
-      string,
+      { Custom: string },
     ][],
   );
 
@@ -313,7 +316,7 @@ export function assetDetailsRxQuery(
         assetMetadatas,
         assetVaultIds,
         hasNative,
-        nativeCurrentcy,
+        nativeCurrency,
       );
     }),
   );

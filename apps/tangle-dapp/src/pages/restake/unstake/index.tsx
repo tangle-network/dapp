@@ -17,7 +17,6 @@ import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/compone
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import cx from 'classnames';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -43,15 +42,14 @@ import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
 import RestakeTabs from '../RestakeTabs';
-import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
-import UnstakeModal from './UnstakeModal';
+import SelectOperatorModal from './SelectOperatorModal';
 import UnstakeRequestTable from './UnstakeRequestTable';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
-const Page = () => {
+const RestakeUnstakePage = () => {
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
     useState(false);
 
@@ -238,22 +236,11 @@ const Page = () => {
   );
 
   return (
-    <div
-      className={cx(
-        'grid gap-4 place-content-center',
-        !isMediumScreen ? 'grid-cols-1' : 'grid-flow-col auto-cols-fr',
-      )}
-    >
-      <StyleContainer
-        className={cx(
-          isUnstakeRequestTableOpen && isMediumScreen
-            ? 'ml-auto mr-0'
-            : 'mx-auto',
-        )}
-      >
+    <div className="flex flex-wrap items-start justify-center gap-4">
+      <div>
         <RestakeTabs />
 
-        <Card withShadow className="relative">
+        <Card withShadow tightPadding className="relative min-w-[512px]">
           {!isUnstakeRequestTableOpen && isMediumScreen && (
             <ExpandTableButton
               className="absolute top-0 -right-10"
@@ -263,50 +250,55 @@ const Page = () => {
           )}
 
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-            <TransactionInputCard.Root tokenSymbol={selectedAsset?.symbol}>
-              <TransactionInputCard.Header>
-                <TransactionInputCard.ChainSelector
-                  placeholder="Select"
-                  onClick={openOperatorModal}
-                  {...(selectedOperatorAccountId
-                    ? {
-                        renderBody: () => (
-                          <AvatarWithText
-                            accountAddress={selectedOperatorAccountId}
-                            identityName={
-                              operatorIdentities?.[selectedOperatorAccountId]
-                                ?.name
-                            }
-                            overrideTypographyProps={{ variant: 'h5' }}
-                          />
-                        ),
-                      }
-                    : {})}
-                />
-                <TransactionInputCard.MaxAmountButton
-                  maxAmount={formattedMaxAmount}
-                  tooltipBody="Staked Balance"
-                  Icon={
+            <div className="flex flex-col items-start justify-stretch">
+              <TransactionInputCard.Root
+                tokenSymbol={selectedAsset?.symbol}
+                className="bg-mono-20 dark:bg-mono-180"
+              >
+                <TransactionInputCard.Header>
+                  <TransactionInputCard.ChainSelector
+                    placeholder="Select Operator"
+                    onClick={openOperatorModal}
+                    {...(selectedOperatorAccountId
+                      ? {
+                          renderBody: () => (
+                            <AvatarWithText
+                              accountAddress={selectedOperatorAccountId}
+                              identityName={
+                                operatorIdentities?.[selectedOperatorAccountId]
+                                  ?.name
+                              }
+                              overrideTypographyProps={{ variant: 'h5' }}
+                            />
+                          ),
+                        }
+                      : {})}
+                  />
+                  <TransactionInputCard.MaxAmountButton
+                    maxAmount={formattedMaxAmount}
+                    tooltipBody="Delegated"
+                    Icon={
+                      useRef({
+                        enabled: <LockLineIcon />,
+                        disabled: <LockFillIcon />,
+                      }).current
+                    }
+                  />
+                </TransactionInputCard.Header>
+
+                <TransactionInputCard.Body
+                  customAmountProps={customAmountProps}
+                  tokenSelectorProps={
                     useRef({
-                      enabled: <LockLineIcon />,
-                      disabled: <LockFillIcon />,
+                      placeholder: <AssetPlaceholder />,
+                      isDisabled: true,
                     }).current
                   }
                 />
-              </TransactionInputCard.Header>
-
-              <TransactionInputCard.Body
-                customAmountProps={customAmountProps}
-                tokenSelectorProps={
-                  useRef({
-                    placeholder: <AssetPlaceholder />,
-                    isDisabled: true,
-                  }).current
-                }
-              />
+              </TransactionInputCard.Root>
 
               <ErrorMessage>{errors.amount?.message}</ErrorMessage>
-            </TransactionInputCard.Root>
+            </div>
 
             <TxInfo />
 
@@ -338,9 +330,7 @@ const Page = () => {
                     type="submit"
                     isFullWidth
                     isLoading={isSubmitting || isLoading}
-                    loadingText={
-                      isSubmitting ? 'Sending transaction...' : loadingText
-                    }
+                    loadingText={loadingText}
                   >
                     {displayError ?? 'Schedule Unstake'}
                   </Button>
@@ -349,19 +339,19 @@ const Page = () => {
             </ActionButtonBase>
           </form>
         </Card>
-      </StyleContainer>
+      </div>
 
       <AnimatedTable
         isTableOpen={isUnstakeRequestTableOpen}
         isMediumScreen={isMediumScreen}
       >
-        <RestakeDetailCard.Root className="md:mt-[61px]">
+        <RestakeDetailCard.Root>
           <div className="flex items-center justify-between">
             <RestakeDetailCard.Header
               title={
                 unstakeRequests.length > 0
-                  ? 'Unstake Requests'
-                  : 'No Unstake Requests'
+                  ? 'Undelegate Requests'
+                  : 'No Undelegate Requests'
               }
             />
 
@@ -377,26 +367,27 @@ const Page = () => {
             />
           ) : (
             <Typography
-              variant="body2"
+              variant="body1"
               className="text-mono-120 dark:text-mono-100"
             >
-              You will be able to withdraw your tokens after the unstake request
-              has been processed. To unstake your tokens go to the unstake tab
-              to schedule a request.
+              You will be able to withdraw your tokens after the undelegate
+              request has been processed.
             </Typography>
           )}
         </RestakeDetailCard.Root>
       </AnimatedTable>
 
       <Modal open={isOperatorModalOpen} onOpenChange={updateOperatorModal}>
-        <UnstakeModal
+        <SelectOperatorModal
           delegatorInfo={delegatorInfo}
-          onClose={closeOperatorModal}
+          isOpen={isOperatorModalOpen}
+          setIsOpen={updateOperatorModal}
           operatorIdentities={operatorIdentities}
           onItemSelected={(item) => {
             closeOperatorModal();
 
             const { formattedAmount, assetId, operatorAccountId } = item;
+
             const commonOpts = {
               shouldDirty: true,
               shouldValidate: true,
@@ -430,4 +421,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default RestakeUnstakePage;

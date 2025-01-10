@@ -5,7 +5,7 @@ import {
   formatDisplayAmount,
 } from '@webb-tools/webb-ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
+import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -58,7 +58,7 @@ const FeeDetailItem: FC<FeeDetailItemProps> = ({
   const feeTitle =
     typeof feePercentage !== 'number'
       ? 'Fee'
-      : `Fee (${formatFractional(feePercentage * 100)})`;
+      : `Fee (${formatPercentage(feePercentage * 100)})`;
 
   return (
     <DetailItem

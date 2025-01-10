@@ -3,7 +3,7 @@ import type { ComponentProps, FC } from 'react';
 
 import { ChainList } from '../../components/Lists/ChainList';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../constants/restake';
-import ModalContent from './ModalContent';
+import { ModalContent } from '@webb-tools/webb-ui-components';
 
 type Props = {
   onClose: () => void;
@@ -12,10 +12,7 @@ type Props = {
 
 const SupportedChainModal: FC<Props> = ({ onChainChange, onClose }) => {
   return (
-    <ModalContent
-      title="Select Chain"
-      description="Select the chain you want to delegate from"
-    >
+    <ModalContent title="Select Chain">
       <ChainList
         searchInputId="restake-supported-chain-search"
         chains={SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.map(

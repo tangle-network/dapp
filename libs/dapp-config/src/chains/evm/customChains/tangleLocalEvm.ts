@@ -5,7 +5,7 @@ import { TANGLE_LOCAL_HTTP_RPC_ENDPOINT } from '../../../constants';
 
 const tangleLocalEVM = defineChain({
   id: EVMChainId.TangleLocalEVM,
-  name: 'Tangle Local EVM',
+  name: 'Tangle Local (EVM)',
   nativeCurrency: {
     name: 'Local Test Tangle Network Token',
     symbol: 'tTNT',

@@ -1,5 +1,6 @@
 export enum AddressType {
   EVM,
-  Substrate,
-  Both,
+  SUBSTRATE,
+  SOLANA,
+  SUBSTRATE_OR_EVM,
 }

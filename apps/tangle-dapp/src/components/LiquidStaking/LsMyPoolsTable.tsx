@@ -193,11 +193,11 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       }),
       COLUMN_HELPER.accessor('commissionFractional', {
         header: () => 'Commission',
-        cell: (props) => <PercentageCell fractional={props.getValue()} />,
+        cell: (props) => <PercentageCell percentage={props.getValue()} />,
       }),
       COLUMN_HELPER.accessor('apyPercentage', {
         header: () => 'APY',
-        cell: (props) => <PercentageCell fractional={props.getValue()} />,
+        cell: (props) => <PercentageCell percentage={props.getValue()} />,
       }),
       COLUMN_HELPER.display({
         id: 'actions',
@@ -332,7 +332,6 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       <TableStatus
         title="Wallet Not Connected"
         description="Once you've connected an account, you'll be able to increase stake, unstake, and manage your liquid staking pools here."
-        icon="🔍"
       />
     );
   } else if (pools.length === 0) {
@@ -340,7 +339,6 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       <TableStatus
         title="No Active Pools"
         description="You haven't staked in any pools yet. Select a pool and start liquid staking to earn rewards! Once you've staked or created a pool, you'll be able to manage your stake and configure the pool here."
-        icon="🔍"
         buttonText="Learn More"
         buttonProps={{
           href: TANGLE_DOCS_LIQUID_STAKING_URL,

@@ -4,6 +4,7 @@ import {
   Alert,
   Button,
   Modal,
+  ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -174,7 +175,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
       <ModalContent size="lg">
         <ModalHeader>Setup Nomination {currentStep}</ModalHeader>
 
-        <div className="px-8 py-6">
+        <ModalBody>
           {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (
             <BondTokens
               isBondedOrNominating={isBondedOrNominating}
@@ -197,7 +198,7 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
               description={`You can only nominate up to ${maxNominationQuota} ${pluralize('validator', maxNominationQuota !== 1)}.`}
             />
           )}
-        </div>
+        </ModalBody>
 
         <ModalFooter className="flex items-center gap-2">
           {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (

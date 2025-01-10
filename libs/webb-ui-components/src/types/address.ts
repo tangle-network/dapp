@@ -30,3 +30,5 @@ export type AnyAddress =
   | SubstrateBytes32Address
   | EvmAddress
   | string;
+
+export type SolanaAddress = Brand<string, 'SolanaAddress'>;

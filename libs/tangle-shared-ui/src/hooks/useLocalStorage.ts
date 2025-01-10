@@ -3,13 +3,7 @@
 import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
 
-import { OnboardingPageKey } from '../constants';
-import {
-  BalanceType,
-  BridgeQueueTxItem,
-  Payout,
-  TangleTokenSymbol,
-} from '../types';
+import { BridgeQueueTxItem, Payout, TangleTokenSymbol } from '../types';
 import {
   Collator,
   Dapp,
@@ -31,8 +25,6 @@ export enum LocalStorageKey {
   SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
   BRIDGE_TX_QUEUE_BY_ACC = 'bridgeTxQueue',
   LIQUID_STAKING_TABLE_DATA = 'liquidStakingTableData',
-  ONBOARDING_MODALS_SEEN = 'onboardingModalsSeen',
-  EVM_TOKEN_BALANCES = 'evmTokenBalances',
 }
 
 export type PayoutsCache = {
@@ -84,11 +76,7 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
                       ? TxQueueByAccount
                       : T extends LocalStorageKey.LIQUID_STAKING_TABLE_DATA
                         ? LiquidStakingTableData
-                        : T extends LocalStorageKey.ONBOARDING_MODALS_SEEN
-                          ? OnboardingPageKey[]
-                          : T extends LocalStorageKey.EVM_TOKEN_BALANCES
-                            ? Record<string, BalanceType>
-                            : never;
+                        : never;
 
 export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,

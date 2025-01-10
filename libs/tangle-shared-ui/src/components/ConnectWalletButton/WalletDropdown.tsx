@@ -65,16 +65,15 @@ const WalletDropdown: FC<{
           accountName={accountName}
           wallet={wallet}
           address={accountAddress}
-          addressClassname="hidden lg:block"
         />
       </DropdownTrigger>
 
       <DropdownBody
         isPortal
-        className="mt-2 md:w-[480px] p-4 space-y-4 dark:bg-mono-180"
+        className="mt-2 md:w-[540px] p-4 space-y-4 dark:bg-mono-180"
       >
         <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 items-center">
             {wallet.Logo}
 
             <div>
@@ -89,12 +88,15 @@ const WalletDropdown: FC<{
                   keyValue={accountAddress}
                   size="sm"
                   labelVariant="body1"
-                  valueVariant="body1"
+                  valueVariant="h5"
                   displayCharCount={5}
                 />
 
                 {accountExplorerUrl !== null && (
-                  <ExternalLinkIcon href={accountExplorerUrl.toString()} />
+                  <ExternalLinkIcon
+                    href={accountExplorerUrl.toString()}
+                    size="md"
+                  />
                 )}
               </div>
             </div>
@@ -108,10 +110,11 @@ const WalletDropdown: FC<{
               leftIcon={
                 <LoginBoxLineIcon
                   className="fill-current dark:fill-current"
-                  size="lg"
+                  size="md"
                 />
               }
               variant="link"
+              className="text-lg"
             >
               Disconnect
             </Button>
@@ -160,8 +163,9 @@ const SwitchAccountButton: FC = () => {
   return activeApi instanceof WebbWeb3Provider ? (
     <Button
       onClick={handleSwitchAccount}
-      leftIcon={<WalletLineIcon className="!fill-current" size="lg" />}
+      leftIcon={<WalletLineIcon className="!fill-current" size="md" />}
       variant="link"
+      className="text-lg"
     >
       Switch
     </Button>

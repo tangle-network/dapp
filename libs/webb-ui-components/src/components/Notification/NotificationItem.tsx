@@ -58,9 +58,9 @@ export const NotificationItem = forwardRef<HTMLDivElement, Props>(
         role="alert"
         style={style}
         className={twMerge(
-          'p-4 w-[420px] rounded-lg',
+          'p-4 max-w-[620px] rounded-lg',
           'bg-mono-0 dark:bg-mono-140',
-          'flex items-start justify-between',
+          'flex items-start justify-between gap-2',
           'shadow-md',
           className,
         )}

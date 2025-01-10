@@ -1,12 +1,12 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
+  Caption,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooterActions,
   ModalHeader,
-  Typography,
   useWebbUI,
 } from '@webb-tools/webb-ui-components';
 import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
@@ -135,15 +135,15 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
             isDisabled={unbondTxStatus === TxStatus.PROCESSING}
           />
 
-          <Typography variant="body1" fw="normal">
+          <Caption>
             Once unbonding, you must wait certain number of eras for your funds
             to become available.
-          </Typography>
+          </Caption>
 
-          <Typography variant="body1" fw="normal">
+          <Caption>
             You can check the remaining eras for your funds to become available
             in the Unbonding {nativeTokenSymbol} tooltip.
-          </Typography>
+          </Caption>
         </ModalBody>
 
         <ModalFooterActions
