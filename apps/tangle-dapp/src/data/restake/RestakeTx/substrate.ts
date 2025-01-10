@@ -1,10 +1,10 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult, Signer } from '@polkadot/types/types';
+import { TxEventHandlers } from '@webb-tools/abstract-api-provider';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import noop from 'lodash/noop';
 import type { Hash } from 'viem';
-
 import {
   type CancelDelegatorUnstakeRequestContext,
   type CancelWithdrawRequestContext,
@@ -15,7 +15,6 @@ import {
   RestakeTxBase,
   type ScheduleDelegatorUnstakeContext,
   type ScheduleWithdrawContext,
-  type TxEventHandlers,
 } from './base';
 
 export default class SubstrateRestakeTx extends RestakeTxBase {
@@ -32,7 +31,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   private signAndSendExtrinsic = <Context extends Record<string, unknown>>(
     extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
     context: Context,
-    eventHandlers?: TxEventHandlers<Context>,
+    eventHandlers?: Partial<TxEventHandlers<Context>>,
   ) => {
     return new Promise<Hash | null>((resolve) => {
       let unsub = noop;
@@ -121,7 +120,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     assetId: string,
     amount: bigint,
     operatorAccount?: string,
-    eventHandlers?: TxEventHandlers<DepositContext>,
+    eventHandlers?: Partial<TxEventHandlers<DepositContext>>,
   ) => {
     const context = {
       amount,
@@ -167,7 +166,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<DelegatorStakeContext>,
+    eventHandlers?: Partial<TxEventHandlers<DelegatorStakeContext>>,
   ) => {
     const context = {
       amount,
@@ -193,7 +192,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<ScheduleDelegatorUnstakeContext>,
+    eventHandlers?: Partial<TxEventHandlers<ScheduleDelegatorUnstakeContext>>,
   ) => {
     const context = {
       amount,
@@ -214,7 +213,9 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   };
 
   executeDelegatorUnstakeRequests = async (
-    eventHandlers?: TxEventHandlers<ExecuteAllDelegatorUnstakeRequestContext>,
+    eventHandlers?: Partial<
+      TxEventHandlers<ExecuteAllDelegatorUnstakeRequestContext>
+    >,
   ): Promise<Hash | null> => {
     const context = {} satisfies ExecuteAllWithdrawRequestContext;
 
@@ -229,7 +230,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   cancelDelegatorUnstakeRequests = async (
     unstakeRequests: CancelDelegatorUnstakeRequestContext['unstakeRequests'],
     eventHandlers?:
-      | TxEventHandlers<CancelDelegatorUnstakeRequestContext>
+      | Partial<TxEventHandlers<CancelDelegatorUnstakeRequestContext>>
       | undefined,
   ): Promise<Hash | null> => {
     const context = {
@@ -254,7 +255,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   scheduleWithdraw = async (
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<ScheduleWithdrawContext>,
+    eventHandlers?: Partial<TxEventHandlers<ScheduleWithdrawContext>>,
   ) => {
     const context = {
       amount,
@@ -272,7 +273,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
   };
 
   executeWithdraw = async (
-    eventHandlers?: TxEventHandlers<ExecuteAllWithdrawRequestContext>,
+    eventHandlers?: Partial<TxEventHandlers<ExecuteAllWithdrawRequestContext>>,
   ) => {
     const context = {} satisfies ExecuteAllWithdrawRequestContext;
 
@@ -286,7 +287,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
 
   cancelWithdraw = async (
     withdrawRequests: CancelWithdrawRequestContext['withdrawRequests'],
-    eventHandlers?: TxEventHandlers<CancelWithdrawRequestContext>,
+    eventHandlers?: Partial<TxEventHandlers<CancelWithdrawRequestContext>>,
   ) => {
     const context = {
       withdrawRequests,

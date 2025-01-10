@@ -1,3 +1,4 @@
+import { TxEvent } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
@@ -32,10 +33,7 @@ import AvatarWithText from '../../../components/AvatarWithText';
 import { ChainList } from '../../../components/Lists/ChainList';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import {
-  type DepositContext,
-  TxEvent,
-} from '../../../data/restake/RestakeTx/base';
+import { type DepositContext } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';

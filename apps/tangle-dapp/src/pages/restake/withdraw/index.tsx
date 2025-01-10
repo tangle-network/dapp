@@ -1,4 +1,5 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
+import { TxEvent } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
@@ -25,10 +26,7 @@ import { formatUnits, parseUnits } from 'viem';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import {
-  type ScheduleWithdrawContext,
-  TxEvent,
-} from '../../../data/restake/RestakeTx/base';
+import { type ScheduleWithdrawContext } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import type { Props } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
@@ -41,13 +39,13 @@ import ActionButtonBase from '../ActionButtonBase';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
+import RestakeTabs from '../RestakeTabs';
 import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
 import WithdrawModal from './WithdrawModal';
 import WithdrawRequestTable from './WithdrawRequestTable';
-import RestakeTabs from '../RestakeTabs';
 
 const RestakeWithdrawPage = () => {
   const {

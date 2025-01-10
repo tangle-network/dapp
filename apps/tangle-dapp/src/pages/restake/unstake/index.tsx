@@ -1,4 +1,5 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
+import { TxEvent } from '@webb-tools/abstract-api-provider';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
@@ -16,6 +17,7 @@ import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
@@ -24,10 +26,7 @@ import AvatarWithText from '../../../components/AvatarWithText';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import {
-  type ScheduleDelegatorUnstakeContext,
-  TxEvent,
-} from '../../../data/restake/RestakeTx/base';
+import { type ScheduleDelegatorUnstakeContext } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import type { Props } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
@@ -44,10 +43,9 @@ import { ExpandTableButton } from '../ExpandTableButton';
 import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
-import TxInfo from './TxInfo';
 import SelectOperatorModal from './SelectOperatorModal';
+import TxInfo from './TxInfo';
 import UnstakeRequestTable from './UnstakeRequestTable';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 const RestakeUnstakePage = () => {
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =

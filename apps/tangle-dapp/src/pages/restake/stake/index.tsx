@@ -1,3 +1,4 @@
+import { TxEvent } from '@webb-tools/abstract-api-provider';
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
@@ -24,10 +25,7 @@ import { formatUnits, parseUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
-import {
-  DelegatorStakeContext,
-  TxEvent,
-} from '../../../data/restake/RestakeTx/base';
+import { DelegatorStakeContext } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import useRestakeTxEventHandlersWithNoti, {
   type Props,
