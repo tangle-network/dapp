@@ -55,13 +55,9 @@ const Page = ({ params }: { params: { id: string } }) => {
         <SkeletonLoader className="min-h-52" />
       </div>
     );
-  }
-
-  if (error) {
+  } else if (error) {
     return <ErrorFallback title={error.name} />;
-  }
-
-  if (result === null) {
+  } else if (result === null) {
     // TODO: Should redirect to the 404 page
     return null;
   }
