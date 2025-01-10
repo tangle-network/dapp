@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 import { ROUTER_PARTNER_ID, ROUTER_QUOTE_URL } from '../constants';
+import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 
 export type RouterQuoteParams = {
   fromTokenAddress: string;
@@ -11,7 +12,36 @@ export type RouterQuoteParams = {
   toTokenChainId: string;
 };
 
-type RouterQuoteResponse = unknown;
+type RouterQuoteResponse = {
+  chainId: string;
+  chainType: string;
+  priceImpact: string;
+  stableReserveAmount: string;
+  estimatedTime: number;
+  flowType: string;
+  fromTokenAddress: EvmAddress;
+  allowanceTo: EvmAddress;
+
+  bridgeFee: {
+    address: EvmAddress;
+    amount: string;
+    decimals: number;
+    symbol: string;
+  };
+
+  destination: {
+    asset: {
+      address: EvmAddress;
+      chainId: string;
+      decimals: number;
+      isMintable: boolean;
+      isWrappedAsset: boolean;
+      name: string;
+      resourceId: string;
+      symbol: string;
+    };
+  };
+};
 
 type RouterQuoteError = {
   error: string;
@@ -45,8 +75,6 @@ const fetchRouterQuote = async (
       },
     });
 
-    console.debug('bridge quote data', response.data);
-
     return response.data;
   } catch (error) {
     if (
@@ -55,7 +83,7 @@ const fetchRouterQuote = async (
     ) {
       console.error('Router quote error:', error.response.data);
 
-      throw error.response.data.error;
+      throw error.response.data;
     }
 
     console.error('Error fetching router quote:', error);

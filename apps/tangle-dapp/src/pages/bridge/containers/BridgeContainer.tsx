@@ -69,8 +69,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       : '';
   }, [balance, nativeTokenSymbol]);
 
-  const { balances, refetch: refetchEVMBalances } = useBridgeEvmBalances();
-
+  const { balances, refresh: refreshEvmBalances } = useBridgeEvmBalances();
   const sourceChains = useBridgeStore((state) => state.sourceChains);
   const destinationChains = useBridgeStore((state) => state.destinationChains);
 
@@ -342,18 +341,29 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     setSendingAmount,
   ]);
 
-  const clearBridgeStore = () => {
+  const clearBridgeStore = useCallback(() => {
     setAmount(null);
     setDestinationAddress(null);
     setIsAmountInputError(false, null);
     setIsAddressInputError(false);
-  };
+  }, [
+    setAmount,
+    setDestinationAddress,
+    setIsAddressInputError,
+    setIsAmountInputError,
+  ]);
 
-  const onSwitchChains = () => {
+  const onSwitchChains = useCallback(() => {
     setSelectedSourceChain(selectedDestinationChain);
     setSelectedDestinationChain(selectedSourceChain);
     clearBridgeStore();
-  };
+  }, [
+    clearBridgeStore,
+    selectedDestinationChain,
+    selectedSourceChain,
+    setSelectedDestinationChain,
+    setSelectedSourceChain,
+  ]);
 
   const assets: AssetConfig[] = useMemo(() => {
     const tokenConfigs = tokens.map((token) => {
@@ -408,12 +418,18 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     activeAccount,
   ]);
 
-  const onSelectToken = (asset: AssetConfig) => {
-    const tokenConfig = tokens.find((token) => token.address === asset.address);
-    if (tokenConfig) {
-      setSelectedToken(tokenConfig);
-    }
-  };
+  const onSelectToken = useCallback(
+    (asset: AssetConfig) => {
+      const tokenConfig = tokens.find(
+        (token) => token.address === asset.address,
+      );
+
+      if (tokenConfig !== undefined) {
+        setSelectedToken(tokenConfig);
+      }
+    },
+    [setSelectedToken, tokens],
+  );
 
   const selectedTokenBalanceOnSourceChain = useMemo(() => {
     const balance = assets.find(
@@ -462,13 +478,9 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   const actionButtonText = useMemo(() => {
     if (!activeAccount || !activeWallet || !activeChain) {
       return 'Connect Wallet';
-    }
-
-    if (isWrongChain) {
+    } else if (isWrongChain) {
       return 'Switch Network';
-    }
-
-    if (
+    } else if (
       amount &&
       destinationAddress &&
       !isAmountInputError &&
@@ -581,17 +593,17 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   ]);
 
   useEffect(() => {
-    // Re-fetch every two minutes.
-    const interval = 2 * 60 * 1000;
+    // Re-fetch every 30 seconds.
+    const interval = 30 * 1000;
 
     const intervalId = setInterval(() => {
-      refetchEVMBalances();
+      refreshEvmBalances();
     }, interval);
 
     return () => {
       clearInterval(intervalId);
     };
-  }, [refetchEVMBalances]);
+  }, [refreshEvmBalances]);
 
   return (
     <>
@@ -668,19 +680,19 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                   placeholder="Enter amount to bridge"
                   wrapperClassName="dark:bg-mono-180"
                   showMaxAction
-                  max={
-                    balance
-                      ? convertDecimalToBn(
-                          new Decimal(selectedTokenBalanceOnSourceChain),
-                          selectedToken.decimals,
-                        )
-                      : null
-                  }
                   decimals={selectedToken.decimals}
                   showErrorMessage={false}
                   setErrorMessage={(error) => {
                     setIsAmountInputError(error ? true : false, error);
                   }}
+                  max={
+                    balance === null
+                      ? null
+                      : convertDecimalToBn(
+                          new Decimal(selectedTokenBalanceOnSourceChain),
+                          selectedToken.decimals,
+                        )
+                  }
                 />
 
                 <ChainOrTokenButton
@@ -832,9 +844,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
       <BridgeConfirmationModal
         isOpen={isConfirmBridgeModalOpen}
-        handleClose={() => {
-          closeConfirmBridgeModal();
-        }}
+        handleClose={closeConfirmBridgeModal}
         sourceChain={selectedSourceChain}
         destinationChain={selectedDestinationChain}
         token={selectedToken}

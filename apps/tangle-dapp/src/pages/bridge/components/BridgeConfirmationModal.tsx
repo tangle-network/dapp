@@ -143,7 +143,6 @@ export const BridgeConfirmationModal = ({
           });
 
           setIsOpenQueueDropdown(true);
-
           updateTxState(response.transactionHash, BridgeTxState.Executed);
 
           addTxExplorerUrl(
@@ -206,11 +205,11 @@ export const BridgeConfirmationModal = ({
       }
 
       handleClose();
-    } catch (error: unknown) {
-      const err = ensureError(error);
+    } catch (possibleError) {
+      const error = ensureError(possibleError);
 
       notificationApi({
-        message: err.message,
+        message: error.message,
         variant: 'error',
       });
 

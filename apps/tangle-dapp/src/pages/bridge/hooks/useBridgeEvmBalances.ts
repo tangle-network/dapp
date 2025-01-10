@@ -20,7 +20,7 @@ import assert from 'assert';
 export const fetchEvmTokenBalance = async (
   accountAddress: string,
   chainId: number,
-  tokenAddress: EvmAddress,
+  erc20Address: EvmAddress,
   tokenAbi: Abi,
   decimals: number,
 ) => {
@@ -31,7 +31,7 @@ export const fetchEvmTokenBalance = async (
     });
 
     const contract = getContract({
-      address: tokenAddress,
+      address: erc20Address,
       abi: tokenAbi,
       client,
     });
@@ -45,8 +45,9 @@ export const fetchEvmTokenBalance = async (
 
     return new Decimal(ethers.utils.formatUnits(balance, decimals));
   } catch (error) {
-    console.error('Bridge failed to fetch evm token balance:', error);
+    console.error('Bridge failed to fetch EVM token balance:', error);
 
+    // Assume that the balance is 0 if fetching it failed.
     return new Decimal(0);
   }
 };
@@ -143,6 +144,6 @@ export const useBridgeEvmBalances = () => {
     balances,
     isLoading,
     error,
-    refetch: fetchBalances,
+    refresh: fetchBalances,
   };
 };
