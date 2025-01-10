@@ -12,6 +12,45 @@ export type PrimitiveFieldType =
       'Optional' | 'Array' | 'List' | 'Struct'
     >;
 
+export type PrimitiveNumberFieldKeys =
+  | 'Uint8'
+  | 'Int8'
+  | 'Uint16'
+  | 'Int16'
+  | 'Uint32'
+  | 'Int32'
+  | 'Uint64'
+  | 'Int64';
+
+export type PrimitiveField =
+  | {
+      None: null;
+    }
+  | {
+      Bool: boolean;
+    }
+  | {
+      [key in PrimitiveNumberFieldKeys]: number;
+    }
+  | {
+      String: string;
+    }
+  | {
+      Bytes: Uint8Array;
+    }
+  | {
+      Array: PrimitiveField[];
+    }
+  | {
+      List: PrimitiveField[];
+    }
+  | {
+      Struct: [string, [string, PrimitiveField][]];
+    }
+  | {
+      AccountId: string;
+    };
+
 export type Blueprint = {
   id: string;
   name: string;

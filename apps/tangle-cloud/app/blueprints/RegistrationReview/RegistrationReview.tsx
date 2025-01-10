@@ -1,12 +1,10 @@
 import { decodeAddress } from '@polkadot/util-crypto';
-import { HexString } from '@polkadot/util/types';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
 import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useActiveChain';
 import { ThreeDotsVerticalIcon } from '@webb-tools/icons/ThreeDotsVerticalIcon';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { Blueprint } from '@webb-tools/tangle-shared-ui/types/blueprint';
-import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
 import {
   Accordion,
@@ -24,10 +22,9 @@ import {
 import { Label } from '@webb-tools/webb-ui-components/components/Label';
 import { TextField } from '@webb-tools/webb-ui-components/components/TextField';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import assert from 'assert';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
-import { parseUnits } from 'viem';
+import useServicesTransactions from '../../../hooks/useServicesTransactions';
 import { PricingFormResult, PricingType } from '../PricingModal/types';
 import ParamsForm from './ParamsForm';
 
@@ -45,6 +42,8 @@ export default function RegistrationReview({
   const [amount, setAmount] = useState('');
 
   const { network } = useNetworkStore();
+
+  const { register } = useServicesTransactions();
 
   const [registrationParams, setRegistrationParams] = useState<
     Record<string, any>
@@ -81,149 +80,36 @@ export default function RegistrationReview({
   }, [activeAccount]);
 
   const handleRegister = async () => {
-    if (!isValidParams || !isValidAmount || !activeChain) {
+    if (!activeAccount || !pricingSettings) {
       return;
     }
 
-    if (!isValidAddress || !pricingSettings) {
-      return;
-    }
+    await register({
+      blueprintIds: blueprints.map((blueprint) => blueprint.id),
+      preferences: blueprints.map(({ id }) => {
+        const blueprintPriceSettings =
+          pricingSettings.type === PricingType.GLOBAL
+            ? pricingSettings.values
+            : pricingSettings.values[id];
 
-    // Assert is safe here because we have already validated the address
-    // this is just for type assertion
-    assert(activeAccount);
-
-    try {
-      const api = await getApiPromise(network.wsRpcEndpoint);
-
-      await new Promise<HexString>((resolve, reject) => {
-        api.tx.utility
-          .batch(
-            blueprints.map((blueprint) =>
-              api.tx.services.preRegister(blueprint.id),
-            ),
-          )
-          .signAndSend(activeAccount.address, (result) => {
-            const status = result.status;
-            const events = result.events.filter(
-              ({ event: { section } }) => section === 'system',
-            );
-
-            if (status.isInBlock || status.isFinalized) {
-              for (const event of events) {
-                const {
-                  event: { method },
-                } = event;
-                const dispatchError = result.dispatchError;
-
-                if (dispatchError && method === 'ExtrinsicFailed') {
-                  let message: string = dispatchError.type;
-
-                  if (dispatchError.isModule) {
-                    try {
-                      const mod = dispatchError.asModule;
-                      const error = dispatchError.registry.findMetaError(mod);
-
-                      message = `${error.section}.${error.name}`;
-                    } catch (error) {
-                      console.error(error);
-                      reject(message);
-                    }
-                  } else if (dispatchError.isToken) {
-                    message = `${dispatchError.type}.${dispatchError.asToken.type}`;
-                  }
-
-                  reject(message);
-                } else if (
-                  method === 'ExtrinsicSuccess' &&
-                  status.isFinalized
-                ) {
-                  // Resolve with the block hash
-                  resolve(status.asFinalized.toHex());
-                }
-              }
-            }
-          });
-      });
-
-      await new Promise<HexString>((resolve, reject) => {
-        api.tx.utility
-          .batch(
-            blueprints.map((blueprint) => {
-              const priceTargets =
-                pricingSettings.type === PricingType.GLOBAL
-                  ? pricingSettings.values
-                  : pricingSettings.values[blueprint.id];
-
-              return api.tx.services.register(
-                blueprint.id,
-                {
-                  key: decodeAddress(
-                    activeAccount.address,
-                    undefined,
-                    network.ss58Prefix,
-                  ),
-                  priceTargets: {
-                    cpu: priceTargets.cpuPrice,
-                    mem: priceTargets.memPrice,
-                    storageHdd: priceTargets.hddStoragePrice,
-                    storageSsd: priceTargets.ssdStoragePrice,
-                    storageNvme: priceTargets.nvmeStoragePrice,
-                  },
-                },
-                registrationParams[blueprint.id],
-                parseUnits(amount, activeChain?.nativeCurrency.decimals),
-              );
-            }),
-          )
-          .signAndSend(activeAccount.address, (result) => {
-            const status = result.status;
-            const events = result.events.filter(
-              ({ event: { section } }) => section === 'system',
-            );
-
-            if (status.isInBlock || status.isFinalized) {
-              for (const event of events) {
-                const {
-                  event: { method },
-                } = event;
-                const dispatchError = result.dispatchError;
-
-                if (dispatchError && method === 'ExtrinsicFailed') {
-                  let message: string = dispatchError.type;
-
-                  if (dispatchError.isModule) {
-                    try {
-                      const mod = dispatchError.asModule;
-                      const error = dispatchError.registry.findMetaError(mod);
-
-                      message = `${error.section}.${error.name}`;
-                    } catch (error) {
-                      console.error(error);
-                      reject(message);
-                    }
-                  } else if (dispatchError.isToken) {
-                    message = `${dispatchError.type}.${dispatchError.asToken.type}`;
-                  }
-
-                  reject(message);
-                } else if (
-                  method === 'ExtrinsicSuccess' &&
-                  status.isFinalized
-                ) {
-                  // Resolve with the block hash
-                  resolve(status.asFinalized.toHex());
-                }
-              }
-            }
-          });
-      });
-
-      // TODO: Notify success
-    } catch (error) {
-      // TODO: Notify error
-      console.error('Error registering blueprints', error);
-    }
+        return {
+          key: decodeAddress(
+            activeAccount.address,
+            undefined,
+            network.ss58Prefix,
+          ),
+          priceTargets: {
+            cpu: Number(blueprintPriceSettings.cpuPrice),
+            mem: Number(blueprintPriceSettings.memPrice),
+            storageHdd: Number(blueprintPriceSettings.hddStoragePrice),
+            storageSsd: Number(blueprintPriceSettings.ssdStoragePrice),
+            storageNvme: Number(blueprintPriceSettings.nvmeStoragePrice),
+          },
+        };
+      }),
+      registrationArgs: blueprints.map(({ id }) => registrationParams[id]),
+      amount: blueprints.map(({ id }) => amount),
+    });
   };
 
   return (

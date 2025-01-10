@@ -1,9 +1,8 @@
 import type { ApiPromise } from '@polkadot/api';
-import type { SubmittableExtrinsic } from '@polkadot/api/types';
-import type { ISubmittableResult, Signer } from '@polkadot/types/types';
+import type { Signer } from '@polkadot/types/types';
+import { signAndSendExtrinsic } from '@webb-tools/polkadot-api-provider';
 import { TxEventHandlers } from '@webb-tools/abstract-api-provider';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import noop from 'lodash/noop';
 import type { Hash } from 'viem';
 import {
   type CancelDelegatorUnstakeRequestContext,
@@ -28,94 +27,6 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
     this.provider.setSigner(this.signer);
   }
 
-  private signAndSendExtrinsic = <Context extends Record<string, unknown>>(
-    extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
-    context: Context,
-    eventHandlers?: Partial<TxEventHandlers<Context>>,
-  ) => {
-    return new Promise<Hash | null>((resolve) => {
-      let unsub = noop;
-
-      extrinsic
-        .signAndSend(
-          this.activeAccount,
-          { nonce: -1 },
-          ({ dispatchError, events, status, txHash }) => {
-            if (status.isInBlock) {
-              const blockHash = status.asInBlock;
-              eventHandlers?.onTxInBlock?.(
-                txHash.toHex(),
-                blockHash.toHex(),
-                context,
-              );
-            }
-
-            if (status.isFinalized) {
-              const blockHash = status.asFinalized;
-              eventHandlers?.onTxFinalized?.(
-                txHash.toHex(),
-                blockHash.toHex(),
-                context,
-              );
-            }
-
-            if (!status.isFinalized) {
-              return;
-            }
-
-            const systemEvents = events.filter(
-              ({ event: { section } }) => section === 'system',
-            );
-
-            for (const event of systemEvents) {
-              const {
-                event: { method },
-              } = event;
-
-              if (dispatchError && method === 'ExtrinsicFailed') {
-                let message: string = dispatchError.type;
-
-                if (dispatchError.isModule) {
-                  try {
-                    const mod = dispatchError.asModule;
-                    const error = dispatchError.registry.findMetaError(mod);
-
-                    message = `${error.section}.${error.name}`;
-                  } catch {
-                    eventHandlers?.onTxFailed?.(message, context);
-                    resolve(null);
-                    unsub();
-                  }
-                } else if (dispatchError.isToken) {
-                  message = `${dispatchError.type}.${dispatchError.asToken.type}`;
-                }
-
-                eventHandlers?.onTxFailed?.(message, context);
-                resolve(null);
-                unsub();
-              } else if (method === 'ExtrinsicSuccess' && status.isFinalized) {
-                const txHashHex = txHash.toHex();
-                eventHandlers?.onTxSuccess?.(
-                  txHashHex,
-                  status.asFinalized.toHex(),
-                  context,
-                );
-                // Resolve with the block hash
-                resolve(txHashHex);
-                unsub();
-              }
-            }
-          },
-        )
-        .then((unsubFn) => (unsub = unsubFn))
-        .catch((error) => {
-          resolve(null);
-          eventHandlers?.onTxFailed?.(error.message, context);
-          unsub();
-        });
-    });
-  };
-
   deposit = async (
     assetId: string,
     amount: bigint,
@@ -138,7 +49,12 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
 
       eventHandlers?.onTxSending?.(context);
 
-      return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
+      return signAndSendExtrinsic(
+        this.activeAccount,
+        extrinsic,
+        context,
+        eventHandlers,
+      );
     }
 
     // Otherwise, batching the deposit & delegate transactions.
@@ -159,7 +75,12 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
 
     eventHandlers?.onTxSending?.(context);
 
-    return this.signAndSendExtrinsic(extrinsics, context, eventHandlers);
+    return signAndSendExtrinsic(
+      this.activeAccount,
+      extrinsics,
+      context,
+      eventHandlers,
+    );
   };
 
   stake = async (
@@ -185,7 +106,12 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
 
     eventHandlers?.onTxSending?.(context);
 
-    return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
+    return signAndSendExtrinsic(
+      this.activeAccount,
+      extrinsic,
+      context,
+      eventHandlers,
+    );
   };
 
   scheduleDelegatorUnstake = async (
@@ -209,7 +135,12 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
 
     eventHandlers?.onTxSending?.(context);
 
-    return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
+    return signAndSendExtrinsic(
+      this.activeAccount,
+      extrinsic,
+      context,
+      eventHandlers,
+    );
   };
 
   executeDelegatorUnstakeRequests = async (
@@ -224,7 +155,12 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
 
     eventHandlers?.onTxSending?.(context);
 
-    return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
+    return signAndSendExtrinsic(
+      this.activeAccount,
+      extrinsic,
+      context,
+      eventHandlers,
+    );
   };
 
   cancelDelegatorUnstakeRequests = async (
@@ -249,7 +185,12 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
 
     eventHandlers?.onTxSending?.(context);
 
-    return this.signAndSendExtrinsic(extrinsics, context, eventHandlers);
+    return signAndSendExtrinsic(
+      this.activeAccount,
+      extrinsics,
+      context,
+      eventHandlers,
+    );
   };
 
   scheduleWithdraw = async (
@@ -269,7 +210,12 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
 
     eventHandlers?.onTxSending?.(context);
 
-    return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
+    return signAndSendExtrinsic(
+      this.activeAccount,
+      extrinsic,
+      context,
+      eventHandlers,
+    );
   };
 
   executeWithdraw = async (
@@ -282,7 +228,12 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
 
     eventHandlers?.onTxSending?.(context);
 
-    return this.signAndSendExtrinsic(extrinsic, context, eventHandlers);
+    return signAndSendExtrinsic(
+      this.activeAccount,
+      extrinsic,
+      context,
+      eventHandlers,
+    );
   };
 
   cancelWithdraw = async (
@@ -304,6 +255,11 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
 
     eventHandlers?.onTxSending?.(context);
 
-    return this.signAndSendExtrinsic(extrinsics, context, eventHandlers);
+    return signAndSendExtrinsic(
+      this.activeAccount,
+      extrinsics,
+      context,
+      eventHandlers,
+    );
   };
 }
