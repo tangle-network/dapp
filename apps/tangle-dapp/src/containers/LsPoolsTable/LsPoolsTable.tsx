@@ -157,11 +157,11 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
     }),
     COLUMN_HELPER.accessor('commissionFractional', {
       header: () => 'Commission',
-      cell: (props) => <PercentageCell fractional={props.getValue()} />,
+      cell: (props) => <PercentageCell percentage={props.getValue()} />,
     }),
     COLUMN_HELPER.accessor('apyPercentage', {
       header: () => 'APY',
-      cell: (props) => <PercentageCell fractional={props.getValue()} />,
+      cell: (props) => <PercentageCell percentage={props.getValue()} />,
     }),
     COLUMN_HELPER.display({
       id: 'actions',

@@ -5,12 +5,12 @@ import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import { getFlexBasic } from '@webb-tools/icons/utils';
-import {
-  BridgeTxState,
-  BridgeTokenType,
-} from '@webb-tools/tangle-shared-ui/types';
+import { BridgeTxState, BridgeToken } from '@webb-tools/tangle-shared-ui/types';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
-import { useWebbUI } from '@webb-tools/webb-ui-components';
+import {
+  EMPTY_VALUE_PLACEHOLDER,
+  useWebbUI,
+} from '@webb-tools/webb-ui-components';
 import { Button } from '@webb-tools/webb-ui-components/components/buttons';
 import {
   Modal,
@@ -41,7 +41,7 @@ interface BridgeConfirmationModalProps {
   handleClose: () => void;
   sourceChain: ChainConfig;
   destinationChain: ChainConfig;
-  token: BridgeTokenType;
+  token: BridgeToken;
   feeDetails: FeeDetailProps | null;
   activeAccountAddress: string;
   destinationAddress: string;
@@ -143,7 +143,6 @@ export const BridgeConfirmationModal = ({
           });
 
           setIsOpenQueueDropdown(true);
-
           updateTxState(response.transactionHash, BridgeTxState.Executed);
 
           addTxExplorerUrl(
@@ -206,11 +205,11 @@ export const BridgeConfirmationModal = ({
       }
 
       handleClose();
-    } catch (error: unknown) {
-      const err = ensureError(error);
+    } catch (possibleError) {
+      const error = ensureError(possibleError);
 
       notificationApi({
-        message: err.message,
+        message: error.message,
         variant: 'error',
       });
 
@@ -241,7 +240,7 @@ export const BridgeConfirmationModal = ({
   return (
     <Modal open>
       <ModalContent isOpen={isOpen} onInteractOutside={handleClose} size="md">
-        <ModalHeader onClose={handleClose}>Bridge Confirmation</ModalHeader>
+        <ModalHeader onClose={handleClose}>Confirm Bridge</ModalHeader>
 
         <ModalBody>
           <div className="flex flex-col items-center gap-3">
@@ -284,7 +283,7 @@ export const BridgeConfirmationModal = ({
             }
           >
             {isTransferByRouterPending || isTransferByHyperlanePending
-              ? 'Bridging...'
+              ? 'Bridging'
               : 'Bridge'}
           </Button>
         </ModalFooter>
@@ -303,39 +302,42 @@ const ConfirmationItem: FC<{
   return (
     <div className="w-full p-4 space-y-2 bg-mono-20 dark:bg-mono-170 rounded-xl">
       <div className="flex items-center justify-between">
-        <Typography variant="body1" className="text-lg">
+        <Typography variant="body1">
           {type === 'source' ? 'From' : 'To'}
         </Typography>
+
         <div className="flex items-center gap-1.5">
           <ChainIcon
             name={chainName}
             size="lg"
-            spinnersize="lg"
+            spinnerSize="lg"
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
           />
+
           <Typography variant="h5" fw="bold">
             {chainName}
           </Typography>
         </div>
       </div>
+
       <div className="flex items-center justify-between">
-        <Typography variant="body1" className="text-lg">
-          Account
-        </Typography>
+        <Typography variant="body1">Account</Typography>
+
         <Typography variant="h5" fw="bold">
           {isSolanaAddress(accAddress)
             ? shortenString(accAddress, 10)
             : shortenHex(accAddress, 10)}
         </Typography>
       </div>
+
       <div className="flex items-center justify-between">
-        <Typography variant="body1" className="text-lg">
-          Amount
-        </Typography>
+        <Typography variant="body1">Amount</Typography>
+
         <div className="flex items-center gap-2">
           <Typography variant="h5" fw="bold">
-            {amount ?? '-'}
+            {amount ?? EMPTY_VALUE_PLACEHOLDER}
           </Typography>
+
           <TokenIcon
             name={tokenName}
             size="lg"

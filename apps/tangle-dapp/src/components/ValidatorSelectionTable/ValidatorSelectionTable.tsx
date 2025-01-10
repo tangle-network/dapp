@@ -29,7 +29,7 @@ import {
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
+import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import cx from 'classnames';
 import {
@@ -193,7 +193,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         ),
         cell: (props) => (
           <Typography variant="body1">
-            {formatFractional(calculateCommission(props.getValue()))}
+            {formatPercentage(calculateCommission(props.getValue()))}
           </Typography>
         ),
         sortingFn: (rowA, rowB, columnId) =>

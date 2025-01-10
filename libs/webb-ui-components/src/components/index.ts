@@ -91,3 +91,4 @@ export * from './WebsiteFooter';
 export * from './WebsiteNewsLetterForm';
 export * from './Caption';
 export * from './ListStatus';
+export * from './CircularProgress';

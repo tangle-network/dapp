@@ -76,13 +76,12 @@ const WithdrawRequestTableActions = ({
     setIsExecuting(false);
   }, [executeWithdraw, executeOptions]);
 
-  const canCancelWithdraw = useMemo(
-    () => selectedRequests.length > 0,
-    [selectedRequests.length],
-  );
+  const canCancelWithdraw = selectedRequests.length > 0;
 
   const canExecuteWithdraw = useMemo(() => {
-    if (allRequests.length === 0) return false;
+    if (allRequests.length === 0) {
+      return false;
+    }
 
     return allRequests.some(({ timeRemaining }) => {
       return isScheduledRequestReady(timeRemaining);

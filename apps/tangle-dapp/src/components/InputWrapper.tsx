@@ -102,12 +102,7 @@ const InputWrapper: FC<InputWrapperProps> = ({
       >
         <div className="flex flex-col gap-1 w-full mr-auto">
           <div className="flex gap-1">
-            <Label
-              className="text-mono-120 dark:text-mono-120 font-bold text-lg"
-              htmlFor={id}
-            >
-              {title}
-            </Label>
+            <Label htmlFor={id}>{title}</Label>
 
             {tooltip !== undefined && (
               <InfoIconWithTooltip

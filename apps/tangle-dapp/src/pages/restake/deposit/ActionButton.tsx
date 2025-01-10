@@ -56,9 +56,7 @@ export default function ActionButton({
           return (
             <Button
               isLoading={isSubmitting || isLoading}
-              loadingText={
-                isSubmitting ? 'Sending transaction...' : loadingText
-              }
+              loadingText={loadingText}
               type="button"
               isFullWidth
               onClick={handleClick}
@@ -71,7 +69,7 @@ export default function ActionButton({
         return (
           <Button
             isLoading={isSubmitting || isLoading}
-            loadingText={isSubmitting ? 'Sending transaction...' : loadingText}
+            loadingText={loadingText}
             type="submit"
             isDisabled={!isValid || displayError !== undefined}
             isFullWidth

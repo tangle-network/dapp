@@ -1,5 +1,5 @@
 export type WithdrawRequestTableData = {
-  amount: number;
+  amount: string;
   amountRaw: bigint;
   assetId: string;
   assetSymbol: string;

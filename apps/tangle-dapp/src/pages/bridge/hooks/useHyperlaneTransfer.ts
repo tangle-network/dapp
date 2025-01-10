@@ -3,13 +3,13 @@ import { JsonRpcSigner } from '@ethersproject/providers';
 import { useMutation } from '@tanstack/react-query';
 import { providers, utils } from 'ethers';
 
-import { BridgeTokenType } from '@webb-tools/tangle-shared-ui/types';
+import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
 import { getHyperlaneWarpCore } from '../lib/hyperlane/context';
 import { getHyperlaneChainName, tryFindToken } from '../lib/hyperlane/utils';
 import useEthersSigner from './useEtheresSigner';
 
 export type HyperlaneTransferProps = {
-  token: BridgeTokenType;
+  token: BridgeToken;
   amount: number;
   sourceTypedChainId: number;
   destinationTypedChainId: number;

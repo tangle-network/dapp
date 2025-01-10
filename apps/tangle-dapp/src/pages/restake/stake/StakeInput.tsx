@@ -136,9 +136,10 @@ export default function StakeInput({
                 }
               : {})}
           />
+
           <TransactionInputCard.MaxAmountButton
             accountType="note"
-            tooltipBody="Deposited Asset"
+            tooltipBody="Deposited"
           />
         </TransactionInputCard.Header>
 

@@ -17,13 +17,18 @@ import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useMemo } from 'react';
-import { formatUnits } from 'viem';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
 import TableCell from '../TableCell';
 import { calculateTimeRemaining } from '../utils';
 import type { WithdrawRequestTableData } from './types';
 import WithdrawRequestTableActions from './WithdrawRequestTableActions';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@webb-tools/webb-ui-components';
+import { BN } from '@polkadot/util';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
 const columnsHelper = createColumnHelper<WithdrawRequestTableData>();
 
@@ -31,7 +36,7 @@ const columns = [
   columnsHelper.accessor('assetId', {
     id: 'select',
     enableSorting: false,
-    header: () => <TableCell>Select request to cancel</TableCell>,
+    header: () => <TableCell>Request</TableCell>,
     cell: (props) => (
       <div className="flex items-center justify-start gap-2">
         <CheckBox
@@ -73,7 +78,7 @@ const columns = [
           ) : (
             <span className="flex items-center gap-1">
               <TimeFillIcon className="!fill-blue-50" />
-              {`${value} round${value > 1 ? 's' : ''}`}
+              {`${value} session${value > 1 ? 's' : ''}`}
             </span>
           )}
         </TableCell>
@@ -96,9 +101,17 @@ const WithdrawRequestTable = ({ withdrawRequests }: Props) => {
       withdrawRequests.reduce(
         (acc, { assetId, amount, requestedRound }) => {
           const asset = assetMap[assetId];
-          if (!asset) return acc;
 
-          const formattedAmount = formatUnits(amount, asset.decimals);
+          if (!asset) {
+            return acc;
+          }
+
+          const fmtAmount = formatDisplayAmount(
+            new BN(amount.toString()),
+            asset.decimals,
+            AmountFormatStyle.SHORT,
+          );
+
           const timeRemaining = calculateTimeRemaining(
             currentRound,
             requestedRound,
@@ -106,7 +119,7 @@ const WithdrawRequestTable = ({ withdrawRequests }: Props) => {
           );
 
           acc[assetId] = {
-            amount: Number(formattedAmount),
+            amount: fmtAmount,
             amountRaw: amount,
             assetId: assetId,
             assetSymbol: asset.symbol,
@@ -120,10 +133,12 @@ const WithdrawRequestTable = ({ withdrawRequests }: Props) => {
     [assetMap, currentRound, leaveDelegatorsDelay, withdrawRequests],
   );
 
+  const rows = useMemo(() => Object.values(dataWithId), [dataWithId]);
+
   const table = useReactTable(
     useMemo<TableOptions<WithdrawRequestTableData>>(
       () => ({
-        data: Object.values(dataWithId),
+        data: rows,
         columns,
         initialState: {
           pagination: {
@@ -140,7 +155,7 @@ const WithdrawRequestTable = ({ withdrawRequests }: Props) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
       }),
-      [dataWithId],
+      [rows],
     ),
   );
 
@@ -153,7 +168,12 @@ const WithdrawRequestTable = ({ withdrawRequests }: Props) => {
 
   return (
     <>
-      <Table variant={TableVariant.DEFAULT} tableProps={table} isPaginated />
+      <Table
+        variant={TableVariant.DEFAULT}
+        tableProps={table}
+        isPaginated
+        title={pluralize('request', rows.length !== 1)}
+      />
 
       <div className="flex items-center gap-3">
         <WithdrawRequestTableActions

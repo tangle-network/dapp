@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { getHyperlaneWarpCore } from '../lib/hyperlane/context';
-import { BridgeTokenType } from '@webb-tools/tangle-shared-ui/types';
+import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
 import { getHyperlaneChainName, tryFindToken } from '../lib/hyperlane/utils';
 
 export type HyperlaneQuoteProps = {
-  token: BridgeTokenType;
+  token: BridgeToken;
   amount: number;
   sourceTypedChainId: number;
   destinationTypedChainId: number;

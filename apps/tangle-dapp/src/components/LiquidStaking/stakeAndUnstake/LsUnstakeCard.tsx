@@ -159,7 +159,7 @@ const LsUnstakeCard: FC = () => {
   const stakedWalletBalance = (
     <LsAgnosticBalance
       isNative={false}
-      tooltip="Click to use all staked balance"
+      tooltip="Available Balance"
       onClick={() => setFromAmount(maxSpendable)}
     />
   );

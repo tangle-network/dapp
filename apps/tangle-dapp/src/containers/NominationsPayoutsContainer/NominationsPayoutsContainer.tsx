@@ -210,7 +210,7 @@ const DelegationsPayoutsContainer: FC = () => {
               buttonText="Connect"
               buttonProps={{
                 isLoading: loading || isConnecting,
-                loadingText: isConnecting ? 'Connecting' : 'Loading...',
+                loadingText: isConnecting ? 'Connecting' : 'Loading',
                 onClick: () => toggleModal(true),
               }}
               icon="🔗"

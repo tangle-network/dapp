@@ -92,6 +92,7 @@ export default function RestakeStakePage() {
   const { stake: delegate } = useRestakeTx();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
+
   const { result: operatorIdentities } = useIdentities(
     useMemo(() => Object.keys(operatorMap), [operatorMap]),
   );
@@ -153,21 +154,21 @@ export default function RestakeStakePage() {
       return [];
     }
 
-    return entries(delegatorInfo.deposits)
-      .filter(([assetId]) => Boolean(assetMap[assetId]))
+    return Object.entries(delegatorInfo.deposits)
+      .filter(([assetId]) => Object.hasOwn(assetMap, assetId))
       .map(([assetId, { amount }]) => {
-        const asset = assetMap[assetId];
+        const metadata = assetMap[assetId];
 
         return {
-          id: asset.id,
-          name: asset.name,
-          symbol: asset.symbol,
-          decimals: asset.decimals,
+          id: metadata.id,
+          name: metadata.name,
+          symbol: metadata.symbol,
+          decimals: metadata.decimals,
           assetBalanceProps: {
-            balance: +formatUnits(amount, asset.decimals),
-            ...(asset.vaultId
+            balance: +formatUnits(amount, metadata.decimals),
+            ...(metadata.vaultId
               ? {
-                  subContent: `Vault ID: ${asset.vaultId}`,
+                  subContent: `Vault ID: ${metadata.vaultId}`,
                 }
               : {}),
           },
@@ -186,6 +187,7 @@ export default function RestakeStakePage() {
   const handleChainChange = useCallback(
     async (chain: ChainConfig) => {
       const typedChainId = calculateTypedChainId(chain.chainType, chain.id);
+
       await switchChain(typedChainId);
       closeChainModal();
     },

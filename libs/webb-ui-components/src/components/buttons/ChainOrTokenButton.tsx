@@ -48,8 +48,9 @@ const ChainOrTokenButton = forwardRef<
         {...props}
         onClick={handleClick}
         type="button"
+        ref={ref}
         className={twMerge(
-          'rounded-lg px-4 py-2',
+          'rounded-lg px-4 py-3',
           !isClickable && 'cursor-default',
           // Use a different background for embedded icon buttons
           // for contrast.
@@ -62,18 +63,19 @@ const ChainOrTokenButton = forwardRef<
               : 'hover:bg-mono-40 hover:dark:bg-mono-170'),
           className,
         )}
-        ref={ref}
       >
         <div className="flex items-center justify-between mr-1">
-          <div className="flex items-center gap-3 min-w-[120px]">
+          <div className="flex items-center gap-2">
             {value && (
-              <IconCmp
-                status={status}
-                size="xl"
-                spinnerSize="lg"
-                className={cx(`shrink-0 grow-0 ${getFlexBasic('xl')}`)}
-                name={value}
-              />
+              <div>
+                <IconCmp
+                  status={status}
+                  size="lg"
+                  spinnerSize="md"
+                  className={cx(`shrink-0 grow-0 ${getFlexBasic('xl')}`)}
+                  name={value}
+                />
+              </div>
             )}
 
             <Typography variant="h5" fw="bold" className={textClassName}>

@@ -1,32 +1,41 @@
-import type { ApiPromise, ApiRx } from '@polkadot/api';
+import type { ApiRx } from '@polkadot/api';
 import type { Option, StorageKey, u128, Vec } from '@polkadot/types';
+import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
 import { map, of } from 'rxjs';
 
 function toPrimitive(
-  entries: [StorageKey<[u128]>, Option<Vec<u128>>][],
+  entries: [StorageKey<[u128]>, Option<Vec<TanglePrimitivesServicesAsset>>][],
 ): [vaultId: bigint, assetIds: bigint[] | null][] {
-  return entries.map(
-    ([vaultId, assetIds]) =>
-      [
-        vaultId.args[0].toBigInt(),
-        assetIds.isNone
-          ? null
-          : assetIds.unwrap().map((assetId) => assetId.toBigInt()),
-      ] as const,
-  );
-}
+  return entries.map(([vaultId, assets]) => {
+    const vaultIdBigInt = vaultId.args[0].toBigInt();
 
-export async function rewardVaultQuery(api: ApiPromise) {
-  if (api.query.multiAssetDelegation?.rewardVaults === undefined) return [];
+    const assetIds = assets.isNone
+      ? null
+      : assets.unwrap().map((asset) => {
+          switch (asset.type) {
+            case 'Custom':
+              return BigInt(asset.asCustom.toBigInt());
+            // TODO: Add support for ERC-20 case.
+            case 'Erc20':
+              throw new Error(
+                'Handling of ERC-20 assets is not yet implemented.',
+              );
+            default: {
+              const _exhaustive: never = asset.type;
 
-  const entries = await api.query.multiAssetDelegation.rewardVaults.entries();
+              throw new Error(`Unhandled asset type: ${_exhaustive}`);
+            }
+          }
+        });
 
-  return toPrimitive(entries);
+    return [vaultIdBigInt, assetIds] as const;
+  });
 }
 
 export function rewardVaultRxQuery(apiRx: ApiRx) {
-  if (apiRx.query.multiAssetDelegation?.rewardVaults === undefined)
+  if (apiRx.query.multiAssetDelegation?.rewardVaults === undefined) {
     return of([]);
+  }
 
   return apiRx.query.multiAssetDelegation.rewardVaults
     .entries()

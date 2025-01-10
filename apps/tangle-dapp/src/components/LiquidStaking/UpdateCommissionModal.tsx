@@ -82,7 +82,7 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
 
           <AddressInput
             id="ls-update-commission-payee-address"
-            type={AddressType.Both}
+            type={AddressType.SUBSTRATE_OR_EVM}
             title="Commission Payee Address"
             value={payeeAccountAddress}
             setValue={setPayeeAccountAddress}

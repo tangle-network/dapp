@@ -245,7 +245,7 @@ const RestakeWithdrawPage = () => {
                   />
                   <TransactionInputCard.MaxAmountButton
                     maxAmount={formattedMaxAmount}
-                    tooltipBody="Deposited Balance"
+                    tooltipBody="Deposited"
                     Icon={
                       useRef({
                         enabled: <LockLineIcon />,
@@ -299,9 +299,7 @@ const RestakeWithdrawPage = () => {
                     type="submit"
                     isFullWidth
                     isLoading={isSubmitting || isLoading}
-                    loadingText={
-                      isSubmitting ? 'Sending transaction...' : loadingText
-                    }
+                    loadingText={loadingText}
                   >
                     {displayError ?? 'Schedule Withdraw'}
                   </Button>
@@ -335,12 +333,12 @@ const RestakeWithdrawPage = () => {
             <WithdrawRequestTable withdrawRequests={withdrawRequests} />
           ) : (
             <Typography
-              variant="body2"
+              variant="body1"
               className="text-mono-120 dark:text-mono-100"
             >
-              You will be able to withdraw your tokens after the unstake
-              schedule is completed. To unstake your tokens, use the unstake
-              tab.
+              You will be able to withdraw your tokens after the undelegate
+              schedule is completed. To undelegate your tokens, use the
+              undelegate tab.
             </Typography>
           )}
         </RestakeDetailCard.Root>

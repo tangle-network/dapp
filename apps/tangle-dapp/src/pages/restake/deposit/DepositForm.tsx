@@ -87,9 +87,11 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
 
   const { assetMap, assetWithBalances } = useRestakeContext();
   const { operatorMap } = useRestakeOperatorMap();
+
   const { result: operatorIdentities } = useIdentities(
     useMemo(() => Object.keys(operatorMap), [operatorMap]),
   );
+
   const { deposit } = useRestakeTx();
 
   const setValue = useCallback(
@@ -142,6 +144,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
 
     // Select the first asset in the vault by default
     setValue('depositAssetId', defaultAsset.assetId);
+
     setValue(
       'amount',
       formatUnits(defaultAsset.balance.balance, defaultAsset.metadata.decimals),

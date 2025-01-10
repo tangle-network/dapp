@@ -15,7 +15,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
-import formatFractional from '@webb-tools/webb-ui-components/utils/formatFractional';
+import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
 
 import { StakingItemExternalLinkButton } from '../../../components/LiquidStaking/StakingItemExternalLinkButton';
 import {
@@ -192,7 +192,7 @@ const getTableColumns: GetTableColumnsFn<PolkadotValidator> = (
             fw="normal"
             className="text-mono-200 dark:text-mono-0"
           >
-            {formatFractional(calculateCommission(props.getValue()))}
+            {formatPercentage(calculateCommission(props.getValue()))}
           </Typography>
         </div>
       ),

@@ -121,7 +121,11 @@ const AmountInput: FC<AmountInputProps> = ({
       <Input
         id={id}
         inputRef={inputRef}
-        inputClassName={twMerge('placeholder:text-lg text-lg', inputClassName)}
+        inputClassName={twMerge(
+          'placeholder:text-lg text-lg',
+          errorMessage !== null && 'text-red-70 dark:text-red-50',
+          inputClassName,
+        )}
         type="text"
         placeholder={placeholder ?? `0 ${nativeTokenSymbol}`}
         size="sm"
