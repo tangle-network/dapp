@@ -13,7 +13,6 @@ import {
   TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { FC, useMemo, useState } from 'react';
@@ -177,7 +176,6 @@ const LsUnbondingTable: FC = () => {
 
   return (
     <Table
-      variant={TableVariant.DEFAULT}
       tableProps={table}
       title={pluralize('unstake request', rows.length !== 1)}
       isPaginated

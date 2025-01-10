@@ -25,7 +25,6 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { type FC, useState } from 'react';
 
@@ -243,7 +242,6 @@ const PayoutTable: FC<PayoutTableProps> = ({
     <>
       <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
         <Table
-          variant={TableVariant.DEFAULT}
           tableProps={table}
           isPaginated
           totalRecords={data.length}

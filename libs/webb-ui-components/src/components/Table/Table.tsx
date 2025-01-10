@@ -87,7 +87,7 @@ export const Table = <T extends RowData>({
   ref,
   getExpandedRowContent,
   className,
-  variant,
+  variant = TableVariant.DEFAULT,
   paginationLabelOverride,
   ...props
 }: TableProps<T, HTMLDivElement>) => {

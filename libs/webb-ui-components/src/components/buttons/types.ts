@@ -91,8 +91,9 @@ export interface ButtonProps extends ButtonBase, IWebbComponentBase {
   isDisabled?: boolean;
 
   /**
-   * The label to show in the button when `isLoading` is true
-   * If no text is passed, it only shows the spinner
+   * The label to show in the button when `isLoading` is true.
+   *
+   * If no value is passed, only the spinner will be shown.
    */
   loadingText?: string;
 

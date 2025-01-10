@@ -10,13 +10,15 @@ import {
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import type { DelegatorWithdrawRequest } from '@webb-tools/tangle-shared-ui/types/restake';
+import type {
+  AssetMetadata,
+  DelegatorWithdrawRequest,
+} from '@webb-tools/tangle-shared-ui/types/restake';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
 import TableCell from '../TableCell';
@@ -25,15 +27,16 @@ import type { WithdrawRequestTableData } from './types';
 import WithdrawRequestTableActions from './WithdrawRequestTableActions';
 import {
   AmountFormatStyle,
+  EMPTY_VALUE_PLACEHOLDER,
   formatDisplayAmount,
 } from '@webb-tools/webb-ui-components';
 import { BN } from '@polkadot/util';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
-const columnsHelper = createColumnHelper<WithdrawRequestTableData>();
+const COLUMN_HELPER = createColumnHelper<WithdrawRequestTableData>();
 
-const columns = [
-  columnsHelper.accessor('assetId', {
+const COLUMNS = [
+  COLUMN_HELPER.accessor('assetId', {
     id: 'select',
     enableSorting: false,
     header: () => <TableCell>Request</TableCell>,
@@ -52,7 +55,7 @@ const columns = [
       </div>
     ),
   }),
-  columnsHelper.accessor('amount', {
+  COLUMN_HELPER.accessor('amount', {
     header: () => <TableCell>Amount</TableCell>,
     cell: (props) => (
       <TableCell fw="normal" className="text-mono-200 dark:text-mono-0">
@@ -60,25 +63,25 @@ const columns = [
       </TableCell>
     ),
   }),
-  columnsHelper.accessor('timeRemaining', {
-    enableSorting: false,
+  COLUMN_HELPER.accessor('timeRemaining', {
     header: () => <TableCell>Time Remaining</TableCell>,
+    sortingFn: (a, b) => a.original.timeRemaining - b.original.timeRemaining,
     cell: (props) => {
-      const value = props.getValue();
+      const timeRemaining = props.getValue();
 
       return (
         <TableCell fw="normal" className="text-mono-200 dark:text-mono-0">
-          {value === 0 ? (
+          {timeRemaining === 0 ? (
             <span className="flex items-center gap-1">
-              <CheckboxCircleFill className="!fill-green-50" />
-              ready
+              <CheckboxCircleFill className="fill-green-50 dark:fill-green-50" />
+              Ready
             </span>
-          ) : value < 0 ? (
-            'N/A'
+          ) : timeRemaining < 0 ? (
+            EMPTY_VALUE_PLACEHOLDER
           ) : (
             <span className="flex items-center gap-1">
-              <TimeFillIcon className="!fill-blue-50" />
-              {`${value} session${value > 1 ? 's' : ''}`}
+              <TimeFillIcon className="fill-blue-50 dark:fill-blue-50" />
+              {`${timeRemaining} ${pluralize('session', timeRemaining !== 1)}`}
             </span>
           )}
         </TableCell>
@@ -91,55 +94,49 @@ type Props = {
   withdrawRequests: DelegatorWithdrawRequest[];
 };
 
-const WithdrawRequestTable = ({ withdrawRequests }: Props) => {
+const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
   const { assetMap } = useRestakeContext();
   const { leaveDelegatorsDelay } = useRestakeConsts();
   const { currentRound } = useRestakeCurrentRound();
 
-  const dataWithId = useMemo(
+  const requests = useMemo(
     () =>
-      withdrawRequests.reduce(
-        (acc, { assetId, amount, requestedRound }) => {
-          const asset = assetMap[assetId];
+      withdrawRequests.flatMap(({ assetId, amount, requestedRound }) => {
+        const metadata: AssetMetadata | undefined = assetMap[assetId];
 
-          if (!asset) {
-            return acc;
-          }
+        // Ignore requests if the metadata is not available.
+        if (metadata === undefined) {
+          return [];
+        }
 
-          const fmtAmount = formatDisplayAmount(
-            new BN(amount.toString()),
-            asset.decimals,
-            AmountFormatStyle.SHORT,
-          );
+        const fmtAmount = formatDisplayAmount(
+          new BN(amount.toString()),
+          metadata.decimals,
+          AmountFormatStyle.SHORT,
+        );
 
-          const timeRemaining = calculateTimeRemaining(
-            currentRound,
-            requestedRound,
-            leaveDelegatorsDelay,
-          );
+        const timeRemaining = calculateTimeRemaining(
+          currentRound,
+          requestedRound,
+          leaveDelegatorsDelay,
+        );
 
-          acc[assetId] = {
-            amount: fmtAmount,
-            amountRaw: amount,
-            assetId: assetId,
-            assetSymbol: asset.symbol,
-            timeRemaining,
-          } satisfies WithdrawRequestTableData;
-
-          return acc;
-        },
-        {} as Record<string, WithdrawRequestTableData>,
-      ),
+        return {
+          amount: fmtAmount,
+          amountRaw: amount,
+          assetId: assetId,
+          assetSymbol: metadata.symbol,
+          timeRemaining,
+        } satisfies WithdrawRequestTableData;
+      }),
     [assetMap, currentRound, leaveDelegatorsDelay, withdrawRequests],
   );
-
-  const rows = useMemo(() => Object.values(dataWithId), [dataWithId]);
 
   const table = useReactTable(
     useMemo<TableOptions<WithdrawRequestTableData>>(
       () => ({
-        data: rows,
-        columns,
+        data: requests,
+        columns: COLUMNS,
         initialState: {
           pagination: {
             pageSize: 5,
@@ -155,7 +152,7 @@ const WithdrawRequestTable = ({ withdrawRequests }: Props) => {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
       }),
-      [rows],
+      [requests],
     ),
   );
 
@@ -169,15 +166,14 @@ const WithdrawRequestTable = ({ withdrawRequests }: Props) => {
   return (
     <>
       <Table
-        variant={TableVariant.DEFAULT}
         tableProps={table}
         isPaginated
-        title={pluralize('request', rows.length !== 1)}
+        title={pluralize('request', requests.length !== 1)}
       />
 
       <div className="flex items-center gap-3">
         <WithdrawRequestTableActions
-          allRequests={Object.values(dataWithId)}
+          allRequests={requests}
           selectedRequests={selectedRequests}
         />
       </div>

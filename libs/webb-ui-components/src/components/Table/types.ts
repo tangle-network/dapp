@@ -96,7 +96,7 @@ export interface TableProps<T extends RowData, E extends HTMLElement>
    */
   getExpandedRowContent?: (row: Row<T>) => React.ReactNode;
 
-  variant: TableVariant;
+  variant?: TableVariant;
   paginationLabelOverride?: string;
 }
 

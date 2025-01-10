@@ -10,7 +10,10 @@ import {
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import type { DelegatorUnstakeRequest } from '@webb-tools/tangle-shared-ui/types/restake';
+import type {
+  AssetMetadata,
+  DelegatorUnstakeRequest,
+} from '@webb-tools/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import {
   AmountFormatStyle,
@@ -20,22 +23,31 @@ import {
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import { useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import AvatarWithText from '../../../components/AvatarWithText';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
 import TableCell from '../TableCell';
 import { calculateTimeRemaining } from '../utils';
-import type { UnstakeRequestTableData } from './types';
 import UnstakeRequestTableActions from './UnstakeRequestTableActions';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { BN } from '@polkadot/util';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
-const columnsHelper = createColumnHelper<UnstakeRequestTableData>();
+export type UnstakeRequestTableRow = {
+  amount: string;
+  amountRaw: bigint;
+  assetId: string;
+  assetSymbol: string;
+  timeRemaining: number;
+  operatorAccountId: SubstrateAddress;
+  operatorIdentityName?: string;
+};
 
-const columns = [
-  columnsHelper.accessor('operatorAccountId', {
+const COLUMN_HELPER = createColumnHelper<UnstakeRequestTableRow>();
+
+const COLUMNS = [
+  COLUMN_HELPER.accessor('operatorAccountId', {
     id: 'select',
     enableSorting: false,
     header: () => <TableCell>Request</TableCell>,
@@ -55,7 +67,7 @@ const columns = [
       </div>
     ),
   }),
-  columnsHelper.accessor('amount', {
+  COLUMN_HELPER.accessor('amount', {
     header: () => <TableCell>Amount</TableCell>,
     cell: (props) => (
       <TableCell fw="normal" className="text-mono-200 dark:text-mono-0">
@@ -63,9 +75,9 @@ const columns = [
       </TableCell>
     ),
   }),
-  columnsHelper.accessor('timeRemaining', {
-    enableSorting: false,
+  COLUMN_HELPER.accessor('timeRemaining', {
     header: () => <TableCell>Time Remaining</TableCell>,
+    sortingFn: (a, b) => a.original.timeRemaining - b.original.timeRemaining,
     cell: (props) => {
       const value = props.getValue();
 
@@ -80,7 +92,7 @@ const columns = [
             EMPTY_VALUE_PLACEHOLDER
           ) : (
             <span className="flex items-center gap-1">
-              <TimeFillIcon className="!fill-blue-50" />
+              <TimeFillIcon className="fill-blue-50 dark:fill-blue-50" />
               {`${value} session${value > 1 ? 's' : ''}`}
             </span>
           )}
@@ -95,27 +107,38 @@ type Props = {
   operatorIdentities: Record<string, IdentityType | null>;
 };
 
-const UnstakeRequestTable = ({
+const createRowId = ({
+  assetId,
+  operatorAccountId,
+}: {
+  assetId: string;
+  operatorAccountId: SubstrateAddress;
+}): `${SubstrateAddress}-${string}` => {
+  return `${operatorAccountId}-${assetId}`;
+};
+
+const UnstakeRequestTable: FC<Props> = ({
   unstakeRequests,
   operatorIdentities,
-}: Props) => {
+}) => {
   const { assetMap } = useRestakeContext();
   const { delegationBondLessDelay } = useRestakeConsts();
   const { currentRound } = useRestakeCurrentRound();
 
-  const dataWithId = useMemo(
+  const requests = useMemo<UnstakeRequestTableRow[]>(
     () =>
-      unstakeRequests.reduce(
-        (acc, { assetId, amount, requestedRound, operatorAccountId }) => {
-          const asset = assetMap[assetId];
+      unstakeRequests.flatMap(
+        ({ assetId, amount, requestedRound, operatorAccountId }) => {
+          const metadata: AssetMetadata | undefined = assetMap[assetId];
 
-          if (!asset) {
-            return acc;
+          // Ignore entries without metadata.
+          if (!metadata) {
+            return [];
           }
 
           const fmtAmount = formatDisplayAmount(
             new BN(amount.toString()),
-            asset.decimals,
+            metadata.decimals,
             AmountFormatStyle.SHORT,
           );
 
@@ -125,37 +148,38 @@ const UnstakeRequestTable = ({
             delegationBondLessDelay,
           );
 
-          acc[getId({ assetId, operatorAccountId })] = {
+          return {
             amount: fmtAmount,
             amountRaw: amount,
             assetId: assetId,
-            assetSymbol: asset.symbol,
+            assetSymbol: metadata.symbol,
             timeRemaining,
             operatorAccountId,
-            operatorIdentityName: operatorIdentities?.[operatorAccountId]?.name,
-          } satisfies UnstakeRequestTableData;
-
-          return acc;
+            operatorIdentityName:
+              operatorIdentities?.[operatorAccountId]?.name ?? undefined,
+          } satisfies UnstakeRequestTableRow;
         },
-        {} as Record<string, UnstakeRequestTableData>,
       ),
-    // prettier-ignore
-    [assetMap, currentRound, delegationBondLessDelay, operatorIdentities, unstakeRequests],
+    [
+      assetMap,
+      currentRound,
+      delegationBondLessDelay,
+      operatorIdentities,
+      unstakeRequests,
+    ],
   );
 
-  const rows = useMemo(() => Object.values(dataWithId), [dataWithId]);
-
   const table = useReactTable(
-    useMemo<TableOptions<UnstakeRequestTableData>>(
+    useMemo<TableOptions<UnstakeRequestTableRow>>(
       () => ({
-        data: rows,
-        columns,
+        data: requests,
+        columns: COLUMNS,
         initialState: {
           pagination: {
             pageSize: 5,
           },
         },
-        getRowId: (row) => getId(row),
+        getRowId: createRowId,
         enableRowSelection: true,
         filterFns: {
           fuzzy: fuzzyFilter,
@@ -166,7 +190,7 @@ const UnstakeRequestTable = ({
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
       }),
-      [rows],
+      [requests],
     ),
   );
 
@@ -180,15 +204,14 @@ const UnstakeRequestTable = ({
   return (
     <>
       <Table
-        variant={TableVariant.DEFAULT}
         tableProps={table}
         isPaginated
-        title={pluralize('request', rows.length !== 1)}
+        title={pluralize('request', requests.length !== 1)}
       />
 
       <div className="grid grid-cols-2 gap-3">
         <UnstakeRequestTableActions
-          allRequests={Object.values(dataWithId)}
+          allRequests={requests}
           selectedRequests={selectedRequests}
         />
       </div>
@@ -197,13 +220,3 @@ const UnstakeRequestTable = ({
 };
 
 export default UnstakeRequestTable;
-
-function getId({
-  assetId,
-  operatorAccountId,
-}: {
-  assetId: string;
-  operatorAccountId: string;
-}) {
-  return `${operatorAccountId}-${assetId}`;
-}
