@@ -40,12 +40,10 @@ const ROLE_DESCRIPTION = {
 const Page = () => {
   const { role } = useRoleStore();
 
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({
-    '0': true,
-  });
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
-  const [isReviewOpen, setIsReviewOpen] = useState(true);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
   const [pricingSettings, setPricingSettings] =
     useState<PricingFormResult | null>(null);
 
