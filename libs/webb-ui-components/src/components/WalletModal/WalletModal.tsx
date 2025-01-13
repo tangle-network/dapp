@@ -40,13 +40,6 @@ export const WalletModal: FC<WalletModalProps> = ({
     return connectError.message;
   }, [connectError]);
 
-  const handleOpenChange = useCallback(
-    (isOpen: boolean) => {
-      toggleModal(isOpen);
-    },
-    [toggleModal],
-  );
-
   const downloadURL = useMemo(() => {
     if (platformId == null) return;
 
@@ -79,17 +72,12 @@ export const WalletModal: FC<WalletModalProps> = ({
   );
 
   return (
-    <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
+    <Modal open={isModalOpen} onOpenChange={toggleModal}>
       <ModalContent
-        isOpen={isModalOpen}
         onCloseAutoFocus={() => resetState()}
-        onInteractOutside={() => handleOpenChange(false)}
         className="overflow-hidden"
       >
-        <ModalHeader
-          onClose={() => handleOpenChange(false)}
-          className="border-b border-mono-40 dark:border-mono-160 pb-4"
-        >
+        <ModalHeader className="pb-4 border-b border-mono-40 dark:border-mono-160">
           Connect Wallet
         </ModalHeader>
 

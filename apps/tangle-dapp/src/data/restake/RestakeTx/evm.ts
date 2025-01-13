@@ -1,3 +1,4 @@
+import { TxEventHandlers } from '@webb-tools/abstract-api-provider';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
@@ -35,7 +36,6 @@ import {
   RestakeTxBase,
   type ScheduleDelegatorUnstakeContext,
   type ScheduleWithdrawContext,
-  type TxEventHandlers,
 } from './base';
 import { MULTI_ASSET_DELEGATION_EVM_ADDRESS } from './constants';
 
@@ -63,7 +63,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
     functionName: TFunctionName,
     args: TArgs,
     context: Context,
-    eventHandlers?: TxEventHandlers<Context>,
+    eventHandlers?: Partial<TxEventHandlers<Context>>,
   ): Promise<Hash | null> => {
     try {
       eventHandlers?.onTxSending?.(context);
@@ -120,7 +120,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
     assetId: string,
     amount: bigint,
     operatorAccount?: SubstrateAddress,
-    eventHandlers?: TxEventHandlers<DepositContext>,
+    eventHandlers?: Partial<TxEventHandlers<DepositContext>>,
   ) => {
     const context = { assetId, amount, operatorAccount } as DepositContext;
     const assetIdBigInt = BigInt(assetId);
@@ -177,7 +177,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
     operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<DelegatorStakeContext>,
+    eventHandlers?: Partial<TxEventHandlers<DelegatorStakeContext>>,
   ) => {
     const context = {
       operatorAccount,
@@ -199,7 +199,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
     operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<ScheduleDelegatorUnstakeContext>,
+    eventHandlers?: Partial<TxEventHandlers<ScheduleDelegatorUnstakeContext>>,
   ): Promise<Hash | null> => {
     const context = {
       operatorAccount,
@@ -218,7 +218,9 @@ export default class EVMRestakeTx extends RestakeTxBase {
   };
 
   executeDelegatorUnstakeRequests = async (
-    eventHandlers?: TxEventHandlers<ExecuteAllDelegatorUnstakeRequestContext>,
+    eventHandlers?: Partial<
+      TxEventHandlers<ExecuteAllDelegatorUnstakeRequestContext>
+    >,
   ): Promise<Hash | null> => {
     const context = {} as ExecuteAllDelegatorUnstakeRequestContext;
 
@@ -234,7 +236,9 @@ export default class EVMRestakeTx extends RestakeTxBase {
 
   cancelDelegatorUnstakeRequests = async (
     unstakeRequests: CancelDelegatorUnstakeRequestContext['unstakeRequests'],
-    eventHandlers?: TxEventHandlers<CancelDelegatorUnstakeRequestContext>,
+    eventHandlers?: Partial<
+      TxEventHandlers<CancelDelegatorUnstakeRequestContext>
+    >,
   ): Promise<Hash | null> => {
     const context = { unstakeRequests } as CancelDelegatorUnstakeRequestContext;
 
@@ -268,7 +272,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
   scheduleWithdraw = async (
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<ScheduleWithdrawContext>,
+    eventHandlers?: Partial<TxEventHandlers<ScheduleWithdrawContext>>,
   ): Promise<Hash | null> => {
     const context = { assetId, amount } as ScheduleWithdrawContext;
 
@@ -283,7 +287,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
   };
 
   executeWithdraw = async (
-    eventHandlers?: TxEventHandlers<ExecuteAllWithdrawRequestContext>,
+    eventHandlers?: Partial<TxEventHandlers<ExecuteAllWithdrawRequestContext>>,
   ): Promise<Hash | null> => {
     const context = {} as ExecuteAllWithdrawRequestContext;
 
@@ -299,7 +303,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
 
   cancelWithdraw = async (
     withdrawRequests: CancelWithdrawRequestContext['withdrawRequests'],
-    eventHandlers?: TxEventHandlers<CancelWithdrawRequestContext>,
+    eventHandlers?: Partial<TxEventHandlers<CancelWithdrawRequestContext>>,
   ): Promise<Hash | null> => {
     const context = { withdrawRequests } as CancelWithdrawRequestContext;
 

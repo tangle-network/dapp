@@ -1,3 +1,7 @@
+import {
+  TxEvent,
+  type TxEventHandlers,
+} from '@webb-tools/abstract-api-provider';
 import type { Evaluate } from '@webb-tools/dapp-types/utils/types';
 import Spinner from '@webb-tools/icons/Spinner';
 import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubstrateExplorerUrl';
@@ -5,8 +9,6 @@ import { type SnackBarOpts } from '@webb-tools/webb-ui-components/components/Not
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useMemo } from 'react';
-
-import { TxEvent, type TxEventHandlers } from './RestakeTx/base';
 import ViewTxOnExplorer from './ViewTxOnExplorer';
 
 type NotiOpts<Context extends Record<string, unknown>> = Evaluate<
@@ -23,10 +25,11 @@ export type Options<Context extends Record<string, unknown>> = Partial<
   Record<TxEvent, NotiOpts<Context>>
 >;
 
-export type Props<Context extends Record<string, unknown>> =
-  TxEventHandlers<Context> & {
-    options?: Options<Context>;
-  };
+export type Props<Context extends Record<string, unknown>> = Partial<
+  TxEventHandlers<Context>
+> & {
+  options?: Options<Context>;
+};
 
 const extractNotiOptions = <Context extends Record<string, unknown>>(
   context: Context,
@@ -50,7 +53,7 @@ export default function useRestakeTxEventHandlersWithNoti<
   const { notificationApi } = useWebbUI();
   const { resolveExplorerUrl } = useSubstrateExplorerUrl();
 
-  return useMemo<TxEventHandlers<Context>>(
+  return useMemo<Partial<TxEventHandlers<Context>>>(
     () => ({
       onTxSending: (context) => {
         const key = TxEvent.SENDING;

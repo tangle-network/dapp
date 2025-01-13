@@ -1,3 +1,5 @@
+'use client';
+
 import BlueprintHeader from '@webb-tools/tangle-shared-ui/components/blueprints/BlueprintHeader';
 import OperatorsTable from '@webb-tools/tangle-shared-ui/components/tables/Operators';
 import useBlueprintDetails from '@webb-tools/tangle-shared-ui/data/restake/useBlueprintDetails';
@@ -5,6 +7,7 @@ import { ErrorFallback } from '@webb-tools/webb-ui-components/components/ErrorFa
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { PropsWithChildren } from 'react';
 import { TangleDAppPagePath } from '../../../types';
 
@@ -58,12 +61,11 @@ const Page = ({ params }: { params: { id: string } }) => {
   } else if (error) {
     return <ErrorFallback title={error.name} />;
   } else if (result === null) {
-    // TODO: Should redirect to the 404 page
-    return null;
+    notFound();
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-10">
       <BlueprintHeader blueprint={result.details} />
 
       <div className="space-y-5">

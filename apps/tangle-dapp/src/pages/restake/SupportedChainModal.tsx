@@ -6,18 +6,13 @@ import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../constants/resta
 import { ModalContent } from '@webb-tools/webb-ui-components';
 
 type Props = {
-  isOpen: boolean;
   onClose: () => void;
   onChainChange: ComponentProps<typeof ChainList>['onSelectChain'];
 };
 
-const SupportedChainModal: FC<Props> = ({ isOpen, onChainChange, onClose }) => {
+const SupportedChainModal: FC<Props> = ({ onChainChange, onClose }) => {
   return (
-    <ModalContent
-      isOpen={isOpen}
-      title="Select Chain"
-      onInteractOutside={onClose}
-    >
+    <ModalContent title="Select Chain">
       <ChainList
         searchInputId="restake-supported-chain-search"
         chains={SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.map(

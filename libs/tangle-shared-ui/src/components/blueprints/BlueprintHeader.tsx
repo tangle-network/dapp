@@ -120,8 +120,14 @@ const BlueprintHeader: FC<BlueprintHeaderProps> = ({ blueprint }) => {
         </div>
 
         <div className="grid grid-cols-2 md:!grid-cols-4 gap-4">
-          <StatsItem label="Total Operators" value={operatorsCount} />
-          <StatsItem label="Total Restakers" value={restakersCount} />
+          <StatsItem
+            label="Total Operators"
+            value={operatorsCount?.toLocaleString()}
+          />
+          <StatsItem
+            label="Total Restakers"
+            value={restakersCount?.toLocaleString()}
+          />
           <StatsItem label="Total Value Locked" value={tvl} />
           <StatsItem label="Category" value={category} />
         </div>
@@ -134,7 +140,7 @@ export default BlueprintHeader;
 
 interface StatsItemProps {
   label: string;
-  value: string | number | null;
+  value: string | number | null | undefined;
 }
 
 const StatsItem: FC<StatsItemProps> = ({ label, value }) => {

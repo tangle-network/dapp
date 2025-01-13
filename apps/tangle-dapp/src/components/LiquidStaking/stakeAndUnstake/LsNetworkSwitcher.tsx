@@ -45,6 +45,7 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
     status: isLsNetworkSwitcherOpen,
     open: openLsNetworkSwitcher,
     close: closeLsNetworkSwitcher,
+    update: updateLsNetworkSwitcher,
   } = useModal(false);
 
   const base = (
@@ -114,12 +115,11 @@ const LsNetworkSwitcher: FC<LsNetworkSwitcherProps> = ({
     <>
       {base}
 
-      <Modal>
-        <ModalContent
-          isOpen={isLsNetworkSwitcherOpen}
-          onInteractOutside={closeLsNetworkSwitcher}
-          size="sm"
-        >
+      <Modal
+        open={isLsNetworkSwitcherOpen}
+        onOpenChange={updateLsNetworkSwitcher}
+      >
+        <ModalContent size="sm">
           <ChainList
             searchInputId="ls-network-switcher-search"
             showSearchInput={false}

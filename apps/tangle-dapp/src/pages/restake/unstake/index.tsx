@@ -1,4 +1,5 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
+import { TxEvent } from '@webb-tools/abstract-api-provider';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
@@ -16,6 +17,7 @@ import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
@@ -24,10 +26,7 @@ import AvatarWithText from '../../../components/AvatarWithText';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import {
-  type ScheduleDelegatorUnstakeContext,
-  TxEvent,
-} from '../../../data/restake/RestakeTx/base';
+import { type ScheduleDelegatorUnstakeContext } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import type { Props } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
@@ -44,8 +43,8 @@ import { ExpandTableButton } from '../ExpandTableButton';
 import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
-import TxInfo from './TxInfo';
 import SelectOperatorModal from './SelectOperatorModal';
+import TxInfo from './TxInfo';
 import UnstakeRequestTable from './UnstakeRequestTable';
 
 const RestakeUnstakePage = () => {
@@ -69,12 +68,18 @@ const RestakeUnstakePage = () => {
   const activeTypedChainId = useActiveTypedChainId();
   const { assetMap } = useRestakeContext();
 
-  const [isOperatorModalOpen, setIsOperatorModalOpen] = useState(false);
+  const {
+    status: isOperatorModalOpen,
+    open: openOperatorModal,
+    close: closeOperatorModal,
+    update: updateOperatorModal,
+  } = useModal();
 
   const {
     status: isChainModalOpen,
     open: openChainModal,
     close: closeChainModal,
+    update: updateChainModal,
   } = useModal();
 
   // Register form fields on mount
@@ -229,7 +234,7 @@ const RestakeUnstakePage = () => {
   );
 
   return (
-    <div className="flex items-start justify-center flex-wrap gap-4">
+    <div className="flex flex-wrap items-start justify-center gap-4">
       <div>
         <RestakeTabs />
 
@@ -251,7 +256,7 @@ const RestakeUnstakePage = () => {
                 <TransactionInputCard.Header>
                   <TransactionInputCard.ChainSelector
                     placeholder="Select Operator"
-                    onClick={() => setIsOperatorModalOpen(true)}
+                    onClick={openOperatorModal}
                     {...(selectedOperatorAccountId
                       ? {
                           renderBody: () => (
@@ -370,14 +375,14 @@ const RestakeUnstakePage = () => {
         </RestakeDetailCard.Root>
       </AnimatedTable>
 
-      <Modal>
+      <Modal open={isOperatorModalOpen} onOpenChange={updateOperatorModal}>
         <SelectOperatorModal
           delegatorInfo={delegatorInfo}
           isOpen={isOperatorModalOpen}
-          setIsOpen={setIsOperatorModalOpen}
+          setIsOpen={updateOperatorModal}
           operatorIdentities={operatorIdentities}
           onItemSelected={(item) => {
-            setIsOperatorModalOpen(false);
+            closeOperatorModal();
 
             const { formattedAmount, assetId, operatorAccountId } = item;
 
@@ -386,14 +391,19 @@ const RestakeUnstakePage = () => {
               shouldValidate: true,
             };
 
-            setFormValue('operatorAccountId', operatorAccountId, commonOpts);
+            setFormValue(
+              'operatorAccountId',
+              operatorAccountId as SubstrateAddress,
+              commonOpts,
+            );
             setFormValue('assetId', assetId, commonOpts);
             setFormValue('amount', formattedAmount, commonOpts);
           }}
         />
+      </Modal>
 
+      <Modal open={isChainModalOpen} onOpenChange={updateChainModal}>
         <SupportedChainModal
-          isOpen={isChainModalOpen}
           onClose={closeChainModal}
           onChainChange={async (chainConfig) => {
             const typedChainId = calculateTypedChainId(

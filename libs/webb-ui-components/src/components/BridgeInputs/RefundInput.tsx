@@ -1,7 +1,5 @@
 'use client';
 
-import { Transition } from '@headlessui/react';
-import cx from 'classnames';
 import { ComponentProps, FC, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { CheckBox } from '../CheckBox';
@@ -58,22 +56,17 @@ export const RefundInput: FC<RefundInputProps> = ({
         </CheckBox>
       </div>
 
-      <Transition
-        show={isChecked}
-        enter={cx('transition-opacity')}
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave={cx('transition-opacity')}
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-      >
+      {isChecked && (
         <AmountInput
           {...refundAmountInputProps}
-          className={refundAmountInputProps.className}
+          className={twMerge(
+            'animate-in fade-in-0 animate-out fade-out-0',
+            refundAmountInputProps.className,
+          )}
           id={id}
           title={title}
         />
-      </Transition>
+      )}
     </>
   );
 };

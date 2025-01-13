@@ -265,6 +265,7 @@ const preset = {
     require('@tailwindcss/forms'),
     require('tailwindcss-radix')(),
     require('tailwind-scrollbar')({ nocompatible: true }),
+    require('tailwindcss-animate'),
   ],
 };
 

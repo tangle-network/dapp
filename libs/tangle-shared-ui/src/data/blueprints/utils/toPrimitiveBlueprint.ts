@@ -28,6 +28,7 @@ import type {
   WasmGadget,
   WasmRuntime,
 } from '@webb-tools/tangle-substrate-types';
+import { PrimitiveFieldType } from '../../../types/blueprint';
 
 export function toPrimitiveBlueprint({
   metadata,
@@ -256,14 +257,6 @@ export function toPrimitiveOperatingSystem(os: OperatingSystem) {
   return os.type;
 }
 
-type PrimitiveFieldType =
-  | { Optional: PrimitiveFieldType }
-  | { Array: [number, PrimitiveFieldType] }
-  | { List: PrimitiveFieldType }
-  | { Struct: [PrimitiveFieldType, [PrimitiveFieldType, PrimitiveFieldType][]] }
-  | FieldFieldType['type']
-  | TanglePrimitivesServicesFieldFieldType['type'];
-
 export function toPrimitiveFieldType(
   fieldType: FieldFieldType | TanglePrimitivesServicesFieldFieldType,
 ): PrimitiveFieldType {
@@ -290,14 +283,11 @@ export function toPrimitiveFieldType(
       const [first, second] = fieldType.asStruct;
       return {
         Struct: [
-          toPrimitiveFieldType(first),
-          second.map<[PrimitiveFieldType, PrimitiveFieldType]>(
-            ([first, second]) =>
-              [
-                toPrimitiveFieldType(first),
-                toPrimitiveFieldType(second),
-              ] as const,
-          ),
+          String(first),
+          second.map<[string, PrimitiveFieldType]>(([first, second]) => [
+            String(first),
+            toPrimitiveFieldType(second),
+          ]),
         ],
       } as const;
     }

@@ -1,11 +1,9 @@
 'use client';
 
-import { Transition, TransitionChild } from '@headlessui/react';
 import * as Dialog from '@radix-ui/react-dialog';
-import { forwardRef, Fragment } from 'react';
+import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ModalContentProps } from './types';
-import useIsBreakpoint from '../../hooks/useIsBreakpoint';
 
 const getTailwindSizeClass = (size: ModalContentProps['size']) => {
   switch (size) {
@@ -22,86 +20,59 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
   (
     {
       children,
-      isOpen = false,
       className,
-      overrideTransitionContentProps,
-      overrideTransitionOverlayProps,
-      overrideTransitionRootProps,
       size = 'md',
+      title = 'Modal',
+      description = 'Modal',
       ...props
     },
     ref,
   ) => {
-    const isSmOrLess = useIsBreakpoint('sm', true);
-    const isMdOrLess = useIsBreakpoint('md', true);
-
     return (
-      <Transition show={isOpen} {...overrideTransitionRootProps}>
-        <TransitionChild
-          as={Fragment}
-          enter="ease-out duration-200"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-100"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-          {...overrideTransitionOverlayProps}
+      <Dialog.Portal>
+        <Dialog.Overlay
+          forceMount
+          className={twMerge(
+            'fixed inset-0 z-20 bg-black/65 backdrop-blur-[1px]',
+            'data-[state=open]:animate-in data-[state=closed]:animate-out',
+            'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+          )}
+        />
+
+        <Dialog.Content
+          forceMount
+          {...props}
+          className={twMerge(
+            // Prevent the focus border from showing.
+            'focus:outline-none',
+            'fixed z-50 w-full rounded-2xl overflow-hidden',
+            'border dark:border-mono-160',
+            'bg-mono-0 dark:bg-mono-180',
+            'left-1/2 -translate-x-1/2',
+            'data-[state=open]:animate-in data-[state=closed]:animate-out',
+            'data-[state=open]:ease-out data-[state=closed]:ease-in',
+            'data-[state=open]:duration-300 md:data-[state=open]:duration-200',
+            'data-[state=closed]:duration-200 md:data-[state=closed]:duration-100',
+            'data-[state=closed]:slide-out-to-left-1/2 md:data-[state=closed]:slide-out-to-top-[48%]',
+            'data-[state=open]:slide-in-from-left-1/2 md:data-[state=open]:slide-in-from-top-[48%]',
+            'data-[state=open]:slide-in-from-bottom-full md:data-[state=open]:fade-in-0 md:data-[state=open]:zoom-in-0',
+            'data-[state=closed]:slide-out-to-bottom-full md:data-[state=closed]:fade-out-0 md:data-[state=closed]:zoom-out-0',
+            'max-md:bottom-0 max-md:rounded-b-none md:top-1/2 md:-translate-y-1/2',
+            getTailwindSizeClass(size),
+            className,
+            'max-sm:max-w-full',
+          )}
+          ref={ref}
         >
-          <Dialog.Overlay
-            forceMount
-            className="fixed inset-0 z-20 bg-black/65 backdrop-blur-[1px]"
-          />
-        </TransitionChild>
+          <Dialog.Title className="sr-only">{title}</Dialog.Title>
 
-        <TransitionChild
-          as={Fragment}
-          enter={twMerge(
-            'ease-out',
-            isMdOrLess ? 'duration-300' : 'duration-200',
-          )}
-          enterFrom={twMerge(
-            isMdOrLess ? 'translate-y-full' : 'opacity-0 top-[calc(50%+15px)]',
-          )}
-          enterTo={twMerge(isMdOrLess ? 'translate-y-0' : 'opacity-100 top-0')}
-          leave={twMerge(
-            'ease-in',
-            isMdOrLess ? 'duration-200' : 'duration-100',
-          )}
-          leaveFrom={twMerge(
-            isMdOrLess ? 'translate-y-0' : 'opacity-100 top-0',
-          )}
-          leaveTo={twMerge(
-            isMdOrLess ? 'translate-y-full' : 'opacity-0 top-[calc(50%+15px)]',
-          )}
-          {...overrideTransitionContentProps}
-        >
-          <Dialog.Content
-            forceMount
-            {...props}
-            className={twMerge(
-              // Prevent the focus border from showing.
-              'focus:outline-none',
-              'fixed z-50 w-full rounded-2xl overflow-hidden',
-              'border dark:border-mono-160',
-              'bg-mono-0 dark:bg-mono-180',
-              '-translate-x-1/2 left-1/2',
-              isMdOrLess
-                ? 'bottom-0 rounded-b-none'
-                : 'top-1/2 -translate-y-1/2',
-              getTailwindSizeClass(size),
-              className,
-              isSmOrLess && 'max-w-full',
-            )}
-            ref={ref}
-          >
-            <Dialog.Title className="sr-only">Modal</Dialog.Title>
+          <Dialog.Description className="sr-only">
+            {description}
+          </Dialog.Description>
 
-            <Dialog.Description className="sr-only">Modal</Dialog.Description>
-
-            {children}
-          </Dialog.Content>
-        </TransitionChild>
-      </Transition>
+          {children}
+        </Dialog.Content>
+      </Dialog.Portal>
     );
   },
 );
