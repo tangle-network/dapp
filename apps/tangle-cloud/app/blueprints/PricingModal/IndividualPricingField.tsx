@@ -21,13 +21,18 @@ type Props = {
   watch: UseFormWatch<IndividualFormSchema>;
 };
 
-const allInpusFilled = (inputValues?: Partial<PriceFieldSchema>) => {
+const allInputsFilled = (inputValues?: Partial<PriceFieldSchema>) => {
   return (
     inputValues?.cpuPrice !== undefined &&
+    inputValues?.cpuPrice !== '' &&
     inputValues?.memPrice !== undefined &&
+    inputValues?.memPrice !== '' &&
     inputValues?.hddStoragePrice !== undefined &&
+    inputValues?.hddStoragePrice !== '' &&
     inputValues?.ssdStoragePrice !== undefined &&
-    inputValues?.nvmeStoragePrice !== undefined
+    inputValues?.ssdStoragePrice !== '' &&
+    inputValues?.nvmeStoragePrice !== undefined &&
+    inputValues?.nvmeStoragePrice !== ''
   );
 };
 
@@ -67,7 +72,7 @@ export default function IndividualPricingField({
                   )
                 }
                 RightIcon={
-                  allInpusFilled(inputValues[blueprint.id]) ? (
+                  allInputsFilled(inputValues[blueprint.id]) ? (
                     <Chip color="green">Ready</Chip>
                   ) : null
                 }
