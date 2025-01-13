@@ -2,10 +2,11 @@ import { decodeAddress } from '@polkadot/util-crypto';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
 import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useActiveChain';
+import { Spinner } from '@webb-tools/icons';
 import { ThreeDotsVerticalIcon } from '@webb-tools/icons/ThreeDotsVerticalIcon';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { Blueprint } from '@webb-tools/tangle-shared-ui/types/blueprint';
-import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
+import { isSubstrateAddress, useWebbUI } from '@webb-tools/webb-ui-components';
 import {
   Accordion,
   AccordionButtonBase,
@@ -23,10 +24,11 @@ import { Label } from '@webb-tools/webb-ui-components/components/Label';
 import { TextField } from '@webb-tools/webb-ui-components/components/TextField';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import Image from 'next/image';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import useServicesTransactions from '../../../hooks/useServicesTransactions';
 import { PricingFormResult, PricingType } from '../PricingModal/types';
 import ParamsForm from './ParamsForm';
+import { TxEvent } from '@webb-tools/abstract-api-provider';
 
 type Props = {
   selectedBlueprints: Blueprint[];
@@ -42,6 +44,8 @@ export default function RegistrationReview({
   const [amount, setAmount] = useState('');
 
   const { network } = useNetworkStore();
+
+  const { notificationApi } = useWebbUI();
 
   const { register } = useServicesTransactions();
 
@@ -79,37 +83,78 @@ export default function RegistrationReview({
     return isSubstrateAddress(activeAccount.address);
   }, [activeAccount]);
 
+  const createNotificationHandler = useCallback(
+    (prefix: string) => {
+      return {
+        onTxSending: () => {
+          notificationApi.addToQueue({
+            key: `${prefix}-${TxEvent.SENDING}`,
+            Icon: <Spinner />,
+            message: `Sending ${prefix.toLowerCase()} transaction`,
+            variant: 'info',
+          });
+        },
+        onTxSuccess: () => {
+          notificationApi.remove(`${prefix}-${TxEvent.SENDING}`);
+          notificationApi.addToQueue({
+            key: `${prefix}-${TxEvent.SUCCESS}`,
+            message: `${prefix} transaction sent successfully!`,
+            variant: 'success',
+          });
+        },
+        onTxFailed: (errorMessage: string) => {
+          notificationApi.remove(`${prefix}-${TxEvent.SENDING}`);
+          notificationApi.addToQueue({
+            key: `${prefix}-${TxEvent.FAILED}`,
+            message: `${prefix} transaction failed!`,
+            secondaryMessage: `Error: ${errorMessage}`,
+            variant: 'error',
+          });
+        },
+      };
+    },
+    [notificationApi],
+  );
+
   const handleRegister = async () => {
     if (!activeAccount || !pricingSettings) {
       return;
     }
 
-    await register({
-      blueprintIds: blueprints.map((blueprint) => blueprint.id),
-      preferences: blueprints.map(({ id }) => {
-        const blueprintPriceSettings =
-          pricingSettings.type === PricingType.GLOBAL
-            ? pricingSettings.values
-            : pricingSettings.values[id];
+    const preferences = blueprints.map(({ id }) => {
+      const blueprintPriceSettings =
+        pricingSettings.type === PricingType.GLOBAL
+          ? pricingSettings.values
+          : pricingSettings.values[id];
 
-        return {
-          key: decodeAddress(
-            activeAccount.address,
-            undefined,
-            network.ss58Prefix,
-          ),
-          priceTargets: {
-            cpu: Number(blueprintPriceSettings.cpuPrice),
-            mem: Number(blueprintPriceSettings.memPrice),
-            storageHdd: Number(blueprintPriceSettings.hddStoragePrice),
-            storageSsd: Number(blueprintPriceSettings.ssdStoragePrice),
-            storageNvme: Number(blueprintPriceSettings.nvmeStoragePrice),
-          },
-        };
-      }),
-      registrationArgs: blueprints.map(({ id }) => registrationParams[id]),
-      amount: blueprints.map(({ id }) => amount),
+      return {
+        key: decodeAddress(
+          activeAccount.address,
+          undefined,
+          network.ss58Prefix,
+        ),
+        priceTargets: {
+          cpu: Number(blueprintPriceSettings.cpuPrice),
+          mem: Number(blueprintPriceSettings.memPrice),
+          storageHdd: Number(blueprintPriceSettings.hddStoragePrice),
+          storageSsd: Number(blueprintPriceSettings.ssdStoragePrice),
+          storageNvme: Number(blueprintPriceSettings.nvmeStoragePrice),
+        },
+      };
     });
+
+    await register(
+      {
+        blueprintIds: blueprints.map((blueprint) => blueprint.id),
+        preferences,
+        registrationArgs: blueprints.map(({ id }) => registrationParams[id]),
+        amount: blueprints.map(({ id }) => amount),
+      },
+      {
+        onPreRegister: createNotificationHandler('PreRegister'),
+        onRegister: createNotificationHandler('Register'),
+      },
+    );
   };
 
   return (
