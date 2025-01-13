@@ -7,7 +7,7 @@ import {
   BLUEPRINTS_OPERATOR_DESCRIPTION,
   BLUEPRINTS_OPERATOR_TITLE,
 } from '@webb-tools/tangle-shared-ui/constants';
-import useBlueprintListing from '@webb-tools/tangle-shared-ui/data/blueprints/useFakeBlueprintListing';
+import useBlueprintListing from '@webb-tools/tangle-shared-ui/data/blueprints/useBlueprintListing';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import {
   Modal,

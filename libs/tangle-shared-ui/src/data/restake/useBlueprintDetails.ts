@@ -59,7 +59,8 @@ export default function useBlueprintDetails(id?: string) {
             const idNumber = Number(id);
             const [ownerAccount, serviceBlueprint] = blueprintDetails.unwrap();
             const owner = ownerAccount.toString();
-            const { metadata } = toPrimitiveBlueprint(serviceBlueprint);
+            const { metadata, registrationParams } =
+              toPrimitiveBlueprint(serviceBlueprint);
 
             const {
               blueprintOperatorMap,
@@ -91,6 +92,7 @@ export default function useBlueprintDetails(id?: string) {
               websiteUrl: metadata.website,
               twitterUrl: info?.twitter ?? null,
               email: info?.email ?? null,
+              registrationParams,
               // TODO: Determine `isBoosted` value.
               isBoosted: false,
             } satisfies Blueprint;

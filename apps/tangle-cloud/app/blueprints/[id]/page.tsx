@@ -2,7 +2,7 @@
 
 import BlueprintHeader from '@webb-tools/tangle-shared-ui/components/blueprints/BlueprintHeader';
 import OperatorsTable from '@webb-tools/tangle-shared-ui/components/tables/Operators';
-import useBlueprintDetails from '@webb-tools/tangle-shared-ui/data/restake/useFakeBlueprintDetails';
+import useBlueprintDetails from '@webb-tools/tangle-shared-ui/data/restake/useBlueprintDetails';
 import { ErrorFallback } from '@webb-tools/webb-ui-components/components/ErrorFallback';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
