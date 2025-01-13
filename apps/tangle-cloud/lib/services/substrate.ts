@@ -40,12 +40,17 @@ export class SubstrateServices extends BaseServices {
       }),
     );
 
-    await signAndSendExtrinsic(
+    const preRegisterTxHash = await signAndSendExtrinsic(
       this.activeAccount,
       preRegisterExtrinsic,
       args,
       eventHandlers?.onPreRegister,
     );
+
+    // Pre-register transaction failed
+    if (preRegisterTxHash === null) {
+      return;
+    }
 
     const registerExtrinsic = this.provider.tx.utility.batch(
       blueprintIds.map((blueprintId, idx) => {
