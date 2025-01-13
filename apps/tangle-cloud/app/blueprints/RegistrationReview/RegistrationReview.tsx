@@ -128,11 +128,7 @@ export default function RegistrationReview({
           : pricingSettings.values[id];
 
       return {
-        key: decodeAddress(
-          activeAccount.address,
-          undefined,
-          network.ss58Prefix,
-        ),
+        key: decodeAddress(activeAccount.address),
         priceTargets: {
           cpu: Number(blueprintPriceSettings.cpuPrice),
           mem: Number(blueprintPriceSettings.memPrice),
