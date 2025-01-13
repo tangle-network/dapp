@@ -49,6 +49,7 @@ export default function RegistrationReview({
 
   const { register } = useServicesTransactions();
 
+  const [accordionState, setAccordionState] = useState<string>('');
   const [registrationParams, setRegistrationParams] = useState<
     Record<string, any>
   >({});
@@ -168,7 +169,12 @@ export default function RegistrationReview({
       </Typography>
 
       <div className="space-y-4">
-        <Accordion type="single" collapsible>
+        <Accordion
+          type="single"
+          collapsible
+          value={accordionState}
+          onValueChange={setAccordionState}
+        >
           {blueprints.map((blueprint) => (
             <AccordionItem
               className="p-6 border-2 border-mono-80 dark:border-mono-160"
@@ -226,12 +232,13 @@ export default function RegistrationReview({
               <AccordionContent>
                 <ParamsForm
                   params={blueprint.registrationParams}
-                  onSave={(params) =>
+                  onSave={(params) => {
                     setRegistrationParams((prev) => ({
                       ...prev,
                       [blueprint.id]: params,
-                    }))
-                  }
+                    }));
+                    setAccordionState('');
+                  }}
                 />
               </AccordionContent>
             </AccordionItem>
