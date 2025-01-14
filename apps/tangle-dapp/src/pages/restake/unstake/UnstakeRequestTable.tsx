@@ -11,7 +11,7 @@ import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import type {
-  AssetMetadata,
+  RestakeVaultAssetMetadata,
   DelegatorUnstakeRequest,
 } from '@webb-tools/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
@@ -129,7 +129,8 @@ const UnstakeRequestTable: FC<Props> = ({
     () =>
       unstakeRequests.flatMap(
         ({ assetId, amount, requestedRound, operatorAccountId }) => {
-          const metadata: AssetMetadata | undefined = assetMap[assetId];
+          const metadata: RestakeVaultAssetMetadata | undefined =
+            assetMap[assetId];
 
           // Ignore entries without metadata.
           if (!metadata) {

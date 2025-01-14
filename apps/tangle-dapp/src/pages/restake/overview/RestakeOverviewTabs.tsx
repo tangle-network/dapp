@@ -62,7 +62,7 @@ const RestakeOverviewTabs: FC<Props> = ({
   action,
 }) => {
   const { assetMap } = useRestakeContext();
-  const { rewardConfig } = useRestakeRewardConfig();
+  const rewardConfig = useRestakeRewardConfig();
 
   // Recalculate vaults data from assetMap
   const vaults = useMemo(() => {
@@ -72,7 +72,9 @@ const RestakeOverviewTabs: FC<Props> = ({
       if (vaultId === null) continue;
 
       if (vaults[vaultId] === undefined) {
-        const apyPercentage = rewardConfig.configs[vaultId]?.apy ?? null;
+        const apyPercentage =
+          rewardConfig?.get(vaultId)?.apy.toNumber() ?? null;
+
         const tvlInUsd = vaultTVL?.[vaultId] ?? null;
 
         vaults[vaultId] = {
@@ -82,16 +84,16 @@ const RestakeOverviewTabs: FC<Props> = ({
           name: name,
           // TODO: Find out a proper way to get the vault symbol, now it's the first token symbol
           representToken: symbol,
-          tokensCount: 1,
+          tokenCount: 1,
           tvlInUsd,
         };
       } else {
-        vaults[vaultId].tokensCount += 1;
+        vaults[vaultId].tokenCount += 1;
       }
     }
 
     return vaults;
-  }, [assetMap, rewardConfig.configs, vaultTVL]);
+  }, [assetMap, rewardConfig, vaultTVL]);
 
   const delegatorTotalRestakedAssets = useMemo(() => {
     if (!delegatorInfo?.delegations) {

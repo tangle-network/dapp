@@ -3,10 +3,10 @@ import type { Table } from '@webb-tools/webb-ui-components/components/Table';
 import type { ComponentProps } from 'react';
 
 export type VaultData = {
-  id: string;
+  id: number;
   name: string;
   apyPercentage: number | null;
-  tokensCount: number;
+  tokenCount: number;
   tvlInUsd: number | null;
   representToken: string;
 };

@@ -1,6 +1,6 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import useRestakeAssetMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetMap';
+import useRestakeVaultAssets from '@webb-tools/tangle-shared-ui/data/restake/useRestakeVaultAssets';
 import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
 import { AssetWithBalance } from '@webb-tools/tangle-shared-ui/types/restake';
 import toPairs from 'lodash/toPairs';
@@ -10,8 +10,7 @@ import { combineLatest, map } from 'rxjs';
 import RestakeContext from './RestakeContext';
 
 const RestakeContextProvider = (props: PropsWithChildren) => {
-  const { assetMap, assetMap$ } = useRestakeAssetMap();
-
+  const { vaultAssets: assetMap, assetMap$ } = useRestakeVaultAssets();
   const { balances, balances$ } = useRestakeBalances();
 
   const assetWithBalances$ = useMemo(

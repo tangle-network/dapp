@@ -11,7 +11,7 @@ import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import type {
-  AssetMetadata,
+  RestakeVaultAssetMetadata,
   DelegatorWithdrawRequest,
 } from '@webb-tools/tangle-shared-ui/types/restake';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
@@ -102,7 +102,8 @@ const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
   const requests = useMemo(
     () =>
       withdrawRequests.flatMap(({ assetId, amount, requestedRound }) => {
-        const metadata: AssetMetadata | undefined = assetMap[assetId];
+        const metadata: RestakeVaultAssetMetadata | undefined =
+          assetMap[assetId];
 
         // Ignore requests if the metadata is not available.
         if (metadata === undefined) {

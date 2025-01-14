@@ -2,12 +2,12 @@
 
 import { createContext } from 'react';
 import { of } from 'rxjs';
-import { AssetBalanceMap, AssetMap } from '../../types/restake';
+import { AssetBalanceMap, RestakeVaultAssetMap } from '../../types/restake';
 import { RestakeContextType } from './types';
 
 const RestakeContext = createContext<RestakeContextType>({
   assetMap: {},
-  assetMap$: of<AssetMap>({}),
+  assetMap$: of<RestakeVaultAssetMap>({}),
   balances: {},
   balances$: of<AssetBalanceMap>({}),
   assetWithBalances: [],

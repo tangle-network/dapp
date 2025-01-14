@@ -1,7 +1,7 @@
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
-import { useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { UseFormWatch } from 'react-hook-form';
 import DetailsContainer from '../../../components/DetailsContainer';
 import DetailItem from '../../../components/LiquidStaking/stakeAndUnstake/DetailItem';
@@ -13,16 +13,15 @@ type Props = {
   watch: UseFormWatch<DepositFormFields>;
 };
 
-export default function TxDetails({ watch }: Props) {
-  const assetId = watch('depositAssetId');
-
+const TxDetails: FC<Props> = ({ watch }) => {
   const { assetMap } = useRestakeContext();
   const { bondDuration } = useRestakeConsts();
+  const rewardConfig = useRestakeRewardConfig();
 
-  const { rewardConfig } = useRestakeRewardConfig();
+  const assetId = watch('depositAssetId');
 
   const apy = useMemo(() => {
-    if (assetId === null) {
+    if (assetId === null || rewardConfig === null) {
       return null;
     }
 
@@ -32,8 +31,8 @@ export default function TxDetails({ watch }: Props) {
       return null;
     }
 
-    return rewardConfig.configs[asset.vaultId]?.apy ?? null;
-  }, [assetId, assetMap, rewardConfig.configs]);
+    return rewardConfig.get(asset.vaultId)?.apy ?? null;
+  }, [assetId, assetMap, rewardConfig]);
 
   return (
     <DetailsContainer>
@@ -53,4 +52,6 @@ export default function TxDetails({ watch }: Props) {
       />
     </DetailsContainer>
   );
-}
+};
+
+export default TxDetails;

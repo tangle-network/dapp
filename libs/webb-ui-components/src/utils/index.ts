@@ -28,3 +28,4 @@ export { default as toSubstrateBytes32Address } from './toSubstrateBytes32Addres
 export * from './isSolanaAddress';
 export * from './assertEvmAddress';
 export * from './assertAddressBy';
+export * from './isTemplateNumber';
