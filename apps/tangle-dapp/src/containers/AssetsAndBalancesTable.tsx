@@ -311,7 +311,7 @@ const AssetsAndBalancesTable: FC = () => {
     [delegatorInfo?.delegations, delegatorInfo?.deposits],
   );
 
-  console.debug('asset map', vaultAssets);
+  console.debug('vault asset map', vaultAssets);
 
   const assetRows = useMemo<Row[]>(() => {
     return Object.entries(vaultAssets).flatMap(([assetId, metadata]) => {

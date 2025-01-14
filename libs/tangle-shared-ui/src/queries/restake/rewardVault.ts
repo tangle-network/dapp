@@ -33,11 +33,9 @@ function toPrimitive(
 }
 
 export function rewardVaultRxQuery(apiRx: ApiRx) {
-  if (apiRx.query.multiAssetDelegation?.rewardVaults === undefined) {
+  if (apiRx.query.rewards?.rewardVaults === undefined) {
     return of([]);
   }
 
-  return apiRx.query.multiAssetDelegation.rewardVaults
-    .entries()
-    .pipe(map(toPrimitive));
+  return apiRx.query.rewards.rewardVaults.entries().pipe(map(toPrimitive));
 }

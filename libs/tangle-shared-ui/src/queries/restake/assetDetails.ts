@@ -27,8 +27,9 @@ function createVaultId(u32: Option<u32>): number | null {
 function isApiSupported(api: ApiPromise | ApiRx) {
   const isAssetsQueryUndefined = api.query?.assets?.asset === undefined;
   const isMetadataQueryUndefined = api.query?.assets?.metadata === undefined;
+
   const isVaultsQueryUndefined =
-    api.query.multiAssetDelegation?.assetLookupRewardVaults === undefined;
+    api.query.rewards?.assetLookupRewardVaults === undefined;
 
   return (
     !isAssetsQueryUndefined &&
