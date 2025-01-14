@@ -311,11 +311,13 @@ const AssetsAndBalancesTable: FC = () => {
     [delegatorInfo?.delegations, delegatorInfo?.deposits],
   );
 
-  console.debug('vault asset map', vaultAssets);
-
   const assetRows = useMemo<Row[]>(() => {
     return Object.entries(vaultAssets).flatMap(([assetId, metadata]) => {
-      const config = rewardConfig?.get(assetId);
+      if (metadata.vaultId === null) {
+        return [];
+      }
+
+      const config = rewardConfig?.get(metadata.vaultId);
 
       if (config === undefined) {
         return [];
