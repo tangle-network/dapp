@@ -23,7 +23,6 @@ import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../../data/restake/useRestakeCurrentRound';
 import TableCell from '../TableCell';
 import { calculateTimeRemaining } from '../utils';
-import type { WithdrawRequestTableData } from './types';
 import WithdrawRequestTableActions from './WithdrawRequestTableActions';
 import {
   AmountFormatStyle,
@@ -33,7 +32,15 @@ import {
 import { BN } from '@polkadot/util';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
-const COLUMN_HELPER = createColumnHelper<WithdrawRequestTableData>();
+export type WithdrawRequestTableRow = {
+  amount: string;
+  amountRaw: bigint;
+  assetId: string;
+  assetSymbol: string;
+  sessionsRemaining: number;
+};
+
+const COLUMN_HELPER = createColumnHelper<WithdrawRequestTableRow>();
 
 const COLUMNS = [
   COLUMN_HELPER.accessor('assetId', {
@@ -63,25 +70,27 @@ const COLUMNS = [
       </TableCell>
     ),
   }),
-  COLUMN_HELPER.accessor('timeRemaining', {
+  COLUMN_HELPER.accessor('sessionsRemaining', {
     header: () => <TableCell>Time Remaining</TableCell>,
-    sortingFn: (a, b) => a.original.timeRemaining - b.original.timeRemaining,
+    sortingFn: (a, b) =>
+      a.original.sessionsRemaining - b.original.sessionsRemaining,
     cell: (props) => {
-      const timeRemaining = props.getValue();
+      const sessionsRemaining = props.getValue();
 
       return (
         <TableCell fw="normal" className="text-mono-200 dark:text-mono-0">
-          {timeRemaining === 0 ? (
+          {sessionsRemaining === 0 ? (
             <span className="flex items-center gap-1">
               <CheckboxCircleFill className="fill-green-50 dark:fill-green-50" />
               Ready
             </span>
-          ) : timeRemaining < 0 ? (
+          ) : sessionsRemaining < 0 ? (
             EMPTY_VALUE_PLACEHOLDER
           ) : (
             <span className="flex items-center gap-1">
               <TimeFillIcon className="fill-blue-50 dark:fill-blue-50" />
-              {`${timeRemaining} ${pluralize('session', timeRemaining !== 1)}`}
+
+              {`${sessionsRemaining} ${pluralize('session', sessionsRemaining !== 1)}`}
             </span>
           )}
         </TableCell>
@@ -97,44 +106,46 @@ type Props = {
 const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
   const { assetMap } = useRestakeContext();
   const { leaveDelegatorsDelay } = useRestakeConsts();
-  const { currentRound } = useRestakeCurrentRound();
+  const { result: currentRound } = useRestakeCurrentRound();
 
-  const requests = useMemo(
-    () =>
-      withdrawRequests.flatMap(({ assetId, amount, requestedRound }) => {
-        const metadata: RestakeVaultAssetMetadata | undefined =
-          assetMap[assetId];
+  const requests = useMemo(() => {
+    // Not yet ready.
+    if (currentRound === null) {
+      return [];
+    }
 
-        // Ignore requests if the metadata is not available.
-        if (metadata === undefined) {
-          return [];
-        }
+    return withdrawRequests.flatMap(({ assetId, amount, requestedRound }) => {
+      const metadata: RestakeVaultAssetMetadata | undefined = assetMap[assetId];
 
-        const fmtAmount = formatDisplayAmount(
-          new BN(amount.toString()),
-          metadata.decimals,
-          AmountFormatStyle.SHORT,
-        );
+      // Ignore requests if the metadata is not available.
+      if (metadata === undefined) {
+        return [];
+      }
 
-        const timeRemaining = calculateTimeRemaining(
-          currentRound,
-          requestedRound,
-          leaveDelegatorsDelay,
-        );
+      const fmtAmount = formatDisplayAmount(
+        new BN(amount.toString()),
+        metadata.decimals,
+        AmountFormatStyle.SHORT,
+      );
 
-        return {
-          amount: fmtAmount,
-          amountRaw: amount,
-          assetId: assetId,
-          assetSymbol: metadata.symbol,
-          timeRemaining,
-        } satisfies WithdrawRequestTableData;
-      }),
-    [assetMap, currentRound, leaveDelegatorsDelay, withdrawRequests],
-  );
+      const sessionsRemaining = calculateTimeRemaining(
+        currentRound,
+        requestedRound,
+        leaveDelegatorsDelay,
+      );
+
+      return {
+        amount: fmtAmount,
+        amountRaw: amount,
+        assetId: assetId,
+        assetSymbol: metadata.symbol,
+        sessionsRemaining,
+      } satisfies WithdrawRequestTableRow;
+    });
+  }, [assetMap, currentRound, leaveDelegatorsDelay, withdrawRequests]);
 
   const table = useReactTable(
-    useMemo<TableOptions<WithdrawRequestTableData>>(
+    useMemo<TableOptions<WithdrawRequestTableRow>>(
       () => ({
         data: requests,
         columns: COLUMNS,

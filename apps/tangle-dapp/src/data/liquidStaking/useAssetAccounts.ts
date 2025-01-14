@@ -9,7 +9,7 @@ import { map } from 'rxjs';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
 
-const useLsPoolMembers = ():
+const useAssetAccounts = ():
   | Readonly<[number, SubstrateAddress, PalletAssetsAssetAccount]>[]
   | null => {
   const networkFeatures = useNetworkFeatures();
@@ -53,4 +53,4 @@ const useLsPoolMembers = ():
   return accounts;
 };
 
-export default useLsPoolMembers;
+export default useAssetAccounts;

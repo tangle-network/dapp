@@ -85,7 +85,7 @@ const UnstakeRequestTableActions: FC<Props> = ({
       return false;
     }
 
-    return allRequests.some(({ timeRemaining }) =>
+    return allRequests.some(({ sessionsRemaining: timeRemaining }) =>
       isScheduledRequestReady(timeRemaining),
     );
   }, [allRequests]);

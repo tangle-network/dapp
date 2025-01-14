@@ -39,7 +39,7 @@ export type UnstakeRequestTableRow = {
   amountRaw: bigint;
   assetId: string;
   assetSymbol: string;
-  timeRemaining: number;
+  sessionsRemaining: number;
   operatorAccountId: SubstrateAddress;
   operatorIdentityName?: string;
 };
@@ -75,25 +75,27 @@ const COLUMNS = [
       </TableCell>
     ),
   }),
-  COLUMN_HELPER.accessor('timeRemaining', {
+  COLUMN_HELPER.accessor('sessionsRemaining', {
     header: () => <TableCell>Time Remaining</TableCell>,
-    sortingFn: (a, b) => a.original.timeRemaining - b.original.timeRemaining,
+    sortingFn: (a, b) =>
+      a.original.sessionsRemaining - b.original.sessionsRemaining,
     cell: (props) => {
-      const value = props.getValue();
+      const sessionsRemaining = props.getValue();
 
       return (
         <TableCell fw="normal" className="text-mono-200 dark:text-mono-0">
-          {value === 0 ? (
+          {sessionsRemaining === 0 ? (
             <span className="flex items-center gap-1">
               <CheckboxCircleFill className="!fill-green-50" />
-              ready
+              Ready
             </span>
-          ) : value < 0 ? (
+          ) : sessionsRemaining < 0 ? (
             EMPTY_VALUE_PLACEHOLDER
           ) : (
             <span className="flex items-center gap-1">
               <TimeFillIcon className="fill-blue-50 dark:fill-blue-50" />
-              {`${value} session${value > 1 ? 's' : ''}`}
+
+              {`${sessionsRemaining} ${pluralize('session', sessionsRemaining !== 1)}`}
             </span>
           )}
         </TableCell>
@@ -107,68 +109,61 @@ type Props = {
   operatorIdentities: Record<string, IdentityType | null>;
 };
 
-const createRowId = ({
-  assetId,
-  operatorAccountId,
-}: {
-  assetId: string;
-  operatorAccountId: SubstrateAddress;
-}): `${SubstrateAddress}-${string}` => {
-  return `${operatorAccountId}-${assetId}`;
-};
-
 const UnstakeRequestTable: FC<Props> = ({
   unstakeRequests,
   operatorIdentities,
 }) => {
   const { assetMap } = useRestakeContext();
   const { delegationBondLessDelay } = useRestakeConsts();
-  const { currentRound } = useRestakeCurrentRound();
+  const { result: currentRound } = useRestakeCurrentRound();
 
-  const requests = useMemo<UnstakeRequestTableRow[]>(
-    () =>
-      unstakeRequests.flatMap(
-        ({ assetId, amount, requestedRound, operatorAccountId }) => {
-          const metadata: RestakeVaultAssetMetadata | undefined =
-            assetMap[assetId];
+  const requests = useMemo<UnstakeRequestTableRow[]>(() => {
+    // Not yet ready.
+    if (currentRound === null) {
+      return [];
+    }
 
-          // Ignore entries without metadata.
-          if (!metadata) {
-            return [];
-          }
+    return unstakeRequests.flatMap(
+      ({ assetId, amount, requestedRound, operatorAccountId }) => {
+        const metadata: RestakeVaultAssetMetadata | undefined =
+          assetMap[assetId];
 
-          const fmtAmount = formatDisplayAmount(
-            new BN(amount.toString()),
-            metadata.decimals,
-            AmountFormatStyle.SHORT,
-          );
+        // Ignore entries without metadata.
+        if (!metadata) {
+          return [];
+        }
 
-          const timeRemaining = calculateTimeRemaining(
-            currentRound,
-            requestedRound,
-            delegationBondLessDelay,
-          );
+        const fmtAmount = formatDisplayAmount(
+          new BN(amount.toString()),
+          metadata.decimals,
+          AmountFormatStyle.SHORT,
+        );
 
-          return {
-            amount: fmtAmount,
-            amountRaw: amount,
-            assetId: assetId,
-            assetSymbol: metadata.symbol,
-            timeRemaining,
-            operatorAccountId,
-            operatorIdentityName:
-              operatorIdentities?.[operatorAccountId]?.name ?? undefined,
-          } satisfies UnstakeRequestTableRow;
-        },
-      ),
-    [
-      assetMap,
-      currentRound,
-      delegationBondLessDelay,
-      operatorIdentities,
-      unstakeRequests,
-    ],
-  );
+        const sessionsRemaining = calculateTimeRemaining(
+          currentRound,
+          requestedRound,
+          delegationBondLessDelay,
+        );
+
+        return {
+          amount: fmtAmount,
+          amountRaw: amount,
+          assetId: assetId,
+          assetSymbol: metadata.symbol,
+          sessionsRemaining,
+          operatorAccountId,
+          operatorIdentityName:
+            operatorIdentities?.[operatorAccountId]?.name ?? undefined,
+        } satisfies UnstakeRequestTableRow;
+      },
+    );
+  }, [
+    assetMap,
+    currentRound,
+    delegationBondLessDelay,
+    operatorIdentities,
+    unstakeRequests,
+  ]);
 
   const table = useReactTable(
     useMemo<TableOptions<UnstakeRequestTableRow>>(
@@ -180,7 +175,6 @@ const UnstakeRequestTable: FC<Props> = ({
             pageSize: 5,
           },
         },
-        getRowId: createRowId,
         enableRowSelection: true,
         filterFns: {
           fuzzy: fuzzyFilter,

@@ -85,9 +85,8 @@ const ListModal = <T,>({
   const isEmpty = !isSearching && !isLoading && processedItems.length === 0;
 
   return (
-    <Modal>
+    <Modal open={isOpen}>
       <ModalContent
-        isOpen={isOpen}
         onInteractOutside={() => setIsOpen(false)}
         size="md"
         className={twMerge(

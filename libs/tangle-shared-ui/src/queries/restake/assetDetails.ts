@@ -77,6 +77,7 @@ function queryTokenPrices(
   const tokenSymbols = nonNativeAssetIds.map((_, idx) =>
     hexToString(assetMetadatas[idx].symbol.toHex()),
   );
+
   return fetchTokenPrices(tokenSymbols);
 }
 

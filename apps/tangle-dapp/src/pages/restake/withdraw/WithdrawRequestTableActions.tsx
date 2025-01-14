@@ -8,11 +8,11 @@ import {
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import { isScheduledRequestReady } from '../utils';
-import type { WithdrawRequestTableData } from './types';
+import { WithdrawRequestTableRow } from './WithdrawRequestTable';
 
 type Props = {
-  allRequests: WithdrawRequestTableData[];
-  selectedRequests: WithdrawRequestTableData[];
+  allRequests: WithdrawRequestTableRow[];
+  selectedRequests: WithdrawRequestTableRow[];
 };
 
 const WithdrawRequestTableActions = ({
@@ -82,7 +82,7 @@ const WithdrawRequestTableActions = ({
       return false;
     }
 
-    return allRequests.some(({ timeRemaining }) => {
+    return allRequests.some(({ sessionsRemaining: timeRemaining }) => {
       return isScheduledRequestReady(timeRemaining);
     });
   }, [allRequests]);
