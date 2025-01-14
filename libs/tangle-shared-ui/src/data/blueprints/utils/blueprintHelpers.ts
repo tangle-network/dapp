@@ -5,6 +5,8 @@ import type {
   TanglePrimitivesServicesServiceBlueprint,
 } from '@polkadot/types/lookup';
 import type { ITuple } from '@polkadot/types/types';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import merge from 'lodash/merge';
 import type { Blueprint } from '../../../types/blueprint';
 import { OperatorMap } from '../../../types/restake';
@@ -13,8 +15,6 @@ import {
   IdentityType,
 } from '../../../utils/polkadot/identity';
 import { toPrimitiveBlueprint } from './toPrimitiveBlueprint';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 
 export function extractBlueprintsData(
   blueprintEntries: [
@@ -111,15 +111,16 @@ export function createBlueprintObjects(
   >['blueprintRestakersMap'],
   blueprintTVLMap: ReturnType<typeof extractOperatorData>['blueprintTVLMap'],
   ownerIdentitiesMap: Awaited<ReturnType<typeof fetchOwnerIdentities>>,
-): Blueprint[] {
-  return Array.from(blueprintsMap.entries()).map(
-    ([blueprintId, { metadata, owner }]) =>
-      ({
+): Record<string, Blueprint> {
+  return Array.from(blueprintsMap.entries()).reduce(
+    (acc, [blueprintId, { metadata, owner, registrationParams }]) => {
+      acc[blueprintId.toString()] = {
         id: blueprintId.toString(),
         name: metadata.name,
         author: metadata.author ?? owner,
-        description: metadata.description,
         imgUrl: metadata.logo,
+        description: metadata.description,
+        registrationParams,
         category: metadata.category,
         restakersCount: blueprintRestakersMap.get(blueprintId)?.size ?? null,
         operatorsCount: blueprintOperatorMap.get(blueprintId)?.size ?? null,
@@ -130,7 +131,11 @@ export function createBlueprintObjects(
         email: ownerIdentitiesMap.get(owner)?.email,
         // TODO: Determine `isBoosted` value.
         isBoosted: false,
-      }) satisfies Blueprint,
+      };
+
+      return acc;
+    },
+    {} as Record<string, Blueprint>,
   );
 }
 

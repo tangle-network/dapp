@@ -34,6 +34,17 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
     setSelectedPayee(StakingRewardsDestination.STAKED);
   }, [setIsModalOpen]);
 
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        setIsModalOpen(true);
+      } else {
+        closeModalAndReset();
+      }
+    },
+    [closeModalAndReset, setIsModalOpen],
+  );
+
   const submitTx = useCallback(async () => {
     if (executeSetPayeeTx === null) {
       return;
@@ -52,15 +63,9 @@ const UpdatePayeeTxContainer: FC<UpdatePayeeTxContainerProps> = ({
     executeSetPayeeTx !== null;
 
   return (
-    <Modal open>
-      <ModalContent
-        onInteractOutside={() => setIsModalOpen(false)}
-        isOpen={isModalOpen}
-        size="md"
-      >
-        <ModalHeader onClose={closeModalAndReset}>
-          Change Reward Destination
-        </ModalHeader>
+    <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
+      <ModalContent size="md">
+        <ModalHeader>Change Reward Destination</ModalHeader>
 
         <ModalBody>
           <UpdatePayee

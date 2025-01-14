@@ -1,10 +1,9 @@
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { FC, useCallback, useMemo, useState } from 'react';
-
+import { TxEvent } from '@webb-tools/abstract-api-provider';
 import {
   type CancelDelegatorUnstakeRequestContext,
   type ExecuteAllDelegatorUnstakeRequestContext,
-  TxEvent,
 } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';

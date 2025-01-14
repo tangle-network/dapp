@@ -51,6 +51,8 @@ export interface CheckBoxProps extends WebbComponentBase {
    */
   labelVariant?: WebbTypographyVariant;
 
+  labelProps?: ComponentProps<'label'>;
+
   /**
    * More info about the checkbox
    */

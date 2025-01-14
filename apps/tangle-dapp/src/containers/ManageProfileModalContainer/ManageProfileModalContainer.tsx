@@ -221,13 +221,9 @@ const ManageProfileModalContainer: FC<ManageProfileModalContainerProps> = ({
     (!isLoading && errors.size === 0);
 
   return (
-    <Modal open>
-      <ModalContent
-        onInteractOutside={() => setIsModalOpen(false)}
-        isOpen={isModalOpen}
-        size="lg"
-      >
-        <ModalHeader onClose={() => setIsModalOpen(false)}>
+    <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <ModalContent size="lg">
+        <ModalHeader>
           {getStepTitle(step, profileType, isCreatingProfile)}
         </ModalHeader>
 

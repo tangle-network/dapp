@@ -51,6 +51,17 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     setHasErrors(false);
   }, [setIsModalOpen]);
 
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        setIsModalOpen(open);
+      } else {
+        closeModalAndReset();
+      }
+    },
+    [closeModalAndReset, setIsModalOpen],
+  );
+
   const { execute: executeBondExtraTx } = useBondExtraTx();
 
   const submitAndSignTx = useCallback(async () => {
@@ -75,13 +86,9 @@ const BondMoreTxContainer: FC<BondMoreTxContainerProps> = ({
     amountToBond !== null && amountToBond.gt(BN_ZERO) && !hasErrors;
 
   return (
-    <Modal open>
-      <ModalContent
-        onInteractOutside={() => setIsModalOpen(false)}
-        isOpen={isModalOpen}
-        size="sm"
-      >
-        <ModalHeader onClose={closeModalAndReset}>Add Stake</ModalHeader>
+    <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
+      <ModalContent size="sm">
+        <ModalHeader>Add Stake</ModalHeader>
 
         <ModalBody className="gap-3">
           <AmountInput

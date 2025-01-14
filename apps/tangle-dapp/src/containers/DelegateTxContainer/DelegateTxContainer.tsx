@@ -77,6 +77,17 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     setDelegateTxStep(DelegateTxSteps.BOND_TOKENS);
   }, [setIsModalOpen]);
 
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        setIsModalOpen(true);
+      } else {
+        closeModalAndReset();
+      }
+    },
+    [closeModalAndReset, setIsModalOpen],
+  );
+
   const { execute: executeSetupNominatorTx, status: setupNominatorTxStatus } =
     useSetupNominatorTx();
 
@@ -160,15 +171,9 @@ const DelegateTxContainer: FC<DelegateTxContainerProps> = ({
     canContinueToSelectDelegatesStep && canContinueToAuthorizeTxStep;
 
   return (
-    <Modal open>
-      <ModalContent
-        onInteractOutside={() => setIsModalOpen(false)}
-        isOpen={isModalOpen}
-        size="lg"
-      >
-        <ModalHeader onClose={closeModalAndReset}>
-          Setup Nomination {currentStep}
-        </ModalHeader>
+    <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
+      <ModalContent size="lg">
+        <ModalHeader>Setup Nomination {currentStep}</ModalHeader>
 
         <ModalBody>
           {delegateTxStep === DelegateTxSteps.BOND_TOKENS ? (

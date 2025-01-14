@@ -87,6 +87,17 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
     setHasErrors(false);
   }, [setIsModalOpen]);
 
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        setIsModalOpen(true);
+      } else {
+        closeModalAndReset();
+      }
+    },
+    [closeModalAndReset, setIsModalOpen],
+  );
+
   const handleSetErrorMessage = useCallback(
     (error: string | null) => {
       setHasErrors(error !== null);
@@ -107,13 +118,9 @@ const UnbondTxContainer: FC<UnbondTxContainerProps> = ({
   }, [amount, closeModalAndReset, executeUnbondTx]);
 
   return (
-    <Modal open>
-      <ModalContent
-        onInteractOutside={() => setIsModalOpen(false)}
-        isOpen={isModalOpen}
-        size="sm"
-      >
-        <ModalHeader onClose={closeModalAndReset}>Unbond Stake</ModalHeader>
+    <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
+      <ModalContent size="sm">
+        <ModalHeader>Unbond Stake</ModalHeader>
 
         <ModalBody>
           <AmountInput

@@ -15,7 +15,7 @@ import { AccordionButtonProps } from './types';
 export const AccordionButton = forwardRef<
   HTMLButtonElement,
   AccordionButtonProps
->(({ children, className, ...props }, ref) => {
+>(({ children, className, Icon, RightIcon, ...props }, ref) => {
   return (
     <AccordionPrimitive.Trigger
       {...props}
@@ -27,10 +27,24 @@ export const AccordionButton = forwardRef<
       )}
       ref={ref}
     >
-      <Typography variant="body1" component="span" fw="bold" className="block">
-        {children}
-      </Typography>
-      <ChevronDown className="block duration-300 ease-in-out transform group-radix-state-open:rotate-180" />
+      <p className="flex items-center gap-2">
+        {Icon}
+
+        <Typography
+          variant="body1"
+          component="span"
+          fw="bold"
+          className="block"
+        >
+          {children}
+        </Typography>
+      </p>
+
+      <p className="flex items-center gap-2">
+        {RightIcon}
+
+        <ChevronDown className="block duration-300 ease-in-out transform group-radix-state-open:rotate-180" />
+      </p>
     </AccordionPrimitive.Trigger>
   );
 });

@@ -142,7 +142,7 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         Logo={TangleCloudLogo}
         logoLink={pathname}
         pathnameOrHash={pathname}
-        className="fixed top-4 left-5 lg:hidden"
+        className="fixed top-[34px] left-4 md:left-8 lg:hidden"
         ActionButton={ActionButton}
       />
     </>
