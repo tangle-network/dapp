@@ -8,10 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
-import {
-  getSortAddressOrIdentityFnc,
-  sortBnValueForNomineeOrValidator,
-} from '@webb-tools/tangle-shared-ui/components/tables/utils';
+import { sortByAddressOrIdentity } from '@webb-tools/tangle-shared-ui/components/tables/utils';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { ExplorerType } from '@webb-tools/tangle-shared-ui/types';
 import {
@@ -36,6 +33,8 @@ import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorTableProps } from './types';
+import sortByBn from '../../utils/sortByBn';
+import filterTableRowBy from '../../utils/filterTableRowBy';
 
 const columnHelper = createColumnHelper<Validator>();
 
@@ -58,14 +57,14 @@ const getTableColumns = (isWaiting?: boolean) => [
               formatStyle={AmountFormatStyle.SHORT}
             />
           ),
-          sortingFn: sortBnValueForNomineeOrValidator,
+          sortingFn: sortByBn((row) => row.totalStakeAmount),
         }),
         columnHelper.accessor('selfStakeAmount', {
           header: () => (
             <HeaderCell title="Self-staked" className="justify-start" />
           ),
           cell: (props) => <TokenAmountCell amount={props.getValue()} />,
-          sortingFn: sortBnValueForNomineeOrValidator,
+          sortingFn: sortByBn((row) => row.selfStakeAmount),
         }),
       ]),
   columnHelper.accessor('nominatorCount', {
@@ -79,7 +78,7 @@ const getTableColumns = (isWaiting?: boolean) => [
     cell: (props) => (
       <PercentageCell percentage={calculateCommission(props.getValue())} />
     ),
-    sortingFn: sortBnValueForNomineeOrValidator,
+    sortingFn: sortByBn((row) => row.commission),
   }),
   // TODO: Hide this for live app for now
   ...(IS_PRODUCTION_ENV
@@ -120,9 +119,12 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
     () => [
       columnHelper.accessor('address', {
         header: () => <HeaderCell title="Identity" className="justify-start" />,
+        sortingFn: sortByAddressOrIdentity<Validator>(),
+        filterFn: filterTableRowBy((row) => [row.address, row.identityName]),
         cell: (props) => {
           const address = props.getValue();
           const identity = props.row.original.identityName;
+
           const accountExplorerLink = makeExplorerUrl(
             network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl,
             address,
@@ -139,9 +141,9 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
               />
 
               <Typography variant="body1" fw="normal" className="truncate">
-                {identity === address
-                  ? shortenString(address, 6)
-                  : formatIdentity(identity)}
+                {identity !== undefined
+                  ? formatIdentity(identity)
+                  : shortenString(address, 6)}
               </Typography>
 
               <CopyWithTooltip
@@ -156,14 +158,6 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
                 className="fill-mono-160 dark:fill-mono-80"
               />
             </div>
-          );
-        },
-        sortingFn: getSortAddressOrIdentityFnc<Validator>(),
-        filterFn: (row, _, filterValue) => {
-          const { address, identityName } = row.original;
-          return (
-            address.toLowerCase().includes(filterValue.toLowerCase()) ||
-            identityName.toLowerCase().includes(filterValue.toLowerCase())
           );
         },
       }),

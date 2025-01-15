@@ -36,7 +36,7 @@ import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
-import searchBy from '../../../utils/searchBy';
+import filterBy from '../../../utils/filterBy';
 import Form from '../Form';
 import RestakeTabs from '../RestakeTabs';
 import StyleContainer from '../StyleContainer';
@@ -339,7 +339,7 @@ export default function RestakeStakePage() {
             getItemKey={(item) => item.accountId}
             onSelect={handleOnSelectOperator}
             filterItem={(item, query) =>
-              searchBy(query, [item.accountId, item.identityName])
+              filterBy(query, [item.accountId, item.identityName])
             }
             renderItem={({ accountId, identityName }) => (
               <OperatorListItem

@@ -10,7 +10,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { WalletPayIcon } from '@webb-tools/icons';
-import { sortBnValueForPayout } from '@webb-tools/tangle-shared-ui/components/tables/utils';
 import {
   AddressWithIdentity,
   Payout,
@@ -33,6 +32,7 @@ import { PayoutTxProps } from '../../containers/PayoutTxContainer/types';
 import { HeaderCell, StringCell } from '../tableCells';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { PayoutTableProps } from './types';
+import sortByBn from '../../utils/sortByBn';
 
 const columnHelper = createColumnHelper<Payout>();
 
@@ -111,7 +111,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
             formatStyle={AmountFormatStyle.SHORT}
           />
         ),
-        sortingFn: sortBnValueForPayout,
+        sortingFn: sortByBn((row) => row.validatorTotalStake),
       }),
       columnHelper.accessor('nominators', {
         header: () => (
@@ -145,7 +145,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
             formatStyle={AmountFormatStyle.SHORT}
           />
         ),
-        sortingFn: sortBnValueForPayout,
+        sortingFn: sortByBn((row) => row.validatorTotalReward),
       }),
       columnHelper.accessor('nominatorTotalReward', {
         header: () => (
@@ -154,7 +154,7 @@ const PayoutTable: FC<PayoutTableProps> = ({
         cell: (props) => {
           return <TokenAmountCell amount={props.getValue()} />;
         },
-        sortingFn: sortBnValueForPayout,
+        sortingFn: sortByBn((row) => row.nominatorTotalReward),
       }),
       columnHelper.display({
         id: 'remaining',

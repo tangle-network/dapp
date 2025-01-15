@@ -13,10 +13,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Search } from '@webb-tools/icons';
-import {
-  getSortAddressOrIdentityFnc,
-  sortBnValueForNomineeOrValidator,
-} from '@webb-tools/tangle-shared-ui/components/tables/utils';
+import { sortByAddressOrIdentity } from '@webb-tools/tangle-shared-ui/components/tables/utils';
 import {
   AmountFormatStyle,
   Avatar,
@@ -49,6 +46,8 @@ import TokenAmountCell from '../tableCells/TokenAmountCell';
 import { ValidatorSelectionTableProps } from './types';
 import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import SkeletonRows from '@webb-tools/tangle-shared-ui/components/SkeletonRows';
+import sortByBn from '../../utils/sortByBn';
+import filterTableRowBy from '../../utils/filterTableRowBy';
 
 const columnHelper = createColumnHelper<Validator>();
 
@@ -97,6 +96,15 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
         header: () => (
           <HeaderCell title="Validator" className="justify-start" />
         ),
+        filterFn: filterTableRowBy((row) => [row.address, row.identityName]),
+        sortingFn: (rowA, rowB, columnId) =>
+          sortValidatorsBy(
+            rowA,
+            rowB,
+            columnId,
+            sortByAddressOrIdentity<Validator>(),
+            isDesc,
+          ),
         cell: (props) => {
           const address = props.getValue();
           const identity = props.row.original.identityName;
@@ -131,22 +139,6 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
             </div>
           );
         },
-        sortingFn: (rowA, rowB, columnId) =>
-          sortValidatorsBy(
-            rowA,
-            rowB,
-            columnId,
-            getSortAddressOrIdentityFnc<Validator>(),
-            isDesc,
-          ),
-        filterFn: (row, _, filterValue) => {
-          const { address, identityName } = row.original;
-
-          return (
-            address.toLowerCase().includes(filterValue.toLowerCase()) ||
-            identityName.toLowerCase().includes(filterValue.toLowerCase())
-          );
-        },
       }),
       columnHelper.accessor('totalStakeAmount', {
         header: () => (
@@ -159,14 +151,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
             formatStyle={AmountFormatStyle.SHORT}
           />
         ),
-        sortingFn: (rowA, rowB, columnId) =>
-          sortValidatorsBy(
-            rowA,
-            rowB,
-            columnId,
-            sortBnValueForNomineeOrValidator,
-            isDesc,
-          ),
+        sortingFn: sortByBn((row) => row.totalStakeAmount),
       }),
       columnHelper.accessor('nominatorCount', {
         header: () => (
@@ -196,14 +181,7 @@ const ValidatorSelectionTable: FC<ValidatorSelectionTableProps> = ({
             {formatPercentage(calculateCommission(props.getValue()))}
           </Typography>
         ),
-        sortingFn: (rowA, rowB, columnId) =>
-          sortValidatorsBy(
-            rowA,
-            rowB,
-            columnId,
-            sortBnValueForNomineeOrValidator,
-            isDesc,
-          ),
+        sortingFn: sortByBn((row) => row.commission),
       }),
     ],
     [isDesc],

@@ -5,7 +5,7 @@ import { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
-import searchBy from '../../../utils/searchBy';
+import filterBy from '../../../utils/filterBy';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 
@@ -66,7 +66,7 @@ const WithdrawModal = ({
       filterItem={({ assetId }, query) => {
         const asset = assetMap[assetId];
 
-        return searchBy(query, [asset?.name, asset?.id, asset?.vaultId]);
+        return filterBy(query, [asset?.name, asset?.id, asset?.vaultId]);
       }}
       renderItem={({ amount, assetId }) => {
         const metadata = assetMap[assetId];

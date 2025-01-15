@@ -7,10 +7,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  getSortAddressOrIdentityFnc,
-  sortBnValueForNomineeOrValidator,
-} from '@webb-tools/tangle-shared-ui/components/tables/utils';
+import { sortByAddressOrIdentity } from '@webb-tools/tangle-shared-ui/components/tables/utils';
 import { Nominee } from '@webb-tools/tangle-shared-ui/types';
 import {
   AmountFormatStyle,
@@ -29,6 +26,7 @@ import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import sortByBn from '../../utils/sortByBn';
 
 const COLUMN_HELPER = createColumnHelper<Nominee>();
 
@@ -59,7 +57,7 @@ const COLUMNS = [
         </div>
       );
     },
-    sortingFn: getSortAddressOrIdentityFnc<Nominee>(),
+    sortingFn: sortByAddressOrIdentity<Nominee>(),
   }),
   COLUMN_HELPER.accessor('isActive', {
     header: () => <HeaderCell title="Status" className="justify-start" />,
@@ -79,7 +77,7 @@ const COLUMNS = [
   COLUMN_HELPER.accessor('selfStakeAmount', {
     header: () => <HeaderCell title="Self-staked" className="justify-center" />,
     cell: (props) => <TokenAmountCell amount={props.getValue()} />,
-    sortingFn: sortBnValueForNomineeOrValidator,
+    sortingFn: sortByBn((row) => row.selfStakeAmount),
   }),
   COLUMN_HELPER.accessor('totalStakeAmount', {
     header: () => (
@@ -91,7 +89,7 @@ const COLUMNS = [
         formatStyle={AmountFormatStyle.SHORT}
       />
     ),
-    sortingFn: sortBnValueForNomineeOrValidator,
+    sortingFn: sortByBn((row) => row.totalStakeAmount),
   }),
   COLUMN_HELPER.accessor('nominatorCount', {
     header: () => <HeaderCell title="Nominations" className="justify-center" />,
@@ -104,7 +102,7 @@ const COLUMNS = [
     cell: (props) => (
       <PercentageCell percentage={calculateCommission(props.getValue())} />
     ),
-    sortingFn: sortBnValueForNomineeOrValidator,
+    sortingFn: sortByBn((row) => row.commission),
   }),
 ];
 

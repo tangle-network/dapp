@@ -9,7 +9,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
 import useRestakeTVL from '../../data/restake/useRestakeTVL';
 import useApiRx from '../../hooks/useApiRx';
-import { OperatorData } from '../../types';
+import { RestakeOperator } from '../../types';
 import type { Blueprint } from '../../types/blueprint';
 import { TangleError, TangleErrorCode } from '../../types/error';
 import type { RestakeVaultAssetMap, OperatorMap } from '../../types/restake';
@@ -150,6 +150,6 @@ async function getBlueprintOperators(
       restakersCount: operatorMap[address]?.restakersCount,
       tvlInUsd,
       vaultTokens: delegationsToVaultTokens(delegations, assetMap),
-    } satisfies OperatorData;
+    } satisfies RestakeOperator;
   });
 }

@@ -28,7 +28,6 @@ const OperatorsTable: FC<Props> = ({
   operatorTVL,
 }) => {
   const [globalFilter, setGlobalFilter] = useState('');
-
   const { assetMap } = useRestakeContext();
 
   const { result: identities } = useIdentities(
@@ -61,7 +60,7 @@ const OperatorsTable: FC<Props> = ({
   return (
     <>
       <Input
-        id="search-validators"
+        id="operators-table-search-operators"
         rightIcon={<Search className="mr-2" />}
         placeholder="Search by identity or address..."
         className="w-1/3 mb-1.5 ml-auto -mt-[54px]"
@@ -75,8 +74,8 @@ const OperatorsTable: FC<Props> = ({
         globalFilter={globalFilter}
         onGlobalFilterChange={setGlobalFilter}
         data={operators}
-        ViewOperatorWrapper={ViewOperatorWrapper}
-        RestakeOperatorWrapper={RestakeOperatorWrapper}
+        ViewOperatorAction={ViewOperatorWrapper}
+        RestakeOperatorAction={RestakeOperatorWrapper}
       />
     </>
   );

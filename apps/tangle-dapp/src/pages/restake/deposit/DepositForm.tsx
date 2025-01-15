@@ -41,7 +41,7 @@ import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import { DepositFormFields } from '../../../types/restake';
-import searchBy from '../../../utils/searchBy';
+import filterBy from '../../../utils/filterBy';
 import Form from '../Form';
 import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
@@ -341,7 +341,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             isOpen={tokenModalOpen}
             setIsOpen={updateTokenModal}
             filterItem={(asset, query) =>
-              searchBy(query, [asset.id, asset.name, asset.symbol])
+              filterBy(query, [asset.id, asset.name, asset.symbol])
             }
             searchInputId="restake-deposit-assets-search"
             searchPlaceholder="Search assets..."

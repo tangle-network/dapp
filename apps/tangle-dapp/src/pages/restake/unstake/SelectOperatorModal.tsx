@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config';
 import { formatUnits } from 'viem';
-import searchBy from '../../../utils/searchBy';
+import filterBy from '../../../utils/filterBy';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
 import {
   AmountFormatStyle,
@@ -76,7 +76,7 @@ const SelectOperatorModal = ({
         const identityName =
           operatorIdentities?.[delegation.operatorAccountId]?.name;
 
-        return searchBy(query, [
+        return filterBy(query, [
           delegation.operatorAccountId,
           assetSymbol,
           identityName,
