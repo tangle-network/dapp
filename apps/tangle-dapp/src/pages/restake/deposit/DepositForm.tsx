@@ -325,10 +325,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
           </div>
 
           <Modal open={chainModalOpen} onOpenChange={updateChainModal}>
-            <ModalContent
-              title="Select Chain"
-              onInteractOutside={closeChainModal}
-            >
+            <ModalContent title="Select Chain">
               <ChainList
                 searchInputId="restake-deposit-form-search"
                 onClose={closeChainModal}

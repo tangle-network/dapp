@@ -348,26 +348,24 @@ const RestakeWithdrawPage = () => {
         </RestakeDetailCard.Root>
       </AnimatedTable>
 
-      <Modal open={isWithdrawModalOpen} onOpenChange={updateWithdrawModal}>
-        <WithdrawModal
-          delegatorInfo={delegatorInfo}
-          isOpen={isWithdrawModalOpen}
-          setIsOpen={updateWithdrawModal}
-          onItemSelected={(item) => {
-            closeWithdrawModal();
+      <WithdrawModal
+        delegatorInfo={delegatorInfo}
+        isOpen={isWithdrawModalOpen}
+        setIsOpen={updateWithdrawModal}
+        onItemSelected={(item) => {
+          closeWithdrawModal();
 
-            const { formattedAmount, assetId } = item;
+          const { formattedAmount, assetId } = item;
 
-            const commonOpts = {
-              shouldDirty: true,
-              shouldValidate: true,
-            };
+          const commonOpts = {
+            shouldDirty: true,
+            shouldValidate: true,
+          };
 
-            setFormValue('assetId', assetId, commonOpts);
-            setFormValue('amount', formattedAmount, commonOpts);
-          }}
-        />
-      </Modal>
+          setFormValue('assetId', assetId, commonOpts);
+          setFormValue('amount', formattedAmount, commonOpts);
+        }}
+      />
 
       <Modal open={isChainModalOpen} onOpenChange={updateChainModal}>
         <SupportedChainModal

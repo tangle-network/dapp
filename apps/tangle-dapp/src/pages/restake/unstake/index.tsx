@@ -386,32 +386,30 @@ const RestakeUnstakePage = () => {
         </RestakeDetailCard.Root>
       </AnimatedTable>
 
-      <Modal open={isOperatorModalOpen} onOpenChange={updateOperatorModal}>
-        <SelectOperatorModal
-          delegatorInfo={delegatorInfo}
-          isOpen={isOperatorModalOpen}
-          setIsOpen={updateOperatorModal}
-          operatorIdentities={operatorIdentities}
-          onItemSelected={(item) => {
-            closeOperatorModal();
+      <SelectOperatorModal
+        delegatorInfo={delegatorInfo}
+        isOpen={isOperatorModalOpen}
+        setIsOpen={updateOperatorModal}
+        operatorIdentities={operatorIdentities}
+        onItemSelected={(item) => {
+          closeOperatorModal();
 
-            const { formattedAmount, assetId, operatorAccountId } = item;
+          const { formattedAmount, assetId, operatorAccountId } = item;
 
-            const commonOpts = {
-              shouldDirty: true,
-              shouldValidate: true,
-            };
+          const commonOpts = {
+            shouldDirty: true,
+            shouldValidate: true,
+          };
 
-            setFormValue(
-              'operatorAccountId',
-              operatorAccountId as SubstrateAddress,
-              commonOpts,
-            );
-            setFormValue('assetId', assetId, commonOpts);
-            setFormValue('amount', formattedAmount, commonOpts);
-          }}
-        />
-      </Modal>
+          setFormValue(
+            'operatorAccountId',
+            operatorAccountId as SubstrateAddress,
+            commonOpts,
+          );
+          setFormValue('assetId', assetId, commonOpts);
+          setFormValue('amount', formattedAmount, commonOpts);
+        }}
+      />
 
       <Modal open={isChainModalOpen} onOpenChange={updateChainModal}>
         <SupportedChainModal
