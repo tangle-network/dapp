@@ -204,12 +204,10 @@ const UnstakeRequestTable: FC<Props> = ({
         title={pluralize('request', requests.length !== 1)}
       />
 
-      <div className="grid grid-cols-2 gap-3">
-        <UnstakeRequestTableActions
-          allRequests={requests}
-          selectedRequests={selectedRequests}
-        />
-      </div>
+      <UnstakeRequestTableActions
+        allRequests={requests}
+        selectedRequests={selectedRequests}
+      />
     </>
   );
 };

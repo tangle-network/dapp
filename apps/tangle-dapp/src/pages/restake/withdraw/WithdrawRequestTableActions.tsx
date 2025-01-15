@@ -88,7 +88,7 @@ const WithdrawRequestTableActions = ({
   }, [allRequests]);
 
   return (
-    <>
+    <div className="flex items-center gap-3">
       <Button
         className="flex-1"
         isLoading={isCanceling}
@@ -111,7 +111,7 @@ const WithdrawRequestTableActions = ({
       >
         Execute All
       </Button>
-    </>
+    </div>
   );
 };
 

@@ -183,12 +183,10 @@ const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
         title={pluralize('request', requests.length !== 1)}
       />
 
-      <div className="flex items-center gap-3">
-        <WithdrawRequestTableActions
-          allRequests={requests}
-          selectedRequests={selectedRequests}
-        />
-      </div>
+      <WithdrawRequestTableActions
+        allRequests={requests}
+        selectedRequests={selectedRequests}
+      />
     </>
   );
 };
