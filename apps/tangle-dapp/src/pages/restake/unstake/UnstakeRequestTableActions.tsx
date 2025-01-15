@@ -91,7 +91,7 @@ const UnstakeRequestTableActions: FC<Props> = ({
   }, [allRequests]);
 
   return (
-    <>
+    <div className="flex items-center gap-3">
       <Button
         isLoading={isCanceling}
         isDisabled={!canCancelUnstake || isExecuting}
@@ -110,7 +110,7 @@ const UnstakeRequestTableActions: FC<Props> = ({
       >
         Execute All
       </Button>
-    </>
+    </div>
   );
 };
 
