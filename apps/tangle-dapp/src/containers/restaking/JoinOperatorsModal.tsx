@@ -84,6 +84,7 @@ const JoinOperatorsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
             setAmount={setBondAmount}
             placeholder="Enter the amount to bond"
             setErrorMessage={setErrorMessage}
+            wrapperOverrides={{ isFullWidth: true }}
           />
 
           <Caption linkHref={OPERATOR_JOIN_DOCS_LINK}>{captionText}</Caption>

@@ -27,6 +27,7 @@ const JoinOperatorsBanner: FC = () => {
         buttonHref={OPERATOR_JOIN_DOCS_LINK}
         action={
           <Button
+            className="w-full max-w-none sm:max-w-max sm:w-auto"
             variant="primary"
             rightIcon={
               <ArrowRight

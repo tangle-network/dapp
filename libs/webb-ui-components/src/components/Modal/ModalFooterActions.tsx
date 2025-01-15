@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { ModalFooter } from './ModalFooter';
 import { Button } from '../buttons';
-import useIsBreakpoint from '../../hooks/useIsBreakpoint';
 
 export type ModalFooterActionsProps = {
   isConfirmDisabled?: boolean;
@@ -20,15 +19,9 @@ export const ModalFooterActions: FC<ModalFooterActionsProps> = ({
   onConfirm,
   onClose,
 }) => {
-  const isMobile = useIsBreakpoint('md', true);
-
   return (
     <ModalFooter>
-      {/**
-       * Remove the secondary button on mobile viewports due to
-       * limited space.
-       */}
-      {learnMoreLinkHref !== undefined && !isMobile ? (
+      {learnMoreLinkHref !== undefined ? (
         <Button
           isFullWidth
           variant="secondary"
@@ -36,6 +29,7 @@ export const ModalFooterActions: FC<ModalFooterActionsProps> = ({
           rel="noopener noreferrer"
           href={learnMoreLinkHref}
           isDisabled={isProcessing}
+          className="hidden sm:flex"
         >
           Learn More
         </Button>
@@ -46,6 +40,7 @@ export const ModalFooterActions: FC<ModalFooterActionsProps> = ({
             variant="secondary"
             isDisabled={isProcessing}
             onClick={onClose}
+            className="hidden sm:flex"
           >
             Cancel
           </Button>
