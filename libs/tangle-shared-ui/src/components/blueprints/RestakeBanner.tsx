@@ -23,7 +23,7 @@ const RestakeBanner: FC<RestakeBannerProps> = ({
   return (
     <div
       className={twMerge(
-        'flex justify-between items-center gap-3 px-6 py-9 rounded-xl bg-center bg-cover bg-no-repeat bg-top-banner',
+        'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 sm:gap-9 px-6 py-9 rounded-xl bg-center bg-cover bg-no-repeat bg-top-banner',
       )}
     >
       <div className="max-w-[600px] space-y-4">
@@ -41,6 +41,7 @@ const RestakeBanner: FC<RestakeBannerProps> = ({
         </div>
 
         <Button
+          className="hidden sm:flex"
           variant="link"
           href={buttonHref}
           target="_blank"
