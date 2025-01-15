@@ -5,26 +5,37 @@ import { OPERATOR_JOIN_DOCS_LINK } from '@webb-tools/webb-ui-components/constant
 import { FC, useState } from 'react';
 import JoinOperatorsModal from './JoinOperatorsModal';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
+import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 
 const JoinOperatorsBanner: FC = () => {
   const [isJoinOperatorsModalOpen, setIsJoinOperatorsModalOpen] =
     useState(false);
 
   const { isEvm } = useAgnosticAccountInfo();
+  const isAccountConnected = useIsAccountConnected();
+
+  const disabledTooltip = isAccountConnected
+    ? 'Only Substrate accounts can register as operators at this time.'
+    : 'Connect a Substrate account to join as an operator.';
 
   return (
     <>
       <RestakeBanner
         title="Register as an Operator"
-        description="Interested in becoming an operator? Operators host blueprints and earn rewards for their delegators. Register as an operator to get started."
+        description="With Tangle, operators and their delegators get rewarded by hosting blueprints. Interested in becoming an operator? Bond some tokens to get started."
         buttonText="Learn More"
         buttonHref={OPERATOR_JOIN_DOCS_LINK}
         action={
           <Button
             variant="primary"
-            rightIcon={<ArrowRight />}
+            rightIcon={
+              <ArrowRight
+                size="lg"
+                className="fill-current dark:fill-current"
+              />
+            }
             onClick={() => setIsJoinOperatorsModalOpen(true)}
-            disabledTooltip="Only Substrate accounts can register as operators at this time."
+            disabledTooltip={disabledTooltip}
             // Disable the button until it is known whether the current account
             // is an EVM account or not.
             isDisabled={isEvm ?? true}

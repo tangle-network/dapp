@@ -97,7 +97,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
     </Component>
   );
 
-  if (disabledTooltip === undefined) {
+  if (disabledTooltip === undefined || !isDisabled) {
     return button;
   }
 
