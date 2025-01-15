@@ -22,7 +22,6 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { FC, useState } from 'react';
 
 import calculateCommission from '../../utils/calculateCommission';
@@ -31,10 +30,10 @@ import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
-const columnHelper = createColumnHelper<Nominee>();
+const COLUMN_HELPER = createColumnHelper<Nominee>();
 
-const columns = [
-  columnHelper.accessor('address', {
+const COLUMNS = [
+  COLUMN_HELPER.accessor('address', {
     header: () => <HeaderCell title="Validator" className="justify-start" />,
     cell: (props) => {
       const address = props.getValue();
@@ -62,7 +61,7 @@ const columns = [
     },
     sortingFn: getSortAddressOrIdentityFnc<Nominee>(),
   }),
-  columnHelper.accessor('isActive', {
+  COLUMN_HELPER.accessor('isActive', {
     header: () => <HeaderCell title="Status" className="justify-start" />,
     cell: (props) => {
       const isActive = props.getValue();
@@ -77,12 +76,12 @@ const columns = [
       return isActiveA ? 1 : -1;
     },
   }),
-  columnHelper.accessor('selfStakeAmount', {
+  COLUMN_HELPER.accessor('selfStakeAmount', {
     header: () => <HeaderCell title="Self-staked" className="justify-center" />,
     cell: (props) => <TokenAmountCell amount={props.getValue()} />,
     sortingFn: sortBnValueForNomineeOrValidator,
   }),
-  columnHelper.accessor('totalStakeAmount', {
+  COLUMN_HELPER.accessor('totalStakeAmount', {
     header: () => (
       <HeaderCell title="Effective amount staked" className="justify-center" />
     ),
@@ -94,13 +93,13 @@ const columns = [
     ),
     sortingFn: sortBnValueForNomineeOrValidator,
   }),
-  columnHelper.accessor('nominatorCount', {
+  COLUMN_HELPER.accessor('nominatorCount', {
     header: () => <HeaderCell title="Nominations" className="justify-center" />,
     cell: (props) => (
       <StringCell value={props.getValue().toString()} className="text-start" />
     ),
   }),
-  columnHelper.accessor('commission', {
+  COLUMN_HELPER.accessor('commission', {
     header: () => <HeaderCell title="Commission" className="justify-center" />,
     cell: (props) => (
       <PercentageCell percentage={calculateCommission(props.getValue())} />
@@ -125,7 +124,7 @@ const NominationsTable: FC<NominationsTableProps> = ({
 
   const table = useReactTable({
     data: nominees,
-    columns,
+    columns: COLUMNS,
     initialState: {
       pagination: {
         pageSize,
@@ -149,7 +148,6 @@ const NominationsTable: FC<NominationsTableProps> = ({
   return (
     <div className="overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160">
       <Table
-        variant={TableVariant.DEFAULT}
         thClassName="border-t-0 bg-mono-0"
         paginationClassName="bg-mono-0 dark:bg-mono-180 pl-6"
         tableProps={table}

@@ -21,16 +21,18 @@ const useIdentities = (
   );
 
   const identityNames = useMemo(() => {
-    if (result === null) return [];
+    if (result === null) {
+      return [];
+    }
 
-    return result.map((identityResult, idx) => {
+    return result.map((identityResult, index) => {
       if (identityResult.isNone) {
-        return [addresses[idx], null] as const;
+        return [addresses[index], null] as const;
       }
 
       const info = extractIdentityInfo(identityResult.unwrap()[0]);
 
-      return [addresses[idx], info] as const;
+      return [addresses[index], info] as const;
     });
   }, [addresses, result]);
 

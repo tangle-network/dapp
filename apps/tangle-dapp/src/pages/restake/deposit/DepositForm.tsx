@@ -119,10 +119,18 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   }, [activeTypedChainId, resetField]);
 
   useEffect(() => {
-    if (!vaultIdParam) return;
+    if (!vaultIdParam) {
+      return;
+    }
+
+    const vaultId = Number(vaultIdParam);
+
+    if (Number.isNaN(vaultId)) {
+      return;
+    }
 
     const defaultAsset = assetWithBalances
-      .filter((asset) => asset.metadata.vaultId === vaultIdParam)
+      .filter((asset) => asset.metadata.vaultId === vaultId)
       .sort((a, b) => {
         const aBalance = a.balance?.balance ?? ZERO_BIG_INT;
         const bBalance = b.balance?.balance ?? ZERO_BIG_INT;
@@ -317,10 +325,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
           </div>
 
           <Modal open={chainModalOpen} onOpenChange={updateChainModal}>
-            <ModalContent
-              title="Select Chain"
-              onInteractOutside={closeChainModal}
-            >
+            <ModalContent title="Select Chain">
               <ChainList
                 searchInputId="restake-deposit-form-search"
                 onClose={closeChainModal}

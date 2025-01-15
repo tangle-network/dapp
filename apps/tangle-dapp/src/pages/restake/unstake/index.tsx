@@ -108,44 +108,52 @@ const RestakeUnstakePage = () => {
   const amount = watch('amount');
 
   const unstakeRequests = useMemo(() => {
-    if (!delegatorInfo?.unstakeRequests) return [];
+    if (!delegatorInfo?.unstakeRequests) {
+      return [];
+    }
 
     return delegatorInfo.unstakeRequests;
   }, [delegatorInfo?.unstakeRequests]);
 
   const selectedAsset = useMemo(() => {
-    if (!selectedAssetId) return null;
-    if (!assetMap[selectedAssetId]) return null;
+    if (!selectedAssetId || !assetMap[selectedAssetId]) {
+      return null;
+    }
 
     return assetMap[selectedAssetId];
   }, [assetMap, selectedAssetId]);
 
-  const { maxAmount, formattedMaxAmount } = useMemo(
-    () => {
-      if (!Array.isArray(delegatorInfo?.delegations)) return {};
+  const { maxAmount, formattedMaxAmount } = useMemo(() => {
+    if (!Array.isArray(delegatorInfo?.delegations)) {
+      return {};
+    }
 
-      const selectedDelegation = delegatorInfo.delegations.find(
-        (item) =>
-          item.assetId === selectedAssetId &&
-          item.operatorAccountId === selectedOperatorAccountId,
-      );
+    const selectedDelegation = delegatorInfo.delegations.find(
+      (item) =>
+        item.assetId === selectedAssetId &&
+        item.operatorAccountId === selectedOperatorAccountId,
+    );
 
-      if (!selectedDelegation) return {};
-      if (!assetMap[selectedDelegation.assetId]) return {};
+    if (!selectedDelegation || !assetMap[selectedDelegation.assetId]) {
+      return {};
+    }
 
-      const maxAmount = selectedDelegation.amountBonded;
-      const formattedMaxAmount = Number(
-        formatUnits(maxAmount, assetMap[selectedDelegation.assetId].decimals),
-      );
+    const maxAmount = selectedDelegation.amountBonded;
 
-      return {
-        maxAmount,
-        formattedMaxAmount,
-      };
-    },
-    // prettier-ignore
-    [delegatorInfo?.delegations, assetMap, selectedAssetId, selectedOperatorAccountId],
-  );
+    const formattedMaxAmount = Number(
+      formatUnits(maxAmount, assetMap[selectedDelegation.assetId].decimals),
+    );
+
+    return {
+      maxAmount,
+      formattedMaxAmount,
+    };
+  }, [
+    delegatorInfo?.delegations,
+    assetMap,
+    selectedAssetId,
+    selectedOperatorAccountId,
+  ]);
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
     const step = decimalsToStep(selectedAsset?.decimals);
@@ -167,22 +175,24 @@ const RestakeUnstakePage = () => {
     };
   }, [maxAmount, register, selectedAsset?.decimals, selectedAsset?.symbol]);
 
-  const displayError = useMemo(
-    () => {
-      return errors.operatorAccountId !== undefined ||
-        !selectedOperatorAccountId
-        ? 'Select an operator'
-        : errors.assetId !== undefined || !selectedAssetId
-          ? 'Select an asset'
-          : !amount
-            ? 'Enter an amount'
-            : errors.amount !== undefined
-              ? 'Invalid amount'
-              : undefined;
-    },
-    // prettier-ignore
-    [errors.operatorAccountId, errors.assetId, errors.amount, selectedOperatorAccountId, selectedAssetId, amount],
-  );
+  const displayError = useMemo(() => {
+    return errors.operatorAccountId !== undefined || !selectedOperatorAccountId
+      ? 'Select an operator'
+      : errors.assetId !== undefined || !selectedAssetId
+        ? 'Select an asset'
+        : !amount
+          ? 'Enter an amount'
+          : errors.amount !== undefined
+            ? 'Invalid amount'
+            : undefined;
+  }, [
+    errors.operatorAccountId,
+    errors.assetId,
+    errors.amount,
+    selectedOperatorAccountId,
+    selectedAssetId,
+    amount,
+  ]);
 
   const options = useMemo<Props<ScheduleDelegatorUnstakeContext>>(() => {
     return {
@@ -212,6 +222,7 @@ const RestakeUnstakePage = () => {
 
   const { scheduleDelegatorUnstake: scheduleDelegatorBondLess } =
     useRestakeTx();
+
   const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
 
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
@@ -368,39 +379,37 @@ const RestakeUnstakePage = () => {
               variant="body1"
               className="text-mono-120 dark:text-mono-100"
             >
-              You will be able to withdraw your tokens after the undelegate
-              request has been processed.
+              Once an undelegation request is submitted, it will appear on this
+              table and can be executed after the unbonding period.
             </Typography>
           )}
         </RestakeDetailCard.Root>
       </AnimatedTable>
 
-      <Modal open={isOperatorModalOpen} onOpenChange={updateOperatorModal}>
-        <SelectOperatorModal
-          delegatorInfo={delegatorInfo}
-          isOpen={isOperatorModalOpen}
-          setIsOpen={updateOperatorModal}
-          operatorIdentities={operatorIdentities}
-          onItemSelected={(item) => {
-            closeOperatorModal();
+      <SelectOperatorModal
+        delegatorInfo={delegatorInfo}
+        isOpen={isOperatorModalOpen}
+        setIsOpen={updateOperatorModal}
+        operatorIdentities={operatorIdentities}
+        onItemSelected={(item) => {
+          closeOperatorModal();
 
-            const { formattedAmount, assetId, operatorAccountId } = item;
+          const { formattedAmount, assetId, operatorAccountId } = item;
 
-            const commonOpts = {
-              shouldDirty: true,
-              shouldValidate: true,
-            };
+          const commonOpts = {
+            shouldDirty: true,
+            shouldValidate: true,
+          };
 
-            setFormValue(
-              'operatorAccountId',
-              operatorAccountId as SubstrateAddress,
-              commonOpts,
-            );
-            setFormValue('assetId', assetId, commonOpts);
-            setFormValue('amount', formattedAmount, commonOpts);
-          }}
-        />
-      </Modal>
+          setFormValue(
+            'operatorAccountId',
+            operatorAccountId as SubstrateAddress,
+            commonOpts,
+          );
+          setFormValue('assetId', assetId, commonOpts);
+          setFormValue('amount', formattedAmount, commonOpts);
+        }}
+      />
 
       <Modal open={isChainModalOpen} onOpenChange={updateChainModal}>
         <SupportedChainModal

@@ -65,7 +65,7 @@ const columns = [
       );
     },
   }),
-  columnHelper.accessor('tokensCount', {
+  columnHelper.accessor('tokenCount', {
     header: () => 'Tokens',
     cell: (props) => (
       <TableCellWrapper>
@@ -148,7 +148,7 @@ const VaultsTable: FC<Props> = ({
           getExpandedRowModel: getExpandedRowModel(),
           getSortedRowModel: getSortedRowModel(),
           getPaginationRowModel: getPaginationRowModel(),
-          getRowCanExpand: (row) => row.original.tokensCount > 0,
+          getRowCanExpand: (row) => row.original.tokenCount > 0,
           autoResetPageIndex: false,
           enableSortingRemoval: false,
         }) satisfies TableOptions<VaultData>,

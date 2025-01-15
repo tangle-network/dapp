@@ -25,7 +25,6 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { Link } from 'react-router';
 import { FC, useMemo, useState } from 'react';
@@ -203,7 +202,6 @@ const ValidatorTable: FC<ValidatorTableProps> = ({
 
   return (
     <Table
-      variant={TableVariant.DEFAULT}
       trClassName={IS_PRODUCTION_ENV ? '' : 'cursor-pointer'}
       tableProps={table}
       isPaginated

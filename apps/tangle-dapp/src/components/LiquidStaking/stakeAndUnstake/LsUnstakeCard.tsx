@@ -248,7 +248,6 @@ const LsUnstakeCard: FC = () => {
             parachainRedeemTxStatus === TxStatus.PROCESSING ||
             tangleUnbondTxStatus === TxStatus.PROCESSING
           }
-          loadingText="Processing"
           onClick={handleUnstakeClick}
           isFullWidth
         >

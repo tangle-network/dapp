@@ -20,6 +20,7 @@ export const fetchTokenPrices = async (
 ): Promise<(number | Error)[]> => {
   // TODO: Implement the proper logic to fetch the price of the tokens
   console.warn('fetchTokenPrices not implemented');
+
   return tokens.map(() => new Error('Token not found'));
 };
 

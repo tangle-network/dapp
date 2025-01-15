@@ -1,5 +1,5 @@
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { TxEvent } from '@webb-tools/abstract-api-provider';
 import {
   type CancelDelegatorUnstakeRequestContext,
@@ -8,17 +8,17 @@ import {
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import { isScheduledRequestReady } from '../utils';
-import type { UnstakeRequestTableData } from './types';
+import { UnstakeRequestTableRow } from './UnstakeRequestTable';
 
 type Props = {
-  allRequests: UnstakeRequestTableData[];
-  selectedRequests: UnstakeRequestTableData[];
+  allRequests: UnstakeRequestTableRow[];
+  selectedRequests: UnstakeRequestTableRow[];
 };
 
-const UnstakeRequestTableActions = ({
+const UnstakeRequestTableActions: FC<Props> = ({
   allRequests,
   selectedRequests,
-}: Props) => {
+}) => {
   const [isCanceling, setIsCanceling] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
 
@@ -69,7 +69,6 @@ const UnstakeRequestTableActions = ({
     );
 
     await cancelDelegatorUnstakeRequests(unstakeRequests, cancelOptions);
-
     setIsCanceling(false);
   }, [cancelDelegatorUnstakeRequests, cancelOptions, selectedRequests]);
 
@@ -79,24 +78,22 @@ const UnstakeRequestTableActions = ({
     setIsExecuting(false);
   }, [executeDelegatorUnstakeRequests, executeOptions]);
 
-  const canCancelUnstake = useMemo(
-    () => selectedRequests.length > 0,
-    [selectedRequests.length],
-  );
+  const canCancelUnstake = selectedRequests.length > 0;
 
   const canExecuteUnstake = useMemo(() => {
-    if (allRequests.length === 0) return false;
+    if (allRequests.length === 0) {
+      return false;
+    }
 
-    return allRequests.some(({ timeRemaining }) => {
-      return isScheduledRequestReady(timeRemaining);
-    });
+    return allRequests.some(({ sessionsRemaining: timeRemaining }) =>
+      isScheduledRequestReady(timeRemaining),
+    );
   }, [allRequests]);
 
   return (
-    <>
+    <div className="flex items-center gap-3">
       <Button
         isLoading={isCanceling}
-        loadingText="Canceling..."
         isDisabled={!canCancelUnstake || isExecuting}
         isFullWidth
         onClick={handleCancelUnstake}
@@ -107,14 +104,13 @@ const UnstakeRequestTableActions = ({
 
       <Button
         isLoading={isExecuting}
-        loadingText="Executing..."
         isDisabled={!canExecuteUnstake || isCanceling}
         isFullWidth
         onClick={handleExecuteUnstake}
       >
         Execute All
       </Button>
-    </>
+    </div>
   );
 };
 

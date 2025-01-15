@@ -45,6 +45,7 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
         { Custom: assetId },
         amount,
         null,
+        null,
       );
 
       eventHandlers?.onTxSending?.(context);
@@ -63,7 +64,9 @@ export default class SubstrateRestakeTx extends RestakeTxBase {
         { Custom: assetId },
         amount,
         null,
+        null,
       ),
+
       this.provider.tx.multiAssetDelegation.delegate(
         operatorAccount,
         { Custom: assetId },

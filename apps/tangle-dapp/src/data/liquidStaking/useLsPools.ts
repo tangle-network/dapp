@@ -8,7 +8,7 @@ import { NetworkFeature } from '../../types';
 import perbillToFractional from '../../utils/perbillToFractional';
 import useLsPoolCompoundApys from './apy/useLsPoolCompoundApys';
 import useLsBondedPools from './useLsBondedPools';
-import useLsPoolMembers from './useLsPoolMembers';
+import useAssetAccounts from './useAssetAccounts';
 import useLsPoolNominations from './useLsPoolNominations';
 import { useLsStore } from './useLsStore';
 
@@ -16,7 +16,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
   const networkFeatures = useNetworkFeatures();
   const poolNominations = useLsPoolNominations();
   const bondedPools = useLsBondedPools();
-  const poolMembers = useLsPoolMembers();
+  const poolMembers = useAssetAccounts();
   const compoundApys = useLsPoolCompoundApys();
   const { lsProtocolId } = useLsStore();
 

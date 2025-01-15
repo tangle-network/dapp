@@ -41,6 +41,7 @@ const OperatorsTable: FC<Props> = ({
         ([addressString, { delegations, restakersCount }]) => {
           const address = assertSubstrateAddress(addressString);
           const tvlInUsd = operatorTVL?.[address] ?? null;
+
           const concentrationPercentage =
             operatorConcentration?.[address] ?? null;
 

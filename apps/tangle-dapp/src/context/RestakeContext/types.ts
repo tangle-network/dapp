@@ -1,6 +1,6 @@
 import {
   AssetBalanceMap,
-  AssetMap,
+  RestakeVaultAssetMap,
   AssetWithBalance,
 } from '@webb-tools/tangle-shared-ui/types/restake';
 import { Observable } from 'rxjs';
@@ -9,12 +9,12 @@ export type RestakeContextType = {
   /**
    * The asset map for the current selected chain
    */
-  assetMap: AssetMap;
+  assetMap: RestakeVaultAssetMap;
 
   /**
    * An observable of the asset map for the current selected chain
    */
-  assetMap$: Observable<AssetMap>;
+  assetMap$: Observable<RestakeVaultAssetMap>;
 
   /**
    * The balances of the current active account

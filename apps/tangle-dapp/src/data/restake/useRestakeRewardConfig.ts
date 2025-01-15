@@ -1,70 +1,33 @@
-import type { Option } from '@polkadot/types';
-import type { PalletMultiAssetDelegationRewardsRewardConfig } from '@polkadot/types/lookup';
-import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import { useObservableState } from 'observable-hooks';
-import { useMemo } from 'react';
-import { map, of } from 'rxjs';
+import { PalletRewardsRewardConfigForAssetVault } from '@polkadot/types/lookup';
+import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import { useCallback, useMemo } from 'react';
 
-import type { RewardConfig, RewardConfigForAsset } from '../../types/restake';
-import hasQuery from '../../utils/hasQuery';
-
-export default function useRestakeRewardConfig() {
-  const { apiRx } = usePolkadotApi();
-
-  const rewardConfigFromQuery$ = useMemo(
-    () =>
-      hasQuery(apiRx, 'multiAssetDelegation', 'rewardConfigStorage')
-        ? apiRx.query.multiAssetDelegation.rewardConfigStorage()
-        : of(
-            apiRx.createType<
-              Option<PalletMultiAssetDelegationRewardsRewardConfig>
-            >('Option<Null>'),
-          ),
-    [apiRx],
+const useRestakeRewardConfig = () => {
+  const { result: entries } = useApiRx(
+    useCallback((api) => {
+      return api.query.rewards.rewardConfigStorage.entries();
+    }, []),
   );
 
-  const rewardConfig$ = useMemo(
-    () =>
-      rewardConfigFromQuery$.pipe(
-        map((rewardConfig) => {
-          if (rewardConfig.isNone) {
-            return {
-              configs: {},
-              whitelistedBlueprintIds: [],
-            } as RewardConfig;
-          }
+  const rewardConfigs = useMemo(() => {
+    if (entries === null) {
+      return null;
+    }
 
-          const config = rewardConfig.unwrap();
+    const map = new Map<number, PalletRewardsRewardConfigForAssetVault>();
 
-          const configs = Array.from(config.configs.entries()).reduce(
-            (configs, [vaultId, rewardConfigForAsset]) => {
-              const configForAsset = {
-                apy: rewardConfigForAsset.apy.toNumber(),
-                cap: rewardConfigForAsset.cap.toBigInt(),
-              } satisfies RewardConfigForAsset;
+    for (const [vaultId, configOpt] of entries) {
+      if (configOpt.isNone) {
+        continue;
+      }
 
-              return {
-                ...configs,
-                [vaultId.toNumber()]: configForAsset,
-              };
-            },
-            {} as RewardConfig['configs'],
-          );
+      map.set(vaultId.args[0].toNumber(), configOpt.unwrap());
+    }
 
-          const whitelistedBlueprintIds = config.whitelistedBlueprintIds.map(
-            (id) => id.toNumber(),
-          );
+    return map;
+  }, [entries]);
 
-          return { configs, whitelistedBlueprintIds } satisfies RewardConfig;
-        }),
-      ),
-    [rewardConfigFromQuery$],
-  );
+  return rewardConfigs;
+};
 
-  const rewardConfig = useObservableState(rewardConfig$, {
-    configs: {},
-    whitelistedBlueprintIds: [],
-  });
-
-  return { rewardConfig, rewardConfig$ };
-}
+export default useRestakeRewardConfig;

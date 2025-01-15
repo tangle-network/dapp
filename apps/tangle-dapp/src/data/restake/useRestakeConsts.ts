@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import getModuleConstant from '../../utils/getModuleConstant';
 
-export default function useRestakeConsts() {
+const useRestakeConsts = () => {
   const { apiPromise } = usePolkadotApi();
 
   const bondDuration = useMemo(
@@ -85,4 +85,6 @@ export default function useRestakeConsts() {
     minOperatorBondAmount,
     operatorBondLessDelay,
   };
-}
+};
+
+export default useRestakeConsts;

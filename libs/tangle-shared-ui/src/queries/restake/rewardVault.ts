@@ -1,10 +1,10 @@
 import type { ApiRx } from '@polkadot/api';
-import type { Option, StorageKey, u128, Vec } from '@polkadot/types';
+import type { Option, StorageKey, u32, Vec } from '@polkadot/types';
 import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
 import { map, of } from 'rxjs';
 
 function toPrimitive(
-  entries: [StorageKey<[u128]>, Option<Vec<TanglePrimitivesServicesAsset>>][],
+  entries: [StorageKey<[u32]>, Option<Vec<TanglePrimitivesServicesAsset>>][],
 ): [vaultId: bigint, assetIds: bigint[] | null][] {
   return entries.map(([vaultId, assets]) => {
     const vaultIdBigInt = vaultId.args[0].toBigInt();
@@ -33,11 +33,9 @@ function toPrimitive(
 }
 
 export function rewardVaultRxQuery(apiRx: ApiRx) {
-  if (apiRx.query.multiAssetDelegation?.rewardVaults === undefined) {
+  if (apiRx.query.rewards?.rewardVaults === undefined) {
     return of([]);
   }
 
-  return apiRx.query.multiAssetDelegation.rewardVaults
-    .entries()
-    .pipe(map(toPrimitive));
+  return apiRx.query.rewards.rewardVaults.entries().pipe(map(toPrimitive));
 }

@@ -12,7 +12,7 @@ import useApiRx from '../../hooks/useApiRx';
 import { OperatorData } from '../../types';
 import type { Blueprint } from '../../types/blueprint';
 import { TangleError, TangleErrorCode } from '../../types/error';
-import type { AssetMap, OperatorMap } from '../../types/restake';
+import type { RestakeVaultAssetMap, OperatorMap } from '../../types/restake';
 import {
   getAccountInfo,
   getMultipleAccountInfo,
@@ -20,12 +20,12 @@ import {
 import delegationsToVaultTokens from '../../utils/restake/delegationsToVaultTokens';
 import { extractOperatorData } from '../blueprints/utils/blueprintHelpers';
 import { toPrimitiveBlueprint } from '../blueprints/utils/toPrimitiveBlueprint';
-import useRestakeAssetMap from './useRestakeAssetMap';
+import useRestakeVaultAssets from './useRestakeVaultAssets';
 import useRestakeOperatorMap from './useRestakeOperatorMap';
 
 export default function useBlueprintDetails(id?: string) {
   const { rpcEndpoint } = useNetworkStore();
-  const { assetMap } = useRestakeAssetMap();
+  const { vaultAssets: assetMap } = useRestakeVaultAssets();
 
   const { operatorMap } = useRestakeOperatorMap();
   const { delegatorInfo } = useRestakeDelegatorInfo();
@@ -124,7 +124,7 @@ export default function useBlueprintDetails(id?: string) {
 
 async function getBlueprintOperators(
   rpcEndpoint: string,
-  assetMap: AssetMap,
+  assetMap: RestakeVaultAssetMap,
   operatorAccountSet: Set<SubstrateAddress>,
   operatorMap: OperatorMap,
   operatorTVL: Record<string, number>,

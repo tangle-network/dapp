@@ -8,6 +8,7 @@ import {
 } from '@polkadot/types/lookup';
 import { TransformEnum } from './utils';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { RestakeAssetId } from '../utils/createRestakeAssetId';
 
 /**
  * The activity status of the operator.
@@ -49,11 +50,14 @@ export type OperatorMap = {
   readonly [accountId: SubstrateAddress]: OperatorMetadata;
 };
 
-export type AssetMetadata = {
-  readonly id: string;
-  readonly name: string;
-  readonly symbol: string;
-  readonly decimals: number;
+export type RestakeVaultAssetMetadata = Readonly<{
+  id: RestakeAssetId;
+  name: string;
+  symbol: string;
+  decimals: number;
+  vaultId: number | null;
+  priceInUsd: number | null;
+  details?: PalletAssetsAssetDetails;
 
   /**
    * The status of the asset.
@@ -62,17 +66,11 @@ export type AssetMetadata = {
    * @field Frozen - The asset is frozen and cannot be staked.
    * @field Destroying - The asset is being destroyed and cannot be staked.
    */
-  readonly status: TransformEnum<PalletAssetsAssetStatus>;
+  status: TransformEnum<PalletAssetsAssetStatus>;
+}>;
 
-  readonly vaultId: string | null;
-
-  readonly priceInUsd: number | null;
-
-  readonly details?: PalletAssetsAssetDetails;
-};
-
-export type AssetMap = {
-  readonly [assetId: string]: AssetMetadata;
+export type RestakeVaultAssetMap = {
+  readonly [assetId: string]: RestakeVaultAssetMetadata;
 };
 
 export type DelegatorWithdrawRequest = {
@@ -159,6 +157,6 @@ export type AssetBalanceMap = {
 
 export type AssetWithBalance = {
   assetId: string;
-  metadata: AssetMetadata;
+  metadata: RestakeVaultAssetMetadata;
   balance: AssetBalance | null;
 };

@@ -18,7 +18,7 @@ import useLsPoolJoinTx from '../../../data/liquidStaking/tangle/useLsPoolJoinTx'
 import useLsExchangeRate, {
   ExchangeRateType,
 } from '../../../data/liquidStaking/useLsExchangeRate';
-import useLsPoolMembers from '../../../data/liquidStaking/useLsPoolMembers';
+import useAssetAccounts from '../../../data/liquidStaking/useAssetAccounts';
 import useLsPools from '../../../data/liquidStaking/useLsPools';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
@@ -61,7 +61,7 @@ const LsStakeCard: FC = () => {
 
   const selectedProtocol = getLsProtocolDef(lsProtocolId);
   const tryChangeNetwork = useLsChangeNetwork();
-  const lsPoolMembers = useLsPoolMembers();
+  const lsPoolMembers = useAssetAccounts();
   const fromLsInputRef = useRef<HTMLInputElement>(null);
 
   const actionText = useMemo(() => {
@@ -253,7 +253,6 @@ const LsStakeCard: FC = () => {
           parachainMintTxStatus === TxStatus.PROCESSING ||
           tanglePoolJoinTxStatus === TxStatus.PROCESSING
         }
-        loadingText="Processing"
         onClick={handleStakeClick}
         isFullWidth
       >

@@ -28,7 +28,7 @@ import { ArrowRight } from '@webb-tools/icons';
 import { PagePath } from '../types';
 import { Link } from 'react-router';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
-import useRestakeAssetMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetMap';
+import useRestakeVaultAssets from '@webb-tools/tangle-shared-ui/data/restake/useRestakeVaultAssets';
 import useIsAccountConnected from '../hooks/useIsAccountConnected';
 import useLsPools from '../data/liquidStaking/useLsPools';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
@@ -67,7 +67,7 @@ type Row = {
   iconUrl?: string;
   decimals: number;
   apyPercentage?: number;
-  cap?: BN;
+  depositCap?: BN;
 };
 
 const COLUMN_HELPER = createColumnHelper<Row>();
@@ -171,13 +171,13 @@ const COLUMNS = [
               AmountFormatStyle.SI,
             );
 
-      const cap = props.row.original.cap;
+      const depositCap = props.row.original.depositCap;
 
-      const fmtCap =
-        cap === undefined
+      const fmtDepositCap =
+        depositCap === undefined
           ? '∞'
           : formatDisplayAmount(
-              cap,
+              depositCap,
               props.row.original.decimals,
               AmountFormatStyle.SI,
             );
@@ -186,8 +186,13 @@ const COLUMNS = [
         <TableCellWrapper>
           <div className="flex gap-1 items-center justify-center">
             <StatItem
-              title={fmtTvl === undefined ? `${fmtCap} Cap` : `${fmtTvl} TVL`}
-              subtitle={fmtTvl === undefined ? undefined : `${fmtCap} Cap`}
+              tooltip="Total value locked & deposit cap."
+              title={
+                fmtTvl === undefined ? `${fmtDepositCap} Cap` : `${fmtTvl} TVL`
+              }
+              subtitle={
+                fmtTvl === undefined ? undefined : `${fmtDepositCap} Cap`
+              }
               removeBorder
             />
           </div>
@@ -269,12 +274,12 @@ const AssetsAndBalancesTable: FC = () => {
   >({});
 
   const { balances } = useRestakeBalances();
-  const { rewardConfig } = useRestakeRewardConfig();
+  const rewardConfig = useRestakeRewardConfig();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const allPools = useLsPools();
   const isAccountConnected = useIsAccountConnected();
   const substrateAddress = useSubstrateAddress();
-  const { assetMap } = useRestakeAssetMap();
+  const { vaultAssets } = useRestakeVaultAssets();
   const assetsTvl = useRestakeAssetsTvl();
 
   const getTotalLockedInAsset = useCallback(
@@ -307,9 +312,23 @@ const AssetsAndBalancesTable: FC = () => {
   );
 
   const assetRows = useMemo<Row[]>(() => {
-    return Object.entries(assetMap).flatMap(([assetId, metadata]) => {
-      const cap = rewardConfig.configs[assetId]?.cap;
-      const capBn = cap === undefined ? undefined : new BN(cap.toString());
+    return Object.entries(vaultAssets).flatMap(([assetId, metadata]) => {
+      if (metadata.vaultId === null) {
+        return [];
+      }
+
+      const config = rewardConfig?.get(metadata.vaultId);
+
+      if (config === undefined) {
+        return [];
+      }
+
+      const apyPercentage = config.apy.toNumber();
+
+      const depositCap =
+        config.depositCap === undefined
+          ? undefined
+          : new BN(config.depositCap.toString());
 
       // TODO: Avoid using `as` to force cast here. This is a temporary workaround until the type of `assetId` is updated to be `RestakeAssetId`.
       const tvl =
@@ -332,19 +351,13 @@ const AssetsAndBalancesTable: FC = () => {
         available,
         locked: getTotalLockedInAsset(parseInt(assetId)),
         // TODO: This won't work because reward config is PER VAULT not PER ASSET. But isn't each asset its own vault?
-        apyPercentage: rewardConfig.configs[assetId]?.apy,
+        apyPercentage,
         tokenSymbol: metadata.symbol,
         decimals: metadata.decimals,
-        cap: capBn,
+        depositCap,
       } satisfies Row;
     });
-  }, [
-    assetMap,
-    assetsTvl,
-    balances,
-    getTotalLockedInAsset,
-    rewardConfig.configs,
-  ]);
+  }, [vaultAssets, assetsTvl, balances, getTotalLockedInAsset, rewardConfig]);
 
   const lsPoolRows = useMemo<Row[]>(() => {
     if (!(allPools instanceof Map)) {
@@ -423,7 +436,7 @@ const AssetsAndBalancesTable: FC = () => {
     return (
       <TableStatus
         title="No Assets"
-        description="There are no assets available yet. Get started by creating your own asset or liquid staking pool!"
+        description="There are no restaking vaults or liquid staking pools available on this network yet. Please check back later."
       />
     );
   }

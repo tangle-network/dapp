@@ -9,7 +9,6 @@ import {
   DropdownBody,
 } from '@webb-tools/webb-ui-components/components/Dropdown';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/getRoundedAmountString';
 import cx from 'classnames';
@@ -67,7 +66,6 @@ const VaultsDropdown: FC<{ vaultTokens: VaultToken[] }> = ({ vaultTokens }) => {
       <DropdownBody isPortal className="mt-2 bg-mono-0 dark:bg-mono-200">
         {/** TODO: Check styling after max depth issue is fixed.  */}
         <Table
-          variant={TableVariant.DEFAULT}
           tableProps={table}
           thClassName={cx('px-0 py-3 first:pl-5 last:pr-5')}
           tdClassName={cx('border-t-0 px-0 py-3 first:pl-5 last:pr-5')}

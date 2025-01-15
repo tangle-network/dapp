@@ -6,13 +6,13 @@ import toPairs from 'lodash/toPairs';
 import { useObservableState } from 'observable-hooks';
 import { PropsWithChildren, useMemo } from 'react';
 import { combineLatest, map } from 'rxjs';
-import useRestakeAssetMap from '../../data/restake/useRestakeAssetMap';
+import useRestakeVaultAssets from '../../data/restake/useRestakeVaultAssets';
 import useRestakeBalances from '../../data/restake/useRestakeBalances';
 import { AssetWithBalance } from '../../types/restake';
 import RestakeContext from './RestakeContext';
 
 const RestakeContextProvider = (props: PropsWithChildren) => {
-  const { assetMap, assetMap$ } = useRestakeAssetMap();
+  const { vaultAssets: assetMap, assetMap$ } = useRestakeVaultAssets();
   const { balances, balances$ } = useRestakeBalances();
 
   const assetWithBalances$ = useMemo(

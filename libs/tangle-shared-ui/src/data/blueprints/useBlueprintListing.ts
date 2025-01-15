@@ -7,7 +7,7 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
 import { useOperatorTVL } from '../restake/useOperatorTVL';
-import useRestakeAssetMap from '../restake/useRestakeAssetMap';
+import useRestakeVaultAssets from '../restake/useRestakeVaultAssets';
 import useRestakeOperatorMap from '../restake/useRestakeOperatorMap';
 import {
   createBlueprintObjects,
@@ -19,7 +19,7 @@ import {
 export default function useBlueprintListing() {
   const { rpcEndpoint } = useNetworkStore();
   const { operatorMap } = useRestakeOperatorMap();
-  const { assetMap } = useRestakeAssetMap();
+  const { vaultAssets: assetMap } = useRestakeVaultAssets();
   const { operatorTVL } = useOperatorTVL(operatorMap, assetMap);
 
   const { result, ...rest } = useApiRx(
