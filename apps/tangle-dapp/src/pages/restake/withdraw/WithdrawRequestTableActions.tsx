@@ -92,7 +92,6 @@ const WithdrawRequestTableActions = ({
       <Button
         className="flex-1"
         isLoading={isCanceling}
-        loadingText="Canceling..."
         isDisabled={!canCancelWithdraw || isExecuting}
         isFullWidth
         onClick={handleCancelWithdraw}
@@ -104,7 +103,6 @@ const WithdrawRequestTableActions = ({
       <Button
         className="flex-1"
         isLoading={isExecuting}
-        loadingText="Executing..."
         isDisabled={!canExecuteWithdraw || isCanceling}
         isFullWidth
         onClick={handleExecuteWithdraw}

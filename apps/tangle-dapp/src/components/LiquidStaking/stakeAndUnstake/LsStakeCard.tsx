@@ -253,7 +253,6 @@ const LsStakeCard: FC = () => {
           parachainMintTxStatus === TxStatus.PROCESSING ||
           tanglePoolJoinTxStatus === TxStatus.PROCESSING
         }
-        loadingText="Processing"
         onClick={handleStakeClick}
         isFullWidth
       >
