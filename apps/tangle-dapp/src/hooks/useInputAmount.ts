@@ -11,6 +11,7 @@ import cleanNumericInputString from '../utils/cleanNumericInputString';
 import parseChainUnits, {
   ChainUnitParsingError,
 } from '../utils/parseChainUnits';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
 type SafeParseInputAmountOptions = {
   amountString: string;
@@ -32,15 +33,15 @@ function safeParseInputAmount(
       case ChainUnitParsingError.EmptyAmount:
         return options.errorOnEmptyValue ? 'Amount is required' : null;
       case ChainUnitParsingError.ExceedsDecimals:
-        return `Amount cannot exceed ${options.decimals} decimal places`;
+        return `Precision cannot exceed ${options.decimals} decimal ${pluralize('place', options.decimals !== 1)}`;
     }
   } else if (options.min !== null && result.lt(options.min)) {
     return (
       options.minErrorMessage ??
-      `Min amount required ${formatDisplayAmount(
+      `Minimum amount required is ${formatDisplayAmount(
         options.min,
         options.decimals,
-        AmountFormatStyle.SHORT,
+        AmountFormatStyle.EXACT,
       )}`
     );
   } else if (options.max !== null && result.gt(options.max)) {
@@ -49,7 +50,7 @@ function safeParseInputAmount(
       `Max amount allowed is ${formatDisplayAmount(
         options.max,
         options.decimals,
-        AmountFormatStyle.SHORT,
+        AmountFormatStyle.EXACT,
       )}`
     );
   }
