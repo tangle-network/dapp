@@ -4,10 +4,13 @@ import { Button } from '@webb-tools/webb-ui-components';
 import { OPERATOR_JOIN_DOCS_LINK } from '@webb-tools/webb-ui-components/constants/tangleDocs';
 import { FC, useState } from 'react';
 import JoinOperatorsModal from './JoinOperatorsModal';
+import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 
 const JoinOperatorsBanner: FC = () => {
   const [isJoinOperatorsModalOpen, setIsJoinOperatorsModalOpen] =
     useState(false);
+
+  const { isEvm } = useAgnosticAccountInfo();
 
   return (
     <>
@@ -21,6 +24,10 @@ const JoinOperatorsBanner: FC = () => {
             variant="primary"
             rightIcon={<ArrowRight />}
             onClick={() => setIsJoinOperatorsModalOpen(true)}
+            disabledTooltip="Only Substrate accounts can register as operators at this time."
+            // Disable the button until it is known whether the current account
+            // is an EVM account or not.
+            isDisabled={isEvm ?? true}
           >
             Join Operators
           </Button>

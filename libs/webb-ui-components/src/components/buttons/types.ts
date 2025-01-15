@@ -141,6 +141,13 @@ export interface ButtonProps extends ButtonBase, IWebbComponentBase {
    * If `true`, the size of the button will be adjusted to fit the icon based on the variant
    */
   isJustIcon?: boolean;
+
+  /**
+   * A tooltip to display when the button is disabled.
+   *
+   * Useful for explaining why the button is disabled.
+   */
+  disabledTooltip?: string;
 }
 
 export interface ButtonSpinnerProps extends WebbComponentBase {

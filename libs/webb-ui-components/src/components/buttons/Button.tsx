@@ -8,6 +8,7 @@ import { ButtonContentProps, ButtonProps } from './types';
 import { useButtonProps } from './use-button-props';
 import { getButtonClassNameByVariant } from './utils';
 import { forwardRef } from 'react';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 
 /**
  * The Webb Button Component
@@ -48,6 +49,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
     spinnerPlacement = 'start',
     variant = 'primary',
     isJustIcon,
+    disabledTooltip,
     ...restProps
   } = props;
 
@@ -67,7 +69,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
 
   const contentProps = { children, leftIcon, rightIcon, variant };
 
-  return (
+  const button = (
     <Component
       {...restProps}
       {...buttonProps}
@@ -93,6 +95,18 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
         </ButtonSpinner>
       )}
     </Component>
+  );
+
+  if (disabledTooltip === undefined) {
+    return button;
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger>{button}</TooltipTrigger>
+
+      <TooltipBody>{disabledTooltip}</TooltipBody>
+    </Tooltip>
   );
 });
 
