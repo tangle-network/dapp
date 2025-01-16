@@ -88,9 +88,7 @@ const ActionItem: FC<ActionItemProps> = ({
 
   return tooltip !== undefined ? (
     <Tooltip>
-      <TooltipBody className="break-normal max-w-[250px] text-center">
-        {tooltip}
-      </TooltipBody>
+      <TooltipBody>{tooltip}</TooltipBody>
 
       <TooltipTrigger asChild>{withLink}</TooltipTrigger>
     </Tooltip>

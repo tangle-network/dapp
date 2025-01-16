@@ -20,6 +20,7 @@ export const TokenPairIcons = forwardRef<HTMLDivElement, TokenPairIconsProps>(
           icon={<TokenIcon size="lg" name={token1Symbol.toLowerCase()} />}
           content={token1Symbol}
         />
+
         <IconWithTooltip
           icon={<TokenIcon size="lg" name={token2Symbol.toLowerCase()} />}
           content={token2Symbol}

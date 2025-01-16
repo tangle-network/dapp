@@ -8,6 +8,7 @@ import {
 import { CopyWithTooltip } from '../../components/CopyWithTooltip/CopyWithTooltip';
 import { IconWithTooltip } from '../../components/IconWithTooltip';
 import { Typography } from '../../typography';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 
 interface RefundAmountProps {
   amount?: number | string;
@@ -64,7 +65,7 @@ const RefundAmount: FC<RefundAmountProps> = ({
           fw="bold"
           className="text-mono-190 dark:text-mono-40"
         >
-          {amount ?? '--'} {tokenSymbol}
+          {amount ?? EMPTY_VALUE_PLACEHOLDER} {tokenSymbol}
         </Typography>
 
         <IconWithTooltip
