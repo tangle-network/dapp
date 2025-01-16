@@ -3,6 +3,7 @@ import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { ModalHeaderProps } from './types';
+import { DialogClose } from '@radix-ui/react-dialog';
 
 export const ModalHeader = forwardRef<HTMLDivElement, ModalHeaderProps>(
   ({ children, className, onClose, titleVariant = 'h4', ...props }, ref) => {
@@ -19,9 +20,12 @@ export const ModalHeader = forwardRef<HTMLDivElement, ModalHeaderProps>(
           {children}
         </Typography>
 
-        <button className="inline-block" onClick={onClose}>
-          <CloseIcon size="lg" />
-        </button>
+        <DialogClose asChild>
+          <button className="inline-block" onClick={onClose}>
+            <CloseIcon size="lg" />
+            <span className="sr-only">Close</span>
+          </button>
+        </DialogClose>
       </div>
     );
   },

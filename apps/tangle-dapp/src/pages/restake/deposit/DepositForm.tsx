@@ -1,8 +1,11 @@
+import { TxEvent } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import { TokenIcon } from '@webb-tools/icons';
+import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
@@ -13,13 +16,13 @@ import {
   ModalContent,
 } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import {
   type ComponentProps,
   useCallback,
   useEffect,
   useMemo,
   useRef,
-  useState,
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -28,11 +31,9 @@ import useRestakeTxEventHandlersWithNoti, {
 } from '../../..//data/restake/useRestakeTxEventHandlersWithNoti';
 import AvatarWithText from '../../../components/AvatarWithText';
 import { ChainList } from '../../../components/Lists/ChainList';
+import LogoListItem from '../../../components/Lists/LogoListItem';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import {
-  type DepositContext,
-  TxEvent,
-} from '../../../data/restake/RestakeTx/base';
+import { type DepositContext } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
@@ -40,16 +41,12 @@ import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import { DepositFormFields } from '../../../types/restake';
+import searchBy from '../../../utils/searchBy';
 import Form from '../Form';
+import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
 import SourceChainInput from './SourceChainInput';
 import TxDetails from './TxDetails';
-import RestakeTabs from '../RestakeTabs';
-import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
-import LogoListItem from '../../../components/Lists/LogoListItem';
-import { TokenIcon } from '@webb-tools/icons';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
-import searchBy from '../../../utils/searchBy';
 
 function getDefaultTypedChainId(activeTypedChainId: number | null) {
   return isDefined(activeTypedChainId) &&
@@ -122,10 +119,18 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   }, [activeTypedChainId, resetField]);
 
   useEffect(() => {
-    if (!vaultIdParam) return;
+    if (!vaultIdParam) {
+      return;
+    }
+
+    const vaultId = Number(vaultIdParam);
+
+    if (Number.isNaN(vaultId)) {
+      return;
+    }
 
     const defaultAsset = assetWithBalances
-      .filter((asset) => asset.metadata.vaultId === vaultIdParam)
+      .filter((asset) => asset.metadata.vaultId === vaultId)
       .sort((a, b) => {
         const aBalance = a.balance?.balance ?? ZERO_BIG_INT;
         const bBalance = b.balance?.balance ?? ZERO_BIG_INT;
@@ -164,9 +169,15 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     status: chainModalOpen,
     close: closeChainModal,
     open: openChainModal,
+    update: updateChainModal,
   } = useModal();
 
-  const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
+  const {
+    status: tokenModalOpen,
+    close: closeTokenModal,
+    open: openTokenModal,
+    update: updateTokenModal,
+  } = useModal();
 
   const selectableTokens = useMemo(
     () =>
@@ -238,9 +249,9 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   const handleTokenChange = useCallback(
     (token: TokenListCardProps['selectTokens'][number]) => {
       setValue('depositAssetId', token.id);
-      setIsTokenModalOpen(false);
+      closeTokenModal();
     },
-    [setIsTokenModalOpen, setValue],
+    [closeTokenModal, setValue],
   );
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
@@ -293,7 +304,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
               <SourceChainInput
                 amountError={errors.amount?.message}
                 openChainModal={openChainModal}
-                openTokenModal={() => setIsTokenModalOpen(true)}
+                openTokenModal={openTokenModal}
                 register={register}
                 setValue={setValue}
                 watch={watch}
@@ -313,12 +324,8 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             </div>
           </div>
 
-          <Modal>
-            <ModalContent
-              isOpen={chainModalOpen}
-              title="Select Chain"
-              onInteractOutside={closeChainModal}
-            >
+          <Modal open={chainModalOpen} onOpenChange={updateChainModal}>
+            <ModalContent title="Select Chain">
               <ChainList
                 searchInputId="restake-deposit-form-search"
                 onClose={closeChainModal}
@@ -331,8 +338,8 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
 
           <ListModal
             title="Select Asset"
-            isOpen={isTokenModalOpen}
-            setIsOpen={setIsTokenModalOpen}
+            isOpen={tokenModalOpen}
+            setIsOpen={updateTokenModal}
             filterItem={(asset, query) =>
               searchBy(query, [asset.id, asset.name, asset.symbol])
             }

@@ -120,15 +120,9 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
   }, [setIsOpen, status]);
 
   return (
-    <Modal open={isOpen}>
-      <ModalContent
-        onInteractOutside={() => setIsOpen(false)}
-        isOpen={isOpen}
-        size="lg"
-      >
-        <ModalHeader onClose={() => setIsOpen(false)}>
-          Create a Liquid Staking Pool
-        </ModalHeader>
+    <Modal open={isOpen} onOpenChange={setIsOpen}>
+      <ModalContent size="lg">
+        <ModalHeader>Create a Liquid Staking Pool</ModalHeader>
 
         <ModalBody className="gap-4">
           <div className="flex flex-col items-center gap-4 sm:flex-row justify-stretch">

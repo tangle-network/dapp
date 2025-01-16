@@ -85,10 +85,8 @@ const ListModal = <T,>({
   const isEmpty = !isSearching && !isLoading && processedItems.length === 0;
 
   return (
-    <Modal>
+    <Modal open={isOpen} onOpenChange={setIsOpen}>
       <ModalContent
-        isOpen={isOpen}
-        onInteractOutside={() => setIsOpen(false)}
         size="md"
         className={twMerge(
           'max-h-[600px]',
@@ -97,9 +95,7 @@ const ListModal = <T,>({
             'h-full',
         )}
       >
-        <ModalHeader className="pb-4" onClose={() => setIsOpen(false)}>
-          {title}
-        </ModalHeader>
+        <ModalHeader className="pb-4">{title}</ModalHeader>
 
         <div>
           {showSearch && filterItem !== undefined && !isEmpty && !isLoading && (

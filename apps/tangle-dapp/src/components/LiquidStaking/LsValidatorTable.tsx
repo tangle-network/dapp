@@ -21,7 +21,6 @@ import {
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -192,11 +191,7 @@ export const LsValidatorTable = () => {
                 debounceTime={300}
               />
 
-              <Table
-                variant={TableVariant.DEFAULT}
-                tableProps={table}
-                totalRecords={tableData.length}
-              />
+              <Table tableProps={table} totalRecords={tableData.length} />
             </div>
 
             {data.length > DEFAULT_PAGINATION.pageSize && (

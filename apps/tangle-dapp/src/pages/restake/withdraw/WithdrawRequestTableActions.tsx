@@ -1,19 +1,18 @@
+import { TxEvent } from '@webb-tools/abstract-api-provider';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { useCallback, useMemo, useState } from 'react';
-
 import {
   type CancelWithdrawRequestContext,
   type ExecuteAllWithdrawRequestContext,
-  TxEvent,
 } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import { isScheduledRequestReady } from '../utils';
-import type { WithdrawRequestTableData } from './types';
+import { WithdrawRequestTableRow } from './WithdrawRequestTable';
 
 type Props = {
-  allRequests: WithdrawRequestTableData[];
-  selectedRequests: WithdrawRequestTableData[];
+  allRequests: WithdrawRequestTableRow[];
+  selectedRequests: WithdrawRequestTableRow[];
 };
 
 const WithdrawRequestTableActions = ({
@@ -83,17 +82,16 @@ const WithdrawRequestTableActions = ({
       return false;
     }
 
-    return allRequests.some(({ timeRemaining }) => {
+    return allRequests.some(({ sessionsRemaining: timeRemaining }) => {
       return isScheduledRequestReady(timeRemaining);
     });
   }, [allRequests]);
 
   return (
-    <>
+    <div className="flex items-center gap-3">
       <Button
         className="flex-1"
         isLoading={isCanceling}
-        loadingText="Canceling..."
         isDisabled={!canCancelWithdraw || isExecuting}
         isFullWidth
         onClick={handleCancelWithdraw}
@@ -105,14 +103,13 @@ const WithdrawRequestTableActions = ({
       <Button
         className="flex-1"
         isLoading={isExecuting}
-        loadingText="Executing..."
         isDisabled={!canExecuteWithdraw || isCanceling}
         isFullWidth
         onClick={handleExecuteWithdraw}
       >
         Execute All
       </Button>
-    </>
+    </div>
   );
 };
 

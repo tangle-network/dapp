@@ -42,6 +42,7 @@ export const CheckBox: FC<CheckBoxProps> = (props) => {
     onChange,
     spacingClassName = 'ml-2',
     wrapperClassName,
+    labelProps,
   } = props;
 
   const inputClsx =
@@ -78,7 +79,14 @@ export const CheckBox: FC<CheckBoxProps> = (props) => {
   const mergedLabelClsx = twMerge(labelClsx, labelClsxProp);
 
   return (
-    <label className={twMerge('inline-flex', wrapperClassName)}>
+    <label
+      {...labelProps}
+      className={twMerge(
+        'inline-flex',
+        labelProps?.className,
+        wrapperClassName,
+      )}
+    >
       <div className="relative group min-h-[28px] min-w-[28px]">
         <input
           id={id}
@@ -115,7 +123,7 @@ export const CheckBox: FC<CheckBoxProps> = (props) => {
 
           <TooltipBody
             title={info.title}
-            className="max-w-[185px] break-normal"
+            className="max-w-[185px]"
             button={
               info.buttonProps && (
                 <Button {...info.buttonProps} variant="utility" size="sm">

@@ -1,6 +1,9 @@
+import { TxEvent } from '@webb-tools/abstract-api-provider';
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import { TokenIcon } from '@webb-tools/icons';
+import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
@@ -13,16 +16,16 @@ import {
 import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
-import entries from 'lodash/entries';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import keys from 'lodash/keys';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
-import {
-  DelegatorStakeContext,
-  TxEvent,
-} from '../../../data/restake/RestakeTx/base';
+import LogoListItem from '../../../components/Lists/LogoListItem';
+import OperatorListItem from '../../../components/Lists/OperatorListItem';
+import { DelegatorStakeContext } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import useRestakeTxEventHandlersWithNoti, {
   type Props,
@@ -33,6 +36,7 @@ import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import type { DelegationFormFields } from '../../../types/restake';
+import searchBy from '../../../utils/searchBy';
 import Form from '../Form';
 import RestakeTabs from '../RestakeTabs';
 import StyleContainer from '../StyleContainer';
@@ -41,13 +45,6 @@ import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Info from './Info';
 import StakeInput from './StakeInput';
-import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
-import OperatorListItem from '../../../components/Lists/OperatorListItem';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import LogoListItem from '../../../components/Lists/LogoListItem';
-import { TokenIcon } from '@webb-tools/icons';
-import searchBy from '../../../utils/searchBy';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -144,10 +141,22 @@ export default function RestakeStakePage() {
     status: isChainModalOpen,
     open: openChainModal,
     close: closeChainModal,
+    update: updateChainModal,
   } = useModal(false);
 
-  const [isOperatorModalOpen, setIsOperatorModalOpen] = useState(false);
-  const [isAssetModalOpen, setIsAssetModalOpen] = useState(false);
+  const {
+    status: isAssetModalOpen,
+    open: openAssetModal,
+    close: closeAssetModal,
+    update: updateAssetModal,
+  } = useModal(false);
+
+  const {
+    status: isOperatorModalOpen,
+    open: openOperatorModal,
+    close: closeOperatorModal,
+    update: updateOperatorModal,
+  } = useModal(false);
 
   const selectableTokens = useMemo(() => {
     if (!isDefined(delegatorInfo)) {
@@ -179,9 +188,9 @@ export default function RestakeStakePage() {
   const handleAssetChange = useCallback(
     (asset: TokenListCardProps['selectTokens'][number]) => {
       setValue('assetId', asset.id);
-      setIsAssetModalOpen(false);
+      closeAssetModal();
     },
-    [setIsAssetModalOpen, setValue],
+    [closeAssetModal, setValue],
   );
 
   const handleChainChange = useCallback(
@@ -257,9 +266,9 @@ export default function RestakeStakePage() {
   const handleOnSelectOperator = useCallback(
     (operator: RestakeOperator) => {
       setValue('operatorAccountId', operator.accountId);
-      setIsOperatorModalOpen(false);
+      closeOperatorModal();
     },
-    [setIsOperatorModalOpen, setValue],
+    [closeOperatorModal, setValue],
   );
 
   return (
@@ -272,8 +281,8 @@ export default function RestakeStakePage() {
             <StakeInput
               amountError={errors.amount?.message}
               delegatorInfo={delegatorInfo}
-              openAssetModal={() => setIsAssetModalOpen(true)}
-              openOperatorModal={() => setIsOperatorModalOpen(true)}
+              openAssetModal={openAssetModal}
+              openOperatorModal={openOperatorModal}
               register={register}
               setValue={setValue}
               watch={watch}
@@ -295,7 +304,7 @@ export default function RestakeStakePage() {
           <ListModal
             title="Select Asset"
             isOpen={isAssetModalOpen}
-            setIsOpen={setIsAssetModalOpen}
+            setIsOpen={updateAssetModal}
             titleWhenEmpty="No Assets Available"
             descriptionWhenEmpty="Have you made a deposit on this network yet?"
             items={selectableTokens}
@@ -321,7 +330,7 @@ export default function RestakeStakePage() {
           <ListModal
             title="Select Operator"
             isOpen={isOperatorModalOpen}
-            setIsOpen={setIsOperatorModalOpen}
+            setIsOpen={updateOperatorModal}
             titleWhenEmpty="No Operators Available"
             descriptionWhenEmpty="Looks like there aren't any registered operators in this network yet. Make the leap and become the first operator!"
             items={operators}
@@ -340,9 +349,8 @@ export default function RestakeStakePage() {
             )}
           />
 
-          <Modal>
+          <Modal open={isChainModalOpen} onOpenChange={updateChainModal}>
             <SupportedChainModal
-              isOpen={isChainModalOpen}
               onClose={closeChainModal}
               onChainChange={handleChainChange}
             />

@@ -154,18 +154,21 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     status: isSourceChainModalOpen,
     open: openSourceChainModal,
     close: closeSourceChainModal,
+    update: updateSourceChainModal,
   } = useModal(false);
 
   const {
     status: isDestinationChainModalOpen,
     open: openDestinationChainModal,
     close: closeDestinationChainModal,
+    update: updateDestinationChainModal,
   } = useModal(false);
 
   const {
     status: isTokenModalOpen,
     open: openTokenModal,
     close: closeTokenModal,
+    update: updateTokenModal,
   } = useModal(false);
 
   const {
@@ -644,11 +647,11 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       >
         <div className="flex flex-col gap-7">
           {/* Source and Destination Chain Selector */}
-          <div className="flex flex-col md:flex-row justify-center md:justify-between items-center md:items-end md:gap-2">
+          <div className="flex flex-col items-center justify-center md:flex-row md:justify-between md:items-end md:gap-2">
             {/** Source chain */}
-            <div className="flex flex-col gap-2 flex-1 w-full">
+            <div className="flex flex-col flex-1 w-full gap-2">
               <Label
-                className="text-mono-120 dark:text-mono-120 font-bold"
+                className="font-bold text-mono-120 dark:text-mono-120"
                 htmlFor="bridge-source-chain-selector"
               >
                 From
@@ -667,14 +670,14 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
             {/** Switch button */}
             <div
-              className="cursor-pointer px-1 pt-6 md:pt-0 md:pb-4"
+              className="px-1 pt-6 cursor-pointer md:pt-0 md:pb-4"
               onClick={onSwitchChains}
             >
               <ArrowsRightLeftIcon className="w-6 h-6 rotate-90 md:rotate-0" />
             </div>
 
             {/** Destination chain */}
-            <div className="flex flex-col gap-2 flex-1 w-full">
+            <div className="flex flex-col flex-1 w-full gap-2">
               <Label htmlFor="bridge-destination-chain-selector">To</Label>
 
               <ChainOrTokenButton
@@ -727,7 +730,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                   value={selectedToken.tokenType}
                   iconType="token"
                   onClick={openTokenModal}
-                  className="w-fit py-2"
+                  className="py-2 w-fit"
                   status="success"
                 />
               </div>
@@ -829,13 +832,12 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
         </div>
       </Card>
 
-      <Modal>
+      <Modal
+        open={isSourceChainModalOpen}
+        onOpenChange={updateSourceChainModal}
+      >
         {/* Source Chain Selector */}
-        <ModalContent
-          isOpen={isSourceChainModalOpen}
-          onInteractOutside={closeSourceChainModal}
-          size="md"
-        >
+        <ModalContent size="md">
           <ChainList
             searchInputId="bridge-source-chain-search"
             onClose={closeSourceChainModal}
@@ -845,13 +847,14 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
             showSearchInput
           />
         </ModalContent>
+      </Modal>
 
+      <Modal
+        open={isDestinationChainModalOpen}
+        onOpenChange={updateDestinationChainModal}
+      >
         {/* Destination Chain Selector */}
-        <ModalContent
-          isOpen={isDestinationChainModalOpen}
-          onInteractOutside={closeDestinationChainModal}
-          size="md"
-        >
+        <ModalContent size="md">
           <ChainList
             searchInputId="bridge-destination-chain-search"
             onClose={closeDestinationChainModal}
@@ -861,13 +864,11 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
             showSearchInput
           />
         </ModalContent>
+      </Modal>
 
+      <Modal open={isTokenModalOpen} onOpenChange={updateTokenModal}>
         {/* Token Selector */}
-        <ModalContent
-          isOpen={isTokenModalOpen}
-          onInteractOutside={closeTokenModal}
-          size="md"
-        >
+        <ModalContent size="md">
           <AssetList
             onClose={closeTokenModal}
             assets={assets}

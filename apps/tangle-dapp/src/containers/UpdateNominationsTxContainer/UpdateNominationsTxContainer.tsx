@@ -57,6 +57,17 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
     setSelectedValidators(currentNominations);
   }, [currentNominations, setIsModalOpen]);
 
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        setIsModalOpen(true);
+      } else {
+        closeModal();
+      }
+    },
+    [closeModal, setIsModalOpen],
+  );
+
   const submitTx = useCallback(async () => {
     if (executeNominateTx === null || selectedValidators === null) {
       return;
@@ -110,13 +121,9 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
   );
 
   return (
-    <Modal open>
-      <ModalContent
-        onInteractOutside={() => setIsModalOpen(false)}
-        isOpen={isModalOpen}
-        size="lg"
-      >
-        <ModalHeader onClose={closeModal}>Update Nominations</ModalHeader>
+    <Modal open={isModalOpen} onOpenChange={handleOpenChange}>
+      <ModalContent size="lg">
+        <ModalHeader>Update Nominations</ModalHeader>
 
         <div className="px-8 py-6">
           <SelectValidators

@@ -1,13 +1,14 @@
+import { isEthereumAddress } from '@polkadot/util-crypto';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { isSubstrateAddress } from '@webb-tools/webb-ui-components/utils/isSubstrateAddress';
+import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
+import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import BoostedChip from '../BoostedChip';
-import { isEthereumAddress } from '@polkadot/util-crypto';
-import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { BlueprintItemProps } from './types';
-import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
+import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 
 const BlueprintItem: FC<BlueprintItemProps> = ({
   name,
@@ -19,6 +20,8 @@ const BlueprintItem: FC<BlueprintItemProps> = ({
   tvl,
   isBoosted,
   renderImage,
+  isSelected,
+  onSelectedChange,
 }) => {
   return (
     <div
@@ -60,8 +63,21 @@ const BlueprintItem: FC<BlueprintItemProps> = ({
                     {name}
                   </Typography>
                 </div>
-                {isBoosted && <BoostedChip />}
+
+                {typeof isSelected === 'boolean' &&
+                typeof onSelectedChange === 'function' ? (
+                  <CheckBox
+                    isChecked={isSelected}
+                    onChange={onSelectedChange}
+                    labelProps={{
+                      onClick: (event) => event.stopPropagation(),
+                    }}
+                  />
+                ) : (
+                  isBoosted && <BoostedChip />
+                )}
               </div>
+
               <Typography
                 variant="body2"
                 className="line-clamp-1 text-mono-120 dark:text-mono-100"

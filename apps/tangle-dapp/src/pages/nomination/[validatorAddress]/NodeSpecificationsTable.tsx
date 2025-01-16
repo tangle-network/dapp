@@ -8,7 +8,6 @@ import {
 } from '@tanstack/react-table';
 import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import { fuzzyFilter, Table, Typography } from '@webb-tools/webb-ui-components';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import cx from 'classnames';
 import { FC } from 'react';
 
@@ -113,11 +112,7 @@ const NodeSpecificationsTable: FC<NodeSpecificationsTableProps> = ({
 
         {/* Success; show the table */}
         {!isLoading && error === null && nodeSpecifications.length > 0 && (
-          <Table
-            variant={TableVariant.DEFAULT}
-            tableProps={table}
-            totalRecords={nodeSpecifications.length}
-          />
+          <Table tableProps={table} totalRecords={nodeSpecifications.length} />
         )}
       </div>
     </div>

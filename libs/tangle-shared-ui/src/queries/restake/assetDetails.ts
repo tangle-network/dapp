@@ -1,5 +1,5 @@
 import { ApiPromise, ApiRx } from '@polkadot/api';
-import type { Option, u128 } from '@polkadot/types';
+import type { Option, u32 } from '@polkadot/types';
 import type {
   PalletAssetsAssetDetails,
   PalletAssetsAssetMetadata,
@@ -7,21 +7,29 @@ import type {
 import { formatBalance, hexToString } from '@polkadot/util';
 import type { Chain } from '@webb-tools/dapp-config';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
-import { AssetMap, AssetMetadata } from '../../types/restake';
+import {
+  RestakeVaultAssetMap,
+  RestakeVaultAssetMetadata,
+} from '../../types/restake';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
 import { fetchSingleTokenPrice, fetchTokenPrices } from '../tokenPrice';
+import { isEvmAddress, isTemplateNumber } from '@webb-tools/webb-ui-components';
+import assert from 'assert';
 
-function u128ToVaultId(u128: Option<u128>) {
-  if (u128.isNone) return null;
+function createVaultId(u32: Option<u32>): number | null {
+  if (u32.isNone) {
+    return null;
+  }
 
-  return u128.unwrap().toString();
+  return u32.unwrap().toNumber();
 }
 
 function isApiSupported(api: ApiPromise | ApiRx) {
   const isAssetsQueryUndefined = api.query?.assets?.asset === undefined;
   const isMetadataQueryUndefined = api.query?.assets?.metadata === undefined;
+
   const isVaultsQueryUndefined =
-    api.query.multiAssetDelegation?.assetLookupRewardVaults === undefined;
+    api.query.rewards?.assetLookupRewardVaults === undefined;
 
   return (
     !isAssetsQueryUndefined &&
@@ -36,24 +44,19 @@ const DEFAULT_NATIVE_CURRENCY = {
   decimals: formatBalance.getDefaults().decimals,
 };
 
-function processAssetMetadata(
-  assetId: string,
-  metadata: PalletAssetsAssetMetadata,
-) {
-  const name = hexToString(metadata.name.toHex()) || `Asset ${assetId}`;
-  const symbol = hexToString(metadata.symbol.toHex()) || `${assetId}`;
-  return { name, symbol, decimals: metadata.decimals.toNumber() };
-}
-
 // Combined process function for both regular and Rx versions
-function createAssetEntry(
+function createAssetMetadata(
   assetId: string,
   detail: PalletAssetsAssetDetails,
   metadata: PalletAssetsAssetMetadata,
-  vaultId: Option<u128>,
+  vaultId: Option<u32>,
   priceInUsd: number | null,
-): AssetMetadata {
-  const { name, symbol, decimals } = processAssetMetadata(assetId, metadata);
+): RestakeVaultAssetMetadata {
+  const name = hexToString(metadata.name.toHex()) || `Asset ${assetId}`;
+  const symbol = hexToString(metadata.symbol.toHex()) || `${assetId}`;
+  const decimals = metadata.decimals.toNumber();
+
+  assert(isEvmAddress(assetId) || isTemplateNumber(assetId));
 
   return {
     id: assetId,
@@ -61,10 +64,10 @@ function createAssetEntry(
     symbol,
     decimals,
     status: detail.status.type,
-    vaultId: u128ToVaultId(vaultId),
+    vaultId: createVaultId(vaultId),
     priceInUsd,
     details: detail,
-  } satisfies AssetMetadata;
+  } satisfies RestakeVaultAssetMetadata;
 }
 
 function queryTokenPrices(
@@ -74,46 +77,8 @@ function queryTokenPrices(
   const tokenSymbols = nonNativeAssetIds.map((_, idx) =>
     hexToString(assetMetadatas[idx].symbol.toHex()),
   );
+
   return fetchTokenPrices(tokenSymbols);
-}
-
-// Simplified process functions
-async function processAssetDetails(
-  api: ApiPromise,
-  nonNativeAssetIds: string[],
-  assetDetails: Option<PalletAssetsAssetDetails>[],
-  assetMetadatas: PalletAssetsAssetMetadata[],
-  assetVaultIds: Option<u128>[],
-  hasNative: boolean,
-  nativeCurrency: Chain['nativeCurrency'],
-) {
-  const tokenPrices = await queryTokenPrices(nonNativeAssetIds, assetMetadatas);
-
-  const initialAssetMap = hasNative
-    ? {
-        [(await getNativeAsset(nativeCurrency, api)).id]: await getNativeAsset(
-          nativeCurrency,
-          api,
-        ),
-      }
-    : {};
-
-  return nonNativeAssetIds.reduce((assetMap, assetId, idx) => {
-    if (assetDetails[idx].isNone) {
-      return assetMap;
-    }
-
-    return {
-      ...assetMap,
-      [assetId]: createAssetEntry(
-        assetId,
-        assetDetails[idx].unwrap(),
-        assetMetadatas[idx],
-        assetVaultIds[idx],
-        typeof tokenPrices[idx] === 'number' ? tokenPrices[idx] : null,
-      ),
-    };
-  }, initialAssetMap);
 }
 
 function processAssetDetailsRx(
@@ -121,15 +86,15 @@ function processAssetDetailsRx(
   nonNativeAssetIds: string[],
   assetDetails: Option<PalletAssetsAssetDetails>[],
   assetMetadatas: PalletAssetsAssetMetadata[],
-  assetVaultIds: Option<u128>[],
+  assetVaultIds: Option<u32>[],
   hasNative: boolean,
   nativeCurrency: Chain['nativeCurrency'],
-): Observable<AssetMap> {
+): Observable<RestakeVaultAssetMap> {
   return hasNative
     ? getNativeAssetRx(nativeCurrency, api).pipe(
         map((nativeAsset) => ({ [nativeAsset.id]: nativeAsset })),
       )
-    : of<AssetMap>({}).pipe(
+    : of<RestakeVaultAssetMap>({}).pipe(
         switchMap(async (initialAssetMap) => {
           const tokenPrices = await queryTokenPrices(
             nonNativeAssetIds,
@@ -137,11 +102,13 @@ function processAssetDetailsRx(
           );
 
           return nonNativeAssetIds.reduce((assetMap, assetId, idx) => {
-            if (assetDetails[idx].isNone) return assetMap;
+            if (assetDetails[idx].isNone) {
+              return assetMap;
+            }
 
             return {
               ...assetMap,
-              [assetId]: createAssetEntry(
+              [assetId]: createAssetMetadata(
                 assetId,
                 assetDetails[idx].unwrap(),
                 assetMetadatas[idx],
@@ -154,104 +121,33 @@ function processAssetDetailsRx(
       );
 }
 
-async function getNativeAsset(
-  nativeCurrency: Chain['nativeCurrency'],
-  api: ApiPromise,
-) {
-  const assetId = '0';
-
-  const vaultId =
-    await api.query.multiAssetDelegation.assetLookupRewardVaults(assetId);
-
-  const priceInUsd = await fetchSingleTokenPrice(nativeCurrency.symbol);
-
-  return {
-    ...nativeCurrency,
-    id: assetId,
-    status: 'Live',
-    vaultId: u128ToVaultId(vaultId),
-    priceInUsd: typeof priceInUsd === 'number' ? priceInUsd : null,
-  } as AssetMetadata;
-}
-
 function getNativeAssetRx(
   nativeCurrency: Chain['nativeCurrency'],
   api: ApiRx,
-): Observable<AssetMetadata> {
-  const assetId = '0';
+): Observable<RestakeVaultAssetMetadata> {
+  const assetId = 0;
 
-  return api.query.multiAssetDelegation.assetLookupRewardVaults(assetId).pipe(
+  return api.query.rewards.assetLookupRewardVaults({ Custom: assetId }).pipe(
     switchMap(async (vaultId) => {
       const priceInUsd = await fetchSingleTokenPrice(nativeCurrency.symbol);
 
       return {
         ...nativeCurrency,
-        id: assetId,
+        id: `${assetId}`,
         status: 'Live' as const,
-        vaultId: u128ToVaultId(vaultId),
+        vaultId: createVaultId(vaultId),
         priceInUsd: typeof priceInUsd === 'number' ? priceInUsd : null,
-      };
+      } satisfies RestakeVaultAssetMetadata;
     }),
   );
 }
 
-// Simplified query functions
-export async function assetDetailsQuery(
-  api: ApiPromise,
-  assetIds: string[],
-  nativeCurrency: Chain['nativeCurrency'] = DEFAULT_NATIVE_CURRENCY,
-) {
-  const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
-
-  if (nonNativeAssetIds.length === 0 || !isApiSupported(api)) {
-    return hasNative
-      ? {
-          [(await getNativeAsset(nativeCurrency, api)).id]:
-            await getNativeAsset(nativeCurrency, api),
-        }
-      : {};
-  }
-
-  const [assetDetails, assetMetadatas, assetVaultIds] = await Promise.all([
-    api.queryMulti<Option<PalletAssetsAssetDetails>[]>(
-      nonNativeAssetIds.map(
-        (assetId) => [api.query.assets.asset, assetId.toString()] as const,
-      ),
-    ),
-    api.queryMulti<PalletAssetsAssetMetadata[]>(
-      nonNativeAssetIds.map(
-        (assetId) => [api.query.assets.metadata, assetId.toString()] as const,
-      ),
-    ),
-    api.queryMulti<Option<u128>[]>(
-      nonNativeAssetIds.map(
-        (assetId) =>
-          [
-            api.query.multiAssetDelegation.assetLookupRewardVaults,
-            assetId,
-          ] as const,
-      ),
-    ),
-  ]);
-
-  return processAssetDetails(
-    api,
-    nonNativeAssetIds,
-    assetDetails,
-    assetMetadatas,
-    assetVaultIds,
-    hasNative,
-    nativeCurrency,
-  );
-}
-
-export function assetDetailsRxQuery(
+export const assetDetailsRxQuery = (
   api: ApiRx,
   assetIds: string[],
   nativeCurrency: Chain['nativeCurrency'] = DEFAULT_NATIVE_CURRENCY,
-) {
+) => {
   const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
-
   const isNonNativeAssetsEmpty = nonNativeAssetIds.length === 0;
 
   if (isNonNativeAssetsEmpty || !isApiSupported(api)) {
@@ -261,7 +157,7 @@ export function assetDetailsRxQuery(
       );
     } else {
       return of<{
-        [assetId: string]: Awaited<ReturnType<typeof getNativeAsset>>;
+        [assetId: string]: RestakeVaultAssetMetadata;
       }>({});
     }
   }
@@ -289,12 +185,12 @@ export function assetDetailsRxQuery(
     (batchQueries, assetId) =>
       batchQueries.concat([
         [
-          api.query.multiAssetDelegation.assetLookupRewardVaults,
+          api.query.rewards.assetLookupRewardVaults,
           { Custom: assetId },
         ] as const,
       ]),
     [] as [
-      typeof api.query.multiAssetDelegation.assetLookupRewardVaults,
+      typeof api.query.rewards.assetLookupRewardVaults,
       { Custom: string },
     ][],
   );
@@ -305,7 +201,8 @@ export function assetDetailsRxQuery(
   const assetMetadatas$ =
     api.queryMulti<PalletAssetsAssetMetadata[]>(assetMetadataQueries);
 
-  const assetVaultIds$ = api.queryMulti<Option<u128>[]>(assetVaultIdQueries);
+  // TODO: Wrong type. Affected by {Custom:...} bug?
+  const assetVaultIds$ = api.queryMulti<Option<u32>[]>(assetVaultIdQueries);
 
   return combineLatest([assetDetails$, assetMetadatas$, assetVaultIds$]).pipe(
     switchMap(([assetDetails, assetMetadatas, assetVaultIds]) => {
@@ -320,4 +217,4 @@ export function assetDetailsRxQuery(
       );
     }),
   );
-}
+};

@@ -1,4 +1,3 @@
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import {
   StakingRewardsDestination,
   StakingRewardsDestinationDisplayText,
@@ -66,6 +65,7 @@ export enum TxName {
   LS_TANGLE_POOL_UNBOND = 'unstake from liquid staking pool',
   LS_TANGLE_POOL_CREATE = 'create liquid staking pool',
   LS_TANGLE_POOL_UPDATE_ROLES = 'update pool roles',
+  RESTAKE_JOIN_OPERATORS = 'join operators',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

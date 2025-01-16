@@ -240,9 +240,12 @@ export const BridgeConfirmationModal = ({
   ]);
 
   return (
-    <Modal open>
-      <ModalContent isOpen={isOpen} onInteractOutside={handleClose} size="md">
-        <ModalHeader onClose={handleClose}>Confirm Bridge</ModalHeader>
+    <Modal
+      open={isOpen}
+      onOpenChange={(open) => (open === false ? handleClose() : null)}
+    >
+      <ModalContent size="md">
+        <ModalHeader>Confirm Bridge</ModalHeader>
 
         <ModalBody>
           <div className="flex flex-col items-center gap-3">

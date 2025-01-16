@@ -1,7 +1,7 @@
-import { ArrowRight } from '@webb-tools/icons';
+import { ArrowRightUp } from '@webb-tools/icons';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 import './top-banner.css';
 
@@ -10,6 +10,7 @@ export type RestakeBannerProps = {
   description: string;
   buttonText: string;
   buttonHref: string;
+  action?: ReactNode;
 };
 
 const RestakeBanner: FC<RestakeBannerProps> = ({
@@ -17,14 +18,15 @@ const RestakeBanner: FC<RestakeBannerProps> = ({
   description,
   buttonText,
   buttonHref,
+  action,
 }) => {
   return (
     <div
       className={twMerge(
-        'px-6 py-9 rounded-xl bg-center bg-cover bg-no-repeat bg-top-banner',
+        'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 sm:gap-9 px-6 py-9 rounded-xl bg-center bg-cover bg-no-repeat bg-top-banner',
       )}
     >
-      <div className="max-w-[500px] space-y-6">
+      <div className="max-w-[600px] space-y-4">
         <div className="space-y-3">
           <Typography variant="h4" className="text-mono-0">
             {title}
@@ -39,16 +41,22 @@ const RestakeBanner: FC<RestakeBannerProps> = ({
         </div>
 
         <Button
+          className="hidden sm:flex"
           variant="link"
           href={buttonHref}
           target="_blank"
           rightIcon={
-            <ArrowRight size="lg" className="fill-current dark:fill-current" />
+            <ArrowRightUp
+              size="lg"
+              className="fill-current dark:fill-current"
+            />
           }
         >
           {buttonText}
         </Button>
       </div>
+
+      {action}
     </div>
   );
 };

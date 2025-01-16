@@ -37,7 +37,7 @@ export default function useRestakeDelegatorInfo() {
                 const info = delegatorInfo.unwrap();
 
                 const deposits = Array.from(info.deposits.entries()).reduce(
-                  (depositRecord, [assetId, amount]) => {
+                  (depositRecord, [assetId, deposit]) => {
                     let assetIdStr: string;
 
                     switch (assetId.type) {
@@ -49,7 +49,7 @@ export default function useRestakeDelegatorInfo() {
                         throw new Error('ERC-20 assets are not supported yet!');
                     }
 
-                    const amountBigInt = amount.toBigInt();
+                    const amountBigInt = deposit.amount.toBigInt();
 
                     return Object.assign(depositRecord, {
                       [assetIdStr]: {

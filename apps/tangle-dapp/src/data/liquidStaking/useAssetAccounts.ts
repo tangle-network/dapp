@@ -9,7 +9,7 @@ import { map } from 'rxjs';
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';
 import { NetworkFeature } from '../../types';
 
-const useLsPoolMembers = ():
+const useAssetAccounts = ():
   | Readonly<[number, SubstrateAddress, PalletAssetsAssetAccount]>[]
   | null => {
   const networkFeatures = useNetworkFeatures();
@@ -22,26 +22,28 @@ const useLsPoolMembers = ():
           return null;
         }
 
-        return api.query.assets.account.entries().pipe(
-          map((entries) => {
-            return entries.flatMap(([key, val]) => {
-              // TODO: Manually casting the type here, since the type is being inferred as `Codec` instead of `Option<PalletAssetsAssetAccount>`. This might be a problem with the TS type generation.
-              const valOpt = val as Option<PalletAssetsAssetAccount>;
+        return (
+          api.query.assets.account
+            // TODO: For some reason, this isn't being inferred correctly. Passing the type manually might still be casting it using `as` in the `.entries()` function implementation, which isn't ideal.
+            .entries<Option<PalletAssetsAssetAccount>>()
+            .pipe(
+              map((entries) => {
+                return entries.flatMap(([key, valOpt]) => {
+                  // Ignore empty values.
+                  if (valOpt.isNone) {
+                    return [];
+                  }
 
-              // Ignore empty values.
-              if (valOpt.isNone) {
-                return [];
-              }
+                  const poolId = key.args[0].toNumber();
 
-              const poolId = key.args[0].toNumber();
+                  const accountAddress = assertSubstrateAddress(
+                    key.args[1].toString(),
+                  );
 
-              const accountAddress = assertSubstrateAddress(
-                key.args[1].toString(),
-              );
-
-              return [[poolId, accountAddress, valOpt.unwrap()] as const];
-            });
-          }),
+                  return [[poolId, accountAddress, valOpt.unwrap()] as const];
+                });
+              }),
+            )
         );
       },
       [isSupported],
@@ -53,4 +55,4 @@ const useLsPoolMembers = ():
   return accounts;
 };
 
-export default useLsPoolMembers;
+export default useAssetAccounts;

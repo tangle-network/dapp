@@ -64,6 +64,7 @@ export type OperatorData = {
   vaultTokens: VaultToken[];
 };
 
+// Bridge
 export enum BridgeTxState {
   Initializing = 'Initializing',
   Sending = 'Sending',

@@ -27,6 +27,8 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
   isLoading,
   error,
   BlueprintItemWrapper,
+  rowSelection,
+  onRowSelectionChange,
 }) => {
   const [searchValue, setSearchValue] = useState('');
 
@@ -69,14 +71,24 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
     () => [
       columnHelper.accessor('name', {
         header: () => 'Project',
-        cell: (props) =>
-          typeof BlueprintItemWrapper === 'undefined' ? (
-            <BlueprintItem {...props.row.original} />
+        cell: (props) => {
+          const selectionProps =
+            typeof rowSelection !== 'undefined' &&
+            typeof onRowSelectionChange === 'function'
+              ? {
+                  isSelected: props.row.getIsSelected(),
+                  onSelectedChange: props.row.getToggleSelectedHandler(),
+                }
+              : {};
+
+          return typeof BlueprintItemWrapper === 'undefined' ? (
+            <BlueprintItem {...props.row.original} {...selectionProps} />
           ) : (
             <BlueprintItemWrapper {...props.row.original}>
-              <BlueprintItem {...props.row.original} /> :
+              <BlueprintItem {...props.row.original} {...selectionProps} />
             </BlueprintItemWrapper>
-          ),
+          );
+        },
         filterFn: (row, _, filterValue) => {
           const { name, author, description } = row.original;
           return (
@@ -107,7 +119,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
         },
       }),
     ],
-    [BlueprintItemWrapper],
+    [BlueprintItemWrapper, onRowSelectionChange, rowSelection],
   );
 
   const table = useReactTable(
@@ -128,6 +140,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
           },
         },
         state: {
+          rowSelection,
           columnFilters: [
             ...(filteredCategory !== 'View All'
               ? [
@@ -139,12 +152,15 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
               : []),
           ],
         },
+        onRowSelectionChange,
+        getRowId: (row) => row.id,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         autoResetPageIndex: false,
       }),
-      [blueprints, columns, filteredCategory],
+      // prettier-ignore
+      [blueprints, columns, filteredCategory, onRowSelectionChange, rowSelection],
     ),
   );
 

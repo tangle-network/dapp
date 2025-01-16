@@ -1,33 +1,6 @@
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import type { TxEventHandlers } from '@webb-tools/abstract-api-provider';
+import type { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import type { Hash } from 'viem';
-
-export enum TxEvent {
-  SENDING = 'SENDING',
-  IN_BLOCK = 'IN_BLOCK',
-  FINALIZED = 'FINALIZED',
-  SUCCESS = 'SUCCESS',
-  FAILED = 'FAILED',
-}
-
-export type TxEventHandlers<Context extends Record<string, unknown>> = {
-  onTxSending?: (context: Context) => void | Promise<void>;
-  onTxInBlock?: (
-    txHash: Hash,
-    blockHash: Hash,
-    context: Context,
-  ) => void | Promise<void>;
-  onTxFinalized?: (
-    txHash: Hash,
-    blockHash: Hash,
-    context: Context,
-  ) => void | Promise<void>;
-  onTxSuccess?: (
-    txHash: Hash,
-    blockHash: Hash,
-    context: Context,
-  ) => void | Promise<void>;
-  onTxFailed?: (error: string, context: Context) => void | Promise<void>;
-};
 
 export type DepositContext = {
   assetId: string;
@@ -81,44 +54,48 @@ export abstract class RestakeTxBase {
     assetId: string,
     amount: bigint,
     operatorAccount?: string,
-    eventHandlers?: TxEventHandlers<DepositContext>,
+    eventHandlers?: Partial<TxEventHandlers<DepositContext>>,
   ): Promise<Hash | null>;
 
   abstract stake(
     operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<DelegatorStakeContext>,
+    eventHandlers?: Partial<TxEventHandlers<DelegatorStakeContext>>,
   ): Promise<Hash | null>;
 
   abstract scheduleDelegatorUnstake(
     operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<ScheduleDelegatorUnstakeContext>,
+    eventHandlers?: Partial<TxEventHandlers<ScheduleDelegatorUnstakeContext>>,
   ): Promise<Hash | null>;
 
   abstract executeDelegatorUnstakeRequests(
-    eventHandlers?: TxEventHandlers<ExecuteAllDelegatorUnstakeRequestContext>,
+    eventHandlers?: Partial<
+      TxEventHandlers<ExecuteAllDelegatorUnstakeRequestContext>
+    >,
   ): Promise<Hash | null>;
 
   abstract cancelDelegatorUnstakeRequests(
     unstakeRequests: CancelDelegatorUnstakeRequestContext['unstakeRequests'],
-    eventHandlers?: TxEventHandlers<CancelDelegatorUnstakeRequestContext>,
+    eventHandlers?: Partial<
+      TxEventHandlers<CancelDelegatorUnstakeRequestContext>
+    >,
   ): Promise<Hash | null>;
 
   abstract scheduleWithdraw(
     assetId: string,
     amount: bigint,
-    eventHandlers?: TxEventHandlers<ScheduleWithdrawContext>,
+    eventHandlers?: Partial<TxEventHandlers<ScheduleWithdrawContext>>,
   ): Promise<Hash | null>;
 
   abstract executeWithdraw(
-    eventHandlers?: TxEventHandlers<ExecuteAllWithdrawRequestContext>,
+    eventHandlers?: Partial<TxEventHandlers<ExecuteAllWithdrawRequestContext>>,
   ): Promise<Hash | null>;
 
   abstract cancelWithdraw(
     withdrawRequests: CancelWithdrawRequestContext['withdrawRequests'],
-    eventHandlers?: TxEventHandlers<CancelWithdrawRequestContext>,
+    eventHandlers?: Partial<TxEventHandlers<CancelWithdrawRequestContext>>,
   ): Promise<Hash | null>;
 }

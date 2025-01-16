@@ -7,13 +7,7 @@ import { assetDetailsRxQuery } from '../../queries/restake/assetDetails';
 import { assetIdsRxQuery } from '../../queries/restake/assetIds';
 import { rewardVaultRxQuery } from '../../queries/restake/rewardVault';
 
-/**
- * Hook to retrieve the asset map for restaking.
- * @returns
- *  - `assetMap`: The asset map.
- *  - `assetMap$`: The observable for the asset map.
- */
-export default function useRestakeAssetMap() {
+const useRestakeVaultAssets = () => {
   const { apiRx } = usePolkadotApi();
   const { activeChain } = useWebContext();
 
@@ -38,10 +32,12 @@ export default function useRestakeAssetMap() {
     [activeChain?.nativeCurrency, apiRx, assetIds$],
   );
 
-  const assetMap = useObservableState(assetMap$, {});
+  const vaultAssets = useObservableState(assetMap$, {});
 
   return {
-    assetMap,
+    vaultAssets,
     assetMap$,
   };
-}
+};
+
+export default useRestakeVaultAssets;

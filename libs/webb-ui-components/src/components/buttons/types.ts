@@ -91,8 +91,9 @@ export interface ButtonProps extends ButtonBase, IWebbComponentBase {
   isDisabled?: boolean;
 
   /**
-   * The label to show in the button when `isLoading` is true
-   * If no text is passed, it only shows the spinner
+   * The label to show in the button when `isLoading` is true.
+   *
+   * If no value is passed, only the spinner will be shown.
    */
   loadingText?: string;
 
@@ -140,6 +141,13 @@ export interface ButtonProps extends ButtonBase, IWebbComponentBase {
    * If `true`, the size of the button will be adjusted to fit the icon based on the variant
    */
   isJustIcon?: boolean;
+
+  /**
+   * A tooltip to display when the button is disabled.
+   *
+   * Useful for explaining why the button is disabled.
+   */
+  disabledTooltip?: string;
 }
 
 export interface ButtonSpinnerProps extends WebbComponentBase {

@@ -1,4 +1,5 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
+import { TxEvent } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
@@ -25,10 +26,7 @@ import { formatUnits, parseUnits } from 'viem';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import {
-  type ScheduleWithdrawContext,
-  TxEvent,
-} from '../../../data/restake/RestakeTx/base';
+import { type ScheduleWithdrawContext } from '../../../data/restake/RestakeTx/base';
 import useRestakeTx from '../../../data/restake/useRestakeTx';
 import type { Props } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
@@ -41,13 +39,13 @@ import ActionButtonBase from '../ActionButtonBase';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
+import RestakeTabs from '../RestakeTabs';
 import StyleContainer from '../StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import TxInfo from './TxInfo';
 import WithdrawModal from './WithdrawModal';
 import WithdrawRequestTable from './WithdrawRequestTable';
-import RestakeTabs from '../RestakeTabs';
 
 const RestakeWithdrawPage = () => {
   const {
@@ -66,12 +64,18 @@ const RestakeWithdrawPage = () => {
   const { activeChain } = useWebContext();
   const { assetMap } = useRestakeContext();
 
-  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const {
+    status: isWithdrawModalOpen,
+    open: openWithdrawModal,
+    close: closeWithdrawModal,
+    update: updateWithdrawModal,
+  } = useModal();
 
   const {
     status: isChainModalOpen,
     open: openChainModal,
     close: closeChainModal,
+    update: updateChainModal,
   } = useModal();
 
   const [isWithdrawRequestTableOpen, setIsWithdrawRequestTableOpen] =
@@ -202,7 +206,7 @@ const RestakeWithdrawPage = () => {
   );
 
   return (
-    <div className="flex items-start justify-center flex-wrap gap-4">
+    <div className="flex flex-wrap items-start justify-center gap-4">
       <StyleContainer>
         <RestakeTabs />
 
@@ -260,7 +264,7 @@ const RestakeWithdrawPage = () => {
                   tokenSelectorProps={
                     useRef({
                       placeholder: <AssetPlaceholder />,
-                      onClick: () => setIsWithdrawModalOpen(true),
+                      onClick: openWithdrawModal,
                     }).current
                   }
                 />
@@ -344,28 +348,27 @@ const RestakeWithdrawPage = () => {
         </RestakeDetailCard.Root>
       </AnimatedTable>
 
-      <Modal>
-        <WithdrawModal
-          delegatorInfo={delegatorInfo}
-          isOpen={isWithdrawModalOpen}
-          setIsOpen={setIsWithdrawModalOpen}
-          onItemSelected={(item) => {
-            setIsWithdrawModalOpen(false);
+      <WithdrawModal
+        delegatorInfo={delegatorInfo}
+        isOpen={isWithdrawModalOpen}
+        setIsOpen={updateWithdrawModal}
+        onItemSelected={(item) => {
+          closeWithdrawModal();
 
-            const { formattedAmount, assetId } = item;
+          const { formattedAmount, assetId } = item;
 
-            const commonOpts = {
-              shouldDirty: true,
-              shouldValidate: true,
-            };
+          const commonOpts = {
+            shouldDirty: true,
+            shouldValidate: true,
+          };
 
-            setFormValue('assetId', assetId, commonOpts);
-            setFormValue('amount', formattedAmount, commonOpts);
-          }}
-        />
+          setFormValue('assetId', assetId, commonOpts);
+          setFormValue('amount', formattedAmount, commonOpts);
+        }}
+      />
 
+      <Modal open={isChainModalOpen} onOpenChange={updateChainModal}>
         <SupportedChainModal
-          isOpen={isChainModalOpen}
           onClose={closeChainModal}
           onChainChange={async (chainConfig) => {
             const typedChainId = calculateTypedChainId(

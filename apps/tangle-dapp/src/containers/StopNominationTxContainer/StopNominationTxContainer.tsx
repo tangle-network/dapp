@@ -36,15 +36,9 @@ const StopNominationTxContainer: FC<StopNominationTxContainerProps> = ({
   }, [closeModal, executeChillTx]);
 
   return (
-    <Modal open>
-      <ModalContent
-        onInteractOutside={() => setIsModalOpen(false)}
-        isOpen={isModalOpen}
-        size="sm"
-      >
-        <ModalHeader onClose={closeModal} className="mb-4">
-          Stop Nominations
-        </ModalHeader>
+    <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <ModalContent size="sm">
+        <ModalHeader className="mb-4">Stop Nominations</ModalHeader>
 
         <ModalBody>
           <ProhibitedLineIcon className="m-auto fill-blue-50 dark:fill-blue-50" />

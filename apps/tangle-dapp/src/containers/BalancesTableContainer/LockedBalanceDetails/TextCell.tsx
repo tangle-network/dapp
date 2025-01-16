@@ -30,9 +30,7 @@ const TextCell: FC<{
             <StatusIndicator size={12} variant={statusVariant} />
           </TooltipTrigger>
 
-          <TooltipBody className="break-normal max-w-[250px] text-center">
-            {status}
-          </TooltipBody>
+          <TooltipBody>{status}</TooltipBody>
         </Tooltip>
       )}
     </div>

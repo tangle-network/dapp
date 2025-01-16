@@ -50,9 +50,7 @@ const BalanceCell: FC<{
             <StatusIndicator size={12} variant="info" />
           </TooltipTrigger>
 
-          <TooltipBody className="break-normal max-w-[250px] text-center">
-            {status}
-          </TooltipBody>
+          <TooltipBody>{status}</TooltipBody>
         </Tooltip>
       )}
     </div>

@@ -6,6 +6,7 @@ import { useParams } from 'react-router';
 import { RestakeAction } from '../../../constants';
 import NotFoundPage from '../../notFound';
 import isEnumValue from '../../../utils/isEnumValue';
+import JoinOperatorsBanner from '../../../containers/restaking/JoinOperatorsBanner';
 
 export default function RestakePage() {
   const { action } = useParams();
@@ -21,14 +22,18 @@ export default function RestakePage() {
   }
 
   return (
-    <RestakeOverviewTabs
-      delegatorTVL={delegatorTVL}
-      operatorMap={operatorMap}
-      delegatorInfo={delegatorInfo}
-      operatorTVL={operatorTVL}
-      vaultTVL={vaultTVL}
-      operatorConcentration={operatorConcentration}
-      action={action ?? RestakeAction.DEPOSIT}
-    />
+    <div className="space-y-7">
+      <JoinOperatorsBanner />
+
+      <RestakeOverviewTabs
+        delegatorTVL={delegatorTVL}
+        operatorMap={operatorMap}
+        delegatorInfo={delegatorInfo}
+        operatorTVL={operatorTVL}
+        vaultTVL={vaultTVL}
+        operatorConcentration={operatorConcentration}
+        action={action ?? RestakeAction.DEPOSIT}
+      />
+    </div>
   );
 }

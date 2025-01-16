@@ -25,7 +25,7 @@ const TVLTable: FC<Props> = ({
   delegatorTVL,
 }) => {
   const { assetMap } = useRestakeContext();
-  const { rewardConfig } = useRestakeRewardConfig();
+  const rewardConfig = useRestakeRewardConfig();
 
   const vaults = useMemo(() => {
     const vaults: Record<string, VaultData> = {};
@@ -43,7 +43,10 @@ const TVLTable: FC<Props> = ({
         const name = assetMap[assetId].name;
         // TODO: Find out a proper way to get the vault symbol, now it's the first token symbol
         const representToken = assetMap[assetId].symbol;
-        const apyPercentage = rewardConfig.configs[vaultId]?.apy ?? null;
+
+        const apyPercentage =
+          rewardConfig?.get(vaultId)?.apy.toNumber() ?? null;
+
         const tvlInUsd = vaultTVL?.[vaultId] ?? null;
 
         vaults[vaultId] = {
@@ -51,16 +54,16 @@ const TVLTable: FC<Props> = ({
           apyPercentage,
           name,
           representToken,
-          tokensCount: 1,
+          tokenCount: 1,
           tvlInUsd,
         };
       } else {
-        vaults[vaultId].tokensCount += 1;
+        vaults[vaultId].tokenCount += 1;
       }
     });
 
     return vaults;
-  }, [assetMap, operatorData?.delegations, rewardConfig.configs, vaultTVL]);
+  }, [assetMap, operatorData?.delegations, rewardConfig, vaultTVL]);
 
   const delegatorTotalRestakedAssets = useMemo(() => {
     if (!delegatorInfo?.delegations) {

@@ -18,13 +18,8 @@ const LockedBalanceDetailsModal: FC<LockedBalanceDetailsModalProps> = ({
   setIsOpen,
 }) => {
   return (
-    <Modal>
-      <ModalContent
-        onInteractOutside={() => setIsOpen(false)}
-        onCloseAutoFocus={() => setIsOpen(false)}
-        isOpen={isOpen}
-        size="lg"
-      >
+    <Modal open={isOpen} onOpenChange={setIsOpen}>
+      <ModalContent size="lg">
         <ModalHeader onClose={() => setIsOpen(false)}>
           Locked Balance Details
         </ModalHeader>
