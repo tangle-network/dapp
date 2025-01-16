@@ -105,6 +105,7 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
 
   return (
     <Tooltip>
+      {/** TODO: Erroring due to need for `asChild`, but when `asChild` is passed, the tooltip doesn't appear. */}
       <TooltipTrigger>{button}</TooltipTrigger>
 
       <TooltipBody>{disabledTooltip}</TooltipBody>

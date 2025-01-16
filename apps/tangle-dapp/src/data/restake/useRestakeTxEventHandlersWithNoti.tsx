@@ -25,9 +25,9 @@ export type Options<Context extends Record<string, unknown>> = Partial<
   Record<TxEvent, NotiOpts<Context>>
 >;
 
-export type Props<Context extends Record<string, unknown>> = Partial<
-  TxEventHandlers<Context>
-> & {
+export type UseRestakeTxEventHandlersWithNotiProps<
+  Context extends Record<string, unknown>,
+> = Partial<TxEventHandlers<Context>> & {
   options?: Options<Context>;
 };
 
@@ -49,7 +49,10 @@ const extractNotiOptions = <Context extends Record<string, unknown>>(
 
 export default function useRestakeTxEventHandlersWithNoti<
   Context extends Record<string, unknown>,
->({ options = {}, ...props }: Props<Context> = {}) {
+>({
+  options = {},
+  ...props
+}: UseRestakeTxEventHandlersWithNotiProps<Context> = {}) {
   const { notificationApi } = useWebbUI();
   const { resolveExplorerUrl } = useSubstrateExplorerUrl();
 

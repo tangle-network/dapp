@@ -20,10 +20,7 @@ import {
   writeContract,
 } from 'wagmi/actions';
 
-import {
-  BATCH_PRECOMPILE_ABI,
-  PrecompileAddress,
-} from '../../../constants/evmPrecompiles';
+import { PrecompileAddress } from '../../../constants/evmPrecompiles';
 import createEvmBatchCallArgs from '../../../utils/staking/createEvmBatchCallArgs';
 import restakeAbi from './abi';
 import {
@@ -33,13 +30,14 @@ import {
   type DepositContext,
   type ExecuteAllDelegatorUnstakeRequestContext,
   type ExecuteAllWithdrawRequestContext,
-  RestakeTxBase,
+  RestakeApiBase,
   type ScheduleDelegatorUnstakeContext,
   type ScheduleWithdrawContext,
 } from './base';
 import { MULTI_ASSET_DELEGATION_EVM_ADDRESS } from './constants';
+import BATCH_PRECOMPILE_ABI from '../../../abi/batch';
 
-export default class EVMRestakeTx extends RestakeTxBase {
+export default class EvmRestakeApi extends RestakeApiBase {
   constructor(
     readonly activeAccount: Address,
     readonly signer: Account | Address,
@@ -69,14 +67,18 @@ export default class EVMRestakeTx extends RestakeTxBase {
       eventHandlers?.onTxSending?.(context);
 
       const connector = (() => {
-        if (this.provider.state.current === null) return;
+        if (this.provider.state.current === null) {
+          return;
+        }
 
         return this.provider.state.connections.get(this.provider.state.current)
           ?.connector;
       })();
 
       const chainId = (() => {
-        if (this.provider.state.current === null) return;
+        if (this.provider.state.current === null) {
+          return;
+        }
 
         return this.provider.state.connections.get(this.provider.state.current)
           ?.chainId;
@@ -104,14 +106,18 @@ export default class EVMRestakeTx extends RestakeTxBase {
 
       if (receipt.status === 'success') {
         eventHandlers?.onTxSuccess?.(hash, receipt.blockHash, context);
+
         return hash;
       } else {
         eventHandlers?.onTxFailed?.('EVM deposit failed', context);
+
         return null;
       }
     } catch (error) {
       const errorMessage = ensureError(error).message;
+
       eventHandlers?.onTxFailed?.(errorMessage, context);
+
       return null;
     }
   };
@@ -122,7 +128,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
     operatorAccount?: SubstrateAddress,
     eventHandlers?: Partial<TxEventHandlers<DepositContext>>,
   ) => {
-    const context = { assetId, amount, operatorAccount } as DepositContext;
+    const context: DepositContext = { assetId, amount, operatorAccount };
     const assetIdBigInt = BigInt(assetId);
 
     if (operatorAccount === undefined) {
@@ -179,11 +185,11 @@ export default class EVMRestakeTx extends RestakeTxBase {
     amount: bigint,
     eventHandlers?: Partial<TxEventHandlers<DelegatorStakeContext>>,
   ) => {
-    const context = {
+    const context: DelegatorStakeContext = {
       operatorAccount,
       assetId,
       amount,
-    } as DelegatorStakeContext;
+    };
 
     return this.sendTransaction(
       restakeAbi,
@@ -201,11 +207,11 @@ export default class EVMRestakeTx extends RestakeTxBase {
     amount: bigint,
     eventHandlers?: Partial<TxEventHandlers<ScheduleDelegatorUnstakeContext>>,
   ): Promise<Hash | null> => {
-    const context = {
+    const context: ScheduleDelegatorUnstakeContext = {
       operatorAccount,
       assetId,
       amount,
-    } as ScheduleDelegatorUnstakeContext;
+    };
 
     return this.sendTransaction(
       restakeAbi,
@@ -222,7 +228,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
       TxEventHandlers<ExecuteAllDelegatorUnstakeRequestContext>
     >,
   ): Promise<Hash | null> => {
-    const context = {} as ExecuteAllDelegatorUnstakeRequestContext;
+    const context: ExecuteAllDelegatorUnstakeRequestContext = {};
 
     return this.sendTransaction(
       restakeAbi,
@@ -240,7 +246,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
       TxEventHandlers<CancelDelegatorUnstakeRequestContext>
     >,
   ): Promise<Hash | null> => {
-    const context = { unstakeRequests } as CancelDelegatorUnstakeRequestContext;
+    const context: CancelDelegatorUnstakeRequestContext = { unstakeRequests };
 
     const batchArgs = createEvmBatchCallArgs(
       unstakeRequests.map(({ amount, assetId, operatorAccount }) => ({
@@ -274,7 +280,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
     amount: bigint,
     eventHandlers?: Partial<TxEventHandlers<ScheduleWithdrawContext>>,
   ): Promise<Hash | null> => {
-    const context = { assetId, amount } as ScheduleWithdrawContext;
+    const context: ScheduleWithdrawContext = { assetId, amount };
 
     return this.sendTransaction(
       restakeAbi,
@@ -289,7 +295,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
   executeWithdraw = async (
     eventHandlers?: Partial<TxEventHandlers<ExecuteAllWithdrawRequestContext>>,
   ): Promise<Hash | null> => {
-    const context = {} as ExecuteAllWithdrawRequestContext;
+    const context: ExecuteAllWithdrawRequestContext = {};
 
     return this.sendTransaction(
       restakeAbi,
@@ -305,7 +311,7 @@ export default class EVMRestakeTx extends RestakeTxBase {
     withdrawRequests: CancelWithdrawRequestContext['withdrawRequests'],
     eventHandlers?: Partial<TxEventHandlers<CancelWithdrawRequestContext>>,
   ): Promise<Hash | null> => {
-    const context = { withdrawRequests } as CancelWithdrawRequestContext;
+    const context: CancelWithdrawRequestContext = { withdrawRequests };
 
     const batchArgs = createEvmBatchCallArgs(
       withdrawRequests.map(({ amount, assetId }) => ({

@@ -4,8 +4,8 @@ import { TxEvent } from '@webb-tools/abstract-api-provider';
 import {
   type CancelDelegatorUnstakeRequestContext,
   type ExecuteAllDelegatorUnstakeRequestContext,
-} from '../../data/restake/RestakeTx/base';
-import useRestakeTx from '../../data/restake/useRestakeTx';
+} from '../../data/restake/RestakeApi/base';
+import useRestakeApi from '../../data/restake/useRestakeApi';
 import useRestakeTxEventHandlersWithNoti from '../../data/restake/useRestakeTxEventHandlersWithNoti';
 import { isScheduledRequestReady } from '../../pages/restake/utils';
 import { UnstakeRequestTableRow } from './UnstakeRequestTable';
@@ -52,10 +52,13 @@ const UnstakeRequestTableActions: FC<Props> = ({
       ),
     );
 
-  const { executeDelegatorUnstakeRequests, cancelDelegatorUnstakeRequests } =
-    useRestakeTx();
+  const restakeApi = useRestakeApi();
 
   const handleCancelUnstake = useCallback(async () => {
+    if (restakeApi === null) {
+      return;
+    }
+
     setIsCanceling(true);
 
     const unstakeRequests = selectedRequests.map(
@@ -68,15 +71,23 @@ const UnstakeRequestTableActions: FC<Props> = ({
       },
     );
 
-    await cancelDelegatorUnstakeRequests(unstakeRequests, cancelOptions);
+    await restakeApi.cancelDelegatorUnstakeRequests(
+      unstakeRequests,
+      cancelOptions,
+    );
+
     setIsCanceling(false);
-  }, [cancelDelegatorUnstakeRequests, cancelOptions, selectedRequests]);
+  }, [cancelOptions, restakeApi, selectedRequests]);
 
   const handleExecuteUnstake = useCallback(async () => {
+    if (restakeApi === null) {
+      return;
+    }
+
     setIsExecuting(true);
-    await executeDelegatorUnstakeRequests(executeOptions);
+    await restakeApi.executeDelegatorUnstakeRequests(executeOptions);
     setIsExecuting(false);
-  }, [executeDelegatorUnstakeRequests, executeOptions]);
+  }, [executeOptions, restakeApi]);
 
   const canCancelUnstake = selectedRequests.length > 0;
 

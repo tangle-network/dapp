@@ -11,12 +11,12 @@ import {
   type DepositContext,
   type ExecuteAllDelegatorUnstakeRequestContext,
   type ExecuteAllWithdrawRequestContext,
-  RestakeTxBase,
+  RestakeApiBase,
   type ScheduleDelegatorUnstakeContext,
   type ScheduleWithdrawContext,
 } from './base';
 
-export default class SubstrateRestakeTx extends RestakeTxBase {
+export default class SubstrateRestakeApi extends RestakeApiBase {
   constructor(
     readonly activeAccount: string,
     readonly signer: Signer,

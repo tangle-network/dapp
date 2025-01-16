@@ -3,8 +3,7 @@ import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubst
 import { useCallback, useEffect, useState } from 'react';
 
 import { TxName } from '../constants';
-import { Precompile } from '../constants/evmPrecompiles';
-import { GetSuccessMessageFunction } from '../types';
+import { GetSuccessMessageFn } from '../types';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useEvmPrecompileAbiCall, {
@@ -13,11 +12,24 @@ import useEvmPrecompileAbiCall, {
 } from './useEvmPrecompileAbiCall';
 import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
 import useTxNotification from './useTxNotification';
+import { AbiFunction } from 'viem';
+import {
+  ExtractAbiFunctionNames,
+  PrecompileAddress,
+} from '../constants/evmPrecompiles';
 
-export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
-  precompile: PrecompileT;
-  evmTxFactory: EvmTxFactory<PrecompileT, Context> | AbiCall<PrecompileT>;
+export type AgnosticTxOptions<
+  Abi extends AbiFunction[],
+  FunctionName extends ExtractAbiFunctionNames<Abi>,
+  Context,
+> = {
+  abi: Abi;
+  precompileAddress: PrecompileAddress;
   substrateTxFactory: SubstrateTxFactory<Context>;
+
+  evmTxFactory:
+    | EvmTxFactory<Abi, FunctionName, Context>
+    | AbiCall<Abi, FunctionName>;
 
   /**
    * An identifiable name shown on the toast notification to
@@ -35,7 +47,7 @@ export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
    * @param context The context object passed to the `execute` function.
    * @returns The success message to display.
    */
-  getSuccessMessageFnc?: GetSuccessMessageFunction<Context>;
+  getSuccessMessage?: GetSuccessMessageFn<Context>;
 };
 
 /**
@@ -45,13 +57,18 @@ export type AgnosticTxOptions<PrecompileT extends Precompile, Context> = {
  * This effectively abstracts away the handling of actions of Substrate
  * and EVM accounts.
  */
-function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
-  precompile,
+function useAgnosticTx<
+  Abi extends AbiFunction[],
+  FunctionName extends ExtractAbiFunctionNames<Abi>,
+  Context = void,
+>({
+  abi,
+  precompileAddress,
   evmTxFactory,
   substrateTxFactory,
   name,
-  getSuccessMessageFnc,
-}: AgnosticTxOptions<PrecompileT, Context>) {
+  getSuccessMessage,
+}: AgnosticTxOptions<Abi, FunctionName, Context>) {
   const [agnosticStatus, setAgnosticStatus] = useState(
     TxStatus.NOT_YET_INITIATED,
   );
@@ -68,7 +85,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     txHash: substrateTxHash,
     txBlockHash: substrateTxBlockHash,
     successMessage: substrateSuccessMessage,
-  } = useSubstrateTx(substrateTxFactory, getSuccessMessageFnc);
+  } = useSubstrateTx(substrateTxFactory, getSuccessMessage);
 
   const {
     execute: executeEvmPrecompileAbiCall,
@@ -77,7 +94,7 @@ function useAgnosticTx<PrecompileT extends Precompile, Context = void>({
     reset: evmReset,
     txHash: evmTxHash,
     successMessage: evmSuccessMessage,
-  } = useEvmPrecompileAbiCall(precompile, evmTxFactory);
+  } = useEvmPrecompileAbiCall(abi, precompileAddress, evmTxFactory);
 
   const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 

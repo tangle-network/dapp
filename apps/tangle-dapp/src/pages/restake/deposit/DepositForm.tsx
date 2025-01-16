@@ -19,6 +19,7 @@ import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import {
   type ComponentProps,
+  FC,
   useCallback,
   useEffect,
   useMemo,
@@ -27,14 +28,14 @@ import {
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 import useRestakeTxEventHandlersWithNoti, {
-  type Props,
-} from '../../..//data/restake/useRestakeTxEventHandlersWithNoti';
+  type UseRestakeTxEventHandlersWithNotiProps,
+} from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import AvatarWithText from '../../../components/AvatarWithText';
 import { ChainList } from '../../../components/Lists/ChainList';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import { type DepositContext } from '../../../data/restake/RestakeTx/base';
-import useRestakeTx from '../../../data/restake/useRestakeTx';
+import { type DepositContext } from '../../../data/restake/RestakeApi/base';
+import useRestakeApi from '../../../data/restake/useRestakeApi';
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
@@ -55,13 +56,11 @@ function getDefaultTypedChainId(activeTypedChainId: number | null) {
     : SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0];
 }
 
-export type DepositFormProps = ComponentProps<'form'>;
+type Props = ComponentProps<'form'>;
 
-const DepositForm = ({ ...props }: DepositFormProps) => {
+const DepositForm: FC<Props> = (props) => {
   const formRef = useRef<HTMLFormElement>(null);
-
   const { apiConfig } = useWebContext();
-
   const activeTypedChainId = useActiveTypedChainId();
 
   const {
@@ -89,7 +88,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     useMemo(() => Object.keys(operatorMap), [operatorMap]),
   );
 
-  const { deposit } = useRestakeTx();
+  const restakeActions = useRestakeApi();
 
   const setValue = useCallback(
     (...params: Parameters<typeof setFormValue>) => {
@@ -135,19 +134,23 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
         const aBalance = a.balance?.balance ?? ZERO_BIG_INT;
         const bBalance = b.balance?.balance ?? ZERO_BIG_INT;
 
-        if (aBalance === bBalance) return 0;
+        if (aBalance === bBalance) {
+          return 0;
+        }
 
         return aBalance > bBalance ? -1 : 1;
       })
-      // Find the first asset with balance
+      // Find the first asset with balance.
       .find(
         (asset) =>
           asset.balance?.balance && asset.balance.balance > ZERO_BIG_INT,
       );
 
-    if (!defaultAsset?.balance?.balance) return;
+    if (!defaultAsset?.balance?.balance) {
+      return;
+    }
 
-    // Select the first asset in the vault by default
+    // Select the first asset in the vault by default.
     setValue('depositAssetId', defaultAsset.assetId);
 
     setValue(
@@ -155,16 +158,15 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
       formatUnits(defaultAsset.balance.balance, defaultAsset.metadata.decimals),
     );
 
-    // Remove the param to prevent reuse after initial load
+    // Remove the param to prevent reuse after initial load.
     setVaultIdParam(null);
   }, [assetWithBalances, vaultIdParam, setVaultIdParam, setValue]);
 
   const sourceTypedChainId = watch('sourceTypedChainId');
 
-  // Subscribe to sourceTypedChainId and update customRpc
+  // Subscribe to sourceTypedChainId and update customRpc.
   useRpcSubscription(sourceTypedChainId);
 
-  // Modal states
   const {
     status: chainModalOpen,
     close: closeChainModal,
@@ -208,8 +210,11 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
     [assetWithBalances],
   );
 
-  const options = useMemo<Props<DepositContext>>(() => {
+  const options = useMemo<
+    UseRestakeTxEventHandlersWithNotiProps<DepositContext>
+  >(() => {
     return {
+      onTxSuccess: () => resetField('amount'),
       options: {
         [TxEvent.SUCCESS]: {
           secondaryMessage: (
@@ -240,7 +245,6 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
           },
         },
       },
-      onTxSuccess: () => resetField('amount'),
     };
   }, [assetMap, operatorIdentities, resetField]);
 
@@ -255,22 +259,25 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
   );
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
-    async (data) => {
-      const { amount, depositAssetId, operatorAccountId } = data;
-      if (depositAssetId === null || assetMap[depositAssetId] === undefined) {
+    async ({ amount, depositAssetId, operatorAccountId }) => {
+      if (
+        depositAssetId === null ||
+        assetMap[depositAssetId] === undefined ||
+        restakeActions === null
+      ) {
         return;
       }
 
       const asset = assetMap[depositAssetId];
 
-      await deposit(
+      await restakeActions.deposit(
         depositAssetId,
         parseUnits(amount, asset.decimals),
         operatorAccountId,
         txEventHandlers,
       );
     },
-    [assetMap, deposit, txEventHandlers],
+    [assetMap, restakeActions, txEventHandlers],
   );
 
   const sourceChainOptions = useMemo(() => {

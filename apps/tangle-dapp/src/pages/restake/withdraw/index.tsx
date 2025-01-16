@@ -26,9 +26,9 @@ import { formatUnits, parseUnits } from 'viem';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import { type ScheduleWithdrawContext } from '../../../data/restake/RestakeTx/base';
-import useRestakeTx from '../../../data/restake/useRestakeTx';
-import type { Props } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
+import { type ScheduleWithdrawContext } from '../../../data/restake/RestakeApi/base';
+import useRestakeApi from '../../../data/restake/useRestakeApi';
+import type { UseRestakeTxEventHandlersWithNotiProps } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
@@ -170,7 +170,9 @@ const RestakeWithdrawForm: FC = () => {
           : undefined;
   }, [errors.assetId, errors.amount, selectedAssetId, amount]);
 
-  const options = useMemo<Props<ScheduleWithdrawContext>>(() => {
+  const options = useMemo<
+    UseRestakeTxEventHandlersWithNotiProps<ScheduleWithdrawContext>
+  >(() => {
     return {
       options: {
         [TxEvent.SUCCESS]: {
@@ -187,25 +189,24 @@ const RestakeWithdrawForm: FC = () => {
     };
   }, [assetMap, reset]);
 
-  const { scheduleWithdraw } = useRestakeTx();
+  const restakeApi = useRestakeApi();
   const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
 
   const onSubmit = useCallback<SubmitHandler<WithdrawFormFields>>(
-    async (data) => {
-      const { amount, assetId } = data;
-      if (!assetId || !isDefined(assetMap[assetId])) {
+    async ({ amount, assetId }) => {
+      if (!assetId || !isDefined(assetMap[assetId]) || restakeApi === null) {
         return;
       }
 
       const asset = assetMap[assetId];
 
-      await scheduleWithdraw(
+      await restakeApi.scheduleWithdraw(
         assetId,
         parseUnits(amount, asset.decimals),
         txEventHandlers,
       );
     },
-    [assetMap, scheduleWithdraw, txEventHandlers],
+    [assetMap, restakeApi, txEventHandlers],
   );
 
   return (

@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { Precompile } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
+import VESTING_PRECOMPILE_ABI from '../../abi/vesting';
 
 /**
  * Performs the `vesting.vest` extrinsic call.
@@ -16,7 +17,8 @@ import useAgnosticTx from '../../hooks/useAgnosticTx';
 const useVestTx = () => {
   return useAgnosticTx({
     name: TxName.VEST,
-    precompile: Precompile.VESTING,
+    abi: VESTING_PRECOMPILE_ABI,
+    precompileAddress: PrecompileAddress.VESTING,
     evmTxFactory: { functionName: 'vest', arguments: [] },
     substrateTxFactory: useCallback((api) => api.tx.vesting.vest(), []),
   });

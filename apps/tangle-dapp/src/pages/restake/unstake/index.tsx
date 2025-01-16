@@ -26,9 +26,9 @@ import AvatarWithText from '../../../components/AvatarWithText';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import { type ScheduleDelegatorUnstakeContext } from '../../../data/restake/RestakeTx/base';
-import useRestakeTx from '../../../data/restake/useRestakeTx';
-import type { Props } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
+import { type ScheduleDelegatorUnstakeContext } from '../../../data/restake/RestakeApi/base';
+import useRestakeApi from '../../../data/restake/useRestakeApi';
+import type { UseRestakeTxEventHandlersWithNotiProps } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
@@ -194,7 +194,9 @@ const RestakeUnstakeForm: FC = () => {
     amount,
   ]);
 
-  const options = useMemo<Props<ScheduleDelegatorUnstakeContext>>(() => {
+  const options = useMemo<
+    UseRestakeTxEventHandlersWithNotiProps<ScheduleDelegatorUnstakeContext>
+  >(() => {
     return {
       options: {
         [TxEvent.SUCCESS]: {
@@ -220,28 +222,25 @@ const RestakeUnstakeForm: FC = () => {
     };
   }, [assetMap, operatorIdentities, reset]);
 
-  const { scheduleDelegatorUnstake: scheduleDelegatorBondLess } =
-    useRestakeTx();
-
+  const restakeApi = useRestakeApi();
   const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
 
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
-    async (data) => {
-      const { amount, assetId, operatorAccountId } = data;
-      if (!assetId || !isDefined(assetMap[assetId])) {
+    async ({ amount, assetId, operatorAccountId }) => {
+      if (!assetId || !isDefined(assetMap[assetId]) || restakeApi === null) {
         return;
       }
 
       const asset = assetMap[assetId];
 
-      await scheduleDelegatorBondLess(
+      await restakeApi.scheduleDelegatorUnstake(
         operatorAccountId,
         assetId,
         parseUnits(amount, asset.decimals),
         txEventHandlers,
       );
     },
-    [assetMap, scheduleDelegatorBondLess, txEventHandlers],
+    [assetMap, restakeApi, txEventHandlers],
   );
 
   return (

@@ -4,8 +4,8 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   type CancelWithdrawRequestContext,
   type ExecuteAllWithdrawRequestContext,
-} from '../../data/restake/RestakeTx/base';
-import useRestakeTx from '../../data/restake/useRestakeTx';
+} from '../../data/restake/RestakeApi/base';
+import useRestakeApi from '../../data/restake/useRestakeApi';
 import useRestakeTxEventHandlersWithNoti from '../../data/restake/useRestakeTxEventHandlersWithNoti';
 import { isScheduledRequestReady } from '../../pages/restake/utils';
 import { WithdrawRequestTableRow } from './WithdrawRequestTable';
@@ -52,9 +52,13 @@ const WithdrawRequestTableActions = ({
       ),
     );
 
-  const { executeWithdraw, cancelWithdraw } = useRestakeTx();
+  const restakeApi = useRestakeApi();
 
   const handleCancelWithdraw = useCallback(async () => {
+    if (restakeApi === null) {
+      return;
+    }
+
     setIsCanceling(true);
 
     const requests = selectedRequests.map(({ amountRaw, assetId }) => {
@@ -64,16 +68,20 @@ const WithdrawRequestTableActions = ({
       } satisfies CancelWithdrawRequestContext['withdrawRequests'][number];
     });
 
-    await cancelWithdraw(requests, cancelOptions);
+    await restakeApi.cancelWithdraw(requests, cancelOptions);
 
     setIsCanceling(false);
-  }, [cancelOptions, cancelWithdraw, selectedRequests]);
+  }, [restakeApi, selectedRequests, cancelOptions]);
 
   const handleExecuteWithdraw = useCallback(async () => {
+    if (restakeApi === null) {
+      return;
+    }
+
     setIsExecuting(true);
-    await executeWithdraw(executeOptions);
+    await restakeApi.executeWithdraw(executeOptions);
     setIsExecuting(false);
-  }, [executeWithdraw, executeOptions]);
+  }, [restakeApi, executeOptions]);
 
   const canCancelWithdraw = selectedRequests.length > 0;
 

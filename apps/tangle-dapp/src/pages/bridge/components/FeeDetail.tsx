@@ -145,7 +145,7 @@ export const FeeDetail = ({
                   variant="body1"
                   className="text-mono-0 dark:text-mono-0"
                 >
-                  ~30min or more
+                  ~ {estimatedTime}
                 </Typography>
               </div>
             )}

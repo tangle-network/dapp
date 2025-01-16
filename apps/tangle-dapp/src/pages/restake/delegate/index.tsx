@@ -25,10 +25,10 @@ import { formatUnits, parseUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
-import { DelegatorStakeContext } from '../../../data/restake/RestakeTx/base';
-import useRestakeTx from '../../../data/restake/useRestakeTx';
+import { DelegatorStakeContext } from '../../../data/restake/RestakeApi/base';
+import useRestakeApi from '../../../data/restake/useRestakeApi';
 import useRestakeTxEventHandlersWithNoti, {
-  type Props,
+  type UseRestakeTxEventHandlersWithNotiProps,
 } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
 import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
@@ -86,7 +86,7 @@ const RestakeDelegateForm: FC = () => {
   }, [register]);
 
   const { assetMap } = useRestakeContext();
-  const { stake: delegate } = useRestakeTx();
+  const restakeApi = useRestakeApi();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
 
@@ -203,7 +203,9 @@ const RestakeDelegateForm: FC = () => {
     [closeChainModal, switchChain],
   );
 
-  const options = useMemo<Props<DelegatorStakeContext>>(() => {
+  const options = useMemo<
+    UseRestakeTxEventHandlersWithNotiProps<DelegatorStakeContext>
+  >(() => {
     return {
       options: {
         [TxEvent.SUCCESS]: {
@@ -232,22 +234,21 @@ const RestakeDelegateForm: FC = () => {
   const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
 
   const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>(
-    async (data) => {
-      const { amount, assetId, operatorAccountId } = data;
-      if (!assetId || !isDefined(assetMap[assetId])) {
+    async ({ amount, assetId, operatorAccountId }) => {
+      if (!assetId || !isDefined(assetMap[assetId]) || restakeApi === null) {
         return;
       }
 
       const asset = assetMap[assetId];
 
-      await delegate(
+      await restakeApi.stake(
         operatorAccountId,
         assetId,
         parseUnits(amount, asset.decimals),
         txEventHandlers,
       );
     },
-    [assetMap, delegate, txEventHandlers],
+    [assetMap, restakeApi, txEventHandlers],
   );
 
   const operators = useMemo<RestakeOperator[]>(() => {

@@ -3,7 +3,7 @@
 
 import { Abi } from 'viem';
 
-const abi = [
+const RESTAKE_ABI = [
   {
     inputs: [
       {
@@ -231,4 +231,4 @@ const abi = [
   },
 ] as const satisfies Abi;
 
-export default abi;
+export default RESTAKE_ABI;
