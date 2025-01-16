@@ -11,6 +11,7 @@ import {
   ViewOperatorWrapper,
 } from '../../components/tables/RestakeActionWrappers';
 import useIdentities from '../../data/useIdentities';
+import { RestakeOperator } from '../../../../../libs/tangle-shared-ui/src/types/index';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
@@ -47,11 +48,11 @@ const OperatorsTable: FC<Props> = ({
           return {
             address,
             concentrationPercentage,
-            identityName: identities[address]?.name ?? '',
+            identityName: identities[address]?.name ?? undefined,
             restakersCount,
             tvlInUsd,
             vaultTokens: delegationsToVaultTokens(delegations, assetMap),
-          };
+          } satisfies RestakeOperator;
         },
       ),
     [assetMap, identities, operatorConcentration, operatorMap, operatorTVL],

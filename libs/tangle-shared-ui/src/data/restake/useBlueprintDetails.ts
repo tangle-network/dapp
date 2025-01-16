@@ -145,7 +145,7 @@ async function getBlueprintOperators(
 
     return {
       address,
-      identityName: info?.name ?? 'Unknown',
+      identityName: info?.name ?? undefined,
       concentrationPercentage,
       restakersCount: operatorMap[address]?.restakersCount,
       tvlInUsd,
