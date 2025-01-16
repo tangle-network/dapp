@@ -11,7 +11,7 @@ import {
   ViewOperatorWrapper,
 } from '../../components/tables/RestakeActionWrappers';
 import useIdentities from '../../data/useIdentities';
-import { RestakeOperator } from '../../../../../libs/tangle-shared-ui/src/types/index';
+import { RestakeOperator } from '@webb-tools/tangle-shared-ui/types';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']

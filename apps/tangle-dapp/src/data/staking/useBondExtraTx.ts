@@ -24,6 +24,8 @@ const useBondExtraTx = () => {
   > = useCallback(
     (context) => ({
       functionName: 'bondExtra',
+      // Args are now type checked against the abi def. for the function,
+      // whereas before it was just 'unknown[]', so any type of arg could be passed. Now, it will throw an error if the arg type is incorrect.
       arguments: [BigInt(context.amount.toString())],
     }),
     [],

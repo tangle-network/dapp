@@ -2,7 +2,7 @@ import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { useCallback, useState } from 'react';
-import type { Hash, AbiFunction } from 'viem';
+import type { AbiFunction, Hex } from 'viem';
 import {
   simulateContract,
   waitForTransactionReceipt,
@@ -26,12 +26,8 @@ export type AbiBatchCallData = {
   // TODO: Value should be strongly typed and explicit. Accept a generic type to accomplish this.
   value: AbiEncodeableValue;
   gasLimit: number;
-  callData: Hash;
+  callData: Hex;
 };
-
-export type AbiBatchCallArgs =
-  | (AbiEncodeableValue | AbiEncodeableValue[])[][]
-  | Readonly<[EvmAddress[], bigint[], Hash[], bigint[]]>;
 
 export type AbiCall<
   Abi extends AbiFunction[],

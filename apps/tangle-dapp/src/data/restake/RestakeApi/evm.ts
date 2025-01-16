@@ -36,6 +36,7 @@ import {
 } from './base';
 import { MULTI_ASSET_DELEGATION_EVM_ADDRESS } from './constants';
 import BATCH_PRECOMPILE_ABI from '../../../abi/batch';
+import RESTAKING_PRECOMPILE_ABI from '../../../abi/restaking';
 
 export default class EvmRestakeApi extends RestakeApiBase {
   constructor(
@@ -251,7 +252,7 @@ export default class EvmRestakeApi extends RestakeApiBase {
     const batchArgs = createEvmBatchCallArgs(
       unstakeRequests.map(({ amount, assetId, operatorAccount }) => ({
         callData: encodeFunctionData({
-          abi: restakeAbi,
+          abi: RESTAKING_PRECOMPILE_ABI,
           functionName: 'cancelDelegatorUnstake',
           args: [
             toSubstrateBytes32Address(operatorAccount),

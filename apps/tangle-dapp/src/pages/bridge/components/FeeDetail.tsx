@@ -7,8 +7,6 @@ import {
   AccordionButtonBase,
   AccordionContent,
   AccordionItem,
-  InfoIconWithTooltip,
-  Label,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';

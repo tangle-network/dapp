@@ -1,7 +1,8 @@
-import {
-  AbiBatchCallArgs,
-  AbiBatchCallData,
-} from '../../hooks/useEvmPrecompileAbiCall';
+import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
+import { AbiBatchCallData } from '../../hooks/useEvmPrecompileAbiCall';
+import { Hex } from 'viem';
+
+type AbiBatchCallArgs = [EvmAddress[], bigint[], Hex[], bigint[]];
 
 function createEvmBatchCallArgs(
   callData: AbiBatchCallData[],
