@@ -97,6 +97,8 @@ const Button = forwardRef<HTMLElement, ButtonProps>((props, ref) => {
     </Component>
   );
 
+  // If the button isn't disabled or a tooltip for the disabled state isn't
+  // provided, just return the button as is.
   if (disabledTooltip === undefined || !isDisabled) {
     return button;
   }
