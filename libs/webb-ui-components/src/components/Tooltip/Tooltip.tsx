@@ -8,7 +8,7 @@ import { TooltipBodyProps, TooltipProps, TooltipTriggerProps } from './types';
 
 /**
  * The `ToolTipBody` component, use after the `TooltipTrigger`.
- * Reresents the popup content of the tooltip.
+ * Represents the popup content of the tooltip.
  * Must use inside the `Tooltip` component.
  *
  * @example
@@ -44,7 +44,7 @@ export const TooltipBody: React.FC<TooltipBodyProps> = ({
     >
       <div
         className={twMerge(
-          'body4 text-mono-140 dark:text-mono-80 font-normal min-w-0 max-w-[300px]',
+          'body2 text-mono-140 dark:text-mono-80 text-center break-normal font-normal min-w-0 max-w-[250px]',
           className,
         )}
       >

@@ -6,6 +6,7 @@ import {
   FileShieldLine,
   InformationLine,
 } from '@webb-tools/icons';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 
 interface AmountInfoProps {
   label: string;
@@ -47,12 +48,13 @@ const AmountInfo: FC<AmountInfoProps> = ({
           />
         )}
       </div>
+
       <Typography
         variant="body1"
         fw="bold"
         className="text-mono-190 dark:text-mono-40"
       >
-        {amount ?? '--'} {tokenSymbol}
+        {amount ?? EMPTY_VALUE_PLACEHOLDER} {tokenSymbol}
       </Typography>
     </div>
   );

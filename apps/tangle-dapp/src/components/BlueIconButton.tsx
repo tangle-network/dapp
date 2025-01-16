@@ -36,9 +36,7 @@ const BlueIconButton: FC<BlueIconButtonProps> = ({
         </IconButton>
       </TooltipTrigger>
 
-      <TooltipBody className="break-normal max-w-[250px] text-center">
-        {tooltip}
-      </TooltipBody>
+      <TooltipBody>{tooltip}</TooltipBody>
     </Tooltip>
   );
 };

@@ -123,7 +123,7 @@ export const CheckBox: FC<CheckBoxProps> = (props) => {
 
           <TooltipBody
             title={info.title}
-            className="max-w-[185px] break-normal"
+            className="max-w-[185px]"
             button={
               info.buttonProps && (
                 <Button {...info.buttonProps} variant="utility" size="sm">

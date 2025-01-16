@@ -54,7 +54,8 @@ export const TitleWithInfo = forwardRef<HTMLDivElement, TitleWithInfoProps>(
                 <InformationLine className="!fill-current pointer-events-none" />
               </span>
             </TooltipTrigger>
-            <TooltipBody className="break-normal max-w-[200px]">
+
+            <TooltipBody className="max-w-[200px]">
               {isPrimitive(info) && info !== null && info !== undefined ? (
                 <Typography
                   ta={isCenterInfo ? 'center' : 'left'}
