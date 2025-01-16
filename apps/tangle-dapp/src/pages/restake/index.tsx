@@ -3,10 +3,11 @@ import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/use
 import useRestakeTVL from '@webb-tools/tangle-shared-ui/data/restake/useRestakeTVL';
 import RestakeOverviewTabs from '../../containers/restaking/RestakeOverviewTabs';
 import { useParams } from 'react-router';
-import { RestakeAction } from '../../../constants';
-import NotFoundPage from '../../notFound';
-import isEnumValue from '../../../utils/isEnumValue';
-import JoinOperatorsBanner from '../../../containers/restaking/JoinOperatorsBanner';
+import NotFoundPage from '../notFound';
+import isEnumValue from '../../utils/isEnumValue';
+import { RestakeAction } from '../../constants';
+import JoinOperatorsBanner from '../../containers/restaking/JoinOperatorsBanner';
+import { FC } from 'react';
 
 const RestakePage: FC = () => {
   const { action } = useParams();
