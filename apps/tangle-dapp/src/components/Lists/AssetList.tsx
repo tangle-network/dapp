@@ -1,4 +1,3 @@
-import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 import { ArrowRightUp, Search, TokenIcon } from '@webb-tools/icons';
 import {
   Input,
@@ -20,7 +19,6 @@ export type AssetConfig = {
   balance?: string;
   explorerUrl?: string;
   address?: Address;
-  assetBridgeType?: EVMTokenBridgeEnum;
 };
 
 type AssetListProps = {

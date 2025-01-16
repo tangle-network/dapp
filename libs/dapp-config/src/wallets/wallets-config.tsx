@@ -16,6 +16,13 @@ const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,
   PresetTypedChainId.TangleMainnetEVM,
 
+  PresetTypedChainId.Arbitrum,
+  PresetTypedChainId.Base,
+  PresetTypedChainId.BSC,
+  PresetTypedChainId.Linea,
+  PresetTypedChainId.Optimism,
+  PresetTypedChainId.Polygon,
+
   // Testnet
   PresetTypedChainId.Goerli,
   PresetTypedChainId.Sepolia,

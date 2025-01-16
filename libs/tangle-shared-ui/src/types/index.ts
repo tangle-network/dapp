@@ -98,7 +98,7 @@ export interface BridgeToken {
   abi: Abi;
   decimals: number;
   chainId: PresetTypedChainId;
-  hyperlaneRouteContractAddress?: EvmAddress;
+  hyperlaneSyntheticAddress?: EvmAddress;
 }
 
 export type BridgeChainsConfigType = Record<
@@ -113,6 +113,7 @@ export type BridgeChainsConfigType = Record<
 
 export type BridgeTokenWithBalance = BridgeToken & {
   balance: Decimal;
+  syntheticBalance?: Decimal;
 };
 
 export type BridgeChainBalances = Partial<
