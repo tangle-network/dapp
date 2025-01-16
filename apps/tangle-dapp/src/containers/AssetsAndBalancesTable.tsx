@@ -158,7 +158,12 @@ const COLUMNS = [
   }),
   COLUMN_HELPER.accessor('tvl', {
     sortingFn: sortByBn((row) => row.tvl),
-    header: () => <HeaderCell title="TVL & Cap" />,
+    header: () => (
+      <HeaderCell
+        title="TVL & Cap"
+        tooltip="Total value locked & deposit cap."
+      />
+    ),
     cell: (props) => {
       const tvl = props.getValue();
 
@@ -186,7 +191,6 @@ const COLUMNS = [
         <TableCellWrapper>
           <div className="flex gap-1 items-center justify-center">
             <StatItem
-              tooltip="Total value locked & deposit cap."
               title={
                 fmtTvl === undefined ? `${fmtDepositCap} Cap` : `${fmtTvl} TVL`
               }

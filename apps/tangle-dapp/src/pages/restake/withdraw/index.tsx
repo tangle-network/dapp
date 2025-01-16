@@ -20,7 +20,7 @@ import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/compone
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 import ErrorMessage from '../../../components/ErrorMessage';
@@ -35,19 +35,19 @@ import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import type { WithdrawFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
-import ActionButtonBase from '../ActionButtonBase';
+import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
 import RestakeTabs from '../RestakeTabs';
-import StyleContainer from '../StyleContainer';
+import StyleContainer from '../../../components/restaking/StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
-import TxInfo from './TxInfo';
-import WithdrawModal from './WithdrawModal';
-import WithdrawRequestTable from './WithdrawRequestTable';
+import Details from './Details';
+import WithdrawModal from '../../../containers/restaking/WithdrawModal';
+import WithdrawRequestTable from '../../../containers/restaking/WithdrawRequestTable';
 
-const RestakeWithdrawPage = () => {
+const RestakeWithdrawForm: FC = () => {
   const {
     register,
     setValue: setFormValue,
@@ -99,14 +99,17 @@ const RestakeWithdrawPage = () => {
   const amount = watch('amount');
 
   const withdrawRequests = useMemo(() => {
-    if (!delegatorInfo?.withdrawRequests) return [];
+    if (!delegatorInfo?.withdrawRequests) {
+      return [];
+    }
 
     return delegatorInfo.withdrawRequests;
   }, [delegatorInfo?.withdrawRequests]);
 
   const selectedAsset = useMemo(() => {
-    if (!selectedAssetId) return null;
-    if (!assetMap[selectedAssetId]) return null;
+    if (!selectedAssetId || !assetMap[selectedAssetId]) {
+      return null;
+    }
 
     return assetMap[selectedAssetId];
   }, [assetMap, selectedAssetId]);
@@ -273,7 +276,7 @@ const RestakeWithdrawPage = () => {
               <ErrorMessage>{errors.amount?.message}</ErrorMessage>
             </div>
 
-            <TxInfo />
+            <Details />
 
             <ActionButtonBase>
               {(isLoading, loadingText) => {
@@ -384,4 +387,4 @@ const RestakeWithdrawPage = () => {
   );
 };
 
-export default RestakeWithdrawPage;
+export default RestakeWithdrawForm;

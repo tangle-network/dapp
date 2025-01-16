@@ -9,6 +9,5 @@ export * from './ServicesKeyMetricItem';
 export * from './Sidebar';
 export * from './skeleton';
 export { default as TangleBigLogo } from './TangleBigLogo';
-export * from './UnbondingStatsItem';
 export * from './ValidatorSelectionTable';
 export * from './ValidatorTable';

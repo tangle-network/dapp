@@ -3,10 +3,10 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import {
   HeaderChipsContainer,
   KeyStatsContainer,
-  NominationsPayoutsContainer,
-  NominatorStatsContainer,
   ValidatorTablesContainer,
 } from '../../containers';
+import NominatorStatsContainer from '../../containers/NominatorStatsContainer';
+import NominationsPayoutsContainer from '../../containers/NominationsPayoutsContainer';
 
 export default function NominationPage() {
   return (

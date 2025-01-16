@@ -1,4 +1,4 @@
-export * from './BondMoreTxContainer';
+export * from './BondMoreTxModal';
 export * from './DelegateTxContainer';
 export * from './HeaderChipsContainer';
 export * from './KeyStatsContainer';

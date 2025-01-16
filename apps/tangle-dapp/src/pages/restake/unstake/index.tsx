@@ -19,7 +19,7 @@ import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
@@ -36,18 +36,18 @@ import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import type { UnstakeFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
-import ActionButtonBase from '../ActionButtonBase';
+import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
 import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
-import SelectOperatorModal from './SelectOperatorModal';
-import TxInfo from './TxInfo';
-import UnstakeRequestTable from './UnstakeRequestTable';
+import SelectOperatorModal from '../../../containers/restaking/SelectOperatorModal';
+import Details from './Details';
+import UnstakeRequestTable from '../../../containers/restaking/UnstakeRequestTable';
 
-const RestakeUnstakePage = () => {
+const RestakeUnstakeForm: FC = () => {
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
     useState(false);
 
@@ -309,7 +309,7 @@ const RestakeUnstakePage = () => {
               <ErrorMessage>{errors.amount?.message}</ErrorMessage>
             </div>
 
-            <TxInfo />
+            <Details />
 
             <ActionButtonBase>
               {(isLoading, loadingText) => {
@@ -428,4 +428,4 @@ const RestakeUnstakePage = () => {
   );
 };
 
-export default RestakeUnstakePage;
+export default RestakeUnstakeForm;

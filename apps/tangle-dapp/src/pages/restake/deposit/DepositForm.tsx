@@ -46,7 +46,7 @@ import Form from '../Form';
 import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
 import SourceChainInput from './SourceChainInput';
-import TxDetails from './TxDetails';
+import Details from './Details';
 
 function getDefaultTypedChainId(activeTypedChainId: number | null) {
   return isDefined(activeTypedChainId) &&
@@ -312,7 +312,7 @@ const DepositForm = ({ ...props }: DepositFormProps) => {
             </div>
 
             <div className="flex flex-col justify-between gap-4 grow">
-              <TxDetails watch={watch} />
+              <Details watch={watch} />
 
               <ActionButton
                 errors={errors}

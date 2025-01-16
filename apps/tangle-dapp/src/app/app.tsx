@@ -18,7 +18,7 @@ import BlueprintLayout from '../pages/blueprints/layout';
 import BlueprintsPage from '../pages/blueprints';
 import BlueprintDetailsPage from '../pages/blueprints/[id]';
 import LiquidStakingPage from '../pages/liquid-staking';
-import RestakePage from '../pages/restake/overview';
+import RestakePage from '../pages/restake';
 import NotFoundPage from '../pages/notFound';
 
 // TODO: Add metadata tags for SEO

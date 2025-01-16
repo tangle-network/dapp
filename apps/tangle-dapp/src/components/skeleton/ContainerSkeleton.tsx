@@ -1,13 +1,13 @@
 import { type FC } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import SkeletonRow from './SkeletonRow';
-import { ContainerSkeletonProps } from './types';
 
-const ContainerSkeleton: FC<ContainerSkeletonProps> = ({
-  numOfRows = 4,
-  className,
-}) => {
+type Props = {
+  numOfRows?: number;
+  className?: string;
+};
+
+const ContainerSkeleton: FC<Props> = ({ numOfRows = 4, className }) => {
   return (
     <div
       className={twMerge(

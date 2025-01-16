@@ -20,8 +20,8 @@ import { LsAllProtocolsTable } from '../../containers/LsPoolsTable';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import getLsTangleNetwork from '../../utils/liquidStaking/getLsTangleNetwork';
-import TabListItem from '../restake/TabListItem';
-import TabsList from '../restake/TabsList';
+import TabListItem from '../../components/restaking/TabListItem';
+import TabsList from '../../components/restaking/TabsList';
 
 enum Tab {
   ALL_POOLS = 'All Pools',
