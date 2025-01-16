@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';
 import { TitleWithInfo } from '../TitleWithInfo';
 import { InfoItemProps } from './types';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 
 /**
  * The `InfoItem` component
@@ -49,7 +50,7 @@ export const InfoItem = forwardRef<HTMLDivElement, InfoItemProps>(
             fw="bold"
             className="text-mono-180 dark:text-mono-80"
           >
-            --
+            {EMPTY_VALUE_PLACEHOLDER}
           </Typography>
         ) : typeof rightContent === 'string' ? (
           <Typography

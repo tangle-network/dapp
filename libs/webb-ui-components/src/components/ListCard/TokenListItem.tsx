@@ -17,6 +17,7 @@ import SkeletonLoader from '../SkeletonLoader';
 import { Button } from '../buttons';
 import { ListItem } from './ListItem';
 import { AssetBadgeInfoType, AssetBalanceType, AssetType } from './types';
+import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 
 const Balance = ({ balance, balanceInUsd, subContent }: AssetBalanceType) => {
   return (
@@ -62,12 +63,13 @@ const AddToWalletButton = ({
     >
       Add to Wallet
     </Button>
+
     <Typography
       className="block cursor-default group-hover:hidden"
       variant="h5"
       fw="bold"
     >
-      --
+      {EMPTY_VALUE_PLACEHOLDER}
     </Typography>
   </>
 );

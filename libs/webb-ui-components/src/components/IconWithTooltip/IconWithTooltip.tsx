@@ -1,7 +1,6 @@
 import { type FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { Typography } from '../../typography/Typography';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip/Tooltip';
 import { IconWithTooltipProp } from './types';
 
@@ -24,11 +23,7 @@ const IconWithTooltip: FC<IconWithTooltipProp> = ({
         {icon}
       </TooltipTrigger>
 
-      <TooltipBody {...overrideTooltipBodyProps}>
-        <Typography variant="body2" className="text-center break-normal">
-          {content}
-        </Typography>
-      </TooltipBody>
+      <TooltipBody {...overrideTooltipBodyProps}>{content}</TooltipBody>
     </Tooltip>
   );
 };

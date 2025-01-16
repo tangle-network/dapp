@@ -103,17 +103,17 @@ const PayoutTxContainer: FC<PayoutTxContainerProps> = ({
           </div>
 
           <div className="flex flex-col gap-9">
-            <Typography variant="body1" fw="normal">
+            <Typography variant="body1">
               Any account can request payout for stakers, this is not limited to
               accounts that will be rewarded.
             </Typography>
 
-            <Typography variant="body1" fw="normal">
+            <Typography variant="body1">
               All the listed validators and all their nominators will receive
               their rewards.
             </Typography>
 
-            <Typography variant="body1" fw="normal">
+            <Typography variant="body1">
               The UI puts a limit of {MAX_PAYOUTS_BATCH_SIZE} payouts at a time,
               where each payout is a single validator for a single era.
             </Typography>
