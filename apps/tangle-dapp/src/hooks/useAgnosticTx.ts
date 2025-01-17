@@ -162,10 +162,13 @@ function useAgnosticTx<
     const error = isEvmAccount ? evmError : substrateError;
     const txHash = isEvmAccount ? evmTxHash : substrateTxHash;
 
+    if (error !== null) {
+      notifyError(name, error);
+    }
     // NOTE: It is totally possible for both to be null, as
     // React's setState is asynchronous and the state might
     // not have been updated yet.
-    if (txHash !== null) {
+    else if (txHash !== null) {
       const successMessage = isEvmAccount
         ? evmSuccessMessage
         : substrateSuccessMessage;
@@ -176,8 +179,6 @@ function useAgnosticTx<
           : resolveExplorerUrl(txHash, substrateTxBlockHash);
 
       notifySuccess(name, explorerUrl, successMessage);
-    } else if (error !== null) {
-      notifyError(name, error);
     }
 
     // Only execute effect when the transaction status changes.

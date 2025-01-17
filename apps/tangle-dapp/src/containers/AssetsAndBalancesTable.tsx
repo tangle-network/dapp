@@ -25,13 +25,11 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import StatItem from '../components/StatItem';
 import { HeaderCell } from '../components/tableCells';
 import { ArrowRight } from '@webb-tools/icons';
-import { PagePath } from '../types';
+import { PagePath, QueryParamKey } from '../types';
 import { Link } from 'react-router';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
 import useRestakeVaultAssets from '@webb-tools/tangle-shared-ui/data/restake/useRestakeVaultAssets';
 import useIsAccountConnected from '../hooks/useIsAccountConnected';
-import useLsPools from '../data/liquidStaking/useLsPools';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
 import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
 import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
@@ -42,19 +40,13 @@ import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableSta
 import LstIcon from '../components/LiquidStaking/LstIcon';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import { LstIconSize } from '../components/LiquidStaking/types';
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import useRestakeAssetsTvl from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import sortByBn from '../utils/sortByBn';
 
-enum RowType {
-  ASSET,
-  LS_POOL,
-}
-
 type Row = {
-  type: RowType;
+  vaultId: number;
   name?: string;
   tokenSymbol: string;
   tvl?: BN;
@@ -99,14 +91,12 @@ const COLUMNS = [
               </Typography>
             )}
 
-            {props.row.original.type !== RowType.LS_POOL && (
-              <Typography
-                variant="body1"
-                className="whitespace-nowrap dark:text-mono-100"
-              >
-                {props.getValue()}
-              </Typography>
-            )}
+            <Typography
+              variant="body1"
+              className="whitespace-nowrap dark:text-mono-100"
+            >
+              {props.getValue()}
+            </Typography>
           </div>
         </TableCellWrapper>
       );
@@ -246,11 +236,12 @@ const COLUMNS = [
     id: 'restake-action',
     header: () => null,
     enableSorting: false,
-    cell: () => (
+    cell: (props) => (
       <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1">
-          {/** TODO: Include asset ID in the URL. */}
-          <Link to={PagePath.RESTAKE}>
+          <Link
+            to={`${PagePath.RESTAKE}/?${QueryParamKey.RESTAKE_VAULT}=${props.row.original.vaultId}`}
+          >
             <Button
               variant="utility"
               size="sm"
@@ -280,9 +271,7 @@ const AssetsAndBalancesTable: FC = () => {
   const { balances } = useRestakeBalances();
   const rewardConfig = useRestakeRewardConfig();
   const { delegatorInfo } = useRestakeDelegatorInfo();
-  const allPools = useLsPools();
   const isAccountConnected = useIsAccountConnected();
-  const substrateAddress = useSubstrateAddress();
   const { vaultAssets } = useRestakeVaultAssets();
   const assetsTvl = useRestakeAssetsTvl();
 
@@ -349,7 +338,7 @@ const AssetsAndBalancesTable: FC = () => {
           : BN_ZERO;
 
       return {
-        type: RowType.ASSET,
+        vaultId: metadata.vaultId,
         name: metadata.name,
         tvl,
         available,
@@ -363,52 +352,13 @@ const AssetsAndBalancesTable: FC = () => {
     });
   }, [vaultAssets, assetsTvl, balances, getTotalLockedInAsset, rewardConfig]);
 
-  const lsPoolRows = useMemo<Row[]>(() => {
-    if (!(allPools instanceof Map)) {
-      return [];
-    }
-
-    const pools = Array.from(allPools.values());
-
-    return pools.map((pool) => {
-      const name = `${pool.name ?? 'Pool'}#${pool.id}`.toUpperCase();
-
-      const membership =
-        substrateAddress === null
-          ? undefined
-          : pool.members.get(substrateAddress);
-
-      const myStake = membership?.balance.toBn() ?? BN_ZERO;
-
-      return {
-        type: RowType.LS_POOL,
-        name,
-        tokenSymbol: name,
-        tvl: pool.totalStaked,
-        available: myStake,
-        locked: getTotalLockedInAsset(pool.id),
-        iconUrl: pool.iconUrl,
-        decimals: TANGLE_TOKEN_DECIMALS,
-        apyPercentage: pool.apyPercentage,
-      } satisfies Row;
-    });
-  }, [allPools, getTotalLockedInAsset, substrateAddress]);
-
   // Combine all rows.
   const rows = useMemo<Row[]>(() => {
-    return [...assetRows, ...lsPoolRows].sort((a, b) => {
+    return [...assetRows].sort((a, b) => {
       // Sort by available balance in descending order.
-      const availableCmp = b.available.cmp(a.available);
-
-      if (availableCmp !== 0) {
-        return availableCmp;
-      }
-
-      // If the available balance is the same, prioritize asset rows
-      // over liquid staking pool rows.
-      return a.type === b.type ? 0 : a.type === RowType.ASSET ? -1 : 1;
+      return b.available.cmp(a.available);
     });
-  }, [assetRows, lsPoolRows]);
+  }, [assetRows]);
 
   const table = useReactTable({
     data: rows,
