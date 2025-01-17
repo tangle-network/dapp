@@ -316,7 +316,8 @@ const AssetsAndBalancesTable: FC = () => {
         return [];
       }
 
-      const apyPercentage = config.apy.toNumber();
+      // APY in this case is always between 0 and 100%.
+      const apyPercentage = config.apy.toNumber() / 100;
 
       const depositCap =
         config.depositCap === undefined

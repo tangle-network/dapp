@@ -173,30 +173,36 @@ const DepositForm: FC<Props> = (props) => {
 
   const selectableTokens = useMemo(
     () =>
-      assetWithBalances.map((asset) => {
-        const balance = asset.balance;
+      assetWithBalances
+        .filter(
+          (asset) =>
+            asset.balance?.balance !== undefined &&
+            asset.balance?.balance !== BigInt(0),
+        )
+        .map((asset) => {
+          const balance = asset.balance;
 
-        return {
-          id: asset.assetId,
-          name: asset.metadata.name,
-          symbol: asset.metadata.symbol,
-          ...(balance !== null
-            ? {
-                assetBalanceProps: {
-                  balance: +formatUnits(
-                    balance.balance,
-                    asset.metadata.decimals,
-                  ),
-                  ...(asset.metadata.vaultId
-                    ? {
-                        subContent: `Vault ID: ${asset.metadata.vaultId}`,
-                      }
-                    : {}),
-                },
-              }
-            : {}),
-        } satisfies TokenListCardProps['selectTokens'][number];
-      }),
+          return {
+            id: asset.assetId,
+            name: asset.metadata.name,
+            symbol: asset.metadata.symbol,
+            ...(balance !== null
+              ? {
+                  assetBalanceProps: {
+                    balance: +formatUnits(
+                      balance.balance,
+                      asset.metadata.decimals,
+                    ),
+                    ...(asset.metadata.vaultId
+                      ? {
+                          subContent: `Vault ID: ${asset.metadata.vaultId}`,
+                        }
+                      : {}),
+                  },
+                }
+              : {}),
+          } satisfies TokenListCardProps['selectTokens'][number];
+        }),
     [assetWithBalances],
   );
 
@@ -249,6 +255,7 @@ const DepositForm: FC<Props> = (props) => {
   const handleOnSelectChain = useCallback(
     (chain: ChainConfig) => {
       const typedChainId = calculateTypedChainId(chain.chainType, chain.id);
+
       setValue('sourceTypedChainId', typedChainId);
       closeChainModal();
     },

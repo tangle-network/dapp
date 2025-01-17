@@ -1,7 +1,5 @@
 import {
   CoinsLineIcon,
-  CoinsStackedLineIcon,
-  GiftLineIcon,
   LockUnlockLineIcon,
   SendPlanLineIcon,
 } from '@webb-tools/icons';
@@ -10,13 +8,12 @@ import { FC, useState } from 'react';
 
 import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
 import useBalances from '../../data/balances/useBalances';
-import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
 import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import { PagePath, StaticSearchQueryPath } from '../../types';
+import { StaticSearchQueryPath } from '../../types';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
@@ -25,7 +22,6 @@ const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
 
   const { execute: executeVestTx, status: vestTxStatus } = useVestTx();
-  const { isEligible: isAirdropEligible } = useAirdropEligibility();
 
   const isPayoutsAvailable = usePayoutsAvailability();
   const activeAccountAddress = useActiveAccountAddress();
@@ -59,34 +55,13 @@ const Actions: FC = () => {
         }
       />
 
-      <ActionItem
-        label="Nominate"
-        internalHref={StaticSearchQueryPath.NominationsTable}
-        Icon={CoinsStackedLineIcon}
-      />
-
       {isPayoutsAvailable && (
         <ActionItem
           hasNotificationDot
           label="Payouts"
           Icon={CoinsLineIcon}
           internalHref={StaticSearchQueryPath.PayoutsTable}
-          tooltip="There are nomination payouts available to claim. Click here to visit the Payouts page."
-        />
-      )}
-
-      {isAirdropEligible && (
-        <ActionItem
-          label="Claim Airdrop"
-          hasNotificationDot
-          Icon={GiftLineIcon}
-          internalHref={PagePath.CLAIM_AIRDROP}
-          tooltip={
-            <>
-              Congratulations, you are eligible for the Tangle Network airdrop!
-              Click here to visit the <strong>Claim Airdrop</strong> page.
-            </>
-          }
+          tooltip="There are nomination payouts available to claim. Click here to visit the Nomination page."
         />
       )}
 
