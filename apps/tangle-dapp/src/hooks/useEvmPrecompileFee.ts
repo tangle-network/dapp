@@ -1,7 +1,10 @@
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { useCallback, useState } from 'react';
 
-import { PrecompileAddress } from '../constants/evmPrecompiles';
+import {
+  ExtractAbiFunctionNames,
+  PrecompileAddress,
+} from '../constants/evmPrecompiles';
 import useEvmAddress20 from './useEvmAddress';
 import { AbiCall } from './useEvmPrecompileAbiCall';
 import useViemPublicClient from './useViemPublicClient';
@@ -17,10 +20,13 @@ function useEvmPrecompileFeeFetcher() {
   const client = useViemPublicClient();
 
   const fetchEvmPrecompileFees = useCallback(
-    async <T extends AbiFunction[]>(
-      abi: T,
+    async <
+      Abi extends AbiFunction[],
+      FunctionName extends ExtractAbiFunctionNames<Abi>,
+    >(
+      abi: Abi,
       precompileAddress: PrecompileAddress,
-      abiCallData: AbiCall<T>,
+      abiCallData: AbiCall<Abi, FunctionName>,
     ) => {
       setStatus('loading');
       setError(null);

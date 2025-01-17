@@ -1,7 +1,7 @@
 import { TxEventHandlers } from '@webb-tools/abstract-api-provider';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
+import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
 import {
   type Abi,
   type Account,
@@ -158,7 +158,7 @@ export default class EvmRestakeApi extends RestakeApiBase {
             abi: restakeAbi,
             functionName: 'delegate',
             args: [
-              toSubstrateBytes32Address(operatorAccount),
+              convertAddressToBytes32(operatorAccount),
               assetIdBigInt,
               amount,
             ],
@@ -196,7 +196,7 @@ export default class EvmRestakeApi extends RestakeApiBase {
       restakeAbi,
       MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'delegate',
-      [toSubstrateBytes32Address(operatorAccount), BigInt(assetId), amount],
+      [convertAddressToBytes32(operatorAccount), BigInt(assetId), amount],
       context,
       eventHandlers,
     );
@@ -218,7 +218,7 @@ export default class EvmRestakeApi extends RestakeApiBase {
       restakeAbi,
       MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'scheduleDelegatorUnstake',
-      [toSubstrateBytes32Address(operatorAccount), BigInt(assetId), amount],
+      [convertAddressToBytes32(operatorAccount), BigInt(assetId), amount],
       context,
       eventHandlers,
     );
@@ -255,7 +255,7 @@ export default class EvmRestakeApi extends RestakeApiBase {
           abi: RESTAKING_PRECOMPILE_ABI,
           functionName: 'cancelDelegatorUnstake',
           args: [
-            toSubstrateBytes32Address(operatorAccount),
+            convertAddressToBytes32(operatorAccount),
             BigInt(assetId),
             amount,
           ],

@@ -1,6 +1,6 @@
 import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
-import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
+import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/convertAddressToBytes32';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -22,7 +22,7 @@ const usePayoutStakersTx = () => {
     Context
   > = useCallback((context) => {
     // The payout stakers precompile function expects a 32-byte address.
-    const validatorEvmAddress32 = toSubstrateBytes32Address(
+    const validatorEvmAddress32 = convertAddressToBytes32(
       context.validatorAddress,
     );
 

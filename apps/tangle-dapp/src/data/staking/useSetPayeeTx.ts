@@ -9,6 +9,7 @@ import { StakingRewardsDestination } from '../../types';
 import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';
 import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
 import STAKING_PRECOMPILE_ABI from '../../abi/staking';
+import enumValueToNumber from '../../utils/enumValueToNumber';
 
 type Context = {
   payee: StakingRewardsDestination;
@@ -31,7 +32,7 @@ const useSetPayeeTx = () => {
 
     return {
       functionName: 'setPayee',
-      arguments: [payee],
+      arguments: [enumValueToNumber(payee)],
     };
   }, []);
 

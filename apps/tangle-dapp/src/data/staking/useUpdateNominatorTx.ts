@@ -1,7 +1,7 @@
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
+import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/convertAddressToBytes32';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -20,6 +20,7 @@ import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
 import { NominationOptionsContext } from './useSetupNominatorTx';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';
 import STAKING_PRECOMPILE_ABI from '../../abi/staking';
+import enumValueToNumber from '../../utils/enumValueToNumber';
 
 export type Context = Partial<NominationOptionsContext> & {
   nominees: Set<SubstrateAddress>;
@@ -49,7 +50,7 @@ const useUpdateNominatorTx = () => {
           STAKING_PRECOMPILE_ABI,
           PrecompileAddress.STAKING,
           'setPayee',
-          [payee],
+          [enumValueToNumber(payee)],
         ),
       );
     }
@@ -67,7 +68,7 @@ const useUpdateNominatorTx = () => {
     }
 
     const evmNomineeAddresses32 = Array.from(context.nominees).map(
-      toSubstrateBytes32Address,
+      convertAddressToBytes32,
     );
 
     // Push nominate call last. Although the order of calls

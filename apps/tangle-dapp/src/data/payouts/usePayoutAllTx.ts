@@ -1,6 +1,6 @@
 import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
+import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/convertAddressToBytes32';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -40,8 +40,7 @@ const usePayoutAllTx = () => {
       .slice(0, MAX_PAYOUTS_BATCH_SIZE)
       .map(({ validatorAddress, era }) => {
         // The precompile function expects a 32-byte address.
-        const validatorEvmAddress32 =
-          toSubstrateBytes32Address(validatorAddress);
+        const validatorEvmAddress32 = convertAddressToBytes32(validatorAddress);
 
         return createEvmBatchCallData(
           STAKING_PRECOMPILE_ABI,

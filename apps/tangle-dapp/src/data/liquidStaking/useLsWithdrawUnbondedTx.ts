@@ -6,7 +6,7 @@ import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import LST_PRECOMPILE_ABI from '../../abi/lst';
-import { toSubstrateBytes32Address } from '@webb-tools/webb-ui-components';
+import { convertAddressToBytes32 } from '@webb-tools/webb-ui-components';
 
 type Context = {
   poolId: number;
@@ -33,7 +33,7 @@ const useLsWithdrawUnbondedTx = () => {
     return {
       functionName: 'withdrawUnbonded',
       arguments: [
-        toSubstrateBytes32Address(activeEvmAddress20),
+        convertAddressToBytes32(activeEvmAddress20),
         context.poolId,
         context.slashingSpans,
       ],

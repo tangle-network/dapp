@@ -1,29 +1,25 @@
 import { decodeAddress } from '@polkadot/util-crypto';
-import { SubstrateBytes32Address, AnyAddress } from '../types/address';
+import { Bytes32, AnyAddress } from '../types/address';
 import { isSubstrateAddress } from './isSubstrateAddress';
 import { u8aToHex } from '@polkadot/util';
-import assert from 'assert';
 import { isEvmAddress } from './isEvmAddress20';
 import { toSubstrateAddress } from './toSubstrateAddress';
+import assertBytes32 from './assertBytes32';
 
 /**
  * Certain precompile functions require `bytes32` addresses instead
  * of the usual 20-byte `address` type.
  */
-const toSubstrateBytes32Address = (
-  address: AnyAddress,
-): SubstrateBytes32Address => {
+const convertAddressToBytes32 = (address: AnyAddress): Bytes32 => {
   if (isEvmAddress(address)) {
-    return toSubstrateBytes32Address(toSubstrateAddress(address));
+    return convertAddressToBytes32(toSubstrateAddress(address));
   } else if (!isSubstrateAddress(address)) {
-    return address as SubstrateBytes32Address;
+    return address as Bytes32;
   }
 
   const result = u8aToHex(decodeAddress(address));
 
-  assert(result.length === 66, 'Result should be a 32 bytes address');
-
-  return result as SubstrateBytes32Address;
+  return assertBytes32(result);
 };
 
-export default toSubstrateBytes32Address;
+export default convertAddressToBytes32;

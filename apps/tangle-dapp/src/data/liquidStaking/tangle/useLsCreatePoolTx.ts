@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
 import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
-import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
+import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/convertAddressToBytes32';
 import { useCallback } from 'react';
 
 import { TxName } from '../../../constants';
@@ -40,15 +40,13 @@ const useLsCreatePoolTx = () => {
     'create',
     Context
   > = useCallback((context) => {
-    const rootEvmAddress32 = toSubstrateBytes32Address(context.rootAddress);
+    const rootEvmAddress32 = convertAddressToBytes32(context.rootAddress);
 
-    const nominatorEvmAddress32 = toSubstrateBytes32Address(
+    const nominatorEvmAddress32 = convertAddressToBytes32(
       context.nominatorAddress,
     );
 
-    const bouncerEvmAddress32 = toSubstrateBytes32Address(
-      context.bouncerAddress,
-    );
+    const bouncerEvmAddress32 = convertAddressToBytes32(context.bouncerAddress);
 
     // Use TextEncoder to handle non-ASCII characters.
     const encoder = new TextEncoder();

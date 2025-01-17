@@ -1,12 +1,10 @@
-import { BN } from '@polkadot/util';
 import {
   EvmAddress,
-  SubstrateBytes32Address,
+  Bytes32,
 } from '@webb-tools/webb-ui-components/types/address';
 import {
   AbiFunction,
   AbiParameter,
-  Address,
   Hex,
   AbiFunction as ViemAbiFunction,
 } from 'viem';
@@ -35,8 +33,8 @@ type SolidityTypeMap = {
   'address[]': EvmAddress[];
   bytes: Hex;
   'bytes[]': Hex[];
-  bytes32: SubstrateBytes32Address;
-  'bytes32[]': SubstrateBytes32Address[];
+  bytes32: Bytes32;
+  'bytes32[]': Bytes32[];
   uint8: number | bigint;
   'uint8[]': Array<number | bigint>;
   uint32: number | bigint;
@@ -89,74 +87,6 @@ export type FindAbiArgsOf<
 export type ExtractAbiFunctionNames<T extends ViemAbiFunction[]> =
   T[number]['name'];
 
-/**
- * Argument type definitions for each EVM precompile function.
- */
-export type AbiFunctionArgs = {
-  [Precompile.STAKING]: {
-    bond: [BN, Address];
-    bondExtra: [BN];
-    chill: [];
-    currentEra: [];
-    erasTotalStake: [BN];
-    isNominator: [Address];
-    isValidator: [Address];
-    maxNominatorCount: [];
-    maxValidatorCount: [];
-    minActiveStake: [];
-    minNominatorBond: [];
-    minValidatorBond: [];
-    nominate: [Address[]];
-    payoutStakers: [Address, number];
-    rebond: [BN];
-    setController: [];
-    setPayee: [number];
-    unbond: [BN];
-    validatorCount: [];
-    withdrawUnbonded: [number];
-  };
-
-  [Precompile.VESTING]: {
-    vest: [];
-  };
-
-  [Precompile.BATCH]: {
-    batchAll: [Address[], BN[], string[], BN[]];
-    batchSome: [Address[], BN[], string[], BN[]];
-    batchSomeUntilFailure: [Address[], BN[], string[], BN[]];
-  };
-
-  [Precompile.BALANCES_ERC20]: {
-    transfer: [Address, BN];
-  };
-
-  [Precompile.LST]: {
-    join: [BN, BN];
-    bondExtra: [BN, number, BN];
-    unbond: [SubstrateBytes32Address, BN, BN];
-    poolWithdrawUnbonded: [BN, number];
-    withdrawUnbonded: [SubstrateBytes32Address, BN, number];
-    create: [
-      BN,
-      SubstrateBytes32Address,
-      SubstrateBytes32Address,
-      SubstrateBytes32Address,
-      string,
-      string,
-    ];
-    nominate: [BN, SubstrateBytes32Address[]];
-    setState: [BN, number];
-    setMetadata: [BN, string];
-    setConfigs: [BN, BN, number, number];
-    updateRoles: [
-      BN,
-      SubstrateBytes32Address,
-      SubstrateBytes32Address,
-      SubstrateBytes32Address,
-    ];
-  };
-};
-
 // See https://github.com/webb-tools/tangle/tree/main/precompiles for more details.
 export enum PrecompileAddress {
   STAKING = '0x0000000000000000000000000000000000000800',
@@ -164,7 +94,7 @@ export enum PrecompileAddress {
   BATCH = '0x0000000000000000000000000000000000000808',
   BALANCES_ERC20 = '0x0000000000000000000000000000000000000802',
   LST = '0x0000000000000000000000000000000000000824',
-  RESTAKING = '0x',
+  RESTAKING = '0x0000000000000000000000000000000000000822',
 }
 
 export const getPrecompileAddress = (

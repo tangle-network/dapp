@@ -1,9 +1,9 @@
 import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
 import {
   AnyAddress,
-  SubstrateBytes32Address,
+  Bytes32,
 } from '@webb-tools/webb-ui-components/types/address';
-import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
+import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
 import { useCallback } from 'react';
 
 import { TxName } from '../../../constants';
@@ -23,7 +23,7 @@ export type Context = {
 // The precompile logic will interpret the 32-byte zero address as a no-op.
 const PRECOMPILE_NOOP_ADDRESS =
   // TODO: Instead of casting, use an assertion.
-  '0x0000000000000000000000000000000000000000000000000000000000000000' as SubstrateBytes32Address;
+  '0x0000000000000000000000000000000000000000000000000000000000000000' as Bytes32;
 
 const useLsUpdateRolesTx = () => {
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
@@ -71,17 +71,17 @@ const useLsUpdateRolesTx = () => {
     const rootEvmAddress32 =
       context.rootAddress === undefined
         ? PRECOMPILE_NOOP_ADDRESS
-        : toSubstrateBytes32Address(context.rootAddress);
+        : convertAddressToBytes32(context.rootAddress);
 
     const nominatorEvmAddress32 =
       context.nominatorAddress === undefined
         ? PRECOMPILE_NOOP_ADDRESS
-        : toSubstrateBytes32Address(context.nominatorAddress);
+        : convertAddressToBytes32(context.nominatorAddress);
 
     const bouncerEvmAddress32 =
       context.bouncerAddress === undefined
         ? PRECOMPILE_NOOP_ADDRESS
-        : toSubstrateBytes32Address(context.bouncerAddress);
+        : convertAddressToBytes32(context.bouncerAddress);
 
     return {
       functionName: 'updateRoles',
