@@ -17,7 +17,7 @@ import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';
 import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';
 import STAKING_PRECOMPILE_ABI from '../../abi/staking';
-import assertBytes32 from '@webb-tools/webb-ui-components/utils/assertBytes32';
+import { assertBytes32 } from '@webb-tools/webb-ui-components';
 
 export type NominationOptionsContext = {
   bondAmount: BN;

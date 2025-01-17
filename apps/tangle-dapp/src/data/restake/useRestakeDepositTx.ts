@@ -1,7 +1,6 @@
 import RESTAKING_PRECOMPILE_ABI from '../../abi/restaking';
 import { TxName } from '../../constants';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
-import { RestakeAssetId } from '../../../../../libs/tangle-shared-ui/src/utils/createRestakeAssetId';
 import { BN } from '@polkadot/util';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { useCallback } from 'react';
@@ -11,6 +10,7 @@ import {
   ZERO_ADDRESS,
 } from '../../constants/evmPrecompiles';
 import { isEvmAddress } from '@webb-tools/webb-ui-components';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 
 type Context = {
   assetId: RestakeAssetId;

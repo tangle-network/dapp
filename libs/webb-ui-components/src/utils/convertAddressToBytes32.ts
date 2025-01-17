@@ -4,7 +4,7 @@ import { isSubstrateAddress } from './isSubstrateAddress';
 import { u8aToHex } from '@polkadot/util';
 import { isEvmAddress } from './isEvmAddress20';
 import { toSubstrateAddress } from './toSubstrateAddress';
-import assertBytes32 from './assertBytes32';
+import { assertBytes32 } from '.';
 
 /**
  * Certain precompile functions require `bytes32` addresses instead
