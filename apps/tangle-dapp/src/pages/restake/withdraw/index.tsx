@@ -1,5 +1,4 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
-import { TxEvent } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
@@ -22,15 +21,10 @@ import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { formatUnits, parseUnits } from 'viem';
+import { formatUnits } from 'viem';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import { type ScheduleWithdrawContext } from '../../../data/restake/RestakeApi/base';
-import useRestakeApi from '../../../data/restake/useRestakeApi';
-import type { UseRestakeTxEventHandlersWithNotiProps } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
-import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
-import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import type { WithdrawFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
@@ -46,6 +40,11 @@ import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
 import WithdrawModal from '../../../containers/restaking/WithdrawModal';
 import WithdrawRequestTable from '../../../containers/restaking/WithdrawRequestTable';
+import useRestakeWithdrawTx from '../../../data/restake/useRestakeWithdrawTx';
+import { TxStatus } from '../../../hooks/useSubstrateTx';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import parseChainUnits from '../../../utils/parseChainUnits';
+import { BN } from '@polkadot/util';
 
 const RestakeWithdrawForm: FC = () => {
   const {
@@ -62,7 +61,7 @@ const RestakeWithdrawForm: FC = () => {
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
   const { activeChain } = useWebContext();
-  const { assetMap } = useRestakeContext();
+  const { assetMetadataMap } = useRestakeContext();
 
   const {
     status: isWithdrawModalOpen,
@@ -107,12 +106,12 @@ const RestakeWithdrawForm: FC = () => {
   }, [delegatorInfo?.withdrawRequests]);
 
   const selectedAsset = useMemo(() => {
-    if (!selectedAssetId || !assetMap[selectedAssetId]) {
+    if (!selectedAssetId || !assetMetadataMap[selectedAssetId]) {
       return null;
     }
 
-    return assetMap[selectedAssetId];
-  }, [assetMap, selectedAssetId]);
+    return assetMetadataMap[selectedAssetId];
+  }, [assetMetadataMap, selectedAssetId]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(
     () => {
@@ -123,12 +122,12 @@ const RestakeWithdrawForm: FC = () => {
       );
 
       if (!depositedAsset) return {};
-      if (!assetMap[depositedAsset[0]]) return {};
+      if (!assetMetadataMap[depositedAsset[0]]) return {};
 
       const assetId = depositedAsset[0];
       const maxAmount = depositedAsset[1].amount;
       const formattedMaxAmount = Number(
-        formatUnits(maxAmount, assetMap[assetId].decimals),
+        formatUnits(maxAmount, assetMetadataMap[assetId].decimals),
       );
 
       return {
@@ -137,7 +136,7 @@ const RestakeWithdrawForm: FC = () => {
       };
     },
     // prettier-ignore
-    [assetMap, delegatorInfo?.deposits, selectedAssetId],
+    [assetMetadataMap, delegatorInfo?.deposits, selectedAssetId],
   );
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
@@ -170,43 +169,25 @@ const RestakeWithdrawForm: FC = () => {
           : undefined;
   }, [errors.assetId, errors.amount, selectedAssetId, amount]);
 
-  const options = useMemo<
-    UseRestakeTxEventHandlersWithNotiProps<ScheduleWithdrawContext>
-  >(() => {
-    return {
-      options: {
-        [TxEvent.SUCCESS]: {
-          secondaryMessage: ({ amount, assetId }, explorerUrl) => (
-            <ViewTxOnExplorer url={explorerUrl}>
-              Successfully scheduled withdraw of{' '}
-              {formatUnits(amount, assetMap[assetId].decimals)}{' '}
-              {assetMap[assetId].symbol}{' '}
-            </ViewTxOnExplorer>
-          ),
-        },
-      },
-      onTxSuccess: () => reset(),
-    };
-  }, [assetMap, reset]);
+  const { execute, status } = useRestakeWithdrawTx();
 
-  const restakeApi = useRestakeApi();
-  const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
+  const isReady = execute !== null && status !== TxStatus.PROCESSING;
 
   const onSubmit = useCallback<SubmitHandler<WithdrawFormFields>>(
-    async ({ amount, assetId }) => {
-      if (!assetId || !isDefined(assetMap[assetId]) || restakeApi === null) {
+    ({ amount, assetId }) => {
+      if (!assetId || !isDefined(assetMetadataMap[assetId]) || !isReady) {
         return;
       }
 
-      const asset = assetMap[assetId];
+      const assetMetadata = assetMetadataMap[assetId];
 
-      await restakeApi.scheduleWithdraw(
-        assetId,
-        parseUnits(amount, asset.decimals),
-        txEventHandlers,
-      );
+      return execute({
+        // TODO: Fix and handle temporary type casts.
+        assetId: assetId as RestakeAssetId,
+        amount: parseChainUnits(amount, assetMetadata.decimals) as BN,
+      });
     },
-    [assetMap, restakeApi, txEventHandlers],
+    [assetMetadataMap, execute, isReady],
   );
 
   return (

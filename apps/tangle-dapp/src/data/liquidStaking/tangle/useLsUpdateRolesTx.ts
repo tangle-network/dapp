@@ -3,7 +3,7 @@ import {
   AnyAddress,
   Bytes32,
 } from '@webb-tools/webb-ui-components/types/address';
-import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
+import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/convertAddressToBytes32';
 import { useCallback } from 'react';
 
 import { TxName } from '../../../constants';

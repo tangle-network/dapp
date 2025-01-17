@@ -1,5 +1,5 @@
 import useIsMountedRef from '@webb-tools/webb-ui-components/hooks/useIsMountedRef';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ensureError from '../utils/ensureError';
 
 /**
@@ -42,17 +42,18 @@ function usePromise<T>(factory: () => Promise<T>, fallbackValue: T) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const isMounted = useIsMountedRef();
+  const isSubscribed = useRef(true);
 
-  useEffect(() => {
-    if (!isMounted.current) {
-      return;
-    }
-
+  const refresh = useCallback(() => {
     // The `isMounted` ref checks if the component is mounted globally,
     // while `isSubscribe` flag manages the subscription state for this specific effect.
     // `isMounted` prevents updates after component unmount,
     // `isSubscribed` allows proper cleanup if the effect re-runs before the promise resolves.
-    let isSubscribed = true;
+    if (!isMounted.current) {
+      return;
+    }
+
+    setError(null);
     setIsLoading(true);
 
     factory()
@@ -77,13 +78,18 @@ function usePromise<T>(factory: () => Promise<T>, fallbackValue: T) {
 
         setIsLoading(false);
       });
-
-    return () => {
-      isSubscribed = false;
-    };
   }, [factory, isMounted]);
 
-  return { result, isLoading, error };
+  // Initial fetch.
+  useEffect(() => {
+    refresh();
+
+    return () => {
+      isSubscribed.current = false;
+    };
+  }, [factory, isMounted, refresh]);
+
+  return { result, isLoading, error, refresh };
 }
 
 export default usePromise;

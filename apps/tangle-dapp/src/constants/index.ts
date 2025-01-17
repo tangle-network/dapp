@@ -66,6 +66,10 @@ export enum TxName {
   LS_TANGLE_POOL_CREATE = 'create liquid staking pool',
   LS_TANGLE_POOL_UPDATE_ROLES = 'update pool roles',
   RESTAKE_JOIN_OPERATORS = 'join operators',
+  RESTAKE_DEPOSIT = 'restake deposit',
+  RESTAKE_DELEGATE = 'restake delegate',
+  RESTAKE_UNSTAKE = 'restake undelegate',
+  RESTAKE_WITHDRAW = 'restake withdraw',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

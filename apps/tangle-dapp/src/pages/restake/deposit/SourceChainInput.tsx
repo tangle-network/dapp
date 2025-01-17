@@ -39,8 +39,7 @@ const SourceChainInput = ({
   const sourceTypedChainId = watch('sourceTypedChainId');
   const depositAssetId = watch('depositAssetId');
 
-  const { assetMap, balances } = useRestakeContext();
-
+  const { assetMetadataMap, balances } = useRestakeContext();
   const { minDelegateAmount } = useRestakeConsts();
 
   const asset = useMemo(() => {
@@ -48,8 +47,8 @@ const SourceChainInput = ({
       return null;
     }
 
-    return assetMap[depositAssetId] ?? null;
-  }, [assetMap, depositAssetId]);
+    return assetMetadataMap[depositAssetId] ?? null;
+  }, [assetMetadataMap, depositAssetId]);
 
   const { max, maxFormatted } = useMemo(() => {
     if (asset === null) return {};

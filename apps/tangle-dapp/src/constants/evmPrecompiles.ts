@@ -14,6 +14,7 @@ import VESTING_PRECOMPILE_ABI from '../abi/vesting';
 import BATCH_PRECOMPILE_ABI from '../abi/batch';
 import BALANCES_ERC20_PRECOMPILE_ABI from '../abi/balancesErc20';
 import LST_PRECOMPILE_ABI from '../abi/lst';
+import { assertEvmAddress } from '@webb-tools/webb-ui-components';
 
 export enum Precompile {
   STAKING,
@@ -96,6 +97,10 @@ export enum PrecompileAddress {
   LST = '0x0000000000000000000000000000000000000824',
   RESTAKING = '0x0000000000000000000000000000000000000822',
 }
+
+export const ZERO_ADDRESS = assertEvmAddress(
+  '0x0000000000000000000000000000000000000000',
+);
 
 export const getPrecompileAddress = (
   precompile: Precompile,

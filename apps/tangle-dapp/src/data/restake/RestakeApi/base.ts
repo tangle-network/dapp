@@ -53,14 +53,14 @@ export abstract class RestakeApiBase {
     eventHandlers?: Partial<TxEventHandlers<DepositContext>>,
   ): Promise<Hash | null>;
 
-  abstract stake(
+  abstract delegate(
     operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
     eventHandlers?: Partial<TxEventHandlers<DelegatorStakeContext>>,
   ): Promise<Hash | null>;
 
-  abstract scheduleDelegatorUnstake(
+  abstract scheduleUnstake(
     operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,

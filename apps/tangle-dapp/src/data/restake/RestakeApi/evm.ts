@@ -1,7 +1,7 @@
 import { TxEventHandlers } from '@webb-tools/abstract-api-provider';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
+import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/convertAddressToBytes32';
 import {
   type Abi,
   type Account,
@@ -20,9 +20,11 @@ import {
   writeContract,
 } from 'wagmi/actions';
 
-import { PrecompileAddress } from '../../../constants/evmPrecompiles';
+import {
+  PrecompileAddress,
+  ZERO_ADDRESS,
+} from '../../../constants/evmPrecompiles';
 import createEvmBatchCallArgs from '../../../utils/staking/createEvmBatchCallArgs';
-import restakeAbi from './abi';
 import {
   type CancelDelegatorUnstakeRequestContext,
   type CancelWithdrawRequestContext,
@@ -132,22 +134,26 @@ export default class EvmRestakeApi extends RestakeApiBase {
     const context: DepositContext = { assetId, amount, operatorAccount };
     const assetIdBigInt = BigInt(assetId);
 
+    // No operator was provided, perform a deposit only.
     if (operatorAccount === undefined) {
       return this.sendTransaction(
-        restakeAbi,
+        RESTAKING_PRECOMPILE_ABI,
         MULTI_ASSET_DELEGATION_EVM_ADDRESS,
         'deposit',
-        [assetIdBigInt, amount],
+        // TODO: Add support for restaking EVM assets by passing in the token address. On the runtime, if it is zero (as it is the case right now), it'll just be ignored, and use the custom asset ID instead.
+        [assetIdBigInt, ZERO_ADDRESS, amount, 1],
         context,
         eventHandlers,
       );
-    } else {
+    }
+    // The operator was provided. Batch the deposit and delegation calls.
+    else {
       const batchArgs = createEvmBatchCallArgs([
         {
           callData: encodeFunctionData({
-            abi: restakeAbi,
+            abi: RESTAKING_PRECOMPILE_ABI,
             functionName: 'deposit',
-            args: [assetIdBigInt, amount],
+            args: [assetIdBigInt, ZERO_ADDRESS, amount, 1],
           }),
           gasLimit: 0,
           to: MULTI_ASSET_DELEGATION_EVM_ADDRESS,
@@ -155,12 +161,14 @@ export default class EvmRestakeApi extends RestakeApiBase {
         },
         {
           callData: encodeFunctionData({
-            abi: restakeAbi,
+            abi: RESTAKING_PRECOMPILE_ABI,
             functionName: 'delegate',
             args: [
               convertAddressToBytes32(operatorAccount),
               assetIdBigInt,
+              ZERO_ADDRESS,
               amount,
+              [],
             ],
           }),
           gasLimit: 0,
@@ -180,7 +188,7 @@ export default class EvmRestakeApi extends RestakeApiBase {
     }
   };
 
-  stake = async (
+  delegate = async (
     operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
@@ -193,16 +201,22 @@ export default class EvmRestakeApi extends RestakeApiBase {
     };
 
     return this.sendTransaction(
-      restakeAbi,
+      RESTAKING_PRECOMPILE_ABI,
       MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'delegate',
-      [convertAddressToBytes32(operatorAccount), BigInt(assetId), amount],
+      [
+        convertAddressToBytes32(operatorAccount),
+        BigInt(assetId),
+        ZERO_ADDRESS,
+        amount,
+        [],
+      ],
       context,
       eventHandlers,
     );
   };
 
-  scheduleDelegatorUnstake = async (
+  scheduleUnstake = async (
     operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
@@ -214,11 +228,22 @@ export default class EvmRestakeApi extends RestakeApiBase {
       amount,
     };
 
+    console.debug(
+      'UNSTAKE ARGS',
+      assetId,
+      convertAddressToBytes32(operatorAccount),
+    );
+
     return this.sendTransaction(
-      restakeAbi,
+      RESTAKING_PRECOMPILE_ABI,
       MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'scheduleDelegatorUnstake',
-      [convertAddressToBytes32(operatorAccount), BigInt(assetId), amount],
+      [
+        convertAddressToBytes32(operatorAccount),
+        BigInt(assetId),
+        ZERO_ADDRESS,
+        amount,
+      ],
       context,
       eventHandlers,
     );
@@ -232,7 +257,7 @@ export default class EvmRestakeApi extends RestakeApiBase {
     const context: ExecuteAllDelegatorUnstakeRequestContext = {};
 
     return this.sendTransaction(
-      restakeAbi,
+      RESTAKING_PRECOMPILE_ABI,
       MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'executeDelegatorUnstake',
       [],
@@ -257,6 +282,7 @@ export default class EvmRestakeApi extends RestakeApiBase {
           args: [
             convertAddressToBytes32(operatorAccount),
             BigInt(assetId),
+            ZERO_ADDRESS,
             amount,
           ],
         }),
@@ -284,10 +310,10 @@ export default class EvmRestakeApi extends RestakeApiBase {
     const context: ScheduleWithdrawContext = { assetId, amount };
 
     return this.sendTransaction(
-      restakeAbi,
+      RESTAKING_PRECOMPILE_ABI,
       MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'scheduleWithdraw',
-      [BigInt(assetId), amount],
+      [BigInt(assetId), ZERO_ADDRESS, amount],
       context,
       eventHandlers,
     );
@@ -299,7 +325,7 @@ export default class EvmRestakeApi extends RestakeApiBase {
     const context: ExecuteAllWithdrawRequestContext = {};
 
     return this.sendTransaction(
-      restakeAbi,
+      RESTAKING_PRECOMPILE_ABI,
       MULTI_ASSET_DELEGATION_EVM_ADDRESS,
       'executeWithdraw',
       [],
@@ -317,9 +343,9 @@ export default class EvmRestakeApi extends RestakeApiBase {
     const batchArgs = createEvmBatchCallArgs(
       withdrawRequests.map(({ amount, assetId }) => ({
         callData: encodeFunctionData({
-          abi: restakeAbi,
+          abi: RESTAKING_PRECOMPILE_ABI,
           functionName: 'cancelWithdraw',
-          args: [BigInt(assetId), amount],
+          args: [BigInt(assetId), ZERO_ADDRESS, amount],
         }),
         gasLimit: 0,
         to: MULTI_ASSET_DELEGATION_EVM_ADDRESS,

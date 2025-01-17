@@ -17,35 +17,28 @@ type Context = {
   amount: BN;
 };
 
-const useRestakeDepositTx = () => {
+const useRestakeWithdrawTx = () => {
   const evmTxFactory: EvmTxFactory<
     typeof RESTAKING_PRECOMPILE_ABI,
-    'deposit',
+    'scheduleWithdraw',
     Context
   > = useCallback(({ assetId, amount }) => {
-    const assetIdBigInt = isEvmAddress(assetId) ? 0 : BigInt(assetId);
+    const customAssetId = isEvmAddress(assetId) ? 0 : BigInt(assetId);
     const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
 
     return {
-      functionName: 'deposit',
-      // TODO: Lock multiplier.
-      arguments: [assetIdBigInt, tokenAddress, BigInt(amount.toString()), 0],
+      functionName: 'scheduleWithdraw',
+      arguments: [customAssetId, tokenAddress, BigInt(amount.toString())],
     };
   }, []);
 
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     (api, _activeSubstrateAddress, { assetId, amount }) => {
-      const assetIdObj = isEvmAddress(assetId)
+      const assetIdEnum = isEvmAddress(assetId)
         ? { Erc20: assetId }
         : { Custom: new BN(assetId) };
 
-      // TODO: Evm address & lock multiplier.
-      return api.tx.multiAssetDelegation.deposit(
-        assetIdObj,
-        amount,
-        null,
-        null,
-      );
+      return api.tx.multiAssetDelegation.scheduleWithdraw(assetIdEnum, amount);
     },
     [],
   );
@@ -53,10 +46,10 @@ const useRestakeDepositTx = () => {
   return useAgnosticTx({
     abi: RESTAKING_PRECOMPILE_ABI,
     precompileAddress: PrecompileAddress.RESTAKING,
-    name: TxName.RESTAKE_DEPOSIT,
+    name: TxName.RESTAKE_WITHDRAW,
     evmTxFactory,
     substrateTxFactory,
   });
 };
 
-export default useRestakeDepositTx;
+export default useRestakeWithdrawTx;

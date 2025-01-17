@@ -113,7 +113,7 @@ const UnstakeRequestTable: FC<Props> = ({
   unstakeRequests,
   operatorIdentities,
 }) => {
-  const { assetMap } = useRestakeContext();
+  const { assetMetadataMap } = useRestakeContext();
   const { delegationBondLessDelay } = useRestakeConsts();
   const { result: currentRound } = useRestakeCurrentRound();
 
@@ -126,7 +126,7 @@ const UnstakeRequestTable: FC<Props> = ({
     return unstakeRequests.flatMap(
       ({ assetId, amount, requestedRound, operatorAccountId }) => {
         const metadata: RestakeVaultAssetMetadata | undefined =
-          assetMap[assetId];
+          assetMetadataMap[assetId];
 
         // Ignore entries without metadata.
         if (!metadata) {
@@ -158,7 +158,7 @@ const UnstakeRequestTable: FC<Props> = ({
       },
     );
   }, [
-    assetMap,
+    assetMetadataMap,
     currentRound,
     delegationBondLessDelay,
     operatorIdentities,

@@ -10,41 +10,48 @@ import {
   PrecompileAddress,
   ZERO_ADDRESS,
 } from '../../constants/evmPrecompiles';
-import { isEvmAddress } from '@webb-tools/webb-ui-components';
+import {
+  convertAddressToBytes32,
+  isEvmAddress,
+} from '@webb-tools/webb-ui-components';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 type Context = {
+  operatorAddress: SubstrateAddress;
   assetId: RestakeAssetId;
   amount: BN;
 };
 
-const useRestakeDepositTx = () => {
+const useRestakeUnstakeTx = () => {
   const evmTxFactory: EvmTxFactory<
     typeof RESTAKING_PRECOMPILE_ABI,
-    'deposit',
+    'scheduleDelegatorUnstake',
     Context
-  > = useCallback(({ assetId, amount }) => {
-    const assetIdBigInt = isEvmAddress(assetId) ? 0 : BigInt(assetId);
+  > = useCallback(({ assetId, amount, operatorAddress }) => {
+    const customAssetId = isEvmAddress(assetId) ? 0 : BigInt(assetId);
     const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
 
     return {
-      functionName: 'deposit',
-      // TODO: Lock multiplier.
-      arguments: [assetIdBigInt, tokenAddress, BigInt(amount.toString()), 0],
+      functionName: 'scheduleDelegatorUnstake',
+      arguments: [
+        convertAddressToBytes32(operatorAddress),
+        customAssetId,
+        tokenAddress,
+        BigInt(amount.toString()),
+      ],
     };
   }, []);
 
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
-    (api, _activeSubstrateAddress, { assetId, amount }) => {
-      const assetIdObj = isEvmAddress(assetId)
+    (api, _activeSubstrateAddress, { operatorAddress, assetId, amount }) => {
+      const assetIdEnum = isEvmAddress(assetId)
         ? { Erc20: assetId }
         : { Custom: new BN(assetId) };
 
-      // TODO: Evm address & lock multiplier.
-      return api.tx.multiAssetDelegation.deposit(
-        assetIdObj,
+      return api.tx.multiAssetDelegation.scheduleDelegatorUnstake(
+        operatorAddress,
+        assetIdEnum,
         amount,
-        null,
-        null,
       );
     },
     [],
@@ -53,10 +60,10 @@ const useRestakeDepositTx = () => {
   return useAgnosticTx({
     abi: RESTAKING_PRECOMPILE_ABI,
     precompileAddress: PrecompileAddress.RESTAKING,
-    name: TxName.RESTAKE_DEPOSIT,
+    name: TxName.RESTAKE_UNSTAKE,
     evmTxFactory,
     substrateTxFactory,
   });
 };
 
-export default useRestakeDepositTx;
+export default useRestakeUnstakeTx;

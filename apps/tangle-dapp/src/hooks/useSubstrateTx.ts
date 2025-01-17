@@ -80,7 +80,7 @@ function useSubstrateTx<Context = void>(
 
       assert(
         injector !== null,
-        'Should not be able to execute a Substrate transaction without an injector',
+        'An injector should be available to sign and send the transaction',
       );
 
       const api = await getApiPromise(overrideRpcEndpoint ?? rpcEndpoint);

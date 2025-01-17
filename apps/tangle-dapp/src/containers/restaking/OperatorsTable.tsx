@@ -29,7 +29,7 @@ const OperatorsTable: FC<Props> = ({
   operatorTVL,
 }) => {
   const [globalFilter, setGlobalFilter] = useState('');
-  const { assetMap } = useRestakeContext();
+  const { assetMetadataMap } = useRestakeContext();
 
   const { result: identities } = useIdentities(
     useMemo(() => Object.keys(operatorMap), [operatorMap]),
@@ -51,11 +51,20 @@ const OperatorsTable: FC<Props> = ({
             identityName: identities[address]?.name ?? undefined,
             restakersCount,
             tvlInUsd,
-            vaultTokens: delegationsToVaultTokens(delegations, assetMap),
+            vaultTokens: delegationsToVaultTokens(
+              delegations,
+              assetMetadataMap,
+            ),
           } satisfies RestakeOperator;
         },
       ),
-    [assetMap, identities, operatorConcentration, operatorMap, operatorTVL],
+    [
+      assetMetadataMap,
+      identities,
+      operatorConcentration,
+      operatorMap,
+      operatorTVL,
+    ],
   );
 
   return (

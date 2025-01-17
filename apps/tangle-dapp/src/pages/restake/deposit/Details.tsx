@@ -14,7 +14,7 @@ type Props = {
 };
 
 const Details: FC<Props> = ({ watch }) => {
-  const { assetMap } = useRestakeContext();
+  const { assetMetadataMap } = useRestakeContext();
   const { bondDuration } = useRestakeConsts();
   const rewardConfig = useRestakeRewardConfig();
 
@@ -25,14 +25,14 @@ const Details: FC<Props> = ({ watch }) => {
       return null;
     }
 
-    const asset = assetMap[assetId];
+    const asset = assetMetadataMap[assetId];
 
     if (asset === undefined || asset.vaultId === null) {
       return null;
     }
 
     return rewardConfig.get(asset.vaultId)?.apy ?? null;
-  }, [assetId, assetMap, rewardConfig]);
+  }, [assetId, assetMetadataMap, rewardConfig]);
 
   return (
     <DetailsContainer>

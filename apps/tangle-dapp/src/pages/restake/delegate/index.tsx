@@ -1,4 +1,3 @@
-import { TxEvent } from '@webb-tools/abstract-api-provider';
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
@@ -21,16 +20,9 @@ import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToN
 import keys from 'lodash/keys';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { formatUnits, parseUnits } from 'viem';
-import AvatarWithText from '../../../components/AvatarWithText';
+import { formatUnits } from 'viem';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
-import { DelegatorStakeContext } from '../../../data/restake/RestakeApi/base';
-import useRestakeApi from '../../../data/restake/useRestakeApi';
-import useRestakeTxEventHandlersWithNoti, {
-  type UseRestakeTxEventHandlersWithNotiProps,
-} from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
-import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
@@ -45,6 +37,11 @@ import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Details from './Details';
 import StakeInput from './StakeInput';
+import useRestakeDelegateTx from '../../../data/restake/useRestakeDelegateTx';
+import { TxStatus } from '../../../hooks/useSubstrateTx';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import parseChainUnits from '../../../utils/parseChainUnits';
+import { BN } from '@polkadot/util';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -58,7 +55,6 @@ const RestakeDelegateForm: FC = () => {
     setValue: setFormValue,
     handleSubmit,
     watch,
-    reset,
     formState: { errors, isValid, isSubmitting },
   } = useForm<DelegationFormFields>({
     mode: 'onBlur',
@@ -85,8 +81,8 @@ const RestakeDelegateForm: FC = () => {
     register('operatorAccountId', { required: 'Operator is required' });
   }, [register]);
 
-  const { assetMap } = useRestakeContext();
-  const restakeApi = useRestakeApi();
+  const { assetMetadataMap } = useRestakeContext();
+  const { execute, status } = useRestakeDelegateTx();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
 
@@ -164,9 +160,9 @@ const RestakeDelegateForm: FC = () => {
     }
 
     return Object.entries(delegatorInfo.deposits)
-      .filter(([assetId]) => Object.hasOwn(assetMap, assetId))
+      .filter(([assetId]) => Object.hasOwn(assetMetadataMap, assetId))
       .map(([assetId, { amount }]) => {
-        const metadata = assetMap[assetId];
+        const metadata = assetMetadataMap[assetId];
 
         return {
           id: metadata.id,
@@ -183,7 +179,7 @@ const RestakeDelegateForm: FC = () => {
           },
         };
       });
-  }, [assetMap, delegatorInfo]);
+  }, [assetMetadataMap, delegatorInfo]);
 
   const handleAssetChange = useCallback(
     (asset: TokenListCardProps['selectTokens'][number]) => {
@@ -203,52 +199,24 @@ const RestakeDelegateForm: FC = () => {
     [closeChainModal, switchChain],
   );
 
-  const options = useMemo<
-    UseRestakeTxEventHandlersWithNotiProps<DelegatorStakeContext>
-  >(() => {
-    return {
-      options: {
-        [TxEvent.SUCCESS]: {
-          secondaryMessage: (
-            { amount, assetId, operatorAccount },
-            explorerUrl,
-          ) => (
-            <ViewTxOnExplorer url={explorerUrl}>
-              Successfully delegated{' '}
-              {formatUnits(amount, assetMap[assetId].decimals)}{' '}
-              {assetMap[assetId].symbol} to{' '}
-              <AvatarWithText
-                className="inline-flex"
-                accountAddress={operatorAccount}
-                identityName={operatorIdentities?.[operatorAccount]?.name}
-                overrideAvatarProps={{ size: 'sm' }}
-              />
-            </ViewTxOnExplorer>
-          ),
-        },
-      },
-      onTxSuccess: () => reset(),
-    };
-  }, [assetMap, operatorIdentities, reset]);
-
-  const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
+  const isReady = execute !== null && status !== TxStatus.PROCESSING;
 
   const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>(
-    async ({ amount, assetId, operatorAccountId }) => {
-      if (!assetId || !isDefined(assetMap[assetId]) || restakeApi === null) {
+    ({ amount, assetId, operatorAccountId }) => {
+      if (!assetId || !isDefined(assetMetadataMap[assetId]) || !isReady) {
         return;
       }
 
-      const asset = assetMap[assetId];
+      const assetMetadata = assetMetadataMap[assetId];
 
-      await restakeApi.stake(
-        operatorAccountId,
-        assetId,
-        parseUnits(amount, asset.decimals),
-        txEventHandlers,
-      );
+      return execute({
+        // TODO: Temp forced casts.
+        amount: parseChainUnits(amount, assetMetadata.decimals) as BN,
+        assetId: assetId as RestakeAssetId,
+        operatorAddress: operatorAccountId,
+      });
     },
-    [assetMap, restakeApi, txEventHandlers],
+    [assetMetadataMap, execute, isReady],
   );
 
   const operators = useMemo<RestakeOperator[]>(() => {
@@ -297,7 +265,7 @@ const RestakeDelegateForm: FC = () => {
                 isValid={isValid}
                 openChainModal={openChainModal}
                 watch={watch}
-                isSubmitting={isSubmitting}
+                isSubmitting={isSubmitting || status === TxStatus.PROCESSING}
               />
             </div>
           </div>

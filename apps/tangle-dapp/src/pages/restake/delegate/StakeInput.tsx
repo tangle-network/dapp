@@ -45,12 +45,12 @@ export default function StakeInput({
   const selectedAssetId = watch('assetId');
   const selectedOperatorAccountId = watch('operatorAccountId');
 
-  const { assetMap } = useRestakeContext();
+  const { assetMetadataMap } = useRestakeContext();
   const { minDelegateAmount } = useRestakeConsts();
 
   const selectedAsset = useMemo(
-    () => (selectedAssetId !== null ? assetMap[selectedAssetId] : null),
-    [assetMap, selectedAssetId],
+    () => (selectedAssetId !== null ? assetMetadataMap[selectedAssetId] : null),
+    [assetMetadataMap, selectedAssetId],
   );
 
   const { max, maxFormatted } = useMemo(() => {

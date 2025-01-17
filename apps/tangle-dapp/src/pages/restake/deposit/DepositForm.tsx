@@ -1,4 +1,3 @@
-import { TxEvent } from '@webb-tools/abstract-api-provider';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
@@ -7,7 +6,6 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { TokenIcon } from '@webb-tools/icons';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import { Card, EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
 import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
@@ -26,18 +24,10 @@ import {
   useRef,
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { formatUnits, parseUnits } from 'viem';
-import useRestakeTxEventHandlersWithNoti, {
-  type UseRestakeTxEventHandlersWithNotiProps,
-} from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
-import AvatarWithText from '../../../components/AvatarWithText';
+import { formatUnits } from 'viem';
 import { ChainList } from '../../../components/Lists/ChainList';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import { type DepositContext } from '../../../data/restake/RestakeApi/base';
-import useRestakeApi from '../../../data/restake/useRestakeApi';
-import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
-import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
@@ -48,6 +38,12 @@ import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
 import SourceChainInput from './SourceChainInput';
 import Details from './Details';
+import useRestakeDepositTx from '../../../data/restake/useRestakeDepositTx';
+import { BN } from '@polkadot/util';
+import parseChainUnits from '../../../utils/parseChainUnits';
+import assert from 'assert';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import { TxStatus } from '../../../hooks/useSubstrateTx';
 
 function getDefaultTypedChainId(activeTypedChainId: number | null) {
   return isDefined(activeTypedChainId) &&
@@ -81,14 +77,8 @@ const DepositForm: FC<Props> = (props) => {
     QueryParamKey.RESTAKE_VAULT,
   );
 
-  const { assetMap, assetWithBalances } = useRestakeContext();
-  const { operatorMap } = useRestakeOperatorMap();
-
-  const { result: operatorIdentities } = useIdentities(
-    useMemo(() => Object.keys(operatorMap), [operatorMap]),
-  );
-
-  const restakeActions = useRestakeApi();
+  const { assetMetadataMap, assetWithBalances } = useRestakeContext();
+  const { execute, status } = useRestakeDepositTx();
 
   const setValue = useCallback(
     (...params: Parameters<typeof setFormValue>) => {
@@ -210,46 +200,6 @@ const DepositForm: FC<Props> = (props) => {
     [assetWithBalances],
   );
 
-  const options = useMemo<
-    UseRestakeTxEventHandlersWithNotiProps<DepositContext>
-  >(() => {
-    return {
-      onTxSuccess: () => resetField('amount'),
-      options: {
-        [TxEvent.SUCCESS]: {
-          secondaryMessage: (
-            { amount, assetId, operatorAccount },
-            explorerUrl,
-          ) => {
-            if (!operatorAccount)
-              return (
-                <ViewTxOnExplorer url={explorerUrl}>
-                  {assetMap[assetId] &&
-                    `Successfully deposit ${formatUnits(amount, assetMap[assetId].decimals)} ${assetMap[assetId].symbol}`.trim()}
-                </ViewTxOnExplorer>
-              );
-
-            return (
-              <ViewTxOnExplorer url={explorerUrl}>
-                Successfully deposited and delegated{' '}
-                {formatUnits(amount, assetMap[assetId].decimals)}{' '}
-                {assetMap[assetId].symbol} to{' '}
-                <AvatarWithText
-                  className="inline-flex"
-                  accountAddress={operatorAccount}
-                  identityName={operatorIdentities?.[operatorAccount]?.name}
-                  overrideAvatarProps={{ size: 'sm' }}
-                />
-              </ViewTxOnExplorer>
-            );
-          },
-        },
-      },
-    };
-  }, [assetMap, operatorIdentities, resetField]);
-
-  const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
-
   const handleTokenChange = useCallback(
     (token: TokenListCardProps['selectTokens'][number]) => {
       setValue('depositAssetId', token.id);
@@ -258,26 +208,31 @@ const DepositForm: FC<Props> = (props) => {
     [closeTokenModal, setValue],
   );
 
+  const isReady = execute !== null && status !== TxStatus.PROCESSING;
+
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
     async ({ amount, depositAssetId, operatorAccountId }) => {
       if (
         depositAssetId === null ||
-        assetMap[depositAssetId] === undefined ||
-        restakeActions === null
+        assetMetadataMap[depositAssetId] === undefined ||
+        !isReady
       ) {
         return;
       }
 
-      const asset = assetMap[depositAssetId];
+      const asset = assetMetadataMap[depositAssetId];
+      const amountBn = parseChainUnits(amount, asset.decimals);
 
-      await restakeActions.deposit(
-        depositAssetId,
-        parseUnits(amount, asset.decimals),
-        operatorAccountId,
-        txEventHandlers,
-      );
+      // TODO: Handle this better instead of an assertion.
+      assert(amountBn instanceof BN, 'Failed to parse input amount into a BN');
+
+      execute({
+        amount: amountBn,
+        // TODO: Temporary unsafe cast.
+        assetId: depositAssetId as RestakeAssetId,
+      });
     },
-    [assetMap, restakeActions, txEventHandlers],
+    [assetMetadataMap, execute, isReady],
   );
 
   const sourceChainOptions = useMemo(() => {
@@ -324,7 +279,7 @@ const DepositForm: FC<Props> = (props) => {
               <ActionButton
                 errors={errors}
                 formRef={formRef}
-                isSubmitting={isSubmitting}
+                isSubmitting={isSubmitting || status === TxStatus.PROCESSING}
                 isValid={isValid}
                 watch={watch}
               />

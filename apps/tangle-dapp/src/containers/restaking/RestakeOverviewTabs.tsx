@@ -61,14 +61,14 @@ const RestakeOverviewTabs: FC<Props> = ({
   vaultTVL,
   action,
 }) => {
-  const { assetMap } = useRestakeContext();
+  const { assetMetadataMap } = useRestakeContext();
   const rewardConfig = useRestakeRewardConfig();
 
   // Recalculate vaults data from assetMap
   const vaults = useMemo(() => {
     const vaults: Record<string, VaultUI> = {};
 
-    for (const { vaultId, name, symbol } of Object.values(assetMap)) {
+    for (const { vaultId, name, symbol } of Object.values(assetMetadataMap)) {
       if (vaultId === null) {
         continue;
       } else if (vaults[vaultId] === undefined) {
@@ -93,7 +93,7 @@ const RestakeOverviewTabs: FC<Props> = ({
     }
 
     return vaults;
-  }, [assetMap, rewardConfig, vaultTVL]);
+  }, [assetMetadataMap, rewardConfig, vaultTVL]);
 
   const delegatorTotalRestakedAssets = useMemo(() => {
     if (!delegatorInfo?.delegations) {
@@ -122,7 +122,7 @@ const RestakeOverviewTabs: FC<Props> = ({
       getExpandedRowContent(row) {
         const vaultId = row.original.id;
 
-        const vaultAssets = Object.values(assetMap)
+        const vaultAssets = Object.values(assetMetadataMap)
           .filter((asset) => asset.vaultId === vaultId)
           .map((asset) => {
             const selfStake =
@@ -144,7 +144,7 @@ const RestakeOverviewTabs: FC<Props> = ({
         );
       },
     }),
-    [assetMap, delegatorTVL, delegatorTotalRestakedAssets],
+    [assetMetadataMap, delegatorTVL, delegatorTotalRestakedAssets],
   );
 
   return (

@@ -86,7 +86,7 @@ export default class SubstrateRestakeApi extends RestakeApiBase {
     );
   };
 
-  stake = async (
+  delegate = async (
     operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,
@@ -117,7 +117,7 @@ export default class SubstrateRestakeApi extends RestakeApiBase {
     );
   };
 
-  scheduleDelegatorUnstake = async (
+  scheduleUnstake = async (
     operatorAccount: SubstrateAddress,
     assetId: string,
     amount: bigint,

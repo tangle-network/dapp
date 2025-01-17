@@ -1,5 +1,4 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
-import { TxEvent } from '@webb-tools/abstract-api-provider';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
@@ -21,16 +20,11 @@ import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { formatUnits, parseUnits } from 'viem';
+import { formatUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import { type ScheduleDelegatorUnstakeContext } from '../../../data/restake/RestakeApi/base';
-import useRestakeApi from '../../../data/restake/useRestakeApi';
-import type { UseRestakeTxEventHandlersWithNotiProps } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
-import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
-import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import type { UnstakeFormFields } from '../../../types/restake';
@@ -46,6 +40,11 @@ import useSwitchChain from '../useSwitchChain';
 import SelectOperatorModal from '../../../containers/restaking/SelectOperatorModal';
 import Details from './Details';
 import UnstakeRequestTable from '../../../containers/restaking/UnstakeRequestTable';
+import useRestakeUnstakeTx from '../../../data/restake/useRestakeUnstakeTx';
+import { TxStatus } from '../../../hooks/useSubstrateTx';
+import parseChainUnits from '../../../utils/parseChainUnits';
+import { BN } from '@polkadot/util';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 
 const RestakeUnstakeForm: FC = () => {
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
@@ -66,7 +65,7 @@ const RestakeUnstakeForm: FC = () => {
 
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
-  const { assetMap } = useRestakeContext();
+  const { assetMetadataMap } = useRestakeContext();
 
   const {
     status: isOperatorModalOpen,
@@ -116,12 +115,12 @@ const RestakeUnstakeForm: FC = () => {
   }, [delegatorInfo?.unstakeRequests]);
 
   const selectedAsset = useMemo(() => {
-    if (!selectedAssetId || !assetMap[selectedAssetId]) {
+    if (!selectedAssetId || !assetMetadataMap[selectedAssetId]) {
       return null;
     }
 
-    return assetMap[selectedAssetId];
-  }, [assetMap, selectedAssetId]);
+    return assetMetadataMap[selectedAssetId];
+  }, [assetMetadataMap, selectedAssetId]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
     if (!Array.isArray(delegatorInfo?.delegations)) {
@@ -134,14 +133,17 @@ const RestakeUnstakeForm: FC = () => {
         item.operatorAccountId === selectedOperatorAccountId,
     );
 
-    if (!selectedDelegation || !assetMap[selectedDelegation.assetId]) {
+    if (!selectedDelegation || !assetMetadataMap[selectedDelegation.assetId]) {
       return {};
     }
 
     const maxAmount = selectedDelegation.amountBonded;
 
     const formattedMaxAmount = Number(
-      formatUnits(maxAmount, assetMap[selectedDelegation.assetId].decimals),
+      formatUnits(
+        maxAmount,
+        assetMetadataMap[selectedDelegation.assetId].decimals,
+      ),
     );
 
     return {
@@ -150,7 +152,7 @@ const RestakeUnstakeForm: FC = () => {
     };
   }, [
     delegatorInfo?.delegations,
-    assetMap,
+    assetMetadataMap,
     selectedAssetId,
     selectedOperatorAccountId,
   ]);
@@ -175,7 +177,7 @@ const RestakeUnstakeForm: FC = () => {
     };
   }, [maxAmount, register, selectedAsset?.decimals, selectedAsset?.symbol]);
 
-  const displayError = useMemo(() => {
+  const displayError = (() => {
     return errors.operatorAccountId !== undefined || !selectedOperatorAccountId
       ? 'Select an operator'
       : errors.assetId !== undefined || !selectedAssetId
@@ -185,62 +187,28 @@ const RestakeUnstakeForm: FC = () => {
           : errors.amount !== undefined
             ? 'Invalid amount'
             : undefined;
-  }, [
-    errors.operatorAccountId,
-    errors.assetId,
-    errors.amount,
-    selectedOperatorAccountId,
-    selectedAssetId,
-    amount,
-  ]);
+  })();
 
-  const options = useMemo<
-    UseRestakeTxEventHandlersWithNotiProps<ScheduleDelegatorUnstakeContext>
-  >(() => {
-    return {
-      options: {
-        [TxEvent.SUCCESS]: {
-          secondaryMessage: (
-            { amount, assetId, operatorAccount },
-            explorerUrl,
-          ) => (
-            <ViewTxOnExplorer url={explorerUrl}>
-              Successfully scheduled unstake of{' '}
-              {formatUnits(amount, assetMap[assetId].decimals)}{' '}
-              {assetMap[assetId].symbol} from{' '}
-              <AvatarWithText
-                className="inline-flex"
-                accountAddress={operatorAccount}
-                identityName={operatorIdentities?.[operatorAccount]?.name}
-                overrideAvatarProps={{ size: 'sm' }}
-              />
-            </ViewTxOnExplorer>
-          ),
-        },
-      },
-      onTxSuccess: () => reset(),
-    };
-  }, [assetMap, operatorIdentities, reset]);
+  const { execute, status } = useRestakeUnstakeTx();
 
-  const restakeApi = useRestakeApi();
-  const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
+  const isReady = execute !== null && status !== TxStatus.PROCESSING;
 
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
     async ({ amount, assetId, operatorAccountId }) => {
-      if (!assetId || !isDefined(assetMap[assetId]) || restakeApi === null) {
+      if (!assetId || !isDefined(assetMetadataMap[assetId]) || !isReady) {
         return;
       }
 
-      const asset = assetMap[assetId];
+      const assetMetadata = assetMetadataMap[assetId];
 
-      await restakeApi.scheduleDelegatorUnstake(
-        operatorAccountId,
-        assetId,
-        parseUnits(amount, asset.decimals),
-        txEventHandlers,
-      );
+      return execute({
+        // TODO: Fix temporary type casts.
+        amount: parseChainUnits(amount, assetMetadata.decimals) as BN,
+        assetId: assetId as RestakeAssetId,
+        operatorAddress: operatorAccountId,
+      });
     },
-    [assetMap, restakeApi, txEventHandlers],
+    [assetMetadataMap, execute, isReady],
   );
 
   return (
@@ -334,10 +302,14 @@ const RestakeUnstakeForm: FC = () => {
 
                 return (
                   <Button
-                    isDisabled={!isValid || isDefined(displayError)}
+                    isDisabled={!isValid || isDefined(displayError) || !isReady}
                     type="submit"
                     isFullWidth
-                    isLoading={isSubmitting || isLoading}
+                    isLoading={
+                      isSubmitting ||
+                      isLoading ||
+                      status === TxStatus.PROCESSING
+                    }
                     loadingText={loadingText}
                   >
                     {displayError ?? 'Schedule Unstake'}

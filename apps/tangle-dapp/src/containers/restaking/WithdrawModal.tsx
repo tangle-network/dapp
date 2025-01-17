@@ -27,7 +27,7 @@ const WithdrawModal = ({
   setIsOpen,
   onItemSelected,
 }: Props) => {
-  const { assetMap } = useRestakeContext();
+  const { assetMetadataMap } = useRestakeContext();
 
   // Aggregate the delegations based on the operator account id and asset id
   const deposits = useMemo(() => {
@@ -54,7 +54,7 @@ const WithdrawModal = ({
       titleWhenEmpty="No Assets Found"
       descriptionWhenEmpty="This account has no assets available to withdraw."
       onSelect={(deposit) => {
-        const asset = assetMap[deposit.assetId];
+        const asset = assetMetadataMap[deposit.assetId];
         const decimals = asset?.decimals || DEFAULT_DECIMALS;
         const fmtAmount = formatUnits(deposit.amount, decimals);
 
@@ -64,12 +64,12 @@ const WithdrawModal = ({
         });
       }}
       filterItem={({ assetId }, query) => {
-        const asset = assetMap[assetId];
+        const asset = assetMetadataMap[assetId];
 
         return filterBy(query, [asset?.name, asset?.id, asset?.vaultId]);
       }}
       renderItem={({ amount, assetId }) => {
-        const metadata = assetMap[assetId];
+        const metadata = assetMetadataMap[assetId];
 
         if (metadata === undefined) {
           return null;

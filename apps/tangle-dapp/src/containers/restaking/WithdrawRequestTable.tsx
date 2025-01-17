@@ -104,7 +104,7 @@ type Props = {
 };
 
 const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
-  const { assetMap } = useRestakeContext();
+  const { assetMetadataMap } = useRestakeContext();
   const { leaveDelegatorsDelay } = useRestakeConsts();
   const { result: currentRound } = useRestakeCurrentRound();
 
@@ -115,7 +115,8 @@ const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
     }
 
     return withdrawRequests.flatMap(({ assetId, amount, requestedRound }) => {
-      const metadata: RestakeVaultAssetMetadata | undefined = assetMap[assetId];
+      const metadata: RestakeVaultAssetMetadata | undefined =
+        assetMetadataMap[assetId];
 
       // Ignore requests if the metadata is not available.
       if (metadata === undefined) {
@@ -142,7 +143,7 @@ const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
         sessionsRemaining,
       } satisfies WithdrawRequestTableRow;
     });
-  }, [assetMap, currentRound, leaveDelegatorsDelay, withdrawRequests]);
+  }, [assetMetadataMap, currentRound, leaveDelegatorsDelay, withdrawRequests]);
 
   const table = useReactTable(
     useMemo<TableOptions<WithdrawRequestTableRow>>(
