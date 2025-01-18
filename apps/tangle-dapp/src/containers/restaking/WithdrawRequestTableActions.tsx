@@ -1,87 +1,59 @@
-import { TxEvent } from '@webb-tools/abstract-api-provider';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { useCallback, useMemo, useState } from 'react';
-import {
-  type CancelWithdrawRequestContext,
-  type ExecuteAllWithdrawRequestContext,
-} from '../../data/restake/RestakeApi/base';
-import useRestakeApi from '../../data/restake/useRestakeApi';
-import useRestakeTxEventHandlersWithNoti from '../../data/restake/useRestakeTxEventHandlersWithNoti';
+import { FC, useCallback, useMemo } from 'react';
 import { isScheduledRequestReady } from '../../pages/restake/utils';
 import { WithdrawRequestTableRow } from './WithdrawRequestTable';
+import useRestakeExecuteWithdrawRequestsTx from '../../data/restake/useRestakeExecuteWithdrawRequestsTx';
+import { TxStatus } from '../../hooks/useSubstrateTx';
+import useRestakeCancelWithdrawRequestsTx from '../../data/restake/useRestakeCancelWithdrawRequestsTx';
+import { BN } from '@polkadot/util';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 
 type Props = {
   allRequests: WithdrawRequestTableRow[];
   selectedRequests: WithdrawRequestTableRow[];
 };
 
-const WithdrawRequestTableActions = ({
+const WithdrawRequestTableActions: FC<Props> = ({
   allRequests,
   selectedRequests,
-}: Props) => {
-  const [isCanceling, setIsCanceling] = useState(false);
-  const [isExecuting, setIsExecuting] = useState(false);
+}) => {
+  const { execute: executeWithdraw, status: withdrawStatus } =
+    useRestakeExecuteWithdrawRequestsTx();
 
-  const cancelOptions =
-    useRestakeTxEventHandlersWithNoti<CancelWithdrawRequestContext>(
-      useMemo(
-        () =>
-          ({
-            options: {
-              [TxEvent.SUCCESS]: {
-                message: 'Successfully canceled withdraw request!',
-              },
-            },
-          }) satisfies Parameters<typeof useRestakeTxEventHandlersWithNoti>[0],
-        [],
-      ),
-    );
+  const { execute: executeCancel, status: cancelStatus } =
+    useRestakeCancelWithdrawRequestsTx();
 
-  const executeOptions =
-    useRestakeTxEventHandlersWithNoti<ExecuteAllWithdrawRequestContext>(
-      useMemo(
-        () =>
-          ({
-            options: {
-              [TxEvent.SUCCESS]: {
-                message: 'Successfully executed withdraw request!',
-              },
-            },
-          }) satisfies Parameters<typeof useRestakeTxEventHandlersWithNoti>[0],
-        [],
-      ),
-    );
+  const isReadyToWithdraw =
+    executeWithdraw !== null && withdrawStatus !== TxStatus.PROCESSING;
 
-  const restakeApi = useRestakeApi();
+  const isReadyToCancel =
+    executeCancel !== null && cancelStatus !== TxStatus.PROCESSING;
 
   const handleCancelWithdraw = useCallback(async () => {
-    if (restakeApi === null) {
+    if (!isReadyToCancel) {
       return;
     }
-
-    setIsCanceling(true);
 
     const requests = selectedRequests.map(({ amountRaw, assetId }) => {
       return {
-        amount: amountRaw,
-        assetId,
-      } satisfies CancelWithdrawRequestContext['withdrawRequests'][number];
+        amount: new BN(amountRaw.toString()),
+        // TODO: Fix temp. force cast.
+        assetId: assetId as RestakeAssetId,
+      };
     });
 
-    await restakeApi.cancelWithdraw(requests, cancelOptions);
+    return executeCancel({
+      withdrawRequests: requests,
+    });
+  }, [isReadyToCancel, selectedRequests, executeCancel]);
 
-    setIsCanceling(false);
-  }, [restakeApi, selectedRequests, cancelOptions]);
-
-  const handleExecuteWithdraw = useCallback(async () => {
-    if (restakeApi === null) {
+  const handleExecuteWithdraw = useCallback(() => {
+    if (!isReadyToWithdraw) {
       return;
     }
 
-    setIsExecuting(true);
-    await restakeApi.executeWithdraw(executeOptions);
-    setIsExecuting(false);
-  }, [restakeApi, executeOptions]);
+    return executeWithdraw();
+  }, [isReadyToWithdraw, executeWithdraw]);
 
   const canCancelWithdraw = selectedRequests.length > 0;
 
@@ -90,8 +62,8 @@ const WithdrawRequestTableActions = ({
       return false;
     }
 
-    return allRequests.some(({ sessionsRemaining: timeRemaining }) => {
-      return isScheduledRequestReady(timeRemaining);
+    return allRequests.some(({ sessionsRemaining }) => {
+      return isScheduledRequestReady(sessionsRemaining);
     });
   }, [allRequests]);
 
@@ -99,8 +71,8 @@ const WithdrawRequestTableActions = ({
     <div className="flex items-center gap-3">
       <Button
         className="flex-1"
-        isLoading={isCanceling}
-        isDisabled={!canCancelWithdraw || isExecuting}
+        isLoading={cancelStatus === TxStatus.PROCESSING}
+        isDisabled={!canCancelWithdraw || !isReadyToCancel}
         isFullWidth
         onClick={handleCancelWithdraw}
         variant="secondary"
@@ -110,8 +82,8 @@ const WithdrawRequestTableActions = ({
 
       <Button
         className="flex-1"
-        isLoading={isExecuting}
-        isDisabled={!canExecuteWithdraw || isCanceling}
+        isLoading={withdrawStatus === TxStatus.PROCESSING}
+        isDisabled={!canExecuteWithdraw || !isReadyToWithdraw}
         isFullWidth
         onClick={handleExecuteWithdraw}
       >

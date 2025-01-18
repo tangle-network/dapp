@@ -70,6 +70,10 @@ export enum TxName {
   RESTAKE_DELEGATE = 'restake delegate',
   RESTAKE_UNSTAKE = 'restake undelegate',
   RESTAKE_WITHDRAW = 'restake withdraw',
+  RESTAKE_CANCEL_UNSTAKE = 'restake cancel undelegate',
+  RESTAKE_EXECUTE_UNSTAKE = 'restake execute undelegate',
+  RESTAKE_EXECUTE_WITHDRAW = 'restake execute withdraw',
+  RESTAKE_CANCEL_WITHDRAW = 'restake cancel withdraw',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

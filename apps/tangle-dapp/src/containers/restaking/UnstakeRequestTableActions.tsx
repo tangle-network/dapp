@@ -1,14 +1,12 @@
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { FC, useCallback, useMemo, useState } from 'react';
-import { TxEvent } from '@webb-tools/abstract-api-provider';
-import {
-  type CancelDelegatorUnstakeRequestContext,
-  type ExecuteAllDelegatorUnstakeRequestContext,
-} from '../../data/restake/RestakeApi/base';
-import useRestakeApi from '../../data/restake/useRestakeApi';
-import useRestakeTxEventHandlersWithNoti from '../../data/restake/useRestakeTxEventHandlersWithNoti';
+import { FC, useCallback, useMemo } from 'react';
 import { isScheduledRequestReady } from '../../pages/restake/utils';
 import { UnstakeRequestTableRow } from './UnstakeRequestTable';
+import { TxStatus } from '../../hooks/useSubstrateTx';
+import useRestakeCancelUnstakeTx from '../../data/restake/useRestakeCancelUnstakeRequestsTx';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import { BN } from '@polkadot/util';
+import useRestakeExecuteUnstakeRequestsTx from '../../data/restake/useRestakeExecuteUnstakeRequestsTx';
 
 type Props = {
   allRequests: UnstakeRequestTableRow[];
@@ -19,75 +17,44 @@ const UnstakeRequestTableActions: FC<Props> = ({
   allRequests,
   selectedRequests,
 }) => {
-  const [isCanceling, setIsCanceling] = useState(false);
-  const [isExecuting, setIsExecuting] = useState(false);
+  const { execute: executeCancel, status: cancelStatus } =
+    useRestakeCancelUnstakeTx();
 
-  const cancelOptions =
-    useRestakeTxEventHandlersWithNoti<CancelDelegatorUnstakeRequestContext>(
-      useMemo(
-        () =>
-          ({
-            options: {
-              [TxEvent.SUCCESS]: {
-                message: 'Successfully canceled unstake request!',
-              },
-            },
-          }) satisfies Parameters<typeof useRestakeTxEventHandlersWithNoti>[0],
-        [],
-      ),
-    );
+  const { execute: executeUnstake, status: unstakeStatus } =
+    useRestakeExecuteUnstakeRequestsTx();
 
-  const executeOptions =
-    useRestakeTxEventHandlersWithNoti<ExecuteAllDelegatorUnstakeRequestContext>(
-      useMemo(
-        () =>
-          ({
-            options: {
-              [TxEvent.SUCCESS]: {
-                message: 'Successfully executed unstake request!',
-              },
-            },
-          }) satisfies Parameters<typeof useRestakeTxEventHandlersWithNoti>[0],
-        [],
-      ),
-    );
+  const isReadyToCancel =
+    executeCancel !== null && cancelStatus !== TxStatus.PROCESSING;
 
-  const restakeApi = useRestakeApi();
+  const isReadyToUnstake =
+    executeUnstake !== null && unstakeStatus !== TxStatus.PROCESSING;
 
-  const handleCancelUnstake = useCallback(async () => {
-    if (restakeApi === null) {
+  const handleCancelUnstake = useCallback(() => {
+    if (!isReadyToCancel) {
       return;
     }
-
-    setIsCanceling(true);
 
     const unstakeRequests = selectedRequests.map(
       ({ amountRaw, operatorAccountId, assetId }) => {
         return {
-          amount: amountRaw,
-          assetId,
-          operatorAccount: operatorAccountId,
-        } satisfies CancelDelegatorUnstakeRequestContext['unstakeRequests'][number];
+          amount: new BN(amountRaw.toString()),
+          // TODO: Fix temp force cast.
+          assetId: assetId as RestakeAssetId,
+          operatorAddress: operatorAccountId,
+        };
       },
     );
 
-    await restakeApi.cancelDelegatorUnstakeRequests(
-      unstakeRequests,
-      cancelOptions,
-    );
+    return executeCancel({ unstakeRequests });
+  }, [executeCancel, isReadyToCancel, selectedRequests]);
 
-    setIsCanceling(false);
-  }, [cancelOptions, restakeApi, selectedRequests]);
-
-  const handleExecuteUnstake = useCallback(async () => {
-    if (restakeApi === null) {
+  const handleExecuteUnstake = useCallback(() => {
+    if (!isReadyToUnstake) {
       return;
     }
 
-    setIsExecuting(true);
-    await restakeApi.executeDelegatorUnstakeRequests(executeOptions);
-    setIsExecuting(false);
-  }, [executeOptions, restakeApi]);
+    return executeUnstake();
+  }, [executeUnstake, isReadyToUnstake]);
 
   const canCancelUnstake = selectedRequests.length > 0;
 
@@ -104,8 +71,8 @@ const UnstakeRequestTableActions: FC<Props> = ({
   return (
     <div className="flex items-center gap-3">
       <Button
-        isLoading={isCanceling}
-        isDisabled={!canCancelUnstake || isExecuting}
+        isLoading={cancelStatus === TxStatus.PROCESSING}
+        isDisabled={!isReadyToCancel || !canCancelUnstake}
         isFullWidth
         onClick={handleCancelUnstake}
         variant="secondary"
@@ -114,8 +81,8 @@ const UnstakeRequestTableActions: FC<Props> = ({
       </Button>
 
       <Button
-        isLoading={isExecuting}
-        isDisabled={!canExecuteUnstake || isCanceling}
+        isDisabled={!isReadyToUnstake || !canExecuteUnstake}
+        isLoading={unstakeStatus === TxStatus.PROCESSING}
         isFullWidth
         onClick={handleExecuteUnstake}
       >
