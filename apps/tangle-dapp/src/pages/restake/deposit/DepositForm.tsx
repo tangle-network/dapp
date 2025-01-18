@@ -217,7 +217,7 @@ const DepositForm: FC<Props> = (props) => {
   const isReady = execute !== null && status !== TxStatus.PROCESSING;
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
-    async ({ amount, depositAssetId, operatorAccountId }) => {
+    ({ amount, depositAssetId, operatorAccountId }) => {
       if (
         depositAssetId === null ||
         assetMetadataMap[depositAssetId] === undefined ||
@@ -232,7 +232,7 @@ const DepositForm: FC<Props> = (props) => {
       // TODO: Handle this better instead of an assertion.
       assert(amountBn instanceof BN, 'Failed to parse input amount into a BN');
 
-      execute({
+      return execute({
         amount: amountBn,
         // TODO: Temporary unsafe cast.
         assetId: depositAssetId as RestakeAssetId,

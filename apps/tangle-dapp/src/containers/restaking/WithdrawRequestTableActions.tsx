@@ -6,7 +6,6 @@ import useRestakeExecuteWithdrawRequestsTx from '../../data/restake/useRestakeEx
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import useRestakeCancelWithdrawRequestsTx from '../../data/restake/useRestakeCancelWithdrawRequestsTx';
 import { BN } from '@polkadot/util';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 
 type Props = {
   allRequests: WithdrawRequestTableRow[];
@@ -37,8 +36,7 @@ const WithdrawRequestTableActions: FC<Props> = ({
     const requests = selectedRequests.map(({ amountRaw, assetId }) => {
       return {
         amount: new BN(amountRaw.toString()),
-        // TODO: Fix temp. force cast.
-        assetId: assetId as RestakeAssetId,
+        assetId,
       };
     });
 

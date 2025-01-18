@@ -11,6 +11,7 @@ import { map, of, switchMap } from 'rxjs';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { DelegatorInfo } from '../../types/restake';
+import createRestakeAssetId from '../../utils/createRestakeAssetId';
 
 export default function useRestakeDelegatorInfo() {
   const activeAddress = useSubstrateAddress();
@@ -38,21 +39,10 @@ export default function useRestakeDelegatorInfo() {
 
                 const deposits = Array.from(info.deposits.entries()).reduce(
                   (depositRecord, [assetId, deposit]) => {
-                    let assetIdStr: string;
-
-                    switch (assetId.type) {
-                      case 'Custom':
-                        assetIdStr = assetId.asCustom.toString();
-
-                        break;
-                      case 'Erc20':
-                        throw new Error('ERC-20 assets are not supported yet!');
-                    }
-
                     const amountBigInt = deposit.amount.toBigInt();
 
                     return Object.assign(depositRecord, {
-                      [assetIdStr]: {
+                      [createRestakeAssetId(assetId)]: {
                         amount: amountBigInt,
                       },
                     } satisfies DelegatorInfo['deposits']);
@@ -64,19 +54,9 @@ export default function useRestakeDelegatorInfo() {
                   DelegatorInfo['delegations'][number]
                 >((delegation) => {
                   const amountBigInt = delegation.amount.toBigInt();
-                  let assetIdStr: string;
-
-                  switch (delegation.assetId.type) {
-                    case 'Custom':
-                      assetIdStr = delegation.assetId.asCustom.toString();
-
-                      break;
-                    case 'Erc20':
-                      throw new Error('ERC-20 assets are not supported yet!');
-                  }
 
                   return {
-                    assetId: assetIdStr,
+                    assetId: createRestakeAssetId(delegation.assetId),
                     amountBonded: amountBigInt,
                     operatorAccountId: assertSubstrateAddress(
                       delegation.operator.toString(),
@@ -112,20 +92,9 @@ function getWithdrawRequests(
   requests: Vec<PalletMultiAssetDelegationDelegatorWithdrawRequest>,
 ): DelegatorInfo['withdrawRequests'] {
   return requests.map((req) => {
-    let assetId: string;
-
-    switch (req.assetId.type) {
-      case 'Custom':
-        assetId = req.assetId.asCustom.toString();
-
-        break;
-      case 'Erc20':
-        throw new Error('ERC-20 assets are not supported yet!');
-    }
-
     return {
       amount: req.amount.toBigInt(),
-      assetId,
+      assetId: createRestakeAssetId(req.assetId),
       requestedRound: req.requestedRound.toNumber(),
     } satisfies DelegatorInfo['withdrawRequests'][number];
   });
@@ -138,20 +107,9 @@ function getUnstakeRequests(
   requests: Vec<PalletMultiAssetDelegationDelegatorBondLessRequest>,
 ): DelegatorInfo['unstakeRequests'] {
   return requests.map((req) => {
-    let assetId: string;
-
-    switch (req.assetId.type) {
-      case 'Custom':
-        assetId = req.assetId.asCustom.toString();
-
-        break;
-      case 'Erc20':
-        throw new Error('ERC-20 assets are not supported yet!');
-    }
-
     return {
       amount: req.amount.toBigInt(),
-      assetId,
+      assetId: createRestakeAssetId(req.assetId),
       requestedRound: req.requestedRound.toNumber(),
       operatorAccountId: assertSubstrateAddress(req.operator.toString()),
     } satisfies DelegatorInfo['unstakeRequests'][number];

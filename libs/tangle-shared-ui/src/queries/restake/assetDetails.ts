@@ -13,8 +13,7 @@ import {
 } from '../../types/restake';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
 import { fetchSingleTokenPrice, fetchTokenPrices } from '../tokenPrice';
-import { isEvmAddress, isTemplateNumber } from '@webb-tools/webb-ui-components';
-import assert from 'assert';
+import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 
 function createVaultId(u32: Option<u32>): number | null {
   if (u32.isNone) {
@@ -56,10 +55,8 @@ function createAssetMetadata(
   const symbol = hexToString(metadata.symbol.toHex()) || `${assetId}`;
   const decimals = metadata.decimals.toNumber();
 
-  assert(isEvmAddress(assetId) || isTemplateNumber(assetId));
-
   return {
-    id: assetId,
+    id: assertRestakeAssetId(assetId),
     name,
     symbol,
     decimals,

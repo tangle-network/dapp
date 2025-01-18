@@ -1,8 +1,8 @@
-import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
 import {
-  AnyAddress,
-  Bytes32,
-} from '@webb-tools/webb-ui-components/types/address';
+  assertBytes32,
+  toSubstrateAddress,
+} from '@webb-tools/webb-ui-components';
+import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
 import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/convertAddressToBytes32';
 import { useCallback } from 'react';
 
@@ -21,9 +21,9 @@ export type Context = {
 };
 
 // The precompile logic will interpret the 32-byte zero address as a no-op.
-const PRECOMPILE_NOOP_ADDRESS =
-  // TODO: Instead of casting, use an assertion.
-  '0x0000000000000000000000000000000000000000000000000000000000000000' as Bytes32;
+const PRECOMPILE_NOOP_ADDRESS = assertBytes32(
+  '0x0000000000000000000000000000000000000000000000000000000000000000',
+);
 
 const useLsUpdateRolesTx = () => {
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(

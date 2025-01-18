@@ -4,7 +4,6 @@ import { isScheduledRequestReady } from '../../pages/restake/utils';
 import { UnstakeRequestTableRow } from './UnstakeRequestTable';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import useRestakeCancelUnstakeTx from '../../data/restake/useRestakeCancelUnstakeRequestsTx';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import { BN } from '@polkadot/util';
 import useRestakeExecuteUnstakeRequestsTx from '../../data/restake/useRestakeExecuteUnstakeRequestsTx';
 
@@ -38,8 +37,7 @@ const UnstakeRequestTableActions: FC<Props> = ({
       ({ amountRaw, operatorAccountId, assetId }) => {
         return {
           amount: new BN(amountRaw.toString()),
-          // TODO: Fix temp force cast.
-          assetId: assetId as RestakeAssetId,
+          assetId,
           operatorAddress: operatorAccountId,
         };
       },
