@@ -27,10 +27,10 @@ import type { Props, VaultData } from './types';
 import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
-const columnHelper = createColumnHelper<VaultData>();
+const COLUMN_HELPER = createColumnHelper<VaultData>();
 
-const columns = [
-  columnHelper.accessor('name', {
+const COLUMNS = [
+  COLUMN_HELPER.accessor('name', {
     header: () => 'Vault',
     cell: (props) => (
       <TableCellWrapper className="pl-3">
@@ -45,7 +45,7 @@ const columns = [
     sortingFn: sortByLocaleCompare((row) => row.name),
     sortDescFirst: true,
   }),
-  columnHelper.accessor('apyPercentage', {
+  COLUMN_HELPER.accessor('apyPercentage', {
     header: () => 'APY',
     cell: (props) => {
       const value = props.getValue();
@@ -65,7 +65,7 @@ const columns = [
       );
     },
   }),
-  columnHelper.accessor('tokenCount', {
+  COLUMN_HELPER.accessor('tokenCount', {
     header: () => 'Tokens',
     cell: (props) => (
       <TableCellWrapper>
@@ -79,7 +79,7 @@ const columns = [
       </TableCellWrapper>
     ),
   }),
-  columnHelper.accessor('tvlInUsd', {
+  COLUMN_HELPER.accessor('tvlInUsd', {
     header: () => 'TVL',
     cell: (props) => (
       <TableCellWrapper removeRightBorder>
@@ -92,7 +92,7 @@ const columns = [
       </TableCellWrapper>
     ),
   }),
-  columnHelper.display({
+  COLUMN_HELPER.display({
     id: 'actions',
     header: () => null,
     cell: ({ row }) => (
@@ -135,7 +135,7 @@ const VaultsTable: FC<Props> = ({
       () =>
         ({
           data,
-          columns,
+          columns: COLUMNS,
           initialState: {
             sorting: [
               {

@@ -277,13 +277,13 @@ const AssetsAndBalancesTable: FC = () => {
 
   const getTotalLockedInAsset = useCallback(
     (assetId: number) => {
-      const deposit = delegatorInfo?.deposits[assetId];
+      const deposit = delegatorInfo?.deposits[`${assetId}`];
 
       if (deposit === undefined) {
         return BN_ZERO;
       }
 
-      const depositAmount = delegatorInfo?.deposits[assetId].amount;
+      const depositAmount = delegatorInfo?.deposits[`${assetId}`].amount;
 
       const delegation = delegatorInfo?.delegations.find((delegation) => {
         return delegation.assetId === assetId.toString();

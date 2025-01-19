@@ -50,7 +50,6 @@ export type DepositFormFields = {
   amount: string;
   sourceTypedChainId: number;
   depositAssetId: string;
-  operatorAccountId: string | undefined;
 };
 
 export type DelegationFormFields = {

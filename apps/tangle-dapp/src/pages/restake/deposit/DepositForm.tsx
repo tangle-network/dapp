@@ -44,13 +44,16 @@ import parseChainUnits from '../../../utils/parseChainUnits';
 import assert from 'assert';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
-function getDefaultTypedChainId(activeTypedChainId: number | null) {
+const getDefaultTypedChainId = (
+  activeTypedChainId: number | null,
+): number | PresetTypedChainId.TangleTestnetNative => {
   return isDefined(activeTypedChainId) &&
     SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.includes(activeTypedChainId)
     ? activeTypedChainId
     : SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS[0];
-}
+};
 
 type Props = ComponentProps<'form'>;
 
@@ -95,14 +98,13 @@ const DepositForm: FC<Props> = (props) => {
   useEffect(() => {
     register('depositAssetId', { required: 'Asset is required' });
     register('sourceTypedChainId', { required: 'Chain is required' });
-    register('operatorAccountId');
   }, [register]);
 
   useEffect(() => {
     setValue('sourceTypedChainId', getDefaultTypedChainId(activeTypedChainId));
   }, [activeTypedChainId, setValue]);
 
-  // Reset form when active chain changes
+  // Reset form when active chain changes.
   useEffect(() => {
     resetField('amount');
   }, [activeTypedChainId, resetField]);
@@ -217,7 +219,7 @@ const DepositForm: FC<Props> = (props) => {
   const isReady = execute !== null && status !== TxStatus.PROCESSING;
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
-    ({ amount, depositAssetId, operatorAccountId }) => {
+    ({ amount, depositAssetId }) => {
       if (
         depositAssetId === null ||
         assetMetadataMap[depositAssetId] === undefined ||

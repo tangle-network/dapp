@@ -17,22 +17,22 @@ import { twMerge } from 'tailwind-merge';
 import TokenAmountCell from '../../tableCells/TokenAmountCell';
 import type { Props, VaultAssetData } from './types';
 
-const columnHelper = createColumnHelper<VaultAssetData>();
+const COLUMN_HELPER = createColumnHelper<VaultAssetData>();
 
-const columns = [
-  columnHelper.accessor('id', {
+const COLUMNS = [
+  COLUMN_HELPER.accessor('id', {
     header: () => 'Asset ID',
     cell: (props) => props.getValue(),
   }),
-  columnHelper.accessor('symbol', {
+  COLUMN_HELPER.accessor('symbol', {
     header: () => 'Asset Symbol',
     cell: (props) => props.getValue(),
   }),
-  columnHelper.accessor('tvl', {
+  COLUMN_HELPER.accessor('tvl', {
     header: () => 'TVL',
     cell: (props) => getTVLToDisplay(props.getValue()),
   }),
-  columnHelper.accessor('selfStake', {
+  COLUMN_HELPER.accessor('selfStake', {
     header: () => 'My Stake',
     cell: (props) => (
       <TokenAmountCell
@@ -50,11 +50,11 @@ const VaultAssetsTable: FC<Props> = ({ data, isShown }) => {
       () =>
         ({
           data,
-          columns,
+          columns: COLUMNS,
           getCoreRowModel: getCoreRowModel(),
           getSortedRowModel: getSortedRowModel(),
           initialState: {
-            sorting: [{ id: 'tvl', desc: true }],
+            sorting: [{ id: 'tvl' satisfies keyof VaultAssetData, desc: true }],
           },
           autoResetPageIndex: false,
           enableSortingRemoval: false,
