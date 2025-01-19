@@ -26,7 +26,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatEther } from 'viem';
 
-import AddressInput, { AddressType } from '../../../components/AddressInput';
+import AddressInput from '../../../components/AddressInput';
 import AmountInput from '../../../components/AmountInput';
 import { BridgeConfirmationModal } from '../components/BridgeConfirmationModal';
 import { FeeDetail, FeeDetailProps } from '../components/FeeDetail';
@@ -49,6 +49,7 @@ import {
 import { RouterTransferProps } from '../hooks/useRouterTransfer';
 import ErrorMessage from '../../../components/ErrorMessage';
 import { WalletFillIcon } from '@webb-tools/icons';
+import { AddressType } from '../../../constants';
 
 interface BridgeContainerProps {
   className?: string;

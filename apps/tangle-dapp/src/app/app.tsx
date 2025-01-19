@@ -1,8 +1,8 @@
+// Import global styles.
 import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles.css';
 
 import { Route, Routes } from 'react-router';
-import { Layout } from '../containers';
 import AccountPage from '../pages/account';
 import ClaimPage from '../pages/claim';
 import ClaimLayout from '../pages/claim/layout';
@@ -20,6 +20,7 @@ import BlueprintDetailsPage from '../pages/blueprints/[id]';
 import LiquidStakingPage from '../pages/liquid-staking';
 import RestakePage from '../pages/restake';
 import NotFoundPage from '../pages/notFound';
+import Layout from '../containers/Layout';
 
 // TODO: Add metadata tags for SEO
 

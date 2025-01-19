@@ -6,7 +6,7 @@ import {
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { FC, useState } from 'react';
 
-import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
+import TransferTxModal from '../../containers/TransferTxModal';
 import useBalances from '../../data/balances/useBalances';
 import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
@@ -96,7 +96,7 @@ const Actions: FC = () => {
 
       <WithdrawEvmBalanceAction />
 
-      <TransferTxContainer
+      <TransferTxModal
         isModalOpen={isTransferModalOpen}
         setIsModalOpen={setIsTransferModalOpen}
       />

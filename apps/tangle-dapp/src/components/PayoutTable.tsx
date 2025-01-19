@@ -27,11 +27,11 @@ import {
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { type FC, useState } from 'react';
 
-import PayoutTxContainer from '../containers/PayoutTxContainer/PayoutTxContainer';
-import { PayoutTxProps } from '../containers/PayoutTxContainer/types';
 import { HeaderCell, StringCell } from './tableCells';
 import TokenAmountCell from './tableCells/TokenAmountCell';
 import sortByBn from '../utils/sortByBn';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import PayoutTxModal from '../containers/PayoutTxContainer';
 
 const COLUMN_HELPER = createColumnHelper<Payout>();
 
@@ -41,6 +41,11 @@ type Props = {
   sessionProgress: DeriveSessionProgress | null;
   historyDepth: BN | null;
   epochDuration: number | null;
+};
+
+type PayoutTxProps = {
+  validatorAddress: SubstrateAddress;
+  era: number;
 };
 
 const PayoutTable: FC<Props> = ({
@@ -257,7 +262,7 @@ const PayoutTable: FC<Props> = ({
       </div>
 
       {payoutTxProps !== null && (
-        <PayoutTxContainer
+        <PayoutTxModal
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
           payoutTxProps={payoutTxProps}

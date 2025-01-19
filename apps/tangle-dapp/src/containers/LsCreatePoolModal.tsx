@@ -14,7 +14,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import AddressInput, { AddressType } from '../components/AddressInput';
+import AddressInput from '../components/AddressInput';
 import AmountInput from '../components/AmountInput';
 import LsProtocolDropdownInput from '../components/LiquidStaking/LsProtocolDropdownInput';
 import TextInput from '../components/TextInput';
@@ -24,7 +24,7 @@ import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
 import { useLsStore } from '../data/liquidStaking/useLsStore';
 import { TxStatus } from '../hooks/useSubstrateTx';
 import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
-import { ERROR_NOT_ENOUGH_BALANCE } from './ManageProfileModalContainer/constants';
+import { AddressType, ERROR_NOT_ENOUGH_BALANCE } from '../constants';
 
 export type LsCreatePoolModalProps = {
   isOpen: boolean;

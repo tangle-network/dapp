@@ -5,7 +5,7 @@ import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToN
 import { type FC, useMemo } from 'react';
 
 import useActiveAccountAddress from '../hooks/useActiveAccountAddress';
-import useUnbondingAmount from '../data/NominatorStats/useUnbondingAmount';
+import useUnbondingAmount from '../data/nomination/useUnbondingAmount';
 import useUnbonding from '../data/staking/useUnbonding';
 import formatTangleBalance from '../utils/formatTangleBalance';
 import { NominatorStatsItem } from './NominatorStatsItem';

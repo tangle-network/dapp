@@ -18,7 +18,7 @@ import { Link } from 'react-router';
 
 import { NominatorStatsItem } from '../components';
 import useBalances from '../data/balances/useBalances';
-import useTotalPayoutRewards from '../data/NominatorStats/useTotalPayoutRewards';
+import useTotalPayoutRewards from '../data/nomination/useTotalPayoutRewards';
 import useIsBondedOrNominating from '../data/staking/useIsBondedOrNominating';
 import useStakingLedger from '../data/staking/useStakingLedger';
 import useActiveAccountAddress from '../hooks/useActiveAccountAddress';
@@ -26,11 +26,11 @@ import useNetworkFeatures from '../hooks/useNetworkFeatures';
 import { NetworkFeature, PagePath } from '../types';
 import formatTangleBalance from '../utils/formatTangleBalance';
 import { DelegateTxContainer } from './DelegateTxContainer';
-import { RebondTxContainer } from './RebondTxContainer';
-import { UnbondTxContainer } from './UnbondTxContainer';
-import { WithdrawUnbondedTxContainer } from './WithdrawUnbondedTxContainer';
 import UnbondingStatsItem from '../components/UnbondingStatsItem';
 import BondMoreTxModal from './BondMoreTxModal';
+import RebondTxModal from './RebondTxModal';
+import WithdrawUnbondedTxModal from './WithdrawUnbondedTxModal';
+import UnbondTxModal from './UnbondTxModal';
 
 const NominatorStatsContainer: FC = () => {
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);
@@ -230,17 +230,17 @@ const NominatorStatsContainer: FC = () => {
         setIsModalOpen={setIsBondMoreModalOpen}
       />
 
-      <UnbondTxContainer
+      <UnbondTxModal
         isModalOpen={isUnbondModalOpen}
         setIsModalOpen={setIsUnbondModalOpen}
       />
 
-      <RebondTxContainer
+      <RebondTxModal
         isModalOpen={isRebondModalOpen}
         setIsModalOpen={setIsRebondModalOpen}
       />
 
-      <WithdrawUnbondedTxContainer
+      <WithdrawUnbondedTxModal
         isModalOpen={isWithdrawUnbondedModalOpen}
         setIsModalOpen={setIsWithdrawUnbondedModalOpen}
       />

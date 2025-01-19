@@ -20,9 +20,9 @@ import {
 } from 'react';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
-import { ContainerSkeleton, NominationsTable } from '../components';
-import useNominations from '../data/NominationsPayouts/useNominations';
-import usePayouts from '../data/NominationsPayouts/usePayouts';
+import { ContainerSkeleton } from '../components';
+import useNominations from '../data/nomination/useNominations';
+import usePayouts from '../data/payouts/usePayouts';
 import { MAX_PAYOUTS_BATCH_SIZE } from '../data/payouts/usePayoutAllTx';
 import { usePayoutsStore } from '../data/payouts/usePayoutsStore';
 import useIsBondedOrNominating from '../data/staking/useIsBondedOrNominating';
@@ -34,12 +34,13 @@ import {
   QueryParamKey,
 } from '../types';
 import { DelegateTxContainer } from './DelegateTxContainer';
-import { StopNominationTxContainer } from './StopNominationTxContainer';
 import { UpdateNominationsTxContainer } from './UpdateNominationsTxContainer';
 import { UpdatePayeeTxContainer } from './UpdatePayeeTxContainer';
 import type { DeriveSessionProgress } from '@polkadot/api-derive/session/types';
 import PayoutTable from '../components/PayoutTable';
 import PayoutAllTxModal from './PayoutAllTxModal';
+import NominationsTable from '../components/nomination/NominationsTable';
+import StopNominationTxModal from './StopNominationTxModal';
 
 const PAGE_SIZE = 10;
 
@@ -301,7 +302,7 @@ const DelegationsPayoutsContainer: FC = () => {
         setIsModalOpen={setIsUpdatePayeeModalOpen}
       />
 
-      <StopNominationTxContainer
+      <StopNominationTxModal
         isModalOpen={isStopNominationModalOpen}
         setIsModalOpen={setIsStopNominationModalOpen}
       />

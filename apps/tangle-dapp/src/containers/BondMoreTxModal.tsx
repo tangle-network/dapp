@@ -12,7 +12,7 @@ import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constant
 import { type FC, useCallback, useEffect, useState } from 'react';
 
 import AmountInput from '../components/AmountInput';
-import useTokenWalletFreeBalance from '../data/NominatorStats/useTokenWalletFreeBalance';
+import useTokenWalletFreeBalance from '../data/nomination/useTokenWalletFreeBalance';
 import useBondExtraTx from '../data/staking/useBondExtraTx';
 
 type Props = {
