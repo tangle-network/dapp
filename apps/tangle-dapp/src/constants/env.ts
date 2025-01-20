@@ -1,1 +1,1 @@
-export const IS_PRODUCTION_ENV = process.env.NODE_ENV === 'production';
+export const IS_PRODUCTION_ENV = import.meta.env.PROD;

@@ -12,7 +12,10 @@ import {
   RestakeVaultAssetMetadata,
 } from '../../types/restake';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
-import { fetchSingleTokenPrice, fetchTokenPrices } from '../tokenPrice';
+import {
+  fetchSingleTokenPriceBySymbol,
+  fetchTokenPricesBySymbols,
+} from '../../utils/fetchTokenPrices';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 
 function createVaultId(u32: Option<u32>): number | null {
@@ -75,7 +78,7 @@ function queryTokenPrices(
     hexToString(assetMetadatas[idx].symbol.toHex()),
   );
 
-  return fetchTokenPrices(tokenSymbols);
+  return fetchTokenPricesBySymbols(tokenSymbols);
 }
 
 function processAssetDetailsRx(
@@ -126,7 +129,9 @@ function getNativeAssetRx(
 
   return api.query.rewards.assetLookupRewardVaults({ Custom: assetId }).pipe(
     switchMap(async (vaultId) => {
-      const priceInUsd = await fetchSingleTokenPrice(nativeCurrency.symbol);
+      const priceInUsd = await fetchSingleTokenPriceBySymbol(
+        nativeCurrency.symbol,
+      );
 
       return {
         ...nativeCurrency,

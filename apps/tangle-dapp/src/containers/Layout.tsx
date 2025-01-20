@@ -10,8 +10,7 @@ import { useLayoutBgClassName } from '@webb-tools/tangle-shared-ui/hooks/useLayo
 import { type FC, type PropsWithChildren } from 'react';
 
 import { MobileSidebar, Sidebar } from '../components';
-import { IS_PRODUCTION_ENV } from '../constants/env';
-import ApiDevStatsContainer from './DebugMetrics';
+import DebugMetrics from './DebugMetrics';
 import WalletAndChainContainer from './WalletAndChainContainer';
 
 import BridgeTxQueueDropdown from '../pages/bridge/components/BridgeTxQueueDropdown';
@@ -70,7 +69,7 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
         </div>
       </main>
 
-      {!IS_PRODUCTION_ENV && <ApiDevStatsContainer />}
+      {!import.meta.env.PROD && <DebugMetrics />}
     </div>
   );
 };
