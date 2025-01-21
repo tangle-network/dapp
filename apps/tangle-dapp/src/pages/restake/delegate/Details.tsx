@@ -12,22 +12,22 @@ const Details = memo(() => {
   return (
     <DetailsContainer>
       <DetailItem
-        title="Unstake period"
-        tooltip="Number of sessions that delegators remain bonded before the exit request is executable."
-        value={
-          isDefined(leaveDelegatorsDelay)
-            ? `${leaveDelegatorsDelay} ${pluralize('session', leaveDelegatorsDelay !== 1)}`
-            : leaveDelegatorsDelay
-        }
-      />
-
-      <DetailItem
-        title="Bond less delay"
+        title="Undelegate period"
         tooltip="Number of sessions that delegation bond less requests must wait before being executable."
         value={
           isDefined(delegationBondLessDelay)
             ? `${delegationBondLessDelay} ${pluralize('session', delegationBondLessDelay !== 1)}`
             : delegationBondLessDelay
+        }
+      />
+
+      <DetailItem
+        title="Withdrawal period"
+        tooltip="Number of sessions that delegators remain bonded before the exit request is executable."
+        value={
+          isDefined(leaveDelegatorsDelay)
+            ? `${leaveDelegatorsDelay} ${pluralize('session', leaveDelegatorsDelay !== 1)}`
+            : leaveDelegatorsDelay
         }
       />
     </DetailsContainer>

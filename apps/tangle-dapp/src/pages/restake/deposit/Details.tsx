@@ -42,7 +42,7 @@ const Details: FC<Props> = ({ watch }) => {
       />
 
       <DetailItem
-        title="Withdraw period"
+        title="Withdrawal period"
         value={
           bondDuration !== null
             ? `${bondDuration} ${pluralize('session', bondDuration !== 1)}`
