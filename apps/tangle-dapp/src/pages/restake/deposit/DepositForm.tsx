@@ -38,13 +38,12 @@ import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
 import SourceChainInput from './SourceChainInput';
 import Details from './Details';
-import useRestakeDepositTx from '../../../data/restake/useRestakeDepositTx';
 import { BN } from '@polkadot/util';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import assert from 'assert';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
-import { TxStatus } from '../../../hooks/useSubstrateTx';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import useRestakeApi from '../../../data/restake/useRestakeApi';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -81,7 +80,7 @@ const DepositForm: FC<Props> = (props) => {
   );
 
   const { assetMetadataMap, assetWithBalances } = useRestakeContext();
-  const { execute, status } = useRestakeDepositTx();
+  const restakeApi = useRestakeApi();
 
   const setValue = useCallback(
     (...params: Parameters<typeof setFormValue>) => {
@@ -216,7 +215,7 @@ const DepositForm: FC<Props> = (props) => {
     [closeTokenModal, setValue],
   );
 
-  const isReady = execute !== null && status !== TxStatus.PROCESSING;
+  const isReady = restakeApi !== null && !isSubmitting;
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
     ({ amount, depositAssetId }) => {
@@ -234,13 +233,10 @@ const DepositForm: FC<Props> = (props) => {
       // TODO: Handle this better instead of an assertion.
       assert(amountBn instanceof BN, 'Failed to parse input amount into a BN');
 
-      return execute({
-        amount: amountBn,
-        // TODO: Temporary unsafe cast.
-        assetId: depositAssetId as RestakeAssetId,
-      });
+      // TODO: Temporary unsafe cast.
+      return restakeApi.deposit(depositAssetId as RestakeAssetId, amountBn);
     },
-    [assetMetadataMap, execute, isReady],
+    [assetMetadataMap, isReady, restakeApi],
   );
 
   const sourceChainOptions = useMemo(() => {
@@ -288,7 +284,7 @@ const DepositForm: FC<Props> = (props) => {
               <ActionButton
                 errors={errors}
                 formRef={formRef}
-                isSubmitting={isSubmitting || status === TxStatus.PROCESSING}
+                isSubmitting={isSubmitting}
                 isValid={isValid}
                 watch={watch}
               />

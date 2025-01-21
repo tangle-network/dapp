@@ -37,11 +37,10 @@ import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Details from './Details';
 import StakeInput from './StakeInput';
-import useRestakeDelegateTx from '../../../data/restake/useRestakeDelegateTx';
-import { TxStatus } from '../../../hooks/useSubstrateTx';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import { BN } from '@polkadot/util';
+import useRestakeApi from '../../../data/restake/useRestakeApi';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -82,7 +81,7 @@ const RestakeDelegateForm: FC = () => {
   }, [register]);
 
   const { assetMetadataMap } = useRestakeContext();
-  const { execute, status } = useRestakeDelegateTx();
+  const restakeApi = useRestakeApi();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
 
@@ -199,7 +198,7 @@ const RestakeDelegateForm: FC = () => {
     [closeChainModal, switchChain],
   );
 
-  const isReady = execute !== null && status !== TxStatus.PROCESSING;
+  const isReady = restakeApi !== null && !isSubmitting;
 
   const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>(
     ({ amount, assetId, operatorAccountId }) => {
@@ -209,14 +208,14 @@ const RestakeDelegateForm: FC = () => {
 
       const assetMetadata = assetMetadataMap[assetId];
 
-      return execute({
-        // TODO: Temp forced casts.
-        amount: parseChainUnits(amount, assetMetadata.decimals) as BN,
-        assetId: assetId as RestakeAssetId,
-        operatorAddress: operatorAccountId,
-      });
+      // TODO: Temp forced casts.
+      return restakeApi.delegate(
+        operatorAccountId,
+        assetId as RestakeAssetId,
+        parseChainUnits(amount, assetMetadata.decimals) as BN,
+      );
     },
-    [assetMetadataMap, execute, isReady],
+    [assetMetadataMap, isReady, restakeApi],
   );
 
   const operators = useMemo<RestakeOperator[]>(() => {
@@ -265,7 +264,7 @@ const RestakeDelegateForm: FC = () => {
                 isValid={isValid}
                 openChainModal={openChainModal}
                 watch={watch}
-                isSubmitting={isSubmitting || status === TxStatus.PROCESSING}
+                isSubmitting={isSubmitting}
               />
             </div>
           </div>

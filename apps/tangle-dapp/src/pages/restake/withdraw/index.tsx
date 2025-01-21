@@ -40,11 +40,10 @@ import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
 import WithdrawModal from '../../../containers/restaking/WithdrawModal';
 import WithdrawRequestTable from '../../../containers/restaking/WithdrawRequestTable';
-import useRestakeWithdrawTx from '../../../data/restake/useRestakeWithdrawTx';
-import { TxStatus } from '../../../hooks/useSubstrateTx';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import { BN } from '@polkadot/util';
+import useRestakeApi from '../../../data/restake/useRestakeApi';
 
 const RestakeWithdrawForm: FC = () => {
   const {
@@ -169,9 +168,9 @@ const RestakeWithdrawForm: FC = () => {
           : undefined;
   }, [errors.assetId, errors.amount, selectedAssetId, amount]);
 
-  const { execute, status } = useRestakeWithdrawTx();
+  const restakeApi = useRestakeApi();
 
-  const isReady = execute !== null && status !== TxStatus.PROCESSING;
+  const isReady = restakeApi !== null && !isSubmitting;
 
   const onSubmit = useCallback<SubmitHandler<WithdrawFormFields>>(
     ({ amount, assetId }) => {
@@ -181,13 +180,13 @@ const RestakeWithdrawForm: FC = () => {
 
       const assetMetadata = assetMetadataMap[assetId];
 
-      return execute({
-        // TODO: Fix and handle temporary type casts.
-        assetId: assetId as RestakeAssetId,
-        amount: parseChainUnits(amount, assetMetadata.decimals) as BN,
-      });
+      // TODO: Fix and handle temporary type casts.
+      return restakeApi.withdraw(
+        assetId as RestakeAssetId,
+        parseChainUnits(amount, assetMetadata.decimals) as BN,
+      );
     },
-    [assetMetadataMap, execute, isReady],
+    [assetMetadataMap, isReady, restakeApi],
   );
 
   return (

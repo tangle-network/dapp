@@ -40,11 +40,10 @@ import useSwitchChain from '../useSwitchChain';
 import SelectOperatorModal from '../../../containers/restaking/SelectOperatorModal';
 import Details from './Details';
 import UnstakeRequestTable from '../../../containers/restaking/UnstakeRequestTable';
-import useRestakeUnstakeTx from '../../../data/restake/useRestakeUnstakeTx';
-import { TxStatus } from '../../../hooks/useSubstrateTx';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import { BN } from '@polkadot/util';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import useRestakeApi from '../../../data/restake/useRestakeApi';
 
 const RestakeUnstakeForm: FC = () => {
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
@@ -189,26 +188,26 @@ const RestakeUnstakeForm: FC = () => {
             : undefined;
   })();
 
-  const { execute, status } = useRestakeUnstakeTx();
+  const restakeApi = useRestakeApi();
 
-  const isReady = execute !== null && status !== TxStatus.PROCESSING;
+  const isReady = restakeApi !== null && !isSubmitting;
 
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
-    async ({ amount, assetId, operatorAccountId }) => {
+    ({ amount, assetId, operatorAccountId }) => {
       if (!assetId || !isDefined(assetMetadataMap[assetId]) || !isReady) {
         return;
       }
 
       const assetMetadata = assetMetadataMap[assetId];
 
-      return execute({
-        // TODO: Fix temporary type casts.
-        amount: parseChainUnits(amount, assetMetadata.decimals) as BN,
-        assetId: assetId as RestakeAssetId,
-        operatorAddress: operatorAccountId,
-      });
+      // TODO: Fix temporary type casts.
+      return restakeApi.undelegate(
+        operatorAccountId,
+        assetId as RestakeAssetId,
+        parseChainUnits(amount, assetMetadata.decimals) as BN,
+      );
     },
-    [assetMetadataMap, execute, isReady],
+    [assetMetadataMap, isReady, restakeApi],
   );
 
   return (
@@ -305,11 +304,7 @@ const RestakeUnstakeForm: FC = () => {
                     isDisabled={!isValid || isDefined(displayError) || !isReady}
                     type="submit"
                     isFullWidth
-                    isLoading={
-                      isSubmitting ||
-                      isLoading ||
-                      status === TxStatus.PROCESSING
-                    }
+                    isLoading={isSubmitting || isLoading}
                     loadingText={loadingText}
                   >
                     {displayError ?? 'Schedule Unstake'}
