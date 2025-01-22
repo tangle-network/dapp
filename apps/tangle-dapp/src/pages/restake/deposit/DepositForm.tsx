@@ -9,13 +9,11 @@ import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeC
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import {
   AmountFormatStyle,
-  assertEvmAddress,
   Card,
   formatDisplayAmount,
   isEvmAddress,
   shortenHex,
 } from '@webb-tools/webb-ui-components';
-import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import {
   Modal,
   ModalContent,
@@ -48,9 +46,10 @@ import { BN } from '@polkadot/util';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import assert from 'assert';
-import { useBridgeEvmBalances } from '../../../data/bridge/useBridgeEvmBalances';
+import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
+import useTangleEvmErc20Balances from '../../../data/restake/useTangleEvmErc20Balances';
+import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -62,14 +61,6 @@ const getDefaultTypedChainId = (
 };
 
 type Props = ComponentProps<'form'>;
-
-type RestakeAssetItem = {
-  id: RestakeAssetId;
-  name: string;
-  symbol: string;
-  balance: BN;
-  decimals: number;
-};
 
 const DepositForm: FC<Props> = (props) => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -90,11 +81,13 @@ const DepositForm: FC<Props> = (props) => {
     },
   });
 
+  const depositAssetId = watch('depositAssetId');
+
   const [vaultIdParam, setVaultIdParam] = useQueryState(
     QueryParamKey.RESTAKE_VAULT,
   );
 
-  const { assetMetadataMap, assetWithBalances } = useRestakeContext();
+  const { assetWithBalances } = useRestakeContext();
   const restakeApi = useRestakeApi();
 
   const setValue = useCallback(
@@ -187,15 +180,7 @@ const DepositForm: FC<Props> = (props) => {
     update: updateTokenModal,
   } = useModal();
 
-  const tangleMainnetEvmChain =
-    apiConfig.chains[PresetTypedChainId.TangleMainnetEVM];
-
-  const { balances: erc20Balances } = useBridgeEvmBalances(
-    tangleMainnetEvmChain.id,
-    tangleMainnetEvmChain.id,
-  );
-
-  const nativeAssets = useMemo<RestakeAssetItem[]>(() => {
+  const nativeAssets = useMemo<RestakeAsset[]>(() => {
     const nativeAssetsWithBalances = assetWithBalances
       .filter(
         (asset) =>
@@ -213,66 +198,61 @@ const DepositForm: FC<Props> = (props) => {
           symbol: asset.metadata.symbol,
           balance,
           decimals: asset.metadata.decimals,
-        } satisfies RestakeAssetItem;
+        } satisfies RestakeAsset;
       });
 
     return nativeAssetsWithBalances;
   }, [assetWithBalances]);
 
-  const erc20Assets = useMemo<RestakeAssetItem[]>(() => {
-    return Object.entries(erc20Balances).flatMap(([, balances]) => {
-      if (balances === undefined) {
-        return [];
-      }
+  const erc20Balances = useTangleEvmErc20Balances();
 
-      return balances.map(
-        (erc20Asset) =>
-          ({
-            name: erc20Asset.tokenSymbol,
-            symbol: erc20Asset.tokenSymbol,
-            balance: new BN(erc20Asset.balance.toString()),
-            decimals: erc20Asset.decimals,
-            // TODO: Figure out how to handle Solana tokens/address.
-            id: assertEvmAddress(erc20Asset.address),
-          }) satisfies RestakeAssetItem,
-      );
-    });
+  const erc20Assets = useMemo<RestakeAsset[]>(() => {
+    if (erc20Balances === null) {
+      return [];
+    }
+
+    return erc20Balances.map(
+      (asset) =>
+        ({
+          name: asset.name,
+          symbol: asset.symbol,
+          balance: new BN(asset.balance.toString()),
+          decimals: asset.decimals,
+          id: asset.contractAddress,
+        }) satisfies RestakeAsset,
+    );
   }, [erc20Balances]);
 
-  const allAssets = useMemo<RestakeAssetItem[]>(() => {
+  const allAssets = useMemo<RestakeAsset[]>(() => {
     return [...nativeAssets, ...erc20Assets];
   }, [erc20Assets, nativeAssets]);
 
-  const handleTokenChange = useCallback(
-    (token: TokenListCardProps['selectTokens'][number]) => {
-      setValue('depositAssetId', token.id);
+  const handleAssetSelection = useCallback(
+    (asset: RestakeAsset) => {
+      setValue('depositAssetId', asset.id);
       closeTokenModal();
     },
     [closeTokenModal, setValue],
   );
 
-  const isReady = restakeApi !== null && !isSubmitting;
+  const asset = useRestakeAsset(depositAssetId);
+  const isReady = restakeApi !== null && asset !== null && !isSubmitting;
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
-    ({ amount, depositAssetId }) => {
-      if (
-        depositAssetId === null ||
-        assetMetadataMap[depositAssetId] === undefined ||
-        !isReady
-      ) {
+    ({ amount }) => {
+      if (!isReady) {
         return;
       }
 
-      const asset = assetMetadataMap[depositAssetId];
       const amountBn = parseChainUnits(amount, asset.decimals);
 
       if (!(amountBn instanceof BN)) {
         return;
       }
 
-      return restakeApi.deposit(depositAssetId, amountBn);
+      return restakeApi.deposit(asset.id, amountBn);
     },
-    [assetMetadataMap, isReady, restakeApi],
+    [asset, isReady, restakeApi],
   );
 
   const sourceChainOptions = useMemo(() => {
@@ -343,6 +323,7 @@ const DepositForm: FC<Props> = (props) => {
             title="Select Asset"
             isOpen={tokenModalOpen}
             setIsOpen={updateTokenModal}
+            onSelect={handleAssetSelection}
             filterItem={(asset, query) =>
               filterBy(query, [asset.id, asset.name, asset.symbol])
             }
@@ -372,7 +353,6 @@ const DepositForm: FC<Props> = (props) => {
                 />
               );
             }}
-            onSelect={handleTokenChange}
           />
         </Form>
       </Card>

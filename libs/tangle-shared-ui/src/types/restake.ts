@@ -9,6 +9,7 @@ import {
 import { TransformEnum } from './utils';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { RestakeAssetId } from '../utils/createRestakeAssetId';
+import { BN } from '@polkadot/util';
 
 /**
  * The activity status of the operator.
@@ -159,4 +160,12 @@ export type AssetWithBalance = {
   assetId: RestakeAssetId;
   metadata: RestakeVaultAssetMetadata;
   balance: AssetBalance | null;
+};
+
+export type RestakeAsset = {
+  id: RestakeAssetId;
+  name: string;
+  symbol: string;
+  balance: BN;
+  decimals: number;
 };

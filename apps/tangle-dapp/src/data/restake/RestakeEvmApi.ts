@@ -57,7 +57,9 @@ class RestakeEvmApi extends RestakeApiBase {
   ) {
     try {
       const connector = (() => {
-        if (this.provider.state.current === null) return;
+        if (this.provider.state.current === null) {
+          return;
+        }
 
         return this.provider.state.connections.get(this.provider.state.current)
           ?.connector;
@@ -94,10 +96,12 @@ class RestakeEvmApi extends RestakeApiBase {
         return hash;
       } else {
         // TODO: Provide more context on what went wrong.
-        return new Error('EVM operation failed');
+        const error = new Error('EVM operation failed');
+
+        this.onFailure(txName, error);
       }
     } catch (possibleError) {
-      return ensureError(possibleError);
+      this.onFailure(txName, ensureError(possibleError));
     }
   }
 
