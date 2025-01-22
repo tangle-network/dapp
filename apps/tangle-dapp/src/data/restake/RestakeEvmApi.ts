@@ -1,12 +1,5 @@
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
-import {
-  Abi as ViemAbi,
-  Account,
-  ContractFunctionArgs,
-  ContractFunctionName,
-  Hash,
-  SimulateContractParameters,
-} from 'viem';
+import { Account, ContractFunctionName, AbiFunction } from 'viem';
 import RestakeApiBase, {
   RestakeUndelegateRequest,
   RestakeWithdrawRequest,
@@ -27,6 +20,7 @@ import { Config } from 'wagmi';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import RESTAKING_PRECOMPILE_ABI from '../../abi/restaking';
 import {
+  FindAbiArgsOf,
   PrecompileAddress,
   ZERO_ADDRESS,
 } from '../../constants/evmPrecompiles';
@@ -37,32 +31,32 @@ import {
 import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
+import { TxName } from '../../constants';
 
 class RestakeEvmApi extends RestakeApiBase {
   constructor(
     readonly activeAccount: EvmAddress,
     readonly signer: Account | EvmAddress,
     readonly provider: Config,
-    onSuccess: TxSuccessCallback,
-    onFailure: TxFailureCallback,
+    readonly onSuccess: TxSuccessCallback,
+    readonly onFailure: TxFailureCallback,
   ) {
-    super(onSuccess, onFailure);
+    super();
   }
 
   async callContract<
-    const Abi extends ViemAbi | readonly unknown[],
+    const Abi extends AbiFunction[],
     FunctionName extends ContractFunctionName<Abi, 'nonpayable' | 'payable'>,
-    Args extends ContractFunctionArgs<
-      Abi,
-      'nonpayable' | 'payable',
-      FunctionName
-    >,
+    Args extends FindAbiArgsOf<Abi, FunctionName>,
   >(
+    txName: TxName,
     abi: Abi,
     address: PrecompileAddress,
     functionName: FunctionName,
     args: Args,
-  ): Promise<Hash | Error> {
+  ) {
+    console.debug('Calling contract', txName);
+
     try {
       const connector = (() => {
         if (this.provider.state.current === null) return;
@@ -72,21 +66,23 @@ class RestakeEvmApi extends RestakeApiBase {
       })();
 
       const chainId = (() => {
-        if (this.provider.state.current === null) return;
+        if (this.provider.state.current === null) {
+          return;
+        }
 
         return this.provider.state.connections.get(this.provider.state.current)
           ?.chainId;
       })();
 
       const { request } = await simulateContract(this.provider, {
-        abi,
+        abi: abi satisfies AbiFunction[] as AbiFunction[],
         address,
         functionName,
         args,
         account: this.activeAccount,
         connector,
         chainId,
-      } satisfies SimulateContractParameters);
+      });
 
       const hash = await writeContract(this.provider, request);
 
@@ -95,7 +91,8 @@ class RestakeEvmApi extends RestakeApiBase {
       });
 
       if (receipt.status === 'success') {
-        // eventHandlers?.onTxSuccess?.(hash, receipt.blockHash, context);
+        this.onSuccess(hash, receipt.blockHash, txName);
+
         return hash;
       } else {
         // TODO: Provide more context on what went wrong.
@@ -106,11 +103,12 @@ class RestakeEvmApi extends RestakeApiBase {
     }
   }
 
-  deposit(assetId: RestakeAssetId, amount: BN) {
+  async deposit(assetId: RestakeAssetId, amount: BN) {
     const assetIdBigInt = isEvmAddress(assetId) ? BigInt(0) : BigInt(assetId);
     const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
 
-    return this.callContract(
+    await this.callContract(
+      TxName.RESTAKE_DEPOSIT,
       RESTAKING_PRECOMPILE_ABI,
       PrecompileAddress.RESTAKING,
       'deposit',
@@ -119,7 +117,7 @@ class RestakeEvmApi extends RestakeApiBase {
     );
   }
 
-  delegate(
+  async delegate(
     operatorAddress: SubstrateAddress,
     assetId: RestakeAssetId,
     amount: BN,
@@ -128,7 +126,8 @@ class RestakeEvmApi extends RestakeApiBase {
     const customAssetId = isEvmAddress(assetId) ? BigInt(0) : BigInt(assetId);
     const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
 
-    return this.callContract(
+    await this.callContract(
+      TxName.RESTAKE_DELEGATE,
       RESTAKING_PRECOMPILE_ABI,
       PrecompileAddress.RESTAKING,
       'delegate',
@@ -142,15 +141,16 @@ class RestakeEvmApi extends RestakeApiBase {
     );
   }
 
-  undelegate(
+  async undelegate(
     operatorAddress: SubstrateAddress,
     assetId: RestakeAssetId,
     amount: BN,
-  ): Promise<Hash | Error> {
+  ) {
     const customAssetId = isEvmAddress(assetId) ? BigInt(0) : BigInt(assetId);
     const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
 
-    return this.callContract(
+    await this.callContract(
+      TxName.RESTAKE_UNSTAKE,
       RESTAKING_PRECOMPILE_ABI,
       PrecompileAddress.RESTAKING,
       'scheduleDelegatorUnstake',
@@ -163,11 +163,12 @@ class RestakeEvmApi extends RestakeApiBase {
     );
   }
 
-  withdraw(assetId: RestakeAssetId, amount: BN): Promise<Hash | Error> {
+  async withdraw(assetId: RestakeAssetId, amount: BN) {
     const customAssetId = isEvmAddress(assetId) ? BigInt(0) : BigInt(assetId);
     const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
 
-    return this.callContract(
+    await this.callContract(
+      TxName.RESTAKE_WITHDRAW,
       RESTAKING_PRECOMPILE_ABI,
       PrecompileAddress.RESTAKING,
       'scheduleWithdraw',
@@ -175,8 +176,9 @@ class RestakeEvmApi extends RestakeApiBase {
     );
   }
 
-  executeUndelegate(): Promise<Hash | Error> {
-    return this.callContract(
+  async executeUndelegate() {
+    await this.callContract(
+      TxName.RESTAKE_EXECUTE_UNSTAKE,
       RESTAKING_PRECOMPILE_ABI,
       PrecompileAddress.RESTAKING,
       'executeDelegatorUnstake',
@@ -184,8 +186,9 @@ class RestakeEvmApi extends RestakeApiBase {
     );
   }
 
-  executeWithdraw(): Promise<Hash | Error> {
-    return this.callContract(
+  async executeWithdraw() {
+    await this.callContract(
+      TxName.RESTAKE_EXECUTE_WITHDRAW,
       RESTAKING_PRECOMPILE_ABI,
       PrecompileAddress.RESTAKING,
       'executeWithdraw',
@@ -193,9 +196,7 @@ class RestakeEvmApi extends RestakeApiBase {
     );
   }
 
-  cancelUndelegate(
-    requests: RestakeUndelegateRequest[],
-  ): Promise<Hash | Error> {
+  async cancelUndelegate(requests: RestakeUndelegateRequest[]) {
     const batchCalls = requests.map(({ operatorAddress, assetId, amount }) => {
       const assetIdBigInt = isEvmAddress(assetId) ? BigInt(0) : BigInt(assetId);
 
@@ -217,7 +218,8 @@ class RestakeEvmApi extends RestakeApiBase {
       );
     });
 
-    return this.callContract(
+    await this.callContract(
+      TxName.RESTAKE_CANCEL_UNSTAKE,
       BATCH_PRECOMPILE_ABI,
       PrecompileAddress.BATCH,
       'batchAll',
@@ -225,7 +227,7 @@ class RestakeEvmApi extends RestakeApiBase {
     );
   }
 
-  cancelWithdraw(requests: RestakeWithdrawRequest[]): Promise<Hash | Error> {
+  async cancelWithdraw(requests: RestakeWithdrawRequest[]) {
     const batchCalls = requests.map(({ assetId, amount }) => {
       const assetIdBigInt = isEvmAddress(assetId) ? 0 : BigInt(assetId);
       const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
@@ -238,7 +240,8 @@ class RestakeEvmApi extends RestakeApiBase {
       );
     });
 
-    return this.callContract(
+    await this.callContract(
+      TxName.RESTAKE_CANCEL_WITHDRAW,
       BATCH_PRECOMPILE_ABI,
       PrecompileAddress.BATCH,
       'batchAll',

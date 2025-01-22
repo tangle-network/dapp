@@ -2,6 +2,7 @@ import { BN } from '@polkadot/util';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { Hash } from 'viem';
+import { TxName } from '../../constants';
 
 export type RestakeWithdrawRequest = {
   assetId: RestakeAssetId;
@@ -14,46 +15,41 @@ export type RestakeUndelegateRequest = {
   amount: BN;
 };
 
-export type TxSuccessCallback = (hash: Hash) => void;
+export type TxSuccessCallback = (
+  hash: Hash,
+  blockHash: Hash,
+  txName: TxName,
+) => void;
 
-export type TxFailureCallback = (error: Error) => void;
+export type TxFailureCallback = (txName: TxName, error: Error) => void;
 
 abstract class RestakeApiBase {
-  constructor(
-    readonly onSuccess: TxSuccessCallback,
-    readonly onFailure: TxFailureCallback,
-  ) {
-    //
-  }
-
-  abstract deposit(assetId: RestakeAssetId, amount: BN): Promise<Hash | Error>;
+  abstract deposit(assetId: RestakeAssetId, amount: BN): Promise<void>;
 
   abstract delegate(
     operatorAddress: SubstrateAddress,
     assetId: RestakeAssetId,
     amount: BN,
     blueprintSelection?: BN[],
-  ): Promise<Hash | Error>;
+  ): Promise<void>;
 
   abstract undelegate(
     operatorAddress: SubstrateAddress,
     assetId: RestakeAssetId,
     amount: BN,
-  ): Promise<Hash | Error>;
+  ): Promise<void>;
 
-  abstract withdraw(assetId: RestakeAssetId, amount: BN): Promise<Hash | Error>;
+  abstract withdraw(assetId: RestakeAssetId, amount: BN): Promise<void>;
 
   abstract cancelUndelegate(
     requests: RestakeUndelegateRequest[],
-  ): Promise<Hash | Error>;
+  ): Promise<void>;
 
-  abstract executeUndelegate(): Promise<Hash | Error>;
+  abstract executeUndelegate(): Promise<void>;
 
-  abstract executeWithdraw(): Promise<Hash | Error>;
+  abstract executeWithdraw(): Promise<void>;
 
-  abstract cancelWithdraw(
-    requests: RestakeWithdrawRequest[],
-  ): Promise<Hash | Error>;
+  abstract cancelWithdraw(requests: RestakeWithdrawRequest[]): Promise<void>;
 }
 
 export default RestakeApiBase;

@@ -9,20 +9,33 @@ import { useWebContext } from '@webb-tools/api-provider-environment/webb-context
 import useSubstrateInjectedExtension from '@webb-tools/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
 import RestakeEvmApi from './RestakeEvmApi';
 import useTxNotification from '../../hooks/useTxNotification';
+import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubstrateExplorerUrl';
+import { Hash } from 'viem';
+import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+import { TxName } from '../../constants';
+import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 
 const useRestakeApi = () => {
   const { apiPromise } = usePolkadotApi();
   const { activeAccount, activeWallet } = useWebContext();
   const injector = useSubstrateInjectedExtension();
-  const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
+  const { resolveExplorerUrl } = useSubstrateExplorerUrl();
+  const { notifySuccess, notifyError } = useTxNotification();
+  const { isEvm } = useAgnosticAccountInfo();
 
-  const onSuccess = useCallback(() => {
-    notifySuccess();
-  }, [notifySuccess]);
+  const onSuccess = useCallback(
+    (txHash: Hash, blockHash: Hash, txName: TxName) => {
+      // TODO: A well-defined explorer is not yet available for EVM. For example, explorer.tangle.tools won't work for local dev network.
+      const explorerUrl = isEvm ? null : resolveExplorerUrl(txHash, blockHash);
+
+      notifySuccess(txName, explorerUrl);
+    },
+    [isEvm, notifySuccess, resolveExplorerUrl],
+  );
 
   const onFailure = useCallback(
-    (error: Error) => {
-      notifyError(error);
+    (txName: TxName, error: Error) => {
+      notifyError(txName, error);
       console.error(error);
     },
     [notifyError],
@@ -55,8 +68,8 @@ const useRestakeApi = () => {
 
         return new RestakeEvmApi(
           evmAddress,
-          activeAccount,
-          activeWallet,
+          evmAddress,
+          getWagmiConfig(),
           onSuccess,
           onFailure,
         );

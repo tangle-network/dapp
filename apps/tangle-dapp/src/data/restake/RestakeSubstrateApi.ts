@@ -9,33 +9,52 @@ import { ISubmittableResult, Signer } from '@polkadot/types/types';
 import { ApiPromise } from '@polkadot/api';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import { BN } from '@polkadot/util';
-import { signAndSendExtrinsic } from '@webb-tools/polkadot-api-provider';
 import { isEvmAddress } from '@webb-tools/webb-ui-components';
 import { ZERO_ADDRESS } from '../../constants/evmPrecompiles';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
-import { Hash } from 'viem';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
+import { TxName } from '../../constants';
+import extractErrorFromTxStatus from '../../utils/extractErrorFromStatus';
 
 class RestakeSubstrateApi extends RestakeApiBase {
   constructor(
     readonly activeAccount: SubstrateAddress,
     readonly signer: Signer,
     readonly api: ApiPromise,
-    onSuccess: TxSuccessCallback,
-    onFailure: TxFailureCallback,
+    readonly onSuccess: TxSuccessCallback,
+    readonly onFailure: TxFailureCallback,
   ) {
-    super(onSuccess, onFailure);
+    super();
 
     this.api.setSigner(signer);
   }
 
+  private handleStatusUpdate = (txName: TxName) => {
+    return (status: ISubmittableResult) => {
+      const txHash = status.txHash.toHex();
+      const blockHash = status.status.asInBlock.toHex();
+      const error = extractErrorFromTxStatus(status);
+
+      if (error === null) {
+        this.onSuccess(txHash, blockHash, txName);
+      } else {
+        this.onFailure(txName, error);
+      }
+    };
+  };
+
   private async submitTx(
+    txName: TxName,
     extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
-  ): Promise<Hash | Error> {
-    return signAndSendExtrinsic(this.activeAccount, extrinsic, {});
+  ): Promise<void> {
+    await extrinsic.signAndSend(
+      this.activeAccount,
+      { signer: this.signer, nonce: -1 },
+      this.handleStatusUpdate(txName),
+    );
   }
 
-  deposit(assetId: RestakeAssetId, amount: BN) {
+  async deposit(assetId: RestakeAssetId, amount: BN) {
     const assetIdEnum = isEvmAddress(assetId)
       ? { Erc20: assetId }
       : { Custom: new BN(assetId) };
@@ -47,7 +66,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
       null,
     );
 
-    return this.submitTx(extrinsic);
+    await this.submitTx(TxName.RESTAKE_DEPOSIT, extrinsic);
   }
 
   delegate(
@@ -73,7 +92,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
       blueprintSelectionEnum,
     );
 
-    return this.submitTx(extrinsic);
+    return this.submitTx(TxName.RESTAKE_DELEGATE, extrinsic);
   }
 
   undelegate(
@@ -91,7 +110,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
       amount,
     );
 
-    return this.submitTx(extrinsic);
+    return this.submitTx(TxName.RESTAKE_UNSTAKE, extrinsic);
   }
 
   withdraw(assetId: RestakeAssetId, amount: BN) {
@@ -104,7 +123,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
       amount,
     );
 
-    return this.submitTx(extrinsic);
+    return this.submitTx(TxName.RESTAKE_WITHDRAW, extrinsic);
   }
 
   cancelUndelegate(requests: RestakeUndelegateRequest[]) {
@@ -122,7 +141,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
 
     const extrinsic = optimizeTxBatch(this.api, batch);
 
-    return this.submitTx(extrinsic);
+    return this.submitTx(TxName.RESTAKE_CANCEL_UNSTAKE, extrinsic);
   }
 
   cancelWithdraw(requests: RestakeWithdrawRequest[]) {
@@ -139,14 +158,14 @@ class RestakeSubstrateApi extends RestakeApiBase {
 
     const extrinsic = optimizeTxBatch(this.api, batch);
 
-    return this.submitTx(extrinsic);
+    return this.submitTx(TxName.RESTAKE_CANCEL_WITHDRAW, extrinsic);
   }
 
   executeUndelegate() {
     const extrinsic =
       this.api.tx.multiAssetDelegation.executeDelegatorUnstake();
 
-    return this.submitTx(extrinsic);
+    return this.submitTx(TxName.RESTAKE_EXECUTE_UNSTAKE, extrinsic);
   }
 
   executeWithdraw() {
@@ -154,7 +173,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
     const extrinsic =
       this.api.tx.multiAssetDelegation.executeWithdraw(ZERO_ADDRESS);
 
-    return this.submitTx(extrinsic);
+    return this.submitTx(TxName.RESTAKE_EXECUTE_WITHDRAW, extrinsic);
   }
 }
 
