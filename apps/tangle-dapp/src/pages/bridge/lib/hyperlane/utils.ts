@@ -18,11 +18,20 @@ export function tryFindToken(
 }
 
 export function getHyperlaneChainName(typedChainId: number) {
+  console.log('typedChainId', typedChainId);
   switch (typedChainId) {
-    case PresetTypedChainId.TangleTestnetEVM:
-      return 'tangletestnet';
-    case PresetTypedChainId.Holesky:
-      return 'holesky';
+    case PresetTypedChainId.Arbitrum:
+      return 'arbitrum';
+    case PresetTypedChainId.Optimism:
+      return 'optimism';
+    case PresetTypedChainId.Base:
+      return 'base';
+    case PresetTypedChainId.BSC:
+      return 'bsc';
+    case PresetTypedChainId.Polygon:
+      return 'polygon';
+    case PresetTypedChainId.TangleMainnetEVM:
+      return 'tangle';
     default:
       throw new Error('Unknown chain');
   }

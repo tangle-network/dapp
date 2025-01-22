@@ -7,7 +7,10 @@ import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transactio
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
+import {
+  EVMTokenBridgeEnum,
+  EVMTokenEnum,
+} from '@webb-tools/evm-contract-metadata';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
@@ -70,7 +73,6 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       : '';
   }, [balance, nativeTokenSymbol]);
 
-  const { balances, refresh: refreshEvmBalances } = useBridgeEvmBalances();
   const sourceChains = useBridgeStore((state) => state.sourceChains);
   const destinationChains = useBridgeStore((state) => state.destinationChains);
 
@@ -90,11 +92,30 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     (state) => state.setSelectedDestinationChain,
   );
 
+  const sourceTypedChainId = useMemo(() => {
+    return calculateTypedChainId(
+      selectedSourceChain.chainType,
+      selectedSourceChain.id,
+    );
+  }, [selectedSourceChain]);
+
+  const destinationTypedChainId = useMemo(() => {
+    return calculateTypedChainId(
+      selectedDestinationChain.chainType,
+      selectedDestinationChain.id,
+    );
+  }, [selectedDestinationChain]);
+
   const tokens = useBridgeStore((state) => state.tokens);
   const selectedToken = useBridgeStore((state) => state.selectedToken);
   const setSelectedToken = useBridgeStore((state) => state.setSelectedToken);
   const amount = useBridgeStore((state) => state.amount);
   const setAmount = useBridgeStore((state) => state.setAmount);
+
+  const { balances, refresh: refreshEvmBalances } = useBridgeEvmBalances(
+    sourceTypedChainId,
+    destinationTypedChainId,
+  );
 
   const isAmountInputError = useBridgeStore(
     (state) => state.isAmountInputError,
@@ -160,20 +181,6 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   const [addressInputErrorMessage, setAddressInputErrorMessage] = useState<
     string | null
   >(null);
-
-  const sourceTypedChainId = useMemo(() => {
-    return calculateTypedChainId(
-      selectedSourceChain.chainType,
-      selectedSourceChain.id,
-    );
-  }, [selectedSourceChain]);
-
-  const destinationTypedChainId = useMemo(() => {
-    return calculateTypedChainId(
-      selectedDestinationChain.chainType,
-      selectedDestinationChain.id,
-    );
-  }, [selectedDestinationChain]);
 
   const isSolanaDestination = selectedDestinationChain.name === 'Solana';
 
@@ -291,6 +298,8 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       },
       estimatedTime: estimatedTime,
       bridgeFeeTokenType: routerQuote.bridgeFee.symbol,
+      sendingAmount: new Decimal(sendingAmount),
+      receivingAmount: new Decimal(receivingAmount),
     };
   }, [
     amount,
@@ -305,12 +314,11 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       return null;
     }
 
-    const sendingAmount = parseFloat(
-      formatEther(BigInt(amount?.toString() ?? '0')),
-    );
+    const sendingAmount = new Decimal(amount?.toString() ?? '0')
+      .div(new Decimal(10).pow(selectedToken.decimals))
+      .toString();
 
-    const formattedSendingAmount =
-      sendingAmount.toString() + ' ' + selectedToken.tokenSymbol;
+    const formattedSendingAmount = `${sendingAmount} ${selectedToken.tokenSymbol}`;
 
     const formattedGasFee =
       formatEther(hyperlaneQuote.fees.local.amount) +
@@ -336,6 +344,8 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       estimatedTime: '',
       bridgeFeeTokenType: hyperlaneQuote.fees.local.symbol,
       gasFeeTokenType: hyperlaneQuote.fees.interchain.symbol,
+      sendingAmount: new Decimal(sendingAmount),
+      receivingAmount: new Decimal(sendingAmount),
     };
   }, [
     amount,
@@ -360,6 +370,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   const onSwitchChains = useCallback(() => {
     setSelectedSourceChain(selectedDestinationChain);
     setSelectedDestinationChain(selectedSourceChain);
+    refreshEvmBalances();
     clearBridgeStore();
   }, [
     clearBridgeStore,
@@ -367,17 +378,24 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     selectedSourceChain,
     setSelectedDestinationChain,
     setSelectedSourceChain,
+    refreshEvmBalances,
   ]);
 
   const assets: AssetConfig[] = useMemo(() => {
     const tokenConfigs = tokens.map((token) => {
       const balance =
-        sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
+        sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM &&
+        token.tokenType === EVMTokenEnum.TNT
           ? fmtAccountBalance
-          : balances?.[sourceTypedChainId]?.find(
-              (tokenBalance: BridgeTokenWithBalance) =>
-                tokenBalance.address === token.address,
-            )?.balance;
+          : sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
+            ? balances?.[sourceTypedChainId]?.find(
+                (tokenBalance: BridgeTokenWithBalance) =>
+                  tokenBalance.address === token.address,
+              )?.syntheticBalance
+            : balances?.[sourceTypedChainId]?.find(
+                (tokenBalance: BridgeTokenWithBalance) =>
+                  tokenBalance.address === token.address,
+              )?.balance;
 
       const selectedChainExplorerUrl =
         selectedSourceChain.blockExplorers?.default;
@@ -386,7 +404,9 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
         selectedChainExplorerUrl?.url &&
         makeExplorerUrl(
           selectedChainExplorerUrl.url,
-          token.address,
+          (sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
+            ? token.hyperlaneSyntheticAddress
+            : token.address) ?? '',
           'address',
           'web3',
         );
@@ -396,12 +416,13 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
         optionalSymbol: token.tokenSymbol,
         balance:
           activeAccount && balance
-            ? parseFloat(balance.toString()).toFixed(3)
+            ? parseFloat(balance.toString()).toFixed(6)
             : '',
         explorerUrl:
-          sourceTypedChainId !== PresetTypedChainId.TangleMainnetEVM
-            ? tokenExplorerUrl
-            : undefined,
+          sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM &&
+          token.tokenType === EVMTokenEnum.TNT
+            ? undefined
+            : tokenExplorerUrl,
         address: token.address as `0x${string}`,
         assetBridgeType:
           sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
@@ -473,11 +494,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
   const isActionBtnLoading = isRouterQuoteLoading || isHyperlaneQuoteLoading;
 
-  const actionBtnLoadingText = isRouterQuoteLoading
-    ? 'Fetching Router quote'
-    : isHyperlaneQuoteLoading
-      ? 'Fetching Hyperlane bridge fee'
-      : '';
+  const actionBtnLoadingText = isActionBtnLoading ? 'Preview Transaction' : '';
 
   const actionButtonText = useMemo(() => {
     if (!activeAccount || !activeWallet || !activeChain) {
@@ -496,7 +513,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       return 'Confirm Bridge';
     }
 
-    return 'Fetch Quote & Fees';
+    return 'Preview Transaction';
   }, [
     activeAccount,
     activeWallet,
@@ -596,9 +613,20 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     setIsAmountInputError,
   ]);
 
+  const recipientExplorerUrl = useMemo(() => {
+    return activeAccount?.address
+      ? makeExplorerUrl(
+          selectedSourceChain.blockExplorers?.default.url ?? '',
+          activeAccount.address,
+          'address',
+          'web3',
+        )
+      : undefined;
+  }, [activeAccount, selectedSourceChain.blockExplorers?.default.url]);
+
   useEffect(() => {
     // Re-fetch every 30 seconds.
-    const interval = 30 * 1000;
+    const interval = 10 * 1000;
 
     const intervalId = setInterval(() => {
       refreshEvmBalances();
@@ -723,7 +751,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                   >
                     <WalletFillIcon size="md" /> Balance:{' '}
                     {selectedTokenBalanceOnSourceChain !== null
-                      ? `${Number(selectedTokenBalanceOnSourceChain).toFixed(3)} ${selectedToken.tokenType}`
+                      ? `${Number(selectedTokenBalanceOnSourceChain).toFixed(6)} ${selectedToken.tokenType}`
                       : EMPTY_VALUE_PLACEHOLDER}
                   </Typography>
                 )}
@@ -766,6 +794,9 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
               estimatedTime={routerFeeDetails.estimatedTime}
               amounts={routerFeeDetails.amounts}
               bridgeFeeTokenType={routerFeeDetails.bridgeFeeTokenType}
+              sendingAmount={routerFeeDetails.sendingAmount}
+              receivingAmount={routerFeeDetails.receivingAmount}
+              recipientExplorerUrl={recipientExplorerUrl}
             />
           )}
 
@@ -778,6 +809,9 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                 amounts={hyperlaneFeeDetails.amounts}
                 bridgeFeeTokenType={hyperlaneFeeDetails.bridgeFeeTokenType}
                 gasFeeTokenType={hyperlaneFeeDetails.gasFeeTokenType}
+                sendingAmount={hyperlaneFeeDetails.sendingAmount}
+                receivingAmount={hyperlaneFeeDetails.receivingAmount}
+                recipientExplorerUrl={recipientExplorerUrl}
               />
             )}
 
@@ -858,6 +892,8 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
         activeAccountAddress={activeAccount?.address ?? ''}
         destinationAddress={destinationAddress ?? ''}
         routerTransferData={routerTransferData}
+        sendingAmount={hyperlaneFeeDetails?.sendingAmount ?? null}
+        receivingAmount={hyperlaneFeeDetails?.receivingAmount ?? null}
       />
     </>
   );
