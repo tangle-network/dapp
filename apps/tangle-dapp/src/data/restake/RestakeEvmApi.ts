@@ -7,7 +7,12 @@ import {
   Hash,
   SimulateContractParameters,
 } from 'viem';
-import RestakeApiBase from './RestakeAbiBase';
+import RestakeApiBase, {
+  RestakeUndelegateRequest,
+  RestakeWithdrawRequest,
+  TxFailureCallback,
+  TxSuccessCallback,
+} from './RestakeAbiBase';
 import { BN } from '@polkadot/util';
 import {
   EvmAddress,
@@ -29,14 +34,19 @@ import {
   convertAddressToBytes32,
   isEvmAddress,
 } from '@webb-tools/webb-ui-components';
+import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
+import BATCH_PRECOMPILE_ABI from '../../abi/batch';
+import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 
 class RestakeEvmApi extends RestakeApiBase {
   constructor(
     readonly activeAccount: EvmAddress,
     readonly signer: Account | EvmAddress,
     readonly provider: Config,
+    onSuccess: TxSuccessCallback,
+    onFailure: TxFailureCallback,
   ) {
-    super();
+    super(onSuccess, onFailure);
   }
 
   async callContract<
@@ -129,6 +139,110 @@ class RestakeEvmApi extends RestakeApiBase {
         BigInt(amount.toString()),
         blueprintSelection?.map((id) => BigInt(id.toString())) ?? [],
       ],
+    );
+  }
+
+  undelegate(
+    operatorAddress: SubstrateAddress,
+    assetId: RestakeAssetId,
+    amount: BN,
+  ): Promise<Hash | Error> {
+    const customAssetId = isEvmAddress(assetId) ? BigInt(0) : BigInt(assetId);
+    const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
+
+    return this.callContract(
+      RESTAKING_PRECOMPILE_ABI,
+      PrecompileAddress.RESTAKING,
+      'scheduleDelegatorUnstake',
+      [
+        convertAddressToBytes32(operatorAddress),
+        customAssetId,
+        tokenAddress,
+        BigInt(amount.toString()),
+      ],
+    );
+  }
+
+  withdraw(assetId: RestakeAssetId, amount: BN): Promise<Hash | Error> {
+    const customAssetId = isEvmAddress(assetId) ? BigInt(0) : BigInt(assetId);
+    const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
+
+    return this.callContract(
+      RESTAKING_PRECOMPILE_ABI,
+      PrecompileAddress.RESTAKING,
+      'scheduleWithdraw',
+      [customAssetId, tokenAddress, BigInt(amount.toString())],
+    );
+  }
+
+  executeUndelegate(): Promise<Hash | Error> {
+    return this.callContract(
+      RESTAKING_PRECOMPILE_ABI,
+      PrecompileAddress.RESTAKING,
+      'executeDelegatorUnstake',
+      [],
+    );
+  }
+
+  executeWithdraw(): Promise<Hash | Error> {
+    return this.callContract(
+      RESTAKING_PRECOMPILE_ABI,
+      PrecompileAddress.RESTAKING,
+      'executeWithdraw',
+      [],
+    );
+  }
+
+  cancelUndelegate(
+    requests: RestakeUndelegateRequest[],
+  ): Promise<Hash | Error> {
+    const batchCalls = requests.map(({ operatorAddress, assetId, amount }) => {
+      const assetIdBigInt = isEvmAddress(assetId) ? BigInt(0) : BigInt(assetId);
+
+      const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
+
+      // The precompile function expects a 32-byte address.
+      const operatorAddressBytes32 = convertAddressToBytes32(operatorAddress);
+
+      return createEvmBatchCallData(
+        RESTAKING_PRECOMPILE_ABI,
+        PrecompileAddress.RESTAKING,
+        'cancelDelegatorUnstake',
+        [
+          operatorAddressBytes32,
+          assetIdBigInt,
+          tokenAddress,
+          BigInt(amount.toString()),
+        ],
+      );
+    });
+
+    return this.callContract(
+      BATCH_PRECOMPILE_ABI,
+      PrecompileAddress.BATCH,
+      'batchAll',
+      createEvmBatchCallArgs(batchCalls),
+    );
+  }
+
+  cancelWithdraw(requests: RestakeWithdrawRequest[]): Promise<Hash | Error> {
+    const batchCalls = requests.map(({ assetId, amount }) => {
+      const assetIdBigInt = isEvmAddress(assetId) ? 0 : BigInt(assetId);
+      const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
+
+      return createEvmBatchCallData(
+        RESTAKING_PRECOMPILE_ABI,
+        PrecompileAddress.RESTAKING,
+        'cancelWithdraw',
+        [assetIdBigInt, tokenAddress, BigInt(amount.toString())],
+      );
+    });
+
+    return this.callContract(
+      BATCH_PRECOMPILE_ABI,
+      PrecompileAddress.BATCH,
+      'batchAll',
+      createEvmBatchCallArgs(batchCalls),
     );
   }
 }

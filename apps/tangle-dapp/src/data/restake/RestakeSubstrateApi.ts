@@ -2,8 +2,10 @@ import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import RestakeApiBase, {
   RestakeUndelegateRequest,
   RestakeWithdrawRequest,
+  TxFailureCallback,
+  TxSuccessCallback,
 } from './RestakeAbiBase';
-import { Signer } from '@polkadot/types/types';
+import { ISubmittableResult, Signer } from '@polkadot/types/types';
 import { ApiPromise } from '@polkadot/api';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import { BN } from '@polkadot/util';
@@ -11,16 +13,26 @@ import { signAndSendExtrinsic } from '@webb-tools/polkadot-api-provider';
 import { isEvmAddress } from '@webb-tools/webb-ui-components';
 import { ZERO_ADDRESS } from '../../constants/evmPrecompiles';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
+import { Hash } from 'viem';
+import { SubmittableExtrinsic } from '@polkadot/api/types';
 
 class RestakeSubstrateApi extends RestakeApiBase {
   constructor(
     readonly activeAccount: SubstrateAddress,
     readonly signer: Signer,
     readonly api: ApiPromise,
+    onSuccess: TxSuccessCallback,
+    onFailure: TxFailureCallback,
   ) {
-    super();
+    super(onSuccess, onFailure);
 
     this.api.setSigner(signer);
+  }
+
+  private async submitTx(
+    extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
+  ): Promise<Hash | Error> {
+    return signAndSendExtrinsic(this.activeAccount, extrinsic, {});
   }
 
   deposit(assetId: RestakeAssetId, amount: BN) {
@@ -35,7 +47,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
       null,
     );
 
-    return signAndSendExtrinsic(this.activeAccount, extrinsic, {});
+    return this.submitTx(extrinsic);
   }
 
   delegate(
@@ -61,7 +73,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
       blueprintSelectionEnum,
     );
 
-    return signAndSendExtrinsic(this.activeAccount, extrinsic, {});
+    return this.submitTx(extrinsic);
   }
 
   undelegate(
@@ -79,7 +91,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
       amount,
     );
 
-    return signAndSendExtrinsic(this.activeAccount, extrinsic, {});
+    return this.submitTx(extrinsic);
   }
 
   withdraw(assetId: RestakeAssetId, amount: BN) {
@@ -92,7 +104,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
       amount,
     );
 
-    return signAndSendExtrinsic(this.activeAccount, extrinsic, {});
+    return this.submitTx(extrinsic);
   }
 
   cancelUndelegate(requests: RestakeUndelegateRequest[]) {
@@ -110,7 +122,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
 
     const extrinsic = optimizeTxBatch(this.api, batch);
 
-    return signAndSendExtrinsic(this.activeAccount, extrinsic, {});
+    return this.submitTx(extrinsic);
   }
 
   cancelWithdraw(requests: RestakeWithdrawRequest[]) {
@@ -127,14 +139,14 @@ class RestakeSubstrateApi extends RestakeApiBase {
 
     const extrinsic = optimizeTxBatch(this.api, batch);
 
-    return signAndSendExtrinsic(this.activeAccount, extrinsic, {});
+    return this.submitTx(extrinsic);
   }
 
   executeUndelegate() {
     const extrinsic =
       this.api.tx.multiAssetDelegation.executeDelegatorUnstake();
 
-    return signAndSendExtrinsic(this.activeAccount, extrinsic, {});
+    return this.submitTx(extrinsic);
   }
 
   executeWithdraw() {
@@ -142,7 +154,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
     const extrinsic =
       this.api.tx.multiAssetDelegation.executeWithdraw(ZERO_ADDRESS);
 
-    return signAndSendExtrinsic(this.activeAccount, extrinsic, {});
+    return this.submitTx(extrinsic);
   }
 }
 

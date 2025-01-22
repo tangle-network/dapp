@@ -14,7 +14,18 @@ export type RestakeUndelegateRequest = {
   amount: BN;
 };
 
+export type TxSuccessCallback = (hash: Hash) => void;
+
+export type TxFailureCallback = (error: Error) => void;
+
 abstract class RestakeApiBase {
+  constructor(
+    readonly onSuccess: TxSuccessCallback,
+    readonly onFailure: TxFailureCallback,
+  ) {
+    //
+  }
+
   abstract deposit(assetId: RestakeAssetId, amount: BN): Promise<Hash | Error>;
 
   abstract delegate(
