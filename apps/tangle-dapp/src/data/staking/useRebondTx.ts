@@ -2,12 +2,13 @@ import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { Precompile } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { GetSuccessMessageFunction } from '../../types';
+import { GetSuccessMessageFn } from '../../types';
+import STAKING_PRECOMPILE_ABI from '../../abi/staking';
 
 type RebondTxContext = {
   amount: BN;
@@ -16,11 +17,17 @@ type RebondTxContext = {
 const useRebondTx = () => {
   const formatNativeTokenAmount = useFormatNativeTokenAmount();
 
-  const evmTxFactory: EvmTxFactory<Precompile.STAKING, RebondTxContext> =
-    useCallback(
-      (context) => ({ functionName: 'rebond', arguments: [context.amount] }),
-      [],
-    );
+  const evmTxFactory: EvmTxFactory<
+    typeof STAKING_PRECOMPILE_ABI,
+    'rebond',
+    RebondTxContext
+  > = useCallback(
+    (context) => ({
+      functionName: 'rebond',
+      arguments: [BigInt(context.amount.toString())],
+    }),
+    [],
+  );
 
   const substrateTxFactory: SubstrateTxFactory<RebondTxContext> = useCallback(
     (api, _activeSubstrateAddress, context) =>
@@ -28,19 +35,18 @@ const useRebondTx = () => {
     [],
   );
 
-  const getSuccessMessageFnc: GetSuccessMessageFunction<RebondTxContext> =
-    useCallback(
-      ({ amount }) =>
-        `Successfully rebonded ${formatNativeTokenAmount(amount)}.`,
-      [formatNativeTokenAmount],
-    );
+  const getSuccessMessage: GetSuccessMessageFn<RebondTxContext> = useCallback(
+    ({ amount }) => `Successfully rebonded ${formatNativeTokenAmount(amount)}.`,
+    [formatNativeTokenAmount],
+  );
 
-  return useAgnosticTx<Precompile.STAKING, RebondTxContext>({
+  return useAgnosticTx({
     name: TxName.REBOND,
-    precompile: Precompile.STAKING,
+    abi: STAKING_PRECOMPILE_ABI,
+    precompileAddress: PrecompileAddress.STAKING,
     evmTxFactory,
     substrateTxFactory,
-    getSuccessMessageFnc,
+    getSuccessMessage,
   });
 };
 

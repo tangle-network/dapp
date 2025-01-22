@@ -22,7 +22,7 @@ import TangleTokenIcon from '../../components/TangleTokenIcon';
 import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import { StaticSearchQueryPath } from '../../types';
-import TransferTxContainer from '../TransferTxContainer/TransferTxContainer';
+import TransferTxModal from '../TransferTxModal';
 import BalanceAction from './BalanceAction';
 import BalanceCell from './BalanceCell';
 import HeaderCell from './HeaderCell';
@@ -168,7 +168,7 @@ const BalancesTableContainer: FC = () => {
         {hasLocks && !isDetailsCollapsed && <LockedBalanceDetails />}
       </Card>
 
-      <TransferTxContainer
+      <TransferTxModal
         isModalOpen={isTransferModalOpen}
         setIsModalOpen={setIsTransferModalOpen}
       />

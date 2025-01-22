@@ -1,11 +1,11 @@
 import { HTMLMotionProps, motion } from 'framer-motion';
 import { forwardRef, PropsWithChildren } from 'react';
 
-export type AnimatedPageWrapperProps = HTMLMotionProps<'div'>;
+type Props = HTMLMotionProps<'div'>;
 
 const AnimatedPageWrapper = forwardRef<
   HTMLDivElement,
-  PropsWithChildren<AnimatedPageWrapperProps>
+  PropsWithChildren<Props>
 >(({ children, ...props }, ref) => {
   return (
     <motion.div

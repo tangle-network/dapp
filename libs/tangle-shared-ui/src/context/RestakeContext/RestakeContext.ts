@@ -6,7 +6,7 @@ import { AssetBalanceMap, RestakeVaultAssetMap } from '../../types/restake';
 import { RestakeContextType } from './types';
 
 const RestakeContext = createContext<RestakeContextType>({
-  assetMap: {},
+  assetMetadataMap: {},
   assetMap$: of<RestakeVaultAssetMap>({}),
   balances: {},
   balances$: of<AssetBalanceMap>({}),

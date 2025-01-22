@@ -159,8 +159,13 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
         getPaginationRowModel: getPaginationRowModel(),
         autoResetPageIndex: false,
       }),
-      // prettier-ignore
-      [blueprints, columns, filteredCategory, onRowSelectionChange, rowSelection],
+      [
+        blueprints,
+        columns,
+        filteredCategory,
+        onRowSelectionChange,
+        rowSelection,
+      ],
     ),
   );
 
@@ -211,6 +216,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
             </div>
           ))}
         </div>
+
         <div className="h-0.5 bg-mono-80 dark:bg-mono-170" />
       </div>
 

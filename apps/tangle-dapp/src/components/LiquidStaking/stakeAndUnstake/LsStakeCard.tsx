@@ -36,7 +36,7 @@ import useLsFeePercentage from './useLsFeePercentage';
 import useLsSpendingLimits from './useLsSpendingLimits';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import LstListItem from '../LstListItem';
-import searchBy from '../../../utils/searchBy';
+import filterBy from '../../../utils/filterBy';
 
 const LsStakeCard: FC = () => {
   const lsPools = useLsPools();
@@ -281,7 +281,7 @@ const LsStakeCard: FC = () => {
         filterItem={(pool, query) => {
           const displayName: LsPoolDisplayName = `${pool.name}#${pool.id}`;
 
-          return searchBy(query, [displayName]);
+          return filterBy(query, [displayName]);
         }}
       />
     </Card>

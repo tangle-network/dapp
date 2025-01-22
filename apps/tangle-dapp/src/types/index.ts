@@ -207,9 +207,4 @@ export type ExposureMap = Record<
   }
 >;
 
-/**
- * Represents a function type that takes a context parameter and returns a success message.
- * @param context The context parameter.
- * @returns The success message.
- */
-export type GetSuccessMessageFunction<Context> = (context: Context) => string;
+export type GetSuccessMessageFn<Context> = (context: Context) => string;

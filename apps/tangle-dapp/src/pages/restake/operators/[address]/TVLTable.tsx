@@ -24,7 +24,7 @@ const TVLTable: FC<Props> = ({
   delegatorInfo,
   delegatorTVL,
 }) => {
-  const { assetMap } = useRestakeContext();
+  const { assetMetadataMap } = useRestakeContext();
   const rewardConfig = useRestakeRewardConfig();
 
   const vaults = useMemo(() => {
@@ -33,16 +33,16 @@ const TVLTable: FC<Props> = ({
     const delegations = operatorData?.delegations ?? [];
 
     delegations.forEach(({ assetId }) => {
-      if (assetMap[assetId] === undefined) return;
+      if (assetMetadataMap[assetId] === undefined) return;
 
-      if (assetMap[assetId].vaultId === null) return;
+      if (assetMetadataMap[assetId].vaultId === null) return;
 
-      const vaultId = assetMap[assetId].vaultId;
+      const vaultId = assetMetadataMap[assetId].vaultId;
       if (vaults[vaultId] === undefined) {
         // TODO: Find out a proper way to get the vault name, now it's the first token name
-        const name = assetMap[assetId].name;
+        const name = assetMetadataMap[assetId].name;
         // TODO: Find out a proper way to get the vault symbol, now it's the first token symbol
-        const representToken = assetMap[assetId].symbol;
+        const representToken = assetMetadataMap[assetId].symbol;
 
         const apyPercentage =
           rewardConfig?.get(vaultId)?.apy.toNumber() ?? null;
@@ -63,7 +63,7 @@ const TVLTable: FC<Props> = ({
     });
 
     return vaults;
-  }, [assetMap, operatorData?.delegations, rewardConfig, vaultTVL]);
+  }, [assetMetadataMap, operatorData?.delegations, rewardConfig, vaultTVL]);
 
   const delegatorTotalRestakedAssets = useMemo(() => {
     if (!delegatorInfo?.delegations) {
@@ -91,7 +91,7 @@ const TVLTable: FC<Props> = ({
       },
       getExpandedRowContent(row) {
         const vaultId = row.original.id;
-        const vaultAssets = Object.values(assetMap)
+        const vaultAssets = Object.values(assetMetadataMap)
           .filter((asset) => asset.vaultId === vaultId)
           .map((asset) => {
             const selfStake =
@@ -118,7 +118,7 @@ const TVLTable: FC<Props> = ({
         );
       },
     }),
-    [assetMap, delegatorTVL, delegatorTotalRestakedAssets],
+    [assetMetadataMap, delegatorTVL, delegatorTotalRestakedAssets],
   );
 
   return (

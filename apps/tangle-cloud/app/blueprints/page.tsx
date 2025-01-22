@@ -3,10 +3,6 @@
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { RowSelectionState } from '@tanstack/table-core';
 import RestakeBanner from '@webb-tools/tangle-shared-ui/components/blueprints/RestakeBanner';
-import {
-  BLUEPRINTS_OPERATOR_DESCRIPTION,
-  BLUEPRINTS_OPERATOR_TITLE,
-} from '@webb-tools/tangle-shared-ui/constants';
 import useBlueprintListing from '@webb-tools/tangle-shared-ui/data/blueprints/useBlueprintListing';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import {
@@ -27,27 +23,26 @@ import RegistrationReview from './RegistrationReview';
 export const dynamic = 'force-static';
 
 const ROLE_TITLE = {
-  [Role.OPERATOR]: BLUEPRINTS_OPERATOR_TITLE,
-  [Role.DEPLOYER]: 'Deploy your first',
+  [Role.OPERATOR]: 'Register Your First Blueprint',
+  [Role.DEPLOYER]: 'Deploy Your First Blueprint',
 } satisfies Record<Role, string>;
 
 const ROLE_DESCRIPTION = {
-  [Role.OPERATOR]: BLUEPRINTS_OPERATOR_DESCRIPTION,
+  [Role.OPERATOR]:
+    'Select a Blueprint, customize settings, and register your decentralized service in minutes.',
   [Role.DEPLOYER]:
     'Select a Blueprint, customize settings, and deploy your decentralized service instance in minutes.',
 } satisfies Record<Role, string>;
 
 const Page = () => {
   const { role } = useRoleStore();
-
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
-
   const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const { blueprints, isLoading, error } = useBlueprintListing();
+
   const [pricingSettings, setPricingSettings] =
     useState<PricingFormResult | null>(null);
-
-  const { blueprints, isLoading, error } = useBlueprintListing();
 
   const selectedBlueprints = useMemo(() => {
     return Object.keys(rowSelection)

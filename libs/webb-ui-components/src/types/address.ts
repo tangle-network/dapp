@@ -15,20 +15,13 @@ export type SubstrateAddress = Brand<string, 'SubstrateAddress'>;
 export type EvmAddress = Brand<`0x${string}`, 'EvmAddress20'>;
 
 /**
- * The same as a Substrate address, but as 32 bytes and without
- * encoding.
+ * Represents data that is 32 bytes long, with a `0x` prefix.
  *
- * This is mainly used for precompile functions that require `bytes32`.
+ * This is mainly used for precompile functions that require `bytes32` for
+ * either data or more frequently, Substrate addresses.
  */
-export type SubstrateBytes32Address = Brand<
-  `0x${string}`,
-  'SubstrateAddressBytes32'
->;
+export type Bytes32 = Brand<`0x${string}`, 'Bytes32'>;
 
-export type AnyAddress =
-  | SubstrateAddress
-  | SubstrateBytes32Address
-  | EvmAddress
-  | string;
+export type AnyAddress = SubstrateAddress | Bytes32 | EvmAddress | string;
 
 export type SolanaAddress = Brand<string, 'SolanaAddress'>;

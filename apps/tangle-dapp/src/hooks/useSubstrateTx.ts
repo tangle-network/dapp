@@ -15,7 +15,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Hash } from 'viem';
 
 import { TxName } from '../constants';
-import { GetSuccessMessageFunction } from '../types';
+import { GetSuccessMessageFn } from '../types';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
@@ -37,7 +37,7 @@ export type SubstrateTxFactory<Context = void> = (
 
 function useSubstrateTx<Context = void>(
   factory: SubstrateTxFactory<Context>,
-  getSuccessMessageFnc?: GetSuccessMessageFunction<Context>,
+  getSuccessMessage?: GetSuccessMessageFn<Context>,
   timeoutDelay = 120_000,
   overrideRpcEndpoint?: string,
 ) {
@@ -80,7 +80,7 @@ function useSubstrateTx<Context = void>(
 
       assert(
         injector !== null,
-        'Should not be able to execute a Substrate transaction without an injector',
+        'An injector should be available to sign and send the transaction',
       );
 
       const api = await getApiPromise(overrideRpcEndpoint ?? rpcEndpoint);
@@ -138,8 +138,8 @@ function useSubstrateTx<Context = void>(
         setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
         setError(error);
 
-        if (error === null && getSuccessMessageFnc !== undefined) {
-          setSuccessMessage(getSuccessMessageFnc(context));
+        if (error === null && getSuccessMessage !== undefined) {
+          setSuccessMessage(getSuccessMessage(context));
         }
       };
 
@@ -169,7 +169,7 @@ function useSubstrateTx<Context = void>(
       rpcEndpoint,
       factory,
       isMountedRef,
-      getSuccessMessageFnc,
+      getSuccessMessage,
       injector,
     ],
   );
@@ -219,12 +219,11 @@ export default useSubstrateTx;
 export function useSubstrateTxWithNotification<Context = void>(
   txName: TxName,
   factory: SubstrateTxFactory<Context>,
-  getSuccessMessageFnc?: GetSuccessMessageFunction<Context>,
+  getSuccessMessage?: GetSuccessMessageFn<Context>,
   overrideRpcEndpoint?: string,
 ) {
   const { resolveExplorerUrl } = useSubstrateExplorerUrl();
   const activeAccountAddress = useActiveAccountAddress();
-
   const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 
   const {
@@ -237,7 +236,7 @@ export function useSubstrateTxWithNotification<Context = void>(
     successMessage,
   } = useSubstrateTx(
     factory,
-    getSuccessMessageFnc,
+    getSuccessMessage,
     undefined,
     overrideRpcEndpoint,
   );

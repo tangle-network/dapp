@@ -1,75 +1,92 @@
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
+import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/convertAddressToBytes32';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { Precompile } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import {
-  AbiBatchCallData,
+  AbiBatchCall,
   EvmTxFactory,
 } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
-import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
+import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';
 import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
 import { NominationOptionsContext } from './useSetupNominatorTx';
+import BATCH_PRECOMPILE_ABI from '../../abi/batch';
+import STAKING_PRECOMPILE_ABI from '../../abi/staking';
+import enumValueToNumber from '../../utils/enumValueToNumber';
 
-export type UpdateNominatorOptions = Partial<NominationOptionsContext> & {
+export type Context = Partial<NominationOptionsContext> & {
   nominees: Set<SubstrateAddress>;
 };
 
 const useUpdateNominatorTx = () => {
-  const evmTxFactory: EvmTxFactory<Precompile.BATCH, UpdateNominatorOptions> =
-    useCallback((context) => {
-      const batchCalls: AbiBatchCallData[] = [];
+  const evmTxFactory: EvmTxFactory<
+    typeof BATCH_PRECOMPILE_ABI,
+    'batchAll',
+    Context
+  > = useCallback((context) => {
+    const batchCalls: AbiBatchCall[] = [];
 
-      // If payee was provided, add the call to set the payee.
-      if (context.payee !== undefined) {
-        const payee = getEvmPayeeValue(context.payee);
+    // If payee was provided, add the call to set the payee.
+    if (context.payee !== undefined) {
+      const payee = getEvmPayeeValue(context.payee);
 
-        // TODO: Are we missing adding all the EVM addresses for the other reward destinations?
-        if (payee === null) {
-          throw new Error(
-            'There is no EVM destination address registered for the given payee',
-          );
-        }
-
-        batchCalls.push(
-          createEvmBatchCallData(Precompile.STAKING, 'setPayee', [payee]),
+      // TODO: Are we missing adding all the EVM addresses for the other reward destinations?
+      if (payee === null) {
+        throw new Error(
+          'There is no EVM destination address registered for the given payee',
         );
       }
 
-      // If a bond amount was provided, add the call to bond extra.
-      if (context.bondAmount !== undefined) {
-        batchCalls.push(
-          createEvmBatchCallData(Precompile.STAKING, 'bondExtra', [
-            BigInt(context.bondAmount.toString()),
-          ]),
-        );
-      }
-
-      const evmNomineeAddresses32 = Array.from(context.nominees).map(
-        toSubstrateBytes32Address,
-      );
-
-      // Push nominate call last. Although the order of calls
-      // in the batch may not matter in this case.
       batchCalls.push(
-        createEvmBatchCallData(Precompile.STAKING, 'nominate', [
-          evmNomineeAddresses32,
-        ]),
+        createEvmBatchCall(
+          STAKING_PRECOMPILE_ABI,
+          PrecompileAddress.STAKING,
+          'setPayee',
+          [enumValueToNumber(payee)],
+        ),
       );
+    }
 
-      return {
-        functionName: 'batchAll',
-        arguments: createEvmBatchCallArgs(batchCalls),
-      };
-    }, []);
+    // If a bond amount was provided, add the call to bond extra.
+    if (context.bondAmount !== undefined) {
+      batchCalls.push(
+        createEvmBatchCall(
+          STAKING_PRECOMPILE_ABI,
+          PrecompileAddress.STAKING,
+          'bondExtra',
+          [BigInt(context.bondAmount.toString())],
+        ),
+      );
+    }
+
+    const evmNomineeAddresses32 = Array.from(context.nominees).map(
+      convertAddressToBytes32,
+    );
+
+    // Push nominate call last. Although the order of calls
+    // in the batch may not matter in this case.
+    batchCalls.push(
+      createEvmBatchCall(
+        STAKING_PRECOMPILE_ABI,
+        PrecompileAddress.STAKING,
+        'nominate',
+        [evmNomineeAddresses32],
+      ),
+    );
+
+    return {
+      functionName: 'batchAll',
+      arguments: createEvmBatchCallArgs(batchCalls),
+    };
+  }, []);
 
   const substrateTxFactory = useCallback<
     SubstrateTxFactory<Partial<NominationOptionsContext>>
@@ -106,9 +123,10 @@ const useUpdateNominatorTx = () => {
     return optimizeTxBatch(api, txs);
   }, []);
 
-  return useAgnosticTx<Precompile.BATCH, UpdateNominatorOptions>({
+  return useAgnosticTx({
     name: TxName.UPDATE_NOMINATOR,
-    precompile: Precompile.BATCH,
+    abi: BATCH_PRECOMPILE_ABI,
+    precompileAddress: PrecompileAddress.BATCH,
     substrateTxFactory,
     evmTxFactory,
   });

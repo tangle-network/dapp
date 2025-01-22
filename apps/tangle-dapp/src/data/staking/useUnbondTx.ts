@@ -2,45 +2,51 @@ import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { Precompile } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { GetSuccessMessageFunction } from '../../types';
+import { GetSuccessMessageFn } from '../../types';
+import STAKING_PRECOMPILE_ABI from '../../abi/staking';
 
-type UnbondTxContext = {
+type Context = {
   amount: BN;
 };
 
 const useUnbondTx = () => {
   const formatNativeTokenAmount = useFormatNativeTokenAmount();
 
-  const evmTxFactory: EvmTxFactory<Precompile.STAKING, UnbondTxContext> =
-    useCallback(
-      (context) => ({ functionName: 'unbond', arguments: [context.amount] }),
-      [],
-    );
+  const evmTxFactory: EvmTxFactory<
+    typeof STAKING_PRECOMPILE_ABI,
+    'unbond',
+    Context
+  > = useCallback(
+    (context) => ({
+      functionName: 'unbond',
+      arguments: [BigInt(context.amount.toString())],
+    }),
+    [],
+  );
 
-  const substrateTxFactory: SubstrateTxFactory<UnbondTxContext> = useCallback(
+  const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     (api, _activeSubstrateAddress, context) =>
       api.tx.staking.unbond(context.amount),
     [],
   );
 
-  const getSuccessMessageFnc: GetSuccessMessageFunction<UnbondTxContext> =
-    useCallback(
-      ({ amount }) =>
-        `Successfully unstaked ${formatNativeTokenAmount(amount)}.`,
-      [formatNativeTokenAmount],
-    );
+  const getSuccessMessage: GetSuccessMessageFn<Context> = useCallback(
+    ({ amount }) => `Successfully unstaked ${formatNativeTokenAmount(amount)}.`,
+    [formatNativeTokenAmount],
+  );
 
-  return useAgnosticTx<Precompile.STAKING, UnbondTxContext>({
+  return useAgnosticTx({
     name: TxName.UNBOND,
-    precompile: Precompile.STAKING,
+    abi: STAKING_PRECOMPILE_ABI,
+    precompileAddress: PrecompileAddress.STAKING,
     evmTxFactory,
     substrateTxFactory,
-    getSuccessMessageFnc,
+    getSuccessMessage,
   });
 };
 

@@ -7,8 +7,6 @@ import {
   AccordionButtonBase,
   AccordionContent,
   AccordionItem,
-  InfoIconWithTooltip,
-  Label,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
@@ -145,7 +143,7 @@ export const FeeDetail = ({
                   variant="body1"
                   className="text-mono-0 dark:text-mono-0"
                 >
-                  ~30min or more
+                  ~ {estimatedTime}
                 </Typography>
               </div>
             )}
