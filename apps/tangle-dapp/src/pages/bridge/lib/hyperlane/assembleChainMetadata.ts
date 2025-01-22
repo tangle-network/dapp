@@ -6,7 +6,10 @@ import {
 } from '@hyperlane-xyz/sdk';
 import { z } from 'zod';
 
-import { HYPERLANE_CHAINS, HYPERLANE_REGISTRY_URL } from '../../constants';
+import {
+  HYPERLANE_CHAINS,
+  HYPERLANE_REGISTRY_URL,
+} from '../../../../constants/bridge';
 
 export default async function assembleChainMetadata() {
   const result = z.record(ChainMetadataSchema).safeParse({

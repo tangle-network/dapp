@@ -24,7 +24,7 @@ import {
   isSolanaAddress,
 } from '@webb-tools/webb-ui-components';
 import { Abi } from 'viem';
-import { ERC20_ABI } from './abi';
+import ERC20_ABI from '../abi/erc20';
 
 // TODO: Include assertion logic, as the Abi type can't be directly imported from viem since the 'type' field clashes (string vs. 'function').
 const assertAbi = (abi: unknown): Abi => abi as Abi;

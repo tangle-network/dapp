@@ -5,7 +5,7 @@ import { objFilter, objMerge } from '@hyperlane-xyz/utils';
 import {
   HYPERLANE_WARP_ROUTE_CONFIGS,
   HYPERLANE_WARP_ROUTE_WHITELIST,
-} from '../../constants';
+} from '../../../../constants/bridge';
 
 export default function assembleWarpCoreConfig(): WarpCoreConfig {
   const result = WarpCoreConfigSchema.safeParse(HYPERLANE_WARP_ROUTE_CONFIGS);

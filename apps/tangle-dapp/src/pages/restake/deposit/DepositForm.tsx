@@ -50,8 +50,7 @@ import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import assert from 'assert';
-import { ZERO_ADDRESS } from '../../../constants/evmPrecompiles';
-import { useBridgeEvmBalances } from '../../bridge/hooks/useBridgeEvmBalances';
+import { useBridgeEvmBalances } from '../../../data/bridge/useBridgeEvmBalances';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -188,7 +187,13 @@ const DepositForm: FC<Props> = (props) => {
     update: updateTokenModal,
   } = useModal();
 
-  const { balances: erc20Balances } = useBridgeEvmBalances();
+  const tangleMainnetEvmChain =
+    apiConfig.chains[PresetTypedChainId.TangleMainnetEVM];
+
+  const { balances: erc20Balances } = useBridgeEvmBalances(
+    tangleMainnetEvmChain.id,
+    tangleMainnetEvmChain.id,
+  );
 
   const nativeAssets = useMemo<RestakeAssetItem[]>(() => {
     const nativeAssetsWithBalances = assetWithBalances
@@ -325,7 +330,7 @@ const DepositForm: FC<Props> = (props) => {
           <Modal open={chainModalOpen} onOpenChange={updateChainModal}>
             <ModalContent title="Select Chain">
               <ChainList
-                searchInputId="restake-deposit-form-search"
+                searchInputId="restake-deposit-chain-search"
                 onClose={closeChainModal}
                 chains={sourceChainOptions}
                 onSelectChain={handleOnSelectChain}

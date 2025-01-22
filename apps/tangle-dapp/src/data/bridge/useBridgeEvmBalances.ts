@@ -10,20 +10,20 @@ import {
   BridgeToken,
   BridgeTokenWithBalance,
 } from '@webb-tools/tangle-shared-ui/types';
-import { BRIDGE_TOKENS } from '../constants';
+import { BRIDGE_TOKENS } from '../../constants/bridge';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
-import useEvmAddress20 from '../../../hooks/useEvmAddress';
+import useEvmAddress20 from '../../hooks/useEvmAddress';
 import { isSolanaAddress } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 
-export const fetchEvmTokenBalance = async (
-  accountAddress: string,
+const fetchErc20TokenBalance = async (
+  accountAddress: EvmAddress,
   chainId: number,
-  erc20Address: EvmAddress,
+  contractAddress: EvmAddress,
   tokenAbi: Abi,
   decimals: number,
-) => {
+): Promise<Decimal> => {
   try {
     const client = createPublicClient({
       chain: chainsConfig[chainId],
@@ -31,7 +31,7 @@ export const fetchEvmTokenBalance = async (
     });
 
     const balance = await client.readContract({
-      address: erc20Address,
+      address: contractAddress,
       abi: tokenAbi,
       functionName: 'balanceOf',
       args: [accountAddress],
@@ -43,7 +43,7 @@ export const fetchEvmTokenBalance = async (
     );
 
     return new Decimal(ethers.utils.formatUnits(balance, decimals));
-  } catch (error) {
+  } catch {
     return new Decimal(0);
   }
 };
@@ -69,7 +69,7 @@ export const useBridgeEvmBalances = (
         return { ...token, balance: new Decimal(0) };
       }
 
-      const balance = await fetchEvmTokenBalance(
+      const balance = await fetchErc20TokenBalance(
         address,
         chainId,
         token.address,
@@ -78,8 +78,9 @@ export const useBridgeEvmBalances = (
       );
 
       let syntheticBalance: Decimal | undefined;
+
       if (token.hyperlaneSyntheticAddress) {
-        syntheticBalance = await fetchEvmTokenBalance(
+        syntheticBalance = await fetchErc20TokenBalance(
           address,
           chainId,
           token.hyperlaneSyntheticAddress,
@@ -93,7 +94,7 @@ export const useBridgeEvmBalances = (
     [],
   );
 
-  const fetchBalances = useCallback(async () => {
+  const fetchAllBalances = useCallback(async () => {
     if (accountEvmAddress === null || !sourceChainId) {
       return;
     }
@@ -106,6 +107,7 @@ export const useBridgeEvmBalances = (
         {};
 
       let tokens = BRIDGE_TOKENS[sourceChainId];
+
       if (!tokens || tokens.length === 0) {
         tokens = BRIDGE_TOKENS[destinationChainId];
       }
@@ -128,13 +130,13 @@ export const useBridgeEvmBalances = (
   }, [accountEvmAddress, destinationChainId, fetchTokenBalance, sourceChainId]);
 
   useEffect(() => {
-    fetchBalances();
-  }, [fetchBalances]);
+    fetchAllBalances();
+  }, [fetchAllBalances]);
 
   return {
     balances,
     isLoading,
     error,
-    refresh: fetchBalances,
+    refresh: fetchAllBalances,
   };
 };

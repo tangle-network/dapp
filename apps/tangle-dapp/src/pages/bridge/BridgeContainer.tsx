@@ -29,30 +29,30 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatEther } from 'viem';
 
-import AddressInput from '../../../components/AddressInput';
-import AmountInput from '../../../components/AmountInput';
-import { BridgeConfirmationModal } from '../components/BridgeConfirmationModal';
-import { FeeDetail, FeeDetailProps } from '../components/FeeDetail';
-import { AssetConfig, AssetList } from '../../../components/Lists/AssetList';
-import { ChainList } from '../../../components/Lists/ChainList';
-import { ROUTER_NATIVE_TOKEN_ADDRESS } from '../constants';
-import useBridgeStore from '../context/useBridgeStore';
-import useBalances from '../../../data/balances/useBalances';
-import { useBridgeEvmBalances } from '../hooks/useBridgeEvmBalances';
+import AddressInput from '../../components/AddressInput';
+import AmountInput from '../../components/AmountInput';
+import { BridgeConfirmationModal } from '../../components/bridge/BridgeConfirmationModal';
+import { FeeDetail, FeeDetailProps } from '../../components/bridge/FeeDetail';
+import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
+import { ChainList } from '../../components/Lists/ChainList';
+import { ROUTER_NATIVE_TOKEN_ADDRESS } from '../../constants/bridge';
+import useBridgeStore from '../../context/useBridgeStore';
+import useBalances from '../../data/balances/useBalances';
+import { useBridgeEvmBalances } from '../../data/bridge/useBridgeEvmBalances';
 import { BridgeTokenWithBalance } from '@webb-tools/tangle-shared-ui/types';
 import useBridgeRouterQuote, {
   RouterQuoteParams,
-} from '../hooks/useBridgeRouterQuote';
-import convertDecimalToBn from '../../../utils/convertDecimalToBn';
-import formatTangleBalance from '../../../utils/formatTangleBalance';
+} from '../../data/bridge/useBridgeRouterQuote';
+import convertDecimalToBn from '../../utils/convertDecimalToBn';
+import formatTangleBalance from '../../utils/formatTangleBalance';
 import {
   HyperlaneQuoteProps,
   useHyperlaneQuote,
-} from '../hooks/useHyperlaneQuote';
-import { RouterTransferProps } from '../hooks/useRouterTransfer';
-import ErrorMessage from '../../../components/ErrorMessage';
+} from '../../data/bridge/useHyperlaneQuote';
+import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
+import ErrorMessage from '../../components/ErrorMessage';
 import { WalletFillIcon } from '@webb-tools/icons';
-import { AddressType } from '../../../constants';
+import { AddressType } from '../../constants';
 
 interface BridgeContainerProps {
   className?: string;

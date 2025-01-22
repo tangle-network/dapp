@@ -29,11 +29,11 @@ import cx from 'classnames';
 import { FC, useCallback } from 'react';
 
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
-import { FeeDetail, FeeDetailProps } from '../components/FeeDetail';
-import { ROUTER_TX_EXPLORER_URL } from '../constants';
-import { useBridgeTxQueue } from '../context/BridgeTxQueueContext';
-import { useHyperlaneTransfer } from '../hooks/useHyperlaneTransfer';
-import { useRouterTransfer } from '../hooks/useRouterTransfer';
+import { FeeDetail, FeeDetailProps } from './FeeDetail';
+import { ROUTER_TX_EXPLORER_URL } from '../../constants/bridge';
+import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
+import { useHyperlaneTransfer } from '../../data/bridge/useHyperlaneTransfer';
+import { useRouterTransfer } from '../../data/bridge/useRouterTransfer';
 import { Decimal } from 'decimal.js';
 
 interface BridgeConfirmationModalProps {

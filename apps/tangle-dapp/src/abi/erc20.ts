@@ -1,4 +1,6 @@
-export const ERC20_ABI = [
+import { AbiFunction } from 'viem';
+
+const ERC20_ABI = [
   {
     inputs: [{ name: 'account', type: 'address' }],
     name: 'balanceOf',
@@ -61,4 +63,6 @@ export const ERC20_ABI = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-];
+] as const satisfies AbiFunction[];
+
+export default ERC20_ABI;

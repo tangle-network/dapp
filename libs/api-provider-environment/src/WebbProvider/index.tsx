@@ -633,7 +633,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           }
         } else {
           // If the user did not want to switch to the previously stored chain,
-          // set the previosuly stored chain in the app for display only.
+          // set the previously stored chain in the app for display only.
           setActiveChain(chains[net]);
         }
       };
