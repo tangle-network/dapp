@@ -40,7 +40,6 @@ import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
 import WithdrawModal from '../../../containers/restaking/WithdrawModal';
 import WithdrawRequestTable from '../../../containers/restaking/WithdrawRequestTable';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import { BN } from '@polkadot/util';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
@@ -179,12 +178,13 @@ const RestakeWithdrawForm: FC = () => {
       }
 
       const assetMetadata = assetMetadataMap[assetId];
+      const amountBn = parseChainUnits(amount, assetMetadata.decimals);
 
-      // TODO: Fix and handle temporary type casts.
-      return restakeApi.withdraw(
-        assetId as RestakeAssetId,
-        parseChainUnits(amount, assetMetadata.decimals) as BN,
-      );
+      if (!(amountBn instanceof BN)) {
+        return;
+      }
+
+      return restakeApi.withdraw(assetId, amountBn);
     },
     [assetMetadataMap, isReady, restakeApi],
   );

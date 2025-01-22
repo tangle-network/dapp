@@ -10,7 +10,7 @@ import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
-import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
+import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';
 import STAKING_PRECOMPILE_ABI from '../../abi/staking';
 
@@ -42,7 +42,7 @@ const usePayoutAllTx = () => {
         // The precompile function expects a 32-byte address.
         const validatorEvmAddress32 = convertAddressToBytes32(validatorAddress);
 
-        return createEvmBatchCallData(
+        return createEvmBatchCall(
           STAKING_PRECOMPILE_ABI,
           PrecompileAddress.STAKING,
           'payoutStakers',

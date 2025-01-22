@@ -42,7 +42,6 @@ import Details from './Details';
 import UnstakeRequestTable from '../../../containers/restaking/UnstakeRequestTable';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import { BN } from '@polkadot/util';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
 
 const RestakeUnstakeForm: FC = () => {
@@ -193,19 +192,19 @@ const RestakeUnstakeForm: FC = () => {
   const isReady = restakeApi !== null && !isSubmitting;
 
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
-    ({ amount, assetId, operatorAccountId }) => {
+    async ({ amount, assetId, operatorAccountId }) => {
       if (!assetId || !isDefined(assetMetadataMap[assetId]) || !isReady) {
         return;
       }
 
       const assetMetadata = assetMetadataMap[assetId];
+      const amountBn = parseChainUnits(amount, assetMetadata.decimals);
 
-      // TODO: Fix temporary type casts.
-      return restakeApi.undelegate(
-        operatorAccountId,
-        assetId as RestakeAssetId,
-        parseChainUnits(amount, assetMetadata.decimals) as BN,
-      );
+      if (!(amountBn instanceof BN)) {
+        return;
+      }
+
+      await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
     },
     [assetMetadataMap, isReady, restakeApi],
   );

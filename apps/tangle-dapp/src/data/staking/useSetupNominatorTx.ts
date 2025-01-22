@@ -12,7 +12,7 @@ import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import { GetSuccessMessageFn, StakingRewardsDestination } from '../../types';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
-import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
+import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';
 import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';
@@ -42,7 +42,7 @@ const useSetupNominatorTx = () => {
       );
     }
 
-    const bondCall = createEvmBatchCallData(
+    const bondCall = createEvmBatchCall(
       STAKING_PRECOMPILE_ABI,
       PrecompileAddress.STAKING,
       'bond',
@@ -53,7 +53,7 @@ const useSetupNominatorTx = () => {
       convertAddressToBytes32,
     );
 
-    const nominateCall = createEvmBatchCallData(
+    const nominateCall = createEvmBatchCall(
       STAKING_PRECOMPILE_ABI,
       PrecompileAddress.STAKING,
       'nominate',

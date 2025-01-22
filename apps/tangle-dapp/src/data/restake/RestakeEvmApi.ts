@@ -28,7 +28,7 @@ import {
   convertAddressToBytes32,
   isEvmAddress,
 } from '@webb-tools/webb-ui-components';
-import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
+import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import { TxName } from '../../constants';
@@ -55,8 +55,6 @@ class RestakeEvmApi extends RestakeApiBase {
     functionName: FunctionName,
     args: Args,
   ) {
-    console.debug('Calling contract', txName);
-
     try {
       const connector = (() => {
         if (this.provider.state.current === null) return;
@@ -78,7 +76,7 @@ class RestakeEvmApi extends RestakeApiBase {
         abi: abi satisfies AbiFunction[] as AbiFunction[],
         address,
         functionName,
-        args,
+        args: args as unknown as unknown[],
         account: this.activeAccount,
         connector,
         chainId,
@@ -205,7 +203,7 @@ class RestakeEvmApi extends RestakeApiBase {
       // The precompile function expects a 32-byte address.
       const operatorAddressBytes32 = convertAddressToBytes32(operatorAddress);
 
-      return createEvmBatchCallData(
+      return createEvmBatchCall(
         RESTAKING_PRECOMPILE_ABI,
         PrecompileAddress.RESTAKING,
         'cancelDelegatorUnstake',
@@ -229,10 +227,10 @@ class RestakeEvmApi extends RestakeApiBase {
 
   async cancelWithdraw(requests: RestakeWithdrawRequest[]) {
     const batchCalls = requests.map(({ assetId, amount }) => {
-      const assetIdBigInt = isEvmAddress(assetId) ? 0 : BigInt(assetId);
+      const assetIdBigInt = isEvmAddress(assetId) ? BigInt(0) : BigInt(assetId);
       const tokenAddress = isEvmAddress(assetId) ? assetId : ZERO_ADDRESS;
 
-      return createEvmBatchCallData(
+      return createEvmBatchCall(
         RESTAKING_PRECOMPILE_ABI,
         PrecompileAddress.RESTAKING,
         'cancelWithdraw',

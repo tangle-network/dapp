@@ -1,13 +1,10 @@
 /**
  * TODO:
- * - Asset ID should has a better type than string.
  * - Vault ID should has a better type than string.
  * - Amount should has a better type than string.
- *
- * Maybe we can utilize the `Brand` type in `apps/tangle-dapp/types/utils.ts`
- * with some casting and assertion functions.
  */
 
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 export type RewardVaultMap = {
@@ -49,18 +46,18 @@ export type RewardConfig = {
 export type DepositFormFields = {
   amount: string;
   sourceTypedChainId: number;
-  depositAssetId: string;
+  depositAssetId: RestakeAssetId;
 };
 
 export type DelegationFormFields = {
   amount: string;
   operatorAccountId: SubstrateAddress;
-  assetId: string;
+  assetId: RestakeAssetId;
 };
 
 export type UnstakeFormFields = DelegationFormFields;
 
 export type WithdrawFormFields = {
   amount: string;
-  assetId: string;
+  assetId: RestakeAssetId;
 };

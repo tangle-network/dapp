@@ -1,12 +1,10 @@
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
-import { AbiBatchCallData } from '../../hooks/useEvmPrecompileAbiCall';
+import { AbiBatchCall } from '../../hooks/useEvmPrecompileAbiCall';
 import { Hex } from 'viem';
 
 type AbiBatchCallArgs = [EvmAddress[], bigint[], Hex[], bigint[]];
 
-function createEvmBatchCallArgs(
-  callData: AbiBatchCallData[],
-): AbiBatchCallArgs {
+function createEvmBatchCallArgs(callData: AbiBatchCall[]): AbiBatchCallArgs {
   return [
     callData.map((call) => call.to),
     callData.map((call) => BigInt(call.value)),

@@ -8,6 +8,8 @@ import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import filterBy from '../../utils/filterBy';
 import LogoListItem from '../../components/Lists/LogoListItem';
 import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -15,7 +17,7 @@ type Props = {
   setIsOpen: (isOpen: boolean) => void;
 
   onItemSelected: (item: {
-    assetId: string;
+    assetId: RestakeAssetId;
     amount: bigint;
     formattedAmount: string;
   }) => void;
@@ -37,7 +39,7 @@ const WithdrawModal = ({
 
     return Object.entries(delegatorInfo.deposits).map(
       ([assetId, { amount }]) => ({
-        assetId,
+        assetId: assertRestakeAssetId(assetId),
         amount,
       }),
     );

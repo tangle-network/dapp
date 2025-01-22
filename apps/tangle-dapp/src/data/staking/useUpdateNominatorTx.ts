@@ -8,13 +8,13 @@ import { TxName } from '../../constants';
 import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import {
-  AbiBatchCallData,
+  AbiBatchCall,
   EvmTxFactory,
 } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
-import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
+import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';
 import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
 import { NominationOptionsContext } from './useSetupNominatorTx';
@@ -32,7 +32,7 @@ const useUpdateNominatorTx = () => {
     'batchAll',
     Context
   > = useCallback((context) => {
-    const batchCalls: AbiBatchCallData[] = [];
+    const batchCalls: AbiBatchCall[] = [];
 
     // If payee was provided, add the call to set the payee.
     if (context.payee !== undefined) {
@@ -46,7 +46,7 @@ const useUpdateNominatorTx = () => {
       }
 
       batchCalls.push(
-        createEvmBatchCallData(
+        createEvmBatchCall(
           STAKING_PRECOMPILE_ABI,
           PrecompileAddress.STAKING,
           'setPayee',
@@ -58,7 +58,7 @@ const useUpdateNominatorTx = () => {
     // If a bond amount was provided, add the call to bond extra.
     if (context.bondAmount !== undefined) {
       batchCalls.push(
-        createEvmBatchCallData(
+        createEvmBatchCall(
           STAKING_PRECOMPILE_ABI,
           PrecompileAddress.STAKING,
           'bondExtra',
@@ -74,7 +74,7 @@ const useUpdateNominatorTx = () => {
     // Push nominate call last. Although the order of calls
     // in the batch may not matter in this case.
     batchCalls.push(
-      createEvmBatchCallData(
+      createEvmBatchCall(
         STAKING_PRECOMPILE_ABI,
         PrecompileAddress.STAKING,
         'nominate',

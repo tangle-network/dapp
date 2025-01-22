@@ -10,7 +10,6 @@ import { ApiPromise } from '@polkadot/api';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import { BN } from '@polkadot/util';
 import { isEvmAddress } from '@webb-tools/webb-ui-components';
-import { ZERO_ADDRESS } from '../../constants/evmPrecompiles';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { TxName } from '../../constants';
@@ -31,6 +30,13 @@ class RestakeSubstrateApi extends RestakeApiBase {
 
   private handleStatusUpdate = (txName: TxName) => {
     return (status: ISubmittableResult) => {
+      // If the component is unmounted, or the transaction
+      // has not yet been included in a block, ignore the
+      // status update.
+      if (!status.isInBlock) {
+        return;
+      }
+
       const txHash = status.txHash.toHex();
       const blockHash = status.status.asInBlock.toHex();
       const error = extractErrorFromTxStatus(status);
@@ -170,8 +176,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
 
   executeWithdraw() {
     // TODO: Figure out what the EVM address param is for.
-    const extrinsic =
-      this.api.tx.multiAssetDelegation.executeWithdraw(ZERO_ADDRESS);
+    const extrinsic = this.api.tx.multiAssetDelegation.executeWithdraw(null);
 
     return this.submitTx(TxName.RESTAKE_EXECUTE_WITHDRAW, extrinsic);
   }

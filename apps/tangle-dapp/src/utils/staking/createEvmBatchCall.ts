@@ -5,10 +5,10 @@ import {
   FindAbiArgsOf,
   PrecompileAddress,
 } from '../../constants/evmPrecompiles';
-import { AbiBatchCallData } from '../../hooks/useEvmPrecompileAbiCall';
+import { AbiBatchCall } from '../../hooks/useEvmPrecompileAbiCall';
 import { assertEvmAddress } from '@webb-tools/webb-ui-components';
 
-const createEvmBatchCallData = <
+const createEvmBatchCall = <
   Abi extends AbiFunction[],
   FunctionName extends ExtractAbiFunctionNames<Abi>,
 >(
@@ -16,7 +16,7 @@ const createEvmBatchCallData = <
   precompileAddress: PrecompileAddress,
   functionName: FunctionName,
   args: FindAbiArgsOf<Abi, FunctionName>,
-): AbiBatchCallData => {
+): AbiBatchCall => {
   const functionNameAsString: string = functionName;
 
   return {
@@ -31,4 +31,4 @@ const createEvmBatchCallData = <
   };
 };
 
-export default createEvmBatchCallData;
+export default createEvmBatchCall;

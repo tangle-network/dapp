@@ -19,12 +19,9 @@ import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 
-export type AbiEncodeableValue = string | number | boolean | bigint;
-
-export type AbiBatchCallData = {
+export type AbiBatchCall = {
   to: EvmAddress;
-  // TODO: Value should be strongly typed and explicit. Accept a generic type to accomplish this.
-  value: AbiEncodeableValue;
+  value: 0;
   gasLimit: number;
   callData: Hex;
 };

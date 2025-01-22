@@ -37,7 +37,6 @@ import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Details from './Details';
 import StakeInput from './StakeInput';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import { BN } from '@polkadot/util';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
@@ -207,13 +206,13 @@ const RestakeDelegateForm: FC = () => {
       }
 
       const assetMetadata = assetMetadataMap[assetId];
+      const amountBn = parseChainUnits(amount, assetMetadata.decimals);
 
-      // TODO: Temp forced casts.
-      return restakeApi.delegate(
-        operatorAccountId,
-        assetId as RestakeAssetId,
-        parseChainUnits(amount, assetMetadata.decimals) as BN,
-      );
+      if (!(amountBn instanceof BN)) {
+        return;
+      }
+
+      return restakeApi.delegate(operatorAccountId, assetId, amountBn);
     },
     [assetMetadataMap, isReady, restakeApi],
   );

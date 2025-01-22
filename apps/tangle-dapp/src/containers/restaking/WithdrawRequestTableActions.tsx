@@ -1,11 +1,9 @@
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { isScheduledRequestReady } from '../../pages/restake/utils';
 import { WithdrawRequestTableRow } from './WithdrawRequestTable';
-import useRestakeExecuteWithdrawRequestsTx from '../../data/restake/useRestakeExecuteWithdrawRequestsTx';
-import { TxStatus } from '../../hooks/useSubstrateTx';
-import useRestakeCancelWithdrawRequestsTx from '../../data/restake/useRestakeCancelWithdrawRequestsTx';
 import { BN } from '@polkadot/util';
+import useRestakeApi from '../../data/restake/useRestakeApi';
 
 type Props = {
   allRequests: WithdrawRequestTableRow[];
@@ -16,20 +14,13 @@ const WithdrawRequestTableActions: FC<Props> = ({
   allRequests,
   selectedRequests,
 }) => {
-  const { execute: executeWithdraw, status: withdrawStatus } =
-    useRestakeExecuteWithdrawRequestsTx();
+  const [isTransacting, setIsTransacting] = useState(false);
+  const restakeApi = useRestakeApi();
 
-  const { execute: executeCancel, status: cancelStatus } =
-    useRestakeCancelWithdrawRequestsTx();
-
-  const isReadyToWithdraw =
-    executeWithdraw !== null && withdrawStatus !== TxStatus.PROCESSING;
-
-  const isReadyToCancel =
-    executeCancel !== null && cancelStatus !== TxStatus.PROCESSING;
+  const isReady = restakeApi !== null && !isTransacting;
 
   const handleCancelWithdraw = useCallback(async () => {
-    if (!isReadyToCancel) {
+    if (!isReady) {
       return;
     }
 
@@ -40,18 +31,20 @@ const WithdrawRequestTableActions: FC<Props> = ({
       };
     });
 
-    return executeCancel({
-      withdrawRequests: requests,
-    });
-  }, [isReadyToCancel, selectedRequests, executeCancel]);
+    setIsTransacting(true);
+    await restakeApi.cancelWithdraw(requests);
+    setIsTransacting(false);
+  }, [isReady, selectedRequests, restakeApi]);
 
-  const handleExecuteWithdraw = useCallback(() => {
-    if (!isReadyToWithdraw) {
+  const handleExecuteWithdraw = useCallback(async () => {
+    if (!isReady) {
       return;
     }
 
-    return executeWithdraw();
-  }, [isReadyToWithdraw, executeWithdraw]);
+    setIsTransacting(true);
+    await restakeApi.executeWithdraw();
+    setIsTransacting(false);
+  }, [isReady, restakeApi]);
 
   const canCancelWithdraw = selectedRequests.length > 0;
 
@@ -69,8 +62,8 @@ const WithdrawRequestTableActions: FC<Props> = ({
     <div className="flex items-center gap-3">
       <Button
         className="flex-1"
-        isLoading={cancelStatus === TxStatus.PROCESSING}
-        isDisabled={!canCancelWithdraw || !isReadyToCancel}
+        isLoading={isTransacting}
+        isDisabled={!canCancelWithdraw || !isReady}
         isFullWidth
         onClick={handleCancelWithdraw}
         variant="secondary"
@@ -80,8 +73,8 @@ const WithdrawRequestTableActions: FC<Props> = ({
 
       <Button
         className="flex-1"
-        isLoading={withdrawStatus === TxStatus.PROCESSING}
-        isDisabled={!canExecuteWithdraw || !isReadyToWithdraw}
+        isLoading={isTransacting}
+        isDisabled={!canExecuteWithdraw || !isReady}
         isFullWidth
         onClick={handleExecuteWithdraw}
       >

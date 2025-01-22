@@ -40,8 +40,6 @@ import SourceChainInput from './SourceChainInput';
 import Details from './Details';
 import { BN } from '@polkadot/util';
 import parseChainUnits from '../../../utils/parseChainUnits';
-import assert from 'assert';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
 
@@ -230,11 +228,11 @@ const DepositForm: FC<Props> = (props) => {
       const asset = assetMetadataMap[depositAssetId];
       const amountBn = parseChainUnits(amount, asset.decimals);
 
-      // TODO: Handle this better instead of an assertion.
-      assert(amountBn instanceof BN, 'Failed to parse input amount into a BN');
+      if (!(amountBn instanceof BN)) {
+        return;
+      }
 
-      // TODO: Temporary unsafe cast.
-      return restakeApi.deposit(depositAssetId as RestakeAssetId, amountBn);
+      return restakeApi.deposit(depositAssetId, amountBn);
     },
     [assetMetadataMap, isReady, restakeApi],
   );

@@ -35,12 +35,8 @@ const UnstakeRequestTableActions: FC<Props> = ({
     );
 
     setIsTransacting(true);
-
-    const result = await restakeApi.cancelUndelegate(unstakeRequests);
-
+    await restakeApi.cancelUndelegate(unstakeRequests);
     setIsTransacting(false);
-
-    return result;
   }, [isReady, restakeApi, selectedRequests]);
 
   const handleExecuteUnstake = useCallback(async () => {
@@ -49,12 +45,8 @@ const UnstakeRequestTableActions: FC<Props> = ({
     }
 
     setIsTransacting(true);
-
-    const result = await restakeApi.executeUndelegate();
-
+    await restakeApi.executeUndelegate();
     setIsTransacting(false);
-
-    return result;
   }, [isReady, restakeApi]);
 
   const canCancelUnstake = selectedRequests.length > 0;
