@@ -11,8 +11,9 @@ import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
 } from '@webb-tools/evm-contract-metadata';
-import { Abi } from 'viem';
+import { Abi, Address } from 'viem';
 import { Decimal } from 'decimal.js';
+import { u128 } from '@polkadot/types';
 
 export type TangleTokenSymbol = 'tTNT' | 'TNT';
 
@@ -119,3 +120,7 @@ export type BridgeTokenWithBalance = BridgeToken & {
 export type BridgeChainBalances = Partial<
   Record<PresetTypedChainId, BridgeTokenWithBalance[]>
 >;
+
+export type RestakeAssetId = `${number}` | EvmAddress;
+
+export type TangleAssetId = { Custom: u128 } | { Erc20: Address };

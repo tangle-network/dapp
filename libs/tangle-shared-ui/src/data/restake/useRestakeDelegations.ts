@@ -1,8 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import useApiRx from '../../hooks/useApiRx';
-import createRestakeAssetId, {
-  RestakeAssetId,
-} from '../../utils/createRestakeAssetId';
+import createRestakeAssetId from '../../utils/createRestakeAssetId';
+import { RestakeAssetId } from '../../types';
 import { BN } from '@polkadot/util';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { PalletMultiAssetDelegationDelegatorDelegatorBlueprintSelection } from '@polkadot/types/lookup';

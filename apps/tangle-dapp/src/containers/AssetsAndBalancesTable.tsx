@@ -45,7 +45,7 @@ import { LstIconSize } from '../components/LiquidStaking/types';
 import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import useRestakeAssetsTvl from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import sortByBn from '../utils/sortByBn';
 
 enum RowType {
@@ -184,7 +184,7 @@ const COLUMNS = [
 
       return (
         <TableCellWrapper>
-          <div className="flex gap-1 items-center justify-center">
+          <div className="flex items-center justify-center gap-1">
             <StatItem
               tooltip="Total value locked & deposit cap."
               title={

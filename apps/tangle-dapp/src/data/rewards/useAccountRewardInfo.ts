@@ -1,7 +1,7 @@
 import { u128 } from '@polkadot/types';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
-import { TangleAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import { TangleAssetId } from '@webb-tools/tangle-shared-ui/types';
 import { useCallback } from 'react';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 

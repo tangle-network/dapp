@@ -8,7 +8,7 @@ import {
 } from '@polkadot/types/lookup';
 import { TransformEnum } from './utils';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import { RestakeAssetId } from '../utils/createRestakeAssetId';
+import { RestakeAssetId } from '../types';
 
 /**
  * The activity status of the operator.

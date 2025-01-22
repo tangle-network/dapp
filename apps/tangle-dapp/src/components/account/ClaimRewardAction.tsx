@@ -1,7 +1,7 @@
 import { BN_ZERO } from '@polkadot/util';
 import { TYPE_REGISTRY } from '@webb-tools/dapp-config/constants/polkadot';
 import VipDiamondLine from '@webb-tools/icons/VipDiamondLine';
-import { TangleAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import { TangleAssetId } from '@webb-tools/tangle-shared-ui/types';
 import { useMemo } from 'react';
 import { formatUnits, zeroAddress } from 'viem';
 import useAccountRewardInfo from '../../data/rewards/useAccountRewardInfo';

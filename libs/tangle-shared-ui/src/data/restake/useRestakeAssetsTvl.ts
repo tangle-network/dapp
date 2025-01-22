@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
-import useRestakeDelegations from './useRestakeDelegations';
 import { useMemo } from 'react';
-import { RestakeAssetId } from '../../utils/createRestakeAssetId';
+import { RestakeAssetId } from '../../types';
+import useRestakeDelegations from './useRestakeDelegations';
 
 const useRestakeAssetsTvl = (): Map<RestakeAssetId, BN> | null => {
   const delegations = useRestakeDelegations();
