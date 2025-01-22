@@ -7,14 +7,20 @@ import { TokenIcon } from '@webb-tools/icons';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import { Card, EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
+import {
+  AmountFormatStyle,
+  assertEvmAddress,
+  Card,
+  formatDisplayAmount,
+  isEvmAddress,
+  shortenHex,
+} from '@webb-tools/webb-ui-components';
 import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import {
   Modal,
   ModalContent,
 } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import {
   type ComponentProps,
   FC,
@@ -42,6 +48,10 @@ import { BN } from '@polkadot/util';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import assert from 'assert';
+import { ZERO_ADDRESS } from '../../../constants/evmPrecompiles';
+import { useBridgeEvmBalances } from '../../bridge/hooks/useBridgeEvmBalances';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -53,6 +63,14 @@ const getDefaultTypedChainId = (
 };
 
 type Props = ComponentProps<'form'>;
+
+type RestakeAssetItem = {
+  id: RestakeAssetId;
+  name: string;
+  symbol: string;
+  balance: BN;
+  decimals: number;
+};
 
 const DepositForm: FC<Props> = (props) => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -170,40 +188,55 @@ const DepositForm: FC<Props> = (props) => {
     update: updateTokenModal,
   } = useModal();
 
-  const selectableTokens = useMemo(
-    () =>
-      assetWithBalances
-        .filter(
-          (asset) =>
-            asset.balance?.balance !== undefined &&
-            asset.balance?.balance !== BigInt(0),
-        )
-        .map((asset) => {
-          const balance = asset.balance;
+  const { balances: erc20Balances } = useBridgeEvmBalances();
 
-          return {
-            id: asset.assetId,
-            name: asset.metadata.name,
-            symbol: asset.metadata.symbol,
-            ...(balance !== null
-              ? {
-                  assetBalanceProps: {
-                    balance: +formatUnits(
-                      balance.balance,
-                      asset.metadata.decimals,
-                    ),
-                    ...(asset.metadata.vaultId
-                      ? {
-                          subContent: `Vault ID: ${asset.metadata.vaultId}`,
-                        }
-                      : {}),
-                  },
-                }
-              : {}),
-          } satisfies TokenListCardProps['selectTokens'][number];
-        }),
-    [assetWithBalances],
-  );
+  const nativeAssets = useMemo<RestakeAssetItem[]>(() => {
+    const nativeAssetsWithBalances = assetWithBalances
+      .filter(
+        (asset) =>
+          asset.balance?.balance !== undefined &&
+          asset.balance.balance !== BigInt(0),
+      )
+      .map((asset) => {
+        assert(asset.balance !== null);
+
+        const balance = new BN(asset.balance.balance.toString());
+
+        return {
+          id: asset.assetId,
+          name: asset.metadata.name,
+          symbol: asset.metadata.symbol,
+          balance,
+          decimals: asset.metadata.decimals,
+        } satisfies RestakeAssetItem;
+      });
+
+    return nativeAssetsWithBalances;
+  }, [assetWithBalances]);
+
+  const erc20Assets = useMemo<RestakeAssetItem[]>(() => {
+    return Object.entries(erc20Balances).flatMap(([, balances]) => {
+      if (balances === undefined) {
+        return [];
+      }
+
+      return balances.map(
+        (erc20Asset) =>
+          ({
+            name: erc20Asset.tokenSymbol,
+            symbol: erc20Asset.tokenSymbol,
+            balance: new BN(erc20Asset.balance.toString()),
+            decimals: erc20Asset.decimals,
+            // TODO: Figure out how to handle Solana tokens/address.
+            id: assertEvmAddress(erc20Asset.address),
+          }) satisfies RestakeAssetItem,
+      );
+    });
+  }, [erc20Balances]);
+
+  const allAssets = useMemo<RestakeAssetItem[]>(() => {
+    return [...nativeAssets, ...erc20Assets];
+  }, [erc20Assets, nativeAssets]);
 
   const handleTokenChange = useCallback(
     (token: TokenListCardProps['selectTokens'][number]) => {
@@ -312,20 +345,25 @@ const DepositForm: FC<Props> = (props) => {
             searchPlaceholder="Search assets..."
             titleWhenEmpty="No Assets Found"
             descriptionWhenEmpty="It seems that there are no available assets in this network yet. Please try again later."
-            items={selectableTokens}
+            items={allAssets}
             renderItem={(asset) => {
-              const fmtBalance =
-                asset.assetBalanceProps?.balance !== undefined
-                  ? `${addCommasToNumber(asset.assetBalanceProps.balance)} ${asset.symbol}`
-                  : EMPTY_VALUE_PLACEHOLDER;
+              const fmtBalance = formatDisplayAmount(
+                asset.balance,
+                asset.decimals,
+                AmountFormatStyle.SHORT,
+              );
+
+              const idText = isEvmAddress(asset.id)
+                ? `Address: ${shortenHex(asset.id)}`
+                : `Asset ID: ${asset.id}`;
 
               return (
                 <LogoListItem
                   logo={<TokenIcon size="xl" name={asset.symbol} />}
                   leftUpperContent={`${asset.name} (${asset.symbol})`}
-                  leftBottomContent={`Asset ID: ${asset.id}`}
+                  leftBottomContent={idText}
                   rightBottomText="Balance"
-                  rightUpperText={fmtBalance}
+                  rightUpperText={`${fmtBalance} ${asset.symbol}`}
                 />
               );
             }}

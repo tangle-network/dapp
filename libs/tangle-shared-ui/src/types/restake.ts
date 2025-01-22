@@ -156,7 +156,7 @@ export type AssetBalanceMap = {
 };
 
 export type AssetWithBalance = {
-  assetId: string;
+  assetId: RestakeAssetId;
   metadata: RestakeVaultAssetMetadata;
   balance: AssetBalance | null;
 };
