@@ -1,5 +1,5 @@
 import { map, Observable } from 'rxjs';
-import { RestakeAssetId } from '../../utils/createRestakeAssetId';
+import { RestakeAssetId } from '../../types';
 
 export function assetIdsQuery(
   rewardVaults: [vaultId: bigint, assetIds: RestakeAssetId[] | null][],
