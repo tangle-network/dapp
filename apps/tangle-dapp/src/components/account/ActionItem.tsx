@@ -14,7 +14,7 @@ import { InternalPath } from '../../types';
 
 type ActionItemProps = {
   Icon: (props: IconBase) => ReactElement;
-  label: string;
+  label?: string;
   onClick?: () => void;
   isDisabled?: boolean;
   hasNotificationDot?: boolean;
@@ -69,13 +69,15 @@ const ActionItem: FC<ActionItemProps> = ({
         <Icon size="lg" />
       </div>
 
-      <Typography
-        component="span"
-        variant="body1"
-        className="block text-center dark:text-mono-0"
-      >
-        {label}
-      </Typography>
+      {label && (
+        <Typography
+          component="span"
+          variant="body1"
+          className="block text-center dark:text-mono-0"
+        >
+          {label}
+        </Typography>
+      )}
     </div>
   );
 

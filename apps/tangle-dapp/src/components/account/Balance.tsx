@@ -6,11 +6,12 @@ import {
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, useMemo, useState } from 'react';
 
-import useBalances from '../../data/balances/useBalances';
-import formatTangleBalance from '../../utils/formatTangleBalance';
 import { LockFillIcon } from '@webb-tools/icons';
 import LockedBalanceDetailsModal from '../../containers/LockedBalanceDetailsModal';
 import useBalanceLocks from '../../data/balances/useBalanceLocks';
+import useBalances from '../../data/balances/useBalances';
+import formatTangleBalance from '../../utils/formatTangleBalance';
+import Actions from './Actions';
 
 const Balance: FC = () => {
   const { transferable, locked } = useBalances();
@@ -64,14 +65,18 @@ const Balance: FC = () => {
         </div>
       </div>
 
-      <div className="flex items-end gap-2 py-2">
-        <Typography variant="h2" fw="bold" className="!leading-none">
-          {left}
-        </Typography>
+      <div className="flex items-baseline gap-4">
+        <div className="flex items-end gap-2 py-2">
+          <Typography variant="h2" fw="bold" className="!leading-none">
+            {left}
+          </Typography>
 
-        <Typography variant="h4" className="!leading-none pb-1 flex gap-2">
-          {right}
-        </Typography>
+          <Typography variant="h4" className="!leading-none pb-1 flex gap-2">
+            {right}
+          </Typography>
+        </div>
+
+        <Actions />
       </div>
 
       <LockedBalanceDetailsModal
