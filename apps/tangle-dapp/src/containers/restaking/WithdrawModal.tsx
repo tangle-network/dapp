@@ -1,15 +1,15 @@
 import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config/constants';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
+import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
+import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
-import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
-import filterBy from '../../utils/filterBy';
 import LogoListItem from '../../components/Lists/LogoListItem';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
-import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
+import filterBy from '../../utils/filterBy';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;

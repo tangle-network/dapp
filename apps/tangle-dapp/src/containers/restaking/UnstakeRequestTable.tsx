@@ -33,7 +33,7 @@ import UnstakeRequestTableActions from './UnstakeRequestTableActions';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { BN } from '@polkadot/util';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 
 export type UnstakeRequestTableRow = {
   amount: string;
