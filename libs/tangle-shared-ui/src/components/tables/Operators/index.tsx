@@ -24,18 +24,19 @@ import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import TableCellWrapper from '../../../components/tables/TableCellWrapper';
 import TableStatus from '../../../components/tables/TableStatus';
-import { getSortAddressOrIdentityFnc } from '../../../components/tables/utils';
-import { OperatorData } from '../../../types';
+import { sortByAddressOrIdentity } from '../../../components/tables/utils';
+import { RestakeOperator } from '../../../types';
 import getTVLToDisplay from '../../../utils/getTVLToDisplay';
-
-import type { Props } from './types';
+import type { ComponentProps, PropsWithChildren } from 'react';
+import type { TableStatusProps } from '../../../components/tables/TableStatus';
 import VaultsDropdown from './VaultsDropdown';
 
-const columnHelper = createColumnHelper<OperatorData>();
+const COLUMN_HELPER = createColumnHelper<RestakeOperator>();
 
-const staticColumns: ColumnDef<OperatorData, any>[] = [
-  columnHelper.accessor('address', {
+const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
+  COLUMN_HELPER.accessor('address', {
     header: () => 'Identity',
+    sortingFn: sortByAddressOrIdentity<RestakeOperator>(),
     cell: (props) => {
       const { address, identityName: identity } = props.row.original;
 
@@ -65,9 +66,8 @@ const staticColumns: ColumnDef<OperatorData, any>[] = [
         </TableCellWrapper>
       );
     },
-    sortingFn: getSortAddressOrIdentityFnc<OperatorData>(),
   }),
-  columnHelper.accessor('restakersCount', {
+  COLUMN_HELPER.accessor('restakersCount', {
     header: () => 'Restakers',
     cell: (props) => (
       <TableCellWrapper>
@@ -81,7 +81,7 @@ const staticColumns: ColumnDef<OperatorData, any>[] = [
       </TableCellWrapper>
     ),
   }),
-  columnHelper.accessor('concentrationPercentage', {
+  COLUMN_HELPER.accessor('concentrationPercentage', {
     header: () => 'Concentration',
     cell: (props) => {
       const value = props.getValue();
@@ -101,7 +101,7 @@ const staticColumns: ColumnDef<OperatorData, any>[] = [
       );
     },
   }),
-  columnHelper.accessor('tvlInUsd', {
+  COLUMN_HELPER.accessor('tvlInUsd', {
     header: () => 'TVL',
     cell: (props) => (
       <TableCellWrapper>
@@ -114,7 +114,7 @@ const staticColumns: ColumnDef<OperatorData, any>[] = [
       </TableCellWrapper>
     ),
   }),
-  columnHelper.accessor('vaultTokens', {
+  COLUMN_HELPER.accessor('vaultTokens', {
     header: () => 'Vaults',
     cell: (props) => {
       const tokensList = props.getValue();
@@ -133,6 +133,18 @@ const staticColumns: ColumnDef<OperatorData, any>[] = [
   }),
 ];
 
+type Props = {
+  isLoading?: boolean;
+  data?: RestakeOperator[];
+  globalFilter?: string;
+  onGlobalFilterChange?: (value: string) => void;
+  loadingTableProps?: Partial<TableStatusProps>;
+  emptyTableProps?: Partial<TableStatusProps>;
+  tableProps?: Partial<ComponentProps<typeof Table>>;
+  ViewOperatorAction?: React.FC<PropsWithChildren<{ address: string }>>;
+  RestakeOperatorAction?: React.FC<PropsWithChildren<{ address: string }>>;
+};
+
 const OperatorsTable: FC<Props> = ({
   data = [],
   isLoading,
@@ -141,36 +153,36 @@ const OperatorsTable: FC<Props> = ({
   tableProps,
   globalFilter,
   onGlobalFilterChange,
-  ViewOperatorWrapper,
-  RestakeOperatorWrapper,
+  ViewOperatorAction,
+  RestakeOperatorAction,
 }) => {
   const columns = useMemo(
     () =>
-      staticColumns.concat([
-        columnHelper.display({
+      STATIC_COLUMNS.concat([
+        COLUMN_HELPER.display({
           id: 'actions',
           header: () => null,
           cell: (props) => (
             <TableCellWrapper removeRightBorder>
               <div className="flex items-center justify-end flex-1 gap-2">
-                {ViewOperatorWrapper ? (
-                  <ViewOperatorWrapper address={props.row.original.address}>
+                {ViewOperatorAction ? (
+                  <ViewOperatorAction address={props.row.original.address}>
                     <Button variant="utility" className="uppercase body4">
                       View
                     </Button>
-                  </ViewOperatorWrapper>
+                  </ViewOperatorAction>
                 ) : (
                   <Button variant="utility" className="uppercase body4">
                     View
                   </Button>
                 )}
 
-                {RestakeOperatorWrapper ? (
-                  <RestakeOperatorWrapper address={props.row.original.address}>
+                {RestakeOperatorAction ? (
+                  <RestakeOperatorAction address={props.row.original.address}>
                     <Button variant="utility" className="uppercase body4">
                       Restake
                     </Button>
-                  </RestakeOperatorWrapper>
+                  </RestakeOperatorAction>
                 ) : (
                   <Button variant="utility" className="uppercase body4">
                     Restake
@@ -180,9 +192,9 @@ const OperatorsTable: FC<Props> = ({
             </TableCellWrapper>
           ),
           enableSorting: false,
-        }) satisfies ColumnDef<OperatorData>,
+        }) satisfies ColumnDef<RestakeOperator>,
       ]),
-    [ViewOperatorWrapper, RestakeOperatorWrapper],
+    [ViewOperatorAction, RestakeOperatorAction],
   );
 
   const table = useReactTable({
@@ -195,7 +207,7 @@ const OperatorsTable: FC<Props> = ({
     initialState: {
       sorting: [
         {
-          id: 'restakersCount',
+          id: 'restakersCount' satisfies keyof RestakeOperator,
           desc: true,
         },
       ],
@@ -220,9 +232,7 @@ const OperatorsTable: FC<Props> = ({
         className={loadingTableProps?.className}
       />
     );
-  }
-
-  if (data.length === 0) {
+  } else if (data.length === 0) {
     return (
       <TableStatus
         title="No Operators Found"

@@ -20,6 +20,7 @@ interface RouterTransactionResponse {
 }
 
 export type RouterTransferProps = {
+  // TODO: Avoid using `any` here.
   routerQuoteData: any;
   fromTokenAddress: string;
   toTokenAddress: string;

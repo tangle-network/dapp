@@ -1,7 +1,7 @@
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { Dispatch, type FC, SetStateAction, memo } from 'react';
 
-import ValidatorSelectionTable from '../../components/ValidatorSelectionTable/ValidatorSelectionTable';
+import ValidatorSelectionTable from '../../components/ValidatorSelectionTable';
 import useAllValidators from '../../data/ValidatorTables/useAllValidators';
 
 export type SelectValidatorsProps = {

@@ -9,7 +9,7 @@ export type RestakeContextType = {
   /**
    * The asset map for the current selected chain
    */
-  assetMap: RestakeVaultAssetMap;
+  assetMetadataMap: RestakeVaultAssetMap;
 
   /**
    * An observable of the asset map for the current selected chain

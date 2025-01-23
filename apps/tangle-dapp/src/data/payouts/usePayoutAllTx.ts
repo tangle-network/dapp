@@ -1,16 +1,18 @@
 import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import toSubstrateBytes32Address from '@webb-tools/webb-ui-components/utils/toSubstrateBytes32Address';
+import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/convertAddressToBytes32';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { Precompile } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
-import createEvmBatchCallData from '../../utils/staking/createEvmBatchCallData';
+import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
+import BATCH_PRECOMPILE_ABI from '../../abi/batch';
+import STAKING_PRECOMPILE_ABI from '../../abi/staking';
 
 export type PayoutAllTxContext = {
   validatorEraPairs: {
@@ -26,29 +28,33 @@ export type PayoutAllTxContext = {
 // of calculating the exact tx weight, since there's always
 // the possibility that other transactions are included in the
 // same block, which would cause the batch payout to fail anyway.
-export const MAX_PAYOUTS_BATCH_SIZE = 30;
+export const MAX_PAYOUTS_BATCH_SIZE = 20;
 
 const usePayoutAllTx = () => {
-  const evmTxFactory: EvmTxFactory<Precompile.BATCH, PayoutAllTxContext> =
-    useCallback((context) => {
-      const batchCalls = context.validatorEraPairs
-        .slice(0, MAX_PAYOUTS_BATCH_SIZE)
-        .map(({ validatorAddress, era }) => {
-          // The precompile function expects a 32-byte address.
-          const validatorEvmAddress32 =
-            toSubstrateBytes32Address(validatorAddress);
+  const evmTxFactory: EvmTxFactory<
+    typeof BATCH_PRECOMPILE_ABI,
+    'batchAll',
+    PayoutAllTxContext
+  > = useCallback((context) => {
+    const batchCalls = context.validatorEraPairs
+      .slice(0, MAX_PAYOUTS_BATCH_SIZE)
+      .map(({ validatorAddress, era }) => {
+        // The precompile function expects a 32-byte address.
+        const validatorEvmAddress32 = convertAddressToBytes32(validatorAddress);
 
-          return createEvmBatchCallData(Precompile.STAKING, 'payoutStakers', [
-            validatorEvmAddress32,
-            era,
-          ]);
-        });
+        return createEvmBatchCall(
+          STAKING_PRECOMPILE_ABI,
+          PrecompileAddress.STAKING,
+          'payoutStakers',
+          [validatorEvmAddress32, era],
+        );
+      });
 
-      return {
-        functionName: 'batchAll',
-        arguments: createEvmBatchCallArgs(batchCalls),
-      };
-    }, []);
+    return {
+      functionName: 'batchAll',
+      arguments: createEvmBatchCallArgs(batchCalls),
+    };
+  }, []);
 
   const substrateTxFactory: SubstrateTxFactory<PayoutAllTxContext> =
     useCallback((api, _activeSubstrateAddress, context) => {
@@ -64,9 +70,10 @@ const usePayoutAllTx = () => {
       return optimizeTxBatch(api, txs);
     }, []);
 
-  return useAgnosticTx<Precompile.BATCH, PayoutAllTxContext>({
+  return useAgnosticTx({
     name: TxName.PAYOUT_ALL,
-    precompile: Precompile.BATCH,
+    abi: BATCH_PRECOMPILE_ABI,
+    precompileAddress: PrecompileAddress.BATCH,
     evmTxFactory,
     substrateTxFactory,
   });

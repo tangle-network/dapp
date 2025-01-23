@@ -4,7 +4,7 @@ import type { FieldErrors, UseFormWatch } from 'react-hook-form';
 
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import type { DepositFormFields } from '../../../types/restake';
-import ActionButtonBase from '../ActionButtonBase';
+import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import useSwitchChain from '../useSwitchChain';
 
 type Props = {

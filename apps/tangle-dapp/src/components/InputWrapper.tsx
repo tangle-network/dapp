@@ -15,7 +15,7 @@ import {
 } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import InputAction from '../containers/ManageProfileModalContainer/InputAction';
+import InputAction from './InputAction';
 import { useErrorCountContext } from '../context/ErrorsContext';
 import ErrorMessage from './ErrorMessage';
 

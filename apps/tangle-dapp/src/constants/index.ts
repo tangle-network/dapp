@@ -66,6 +66,14 @@ export enum TxName {
   LS_TANGLE_POOL_CREATE = 'create liquid staking pool',
   LS_TANGLE_POOL_UPDATE_ROLES = 'update pool roles',
   RESTAKE_JOIN_OPERATORS = 'join operators',
+  RESTAKE_DEPOSIT = 'restake deposit',
+  RESTAKE_DELEGATE = 'restake delegate',
+  RESTAKE_UNSTAKE = 'restake undelegate',
+  RESTAKE_WITHDRAW = 'restake withdraw',
+  RESTAKE_CANCEL_UNSTAKE = 'restake cancel undelegate',
+  RESTAKE_EXECUTE_UNSTAKE = 'restake execute undelegate',
+  RESTAKE_EXECUTE_WITHDRAW = 'restake execute withdraw',
+  RESTAKE_CANCEL_WITHDRAW = 'restake cancel withdraw',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =
@@ -118,3 +126,15 @@ export enum RestakeAction {
   UNDELEGATE = 'undelegate',
   WITHDRAW = 'withdraw',
 }
+
+export enum AddressType {
+  EVM,
+  SUBSTRATE,
+  SOLANA,
+  SUBSTRATE_OR_EVM,
+}
+
+export const ERROR_MIN_RESTAKING_BOND =
+  'Must be at least the minimum restaking bond';
+
+export const ERROR_NOT_ENOUGH_BALANCE = 'Not enough available balance';

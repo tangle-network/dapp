@@ -13,7 +13,7 @@ import { TangleDAppPagePath } from '../../../types';
 
 export const dynamic = 'force-static';
 
-const ViewOperatorWrapper = ({
+const ViewOperatorAction = ({
   children,
   address,
 }: PropsWithChildren<{ address: string }>) => {
@@ -27,7 +27,7 @@ const ViewOperatorWrapper = ({
   );
 };
 
-const RestakeOperatorWrapper = ({
+const RestakeOperatorAction = ({
   children,
   address,
 }: PropsWithChildren<{ address: string }>) => {
@@ -74,8 +74,8 @@ const Page = ({ params }: { params: { id: string } }) => {
         </Typography>
 
         <OperatorsTable
-          ViewOperatorWrapper={ViewOperatorWrapper}
-          RestakeOperatorWrapper={RestakeOperatorWrapper}
+          ViewOperatorAction={ViewOperatorAction}
+          RestakeOperatorAction={RestakeOperatorAction}
           data={result.operators}
         />
       </div>

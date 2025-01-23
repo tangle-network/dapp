@@ -64,7 +64,7 @@ const VaultsDropdown: FC<{ vaultTokens: VaultToken[] }> = ({ vaultTokens }) => {
       </DropdownBasicButton>
 
       <DropdownBody isPortal className="mt-2 bg-mono-0 dark:bg-mono-200">
-        {/** TODO: Check styling after max depth issue is fixed.  */}
+        {/** TODO: Check styling after max depth issue is fixed. */}
         <Table
           tableProps={table}
           thClassName={cx('px-0 py-3 first:pl-5 last:pr-5')}

@@ -9,7 +9,7 @@ import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constant
 import { type FC, useCallback, useState } from 'react';
 
 import { PAYMENT_DESTINATION_OPTIONS } from '../../constants';
-import useStakingRewardsDestination from '../../data/NominatorStats/useStakingRewardsDestination';
+import useStakingRewardsDestination from '../../data/nomination/useStakingRewardsDestination';
 import useSetPayeeTx from '../../data/staking/useSetPayeeTx';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { StakingRewardsDestination } from '../../types';

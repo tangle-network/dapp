@@ -1,14 +1,14 @@
 import type { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import { useLocation } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath } from '../../types';
-import TabListItem from './TabListItem';
-import TabsList from './TabsList';
+import TabListItem from '../../components/restaking/TabListItem';
+import TabsList from '../../components/restaking/TabsList';
 import { RestakeAction } from '../../constants';
 
-export type TabsListProps = PropsOf<'ul'>;
+type Props = PropsOf<'ul'>;
 
 const getTabRoute = (tab: RestakeAction): PagePath => {
   switch (tab) {
@@ -23,7 +23,7 @@ const getTabRoute = (tab: RestakeAction): PagePath => {
   }
 };
 
-const RestakeTabs = (props: TabsListProps) => {
+const RestakeTabs: FC<Props> = (props) => {
   const location = useLocation();
 
   const activeTab = useMemo(() => {

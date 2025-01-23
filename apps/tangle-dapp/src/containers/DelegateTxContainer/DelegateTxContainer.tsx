@@ -16,7 +16,7 @@ import assert from 'assert';
 import { type FC, useCallback, useState } from 'react';
 
 import { PAYMENT_DESTINATION_OPTIONS as PAYEE_OPTIONS } from '../../constants';
-import useStakingRewardsDestination from '../../data/NominatorStats/useStakingRewardsDestination';
+import useStakingRewardsDestination from '../../data/nomination/useStakingRewardsDestination';
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import useSetupNominatorTx from '../../data/staking/useSetupNominatorTx';
 import useUpdateNominatorTx from '../../data/staking/useUpdateNominatorTx';

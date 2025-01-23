@@ -1,12 +1,10 @@
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 
-import {
-  HeaderChipsContainer,
-  KeyStatsContainer,
-  NominationsPayoutsContainer,
-  NominatorStatsContainer,
-  ValidatorTablesContainer,
-} from '../../containers';
+import { KeyStatsContainer } from '../../containers';
+import NominatorStatsContainer from '../../containers/NominatorStatsContainer';
+import NominationsPayoutsContainer from '../../containers/NominationsPayoutsContainer';
+import NominationHeaderChips from '../../containers/NominationHeaderChips';
+import NominationValidatorTables from '../../containers/NominationValidatorTables';
 
 export default function NominationPage() {
   return (
@@ -16,7 +14,7 @@ export default function NominationPage() {
           Overview
         </Typography>
 
-        <HeaderChipsContainer />
+        <NominationHeaderChips />
       </div>
 
       <KeyStatsContainer />
@@ -25,7 +23,7 @@ export default function NominationPage() {
 
       <NominationsPayoutsContainer />
 
-      <ValidatorTablesContainer />
+      <NominationValidatorTables />
     </div>
   );
 }

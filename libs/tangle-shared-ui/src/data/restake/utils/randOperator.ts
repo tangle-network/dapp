@@ -1,21 +1,22 @@
 import { evmToAddress } from '@polkadot/util-crypto';
-import { OperatorData } from '../../../types';
+import { RestakeOperator } from '../../../types';
 import { randEthereumAddress, randNumber, randUserName } from '@ngneat/falso';
 import uniqWith from 'lodash/uniqWith';
+import { assertSubstrateAddress } from '@webb-tools/webb-ui-components';
 
-const tokenNames = ['TNT', 'USDC', 'USDT', 'DAI', 'WBTC', 'WETH', 'WBTC'];
+const TOKEN_NAMES = ['TNT', 'USDC', 'USDT', 'DAI', 'WBTC', 'WETH', 'WBTC'];
 
-function randVaultToken() {
+const randVaultToken = () => {
   return {
-    name: tokenNames[randNumber({ min: 0, max: tokenNames.length - 1 })],
-    symbol: tokenNames[randNumber({ min: 0, max: tokenNames.length - 1 })],
+    name: TOKEN_NAMES[randNumber({ min: 0, max: TOKEN_NAMES.length - 1 })],
+    symbol: TOKEN_NAMES[randNumber({ min: 0, max: TOKEN_NAMES.length - 1 })],
     amount: randNumber({ min: 100, max: 10_000 }),
   };
-}
+};
 
-export default function randOperator() {
+const randOperator = (): RestakeOperator => {
   return {
-    address: evmToAddress(randEthereumAddress()),
+    address: assertSubstrateAddress(evmToAddress(randEthereumAddress())),
     identityName: randUserName(),
     restakersCount: randNumber({ max: 50 }),
     concentrationPercentage: randNumber({ max: 100 }),
@@ -24,5 +25,7 @@ export default function randOperator() {
       Array.from({ length: randNumber({ max: 5 }) }).map(randVaultToken),
       (a, b) => a.name === b.name && a.symbol === b.symbol,
     ),
-  } satisfies OperatorData;
-}
+  } satisfies RestakeOperator;
+};
+
+export default randOperator;

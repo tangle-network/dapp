@@ -38,8 +38,8 @@ export const ExplorerType = {
 } as const;
 
 export type BasicAccountInfo = {
-  address: string;
-  identityName: string;
+  address: SubstrateAddress;
+  identityName?: string;
 };
 
 export interface Nominee extends BasicAccountInfo {
@@ -56,9 +56,9 @@ export type VaultToken = {
   amount: number | string;
 };
 
-export type OperatorData = {
-  address: string;
-  identityName: string;
+export type RestakeOperator = {
+  address: SubstrateAddress;
+  identityName?: string;
   restakersCount: number;
   concentrationPercentage: number | null;
   tvlInUsd: number | null;

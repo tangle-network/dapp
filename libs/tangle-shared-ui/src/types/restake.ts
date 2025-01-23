@@ -74,7 +74,7 @@ export type RestakeVaultAssetMap = {
 };
 
 export type DelegatorWithdrawRequest = {
-  readonly assetId: string;
+  readonly assetId: RestakeAssetId;
   readonly amount: bigint;
   readonly requestedRound: number;
 };
@@ -82,12 +82,12 @@ export type DelegatorWithdrawRequest = {
 export type DelegatorBondInfo = {
   readonly operatorAccountId: SubstrateAddress;
   readonly amountBonded: bigint;
-  readonly assetId: string;
+  readonly assetId: RestakeAssetId;
 };
 
 export type DelegatorUnstakeRequest = {
   readonly operatorAccountId: SubstrateAddress;
-  readonly assetId: string;
+  readonly assetId: RestakeAssetId;
   readonly amount: bigint;
   readonly requestedRound: number;
 };
@@ -104,7 +104,7 @@ export type DelegatorStatus =
 
 export type DelegatorInfo = {
   readonly deposits: {
-    readonly [assetId: string]: {
+    readonly [assetId: RestakeAssetId]: {
       amount: bigint;
     };
   };

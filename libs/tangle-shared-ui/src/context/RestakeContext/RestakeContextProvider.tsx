@@ -57,7 +57,7 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
       value={{
         assetWithBalances,
         assetWithBalances$,
-        assetMap,
+        assetMetadataMap: assetMap,
         assetMap$,
         balances,
         balances$,

@@ -2,13 +2,14 @@ import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { Precompile } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { GetSuccessMessageFunction } from '../../types';
+import { GetSuccessMessageFn } from '../../types';
 import useSlashingSpans from './useSlashingSpans';
+import STAKING_PRECOMPILE_ABI from '../../abi/staking';
 
 const useWithdrawUnbondedTx = (withdrawAmount: BN | null) => {
   const formatNativeTokenAmount = useFormatNativeTokenAmount();
@@ -23,7 +24,10 @@ const useWithdrawUnbondedTx = (withdrawAmount: BN | null) => {
         : // TODO: Need to verify that the span index is what is wanted by the extrinsics.
           slashingSpansOpt.unwrap().spanIndex.toNumber();
 
-  const evmTxFactory: EvmTxFactory<Precompile.STAKING> = useCallback(() => {
+  const evmTxFactory: EvmTxFactory<
+    typeof STAKING_PRECOMPILE_ABI,
+    'withdrawUnbonded'
+  > = useCallback(() => {
     if (slashingSpans === null) {
       return null;
     }
@@ -45,7 +49,7 @@ const useWithdrawUnbondedTx = (withdrawAmount: BN | null) => {
     [slashingSpans],
   );
 
-  const getSuccessMessageFnc: GetSuccessMessageFunction<void> = useCallback(
+  const getSuccessMessage: GetSuccessMessageFn<void> = useCallback(
     () =>
       withdrawAmount
         ? `Successfully withdrew ${formatNativeTokenAmount(withdrawAmount)}.`
@@ -53,12 +57,13 @@ const useWithdrawUnbondedTx = (withdrawAmount: BN | null) => {
     [withdrawAmount, formatNativeTokenAmount],
   );
 
-  return useAgnosticTx<Precompile.STAKING>({
+  return useAgnosticTx({
     name: TxName.WITHDRAW_UNBONDED,
-    precompile: Precompile.STAKING,
+    abi: STAKING_PRECOMPILE_ABI,
+    precompileAddress: PrecompileAddress.STAKING,
     evmTxFactory,
     substrateTxFactory,
-    getSuccessMessageFnc,
+    getSuccessMessage,
   });
 };
 
