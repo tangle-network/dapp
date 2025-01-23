@@ -39,7 +39,7 @@ const AvatarWithText = ({
         value={accountAddress}
         {...overrideAvatarProps}
         className={twMerge(
-          `${getFlexBasic()} shrink-0`,
+          `${getFlexBasic('lg')} shrink-0`,
           overrideAvatarProps?.className,
         )}
       />
