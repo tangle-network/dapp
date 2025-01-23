@@ -13,6 +13,7 @@ import useRewardsTx from '../../data/rewards/useRewardsTx';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import ActionItem from './ActionItem';
 import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
+import { twMerge } from 'tailwind-merge';
 
 export default function ClaimRewardAction() {
   const { notificationApi } = useWebbUI();
@@ -100,14 +101,13 @@ export default function ClaimRewardAction() {
     <ActionItem
       Icon={isLoading ? SpinnerIcon : VipDiamondLine}
       isDisabled={isLoading}
-      label="Unclaimed Rewards"
+      label="Rewards"
       hasNotificationDot
       onClick={handleClick}
       tooltip={
         <>
           Congratulations! You have <strong>{nativeClaimableAmount}</strong>{' '}
-          {activeChain.nativeCurrency.symbol}
-          unclaimed rewards.
+          {activeChain.nativeCurrency.symbol} unclaimed rewards.
         </>
       }
     />
@@ -115,5 +115,10 @@ export default function ClaimRewardAction() {
 }
 
 const SpinnerIcon = (props: IconBase) => {
-  return <Spinner {...props} />;
+  return (
+    <Spinner
+      {...props}
+      className={twMerge('min-w-6 min-h-6', props.className)}
+    />
+  );
 };
