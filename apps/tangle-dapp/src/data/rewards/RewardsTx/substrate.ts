@@ -21,6 +21,11 @@ export default class SubstrateRewardsTx extends RewardsTxBase {
     args: { assetId: TangleAssetId },
     eventHandlers?: Partial<TxEventHandlers<{ assetId: TangleAssetId }>>,
   ) => {
+    if (this.provider.tx.rewards?.claimRewards === undefined) {
+      eventHandlers?.onTxFailed?.('The network does not support rewards', args);
+      return null;
+    }
+
     const { assetId } = args;
 
     const extrinsic = this.provider.tx.rewards.claimRewards(assetId);
