@@ -100,9 +100,8 @@ export default function ClaimRewardAction() {
   return (
     <ActionItem
       Icon={isLoading ? SpinnerIcon : VipDiamondLine}
+      iconSize="md"
       isDisabled={isLoading}
-      label="Rewards"
-      hasNotificationDot
       onClick={handleClick}
       tooltip={
         <>
