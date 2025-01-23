@@ -34,7 +34,7 @@ const Actions: FC = () => {
       : null;
 
   return (
-    <div className="flex items-center justify-start gap-3 overflow-x-auto">
+    <div className="flex items-center justify-start gap-2 overflow-x-auto">
       <ActionItem
         Icon={SendPlanLineIcon}
         onClick={() => setIsTransferModalOpen(true)}

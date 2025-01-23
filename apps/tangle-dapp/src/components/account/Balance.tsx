@@ -65,7 +65,7 @@ const Balance: FC = () => {
         </div>
       </div>
 
-      <div className="flex items-baseline gap-4">
+      <div className="flex items-baseline gap-6">
         <div className="flex items-end gap-2 py-2">
           <Typography variant="h2" fw="bold" className="!leading-none">
             {left}
