@@ -14,6 +14,7 @@ import { InternalPath } from '../../types';
 
 type ActionItemProps = {
   Icon: (props: IconBase) => ReactElement;
+  iconSize?: IconBase['size'];
   label?: string;
   onClick?: () => void;
   isDisabled?: boolean;
@@ -25,6 +26,7 @@ type ActionItemProps = {
 
 const ActionItem: FC<ActionItemProps> = ({
   Icon,
+  iconSize = 'lg',
   label,
   onClick,
   internalHref,
@@ -66,7 +68,7 @@ const ActionItem: FC<ActionItemProps> = ({
           />
         )}
 
-        <Icon size="lg" />
+        <Icon size={iconSize} />
       </div>
 
       {label && (
