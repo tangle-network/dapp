@@ -7,27 +7,17 @@ import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 
 const Details = memo(() => {
-  const { leaveDelegatorsDelay, delegationBondLessDelay } = useRestakeConsts();
+  const { delegationBondLessDelay } = useRestakeConsts();
 
   return (
     <DetailsContainer>
       <DetailItem
         title="Undelegate period"
-        tooltip="Number of sessions that delegation bond less requests must wait before being executable."
+        tooltip="Waiting time between scheduling and executing an undelegation"
         value={
           isDefined(delegationBondLessDelay)
             ? `${delegationBondLessDelay} ${pluralize('session', delegationBondLessDelay !== 1)}`
             : delegationBondLessDelay
-        }
-      />
-
-      <DetailItem
-        title="Withdrawal period"
-        tooltip="Number of sessions that delegators remain bonded before the exit request is executable."
-        value={
-          isDefined(leaveDelegatorsDelay)
-            ? `${leaveDelegatorsDelay} ${pluralize('session', leaveDelegatorsDelay !== 1)}`
-            : leaveDelegatorsDelay
         }
       />
     </DetailsContainer>

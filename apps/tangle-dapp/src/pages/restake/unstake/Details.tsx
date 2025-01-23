@@ -11,10 +11,9 @@ const Details: FC = () => {
   // TODO: Add fee value.
   return (
     <DetailsContainer>
-      <DetailItem title="Fee" value={EMPTY_VALUE_PLACEHOLDER} />
-
       <DetailItem
-        title="Unstake Period"
+        title="Undelegate period"
+        tooltip="Waiting time between scheduling and executing an undelegation"
         value={
           typeof delegationBondLessDelay === 'number'
             ? `${delegationBondLessDelay} ${pluralize('session', delegationBondLessDelay !== 1)}`

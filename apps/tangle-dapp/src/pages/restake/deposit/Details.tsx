@@ -48,7 +48,7 @@ const Details: FC<Props> = ({ watch }) => {
             ? `${bondDuration} ${pluralize('session', bondDuration !== 1)}`
             : EMPTY_VALUE_PLACEHOLDER
         }
-        tooltip="The duration for which the deposited asset is locked."
+        tooltip="Waiting time between scheduling and executing a withdrawal"
       />
     </DetailsContainer>
   );
