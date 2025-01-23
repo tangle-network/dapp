@@ -1,17 +1,17 @@
 import { PropsWithChildren } from 'react';
 import { Link } from 'react-router';
-import { PagePath } from '../../types';
-
-export const ViewOperatorWrapper = ({
-  children,
-  address,
-}: PropsWithChildren<{ address: string }>) => {
-  return <Link to={`${PagePath.RESTAKE_OPERATOR}/${address}`}>{children}</Link>;
-};
+import { PagePath, QueryParamKey } from '../../types';
 
 export const RestakeOperatorWrapper = ({
   children,
   address,
 }: PropsWithChildren<{ address: string }>) => {
-  return <Link to={`${PagePath.RESTAKE_OPERATOR}/${address}`}>{children}</Link>;
+  return (
+    <Link
+      // TODO: Should redirect & auto select operator for delegation
+      to={`${PagePath.RESTAKE_DELEGATE}?${QueryParamKey.RESTAKE_OPERATOR}=${address}`}
+    >
+      {children}
+    </Link>
+  );
 };
