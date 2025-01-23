@@ -1,18 +1,26 @@
 import { BN_ZERO } from '@polkadot/util';
+import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useActiveChain';
 import { TYPE_REGISTRY } from '@webb-tools/dapp-config/constants/polkadot';
+import Spinner from '@webb-tools/icons/Spinner';
+import { IconBase } from '@webb-tools/icons/types';
 import VipDiamondLine from '@webb-tools/icons/VipDiamondLine';
+import useTransactionInfo from '@webb-tools/tangle-shared-ui/hooks/useTransactionInfo';
 import { TangleAssetId } from '@webb-tools/tangle-shared-ui/types';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { formatUnits, zeroAddress } from 'viem';
 import useAccountRewardInfo from '../../data/rewards/useAccountRewardInfo';
+import useRewardsTx from '../../data/rewards/useRewardsTx';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import ActionItem from './ActionItem';
-import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useActiveChain';
+import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
 
 export default function ClaimRewardAction() {
+  const { notificationApi } = useWebbUI();
   const [activeChain] = useActiveChain();
-
   const { isEvm } = useAgnosticAccountInfo();
+
+  const { claimRewards } = useRewardsTx();
+  const { isLoading, error, eventHandlers } = useTransactionInfo();
 
   // TODO: Add other assets in the future,
   // for now, we only support native asset
@@ -63,15 +71,38 @@ export default function ClaimRewardAction() {
     );
   }, [activeChain, result]);
 
+  const handleClick = useCallback(async () => {
+    if (claimableAssets.length === 0) {
+      return;
+    }
+
+    // TODO: We should support claim multiple assets in the future
+    await claimRewards({ assetId: claimableAssets[0] }, eventHandlers);
+  }, [claimRewards, claimableAssets, eventHandlers]);
+
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+
+    notificationApi.addToQueue({
+      message: 'Failed to claim rewards',
+      secondaryMessage: error,
+      variant: 'error',
+    });
+  }, [error, notificationApi]);
+
   if (!hasClaimableReward || nativeClaimableAmount === null || !activeChain) {
     return null;
   }
 
   return (
     <ActionItem
-      Icon={VipDiamondLine}
+      Icon={isLoading ? SpinnerIcon : VipDiamondLine}
+      isDisabled={isLoading}
       label="Unclaimed Rewards"
       hasNotificationDot
+      onClick={handleClick}
       tooltip={
         <>
           Congratulations! You have <strong>{nativeClaimableAmount}</strong>{' '}
@@ -82,3 +113,7 @@ export default function ClaimRewardAction() {
     />
   );
 }
+
+const SpinnerIcon = (props: IconBase) => {
+  return <Spinner {...props} />;
+};

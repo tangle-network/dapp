@@ -20,6 +20,7 @@ import { PagePath, StaticSearchQueryPath } from '../../types';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
+import ClaimRewardAction from './ClaimRewardAction';
 
 const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
@@ -120,6 +121,8 @@ const Actions: FC = () => {
       )}
 
       <WithdrawEvmBalanceAction />
+
+      <ClaimRewardAction />
 
       <TransferTxContainer
         isModalOpen={isTransferModalOpen}
