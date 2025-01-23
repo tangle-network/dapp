@@ -16,10 +16,13 @@ type Delegation = {
 
 const useRestakeDelegations = () => {
   const { result: delegationMap } = useApiRx(
-    useCallback(
-      (api) => api.query.multiAssetDelegation.delegators.entries(),
-      [],
-    ),
+    useCallback((api) => {
+      if (api.query.multiAssetDelegation?.delegators === undefined) {
+        return null;
+      }
+
+      return api.query.multiAssetDelegation.delegators.entries();
+    }, []),
   );
 
   const delegations = useMemo<Delegation[] | null>(() => {

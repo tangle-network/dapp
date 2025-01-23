@@ -16,6 +16,10 @@ export default function useAccountRewardInfo(supportedAssets: TangleAssetId[]) {
           return null;
         }
 
+        if (apiRx.query.rewards?.userServiceReward === undefined) {
+          return null;
+        }
+
         return apiRx.queryMulti<u128[]>(
           supportedAssets.map((asset) => {
             return [
