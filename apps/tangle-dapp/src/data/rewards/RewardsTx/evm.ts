@@ -14,10 +14,9 @@ import {
 } from 'viem';
 import type { Config } from 'wagmi';
 import {
-  simulateContract,
-  SimulateContractParameters,
   waitForTransactionReceipt,
   writeContract,
+  WriteContractParameters,
 } from 'wagmi/actions';
 import abi from './abi';
 import RewardsTxBase from './base';
@@ -53,31 +52,13 @@ export default class EVMRewardsTx extends RewardsTxBase {
     try {
       eventHandlers?.onTxSending?.(context);
 
-      const connector = (() => {
-        if (this.provider.state.current === null) return;
-
-        return this.provider.state.connections.get(this.provider.state.current)
-          ?.connector;
-      })();
-
-      const chainId = (() => {
-        if (this.provider.state.current === null) return;
-
-        return this.provider.state.connections.get(this.provider.state.current)
-          ?.chainId;
-      })();
-
-      const { request } = await simulateContract(this.provider, {
+      const hash = await writeContract(this.provider, {
         abi,
         address,
         functionName,
         args,
         account: this.activeAccount,
-        connector,
-        chainId,
-      } as SimulateContractParameters);
-
-      const hash = await writeContract(this.provider, request);
+      } as WriteContractParameters);
 
       eventHandlers?.onTxInBlock?.(hash, zeroAddress, context);
 
