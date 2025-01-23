@@ -23,8 +23,8 @@ export type Erc20Balance = Erc20Token & {
 // TODO: Query from EVM instead of being hard-coded. Waiting for bridge to be implemented in order to do that.
 export const ERC20_TEST_TOKENS: Erc20Token[] = [
   {
-    name: 'Froggy Testcoin',
-    symbol: 'FWOG',
+    name: 'ERC-20 Testcoin',
+    symbol: 'ETST',
     decimals: 18,
     contractAddress: assertEvmAddress(
       '0xd38790743B49bbB8E5AF03A94029DA04aaFa262b',
@@ -32,10 +32,17 @@ export const ERC20_TEST_TOKENS: Erc20Token[] = [
   },
 ];
 
+export const findErc20Token = (id: EvmAddress): Erc20Token | null => {
+  return (
+    ERC20_TEST_TOKENS.find((token) => token.contractAddress === id) ?? null
+  );
+};
+
 const useTangleEvmErc20Balances = (): Erc20Balance[] | null => {
   const { apiConfig } = useWebContext();
   const { evmAddress } = useAgnosticAccountInfo();
   const [balances, setBalances] = useState<Erc20Balance[] | null>(null);
+
   const chain = apiConfig.chains[PresetTypedChainId.TangleLocalEVM];
 
   const fetchBalance = useCallback(

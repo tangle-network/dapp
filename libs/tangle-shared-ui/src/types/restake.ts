@@ -25,7 +25,7 @@ export type OperatorStatus =
 export type OperatorDelegatorBond = {
   readonly delegatorAccountId: string;
   readonly amount: bigint;
-  readonly assetId: string;
+  readonly assetId: RestakeAssetId;
 };
 
 export type OperatorBondLessRequest = {
@@ -71,7 +71,7 @@ export type RestakeVaultAssetMetadata = Readonly<{
 }>;
 
 export type RestakeVaultAssetMap = {
-  readonly [assetId: string]: RestakeVaultAssetMetadata;
+  readonly [assetId: RestakeAssetId]: RestakeVaultAssetMetadata;
 };
 
 export type DelegatorWithdrawRequest = {
@@ -137,7 +137,7 @@ export type AssetAccountExistenceReason =
  * @name PalletAssetsAssetAccount
  */
 export type AssetBalance = {
-  readonly assetId: string;
+  readonly assetId: RestakeAssetId;
   readonly balance: bigint;
 
   /**
@@ -153,7 +153,7 @@ export type AssetBalance = {
 };
 
 export type AssetBalanceMap = {
-  readonly [assetId: string]: AssetBalance;
+  readonly [assetId: RestakeAssetId]: AssetBalance;
 };
 
 export type AssetWithBalance = {

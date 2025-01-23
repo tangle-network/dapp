@@ -8,19 +8,20 @@ import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/u
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
 import {
+  AmountFormatStyle,
   assertSubstrateAddress,
   Card,
+  formatDisplayAmount,
+  isEvmAddress,
   isSubstrateAddress,
+  shortenHex,
 } from '@webb-tools/webb-ui-components';
-import type { TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import keys from 'lodash/keys';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { formatUnits } from 'viem';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
 import useIdentities from '../../../data/useIdentities';
@@ -40,6 +41,10 @@ import StakeInput from './StakeInput';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import { BN } from '@polkadot/util';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
+import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
+import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
+import { findErc20Token } from '../../../data/restake/useTangleEvmErc20Balances';
+import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -115,6 +120,7 @@ const RestakeDelegateForm: FC = () => {
     }
   }, [defaultAssetId, setValue]);
 
+  // Set the operatorAccountId from the URL param.
   useEffect(() => {
     if (
       !operatorParam ||
@@ -152,35 +158,49 @@ const RestakeDelegateForm: FC = () => {
     update: updateOperatorModal,
   } = useModal(false);
 
-  const selectableTokens = useMemo(() => {
+  const delegatedAssets = useMemo<RestakeAsset[]>(() => {
     if (!isDefined(delegatorInfo)) {
       return [];
     }
 
-    return Object.entries(delegatorInfo.deposits)
-      .filter(([assetId]) => Object.hasOwn(assetMetadataMap, assetId))
-      .map(([assetId, { amount }]) => {
-        const metadata = assetMetadataMap[assetId];
+    return Object.entries(delegatorInfo.deposits).flatMap(
+      ([assetIdString, { amount }]) => {
+        const assetId = assertRestakeAssetId(assetIdString);
+        const balance = new BN(amount.toString());
 
-        return {
-          id: metadata.id,
-          name: metadata.name,
-          symbol: metadata.symbol,
-          decimals: metadata.decimals,
-          assetBalanceProps: {
-            balance: +formatUnits(amount, metadata.decimals),
-            ...(metadata.vaultId
-              ? {
-                  subContent: `Vault ID: ${metadata.vaultId}`,
-                }
-              : {}),
-          },
-        };
-      });
+        if (!isEvmAddress(assetId)) {
+          const metadata = assetMetadataMap[assetId];
+
+          if (metadata === undefined) {
+            return [];
+          }
+
+          return {
+            id: metadata.id,
+            name: metadata.name,
+            symbol: metadata.symbol,
+            decimals: metadata.decimals,
+            balance,
+          } satisfies RestakeAsset;
+        } else {
+          const erc20Token = findErc20Token(assetId);
+
+          if (erc20Token === null) {
+            return [];
+          }
+
+          return {
+            ...erc20Token,
+            id: assetId,
+            balance,
+          } satisfies RestakeAsset;
+        }
+      },
+    );
   }, [assetMetadataMap, delegatorInfo]);
 
-  const handleAssetChange = useCallback(
-    (asset: TokenListCardProps['selectTokens'][number]) => {
+  const handleAssetSelect = useCallback(
+    (asset: RestakeAsset) => {
       setValue('assetId', asset.id);
       closeAssetModal();
     },
@@ -197,16 +217,18 @@ const RestakeDelegateForm: FC = () => {
     [closeChainModal, switchChain],
   );
 
-  const isReady = restakeApi !== null && !isSubmitting;
+  const selectedAsset = useRestakeAsset(watch('assetId'));
+
+  const isReady =
+    restakeApi !== null && !isSubmitting && selectedAsset !== null;
 
   const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>(
     ({ amount, assetId, operatorAccountId }) => {
-      if (!assetId || !isDefined(assetMetadataMap[assetId]) || !isReady) {
+      if (!isReady) {
         return;
       }
 
-      const assetMetadata = assetMetadataMap[assetId];
-      const amountBn = parseChainUnits(amount, assetMetadata.decimals);
+      const amountBn = parseChainUnits(amount, selectedAsset.decimals);
 
       if (!(amountBn instanceof BN)) {
         return;
@@ -214,7 +236,7 @@ const RestakeDelegateForm: FC = () => {
 
       return restakeApi.delegate(operatorAccountId, assetId, amountBn);
     },
-    [assetMetadataMap, isReady, restakeApi],
+    [isReady, restakeApi, selectedAsset?.decimals],
   );
 
   const operators = useMemo<RestakeOperator[]>(() => {
@@ -274,20 +296,28 @@ const RestakeDelegateForm: FC = () => {
             setIsOpen={updateAssetModal}
             titleWhenEmpty="No Assets Available"
             descriptionWhenEmpty="Have you made a deposit on this network yet?"
-            items={selectableTokens}
+            items={delegatedAssets}
             searchInputId="restake-delegate-asset-search"
             searchPlaceholder="Search for asset or enter token address"
             getItemKey={(item) => item.id}
-            onSelect={handleAssetChange}
+            onSelect={handleAssetSelect}
             renderItem={(asset) => {
-              const fmtBalance = `${addCommasToNumber(asset.assetBalanceProps.balance)} ${asset.symbol}`;
+              const fmtBalance = formatDisplayAmount(
+                asset.balance,
+                asset.decimals,
+                AmountFormatStyle.SHORT,
+              );
+
+              const idText = isEvmAddress(asset.id)
+                ? `Address: ${shortenHex(asset.id)}`
+                : `Asset ID: ${asset.id}`;
 
               return (
                 <LogoListItem
                   logo={<TokenIcon size="xl" name={asset.symbol} />}
                   leftUpperContent={`${asset.name} (${asset.symbol})`}
-                  leftBottomContent={`Asset ID: ${asset.id}`}
-                  rightUpperText={fmtBalance}
+                  leftBottomContent={idText}
+                  rightUpperText={`${fmtBalance} ${asset.symbol}`}
                   rightBottomText="Balance"
                 />
               );

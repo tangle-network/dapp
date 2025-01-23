@@ -9,6 +9,7 @@ import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import type { AssetBalance, AssetBalanceMap } from '../../types/restake';
 import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
+import { RestakeAssetId } from '../../utils/createRestakeAssetId';
 
 export default function useRestakeBalances() {
   const { apiRx } = usePolkadotApi();
@@ -30,6 +31,7 @@ export default function useRestakeBalances() {
           }
 
           const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
+
           if (nonNativeAssetIds.length === 0) {
             return hasNative
               ? getNativeBalance$(apiRx, activeAccount)
@@ -89,7 +91,7 @@ export default function useRestakeBalances() {
 function assetBalancesReducer(
   assetBalances: Option<PalletAssetsAssetAccount>[],
   initialValue: AssetBalanceMap,
-  nonNativeAssetIds: string[],
+  nonNativeAssetIds: RestakeAssetId[],
 ) {
   return assetBalances.reduce(
     (assetBalanceMap, accountBalance, idx) => {
@@ -120,7 +122,7 @@ function assetBalancesReducer(
 
       return Object.assign(assetBalanceMap, {
         [assetId]: {
-          assetId: assetId,
+          assetId,
           balance: balance.toBigInt(),
           status: status.type,
           existenceReason: toPrimitiveReason(reason),

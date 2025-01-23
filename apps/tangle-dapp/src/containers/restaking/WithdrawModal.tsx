@@ -7,9 +7,16 @@ import { formatUnits } from 'viem';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import filterBy from '../../utils/filterBy';
 import LogoListItem from '../../components/Lists/LogoListItem';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+  isEvmAddress,
+  shortenHex,
+} from '@webb-tools/webb-ui-components';
+import { findErc20Token } from '../../data/restake/useTangleEvmErc20Balances';
+import { BN } from '@polkadot/util';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -70,27 +77,54 @@ const WithdrawModal = ({
 
         return filterBy(query, [asset?.name, asset?.id, asset?.vaultId]);
       }}
+      // TODO: This can be cleaned up a bit. Seems like a bit of reused code.
       renderItem={({ amount, assetId }) => {
-        const metadata = assetMetadataMap[assetId];
+        let name: string;
+        let symbol: string;
+        let decimals: number;
+        let vaultId: number | null = null;
 
-        if (metadata === undefined) {
-          return null;
+        if (isEvmAddress(assetId)) {
+          const erc20Token = findErc20Token(assetId);
+
+          if (erc20Token === null) {
+            return null;
+          }
+
+          name = erc20Token.name;
+          symbol = erc20Token.symbol;
+          decimals = erc20Token.decimals;
+        } else {
+          const metadata = assetMetadataMap[assetId];
+
+          if (metadata === undefined) {
+            return null;
+          }
+
+          name = metadata.name;
+          symbol = metadata.symbol;
+          decimals = metadata.decimals;
+          vaultId = metadata.vaultId;
         }
 
-        const fmtAmount = addCommasToNumber(
-          formatUnits(amount, metadata.decimals),
+        const fmtAmount = formatDisplayAmount(
+          new BN(amount.toString()),
+          decimals,
+          AmountFormatStyle.SHORT,
         );
+
+        const idText = isEvmAddress(assetId)
+          ? `Address: ${shortenHex(assetId)}`
+          : `Asset ID: ${assetId}`;
 
         return (
           <LogoListItem
-            logo={<TokenIcon size="xl" name={metadata.symbol} />}
-            leftUpperContent={`${metadata.name} (${metadata.symbol})`}
-            leftBottomContent={`Asset ID: ${assetId}`}
+            logo={<TokenIcon size="xl" name={symbol} />}
+            leftUpperContent={`${name} (${symbol})`}
+            leftBottomContent={idText}
             rightUpperText={fmtAmount}
             rightBottomText={
-              metadata.vaultId !== null
-                ? `Vault ID: ${metadata.vaultId}`
-                : undefined
+              vaultId !== null ? `Vault ID: ${vaultId}` : undefined
             }
           />
         );

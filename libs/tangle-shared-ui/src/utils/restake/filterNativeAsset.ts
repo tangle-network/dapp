@@ -14,6 +14,7 @@ export default function filterNativeAsset(assetIds: string[]) {
   const nonNativeAssetIds = assetIds.filter((assetId) => {
     if (assetId === '0') {
       hasNative = true;
+
       return false;
     }
 

@@ -44,6 +44,7 @@ import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import useRestakeAssetsTvl from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import sortByBn from '../utils/sortByBn';
+import useTangleEvmErc20Balances from '../data/restake/useTangleEvmErc20Balances';
 
 type Row = {
   vaultId: number;
@@ -303,6 +304,16 @@ const AssetsAndBalancesTable: FC = () => {
     },
     [delegatorInfo?.delegations, delegatorInfo?.deposits],
   );
+
+  const erc20Balances = useTangleEvmErc20Balances();
+
+  const erc20Rows = useMemo(() => {
+    if (erc20Balances === null) {
+      return [];
+    }
+
+    return erc20Balances.map((asset) => {});
+  }, [erc20Balances]);
 
   const assetRows = useMemo<Row[]>(() => {
     return Object.entries(vaultAssets).flatMap(([assetId, metadata]) => {

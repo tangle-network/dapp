@@ -10,10 +10,7 @@ import {
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import type {
-  RestakeVaultAssetMetadata,
-  DelegatorWithdrawRequest,
-} from '@webb-tools/tangle-shared-ui/types/restake';
+import type { DelegatorWithdrawRequest } from '@webb-tools/tangle-shared-ui/types/restake';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
@@ -28,10 +25,12 @@ import {
   AmountFormatStyle,
   EMPTY_VALUE_PLACEHOLDER,
   formatDisplayAmount,
+  isEvmAddress,
 } from '@webb-tools/webb-ui-components';
 import { BN } from '@polkadot/util';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import { findErc20Token } from '../../data/restake/useTangleEvmErc20Balances';
 
 export type WithdrawRequestTableRow = {
   amount: string;
@@ -116,11 +115,12 @@ const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
     }
 
     return withdrawRequests.flatMap(({ assetId, amount, requestedRound }) => {
-      const metadata: RestakeVaultAssetMetadata | undefined =
-        assetMetadataMap[assetId];
+      const metadata = isEvmAddress(assetId)
+        ? findErc20Token(assetId)
+        : assetMetadataMap[assetId];
 
-      // Ignore requests if the metadata is not available.
-      if (metadata === undefined) {
+      // Skip requests that are lacking metadata.
+      if (metadata === undefined || metadata === null) {
         return [];
       }
 
@@ -139,7 +139,7 @@ const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
       return {
         amount: fmtAmount,
         amountRaw: amount,
-        assetId: assetId,
+        assetId,
         assetSymbol: metadata.symbol,
         sessionsRemaining,
       } satisfies WithdrawRequestTableRow;
