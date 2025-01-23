@@ -16,11 +16,13 @@ import { RestakeAction } from '../../constants';
 import RestakeWithdrawForm from '../../pages/restake/withdraw';
 import RestakeDelegateForm from '../../pages/restake/delegate';
 import RestakeUnstakeForm from '../../pages/restake/unstake';
+import BlueprintListing from '../../pages/blueprints/BlueprintListing';
 
 enum RestakeTab {
   RESTAKE = 'Restake',
   VAULTS = 'Vaults',
   OPERATORS = 'Operators',
+  BLUEPRINTS = 'Blueprints',
 }
 
 type VaultUI = NonNullable<ComponentProps<typeof VaultsTable>['data']>[number];
@@ -169,6 +171,10 @@ const RestakeOverviewTabs: FC<Props> = ({
           operatorMap={operatorMap}
           operatorTVL={operatorTVL}
         />
+      </TabContent>
+
+      <TabContent value={RestakeTab.BLUEPRINTS}>
+        <BlueprintListing />
       </TabContent>
     </TableAndChartTabs>
   );
