@@ -1,8 +1,8 @@
 import { FC } from 'react';
-
 import CardWithTangleLogo from '../CardWithTangleLogo';
 import AccountAddress from './AccountAddress';
 import Balance from './Balance';
+import RewardsAndPoints from './RewardsAndPoints';
 
 const AccountSummaryCard: FC<{ className?: string }> = ({ className }) => {
   return (
@@ -13,6 +13,8 @@ const AccountSummaryCard: FC<{ className?: string }> = ({ className }) => {
         </header>
 
         <Balance />
+
+        <RewardsAndPoints />
       </div>
     </CardWithTangleLogo>
   );

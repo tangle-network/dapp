@@ -1,8 +1,8 @@
 import { TxEventHandlers } from '@webb-tools/abstract-api-provider';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import { TangleAssetId } from '@webb-tools/tangle-shared-ui/types';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
-import isErc20Asset from '@webb-tools/tangle-shared-ui/utils/isErc20Asset';
+import { isEvmAddress } from '@webb-tools/webb-ui-components';
+import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import {
   zeroAddress,
   type Abi,
@@ -18,9 +18,12 @@ import {
   writeContract,
   WriteContractParameters,
 } from 'wagmi/actions';
-import abi from './abi';
-import RewardsTxBase from './base';
-import { REWARDS_EVM_ADDRESS } from './constants';
+import BATCH_PRECOMPILE_ABI from '../../../abi/batch';
+import { PrecompileAddress } from '../../../constants/evmPrecompiles';
+import createEvmBatchCall from '../../../utils/staking/createEvmBatchCall';
+import createEvmBatchCallArgs from '../../../utils/staking/createEvmBatchCallArgs';
+import rewardsAbi from './abi';
+import RewardsTxBase, { ClaimRewardsArgs } from './base';
 
 export default class EVMRewardsTx extends RewardsTxBase {
   constructor(
@@ -83,20 +86,47 @@ export default class EVMRewardsTx extends RewardsTxBase {
   };
 
   claimRewards = async (
-    args: { assetId: TangleAssetId },
-    eventHandlers?: Partial<TxEventHandlers<{ assetId: TangleAssetId }>>,
+    args: ClaimRewardsArgs,
+    eventHandlers?: Partial<TxEventHandlers<ClaimRewardsArgs>>,
   ) => {
-    const { assetId } = args;
+    const { assetIds } = args;
 
-    return this.sendTransaction(
-      abi,
-      REWARDS_EVM_ADDRESS,
-      'claimRewards',
-      isErc20Asset(assetId)
-        ? [ZERO_BIG_INT, assetId.Erc20]
-        : [assetId.Custom.toBigInt(), zeroAddress],
-      { assetId },
-      eventHandlers,
-    );
+    if (assetIds.length === 1) {
+      const callArgs = isEvmAddress(assetIds[0])
+        ? ([ZERO_BIG_INT, assetIds[0]] as const)
+        : ([BigInt(assetIds[0]), zeroAddress] as const);
+
+      return this.sendTransaction(
+        rewardsAbi,
+        PrecompileAddress.REWARDS,
+        'claimRewards',
+        callArgs,
+        args,
+        eventHandlers,
+      );
+    } else {
+      // Batch claim rewards
+      const batchCalls = assetIds.map((assetId) => {
+        const callArgs = isEvmAddress(assetId)
+          ? ([ZERO_BIG_INT, assetId] as const)
+          : ([BigInt(assetId), zeroAddress as EvmAddress] as const);
+
+        return createEvmBatchCall(
+          [rewardsAbi[0]],
+          PrecompileAddress.REWARDS,
+          'claimRewards',
+          callArgs,
+        );
+      });
+
+      return this.sendTransaction(
+        BATCH_PRECOMPILE_ABI,
+        PrecompileAddress.BATCH,
+        'batchAll',
+        createEvmBatchCallArgs(batchCalls),
+        args,
+        eventHandlers,
+      );
+    }
   };
 }

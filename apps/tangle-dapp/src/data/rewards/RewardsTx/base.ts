@@ -1,11 +1,15 @@
 import { TxEventHandlers } from '@webb-tools/abstract-api-provider/transaction-events';
-import { TangleAssetId } from '@webb-tools/tangle-shared-ui/types';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import { Hash } from 'viem';
 
+export type ClaimRewardsArgs = {
+  assetIds: RestakeAssetId[];
+};
+
 abstract class RewardsTxBase {
-  abstract claimRewards<ArgsType extends { assetId: TangleAssetId }>(
-    args: ArgsType,
-    eventHandlers?: Partial<TxEventHandlers<ArgsType>>,
+  abstract claimRewards(
+    args: ClaimRewardsArgs,
+    eventHandlers?: Partial<TxEventHandlers<ClaimRewardsArgs>>,
   ): Promise<Hash | null>;
 }
 
