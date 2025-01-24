@@ -22,28 +22,29 @@ import {
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { ArrowRight } from '@webb-tools/icons';
+import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
+import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
+import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
+import useRestakeAssetsTvl from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
+import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
+import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
+import useRestakeVaultAssets from '@webb-tools/tangle-shared-ui/data/restake/useRestakeVaultAssets';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
+import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import get from 'lodash/get';
+import { Link } from 'react-router';
+import LstIcon from '../components/LiquidStaking/LstIcon';
+import { LstIconSize } from '../components/LiquidStaking/types';
 import StatItem from '../components/StatItem';
 import { HeaderCell } from '../components/tableCells';
-import { ArrowRight } from '@webb-tools/icons';
-import { PagePath, QueryParamKey } from '../types';
-import { Link } from 'react-router';
-import sortByLocaleCompare from '../utils/sortByLocaleCompare';
-import useRestakeVaultAssets from '@webb-tools/tangle-shared-ui/data/restake/useRestakeVaultAssets';
-import useIsAccountConnected from '../hooks/useIsAccountConnected';
-import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
-import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
-import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
-import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
-import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
-import LstIcon from '../components/LiquidStaking/LstIcon';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
-import { LstIconSize } from '../components/LiquidStaking/types';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
-import useRestakeAssetsTvl from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
+import useIsAccountConnected from '../hooks/useIsAccountConnected';
+import { PagePath, QueryParamKey } from '../types';
 import sortByBn from '../utils/sortByBn';
+import sortByLocaleCompare from '../utils/sortByLocaleCompare';
 
 type Row = {
   vaultId: number;
@@ -93,7 +94,7 @@ const COLUMNS = [
 
             <Typography
               variant="body1"
-              className="whitespace-nowrap dark:text-mono-100"
+              className="whitespace-nowrap text-mono-120 dark:text-mono-100"
             >
               {props.getValue()}
             </Typography>
@@ -125,7 +126,7 @@ const COLUMNS = [
     },
   }),
   COLUMN_HELPER.accessor('locked', {
-    header: () => 'Locked',
+    header: () => 'Deposits',
     sortingFn: sortByBn((row) => row.locked),
     cell: (props) => {
       const fmtLocked = formatDisplayAmount(
@@ -150,7 +151,7 @@ const COLUMNS = [
     sortingFn: sortByBn((row) => row.tvl),
     header: () => (
       <HeaderCell
-        title="TVL & Cap"
+        title="TVL | Capacity"
         tooltip="Total value locked & deposit cap."
       />
     ),
@@ -181,12 +182,8 @@ const COLUMNS = [
         <TableCellWrapper>
           <div className="flex items-center justify-center gap-1">
             <StatItem
-              title={
-                fmtTvl === undefined ? `${fmtDepositCap} Cap` : `${fmtTvl} TVL`
-              }
-              subtitle={
-                fmtTvl === undefined ? undefined : `${fmtDepositCap} Cap`
-              }
+              title={fmtTvl === undefined ? `${fmtDepositCap}` : `${fmtTvl}`}
+              subtitle={fmtTvl === undefined ? undefined : `${fmtDepositCap}`}
               removeBorder
             />
           </div>
@@ -391,7 +388,7 @@ const AssetsAndBalancesTable: FC = () => {
     return (
       <TableStatus
         title="No Assets"
-        description="There are no restaking vaults or liquid staking pools available on this network yet. Please check back later."
+        description="There are no restaking vaults available on this network yet. Please check back later."
       />
     );
   }

@@ -20,7 +20,7 @@ export { default as isScientificNotation } from './isScientificNotation';
 export { default as isSideBarItemActive } from './isSideBarItemActive';
 export * from './isSolanaAddress';
 export * from './isSubstrateAddress';
-export * from './isTemplateBigInt';
+export * from './isTemplateNumber';
 export * from './isValidAddress';
 export { default as numberToString } from './numberToString';
 export { default as populateDocsUrl } from './populateDocsUrl';
