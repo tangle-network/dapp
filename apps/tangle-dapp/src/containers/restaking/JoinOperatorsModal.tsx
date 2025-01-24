@@ -1,30 +1,25 @@
+import { BN } from '@polkadot/util';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   AmountFormatStyle,
   Caption,
   formatDisplayAmount,
-  Modal,
   ModalBody,
   ModalContent,
   ModalFooterActions,
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
-import { FC, useCallback, useMemo, useState } from 'react';
-import useJoinOperatorsTx from '../../data/restake/useJoinOperatorsTx';
-import { TxStatus } from '../../hooks/useSubstrateTx';
-import AmountInput from '../../components/AmountInput';
-import { BN } from '@polkadot/util';
-import useApi from '../../hooks/useApi';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { OPERATOR_JOIN_DOCS_LINK } from '@webb-tools/webb-ui-components/constants/tangleDocs';
+import noop from 'lodash/noop';
+import { FC, useCallback, useMemo, useState } from 'react';
+import AmountInput from '../../components/AmountInput';
 import useBalances from '../../data/balances/useBalances';
+import useJoinOperatorsTx from '../../data/restake/useJoinOperatorsTx';
+import useApi from '../../hooks/useApi';
+import { TxStatus } from '../../hooks/useSubstrateTx';
 
-type Props = {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-};
-
-const JoinOperatorsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
+const JoinOperatorsModal: FC = () => {
   const [bondAmount, setBondAmount] = useState<BN | null>(null);
   const { nativeTokenSymbol } = useNetworkStore();
   const { execute, status } = useJoinOperatorsTx();
@@ -46,10 +41,15 @@ const JoinOperatorsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
   }, [bondAmount, execute, isReady]);
 
   const { result: minOperatorBond } = useApi(
-    useCallback(
-      (api) => api.consts.multiAssetDelegation.minOperatorBondAmount.toBn(),
-      [],
-    ),
+    useCallback((api) => {
+      if (
+        api.consts.multiAssetDelegation?.minOperatorBondAmount === undefined
+      ) {
+        return null;
+      }
+
+      return api.consts.multiAssetDelegation.minOperatorBondAmount.toBn();
+    }, []),
   );
 
   const captionText = useMemo<string>(() => {
@@ -67,37 +67,33 @@ const JoinOperatorsModal: FC<Props> = ({ isOpen, setIsOpen }) => {
   }, [minOperatorBond, nativeTokenSymbol]);
 
   return (
-    <Modal open={isOpen} onOpenChange={setIsOpen}>
-      <ModalContent size="sm">
-        <ModalHeader onClose={() => setIsOpen(false)}>
-          Join Operators
-        </ModalHeader>
+    <ModalContent size="sm">
+      <ModalHeader>Join Operators</ModalHeader>
 
-        <ModalBody className="gap-3">
-          <AmountInput
-            id="restake-join-operators-bond"
-            title="Bond Amount"
-            amount={bondAmount}
-            min={minOperatorBond}
-            max={free}
-            showMaxAction
-            setAmount={setBondAmount}
-            placeholder="Enter the amount to bond"
-            setErrorMessage={setErrorMessage}
-            wrapperOverrides={{ isFullWidth: true }}
-          />
-
-          <Caption linkHref={OPERATOR_JOIN_DOCS_LINK}>{captionText}</Caption>
-        </ModalBody>
-
-        <ModalFooterActions
-          onClose={() => setIsOpen(false)}
-          isProcessing={status === TxStatus.PROCESSING}
-          onConfirm={handleConfirmClick}
-          isConfirmDisabled={!isReady}
+      <ModalBody className="gap-3">
+        <AmountInput
+          id="restake-join-operators-bond"
+          title="Bond Amount"
+          amount={bondAmount}
+          min={minOperatorBond}
+          max={free}
+          showMaxAction
+          setAmount={setBondAmount}
+          placeholder="Enter the amount to bond"
+          setErrorMessage={setErrorMessage}
+          wrapperOverrides={{ isFullWidth: true }}
         />
-      </ModalContent>
-    </Modal>
+
+        <Caption linkHref={OPERATOR_JOIN_DOCS_LINK}>{captionText}</Caption>
+      </ModalBody>
+
+      <ModalFooterActions
+        hasCloseButton
+        isProcessing={status === TxStatus.PROCESSING}
+        onConfirm={handleConfirmClick}
+        isConfirmDisabled={!isReady}
+      />
+    </ModalContent>
   );
 };
 
