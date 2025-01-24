@@ -11,7 +11,7 @@ import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import type {
-  RestakeVaultAssetMetadata,
+  RestakeVaultMetadata,
   DelegatorUnstakeRequest,
 } from '@webb-tools/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
@@ -114,7 +114,7 @@ const UnstakeRequestTable: FC<Props> = ({
   unstakeRequests,
   operatorIdentities,
 }) => {
-  const { assetMetadataMap } = useRestakeContext();
+  const { vaults } = useRestakeContext();
   const { delegationBondLessDelay } = useRestakeConsts();
   const { result: currentRound } = useRestakeCurrentRound();
 
@@ -126,8 +126,7 @@ const UnstakeRequestTable: FC<Props> = ({
 
     return unstakeRequests.flatMap(
       ({ assetId, amount, requestedRound, operatorAccountId }) => {
-        const metadata: RestakeVaultAssetMetadata | undefined =
-          assetMetadataMap[assetId];
+        const metadata: RestakeVaultMetadata | undefined = vaults[assetId];
 
         // Ignore entries without metadata.
         if (!metadata) {
@@ -159,7 +158,7 @@ const UnstakeRequestTable: FC<Props> = ({
       },
     );
   }, [
-    assetMetadataMap,
+    vaults,
     currentRound,
     delegationBondLessDelay,
     operatorIdentities,

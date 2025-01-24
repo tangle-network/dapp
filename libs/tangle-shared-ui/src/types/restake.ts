@@ -48,11 +48,11 @@ export type OperatorMetadata = {
 };
 
 export type OperatorMap = {
-  readonly [accountId: SubstrateAddress]: OperatorMetadata;
+  readonly [accountAddress: SubstrateAddress]: OperatorMetadata;
 };
 
-export type RestakeVaultAssetMetadata = Readonly<{
-  id: RestakeAssetId;
+export type RestakeVaultMetadata = Readonly<{
+  assetId: RestakeAssetId;
   name: string;
   symbol: string;
   decimals: number;
@@ -67,11 +67,11 @@ export type RestakeVaultAssetMetadata = Readonly<{
    * @field Frozen - The asset is frozen and cannot be staked.
    * @field Destroying - The asset is being destroyed and cannot be staked.
    */
-  status: TransformEnum<PalletAssetsAssetStatus>;
+  status?: PalletAssetsAssetStatus['type'];
 }>;
 
-export type RestakeVaultAssetMap = {
-  readonly [assetId: RestakeAssetId]: RestakeVaultAssetMetadata;
+export type RestakeVaultMap = {
+  readonly [assetId: RestakeAssetId]: RestakeVaultMetadata;
 };
 
 export type DelegatorWithdrawRequest = {
@@ -111,11 +111,8 @@ export type DelegatorInfo = {
   };
 
   readonly withdrawRequests: Array<DelegatorWithdrawRequest>;
-
   readonly delegations: Array<DelegatorBondInfo>;
-
   readonly unstakeRequests: Array<DelegatorUnstakeRequest>;
-
   readonly status: DelegatorStatus;
 };
 
@@ -158,7 +155,7 @@ export type AssetBalanceMap = {
 
 export type AssetWithBalance = {
   assetId: RestakeAssetId;
-  metadata: RestakeVaultAssetMetadata;
+  metadata: RestakeVaultMetadata;
   balance: AssetBalance | null;
 };
 

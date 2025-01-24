@@ -84,7 +84,7 @@ const RestakeDelegateForm: FC = () => {
     register('operatorAccountId', { required: 'Operator is required' });
   }, [register]);
 
-  const { assetMetadataMap } = useRestakeContext();
+  const { vaults } = useRestakeContext();
   const restakeApi = useRestakeApi();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
@@ -169,14 +169,14 @@ const RestakeDelegateForm: FC = () => {
         const balance = new BN(amount.toString());
 
         if (!isEvmAddress(assetId)) {
-          const metadata = assetMetadataMap[assetId];
+          const metadata = vaults[assetId];
 
           if (metadata === undefined) {
             return [];
           }
 
           return {
-            id: metadata.id,
+            id: metadata.assetId,
             name: metadata.name,
             symbol: metadata.symbol,
             decimals: metadata.decimals,
@@ -197,7 +197,7 @@ const RestakeDelegateForm: FC = () => {
         }
       },
     );
-  }, [assetMetadataMap, delegatorInfo]);
+  }, [vaults, delegatorInfo]);
 
   const handleAssetSelect = useCallback(
     (asset: RestakeAsset) => {

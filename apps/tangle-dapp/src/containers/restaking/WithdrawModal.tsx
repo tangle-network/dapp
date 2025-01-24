@@ -36,7 +36,7 @@ const WithdrawModal = ({
   setIsOpen,
   onItemSelected,
 }: Props) => {
-  const { assetMetadataMap } = useRestakeContext();
+  const { vaults } = useRestakeContext();
 
   // Aggregate the delegations based on the operator account id and asset id
   const deposits = useMemo(() => {
@@ -63,7 +63,7 @@ const WithdrawModal = ({
       titleWhenEmpty="No Assets Found"
       descriptionWhenEmpty="This account has no assets available to withdraw."
       onSelect={(deposit) => {
-        const asset = assetMetadataMap[deposit.assetId];
+        const asset = vaults[deposit.assetId];
         const decimals = asset?.decimals || DEFAULT_DECIMALS;
         const fmtAmount = formatUnits(deposit.amount, decimals);
 
@@ -73,9 +73,9 @@ const WithdrawModal = ({
         });
       }}
       filterItem={({ assetId }, query) => {
-        const asset = assetMetadataMap[assetId];
+        const asset = vaults[assetId];
 
-        return filterBy(query, [asset?.name, asset?.id, asset?.vaultId]);
+        return filterBy(query, [asset?.name, asset?.assetId, asset?.vaultId]);
       }}
       // TODO: This can be cleaned up a bit. Seems like a bit of reused code.
       renderItem={({ amount, assetId }) => {
@@ -95,7 +95,7 @@ const WithdrawModal = ({
           symbol = erc20Token.symbol;
           decimals = erc20Token.decimals;
         } else {
-          const metadata = assetMetadataMap[assetId];
+          const metadata = vaults[assetId];
 
           if (metadata === undefined) {
             return null;

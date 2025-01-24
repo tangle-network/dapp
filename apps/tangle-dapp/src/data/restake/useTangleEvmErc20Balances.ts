@@ -27,7 +27,7 @@ export const ERC20_TEST_TOKENS: Erc20Token[] = [
     symbol: 'ETST',
     decimals: 18,
     contractAddress: assertEvmAddress(
-      '0xd38790743B49bbB8E5AF03A94029DA04aaFa262b',
+      '0x2af9b184d0d42cd8d3c4fd0c953a06b6838c9357',
     ),
   },
 ];
@@ -83,6 +83,11 @@ const useTangleEvmErc20Balances = (): Erc20Balance[] | null => {
         const scaledBalance = new BN(balance.toString()).mul(
           new BN(10).pow(new BN(asset.decimals)),
         );
+
+        // Ignore assets that have a zero balance.
+        if (scaledBalance.isZero()) {
+          continue;
+        }
 
         newBalances.push({
           ...asset,

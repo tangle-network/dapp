@@ -1,13 +1,10 @@
 import { VaultToken } from '../../types';
-import {
-  RestakeVaultAssetMap,
-  OperatorDelegatorBond,
-} from '../../types/restake';
+import { RestakeVaultMap, OperatorDelegatorBond } from '../../types/restake';
 import safeFormatUnits from '../safeFormatUnits';
 
 export default function delegationsToVaultTokens(
   delegations: OperatorDelegatorBond[],
-  assetMap: RestakeVaultAssetMap,
+  assetMap: RestakeVaultMap,
 ) {
   return delegations.reduce<VaultToken[]>(
     (vaultTokenArr, { assetId, amount }) => {

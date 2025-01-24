@@ -5,10 +5,11 @@ import { map, type Observable } from 'rxjs';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { assetIdsQuery } from '../../queries/restake/assetIds';
 import { rewardVaultRxQuery } from '../../queries/restake/rewardVault';
+import { RestakeAssetId } from '../../utils/createRestakeAssetId';
 
 export type UseRestakeAssetIdsReturnType = {
-  assetIds: string[];
-  assetIds$: Observable<string[]>;
+  assetIds: RestakeAssetId[];
+  assetIds$: Observable<RestakeAssetId[]>;
 };
 
 /**
@@ -21,9 +22,7 @@ export default function useRestakeAssetIds(): Evaluate<UseRestakeAssetIdsReturnT
   const assetIds$ = useMemo(
     () =>
       rewardVaultRxQuery(apiRx).pipe(
-        map((rewardVaults) =>
-          assetIdsQuery(rewardVaults).map((id) => id.toString()),
-        ),
+        map((rewardVaults) => assetIdsQuery(rewardVaults)),
       ),
     [apiRx],
   );

@@ -7,7 +7,7 @@ import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestake
 import { BN, BN_ZERO } from '@polkadot/util';
 
 const useRestakeAsset = (id: RestakeAssetId | null | undefined) => {
-  const { assetMetadataMap, balances } = useRestakeContext();
+  const { vaults, balances } = useRestakeContext();
   const erc20Balances = useTangleEvmErc20Balances();
 
   const asset = useMemo<RestakeAsset | null>(() => {
@@ -32,7 +32,7 @@ const useRestakeAsset = (id: RestakeAssetId | null | undefined) => {
       } satisfies RestakeAsset;
     }
 
-    const metadata = assetMetadataMap[id];
+    const metadata = vaults[id];
 
     if (metadata === undefined) {
       return null;
@@ -50,7 +50,7 @@ const useRestakeAsset = (id: RestakeAssetId | null | undefined) => {
       decimals: metadata.decimals,
       balance: balanceBn,
     } satisfies RestakeAsset;
-  }, [assetMetadataMap, balances, erc20Balances, id]);
+  }, [vaults, balances, erc20Balances, id]);
 
   return asset;
 };

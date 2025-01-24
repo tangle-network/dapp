@@ -3,20 +3,21 @@ import type { Option, u32 } from '@polkadot/types';
 import type {
   PalletAssetsAssetDetails,
   PalletAssetsAssetMetadata,
+  PalletAssetsAssetStatus,
 } from '@polkadot/types/lookup';
-import { formatBalance, hexToString } from '@polkadot/util';
+import { BN, formatBalance, hexToString } from '@polkadot/util';
 import type { Chain } from '@webb-tools/dapp-config';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
-import {
-  RestakeVaultAssetMap,
-  RestakeVaultAssetMetadata,
-} from '../../types/restake';
+import { RestakeVaultMap, RestakeVaultMetadata } from '../../types/restake';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
 import {
   fetchSingleTokenPriceBySymbol,
   fetchTokenPricesBySymbols,
 } from '../../utils/fetchTokenPrices';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
+import { RestakeAssetId } from '../../utils/createRestakeAssetId';
+import createAssetIdEnum from '../../utils/createAssetIdEnum';
+import { isEvmAddress } from '@webb-tools/webb-ui-components';
 
 function createVaultId(u32: Option<u32>): number | null {
   if (u32.isNone) {
@@ -49,25 +50,24 @@ const DEFAULT_NATIVE_CURRENCY = {
 // Combined process function for both regular and Rx versions
 function createAssetMetadata(
   assetId: string,
-  detail: PalletAssetsAssetDetails,
   metadata: PalletAssetsAssetMetadata,
   vaultId: Option<u32>,
   priceInUsd: number | null,
-): RestakeVaultAssetMetadata {
+  status?: PalletAssetsAssetStatus['type'],
+): RestakeVaultMetadata {
   const name = hexToString(metadata.name.toHex()) || `Asset ${assetId}`;
   const symbol = hexToString(metadata.symbol.toHex()) || `${assetId}`;
   const decimals = metadata.decimals.toNumber();
 
   return {
-    id: assertRestakeAssetId(assetId),
+    assetId: assertRestakeAssetId(assetId),
     name,
     symbol,
     decimals,
-    status: detail.status.type,
+    status,
     vaultId: createVaultId(vaultId),
     priceInUsd,
-    details: detail,
-  } satisfies RestakeVaultAssetMetadata;
+  } satisfies RestakeVaultMetadata;
 }
 
 function queryTokenPrices(
@@ -83,18 +83,18 @@ function queryTokenPrices(
 
 function processAssetDetailsRx(
   api: ApiRx,
-  nonNativeAssetIds: string[],
+  nonNativeAssetIds: RestakeAssetId[],
   assetDetails: Option<PalletAssetsAssetDetails>[],
   assetMetadatas: PalletAssetsAssetMetadata[],
   assetVaultIds: Option<u32>[],
   hasNative: boolean,
   nativeCurrency: Chain['nativeCurrency'],
-): Observable<RestakeVaultAssetMap> {
+): Observable<RestakeVaultMap> {
   return hasNative
     ? getNativeAssetRx(nativeCurrency, api).pipe(
-        map((nativeAsset) => ({ [nativeAsset.id]: nativeAsset })),
+        map((nativeAsset) => ({ [nativeAsset.assetId]: nativeAsset })),
       )
-    : of<RestakeVaultAssetMap>({}).pipe(
+    : of<RestakeVaultMap>({}).pipe(
         switchMap(async (initialAssetMap) => {
           const tokenPrices = await queryTokenPrices(
             nonNativeAssetIds,
@@ -102,7 +102,29 @@ function processAssetDetailsRx(
           );
 
           return nonNativeAssetIds.reduce((assetMap, assetId, idx) => {
-            if (assetDetails[idx].isNone) {
+            const price =
+              typeof tokenPrices[idx] === 'number' ? tokenPrices[idx] : null;
+
+            if (isEvmAddress(assetId)) {
+              const erc20Token = findErc20Token(assetId);
+
+              if (erc20Token === null) {
+                return assetMap;
+              }
+
+              return {
+                ...assetMap,
+                [assetId]: {
+                  assetId,
+                  name: erc20Token.name,
+                  symbol: erc20Token.symbol,
+                  decimals: erc20Token.decimals,
+                  status: 'Live' as const,
+                  vaultId: assetVaultIds[idx].unwrap().toNumber(),
+                  priceInUsd: price,
+                } satisfies RestakeVaultMetadata,
+              };
+            } else if (assetDetails[idx].isNone) {
               return assetMap;
             }
 
@@ -110,10 +132,10 @@ function processAssetDetailsRx(
               ...assetMap,
               [assetId]: createAssetMetadata(
                 assetId,
-                assetDetails[idx].unwrap(),
                 assetMetadatas[idx],
                 assetVaultIds[idx],
-                typeof tokenPrices[idx] === 'number' ? tokenPrices[idx] : null,
+                price,
+                assetDetails[idx].unwrap().status.type,
               ),
             };
           }, initialAssetMap);
@@ -124,7 +146,7 @@ function processAssetDetailsRx(
 function getNativeAssetRx(
   nativeCurrency: Chain['nativeCurrency'],
   api: ApiRx,
-): Observable<RestakeVaultAssetMetadata> {
+): Observable<RestakeVaultMetadata> {
   const assetId = 0;
 
   return api.query.rewards.assetLookupRewardVaults({ Custom: assetId }).pipe(
@@ -135,18 +157,18 @@ function getNativeAssetRx(
 
       return {
         ...nativeCurrency,
-        id: `${assetId}`,
+        assetId: `${assetId}`,
         status: 'Live' as const,
         vaultId: createVaultId(vaultId),
         priceInUsd: typeof priceInUsd === 'number' ? priceInUsd : null,
-      } satisfies RestakeVaultAssetMetadata;
+      } satisfies RestakeVaultMetadata;
     }),
   );
 }
 
-export const assetDetailsRxQuery = (
+export const queryVaultsRx = (
   api: ApiRx,
-  assetIds: string[],
+  assetIds: RestakeAssetId[],
   nativeCurrency: Chain['nativeCurrency'] = DEFAULT_NATIVE_CURRENCY,
 ) => {
   const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
@@ -155,46 +177,56 @@ export const assetDetailsRxQuery = (
   if (isNonNativeAssetsEmpty || !isApiSupported(api)) {
     if (hasNative) {
       return getNativeAssetRx(nativeCurrency, api).pipe(
-        map((nativeAsset) => ({ [nativeAsset.id]: nativeAsset })),
+        map((nativeAsset) => ({ [nativeAsset.assetId]: nativeAsset })),
       );
     } else {
       return of<{
-        [assetId: string]: RestakeVaultAssetMetadata;
+        [assetId: RestakeAssetId]: RestakeVaultMetadata;
       }>({});
     }
   }
 
   // Batch queries for asset details
   const assetDetailQueries = nonNativeAssetIds.reduce(
-    (batchQueries, assetId) =>
-      batchQueries.concat([
-        [api.query.assets.asset, { Custom: assetId.toString() }] as const,
-      ]),
-    [] as [typeof api.query.assets.asset, { Custom: string }][],
+    (batchQueries, assetId) => {
+      if (isEvmAddress(assetId)) {
+        return batchQueries;
+      }
+
+      return batchQueries.concat([[api.query.assets.asset, new BN(assetId)]]);
+    },
+    [] as [typeof api.query.assets.asset, BN][],
   );
+
+  type MetadataBatchQueries = [
+    typeof api.query.assets.metadata,
+    Parameters<typeof api.query.assets.metadata>[0],
+  ][];
 
   // Batch queries for asset metadata
   const assetMetadataQueries = nonNativeAssetIds.reduce(
-    (batchQueries, assetId) =>
-      batchQueries.concat([
-        [api.query.assets.metadata, { Custom: assetId.toString() }] as const,
-      ]),
-    [] as [typeof api.query.assets.metadata, { Custom: string }][],
+    (batchQueries: MetadataBatchQueries, assetId) => {
+      if (isEvmAddress(assetId)) {
+        return batchQueries;
+      }
+
+      return batchQueries.concat([[api.query.assets.metadata, assetId]]);
+    },
+    [],
   );
+
+  type VaultIdQueries = [
+    typeof api.query.rewards.assetLookupRewardVaults,
+    Parameters<typeof api.query.rewards.assetLookupRewardVaults>[0],
+  ][];
 
   // Batch queries for asset vault ID
   const assetVaultIdQueries = nonNativeAssetIds.reduce(
-    (batchQueries, assetId) =>
+    (batchQueries: VaultIdQueries, assetId) =>
       batchQueries.concat([
-        [
-          api.query.rewards.assetLookupRewardVaults,
-          { Custom: assetId },
-        ] as const,
+        [api.query.rewards.assetLookupRewardVaults, createAssetIdEnum(assetId)],
       ]),
-    [] as [
-      typeof api.query.rewards.assetLookupRewardVaults,
-      { Custom: string },
-    ][],
+    [],
   );
 
   const assetDetails$ =
@@ -203,11 +235,19 @@ export const assetDetailsRxQuery = (
   const assetMetadatas$ =
     api.queryMulti<PalletAssetsAssetMetadata[]>(assetMetadataQueries);
 
-  // TODO: Wrong type. Affected by {Custom:...} bug?
   const assetVaultIds$ = api.queryMulti<Option<u32>[]>(assetVaultIdQueries);
 
   return combineLatest([assetDetails$, assetMetadatas$, assetVaultIds$]).pipe(
     switchMap(([assetDetails, assetMetadatas, assetVaultIds]) => {
+      console.debug(
+        'GOT',
+        assetDetails,
+        assetMetadatas,
+        assetVaultIds.map((a) => a.unwrap().toString()),
+        nonNativeAssetIds,
+        hasNative,
+      );
+
       return processAssetDetailsRx(
         api,
         nonNativeAssetIds,

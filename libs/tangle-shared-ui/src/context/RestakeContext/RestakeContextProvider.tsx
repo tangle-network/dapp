@@ -6,21 +6,23 @@ import toPairs from 'lodash/toPairs';
 import { useObservableState } from 'observable-hooks';
 import { PropsWithChildren, useMemo } from 'react';
 import { combineLatest, map } from 'rxjs';
-import useRestakeVaultAssets from '../../data/restake/useRestakeVaultAssets';
+import useRestakeVaults from '../../data/restake/useRestakeVaults';
 import useRestakeBalances from '../../data/restake/useRestakeBalances';
 import { AssetWithBalance } from '../../types/restake';
 import RestakeContext from './RestakeContext';
+import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 
 const RestakeContextProvider = (props: PropsWithChildren) => {
-  const { vaultAssets: assetMap, assetMap$ } = useRestakeVaultAssets();
+  const { vaults, vaults$ } = useRestakeVaults();
   const { balances, balances$ } = useRestakeBalances();
 
   const assetWithBalances$ = useMemo(
     () =>
-      combineLatest([assetMap$, balances$]).pipe(
+      combineLatest([vaults$, balances$]).pipe(
         map(([assetMap, balances]) => {
           const combined = toPairs(assetMap).reduce(
-            (assetWithBalances, [assetId, assetMetadata]) => {
+            (assetWithBalances, [assetIdString, assetMetadata]) => {
+              const assetId = assertRestakeAssetId(assetIdString);
               const balance = balances[assetId] ?? null;
 
               return assetWithBalances.concat({
@@ -47,7 +49,7 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
           ];
         }),
       ),
-    [assetMap$, balances$],
+    [vaults$, balances$],
   );
 
   const assetWithBalances = useObservableState(assetWithBalances$, []);
@@ -57,8 +59,8 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
       value={{
         assetWithBalances,
         assetWithBalances$,
-        assetMetadataMap: assetMap,
-        assetMap$,
+        vaults,
+        vaults$,
         balances,
         balances$,
       }}

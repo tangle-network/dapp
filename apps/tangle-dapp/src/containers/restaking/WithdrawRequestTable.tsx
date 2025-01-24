@@ -104,7 +104,7 @@ type Props = {
 };
 
 const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
-  const { assetMetadataMap } = useRestakeContext();
+  const { vaults } = useRestakeContext();
   const { leaveDelegatorsDelay } = useRestakeConsts();
   const { result: currentRound } = useRestakeCurrentRound();
 
@@ -117,7 +117,7 @@ const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
     return withdrawRequests.flatMap(({ assetId, amount, requestedRound }) => {
       const metadata = isEvmAddress(assetId)
         ? findErc20Token(assetId)
-        : assetMetadataMap[assetId];
+        : vaults[assetId];
 
       // Skip requests that are lacking metadata.
       if (metadata === undefined || metadata === null) {
@@ -144,7 +144,7 @@ const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
         sessionsRemaining,
       } satisfies WithdrawRequestTableRow;
     });
-  }, [assetMetadataMap, currentRound, leaveDelegatorsDelay, withdrawRequests]);
+  }, [vaults, currentRound, leaveDelegatorsDelay, withdrawRequests]);
 
   const table = useReactTable(
     useMemo<TableOptions<WithdrawRequestTableRow>>(
