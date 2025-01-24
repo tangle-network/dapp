@@ -6,7 +6,14 @@ import type {
 } from '@webb-tools/tangle-shared-ui/types/restake';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
-import { type ComponentProps, type FC, ReactNode, useMemo } from 'react';
+import {
+  type ComponentProps,
+  type FC,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import VaultAssetsTable from '../../components/tables/VaultAssets';
 import VaultsTable from '../../components/tables/Vaults';
 import useRestakeRewardConfig from '../../data/restake/useRestakeRewardConfig';
@@ -63,6 +70,8 @@ const RestakeOverviewTabs: FC<Props> = ({
   vaultTVL,
   action,
 }) => {
+  const [tab, setTab] = useState(RestakeTab.RESTAKE);
+
   const { assetMetadataMap } = useRestakeContext();
   const rewardConfig = useRestakeRewardConfig();
 
@@ -149,9 +158,15 @@ const RestakeOverviewTabs: FC<Props> = ({
     [assetMetadataMap, delegatorTVL, delegatorTotalRestakedAssets],
   );
 
+  const handleRestakeClicked = useCallback(() => {
+    setTab(RestakeTab.RESTAKE);
+  }, []);
+
   return (
     <TableAndChartTabs
       tabs={Object.values(RestakeTab)}
+      value={tab}
+      onValueChange={(tab) => setTab(tab as RestakeTab)}
       headerClassName="w-full"
     >
       <TabContent
@@ -170,6 +185,7 @@ const RestakeOverviewTabs: FC<Props> = ({
           operatorConcentration={operatorConcentration}
           operatorMap={operatorMap}
           operatorTVL={operatorTVL}
+          onRestakeClicked={handleRestakeClicked}
         />
       </TabContent>
 
