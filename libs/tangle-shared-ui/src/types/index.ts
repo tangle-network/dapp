@@ -121,6 +121,6 @@ export type BridgeChainBalances = Partial<
   Record<PresetTypedChainId, BridgeTokenWithBalance[]>
 >;
 
-export type RestakeAssetId = `${number}` | EvmAddress;
+export type RestakeAssetId = `${bigint}` | EvmAddress;
 
 export type TangleAssetId = { Custom: u128 } | { Erc20: Address };

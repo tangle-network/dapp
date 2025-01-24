@@ -7,7 +7,7 @@ const createRestakeAssetId = (
 ): RestakeAssetId => {
   switch (tangleAssetId.type) {
     case 'Custom':
-      return `${tangleAssetId.asCustom.toNumber()}`;
+      return `${tangleAssetId.asCustom.toBigInt()}`;
     case 'Erc20':
       return assertEvmAddress(tangleAssetId.asErc20.toHex());
   }

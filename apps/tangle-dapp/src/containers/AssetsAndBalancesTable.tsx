@@ -45,6 +45,7 @@ import useIsAccountConnected from '../hooks/useIsAccountConnected';
 import { PagePath, QueryParamKey } from '../types';
 import sortByBn from '../utils/sortByBn';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
+import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
 
 type Row = {
   vaultId: number;
@@ -273,14 +274,15 @@ const AssetsAndBalancesTable: FC = () => {
   const assetsTvl = useRestakeAssetsTvl();
 
   const getTotalLockedInAsset = useCallback(
-    (assetId: number) => {
-      const deposit = delegatorInfo?.deposits[`${assetId}`];
+    (assetId: RestakeAssetId) => {
+      const deposits = delegatorInfo?.deposits ?? {};
+      const deposit = get(deposits, assetId);
 
       if (deposit === undefined) {
         return BN_ZERO;
       }
 
-      const depositAmount = delegatorInfo?.deposits[`${assetId}`].amount;
+      const depositAmount = deposit.amount;
 
       const delegation = delegatorInfo?.delegations.find((delegation) => {
         return delegation.assetId === assetId.toString();
@@ -302,7 +304,8 @@ const AssetsAndBalancesTable: FC = () => {
   );
 
   const assetRows = useMemo<Row[]>(() => {
-    return Object.entries(vaultAssets).flatMap(([assetId, metadata]) => {
+    return Object.entries(vaultAssets).flatMap(([rawAssetId, metadata]) => {
+      const assetId = assertRestakeAssetId(rawAssetId);
       if (metadata.vaultId === null) {
         return [];
       }
@@ -321,11 +324,7 @@ const AssetsAndBalancesTable: FC = () => {
           ? undefined
           : new BN(config.depositCap.toString());
 
-      // TODO: Avoid using `as` to force cast here. This is a temporary workaround until the type of `assetId` is updated to be `RestakeAssetId`.
-      const tvl =
-        assetsTvl === null
-          ? undefined
-          : assetsTvl.get(assetId as RestakeAssetId);
+      const tvl = assetsTvl === null ? undefined : assetsTvl.get(assetId);
 
       const assetBalances: (typeof balances)[string] | undefined =
         balances[assetId];
@@ -340,7 +339,7 @@ const AssetsAndBalancesTable: FC = () => {
         name: metadata.name,
         tvl,
         available,
-        locked: getTotalLockedInAsset(parseInt(assetId)),
+        locked: getTotalLockedInAsset(assetId),
         // TODO: This won't work because reward config is PER VAULT not PER ASSET. But isn't each asset its own vault?
         apyPercentage,
         tokenSymbol: metadata.symbol,
