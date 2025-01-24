@@ -9,14 +9,13 @@ import {
   TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { Input } from '@webb-tools/webb-ui-components/components/Input';
 import { Pagination } from '@webb-tools/webb-ui-components/components/Pagination';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { ComponentProps, FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { isTangleError } from '../../../types/error';
 import BlueprintItem from './BlueprintItem';
 import { BlueprintGalleryProps, BlueprintItemProps } from './types';
 
@@ -209,9 +208,9 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
         <Typography
           ta="center"
           variant="body1"
-          className="flex items-center justify-center h-40"
+          className="flex items-center justify-center h-40 md:max-w-[75%] md:mx-auto"
         >
-          {error.message}
+          {isTangleError(error) ? error.description : error.message}
         </Typography>
       ) : isEmpty ? (
         <Typography

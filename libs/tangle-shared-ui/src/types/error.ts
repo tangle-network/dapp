@@ -21,3 +21,7 @@ export class TangleError extends Error {
     this.description = TangleErrorDescriptionMap[code];
   }
 }
+
+export function isTangleError(error: unknown): error is TangleError {
+  return error instanceof TangleError;
+}
