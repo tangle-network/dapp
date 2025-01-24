@@ -122,7 +122,7 @@ const WithdrawModal = ({
             logo={<TokenIcon size="xl" name={symbol} />}
             leftUpperContent={`${name} (${symbol})`}
             leftBottomContent={idText}
-            rightUpperText={fmtAmount}
+            rightUpperText={`${fmtAmount} ${symbol}`}
             rightBottomText={
               vaultId !== null ? `Vault ID: ${vaultId}` : undefined
             }

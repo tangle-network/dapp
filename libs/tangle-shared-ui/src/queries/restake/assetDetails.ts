@@ -10,14 +10,11 @@ import type { Chain } from '@webb-tools/dapp-config';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
 import { RestakeVaultMap, RestakeVaultMetadata } from '../../types/restake';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
-import {
-  fetchSingleTokenPriceBySymbol,
-  fetchTokenPricesBySymbols,
-} from '../../utils/fetchTokenPrices';
+import { fetchTokenPriceBySymbol } from '../../utils/fetchTokenPrices';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import { RestakeAssetId } from '../../utils/createRestakeAssetId';
 import createAssetIdEnum from '../../utils/createAssetIdEnum';
-import { isEvmAddress } from '@webb-tools/webb-ui-components';
+import { assertEvmAddress, isEvmAddress } from '@webb-tools/webb-ui-components';
 
 function createVaultId(u32: Option<u32>): number | null {
   if (u32.isNone) {
@@ -70,17 +67,6 @@ function createAssetMetadata(
   } satisfies RestakeVaultMetadata;
 }
 
-function queryTokenPrices(
-  nonNativeAssetIds: string[],
-  assetMetadatas: PalletAssetsAssetMetadata[],
-) {
-  const tokenSymbols = nonNativeAssetIds.map((_, idx) =>
-    hexToString(assetMetadatas[idx].symbol.toHex()),
-  );
-
-  return fetchTokenPricesBySymbols(tokenSymbols);
-}
-
 function processAssetDetailsRx(
   api: ApiRx,
   nonNativeAssetIds: RestakeAssetId[],
@@ -96,17 +82,20 @@ function processAssetDetailsRx(
       )
     : of<RestakeVaultMap>({}).pipe(
         switchMap(async (initialAssetMap) => {
-          const tokenPrices = await queryTokenPrices(
-            nonNativeAssetIds,
-            assetMetadatas,
-          );
-
           return nonNativeAssetIds.reduce((assetMap, assetId, idx) => {
-            const price =
-              typeof tokenPrices[idx] === 'number' ? tokenPrices[idx] : null;
+            // TODO: Implement price fetching.
+            // const price = await fetchTokenPriceBySymbol(erc20Token.symbol);
+            const price = null;
 
             if (isEvmAddress(assetId)) {
-              const erc20Token = findErc20Token(assetId);
+              const erc20Token = {
+                name: "Yuri's Local ERC-2 Dummy",
+                symbol: 'USDC',
+                decimals: 18,
+                contractAddress: assertEvmAddress(
+                  '0x2af9b184d0d42cd8d3c4fd0c953a06b6838c9357',
+                ),
+              };
 
               if (erc20Token === null) {
                 return assetMap;
@@ -124,7 +113,10 @@ function processAssetDetailsRx(
                   priceInUsd: price,
                 } satisfies RestakeVaultMetadata,
               };
-            } else if (assetDetails[idx].isNone) {
+            } else if (
+              assetDetails[idx] === undefined ||
+              assetDetails[idx].isNone
+            ) {
               return assetMap;
             }
 
@@ -151,9 +143,7 @@ function getNativeAssetRx(
 
   return api.query.rewards.assetLookupRewardVaults({ Custom: assetId }).pipe(
     switchMap(async (vaultId) => {
-      const priceInUsd = await fetchSingleTokenPriceBySymbol(
-        nativeCurrency.symbol,
-      );
+      const priceInUsd = await fetchTokenPriceBySymbol(nativeCurrency.symbol);
 
       return {
         ...nativeCurrency,
@@ -239,15 +229,6 @@ export const queryVaultsRx = (
 
   return combineLatest([assetDetails$, assetMetadatas$, assetVaultIds$]).pipe(
     switchMap(([assetDetails, assetMetadatas, assetVaultIds]) => {
-      console.debug(
-        'GOT',
-        assetDetails,
-        assetMetadatas,
-        assetVaultIds.map((a) => a.unwrap().toString()),
-        nonNativeAssetIds,
-        hasNative,
-      );
-
       return processAssetDetailsRx(
         api,
         nonNativeAssetIds,

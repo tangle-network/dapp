@@ -158,7 +158,7 @@ const RestakeDelegateForm: FC = () => {
     update: updateOperatorModal,
   } = useModal(false);
 
-  const delegatedAssets = useMemo<RestakeAsset[]>(() => {
+  const depositedAssets = useMemo<RestakeAsset[]>(() => {
     if (!isDefined(delegatorInfo)) {
       return [];
     }
@@ -296,7 +296,7 @@ const RestakeDelegateForm: FC = () => {
             setIsOpen={updateAssetModal}
             titleWhenEmpty="No Assets Available"
             descriptionWhenEmpty="Have you made a deposit on this network yet?"
-            items={delegatedAssets}
+            items={depositedAssets}
             searchInputId="restake-delegate-asset-search"
             searchPlaceholder="Search for asset or enter token address"
             getItemKey={(item) => item.id}

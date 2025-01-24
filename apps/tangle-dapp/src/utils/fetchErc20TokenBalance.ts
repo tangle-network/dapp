@@ -26,7 +26,10 @@ const fetchErc20TokenBalance = async (
 
     return new Decimal(ethers.utils.formatUnits(balance, decimals));
   } catch (e) {
-    console.error('Failed to fetch ERC20 token balance:', e);
+    console.warn(
+      'Failed to fetch ERC20 token balance, assuming balance of 0:',
+      e,
+    );
 
     return new Decimal(0);
   }

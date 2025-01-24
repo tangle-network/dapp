@@ -1,6 +1,5 @@
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { FC, useMemo } from 'react';
 import { UseFormWatch } from 'react-hook-form';
 import DetailsContainer from '../../../components/DetailsContainer';
@@ -8,6 +7,8 @@ import DetailItem from '../../../components/LiquidStaking/stakeAndUnstake/Detail
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeRewardConfig from '../../../data/restake/useRestakeRewardConfig';
 import { DepositFormFields } from '../../../types/restake';
+import useSessionDurationMs from '../../../data/useSessionDurationMs';
+import formatMsDuration from '../../../utils/formatMsDuration';
 
 type Props = {
   watch: UseFormWatch<DepositFormFields>;
@@ -17,6 +18,7 @@ const Details: FC<Props> = ({ watch }) => {
   const { vaults } = useRestakeContext();
   const { bondDuration } = useRestakeConsts();
   const rewardConfig = useRestakeRewardConfig();
+  const sessionDurationMs = useSessionDurationMs();
 
   const assetId = watch('depositAssetId');
 
@@ -34,6 +36,14 @@ const Details: FC<Props> = ({ watch }) => {
     return rewardConfig.get(asset.vaultId)?.apy ?? null;
   }, [assetId, vaults, rewardConfig]);
 
+  const withdrawPeriod = useMemo(() => {
+    if (sessionDurationMs === null || bondDuration === null) {
+      return null;
+    }
+
+    return formatMsDuration(sessionDurationMs * bondDuration);
+  }, [bondDuration, sessionDurationMs]);
+
   return (
     <DetailsContainer>
       <DetailItem
@@ -42,13 +52,9 @@ const Details: FC<Props> = ({ watch }) => {
       />
 
       <DetailItem
-        title="Withdrawal period"
-        value={
-          bondDuration !== null
-            ? `${bondDuration} ${pluralize('session', bondDuration !== 1)}`
-            : EMPTY_VALUE_PLACEHOLDER
-        }
-        tooltip="The duration for which the deposited asset is locked."
+        title="Withdrawal delay"
+        value={withdrawPeriod}
+        tooltip="The duration for which the deposited asset is locked and can be withdrawn."
       />
     </DetailsContainer>
   );
