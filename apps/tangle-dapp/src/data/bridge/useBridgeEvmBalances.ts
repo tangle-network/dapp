@@ -13,6 +13,7 @@ import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import { isSolanaAddress } from '@webb-tools/webb-ui-components';
 import fetchErc20TokenBalance from '../../utils/fetchErc20TokenBalance';
+import useViemPublicClient from '../../hooks/useViemPublicClient';
 
 export const useBridgeEvmBalances = (
   sourceChainId: number,
@@ -23,6 +24,7 @@ export const useBridgeEvmBalances = (
   const [balances, setBalances] = useState<BridgeChainBalances>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const viemPublicClient = useViemPublicClient();
 
   const fetchTokenBalance = useCallback(
     async (
@@ -30,14 +32,14 @@ export const useBridgeEvmBalances = (
       chainId: PresetTypedChainId,
       address: EvmAddress,
     ): Promise<BridgeTokenWithBalance> => {
-      // TODO: Not all tokens are ERC20, ex. Solana. Handle the edge cases. For now, just return a balance of 0.
-      if (isSolanaAddress(token.address)) {
+      if (viemPublicClient === null || isSolanaAddress(token.address)) {
+        // TODO: Not all tokens are ERC20, ex. Solana. Handle the edge cases. For now, just return a balance of 0.
         return { ...token, balance: new Decimal(0) };
       }
 
       const balance = await fetchErc20TokenBalance(
+        viemPublicClient,
         address,
-        chainId,
         token.address,
         token.abi,
         token.decimals,
@@ -47,8 +49,8 @@ export const useBridgeEvmBalances = (
 
       if (token.hyperlaneSyntheticAddress) {
         syntheticBalance = await fetchErc20TokenBalance(
+          viemPublicClient,
           address,
-          chainId,
           token.hyperlaneSyntheticAddress,
           token.abi,
           token.decimals,
@@ -57,7 +59,7 @@ export const useBridgeEvmBalances = (
 
       return { ...token, balance, syntheticBalance };
     },
-    [],
+    [viemPublicClient],
   );
 
   const fetchAllBalances = useCallback(async () => {

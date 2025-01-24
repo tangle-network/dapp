@@ -1,25 +1,18 @@
-import { chainsConfig } from '@webb-tools/dapp-config';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import assert from 'assert';
 import { Decimal } from 'decimal.js';
 import { ethers } from 'ethers';
-import { Abi, createPublicClient, http } from 'viem';
+import { Abi, PublicClient } from 'viem';
 
 const fetchErc20TokenBalance = async (
+  viemPublicClient: PublicClient,
   accountAddress: EvmAddress,
-  chainId: number,
   contractAddress: EvmAddress,
   tokenAbi: Abi,
   decimals: number,
 ): Promise<Decimal> => {
   try {
-    const client = createPublicClient({
-      chain: chainsConfig[chainId],
-      // TODO: Just for debugging / temporary.
-      transport: http('http://127.0.0.1:9944'),
-    });
-
-    const balance = await client.readContract({
+    const balance = await viemPublicClient.readContract({
       address: contractAddress,
       abi: tokenAbi,
       functionName: 'balanceOf',

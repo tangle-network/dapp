@@ -4,10 +4,9 @@ import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import fetchErc20TokenBalance from '../../utils/fetchErc20TokenBalance';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import { useCallback, useEffect, useState } from 'react';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import ERC20_ABI from '../../abi/erc20';
 import { Decimal } from 'decimal.js';
+import useViemPublicClient from '../../hooks/useViemPublicClient';
 
 type Erc20Token = {
   contractAddress: EvmAddress;
@@ -23,11 +22,19 @@ export type Erc20Balance = Erc20Token & {
 // TODO: Query from EVM instead of being hard-coded. Waiting for bridge to be implemented in order to do that.
 export const ERC20_TEST_TOKENS: Erc20Token[] = [
   {
-    name: 'ERC-20 Testcoin',
-    symbol: 'ETST',
+    name: "Yuri's Local ERC-2 Dummy",
+    symbol: 'USDC',
     decimals: 18,
     contractAddress: assertEvmAddress(
       '0x2af9b184d0d42cd8d3c4fd0c953a06b6838c9357',
+    ),
+  },
+  {
+    name: 'Testnet ERC-20 Dummy',
+    symbol: 'USDC',
+    decimals: 18,
+    contractAddress: assertEvmAddress(
+      '0x9794e2f4edc455d1c31ad795d830c58e4c022475',
     ),
   },
 ];
@@ -39,26 +46,28 @@ export const findErc20Token = (id: EvmAddress): Erc20Token | null => {
 };
 
 const useTangleEvmErc20Balances = (): Erc20Balance[] | null => {
-  const { apiConfig } = useWebContext();
   const { evmAddress } = useAgnosticAccountInfo();
   const [balances, setBalances] = useState<Erc20Balance[] | null>(null);
-
-  const chain = apiConfig.chains[PresetTypedChainId.TangleLocalEVM];
+  const viemPublicClient = useViemPublicClient();
 
   const fetchBalance = useCallback(
     async (
       evmAddress: EvmAddress,
       token: Erc20Token,
     ): Promise<Decimal | null> => {
+      if (viemPublicClient === null) {
+        return null;
+      }
+
       return fetchErc20TokenBalance(
+        viemPublicClient,
         evmAddress,
-        chain.id,
         token.contractAddress,
         ERC20_ABI,
         token.decimals,
       );
     },
-    [chain.id],
+    [viemPublicClient],
   );
 
   // Fetch balances on mount and whenever the active account changes.
