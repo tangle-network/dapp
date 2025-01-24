@@ -1,14 +1,15 @@
 import { FC } from 'react';
 import { ModalFooter } from './ModalFooter';
 import { Button } from '../buttons';
+import { DialogClose } from '@radix-ui/react-dialog';
 
 export type ModalFooterActionsProps = {
   isConfirmDisabled?: boolean;
   learnMoreLinkHref?: string;
   isProcessing?: boolean;
   confirmButtonText?: string;
+  hasCloseButton?: boolean;
   onConfirm: () => void;
-  onClose?: () => void;
 };
 
 export const ModalFooterActions: FC<ModalFooterActionsProps> = ({
@@ -17,7 +18,7 @@ export const ModalFooterActions: FC<ModalFooterActionsProps> = ({
   isProcessing = false,
   confirmButtonText = 'Confirm',
   onConfirm,
-  onClose,
+  hasCloseButton,
 }) => {
   return (
     <ModalFooter>
@@ -34,16 +35,17 @@ export const ModalFooterActions: FC<ModalFooterActionsProps> = ({
           Learn More
         </Button>
       ) : (
-        onClose !== undefined && (
-          <Button
-            isFullWidth
-            variant="secondary"
-            isDisabled={isProcessing}
-            onClick={onClose}
-            className="hidden sm:flex"
-          >
-            Cancel
-          </Button>
+        hasCloseButton && (
+          <DialogClose asChild>
+            <Button
+              isFullWidth
+              variant="secondary"
+              isDisabled={isProcessing}
+              className="hidden sm:flex"
+            >
+              Cancel
+            </Button>
+          </DialogClose>
         )
       )}
 

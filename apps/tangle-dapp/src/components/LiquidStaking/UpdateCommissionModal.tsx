@@ -99,7 +99,7 @@ const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
         </ModalBody>
 
         <ModalFooterActions
-          onClose={() => setIsOpen(false)}
+          hasCloseButton
           isProcessing={status === TxStatus.PROCESSING}
           onConfirm={handleUpdateCommissionClick}
           isConfirmDisabled={!isReady}

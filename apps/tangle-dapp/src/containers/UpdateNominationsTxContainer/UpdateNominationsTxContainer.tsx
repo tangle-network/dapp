@@ -141,7 +141,7 @@ const UpdateNominationsTxContainer: FC<UpdateNominationsTxContainerProps> = ({
         </div>
 
         <ModalFooterActions
-          onClose={closeModal}
+          hasCloseButton
           isProcessing={nominateTxStatus === TxStatus.PROCESSING}
           isConfirmDisabled={!canSubmitTx}
           onConfirm={submitTx}
