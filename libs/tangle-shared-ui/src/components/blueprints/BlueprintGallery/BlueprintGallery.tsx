@@ -30,8 +30,6 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
   rowSelection,
   onRowSelectionChange,
 }) => {
-  const [searchValue, setSearchValue] = useState('');
-
   const [filteredCategory, setFilteredCategory] = useState<
     'View All' | (string & {})
   >('View All');
@@ -171,25 +169,6 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
 
   return (
     <div className="space-y-5">
-      {/* Search bar */}
-      <div
-        className={twMerge(
-          'rounded-xl py-4 px-6 bg-mono-0 dark:bg-mono-180',
-          'flex items-center gap-2',
-        )}
-      >
-        <Input
-          id="search-blueprints"
-          placeholder="Search"
-          value={searchValue}
-          onChange={setSearchValue}
-          isControlled
-          className="flex-1 overflow-hidden rounded-full"
-          inputClassName="border-0 bg-mono-20 dark:bg-mono-200"
-        />
-        <Button variant="secondary">Search</Button>
-      </div>
-
       {/* Category */}
       <div className="-space-y-0.5">
         <div className="flex items-center gap-9">
