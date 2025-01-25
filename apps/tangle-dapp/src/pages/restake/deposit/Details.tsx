@@ -1,6 +1,5 @@
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { FC, useMemo } from 'react';
 import { UseFormWatch } from 'react-hook-form';
 import DetailsContainer from '../../../components/DetailsContainer';
@@ -8,15 +7,18 @@ import DetailItem from '../../../components/LiquidStaking/stakeAndUnstake/Detail
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import useRestakeRewardConfig from '../../../data/restake/useRestakeRewardConfig';
 import { DepositFormFields } from '../../../types/restake';
+import useSessionDurationMs from '../../../data/useSessionDurationMs';
+import formatMsDuration from '../../../utils/formatMsDuration';
 
 type Props = {
   watch: UseFormWatch<DepositFormFields>;
 };
 
 const Details: FC<Props> = ({ watch }) => {
-  const { assetMetadataMap } = useRestakeContext();
-  const { bondDuration } = useRestakeConsts();
+  const { vaults } = useRestakeContext();
+  const { leaveDelegatorsDelay } = useRestakeConsts();
   const rewardConfig = useRestakeRewardConfig();
+  const sessionDurationMs = useSessionDurationMs();
 
   const assetId = watch('depositAssetId');
 
@@ -25,14 +27,22 @@ const Details: FC<Props> = ({ watch }) => {
       return null;
     }
 
-    const asset = assetMetadataMap[assetId];
+    const asset = vaults[assetId];
 
     if (asset === undefined || asset.vaultId === null) {
       return null;
     }
 
     return rewardConfig.get(asset.vaultId)?.apy ?? null;
-  }, [assetId, assetMetadataMap, rewardConfig]);
+  }, [assetId, vaults, rewardConfig]);
+
+  const withdrawPeriod = useMemo(() => {
+    if (sessionDurationMs === null || leaveDelegatorsDelay === null) {
+      return null;
+    }
+
+    return formatMsDuration(sessionDurationMs * leaveDelegatorsDelay);
+  }, [leaveDelegatorsDelay, sessionDurationMs]);
 
   return (
     <DetailsContainer>
@@ -43,12 +53,8 @@ const Details: FC<Props> = ({ watch }) => {
 
       <DetailItem
         title="Withdrawal period"
-        value={
-          bondDuration !== null
-            ? `${bondDuration} ${pluralize('session', bondDuration !== 1)}`
-            : EMPTY_VALUE_PLACEHOLDER
-        }
         tooltip="Waiting time between scheduling and executing a withdrawal"
+        value={withdrawPeriod}
       />
     </DetailsContainer>
   );

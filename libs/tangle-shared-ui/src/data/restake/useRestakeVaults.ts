@@ -3,11 +3,11 @@ import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { mergeMap } from 'rxjs';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
-import { assetDetailsRxQuery } from '../../queries/restake/assetDetails';
+import { queryVaultsRx } from '../../queries/restake/assetDetails';
 import { assetIdsRxQuery } from '../../queries/restake/assetIds';
 import { rewardVaultRxQuery } from '../../queries/restake/rewardVault';
 
-const useRestakeVaultAssets = () => {
+const useRestakeVaults = () => {
   const { apiRx } = usePolkadotApi();
   const { activeChain } = useWebContext();
 
@@ -18,26 +18,22 @@ const useRestakeVaultAssets = () => {
     [rewardVault$],
   );
 
-  const assetMap$ = useMemo(
+  const vaults$ = useMemo(
     () =>
       assetIds$.pipe(
         mergeMap((assetIds) =>
-          assetDetailsRxQuery(
-            apiRx,
-            assetIds.map((assetId) => assetId.toString()),
-            activeChain?.nativeCurrency,
-          ),
+          queryVaultsRx(apiRx, assetIds, activeChain?.nativeCurrency),
         ),
       ),
     [activeChain?.nativeCurrency, apiRx, assetIds$],
   );
 
-  const vaultAssets = useObservableState(assetMap$, {});
+  const vaults = useObservableState(vaults$, {});
 
   return {
-    vaultAssets,
-    assetMap$,
+    vaults,
+    vaults$,
   };
 };
 
-export default useRestakeVaultAssets;
+export default useRestakeVaults;

@@ -16,6 +16,7 @@ import {
   Button,
   EMPTY_VALUE_PLACEHOLDER,
   formatDisplayAmount,
+  isEvmAddress,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -27,25 +28,23 @@ import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
 import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
 import useRestakeAssetsTvl from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
-import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeVaultAssets from '@webb-tools/tangle-shared-ui/data/restake/useRestakeVaultAssets';
+import useRestakeVaults from '@webb-tools/tangle-shared-ui/data/restake/useRestakeVaults';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
 import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import get from 'lodash/get';
 import { Link } from 'react-router';
-import LstIcon from '../components/LiquidStaking/LstIcon';
-import { LstIconSize } from '../components/LiquidStaking/types';
 import StatItem from '../components/StatItem';
 import { HeaderCell } from '../components/tableCells';
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
+import useTangleEvmErc20Balances from '../data/restake/useTangleEvmErc20Balances';
 import useIsAccountConnected from '../hooks/useIsAccountConnected';
 import { PagePath, QueryParamKey } from '../types';
 import sortByBn from '../utils/sortByBn';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
-import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
+import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
 
 type Row = {
   vaultId: number;
@@ -58,7 +57,6 @@ type Row = {
   locked: BN;
   lockedInUsd?: number;
   points?: number;
-  iconUrl?: string;
   decimals: number;
   apyPercentage?: number;
   depositCap?: BN;
@@ -77,15 +75,7 @@ const COLUMNS = [
       return (
         <TableCellWrapper className="pl-3">
           <div className="flex items-center gap-2">
-            {props.row.original.iconUrl !== undefined ? (
-              <LstIcon
-                lsProtocolId={LsProtocolId.TANGLE_MAINNET}
-                iconUrl={props.row.original.iconUrl}
-                size={LstIconSize.LG}
-              />
-            ) : (
-              <LsTokenIcon name="tnt" size="lg" />
-            )}
+            <LsTokenIcon name={props.row.original.tokenSymbol} size="lg" />
 
             {name !== undefined && (
               <Typography variant="h5" className="whitespace-nowrap">
@@ -208,28 +198,6 @@ const COLUMNS = [
       );
     },
   }),
-  // TODO: Hiding for now. See #2708.
-  // COLUMN_HELPER.accessor('points', {
-  //   header: () => (
-  //     <HeaderCell
-  //       title="Points"
-  //       tooltip="Points are relevant for the upcoming airdrop campaign."
-  //     />
-  //   ),
-  //   cell: (props) => {
-  //     const points = props.getValue();
-
-  //     if (points === undefined) {
-  //       return EMPTY_VALUE_PLACEHOLDER;
-  //     }
-
-  //     return (
-  //       <TableCellWrapper>
-  //         <Typography variant="h5">{addCommasToNumber(points)}</Typography>
-  //       </TableCellWrapper>
-  //     );
-  //   },
-  // }),
   COLUMN_HELPER.display({
     id: 'restake-action',
     header: () => null,
@@ -256,7 +224,7 @@ const COLUMNS = [
   }),
 ];
 
-const AssetsAndBalancesTable: FC = () => {
+const VaultsAndBalancesTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([
     // Default sorting by TVL in descending order.
     { id: 'tvl' satisfies keyof Row, desc: true },
@@ -266,12 +234,13 @@ const AssetsAndBalancesTable: FC = () => {
     VisibilityState & Partial<Record<keyof Row, boolean>>
   >({});
 
-  const { balances } = useRestakeBalances();
+  const { balances: customAssetBalances } = useRestakeBalances();
   const rewardConfig = useRestakeRewardConfig();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const isAccountConnected = useIsAccountConnected();
-  const { vaultAssets } = useRestakeVaultAssets();
+  const { vaults } = useRestakeVaults();
   const assetsTvl = useRestakeAssetsTvl();
+  const erc20Balances = useTangleEvmErc20Balances();
 
   const getTotalLockedInAsset = useCallback(
     (assetId: RestakeAssetId) => {
@@ -303,9 +272,8 @@ const AssetsAndBalancesTable: FC = () => {
     [delegatorInfo?.delegations, delegatorInfo?.deposits],
   );
 
-  const assetRows = useMemo<Row[]>(() => {
-    return Object.entries(vaultAssets).flatMap(([rawAssetId, metadata]) => {
-      const assetId = assertRestakeAssetId(rawAssetId);
+  const vaultRows = useMemo<Row[]>(() => {
+    return Object.entries(vaults).flatMap(([assetIdString, metadata]) => {
       if (metadata.vaultId === null) {
         return [];
       }
@@ -315,6 +283,8 @@ const AssetsAndBalancesTable: FC = () => {
       if (config === undefined) {
         return [];
       }
+
+      const assetId = assertRestakeAssetId(assetIdString);
 
       // APY in this case is always between 0 and 100%.
       const apyPercentage = config.apy.toNumber() / 100;
@@ -326,13 +296,22 @@ const AssetsAndBalancesTable: FC = () => {
 
       const tvl = assetsTvl === null ? undefined : assetsTvl.get(assetId);
 
-      const assetBalances: (typeof balances)[string] | undefined =
-        balances[assetId];
+      const assetBalances:
+        | (typeof customAssetBalances)[RestakeAssetId]
+        | undefined = customAssetBalances[assetId];
 
-      const available =
-        assetBalances?.balance !== undefined
-          ? new BN(assetBalances.balance.toString())
-          : BN_ZERO;
+      const available = (() => {
+        if (isEvmAddress(assetId)) {
+          return (
+            erc20Balances?.find((asset) => asset.contractAddress === assetId)
+              ?.balance ?? BN_ZERO
+          );
+        } else {
+          return assetBalances?.balance !== undefined
+            ? new BN(assetBalances.balance.toString())
+            : BN_ZERO;
+        }
+      })();
 
       return {
         vaultId: metadata.vaultId,
@@ -347,15 +326,22 @@ const AssetsAndBalancesTable: FC = () => {
         depositCap,
       } satisfies Row;
     });
-  }, [vaultAssets, assetsTvl, balances, getTotalLockedInAsset, rewardConfig]);
+  }, [
+    vaults,
+    rewardConfig,
+    assetsTvl,
+    customAssetBalances,
+    getTotalLockedInAsset,
+    erc20Balances,
+  ]);
 
   // Combine all rows.
   const rows = useMemo<Row[]>(() => {
-    return [...assetRows].sort((a, b) => {
+    return [...vaultRows].sort((a, b) => {
       // Sort by available balance in descending order.
       return b.available.cmp(a.available);
     });
-  }, [assetRows]);
+  }, [vaultRows]);
 
   const table = useReactTable({
     data: rows,
@@ -386,8 +372,8 @@ const AssetsAndBalancesTable: FC = () => {
   if (rows.length === 0) {
     return (
       <TableStatus
-        title="No Assets"
-        description="There are no restaking vaults available on this network yet. Please check back later."
+        title="No Assets Available Yet"
+        description="There are no restaking vaults or liquid staking pools available on this network yet. Please check back later."
       />
     );
   }
@@ -403,4 +389,4 @@ const AssetsAndBalancesTable: FC = () => {
   );
 };
 
-export default AssetsAndBalancesTable;
+export default VaultsAndBalancesTable;

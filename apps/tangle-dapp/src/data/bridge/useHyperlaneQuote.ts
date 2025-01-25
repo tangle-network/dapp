@@ -1,8 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { getHyperlaneWarpCore } from '../lib/hyperlane/context';
+import { getHyperlaneWarpCore } from '../../pages/bridge/lib/hyperlane/context';
 import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
-import { getHyperlaneChainName, tryFindToken } from '../lib/hyperlane/utils';
+import {
+  getHyperlaneChainName,
+  tryFindToken,
+} from '../../pages/bridge/lib/hyperlane/utils';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
 export type HyperlaneQuoteProps = {
   token: BridgeToken;
@@ -29,13 +33,19 @@ export const getHyperlaneQuote = async (props: HyperlaneQuoteProps | null) => {
     } = props;
 
     const warpCore = getHyperlaneWarpCore();
+
     if (!warpCore) {
       throw new Error('Hyperlane warp core not found');
     }
 
+    const tokenToBridge =
+      sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
+        ? token.hyperlaneSyntheticAddress
+        : token.address;
+
     const hyperlaneToken = tryFindToken(
       getHyperlaneChainName(sourceTypedChainId),
-      token.hyperlaneRouteContractAddress,
+      tokenToBridge,
     );
     if (!hyperlaneToken) {
       throw new Error('Hyperlane token not found');

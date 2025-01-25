@@ -7,7 +7,8 @@ import { combineLatest, map, of, switchMap } from 'rxjs';
 import useRestakeAssetIds from '../../data/restake/useRestakeAssetIds';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import type { AssetBalance, AssetBalanceMap } from '../../types/restake';
+import { RestakeAssetId } from '../../types';
+import { AssetBalance, AssetBalanceMap } from '../../types/restake';
 import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
 
@@ -24,9 +25,7 @@ export default function useRestakeBalances() {
 
           if (!hasAssetsPallet(apiRx, 'query', 'account')) {
             return emptyObservable;
-          }
-
-          if (activeAccount === null || activeAccount.length === 0) {
+          } else if (activeAccount === null || activeAccount.length === 0) {
             return emptyObservable;
           }
 
@@ -94,7 +93,7 @@ export default function useRestakeBalances() {
 function assetBalancesReducer(
   assetBalances: Option<PalletAssetsAssetAccount>[],
   initialValue: AssetBalanceMap,
-  assetIds: string[],
+  assetIds: RestakeAssetId[],
 ) {
   return assetBalances.reduce(
     (assetBalanceMap, accountBalance, idx) => {
@@ -125,7 +124,7 @@ function assetBalancesReducer(
 
       return Object.assign(assetBalanceMap, {
         [assetId]: {
-          assetId: assetId,
+          assetId,
           balance: balance.toBigInt(),
           status: status.type,
           existenceReason: toPrimitiveReason(reason),

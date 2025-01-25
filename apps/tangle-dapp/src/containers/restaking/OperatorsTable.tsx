@@ -49,7 +49,7 @@ const OperatorsTable: FC<Props> = ({
   const { isEvm } = useAgnosticAccountInfo();
   const isAccountConnected = useIsAccountConnected();
 
-  const { assetMetadataMap } = useRestakeContext();
+  const { vaults } = useRestakeContext();
 
   const { result: identities } = useIdentities(
     useMemo(() => Object.keys(operatorMap), [operatorMap]),
@@ -71,20 +71,11 @@ const OperatorsTable: FC<Props> = ({
             identityName: identities[address]?.name ?? undefined,
             restakersCount,
             tvlInUsd,
-            vaultTokens: delegationsToVaultTokens(
-              delegations,
-              assetMetadataMap,
-            ),
+            vaultTokens: delegationsToVaultTokens(delegations, vaults),
           } satisfies RestakeOperator;
         },
       ),
-    [
-      assetMetadataMap,
-      identities,
-      operatorConcentration,
-      operatorMap,
-      operatorTVL,
-    ],
+    [vaults, identities, operatorConcentration, operatorMap, operatorTVL],
   );
 
   const disabledTooltip = isAccountConnected

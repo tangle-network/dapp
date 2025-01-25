@@ -32,11 +32,7 @@ import {
   ChainType,
   calculateTypedChainId,
 } from '@webb-tools/dapp-types/TypedChainId';
-import {
-  WebbWeb3Provider,
-  isErrorInstance,
-  isViemError,
-} from '@webb-tools/web3-api-provider';
+import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import useWagmiHydration from '@webb-tools/webb-ui-components/hooks/useWagmiHydration';
 import { useCallback, useEffect, useRef, useState, type FC } from 'react';
@@ -53,6 +49,7 @@ import { useActiveChain } from '../hooks/useActiveChain';
 import { useActiveWallet } from '../hooks/useActiveWallet';
 import waitForConfigReady from '../utils/waitForConfigReady';
 import { WebbContext } from '../webb-context';
+import { BaseError } from 'viem';
 
 interface WebbProviderInnerProps extends BareProps {
   appEvent: TAppEvent;
@@ -486,7 +483,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           ).message;
 
           // Libraries error check
-          if (isViemError(e) || isErrorInstance(e, WagmiBaseError)) {
+          if (e instanceof BaseError || e instanceof WagmiBaseError) {
             errorMessage = e.shortMessage;
           } else if (e instanceof Error) {
             errorMessage = e.message;
@@ -633,7 +630,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           }
         } else {
           // If the user did not want to switch to the previously stored chain,
-          // set the previosuly stored chain in the app for display only.
+          // set the previously stored chain in the app for display only.
           setActiveChain(chains[net]);
         }
       };

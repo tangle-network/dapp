@@ -20,7 +20,7 @@ const PointsReminder: FC<{ className?: string }> = ({ className }) => {
 
       <div>
         <ul className="list-disc list-inside">
-          <li>Deposit restaking assets</li>
+          <li>Deposit & delegate restaking assets</li>
           <li>Build dApps</li>
           <li>Develop blueprints</li>
           <li>Deploy instances</li>

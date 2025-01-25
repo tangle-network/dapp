@@ -33,7 +33,7 @@ const SelectOperatorModal = ({
   onItemSelected,
   operatorIdentities,
 }: Props) => {
-  const { assetMetadataMap } = useRestakeContext();
+  const { vaults } = useRestakeContext();
 
   // Aggregate the delegations based on the operator account ID and asset ID.
   const delegations = useMemo(() => {
@@ -55,7 +55,7 @@ const SelectOperatorModal = ({
       titleWhenEmpty="No Delegation Found"
       descriptionWhenEmpty="Have you deposited or delegated an asset to an operator yet?"
       onSelect={(item) => {
-        const asset = assetMetadataMap[item.assetId];
+        const asset = vaults[item.assetId];
         const decimals = asset?.decimals || DEFAULT_DECIMALS;
         const fmtAmount = formatUnits(item.amountBonded, decimals);
 
@@ -65,7 +65,7 @@ const SelectOperatorModal = ({
         });
       }}
       filterItem={(delegation, query) => {
-        const metadata = assetMetadataMap[delegation.assetId];
+        const metadata = vaults[delegation.assetId];
 
         if (metadata === undefined) {
           return false;
@@ -83,7 +83,7 @@ const SelectOperatorModal = ({
         ]);
       }}
       renderItem={({ amountBonded, assetId, operatorAccountId }) => {
-        const asset = assetMetadataMap[assetId];
+        const asset = vaults[assetId];
 
         if (asset === undefined) {
           return null;

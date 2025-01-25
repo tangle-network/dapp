@@ -6,7 +6,6 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
-import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import {
   Card,
@@ -43,6 +42,7 @@ import WithdrawRequestTable from '../../../containers/restaking/WithdrawRequestT
 import parseChainUnits from '../../../utils/parseChainUnits';
 import { BN } from '@polkadot/util';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
+import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 
 const RestakeWithdrawForm: FC = () => {
   const {
@@ -59,7 +59,6 @@ const RestakeWithdrawForm: FC = () => {
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
   const { activeChain } = useWebContext();
-  const { assetMetadataMap } = useRestakeContext();
 
   const {
     status: isWithdrawModalOpen,
@@ -103,39 +102,32 @@ const RestakeWithdrawForm: FC = () => {
     return delegatorInfo.withdrawRequests;
   }, [delegatorInfo?.withdrawRequests]);
 
-  const selectedAsset = useMemo(() => {
-    if (!selectedAssetId || !assetMetadataMap[selectedAssetId]) {
-      return null;
+  const selectedAsset = useRestakeAsset(selectedAssetId);
+
+  const { maxAmount, formattedMaxAmount } = useMemo(() => {
+    if (!delegatorInfo?.deposits) {
+      return {};
     }
 
-    return assetMetadataMap[selectedAssetId];
-  }, [assetMetadataMap, selectedAssetId]);
+    const depositedAsset = Object.entries(delegatorInfo.deposits).find(
+      ([assetId]) => assetId === selectedAssetId,
+    );
 
-  const { maxAmount, formattedMaxAmount } = useMemo(
-    () => {
-      if (!delegatorInfo?.deposits) return {};
+    if (!depositedAsset || selectedAsset === null) {
+      return {};
+    }
 
-      const depositedAsset = Object.entries(delegatorInfo.deposits).find(
-        ([assetId]) => assetId === selectedAssetId,
-      );
+    const maxAmount = depositedAsset[1].amount;
 
-      if (!depositedAsset) return {};
-      if (!assetMetadataMap[depositedAsset[0]]) return {};
+    const formattedMaxAmount = Number(
+      formatUnits(maxAmount, selectedAsset.decimals),
+    );
 
-      const assetId = depositedAsset[0];
-      const maxAmount = depositedAsset[1].amount;
-      const formattedMaxAmount = Number(
-        formatUnits(maxAmount, assetMetadataMap[assetId].decimals),
-      );
-
-      return {
-        maxAmount,
-        formattedMaxAmount,
-      };
-    },
-    // prettier-ignore
-    [assetMetadataMap, delegatorInfo?.deposits, selectedAssetId],
-  );
+    return {
+      maxAmount,
+      formattedMaxAmount,
+    };
+  }, [delegatorInfo?.deposits, selectedAsset, selectedAssetId]);
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
     const step = decimalsToStep(selectedAsset?.decimals);
@@ -169,16 +161,16 @@ const RestakeWithdrawForm: FC = () => {
 
   const restakeApi = useRestakeApi();
 
-  const isReady = restakeApi !== null && !isSubmitting;
+  const isReady =
+    restakeApi !== null && !isSubmitting && selectedAsset !== null;
 
   const onSubmit = useCallback<SubmitHandler<WithdrawFormFields>>(
     ({ amount, assetId }) => {
-      if (!assetId || !isDefined(assetMetadataMap[assetId]) || !isReady) {
+      if (!isReady) {
         return;
       }
 
-      const assetMetadata = assetMetadataMap[assetId];
-      const amountBn = parseChainUnits(amount, assetMetadata.decimals);
+      const amountBn = parseChainUnits(amount, selectedAsset.decimals);
 
       if (!(amountBn instanceof BN)) {
         return;
@@ -186,7 +178,7 @@ const RestakeWithdrawForm: FC = () => {
 
       return restakeApi.withdraw(assetId, amountBn);
     },
-    [assetMetadataMap, isReady, restakeApi],
+    [isReady, restakeApi, selectedAsset?.decimals],
   );
 
   return (
@@ -211,7 +203,7 @@ const RestakeWithdrawForm: FC = () => {
               >
                 <TransactionInputCard.Header>
                   <TransactionInputCard.ChainSelector
-                    placeholder="Connecting..."
+                    placeholder="Connecting"
                     disabled
                     {...(activeChain
                       ? {
@@ -336,10 +328,8 @@ const RestakeWithdrawForm: FC = () => {
         delegatorInfo={delegatorInfo}
         isOpen={isWithdrawModalOpen}
         setIsOpen={updateWithdrawModal}
-        onItemSelected={(item) => {
+        onItemSelected={({ formattedAmount, assetId }) => {
           closeWithdrawModal();
-
-          const { formattedAmount, assetId } = item;
 
           const commonOpts = {
             shouldDirty: true,
@@ -359,6 +349,7 @@ const RestakeWithdrawForm: FC = () => {
               chainConfig.chainType,
               chainConfig.id,
             );
+
             await switchChain(typedChainId);
             closeChainModal();
           }}

@@ -72,14 +72,14 @@ const RestakeOverviewTabs: FC<Props> = ({
 }) => {
   const [tab, setTab] = useState(RestakeTab.RESTAKE);
 
-  const { assetMetadataMap } = useRestakeContext();
+  const { vaults: vaultsMetadataMap } = useRestakeContext();
   const rewardConfig = useRestakeRewardConfig();
 
   // Recalculate vaults data from assetMap
   const vaults = useMemo(() => {
     const vaults: Record<string, VaultUI> = {};
 
-    for (const { vaultId, name, symbol } of Object.values(assetMetadataMap)) {
+    for (const { vaultId, name, symbol } of Object.values(vaultsMetadataMap)) {
       if (vaultId === null) {
         continue;
       } else if (vaults[vaultId] === undefined) {
@@ -104,7 +104,7 @@ const RestakeOverviewTabs: FC<Props> = ({
     }
 
     return vaults;
-  }, [assetMetadataMap, rewardConfig, vaultTVL]);
+  }, [vaultsMetadataMap, rewardConfig, vaultTVL]);
 
   const delegatorTotalRestakedAssets = useMemo(() => {
     if (!delegatorInfo?.delegations) {
@@ -133,16 +133,16 @@ const RestakeOverviewTabs: FC<Props> = ({
       getExpandedRowContent(row) {
         const vaultId = row.original.id;
 
-        const vaultAssets = Object.values(assetMetadataMap)
+        const vaultAssets = Object.values(vaultsMetadataMap)
           .filter((asset) => asset.vaultId === vaultId)
           .map((asset) => {
             const selfStake =
-              delegatorTotalRestakedAssets[asset.id] ?? ZERO_BIG_INT;
+              delegatorTotalRestakedAssets[asset.assetId] ?? ZERO_BIG_INT;
 
-            const tvl = delegatorTVL?.[asset.id] ?? null;
+            const tvl = delegatorTVL?.[asset.assetId] ?? null;
 
             return {
-              id: asset.id,
+              id: asset.assetId,
               symbol: asset.symbol,
               decimals: asset.decimals,
               tvl,
@@ -155,7 +155,7 @@ const RestakeOverviewTabs: FC<Props> = ({
         );
       },
     }),
-    [assetMetadataMap, delegatorTVL, delegatorTotalRestakedAssets],
+    [vaultsMetadataMap, delegatorTVL, delegatorTotalRestakedAssets],
   );
 
   const handleRestakeClicked = useCallback(() => {

@@ -6,16 +6,6 @@ import getModuleConstant from '../../utils/getModuleConstant';
 const useRestakeConsts = () => {
   const { apiPromise } = usePolkadotApi();
 
-  const bondDuration = useMemo(
-    () =>
-      getModuleConstant(
-        apiPromise,
-        'multiAssetDelegation',
-        'bondDuration',
-      )?.toNumber() ?? null,
-    [apiPromise],
-  );
-
   const delegationBondLessDelay = useMemo(
     () =>
       getModuleConstant(
@@ -77,7 +67,6 @@ const useRestakeConsts = () => {
   );
 
   return {
-    bondDuration,
     delegationBondLessDelay,
     leaveDelegatorsDelay,
     leaveOperatorsDelay,

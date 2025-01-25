@@ -63,7 +63,7 @@ const RestakeUnstakeForm: FC = () => {
 
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
-  const { assetMetadataMap } = useRestakeContext();
+  const { vaults } = useRestakeContext();
 
   const {
     status: isOperatorModalOpen,
@@ -113,12 +113,12 @@ const RestakeUnstakeForm: FC = () => {
   }, [delegatorInfo?.unstakeRequests]);
 
   const selectedAsset = useMemo(() => {
-    if (!selectedAssetId || !assetMetadataMap[selectedAssetId]) {
+    if (!selectedAssetId || !vaults[selectedAssetId]) {
       return null;
     }
 
-    return assetMetadataMap[selectedAssetId];
-  }, [assetMetadataMap, selectedAssetId]);
+    return vaults[selectedAssetId];
+  }, [vaults, selectedAssetId]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
     if (!Array.isArray(delegatorInfo?.delegations)) {
@@ -131,17 +131,14 @@ const RestakeUnstakeForm: FC = () => {
         item.operatorAccountId === selectedOperatorAccountId,
     );
 
-    if (!selectedDelegation || !assetMetadataMap[selectedDelegation.assetId]) {
+    if (!selectedDelegation || !vaults[selectedDelegation.assetId]) {
       return {};
     }
 
     const maxAmount = selectedDelegation.amountBonded;
 
     const formattedMaxAmount = Number(
-      formatUnits(
-        maxAmount,
-        assetMetadataMap[selectedDelegation.assetId].decimals,
-      ),
+      formatUnits(maxAmount, vaults[selectedDelegation.assetId].decimals),
     );
 
     return {
@@ -150,7 +147,7 @@ const RestakeUnstakeForm: FC = () => {
     };
   }, [
     delegatorInfo?.delegations,
-    assetMetadataMap,
+    vaults,
     selectedAssetId,
     selectedOperatorAccountId,
   ]);
@@ -193,11 +190,11 @@ const RestakeUnstakeForm: FC = () => {
 
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
     async ({ amount, assetId, operatorAccountId }) => {
-      if (!assetId || !isDefined(assetMetadataMap[assetId]) || !isReady) {
+      if (!assetId || !isDefined(vaults[assetId]) || !isReady) {
         return;
       }
 
-      const assetMetadata = assetMetadataMap[assetId];
+      const assetMetadata = vaults[assetId];
       const amountBn = parseChainUnits(amount, assetMetadata.decimals);
 
       if (!(amountBn instanceof BN)) {
@@ -206,7 +203,7 @@ const RestakeUnstakeForm: FC = () => {
 
       await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
     },
-    [assetMetadataMap, isReady, restakeApi],
+    [vaults, isReady, restakeApi],
   );
 
   return (

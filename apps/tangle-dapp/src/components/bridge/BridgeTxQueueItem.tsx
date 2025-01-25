@@ -10,7 +10,7 @@ import { Decimal } from 'decimal.js';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { useBridgeTxQueue } from '../context/BridgeTxQueueContext';
+import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
 
 interface BridgeTxQueueItemProps {
   tx: BridgeQueueTxItem;
