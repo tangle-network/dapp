@@ -1,4 +1,4 @@
-import { RestakeAssetId } from '../createRestakeAssetId';
+import { RestakeAssetId } from '../../types';
 
 /**
  * By convention, the native asset ID is `0`.

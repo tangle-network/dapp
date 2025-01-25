@@ -3,7 +3,7 @@ import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStor
 import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import createRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
-import createServiceAsset from '@webb-tools/tangle-shared-ui/utils/createServiceAsset';
+import createAssetIdEnum from '@webb-tools/tangle-shared-ui/utils/createAssetIdEnum';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import JSONParseBigInt from '@webb-tools/webb-ui-components/utils/JSONParseBigInt';
@@ -132,7 +132,7 @@ async function fetcher([rpcEndpoint, activeAddress, assetIds]: [
         id: 1,
         jsonrpc: '2.0',
         method: 'rewards_queryUserRewards',
-        params: [activeAddress, createServiceAsset(assetId)],
+        params: [activeAddress, createAssetIdEnum(assetId)],
       });
 
       const response = await fetch(url.toString(), {
