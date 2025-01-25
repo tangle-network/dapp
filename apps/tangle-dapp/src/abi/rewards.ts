@@ -1,9 +1,6 @@
-// The ABI is gotten from the contract
-// https://github.com/tangle-network/tangle/blob/48a8d7052750cdfdc79a7aa49d1087057bfa258a/precompiles/rewards/Rewards.sol
+import { AbiFunction } from 'viem';
 
-import { Abi } from 'viem';
-
-const abi = [
+const REWARDS_PRECOMPILE_ABI = [
   {
     inputs: [
       {
@@ -22,6 +19,6 @@ const abi = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-] as const satisfies Abi;
+] as const satisfies AbiFunction[];
 
-export default abi;
+export default REWARDS_PRECOMPILE_ABI;

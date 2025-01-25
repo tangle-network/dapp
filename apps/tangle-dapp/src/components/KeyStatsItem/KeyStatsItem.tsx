@@ -18,7 +18,7 @@ export type KeyStatsItemProps = {
   showDataBeforeLoading?: boolean;
   children?: ReactNode;
   error: Error | null;
-  isLoading: boolean;
+  isLoading?: boolean;
   variant?: KeyStatsItemVariant;
 };
 
