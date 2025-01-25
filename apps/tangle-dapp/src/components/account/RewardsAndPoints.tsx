@@ -1,9 +1,13 @@
+import { BN } from '@polkadot/util';
 import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useActiveChain';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@webb-tools/webb-ui-components/utils/formatDisplayAmount';
 import { useMemo } from 'react';
-import { formatUnits } from 'viem';
 import useAccountRewardInfo from '../../data/rewards/useAccountRewardInfo';
 import KeyStatsItem from '../KeyStatsItem/KeyStatsItem';
 import ClaimRewardAction from './ClaimRewardAction';
@@ -32,7 +36,11 @@ const RewardsAndPoints = () => {
       .values()
       .reduce((acc, current) => acc + current, ZERO_BIG_INT);
 
-    return formatUnits(totalRewards, activeChain.nativeCurrency.decimals);
+    return formatDisplayAmount(
+      new BN(totalRewards.toString()),
+      activeChain.nativeCurrency.decimals,
+      AmountFormatStyle.SHORT,
+    );
   }, [activeChain, result]);
 
   return (

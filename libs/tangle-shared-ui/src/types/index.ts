@@ -6,14 +6,14 @@ import {
   SubstrateAddress,
 } from '@webb-tools/webb-ui-components/types/address';
 
+import { u128 } from '@polkadot/types';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
 } from '@webb-tools/evm-contract-metadata';
-import { Abi, Address } from 'viem';
 import { Decimal } from 'decimal.js';
-import { u128 } from '@polkadot/types';
+import { Abi } from 'viem';
 
 export type TangleTokenSymbol = 'tTNT' | 'TNT';
 
@@ -123,4 +123,4 @@ export type BridgeChainBalances = Partial<
 
 export type RestakeAssetId = `${bigint}` | EvmAddress;
 
-export type TangleAssetId = { Custom: u128 } | { Erc20: Address };
+export type TangleAssetId = { Custom: u128 } | { Erc20: EvmAddress };

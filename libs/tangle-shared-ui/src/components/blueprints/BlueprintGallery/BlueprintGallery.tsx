@@ -15,7 +15,7 @@ import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLo
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { ComponentProps, FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { isTangleError } from '../../../types/error';
+import { TangleError } from '../../../types/error';
 import BlueprintItem from './BlueprintItem';
 import { BlueprintGalleryProps, BlueprintItemProps } from './types';
 
@@ -210,7 +210,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
           variant="body1"
           className="flex items-center justify-center h-40 md:max-w-[75%] md:mx-auto"
         >
-          {isTangleError(error) ? error.description : error.message}
+          {error instanceof TangleError ? error.description : error.message}
         </Typography>
       ) : isEmpty ? (
         <Typography
