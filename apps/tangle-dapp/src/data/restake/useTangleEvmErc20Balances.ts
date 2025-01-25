@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import ERC20_ABI from '../../abi/erc20';
 import { Decimal } from 'decimal.js';
 import useViemPublicClient from '../../hooks/useViemPublicClient';
+import convertDecimalToBN from '../../utils/convertDecimalToBn';
 
 type Erc20Token = {
   contractAddress: EvmAddress;
@@ -83,24 +84,22 @@ const useTangleEvmErc20Balances = (): Erc20Balance[] | null => {
       const newBalances: Erc20Balance[] = [];
 
       for (const asset of ERC20_TEST_TOKENS) {
-        const balance = await fetchBalance(evmAddress, asset);
+        const balanceDecimal = await fetchBalance(evmAddress, asset);
 
-        if (balance === null) {
+        if (balanceDecimal === null) {
           continue;
         }
 
-        const scaledBalance = new BN(balance.toString()).mul(
-          new BN(10).pow(new BN(asset.decimals)),
-        );
+        const balance = convertDecimalToBN(balanceDecimal, asset.decimals);
 
         // Ignore assets that have a zero balance.
-        if (scaledBalance.isZero()) {
+        if (balance.isZero()) {
           continue;
         }
 
         newBalances.push({
           ...asset,
-          balance: scaledBalance,
+          balance,
         } satisfies Erc20Balance);
       }
 

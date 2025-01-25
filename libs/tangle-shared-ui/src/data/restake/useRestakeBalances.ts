@@ -24,9 +24,7 @@ export default function useRestakeBalances() {
 
           if (!hasAssetsPallet(apiRx, 'query', 'account')) {
             return emptyObservable;
-          }
-
-          if (activeAccount === null || activeAccount.length === 0) {
+          } else if (activeAccount === null || activeAccount.length === 0) {
             return emptyObservable;
           }
 

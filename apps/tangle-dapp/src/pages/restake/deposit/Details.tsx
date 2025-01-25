@@ -16,7 +16,7 @@ type Props = {
 
 const Details: FC<Props> = ({ watch }) => {
   const { vaults } = useRestakeContext();
-  const { bondDuration } = useRestakeConsts();
+  const { leaveDelegatorsDelay } = useRestakeConsts();
   const rewardConfig = useRestakeRewardConfig();
   const sessionDurationMs = useSessionDurationMs();
 
@@ -37,12 +37,12 @@ const Details: FC<Props> = ({ watch }) => {
   }, [assetId, vaults, rewardConfig]);
 
   const withdrawPeriod = useMemo(() => {
-    if (sessionDurationMs === null || bondDuration === null) {
+    if (sessionDurationMs === null || leaveDelegatorsDelay === null) {
       return null;
     }
 
-    return formatMsDuration(sessionDurationMs * bondDuration);
-  }, [bondDuration, sessionDurationMs]);
+    return formatMsDuration(sessionDurationMs * leaveDelegatorsDelay);
+  }, [leaveDelegatorsDelay, sessionDurationMs]);
 
   return (
     <DetailsContainer>

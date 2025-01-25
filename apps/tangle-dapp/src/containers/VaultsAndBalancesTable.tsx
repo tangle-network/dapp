@@ -16,6 +16,7 @@ import {
   Button,
   EMPTY_VALUE_PLACEHOLDER,
   formatDisplayAmount,
+  isEvmAddress,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
@@ -45,6 +46,7 @@ import useRestakeAssetsTvl from '@webb-tools/tangle-shared-ui/data/restake/useRe
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import sortByBn from '../utils/sortByBn';
 import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
+import useTangleEvmErc20Balances from '../data/restake/useTangleEvmErc20Balances';
 
 type Row = {
   vaultId: number;
@@ -247,22 +249,23 @@ const VaultsAndBalancesTable: FC = () => {
     VisibilityState & Partial<Record<keyof Row, boolean>>
   >({});
 
-  const { balances } = useRestakeBalances();
+  const { balances: customAssetBalances } = useRestakeBalances();
   const rewardConfig = useRestakeRewardConfig();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const isAccountConnected = useIsAccountConnected();
   const { vaults } = useRestakeVaults();
   const assetsTvl = useRestakeAssetsTvl();
+  const erc20Balances = useTangleEvmErc20Balances();
 
   const getTotalLockedInAsset = useCallback(
-    (assetId: number) => {
-      const deposit = delegatorInfo?.deposits[`${assetId}`];
+    (assetId: RestakeAssetId) => {
+      const deposit = delegatorInfo?.deposits[assetId];
 
       if (deposit === undefined) {
         return BN_ZERO;
       }
 
-      const depositAmount = delegatorInfo?.deposits[`${assetId}`].amount;
+      const depositAmount = delegatorInfo?.deposits[assetId].amount;
 
       const delegation = delegatorInfo?.delegations.find((delegation) => {
         return delegation.assetId === assetId.toString();
@@ -307,20 +310,29 @@ const VaultsAndBalancesTable: FC = () => {
 
       const tvl = assetsTvl === null ? undefined : assetsTvl.get(assetId);
 
-      const assetBalances: (typeof balances)[RestakeAssetId] | undefined =
-        balances[assetId];
+      const assetBalances:
+        | (typeof customAssetBalances)[RestakeAssetId]
+        | undefined = customAssetBalances[assetId];
 
-      const available =
-        assetBalances?.balance !== undefined
-          ? new BN(assetBalances.balance.toString())
-          : BN_ZERO;
+      const available = (() => {
+        if (isEvmAddress(assetId)) {
+          return (
+            erc20Balances?.find((asset) => asset.contractAddress === assetId)
+              ?.balance ?? BN_ZERO
+          );
+        } else {
+          return assetBalances?.balance !== undefined
+            ? new BN(assetBalances.balance.toString())
+            : BN_ZERO;
+        }
+      })();
 
       return {
         vaultId: metadata.vaultId,
         name: metadata.name,
         tvl,
         available,
-        locked: getTotalLockedInAsset(parseInt(assetIdString)),
+        locked: getTotalLockedInAsset(assetId),
         // TODO: This won't work because reward config is PER VAULT not PER ASSET. But isn't each asset its own vault?
         apyPercentage,
         tokenSymbol: metadata.symbol,
@@ -328,7 +340,14 @@ const VaultsAndBalancesTable: FC = () => {
         depositCap,
       } satisfies Row;
     });
-  }, [vaults, assetsTvl, balances, getTotalLockedInAsset, rewardConfig]);
+  }, [
+    vaults,
+    rewardConfig,
+    assetsTvl,
+    customAssetBalances,
+    getTotalLockedInAsset,
+    erc20Balances,
+  ]);
 
   // Combine all rows.
   const rows = useMemo<Row[]>(() => {

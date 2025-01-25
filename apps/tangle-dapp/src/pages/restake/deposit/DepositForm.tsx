@@ -216,7 +216,7 @@ const DepositForm: FC<Props> = (props) => {
         ({
           name: asset.name,
           symbol: asset.symbol,
-          balance: new BN(asset.balance.toString()),
+          balance: asset.balance,
           decimals: asset.decimals,
           id: asset.contractAddress,
         }) satisfies RestakeAsset,

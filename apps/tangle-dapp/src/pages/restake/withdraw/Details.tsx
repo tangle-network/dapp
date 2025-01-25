@@ -6,16 +6,16 @@ import useSessionDurationMs from '../../../data/useSessionDurationMs';
 import formatMsDuration from '../../../utils/formatMsDuration';
 
 const Details: FC = () => {
-  const { bondDuration } = useRestakeConsts();
+  const { leaveDelegatorsDelay } = useRestakeConsts();
   const sessionDurationMs = useSessionDurationMs();
 
   const withdrawPeriod = useMemo(() => {
-    if (sessionDurationMs === null || bondDuration === null) {
+    if (sessionDurationMs === null || leaveDelegatorsDelay === null) {
       return null;
     }
 
-    return formatMsDuration(sessionDurationMs * bondDuration);
-  }, [bondDuration, sessionDurationMs]);
+    return formatMsDuration(sessionDurationMs * leaveDelegatorsDelay);
+  }, [leaveDelegatorsDelay, sessionDurationMs]);
 
   return (
     <DetailsContainer>
