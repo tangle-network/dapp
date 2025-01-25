@@ -38,9 +38,6 @@ import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRes
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
-import LstIcon from '../components/LiquidStaking/LstIcon';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
-import { LstIconSize } from '../components/LiquidStaking/types';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import useRestakeAssetsTvl from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
@@ -59,7 +56,6 @@ type Row = {
   locked: BN;
   lockedInUsd?: number;
   points?: number;
-  iconUrl?: string;
   decimals: number;
   apyPercentage?: number;
   depositCap?: BN;
@@ -78,15 +74,7 @@ const COLUMNS = [
       return (
         <TableCellWrapper className="pl-3">
           <div className="flex items-center gap-2">
-            {props.row.original.iconUrl !== undefined ? (
-              <LstIcon
-                lsProtocolId={LsProtocolId.TANGLE_MAINNET}
-                iconUrl={props.row.original.iconUrl}
-                size={LstIconSize.LG}
-              />
-            ) : (
-              <LsTokenIcon name="tnt" size="lg" />
-            )}
+            <LsTokenIcon name={props.row.original.tokenSymbol} size="lg" />
 
             {name !== undefined && (
               <Typography variant="h5" className="whitespace-nowrap">
