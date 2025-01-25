@@ -4,9 +4,13 @@ import { useMutation } from '@tanstack/react-query';
 import { providers, utils } from 'ethers';
 
 import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
-import { getHyperlaneWarpCore } from '../lib/hyperlane/context';
-import { getHyperlaneChainName, tryFindToken } from '../lib/hyperlane/utils';
-import useEthersSigner from './useEtheresSigner';
+import { getHyperlaneWarpCore } from '../../pages/bridge/lib/hyperlane/context';
+import {
+  getHyperlaneChainName,
+  tryFindToken,
+} from '../../pages/bridge/lib/hyperlane/utils';
+import useEthersSigner from './useEthersSigner';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 
 export type HyperlaneTransferProps = {
   token: BridgeToken;
@@ -37,9 +41,14 @@ export const transferByHyperlane = async ({
       throw new Error('Hyperlane warp core not found');
     }
 
+    const tokenToBridge =
+      sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
+        ? token.hyperlaneSyntheticAddress
+        : token.address;
+
     const hyperlaneToken = tryFindToken(
       getHyperlaneChainName(sourceTypedChainId),
-      token.hyperlaneRouteContractAddress,
+      tokenToBridge,
     );
     if (!hyperlaneToken) {
       throw new Error('Hyperlane token not found');
@@ -86,7 +95,7 @@ export const transferByHyperlane = async ({
         tx.transaction as providers.TransactionRequest,
       );
       const receipt = await transaction.wait();
-      console.log('✅ Transaction receipt:', receipt);
+      console.log('Transaction receipt:', receipt);
       receipts.push(receipt);
     }
 

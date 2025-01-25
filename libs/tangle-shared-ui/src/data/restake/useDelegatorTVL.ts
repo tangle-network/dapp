@@ -1,11 +1,11 @@
 import { useObservable, useObservableState } from 'observable-hooks';
 import { of, switchMap } from 'rxjs';
-import type { RestakeVaultAssetMap, DelegatorInfo } from '../../types/restake';
+import type { RestakeVaultMap, DelegatorInfo } from '../../types/restake';
 import safeFormatUnits from '../../utils/safeFormatUnits';
 
 export function useDelegatorTVL(
   delegatorInfo: DelegatorInfo | null,
-  assetMap: RestakeVaultAssetMap,
+  assetMap: RestakeVaultMap,
 ) {
   const tvl$ = useObservable(
     (input$) =>

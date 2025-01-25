@@ -52,7 +52,7 @@ const LogoListItem: FC<Props> = ({
         </div>
       </div>
 
-      {rightUpperText !== undefined && rightBottomText !== undefined && (
+      {(rightUpperText !== undefined || rightBottomText !== undefined) && (
         <div className="flex flex-col items-end justify-center">
           <Typography variant="body1">
             {rightUpperText ?? EMPTY_VALUE_PLACEHOLDER}

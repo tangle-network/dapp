@@ -7,9 +7,16 @@ import { formatUnits } from 'viem';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import filterBy from '../../utils/filterBy';
 import LogoListItem from '../../components/Lists/LogoListItem';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+  isEvmAddress,
+  shortenHex,
+} from '@webb-tools/webb-ui-components';
+import { findErc20Token } from '../../data/restake/useTangleEvmErc20Balances';
+import { BN } from '@polkadot/util';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -29,7 +36,7 @@ const WithdrawModal = ({
   setIsOpen,
   onItemSelected,
 }: Props) => {
-  const { assetMetadataMap } = useRestakeContext();
+  const { vaults } = useRestakeContext();
 
   // Aggregate the delegations based on the operator account id and asset id
   const deposits = useMemo(() => {
@@ -56,7 +63,7 @@ const WithdrawModal = ({
       titleWhenEmpty="No Assets Found"
       descriptionWhenEmpty="This account has no assets available to withdraw."
       onSelect={(deposit) => {
-        const asset = assetMetadataMap[deposit.assetId];
+        const asset = vaults[deposit.assetId];
         const decimals = asset?.decimals || DEFAULT_DECIMALS;
         const fmtAmount = formatUnits(deposit.amount, decimals);
 
@@ -66,31 +73,58 @@ const WithdrawModal = ({
         });
       }}
       filterItem={({ assetId }, query) => {
-        const asset = assetMetadataMap[assetId];
+        const asset = vaults[assetId];
 
-        return filterBy(query, [asset?.name, asset?.id, asset?.vaultId]);
+        return filterBy(query, [asset?.name, asset?.assetId, asset?.vaultId]);
       }}
+      // TODO: This can be cleaned up a bit. Seems like a bit of reused code.
       renderItem={({ amount, assetId }) => {
-        const metadata = assetMetadataMap[assetId];
+        let name: string;
+        let symbol: string;
+        let decimals: number;
+        let vaultId: number | null = null;
 
-        if (metadata === undefined) {
-          return null;
+        if (isEvmAddress(assetId)) {
+          const erc20Token = findErc20Token(assetId);
+
+          if (erc20Token === null) {
+            return null;
+          }
+
+          name = erc20Token.name;
+          symbol = erc20Token.symbol;
+          decimals = erc20Token.decimals;
+        } else {
+          const metadata = vaults[assetId];
+
+          if (metadata === undefined) {
+            return null;
+          }
+
+          name = metadata.name;
+          symbol = metadata.symbol;
+          decimals = metadata.decimals;
+          vaultId = metadata.vaultId;
         }
 
-        const fmtAmount = addCommasToNumber(
-          formatUnits(amount, metadata.decimals),
+        const fmtAmount = formatDisplayAmount(
+          new BN(amount.toString()),
+          decimals,
+          AmountFormatStyle.SHORT,
         );
+
+        const idText = isEvmAddress(assetId)
+          ? `Address: ${shortenHex(assetId)}`
+          : `Asset ID: ${assetId}`;
 
         return (
           <LogoListItem
-            logo={<TokenIcon size="xl" name={metadata.symbol} />}
-            leftUpperContent={`${metadata.name} (${metadata.symbol})`}
-            leftBottomContent={`Asset ID: ${assetId}`}
-            rightUpperText={fmtAmount}
+            logo={<TokenIcon size="xl" name={symbol} />}
+            leftUpperContent={`${name} (${symbol})`}
+            leftBottomContent={idText}
+            rightUpperText={`${fmtAmount} ${symbol}`}
             rightBottomText={
-              metadata.vaultId !== null
-                ? `Vault ID: ${metadata.vaultId}`
-                : undefined
+              vaultId !== null ? `Vault ID: ${vaultId}` : undefined
             }
           />
         );

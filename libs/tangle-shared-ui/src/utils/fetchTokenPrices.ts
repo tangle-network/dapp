@@ -4,81 +4,52 @@ import axios from 'axios';
 const COINGECKO_API_BASE_URL = 'https://api.coingecko.com/api/v3/simple/price';
 const CURRENCY = 'usd';
 
-export enum CoingeckoTokenId {
+export enum CoinGeckoTokenId {
   ETH = 'ethereum',
   BTC = 'bitcoin',
   USDT = 'tether',
 }
 
-const SYMBOL_MAP: Record<string, CoingeckoTokenId> = {
+const SYMBOL_MAP: Record<string, CoinGeckoTokenId> = {
   // TODO: Add a list of token symbols which will be available on testnet/mainnet
-  eth: CoingeckoTokenId.ETH,
+  eth: CoinGeckoTokenId.ETH,
 };
 
-// TODO: Properly implement this function, right now it's a bit wacky, and the logic doesn't work as expected.
-export const fetchTokenPricesBySymbols = async (
-  tokenSymbols: string[],
-): Promise<(number | Error)[]> => {
-  const coingeckoTokenIds: (CoingeckoTokenId | null)[] = tokenSymbols.map(
-    (symbol) => SYMBOL_MAP[symbol] ?? null,
-  );
-
-  const errors = coingeckoTokenIds
-    .map((result, index) => {
-      if (result === null) {
-        return new Error(
-          `No Coingecko token ID found for symbol: ${tokenSymbols[index]}`,
-        );
-      }
-
-      return null;
-    })
-    .filter((error): error is Error => error !== null);
-
-  if (errors.length > 0) {
-    return errors;
-  }
-
-  return fetchTokenPrices(
-    coingeckoTokenIds.filter((id): id is CoingeckoTokenId => id !== null),
-  );
-};
-
-export const fetchTokenPrices = async (
-  tokenIds: CoingeckoTokenId[],
-): Promise<(number | Error)[]> => {
+export const fetchTokenPrice = async (
+  tokenId: CoinGeckoTokenId,
+): Promise<number | Error> => {
   try {
     const endpointUrl = new URL(COINGECKO_API_BASE_URL);
 
-    endpointUrl.searchParams.append('ids', tokenIds.join(','));
+    endpointUrl.searchParams.append('ids', tokenId);
     endpointUrl.searchParams.append('vs_currencies', CURRENCY);
 
     const response = await axios.get<
-      Record<CoingeckoTokenId, { [CURRENCY]: number }>
+      Record<CoinGeckoTokenId, { [CURRENCY]: number }>
     >(endpointUrl.toString());
 
-    return tokenIds.map((requestedTokenId) => {
-      const prices = response.data[requestedTokenId];
+    const prices = response.data[tokenId];
 
-      if (prices === undefined) {
-        return new Error(
-          `Token "${requestedTokenId}" not found in the response`,
-        );
-      } else if (!(CURRENCY in prices)) {
-        return new Error(`Currency "${CURRENCY}" not found in the response`);
-      }
+    if (prices === undefined) {
+      return new Error(`Token "${tokenId}" not found in the response`);
+    } else if (!(CURRENCY in prices)) {
+      return new Error(`Currency "${CURRENCY}" not found in the response`);
+    }
 
-      return prices[CURRENCY];
-    });
+    return prices[CURRENCY];
   } catch (possibleError) {
-    return tokenIds.map(() => ensureError(possibleError));
+    return ensureError(possibleError);
   }
 };
 
-export const fetchSingleTokenPriceBySymbol = async (
+export const fetchTokenPriceBySymbol = async (
   tokenSymbol: string,
 ): Promise<number | Error> => {
-  const [result] = await fetchTokenPricesBySymbols([tokenSymbol]);
+  const coingeckoTokenId = SYMBOL_MAP[tokenSymbol] ?? null;
 
-  return result;
+  if (coingeckoTokenId === null) {
+    return new Error(`No CoinGecko token ID found for symbol: ${tokenSymbol}`);
+  }
+
+  return fetchTokenPrice(coingeckoTokenId);
 };

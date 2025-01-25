@@ -7,7 +7,7 @@ import { Decimal } from 'decimal.js';
 import { create } from 'zustand';
 
 import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
-import { BRIDGE_CHAINS } from '../constants';
+import { BRIDGE_CHAINS } from '../constants/bridge';
 
 const sortChainOptions = (chains: ChainConfig[]) => {
   return chains.sort((a, b) => a.name.localeCompare(b.name));
@@ -26,14 +26,14 @@ const DEFAULT_DESTINATION_CHAINS = sortChainOptions(
 );
 
 const getDefaultTokens = (): BridgeToken[] => {
-  const firstSourceChain = chainsConfig[PresetTypedChainId.TangleMainnetEVM];
+  const firstSourceChain = chainsConfig[PresetTypedChainId.Arbitrum];
 
   const firstSourceChainId = calculateTypedChainId(
     firstSourceChain.chainType,
     firstSourceChain.id,
   );
 
-  const firstDestChain = chainsConfig[PresetTypedChainId.EthereumMainNet];
+  const firstDestChain = chainsConfig[PresetTypedChainId.TangleMainnetEVM];
 
   const firstDestChainId = calculateTypedChainId(
     firstDestChain.chainType,
@@ -91,8 +91,8 @@ const useBridgeStore = create<BridgeStore>((set) => ({
   sourceChains: DEFAULT_SOURCE_CHAINS,
   destinationChains: DEFAULT_DESTINATION_CHAINS,
 
-  selectedSourceChain: chainsConfig[PresetTypedChainId.TangleMainnetEVM],
-  selectedDestinationChain: chainsConfig[PresetTypedChainId.EthereumMainNet],
+  selectedSourceChain: chainsConfig[PresetTypedChainId.Arbitrum],
+  selectedDestinationChain: chainsConfig[PresetTypedChainId.TangleMainnetEVM],
 
   setSelectedSourceChain: (chain) =>
     set(() => {

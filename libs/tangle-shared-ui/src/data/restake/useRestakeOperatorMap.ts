@@ -10,6 +10,7 @@ import { useMemo } from 'react';
 import { map, type Observable, of } from 'rxjs';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { OperatorMap, OperatorMetadata } from '../../types/restake';
+import createRestakeAssetId from '../../utils/createRestakeAssetId';
 
 type UseRestakeOperatorMapReturnType = {
   operatorMap: OperatorMap;
@@ -37,6 +38,7 @@ export default function useRestakeOperatorMap(): UseRestakeOperatorMapReturnType
 
             const accountId = accountStorage.args[0];
             const operator = operatorMetadata.unwrap();
+
             const { delegations, restakersCount } = toPrimitiveDelegations(
               operator.delegations,
             );
@@ -118,7 +120,7 @@ function toPrimitiveDelegations(
       return {
         amount: amount.toBigInt(),
         delegatorAccountId,
-        assetId: assetId.toString(),
+        assetId: createRestakeAssetId(assetId),
       } satisfies OperatorMetadata['delegations'][number];
     },
   );

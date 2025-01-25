@@ -1,7 +1,6 @@
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import { ChevronDown } from '@webb-tools/icons';
-import isViemError from '@webb-tools/web3-api-provider/utils/isViemError';
 import { WebbWeb3Provider } from '@webb-tools/web3-api-provider/webb-provider';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
@@ -15,6 +14,7 @@ import type { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import useWalletAccounts from '../../hooks/useWalletAccounts';
+import { BaseError } from 'viem';
 
 type Props = {
   activeAccountAddress: string;
@@ -35,9 +35,10 @@ const ClaimingAccountInput: FC<Props> = ({
     try {
       await walletClient.requestPermissions({ eth_accounts: {} });
     } catch (error) {
-      const message = isViemError(error)
-        ? error.shortMessage
-        : WebbError.from(WebbErrorCodes.SwitchAccountFailed).message;
+      const message =
+        error instanceof BaseError
+          ? error.shortMessage
+          : WebbError.from(WebbErrorCodes.SwitchAccountFailed).message;
 
       notificationApi({ variant: 'error', message });
     }

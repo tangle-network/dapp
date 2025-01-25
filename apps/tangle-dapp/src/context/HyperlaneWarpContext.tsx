@@ -3,7 +3,7 @@ import { FC, PropsWithChildren, useEffect } from 'react';
 import {
   initHyperlaneWarpContext,
   removeHyperlaneWarpContext,
-} from '../lib/hyperlane/context';
+} from '../pages/bridge/lib/hyperlane/context';
 
 const HyperlaneWarpContext: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {

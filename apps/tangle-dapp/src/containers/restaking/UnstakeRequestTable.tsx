@@ -10,15 +10,13 @@ import {
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import type {
-  RestakeVaultAssetMetadata,
-  DelegatorUnstakeRequest,
-} from '@webb-tools/tangle-shared-ui/types/restake';
+import type { DelegatorUnstakeRequest } from '@webb-tools/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import {
   AmountFormatStyle,
-  EMPTY_VALUE_PLACEHOLDER,
   formatDisplayAmount,
+  isEvmAddress,
+  Typography,
 } from '@webb-tools/webb-ui-components';
 import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
@@ -34,6 +32,9 @@ import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { BN } from '@polkadot/util';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import useSessionDurationMs from '../../data/useSessionDurationMs';
+import { findErc20Token } from '../../data/restake/useTangleEvmErc20Balances';
+import formatSessionDistance from '../../utils/formatSessionDistance';
 
 export type UnstakeRequestTableRow = {
   amount: string;
@@ -41,6 +42,7 @@ export type UnstakeRequestTableRow = {
   assetId: RestakeAssetId;
   assetSymbol: string;
   sessionsRemaining: number;
+  sessionDurationMs: number;
   operatorAccountId: SubstrateAddress;
   operatorIdentityName?: string;
 };
@@ -83,23 +85,26 @@ const COLUMNS = [
     cell: (props) => {
       const sessionsRemaining = props.getValue();
 
-      return (
-        <TableCell fw="normal" className="text-mono-200 dark:text-mono-0">
-          {sessionsRemaining === 0 ? (
-            <span className="flex items-center gap-1">
-              <CheckboxCircleFill className="!fill-green-50" />
-              Ready
-            </span>
-          ) : sessionsRemaining < 0 ? (
-            EMPTY_VALUE_PLACEHOLDER
-          ) : (
-            <span className="flex items-center gap-1">
-              <TimeFillIcon className="fill-blue-50 dark:fill-blue-50" />
+      if (sessionsRemaining <= 0) {
+        return (
+          <Typography variant="body2" className="flex items-center gap-1">
+            <CheckboxCircleFill className="!fill-green-50" />
+            Ready
+          </Typography>
+        );
+      }
 
-              {`${sessionsRemaining} ${pluralize('session', sessionsRemaining !== 1)}`}
-            </span>
-          )}
-        </TableCell>
+      const timeRemaining = formatSessionDistance(
+        sessionsRemaining,
+        props.row.original.sessionDurationMs,
+      );
+
+      return (
+        <Typography variant="body2" className="flex items-center gap-1">
+          <TimeFillIcon className="fill-blue-50 dark:fill-blue-50" />
+
+          {timeRemaining}
+        </Typography>
       );
     },
   }),
@@ -114,23 +119,25 @@ const UnstakeRequestTable: FC<Props> = ({
   unstakeRequests,
   operatorIdentities,
 }) => {
-  const { assetMetadataMap } = useRestakeContext();
+  const { vaults } = useRestakeContext();
   const { delegationBondLessDelay } = useRestakeConsts();
   const { result: currentRound } = useRestakeCurrentRound();
+  const sessionDurationMs = useSessionDurationMs();
 
   const requests = useMemo<UnstakeRequestTableRow[]>(() => {
     // Not yet ready.
-    if (currentRound === null) {
+    if (currentRound === null || sessionDurationMs == null) {
       return [];
     }
 
     return unstakeRequests.flatMap(
       ({ assetId, amount, requestedRound, operatorAccountId }) => {
-        const metadata: RestakeVaultAssetMetadata | undefined =
-          assetMetadataMap[assetId];
+        const metadata = isEvmAddress(assetId)
+          ? findErc20Token(assetId)
+          : vaults[assetId];
 
-        // Ignore entries without metadata.
-        if (!metadata) {
+        // Skip requests that are lacking metadata.
+        if (metadata === undefined || metadata === null) {
           return [];
         }
 
@@ -152,6 +159,7 @@ const UnstakeRequestTable: FC<Props> = ({
           assetId: assetId,
           assetSymbol: metadata.symbol,
           sessionsRemaining,
+          sessionDurationMs,
           operatorAccountId,
           operatorIdentityName:
             operatorIdentities?.[operatorAccountId]?.name ?? undefined,
@@ -159,11 +167,12 @@ const UnstakeRequestTable: FC<Props> = ({
       },
     );
   }, [
-    assetMetadataMap,
     currentRound,
+    sessionDurationMs,
+    unstakeRequests,
+    vaults,
     delegationBondLessDelay,
     operatorIdentities,
-    unstakeRequests,
   ]);
 
   const table = useReactTable(

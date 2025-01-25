@@ -7,14 +7,18 @@ import { TokenIcon } from '@webb-tools/icons';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import { Card, EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components';
-import { type TokenListCardProps } from '@webb-tools/webb-ui-components/components/ListCard/types';
+import {
+  AmountFormatStyle,
+  Card,
+  formatDisplayAmount,
+  isEvmAddress,
+  shortenHex,
+} from '@webb-tools/webb-ui-components';
 import {
   Modal,
   ModalContent,
 } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import {
   type ComponentProps,
   FC,
@@ -42,6 +46,10 @@ import { BN } from '@polkadot/util';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
+import assert from 'assert';
+import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
+import useTangleEvmErc20Balances from '../../../data/restake/useTangleEvmErc20Balances';
+import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -73,11 +81,13 @@ const DepositForm: FC<Props> = (props) => {
     },
   });
 
+  const depositAssetId = watch('depositAssetId');
+
   const [vaultIdParam, setVaultIdParam] = useQueryState(
     QueryParamKey.RESTAKE_VAULT,
   );
 
-  const { assetMetadataMap, assetWithBalances } = useRestakeContext();
+  const { assetWithBalances } = useRestakeContext();
   const restakeApi = useRestakeApi();
 
   const setValue = useCallback(
@@ -170,71 +180,79 @@ const DepositForm: FC<Props> = (props) => {
     update: updateTokenModal,
   } = useModal();
 
-  const selectableTokens = useMemo(
-    () =>
-      assetWithBalances
-        .filter(
-          (asset) =>
-            asset.balance?.balance !== undefined &&
-            asset.balance?.balance !== BigInt(0),
-        )
-        .map((asset) => {
-          const balance = asset.balance;
+  const nativeAssets = useMemo<RestakeAsset[]>(() => {
+    const nativeAssetsWithBalances = assetWithBalances
+      .filter(
+        (asset) =>
+          asset.balance?.balance !== undefined &&
+          asset.balance.balance !== BigInt(0),
+      )
+      .map((asset) => {
+        assert(asset.balance !== null);
 
-          return {
-            id: asset.assetId,
-            name: asset.metadata.name,
-            symbol: asset.metadata.symbol,
-            ...(balance !== null
-              ? {
-                  assetBalanceProps: {
-                    balance: +formatUnits(
-                      balance.balance,
-                      asset.metadata.decimals,
-                    ),
-                    ...(asset.metadata.vaultId
-                      ? {
-                          subContent: `Vault ID: ${asset.metadata.vaultId}`,
-                        }
-                      : {}),
-                  },
-                }
-              : {}),
-          } satisfies TokenListCardProps['selectTokens'][number];
-        }),
-    [assetWithBalances],
-  );
+        const balance = new BN(asset.balance.balance.toString());
 
-  const handleTokenChange = useCallback(
-    (token: TokenListCardProps['selectTokens'][number]) => {
-      setValue('depositAssetId', token.id);
+        return {
+          id: asset.assetId,
+          name: asset.metadata.name,
+          symbol: asset.metadata.symbol,
+          balance,
+          decimals: asset.metadata.decimals,
+        } satisfies RestakeAsset;
+      });
+
+    return nativeAssetsWithBalances;
+  }, [assetWithBalances]);
+
+  const erc20Balances = useTangleEvmErc20Balances();
+
+  const erc20Assets = useMemo<RestakeAsset[]>(() => {
+    if (erc20Balances === null) {
+      return [];
+    }
+
+    return erc20Balances.map(
+      (asset) =>
+        ({
+          name: asset.name,
+          symbol: asset.symbol,
+          balance: asset.balance,
+          decimals: asset.decimals,
+          id: asset.contractAddress,
+        }) satisfies RestakeAsset,
+    );
+  }, [erc20Balances]);
+
+  const allAssets = useMemo<RestakeAsset[]>(() => {
+    return [...nativeAssets, ...erc20Assets];
+  }, [erc20Assets, nativeAssets]);
+
+  const handleAssetSelection = useCallback(
+    (asset: RestakeAsset) => {
+      setValue('depositAssetId', asset.id);
       closeTokenModal();
     },
     [closeTokenModal, setValue],
   );
 
-  const isReady = restakeApi !== null && !isSubmitting;
+  const asset = useRestakeAsset(depositAssetId);
+  const isReady = restakeApi !== null && asset !== null && !isSubmitting;
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
-    ({ amount, depositAssetId }) => {
-      if (
-        depositAssetId === null ||
-        assetMetadataMap[depositAssetId] === undefined ||
-        !isReady
-      ) {
+    ({ amount }) => {
+      if (!isReady) {
         return;
       }
 
-      const asset = assetMetadataMap[depositAssetId];
       const amountBn = parseChainUnits(amount, asset.decimals);
 
       if (!(amountBn instanceof BN)) {
         return;
       }
 
-      return restakeApi.deposit(depositAssetId, amountBn);
+      return restakeApi.deposit(asset.id, amountBn);
     },
-    [assetMetadataMap, isReady, restakeApi],
+    [asset, isReady, restakeApi],
   );
 
   const sourceChainOptions = useMemo(() => {
@@ -292,7 +310,7 @@ const DepositForm: FC<Props> = (props) => {
           <Modal open={chainModalOpen} onOpenChange={updateChainModal}>
             <ModalContent title="Select Chain">
               <ChainList
-                searchInputId="restake-deposit-form-search"
+                searchInputId="restake-deposit-chain-search"
                 onClose={closeChainModal}
                 chains={sourceChainOptions}
                 onSelectChain={handleOnSelectChain}
@@ -305,6 +323,7 @@ const DepositForm: FC<Props> = (props) => {
             title="Select Asset"
             isOpen={tokenModalOpen}
             setIsOpen={updateTokenModal}
+            onSelect={handleAssetSelection}
             filterItem={(asset, query) =>
               filterBy(query, [asset.id, asset.name, asset.symbol])
             }
@@ -312,24 +331,28 @@ const DepositForm: FC<Props> = (props) => {
             searchPlaceholder="Search assets..."
             titleWhenEmpty="No Assets Found"
             descriptionWhenEmpty="It seems that there are no available assets in this network yet. Please try again later."
-            items={selectableTokens}
+            items={allAssets}
             renderItem={(asset) => {
-              const fmtBalance =
-                asset.assetBalanceProps?.balance !== undefined
-                  ? `${addCommasToNumber(asset.assetBalanceProps.balance)} ${asset.symbol}`
-                  : EMPTY_VALUE_PLACEHOLDER;
+              const fmtBalance = formatDisplayAmount(
+                asset.balance,
+                asset.decimals,
+                AmountFormatStyle.SHORT,
+              );
+
+              const idText = isEvmAddress(asset.id)
+                ? `Address: ${shortenHex(asset.id)}`
+                : `Asset ID: ${asset.id}`;
 
               return (
                 <LogoListItem
                   logo={<TokenIcon size="xl" name={asset.symbol} />}
                   leftUpperContent={`${asset.name} (${asset.symbol})`}
-                  leftBottomContent={`Asset ID: ${asset.id}`}
+                  leftBottomContent={idText}
                   rightBottomText="Balance"
-                  rightUpperText={fmtBalance}
+                  rightUpperText={`${fmtBalance} ${asset.symbol}`}
                 />
               );
             }}
-            onSelect={handleTokenChange}
           />
         </Form>
       </Card>

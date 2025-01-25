@@ -17,10 +17,10 @@ import { FC } from 'react';
 import { VaultToken } from '../../../types';
 import LsTokenIcon from '../../LsTokenIcon';
 
-const columnHelper = createColumnHelper<VaultToken>();
+const COLUMN_HELPER = createColumnHelper<VaultToken>();
 
-const columns = [
-  columnHelper.accessor('name', {
+const COLUMNS = [
+  COLUMN_HELPER.accessor('name', {
     header: () => <Typography variant="body2">Token</Typography>,
     cell: (props) => (
       <div className="flex items-center gap-2">
@@ -30,7 +30,7 @@ const columns = [
       </div>
     ),
   }),
-  columnHelper.accessor('amount', {
+  COLUMN_HELPER.accessor('amount', {
     header: () => (
       <Typography variant="body2" ta="right">
         Amount
@@ -50,7 +50,7 @@ const columns = [
 
 const VaultsDropdown: FC<{ vaultTokens: VaultToken[] }> = ({ vaultTokens }) => {
   const table = useReactTable({
-    columns,
+    columns: COLUMNS,
     data: vaultTokens,
     getCoreRowModel: getCoreRowModel(),
   });

@@ -2,7 +2,7 @@ import { u128 } from '@polkadot/types';
 import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
 import { assertEvmAddress } from '@webb-tools/webb-ui-components';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
-import { Address } from 'viem';
+import { Address, checksumAddress } from 'viem';
 
 export type RestakeAssetId = `${number}` | EvmAddress;
 
@@ -15,7 +15,7 @@ const createRestakeAssetId = (
     case 'Custom':
       return `${tangleAssetId.asCustom.toNumber()}`;
     case 'Erc20':
-      return assertEvmAddress(tangleAssetId.asErc20.toHex());
+      return assertEvmAddress(checksumAddress(tangleAssetId.asErc20.toHex()));
   }
 };
 

@@ -9,6 +9,7 @@ import {
 import { TransformEnum } from './utils';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { RestakeAssetId } from '../utils/createRestakeAssetId';
+import { BN } from '@polkadot/util';
 
 /**
  * The activity status of the operator.
@@ -24,7 +25,7 @@ export type OperatorStatus =
 export type OperatorDelegatorBond = {
   readonly delegatorAccountId: string;
   readonly amount: bigint;
-  readonly assetId: string;
+  readonly assetId: RestakeAssetId;
 };
 
 export type OperatorBondLessRequest = {
@@ -47,11 +48,11 @@ export type OperatorMetadata = {
 };
 
 export type OperatorMap = {
-  readonly [accountId: SubstrateAddress]: OperatorMetadata;
+  readonly [accountAddress: SubstrateAddress]: OperatorMetadata;
 };
 
-export type RestakeVaultAssetMetadata = Readonly<{
-  id: RestakeAssetId;
+export type RestakeVaultMetadata = Readonly<{
+  assetId: RestakeAssetId;
   name: string;
   symbol: string;
   decimals: number;
@@ -66,11 +67,11 @@ export type RestakeVaultAssetMetadata = Readonly<{
    * @field Frozen - The asset is frozen and cannot be staked.
    * @field Destroying - The asset is being destroyed and cannot be staked.
    */
-  status: TransformEnum<PalletAssetsAssetStatus>;
+  status?: PalletAssetsAssetStatus['type'];
 }>;
 
-export type RestakeVaultAssetMap = {
-  readonly [assetId: string]: RestakeVaultAssetMetadata;
+export type RestakeVaultMap = {
+  readonly [assetId: RestakeAssetId]: RestakeVaultMetadata;
 };
 
 export type DelegatorWithdrawRequest = {
@@ -110,11 +111,8 @@ export type DelegatorInfo = {
   };
 
   readonly withdrawRequests: Array<DelegatorWithdrawRequest>;
-
   readonly delegations: Array<DelegatorBondInfo>;
-
   readonly unstakeRequests: Array<DelegatorUnstakeRequest>;
-
   readonly status: DelegatorStatus;
 };
 
@@ -136,7 +134,7 @@ export type AssetAccountExistenceReason =
  * @name PalletAssetsAssetAccount
  */
 export type AssetBalance = {
-  readonly assetId: string;
+  readonly assetId: RestakeAssetId;
   readonly balance: bigint;
 
   /**
@@ -152,11 +150,19 @@ export type AssetBalance = {
 };
 
 export type AssetBalanceMap = {
-  readonly [assetId: string]: AssetBalance;
+  readonly [assetId: RestakeAssetId]: AssetBalance;
 };
 
 export type AssetWithBalance = {
-  assetId: string;
-  metadata: RestakeVaultAssetMetadata;
+  assetId: RestakeAssetId;
+  metadata: RestakeVaultMetadata;
   balance: AssetBalance | null;
+};
+
+export type RestakeAsset = {
+  id: RestakeAssetId;
+  name: string;
+  symbol: string;
+  balance: BN;
+  decimals: number;
 };
