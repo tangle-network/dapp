@@ -6,10 +6,10 @@ import {
   PalletMultiAssetDelegationDelegatorDelegatorStatus,
   PalletMultiAssetDelegationOperatorOperatorStatus,
 } from '@polkadot/types/lookup';
-import { TransformEnum } from './utils';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import { RestakeAssetId } from '../utils/createRestakeAssetId';
 import { BN } from '@polkadot/util';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { RestakeAssetId } from '../types';
+import { TransformEnum } from './utils';
 
 /**
  * The activity status of the operator.

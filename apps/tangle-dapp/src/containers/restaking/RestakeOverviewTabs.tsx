@@ -6,7 +6,14 @@ import type {
 } from '@webb-tools/tangle-shared-ui/types/restake';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
-import { type ComponentProps, type FC, ReactNode, useMemo } from 'react';
+import {
+  type ComponentProps,
+  type FC,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import VaultAssetsTable from '../../components/tables/VaultAssets';
 import VaultsTable from '../../components/tables/Vaults';
 import useRestakeRewardConfig from '../../data/restake/useRestakeRewardConfig';
@@ -16,11 +23,13 @@ import { RestakeAction } from '../../constants';
 import RestakeWithdrawForm from '../../pages/restake/withdraw';
 import RestakeDelegateForm from '../../pages/restake/delegate';
 import RestakeUnstakeForm from '../../pages/restake/unstake';
+import BlueprintListing from '../../pages/blueprints/BlueprintListing';
 
 enum RestakeTab {
   RESTAKE = 'Restake',
   VAULTS = 'Vaults',
   OPERATORS = 'Operators',
+  BLUEPRINTS = 'Blueprints',
 }
 
 type VaultUI = NonNullable<ComponentProps<typeof VaultsTable>['data']>[number];
@@ -61,6 +70,8 @@ const RestakeOverviewTabs: FC<Props> = ({
   vaultTVL,
   action,
 }) => {
+  const [tab, setTab] = useState(RestakeTab.RESTAKE);
+
   const { vaults: vaultsMetadataMap } = useRestakeContext();
   const rewardConfig = useRestakeRewardConfig();
 
@@ -147,9 +158,15 @@ const RestakeOverviewTabs: FC<Props> = ({
     [vaultsMetadataMap, delegatorTVL, delegatorTotalRestakedAssets],
   );
 
+  const handleRestakeClicked = useCallback(() => {
+    setTab(RestakeTab.RESTAKE);
+  }, []);
+
   return (
     <TableAndChartTabs
       tabs={Object.values(RestakeTab)}
+      value={tab}
+      onValueChange={(tab) => setTab(tab as RestakeTab)}
       headerClassName="w-full"
     >
       <TabContent
@@ -168,7 +185,12 @@ const RestakeOverviewTabs: FC<Props> = ({
           operatorConcentration={operatorConcentration}
           operatorMap={operatorMap}
           operatorTVL={operatorTVL}
+          onRestakeClicked={handleRestakeClicked}
         />
+      </TabContent>
+
+      <TabContent value={RestakeTab.BLUEPRINTS}>
+        <BlueprintListing />
       </TabContent>
     </TableAndChartTabs>
   );

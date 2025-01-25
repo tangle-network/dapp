@@ -31,7 +31,7 @@ import UnstakeRequestTableActions from './UnstakeRequestTableActions';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { BN } from '@polkadot/util';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import useSessionDurationMs from '../../data/useSessionDurationMs';
 import { findErc20Token } from '../../data/restake/useTangleEvmErc20Balances';
 import formatSessionDistance from '../../utils/formatSessionDistance';

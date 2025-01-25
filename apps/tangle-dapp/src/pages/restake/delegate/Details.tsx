@@ -21,8 +21,8 @@ const Details = memo(() => {
   return (
     <DetailsContainer>
       <DetailItem
-        title="Undelegate delay"
-        tooltip="When you decide to undelegate your stake, you'll need to wait for this period to pass before your request can be processed."
+        title="Undelegate period"
+        tooltip="Waiting time between scheduling and executing an undelegation"
         value={unstakePeriod}
       />
     </DetailsContainer>

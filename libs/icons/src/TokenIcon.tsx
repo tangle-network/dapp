@@ -14,7 +14,7 @@ type Props = TokenIconBase & {
   spinnerSize?: TokenIconBase['size'];
 };
 
-export const TokenIcon: React.FC<Props> = (props) => {
+export const TokenIcon: React.FC<Props> = ({ spinnerSize, ...props }) => {
   const {
     className: classNameProp,
     isActive,
@@ -24,7 +24,6 @@ export const TokenIcon: React.FC<Props> = (props) => {
     size = 'md',
     onClick,
     customLoadingCmp,
-    spinnerSize,
     ...restProps
   } = props;
 

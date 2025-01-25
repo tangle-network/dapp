@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { Hash } from 'viem';
 import { TxName } from '../../constants';

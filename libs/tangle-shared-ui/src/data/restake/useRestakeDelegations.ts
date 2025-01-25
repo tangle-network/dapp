@@ -1,8 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import useApiRx from '../../hooks/useApiRx';
-import createRestakeAssetId, {
-  RestakeAssetId,
-} from '../../utils/createRestakeAssetId';
+import createRestakeAssetId from '../../utils/createRestakeAssetId';
+import { RestakeAssetId } from '../../types';
 import { BN } from '@polkadot/util';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { PalletMultiAssetDelegationDelegatorDelegatorBlueprintSelection } from '@polkadot/types/lookup';
@@ -17,10 +16,13 @@ type Delegation = {
 
 const useRestakeDelegations = () => {
   const { result: delegationMap } = useApiRx(
-    useCallback(
-      (api) => api.query.multiAssetDelegation.delegators.entries(),
-      [],
-    ),
+    useCallback((api) => {
+      if (api.query.multiAssetDelegation?.delegators === undefined) {
+        return null;
+      }
+
+      return api.query.multiAssetDelegation.delegators.entries();
+    }, []),
   );
 
   const delegations = useMemo<Delegation[] | null>(() => {

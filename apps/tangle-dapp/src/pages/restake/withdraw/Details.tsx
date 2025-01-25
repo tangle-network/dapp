@@ -1,7 +1,7 @@
+import { FC, useMemo } from 'react';
 import DetailsContainer from '../../../components/DetailsContainer';
 import DetailItem from '../../../components/LiquidStaking/stakeAndUnstake/DetailItem';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
-import { FC, useMemo } from 'react';
 import useSessionDurationMs from '../../../data/useSessionDurationMs';
 import formatMsDuration from '../../../utils/formatMsDuration';
 
@@ -20,8 +20,8 @@ const Details: FC = () => {
   return (
     <DetailsContainer>
       <DetailItem
-        title="Execution delay"
-        tooltip="The time you'll need to wait before this withdrawal request can be completed."
+        title="Withdrawal period"
+        tooltip="Waiting time between scheduling and executing a withdrawal"
         value={withdrawPeriod}
       />
     </DetailsContainer>

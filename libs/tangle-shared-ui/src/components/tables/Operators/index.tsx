@@ -52,7 +52,7 @@ const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
 
             <div>
               <Typography variant="h5" fw="bold">
-                {identity === address ? shortenString(address) : identity}
+                {identity ? identity : shortenString(address)}
               </Typography>
 
               <Typography
@@ -141,7 +141,6 @@ type Props = {
   loadingTableProps?: Partial<TableStatusProps>;
   emptyTableProps?: Partial<TableStatusProps>;
   tableProps?: Partial<ComponentProps<typeof Table>>;
-  ViewOperatorAction?: React.FC<PropsWithChildren<{ address: string }>>;
   RestakeOperatorAction?: React.FC<PropsWithChildren<{ address: string }>>;
 };
 
@@ -153,7 +152,6 @@ const OperatorsTable: FC<Props> = ({
   tableProps,
   globalFilter,
   onGlobalFilterChange,
-  ViewOperatorAction,
   RestakeOperatorAction,
 }) => {
   const columns = useMemo(
@@ -165,27 +163,15 @@ const OperatorsTable: FC<Props> = ({
           cell: (props) => (
             <TableCellWrapper removeRightBorder>
               <div className="flex items-center justify-end flex-1 gap-2">
-                {ViewOperatorAction ? (
-                  <ViewOperatorAction address={props.row.original.address}>
-                    <Button variant="utility" className="uppercase body4">
-                      View
-                    </Button>
-                  </ViewOperatorAction>
-                ) : (
-                  <Button variant="utility" className="uppercase body4">
-                    View
-                  </Button>
-                )}
-
                 {RestakeOperatorAction ? (
                   <RestakeOperatorAction address={props.row.original.address}>
                     <Button variant="utility" className="uppercase body4">
-                      Restake
+                      Delegate
                     </Button>
                   </RestakeOperatorAction>
                 ) : (
                   <Button variant="utility" className="uppercase body4">
-                    Restake
+                    Delegate
                   </Button>
                 )}
               </div>
@@ -194,7 +180,7 @@ const OperatorsTable: FC<Props> = ({
           enableSorting: false,
         }) satisfies ColumnDef<RestakeOperator>,
       ]),
-    [ViewOperatorAction, RestakeOperatorAction],
+    [RestakeOperatorAction],
   );
 
   const table = useReactTable({

@@ -52,9 +52,9 @@ const Details: FC<Props> = ({ watch }) => {
       />
 
       <DetailItem
-        title="Withdrawal delay"
+        title="Withdrawal period"
+        tooltip="Waiting time between scheduling and executing a withdrawal"
         value={withdrawPeriod}
-        tooltip="The duration for which the deposited asset is locked and can be withdrawn."
       />
     </DetailsContainer>
   );

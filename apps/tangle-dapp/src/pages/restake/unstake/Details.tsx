@@ -20,8 +20,8 @@ const Details: FC = () => {
   return (
     <DetailsContainer>
       <DetailItem
-        title="Execution delay"
-        tooltip="The time you'll need to wait before this undelegate request can be completed."
+        title="Undelegate period"
+        tooltip="Waiting time between scheduling and executing an undelegation"
         value={unstakePeriod}
       />
     </DetailsContainer>

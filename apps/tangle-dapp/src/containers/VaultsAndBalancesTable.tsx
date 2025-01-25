@@ -23,27 +23,28 @@ import {
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
+import { ArrowRight } from '@webb-tools/icons';
+import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
+import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
+import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
+import useRestakeAssetsTvl from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
+import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
+import useRestakeVaults from '@webb-tools/tangle-shared-ui/data/restake/useRestakeVaults';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
+import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
+import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
+import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import get from 'lodash/get';
+import { Link } from 'react-router';
 import StatItem from '../components/StatItem';
 import { HeaderCell } from '../components/tableCells';
-import { ArrowRight } from '@webb-tools/icons';
-import { PagePath, QueryParamKey } from '../types';
-import { Link } from 'react-router';
-import sortByLocaleCompare from '../utils/sortByLocaleCompare';
-import useRestakeVaults from '@webb-tools/tangle-shared-ui/data/restake/useRestakeVaults';
-import useIsAccountConnected from '../hooks/useIsAccountConnected';
-import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
-import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
-import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
-import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
-import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
-import useRestakeAssetsTvl from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
-import sortByBn from '../utils/sortByBn';
-import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
 import useTangleEvmErc20Balances from '../data/restake/useTangleEvmErc20Balances';
+import useIsAccountConnected from '../hooks/useIsAccountConnected';
+import { PagePath, QueryParamKey } from '../types';
+import sortByBn from '../utils/sortByBn';
+import sortByLocaleCompare from '../utils/sortByLocaleCompare';
+import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
 
 type Row = {
   vaultId: number;
@@ -84,7 +85,7 @@ const COLUMNS = [
 
             <Typography
               variant="body1"
-              className="whitespace-nowrap dark:text-mono-100"
+              className="whitespace-nowrap text-mono-120 dark:text-mono-100"
             >
               {props.getValue()}
             </Typography>
@@ -116,7 +117,7 @@ const COLUMNS = [
     },
   }),
   COLUMN_HELPER.accessor('locked', {
-    header: () => 'Locked',
+    header: () => 'Deposits',
     sortingFn: sortByBn((row) => row.locked),
     cell: (props) => {
       const fmtLocked = formatDisplayAmount(
@@ -141,7 +142,7 @@ const COLUMNS = [
     sortingFn: sortByBn((row) => row.tvl),
     header: () => (
       <HeaderCell
-        title="TVL & Cap"
+        title="TVL | Capacity"
         tooltip="Total value locked & deposit cap."
       />
     ),
@@ -170,14 +171,10 @@ const COLUMNS = [
 
       return (
         <TableCellWrapper>
-          <div className="flex gap-1 items-center justify-center">
+          <div className="flex items-center justify-center gap-1">
             <StatItem
-              title={
-                fmtTvl === undefined ? `${fmtDepositCap} Cap` : `${fmtTvl} TVL`
-              }
-              subtitle={
-                fmtTvl === undefined ? undefined : `${fmtDepositCap} Cap`
-              }
+              title={fmtTvl === undefined ? `${fmtDepositCap}` : `${fmtTvl}`}
+              subtitle={fmtTvl === undefined ? undefined : `${fmtDepositCap}`}
               removeBorder
             />
           </div>
@@ -247,13 +244,14 @@ const VaultsAndBalancesTable: FC = () => {
 
   const getTotalLockedInAsset = useCallback(
     (assetId: RestakeAssetId) => {
-      const deposit = delegatorInfo?.deposits[assetId];
+      const deposits = delegatorInfo?.deposits ?? {};
+      const deposit = get(deposits, assetId);
 
       if (deposit === undefined) {
         return BN_ZERO;
       }
 
-      const depositAmount = delegatorInfo?.deposits[assetId].amount;
+      const depositAmount = deposit.amount;
 
       const delegation = delegatorInfo?.delegations.find((delegation) => {
         return delegation.assetId === assetId.toString();

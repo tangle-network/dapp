@@ -1,4 +1,4 @@
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import { Account, ContractFunctionName, AbiFunction } from 'viem';
 import RestakeApiBase, {
   RestakeUndelegateRequest,

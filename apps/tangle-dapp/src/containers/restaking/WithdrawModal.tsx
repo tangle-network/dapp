@@ -1,13 +1,10 @@
+import { BN } from '@polkadot/util';
 import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config/constants';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
-import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
-import { useMemo } from 'react';
-import { formatUnits } from 'viem';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
-import filterBy from '../../utils/filterBy';
-import LogoListItem from '../../components/Lists/LogoListItem';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
+import { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
 import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
 import {
   AmountFormatStyle,
@@ -15,8 +12,11 @@ import {
   isEvmAddress,
   shortenHex,
 } from '@webb-tools/webb-ui-components';
+import { useMemo } from 'react';
+import { formatUnits } from 'viem';
+import LogoListItem from '../../components/Lists/LogoListItem';
 import { findErc20Token } from '../../data/restake/useTangleEvmErc20Balances';
-import { BN } from '@polkadot/util';
+import filterBy from '../../utils/filterBy';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;

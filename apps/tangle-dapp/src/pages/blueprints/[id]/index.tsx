@@ -6,7 +6,6 @@ import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLo
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { FC } from 'react';
 import { useParams } from 'react-router';
-import { ViewOperatorWrapper } from '../../../components/tables/RestakeActionWrappers';
 
 const BlueprintDetailsPage: FC = () => {
   const { id = '' } = useParams();
@@ -40,10 +39,7 @@ const BlueprintDetailsPage: FC = () => {
           Operators running {result.details.name}
         </Typography>
 
-        <OperatorsTable
-          ViewOperatorAction={ViewOperatorWrapper}
-          data={result.operators}
-        />
+        <OperatorsTable data={result.operators} />
       </div>
     </div>
   );

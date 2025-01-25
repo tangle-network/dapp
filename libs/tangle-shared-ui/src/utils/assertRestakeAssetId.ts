@@ -1,9 +1,9 @@
+import { isEvmAddress, isTemplateBigInt } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
-import { RestakeAssetId } from './createRestakeAssetId';
-import { isEvmAddress, isTemplateNumber } from '@webb-tools/webb-ui-components';
+import { RestakeAssetId } from '../types';
 
 const assertRestakeAssetId = (possibleAssetId: string): RestakeAssetId => {
-  assert(isEvmAddress(possibleAssetId) || isTemplateNumber(possibleAssetId));
+  assert(isEvmAddress(possibleAssetId) || isTemplateBigInt(possibleAssetId));
 
   return possibleAssetId as RestakeAssetId;
 };

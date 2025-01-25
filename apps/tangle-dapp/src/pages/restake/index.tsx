@@ -1,13 +1,12 @@
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useRestakeTVL from '@webb-tools/tangle-shared-ui/data/restake/useRestakeTVL';
-import RestakeOverviewTabs from '../../containers/restaking/RestakeOverviewTabs';
-import { useParams } from 'react-router';
-import NotFoundPage from '../notFound';
-import isEnumValue from '../../utils/isEnumValue';
-import { RestakeAction } from '../../constants';
-import JoinOperatorsBanner from '../../containers/restaking/JoinOperatorsBanner';
 import { FC } from 'react';
+import { useParams } from 'react-router';
+import { RestakeAction } from '../../constants';
+import RestakeOverviewTabs from '../../containers/restaking/RestakeOverviewTabs';
+import isEnumValue from '../../utils/isEnumValue';
+import NotFoundPage from '../notFound';
 
 const RestakePage: FC = () => {
   const { action } = useParams();
@@ -24,8 +23,6 @@ const RestakePage: FC = () => {
 
   return (
     <div className="space-y-7">
-      <JoinOperatorsBanner />
-
       <RestakeOverviewTabs
         delegatorTVL={delegatorTVL}
         operatorMap={operatorMap}

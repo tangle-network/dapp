@@ -7,14 +7,15 @@ import type {
 } from '@polkadot/types/lookup';
 import { BN, formatBalance, hexToString } from '@polkadot/util';
 import type { Chain } from '@webb-tools/dapp-config';
+import { assertEvmAddress } from '@webb-tools/webb-ui-components';
+import { isEvmAddress } from '@webb-tools/webb-ui-components/utils/isEvmAddress20';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
+import { RestakeAssetId } from '../../types';
 import { RestakeVaultMap, RestakeVaultMetadata } from '../../types/restake';
-import filterNativeAsset from '../../utils/restake/filterNativeAsset';
-import { fetchTokenPriceBySymbol } from '../../utils/fetchTokenPrices';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
-import { RestakeAssetId } from '../../utils/createRestakeAssetId';
 import createAssetIdEnum from '../../utils/createAssetIdEnum';
-import { assertEvmAddress, isEvmAddress } from '@webb-tools/webb-ui-components';
+import { fetchTokenPriceBySymbol } from '../../utils/fetchTokenPrices';
+import filterNativeAsset from '../../utils/restake/filterNativeAsset';
 
 function createVaultId(u32: Option<u32>): number | null {
   if (u32.isNone) {

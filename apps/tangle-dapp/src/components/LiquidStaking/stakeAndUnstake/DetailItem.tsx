@@ -26,7 +26,7 @@ const DetailItem: FC<DetailItemProps> = ({
   className,
 }) => {
   return (
-    <div className="flex gap-2 justify-between w-full">
+    <div className="flex justify-between w-full gap-2">
       <div className="flex items-center gap-1">
         <Typography variant="body2" fw="normal">
           {title}
@@ -38,9 +38,6 @@ const DetailItem: FC<DetailItemProps> = ({
               <InformationLine className="fill-mono-140 dark:fill-mono-100" />
             }
             content={tooltip}
-            overrideTooltipBodyProps={{
-              className: 'max-w-[350px]',
-            }}
           />
         )}
       </div>

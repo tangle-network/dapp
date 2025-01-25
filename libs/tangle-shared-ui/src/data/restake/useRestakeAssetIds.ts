@@ -5,7 +5,7 @@ import { map, type Observable } from 'rxjs';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { assetIdsQuery } from '../../queries/restake/assetIds';
 import { rewardVaultRxQuery } from '../../queries/restake/rewardVault';
-import { RestakeAssetId } from '../../utils/createRestakeAssetId';
+import { RestakeAssetId } from '../../types';
 
 export type UseRestakeAssetIdsReturnType = {
   assetIds: RestakeAssetId[];

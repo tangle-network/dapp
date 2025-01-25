@@ -7,7 +7,7 @@ import RestakeApiBase, {
 } from './RestakeAbiBase';
 import { ISubmittableResult, Signer } from '@polkadot/types/types';
 import { ApiPromise } from '@polkadot/api';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import { BN } from '@polkadot/util';
 import { isEvmAddress } from '@webb-tools/webb-ui-components';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';

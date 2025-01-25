@@ -1,19 +1,13 @@
-import {
-  CoinsLineIcon,
-  LockUnlockLineIcon,
-  SendPlanLineIcon,
-} from '@webb-tools/icons';
+import { LockUnlockLineIcon, SendPlanLineIcon } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { FC, useState } from 'react';
 
 import TransferTxModal from '../../containers/TransferTxModal';
 import useBalances from '../../data/balances/useBalances';
-import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import { StaticSearchQueryPath } from '../../types';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
@@ -23,7 +17,6 @@ const Actions: FC = () => {
 
   const { execute: executeVestTx, status: vestTxStatus } = useVestTx();
 
-  const isPayoutsAvailable = usePayoutsAvailability();
   const activeAccountAddress = useActiveAccountAddress();
 
   const { transferable: transferableBalance } = useBalances();
@@ -41,9 +34,8 @@ const Actions: FC = () => {
       : null;
 
   return (
-    <div className="flex items-center justify-start gap-6 overflow-x-auto">
+    <div className="flex items-center justify-start gap-2 overflow-x-auto">
       <ActionItem
-        label="Send"
         Icon={SendPlanLineIcon}
         onClick={() => setIsTransferModalOpen(true)}
         // Disable while no account is connected, or when the active
@@ -53,23 +45,13 @@ const Actions: FC = () => {
           transferableBalance === null ||
           transferableBalance.isZero()
         }
+        tooltip={`Send ${nativeTokenSymbol}`}
       />
-
-      {isPayoutsAvailable && (
-        <ActionItem
-          hasNotificationDot
-          label="Payouts"
-          Icon={CoinsLineIcon}
-          internalHref={StaticSearchQueryPath.PayoutsTable}
-          tooltip="There are nomination payouts available to claim. Click here to visit the Nomination page."
-        />
-      )}
 
       {/* This is a special case, so hide it for most users if they're not vesting */}
       {isVesting && (
         <ActionItem
           Icon={LockUnlockLineIcon}
-          label="Vest"
           onClick={executeVestTx !== null ? executeVestTx : undefined}
           hasNotificationDot={hasClaimableVestingTokens}
           isDisabled={

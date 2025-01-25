@@ -1,3 +1,4 @@
+import { BN } from '@polkadot/util';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -10,28 +11,27 @@ import {
 import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import type { DelegatorWithdrawRequest } from '@webb-tools/tangle-shared-ui/types/restake';
-import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
-import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { Table } from '@webb-tools/webb-ui-components/components/Table';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { FC, useMemo } from 'react';
-import useRestakeConsts from '../../data/restake/useRestakeConsts';
-import useRestakeCurrentRound from '../../data/restake/useRestakeCurrentRound';
-import TableCell from '../../components/restaking/TableCell';
-import { calculateTimeRemaining } from '../../pages/restake/utils';
-import WithdrawRequestTableActions from './WithdrawRequestTableActions';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
   isEvmAddress,
 } from '@webb-tools/webb-ui-components';
-import { BN } from '@polkadot/util';
+import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
+import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
+import { Table } from '@webb-tools/webb-ui-components/components/Table';
+import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
+import { FC, useMemo } from 'react';
+import TableCell from '../../components/restaking/TableCell';
+import useRestakeConsts from '../../data/restake/useRestakeConsts';
+import useRestakeCurrentRound from '../../data/restake/useRestakeCurrentRound';
 import { findErc20Token } from '../../data/restake/useTangleEvmErc20Balances';
 import useSessionDurationMs from '../../data/useSessionDurationMs';
+import { calculateTimeRemaining } from '../../pages/restake/utils';
 import formatSessionDistance from '../../utils/formatSessionDistance';
+import WithdrawRequestTableActions from './WithdrawRequestTableActions';
 
 export type WithdrawRequestTableRow = {
   amount: string;
