@@ -3,7 +3,6 @@ import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { FC } from 'react';
 
-import CrossChainTime from '../../../utils/CrossChainTime';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import DetailItem from './DetailItem';
 

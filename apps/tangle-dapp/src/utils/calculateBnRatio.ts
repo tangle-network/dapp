@@ -1,34 +1,40 @@
 import { BN } from '@polkadot/util';
 import assert from 'assert';
+import { Decimal } from 'decimal.js';
 
 /**
  * Given an amount, calculate its percentage of a total amount.
  *
  * The resulting percentage will be a Number with the requested decimal
- * places, ex. `0.67`, ranging from 0 to 1.
+ * places, ex. 0.67, ranging from 0 to 1.
  *
  * Because of the possible loss in precision, this utility function is
  * only suitable for use in the UI.
  *
  * @throws If the second argument is zero.
  */
-function calculateBnRatio(a: BN, b: BN, decimalPrecision = 2): number {
+function calculateBnRatio(a: BN, b: BN, decimalPlaces = 2): number {
   assert(
     !b.isZero(),
     'The second argument should not be zero, otherwise division by zero would occur',
   );
 
-  const precisionFactor = 10 ** decimalPrecision;
-  const scaledAmount = a.muln(precisionFactor);
-  const percentageString = scaledAmount.div(b).toString();
+  assert(decimalPlaces >= 0, 'Decimal precision must be non-negative');
 
-  // Converting the string to a number ensures that the conversion to
-  // number never fails, but it may result in a loss of precision for
-  // extremely large values.
-  const percentage = Number(percentageString) / precisionFactor;
+  if (a.isZero()) {
+    return 0;
+  }
 
-  // Round the percentage to the requested decimal places.
-  return Math.round(percentage * precisionFactor) / precisionFactor;
+  const decimalA = new Decimal(a.toString());
+  const decimalB = new Decimal(b.toString());
+
+  const ratio = decimalA
+    .div(decimalB)
+    // Truncate the decimal places to the requested precision
+    // without rounding.
+    .toDP(decimalPlaces + 2, Decimal.ROUND_FLOOR);
+
+  return Number(ratio);
 }
 
 export default calculateBnRatio;

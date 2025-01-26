@@ -14,6 +14,7 @@ import {
 import {
   AmountFormatStyle,
   Button,
+  CircularProgress,
   EMPTY_VALUE_PLACEHOLDER,
   formatDisplayAmount,
   isEvmAddress,
@@ -45,6 +46,7 @@ import { PagePath, QueryParamKey } from '../types';
 import sortByBn from '../utils/sortByBn';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
 import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
+import calculateBnRatio from '../utils/calculateBnRatio';
 
 type Row = {
   vaultId: number;
@@ -155,7 +157,7 @@ const COLUMNS = [
           : formatDisplayAmount(
               tvl,
               props.row.original.decimals,
-              AmountFormatStyle.SI,
+              AmountFormatStyle.SHORT,
             );
 
       const depositCap = props.row.original.depositCap;
@@ -166,17 +168,32 @@ const COLUMNS = [
           : formatDisplayAmount(
               depositCap,
               props.row.original.decimals,
-              AmountFormatStyle.SI,
+              AmountFormatStyle.SHORT,
             );
+
+      const capacityPercentage =
+        tvl === undefined || depositCap === undefined
+          ? null
+          : calculateBnRatio(tvl, depositCap);
+
+      console.debug('CAPACITY', capacityPercentage);
 
       return (
         <TableCellWrapper>
           <div className="flex items-center justify-center gap-1">
-            <StatItem
-              title={fmtTvl === undefined ? `${fmtDepositCap}` : `${fmtTvl}`}
-              subtitle={fmtTvl === undefined ? undefined : `${fmtDepositCap}`}
-              removeBorder
-            />
+            {capacityPercentage !== null && (
+              <CircularProgress
+                progress={capacityPercentage}
+                size="md"
+                tooltip={formatPercentage(capacityPercentage)}
+              />
+            )}
+
+            <Typography variant="body1">
+              {fmtTvl === undefined
+                ? `${fmtDepositCap}`
+                : `${fmtTvl} | ${fmtDepositCap}`}
+            </Typography>
           </div>
         </TableCellWrapper>
       );

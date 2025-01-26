@@ -13,26 +13,19 @@ import {
   LsPool,
   LsPoolDisplayName,
 } from '../../../constants/liquidStaking/types';
-import useRedeemTx from '../../../data/liquidStaking/parachain/useRedeemTx';
 import useLsPoolUnbondTx from '../../../data/liquidStaking/tangle/useLsPoolUnbondTx';
-import useLsExchangeRate, {
-  ExchangeRateType,
-} from '../../../data/liquidStaking/useLsExchangeRate';
+import useLsExchangeRate from '../../../data/liquidStaking/useLsExchangeRate';
 import useLsMyPools from '../../../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
-import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
 import LsInput from './LsInput';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
-import useLsFeePercentage from './useLsFeePercentage';
-import useLsSpendingLimits from './useLsSpendingLimits';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import LstListItem from '../LstListItem';
 
@@ -45,7 +38,6 @@ const LsUnstakeCard: FC = () => {
   const fromLsInputRef = useRef<HTMLInputElement>(null);
   const myPools = useLsMyPools();
 
-  // TODO: This is a BIT of a hack. Find a better, more explicit way to handle this.
   // Map the pools to replace the total staked property with the
   // self stake property instead. This is so that the Select LST
   // modal shows the self stake amount instead of the total staked,
@@ -61,23 +53,15 @@ const LsUnstakeCard: FC = () => {
   const { lsProtocolId, setLsProtocolId, lsNetworkId, lsPoolId, setLsPoolId } =
     useLsStore();
 
-  const { execute: executeParachainRedeemTx, status: parachainRedeemTxStatus } =
-    useRedeemTx();
-
   const { execute: executeTangleUnbondTx, status: tangleUnbondTxStatus } =
     useLsPoolUnbondTx();
-
-  const { minSpendable, maxSpendable } = useLsSpendingLimits(
-    false,
-    lsProtocolId,
-  );
 
   const selectedProtocol = getLsProtocolDef(lsProtocolId);
 
   const {
     exchangeRate: exchangeRateOrError,
     isRefreshing: isRefreshingExchangeRate,
-  } = useLsExchangeRate(ExchangeRateType.DerivativeToNative);
+  } = useLsExchangeRate();
 
   // TODO: Properly handle the error state.
   const exchangeRate =
@@ -95,14 +79,6 @@ const LsUnstakeCard: FC = () => {
     }
 
     if (
-      selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeParachainRedeemTx !== null
-    ) {
-      return executeParachainRedeemTx({
-        amount: fromAmount,
-        currency: selectedProtocol.currency,
-      });
-    } else if (
       isTangleNetwork &&
       executeTangleUnbondTx !== null &&
       lsPoolId !== null
@@ -112,30 +88,15 @@ const LsUnstakeCard: FC = () => {
         poolId: lsPoolId,
       });
     }
-  }, [
-    executeParachainRedeemTx,
-    executeTangleUnbondTx,
-    fromAmount,
-    isTangleNetwork,
-    lsPoolId,
-    selectedProtocol,
-  ]);
-
-  const feePercentage = useLsFeePercentage(lsProtocolId, false);
+  }, [executeTangleUnbondTx, fromAmount, isTangleNetwork, lsPoolId]);
 
   const toAmount = useMemo(() => {
-    if (
-      fromAmount === null ||
-      exchangeRate === null ||
-      typeof feePercentage !== 'number'
-    ) {
+    if (fromAmount === null || exchangeRate === null) {
       return null;
     }
 
-    const feeAmount = scaleAmountByPercentage(fromAmount, feePercentage);
-
-    return fromAmount.divn(exchangeRate).sub(feeAmount);
-  }, [exchangeRate, feePercentage, fromAmount]);
+    return fromAmount.divn(exchangeRate);
+  }, [exchangeRate, fromAmount]);
 
   // Reset the input amount when the network changes.
   useEffect(() => {
@@ -164,11 +125,8 @@ const LsUnstakeCard: FC = () => {
     />
   );
 
-  // TODO: Also check if the user has enough balance to unstake. Convert this into a self-executing function to break down the complexity of a one-liner.
   const canCallUnstake =
-    (selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeParachainRedeemTx !== null) ||
-    (isTangleNetwork && executeTangleUnbondTx !== null && lsPoolId !== null);
+    isTangleNetwork && executeTangleUnbondTx !== null && lsPoolId !== null;
 
   return (
     <>
@@ -223,16 +181,7 @@ const LsUnstakeCard: FC = () => {
         <div className="flex flex-col gap-2 p-3">
           <UnstakePeriodDetailItem protocolId={lsProtocolId} />
 
-          <ExchangeRateDetailItem
-            token={selectedProtocol.token}
-            type={ExchangeRateType.DerivativeToNative}
-          />
-
-          <FeeDetailItem
-            protocolId={lsProtocolId}
-            isStaking={false}
-            inputAmount={fromAmount}
-          />
+          <ExchangeRateDetailItem token={selectedProtocol.token} />
         </div>
 
         <Button
@@ -244,10 +193,7 @@ const LsUnstakeCard: FC = () => {
             fromAmount === null ||
             fromAmount.isZero()
           }
-          isLoading={
-            parachainRedeemTxStatus === TxStatus.PROCESSING ||
-            tangleUnbondTxStatus === TxStatus.PROCESSING
-          }
+          isLoading={tangleUnbondTxStatus === TxStatus.PROCESSING}
           onClick={handleUnstakeClick}
           isFullWidth
         >
