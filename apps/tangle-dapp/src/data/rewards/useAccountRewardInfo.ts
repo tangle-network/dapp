@@ -56,6 +56,7 @@ export default function useAccountRewardInfo() {
       [activeSubstrateAddress, assetIds, overrideRpcEndpoint, rpcEndpoint],
     ),
     fetcher,
+    useMemo(() => ({ shouldRetryOnError: false }), []),
   );
 
   const result = useMemo(() => {
@@ -102,8 +103,8 @@ const responseSchema = z.union([
     jsonrpc: z.string(),
     error: z.object({
       code: z.number(),
-      data: z.string(),
       message: z.string(),
+      data: z.string().optional(),
     }),
   }),
   z.object({
@@ -144,12 +145,36 @@ async function fetcher([rpcEndpoint, activeAddress, assetIds]: [
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch rewards for ${assetId}`);
+        return {
+          id: 1,
+          jsonrpc: '2.0',
+          error: {
+            code: response.status,
+            message: response.statusText,
+          },
+        } satisfies z.infer<typeof responseSchema>;
       }
 
       const parsed = JSONParseBigInt(await response.text());
 
-      return responseSchema.parse(parsed);
+      const result = responseSchema.safeParse(parsed);
+      if (result.success === false) {
+        const message =
+          result.error.issues.length > 0
+            ? result.error.issues[0].message
+            : 'Failed to parse rewards';
+
+        return {
+          id: 1,
+          jsonrpc: '2.0',
+          error: {
+            code: response.status,
+            message,
+          },
+        } satisfies z.infer<typeof responseSchema>;
+      }
+
+      return result.data;
     }),
   );
 
