@@ -16,6 +16,7 @@ export type KeyStatsItemProps = {
   tooltip?: string;
   className?: string;
   showDataBeforeLoading?: boolean;
+  hideErrorNotification?: boolean;
   children?: ReactNode;
   error: Error | null;
   isLoading?: boolean;
@@ -27,6 +28,7 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
   tooltip,
   className,
   showDataBeforeLoading,
+  hideErrorNotification = false,
   prefix,
   suffix,
   children,
@@ -36,13 +38,13 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
   // If present, report errors to the user via a toast
   // notification.
   useEffect(() => {
-    if (error !== null) {
+    if (error !== null && !hideErrorNotification) {
       notificationApi({
         variant: 'error',
         message: error.message,
       });
     }
-  }, [error]);
+  }, [error, hideErrorNotification]);
 
   return (
     <div
