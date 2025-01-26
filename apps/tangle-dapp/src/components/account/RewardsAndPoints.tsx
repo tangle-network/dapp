@@ -46,6 +46,7 @@ const RewardsAndPoints = () => {
   return (
     <div className="grid grid-cols-2 gap-6">
       <KeyStatsItem
+        hideErrorNotification
         isLoading={isLoading}
         className="!p-0"
         title="Unclaimed Rewards"
