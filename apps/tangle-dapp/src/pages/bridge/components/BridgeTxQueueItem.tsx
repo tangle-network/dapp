@@ -86,7 +86,7 @@ const getTotalSteps = (bridgeType: EVMTokenBridgeEnum): number => {
 
 const getActiveStep = (state: BridgeTxState): number => {
   switch (state) {
-    case BridgeTxState.Initializing:
+    case BridgeTxState.Pending:
       return 1;
     case BridgeTxState.Sending:
       return 2;
@@ -99,7 +99,7 @@ const getActiveStep = (state: BridgeTxState): number => {
 
 const getStatus = (state: BridgeTxState): StatusVariant => {
   switch (state) {
-    case BridgeTxState.Initializing:
+    case BridgeTxState.Pending:
       return 'info';
     case BridgeTxState.Sending:
       return 'info';
@@ -112,8 +112,8 @@ const getStatus = (state: BridgeTxState): StatusVariant => {
 
 const getStatusMessage = (state: BridgeTxState): string => {
   switch (state) {
-    case BridgeTxState.Initializing:
-      return 'Initializing';
+    case BridgeTxState.Pending:
+      return 'Pending';
     case BridgeTxState.Sending:
       return 'Sending';
     case BridgeTxState.Executed:

@@ -66,7 +66,7 @@ export type OperatorData = {
 
 // Bridge
 export enum BridgeTxState {
-  Initializing = 'Initializing',
+  Pending = 'Pending',
   Sending = 'Sending',
   Executed = 'Executed',
   Failed = 'Failed',

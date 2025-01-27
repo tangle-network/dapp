@@ -20,6 +20,7 @@ import {
   linea,
   base,
   bsc,
+  bitlayer
 } from 'viem/chains';
 import type { ChainConfig } from '../chain-config.interface';
 import athenaLocalnet from './customChains/athenaLocalnet';
@@ -52,6 +53,7 @@ export const wagmiChains = [
   linea,
   base,
   bsc,
+  bitlayer,
 ] as const;
 
 export const chainsConfig = {
@@ -109,6 +111,14 @@ export const chainsConfig = {
     group: 'bsc',
     tag: 'live',
     displayName: 'BSC',
+  } satisfies ChainConfig,
+
+  [PresetTypedChainId.Bitlayer]: {
+    ...bitlayer,
+    chainType: ChainType.EVM,
+    group: 'bitlayer',
+    tag: 'live',
+    displayName: 'Bitlayer',
   } satisfies ChainConfig,
 
   // Testnet
@@ -206,7 +216,7 @@ export const chainsConfig = {
     chainType: ChainType.EVM,
     group: 'tangle',
     tag: 'test',
-    displayName: 'Tangle Testnet (EVM)',
+    displayName: 'Tangle Testnet',
   } satisfies ChainConfig,
 
   [PresetTypedChainId.TangleLocalEVM]: {
