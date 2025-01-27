@@ -390,7 +390,7 @@ const VaultsAndBalancesTable: FC = () => {
     return (
       <TableStatus
         title="No Assets Available Yet"
-        description="There are no restaking vaults or liquid staking pools available on this network yet. Please check back later."
+        description="There are no restaking vaults available on this network yet. Please check back later."
       />
     );
   }

@@ -19,7 +19,7 @@ import {
 import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useNetworkStore from '../../context/useNetworkStore';
-import useNetworkSwitcher from '../../hooks/useNetworkSwitcher';
+import useSwitchNetwork from '../../hooks/useSwitchNetwork';
 import createCustomNetwork from '../../utils/createCustomNetwork';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
@@ -28,7 +28,7 @@ const NetworkSelectionButton: FC = () => {
     useWebContext();
 
   const { network } = useNetworkStore();
-  const { switchNetwork, isCustom } = useNetworkSwitcher();
+  const { switchNetwork, isCustom } = useSwitchNetwork();
 
   // TODO: Handle switching network on EVM wallet here.
   const switchToCustomNetwork = useCallback(

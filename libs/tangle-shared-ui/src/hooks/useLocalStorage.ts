@@ -4,37 +4,20 @@ import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
 
 import { BridgeQueueTxItem, Payout, TangleTokenSymbol } from '../types';
-import {
-  Collator,
-  Dapp,
-  PhalaVaultOrStakePool,
-  Validator,
-} from '../types/liquidStaking';
 import Optional from '../utils/Optional';
 
 export enum LocalStorageKey {
-  IS_BALANCES_TABLE_DETAILS_COLLAPSED = 'isBalancesTableDetailsCollapsed',
-  ACTIVE_AND_DELEGATION_COUNT = 'activeAndDelegationCount',
-  IDEAL_STAKE_PERCENTAGE = 'idealStakePercentage',
-  VALIDATOR_COUNTS = 'validatorCounts',
-  WAITING_COUNT = 'waitingCount',
   PAYOUTS = 'payouts',
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   KNOWN_NETWORK_ID = 'knownNetworkId',
-  SERVICES_CACHE = 'servicesCache',
   SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
   BRIDGE_TX_QUEUE_BY_ACC = 'bridgeTxQueue',
-  LIQUID_STAKING_TABLE_DATA = 'liquidStakingTableData',
 }
 
 export type PayoutsCache = {
   [rpcEndpoint: string]: {
     [address: string]: Payout[];
   };
-};
-
-export type LiquidStakingTableData = {
-  [chain: string]: Validator[] | PhalaVaultOrStakePool[] | Dapp[] | Collator[];
 };
 
 export type SubstrateWalletsMetadataEntry = {
@@ -54,29 +37,17 @@ export type TxQueueByAccount = Record<string, BridgeQueueTxItem[]>;
  * respective value types.
  */
 export type LocalStorageValueOf<T extends LocalStorageKey> =
-  T extends LocalStorageKey.IS_BALANCES_TABLE_DETAILS_COLLAPSED
-    ? boolean
-    : T extends LocalStorageKey.ACTIVE_AND_DELEGATION_COUNT
-      ? { value1: number | null; value2: number | null }
-      : T extends LocalStorageKey.IDEAL_STAKE_PERCENTAGE
-        ? { value1: number | null }
-        : T extends LocalStorageKey.VALIDATOR_COUNTS
-          ? { value1: number | null; value2: number | null }
-          : T extends LocalStorageKey.WAITING_COUNT
-            ? { value1: number | null }
-            : T extends LocalStorageKey.PAYOUTS
-              ? PayoutsCache
-              : T extends LocalStorageKey.CUSTOM_RPC_ENDPOINT
-                ? string
-                : T extends LocalStorageKey.KNOWN_NETWORK_ID
-                  ? number
-                  : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
-                    ? SubstrateWalletsMetadataCache
-                    : T extends LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC
-                      ? TxQueueByAccount
-                      : T extends LocalStorageKey.LIQUID_STAKING_TABLE_DATA
-                        ? LiquidStakingTableData
-                        : never;
+  T extends LocalStorageKey.PAYOUTS
+    ? PayoutsCache
+    : T extends LocalStorageKey.CUSTOM_RPC_ENDPOINT
+      ? string
+      : T extends LocalStorageKey.KNOWN_NETWORK_ID
+        ? number
+        : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
+          ? SubstrateWalletsMetadataCache
+          : T extends LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC
+            ? TxQueueByAccount
+            : never;
 
 export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,
