@@ -51,9 +51,9 @@ function useApiRx<T>(
     setError(null);
   }, []);
 
+  // Create the subscription when the API is ready.
   useEffect(() => {
     if (apiRx === null) {
-      // Discard any previous data when the Promise API is not ready.
       resetData();
 
       return;

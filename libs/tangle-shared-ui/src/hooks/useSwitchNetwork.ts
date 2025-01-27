@@ -61,6 +61,10 @@ const useSwitchNetwork = () => {
         setIsCustom(true);
       }
 
+      console.debug(
+        `Set initial network: ${initialNetwork.name} | RPC: ${initialNetwork.wsRpcEndpoint}`,
+      );
+
       setNetwork(initialNetwork);
     });
   }, [
@@ -96,17 +100,13 @@ const useSwitchNetwork = () => {
 
           if (switchChainResult !== null) {
             console.debug(
-              `Switching to ${isCustom ? 'custom' : 'Tangle'} network: ${
-                newNetwork.name
-              } (${newNetwork.nodeType}) with RPC endpoint: ${
-                newNetwork.wsRpcEndpoint
-              }`,
+              `Switched to network: ${newNetwork.name} | RPC: ${newNetwork.wsRpcEndpoint}`,
             );
           }
         } catch (error) {
           notificationApi({
             variant: 'error',
-            message: 'Switching network failed',
+            message: 'Switching chain failed',
             secondaryMessage: `Error: ${ensureError(error).message}`,
           });
         }

@@ -145,7 +145,7 @@ const COLUMNS = [
     header: () => (
       <HeaderCell
         title="TVL | Capacity"
-        tooltip="Total value locked & deposit cap."
+        tooltip="Total value locked & deposit capacity."
       />
     ),
     cell: (props) => {
@@ -175,8 +175,6 @@ const COLUMNS = [
         tvl === undefined || depositCap === undefined
           ? null
           : calculateBnRatio(tvl, depositCap);
-
-      console.debug('CAPACITY', capacityPercentage);
 
       return (
         <TableCellWrapper>
