@@ -20,7 +20,7 @@ import {
   linea,
   base,
   bsc,
-  bitlayer
+  bitlayer,
 } from 'viem/chains';
 import type { ChainConfig } from '../chain-config.interface';
 import athenaLocalnet from './customChains/athenaLocalnet';

@@ -57,7 +57,9 @@ export const FeeDetail = ({
             'group flex items-center justify-between w-full px-4 pt-3 pb-2',
           )}
         >
-          <Typography variant="body1" fw='bold'>Total Receiving</Typography>
+          <Typography variant="body1" fw="bold">
+            Total Receiving
+          </Typography>
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
@@ -69,7 +71,7 @@ export const FeeDetail = ({
 
               <Typography
                 variant="h4"
-                fw='bold'
+                fw="bold"
                 className="text-mono-0 dark:text-mono-0 whitespace-nowrap"
               >
                 {amounts.receiving.split('.')[0]}
@@ -102,11 +104,13 @@ export const FeeDetail = ({
             <div className="h-[2px] bg-mono-40 dark:bg-mono-160" />
 
             <div className="flex items-center justify-between">
-              <Typography variant="body1" fw='bold'>Sending</Typography>
+              <Typography variant="body1" fw="bold">
+                Sending
+              </Typography>
 
               <Typography
                 variant="body1"
-                fw='bold'
+                fw="bold"
                 className="text-mono-0 dark:text-mono-0 whitespace-nowrap"
               >
                 {amounts.sending}
@@ -114,11 +118,13 @@ export const FeeDetail = ({
             </div>
 
             <div className="flex items-center justify-between">
-              <Typography variant="body1" fw='bold'>Bridge Fee</Typography>
+              <Typography variant="body1" fw="bold">
+                Bridge Fee
+              </Typography>
 
               <Typography
                 variant="body1"
-                fw='bold'
+                fw="bold"
                 className="text-mono-0 dark:text-mono-0 whitespace-nowrap"
               >
                 {amounts.bridgeFee.split('.')[0]}
@@ -130,7 +136,9 @@ export const FeeDetail = ({
             </div>
 
             <div className="flex items-center justify-between">
-              <Typography variant="body1" fw='bold'>Bridge Route</Typography>
+              <Typography variant="body1" fw="bold">
+                Bridge Route
+              </Typography>
 
               <div className="flex items-center gap-2">
                 {token.bridgeType === EVMTokenBridgeEnum.Router ? (
@@ -139,7 +147,7 @@ export const FeeDetail = ({
                   <TokenIcon name="hyperlane" size="lg" />
                 )}
 
-                <Typography variant="body1" fw='bold'>
+                <Typography variant="body1" fw="bold">
                   {token.bridgeType.charAt(0).toUpperCase() +
                     token.bridgeType.slice(1)}
                 </Typography>
@@ -148,11 +156,13 @@ export const FeeDetail = ({
 
             {amounts.gasFee && (
               <div className="flex items-center justify-between">
-                <Typography variant="body1" fw='bold'>Gas Fee</Typography>
+                <Typography variant="body1" fw="bold">
+                  Gas Fee
+                </Typography>
 
                 <Typography
                   variant="body1"
-                  fw='bold'
+                  fw="bold"
                   className="text-mono-0 dark:text-mono-0 whitespace-nowrap"
                 >
                   {amounts.gasFee}
@@ -162,7 +172,9 @@ export const FeeDetail = ({
 
             {recipientExplorerUrl && (
               <div className="flex items-center justify-between">
-                <Typography variant="body1" fw='bold'>Recipient</Typography>
+                <Typography variant="body1" fw="bold">
+                  Recipient
+                </Typography>
 
                 <a
                   href={recipientExplorerUrl}
@@ -172,7 +184,7 @@ export const FeeDetail = ({
                 >
                   <Typography
                     variant="body1"
-                    fw='bold'
+                    fw="bold"
                     className="text-mono-0 dark:text-mono-0 whitespace-nowrap"
                   >
                     {shortenHex(recipientExplorerUrl)}
