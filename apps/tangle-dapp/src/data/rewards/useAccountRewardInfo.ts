@@ -2,8 +2,8 @@ import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useAc
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
-import createRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import createAssetIdEnum from '@webb-tools/tangle-shared-ui/utils/createAssetIdEnum';
+import createRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import JSONParseBigInt from '@webb-tools/webb-ui-components/utils/JSONParseBigInt';
@@ -11,6 +11,7 @@ import JSONStringifyBigInt from '@webb-tools/webb-ui-components/utils/JSONString
 import { useCallback, useMemo } from 'react';
 import useSWR from 'swr';
 import { z } from 'zod';
+import { SWRKey } from '../../constants/swr';
 import useActiveDelegation from '../restake/useActiveDelegation';
 
 export default function useAccountRewardInfo() {
@@ -49,6 +50,7 @@ export default function useAccountRewardInfo() {
   } = useSWR(
     useMemo(
       () => [
+        SWRKey.GetAccountRewards,
         overrideRpcEndpoint ?? rpcEndpoint,
         activeSubstrateAddress,
         assetIds,
@@ -56,7 +58,7 @@ export default function useAccountRewardInfo() {
       [activeSubstrateAddress, assetIds, overrideRpcEndpoint, rpcEndpoint],
     ),
     fetcher,
-    useMemo(() => ({ shouldRetryOnError: false }), []),
+    { shouldRetryOnError: false, refreshInterval: 5000 },
   );
 
   const result = useMemo(() => {
@@ -114,7 +116,8 @@ const responseSchema = z.union([
   }),
 ]);
 
-async function fetcher([rpcEndpoint, activeAddress, assetIds]: [
+async function fetcher([, rpcEndpoint, activeAddress, assetIds]: [
+  string,
   string,
   SubstrateAddress | null,
   RestakeAssetId[],
