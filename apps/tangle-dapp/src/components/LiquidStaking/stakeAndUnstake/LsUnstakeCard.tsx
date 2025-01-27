@@ -28,6 +28,7 @@ import useLsChangeNetwork from './useLsChangeNetwork';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import LstListItem from '../LstListItem';
 import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useLsAgnosticBalance from './useLsAgnosticBalance';
 
 const LsUnstakeCard: FC = () => {
   const isAccountConnected = useIsAccountConnected();
@@ -117,11 +118,17 @@ const LsUnstakeCard: FC = () => {
     }
   }, []);
 
+  const balance = useLsAgnosticBalance(false);
+
   const stakedWalletBalance = (
     <LsAgnosticBalance
       isNative={false}
       tooltip="Available Balance"
-      onClick={() => setFromAmount(maxSpendable)}
+      onClick={() => {
+        if (balance instanceof BN) {
+          setFromAmount(balance);
+        }
+      }}
     />
   );
 
@@ -150,8 +157,7 @@ const LsUnstakeCard: FC = () => {
           placeholder="Enter amount to unstake"
           rightElement={stakedWalletBalance}
           isDerivativeVariant
-          minAmount={minSpendable ?? undefined}
-          maxAmount={maxSpendable ?? undefined}
+          maxAmount={balance instanceof BN ? balance : undefined}
           maxErrorMessage="Not enough stake to redeem"
           // Disable the token click if there's no account connected
           // since it won't be possible to fetch the user's pools

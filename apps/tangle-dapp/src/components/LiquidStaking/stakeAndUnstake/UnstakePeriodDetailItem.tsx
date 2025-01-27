@@ -22,12 +22,9 @@ const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
   const protocol = getLsProtocolDef(protocolId);
 
   const unlockPeriod = ((): UnstakePeriod | null => {
-    const unlockPeriod = new CrossChainTime(
-      protocol.timeUnit,
-      protocol.unstakingPeriod,
-    );
+    // TODO: This is actually in eras, not days. May need conversion.
+    const days = protocol.unstakingPeriod;
 
-    const days = unlockPeriod.toDays();
     const roundedDays = Math.round(days);
 
     return {

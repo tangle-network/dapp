@@ -30,6 +30,7 @@ import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import LstListItem from '../LstListItem';
 import filterBy from '../../../utils/filterBy';
 import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useLsAgnosticBalance from './useLsAgnosticBalance';
 
 const LsStakeCard: FC = () => {
   const lsPools = useLsPools();
@@ -107,12 +108,14 @@ const LsStakeCard: FC = () => {
   const canCallStake =
     isTangleNetwork && executeTanglePoolJoinTx !== null && lsPoolId !== null;
 
+  const balance = useLsAgnosticBalance(true);
+
   const walletBalance = (
     <LsAgnosticBalance
       tooltip="Available Balance"
       onClick={() => {
-        if (maxSpendable !== null) {
-          setFromAmount(maxSpendable);
+        if (balance instanceof BN) {
+          setFromAmount(balance);
         }
       }}
     />
@@ -162,8 +165,7 @@ const LsStakeCard: FC = () => {
         placeholder="Enter amount to stake"
         rightElement={walletBalance}
         setProtocolId={setLsProtocolId}
-        minAmount={minSpendable ?? undefined}
-        maxAmount={maxSpendable ?? undefined}
+        maxAmount={balance instanceof BN ? balance : undefined}
         setNetworkId={tryChangeNetwork}
         showPoolIndicator={false}
       />
