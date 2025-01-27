@@ -7,10 +7,10 @@ import { FC, useCallback, useMemo } from 'react';
 
 import useEvmBalanceWithdrawTx from '../../data/balances/useEvmBalanceWithdrawTx';
 import usePendingEvmBalance from '../../data/balances/usePendingEvmBalance';
-import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
+import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 const WithdrawEvmBalanceAction: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();

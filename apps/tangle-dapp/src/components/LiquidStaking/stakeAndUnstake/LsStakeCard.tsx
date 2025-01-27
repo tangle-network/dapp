@@ -18,7 +18,6 @@ import useLsExchangeRate from '../../../data/liquidStaking/useLsExchangeRate';
 import useAssetAccounts from '../../../data/liquidStaking/useAssetAccounts';
 import useLsPools from '../../../data/liquidStaking/useLsPools';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import DetailsContainer from '../../DetailsContainer';
@@ -30,6 +29,7 @@ import useLsChangeNetwork from './useLsChangeNetwork';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import LstListItem from '../LstListItem';
 import filterBy from '../../../utils/filterBy';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 const LsStakeCard: FC = () => {
   const lsPools = useLsPools();

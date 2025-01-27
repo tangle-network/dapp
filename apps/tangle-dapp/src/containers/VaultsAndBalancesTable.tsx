@@ -40,13 +40,13 @@ import { Link } from 'react-router';
 import StatItem from '../components/StatItem';
 import { HeaderCell } from '../components/tableCells';
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
-import useTangleEvmErc20Balances from '../data/restake/useTangleEvmErc20Balances';
 import useIsAccountConnected from '../hooks/useIsAccountConnected';
 import { PagePath, QueryParamKey } from '../types';
 import sortByBn from '../utils/sortByBn';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
 import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
 import calculateBnRatio from '../utils/calculateBnRatio';
+import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 
 type Row = {
   vaultId: number;

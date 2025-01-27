@@ -17,7 +17,6 @@ import useLsPoolUnbondTx from '../../../data/liquidStaking/tangle/useLsPoolUnbon
 import useLsExchangeRate from '../../../data/liquidStaking/useLsExchangeRate';
 import useLsMyPools from '../../../data/liquidStaking/useLsMyPools';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
@@ -28,6 +27,7 @@ import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import LstListItem from '../LstListItem';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 const LsUnstakeCard: FC = () => {
   const isAccountConnected = useIsAccountConnected();

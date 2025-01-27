@@ -2,9 +2,9 @@ import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeC
 import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
 import { isEvmAddress } from '@webb-tools/webb-ui-components';
 import { useMemo } from 'react';
-import useTangleEvmErc20Balances from './useTangleEvmErc20Balances';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
+import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 
 const useRestakeAsset = (id: RestakeAssetId | null | undefined) => {
   const { vaults, balances } = useRestakeContext();

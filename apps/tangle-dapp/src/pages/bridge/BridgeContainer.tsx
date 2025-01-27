@@ -43,7 +43,6 @@ import { BridgeTokenWithBalance } from '@webb-tools/tangle-shared-ui/types';
 import useBridgeRouterQuote, {
   RouterQuoteParams,
 } from '../../data/bridge/useBridgeRouterQuote';
-import convertDecimalToBn from '../../utils/convertDecimalToBn';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import {
   HyperlaneQuoteProps,
@@ -53,6 +52,7 @@ import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
 import ErrorMessage from '../../components/ErrorMessage';
 import { WalletFillIcon } from '@webb-tools/icons';
 import { AddressType } from '../../constants';
+import convertDecimalToBn from '@webb-tools/tangle-shared-ui/utils/convertDecimalToBn';
 
 interface BridgeContainerProps {
   className?: string;

@@ -12,8 +12,8 @@ import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import { isSolanaAddress } from '@webb-tools/webb-ui-components';
-import fetchErc20TokenBalance from '../../utils/fetchErc20TokenBalance';
-import useViemPublicClient from '../../hooks/useViemPublicClient';
+import fetchErc20TokenBalance from '@webb-tools/tangle-shared-ui/utils/fetchErc20TokenBalance';
+import useViemPublicClient from '@webb-tools/tangle-shared-ui/hooks/useViemPublicClient';
 
 export const useBridgeEvmBalances = (
   sourceChainId: number,

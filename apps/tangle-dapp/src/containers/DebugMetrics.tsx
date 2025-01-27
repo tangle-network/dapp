@@ -7,7 +7,6 @@ import {
 } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
-import useProvider from '@webb-tools/tangle-shared-ui/hooks/useProvider';
 
 import useDebugMetricsStore from '../context/useDebugMetricsStore';
 
@@ -59,8 +58,6 @@ const DebugMetrics: FC = () => {
     (apiRx?.stats?.active.subscriptions ?? 0) +
     subscriptionCount;
 
-  const session = useProvider();
-
   // Manually trigger a re-render every second, since the stats
   // are not automatically updated.
   useEffect(() => {
@@ -98,10 +95,6 @@ const DebugMetrics: FC = () => {
         warnAt={1}
         isApiLoading={isApiLoading}
       />
-
-      <button onClick={() => session.connectSubstrateProvider('test')}>
-        connect
-      </button>
     </>
   );
 

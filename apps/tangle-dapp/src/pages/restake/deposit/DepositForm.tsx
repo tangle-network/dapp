@@ -48,8 +48,8 @@ import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
 import assert from 'assert';
 import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
-import useTangleEvmErc20Balances from '../../../data/restake/useTangleEvmErc20Balances';
 import useRestakeAsset from '../../../data/restake/useRestakeAsset';
+import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,

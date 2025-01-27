@@ -13,7 +13,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { FC, useEffect, useMemo, useState } from 'react';
 import { combineLatest, Subscription } from 'rxjs';
 
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 import EligibleSection from './EligibleSection';
 import NotEligibleSection from './NotEligibleSection';
 import type { ClaimInfoType } from './types';

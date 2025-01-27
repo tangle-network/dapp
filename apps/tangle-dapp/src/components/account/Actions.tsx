@@ -6,19 +6,16 @@ import TransferTxModal from '../../containers/TransferTxModal';
 import useBalances from '../../data/balances/useBalances';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
-
   const { execute: executeVestTx, status: vestTxStatus } = useVestTx();
-
   const activeAccountAddress = useActiveAccountAddress();
-
   const { transferable: transferableBalance } = useBalances();
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 

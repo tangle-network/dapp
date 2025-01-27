@@ -15,8 +15,8 @@ import {
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 import LogoListItem from '../../components/Lists/LogoListItem';
-import { findErc20Token } from '../../data/restake/useTangleEvmErc20Balances';
 import filterBy from '../../utils/filterBy';
+import { findErc20Token } from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;

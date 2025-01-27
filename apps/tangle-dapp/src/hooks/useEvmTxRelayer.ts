@@ -1,6 +1,4 @@
-import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import axios, { AxiosResponse } from 'axios';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useCallback } from 'react';
 import {
   AbiFunction,
@@ -19,6 +17,8 @@ import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import { assertEvmAddress } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
 import useViemWalletClient from './useViemWalletClient';
+import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 
 const PATHNAME = '/api/v1/relay';
 const DEADLINE_MINUTES = 10;

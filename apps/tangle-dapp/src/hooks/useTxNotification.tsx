@@ -5,7 +5,7 @@ import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 
 import { TxName } from '../constants';
-import useAgnosticAccountInfo from './useAgnosticAccountInfo';
+import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 const SUCCESS_TIMEOUT = 10_000;
 

@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
-import useViemPublicClient from './useViemPublicClient';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import { Hex } from 'viem';
-import useAgnosticAccountInfo from './useAgnosticAccountInfo';
+import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useViemPublicClient from '@webb-tools/tangle-shared-ui/hooks/useViemPublicClient';
 
 /**
  * Add a buffer to the gas estimate to ensure the

@@ -7,8 +7,8 @@ import {
 } from '../constants/evmPrecompiles';
 import useEvmAddress20 from './useEvmAddress';
 import { AbiCall } from './useEvmPrecompileCall';
-import useViemPublicClient from './useViemPublicClient';
 import { AbiFunction } from 'viem';
+import useViemPublicClient from '@webb-tools/tangle-shared-ui/hooks/useViemPublicClient';
 
 export type QueryStatus = 'idle' | 'loading' | 'success' | 'error';
 

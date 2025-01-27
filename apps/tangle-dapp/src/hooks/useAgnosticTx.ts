@@ -4,8 +4,6 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { TxName } from '../constants';
 import { GetSuccessMessageFn } from '../types';
-import useActiveAccountAddress from './useActiveAccountAddress';
-import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useEvmPrecompileCall, {
   AbiCall,
   EvmTxFactory,
@@ -17,6 +15,8 @@ import {
   ExtractAbiFunctionNames,
   PrecompileAddress,
 } from '../constants/evmPrecompiles';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 export type AgnosticTxOptions<
   Abi extends AbiFunction[],

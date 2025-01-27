@@ -13,7 +13,7 @@ import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubst
 import { Hash } from 'viem';
 import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import { TxName } from '../../constants';
-import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
+import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 const useRestakeApi = () => {
   const { apiPromise } = usePolkadotApi();

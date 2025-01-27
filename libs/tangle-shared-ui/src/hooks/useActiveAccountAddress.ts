@@ -1,5 +1,4 @@
 import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   isEvmAddress,
   isSubstrateAddress,
@@ -10,6 +9,7 @@ import {
   SubstrateAddress,
 } from '@webb-tools/webb-ui-components/types/address';
 import assert from 'assert';
+import useNetworkStore from '../context/useNetworkStore';
 
 const useActiveAccountAddress = (): SubstrateAddress | EvmAddress | null => {
   const { network } = useNetworkStore();

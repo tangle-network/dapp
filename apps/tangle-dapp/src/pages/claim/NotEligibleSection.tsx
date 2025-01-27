@@ -3,7 +3,7 @@ import { Button } from '@webb-tools/webb-ui-components';
 import type { FC } from 'react';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 const NotEligibleSection: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();

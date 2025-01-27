@@ -1,8 +1,7 @@
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import createTangleViemChainFromNetwork from '@webb-tools/tangle-shared-ui/utils/createTangleViemChainFromNetwork';
 import { useEffect, useState } from 'react';
 import { createWalletClient, http, WalletClient } from 'viem';
-
-import createTangleViemChainFromNetwork from '../utils/evm/createTangleViemChainFromNetwork';
 
 const useViemWalletClient = () => {
   const [walletClient, setWalletClient] = useState<WalletClient | null>(null);

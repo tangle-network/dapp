@@ -27,11 +27,11 @@ import { FC, useMemo } from 'react';
 import TableCell from '../../components/restaking/TableCell';
 import useRestakeConsts from '../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../data/restake/useRestakeCurrentRound';
-import { findErc20Token } from '../../data/restake/useTangleEvmErc20Balances';
 import useSessionDurationMs from '../../data/useSessionDurationMs';
 import { calculateTimeRemaining } from '../../pages/restake/utils';
 import formatSessionDistance from '../../utils/formatSessionDistance';
 import WithdrawRequestTableActions from './WithdrawRequestTableActions';
+import { findErc20Token } from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 
 export type WithdrawRequestTableRow = {
   amount: string;

@@ -1,13 +1,13 @@
 import { BN } from '@polkadot/util';
 import { assertEvmAddress } from '@webb-tools/webb-ui-components';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
-import fetchErc20TokenBalance from '../../utils/fetchErc20TokenBalance';
-import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import { useCallback, useEffect, useState } from 'react';
-import ERC20_ABI from '../../abi/erc20';
 import { Decimal } from 'decimal.js';
-import useViemPublicClient from '../../hooks/useViemPublicClient';
-import convertDecimalToBN from '../../utils/convertDecimalToBn';
+import useViemPublicClient from './useViemPublicClient';
+import useAgnosticAccountInfo from './useAgnosticAccountInfo';
+import fetchErc20TokenBalance from '../utils/fetchErc20TokenBalance';
+import { erc20Abi } from 'viem';
+import convertDecimalToBN from '../utils/convertDecimalToBn';
 
 type Erc20Token = {
   contractAddress: EvmAddress;
@@ -20,10 +20,10 @@ export type Erc20Balance = Erc20Token & {
   balance: BN;
 };
 
-// TODO: Query from EVM instead of being hard-coded. Waiting for bridge to be implemented in order to do that.
+// TODO: Waiting for bridge PR to be implemented in order to list ERC-20 assets here instead of these dummies.
 export const ERC20_TEST_TOKENS: Erc20Token[] = [
   {
-    name: "Yuri's Local ERC-2 Dummy",
+    name: 'Local ERC-20 Dummy',
     symbol: 'USDC',
     decimals: 18,
     contractAddress: assertEvmAddress(
@@ -64,7 +64,7 @@ const useTangleEvmErc20Balances = (): Erc20Balance[] | null => {
         viemPublicClient,
         evmAddress,
         token.contractAddress,
-        ERC20_ABI,
+        erc20Abi,
         token.decimals,
       );
     },
