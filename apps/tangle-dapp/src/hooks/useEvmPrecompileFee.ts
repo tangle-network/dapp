@@ -6,7 +6,7 @@ import {
   PrecompileAddress,
 } from '../constants/evmPrecompiles';
 import useEvmAddress20 from './useEvmAddress';
-import { AbiCall } from './useEvmPrecompileAbiCall';
+import { AbiCall } from './useEvmPrecompileCall';
 import useViemPublicClient from './useViemPublicClient';
 import { AbiFunction } from 'viem';
 

@@ -54,7 +54,7 @@ export type EvmTxFactory<
  * This is used for performing actions from EVM accounts. Substrate accounts
  * should use `useSubstrateTx` for transactions instead, or `useApiRx` for queries.
  */
-function useEvmPrecompileAbiCall<
+function useEvmPrecompileCall<
   Abi extends AbiFunction[],
   FunctionName extends ExtractAbiFunctionNames<Abi>,
   Context = void,
@@ -170,4 +170,4 @@ function useEvmPrecompileAbiCall<
   };
 }
 
-export default useEvmPrecompileAbiCall;
+export default useEvmPrecompileCall;

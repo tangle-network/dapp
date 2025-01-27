@@ -172,6 +172,7 @@ const useProvider = () => {
 
   const isConnected = activeAccount !== null;
 
+  // TODO: Debugging.
   useEffect(() => {
     console.debug('IS CONNECTING', isConnecting);
     console.debug('ACCOUNT', activeAccount);

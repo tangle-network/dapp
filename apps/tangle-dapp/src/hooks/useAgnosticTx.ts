@@ -6,10 +6,10 @@ import { TxName } from '../constants';
 import { GetSuccessMessageFn } from '../types';
 import useActiveAccountAddress from './useActiveAccountAddress';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
-import useEvmPrecompileAbiCall, {
+import useEvmPrecompileCall, {
   AbiCall,
   EvmTxFactory,
-} from './useEvmPrecompileAbiCall';
+} from './useEvmPrecompileCall';
 import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
 import useTxNotification from './useTxNotification';
 import { AbiFunction } from 'viem';
@@ -94,7 +94,7 @@ function useAgnosticTx<
     reset: evmReset,
     txHash: evmTxHash,
     successMessage: evmSuccessMessage,
-  } = useEvmPrecompileAbiCall(abi, precompileAddress, evmTxFactory);
+  } = useEvmPrecompileCall(abi, precompileAddress, evmTxFactory);
 
   const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 

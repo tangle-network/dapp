@@ -13,7 +13,7 @@ import { useCallback } from 'react';
 import { TxName } from '../../constants';
 import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
-import { AbiCall, EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
+import { AbiCall, EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
 import useEvmPrecompileFeeFetcher from '../../hooks/useEvmPrecompileFee';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';

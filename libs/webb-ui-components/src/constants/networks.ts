@@ -44,6 +44,7 @@ export type Network = {
   nativeExplorerUrl?: string;
   evmExplorerUrl?: string;
   avatar?: string;
+  evmTxRelayerEndpoint?: string;
 
   /**
    * The Web Socket RPC endpoint of the network.
@@ -108,6 +109,7 @@ export const TANGLE_LOCAL_DEV_NETWORK = {
   httpRpcEndpoint: TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
   polkadotJsDashboardUrl: TANGLE_LOCAL_POLKADOT_JS_DASHBOARD_URL,
   ss58Prefix: 42,
+  evmTxRelayerEndpoint: 'http://localhost:4500',
 } as const satisfies Network;
 
 export const TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK = {

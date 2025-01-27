@@ -9,7 +9,7 @@ import REWARDS_PRECOMPILE_ABI from '../../abi/rewards';
 import { TxName } from '../../constants';
 import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
-import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
+import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';

@@ -7,10 +7,7 @@ import { useCallback } from 'react';
 import { TxName } from '../../constants';
 import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
-import {
-  AbiBatchCall,
-  EvmTxFactory,
-} from '../../hooks/useEvmPrecompileAbiCall';
+import { AbiBatchCall, EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
