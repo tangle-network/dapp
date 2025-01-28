@@ -597,11 +597,7 @@ const ConfirmationItem: FC<{
             rel="noreferrer"
             className="flex items-center gap-1"
           >
-            <Typography
-              variant="h5"
-              fw="bold"
-              className="whitespace-nowrap"
-            >
+            <Typography variant="h5" fw="bold" className="whitespace-nowrap">
               {isSolanaAddress(accAddress)
                 ? shortenString(accAddress, 10)
                 : shortenHex(accAddress, 10)}

@@ -142,7 +142,7 @@ export const KeyValueWithButton = forwardRef<
                   : onCopy
               }
             >
-              <FileCopyLine className={size === 'md' ? '!fill-current' : ''}  />
+              <FileCopyLine className={size === 'md' ? '!fill-current' : ''} />
             </TooltipTrigger>
             <TooltipBody>{isCopied ? 'Copied' : 'Copy'}</TooltipBody>
           </Tooltip>

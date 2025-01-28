@@ -68,11 +68,7 @@ export const FeeDetail = ({
                 className={cx(`shrink-0 ${getFlexBasic('lg')}`)}
               />
 
-              <Typography
-                variant="h4"
-                fw="bold"
-                className="whitespace-nowrap"
-              >
+              <Typography variant="h4" fw="bold" className="whitespace-nowrap">
                 {amounts.receiving.split('.')[0]}
                 {amounts.receiving.split('.')[1]
                   ? `.${amounts.receiving.split('.')[1].slice(0, 4)}`
