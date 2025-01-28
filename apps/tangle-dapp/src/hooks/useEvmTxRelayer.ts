@@ -26,7 +26,7 @@ import RESTAKING_PRECOMPILE_ABI from '../abi/restaking';
 import useEvmGasEstimate from './useEvmGasEstimate';
 
 const PATHNAME = '/api/v1/relay';
-const DEADLINE_MINUTES = 10;
+const DEADLINE_MINUTES = 30;
 const MAX_GAS_LIMIT = 60_000;
 
 const ALLOWED_CALLS: Partial<Record<PrecompileAddress, string[]>> = {
@@ -164,7 +164,7 @@ const useEvmTxRelayer = () => {
         name: 'TangleEvmTxRelayer',
         version: '1',
         chainId: network.evmChainId,
-        verifyingContract: destination,
+        verifyingContract: PrecompileAddress.CALL_PERMIT,
       };
 
       const message = {
@@ -172,7 +172,7 @@ const useEvmTxRelayer = () => {
         from: evmAddress,
         to: destination,
         value: 0,
-        // TODO: Nonce.
+        // TODO: Nonce: await callPermit.read.nonces([FROM.address]).
         nonce: 0,
         // For signing, the deadline should be in decimal form, not hex.
         deadline: deadlineSeconds,
@@ -211,7 +211,7 @@ const useEvmTxRelayer = () => {
       );
 
       const currentTimeSeconds = Math.floor(Date.now() / 1000);
-      const deadlineSeconds = currentTimeSeconds + DEADLINE_MINUTES * 10;
+      const deadlineSeconds = currentTimeSeconds + DEADLINE_MINUTES * 60;
       const deadline = `0x${deadlineSeconds.toString(16)}` as const;
       const destination = assertEvmAddress(precompileAddress);
 
