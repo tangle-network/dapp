@@ -1,22 +1,13 @@
-import {
-  CoinsLineIcon,
-  CoinsStackedLineIcon,
-  GiftLineIcon,
-  LockUnlockLineIcon,
-  SendPlanLineIcon,
-} from '@webb-tools/icons';
+import { LockUnlockLineIcon, SendPlanLineIcon } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { FC, useState } from 'react';
 
-import TransferTxContainer from '../../containers/TransferTxContainer/TransferTxContainer';
+import TransferTxModal from '../../containers/TransferTxModal';
 import useBalances from '../../data/balances/useBalances';
-import useAirdropEligibility from '../../data/claims/useAirdropEligibility';
-import usePayoutsAvailability from '../../data/payouts/usePayoutsAvailability';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useVestTx from '../../data/vesting/useVestTx';
 import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import { PagePath, StaticSearchQueryPath } from '../../types';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
@@ -25,9 +16,7 @@ const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();
 
   const { execute: executeVestTx, status: vestTxStatus } = useVestTx();
-  const { isEligible: isAirdropEligible } = useAirdropEligibility();
 
-  const isPayoutsAvailable = usePayoutsAvailability();
   const activeAccountAddress = useActiveAccountAddress();
 
   const { transferable: transferableBalance } = useBalances();
@@ -45,9 +34,8 @@ const Actions: FC = () => {
       : null;
 
   return (
-    <div className="flex items-center justify-start gap-6 overflow-x-auto">
+    <div className="flex items-center justify-start gap-2 overflow-x-auto">
       <ActionItem
-        label="Send"
         Icon={SendPlanLineIcon}
         onClick={() => setIsTransferModalOpen(true)}
         // Disable while no account is connected, or when the active
@@ -57,44 +45,13 @@ const Actions: FC = () => {
           transferableBalance === null ||
           transferableBalance.isZero()
         }
+        tooltip={`Send ${nativeTokenSymbol}`}
       />
-
-      <ActionItem
-        label="Nominate"
-        internalHref={StaticSearchQueryPath.NominationsTable}
-        Icon={CoinsStackedLineIcon}
-      />
-
-      {isPayoutsAvailable && (
-        <ActionItem
-          hasNotificationDot
-          label="Payouts"
-          Icon={CoinsLineIcon}
-          internalHref={StaticSearchQueryPath.PayoutsTable}
-          tooltip="There are nomination payouts available to claim. Click here to visit the Payouts page."
-        />
-      )}
-
-      {isAirdropEligible && (
-        <ActionItem
-          label="Claim Airdrop"
-          hasNotificationDot
-          Icon={GiftLineIcon}
-          internalHref={PagePath.CLAIM_AIRDROP}
-          tooltip={
-            <>
-              Congratulations, you are eligible for the Tangle Network airdrop!
-              Click here to visit the <strong>Claim Airdrop</strong> page.
-            </>
-          }
-        />
-      )}
 
       {/* This is a special case, so hide it for most users if they're not vesting */}
       {isVesting && (
         <ActionItem
           Icon={LockUnlockLineIcon}
-          label="Vest"
           onClick={executeVestTx !== null ? executeVestTx : undefined}
           hasNotificationDot={hasClaimableVestingTokens}
           isDisabled={
@@ -121,7 +78,7 @@ const Actions: FC = () => {
 
       <WithdrawEvmBalanceAction />
 
-      <TransferTxContainer
+      <TransferTxModal
         isModalOpen={isTransferModalOpen}
         setIsModalOpen={setIsTransferModalOpen}
       />

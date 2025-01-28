@@ -6,13 +6,14 @@ import {
   SubstrateAddress,
 } from '@webb-tools/webb-ui-components/types/address';
 
+import { u128 } from '@polkadot/types';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
 } from '@webb-tools/evm-contract-metadata';
-import { Abi } from 'viem';
 import { Decimal } from 'decimal.js';
+import { Abi } from 'viem';
 
 export type TangleTokenSymbol = 'tTNT' | 'TNT';
 
@@ -37,8 +38,8 @@ export const ExplorerType = {
 } as const;
 
 export type BasicAccountInfo = {
-  address: string;
-  identityName: string;
+  address: SubstrateAddress;
+  identityName?: string;
 };
 
 export interface Nominee extends BasicAccountInfo {
@@ -55,9 +56,9 @@ export type VaultToken = {
   amount: number | string;
 };
 
-export type OperatorData = {
-  address: string;
-  identityName: string;
+export type RestakeOperator = {
+  address: SubstrateAddress;
+  identityName?: string;
   restakersCount: number;
   concentrationPercentage: number | null;
   tvlInUsd: number | null;
@@ -67,8 +68,7 @@ export type OperatorData = {
 // Bridge
 export enum BridgeTxState {
   Pending = 'Pending',
-  Sending = 'Sending',
-  Executed = 'Executed',
+  Completed = 'Completed',
   Failed = 'Failed',
 }
 
@@ -120,3 +120,7 @@ export type BridgeTokenWithBalance = BridgeToken & {
 export type BridgeChainBalances = Partial<
   Record<PresetTypedChainId, BridgeTokenWithBalance[]>
 >;
+
+export type RestakeAssetId = `${bigint}` | EvmAddress;
+
+export type TangleAssetId = { Custom: u128 } | { Erc20: EvmAddress };

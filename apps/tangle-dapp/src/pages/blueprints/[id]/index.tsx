@@ -6,14 +6,9 @@ import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLo
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { FC } from 'react';
 import { useParams } from 'react-router';
-import {
-  RestakeOperatorWrapper,
-  ViewOperatorWrapper,
-} from '../../../components/tables/RestakeActionWrappers';
 
 const BlueprintDetailsPage: FC = () => {
   const { id = '' } = useParams();
-
   const { result, isLoading, error } = useBlueprintDetails(id);
 
   if (isLoading) {
@@ -28,13 +23,9 @@ const BlueprintDetailsPage: FC = () => {
         <SkeletonLoader className="min-h-52" />
       </div>
     );
-  }
-
-  if (error) {
+  } else if (error !== null) {
     return <ErrorFallback title={error.name} />;
-  }
-
-  if (result === null) {
+  } else if (result === null) {
     // TODO: Should redirect to the 404 page
     return null;
   }
@@ -48,11 +39,7 @@ const BlueprintDetailsPage: FC = () => {
           Operators running {result.details.name}
         </Typography>
 
-        <OperatorsTable
-          ViewOperatorWrapper={ViewOperatorWrapper}
-          RestakeOperatorWrapper={RestakeOperatorWrapper}
-          data={result.operators}
-        />
+        <OperatorsTable data={result.operators} />
       </div>
     </div>
   );

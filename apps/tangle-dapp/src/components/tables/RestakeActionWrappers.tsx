@@ -1,17 +1,16 @@
-import { PropsWithChildren } from 'react';
-import { Link } from 'react-router';
-import { PagePath } from '../../types';
+import { FC, PropsWithChildren } from 'react';
+import { Link, LinkProps } from 'react-router';
+import { PagePath, QueryParamKey } from '../../types';
 
-export const ViewOperatorWrapper = ({
-  children,
-  address,
-}: PropsWithChildren<{ address: string }>) => {
-  return <Link to={`${PagePath.RESTAKE_OPERATOR}/${address}`}>{children}</Link>;
-};
-
-export const RestakeOperatorWrapper = ({
-  children,
-  address,
-}: PropsWithChildren<{ address: string }>) => {
-  return <Link to={`${PagePath.RESTAKE_OPERATOR}/${address}`}>{children}</Link>;
+export const RestakeOperatorWrapper: FC<
+  PropsWithChildren<Omit<LinkProps, 'to'> & { address: string }>
+> = ({ children, address, ...props }) => {
+  return (
+    <Link
+      to={`${PagePath.RESTAKE_DELEGATE}?${QueryParamKey.RESTAKE_OPERATOR}=${address}`}
+      {...props}
+    >
+      {children}
+    </Link>
+  );
 };

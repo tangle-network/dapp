@@ -11,15 +11,16 @@ import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenStrin
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { Precompile } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { AbiCall, EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import useEvmPrecompileFeeFetcher from '../../hooks/useEvmPrecompileFee';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { GetSuccessMessageFunction } from '../../types';
+import { GetSuccessMessageFn } from '../../types';
+import BALANCES_ERC20_PRECOMPILE_ABI from '../../abi/balancesErc20';
 
-type TransferTxContext = {
+type Context = {
   recipientAddress: SubstrateAddress | EvmAddress;
   amount: BN;
   maxAmount: BN;
@@ -30,16 +31,20 @@ const useTransferTx = () => {
   const formatNativeTokenAmount = useFormatNativeTokenAmount();
 
   const evmTxFactory: EvmTxFactory<
-    Precompile.BALANCES_ERC20,
-    TransferTxContext
+    typeof BALANCES_ERC20_PRECOMPILE_ABI,
+    'transfer',
+    Context
   > = useCallback(
     async ({ recipientAddress, amount, maxAmount }) => {
       const isMaxAmount = amount.eq(maxAmount);
       const recipientEvmAddress20 = toEvmAddress(recipientAddress);
 
-      const sharedAbiCallData: AbiCall<Precompile.BALANCES_ERC20> = {
+      const sharedAbiCallData: AbiCall<
+        typeof BALANCES_ERC20_PRECOMPILE_ABI,
+        'transfer'
+      > = {
         functionName: 'transfer',
-        arguments: [recipientEvmAddress20, amount],
+        arguments: [recipientEvmAddress20, BigInt(amount.toString())],
       };
 
       // If the amount to transfer is not the maximum amount
@@ -51,7 +56,8 @@ const useTransferTx = () => {
       // Otherwise, fetch the fees for the transfer and subtract them from
       // the maximum amount to get the actual amount to transfer.
       const fees = await fetchEvmPrecompileFees(
-        Precompile.BALANCES_ERC20,
+        BALANCES_ERC20_PRECOMPILE_ABI,
+        PrecompileAddress.BALANCES_ERC20,
         sharedAbiCallData,
       );
 
@@ -66,17 +72,17 @@ const useTransferTx = () => {
       }
 
       const txFee = new BN((gas * maxFeePerGas).toString());
-      const formattedAmount = amount.sub(txFee);
+      const amountMinusFee = amount.sub(txFee);
 
       return {
         ...sharedAbiCallData,
-        arguments: [recipientEvmAddress20, formattedAmount],
+        arguments: [recipientEvmAddress20, BigInt(amountMinusFee.toString())],
       };
     },
     [fetchEvmPrecompileFees],
   );
 
-  const substrateTxFactory: SubstrateTxFactory<TransferTxContext> = useCallback(
+  const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     async (
       api,
       _activeSubstrateAddress,
@@ -102,21 +108,21 @@ const useTransferTx = () => {
     [],
   );
 
-  const getSuccessMessageFnc: GetSuccessMessageFunction<TransferTxContext> =
-    useCallback(
-      ({ recipientAddress: receiverAddress, amount }) =>
-        `Successfully transferred ${formatNativeTokenAmount(
-          amount,
-        )} to ${shortenString(receiverAddress)}.`,
-      [formatNativeTokenAmount],
-    );
+  const getSuccessMessage: GetSuccessMessageFn<Context> = useCallback(
+    ({ recipientAddress: receiverAddress, amount }) =>
+      `Successfully transferred ${formatNativeTokenAmount(
+        amount,
+      )} to ${shortenString(receiverAddress)}.`,
+    [formatNativeTokenAmount],
+  );
 
-  return useAgnosticTx<Precompile.BALANCES_ERC20, TransferTxContext>({
+  return useAgnosticTx({
     name: TxName.TRANSFER,
-    precompile: Precompile.BALANCES_ERC20,
+    abi: BALANCES_ERC20_PRECOMPILE_ABI,
+    precompileAddress: PrecompileAddress.BALANCES_ERC20,
     evmTxFactory,
     substrateTxFactory,
-    getSuccessMessageFnc,
+    getSuccessMessage,
   });
 };
 

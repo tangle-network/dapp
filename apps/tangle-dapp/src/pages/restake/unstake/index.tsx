@@ -1,5 +1,4 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
-import { TxEvent } from '@webb-tools/abstract-api-provider';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
@@ -19,35 +18,33 @@ import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { formatUnits, parseUnits } from 'viem';
+import { formatUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
-import { type ScheduleDelegatorUnstakeContext } from '../../../data/restake/RestakeTx/base';
-import useRestakeTx from '../../../data/restake/useRestakeTx';
-import type { Props } from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
-import useRestakeTxEventHandlersWithNoti from '../../../data/restake/useRestakeTxEventHandlersWithNoti';
-import ViewTxOnExplorer from '../../../data/restake/ViewTxOnExplorer';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import type { UnstakeFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
-import ActionButtonBase from '../ActionButtonBase';
+import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
 import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
-import SelectOperatorModal from './SelectOperatorModal';
-import TxInfo from './TxInfo';
-import UnstakeRequestTable from './UnstakeRequestTable';
+import SelectOperatorModal from '../../../containers/restaking/SelectOperatorModal';
+import Details from './Details';
+import UnstakeRequestTable from '../../../containers/restaking/UnstakeRequestTable';
+import parseChainUnits from '../../../utils/parseChainUnits';
+import { BN } from '@polkadot/util';
+import useRestakeApi from '../../../data/restake/useRestakeApi';
 
-const RestakeUnstakePage = () => {
+const RestakeUnstakeForm: FC = () => {
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
     useState(false);
 
@@ -66,7 +63,7 @@ const RestakeUnstakePage = () => {
 
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
-  const { assetMap } = useRestakeContext();
+  const { vaults } = useRestakeContext();
 
   const {
     status: isOperatorModalOpen,
@@ -116,12 +113,12 @@ const RestakeUnstakePage = () => {
   }, [delegatorInfo?.unstakeRequests]);
 
   const selectedAsset = useMemo(() => {
-    if (!selectedAssetId || !assetMap[selectedAssetId]) {
+    if (!selectedAssetId || !vaults[selectedAssetId]) {
       return null;
     }
 
-    return assetMap[selectedAssetId];
-  }, [assetMap, selectedAssetId]);
+    return vaults[selectedAssetId];
+  }, [vaults, selectedAssetId]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
     if (!Array.isArray(delegatorInfo?.delegations)) {
@@ -134,14 +131,14 @@ const RestakeUnstakePage = () => {
         item.operatorAccountId === selectedOperatorAccountId,
     );
 
-    if (!selectedDelegation || !assetMap[selectedDelegation.assetId]) {
+    if (!selectedDelegation || !vaults[selectedDelegation.assetId]) {
       return {};
     }
 
     const maxAmount = selectedDelegation.amountBonded;
 
     const formattedMaxAmount = Number(
-      formatUnits(maxAmount, assetMap[selectedDelegation.assetId].decimals),
+      formatUnits(maxAmount, vaults[selectedDelegation.assetId].decimals),
     );
 
     return {
@@ -150,7 +147,7 @@ const RestakeUnstakePage = () => {
     };
   }, [
     delegatorInfo?.delegations,
-    assetMap,
+    vaults,
     selectedAssetId,
     selectedOperatorAccountId,
   ]);
@@ -175,7 +172,7 @@ const RestakeUnstakePage = () => {
     };
   }, [maxAmount, register, selectedAsset?.decimals, selectedAsset?.symbol]);
 
-  const displayError = useMemo(() => {
+  const displayError = (() => {
     return errors.operatorAccountId !== undefined || !selectedOperatorAccountId
       ? 'Select an operator'
       : errors.assetId !== undefined || !selectedAssetId
@@ -185,63 +182,28 @@ const RestakeUnstakePage = () => {
           : errors.amount !== undefined
             ? 'Invalid amount'
             : undefined;
-  }, [
-    errors.operatorAccountId,
-    errors.assetId,
-    errors.amount,
-    selectedOperatorAccountId,
-    selectedAssetId,
-    amount,
-  ]);
+  })();
 
-  const options = useMemo<Props<ScheduleDelegatorUnstakeContext>>(() => {
-    return {
-      options: {
-        [TxEvent.SUCCESS]: {
-          secondaryMessage: (
-            { amount, assetId, operatorAccount },
-            explorerUrl,
-          ) => (
-            <ViewTxOnExplorer url={explorerUrl}>
-              Successfully scheduled unstake of{' '}
-              {formatUnits(amount, assetMap[assetId].decimals)}{' '}
-              {assetMap[assetId].symbol} from{' '}
-              <AvatarWithText
-                className="inline-flex"
-                accountAddress={operatorAccount}
-                identityName={operatorIdentities?.[operatorAccount]?.name}
-                overrideAvatarProps={{ size: 'sm' }}
-              />
-            </ViewTxOnExplorer>
-          ),
-        },
-      },
-      onTxSuccess: () => reset(),
-    };
-  }, [assetMap, operatorIdentities, reset]);
+  const restakeApi = useRestakeApi();
 
-  const { scheduleDelegatorUnstake: scheduleDelegatorBondLess } =
-    useRestakeTx();
-
-  const txEventHandlers = useRestakeTxEventHandlersWithNoti(options);
+  const isReady = restakeApi !== null && !isSubmitting;
 
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
-    async (data) => {
-      const { amount, assetId, operatorAccountId } = data;
-      if (!assetId || !isDefined(assetMap[assetId])) {
+    async ({ amount, assetId, operatorAccountId }) => {
+      if (!assetId || !isDefined(vaults[assetId]) || !isReady) {
         return;
       }
 
-      const asset = assetMap[assetId];
+      const assetMetadata = vaults[assetId];
+      const amountBn = parseChainUnits(amount, assetMetadata.decimals);
 
-      await scheduleDelegatorBondLess(
-        operatorAccountId,
-        assetId,
-        parseUnits(amount, asset.decimals),
-        txEventHandlers,
-      );
+      if (!(amountBn instanceof BN)) {
+        return;
+      }
+
+      await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
     },
-    [assetMap, scheduleDelegatorBondLess, txEventHandlers],
+    [vaults, isReady, restakeApi],
   );
 
   return (
@@ -309,7 +271,7 @@ const RestakeUnstakePage = () => {
               <ErrorMessage>{errors.amount?.message}</ErrorMessage>
             </div>
 
-            <TxInfo />
+            <Details />
 
             <ActionButtonBase>
               {(isLoading, loadingText) => {
@@ -335,7 +297,7 @@ const RestakeUnstakePage = () => {
 
                 return (
                   <Button
-                    isDisabled={!isValid || isDefined(displayError)}
+                    isDisabled={!isValid || isDefined(displayError) || !isReady}
                     type="submit"
                     isFullWidth
                     isLoading={isSubmitting || isLoading}
@@ -428,4 +390,4 @@ const RestakeUnstakePage = () => {
   );
 };
 
-export default RestakeUnstakePage;
+export default RestakeUnstakeForm;

@@ -8,8 +8,8 @@ import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
 import { z } from 'zod';
 
-import HyperlaneWarpContext from '../pages/bridge/context/HyperlaneWarpContext';
-import BridgeTxQueueProvider from '../pages/bridge/context/BridgeTxQueueContext/BridgeTxQueueProvider';
+import HyperlaneWarpContext from '../context/bridge/HyperlaneWarpContext';
+import BridgeTxQueueProvider from '../context/bridge/BridgeTxQueueContext/BridgeTxQueueProvider';
 import PolkadotApiProvider from '@webb-tools/tangle-shared-ui/context/PolkadotApiProvider';
 import { RestakeContextProvider } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 

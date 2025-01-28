@@ -9,10 +9,10 @@ import useNetworkStore from '../../context/useNetworkStore';
 import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
 import useRestakeTVL from '../../data/restake/useRestakeTVL';
 import useApiRx from '../../hooks/useApiRx';
-import { OperatorData } from '../../types';
+import { RestakeOperator } from '../../types';
 import type { Blueprint } from '../../types/blueprint';
 import { TangleError, TangleErrorCode } from '../../types/error';
-import type { RestakeVaultAssetMap, OperatorMap } from '../../types/restake';
+import type { RestakeVaultMap, OperatorMap } from '../../types/restake';
 import {
   getAccountInfo,
   getMultipleAccountInfo,
@@ -20,12 +20,12 @@ import {
 import delegationsToVaultTokens from '../../utils/restake/delegationsToVaultTokens';
 import { extractOperatorData } from '../blueprints/utils/blueprintHelpers';
 import { toPrimitiveBlueprint } from '../blueprints/utils/toPrimitiveBlueprint';
-import useRestakeVaultAssets from './useRestakeVaultAssets';
+import useRestakeVaults from './useRestakeVaults';
 import useRestakeOperatorMap from './useRestakeOperatorMap';
 
 export default function useBlueprintDetails(id?: string) {
   const { rpcEndpoint } = useNetworkStore();
-  const { vaultAssets: assetMap } = useRestakeVaultAssets();
+  const { vaults } = useRestakeVaults();
 
   const { operatorMap } = useRestakeOperatorMap();
   const { delegatorInfo } = useRestakeDelegatorInfo();
@@ -101,7 +101,7 @@ export default function useBlueprintDetails(id?: string) {
               operatorsSet !== undefined
                 ? await getBlueprintOperators(
                     rpcEndpoint,
-                    assetMap,
+                    vaults,
                     operatorsSet,
                     operatorMap,
                     operatorTVL,
@@ -117,14 +117,14 @@ export default function useBlueprintDetails(id?: string) {
         );
       },
       // prettier-ignore
-      [assetMap, id, operatorConcentration, operatorMap, operatorTVL, rpcEndpoint],
+      [vaults, id, operatorConcentration, operatorMap, operatorTVL, rpcEndpoint],
     ),
   );
 }
 
 async function getBlueprintOperators(
   rpcEndpoint: string,
-  assetMap: RestakeVaultAssetMap,
+  assetMap: RestakeVaultMap,
   operatorAccountSet: Set<SubstrateAddress>,
   operatorMap: OperatorMap,
   operatorTVL: Record<string, number>,
@@ -145,11 +145,11 @@ async function getBlueprintOperators(
 
     return {
       address,
-      identityName: info?.name ?? 'Unknown',
+      identityName: info?.name ?? undefined,
       concentrationPercentage,
       restakersCount: operatorMap[address]?.restakersCount,
       tvlInUsd,
       vaultTokens: delegationsToVaultTokens(delegations, assetMap),
-    } satisfies OperatorData;
+    } satisfies RestakeOperator;
   });
 }

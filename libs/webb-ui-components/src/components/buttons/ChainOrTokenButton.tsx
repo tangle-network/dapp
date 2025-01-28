@@ -86,7 +86,7 @@ const ChainOrTokenButton = forwardRef<
           {!disabled && showChevron && (
             <ChevronDown
               size="lg"
-              className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
+              className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')} ml-1`)}
             />
           )}
         </div>

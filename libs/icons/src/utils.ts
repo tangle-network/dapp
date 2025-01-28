@@ -59,11 +59,11 @@ export function getFlexBasic(size: IconSize = 'md') {
     }
 
     case 'lg': {
-      return 'basis-8' as const;
+      return 'basis-6' as const;
     }
 
     case 'md': {
-      return 'basis-6' as const;
+      return 'basis-4' as const;
     }
 
     default: {
@@ -79,15 +79,15 @@ export function getMinSizeClassName(size: IconSize) {
     }
 
     case 'lg': {
-      return 'min-w-8 min-h-8' as const;
+      return 'min-w-6 min-h-6' as const;
     }
 
     case 'xl': {
-      return 'min-w-12 min-h-12' as const;
+      return 'min-w-10 min-h-10' as const;
     }
 
     case '2xl': {
-      return 'min-w-24 min-h-24' as const;
+      return 'min-w-12 min-h-12' as const;
     }
 
     default: {

@@ -6,7 +6,6 @@ import { twMerge } from 'tailwind-merge';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import { LsNetworkId, LsToken } from '../../../constants/liquidStaking/types';
-import { ERROR_NOT_ENOUGH_BALANCE } from '../../../containers/ManageProfileModalContainer/constants';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useInputAmount from '../../../hooks/useInputAmount';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
@@ -14,6 +13,7 @@ import ErrorMessage from '../../ErrorMessage';
 import LsNetworkSwitcher from './LsNetworkSwitcher';
 import LsTokenChip from './LsTokenChip';
 import SelectedPoolIndicator from './SelectedPoolIndicator';
+import { ERROR_NOT_ENOUGH_BALANCE } from '../../../constants';
 
 export type LsInputProps = {
   id: string;

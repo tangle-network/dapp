@@ -13,7 +13,7 @@ const CLASS_NAMES: ChipClassNames = {
   },
   purple: {
     active:
-      'bg-purple-10 text-purple-90 dark:bg-purple-120 dark:text-purple-50',
+      'bg-purple-10 text-purple-100 dark:bg-purple-20 dark:text-purple-100',
     disabled:
       'bg-purple-10 text-purple-40 dark:bg-purple-120 dark:text-purple-90',
     selected: 'border-solid border-2 border-purple-90 dark:border-purple-50',

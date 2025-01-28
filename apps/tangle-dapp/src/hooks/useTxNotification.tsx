@@ -40,6 +40,15 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.LS_TANGLE_POOL_CREATE]: 'Created liquid staking pool',
   [TxName.LS_TANGLE_POOL_UPDATE_ROLES]: 'Updated pool roles',
   [TxName.RESTAKE_JOIN_OPERATORS]: 'Joined as an operator',
+  [TxName.RESTAKE_DEPOSIT]: 'Deposited tokens',
+  [TxName.RESTAKE_DELEGATE]: 'Delegated tokens',
+  [TxName.RESTAKE_UNSTAKE]: 'Scheduled unstake request',
+  [TxName.RESTAKE_WITHDRAW]: 'Withdrawal scheduled',
+  [TxName.RESTAKE_CANCEL_UNSTAKE]: 'Unstake request(s) cancelled',
+  [TxName.RESTAKE_EXECUTE_UNSTAKE]: 'Unstake request executed',
+  [TxName.RESTAKE_EXECUTE_WITHDRAW]: 'Withdraw request executed',
+  [TxName.RESTAKE_CANCEL_WITHDRAW]: 'Withdraw request(s) cancelled',
+  [TxName.CLAIM_REWARDS]: 'Claimed rewards',
 };
 
 const makeKey = (txName: TxName): `${TxName}-tx-notification` =>

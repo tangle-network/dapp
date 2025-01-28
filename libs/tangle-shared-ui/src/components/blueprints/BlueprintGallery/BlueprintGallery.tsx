@@ -9,14 +9,13 @@ import {
   TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { Input } from '@webb-tools/webb-ui-components/components/Input';
 import { Pagination } from '@webb-tools/webb-ui-components/components/Pagination';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { ComponentProps, FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { TangleError } from '../../../types/error';
 import BlueprintItem from './BlueprintItem';
 import { BlueprintGalleryProps, BlueprintItemProps } from './types';
 
@@ -30,8 +29,6 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
   rowSelection,
   onRowSelectionChange,
 }) => {
-  const [searchValue, setSearchValue] = useState('');
-
   const [filteredCategory, setFilteredCategory] = useState<
     'View All' | (string & {})
   >('View All');
@@ -159,32 +156,18 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
         getPaginationRowModel: getPaginationRowModel(),
         autoResetPageIndex: false,
       }),
-      // prettier-ignore
-      [blueprints, columns, filteredCategory, onRowSelectionChange, rowSelection],
+      [
+        blueprints,
+        columns,
+        filteredCategory,
+        onRowSelectionChange,
+        rowSelection,
+      ],
     ),
   );
 
   return (
     <div className="space-y-5">
-      {/* Search bar */}
-      <div
-        className={twMerge(
-          'rounded-xl py-4 px-6 bg-mono-0 dark:bg-mono-180',
-          'flex items-center gap-2',
-        )}
-      >
-        <Input
-          id="search-blueprints"
-          placeholder="Search"
-          value={searchValue}
-          onChange={setSearchValue}
-          isControlled
-          className="flex-1 overflow-hidden rounded-full"
-          inputClassName="border-0 bg-mono-20 dark:bg-mono-200"
-        />
-        <Button variant="secondary">Search</Button>
-      </div>
-
       {/* Category */}
       <div className="-space-y-0.5">
         <div className="flex items-center gap-9">
@@ -211,6 +194,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
             </div>
           ))}
         </div>
+
         <div className="h-0.5 bg-mono-80 dark:bg-mono-170" />
       </div>
 
@@ -224,9 +208,9 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
         <Typography
           ta="center"
           variant="body1"
-          className="flex items-center justify-center h-40"
+          className="flex items-center justify-center h-40 md:max-w-[75%] md:mx-auto"
         >
-          {error.message}
+          {error instanceof TangleError ? error.description : error.message}
         </Typography>
       ) : isEmpty ? (
         <Typography

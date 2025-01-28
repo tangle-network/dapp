@@ -23,12 +23,15 @@ export default function ErrorMessage({
     <p
       {...props}
       className={twMerge(
-        'flex items-center gap-1 text-red-70 dark:text-red-50 mt-2',
+        'flex items-start gap-2 text-red-70 dark:text-red-50',
         className,
       )}
     >
       {isDefined(children) ? (
-        <InformationLine size="md" className="fill-current dark:fill-current" />
+        <InformationLine
+          size="md"
+          className="fill-current dark:fill-current mt-1 shrink-0"
+        />
       ) : null}
 
       <Typography
@@ -36,7 +39,7 @@ export default function ErrorMessage({
         fw="bold"
         {...typographyProps}
         variant={variant}
-        className={twMerge('!text-inherit', typoClassName)}
+        className={twMerge('!text-inherit leading-normal', typoClassName)}
       >
         {children}
       </Typography>

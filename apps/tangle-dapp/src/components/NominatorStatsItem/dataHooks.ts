@@ -1,7 +1,7 @@
-import useTokenWalletFreeBalance from '../../data/NominatorStats/useTokenWalletFreeBalance';
-import useTotalPayoutRewards from '../../data/NominatorStats/useTotalPayoutRewards';
-import useTotalStakedAmountSubscription from '../../data/NominatorStats/useTotalStakedAmountSubscription';
-import useUnbondingAmountSubscription from '../../data/NominatorStats/useUnbondingAmount';
+import useTokenWalletFreeBalance from '../../data/nomination/useTokenWalletFreeBalance';
+import useTotalPayoutRewards from '../../data/nomination/useTotalPayoutRewards';
+import useTotalStakedAmountSubscription from '../../data/nomination/useTotalStakedAmountSubscription';
+import useUnbondingAmountSubscription from '../../data/nomination/useUnbondingAmount';
 
 const dataHooks = {
   'Wallet Balance': useTokenWalletFreeBalance,

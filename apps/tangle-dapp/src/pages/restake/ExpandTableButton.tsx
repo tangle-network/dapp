@@ -5,7 +5,7 @@ import {
   Tooltip,
   TooltipBody,
 } from '@webb-tools/webb-ui-components/components/Tooltip';
-import type { ComponentProps, ReactNode } from 'react';
+import type { ComponentProps, FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 enum NotificationVariant {
@@ -18,7 +18,7 @@ export type ExpandTableButtonProps = ComponentProps<'button'> & {
   tooltipContent?: ReactNode;
 };
 
-const colorClasses = {
+const COLOR_CLASSES = {
   [NotificationVariant.PENDING]: {
     back: twMerge('bg-amber-400'),
     front: twMerge('bg-amber-500'),
@@ -32,11 +32,11 @@ const colorClasses = {
   { back: string; front: string }
 >;
 
-export function ExpandTableButton({
+export const ExpandTableButton: FC<ExpandTableButtonProps> = ({
   notificationVariant,
   tooltipContent,
   ...props
-}: ExpandTableButtonProps) {
+}) => {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -48,13 +48,14 @@ export function ExpandTableButton({
               <span
                 className={twMerge(
                   'absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping',
-                  colorClasses[notificationVariant].back,
+                  COLOR_CLASSES[notificationVariant].back,
                 )}
               />
+
               <span
                 className={twMerge(
                   'relative inline-flex w-2 h-2 rounded-full',
-                  colorClasses[notificationVariant].front,
+                  COLOR_CLASSES[notificationVariant].front,
                 )}
               />
             </span>
@@ -65,4 +66,4 @@ export function ExpandTableButton({
       <TooltipBody>{tooltipContent}</TooltipBody>
     </Tooltip>
   );
-}
+};

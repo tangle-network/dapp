@@ -5,6 +5,10 @@ import { useCallback, useMemo } from 'react';
 const useRestakeRewardConfig = () => {
   const { result: entries } = useApiRx(
     useCallback((api) => {
+      if (api.query.rewards?.rewardConfigStorage === undefined) {
+        return null;
+      }
+
       return api.query.rewards.rewardConfigStorage.entries();
     }, []),
   );

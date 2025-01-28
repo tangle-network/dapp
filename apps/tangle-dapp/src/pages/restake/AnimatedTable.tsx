@@ -1,17 +1,17 @@
 import cx from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
-import type { PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 
-export type AnimatedTableProps = PropsWithChildren & {
+type Props = PropsWithChildren & {
   isTableOpen?: boolean;
   isMediumScreen?: boolean;
 };
 
-export function AnimatedTable({
+export const AnimatedTable: FC<Props> = ({
   children,
   isMediumScreen,
   isTableOpen,
-}: AnimatedTableProps) {
+}) => {
   return (
     <AnimatePresence>
       {(!isMediumScreen || isTableOpen) && (
@@ -28,4 +28,4 @@ export function AnimatedTable({
       )}
     </AnimatePresence>
   );
-}
+};

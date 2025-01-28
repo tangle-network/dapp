@@ -3,10 +3,9 @@ import { useWebContext } from '@webb-tools/api-provider-environment/webb-context
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { useCallback } from 'react';
-
 import chainToNetwork from '../../utils/chainToNetwork';
 
-export default function useSwitchChain() {
+const useSwitchChain = () => {
   const { activeWallet, activeApi, switchChain } = useWebContext();
   const { toggleModal } = useConnectWallet();
   const { setNetwork } = useNetworkStore();
@@ -18,7 +17,10 @@ export default function useSwitchChain() {
       }
 
       const nextChain = chainsPopulated[typedChainId];
-      if (nextChain === undefined) return;
+
+      if (nextChain === undefined) {
+        return;
+      }
 
       const isWalletSupported = nextChain.wallets.includes(activeWallet.id);
 
@@ -26,8 +28,10 @@ export default function useSwitchChain() {
         return toggleModal(true, typedChainId);
       } else {
         const switchResult = await switchChain(nextChain, activeWallet);
+
         if (switchResult !== null) {
           const nextNetwork = chainToNetwork(typedChainId);
+
           setNetwork(nextNetwork);
         }
 
@@ -36,4 +40,6 @@ export default function useSwitchChain() {
     },
     [activeApi, activeWallet, setNetwork, switchChain, toggleModal],
   );
-}
+};
+
+export default useSwitchChain;

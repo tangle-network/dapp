@@ -7,6 +7,7 @@ import {
 import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 import KeyStatsItemVariant from './KeyStatsItemVariant';
+import { isPrimitive } from '@webb-tools/dapp-types';
 
 export type KeyStatsItemProps = {
   title: string;
@@ -15,9 +16,10 @@ export type KeyStatsItemProps = {
   tooltip?: string;
   className?: string;
   showDataBeforeLoading?: boolean;
+  hideErrorNotification?: boolean;
   children?: ReactNode;
   error: Error | null;
-  isLoading: boolean;
+  isLoading?: boolean;
   variant?: KeyStatsItemVariant;
 };
 
@@ -26,6 +28,7 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
   tooltip,
   className,
   showDataBeforeLoading,
+  hideErrorNotification = false,
   prefix,
   suffix,
   children,
@@ -35,13 +38,13 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
   // If present, report errors to the user via a toast
   // notification.
   useEffect(() => {
-    if (error !== null) {
+    if (error !== null && !hideErrorNotification) {
       notificationApi({
         variant: 'error',
         message: error.message,
       });
     }
-  }, [error]);
+  }, [error, hideErrorNotification]);
 
   return (
     <div
@@ -67,18 +70,22 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
             <SkeletonLoader className="w-20 h-8" />
           ) : error !== null ? (
             'Error'
-          ) : children === null ? null : (
-            <Typography
-              variant="h4"
-              fw="bold"
-              className="text-mono-140 dark:text-mono-40"
-            >
-              {prefix}
+          ) : isPrimitive(children) ? (
+            children === null ? null : (
+              <Typography
+                variant="h4"
+                fw="bold"
+                className="text-mono-140 dark:text-mono-40"
+              >
+                {prefix}
 
-              {children}
+                {children}
 
-              {suffix}
-            </Typography>
+                {suffix}
+              </Typography>
+            )
+          ) : (
+            children
           )}
         </div>
       </div>

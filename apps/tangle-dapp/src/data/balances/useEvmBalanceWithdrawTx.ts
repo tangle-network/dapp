@@ -4,24 +4,23 @@ import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
 import { useSubstrateTxWithNotification } from '../../hooks/useSubstrateTx';
-import { GetSuccessMessageFunction } from '../../types';
+import { GetSuccessMessageFn } from '../../types';
 
-type EvmBalanceWithdrawContext = {
+type Context = {
   pendingEvmBalance: bigint | null;
   evmAddress20: HexString | null;
 };
 
 const useEvmBalanceWithdrawTx = (tokenAmountStr?: string | null) => {
-  const getSuccessMessageFnc: GetSuccessMessageFunction<EvmBalanceWithdrawContext> =
-    useCallback(
-      () =>
-        typeof tokenAmountStr === 'string'
-          ? `Successfully withdrew ${tokenAmountStr}.`
-          : '',
-      [tokenAmountStr],
-    );
+  const getSuccessMessage = useCallback<GetSuccessMessageFn<Context>>(
+    () =>
+      typeof tokenAmountStr === 'string'
+        ? `Successfully withdrew ${tokenAmountStr}.`
+        : '',
+    [tokenAmountStr],
+  );
 
-  return useSubstrateTxWithNotification<EvmBalanceWithdrawContext>(
+  return useSubstrateTxWithNotification<Context>(
     TxName.WITHDRAW_EVM_BALANCE,
     useCallback((api, _, { pendingEvmBalance, evmAddress20 }) => {
       if (
@@ -34,7 +33,7 @@ const useEvmBalanceWithdrawTx = (tokenAmountStr?: string | null) => {
 
       return api.tx.evm.withdraw(evmAddress20, pendingEvmBalance);
     }, []),
-    getSuccessMessageFnc,
+    getSuccessMessage,
   );
 };
 

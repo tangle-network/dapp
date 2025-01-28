@@ -1,28 +1,28 @@
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
-import { Precompile } from '../../constants/evmPrecompiles';
+import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileAbiCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
+import STAKING_PRECOMPILE_ABI from '../../abi/staking';
 
 /**
  * Stop nominating validators.
  */
 const useChillTx = () => {
-  const evmTxFactory: EvmTxFactory<Precompile.STAKING> = useCallback(
-    () => ({ functionName: 'chill', arguments: [] }),
-    [],
-  );
+  const evmTxFactory: EvmTxFactory<typeof STAKING_PRECOMPILE_ABI, 'chill'> =
+    useCallback(() => ({ functionName: 'chill', arguments: [] }), []);
 
   const substrateTxFactory: SubstrateTxFactory = useCallback(
     (api, _activeSubstrateAddress) => api.tx.staking.chill(),
     [],
   );
 
-  return useAgnosticTx<Precompile.STAKING>({
+  return useAgnosticTx({
     name: TxName.CHILL,
-    precompile: Precompile.STAKING,
+    abi: STAKING_PRECOMPILE_ABI,
+    precompileAddress: PrecompileAddress.STAKING,
     evmTxFactory,
     substrateTxFactory,
   });

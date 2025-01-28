@@ -8,13 +8,13 @@ import { TokenIconBase } from './types';
 import { useDynamicSVGImport } from './useDynamicSVGImport';
 import { getIconSizeInPixel } from './utils';
 
-export const TokenIcon: React.FC<
-  TokenIconBase & {
-    isActive?: boolean;
-    customLoadingCmp?: React.ReactNode;
-    spinnerSize?: TokenIconBase['size'];
-  }
-> = (props) => {
+type Props = TokenIconBase & {
+  isActive?: boolean;
+  customLoadingCmp?: React.ReactNode;
+  spinnerSize?: TokenIconBase['size'];
+};
+
+export const TokenIcon: React.FC<Props> = ({ spinnerSize, ...props }) => {
   const {
     className: classNameProp,
     isActive,
@@ -24,7 +24,6 @@ export const TokenIcon: React.FC<
     size = 'md',
     onClick,
     customLoadingCmp,
-    spinnerSize,
     ...restProps
   } = props;
 
@@ -48,7 +47,7 @@ export const TokenIcon: React.FC<
     [classNameProp, name, onClick],
   );
 
-  // Prevent infinite loop when the passed onClick not use useCallback
+  // Prevent infinite loop when the passed onClick not use useCallback.
   const onClickRef = useRef<
     MouseEventHandler<SVGElement | HTMLDivElement> | undefined
   >(onClick);

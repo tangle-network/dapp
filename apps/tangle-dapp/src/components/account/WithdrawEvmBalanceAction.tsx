@@ -64,7 +64,6 @@ const WithdrawEvmBalanceAction: FC = () => {
     <ActionItem
       hasNotificationDot
       notificationDotVariant={status === TxStatus.ERROR ? 'error' : 'success'}
-      label="Withdraw"
       isDisabled={status === TxStatus.PROCESSING || execute === null}
       onClick={handleWithdraw}
       Icon={

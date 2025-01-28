@@ -1,10 +1,9 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
-import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import type { TokenSelectorProps } from '@webb-tools/webb-ui-components/components/TokenSelector/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
-import { useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import type {
   UseFormRegister,
   UseFormSetValue,
@@ -17,6 +16,7 @@ import { DepositFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import AssetPlaceholder from '../AssetPlaceholder';
+import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 
 type Props = {
   amountError?: string;
@@ -27,43 +27,38 @@ type Props = {
   watch: UseFormWatch<DepositFormFields>;
 };
 
-const SourceChainInput = ({
+const SourceChainInput: FC<Props> = ({
   amountError,
   openChainModal,
   openTokenModal,
   register,
   setValue,
   watch,
-}: Props) => {
+}) => {
   // Selectors
   const sourceTypedChainId = watch('sourceTypedChainId');
   const depositAssetId = watch('depositAssetId');
 
-  const { assetMap, balances } = useRestakeContext();
-
   const { minDelegateAmount } = useRestakeConsts();
-
-  const asset = useMemo(() => {
-    if (depositAssetId === null) {
-      return null;
-    }
-
-    return assetMap[depositAssetId] ?? null;
-  }, [assetMap, depositAssetId]);
+  const asset = useRestakeAsset(depositAssetId);
 
   const { max, maxFormatted } = useMemo(() => {
-    if (asset === null) return {};
+    if (asset === null) {
+      return {};
+    }
 
-    const balance = balances[asset.id]?.balance ?? ZERO_BIG_INT;
+    const balanceBigInt = BigInt(asset.balance.toString());
 
     return {
-      max: balance,
-      maxFormatted: formatUnits(balance, asset.decimals),
+      max: balanceBigInt,
+      maxFormatted: formatUnits(balanceBigInt, asset.decimals),
     };
-  }, [asset, balances]);
+  }, [asset]);
 
   const { min, minFormatted } = useMemo(() => {
-    if (asset === null) return {};
+    if (asset === null) {
+      return {};
+    }
 
     return {
       min: minDelegateAmount ?? ZERO_BIG_INT,

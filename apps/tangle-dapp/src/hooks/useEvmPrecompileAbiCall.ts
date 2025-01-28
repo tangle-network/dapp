@@ -1,9 +1,8 @@
-import { BN } from '@polkadot/util';
 import { HexString } from '@polkadot/util/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { useCallback, useState } from 'react';
-import type { Address, Hash } from 'viem';
+import type { AbiFunction, Hex } from 'viem';
 import {
   simulateContract,
   waitForTransactionReceipt,
@@ -12,41 +11,37 @@ import {
 import { useConnectorClient } from 'wagmi';
 
 import {
-  AbiFunctionName,
-  getPrecompileAbi,
-  getPrecompileAddress,
-  Precompile,
+  ExtractAbiFunctionNames,
+  FindAbiArgsOf,
   PrecompileAddress,
 } from '../constants/evmPrecompiles';
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
+import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 
-export type AbiCallArg = string | number | number[] | BN | boolean;
-
-export type AbiEncodeableValue = string | number | boolean | bigint;
-
-export type AbiBatchCallData = {
-  to: PrecompileAddress | Address;
-  // TODO: Value should be strongly typed and explicit. Accept a generic type to accomplish this.
-  value: AbiEncodeableValue;
+export type AbiBatchCall = {
+  to: EvmAddress;
+  value: 0;
   gasLimit: number;
-  callData: Hash;
+  callData: Hex;
 };
 
-export type AbiBatchCallArgs =
-  | (AbiEncodeableValue | AbiEncodeableValue[])[][]
-  | Readonly<[Address[], bigint[], Hash[], bigint[]]>;
-
-export type AbiCall<PrecompileT extends Precompile> = {
-  functionName: AbiFunctionName<PrecompileT>;
-  // TODO: Use argument types from the ABI for the specific function.
-  arguments: AbiCallArg[] | AbiBatchCallArgs;
+export type AbiCall<
+  Abi extends AbiFunction[],
+  FunctionName extends ExtractAbiFunctionNames<Abi>,
+> = {
+  functionName: FunctionName;
+  arguments: FindAbiArgsOf<Abi, FunctionName>;
 };
 
-export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
+export type EvmTxFactory<
+  Abi extends AbiFunction[],
+  FunctionName extends ExtractAbiFunctionNames<Abi>,
+  Context = void,
+> = (
   context: Context,
-  activeEvmAddress20: Address,
-) => PromiseOrT<AbiCall<PrecompileT>> | null;
+  activeEvmAddress20: EvmAddress,
+) => PromiseOrT<AbiCall<Abi, FunctionName>> | null;
 
 /**
  * Obtain a function that can be used to execute a precompile contract call.
@@ -60,12 +55,16 @@ export type EvmTxFactory<PrecompileT extends Precompile, Context = void> = (
  * should use `useSubstrateTx` for transactions instead, or `useApiRx` for queries.
  */
 function useEvmPrecompileAbiCall<
-  PrecompileT extends Precompile,
+  Abi extends AbiFunction[],
+  FunctionName extends ExtractAbiFunctionNames<Abi>,
   Context = void,
 >(
-  precompile: PrecompileT,
-  factory: EvmTxFactory<PrecompileT, Context> | AbiCall<PrecompileT>,
-  getSuccessMessageFnc?: (context: Context) => string,
+  abi: Abi,
+  precompileAddress: PrecompileAddress,
+  factory:
+    | EvmTxFactory<Abi, FunctionName, Context>
+    | AbiCall<Abi, FunctionName>,
+  getSuccessMessage?: (context: Context) => string,
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
@@ -102,8 +101,9 @@ function useEvmPrecompileAbiCall<
 
       try {
         const { request } = await simulateContract(connectorClient, {
-          address: getPrecompileAddress(precompile),
-          abi: getPrecompileAbi(precompile),
+          address: precompileAddress,
+          // TODO: Find a way to avoid casting.
+          abi: abi satisfies AbiFunction[] as AbiFunction[],
           functionName: factoryResult.functionName,
           args: factoryResult.arguments,
           account: activeEvmAddress20,
@@ -129,9 +129,7 @@ function useEvmPrecompileAbiCall<
 
         if (txReceipt.status === 'success') {
           setSuccessMessage(
-            getSuccessMessageFnc !== undefined
-              ? getSuccessMessageFnc(context)
-              : null,
+            getSuccessMessage !== undefined ? getSuccessMessage(context) : null,
           );
         }
       } catch (possibleError) {
@@ -149,8 +147,9 @@ function useEvmPrecompileAbiCall<
       status,
       connectorClient,
       factory,
-      precompile,
-      getSuccessMessageFnc,
+      precompileAddress,
+      abi,
+      getSuccessMessage,
     ],
   );
 

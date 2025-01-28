@@ -1,6 +1,6 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import useRestakeVaultAssets from '@webb-tools/tangle-shared-ui/data/restake/useRestakeVaultAssets';
+import useRestakeVaults from '@webb-tools/tangle-shared-ui/data/restake/useRestakeVaults';
 import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
 import { AssetWithBalance } from '@webb-tools/tangle-shared-ui/types/restake';
 import toPairs from 'lodash/toPairs';
@@ -8,17 +8,19 @@ import { useObservableState } from 'observable-hooks';
 import { PropsWithChildren, useMemo } from 'react';
 import { combineLatest, map } from 'rxjs';
 import RestakeContext from './RestakeContext';
+import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
 
 const RestakeContextProvider = (props: PropsWithChildren) => {
-  const { vaultAssets: assetMap, assetMap$ } = useRestakeVaultAssets();
+  const { vaults, vaults$ } = useRestakeVaults();
   const { balances, balances$ } = useRestakeBalances();
 
   const assetWithBalances$ = useMemo(
     () =>
-      combineLatest([assetMap$, balances$]).pipe(
+      combineLatest([vaults$, balances$]).pipe(
         map(([assetMap, balances]) => {
           const combined = toPairs(assetMap).reduce(
-            (assetWithBalances, [assetId, assetMetadata]) => {
+            (assetWithBalances, [assetIdString, assetMetadata]) => {
+              const assetId = assertRestakeAssetId(assetIdString);
               const balance = balances[assetId] ?? null;
 
               return assetWithBalances.concat({
@@ -45,7 +47,7 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
           ];
         }),
       ),
-    [assetMap$, balances$],
+    [vaults$, balances$],
   );
 
   const assetWithBalances = useObservableState(assetWithBalances$, []);
@@ -55,8 +57,8 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
       value={{
         assetWithBalances,
         assetWithBalances$,
-        assetMap,
-        assetMap$,
+        assetMap: vaults,
+        assetMap$: vaults$,
         balances,
         balances$,
       }}

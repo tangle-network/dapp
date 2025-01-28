@@ -1,12 +1,14 @@
 import type { ApiRx } from '@polkadot/api';
 import type { Option } from '@polkadot/types';
 import type { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
+import { isEvmAddress } from '@webb-tools/webb-ui-components/utils/isEvmAddress20';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { combineLatest, map, of, switchMap } from 'rxjs';
 import useRestakeAssetIds from '../../data/restake/useRestakeAssetIds';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import type { AssetBalance, AssetBalanceMap } from '../../types/restake';
+import { RestakeAssetId } from '../../types';
+import { AssetBalance, AssetBalanceMap } from '../../types/restake';
 import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
 
@@ -23,21 +25,23 @@ export default function useRestakeBalances() {
 
           if (!hasAssetsPallet(apiRx, 'query', 'account')) {
             return emptyObservable;
-          }
-
-          if (activeAccount === null || activeAccount.length === 0) {
+          } else if (activeAccount === null || activeAccount.length === 0) {
             return emptyObservable;
           }
 
           const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
-          if (nonNativeAssetIds.length === 0) {
+          const substrateAssetIds = nonNativeAssetIds.filter(
+            (assetId) => !isEvmAddress(assetId),
+          );
+
+          if (substrateAssetIds.length === 0) {
             return hasNative
               ? getNativeBalance$(apiRx, activeAccount)
               : emptyObservable;
           }
 
           // non-native assets is not empty
-          const batchedQueries = nonNativeAssetIds.map<
+          const batchedQueries = substrateAssetIds.map<
             [typeof apiRx.query.assets.account, [string, string]]
           >((assetId) => [
             apiRx.query.assets.account,
@@ -58,7 +62,7 @@ export default function useRestakeBalances() {
                 return assetBalancesReducer(
                   assetAccountBalances,
                   nativeBalance,
-                  nonNativeAssetIds,
+                  substrateAssetIds,
                 );
               }),
             );
@@ -68,7 +72,7 @@ export default function useRestakeBalances() {
                 return assetBalancesReducer(
                   assetAccountBalances,
                   {},
-                  nonNativeAssetIds,
+                  substrateAssetIds,
                 );
               }),
             );
@@ -89,7 +93,7 @@ export default function useRestakeBalances() {
 function assetBalancesReducer(
   assetBalances: Option<PalletAssetsAssetAccount>[],
   initialValue: AssetBalanceMap,
-  nonNativeAssetIds: string[],
+  assetIds: RestakeAssetId[],
 ) {
   return assetBalances.reduce(
     (assetBalanceMap, accountBalance, idx) => {
@@ -98,7 +102,7 @@ function assetBalancesReducer(
       }
 
       const { balance, status, reason } = accountBalance.unwrap();
-      const assetId = nonNativeAssetIds[idx];
+      const assetId = assetIds[idx];
 
       function toPrimitiveReason(
         reasonArg: typeof reason,
@@ -120,7 +124,7 @@ function assetBalancesReducer(
 
       return Object.assign(assetBalanceMap, {
         [assetId]: {
-          assetId: assetId,
+          assetId,
           balance: balance.toBigInt(),
           status: status.type,
           existenceReason: toPrimitiveReason(reason),

@@ -13,21 +13,7 @@ import { TangleDAppPagePath } from '../../../types';
 
 export const dynamic = 'force-static';
 
-const ViewOperatorWrapper = ({
-  children,
-  address,
-}: PropsWithChildren<{ address: string }>) => {
-  return (
-    <Link
-      href={`${TangleDAppPagePath.RESTAKE_OPERATOR}/${address}`}
-      target="_blank"
-    >
-      {children}
-    </Link>
-  );
-};
-
-const RestakeOperatorWrapper = ({
+const RestakeOperatorAction = ({
   children,
   address,
 }: PropsWithChildren<{ address: string }>) => {
@@ -74,8 +60,7 @@ const Page = ({ params }: { params: { id: string } }) => {
         </Typography>
 
         <OperatorsTable
-          ViewOperatorWrapper={ViewOperatorWrapper}
-          RestakeOperatorWrapper={RestakeOperatorWrapper}
+          RestakeOperatorAction={RestakeOperatorAction}
           data={result.operators}
         />
       </div>

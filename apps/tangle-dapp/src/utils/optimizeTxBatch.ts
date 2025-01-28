@@ -3,6 +3,7 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { assert } from '@polkadot/util';
 
+// TODO: Could also be improved to handle block weight limits here automatically; keep creating batches until the block weight limit is reached, then send the batch and continue with the remaining transactions.
 const optimizeTxBatch = (
   api: ApiPromise,
   txs: SubmittableExtrinsic<'promise', ISubmittableResult>[],

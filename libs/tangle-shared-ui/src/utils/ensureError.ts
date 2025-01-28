@@ -1,9 +1,11 @@
-import { isErrorInstance } from '@webb-tools/web3-api-provider';
-import isViemError from '@webb-tools/web3-api-provider/utils/isViemError';
-import { BaseError } from 'wagmi';
+import { BaseError as ViemError } from 'viem';
+import { BaseError as WagmiError } from 'wagmi';
 
 function ensureError(possibleError: unknown): Error {
-  if (isViemError(possibleError) || isErrorInstance(possibleError, BaseError)) {
+  if (
+    possibleError instanceof ViemError ||
+    possibleError instanceof WagmiError
+  ) {
     return new Error(possibleError.shortMessage);
   } else if (typeof possibleError === 'string') {
     return new Error(possibleError);

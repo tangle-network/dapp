@@ -2,31 +2,18 @@ import type { ApiRx } from '@polkadot/api';
 import type { Option, StorageKey, u32, Vec } from '@polkadot/types';
 import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
 import { map, of } from 'rxjs';
+import createRestakeAssetId from '../../utils/createRestakeAssetId';
+import { RestakeAssetId } from '../../types';
 
 function toPrimitive(
   entries: [StorageKey<[u32]>, Option<Vec<TanglePrimitivesServicesAsset>>][],
-): [vaultId: bigint, assetIds: bigint[] | null][] {
+): [vaultId: bigint, assetIds: RestakeAssetId[] | null][] {
   return entries.map(([vaultId, assets]) => {
     const vaultIdBigInt = vaultId.args[0].toBigInt();
 
     const assetIds = assets.isNone
       ? null
-      : assets.unwrap().map((asset) => {
-          switch (asset.type) {
-            case 'Custom':
-              return BigInt(asset.asCustom.toBigInt());
-            // TODO: Add support for ERC-20 case.
-            case 'Erc20':
-              throw new Error(
-                'Handling of ERC-20 assets is not yet implemented.',
-              );
-            default: {
-              const _exhaustive: never = asset.type;
-
-              throw new Error(`Unhandled asset type: ${_exhaustive}`);
-            }
-          }
-        });
+      : assets.unwrap().map(createRestakeAssetId);
 
     return [vaultIdBigInt, assetIds] as const;
   });

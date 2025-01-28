@@ -7,7 +7,7 @@ import { useWallets } from '@webb-tools/api-provider-environment/hooks/useWallet
 import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
 import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
 import { LoginBoxLineIcon, WalletLineIcon } from '@webb-tools/icons';
-import { isViemError, WebbWeb3Provider } from '@webb-tools/web3-api-provider';
+import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
 import {
   AccountDropdownBody,
   Button,
@@ -25,6 +25,7 @@ import { FC, useCallback, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
 import useSubstrateExplorerUrl from '../../hooks/useSubstrateExplorerUrl';
+import { BaseError } from 'viem';
 
 const WalletDropdown: FC<{
   accountName?: string;
@@ -147,7 +148,7 @@ const SwitchAccountButton: FC = () => {
           WebbErrorCodes.SwitchAccountFailed,
         ).message;
 
-        if (isViemError(error)) {
+        if (error instanceof BaseError) {
           message = error.shortMessage;
         }
 
@@ -163,7 +164,9 @@ const SwitchAccountButton: FC = () => {
   return activeApi instanceof WebbWeb3Provider ? (
     <Button
       onClick={handleSwitchAccount}
-      leftIcon={<WalletLineIcon className="!fill-current" size="md" />}
+      leftIcon={
+        <WalletLineIcon className="fill-current dark:fill-current" size="md" />
+      }
       variant="link"
       className="text-lg"
     >
@@ -176,10 +179,11 @@ const SwitchAccountButton: FC = () => {
           leftIcon={
             <WalletLineIcon
               className="fill-current dark:fill-current"
-              size="lg"
+              size="md"
             />
           }
           variant="link"
+          className="text-lg"
         >
           Switch
         </Button>
