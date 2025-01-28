@@ -18,6 +18,9 @@ import {
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
+import useBalances from '../data/balances/useBalances';
+import useEvmTxRelayer from './useEvmTxRelayer';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 
 export type AbiBatchCall = {
   to: EvmAddress;
@@ -26,7 +29,7 @@ export type AbiBatchCall = {
   callData: Hex;
 };
 
-export type AbiCall<
+export type PrecompileCall<
   Abi extends AbiFunction[],
   FunctionName extends ExtractAbiFunctionNames<Abi>,
 > = {
@@ -41,7 +44,7 @@ export type EvmTxFactory<
 > = (
   context: Context,
   activeEvmAddress20: EvmAddress,
-) => PromiseOrT<AbiCall<Abi, FunctionName>> | null;
+) => PromiseOrT<PrecompileCall<Abi, FunctionName>> | null;
 
 /**
  * Obtain a function that can be used to execute a precompile contract call.
@@ -63,13 +66,16 @@ function useEvmPrecompileCall<
   precompileAddress: PrecompileAddress,
   factory:
     | EvmTxFactory<Abi, FunctionName, Context>
-    | AbiCall<Abi, FunctionName>,
+    | PrecompileCall<Abi, FunctionName>,
   getSuccessMessage?: (context: Context) => string,
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
   const [txHash, setTxHash] = useState<HexString | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const { free } = useBalances();
+  const relayEvmTx = useEvmTxRelayer();
+  const { network } = useNetworkStore();
 
   const activeEvmAddress20 = useEvmAddress20();
   const { data: connectorClient } = useConnectorClient();
@@ -89,8 +95,10 @@ function useEvmPrecompileCall<
           ? await factory(context, activeEvmAddress20)
           : factory;
 
-      // Factory isn't ready yet.
-      if (factoryResult === null) {
+      // Not yet ready.
+      if (factoryResult === null || relayEvmTx === null || free === null) {
+        console.warn('Attempted to execute EVM pre-compile call too early.');
+
         return;
       }
 
@@ -99,10 +107,36 @@ function useEvmPrecompileCall<
       setTxHash(null);
       setStatus(TxStatus.PROCESSING);
 
+      // TODO: Compare against estimated contract execution gas against balance (there's a constant that allows conversion from gas to native token) instead of checking if it's zero?
+      // Relay the transaction if the EVM account doesn't have enough to
+      // cover the transaction fees. This is like a subsidy for EVM accounts
+      // without TNT.
+      if (!free.isZero() && network.evmTxRelayerEndpoint !== undefined) {
+        console.debug('Attempting to relay transaction for EVM account.');
+
+        const result = await relayEvmTx(
+          abi,
+          precompileAddress,
+          factoryResult.functionName,
+          factoryResult.arguments,
+        );
+
+        if (result instanceof Error) {
+          setStatus(TxStatus.ERROR);
+          setError(result);
+
+          return;
+        }
+
+        setStatus(TxStatus.COMPLETE);
+        setTxHash(result.txHash);
+
+        return;
+      }
+
       try {
         const { request } = await simulateContract(connectorClient, {
           address: precompileAddress,
-          // TODO: Find a way to avoid casting.
           abi: abi satisfies AbiFunction[] as AbiFunction[],
           functionName: factoryResult.functionName,
           args: factoryResult.arguments,
@@ -147,8 +181,11 @@ function useEvmPrecompileCall<
       status,
       connectorClient,
       factory,
-      precompileAddress,
+      relayEvmTx,
+      free,
+      network.evmTxRelayerEndpoint,
       abi,
+      precompileAddress,
       getSuccessMessage,
     ],
   );

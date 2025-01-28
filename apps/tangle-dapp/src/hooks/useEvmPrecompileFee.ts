@@ -6,7 +6,7 @@ import {
   PrecompileAddress,
 } from '../constants/evmPrecompiles';
 import useEvmAddress20 from './useEvmAddress';
-import { AbiCall } from './useEvmPrecompileCall';
+import { PrecompileCall } from './useEvmPrecompileCall';
 import { AbiFunction } from 'viem';
 import useViemPublicClient from '@webb-tools/tangle-shared-ui/hooks/useViemPublicClient';
 
@@ -26,7 +26,7 @@ function useEvmPrecompileFeeFetcher() {
     >(
       abi: Abi,
       precompileAddress: PrecompileAddress,
-      abiCallData: AbiCall<Abi, FunctionName>,
+      abiCallData: PrecompileCall<Abi, FunctionName>,
     ) => {
       setStatus('loading');
       setError(null);

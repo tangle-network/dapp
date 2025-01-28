@@ -5,7 +5,6 @@ import {
   useWebContext,
 } from '@webb-tools/api-provider-environment';
 import getPlatformMetaData from '@webb-tools/browser-utils/platform/getPlatformMetaData';
-import { WalletId } from '@webb-tools/dapp-types';
 import {
   calculateTypedChainId,
   ChainType,
@@ -37,15 +36,6 @@ const WalletModalContainer = () => {
     [network],
   );
 
-  // TODO: Fix the issue with WalletConnectV2 and re-enable it.
-  const wallets = useMemo(() => {
-    // Exclude WalletConnectV2 from the list of supported wallets, as it
-    // is currently broken in the dApp.
-    return supportedWallets.filter(
-      (wallet) => wallet.id !== WalletId.WalletConnectV2,
-    );
-  }, [supportedWallets]);
-
   return (
     <WalletModal
       connectingWalletId={connectingWalletId}
@@ -57,11 +47,11 @@ const WalletModalContainer = () => {
       connectWallet={connectWallet}
       toggleModal={toggleModal}
       connectError={connectError}
-      supportedWallets={wallets}
+      supportedWallets={supportedWallets}
       notificationApi={notificationApi}
       apiConfig={apiConfig}
       targetTypedChainIds={targetTypedChainIds}
-      contentDefaultText="Connect your EVM or Substrate wallet to interact with the Tangle Network."
+      contentDefaultText="Connect your Substrate or EVM wallet to interact with the Tangle Network."
     />
   );
 };

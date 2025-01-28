@@ -22,9 +22,10 @@ export const WalletModal: FC<WalletModalProps> = ({
   targetTypedChainIds,
   contentDefaultText,
 }) => {
-  // Get the current failed or connecting wallet
+  // Get the current failed or connecting wallet.
   const getCurrentWallet = useCallback(() => {
     const walletId = failedWalletId ?? connectingWalletId;
+
     if (!walletId) {
       return;
     }
@@ -32,16 +33,18 @@ export const WalletModal: FC<WalletModalProps> = ({
     return apiConfig.wallets[walletId];
   }, [apiConfig.wallets, connectingWalletId, failedWalletId]);
 
-  const errorMessage = useMemo(() => {
+  const errorMessage = (() => {
     if (!connectError) {
       return;
     }
 
     return connectError.message;
-  }, [connectError]);
+  })();
 
-  const downloadURL = useMemo(() => {
-    if (platformId == null) return;
+  const downloadUrl = useMemo(() => {
+    if (platformId == null) {
+      return;
+    }
 
     const wallet = getCurrentWallet();
 
@@ -50,26 +53,28 @@ export const WalletModal: FC<WalletModalProps> = ({
     }
   }, [getCurrentWallet, platformId]);
 
-  const handleTryAgainBtnClick = useCallback(
-    async () => {
-      if (connectError instanceof WalletNotInstalledError) {
-        return;
-      }
+  const handleTryAgainBtnClick = useCallback(async () => {
+    if (connectError instanceof WalletNotInstalledError) {
+      return;
+    }
 
-      if (!selectedWallet) {
-        notificationApi.addToQueue({
-          variant: 'warning',
-          message: 'Failed to switch wallet',
-          secondaryMessage: 'No wallet selected. Please try again.',
-        });
-        return;
-      }
+    if (!selectedWallet) {
+      notificationApi.addToQueue({
+        variant: 'warning',
+        message: 'Failed to switch wallet',
+        secondaryMessage: 'No wallet selected. Please try again.',
+      });
+      return;
+    }
 
-      await connectWallet(selectedWallet, targetTypedChainIds);
-    },
-    // prettier-ignore
-    [connectError, selectedWallet, connectWallet, targetTypedChainIds, notificationApi],
-  );
+    await connectWallet(selectedWallet, targetTypedChainIds);
+  }, [
+    connectError,
+    selectedWallet,
+    connectWallet,
+    targetTypedChainIds,
+    notificationApi,
+  ]);
 
   return (
     <Modal open={isModalOpen} onOpenChange={toggleModal}>
@@ -99,12 +104,12 @@ export const WalletModal: FC<WalletModalProps> = ({
           tryAgainBtnProps={
             connectError instanceof WalletNotInstalledError
               ? {
-                  href: downloadURL?.toString(),
+                  href: downloadUrl?.toString(),
                   target: '_blank',
                 }
               : {}
           }
-          downloadWalletURL={downloadURL}
+          downloadWalletURL={downloadUrl}
           contentDefaultText={contentDefaultText}
         />
       </ModalContent>

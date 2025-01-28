@@ -13,7 +13,7 @@ import { useCallback } from 'react';
 import { TxName } from '../../constants';
 import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
-import { AbiCall, EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
+import { PrecompileCall, EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
 import useEvmPrecompileFeeFetcher from '../../hooks/useEvmPrecompileFee';
 import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
@@ -39,7 +39,7 @@ const useTransferTx = () => {
       const isMaxAmount = amount.eq(maxAmount);
       const recipientEvmAddress20 = toEvmAddress(recipientAddress);
 
-      const sharedAbiCallData: AbiCall<
+      const sharedAbiCallData: PrecompileCall<
         typeof BALANCES_ERC20_PRECOMPILE_ABI,
         'transfer'
       > = {

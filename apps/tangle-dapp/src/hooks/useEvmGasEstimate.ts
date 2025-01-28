@@ -8,7 +8,7 @@ import useViemPublicClient from '@webb-tools/tangle-shared-ui/hooks/useViemPubli
  * Add a buffer to the gas estimate to ensure the
  * transaction is successful.
  */
-const BUFFER = BigInt(11); // +10% (1.1)
+const BUFFER = BigInt(15); // +50% (1.5)
 
 const useEvmGasEstimate = () => {
   const { evmAddress } = useAgnosticAccountInfo();
@@ -22,7 +22,8 @@ const useEvmGasEstimate = () => {
 
       const gasEstimate = await viemPublicClient.estimateContractGas({
         account: evmAddress,
-        to: contractAddress,
+        address: contractAddress,
+        // TODO: Proper params.
         data: callData,
       });
 

@@ -16,9 +16,12 @@ import {
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import { assertEvmAddress } from '@webb-tools/webb-ui-components';
 import assert from 'assert';
-import useViemWalletClient from './useViemWalletClient';
+import useViemWalletClient, {
+  WalletClientTransport,
+} from './useViemWalletClient';
 import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 
 const PATHNAME = '/api/v1/relay';
 const DEADLINE_MINUTES = 10;
@@ -113,15 +116,15 @@ type Response =
 const useEvmTxRelayer = () => {
   const { evmAddress } = useAgnosticAccountInfo();
   const { network } = useNetworkStore();
-  const walletClient = useViemWalletClient();
+  const walletClient = useViemWalletClient(WalletClientTransport.WINDOW);
 
   const isReady =
     evmAddress !== null &&
     network.evmTxRelayerEndpoint !== undefined &&
     walletClient !== null;
 
-  const obtainSignatureParams = useCallback(
-    async (destination: EvmAddress, deadlineSeconds: number) => {
+  const signTx = useCallback(
+    async (data: Hex, destination: EvmAddress, deadlineSeconds: number) => {
       // TODO: Temp. assertion.
       assert(walletClient !== null && evmAddress !== null);
 
@@ -135,6 +138,7 @@ const useEvmTxRelayer = () => {
       };
 
       const message = {
+        data,
         from: evmAddress,
         to: destination,
         value: 0,
@@ -155,7 +159,7 @@ const useEvmTxRelayer = () => {
 
       const { v, r, s } = parseSignature(signature);
 
-      return { v, r, s };
+      return { v: v !== undefined ? Number(v) : undefined, r, s };
     },
     [evmAddress, network.evmChainId, walletClient],
   );
@@ -181,31 +185,30 @@ const useEvmTxRelayer = () => {
       const deadline = `0x${deadlineSeconds.toString(16)}` as const;
       const destination = assertEvmAddress(precompileAddress);
 
-      const { v, r, s } = await obtainSignatureParams(
-        destination,
-        deadlineSeconds,
-      );
-
-      const url = new URL(network.evmTxRelayerEndpoint);
-
-      url.pathname = PATHNAME;
-
       const callData = encodeFunctionData({
         abi: abi satisfies AbiFunction[] as AbiFunction[],
         functionName: functionName satisfies string as string,
         args,
       });
 
-      const response = await axios.post<
-        Response,
-        AxiosResponse<Response, unknown>,
-        RequestBody
-      >(url.toString(), {
+      const { v, r, s } = await signTx(callData, destination, deadlineSeconds);
+      const url = new URL(network.evmTxRelayerEndpoint);
+
+      url.pathname = PATHNAME;
+      console.debug('Obtained signature:', { v, r, s });
+
+      if (v === undefined) {
+        return new Error(
+          'Failed to obtain signature: recovery ID is undefined, possibly indicating an invalid or malformed signature.',
+        );
+      }
+
+      console.debug('BODY', {
         from: evmAddress,
         to: destination,
         value: ZERO_ADDRESS,
-        // TODO: Should gas limit be estimated or set to zero since we're dealing with precompile calls here, not 'real' EVM?
-        gaslimit: 0,
+        // TODO: Estimate gas limit. For now, using max limit allowed by the relayer: 60,000.
+        gaslimit: 60_000,
         data: callData,
         deadline,
         v,
@@ -213,20 +216,38 @@ const useEvmTxRelayer = () => {
         s,
       });
 
-      if (response.data.status === 'success') {
-        return response.data;
-      } else {
-        return response.data.details !== undefined
-          ? new Error(`${response.data.error}; ${response.data.details}`)
-          : new Error(response.data.error);
+      try {
+        const response = await axios.post<
+          Response,
+          AxiosResponse<Response, unknown>,
+          RequestBody
+        >(url.toString(), {
+          from: evmAddress,
+          to: destination,
+          value: ZERO_ADDRESS,
+          // TODO: Estimate gas limit. For now, using max limit allowed by the relayer: 60,000.
+          gaslimit: 60_000,
+          data: callData,
+          deadline,
+          v,
+          r,
+          s,
+        });
+
+        if (response.data.status === 'success') {
+          return response.data;
+        } else {
+          return response.data.details !== undefined
+            ? new Error(`${response.data.error}; ${response.data.details}`)
+            : new Error(response.data.error);
+        }
+      } catch (possibleError) {
+        const error = ensureError(possibleError);
+
+        return error;
       }
     },
-    [
-      evmAddress,
-      network.evmTxRelayerEndpoint,
-      obtainSignatureParams,
-      walletClient,
-    ],
+    [evmAddress, network.evmTxRelayerEndpoint, signTx, walletClient],
   );
 
   return isReady ? relayEvmTx : null;

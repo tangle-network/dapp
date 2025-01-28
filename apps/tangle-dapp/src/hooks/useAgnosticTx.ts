@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { TxName } from '../constants';
 import { GetSuccessMessageFn } from '../types';
 import useEvmPrecompileCall, {
-  AbiCall,
+  PrecompileCall,
   EvmTxFactory,
 } from './useEvmPrecompileCall';
 import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
@@ -29,7 +29,7 @@ export type AgnosticTxOptions<
 
   evmTxFactory:
     | EvmTxFactory<Abi, FunctionName, Context>
-    | AbiCall<Abi, FunctionName>;
+    | PrecompileCall<Abi, FunctionName>;
 
   /**
    * An identifiable name shown on the toast notification to

@@ -92,6 +92,7 @@ export const TANGLE_TESTNET_NATIVE_NETWORK = {
   nativeExplorerUrl: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_TESTNET_EVM_EXPLORER_URL,
   ss58Prefix: TANGLE_SS58_PREFIX,
+  evmTxRelayerEndpoint: 'https://testnet-txrelayer.tangle.tools/',
 } as const satisfies Network;
 
 /**
@@ -109,7 +110,7 @@ export const TANGLE_LOCAL_DEV_NETWORK = {
   httpRpcEndpoint: TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
   polkadotJsDashboardUrl: TANGLE_LOCAL_POLKADOT_JS_DASHBOARD_URL,
   ss58Prefix: 42,
-  evmTxRelayerEndpoint: 'http://localhost:4500',
+  evmTxRelayerEndpoint: 'http://localhost:3000',
 } as const satisfies Network;
 
 export const TANGLE_RESTAKING_PARACHAIN_LOCAL_DEV_NETWORK = {

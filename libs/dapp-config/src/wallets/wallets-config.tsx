@@ -81,9 +81,9 @@ export const walletsConfig: Record<number, WalletConfig> = {
     id: WalletId.WalletConnectV2,
     Logo: <WalletConnectIcon />,
     name: 'WalletConnect',
-    title: 'Wallet Connect',
+    title: 'WalletConnect',
     platform: 'EVM',
-    enabled: true,
+    enabled: false,
     async detect() {
       return true;
     },
