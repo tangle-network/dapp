@@ -103,13 +103,13 @@ type RequestBody = {
   s: Hex;
 };
 
-type SuccessResult = {
+export type EvmTxRelaySuccessResult = {
   txHash: Hash;
   simulatedOutcome: Hex;
 };
 
 type Response =
-  | ({ status: 'success' } & SuccessResult)
+  | ({ status: 'success' } & EvmTxRelaySuccessResult)
   | {
       status: 'failure';
       error: string;
@@ -203,7 +203,7 @@ const useEvmTxRelayer = () => {
       precompileAddress: PrecompileAddress,
       functionName: FunctionName,
       args: FindAbiArgsOf<Abi, FunctionName>,
-    ): Promise<Error | SuccessResult> => {
+    ): Promise<Error | EvmTxRelaySuccessResult> => {
       assert(
         evmAddress !== null &&
           network.evmTxRelayerEndpoint !== undefined &&

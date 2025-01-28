@@ -14,6 +14,8 @@ import { Hash } from 'viem';
 import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import { TxName } from '../../constants';
 import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useEvmTxRelayer from '../../hooks/useEvmTxRelayer';
+import useBalances from '../balances/useBalances';
 
 const useRestakeApi = () => {
   const { apiPromise } = usePolkadotApi();
@@ -22,6 +24,8 @@ const useRestakeApi = () => {
   const { resolveExplorerUrl } = useSubstrateExplorerUrl();
   const { notifySuccess, notifyError } = useTxNotification();
   const { isEvm } = useAgnosticAccountInfo();
+  const relayEvmTx = useEvmTxRelayer();
+  const { free } = useBalances();
 
   const onSuccess = useCallback(
     (txHash: Hash, blockHash: Hash, txName: TxName) => {
@@ -67,6 +71,8 @@ const useRestakeApi = () => {
         const evmAddress = assertEvmAddress(activeAccount.address);
 
         return new RestakeEvmApi(
+          relayEvmTx,
+          free?.isZero() === true ? true : false,
           evmAddress,
           evmAddress,
           getWagmiConfig(),
@@ -75,7 +81,16 @@ const useRestakeApi = () => {
         );
       }
     }
-  }, [activeAccount, activeWallet, apiPromise, injector, onFailure, onSuccess]);
+  }, [
+    activeAccount,
+    activeWallet,
+    apiPromise,
+    free,
+    injector,
+    onFailure,
+    onSuccess,
+    relayEvmTx,
+  ]);
 
   return api;
 };

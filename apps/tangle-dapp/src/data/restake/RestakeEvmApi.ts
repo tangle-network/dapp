@@ -20,6 +20,7 @@ import { Config } from 'wagmi';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import RESTAKING_PRECOMPILE_ABI from '../../abi/restaking';
 import {
+  ExtractAbiFunctionNames,
   FindAbiArgsOf,
   PrecompileAddress,
   ZERO_ADDRESS,
@@ -32,9 +33,27 @@ import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import { TxName } from '../../constants';
+import {
+  EvmTxRelaySuccessResult,
+  isEvmTxRelayerEligible,
+} from '../../hooks/useEvmTxRelayer';
+
+type RelayEvmTxFn =
+  | (<
+      Abi extends AbiFunction[],
+      FunctionName extends ExtractAbiFunctionNames<Abi>,
+    >(
+      abi: Abi,
+      precompileAddress: PrecompileAddress,
+      functionName: FunctionName,
+      args: FindAbiArgsOf<Abi, FunctionName>,
+    ) => Promise<Error | EvmTxRelaySuccessResult>)
+  | null;
 
 class RestakeEvmApi extends RestakeApiBase {
   constructor(
+    readonly relay: RelayEvmTxFn,
+    readonly hasNoBalance: boolean,
     readonly activeAccount: EvmAddress,
     readonly signer: Account | EvmAddress,
     readonly provider: Config,
@@ -55,6 +74,24 @@ class RestakeEvmApi extends RestakeApiBase {
     functionName: FunctionName,
     args: Args,
   ) {
+    const isEligibleForTxRelay =
+      this.relay !== null &&
+      this.hasNoBalance &&
+      isEvmTxRelayerEligible(address, functionName);
+
+    if (isEligibleForTxRelay) {
+      const result = await this.relay(abi, address, functionName, args);
+
+      if (result instanceof Error) {
+        this.onFailure(txName, result);
+      } else {
+        // TODO: No block hash available in this case. Will it affect the 'View explorer' link?
+        this.onSuccess(result.txHash, '0x0', txName);
+      }
+
+      return;
+    }
+
     try {
       const connector = (() => {
         if (this.provider.state.current === null) {
