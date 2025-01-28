@@ -41,7 +41,6 @@ function useEvmPrecompileFeeFetcher() {
       const [gas, fees] = await Promise.all([
         client.estimateContractGas({
           address: precompileAddress,
-          // TODO: Find a way to avoid casting.
           abi: abi satisfies AbiFunction[] as AbiFunction[],
           functionName: abiCallData.functionName,
           args: abiCallData.arguments,

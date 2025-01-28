@@ -23,9 +23,11 @@ import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnost
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import RESTAKING_PRECOMPILE_ABI from '../abi/restaking';
+import useEvmGasEstimate from './useEvmGasEstimate';
 
 const PATHNAME = '/api/v1/relay';
 const DEADLINE_MINUTES = 10;
+const MAX_GAS_LIMIT = 60_000;
 
 const ALLOWED_CALLS: Partial<Record<PrecompileAddress, string[]>> = {
   [PrecompileAddress.RESTAKING]: [
@@ -145,6 +147,7 @@ const useEvmTxRelayer = () => {
   const { evmAddress } = useAgnosticAccountInfo();
   const { network } = useNetworkStore();
   const walletClient = useViemWalletClient(WalletClientTransport.WINDOW);
+  const estimateGas = useEvmGasEstimate();
 
   const isReady =
     evmAddress !== null &&
@@ -156,10 +159,9 @@ const useEvmTxRelayer = () => {
       // TODO: Temp. assertion.
       assert(walletClient !== null && evmAddress !== null);
 
-      // EIP-712 domain, types, and message
+      // EIP-712 domain, types, and message.
       const domain = {
-        // TODO: Name & version.
-        name: 'CallPermitExample',
+        name: 'TangleEvmTxRelayer',
         version: '1',
         chainId: network.evmChainId,
         verifyingContract: destination,
@@ -231,6 +233,21 @@ const useEvmTxRelayer = () => {
         );
       }
 
+      const gasEstimate = await estimateGas(abi, precompileAddress, {
+        functionName,
+        arguments: args,
+      });
+
+      // If the estimate is null, or exceeds the maximum gas limit,
+      // use the maximum. Otherwise, it must be lower than the maximum;
+      // and thus it can fit within a 32-bit integer.
+      const gasLimit =
+        gasEstimate === null
+          ? MAX_GAS_LIMIT
+          : gasEstimate > BigInt(MAX_GAS_LIMIT)
+            ? MAX_GAS_LIMIT
+            : Number(gasEstimate);
+
       try {
         const response = await axios.post<
           Response,
@@ -240,8 +257,7 @@ const useEvmTxRelayer = () => {
           from: evmAddress,
           to: destination,
           value: ZERO_ADDRESS,
-          // TODO: Estimate gas limit. For now, using max limit allowed by the relayer: 60,000.
-          gaslimit: 60_000,
+          gaslimit: gasLimit,
           data: callData,
           deadline,
           v,
@@ -257,12 +273,16 @@ const useEvmTxRelayer = () => {
             : new Error(response.data.error);
         }
       } catch (possibleError) {
-        const error = ensureError(possibleError);
-
-        return error;
+        return ensureError(possibleError);
       }
     },
-    [evmAddress, network.evmTxRelayerEndpoint, signTx, walletClient],
+    [
+      estimateGas,
+      evmAddress,
+      network.evmTxRelayerEndpoint,
+      signTx,
+      walletClient,
+    ],
   );
 
   return isReady ? relayEvmTx : null;

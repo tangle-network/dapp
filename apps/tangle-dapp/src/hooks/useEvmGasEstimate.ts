@@ -1,8 +1,12 @@
 import { useCallback } from 'react';
-import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
-import { Hex } from 'viem';
+import { AbiFunction } from 'viem';
 import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useViemPublicClient from '@webb-tools/tangle-shared-ui/hooks/useViemPublicClient';
+import {
+  ExtractAbiFunctionNames,
+  PrecompileAddress,
+} from '../constants/evmPrecompiles';
+import { PrecompileCall } from './useEvmPrecompileCall';
 
 /**
  * Add a buffer to the gas estimate to ensure the
@@ -15,16 +19,24 @@ const useEvmGasEstimate = () => {
   const viemPublicClient = useViemPublicClient();
 
   const estimateGas = useCallback(
-    async (contractAddress: EvmAddress, callData: Hex) => {
+    async <
+      Abi extends AbiFunction[],
+      FunctionName extends ExtractAbiFunctionNames<Abi>,
+    >(
+      abi: Abi,
+      precompileAddress: PrecompileAddress,
+      call: PrecompileCall<Abi, FunctionName>,
+    ) => {
       if (viemPublicClient === null || evmAddress === null) {
         return null;
       }
 
       const gasEstimate = await viemPublicClient.estimateContractGas({
+        abi: abi satisfies AbiFunction[] as AbiFunction[],
         account: evmAddress,
-        address: contractAddress,
-        // TODO: Proper params.
-        data: callData,
+        address: precompileAddress,
+        functionName: call.functionName,
+        args: call.arguments,
       });
 
       return (gasEstimate * BUFFER) / BigInt(10);
