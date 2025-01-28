@@ -22,9 +22,19 @@ import useViemWalletClient, {
 import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import RESTAKING_PRECOMPILE_ABI from '../abi/restaking';
 
 const PATHNAME = '/api/v1/relay';
 const DEADLINE_MINUTES = 10;
+
+const ALLOWED_CALLS: Partial<Record<PrecompileAddress, string[]>> = {
+  [PrecompileAddress.RESTAKING]: [
+    'deposit',
+    'delegate',
+  ] as const satisfies ExtractAbiFunctionNames<
+    typeof RESTAKING_PRECOMPILE_ABI
+  >[],
+};
 
 const EIP712_TYPES = {
   Permit: [
@@ -107,6 +117,24 @@ type Response =
        */
       details?: string;
     };
+
+/**
+ * Check whether a specific EVM precompile function is eligible to be
+ * subsidized by the EVM transaction relayer.
+ */
+export const isEvmTxRelayerEligible = <
+  Abi extends AbiFunction[],
+  FunctionName extends ExtractAbiFunctionNames<Abi>,
+>(
+  precompileAddress: PrecompileAddress,
+  functionName: FunctionName,
+): boolean => {
+  if (ALLOWED_CALLS[precompileAddress] === undefined) {
+    return false;
+  }
+
+  return ALLOWED_CALLS[precompileAddress].includes(functionName);
+};
 
 /**
  * Obtain a function to send signed transactions to a relayer API.
@@ -202,19 +230,6 @@ const useEvmTxRelayer = () => {
           'Failed to obtain signature: recovery ID is undefined, possibly indicating an invalid or malformed signature.',
         );
       }
-
-      console.debug('BODY', {
-        from: evmAddress,
-        to: destination,
-        value: ZERO_ADDRESS,
-        // TODO: Estimate gas limit. For now, using max limit allowed by the relayer: 60,000.
-        gaslimit: 60_000,
-        data: callData,
-        deadline,
-        v,
-        r,
-        s,
-      });
 
       try {
         const response = await axios.post<

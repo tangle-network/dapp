@@ -19,7 +19,7 @@ import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import useBalances from '../data/balances/useBalances';
-import useEvmTxRelayer from './useEvmTxRelayer';
+import useEvmTxRelayer, { isEvmTxRelayerEligible } from './useEvmTxRelayer';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 
 export type AbiBatchCall = {
@@ -107,11 +107,17 @@ function useEvmPrecompileCall<
       setTxHash(null);
       setStatus(TxStatus.PROCESSING);
 
+      const isEligibleForEvmTxRelayer =
+        free.isZero() &&
+        network.evmTxRelayerEndpoint !== undefined &&
+        isEvmTxRelayerEligible(precompileAddress, factoryResult.functionName);
+
       // TODO: Compare against estimated contract execution gas against balance (there's a constant that allows conversion from gas to native token) instead of checking if it's zero?
       // Relay the transaction if the EVM account doesn't have enough to
       // cover the transaction fees. This is like a subsidy for EVM accounts
-      // without TNT.
-      if (!free.isZero() && network.evmTxRelayerEndpoint !== undefined) {
+      // without TNT. Not all precompile functions are eligible for this; only
+      // those that are whitelisted by the EVM transaction relayer.
+      if (isEligibleForEvmTxRelayer) {
         console.debug('Attempting to relay transaction for EVM account.');
 
         const result = await relayEvmTx(
