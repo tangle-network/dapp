@@ -1,7 +1,7 @@
 'use client';
 
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { chainsPopulated } from '@webb-tools/dapp-config';
+import { ChainConfig, chainsPopulated } from '@webb-tools/dapp-config';
 import { Alert, ChainIcon, ChevronDown, Spinner } from '@webb-tools/icons';
 import {
   calculateTypedChainId,
@@ -23,7 +23,10 @@ import useSwitchNetwork from '../../hooks/useSwitchNetwork';
 import createCustomNetwork from '../../utils/createCustomNetwork';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
-const NetworkSelectionButton: FC = () => {
+const NetworkSelectionButton: FC<{
+  isBridgePage?: boolean;
+  bridgeSourceChain?: ChainConfig;
+}> = ({ isBridgePage = false, bridgeSourceChain }) => {
   const { activeChain, activeWallet, isConnecting, loading, switchChain } =
     useWebContext();
 
@@ -44,33 +47,67 @@ const NetworkSelectionButton: FC = () => {
       return 'Loading';
     }
 
-    return network?.name ?? 'Unknown Network';
-  }, [isConnecting, loading, network?.name]);
+    return activeChain?.displayName ?? activeChain?.name ?? 'Unknown Network';
+  }, [isConnecting, loading, activeChain?.displayName, activeChain?.name]);
 
   const isWrongEvmNetwork = useMemo(() => {
     const isEvmWallet = activeWallet?.platform === 'EVM';
 
+    if (!isEvmWallet) {
+      return false;
+    }
+
+    if (isBridgePage) {
+      return activeChain?.name !== bridgeSourceChain?.name;
+    }
+
     return (
-      isEvmWallet &&
-      network.evmChainId !== undefined &&
-      network.evmChainId !== activeChain?.id
+      network.evmChainId !== undefined && network.evmChainId !== activeChain?.id
     );
-  }, [activeChain?.id, activeWallet?.platform, network.evmChainId]);
+  }, [
+    activeChain?.id,
+    activeChain?.name,
+    activeWallet?.platform,
+    network.evmChainId,
+    bridgeSourceChain?.name,
+    isBridgePage,
+  ]);
 
   const switchToCorrectEvmChain = useCallback(() => {
-    if (!network.evmChainId || !activeWallet) {
+    if (!activeWallet) {
       return;
     }
 
-    const typedChainId = calculateTypedChainId(
-      ChainType.EVM,
-      network.evmChainId,
-    );
+    if (isBridgePage) {
+      if (!bridgeSourceChain) {
+        return;
+      }
+      const typedChainId = calculateTypedChainId(
+        ChainType.EVM,
+        bridgeSourceChain.id,
+      );
 
-    const targetChain = chainsPopulated[typedChainId];
+      const targetChain = chainsPopulated[typedChainId];
 
-    switchChain(targetChain, activeWallet);
-  }, [activeWallet, network.evmChainId, switchChain]);
+      switchChain(targetChain, activeWallet);
+    } else {
+      if (!network.evmChainId) {
+        return;
+      }
+      const typedChainId = calculateTypedChainId(
+        ChainType.EVM,
+        network.evmChainId,
+      );
+      const targetChain = chainsPopulated[typedChainId];
+      switchChain(targetChain, activeWallet);
+    }
+  }, [
+    activeWallet,
+    network.evmChainId,
+    switchChain,
+    isBridgePage,
+    bridgeSourceChain,
+  ]);
 
   return (
     <div className="flex items-center gap-1">
@@ -132,7 +169,7 @@ const TriggerButton: FC<TriggerButtonProps> = ({
       type="button"
       disabled={isLoading}
       className={twMerge(
-        'flex items-center gap-2 rounded-lg p-2',
+        'flex items-center gap-2 rounded-lg p-2 px-4',
         'bg-transparent dark:bg-transparent',
         'hover:bg-mono-100/10 dark:hover:bg-mono-0/10',
         'border-2 border-mono-60 dark:border-mono-140',
@@ -145,7 +182,7 @@ const TriggerButton: FC<TriggerButtonProps> = ({
         <ChainIcon size="lg" className="shrink-0 grow-0" name={networkName} />
       )}
 
-      <div className="flex items-center gap-0">
+      <div className="flex items-center gap-1">
         <Typography
           variant="body1"
           fw="bold"

@@ -1,6 +1,9 @@
+import { chainsConfig } from '@webb-tools/dapp-config/chains';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { Decimal } from 'decimal.js';
+import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
+import { Abi, createPublicClient, http } from 'viem';
 
 import {
   BridgeChainBalances,
@@ -12,8 +15,38 @@ import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import { isSolanaAddress } from '@webb-tools/webb-ui-components';
-import fetchErc20TokenBalance from '@webb-tools/tangle-shared-ui/utils/fetchErc20TokenBalance';
-import useViemPublicClient from '@webb-tools/tangle-shared-ui/hooks/useViemPublicClient';
+import assert from 'assert';
+
+export const fetchEvmTokenBalance = async (
+  accountAddress: string,
+  chainId: number,
+  erc20Address: EvmAddress,
+  tokenAbi: Abi,
+  decimals: number,
+) => {
+  try {
+    const client = createPublicClient({
+      chain: chainsConfig[chainId],
+      transport: http(),
+    });
+
+    const balance = await client.readContract({
+      address: erc20Address,
+      abi: tokenAbi,
+      functionName: 'balanceOf',
+      args: [accountAddress],
+    });
+
+    assert(
+      typeof balance === 'bigint',
+      `Bridge failed to read ERC20 token balance: Unexpected balance type returned, expected bigint but got ${typeof balance} (${balance})`,
+    );
+
+    return new Decimal(ethers.utils.formatUnits(balance, decimals));
+  } catch {
+    return new Decimal(0);
+  }
+};
 
 export const useBridgeEvmBalances = (
   sourceChainId: number,
@@ -24,7 +57,6 @@ export const useBridgeEvmBalances = (
   const [balances, setBalances] = useState<BridgeChainBalances>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const viemPublicClient = useViemPublicClient();
 
   const fetchTokenBalance = useCallback(
     async (
@@ -32,25 +64,24 @@ export const useBridgeEvmBalances = (
       chainId: PresetTypedChainId,
       address: EvmAddress,
     ): Promise<BridgeTokenWithBalance> => {
-      if (viemPublicClient === null || isSolanaAddress(token.address)) {
-        // TODO: Not all tokens are ERC20, ex. Solana. Handle the edge cases. For now, just return a balance of 0.
+      // TODO: Not all tokens are ERC20, ex. Solana. Handle the edge cases. For now, just return a balance of 0.
+      if (isSolanaAddress(token.address)) {
         return { ...token, balance: new Decimal(0) };
       }
 
-      const balance = await fetchErc20TokenBalance(
-        viemPublicClient,
+      const balance = await fetchEvmTokenBalance(
         address,
+        chainId,
         token.address,
         token.abi,
         token.decimals,
       );
 
       let syntheticBalance: Decimal | undefined;
-
       if (token.hyperlaneSyntheticAddress) {
-        syntheticBalance = await fetchErc20TokenBalance(
-          viemPublicClient,
+        syntheticBalance = await fetchEvmTokenBalance(
           address,
+          chainId,
           token.hyperlaneSyntheticAddress,
           token.abi,
           token.decimals,
@@ -59,10 +90,10 @@ export const useBridgeEvmBalances = (
 
       return { ...token, balance, syntheticBalance };
     },
-    [viemPublicClient],
+    [],
   );
 
-  const fetchAllBalances = useCallback(async () => {
+  const fetchBalances = useCallback(async () => {
     if (accountEvmAddress === null || !sourceChainId) {
       return;
     }
@@ -75,7 +106,6 @@ export const useBridgeEvmBalances = (
         {};
 
       let tokens = BRIDGE_TOKENS[sourceChainId];
-
       if (!tokens || tokens.length === 0) {
         tokens = BRIDGE_TOKENS[destinationChainId];
       }
@@ -98,13 +128,13 @@ export const useBridgeEvmBalances = (
   }, [accountEvmAddress, destinationChainId, fetchTokenBalance, sourceChainId]);
 
   useEffect(() => {
-    fetchAllBalances();
-  }, [fetchAllBalances]);
+    fetchBalances();
+  }, [fetchBalances]);
 
   return {
     balances,
     isLoading,
     error,
-    refresh: fetchAllBalances,
+    refresh: fetchBalances,
   };
 };

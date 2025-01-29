@@ -4,11 +4,11 @@ import { useMutation } from '@tanstack/react-query';
 import { providers, utils } from 'ethers';
 
 import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
-import { getHyperlaneWarpCore } from '../../pages/bridge/lib/hyperlane/context';
+import { getHyperlaneWarpCore } from '../../lib/bridge/hyperlane/context';
 import {
   getHyperlaneChainName,
   tryFindToken,
-} from '../../pages/bridge/lib/hyperlane/utils';
+} from '../../lib/bridge/hyperlane/utils';
 import useEthersSigner from './useEthersSigner';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
 

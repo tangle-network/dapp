@@ -1,6 +1,6 @@
-import { ChevronDownIcon } from '@heroicons/react/24/solid';
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
 import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
-import { ArrowRightUp, TokenIcon } from '@webb-tools/icons';
+import { ChevronDown, TokenIcon } from '@webb-tools/icons';
 import { getFlexBasic } from '@webb-tools/icons/utils';
 import {
   Accordion,
@@ -39,7 +39,6 @@ export const FeeDetail = ({
   amounts,
   className,
   isCollapsible = true,
-  bridgeFeeTokenType,
   recipientExplorerUrl,
 }: FeeDetailProps) => {
   return (
@@ -61,7 +60,7 @@ export const FeeDetail = ({
             Total Receiving
           </Typography>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
               <TokenIcon
                 size="lg"
@@ -69,11 +68,7 @@ export const FeeDetail = ({
                 className={cx(`shrink-0 ${getFlexBasic('lg')}`)}
               />
 
-              <Typography
-                variant="h4"
-                fw="bold"
-                className="text-mono-0 dark:text-mono-0 whitespace-nowrap"
-              >
+              <Typography variant="h4" fw="bold" className="whitespace-nowrap">
                 {amounts.receiving.split('.')[0]}
                 {amounts.receiving.split('.')[1]
                   ? `.${amounts.receiving.split('.')[1].slice(0, 4)}`
@@ -82,9 +77,10 @@ export const FeeDetail = ({
             </div>
 
             {isCollapsible && (
-              <ChevronDownIcon
+              <ChevronDown
+                size="lg"
                 className={cx(
-                  'w-5 h-5 text-mono-120 dark:text-mono-100 transition-transform duration-300',
+                  'transition-transform duration-300',
                   'group-radix-state-open:rotate-180',
                   'group-radix-state-closed:rotate-0',
                 )}
@@ -111,7 +107,7 @@ export const FeeDetail = ({
               <Typography
                 variant="body1"
                 fw="bold"
-                className="text-mono-0 dark:text-mono-0 whitespace-nowrap"
+                className="whitespace-nowrap"
               >
                 {amounts.sending}
               </Typography>
@@ -125,13 +121,12 @@ export const FeeDetail = ({
               <Typography
                 variant="body1"
                 fw="bold"
-                className="text-mono-0 dark:text-mono-0 whitespace-nowrap"
+                className="whitespace-nowrap"
               >
                 {amounts.bridgeFee.split('.')[0]}
                 {amounts.bridgeFee.split('.')[1]
                   ? `.${amounts.bridgeFee.split('.')[1].slice(0, 4)}`
                   : ''}{' '}
-                {bridgeFeeTokenType}
               </Typography>
             </div>
 
@@ -163,7 +158,7 @@ export const FeeDetail = ({
                 <Typography
                   variant="body1"
                   fw="bold"
-                  className="text-mono-0 dark:text-mono-0 whitespace-nowrap"
+                  className="whitespace-nowrap"
                 >
                   {amounts.gasFee}
                 </Typography>
@@ -185,12 +180,12 @@ export const FeeDetail = ({
                   <Typography
                     variant="body1"
                     fw="bold"
-                    className="text-mono-0 dark:text-mono-0 whitespace-nowrap"
+                    className="whitespace-nowrap"
                   >
                     {shortenHex(recipientExplorerUrl)}
                   </Typography>
 
-                  <ArrowRightUp className="fill-current dark:fill-current" />
+                  <ArrowTopRightOnSquareIcon className="w-4 h-4" />
                 </a>
               </div>
             )}

@@ -1,18 +1,14 @@
 import { GithubRegistry } from '@hyperlane-xyz/registry';
-import {
-  ChainMap,
-  ChainMetadata,
-  ChainMetadataSchema,
-} from '@hyperlane-xyz/sdk';
+import { ChainMap, ChainMetadata } from '@hyperlane-xyz/sdk';
 import { z } from 'zod';
 
 import {
   HYPERLANE_CHAINS,
   HYPERLANE_REGISTRY_URL,
-} from '../../../../constants/bridge';
+} from '../../../constants/bridge';
 
 export default async function assembleChainMetadata() {
-  const result = z.record(ChainMetadataSchema).safeParse({
+  const result = z.record(z.custom<ChainMetadata>()).safeParse({
     ...HYPERLANE_CHAINS,
   });
 

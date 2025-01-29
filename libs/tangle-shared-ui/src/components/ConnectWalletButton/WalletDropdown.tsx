@@ -164,7 +164,9 @@ const SwitchAccountButton: FC = () => {
   return activeApi instanceof WebbWeb3Provider ? (
     <Button
       onClick={handleSwitchAccount}
-      leftIcon={<WalletLineIcon className="!fill-current" size="md" />}
+      leftIcon={
+        <WalletLineIcon className="fill-current dark:fill-current" size="md" />
+      }
       variant="link"
       className="text-lg"
     >
@@ -177,10 +179,11 @@ const SwitchAccountButton: FC = () => {
           leftIcon={
             <WalletLineIcon
               className="fill-current dark:fill-current"
-              size="lg"
+              size="md"
             />
           }
           variant="link"
+          className="text-lg"
         >
           Switch
         </Button>

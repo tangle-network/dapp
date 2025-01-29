@@ -50,7 +50,7 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
       if (!activeAccount) return;
       const tx = {
         ...txData,
-        state: BridgeTxState.Initializing,
+        state: BridgeTxState.Pending,
       };
 
       setCachedBridgeTxQueueByAcc((cache) => {
