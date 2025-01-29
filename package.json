@@ -26,7 +26,8 @@
     "pr:check": "prettier --write \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx}\" && yarn lint && yarn build",
     "chromatic": "npx chromatic --build-script-name=build:storybook --exit-zero-on-changes",
     "generate:release": "node ./tools/release.js",
-    "codegen": "npx graphql-codegen --config codegen.ts"
+    "codegen": "npx graphql-codegen --config codegen.ts",
+    "check:codegen": "node ./tools/checkCodegen.js"
   },
   "resolutions": {
     "eslint-plugin-import": "npm:eslint-plugin-import-x@^4.5.0"
