@@ -77,14 +77,14 @@ export const AssetList = ({
               className="cursor-pointer w-full flex items-center gap-4 justify-between max-w-full min-h-[60px] py-[12px] px-6"
             >
               <div className="flex items-center gap-2">
-                {/* <TokenIcon
+                <TokenIcon
                   size="xl"
                   name={
                     asset.symbol === 'SolvBTC.BBN' ? 'SolvBTC' : asset.symbol
                   }
                   className="mr-2"
                   spinnerSize="lg"
-                /> */}
+                />
 
                 <div className="flex flex-col gap-1">
                   <Typography

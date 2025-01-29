@@ -64,7 +64,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   const { transferable: balance } = useBalances();
   const [activeWallet] = useActiveWallet();
   const { toggleModal: toggleConnectWalletModal } = useConnectWallet();
-
+  const [isTxInProgress, setIsTxInProgress] = useState(false);
   const sourceChains = useBridgeStore((state) => state.sourceChains);
   const destinationChains = useBridgeStore((state) => state.destinationChains);
 
@@ -525,11 +525,21 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     isAddressInputError,
   ]);
 
-  const isActionBtnLoading = isRouterQuoteLoading || isHyperlaneQuoteLoading;
+  const isActionBtnLoading =
+    isRouterQuoteLoading || isHyperlaneQuoteLoading || isTxInProgress;
 
-  const actionBtnLoadingText = isActionBtnLoading ? 'Preview Transaction' : '';
+  const actionBtnLoadingText = useMemo(() => {
+    if (isTxInProgress) {
+      return 'Transaction in Progress';
+    }
+    return isActionBtnLoading ? 'Preview Transaction' : '';
+  }, [isActionBtnLoading, isTxInProgress]);
 
   const actionButtonText = useMemo(() => {
+    if (isTxInProgress) {
+      return 'Transaction in Progress';
+    }
+
     if (!activeAccount || !activeWallet || !activeChain) {
       return 'Connect Wallet';
     } else if (
@@ -546,6 +556,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
     return 'Preview Transaction';
   }, [
+    isTxInProgress,
     activeAccount,
     activeWallet,
     activeChain,
@@ -763,6 +774,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                           selectedToken.decimals,
                         )
                   }
+                  isDisabled={isTxInProgress}
                 />
 
                 <ChainOrTokenButton
@@ -793,7 +805,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                         variant="body1"
                         className="flex items-center gap-1"
                       >
-                        <WalletFillIcon size="lg" /> Balance:{' '}
+                        <WalletFillIcon size="md" /> Balance:{' '}
                         {selectedTokenBalanceOnSourceChain !== null
                           ? `${Number(selectedTokenBalanceOnSourceChain).toFixed(6)} ${selectedToken.tokenType}`
                           : EMPTY_VALUE_PLACEHOLDER}
@@ -836,6 +848,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                   setIsAddressInputError(error ? true : false);
                   setAddressInputErrorMessage(error);
                 }}
+                isDisabled={isTxInProgress}
               />
 
               {addressInputErrorMessage !== null && (
@@ -969,6 +982,8 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
             ? (routerFeeDetails?.receivingAmount ?? null)
             : (hyperlaneFeeDetails?.receivingAmount ?? null)
         }
+        isTxInProgress={isTxInProgress}
+        setIsTxInProgress={setIsTxInProgress}
       />
     </>
   );

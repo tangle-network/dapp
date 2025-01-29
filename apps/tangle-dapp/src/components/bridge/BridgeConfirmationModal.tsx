@@ -67,6 +67,8 @@ interface BridgeConfirmationModalProps {
   } | null;
   sendingAmount: Decimal | null;
   receivingAmount: Decimal | null;
+  isTxInProgress: boolean;
+  setIsTxInProgress: (isTxInProgress: boolean) => void;
 }
 
 export const BridgeConfirmationModal = ({
@@ -82,6 +84,7 @@ export const BridgeConfirmationModal = ({
   routerTransferData,
   sendingAmount,
   receivingAmount,
+  setIsTxInProgress,
 }: BridgeConfirmationModalProps) => {
   const {
     addTxToQueue,
@@ -359,6 +362,8 @@ export const BridgeConfirmationModal = ({
   );
 
   const handleConfirm = useCallback(async () => {
+    setIsTxInProgress(true);
+
     try {
       if (!sendingAmount || !receivingAmount) {
         throw new Error('Invalid amount');
@@ -393,6 +398,7 @@ export const BridgeConfirmationModal = ({
             bridgeType: EVMTokenBridgeEnum.Router,
           });
 
+          setIsTxInProgress(false);
           setIsOpenQueueDropdown(true);
           updateTxState(response.transactionHash, BridgeTxState.Pending);
           addTxExplorerUrl(
@@ -453,6 +459,7 @@ export const BridgeConfirmationModal = ({
         }
       }
 
+      setIsTxInProgress(false);
       handleClose();
       clearBridgeStore();
     } catch (possibleError) {
