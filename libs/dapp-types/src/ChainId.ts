@@ -111,6 +111,8 @@ export enum PresetTypedChainId {
 
   BSC = calculateTypedChainId(ChainType.EVM, EVMChainId.BSC),
 
+  Bitlayer = calculateTypedChainId(ChainType.EVM, EVMChainId.Bitlayer),
+
   // Localnets
   HermesLocalnet = calculateTypedChainId(
     ChainType.EVM,

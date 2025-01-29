@@ -92,7 +92,7 @@ const fetchRouterQuote = async (
   }
 };
 
-const useBridgeRouterQuote = (props: RouterQuoteParams | null) => {
+const useRouterQuote = (props: RouterQuoteParams | null) => {
   return useQuery<unknown, RouterQuoteError, RouterQuoteResponse>({
     queryKey: ['routerQuote', props],
     queryFn: () => fetchRouterQuote(props),
@@ -101,4 +101,4 @@ const useBridgeRouterQuote = (props: RouterQuoteParams | null) => {
   });
 };
 
-export default useBridgeRouterQuote;
+export default useRouterQuote;

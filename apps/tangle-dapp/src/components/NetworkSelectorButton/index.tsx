@@ -3,22 +3,23 @@ import { useLocation } from 'react-router';
 import { type FC } from 'react';
 
 import { PagePath } from '../../types';
+import useBridgeStore from '../../context/bridge/useBridgeStore';
 
 const NetworkSelectorButton: FC = () => {
   const location = useLocation();
 
-  const isInLiquidStakingPage = location.pathname.startsWith(
-    PagePath.LIQUID_STAKING,
+  const selectedSourceChain = useBridgeStore(
+    (state) => state.selectedSourceChain,
   );
 
   const isInBridgePath = location.pathname.startsWith(PagePath.BRIDGE);
 
-  // Disable network switching on certain pages.
-  if (isInBridgePath || isInLiquidStakingPage) {
-    return null;
-  }
-
-  return <NetworkSelectorDropdown />;
+  return (
+    <NetworkSelectorDropdown
+      isBridgePage={isInBridgePath}
+      bridgeSourceChain={selectedSourceChain}
+    />
+  );
 };
 
 export default NetworkSelectorButton;

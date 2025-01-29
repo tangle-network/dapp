@@ -24,6 +24,7 @@ enum EVMChainId {
   Linea = 59144,
   Base = 8453,
   BSC = 56,
+  Bitlayer = 200901,
 
   TangleLocalEVM = 3287,
   TangleTestnetEVM = 3799,

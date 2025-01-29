@@ -10,7 +10,7 @@ import { Decimal } from 'decimal.js';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
+import { useBridgeTxQueue } from '../../context/bridge/BridgeTxQueueContext';
 
 interface BridgeTxQueueItemProps {
   tx: BridgeQueueTxItem;
@@ -40,21 +40,18 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
           tokenSymbol: tx.tokenSymbol,
           walletAddress: tx.recipientAddress,
         }}
+        className="py-2"
       />
       <TxProgressor.Footer
         status={getStatus(tx.state)}
-        statusMessage={getStatusMessage(tx.state)}
-        steppedProgressProps={{
-          steps: getTotalSteps(tx.bridgeType),
-          activeStep: getActiveStep(tx.state),
-        }}
+        statusMessage={getStatusMessage(tx.state, false, tx.bridgeType)}
         externalUrl={tx.explorerUrl ? new URL(tx.explorerUrl) : undefined}
         destinationTxStatus={
           tx.destinationTxState ? getStatus(tx.destinationTxState) : undefined
         }
         destinationTxStatusMessage={
           tx.destinationTxState
-            ? getStatusMessage(tx.destinationTxState)
+            ? getStatusMessage(tx.destinationTxState, true, tx.bridgeType)
             : undefined
         }
         destinationTxExplorerUrl={
@@ -80,45 +77,35 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
 
 export default BridgeTxQueueItem;
 
-const getTotalSteps = (bridgeType: EVMTokenBridgeEnum): number => {
-  return bridgeType === EVMTokenBridgeEnum.Router ? 2 : 2;
-};
-
-const getActiveStep = (state: BridgeTxState): number => {
-  switch (state) {
-    case BridgeTxState.Initializing:
-      return 1;
-    case BridgeTxState.Sending:
-      return 2;
-    case BridgeTxState.Executed:
-      return 3;
-    case BridgeTxState.Failed:
-      return 3;
-  }
-};
-
 const getStatus = (state: BridgeTxState): StatusVariant => {
   switch (state) {
-    case BridgeTxState.Initializing:
+    case BridgeTxState.Pending:
       return 'info';
-    case BridgeTxState.Sending:
-      return 'info';
-    case BridgeTxState.Executed:
+    case BridgeTxState.Completed:
       return 'success';
     case BridgeTxState.Failed:
       return 'error';
   }
 };
 
-const getStatusMessage = (state: BridgeTxState): string => {
+const getStatusMessage = (
+  state: BridgeTxState,
+  isDestinationTx: boolean,
+  bridgeType: EVMTokenBridgeEnum,
+): string => {
+  const TxType =
+    bridgeType === EVMTokenBridgeEnum.Hyperlane
+      ? isDestinationTx
+        ? 'on destination'
+        : 'on source'
+      : '';
+
   switch (state) {
-    case BridgeTxState.Initializing:
-      return 'Initializing';
-    case BridgeTxState.Sending:
-      return 'Sending';
-    case BridgeTxState.Executed:
-      return 'Executed';
+    case BridgeTxState.Pending:
+      return `Pending ${TxType} `;
+    case BridgeTxState.Completed:
+      return `Successful ${TxType} `;
     case BridgeTxState.Failed:
-      return 'Failed';
+      return `Failed ${TxType} `;
   }
 };

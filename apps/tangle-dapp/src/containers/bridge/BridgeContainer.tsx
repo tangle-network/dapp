@@ -12,7 +12,6 @@ import {
   EVMTokenEnum,
 } from '@webb-tools/evm-contract-metadata';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import {
   Button,
   Card,
@@ -25,26 +24,26 @@ import {
   useModal,
 } from '@webb-tools/webb-ui-components';
 import { Decimal } from 'decimal.js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatEther } from 'viem';
 
 import AddressInput from '../../components/AddressInput';
+import { AddressType } from '../../constants';
 import AmountInput from '../../components/AmountInput';
 import { BridgeConfirmationModal } from '../../components/bridge/BridgeConfirmationModal';
 import { FeeDetail, FeeDetailProps } from '../../components/bridge/FeeDetail';
 import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
 import { ChainList } from '../../components/Lists/ChainList';
 import { ROUTER_NATIVE_TOKEN_ADDRESS } from '../../constants/bridge';
-import useBridgeStore from '../../context/useBridgeStore';
+import useBridgeStore from '../../context/bridge/useBridgeStore';
 import useBalances from '../../data/balances/useBalances';
 import { useBridgeEvmBalances } from '../../data/bridge/useBridgeEvmBalances';
 import { BridgeTokenWithBalance } from '@webb-tools/tangle-shared-ui/types';
-import useBridgeRouterQuote, {
+import useRouterQuote, {
   RouterQuoteParams,
-} from '../../data/bridge/useBridgeRouterQuote';
+} from '../../data/bridge/useRouterQuote';
 import convertDecimalToBn from '../../utils/convertDecimalToBn';
-import formatTangleBalance from '../../utils/formatTangleBalance';
 import {
   HyperlaneQuoteProps,
   useHyperlaneQuote,
@@ -52,7 +51,7 @@ import {
 import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
 import ErrorMessage from '../../components/ErrorMessage';
 import { WalletFillIcon } from '@webb-tools/icons';
-import { AddressType } from '../../constants';
+import { useBalance } from 'wagmi';
 
 interface BridgeContainerProps {
   className?: string;
@@ -63,16 +62,9 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   const [activeChain] = useActiveChain();
   const [activeAccount] = useActiveAccount();
   const { transferable: balance } = useBalances();
-  const { nativeTokenSymbol } = useNetworkStore();
   const [activeWallet] = useActiveWallet();
   const { toggleModal: toggleConnectWalletModal } = useConnectWallet();
-
-  const fmtAccountBalance = useMemo(() => {
-    return balance
-      ? formatTangleBalance(balance, nativeTokenSymbol).split(' ')[0]
-      : '';
-  }, [balance, nativeTokenSymbol]);
-
+  const [isTxInProgress, setIsTxInProgress] = useState(false);
   const sourceChains = useBridgeStore((state) => state.sourceChains);
   const destinationChains = useBridgeStore((state) => state.destinationChains);
 
@@ -111,6 +103,11 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   const setSelectedToken = useBridgeStore((state) => state.setSelectedToken);
   const amount = useBridgeStore((state) => state.amount);
   const setAmount = useBridgeStore((state) => state.setAmount);
+
+  const { data: nativeTokenBalance } = useBalance({
+    address: activeAccount?.address as `0x${string}`,
+    chainId: selectedSourceChain.id,
+  });
 
   const { balances, refresh: refreshEvmBalances } = useBridgeEvmBalances(
     sourceTypedChainId,
@@ -249,7 +246,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     isLoading: isRouterQuoteLoading,
     refetch: refetchRouterQuote,
     error: routerQuoteError,
-  } = useBridgeRouterQuote(routerQuoteParams);
+  } = useRouterQuote(routerQuoteParams);
 
   const {
     data: hyperlaneQuote,
@@ -257,6 +254,20 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     refetch: refetchHyperlaneQuote,
     error: hyperlaneQuoteError,
   } = useHyperlaneQuote(hyperlaneQuoteParams);
+
+  const recipientExplorerUrl = useMemo(() => {
+    return destinationAddress
+      ? makeExplorerUrl(
+          selectedDestinationChain.blockExplorers?.default.url ?? '',
+          destinationAddress,
+          'address',
+          'web3',
+        )
+      : undefined;
+  }, [
+    destinationAddress,
+    selectedDestinationChain.blockExplorers?.default.url,
+  ]);
 
   const routerFeeDetails: FeeDetailProps | null = useMemo(() => {
     if (!routerQuote) {
@@ -300,6 +311,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       bridgeFeeTokenType: routerQuote.bridgeFee.symbol,
       sendingAmount: new Decimal(sendingAmount),
       receivingAmount: new Decimal(receivingAmount),
+      recipientExplorerUrl: recipientExplorerUrl,
     };
   }, [
     amount,
@@ -307,6 +319,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     selectedToken,
     setReceivingAmount,
     setSendingAmount,
+    recipientExplorerUrl,
   ]);
 
   const hyperlaneFeeDetails: FeeDetailProps | null = useMemo(() => {
@@ -346,6 +359,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       gasFeeTokenType: hyperlaneQuote.fees.interchain.symbol,
       sendingAmount: new Decimal(sendingAmount),
       receivingAmount: new Decimal(sendingAmount),
+      recipientExplorerUrl: recipientExplorerUrl,
     };
   }, [
     amount,
@@ -353,6 +367,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     selectedToken,
     setReceivingAmount,
     setSendingAmount,
+    recipientExplorerUrl,
   ]);
 
   const clearBridgeStore = useCallback(() => {
@@ -383,19 +398,30 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
   const assets: AssetConfig[] = useMemo(() => {
     const tokenConfigs = tokens.map((token) => {
-      const balance =
-        sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM &&
-        token.tokenType === EVMTokenEnum.TNT
-          ? fmtAccountBalance
-          : sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
-            ? balances?.[sourceTypedChainId]?.find(
-                (tokenBalance: BridgeTokenWithBalance) =>
-                  tokenBalance.address === token.address,
-              )?.syntheticBalance
-            : balances?.[sourceTypedChainId]?.find(
-                (tokenBalance: BridgeTokenWithBalance) =>
-                  tokenBalance.address === token.address,
-              )?.balance;
+      const isNativeToken =
+        (sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM &&
+          token.tokenType === EVMTokenEnum.TNT) ||
+        (sourceTypedChainId === PresetTypedChainId.Polygon &&
+          token.tokenSymbol === 'POL') ||
+        ((sourceTypedChainId === PresetTypedChainId.Optimism ||
+          sourceTypedChainId === PresetTypedChainId.Arbitrum ||
+          sourceTypedChainId === PresetTypedChainId.Base) &&
+          token.tokenSymbol === 'ETH') ||
+        (sourceTypedChainId === PresetTypedChainId.BSC &&
+          token.tokenSymbol === 'BNB');
+
+      const balance = isNativeToken
+        ? formatEther(nativeTokenBalance?.value ?? BigInt(0))
+        : sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
+            sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM
+          ? balances?.[sourceTypedChainId]?.find(
+              (tokenBalance: BridgeTokenWithBalance) =>
+                tokenBalance.address === token.address,
+            )?.syntheticBalance
+          : balances?.[sourceTypedChainId]?.find(
+              (tokenBalance: BridgeTokenWithBalance) =>
+                tokenBalance.address === token.address,
+            )?.balance;
 
       const selectedChainExplorerUrl =
         selectedSourceChain.blockExplorers?.default;
@@ -404,7 +430,8 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
         selectedChainExplorerUrl?.url &&
         makeExplorerUrl(
           selectedChainExplorerUrl.url,
-          (sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
+          (sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
+          sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM
             ? token.hyperlaneSyntheticAddress
             : token.address) ?? '',
           'address',
@@ -418,12 +445,12 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
           activeAccount && balance
             ? parseFloat(balance.toString()).toFixed(6)
             : '',
-        explorerUrl:
-          sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM &&
-          token.tokenType === EVMTokenEnum.TNT
-            ? undefined
-            : tokenExplorerUrl,
-        address: token.address as `0x${string}`,
+        explorerUrl: !isNativeToken ? tokenExplorerUrl : undefined,
+        address:
+          sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
+          sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM
+            ? token.hyperlaneSyntheticAddress
+            : (token.address as `0x${string}`),
         assetBridgeType:
           sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
             ? EVMTokenBridgeEnum.None
@@ -437,7 +464,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   }, [
     tokens,
     sourceTypedChainId,
-    fmtAccountBalance,
+    nativeTokenBalance?.value,
     balances,
     selectedSourceChain.blockExplorers?.default,
     activeAccount,
@@ -457,12 +484,18 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   );
 
   const selectedTokenBalanceOnSourceChain = useMemo(() => {
+    const tokenAddress =
+      sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
+      sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM
+        ? selectedToken.hyperlaneSyntheticAddress
+        : selectedToken.address;
+
     const balance = assets.find(
-      (asset) => asset.address === selectedToken.address,
+      (asset) => asset.address === tokenAddress,
     )?.balance;
 
     return balance ? parseFloat(balance) : 0;
-  }, [selectedToken, assets]);
+  }, [selectedToken, assets, sourceTypedChainId]);
 
   const isWrongChain = useMemo(() => {
     const isEvmWallet = activeWallet?.platform === 'EVM';
@@ -492,15 +525,23 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     isAddressInputError,
   ]);
 
-  const isActionBtnLoading = isRouterQuoteLoading || isHyperlaneQuoteLoading;
+  const isActionBtnLoading =
+    isRouterQuoteLoading || isHyperlaneQuoteLoading || isTxInProgress;
 
-  const actionBtnLoadingText = isActionBtnLoading ? 'Preview Transaction' : '';
+  const actionBtnLoadingText = useMemo(() => {
+    if (isTxInProgress) {
+      return 'Transaction in Progress';
+    }
+    return isActionBtnLoading ? 'Preview Transaction' : '';
+  }, [isActionBtnLoading, isTxInProgress]);
 
   const actionButtonText = useMemo(() => {
+    if (isTxInProgress) {
+      return 'Transaction in Progress';
+    }
+
     if (!activeAccount || !activeWallet || !activeChain) {
       return 'Connect Wallet';
-    } else if (isWrongChain) {
-      return 'Switch Network';
     } else if (
       amount &&
       destinationAddress &&
@@ -515,10 +556,10 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
     return 'Preview Transaction';
   }, [
+    isTxInProgress,
     activeAccount,
     activeWallet,
     activeChain,
-    isWrongChain,
     amount,
     destinationAddress,
     isAmountInputError,
@@ -532,10 +573,6 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   const onClickActionBtn = useCallback(() => {
     if (!activeAccount || !activeWallet || !activeChain) {
       toggleConnectWalletModal(true, sourceTypedChainId);
-    } else if (isWrongChain) {
-      const nextChain = chainsPopulated[sourceTypedChainId];
-
-      switchChain(nextChain, activeWallet);
     } else if (
       amount &&
       destinationAddress &&
@@ -557,7 +594,6 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     activeAccount,
     activeWallet,
     activeChain,
-    isWrongChain,
     amount,
     destinationAddress,
     isAmountInputError,
@@ -568,7 +604,6 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     hyperlaneQuoteError,
     toggleConnectWalletModal,
     sourceTypedChainId,
-    switchChain,
     openConfirmBridgeModal,
     selectedToken.bridgeType,
     refetchHyperlaneQuote,
@@ -613,19 +648,8 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     setIsAmountInputError,
   ]);
 
-  const recipientExplorerUrl = useMemo(() => {
-    return activeAccount?.address
-      ? makeExplorerUrl(
-          selectedSourceChain.blockExplorers?.default.url ?? '',
-          activeAccount.address,
-          'address',
-          'web3',
-        )
-      : undefined;
-  }, [activeAccount, selectedSourceChain.blockExplorers?.default.url]);
-
   useEffect(() => {
-    // Re-fetch every 30 seconds.
+    // Re-fetch every 10 seconds.
     const interval = 10 * 1000;
 
     const intervalId = setInterval(() => {
@@ -637,12 +661,36 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     };
   }, [refreshEvmBalances]);
 
+  const isSwitchingChainRef = useRef(false);
+
+  useEffect(() => {
+    if (
+      isWrongChain &&
+      activeWallet &&
+      activeAccount &&
+      !isSwitchingChainRef.current
+    ) {
+      isSwitchingChainRef.current = true;
+      const nextChain = chainsPopulated[sourceTypedChainId];
+
+      switchChain(nextChain, activeWallet).finally(() => {
+        isSwitchingChainRef.current = false;
+      });
+    }
+  }, [
+    isWrongChain,
+    activeWallet,
+    activeAccount,
+    sourceTypedChainId,
+    switchChain,
+  ]);
+
   return (
     <>
       <Card
         withShadow
         className={twMerge(
-          'flex flex-col gap-7 w-full max-w-[550px] mx-auto',
+          'flex flex-col gap-7 w-full max-w-[550px] mx-auto relative',
           className,
         )}
       >
@@ -664,6 +712,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                 }
                 className="w-full"
                 iconType="chain"
+                textClassName="whitespace-nowrap"
                 onClick={openSourceChainModal}
                 disabled={sourceChains.length <= 1}
               />
@@ -694,7 +743,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
             </div>
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             {/* Sending Amount and Token Selector */}
             <div className="flex flex-col gap-2">
               <div
@@ -725,10 +774,15 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                           selectedToken.decimals,
                         )
                   }
+                  isDisabled={isTxInProgress}
                 />
 
                 <ChainOrTokenButton
-                  value={selectedToken.tokenType}
+                  value={
+                    selectedToken.tokenType === ('SolvBTC.BBN' as EVMTokenEnum)
+                      ? 'SolvBTC'
+                      : selectedToken.tokenType
+                  }
                   iconType="token"
                   onClick={openTokenModal}
                   className="py-2 w-fit"
@@ -736,18 +790,34 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                 />
               </div>
 
-              <div className="flex items-center justify-between px-1">
+              <div className="flex flex-col gap-1 px-1">
                 {isAmountInputError && amountInputErrorMessage !== null && (
-                  <ErrorMessage className="mt-0">
-                    {amountInputErrorMessage}
-                  </ErrorMessage>
+                  <div className="flex flex-col gap-1 animate-in fade-in duration-300 ease-out">
+                    <ErrorMessage
+                      className="mt-0"
+                      typographyProps={{ variant: 'body1' }}
+                    >
+                      {amountInputErrorMessage}
+                    </ErrorMessage>
+
+                    {activeAccount !== null && (
+                      <Typography
+                        variant="body1"
+                        className="flex items-center gap-1"
+                      >
+                        <WalletFillIcon size="md" /> Balance:{' '}
+                        {selectedTokenBalanceOnSourceChain !== null
+                          ? `${Number(selectedTokenBalanceOnSourceChain).toFixed(6)} ${selectedToken.tokenType}`
+                          : EMPTY_VALUE_PLACEHOLDER}
+                      </Typography>
+                    )}
+                  </div>
                 )}
 
-                {/** Balance */}
-                {activeAccount !== null && (
+                {!isAmountInputError && activeAccount !== null && (
                   <Typography
                     variant="body1"
-                    className="flex items-center gap-1 ml-auto"
+                    className="flex items-center gap-1 ml-auto transition-opacity duration-300 ease-out"
                   >
                     <WalletFillIcon size="md" /> Balance:{' '}
                     {selectedTokenBalanceOnSourceChain !== null
@@ -769,7 +839,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                   isFullWidth: true,
                   wrapperClassName: 'bg-mono-20 dark:bg-mono-180',
                 }}
-                showAvatar={!isSolanaDestination}
+                showAvatar={false}
                 value={destinationAddress ?? ''}
                 setValue={setDestinationAddress}
                 placeholder="0x..."
@@ -778,10 +848,14 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                   setIsAddressInputError(error ? true : false);
                   setAddressInputErrorMessage(error);
                 }}
+                isDisabled={isTxInProgress}
               />
 
               {addressInputErrorMessage !== null && (
-                <ErrorMessage className="mt-0">
+                <ErrorMessage
+                  className="mt-0"
+                  typographyProps={{ variant: 'body1' }}
+                >
                   {addressInputErrorMessage}
                 </ErrorMessage>
               )}
@@ -816,7 +890,12 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
             )}
 
           {routerQuoteError?.error !== undefined && (
-            <ErrorMessage>{routerQuoteError.error}</ErrorMessage>
+            <ErrorMessage
+              className="mt-0 animate-in fade-in duration-300 ease-out"
+              typographyProps={{ variant: 'body1' }}
+            >
+              {routerQuoteError.error}
+            </ErrorMessage>
           )}
 
           {/* Action button */}
@@ -881,6 +960,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       <BridgeConfirmationModal
         isOpen={isConfirmBridgeModalOpen}
         handleClose={closeConfirmBridgeModal}
+        clearBridgeStore={clearBridgeStore}
         sourceChain={selectedSourceChain}
         destinationChain={selectedDestinationChain}
         token={selectedToken}
@@ -892,8 +972,18 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
         activeAccountAddress={activeAccount?.address ?? ''}
         destinationAddress={destinationAddress ?? ''}
         routerTransferData={routerTransferData}
-        sendingAmount={hyperlaneFeeDetails?.sendingAmount ?? null}
-        receivingAmount={hyperlaneFeeDetails?.receivingAmount ?? null}
+        sendingAmount={
+          selectedToken.bridgeType === EVMTokenBridgeEnum.Router
+            ? (routerFeeDetails?.sendingAmount ?? null)
+            : (hyperlaneFeeDetails?.sendingAmount ?? null)
+        }
+        receivingAmount={
+          selectedToken.bridgeType === EVMTokenBridgeEnum.Router
+            ? (routerFeeDetails?.receivingAmount ?? null)
+            : (hyperlaneFeeDetails?.receivingAmount ?? null)
+        }
+        isTxInProgress={isTxInProgress}
+        setIsTxInProgress={setIsTxInProgress}
       />
     </>
   );

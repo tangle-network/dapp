@@ -67,9 +67,8 @@ export type RestakeOperator = {
 
 // Bridge
 export enum BridgeTxState {
-  Initializing = 'Initializing',
-  Sending = 'Sending',
-  Executed = 'Executed',
+  Pending = 'Pending',
+  Completed = 'Completed',
   Failed = 'Failed',
 }
 

@@ -59,6 +59,9 @@ const classNames: ChainChipClassNames = {
   solana: {
     default: 'text-mono-0 dark:text-mono-0 bg-[#000000]',
   },
+  bitlayer: {
+    default: 'text-mono-0 dark:text-mono-0 bg-[#000000]',
+  },
 };
 
 export function getChainChipClassName(chainType: ChainGroup) {

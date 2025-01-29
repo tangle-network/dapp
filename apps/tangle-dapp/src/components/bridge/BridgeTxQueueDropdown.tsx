@@ -9,7 +9,7 @@ import { Typography } from '@webb-tools/webb-ui-components/typography/Typography
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { useBridgeTxQueue } from '../../context/BridgeTxQueueContext';
+import { useBridgeTxQueue } from '../../context/bridge/BridgeTxQueueContext';
 import BridgeTxQueueItem from './BridgeTxQueueItem';
 
 const BridgeTxQueueDropdown: FC<{
@@ -42,10 +42,10 @@ const BridgeTxQueueDropdown: FC<{
           variant="secondary"
           className={twMerge(
             'rounded-full border-2 py-2 px-4',
-            'bg-mono-0/10 border-mono-60',
-            'hover:bg-mono-0/30',
+            'bg-mono-0/10 border-mono-60 dark:border-mono-140',
             'dark:bg-mono-0/5 dark:border-mono-140',
-            'dark:hover:bg-mono-0/10',
+            'hover:bg-mono-100/10 dark:hover:bg-mono-0/10',
+            'hover:border-mono-60 dark:hover:border-mono-140',
             dropdownButtonClassName,
           )}
         >
@@ -53,6 +53,7 @@ const BridgeTxQueueDropdown: FC<{
             <ShuffleLine className="fill-mono-160 dark:fill-mono-0" />
             <Typography
               variant="body1"
+              fw="semibold"
               className="text-mono-160 dark:text-mono-0"
             >
               ({txQueue.length})
@@ -66,7 +67,7 @@ const BridgeTxQueueDropdown: FC<{
         className={twMerge(
           'max-h-80 w-[calc(100vw-32px)] md:w-[30rem]',
           'overflow-scroll overflow-x-hidden dark:bg-mono-180',
-          'mt-2 mr-4 md:mr-8 lg:mr-12',
+          'mt-2 mr-4 md:mr-8',
           dropdownBodyClassName,
         )}
       >
