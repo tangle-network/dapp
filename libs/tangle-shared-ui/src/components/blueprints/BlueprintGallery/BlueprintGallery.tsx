@@ -169,7 +169,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
   return (
     <div className="space-y-5">
       {/* Category */}
-      <div className="-space-y-0.5">
+      {/* <div className="-space-y-0.5">
         <div className="flex items-center gap-9">
           {categoryItems.map(({ label, onClick, isActive }, idx) => (
             <div
@@ -196,7 +196,7 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
         </div>
 
         <div className="h-0.5 bg-mono-80 dark:bg-mono-170" />
-      </div>
+      </div> */}
 
       {isLoading ? (
         <GalleryContainer>

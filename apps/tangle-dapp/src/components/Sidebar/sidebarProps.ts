@@ -45,15 +45,6 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     subItems: [],
   },
   {
-    name: 'Blueprints',
-    href: PagePath.BLUEPRINTS,
-    isInternal: true,
-    isNext: false,
-    Icon: GridFillIcon,
-    subItems: [],
-    hideInProduction: true,
-  },
-  {
     name: 'Liquid Stake',
     href: PagePath.LIQUID_STAKING,
     isInternal: true,

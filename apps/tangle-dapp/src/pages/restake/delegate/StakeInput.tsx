@@ -1,11 +1,13 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
+import LockFillIcon from '@webb-tools/icons/LockFillIcon';
+import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
 import type { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
-import { FC, useCallback, useMemo } from 'react';
+import { FC, useCallback, useMemo, useRef } from 'react';
 import type {
   UseFormRegister,
   UseFormSetValue,
@@ -14,12 +16,12 @@ import type {
 import { formatUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
 import ErrorMessage from '../../../components/ErrorMessage';
+import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 import useRestakeConsts from '../../../data/restake/useRestakeConsts';
 import type { DelegationFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import AssetPlaceholder from '../AssetPlaceholder';
-import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 
 type Props = {
   amountError: string | undefined;
@@ -138,7 +140,13 @@ const StakeInput: FC<Props> = ({
 
           <TransactionInputCard.MaxAmountButton
             accountType="note"
-            tooltipBody="Deposited"
+            tooltipBody="Available Balance"
+            Icon={
+              useRef({
+                enabled: <LockLineIcon />,
+                disabled: <LockFillIcon />,
+              }).current
+            }
           />
         </TransactionInputCard.Header>
 

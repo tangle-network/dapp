@@ -70,7 +70,7 @@ const UnstakeRequestTableActions: FC<Props> = ({
         onClick={handleCancelUnstake}
         variant="secondary"
       >
-        Cancel Unstake
+        Cancel Undelegate
       </Button>
 
       <Button

@@ -47,8 +47,8 @@ const NetworkSelectionButton: FC<{
       return 'Loading';
     }
 
-    return activeChain?.displayName ?? activeChain?.name ?? 'Unknown Network';
-  }, [isConnecting, loading, activeChain?.displayName, activeChain?.name]);
+    return activeChain?.displayName ?? activeChain?.name ?? network?.name ?? 'Unknown Network';
+  }, [isConnecting, loading, activeChain?.displayName, activeChain?.name, network?.name]);
 
   const isWrongEvmNetwork = useMemo(() => {
     const isEvmWallet = activeWallet?.platform === 'EVM';

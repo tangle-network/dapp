@@ -53,7 +53,7 @@ const COLUMNS = [
   COLUMN_HELPER.accessor('operatorAccountId', {
     id: 'select',
     enableSorting: false,
-    header: () => <TableCell>Request</TableCell>,
+    header: () => <TableCell>Operator</TableCell>,
     cell: (props) => (
       <div className="flex items-center justify-start gap-2">
         <CheckBox

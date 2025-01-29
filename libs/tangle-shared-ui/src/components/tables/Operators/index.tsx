@@ -81,7 +81,8 @@ const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
       </TableCellWrapper>
     ),
   }),
-  COLUMN_HELPER.accessor('concentrationPercentage', {
+  // Hidden now as we don't have price for testnet and TNT assets
+  /* COLUMN_HELPER.accessor('concentrationPercentage', {
     header: () => 'Concentration',
     cell: (props) => {
       const value = props.getValue();
@@ -113,7 +114,7 @@ const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
         </Typography>
       </TableCellWrapper>
     ),
-  }),
+  }), */
   COLUMN_HELPER.accessor('vaultTokens', {
     header: () => 'Vaults',
     cell: (props) => {

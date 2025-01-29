@@ -168,6 +168,7 @@ const RestakeOverviewTabs: FC<Props> = ({
       value={tab}
       onValueChange={(tab) => setTab(tab as RestakeTab)}
       headerClassName="w-full"
+      className="space-y-9"
     >
       <TabContent
         value={RestakeTab.RESTAKE}

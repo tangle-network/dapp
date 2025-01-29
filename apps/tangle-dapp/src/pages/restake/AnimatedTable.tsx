@@ -16,7 +16,7 @@ export const AnimatedTable: FC<Props> = ({
     <AnimatePresence>
       {(!isMediumScreen || isTableOpen) && (
         <motion.div
-          key="unstake-request-table"
+          key="undelegate-request-table"
           className={cx('max-w-lg origin-[0_0_0]')}
           transition={{ duration: 0.15 }}
           initial={{ opacity: 0, scale: 0 }}

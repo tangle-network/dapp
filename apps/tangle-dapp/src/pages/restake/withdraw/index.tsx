@@ -190,7 +190,7 @@ const RestakeWithdrawForm: FC = () => {
           {!isWithdrawRequestTableOpen && isMediumScreen && (
             <ExpandTableButton
               className="absolute top-0 -right-10"
-              tooltipContent="Open withdraw requests table"
+              tooltipContent="Withdrawal request"
               onClick={() => setIsWithdrawRequestTableOpen(true)}
             />
           )}
@@ -225,7 +225,7 @@ const RestakeWithdrawForm: FC = () => {
                   />
                   <TransactionInputCard.MaxAmountButton
                     maxAmount={formattedMaxAmount}
-                    tooltipBody="Deposited"
+                    tooltipBody="Available Balance"
                     Icon={
                       useRef({
                         enabled: <LockLineIcon />,
@@ -299,8 +299,8 @@ const RestakeWithdrawForm: FC = () => {
             <RestakeDetailCard.Header
               title={
                 withdrawRequests.length > 0
-                  ? 'Withdraw Requests'
-                  : 'No Withdraw Requests'
+                  ? 'Withdrawal Requests'
+                  : 'No Withdrawal Requests'
               }
             />
 
@@ -316,9 +316,7 @@ const RestakeWithdrawForm: FC = () => {
               variant="body1"
               className="text-mono-120 dark:text-mono-100"
             >
-              You will be able to withdraw your tokens after the undelegate
-              schedule is completed. To undelegate your tokens, use the
-              undelegate tab.
+              Your requests will appear here after scheduling a withdrawal. Requests can be executed after the waiting period.
             </Typography>
           )}
         </RestakeDetailCard.Root>

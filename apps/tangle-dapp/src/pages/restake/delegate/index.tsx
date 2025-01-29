@@ -301,6 +301,9 @@ const RestakeDelegateForm: FC = () => {
             searchPlaceholder="Search for asset or enter token address"
             getItemKey={(item) => item.id}
             onSelect={handleAssetSelect}
+            filterItem={(item, query) =>
+              filterBy(query, [item.name, item.symbol, item.id])
+            }
             renderItem={(asset) => {
               const fmtBalance = formatDisplayAmount(
                 asset.balance,

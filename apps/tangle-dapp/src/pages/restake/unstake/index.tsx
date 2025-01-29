@@ -176,11 +176,11 @@ const RestakeUnstakeForm: FC = () => {
     return errors.operatorAccountId !== undefined || !selectedOperatorAccountId
       ? 'Select an operator'
       : errors.assetId !== undefined || !selectedAssetId
-        ? 'Select an asset'
+        ? 'Select Asset'
         : !amount
-          ? 'Enter an amount'
+          ? 'Enter Amount'
           : errors.amount !== undefined
-            ? 'Invalid amount'
+            ? 'Invalid Amount'
             : undefined;
   })();
 
@@ -215,7 +215,7 @@ const RestakeUnstakeForm: FC = () => {
           {!isUnstakeRequestTableOpen && isMediumScreen && (
             <ExpandTableButton
               className="absolute top-0 -right-10"
-              tooltipContent="Open unstake requests table"
+              tooltipContent="Undelegate request"
               onClick={() => setIsUnstakeRequestTableOpen(true)}
             />
           )}
@@ -247,13 +247,7 @@ const RestakeUnstakeForm: FC = () => {
                   />
                   <TransactionInputCard.MaxAmountButton
                     maxAmount={formattedMaxAmount}
-                    tooltipBody="Delegated"
-                    Icon={
-                      useRef({
-                        enabled: <LockLineIcon />,
-                        disabled: <LockFillIcon />,
-                      }).current
-                    }
+                    tooltipBody="Available Balance"
                   />
                 </TransactionInputCard.Header>
 
@@ -341,8 +335,8 @@ const RestakeUnstakeForm: FC = () => {
               variant="body1"
               className="text-mono-120 dark:text-mono-100"
             >
-              Once an undelegation request is submitted, it will appear on this
-              table and can be executed after the unbonding period.
+              Your requests will appear here after scheduling an undelegation.
+              Requests can be executed after the waiting period.
             </Typography>
           )}
         </RestakeDetailCard.Root>

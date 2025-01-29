@@ -42,7 +42,7 @@ export const KeyValueWithButton = forwardRef<
       valueFontWeight,
       valueVariant,
       label = '',
-      isDisabledTooltip,
+      isDisabledTooltip = true,
       onCopyButtonClick,
       displayCharCount = 5,
       copyProps,
