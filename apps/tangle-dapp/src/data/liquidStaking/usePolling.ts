@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export type PollingOptions = {
   effect: (() => Promise<unknown> | unknown) | null;
@@ -13,6 +13,9 @@ const usePolling = ({
   refreshInterval = 12_000,
 }: PollingOptions) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const intervalHandleRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const effectRef = useRef(effect);
+  const isMountedRef = useRef(true);
 
   const refresh = useCallback(async () => {
     // Fetcher isn't ready to be called yet.
@@ -25,22 +28,42 @@ const usePolling = ({
     setIsRefreshing(false);
   }, [effect]);
 
+  // Update the effect ref whenever the effect changes.
   useEffect(() => {
-    let intervalHandle: ReturnType<typeof setInterval> | null = null;
+    effectRef.current = effect;
+  }, [effect]);
 
-    (async () => {
-      // Call it immediately to avoid initial delay.
-      await refresh();
-
-      intervalHandle = setInterval(refresh, refreshInterval);
-    })();
-
+  // Track whether the component is mounted to avoid state
+  // or component unmounts.
+  useEffect(() => {
     return () => {
-      if (intervalHandle !== null) {
-        clearInterval(intervalHandle);
+      isMountedRef.current = false;
+      if (intervalHandleRef.current !== null) {
+        clearInterval(intervalHandleRef.current);
       }
     };
-  }, [effect, refresh, refreshInterval]);
+  }, []);
+
+  useEffect(() => {
+    // Clear any existing interval to prevent multiple intervals.
+    if (intervalHandleRef.current !== null) {
+      clearInterval(intervalHandleRef.current);
+    }
+
+    // Immediately invoke the effect to avoid initial delay.
+    refresh();
+
+    intervalHandleRef.current = setInterval(refresh, refreshInterval);
+
+    // Clear the interval when dependencies change or component
+    // unmounts.
+    return () => {
+      if (intervalHandleRef.current !== null) {
+        clearInterval(intervalHandleRef.current);
+        intervalHandleRef.current = null;
+      }
+    };
+  }, [refresh, refreshInterval]);
 
   return isRefreshing;
 };

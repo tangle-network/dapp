@@ -15,7 +15,7 @@ import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import { TxName } from '../../constants';
 import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useEvmTxRelayer from '../../hooks/useEvmTxRelayer';
-import useBalances from '../balances/useBalances';
+import useIsEvmTxRelayerCandidate from '../../hooks/useIsEvmTxRelayerCandidate';
 
 const useRestakeApi = () => {
   const { apiPromise } = usePolkadotApi();
@@ -25,7 +25,7 @@ const useRestakeApi = () => {
   const { notifySuccess, notifyError } = useTxNotification();
   const { isEvm } = useAgnosticAccountInfo();
   const relayEvmTx = useEvmTxRelayer();
-  const { free } = useBalances();
+  const isEvmTxRelayerCandidate = useIsEvmTxRelayerCandidate();
 
   const onSuccess = useCallback(
     (txHash: Hash, blockHash: Hash, txName: TxName) => {
@@ -47,7 +47,11 @@ const useRestakeApi = () => {
 
   const api = useMemo(() => {
     // Not yet ready.
-    if (activeWallet === undefined || activeAccount === null) {
+    if (
+      activeWallet === undefined ||
+      activeAccount === null ||
+      isEvmTxRelayerCandidate === null
+    ) {
       return null;
     }
 
@@ -72,7 +76,7 @@ const useRestakeApi = () => {
 
         return new RestakeEvmApi(
           relayEvmTx,
-          free?.isZero() === true ? true : false,
+          isEvmTxRelayerCandidate,
           evmAddress,
           evmAddress,
           getWagmiConfig(),
@@ -85,8 +89,8 @@ const useRestakeApi = () => {
     activeAccount,
     activeWallet,
     apiPromise,
-    free,
     injector,
+    isEvmTxRelayerCandidate,
     onFailure,
     onSuccess,
     relayEvmTx,

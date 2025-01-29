@@ -24,6 +24,7 @@ import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStor
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import RESTAKING_PRECOMPILE_ABI from '../abi/restaking';
 import useEvmGasEstimate from './useEvmGasEstimate';
+import useEvmCallPermitNonce from './useEvmCallPermitNonce';
 
 const PATHNAME = '/api/v1/relay';
 const DEADLINE_MINUTES = 30;
@@ -38,16 +39,56 @@ const ALLOWED_CALLS: Partial<Record<PrecompileAddress, string[]>> = {
   >[],
 };
 
-const EIP712_TYPES = {
-  Permit: [
-    { name: 'from', type: 'address' },
-    { name: 'to', type: 'address' },
-    { name: 'value', type: 'uint256' },
-    { name: 'data', type: 'bytes' },
-    { name: 'nonce', type: 'uint256' },
-    { name: 'deadline', type: 'uint256' },
+const TYPES = {
+  EIP712Domain: [
+    {
+      name: 'name',
+      type: 'string',
+    },
+    {
+      name: 'version',
+      type: 'string',
+    },
+    {
+      name: 'chainId',
+      type: 'uint256',
+    },
+    {
+      name: 'verifyingContract',
+      type: 'address',
+    },
   ],
-};
+  CallPermit: [
+    {
+      name: 'from',
+      type: 'address',
+    },
+    {
+      name: 'to',
+      type: 'address',
+    },
+    {
+      name: 'value',
+      type: 'uint256',
+    },
+    {
+      name: 'data',
+      type: 'bytes',
+    },
+    {
+      name: 'gaslimit',
+      type: 'uint64',
+    },
+    {
+      name: 'nonce',
+      type: 'uint256',
+    },
+    {
+      name: 'deadline',
+      type: 'uint256',
+    },
+  ],
+} as const;
 
 /**
  * @see https://github.com/tangle-network/txrelayer-blueprint/blob/main/API.md#request-body
@@ -145,25 +186,37 @@ export const isEvmTxRelayerEligible = <
  */
 const useEvmTxRelayer = () => {
   const { evmAddress } = useAgnosticAccountInfo();
-  const { network } = useNetworkStore();
+
+  const {
+    network: { evmChainId, evmTxRelayerEndpoint },
+  } = useNetworkStore();
+
   const walletClient = useViemWalletClient(WalletClientTransport.WINDOW);
   const estimateGas = useEvmGasEstimate();
+  const nonce = useEvmCallPermitNonce();
 
   const isReady =
     evmAddress !== null &&
-    network.evmTxRelayerEndpoint !== undefined &&
-    walletClient !== null;
+    evmTxRelayerEndpoint !== undefined &&
+    walletClient !== null &&
+    evmChainId !== undefined &&
+    nonce !== null;
 
   const signTx = useCallback(
-    async (data: Hex, destination: EvmAddress, deadlineSeconds: number) => {
-      // TODO: Temp. assertion.
-      assert(walletClient !== null && evmAddress !== null);
+    async (
+      data: Hex,
+      destination: EvmAddress,
+      deadlineSeconds: number,
+      nonce: bigint,
+      gasLimit: bigint,
+    ) => {
+      assert(isReady);
 
       // EIP-712 domain, types, and message.
       const domain = {
-        name: 'TangleEvmTxRelayer',
+        name: 'Call Permit Precompile',
         version: '1',
-        chainId: network.evmChainId,
+        chainId: BigInt(evmChainId),
         verifyingContract: PrecompileAddress.CALL_PERMIT,
       };
 
@@ -171,19 +224,18 @@ const useEvmTxRelayer = () => {
         data,
         from: evmAddress,
         to: destination,
-        value: 0,
-        // TODO: Nonce: await callPermit.read.nonces([FROM.address]).
-        nonce: 0,
+        value: BigInt(0),
+        nonce,
         // For signing, the deadline should be in decimal form, not hex.
-        deadline: deadlineSeconds,
-        // TODO: Additional fields if the contract requires them.
+        deadline: BigInt(deadlineSeconds),
+        gaslimit: gasLimit,
       };
 
       const signature = await walletClient.signTypedData({
         account: evmAddress,
         domain,
-        types: EIP712_TYPES,
-        primaryType: 'Permit',
+        types: TYPES,
+        primaryType: 'CallPermit',
         message,
       });
 
@@ -191,7 +243,7 @@ const useEvmTxRelayer = () => {
 
       return { v: v !== undefined ? Number(v) : undefined, r, s };
     },
-    [evmAddress, network.evmChainId, walletClient],
+    [evmAddress, isReady, evmChainId, walletClient],
   );
 
   const relayEvmTx = useCallback(
@@ -204,11 +256,7 @@ const useEvmTxRelayer = () => {
       functionName: FunctionName,
       args: FindAbiArgsOf<Abi, FunctionName>,
     ): Promise<Error | EvmTxRelaySuccessResult> => {
-      assert(
-        evmAddress !== null &&
-          network.evmTxRelayerEndpoint !== undefined &&
-          walletClient !== null,
-      );
+      assert(isReady);
 
       const currentTimeSeconds = Math.floor(Date.now() / 1000);
       const deadlineSeconds = currentTimeSeconds + DEADLINE_MINUTES * 60;
@@ -220,18 +268,6 @@ const useEvmTxRelayer = () => {
         functionName: functionName satisfies string as string,
         args,
       });
-
-      const { v, r, s } = await signTx(callData, destination, deadlineSeconds);
-      const url = new URL(network.evmTxRelayerEndpoint);
-
-      url.pathname = PATHNAME;
-      console.debug('Obtained signature:', { v, r, s });
-
-      if (v === undefined) {
-        return new Error(
-          'Failed to obtain signature: recovery ID is undefined, possibly indicating an invalid or malformed signature.',
-        );
-      }
 
       const gasEstimate = await estimateGas(abi, precompileAddress, {
         functionName,
@@ -247,6 +283,25 @@ const useEvmTxRelayer = () => {
           : gasEstimate > BigInt(MAX_GAS_LIMIT)
             ? MAX_GAS_LIMIT
             : Number(gasEstimate);
+
+      const { v, r, s } = await signTx(
+        callData,
+        destination,
+        deadlineSeconds,
+        nonce,
+        BigInt(gasLimit),
+      );
+
+      const url = new URL(evmTxRelayerEndpoint);
+
+      url.pathname = PATHNAME;
+      console.debug('Obtained signature:', { v, r, s });
+
+      if (v === undefined) {
+        return new Error(
+          'Failed to obtain signature: recovery ID is undefined, possibly indicating an invalid or malformed signature.',
+        );
+      }
 
       try {
         const response = await axios.post<
@@ -276,13 +331,7 @@ const useEvmTxRelayer = () => {
         return ensureError(possibleError);
       }
     },
-    [
-      estimateGas,
-      evmAddress,
-      network.evmTxRelayerEndpoint,
-      signTx,
-      walletClient,
-    ],
+    [estimateGas, evmAddress, evmTxRelayerEndpoint, isReady, nonce, signTx],
   );
 
   return isReady ? relayEvmTx : null;

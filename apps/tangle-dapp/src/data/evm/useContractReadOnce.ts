@@ -1,4 +1,3 @@
-import { HexString } from '@polkadot/util/types';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import assert from 'assert';
 import { useCallback } from 'react';
@@ -7,30 +6,26 @@ import {
   ContractFunctionArgs,
   ContractFunctionName,
 } from 'viem';
-import { mainnet, sepolia } from 'viem/chains';
 import { ReadContractReturnType } from 'wagmi/actions';
 
-import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useDebugMetricsStore from '../../context/useDebugMetricsStore';
-import useViemPublicClientWithChain from './useViemPublicClientWithChain';
+import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
+import useViemPublicClient from '@webb-tools/tangle-shared-ui/hooks/useViemPublicClient';
 
 export type ContractReadOptions<
   Abi extends ViemAbi,
   FunctionName extends ContractFunctionName<Abi, 'pure' | 'view'>,
 > = {
-  address: HexString;
+  address: EvmAddress;
   functionName: FunctionName;
   args: ContractFunctionArgs<Abi, 'pure' | 'view', FunctionName>;
 };
 
 const useContractReadOnce = <Abi extends ViemAbi>(abi: Abi) => {
   const { incrementRequestCount } = useDebugMetricsStore();
+  const viemPublicClient = useViemPublicClient();
 
-  // Use Sepolia testnet for development, and mainnet for production.
-  // Some dummy contracts were deployed on Sepolia for testing purposes.
-  const chain = IS_PRODUCTION_ENV ? mainnet : sepolia;
-
-  const publicClient = useViemPublicClientWithChain(chain);
+  const isReady = viemPublicClient !== null;
 
   const read = useCallback(
     async <FunctionName extends ContractFunctionName<Abi, 'pure' | 'view'>>({
@@ -45,15 +40,11 @@ const useContractReadOnce = <Abi extends ViemAbi>(abi: Abi) => {
         >
       | Error
     > => {
-      assert(
-        publicClient !== null,
-        "Should not be able to call this function if the client isn't ready yet",
-      );
-
+      assert(isReady);
       incrementRequestCount();
 
       try {
-        return await publicClient.readContract({
+        return await viemPublicClient.readContract({
           address,
           abi,
           functionName,
@@ -70,11 +61,11 @@ const useContractReadOnce = <Abi extends ViemAbi>(abi: Abi) => {
         return error;
       }
     },
-    [abi, incrementRequestCount, publicClient],
+    [abi, incrementRequestCount, isReady, viemPublicClient],
   );
 
   // Only provide the read functions once the public client is ready.
-  return publicClient === null ? null : read;
+  return isReady ? read : null;
 };
 
 export default useContractReadOnce;

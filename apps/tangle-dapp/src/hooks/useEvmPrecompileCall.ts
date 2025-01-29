@@ -18,9 +18,8 @@ import {
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
-import useBalances from '../data/balances/useBalances';
 import useEvmTxRelayer, { isEvmTxRelayerEligible } from './useEvmTxRelayer';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useIsEvmTxRelayerCandidate from './useIsEvmTxRelayerCandidate';
 
 export type AbiBatchCall = {
   to: EvmAddress;
@@ -73,9 +72,8 @@ function useEvmPrecompileCall<
   const [error, setError] = useState<Error | null>(null);
   const [txHash, setTxHash] = useState<HexString | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const { free } = useBalances();
   const relayEvmTx = useEvmTxRelayer();
-  const { network } = useNetworkStore();
+  const isEvmTxRelayerCandidate = useIsEvmTxRelayerCandidate();
 
   const activeEvmAddress20 = useEvmAddress20();
   const { data: connectorClient } = useConnectorClient();
@@ -96,7 +94,11 @@ function useEvmPrecompileCall<
           : factory;
 
       // Not yet ready.
-      if (factoryResult === null || relayEvmTx === null || free === null) {
+      if (
+        factoryResult === null ||
+        relayEvmTx === null ||
+        isEvmTxRelayerCandidate === null
+      ) {
         console.warn('Attempted to execute EVM pre-compile call too early.');
 
         return;
@@ -108,11 +110,9 @@ function useEvmPrecompileCall<
       setStatus(TxStatus.PROCESSING);
 
       const isEligibleForEvmTxRelayer =
-        free.isZero() &&
-        network.evmTxRelayerEndpoint !== undefined &&
+        isEvmTxRelayerCandidate &&
         isEvmTxRelayerEligible(precompileAddress, factoryResult.functionName);
 
-      // TODO: Compare against estimated contract execution gas against balance (there's a constant that allows conversion from gas to native token) instead of checking if it's zero?
       // Relay the transaction if the EVM account doesn't have enough to
       // cover the transaction fees. This is like a subsidy for EVM accounts
       // without TNT. Not all precompile functions are eligible for this; only
@@ -188,10 +188,9 @@ function useEvmPrecompileCall<
       connectorClient,
       factory,
       relayEvmTx,
-      free,
-      network.evmTxRelayerEndpoint,
-      abi,
+      isEvmTxRelayerCandidate,
       precompileAddress,
+      abi,
       getSuccessMessage,
     ],
   );
