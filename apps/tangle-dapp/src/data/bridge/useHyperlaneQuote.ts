@@ -1,12 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { getHyperlaneWarpCore } from '../../pages/bridge/lib/hyperlane/context';
+import { getHyperlaneWarpCore } from '../../lib/bridge/hyperlane/context';
 import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
 import {
   getHyperlaneChainName,
   tryFindToken,
-} from '../../pages/bridge/lib/hyperlane/utils';
+} from '../../lib/bridge/hyperlane/utils';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { fetchEvmTokenBalance } from './useBridgeEvmBalances';
+import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
+import { notificationApi } from '@webb-tools/webb-ui-components';
 
 export type HyperlaneQuoteProps = {
   token: BridgeToken;
@@ -60,7 +63,20 @@ export const getHyperlaneQuote = async (props: HyperlaneQuoteProps | null) => {
         destination,
       });
     if (!isCollateralSufficient) {
-      throw new Error('Insufficient destination collateral');
+      const balance = await fetchEvmTokenBalance(
+        senderAddress,
+        destinationTypedChainId,
+        token.address as EvmAddress,
+        token.abi,
+        token.decimals,
+      );
+
+      notificationApi({
+        variant: 'error',
+        message: `Insufficient collateral on ${destination} chain. \n Available collateral: ${parseFloat(balance.toString()).toFixed(6)} ${token.tokenSymbol}`,
+      });
+
+      console.error('Insufficient destination collateral');
     }
 
     const errors = await warpCore.validateTransfer({

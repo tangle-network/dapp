@@ -2,12 +2,12 @@
 
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import {
-  ArrowRight,
   ExternalLinkLine,
   ShieldedAssetIcon,
   StatusIndicator,
   TokenIcon,
 } from '@webb-tools/icons';
+import { ArrowRightIcon } from '@heroicons/react/24/solid';
 import { Decimal } from 'decimal.js';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -58,6 +58,8 @@ const getChipColor = (
       return 'purple';
     case 'Withdraw':
       return 'yellow';
+    case 'Bridge':
+      return 'purple';
     default:
       return 'dark-grey';
   }
@@ -162,11 +164,11 @@ const TxProgressorBody = forwardRef<
     <div
       {...props}
       ref={ref}
-      className={twMerge('flex items-center justify-between mt-2', className)}
+      className={twMerge('flex items-center justify-between', className)}
     >
       <TxProgressorBodyItem {...txSourceInfo} isSource />
 
-      <ArrowRight size="lg" />
+      <ArrowRightIcon className="h-5 w-5" />
 
       <TxProgressorBodyItem {...txDestinationInfo} />
     </div>
@@ -201,7 +203,7 @@ const TxProgressorFooter = forwardRef<
       >
         {steppedProgressProps && <SteppedProgress {...steppedProgressProps} />}
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-1">
             <div className="flex items-center gap-1">
               <StatusIndicator animated size={14} variant={status} />

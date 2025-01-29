@@ -25,7 +25,8 @@ export type ChainGroup =
   | 'base'
   | 'linea'
   | 'webb-dev'
-  | 'solana';
+  | 'solana'
+  | 'bitlayer';
 
 /**
  * The extended chain interface that includes the chain type and group

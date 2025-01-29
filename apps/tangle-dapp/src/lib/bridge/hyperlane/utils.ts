@@ -18,7 +18,6 @@ export function tryFindToken(
 }
 
 export function getHyperlaneChainName(typedChainId: number) {
-  console.log('typedChainId', typedChainId);
   switch (typedChainId) {
     case PresetTypedChainId.Arbitrum:
       return 'arbitrum';
@@ -32,6 +31,10 @@ export function getHyperlaneChainName(typedChainId: number) {
       return 'polygon';
     case PresetTypedChainId.TangleMainnetEVM:
       return 'tangle';
+    case PresetTypedChainId.TangleTestnetEVM:
+      return 'tangletestnet';
+    case PresetTypedChainId.Holesky:
+      return 'holesky';
     default:
       throw new Error('Unknown chain');
   }

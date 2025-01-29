@@ -53,7 +53,7 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
               <div className="flex items-center gap-2">
                 <WalletAndChainContainer />
 
-                <BridgeTxQueueDropdown dropdownButtonClassName="h-[52px]" />
+                <BridgeTxQueueDropdown dropdownButtonClassName="h-[44px]" />
               </div>
             </div>
 

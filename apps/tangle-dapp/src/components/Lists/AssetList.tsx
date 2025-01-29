@@ -61,11 +61,12 @@ export const AssetList = ({
       <ScrollArea
         {...overrideScrollAreaProps}
         className={twMerge(
-          'w-full h-full pt-4',
+          'w-full h-[400px]',
           overrideScrollAreaProps?.className,
         )}
+        style={{ position: 'relative' }}
       >
-        <ul>
+        <ul className="h-full">
           {filteredAssets.map((asset, idx) => (
             <ListItem
               key={`${asset.symbol}-${idx}`}
@@ -78,7 +79,9 @@ export const AssetList = ({
               <div className="flex items-center gap-2">
                 <TokenIcon
                   size="xl"
-                  name={asset.symbol}
+                  name={
+                    asset.symbol === 'SolvBTC.BBN' ? 'SolvBTC' : asset.symbol
+                  }
                   className="mr-2"
                   spinnerSize="lg"
                 />
