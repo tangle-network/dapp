@@ -1,10 +1,12 @@
 import type { CodegenConfig } from '@graphql-codegen/cli';
 import 'dotenv/config';
 
-console.log('VITE_GRAPHQL_ENDPOINT', process.env.VITE_GRAPHQL_ENDPOINT);
+const VITE_GRAPHQL_ENDPOINT =
+  process.env.VITE_GRAPHQL_ENDPOINT ??
+  'https://testnet-gql.tangle.tools/graphql';
 
 const config: CodegenConfig = {
-  schema: process.env.VITE_GRAPHQL_ENDPOINT,
+  schema: VITE_GRAPHQL_ENDPOINT,
   documents: ['apps/tangle-dapp/src/**/*.ts', 'apps/tangle-dapp/src/**/*.tsx'],
   ignoreNoDocuments: true,
   generates: {
