@@ -11,25 +11,28 @@ import JSONStringifyBigInt from '@webb-tools/webb-ui-components/utils/JSONString
 import { useCallback, useMemo } from 'react';
 import useSWR from 'swr';
 import { z } from 'zod';
-import { SWRKey } from '../../constants/swr';
 import useActiveDelegation from '../restake/useActiveDelegation';
 
 export default function useAccountRewardInfo() {
   const activeSubstrateAddress = useSubstrateAddress();
   const activeDelegation = useActiveDelegation();
 
-  const { rpcEndpoint } = useNetworkStore();
+  const { network, rpcEndpoint } = useNetworkStore();
   const [activeChain] = useActiveChain();
 
-  const overrideRpcEndpoint = useMemo(() => {
-    if (activeChain?.rpcUrls.default?.webSocket === undefined) {
-      return undefined;
-    }
+  const overrideRpcEndpoint = useMemo(
+    () => {
+      const wsEndpoints = activeChain?.rpcUrls.default?.webSocket;
 
-    return activeChain.rpcUrls.default.webSocket.length > 0
-      ? activeChain.rpcUrls.default.webSocket[0]
-      : undefined;
-  }, [activeChain?.rpcUrls.default?.webSocket]);
+      if (wsEndpoints && wsEndpoints.length > 0) {
+        return wsEndpoints[0];
+      }
+
+      return network.archiveRpcEndpoint ?? rpcEndpoint;
+    },
+    // prettier-ignore
+    [activeChain?.rpcUrls.default?.webSocket, network.archiveRpcEndpoint, rpcEndpoint],
+  );
 
   const assetIds = useMemo(() => {
     if (activeDelegation === null) {
@@ -47,19 +50,10 @@ export default function useAccountRewardInfo() {
     isLoading,
     error: swrError,
     mutate,
-  } = useSWR(
-    useMemo(
-      () => [
-        SWRKey.GetAccountRewards,
-        overrideRpcEndpoint ?? rpcEndpoint,
-        activeSubstrateAddress,
-        assetIds,
-      ],
-      [activeSubstrateAddress, assetIds, overrideRpcEndpoint, rpcEndpoint],
-    ),
-    fetcher,
-    { shouldRetryOnError: false, refreshInterval: 5000 },
-  );
+  } = useSWR([overrideRpcEndpoint, activeSubstrateAddress, assetIds], fetcher, {
+    shouldRetryOnError: false,
+    refreshInterval: 5000,
+  });
 
   const result = useMemo(() => {
     if (!data) {
