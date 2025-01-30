@@ -172,7 +172,7 @@ const RestakeOverviewTabs: FC<Props> = ({
     >
       <TabContent
         value={RestakeTab.RESTAKE}
-        className="flex justify-center min-w-[480px] mx-auto"
+        className="flex justify-center md:min-w-[480px] mx-auto"
       >
         {getFormOfRestakeAction(action)}
       </TabContent>

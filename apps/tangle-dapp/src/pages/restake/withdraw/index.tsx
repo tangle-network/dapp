@@ -1,3 +1,4 @@
+import { BN } from '@polkadot/util';
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
@@ -7,11 +8,7 @@ import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import {
-  Card,
-  IconButton,
-  useBreakpointValue,
-} from '@webb-tools/webb-ui-components';
+import { Card, IconButton } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
@@ -23,26 +20,27 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits } from 'viem';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
+import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
+import StyleContainer from '../../../components/restaking/StyleContainer';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
+import WithdrawModal from '../../../containers/restaking/WithdrawModal';
+import WithdrawRequestTable from '../../../containers/restaking/WithdrawRequestTable';
+import useRestakeApi from '../../../data/restake/useRestakeApi';
+import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import type { WithdrawFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
-import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
+import parseChainUnits from '../../../utils/parseChainUnits';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
 import RestakeTabs from '../RestakeTabs';
-import StyleContainer from '../../../components/restaking/StyleContainer';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
-import WithdrawModal from '../../../containers/restaking/WithdrawModal';
-import WithdrawRequestTable from '../../../containers/restaking/WithdrawRequestTable';
-import parseChainUnits from '../../../utils/parseChainUnits';
-import { BN } from '@polkadot/util';
-import useRestakeApi from '../../../data/restake/useRestakeApi';
-import useRestakeAsset from '../../../data/restake/useRestakeAsset';
+import { DelegatorWithdrawRequest } from '@webb-tools/tangle-shared-ui/types/restake';
+import { twMerge } from 'tailwind-merge';
 
 const RestakeWithdrawForm: FC = () => {
   const {
@@ -76,8 +74,6 @@ const RestakeWithdrawForm: FC = () => {
 
   const [isWithdrawRequestTableOpen, setIsWithdrawRequestTableOpen] =
     useState(false);
-
-  const isMediumScreen = useBreakpointValue('md', true, false);
 
   // Register form fields on mount
   useEffect(() => {
@@ -151,7 +147,7 @@ const RestakeWithdrawForm: FC = () => {
 
   const displayError = useMemo(() => {
     return errors.assetId !== undefined || !selectedAssetId
-      ? 'Select an asset'
+      ? 'Select Asset'
       : !amount
         ? 'Enter an amount'
         : errors.amount !== undefined
@@ -182,14 +178,14 @@ const RestakeWithdrawForm: FC = () => {
   );
 
   return (
-    <div className="flex flex-wrap items-start justify-center gap-4">
+    <div className="grid items-start justify-center gap-4 max-md:grid-cols-1 md:auto-cols-auto md:grid-flow-col">
       <StyleContainer>
         <RestakeTabs />
 
-        <Card withShadow tightPadding className="relative min-w-[512px]">
-          {!isWithdrawRequestTableOpen && isMediumScreen && (
+        <Card withShadow tightPadding className="relative md:min-w-[512px]">
+          {!isWithdrawRequestTableOpen && (
             <ExpandTableButton
-              className="absolute top-0 -right-10"
+              className="absolute top-0 -right-10 max-md:hidden"
               tooltipContent="Withdrawal request"
               onClick={() => setIsWithdrawRequestTableOpen(true)}
             />
@@ -291,37 +287,20 @@ const RestakeWithdrawForm: FC = () => {
       </StyleContainer>
 
       <AnimatedTable
+        className="hidden md:block"
         isTableOpen={isWithdrawRequestTableOpen}
-        isMediumScreen={isMediumScreen}
       >
-        <RestakeDetailCard.Root>
-          <div className="flex items-center justify-between">
-            <RestakeDetailCard.Header
-              title={
-                withdrawRequests.length > 0
-                  ? 'Withdrawal Requests'
-                  : 'No Withdrawal Requests'
-              }
-            />
-
-            <IconButton onClick={() => setIsWithdrawRequestTableOpen(false)}>
-              <Cross1Icon />
-            </IconButton>
-          </div>
-
-          {withdrawRequests.length > 0 ? (
-            <WithdrawRequestTable withdrawRequests={withdrawRequests} />
-          ) : (
-            <Typography
-              variant="body1"
-              className="text-mono-120 dark:text-mono-100"
-            >
-              Your requests will appear here after scheduling a withdrawal.
-              Requests can be executed after the waiting period.
-            </Typography>
-          )}
-        </RestakeDetailCard.Root>
+        <WithdrawRequestView
+          withdrawRequests={withdrawRequests}
+          onClose={() => setIsWithdrawRequestTableOpen(false)}
+        />
       </AnimatedTable>
+
+      <WithdrawRequestView
+        withdrawRequests={withdrawRequests}
+        onClose={() => setIsWithdrawRequestTableOpen(false)}
+        className="md:hidden"
+      />
 
       <WithdrawModal
         delegatorInfo={delegatorInfo}
@@ -359,3 +338,43 @@ const RestakeWithdrawForm: FC = () => {
 };
 
 export default RestakeWithdrawForm;
+
+const WithdrawRequestView = ({
+  withdrawRequests,
+  onClose,
+  className,
+}: {
+  withdrawRequests: DelegatorWithdrawRequest[];
+  onClose: () => void;
+  className?: string;
+}) => {
+  return (
+    <RestakeDetailCard.Root className={twMerge('!min-w-0', className)}>
+      <div className="flex items-center justify-between">
+        <RestakeDetailCard.Header
+          title={
+            withdrawRequests.length > 0
+              ? 'Withdrawal Requests'
+              : 'No Withdrawal Requests'
+          }
+        />
+
+        <IconButton onClick={onClose}>
+          <Cross1Icon />
+        </IconButton>
+      </div>
+
+      {withdrawRequests.length > 0 ? (
+        <WithdrawRequestTable withdrawRequests={withdrawRequests} />
+      ) : (
+        <Typography
+          variant="body1"
+          className="text-mono-120 dark:text-mono-100"
+        >
+          Your requests will appear here after scheduling a withdrawal. Requests
+          can be executed after the waiting period.
+        </Typography>
+      )}
+    </RestakeDetailCard.Root>
+  );
+};

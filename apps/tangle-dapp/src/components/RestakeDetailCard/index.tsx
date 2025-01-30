@@ -24,7 +24,7 @@ const RestakeDetailCardRoot = forwardRef<
     <div
       {...props}
       className={twMerge(
-        'px-4 py-6 rounded-2xl bg-linear-table space-y-4 min-w-[600px]',
+        'px-4 py-6 rounded-2xl bg-linear-table space-y-4 md:min-w-[600px]',
         className,
       )}
       ref={ref}

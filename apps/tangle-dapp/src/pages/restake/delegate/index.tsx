@@ -261,7 +261,7 @@ const RestakeDelegateForm: FC = () => {
   );
 
   return (
-    <StyleContainer className="min-w-[512px]">
+    <StyleContainer className="md:min-w-[512px]">
       <RestakeTabs />
 
       <Card withShadow tightPadding>
