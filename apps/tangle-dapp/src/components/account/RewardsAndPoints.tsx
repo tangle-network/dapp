@@ -63,6 +63,7 @@ const RewardsAndPoints = () => {
         hideErrorNotification
         isLoading={isRewardsLoading}
         error={rewardsError}
+        tooltip="Rewards earned from deposits in restaking"
       >
         <div className="flex items-baseline gap-2">
           <Typography
@@ -89,6 +90,7 @@ const RewardsAndPoints = () => {
         hideErrorNotification
         isLoading={isPointsLoading}
         error={pointsError}
+        tooltip="Points earned toward airdrop through network participant"
       >
         {points?.account?.totalPoints ?? EMPTY_VALUE_PLACEHOLDER} XP
       </KeyStatsItem>
