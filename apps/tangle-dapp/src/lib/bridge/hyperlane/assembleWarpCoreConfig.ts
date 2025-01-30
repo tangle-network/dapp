@@ -1,11 +1,10 @@
 import { warpRouteConfigs } from '@hyperlane-xyz/registry';
 import { WarpCoreConfig, WarpCoreConfigSchema } from '@hyperlane-xyz/sdk';
 import { objFilter, objMerge } from '@hyperlane-xyz/utils';
-
 import {
   HYPERLANE_WARP_ROUTE_CONFIGS,
   HYPERLANE_WARP_ROUTE_WHITELIST,
-} from '../../../../../../libs/tangle-shared-ui/src/constants/bridge';
+} from '@webb-tools/tangle-shared-ui/constants/bridge';
 
 export default function assembleWarpCoreConfig(): WarpCoreConfig {
   const result = WarpCoreConfigSchema.safeParse(HYPERLANE_WARP_ROUTE_CONFIGS);

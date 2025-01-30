@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
+import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import {
   ROUTER_PARTNER_ID,
   ROUTER_QUOTE_URL,
-} from '../../../../../libs/tangle-shared-ui/src/constants/bridge';
-import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
+} from '@webb-tools/tangle-shared-ui/constants/bridge';
 
 export type RouterQuoteParams = {
   fromTokenAddress: string;

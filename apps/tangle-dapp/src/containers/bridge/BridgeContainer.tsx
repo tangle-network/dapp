@@ -35,7 +35,6 @@ import { BridgeConfirmationModal } from '../../components/bridge/BridgeConfirmat
 import { FeeDetail, FeeDetailProps } from '../../components/bridge/FeeDetail';
 import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
 import { ChainList } from '../../components/Lists/ChainList';
-import { ROUTER_NATIVE_TOKEN_ADDRESS } from '../../../../../libs/tangle-shared-ui/src/constants/bridge';
 import useBridgeStore from '../../context/bridge/useBridgeStore';
 import useBalances from '../../data/balances/useBalances';
 import { BridgeTokenWithBalance } from '@webb-tools/tangle-shared-ui/types';
@@ -52,6 +51,7 @@ import { WalletFillIcon } from '@webb-tools/icons';
 import { useBalance } from 'wagmi';
 import convertDecimalToBn from '@webb-tools/tangle-shared-ui/utils/convertDecimalToBn';
 import { useBridgeEvmBalances } from '../../data/bridge/useBridgeEvmBalances';
+import { ROUTER_NATIVE_TOKEN_ADDRESS } from '@webb-tools/tangle-shared-ui/constants/bridge';
 
 interface BridgeContainerProps {
   className?: string;
