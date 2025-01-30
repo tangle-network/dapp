@@ -16,6 +16,8 @@ export const TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL = 'TNT';
 export const TANGLE_TESTNET_WS_RPC_ENDPOINT = 'wss://testnet-rpc.tangle.tools';
 export const TANGLE_TESTNET_HTTP_RPC_ENDPOINT =
   'https://testnet-rpc.tangle.tools';
+export const TANGLE_TESTNET_ARCHIVE_RPC_ENDPOINT =
+  'wss://testnet-rpc-direct.tangle.tools';
 export const TANGLE_TESTNET_POLKADOT_JS_DASHBOARD_URL =
   getPolkadotJsDashboardUrl(TANGLE_TESTNET_WS_RPC_ENDPOINT);
 export const TANGLE_TESTNET_NATIVE_EXPLORER_URL = `https://polkadot.js.org/apps/?rpc=${TANGLE_TESTNET_WS_RPC_ENDPOINT}#/explorer`;

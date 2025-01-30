@@ -16,6 +16,7 @@ import {
   TANGLE_LOCAL_HTTP_RPC_ENDPOINT,
   TANGLE_LOCAL_POLKADOT_JS_DASHBOARD_URL,
   TANGLE_SS58_PREFIX,
+  TANGLE_TESTNET_ARCHIVE_RPC_ENDPOINT,
 } from '@webb-tools/dapp-config/constants/tangle';
 
 import { SUBQUERY_ENDPOINT } from './index';
@@ -60,6 +61,14 @@ export type Network = {
    * client requests.
    */
   httpRpcEndpoint?: string;
+
+  /**
+   * The endpoint for the archive node of the network.
+   *
+   * Usually used for fetching historical data.
+   */
+  archiveRpcEndpoint?: string;
+
   ss58Prefix?: number;
 };
 
@@ -72,6 +81,7 @@ export const TANGLE_MAINNET_NETWORK = {
   nodeType: 'standalone',
   wsRpcEndpoint: TANGLE_MAINNET_WS_RPC_ENDPOINT,
   httpRpcEndpoint: TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
+  archiveRpcEndpoint: TANGLE_MAINNET_WS_RPC_ENDPOINT,
   polkadotJsDashboardUrl: TANGLE_MAINNET_POLKADOT_JS_DASHBOARD_URL,
   nativeExplorerUrl: TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_MAINNET_EVM_EXPLORER_URL,
@@ -88,6 +98,7 @@ export const TANGLE_TESTNET_NATIVE_NETWORK = {
   subqueryEndpoint: SUBQUERY_ENDPOINT,
   httpRpcEndpoint: TANGLE_TESTNET_HTTP_RPC_ENDPOINT,
   wsRpcEndpoint: TANGLE_TESTNET_WS_RPC_ENDPOINT,
+  archiveRpcEndpoint: TANGLE_TESTNET_ARCHIVE_RPC_ENDPOINT,
   polkadotJsDashboardUrl: TANGLE_TESTNET_POLKADOT_JS_DASHBOARD_URL,
   nativeExplorerUrl: TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   evmExplorerUrl: TANGLE_TESTNET_EVM_EXPLORER_URL,
