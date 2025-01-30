@@ -1,14 +1,13 @@
-import assert from 'assert';
+import { DEFAULT_GRAPHQL_ENDPOINT } from '@webb-tools/dapp-config/constants/graphql';
 import type { TypedDocumentString } from '../graphql/graphql';
 
-const ENDPOINT = import.meta.env.VITE_GRAPHQL_ENDPOINT;
+const ENDPOINT =
+  import.meta.env.VITE_GRAPHQL_ENDPOINT ?? DEFAULT_GRAPHQL_ENDPOINT;
 
 export async function executeGraphQL<TResult, TVariables>(
   query: TypedDocumentString<TResult, TVariables>,
   ...[variables]: TVariables extends Record<string, never> ? [] : [TVariables]
 ) {
-  assert(ENDPOINT, 'VITE_GRAPHQL_ENDPOINT is not set');
-
   const response = await fetch(ENDPOINT, {
     method: 'POST',
     headers: {
