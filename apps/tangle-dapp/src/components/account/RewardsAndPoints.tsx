@@ -11,28 +11,40 @@ import { useMemo } from 'react';
 import useAccountRewardInfo from '../../data/rewards/useAccountRewardInfo';
 import KeyStatsItem from '../KeyStatsItem/KeyStatsItem';
 import ClaimRewardAction from './ClaimRewardAction';
+import useActivePoints from '../../data/points/useActivePoints';
 
 const RewardsAndPoints = () => {
   const [activeChain] = useActiveChain();
 
-  const { result, error, refetch, isLoading } = useAccountRewardInfo();
+  const {
+    result: rewards,
+    error: rewardsError,
+    refetch: refreshRewards,
+    isLoading: isRewardsLoading,
+  } = useAccountRewardInfo();
+
+  const {
+    data: points,
+    error: pointsError,
+    isLoading: isPointsLoading,
+  } = useActivePoints();
 
   const claimableAssets = useMemo(() => {
-    if (result === null) {
+    if (rewards === null) {
       return null;
     }
 
     return new Map(
-      result.entries().filter(([_, value]) => value > ZERO_BIG_INT),
+      rewards.entries().filter(([_, value]) => value > ZERO_BIG_INT),
     );
-  }, [result]);
+  }, [rewards]);
 
   const totalRewardsFormatted = useMemo(() => {
-    if (result === null || !activeChain) {
+    if (rewards === null || !activeChain) {
       return null;
     }
 
-    const totalRewards = result
+    const totalRewards = rewards
       .values()
       .reduce((acc, current) => acc + current, ZERO_BIG_INT);
 
@@ -41,16 +53,17 @@ const RewardsAndPoints = () => {
       activeChain.nativeCurrency.decimals,
       AmountFormatStyle.SHORT,
     );
-  }, [activeChain, result]);
+  }, [activeChain, rewards]);
 
   return (
     <div className="grid grid-cols-2 gap-6">
       <KeyStatsItem
-        hideErrorNotification
-        isLoading={isLoading}
         className="!p-0"
         title="Unclaimed Rewards"
-        error={error}
+        hideErrorNotification
+        isLoading={isRewardsLoading}
+        error={rewardsError}
+        tooltip="Rewards earned from deposits in restaking"
       >
         <div className="flex items-baseline gap-2">
           <Typography
@@ -65,14 +78,21 @@ const RewardsAndPoints = () => {
           {claimableAssets !== null && claimableAssets.size > 0 ? (
             <ClaimRewardAction
               claimableAssets={claimableAssets}
-              onPostClaim={refetch}
+              onPostClaim={refreshRewards}
             />
           ) : null}
         </div>
       </KeyStatsItem>
 
-      <KeyStatsItem className="!p-0" title="Earned Points" error={null}>
-        {EMPTY_VALUE_PLACEHOLDER} XP
+      <KeyStatsItem
+        className="!p-0"
+        title="Earned Points"
+        hideErrorNotification
+        isLoading={isPointsLoading}
+        error={pointsError}
+        tooltip="Points earned toward airdrop through network participant"
+      >
+        {points?.account?.totalPoints ?? EMPTY_VALUE_PLACEHOLDER} XP
       </KeyStatsItem>
     </div>
   );

@@ -40,15 +40,24 @@ const NetworkSelectionButton: FC<{
     [switchNetwork],
   );
 
-  const networkName = useMemo(() => {
-    if (isConnecting) {
-      return 'Connecting';
-    } else if (loading) {
-      return 'Loading';
-    }
+  const networkName = useMemo(
+    () => {
+      if (isConnecting) {
+        return 'Connecting';
+      } else if (loading) {
+        return 'Loading';
+      }
 
-    return activeChain?.displayName ?? activeChain?.name ?? 'Unknown Network';
-  }, [isConnecting, loading, activeChain?.displayName, activeChain?.name]);
+      return (
+        network?.name ??
+        activeChain?.displayName ??
+        activeChain?.name ??
+        'Unknown Network'
+      );
+    },
+    // prettier-ignore
+    [isConnecting, loading, activeChain?.displayName, activeChain?.name, network?.name],
+  );
 
   const isWrongEvmNetwork = useMemo(() => {
     const isEvmWallet = activeWallet?.platform === 'EVM';

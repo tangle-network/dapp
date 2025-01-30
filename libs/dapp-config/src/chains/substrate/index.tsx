@@ -5,6 +5,7 @@ import {
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
   TANGLE_MAINNET_WS_RPC_ENDPOINT,
+  TANGLE_TESTNET_ARCHIVE_RPC_ENDPOINT,
   TANGLE_TESTNET_NATIVE_EXPLORER_URL,
   TANGLE_TESTNET_NATIVE_TOKEN_SYMBOL,
   TANGLE_TESTNET_WS_RPC_ENDPOINT,
@@ -59,7 +60,10 @@ export const chainsConfig = {
     rpcUrls: {
       default: {
         http: [],
-        webSocket: [TANGLE_TESTNET_WS_RPC_ENDPOINT],
+        webSocket: [
+          TANGLE_TESTNET_ARCHIVE_RPC_ENDPOINT,
+          TANGLE_TESTNET_WS_RPC_ENDPOINT,
+        ],
       },
     },
     env: ['development'],

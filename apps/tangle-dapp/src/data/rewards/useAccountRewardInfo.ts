@@ -2,8 +2,8 @@ import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useAc
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
-import createRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import createAssetIdEnum from '@webb-tools/tangle-shared-ui/utils/createAssetIdEnum';
+import createRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/createRestakeAssetId';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import JSONParseBigInt from '@webb-tools/webb-ui-components/utils/JSONParseBigInt';
@@ -12,23 +12,28 @@ import { useCallback, useMemo } from 'react';
 import useSWR from 'swr';
 import { z } from 'zod';
 import useActiveDelegation from '../restake/useActiveDelegation';
+import { SWRKey } from './../../constants/swr';
 
 export default function useAccountRewardInfo() {
   const activeSubstrateAddress = useSubstrateAddress();
   const activeDelegation = useActiveDelegation();
 
-  const { rpcEndpoint } = useNetworkStore();
+  const { network, rpcEndpoint } = useNetworkStore();
   const [activeChain] = useActiveChain();
 
-  const overrideRpcEndpoint = useMemo(() => {
-    if (activeChain?.rpcUrls.default?.webSocket === undefined) {
-      return undefined;
-    }
+  const overrideRpcEndpoint = useMemo(
+    () => {
+      const wsEndpoints = activeChain?.rpcUrls.default?.webSocket;
 
-    return activeChain.rpcUrls.default.webSocket.length > 0
-      ? activeChain.rpcUrls.default.webSocket[0]
-      : undefined;
-  }, [activeChain?.rpcUrls.default?.webSocket]);
+      if (wsEndpoints && wsEndpoints.length > 0) {
+        return wsEndpoints[0];
+      }
+
+      return network.archiveRpcEndpoint ?? rpcEndpoint;
+    },
+    // prettier-ignore
+    [activeChain?.rpcUrls.default?.webSocket, network.archiveRpcEndpoint, rpcEndpoint],
+  );
 
   const assetIds = useMemo(() => {
     if (activeDelegation === null) {
@@ -47,16 +52,17 @@ export default function useAccountRewardInfo() {
     error: swrError,
     mutate,
   } = useSWR(
-    useMemo(
-      () => [
-        overrideRpcEndpoint ?? rpcEndpoint,
-        activeSubstrateAddress,
-        assetIds,
-      ],
-      [activeSubstrateAddress, assetIds, overrideRpcEndpoint, rpcEndpoint],
-    ),
+    [
+      SWRKey.GetAccountRewards,
+      overrideRpcEndpoint,
+      activeSubstrateAddress,
+      assetIds,
+    ],
     fetcher,
-    useMemo(() => ({ shouldRetryOnError: false }), []),
+    {
+      shouldRetryOnError: false,
+      refreshInterval: 5000,
+    },
   );
 
   const result = useMemo(() => {
@@ -114,12 +120,13 @@ const responseSchema = z.union([
   }),
 ]);
 
-async function fetcher([rpcEndpoint, activeAddress, assetIds]: [
+async function fetcher([, rpcEndpoint, activeAddress, assetIds]: [
+  SWRKey,
   string,
   SubstrateAddress | null,
   RestakeAssetId[],
 ]) {
-  if (activeAddress === null) {
+  if (activeAddress === null || assetIds.length === 0) {
     return null;
   }
 
