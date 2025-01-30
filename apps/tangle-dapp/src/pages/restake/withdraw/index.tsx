@@ -316,7 +316,8 @@ const RestakeWithdrawForm: FC = () => {
               variant="body1"
               className="text-mono-120 dark:text-mono-100"
             >
-              Your requests will appear here after scheduling a withdrawal. Requests can be executed after the waiting period.
+              Your requests will appear here after scheduling a withdrawal.
+              Requests can be executed after the waiting period.
             </Typography>
           )}
         </RestakeDetailCard.Root>
