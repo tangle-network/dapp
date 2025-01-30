@@ -49,9 +49,9 @@ const NetworkSelectionButton: FC<{
       }
 
       return (
+        network?.name ??
         activeChain?.displayName ??
         activeChain?.name ??
-        network?.name ??
         'Unknown Network'
       );
     },
