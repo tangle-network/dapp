@@ -29,12 +29,6 @@ const RewardsAndPoints = () => {
     isLoading: isPointsLoading,
   } = useActivePoints();
 
-  console.log({
-    points,
-    pointsError,
-    isPointsLoading,
-  });
-
   const claimableAssets = useMemo(() => {
     if (rewards === null) {
       return null;

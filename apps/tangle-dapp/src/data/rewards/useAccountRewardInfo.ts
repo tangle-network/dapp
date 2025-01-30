@@ -12,6 +12,7 @@ import { useCallback, useMemo } from 'react';
 import useSWR from 'swr';
 import { z } from 'zod';
 import useActiveDelegation from '../restake/useActiveDelegation';
+import { SWRKey } from './../../constants/swr';
 
 export default function useAccountRewardInfo() {
   const activeSubstrateAddress = useSubstrateAddress();
@@ -50,10 +51,19 @@ export default function useAccountRewardInfo() {
     isLoading,
     error: swrError,
     mutate,
-  } = useSWR([overrideRpcEndpoint, activeSubstrateAddress, assetIds], fetcher, {
-    shouldRetryOnError: false,
-    refreshInterval: 5000,
-  });
+  } = useSWR(
+    [
+      SWRKey.GetAccountRewards,
+      overrideRpcEndpoint,
+      activeSubstrateAddress,
+      assetIds,
+    ],
+    fetcher,
+    {
+      shouldRetryOnError: false,
+      refreshInterval: 5000,
+    },
+  );
 
   const result = useMemo(() => {
     if (!data) {
@@ -111,12 +121,12 @@ const responseSchema = z.union([
 ]);
 
 async function fetcher([, rpcEndpoint, activeAddress, assetIds]: [
-  string,
+  SWRKey,
   string,
   SubstrateAddress | null,
   RestakeAssetId[],
 ]) {
-  if (activeAddress === null) {
+  if (activeAddress === null || assetIds.length === 0) {
     return null;
   }
 
