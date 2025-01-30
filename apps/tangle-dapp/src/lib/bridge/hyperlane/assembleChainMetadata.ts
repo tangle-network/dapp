@@ -5,7 +5,7 @@ import { z } from 'zod';
 import {
   HYPERLANE_CHAINS,
   HYPERLANE_REGISTRY_URL,
-} from '../../../constants/bridge';
+} from '../../../../../../libs/tangle-shared-ui/src/constants/bridge';
 
 export default async function assembleChainMetadata() {
   const result = z.record(z.custom<ChainMetadata>()).safeParse({

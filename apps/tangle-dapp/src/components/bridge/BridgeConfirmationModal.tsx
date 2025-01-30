@@ -29,11 +29,6 @@ import { FC, useCallback, useMemo, useState } from 'react';
 
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { FeeDetail, FeeDetailProps } from './FeeDetail';
-import {
-  ROUTER_TX_EXPLORER_URL,
-  ROUTER_TX_STATUS_URL,
-  mailboxAddress,
-} from '../../constants/bridge';
 import useBridgeTxQueue from '../../context/bridge/BridgeTxQueueContext/useBridgeTxQueue';
 import { useHyperlaneTransfer } from '../../data/bridge/useHyperlaneTransfer';
 import { useRouterTransfer } from '../../data/bridge/useRouterTransfer';
@@ -46,6 +41,11 @@ import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
 import { ArrowDownIcon } from '@webb-tools/icons';
 import axios from 'axios';
+import {
+  mailboxAddress,
+  ROUTER_TX_EXPLORER_URL,
+  ROUTER_TX_STATUS_URL,
+} from '@webb-tools/tangle-shared-ui/constants/bridge';
 
 interface BridgeConfirmationModalProps {
   isOpen: boolean;
@@ -474,6 +474,7 @@ export const BridgeConfirmationModal = ({
       clearBridgeStore();
     }
   }, [
+    setIsTxInProgress,
     sendingAmount,
     receivingAmount,
     token.bridgeType,
@@ -491,8 +492,8 @@ export const BridgeConfirmationModal = ({
     destinationAddress,
     setIsOpenQueueDropdown,
     updateTxState,
-    watchTransaction,
     addTxExplorerUrl,
+    watchTransaction,
     transferByHyperlaneAsync,
     notificationApi,
   ]);

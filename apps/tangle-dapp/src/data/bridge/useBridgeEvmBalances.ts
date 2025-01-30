@@ -10,7 +10,7 @@ import {
   BridgeToken,
   BridgeTokenWithBalance,
 } from '@webb-tools/tangle-shared-ui/types';
-import { BRIDGE_TOKENS } from '../../constants/bridge';
+import { BRIDGE_TOKENS } from '../../../../../libs/tangle-shared-ui/src/constants/bridge';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import useEvmAddress20 from '../../hooks/useEvmAddress';

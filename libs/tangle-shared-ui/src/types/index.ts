@@ -92,7 +92,7 @@ export type BridgeQueueTxItem = {
 };
 
 export interface BridgeToken {
-  tokenSymbol: string;
+  symbol: string;
   tokenType: EVMTokenEnum;
   bridgeType: EVMTokenBridgeEnum;
   address: EvmAddress | SolanaAddress;

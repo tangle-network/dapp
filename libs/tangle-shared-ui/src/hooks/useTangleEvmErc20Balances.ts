@@ -1,5 +1,4 @@
 import { BN } from '@polkadot/util';
-import { assertEvmAddress } from '@webb-tools/webb-ui-components';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import { useCallback, useEffect, useState } from 'react';
 import { Decimal } from 'decimal.js';
@@ -8,6 +7,10 @@ import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import fetchErc20TokenBalance from '../utils/fetchErc20TokenBalance';
 import { erc20Abi } from 'viem';
 import convertDecimalToBN from '../utils/convertDecimalToBn';
+import { BRIDGE_TOKENS } from '../constants/bridge';
+import { BridgeToken } from '../types';
+import { chainsConfig } from '@webb-tools/dapp-config';
+import assert from 'assert';
 
 type Erc20Token = {
   contractAddress: EvmAddress;
@@ -20,29 +23,48 @@ export type Erc20Balance = Erc20Token & {
   balance: BN;
 };
 
-// TODO: Waiting for bridge PR to be implemented in order to list ERC-20 assets here instead of these dummies.
-export const ERC20_TEST_TOKENS: Erc20Token[] = [
-  {
-    name: 'Local ERC-20 Dummy',
-    symbol: 'USDC',
-    decimals: 18,
-    contractAddress: assertEvmAddress(
-      '0x2af9b184d0d42cd8d3c4fd0c953a06b6838c9357',
-    ),
-  },
-  {
-    name: 'Testnet ERC-20 Dummy',
-    symbol: 'USDC',
-    decimals: 18,
-    contractAddress: assertEvmAddress(
-      '0x9794e2f4edc455d1c31ad795d830c58e4c022475',
-    ),
-  },
-];
+const createErc20Token = (bridgeToken: Required<BridgeToken>): Erc20Token => {
+  const chain = chainsConfig[bridgeToken.chainId];
+
+  assert(chain !== undefined, 'Chain not found for bridge token');
+
+  return {
+    contractAddress: bridgeToken.hyperlaneSyntheticAddress,
+    name: chain.name,
+    symbol: bridgeToken.symbol,
+    decimals: bridgeToken.decimals,
+  };
+};
+
+const getAllErc20Tokens = (): Erc20Token[] => {
+  // Filter out duplicate tokens.
+  const seen = new Set<EvmAddress>();
+
+  return Object.values(BRIDGE_TOKENS)
+    .flat()
+    .flatMap((token) => {
+      const hyperlaneSyntheticAddress = token.hyperlaneSyntheticAddress;
+
+      if (hyperlaneSyntheticAddress === undefined) {
+        return [];
+      }
+
+      return createErc20Token({ ...token, hyperlaneSyntheticAddress });
+    })
+    .filter((token) => {
+      if (seen.has(token.contractAddress)) {
+        return false;
+      }
+
+      seen.add(token.contractAddress);
+
+      return true;
+    });
+};
 
 export const findErc20Token = (id: EvmAddress): Erc20Token | null => {
   return (
-    ERC20_TEST_TOKENS.find((token) => token.contractAddress === id) ?? null
+    getAllErc20Tokens().find((token) => token.contractAddress === id) ?? null
   );
 };
 
@@ -82,8 +104,9 @@ const useTangleEvmErc20Balances = (): Erc20Balance[] | null => {
 
     (async () => {
       const newBalances: Erc20Balance[] = [];
+      const allTokens = getAllErc20Tokens();
 
-      for (const asset of ERC20_TEST_TOKENS) {
+      for (const asset of allTokens) {
         const balanceDecimal = await fetchBalance(evmAddress, asset);
 
         if (balanceDecimal === null) {

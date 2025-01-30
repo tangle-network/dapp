@@ -35,7 +35,7 @@ import { BridgeConfirmationModal } from '../../components/bridge/BridgeConfirmat
 import { FeeDetail, FeeDetailProps } from '../../components/bridge/FeeDetail';
 import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
 import { ChainList } from '../../components/Lists/ChainList';
-import { ROUTER_NATIVE_TOKEN_ADDRESS } from '../../constants/bridge';
+import { ROUTER_NATIVE_TOKEN_ADDRESS } from '../../../../../libs/tangle-shared-ui/src/constants/bridge';
 import useBridgeStore from '../../context/bridge/useBridgeStore';
 import useBalances from '../../data/balances/useBalances';
 import { BridgeTokenWithBalance } from '@webb-tools/tangle-shared-ui/types';
@@ -331,7 +331,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       .div(new Decimal(10).pow(selectedToken.decimals))
       .toString();
 
-    const formattedSendingAmount = `${sendingAmount} ${selectedToken.tokenSymbol}`;
+    const formattedSendingAmount = `${sendingAmount} ${selectedToken.symbol}`;
 
     const formattedGasFee =
       formatEther(hyperlaneQuote.fees.local.amount) +
@@ -402,13 +402,13 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
         (sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM &&
           token.tokenType === EVMTokenEnum.TNT) ||
         (sourceTypedChainId === PresetTypedChainId.Polygon &&
-          token.tokenSymbol === 'POL') ||
+          token.symbol === 'POL') ||
         ((sourceTypedChainId === PresetTypedChainId.Optimism ||
           sourceTypedChainId === PresetTypedChainId.Arbitrum ||
           sourceTypedChainId === PresetTypedChainId.Base) &&
-          token.tokenSymbol === 'ETH') ||
+          token.symbol === 'ETH') ||
         (sourceTypedChainId === PresetTypedChainId.BSC &&
-          token.tokenSymbol === 'BNB');
+          token.symbol === 'BNB');
 
       const balance = isNativeToken
         ? formatEther(nativeTokenBalance?.value ?? BigInt(0))
@@ -440,7 +440,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
       return {
         symbol: token.tokenType,
-        optionalSymbol: token.tokenSymbol,
+        optionalSymbol: token.symbol,
         balance:
           activeAccount && balance
             ? parseFloat(balance.toString()).toFixed(6)
