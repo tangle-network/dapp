@@ -168,10 +168,11 @@ const RestakeOverviewTabs: FC<Props> = ({
       value={tab}
       onValueChange={(tab) => setTab(tab as RestakeTab)}
       headerClassName="w-full"
+      className="space-y-9"
     >
       <TabContent
         value={RestakeTab.RESTAKE}
-        className="flex justify-center min-w-[480px] mx-auto"
+        className="flex justify-center md:min-w-[480px] mx-auto"
       >
         {getFormOfRestakeAction(action)}
       </TabContent>

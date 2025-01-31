@@ -9,7 +9,7 @@ const StyleContainer = forwardRef<
     <div
       {...props}
       ref={ref}
-      className={twMerge('w-full max-w-lg mx-auto', className)}
+      className={twMerge('w-full md:max-w-lg mx-auto', className)}
     >
       {children}
     </div>

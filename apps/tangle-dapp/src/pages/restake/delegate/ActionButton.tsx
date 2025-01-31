@@ -32,13 +32,13 @@ export default function ActionButton({
   const displayError = useMemo(
     () => {
       return errors.operatorAccountId !== undefined || !operatorAccountId
-        ? 'Select an operator'
+        ? 'Select Operator'
         : errors.assetId !== undefined || !assetId
-          ? 'Select an asset'
+          ? 'Select Asset'
           : !amount
-            ? 'Enter an amount'
+            ? 'Enter Amount'
             : errors.amount !== undefined
-              ? 'Invalid amount'
+              ? 'Invalid Amount'
               : undefined;
     },
     // prettier-ignore

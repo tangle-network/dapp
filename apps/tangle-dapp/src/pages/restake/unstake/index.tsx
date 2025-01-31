@@ -1,3 +1,4 @@
+import { BN } from '@polkadot/util';
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
@@ -6,11 +7,9 @@ import LockFillIcon from '@webb-tools/icons/LockFillIcon';
 import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import {
-  Card,
-  IconButton,
-  useBreakpointValue,
-} from '@webb-tools/webb-ui-components';
+import { DelegatorUnstakeRequest } from '@webb-tools/tangle-shared-ui/types/restake';
+import { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
+import { Card, IconButton } from '@webb-tools/webb-ui-components';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
@@ -20,35 +19,33 @@ import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
+import { twMerge } from 'tailwind-merge';
 import { formatUnits } from 'viem';
 import AvatarWithText from '../../../components/AvatarWithText';
 import ErrorMessage from '../../../components/ErrorMessage';
 import RestakeDetailCard from '../../../components/RestakeDetailCard';
+import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
+import SelectOperatorModal from '../../../containers/restaking/SelectOperatorModal';
+import UnstakeRequestTable from '../../../containers/restaking/UnstakeRequestTable';
+import useRestakeApi from '../../../data/restake/useRestakeApi';
 import useIdentities from '../../../data/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import type { UnstakeFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
-import ActionButtonBase from '../../../components/restaking/ActionButtonBase';
+import parseChainUnits from '../../../utils/parseChainUnits';
 import { AnimatedTable } from '../AnimatedTable';
 import AssetPlaceholder from '../AssetPlaceholder';
 import { ExpandTableButton } from '../ExpandTableButton';
 import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
-import SelectOperatorModal from '../../../containers/restaking/SelectOperatorModal';
 import Details from './Details';
-import UnstakeRequestTable from '../../../containers/restaking/UnstakeRequestTable';
-import parseChainUnits from '../../../utils/parseChainUnits';
-import { BN } from '@polkadot/util';
-import useRestakeApi from '../../../data/restake/useRestakeApi';
 
 const RestakeUnstakeForm: FC = () => {
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
     useState(false);
-
-  const isMediumScreen = useBreakpointValue('md', true, false);
 
   const {
     register,
@@ -174,13 +171,13 @@ const RestakeUnstakeForm: FC = () => {
 
   const displayError = (() => {
     return errors.operatorAccountId !== undefined || !selectedOperatorAccountId
-      ? 'Select an operator'
+      ? 'Select Operator'
       : errors.assetId !== undefined || !selectedAssetId
-        ? 'Select an asset'
+        ? 'Select Asset'
         : !amount
-          ? 'Enter an amount'
+          ? 'Enter Amount'
           : errors.amount !== undefined
-            ? 'Invalid amount'
+            ? 'Invalid Amount'
             : undefined;
   })();
 
@@ -207,15 +204,15 @@ const RestakeUnstakeForm: FC = () => {
   );
 
   return (
-    <div className="flex flex-wrap items-start justify-center gap-4">
+    <div className="grid items-start justify-center gap-4 max-md:grid-cols-1 md:auto-cols-auto md:grid-flow-col">
       <div>
         <RestakeTabs />
 
-        <Card withShadow tightPadding className="relative min-w-[512px]">
-          {!isUnstakeRequestTableOpen && isMediumScreen && (
+        <Card withShadow tightPadding className="relative md:min-w-[512px]">
+          {!isUnstakeRequestTableOpen && (
             <ExpandTableButton
-              className="absolute top-0 -right-10"
-              tooltipContent="Open unstake requests table"
+              className="absolute top-0 -right-10 max-md:hidden"
+              tooltipContent="Undelegate request"
               onClick={() => setIsUnstakeRequestTableOpen(true)}
             />
           )}
@@ -247,7 +244,7 @@ const RestakeUnstakeForm: FC = () => {
                   />
                   <TransactionInputCard.MaxAmountButton
                     maxAmount={formattedMaxAmount}
-                    tooltipBody="Delegated"
+                    tooltipBody="Available Balance"
                     Icon={
                       useRef({
                         enabled: <LockLineIcon />,
@@ -314,39 +311,21 @@ const RestakeUnstakeForm: FC = () => {
 
       <AnimatedTable
         isTableOpen={isUnstakeRequestTableOpen}
-        isMediumScreen={isMediumScreen}
+        className="hidden md:block"
       >
-        <RestakeDetailCard.Root>
-          <div className="flex items-center justify-between">
-            <RestakeDetailCard.Header
-              title={
-                unstakeRequests.length > 0
-                  ? 'Undelegate Requests'
-                  : 'No Undelegate Requests'
-              }
-            />
-
-            <IconButton onClick={() => setIsUnstakeRequestTableOpen(false)}>
-              <Cross1Icon />
-            </IconButton>
-          </div>
-
-          {unstakeRequests.length > 0 ? (
-            <UnstakeRequestTable
-              operatorIdentities={operatorIdentities}
-              unstakeRequests={unstakeRequests}
-            />
-          ) : (
-            <Typography
-              variant="body1"
-              className="text-mono-120 dark:text-mono-100"
-            >
-              Once an undelegation request is submitted, it will appear on this
-              table and can be executed after the unbonding period.
-            </Typography>
-          )}
-        </RestakeDetailCard.Root>
+        <UndelegateRequestsView
+          unstakeRequests={unstakeRequests}
+          operatorIdentities={operatorIdentities}
+          onClose={() => setIsUnstakeRequestTableOpen(false)}
+        />
       </AnimatedTable>
+
+      <UndelegateRequestsView
+        unstakeRequests={unstakeRequests}
+        operatorIdentities={operatorIdentities}
+        onClose={() => setIsUnstakeRequestTableOpen(false)}
+        className="md:hidden"
+      />
 
       <SelectOperatorModal
         delegatorInfo={delegatorInfo}
@@ -391,3 +370,50 @@ const RestakeUnstakeForm: FC = () => {
 };
 
 export default RestakeUnstakeForm;
+
+type Props = {
+  unstakeRequests: DelegatorUnstakeRequest[];
+  operatorIdentities: Record<string, IdentityType | null>;
+  onClose: () => void;
+  className?: string;
+};
+
+function UndelegateRequestsView({
+  unstakeRequests,
+  operatorIdentities,
+  onClose,
+  className,
+}: Props) {
+  return (
+    <RestakeDetailCard.Root className={twMerge('!min-w-0', className)}>
+      <div className="flex items-center justify-between">
+        <RestakeDetailCard.Header
+          title={
+            unstakeRequests.length > 0
+              ? 'Undelegate Requests'
+              : 'No Undelegate Requests'
+          }
+        />
+
+        <IconButton onClick={onClose}>
+          <Cross1Icon />
+        </IconButton>
+      </div>
+
+      {unstakeRequests.length > 0 ? (
+        <UnstakeRequestTable
+          operatorIdentities={operatorIdentities}
+          unstakeRequests={unstakeRequests}
+        />
+      ) : (
+        <Typography
+          variant="body1"
+          className="text-mono-120 dark:text-mono-100"
+        >
+          Your requests will appear here after scheduling an undelegation.
+          Requests can be executed after the waiting period.
+        </Typography>
+      )}
+    </RestakeDetailCard.Root>
+  );
+}

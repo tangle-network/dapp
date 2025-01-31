@@ -1,12 +1,16 @@
+import { BN } from '@polkadot/util';
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import { ChainConfig } from '@webb-tools/dapp-config';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
+import { PresetTypedChainId } from '@webb-tools/dapp-types';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { TokenIcon } from '@webb-tools/icons';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
+import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
+import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
 import {
   AmountFormatStyle,
   Card,
@@ -19,6 +23,7 @@ import {
   ModalContent,
 } from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
+import assert from 'assert';
 import {
   type ComponentProps,
   FC,
@@ -31,25 +36,21 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits } from 'viem';
 import { ChainList } from '../../../components/Lists/ChainList';
 import LogoListItem from '../../../components/Lists/LogoListItem';
+import StyleContainer from '../../../components/restaking/StyleContainer';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
+import useRestakeApi from '../../../data/restake/useRestakeApi';
+import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
 import { DepositFormFields } from '../../../types/restake';
 import filterBy from '../../../utils/filterBy';
+import parseChainUnits from '../../../utils/parseChainUnits';
 import Form from '../Form';
 import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
-import SourceChainInput from './SourceChainInput';
 import Details from './Details';
-import { BN } from '@polkadot/util';
-import parseChainUnits from '../../../utils/parseChainUnits';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import useRestakeApi from '../../../data/restake/useRestakeApi';
-import assert from 'assert';
-import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
-import useRestakeAsset from '../../../data/restake/useRestakeAsset';
-import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
+import SourceChainInput from './SourceChainInput';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -277,7 +278,7 @@ const DepositForm: FC<Props> = (props) => {
   );
 
   return (
-    <div className="min-w-[512px]">
+    <StyleContainer className="md:min-w-[512px]">
       <RestakeTabs />
 
       <Card withShadow tightPadding>
@@ -356,7 +357,7 @@ const DepositForm: FC<Props> = (props) => {
           />
         </Form>
       </Card>
-    </div>
+    </StyleContainer>
   );
 };
 

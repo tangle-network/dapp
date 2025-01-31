@@ -70,8 +70,16 @@ const RewardsAndPoints = () => {
             variant="h4"
             fw="bold"
             className="text-mono-140 dark:text-mono-40"
+            component="span"
           >
             {totalRewardsFormatted ?? EMPTY_VALUE_PLACEHOLDER}{' '}
+          </Typography>
+
+          <Typography
+            variant="body1"
+            className="text-mono-140 dark:text-mono-40"
+            component="span"
+          >
             {activeChain?.nativeCurrency.symbol}
           </Typography>
 
@@ -92,7 +100,24 @@ const RewardsAndPoints = () => {
         error={pointsError}
         tooltip="Points earned toward airdrop through network participant"
       >
-        {points?.account?.totalPoints ?? EMPTY_VALUE_PLACEHOLDER} XP
+        <div className="flex items-baseline gap-2">
+          <Typography
+            variant="h4"
+            fw="bold"
+            className="text-mono-140 dark:text-mono-40"
+            component="span"
+          >
+            {points?.account?.totalPoints ?? EMPTY_VALUE_PLACEHOLDER}
+          </Typography>
+
+          <Typography
+            variant="body1"
+            className="text-mono-140 dark:text-mono-40"
+            component="span"
+          >
+            XP
+          </Typography>
+        </div>
       </KeyStatsItem>
     </div>
   );

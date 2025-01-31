@@ -48,7 +48,7 @@ const COLUMNS = [
   COLUMN_HELPER.accessor('assetId', {
     id: 'select',
     enableSorting: false,
-    header: () => <TableCell>Request</TableCell>,
+    header: () => <TableCell>Amount</TableCell>,
     cell: (props) => (
       <div className="flex items-center justify-start gap-2">
         <CheckBox
@@ -59,21 +59,13 @@ const COLUMNS = [
         />
 
         <Typography variant="body1">
-          {props.row.original.assetSymbol}
+          {props.row.original.amount} {props.row.original.assetSymbol}
         </Typography>
       </div>
     ),
   }),
-  COLUMN_HELPER.accessor('amount', {
-    header: () => <TableCell>Amount</TableCell>,
-    cell: (props) => (
-      <TableCell fw="normal" className="text-mono-200 dark:text-mono-0">
-        {props.getValue()} {props.row.original.assetSymbol}
-      </TableCell>
-    ),
-  }),
   COLUMN_HELPER.accessor('sessionsRemaining', {
-    header: () => 'Time Remaining',
+    header: () => <TableCell>Time Remaining</TableCell>,
     sortingFn: (a, b) =>
       a.original.sessionsRemaining - b.original.sessionsRemaining,
     cell: (props) => {
