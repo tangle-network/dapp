@@ -10,7 +10,7 @@ const fetchErc20TokenBalance = async (
   contractAddress: EvmAddress,
   tokenAbi: Abi,
   decimals: number,
-): Promise<Decimal> => {
+): Promise<Decimal | null> => {
   try {
     const balance = await viemPublicClient.readContract({
       address: contractAddress,
@@ -27,11 +27,10 @@ const fetchErc20TokenBalance = async (
     return new Decimal(ethers.utils.formatUnits(balance, decimals));
   } catch (e) {
     console.warn(
-      'Failed to fetch ERC20 token balance, assuming balance of 0:',
-      e,
+      `Failed to fetch ERC20 token balance (is the contract deployed on this network?) (chain: ${viemPublicClient.chain?.name}, account: ${accountAddress}): ${e}`,
     );
 
-    return new Decimal(0);
+    return null;
   }
 };
 

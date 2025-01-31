@@ -204,7 +204,8 @@ const DepositForm: FC<Props> = (props) => {
     return nativeAssetsWithBalances;
   }, [assetWithBalances]);
 
-  const { data: erc20Balances } = useTangleEvmErc20Balances();
+  const { data: erc20Balances, refetch: refetchErc20Balances } =
+    useTangleEvmErc20Balances();
 
   const erc20Assets = useMemo<RestakeAsset[]>(() => {
     if (erc20Balances === null || erc20Balances === undefined) {
@@ -239,7 +240,7 @@ const DepositForm: FC<Props> = (props) => {
   const isReady = restakeApi !== null && asset !== null && !isSubmitting;
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
-    ({ amount }) => {
+    async ({ amount }) => {
       if (!isReady) {
         return;
       }
@@ -250,9 +251,15 @@ const DepositForm: FC<Props> = (props) => {
         return;
       }
 
-      return restakeApi.deposit(asset.id, amountBn);
+      await restakeApi.deposit(asset.id, amountBn);
+
+      // Reload balances after depositing an EVM ERC-20 asset,
+      // so that the deposit amount is reflected in the balance.
+      if (isEvmAddress(asset.id)) {
+        refetchErc20Balances();
+      }
     },
-    [asset, isReady, restakeApi],
+    [asset?.decimals, asset?.id, isReady, refetchErc20Balances, restakeApi],
   );
 
   const sourceChainOptions = useMemo(() => {

@@ -44,6 +44,7 @@ const useContractRead = <
   const value = useQuery({
     queryKey: ['useContractRead', abi, options],
     queryFn: fetcher,
+    refetchInterval: 8000,
   });
 
   return value;
