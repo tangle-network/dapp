@@ -14,7 +14,6 @@ import BridgeLayout from '../pages/bridge/layout';
 import BridgePage from '../pages/bridge';
 import { PagePath } from '../types';
 import Providers from './providers';
-import BlueprintLayout from '../pages/blueprints/layout';
 import BlueprintsPage from '../pages/blueprints';
 import BlueprintDetailsPage from '../pages/blueprints/[id]';
 import LiquidStakingPage from '../pages/liquid-staking';
@@ -54,7 +53,7 @@ function App() {
               <Route index element={<BridgePage />} />
             </Route>
 
-            <Route path={PagePath.BLUEPRINTS} element={<BlueprintLayout />}>
+            <Route path={PagePath.BLUEPRINTS}>
               <Route index element={<BlueprintsPage />} />
 
               <Route
