@@ -32,11 +32,11 @@ export default function ActionButton({
       {(isLoading, loadingText) => {
         const displayError =
           errors.sourceTypedChainId !== undefined
-            ? `Select a source chain`
+            ? `Select Source Chain`
             : errors.depositAssetId !== undefined
-              ? `Select an asset`
+              ? `Select Asset`
               : errors.amount !== undefined
-                ? `Enter an amount`
+                ? `Enter Amount`
                 : undefined;
 
         if (activeTypedChainId !== sourceTypedChainId) {

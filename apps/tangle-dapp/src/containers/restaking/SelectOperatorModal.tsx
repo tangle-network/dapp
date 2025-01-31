@@ -48,7 +48,7 @@ const SelectOperatorModal = ({
     <ListModal
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      searchInputId="restake-unstake-operator-search"
+      searchInputId="restake-undelegate-operator-search"
       searchPlaceholder="Search operators by account ID..."
       items={delegations}
       title="Select Operator"

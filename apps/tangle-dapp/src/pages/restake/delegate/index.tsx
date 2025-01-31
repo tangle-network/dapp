@@ -261,7 +261,7 @@ const RestakeDelegateForm: FC = () => {
   );
 
   return (
-    <StyleContainer className="min-w-[512px]">
+    <StyleContainer className="md:min-w-[512px]">
       <RestakeTabs />
 
       <Card withShadow tightPadding>
@@ -301,6 +301,9 @@ const RestakeDelegateForm: FC = () => {
             searchPlaceholder="Search for asset or enter token address"
             getItemKey={(item) => item.id}
             onSelect={handleAssetSelect}
+            filterItem={(item, query) =>
+              filterBy(query, [item.name, item.symbol, item.id])
+            }
             renderItem={(asset) => {
               const fmtBalance = formatDisplayAmount(
                 asset.balance,

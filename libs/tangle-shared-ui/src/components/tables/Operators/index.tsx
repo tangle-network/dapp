@@ -12,23 +12,21 @@ import {
 import {
   Avatar,
   Button,
+  KeyValueWithButton,
   shortenString,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import type { ComponentProps, PropsWithChildren } from 'react';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import TableCellWrapper from '../../../components/tables/TableCellWrapper';
+import type { TableStatusProps } from '../../../components/tables/TableStatus';
 import TableStatus from '../../../components/tables/TableStatus';
 import { sortByAddressOrIdentity } from '../../../components/tables/utils';
 import { RestakeOperator } from '../../../types';
-import getTVLToDisplay from '../../../utils/getTVLToDisplay';
-import type { ComponentProps, PropsWithChildren } from 'react';
-import type { TableStatusProps } from '../../../components/tables/TableStatus';
 import VaultsDropdown from './VaultsDropdown';
 
 const COLUMN_HELPER = createColumnHelper<RestakeOperator>();
@@ -55,12 +53,7 @@ const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
                 {identity ? identity : shortenString(address)}
               </Typography>
 
-              <Typography
-                variant="body2"
-                className="text-mono-100 dark:text-mono-120"
-              >
-                {shortenString(address)}
-              </Typography>
+              <KeyValueWithButton keyValue={address} size="sm" />
             </div>
           </div>
         </TableCellWrapper>
@@ -81,7 +74,8 @@ const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
       </TableCellWrapper>
     ),
   }),
-  COLUMN_HELPER.accessor('concentrationPercentage', {
+  // Hidden now as we don't have price for testnet and TNT assets
+  /* COLUMN_HELPER.accessor('concentrationPercentage', {
     header: () => 'Concentration',
     cell: (props) => {
       const value = props.getValue();
@@ -113,7 +107,7 @@ const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
         </Typography>
       </TableCellWrapper>
     ),
-  }),
+  }), */
   COLUMN_HELPER.accessor('vaultTokens', {
     header: () => 'Vaults',
     cell: (props) => {
