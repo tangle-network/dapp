@@ -5,7 +5,7 @@ import {
   FindAbiArgsOf,
   PrecompileAddress,
 } from '../../constants/evmPrecompiles';
-import { AbiBatchCall } from '../../hooks/useEvmPrecompileAbiCall';
+import { AbiBatchCall } from '../../hooks/useEvmPrecompileCall';
 import { assertEvmAddress } from '@webb-tools/webb-ui-components';
 
 const createEvmBatchCall = <

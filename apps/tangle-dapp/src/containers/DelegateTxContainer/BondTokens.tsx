@@ -14,7 +14,7 @@ import {
   STAKING_PAYEE_VALUE_TO_TEXT_MAP,
 } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 import { StakingRewardsDestinationDisplayText } from '../../types/index';
 import { BondTokensProps } from './types';
 

@@ -1,8 +1,4 @@
-import {
-  PalletAssetsAssetAccount,
-  TanglePrimitivesCurrencyTokenSymbol,
-  TanglePrimitivesTimeUnit,
-} from '@polkadot/types/lookup';
+import { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
 import {
@@ -12,19 +8,6 @@ import {
   Network as TangleNetwork,
 } from '@webb-tools/webb-ui-components/constants/networks';
 import type { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-
-import {
-  LsNetworkEntityAdapter,
-  ProtocolEntity,
-} from '../../data/liquidStaking/adapter';
-import { CrossChainTimeUnit } from '../../utils/CrossChainTime';
-
-export type LsParachainChainId =
-  | LsProtocolId.POLKADOT
-  | LsProtocolId.PHALA
-  | LsProtocolId.MOONBEAM
-  | LsProtocolId.ASTAR
-  | LsProtocolId.MANTA;
 
 export type LsTangleNetworkId =
   | LsProtocolId.TANGLE_MAINNET
@@ -41,17 +24,9 @@ export enum LsToken {
   T_TNT = 'tTNT',
 }
 
-export type LsParachainToken =
-  | LsToken.DOT
-  | LsToken.GLMR
-  | LsToken.MANTA
-  | LsToken.ASTAR
-  | LsToken.PHALA;
-
 type ProtocolDefCommon = {
   name: string;
   decimals: number;
-  timeUnit: CrossChainTimeUnit;
   unstakingPeriod: number;
   chainIconFileName: string;
 };
@@ -60,7 +35,6 @@ export enum LsNetworkId {
   TANGLE_LOCAL,
   TANGLE_TESTNET,
   TANGLE_MAINNET,
-  TANGLE_RESTAKING_PARACHAIN,
 }
 
 export interface LsTangleNetworkDef extends ProtocolDefCommon {
@@ -78,19 +52,7 @@ export interface LsTangleNetworkDef extends ProtocolDefCommon {
   tangleNetwork: TangleNetwork;
 }
 
-export interface LsParachainChainDef<T extends ProtocolEntity = ProtocolEntity>
-  extends ProtocolDefCommon {
-  networkId: LsNetworkId.TANGLE_RESTAKING_PARACHAIN;
-  id: LsParachainChainId;
-  name: string;
-  token: LsParachainToken;
-  currency: ParachainCurrency;
-  rpcEndpoint: string;
-  ss58Prefix: number;
-  adapter: LsNetworkEntityAdapter<T>;
-}
-
-export type LsProtocolDef = LsParachainChainDef | LsTangleNetworkDef;
+export type LsProtocolDef = LsTangleNetworkDef;
 
 export type LsCardSearchParams = {
   amount: BN;
@@ -102,28 +64,6 @@ export type Network = {
   name: string;
   endpoint: string;
   tokenSymbol: LsToken;
-  chainType: NetworkType;
-};
-
-export enum NetworkType {
-  RELAY_CHAIN = 'Relay Chain',
-  PARACHAIN = 'Parachain',
-}
-
-// TODO: Temporary manual override until the Parachain types are updated.
-export type ParachainCurrency = TanglePrimitivesCurrencyTokenSymbol['type'];
-// | Exclude<TanglePrimitivesCurrencyTokenSymbol['type'], 'Bnc'>
-// | 'Tnt';
-
-export type LsParachainCurrencyKey =
-  | { lst: ParachainCurrency }
-  | { Native: ParachainCurrency };
-
-export type LsParachainTimeUnit = TanglePrimitivesTimeUnit['type'];
-
-export type LsParachainSimpleTimeUnit = {
-  value: number;
-  unit: LsParachainTimeUnit;
 };
 
 export type LsNetwork = {

@@ -16,7 +16,6 @@ import {
 import { LinkProps } from 'react-router';
 import { RestakeOperatorWrapper } from '../../components/tables/RestakeActionWrappers';
 import useIdentities from '../../data/useIdentities';
-import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import JoinOperatorsModal from './JoinOperatorsModal';
 import {
@@ -24,6 +23,7 @@ import {
   ModalTrigger,
 } from '@webb-tools/webb-ui-components/components/Modal';
 import { PropsWithChildren } from 'react';
+import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
@@ -48,7 +48,6 @@ const OperatorsTable: FC<Props> = ({
 
   const { isEvm } = useAgnosticAccountInfo();
   const isAccountConnected = useIsAccountConnected();
-
   const { vaults } = useRestakeContext();
 
   const { result: identities } = useIdentities(

@@ -53,7 +53,6 @@ export const WalletConnectionCard = forwardRef<
     }, [failedWalletId, wallets]);
 
     const showList = !isMdOrLess || (!connectingWallet && !failedWallet);
-
     const showContent = !isMdOrLess || connectingWallet || failedWallet;
 
     return (
@@ -216,21 +215,28 @@ const WalletList: FC<
 > = ({ wallets, onWalletSelect, className }) => {
   return (
     <ul className={twMerge('pt-4', className)}>
-      {wallets.map((wallet) => (
-        <ListItem
-          key={wallet.id}
-          className="cursor-pointer"
-          onClick={() => onWalletSelect?.(wallet)}
-        >
-          <div className="flex items-center gap-2">
-            {wallet.Logo}
+      {wallets.flatMap((wallet) => {
+        // Skip disabled wallets.
+        if (!wallet.enabled) {
+          return [];
+        }
 
-            <Typography variant="body1" fw="bold">
-              {wallet.title}
-            </Typography>
-          </div>
-        </ListItem>
-      ))}
+        return (
+          <ListItem
+            key={wallet.id}
+            className="cursor-pointer"
+            onClick={() => onWalletSelect?.(wallet)}
+          >
+            <div className="flex items-center gap-2">
+              {wallet.Logo}
+
+              <Typography variant="body1" fw="bold">
+                {wallet.title}
+              </Typography>
+            </div>
+          </ListItem>
+        );
+      })}
     </ul>
   );
 };

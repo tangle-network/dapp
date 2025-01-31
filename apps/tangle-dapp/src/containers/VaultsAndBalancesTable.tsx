@@ -14,6 +14,7 @@ import {
 import {
   AmountFormatStyle,
   Button,
+  CircularProgress,
   EMPTY_VALUE_PLACEHOLDER,
   formatDisplayAmount,
   isEvmAddress,
@@ -39,12 +40,13 @@ import { Link } from 'react-router';
 import StatItem from '../components/StatItem';
 import { HeaderCell } from '../components/tableCells';
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
-import useTangleEvmErc20Balances from '../data/restake/useTangleEvmErc20Balances';
 import useIsAccountConnected from '../hooks/useIsAccountConnected';
 import { PagePath, QueryParamKey } from '../types';
 import sortByBn from '../utils/sortByBn';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
 import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
+import calculateBnRatio from '../utils/calculateBnRatio';
+import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 
 type Row = {
   vaultId: number;
@@ -143,7 +145,7 @@ const COLUMNS = [
     header: () => (
       <HeaderCell
         title="TVL | Capacity"
-        tooltip="Total value locked & deposit cap."
+        tooltip="Total value locked & deposit capacity."
       />
     ),
     cell: (props) => {
@@ -155,7 +157,7 @@ const COLUMNS = [
           : formatDisplayAmount(
               tvl,
               props.row.original.decimals,
-              AmountFormatStyle.SI,
+              AmountFormatStyle.SHORT,
             );
 
       const depositCap = props.row.original.depositCap;
@@ -166,17 +168,30 @@ const COLUMNS = [
           : formatDisplayAmount(
               depositCap,
               props.row.original.decimals,
-              AmountFormatStyle.SI,
+              AmountFormatStyle.SHORT,
             );
+
+      const capacityPercentage =
+        tvl === undefined || depositCap === undefined
+          ? null
+          : calculateBnRatio(tvl, depositCap);
 
       return (
         <TableCellWrapper>
           <div className="flex items-center justify-center gap-1">
-            <StatItem
-              title={fmtTvl === undefined ? `${fmtDepositCap}` : `${fmtTvl}`}
-              subtitle={fmtTvl === undefined ? undefined : `${fmtDepositCap}`}
-              removeBorder
-            />
+            {capacityPercentage !== null && (
+              <CircularProgress
+                progress={capacityPercentage}
+                size="md"
+                tooltip={formatPercentage(capacityPercentage)}
+              />
+            )}
+
+            <Typography variant="body1">
+              {fmtTvl === undefined
+                ? `${fmtDepositCap}`
+                : `${fmtTvl} | ${fmtDepositCap}`}
+            </Typography>
           </div>
         </TableCellWrapper>
       );
@@ -373,7 +388,7 @@ const VaultsAndBalancesTable: FC = () => {
     return (
       <TableStatus
         title="No Assets Available Yet"
-        description="There are no restaking vaults or liquid staking pools available on this network yet. Please check back later."
+        description="There are no restaking vaults available on this network yet. Please check back later."
       />
     );
   }

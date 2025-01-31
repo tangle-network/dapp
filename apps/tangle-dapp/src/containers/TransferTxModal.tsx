@@ -23,10 +23,10 @@ import AmountInput from '../components/AmountInput';
 import useBalances from '../data/balances/useBalances';
 import useExistentialDeposit from '../data/balances/useExistentialDeposit';
 import useTransferTx from '../data/balances/useTransferTx';
-import useActiveAccountAddress from '../hooks/useActiveAccountAddress';
 import { TxStatus } from '../hooks/useSubstrateTx';
 import formatTangleBalance from '../utils/formatTangleBalance';
 import { AddressType } from '../constants';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 type Props = {
   isModalOpen: boolean;

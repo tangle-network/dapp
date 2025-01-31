@@ -43,8 +43,8 @@ import { BN } from '@polkadot/util';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
 import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
 import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
-import { findErc20Token } from '../../../data/restake/useTangleEvmErc20Balances';
 import useRestakeAsset from '../../../data/restake/useRestakeAsset';
+import { findErc20Token } from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;

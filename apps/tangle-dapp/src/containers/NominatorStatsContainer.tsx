@@ -21,7 +21,6 @@ import useBalances from '../data/balances/useBalances';
 import useTotalPayoutRewards from '../data/nomination/useTotalPayoutRewards';
 import useIsBondedOrNominating from '../data/staking/useIsBondedOrNominating';
 import useStakingLedger from '../data/staking/useStakingLedger';
-import useActiveAccountAddress from '../hooks/useActiveAccountAddress';
 import useNetworkFeatures from '../hooks/useNetworkFeatures';
 import { NetworkFeature, PagePath } from '../types';
 import formatTangleBalance from '../utils/formatTangleBalance';
@@ -31,6 +30,7 @@ import BondMoreTxModal from './BondMoreTxModal';
 import RebondTxModal from './RebondTxModal';
 import WithdrawUnbondedTxModal from './WithdrawUnbondedTxModal';
 import UnbondTxModal from './UnbondTxModal';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 const NominatorStatsContainer: FC = () => {
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);

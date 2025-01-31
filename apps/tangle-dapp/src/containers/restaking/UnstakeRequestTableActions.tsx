@@ -75,7 +75,7 @@ const UnstakeRequestTableActions: FC<Props> = ({
 
       <Button
         isLoading={isTransacting}
-        isDisabled={!isReady || !canExecuteUnstake}
+        isDisabled={!isReady || canCancelUnstake || !canExecuteUnstake}
         isFullWidth
         onClick={handleExecuteUnstake}
       >

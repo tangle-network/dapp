@@ -6,9 +6,9 @@ import {
   PrecompileAddress,
 } from '../constants/evmPrecompiles';
 import useEvmAddress20 from './useEvmAddress';
-import { AbiCall } from './useEvmPrecompileAbiCall';
-import useViemPublicClient from './useViemPublicClient';
+import { PrecompileCall } from './useEvmPrecompileCall';
 import { AbiFunction } from 'viem';
+import useViemPublicClient from '@webb-tools/tangle-shared-ui/hooks/useViemPublicClient';
 
 export type QueryStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -26,7 +26,7 @@ function useEvmPrecompileFeeFetcher() {
     >(
       abi: Abi,
       precompileAddress: PrecompileAddress,
-      abiCallData: AbiCall<Abi, FunctionName>,
+      abiCallData: PrecompileCall<Abi, FunctionName>,
     ) => {
       setStatus('loading');
       setError(null);
@@ -41,7 +41,6 @@ function useEvmPrecompileFeeFetcher() {
       const [gas, fees] = await Promise.all([
         client.estimateContractGas({
           address: precompileAddress,
-          // TODO: Find a way to avoid casting.
           abi: abi satisfies AbiFunction[] as AbiFunction[],
           functionName: abiCallData.functionName,
           args: abiCallData.arguments,

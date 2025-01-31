@@ -4,12 +4,10 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { TxName } from '../constants';
 import { GetSuccessMessageFn } from '../types';
-import useActiveAccountAddress from './useActiveAccountAddress';
-import useAgnosticAccountInfo from './useAgnosticAccountInfo';
-import useEvmPrecompileAbiCall, {
-  AbiCall,
+import useEvmPrecompileCall, {
+  PrecompileCall,
   EvmTxFactory,
-} from './useEvmPrecompileAbiCall';
+} from './useEvmPrecompileCall';
 import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
 import useTxNotification from './useTxNotification';
 import { AbiFunction } from 'viem';
@@ -17,6 +15,8 @@ import {
   ExtractAbiFunctionNames,
   PrecompileAddress,
 } from '../constants/evmPrecompiles';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 export type AgnosticTxOptions<
   Abi extends AbiFunction[],
@@ -29,7 +29,7 @@ export type AgnosticTxOptions<
 
   evmTxFactory:
     | EvmTxFactory<Abi, FunctionName, Context>
-    | AbiCall<Abi, FunctionName>;
+    | PrecompileCall<Abi, FunctionName>;
 
   /**
    * An identifiable name shown on the toast notification to
@@ -94,7 +94,7 @@ function useAgnosticTx<
     reset: evmReset,
     txHash: evmTxHash,
     successMessage: evmSuccessMessage,
-  } = useEvmPrecompileAbiCall(abi, precompileAddress, evmTxFactory);
+  } = useEvmPrecompileCall(abi, precompileAddress, evmTxFactory);
 
   const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
 

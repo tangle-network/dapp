@@ -12,7 +12,7 @@ import {
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC, ReactNode } from 'react';
 
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 
 const BalanceCell: FC<{
