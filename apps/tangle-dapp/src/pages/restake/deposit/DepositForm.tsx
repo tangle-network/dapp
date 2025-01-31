@@ -84,11 +84,11 @@ const DepositForm: FC<Props> = (props) => {
 
   const depositAssetId = watch('depositAssetId');
 
-  const [vaultIdParam, setVaultIdParam] = useQueryState(
-    QueryParamKey.RESTAKE_VAULT,
+  const [assetIdParam, setAssetIdParam] = useQueryState(
+    QueryParamKey.RESTAKE_ASSET_ID,
   );
 
-  const { assetWithBalances } = useRestakeContext();
+  const { assetWithBalances, isLoading } = useRestakeContext();
   const restakeApi = useRestakeApi();
 
   const setValue = useCallback(
@@ -118,35 +118,18 @@ const DepositForm: FC<Props> = (props) => {
   }, [activeTypedChainId, resetField]);
 
   useEffect(() => {
-    if (!vaultIdParam) {
+    if (!assetIdParam) {
       return;
     }
 
-    const vaultId = Number(vaultIdParam);
+    const defaultAsset = assetWithBalances.find(
+      (asset) => asset.assetId === assetIdParam,
+    );
 
-    if (Number.isNaN(vaultId)) {
-      return;
-    }
-
-    const defaultAsset = assetWithBalances
-      .filter((asset) => asset.metadata.vaultId === vaultId)
-      .sort((a, b) => {
-        const aBalance = a.balance?.balance ?? ZERO_BIG_INT;
-        const bBalance = b.balance?.balance ?? ZERO_BIG_INT;
-
-        if (aBalance === bBalance) {
-          return 0;
-        }
-
-        return aBalance > bBalance ? -1 : 1;
-      })
-      // Find the first asset with balance.
-      .find(
-        (asset) =>
-          asset.balance?.balance && asset.balance.balance > ZERO_BIG_INT,
-      );
-
-    if (!defaultAsset?.balance?.balance) {
+    if (
+      defaultAsset?.balance?.balance === undefined ||
+      defaultAsset?.balance?.balance === ZERO_BIG_INT
+    ) {
       return;
     }
 
@@ -159,8 +142,8 @@ const DepositForm: FC<Props> = (props) => {
     );
 
     // Remove the param to prevent reuse after initial load.
-    setVaultIdParam(null);
-  }, [assetWithBalances, vaultIdParam, setVaultIdParam, setValue]);
+    setAssetIdParam(null);
+  }, [assetIdParam, assetWithBalances, setAssetIdParam, setValue]);
 
   const sourceTypedChainId = watch('sourceTypedChainId');
 
@@ -325,6 +308,7 @@ const DepositForm: FC<Props> = (props) => {
             isOpen={tokenModalOpen}
             setIsOpen={updateTokenModal}
             onSelect={handleAssetSelection}
+            isLoading={isLoading}
             filterItem={(asset, query) =>
               filterBy(query, [asset.id, asset.name, asset.symbol])
             }
