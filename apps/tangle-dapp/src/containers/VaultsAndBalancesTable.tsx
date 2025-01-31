@@ -56,8 +56,10 @@ type Row = {
   tvlInUsd?: number;
   available: BN;
   availableInUsd?: number;
-  locked: BN;
-  lockedInUsd?: number;
+  deposited: BN;
+  depositedInUsd?: number;
+  delegated: BN;
+  delegatedInUsd?: number;
   points?: number;
   decimals: number;
   apyPercentage?: number;
@@ -118,9 +120,9 @@ const COLUMNS = [
       );
     },
   }),
-  COLUMN_HELPER.accessor('locked', {
+  COLUMN_HELPER.accessor('deposited', {
     header: () => 'Deposits',
-    sortingFn: sortByBn((row) => row.locked),
+    sortingFn: sortByBn((row) => row.deposited),
     cell: (props) => {
       const fmtLocked = formatDisplayAmount(
         props.getValue(),
@@ -129,9 +131,9 @@ const COLUMNS = [
       );
 
       const subtitle =
-        props.row.original.lockedInUsd === undefined
+        props.row.original.depositedInUsd === undefined
           ? undefined
-          : `$${props.row.original.lockedInUsd}`;
+          : `$${props.row.original.depositedInUsd}`;
 
       return (
         <TableCellWrapper>
@@ -309,7 +311,8 @@ const VaultsAndBalancesTable: FC = () => {
           ? undefined
           : new BN(config.depositCap.toString());
 
-      const tvl = assetsTvl === null ? undefined : assetsTvl.get(assetId);
+      const delegated =
+        (assetsTvl === null ? undefined : assetsTvl.get(assetId)) ?? BN_ZERO;
 
       const assetBalances:
         | (typeof customAssetBalances)[RestakeAssetId]
@@ -328,12 +331,17 @@ const VaultsAndBalancesTable: FC = () => {
         }
       })();
 
+      const deposits = delegatorInfo?.deposits ?? {};
+      const depositedBigInt = get(deposits, assetId)?.amount ?? BigInt(0);
+      const deposited = new BN(depositedBigInt.toString());
+
       return {
         vaultId: metadata.vaultId,
         name: metadata.name,
-        tvl,
+        tvl: getTotalLockedInAsset(assetId),
         available,
-        locked: getTotalLockedInAsset(assetId),
+        deposited,
+        delegated,
         // TODO: This won't work because reward config is PER VAULT not PER ASSET. But isn't each asset its own vault?
         apyPercentage,
         tokenSymbol: metadata.symbol,
@@ -346,6 +354,7 @@ const VaultsAndBalancesTable: FC = () => {
     rewardConfig,
     assetsTvl,
     customAssetBalances,
+    delegatorInfo?.deposits,
     getTotalLockedInAsset,
     erc20Balances,
   ]);
