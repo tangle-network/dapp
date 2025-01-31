@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from 'react';
 import { Card, Typography } from '@webb-tools/webb-ui-components';
 import { twMerge } from 'tailwind-merge';
-import { ChevronLeft, ChevronRight, ArrowRightUp } from '@webb-tools/icons';
+import { ArrowRightUp } from '@webb-tools/icons';
 
 interface CarouselSlide {
   title: string;
@@ -65,18 +65,10 @@ const PromotionalBanner: FC<{ className?: string }> = ({ className }) => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 8000);
+    }, 15000);
 
     return () => clearInterval(timer);
   }, []);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
@@ -85,7 +77,7 @@ const PromotionalBanner: FC<{ className?: string }> = ({ className }) => {
   return (
     <Card
       className={twMerge(
-        'relative overflow-hidden group bg-no-repeat bg-cover',
+        'relative overflow-hidden bg-no-repeat bg-cover',
         "bg-[url('/static/assets/account/promotional_banner_light.png')] dark:bg-[url('/static/assets/account/promotional_banner_dark.png')]",
         className,
       )}
@@ -117,7 +109,7 @@ const PromotionalBanner: FC<{ className?: string }> = ({ className }) => {
                 href={slide.btnLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[16px] font-bold text-blue-60 dark:text-blue-50 mt-auto flex items-center gap-1"
+                className="text-[16px] font-bold text-blue-60 dark:text-blue-50 mt-auto flex items-center gap-1 w-fit"
               >
                 {slide.btnText}
 
@@ -128,36 +120,19 @@ const PromotionalBanner: FC<{ className?: string }> = ({ className }) => {
         </div>
       </div>
 
-      <div>
-        <button
-          onClick={prevSlide}
-          className="absolute left-2 top-1/2 -translate-y-1/2 bg-gray-100 dark:bg-mono-180 hover:bg-gray-200 hover:dark:bg-mono-200 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-          aria-label="Previous slide"
-        >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-        <button
-          onClick={nextSlide}
-          className="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-100 dark:bg-mono-180 hover:bg-gray-200 hover:dark:bg-mono-200 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-          aria-label="Next slide"
-        >
-          <ChevronRight className="w-6 h-6" />
-        </button>
-
-        <div className="absolute left-1/2 -translate-x-1/2 flex gap-2 bottom-4">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                currentSlide === index
-                  ? 'bg-white w-4'
-                  : 'bg-white/50 hover:bg-white/75'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
+      <div className="absolute left-1/2 -translate-x-1/2 flex gap-2 bottom-4">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToSlide(index)}
+            className={`w-2 h-2 rounded-full transition-all ${
+              currentSlide === index
+                ? 'bg-white w-4'
+                : 'bg-white/50 hover:bg-white/75'
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
       </div>
     </Card>
   );
