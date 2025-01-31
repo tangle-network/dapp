@@ -1,13 +1,12 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import { LsNetworkId } from '../../constants/liquidStaking/types';
 import { useLsStore } from './useLsStore';
-import usePolling from './usePolling';
+import { useQuery } from '@tanstack/react-query';
 
 const MAX_BN_OPERATION_NUMBER = 2 ** 26 - 1;
 
 const useLsExchangeRate = () => {
-  const [exchangeRate, setExchangeRate] = useState<number | Error | null>(null);
   const { lsNetworkId } = useLsStore();
 
   const fetch = useCallback(async () => {
@@ -27,13 +26,16 @@ const useLsExchangeRate = () => {
     // Still loading. Do not update the value. Display the stale
     // value.
     if (newExchangeRate === null) {
-      return;
+      return null;
     }
 
-    setExchangeRate(newExchangeRate);
+    return newExchangeRate;
   }, [lsNetworkId]);
 
-  const isRefreshing = usePolling({ effect: fetch });
+  const { data: exchangeRate } = useQuery({
+    queryKey: ['useLsExchangeRate', lsNetworkId],
+    queryFn: fetch,
+  });
 
   return {
     exchangeRate:
@@ -42,7 +44,6 @@ const useLsExchangeRate = () => {
       typeof exchangeRate === 'number'
         ? Math.min(MAX_BN_OPERATION_NUMBER, exchangeRate)
         : exchangeRate,
-    isRefreshing,
   };
 };
 

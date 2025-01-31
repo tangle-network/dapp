@@ -204,10 +204,10 @@ const DepositForm: FC<Props> = (props) => {
     return nativeAssetsWithBalances;
   }, [assetWithBalances]);
 
-  const erc20Balances = useTangleEvmErc20Balances();
+  const { data: erc20Balances } = useTangleEvmErc20Balances();
 
   const erc20Assets = useMemo<RestakeAsset[]>(() => {
-    if (erc20Balances === null) {
+    if (erc20Balances === null || erc20Balances === undefined) {
       return [];
     }
 

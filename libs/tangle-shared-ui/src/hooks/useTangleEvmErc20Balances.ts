@@ -1,6 +1,6 @@
 import { BN } from '@polkadot/util';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { Decimal } from 'decimal.js';
 import useViemPublicClient from './useViemPublicClient';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
@@ -11,6 +11,7 @@ import { BRIDGE_TOKENS } from '../constants/bridge';
 import { BridgeToken } from '../types';
 import { chainsConfig } from '@webb-tools/dapp-config';
 import assert from 'assert';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 type Erc20Token = {
   contractAddress: EvmAddress;
@@ -68,9 +69,11 @@ export const findErc20Token = (id: EvmAddress): Erc20Token | null => {
   );
 };
 
-const useTangleEvmErc20Balances = (): Erc20Balance[] | null => {
+const useTangleEvmErc20Balances = (): UseQueryResult<
+  Erc20Balance[] | null,
+  Error
+> => {
   const { evmAddress } = useAgnosticAccountInfo();
-  const [balances, setBalances] = useState<Erc20Balance[] | null>(null);
   const viemPublicClient = useViemPublicClient();
 
   const fetchBalance = useCallback(
@@ -93,42 +96,49 @@ const useTangleEvmErc20Balances = (): Erc20Balance[] | null => {
     [viemPublicClient],
   );
 
-  // Fetch balances on mount and whenever the active account changes.
-  useEffect(() => {
+  const fetchBalances = useCallback(async () => {
     // EVM account not connected.
     if (evmAddress === null) {
-      setBalances(null);
-
-      return;
+      return null;
     }
 
-    (async () => {
-      const newBalances: Erc20Balance[] = [];
-      const allTokens = getAllErc20Tokens();
+    const newBalances: Erc20Balance[] = [];
+    const allTokens = getAllErc20Tokens();
 
-      for (const asset of allTokens) {
-        const balanceDecimal = await fetchBalance(evmAddress, asset);
+    for (const asset of allTokens) {
+      const balanceDecimal = await fetchBalance(evmAddress, asset);
 
-        if (balanceDecimal === null) {
-          continue;
-        }
-
-        const balance = convertDecimalToBN(balanceDecimal, asset.decimals);
-
-        // Ignore assets that have a zero balance.
-        if (balance.isZero()) {
-          continue;
-        }
-
-        newBalances.push({
-          ...asset,
-          balance,
-        } satisfies Erc20Balance);
+      if (balanceDecimal === null) {
+        continue;
       }
 
-      setBalances(newBalances);
-    })();
+      const balance = convertDecimalToBN(balanceDecimal, asset.decimals);
+
+      // Ignore assets that have a zero balance.
+      if (balance.isZero()) {
+        continue;
+      }
+
+      newBalances.push({
+        ...asset,
+        balance,
+      } satisfies Erc20Balance);
+    }
+
+    return newBalances;
   }, [evmAddress, fetchBalance]);
+
+  // Fetch balances often to keep it in sync with the UI,
+  // and also to keep the deposit balance updated (ex. after
+  // the user performs a restake deposit).
+  const balances = useQuery({
+    queryKey: ['tangle-evm-erc20-balances', evmAddress],
+    queryFn: fetchBalances,
+    refetchInterval: 5000,
+    refetchIntervalInBackground: true,
+    enabled: evmAddress !== null,
+    retry: true,
+  });
 
   return balances;
 };

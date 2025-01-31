@@ -255,7 +255,7 @@ const VaultsAndBalancesTable: FC = () => {
   const isAccountConnected = useIsAccountConnected();
   const { vaults } = useRestakeVaults();
   const assetsTvl = useRestakeAssetsTvl();
-  const erc20Balances = useTangleEvmErc20Balances();
+  const { data: erc20Balances } = useTangleEvmErc20Balances();
 
   const getTotalLockedInAsset = useCallback(
     (assetId: RestakeAssetId) => {

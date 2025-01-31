@@ -8,13 +8,13 @@ import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTan
 
 const useRestakeAsset = (id: RestakeAssetId | null | undefined) => {
   const { vaults, balances } = useRestakeContext();
-  const erc20Balances = useTangleEvmErc20Balances();
+  const { data: erc20Balances } = useTangleEvmErc20Balances();
 
   const asset = useMemo<RestakeAsset | null>(() => {
     if (id === null || id === undefined) {
       return null;
     } else if (isEvmAddress(id)) {
-      if (erc20Balances === null) {
+      if (erc20Balances === null || erc20Balances === undefined) {
         return null;
       }
 
