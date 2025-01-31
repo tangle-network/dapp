@@ -1,4 +1,4 @@
-import { ChainConfig } from '@webb-tools/dapp-config';
+import { ChainConfig, ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { TokenIcon } from '@webb-tools/icons';
@@ -166,7 +166,13 @@ const RestakeDelegateForm: FC = () => {
     return Object.entries(delegatorInfo.deposits).flatMap(
       ([assetIdString, { amount }]) => {
         const assetId = assertRestakeAssetId(assetIdString);
-        const balance = new BN(amount.toString());
+
+        const delegatedAmount =
+          delegatorInfo.delegations.find(
+            (delegation) => delegation.assetId === assetId,
+          )?.amountBonded ?? ZERO_BIG_INT;
+
+        const balance = new BN((amount - delegatedAmount).toString());
 
         if (!isEvmAddress(assetId)) {
           const metadata = vaults[assetId];

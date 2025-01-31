@@ -101,7 +101,7 @@ const RestakeWithdrawForm: FC = () => {
   const selectedAsset = useRestakeAsset(selectedAssetId);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
-    if (!delegatorInfo?.deposits) {
+    if (!delegatorInfo) {
       return {};
     }
 
@@ -113,7 +113,12 @@ const RestakeWithdrawForm: FC = () => {
       return {};
     }
 
-    const maxAmount = depositedAsset[1].amount;
+    const delegatedAmount =
+      delegatorInfo.delegations.find(
+        (delegation) => delegation.assetId === selectedAssetId,
+      )?.amountBonded ?? ZERO_BIG_INT;
+
+    const maxAmount = depositedAsset[1].amount - delegatedAmount;
 
     const formattedMaxAmount = Number(
       formatUnits(maxAmount, selectedAsset.decimals),
@@ -123,7 +128,7 @@ const RestakeWithdrawForm: FC = () => {
       maxAmount,
       formattedMaxAmount,
     };
-  }, [delegatorInfo?.deposits, selectedAsset, selectedAssetId]);
+  }, [delegatorInfo, selectedAsset, selectedAssetId]);
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
     const step = decimalsToStep(selectedAsset?.decimals);
