@@ -45,9 +45,9 @@ const WithdrawModal = ({
     }
 
     return Object.entries(delegatorInfo.deposits).map(
-      ([assetId, { amount }]) => ({
+      ([assetId, { amount, delegatedAmount }]) => ({
         assetId: assertRestakeAssetId(assetId),
-        amount,
+        amount: amount - delegatedAmount,
       }),
     );
   }, [delegatorInfo]);

@@ -55,8 +55,12 @@ const StakeInput: FC<Props> = ({
       return {};
     }
 
-    const amountRaw =
-      delegatorInfo.deposits[selectedAsset.id]?.amount ?? ZERO_BIG_INT;
+    const depositedAsset = delegatorInfo.deposits[selectedAsset.id];
+    if (depositedAsset === undefined) {
+      return {};
+    }
+
+    const amountRaw = depositedAsset.amount - depositedAsset.delegatedAmount;
 
     const maxFormatted = +formatUnits(amountRaw, selectedAsset.decimals);
 
