@@ -1,8 +1,7 @@
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 import { isEvmAddress, toEvmAddress } from '@webb-tools/webb-ui-components';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import { useMemo } from 'react';
-
-import useActiveAccountAddress from './useActiveAccountAddress';
 
 /**
  * Obtain the EVM address of the active account, if any.

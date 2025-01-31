@@ -4,7 +4,6 @@ import {
   DocumentationIcon,
   GiftLineIcon,
   GlobalLine,
-  GridFillIcon,
   HomeFillIcon,
   PolkadotJs,
   ShuffleLine,

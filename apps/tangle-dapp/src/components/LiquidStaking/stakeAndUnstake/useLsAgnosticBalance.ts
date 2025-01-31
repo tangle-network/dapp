@@ -1,10 +1,9 @@
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { useEffect, useState } from 'react';
 
 import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import useBalances from '../../../data/balances/useBalances';
-import useParachainBalances from '../../../data/liquidStaking/parachain/useParachainBalances';
 import useLsPoolBalance from '../../../data/liquidStaking/tangle/useLsPoolBalance';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
@@ -42,7 +41,6 @@ const createBalanceStateUpdater = (
 };
 
 const useLsAgnosticBalance = (isNative: boolean) => {
-  const { nativeBalances, liquidBalances } = useParachainBalances();
   const { free: tangleFreeBalance } = useBalances();
   const { lsProtocolId, lsNetworkId } = useLsStore();
   const tangleAssetBalance = useLsPoolBalance();
@@ -51,7 +49,6 @@ const useLsAgnosticBalance = (isNative: boolean) => {
     BN | null | typeof EMPTY_VALUE_PLACEHOLDER
   >(EMPTY_VALUE_PLACEHOLDER);
 
-  const parachainBalances = isNative ? nativeBalances : liquidBalances;
   const isAccountConnected = useIsAccountConnected();
   const protocol = getLsProtocolDef(lsProtocolId);
 
@@ -68,21 +65,6 @@ const useLsAgnosticBalance = (isNative: boolean) => {
       setBalance(null);
     }
   }, [isAccountConnected, isNative, lsProtocolId]);
-
-  // Update balance to the parachain balance when the restaking
-  // parachain is the active network.
-  useEffect(() => {
-    if (
-      protocol.networkId !== LsNetworkId.TANGLE_RESTAKING_PARACHAIN ||
-      parachainBalances === null
-    ) {
-      return;
-    }
-
-    const newBalance = parachainBalances.get(protocol.token) ?? BN_ZERO;
-
-    setBalance(createBalanceStateUpdater(newBalance));
-  }, [parachainBalances, protocol.token, protocol.networkId]);
 
   const isLsTangleNetwork =
     lsNetworkId === LsNetworkId.TANGLE_LOCAL ||

@@ -1,16 +1,3 @@
-import {
-  Collator,
-  Dapp,
-  PhalaVaultOrStakePool,
-  Validator,
-} from '@webb-tools/tangle-shared-ui/types/liquidStaking';
-
-export type LiquidStakingItemType =
-  | Validator
-  | PhalaVaultOrStakePool
-  | Dapp
-  | Collator;
-
 export enum LiquidStakingToken {
   DOT = 'DOT',
   GLMR = 'GLMR',

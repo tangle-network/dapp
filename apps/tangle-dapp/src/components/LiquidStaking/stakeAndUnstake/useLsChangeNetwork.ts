@@ -1,4 +1,4 @@
-import useNetworkSwitcher from '@webb-tools/tangle-shared-ui/hooks/useNetworkSwitcher';
+import useSwitchNetwork from '@webb-tools/tangle-shared-ui/hooks/useSwitchNetwork';
 import { useWebbUI } from '@webb-tools/webb-ui-components';
 import { useCallback } from 'react';
 
@@ -10,7 +10,7 @@ import getLsTangleNetwork from '../../../utils/liquidStaking/getLsTangleNetwork'
 
 const useLsChangeNetwork = () => {
   const { lsNetworkId, setSelectedNetworkId } = useLsStore();
-  const { switchNetwork } = useNetworkSwitcher();
+  const { switchNetwork } = useSwitchNetwork();
   const { notificationApi } = useWebbUI();
 
   const tryChangeNetwork = useCallback(

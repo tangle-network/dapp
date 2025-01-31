@@ -221,7 +221,6 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
         );
       }
     },
-    // prettier-ignore
     [appName, switchChain, typedChainId],
   );
 

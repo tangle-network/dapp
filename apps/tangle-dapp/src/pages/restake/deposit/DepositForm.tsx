@@ -9,6 +9,7 @@ import { TokenIcon } from '@webb-tools/icons';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
+import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
 import {
   AmountFormatStyle,
@@ -39,7 +40,6 @@ import StyleContainer from '../../../components/restaking/StyleContainer';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
 import useRestakeAsset from '../../../data/restake/useRestakeAsset';
-import useTangleEvmErc20Balances from '../../../data/restake/useTangleEvmErc20Balances';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';

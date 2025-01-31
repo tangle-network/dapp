@@ -38,12 +38,10 @@ import { ChainList } from '../../components/Lists/ChainList';
 import { ROUTER_NATIVE_TOKEN_ADDRESS } from '../../constants/bridge';
 import useBridgeStore from '../../context/bridge/useBridgeStore';
 import useBalances from '../../data/balances/useBalances';
-import { useBridgeEvmBalances } from '../../data/bridge/useBridgeEvmBalances';
 import { BridgeTokenWithBalance } from '@webb-tools/tangle-shared-ui/types';
 import useRouterQuote, {
   RouterQuoteParams,
 } from '../../data/bridge/useRouterQuote';
-import convertDecimalToBn from '../../utils/convertDecimalToBn';
 import {
   HyperlaneQuoteProps,
   useHyperlaneQuote,
@@ -52,6 +50,8 @@ import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
 import ErrorMessage from '../../components/ErrorMessage';
 import { WalletFillIcon } from '@webb-tools/icons';
 import { useBalance } from 'wagmi';
+import convertDecimalToBn from '@webb-tools/tangle-shared-ui/utils/convertDecimalToBn';
+import { useBridgeEvmBalances } from '../../data/bridge/useBridgeEvmBalances';
 
 interface BridgeContainerProps {
   className?: string;

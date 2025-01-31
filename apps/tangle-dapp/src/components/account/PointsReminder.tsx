@@ -29,8 +29,9 @@ const PointsReminder: FC<{ className?: string }> = ({ className }) => {
       </div>
 
       <div className="mt-auto">
-        {/** TODO: Awaiting creation of the campaign docs page. Tracked by #2708. */}
-        <ExternalLink href="#">Learn More</ExternalLink>
+        <ExternalLink href="https://docs.tangle.tools/network/participation-mechanics">
+          Learn More
+        </ExternalLink>
       </div>
     </Card>
   );

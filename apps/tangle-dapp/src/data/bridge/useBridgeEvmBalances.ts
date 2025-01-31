@@ -43,7 +43,7 @@ export const fetchEvmTokenBalance = async (
     );
 
     return new Decimal(ethers.utils.formatUnits(balance, decimals));
-  } catch (error) {
+  } catch {
     return new Decimal(0);
   }
 };

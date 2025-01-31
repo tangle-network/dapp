@@ -25,11 +25,11 @@ import { isHex } from 'viem';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
 import ClaimRecipientInput from '../../components/claims/ClaimRecipientInput';
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
 import toAsciiHex from '../../utils/claims/toAsciiHex';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import getStatement, { Statement } from '../../utils/getStatement';
 import type { ClaimInfoType } from './types';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 enum Step {
   INPUT_ADDRESS,

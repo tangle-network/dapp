@@ -74,7 +74,7 @@ const WithdrawRequestTableActions: FC<Props> = ({
       <Button
         className="flex-1"
         isLoading={isTransacting}
-        isDisabled={!canExecuteWithdraw || !isReady}
+        isDisabled={!canExecuteWithdraw || canCancelWithdraw || !isReady}
         isFullWidth
         onClick={handleExecuteWithdraw}
       >

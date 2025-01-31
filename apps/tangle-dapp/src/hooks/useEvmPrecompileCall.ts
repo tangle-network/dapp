@@ -18,6 +18,8 @@ import {
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
 import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
+import useEvmTxRelayer, { isEvmTxRelayerEligible } from './useEvmTxRelayer';
+import useIsEvmTxRelayerCandidate from './useIsEvmTxRelayerCandidate';
 
 export type AbiBatchCall = {
   to: EvmAddress;
@@ -26,7 +28,7 @@ export type AbiBatchCall = {
   callData: Hex;
 };
 
-export type AbiCall<
+export type PrecompileCall<
   Abi extends AbiFunction[],
   FunctionName extends ExtractAbiFunctionNames<Abi>,
 > = {
@@ -41,7 +43,7 @@ export type EvmTxFactory<
 > = (
   context: Context,
   activeEvmAddress20: EvmAddress,
-) => PromiseOrT<AbiCall<Abi, FunctionName>> | null;
+) => PromiseOrT<PrecompileCall<Abi, FunctionName>> | null;
 
 /**
  * Obtain a function that can be used to execute a precompile contract call.
@@ -54,7 +56,7 @@ export type EvmTxFactory<
  * This is used for performing actions from EVM accounts. Substrate accounts
  * should use `useSubstrateTx` for transactions instead, or `useApiRx` for queries.
  */
-function useEvmPrecompileAbiCall<
+function useEvmPrecompileCall<
   Abi extends AbiFunction[],
   FunctionName extends ExtractAbiFunctionNames<Abi>,
   Context = void,
@@ -63,13 +65,15 @@ function useEvmPrecompileAbiCall<
   precompileAddress: PrecompileAddress,
   factory:
     | EvmTxFactory<Abi, FunctionName, Context>
-    | AbiCall<Abi, FunctionName>,
+    | PrecompileCall<Abi, FunctionName>,
   getSuccessMessage?: (context: Context) => string,
 ) {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [error, setError] = useState<Error | null>(null);
   const [txHash, setTxHash] = useState<HexString | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const relayEvmTx = useEvmTxRelayer();
+  const isEvmTxRelayerCandidate = useIsEvmTxRelayerCandidate();
 
   const activeEvmAddress20 = useEvmAddress20();
   const { data: connectorClient } = useConnectorClient();
@@ -89,8 +93,14 @@ function useEvmPrecompileAbiCall<
           ? await factory(context, activeEvmAddress20)
           : factory;
 
-      // Factory isn't ready yet.
-      if (factoryResult === null) {
+      // Not yet ready.
+      if (
+        factoryResult === null ||
+        relayEvmTx === null ||
+        isEvmTxRelayerCandidate === null
+      ) {
+        console.warn('Attempted to execute EVM pre-compile call too early.');
+
         return;
       }
 
@@ -99,10 +109,40 @@ function useEvmPrecompileAbiCall<
       setTxHash(null);
       setStatus(TxStatus.PROCESSING);
 
+      const isEligibleForEvmTxRelayer =
+        isEvmTxRelayerCandidate &&
+        isEvmTxRelayerEligible(precompileAddress, factoryResult.functionName);
+
+      // Relay the transaction if the EVM account doesn't have enough to
+      // cover the transaction fees. This is like a subsidy for EVM accounts
+      // without TNT. Not all precompile functions are eligible for this; only
+      // those that are whitelisted by the EVM transaction relayer.
+      if (isEligibleForEvmTxRelayer) {
+        console.debug('Attempting to relay transaction for EVM account.');
+
+        const result = await relayEvmTx(
+          abi,
+          precompileAddress,
+          factoryResult.functionName,
+          factoryResult.arguments,
+        );
+
+        if (result instanceof Error) {
+          setStatus(TxStatus.ERROR);
+          setError(result);
+
+          return;
+        }
+
+        setStatus(TxStatus.COMPLETE);
+        setTxHash(result.txHash);
+
+        return;
+      }
+
       try {
         const { request } = await simulateContract(connectorClient, {
           address: precompileAddress,
-          // TODO: Find a way to avoid casting.
           abi: abi satisfies AbiFunction[] as AbiFunction[],
           functionName: factoryResult.functionName,
           args: factoryResult.arguments,
@@ -147,6 +187,8 @@ function useEvmPrecompileAbiCall<
       status,
       connectorClient,
       factory,
+      relayEvmTx,
+      isEvmTxRelayerCandidate,
       precompileAddress,
       abi,
       getSuccessMessage,
@@ -170,4 +212,4 @@ function useEvmPrecompileAbiCall<
   };
 }
 
-export default useEvmPrecompileAbiCall;
+export default useEvmPrecompileCall;

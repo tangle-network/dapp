@@ -7,7 +7,6 @@ import {
   LsTangleNetworkDef,
   LsToken,
 } from '../../../constants/liquidStaking/types';
-import { CrossChainTimeUnit } from '../../../utils/CrossChainTime';
 
 const TANGLE_LOCAL = {
   networkId: LsNetworkId.TANGLE_LOCAL,
@@ -17,7 +16,6 @@ const TANGLE_LOCAL = {
   chainIconFileName: 'tangle',
   decimals: TANGLE_TOKEN_DECIMALS,
   rpcEndpoint: TANGLE_LOCAL_DEV_NETWORK.wsRpcEndpoint,
-  timeUnit: CrossChainTimeUnit.POLKADOT_ERA,
   unstakingPeriod: 14,
   ss58Prefix: TANGLE_LOCAL_DEV_NETWORK.ss58Prefix,
   tangleNetwork: TANGLE_LOCAL_DEV_NETWORK,

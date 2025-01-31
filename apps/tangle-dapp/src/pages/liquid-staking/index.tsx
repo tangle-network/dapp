@@ -1,6 +1,5 @@
 import { AddLineIcon } from '@webb-tools/icons';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import useNetworkSwitcher from '@webb-tools/tangle-shared-ui/hooks/useNetworkSwitcher';
 import {
   Button,
   TabContent,
@@ -22,6 +21,7 @@ import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import getLsTangleNetwork from '../../utils/liquidStaking/getLsTangleNetwork';
 import TabListItem from '../../components/restaking/TabListItem';
 import TabsList from '../../components/restaking/TabsList';
+import findLsNetworkByChainId from '../../utils/liquidStaking/findLsNetworkByChainId';
 
 enum Tab {
   ALL_POOLS = 'All Pools',
@@ -36,11 +36,11 @@ const LiquidStakingPage: FC = () => {
     lsNetworkId,
     setIsStaking: setIsStakingInStore,
     isStaking: isStakingInStore,
+    setSelectedNetworkId,
   } = useLsStore();
 
   const isAccountConnected = useIsAccountConnected();
   const { network } = useNetworkStore();
-  const { switchNetwork } = useNetworkSwitcher();
   const [isCreatePoolModalOpen, setIsCreatePoolModalOpen] = useState(false);
 
   const lsTangleNetwork = getLsTangleNetwork(lsNetworkId);
@@ -49,8 +49,10 @@ const LiquidStakingPage: FC = () => {
   // It might differ initially if the user navigates to the page and
   // the active network differs from the default liquid staking network.
   useEffect(() => {
-    if (network.id !== lsTangleNetwork.id) {
-      switchNetwork(lsTangleNetwork, false);
+    const newLsNetworkId = findLsNetworkByChainId(network.id);
+
+    if (lsTangleNetwork.id !== network.id && newLsNetworkId !== null) {
+      setSelectedNetworkId(newLsNetworkId);
     }
 
     // Run once on load.

@@ -33,8 +33,8 @@ import { BN } from '@polkadot/util';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import useSessionDurationMs from '../../data/useSessionDurationMs';
-import { findErc20Token } from '../../data/restake/useTangleEvmErc20Balances';
 import formatSessionDistance from '../../utils/formatSessionDistance';
+import { findErc20Token } from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 
 export type UnstakeRequestTableRow = {
   amount: string;

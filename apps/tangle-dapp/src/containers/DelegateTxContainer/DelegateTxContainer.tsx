@@ -20,7 +20,7 @@ import useStakingRewardsDestination from '../../data/nomination/useStakingReward
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import useSetupNominatorTx from '../../data/staking/useSetupNominatorTx';
 import useUpdateNominatorTx from '../../data/staking/useUpdateNominatorTx';
-import useActiveAccountAddress from '../../hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { StakingRewardsDestination } from '../../types';

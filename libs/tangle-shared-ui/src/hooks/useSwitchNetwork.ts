@@ -25,12 +25,12 @@ import testRpcEndpointConnection from '../utils/testRpcEndpointConnection';
 import ensureError from '../utils/ensureError';
 import { getApiPromise } from '../utils/polkadot/api';
 
-const useNetworkSwitcher = () => {
+const useSwitchNetwork = () => {
   const { switchChain, activeWallet } = useWebContext();
   const [isCustom, setIsCustom] = useState(false);
   const { network, setNetwork } = useNetworkStore();
 
-  // TODO: Should utilize the zustand middleware to cache this
+  // TODO: Should utilize the Zustand persistence middleware to cache this.
   // in instead of manually handling it here.
   // if we set the network by calling `setNetwork`,
   // the new network won't be cached in local storage.
@@ -60,6 +60,10 @@ const useNetworkSwitcher = () => {
       if (initialNetwork.id === NetworkId.CUSTOM) {
         setIsCustom(true);
       }
+
+      console.debug(
+        `Set initial network: ${initialNetwork.name} | RPC: ${initialNetwork.wsRpcEndpoint}`,
+      );
 
       setNetwork(initialNetwork);
     });
@@ -92,22 +96,17 @@ const useNetworkSwitcher = () => {
       if (activeWallet !== undefined) {
         try {
           const chain = await mapNetworkToChain(newNetwork, activeWallet);
-
           const switchChainResult = await switchChain(chain, activeWallet);
 
           if (switchChainResult !== null) {
             console.debug(
-              `Switching to ${isCustom ? 'custom' : 'Webb'} network: ${
-                newNetwork.name
-              } (${newNetwork.nodeType}) with RPC endpoint: ${
-                newNetwork.wsRpcEndpoint
-              }`,
+              `Switched to network: ${newNetwork.name} | RPC: ${newNetwork.wsRpcEndpoint}`,
             );
           }
         } catch (error) {
           notificationApi({
             variant: 'error',
-            message: 'Switching network failed',
+            message: 'Switching chain failed',
             secondaryMessage: `Error: ${ensureError(error).message}`,
           });
         }
@@ -241,4 +240,4 @@ function defineWebbChain(
   } satisfies Chain;
 }
 
-export default useNetworkSwitcher;
+export default useSwitchNetwork;

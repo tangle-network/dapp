@@ -13,30 +13,24 @@ import {
   LsNetworkId,
   LsPoolDisplayName,
 } from '../../../constants/liquidStaking/types';
-import useMintTx from '../../../data/liquidStaking/parachain/useMintTx';
 import useLsPoolJoinTx from '../../../data/liquidStaking/tangle/useLsPoolJoinTx';
-import useLsExchangeRate, {
-  ExchangeRateType,
-} from '../../../data/liquidStaking/useLsExchangeRate';
+import useLsExchangeRate from '../../../data/liquidStaking/useLsExchangeRate';
 import useAssetAccounts from '../../../data/liquidStaking/useAssetAccounts';
 import useLsPools from '../../../data/liquidStaking/useLsPools';
 import { useLsStore } from '../../../data/liquidStaking/useLsStore';
-import useActiveAccountAddress from '../../../hooks/useActiveAccountAddress';
 import { TxStatus } from '../../../hooks/useSubstrateTx';
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
-import scaleAmountByPercentage from '../../../utils/scaleAmountByPercentage';
 import DetailsContainer from '../../DetailsContainer';
 import ExchangeRateDetailItem from './ExchangeRateDetailItem';
-import FeeDetailItem from './FeeDetailItem';
 import LsAgnosticBalance from './LsAgnosticBalance';
 import LsInput from './LsInput';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
-import useLsFeePercentage from './useLsFeePercentage';
-import useLsSpendingLimits from './useLsSpendingLimits';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import LstListItem from '../LstListItem';
 import filterBy from '../../../utils/filterBy';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useLsAgnosticBalance from './useLsAgnosticBalance';
 
 const LsStakeCard: FC = () => {
   const lsPools = useLsPools();
@@ -49,15 +43,7 @@ const LsStakeCard: FC = () => {
   const { execute: executeTanglePoolJoinTx, status: tanglePoolJoinTxStatus } =
     useLsPoolJoinTx();
 
-  const { execute: executeParachainMintTx, status: parachainMintTxStatus } =
-    useMintTx();
-
   const activeAccountAddress = useActiveAccountAddress();
-
-  const { maxSpendable, minSpendable } = useLsSpendingLimits(
-    true,
-    lsProtocolId,
-  );
 
   const selectedProtocol = getLsProtocolDef(lsProtocolId);
   const tryChangeNetwork = useLsChangeNetwork();
@@ -87,7 +73,7 @@ const LsStakeCard: FC = () => {
   const {
     exchangeRate: exchangeRateOrError,
     isRefreshing: isRefreshingExchangeRate,
-  } = useLsExchangeRate(ExchangeRateType.NativeToDerivative);
+  } = useLsExchangeRate();
 
   // TODO: Properly handle the error state.
   const exchangeRate =
@@ -100,14 +86,6 @@ const LsStakeCard: FC = () => {
     }
 
     if (
-      selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeParachainMintTx !== null
-    ) {
-      executeParachainMintTx({
-        amount: fromAmount,
-        currency: selectedProtocol.currency,
-      });
-    } else if (
       isTangleNetwork &&
       executeTanglePoolJoinTx !== null &&
       lsPoolId !== null
@@ -117,43 +95,27 @@ const LsStakeCard: FC = () => {
         poolId: lsPoolId,
       });
     }
-  }, [
-    executeParachainMintTx,
-    executeTanglePoolJoinTx,
-    fromAmount,
-    isTangleNetwork,
-    selectedProtocol,
-    lsPoolId,
-  ]);
-
-  const feePercentage = useLsFeePercentage(lsProtocolId, true);
+  }, [executeTanglePoolJoinTx, fromAmount, isTangleNetwork, lsPoolId]);
 
   const toAmount = useMemo(() => {
-    if (
-      fromAmount === null ||
-      exchangeRate === null ||
-      typeof feePercentage !== 'number'
-    ) {
+    if (fromAmount === null || exchangeRate === null) {
       return null;
     }
 
-    const feeAmount = scaleAmountByPercentage(fromAmount, feePercentage);
-
-    return fromAmount.muln(exchangeRate).sub(feeAmount);
-  }, [fromAmount, exchangeRate, feePercentage]);
+    return fromAmount.muln(exchangeRate);
+  }, [fromAmount, exchangeRate]);
 
   const canCallStake =
-    (fromAmount !== null &&
-      selectedProtocol.networkId === LsNetworkId.TANGLE_RESTAKING_PARACHAIN &&
-      executeParachainMintTx !== null) ||
-    (isTangleNetwork && executeTanglePoolJoinTx !== null && lsPoolId !== null);
+    isTangleNetwork && executeTanglePoolJoinTx !== null && lsPoolId !== null;
+
+  const balance = useLsAgnosticBalance(true);
 
   const walletBalance = (
     <LsAgnosticBalance
       tooltip="Available Balance"
       onClick={() => {
-        if (maxSpendable !== null) {
-          setFromAmount(maxSpendable);
+        if (balance instanceof BN) {
+          setFromAmount(balance);
         }
       }}
     />
@@ -203,8 +165,7 @@ const LsStakeCard: FC = () => {
         placeholder="Enter amount to stake"
         rightElement={walletBalance}
         setProtocolId={setLsProtocolId}
-        minAmount={minSpendable ?? undefined}
-        maxAmount={maxSpendable ?? undefined}
+        maxAmount={balance instanceof BN ? balance : undefined}
         setNetworkId={tryChangeNetwork}
         showPoolIndicator={false}
       />
@@ -228,16 +189,7 @@ const LsStakeCard: FC = () => {
       <DetailsContainer>
         <UnstakePeriodDetailItem protocolId={lsProtocolId} />
 
-        <ExchangeRateDetailItem
-          token={selectedProtocol.token}
-          type={ExchangeRateType.NativeToDerivative}
-        />
-
-        <FeeDetailItem
-          inputAmount={fromAmount}
-          isStaking
-          protocolId={lsProtocolId}
-        />
+        <ExchangeRateDetailItem token={selectedProtocol.token} />
       </DetailsContainer>
 
       <Button
@@ -249,10 +201,7 @@ const LsStakeCard: FC = () => {
           fromAmount === null ||
           fromAmount.isZero()
         }
-        isLoading={
-          parachainMintTxStatus === TxStatus.PROCESSING ||
-          tanglePoolJoinTxStatus === TxStatus.PROCESSING
-        }
+        isLoading={tanglePoolJoinTxStatus === TxStatus.PROCESSING}
         onClick={handleStakeClick}
         isFullWidth
       >

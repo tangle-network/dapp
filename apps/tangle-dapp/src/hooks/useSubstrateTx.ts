@@ -17,9 +17,9 @@ import { Hash } from 'viem';
 import { TxName } from '../constants';
 import { GetSuccessMessageFn } from '../types';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
-import useActiveAccountAddress from './useActiveAccountAddress';
-import useAgnosticAccountInfo from './useAgnosticAccountInfo';
 import useTxNotification from './useTxNotification';
+import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 export enum TxStatus {
   NOT_YET_INITIATED,
