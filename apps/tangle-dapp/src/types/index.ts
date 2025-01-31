@@ -16,6 +16,7 @@ export enum PagePath {
   BLUEPRINTS_DETAILS = '/blueprints/:id',
   SERVICES = '/services',
   RESTAKE = '/restake',
+  RESTAKE_DEPOSIT = '/restake/deposit',
   RESTAKE_DELEGATE = '/restake/delegate',
   RESTAKE_UNDELEGATE = '/restake/undelegate',
   RESTAKE_WITHDRAW = '/restake/withdraw',

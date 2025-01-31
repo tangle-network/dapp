@@ -2,9 +2,10 @@ import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/u
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useRestakeTVL from '@webb-tools/tangle-shared-ui/data/restake/useRestakeTVL';
 import { FC } from 'react';
-import { useParams } from 'react-router';
+import { Navigate, useParams } from 'react-router';
 import { RestakeAction } from '../../constants';
 import RestakeOverviewTabs from '../../containers/restaking/RestakeOverviewTabs';
+import { PagePath } from '../../types';
 import isEnumValue from '../../utils/isEnumValue';
 import NotFoundPage from '../notFound';
 
@@ -20,6 +21,9 @@ const RestakePage: FC = () => {
   if (action !== undefined && !isEnumValue(action, RestakeAction)) {
     return <NotFoundPage />;
   }
+  if (action === undefined) {
+    return <Navigate to={PagePath.RESTAKE_DEPOSIT} />;
+  }
 
   return (
     <div className="space-y-7">
@@ -30,7 +34,7 @@ const RestakePage: FC = () => {
         operatorTVL={operatorTVL}
         vaultTVL={vaultTVL}
         operatorConcentration={operatorConcentration}
-        action={action ?? RestakeAction.DEPOSIT}
+        action={action}
       />
     </div>
   );
