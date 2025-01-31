@@ -26,6 +26,7 @@ import {
 } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
 import { FC, useCallback, useMemo, useState } from 'react';
+import useWalletClient from '../../data/bridge/useWalletClient';
 
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { FeeDetail, FeeDetailProps } from './FeeDetail';
@@ -46,6 +47,7 @@ import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
 import { ArrowDownIcon } from '@webb-tools/icons';
 import axios from 'axios';
+import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
 
 interface BridgeConfirmationModalProps {
   isOpen: boolean;
@@ -124,6 +126,11 @@ export const BridgeConfirmationModal = ({
     senderAddress: activeAccountAddress,
     recipientAddress: destinationAddress,
   });
+
+  const isNativeToken = useIsBridgeNativeToken(
+    calculateTypedChainId(sourceChain.chainType, sourceChain.id),
+    token,
+  );
 
   const { notificationApi } = useWebbUI();
 
@@ -361,6 +368,8 @@ export const BridgeConfirmationModal = ({
     [srcChainPublicClient, updateTxState, token.bridgeType],
   );
 
+  const walletClient = useWalletClient();
+
   const handleConfirm = useCallback(async () => {
     setIsTxInProgress(true);
 
@@ -460,8 +469,32 @@ export const BridgeConfirmationModal = ({
       }
 
       setIsTxInProgress(false);
+
       handleClose();
       clearBridgeStore();
+
+      if (!isNativeToken && walletClient) {
+        const success = await walletClient.watchAsset({
+          type: 'ERC20',
+          options: {
+            address: token.address,
+            decimals: token.decimals,
+            symbol: token.tokenSymbol,
+          },
+        });
+
+        if (success) {
+          notificationApi({
+            message: `${token.tokenSymbol} was successfully added to your wallet`,
+            variant: 'success',
+          });
+        } else {
+          notificationApi({
+            message: `Failed to add ${token.tokenSymbol} to your wallet`,
+            variant: 'error',
+          });
+        }
+      }
     } catch (possibleError) {
       const error = ensureError(possibleError);
 
@@ -474,12 +507,18 @@ export const BridgeConfirmationModal = ({
       clearBridgeStore();
     }
   }, [
+    setIsTxInProgress,
     sendingAmount,
     receivingAmount,
     token.bridgeType,
     token.tokenType,
+    token.address,
+    token.decimals,
+    token.tokenSymbol,
     handleClose,
     clearBridgeStore,
+    isNativeToken,
+    walletClient,
     transferByRouterAsync,
     addTxToQueue,
     sourceChain.tag,
@@ -491,8 +530,8 @@ export const BridgeConfirmationModal = ({
     destinationAddress,
     setIsOpenQueueDropdown,
     updateTxState,
-    watchTransaction,
     addTxExplorerUrl,
+    watchTransaction,
     transferByHyperlaneAsync,
     notificationApi,
   ]);
