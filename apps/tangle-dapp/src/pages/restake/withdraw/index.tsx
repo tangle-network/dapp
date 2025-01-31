@@ -113,12 +113,8 @@ const RestakeWithdrawForm: FC = () => {
       return {};
     }
 
-    const delegatedAmount =
-      delegatorInfo.delegations.find(
-        (delegation) => delegation.assetId === selectedAssetId,
-      )?.amountBonded ?? ZERO_BIG_INT;
-
-    const maxAmount = depositedAsset[1].amount - delegatedAmount;
+    const maxAmount =
+      depositedAsset[1].amount - depositedAsset[1].delegatedAmount;
 
     const formattedMaxAmount = Number(
       formatUnits(maxAmount, selectedAsset.decimals),
