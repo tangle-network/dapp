@@ -120,12 +120,19 @@ const COLUMNS = [
       );
     },
   }),
-  COLUMN_HELPER.accessor('deposited', {
-    header: () => 'Deposits',
+  COLUMN_HELPER.display({
+    id: 'deposits-and-delegated',
+    header: () => 'Deposits | Delegation',
     sortingFn: sortByBn((row) => row.deposited),
     cell: (props) => {
-      const fmtLocked = formatDisplayAmount(
-        props.getValue(),
+      const fmtDeposited = formatDisplayAmount(
+        props.row.original.deposited,
+        props.row.original.decimals,
+        AmountFormatStyle.SHORT,
+      );
+
+      const fmtDelegated = formatDisplayAmount(
+        props.row.original.delegated,
         props.row.original.decimals,
         AmountFormatStyle.SHORT,
       );
@@ -137,7 +144,11 @@ const COLUMNS = [
 
       return (
         <TableCellWrapper>
-          <StatItem title={fmtLocked} subtitle={subtitle} removeBorder />
+          <StatItem
+            title={`${fmtDeposited} | ${fmtDelegated}`}
+            subtitle={subtitle}
+            removeBorder
+          />
         </TableCellWrapper>
       );
     },

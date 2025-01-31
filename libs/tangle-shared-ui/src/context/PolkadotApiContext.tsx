@@ -20,7 +20,8 @@ export type PolkadotApiContextProps = Prettify<{
   setCustomRpc: Dispatch<SetStateAction<Maybe<string>>>;
 }>;
 
-export const DEFAULT_ENDPOINT = useNetworkStore.getState().rpcEndpoint;
+export const DEFAULT_ENDPOINT =
+  useNetworkStore.getState().network.wsRpcEndpoint;
 
 export const DEFAULT_API_PROMISE = (() => {
   try {

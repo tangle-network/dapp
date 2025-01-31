@@ -126,7 +126,7 @@ const OperatorsTable: FC<Props> = ({
           RestakeOperatorAction={RestakeAction}
         />
 
-        <JoinOperatorsModal />
+        <JoinOperatorsModal setIsOpen={setIsJoinOperatorsModalOpen} />
       </div>
     </Modal>
   );
