@@ -13,6 +13,7 @@ import { TangleTokenSymbol } from '../types';
 const useNetworkStore = create<{
   rpcEndpoint: string;
   network: Network;
+  network2?: Network;
   setNetwork: (network: Network) => void;
   nativeTokenSymbol: TangleTokenSymbol;
 }>((set) => ({
@@ -22,6 +23,7 @@ const useNetworkStore = create<{
   setNetwork: (network) =>
     set({
       network,
+      network2: network,
       rpcEndpoint: network.wsRpcEndpoint,
       nativeTokenSymbol: network.tokenSymbol,
     }),

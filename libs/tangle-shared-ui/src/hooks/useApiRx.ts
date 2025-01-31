@@ -1,12 +1,13 @@
 'use client';
 
 import { ApiRx } from '@polkadot/api';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { catchError, Observable } from 'rxjs';
 import useNetworkStore from '../context/useNetworkStore';
 import usePromise from './usePromise';
 import { getApiRx } from '../utils/polkadot/api';
 import ensureError from '../utils/ensureError';
+import { TANGLE_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
 
 export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | null;
 
@@ -29,22 +30,38 @@ export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | null;
  * );
  * ```
  */
-function useApiRx<T>(
-  factory: ObservableFactory<T>,
-  rpcEndpointOverride?: string,
-) {
+function useApiRx<T>(factory: ObservableFactory<T>) {
   const [result, setResult] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
   const { rpcEndpoint } = useNetworkStore();
   const [error, setError] = useState<Error | null>(null);
+  const isMountedRef = useRef(true);
+  const { network2 } = useNetworkStore();
+  const [apiRx, setApiRx] = useState<ApiRx | null>(null);
 
-  const { result: apiRx } = usePromise(
-    useCallback(
-      () => getApiRx(rpcEndpointOverride ?? rpcEndpoint),
-      [rpcEndpointOverride, rpcEndpoint],
-    ),
-    null,
-  );
+  // const { result: apiRx, refresh } = usePromise(
+  //   useCallback(() => {
+  //     const a = getApiRx(rpcEndpoint);
+
+  //     console.debug('SWITCH TO NETWORK', rpcEndpoint);
+
+  //     return a;
+  //   }, [rpcEndpoint]),
+  //   null,
+  // );
+
+  useEffect(() => {
+    (async () => {
+      // if (network.id !== TANGLE_LOCAL_DEV_NETWORK.id) {
+      //   return;
+      // }
+      if (network2?.wsRpcEndpoint === undefined) {
+        return;
+      }
+
+      setApiRx(await getApiRx(network2?.wsRpcEndpoint));
+    })();
+  }, [network2?.wsRpcEndpoint, rpcEndpoint]);
 
   const resetData = useCallback(() => {
     setResult(null);
@@ -103,12 +120,19 @@ function useApiRx<T>(
         }),
       )
       .subscribe((newResult) => {
+        if (!isMountedRef) {
+          return;
+        }
+
         setResult(newResult);
         setLoading(false);
       });
 
-    return () => subscription.unsubscribe();
-  }, [factory, apiRx, resetData]);
+    return () => {
+      isMountedRef.current = false;
+      subscription.unsubscribe();
+    };
+  }, [factory, apiRx, resetData, network2?.name, network2?.id]);
 
   return { result, isLoading, error };
 }
