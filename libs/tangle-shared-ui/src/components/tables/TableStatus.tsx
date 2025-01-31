@@ -1,10 +1,11 @@
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
 import { ButtonProps } from '@webb-tools/webb-ui-components/components/buttons/types';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export type TableStatusProps = {
-  icon?: string;
+  icon?: ReactNode;
   title: string;
   description: string;
   buttonText?: string;

@@ -25,6 +25,7 @@ export type ListModalProps<T> = {
   getItemKey?: (item: T) => string;
   onSelect: (item: T) => void;
   sorting?: (a: T, b: T) => number;
+  isLoading?: boolean;
 
   /**
    * Provide a function to help determine whether to include an item in the list once a search query is provided.
@@ -56,6 +57,7 @@ const ListModal = <T,>({
   renderItem,
   getItemKey,
   onSelect,
+  isLoading: isLoadingProp,
 }: ListModalProps<T>) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -81,7 +83,7 @@ const ListModal = <T,>({
     return sortedItems.filter((item) => filterItem(item, searchQuery));
   }, [filterItem, isSearching, sortedItems, searchQuery]);
 
-  const isLoading = !Array.isArray(processedItems);
+  const isLoading = !Array.isArray(processedItems) || isLoadingProp;
   const isEmpty = !isSearching && !isLoading && processedItems.length === 0;
 
   return (

@@ -24,13 +24,15 @@ import {
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { ArrowRight } from '@webb-tools/icons';
+import { ArrowRight } from '@webb-tools/icons/ArrowRight';
+import Spinner from '@webb-tools/icons/Spinner';
 import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
 import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
+import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import useRestakeAssetsTvl from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
 import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeVaults from '@webb-tools/tangle-shared-ui/data/restake/useRestakeVaults';
+import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
 import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
@@ -42,11 +44,9 @@ import { HeaderCell } from '../components/tableCells';
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
 import useIsAccountConnected from '../hooks/useIsAccountConnected';
 import { PagePath, QueryParamKey } from '../types';
+import calculateBnRatio from '../utils/calculateBnRatio';
 import sortByBn from '../utils/sortByBn';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
-import useRestakeBalances from '@webb-tools/tangle-shared-ui/data/restake/useRestakeBalances';
-import calculateBnRatio from '../utils/calculateBnRatio';
-import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 
 type Row = {
   vaultId: number;
@@ -250,13 +250,18 @@ const VaultsAndBalancesTable: FC = () => {
     VisibilityState & Partial<Record<keyof Row, boolean>>
   >({});
 
-  const { balances: customAssetBalances } = useRestakeBalances();
   const rewardConfig = useRestakeRewardConfig();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const isAccountConnected = useIsAccountConnected();
-  const { vaults } = useRestakeVaults();
+
   const assetsTvl = useRestakeAssetsTvl();
   const erc20Balances = useTangleEvmErc20Balances();
+
+  const {
+    vaults,
+    balances: customAssetBalances,
+    isLoading,
+  } = useRestakeContext();
 
   const getTotalLockedInAsset = useCallback(
     (assetId: RestakeAssetId) => {
@@ -385,6 +390,16 @@ const VaultsAndBalancesTable: FC = () => {
       locked: isAccountConnected,
     });
   }, [isAccountConnected]);
+
+  if (isLoading) {
+    return (
+      <TableStatus
+        title="Loading..."
+        description="Please wait while we load the data."
+        icon={<Spinner size="lg" />}
+      />
+    );
+  }
 
   if (rows.length === 0) {
     return (
