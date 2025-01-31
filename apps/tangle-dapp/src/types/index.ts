@@ -27,6 +27,7 @@ export enum PagePath {
 export enum QueryParamKey {
   DELEGATIONS_AND_PAYOUTS_TAB = 'tab',
   RESTAKE_VAULT = 'vault',
+  RESTAKE_ASSET_ID = 'assetId',
   RESTAKE_OPERATOR = 'operator',
 }
 

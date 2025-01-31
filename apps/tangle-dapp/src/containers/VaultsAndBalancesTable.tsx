@@ -50,6 +50,7 @@ import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTan
 
 type Row = {
   vaultId: number;
+  assetId: RestakeAssetId;
   name?: string;
   tokenSymbol: string;
   tvl?: BN;
@@ -221,7 +222,7 @@ const COLUMNS = [
       <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1">
           <Link
-            to={`${PagePath.RESTAKE}/?${QueryParamKey.RESTAKE_VAULT}=${props.row.original.vaultId}`}
+            to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_ASSET_ID}=${props.row.original.assetId}`}
           >
             <Button
               variant="utility"
@@ -339,6 +340,7 @@ const VaultsAndBalancesTable: FC = () => {
         tokenSymbol: metadata.symbol,
         decimals: metadata.decimals,
         depositCap,
+        assetId,
       } satisfies Row;
     });
   }, [
