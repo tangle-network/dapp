@@ -23,7 +23,8 @@ const ClaimPage: FC = () => {
   const { loading, isConnecting } = useWebContext();
   const activeAccountAddress = useActiveAccountAddress();
   const { notificationApi } = useWebbUI();
-  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const { nativeTokenSymbol } = useNetworkStore();
 
   // Default to null to indicate that we are still checking
   // If false, then we know that the user is not eligible

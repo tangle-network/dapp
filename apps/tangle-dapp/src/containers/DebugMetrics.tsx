@@ -21,7 +21,7 @@ function formatBytes(bytes: number): string {
 
 const DebugMetrics: FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const { rpcEndpoint } = useNetworkStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
 
   const { result: api } = usePromise(
     useCallback(() => getApiPromise(rpcEndpoint), [rpcEndpoint]),

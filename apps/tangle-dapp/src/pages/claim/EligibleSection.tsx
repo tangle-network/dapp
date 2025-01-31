@@ -56,7 +56,8 @@ const EligibleSection: FC<Props> = ({
   const { notificationApi } = useWebbUI();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const { nativeTokenSymbol } = useNetworkStore();
   const activeAccountAddress = useActiveAccountAddress();
 
   const [recipient, setRecipient] = useState(
