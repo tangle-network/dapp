@@ -200,7 +200,7 @@ const COLUMNS = [
               />
             )}
 
-            <Typography variant="body1">
+            <Typography variant="body1" className="dark:text-mono-0">
               {fmtTvl === undefined
                 ? `${fmtDepositCap}`
                 : `${fmtTvl} | ${fmtDepositCap}`}

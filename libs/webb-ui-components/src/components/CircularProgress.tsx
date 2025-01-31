@@ -1,6 +1,8 @@
+// Import progress styling.
+import 'react-circular-progressbar/dist/styles.css';
+
 import { FC } from 'react';
 import { CircularProgressbar } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
 import { twMerge } from 'tailwind-merge';
 import { Tooltip, TooltipBody, TooltipTrigger } from './Tooltip';
 
@@ -43,6 +45,11 @@ export const CircularProgress: FC<CircularProgressProps> = ({
   const progressComponent = (
     <CircularProgressbar
       className={twMerge('!w-auto', getSizeClass(size))}
+      styles={{
+        path: {
+          stroke: '#5b76ff',
+        },
+      }}
       value={progress * 100}
       strokeWidth={15}
     />
@@ -54,7 +61,9 @@ export const CircularProgress: FC<CircularProgressProps> = ({
 
   return (
     <Tooltip>
-      <TooltipTrigger>{progressComponent}</TooltipTrigger>
+      <TooltipTrigger className="cursor-default">
+        {progressComponent}
+      </TooltipTrigger>
 
       <TooltipBody>{tooltip}</TooltipBody>
     </Tooltip>

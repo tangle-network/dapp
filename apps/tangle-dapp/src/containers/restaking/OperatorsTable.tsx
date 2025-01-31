@@ -101,10 +101,11 @@ const OperatorsTable: FC<Props> = ({
         <ModalTrigger asChild>
           <Button
             className="mb-4 ml-auto -mt-14"
-            variant="secondary"
+            variant="utility"
+            size="sm"
             leftIcon={
               <AddLineIcon
-                size="lg"
+                size="md"
                 className="fill-current dark:fill-current"
               />
             }
