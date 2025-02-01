@@ -916,6 +916,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       hyperlaneSyntheticAddress: assertEvmAddress(
         '0x122c216D5379376413Fc7B547598AcD5268A57B4',
       ),
+      isTestnet: true,
     },
     {
       symbol: 'MMT',
@@ -928,6 +929,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       hyperlaneSyntheticAddress: assertEvmAddress(
         '0xbd6651dd0DAe09818baA8950430D139BD0D899ff',
       ),
+      isTestnet: true,
     },
     {
       symbol: 'CPT',
@@ -940,6 +942,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       hyperlaneSyntheticAddress: assertEvmAddress(
         '0xc0CB548E329A9Fb2431E651E8e0B3269aD6F1D22',
       ),
+      isTestnet: true,
     },
     {
       symbol: 'WETH',
@@ -952,6 +955,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       hyperlaneSyntheticAddress: assertEvmAddress(
         '0x75F277a14bBe7020aaBd62c482c38391FB09E0ba',
       ),
+      isTestnet: true,
     },
   ],
 };

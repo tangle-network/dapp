@@ -100,6 +100,7 @@ export interface BridgeToken {
   decimals: number;
   chainId: PresetTypedChainId;
   hyperlaneSyntheticAddress?: EvmAddress;
+  isTestnet?: boolean;
 }
 
 export type BridgeChainsConfigType = Record<
