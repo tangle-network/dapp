@@ -338,7 +338,7 @@ const DepositForm: FC<Props> = (props) => {
             searchInputId="restake-deposit-assets-search"
             searchPlaceholder="Search assets..."
             titleWhenEmpty="No Assets Found"
-            descriptionWhenEmpty="It seems that there are no available assets in this network yet. Please try again later."
+            descriptionWhenEmpty="It seems that there are no available assets on this account in this network yet. Please try again later."
             items={allAssets}
             renderItem={(asset) => {
               const fmtBalance = formatDisplayAmount(

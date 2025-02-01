@@ -55,13 +55,19 @@ const StakeInput: FC<Props> = ({
       return {};
     }
 
-    const amountRaw =
+    const amountBigInt =
       delegatorInfo.deposits[selectedAsset.id]?.amount ?? ZERO_BIG_INT;
 
-    const maxFormatted = +formatUnits(amountRaw, selectedAsset.decimals);
+    const delegatedBigInt =
+      delegatorInfo.delegations.find(
+        (delegation) => delegation.assetId === selectedAsset.id,
+      )?.amountBonded ?? ZERO_BIG_INT;
+
+    const availableBalance = amountBigInt - delegatedBigInt;
+    const maxFormatted = +formatUnits(availableBalance, selectedAsset.decimals);
 
     return {
-      max: amountRaw,
+      max: availableBalance,
       maxFormatted,
     };
   }, [delegatorInfo, selectedAsset]);

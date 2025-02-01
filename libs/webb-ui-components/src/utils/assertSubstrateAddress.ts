@@ -8,6 +8,8 @@ const assertSubstrateAddress = (address: string): SubstrateAddress => {
     'Address should be a valid Substrate address',
   );
 
+  // TODO: Format the address similar to EVM checksum for consistent & deterministic comparisons between SubstrateAddress types.
+
   return address as SubstrateAddress;
 };
 

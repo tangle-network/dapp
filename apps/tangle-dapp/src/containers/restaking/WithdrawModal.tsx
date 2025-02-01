@@ -1,5 +1,8 @@
 import { BN } from '@polkadot/util';
-import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config/constants';
+import {
+  DEFAULT_DECIMALS,
+  ZERO_BIG_INT,
+} from '@webb-tools/dapp-config/constants';
 import { TokenIcon } from '@webb-tools/icons/TokenIcon';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
@@ -17,6 +20,7 @@ import { formatUnits } from 'viem';
 import LogoListItem from '../../components/Lists/LogoListItem';
 import filterBy from '../../utils/filterBy';
 import { findErc20Token } from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
+import calculateRestakeAvailableBalance from '../../utils/restaking/calculateRestakeAvailableBalance';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -38,18 +42,22 @@ const WithdrawModal = ({
 }: Props) => {
   const { vaults } = useRestakeContext();
 
-  // Aggregate the delegations based on the operator account id and asset id
-  const deposits = useMemo(() => {
+  const availableForWithdrawal = useMemo(() => {
     if (!delegatorInfo?.deposits) {
       return [];
     }
 
-    return Object.entries(delegatorInfo.deposits).map(
-      ([assetId, { amount }]) => ({
-        assetId: assertRestakeAssetId(assetId),
-        amount,
-      }),
-    );
+    return Object.entries(delegatorInfo.deposits).map(([assetIdString]) => {
+      const availableForWithdrawal = calculateRestakeAvailableBalance(
+        delegatorInfo,
+        assertRestakeAssetId(assetIdString),
+      );
+
+      return {
+        assetId: assertRestakeAssetId(assetIdString),
+        amount: availableForWithdrawal ?? ZERO_BIG_INT,
+      };
+    });
   }, [delegatorInfo]);
 
   return (
@@ -59,7 +67,7 @@ const WithdrawModal = ({
       setIsOpen={setIsOpen}
       searchInputId="restake-withdraw-asset-search"
       searchPlaceholder="Search assets by ID or name..."
-      items={deposits}
+      items={availableForWithdrawal}
       titleWhenEmpty="No Assets Found"
       descriptionWhenEmpty="This account has no assets available to withdraw."
       onSelect={(deposit) => {

@@ -141,44 +141,59 @@ const useTangleEvmErc20Balances = (): UseQueryResult<
   const fetchBalances = useCallback(async () => {
     assert(isReady);
 
-    const newBalances: Erc20Balance[] = [];
     const allTokens = getErc20TokensOfNetwork(networkId);
 
-    for (const token of allTokens) {
-      const balanceDecimal = await fetchErc20TokenBalance(
-        viemPublicClient,
-        evmAddress,
-        token.contractAddress,
-        erc20Abi,
-        token.decimals,
-      );
+    const balancePromises = allTokens.map(async (token) => {
+      try {
+        const balanceDecimal = await fetchErc20TokenBalance(
+          viemPublicClient,
+          evmAddress,
+          token.contractAddress,
+          erc20Abi,
+          token.decimals,
+        );
 
-      if (balanceDecimal === null) {
-        continue;
+        if (balanceDecimal === null) {
+          return null;
+        }
+
+        const balance = convertDecimalToBN(balanceDecimal, token.decimals);
+
+        if (balance.isZero()) {
+          return null;
+        }
+
+        return {
+          ...token,
+          balance,
+        } satisfies Erc20Balance;
+      } catch (error) {
+        console.error(`Error fetching balance for ${token.symbol}:`, error);
+
+        return null;
+      }
+    });
+
+    const results = await Promise.allSettled(balancePromises);
+
+    return results.reduce<Erc20Balance[]>((acc, result) => {
+      if (result.status === 'fulfilled' && result.value !== null) {
+        acc.push(result.value);
       }
 
-      const balance = convertDecimalToBN(balanceDecimal, token.decimals);
-
-      // Ignore assets that have a zero balance.
-      if (balance.isZero()) {
-        continue;
-      }
-
-      newBalances.push({
-        ...token,
-        balance,
-      } satisfies Erc20Balance);
-    }
-
-    return newBalances;
+      return acc;
+    }, []);
   }, [evmAddress, isReady, networkId, viemPublicClient]);
 
   // Fetch balances often to keep it in sync with the UI,
   // and also to keep the deposit balance updated (ex. after
   // the user performs a restake deposit).
   const balances = useQuery({
+    // Automatically re-fetch when the active account or network
+    // changes.
     queryKey: ['tangle-evm-erc20-balances', evmAddress, networkId],
     queryFn: fetchBalances,
+    refetchInterval: 12_000,
     enabled: isReady,
   });
 

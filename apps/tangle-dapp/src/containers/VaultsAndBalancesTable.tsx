@@ -270,7 +270,7 @@ const VaultsAndBalancesTable: FC = () => {
   const assetsTvl = useRestakeAssetsTvl();
   const { data: erc20Balances } = useTangleEvmErc20Balances();
 
-  const getTotalLockedInAsset = useCallback(
+  const getAssetTvl = useCallback(
     (assetId: RestakeAssetId) => {
       const deposits = delegatorInfo?.deposits ?? {};
       const deposit = get(deposits, assetId);
@@ -281,23 +281,14 @@ const VaultsAndBalancesTable: FC = () => {
 
       const depositAmount = deposit.amount;
 
-      const delegation = delegatorInfo?.delegations.find((delegation) => {
-        return delegation.assetId === assetId.toString();
-      });
-
       const depositAmountBn =
         depositAmount === undefined
           ? BN_ZERO
           : new BN(depositAmount.toString());
 
-      const delegationBn =
-        delegation === undefined
-          ? BN_ZERO
-          : new BN(delegation.amountBonded.toString());
-
-      return depositAmountBn.add(delegationBn);
+      return depositAmountBn;
     },
-    [delegatorInfo?.delegations, delegatorInfo?.deposits],
+    [delegatorInfo?.deposits],
   );
 
   const vaultRows = useMemo<Row[]>(() => {
@@ -349,7 +340,7 @@ const VaultsAndBalancesTable: FC = () => {
       return {
         vaultId: metadata.vaultId,
         name: metadata.name,
-        tvl: getTotalLockedInAsset(assetId),
+        tvl: getAssetTvl(assetId),
         available,
         deposited,
         delegated,
@@ -366,7 +357,7 @@ const VaultsAndBalancesTable: FC = () => {
     assetsTvl,
     customAssetBalances,
     delegatorInfo?.deposits,
-    getTotalLockedInAsset,
+    getAssetTvl,
     erc20Balances,
   ]);
 
