@@ -11,7 +11,7 @@ interface CarouselSlide {
   btnLink: string;
 }
 
-const slides: CarouselSlide[] = [
+const SLIDES: CarouselSlide[] = [
   {
     title: 'Earn Points with Tangle',
     description:
@@ -64,15 +64,11 @@ const PromotionalBanner: FC<{ className?: string }> = ({ className }) => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setCurrentSlide((prev) => (prev + 1) % SLIDES.length);
     }, 15000);
 
     return () => clearInterval(timer);
   }, []);
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
-  };
 
   return (
     <Card
@@ -87,7 +83,7 @@ const PromotionalBanner: FC<{ className?: string }> = ({ className }) => {
           className="flex w-full transition-transform duration-600 ease-out"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
-          {slides.map((slide, index) => (
+          {SLIDES.map((slide, index) => (
             <div
               key={index}
               className="w-full min-w-full flex-shrink-0 flex flex-col gap-[22px]"
@@ -121,10 +117,10 @@ const PromotionalBanner: FC<{ className?: string }> = ({ className }) => {
       </div>
 
       <div className="absolute left-1/2 -translate-x-1/2 flex gap-2 bottom-4">
-        {slides.map((_, index) => (
+        {SLIDES.map((_, index) => (
           <button
             key={index}
-            onClick={() => goToSlide(index)}
+            onClick={() => setCurrentSlide(index)}
             className={`w-2 h-2 rounded-full transition-all ${
               currentSlide === index
                 ? 'bg-white w-4'
