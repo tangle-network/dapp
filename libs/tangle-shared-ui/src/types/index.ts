@@ -53,7 +53,7 @@ export interface Nominee extends BasicAccountInfo {
 export type VaultToken = {
   name: string;
   symbol: string;
-  amount: number | string;
+  amount: Decimal;
 };
 
 export type RestakeOperator = {

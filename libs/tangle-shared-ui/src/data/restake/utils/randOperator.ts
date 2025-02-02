@@ -1,8 +1,14 @@
+import {
+  randEthereumAddress,
+  randFloat,
+  randNumber,
+  randUserName,
+} from '@ngneat/falso';
 import { evmToAddress } from '@polkadot/util-crypto';
-import { RestakeOperator } from '../../../types';
-import { randEthereumAddress, randNumber, randUserName } from '@ngneat/falso';
-import uniqWith from 'lodash/uniqWith';
 import { assertSubstrateAddress } from '@webb-tools/webb-ui-components';
+import { Decimal } from 'decimal.js';
+import uniqWith from 'lodash/uniqWith';
+import { RestakeOperator } from '../../../types';
 
 const TOKEN_NAMES = ['TNT', 'USDC', 'USDT', 'DAI', 'WBTC', 'WETH', 'WBTC'];
 
@@ -10,7 +16,7 @@ const randVaultToken = () => {
   return {
     name: TOKEN_NAMES[randNumber({ min: 0, max: TOKEN_NAMES.length - 1 })],
     symbol: TOKEN_NAMES[randNumber({ min: 0, max: TOKEN_NAMES.length - 1 })],
-    amount: randNumber({ min: 100, max: 10_000 }),
+    amount: new Decimal(randFloat({ min: 100, max: 10_000 })),
   };
 };
 
