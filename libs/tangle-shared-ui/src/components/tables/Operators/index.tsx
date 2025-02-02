@@ -123,7 +123,12 @@ const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
         </TableCellWrapper>
       );
     },
-    enableSorting: false,
+    sortingFn: (rowA, rowB) => {
+      const aVaultTokens = rowA.original.vaultTokens;
+      const bVaultTokens = rowB.original.vaultTokens;
+
+      return aVaultTokens.length - bVaultTokens.length;
+    },
   }),
 ];
 
@@ -187,7 +192,11 @@ const OperatorsTable: FC<Props> = ({
     initialState: {
       sorting: [
         {
-          id: 'restakersCount' satisfies keyof RestakeOperator,
+          id: 'vaultTokens',
+          desc: true,
+        },
+        {
+          id: 'restakersCount',
           desc: true,
         },
       ],
