@@ -13,7 +13,7 @@ import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
 
 export default function useRestakeBalances() {
-  const { apiRx } = usePolkadotApi();
+  const { apiRx, apiRxLoading, apiRxError } = usePolkadotApi();
   const { assetIds } = useRestakeAssetIds();
   const activeAccount = useSubstrateAddress();
 
@@ -87,6 +87,8 @@ export default function useRestakeBalances() {
   return {
     balances,
     balances$,
+    isLoading: apiRxLoading,
+    error: apiRxError,
   };
 }
 

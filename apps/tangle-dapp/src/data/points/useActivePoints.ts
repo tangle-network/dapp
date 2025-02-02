@@ -28,7 +28,7 @@ const fetcher = async ([, activeAccount]: [string, string | null]) => {
 };
 
 export default function useActivePoints() {
-  const activeAccount = useSubstrateAddress();
+  const activeAccount = useSubstrateAddress(false);
 
   const {
     data = null,

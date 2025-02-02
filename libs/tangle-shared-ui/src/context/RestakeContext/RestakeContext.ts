@@ -12,6 +12,8 @@ const RestakeContext = createContext<RestakeContextType>({
   balances$: of<AssetBalanceMap>({}),
   assetWithBalances: [],
   assetWithBalances$: of([]),
+  isLoading: false,
+  error: null,
 });
 
 export default RestakeContext;
