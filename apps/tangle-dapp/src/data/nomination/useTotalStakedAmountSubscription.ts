@@ -16,7 +16,8 @@ export default function useTotalStakedAmountSubscription(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const { rpcEndpoint, nativeTokenSymbol } = useNetworkStore();
+  const { nativeTokenSymbol } = useNetworkStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const address = useSubstrateAddress();
 
   useEffect(() => {

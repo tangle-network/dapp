@@ -45,7 +45,7 @@ export default function usePayouts(): UsePayoutsReturnType {
     LocalStorageKey.PAYOUTS,
   );
 
-  const { rpcEndpoint, network } = useNetworkStore();
+  const network = useNetworkStore((store) => store.network);
   const activeSubstrateAddress = useSubstrateAddress();
 
   const { data: eraTotalRewards } = useEraTotalRewards();
@@ -99,7 +99,7 @@ export default function usePayouts(): UsePayoutsReturnType {
           setIsLoading(true);
 
           const payouts = await fetchPayouts(
-            rpcEndpoint,
+            network.wsRpcEndpoint,
             activeSubstrateAddress,
             unclaimedRewards,
             eraTotalRewards,
@@ -117,8 +117,8 @@ export default function usePayouts(): UsePayoutsReturnType {
           setPayouts({ [maxEras]: sortedPayout });
           setCachedPayouts((previous) => ({
             ...previous?.value,
-            [rpcEndpoint]: {
-              ...previous?.value?.[rpcEndpoint],
+            [network.wsRpcEndpoint]: {
+              ...previous?.value?.[network.wsRpcEndpoint],
               [activeSubstrateAddress]: sortedPayout,
             },
           }));
@@ -142,7 +142,7 @@ export default function usePayouts(): UsePayoutsReturnType {
       };
     },
     // prettier-ignore
-    [activeSubstrateAddress, doesDataAtMaxErasExist, eraTotalRewards, mappedValidatorInfo, maxEras, network.ss58Prefix, rpcEndpoint, setCachedPayouts, setIsLoading, setPayouts, unclaimedRewards, validatorIdentityNamesMap],
+    [activeSubstrateAddress, doesDataAtMaxErasExist, eraTotalRewards, mappedValidatorInfo, maxEras, network.ss58Prefix, network.wsRpcEndpoint, setCachedPayouts, setIsLoading, setPayouts, unclaimedRewards, validatorIdentityNamesMap],
   );
 
   return {

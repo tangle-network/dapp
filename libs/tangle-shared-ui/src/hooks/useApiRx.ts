@@ -1,7 +1,7 @@
 'use client';
 
 import { ApiRx } from '@polkadot/api';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { catchError, Observable } from 'rxjs';
 import useNetworkStore from '../context/useNetworkStore';
 import usePromise from './usePromise';
@@ -29,20 +29,21 @@ export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | null;
  * );
  * ```
  */
-function useApiRx<T>(
-  factory: ObservableFactory<T>,
-  rpcEndpointOverride?: string,
-) {
+function useApiRx<T>(factory: ObservableFactory<T>) {
   const [result, setResult] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
-  const { rpcEndpoint } = useNetworkStore();
   const [error, setError] = useState<Error | null>(null);
+  const isMountedRef = useRef(true);
+  const rpcEndpoint = useNetworkStore((store) => store.network2?.wsRpcEndpoint);
 
   const { result: apiRx } = usePromise(
-    useCallback(
-      () => getApiRx(rpcEndpointOverride ?? rpcEndpoint),
-      [rpcEndpointOverride, rpcEndpoint],
-    ),
+    useCallback(async () => {
+      if (rpcEndpoint === undefined) {
+        return null;
+      }
+
+      return await getApiRx(rpcEndpoint);
+    }, [rpcEndpoint]),
     null,
   );
 
@@ -103,11 +104,18 @@ function useApiRx<T>(
         }),
       )
       .subscribe((newResult) => {
+        if (!isMountedRef) {
+          return;
+        }
+
         setResult(newResult);
         setLoading(false);
       });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMountedRef.current = false;
+      subscription.unsubscribe();
+    };
   }, [factory, apiRx, resetData]);
 
   return { result, isLoading, error };

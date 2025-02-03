@@ -7,7 +7,7 @@ import { Decimal } from 'decimal.js';
 import { create } from 'zustand';
 
 import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
-import { BRIDGE_CHAINS } from '../../constants/bridge';
+import { BRIDGE_CHAINS } from '@webb-tools/tangle-shared-ui/constants/bridge';
 
 const sortChainOptions = (chains: ChainConfig[]) => {
   return chains.sort((a, b) => a.name.localeCompare(b.name));

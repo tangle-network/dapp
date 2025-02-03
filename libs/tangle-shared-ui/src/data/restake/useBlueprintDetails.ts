@@ -24,7 +24,7 @@ import useRestakeVaults from './useRestakeVaults';
 import useRestakeOperatorMap from './useRestakeOperatorMap';
 
 export default function useBlueprintDetails(id?: string) {
-  const { rpcEndpoint } = useNetworkStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { vaults } = useRestakeVaults();
 
   const { operatorMap } = useRestakeOperatorMap();

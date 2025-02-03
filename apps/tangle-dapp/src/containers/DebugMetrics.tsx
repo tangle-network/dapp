@@ -8,8 +8,6 @@ import {
 import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import useDebugMetricsStore from '../context/useDebugMetricsStore';
-
 /**
  * Format bytes to megabytes, rounded to two decimal places
  * and suffixed with `mb`.
@@ -23,8 +21,7 @@ function formatBytes(bytes: number): string {
 
 const DebugMetrics: FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  const { rpcEndpoint } = useNetworkStore();
-  const { requestCount, subscriptionCount } = useDebugMetricsStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
 
   const { result: api } = usePromise(
     useCallback(() => getApiPromise(rpcEndpoint), [rpcEndpoint]),
@@ -40,9 +37,7 @@ const DebugMetrics: FC = () => {
   const [tick, setTick] = useState(0);
 
   const totalRequests =
-    (api?.stats?.total.requests ?? 0) +
-    (apiRx?.stats?.total.requests ?? 0) +
-    requestCount;
+    (api?.stats?.total.requests ?? 0) + (apiRx?.stats?.total.requests ?? 0);
 
   const totalBytesReceived =
     (api?.stats?.total.bytesRecv ?? 0) + (apiRx?.stats?.total.bytesRecv ?? 0);
@@ -55,8 +50,7 @@ const DebugMetrics: FC = () => {
 
   const totalActiveSubscriptions =
     (api?.stats?.active.subscriptions ?? 0) +
-    (apiRx?.stats?.active.subscriptions ?? 0) +
-    subscriptionCount;
+    (apiRx?.stats?.active.subscriptions ?? 0);
 
   // Manually trigger a re-render every second, since the stats
   // are not automatically updated.

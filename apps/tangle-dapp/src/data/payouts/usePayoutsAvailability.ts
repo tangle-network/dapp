@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 const usePayoutsAvailability = () => {
   const { valueOpt: cachedPayouts } = useLocalStorage(LocalStorageKey.PAYOUTS);
-  const { rpcEndpoint } = useNetworkStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const address = useSubstrateAddress();
 
   const payoutsData = useMemo(() => {

@@ -23,15 +23,12 @@ export default function ErrorMessage({
     <p
       {...props}
       className={twMerge(
-        'flex items-start gap-2 text-red-70 dark:text-red-50',
+        'flex items-center justify-center gap-0.5 text-red-70 dark:text-red-50 mt-2 ml-2',
         className,
       )}
     >
       {isDefined(children) ? (
-        <InformationLine
-          size="md"
-          className="fill-current dark:fill-current mt-1 shrink-0"
-        />
+        <InformationLine size="md" className="fill-current dark:fill-current" />
       ) : null}
 
       <Typography

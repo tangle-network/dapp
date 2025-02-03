@@ -1,4 +1,4 @@
-import { ChainConfig, ZERO_BIG_INT } from '@webb-tools/dapp-config';
+import { ChainConfig } from '@webb-tools/dapp-config';
 import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { TokenIcon } from '@webb-tools/icons';
@@ -37,7 +37,7 @@ import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import ActionButton from './ActionButton';
 import Details from './Details';
-import StakeInput from './StakeInput';
+import RestakeDelegateInput from './RestakeDelegateInput';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import { BN } from '@polkadot/util';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
@@ -166,7 +166,6 @@ const RestakeDelegateForm: FC = () => {
     return Object.entries(delegatorInfo.deposits).flatMap(
       ([assetIdString, { amount, delegatedAmount }]) => {
         const assetId = assertRestakeAssetId(assetIdString);
-
         const balance = new BN((amount - delegatedAmount).toString());
 
         if (!isEvmAddress(assetId)) {
@@ -268,7 +267,7 @@ const RestakeDelegateForm: FC = () => {
       <Card withShadow tightPadding>
         <Form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col h-full space-y-4 grow">
-            <StakeInput
+            <RestakeDelegateInput
               amountError={errors.amount?.message}
               delegatorInfo={delegatorInfo}
               openAssetModal={openAssetModal}

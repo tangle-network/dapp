@@ -11,15 +11,18 @@ import {
   ModalHeader,
 } from '@webb-tools/webb-ui-components';
 import { OPERATOR_JOIN_DOCS_LINK } from '@webb-tools/webb-ui-components/constants/tangleDocs';
-import noop from 'lodash/noop';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import AmountInput from '../../components/AmountInput';
 import useBalances from '../../data/balances/useBalances';
 import useJoinOperatorsTx from '../../data/restake/useJoinOperatorsTx';
 import useApi from '../../hooks/useApi';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 
-const JoinOperatorsModal: FC = () => {
+type Props = {
+  setIsOpen: (isOpen: boolean) => void;
+};
+
+const JoinOperatorsModal: FC<Props> = ({ setIsOpen }) => {
   const [bondAmount, setBondAmount] = useState<BN | null>(null);
   const { nativeTokenSymbol } = useNetworkStore();
   const { execute, status } = useJoinOperatorsTx();
@@ -65,6 +68,13 @@ const JoinOperatorsModal: FC = () => {
 
     return `A minimum bond amount of ${fmtMinOperatorBond} ${nativeTokenSymbol} is required to register as an operator. This stake recovered after an unbonding period.`;
   }, [minOperatorBond, nativeTokenSymbol]);
+
+  useEffect(() => {
+    if (status === TxStatus.COMPLETE) {
+      setBondAmount(null);
+      setIsOpen(false);
+    }
+  }, [setIsOpen, status]);
 
   return (
     <ModalContent size="sm">

@@ -14,13 +14,9 @@ import {
   EVMTokens,
 } from '@webb-tools/evm-contract-metadata';
 
-import {
-  BridgeChainsConfigType,
-  BridgeToken,
-} from '@webb-tools/tangle-shared-ui/types';
 import { assertEvmAddress } from '@webb-tools/webb-ui-components';
-import { Abi } from 'viem';
-import ERC20_ABI from '../abi/erc20';
+import { Abi, erc20Abi } from 'viem';
+import { BridgeChainsConfigType, BridgeToken } from '../types';
 
 // TODO: Include assertion logic, as the Abi type can't be directly imported from viem since the 'type' field clashes (string vs. 'function').
 const assertAbi = (abi: unknown): Abi => abi as Abi;
@@ -28,7 +24,7 @@ const assertAbi = (abi: unknown): Abi => abi as Abi;
 export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
   [PresetTypedChainId.Polygon]: [
     {
-      tokenSymbol: 'TNT',
+      symbol: 'TNT',
       tokenType: EVMTokenEnum.TNT,
       bridgeType: EVMTokenBridgeEnum.Router,
       address: assertEvmAddress(EVMTokens.polygon.router.TNT.address),
@@ -37,11 +33,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       chainId: PresetTypedChainId.Polygon,
     },
     {
-      tokenSymbol: 'CRV',
+      symbol: 'CRV',
       tokenType: 'CRV' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x3DBBB4fdC5725FF780E653FfC3Af427029C259F3'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -49,11 +45,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'DAI',
+      symbol: 'DAI',
       tokenType: 'DAI' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -61,11 +57,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'LDO',
+      symbol: 'LDO',
       tokenType: 'LDO' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x99829129a49517FAc964802cA30E75Fd96143dC2'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -73,11 +69,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'LINK',
+      symbol: 'LINK',
       tokenType: 'LINK' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xfeE0B3295D2f7e209217F33FDb46e79D6b3C15C7'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -85,11 +81,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'POL',
+      symbol: 'POL',
       tokenType: 'POL' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xCdb39557fa155Ff98d11739B6A5F687E7Cb922d8'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -97,11 +93,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'rETH',
+      symbol: 'rETH',
       tokenType: 'rETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x158C33834acf0B3d061DdFA1C7784cA595AC1c25'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -109,11 +105,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'tBTC',
+      symbol: 'tBTC',
       tokenType: 'tBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xF46496DD3eFdbb6Bf69cdEee56aBd17AAC8A0494'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -121,11 +117,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'UNI',
+      symbol: 'UNI',
       tokenType: 'UNI' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xa3E0920CAf0e2eDDDe54D49fFC1d82e1a23c9693'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -133,11 +129,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'USDC',
+      symbol: 'USDC',
       tokenType: 'USDC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xf041B44EE24B5358D0999076933675fF5baCa437'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 6,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -145,11 +141,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'USDT',
+      symbol: 'USDT',
       tokenType: 'USDT' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x72141B45a23333011AaAb07D6fDEBbE97049091e'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 6,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -157,11 +153,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'WBTC',
+      symbol: 'WBTC',
       tokenType: 'WBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x0E7f434f502200ec7BEb04Ed6B38DFaf0aD88617'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 8,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -169,11 +165,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'WETH',
+      symbol: 'WETH',
       tokenType: 'WETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -181,11 +177,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'wstETH',
+      symbol: 'wstETH',
       tokenType: 'wstETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x5180c082e7E438c80cF4235C098C8CB0a7c3E3FD'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -195,7 +191,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
   ],
   [PresetTypedChainId.Arbitrum]: [
     {
-      tokenSymbol: 'TNT',
+      symbol: 'TNT',
       tokenType: EVMTokenEnum.TNT,
       bridgeType: EVMTokenBridgeEnum.Router,
       address: assertEvmAddress(EVMTokens.arbitrum.router.TNT.address),
@@ -204,11 +200,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       chainId: PresetTypedChainId.Arbitrum,
     },
     {
-      tokenSymbol: 'ARB',
+      symbol: 'ARB',
       tokenType: 'ARB' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x99Ce18058C6fE35216D8626C3D183526240CcCbb'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -216,11 +212,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'cbBTC',
+      symbol: 'cbBTC',
       tokenType: 'cbBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xD5B8441E2929e73f1e9a9C53b7a6863780897FFa'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 8,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -228,11 +224,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'cbETH',
+      symbol: 'cbETH',
       tokenType: 'cbETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x77dfB661ee20af4F0C48E4d31828efC34D9a93C6'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -240,11 +236,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'CRV',
+      symbol: 'CRV',
       tokenType: 'CRV' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x223E7B1EAd79C6603a891D9e733FD5ADD1044dd1'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -252,11 +248,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'DAI',
+      symbol: 'DAI',
       tokenType: 'DAI' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -264,11 +260,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'ETH',
+      symbol: 'ETH',
       tokenType: 'ETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x68AbCC37de2BEb083Cd6A549f64C3494Ea418BB7'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -276,11 +272,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'ezETH',
+      symbol: 'ezETH',
       tokenType: 'ezETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x7CFc15E7fD3998B962D1FC137b64d10513c18097'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -288,11 +284,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'LDO',
+      symbol: 'LDO',
       tokenType: 'LDO' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -300,11 +296,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'LINK',
+      symbol: 'LINK',
       tokenType: 'LINK' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x0251Bdc4cd9226B369859fd75D5be133EF48e7D9'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -312,11 +308,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'rETH',
+      symbol: 'rETH',
       tokenType: 'rETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xB6e1965e8c13657e25450F0161eebAD8F2b2FC0E'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -324,11 +320,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'SolvBTC',
+      symbol: 'SolvBTC',
       tokenType: 'SolvBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xc80f2Bd6Bc9C74a6674bC0A0966e76a5eAC51Cf7'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -336,11 +332,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'SolvBTC.BBN',
+      symbol: 'SolvBTC.BBN',
       tokenType: 'SolvBTC.BBN' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x122c216D5379376413Fc7B547598AcD5268A57B4'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -348,11 +344,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'swETH',
+      symbol: 'swETH',
       tokenType: 'swETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x15BC1c8861def0e6605685bFEdF3A6456f068dBa'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -360,11 +356,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'tBTC',
+      symbol: 'tBTC',
       tokenType: 'tBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x1654A5e254277FB66773eb4B0E428efB0bFB3Dca'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -372,11 +368,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'UNI',
+      symbol: 'UNI',
       tokenType: 'UNI' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xd5c9FCfF2f362E89538E92e8B6e677571E11C1e7'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -384,11 +380,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'USDC',
+      symbol: 'USDC',
       tokenType: 'USDC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xd7405f4396a90cD6B1f11f172F08034dBd9265D8'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 6,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -396,11 +392,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'USDT',
+      symbol: 'USDT',
       tokenType: 'USDT' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x5b6C0685Fc934C53b4523Bf8df5277dC4f3914FA'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 6,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -408,11 +404,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'USDX',
+      symbol: 'USDX',
       tokenType: 'USDX' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x4139b8F1474FFd04EE15F86103EF53f8Fdb3d8D0'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -420,11 +416,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'WBTC',
+      symbol: 'WBTC',
       tokenType: 'WBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x44626462ed716DF3569a55c3584CEe2027d061bf'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 8,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -432,11 +428,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'WETH',
+      symbol: 'WETH',
       tokenType: 'WETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x02644D01979CDe915eD7D7C3a997072F5716D137'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -444,11 +440,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'wstETH',
+      symbol: 'wstETH',
       tokenType: 'wstETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xa3E0920CAf0e2eDDDe54D49fFC1d82e1a23c9693'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -458,7 +454,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
   ],
   [PresetTypedChainId.Optimism]: [
     {
-      tokenSymbol: 'TNT',
+      symbol: 'TNT',
       tokenType: EVMTokenEnum.TNT,
       bridgeType: EVMTokenBridgeEnum.Router,
       address: assertEvmAddress(EVMTokens.optimism.router.TNT.address),
@@ -467,11 +463,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       chainId: PresetTypedChainId.Optimism,
     },
     {
-      tokenSymbol: 'cbETH',
+      symbol: 'cbETH',
       tokenType: 'cbETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x61F71B85762c8848083506da347969c58248f0c6'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -479,11 +475,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'CRV',
+      symbol: 'CRV',
       tokenType: 'CRV' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -491,11 +487,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'DAI',
+      symbol: 'DAI',
       tokenType: 'DAI' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x6d55528963D147BEA3e925538F2e32C24Fa0119a'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -503,11 +499,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'ETH',
+      symbol: 'ETH',
       tokenType: 'ETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x96d4357EB200f230816811b4320259b2f9228D5c'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -515,11 +511,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'ezETH',
+      symbol: 'ezETH',
       tokenType: 'ezETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xb794b059bDA36a01C3757693D4136162752e03C6'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -527,11 +523,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'LDO',
+      symbol: 'LDO',
       tokenType: 'LDO' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x87228bCa8bdB5F3c1EafDddCC14a059Bcde2233b'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -539,11 +535,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'LINK',
+      symbol: 'LINK',
       tokenType: 'LINK' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x7a6BB435590eab856cA0b19EF5bFC227346f0f96'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -551,11 +547,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'OP',
+      symbol: 'OP',
       tokenType: 'OP' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x3fD392c4b9c8ceD4bA003115A7803D0Fa0c6718B'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -563,11 +559,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'rETH',
+      symbol: 'rETH',
       tokenType: 'rETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xEF783f54b69554f0A3c7263DF508A395febb407b'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -575,11 +571,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'tBTC',
+      symbol: 'tBTC',
       tokenType: 'tBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x5742195A81349F1306361D71A050C4cDdC5814FE'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -587,11 +583,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'UNI',
+      symbol: 'UNI',
       tokenType: 'UNI' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x25Eb364cb96485c22eE70a6cfc60717F0C0b3380'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -599,11 +595,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'USDC',
+      symbol: 'USDC',
       tokenType: 'USDC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x7A153C00352DCb87E11684ce504bfE4dC170acCb'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 6,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -611,11 +607,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'USDT',
+      symbol: 'USDT',
       tokenType: 'USDT' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x108F919b5A76B64e80dBf74130Ff6441A62F6405'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 6,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -623,11 +619,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'WBTC',
+      symbol: 'WBTC',
       tokenType: 'WBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xDCb6a0a3bC5e034400e845483f21da67866691Bb'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 8,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -635,11 +631,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'WETH',
+      symbol: 'WETH',
       tokenType: 'WETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -647,11 +643,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'wstETH',
+      symbol: 'wstETH',
       tokenType: 'wstETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x99Ce18058C6fE35216D8626C3D183526240CcCbb'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -661,7 +657,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
   ],
   [PresetTypedChainId.Linea]: [
     {
-      tokenSymbol: 'TNT',
+      symbol: 'TNT',
       tokenType: EVMTokenEnum.TNT,
       bridgeType: EVMTokenBridgeEnum.Router,
       address: assertEvmAddress(EVMTokens.linea.router.TNT.address),
@@ -672,7 +668,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
   ],
   [PresetTypedChainId.Base]: [
     {
-      tokenSymbol: 'TNT',
+      symbol: 'TNT',
       tokenType: EVMTokenEnum.TNT,
       bridgeType: EVMTokenBridgeEnum.Router,
       address: assertEvmAddress(EVMTokens.base.router.TNT.address),
@@ -681,11 +677,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       chainId: PresetTypedChainId.Base,
     },
     {
-      tokenSymbol: 'AVAIL',
+      symbol: 'AVAIL',
       tokenType: 'AVAIL' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xe2C35423680D0F55F2C226dD75600826f66debA3'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -693,11 +689,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'cbBTC',
+      symbol: 'cbBTC',
       tokenType: 'cbBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x07a4568A98621f90E7D94E87D7e9Bf806d5E19f3'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 8,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -705,11 +701,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'cbETH',
+      symbol: 'cbETH',
       tokenType: 'cbETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -717,11 +713,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'CRV',
+      symbol: 'CRV',
       tokenType: 'CRV' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xAf461f35C12d207ee533191C89B476CCB1b03D60'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -729,11 +725,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'DAI',
+      symbol: 'DAI',
       tokenType: 'DAI' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xfB03a8fEea1635c16Fd81731E89E5517201C20e5'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -741,11 +737,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'ETH',
+      symbol: 'ETH',
       tokenType: 'ETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x61F71B85762c8848083506da347969c58248f0c6'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -753,11 +749,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'ezETH',
+      symbol: 'ezETH',
       tokenType: 'ezETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xCa965b842699e16b367702310f50161e03eb2d27'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -765,11 +761,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'LBTC',
+      symbol: 'LBTC',
       tokenType: 'LBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 8,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -777,11 +773,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'LINK',
+      symbol: 'LINK',
       tokenType: 'LINK' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xB922779bB836765598709032736C86c67E5A514e'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -789,11 +785,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'rETH',
+      symbol: 'rETH',
       tokenType: 'rETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xb2434BA552d88e026c1D339CFE8c827d98A626b9'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -801,11 +797,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'stAVAIL',
+      symbol: 'stAVAIL',
       tokenType: 'stAVAIL' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xcC1579deEE9Fd67B3F73EBA8CF2e113bcb59515C'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -813,11 +809,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'tBTC',
+      symbol: 'tBTC',
       tokenType: 'tBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x21F0ba9E292e1FE8A1C723C8dc3D0bf782b3d75E'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -825,11 +821,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'USDC',
+      symbol: 'USDC',
       tokenType: 'USDC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xf041B44EE24B5358D0999076933675fF5baCa437'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 6,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -837,11 +833,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'USDT',
+      symbol: 'USDT',
       tokenType: 'USDT' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x72141B45a23333011AaAb07D6fDEBbE97049091e'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 6,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -849,11 +845,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'WBTC',
+      symbol: 'WBTC',
       tokenType: 'WBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x989Ecb4dB2543b694b7496f5823DA6fDd26cb5C5'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 8,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -861,11 +857,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'WETH',
+      symbol: 'WETH',
       tokenType: 'WETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -873,11 +869,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      tokenSymbol: 'wstETH',
+      symbol: 'wstETH',
       tokenType: 'wstETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x451c6284eEA043Fa3969bA65530E96421C89bF9b'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -887,7 +883,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
   ],
   [PresetTypedChainId.BSC]: [
     {
-      tokenSymbol: 'TNT',
+      symbol: 'TNT',
       tokenType: EVMTokenEnum.TNT,
       bridgeType: EVMTokenBridgeEnum.Router,
       address: assertEvmAddress(EVMTokens.bsc.router.TNT.address),
@@ -896,11 +892,11 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       chainId: PresetTypedChainId.BSC,
     },
     {
-      tokenSymbol: 'BNB',
+      symbol: 'BNB',
       tokenType: 'BNB' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x510b0140a4A5b12c7127fB0A6A946200d66a64C2'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.BSC,
       hyperlaneSyntheticAddress: assertEvmAddress(
@@ -910,52 +906,56 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
   ],
   [PresetTypedChainId.Holesky]: [
     {
-      tokenSymbol: 'LDT',
+      symbol: 'LDT',
       tokenType: 'LDT' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x488A2E673B0bA9876788A7497c331EfaA14d5F81'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Holesky,
       hyperlaneSyntheticAddress: assertEvmAddress(
         '0x122c216D5379376413Fc7B547598AcD5268A57B4',
       ),
+      isTestnet: true,
     },
     {
-      tokenSymbol: 'MMT',
+      symbol: 'MMT',
       tokenType: 'MMT' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xc0CB548E329A9Fb2431E651E8e0B3269aD6F1D22'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Holesky,
       hyperlaneSyntheticAddress: assertEvmAddress(
         '0xbd6651dd0DAe09818baA8950430D139BD0D899ff',
       ),
+      isTestnet: true,
     },
     {
-      tokenSymbol: 'CPT',
+      symbol: 'CPT',
       tokenType: 'CPT' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x75F277a14bBe7020aaBd62c482c38391FB09E0ba'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Holesky,
       hyperlaneSyntheticAddress: assertEvmAddress(
         '0xc0CB548E329A9Fb2431E651E8e0B3269aD6F1D22',
       ),
+      isTestnet: true,
     },
     {
-      tokenSymbol: 'WETH',
+      symbol: 'WETH',
       tokenType: 'WETH' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0x777053A78AaB486A57A4e09d8FF48Fbb989564dE'),
-      abi: assertAbi(ERC20_ABI),
+      abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Holesky,
       hyperlaneSyntheticAddress: assertEvmAddress(
         '0x75F277a14bBe7020aaBd62c482c38391FB09E0ba',
       ),
+      isTestnet: true,
     },
   ],
 };

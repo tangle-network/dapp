@@ -30,11 +30,6 @@ import useWalletClient from '../../data/bridge/useWalletClient';
 
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { FeeDetail, FeeDetailProps } from './FeeDetail';
-import {
-  ROUTER_TX_EXPLORER_URL,
-  ROUTER_TX_STATUS_URL,
-  mailboxAddress,
-} from '../../constants/bridge';
 import useBridgeTxQueue from '../../context/bridge/BridgeTxQueueContext/useBridgeTxQueue';
 import { useHyperlaneTransfer } from '../../data/bridge/useHyperlaneTransfer';
 import { useRouterTransfer } from '../../data/bridge/useRouterTransfer';
@@ -47,6 +42,11 @@ import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
 import { ArrowDownIcon } from '@webb-tools/icons';
 import axios from 'axios';
+import {
+  mailboxAddress,
+  ROUTER_TX_EXPLORER_URL,
+  ROUTER_TX_STATUS_URL,
+} from '@webb-tools/tangle-shared-ui/constants/bridge';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
 import useLocalStorage, {
   LocalStorageKey,
@@ -489,7 +489,7 @@ export const BridgeConfirmationModal = ({
           options: {
             address: token.address,
             decimals: token.decimals,
-            symbol: token.tokenSymbol,
+            symbol: token.symbol,
           },
         });
 
@@ -507,12 +507,12 @@ export const BridgeConfirmationModal = ({
           });
 
           notificationApi({
-            message: `${token.tokenSymbol} was successfully added to your wallet`,
+            message: `${token.symbol} was successfully added to your wallet`,
             variant: 'success',
           });
         } else {
           notificationApi({
-            message: `Failed to add ${token.tokenSymbol} to your wallet`,
+            message: `Failed to add ${token.symbol} to your wallet`,
             variant: 'error',
           });
         }
@@ -536,7 +536,7 @@ export const BridgeConfirmationModal = ({
     token.address,
     token.tokenType,
     token.decimals,
-    token.tokenSymbol,
+    token.symbol,
     handleClose,
     clearBridgeStore,
     cachedTokensToAcc?.value,

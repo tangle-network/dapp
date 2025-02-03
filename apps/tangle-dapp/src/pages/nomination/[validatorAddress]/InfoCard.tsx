@@ -27,7 +27,8 @@ const InfoCard: FC<InfoCardProps> = ({
   validatorAddress,
   className,
 }: InfoCardProps) => {
-  const { network, rpcEndpoint } = useNetworkStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const { network } = useNetworkStore();
 
   const { name, isActive, nominations, twitter, email, web, isLoading } =
     useValidatorInfoCard(rpcEndpoint, validatorAddress);

@@ -1,9 +1,6 @@
 import { BN } from '@polkadot/util';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { ChainConfig } from '@webb-tools/dapp-config';
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { TokenIcon } from '@webb-tools/icons';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
@@ -18,10 +15,6 @@ import {
   isEvmAddress,
   shortenHex,
 } from '@webb-tools/webb-ui-components';
-import {
-  Modal,
-  ModalContent,
-} from '@webb-tools/webb-ui-components/components/Modal';
 import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
 import assert from 'assert';
 import {
@@ -34,7 +27,6 @@ import {
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { formatUnits } from 'viem';
-import { ChainList } from '../../../components/Lists/ChainList';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import StyleContainer from '../../../components/restaking/StyleContainer';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
@@ -65,7 +57,6 @@ type Props = ComponentProps<'form'>;
 
 const DepositForm: FC<Props> = (props) => {
   const formRef = useRef<HTMLFormElement>(null);
-  const { apiConfig } = useWebContext();
   const activeTypedChainId = useActiveTypedChainId();
 
   const {
@@ -151,13 +142,6 @@ const DepositForm: FC<Props> = (props) => {
   useRpcSubscription(sourceTypedChainId);
 
   const {
-    status: chainModalOpen,
-    close: closeChainModal,
-    open: openChainModal,
-    update: updateChainModal,
-  } = useModal();
-
-  const {
     status: tokenModalOpen,
     close: closeTokenModal,
     open: openTokenModal,
@@ -188,10 +172,11 @@ const DepositForm: FC<Props> = (props) => {
     return nativeAssetsWithBalances;
   }, [assetWithBalances]);
 
-  const erc20Balances = useTangleEvmErc20Balances();
+  const { data: erc20Balances, refetch: refetchErc20Balances } =
+    useTangleEvmErc20Balances();
 
   const erc20Assets = useMemo<RestakeAsset[]>(() => {
-    if (erc20Balances === null) {
+    if (erc20Balances === null || erc20Balances === undefined) {
       return [];
     }
 
@@ -223,7 +208,7 @@ const DepositForm: FC<Props> = (props) => {
   const isReady = restakeApi !== null && asset !== null && !isSubmitting;
 
   const onSubmit = useCallback<SubmitHandler<DepositFormFields>>(
-    ({ amount }) => {
+    async ({ amount }) => {
       if (!isReady) {
         return;
       }
@@ -234,30 +219,15 @@ const DepositForm: FC<Props> = (props) => {
         return;
       }
 
-      return restakeApi.deposit(asset.id, amountBn);
+      await restakeApi.deposit(asset.id, amountBn);
+
+      // Reload balances after depositing an EVM ERC-20 asset,
+      // so that the deposit amount is reflected in the balance.
+      if (isEvmAddress(asset.id)) {
+        refetchErc20Balances();
+      }
     },
-    [asset, isReady, restakeApi],
-  );
-
-  const sourceChainOptions = useMemo(() => {
-    return SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS.map(
-      (typedChainId) => [typedChainId, apiConfig.chains[typedChainId]] as const,
-    )
-      .filter(([, chain]) => Boolean(chain))
-      .map(([typedChainId, chain]) => ({
-        ...chain,
-        typedChainId,
-      }));
-  }, [apiConfig.chains]);
-
-  const handleOnSelectChain = useCallback(
-    (chain: ChainConfig) => {
-      const typedChainId = calculateTypedChainId(chain.chainType, chain.id);
-
-      setValue('sourceTypedChainId', typedChainId);
-      closeChainModal();
-    },
-    [closeChainModal, setValue],
+    [asset?.decimals, asset?.id, isReady, refetchErc20Balances, restakeApi],
   );
 
   return (
@@ -270,7 +240,6 @@ const DepositForm: FC<Props> = (props) => {
             <div className="space-y-2">
               <SourceChainInput
                 amountError={errors.amount?.message}
-                openChainModal={openChainModal}
                 openTokenModal={openTokenModal}
                 register={register}
                 setValue={setValue}
@@ -291,18 +260,6 @@ const DepositForm: FC<Props> = (props) => {
             </div>
           </div>
 
-          <Modal open={chainModalOpen} onOpenChange={updateChainModal}>
-            <ModalContent title="Select Chain">
-              <ChainList
-                searchInputId="restake-deposit-chain-search"
-                onClose={closeChainModal}
-                chains={sourceChainOptions}
-                onSelectChain={handleOnSelectChain}
-                chainType="source"
-              />
-            </ModalContent>
-          </Modal>
-
           <ListModal
             title="Select Asset"
             isOpen={tokenModalOpen}
@@ -315,7 +272,7 @@ const DepositForm: FC<Props> = (props) => {
             searchInputId="restake-deposit-assets-search"
             searchPlaceholder="Search assets..."
             titleWhenEmpty="No Assets Found"
-            descriptionWhenEmpty="It seems that there are no available assets in this network yet. Please try again later."
+            descriptionWhenEmpty="It seems that there are no available assets on this account in this network yet. Please try again later."
             items={allAssets}
             renderItem={(asset) => {
               const fmtBalance = formatDisplayAmount(

@@ -41,7 +41,7 @@ const OperatorInfoCard: FC<Props> = ({
   operatorTVL,
   ...props
 }) => {
-  const { rpcEndpoint } = useNetworkStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
 
   const isRestaked = useMemo<boolean>(() => {
     if (delegatorInfo === null) {

@@ -17,7 +17,7 @@ import {
 } from './utils/blueprintHelpers';
 
 export default function useBlueprintListing() {
-  const { rpcEndpoint } = useNetworkStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { operatorMap } = useRestakeOperatorMap();
   const { vaults } = useRestakeVaults();
   const { operatorTVL } = useOperatorTVL(operatorMap, vaults);
