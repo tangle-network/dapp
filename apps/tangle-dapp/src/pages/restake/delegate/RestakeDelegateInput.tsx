@@ -34,7 +34,7 @@ type Props = {
   operatorIdentities?: Record<string, IdentityType | null> | null;
 };
 
-const StakeInput: FC<Props> = ({
+const RestakeDelegateInput: FC<Props> = ({
   amountError,
   delegatorInfo,
   openAssetModal,
@@ -170,4 +170,4 @@ const StakeInput: FC<Props> = ({
   );
 };
 
-export default StakeInput;
+export default RestakeDelegateInput;

@@ -1,5 +1,4 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
-import type { Noop } from '@webb-tools/dapp-types/utils/types';
 import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
 import type { TokenSelectorProps } from '@webb-tools/webb-ui-components/components/TokenSelector/types';
 import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
@@ -20,8 +19,7 @@ import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 
 type Props = {
   amountError?: string;
-  openChainModal: Noop;
-  openTokenModal: Noop;
+  openTokenModal: () => void;
   register: UseFormRegister<DepositFormFields>;
   setValue: UseFormSetValue<DepositFormFields>;
   watch: UseFormWatch<DepositFormFields>;
@@ -29,7 +27,6 @@ type Props = {
 
 const SourceChainInput: FC<Props> = ({
   amountError,
-  openChainModal,
   openTokenModal,
   register,
   setValue,
@@ -76,11 +73,6 @@ const SourceChainInput: FC<Props> = ({
     [setValue],
   );
 
-  const handleChainSelectorClick = useCallback(
-    () => openChainModal(),
-    [openChainModal],
-  );
-
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
     const step = decimalsToStep(asset?.decimals);
 
@@ -122,9 +114,10 @@ const SourceChainInput: FC<Props> = ({
       >
         <TransactionInputCard.Header>
           <TransactionInputCard.ChainSelector
+            disabled
             typedChainId={sourceTypedChainId}
-            onClick={handleChainSelectorClick}
           />
+
           <TransactionInputCard.MaxAmountButton
             maxAmount={
               typeof maxFormatted === 'string' ? +maxFormatted : undefined
@@ -138,6 +131,7 @@ const SourceChainInput: FC<Props> = ({
           customAmountProps={customAmountProps}
         />
       </TransactionInputCard.Root>
+
       <ErrorMessage>{amountError}</ErrorMessage>
     </div>
   );
