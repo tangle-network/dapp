@@ -111,7 +111,7 @@
     "@eslint/js": "~8.57.1",
     "@graphql-codegen/cli": "^5.0.3",
     "@graphql-codegen/schema-ast": "^4.1.0",
-    "@next/bundle-analyzer": "^14.2.20",
+    "@next/bundle-analyzer": "^15.1.6",
     "@nx/eslint": "20.2.2",
     "@nx/eslint-plugin": "20.2.2",
     "@nx/jest": "20.2.2",

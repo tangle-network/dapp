@@ -6825,12 +6825,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/bundle-analyzer@npm:^14.2.20":
-  version: 14.2.20
-  resolution: "@next/bundle-analyzer@npm:14.2.20"
+"@next/bundle-analyzer@npm:^15.1.6":
+  version: 15.1.6
+  resolution: "@next/bundle-analyzer@npm:15.1.6"
   dependencies:
     webpack-bundle-analyzer: "npm:4.10.1"
-  checksum: 10c0/fda13ebee3835d9ea22ea498b9a74bce7b2b39be38bf665676f132c0eb20a03c2dba0e212c6c48da60b4b0a8f975fcc587ca08f551bde5b624af7e7039d455f5
+  checksum: 10c0/57bc59559f726ed96cfc4b348ffd7febbf47c231cddd5a2b9e5b2b611794b8a952115377880189ef9e2fd94f2a1661e2ff1e2b2df5c8b0e6c6c8e5ed10281961
   languageName: node
   linkType: hard
 
@@ -39113,7 +39113,7 @@ __metadata:
     "@hyperlane-xyz/registry": "npm:^6.2.0"
     "@hyperlane-xyz/sdk": "npm:^5.7.0"
     "@hyperlane-xyz/utils": "npm:^5.7.0"
-    "@next/bundle-analyzer": "npm:^14.2.20"
+    "@next/bundle-analyzer": "npm:^15.1.6"
     "@ngneat/falso": "npm:^7.2.0"
     "@nx/eslint": "npm:20.2.2"
     "@nx/eslint-plugin": "npm:20.2.2"
