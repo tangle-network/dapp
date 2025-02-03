@@ -45,7 +45,7 @@ export default function usePayouts(): UsePayoutsReturnType {
     LocalStorageKey.PAYOUTS,
   );
 
-  const { network } = useNetworkStore();
+  const network = useNetworkStore((store) => store.network);
   const activeSubstrateAddress = useSubstrateAddress();
 
   const { data: eraTotalRewards } = useEraTotalRewards();

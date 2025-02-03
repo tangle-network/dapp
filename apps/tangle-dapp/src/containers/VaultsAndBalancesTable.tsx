@@ -17,6 +17,7 @@ import {
   CircularProgress,
   EMPTY_VALUE_PLACEHOLDER,
   formatDisplayAmount,
+  InfoIconWithTooltip,
   isEvmAddress,
   Table,
   Typography,
@@ -121,9 +122,8 @@ const COLUMNS = [
       );
     },
   }),
-  COLUMN_HELPER.display({
-    id: 'deposits-and-delegated',
-    header: () => 'Deposits | Delegation',
+  COLUMN_HELPER.accessor('deposited', {
+    header: () => 'Deposits',
     sortingFn: sortByBn((row) => row.deposited),
     cell: (props) => {
       const fmtDeposited = formatDisplayAmount(
@@ -138,18 +138,18 @@ const COLUMNS = [
         AmountFormatStyle.SHORT,
       );
 
-      const subtitle =
-        props.row.original.depositedInUsd === undefined
-          ? undefined
-          : `$${props.row.original.depositedInUsd}`;
-
       return (
         <TableCellWrapper>
-          <StatItem
-            title={`${fmtDeposited} | ${fmtDelegated}`}
-            subtitle={subtitle}
-            removeBorder
-          />
+          <Typography
+            variant="body1"
+            className="flex gap-1 items-center justify-center"
+          >
+            {fmtDeposited}
+
+            <InfoIconWithTooltip
+              content={`${fmtDelegated}/${fmtDeposited} delegated`}
+            />
+          </Typography>
         </TableCellWrapper>
       );
     },

@@ -489,7 +489,7 @@ export const BridgeConfirmationModal = ({
           options: {
             address: token.address,
             decimals: token.decimals,
-            symbol: token.tokenSymbol,
+            symbol: token.symbol,
           },
         });
 
@@ -507,12 +507,12 @@ export const BridgeConfirmationModal = ({
           });
 
           notificationApi({
-            message: `${token.tokenSymbol} was successfully added to your wallet`,
+            message: `${token.symbol} was successfully added to your wallet`,
             variant: 'success',
           });
         } else {
           notificationApi({
-            message: `Failed to add ${token.tokenSymbol} to your wallet`,
+            message: `Failed to add ${token.symbol} to your wallet`,
             variant: 'error',
           });
         }
@@ -536,7 +536,7 @@ export const BridgeConfirmationModal = ({
     token.address,
     token.tokenType,
     token.decimals,
-    token.tokenSymbol,
+    token.symbol,
     handleClose,
     clearBridgeStore,
     cachedTokensToAcc?.value,
