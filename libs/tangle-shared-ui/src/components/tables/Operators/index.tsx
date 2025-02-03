@@ -9,9 +9,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import {
+  AmountFormatStyle,
   Avatar,
   Button,
+  formatDisplayAmount,
   KeyValueWithButton,
   shortenString,
   Table,
@@ -26,12 +29,16 @@ import TableCellWrapper from '../../../components/tables/TableCellWrapper';
 import type { TableStatusProps } from '../../../components/tables/TableStatus';
 import TableStatus from '../../../components/tables/TableStatus';
 import { sortByAddressOrIdentity } from '../../../components/tables/utils';
+import useNetworkStore from '../../../context/useNetworkStore';
 import { RestakeOperator } from '../../../types';
 import VaultsDropdown from './VaultsDropdown';
+import { BN } from 'bn.js';
 
 const COLUMN_HELPER = createColumnHelper<RestakeOperator>();
 
-const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
+const getStaticColumns = (
+  nativeTokenSymbol: string,
+): ColumnDef<RestakeOperator, any>[] => [
   COLUMN_HELPER.accessor('address', {
     header: () => 'Identity',
     sortingFn: sortByAddressOrIdentity<RestakeOperator>(),
@@ -56,6 +63,29 @@ const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
               <KeyValueWithButton keyValue={address} size="sm" />
             </div>
           </div>
+        </TableCellWrapper>
+      );
+    },
+  }),
+  COLUMN_HELPER.accessor('selfStakeAmount', {
+    header: () => 'Self-Bonded',
+    cell: (props) => {
+      const value = props.getValue();
+
+      return (
+        <TableCellWrapper>
+          <Typography
+            variant="body1"
+            fw="bold"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {formatDisplayAmount(
+              new BN(value.toString()),
+              TANGLE_TOKEN_DECIMALS,
+              AmountFormatStyle.SHORT,
+            )}{' '}
+            {nativeTokenSymbol}
+          </Typography>
         </TableCellWrapper>
       );
     },
@@ -153,9 +183,13 @@ const OperatorsTable: FC<Props> = ({
   onGlobalFilterChange,
   RestakeOperatorAction,
 }) => {
+  const nativeTokenSymbol = useNetworkStore(
+    (store) => store.network.tokenSymbol,
+  );
+
   const columns = useMemo(
     () =>
-      STATIC_COLUMNS.concat([
+      getStaticColumns(nativeTokenSymbol).concat([
         COLUMN_HELPER.display({
           id: 'actions',
           header: () => null,
@@ -179,7 +213,7 @@ const OperatorsTable: FC<Props> = ({
           enableSorting: false,
         }) satisfies ColumnDef<RestakeOperator>,
       ]),
-    [RestakeOperatorAction],
+    [RestakeOperatorAction, nativeTokenSymbol],
   );
 
   const table = useReactTable({

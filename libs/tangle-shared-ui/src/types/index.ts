@@ -59,6 +59,7 @@ export type VaultToken = {
 export type RestakeOperator = {
   address: SubstrateAddress;
   identityName?: string;
+  selfStakeAmount: bigint;
   restakersCount: number;
   concentrationPercentage: number | null;
   tvlInUsd: number | null;

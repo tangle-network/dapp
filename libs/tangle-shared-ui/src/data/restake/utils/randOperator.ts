@@ -5,6 +5,7 @@ import {
   randUserName,
 } from '@ngneat/falso';
 import { evmToAddress } from '@polkadot/util-crypto';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { assertSubstrateAddress } from '@webb-tools/webb-ui-components';
 import { Decimal } from 'decimal.js';
 import uniqWith from 'lodash/uniqWith';
@@ -31,6 +32,9 @@ const randOperator = (): RestakeOperator => {
       Array.from({ length: randNumber({ max: 5 }) }).map(randVaultToken),
       (a, b) => a.name === b.name && a.symbol === b.symbol,
     ),
+    selfStakeAmount:
+      BigInt(randNumber({ min: 100, max: 10_000 })) *
+      BigInt(10 ** TANGLE_TOKEN_DECIMALS),
   } satisfies RestakeOperator;
 };
 

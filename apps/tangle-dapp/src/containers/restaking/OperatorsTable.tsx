@@ -1,29 +1,32 @@
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { AddLineIcon } from '@webb-tools/icons';
 import OperatorsTableUI from '@webb-tools/tangle-shared-ui/components/tables/Operators';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
+import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import { RestakeOperator } from '@webb-tools/tangle-shared-ui/types';
 import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import delegationsToVaultTokens from '@webb-tools/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import {
+  Modal,
+  ModalTrigger,
+} from '@webb-tools/webb-ui-components/components/Modal';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
+import { Decimal } from 'decimal.js';
 import {
   type ComponentProps,
   type FC,
+  PropsWithChildren,
   useCallback,
   useMemo,
   useState,
 } from 'react';
 import { LinkProps } from 'react-router';
+import { formatUnits } from 'viem';
 import { RestakeOperatorWrapper } from '../../components/tables/RestakeActionWrappers';
 import useIdentities from '../../data/useIdentities';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import JoinOperatorsModal from './JoinOperatorsModal';
-import {
-  Modal,
-  ModalTrigger,
-} from '@webb-tools/webb-ui-components/components/Modal';
-import { PropsWithChildren } from 'react';
-import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
@@ -57,7 +60,7 @@ const OperatorsTable: FC<Props> = ({
   const operators = useMemo(
     () =>
       Object.entries(operatorMap).map<OperatorUI>(
-        ([addressString, { delegations, restakersCount }]) => {
+        ([addressString, { delegations, restakersCount, stake }]) => {
           const address = assertSubstrateAddress(addressString);
           const tvlInUsd = operatorTVL?.[address] ?? null;
 
@@ -71,6 +74,7 @@ const OperatorsTable: FC<Props> = ({
             restakersCount,
             tvlInUsd,
             vaultTokens: delegationsToVaultTokens(delegations, vaults),
+            selfStakeAmount: stake,
           } satisfies RestakeOperator;
         },
       ),

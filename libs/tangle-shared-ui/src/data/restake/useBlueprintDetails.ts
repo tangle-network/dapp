@@ -2,9 +2,12 @@
 
 import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesOperatorPreferences } from '@polkadot/types/lookup';
+import { TANGLE_TOKEN_DECIMALS, ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { Decimal } from 'decimal.js';
 import { useCallback } from 'react';
 import { combineLatest, of, switchMap } from 'rxjs';
+import { formatUnits } from 'viem';
 import useNetworkStore from '../../context/useNetworkStore';
 import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
 import useRestakeTVL from '../../data/restake/useRestakeTVL';
@@ -12,7 +15,7 @@ import useApiRx from '../../hooks/useApiRx';
 import { RestakeOperator } from '../../types';
 import type { Blueprint } from '../../types/blueprint';
 import { TangleError, TangleErrorCode } from '../../types/error';
-import type { RestakeVaultMap, OperatorMap } from '../../types/restake';
+import type { OperatorMap, RestakeVaultMap } from '../../types/restake';
 import {
   getAccountInfo,
   getMultipleAccountInfo,
@@ -20,11 +23,11 @@ import {
 import delegationsToVaultTokens from '../../utils/restake/delegationsToVaultTokens';
 import { extractOperatorData } from '../blueprints/utils/blueprintHelpers';
 import { toPrimitiveBlueprint } from '../blueprints/utils/toPrimitiveBlueprint';
-import useRestakeVaults from './useRestakeVaults';
 import useRestakeOperatorMap from './useRestakeOperatorMap';
+import useRestakeVaults from './useRestakeVaults';
 
 export default function useBlueprintDetails(id?: string) {
-  const { rpcEndpoint } = useNetworkStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { vaults } = useRestakeVaults();
 
   const { operatorMap } = useRestakeOperatorMap();
@@ -142,12 +145,14 @@ async function getBlueprintOperators(
     const concentrationPercentage = operatorConcentration[address] ?? null;
     const tvlInUsd = operatorTVL[address] ?? null;
     const delegations = operatorMap[address].delegations ?? [];
+    const selfStakeAmount = operatorMap[address]?.stake ?? ZERO_BIG_INT;
 
     return {
       address,
       identityName: info?.name ?? undefined,
       concentrationPercentage,
       restakersCount: operatorMap[address]?.restakersCount,
+      selfStakeAmount: selfStakeAmount,
       tvlInUsd,
       vaultTokens: delegationsToVaultTokens(delegations, assetMap),
     } satisfies RestakeOperator;
