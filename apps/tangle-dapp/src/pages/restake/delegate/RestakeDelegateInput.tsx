@@ -1,4 +1,3 @@
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import type { Noop } from '@webb-tools/dapp-types/utils/types';
 import LockFillIcon from '@webb-tools/icons/LockFillIcon';
@@ -22,6 +21,7 @@ import type { DelegationFormFields } from '../../../types/restake';
 import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import AssetPlaceholder from '../AssetPlaceholder';
+import calculateRestakeAvailableBalance from '../../../utils/restaking/calculateRestakeAvailableBalance';
 
 type Props = {
   amountError: string | undefined;
@@ -55,15 +55,15 @@ const RestakeDelegateInput: FC<Props> = ({
       return {};
     }
 
-    const amountBigInt =
-      delegatorInfo.deposits[selectedAsset.id]?.amount ?? ZERO_BIG_INT;
+    const availableBalance = calculateRestakeAvailableBalance(
+      delegatorInfo,
+      selectedAsset.id,
+    );
 
-    const delegatedBigInt =
-      delegatorInfo.delegations.find(
-        (delegation) => delegation.assetId === selectedAsset.id,
-      )?.amountBonded ?? ZERO_BIG_INT;
+    if (availableBalance === null) {
+      return {};
+    }
 
-    const availableBalance = amountBigInt - delegatedBigInt;
     const maxFormatted = +formatUnits(availableBalance, selectedAsset.decimals);
 
     return {
