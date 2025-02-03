@@ -164,14 +164,8 @@ const RestakeDelegateForm: FC = () => {
     }
 
     return Object.entries(delegatorInfo.deposits).flatMap(
-      ([assetIdString, { amount }]) => {
+      ([assetIdString, { amount, delegatedAmount }]) => {
         const assetId = assertRestakeAssetId(assetIdString);
-
-        const delegatedAmount =
-          delegatorInfo.delegations.find(
-            (delegation) => delegation.assetId === assetId,
-          )?.amountBonded ?? ZERO_BIG_INT;
-
         const balance = new BN((amount - delegatedAmount).toString());
 
         if (!isEvmAddress(assetId)) {

@@ -8,8 +8,8 @@ import { assetIdsRxQuery } from '../../queries/restake/assetIds';
 import { rewardVaultRxQuery } from '../../queries/restake/rewardVault';
 
 const useRestakeVaults = () => {
-  const { apiRx } = usePolkadotApi();
-  const { activeChain } = useWebContext();
+  const { apiRx, apiRxLoading, apiRxError } = usePolkadotApi();
+  const { activeChain, isConnecting, loading } = useWebContext();
 
   const rewardVault$ = useMemo(() => rewardVaultRxQuery(apiRx), [apiRx]);
 
@@ -33,6 +33,8 @@ const useRestakeVaults = () => {
   return {
     vaults,
     vaults$,
+    isLoading: apiRxLoading || isConnecting || loading,
+    error: apiRxError,
   };
 };
 

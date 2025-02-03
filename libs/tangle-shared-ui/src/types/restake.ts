@@ -107,6 +107,7 @@ export type DelegatorInfo = {
   readonly deposits: {
     readonly [assetId: RestakeAssetId]: {
       amount: bigint;
+      delegatedAmount: bigint;
     };
   };
 

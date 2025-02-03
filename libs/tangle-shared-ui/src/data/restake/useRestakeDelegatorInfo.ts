@@ -40,10 +40,13 @@ export default function useRestakeDelegatorInfo() {
                 const deposits = Array.from(info.deposits.entries()).reduce(
                   (depositRecord, [assetId, deposit]) => {
                     const amountBigInt = deposit.amount.toBigInt();
+                    const delegatedAmountBigInt =
+                      deposit.delegatedAmount.toBigInt();
 
                     return Object.assign(depositRecord, {
                       [createRestakeAssetId(assetId)]: {
                         amount: amountBigInt,
+                        delegatedAmount: delegatedAmountBigInt,
                       },
                     } satisfies DelegatorInfo['deposits']);
                   },
