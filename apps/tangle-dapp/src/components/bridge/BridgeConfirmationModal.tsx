@@ -48,6 +48,9 @@ import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
 import { ArrowDownIcon } from '@webb-tools/icons';
 import axios from 'axios';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
+import useLocalStorage, {
+  LocalStorageKey,
+} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 
 interface BridgeConfirmationModalProps {
   isOpen: boolean;
@@ -133,6 +136,9 @@ export const BridgeConfirmationModal = ({
   );
 
   const { notificationApi } = useWebbUI();
+
+  const { setWithPreviousValue: setTokensToAcc, valueOpt: cachedTokensToAcc } =
+    useLocalStorage(LocalStorageKey.BRIDGE_TOKENS_TO_ACC);
 
   const srcChainPublicClient = createPublicClient({
     chain: sourceChain,
@@ -473,7 +479,11 @@ export const BridgeConfirmationModal = ({
       handleClose();
       clearBridgeStore();
 
-      if (!isNativeToken && walletClient) {
+      const isTokenAlreadyAdded = cachedTokensToAcc?.value?.[
+        activeAccountAddress
+      ]?.includes(token.address);
+
+      if (!isNativeToken && walletClient && !isTokenAlreadyAdded) {
         const success = await walletClient.watchAsset({
           type: 'ERC20',
           options: {
@@ -484,6 +494,18 @@ export const BridgeConfirmationModal = ({
         });
 
         if (success) {
+          setTokensToAcc((prevValue) => {
+            const currentTokens = prevValue?.value || {};
+            const updatedTokens = {
+              ...currentTokens,
+              [activeAccountAddress]: [
+                ...(currentTokens[activeAccountAddress] || []),
+                token.address,
+              ],
+            };
+            return updatedTokens;
+          });
+
           notificationApi({
             message: `${token.tokenSymbol} was successfully added to your wallet`,
             variant: 'success',
@@ -511,12 +533,14 @@ export const BridgeConfirmationModal = ({
     sendingAmount,
     receivingAmount,
     token.bridgeType,
-    token.tokenType,
     token.address,
+    token.tokenType,
     token.decimals,
     token.tokenSymbol,
     handleClose,
     clearBridgeStore,
+    cachedTokensToAcc?.value,
+    activeAccountAddress,
     isNativeToken,
     walletClient,
     transferByRouterAsync,
@@ -526,13 +550,13 @@ export const BridgeConfirmationModal = ({
     sourceChain.id,
     destinationChain.chainType,
     destinationChain.id,
-    activeAccountAddress,
     destinationAddress,
     setIsOpenQueueDropdown,
     updateTxState,
     addTxExplorerUrl,
     watchTransaction,
     transferByHyperlaneAsync,
+    setTokensToAcc,
     notificationApi,
   ]);
 
