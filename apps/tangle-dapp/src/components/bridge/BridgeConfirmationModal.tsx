@@ -26,6 +26,7 @@ import {
 } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
 import { FC, useCallback, useMemo, useState } from 'react';
+import useWalletClient from '../../data/bridge/useWalletClient';
 
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { FeeDetail, FeeDetailProps } from './FeeDetail';
@@ -46,6 +47,10 @@ import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
 import { ArrowDownIcon } from '@webb-tools/icons';
 import axios from 'axios';
+import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
+import useLocalStorage, {
+  LocalStorageKey,
+} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 
 interface BridgeConfirmationModalProps {
   isOpen: boolean;
@@ -125,7 +130,15 @@ export const BridgeConfirmationModal = ({
     recipientAddress: destinationAddress,
   });
 
+  const isNativeToken = useIsBridgeNativeToken(
+    calculateTypedChainId(sourceChain.chainType, sourceChain.id),
+    token,
+  );
+
   const { notificationApi } = useWebbUI();
+
+  const { setWithPreviousValue: setTokensToAcc, valueOpt: cachedTokensToAcc } =
+    useLocalStorage(LocalStorageKey.BRIDGE_TOKENS_TO_ACC);
 
   const srcChainPublicClient = createPublicClient({
     chain: sourceChain,
@@ -361,6 +374,8 @@ export const BridgeConfirmationModal = ({
     [srcChainPublicClient, updateTxState, token.bridgeType],
   );
 
+  const walletClient = useWalletClient();
+
   const handleConfirm = useCallback(async () => {
     setIsTxInProgress(true);
 
@@ -460,8 +475,48 @@ export const BridgeConfirmationModal = ({
       }
 
       setIsTxInProgress(false);
+
       handleClose();
       clearBridgeStore();
+
+      const isTokenAlreadyAdded = cachedTokensToAcc?.value?.[
+        activeAccountAddress
+      ]?.includes(token.address);
+
+      if (!isNativeToken && walletClient && !isTokenAlreadyAdded) {
+        const success = await walletClient.watchAsset({
+          type: 'ERC20',
+          options: {
+            address: token.address,
+            decimals: token.decimals,
+            symbol: token.tokenSymbol,
+          },
+        });
+
+        if (success) {
+          setTokensToAcc((prevValue) => {
+            const currentTokens = prevValue?.value || {};
+            const updatedTokens = {
+              ...currentTokens,
+              [activeAccountAddress]: [
+                ...(currentTokens[activeAccountAddress] || []),
+                token.address,
+              ],
+            };
+            return updatedTokens;
+          });
+
+          notificationApi({
+            message: `${token.tokenSymbol} was successfully added to your wallet`,
+            variant: 'success',
+          });
+        } else {
+          notificationApi({
+            message: `Failed to add ${token.tokenSymbol} to your wallet`,
+            variant: 'error',
+          });
+        }
+      }
     } catch (possibleError) {
       const error = ensureError(possibleError);
 
@@ -474,12 +529,20 @@ export const BridgeConfirmationModal = ({
       clearBridgeStore();
     }
   }, [
+    setIsTxInProgress,
     sendingAmount,
     receivingAmount,
     token.bridgeType,
+    token.address,
     token.tokenType,
+    token.decimals,
+    token.tokenSymbol,
     handleClose,
     clearBridgeStore,
+    cachedTokensToAcc?.value,
+    activeAccountAddress,
+    isNativeToken,
+    walletClient,
     transferByRouterAsync,
     addTxToQueue,
     sourceChain.tag,
@@ -487,13 +550,13 @@ export const BridgeConfirmationModal = ({
     sourceChain.id,
     destinationChain.chainType,
     destinationChain.id,
-    activeAccountAddress,
     destinationAddress,
     setIsOpenQueueDropdown,
     updateTxState,
-    watchTransaction,
     addTxExplorerUrl,
+    watchTransaction,
     transferByHyperlaneAsync,
+    setTokensToAcc,
     notificationApi,
   ]);
 
