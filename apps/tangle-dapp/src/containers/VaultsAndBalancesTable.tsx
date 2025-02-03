@@ -142,7 +142,7 @@ const COLUMNS = [
         <TableCellWrapper>
           <Typography
             variant="body1"
-            className="flex gap-1 items-center justify-center"
+            className="flex gap-1 items-center justify-center dark:text-mono-0"
           >
             {fmtDeposited}
 
