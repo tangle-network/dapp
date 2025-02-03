@@ -13,7 +13,7 @@ type Props = PropsOf<'ul'>;
 const getTabRoute = (tab: RestakeAction): PagePath => {
   switch (tab) {
     case RestakeAction.DEPOSIT:
-      return PagePath.RESTAKE;
+      return PagePath.RESTAKE_DEPOSIT;
     case RestakeAction.DELEGATE:
       return PagePath.RESTAKE_DELEGATE;
     case RestakeAction.UNDELEGATE:

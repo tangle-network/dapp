@@ -15,7 +15,7 @@ import useActiveDelegation from '../restake/useActiveDelegation';
 import { SWRKey } from './../../constants/swr';
 
 export default function useAccountRewardInfo() {
-  const activeSubstrateAddress = useSubstrateAddress();
+  const activeSubstrateAddress = useSubstrateAddress(false);
   const activeDelegation = useActiveDelegation();
 
   const { network, rpcEndpoint } = useNetworkStore();
