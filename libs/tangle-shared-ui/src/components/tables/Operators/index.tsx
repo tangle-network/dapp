@@ -67,7 +67,7 @@ const getStaticColumns = (
       );
     },
   }),
-  COLUMN_HELPER.accessor('selfStakeAmount', {
+  COLUMN_HELPER.accessor('selfBondedAmount', {
     header: () => 'Self-Bonded',
     cell: (props) => {
       const value = props.getValue();

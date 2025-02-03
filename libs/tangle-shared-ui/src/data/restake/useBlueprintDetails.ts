@@ -145,14 +145,14 @@ async function getBlueprintOperators(
     const concentrationPercentage = operatorConcentration[address] ?? null;
     const tvlInUsd = operatorTVL[address] ?? null;
     const delegations = operatorMap[address].delegations ?? [];
-    const selfStakeAmount = operatorMap[address]?.stake ?? ZERO_BIG_INT;
+    const selfBondedAmount = operatorMap[address]?.stake ?? ZERO_BIG_INT;
 
     return {
       address,
       identityName: info?.name ?? undefined,
       concentrationPercentage,
       restakersCount: operatorMap[address]?.restakersCount,
-      selfStakeAmount: selfStakeAmount,
+      selfBondedAmount,
       tvlInUsd,
       vaultTokens: delegationsToVaultTokens(delegations, assetMap),
     } satisfies RestakeOperator;

@@ -32,7 +32,7 @@ const randOperator = (): RestakeOperator => {
       Array.from({ length: randNumber({ max: 5 }) }).map(randVaultToken),
       (a, b) => a.name === b.name && a.symbol === b.symbol,
     ),
-    selfStakeAmount:
+    selfBondedAmount:
       BigInt(randNumber({ min: 100, max: 10_000 })) *
       BigInt(10 ** TANGLE_TOKEN_DECIMALS),
   } satisfies RestakeOperator;

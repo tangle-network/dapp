@@ -74,7 +74,7 @@ const OperatorsTable: FC<Props> = ({
             restakersCount,
             tvlInUsd,
             vaultTokens: delegationsToVaultTokens(delegations, vaults),
-            selfStakeAmount: stake,
+            selfBondedAmount: stake,
           } satisfies RestakeOperator;
         },
       ),
