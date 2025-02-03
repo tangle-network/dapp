@@ -1,8 +1,8 @@
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
 import { AddLineIcon } from '@webb-tools/icons';
 import OperatorsTableUI from '@webb-tools/tangle-shared-ui/components/tables/Operators';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
 import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { RestakeOperator } from '@webb-tools/tangle-shared-ui/types';
 import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import delegationsToVaultTokens from '@webb-tools/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
@@ -12,7 +12,6 @@ import {
   ModalTrigger,
 } from '@webb-tools/webb-ui-components/components/Modal';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
-import { Decimal } from 'decimal.js';
 import {
   type ComponentProps,
   type FC,
@@ -22,7 +21,6 @@ import {
   useState,
 } from 'react';
 import { LinkProps } from 'react-router';
-import { formatUnits } from 'viem';
 import { RestakeOperatorWrapper } from '../../components/tables/RestakeActionWrappers';
 import useIdentities from '../../data/useIdentities';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
@@ -51,6 +49,7 @@ const OperatorsTable: FC<Props> = ({
 
   const { isEvm } = useAgnosticAccountInfo();
   const isAccountConnected = useIsAccountConnected();
+  const activeSubstrateAddress = useSubstrateAddress(false);
   const { vaults } = useRestakeContext();
 
   const { result: identities } = useIdentities(
@@ -67,6 +66,13 @@ const OperatorsTable: FC<Props> = ({
           const concentrationPercentage =
             operatorConcentration?.[address] ?? null;
 
+          const isDelegated =
+            activeSubstrateAddress !== null &&
+            delegations.some(
+              (delegation) =>
+                delegation.delegatorAccountId === activeSubstrateAddress,
+            );
+
           return {
             address,
             concentrationPercentage,
@@ -75,10 +81,18 @@ const OperatorsTable: FC<Props> = ({
             tvlInUsd,
             vaultTokens: delegationsToVaultTokens(delegations, vaults),
             selfBondedAmount: stake,
+            isDelegated,
           } satisfies RestakeOperator;
         },
       ),
-    [vaults, identities, operatorConcentration, operatorMap, operatorTVL],
+    [
+      operatorMap,
+      operatorTVL,
+      operatorConcentration,
+      activeSubstrateAddress,
+      identities,
+      vaults,
+    ],
   );
 
   const disabledTooltip = isAccountConnected

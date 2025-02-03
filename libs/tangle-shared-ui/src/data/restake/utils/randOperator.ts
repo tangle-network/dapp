@@ -1,4 +1,5 @@
 import {
+  randChanceBoolean,
   randEthereumAddress,
   randFloat,
   randNumber,
@@ -35,6 +36,7 @@ const randOperator = (): RestakeOperator => {
     selfBondedAmount:
       BigInt(randNumber({ min: 100, max: 10_000 })) *
       BigInt(10 ** TANGLE_TOKEN_DECIMALS),
+    isDelegated: randChanceBoolean({ chanceFalse: 0.9 }),
   } satisfies RestakeOperator;
 };
 

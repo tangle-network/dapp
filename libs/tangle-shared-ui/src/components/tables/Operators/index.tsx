@@ -10,11 +10,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
+import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import {
   AmountFormatStyle,
   Avatar,
   Button,
   formatDisplayAmount,
+  IconWithTooltip,
   KeyValueWithButton,
   shortenString,
   Table,
@@ -22,6 +24,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import { BN } from 'bn.js';
 import type { ComponentProps, PropsWithChildren } from 'react';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -32,7 +35,6 @@ import { sortByAddressOrIdentity } from '../../../components/tables/utils';
 import useNetworkStore from '../../../context/useNetworkStore';
 import { RestakeOperator } from '../../../types';
 import VaultsDropdown from './VaultsDropdown';
-import { BN } from 'bn.js';
 
 const COLUMN_HELPER = createColumnHelper<RestakeOperator>();
 
@@ -43,7 +45,11 @@ const getStaticColumns = (
     header: () => 'Identity',
     sortingFn: sortByAddressOrIdentity<RestakeOperator>(),
     cell: (props) => {
-      const { address, identityName: identity } = props.row.original;
+      const {
+        address,
+        identityName: identity,
+        isDelegated,
+      } = props.row.original;
 
       return (
         <TableCellWrapper className="pl-3">
@@ -56,9 +62,18 @@ const getStaticColumns = (
             />
 
             <div>
-              <Typography variant="h5" fw="bold">
-                {identity ? identity : shortenString(address)}
-              </Typography>
+              <div className="flex items-center gap-2">
+                <Typography variant="h5" fw="bold">
+                  {identity ? identity : shortenString(address)}
+                </Typography>
+
+                {isDelegated && (
+                  <IconWithTooltip
+                    icon={<CheckboxCircleFill className="!fill-green-50" />}
+                    content="Delegated"
+                  />
+                )}
+              </div>
 
               <KeyValueWithButton keyValue={address} size="sm" />
             </div>
@@ -103,6 +118,17 @@ const getStaticColumns = (
         </Typography>
       </TableCellWrapper>
     ),
+  }),
+  // For sorting purpose
+  COLUMN_HELPER.accessor('isDelegated', {
+    header: () => null,
+    cell: () => null,
+    sortingFn: (rowA, rowB) => {
+      const aIsDelegated = rowA.original.isDelegated;
+      const bIsDelegated = rowB.original.isDelegated;
+
+      return aIsDelegated ? -1 : bIsDelegated ? 1 : 0;
+    },
   }),
   // Hidden now as we don't have price for testnet and TNT assets
   /* COLUMN_HELPER.accessor('concentrationPercentage', {
@@ -226,6 +252,10 @@ const OperatorsTable: FC<Props> = ({
     initialState: {
       sorting: [
         {
+          id: 'isDelegated',
+          desc: false,
+        },
+        {
           id: 'vaultTokens',
           desc: true,
         },
@@ -234,6 +264,9 @@ const OperatorsTable: FC<Props> = ({
           desc: true,
         },
       ],
+      columnVisibility: {
+        isDelegated: false,
+      },
     },
     state: {
       globalFilter,

@@ -2,16 +2,15 @@
 
 import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesOperatorPreferences } from '@polkadot/types/lookup';
-import { TANGLE_TOKEN_DECIMALS, ZERO_BIG_INT } from '@webb-tools/dapp-config';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import { Decimal } from 'decimal.js';
 import { useCallback } from 'react';
 import { combineLatest, of, switchMap } from 'rxjs';
-import { formatUnits } from 'viem';
 import useNetworkStore from '../../context/useNetworkStore';
 import useRestakeDelegatorInfo from '../../data/restake/useRestakeDelegatorInfo';
 import useRestakeTVL from '../../data/restake/useRestakeTVL';
 import useApiRx from '../../hooks/useApiRx';
+import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { RestakeOperator } from '../../types';
 import type { Blueprint } from '../../types/blueprint';
 import { TangleError, TangleErrorCode } from '../../types/error';
@@ -36,6 +35,8 @@ export default function useBlueprintDetails(id?: string) {
     operatorMap,
     delegatorInfo,
   );
+
+  const activeSubstrateAddress = useSubstrateAddress(false);
 
   return useApiRx(
     useCallback(
@@ -109,6 +110,7 @@ export default function useBlueprintDetails(id?: string) {
                     operatorMap,
                     operatorTVL,
                     operatorConcentration,
+                    activeSubstrateAddress,
                   )
                 : [];
 
@@ -120,7 +122,7 @@ export default function useBlueprintDetails(id?: string) {
         );
       },
       // prettier-ignore
-      [vaults, id, operatorConcentration, operatorMap, operatorTVL, rpcEndpoint],
+      [id, operatorMap, operatorTVL, rpcEndpoint, vaults, operatorConcentration, activeSubstrateAddress],
     ),
   );
 }
@@ -132,6 +134,7 @@ async function getBlueprintOperators(
   operatorMap: OperatorMap,
   operatorTVL: Record<string, number>,
   operatorConcentration: Record<string, number | null>,
+  activeSubstrateAddress: SubstrateAddress | null,
 ) {
   const operatorAccountArr = Array.from(operatorAccountSet);
 
@@ -146,6 +149,12 @@ async function getBlueprintOperators(
     const tvlInUsd = operatorTVL[address] ?? null;
     const delegations = operatorMap[address].delegations ?? [];
     const selfBondedAmount = operatorMap[address]?.stake ?? ZERO_BIG_INT;
+    const isDelegated =
+      activeSubstrateAddress !== null &&
+      delegations.some(
+        // TODO: We should implement a better way to compare addresses.
+        (delegate) => delegate.delegatorAccountId === activeSubstrateAddress,
+      );
 
     return {
       address,
@@ -155,6 +164,7 @@ async function getBlueprintOperators(
       selfBondedAmount,
       tvlInUsd,
       vaultTokens: delegationsToVaultTokens(delegations, assetMap),
+      isDelegated,
     } satisfies RestakeOperator;
   });
 }
