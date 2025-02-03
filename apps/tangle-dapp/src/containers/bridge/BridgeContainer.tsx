@@ -52,6 +52,7 @@ import { useBalance } from 'wagmi';
 import convertDecimalToBn from '@webb-tools/tangle-shared-ui/utils/convertDecimalToBn';
 import { useBridgeEvmBalances } from '../../data/bridge/useBridgeEvmBalances';
 import { ROUTER_NATIVE_TOKEN_ADDRESS } from '@webb-tools/tangle-shared-ui/constants/bridge';
+import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
 
 interface BridgeContainerProps {
   className?: string;
@@ -174,6 +175,14 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     open: openConfirmBridgeModal,
     close: closeConfirmBridgeModal,
   } = useModal(false);
+
+  const isNativeToken = useIsBridgeNativeToken(
+    calculateTypedChainId(
+      selectedSourceChain.chainType,
+      selectedSourceChain.id,
+    ),
+    selectedToken,
+  );
 
   const [addressInputErrorMessage, setAddressInputErrorMessage] = useState<
     string | null
@@ -398,18 +407,6 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
   const assets: AssetConfig[] = useMemo(() => {
     const tokenConfigs = tokens.map((token) => {
-      const isNativeToken =
-        (sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM &&
-          token.tokenType === EVMTokenEnum.TNT) ||
-        (sourceTypedChainId === PresetTypedChainId.Polygon &&
-          token.symbol === 'POL') ||
-        ((sourceTypedChainId === PresetTypedChainId.Optimism ||
-          sourceTypedChainId === PresetTypedChainId.Arbitrum ||
-          sourceTypedChainId === PresetTypedChainId.Base) &&
-          token.symbol === 'ETH') ||
-        (sourceTypedChainId === PresetTypedChainId.BSC &&
-          token.symbol === 'BNB');
-
       const balance = isNativeToken
         ? formatEther(nativeTokenBalance?.value ?? BigInt(0))
         : sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
@@ -463,8 +460,9 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     return tokenConfigs;
   }, [
     tokens,
-    sourceTypedChainId,
+    isNativeToken,
     nativeTokenBalance?.value,
+    sourceTypedChainId,
     balances,
     selectedSourceChain.blockExplorers?.default,
     activeAccount,

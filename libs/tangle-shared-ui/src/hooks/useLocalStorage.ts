@@ -12,6 +12,7 @@ export enum LocalStorageKey {
   KNOWN_NETWORK_ID = 'knownNetworkId',
   SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
   BRIDGE_TX_QUEUE_BY_ACC = 'bridgeTxQueue',
+  BRIDGE_TOKENS_TO_ACC = 'bridgeTokensToAcc',
 }
 
 export type PayoutsCache = {
@@ -32,6 +33,8 @@ export type SubstrateWalletsMetadataCache = Partial<
 
 export type TxQueueByAccount = Record<string, BridgeQueueTxItem[]>;
 
+export type BridgeTokensToAcc = Record<string, string[]>; // accountAddress -> tokenAddress[]
+
 /**
  * Type definition associating local storage keys with their
  * respective value types.
@@ -47,7 +50,9 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
           ? SubstrateWalletsMetadataCache
           : T extends LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC
             ? TxQueueByAccount
-            : never;
+            : T extends LocalStorageKey.BRIDGE_TOKENS_TO_ACC
+              ? BridgeTokensToAcc
+              : never;
 
 export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,
