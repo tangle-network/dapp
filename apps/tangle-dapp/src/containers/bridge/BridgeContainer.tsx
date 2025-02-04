@@ -35,7 +35,6 @@ import { BridgeConfirmationModal } from '../../components/bridge/BridgeConfirmat
 import { FeeDetail, FeeDetailProps } from '../../components/bridge/FeeDetail';
 import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
 import { ChainList } from '../../components/Lists/ChainList';
-import { ROUTER_NATIVE_TOKEN_ADDRESS } from '../../constants/bridge';
 import useBridgeStore from '../../context/bridge/useBridgeStore';
 import useBalances from '../../data/balances/useBalances';
 import { BridgeTokenWithBalance } from '@webb-tools/tangle-shared-ui/types';
@@ -52,6 +51,7 @@ import { WalletFillIcon } from '@webb-tools/icons';
 import { useBalance } from 'wagmi';
 import convertDecimalToBn from '@webb-tools/tangle-shared-ui/utils/convertDecimalToBn';
 import { useBridgeEvmBalances } from '../../data/bridge/useBridgeEvmBalances';
+import { ROUTER_NATIVE_TOKEN_ADDRESS } from '@webb-tools/tangle-shared-ui/constants/bridge';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
 
 interface BridgeContainerProps {
@@ -340,7 +340,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
       .div(new Decimal(10).pow(selectedToken.decimals))
       .toString();
 
-    const formattedSendingAmount = `${sendingAmount} ${selectedToken.tokenSymbol}`;
+    const formattedSendingAmount = `${sendingAmount} ${selectedToken.symbol}`;
 
     const formattedGasFee =
       formatEther(hyperlaneQuote.fees.local.amount) +
@@ -437,7 +437,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
       return {
         symbol: token.tokenType,
-        optionalSymbol: token.tokenSymbol,
+        optionalSymbol: token.symbol,
         balance:
           activeAccount && balance
             ? parseFloat(balance.toString()).toFixed(6)

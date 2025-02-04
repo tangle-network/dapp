@@ -1,17 +1,11 @@
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
-import { useCallback, useEffect, useState } from 'react';
-import {
-  Abi as ViemAbi,
-  ContractFunctionArgs,
-  ContractFunctionName,
-  ContractFunctionReturnType,
-} from 'viem';
+import { useCallback } from 'react';
+import { Abi as ViemAbi, ContractFunctionName } from 'viem';
 
-import useDebugMetricsStore from '../../context/useDebugMetricsStore';
-import usePolling from '../liquidStaking/usePolling';
 import useContractReadOnce, {
   ContractReadOptions,
 } from './useContractReadOnce';
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * Continuously reads a contract function, refreshing the value
@@ -28,39 +22,11 @@ const useContractRead = <
     // This is useful for when the options are dependent on some state.
     | (() => PromiseOrT<ContractReadOptions<Abi, FunctionName> | null>),
 ) => {
-  type ReturnType =
-    | Error
-    | Awaited<
-        ContractFunctionReturnType<
-          Abi,
-          'pure' | 'view',
-          FunctionName,
-          ContractFunctionArgs<Abi, 'pure' | 'view', FunctionName>
-        >
-      >;
-
-  const [value, setValue] = useState<ReturnType | null>(null);
-  const [isPaused, setIsPaused] = useState(false);
   const readOnce = useContractReadOnce(abi);
-
-  const { incrementSubscriptionCount, decrementSubscriptionCount } =
-    useDebugMetricsStore();
-
-  // Register and deregister subscription count entry to keep track
-  // of performance metrics.
-  useEffect(() => {
-    isPaused ? decrementSubscriptionCount() : incrementSubscriptionCount();
-
-    return () => {
-      if (!isPaused) {
-        decrementSubscriptionCount();
-      }
-    };
-  }, [decrementSubscriptionCount, incrementSubscriptionCount, isPaused]);
 
   const fetcher = useCallback(async () => {
     // Not yet ready to fetch.
-    if (isPaused || readOnce === null) {
+    if (readOnce === null) {
       return null;
     }
 
@@ -72,16 +38,16 @@ const useContractRead = <
       return null;
     }
 
-    setValue(await readOnce(options_));
-  }, [isPaused, options, readOnce]);
+    return await readOnce(options_);
+  }, [options, readOnce]);
 
-  usePolling({
-    // By providing null, it signals to the hook to maintain
-    // its current value and not refresh.
-    effect: isPaused ? null : fetcher,
+  const value = useQuery({
+    queryKey: ['useContractRead', abi, options],
+    queryFn: fetcher,
+    refetchInterval: 8000,
   });
 
-  return { value, isPaused, setIsPaused };
+  return value;
 };
 
 export default useContractRead;

@@ -73,7 +73,7 @@ export const getHyperlaneQuote = async (props: HyperlaneQuoteProps | null) => {
 
       notificationApi({
         variant: 'error',
-        message: `Insufficient collateral on ${destination} chain. \n Available collateral: ${parseFloat(balance.toString()).toFixed(6)} ${token.tokenSymbol}`,
+        message: `Insufficient collateral on ${destination} chain. \n Available collateral: ${parseFloat(balance.toString()).toFixed(6)} ${token.symbol}`,
       });
 
       console.error('Insufficient destination collateral');

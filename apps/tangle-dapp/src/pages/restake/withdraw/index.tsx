@@ -41,6 +41,7 @@ import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
 import { DelegatorWithdrawRequest } from '@webb-tools/tangle-shared-ui/types/restake';
 import { twMerge } from 'tailwind-merge';
+import calculateRestakeAvailableBalance from '../../../utils/restaking/calculateRestakeAvailableBalance';
 
 const RestakeWithdrawForm: FC = () => {
   const {
@@ -101,28 +102,26 @@ const RestakeWithdrawForm: FC = () => {
   const selectedAsset = useRestakeAsset(selectedAssetId);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
-    if (!delegatorInfo) {
+    if (!delegatorInfo?.deposits || selectedAsset === null) {
       return {};
     }
 
-    const depositedAsset = Object.entries(delegatorInfo.deposits).find(
-      ([assetId]) => assetId === selectedAssetId,
+    const availableBalance = calculateRestakeAvailableBalance(
+      delegatorInfo,
+      selectedAssetId,
     );
 
-    if (!depositedAsset || selectedAsset === null) {
+    if (availableBalance === null) {
       return {};
     }
 
-    const maxAmount =
-      depositedAsset[1].amount - depositedAsset[1].delegatedAmount;
-
-    const formattedMaxAmount = Number(
-      formatUnits(maxAmount, selectedAsset.decimals),
+    const fmtAvailableBalance = Number(
+      formatUnits(availableBalance, selectedAsset.decimals),
     );
 
     return {
-      maxAmount,
-      formattedMaxAmount,
+      maxAmount: availableBalance,
+      formattedMaxAmount: fmtAvailableBalance,
     };
   }, [delegatorInfo, selectedAsset, selectedAssetId]);
 

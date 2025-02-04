@@ -11,18 +11,17 @@ import { TangleTokenSymbol } from '../types';
  * Polkadot API instances.
  */
 const useNetworkStore = create<{
-  rpcEndpoint: string;
   network: Network;
+  network2?: Network;
   setNetwork: (network: Network) => void;
   nativeTokenSymbol: TangleTokenSymbol;
 }>((set) => ({
-  rpcEndpoint: DEFAULT_NETWORK.wsRpcEndpoint,
   network: DEFAULT_NETWORK,
   nativeTokenSymbol: DEFAULT_NETWORK.tokenSymbol,
   setNetwork: (network) =>
     set({
       network,
-      rpcEndpoint: network.wsRpcEndpoint,
+      network2: network,
       nativeTokenSymbol: network.tokenSymbol,
     }),
 }));

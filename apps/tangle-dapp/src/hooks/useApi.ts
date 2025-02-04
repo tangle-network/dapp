@@ -23,7 +23,7 @@ export type ApiFetcher<T> = (api: ApiPromise) => Promise<T> | T;
 function useApi<T>(fetcher: ApiFetcher<T>, overrideRpcEndpoint?: string) {
   const [result, setResult] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  const { rpcEndpoint } = useNetworkStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
 
   const { result: api } = usePromise<ApiPromise | null>(
     useCallback(

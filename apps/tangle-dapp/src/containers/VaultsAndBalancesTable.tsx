@@ -17,6 +17,7 @@ import {
   CircularProgress,
   EMPTY_VALUE_PLACEHOLDER,
   formatDisplayAmount,
+  InfoIconWithTooltip,
   isEvmAddress,
   Table,
   Typography,
@@ -57,8 +58,10 @@ type Row = {
   tvlInUsd?: number;
   available: BN;
   availableInUsd?: number;
-  locked: BN;
-  lockedInUsd?: number;
+  deposited: BN;
+  depositedInUsd?: number;
+  delegated: BN;
+  delegatedInUsd?: number;
   points?: number;
   decimals: number;
   apyPercentage?: number;
@@ -119,24 +122,34 @@ const COLUMNS = [
       );
     },
   }),
-  COLUMN_HELPER.accessor('locked', {
+  COLUMN_HELPER.accessor('deposited', {
     header: () => 'Deposits',
-    sortingFn: sortByBn((row) => row.locked),
+    sortingFn: sortByBn((row) => row.deposited),
     cell: (props) => {
-      const fmtLocked = formatDisplayAmount(
-        props.getValue(),
+      const fmtDeposited = formatDisplayAmount(
+        props.row.original.deposited,
         props.row.original.decimals,
         AmountFormatStyle.SHORT,
       );
 
-      const subtitle =
-        props.row.original.lockedInUsd === undefined
-          ? undefined
-          : `$${props.row.original.lockedInUsd}`;
+      const fmtDelegated = formatDisplayAmount(
+        props.row.original.delegated,
+        props.row.original.decimals,
+        AmountFormatStyle.SHORT,
+      );
 
       return (
         <TableCellWrapper>
-          <StatItem title={fmtLocked} subtitle={subtitle} removeBorder />
+          <Typography
+            variant="body1"
+            className="flex gap-1 items-center justify-center dark:text-mono-0"
+          >
+            {fmtDeposited}
+
+            <InfoIconWithTooltip
+              content={`${fmtDelegated}/${fmtDeposited} delegated`}
+            />
+          </Typography>
         </TableCellWrapper>
       );
     },
@@ -188,7 +201,7 @@ const COLUMNS = [
               />
             )}
 
-            <Typography variant="body1">
+            <Typography variant="body1" className="dark:text-mono-0">
               {fmtTvl === undefined
                 ? `${fmtDepositCap}`
                 : `${fmtTvl} | ${fmtDepositCap}`}
@@ -255,7 +268,7 @@ const VaultsAndBalancesTable: FC = () => {
   const isAccountConnected = useIsAccountConnected();
 
   const assetsTvl = useRestakeAssetsTvl();
-  const erc20Balances = useTangleEvmErc20Balances();
+  const { data: erc20Balances } = useTangleEvmErc20Balances();
 
   const {
     vaults,
@@ -263,7 +276,7 @@ const VaultsAndBalancesTable: FC = () => {
     isLoading,
   } = useRestakeContext();
 
-  const getTotalLockedInAsset = useCallback(
+  const getAssetTvl = useCallback(
     (assetId: RestakeAssetId) => {
       const deposits = delegatorInfo?.deposits ?? {};
       const deposit = get(deposits, assetId);
@@ -274,23 +287,14 @@ const VaultsAndBalancesTable: FC = () => {
 
       const depositAmount = deposit.amount;
 
-      const delegation = delegatorInfo?.delegations.find((delegation) => {
-        return delegation.assetId === assetId.toString();
-      });
-
       const depositAmountBn =
         depositAmount === undefined
           ? BN_ZERO
           : new BN(depositAmount.toString());
 
-      const delegationBn =
-        delegation === undefined
-          ? BN_ZERO
-          : new BN(delegation.amountBonded.toString());
-
-      return depositAmountBn.add(delegationBn);
+      return depositAmountBn;
     },
-    [delegatorInfo?.delegations, delegatorInfo?.deposits],
+    [delegatorInfo?.deposits],
   );
 
   const vaultRows = useMemo<Row[]>(() => {
@@ -315,7 +319,8 @@ const VaultsAndBalancesTable: FC = () => {
           ? undefined
           : new BN(config.depositCap.toString());
 
-      const tvl = assetsTvl === null ? undefined : assetsTvl.get(assetId);
+      const delegated =
+        (assetsTvl === null ? undefined : assetsTvl.get(assetId)) ?? BN_ZERO;
 
       const assetBalances:
         | (typeof customAssetBalances)[RestakeAssetId]
@@ -334,12 +339,17 @@ const VaultsAndBalancesTable: FC = () => {
         }
       })();
 
+      const deposits = delegatorInfo?.deposits ?? {};
+      const depositedBigInt = get(deposits, assetId)?.amount ?? BigInt(0);
+      const deposited = new BN(depositedBigInt.toString());
+
       return {
         vaultId: metadata.vaultId,
         name: metadata.name,
-        tvl,
+        tvl: getAssetTvl(assetId),
         available,
-        locked: getTotalLockedInAsset(assetId),
+        deposited,
+        delegated,
         // TODO: This won't work because reward config is PER VAULT not PER ASSET. But isn't each asset its own vault?
         apyPercentage,
         tokenSymbol: metadata.symbol,
@@ -353,7 +363,8 @@ const VaultsAndBalancesTable: FC = () => {
     rewardConfig,
     assetsTvl,
     customAssetBalances,
-    getTotalLockedInAsset,
+    delegatorInfo?.deposits,
+    getAssetTvl,
     erc20Balances,
   ]);
 

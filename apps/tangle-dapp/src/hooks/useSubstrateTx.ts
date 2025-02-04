@@ -50,7 +50,7 @@ function useSubstrateTx<Context = void>(
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
   const activeSubstrateAddress = useSubstrateAddress();
   const isMountedRef = useIsMountedRef();
-  const { rpcEndpoint } = useNetworkStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const injector = useSubstrateInjectedExtension();
 
   // Useful for debugging.

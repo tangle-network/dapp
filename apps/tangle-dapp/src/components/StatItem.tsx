@@ -19,7 +19,7 @@ const StatItem: FC<StatItemProps> = ({
 
   return (
     <div className={className}>
-      <Typography className="dark:text-mono-0" variant="body1" fw="bold">
+      <Typography className="dark:text-mono-0" variant="body1">
         {title}
       </Typography>
 

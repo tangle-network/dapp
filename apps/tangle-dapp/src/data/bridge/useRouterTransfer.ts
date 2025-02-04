@@ -3,9 +3,9 @@ import { JsonRpcSigner } from '@ethersproject/providers';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { ROUTER_TRANSACTION_URL } from '../../constants/bridge';
 import useEthersSigner from './useEthersSigner';
 import { isEvmAddress } from '@webb-tools/webb-ui-components';
+import { ROUTER_TRANSACTION_URL } from '@webb-tools/tangle-shared-ui/constants/bridge';
 
 interface RouterTransactionResponse {
   allowanceTo: string;

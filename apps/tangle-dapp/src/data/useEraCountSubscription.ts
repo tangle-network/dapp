@@ -12,7 +12,7 @@ export default function useEraCountSubscription(
   const [era, setEra] = useState(defaultValue);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { rpcEndpoint } = useNetworkStore();
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
 
   useEffect(() => {
     let isMounted = true;
