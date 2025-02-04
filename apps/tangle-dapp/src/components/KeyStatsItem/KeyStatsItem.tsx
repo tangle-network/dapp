@@ -85,7 +85,13 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
               </Typography>
             )
           ) : (
-            children
+            <Typography
+              variant="h4"
+              fw="bold"
+              className="text-mono-140 dark:text-mono-40"
+            >
+              {children}
+            </Typography>
           )}
         </div>
       </div>
