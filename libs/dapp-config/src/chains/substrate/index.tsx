@@ -61,8 +61,8 @@ export const chainsConfig = {
       default: {
         http: [],
         webSocket: [
-          TANGLE_TESTNET_ARCHIVE_RPC_ENDPOINT,
           TANGLE_TESTNET_WS_RPC_ENDPOINT,
+          TANGLE_TESTNET_ARCHIVE_RPC_ENDPOINT,
         ],
       },
     },
