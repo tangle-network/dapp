@@ -10,7 +10,7 @@ import type { Chain } from '@webb-tools/dapp-config';
 import { isEvmAddress } from '@webb-tools/webb-ui-components/utils/isEvmAddress20';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
 import { RestakeAssetId } from '../../types';
-import { RestakeVaultMap, RestakeVaultMetadata } from '../../types/restake';
+import { RestakeAssetMap, RestakeAssetMetadata } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import createAssetIdEnum from '../../utils/createAssetIdEnum';
 import { fetchTokenPriceBySymbol } from '../../utils/fetchTokenPrices';
@@ -52,7 +52,7 @@ function createAssetMetadata(
   vaultId: Option<u32>,
   priceInUsd: number | null,
   status?: PalletAssetsAssetStatus['type'],
-): RestakeVaultMetadata {
+): RestakeAssetMetadata {
   const name = hexToString(metadata.name.toHex()) || `Asset ${assetId}`;
   const symbol = hexToString(metadata.symbol.toHex()) || `${assetId}`;
   const decimals = metadata.decimals.toNumber();
@@ -65,7 +65,7 @@ function createAssetMetadata(
     status,
     vaultId: createVaultId(vaultId),
     priceInUsd,
-  } satisfies RestakeVaultMetadata;
+  } satisfies RestakeAssetMetadata;
 }
 
 function processAssetDetailsRx(
@@ -76,12 +76,12 @@ function processAssetDetailsRx(
   assetVaultIds: Option<u32>[],
   hasNative: boolean,
   nativeCurrency: Chain['nativeCurrency'],
-): Observable<RestakeVaultMap> {
+): Observable<RestakeAssetMap> {
   return hasNative
     ? getNativeAssetRx(nativeCurrency, api).pipe(
         map((nativeAsset) => ({ [nativeAsset.assetId]: nativeAsset })),
       )
-    : of<RestakeVaultMap>({}).pipe(
+    : of<RestakeAssetMap>({}).pipe(
         switchMap(async (initialAssetMap) => {
           return nonNativeAssetIds.reduce((assetMap, assetId, idx) => {
             // TODO: Implement price fetching.
@@ -105,7 +105,7 @@ function processAssetDetailsRx(
                   status: 'Live' as const,
                   vaultId: assetVaultIds[idx].unwrap().toNumber(),
                   priceInUsd: price,
-                } satisfies RestakeVaultMetadata,
+                } satisfies RestakeAssetMetadata,
               };
             } else if (
               assetDetails[idx] === undefined ||
@@ -132,7 +132,7 @@ function processAssetDetailsRx(
 function getNativeAssetRx(
   nativeCurrency: Chain['nativeCurrency'],
   api: ApiRx,
-): Observable<RestakeVaultMetadata> {
+): Observable<RestakeAssetMetadata> {
   const assetId = 0;
 
   return api.query.rewards.assetLookupRewardVaults({ Custom: assetId }).pipe(
@@ -145,12 +145,12 @@ function getNativeAssetRx(
         status: 'Live' as const,
         vaultId: createVaultId(vaultId),
         priceInUsd: typeof priceInUsd === 'number' ? priceInUsd : null,
-      } satisfies RestakeVaultMetadata;
+      } satisfies RestakeAssetMetadata;
     }),
   );
 }
 
-export const queryVaultsRx = (
+export const queryAssetsRx = (
   api: ApiRx,
   assetIds: RestakeAssetId[],
   nativeCurrency: Chain['nativeCurrency'] = DEFAULT_NATIVE_CURRENCY,
@@ -165,7 +165,7 @@ export const queryVaultsRx = (
       );
     } else {
       return of<{
-        [assetId: RestakeAssetId]: RestakeVaultMetadata;
+        [assetId: RestakeAssetId]: RestakeAssetMetadata;
       }>({});
     }
   }

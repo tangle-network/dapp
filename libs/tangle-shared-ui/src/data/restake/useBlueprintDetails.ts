@@ -14,7 +14,7 @@ import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { RestakeOperator } from '../../types';
 import type { Blueprint } from '../../types/blueprint';
 import { TangleError, TangleErrorCode } from '../../types/error';
-import type { OperatorMap, RestakeVaultMap } from '../../types/restake';
+import type { OperatorMap, RestakeAssetMap } from '../../types/restake';
 import {
   getAccountInfo,
   getMultipleAccountInfo,
@@ -23,11 +23,11 @@ import delegationsToVaultTokens from '../../utils/restake/delegationsToVaultToke
 import { extractOperatorData } from '../blueprints/utils/blueprintHelpers';
 import { toPrimitiveBlueprint } from '../blueprints/utils/toPrimitiveBlueprint';
 import useRestakeOperatorMap from './useRestakeOperatorMap';
-import useRestakeVaults from './useRestakeVaults';
+import useRestakeAssets from './useRestakeAssets';
 
 export default function useBlueprintDetails(id?: string) {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
-  const { vaults } = useRestakeVaults();
+  const { assets } = useRestakeAssets();
 
   const { operatorMap } = useRestakeOperatorMap();
   const { delegatorInfo } = useRestakeDelegatorInfo();
@@ -105,7 +105,7 @@ export default function useBlueprintDetails(id?: string) {
               operatorsSet !== undefined
                 ? await getBlueprintOperators(
                     rpcEndpoint,
-                    vaults,
+                    assets,
                     operatorsSet,
                     operatorMap,
                     operatorTVL,
@@ -122,14 +122,14 @@ export default function useBlueprintDetails(id?: string) {
         );
       },
       // prettier-ignore
-      [id, operatorMap, operatorTVL, rpcEndpoint, vaults, operatorConcentration, activeSubstrateAddress],
+      [id, operatorMap, operatorTVL, rpcEndpoint, assets, operatorConcentration, activeSubstrateAddress],
     ),
   );
 }
 
 async function getBlueprintOperators(
   rpcEndpoint: string,
-  assetMap: RestakeVaultMap,
+  assetMap: RestakeAssetMap,
   operatorAccountSet: Set<SubstrateAddress>,
   operatorMap: OperatorMap,
   operatorTVL: Record<string, number>,

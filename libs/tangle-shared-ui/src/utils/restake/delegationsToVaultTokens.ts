@@ -1,11 +1,11 @@
 import { Decimal } from 'decimal.js';
 import { RestakeAssetId, VaultToken } from '../../types';
-import { OperatorDelegatorBond, RestakeVaultMap } from '../../types/restake';
+import { OperatorDelegatorBond, RestakeAssetMap } from '../../types/restake';
 import safeFormatUnits from '../safeFormatUnits';
 
 export default function delegationsToVaultTokens(
   delegations: OperatorDelegatorBond[],
-  assetMap: RestakeVaultMap,
+  assetMap: RestakeAssetMap,
 ): VaultToken[] {
   const vaultTokenMap = new Map<RestakeAssetId, VaultToken>();
 

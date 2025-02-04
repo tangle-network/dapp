@@ -142,7 +142,7 @@ const COLUMNS = [
         <TableCellWrapper>
           <Typography
             variant="body1"
-            className="flex gap-1 items-center justify-center dark:text-mono-0"
+            className="flex items-center justify-center gap-1 dark:text-mono-0"
           >
             {fmtDeposited}
 
@@ -271,7 +271,7 @@ const VaultsAndBalancesTable: FC = () => {
   const { data: erc20Balances } = useTangleEvmErc20Balances();
 
   const {
-    vaults,
+    assets,
     balances: customAssetBalances,
     isLoading,
   } = useRestakeContext();
@@ -298,7 +298,7 @@ const VaultsAndBalancesTable: FC = () => {
   );
 
   const vaultRows = useMemo<Row[]>(() => {
-    return Object.entries(vaults).flatMap(([assetIdString, metadata]) => {
+    return Object.entries(assets).flatMap(([assetIdString, metadata]) => {
       if (metadata.vaultId === null) {
         return [];
       }
@@ -359,7 +359,7 @@ const VaultsAndBalancesTable: FC = () => {
       } satisfies Row;
     });
   }, [
-    vaults,
+    assets,
     rewardConfig,
     assetsTvl,
     customAssetBalances,

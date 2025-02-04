@@ -8,12 +8,12 @@ export default function useRestakeTVL(
   operatorMap: OperatorMap,
   delegatorInfo: DelegatorInfo | null,
 ) {
-  const { vaults } = useRestakeContext();
-  const { operatorTVL, vaultTVL } = useOperatorTVL(operatorMap, vaults);
+  const { assets } = useRestakeContext();
+  const { operatorTVL, vaultTVL } = useOperatorTVL(operatorMap, assets);
 
   const { delegatorTVL, totalDelegatorTVL } = useDelegatorTVL(
     delegatorInfo,
-    vaults,
+    assets,
   );
 
   const totalNetworkTVL = Object.values(vaultTVL).reduce(
