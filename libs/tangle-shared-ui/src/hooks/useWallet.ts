@@ -21,7 +21,7 @@ declare global {
   }
 }
 
-const useProvider = () => {
+const useWallet = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const evmChain = useEvmChain();
 
@@ -79,12 +79,12 @@ const useProvider = () => {
       }
 
       // Fetch all accounts across all enabled extensions.
-      const accounts = await web3Accounts();
+      const substrateAccounts = await web3Accounts();
 
-      const defaultAccount = accounts.at(0);
+      const defaultAccount = substrateAccounts.at(0);
 
       // No accounts found.
-      if (accounts.length === 0 || defaultAccount === undefined) {
+      if (substrateAccounts.length === 0 || defaultAccount === undefined) {
         setIsConnecting(false);
         disconnect();
 
@@ -106,8 +106,22 @@ const useProvider = () => {
         );
       }
 
-      setProvider(newProvider);
-      setAccounts(accounts);
+      setProvider({
+        type: 'substrate',
+        provider: newProvider,
+      });
+
+      setAccounts(
+        substrateAccounts.map((substrateAccount) => ({
+          type: 'substrate',
+          address: assertSubstrateAddress(substrateAccount.address),
+          source: substrateAccount.meta.source,
+          genesisHash: substrateAccount.meta.genesisHash,
+          name: substrateAccount.meta.name,
+          keypairType: substrateAccount.type,
+        })),
+      );
+
       setActiveAccountAddress(assertSubstrateAddress(defaultAccount.address));
       setIsConnecting(false);
 
@@ -122,8 +136,21 @@ const useProvider = () => {
         return new Error('Not connected to EVM chain yet');
       }
 
+      const rpcUrl = (() => {
+        if (evmChain.rpcUrls.default.http.length > 0) {
+          return evmChain.rpcUrls.default.http[0];
+        } else if (
+          evmChain.rpcUrls.default.webSocket !== undefined &&
+          evmChain.rpcUrls.default.webSocket.length > 0
+        ) {
+          return evmChain.rpcUrls.default.webSocket[0];
+        }
+
+        return undefined;
+      })();
+
       assert(
-        evmChain.rpcUrls.default.http.length > 1,
+        rpcUrl !== undefined,
         "Active EVM chain doesn't have any RPC URLs defined in its config",
       );
 
@@ -138,7 +165,25 @@ const useProvider = () => {
           rpcMap: { 1: evmChain.rpcUrls.default.http[0] },
         });
 
-        setProvider(provider);
+        await provider.connect();
+
+        if (provider.accounts.length === 0) {
+          return new Error('No accounts found in the connected wallet');
+        }
+
+        setAccounts(
+          provider.accounts.map((evmAccountAddress) => ({
+            type: 'evm',
+            address: assertEvmAddress(evmAccountAddress),
+          })),
+        );
+
+        setActiveAccountAddress(assertEvmAddress(provider.accounts[0]));
+
+        setProvider({
+          type: 'walletconnect',
+          provider,
+        });
       } catch (error) {
         return ensureError(error);
       } finally {
@@ -147,7 +192,7 @@ const useProvider = () => {
 
       return true;
     },
-    [evmChain, setProvider],
+    [evmChain, setAccounts, setActiveAccountAddress, setProvider],
   );
 
   const connectEvmWallet = useCallback(async (): Promise<Error | true> => {
@@ -181,8 +226,18 @@ const useProvider = () => {
       // TODO: Obtain this from local storage, persist what was the last connected account.
       const defaultAccount = assertEvmAddress(evmAccounts[0].address);
 
-      setProvider(window.ethereum);
-      setAccounts(evmAccounts);
+      setProvider({
+        type: 'evm',
+        provider: window.ethereum,
+      });
+
+      setAccounts(
+        evmAccounts.map((evmAccount) => ({
+          type: 'evm',
+          address: assertEvmAddress(evmAccount.address),
+        })),
+      );
+
       setActiveAccountAddress(defaultAccount);
 
       return true;
@@ -229,4 +284,4 @@ const useProvider = () => {
   };
 };
 
-export default useProvider;
+export default useWallet;
