@@ -57,6 +57,7 @@ import sortByBn from '../utils/sortByBn';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 
 type Row = {
   vaultId: number;
@@ -320,23 +321,18 @@ const AssetsAndBalancesTable: FC = () => {
 
   const getAssetTvl = useCallback(
     (assetId: RestakeAssetId) => {
-      const deposits = delegatorInfo?.deposits ?? {};
-      const deposit = get(deposits, assetId);
-
-      if (deposit === undefined) {
+      if (assetsTvl === null) {
         return BN_ZERO;
       }
 
-      const depositAmount = deposit.amount;
+      const tvl = assetsTvl.get(assetId);
+      if (tvl === undefined) {
+        return BN_ZERO;
+      }
 
-      const depositAmountBn =
-        depositAmount === undefined
-          ? BN_ZERO
-          : new BN(depositAmount.toString());
-
-      return depositAmountBn;
+      return tvl;
     },
-    [delegatorInfo?.deposits],
+    [assetsTvl],
   );
 
   const vaultRows = useMemo<Row[]>(
@@ -359,9 +355,6 @@ const AssetsAndBalancesTable: FC = () => {
 
         const depositCap = config.depositCap.toBn();
 
-        const delegated =
-          (assetsTvl === null ? undefined : assetsTvl.get(assetId)) ?? BN_ZERO;
-
         const assetBalances:
           | (typeof customAssetBalances)[RestakeAssetId]
           | undefined = customAssetBalances[assetId];
@@ -380,8 +373,13 @@ const AssetsAndBalancesTable: FC = () => {
         })();
 
         const deposits = delegatorInfo?.deposits ?? {};
-        const depositedBigInt = get(deposits, assetId)?.amount ?? BigInt(0);
+
+        const depositedBigInt = get(deposits, assetId)?.amount ?? ZERO_BIG_INT;
         const deposited = new BN(depositedBigInt.toString());
+
+        const delegatedBigInt =
+          get(deposits, assetId)?.delegatedAmount ?? ZERO_BIG_INT;
+        const delegated = new BN(delegatedBigInt.toString());
 
         const [userLastClaimedBlockNumber] = userVaultClaimedRewards?.get(
           metadata.vaultId,
@@ -398,10 +396,12 @@ const AssetsAndBalancesTable: FC = () => {
           decayRate,
         );
 
+        const tvl = getAssetTvl(assetId);
+
         return {
           vaultId: metadata.vaultId,
           name: metadata.name,
-          tvl: getAssetTvl(assetId),
+          tvl,
           available,
           deposited,
           delegated,
@@ -415,7 +415,7 @@ const AssetsAndBalancesTable: FC = () => {
       });
     },
     // prettier-ignore
-    [assets, rewardConfig, vaultsTotalDeposit, assetsTvl, customAssetBalances, delegatorInfo?.deposits, userVaultClaimedRewards, totalIssuance, bestFinalizedBlockNumber, decayStartPeriod, decayRate, getAssetTvl, nativeTokenSymbol, erc20Balances],
+    [assets, bestFinalizedBlockNumber, customAssetBalances, decayRate, decayStartPeriod, delegatorInfo?.deposits, erc20Balances, getAssetTvl, nativeTokenSymbol, rewardConfig, totalIssuance, userVaultClaimedRewards, vaultsTotalDeposit],
   );
 
   // Combine all rows.
