@@ -1,4 +1,3 @@
-import { DEFAULT_FLAGS_ELECTED } from '@webb-tools/dapp-config';
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
@@ -11,9 +10,14 @@ const useActiveValidators = () => {
     isLoading: isLoadingActiveValidatorAddresses,
   } = useApiRx(
     useCallback((api) => {
-      const electedInfo = api.derive.staking.electedInfo(DEFAULT_FLAGS_ELECTED);
+      const validators = api.query.session.validators();
 
-      return electedInfo.pipe(map((derive) => derive.nextElected));
+      return validators.pipe(
+        map((validators) => {
+          const validatorAddresses = Array.from(validators || []);
+          return validatorAddresses.length > 0 ? validatorAddresses : null;
+        }),
+      );
     }, []),
   );
 
