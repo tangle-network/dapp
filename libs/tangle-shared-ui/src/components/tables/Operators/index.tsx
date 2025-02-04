@@ -9,9 +9,14 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
+import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
 import {
+  AmountFormatStyle,
   Avatar,
   Button,
+  formatDisplayAmount,
+  IconWithTooltip,
   KeyValueWithButton,
   shortenString,
   Table,
@@ -19,6 +24,7 @@ import {
 } from '@webb-tools/webb-ui-components';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import { BN } from 'bn.js';
 import type { ComponentProps, PropsWithChildren } from 'react';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -26,17 +32,24 @@ import TableCellWrapper from '../../../components/tables/TableCellWrapper';
 import type { TableStatusProps } from '../../../components/tables/TableStatus';
 import TableStatus from '../../../components/tables/TableStatus';
 import { sortByAddressOrIdentity } from '../../../components/tables/utils';
+import useNetworkStore from '../../../context/useNetworkStore';
 import { RestakeOperator } from '../../../types';
 import VaultsDropdown from './VaultsDropdown';
 
 const COLUMN_HELPER = createColumnHelper<RestakeOperator>();
 
-const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
+const getStaticColumns = (
+  nativeTokenSymbol: string,
+): ColumnDef<RestakeOperator, any>[] => [
   COLUMN_HELPER.accessor('address', {
     header: () => 'Identity',
     sortingFn: sortByAddressOrIdentity<RestakeOperator>(),
     cell: (props) => {
-      const { address, identityName: identity } = props.row.original;
+      const {
+        address,
+        identityName: identity,
+        isDelegated,
+      } = props.row.original;
 
       return (
         <TableCellWrapper className="pl-3">
@@ -49,13 +62,45 @@ const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
             />
 
             <div>
-              <Typography variant="h5" fw="bold">
-                {identity ? identity : shortenString(address)}
-              </Typography>
+              <div className="flex items-center gap-2">
+                <Typography variant="h5" fw="bold">
+                  {identity ? identity : shortenString(address)}
+                </Typography>
+
+                {isDelegated && (
+                  <IconWithTooltip
+                    icon={<CheckboxCircleFill className="!fill-green-50" />}
+                    content="Delegated"
+                  />
+                )}
+              </div>
 
               <KeyValueWithButton keyValue={address} size="sm" />
             </div>
           </div>
+        </TableCellWrapper>
+      );
+    },
+  }),
+  COLUMN_HELPER.accessor('selfBondedAmount', {
+    header: () => 'Self-Bonded',
+    cell: (props) => {
+      const value = props.getValue();
+
+      return (
+        <TableCellWrapper>
+          <Typography
+            variant="body1"
+            fw="bold"
+            className="text-mono-200 dark:text-mono-0"
+          >
+            {formatDisplayAmount(
+              new BN(value.toString()),
+              TANGLE_TOKEN_DECIMALS,
+              AmountFormatStyle.SHORT,
+            )}{' '}
+            {nativeTokenSymbol}
+          </Typography>
         </TableCellWrapper>
       );
     },
@@ -73,6 +118,17 @@ const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
         </Typography>
       </TableCellWrapper>
     ),
+  }),
+  // For sorting purpose
+  COLUMN_HELPER.accessor('isDelegated', {
+    header: () => null,
+    cell: () => null,
+    sortingFn: (rowA, rowB) => {
+      const aIsDelegated = rowA.original.isDelegated;
+      const bIsDelegated = rowB.original.isDelegated;
+
+      return aIsDelegated ? -1 : bIsDelegated ? 1 : 0;
+    },
   }),
   // Hidden now as we don't have price for testnet and TNT assets
   /* COLUMN_HELPER.accessor('concentrationPercentage', {
@@ -123,7 +179,12 @@ const STATIC_COLUMNS: ColumnDef<RestakeOperator, any>[] = [
         </TableCellWrapper>
       );
     },
-    enableSorting: false,
+    sortingFn: (rowA, rowB) => {
+      const aVaultTokens = rowA.original.vaultTokens;
+      const bVaultTokens = rowB.original.vaultTokens;
+
+      return aVaultTokens.length - bVaultTokens.length;
+    },
   }),
 ];
 
@@ -148,9 +209,13 @@ const OperatorsTable: FC<Props> = ({
   onGlobalFilterChange,
   RestakeOperatorAction,
 }) => {
+  const nativeTokenSymbol = useNetworkStore(
+    (store) => store.network.tokenSymbol,
+  );
+
   const columns = useMemo(
     () =>
-      STATIC_COLUMNS.concat([
+      getStaticColumns(nativeTokenSymbol).concat([
         COLUMN_HELPER.display({
           id: 'actions',
           header: () => null,
@@ -174,7 +239,7 @@ const OperatorsTable: FC<Props> = ({
           enableSorting: false,
         }) satisfies ColumnDef<RestakeOperator>,
       ]),
-    [RestakeOperatorAction],
+    [RestakeOperatorAction, nativeTokenSymbol],
   );
 
   const table = useReactTable({
@@ -187,10 +252,21 @@ const OperatorsTable: FC<Props> = ({
     initialState: {
       sorting: [
         {
-          id: 'restakersCount' satisfies keyof RestakeOperator,
+          id: 'isDelegated',
+          desc: false,
+        },
+        {
+          id: 'vaultTokens',
+          desc: true,
+        },
+        {
+          id: 'restakersCount',
           desc: true,
         },
       ],
+      columnVisibility: {
+        isDelegated: false,
+      },
     },
     state: {
       globalFilter,
