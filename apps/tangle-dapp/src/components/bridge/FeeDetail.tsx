@@ -63,10 +63,11 @@ export const FeeDetail = ({
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
               <Typography variant="h4" fw="bold" className="whitespace-nowrap">
-                {amounts.receiving.split('.')[0]}
-                {amounts.receiving.split('.')[1]
-                  ? `.${amounts.receiving.split('.')[1].slice(0, 6)}`
+                {amounts.receiving.split(' ')[0].split('.')[0]}
+                {amounts.receiving.split(' ')[0].split('.')[1]
+                  ? `.${amounts.receiving.split(' ')[0].split('.')[1].slice(0, 4)}`
                   : ''}{' '}
+                {amounts.receiving.split(' ')[1]}
               </Typography>
 
               <TokenIcon
