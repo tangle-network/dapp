@@ -11,6 +11,9 @@ import {
 } from '@webb-tools/webb-ui-components';
 import ensureError from '../utils/ensureError';
 import { EIP1193Provider } from 'viem';
+import { EthereumProvider } from '@walletconnect/ethereum-provider';
+import useEvmChain from './useEvmChain';
+import assert from 'assert';
 
 declare global {
   interface Window {
@@ -20,6 +23,7 @@ declare global {
 
 const useProvider = () => {
   const [isConnecting, setIsConnecting] = useState(false);
+  const evmChain = useEvmChain();
 
   const {
     activeAccountAddress,
@@ -54,13 +58,13 @@ const useProvider = () => {
     [accounts, setActiveAccountAddress],
   );
 
-  const signOut = useCallback(() => {
+  const disconnect = useCallback(() => {
     setAccounts(undefined);
     setActiveAccountAddress(undefined);
     setProvider(undefined);
   }, [setAccounts, setActiveAccountAddress, setProvider]);
 
-  const connectSubstrateProvider = useCallback(
+  const connectSubstrateWallet = useCallback(
     async (appName: string): Promise<Error | true> => {
       setIsConnecting(true);
 
@@ -82,7 +86,7 @@ const useProvider = () => {
       // No accounts found.
       if (accounts.length === 0 || defaultAccount === undefined) {
         setIsConnecting(false);
-        signOut();
+        disconnect();
 
         return new Error('No accounts found in the connected wallet');
       }
@@ -95,7 +99,7 @@ const useProvider = () => {
 
       if (newProvider === undefined) {
         setIsConnecting(false);
-        signOut();
+        disconnect();
 
         return new Error(
           `The associated provider for account ${defaultAccount.address} could not be located`,
@@ -109,10 +113,44 @@ const useProvider = () => {
 
       return true;
     },
-    [setAccounts, setActiveAccountAddress, setProvider, signOut],
+    [setAccounts, setActiveAccountAddress, setProvider, disconnect],
   );
 
-  const connectEvmProvider = useCallback(async (): Promise<Error | true> => {
+  const connectWalletConnectV2 = useCallback(
+    async (projectId: string): Promise<Error | true> => {
+      if (evmChain === null) {
+        return new Error('Not connected to EVM chain yet');
+      }
+
+      assert(
+        evmChain.rpcUrls.default.http.length > 1,
+        "Active EVM chain doesn't have any RPC URLs defined in its config",
+      );
+
+      setIsConnecting(true);
+
+      try {
+        const provider = await EthereumProvider.init({
+          // Required from WalletConnect Cloud.
+          projectId,
+          chains: [evmChain.id],
+          showQrModal: true,
+          rpcMap: { 1: evmChain.rpcUrls.default.http[0] },
+        });
+
+        setProvider(provider);
+      } catch (error) {
+        return ensureError(error);
+      } finally {
+        setIsConnecting(false);
+      }
+
+      return true;
+    },
+    [evmChain, setProvider],
+  );
+
+  const connectEvmWallet = useCallback(async (): Promise<Error | true> => {
     try {
       // Check if window.ethereum is available.
       if (typeof window.ethereum === 'undefined') {
@@ -184,9 +222,10 @@ const useProvider = () => {
     activeAccount,
     provider,
     trySwitchAccount,
-    signOut,
-    connectSubstrateProvider,
-    connectEvmProvider,
+    disconnect,
+    connectSubstrateWallet,
+    connectEvmWallet,
+    connectWalletConnectV2,
   };
 };
 

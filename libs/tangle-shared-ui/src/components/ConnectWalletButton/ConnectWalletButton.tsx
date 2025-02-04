@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';
 import UpdateMetadataButton from '../UpdateMetadataButton';
 import WalletDropdown from './WalletDropdown';
-import WalletModalContainer from './WalletModalContainer';
+import ConnectWalletModal from './ConnectWalletModal';
 import {
   isSubstrateAddress,
   toSubstrateAddress,
@@ -17,7 +17,7 @@ const ConnectWalletButton = () => {
   const { activeAccount, activeWallet, loading, isConnecting } =
     useWebContext();
 
-  const { network } = useNetworkStore();
+  const network = useNetworkStore((store) => store.network);
   const { toggleModal } = useConnectWallet();
 
   const accountAddress = useMemo(() => {
@@ -37,30 +37,28 @@ const ConnectWalletButton = () => {
 
   return (
     <>
-      <div>
-        {!isReady || !accountAddress ? (
-          <Button
-            isLoading={isConnecting || loading}
-            loadingText={isConnecting ? 'Connecting' : undefined}
-            onClick={() => toggleModal(true)}
-            className="flex items-center justify-center px-6"
-          >
-            Connect
-          </Button>
-        ) : (
-          <div className="relative">
-            <WalletDropdown
-              accountAddress={accountAddress}
-              accountName={activeAccount.name}
-              wallet={activeWallet}
-            />
+      {!isReady || !accountAddress ? (
+        <Button
+          isLoading={isConnecting || loading}
+          loadingText={isConnecting ? 'Connecting' : undefined}
+          onClick={() => toggleModal(true)}
+          className="flex items-center justify-center px-6"
+        >
+          Connect
+        </Button>
+      ) : (
+        <div className="relative">
+          <WalletDropdown
+            accountAddress={accountAddress}
+            accountName={activeAccount.name}
+            wallet={activeWallet}
+          />
 
-            <UpdateMetadataButton />
-          </div>
-        )}
-      </div>
+          <UpdateMetadataButton />
+        </div>
+      )}
 
-      <WalletModalContainer />
+      <ConnectWalletModal />
     </>
   );
 };
