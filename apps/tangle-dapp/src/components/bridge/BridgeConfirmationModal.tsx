@@ -25,7 +25,7 @@ import {
   shortenString,
 } from '@webb-tools/webb-ui-components/utils';
 import cx from 'classnames';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import useWalletClient from '../../data/bridge/useWalletClient';
 
 import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
@@ -43,13 +43,13 @@ import { createPublicClient, http, getContract } from 'viem';
 import { IMailbox__factory } from '@hyperlane-xyz/core';
 import { HyperlaneCore } from '@hyperlane-xyz/sdk';
 import { useQuery } from '@tanstack/react-query';
-import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
 import { ArrowDownIcon } from '@webb-tools/icons';
 import axios from 'axios';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
 import useLocalStorage, {
   LocalStorageKey,
+  BridgeDestTxStatus,
 } from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
 
 interface BridgeConfirmationModalProps {
@@ -140,34 +140,42 @@ export const BridgeConfirmationModal = ({
   const { setWithPreviousValue: setTokensToAcc, valueOpt: cachedTokensToAcc } =
     useLocalStorage(LocalStorageKey.BRIDGE_TOKENS_TO_ACC);
 
+  const { setWithPreviousValue: setDestTxIds, valueOpt: cachedDestTxIds } =
+    useLocalStorage(LocalStorageKey.BRIDGE_DEST_TX_IDS);
+
   const srcChainPublicClient = createPublicClient({
     chain: sourceChain,
     transport: http(),
   });
 
-  const dstChainPublicClient = createPublicClient({
-    chain: destinationChain,
-    transport: http(),
-  });
-
-  const [hyperlaneDestinationTxInfo, setHyperlaneDestinationTxInfo] = useState<{
-    sourceTxHash: string | null;
-    messageId: string | null;
-  }>({ sourceTxHash: null, messageId: null });
-
-  const [
-    isHyperlaneDestinationTxFinalized,
-    setIsHyperlaneDestinationTxFinalized,
-  ] = useState(false);
-
   const checkHyperlaneMessageDelivery = useCallback(
-    async (sourceTxHash: string, messageId: string) => {
+    async (
+      sourceTxHash: string,
+      messageId: string,
+      destChain: ChainConfig,
+      status: BridgeDestTxStatus,
+    ) => {
+      if (
+        status === BridgeDestTxStatus.Completed ||
+        status === BridgeDestTxStatus.Failed
+      )
+        return;
+
       try {
+        const destinationTypedChainId = calculateTypedChainId(
+          destChain.chainType,
+          destChain.id,
+        );
+
+        updateTxDestinationTxState(sourceTxHash, '', BridgeTxState.Pending);
+
+        const dstChainPublicClient = createPublicClient({
+          chain: destChain,
+          transport: http(),
+        });
+
         const mailboxContract = getContract({
-          address:
-            destinationChain.id === EVMChainId.Holesky
-              ? (mailboxAddress.holesky as `0x${string}`)
-              : (mailboxAddress.tangletestnet as `0x${string}`),
+          address: mailboxAddress[destinationTypedChainId] as `0x${string}`,
           abi: IMailbox__factory.abi,
           client: dstChainPublicClient,
         });
@@ -201,18 +209,60 @@ export const BridgeConfirmationModal = ({
               hash: log.transactionHash as `0x${string}`,
             });
 
-            const destinationTypedChainId = calculateTypedChainId(
-              destinationChain.chainType,
-              destinationChain.id,
-            );
-
-            if (chainsConfig[destinationTypedChainId].blockExplorers) {
+            if (receipt.status === 'success') {
               updateTxDestinationTxState(
                 sourceTxHash,
                 receipt.transactionHash,
-                BridgeTxState.Pending,
+                BridgeTxState.Completed,
               );
+              setDestTxIds((prevValue) => {
+                const currentDestTxIds = prevValue?.value || {};
+                const updatedDestTxIds = {
+                  ...currentDestTxIds,
+                  [activeAccountAddress]: {
+                    hyperlane:
+                      currentDestTxIds[activeAccountAddress]?.hyperlane.map(
+                        (item) =>
+                          item.srcTx === sourceTxHash
+                            ? { ...item, status: BridgeDestTxStatus.Completed }
+                            : item,
+                      ) || [],
+                    router: currentDestTxIds[activeAccountAddress]?.router,
+                  },
+                };
+                return updatedDestTxIds;
+              });
+            } else {
+              updateTxDestinationTxState(
+                sourceTxHash,
+                receipt.transactionHash,
+                BridgeTxState.Failed,
+              );
+              setDestTxIds((prevValue) => {
+                const currentDestTxIds = prevValue?.value || {};
+                const updatedDestTxIds = {
+                  ...currentDestTxIds,
+                  [activeAccountAddress]: {
+                    hyperlane:
+                      currentDestTxIds[activeAccountAddress]?.hyperlane.map(
+                        (item) =>
+                          item.srcTx === sourceTxHash
+                            ? { ...item, status: BridgeDestTxStatus.Failed }
+                            : item,
+                      ) || [],
+                    router: currentDestTxIds[activeAccountAddress]?.router.map(
+                      (item) =>
+                        item.srcTx === sourceTxHash
+                          ? { ...item, status: BridgeDestTxStatus.Failed }
+                          : item,
+                    ),
+                  },
+                };
+                return updatedDestTxIds;
+              });
+            }
 
+            if (chainsConfig[destinationTypedChainId].blockExplorers) {
               addTxDestinationTxExplorerUrl(
                 sourceTxHash,
                 makeExplorerUrl(
@@ -224,22 +274,6 @@ export const BridgeConfirmationModal = ({
                 ).toString(),
               );
             }
-
-            if (receipt.status === 'success') {
-              updateTxDestinationTxState(
-                sourceTxHash,
-                receipt.transactionHash,
-                BridgeTxState.Completed,
-              );
-              setIsHyperlaneDestinationTxFinalized(true);
-            } else {
-              updateTxDestinationTxState(
-                sourceTxHash,
-                receipt.transactionHash,
-                BridgeTxState.Failed,
-              );
-              setIsHyperlaneDestinationTxFinalized(true);
-            }
           }
         }
 
@@ -250,49 +284,75 @@ export const BridgeConfirmationModal = ({
       }
     },
     [
-      destinationChain.id,
-      destinationChain.chainType,
-      dstChainPublicClient,
       updateTxDestinationTxState,
+      setDestTxIds,
+      activeAccountAddress,
       addTxDestinationTxExplorerUrl,
     ],
   );
 
-  useQuery({
-    queryKey: [
-      'hyperlaneMessageDelivery',
-      hyperlaneDestinationTxInfo.messageId,
-    ],
-    queryFn: () => {
-      if (
-        !hyperlaneDestinationTxInfo.sourceTxHash ||
-        !hyperlaneDestinationTxInfo.messageId
-      ) {
-        return null;
-      }
+  const finalizePendingHyperlaneTxs = useCallback(async () => {
+    const destTxnIds = cachedDestTxIds?.value;
+
+    if (!destTxnIds) return;
+
+    const hyperlaneTxIds = destTxnIds[activeAccountAddress].hyperlane;
+
+    if (hyperlaneTxIds.length === 0) return;
+
+    const checkedHyperlaneTxs = hyperlaneTxIds.map((txId) => {
       return checkHyperlaneMessageDelivery(
-        hyperlaneDestinationTxInfo.sourceTxHash,
-        hyperlaneDestinationTxInfo.messageId,
+        txId.srcTx,
+        txId.msgId,
+        txId.destChain,
+        txId.status,
       );
+    });
+
+    return await Promise.all(checkedHyperlaneTxs);
+  }, [
+    activeAccountAddress,
+    cachedDestTxIds?.value,
+    checkHyperlaneMessageDelivery,
+  ]);
+
+  const enableFinalizePendingHyperlaneTxs = useMemo(() => {
+    const destTxnIds = cachedDestTxIds?.value;
+
+    if (!destTxnIds) {
+      return false;
+    }
+
+    const hyperlaneTxIds = destTxnIds[activeAccountAddress]?.hyperlane || [];
+
+    if (hyperlaneTxIds.length === 0) {
+      return false;
+    }
+
+    return hyperlaneTxIds.some(
+      (txId) => txId.status === BridgeDestTxStatus.Pending,
+    );
+  }, [activeAccountAddress, cachedDestTxIds?.value]);
+
+  useQuery({
+    queryKey: ['hyperlaneMessageDelivery'],
+    queryFn: () => {
+      return finalizePendingHyperlaneTxs();
     },
-    refetchInterval: 5000,
+    refetchInterval: 10000,
     refetchIntervalInBackground: true,
-    enabled:
-      !isHyperlaneDestinationTxFinalized &&
-      !!hyperlaneDestinationTxInfo.messageId &&
-      token.bridgeType === EVMTokenBridgeEnum.Hyperlane,
+    enabled: enableFinalizePendingHyperlaneTxs,
     retry: true,
   });
 
-  const [routerTxInfo, setRouterTxInfo] = useState<{
-    sourceTxHash: string | null;
-  }>({ sourceTxHash: null });
-
-  const [isRouterDestinationTxFinalized, setIsRouterDestinationTxFinalized] =
-    useState(false);
-
   const checkRouterMessageDelivery = useCallback(
-    async (sourceTxHash: string) => {
+    async (sourceTxHash: string, status: BridgeDestTxStatus) => {
+      if (
+        status === BridgeDestTxStatus.Completed ||
+        status === BridgeDestTxStatus.Failed
+      )
+        return;
+
       try {
         const response = await axios.get(ROUTER_TX_STATUS_URL, {
           params: {
@@ -304,10 +364,40 @@ export const BridgeConfirmationModal = ({
           updateTxState(sourceTxHash, BridgeTxState.Pending);
         } else if (response.data.status === 'failed') {
           updateTxState(sourceTxHash, BridgeTxState.Failed);
-          setIsRouterDestinationTxFinalized(true);
+          setDestTxIds((prevValue) => {
+            const currentDestTxIds = prevValue?.value || {};
+            const updatedDestTxIds = {
+              ...currentDestTxIds,
+              [activeAccountAddress]: {
+                router:
+                  currentDestTxIds[activeAccountAddress]?.router.map((item) =>
+                    item.srcTx === sourceTxHash
+                      ? { ...item, status: BridgeDestTxStatus.Failed }
+                      : item,
+                  ) || [],
+                hyperlane: currentDestTxIds[activeAccountAddress]?.hyperlane,
+              },
+            };
+            return updatedDestTxIds;
+          });
         } else if (response.data.status === 'completed') {
           updateTxState(sourceTxHash, BridgeTxState.Completed);
-          setIsRouterDestinationTxFinalized(true);
+          setDestTxIds((prevValue) => {
+            const currentDestTxIds = prevValue?.value || {};
+            const updatedDestTxIds = {
+              ...currentDestTxIds,
+              [activeAccountAddress]: {
+                router:
+                  currentDestTxIds[activeAccountAddress]?.router.map((item) =>
+                    item.srcTx === sourceTxHash
+                      ? { ...item, status: BridgeDestTxStatus.Completed }
+                      : item,
+                  ) || [],
+                hyperlane: currentDestTxIds[activeAccountAddress]?.hyperlane,
+              },
+            };
+            return updatedDestTxIds;
+          });
         }
 
         return true;
@@ -316,23 +406,53 @@ export const BridgeConfirmationModal = ({
         return false;
       }
     },
-    [updateTxState],
+    [activeAccountAddress, setDestTxIds, updateTxState],
   );
 
+  const finalizePendingRouterTxs = useCallback(async () => {
+    const destTxnIds = cachedDestTxIds?.value;
+
+    if (!destTxnIds) {
+      return;
+    }
+
+    const routerTxnIds = destTxnIds[activeAccountAddress].router;
+
+    if (routerTxnIds.length === 0) return;
+
+    const checkedRouterTxs = routerTxnIds.map((txId) => {
+      return checkRouterMessageDelivery(txId.srcTx, txId.status);
+    });
+
+    return await Promise.all(checkedRouterTxs);
+  }, [checkRouterMessageDelivery, cachedDestTxIds, activeAccountAddress]);
+
+  const enableFinalizePendingRouterTxs = useMemo(() => {
+    const destTxnIds = cachedDestTxIds?.value;
+
+    if (!destTxnIds) {
+      return false;
+    }
+
+    const routerTxnIds = destTxnIds[activeAccountAddress]?.router || [];
+
+    if (routerTxnIds.length === 0) {
+      return false;
+    }
+
+    return routerTxnIds.some(
+      (txId) => txId.status === BridgeDestTxStatus.Pending,
+    );
+  }, [cachedDestTxIds, activeAccountAddress]);
+
   useQuery({
-    queryKey: ['routerMessageDelivery', routerTxInfo.sourceTxHash],
+    queryKey: ['routerMessageDelivery'],
     queryFn: () => {
-      if (!routerTxInfo.sourceTxHash) {
-        return null;
-      }
-      return checkRouterMessageDelivery(routerTxInfo.sourceTxHash);
+      return finalizePendingRouterTxs();
     },
-    refetchInterval: 5000,
+    refetchInterval: 10000,
     refetchIntervalInBackground: true,
-    enabled:
-      !isRouterDestinationTxFinalized &&
-      !!routerTxInfo.sourceTxHash &&
-      token.bridgeType === EVMTokenBridgeEnum.Router,
+    enabled: enableFinalizePendingRouterTxs,
     retry: true,
   });
 
@@ -354,14 +474,45 @@ export const BridgeConfirmationModal = ({
             const message =
               HyperlaneCore.getDispatchedMessages(hyperlaneReceipt);
             if (message.length > 0) {
-              setHyperlaneDestinationTxInfo({
-                sourceTxHash: txHash,
-                messageId: message[0].id,
+              setDestTxIds((prevValue) => {
+                const currentDestTxIds = prevValue?.value || {};
+                const updatedDestTxIds = {
+                  ...currentDestTxIds,
+                  [activeAccountAddress]: {
+                    router: [
+                      ...(currentDestTxIds[activeAccountAddress]?.router || []),
+                    ],
+                    hyperlane: [
+                      ...(currentDestTxIds[activeAccountAddress]?.hyperlane ||
+                        []),
+                      {
+                        srcTx: txHash,
+                        msgId: message[0].id,
+                        destChain: destinationChain,
+                        status: BridgeDestTxStatus.Pending,
+                      },
+                    ],
+                  },
+                };
+                return updatedDestTxIds;
               });
             }
           } else {
             updateTxState(txHash, BridgeTxState.Pending);
-            setRouterTxInfo({ sourceTxHash: txHash });
+            setDestTxIds((prevValue) => {
+              const currentDestTxIds = prevValue?.value || {};
+              const updatedDestTxIds = {
+                ...currentDestTxIds,
+                [activeAccountAddress]: {
+                  router: [
+                    ...(currentDestTxIds[activeAccountAddress]?.router || []),
+                    { srcTx: txHash, status: BridgeDestTxStatus.Pending },
+                  ],
+                  hyperlane: currentDestTxIds[activeAccountAddress]?.hyperlane,
+                },
+              };
+              return updatedDestTxIds;
+            });
           }
         } else {
           updateTxState(txHash, BridgeTxState.Failed);
@@ -371,7 +522,14 @@ export const BridgeConfirmationModal = ({
         updateTxState(txHash, BridgeTxState.Failed);
       }
     },
-    [srcChainPublicClient, updateTxState, token.bridgeType],
+    [
+      srcChainPublicClient,
+      token.bridgeType,
+      updateTxState,
+      setDestTxIds,
+      activeAccountAddress,
+      destinationChain,
+    ],
   );
 
   const walletClient = useWalletClient();

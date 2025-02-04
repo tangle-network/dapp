@@ -7,10 +7,14 @@ import {
 import { TxProgressor } from '@webb-tools/webb-ui-components/components/TxProgressor';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import { Decimal } from 'decimal.js';
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { useBridgeTxQueue } from '../../context/bridge/BridgeTxQueueContext';
+import useLocalStorage, {
+  LocalStorageKey,
+} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
+import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
 
 interface BridgeTxQueueItemProps {
   tx: BridgeQueueTxItem;
@@ -19,6 +23,48 @@ interface BridgeTxQueueItemProps {
 
 const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
   const { deleteTxFromQueue } = useBridgeTxQueue();
+  const { setWithPreviousValue: setDestTxIds } = useLocalStorage(
+    LocalStorageKey.BRIDGE_DEST_TX_IDS,
+  );
+  const [activeAccount] = useActiveAccount();
+  const activeAccountAddress = activeAccount?.address || '';
+
+  const removeTxFromLocalStorage = useCallback(
+    (tx: BridgeQueueTxItem) => {
+      if (tx.bridgeType === EVMTokenBridgeEnum.Hyperlane) {
+        setDestTxIds((prevValue) => {
+          const currentDestTxIds = prevValue?.value || {};
+          const updatedDestTxIds = {
+            ...currentDestTxIds,
+            [activeAccountAddress]: {
+              router: currentDestTxIds[activeAccountAddress]?.router,
+              hyperlane:
+                currentDestTxIds[activeAccountAddress]?.hyperlane.filter(
+                  (item) => item.srcTx !== tx.hash,
+                ) || [],
+            },
+          };
+          return updatedDestTxIds;
+        });
+      } else if (tx.bridgeType === EVMTokenBridgeEnum.Router) {
+        setDestTxIds((prevValue) => {
+          const currentDestTxIds = prevValue?.value || {};
+          const updatedDestTxIds = {
+            ...currentDestTxIds,
+            [activeAccountAddress]: {
+              router:
+                currentDestTxIds[activeAccountAddress]?.router.filter(
+                  (item) => item.srcTx !== tx.hash,
+                ) || [],
+              hyperlane: currentDestTxIds[activeAccountAddress]?.hyperlane,
+            },
+          };
+          return updatedDestTxIds;
+        });
+      }
+    },
+    [activeAccountAddress, setDestTxIds],
+  );
 
   return (
     <TxProgressor.Root
@@ -64,6 +110,7 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
             variant="body2"
             onClick={() => {
               deleteTxFromQueue(tx.hash);
+              removeTxFromLocalStorage(tx);
             }}
             className="text-right cursor-pointer text-red-70 dark:text-red-50"
           >

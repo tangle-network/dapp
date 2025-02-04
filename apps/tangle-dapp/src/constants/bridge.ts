@@ -3319,6 +3319,15 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
 ];
 
 export const mailboxAddress = {
-  holesky: '0xAA40AD8f072b8bbbE26637678fE0E74A47eFbe31',
-  tangletestnet: '0x47818e35750e70CC2245B00a17118F8268Ff6Bfd',
+  [PresetTypedChainId.Arbitrum]: '0x979Ca5202784112f4738403dBec5D0F3B9daabB9',
+  [PresetTypedChainId.Base]: '0xeA87ae93Fa0019a82A727bfd3eBd1cFCa8f64f1D',
+  [PresetTypedChainId.BSC]: '0x2971b9Aec44bE4eb673DF1B88cDB57b96eefe8a4',
+  [PresetTypedChainId.Linea]: '0x02d16BC51af6BfD153d67CA61754cF912E82C4d9',
+  [PresetTypedChainId.Holesky]: '0xAA40AD8f072b8bbbE26637678fE0E74A47eFbe31',
+  [PresetTypedChainId.Optimism]: '0xd4C1905BB1D26BC93DAC913e13CaCC278CdCC80D',
+  [PresetTypedChainId.Polygon]: '0x5d934f4e2f797775e53561bB72aca21ba36B96BB',
+  [PresetTypedChainId.TangleMainnetEVM]:
+    '0x2f2aFaE1139Ce54feFC03593FeE8AB2aDF4a85A7',
+  [PresetTypedChainId.TangleTestnetEVM]:
+    '0x47818e35750e70CC2245B00a17118F8268Ff6Bfd',
 };
