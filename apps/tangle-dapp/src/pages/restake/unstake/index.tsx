@@ -199,8 +199,12 @@ const RestakeUnstakeForm: FC = () => {
       }
 
       await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
+
+      setFormValue('amount', '');
+      setFormValue('assetId', '0x0');
+      setFormValue('operatorAccountId', '' as SubstrateAddress);
     },
-    [vaults, isReady, restakeApi],
+    [vaults, isReady, restakeApi, setFormValue],
   );
 
   return (
