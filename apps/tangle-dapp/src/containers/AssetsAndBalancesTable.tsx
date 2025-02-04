@@ -1,5 +1,6 @@
 'use client';
 
+import useVaultRewards from '@webb-tools/tangle-shared-ui/data/rewards/useVaultRewards';
 import { BN, BN_ZERO } from '@polkadot/util';
 import {
   createColumnHelper,
@@ -11,13 +12,6 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import useTotalIssuance from '@webb-tools/tangle-shared-ui/data/balances/useTotalIssuance';
-import useDecayRate from '@webb-tools/tangle-shared-ui/data/rewards/useDecayRate';
-import useDecayStartPeriod from '@webb-tools/tangle-shared-ui/data/rewards/useDecayStartPeriod';
-import useUserVaultClaimedRewards from '@webb-tools/tangle-shared-ui/data/rewards/useUserVaultClaimedRewards';
-import useVaultsTotalDeposit from '@webb-tools/tangle-shared-ui/data/rewards/useVaultsTotalDeposit';
-import useBestFinalizedBlockNumber from '@webb-tools/tangle-shared-ui/hooks/useBestFinalizedBlockNumber';
-import calculateVaultAnnualRewards from '@webb-tools/tangle-shared-ui/utils/calculateVaultAnnualRewards';
 import {
   AmountFormatStyle,
   Button,
@@ -74,7 +68,7 @@ type Row = {
   delegated: BN;
   delegatedInUsd?: number;
   points?: number;
-  vaultAnnualRewards?: BN | null;
+  vaultReward?: BN | null;
   decimals: number;
   depositCap?: BN;
 };
@@ -165,7 +159,7 @@ const COLUMNS = [
       );
     },
   }),
-  COLUMN_HELPER.accessor('vaultAnnualRewards', {
+  COLUMN_HELPER.accessor('vaultReward', {
     header: () => (
       <HeaderCell
         title="Rewards"
@@ -173,11 +167,11 @@ const COLUMNS = [
       />
     ),
     cell: (props) => {
-      const annualRewards = props.getValue();
+      const vaultReward = props.getValue();
 
-      const fmtRewards = BN.isBN(annualRewards)
+      const fmtRewards = BN.isBN(vaultReward)
         ? formatDisplayAmount(
-            annualRewards,
+            vaultReward,
             TANGLE_TOKEN_DECIMALS,
             AmountFormatStyle.SHORT,
           )
@@ -311,13 +305,7 @@ const AssetsAndBalancesTable: FC = () => {
     isLoading,
   } = useRestakeContext();
 
-  const { result: decayStartPeriod } = useDecayStartPeriod();
-  const { result: decayRate } = useDecayRate();
-
-  const { result: totalIssuance } = useTotalIssuance();
-  const { result: vaultsTotalDeposit } = useVaultsTotalDeposit();
-  const { result: bestFinalizedBlockNumber } = useBestFinalizedBlockNumber();
-  const { result: userVaultClaimedRewards } = useUserVaultClaimedRewards();
+  const { result: vaultRewards } = useVaultRewards();
 
   const getAssetTvl = useCallback(
     (assetId: RestakeAssetId) => {
@@ -347,9 +335,6 @@ const AssetsAndBalancesTable: FC = () => {
         if (config === undefined) {
           return [];
         }
-
-        const vaultTotalDeposit =
-          vaultsTotalDeposit?.get(metadata.vaultId) ?? BN_ZERO;
 
         const assetId = assertRestakeAssetId(assetIdString);
 
@@ -381,20 +366,7 @@ const AssetsAndBalancesTable: FC = () => {
           get(deposits, assetId)?.delegatedAmount ?? ZERO_BIG_INT;
         const delegated = new BN(delegatedBigInt.toString());
 
-        const [userLastClaimedBlockNumber] = userVaultClaimedRewards?.get(
-          metadata.vaultId,
-        ) ?? [null, null];
-
-        const vaultAnnualRewards = calculateVaultAnnualRewards(
-          depositCap,
-          config.apy,
-          totalIssuance,
-          vaultTotalDeposit,
-          bestFinalizedBlockNumber,
-          userLastClaimedBlockNumber,
-          decayStartPeriod,
-          decayRate,
-        );
+        const vaultReward = vaultRewards?.get(metadata.vaultId);
 
         const tvl = getAssetTvl(assetId);
 
@@ -405,7 +377,7 @@ const AssetsAndBalancesTable: FC = () => {
           available,
           deposited,
           delegated,
-          vaultAnnualRewards,
+          vaultReward,
           tokenSymbol: metadata.symbol,
           decimals: metadata.decimals,
           depositCap,
@@ -415,7 +387,7 @@ const AssetsAndBalancesTable: FC = () => {
       });
     },
     // prettier-ignore
-    [assets, bestFinalizedBlockNumber, customAssetBalances, decayRate, decayStartPeriod, delegatorInfo?.deposits, erc20Balances, getAssetTvl, nativeTokenSymbol, rewardConfig, totalIssuance, userVaultClaimedRewards, vaultsTotalDeposit],
+    [assets, customAssetBalances, delegatorInfo?.deposits, erc20Balances, getAssetTvl, nativeTokenSymbol, rewardConfig, vaultRewards],
   );
 
   // Combine all rows.
