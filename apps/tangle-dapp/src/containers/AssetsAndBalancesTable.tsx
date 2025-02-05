@@ -237,7 +237,7 @@ const COLUMNS = [
           : calculateBnRatio(tvl, depositCap);
 
       return (
-        <TableCellWrapper>
+        <TableCellWrapper removeRightBorder>
           <div className="flex items-center justify-center gap-1">
             {capacityPercentage !== null && (
               <CircularProgress
@@ -262,7 +262,7 @@ const COLUMNS = [
     header: () => null,
     enableSorting: false,
     cell: (props) => (
-      <TableCellWrapper removeRightBorder>
+      <TableCellWrapper removeRightBorder className="justify-end">
         <Link
           to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_ASSET_ID}=${props.row.original.assetId}`}
         >
@@ -452,6 +452,7 @@ const AssetsAndBalancesTable: FC = () => {
       title={pluralize('asset', rows.length !== 1)}
       tableProps={table}
       trClassName="cursor-default"
+      thClassName="pl-0"
       isPaginated
     />
   );
