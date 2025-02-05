@@ -21,9 +21,7 @@ const useVaultRewards = () => {
         const vaultPotAccountEntries = Array.from(vaultPotAccounts.entries());
 
         return apiRx.query.balances.account
-          .multi(
-            vaultPotAccountEntries.map(([, accountId]) => [accountId] as const),
-          )
+          .multi(vaultPotAccountEntries.map(([, accountId]) => accountId))
           .pipe(
             map((balances) => {
               return balances.reduce((acc, balance, idx) => {
