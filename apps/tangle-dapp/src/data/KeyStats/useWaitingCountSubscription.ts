@@ -2,7 +2,7 @@ import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import { getApiRx } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
 import { useEffect, useState } from 'react';
-import { Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 
 export default function useWaitingCountSubscription(
   defaultValue: { value1: number | null; value2: number | null } = {
@@ -23,11 +23,22 @@ export default function useWaitingCountSubscription(
       try {
         const api = await getApiRx(rpcEndpoint);
 
-        sub = api.derive.staking.waitingInfo().subscribe((waitingInfo) => {
-          const newWaitingCount = waitingInfo.waiting.length;
+        // Combine both active validators and all validators observables
+        sub = combineLatest([
+          api.query.session.validators(), // Get active validators
+          api.query.staking.validators.entries(), // Get all validators
+        ]).subscribe(([activeValidators, allValidatorsEntries]) => {
+          // Count of active validators
+          const activeCount = activeValidators.length;
 
-          if (isMounted && newWaitingCount !== value1) {
-            setValue1(newWaitingCount);
+          // Count of all validators (filtering out empty entries)
+          const totalCount = allValidatorsEntries.length;
+
+          // Calculate waiting count as the difference
+          const waitingCount = Math.max(0, totalCount - activeCount);
+
+          if (isMounted && waitingCount !== value1) {
+            setValue1(waitingCount);
             setIsLoading(false);
           }
         });

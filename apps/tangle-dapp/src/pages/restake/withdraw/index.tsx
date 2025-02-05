@@ -161,7 +161,7 @@ const RestakeWithdrawForm: FC = () => {
     restakeApi !== null && !isSubmitting && selectedAsset !== null;
 
   const onSubmit = useCallback<SubmitHandler<WithdrawFormFields>>(
-    ({ amount, assetId }) => {
+    async ({ amount, assetId }) => {
       if (!isReady) {
         return;
       }
@@ -172,9 +172,12 @@ const RestakeWithdrawForm: FC = () => {
         return;
       }
 
-      return restakeApi.withdraw(assetId, amountBn);
+      await restakeApi.withdraw(assetId, amountBn);
+
+      setFormValue('amount', '', { shouldValidate: false });
+      setFormValue('assetId', '0x0', { shouldValidate: false });
     },
-    [isReady, restakeApi, selectedAsset?.decimals],
+    [isReady, restakeApi, selectedAsset?.decimals, setFormValue],
   );
 
   return (

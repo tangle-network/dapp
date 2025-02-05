@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BridgeQueueTxItem, Payout, TangleTokenSymbol } from '../types';
 import Optional from '../utils/Optional';
+import { ChainConfig } from '@webb-tools/dapp-config';
 
 export enum LocalStorageKey {
   PAYOUTS = 'payouts',
@@ -13,6 +14,7 @@ export enum LocalStorageKey {
   SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
   BRIDGE_TX_QUEUE_BY_ACC = 'bridgeTxQueue',
   BRIDGE_TOKENS_TO_ACC = 'bridgeTokensToAcc',
+  BRIDGE_DEST_TX_IDS = 'bridgeDestTxIds',
 }
 
 export type PayoutsCache = {
@@ -35,6 +37,28 @@ export type TxQueueByAccount = Record<string, BridgeQueueTxItem[]>;
 
 export type BridgeTokensToAcc = Record<string, string[]>; // accountAddress -> tokenAddress[]
 
+export enum BridgeDestTxStatus {
+  Completed = 'completed',
+  Failed = 'failed',
+  Pending = 'pending',
+}
+
+export type BridgeDestTxIds = Record<
+  string,
+  {
+    hyperlane: {
+      srcTx: string;
+      msgId: string;
+      destChain: ChainConfig;
+      status: BridgeDestTxStatus;
+    }[];
+    router: {
+      srcTx: string;
+      status: BridgeDestTxStatus;
+    }[];
+  }
+>; // accountAddress -> { hyperlane: [], router: [] }
+
 /**
  * Type definition associating local storage keys with their
  * respective value types.
@@ -52,7 +76,9 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
             ? TxQueueByAccount
             : T extends LocalStorageKey.BRIDGE_TOKENS_TO_ACC
               ? BridgeTokensToAcc
-              : never;
+              : T extends LocalStorageKey.BRIDGE_DEST_TX_IDS
+                ? BridgeDestTxIds
+                : never;
 
 export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,

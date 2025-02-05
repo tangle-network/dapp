@@ -223,7 +223,7 @@ const RestakeDelegateForm: FC = () => {
     restakeApi !== null && !isSubmitting && selectedAsset !== null;
 
   const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>(
-    ({ amount, assetId, operatorAccountId }) => {
+    async ({ amount, assetId, operatorAccountId }) => {
       if (!isReady) {
         return;
       }
@@ -234,9 +234,13 @@ const RestakeDelegateForm: FC = () => {
         return;
       }
 
-      return restakeApi.delegate(operatorAccountId, assetId, amountBn);
+      await restakeApi.delegate(operatorAccountId, assetId, amountBn);
+
+      setValue('operatorAccountId', '', { shouldValidate: false });
+      setValue('amount', '', { shouldValidate: false });
+      setValue('assetId', '', { shouldValidate: false });
     },
-    [isReady, restakeApi, selectedAsset?.decimals],
+    [isReady, restakeApi, selectedAsset?.decimals, setValue],
   );
 
   const operators = useMemo<RestakeOperator[]>(() => {
