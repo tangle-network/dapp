@@ -8,7 +8,7 @@ import { useCallback } from 'react';
 const useEvmCallPermitNonce = (): bigint | null => {
   const { evmAddress } = useAgnosticAccountInfo();
 
-  const { value: nonce } = useContractRead(
+  const { data: nonce } = useContractRead(
     CALL_PERMIT_PRECOMPILE_ABI,
     useCallback(() => {
       if (evmAddress === null) {
@@ -24,7 +24,7 @@ const useEvmCallPermitNonce = (): bigint | null => {
   );
 
   // TODO: Handle error case explicitly.
-  return nonce instanceof Error ? null : nonce;
+  return nonce instanceof Error ? null : (nonce ?? null);
 };
 
 export default useEvmCallPermitNonce;

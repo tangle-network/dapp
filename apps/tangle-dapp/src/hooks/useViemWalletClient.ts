@@ -1,5 +1,5 @@
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import createTangleViemChainFromNetwork from '@webb-tools/tangle-shared-ui/utils/createTangleViemChainFromNetwork';
+import useEvmChain from '@webb-tools/tangle-shared-ui/hooks/useEvmChain';
 import { useEffect, useState } from 'react';
 import {
   createWalletClient,
@@ -38,21 +38,13 @@ declare global {
 const useViemWalletClient = (transport = WalletClientTransport.HTTP_RPC) => {
   const [walletClient, setWalletClient] = useState<WalletClient | null>(null);
   const { network } = useNetworkStore();
+  const evmChain = useEvmChain();
 
   // Update the wallet client when the network changes.
   useEffect(() => {
-    if (
-      network.evmChainId === undefined ||
-      network.httpRpcEndpoint === undefined
-    ) {
+    if (evmChain === null || network.httpRpcEndpoint === undefined) {
       return;
     }
-
-    const chain = createTangleViemChainFromNetwork({
-      ...network,
-      evmChainId: network.evmChainId,
-      httpRpcEndpoint: network.httpRpcEndpoint,
-    });
 
     let transport_: Transport;
 
@@ -76,12 +68,12 @@ const useViemWalletClient = (transport = WalletClientTransport.HTTP_RPC) => {
     }
 
     const newWalletClient = createWalletClient({
-      chain,
+      chain: evmChain,
       transport: transport_,
     });
 
     setWalletClient(newWalletClient);
-  }, [network, transport]);
+  }, [evmChain, network, transport]);
 
   return walletClient;
 };

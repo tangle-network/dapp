@@ -1,6 +1,4 @@
-import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { ExplorerType } from '@webb-tools/tangle-shared-ui/types';
 import {
   Avatar,
   Chip,
@@ -17,9 +15,10 @@ import ValidatorSocials from '../../../components/ValidatorSocials';
 import useValidatorInfoCard from '../../../data/validatorDetails/useValidatorInfoCard';
 import ValueSkeleton from './ValueSkeleton';
 import { CardWithTangleLogo } from '../../../components';
+import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 interface InfoCardProps {
-  validatorAddress: string;
+  validatorAddress: SubstrateAddress;
   className?: string;
 }
 
@@ -28,10 +27,15 @@ const InfoCard: FC<InfoCardProps> = ({
   className,
 }: InfoCardProps) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
-  const { network } = useNetworkStore();
+
+  const createExplorerAccountUrl = useNetworkStore(
+    (store) => store.network.createExplorerAccountUrl,
+  );
 
   const { name, isActive, nominations, twitter, email, web, isLoading } =
     useValidatorInfoCard(rpcEndpoint, validatorAddress);
+
+  const accountAddressUrl = createExplorerAccountUrl(validatorAddress);
 
   return (
     <CardWithTangleLogo className={twMerge('min-h-[300px]', className)}>
@@ -75,15 +79,12 @@ const InfoCard: FC<InfoCardProps> = ({
                 iconClassName="!fill-mono-100"
               />
 
-              <ExternalLinkIcon
-                href={makeExplorerUrl(
-                  network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl,
-                  validatorAddress,
-                  'address',
-                  ExplorerType.Substrate,
-                ).toString()}
-                className="!fill-mono-100"
-              />
+              {accountAddressUrl !== null && (
+                <ExternalLinkIcon
+                  href={accountAddressUrl}
+                  className="!fill-mono-100"
+                />
+              )}
             </div>
           </div>
         </div>

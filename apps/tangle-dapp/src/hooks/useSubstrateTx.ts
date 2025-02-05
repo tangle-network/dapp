@@ -4,7 +4,6 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import { PromiseOrT } from '@webb-tools/abstract-api-provider';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
-import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubstrateExplorerUrl';
 import useSubstrateInjectedExtension from '@webb-tools/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
 import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
 import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
@@ -222,9 +221,12 @@ export function useSubstrateTxWithNotification<Context = void>(
   getSuccessMessage?: GetSuccessMessageFn<Context>,
   overrideRpcEndpoint?: string,
 ) {
-  const { resolveExplorerUrl } = useSubstrateExplorerUrl();
   const activeAccountAddress = useActiveAccountAddress();
   const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
+
+  const createExplorerTxUrl = useNetworkStore(
+    (store) => store.network.createExplorerTxUrl,
+  );
 
   const {
     execute: execute_,
@@ -274,7 +276,7 @@ export function useSubstrateTxWithNotification<Context = void>(
     if (error !== null) {
       notifyError(txName, error);
     } else if (txHash !== null && txBlockHash !== null) {
-      const explorerUrl = resolveExplorerUrl(txHash, txBlockHash);
+      const explorerUrl = createExplorerTxUrl(false, txHash, txBlockHash);
 
       notifySuccess(txName, explorerUrl, successMessage);
     }

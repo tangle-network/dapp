@@ -1,6 +1,5 @@
 import { HexString } from '@polkadot/util/types';
 import { useWebContext } from '@webb-tools/api-provider-environment';
-import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import {
   calculateTypedChainId,
@@ -28,6 +27,7 @@ import useEvmAddress20 from '../../hooks/useEvmAddress';
 import useTxNotification, {
   NotificationSteps,
 } from '../../hooks/useTxNotification';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 
 export type ContractWriteOptions<
   Abi extends ViemAbi,
@@ -45,6 +45,10 @@ const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
   const activeEvmAddress20 = useEvmAddress20();
   const { activeChain, activeWallet, switchChain } = useWebContext();
   const { notifyProcessing, notifySuccess, notifyError } = useTxNotification();
+
+  const createExplorerTxUrl = useNetworkStore(
+    (store) => store.network.createExplorerTxUrl,
+  );
 
   const write = useCallback(
     async <
@@ -98,16 +102,7 @@ const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
         });
 
         if (txReceipt.status === 'success') {
-          let explorerUrl: string | undefined = undefined;
-
-          if (activeChain?.blockExplorers?.default !== undefined) {
-            explorerUrl = makeExplorerUrl(
-              activeChain.blockExplorers.default.url,
-              txHash,
-              'tx',
-              'web3',
-            );
-          }
+          const explorerUrl = createExplorerTxUrl(true, txHash);
 
           notifySuccess(options.txName, explorerUrl);
         } else {
@@ -133,6 +128,7 @@ const useContractWrite = <Abi extends ViemAbi>(abi: Abi) => {
       activeEvmAddress20,
       activeWallet,
       connectorClient,
+      createExplorerTxUrl,
       notifyError,
       notifyProcessing,
       notifySuccess,

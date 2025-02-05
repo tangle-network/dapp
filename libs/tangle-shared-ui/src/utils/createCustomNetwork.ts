@@ -13,6 +13,8 @@ const createCustomNetwork = (customRpcEndpoint: string): Network => ({
   nodeType: 'standalone',
   wsRpcEndpoint: customRpcEndpoint,
   polkadotJsDashboardUrl: getPolkadotJsDashboardUrl(customRpcEndpoint),
+  createExplorerAccountUrl: () => null,
+  createExplorerTxUrl: () => null,
 });
 
 export default createCustomNetwork;

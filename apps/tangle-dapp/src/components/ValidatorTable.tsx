@@ -7,10 +7,8 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
 import { sortByAddressOrIdentity } from '@webb-tools/tangle-shared-ui/components/tables/utils';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { ExplorerType } from '@webb-tools/tangle-shared-ui/types';
 import {
   AmountFormatStyle,
   Avatar,
@@ -106,7 +104,9 @@ type Props = {
 };
 
 const ValidatorTable: FC<Props> = ({ data, isWaiting, searchValue }) => {
-  const { network } = useNetworkStore();
+  const createExplorerAccountUrl = useNetworkStore(
+    (store) => store.network.createExplorerAccountUrl,
+  );
 
   const [sorting, setSorting] = useState<SortingState>(() => {
     if (isWaiting) {
@@ -126,12 +126,7 @@ const ValidatorTable: FC<Props> = ({ data, isWaiting, searchValue }) => {
           const address = props.getValue();
           const identity = props.row.original.identityName;
 
-          const accountExplorerLink = makeExplorerUrl(
-            network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl,
-            address,
-            'address',
-            ExplorerType.Substrate,
-          ).toString();
+          const accountExplorerUrl = createExplorerAccountUrl(address);
 
           return (
             <div className="flex items-center space-x-1">
@@ -154,17 +149,19 @@ const ValidatorTable: FC<Props> = ({ data, isWaiting, searchValue }) => {
                 iconClassName="!fill-mono-160 dark:!fill-mono-80"
               />
 
-              <ExternalLinkIcon
-                href={accountExplorerLink}
-                className="fill-mono-160 dark:fill-mono-80"
-              />
+              {accountExplorerUrl !== null && (
+                <ExternalLinkIcon
+                  href={accountExplorerUrl}
+                  className="fill-mono-160 dark:fill-mono-80"
+                />
+              )}
             </div>
           );
         },
       }),
       ...getTableColumns(isWaiting),
     ],
-    [isWaiting, network.nativeExplorerUrl, network.polkadotJsDashboardUrl],
+    [createExplorerAccountUrl, isWaiting],
   );
 
   const table = useReactTable({

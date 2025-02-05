@@ -183,6 +183,8 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
         substrate?: number;
       },
     ) => {
+      console.debug('Connecting wallet ...', nextWallet);
+
       try {
         subjects.setSelectedWallet(nextWallet);
         subjects.setWalletState(WalletState.CONNECTING);
@@ -192,6 +194,7 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
         if (provider === undefined || provider === false) {
           subjects.setWalletState(WalletState.FAILED);
           subjects.setConnectError(new WalletNotInstalledError(nextWallet.id));
+
           return;
         }
 
@@ -206,6 +209,7 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
         );
 
         const nextChain = chainsPopulated[nextTypedChainId];
+
         assert(
           nextChain,
           WebbError.from(WebbErrorCodes.UnsupportedChain).message,
@@ -214,6 +218,7 @@ const useConnectWallet = (): UseConnectWalletReturnType => {
         await switchChain(nextChain, nextWallet);
       } catch (error) {
         subjects.setWalletState(WalletState.FAILED);
+
         subjects.setConnectError(
           error instanceof WebbError
             ? error
@@ -265,16 +270,11 @@ function useMemoValues(props: {
   const { walletState, selectedWallet, typedChainId } = props;
   const { apiConfig, activeWallet, loading } = useWebContext();
 
-  const connectingWalletId = useMemo<number | undefined>(
-    () =>
-      walletState === WalletState.CONNECTING ? selectedWallet?.id : undefined,
-    [selectedWallet?.id, walletState],
-  );
+  const connectingWalletId =
+    walletState === WalletState.CONNECTING ? selectedWallet?.id : undefined;
 
-  const failedWalletId = useMemo<number | undefined>(
-    () => (walletState === WalletState.FAILED ? selectedWallet?.id : undefined),
-    [selectedWallet?.id, walletState],
-  );
+  const failedWalletId =
+    walletState === WalletState.FAILED ? selectedWallet?.id : undefined;
 
   const isWalletConnected = useMemo(
     () => [activeWallet, !loading].every(Boolean),

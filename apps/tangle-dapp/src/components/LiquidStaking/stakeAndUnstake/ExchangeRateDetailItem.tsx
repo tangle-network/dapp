@@ -1,7 +1,6 @@
 import { SkeletonLoader } from '@webb-tools/webb-ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { FC } from 'react';
-import { twMerge } from 'tailwind-merge';
 
 import { LsToken } from '../../../constants/liquidStaking/types';
 import useLsActivePoolDisplayName from '../../../data/liquidStaking/useLsActivePoolDisplayName';
@@ -14,7 +13,7 @@ export type ExchangeRateDetailItemProps = {
 
 const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({ token }) => {
   const { displayName: lsActivePoolDisplayName } = useLsActivePoolDisplayName();
-  const { exchangeRate, isRefreshing } = useLsExchangeRate();
+  const exchangeRate = useLsExchangeRate();
 
   const exchangeRateElement =
     exchangeRate instanceof Error ? (
@@ -29,12 +28,7 @@ const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({ token }) => {
     exchangeRateElement instanceof Error ? (
       exchangeRateElement
     ) : (
-      <div
-        className={twMerge(
-          'flex gap-1 items-center justify-center whitespace-nowrap',
-          isRefreshing && 'animate-pulse',
-        )}
-      >
+      <div className="flex gap-1 items-center justify-center whitespace-nowrap">
         1 {token} = {exchangeRateElement}{' '}
         {lsActivePoolDisplayName?.toUpperCase() ?? EMPTY_VALUE_PLACEHOLDER}
       </div>

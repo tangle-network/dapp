@@ -1,6 +1,6 @@
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
 
-async function getPolkadotBasedWallet(
+async function findSubstrateWallet(
   appName: string,
   extensionName: string,
 ): Promise<InjectedExtension | undefined> {
@@ -13,10 +13,10 @@ async function getPolkadotBasedWallet(
 
     const extensions = await web3Enable(appName);
 
-    return extensions.find((ex) => ex.name === extensionName);
+    return extensions.find((extension) => extension.name === extensionName);
   } catch (error) {
     console.error('Error getting polkadot based wallet', error);
   }
 }
 
-export default getPolkadotBasedWallet;
+export default findSubstrateWallet;

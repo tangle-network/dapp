@@ -1,9 +1,9 @@
 import type { WalletConfig } from '../wallets/wallet-config.interface';
-import { walletsConfig as defaultWalletConfig } from '../wallets/wallets-config';
+import { WALLET_CONFIG } from '../wallets/wallets-config';
 
 export default function getWalletIdsForTypedChainId(
   typedChainId: number,
-  walletsConfig: Record<number, WalletConfig> = defaultWalletConfig,
+  walletsConfig: Record<number, WalletConfig> = WALLET_CONFIG,
 ): Array<WalletConfig['id']> {
   return Array.from(
     Object.values(walletsConfig)

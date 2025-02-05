@@ -24,24 +24,32 @@ import {
 import { FC, useCallback, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
-import useSubstrateExplorerUrl from '../../hooks/useSubstrateExplorerUrl';
 import { BaseError } from 'viem';
+import {
+  EvmAddress,
+  SubstrateAddress,
+} from '@webb-tools/webb-ui-components/types/address';
 
 const WalletDropdown: FC<{
   accountName?: string;
-  accountAddress: string;
+  accountAddress: SubstrateAddress | EvmAddress;
   wallet: WalletConfig;
 }> = ({ accountAddress, accountName, wallet }) => {
   const { inactivateApi } = useWebContext();
-  const { getExplorerUrl } = useSubstrateExplorerUrl();
   const { notificationApi } = useWebbUI();
   const { wallets } = useWallets();
+
+  const createExplorerAccountUrl = useNetworkStore(
+    (store) => store.network.createExplorerAccountUrl,
+  );
 
   const currentManagedWallet = useMemo<ManagedWallet | undefined>(() => {
     return wallets.find((wallet) => wallet.connected);
   }, [wallets]);
 
-  const accountExplorerUrl = getExplorerUrl(accountAddress, 'address');
+  const accountExplorerUrl = useMemo(() => {
+    return createExplorerAccountUrl(accountAddress);
+  }, [accountAddress, createExplorerAccountUrl]);
 
   const handleDisconnect = useCallback(async () => {
     try {
@@ -94,10 +102,7 @@ const WalletDropdown: FC<{
                 />
 
                 {accountExplorerUrl !== null && (
-                  <ExternalLinkIcon
-                    href={accountExplorerUrl.toString()}
-                    size="md"
-                  />
+                  <ExternalLinkIcon href={accountExplorerUrl} size="md" />
                 )}
               </div>
             </div>
