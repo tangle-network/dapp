@@ -10,13 +10,12 @@ const useIsBridgeNativeToken = (
     (sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM &&
       token.tokenType === EVMTokenEnum.TNT) ||
     (sourceTypedChainId === PresetTypedChainId.Polygon &&
-      token.tokenSymbol === 'POL') ||
+      token.symbol === 'POL') ||
     ((sourceTypedChainId === PresetTypedChainId.Optimism ||
       sourceTypedChainId === PresetTypedChainId.Arbitrum ||
       sourceTypedChainId === PresetTypedChainId.Base) &&
-      token.tokenSymbol === 'ETH') ||
-    (sourceTypedChainId === PresetTypedChainId.BSC &&
-      token.tokenSymbol === 'BNB');
+      token.symbol === 'ETH') ||
+    (sourceTypedChainId === PresetTypedChainId.BSC && token.symbol === 'BNB');
 
   return isNativeToken;
 };

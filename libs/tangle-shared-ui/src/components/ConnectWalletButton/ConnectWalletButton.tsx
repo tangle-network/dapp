@@ -9,7 +9,8 @@ import UpdateMetadataButton from '../UpdateMetadataButton';
 import WalletDropdown from './WalletDropdown';
 import ConnectWalletModal from './ConnectWalletModal';
 import {
-  isSubstrateAddress,
+  assertSubstrateAddress,
+  isEvmAddress,
   toSubstrateAddress,
 } from '@webb-tools/webb-ui-components';
 
@@ -23,10 +24,10 @@ const ConnectWalletButton = () => {
   const accountAddress = useMemo(() => {
     if (activeAccount?.address === undefined) {
       return null;
-    } else if (!isSubstrateAddress(activeAccount.address)) {
+    } else if (isEvmAddress(activeAccount.address)) {
       return activeAccount.address;
     } else if (network.ss58Prefix === undefined) {
-      return activeAccount.address;
+      return assertSubstrateAddress(activeAccount.address);
     }
 
     return toSubstrateAddress(activeAccount.address, network.ss58Prefix);

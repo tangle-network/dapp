@@ -127,7 +127,7 @@ const ValidatorTable: FC<Props> = ({ data, isWaiting, searchValue }) => {
           const identity = props.row.original.identityName;
 
           const accountExplorerLink = makeExplorerUrl(
-            network.nativeExplorerUrl ?? network.polkadotJsDashboardUrl,
+            network.explorerUrl ?? network.polkadotJsDashboardUrl,
             address,
             'address',
             ExplorerType.Substrate,
@@ -164,7 +164,7 @@ const ValidatorTable: FC<Props> = ({ data, isWaiting, searchValue }) => {
       }),
       ...getTableColumns(isWaiting),
     ],
-    [isWaiting, network.nativeExplorerUrl, network.polkadotJsDashboardUrl],
+    [isWaiting, network.explorerUrl, network.polkadotJsDashboardUrl],
   );
 
   const table = useReactTable({
