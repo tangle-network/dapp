@@ -24,7 +24,7 @@ const TVLTable: FC<Props> = ({
   delegatorInfo,
   delegatorTVL,
 }) => {
-  const { vaults: vaultsMetadataMap } = useRestakeContext();
+  const { assets: assetsMetadataMap } = useRestakeContext();
   const rewardConfig = useRestakeRewardConfig();
 
   const vaults = useMemo(() => {
@@ -33,16 +33,16 @@ const TVLTable: FC<Props> = ({
     const delegations = operatorData?.delegations ?? [];
 
     delegations.forEach(({ assetId }) => {
-      if (vaultsMetadataMap[assetId] === undefined) return;
+      if (assetsMetadataMap[assetId] === undefined) return;
 
-      if (vaultsMetadataMap[assetId].vaultId === null) return;
+      if (assetsMetadataMap[assetId].vaultId === null) return;
 
-      const vaultId = vaultsMetadataMap[assetId].vaultId;
+      const vaultId = assetsMetadataMap[assetId].vaultId;
       if (vaults[vaultId] === undefined) {
         // TODO: Find out a proper way to get the vault name, now it's the first token name
-        const name = vaultsMetadataMap[assetId].name;
+        const name = assetsMetadataMap[assetId].name;
         // TODO: Find out a proper way to get the vault symbol, now it's the first token symbol
-        const representToken = vaultsMetadataMap[assetId].symbol;
+        const representToken = assetsMetadataMap[assetId].symbol;
 
         const apyPercentage =
           rewardConfig?.get(vaultId)?.apy.toNumber() ?? null;
@@ -63,7 +63,7 @@ const TVLTable: FC<Props> = ({
     });
 
     return vaults;
-  }, [vaultsMetadataMap, operatorData?.delegations, rewardConfig, vaultTVL]);
+  }, [assetsMetadataMap, operatorData?.delegations, rewardConfig, vaultTVL]);
 
   const delegatorTotalRestakedAssets = useMemo(() => {
     if (!delegatorInfo?.delegations) {
@@ -91,7 +91,7 @@ const TVLTable: FC<Props> = ({
       },
       getExpandedRowContent(row) {
         const vaultId = row.original.id;
-        const vaultAssets = Object.values(vaultsMetadataMap)
+        const vaultAssets = Object.values(assetsMetadataMap)
           .filter((asset) => asset.vaultId === vaultId)
           .map((asset) => {
             const selfStake =
@@ -118,7 +118,7 @@ const TVLTable: FC<Props> = ({
         );
       },
     }),
-    [vaultsMetadataMap, delegatorTVL, delegatorTotalRestakedAssets],
+    [assetsMetadataMap, delegatorTVL, delegatorTotalRestakedAssets],
   );
 
   return (

@@ -1,27 +1,35 @@
-import { VaultToken } from '../../types';
-import { RestakeVaultMap, OperatorDelegatorBond } from '../../types/restake';
+import { Decimal } from 'decimal.js';
+import { RestakeAssetId, VaultToken } from '../../types';
+import { OperatorDelegatorBond, RestakeAssetMap } from '../../types/restake';
 import safeFormatUnits from '../safeFormatUnits';
 
 export default function delegationsToVaultTokens(
   delegations: OperatorDelegatorBond[],
-  assetMap: RestakeVaultMap,
-) {
-  return delegations.reduce<VaultToken[]>(
-    (vaultTokenArr, { assetId, amount }) => {
-      const asset = assetMap[assetId];
+  assetMap: RestakeAssetMap,
+): VaultToken[] {
+  const vaultTokenMap = new Map<RestakeAssetId, VaultToken>();
 
-      if (asset === undefined) return vaultTokenArr;
+  delegations.forEach(({ assetId, amount }) => {
+    const asset = assetMap[assetId];
 
-      const parsed = safeFormatUnits(amount, asset.decimals);
+    if (asset === undefined) return;
 
-      if (parsed.success === false) return vaultTokenArr;
+    const parsed = safeFormatUnits(amount, asset.decimals);
 
-      return vaultTokenArr.concat({
+    if (parsed.success === false) return;
+
+    const vaultToken = vaultTokenMap.get(assetId);
+
+    if (vaultToken === undefined) {
+      vaultTokenMap.set(assetId, {
         name: asset.name,
         symbol: asset.symbol,
-        amount: parsed.value,
+        amount: new Decimal(parsed.value),
       });
-    },
-    [],
-  );
+    } else {
+      vaultToken.amount = vaultToken.amount.plus(parsed.value);
+    }
+  });
+
+  return Array.from(vaultTokenMap.values());
 }

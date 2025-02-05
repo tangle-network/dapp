@@ -1,14 +1,21 @@
 import { AddLineIcon } from '@webb-tools/icons';
 import OperatorsTableUI from '@webb-tools/tangle-shared-ui/components/tables/Operators';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
+import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
 import { RestakeOperator } from '@webb-tools/tangle-shared-ui/types';
 import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import delegationsToVaultTokens from '@webb-tools/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import {
+  Modal,
+  ModalTrigger,
+} from '@webb-tools/webb-ui-components/components/Modal';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import {
   type ComponentProps,
   type FC,
+  PropsWithChildren,
   useCallback,
   useMemo,
   useState,
@@ -18,12 +25,6 @@ import { RestakeOperatorWrapper } from '../../components/tables/RestakeActionWra
 import useIdentities from '../../data/useIdentities';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import JoinOperatorsModal from './JoinOperatorsModal';
-import {
-  Modal,
-  ModalTrigger,
-} from '@webb-tools/webb-ui-components/components/Modal';
-import { PropsWithChildren } from 'react';
-import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
@@ -48,7 +49,8 @@ const OperatorsTable: FC<Props> = ({
 
   const { isEvm } = useAgnosticAccountInfo();
   const isAccountConnected = useIsAccountConnected();
-  const { vaults } = useRestakeContext();
+  const activeSubstrateAddress = useSubstrateAddress(false);
+  const { assets } = useRestakeContext();
 
   const { result: identities } = useIdentities(
     useMemo(() => Object.keys(operatorMap), [operatorMap]),
@@ -57,12 +59,19 @@ const OperatorsTable: FC<Props> = ({
   const operators = useMemo(
     () =>
       Object.entries(operatorMap).map<OperatorUI>(
-        ([addressString, { delegations, restakersCount }]) => {
+        ([addressString, { delegations, restakersCount, stake }]) => {
           const address = assertSubstrateAddress(addressString);
           const tvlInUsd = operatorTVL?.[address] ?? null;
 
           const concentrationPercentage =
             operatorConcentration?.[address] ?? null;
+
+          const isDelegated =
+            activeSubstrateAddress !== null &&
+            delegations.some(
+              (delegation) =>
+                delegation.delegatorAccountId === activeSubstrateAddress,
+            );
 
           return {
             address,
@@ -70,11 +79,20 @@ const OperatorsTable: FC<Props> = ({
             identityName: identities[address]?.name ?? undefined,
             restakersCount,
             tvlInUsd,
-            vaultTokens: delegationsToVaultTokens(delegations, vaults),
+            vaultTokens: delegationsToVaultTokens(delegations, assets),
+            selfBondedAmount: stake,
+            isDelegated,
           } satisfies RestakeOperator;
         },
       ),
-    [vaults, identities, operatorConcentration, operatorMap, operatorTVL],
+    [
+      operatorMap,
+      operatorTVL,
+      operatorConcentration,
+      activeSubstrateAddress,
+      identities,
+      assets,
+    ],
   );
 
   const disabledTooltip = isAccountConnected

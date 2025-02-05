@@ -1,21 +1,27 @@
 import { Typography } from '@webb-tools/webb-ui-components';
 import cx from 'classnames';
 import { FC } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export type StatItemProps = {
   title: string;
   subtitle?: string;
   removeBorder?: boolean;
+  className?: string;
 };
 
 const StatItem: FC<StatItemProps> = ({
   title,
   subtitle,
   removeBorder = false,
+  className: classNameProp,
 }) => {
-  const className = cx('flex flex-col items-start justify-center px-3', {
-    'border-l dark:border-mono-120': !removeBorder,
-  });
+  const className = twMerge(
+    cx('flex flex-col items-start justify-center px-3', {
+      'border-l dark:border-mono-120': !removeBorder,
+    }),
+    classNameProp,
+  );
 
   return (
     <div className={className}>

@@ -1,30 +1,30 @@
 import { BN } from '@polkadot/util';
 import { useMemo } from 'react';
 import { RestakeAssetId } from '../../types';
-import useRestakeDelegations from './useRestakeDelegations';
+import useRestakeDeposits from './useRestakeDeposits';
 
 const useRestakeAssetsTvl = (): Map<RestakeAssetId, BN> | null => {
-  const delegations = useRestakeDelegations();
+  const { result: deposits } = useRestakeDeposits();
 
   const tvlMap = useMemo(() => {
-    if (delegations === null) {
+    if (deposits === null) {
       return null;
     }
 
     const tvlMap = new Map<RestakeAssetId, BN>();
 
-    for (const delegation of delegations) {
-      const existingEntry = tvlMap.get(delegation.assetId);
+    for (const deposit of deposits) {
+      const existingEntry = tvlMap.get(deposit.assetId);
 
       if (existingEntry === undefined) {
-        tvlMap.set(delegation.assetId, delegation.amount);
+        tvlMap.set(deposit.assetId, deposit.amount);
       } else {
-        tvlMap.set(delegation.assetId, existingEntry.add(delegation.amount));
+        tvlMap.set(deposit.assetId, existingEntry.add(deposit.amount));
       }
     }
 
     return tvlMap;
-  }, [delegations]);
+  }, [deposits]);
 
   return tvlMap;
 };

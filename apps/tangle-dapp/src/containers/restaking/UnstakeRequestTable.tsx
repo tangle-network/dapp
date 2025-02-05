@@ -119,7 +119,7 @@ const UnstakeRequestTable: FC<Props> = ({
   unstakeRequests,
   operatorIdentities,
 }) => {
-  const { vaults } = useRestakeContext();
+  const { assets } = useRestakeContext();
   const { delegationBondLessDelay } = useRestakeConsts();
   const { result: currentRound } = useRestakeCurrentRound();
   const sessionDurationMs = useSessionDurationMs();
@@ -134,7 +134,7 @@ const UnstakeRequestTable: FC<Props> = ({
       ({ assetId, amount, requestedRound, operatorAccountId }) => {
         const metadata = isEvmAddress(assetId)
           ? findErc20Token(assetId)
-          : vaults[assetId];
+          : assets[assetId];
 
         // Skip requests that are lacking metadata.
         if (metadata === undefined || metadata === null) {
@@ -170,7 +170,7 @@ const UnstakeRequestTable: FC<Props> = ({
     currentRound,
     sessionDurationMs,
     unstakeRequests,
-    vaults,
+    assets,
     delegationBondLessDelay,
     operatorIdentities,
   ]);

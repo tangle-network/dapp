@@ -51,7 +51,7 @@ export type OperatorMap = {
   readonly [accountAddress: SubstrateAddress]: OperatorMetadata;
 };
 
-export type RestakeVaultMetadata = Readonly<{
+export type RestakeAssetMetadata = Readonly<{
   assetId: RestakeAssetId;
   name: string;
   symbol: string;
@@ -70,8 +70,8 @@ export type RestakeVaultMetadata = Readonly<{
   status?: PalletAssetsAssetStatus['type'];
 }>;
 
-export type RestakeVaultMap = {
-  readonly [assetId: RestakeAssetId]: RestakeVaultMetadata;
+export type RestakeAssetMap = {
+  readonly [assetId: RestakeAssetId]: RestakeAssetMetadata;
 };
 
 export type DelegatorWithdrawRequest = {
@@ -156,7 +156,7 @@ export type AssetBalanceMap = {
 
 export type AssetWithBalance = {
   assetId: RestakeAssetId;
-  metadata: RestakeVaultMetadata;
+  metadata: RestakeAssetMetadata;
   balance: AssetBalance | null;
 };
 

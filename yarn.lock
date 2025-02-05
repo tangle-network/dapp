@@ -17779,16 +17779,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/tangle-substrate-types@npm:^0.9.11":
-  version: 0.9.11
-  resolution: "@webb-tools/tangle-substrate-types@npm:0.9.11"
+"@webb-tools/tangle-substrate-types@npm:^0.9.13":
+  version: 0.9.13
+  resolution: "@webb-tools/tangle-substrate-types@npm:0.9.13"
   dependencies:
     "@polkadot/api": "npm:^13.2.1"
     "@polkadot/typegen": "npm:^13.2.1"
     "@polkadot/types": "npm:^13.2.1"
     ecpair: "npm:^2.1.0"
     tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/e4f8a2939566ac8032c9f89ea7dcb1255485d262c002ffbbee5d64a2ffb8140057c6e640708f3e973017710958fbafedb42c1ac1d074d08c4bda14f195c7f3f3
+  checksum: 10c0/82aca9b7aba6fead4fc50873c29a9ff1a0e606ad0c59e32b313a0b10ed9f0e7259cd5f462b649b8e68ed6c067454b935945bdc2c3544cfce751be48090c87937
   languageName: node
   linkType: hard
 
@@ -39379,7 +39379,7 @@ __metadata:
     "@walletconnect/ethereum-provider": "npm:^2.18.0"
     "@webb-tools/evm-contract-metadata": "npm:^1.3.0"
     "@webb-tools/tangle-restaking-types": "npm:^0.1.0"
-    "@webb-tools/tangle-substrate-types": "npm:^0.9.11"
+    "@webb-tools/tangle-substrate-types": "npm:^0.9.13"
     autoprefixer: "npm:^10.4.20"
     babel-jest: "npm:29.7.0"
     chromatic: "npm:^11.20.2"

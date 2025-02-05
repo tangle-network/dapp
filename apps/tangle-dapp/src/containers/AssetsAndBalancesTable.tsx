@@ -1,5 +1,6 @@
 'use client';
 
+import useVaultRewards from '@webb-tools/tangle-shared-ui/data/rewards/useVaultRewards';
 import { BN, BN_ZERO } from '@polkadot/util';
 import {
   createColumnHelper,
@@ -48,12 +49,16 @@ import { PagePath, QueryParamKey } from '../types';
 import calculateBnRatio from '../utils/calculateBnRatio';
 import sortByBn from '../utils/sortByBn';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
+import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 
 type Row = {
   vaultId: number;
   assetId: RestakeAssetId;
   name?: string;
   tokenSymbol: string;
+  nativeTokenSymbol: string;
   tvl?: BN;
   tvlInUsd?: number;
   available: BN;
@@ -63,8 +68,8 @@ type Row = {
   delegated: BN;
   delegatedInUsd?: number;
   points?: number;
+  vaultReward?: BN | null;
   decimals: number;
-  apyPercentage?: number;
   depositCap?: BN;
 };
 
@@ -117,7 +122,12 @@ const COLUMNS = [
 
       return (
         <TableCellWrapper>
-          <StatItem title={fmtAvailable} subtitle={subtitle} removeBorder />
+          <StatItem
+            className="px-0"
+            title={fmtAvailable}
+            subtitle={subtitle}
+            removeBorder
+          />
         </TableCellWrapper>
       );
     },
@@ -142,7 +152,7 @@ const COLUMNS = [
         <TableCellWrapper>
           <Typography
             variant="body1"
-            className="flex gap-1 items-center justify-center dark:text-mono-0"
+            className="flex items-center justify-center gap-1 dark:text-mono-0"
           >
             {fmtDeposited}
 
@@ -150,6 +160,42 @@ const COLUMNS = [
               content={`${fmtDelegated}/${fmtDeposited} delegated`}
             />
           </Typography>
+        </TableCellWrapper>
+      );
+    },
+  }),
+  COLUMN_HELPER.accessor('vaultReward', {
+    header: () => (
+      <HeaderCell
+        title="Rewards"
+        tooltip="Total annual deposit rewards per vault"
+      />
+    ),
+    cell: (props) => {
+      const vaultReward = props.getValue();
+
+      const fmtRewards = BN.isBN(vaultReward)
+        ? formatDisplayAmount(
+            vaultReward,
+            TANGLE_TOKEN_DECIMALS,
+            AmountFormatStyle.SHORT,
+          )
+        : EMPTY_VALUE_PLACEHOLDER;
+
+      return (
+        <TableCellWrapper>
+          <div className="flex items-baseline gap-2">
+            <Typography className="dark:text-mono-0" variant="body1">
+              {fmtRewards}
+            </Typography>
+
+            <Typography
+              variant="body2"
+              className="text-mono-120 dark:text-mono-100"
+            >
+              {props.row.original.nativeTokenSymbol}
+            </Typography>
+          </div>
         </TableCellWrapper>
       );
     },
@@ -191,7 +237,7 @@ const COLUMNS = [
           : calculateBnRatio(tvl, depositCap);
 
       return (
-        <TableCellWrapper>
+        <TableCellWrapper removeRightBorder>
           <div className="flex items-center justify-center gap-1">
             {capacityPercentage !== null && (
               <CircularProgress
@@ -211,49 +257,31 @@ const COLUMNS = [
       );
     },
   }),
-  COLUMN_HELPER.accessor('apyPercentage', {
-    header: () => 'APY',
-    cell: (props) => {
-      const apyPercentage = props.getValue();
-
-      if (apyPercentage === undefined) {
-        return EMPTY_VALUE_PLACEHOLDER;
-      }
-
-      return (
-        <TableCellWrapper removeRightBorder>
-          {formatPercentage(apyPercentage)}
-        </TableCellWrapper>
-      );
-    },
-  }),
   COLUMN_HELPER.display({
     id: 'restake-action',
     header: () => null,
     enableSorting: false,
     cell: (props) => (
-      <TableCellWrapper removeRightBorder>
-        <div className="flex items-center justify-end flex-1">
-          <Link
-            to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_ASSET_ID}=${props.row.original.assetId}`}
+      <TableCellWrapper removeRightBorder className="justify-end">
+        <Link
+          to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_ASSET_ID}=${props.row.original.assetId}`}
+        >
+          <Button
+            variant="utility"
+            size="sm"
+            rightIcon={
+              <ArrowRight className="fill-current dark:fill-current" />
+            }
           >
-            <Button
-              variant="utility"
-              size="sm"
-              rightIcon={
-                <ArrowRight className="fill-current dark:fill-current" />
-              }
-            >
-              Restake
-            </Button>
-          </Link>
-        </div>
+            Restake
+          </Button>
+        </Link>
       </TableCellWrapper>
     ),
   }),
 ];
 
-const VaultsAndBalancesTable: FC = () => {
+const AssetsAndBalancesTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([
     // Default sorting by TVL in descending order.
     { id: 'tvl' satisfies keyof Row, desc: true },
@@ -267,106 +295,103 @@ const VaultsAndBalancesTable: FC = () => {
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const isAccountConnected = useIsAccountConnected();
 
+  const nativeTokenSymbol = useNetworkStore(
+    (store) => store.network.tokenSymbol,
+  );
+
   const assetsTvl = useRestakeAssetsTvl();
   const { data: erc20Balances } = useTangleEvmErc20Balances();
 
   const {
-    vaults,
+    assets,
     balances: customAssetBalances,
     isLoading,
   } = useRestakeContext();
 
+  const { result: vaultRewards } = useVaultRewards();
+
   const getAssetTvl = useCallback(
     (assetId: RestakeAssetId) => {
-      const deposits = delegatorInfo?.deposits ?? {};
-      const deposit = get(deposits, assetId);
-
-      if (deposit === undefined) {
+      if (assetsTvl === null) {
         return BN_ZERO;
       }
 
-      const depositAmount = deposit.amount;
+      const tvl = assetsTvl.get(assetId);
+      if (tvl === undefined) {
+        return BN_ZERO;
+      }
 
-      const depositAmountBn =
-        depositAmount === undefined
-          ? BN_ZERO
-          : new BN(depositAmount.toString());
-
-      return depositAmountBn;
+      return tvl;
     },
-    [delegatorInfo?.deposits],
+    [assetsTvl],
   );
 
-  const vaultRows = useMemo<Row[]>(() => {
-    return Object.entries(vaults).flatMap(([assetIdString, metadata]) => {
-      if (metadata.vaultId === null) {
-        return [];
-      }
-
-      const config = rewardConfig?.get(metadata.vaultId);
-
-      if (config === undefined) {
-        return [];
-      }
-
-      const assetId = assertRestakeAssetId(assetIdString);
-
-      // APY in this case is always between 0 and 100%.
-      const apyPercentage = config.apy.toNumber() / 100;
-
-      const depositCap =
-        config.depositCap === undefined
-          ? undefined
-          : new BN(config.depositCap.toString());
-
-      const delegated =
-        (assetsTvl === null ? undefined : assetsTvl.get(assetId)) ?? BN_ZERO;
-
-      const assetBalances:
-        | (typeof customAssetBalances)[RestakeAssetId]
-        | undefined = customAssetBalances[assetId];
-
-      const available = (() => {
-        if (isEvmAddress(assetId)) {
-          return (
-            erc20Balances?.find((asset) => asset.contractAddress === assetId)
-              ?.balance ?? BN_ZERO
-          );
-        } else {
-          return assetBalances?.balance !== undefined
-            ? new BN(assetBalances.balance.toString())
-            : BN_ZERO;
+  const vaultRows = useMemo<Row[]>(
+    () => {
+      return Object.entries(assets).flatMap(([assetIdString, metadata]) => {
+        if (metadata.vaultId === null) {
+          return [];
         }
-      })();
 
-      const deposits = delegatorInfo?.deposits ?? {};
-      const depositedBigInt = get(deposits, assetId)?.amount ?? BigInt(0);
-      const deposited = new BN(depositedBigInt.toString());
+        const config = rewardConfig?.get(metadata.vaultId);
 
-      return {
-        vaultId: metadata.vaultId,
-        name: metadata.name,
-        tvl: getAssetTvl(assetId),
-        available,
-        deposited,
-        delegated,
-        // TODO: This won't work because reward config is PER VAULT not PER ASSET. But isn't each asset its own vault?
-        apyPercentage,
-        tokenSymbol: metadata.symbol,
-        decimals: metadata.decimals,
-        depositCap,
-        assetId,
-      } satisfies Row;
-    });
-  }, [
-    vaults,
-    rewardConfig,
-    assetsTvl,
-    customAssetBalances,
-    delegatorInfo?.deposits,
-    getAssetTvl,
-    erc20Balances,
-  ]);
+        if (config === undefined) {
+          return [];
+        }
+
+        const assetId = assertRestakeAssetId(assetIdString);
+
+        const depositCap = config.depositCap.toBn();
+
+        const assetBalances:
+          | (typeof customAssetBalances)[RestakeAssetId]
+          | undefined = customAssetBalances[assetId];
+
+        const available = (() => {
+          if (isEvmAddress(assetId)) {
+            return (
+              erc20Balances?.find((asset) => asset.contractAddress === assetId)
+                ?.balance ?? BN_ZERO
+            );
+          } else {
+            return assetBalances?.balance !== undefined
+              ? new BN(assetBalances.balance.toString())
+              : BN_ZERO;
+          }
+        })();
+
+        const deposits = delegatorInfo?.deposits ?? {};
+
+        const depositedBigInt = get(deposits, assetId)?.amount ?? ZERO_BIG_INT;
+        const deposited = new BN(depositedBigInt.toString());
+
+        const delegatedBigInt =
+          get(deposits, assetId)?.delegatedAmount ?? ZERO_BIG_INT;
+        const delegated = new BN(delegatedBigInt.toString());
+
+        const vaultReward = vaultRewards?.get(metadata.vaultId);
+
+        const tvl = getAssetTvl(assetId);
+
+        return {
+          vaultId: metadata.vaultId,
+          name: metadata.name,
+          tvl,
+          available,
+          deposited,
+          delegated,
+          vaultReward,
+          tokenSymbol: metadata.symbol,
+          decimals: metadata.decimals,
+          depositCap,
+          assetId,
+          nativeTokenSymbol,
+        } satisfies Row;
+      });
+    },
+    // prettier-ignore
+    [assets, customAssetBalances, delegatorInfo?.deposits, erc20Balances, getAssetTvl, nativeTokenSymbol, rewardConfig, vaultRewards],
+  );
 
   // Combine all rows.
   const rows = useMemo<Row[]>(() => {
@@ -427,9 +452,10 @@ const VaultsAndBalancesTable: FC = () => {
       title={pluralize('asset', rows.length !== 1)}
       tableProps={table}
       trClassName="cursor-default"
+      thClassName="pl-0"
       isPaginated
     />
   );
 };
 
-export default VaultsAndBalancesTable;
+export default AssetsAndBalancesTable;

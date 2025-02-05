@@ -40,7 +40,7 @@ const WithdrawModal = ({
   setIsOpen,
   onItemSelected,
 }: Props) => {
-  const { vaults } = useRestakeContext();
+  const { assets } = useRestakeContext();
 
   const availableForWithdrawal = useMemo(() => {
     if (!delegatorInfo?.deposits) {
@@ -71,7 +71,7 @@ const WithdrawModal = ({
       titleWhenEmpty="No Assets Found"
       descriptionWhenEmpty="This account has no assets available to withdraw."
       onSelect={(deposit) => {
-        const asset = vaults[deposit.assetId];
+        const asset = assets[deposit.assetId];
         const decimals = asset?.decimals || DEFAULT_DECIMALS;
         const fmtAmount = formatUnits(deposit.amount, decimals);
 
@@ -81,7 +81,7 @@ const WithdrawModal = ({
         });
       }}
       filterItem={({ assetId }, query) => {
-        const asset = vaults[assetId];
+        const asset = assets[assetId];
 
         return filterBy(query, [asset?.name, asset?.assetId, asset?.vaultId]);
       }}
@@ -103,7 +103,7 @@ const WithdrawModal = ({
           symbol = erc20Token.symbol;
           decimals = erc20Token.decimals;
         } else {
-          const metadata = vaults[assetId];
+          const metadata = assets[assetId];
 
           if (metadata === undefined) {
             return null;

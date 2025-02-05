@@ -7,7 +7,7 @@ import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 
 const useRestakeAsset = (id: RestakeAssetId | null | undefined) => {
-  const { vaults, balances } = useRestakeContext();
+  const { assets, balances } = useRestakeContext();
   const { data: erc20Balances } = useTangleEvmErc20Balances();
 
   const asset = useMemo<RestakeAsset | null>(() => {
@@ -32,7 +32,7 @@ const useRestakeAsset = (id: RestakeAssetId | null | undefined) => {
       } satisfies RestakeAsset;
     }
 
-    const metadata = vaults[id];
+    const metadata = assets[id];
 
     if (metadata === undefined) {
       return null;
@@ -50,7 +50,7 @@ const useRestakeAsset = (id: RestakeAssetId | null | undefined) => {
       decimals: metadata.decimals,
       balance: balanceBn,
     } satisfies RestakeAsset;
-  }, [vaults, balances, erc20Balances, id]);
+  }, [assets, balances, erc20Balances, id]);
 
   return asset;
 };

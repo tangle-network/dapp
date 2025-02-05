@@ -41,7 +41,7 @@ const COLUMNS = [
 
       return (
         <Typography variant="body1" ta="right">
-          {typeof value === 'string' ? value : getRoundedAmountString(value)}
+          {getRoundedAmountString(value.toNumber())}
         </Typography>
       );
     },
