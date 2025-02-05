@@ -122,7 +122,12 @@ const COLUMNS = [
 
       return (
         <TableCellWrapper>
-          <StatItem title={fmtAvailable} subtitle={subtitle} removeBorder />
+          <StatItem
+            className="px-0"
+            title={fmtAvailable}
+            subtitle={subtitle}
+            removeBorder
+          />
         </TableCellWrapper>
       );
     },
@@ -178,7 +183,7 @@ const COLUMNS = [
         : EMPTY_VALUE_PLACEHOLDER;
 
       return (
-        <TableCellWrapper removeRightBorder>
+        <TableCellWrapper>
           <div className="flex items-baseline gap-2">
             <Typography className="dark:text-mono-0" variant="body1">
               {fmtRewards}
@@ -258,21 +263,19 @@ const COLUMNS = [
     enableSorting: false,
     cell: (props) => (
       <TableCellWrapper removeRightBorder>
-        <div className="flex items-center justify-end flex-1">
-          <Link
-            to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_ASSET_ID}=${props.row.original.assetId}`}
+        <Link
+          to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_ASSET_ID}=${props.row.original.assetId}`}
+        >
+          <Button
+            variant="utility"
+            size="sm"
+            rightIcon={
+              <ArrowRight className="fill-current dark:fill-current" />
+            }
           >
-            <Button
-              variant="utility"
-              size="sm"
-              rightIcon={
-                <ArrowRight className="fill-current dark:fill-current" />
-              }
-            >
-              Restake
-            </Button>
-          </Link>
-        </div>
+            Restake
+          </Button>
+        </Link>
       </TableCellWrapper>
     ),
   }),
