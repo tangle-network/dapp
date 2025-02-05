@@ -1,11 +1,11 @@
 import { useObservable, useObservableState } from 'observable-hooks';
 import { of, switchMap } from 'rxjs';
-import { RestakeVaultMap, OperatorMap } from '../../types/restake';
+import { RestakeAssetMap, OperatorMap } from '../../types/restake';
 import safeFormatUnits from '../../utils/safeFormatUnits';
 
 export function useOperatorTVL(
   operatorMap: OperatorMap,
-  assetMap: RestakeVaultMap,
+  assetMap: RestakeAssetMap,
 ) {
   const tvl$ = useObservable(
     (input$) =>
