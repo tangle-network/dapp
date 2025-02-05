@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import {
   AssetBalanceMap,
-  RestakeVaultMap,
+  RestakeAssetMap,
   AssetWithBalance,
 } from '../../types/restake';
 
@@ -9,12 +9,12 @@ export type RestakeContextType = {
   /**
    * The asset map for the current selected chain
    */
-  vaults: RestakeVaultMap;
+  assets: RestakeAssetMap;
 
   /**
    * An observable of the asset map for the current selected chain
    */
-  vaults$: Observable<RestakeVaultMap>;
+  assets$: Observable<RestakeAssetMap>;
 
   /**
    * The balances of the current active account

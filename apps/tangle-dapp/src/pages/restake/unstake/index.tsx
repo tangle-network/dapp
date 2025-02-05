@@ -60,7 +60,7 @@ const RestakeUnstakeForm: FC = () => {
 
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
-  const { vaults } = useRestakeContext();
+  const { assets } = useRestakeContext();
 
   const {
     status: isOperatorModalOpen,
@@ -110,12 +110,12 @@ const RestakeUnstakeForm: FC = () => {
   }, [delegatorInfo?.unstakeRequests]);
 
   const selectedAsset = useMemo(() => {
-    if (!selectedAssetId || !vaults[selectedAssetId]) {
+    if (!selectedAssetId || !assets[selectedAssetId]) {
       return null;
     }
 
-    return vaults[selectedAssetId];
-  }, [vaults, selectedAssetId]);
+    return assets[selectedAssetId];
+  }, [assets, selectedAssetId]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
     if (!Array.isArray(delegatorInfo?.delegations)) {
@@ -128,14 +128,14 @@ const RestakeUnstakeForm: FC = () => {
         item.operatorAccountId === selectedOperatorAccountId,
     );
 
-    if (!selectedDelegation || !vaults[selectedDelegation.assetId]) {
+    if (!selectedDelegation || !assets[selectedDelegation.assetId]) {
       return {};
     }
 
     const maxAmount = selectedDelegation.amountBonded;
 
     const formattedMaxAmount = Number(
-      formatUnits(maxAmount, vaults[selectedDelegation.assetId].decimals),
+      formatUnits(maxAmount, assets[selectedDelegation.assetId].decimals),
     );
 
     return {
@@ -144,7 +144,7 @@ const RestakeUnstakeForm: FC = () => {
     };
   }, [
     delegatorInfo?.delegations,
-    vaults,
+    assets,
     selectedAssetId,
     selectedOperatorAccountId,
   ]);
@@ -187,11 +187,11 @@ const RestakeUnstakeForm: FC = () => {
 
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
     async ({ amount, assetId, operatorAccountId }) => {
-      if (!assetId || !isDefined(vaults[assetId]) || !isReady) {
+      if (!assetId || !isDefined(assets[assetId]) || !isReady) {
         return;
       }
 
-      const assetMetadata = vaults[assetId];
+      const assetMetadata = assets[assetId];
       const amountBn = parseChainUnits(amount, assetMetadata.decimals);
 
       if (!(amountBn instanceof BN)) {
@@ -200,7 +200,7 @@ const RestakeUnstakeForm: FC = () => {
 
       await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
     },
-    [vaults, isReady, restakeApi],
+    [assets, isReady, restakeApi],
   );
 
   return (
