@@ -14,7 +14,7 @@ import {
   ApiConfig,
   chainsConfig,
   chainsPopulated,
-  walletsConfig,
+  WALLET_CONFIG,
   type Chain,
   type Wallet,
 } from '@webb-tools/dapp-config';
@@ -62,7 +62,7 @@ const logger = LoggerService.get('WebbProvider');
 
 const apiConfig = ApiConfig.init({
   chains: chainsConfig,
-  wallets: walletsConfig,
+  wallets: WALLET_CONFIG,
 });
 
 const appNetworkStoragePromise = netStorageFactory();
@@ -233,8 +233,9 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
             setActiveChain(undefined);
           }
           break;
-        default:
-          alert(code);
+        default: {
+          alert(`Unhandled Webb error code: ${code}`);
+        }
       }
     },
     [setActiveChain],
@@ -328,7 +329,9 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
           case WalletId.Rainbow:
             {
               abortSignal?.throwIfAborted();
+
               const connector = connectors.find((c) => c.id === wallet.rdns);
+
               if (!connector) {
                 throw new WalletNotInstalledError(wallet.id);
               }
@@ -345,8 +348,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
                   connector: connector,
                 });
               }
-
-              abortSignal?.throwIfAborted();
 
               abortSignal?.throwIfAborted();
 
@@ -368,7 +369,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
 
                 try {
                   /// this will throw if the user switched to unsupported chain
-                  const name = apiConfig.getEVMChainName(updatedChainId);
                   const newTypedChainId = calculateTypedChainId(
                     ChainType.EVM,
                     updatedChainId,
@@ -377,12 +377,6 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
                   /// update the current typed chain id
                   webbWeb3Provider.typedChainidSubject.next(newTypedChainId);
 
-                  /// Alerting that the provider has changed via the extension
-                  notificationApi({
-                    message: 'Web3: Connected',
-                    variant: 'info',
-                    secondaryMessage: `Connection is switched to ${name} chain`,
-                  });
                   setActiveWallet(wallet);
                   setActiveChain(activeChain);
 
@@ -701,7 +695,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
       value={{
         appName: applicationName,
         loading,
-        wallets: walletsConfig,
+        wallets: WALLET_CONFIG,
         chains: chains,
         activeWallet,
         activeChain,

@@ -10,12 +10,12 @@ export default function useSidebarProps() {
     () =>
       getSidebarProps({
         polkadotJsDashboardUrl: network.polkadotJsDashboardUrl,
-        nativeExplorerUrl: network.nativeExplorerUrl,
+        nativeExplorerUrl: network.explorerUrl,
         evmExplorerUrl: network.evmExplorerUrl,
       }),
     [
       network.evmExplorerUrl,
-      network.nativeExplorerUrl,
+      network.explorerUrl,
       network.polkadotJsDashboardUrl,
     ],
   );

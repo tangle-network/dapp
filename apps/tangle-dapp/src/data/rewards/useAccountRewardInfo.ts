@@ -18,22 +18,22 @@ export default function useAccountRewardInfo() {
   const activeSubstrateAddress = useSubstrateAddress(false);
   const activeDelegation = useActiveDelegation();
 
-  const { network, rpcEndpoint } = useNetworkStore();
+  const { network } = useNetworkStore();
   const [activeChain] = useActiveChain();
 
-  const overrideRpcEndpoint = useMemo(
-    () => {
-      const wsEndpoints = activeChain?.rpcUrls.default?.webSocket;
+  const overrideRpcEndpoint = useMemo(() => {
+    const wsEndpoints = activeChain?.rpcUrls.default?.webSocket;
 
-      if (wsEndpoints && wsEndpoints.length > 0) {
-        return wsEndpoints[0];
-      }
+    if (wsEndpoints && wsEndpoints.length > 0) {
+      return wsEndpoints[0];
+    }
 
-      return network.archiveRpcEndpoint ?? rpcEndpoint;
-    },
-    // prettier-ignore
-    [activeChain?.rpcUrls.default?.webSocket, network.archiveRpcEndpoint, rpcEndpoint],
-  );
+    return network.archiveRpcEndpoint ?? network.wsRpcEndpoint;
+  }, [
+    activeChain?.rpcUrls.default?.webSocket,
+    network.archiveRpcEndpoint,
+    network.wsRpcEndpoint,
+  ]);
 
   const assetIds = useMemo(() => {
     if (activeDelegation === null) {

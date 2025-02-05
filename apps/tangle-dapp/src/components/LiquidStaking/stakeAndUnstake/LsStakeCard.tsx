@@ -70,10 +70,7 @@ const LsStakeCard: FC = () => {
     lsNetworkId === LsNetworkId.TANGLE_MAINNET ||
     lsNetworkId === LsNetworkId.TANGLE_TESTNET;
 
-  const {
-    exchangeRate: exchangeRateOrError,
-    isRefreshing: isRefreshingExchangeRate,
-  } = useLsExchangeRate();
+  const exchangeRateOrError = useLsExchangeRate();
 
   // TODO: Properly handle the error state.
   const exchangeRate =
@@ -98,7 +95,11 @@ const LsStakeCard: FC = () => {
   }, [executeTanglePoolJoinTx, fromAmount, isTangleNetwork, lsPoolId]);
 
   const toAmount = useMemo(() => {
-    if (fromAmount === null || exchangeRate === null) {
+    if (
+      fromAmount === null ||
+      exchangeRate === null ||
+      exchangeRate === undefined
+    ) {
       return null;
     }
 
@@ -182,7 +183,6 @@ const LsStakeCard: FC = () => {
         isDerivativeVariant
         token={selectedProtocol.token}
         onTokenClick={() => setIsSelectTokenModalOpen(true)}
-        className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
       />
 
       {/* Details */}

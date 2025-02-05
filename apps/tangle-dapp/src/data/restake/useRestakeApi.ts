@@ -9,32 +9,35 @@ import { useWebContext } from '@webb-tools/api-provider-environment/webb-context
 import useSubstrateInjectedExtension from '@webb-tools/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
 import RestakeEvmApi from './RestakeEvmApi';
 import useTxNotification from '../../hooks/useTxNotification';
-import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubstrateExplorerUrl';
 import { Hash } from 'viem';
 import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
 import { TxName } from '../../constants';
 import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useEvmTxRelayer from '../../hooks/useEvmTxRelayer';
 import useIsEvmTxRelayerCandidate from '../../hooks/useIsEvmTxRelayerCandidate';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 
 const useRestakeApi = () => {
   const { apiPromise } = usePolkadotApi();
   const { activeAccount, activeWallet } = useWebContext();
   const injector = useSubstrateInjectedExtension();
-  const { resolveExplorerUrl } = useSubstrateExplorerUrl();
   const { notifySuccess, notifyError } = useTxNotification();
   const { isEvm } = useAgnosticAccountInfo();
   const relayEvmTx = useEvmTxRelayer();
   const isEvmTxRelayerCandidate = useIsEvmTxRelayerCandidate();
 
+  const createExplorerTxUrl = useNetworkStore(
+    (store) => store.network.createExplorerTxUrl,
+  );
+
   const onSuccess = useCallback(
     (txHash: Hash, blockHash: Hash, txName: TxName) => {
-      // TODO: A well-defined explorer is not yet available for EVM. For example, explorer.tangle.tools won't work for local dev network.
-      const explorerUrl = isEvm ? null : resolveExplorerUrl(txHash, blockHash);
+      const explorerUrl =
+        isEvm === null ? null : createExplorerTxUrl(isEvm, txHash, blockHash);
 
       notifySuccess(txName, explorerUrl);
     },
-    [isEvm, notifySuccess, resolveExplorerUrl],
+    [createExplorerTxUrl, isEvm, notifySuccess],
   );
 
   const onFailure = useCallback(

@@ -1,5 +1,4 @@
 import { assert } from '@polkadot/util';
-import useSubstrateExplorerUrl from '@webb-tools/tangle-shared-ui/hooks/useSubstrateExplorerUrl';
 import { useCallback, useEffect, useState } from 'react';
 
 import { TxName } from '../constants';
@@ -17,6 +16,7 @@ import {
 } from '../constants/evmPrecompiles';
 import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 
 export type AgnosticTxOptions<
   Abi extends AbiFunction[],
@@ -75,7 +75,10 @@ function useAgnosticTx<
 
   const activeAccountAddress = useActiveAccountAddress();
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
-  const { resolveExplorerUrl } = useSubstrateExplorerUrl();
+
+  const createExplorerTxUrl = useNetworkStore(
+    (store) => store.network.createExplorerTxUrl,
+  );
 
   const {
     execute: executeSubstrateTx,
@@ -173,10 +176,11 @@ function useAgnosticTx<
         ? evmSuccessMessage
         : substrateSuccessMessage;
 
-      const explorerUrl =
-        substrateTxBlockHash == null
-          ? null
-          : resolveExplorerUrl(txHash, substrateTxBlockHash);
+      const explorerUrl = createExplorerTxUrl(
+        false,
+        txHash,
+        substrateTxBlockHash ?? undefined,
+      );
 
       notifySuccess(name, explorerUrl, successMessage);
     }

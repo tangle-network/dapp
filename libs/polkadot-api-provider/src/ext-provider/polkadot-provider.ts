@@ -9,7 +9,7 @@ import {
 } from '@polkadot/extension-inject/types';
 import { LoggerService } from '@webb-tools/browser-utils';
 import { Wallet } from '@webb-tools/dapp-config';
-import getPolkadotBasedWallet from '@webb-tools/dapp-config/utils/getPolkadotBasedWallet';
+import findSubstrateWallet from '@webb-tools/dapp-config/utils/findSubstrateWallet';
 import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
 import { EventBus } from '@webb-tools/dapp-types/EventBus';
 import lodash from 'lodash';
@@ -181,7 +181,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     wallet: Wallet,
   ): Promise<[ApiPromise, InjectedExtension]> {
     // Check whether the extension is existed or not
-    const currentExtension = await getPolkadotBasedWallet(appName, wallet.name);
+    const currentExtension = await findSubstrateWallet(appName, wallet.name);
 
     if (!currentExtension) {
       logger.warn(`${wallet.title} extension isn't installed`);

@@ -14,7 +14,7 @@ import { Network } from '@webb-tools/webb-ui-components/constants/networks';
 import { useMemo } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';
 
-const WalletModalContainer = () => {
+const ConnectWalletModal = () => {
   const {
     connectingWalletId,
     failedWalletId,
@@ -70,4 +70,4 @@ const networkToTypedChainIds = (network: Network) => {
   return { evm, substrate };
 };
 
-export default WalletModalContainer;
+export default ConnectWalletModal;

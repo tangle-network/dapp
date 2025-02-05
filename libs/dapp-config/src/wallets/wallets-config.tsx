@@ -9,7 +9,7 @@ import {
   TalismanIcon,
   WalletConnectIcon,
 } from '@webb-tools/icons/wallets';
-import getPolkadotBasedWallet from '../utils/getPolkadotBasedWallet';
+import findSubstrateWallet from '../utils/findSubstrateWallet';
 import type { WalletConfig } from './wallet-config.interface';
 
 const ANY_EVM = [
@@ -54,7 +54,7 @@ const ANY_SUBSTRATE = [
   PresetTypedChainId.RococoPhala,
 ];
 
-export const walletsConfig: Record<number, WalletConfig> = {
+export const WALLET_CONFIG: Record<number, WalletConfig> = {
   // TODO: Should move all hardcoded wallet configs to connectors
   // https://wagmi.sh/examples/custom-connector
   [WalletId.MetaMask]: {
@@ -83,7 +83,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
     name: 'WalletConnect',
     title: 'WalletConnect',
     platform: 'EVM',
-    enabled: false,
+    enabled: true,
     async detect() {
       return true;
     },
@@ -118,7 +118,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
     platform: 'Substrate',
     enabled: true,
     async detect(appName) {
-      return getPolkadotBasedWallet(appName, 'polkadot-js');
+      return findSubstrateWallet(appName, 'polkadot-js');
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://polkadot.js.org/extension',
@@ -137,7 +137,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
     platform: 'Substrate',
     enabled: true,
     detect(appName) {
-      return getPolkadotBasedWallet(appName, 'talisman');
+      return findSubstrateWallet(appName, 'talisman');
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://talisman.xyz/',
@@ -156,7 +156,7 @@ export const walletsConfig: Record<number, WalletConfig> = {
     platform: 'Substrate',
     enabled: true,
     detect(appName) {
-      return getPolkadotBasedWallet(appName, 'subwallet-js');
+      return findSubstrateWallet(appName, 'subwallet-js');
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://www.subwallet.app/',

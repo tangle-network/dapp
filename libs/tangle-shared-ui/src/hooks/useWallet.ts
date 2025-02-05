@@ -8,9 +8,13 @@ import {
 import {
   assertEvmAddress,
   assertSubstrateAddress,
+  isEvmAddress,
 } from '@webb-tools/webb-ui-components';
 import ensureError from '../utils/ensureError';
 import { EIP1193Provider } from 'viem';
+import { EthereumProvider } from '@walletconnect/ethereum-provider';
+import useEvmChain from './useEvmChain';
+import assert from 'assert';
 
 declare global {
   interface Window {
@@ -18,8 +22,9 @@ declare global {
   }
 }
 
-const useProvider = () => {
+const useWallet = () => {
   const [isConnecting, setIsConnecting] = useState(false);
+  const evmChain = useEvmChain();
 
   const {
     activeAccountAddress,
@@ -35,11 +40,7 @@ const useProvider = () => {
    */
   const trySwitchAccount = useCallback(
     (newAccountAddress: SubstrateAddress | EvmAddress): boolean => {
-      if (accounts === undefined) {
-        return false;
-      }
-
-      const newAccount = accounts.find(
+      const newAccount = accounts?.find(
         (account) => account.address === newAccountAddress,
       );
 
@@ -54,13 +55,13 @@ const useProvider = () => {
     [accounts, setActiveAccountAddress],
   );
 
-  const signOut = useCallback(() => {
+  const disconnect = useCallback(() => {
     setAccounts(undefined);
     setActiveAccountAddress(undefined);
     setProvider(undefined);
   }, [setAccounts, setActiveAccountAddress, setProvider]);
 
-  const connectSubstrateProvider = useCallback(
+  const connectSubstrateWallet = useCallback(
     async (appName: string): Promise<Error | true> => {
       setIsConnecting(true);
 
@@ -75,14 +76,14 @@ const useProvider = () => {
       }
 
       // Fetch all accounts across all enabled extensions.
-      const accounts = await web3Accounts();
+      const substrateAccounts = await web3Accounts();
 
-      const defaultAccount = accounts.at(0);
+      const defaultAccount = substrateAccounts.at(0);
 
       // No accounts found.
-      if (accounts.length === 0 || defaultAccount === undefined) {
+      if (substrateAccounts.length === 0 || defaultAccount === undefined) {
         setIsConnecting(false);
-        signOut();
+        disconnect();
 
         return new Error('No accounts found in the connected wallet');
       }
@@ -95,24 +96,109 @@ const useProvider = () => {
 
       if (newProvider === undefined) {
         setIsConnecting(false);
-        signOut();
+        disconnect();
 
         return new Error(
           `The associated provider for account ${defaultAccount.address} could not be located`,
         );
       }
 
-      setProvider(newProvider);
-      setAccounts(accounts);
+      setProvider({
+        type: 'substrate',
+        provider: newProvider,
+      });
+
+      setAccounts(
+        substrateAccounts.map((substrateAccount) => {
+          const address = isEvmAddress(substrateAccount.address)
+            ? assertEvmAddress(substrateAccount.address)
+            : assertSubstrateAddress(substrateAccount.address);
+
+          return {
+            type: 'substrate',
+            address,
+            source: substrateAccount.meta.source,
+            genesisHash: substrateAccount.meta.genesisHash,
+            name: substrateAccount.meta.name,
+            keypairType: substrateAccount.type,
+          };
+        }),
+      );
+
       setActiveAccountAddress(assertSubstrateAddress(defaultAccount.address));
       setIsConnecting(false);
 
       return true;
     },
-    [setAccounts, setActiveAccountAddress, setProvider, signOut],
+    [setAccounts, setActiveAccountAddress, setProvider, disconnect],
   );
 
-  const connectEvmProvider = useCallback(async (): Promise<Error | true> => {
+  const connectWalletConnectV2 = useCallback(
+    async (projectId: string): Promise<Error | true> => {
+      if (evmChain === null) {
+        return new Error('Not connected to EVM chain yet');
+      }
+
+      const rpcUrl = (() => {
+        if (evmChain.rpcUrls.default.http.length > 0) {
+          return evmChain.rpcUrls.default.http[0];
+        } else if (
+          evmChain.rpcUrls.default.webSocket !== undefined &&
+          evmChain.rpcUrls.default.webSocket.length > 0
+        ) {
+          return evmChain.rpcUrls.default.webSocket[0];
+        }
+
+        return undefined;
+      })();
+
+      assert(
+        rpcUrl !== undefined,
+        "Active EVM chain doesn't have any RPC URLs defined in its config",
+      );
+
+      setIsConnecting(true);
+
+      try {
+        const provider = await EthereumProvider.init({
+          // Required from WalletConnect Cloud.
+          projectId,
+          chains: [evmChain.id],
+          showQrModal: true,
+          rpcMap: { 1: evmChain.rpcUrls.default.http[0] },
+        });
+
+        await provider.connect();
+
+        if (provider.accounts.length === 0) {
+          return new Error('No accounts found in the connected wallet');
+        }
+
+        setAccounts(
+          provider.accounts.map((evmAccountAddress) => ({
+            type: 'evm',
+            address: assertEvmAddress(evmAccountAddress),
+          })),
+        );
+
+        setActiveAccountAddress(assertEvmAddress(provider.accounts[0]));
+
+        setProvider({
+          type: 'walletconnect',
+          provider,
+        });
+      } catch (error) {
+        return ensureError(error);
+      } finally {
+        setIsConnecting(false);
+      }
+
+      return true;
+    },
+    [evmChain, setAccounts, setActiveAccountAddress, setProvider],
+  );
+
+  const connectEvmWallet = useCallback(async (): Promise<Error | true> => {
     try {
       // Check if window.ethereum is available.
       if (typeof window.ethereum === 'undefined') {
@@ -143,8 +229,18 @@ const useProvider = () => {
       // TODO: Obtain this from local storage, persist what was the last connected account.
       const defaultAccount = assertEvmAddress(evmAccounts[0].address);
 
-      setProvider(window.ethereum);
-      setAccounts(evmAccounts);
+      setProvider({
+        type: 'evm',
+        provider: window.ethereum,
+      });
+
+      setAccounts(
+        evmAccounts.map((evmAccount) => ({
+          type: 'evm',
+          address: assertEvmAddress(evmAccount.address),
+        })),
+      );
+
       setActiveAccountAddress(defaultAccount);
 
       return true;
@@ -184,10 +280,11 @@ const useProvider = () => {
     activeAccount,
     provider,
     trySwitchAccount,
-    signOut,
-    connectSubstrateProvider,
-    connectEvmProvider,
+    disconnect,
+    connectSubstrateWallet,
+    connectEvmWallet,
+    connectWalletConnectV2,
   };
 };
 
-export default useProvider;
+export default useWallet;

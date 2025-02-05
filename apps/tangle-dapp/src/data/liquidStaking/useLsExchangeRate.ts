@@ -37,14 +37,11 @@ const useLsExchangeRate = () => {
     queryFn: fetch,
   });
 
-  return {
-    exchangeRate:
-      // For some undocumented reason, BN.js can perform number operations
-      // on BN instances that are up to 2^26 - 1.
-      typeof exchangeRate === 'number'
-        ? Math.min(MAX_BN_OPERATION_NUMBER, exchangeRate)
-        : exchangeRate,
-  };
+  // For some undocumented reason, BN.js can perform number operations
+  // on BN instances that are up to 2^26 - 1.
+  return typeof exchangeRate === 'number'
+    ? Math.min(MAX_BN_OPERATION_NUMBER, exchangeRate)
+    : exchangeRate;
 };
 
 export default useLsExchangeRate;

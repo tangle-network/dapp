@@ -55,6 +55,8 @@ export default function chainToNetwork(typedChainId: number): Network {
     // maybe the chain group property or something else.
     nodeType: 'standalone',
     polkadotJsDashboardUrl: getPolkadotJsDashboardUrl(wsRpcEndpoint),
+    createExplorerAccountUrl: () => null,
+    createExplorerTxUrl: () => null,
     wsRpcEndpoint,
     ...(chain.rpcUrls.default.http?.[0]
       ? {

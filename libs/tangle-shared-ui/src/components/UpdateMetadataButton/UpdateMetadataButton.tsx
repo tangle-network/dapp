@@ -54,37 +54,40 @@ const UpdateMetadataButton: FC = () => {
     [setCache],
   );
 
-  const isMetadataUpToDate = useMemo(
-    () => {
-      // Only update metadata for the mainnet. This is because
-      // the testnet and local networks have the same genesis hash,
-      // so they represent the same network. Only the mainnet's metadata
-      // is relevant.
-      if (apiPromise === null || network.id !== NetworkId.TANGLE_MAINNET) {
-        return null;
-      }
+  const isMetadataUpToDate = useMemo(() => {
+    // Only update metadata for the mainnet. This is because
+    // the testnet and local networks have the same genesis hash,
+    // so they represent the same network. Only the mainnet's metadata
+    // is relevant.
+    if (apiPromise === null || network.id !== NetworkId.TANGLE_MAINNET) {
+      return null;
+    }
 
-      // If the active wallet is an EVM wallet, we don't need to update the metadata
-      if (activeWallet?.platform === 'EVM') {
-        return null;
-      }
+    // If the active wallet is an EVM wallet, we don't need to update the metadata
+    if (activeWallet?.platform === 'EVM') {
+      return null;
+    }
 
-      const genesisHash = apiPromise.genesisHash.toHex();
-      const cachedEntry = cachedMetadata?.value?.[genesisHash];
+    const genesisHash = apiPromise.genesisHash.toHex();
+    const cachedEntry = cachedMetadata?.value?.[genesisHash];
 
-      if (cachedEntry === undefined) {
-        return false;
-      }
+    if (cachedEntry === undefined) {
+      return false;
+    }
 
-      return isEqual(cachedEntry, {
-        ss58Prefix: network.ss58Prefix,
-        tokenSymbol: network.tokenSymbol,
-        tokenDecimals: TANGLE_TOKEN_DECIMALS,
-      });
-    },
-    // prettier-ignore
-    [activeWallet?.platform, apiPromise, cachedMetadata?.value, network.id, network.ss58Prefix, network.tokenSymbol],
-  );
+    return isEqual(cachedEntry, {
+      ss58Prefix: network.ss58Prefix,
+      tokenSymbol: network.tokenSymbol,
+      tokenDecimals: TANGLE_TOKEN_DECIMALS,
+    });
+  }, [
+    activeWallet?.platform,
+    apiPromise,
+    cachedMetadata?.value,
+    network.id,
+    network.ss58Prefix,
+    network.tokenSymbol,
+  ]);
 
   const isSubstrateAccount = useMemo(() => {
     return activeAccount !== null
