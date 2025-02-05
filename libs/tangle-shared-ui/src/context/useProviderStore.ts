@@ -23,11 +23,16 @@ type Provider =
 type Account =
   | {
       type: 'substrate';
-      address: SubstrateAddress;
       genesisHash?: string | null;
       name?: string;
       source: string;
       keypairType?: KeypairType;
+
+      /**
+       * Note that some Substrate wallets support EVM accounts,
+       * such as Talisman.
+       */
+      address: SubstrateAddress | EvmAddress;
     }
   | { type: 'evm'; address: EvmAddress };
 

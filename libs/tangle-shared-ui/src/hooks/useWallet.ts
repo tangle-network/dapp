@@ -8,6 +8,7 @@ import {
 import {
   assertEvmAddress,
   assertSubstrateAddress,
+  isEvmAddress,
 } from '@webb-tools/webb-ui-components';
 import ensureError from '../utils/ensureError';
 import { EIP1193Provider } from 'viem';
@@ -39,11 +40,7 @@ const useWallet = () => {
    */
   const trySwitchAccount = useCallback(
     (newAccountAddress: SubstrateAddress | EvmAddress): boolean => {
-      if (accounts === undefined) {
-        return false;
-      }
-
-      const newAccount = accounts.find(
+      const newAccount = accounts?.find(
         (account) => account.address === newAccountAddress,
       );
 
@@ -112,14 +109,20 @@ const useWallet = () => {
       });
 
       setAccounts(
-        substrateAccounts.map((substrateAccount) => ({
-          type: 'substrate',
-          address: assertSubstrateAddress(substrateAccount.address),
-          source: substrateAccount.meta.source,
-          genesisHash: substrateAccount.meta.genesisHash,
-          name: substrateAccount.meta.name,
-          keypairType: substrateAccount.type,
-        })),
+        substrateAccounts.map((substrateAccount) => {
+          const address = isEvmAddress(substrateAccount.address)
+            ? assertEvmAddress(substrateAccount.address)
+            : assertSubstrateAddress(substrateAccount.address);
+
+          return {
+            type: 'substrate',
+            address,
+            source: substrateAccount.meta.source,
+            genesisHash: substrateAccount.meta.genesisHash,
+            name: substrateAccount.meta.name,
+            keypairType: substrateAccount.type,
+          };
+        }),
       );
 
       setActiveAccountAddress(assertSubstrateAddress(defaultAccount.address));
