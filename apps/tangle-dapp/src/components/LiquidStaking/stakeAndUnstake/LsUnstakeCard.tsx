@@ -58,11 +58,7 @@ const LsUnstakeCard: FC = () => {
     useLsPoolUnbondTx();
 
   const selectedProtocol = getLsProtocolDef(lsProtocolId);
-
-  const {
-    exchangeRate: exchangeRateOrError,
-    isRefreshing: isRefreshingExchangeRate,
-  } = useLsExchangeRate();
+  const exchangeRateOrError = useLsExchangeRate();
 
   // TODO: Properly handle the error state.
   const exchangeRate =
@@ -92,7 +88,11 @@ const LsUnstakeCard: FC = () => {
   }, [executeTangleUnbondTx, fromAmount, isTangleNetwork, lsPoolId]);
 
   const toAmount = useMemo(() => {
-    if (fromAmount === null || exchangeRate === null) {
+    if (
+      fromAmount === null ||
+      exchangeRate === null ||
+      exchangeRate === undefined
+    ) {
       return null;
     }
 
@@ -179,7 +179,6 @@ const LsUnstakeCard: FC = () => {
           placeholder={EMPTY_VALUE_PLACEHOLDER}
           token={selectedProtocol.token}
           isReadOnly
-          className={isRefreshingExchangeRate ? 'animate-pulse' : undefined}
           showPoolIndicator={false}
         />
 
