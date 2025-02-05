@@ -236,9 +236,9 @@ const RestakeDelegateForm: FC = () => {
 
       await restakeApi.delegate(operatorAccountId, assetId, amountBn);
 
-      setValue('operatorAccountId', '');
-      setValue('amount', '');
-      setValue('assetId', '');
+      setValue('operatorAccountId', '', { shouldValidate: false });
+      setValue('amount', '', { shouldValidate: false });
+      setValue('assetId', '', { shouldValidate: false });
     },
     [isReady, restakeApi, selectedAsset?.decimals, setValue],
   );

@@ -221,8 +221,8 @@ const DepositForm: FC<Props> = (props) => {
 
       await restakeApi.deposit(asset.id, amountBn);
 
-      resetField('amount');
-      resetField('depositAssetId');
+      setValue('amount', '', { shouldValidate: false });
+      setValue('depositAssetId', '', { shouldValidate: false });
 
       // Reload balances after depositing an EVM ERC-20 asset,
       // so that the deposit amount is reflected in the balance.
@@ -236,7 +236,7 @@ const DepositForm: FC<Props> = (props) => {
       isReady,
       refetchErc20Balances,
       restakeApi,
-      resetField,
+      setValue,
     ],
   );
 

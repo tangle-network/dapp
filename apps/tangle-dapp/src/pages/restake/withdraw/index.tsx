@@ -174,8 +174,8 @@ const RestakeWithdrawForm: FC = () => {
 
       await restakeApi.withdraw(assetId, amountBn);
 
-      setFormValue('amount', '');
-      setFormValue('assetId', '0x0');
+      setFormValue('amount', '', { shouldValidate: false });
+      setFormValue('assetId', '0x0', { shouldValidate: false });
     },
     [isReady, restakeApi, selectedAsset?.decimals, setFormValue],
   );
