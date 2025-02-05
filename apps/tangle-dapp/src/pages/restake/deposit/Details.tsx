@@ -15,7 +15,7 @@ type Props = {
 };
 
 const Details: FC<Props> = ({ watch }) => {
-  const { vaults } = useRestakeContext();
+  const { assets } = useRestakeContext();
   const { leaveDelegatorsDelay } = useRestakeConsts();
   const rewardConfig = useRestakeRewardConfig();
   const sessionDurationMs = useSessionDurationMs();
@@ -27,14 +27,14 @@ const Details: FC<Props> = ({ watch }) => {
       return null;
     }
 
-    const asset = vaults[assetId];
+    const asset = assets[assetId];
 
     if (asset === undefined || asset.vaultId === null) {
       return null;
     }
 
     return rewardConfig.get(asset.vaultId)?.apy ?? null;
-  }, [assetId, vaults, rewardConfig]);
+  }, [assetId, assets, rewardConfig]);
 
   const withdrawPeriod = useMemo(() => {
     if (sessionDurationMs === null || leaveDelegatorsDelay === null) {
