@@ -1,5 +1,4 @@
 import {
-  PalletAssetsAccountStatus,
   PalletAssetsAssetDetails,
   PalletAssetsAssetStatus,
   PalletAssetsExistenceReason,
@@ -144,9 +143,11 @@ export type AssetBalanceMap = {
 };
 
 export type AssetWithBalance = {
-  assetId: RestakeAssetId;
-  metadata: RestakeAssetMetadata;
-  balance: AssetBalance | null;
+  readonly [assetId: RestakeAssetId]: {
+    readonly assetId: RestakeAssetId;
+    readonly metadata: RestakeAssetMetadata;
+    readonly balance: AssetBalance | null;
+  };
 };
 
 export type RestakeAsset = {

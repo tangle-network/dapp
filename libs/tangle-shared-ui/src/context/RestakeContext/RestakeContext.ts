@@ -6,7 +6,7 @@ import { RestakeContextType } from './types';
 const RestakeContext = createContext<RestakeContextType>({
   assets: {},
   balances: {},
-  assetWithBalances: [],
+  assetWithBalances: {},
   isLoading: false,
   error: null,
 });

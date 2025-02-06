@@ -1,7 +1,5 @@
 'use client';
 
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
-import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import toPairs from 'lodash/toPairs';
 import { PropsWithChildren, useMemo } from 'react';
 import useRestakeAssets from '../../data/restake/useRestakeAssets';
@@ -24,31 +22,22 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
   } = useRestakeBalances();
 
   const assetWithBalances = useMemo(() => {
-    const combined = toPairs(assets).reduce(
-      (assetWithBalances, [assetIdString, assetMetadata]) => {
+    return toPairs(assets).reduce(
+      (assetWithBalances, [assetIdString, metadata]) => {
         const assetId = assertRestakeAssetId(assetIdString);
         const balance = balances[assetId] ?? null;
 
-        return assetWithBalances.concat({
-          assetId,
-          metadata: assetMetadata,
-          balance,
-        });
+        return {
+          ...assetWithBalances,
+          [assetId]: {
+            assetId,
+            metadata,
+            balance,
+          },
+        };
       },
-      [] as Array<AssetWithBalance>,
+      {} as AssetWithBalance,
     );
-
-    // Order assets with balances first
-    return [
-      ...combined.filter(
-        (asset) =>
-          isDefined(asset.balance) && asset.balance.balance > ZERO_BIG_INT,
-      ),
-      ...combined.filter(
-        (asset) =>
-          !isDefined(asset.balance) || asset.balance.balance === ZERO_BIG_INT,
-      ),
-    ];
   }, [assets, balances]);
 
   return (

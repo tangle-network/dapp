@@ -113,9 +113,8 @@ const DepositForm: FC<Props> = (props) => {
       return;
     }
 
-    const defaultAsset = assetWithBalances.find(
-      (asset) => asset.assetId === assetIdParam,
-    );
+    const defaultAsset =
+      assetWithBalances[assetIdParam as keyof typeof assetWithBalances];
 
     if (
       defaultAsset?.balance?.balance === undefined ||
@@ -149,7 +148,7 @@ const DepositForm: FC<Props> = (props) => {
   } = useModal();
 
   const nativeAssets = useMemo<RestakeAsset[]>(() => {
-    const nativeAssetsWithBalances = assetWithBalances
+    const nativeAssetsWithBalances = Object.values(assetWithBalances)
       .filter(
         (asset) =>
           asset.balance?.balance !== undefined &&

@@ -18,7 +18,7 @@ export type RestakeContextType = {
   /**
    * The assets with balances of the current active account
    */
-  assetWithBalances: Array<AssetWithBalance>;
+  assetWithBalances: AssetWithBalance;
 
   isLoading: boolean;
 
