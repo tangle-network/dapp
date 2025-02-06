@@ -168,19 +168,20 @@ const COLUMNS = [
     header: () => (
       <HeaderCell
         title="Rewards"
-        tooltip="Total annual deposit rewards per vault"
+        tooltip="Total annual deposit rewards per vault."
       />
     ),
     cell: (props) => {
       const vaultReward = props.getValue();
 
-      const fmtRewards = BN.isBN(vaultReward)
-        ? formatDisplayAmount(
-            vaultReward,
-            TANGLE_TOKEN_DECIMALS,
-            AmountFormatStyle.SHORT,
-          )
-        : EMPTY_VALUE_PLACEHOLDER;
+      const fmtRewards =
+        vaultReward instanceof BN
+          ? formatDisplayAmount(
+              vaultReward,
+              TANGLE_TOKEN_DECIMALS,
+              AmountFormatStyle.SHORT,
+            )
+          : EMPTY_VALUE_PLACEHOLDER;
 
       return (
         <TableCellWrapper>

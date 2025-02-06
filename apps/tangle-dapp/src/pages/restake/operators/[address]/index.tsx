@@ -42,7 +42,7 @@ const Page = () => {
     [blueprints],
   );
 
-  // TODO: Handle this better
+  // TODO: Redirect to 404 page instead of returning null.
   if (address === undefined || !isSubstrateAddress(address)) {
     return null;
   }

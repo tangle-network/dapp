@@ -19,8 +19,10 @@ export const useValidators = (
 } => {
   const { result: identityNames, isLoading: isLoadingIdentityNames } =
     useValidatorIdentityNames();
+
   const { result: validatorPrefs, isLoading: isLoadingValidatorPrefs } =
     useValidatorPrefs();
+
   const { result: exposures } = useValidatorStakingExposures(isActive);
 
   const { result: nominations, isLoading: isLoadingNominations } = useApiRx(

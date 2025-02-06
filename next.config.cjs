@@ -33,9 +33,6 @@ const nextConfig = {
       },
     ];
   },
-  images: {
-    domains: ['images.unsplash.com'], // TODO: update when adding api for blueprints
-  },
 };
 
 module.exports = nextConfig;

@@ -21,8 +21,6 @@ import RestakePage from '../pages/restake';
 import NotFoundPage from '../pages/notFound';
 import Layout from '../containers/Layout';
 
-// TODO: Add metadata tags for SEO
-
 function App() {
   return (
     <div>

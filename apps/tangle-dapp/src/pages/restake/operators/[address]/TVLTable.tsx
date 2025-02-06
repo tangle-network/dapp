@@ -29,37 +29,41 @@ const TVLTable: FC<Props> = ({
 
   const vaults = useMemo(() => {
     const vaults: Record<string, VaultData> = {};
-
     const delegations = operatorData?.delegations ?? [];
 
     delegations.forEach(({ assetId }) => {
-      if (assetsMetadataMap[assetId] === undefined) return;
-
-      if (assetsMetadataMap[assetId].vaultId === null) return;
+      if (
+        assetsMetadataMap[assetId] === undefined ||
+        assetsMetadataMap[assetId].vaultId === null
+      ) {
+        return;
+      }
 
       const vaultId = assetsMetadataMap[assetId].vaultId;
-      if (vaults[vaultId] === undefined) {
-        // TODO: Find out a proper way to get the vault name, now it's the first token name
-        const name = assetsMetadataMap[assetId].name;
-        // TODO: Find out a proper way to get the vault symbol, now it's the first token symbol
-        const representToken = assetsMetadataMap[assetId].symbol;
 
-        const apyPercentage =
-          rewardConfig?.get(vaultId)?.apy.toNumber() ?? null;
-
-        const tvlInUsd = vaultTVL?.[vaultId] ?? null;
-
-        vaults[vaultId] = {
-          id: vaultId,
-          apyPercentage,
-          name,
-          representToken,
-          tokenCount: 1,
-          tvlInUsd,
-        };
-      } else {
+      if (vaults[vaultId] !== undefined) {
         vaults[vaultId].tokenCount += 1;
+
+        return;
       }
+
+      // TODO: Find out a proper way to get the vault name, now it's the first token name
+      const name = assetsMetadataMap[assetId].name;
+
+      // TODO: Find out a proper way to get the vault symbol, now it's the first token symbol
+      const representToken = assetsMetadataMap[assetId].symbol;
+
+      const apyPercentage = rewardConfig?.get(vaultId)?.apy.toNumber() ?? null;
+      const tvlInUsd = vaultTVL?.[vaultId] ?? null;
+
+      vaults[vaultId] = {
+        id: vaultId,
+        apyPercentage,
+        name,
+        representToken,
+        tokenCount: 1,
+        tvlInUsd,
+      } satisfies VaultData;
     });
 
     return vaults;
@@ -77,6 +81,7 @@ const TVLTable: FC<Props> = ({
         } else {
           acc[assetId] += amountBonded;
         }
+
         return acc;
       },
       {},
@@ -86,11 +91,15 @@ const TVLTable: FC<Props> = ({
   const tableProps = useMemo<ComponentProps<typeof VaultsTable>['tableProps']>(
     () => ({
       onRowClick(row) {
-        if (!row.getCanExpand()) return;
+        if (!row.getCanExpand()) {
+          return;
+        }
+
         return row.toggleExpanded();
       },
       getExpandedRowContent(row) {
         const vaultId = row.original.id;
+
         const vaultAssets = Object.values(assetsMetadataMap)
           .filter((asset) => asset.vaultId === vaultId)
           .map((asset) => {

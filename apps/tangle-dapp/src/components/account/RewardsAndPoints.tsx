@@ -12,6 +12,7 @@ import useAccountRewardInfo from '../../data/rewards/useAccountRewardInfo';
 import KeyStatsItem from '../KeyStatsItem/KeyStatsItem';
 import ClaimRewardAction from './ClaimRewardAction';
 import useActivePoints from '../../data/points/useActivePoints';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 
 const RewardsAndPoints = () => {
   const [activeChain] = useActiveChain();
@@ -34,6 +35,7 @@ const RewardsAndPoints = () => {
       return null;
     }
 
+    // Include only non-zero entries.
     return new Map(
       rewards.entries().filter(([_, value]) => value > ZERO_BIG_INT),
     );
@@ -55,6 +57,14 @@ const RewardsAndPoints = () => {
     );
   }, [activeChain, rewards]);
 
+  const totalPoints = useMemo(() => {
+    if (typeof points?.account?.totalPoints !== 'number') {
+      return EMPTY_VALUE_PLACEHOLDER;
+    }
+
+    return addCommasToNumber(points.account.totalPoints);
+  }, [points?.account?.totalPoints]);
+
   return (
     <div className="grid grid-cols-2 gap-6">
       <KeyStatsItem
@@ -63,7 +73,7 @@ const RewardsAndPoints = () => {
         hideErrorNotification
         isLoading={isRewardsLoading}
         error={rewardsError}
-        tooltip="Rewards earned from deposits in restaking"
+        tooltip="Rewards earned from deposits in restaking."
       >
         <div className="flex items-baseline gap-2">
           <Typography
@@ -94,11 +104,11 @@ const RewardsAndPoints = () => {
 
       <KeyStatsItem
         className="!p-0"
-        title="Earned Points"
+        title="Points Earned"
         hideErrorNotification
         isLoading={isPointsLoading}
         error={pointsError}
-        tooltip="Points earned toward airdrop through network participant"
+        tooltip="Points earned toward airdrop through network participation."
       >
         <div className="flex items-baseline gap-2">
           <Typography
@@ -107,7 +117,7 @@ const RewardsAndPoints = () => {
             className="text-mono-140 dark:text-mono-40"
             component="span"
           >
-            {points?.account?.totalPoints ?? EMPTY_VALUE_PLACEHOLDER}
+            {totalPoints}
           </Typography>
 
           <Typography

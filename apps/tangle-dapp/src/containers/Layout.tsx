@@ -11,7 +11,7 @@ import { type FC, type PropsWithChildren } from 'react';
 
 import { MobileSidebar, Sidebar } from '../components';
 import DebugMetrics from './DebugMetrics';
-import WalletAndChainContainer from './WalletAndChainContainer';
+import TopNavigationPanel from './TopNavigationPanel';
 
 import BridgeTxQueueDropdown from '../components/bridge/BridgeTxQueueDropdown';
 
@@ -51,7 +51,7 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
               </div>
 
               <div className="flex items-center gap-2">
-                <WalletAndChainContainer />
+                <TopNavigationPanel />
 
                 <BridgeTxQueueDropdown dropdownButtonClassName="h-[44px]" />
               </div>
