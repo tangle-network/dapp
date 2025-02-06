@@ -7,16 +7,18 @@ import type {
 } from '@polkadot/types/lookup';
 import { BN, formatBalance, hexToString } from '@polkadot/util';
 import type { Chain } from '@webb-tools/dapp-config';
+import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 import { isEvmAddress } from '@webb-tools/webb-ui-components/utils/isEvmAddress20';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
+import { PublicClient } from 'viem';
+import { findErc20Token } from '../../hooks/useTangleEvmErc20Balances';
 import { RestakeAssetId } from '../../types';
 import { RestakeAssetMap, RestakeAssetMetadata } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import createAssetIdEnum from '../../utils/createAssetIdEnum';
+import fetchErc20TokenMetadata from '../../utils/fetchErc20TokenMetadata';
 import { fetchTokenPriceBySymbol } from '../../utils/fetchTokenPrices';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
-import { findErc20Token } from '../../hooks/useTangleEvmErc20Balances';
-import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 
 function createVaultId(u32: Option<u32>): number | null {
   if (u32.isNone) {
@@ -78,6 +80,7 @@ function processAssetDetailsRx(
   assetVaultMap: Map<RestakeAssetId, number>,
   hasNative: boolean,
   nativeCurrency: Chain['nativeCurrency'],
+  viemPublicClient?: PublicClient | undefined | null,
 ): Observable<RestakeAssetMap> {
   return hasNative
     ? getNativeAssetRx(nativeCurrency, api).pipe(
@@ -108,9 +111,8 @@ function processAssetDetailsRx(
               };
             }, initialAssetMap);
 
-          const evmAssetMap = evmAssetIds
-            .values()
-            .reduce((assetMap, assetId) => {
+          const evmAssetMap = await evmAssetIds.values().reduce(
+            async (assetMap, assetId) => {
               // TODO: Implement price fetching.
               // const price = await fetchTokenPriceBySymbol(erc20Token.symbol);
               const price = null;
@@ -118,11 +120,35 @@ function processAssetDetailsRx(
               const erc20Token = findErc20Token(assetId);
 
               if (erc20Token === null) {
-                return assetMap;
+                if (!viemPublicClient) {
+                  return assetMap;
+                }
+
+                const metadata = await fetchErc20TokenMetadata(
+                  viemPublicClient,
+                  assetId,
+                );
+
+                if (metadata === null) {
+                  return assetMap;
+                }
+
+                return {
+                  ...(await assetMap),
+                  [assetId]: {
+                    assetId,
+                    name: metadata.name,
+                    symbol: metadata.symbol,
+                    decimals: metadata.decimals,
+                    status: 'Live' as const,
+                    vaultId: assetVaultMap.get(assetId) ?? null,
+                    priceInUsd: price,
+                  } satisfies RestakeAssetMetadata,
+                };
               }
 
               return {
-                ...assetMap,
+                ...(await assetMap),
                 [assetId]: {
                   assetId,
                   name: erc20Token.name,
@@ -133,7 +159,9 @@ function processAssetDetailsRx(
                   priceInUsd: price,
                 } satisfies RestakeAssetMetadata,
               };
-            }, {} as RestakeAssetMap);
+            },
+            Promise.resolve({} as RestakeAssetMap),
+          );
 
           return {
             ...substrateAssetMap,
@@ -168,6 +196,7 @@ export const queryAssetsRx = (
   api: ApiRx,
   assetIds: RestakeAssetId[],
   nativeCurrency: Chain['nativeCurrency'] = DEFAULT_NATIVE_CURRENCY,
+  viemPublicClient?: PublicClient | undefined | null,
 ) => {
   const { hasNative, nonNativeAssetIds } = filterNativeAsset(assetIds);
   const isNonNativeAssetsEmpty = nonNativeAssetIds.length === 0;
@@ -269,6 +298,7 @@ export const queryAssetsRx = (
         assetVaultMap,
         hasNative,
         nativeCurrency,
+        viemPublicClient,
       );
     }),
   );

@@ -3,6 +3,7 @@ import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { mergeMap, switchMap } from 'rxjs';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
+import useViemPublicClient from '../../hooks/useViemPublicClient';
 import { queryAssetsRx } from '../../queries/restake/assetDetails';
 import { assetIdsRxQuery } from '../../queries/restake/assetIds';
 import { rewardVaultRxQuery } from '../../queries/restake/rewardVault';
@@ -11,6 +12,7 @@ import rewardVaultsPotAccountsRxQuery from '../../queries/restake/rewardVaultsPo
 const useRestakeAssets = () => {
   const { apiRx, apiRxLoading, apiRxError } = usePolkadotApi();
   const { activeChain, isConnecting, loading } = useWebContext();
+  const viemPublicClient = useViemPublicClient();
 
   const rewardVault$ = useMemo(
     () =>
@@ -34,10 +36,15 @@ const useRestakeAssets = () => {
     () =>
       assetIds$.pipe(
         mergeMap((assetIds) =>
-          queryAssetsRx(apiRx, assetIds, activeChain?.nativeCurrency),
+          queryAssetsRx(
+            apiRx,
+            assetIds,
+            activeChain?.nativeCurrency,
+            viemPublicClient,
+          ),
         ),
       ),
-    [activeChain?.nativeCurrency, apiRx, assetIds$],
+    [activeChain?.nativeCurrency, apiRx, assetIds$, viemPublicClient],
   );
 
   const assets = useObservableState(assets$, {});
