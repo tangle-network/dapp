@@ -22,6 +22,68 @@ import { BridgeChainsConfigType, BridgeToken } from '../types';
 const assertAbi = (abi: unknown): Abi => abi as Abi;
 
 export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
+  [PresetTypedChainId.EthereumMainNet]: [
+    {
+      symbol: 'EIGEN',
+      tokenType: 'EIGEN' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x7C547f860b71399846E5CC2487f60A2b34396CC2'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x322CCb93C99BDDD78eC7cc6cA55eeceF1268BC16',
+      ),
+    },
+    {
+      symbol: 'hETH',
+      tokenType: 'hETH' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xFF2b0Dab4956e69bc2c78542C396EEcD9eAB3460'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xcFeb82B9a9C7791683C846a69311A6885eD29A03',
+      ),
+    },
+    {
+      symbol: 'eETH',
+      tokenType: 'eETH' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x91BCcB2660802f567A48e4F636E35D2eE5d6463F'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x69cC6D7da66752B267C9F6B157F0643F54654233',
+      ),
+    },
+    {
+      symbol: 'eBTC',
+      tokenType: 'eBTC' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x8a578773BdE68985B167345301B04B7368c15DAe'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x8360830C2BCE22a7Dd15d9350C81d8E573B563eE',
+      ),
+    },
+    {
+      symbol: 'Avail',
+      tokenType: 'Avail' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xf8dC93D3FCf1b8c7C950CB4bEe9dE70633C0553f'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x4A68525B31F8C67761e0429f6e4766a55f15b7A5',
+      ),
+    },
+  ],
   [PresetTypedChainId.Polygon]: [
     {
       symbol: 'TNT',
@@ -961,6 +1023,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
 };
 
 export const BRIDGE_CHAINS: BridgeChainsConfigType = {
+
   [PresetTypedChainId.TangleMainnetEVM]: {
     [PresetTypedChainId.Polygon]: {
       supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.Polygon],
@@ -982,6 +1045,14 @@ export const BRIDGE_CHAINS: BridgeChainsConfigType = {
     },
     [PresetTypedChainId.SolanaMainnet]: {
       supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.SolanaMainnet],
+    },
+    [PresetTypedChainId.EthereumMainNet]: {
+      supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.EthereumMainNet],
+    },
+  },
+  [PresetTypedChainId.EthereumMainNet]: {
+    [PresetTypedChainId.TangleMainnetEVM]: {
+      supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.EthereumMainNet],
     },
   },
   [PresetTypedChainId.Arbitrum]: {
@@ -1378,6 +1449,56 @@ export const HYPERLANE_CHAINS: ChainMap<ChainMetadata> = {
         http: 'https://testnet-rpc.tangle.tools',
       },
     ],
+  },
+  ethereum: {
+    blockExplorers: [
+      {
+        apiUrl: 'https://api.etherscan.io/api',
+        family: ExplorerFamily.Etherscan,
+        name: 'Etherscan',
+        url: 'https://etherscan.io',
+      },
+      {
+        apiUrl: 'https://eth.blockscout.com/api',
+        family: ExplorerFamily.Blockscout,
+        name: 'Blockscout',
+        url: 'https://blockscout.com/eth/mainnet',
+      },
+    ],
+    blocks: {
+      confirmations: 2,
+      estimateBlockTime: 13,
+      reorgPeriod: 15,
+    },
+    chainId: 1,
+    deployer: {
+      name: 'Abacus Works',
+      url: 'https://www.hyperlane.xyz',
+    },
+    displayName: 'Ethereum',
+    domainId: 1,
+    gasCurrencyCoinGeckoId: 'ethereum',
+    gnosisSafeTransactionServiceUrl:
+      'https://safe-transaction-mainnet.safe.global/',
+    name: 'ethereum',
+    nativeToken: {
+      decimals: 18,
+      name: 'Ether',
+      symbol: 'ETH',
+    },
+    protocol: ProtocolType.Ethereum,
+    rpcUrls: [
+      {
+        http: 'https://rpc.ankr.com/eth',
+      },
+      {
+        http: 'https://ethereum.publicnode.com',
+      },
+      {
+        http: 'https://cloudflare-eth.com',
+      },
+    ],
+    technicalStack: ChainTechnicalStack.Other,
   },
 };
 
@@ -3240,6 +3361,141 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'WETH',
     },
+    {
+      addressOrDenom: '0x7C547f860b71399846E5CC2487f60A2b34396CC2',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xec53bF9167f50cDEB3Ae105f56099aaaB9061F83',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x322CCb93C99BDDD78eC7cc6cA55eeceF1268BC16',
+        },
+      ],
+      decimals: 18,
+      name: 'Eigen',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'EIGEN',
+    },
+    {
+      addressOrDenom: '0x322CCb93C99BDDD78eC7cc6cA55eeceF1268BC16',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|ethereum|0x7C547f860b71399846E5CC2487f60A2b34396CC2',
+        },
+      ],
+      decimals: 18,
+      name: 'Eigen',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'EIGEN',
+    },
+    {
+      addressOrDenom: '0xFF2b0Dab4956e69bc2c78542C396EEcD9eAB3460',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0x5bBe36152d3CD3eB7183A82470b39b29EedF068B',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xcFeb82B9a9C7791683C846a69311A6885eD29A03',
+        },
+      ],
+      decimals: 18,
+      name: 'Hord ETH Staking',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'hETH',
+    },
+    {
+      addressOrDenom: '0xcFeb82B9a9C7791683C846a69311A6885eD29A03',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|ethereum|0xFF2b0Dab4956e69bc2c78542C396EEcD9eAB3460',
+        },
+      ],
+      decimals: 18,
+      name: 'Hord ETH Staking',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'hETH',
+    },
+    {
+      addressOrDenom: '0x91BCcB2660802f567A48e4F636E35D2eE5d6463F',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0x35fA164735182de50811E8e2E824cFb9B6118ac2',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x69cC6D7da66752B267C9F6B157F0643F54654233',
+        },
+      ],
+      decimals: 18,
+      name: 'ether.fi ETH',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'eETH',
+    },
+    {
+      addressOrDenom: '0x69cC6D7da66752B267C9F6B157F0643F54654233',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|ethereum|0x91BCcB2660802f567A48e4F636E35D2eE5d6463F',
+        },
+      ],
+      decimals: 18,
+      name: 'ether.fi ETH',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'eETH',
+    },
+    {
+      addressOrDenom: '0x8a578773BdE68985B167345301B04B7368c15DAe',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0x657e8C867D8B37dCC18fA4Caead9C45EB088C642',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x8360830C2BCE22a7Dd15d9350C81d8E573B563eE',
+        },
+      ],
+      decimals: 8,
+      name: 'ether.fi BTC',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'eBTC',
+    },
+    {
+      addressOrDenom: '0x8360830C2BCE22a7Dd15d9350C81d8E573B563eE',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|ethereum|0x8a578773BdE68985B167345301B04B7368c15DAe',
+        },
+      ],
+      decimals: 8,
+      name: 'ether.fi BTC',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'eBTC',
+    },
+    {
+      addressOrDenom: '0xf8dC93D3FCf1b8c7C950CB4bEe9dE70633C0553f',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xEeB4d8400AEefafC1B2953e0094134A887C76Bd8',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x4A68525B31F8C67761e0429f6e4766a55f15b7A5',
+        },
+      ],
+      decimals: 18,
+      name: 'Avail',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'AVAIL',
+    },
+    {
+      addressOrDenom: '0x4A68525B31F8C67761e0429f6e4766a55f15b7A5',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|ethereum|0xf8dC93D3FCf1b8c7C950CB4bEe9dE70633C0553f',
+        },
+      ],
+      decimals: 18,
+      name: 'Avail',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'AVAIL',
+    },
   ],
 };
 
@@ -3316,9 +3572,16 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'MMT/holesky-tangle',
   'CPT/holesky-tangle',
   'WETH/holesky-tangle',
+  'EIGEN/ethereum-tangle',
+  'hETH/ethereum-tangle',
+  'eETH/ethereum-tangle',
+  'eBTC/ethereum-tangle',
+  'AVAIL/ethereum-tangle',
 ];
 
 export const mailboxAddress = {
+  [PresetTypedChainId.EthereumMainNet]:
+    '0xc005dc82818d67AF737725bD4bf75435d065D239',
   [PresetTypedChainId.Arbitrum]: '0x979Ca5202784112f4738403dBec5D0F3B9daabB9',
   [PresetTypedChainId.Base]: '0xeA87ae93Fa0019a82A727bfd3eBd1cFCa8f64f1D',
   [PresetTypedChainId.BSC]: '0x2971b9Aec44bE4eb673DF1B88cDB57b96eefe8a4',
