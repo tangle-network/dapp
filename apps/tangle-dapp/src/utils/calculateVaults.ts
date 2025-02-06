@@ -33,7 +33,7 @@ const calculateVaults = ({
       vaults.set(vaultId, {
         id: vaultId,
         apyPercentage,
-        name: `${name} vault #${vaultId}`,
+        name: `Vault ID #${vaultId}`,
         representToken: symbol,
         tokenCount: 1,
         tvlInUsd,

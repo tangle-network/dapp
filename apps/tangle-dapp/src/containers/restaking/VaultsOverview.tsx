@@ -4,18 +4,17 @@ import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/u
 import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useRestakeTVL from '@webb-tools/tangle-shared-ui/data/restake/useRestakeTVL';
 import { ComponentProps, useMemo } from 'react';
+import VaultAssetsTable from '../../components/tables/VaultAssets';
 import { VaultAssetData } from '../../components/tables/VaultAssets/types';
 import VaultsTable from '../../components/tables/Vaults';
-import VaultAssetsTable from '../../components/tables/VaultAssets';
-import { randNumber } from '@ngneat/falso';
-import { VaultType } from '../../utils/calculateVaults';
+import useRestakeVaults from '../../data/restake/useRestakeVaults';
 
 export default function VaultsOverview() {
-  const { assets: assetsMetadataMap } = useRestakeContext();
+  const { assets: assetsMetadataMap, isLoading } = useRestakeContext();
 
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
-  // const vaults = useRestakeVaults(true);
+  const vaults = useRestakeVaults(true);
 
   const { delegatorTVL } = useRestakeTVL(operatorMap, delegatorInfo);
 
@@ -71,19 +70,7 @@ export default function VaultsOverview() {
     [assetsMetadataMap, delegatorTVL, delegatorTotalRestakedAssets],
   );
 
-  return <VaultsTable data={getVaults()} tableProps={tableProps} />;
-}
-
-function getVaults() {
-  return Array.from({ length: randNumber({ min: 1, max: 10 }) }).map(
-    (_, idx) =>
-      ({
-        id: idx + 1,
-        name: `Vault #${idx + 1}`,
-        apyPercentage: randNumber({ min: 0, max: 100 }),
-        tokenCount: randNumber({ min: 1, max: 10 }),
-        tvlInUsd: null,
-        representToken: 'ETH',
-      }) satisfies VaultType,
+  return (
+    <VaultsTable data={vaults} tableProps={tableProps} isLoading={isLoading} />
   );
 }
