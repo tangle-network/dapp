@@ -8,7 +8,7 @@ import useRestakeAssetIds from '../../data/restake/useRestakeAssetIds';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { RestakeAssetId } from '../../types';
-import { AssetBalance, AssetBalanceMap } from '../../types/restake';
+import { AssetBalanceMap } from '../../types/restake';
 import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
 
@@ -103,33 +103,13 @@ function assetBalancesReducer(
         return assetBalanceMap;
       }
 
-      const { balance, status, reason } = accountBalance.unwrap();
+      const { balance } = accountBalance.unwrap();
       const assetId = assetIds[idx];
-
-      function toPrimitiveReason(
-        reasonArg: typeof reason,
-      ): AssetBalance['existenceReason'] {
-        if (reasonArg.type === 'DepositHeld') {
-          return {
-            DepositHeld: reasonArg.asDepositHeld.toString(),
-          };
-        }
-
-        if (reasonArg.type === 'DepositFrom') {
-          return {
-            DepositFrom: reasonArg.asDepositFrom,
-          };
-        }
-
-        return reasonArg.type;
-      }
 
       return Object.assign(assetBalanceMap, {
         [assetId]: {
           assetId,
           balance: balance.toBigInt(),
-          status: status.type,
-          existenceReason: toPrimitiveReason(reason),
         },
       } satisfies AssetBalanceMap);
     },
@@ -147,8 +127,6 @@ function getNativeBalance$(apiRx: ApiRx, activeAccount: string) {
           '0': {
             assetId: '0',
             balance: data.free.toBigInt(),
-            status: 'Liquid',
-            existenceReason: 'Sufficient',
           },
         }) as AssetBalanceMap,
     ),

@@ -137,17 +137,6 @@ export type AssetAccountExistenceReason =
 export type AssetBalance = {
   readonly assetId: RestakeAssetId;
   readonly balance: bigint;
-
-  /**
-   * The status of the account.
-   *
-   * @field "Frozen"
-   * @field "Liquid"
-   * @field "Blocked"
-   */
-  readonly status: TransformEnum<PalletAssetsAccountStatus>;
-
-  readonly existenceReason: AssetAccountExistenceReason;
 };
 
 export type AssetBalanceMap = {
