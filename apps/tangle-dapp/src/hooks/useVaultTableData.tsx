@@ -43,7 +43,7 @@ const useVaultTableData = ({
 
         const operatorAssets = Array.from(uniqueAssetIds)
           .map((assetId) => assets[assetId])
-          .filter((asset): asset is typeof asset => asset !== undefined);
+          .filter((asset) => asset !== undefined);
 
         return calculateVaults({
           assets: operatorAssets,
