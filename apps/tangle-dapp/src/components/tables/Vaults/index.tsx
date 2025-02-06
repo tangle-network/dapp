@@ -8,6 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChevronUp } from '@webb-tools/icons/ChevronUp';
+import Spinner from '@webb-tools/icons/Spinner';
 import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
 import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
@@ -18,15 +19,14 @@ import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/ty
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
-import { Link } from 'react-router';
-import { FC, useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
-
-import { PagePath, QueryParamKey } from '../../../types';
-import type { Props } from './types';
-import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import { FC, useMemo } from 'react';
+import { Link } from 'react-router';
+import { twMerge } from 'tailwind-merge';
+import { PagePath, QueryParamKey } from '../../../types';
 import type { VaultType } from '../../../utils/calculateVaults';
+import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
+import type { Props } from './types';
 
 const COLUMN_HELPER = createColumnHelper<VaultType>();
 
@@ -162,7 +162,7 @@ const VaultsTable: FC<Props> = ({
       <TableStatus
         title="Loading Vaults"
         description="Please wait while we load the vaults."
-        icon="🔄"
+        icon={<Spinner size="lg" />}
         {...loadingTableProps}
         className={loadingTableProps?.className}
       />
