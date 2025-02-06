@@ -1,5 +1,6 @@
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
+import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import type {
   DelegatorInfo,
   OperatorMetadata,
@@ -8,8 +9,8 @@ import { ComponentProps, type FC, useMemo } from 'react';
 import VaultAssetsTable from '../../../../components/tables/VaultAssets';
 import { VaultAssetData } from '../../../../components/tables/VaultAssets/types';
 import VaultsTable from '../../../../components/tables/Vaults';
-import type { VaultData } from '../../../../components/tables/Vaults/types';
 import useRestakeRewardConfig from '../../../../data/restake/useRestakeRewardConfig';
+import calculateVaults from '../../../../utils/calculateVaults';
 
 type Props = {
   operatorData: OperatorMetadata | undefined;
@@ -28,42 +29,32 @@ const TVLTable: FC<Props> = ({
   const rewardConfig = useRestakeRewardConfig();
 
   const vaults = useMemo(() => {
-    const vaults: Record<string, VaultData> = {};
+    if (operatorData === undefined) {
+      return [];
+    }
 
-    const delegations = operatorData?.delegations ?? [];
+    const uniqueAssetIds = operatorData.delegations.reduce(
+      (acc, { assetId }) => {
+        acc.add(assetId);
+        return acc;
+      },
+      new Set<RestakeAssetId>(),
+    );
 
-    delegations.forEach(({ assetId }) => {
-      if (assetsMetadataMap[assetId] === undefined) return;
+    const assets = uniqueAssetIds
+      .values()
+      .toArray()
+      .map((assetId) => assetsMetadataMap[assetId])
+      .filter((asset) => asset !== undefined);
 
-      if (assetsMetadataMap[assetId].vaultId === null) return;
-
-      const vaultId = assetsMetadataMap[assetId].vaultId;
-      if (vaults[vaultId] === undefined) {
-        // TODO: Find out a proper way to get the vault name, now it's the first token name
-        const name = assetsMetadataMap[assetId].name;
-        // TODO: Find out a proper way to get the vault symbol, now it's the first token symbol
-        const representToken = assetsMetadataMap[assetId].symbol;
-
-        const apyPercentage =
-          rewardConfig?.get(vaultId)?.apy.toNumber() ?? null;
-
-        const tvlInUsd = vaultTVL?.[vaultId] ?? null;
-
-        vaults[vaultId] = {
-          id: vaultId,
-          apyPercentage,
-          name,
-          representToken,
-          tokenCount: 1,
-          tvlInUsd,
-        };
-      } else {
-        vaults[vaultId].tokenCount += 1;
-      }
+    const vaultsMap = calculateVaults({
+      assets,
+      rewardConfig,
+      vaultTVL,
     });
 
-    return vaults;
-  }, [assetsMetadataMap, operatorData?.delegations, rewardConfig, vaultTVL]);
+    return vaultsMap.values().toArray();
+  }, [assetsMetadataMap, operatorData, rewardConfig, vaultTVL]);
 
   const delegatorTotalRestakedAssets = useMemo(() => {
     if (!delegatorInfo?.delegations) {
@@ -128,7 +119,7 @@ const TVLTable: FC<Props> = ({
         description:
           'This operator currently has no Total Value Locked (TVL). You can delegate to this operator to contribute to their TVL and see it reflected here.',
       }}
-      data={Object.values(vaults)}
+      data={vaults}
       tableProps={tableProps}
     />
   );

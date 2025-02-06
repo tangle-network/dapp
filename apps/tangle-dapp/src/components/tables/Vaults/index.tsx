@@ -23,11 +23,12 @@ import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { PagePath, QueryParamKey } from '../../../types';
-import type { Props, VaultData } from './types';
+import type { Props } from './types';
 import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import type { VaultType } from '../../../utils/calculateVaults';
 
-const COLUMN_HELPER = createColumnHelper<VaultData>();
+const COLUMN_HELPER = createColumnHelper<VaultType>();
 
 const COLUMNS = [
   COLUMN_HELPER.accessor('name', {
@@ -151,7 +152,7 @@ const VaultsTable: FC<Props> = ({
           getRowCanExpand: (row) => row.original.tokenCount > 0,
           autoResetPageIndex: false,
           enableSortingRemoval: false,
-        }) satisfies TableOptions<VaultData>,
+        }) satisfies TableOptions<VaultType>,
       [data],
     ),
   );
