@@ -12,31 +12,42 @@ import Spinner from '@webb-tools/icons/Spinner';
 import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
 import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
-import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { CircularProgress } from '@webb-tools/webb-ui-components/components/CircularProgress';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@webb-tools/webb-ui-components/utils/formatDisplayAmount';
 import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { FC, useMemo } from 'react';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { PagePath, QueryParamKey } from '../../../types';
+import calculateBnRatio from '../../../utils/calculateBnRatio';
 import type { VaultType } from '../../../utils/calculateVaults';
+import sortByBn from '../../../utils/sortByBn';
 import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
+import { HeaderCell } from '../../tableCells';
 import type { Props } from './types';
 
 const COLUMN_HELPER = createColumnHelper<VaultType>();
 
-const COLUMNS = [
+const getColumns = (nativeTokenSymbol: string) => [
   COLUMN_HELPER.accessor('name', {
     header: () => 'Vault',
     cell: (props) => (
       <TableCellWrapper className="pl-3">
         <div className="flex items-center gap-2">
-          <LsTokenIcon name={props.row.original.representToken} size="lg" />
+          <LsTokenIcon
+            name={props.row.original.representAssetSymbol}
+            size="lg"
+          />
           <Typography variant="h5" className="whitespace-nowrap">
             {props.getValue()}
           </Typography>
@@ -46,52 +57,122 @@ const COLUMNS = [
     sortingFn: sortByLocaleCompare((row) => row.name),
     sortDescFirst: true,
   }),
-  COLUMN_HELPER.accessor('apyPercentage', {
-    header: () => 'APY',
+  COLUMN_HELPER.accessor('available', {
+    header: () => 'Available',
+    sortingFn: sortByBn((row) => row.available),
     cell: (props) => {
       const value = props.getValue();
+      const fmtAvailable =
+        value === null
+          ? EMPTY_VALUE_PLACEHOLDER
+          : formatDisplayAmount(
+              value,
+              props.row.original.decimals,
+              AmountFormatStyle.SHORT,
+            );
+
+      return <TableCellWrapper>{fmtAvailable}</TableCellWrapper>;
+    },
+  }),
+  COLUMN_HELPER.accessor('totalDeposits', {
+    header: () => 'Deposits',
+    sortingFn: sortByBn((row) => row.totalDeposits),
+    cell: (props) => {
+      const value = props.getValue();
+      const fmtDeposits =
+        value === null
+          ? EMPTY_VALUE_PLACEHOLDER
+          : formatDisplayAmount(
+              value,
+              props.row.original.decimals,
+              AmountFormatStyle.SHORT,
+            );
+
+      return <TableCellWrapper>{fmtDeposits}</TableCellWrapper>;
+    },
+  }),
+  COLUMN_HELPER.accessor('reward', {
+    sortingFn: sortByBn((row) => row.reward),
+    header: () => (
+      <HeaderCell
+        title="Rewards"
+        tooltip="Total annual deposit rewards per vault"
+      />
+    ),
+    cell: (props) => {
+      const value = props.getValue();
+      const fmtRewards =
+        value === null
+          ? EMPTY_VALUE_PLACEHOLDER
+          : formatDisplayAmount(
+              value,
+              props.row.original.decimals,
+              AmountFormatStyle.SHORT,
+            );
 
       return (
-        <TableCellWrapper>
-          <Typography
-            variant="body1"
-            fw="bold"
-            className="text-mono-200 dark:text-mono-0"
-          >
-            {typeof value !== 'number'
-              ? EMPTY_VALUE_PLACEHOLDER
-              : formatPercentage(value)}
-          </Typography>
+        <TableCellWrapper removeRightBorder>
+          {fmtRewards} {nativeTokenSymbol}
         </TableCellWrapper>
       );
     },
   }),
-  COLUMN_HELPER.accessor('tokenCount', {
-    header: () => 'Tokens',
-    cell: (props) => (
-      <TableCellWrapper>
-        <Typography
-          variant="body1"
-          fw="bold"
-          className="text-mono-200 dark:text-mono-0"
-        >
-          {props.getValue()}
-        </Typography>
-      </TableCellWrapper>
+  COLUMN_HELPER.accessor('tvl', {
+    sortingFn: sortByBn((row) => row.tvl),
+    header: () => (
+      <HeaderCell
+        title="TVL | Capacity"
+        tooltip="Total value locked & deposit capacity."
+      />
     ),
-  }),
-  COLUMN_HELPER.accessor('tvlInUsd', {
-    header: () => 'TVL',
-    cell: (props) => (
-      <TableCellWrapper removeRightBorder>
-        <Typography
-          variant="body1"
-          className="text-mono-120 dark:text-mono-100"
-        >
-          {getTVLToDisplay(props.getValue())}
-        </Typography>
-      </TableCellWrapper>
-    ),
+    cell: (props) => {
+      const tvl = props.getValue();
+
+      const fmtTvl =
+        tvl === null
+          ? undefined
+          : formatDisplayAmount(
+              tvl,
+              props.row.original.decimals,
+              AmountFormatStyle.SHORT,
+            );
+
+      const depositCap = props.row.original.capacity;
+
+      const fmtDepositCap =
+        depositCap === null
+          ? '∞'
+          : formatDisplayAmount(
+              depositCap,
+              props.row.original.decimals,
+              AmountFormatStyle.SHORT,
+            );
+
+      const capacityPercentage =
+        tvl === null || depositCap === null
+          ? null
+          : calculateBnRatio(tvl, depositCap);
+
+      return (
+        <TableCellWrapper removeRightBorder>
+          <div className="flex items-center justify-center gap-1">
+            {capacityPercentage !== null && (
+              <CircularProgress
+                progress={capacityPercentage}
+                size="md"
+                tooltip={formatPercentage(capacityPercentage)}
+              />
+            )}
+
+            <Typography variant="body1" className="dark:text-mono-0">
+              {fmtTvl === null
+                ? `${fmtDepositCap}`
+                : `${fmtTvl} | ${fmtDepositCap}`}
+            </Typography>
+          </div>
+        </TableCellWrapper>
+      );
+    },
   }),
   COLUMN_HELPER.display({
     id: 'actions',
@@ -100,10 +181,10 @@ const COLUMNS = [
       <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1 gap-2">
           <Link
-            to={`${PagePath.RESTAKE}?${QueryParamKey.RESTAKE_VAULT}=${row.original.id}`}
+            to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_VAULT}=${row.original.id}`}
           >
             <Button variant="utility" className="uppercase body4">
-              Restake
+              Deposit
             </Button>
           </Link>
 
@@ -131,20 +212,16 @@ const VaultsTable: FC<Props> = ({
   loadingTableProps,
   tableProps,
 }) => {
+  const nativeTokenSymbol = useNetworkStore(
+    (store) => store.network.tokenSymbol,
+  );
+
   const table = useReactTable(
     useMemo(
       () =>
         ({
           data,
-          columns: COLUMNS,
-          initialState: {
-            sorting: [
-              {
-                id: 'apyPercentage',
-                desc: true,
-              },
-            ],
-          },
+          columns: getColumns(nativeTokenSymbol),
           getCoreRowModel: getCoreRowModel(),
           getExpandedRowModel: getExpandedRowModel(),
           getSortedRowModel: getSortedRowModel(),
@@ -153,7 +230,7 @@ const VaultsTable: FC<Props> = ({
           autoResetPageIndex: false,
           enableSortingRemoval: false,
         }) satisfies TableOptions<VaultType>,
-      [data],
+      [data, nativeTokenSymbol],
     ),
   );
 

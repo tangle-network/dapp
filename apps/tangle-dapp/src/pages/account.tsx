@@ -15,7 +15,7 @@ const AccountPage: FC = () => {
       </div>
 
       <Typography variant="h4" fw="bold">
-        Restake Assets
+        Restake Vaults
       </Typography>
 
       <VaultsOverview />
