@@ -1023,7 +1023,6 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
 };
 
 export const BRIDGE_CHAINS: BridgeChainsConfigType = {
-
   [PresetTypedChainId.TangleMainnetEVM]: {
     [PresetTypedChainId.Polygon]: {
       supportedTokens: BRIDGE_TOKENS[PresetTypedChainId.Polygon],
