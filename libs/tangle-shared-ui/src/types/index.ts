@@ -93,7 +93,8 @@ export type BridgeQueueTxItem = {
   bridgeType: EVMTokenBridgeEnum;
 };
 
-export interface BridgeToken {
+export type BridgeToken = {
+  name?: string;
   symbol: string;
   tokenType: EVMTokenEnum;
   bridgeType: EVMTokenBridgeEnum;
@@ -103,7 +104,7 @@ export interface BridgeToken {
   chainId: PresetTypedChainId;
   hyperlaneSyntheticAddress?: EvmAddress;
   isTestnet?: boolean;
-}
+};
 
 export type BridgeChainsConfigType = Record<
   PresetTypedChainId,
