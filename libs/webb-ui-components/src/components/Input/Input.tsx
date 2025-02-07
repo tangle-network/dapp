@@ -208,15 +208,14 @@ export const Input: React.FC<InputProps> = (props) => {
         )}
       </div>
 
+      {/** TODO: Replace with `ErrorMessage` component. */}
       {errorMessage !== undefined && (
         <Typography
           component="p"
           variant="body4"
           fw="bold"
           className="mt-2 text-red-70 dark:text-red-50"
-        >
-          {errorMessage}
-        </Typography>
+        ></Typography>
       )}
     </div>
   );

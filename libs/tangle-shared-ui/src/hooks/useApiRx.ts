@@ -41,7 +41,6 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
       if (rpcEndpoint === undefined) {
         return null;
       }
-
       return await getApiRx(rpcEndpoint);
     }, [rpcEndpoint]),
     null,
@@ -55,6 +54,8 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
 
   // Create the subscription when the API is ready.
   useEffect(() => {
+    isMountedRef.current = true;
+
     if (apiRx === null) {
       return;
     }
@@ -66,29 +67,29 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
     // be if the active chain is mainnet, but the factory is trying to fetch
     // data from a testnet pallet that hasn't been deployed to mainnet yet.
     try {
-      const result = factory(apiRx);
+      const factoryResult = factory(apiRx);
 
-      if (result instanceof Error) {
-        setError(error);
+      if (factoryResult instanceof Error) {
+        setError(factoryResult);
         setLoading(false);
 
         return;
       }
       // The factory is not yet ready to produce an observable.
-      else if (result === null) {
+      else if (factoryResult === null) {
         return;
       } else {
-        observable = result;
+        observable = factoryResult;
       }
     } catch (possibleError) {
-      const error = ensureError(possibleError);
+      const newError = ensureError(possibleError);
 
       console.error(
         'Error creating subscription, this can happen when TypeScript type definitions are outdated or accessing pallets on the wrong chain:',
-        error,
+        newError,
       );
 
-      setError(error);
+      setError(newError);
       setLoading(false);
 
       return;
@@ -99,7 +100,6 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
         catchError((possibleError: unknown) => {
           setError(ensureError(possibleError));
           setLoading(false);
-
           // By returning an empty observable, the subscription will be
           // automatically completed, effectively unsubscribing from the
           // observable. Since the empty observable emits nothing, the
@@ -111,7 +111,6 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
         if (!isMountedRef.current) {
           return;
         }
-
         setResult(newResult);
         setLoading(false);
       });
@@ -120,7 +119,7 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
       isMountedRef.current = false;
       subscription.unsubscribe();
     };
-  }, [factory, apiRx, reset, error]);
+  }, [factory, apiRx, reset]);
 
   return { result, isLoading, error };
 };

@@ -88,7 +88,7 @@ function useAgnosticTx<
     txHash: substrateTxHash,
     txBlockHash: substrateTxBlockHash,
     successMessage: substrateSuccessMessage,
-  } = useSubstrateTx({ factory: substrateTxFactory, getSuccessMessage });
+  } = useSubstrateTx({ name, factory: substrateTxFactory, getSuccessMessage });
 
   const {
     execute: executeEvmPrecompileAbiCall,

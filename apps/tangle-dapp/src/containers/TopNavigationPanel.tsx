@@ -11,7 +11,8 @@ const TopNavigationPanel: FC = () => {
 
       <ConnectWalletButton />
 
-      <TxHistoryDrawer />
+      {/** Hide for now, until it is fully implemented. */}
+      {/* <TxHistoryDrawer /> */}
     </div>
   );
 };

@@ -3,6 +3,7 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import {
   CheckboxCircleLine,
+  CloseCircleLineIcon,
   InformationLine,
   ShuffleLine,
   Spinner,
@@ -70,6 +71,14 @@ const TxHistoryDrawer = () => {
     return count === 0 ? null : count;
   }, [relevantTransactions]);
 
+  // Hide the button if there are no known transactions.
+  if (
+    relevantTransactions?.length === undefined ||
+    relevantTransactions.length === 0
+  ) {
+    return null;
+  }
+
   return (
     <div className="flex items-center">
       <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -132,7 +141,11 @@ const TxHistoryDrawer = () => {
             </Dialog.Description>
 
             <div className="space-y-3">
-              <Typography variant="h5">Transactions</Typography>
+              <div className="flex items-center justify-between">
+                <Typography variant="h5">Transactions</Typography>
+
+                <CloseCircleLineIcon />
+              </div>
 
               {relevantTransactions !== null &&
                 relevantTransactions.map((tx) => (

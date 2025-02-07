@@ -49,6 +49,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.RESTAKE_EXECUTE_WITHDRAW]: 'Withdraw request executed',
   [TxName.RESTAKE_CANCEL_WITHDRAW]: 'Withdraw request(s) cancelled',
   [TxName.CLAIM_REWARDS]: 'Claimed rewards',
+  [TxName.DEMOCRACY_UNLOCK]: 'Democracy tokens unlocked',
 };
 
 const makeKey = (txName: TxName): `${TxName}-tx-notification` =>

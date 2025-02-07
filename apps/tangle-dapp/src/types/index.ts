@@ -68,8 +68,8 @@ export enum StakingRewardsDestination {
 }
 
 export enum StakingRewardsDestinationDisplayText {
-  STAKED = 'Staked (increase the amount at stake)',
-  STASH = 'Stash (do not increase the amount at stake)',
+  STAKED = 'Staked (increase stake)',
+  STASH = 'Stash (do not increase stake)',
   CONTROLLER = 'Controller Account',
   ACCOUNT = 'Specific Account',
   NONE = 'None',

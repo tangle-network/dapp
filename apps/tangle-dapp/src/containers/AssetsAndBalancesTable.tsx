@@ -206,7 +206,7 @@ const COLUMNS = [
     header: () => (
       <HeaderCell
         title="TVL | Capacity"
-        tooltip="Total value locked & deposit capacity."
+        tooltip="Value locked out of the total deposit capacity."
       />
     ),
     cell: (props) => {

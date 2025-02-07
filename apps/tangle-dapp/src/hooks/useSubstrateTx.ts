@@ -37,18 +37,20 @@ export type SubstrateTxFactory<Context = void> = (
 ) => PromiseOrT<SubmittableExtrinsic<'promise', ISubmittableResult> | null>;
 
 type Options<Context = void> = {
+  name: TxName;
   factory: SubstrateTxFactory<Context>;
-  details?: Map<string, HistoryTxDetail>;
+  getDetails?: (context: Context) => Map<string, HistoryTxDetail>;
   getSuccessMessage?: GetSuccessMessageFn<Context>;
   overrideRpcEndpoint?: string;
 };
 
-function useSubstrateTx<Context = void>({
+const useSubstrateTx = <Context = void>({
+  name,
   factory,
-  details,
+  getDetails,
   getSuccessMessage,
   overrideRpcEndpoint,
-}: Options<Context>) {
+}: Options<Context>) => {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [txHash, setTxHash] = useState<Hash | null>(null);
   const [txBlockHash, setTxBlockHash] = useState<Hash | null>(null);
@@ -137,28 +139,29 @@ function useSubstrateTx<Context = void>({
 
       pushTx({
         hash: txHash,
-        // TODO: Tx name.
-        name: TxName.BOND,
+        name,
         network: networkId,
         origin: activeSubstrateAddress,
         timestamp: Date.now(),
         status: 'pending',
-        details,
+        details: getDetails?.(context),
       });
 
-      const handleStatusUpdate = (status: ISubmittableResult) => {
+      const handleStatusUpdate = (txStatus: ISubmittableResult) => {
+        // TODO: Handle pending, in-block, & finalized states appropriately.s
+
         // If the component is unmounted, or the transaction
         // has not yet been included in a block, ignore the
         // status update.
-        if (!isMountedRef.current || !status.isInBlock) {
+        if (!isMountedRef.current || !txStatus.isInBlock) {
           return;
         }
 
         patchTx(txHash, { status: 'inblock' });
         setTxHash(txHash);
-        setTxBlockHash(status.status.asInBlock.toHex());
+        setTxBlockHash(txStatus.status.asInBlock.toHex());
 
-        const error = extractErrorFromTxStatus(status);
+        const error = extractErrorFromTxStatus(txStatus);
 
         setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
         setError(error);
@@ -201,7 +204,8 @@ function useSubstrateTx<Context = void>({
       overrideRpcEndpoint,
       rpcEndpoint,
       pushTx,
-      details,
+      name,
+      getDetails,
       factory,
       isMountedRef,
       patchTx,
@@ -227,7 +231,7 @@ function useSubstrateTx<Context = void>({
     txBlockHash,
     successMessage,
   };
-}
+};
 
 export default useSubstrateTx;
 
@@ -254,6 +258,7 @@ export function useSubstrateTxWithNotification<Context = void>(
     txBlockHash,
     successMessage,
   } = useSubstrateTx({
+    name: txName,
     factory,
     getSuccessMessage,
     overrideRpcEndpoint,
@@ -291,13 +296,17 @@ export function useSubstrateTxWithNotification<Context = void>(
 
     if (error !== null) {
       notifyError(txName, error);
-    } else if (txHash !== null && txBlockHash !== null) {
-      const explorerUrl = createExplorerTxUrl(false, txHash, txBlockHash);
+    } else if (txHash !== null) {
+      const explorerUrl = createExplorerTxUrl(
+        false,
+        txHash,
+        txBlockHash ?? undefined,
+      );
 
       notifySuccess(txName, explorerUrl, successMessage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  }, [status, error]);
 
   return {
     // Prevent the consumer from executing the transaction if
