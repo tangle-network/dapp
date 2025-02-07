@@ -3,23 +3,22 @@ import '@webb-tools/webb-ui-components/tailwind.css';
 import '../styles.css';
 
 import { Route, Routes } from 'react-router';
+import Layout from '../containers/Layout';
 import AccountPage from '../pages/account';
+import BlueprintsPage from '../pages/blueprints';
+import BlueprintDetailsPage from '../pages/blueprints/[id]';
+import BridgePage from '../pages/bridge';
 import ClaimPage from '../pages/claim';
 import ClaimLayout from '../pages/claim/layout';
 import ClaimSuccessPage from '../pages/claim/success';
+import LiquidStakingPage from '../pages/liquid-staking';
 import NominationPage from '../pages/nomination';
 import ValidatorDetailsPage from '../pages/nomination/[validatorAddress]';
 import NominationLayout from '../pages/nomination/layout';
-import BridgeLayout from '../pages/bridge/layout';
-import BridgePage from '../pages/bridge';
+import NotFoundPage from '../pages/notFound';
+import RestakePage from '../pages/restake';
 import { PagePath } from '../types';
 import Providers from './providers';
-import BlueprintsPage from '../pages/blueprints';
-import BlueprintDetailsPage from '../pages/blueprints/[id]';
-import LiquidStakingPage from '../pages/liquid-staking';
-import RestakePage from '../pages/restake';
-import NotFoundPage from '../pages/notFound';
-import Layout from '../containers/Layout';
 
 // TODO: Add metadata tags for SEO
 
@@ -49,9 +48,7 @@ function App() {
               />
             </Route>
 
-            <Route path={PagePath.BRIDGE} element={<BridgeLayout />}>
-              <Route index element={<BridgePage />} />
-            </Route>
+            <Route path={PagePath.BRIDGE} element={<BridgePage />} />
 
             <Route path={PagePath.BLUEPRINTS}>
               <Route index element={<BlueprintsPage />} />
