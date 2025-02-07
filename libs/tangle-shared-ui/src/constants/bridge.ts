@@ -83,6 +83,66 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0x4A68525B31F8C67761e0429f6e4766a55f15b7A5',
       ),
     },
+    {
+      symbol: 'Staked Avail',
+      tokenType: 'stAVAIL' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xFC531de310078C01540Bb108c1a1AfAA30F34206'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x06f5C8FEc9C36130cB547DF3201CF4cea2562419',
+      ),
+    },
+    {
+      symbol: 'ARB',
+      tokenType: 'ARB' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x3De76F94e843545241DFB26b99CCf7a33E86050F'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xf44511BAFE78CF8DAaa2804d075B40DEFFFe63b2',
+      ),
+    },
+    {
+      symbol: 'cbBTC',
+      tokenType: 'cbBTC' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x28db68252Ae4597cC4567d3C2A29Bc50D0BCA02d'),
+      abi: assertAbi(erc20Abi),
+      decimals: 8,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xFa0C5466EF2D1C6b4C769c8a3BaABD9e9107a6f7',
+      ),
+    },
+    {
+      symbol: 'cbETH',
+      tokenType: 'cbETH' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x99Ce18058C6fE35216D8626C3D183526240CcCbb'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x74CBCBa1125ec200cc63efF432B462A084E557cc',
+      ),
+    },
+    {
+      symbol: 'DAI',
+      tokenType: 'DAI' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xC5B342D3CfAd241D9300Cb76116CA4a5e30Cf2Ac'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -1504,33 +1564,6 @@ export const HYPERLANE_CHAINS: ChainMap<ChainMetadata> = {
 export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
   tokens: [
     {
-      addressOrDenom: '0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
-      chainName: 'arbitrum',
-      collateralAddressOrDenom: '0x912CE59144191C1204E64559FE8253a0e49E6548',
-      connections: [
-        {
-          token: 'ethereum|tangle|0xf44511BAFE78CF8DAaa2804d075B40DEFFFe63b2',
-        },
-      ],
-      decimals: 18,
-      name: 'Arbitrum',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'ARB',
-    },
-    {
-      addressOrDenom: '0xf44511BAFE78CF8DAaa2804d075B40DEFFFe63b2',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
-        },
-      ],
-      decimals: 18,
-      name: 'Arbitrum',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'ARB',
-    },
-    {
       addressOrDenom: '0xe2C35423680D0F55F2C226dD75600826f66debA3',
       chainName: 'base',
       collateralAddressOrDenom: '0xd89d90d26B48940FA8F58385Fe84625d468E057a',
@@ -1582,135 +1615,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       name: 'BNB',
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'BNB',
-    },
-    {
-      addressOrDenom: '0xD5B8441E2929e73f1e9a9C53b7a6863780897FFa',
-      chainName: 'arbitrum',
-      collateralAddressOrDenom: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
-      connections: [
-        {
-          token: 'ethereum|base|0x07a4568A98621f90E7D94E87D7e9Bf806d5E19f3',
-        },
-        {
-          token: 'ethereum|tangle|0xFa0C5466EF2D1C6b4C769c8a3BaABD9e9107a6f7',
-        },
-      ],
-      decimals: 8,
-      name: 'Coinbase Wrapped BTC',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'cbBTC',
-    },
-    {
-      addressOrDenom: '0x07a4568A98621f90E7D94E87D7e9Bf806d5E19f3',
-      chainName: 'base',
-      collateralAddressOrDenom: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0xD5B8441E2929e73f1e9a9C53b7a6863780897FFa',
-        },
-        {
-          token: 'ethereum|tangle|0xFa0C5466EF2D1C6b4C769c8a3BaABD9e9107a6f7',
-        },
-      ],
-      decimals: 8,
-      name: 'Coinbase Wrapped BTC',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'cbBTC',
-    },
-    {
-      addressOrDenom: '0xFa0C5466EF2D1C6b4C769c8a3BaABD9e9107a6f7',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0xD5B8441E2929e73f1e9a9C53b7a6863780897FFa',
-        },
-        {
-          token: 'ethereum|base|0x07a4568A98621f90E7D94E87D7e9Bf806d5E19f3',
-        },
-      ],
-      decimals: 8,
-      name: 'Coinbase Wrapped BTC',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'cbBTC',
-    },
-    {
-      addressOrDenom: '0x77dfB661ee20af4F0C48E4d31828efC34D9a93C6',
-      chainName: 'arbitrum',
-      collateralAddressOrDenom: '0x1DEBd73E752bEaF79865Fd6446b0c970EaE7732f',
-      connections: [
-        {
-          token: 'ethereum|base|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
-        },
-        {
-          token: 'ethereum|optimism|0x61F71B85762c8848083506da347969c58248f0c6',
-        },
-        {
-          token: 'ethereum|tangle|0x74CBCBa1125ec200cc63efF432B462A084E557cc',
-        },
-      ],
-      decimals: 18,
-      name: 'Coinbase Wrapped Staked ETH',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'cbETH',
-    },
-    {
-      addressOrDenom: '0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
-      chainName: 'base',
-      collateralAddressOrDenom: '0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x77dfB661ee20af4F0C48E4d31828efC34D9a93C6',
-        },
-        {
-          token: 'ethereum|optimism|0x61F71B85762c8848083506da347969c58248f0c6',
-        },
-        {
-          token: 'ethereum|tangle|0x74CBCBa1125ec200cc63efF432B462A084E557cc',
-        },
-      ],
-      decimals: 18,
-      name: 'Coinbase Wrapped Staked ETH',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'cbETH',
-    },
-    {
-      addressOrDenom: '0x61F71B85762c8848083506da347969c58248f0c6',
-      chainName: 'optimism',
-      collateralAddressOrDenom: '0xadDb6A0412DE1BA0F936DCaeb8Aaa24578dcF3B2',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x77dfB661ee20af4F0C48E4d31828efC34D9a93C6',
-        },
-        {
-          token: 'ethereum|base|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
-        },
-        {
-          token: 'ethereum|tangle|0x74CBCBa1125ec200cc63efF432B462A084E557cc',
-        },
-      ],
-      decimals: 18,
-      name: 'Coinbase Wrapped Staked ETH',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'cbETH',
-    },
-    {
-      addressOrDenom: '0x74CBCBa1125ec200cc63efF432B462A084E557cc',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x77dfB661ee20af4F0C48E4d31828efC34D9a93C6',
-        },
-        {
-          token: 'ethereum|base|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
-        },
-        {
-          token: 'ethereum|optimism|0x61F71B85762c8848083506da347969c58248f0c6',
-        },
-      ],
-      decimals: 18,
-      name: 'Coinbase Wrapped Staked ETH',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'cbETH',
     },
     {
       addressOrDenom: '0x223E7B1EAd79C6603a891D9e733FD5ADD1044dd1',
@@ -1825,120 +1729,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       name: 'Curve DAO Token',
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'CRV',
-    },
-    {
-      addressOrDenom: '0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
-      chainName: 'arbitrum',
-      collateralAddressOrDenom: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
-      connections: [
-        {
-          token: 'ethereum|base|0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
-        },
-        {
-          token: 'ethereum|optimism|0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
-        },
-        {
-          token: 'ethereum|polygon|0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
-        },
-        {
-          token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
-        },
-      ],
-      decimals: 18,
-      name: 'Dai Stablecoin',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'DAI',
-    },
-    {
-      addressOrDenom: '0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
-      chainName: 'base',
-      collateralAddressOrDenom: '0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
-        },
-        {
-          token: 'ethereum|optimism|0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
-        },
-        {
-          token: 'ethereum|polygon|0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
-        },
-        {
-          token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
-        },
-      ],
-      decimals: 18,
-      name: 'Dai Stablecoin',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'DAI',
-    },
-    {
-      addressOrDenom: '0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
-      chainName: 'optimism',
-      collateralAddressOrDenom: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
-        },
-        {
-          token: 'ethereum|base|0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
-        },
-        {
-          token: 'ethereum|polygon|0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
-        },
-        {
-          token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
-        },
-      ],
-      decimals: 18,
-      name: 'Dai Stablecoin',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'DAI',
-    },
-    {
-      addressOrDenom: '0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
-      chainName: 'polygon',
-      collateralAddressOrDenom: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
-        },
-        {
-          token: 'ethereum|base|0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
-        },
-        {
-          token: 'ethereum|optimism|0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
-        },
-        {
-          token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
-        },
-      ],
-      decimals: 18,
-      name: 'Dai Stablecoin',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'DAI',
-    },
-    {
-      addressOrDenom: '0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
-        },
-        {
-          token: 'ethereum|base|0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
-        },
-        {
-          token: 'ethereum|optimism|0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
-        },
-        {
-          token: 'ethereum|polygon|0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
-        },
-      ],
-      decimals: 18,
-      name: 'Dai Stablecoin',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'DAI',
     },
     {
       addressOrDenom: '0x68AbCC37de2BEb083Cd6A549f64C3494Ea418BB7',
@@ -3495,26 +3285,432 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'AVAIL',
     },
+    {
+      addressOrDenom: '0xFC531de310078C01540Bb108c1a1AfAA30F34206',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0x3742f3Fcc56B2d46c7B8CA77c23be60Cd43Ca80a',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x06f5C8FEc9C36130cB547DF3201CF4cea2562419',
+        },
+      ],
+      decimals: 18,
+      name: 'Staked Avail',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'stAVAIL',
+    },
+    {
+      addressOrDenom: '0x06f5C8FEc9C36130cB547DF3201CF4cea2562419',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|ethereum|0xFC531de310078C01540Bb108c1a1AfAA30F34206',
+        },
+      ],
+      decimals: 18,
+      name: 'Staked Avail',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'stAVAIL',
+    },
+    {
+      addressOrDenom: '0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
+      chainName: 'arbitrum',
+      collateralAddressOrDenom: '0x912CE59144191C1204E64559FE8253a0e49E6548',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xf44511BAFE78CF8DAaa2804d075B40DEFFFe63b2',
+        },
+      ],
+      decimals: 18,
+      name: 'Arbitrum',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'ARB',
+    },
+    {
+      addressOrDenom: '0x3De76F94e843545241DFB26b99CCf7a33E86050F',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xf44511BAFE78CF8DAaa2804d075B40DEFFFe63b2',
+        },
+      ],
+      decimals: 18,
+      name: 'Arbitrum',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'ARB',
+    },
+    {
+      addressOrDenom: '0xf44511BAFE78CF8DAaa2804d075B40DEFFFe63b2',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
+        },
+      ],
+      decimals: 18,
+      name: 'Arbitrum',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'ARB',
+    },
+    {
+      addressOrDenom: '0xD5B8441E2929e73f1e9a9C53b7a6863780897FFa',
+      chainName: 'arbitrum',
+      collateralAddressOrDenom: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+      connections: [
+        {
+          token: 'ethereum|base|0x07a4568A98621f90E7D94E87D7e9Bf806d5E19f3',
+        },
+        {
+          token: 'ethereum|tangle|0xFa0C5466EF2D1C6b4C769c8a3BaABD9e9107a6f7',
+        },
+        {
+          token: 'ethereum|ethereum|0x28db68252Ae4597cC4567d3C2A29Bc50D0BCA02d',
+        },
+      ],
+      decimals: 8,
+      name: 'Coinbase Wrapped BTC',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'cbBTC',
+    },
+    {
+      addressOrDenom: '0x07a4568A98621f90E7D94E87D7e9Bf806d5E19f3',
+      chainName: 'base',
+      collateralAddressOrDenom: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0xD5B8441E2929e73f1e9a9C53b7a6863780897FFa',
+        },
+        {
+          token: 'ethereum|tangle|0xFa0C5466EF2D1C6b4C769c8a3BaABD9e9107a6f7',
+        },
+        {
+          token: 'ethereum|ethereum|0x28db68252Ae4597cC4567d3C2A29Bc50D0BCA02d',
+        },
+      ],
+      decimals: 8,
+      name: 'Coinbase Wrapped BTC',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'cbBTC',
+    },
+    {
+      addressOrDenom: '0x28db68252Ae4597cC4567d3C2A29Bc50D0BCA02d',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xFa0C5466EF2D1C6b4C769c8a3BaABD9e9107a6f7',
+        },
+        {
+          token: 'ethereum|arbitrum|0xD5B8441E2929e73f1e9a9C53b7a6863780897FFa',
+        },
+        {
+          token: 'ethereum|base|0x07a4568A98621f90E7D94E87D7e9Bf806d5E19f3',
+        },
+      ],
+      decimals: 8,
+      name: 'Coinbase Wrapped BTC',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'cbBTC',
+    },
+    {
+      addressOrDenom: '0xFa0C5466EF2D1C6b4C769c8a3BaABD9e9107a6f7',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0xD5B8441E2929e73f1e9a9C53b7a6863780897FFa',
+        },
+        {
+          token: 'ethereum|base|0x07a4568A98621f90E7D94E87D7e9Bf806d5E19f3',
+        },
+        {
+          token: 'ethereum|ethereum|0x28db68252Ae4597cC4567d3C2A29Bc50D0BCA02d',
+        },
+      ],
+      decimals: 8,
+      name: 'Coinbase Wrapped BTC',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'cbBTC',
+    },
+    {
+      addressOrDenom: '0x77dfB661ee20af4F0C48E4d31828efC34D9a93C6',
+      chainName: 'arbitrum',
+      collateralAddressOrDenom: '0x1DEBd73E752bEaF79865Fd6446b0c970EaE7732f',
+      connections: [
+        {
+          token: 'ethereum|base|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
+        },
+        {
+          token: 'ethereum|optimism|0x61F71B85762c8848083506da347969c58248f0c6',
+        },
+        {
+          token: 'ethereum|tangle|0x74CBCBa1125ec200cc63efF432B462A084E557cc',
+        },
+        {
+          token: 'ethereum|ethereum|0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
+        },
+      ],
+      decimals: 18,
+      name: 'Coinbase Wrapped Staked ETH',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'cbETH',
+    },
+    {
+      addressOrDenom: '0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
+      chainName: 'base',
+      collateralAddressOrDenom: '0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x77dfB661ee20af4F0C48E4d31828efC34D9a93C6',
+        },
+        {
+          token: 'ethereum|optimism|0x61F71B85762c8848083506da347969c58248f0c6',
+        },
+        {
+          token: 'ethereum|tangle|0x74CBCBa1125ec200cc63efF432B462A084E557cc',
+        },
+        {
+          token: 'ethereum|ethereum|0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
+        },
+      ],
+      decimals: 18,
+      name: 'Coinbase Wrapped Staked ETH',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'cbETH',
+    },
+    {
+      addressOrDenom: '0x61F71B85762c8848083506da347969c58248f0c6',
+      chainName: 'optimism',
+      collateralAddressOrDenom: '0xadDb6A0412DE1BA0F936DCaeb8Aaa24578dcF3B2',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x77dfB661ee20af4F0C48E4d31828efC34D9a93C6',
+        },
+        {
+          token: 'ethereum|base|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
+        },
+        {
+          token: 'ethereum|tangle|0x74CBCBa1125ec200cc63efF432B462A084E557cc',
+        },
+        {
+          token: 'ethereum|ethereum|0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
+        },
+      ],
+      decimals: 18,
+      name: 'Coinbase Wrapped Staked ETH',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'cbETH',
+    },
+    {
+      addressOrDenom: '0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xBe9895146f7AF43049ca1c1AE358B0541Ea49704',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x77dfB661ee20af4F0C48E4d31828efC34D9a93C6',
+        },
+        {
+          token: 'ethereum|base|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
+        },
+        {
+          token: 'ethereum|tangle|0x74CBCBa1125ec200cc63efF432B462A084E557cc',
+        },
+        {
+          token: 'ethereum|optimism|0x61F71B85762c8848083506da347969c58248f0c6',
+        },
+      ],
+      decimals: 18,
+      name: 'Coinbase Wrapped Staked ETH',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'cbETH',
+    },
+    {
+      addressOrDenom: '0x74CBCBa1125ec200cc63efF432B462A084E557cc',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x77dfB661ee20af4F0C48E4d31828efC34D9a93C6',
+        },
+        {
+          token: 'ethereum|base|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
+        },
+        {
+          token: 'ethereum|optimism|0x61F71B85762c8848083506da347969c58248f0c6',
+        },
+        {
+          token: 'ethereum|ethereum|0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
+        },
+      ],
+      decimals: 18,
+      name: 'Coinbase Wrapped Staked ETH',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'cbETH',
+    },
+    {
+      addressOrDenom: '0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
+      chainName: 'arbitrum',
+      collateralAddressOrDenom: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+      connections: [
+        {
+          token: 'ethereum|base|0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
+        },
+        {
+          token: 'ethereum|optimism|0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
+        },
+        {
+          token: 'ethereum|polygon|0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
+        },
+        {
+          token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
+        },
+        {
+          token: 'ethereum|ethereum|0xC5B342D3CfAd241D9300Cb76116CA4a5e30Cf2Ac',
+        },
+      ],
+      decimals: 18,
+      name: 'Dai Stablecoin',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'DAI',
+    },
+    {
+      addressOrDenom: '0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
+      chainName: 'base',
+      collateralAddressOrDenom: '0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
+        },
+        {
+          token: 'ethereum|optimism|0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
+        },
+        {
+          token: 'ethereum|polygon|0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
+        },
+        {
+          token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
+        },
+        {
+          token: 'ethereum|ethereum|0xC5B342D3CfAd241D9300Cb76116CA4a5e30Cf2Ac',
+        },
+      ],
+      decimals: 18,
+      name: 'Dai Stablecoin',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'DAI',
+    },
+    {
+      addressOrDenom: '0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
+      chainName: 'optimism',
+      collateralAddressOrDenom: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
+        },
+        {
+          token: 'ethereum|base|0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
+        },
+        {
+          token: 'ethereum|polygon|0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
+        },
+        {
+          token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
+        },
+        {
+          token: 'ethereum|ethereum|0xC5B342D3CfAd241D9300Cb76116CA4a5e30Cf2Ac',
+        },
+      ],
+      decimals: 18,
+      name: 'Dai Stablecoin',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'DAI',
+    },
+    {
+      addressOrDenom: '0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
+      chainName: 'polygon',
+      collateralAddressOrDenom: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
+        },
+        {
+          token: 'ethereum|base|0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
+        },
+        {
+          token: 'ethereum|optimism|0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
+        },
+        {
+          token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
+        },
+        {
+          token: 'ethereum|ethereum|0xC5B342D3CfAd241D9300Cb76116CA4a5e30Cf2Ac',
+        },
+      ],
+      decimals: 18,
+      name: 'Dai Stablecoin',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'DAI',
+    },
+    {
+      addressOrDenom: '0xC5B342D3CfAd241D9300Cb76116CA4a5e30Cf2Ac',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
+        },
+        {
+          token: 'ethereum|base|0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
+        },
+        {
+          token: 'ethereum|optimism|0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
+        },
+        {
+          token: 'ethereum|polygon|0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
+        },
+        {
+          token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
+        },
+      ],
+      decimals: 18,
+      name: 'Dai Stablecoin',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'DAI',
+    },
+    {
+      addressOrDenom: '0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
+        },
+        {
+          token: 'ethereum|base|0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
+        },
+        {
+          token: 'ethereum|optimism|0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
+        },
+        {
+          token: 'ethereum|polygon|0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
+        },
+        {
+          token: 'ethereum|ethereum|0xC5B342D3CfAd241D9300Cb76116CA4a5e30Cf2Ac',
+        },
+      ],
+      decimals: 18,
+      name: 'Dai Stablecoin',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'DAI',
+    },
   ],
 };
 
 export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
-  'ARB/arbitrum-tangle',
   'AVAIL/base-tangle',
   'BNB/bsc-tangle',
-  'cbBTC/arbitrum-tangle',
-  'cbBTC/base-tangle',
-  'cbETH/arbitrum-tangle',
-  'cbETH/base-tangle',
-  'cbETH/optimism-tangle',
   'CRV/arbitrum-tangle',
   'CRV/base-tangle',
   'CRV/optimism-tangle',
   'CRV/polygon-tangle',
-  'DAI/arbitrum-tangle',
-  'DAI/base-tangle',
-  'DAI/optimism-tangle',
-  'DAI/polygon-tangle',
   'ETH/arbitrum-tangle',
   'ETH/base-tangle',
   'ETH/optimism-tangle',
@@ -3576,6 +3772,21 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'eETH/ethereum-tangle',
   'eBTC/ethereum-tangle',
   'AVAIL/ethereum-tangle',
+  'stAVAIL/ethereum-tangle',
+  'ARB/arbitrum-tangle',
+  'ARB/ethereum-tangle',
+  'cbBTC/arbitrum-tangle',
+  'cbBTC/base-tangle',
+  'cbBTC/ethereum-tangle',
+  'cbETH/arbitrum-tangle',
+  'cbETH/base-tangle',
+  'cbETH/optimism-tangle',
+  'cbETH/ethereum-tangle',
+  'DAI/arbitrum-tangle',
+  'DAI/base-tangle',
+  'DAI/optimism-tangle',
+  'DAI/polygon-tangle',
+  'DAI/ethereum-tangle',
 ];
 
 export const mailboxAddress = {
