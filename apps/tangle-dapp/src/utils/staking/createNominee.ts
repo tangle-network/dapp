@@ -9,7 +9,7 @@ export type CreateNomineeOptions = {
   isActive: boolean;
   identities: Map<string, string | null>;
   prefs: Map<string, PalletStakingValidatorPrefs>;
-  getExposure: (address: string) =>
+  getExposure: (address: SubstrateAddress) =>
     | {
         own: BN;
         total: BN;

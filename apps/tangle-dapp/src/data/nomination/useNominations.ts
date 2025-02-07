@@ -54,9 +54,9 @@ const useNominations = () => {
       );
 
       // TODO: Turn this into a set, and then use `has` instead of `some`.
-      const isActive = sessionValidators.some(
-        (validatorAddress) => validatorAddress.toString() === nomineeAddress,
-      );
+      const isActive = sessionValidators
+        .map((address) => assertSubstrateAddress(address.toString()))
+        .some((validatorAddress) => validatorAddress === nomineeAddress);
 
       return createNominee({
         address: nomineeAddress,
