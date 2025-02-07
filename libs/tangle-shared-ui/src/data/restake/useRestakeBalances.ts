@@ -60,6 +60,7 @@ export default function useRestakeBalances() {
     data: erc20Balances,
     isLoading,
     error,
+    refetch: refetchErc20Balances,
   } = useErc20Balances(evmAssetIds);
 
   const substrateBalances = useObservableState(substrateBalances$, {});
@@ -94,6 +95,7 @@ export default function useRestakeBalances() {
     balances,
     isLoading: apiRxLoading || isLoading,
     error: apiRxError || error,
+    refetchErc20Balances,
   };
 }
 

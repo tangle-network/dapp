@@ -20,6 +20,8 @@ export type RestakeContextType = {
    */
   assetWithBalances: AssetWithBalance;
 
+  refetchErc20Balances: () => Promise<void>;
+
   isLoading: boolean;
 
   error: Error | null;

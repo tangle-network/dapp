@@ -1,7 +1,7 @@
 'use client';
 
 import toPairs from 'lodash/toPairs';
-import { PropsWithChildren, useMemo } from 'react';
+import { PropsWithChildren, useCallback, useMemo } from 'react';
 import useRestakeAssets from '../../data/restake/useRestakeAssets';
 import useRestakeBalances from '../../data/restake/useRestakeBalances';
 import { AssetWithBalance } from '../../types/restake';
@@ -19,6 +19,7 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
     balances,
     isLoading: balancesLoading,
     error: balancesError,
+    refetchErc20Balances: refetchErc20BalancesFn,
   } = useRestakeBalances();
 
   const assetWithBalances = useMemo(() => {
@@ -40,6 +41,10 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
     );
   }, [assets, balances]);
 
+  const refetchErc20Balances = useCallback(async () => {
+    await refetchErc20BalancesFn();
+  }, [refetchErc20BalancesFn]);
+
   return (
     <RestakeContext.Provider
       value={{
@@ -48,6 +53,7 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
         balances,
         isLoading: vaultsLoading || balancesLoading,
         error: vaultsError || balancesError,
+        refetchErc20Balances,
       }}
       {...props}
     />
