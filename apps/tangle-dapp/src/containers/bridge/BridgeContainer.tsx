@@ -7,6 +7,7 @@ import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transactio
 import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
 import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
 import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { useShallow } from 'zustand/react/shallow';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
@@ -66,11 +67,17 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   const [activeWallet] = useActiveWallet();
   const { toggleModal: toggleConnectWalletModal } = useConnectWallet();
   const [isTxInProgress, setIsTxInProgress] = useState(false);
-  const sourceChains = useBridgeStore((state) => state.sourceChains);
-  const destinationChains = useBridgeStore((state) => state.destinationChains);
+
+  const sourceChains = useBridgeStore(
+    useShallow((state) => state.sourceChains),
+  );
+
+  const destinationChains = useBridgeStore(
+    useShallow((state) => state.destinationChains),
+  );
 
   const selectedSourceChain = useBridgeStore(
-    (state) => state.selectedSourceChain,
+    useShallow((state) => state.selectedSourceChain),
   );
 
   const setSelectedSourceChain = useBridgeStore(
@@ -78,7 +85,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
   );
 
   const selectedDestinationChain = useBridgeStore(
-    (state) => state.selectedDestinationChain,
+    useShallow((state) => state.selectedDestinationChain),
   );
 
   const setSelectedDestinationChain = useBridgeStore(
@@ -99,15 +106,24 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
     );
   }, [selectedDestinationChain]);
 
-  const tokens = useBridgeStore((state) => state.tokens);
-  const selectedToken = useBridgeStore((state) => state.selectedToken);
+  const tokens = useBridgeStore(useShallow((state) => state.tokens));
+
+  const selectedToken = useBridgeStore(
+    useShallow((state) => state.selectedToken),
+  );
+
   const setSelectedToken = useBridgeStore((state) => state.setSelectedToken);
-  const amount = useBridgeStore((state) => state.amount);
-  const setAmount = useBridgeStore((state) => state.setAmount);
+
+  const amount = useBridgeStore(useShallow((state) => state.amount));
+
+  const setAmount = useBridgeStore(useShallow((state) => state.setAmount));
 
   const { data: nativeTokenBalance } = useBalance({
     address: activeAccount?.address as `0x${string}`,
     chainId: selectedSourceChain.id,
+    query: {
+      enabled: activeAccount !== null,
+    },
   });
 
   const { balances, refresh: refreshEvmBalances } = useBridgeEvmBalances(
@@ -790,7 +806,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
               <div className="flex flex-col gap-1 px-1">
                 {isAmountInputError && amountInputErrorMessage !== null && (
-                  <div className="flex flex-col gap-1 animate-in fade-in duration-300 ease-out">
+                  <div className="flex flex-col gap-1 duration-300 ease-out animate-in fade-in">
                     <ErrorMessage
                       className="mt-0"
                       typographyProps={{ variant: 'body1' }}
@@ -889,7 +905,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
           {routerQuoteError?.error !== undefined && (
             <ErrorMessage
-              className="mt-0 animate-in fade-in duration-300 ease-out"
+              className="mt-0 duration-300 ease-out animate-in fade-in"
               typographyProps={{ variant: 'body1' }}
             >
               {routerQuoteError.error}
