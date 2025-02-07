@@ -5,7 +5,6 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { TokenIcon } from '@webb-tools/icons';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
 import {
   AmountFormatStyle,
@@ -78,7 +77,8 @@ const DepositForm: FC<Props> = (props) => {
     QueryParamKey.RESTAKE_VAULT,
   );
 
-  const { assetWithBalances, isLoading } = useRestakeContext();
+  const { assetWithBalances, isLoading, refetchErc20Balances } =
+    useRestakeContext();
   const restakeApi = useRestakeApi();
 
   const setValue = useCallback(
@@ -154,7 +154,7 @@ const DepositForm: FC<Props> = (props) => {
     update: updateTokenModal,
   } = useModal();
 
-  const nativeAssets = useMemo<RestakeAsset[]>(() => {
+  const allAssets = useMemo<RestakeAsset[]>(() => {
     const nativeAssetsWithBalances = Object.values(assetWithBalances)
       .filter(
         (asset) =>
@@ -177,30 +177,6 @@ const DepositForm: FC<Props> = (props) => {
 
     return nativeAssetsWithBalances;
   }, [assetWithBalances]);
-
-  const { data: erc20Balances, refetch: refetchErc20Balances } =
-    useTangleEvmErc20Balances();
-
-  const erc20Assets = useMemo<RestakeAsset[]>(() => {
-    if (erc20Balances === null || erc20Balances === undefined) {
-      return [];
-    }
-
-    return erc20Balances.map(
-      (asset) =>
-        ({
-          name: asset.name,
-          symbol: asset.symbol,
-          balance: asset.balance,
-          decimals: asset.decimals,
-          id: asset.contractAddress,
-        }) satisfies RestakeAsset,
-    );
-  }, [erc20Balances]);
-
-  const allAssets = useMemo<RestakeAsset[]>(() => {
-    return [...nativeAssets, ...erc20Assets];
-  }, [erc20Assets, nativeAssets]);
 
   const handleAssetSelection = useCallback(
     (asset: RestakeAsset) => {
