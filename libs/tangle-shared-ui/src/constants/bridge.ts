@@ -143,6 +143,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
       ),
     },
+    {
+      symbol: 'WETH',
+      tokenType: 'WETH' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xf57A9F38C81aCba265522627E90AAA5EB197028f'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -2871,104 +2883,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       symbol: 'WBTC',
     },
     {
-      addressOrDenom: '0x02644D01979CDe915eD7D7C3a997072F5716D137',
-      chainName: 'arbitrum',
-      collateralAddressOrDenom: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
-      connections: [
-        { token: 'ethereum|base|0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f' },
-        {
-          token: 'ethereum|optimism|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
-        },
-        {
-          token: 'ethereum|polygon|0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
-        },
-        { token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52' },
-      ],
-      decimals: 18,
-      name: 'Wrapped Ether',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'WETH',
-    },
-    {
-      addressOrDenom: '0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f',
-      chainName: 'base',
-      collateralAddressOrDenom: '0x4200000000000000000000000000000000000006',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x02644D01979CDe915eD7D7C3a997072F5716D137',
-        },
-        {
-          token: 'ethereum|optimism|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
-        },
-        {
-          token: 'ethereum|polygon|0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
-        },
-        { token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52' },
-      ],
-      decimals: 18,
-      name: 'Wrapped Ether',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'WETH',
-    },
-    {
-      addressOrDenom: '0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
-      chainName: 'optimism',
-      collateralAddressOrDenom: '0x4200000000000000000000000000000000000006',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x02644D01979CDe915eD7D7C3a997072F5716D137',
-        },
-        { token: 'ethereum|base|0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f' },
-        {
-          token: 'ethereum|polygon|0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
-        },
-        { token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52' },
-      ],
-      decimals: 18,
-      name: 'Wrapped Ether',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'WETH',
-    },
-    {
-      addressOrDenom: '0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
-      chainName: 'polygon',
-      collateralAddressOrDenom: '0x11CD37bb86F65419713f30673A480EA33c826872',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x02644D01979CDe915eD7D7C3a997072F5716D137',
-        },
-        { token: 'ethereum|base|0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f' },
-        {
-          token: 'ethereum|optimism|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
-        },
-        { token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52' },
-      ],
-      decimals: 18,
-      name: 'Wrapped Ether',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'WETH',
-    },
-    {
-      addressOrDenom: '0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x02644D01979CDe915eD7D7C3a997072F5716D137',
-        },
-        { token: 'ethereum|base|0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f' },
-        {
-          token: 'ethereum|optimism|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
-        },
-        {
-          token: 'ethereum|polygon|0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
-        },
-      ],
-      decimals: 18,
-      name: 'Wrapped Ether',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'WETH',
-    },
-    {
       addressOrDenom: '0xa3E0920CAf0e2eDDDe54D49fFC1d82e1a23c9693',
       chainName: 'arbitrum',
       collateralAddressOrDenom: '0x5979D7b546E38E414F7E9822514be443A4800529',
@@ -3701,6 +3615,161 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'DAI',
     },
+    {
+      addressOrDenom: '0x02644D01979CDe915eD7D7C3a997072F5716D137',
+      chainName: 'arbitrum',
+      collateralAddressOrDenom: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+      connections: [
+        {
+          token: 'ethereum|base|0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f',
+        },
+        {
+          token: 'ethereum|optimism|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
+        },
+        {
+          token: 'ethereum|polygon|0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
+        },
+        {
+          token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
+        },
+        {
+          token: 'ethereum|ethereum|0xf57A9F38C81aCba265522627E90AAA5EB197028f',
+        },
+      ],
+      decimals: 18,
+      name: 'Wrapped Ether',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'WETH',
+    },
+    {
+      addressOrDenom: '0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f',
+      chainName: 'base',
+      collateralAddressOrDenom: '0x4200000000000000000000000000000000000006',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x02644D01979CDe915eD7D7C3a997072F5716D137',
+        },
+        {
+          token: 'ethereum|optimism|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
+        },
+        {
+          token: 'ethereum|polygon|0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
+        },
+        {
+          token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
+        },
+        {
+          token: 'ethereum|ethereum|0xf57A9F38C81aCba265522627E90AAA5EB197028f',
+        },
+      ],
+      decimals: 18,
+      name: 'Wrapped Ether',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'WETH',
+    },
+    {
+      addressOrDenom: '0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
+      chainName: 'optimism',
+      collateralAddressOrDenom: '0x4200000000000000000000000000000000000006',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x02644D01979CDe915eD7D7C3a997072F5716D137',
+        },
+        {
+          token: 'ethereum|base|0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f',
+        },
+        {
+          token: 'ethereum|polygon|0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
+        },
+        {
+          token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
+        },
+        {
+          token: 'ethereum|ethereum|0xf57A9F38C81aCba265522627E90AAA5EB197028f',
+        },
+      ],
+      decimals: 18,
+      name: 'Wrapped Ether',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'WETH',
+    },
+    {
+      addressOrDenom: '0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
+      chainName: 'polygon',
+      collateralAddressOrDenom: '0x11CD37bb86F65419713f30673A480EA33c826872',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x02644D01979CDe915eD7D7C3a997072F5716D137',
+        },
+        {
+          token: 'ethereum|base|0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f',
+        },
+        {
+          token: 'ethereum|optimism|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
+        },
+        {
+          token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
+        },
+        {
+          token: 'ethereum|ethereum|0xf57A9F38C81aCba265522627E90AAA5EB197028f',
+        },
+      ],
+      decimals: 18,
+      name: 'Wrapped Ether',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'WETH',
+    },
+    {
+      addressOrDenom: '0xf57A9F38C81aCba265522627E90AAA5EB197028f',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
+        },
+        {
+          token: 'ethereum|arbitrum|0x02644D01979CDe915eD7D7C3a997072F5716D137',
+        },
+        {
+          token: 'ethereum|base|0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f',
+        },
+        {
+          token: 'ethereum|optimism|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
+        },
+        {
+          token: 'ethereum|polygon|0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
+        },
+      ],
+      decimals: 18,
+      name: 'Wrapped Ether',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'WETH',
+    },
+    {
+      addressOrDenom: '0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x02644D01979CDe915eD7D7C3a997072F5716D137',
+        },
+        {
+          token: 'ethereum|base|0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f',
+        },
+        {
+          token: 'ethereum|optimism|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
+        },
+        {
+          token: 'ethereum|polygon|0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
+        },
+        {
+          token: 'ethereum|ethereum|0xf57A9F38C81aCba265522627E90AAA5EB197028f',
+        },
+      ],
+      decimals: 18,
+      name: 'Wrapped Ether',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'WETH',
+    },
   ],
 };
 
@@ -3760,6 +3829,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'WETH/base-tangle',
   'WETH/optimism-tangle',
   'WETH/polygon-tangle',
+  'WETH/ethereum-tangle',
   'wstETH/arbitrum-tangle',
   'wstETH/base-tangle',
   'wstETH/optimism-tangle',
