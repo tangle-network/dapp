@@ -155,6 +155,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
       ),
     },
+    {
+      symbol: 'ezETH',
+      tokenType: 'ezETH' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xea4866eD17f557c8E4D2fB93E705320522216145'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x536889B3c998D36911BA73411F502662B0754684',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -1805,73 +1817,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       name: 'Ether',
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'ETH',
-    },
-    {
-      addressOrDenom: '0x7CFc15E7fD3998B962D1FC137b64d10513c18097',
-      chainName: 'arbitrum',
-      collateralAddressOrDenom: '0x2416092f143378750bb29b79eD961ab195CcEea5',
-      connections: [
-        { token: 'ethereum|base|0xCa965b842699e16b367702310f50161e03eb2d27' },
-        {
-          token: 'ethereum|optimism|0xb794b059bDA36a01C3757693D4136162752e03C6',
-        },
-        { token: 'ethereum|tangle|0x536889B3c998D36911BA73411F502662B0754684' },
-      ],
-      decimals: 18,
-      name: 'Renzo Restaked ETH',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'ezETH',
-    },
-    {
-      addressOrDenom: '0xCa965b842699e16b367702310f50161e03eb2d27',
-      chainName: 'base',
-      collateralAddressOrDenom: '0x2416092f143378750bb29b79eD961ab195CcEea5',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x7CFc15E7fD3998B962D1FC137b64d10513c18097',
-        },
-        {
-          token: 'ethereum|optimism|0xb794b059bDA36a01C3757693D4136162752e03C6',
-        },
-        { token: 'ethereum|tangle|0x536889B3c998D36911BA73411F502662B0754684' },
-      ],
-      decimals: 18,
-      name: 'Renzo Restaked ETH',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'ezETH',
-    },
-    {
-      addressOrDenom: '0xb794b059bDA36a01C3757693D4136162752e03C6',
-      chainName: 'optimism',
-      collateralAddressOrDenom: '0x2416092f143378750bb29b79eD961ab195CcEea5',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x7CFc15E7fD3998B962D1FC137b64d10513c18097',
-        },
-        { token: 'ethereum|base|0xCa965b842699e16b367702310f50161e03eb2d27' },
-        { token: 'ethereum|tangle|0x536889B3c998D36911BA73411F502662B0754684' },
-      ],
-      decimals: 18,
-      name: 'Renzo Restaked ETH',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'ezETH',
-    },
-    {
-      addressOrDenom: '0x536889B3c998D36911BA73411F502662B0754684',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x7CFc15E7fD3998B962D1FC137b64d10513c18097',
-        },
-        { token: 'ethereum|base|0xCa965b842699e16b367702310f50161e03eb2d27' },
-        {
-          token: 'ethereum|optimism|0xb794b059bDA36a01C3757693D4136162752e03C6',
-        },
-      ],
-      decimals: 18,
-      name: 'Renzo Restaked ETH',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'ezETH',
     },
     {
       addressOrDenom: '0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
@@ -3770,6 +3715,120 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'WETH',
     },
+    {
+      addressOrDenom: '0x7CFc15E7fD3998B962D1FC137b64d10513c18097',
+      chainName: 'arbitrum',
+      collateralAddressOrDenom: '0x2416092f143378750bb29b79eD961ab195CcEea5',
+      connections: [
+        {
+          token: 'ethereum|base|0xCa965b842699e16b367702310f50161e03eb2d27',
+        },
+        {
+          token: 'ethereum|optimism|0xb794b059bDA36a01C3757693D4136162752e03C6',
+        },
+        {
+          token: 'ethereum|tangle|0x536889B3c998D36911BA73411F502662B0754684',
+        },
+        {
+          token: 'ethereum|ethereum|0xea4866eD17f557c8E4D2fB93E705320522216145',
+        },
+      ],
+      decimals: 18,
+      name: 'Renzo Restaked ETH',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'ezETH',
+    },
+    {
+      addressOrDenom: '0xCa965b842699e16b367702310f50161e03eb2d27',
+      chainName: 'base',
+      collateralAddressOrDenom: '0x2416092f143378750bb29b79eD961ab195CcEea5',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x7CFc15E7fD3998B962D1FC137b64d10513c18097',
+        },
+        {
+          token: 'ethereum|optimism|0xb794b059bDA36a01C3757693D4136162752e03C6',
+        },
+        {
+          token: 'ethereum|tangle|0x536889B3c998D36911BA73411F502662B0754684',
+        },
+        {
+          token: 'ethereum|ethereum|0xea4866eD17f557c8E4D2fB93E705320522216145',
+        },
+      ],
+      decimals: 18,
+      name: 'Renzo Restaked ETH',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'ezETH',
+    },
+    {
+      addressOrDenom: '0xb794b059bDA36a01C3757693D4136162752e03C6',
+      chainName: 'optimism',
+      collateralAddressOrDenom: '0x2416092f143378750bb29b79eD961ab195CcEea5',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x7CFc15E7fD3998B962D1FC137b64d10513c18097',
+        },
+        {
+          token: 'ethereum|base|0xCa965b842699e16b367702310f50161e03eb2d27',
+        },
+        {
+          token: 'ethereum|tangle|0x536889B3c998D36911BA73411F502662B0754684',
+        },
+        {
+          token: 'ethereum|ethereum|0xea4866eD17f557c8E4D2fB93E705320522216145',
+        },
+      ],
+      decimals: 18,
+      name: 'Renzo Restaked ETH',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'ezETH',
+    },
+    {
+      addressOrDenom: '0xea4866eD17f557c8E4D2fB93E705320522216145',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xbf5495Efe5DB9ce00f80364C8B423567e58d2110',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x7CFc15E7fD3998B962D1FC137b64d10513c18097',
+        },
+        {
+          token: 'ethereum|base|0xCa965b842699e16b367702310f50161e03eb2d27',
+        },
+        {
+          token: 'ethereum|optimism|0xb794b059bDA36a01C3757693D4136162752e03C6',
+        },
+        {
+          token: 'ethereum|tangle|0x536889B3c998D36911BA73411F502662B0754684',
+        },
+      ],
+      decimals: 18,
+      name: 'Renzo Restaked ETH',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'ezETH',
+    },
+    {
+      addressOrDenom: '0x536889B3c998D36911BA73411F502662B0754684',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x7CFc15E7fD3998B962D1FC137b64d10513c18097',
+        },
+        {
+          token: 'ethereum|base|0xCa965b842699e16b367702310f50161e03eb2d27',
+        },
+        {
+          token: 'ethereum|optimism|0xb794b059bDA36a01C3757693D4136162752e03C6',
+        },
+        {
+          token: 'ethereum|ethereum|0xea4866eD17f557c8E4D2fB93E705320522216145',
+        },
+      ],
+      decimals: 18,
+      name: 'Renzo Restaked ETH',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'ezETH',
+    },
   ],
 };
 
@@ -3786,6 +3845,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'ezETH/arbitrum-tangle',
   'ezETH/base-tangle',
   'ezETH/optimism-tangle',
+  'ezETH/ethereum-tangle',
   'LBTC/base-tangle',
   'LDO/arbitrum-tangle',
   'LDO/optimism-tangle',
