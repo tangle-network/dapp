@@ -51,7 +51,7 @@ export interface Validator extends BasicAccountInfo {
 }
 
 export type VaultToken = {
-  name: string;
+  name?: string;
   symbol: string;
   amount: Decimal;
 };

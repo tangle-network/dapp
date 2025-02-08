@@ -53,7 +53,7 @@ export type OperatorMap = {
 
 export type RestakeAssetMetadata = Readonly<{
   assetId: RestakeAssetId;
-  name: string;
+  name?: string;
   symbol: string;
   decimals: number;
   vaultId: number | null;
@@ -162,7 +162,7 @@ export type AssetWithBalance = {
 
 export type RestakeAsset = {
   id: RestakeAssetId;
-  name: string;
+  name?: string;
   symbol: string;
   balance: BN;
   decimals: number;

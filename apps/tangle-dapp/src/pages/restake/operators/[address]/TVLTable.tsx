@@ -32,14 +32,13 @@ const TVLTable: FC<Props> = ({
     const delegations = operatorData?.delegations ?? [];
 
     delegations.forEach(({ assetId }) => {
-      if (
-        assetsMetadataMap[assetId] === undefined ||
-        assetsMetadataMap[assetId].vaultId === null
-      ) {
+      const metadata = assetsMetadataMap[assetId];
+
+      if (metadata === undefined || metadata.vaultId === null) {
         return;
       }
 
-      const vaultId = assetsMetadataMap[assetId].vaultId;
+      const vaultId = metadata.vaultId;
 
       if (vaults[vaultId] !== undefined) {
         vaults[vaultId].tokenCount += 1;
@@ -48,10 +47,10 @@ const TVLTable: FC<Props> = ({
       }
 
       // TODO: Find out a proper way to get the vault name, now it's the first token name
-      const name = assetsMetadataMap[assetId].name;
+      const name = metadata.name ?? metadata.symbol;
 
       // TODO: Find out a proper way to get the vault symbol, now it's the first token symbol
-      const representToken = assetsMetadataMap[assetId].symbol;
+      const representToken = metadata.symbol;
 
       const apyPercentage = rewardConfig?.get(vaultId)?.apy.toNumber() ?? null;
       const tvlInUsd = vaultTVL?.[vaultId] ?? null;

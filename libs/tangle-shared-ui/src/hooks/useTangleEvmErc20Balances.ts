@@ -17,7 +17,7 @@ import { NetworkId } from '@webb-tools/webb-ui-components/constants/networks';
 
 type Erc20Token = {
   contractAddress: EvmAddress;
-  name: string;
+  name?: string;
   symbol: string;
   decimals: number;
   networks: NetworkId[];
@@ -43,7 +43,7 @@ const createErc20Token = (
 
   return {
     contractAddress: bridgeToken.hyperlaneSyntheticAddress,
-    name: bridgeToken.symbol,
+    name: bridgeToken.name,
     symbol: bridgeToken.symbol,
     decimals: bridgeToken.decimals,
     networks:

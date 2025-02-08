@@ -88,11 +88,13 @@ const RestakeOverviewTabs: FC<Props> = ({
 
         const tvlInUsd = vaultTVL?.[vaultId] ?? null;
 
+        // TODO: Find out a proper way to get the vault name, now it's the first token name
+        const vaultName = name !== undefined ? `${name} (${symbol})` : symbol;
+
         vaults[vaultId] = {
           id: vaultId,
           apyPercentage,
-          // TODO: Find out a proper way to get the vault name, now it's the first token name
-          name: name,
+          name: vaultName,
           // TODO: Find out a proper way to get the vault symbol, now it's the first token symbol
           representToken: symbol,
           tokenCount: 1,

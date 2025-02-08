@@ -87,7 +87,7 @@ const WithdrawModal = ({
       }}
       // TODO: This can be cleaned up a bit. Seems like a bit of reused code.
       renderItem={({ amount, assetId }) => {
-        let name: string;
+        let name: string | undefined;
         let symbol: string;
         let decimals: number;
         let vaultId: number | null = null;
@@ -128,7 +128,9 @@ const WithdrawModal = ({
         return (
           <LogoListItem
             logo={<TokenIcon size="xl" name={symbol} />}
-            leftUpperContent={`${name} (${symbol})`}
+            leftUpperContent={
+              name !== undefined ? `${name} (${symbol})` : symbol
+            }
             leftBottomContent={idText}
             rightUpperText={`${fmtAmount} ${symbol}`}
             rightBottomText={
