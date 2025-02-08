@@ -42,7 +42,7 @@ export type BasicAccountInfo = {
   identityName?: string;
 };
 
-export interface Nominee extends BasicAccountInfo {
+export interface Validator extends BasicAccountInfo {
   isActive: boolean;
   commission: BN;
   selfStakeAmount: BN;

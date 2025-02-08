@@ -1,11 +1,11 @@
 import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
 import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
-import { Nominee } from '@webb-tools/tangle-shared-ui/types';
+import { Validator } from '@webb-tools/tangle-shared-ui/types';
 import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
 import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 
-import createNominee from '../../utils/staking/createNominee';
+import createValidator from '../../utils/staking/createValidator';
 import useStakingExposures from '../staking/useStakingExposures';
 import useValidatorPrefs from '../staking/useValidatorPrefs';
 import useValidatorIdentityNames from '../ValidatorTables/useValidatorIdentityNames';
@@ -33,7 +33,7 @@ const useNominations = () => {
     ),
   );
 
-  const nominees = useMemo<Optional<Nominee[]> | null>(() => {
+  const nominees = useMemo<Optional<Validator[]> | null>(() => {
     if (
       nominationInfoOpt === null ||
       sessionValidators === null ||
@@ -58,7 +58,7 @@ const useNominations = () => {
         .map((address) => assertSubstrateAddress(address.toString()))
         .some((validatorAddress) => validatorAddress === nomineeAddress);
 
-      return createNominee({
+      return createValidator({
         address: nomineeAddress,
         isActive,
         identities,

@@ -3,7 +3,7 @@ import type {
   SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
-import { Nominee } from '@webb-tools/tangle-shared-ui/types';
+import { Validator } from '@webb-tools/tangle-shared-ui/types';
 
 export enum PagePath {
   DASHBOARD = '/',
@@ -45,8 +45,6 @@ export enum DelegationsAndPayoutsTab {
   NOMINATIONS = 'Nominations',
   PAYOUTS = 'Payouts',
 }
-
-export interface Validator extends Nominee {}
 
 export type NodeSpecification = {
   os: string;

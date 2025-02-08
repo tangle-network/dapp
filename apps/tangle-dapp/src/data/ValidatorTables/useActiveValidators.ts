@@ -15,6 +15,7 @@ const useActiveValidators = () => {
       return validators.pipe(
         map((validators) => {
           const validatorAddresses = Array.from(validators || []);
+
           return validatorAddresses.length > 0 ? validatorAddresses : null;
         }),
       );
