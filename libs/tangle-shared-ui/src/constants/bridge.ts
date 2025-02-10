@@ -215,6 +215,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0xbD33235a960874027ad0C7393BE8583572EE2f5b',
       ),
     },
+    {
+      symbol: 'SolvBTC',
+      tokenType: 'SolvBTC' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x223E7B1EAd79C6603a891D9e733FD5ADD1044dd1',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -2007,11 +2019,28 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       symbol: 'SolvBTC',
     },
     {
+      addressOrDenom: '0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0x7A56E1C57C7475CCf742a1832B028F0456652F97',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x223E7B1EAd79C6603a891D9e733FD5ADD1044dd1',
+        },
+      ],
+      decimals: 18,
+      name: 'Solv BTC',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'SolvBTC',
+    },
+    {
       addressOrDenom: '0x223E7B1EAd79C6603a891D9e733FD5ADD1044dd1',
       chainName: 'tangle',
       connections: [
         {
           token: 'ethereum|arbitrum|0xc80f2Bd6Bc9C74a6674bC0A0966e76a5eAC51Cf7',
+        },
+        {
+          token: 'ethereum|ethereum|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
         },
       ],
       decimals: 18,
@@ -3457,6 +3486,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'rETH/polygon-tangle',
   'rETH/ethereum-tangle',
   'SolvBTC/arbitrum-tangle',
+  'SolvBTC/ethereum-tangle',
   'SolvBTC.BBN/arbitrum-tangle',
   'stAVAIL/base-tangle',
   'swETH/arbitrum-tangle',
