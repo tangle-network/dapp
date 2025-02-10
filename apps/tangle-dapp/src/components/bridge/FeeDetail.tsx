@@ -56,13 +56,13 @@ export const FeeDetail = ({
             'group flex items-center justify-between w-full px-4 pt-3 pb-2',
           )}
         >
-          <Typography variant="body1" fw="bold">
+          <Typography variant="body1" fw="normal">
             Total Receiving
           </Typography>
 
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
-              <Typography variant="h4" fw="bold" className="whitespace-nowrap">
+              <Typography variant="h5" fw="normal" className="whitespace-nowrap">
                 {amounts.receiving.split(' ')[0].split('.')[0]}
                 {amounts.receiving.split(' ')[0].split('.')[1]
                   ? `.${amounts.receiving.split(' ')[0].split('.')[1].slice(0, 4)}`
@@ -101,28 +101,28 @@ export const FeeDetail = ({
             <div className="h-[2px] bg-mono-40 dark:bg-mono-160" />
 
             <div className="flex items-center justify-between">
-              <Typography variant="body1" fw="bold">
+              <Typography variant="body1" fw="normal">
                 Sending
               </Typography>
 
               <Typography
                 variant="body1"
-                fw="bold"
-                className="whitespace-nowrap"
+                fw="normal"
+                className="whitespace-nowrap text-mono-200 dark:text-mono-0"
               >
                 {amounts.sending}
               </Typography>
             </div>
 
             <div className="flex items-center justify-between">
-              <Typography variant="body1" fw="bold">
+              <Typography variant="body1" fw="normal">
                 Bridge Fee
               </Typography>
 
               <Typography
                 variant="body1"
-                fw="bold"
-                className="whitespace-nowrap"
+                fw="normal"
+                className="whitespace-nowrap text-mono-200 dark:text-mono-0"
               >
                 {amounts.bridgeFee.split('.')[0]}
                 {amounts.bridgeFee.split('.')[1]
@@ -132,7 +132,7 @@ export const FeeDetail = ({
             </div>
 
             <div className="flex items-center justify-between">
-              <Typography variant="body1" fw="bold">
+              <Typography variant="body1" fw="normal">
                 Bridge Route
               </Typography>
 
@@ -143,7 +143,11 @@ export const FeeDetail = ({
                   <TokenIcon name="hyperlane" size="lg" />
                 )}
 
-                <Typography variant="body1" fw="bold">
+                <Typography
+                  variant="body1"
+                  fw="normal"
+                  className="whitespace-nowrap text-mono-200 dark:text-mono-0"
+                >
                   {token.bridgeType.charAt(0).toUpperCase() +
                     token.bridgeType.slice(1)}
                 </Typography>
@@ -152,14 +156,14 @@ export const FeeDetail = ({
 
             {amounts.gasFee && (
               <div className="flex items-center justify-between">
-                <Typography variant="body1" fw="bold">
+                <Typography variant="body1" fw="normal">
                   Gas Fee
                 </Typography>
 
                 <Typography
                   variant="body1"
-                  fw="bold"
-                  className="whitespace-nowrap"
+                  fw="normal"
+                  className="whitespace-nowrap text-mono-200 dark:text-mono-0"
                 >
                   {amounts.gasFee}
                 </Typography>
@@ -168,7 +172,7 @@ export const FeeDetail = ({
 
             {recipientExplorerUrl && (
               <div className="flex items-center justify-between">
-                <Typography variant="body1" fw="bold">
+                <Typography variant="body1" fw="normal">
                   Recipient
                 </Typography>
 
@@ -180,8 +184,8 @@ export const FeeDetail = ({
                 >
                   <Typography
                     variant="body1"
-                    fw="bold"
-                    className="whitespace-nowrap"
+                    fw="normal"
+                    className="whitespace-nowrap text-mono-200 dark:text-mono-0"
                   >
                     {shortenHex(recipientExplorerUrl)}
                   </Typography>
