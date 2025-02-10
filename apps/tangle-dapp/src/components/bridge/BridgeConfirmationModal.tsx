@@ -848,6 +848,13 @@ const ConfirmationItem: FC<{
         <Typography variant="body1">Amount</Typography>
 
         <div className="flex items-center gap-2">
+          <TokenIcon
+            name={tokenName}
+            size="lg"
+            spinnerSize="lg"
+            className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
+          />
+
           <Typography
             variant="body1"
             fw="normal"
@@ -855,13 +862,6 @@ const ConfirmationItem: FC<{
           >
             {amount ?? EMPTY_VALUE_PLACEHOLDER}
           </Typography>
-
-          <TokenIcon
-            name={tokenName}
-            size="lg"
-            spinnerSize="lg"
-            className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
-          />
         </div>
       </div>
     </div>

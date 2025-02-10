@@ -62,19 +62,23 @@ export const FeeDetail = ({
 
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
-              <Typography variant="h5" fw="normal" className="whitespace-nowrap">
+              <TokenIcon
+                size="lg"
+                name={token.tokenType.toLowerCase()}
+                className={cx(`shrink-0 ${getFlexBasic('lg')}`)}
+              />
+              
+              <Typography
+                variant="h5"
+                fw="normal"
+                className="whitespace-nowrap"
+              >
                 {amounts.receiving.split(' ')[0].split('.')[0]}
                 {amounts.receiving.split(' ')[0].split('.')[1]
                   ? `.${amounts.receiving.split(' ')[0].split('.')[1].slice(0, 4)}`
                   : ''}{' '}
                 {amounts.receiving.split(' ')[1]}
               </Typography>
-
-              <TokenIcon
-                size="lg"
-                name={token.tokenType.toLowerCase()}
-                className={cx(`shrink-0 ${getFlexBasic('lg')}`)}
-              />
             </div>
 
             {isCollapsible && (
