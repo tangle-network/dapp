@@ -809,7 +809,11 @@ const ConfirmationItem: FC<{
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
           />
 
-          <Typography variant="h5" fw="bold" className="text-nowrap">
+          <Typography
+            variant="body1"
+            fw="normal"
+            className="text-nowrap text-mono-200 dark:text-mono-0"
+          >
             {chain.displayName ?? chain.name}
           </Typography>
         </div>
@@ -825,7 +829,11 @@ const ConfirmationItem: FC<{
             rel="noreferrer"
             className="flex items-center gap-1"
           >
-            <Typography variant="h5" fw="bold" className="whitespace-nowrap">
+            <Typography
+              variant="body1"
+              fw="normal"
+              className="whitespace-nowrap text-mono-200 dark:text-mono-0"
+            >
               {isSolanaAddress(accAddress)
                 ? shortenString(accAddress, 10)
                 : shortenHex(accAddress, 10)}
@@ -840,16 +848,20 @@ const ConfirmationItem: FC<{
         <Typography variant="body1">Amount</Typography>
 
         <div className="flex items-center gap-2">
-          <Typography variant="h5" fw="bold" className="text-nowrap">
-            {amount ?? EMPTY_VALUE_PLACEHOLDER}
-          </Typography>
-
           <TokenIcon
             name={tokenName}
             size="lg"
             spinnerSize="lg"
             className={cx(`shrink-0 grow-0 ${getFlexBasic('lg')}`)}
           />
+
+          <Typography
+            variant="body1"
+            fw="normal"
+            className="text-nowrap text-mono-200 dark:text-mono-0"
+          >
+            {amount ?? EMPTY_VALUE_PLACEHOLDER}
+          </Typography>
         </div>
       </div>
     </div>

@@ -71,6 +71,14 @@ const LiquidStakingPage: FC = () => {
 
   return (
     <div>
+      <Typography
+        variant="h4"
+        fw="bold"
+        className="text-mono-200 dark:text-mono-0 max-w-[532px] mx-auto w-full text-left mb-5"
+      >
+        Liquid Stake
+      </Typography>
+
       <LsCreatePoolModal
         isOpen={isCreatePoolModalOpen}
         setIsOpen={setIsCreatePoolModalOpen}
