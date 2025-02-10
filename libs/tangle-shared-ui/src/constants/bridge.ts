@@ -179,6 +179,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0xB703e29F2b05c57Fbc2E3492bE5fC6Db62CE3188',
       ),
     },
+    {
+      symbol: 'LDO',
+      tokenType: 'LDO' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x160F5cD345Db235C92B671782d27F5aA6F2f31EB'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x94AB056b6CF81464458d205E632b2757A311E821',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -1829,79 +1841,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       name: 'Ether',
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'ETH',
-    },
-    {
-      addressOrDenom: '0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d',
-      chainName: 'arbitrum',
-      collateralAddressOrDenom: '0x13Ad51ed4F1B7e9Dc168d8a00cB3f4dDD85EfA60',
-      connections: [
-        {
-          token: 'ethereum|optimism|0x87228bCa8bdB5F3c1EafDddCC14a059Bcde2233b',
-        },
-        {
-          token: 'ethereum|polygon|0x99829129a49517FAc964802cA30E75Fd96143dC2',
-        },
-        { token: 'ethereum|tangle|0x94AB056b6CF81464458d205E632b2757A311E821' },
-      ],
-      decimals: 18,
-      name: 'Lido DAO Token',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'LDO',
-    },
-    {
-      addressOrDenom: '0x87228bCa8bdB5F3c1EafDddCC14a059Bcde2233b',
-      chainName: 'optimism',
-      collateralAddressOrDenom: '0xFdb794692724153d1488CcdBE0C56c252596735F',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d',
-        },
-        {
-          token: 'ethereum|polygon|0x99829129a49517FAc964802cA30E75Fd96143dC2',
-        },
-        { token: 'ethereum|tangle|0x94AB056b6CF81464458d205E632b2757A311E821' },
-      ],
-      decimals: 18,
-      name: 'Lido DAO Token',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'LDO',
-    },
-    {
-      addressOrDenom: '0x99829129a49517FAc964802cA30E75Fd96143dC2',
-      chainName: 'polygon',
-      collateralAddressOrDenom: '0xC3C7d422809852031b44ab29EEC9F1EfF2A58756',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d',
-        },
-        {
-          token: 'ethereum|optimism|0x87228bCa8bdB5F3c1EafDddCC14a059Bcde2233b',
-        },
-        { token: 'ethereum|tangle|0x94AB056b6CF81464458d205E632b2757A311E821' },
-      ],
-      decimals: 18,
-      name: 'Lido DAO Token',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'LDO',
-    },
-    {
-      addressOrDenom: '0x94AB056b6CF81464458d205E632b2757A311E821',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d',
-        },
-        {
-          token: 'ethereum|optimism|0x87228bCa8bdB5F3c1EafDddCC14a059Bcde2233b',
-        },
-        {
-          token: 'ethereum|polygon|0x99829129a49517FAc964802cA30E75Fd96143dC2',
-        },
-      ],
-      decimals: 18,
-      name: 'Lido DAO Token',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'LDO',
     },
     {
       addressOrDenom: '0x488A2E673B0bA9876788A7497c331EfaA14d5F81',
@@ -3865,6 +3804,116 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'LBTC',
     },
+    {
+      addressOrDenom: '0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d',
+      chainName: 'arbitrum',
+      collateralAddressOrDenom: '0x13Ad51ed4F1B7e9Dc168d8a00cB3f4DD85EfA60',
+      connections: [
+        {
+          token: 'ethereum|optimism|0x87228bCa8bdB5F3c1EafDddCC14a059Bcde2233b',
+        },
+        {
+          token: 'ethereum|polygon|0x99829129a49517FAc964802cA30E75Fd96143dC2',
+        },
+        {
+          token: 'ethereum|tangle|0x94AB056b6CF81464458d205E632b2757A311E821',
+        },
+        {
+          token: 'ethereum|ethereum|0x160F5cD345Db235C92B671782d27F5aA6F2f31EB',
+        },
+      ],
+      decimals: 18,
+      name: 'Lido DAO Token',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'LDO',
+    },
+    {
+      addressOrDenom: '0x87228bCa8bdB5F3c1EafDddCC14a059Bcde2233b',
+      chainName: 'optimism',
+      collateralAddressOrDenom: '0xFdb794692724153d1488CcdBE0C56c252596735F',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d',
+        },
+        {
+          token: 'ethereum|polygon|0x99829129a49517FAc964802cA30E75Fd96143dC2',
+        },
+        {
+          token: 'ethereum|tangle|0x94AB056b6CF81464458d205E632b2757A311E821',
+        },
+        {
+          token: 'ethereum|ethereum|0x160F5cD345Db235C92B671782d27F5aA6F2f31EB',
+        },
+      ],
+      decimals: 18,
+      name: 'Lido DAO Token',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'LDO',
+    },
+    {
+      addressOrDenom: '0x99829129a49517FAc964802cA30E75Fd96143dC2',
+      chainName: 'polygon',
+      collateralAddressOrDenom: '0xC3C7d422809852031b44ab29EEC9F1EfF2A58756',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d',
+        },
+        {
+          token: 'ethereum|optimism|0x87228bCa8bdB5F3c1EafDddCC14a059Bcde2233b',
+        },
+        { token: 'ethereum|tangle|0x94AB056b6CF81464458d205E632b2757A311E821' },
+        {
+          token: 'ethereum|ethereum|0x160F5cD345Db235C92B671782d27F5aA6F2f31EB',
+        },
+      ],
+      decimals: 18,
+      name: 'Lido DAO Token',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'LDO',
+    },
+    {
+      addressOrDenom: '0x160F5cD345Db235C92B671782d27F5aA6F2f31EB',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32',
+      connections: [
+        { token: 'ethereum|tangle|0x94AB056b6CF81464458d205E632b2757A311E821' },
+        {
+          token: 'ethereum|optimism|0x87228bCa8bdB5F3c1EafDddCC14a059Bcde2233b',
+        },
+        {
+          token: 'ethereum|polygon|0x99829129a49517FAc964802cA30E75Fd96143dC2',
+        },
+        {
+          token: 'ethereum|arbitrum|0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d',
+        },
+      ],
+      decimals: 18,
+      name: 'Lido DAO Token',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'LDO',
+    },
+    {
+      addressOrDenom: '0x94AB056b6CF81464458d205E632b2757A311E821',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d',
+        },
+        {
+          token: 'ethereum|optimism|0x87228bCa8bdB5F3c1EafDddCC14a059Bcde2233b',
+        },
+        {
+          token: 'ethereum|polygon|0x99829129a49517FAc964802cA30E75Fd96143dC2',
+        },
+        {
+          token: 'ethereum|ethereum|0x160F5cD345Db235C92B671782d27F5aA6F2f31EB',
+        },
+      ],
+      decimals: 18,
+      name: 'Lido DAO Token',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'LDO',
+    },
   ],
 };
 
@@ -3887,6 +3936,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'LDO/arbitrum-tangle',
   'LDO/optimism-tangle',
   'LDO/polygon-tangle',
+  'LDO/ethereum-tangle',
   'LDT/holesky-tangle',
   'LINK/arbitrum-tangle',
   'LINK/base-tangle',
