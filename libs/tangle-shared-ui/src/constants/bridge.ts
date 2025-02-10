@@ -1670,15 +1670,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978',
       connections: [
         {
-          token: 'ethereum|base|0xAf461f35C12d207ee533191C89B476CCB1b03D60',
-        },
-        {
-          token: 'ethereum|optimism|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
-        },
-        {
-          token: 'ethereum|polygon|0x3DBBB4fdC5725FF780E653FfC3Af427029C259F3',
-        },
-        {
           token: 'ethereum|tangle|0xED8Ef3eF3965f64A143977eB641BA2212DCfC96e',
         },
       ],
@@ -1692,15 +1683,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'base',
       collateralAddressOrDenom: '0x8Ee73c484A26e0A5df2Ee2a4960B789967dd0415',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x223E7B1EAd79C6603a891D9e733FD5ADD1044dd1',
-        },
-        {
-          token: 'ethereum|optimism|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
-        },
-        {
-          token: 'ethereum|polygon|0x3DBBB4fdC5725FF780E653FfC3Af427029C259F3',
-        },
         {
           token: 'ethereum|tangle|0xED8Ef3eF3965f64A143977eB641BA2212DCfC96e',
         },
@@ -1716,15 +1698,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x0994206dfE8De6Ec6920FF4D779B0d950605Fb53',
       connections: [
         {
-          token: 'ethereum|arbitrum|0x223E7B1EAd79C6603a891D9e733FD5ADD1044dd1',
-        },
-        {
-          token: 'ethereum|base|0xAf461f35C12d207ee533191C89B476CCB1b03D60',
-        },
-        {
-          token: 'ethereum|polygon|0x3DBBB4fdC5725FF780E653FfC3Af427029C259F3',
-        },
-        {
           token: 'ethereum|tangle|0xED8Ef3eF3965f64A143977eB641BA2212DCfC96e',
         },
       ],
@@ -1738,15 +1711,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'polygon',
       collateralAddressOrDenom: '0x172370d5Cd63279eFa6d502DAB29171933a610AF',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x223E7B1EAd79C6603a891D9e733FD5ADD1044dd1',
-        },
-        {
-          token: 'ethereum|base|0xAf461f35C12d207ee533191C89B476CCB1b03D60',
-        },
-        {
-          token: 'ethereum|optimism|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
-        },
         {
           token: 'ethereum|tangle|0xED8Ef3eF3965f64A143977eB641BA2212DCfC96e',
         },
@@ -1782,10 +1746,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       addressOrDenom: '0x68AbCC37de2BEb083Cd6A549f64C3494Ea418BB7',
       chainName: 'arbitrum',
       connections: [
-        { token: 'ethereum|base|0x61F71B85762c8848083506da347969c58248f0c6' },
-        {
-          token: 'ethereum|optimism|0x96d4357EB200f230816811b4320259b2f9228D5c',
-        },
         { token: 'ethereum|tangle|0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7' },
       ],
       decimals: 18,
@@ -1797,12 +1757,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       addressOrDenom: '0x61F71B85762c8848083506da347969c58248f0c6',
       chainName: 'base',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x68AbCC37de2BEb083Cd6A549f64C3494Ea418BB7',
-        },
-        {
-          token: 'ethereum|optimism|0x96d4357EB200f230816811b4320259b2f9228D5c',
-        },
         { token: 'ethereum|tangle|0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7' },
       ],
       decimals: 18,
@@ -1814,10 +1768,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       addressOrDenom: '0x96d4357EB200f230816811b4320259b2f9228D5c',
       chainName: 'optimism',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x68AbCC37de2BEb083Cd6A549f64C3494Ea418BB7',
-        },
-        { token: 'ethereum|base|0x61F71B85762c8848083506da347969c58248f0c6' },
         { token: 'ethereum|tangle|0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7' },
       ],
       decimals: 18,
@@ -1876,16 +1826,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0xf97f4df75117a78c1A5a0DBb814Af92458539FB4',
       connections: [
         {
-          token: 'ethereum|optimism|0x7a6BB435590eab856cA0b19EF5bFC227346f0f96',
-        },
-        {
-          token: 'ethereum|polygon|0xfeE0B3295D2f7e209217F33FDb46e79D6b3C15C7',
-        },
-        {
           token: 'ethereum|tangle|0xd27b4c2F12d0E197c5563daa507DB31c5994180D',
-        },
-        {
-          token: 'ethereum|base|0xB922779bB836765598709032736C86c67E5A514e',
         },
       ],
       decimals: 18,
@@ -1899,16 +1840,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x350a791Bfc2C21F9Ed5d10980Dad2e2638ffa7f6',
       connections: [
         {
-          token: 'ethereum|arbitrum|0x0251Bdc4cd9226B369859fd75D5be133EF48e7D9',
-        },
-        {
-          token: 'ethereum|polygon|0xfeE0B3295D2f7e209217F33FDb46e79D6b3C15C7',
-        },
-        {
           token: 'ethereum|tangle|0xd27b4c2F12d0E197c5563daa507DB31c5994180D',
-        },
-        {
-          token: 'ethereum|base|0xB922779bB836765598709032736C86c67E5A514e',
         },
       ],
       decimals: 18,
@@ -1922,16 +1854,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39',
       connections: [
         {
-          token: 'ethereum|arbitrum|0x0251Bdc4cd9226B369859fd75D5be133EF48e7D9',
-        },
-        {
-          token: 'ethereum|optimism|0x7a6BB435590eab856cA0b19EF5bFC227346f0f96',
-        },
-        {
           token: 'ethereum|tangle|0xd27b4c2F12d0E197c5563daa507DB31c5994180D',
-        },
-        {
-          token: 'ethereum|base|0xB922779bB836765598709032736C86c67E5A514e',
         },
       ],
       decimals: 18,
@@ -1944,15 +1867,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'base',
       collateralAddressOrDenom: '0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x0251Bdc4cd9226B369859fd75D5be133EF48e7D9',
-        },
-        {
-          token: 'ethereum|optimism|0x7a6BB435590eab856cA0b19EF5bFC227346f0f96',
-        },
-        {
-          token: 'ethereum|polygon|0xfeE0B3295D2f7e209217F33FDb46e79D6b3C15C7',
-        },
         {
           token: 'ethereum|tangle|0xd27b4c2F12d0E197c5563daa507DB31c5994180D',
         },
@@ -2043,15 +1957,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0xEC70Dcb4A1EFa46b8F2D97C310C9c4790ba5ffA8',
       connections: [
         {
-          token: 'ethereum|base|0xb2434BA552d88e026c1D339CFE8c827d98A626b9',
-        },
-        {
-          token: 'ethereum|optimism|0xEF783f54b69554f0A3c7263DF508A395febb407b',
-        },
-        {
-          token: 'ethereum|polygon|0x158C33834acf0B3d061DdFA1C7784cA595AC1c25',
-        },
-        {
           token: 'ethereum|tangle|0xbD33235a960874027ad0C7393BE8583572EE2f5b',
         },
       ],
@@ -2065,15 +1970,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'base',
       collateralAddressOrDenom: '0xB6fe221Fe9EeF5aBa221c348bA20A1Bf5e73624c',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0xB6e1965e8c13657e25450F0161eebAD8F2b2FC0E',
-        },
-        {
-          token: 'ethereum|optimism|0xEF783f54b69554f0A3c7263DF508A395febb407b',
-        },
-        {
-          token: 'ethereum|polygon|0x158C33834acf0B3d061DdFA1C7784cA595AC1c25',
-        },
         {
           token: 'ethereum|tangle|0xbD33235a960874027ad0C7393BE8583572EE2f5b',
         },
@@ -2089,15 +1985,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x9Bcef72be871e61ED4fBbc7630889beE758eb81D',
       connections: [
         {
-          token: 'ethereum|arbitrum|0xB6e1965e8c13657e25450F0161eebAD8F2b2FC0E',
-        },
-        {
-          token: 'ethereum|base|0xb2434BA552d88e026c1D339CFE8c827d98A626b9',
-        },
-        {
-          token: 'ethereum|polygon|0x158C33834acf0B3d061DdFA1C7784cA595AC1c25',
-        },
-        {
           token: 'ethereum|tangle|0xbD33235a960874027ad0C7393BE8583572EE2f5b',
         },
       ],
@@ -2111,15 +1998,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'polygon',
       collateralAddressOrDenom: '0x0266F4F08D82372CF0FcbCCc0Ff74309089c74d1',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0xB6e1965e8c13657e25450F0161eebAD8F2b2FC0E',
-        },
-        {
-          token: 'ethereum|base|0xb2434BA552d88e026c1D339CFE8c827d98A626b9',
-        },
-        {
-          token: 'ethereum|optimism|0xEF783f54b69554f0A3c7263DF508A395febb407b',
-        },
         {
           token: 'ethereum|tangle|0xbD33235a960874027ad0C7393BE8583572EE2f5b',
         },
@@ -2264,13 +2142,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'arbitrum',
       collateralAddressOrDenom: '0x6c84a8f1c29108F47a79964b5Fe888D4f4D0dE40',
       connections: [
-        { token: 'ethereum|base|0x21F0ba9E292e1FE8A1C723C8dc3D0bf782b3d75E' },
-        {
-          token: 'ethereum|optimism|0x5742195A81349F1306361D71A050C4cDdC5814FE',
-        },
-        {
-          token: 'ethereum|polygon|0xF46496DD3eFdbb6Bf69cdEee56aBd17AAC8A0494',
-        },
         { token: 'ethereum|tangle|0x9330D5e38d714e1E71fd2dBeA7EbD98f13E4E241' },
       ],
       decimals: 18,
@@ -2283,15 +2154,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'base',
       collateralAddressOrDenom: '0x236aa50979D5f3De3Bd1Eeb40E81137F22ab794b',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x1654A5e254277FB66773eb4B0E428efB0bFB3Dca',
-        },
-        {
-          token: 'ethereum|optimism|0x5742195A81349F1306361D71A050C4cDdC5814FE',
-        },
-        {
-          token: 'ethereum|polygon|0xF46496DD3eFdbb6Bf69cdEee56aBd17AAC8A0494',
-        },
         { token: 'ethereum|tangle|0x9330D5e38d714e1E71fd2dBeA7EbD98f13E4E241' },
       ],
       decimals: 18,
@@ -2304,13 +2166,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'optimism',
       collateralAddressOrDenom: '0x6c84a8f1c29108F47a79964b5Fe888D4f4D0dE40',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x1654A5e254277FB66773eb4B0E428efB0bFB3Dca',
-        },
-        { token: 'ethereum|base|0x21F0ba9E292e1FE8A1C723C8dc3D0bf782b3d75E' },
-        {
-          token: 'ethereum|polygon|0xF46496DD3eFdbb6Bf69cdEee56aBd17AAC8A0494',
-        },
         { token: 'ethereum|tangle|0x9330D5e38d714e1E71fd2dBeA7EbD98f13E4E241' },
       ],
       decimals: 18,
@@ -2323,13 +2178,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'polygon',
       collateralAddressOrDenom: '0x236aa50979D5f3De3Bd1Eeb40E81137F22ab794b',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x1654A5e254277FB66773eb4B0E428efB0bFB3Dca',
-        },
-        { token: 'ethereum|base|0x21F0ba9E292e1FE8A1C723C8dc3D0bf782b3d75E' },
-        {
-          token: 'ethereum|optimism|0x5742195A81349F1306361D71A050C4cDdC5814FE',
-        },
         { token: 'ethereum|tangle|0x9330D5e38d714e1E71fd2dBeA7EbD98f13E4E241' },
       ],
       decimals: 18,
@@ -2362,12 +2210,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'arbitrum',
       collateralAddressOrDenom: '0xFa7F8980b0f1E64A2062791cc3b0871572f1F7f0',
       connections: [
-        {
-          token: 'ethereum|optimism|0x25Eb364cb96485c22eE70a6cfc60717F0C0b3380',
-        },
-        {
-          token: 'ethereum|polygon|0xa3E0920CAf0e2eDDDe54D49fFC1d82e1a23c9693',
-        },
         { token: 'ethereum|tangle|0xC2450aa58A3ec477B04F2122c8101eE6bdcC3A82' },
       ],
       decimals: 18,
@@ -2380,12 +2222,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'optimism',
       collateralAddressOrDenom: '0x6fd9d7AD17242c41f7131d257212c54A0e816691',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0xd5c9FCfF2f362E89538E92e8B6e677571E11C1e7',
-        },
-        {
-          token: 'ethereum|polygon|0xa3E0920CAf0e2eDDDe54D49fFC1d82e1a23c9693',
-        },
         { token: 'ethereum|tangle|0xC2450aa58A3ec477B04F2122c8101eE6bdcC3A82' },
       ],
       decimals: 18,
@@ -2398,12 +2234,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'polygon',
       collateralAddressOrDenom: '0xb33EaAd8d922B1083446DC23f610c2567fB5180f',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0xd5c9FCfF2f362E89538E92e8B6e677571E11C1e7',
-        },
-        {
-          token: 'ethereum|optimism|0x25Eb364cb96485c22eE70a6cfc60717F0C0b3380',
-        },
         { token: 'ethereum|tangle|0xC2450aa58A3ec477B04F2122c8101eE6bdcC3A82' },
       ],
       decimals: 18,
@@ -2435,13 +2265,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'arbitrum',
       collateralAddressOrDenom: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
       connections: [
-        { token: 'ethereum|base|0xf041B44EE24B5358D0999076933675fF5baCa437' },
-        {
-          token: 'ethereum|optimism|0x7A153C00352DCb87E11684ce504bfE4dC170acCb',
-        },
-        {
-          token: 'ethereum|polygon|0xf041B44EE24B5358D0999076933675fF5baCa437',
-        },
         { token: 'ethereum|tangle|0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa' },
       ],
       decimals: 6,
@@ -2454,15 +2277,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'base',
       collateralAddressOrDenom: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0xd7405f4396a90cD6B1f11f172F08034dBd9265D8',
-        },
-        {
-          token: 'ethereum|optimism|0x7A153C00352DCb87E11684ce504bfE4dC170acCb',
-        },
-        {
-          token: 'ethereum|polygon|0xf041B44EE24B5358D0999076933675fF5baCa437',
-        },
         { token: 'ethereum|tangle|0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa' },
       ],
       decimals: 6,
@@ -2475,13 +2289,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'optimism',
       collateralAddressOrDenom: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0xd7405f4396a90cD6B1f11f172F08034dBd9265D8',
-        },
-        { token: 'ethereum|base|0xf041B44EE24B5358D0999076933675fF5baCa437' },
-        {
-          token: 'ethereum|polygon|0xf041B44EE24B5358D0999076933675fF5baCa437',
-        },
         { token: 'ethereum|tangle|0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa' },
       ],
       decimals: 6,
@@ -2494,13 +2301,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'polygon',
       collateralAddressOrDenom: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0xd7405f4396a90cD6B1f11f172F08034dBd9265D8',
-        },
-        { token: 'ethereum|base|0xf041B44EE24B5358D0999076933675fF5baCa437' },
-        {
-          token: 'ethereum|optimism|0x7A153C00352DCb87E11684ce504bfE4dC170acCb',
-        },
         { token: 'ethereum|tangle|0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa' },
       ],
       decimals: 6,
@@ -2533,13 +2333,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'arbitrum',
       collateralAddressOrDenom: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
       connections: [
-        { token: 'ethereum|base|0x72141B45a23333011AaAb07D6fDEBbE97049091e' },
-        {
-          token: 'ethereum|optimism|0x108F919b5A76B64e80dBf74130Ff6441A62F6405',
-        },
-        {
-          token: 'ethereum|polygon|0x72141B45a23333011AaAb07D6fDEBbE97049091e',
-        },
         { token: 'ethereum|tangle|0xa06898e779998eC3a749368DF924d5b94C2465b4' },
       ],
       decimals: 6,
@@ -2552,15 +2345,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'base',
       collateralAddressOrDenom: '0xfde4C96c8593536E31F229EA8f37b2ADa2699bb2',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x5b6C0685Fc934C53b4523Bf8df5277dC4f3914FA',
-        },
-        {
-          token: 'ethereum|optimism|0x108F919b5A76B64e80dBf74130Ff6441A62F6405',
-        },
-        {
-          token: 'ethereum|polygon|0x72141B45a23333011AaAb07D6fDEBbE97049091e',
-        },
         { token: 'ethereum|tangle|0xa06898e779998eC3a749368DF924d5b94C2465b4' },
       ],
       decimals: 6,
@@ -2573,13 +2357,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'optimism',
       collateralAddressOrDenom: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x5b6C0685Fc934C53b4523Bf8df5277dC4f3914FA',
-        },
-        { token: 'ethereum|base|0x72141B45a23333011AaAb07D6fDEBbE97049091e' },
-        {
-          token: 'ethereum|polygon|0x72141B45a23333011AaAb07D6fDEBbE97049091e',
-        },
         { token: 'ethereum|tangle|0xa06898e779998eC3a749368DF924d5b94C2465b4' },
       ],
       decimals: 6,
@@ -2592,13 +2369,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'polygon',
       collateralAddressOrDenom: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x5b6C0685Fc934C53b4523Bf8df5277dC4f3914FA',
-        },
-        { token: 'ethereum|base|0x72141B45a23333011AaAb07D6fDEBbE97049091e' },
-        {
-          token: 'ethereum|optimism|0x108F919b5A76B64e80dBf74130Ff6441A62F6405',
-        },
         { token: 'ethereum|tangle|0xa06898e779998eC3a749368DF924d5b94C2465b4' },
       ],
       decimals: 6,
@@ -2658,13 +2428,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'arbitrum',
       collateralAddressOrDenom: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
       connections: [
-        { token: 'ethereum|base|0x989Ecb4dB2543b694b7496f5823DA6fDd26cb5C5' },
-        {
-          token: 'ethereum|optimism|0xDCb6a0a3bC5e034400e845483f21da67866691Bb',
-        },
-        {
-          token: 'ethereum|polygon|0x0E7f434f502200ec7BEb04Ed6B38DFaf0aD88617',
-        },
         { token: 'ethereum|tangle|0xd5c9FCfF2f362E89538E92e8B6e677571E11C1e7' },
       ],
       decimals: 8,
@@ -2677,15 +2440,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'base',
       collateralAddressOrDenom: '0x0555E30da8f98308EdB960aa94C0Db47230d2B9c',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x44626462ed716DF3569a55c3584CEe2027d061bf',
-        },
-        {
-          token: 'ethereum|optimism|0xDCb6a0a3bC5e034400e845483f21da67866691Bb',
-        },
-        {
-          token: 'ethereum|polygon|0x0E7f434f502200ec7BEb04Ed6B38DFaf0aD88617',
-        },
         { token: 'ethereum|tangle|0xd5c9FCfF2f362E89538E92e8B6e677571E11C1e7' },
       ],
       decimals: 8,
@@ -2698,13 +2452,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'optimism',
       collateralAddressOrDenom: '0x68f180fcCe6836688e9084f035309E29Bf0A2095',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x44626462ed716DF3569a55c3584CEe2027d061bf',
-        },
-        { token: 'ethereum|base|0x989Ecb4dB2543b694b7496f5823DA6fDd26cb5C5' },
-        {
-          token: 'ethereum|polygon|0x0E7f434f502200ec7BEb04Ed6B38DFaf0aD88617',
-        },
         { token: 'ethereum|tangle|0xd5c9FCfF2f362E89538E92e8B6e677571E11C1e7' },
       ],
       decimals: 8,
@@ -2717,13 +2464,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'polygon',
       collateralAddressOrDenom: '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x44626462ed716DF3569a55c3584CEe2027d061bf',
-        },
-        { token: 'ethereum|base|0x989Ecb4dB2543b694b7496f5823DA6fDd26cb5C5' },
-        {
-          token: 'ethereum|optimism|0xDCb6a0a3bC5e034400e845483f21da67866691Bb',
-        },
         { token: 'ethereum|tangle|0xd5c9FCfF2f362E89538E92e8B6e677571E11C1e7' },
       ],
       decimals: 8,
@@ -2756,13 +2496,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'arbitrum',
       collateralAddressOrDenom: '0x5979D7b546E38E414F7E9822514be443A4800529',
       connections: [
-        { token: 'ethereum|base|0x451c6284eEA043Fa3969bA65530E96421C89bF9b' },
-        {
-          token: 'ethereum|optimism|0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
-        },
-        {
-          token: 'ethereum|polygon|0x5180c082e7E438c80cF4235C098C8CB0a7c3E3FD',
-        },
         { token: 'ethereum|tangle|0xC0fD9c0ee70d7d9Eede7f5918077dC506aF95E48' },
       ],
       decimals: 18,
@@ -2775,15 +2508,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'base',
       collateralAddressOrDenom: '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0xa3E0920CAf0e2eDDDe54D49fFC1d82e1a23c9693',
-        },
-        {
-          token: 'ethereum|optimism|0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
-        },
-        {
-          token: 'ethereum|polygon|0x5180c082e7E438c80cF4235C098C8CB0a7c3E3FD',
-        },
         { token: 'ethereum|tangle|0xC0fD9c0ee70d7d9Eede7f5918077dC506aF95E48' },
       ],
       decimals: 18,
@@ -2796,13 +2520,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'optimism',
       collateralAddressOrDenom: '0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0xa3E0920CAf0e2eDDDe54D49fFC1d82e1a23c9693',
-        },
-        { token: 'ethereum|base|0x451c6284eEA043Fa3969bA65530E96421C89bF9b' },
-        {
-          token: 'ethereum|polygon|0x5180c082e7E438c80cF4235C098C8CB0a7c3E3FD',
-        },
         { token: 'ethereum|tangle|0xC0fD9c0ee70d7d9Eede7f5918077dC506aF95E48' },
       ],
       decimals: 18,
@@ -2815,13 +2532,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'polygon',
       collateralAddressOrDenom: '0x03b54A6e9a984069379fae1a4fC4dBAE93B3bCCD',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0xa3E0920CAf0e2eDDDe54D49fFC1d82e1a23c9693',
-        },
-        { token: 'ethereum|base|0x451c6284eEA043Fa3969bA65530E96421C89bF9b' },
-        {
-          token: 'ethereum|optimism|0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
-        },
         { token: 'ethereum|tangle|0xC0fD9c0ee70d7d9Eede7f5918077dC506aF95E48' },
       ],
       decimals: 18,
@@ -3142,13 +2852,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
       connections: [
         {
-          token: 'ethereum|base|0x07a4568A98621f90E7D94E87D7e9Bf806d5E19f3',
-        },
-        {
           token: 'ethereum|tangle|0xFa0C5466EF2D1C6b4C769c8a3BaABD9e9107a6f7',
-        },
-        {
-          token: 'ethereum|ethereum|0x28db68252Ae4597cC4567d3C2A29Bc50D0BCA02d',
         },
       ],
       decimals: 8,
@@ -3162,13 +2866,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
       connections: [
         {
-          token: 'ethereum|arbitrum|0xD5B8441E2929e73f1e9a9C53b7a6863780897FFa',
-        },
-        {
           token: 'ethereum|tangle|0xFa0C5466EF2D1C6b4C769c8a3BaABD9e9107a6f7',
-        },
-        {
-          token: 'ethereum|ethereum|0x28db68252Ae4597cC4567d3C2A29Bc50D0BCA02d',
         },
       ],
       decimals: 8,
@@ -3183,12 +2881,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       connections: [
         {
           token: 'ethereum|tangle|0xFa0C5466EF2D1C6b4C769c8a3BaABD9e9107a6f7',
-        },
-        {
-          token: 'ethereum|arbitrum|0xD5B8441E2929e73f1e9a9C53b7a6863780897FFa',
-        },
-        {
-          token: 'ethereum|base|0x07a4568A98621f90E7D94E87D7e9Bf806d5E19f3',
         },
       ],
       decimals: 8,
@@ -3221,16 +2913,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x1DEBd73E752bEaF79865Fd6446b0c970EaE7732f',
       connections: [
         {
-          token: 'ethereum|base|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
-        },
-        {
-          token: 'ethereum|optimism|0x61F71B85762c8848083506da347969c58248f0c6',
-        },
-        {
           token: 'ethereum|tangle|0x74CBCBa1125ec200cc63efF432B462A084E557cc',
-        },
-        {
-          token: 'ethereum|ethereum|0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
         },
       ],
       decimals: 18,
@@ -3244,16 +2927,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22',
       connections: [
         {
-          token: 'ethereum|arbitrum|0x77dfB661ee20af4F0C48E4d31828efC34D9a93C6',
-        },
-        {
-          token: 'ethereum|optimism|0x61F71B85762c8848083506da347969c58248f0c6',
-        },
-        {
           token: 'ethereum|tangle|0x74CBCBa1125ec200cc63efF432B462A084E557cc',
-        },
-        {
-          token: 'ethereum|ethereum|0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
         },
       ],
       decimals: 18,
@@ -3267,16 +2941,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0xadDb6A0412DE1BA0F936DCaeb8Aaa24578dcF3B2',
       connections: [
         {
-          token: 'ethereum|arbitrum|0x77dfB661ee20af4F0C48E4d31828efC34D9a93C6',
-        },
-        {
-          token: 'ethereum|base|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
-        },
-        {
           token: 'ethereum|tangle|0x74CBCBa1125ec200cc63efF432B462A084E557cc',
-        },
-        {
-          token: 'ethereum|ethereum|0x99Ce18058C6fE35216D8626C3D183526240CcCbb',
         },
       ],
       decimals: 18,
@@ -3290,16 +2955,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0xBe9895146f7AF43049ca1c1AE358B0541Ea49704',
       connections: [
         {
-          token: 'ethereum|arbitrum|0x77dfB661ee20af4F0C48E4d31828efC34D9a93C6',
-        },
-        {
-          token: 'ethereum|base|0xb0cB96127e4C4bE884F71c9CF2BbbFf897271e76',
-        },
-        {
           token: 'ethereum|tangle|0x74CBCBa1125ec200cc63efF432B462A084E557cc',
-        },
-        {
-          token: 'ethereum|optimism|0x61F71B85762c8848083506da347969c58248f0c6',
         },
       ],
       decimals: 18,
@@ -3335,19 +2991,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
       connections: [
         {
-          token: 'ethereum|base|0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
-        },
-        {
-          token: 'ethereum|optimism|0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
-        },
-        {
-          token: 'ethereum|polygon|0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
-        },
-        {
           token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
-        },
-        {
-          token: 'ethereum|ethereum|0xC5B342D3CfAd241D9300Cb76116CA4a5e30Cf2Ac',
         },
       ],
       decimals: 18,
@@ -3361,19 +3005,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb',
       connections: [
         {
-          token: 'ethereum|arbitrum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
-        },
-        {
-          token: 'ethereum|optimism|0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
-        },
-        {
-          token: 'ethereum|polygon|0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
-        },
-        {
           token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
-        },
-        {
-          token: 'ethereum|ethereum|0xC5B342D3CfAd241D9300Cb76116CA4a5e30Cf2Ac',
         },
       ],
       decimals: 18,
@@ -3387,19 +3019,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
       connections: [
         {
-          token: 'ethereum|arbitrum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
-        },
-        {
-          token: 'ethereum|base|0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
-        },
-        {
-          token: 'ethereum|polygon|0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
-        },
-        {
           token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
-        },
-        {
-          token: 'ethereum|ethereum|0xC5B342D3CfAd241D9300Cb76116CA4a5e30Cf2Ac',
         },
       ],
       decimals: 18,
@@ -3413,19 +3033,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
       connections: [
         {
-          token: 'ethereum|arbitrum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
-        },
-        {
-          token: 'ethereum|base|0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
-        },
-        {
-          token: 'ethereum|optimism|0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
-        },
-        {
           token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
-        },
-        {
-          token: 'ethereum|ethereum|0xC5B342D3CfAd241D9300Cb76116CA4a5e30Cf2Ac',
         },
       ],
       decimals: 18,
@@ -3438,18 +3046,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'ethereum',
       collateralAddressOrDenom: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
-        },
-        {
-          token: 'ethereum|base|0xfB03a8fEea1635c16Fd81731E89E5517201C20e5',
-        },
-        {
-          token: 'ethereum|optimism|0x6d55528963D147BEA3e925538F2e32C24Fa0119a',
-        },
-        {
-          token: 'ethereum|polygon|0x215fF6c8C9FdC3a8635F2343112B7b5aA8194789',
-        },
         {
           token: 'ethereum|tangle|0xE75BE8E6C71eA004949898306DDa9BD59Cc2b0dC',
         },
@@ -3490,19 +3086,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
       connections: [
         {
-          token: 'ethereum|base|0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f',
-        },
-        {
-          token: 'ethereum|optimism|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
-        },
-        {
-          token: 'ethereum|polygon|0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
-        },
-        {
           token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
-        },
-        {
-          token: 'ethereum|ethereum|0xf57A9F38C81aCba265522627E90AAA5EB197028f',
         },
       ],
       decimals: 18,
@@ -3516,19 +3100,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x4200000000000000000000000000000000000006',
       connections: [
         {
-          token: 'ethereum|arbitrum|0x02644D01979CDe915eD7D7C3a997072F5716D137',
-        },
-        {
-          token: 'ethereum|optimism|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
-        },
-        {
-          token: 'ethereum|polygon|0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
-        },
-        {
           token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
-        },
-        {
-          token: 'ethereum|ethereum|0xf57A9F38C81aCba265522627E90AAA5EB197028f',
         },
       ],
       decimals: 18,
@@ -3542,19 +3114,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x4200000000000000000000000000000000000006',
       connections: [
         {
-          token: 'ethereum|arbitrum|0x02644D01979CDe915eD7D7C3a997072F5716D137',
-        },
-        {
-          token: 'ethereum|base|0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f',
-        },
-        {
-          token: 'ethereum|polygon|0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
-        },
-        {
           token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
-        },
-        {
-          token: 'ethereum|ethereum|0xf57A9F38C81aCba265522627E90AAA5EB197028f',
         },
       ],
       decimals: 18,
@@ -3568,19 +3128,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x11CD37bb86F65419713f30673A480EA33c826872',
       connections: [
         {
-          token: 'ethereum|arbitrum|0x02644D01979CDe915eD7D7C3a997072F5716D137',
-        },
-        {
-          token: 'ethereum|base|0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f',
-        },
-        {
-          token: 'ethereum|optimism|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
-        },
-        {
           token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
-        },
-        {
-          token: 'ethereum|ethereum|0xf57A9F38C81aCba265522627E90AAA5EB197028f',
         },
       ],
       decimals: 18,
@@ -3595,18 +3143,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       connections: [
         {
           token: 'ethereum|tangle|0xf1025024e86Ffbb639A00EE7918B0411eE4B7e52',
-        },
-        {
-          token: 'ethereum|arbitrum|0x02644D01979CDe915eD7D7C3a997072F5716D137',
-        },
-        {
-          token: 'ethereum|base|0xAa14351a1FdD71f5Fdf3653AF0130f79fC005F6f',
-        },
-        {
-          token: 'ethereum|optimism|0x677952E2ff8c5Fb2F2455a84AC70208f4c3d7810',
-        },
-        {
-          token: 'ethereum|polygon|0x0fB3F8e01fAEf0eBC1E56F34E58BA3edCe75B116',
         },
       ],
       decimals: 18,
@@ -3645,16 +3181,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x2416092f143378750bb29b79eD961ab195CcEea5',
       connections: [
         {
-          token: 'ethereum|base|0xCa965b842699e16b367702310f50161e03eb2d27',
-        },
-        {
-          token: 'ethereum|optimism|0xb794b059bDA36a01C3757693D4136162752e03C6',
-        },
-        {
           token: 'ethereum|tangle|0x536889B3c998D36911BA73411F502662B0754684',
-        },
-        {
-          token: 'ethereum|ethereum|0xea4866eD17f557c8E4D2fB93E705320522216145',
         },
       ],
       decimals: 18,
@@ -3668,16 +3195,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x2416092f143378750bb29b79eD961ab195CcEea5',
       connections: [
         {
-          token: 'ethereum|arbitrum|0x7CFc15E7fD3998B962D1FC137b64d10513c18097',
-        },
-        {
-          token: 'ethereum|optimism|0xb794b059bDA36a01C3757693D4136162752e03C6',
-        },
-        {
           token: 'ethereum|tangle|0x536889B3c998D36911BA73411F502662B0754684',
-        },
-        {
-          token: 'ethereum|ethereum|0xea4866eD17f557c8E4D2fB93E705320522216145',
         },
       ],
       decimals: 18,
@@ -3691,16 +3209,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x2416092f143378750bb29b79eD961ab195CcEea5',
       connections: [
         {
-          token: 'ethereum|arbitrum|0x7CFc15E7fD3998B962D1FC137b64d10513c18097',
-        },
-        {
-          token: 'ethereum|base|0xCa965b842699e16b367702310f50161e03eb2d27',
-        },
-        {
           token: 'ethereum|tangle|0x536889B3c998D36911BA73411F502662B0754684',
-        },
-        {
-          token: 'ethereum|ethereum|0xea4866eD17f557c8E4D2fB93E705320522216145',
         },
       ],
       decimals: 18,
@@ -3713,15 +3222,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'ethereum',
       collateralAddressOrDenom: '0xbf5495Efe5DB9ce00f80364C8B423567e58d2110',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0x7CFc15E7fD3998B962D1FC137b64d10513c18097',
-        },
-        {
-          token: 'ethereum|base|0xCa965b842699e16b367702310f50161e03eb2d27',
-        },
-        {
-          token: 'ethereum|optimism|0xb794b059bDA36a01C3757693D4136162752e03C6',
-        },
         {
           token: 'ethereum|tangle|0x536889B3c998D36911BA73411F502662B0754684',
         },
@@ -3762,9 +3262,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
         {
           token: 'ethereum|tangle|0xB703e29F2b05c57Fbc2E3492bE5fC6Db62CE3188',
         },
-        {
-          token: 'ethereum|ethereum|0x88dd0d1DA4155f453a5933310df48Ce7d7fEAbfF',
-        },
       ],
       decimals: 8,
       name: 'Lombard Staked Bitcoin',
@@ -3778,9 +3275,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       connections: [
         {
           token: 'ethereum|tangle|0xB703e29F2b05c57Fbc2E3492bE5fC6Db62CE3188',
-        },
-        {
-          token: 'ethereum|base|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
         },
       ],
       decimals: 8,
@@ -3810,16 +3304,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x13Ad51ed4F1B7e9Dc168d8a00cB3f4DD85EfA60',
       connections: [
         {
-          token: 'ethereum|optimism|0x87228bCa8bdB5F3c1EafDddCC14a059Bcde2233b',
-        },
-        {
-          token: 'ethereum|polygon|0x99829129a49517FAc964802cA30E75Fd96143dC2',
-        },
-        {
           token: 'ethereum|tangle|0x94AB056b6CF81464458d205E632b2757A311E821',
-        },
-        {
-          token: 'ethereum|ethereum|0x160F5cD345Db235C92B671782d27F5aA6F2f31EB',
         },
       ],
       decimals: 18,
@@ -3833,16 +3318,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0xFdb794692724153d1488CcdBE0C56c252596735F',
       connections: [
         {
-          token: 'ethereum|arbitrum|0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d',
-        },
-        {
-          token: 'ethereum|polygon|0x99829129a49517FAc964802cA30E75Fd96143dC2',
-        },
-        {
           token: 'ethereum|tangle|0x94AB056b6CF81464458d205E632b2757A311E821',
-        },
-        {
-          token: 'ethereum|ethereum|0x160F5cD345Db235C92B671782d27F5aA6F2f31EB',
         },
       ],
       decimals: 18,
@@ -3855,16 +3331,7 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       chainName: 'polygon',
       collateralAddressOrDenom: '0xC3C7d422809852031b44ab29EEC9F1EfF2A58756',
       connections: [
-        {
-          token: 'ethereum|arbitrum|0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d',
-        },
-        {
-          token: 'ethereum|optimism|0x87228bCa8bdB5F3c1EafDddCC14a059Bcde2233b',
-        },
         { token: 'ethereum|tangle|0x94AB056b6CF81464458d205E632b2757A311E821' },
-        {
-          token: 'ethereum|ethereum|0x160F5cD345Db235C92B671782d27F5aA6F2f31EB',
-        },
       ],
       decimals: 18,
       name: 'Lido DAO Token',
@@ -3877,15 +3344,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       collateralAddressOrDenom: '0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32',
       connections: [
         { token: 'ethereum|tangle|0x94AB056b6CF81464458d205E632b2757A311E821' },
-        {
-          token: 'ethereum|optimism|0x87228bCa8bdB5F3c1EafDddCC14a059Bcde2233b',
-        },
-        {
-          token: 'ethereum|polygon|0x99829129a49517FAc964802cA30E75Fd96143dC2',
-        },
-        {
-          token: 'ethereum|arbitrum|0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d',
-        },
       ],
       decimals: 18,
       name: 'Lido DAO Token',
