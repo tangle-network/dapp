@@ -60,7 +60,7 @@ const SIDEBAR_STATIC_ITEMS: SideBarItemProps[] = [
     subItems: [],
   },
   {
-    name: 'Nominate',
+    name: 'Nomination',
     href: PagePath.NOMINATION,
     isInternal: true,
     isNext: false,

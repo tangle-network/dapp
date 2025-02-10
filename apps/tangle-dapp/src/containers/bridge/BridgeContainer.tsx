@@ -701,6 +701,14 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
 
   return (
     <>
+      <Typography
+        variant="h4"
+        fw="bold"
+        className="text-mono-200 dark:text-mono-0 max-w-[550px] mx-auto w-full text-left"
+      >
+        Bridge
+      </Typography>
+
       <Card
         withShadow
         className={twMerge(
@@ -709,6 +717,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
         )}
       >
         <div className="flex flex-col gap-7">
+          {' '}
           {/* Source and Destination Chain Selector */}
           <div className="flex flex-col items-center justify-center md:flex-row md:justify-between md:items-end md:gap-2">
             {/** Source chain */}
@@ -756,7 +765,6 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
               />
             </div>
           </div>
-
           <div className="flex flex-col gap-4">
             {/* Sending Amount and Token Selector */}
             <div className="flex flex-col gap-2">
@@ -875,7 +883,6 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
               )}
             </div>
           </div>
-
           {routerQuote && !isRouterQuoteLoading && routerFeeDetails && (
             <FeeDetail
               token={routerFeeDetails.token}
@@ -887,7 +894,6 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
               recipientExplorerUrl={recipientExplorerUrl}
             />
           )}
-
           {hyperlaneQuote &&
             !isHyperlaneQuoteLoading &&
             hyperlaneFeeDetails && (
@@ -902,7 +908,6 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                 recipientExplorerUrl={recipientExplorerUrl}
               />
             )}
-
           {routerQuoteError?.error !== undefined && (
             <ErrorMessage
               className="mt-0 duration-300 ease-out animate-in fade-in"
@@ -911,7 +916,6 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
               {routerQuoteError.error}
             </ErrorMessage>
           )}
-
           {/* Action button */}
           <Button
             variant="primary"
