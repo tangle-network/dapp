@@ -23711,15 +23711,15 @@ __metadata:
   linkType: hard
 
 "eslint-plugin-storybook@npm:^0.11.1":
-  version: 0.11.1
-  resolution: "eslint-plugin-storybook@npm:0.11.1"
+  version: 0.11.2
+  resolution: "eslint-plugin-storybook@npm:0.11.2"
   dependencies:
     "@storybook/csf": "npm:^0.1.11"
     "@typescript-eslint/utils": "npm:^8.8.1"
     ts-dedent: "npm:^2.2.0"
   peerDependencies:
-    eslint: ">=6"
-  checksum: 10c0/0520018311c6da25fe2d0db24a59e99ecefe74c4cadd4eba42ce3b1b0ce2c3cc6f88d48680389374f99e10151a7ef3da52386853d9d5a4058c41ae72e2184549
+    eslint: ">=8"
+  checksum: 10c0/8ba697ec92282b747ba20d8759fd2999b9d35f7a0adb7a809fe36e7baaac142b0f2123f78a87c05b811868d7e62d828ded1855fac4913667c470540dfdf0b3dc
   languageName: node
   linkType: hard
 
