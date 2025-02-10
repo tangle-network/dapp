@@ -67,7 +67,7 @@ export const FeeDetail = ({
                 name={token.tokenType.toLowerCase()}
                 className={cx(`shrink-0 ${getFlexBasic('lg')}`)}
               />
-              
+
               <Typography
                 variant="h5"
                 fw="normal"
