@@ -167,6 +167,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0x536889B3c998D36911BA73411F502662B0754684',
       ),
     },
+    {
+      symbol: 'LBTC',
+      tokenType: 'LBTC' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x88dd0d1DA4155f453a5933310df48Ce7d7fEAbfF'),
+      abi: assertAbi(erc20Abi),
+      decimals: 8,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xB703e29F2b05c57Fbc2E3492bE5fC6Db62CE3188',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -1817,33 +1829,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       name: 'Ether',
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'ETH',
-    },
-    {
-      addressOrDenom: '0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
-      chainName: 'base',
-      collateralAddressOrDenom: '0xecAc9C5F704e954931349Da37F60E39f515c11c1',
-      connections: [
-        {
-          token: 'ethereum|tangle|0xB703e29F2b05c57Fbc2E3492bE5fC6Db62CE3188',
-        },
-      ],
-      decimals: 8,
-      name: 'Lombard Staked Bitcoin',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'LBTC',
-    },
-    {
-      addressOrDenom: '0xB703e29F2b05c57Fbc2E3492bE5fC6Db62CE3188',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|base|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
-        },
-      ],
-      decimals: 8,
-      name: 'Lombard Staked Bitcoin',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'LBTC',
     },
     {
       addressOrDenom: '0xd311608Ca8b12d3cce99D9318bc38b4BCcBdE11d',
@@ -3829,6 +3814,57 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'ezETH',
     },
+
+    {
+      addressOrDenom: '0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
+      chainName: 'base',
+      collateralAddressOrDenom: '0xecAc9C5F704e954931349Da37F60E39f515c11c1',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xB703e29F2b05c57Fbc2E3492bE5fC6Db62CE3188',
+        },
+        {
+          token: 'ethereum|ethereum|0x88dd0d1DA4155f453a5933310df48Ce7d7fEAbfF',
+        },
+      ],
+      decimals: 8,
+      name: 'Lombard Staked Bitcoin',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'LBTC',
+    },
+    {
+      addressOrDenom: '0x88dd0d1DA4155f453a5933310df48Ce7d7fEAbfF',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0x8236a87084f8B84306f72007F36F2618A5634494',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xB703e29F2b05c57Fbc2E3492bE5fC6Db62CE3188',
+        },
+        {
+          token: 'ethereum|base|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
+        },
+      ],
+      decimals: 8,
+      name: 'Lombard Staked Bitcoin',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'LBTC',
+    },
+    {
+      addressOrDenom: '0xB703e29F2b05c57Fbc2E3492bE5fC6Db62CE3188',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|base|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
+        },
+        {
+          token: 'ethereum|ethereum|0x88dd0d1DA4155f453a5933310df48Ce7d7fEAbfF',
+        },
+      ],
+      decimals: 8,
+      name: 'Lombard Staked Bitcoin',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'LBTC',
+    },
   ],
 };
 
@@ -3847,6 +3883,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'ezETH/optimism-tangle',
   'ezETH/ethereum-tangle',
   'LBTC/base-tangle',
+  'LBTC/ethereum-tangle',
   'LDO/arbitrum-tangle',
   'LDO/optimism-tangle',
   'LDO/polygon-tangle',
