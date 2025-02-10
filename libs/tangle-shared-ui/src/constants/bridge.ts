@@ -191,6 +191,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0x94AB056b6CF81464458d205E632b2757A311E821',
       ),
     },
+    {
+      symbol: 'LINK',
+      tokenType: 'LINK' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xfD5B74BA0D507290891766D3902cfC9658F08C4E'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xd27b4c2F12d0E197c5563daa507DB31c5994180D',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -1821,84 +1833,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       symbol: 'LDT',
     },
     {
-      addressOrDenom: '0x0251Bdc4cd9226B369859fd75D5be133EF48e7D9',
-      chainName: 'arbitrum',
-      collateralAddressOrDenom: '0xf97f4df75117a78c1A5a0DBb814Af92458539FB4',
-      connections: [
-        {
-          token: 'ethereum|tangle|0xd27b4c2F12d0E197c5563daa507DB31c5994180D',
-        },
-      ],
-      decimals: 18,
-      name: 'ChainLink Token',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'LINK',
-    },
-    {
-      addressOrDenom: '0x7a6BB435590eab856cA0b19EF5bFC227346f0f96',
-      chainName: 'optimism',
-      collateralAddressOrDenom: '0x350a791Bfc2C21F9Ed5d10980Dad2e2638ffa7f6',
-      connections: [
-        {
-          token: 'ethereum|tangle|0xd27b4c2F12d0E197c5563daa507DB31c5994180D',
-        },
-      ],
-      decimals: 18,
-      name: 'ChainLink Token',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'LINK',
-    },
-    {
-      addressOrDenom: '0xfeE0B3295D2f7e209217F33FDb46e79D6b3C15C7',
-      chainName: 'polygon',
-      collateralAddressOrDenom: '0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39',
-      connections: [
-        {
-          token: 'ethereum|tangle|0xd27b4c2F12d0E197c5563daa507DB31c5994180D',
-        },
-      ],
-      decimals: 18,
-      name: 'ChainLink Token',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'LINK',
-    },
-    {
-      addressOrDenom: '0xB922779bB836765598709032736C86c67E5A514e',
-      chainName: 'base',
-      collateralAddressOrDenom: '0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196',
-      connections: [
-        {
-          token: 'ethereum|tangle|0xd27b4c2F12d0E197c5563daa507DB31c5994180D',
-        },
-      ],
-      decimals: 18,
-      name: 'ChainLink Token',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'LINK',
-    },
-    {
-      addressOrDenom: '0xd27b4c2F12d0E197c5563daa507DB31c5994180D',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x0251Bdc4cd9226B369859fd75D5be133EF48e7D9',
-        },
-        {
-          token: 'ethereum|optimism|0x7a6BB435590eab856cA0b19EF5bFC227346f0f96',
-        },
-        {
-          token: 'ethereum|polygon|0xfeE0B3295D2f7e209217F33FDb46e79D6b3C15C7',
-        },
-        {
-          token: 'ethereum|base|0xB922779bB836765598709032736C86c67E5A514e',
-        },
-      ],
-      decimals: 18,
-      name: 'ChainLink Token',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'LINK',
-    },
-    {
       addressOrDenom: '0x3fD392c4b9c8ceD4bA003115A7803D0Fa0c6718B',
       chainName: 'optimism',
       collateralAddressOrDenom: '0x4200000000000000000000000000000000000042',
@@ -3372,6 +3306,91 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'LDO',
     },
+    {
+      addressOrDenom: '0x0251Bdc4cd9226B369859fd75D5be133EF48e7D9',
+      chainName: 'arbitrum',
+      collateralAddressOrDenom: '0xf97f4df75117a78c1A5a0DBb814Af92458539FB4',
+      connections: [
+        { token: 'ethereum|tangle|0xd27b4c2F12d0E197c5563daa507DB31c5994180D' },
+      ],
+      decimals: 18,
+      name: 'ChainLink Token',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'LINK',
+    },
+    {
+      addressOrDenom: '0x7a6BB435590eab856cA0b19EF5bFC227346f0f96',
+      chainName: 'optimism',
+      collateralAddressOrDenom: '0x350a791Bfc2C21F9Ed5d10980Dad2e2638ffa7f6',
+      connections: [
+        { token: 'ethereum|tangle|0xd27b4c2F12d0E197c5563daa507DB31c5994180D' },
+      ],
+      decimals: 18,
+      name: 'ChainLink Token',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'LINK',
+    },
+    {
+      addressOrDenom: '0xfeE0B3295D2f7e209217F33FDb46e79D6b3C15C7',
+      chainName: 'polygon',
+      collateralAddressOrDenom: '0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39',
+      connections: [
+        { token: 'ethereum|tangle|0xd27b4c2F12d0E197c5563daa507DB31c5994180D' },
+      ],
+      decimals: 18,
+      name: 'ChainLink Token',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'LINK',
+    },
+    {
+      addressOrDenom: '0xB922779bB836765598709032736C86c67E5A514e',
+      chainName: 'base',
+      collateralAddressOrDenom: '0x88Fb150BDc53A65fe94Dea0c9BA0a6dAf8C6e196',
+      connections: [
+        { token: 'ethereum|tangle|0xd27b4c2F12d0E197c5563daa507DB31c5994180D' },
+      ],
+      decimals: 18,
+      name: 'ChainLink Token',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'LINK',
+    },
+    {
+      addressOrDenom: '0xfD5B74BA0D507290891766D3902cfC9658F08C4E',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
+      connections: [
+        { token: 'ethereum|tangle|0xd27b4c2F12d0E197c5563daa507DB31c5994180D' },
+      ],
+      decimals: 18,
+      name: 'ChainLink Token',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'LINK',
+    },
+    {
+      addressOrDenom: '0xd27b4c2F12d0E197c5563daa507DB31c5994180D',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x0251Bdc4cd9226B369859fd75D5be133EF48e7D9',
+        },
+        {
+          token: 'ethereum|optimism|0x7a6BB435590eab856cA0b19EF5bFC227346f0f96',
+        },
+        {
+          token: 'ethereum|polygon|0xfeE0B3295D2f7e209217F33FDb46e79D6b3C15C7',
+        },
+        {
+          token: 'ethereum|base|0xB922779bB836765598709032736C86c67E5A514e',
+        },
+        {
+          token: 'ethereum|ethereum|0xfD5B74BA0D507290891766D3902cfC9658F08C4E',
+        },
+      ],
+      decimals: 18,
+      name: 'ChainLink Token',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'LINK',
+    },
   ],
 };
 
@@ -3400,6 +3419,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'LINK/base-tangle',
   'LINK/optimism-tangle',
   'LINK/polygon-tangle',
+  'LINK/ethereum-tangle',
   'OP/optimism-tangle',
   'POL/polygon-tangle',
   'rETH/arbitrum-tangle',
