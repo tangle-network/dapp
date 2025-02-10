@@ -203,6 +203,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0xd27b4c2F12d0E197c5563daa507DB31c5994180D',
       ),
     },
+    {
+      symbol: 'rETH',
+      tokenType: 'rETH' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xD261C3F45F88169FA2b51dFA65c45e8644E2e0bB'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xbD33235a960874027ad0C7393BE8583572EE2f5b',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -1942,6 +1954,20 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       symbol: 'rETH',
     },
     {
+      addressOrDenom: '0xD261C3F45F88169FA2b51dFA65c45e8644E2e0bB',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xae78736Cd615f374D3085123A210448E74Fc6393',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xbD33235a960874027ad0C7393BE8583572EE2f5b',
+        },
+      ],
+      decimals: 18,
+      name: 'Rocket Pool ETH',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'rETH',
+    },
+    {
       addressOrDenom: '0xbD33235a960874027ad0C7393BE8583572EE2f5b',
       chainName: 'tangle',
       connections: [
@@ -1956,6 +1982,9 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
         },
         {
           token: 'ethereum|polygon|0x158C33834acf0B3d061DdFA1C7784cA595AC1c25',
+        },
+        {
+          token: 'ethereum|ethereum|0xD261C3F45F88169FA2b51dFA65c45e8644E2e0bB',
         },
       ],
       decimals: 18,
@@ -3426,6 +3455,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'rETH/base-tangle',
   'rETH/optimism-tangle',
   'rETH/polygon-tangle',
+  'rETH/ethereum-tangle',
   'SolvBTC/arbitrum-tangle',
   'SolvBTC.BBN/arbitrum-tangle',
   'stAVAIL/base-tangle',
