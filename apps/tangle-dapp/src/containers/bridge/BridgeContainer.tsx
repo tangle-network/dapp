@@ -809,7 +809,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
                   <div className="flex flex-col gap-1 duration-300 ease-out animate-in fade-in">
                     <ErrorMessage
                       className="mt-0"
-                      typographyProps={{ variant: 'body1' }}
+                      typographyProps={{ variant: 'body2', fw: 'normal' }}
                     >
                       {amountInputErrorMessage}
                     </ErrorMessage>
@@ -868,7 +868,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
               {addressInputErrorMessage !== null && (
                 <ErrorMessage
                   className="mt-0"
-                  typographyProps={{ variant: 'body1' }}
+                  typographyProps={{ variant: 'body2', fw: 'normal' }}
                 >
                   {addressInputErrorMessage}
                 </ErrorMessage>
@@ -906,7 +906,7 @@ export default function BridgeContainer({ className }: BridgeContainerProps) {
           {routerQuoteError?.error !== undefined && (
             <ErrorMessage
               className="mt-0 duration-300 ease-out animate-in fade-in"
-              typographyProps={{ variant: 'body1' }}
+              typographyProps={{ variant: 'body2', fw: 'normal' }}
             >
               {routerQuoteError.error}
             </ErrorMessage>
