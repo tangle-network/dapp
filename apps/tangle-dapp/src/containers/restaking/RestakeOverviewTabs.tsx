@@ -1,29 +1,15 @@
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
-import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import type {
-  DelegatorInfo,
-  OperatorMap,
-} from '@webb-tools/tangle-shared-ui/types/restake';
+import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
 import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
 import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
-import {
-  type ComponentProps,
-  type FC,
-  ReactNode,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
-import VaultAssetsTable from '../../components/tables/VaultAssets';
-import VaultsTable from '../../components/tables/Vaults';
-import useRestakeRewardConfig from '../../data/restake/useRestakeRewardConfig';
-import OperatorsTable from './OperatorsTable';
-import DepositForm from '../../pages/restake/deposit/DepositForm';
+import { type FC, ReactNode, useCallback, useState } from 'react';
 import { RestakeAction } from '../../constants';
-import RestakeWithdrawForm from '../../pages/restake/withdraw';
-import RestakeDelegateForm from '../../pages/restake/delegate';
-import RestakeUnstakeForm from '../../pages/restake/unstake';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';
+import RestakeDelegateForm from '../../pages/restake/delegate';
+import DepositForm from '../../pages/restake/deposit/DepositForm';
+import RestakeUnstakeForm from '../../pages/restake/unstake';
+import RestakeWithdrawForm from '../../pages/restake/withdraw';
+import OperatorsTable from './OperatorsTable';
+import VaultsOverview from './VaultsOverview';
 
 enum RestakeTab {
   RESTAKE = 'Restake',
@@ -32,19 +18,10 @@ enum RestakeTab {
   BLUEPRINTS = 'Blueprints',
 }
 
-type VaultUI = NonNullable<ComponentProps<typeof VaultsTable>['data']>[number];
-
-type VaultAssetUI = NonNullable<
-  ComponentProps<typeof VaultAssetsTable>['data']
->[number];
-
 type Props = {
-  delegatorInfo: DelegatorInfo | null;
-  delegatorTVL?: Record<string, number>;
   operatorConcentration?: Record<string, number | null>;
   operatorMap: OperatorMap;
   operatorTVL?: Record<string, number>;
-  vaultTVL?: Record<string, number>;
   action: RestakeAction;
 };
 
@@ -62,101 +39,12 @@ const getFormOfRestakeAction = (action: RestakeAction): ReactNode => {
 };
 
 const RestakeOverviewTabs: FC<Props> = ({
-  delegatorInfo,
-  delegatorTVL,
   operatorConcentration,
   operatorMap,
   operatorTVL,
-  vaultTVL,
   action,
 }) => {
   const [tab, setTab] = useState(RestakeTab.RESTAKE);
-
-  const { assets: assetsMetadataMap } = useRestakeContext();
-  const rewardConfig = useRestakeRewardConfig();
-
-  // Recalculate vaults data from assetMap
-  const vaults = useMemo(() => {
-    const vaults: Record<string, VaultUI> = {};
-
-    for (const { vaultId, name, symbol } of Object.values(assetsMetadataMap)) {
-      if (vaultId === null) {
-        continue;
-      } else if (vaults[vaultId] === undefined) {
-        const apyPercentage =
-          rewardConfig?.get(vaultId)?.apy.toNumber() ?? null;
-
-        const tvlInUsd = vaultTVL?.[vaultId] ?? null;
-
-        vaults[vaultId] = {
-          id: vaultId,
-          apyPercentage,
-          // TODO: Find out a proper way to get the vault name, now it's the first token name
-          name: name,
-          // TODO: Find out a proper way to get the vault symbol, now it's the first token symbol
-          representToken: symbol,
-          tokenCount: 1,
-          tvlInUsd,
-        };
-      } else {
-        vaults[vaultId].tokenCount += 1;
-      }
-    }
-
-    return vaults;
-  }, [assetsMetadataMap, rewardConfig, vaultTVL]);
-
-  const delegatorTotalRestakedAssets = useMemo(() => {
-    if (!delegatorInfo?.delegations) {
-      return {};
-    }
-
-    return delegatorInfo.delegations.reduce<Record<string, bigint>>(
-      (acc, { amountBonded, assetId }) => {
-        if (acc[assetId] === undefined) {
-          acc[assetId] = amountBonded;
-        } else {
-          acc[assetId] += amountBonded;
-        }
-        return acc;
-      },
-      {},
-    );
-  }, [delegatorInfo?.delegations]);
-
-  const tableProps = useMemo<ComponentProps<typeof VaultsTable>['tableProps']>(
-    () => ({
-      onRowClick(row) {
-        if (!row.getCanExpand()) return;
-        return row.toggleExpanded();
-      },
-      getExpandedRowContent(row) {
-        const vaultId = row.original.id;
-
-        const vaultAssets = Object.values(assetsMetadataMap)
-          .filter((asset) => asset.vaultId === vaultId)
-          .map((asset) => {
-            const selfStake =
-              delegatorTotalRestakedAssets[asset.assetId] ?? ZERO_BIG_INT;
-
-            const tvl = delegatorTVL?.[asset.assetId] ?? null;
-
-            return {
-              id: asset.assetId,
-              symbol: asset.symbol,
-              decimals: asset.decimals,
-              tvl,
-              selfStake,
-            } satisfies VaultAssetUI;
-          });
-
-        return (
-          <VaultAssetsTable isShown={row.getIsExpanded()} data={vaultAssets} />
-        );
-      },
-    }),
-    [assetsMetadataMap, delegatorTVL, delegatorTotalRestakedAssets],
-  );
 
   const handleRestakeClicked = useCallback(() => {
     setTab(RestakeTab.RESTAKE);
@@ -178,7 +66,7 @@ const RestakeOverviewTabs: FC<Props> = ({
       </TabContent>
 
       <TabContent value={RestakeTab.VAULTS}>
-        <VaultsTable data={Object.values(vaults)} tableProps={tableProps} />
+        <VaultsOverview />
       </TabContent>
 
       <TabContent value={RestakeTab.OPERATORS}>

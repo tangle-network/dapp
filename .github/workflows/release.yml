@@ -33,8 +33,6 @@ jobs:
       - name: Enable corepack
         run: |
           corepack enable
-          corepack prepare yarn@4.2.2 --activate
-          yarn set version 4.2.2
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v4.2.0

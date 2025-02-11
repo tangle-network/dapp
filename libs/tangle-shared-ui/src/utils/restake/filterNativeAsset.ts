@@ -1,3 +1,4 @@
+import { zeroAddress } from 'viem';
 import { RestakeAssetId } from '../../types';
 
 /**
@@ -14,7 +15,7 @@ export default function filterNativeAsset(assetIds: RestakeAssetId[]) {
 
   // Filter out the native asset ID
   const nonNativeAssetIds = assetIds.filter((assetId) => {
-    if (assetId === '0') {
+    if (assetId === '0' || assetId === zeroAddress) {
       hasNative = true;
 
       return false;

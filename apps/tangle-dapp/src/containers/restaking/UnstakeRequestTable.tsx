@@ -34,7 +34,6 @@ import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
 import useSessionDurationMs from '../../data/useSessionDurationMs';
 import formatSessionDistance from '../../utils/formatSessionDistance';
-import { findErc20Token } from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 
 export type UnstakeRequestTableRow = {
   amount: string;
@@ -132,9 +131,7 @@ const UnstakeRequestTable: FC<Props> = ({
 
     return unstakeRequests.flatMap(
       ({ assetId, amount, requestedRound, operatorAccountId }) => {
-        const metadata = isEvmAddress(assetId)
-          ? findErc20Token(assetId)
-          : assets[assetId];
+        const metadata = assets[assetId];
 
         // Skip requests that are lacking metadata.
         if (metadata === undefined || metadata === null) {
