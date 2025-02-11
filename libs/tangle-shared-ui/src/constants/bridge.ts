@@ -251,6 +251,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7',
       ),
     },
+    {
+      symbol: 'POL',
+      tokenType: 'POL' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x9e911A61BE3D246fA8eF6d18bE84009c86B86240'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x160F5cD345Db235C92B671782d27F5aA6F2f31EB',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -1856,32 +1868,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       name: 'Optimism',
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'OP',
-    },
-    {
-      addressOrDenom: '0xCdb39557fa155Ff98d11739B6A5F687E7Cb922d8',
-      chainName: 'polygon',
-      connections: [
-        {
-          token: 'ethereum|tangle|0x160F5cD345Db235C92B671782d27F5aA6F2f31EB',
-        },
-      ],
-      decimals: 18,
-      name: 'Polygon Ecosystem Token',
-      standard: TokenStandard.EvmHypNative,
-      symbol: 'POL',
-    },
-    {
-      addressOrDenom: '0x160F5cD345Db235C92B671782d27F5aA6F2f31EB',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|polygon|0xCdb39557fa155Ff98d11739B6A5F687E7Cb922d8',
-        },
-      ],
-      decimals: 18,
-      name: 'Polygon Ecosystem Token',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'POL',
     },
     {
       addressOrDenom: '0xB6e1965e8c13657e25450F0161eebAD8F2b2FC0E',
@@ -3506,6 +3492,46 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'ETH',
     },
+
+    {
+      addressOrDenom: '0xCdb39557fa155Ff98d11739B6A5F687E7Cb922d8',
+      chainName: 'polygon',
+      connections: [
+        { token: 'ethereum|tangle|0x160F5cD345Db235C92B671782d27F5aA6F2f31EB' },
+      ],
+      decimals: 18,
+      name: 'Polygon Ecosystem Token',
+      standard: TokenStandard.EvmHypNative,
+      symbol: 'POL',
+    },
+    {
+      addressOrDenom: '0x9e911A61BE3D246fA8eF6d18bE84009c86B86240',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0x455e53CBB86018Ac2B8092FdCd39d8444aFFC3F6',
+      connections: [
+        { token: 'ethereum|tangle|0x160F5cD345Db235C92B671782d27F5aA6F2f31EB' },
+      ],
+      decimals: 18,
+      name: 'Polygon Ecosystem Token',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'POL',
+    },
+    {
+      addressOrDenom: '0x160F5cD345Db235C92B671782d27F5aA6F2f31EB',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|polygon|0xCdb39557fa155Ff98d11739B6A5F687E7Cb922d8',
+        },
+        {
+          token: 'ethereum|ethereum|0x9e911A61BE3D246fA8eF6d18bE84009c86B86240',
+        },
+      ],
+      decimals: 18,
+      name: 'Polygon Ecosystem Token',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'POL',
+    },
   ],
 };
 
@@ -3538,6 +3564,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'LINK/ethereum-tangle',
   'OP/optimism-tangle',
   'POL/polygon-tangle',
+  'POL/ethereum-tangle',
   'rETH/arbitrum-tangle',
   'rETH/base-tangle',
   'rETH/optimism-tangle',
