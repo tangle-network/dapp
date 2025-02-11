@@ -239,6 +239,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0xF0120960A6D667460F21f88778cb5e44cb90Ac3d',
       ),
     },
+    {
+      symbol: 'ETH',
+      tokenType: 'ETH' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x2BAc449691070F058Fdb0E738D1bE9175f8ec63d'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -1789,56 +1801,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       name: 'Curve DAO Token',
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'CRV',
-    },
-    {
-      addressOrDenom: '0x68AbCC37de2BEb083Cd6A549f64C3494Ea418BB7',
-      chainName: 'arbitrum',
-      connections: [
-        { token: 'ethereum|tangle|0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7' },
-      ],
-      decimals: 18,
-      name: 'Ether',
-      standard: TokenStandard.EvmHypNative,
-      symbol: 'ETH',
-    },
-    {
-      addressOrDenom: '0x61F71B85762c8848083506da347969c58248f0c6',
-      chainName: 'base',
-      connections: [
-        { token: 'ethereum|tangle|0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7' },
-      ],
-      decimals: 18,
-      name: 'Ether',
-      standard: TokenStandard.EvmHypNative,
-      symbol: 'ETH',
-    },
-    {
-      addressOrDenom: '0x96d4357EB200f230816811b4320259b2f9228D5c',
-      chainName: 'optimism',
-      connections: [
-        { token: 'ethereum|tangle|0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7' },
-      ],
-      decimals: 18,
-      name: 'Ether',
-      standard: TokenStandard.EvmHypNative,
-      symbol: 'ETH',
-    },
-    {
-      addressOrDenom: '0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x68AbCC37de2BEb083Cd6A549f64C3494Ea418BB7',
-        },
-        { token: 'ethereum|base|0x61F71B85762c8848083506da347969c58248f0c6' },
-        {
-          token: 'ethereum|optimism|0x96d4357EB200f230816811b4320259b2f9228D5c',
-        },
-      ],
-      decimals: 18,
-      name: 'Ether',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'ETH',
     },
     {
       addressOrDenom: '0x488A2E673B0bA9876788A7497c331EfaA14d5F81',
@@ -3478,6 +3440,72 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'LINK',
     },
+    {
+      addressOrDenom: '0x68AbCC37de2BEb083Cd6A549f64C3494Ea418BB7',
+      chainName: 'arbitrum',
+      connections: [
+        { token: 'ethereum|tangle|0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7' },
+      ],
+      decimals: 18,
+      name: 'Ether',
+      standard: TokenStandard.EvmHypNative,
+      symbol: 'ETH',
+    },
+    {
+      addressOrDenom: '0x61F71B85762c8848083506da347969c58248f0c6',
+      chainName: 'base',
+      connections: [
+        { token: 'ethereum|tangle|0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7' },
+      ],
+      decimals: 18,
+      name: 'Ether',
+      standard: TokenStandard.EvmHypNative,
+      symbol: 'ETH',
+    },
+    {
+      addressOrDenom: '0x96d4357EB200f230816811b4320259b2f9228D5c',
+      chainName: 'optimism',
+      connections: [
+        { token: 'ethereum|tangle|0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7' },
+      ],
+      decimals: 18,
+      name: 'Ether',
+      standard: TokenStandard.EvmHypNative,
+      symbol: 'ETH',
+    },
+    {
+      addressOrDenom: '0x2BAc449691070F058Fdb0E738D1bE9175f8ec63d',
+      chainName: 'ethereum',
+      connections: [
+        { token: 'ethereum|tangle|0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7' },
+      ],
+      decimals: 18,
+      name: 'Ether',
+      standard: TokenStandard.EvmHypNative,
+      symbol: 'ETH',
+    },
+    {
+      addressOrDenom: '0x6341d878A7f8D1872D8EA6f10e15E89692DC7cd7',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x68AbCC37de2BEb083Cd6A549f64C3494Ea418BB7',
+        },
+        {
+          token: 'ethereum|base|0x61F71B85762c8848083506da347969c58248f0c6',
+        },
+        {
+          token: 'ethereum|optimism|0x96d4357EB200f230816811b4320259b2f9228D5c',
+        },
+        {
+          token: 'ethereum|ethereum|0x2BAc449691070F058Fdb0E738D1bE9175f8ec63d',
+        },
+      ],
+      decimals: 18,
+      name: 'Ether',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'ETH',
+    },
   ],
 };
 
@@ -3491,6 +3519,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'ETH/arbitrum-tangle',
   'ETH/base-tangle',
   'ETH/optimism-tangle',
+  'ETH/ethereum-tangle',
   'ezETH/arbitrum-tangle',
   'ezETH/base-tangle',
   'ezETH/optimism-tangle',
