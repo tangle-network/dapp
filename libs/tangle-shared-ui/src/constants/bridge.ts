@@ -263,6 +263,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0x160F5cD345Db235C92B671782d27F5aA6F2f31EB',
       ),
     },
+    {
+      symbol: 'swETH',
+      tokenType: 'swETH' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xC5D0781702D9c7BCcdA04DF3F767F1058e753cd1'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x28ce5Ab9E7b4B04f146E3Ca5E3cb87D7b07d5497',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -2080,33 +2092,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       symbol: 'stAVAIL',
     },
     {
-      addressOrDenom: '0x15BC1c8861def0e6605685bFEdF3A6456f068dBa',
-      chainName: 'arbitrum',
-      collateralAddressOrDenom: '0xbc011A12Da28e8F0f528d9eE5E7039E22F91cf18',
-      connections: [
-        {
-          token: 'ethereum|tangle|0x28ce5Ab9E7b4B04f146E3Ca5E3cb87D7b07d5497',
-        },
-      ],
-      decimals: 18,
-      name: 'swETH',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'swETH',
-    },
-    {
-      addressOrDenom: '0x28ce5Ab9E7b4B04f146E3Ca5E3cb87D7b07d5497',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x15BC1c8861def0e6605685bFEdF3A6456f068dBa',
-        },
-      ],
-      decimals: 18,
-      name: 'swETH',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'swETH',
-    },
-    {
       addressOrDenom: '0x1654A5e254277FB66773eb4B0E428efB0bFB3Dca',
       chainName: 'arbitrum',
       collateralAddressOrDenom: '0x6c84a8f1c29108F47a79964b5Fe888D4f4D0dE40',
@@ -3532,6 +3517,46 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'POL',
     },
+    {
+      addressOrDenom: '0x15BC1c8861def0e6605685bFEdF3A6456f068dBa',
+      chainName: 'arbitrum',
+      collateralAddressOrDenom: '0xbc011A12Da28e8F0f528d9eE5E7039E22F91cf18',
+      connections: [
+        { token: 'ethereum|tangle|0x28ce5Ab9E7b4B04f146E3Ca5E3cb87D7b07d5497' },
+      ],
+      decimals: 18,
+      name: 'swETH',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'swETH',
+    },
+    {
+      addressOrDenom: '0xC5D0781702D9c7BCcdA04DF3F767F1058e753cd1',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xf951E335afb289353dc249e82926178EaC7DEd78',
+      connections: [
+        { token: 'ethereum|tangle|0x28ce5Ab9E7b4B04f146E3Ca5E3cb87D7b07d5497' },
+      ],
+      decimals: 18,
+      name: 'swETH',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'swETH',
+    },
+    {
+      addressOrDenom: '0x28ce5Ab9E7b4B04f146E3Ca5E3cb87D7b07d5497',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x15BC1c8861def0e6605685bFEdF3A6456f068dBa',
+        },
+        {
+          token: 'ethereum|ethereum|0xC5D0781702D9c7BCcdA04DF3F767F1058e753cd1',
+        },
+      ],
+      decimals: 18,
+      name: 'swETH',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'swETH',
+    },
   ],
 };
 
@@ -3576,6 +3601,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'SolvBTC.BBN/ethereum-tangle',
   'stAVAIL/base-tangle',
   'swETH/arbitrum-tangle',
+  'swETH/ethereum-tangle',
   'tBTC/arbitrum-tangle',
   'tBTC/base-tangle',
   'tBTC/optimism-tangle',
