@@ -347,6 +347,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0x89C60DBe8F15d9567A75B0712D43CE4d44977c29',
       ),
     },
+    {
+      symbol: 'USDX',
+      tokenType: 'USDX' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x21F16dB63F954E5C73e06757E0fe136f2BF91564'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x04667a82F593d55aa34CE38B204Ec0Fdc54cDe0C',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -2318,11 +2330,28 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       symbol: 'USDX',
     },
     {
+      addressOrDenom: '0x21F16dB63F954E5C73e06757E0fe136f2BF91564',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xf3527ef8dE265eAa3716FB312c12847bFBA66Cef',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x04667a82F593d55aa34CE38B204Ec0Fdc54cDe0C',
+        },
+      ],
+      decimals: 18,
+      name: 'USDX',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'USDX',
+    },
+    {
       addressOrDenom: '0x04667a82F593d55aa34CE38B204Ec0Fdc54cDe0C',
       chainName: 'tangle',
       connections: [
         {
           token: 'ethereum|arbitrum|0x4139b8F1474FFd04EE15F86103EF53f8Fdb3d8D0',
+        },
+        {
+          token: 'ethereum|ethereum|0x21F16dB63F954E5C73e06757E0fe136f2BF91564',
         },
       ],
       decimals: 18,
@@ -3812,6 +3841,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'USDT/polygon-tangle',
   'USDT/ethereum-tangle',
   'USDX/arbitrum-tangle',
+  'USDX/ethereum-tangle',
   'WBTC/arbitrum-tangle',
   'WBTC/base-tangle',
   'WBTC/optimism-tangle',
