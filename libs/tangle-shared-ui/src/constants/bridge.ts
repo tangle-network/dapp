@@ -299,6 +299,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa',
       ),
     },
+    {
+      symbol: 'USDT',
+      tokenType: 'USDT' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x91611BFabaD20B5f8f286705C6510456E43E427F'),
+      abi: assertAbi(erc20Abi),
+      decimals: 6,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xa06898e779998eC3a749368DF924d5b94C2465b4',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -2219,6 +2231,20 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       symbol: 'USDT',
     },
     {
+      addressOrDenom: '0x91611BFabaD20B5f8f286705C6510456E43E427F',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xa06898e779998eC3a749368DF924d5b94C2465b4',
+        },
+      ],
+      decimals: 6,
+      name: 'Tether USD',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'USDT',
+    },
+    {
       addressOrDenom: '0xa06898e779998eC3a749368DF924d5b94C2465b4',
       chainName: 'tangle',
       connections: [
@@ -2231,6 +2257,9 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
         },
         {
           token: 'ethereum|polygon|0x72141B45a23333011AaAb07D6fDEBbE97049091e',
+        },
+        {
+          token: 'ethereum|ethereum|0x91611BFabaD20B5f8f286705C6510456E43E427F',
         },
       ],
       decimals: 6,
@@ -3686,6 +3715,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'USDT/base-tangle',
   'USDT/optimism-tangle',
   'USDT/polygon-tangle',
+  'USDT/ethereum-tangle',
   'USDX/arbitrum-tangle',
   'WBTC/arbitrum-tangle',
   'WBTC/base-tangle',
