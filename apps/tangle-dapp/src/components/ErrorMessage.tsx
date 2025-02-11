@@ -23,7 +23,7 @@ export default function ErrorMessage({
     <p
       {...props}
       className={twMerge(
-        'flex items-center justify-start gap-0.5 text-red-70 dark:text-red-50 mt-2 ml-2',
+        'flex items-center justify-start gap-0.5 text-red-70 dark:text-red-50 mt-2',
         className,
       )}
     >
