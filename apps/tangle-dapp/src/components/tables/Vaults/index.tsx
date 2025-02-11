@@ -7,7 +7,7 @@ import {
   TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChevronUp } from '@webb-tools/icons/ChevronUp';
+import { ChevronDown } from '@webb-tools/icons/ChevronDown';
 import Spinner from '@webb-tools/icons/Spinner';
 import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
 import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
@@ -195,10 +195,10 @@ const getColumns = (nativeTokenSymbol: string) => [
             <div
               className={twMerge(
                 '!text-current transition-transform duration-300 ease-in-out',
-                row.getIsExpanded() ? 'rotate-180' : '',
+                row.getIsExpanded() ? '' : 'rotate-180',
               )}
             >
-              <ChevronUp className="!fill-current" />
+              <ChevronDown className="!fill-current" />
             </div>
           </Button>
         </div>
