@@ -335,6 +335,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0xC0fD9c0ee70d7d9Eede7f5918077dC506aF95E48',
       ),
     },
+    {
+      symbol: 'mETH',
+      tokenType: 'mETH' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xA06164d6440dd1E8cb51b743d7bEAB86c44f74f1'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x89C60DBe8F15d9567A75B0712D43CE4d44977c29',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -3709,6 +3721,33 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'USDC',
     },
+    {
+      addressOrDenom: '0xA06164d6440dd1E8cb51b743d7bEAB86c44f74f1',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xd5F7838F5C461fefF7FE49ea5ebaF7728bB0ADfa',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x89C60DBe8F15d9567A75B0712D43CE4d44977c29',
+        },
+      ],
+      decimals: 18,
+      name: 'mETH',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'mETH',
+    },
+    {
+      addressOrDenom: '0x89C60DBe8F15d9567A75B0712D43CE4d44977c29',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|ethereum|0xA06164d6440dd1E8cb51b743d7bEAB86c44f74f1',
+        },
+      ],
+      decimals: 18,
+      name: 'mETH',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'mETH',
+    },
   ],
 };
 
@@ -3811,6 +3850,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'DAI/optimism-tangle',
   'DAI/polygon-tangle',
   'DAI/ethereum-tangle',
+  'mETH/ethereum-tangle',
 ];
 
 export const mailboxAddress = {
