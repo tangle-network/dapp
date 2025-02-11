@@ -311,6 +311,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0xa06898e779998eC3a749368DF924d5b94C2465b4',
       ),
     },
+    {
+      symbol: 'WBTC',
+      tokenType: 'WBTC' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xa3E0920CAf0e2eDDDe54D49fFC1d82e1a23c9693'),
+      abi: assertAbi(erc20Abi),
+      decimals: 8,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xd5c9FCfF2f362E89538E92e8B6e677571E11C1e7',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -2343,6 +2355,20 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       symbol: 'WBTC',
     },
     {
+      addressOrDenom: '0xa3E0920CAf0e2eDDDe54D49fFC1d82e1a23c9693',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xd5c9FCfF2f362E89538E92e8B6e677571E11C1e7',
+        },
+      ],
+      decimals: 8,
+      name: 'Wrapped BTC',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'WBTC',
+    },
+    {
       addressOrDenom: '0xd5c9FCfF2f362E89538E92e8B6e677571E11C1e7',
       chainName: 'tangle',
       connections: [
@@ -2355,6 +2381,9 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
         },
         {
           token: 'ethereum|polygon|0x0E7f434f502200ec7BEb04Ed6B38DFaf0aD88617',
+        },
+        {
+          token: 'ethereum|ethereum|0xa3E0920CAf0e2eDDDe54D49fFC1d82e1a23c9693',
         },
       ],
       decimals: 8,
@@ -3721,6 +3750,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'WBTC/base-tangle',
   'WBTC/optimism-tangle',
   'WBTC/polygon-tangle',
+  'WBTC/ethereum-tangle',
   'WETH/arbitrum-tangle',
   'WETH/base-tangle',
   'WETH/optimism-tangle',
