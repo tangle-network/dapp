@@ -1,10 +1,11 @@
 import type { Evaluate } from '@webb-tools/dapp-types/utils/types';
 import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
-import { map, type Observable } from 'rxjs';
+import { map, switchMap, type Observable } from 'rxjs';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import { assetIdsQuery } from '../../queries/restake/assetIds';
 import { rewardVaultRxQuery } from '../../queries/restake/rewardVault';
+import rewardVaultsPotAccountsRxQuery from '../../queries/restake/rewardVaultsPotAccounts';
 import { RestakeAssetId } from '../../types';
 
 export type UseRestakeAssetIdsReturnType = {
@@ -21,8 +22,14 @@ export default function useRestakeAssetIds(): Evaluate<UseRestakeAssetIdsReturnT
 
   const assetIds$ = useMemo(
     () =>
-      rewardVaultRxQuery(apiRx).pipe(
-        map((rewardVaults) => assetIdsQuery(rewardVaults)),
+      rewardVaultsPotAccountsRxQuery(apiRx).pipe(
+        switchMap((vaultsPotAccounts) => {
+          const vaultIds = vaultsPotAccounts.keys().toArray();
+
+          return rewardVaultRxQuery(apiRx, vaultIds).pipe(
+            map((rewardVaults) => assetIdsQuery(rewardVaults)),
+          );
+        }),
       ),
     [apiRx],
   );

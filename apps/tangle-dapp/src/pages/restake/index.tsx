@@ -14,8 +14,10 @@ const RestakePage: FC = () => {
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
 
-  const { delegatorTVL, operatorConcentration, operatorTVL, vaultTVL } =
-    useRestakeTVL(operatorMap, delegatorInfo);
+  const { operatorConcentration, operatorTVL } = useRestakeTVL(
+    operatorMap,
+    delegatorInfo,
+  );
 
   // If provided, make sure that the action parameter is valid.
   if (action !== undefined && !isEnumValue(action, RestakeAction)) {
@@ -28,11 +30,8 @@ const RestakePage: FC = () => {
   return (
     <div className="space-y-7">
       <RestakeOverviewTabs
-        delegatorTVL={delegatorTVL}
         operatorMap={operatorMap}
-        delegatorInfo={delegatorInfo}
         operatorTVL={operatorTVL}
-        vaultTVL={vaultTVL}
         operatorConcentration={operatorConcentration}
         action={action}
       />

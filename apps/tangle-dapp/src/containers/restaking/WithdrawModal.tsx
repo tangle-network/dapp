@@ -19,7 +19,6 @@ import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 import LogoListItem from '../../components/Lists/LogoListItem';
 import filterBy from '../../utils/filterBy';
-import { findErc20Token } from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 import calculateRestakeAvailableBalance from '../../utils/restaking/calculateRestakeAvailableBalance';
 
 type Props = {
@@ -87,33 +86,13 @@ const WithdrawModal = ({
       }}
       // TODO: This can be cleaned up a bit. Seems like a bit of reused code.
       renderItem={({ amount, assetId }) => {
-        let name: string | undefined;
-        let symbol: string;
-        let decimals: number;
-        let vaultId: number | null = null;
+        const metadata = assets[assetId];
 
-        if (isEvmAddress(assetId)) {
-          const erc20Token = findErc20Token(assetId);
-
-          if (erc20Token === null) {
-            return null;
-          }
-
-          name = erc20Token.name;
-          symbol = erc20Token.symbol;
-          decimals = erc20Token.decimals;
-        } else {
-          const metadata = assets[assetId];
-
-          if (metadata === undefined) {
-            return null;
-          }
-
-          name = metadata.name;
-          symbol = metadata.symbol;
-          decimals = metadata.decimals;
-          vaultId = metadata.vaultId;
+        if (metadata === undefined) {
+          return null;
         }
+
+        const { name, symbol, decimals, vaultId } = metadata;
 
         const fmtAmount = formatDisplayAmount(
           new BN(amount.toString()),

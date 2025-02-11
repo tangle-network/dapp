@@ -5,8 +5,6 @@ import isDefined from '@webb-tools/dapp-types/utils/isDefined';
 import { TokenIcon } from '@webb-tools/icons';
 import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
 import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import useTangleEvmErc20Balances from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
 import {
   AmountFormatStyle,
@@ -75,11 +73,12 @@ const DepositForm: FC<Props> = (props) => {
 
   const depositAssetId = watch('depositAssetId');
 
-  const [assetIdParam, setAssetIdParam] = useQueryState(
-    QueryParamKey.RESTAKE_ASSET_ID,
+  const [vaultIdParam, setVaultIdParam] = useQueryState(
+    QueryParamKey.RESTAKE_VAULT,
   );
 
-  const { assetWithBalances, isLoading } = useRestakeContext();
+  const { assetWithBalances, isLoading, refetchErc20Balances } =
+    useRestakeContext();
   const restakeApi = useRestakeApi();
 
   const setValue = useCallback(
@@ -109,18 +108,30 @@ const DepositForm: FC<Props> = (props) => {
   }, [activeTypedChainId, resetField]);
 
   useEffect(() => {
-    if (!assetIdParam) {
+    if (!vaultIdParam || isLoading) {
       return;
     }
 
-    const defaultAsset = assetWithBalances.find(
-      (asset) => asset.assetId === assetIdParam,
+    // Find the first asset in the vault that has a balance.
+    const defaultAsset = Object.values(assetWithBalances).find(
+      ({ metadata, balance }) => {
+        if (metadata.vaultId?.toString() !== vaultIdParam) {
+          return false;
+        }
+
+        const balance_ = balance?.balance;
+
+        return balance_ !== undefined && balance_ > ZERO_BIG_INT;
+      },
     );
 
-    if (
-      defaultAsset?.balance?.balance === undefined ||
-      defaultAsset?.balance?.balance === ZERO_BIG_INT
-    ) {
+    if (defaultAsset === undefined) {
+      setVaultIdParam(null);
+      return;
+    }
+
+    if (defaultAsset.balance === null) {
+      setVaultIdParam(null);
       return;
     }
 
@@ -133,13 +144,8 @@ const DepositForm: FC<Props> = (props) => {
     );
 
     // Remove the param to prevent reuse after initial load.
-    setAssetIdParam(null);
-  }, [assetIdParam, assetWithBalances, setAssetIdParam, setValue]);
-
-  const sourceTypedChainId = watch('sourceTypedChainId');
-
-  // Subscribe to sourceTypedChainId and update customRpc.
-  useRpcSubscription(sourceTypedChainId);
+    setVaultIdParam(null);
+  }, [assetWithBalances, isLoading, setValue, setVaultIdParam, vaultIdParam]);
 
   const {
     status: tokenModalOpen,
@@ -148,8 +154,8 @@ const DepositForm: FC<Props> = (props) => {
     update: updateTokenModal,
   } = useModal();
 
-  const nativeAssets = useMemo<RestakeAsset[]>(() => {
-    const nativeAssetsWithBalances = assetWithBalances
+  const allAssets = useMemo<RestakeAsset[]>(() => {
+    const nativeAssetsWithBalances = Object.values(assetWithBalances)
       .filter(
         (asset) =>
           asset.balance?.balance !== undefined &&
@@ -171,30 +177,6 @@ const DepositForm: FC<Props> = (props) => {
 
     return nativeAssetsWithBalances;
   }, [assetWithBalances]);
-
-  const { data: erc20Balances, refetch: refetchErc20Balances } =
-    useTangleEvmErc20Balances();
-
-  const erc20Assets = useMemo<RestakeAsset[]>(() => {
-    if (erc20Balances === null || erc20Balances === undefined) {
-      return [];
-    }
-
-    return erc20Balances.map(
-      (asset) =>
-        ({
-          name: asset.name,
-          symbol: asset.symbol,
-          balance: asset.balance,
-          decimals: asset.decimals,
-          id: asset.contractAddress,
-        }) satisfies RestakeAsset,
-    );
-  }, [erc20Balances]);
-
-  const allAssets = useMemo<RestakeAsset[]>(() => {
-    return [...nativeAssets, ...erc20Assets];
-  }, [erc20Assets, nativeAssets]);
 
   const handleAssetSelection = useCallback(
     (asset: RestakeAsset) => {

@@ -30,8 +30,6 @@ jobs:
       - name: Enable corepack
         run: |
           corepack enable
-          corepack prepare yarn@4.2.2 --activate
-          yarn set version 4.2.2
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4.2.0

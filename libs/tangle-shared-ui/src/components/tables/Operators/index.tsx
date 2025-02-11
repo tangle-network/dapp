@@ -195,7 +195,7 @@ type Props = {
   onGlobalFilterChange?: (value: string) => void;
   loadingTableProps?: Partial<TableStatusProps>;
   emptyTableProps?: Partial<TableStatusProps>;
-  tableProps?: Partial<ComponentProps<typeof Table>>;
+  tableProps?: Partial<ComponentProps<typeof Table<RestakeOperator>>>;
   RestakeOperatorAction?: React.FC<PropsWithChildren<{ address: string }>>;
 };
 

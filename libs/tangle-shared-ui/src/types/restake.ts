@@ -1,5 +1,4 @@
 import {
-  PalletAssetsAccountStatus,
   PalletAssetsAssetDetails,
   PalletAssetsAssetStatus,
   PalletAssetsExistenceReason,
@@ -137,17 +136,6 @@ export type AssetAccountExistenceReason =
 export type AssetBalance = {
   readonly assetId: RestakeAssetId;
   readonly balance: bigint;
-
-  /**
-   * The status of the account.
-   *
-   * @field "Frozen"
-   * @field "Liquid"
-   * @field "Blocked"
-   */
-  readonly status: TransformEnum<PalletAssetsAccountStatus>;
-
-  readonly existenceReason: AssetAccountExistenceReason;
 };
 
 export type AssetBalanceMap = {
@@ -155,9 +143,11 @@ export type AssetBalanceMap = {
 };
 
 export type AssetWithBalance = {
-  assetId: RestakeAssetId;
-  metadata: RestakeAssetMetadata;
-  balance: AssetBalance | null;
+  readonly [assetId: RestakeAssetId]: {
+    readonly assetId: RestakeAssetId;
+    readonly metadata: RestakeAssetMetadata;
+    readonly balance: AssetBalance | null;
+  };
 };
 
 export type RestakeAsset = {

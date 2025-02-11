@@ -1,9 +1,13 @@
+import type { BN } from '@polkadot/util';
+import type { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
+
 export type VaultAssetData = {
-  id: string;
+  id: RestakeAssetId;
   symbol: string;
   decimals: number;
-  tvl: number | null;
-  selfStake: bigint;
+  tvl?: BN | null;
+  available?: BN | null;
+  totalDeposits?: BN | null;
 };
 
 export type Props = {

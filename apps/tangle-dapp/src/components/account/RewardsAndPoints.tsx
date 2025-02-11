@@ -3,16 +3,16 @@ import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useAc
 import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
 import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
 } from '@webb-tools/webb-ui-components/utils/formatDisplayAmount';
 import { useMemo } from 'react';
+import useActivePoints from '../../data/points/useActivePoints';
 import useAccountRewardInfo from '../../data/rewards/useAccountRewardInfo';
 import KeyStatsItem from '../KeyStatsItem/KeyStatsItem';
 import ClaimRewardAction from './ClaimRewardAction';
-import useActivePoints from '../../data/points/useActivePoints';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
 
 const RewardsAndPoints = () => {
   const [activeChain] = useActiveChain();
@@ -56,14 +56,6 @@ const RewardsAndPoints = () => {
       AmountFormatStyle.SHORT,
     );
   }, [activeChain, rewards]);
-
-  const totalPoints = useMemo(() => {
-    if (typeof points?.account?.totalPoints !== 'number') {
-      return EMPTY_VALUE_PLACEHOLDER;
-    }
-
-    return addCommasToNumber(points.account.totalPoints);
-  }, [points?.account?.totalPoints]);
 
   return (
     <div className="grid grid-cols-2 gap-6">
@@ -117,7 +109,9 @@ const RewardsAndPoints = () => {
             className="text-mono-140 dark:text-mono-40"
             component="span"
           >
-            {totalPoints}
+            {points?.account?.totalPoints === undefined
+              ? EMPTY_VALUE_PLACEHOLDER
+              : addCommasToNumber(points.account.totalPoints)}
           </Typography>
 
           <Typography

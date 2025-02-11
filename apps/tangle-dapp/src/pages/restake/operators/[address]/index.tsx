@@ -15,10 +15,7 @@ const Page = () => {
   const { address } = useParams();
   const { operatorMap } = useRestakeOperatorMap();
   const { delegatorInfo } = useRestakeDelegatorInfo();
-  const { operatorTVL, vaultTVL, delegatorTVL } = useRestakeTVL(
-    operatorMap,
-    delegatorInfo,
-  );
+  const { operatorTVL } = useRestakeTVL(operatorMap, delegatorInfo);
 
   const { isLoading, blueprints, error } = useOperatorBlueprints(address);
 
@@ -74,9 +71,7 @@ const Page = () => {
 
         <TVLTable
           operatorData={operatorMap[address]}
-          vaultTVL={vaultTVL}
           delegatorInfo={delegatorInfo}
-          delegatorTVL={delegatorTVL}
         />
       </div>
     </div>
