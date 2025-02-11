@@ -75,8 +75,16 @@ const useVaultTableData = ({
 
   const tableProps = useMemo<ComponentProps<typeof VaultsTable>['tableProps']>(
     () => ({
-      onRowClick(row) {
+      onRowClick(row, table) {
         if (!row.getCanExpand()) return;
+
+        // Close all other rows
+        table.getRowModel().rows.forEach((r) => {
+          if (r.id !== row.id && r.getIsExpanded()) {
+            r.toggleExpanded(false);
+          }
+        });
+
         return row.toggleExpanded();
       },
       getExpandedRowContent(row) {
