@@ -323,6 +323,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0xd5c9FCfF2f362E89538E92e8B6e677571E11C1e7',
       ),
     },
+    {
+      symbol: 'wstETH',
+      tokenType: 'wstETH' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xC0fD9c0ee70d7d9Eede7f5918077dC506aF95E48',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -2440,6 +2452,18 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       symbol: 'wstETH',
     },
     {
+      addressOrDenom: '0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+      connections: [
+        { token: 'ethereum|tangle|0xC0fD9c0ee70d7d9Eede7f5918077dC506aF95E48' },
+      ],
+      decimals: 18,
+      name: 'Wrapped liquid staked Ether 2.0',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'wstETH',
+    },
+    {
       addressOrDenom: '0xC0fD9c0ee70d7d9Eede7f5918077dC506aF95E48',
       chainName: 'tangle',
       connections: [
@@ -2452,6 +2476,9 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
         },
         {
           token: 'ethereum|polygon|0x5180c082e7E438c80cF4235C098C8CB0a7c3E3FD',
+        },
+        {
+          token: 'ethereum|ethereum|0xD297d7F1B1660334F98941Dc7d3BC4A49b7837EC',
         },
       ],
       decimals: 18,
@@ -3760,6 +3787,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'wstETH/base-tangle',
   'wstETH/optimism-tangle',
   'wstETH/polygon-tangle',
+  'wstETH/ethereum-tangle',
   'MMT/holesky-tangle',
   'CPT/holesky-tangle',
   'WETH/holesky-tangle',
