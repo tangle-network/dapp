@@ -275,6 +275,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0x28ce5Ab9E7b4B04f146E3Ca5E3cb87D7b07d5497',
       ),
     },
+    {
+      symbol: 'tBTC',
+      tokenType: 'tBTC' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xa4cFffD900758D492D022E6b67f2092b1Dc8bCD4'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x388A9a1a38CA0079a43202817cc56315C5D4B89B',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -362,12 +374,12 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       symbol: 'tBTC',
       tokenType: 'tBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
-      address: assertEvmAddress('0xF46496DD3eFdbb6Bf69cdEee56aBd17AAC8A0494'),
+      address: assertEvmAddress('0xF852cE3E163ae2A2B43f05C6696B50D386ca44d5'),
       abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Polygon,
       hyperlaneSyntheticAddress: assertEvmAddress(
-        '0x9330D5e38d714e1E71fd2dBeA7EbD98f13E4E241',
+        '0x388A9a1a38CA0079a43202817cc56315C5D4B89B',
       ),
     },
     {
@@ -613,12 +625,12 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       symbol: 'tBTC',
       tokenType: 'tBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
-      address: assertEvmAddress('0x1654A5e254277FB66773eb4B0E428efB0bFB3Dca'),
+      address: assertEvmAddress('0x8DA17A0e53EBbf10578FFBD81fEBc878AbDa6cf8'),
       abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Arbitrum,
       hyperlaneSyntheticAddress: assertEvmAddress(
-        '0x9330D5e38d714e1E71fd2dBeA7EbD98f13E4E241',
+        '0x388A9a1a38CA0079a43202817cc56315C5D4B89B',
       ),
     },
     {
@@ -828,12 +840,12 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       symbol: 'tBTC',
       tokenType: 'tBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
-      address: assertEvmAddress('0x5742195A81349F1306361D71A050C4cDdC5814FE'),
+      address: assertEvmAddress('0x0ef4a94D10C7eb84F01247365b6983c2ACF43fc4'),
       abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Optimism,
       hyperlaneSyntheticAddress: assertEvmAddress(
-        '0x9330D5e38d714e1E71fd2dBeA7EbD98f13E4E241',
+        '0x388A9a1a38CA0079a43202817cc56315C5D4B89B',
       ),
     },
     {
@@ -1066,12 +1078,12 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       symbol: 'tBTC',
       tokenType: 'tBTC' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
-      address: assertEvmAddress('0x21F0ba9E292e1FE8A1C723C8dc3D0bf782b3d75E'),
+      address: assertEvmAddress('0x69F6bBb296eAB012955BbB32524E9c0d5a84153F'),
       abi: assertAbi(erc20Abi),
       decimals: 18,
       chainId: PresetTypedChainId.Base,
       hyperlaneSyntheticAddress: assertEvmAddress(
-        '0x9330D5e38d714e1E71fd2dBeA7EbD98f13E4E241',
+        '0x388A9a1a38CA0079a43202817cc56315C5D4B89B',
       ),
     },
     {
@@ -2090,74 +2102,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       name: 'Staked Avail (Wormhole)',
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'stAVAIL',
-    },
-    {
-      addressOrDenom: '0x1654A5e254277FB66773eb4B0E428efB0bFB3Dca',
-      chainName: 'arbitrum',
-      collateralAddressOrDenom: '0x6c84a8f1c29108F47a79964b5Fe888D4f4D0dE40',
-      connections: [
-        { token: 'ethereum|tangle|0x9330D5e38d714e1E71fd2dBeA7EbD98f13E4E241' },
-      ],
-      decimals: 18,
-      name: 'Arbitrum tBTC v2',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'tBTC',
-    },
-    {
-      addressOrDenom: '0x21F0ba9E292e1FE8A1C723C8dc3D0bf782b3d75E',
-      chainName: 'base',
-      collateralAddressOrDenom: '0x236aa50979D5f3De3Bd1Eeb40E81137F22ab794b',
-      connections: [
-        { token: 'ethereum|tangle|0x9330D5e38d714e1E71fd2dBeA7EbD98f13E4E241' },
-      ],
-      decimals: 18,
-      name: 'Arbitrum tBTC v2',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'tBTC',
-    },
-    {
-      addressOrDenom: '0x5742195A81349F1306361D71A050C4cDdC5814FE',
-      chainName: 'optimism',
-      collateralAddressOrDenom: '0x6c84a8f1c29108F47a79964b5Fe888D4f4D0dE40',
-      connections: [
-        { token: 'ethereum|tangle|0x9330D5e38d714e1E71fd2dBeA7EbD98f13E4E241' },
-      ],
-      decimals: 18,
-      name: 'Arbitrum tBTC v2',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'tBTC',
-    },
-    {
-      addressOrDenom: '0xF46496DD3eFdbb6Bf69cdEee56aBd17AAC8A0494',
-      chainName: 'polygon',
-      collateralAddressOrDenom: '0x236aa50979D5f3De3Bd1Eeb40E81137F22ab794b',
-      connections: [
-        { token: 'ethereum|tangle|0x9330D5e38d714e1E71fd2dBeA7EbD98f13E4E241' },
-      ],
-      decimals: 18,
-      name: 'Arbitrum tBTC v2',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'tBTC',
-    },
-    {
-      addressOrDenom: '0x9330D5e38d714e1E71fd2dBeA7EbD98f13E4E241',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0x1654A5e254277FB66773eb4B0E428efB0bFB3Dca',
-        },
-        { token: 'ethereum|base|0x21F0ba9E292e1FE8A1C723C8dc3D0bf782b3d75E' },
-        {
-          token: 'ethereum|optimism|0x5742195A81349F1306361D71A050C4cDdC5814FE',
-        },
-        {
-          token: 'ethereum|polygon|0xF46496DD3eFdbb6Bf69cdEee56aBd17AAC8A0494',
-        },
-      ],
-      decimals: 18,
-      name: 'Arbitrum tBTC v2',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'tBTC',
     },
     {
       addressOrDenom: '0xd5c9FCfF2f362E89538E92e8B6e677571E11C1e7',
@@ -3557,6 +3501,90 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'swETH',
     },
+
+    {
+      addressOrDenom: '0x8DA17A0e53EBbf10578FFBD81fEBc878AbDa6cf8',
+      chainName: 'arbitrum',
+      collateralAddressOrDenom: '0x6c84a8f1c29108F47a79964b5Fe888D4f4D0dE40',
+      connections: [
+        { token: 'ethereum|tangle|0x388A9a1a38CA0079a43202817cc56315C5D4B89B' },
+      ],
+      decimals: 18,
+      name: 'Arbitrum tBTC v2',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'tBTC',
+    },
+    {
+      addressOrDenom: '0x69F6bBb296eAB012955BbB32524E9c0d5a84153F',
+      chainName: 'base',
+      collateralAddressOrDenom: '0x236aa50979D5f3De3Bd1Eeb40E81137F22ab794b',
+      connections: [
+        { token: 'ethereum|tangle|0x388A9a1a38CA0079a43202817cc56315C5D4B89B' },
+      ],
+      decimals: 18,
+      name: 'Arbitrum tBTC v2',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'tBTC',
+    },
+    {
+      addressOrDenom: '0xa4cFffD900758D492D022E6b67f2092b1Dc8bCD4',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
+      connections: [
+        { token: 'ethereum|tangle|0x388A9a1a38CA0079a43202817cc56315C5D4B89B' },
+      ],
+      decimals: 18,
+      name: 'Arbitrum tBTC v2',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'tBTC',
+    },
+    {
+      addressOrDenom: '0x0ef4a94D10C7eb84F01247365b6983c2ACF43fc4',
+      chainName: 'optimism',
+      collateralAddressOrDenom: '0x6c84a8f1c29108F47a79964b5Fe888D4f4D0dE40',
+      connections: [
+        { token: 'ethereum|tangle|0x388A9a1a38CA0079a43202817cc56315C5D4B89B' },
+      ],
+      decimals: 18,
+      name: 'Arbitrum tBTC v2',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'tBTC',
+    },
+    {
+      addressOrDenom: '0xF852cE3E163ae2A2B43f05C6696B50D386ca44d5',
+      chainName: 'polygon',
+      collateralAddressOrDenom: '0x236aa50979D5f3De3Bd1Eeb40E81137F22ab794b',
+      connections: [
+        { token: 'ethereum|tangle|0x388A9a1a38CA0079a43202817cc56315C5D4B89B' },
+      ],
+      decimals: 18,
+      name: 'Arbitrum tBTC v2',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'tBTC',
+    },
+    {
+      addressOrDenom: '0x388A9a1a38CA0079a43202817cc56315C5D4B89B',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0x8DA17A0e53EBbf10578FFBD81fEBc878AbDa6cf8',
+        },
+        { token: 'ethereum|base|0x69F6bBb296eAB012955BbB32524E9c0d5a84153F' },
+        {
+          token: 'ethereum|ethereum|0xa4cFffD900758D492D022E6b67f2092b1Dc8bCD4',
+        },
+        {
+          token: 'ethereum|optimism|0x0ef4a94D10C7eb84F01247365b6983c2ACF43fc4',
+        },
+        {
+          token: 'ethereum|polygon|0xF852cE3E163ae2A2B43f05C6696B50D386ca44d5',
+        },
+      ],
+      decimals: 18,
+      name: 'Arbitrum tBTC v2',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'tBTC',
+    },
   ],
 };
 
@@ -3606,6 +3634,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'tBTC/base-tangle',
   'tBTC/optimism-tangle',
   'tBTC/polygon-tangle',
+  'tBTC/ethereum-tangle',
   'UNI/arbitrum-tangle',
   'UNI/optimism-tangle',
   'UNI/polygon-tangle',
