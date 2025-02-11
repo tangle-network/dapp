@@ -287,6 +287,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0x388A9a1a38CA0079a43202817cc56315C5D4B89B',
       ),
     },
+    {
+      symbol: 'USDC',
+      tokenType: 'USDC' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x3DBBB4fdC5725FF780E653FfC3Af427029C259F3'),
+      abi: assertAbi(erc20Abi),
+      decimals: 6,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -2159,74 +2171,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       symbol: 'UNI',
     },
     {
-      addressOrDenom: '0xd7405f4396a90cD6B1f11f172F08034dBd9265D8',
-      chainName: 'arbitrum',
-      collateralAddressOrDenom: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-      connections: [
-        { token: 'ethereum|tangle|0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa' },
-      ],
-      decimals: 6,
-      name: 'USD Coin',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'USDC',
-    },
-    {
-      addressOrDenom: '0xf041B44EE24B5358D0999076933675fF5baCa437',
-      chainName: 'base',
-      collateralAddressOrDenom: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
-      connections: [
-        { token: 'ethereum|tangle|0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa' },
-      ],
-      decimals: 6,
-      name: 'USD Coin',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'USDC',
-    },
-    {
-      addressOrDenom: '0x7A153C00352DCb87E11684ce504bfE4dC170acCb',
-      chainName: 'optimism',
-      collateralAddressOrDenom: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85',
-      connections: [
-        { token: 'ethereum|tangle|0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa' },
-      ],
-      decimals: 6,
-      name: 'USD Coin',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'USDC',
-    },
-    {
-      addressOrDenom: '0xf041B44EE24B5358D0999076933675fF5baCa437',
-      chainName: 'polygon',
-      collateralAddressOrDenom: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
-      connections: [
-        { token: 'ethereum|tangle|0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa' },
-      ],
-      decimals: 6,
-      name: 'USD Coin',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'USDC',
-    },
-    {
-      addressOrDenom: '0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|arbitrum|0xd7405f4396a90cD6B1f11f172F08034dBd9265D8',
-        },
-        { token: 'ethereum|base|0xf041B44EE24B5358D0999076933675fF5baCa437' },
-        {
-          token: 'ethereum|optimism|0x7A153C00352DCb87E11684ce504bfE4dC170acCb',
-        },
-        {
-          token: 'ethereum|polygon|0xf041B44EE24B5358D0999076933675fF5baCa437',
-        },
-      ],
-      decimals: 6,
-      name: 'USD Coin',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'USDC',
-    },
-    {
       addressOrDenom: '0x5b6C0685Fc934C53b4523Bf8df5277dC4f3914FA',
       chainName: 'arbitrum',
       collateralAddressOrDenom: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
@@ -3585,6 +3529,101 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'tBTC',
     },
+    {
+      addressOrDenom: '0xd7405f4396a90cD6B1f11f172F08034dBd9265D8',
+      chainName: 'arbitrum',
+      collateralAddressOrDenom: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa',
+        },
+      ],
+      decimals: 6,
+      name: 'USD Coin',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'USDC',
+    },
+    {
+      addressOrDenom: '0xf041B44EE24B5358D0999076933675fF5baCa437',
+      chainName: 'base',
+      collateralAddressOrDenom: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa',
+        },
+      ],
+      decimals: 6,
+      name: 'USD Coin',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'USDC',
+    },
+    {
+      addressOrDenom: '0x7A153C00352DCb87E11684ce504bfE4dC170acCb',
+      chainName: 'optimism',
+      collateralAddressOrDenom: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa',
+        },
+      ],
+      decimals: 6,
+      name: 'USD Coin',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'USDC',
+    },
+    {
+      addressOrDenom: '0xf041B44EE24B5358D0999076933675fF5baCa437',
+      chainName: 'polygon',
+      collateralAddressOrDenom: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa',
+        },
+      ],
+      decimals: 6,
+      name: 'USD Coin',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'USDC',
+    },
+    {
+      addressOrDenom: '0x3DBBB4fdC5725FF780E653FfC3Af427029C259F3',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa',
+        },
+      ],
+      decimals: 6,
+      name: 'USD Coin',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'USDC',
+    },
+    {
+      addressOrDenom: '0x524322C9bF30137E12f86EFE74D1Cba05f4126Fa',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0xd7405f4396a90cD6B1f11f172F08034dBd9265D8',
+        },
+        {
+          token: 'ethereum|base|0xf041B44EE24B5358D0999076933675fF5baCa437',
+        },
+        {
+          token: 'ethereum|optimism|0x7A153C00352DCb87E11684ce504bfE4dC170acCb',
+        },
+        {
+          token: 'ethereum|polygon|0xf041B44EE24B5358D0999076933675fF5baCa437',
+        },
+        {
+          token: 'ethereum|ethereum|0x3DBBB4fdC5725FF780E653FfC3Af427029C259F3',
+        },
+      ],
+      decimals: 6,
+      name: 'USD Coin',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'USDC',
+    },
   ],
 };
 
@@ -3642,6 +3681,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'USDC/base-tangle',
   'USDC/optimism-tangle',
   'USDC/polygon-tangle',
+  'USDC/ethereum-tangle',
   'USDT/arbitrum-tangle',
   'USDT/base-tangle',
   'USDT/optimism-tangle',
