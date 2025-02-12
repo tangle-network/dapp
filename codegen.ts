@@ -14,6 +14,9 @@ const config: CodegenConfig = {
       preset: 'client',
       config: {
         documentMode: 'string',
+        scalars: {
+          BigFloat: 'string',
+        },
       },
     },
     'apps/tangle-dapp/schema.graphql': {

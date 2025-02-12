@@ -31,7 +31,6 @@ import useSessionDurationMs from '../../data/useSessionDurationMs';
 import { calculateTimeRemaining } from '../../pages/restake/utils';
 import formatSessionDistance from '../../utils/formatSessionDistance';
 import WithdrawRequestTableActions from './WithdrawRequestTableActions';
-import { findErc20Token } from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 
 export type WithdrawRequestTableRow = {
   amount: string;
@@ -116,9 +115,7 @@ const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
     }
 
     return withdrawRequests.flatMap(({ assetId, amount, requestedRound }) => {
-      const metadata = isEvmAddress(assetId)
-        ? findErc20Token(assetId)
-        : assets[assetId];
+      const metadata = assets[assetId];
 
       // Skip requests that are lacking metadata.
       if (metadata === undefined || metadata === null) {

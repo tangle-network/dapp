@@ -1,4 +1,4 @@
-import type { Row, RowData, useReactTable } from '@tanstack/react-table';
+import type { Row, RowData, Table, useReactTable } from '@tanstack/react-table';
 import type {
   IWebbComponentBase,
   PropsOf,
@@ -82,7 +82,7 @@ export interface TableProps<T extends RowData, E extends HTMLElement>
   /**
    * Handle when the row is clicked
    */
-  onRowClick?: (row: Row<T>) => void;
+  onRowClick?: (row: Row<T>, table: Table<T>) => void;
 
   /**
    * The optional ref to forward to the table component

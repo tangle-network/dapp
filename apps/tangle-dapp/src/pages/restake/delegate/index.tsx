@@ -44,7 +44,6 @@ import useRestakeApi from '../../../data/restake/useRestakeApi';
 import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
 import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
 import useRestakeAsset from '../../../data/restake/useRestakeAsset';
-import { findErc20Token } from '@webb-tools/tangle-shared-ui/hooks/useTangleEvmErc20Balances';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -167,34 +166,19 @@ const RestakeDelegateForm: FC = () => {
       ([assetIdString, { amount, delegatedAmount }]) => {
         const assetId = assertRestakeAssetId(assetIdString);
         const balance = new BN((amount - delegatedAmount).toString());
+        const metadata = assets[assetId];
 
-        if (!isEvmAddress(assetId)) {
-          const metadata = assets[assetId];
-
-          if (metadata === undefined) {
-            return [];
-          }
-
-          return {
-            id: metadata.assetId,
-            name: metadata.name,
-            symbol: metadata.symbol,
-            decimals: metadata.decimals,
-            balance,
-          } satisfies RestakeAsset;
-        } else {
-          const erc20Token = findErc20Token(assetId);
-
-          if (erc20Token === null) {
-            return [];
-          }
-
-          return {
-            ...erc20Token,
-            id: assetId,
-            balance,
-          } satisfies RestakeAsset;
+        if (metadata === undefined) {
+          return [];
         }
+
+        return {
+          id: metadata.assetId,
+          name: metadata.name,
+          symbol: metadata.symbol,
+          decimals: metadata.decimals,
+          balance,
+        } satisfies RestakeAsset;
       },
     );
   }, [assets, delegatorInfo]);

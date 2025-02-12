@@ -6,60 +6,121 @@ import {
   type TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
-import { AmountFormatStyle } from '@webb-tools/webb-ui-components';
+import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import {
+  ExternalLinkIcon,
+  isEvmAddress,
+  Typography,
+} from '@webb-tools/webb-ui-components';
 import { Table } from '@webb-tools/webb-ui-components/components/Table';
 import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
+import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@webb-tools/webb-ui-components/utils/formatDisplayAmount';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import TokenAmountCell from '../../tableCells/TokenAmountCell';
 import type { Props, VaultAssetData } from './types';
 
 const COLUMN_HELPER = createColumnHelper<VaultAssetData>();
 
-const COLUMNS = [
+const getColumns = (evmExplorerUrl?: string) => [
   COLUMN_HELPER.accessor('id', {
-    header: () => 'Asset ID',
-    cell: (props) => props.getValue(),
+    header: () => 'Asset',
+    cell: (props) => {
+      const assetId = props.row.original.id;
+
+      // Only EVM assets have an explorer URL
+      const href =
+        evmExplorerUrl && isEvmAddress(assetId)
+          ? makeExplorerUrl(evmExplorerUrl, assetId, 'address', 'web3')
+          : null;
+
+      return (
+        <p className="flex items-center gap-2">
+          <Typography
+            variant="body2"
+            className="dark:text-mono-0"
+            component="span"
+          >
+            {props.row.original.symbol}
+          </Typography>
+
+          {href && <ExternalLinkIcon href={href} />}
+        </p>
+      );
+    },
   }),
-  COLUMN_HELPER.accessor('symbol', {
-    header: () => 'Asset Symbol',
-    cell: (props) => props.getValue(),
+  COLUMN_HELPER.accessor('available', {
+    header: () => 'Available',
+    cell: (props) => {
+      const value = props.getValue();
+
+      if (BN.isBN(value)) {
+        return formatDisplayAmount(
+          value,
+          props.row.original.decimals,
+          AmountFormatStyle.SHORT,
+        );
+      }
+
+      return EMPTY_VALUE_PLACEHOLDER;
+    },
+  }),
+  COLUMN_HELPER.accessor('totalDeposits', {
+    header: () => 'Deposits',
+    cell: (props) => {
+      const value = props.getValue();
+
+      if (BN.isBN(value)) {
+        return formatDisplayAmount(
+          value,
+          props.row.original.decimals,
+          AmountFormatStyle.SHORT,
+        );
+      }
+
+      return EMPTY_VALUE_PLACEHOLDER;
+    },
   }),
   COLUMN_HELPER.accessor('tvl', {
     header: () => 'TVL',
-    cell: (props) => getTVLToDisplay(props.getValue()),
-  }),
-  COLUMN_HELPER.accessor('selfStake', {
-    header: () => 'My Stake',
-    cell: (props) => (
-      <TokenAmountCell
-        amount={new BN(props.getValue().toString())}
-        decimals={props.row.original.decimals}
-        formatStyle={AmountFormatStyle.SHORT}
-      />
-    ),
+    cell: (props) => {
+      const value = props.getValue();
+
+      if (BN.isBN(value)) {
+        return formatDisplayAmount(
+          value,
+          props.row.original.decimals,
+          AmountFormatStyle.SHORT,
+        );
+      }
+
+      return EMPTY_VALUE_PLACEHOLDER;
+    },
   }),
 ];
 
 const VaultAssetsTable: FC<Props> = ({ data, isShown }) => {
+  const evmExplorerUrl = useNetworkStore(
+    (store) => store.network.evmExplorerUrl,
+  );
+
   const table = useReactTable(
     useMemo(
       () =>
         ({
           data,
-          columns: COLUMNS,
+          columns: getColumns(evmExplorerUrl),
           getCoreRowModel: getCoreRowModel(),
           getSortedRowModel: getSortedRowModel(),
-          initialState: {
-            sorting: [{ id: 'tvl' satisfies keyof VaultAssetData, desc: true }],
-          },
           autoResetPageIndex: false,
           enableSortingRemoval: false,
         }) satisfies TableOptions<VaultAssetData>,
-      [data],
+      [data, evmExplorerUrl],
     ),
   );
 
@@ -68,7 +129,10 @@ const VaultAssetsTable: FC<Props> = ({ data, isShown }) => {
       variant={TableVariant.GLASS_INNER}
       tableProps={table}
       title={pluralize('asset', data.length !== 1)}
-      className={twMerge(isShown ? 'animate-slide-down' : 'animate-slide-up')}
+      className={twMerge(
+        isShown ? 'animate-slide-down' : 'animate-slide-up',
+        'bg-mono-20 dark:bg-mono-180 -mt-1',
+      )}
     />
   );
 };

@@ -99,10 +99,10 @@ export const Table = <T extends RowData>({
 
       return (eve: React.MouseEvent<HTMLTableRowElement>) => {
         eve.preventDefault();
-        onRowClick(row);
+        onRowClick(row, table);
       };
     },
-    [onRowClick],
+    [onRowClick, table],
   );
 
   return (
