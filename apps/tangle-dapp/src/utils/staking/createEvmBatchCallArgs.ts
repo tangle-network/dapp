@@ -4,12 +4,12 @@ import { Hex } from 'viem';
 
 type AbiBatchCallArgs = [EvmAddress[], bigint[], Hex[], bigint[]];
 
-function createEvmBatchCallArgs(callData: AbiBatchCall[]): AbiBatchCallArgs {
+function createEvmBatchCallArgs(calls: AbiBatchCall[]): AbiBatchCallArgs {
   return [
-    callData.map((call) => call.to),
-    callData.map((call) => BigInt(call.value)),
-    callData.map((call) => call.callData),
-    callData.map((call) => BigInt(call.gasLimit)),
+    calls.map((call) => call.to),
+    calls.map((call) => BigInt(call.value)),
+    calls.map((call) => call.callData),
+    calls.map((call) => BigInt(call.gasLimit)),
   ];
 }
 

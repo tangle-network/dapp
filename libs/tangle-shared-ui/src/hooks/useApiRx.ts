@@ -77,6 +77,8 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
       }
       // The factory is not yet ready to produce an observable.
       else if (factoryResult === null) {
+        reset();
+
         return;
       } else {
         observable = factoryResult;
