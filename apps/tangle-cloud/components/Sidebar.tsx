@@ -5,6 +5,7 @@ import CommandFillIcon from '@webb-tools/icons/CommandFillIcon';
 import { DocumentationIcon } from '@webb-tools/icons/DocumentationIcon';
 import GlobalLine from '@webb-tools/icons/GlobalLine';
 import { GridFillIcon } from '@webb-tools/icons/GridFillIcon';
+import { ServiceLine } from '@webb-tools/icons';
 import {
   Dropdown,
   DropdownBody,
@@ -17,6 +18,7 @@ import {
   SideBarFooterType,
   SideBarItemProps,
   SidebarTangleClosedIcon,
+  SideBarItem,
 } from '@webb-tools/webb-ui-components/components/SideBar';
 import { TangleCloudLogo } from '@webb-tools/webb-ui-components/components/TangleCloudLogo';
 import {
@@ -60,7 +62,14 @@ const SIDEBAR_ITEMS: SideBarItemProps[] = [
     Icon: GlobalLine,
     subItems: [],
   },
-
+  {
+    name: 'Account',
+    href: '/account',
+    isInternal: true,
+    isNext: true,
+    Icon: GlobalLine,
+    subItems: [],
+  },
   // External links
   {
     Icon: CommandFillIcon,
@@ -103,13 +112,6 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
         >
           Operate
         </DropdownMenuItem>
-        <DropdownMenuItem
-          isActive={role === Role.DEPLOYER}
-          onClick={() => setRole(Role.DEPLOYER)}
-          leftIcon={ROLE_ICON_MAP[Role.DEPLOYER]()}
-        >
-          Deploy
-        </DropdownMenuItem>
       </DropdownBody>
     </Dropdown>
   );
@@ -131,7 +133,6 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         className="hidden h-screen lg:block"
         isExpandedByDefault={isExpandedByDefault}
         onSideBarToggle={setSidebarCookieOnToggle}
-        ActionButton={ActionButton}
       />
 
       {/* Small screen sidebar */}
@@ -143,7 +144,6 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         logoLink={pathname}
         pathnameOrHash={pathname}
         className="fixed top-[34px] left-4 md:left-8 lg:hidden"
-        ActionButton={ActionButton}
       />
     </>
   );

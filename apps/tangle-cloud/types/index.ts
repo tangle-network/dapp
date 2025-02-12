@@ -4,6 +4,7 @@ export enum PagePath {
   HOME = '/',
   BLUEPRINTS = '/blueprints',
   OPERATORS = '/operators',
+  MY_SERVICES = '/account',
 }
 
 export enum TangleDAppPagePath {

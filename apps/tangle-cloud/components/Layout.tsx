@@ -24,18 +24,22 @@ const Layout: FC<PropsWithChildren<Props>> = ({
   isSidebarInitiallyExpanded,
 }) => {
   return (
-    <div className={`flex min-h-screen bg-body body-bg`}>
-      <Sidebar isExpandedByDefault={isSidebarInitiallyExpanded} />
+    <div className="flex min-h-screen bg-body body-bg">
+      <div className="fixed top-0 left-0 h-screen">
+        <Sidebar isExpandedByDefault={isSidebarInitiallyExpanded} />
+      </div>
 
-      <div className="flex flex-col flex-1 min-h-screen overflow-y-auto scrollbar-hide">
-        <main className="flex-1">{children}</main>
+      <div className="flex-1 ml-[240px]">
+        <div className="flex flex-col min-h-screen overflow-y-auto scrollbar-hide">
+          <main className="flex-1">{children}</main>
 
-        <Footer
-          socialsLinkOverrides={TANGLE_SOCIAL_URLS_RECORD}
-          bottomLinkOverrides={BOTTOM_LINK_OVERRIDES}
-          isMinimal
-          className="px-6 py-8"
-        />
+          <Footer
+            socialsLinkOverrides={TANGLE_SOCIAL_URLS_RECORD}
+            bottomLinkOverrides={BOTTOM_LINK_OVERRIDES}
+            isMinimal
+            className="px-6 py-8"
+          />
+        </div>
       </div>
     </div>
   );
