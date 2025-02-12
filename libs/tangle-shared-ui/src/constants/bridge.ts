@@ -1015,7 +1015,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       chainId: PresetTypedChainId.Base,
     },
     {
-      symbol: 'AVAIL',
+      symbol: 'Avail (Wormhole)',
       tokenType: 'AVAIL' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xe2C35423680D0F55F2C226dD75600826f66debA3'),
@@ -1135,7 +1135,7 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       ),
     },
     {
-      symbol: 'stAVAIL',
+      symbol: 'Staked Avail (Wormhole)',
       tokenType: 'stAVAIL' as EVMTokenEnum,
       bridgeType: EVMTokenBridgeEnum.Hyperlane,
       address: assertEvmAddress('0xcC1579deEE9Fd67B3F73EBA8CF2e113bcb59515C'),
@@ -1780,33 +1780,6 @@ export const HYPERLANE_CHAINS: ChainMap<ChainMetadata> = {
 export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
   tokens: [
     {
-      addressOrDenom: '0xe2C35423680D0F55F2C226dD75600826f66debA3',
-      chainName: 'base',
-      collateralAddressOrDenom: '0xd89d90d26B48940FA8F58385Fe84625d468E057a',
-      connections: [
-        {
-          token: 'ethereum|tangle|0x4b7c2a96d1E9f3D37F979A8c74e17d53473fbf40',
-        },
-      ],
-      decimals: 18,
-      name: 'Avail (Wormhole)',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'AVAIL',
-    },
-    {
-      addressOrDenom: '0x4b7c2a96d1E9f3D37F979A8c74e17d53473fbf40',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|base|0xe2C35423680D0F55F2C226dD75600826f66debA3',
-        },
-      ],
-      decimals: 18,
-      name: 'Avail (Wormhole)',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'AVAIL',
-    },
-    {
       addressOrDenom: '0x510b0140a4A5b12c7127fB0A6A946200d66a64C2',
       chainName: 'bsc',
       connections: [
@@ -2147,33 +2120,6 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       name: 'SolvBTC Babylon',
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'SolvBTC.BBN',
-    },
-    {
-      addressOrDenom: '0xcC1579deEE9Fd67B3F73EBA8CF2e113bcb59515C',
-      chainName: 'base',
-      collateralAddressOrDenom: '0x74cb668d23E6e54524e2E1e4d1c392F5fd611783',
-      connections: [
-        {
-          token: 'ethereum|tangle|0xb0b1cb358f4597838859edA7dac076ada0E8aA34',
-        },
-      ],
-      decimals: 18,
-      name: 'Staked Avail (Wormhole)',
-      standard: TokenStandard.EvmHypCollateral,
-      symbol: 'stAVAIL',
-    },
-    {
-      addressOrDenom: '0xb0b1cb358f4597838859edA7dac076ada0E8aA34',
-      chainName: 'tangle',
-      connections: [
-        {
-          token: 'ethereum|base|0xcC1579deEE9Fd67B3F73EBA8CF2e113bcb59515C',
-        },
-      ],
-      decimals: 18,
-      name: 'Staked Avail (Wormhole)',
-      standard: TokenStandard.EvmHypSynthetic,
-      symbol: 'stAVAIL',
     },
     {
       addressOrDenom: '0xd5c9FCfF2f362E89538E92e8B6e677571E11C1e7',
@@ -3777,6 +3723,60 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'mETH',
     },
+    {
+      addressOrDenom: '0xe2C35423680D0F55F2C226dD75600826f66debA3',
+      chainName: 'base',
+      collateralAddressOrDenom: '0xd89d90d26B48940FA8F58385Fe84625d468E057a',
+      connections: [
+        {
+          token: 'ethereum|tangle|0x4b7c2a96d1E9f3D37F979A8c74e17d53473fbf40',
+        },
+      ],
+      decimals: 18,
+      name: 'Avail (Wormhole)',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'AVAIL',
+    },
+    {
+      addressOrDenom: '0x4b7c2a96d1E9f3D37F979A8c74e17d53473fbf40',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|base|0xe2C35423680D0F55F2C226dD75600826f66debA3',
+        },
+      ],
+      decimals: 18,
+      name: 'Avail (Wormhole)',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'AVAIL',
+    },
+    {
+      addressOrDenom: '0xcC1579deEE9Fd67B3F73EBA8CF2e113bcb59515C',
+      chainName: 'base',
+      collateralAddressOrDenom: '0x74cb668d23E6e54524e2E1e4d1c392F5fd611783',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xb0b1cb358f4597838859edA7dac076ada0E8aA34',
+        },
+      ],
+      decimals: 18,
+      name: 'Staked Avail (Wormhole)',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'stAVAIL',
+    },
+    {
+      addressOrDenom: '0xb0b1cb358f4597838859edA7dac076ada0E8aA34',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|base|0xcC1579deEE9Fd67B3F73EBA8CF2e113bcb59515C',
+        },
+      ],
+      decimals: 18,
+      name: 'Staked Avail (Wormhole)',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'stAVAIL',
+    },
   ],
 };
 
@@ -3865,7 +3865,9 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'eETH/ethereum-tangle',
   'eBTC/ethereum-tangle',
   'AVAIL/ethereum-tangle',
+  'AVAIL/base-tangle',
   'stAVAIL/ethereum-tangle',
+  'stAVAIL/base-tangle',
   'ARB/arbitrum-tangle',
   'ARB/ethereum-tangle',
   'cbBTC/arbitrum-tangle',
