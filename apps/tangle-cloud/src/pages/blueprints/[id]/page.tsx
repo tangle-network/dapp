@@ -55,8 +55,13 @@ const Page = () => {
           Operators running {result.details.name}
         </Typography>
 
-        <OperatorsTable data={result.operators} />
+        <OperatorsTable
+          RestakeOperatorAction={RestakeOperatorAction}
+          data={result.operators}
+        />
       </div>
     </div>
   );
-}
+};
+
+export default Page;

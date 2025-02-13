@@ -12,12 +12,28 @@ import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import useRoleStore, { Role } from '../../stores/roleStore';
 import BlueprintListing from './BlueprintListing';
 import PricingModal from './PricingModal';
 import { PricingFormResult } from './PricingModal/types';
 import RegistrationReview from './RegistrationReview';
 
-export default function BlueprintsPage() {
+export const dynamic = 'force-static';
+
+const ROLE_TITLE = {
+  [Role.OPERATOR]: 'Register Your First Blueprint',
+  [Role.DEPLOYER]: 'Deploy Your First Blueprint',
+} satisfies Record<Role, string>;
+
+const ROLE_DESCRIPTION = {
+  [Role.OPERATOR]:
+    'Select a Blueprint, customize settings, and register your decentralized service in minutes.',
+  [Role.DEPLOYER]:
+    'Select a Blueprint, customize settings, and deploy your decentralized service instance in minutes.',
+} satisfies Record<Role, string>;
+
+const Page = () => {
+  const { role } = useRoleStore();
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
@@ -57,8 +73,8 @@ export default function BlueprintsPage() {
   return (
     <div className="space-y-5">
       <RestakeBanner
-        title="Register Your First Blueprint"
-        description="Select a Blueprint, customize settings, and register your decentralized service in minutes."
+        title={ROLE_TITLE[role]}
+        description={ROLE_DESCRIPTION[role]}
         buttonHref={BLUEPRINT_DOCS_LINK}
         buttonText="Get Started"
       />
@@ -112,4 +128,6 @@ export default function BlueprintsPage() {
       </Modal>
     </div>
   );
-}
+};
+
+export default Page;
