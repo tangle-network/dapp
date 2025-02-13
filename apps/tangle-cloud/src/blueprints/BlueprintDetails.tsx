@@ -6,31 +6,16 @@ import useBlueprintDetails from '@webb-tools/tangle-shared-ui/data/restake/useBl
 import { ErrorFallback } from '@webb-tools/webb-ui-components/components/ErrorFallback';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { PropsWithChildren } from 'react';
-import { TangleDAppPagePath } from '../../../types';
+import { useParams, Navigate } from 'react-router-dom';
+import { PagePath } from '../types';
 
-export const dynamic = 'force-static';
+export default function BlueprintDetails() {
+  const { id } = useParams<{ id: string }>();
+  const { result, isLoading, error } = useBlueprintDetails(id ?? '');
 
-const RestakeOperatorAction = ({
-  children,
-  address,
-}: PropsWithChildren<{ address: string }>) => {
-  return (
-    <Link
-      href={`${TangleDAppPagePath.RESTAKE_OPERATOR}/${address}`}
-      target="_blank"
-    >
-      {children}
-    </Link>
-  );
-};
-
-const Page = ({ params }: { params: { id: string } }) => {
-  const { id } = params;
-
-  const { result, isLoading, error } = useBlueprintDetails(id);
+  if (!id) {
+    return <Navigate to={PagePath.BLUEPRINTS} replace />;
+  }
 
   if (isLoading) {
     return (
@@ -47,7 +32,7 @@ const Page = ({ params }: { params: { id: string } }) => {
   } else if (error) {
     return <ErrorFallback title={error.name} />;
   } else if (result === null) {
-    notFound();
+    return <Navigate to={PagePath.BLUEPRINTS} replace />;
   }
 
   return (
@@ -59,13 +44,8 @@ const Page = ({ params }: { params: { id: string } }) => {
           Operators running {result.details.name}
         </Typography>
 
-        <OperatorsTable
-          RestakeOperatorAction={RestakeOperatorAction}
-          data={result.operators}
-        />
+        <OperatorsTable data={result.operators} />
       </div>
     </div>
   );
-};
-
-export default Page;
+}

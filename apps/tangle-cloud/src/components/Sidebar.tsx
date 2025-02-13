@@ -28,8 +28,7 @@ import cx from 'classnames';
 import capitalize from 'lodash/capitalize';
 import { usePathname } from 'next/navigation';
 import { FC, useMemo } from 'react';
-import useRoleStore, { Role, ROLE_ICON_MAP } from '../stores/roleStore';
-import { PagePath } from '../types';
+import { PagePath } from '../../types';
 
 type Props = {
   isExpandedByDefault?: boolean;
@@ -79,42 +78,6 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
   useNextThemesForThemeToggle: true,
 };
 
-const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
-  const { role, setRole } = useRoleStore();
-
-  const capitalizedRole = useMemo(() => capitalize(role), [role]);
-
-  return (
-    <Dropdown>
-      <DropdownButton
-        isFullWidth
-        size="sm"
-        icon={ROLE_ICON_MAP[role]({ size: 'lg' })}
-        hideChevron={!isExpanded}
-        label={isExpanded ? capitalizedRole : ''}
-        className={cx('min-w-0 mx-auto', !isExpanded && 'px-2 w-fit')}
-      />
-
-      <DropdownBody className="ml-2" side="right" align="center">
-        <DropdownMenuItem
-          isActive={role === Role.OPERATOR}
-          onClick={() => setRole(Role.OPERATOR)}
-          leftIcon={ROLE_ICON_MAP[Role.OPERATOR]()}
-        >
-          Operate
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          isActive={role === Role.DEPLOYER}
-          onClick={() => setRole(Role.DEPLOYER)}
-          leftIcon={ROLE_ICON_MAP[Role.DEPLOYER]()}
-        >
-          Deploy
-        </DropdownMenuItem>
-      </DropdownBody>
-    </Dropdown>
-  );
-};
-
 const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
   const pathname = usePathname();
 
@@ -131,7 +94,6 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         className="hidden h-screen lg:block"
         isExpandedByDefault={isExpandedByDefault}
         onSideBarToggle={setSidebarCookieOnToggle}
-        ActionButton={ActionButton}
       />
 
       {/* Small screen sidebar */}
@@ -143,7 +105,6 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         logoLink={pathname}
         pathnameOrHash={pathname}
         className="fixed top-[34px] left-4 md:left-8 lg:hidden"
-        ActionButton={ActionButton}
       />
     </>
   );

@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -11,33 +11,24 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "types": [
-      "jest",
-      "node"
-    ]
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js",
-    "**/*.jsx",
-    "../../apps/tangle-cloud/.next/types/**/*.ts",
-    "../../dist/apps/tangle-cloud/.next/types/**/*.ts",
-    "next-env.d.ts",
-    ".next/types/**/*.ts",
-    "../../types/global.d.ts",
-    "eslint.config.cjs",
-    "../../dist/apps/tangle-cloud/types/**/*.ts"
-  ],
+  "files": ["src/svg.d.ts"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "vite.config.ts"],
   "exclude": [
     "node_modules",
     "jest.config.ts",
-    "**/*.spec.ts",
-    "**/*.test.ts"
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
   ]
 }

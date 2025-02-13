@@ -1,49 +1,66 @@
 {
   "name": "tangle-cloud",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/tangle-cloud",
+  "sourceRoot": "apps/tangle-cloud/src",
   "projectType": "application",
-  "tags": [],
   "targets": {
     "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/tangle-cloud"
+      },
       "configurations": {
-        "development": {}
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
       }
     },
     "serve": {
+      "executor": "@nx/vite:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "port": 4300
+        "buildTarget": "tangle-cloud:build",
+        "skipLint": true
       },
       "configurations": {
-        "development": {},
-        "production": {}
+        "development": {
+          "buildTarget": "tangle-cloud:build:development",
+          "hmr": true
+        },
+        "production": {
+          "buildTarget": "tangle-cloud:build:production",
+          "hmr": false
+        }
       }
     },
-    "export": {
-      "executor": "@nx/next:export",
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "tangle-cloud:build:production"
+        "buildTarget": "tangle-cloud:build"
       }
     },
     "test": {
-      "inputs": [
-        "default",
-        "^production",
-        "{workspaceRoot}/jest.preset.js",
-        {
-          "externalDependencies": ["jest"]
-        }
-      ],
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "coverage": true
-        }
+        "passWithNoTests": true,
+        "reportsDirectory": "../../coverage/apps/tangle-cloud"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/tangle-cloud/**/*.{ts,tsx,js,jsx}"]
       }
     }
-  }
+  },
+  "tags": [],
+  "implicitDependencies": ["webb-ui-components", "tangle-shared-ui"]
 }
