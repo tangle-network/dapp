@@ -1,7 +1,5 @@
 import { PropsWithChildren } from 'react';
-import Header from '../components/Header';
-
-export const dynamic = 'force-static';
+import Header from '../../components/Header';
 
 const Layout = ({ children }: PropsWithChildren) => {
   return (

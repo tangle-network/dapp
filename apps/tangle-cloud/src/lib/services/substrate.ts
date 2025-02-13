@@ -1,30 +1,73 @@
-import { ApiPromise } from '@polkadot/api';
-import { Signer } from '@polkadot/api/types';
-import BaseServices, { EventHandlers, RegisterArgs } from './base';
+import type { ApiPromise } from '@polkadot/api';
+import type { Signer } from '@polkadot/types/types';
+import type { TxEventHandlers } from '@webb-tools/abstract-api-provider';
+import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
+import { signAndSendExtrinsic } from '@webb-tools/polkadot-api-provider';
+import { parseUnits } from 'viem';
+import BaseServices, { RegisterArgsType } from './base';
 
-export class SubstrateServices implements BaseServices {
+export class SubstrateServices extends BaseServices {
   constructor(
-    private readonly address: string,
-    private readonly signer: Signer,
-    private readonly api: ApiPromise,
-  ) {}
+    readonly activeAccount: string,
+    readonly signer: Signer,
+    readonly provider: ApiPromise,
+  ) {
+    super();
 
-  validateRegisterArgs() {
-    // TODO: Implement validation
+    this.provider.setSigner(this.signer);
   }
 
-  async register(args: RegisterArgs, eventHandlers: EventHandlers) {
-    try {
-      eventHandlers?.onRegister?.onTxSending?.();
+  register = async (
+    args: RegisterArgsType,
+    eventHandlers?: Partial<{
+      onPreRegister: Partial<TxEventHandlers<RegisterArgsType>>;
+      onRegister: Partial<TxEventHandlers<RegisterArgsType>>;
+    }>,
+  ): Promise<void> => {
+    const { blueprintIds, preferences, registrationArgs, amount } = args;
 
-      // TODO: Implement Substrate registration logic
+    // TODO: Find a better way to get the chain decimals
+    const decimals =
+      this.provider.registry.chainDecimals.length > 0
+        ? this.provider.registry.chainDecimals[0]
+        : TANGLE_TOKEN_DECIMALS;
 
-      eventHandlers?.onRegister?.onTxSuccess?.();
-    } catch (error) {
-      eventHandlers?.onRegister?.onTxFailed?.(
-        error instanceof Error ? error.message : 'Unknown error',
-        args,
-      );
+    this.validateRegisterArgs(args);
+
+    const preRegisterExtrinsic = this.provider.tx.utility.batch(
+      blueprintIds.map((blueprintId) => {
+        return this.provider.tx.services.preRegister(blueprintId);
+      }),
+    );
+
+    const preRegisterTxHash = await signAndSendExtrinsic(
+      this.activeAccount,
+      preRegisterExtrinsic,
+      args,
+      eventHandlers?.onPreRegister,
+    );
+
+    // Pre-register transaction failed
+    if (preRegisterTxHash === null) {
+      return;
     }
-  }
+
+    const registerExtrinsic = this.provider.tx.utility.batch(
+      blueprintIds.map((blueprintId, idx) => {
+        return this.provider.tx.services.register(
+          blueprintId,
+          preferences[idx],
+          registrationArgs[idx],
+          parseUnits(amount[idx], decimals),
+        );
+      }),
+    );
+
+    await signAndSendExtrinsic(
+      this.activeAccount,
+      registerExtrinsic,
+      args,
+      eventHandlers?.onRegister,
+    );
+  };
 }

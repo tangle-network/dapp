@@ -1,34 +1,21 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "allowJs": true,
-    "esModuleInterop": true,
+    "allowJs": false,
+    "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "incremental": true,
-    "moduleResolution": "bundler",
-    "types": ["node"],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "types": ["vite/client", "vitest"]
   },
-  "files": ["src/svg.d.ts"],
-  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "vite.config.ts"],
-  "exclude": [
-    "node_modules",
-    "jest.config.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts"
-  ],
+  "files": [],
+  "include": [],
   "references": [
     {
-      "path": "./tsconfig.node.json"
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
     }
-  ]
+  ],
+  "extends": "../../tsconfig.base.json"
 }
