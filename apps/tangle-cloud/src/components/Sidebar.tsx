@@ -76,7 +76,6 @@ const SIDEBAR_FOOTER: SideBarFooterType = {
   href: TANGLE_DOCS_URL,
   isInternal: false,
   name: 'Docs',
-  useNextThemesForThemeToggle: true,
 };
 
 const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {

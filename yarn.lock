@@ -12238,6 +12238,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@remix-run/router@npm:1.6.2":
+  version: 1.6.2
+  resolution: "@remix-run/router@npm:1.6.2"
+  checksum: 10c0/73da6884e53873e4290abb3978373cafc3f351994273b0663eda5e12c81cb427fc6fe4df1924569d9a214f701d0106cf37122455951e0239d7e6fa35071df558
+  languageName: node
+  linkType: hard
+
 "@repeaterjs/repeater@npm:^3.0.4, @repeaterjs/repeater@npm:^3.0.6":
   version: 3.0.6
   resolution: "@repeaterjs/repeater@npm:3.0.6"
@@ -33940,6 +33947,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-router-dom@npm:6.11.2":
+  version: 6.11.2
+  resolution: "react-router-dom@npm:6.11.2"
+  dependencies:
+    "@remix-run/router": "npm:1.6.2"
+    react-router: "npm:6.11.2"
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: 10c0/be7433bc290e56c0dd3e1008d53a76cc9866bf460980658501880876420086f11810ec3355a3abcd79ac537d6a1351eda009fade841c266456d0e8df60967b76
+  languageName: node
+  linkType: hard
+
+"react-router@npm:6.11.2":
+  version: 6.11.2
+  resolution: "react-router@npm:6.11.2"
+  dependencies:
+    "@remix-run/router": "npm:1.6.2"
+  peerDependencies:
+    react: ">=16.8"
+  checksum: 10c0/a437606078d6096a6dfa322adf80d00ce153f20cd470ad888088c8da99f44477b963425c53f5461a540b909fc274154292ed80d636482dcdc58a423915ca1433
+  languageName: node
+  linkType: hard
+
 "react-router@npm:^7.0.2":
   version: 7.0.2
   resolution: "react-router@npm:7.0.2"
@@ -39394,6 +39425,7 @@ __metadata:
     eslint-config-next: "npm:^14.2.20"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-import-resolver-typescript: "npm:^3.7.0"
+    eslint-plugin-import: "npm:2.31.0"
     eslint-plugin-import-x: "npm:^4.5.1"
     eslint-plugin-jsx-a11y: "npm:6.10.2"
     eslint-plugin-react: "npm:7.37.2"
@@ -39429,6 +39461,7 @@ __metadata:
     react-hook-form: "npm:^7.54.1"
     react-is: "npm:^18.3.1"
     react-router: "npm:^7.0.2"
+    react-router-dom: "npm:6.11.2"
     react-syntax-highlighter: "npm:^15.6.1"
     recharts: "npm:^2.15.0"
     rollup: "npm:^4.28.1"

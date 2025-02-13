@@ -23,7 +23,6 @@ import {
 import { Label } from '@webb-tools/webb-ui-components/components/Label';
 import { TextField } from '@webb-tools/webb-ui-components/components/TextField';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
 import useServicesTransactions from '../../../hooks/useServicesTransactions';
 import { PricingFormResult, PricingType } from '../PricingModal/types';
@@ -184,13 +183,12 @@ export default function RegistrationReview({
               <AccordionButtonBase asChild>
                 <div className="flex w-full gap-1">
                   {blueprint.imgUrl && (
-                    <Image
+                    <img
                       src={blueprint.imgUrl}
                       width={48}
                       height={48}
                       alt={blueprint.name}
                       className="flex-shrink-0 bg-center rounded-full"
-                      fill={false}
                     />
                   )}
 

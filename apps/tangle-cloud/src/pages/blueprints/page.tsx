@@ -1,5 +1,3 @@
-'use client';
-
 import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { RowSelectionState } from '@tanstack/table-core';
 import RestakeBanner from '@webb-tools/tangle-shared-ui/components/blueprints/RestakeBanner';
