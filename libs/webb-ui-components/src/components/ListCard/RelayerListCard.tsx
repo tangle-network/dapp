@@ -1,10 +1,10 @@
-import { ExternalLinkLine, Search } from '@webb-tools/icons';
+import { ExternalLinkLine, Search } from '@tangle-network/icons';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { Typography } from '../../typography';
 import { shortenString } from '../../utils';
 
-import { getFlexBasic } from '@webb-tools/icons/utils';
+import { getFlexBasic } from '@tangle-network/icons/utils';
 import { Avatar } from '../Avatar';
 import { Input } from '../Input';
 import { RadioGroup, RadioItem } from '../Radio';

@@ -1,6 +1,6 @@
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { ButtonProps } from '@webb-tools/webb-ui-components/components/buttons/types';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
+import { ButtonProps } from '@tangle-network/webb-ui-components/components/buttons/types';
+import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
 import { ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 

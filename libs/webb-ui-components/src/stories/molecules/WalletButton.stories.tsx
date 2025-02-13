@@ -1,7 +1,7 @@
 import { randEthereumAddress } from '@ngneat/falso';
 import type { Meta, StoryObj } from '@storybook/react';
-import { walletsConfig } from '@webb-tools/dapp-config/wallets/wallets-config';
-import { WalletId } from '@webb-tools/dapp-types/WalletId';
+import { walletsConfig } from '@tangle-network/dapp-config/wallets/wallets-config';
+import { WalletId } from '@tangle-network/dapp-types/WalletId';
 import WalletButton from '../../components/buttons/WalletButton';
 
 const meta: Meta<typeof WalletButton> = {

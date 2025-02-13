@@ -7,9 +7,12 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { AddCircleLineIcon, SubtractCircleLineIcon } from '@webb-tools/icons';
-import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import {
+  AddCircleLineIcon,
+  SubtractCircleLineIcon,
+} from '@tangle-network/icons';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import {
   ActionsDropdown,
   AmountFormatStyle,
@@ -21,11 +24,11 @@ import {
   TooltipBody,
   TooltipTrigger,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { ActionItemType } from '@webb-tools/webb-ui-components/components/ActionsDropdown/types';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+} from '@tangle-network/webb-ui-components';
+import { ActionItemType } from '@tangle-network/webb-ui-components/components/ActionsDropdown/types';
+import { TableVariant } from '@tangle-network/webb-ui-components/components/Table/types';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
+import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
 import assert from 'assert';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';

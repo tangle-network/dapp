@@ -1,9 +1,9 @@
-import BlueprintHeader from '@webb-tools/tangle-shared-ui/components/blueprints/BlueprintHeader';
-import OperatorsTable from '@webb-tools/tangle-shared-ui/components/tables/Operators';
-import useBlueprintDetails from '@webb-tools/tangle-shared-ui/data/restake/useBlueprintDetails';
-import { ErrorFallback } from '@webb-tools/webb-ui-components/components/ErrorFallback';
-import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import BlueprintHeader from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintHeader';
+import OperatorsTable from '@tangle-network/tangle-shared-ui/components/tables/Operators';
+import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/useBlueprintDetails';
+import { ErrorFallback } from '@tangle-network/webb-ui-components/components/ErrorFallback';
+import SkeletonLoader from '@tangle-network/webb-ui-components/components/SkeletonLoader';
+import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
 import { FC } from 'react';
 import { useParams } from 'react-router';
 

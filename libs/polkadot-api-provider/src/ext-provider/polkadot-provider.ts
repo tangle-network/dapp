@@ -1,4 +1,4 @@
-// Copyright 2024 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
@@ -7,11 +7,11 @@ import {
   InjectedExtension,
   MetadataDef,
 } from '@polkadot/extension-inject/types';
-import { LoggerService } from '@webb-tools/browser-utils';
-import { Wallet } from '@webb-tools/dapp-config';
-import findSubstrateWallet from '@webb-tools/dapp-config/utils/findSubstrateWallet';
-import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
-import { EventBus } from '@webb-tools/dapp-types/EventBus';
+import { LoggerService } from '@tangle-network/browser-utils';
+import { Wallet } from '@tangle-network/dapp-config';
+import findSubstrateWallet from '@tangle-network/dapp-config/utils/findSubstrateWallet';
+import WalletNotInstalledError from '@tangle-network/dapp-types/errors/WalletNotInstalledError';
+import { EventBus } from '@tangle-network/dapp-types/EventBus';
 import lodash from 'lodash';
 import { isValidAddress } from './is-valid-address';
 import { PolkadotAccount, PolkadotAccounts } from './polkadot-accounts';

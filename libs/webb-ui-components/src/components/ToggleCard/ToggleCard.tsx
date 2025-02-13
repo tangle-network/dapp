@@ -1,4 +1,4 @@
-import { getFlexBasic } from '@webb-tools/icons/utils';
+import { getFlexBasic } from '@tangle-network/icons/utils';
 import { cloneElement, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';

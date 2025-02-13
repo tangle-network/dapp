@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react';
-import type { IconBase } from '@webb-tools/icons/types';
+import type { IconBase } from '@tangle-network/icons/types';
 import { InternalOrExternalLink } from '../Navbar/InternalOrExternalLink';
 
 export type WebsiteType = 'webb' | 'tangle';

@@ -1,7 +1,7 @@
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
-import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
-import { isEvmAddress } from '@webb-tools/webb-ui-components/utils/isEvmAddress20';
+import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
+import { isEvmAddress } from '@tangle-network/webb-ui-components/utils/isEvmAddress20';
 import { useCallback } from 'react';
 import { zeroAddress } from 'viem';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';

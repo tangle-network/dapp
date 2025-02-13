@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import useVestingInfo from '../../data/vesting/useVestingInfo';
 import useApi from '../../hooks/useApi';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import getBlockDate from '../../utils/getBlockDate';
 import calculateTimeRemaining from '../../utils/calculateTimeRemaining';
 import { BalanceLockRow } from '.';
 import { LockUnlocksAtKind, SubstrateLockId } from '../../constants';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+import addCommasToNumber from '@tangle-network/webb-ui-components/utils/addCommasToNumber';
 import { sortVestingSchedulesAscending } from '../BalancesTableContainer/LockedBalanceDetails/utils';
 
 const useVestingLockRows = (): BalanceLockRow[] | null => {

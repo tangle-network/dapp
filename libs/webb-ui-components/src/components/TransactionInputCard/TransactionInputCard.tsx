@@ -1,6 +1,6 @@
 'use client';
 
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { chainsConfig } from '@tangle-network/dapp-config/chains/chain-config';
 import {
   ChainIcon,
   ChevronDown,
@@ -8,7 +8,7 @@ import {
   ShieldKeyholeLineIcon,
   WalletFillIcon,
   WalletLineIcon,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import {
   type ElementType,
   type ForwardedRef,

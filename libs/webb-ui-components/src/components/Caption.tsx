@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Typography } from '../typography';
-import { ArrowRightUp } from '@webb-tools/icons';
+import { ArrowRightUp } from '@tangle-network/icons';
 
 export type CaptionProps = {
   children: string | string[];

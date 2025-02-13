@@ -1,4 +1,4 @@
-import { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
+import { StatusIndicatorProps } from '@tangle-network/icons/StatusIndicator/types';
 import { Decimal } from 'decimal.js';
 
 import { PropsOf, TokenType } from '../../types';

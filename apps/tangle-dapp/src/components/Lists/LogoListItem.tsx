@@ -1,7 +1,7 @@
 import {
   EMPTY_VALUE_PLACEHOLDER,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { FC, ReactNode } from 'react';
 
 type Props = {

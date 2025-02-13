@@ -12,8 +12,8 @@ import {
   type TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import { Search } from '@webb-tools/icons';
-import { sortByAddressOrIdentity } from '@webb-tools/tangle-shared-ui/components/tables/utils';
+import { Search } from '@tangle-network/icons';
+import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/components/tables/utils';
 import {
   AmountFormatStyle,
   Avatar,
@@ -24,10 +24,10 @@ import {
   shortenString,
   Table,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
+} from '@tangle-network/webb-ui-components';
+import { TableVariant } from '@tangle-network/webb-ui-components/components/Table/types';
+import formatPercentage from '@tangle-network/webb-ui-components/utils/formatPercentage';
+import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
 import cx from 'classnames';
 import {
   FC,
@@ -45,11 +45,11 @@ import { Validator } from '../types';
 import calculateCommission from '../utils/calculateCommission';
 import { HeaderCell } from './tableCells';
 import TokenAmountCell from './tableCells/TokenAmountCell';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
-import SkeletonRows from '@webb-tools/tangle-shared-ui/components/SkeletonRows';
+import addCommasToNumber from '@tangle-network/webb-ui-components/utils/addCommasToNumber';
+import SkeletonRows from '@tangle-network/tangle-shared-ui/components/SkeletonRows';
 import sortByBn from '../utils/sortByBn';
 import filterTableRowBy from '../utils/filterTableRowBy';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
 
 type Props = {
   allValidators: Validator[];

@@ -10,18 +10,18 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChevronUp } from '@webb-tools/icons';
-import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
-import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
+import { ChevronUp } from '@tangle-network/icons';
+import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
+import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import {
   AmountFormatStyle,
   Button,
   formatDisplayAmount,
   Table,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+} from '@tangle-network/webb-ui-components';
+import { TableVariant } from '@tangle-network/webb-ui-components/components/Table/types';
+import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 

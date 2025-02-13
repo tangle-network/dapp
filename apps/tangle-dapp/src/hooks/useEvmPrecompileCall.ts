@@ -1,6 +1,6 @@
 import { HexString } from '@polkadot/util/types';
-import { PromiseOrT } from '@webb-tools/abstract-api-provider';
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import { PromiseOrT } from '@tangle-network/abstract-api-provider';
+import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
 import { useCallback, useState } from 'react';
 import type { AbiFunction, Hex } from 'viem';
 import {
@@ -17,7 +17,7 @@ import {
 } from '../constants/evmPrecompiles';
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
-import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
+import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
 import useEvmTxRelayer, { isEvmTxRelayerEligible } from './useEvmTxRelayer';
 import useIsEvmTxRelayerCandidate from './useIsEvmTxRelayerCandidate';
 

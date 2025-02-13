@@ -1,5 +1,5 @@
-import { DEFAULT_FLAGS_WAITING } from '@webb-tools/dapp-config';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import { DEFAULT_FLAGS_WAITING } from '@tangle-network/dapp-config';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 

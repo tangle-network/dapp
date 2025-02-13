@@ -1,5 +1,5 @@
-import { SparklingIcon } from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { SparklingIcon } from '@tangle-network/icons';
+import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

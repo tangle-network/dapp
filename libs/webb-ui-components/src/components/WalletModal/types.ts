@@ -1,8 +1,8 @@
-import { ApiConfig, WalletConfig } from '@webb-tools/dapp-config';
+import { ApiConfig, WalletConfig } from '@tangle-network/dapp-config';
 import { notificationApi } from '../Notification';
 import { PropsOf } from '../../types';
-import { WalletId, WebbError } from '@webb-tools/dapp-types';
-import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData';
+import { WalletId, WebbError } from '@tangle-network/dapp-types';
+import type { SupportedBrowsers } from '@tangle-network/browser-utils/platform/getPlatformMetaData';
 
 export interface WalletModalProps extends PropsOf<'div'> {
   /**

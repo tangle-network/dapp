@@ -1,7 +1,7 @@
 'use client';
 
 import { DoubleArrowLeftIcon } from '@radix-ui/react-icons';
-import { TangleIcon, WebbLogoIcon } from '@webb-tools/icons';
+import { TangleIcon, WebbLogoIcon } from '@tangle-network/icons';
 import cx from 'classnames';
 import { type FC, forwardRef, useCallback, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';

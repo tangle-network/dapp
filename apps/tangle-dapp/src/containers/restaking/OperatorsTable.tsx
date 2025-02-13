@@ -1,17 +1,17 @@
-import { AddLineIcon } from '@webb-tools/icons';
-import OperatorsTableUI from '@webb-tools/tangle-shared-ui/components/tables/Operators';
-import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
-import { RestakeOperator } from '@webb-tools/tangle-shared-ui/types';
-import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
-import delegationsToVaultTokens from '@webb-tools/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { AddLineIcon } from '@tangle-network/icons';
+import OperatorsTableUI from '@tangle-network/tangle-shared-ui/components/tables/Operators';
+import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import { RestakeOperator } from '@tangle-network/tangle-shared-ui/types';
+import type { OperatorMap } from '@tangle-network/tangle-shared-ui/types/restake';
+import delegationsToVaultTokens from '@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
+import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
 import {
   Modal,
   ModalTrigger,
-} from '@webb-tools/webb-ui-components/components/Modal';
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
+} from '@tangle-network/webb-ui-components/components/Modal';
+import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
 import {
   type ComponentProps,
   type FC,

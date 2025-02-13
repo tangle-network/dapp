@@ -1,11 +1,11 @@
-// Copyright 2024 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
 import {
   Account,
   AccountsAdapter,
   PromiseOrT,
-} from '@webb-tools/abstract-api-provider/account';
+} from '@tangle-network/abstract-api-provider/account';
 
 import {
   InjectedAccount,

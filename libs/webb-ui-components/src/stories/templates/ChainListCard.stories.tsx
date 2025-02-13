@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import { ChainType } from '@webb-tools/dapp-types/TypedChainId';
+import { chainsConfig } from '@tangle-network/dapp-config/chains/chain-config';
+import { PresetTypedChainId } from '@tangle-network/dapp-types';
+import { ChainType } from '@tangle-network/dapp-types/TypedChainId';
 import ChainListCard from '../../components/ListCard/ChainListCard';
 
 const meta: Meta<typeof ChainListCard> = {

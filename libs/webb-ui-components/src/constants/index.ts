@@ -1,7 +1,7 @@
 import {
   TANGLE_MAINNET_NATIVE_EXPLORER_URL,
   TANGLE_MAINNET_EVM_EXPLORER_URL,
-} from '@webb-tools/dapp-config/constants/tangle';
+} from '@tangle-network/dapp-config/constants/tangle';
 import {
   Common2Icon,
   DiscordFill,
@@ -10,8 +10,8 @@ import {
   TelegramFill,
   TwitterFill,
   YouTubeFill,
-} from '@webb-tools/icons';
-import type { IconBase } from '@webb-tools/icons/types';
+} from '@tangle-network/icons';
+import type { IconBase } from '@tangle-network/icons/types';
 import type { FooterNavsType, Link, SocialConfigsType } from '../types';
 
 /** TODO: Determine the best way to put thess configs to share across the project */
@@ -52,21 +52,21 @@ export const WEBB_BLOG_URL = 'https://blog.webb.tools';
 
 export const WEBB_WHITEPAPER_URL = 'https://eprint.iacr.org/2023/260';
 export const TANGLE_WHITEPAPER_URL =
-  'https://github.com/webb-tools/tangle/blob/main/Tangle_Network_Whitepaper_March282024.pdf';
+  'https://github.com/tangle-network/tangle/blob/main/Tangle_Network_Whitepaper_March282024.pdf';
 
 export const WEBB_CAREERS_URL = 'https://wellfound.com/company/webb-4/jobs';
 
 export const WEBB_DAPP_NEW_ISSUE_URL =
-  'https://github.com/webb-tools/webb-dapp/issues/new/choose';
+  'https://github.com/tangle-network/dapp/issues/new/choose';
 export const WEBB_FAUCET_URL = 'https://faucet.tangle.tools';
 export const WEBB_DISCORD_CHANNEL_URL =
   'https://discord.com/channels/833784453251596298/1183826417625075753';
 
 export const GITHUB_REQUEST_FEATURE_URL =
-  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=feature+%E2%9E%95&projects=&template=FEATURE_REQUEST.yml&title=%5BFEAT%5D+%3Ctitle%3E';
+  'https://github.com/tangle-network/dapp/issues/new?assignees=&labels=feature+%E2%9E%95&projects=&template=FEATURE_REQUEST.yml&title=%5BFEAT%5D+%3Ctitle%3E';
 
 export const GITHUB_BUG_REPORT_URL =
-  'https://github.com/webb-tools/webb-dapp/issues/new?assignees=&labels=bug+%F0%9F%AA%B2&projects=&template=BUG_REPORT.yml&title=%5BBUG%5D+%3Ctitle%3E';
+  'https://github.com/tangle-network/dapp/issues/new?assignees=&labels=bug+%F0%9F%AA%B2&projects=&template=BUG_REPORT.yml&title=%5BBUG%5D+%3Ctitle%3E';
 
 // TODO: remove this, only use in the old stats dapp
 export const POLKADOT_JS_EXPLORER_URL =
@@ -88,7 +88,7 @@ export const TANGLE_TESTNET_STAKING_URL =
   'https://polkadot.js.org/apps/?rpc=wss://testnet-rpc.tangle.tools#/staking';
 
 export const STAKING_PRECOMPILE_LINK =
-  'https://github.com/webb-tools/tangle/blob/main/precompiles/staking/StakingInterface.sol';
+  'https://github.com/tangle-network/tangle/blob/main/precompiles/staking/StakingInterface.sol';
 
 export const TANGLE_PRIVACY_POLICY_URL = new URL(
   '/privacy-policy',
@@ -151,7 +151,7 @@ export const WEBB_DOC_ROUTES_RECORD = {
   },
 } as const;
 
-export const WEBB_AVAILABLE_SOCIALS = [
+export const TANGLE_AVAILABLE_SOCIALS = [
   'telegram',
   'discord',
   'commonwealth',
@@ -162,15 +162,15 @@ export const WEBB_AVAILABLE_SOCIALS = [
 ] as const;
 
 export const SOCIAL_URLS_RECORD = {
-  telegram: 'https://t.me/webbprotocol',
+  telegram: 'https://t.me/tanglenet',
   discord: 'https://discord.com/invite/cv8EfJu3Tn',
-  commonwealth: 'https://commonwealth.im/webb',
+  commonwealth: 'https://commonwealth.im/tangle',
   linkedin: 'https://www.linkedin.com/company/webb-protocol',
-  twitter: 'https://twitter.com/webbprotocol',
-  github: 'https://github.com/webb-tools',
-  youTube: 'https://www.youtube.com/channel/UCDro1mNK9yHGQNDvFuucwVw',
+  twitter: 'https://twitter.com/tangle_network',
+  github: 'https://github.com/tangle-network',
+  youTube: 'https://www.youtube.com/@tanglenetwork',
 } as const satisfies {
-  [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: string;
+  [key in (typeof TANGLE_AVAILABLE_SOCIALS)[number]]: string;
 };
 
 export const TANGLE_SOCIAL_URLS_RECORD = {
@@ -180,7 +180,7 @@ export const TANGLE_SOCIAL_URLS_RECORD = {
   youTube: 'https://www.youtube.com/@TangleNetwork',
   github: TANGLE_GITHUB_URL,
 } as const satisfies Partial<{
-  [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: string;
+  [key in (typeof TANGLE_AVAILABLE_SOCIALS)[number]]: string;
 }>;
 
 export const SOCIAL_ICONS_RECORD = {
@@ -192,7 +192,7 @@ export const SOCIAL_ICONS_RECORD = {
   github: GithubFill,
   youTube: YouTubeFill,
 } as const satisfies {
-  [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: (
+  [key in (typeof TANGLE_AVAILABLE_SOCIALS)[number]]: (
     props: IconBase,
   ) => JSX.Element;
 };
@@ -287,7 +287,7 @@ export const bottomLinks = [
 ] as const;
 
 export const defaultSocialConfigs: SocialConfigsType[] =
-  WEBB_AVAILABLE_SOCIALS.map(
+  TANGLE_AVAILABLE_SOCIALS.map(
     (name) =>
       ({
         name,

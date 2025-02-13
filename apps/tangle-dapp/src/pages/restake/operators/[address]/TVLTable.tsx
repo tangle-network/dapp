@@ -1,7 +1,7 @@
 import type {
   DelegatorInfo,
   OperatorMetadata,
-} from '@webb-tools/tangle-shared-ui/types/restake';
+} from '@tangle-network/tangle-shared-ui/types/restake';
 import { type FC } from 'react';
 import VaultsTable from '../../../../components/tables/Vaults';
 import useVaultTableData from '../../../../hooks/useVaultTableData';

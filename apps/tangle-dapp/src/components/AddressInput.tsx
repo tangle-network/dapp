@@ -5,7 +5,7 @@ import {
   isEvmAddress,
   isSolanaAddress,
   isSubstrateAddress,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 

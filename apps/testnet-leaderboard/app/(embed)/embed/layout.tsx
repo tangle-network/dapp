@@ -1,4 +1,4 @@
-import '@webb-tools/webb-ui-components/tailwind.css';
+import '@tangle-network/webb-ui-components/tailwind.css';
 
 import Script from 'next/script';
 

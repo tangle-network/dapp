@@ -1,6 +1,6 @@
 import { formatNumber } from '@polkadot/util';
-import { DEFAULT_FLAGS_ELECTED } from '@webb-tools/dapp-config/constants/tangle';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import { DEFAULT_FLAGS_ELECTED } from '@tangle-network/dapp-config/constants/tangle';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { useCallback, useEffect, useState } from 'react';
 import { map } from 'rxjs';
 

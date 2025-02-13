@@ -2,7 +2,7 @@ import {
   ShieldKeyholeLineIcon,
   TokenIcon,
   WalletLineIcon,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import cx from 'classnames';
 import { MouseEvent, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';

@@ -1,11 +1,11 @@
-import { ExternalLinkLine } from '@webb-tools/icons';
-import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { ExternalLinkLine } from '@tangle-network/icons';
+import { Button, Typography } from '@tangle-network/webb-ui-components';
 import capitalize from 'lodash/capitalize';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';
 
 import { TxName } from '../constants';
-import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 const SUCCESS_TIMEOUT = 10_000;
 

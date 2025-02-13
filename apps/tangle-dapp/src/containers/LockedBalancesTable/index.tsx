@@ -14,18 +14,18 @@ import {
   InfoIconWithTooltip,
   Table,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+} from '@tangle-network/webb-ui-components';
+import { TableVariant } from '@tangle-network/webb-ui-components/components/Table/types';
+import addCommasToNumber from '@tangle-network/webb-ui-components/utils/addCommasToNumber';
 import { FC, useMemo, useState } from 'react';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import useLockRows from './useLockRows';
 import { BN } from '@polkadot/util';
 import { LockUnlocksAtKind, SubstrateLockId } from '../../constants';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import { CheckboxCircleFill } from '@webb-tools/icons';
-import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import { CheckboxCircleFill } from '@tangle-network/icons';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
 
 export type BalanceLockRow = {
   index?: number;

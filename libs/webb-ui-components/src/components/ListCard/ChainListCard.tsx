@@ -1,6 +1,6 @@
 'use client';
 
-import { ChainIcon, Search } from '@webb-tools/icons';
+import { ChainIcon, Search } from '@tangle-network/icons';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography';

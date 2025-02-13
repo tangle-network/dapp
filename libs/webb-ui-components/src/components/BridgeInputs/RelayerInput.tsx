@@ -1,4 +1,4 @@
-import { ChevronRight, Close, ExternalLinkLine } from '@webb-tools/icons';
+import { ChevronRight, Close, ExternalLinkLine } from '@tangle-network/icons';
 import { forwardRef } from 'react';
 import { Typography } from '../../typography/Typography';
 import { shortenString } from '../../utils/shortenString';

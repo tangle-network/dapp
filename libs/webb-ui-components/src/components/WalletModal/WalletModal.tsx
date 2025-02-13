@@ -4,7 +4,7 @@ import { FC, useCallback, useMemo } from 'react';
 import { Modal, ModalContent, ModalHeader } from '../Modal';
 import { WalletConnectionCard } from '../WalletConnectionCard';
 import { WalletModalProps } from './types';
-import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
+import WalletNotInstalledError from '@tangle-network/dapp-types/errors/WalletNotInstalledError';
 
 export const WalletModal: FC<WalletModalProps> = ({
   notificationApi,

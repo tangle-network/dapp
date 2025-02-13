@@ -1,4 +1,4 @@
-import { ArrowRight } from '@webb-tools/icons';
+import { ArrowRight } from '@tangle-network/icons';
 import type { Meta, StoryObj } from '@storybook/react';
 import Button from '../../components/buttons/Button';
 

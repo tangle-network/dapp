@@ -1,4 +1,4 @@
-import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
+import usePolkadotApi from '@tangle-network/tangle-shared-ui/hooks/usePolkadotApi';
 import { useMemo } from 'react';
 
 import getModuleConstant from '../../utils/getModuleConstant';

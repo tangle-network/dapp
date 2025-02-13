@@ -2,8 +2,8 @@ import {
   Link as LinkIcon,
   Mail as MailIcon,
   TwitterFill,
-} from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+} from '@tangle-network/icons';
+import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
 import type { ComponentProps, FC, PropsWithChildren } from 'react';
 
 import type { IdentityType } from './types';

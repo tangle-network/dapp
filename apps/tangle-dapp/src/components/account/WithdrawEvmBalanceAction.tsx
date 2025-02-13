@@ -1,8 +1,8 @@
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import RefundLineIcon from '@webb-tools/icons/RefundLineIcon';
-import Spinner from '@webb-tools/icons/Spinner';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { toEvmAddress } from '@webb-tools/webb-ui-components';
+import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
+import RefundLineIcon from '@tangle-network/icons/RefundLineIcon';
+import Spinner from '@tangle-network/icons/Spinner';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { toEvmAddress } from '@tangle-network/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
 import useEvmBalanceWithdrawTx from '../../data/balances/useEvmBalanceWithdrawTx';
@@ -10,7 +10,7 @@ import usePendingEvmBalance from '../../data/balances/usePendingEvmBalance';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
-import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 const WithdrawEvmBalanceAction: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();

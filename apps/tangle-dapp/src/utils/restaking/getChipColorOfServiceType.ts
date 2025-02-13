@@ -1,4 +1,4 @@
-import type { ChipColors } from '@webb-tools/webb-ui-components';
+import type { ChipColors } from '@tangle-network/webb-ui-components';
 
 import { RestakingService } from '../../types';
 

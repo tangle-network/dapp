@@ -1,4 +1,4 @@
-import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
+import SkeletonLoader from '@tangle-network/webb-ui-components/components/SkeletonLoader';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

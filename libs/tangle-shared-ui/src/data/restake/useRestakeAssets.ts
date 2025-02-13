@@ -1,4 +1,4 @@
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
+import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
 import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { mergeMap, switchMap } from 'rxjs';

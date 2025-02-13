@@ -1,6 +1,6 @@
 'use client';
 
-import { getFlexBasic } from '@webb-tools/icons/utils';
+import { getFlexBasic } from '@tangle-network/icons/utils';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 import ButtonSpinner from './ButtonSpinner';

@@ -1,8 +1,8 @@
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useLocalStorage, {
   LocalStorageKey,
-} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
+} from '@tangle-network/tangle-shared-ui/hooks/useLocalStorage';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { useEffect, useMemo, useState } from 'react';
 
 const usePayoutsAvailability = () => {

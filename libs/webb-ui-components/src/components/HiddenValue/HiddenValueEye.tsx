@@ -1,4 +1,4 @@
-import { EyeClosedLine, EyeLineIcon } from '@webb-tools/icons';
+import { EyeClosedLine, EyeLineIcon } from '@tangle-network/icons';
 import { type FC } from 'react';
 import { IconButton } from '../buttons';
 import { useHiddenValue } from '../../hooks';

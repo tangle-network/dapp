@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import { WalletFillIcon, WalletLineIcon } from '@webb-tools/icons';
+import { WalletFillIcon, WalletLineIcon } from '@tangle-network/icons';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
@@ -8,8 +8,8 @@ import {
   TooltipBody,
   TooltipTrigger,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 

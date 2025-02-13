@@ -1,5 +1,5 @@
-import { TxEventHandlers } from '@webb-tools/abstract-api-provider';
-import { PrimitiveField } from '@webb-tools/tangle-shared-ui/types/blueprint';
+import { TxEventHandlers } from '@tangle-network/abstract-api-provider';
+import { PrimitiveField } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import assert from 'assert';
 
 export type PreferenceType = {

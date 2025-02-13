@@ -1,6 +1,6 @@
 import { BN } from '@polkadot/util';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   AmountFormatStyle,
   Caption,
@@ -9,8 +9,8 @@ import {
   ModalContent,
   ModalFooterActions,
   ModalHeader,
-} from '@webb-tools/webb-ui-components';
-import { OPERATOR_JOIN_DOCS_LINK } from '@webb-tools/webb-ui-components/constants/tangleDocs';
+} from '@tangle-network/webb-ui-components';
+import { OPERATOR_JOIN_DOCS_LINK } from '@tangle-network/webb-ui-components/constants/tangleDocs';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import AmountInput from '../../components/AmountInput';
 import useBalances from '../../data/balances/useBalances';

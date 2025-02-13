@@ -1,4 +1,4 @@
-import { FileUploadLine } from '@webb-tools/icons';
+import { FileUploadLine } from '@tangle-network/icons';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { useDropzone, type Accept } from 'react-dropzone';

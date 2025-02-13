@@ -1,4 +1,4 @@
-import { FilterIcon, Search } from '@webb-tools/icons';
+import { FilterIcon, Search } from '@tangle-network/icons';
 import { Typography } from '../../typography';
 import { forwardRef } from 'react';
 

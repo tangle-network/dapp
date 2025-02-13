@@ -1,4 +1,4 @@
-import useIsMountedRef from '@webb-tools/webb-ui-components/hooks/useIsMountedRef';
+import useIsMountedRef from '@tangle-network/webb-ui-components/hooks/useIsMountedRef';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ensureError from '../utils/ensureError';
 

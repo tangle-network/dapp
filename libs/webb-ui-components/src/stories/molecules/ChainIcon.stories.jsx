@@ -1,4 +1,4 @@
-import { ChainIcon } from '@webb-tools/icons';
+import { ChainIcon } from '@tangle-network/icons';
 
 const Template = (args) => <ChainIcon {...args} />;
 

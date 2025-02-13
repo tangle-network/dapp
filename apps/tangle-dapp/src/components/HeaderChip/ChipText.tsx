@@ -1,6 +1,6 @@
-import { Typography } from '@webb-tools/webb-ui-components';
-import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+import { Typography } from '@tangle-network/webb-ui-components';
+import SkeletonLoader from '@tangle-network/webb-ui-components/components/SkeletonLoader';
+import addCommasToNumber from '@tangle-network/webb-ui-components/utils/addCommasToNumber';
 
 import dataHooks from './dataHooks';
 import type { HeaderChipItemProps } from './types';

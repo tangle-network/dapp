@@ -1,6 +1,6 @@
 import { Typography } from '../../typography';
-import { ChainIcon, ChevronDown, TokenIcon } from '@webb-tools/icons';
-import { getFlexBasic } from '@webb-tools/icons/utils';
+import { ChainIcon, ChevronDown, TokenIcon } from '@tangle-network/icons';
+import { getFlexBasic } from '@tangle-network/icons/utils';
 import cx from 'classnames';
 import { forwardRef, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';

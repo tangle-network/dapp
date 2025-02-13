@@ -1,11 +1,11 @@
-import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import type { Noop } from '@webb-tools/dapp-types/utils/types';
-import LockFillIcon from '@webb-tools/icons/LockFillIcon';
-import { LockLineIcon } from '@webb-tools/icons/LockLineIcon';
-import type { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
-import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
-import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
-import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
+import isDefined from '@tangle-network/dapp-types/utils/isDefined';
+import type { Noop } from '@tangle-network/dapp-types/utils/types';
+import LockFillIcon from '@tangle-network/icons/LockFillIcon';
+import { LockLineIcon } from '@tangle-network/icons/LockLineIcon';
+import type { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
+import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
+import type { TextFieldInputProps } from '@tangle-network/webb-ui-components/components/TextField/types';
+import { TransactionInputCard } from '@tangle-network/webb-ui-components/components/TransactionInputCard';
 import { FC, useCallback, useMemo, useRef } from 'react';
 import type {
   UseFormRegister,

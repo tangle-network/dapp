@@ -1,5 +1,5 @@
-import { SkeletonLoader } from '@webb-tools/webb-ui-components';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+import { SkeletonLoader } from '@tangle-network/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
 import { FC } from 'react';
 
 import { LsToken } from '../../../constants/liquidStaking/types';

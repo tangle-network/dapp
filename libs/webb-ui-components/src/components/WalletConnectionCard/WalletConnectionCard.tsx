@@ -1,7 +1,7 @@
 'use client';
 
-import { Wallet } from '@webb-tools/dapp-config';
-import { ArrowRightUp, Spinner, WalletLineIcon } from '@webb-tools/icons';
+import { Wallet } from '@tangle-network/dapp-config';
+import { ArrowRightUp, Spinner, WalletLineIcon } from '@tangle-network/icons';
 import { FC, cloneElement, forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { PropsOf } from '../../types';

@@ -7,8 +7,8 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { sortByAddressOrIdentity } from '@webb-tools/tangle-shared-ui/components/tables/utils';
-import { Nominee } from '@webb-tools/tangle-shared-ui/types';
+import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/components/tables/utils';
+import { Nominee } from '@tangle-network/tangle-shared-ui/types';
 import {
   AmountFormatStyle,
   Avatar,
@@ -18,14 +18,14 @@ import {
   shortenString,
   Table,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { FC, useState } from 'react';
 
 import calculateCommission from '../../utils/calculateCommission';
 import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
 import sortByBn from '../../utils/sortByBn';
 
 const COLUMN_HELPER = createColumnHelper<Nominee>();

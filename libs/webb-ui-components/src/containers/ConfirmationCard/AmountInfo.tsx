@@ -5,7 +5,7 @@ import {
   CornerDownRightLine,
   FileShieldLine,
   InformationLine,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import { EMPTY_VALUE_PLACEHOLDER } from '../../constants';
 
 interface AmountInfoProps {

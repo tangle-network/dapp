@@ -1,6 +1,6 @@
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ChainIcon, TokenIcon } from '@webb-tools/icons';
+import { ChainIcon, TokenIcon } from '@tangle-network/icons';
 
 import { IconWithTooltip } from '../IconWithTooltip';
 import { IconsGroupProps } from './types';

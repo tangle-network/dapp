@@ -1,4 +1,4 @@
-import { TANGLE_MKT_URL } from '@webb-tools/webb-ui-components/constants';
+import { TANGLE_MKT_URL } from '@tangle-network/webb-ui-components/constants';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ComponentProps, ElementRef, forwardRef } from 'react';

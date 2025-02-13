@@ -1,7 +1,7 @@
-import { Card, CardVariant } from '@webb-tools/webb-ui-components';
-import { Divider } from '@webb-tools/webb-ui-components/components/Divider';
-import { AppTemplate } from '@webb-tools/webb-ui-components/containers/AppTemplate';
-import FAQSection from '@webb-tools/webb-ui-components/containers/FAQSection';
+import { Card, CardVariant } from '@tangle-network/webb-ui-components';
+import { Divider } from '@tangle-network/webb-ui-components/components/Divider';
+import { AppTemplate } from '@tangle-network/webb-ui-components/containers/AppTemplate';
+import FAQSection from '@tangle-network/webb-ui-components/containers/FAQSection';
 import type { FC } from 'react';
 import { Outlet } from 'react-router';
 import faqItems from '../../constants/faq';

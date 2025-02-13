@@ -1,5 +1,5 @@
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import assert from 'assert';
 import { useCallback, useMemo } from 'react';
 

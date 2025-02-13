@@ -1,4 +1,4 @@
-import { IconSize } from '@webb-tools/icons/types';
+import { IconSize } from '@tangle-network/icons/types';
 
 /**
  * Get the className to handle horizontal spaces between the icons in pixel

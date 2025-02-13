@@ -1,4 +1,4 @@
-import { InformationLine } from '@webb-tools/icons';
+import { InformationLine } from '@tangle-network/icons';
 import {
   Chip,
   GITHUB_BUG_REPORT_URL,
@@ -6,7 +6,7 @@ import {
   InfoIconWithTooltip,
   SkeletonLoader,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 

@@ -7,8 +7,8 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { sortByAddressOrIdentity } from '@webb-tools/tangle-shared-ui/components/tables/utils';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/components/tables/utils';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   AmountFormatStyle,
   Avatar,
@@ -19,8 +19,8 @@ import {
   shortenString,
   Table,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+} from '@tangle-network/webb-ui-components';
+import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
 import { Link } from 'react-router';
 import { FC, useMemo, useState } from 'react';
 

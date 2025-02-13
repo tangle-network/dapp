@@ -1,5 +1,5 @@
-import type { PrimitiveFieldType } from '@webb-tools/tangle-shared-ui/types/blueprint';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import type { PrimitiveFieldType } from '@tangle-network/tangle-shared-ui/types/blueprint';
+import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
 import set from 'lodash/set';
 import { useCallback, useState } from 'react';
 import FieldTypeInput from './FieldTypeInput';

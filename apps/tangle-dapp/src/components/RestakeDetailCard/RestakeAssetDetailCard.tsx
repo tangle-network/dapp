@@ -1,6 +1,6 @@
-import { ArrowRightUp } from '@webb-tools/icons/ArrowRightUp';
-import { TokenIcon } from '@webb-tools/icons/TokenIcon';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import { ArrowRightUp } from '@tangle-network/icons/ArrowRightUp';
+import { TokenIcon } from '@tangle-network/icons/TokenIcon';
+import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
 
 import RestakeDetailCard from './index';
 import { getDisplayValue } from './utils';

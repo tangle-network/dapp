@@ -1,13 +1,13 @@
 import { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import {
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
   Network as TangleNetwork,
-} from '@webb-tools/webb-ui-components/constants/networks';
-import type { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+} from '@tangle-network/webb-ui-components/constants/networks';
+import type { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
 
 export type LsTangleNetworkId =
   | LsProtocolId.TANGLE_MAINNET

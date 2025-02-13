@@ -1,4 +1,4 @@
-import { ProhibitedLineIcon } from '@webb-tools/icons';
+import { ProhibitedLineIcon } from '@tangle-network/icons';
 import {
   Modal,
   ModalBody,
@@ -6,8 +6,8 @@ import {
   ModalFooterActions,
   ModalHeader,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/webb-ui-components';
+import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/webb-ui-components/constants';
 import { type FC, useCallback } from 'react';
 
 import useChillTx from '../data/staking/useChillTx';

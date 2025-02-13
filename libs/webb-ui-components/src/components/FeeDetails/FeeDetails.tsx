@@ -1,9 +1,9 @@
-import isPrimitive from '@webb-tools/dapp-types/utils/isPrimitive';
+import isPrimitive from '@tangle-network/dapp-types/utils/isPrimitive';
 import {
   ArrowDropDownFill,
   CornerDownRightLine,
   TokenIcon,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import cx from 'classnames';
 import { cloneElement, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';

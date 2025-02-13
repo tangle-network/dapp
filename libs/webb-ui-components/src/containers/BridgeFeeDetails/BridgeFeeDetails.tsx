@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 import FeeDetails from '../../components/FeeDetails';
 import { FeeItem } from '../../components/FeeDetails/types';
 import { BridgeFeeDetailsProps } from './types';
-import { GasStationFill } from '@webb-tools/icons';
+import { GasStationFill } from '@tangle-network/icons';
 
 /**
  * The BridgeFeeDetails component is used to display fees for a transaction.

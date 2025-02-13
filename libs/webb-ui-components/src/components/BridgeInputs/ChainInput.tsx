@@ -1,4 +1,4 @@
-import { ChainIcon } from '@webb-tools/icons';
+import { ChainIcon } from '@tangle-network/icons';
 import { forwardRef } from 'react';
 import { Typography } from '../../typography/Typography';
 import { Label } from '../Label';

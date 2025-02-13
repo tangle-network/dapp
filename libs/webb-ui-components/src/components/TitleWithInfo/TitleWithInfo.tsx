@@ -1,11 +1,11 @@
-import { InformationLine } from '@webb-tools/icons';
+import { InformationLine } from '@tangle-network/icons';
 import { Typography } from '../../typography';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { TitleWithInfoProps } from './types';
-import isPrimitive from '@webb-tools/dapp-types/utils/isPrimitive';
+import isPrimitive from '@tangle-network/dapp-types/utils/isPrimitive';
 
 /**
  * The re-useable title component with small info in a popup tooltip

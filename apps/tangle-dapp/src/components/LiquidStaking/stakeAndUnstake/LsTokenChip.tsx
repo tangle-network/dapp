@@ -1,5 +1,5 @@
-import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
-import { Typography } from '@webb-tools/webb-ui-components';
+import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
+import { Typography } from '@tangle-network/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
-import { ChevronDown } from '@webb-tools/icons/ChevronDown';
+import { ChevronDown } from '@tangle-network/icons/ChevronDown';
 import cx from 'classnames';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
 import { AmountMenu } from '../AmountMenu';

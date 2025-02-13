@@ -1,13 +1,13 @@
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { ChainConfig } from '@webb-tools/dapp-config';
-import { ChainIcon, Search } from '@webb-tools/icons';
+import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
+import { ChainConfig } from '@tangle-network/dapp-config';
+import { ChainIcon, Search } from '@tangle-network/icons';
 import {
   Chip,
   Input,
   ListItem,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
+} from '@tangle-network/webb-ui-components';
+import { ScrollArea } from '@tangle-network/webb-ui-components/components/ScrollArea';
 import { ComponentProps, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 

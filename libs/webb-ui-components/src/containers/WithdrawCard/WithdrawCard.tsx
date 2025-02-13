@@ -1,6 +1,6 @@
 'use client';
 
-import { InformationLine } from '@webb-tools/icons';
+import { InformationLine } from '@tangle-network/icons';
 import cx from 'classnames';
 import { FC, forwardRef, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';

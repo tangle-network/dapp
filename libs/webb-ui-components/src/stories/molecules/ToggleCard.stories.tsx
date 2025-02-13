@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import ToggleCard from '../../components/ToggleCard';
-import GasStationFill from '@webb-tools/icons/GasStationFill';
+import GasStationFill from '@tangle-network/icons/GasStationFill';
 
 const meta: Meta<typeof ToggleCard> = {
   title: 'Design System/Molecules/ToggleCard',

@@ -1,4 +1,4 @@
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
+import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // This file has been modified by Webb Technologies Inc.
 
-import { EventBus } from '@webb-tools/dapp-types/EventBus';
+import { EventBus } from '@tangle-network/dapp-types/EventBus';
 
 export type LogEvent = {
   log: {

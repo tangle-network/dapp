@@ -1,8 +1,8 @@
 import { Option, Vec } from '@polkadot/types';
 import { PalletVestingVestingInfo } from '@polkadot/types/lookup';
 import { BN, BN_ZERO } from '@polkadot/util';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 
 import { SubstrateLockId } from '../../constants/index';

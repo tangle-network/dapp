@@ -1,5 +1,5 @@
-import { SettingsFillIcon } from '@webb-tools/icons';
-import { Typography } from '@webb-tools/webb-ui-components';
+import { SettingsFillIcon } from '@tangle-network/icons';
+import { Typography } from '@tangle-network/webb-ui-components';
 import { FC } from 'react';
 
 import DropdownChevronIcon from '../../DropdownChevronIcon';

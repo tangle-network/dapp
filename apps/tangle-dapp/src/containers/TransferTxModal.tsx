@@ -1,6 +1,6 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   Alert,
   BridgeInputGroup,
@@ -13,8 +13,8 @@ import {
   ModalHeader,
   TxConfirmationRing,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/webb-ui-components';
+import { TANGLE_DOCS_URL } from '@tangle-network/webb-ui-components/constants';
 import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 
@@ -26,7 +26,7 @@ import useTransferTx from '../data/balances/useTransferTx';
 import { TxStatus } from '../hooks/useSubstrateTx';
 import formatTangleBalance from '../utils/formatTangleBalance';
 import { AddressType } from '../constants';
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 type Props = {
   isModalOpen: boolean;

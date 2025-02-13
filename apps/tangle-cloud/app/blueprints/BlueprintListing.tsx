@@ -1,8 +1,8 @@
 'use client';
 
 import { RowSelectionState } from '@tanstack/table-core';
-import BlueprintGallery from '@webb-tools/tangle-shared-ui/components/blueprints/BlueprintGallery';
-import useBlueprintListing from '@webb-tools/tangle-shared-ui/data/blueprints/useBlueprintListing';
+import BlueprintGallery from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery';
+import useBlueprintListing from '@tangle-network/tangle-shared-ui/data/blueprints/useBlueprintListing';
 import Image from 'next/image';
 import Link from 'next/link';
 import {

@@ -1,4 +1,4 @@
-import { InformationLine } from '@webb-tools/icons/InformationLine';
+import { InformationLine } from '@tangle-network/icons/InformationLine';
 import cx from 'classnames';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';

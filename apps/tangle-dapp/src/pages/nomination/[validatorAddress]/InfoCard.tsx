@@ -1,13 +1,13 @@
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   Avatar,
   Chip,
   CopyWithTooltip,
   ExternalLinkIcon,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+} from '@tangle-network/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
+import { shortenString } from '@tangle-network/webb-ui-components/utils/shortenString';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -15,7 +15,7 @@ import ValidatorSocials from '../../../components/ValidatorSocials';
 import useValidatorInfoCard from '../../../data/validatorDetails/useValidatorInfoCard';
 import ValueSkeleton from './ValueSkeleton';
 import { CardWithTangleLogo } from '../../../components';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
 
 interface InfoCardProps {
   validatorAddress: SubstrateAddress;

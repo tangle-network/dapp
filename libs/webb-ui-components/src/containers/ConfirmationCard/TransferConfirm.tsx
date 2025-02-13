@@ -1,4 +1,4 @@
-import { Close, FileShieldLine } from '@webb-tools/icons';
+import { Close, FileShieldLine } from '@tangle-network/icons';
 import { Decimal } from 'decimal.js';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';

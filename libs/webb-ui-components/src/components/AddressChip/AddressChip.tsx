@@ -1,8 +1,8 @@
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import WalletLineIcon from '@webb-tools/icons/WalletLineIcon';
-import ShieldKeyholeLineIcon from '@webb-tools/icons/ShieldKeyholeLineIcon';
+import WalletLineIcon from '@tangle-network/icons/WalletLineIcon';
+import ShieldKeyholeLineIcon from '@tangle-network/icons/ShieldKeyholeLineIcon';
 
 import { AddressChipProps } from './types';
 import { Typography } from '../../typography/Typography';

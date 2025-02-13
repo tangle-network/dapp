@@ -1,5 +1,5 @@
-import type { Wallet } from '@webb-tools/dapp-config';
-import type { WalletId } from '@webb-tools/dapp-types';
+import type { Wallet } from '@tangle-network/dapp-config';
+import type { WalletId } from '@tangle-network/dapp-types';
 import type { PropsOf } from '../../types';
 import type { ButtonProps } from '../buttons/types';
 

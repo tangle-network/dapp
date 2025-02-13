@@ -4,8 +4,8 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 
 import useEthersSigner from './useEthersSigner';
-import { isEvmAddress } from '@webb-tools/webb-ui-components';
-import { ROUTER_TRANSACTION_URL } from '@webb-tools/tangle-shared-ui/constants/bridge';
+import { isEvmAddress } from '@tangle-network/webb-ui-components';
+import { ROUTER_TRANSACTION_URL } from '@tangle-network/tangle-shared-ui/constants/bridge';
 
 interface RouterTransactionResponse {
   allowanceTo: string;

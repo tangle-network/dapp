@@ -1,4 +1,7 @@
-import { isEvmAddress, isTemplateBigInt } from '@webb-tools/webb-ui-components';
+import {
+  isEvmAddress,
+  isTemplateBigInt,
+} from '@tangle-network/webb-ui-components';
 import assert from 'assert';
 import { RestakeAssetId } from '../types';
 

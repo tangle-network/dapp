@@ -1,5 +1,5 @@
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
-import { ChainIcon } from '@webb-tools/icons/ChainIcon';
+import { chainsConfig } from '@tangle-network/dapp-config/chains/chain-config';
+import { ChainIcon } from '@tangle-network/icons/ChainIcon';
 import cx from 'classnames';
 import { forwardRef, useCallback } from 'react';
 

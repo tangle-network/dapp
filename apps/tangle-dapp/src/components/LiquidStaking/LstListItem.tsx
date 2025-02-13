@@ -5,10 +5,10 @@ import {
   EMPTY_VALUE_PLACEHOLDER,
   formatDisplayAmount,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { LsPool } from '../../constants/liquidStaking/types';
 import { LstIconSize } from './types';
-import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
+import formatPercentage from '@tangle-network/webb-ui-components/utils/formatPercentage';
 import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import LogoListItem from '../Lists/LogoListItem';
 

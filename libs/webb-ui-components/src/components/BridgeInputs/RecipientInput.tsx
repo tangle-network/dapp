@@ -1,6 +1,6 @@
 'use client';
 
-import { InformationLine } from '@webb-tools/icons/InformationLine';
+import { InformationLine } from '@tangle-network/icons/InformationLine';
 import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';

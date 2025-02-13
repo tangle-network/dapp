@@ -1,6 +1,6 @@
 'use client';
 
-import { Alert } from '@webb-tools/icons/Alert';
+import { Alert } from '@tangle-network/icons/Alert';
 import { useMemo, type FC } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import {

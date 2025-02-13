@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { TxProgressor } from '../../components/TxProgressor';
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
+import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
 import { randEthereumAddress } from '@ngneat/falso';
 import { Decimal } from 'decimal.js';
 

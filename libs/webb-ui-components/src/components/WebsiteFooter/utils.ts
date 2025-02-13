@@ -10,7 +10,7 @@ import {
   TANGLE_PRIVACY_POLICY_URL,
   TANGLE_TERMS_OF_SERVICE_URL,
   TANGLE_WHITEPAPER_URL,
-  WEBB_AVAILABLE_SOCIALS,
+  TANGLE_AVAILABLE_SOCIALS,
   WEBB_DOCS_URL,
   WEBB_CAREERS_URL,
   WEBB_MKT_URL,
@@ -129,10 +129,10 @@ export function getSocials(websiteType: WebsiteType) {
           twitter: TANGLE_TWITTER_URL,
           github: TANGLE_GITHUB_URL,
         } as const satisfies {
-          [key in (typeof WEBB_AVAILABLE_SOCIALS)[number]]: string;
+          [key in (typeof TANGLE_AVAILABLE_SOCIALS)[number]]: string;
         });
 
-  return WEBB_AVAILABLE_SOCIALS.map(
+  return TANGLE_AVAILABLE_SOCIALS.map(
     (name) =>
       ({
         name: capitalize(name),

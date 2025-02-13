@@ -9,11 +9,11 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { WalletPayIcon } from '@webb-tools/icons';
+import { WalletPayIcon } from '@tangle-network/icons';
 import {
   AddressWithIdentity,
   Payout,
-} from '@webb-tools/tangle-shared-ui/types';
+} from '@tangle-network/tangle-shared-ui/types';
 import {
   AmountFormatStyle,
   Avatar,
@@ -23,14 +23,14 @@ import {
   shortenString,
   Table,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+} from '@tangle-network/webb-ui-components';
+import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
 import { type FC, useState } from 'react';
 
 import { HeaderCell, StringCell } from './tableCells';
 import TokenAmountCell from './tableCells/TokenAmountCell';
 import sortByBn from '../utils/sortByBn';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
 import PayoutTxModal from '../containers/PayoutTxContainer';
 
 const COLUMN_HELPER = createColumnHelper<Payout>();

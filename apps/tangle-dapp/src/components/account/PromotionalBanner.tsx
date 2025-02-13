@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from 'react';
-import { Card, Typography } from '@webb-tools/webb-ui-components';
+import { Card, Typography } from '@tangle-network/webb-ui-components';
 import { twMerge } from 'tailwind-merge';
-import { ArrowRightUp } from '@webb-tools/icons';
+import { ArrowRightUp } from '@tangle-network/icons';
 
 interface CarouselSlide {
   title: string;

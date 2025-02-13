@@ -6,7 +6,7 @@ import {
   ModalFooterActions,
   ModalHeader,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import useLsSetCommissionTx from '../../data/liquidStaking/tangle/useLsSetCommissionTx';

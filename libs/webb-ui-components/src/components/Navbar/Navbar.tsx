@@ -6,7 +6,7 @@ import {
   ChevronDown,
   CloseCircleLineIcon,
   Menu,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import cx from 'classnames';
 import { FC, forwardRef, useMemo } from 'react';
 

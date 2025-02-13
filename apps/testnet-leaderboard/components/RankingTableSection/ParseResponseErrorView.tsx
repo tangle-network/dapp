@@ -1,8 +1,8 @@
 'use client';
 
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { GITHUB_BUG_REPORT_URL } from '@webb-tools/webb-ui-components/constants';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
+import { GITHUB_BUG_REPORT_URL } from '@tangle-network/webb-ui-components/constants';
+import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
 import type { FC } from 'react';
 
 type Props = {

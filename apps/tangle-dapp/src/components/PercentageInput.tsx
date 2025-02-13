@@ -1,6 +1,6 @@
-import BackspaceDeleteFillIcon from '@webb-tools/icons/BackspaceDeleteFillIcon';
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
-import { Button, Input } from '@webb-tools/webb-ui-components';
+import BackspaceDeleteFillIcon from '@tangle-network/icons/BackspaceDeleteFillIcon';
+import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
+import { Button, Input } from '@tangle-network/webb-ui-components';
 import { Decimal } from 'decimal.js';
 import { FC, useCallback } from 'react';
 

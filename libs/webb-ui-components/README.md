@@ -40,25 +40,25 @@ This component library can be used by external dApp developers for their own pro
 
 ### External Usage
 
-To make use of the library in your own project install `@webb-tools/webb-ui-components` with your package manager of choice:
+To make use of the library in your own project install `@tangle-network/webb-ui-components` with your package manager of choice:
 
 > NPM
 
 ```bash
-npm install @webb-tools/webb-ui-components
+npm install @tangle-network/webb-ui-components
 ```
 
 > Yarn
 
 ```bash
-yarn add @webb-tools/webb-ui-components
+yarn add @tangle-network/webb-ui-components
 ```
 
 Now that we have installed the component library we need to include `WebbUIProvider` in our React project and import the css styles file like so:
 
 ```js
-import { WebbUIProvider } from '@webb-tools/webb-ui-components';
-import '@webb-tools/webb-ui-components/index.css';
+import { WebbUIProvider } from '@tangle-network/webb-ui-components';
+import '@tangle-network/webb-ui-components/index.css';
 
 const App: FC = () => {
   return (
@@ -81,7 +81,7 @@ To make use of the tailwind classes for Webb's design system (e.g. colors, typos
 // tailwind.config.js
 
 /** @type {import('tailwindcss').Config} */
-const preset = require('@webb-tools/tailwind-preset');
+const preset = require('@tangle-network/tailwind-preset');
 
 module.exports = {
   presets: [preset],

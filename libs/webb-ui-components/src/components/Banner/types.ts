@@ -1,4 +1,4 @@
-import type { IconBase } from '@webb-tools/icons/types';
+import type { IconBase } from '@tangle-network/icons/types';
 import { PropsOf, WebbComponentBase } from '../../types';
 import { ComponentProps } from 'react';
 import type { Button } from '../buttons';

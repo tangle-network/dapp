@@ -1,26 +1,26 @@
 {
-  "name": "@webb-tools/webb-ui-components",
+  "name": "@tangle-network/webb-ui-components",
   "version": "0.0.3",
   "type": "module",
   "main": "./index.js",
   "types": "./src/index.d.ts",
-  "description": "Webb UI Component Library",
+  "description": "Tangle UI Component Library",
   "keywords": [
-    "webb",
-    "webb-tools",
+    "tangle",
+    "tangle-network",
     "webb-ui-components",
     "webb-ui",
     "webb-ui-library",
     "webb-ui-component-library",
     "dApp"
   ],
-  "homepage": "https://github.com/webb-tools/webb-dapp/tree/develop/libs/webb-ui-components#readme",
-  "bugs": "https://github.com/webb-tools/webb-dapp/issues/new/choose",
+  "homepage": "https://github.com/tangle-network/dapp/tree/develop/libs/webb-ui-components#readme",
+  "bugs": "https://github.com/tangle-network/dapp/issues/new/choose",
   "license": "Apache-2.0",
-  "author": "Webb Developers",
+  "author": "Tangle Developers",
   "repository": {
     "type": "git",
-    "url": "https://github.com/webb-tools/webb-dapp"
+    "url": "https://github.com/tangle-network/dapp"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

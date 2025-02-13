@@ -1,4 +1,4 @@
-import { TANGLE_DAPP_URL } from '@webb-tools/webb-ui-components/constants';
+import { TANGLE_DAPP_URL } from '@tangle-network/webb-ui-components/constants';
 
 const OPENGRAPH_IMAGES_BASE_URL = '/static/opengraph';
 

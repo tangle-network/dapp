@@ -1,6 +1,6 @@
 'use client';
 
-import { createIcon } from '@webb-tools/icons/create-icon';
+import { createIcon } from '@tangle-network/icons/create-icon';
 import { useMemo, useEffect, useState } from 'react';
 import { randNumber } from '@ngneat/falso';
 

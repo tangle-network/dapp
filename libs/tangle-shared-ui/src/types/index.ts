@@ -1,13 +1,13 @@
 import type { BN } from '@polkadot/util';
-import type { WebbProviderType } from '@webb-tools/abstract-api-provider/types';
+import type { WebbProviderType } from '@tangle-network/abstract-api-provider/types';
 import {
   EvmAddress,
   SolanaAddress,
   SubstrateAddress,
-} from '@webb-tools/webb-ui-components/types/address';
+} from '@tangle-network/webb-ui-components/types/address';
 
 import { u128 } from '@polkadot/types';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,

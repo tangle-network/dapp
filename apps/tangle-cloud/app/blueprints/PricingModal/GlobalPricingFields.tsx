@@ -1,4 +1,4 @@
-import { FormField } from '@webb-tools/webb-ui-components/components/form';
+import { FormField } from '@tangle-network/webb-ui-components/components/form';
 import type { Control } from 'react-hook-form';
 import inputs from './inputs';
 import InputsWrapper from './InputsWrapper';

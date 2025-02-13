@@ -1,5 +1,5 @@
 {
-  "name": "@webb-tools/browser-utils",
+  "name": "@tangle-network/browser-utils",
   "version": "0.0.1",
   "type": "module",
   "types": "./src/index.d.ts"

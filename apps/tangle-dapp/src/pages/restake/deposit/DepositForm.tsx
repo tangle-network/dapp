@@ -1,19 +1,19 @@
 import { BN } from '@polkadot/util';
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import { TokenIcon } from '@webb-tools/icons';
-import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
-import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
+import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
+import { PresetTypedChainId } from '@tangle-network/dapp-types';
+import isDefined from '@tangle-network/dapp-types/utils/isDefined';
+import { TokenIcon } from '@tangle-network/icons';
+import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
+import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import {
   AmountFormatStyle,
   Card,
   formatDisplayAmount,
   isEvmAddress,
   shortenHex,
-} from '@webb-tools/webb-ui-components';
-import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
+} from '@tangle-network/webb-ui-components';
+import { useModal } from '@tangle-network/webb-ui-components/hooks/useModal';
 import assert from 'assert';
 import {
   type ComponentProps,

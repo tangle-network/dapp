@@ -1,10 +1,10 @@
 import { DoubleArrowRightIcon } from '@radix-ui/react-icons';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
-import IconButton from '@webb-tools/webb-ui-components/components/buttons/IconButton';
+import IconButton from '@tangle-network/webb-ui-components/components/buttons/IconButton';
 import {
   Tooltip,
   TooltipBody,
-} from '@webb-tools/webb-ui-components/components/Tooltip';
+} from '@tangle-network/webb-ui-components/components/Tooltip';
 import type { ComponentProps, FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 

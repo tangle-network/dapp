@@ -1,4 +1,4 @@
-import { Close as CloseIcon } from '@webb-tools/icons';
+import { Close as CloseIcon } from '@tangle-network/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';

@@ -1,11 +1,11 @@
 import { encodeAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
-import { Account } from '@webb-tools/abstract-api-provider';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
-import { isEvmAddress } from '@webb-tools/webb-ui-components/utils/isEvmAddress20';
+import { Account } from '@tangle-network/abstract-api-provider';
+import { useWebContext } from '@tangle-network/api-provider-environment';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
+import { isEvmAddress } from '@tangle-network/webb-ui-components/utils/isEvmAddress20';
 import { useMemo } from 'react';
 
 export type WalletAccount = {

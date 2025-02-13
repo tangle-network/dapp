@@ -1,5 +1,5 @@
-import { TableStatusProps } from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
-import type { Table } from '@webb-tools/webb-ui-components/components/Table';
+import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import type { Table } from '@tangle-network/webb-ui-components/components/Table';
 import type { ComponentProps } from 'react';
 import type { VaultType } from '../../../utils/calculateVaults';
 

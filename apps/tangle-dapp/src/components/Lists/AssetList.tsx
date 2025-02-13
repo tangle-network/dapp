@@ -1,12 +1,12 @@
-import { ArrowRightUp, Search, TokenIcon } from '@webb-tools/icons';
+import { ArrowRightUp, Search, TokenIcon } from '@tangle-network/icons';
 import {
   Input,
   ListItem,
   shortenHex,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/webb-ui-components';
+import { ScrollArea } from '@tangle-network/webb-ui-components/components/ScrollArea';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
 import { ComponentProps, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Address } from 'viem';

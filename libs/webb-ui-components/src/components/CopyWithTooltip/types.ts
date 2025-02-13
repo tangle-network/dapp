@@ -1,4 +1,4 @@
-import { IconSize } from '@webb-tools/icons/types';
+import { IconSize } from '@tangle-network/icons/types';
 import { WebbComponentBase } from '../../types';
 
 /**

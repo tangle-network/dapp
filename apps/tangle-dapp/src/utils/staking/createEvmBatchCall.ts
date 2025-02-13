@@ -6,7 +6,7 @@ import {
   PrecompileAddress,
 } from '../../constants/evmPrecompiles';
 import { AbiBatchCall } from '../../hooks/useEvmPrecompileCall';
-import { assertEvmAddress } from '@webb-tools/webb-ui-components';
+import { assertEvmAddress } from '@tangle-network/webb-ui-components';
 
 const createEvmBatchCall = <
   Abi extends AbiFunction[],

@@ -1,4 +1,4 @@
-import type LoggerService from '@webb-tools/browser-utils/logger/LoggerService';
+import type LoggerService from '@tangle-network/browser-utils/logger/LoggerService';
 import type { ErrorInfo, ReactNode } from 'react';
 
 export interface WebbUIErrorBoundaryState {

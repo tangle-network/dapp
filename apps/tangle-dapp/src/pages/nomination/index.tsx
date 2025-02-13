@@ -1,4 +1,4 @@
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
 
 import { KeyStatsContainer } from '../../containers';
 import NominatorStatsContainer from '../../containers/NominatorStatsContainer';

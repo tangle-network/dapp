@@ -1,4 +1,4 @@
-import { Search } from '@webb-tools/icons';
+import { Search } from '@tangle-network/icons';
 import {
   Input,
   ListItem,
@@ -6,7 +6,7 @@ import {
   Modal,
   ModalContent,
   ModalHeader,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { useMemo, useState } from 'react';
 import SkeletonRows from './SkeletonRows';
 import { twMerge } from 'tailwind-merge';

@@ -1,6 +1,10 @@
-import isPrimitive from '@webb-tools/dapp-types/utils/isPrimitive';
-import { ChevronDown, ShieldedAssetIcon, TokenIcon } from '@webb-tools/icons';
-import { getFlexBasic } from '@webb-tools/icons/utils';
+import isPrimitive from '@tangle-network/dapp-types/utils/isPrimitive';
+import {
+  ChevronDown,
+  ShieldedAssetIcon,
+  TokenIcon,
+} from '@tangle-network/icons';
+import { getFlexBasic } from '@tangle-network/icons/utils';
 import cx from 'classnames';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';

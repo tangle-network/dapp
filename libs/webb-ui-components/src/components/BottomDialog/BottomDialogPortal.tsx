@@ -1,7 +1,7 @@
 'use client';
 
 import * as Dialog from '@radix-ui/react-dialog';
-import { Close } from '@webb-tools/icons/Close';
+import { Close } from '@tangle-network/icons/Close';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 

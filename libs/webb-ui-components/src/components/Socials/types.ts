@@ -1,4 +1,4 @@
-import { WEBB_AVAILABLE_SOCIALS } from '../../constants';
+import { TANGLE_AVAILABLE_SOCIALS } from '../../constants';
 import { PropsOf, SocialConfigsType } from '../../types';
 
 export type IconPlacement = 'start' | 'end' | 'center';
@@ -19,6 +19,6 @@ export interface SocialsProps extends PropsOf<'div'> {
   socialConfigs?: Array<SocialConfigsType>;
 
   linkOverrides?: Partial<
-    Record<(typeof WEBB_AVAILABLE_SOCIALS)[number], string>
+    Record<(typeof TANGLE_AVAILABLE_SOCIALS)[number], string>
   >;
 }

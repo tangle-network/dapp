@@ -1,25 +1,25 @@
 'use client';
 
 import { AccordionTrigger } from '@radix-ui/react-accordion';
-import { TANGLE_TESTNET_NATIVE_EXPLORER_URL } from '@webb-tools/dapp-config/constants/tangle';
-import { ArrowRight, ChevronDown, Menu } from '@webb-tools/icons';
+import { TANGLE_TESTNET_NATIVE_EXPLORER_URL } from '@tangle-network/dapp-config/constants/tangle';
+import { ArrowRight, ChevronDown, Menu } from '@tangle-network/icons';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
-} from '@webb-tools/webb-ui-components/components/Accordion';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+} from '@tangle-network/webb-ui-components/components/Accordion';
+import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
 import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
   DropdownMenuItem,
-} from '@webb-tools/webb-ui-components/components/Dropdown';
+} from '@tangle-network/webb-ui-components/components/Dropdown';
 import {
   TANGLE_MKT_URL,
   WEBB_BLOG_URL,
-} from '@webb-tools/webb-ui-components/constants';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+} from '@tangle-network/webb-ui-components/constants';
+import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
 import cx from 'classnames';
 import Link from 'next/link';
 import type { ComponentProps } from 'react';

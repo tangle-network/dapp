@@ -1,7 +1,7 @@
 'use client';
 
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
-import { ChevronDown, InformationLine } from '@webb-tools/icons';
+import { ChevronDown, InformationLine } from '@tangle-network/icons';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';

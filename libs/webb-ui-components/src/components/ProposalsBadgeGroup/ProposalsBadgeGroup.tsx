@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ProposalsBadgeGroupProps } from './types';
-import ProposalBadge from '@webb-tools/icons/ProposalBadge/ProposalBadge';
+import ProposalBadge from '@tangle-network/icons/ProposalBadge/ProposalBadge';
 import { Tooltip, TooltipTrigger, TooltipBody } from '../Tooltip';
 
 export const ProposalsBadgeGroup = forwardRef<

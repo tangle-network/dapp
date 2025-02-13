@@ -1,5 +1,5 @@
-import useSwitchNetwork from '@webb-tools/tangle-shared-ui/hooks/useSwitchNetwork';
-import { useWebbUI } from '@webb-tools/webb-ui-components';
+import useSwitchNetwork from '@tangle-network/tangle-shared-ui/hooks/useSwitchNetwork';
+import { useWebbUI } from '@tangle-network/webb-ui-components';
 import { useCallback } from 'react';
 
 import { LsNetworkId } from '../../../constants/liquidStaking/types';

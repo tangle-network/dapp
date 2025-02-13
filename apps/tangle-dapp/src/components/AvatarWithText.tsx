@@ -1,9 +1,9 @@
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { getFlexBasic } from '@webb-tools/icons/utils';
-import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+import { getFlexBasic } from '@tangle-network/icons/utils';
+import { Avatar } from '@tangle-network/webb-ui-components/components/Avatar';
+import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+import { shortenHex } from '@tangle-network/webb-ui-components/utils/shortenHex';
+import { shortenString } from '@tangle-network/webb-ui-components/utils/shortenString';
 import isEqual from 'lodash/isEqual';
 import { type ComponentProps, memo, type ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';

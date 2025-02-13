@@ -1,15 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { getHyperlaneWarpCore } from '../../lib/bridge/hyperlane/context';
-import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
+import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
 import {
   getHyperlaneChainName,
   tryFindToken,
 } from '../../lib/bridge/hyperlane/utils';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { fetchEvmTokenBalance } from './useBridgeEvmBalances';
-import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
-import { notificationApi } from '@webb-tools/webb-ui-components';
+import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
+import { notificationApi } from '@tangle-network/webb-ui-components';
 
 export type HyperlaneQuoteProps = {
   token: BridgeToken;

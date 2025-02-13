@@ -1,4 +1,4 @@
-import { CheckboxBlankCircleLine } from '@webb-tools/icons/CheckboxBlankCircleLine';
+import { CheckboxBlankCircleLine } from '@tangle-network/icons/CheckboxBlankCircleLine';
 import cx from 'classnames';
 import { cloneElement, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';

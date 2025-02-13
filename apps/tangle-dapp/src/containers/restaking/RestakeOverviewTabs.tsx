@@ -1,6 +1,6 @@
-import type { OperatorMap } from '@webb-tools/tangle-shared-ui/types/restake';
-import { TableAndChartTabs } from '@webb-tools/webb-ui-components/components/TableAndChartTabs';
-import { TabContent } from '@webb-tools/webb-ui-components/components/Tabs/TabContent';
+import type { OperatorMap } from '@tangle-network/tangle-shared-ui/types/restake';
+import { TableAndChartTabs } from '@tangle-network/webb-ui-components/components/TableAndChartTabs';
+import { TabContent } from '@tangle-network/webb-ui-components/components/Tabs/TabContent';
 import { type FC, ReactNode, useCallback, useState } from 'react';
 import { RestakeAction } from '../../constants';
 import BlueprintListing from '../../pages/blueprints/BlueprintListing';

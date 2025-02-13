@@ -1,7 +1,7 @@
 'use client';
 
 import { type FC, useState } from 'react';
-import { EyeLineIcon, EyeClosedLine } from '@webb-tools/icons';
+import { EyeLineIcon, EyeClosedLine } from '@tangle-network/icons';
 
 import { Typography } from '../../typography';
 import { CopyWithTooltip } from '../../components/CopyWithTooltip/CopyWithTooltip';

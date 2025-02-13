@@ -1,5 +1,5 @@
-import { isEvmAddress } from '@webb-tools/webb-ui-components';
-import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
+import { isEvmAddress } from '@tangle-network/webb-ui-components';
+import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
 import { RestakeAssetId } from '../types';
 
 export type AssetIdEnum =

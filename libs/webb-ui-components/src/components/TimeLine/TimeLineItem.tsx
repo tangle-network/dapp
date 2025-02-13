@@ -2,7 +2,7 @@ import {
   CheckboxCircleLine,
   ExternalLinkLine,
   Spinner,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import { Typography } from '../../typography';
 import { shortenHex } from '../../utils';
 import { formatRelative } from 'date-fns';

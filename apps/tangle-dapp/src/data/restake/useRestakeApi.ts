@@ -1,21 +1,21 @@
 import { useCallback, useMemo } from 'react';
 import RestakeSubstrateApi from './RestakeSubstrateApi';
-import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
+import usePolkadotApi from '@tangle-network/tangle-shared-ui/hooks/usePolkadotApi';
 import {
   assertEvmAddress,
   assertSubstrateAddress,
-} from '@webb-tools/webb-ui-components';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import useSubstrateInjectedExtension from '@webb-tools/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
+} from '@tangle-network/webb-ui-components';
+import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
+import useSubstrateInjectedExtension from '@tangle-network/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
 import RestakeEvmApi from './RestakeEvmApi';
 import useTxNotification from '../../hooks/useTxNotification';
 import { Hash } from 'viem';
-import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
 import { TxName } from '../../constants';
-import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useEvmTxRelayer from '../../hooks/useEvmTxRelayer';
 import useIsEvmTxRelayerCandidate from '../../hooks/useIsEvmTxRelayerCandidate';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 const useRestakeApi = () => {
   const { apiPromise } = usePolkadotApi();

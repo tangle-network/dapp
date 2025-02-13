@@ -1,13 +1,13 @@
 import type { RankingInfo } from '@tanstack/match-sorter-utils';
-import type { IconBase } from '@webb-tools/icons/types';
+import type { IconBase } from '@tangle-network/icons/types';
 import type {
   FilterFn,
   PartialKeys,
   RowData,
   TableOptionsResolved,
 } from '@tanstack/react-table';
-import type { Nullable, Maybe } from '@webb-tools/dapp-types/utils/types';
-import { WEBB_AVAILABLE_SOCIALS } from '../constants';
+import type { Nullable, Maybe } from '@tangle-network/dapp-types/utils/types';
+import { TANGLE_AVAILABLE_SOCIALS } from '../constants';
 
 /******************
  * DECLARE GLOBAL *
@@ -117,7 +117,7 @@ export interface SocialConfigsType extends Omit<ExternalLink, 'name'> {
   /**
    * Platform name
    */
-  name: (typeof WEBB_AVAILABLE_SOCIALS)[number];
+  name: (typeof TANGLE_AVAILABLE_SOCIALS)[number];
   /**
    * Platform icon
    */

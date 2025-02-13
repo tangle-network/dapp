@@ -1,5 +1,5 @@
-import { AddLineIcon } from '@webb-tools/icons';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { AddLineIcon } from '@tangle-network/icons';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   Button,
   TabContent,
@@ -7,7 +7,7 @@ import {
   TabTrigger,
   Typography,
   TabsList as WebbTabsList,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { FC, useEffect, useState } from 'react';
 
 import LsUnbondingTable from '../../components/LiquidStaking/LsUnbondingTable';

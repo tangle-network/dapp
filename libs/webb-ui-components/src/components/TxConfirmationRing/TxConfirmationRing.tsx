@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import cx from 'classnames';
 import { isHex } from 'viem';
-import { ExternalLinkLine } from '@webb-tools/icons';
+import { ExternalLinkLine } from '@tangle-network/icons';
 
 import ChainsRing from '../ChainsRing';
 import { TxConfirmationRingProps } from './types';

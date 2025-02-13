@@ -1,6 +1,6 @@
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
+import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 
 import useActiveEraIndex from './useActiveEraIndex';

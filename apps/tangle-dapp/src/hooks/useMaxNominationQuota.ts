@@ -1,4 +1,4 @@
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { useCallback } from 'react';
 
 const useMaxNominationQuota = (): number => {

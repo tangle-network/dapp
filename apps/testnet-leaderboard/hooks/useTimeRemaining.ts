@@ -1,6 +1,6 @@
 'use client';
 
-import type { Nullable } from '@webb-tools/dapp-types/utils/types';
+import type { Nullable } from '@tangle-network/dapp-types/utils/types';
 import { useEffect, useState } from 'react';
 
 import { DAY, HOUR, MINUTE, SECOND } from '../constants';

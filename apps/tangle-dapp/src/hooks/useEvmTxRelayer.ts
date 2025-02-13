@@ -13,15 +13,15 @@ import {
   PrecompileAddress,
   ZERO_ADDRESS,
 } from '../constants/evmPrecompiles';
-import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
-import { assertEvmAddress } from '@webb-tools/webb-ui-components';
+import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
+import { assertEvmAddress } from '@tangle-network/webb-ui-components';
 import assert from 'assert';
 import useViemWalletClient, {
   WalletClientTransport,
 } from './useViemWalletClient';
-import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
 import RESTAKING_PRECOMPILE_ABI from '../abi/restaking';
 import useEvmGasEstimate from './useEvmGasEstimate';
 import useEvmCallPermitNonce from './useEvmCallPermitNonce';

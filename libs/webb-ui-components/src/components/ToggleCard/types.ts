@@ -1,4 +1,4 @@
-import { IconBase } from '@webb-tools/icons/types';
+import { IconBase } from '@tangle-network/icons/types';
 import { ComponentPropsWithoutRef } from 'react';
 import { PropsOf } from '../../types';
 import { Switcher } from '../Switcher';

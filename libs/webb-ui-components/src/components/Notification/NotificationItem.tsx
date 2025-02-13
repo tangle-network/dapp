@@ -5,7 +5,7 @@ import {
   CheckboxCircleLine,
   Close,
   InformationLine,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import {
   SnackbarContent,
   closeSnackbar,

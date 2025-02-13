@@ -2,19 +2,19 @@ import { BN } from '@polkadot/util';
 import {
   DEFAULT_DECIMALS,
   ZERO_BIG_INT,
-} from '@webb-tools/dapp-config/constants';
-import { TokenIcon } from '@webb-tools/icons/TokenIcon';
-import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
-import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
-import { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
-import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
+} from '@tangle-network/dapp-config/constants';
+import { TokenIcon } from '@tangle-network/icons/TokenIcon';
+import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
+import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
+import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
   isEvmAddress,
   shortenHex,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 import LogoListItem from '../../components/Lists/LogoListItem';

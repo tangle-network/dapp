@@ -4,8 +4,8 @@ import {
   AppEvent,
   NextThemeProvider,
   WebbProvider,
-} from '@webb-tools/api-provider-environment';
-import { WebbUIProvider } from '@webb-tools/webb-ui-components';
+} from '@tangle-network/api-provider-environment';
+import { WebbUIProvider } from '@tangle-network/webb-ui-components';
 import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
 

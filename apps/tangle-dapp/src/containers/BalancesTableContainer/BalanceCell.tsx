@@ -1,6 +1,6 @@
 import { BN } from '@polkadot/util';
-import StatusIndicator from '@webb-tools/icons/StatusIndicator';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import StatusIndicator from '@tangle-network/icons/StatusIndicator';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   HiddenValue,
   SkeletonLoader,
@@ -8,11 +8,11 @@ import {
   TooltipBody,
   TooltipTrigger,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
 import { FC, ReactNode } from 'react';
 
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 
 const BalanceCell: FC<{

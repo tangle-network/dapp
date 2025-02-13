@@ -1,14 +1,14 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
+import { useWebContext } from '@tangle-network/api-provider-environment';
+import { WebbError, WebbErrorCodes } from '@tangle-network/dapp-types';
 import noop from 'lodash/noop';
 import { useMemo } from 'react';
 import BaseServices from '../lib/services/base';
 import { EvmServices } from '../lib/services/evm';
-import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
 import assert from 'assert';
-import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
+import { WebbPolkadot } from '@tangle-network/polkadot-api-provider';
 import { SubstrateServices } from '../lib/services/substrate';
-import { ensureHex } from '@webb-tools/dapp-config';
+import { ensureHex } from '@tangle-network/dapp-config';
 
 export default function useServicesTransactions() {
   const { activeAccount, activeWallet, activeApi } = useWebContext();

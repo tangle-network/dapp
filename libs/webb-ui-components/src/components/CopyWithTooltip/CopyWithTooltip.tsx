@@ -1,6 +1,6 @@
 'use client';
 
-import { FileCopyLine } from '@webb-tools/icons/FileCopyLine';
+import { FileCopyLine } from '@tangle-network/icons/FileCopyLine';
 import { useCallback, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useCopyable } from '../../hooks';
@@ -8,7 +8,7 @@ import { Typography } from '../../typography/Typography';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import { Button } from '../buttons';
 import { CopyWithTooltipProps, CopyWithTooltipUIProps } from './types';
-import { CheckLineIcon } from '@webb-tools/icons';
+import { CheckLineIcon } from '@tangle-network/icons';
 
 /**
  * The `CopyWithTooltip` component

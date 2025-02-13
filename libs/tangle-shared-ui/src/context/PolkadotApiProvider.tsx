@@ -1,6 +1,6 @@
 'use client';
 
-import { Maybe } from '@webb-tools/dapp-types/utils/types';
+import { Maybe } from '@tangle-network/dapp-types/utils/types';
 import { FC, PropsWithChildren, useMemo, useState } from 'react';
 import useSWRImmutable from 'swr/immutable';
 import { getApiPromise, getApiRx } from '../utils/polkadot/api';

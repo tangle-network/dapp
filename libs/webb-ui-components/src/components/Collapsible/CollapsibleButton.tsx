@@ -1,7 +1,7 @@
 'use client';
 
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible';
-import { ChevronDown } from '@webb-tools/icons';
+import { ChevronDown } from '@tangle-network/icons';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';

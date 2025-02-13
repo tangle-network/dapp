@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRightUp, ChevronDown, ChevronUp } from '@webb-tools/icons';
+import { ArrowRightUp, ChevronDown, ChevronUp } from '@tangle-network/icons';
 import { FC, useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 

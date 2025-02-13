@@ -1,4 +1,4 @@
-import { ChainIcon } from '@webb-tools/icons/ChainIcon';
+import { ChainIcon } from '@tangle-network/icons/ChainIcon';
 import { forwardRef, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { ChainChipProps } from './types';

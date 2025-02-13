@@ -1,6 +1,6 @@
 'use client';
 
-import LoggerService from '@webb-tools/browser-utils/logger/LoggerService';
+import LoggerService from '@tangle-network/browser-utils/logger/LoggerService';
 import noop from 'lodash/noop';
 import { createContext } from 'react';
 import { notificationApi } from '../components/Notification';

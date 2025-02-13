@@ -1,11 +1,11 @@
-import { StatusIndicator } from '@webb-tools/icons';
-import { IconBase } from '@webb-tools/icons/types';
+import { StatusIndicator } from '@tangle-network/icons';
+import { IconBase } from '@tangle-network/icons/types';
 import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { Link } from 'react-router';
 import { ComponentProps, FC, ReactElement, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';

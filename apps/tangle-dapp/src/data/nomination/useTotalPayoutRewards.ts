@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { useMemo, useState } from 'react';
 
 import { usePayoutsStore } from '../payouts/usePayoutsStore';

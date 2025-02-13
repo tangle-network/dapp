@@ -1,14 +1,14 @@
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { ChainIcon } from '@webb-tools/icons';
-import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { ChainIcon } from '@tangle-network/icons';
+import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
+import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import {
   Dropdown,
   DropdownBody,
   DropdownMenuItem,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
+} from '@tangle-network/webb-ui-components';
+import { ScrollArea } from '@tangle-network/webb-ui-components/components/ScrollArea';
 import { FC, useCallback } from 'react';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../constants/liquidStaking/constants';

@@ -1,4 +1,4 @@
-import { TokenIcon } from '@webb-tools/icons';
+import { TokenIcon } from '@tangle-network/icons';
 import { Typography } from '../../typography';
 import { getRoundedAmountString } from '../../utils';
 import { forwardRef } from 'react';

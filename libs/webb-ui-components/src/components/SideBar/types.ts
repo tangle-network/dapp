@@ -1,6 +1,6 @@
-import type { AppEnvironment } from '@webb-tools/dapp-config/types';
+import type { AppEnvironment } from '@tangle-network/dapp-config/types';
 import type { DialogContentProps } from '@radix-ui/react-dialog';
-import type { IconBase } from '@webb-tools/icons/types';
+import type { IconBase } from '@tangle-network/icons/types';
 import { ComponentProps, FunctionComponent, MouseEventHandler } from 'react';
 import type { LogoProps } from '../Logo/types';
 

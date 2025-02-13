@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { ArrowRightUp } from '@webb-tools/icons';
+import { ArrowRightUp } from '@tangle-network/icons';
 
 import { Typography } from '../../typography/Typography';
 import { Link } from '../Link';

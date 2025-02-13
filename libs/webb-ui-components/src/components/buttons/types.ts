@@ -1,6 +1,6 @@
-import type { WalletConfig } from '@webb-tools/dapp-config/wallets/wallet-config.interface';
-import type { StatusIndicatorProps } from '@webb-tools/icons/StatusIndicator/types';
-import type { IconBase } from '@webb-tools/icons/types';
+import type { WalletConfig } from '@tangle-network/dapp-config/wallets/wallet-config.interface';
+import type { StatusIndicatorProps } from '@tangle-network/icons/StatusIndicator/types';
+import type { IconBase } from '@tangle-network/icons/types';
 import type { HTMLAttributeAnchorTarget, JSXElementConstructor } from 'react';
 import type {
   IWebbComponentBase,

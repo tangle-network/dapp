@@ -3,14 +3,14 @@
 import {
   useConnectWallet,
   useWebContext,
-} from '@webb-tools/api-provider-environment';
-import getPlatformMetaData from '@webb-tools/browser-utils/platform/getPlatformMetaData';
+} from '@tangle-network/api-provider-environment';
+import getPlatformMetaData from '@tangle-network/browser-utils/platform/getPlatformMetaData';
 import {
   calculateTypedChainId,
   ChainType,
-} from '@webb-tools/dapp-types/TypedChainId';
-import { useWebbUI, WalletModal } from '@webb-tools/webb-ui-components';
-import { Network } from '@webb-tools/webb-ui-components/constants/networks';
+} from '@tangle-network/dapp-types/TypedChainId';
+import { useWebbUI, WalletModal } from '@tangle-network/webb-ui-components';
+import { Network } from '@tangle-network/webb-ui-components/constants/networks';
 import { useMemo } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';
 

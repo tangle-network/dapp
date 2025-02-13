@@ -1,6 +1,6 @@
 'use client';
 
-import { FileCopyLine } from '@webb-tools/icons';
+import { FileCopyLine } from '@tangle-network/icons';
 import cx from 'classnames';
 import {
   forwardRef,

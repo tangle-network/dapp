@@ -3,7 +3,7 @@ import {
   GridFillIcon,
   KeyIcon,
   ShieldKeyholeLineIcon,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

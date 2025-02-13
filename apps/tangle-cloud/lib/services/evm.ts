@@ -1,7 +1,7 @@
 import type { Account, Address } from 'viem';
 import BaseServices, { RegisterArgsType } from './base';
 import type { Config } from 'wagmi';
-import { TxEventHandlers } from '@webb-tools/abstract-api-provider';
+import { TxEventHandlers } from '@tangle-network/abstract-api-provider';
 
 export class EvmServices extends BaseServices {
   constructor(

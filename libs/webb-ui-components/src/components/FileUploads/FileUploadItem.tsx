@@ -1,5 +1,5 @@
 import { noop } from '@tanstack/react-table';
-import { Close } from '@webb-tools/icons';
+import { Close } from '@tangle-network/icons';
 import cx from 'classnames';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';

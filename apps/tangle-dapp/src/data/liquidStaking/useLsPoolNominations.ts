@@ -1,4 +1,4 @@
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
 import { useMemo } from 'react';
 
 import useLsPoolBondedAccounts from './useLsPoolBondedAccounts';

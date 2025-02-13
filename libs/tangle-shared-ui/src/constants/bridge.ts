@@ -7,14 +7,14 @@ import {
   WarpCoreConfig,
 } from '@hyperlane-xyz/sdk';
 import { ProtocolType } from '@hyperlane-xyz/utils';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
   EVMTokens,
 } from '@webb-tools/evm-contract-metadata';
 
-import { assertEvmAddress } from '@webb-tools/webb-ui-components';
+import { assertEvmAddress } from '@tangle-network/webb-ui-components';
 import { Abi, erc20Abi } from 'viem';
 import { BridgeChainsConfigType, BridgeToken } from '../types';
 

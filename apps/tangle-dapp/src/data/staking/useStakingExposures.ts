@@ -1,7 +1,7 @@
 import { Option, StorageKey, u32 } from '@polkadot/types';
 import { AccountId32 } from '@polkadot/types/interfaces';
 import { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { useCallback } from 'react';
 
 import useEntryMap from '../../hooks/useEntryMap';

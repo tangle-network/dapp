@@ -1,5 +1,5 @@
 import { type Row, type RowData, flexRender } from '@tanstack/react-table';
-import { ArrowDropDownFill, ArrowDropUpFill } from '@webb-tools/icons';
+import { ArrowDropDownFill, ArrowDropUpFill } from '@tangle-network/icons';
 import { Fragment, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
 

@@ -8,7 +8,10 @@ import {
   QueryParamKeyOf,
   QueryParamValueOf,
 } from '../types';
-import { isEvmAddress, isTemplateBigInt } from '@webb-tools/webb-ui-components';
+import {
+  isEvmAddress,
+  isTemplateBigInt,
+} from '@tangle-network/webb-ui-components';
 
 type UseQueryParamsReturn<Page extends PagePath> = {
   value: QueryParamValueOf<QueryParamKeyOf<Page>> | null;

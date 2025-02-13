@@ -1,7 +1,7 @@
 'use client';
 
 import * as Dialog from '@radix-ui/react-dialog';
-import { HamburgerMenu } from '@webb-tools/icons';
+import { HamburgerMenu } from '@tangle-network/icons';
 import { forwardRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 

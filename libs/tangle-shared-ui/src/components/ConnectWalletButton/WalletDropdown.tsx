@@ -2,12 +2,12 @@
 
 import { encodeAddress } from '@polkadot/util-crypto';
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { useWallets } from '@webb-tools/api-provider-environment/hooks/useWallets';
-import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { LoginBoxLineIcon, WalletLineIcon } from '@webb-tools/icons';
-import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
+import { useWebContext } from '@tangle-network/api-provider-environment';
+import { useWallets } from '@tangle-network/api-provider-environment/hooks/useWallets';
+import { ManagedWallet, WalletConfig } from '@tangle-network/dapp-config';
+import { WebbError, WebbErrorCodes } from '@tangle-network/dapp-types';
+import { LoginBoxLineIcon, WalletLineIcon } from '@tangle-network/icons';
+import { WebbWeb3Provider } from '@tangle-network/web3-api-provider';
 import {
   AccountDropdownBody,
   Button,
@@ -20,7 +20,7 @@ import {
   Typography,
   useWebbUI,
   WalletButton,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
@@ -28,7 +28,7 @@ import { BaseError } from 'viem';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@webb-tools/webb-ui-components/types/address';
+} from '@tangle-network/webb-ui-components/types/address';
 
 const WalletDropdown: FC<{
   accountName?: string;

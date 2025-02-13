@@ -3,7 +3,7 @@ import type {
   SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
-import { Nominee } from '@webb-tools/tangle-shared-ui/types';
+import { Nominee } from '@tangle-network/tangle-shared-ui/types';
 
 export enum PagePath {
   DASHBOARD = '/',

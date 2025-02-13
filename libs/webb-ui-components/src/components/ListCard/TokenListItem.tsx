@@ -6,7 +6,7 @@ import {
   RefreshLineIcon,
   ShieldedAssetIcon,
   TokenIcon,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import { ComponentProps, forwardRef, useMemo, useRef } from 'react';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';

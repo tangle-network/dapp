@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BridgeQueueTxItem, Payout, TangleTokenSymbol } from '../types';
 import Optional from '../utils/Optional';
-import { ChainConfig } from '@webb-tools/dapp-config';
+import { ChainConfig } from '@tangle-network/dapp-config';
 
 export enum LocalStorageKey {
   PAYOUTS = 'payouts',

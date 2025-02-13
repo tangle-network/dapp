@@ -1,4 +1,4 @@
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography/Typography';
+import { Typography } from '@tangle-network/webb-ui-components/typography/Typography/Typography';
 import { FC } from 'react';
 
 import AccountSummaryCard from '../components/account/AccountSummaryCard';

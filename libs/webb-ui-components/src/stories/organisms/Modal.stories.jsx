@@ -4,8 +4,8 @@ import { ModalTrigger } from '../../components/Modal/ModalTrigger';
 import { ModalContent } from '../../components/Modal/ModalContent';
 import { WalletConnectionCard } from '../../components/WalletConnectionCard';
 import { Button } from '../../components/buttons';
-import { MetaMaskIcon, PolkadotJsIcon } from '@webb-tools/icons';
-import { WalletId } from '@webb-tools/dapp-types/WalletId';
+import { MetaMaskIcon, PolkadotJsIcon } from '@tangle-network/icons';
+import { WalletId } from '@tangle-network/dapp-types/WalletId';
 
 const walletsConfig = {
   [WalletId.MetaMask]: {

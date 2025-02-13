@@ -1,4 +1,4 @@
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { useMemo } from 'react';
 
 import getSidebarProps from './sidebarProps';

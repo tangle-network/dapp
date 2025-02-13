@@ -1,4 +1,4 @@
-import { Footer } from '@webb-tools/webb-ui-components/components/Footer';
+import { Footer } from '@tangle-network/webb-ui-components/components/Footer';
 import Sidebar from './Sidebar';
 import { FC, PropsWithChildren } from 'react';
 import {
@@ -6,7 +6,7 @@ import {
   TANGLE_PRIVACY_POLICY_URL,
   TANGLE_SOCIAL_URLS_RECORD,
   TANGLE_TERMS_OF_SERVICE_URL,
-} from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/webb-ui-components/constants';
 
 type Props = {
   isSidebarInitiallyExpanded?: boolean;

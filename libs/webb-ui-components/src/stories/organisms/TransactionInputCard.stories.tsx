@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
+import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
 import { useState } from 'react';
 import { TransactionInputCard } from '../../components/TransactionInputCard';
 

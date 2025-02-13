@@ -1,4 +1,4 @@
-import { createIcon } from '@webb-tools/icons/create-icon';
+import { createIcon } from '@tangle-network/icons/create-icon';
 import { useMemo } from 'react';
 
 import { LogoWithoutNameProps } from './types';

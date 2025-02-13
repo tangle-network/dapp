@@ -1,5 +1,5 @@
-import type { WalletConfig } from '@webb-tools/dapp-config';
-import { Maybe } from '@webb-tools/dapp-types/utils/types';
+import type { WalletConfig } from '@tangle-network/dapp-config';
+import { Maybe } from '@tangle-network/dapp-types/utils/types';
 import { useObservableState } from 'observable-hooks';
 import { BehaviorSubject } from 'rxjs';
 

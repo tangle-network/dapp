@@ -3,7 +3,7 @@ import {
   CornerDownRightLine,
   InformationLine,
   WalletLineIcon,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 
 import { CopyWithTooltip } from '../../components/CopyWithTooltip/CopyWithTooltip';
 import { IconWithTooltip } from '../../components/IconWithTooltip';

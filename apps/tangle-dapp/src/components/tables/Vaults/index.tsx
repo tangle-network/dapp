@@ -7,24 +7,24 @@ import {
   TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChevronDown } from '@webb-tools/icons/ChevronDown';
-import Spinner from '@webb-tools/icons/Spinner';
-import LsTokenIcon from '@webb-tools/tangle-shared-ui/components/LsTokenIcon';
-import TableCellWrapper from '@webb-tools/tangle-shared-ui/components/tables/TableCellWrapper';
-import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { CircularProgress } from '@webb-tools/webb-ui-components/components/CircularProgress';
-import { Table } from '@webb-tools/webb-ui-components/components/Table';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { ChevronDown } from '@tangle-network/icons/ChevronDown';
+import Spinner from '@tangle-network/icons/Spinner';
+import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
+import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
+import { CircularProgress } from '@tangle-network/webb-ui-components/components/CircularProgress';
+import { Table } from '@tangle-network/webb-ui-components/components/Table';
+import { TableVariant } from '@tangle-network/webb-ui-components/components/Table/types';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
+import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
-} from '@webb-tools/webb-ui-components/utils/formatDisplayAmount';
-import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+} from '@tangle-network/webb-ui-components/utils/formatDisplayAmount';
+import formatPercentage from '@tangle-network/webb-ui-components/utils/formatPercentage';
+import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
 import { FC, useMemo } from 'react';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';

@@ -1,18 +1,18 @@
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/outline';
-import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
-import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
-import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useActiveChain';
-import { useActiveWallet } from '@webb-tools/api-provider-environment/hooks/useActiveWallet';
-import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
+import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
+import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
+import { useActiveWallet } from '@tangle-network/api-provider-environment/hooks/useActiveWallet';
+import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
+import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
+import chainsPopulated from '@tangle-network/dapp-config/chains/chainsPopulated';
+import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { useShallow } from 'zustand/react/shallow';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
 } from '@webb-tools/evm-contract-metadata';
-import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
+import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import {
   Button,
   Card,
@@ -23,7 +23,7 @@ import {
   ModalContent,
   Typography,
   useModal,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { Decimal } from 'decimal.js';
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -38,7 +38,7 @@ import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
 import { ChainList } from '../../components/Lists/ChainList';
 import useBridgeStore from '../../context/bridge/useBridgeStore';
 import useBalances from '../../data/balances/useBalances';
-import { BridgeTokenWithBalance } from '@webb-tools/tangle-shared-ui/types';
+import { BridgeTokenWithBalance } from '@tangle-network/tangle-shared-ui/types';
 import useRouterQuote, {
   RouterQuoteParams,
 } from '../../data/bridge/useRouterQuote';
@@ -48,11 +48,11 @@ import {
 } from '../../data/bridge/useHyperlaneQuote';
 import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
 import ErrorMessage from '../../components/ErrorMessage';
-import { WalletFillIcon } from '@webb-tools/icons';
+import { WalletFillIcon } from '@tangle-network/icons';
 import { useBalance } from 'wagmi';
-import convertDecimalToBn from '@webb-tools/tangle-shared-ui/utils/convertDecimalToBn';
+import convertDecimalToBn from '@tangle-network/tangle-shared-ui/utils/convertDecimalToBn';
 import { useBridgeEvmBalances } from '../../data/bridge/useBridgeEvmBalances';
-import { ROUTER_NATIVE_TOKEN_ADDRESS } from '@webb-tools/tangle-shared-ui/constants/bridge';
+import { ROUTER_NATIVE_TOKEN_ADDRESS } from '@tangle-network/tangle-shared-ui/constants/bridge';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
 
 interface BridgeContainerProps {

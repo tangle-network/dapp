@@ -1,7 +1,7 @@
 import {
   InfoIconWithTooltip,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

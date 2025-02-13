@@ -1,6 +1,6 @@
 import { Updater } from '@tanstack/react-table';
 import { WebbComponentBase } from '../../types';
-import { IconSize } from '@webb-tools/icons/types';
+import { IconSize } from '@tangle-network/icons/types';
 import { PaginationItemsOptions } from '../../utils';
 
 type PickedKeys = 'boundaryCount' | 'siblingCount';

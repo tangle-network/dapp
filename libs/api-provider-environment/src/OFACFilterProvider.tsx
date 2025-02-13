@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, type FC, type PropsWithChildren } from 'react';
-import { OFACModal } from '@webb-tools/webb-ui-components';
+import { OFACModal } from '@tangle-network/webb-ui-components';
 
 export type OFACFilterProviderProps = {
   isActivated?: boolean;

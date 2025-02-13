@@ -3,7 +3,7 @@
 import { type FC, useMemo, useState } from 'react';
 import { getAbiItem } from 'viem';
 import cx from 'classnames';
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { chainsConfig } from '@tangle-network/dapp-config/chains/chain-config';
 
 import ChainsRing from '../../components/ChainsRing';
 import { Typography } from '../../typography';

@@ -1,15 +1,15 @@
 'use client';
 
-import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData';
-import getPlatformMetaData from '@webb-tools/browser-utils/platform/getPlatformMetaData';
-import type { WalletConfig } from '@webb-tools/dapp-config';
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
+import type { SupportedBrowsers } from '@tangle-network/browser-utils/platform/getPlatformMetaData';
+import getPlatformMetaData from '@tangle-network/browser-utils/platform/getPlatformMetaData';
+import type { WalletConfig } from '@tangle-network/dapp-config';
+import chainsPopulated from '@tangle-network/dapp-config/chains/chainsPopulated';
 import {
   WebbError,
   WebbErrorCodes,
   type WalletId,
-} from '@webb-tools/dapp-types';
-import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
+} from '@tangle-network/dapp-types';
+import WalletNotInstalledError from '@tangle-network/dapp-types/errors/WalletNotInstalledError';
 import assert from 'assert';
 import { useObservableState } from 'observable-hooks';
 import { useCallback, useEffect, useMemo } from 'react';

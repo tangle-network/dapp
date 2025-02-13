@@ -7,8 +7,8 @@ import {
   ModalFooterActions,
   ModalHeader,
   useWebbUI,
-} from '@webb-tools/webb-ui-components';
-import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/webb-ui-components';
+import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/webb-ui-components/constants';
 import { type FC, useCallback, useEffect, useState } from 'react';
 
 import AmountInput from '../components/AmountInput';

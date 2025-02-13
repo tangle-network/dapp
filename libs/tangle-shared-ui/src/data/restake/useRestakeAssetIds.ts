@@ -1,4 +1,4 @@
-import type { Evaluate } from '@webb-tools/dapp-types/utils/types';
+import type { Evaluate } from '@tangle-network/dapp-types/utils/types';
 import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { map, switchMap, type Observable } from 'rxjs';

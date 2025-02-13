@@ -35,7 +35,7 @@ export const Twitter: Story = {
 
 export const Github: Story = {
   render: () => (
-    <SocialChip href="https://github.com/webb-tools/tangle" type="github" />
+    <SocialChip href="https://github.com/tangle-network/tangle" type="github" />
   ),
 };
 

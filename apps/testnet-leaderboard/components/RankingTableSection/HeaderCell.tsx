@@ -1,4 +1,4 @@
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
 import type { FC } from 'react';
 
 const HeaderCell: FC<{ title: string; className?: string }> = ({

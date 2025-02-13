@@ -1,7 +1,7 @@
 import { HexString } from '@polkadot/util/types';
-import { ArrowRightUp } from '@webb-tools/icons';
-import { shortenString, Typography } from '@webb-tools/webb-ui-components';
-import type { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { ArrowRightUp } from '@tangle-network/icons';
+import { shortenString, Typography } from '@tangle-network/webb-ui-components';
+import type { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
 import { FC, MouseEvent, useCallback } from 'react';
 
 export type AddressLinkProps = {

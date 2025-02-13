@@ -1,5 +1,5 @@
-import { TokenIcon } from '@webb-tools/icons/TokenIcon';
-import { IconSize } from '@webb-tools/icons/types';
+import { TokenIcon } from '@tangle-network/icons/TokenIcon';
+import { IconSize } from '@tangle-network/icons/types';
 import { FC } from 'react';
 
 interface TangleTokenIconProps {

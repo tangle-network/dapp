@@ -7,20 +7,20 @@ import {
   type TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
-import { TimeFillIcon } from '@webb-tools/icons/TimeFillIcon';
-import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import type { DelegatorUnstakeRequest } from '@webb-tools/tangle-shared-ui/types/restake';
-import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
+import { CheckboxCircleFill } from '@tangle-network/icons/CheckboxCircleFill';
+import { TimeFillIcon } from '@tangle-network/icons/TimeFillIcon';
+import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+import type { DelegatorUnstakeRequest } from '@tangle-network/tangle-shared-ui/types/restake';
+import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
   isEvmAddress,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
-import { fuzzyFilter } from '@webb-tools/webb-ui-components/components/Filter/utils';
-import { Table } from '@webb-tools/webb-ui-components/components/Table';
+} from '@tangle-network/webb-ui-components';
+import { CheckBox } from '@tangle-network/webb-ui-components/components/CheckBox';
+import { fuzzyFilter } from '@tangle-network/webb-ui-components/components/Filter/utils';
+import { Table } from '@tangle-network/webb-ui-components/components/Table';
 import { FC, useMemo } from 'react';
 import AvatarWithText from '../../components/AvatarWithText';
 import useRestakeConsts from '../../data/restake/useRestakeConsts';
@@ -28,10 +28,10 @@ import useRestakeCurrentRound from '../../data/restake/useRestakeCurrentRound';
 import TableCell from '../../components/restaking/TableCell';
 import { calculateTimeRemaining } from '../../pages/restake/utils';
 import UnstakeRequestTableActions from './UnstakeRequestTableActions';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
 import { BN } from '@polkadot/util';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
+import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import useSessionDurationMs from '../../data/useSessionDurationMs';
 import formatSessionDistance from '../../utils/formatSessionDistance';
 

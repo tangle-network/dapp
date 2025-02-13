@@ -1,12 +1,12 @@
-// Copyright 2024 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
 import {
   Account,
   AccountsAdapter,
   type PromiseOrT,
-} from '@webb-tools/abstract-api-provider/account';
-import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+} from '@tangle-network/abstract-api-provider/account';
+import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
 import type { Address, JsonRpcAccount } from 'viem';
 import type { Connector } from 'wagmi';
 import { getAccount } from 'wagmi/actions';

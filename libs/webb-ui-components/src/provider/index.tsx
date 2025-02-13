@@ -1,6 +1,6 @@
 'use client';
 
-import LoggerService from '@webb-tools/browser-utils/logger/LoggerService';
+import LoggerService from '@tangle-network/browser-utils/logger/LoggerService';
 import { createElement, useCallback, useMemo, useState } from 'react';
 import {
   NotificationProvider,

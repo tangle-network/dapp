@@ -5,7 +5,7 @@ import {
   HelpLineIcon,
   InformationLine,
   TangleIcon,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import { Fragment, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Typography } from '../../typography/Typography';

@@ -1,4 +1,4 @@
-import { ExternalLinkLine } from '@webb-tools/icons';
+import { ExternalLinkLine } from '@tangle-network/icons';
 import cx from 'classnames';
 import { useMemo } from 'react';
 import type { EventFor } from '../../types';

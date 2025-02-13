@@ -2,12 +2,12 @@ import { BN } from '@polkadot/util';
 import {
   toEvmAddress,
   toSubstrateAddress,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@webb-tools/webb-ui-components/types/address';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+} from '@tangle-network/webb-ui-components/types/address';
+import { shortenString } from '@tangle-network/webb-ui-components/utils/shortenString';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';

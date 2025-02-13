@@ -2,7 +2,7 @@ import {
   CheckboxCircleLine,
   CloseCircleLineIcon,
   Spinner,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { LoadingPillProps } from './types';

@@ -1,4 +1,4 @@
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
 import RestakeApiBase, {
   RestakeUndelegateRequest,
   RestakeWithdrawRequest,
@@ -7,9 +7,9 @@ import RestakeApiBase, {
 } from './RestakeAbiBase';
 import { ISubmittableResult, Signer } from '@polkadot/types/types';
 import { ApiPromise } from '@polkadot/api';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { BN } from '@polkadot/util';
-import { isEvmAddress } from '@webb-tools/webb-ui-components';
+import { isEvmAddress } from '@tangle-network/webb-ui-components';
 import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { TxName } from '../../constants';

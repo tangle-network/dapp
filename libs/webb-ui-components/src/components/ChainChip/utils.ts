@@ -1,4 +1,4 @@
-import type { ChainGroup } from '@webb-tools/dapp-config/chains/chain-config.interface';
+import type { ChainGroup } from '@tangle-network/dapp-config/chains/chain-config.interface';
 import type { ChainChipClassNames } from './types';
 
 const classNames: ChainChipClassNames = {

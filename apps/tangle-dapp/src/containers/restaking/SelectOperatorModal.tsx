@@ -1,16 +1,16 @@
-import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
-import type { IdentityType } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
+import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+import { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
+import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { useMemo } from 'react';
-import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
-import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config';
+import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
+import { DEFAULT_DECIMALS } from '@tangle-network/dapp-config';
 import { formatUnits } from 'viem';
 import filterBy from '../../utils/filterBy';
 import OperatorListItem from '../../components/Lists/OperatorListItem';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { BN } from '@polkadot/util';
 
 type Props = {

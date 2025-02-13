@@ -1,4 +1,4 @@
-import { EVMChainId, SubstrateChainId } from '@webb-tools/dapp-types';
+import { EVMChainId, SubstrateChainId } from '@tangle-network/dapp-types';
 import {
   TANGLE_MAINNET_WS_RPC_ENDPOINT,
   TANGLE_MAINNET_HTTP_RPC_ENDPOINT,
@@ -17,10 +17,10 @@ import {
   TANGLE_LOCAL_POLKADOT_JS_DASHBOARD_URL,
   TANGLE_SS58_PREFIX,
   TANGLE_TESTNET_ARCHIVE_RPC_ENDPOINT,
-} from '@webb-tools/dapp-config/constants/tangle';
+} from '@tangle-network/dapp-config/constants/tangle';
 
 import { SUBQUERY_ENDPOINT } from './index';
-import getPolkadotJsDashboardUrl from '@webb-tools/dapp-config/utils/getPolkadotJsDashboardUrl';
+import getPolkadotJsDashboardUrl from '@tangle-network/dapp-config/utils/getPolkadotJsDashboardUrl';
 import { EvmAddress, SubstrateAddress } from '../types/address';
 import { HexString } from '@polkadot/util/types';
 import { isEvmAddress } from '../utils';

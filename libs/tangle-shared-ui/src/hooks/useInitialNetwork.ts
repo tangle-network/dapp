@@ -2,7 +2,7 @@ import {
   Network,
   NETWORK_MAP,
   NetworkId,
-} from '@webb-tools/webb-ui-components/constants/networks';
+} from '@tangle-network/webb-ui-components/constants/networks';
 import { useCallback } from 'react';
 import { z } from 'zod';
 import useLocalStorage, { LocalStorageKey } from './useLocalStorage';

@@ -2,7 +2,7 @@ import {
   AlertFill,
   CheckboxCircleFill,
   InformationLineFill,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import cx from 'classnames';
 import { useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';

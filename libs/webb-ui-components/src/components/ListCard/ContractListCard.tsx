@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, forwardRef } from 'react';
-import { ExternalLinkLine, Search } from '@webb-tools/icons';
+import { ExternalLinkLine, Search } from '@tangle-network/icons';
 import { ScrollArea } from '../ScrollArea';
 import { Typography } from '../../typography';
 import SkeletonLoader from '../SkeletonLoader';

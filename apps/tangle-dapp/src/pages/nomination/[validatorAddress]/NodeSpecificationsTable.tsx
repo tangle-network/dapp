@@ -6,8 +6,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
-import { fuzzyFilter, Table, Typography } from '@webb-tools/webb-ui-components';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import {
+  fuzzyFilter,
+  Table,
+  Typography,
+} from '@tangle-network/webb-ui-components';
 import cx from 'classnames';
 import { FC } from 'react';
 

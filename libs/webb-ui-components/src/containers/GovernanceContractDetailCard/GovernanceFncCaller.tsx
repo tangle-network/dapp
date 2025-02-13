@@ -1,6 +1,6 @@
 import type { FC } from 'react';
 import cx from 'classnames';
-import { ArrowDropDownFill, InformationLine } from '@webb-tools/icons';
+import { ArrowDropDownFill, InformationLine } from '@tangle-network/icons';
 
 import {
   Accordion,

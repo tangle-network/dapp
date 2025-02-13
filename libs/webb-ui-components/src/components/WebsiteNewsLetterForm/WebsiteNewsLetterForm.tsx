@@ -1,6 +1,6 @@
 'use client';
 
-import { InformationLine } from '@webb-tools/icons';
+import { InformationLine } from '@tangle-network/icons';
 import { FC, useCallback, useState } from 'react';
 
 import { Typography } from '../../typography';

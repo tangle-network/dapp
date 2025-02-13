@@ -1,5 +1,5 @@
-import usePolkadotApi from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
+import usePolkadotApi from '@tangle-network/tangle-shared-ui/hooks/usePolkadotApi';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { map, of } from 'rxjs';

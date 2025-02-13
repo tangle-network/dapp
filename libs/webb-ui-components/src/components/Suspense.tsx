@@ -1,4 +1,4 @@
-import Spinner from '@webb-tools/icons/Spinner';
+import Spinner from '@tangle-network/icons/Spinner';
 import { Suspense as ReactSuspense, type PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
 import type { PropsOf } from '../types';

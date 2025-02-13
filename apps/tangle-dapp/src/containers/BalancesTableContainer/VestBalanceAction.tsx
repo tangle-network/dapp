@@ -1,4 +1,4 @@
-import { LockUnlockLineIcon } from '@webb-tools/icons';
+import { LockUnlockLineIcon } from '@tangle-network/icons';
 import { FC } from 'react';
 
 import useVestingInfo from '../../data/vesting/useVestingInfo';

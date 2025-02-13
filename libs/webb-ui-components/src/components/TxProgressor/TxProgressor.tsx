@@ -1,12 +1,12 @@
 'use client';
 
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { chainsConfig } from '@tangle-network/dapp-config/chains/chain-config';
 import {
   ExternalLinkLine,
   ShieldedAssetIcon,
   StatusIndicator,
   TokenIcon,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 import { Decimal } from 'decimal.js';
 import { forwardRef } from 'react';

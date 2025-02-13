@@ -1,4 +1,4 @@
-import { DEFAULT_GRAPHQL_ENDPOINT } from '@webb-tools/dapp-config/constants/graphql';
+import { DEFAULT_GRAPHQL_ENDPOINT } from '@tangle-network/dapp-config/constants/graphql';
 import type { TypedDocumentString } from '../graphql/graphql';
 
 const ENDPOINT =

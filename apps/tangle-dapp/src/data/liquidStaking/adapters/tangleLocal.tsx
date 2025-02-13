@@ -1,6 +1,6 @@
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
-import { TANGLE_LOCAL_DEV_NETWORK } from '@webb-tools/webb-ui-components/constants/networks';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
+import { TANGLE_LOCAL_DEV_NETWORK } from '@tangle-network/webb-ui-components/constants/networks';
 
 import {
   LsNetworkId,

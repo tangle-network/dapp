@@ -1,4 +1,4 @@
-import { ChevronRight } from '@webb-tools/icons/ChevronRight';
+import { ChevronRight } from '@tangle-network/icons/ChevronRight';
 import { ComponentProps, memo } from 'react';
 import { twMerge } from 'tailwind-merge';
 

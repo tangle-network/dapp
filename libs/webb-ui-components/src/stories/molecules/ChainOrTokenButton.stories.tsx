@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { chainsConfig } from '@webb-tools/dapp-config/chains/evm';
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
+import { chainsConfig } from '@tangle-network/dapp-config/chains/evm';
+import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
 import ChainOrTokenButton from '../../components/buttons/ChainOrTokenButton';
 
 const meta: Meta<typeof ChainOrTokenButton> = {

@@ -1,4 +1,4 @@
-import { ChevronDown } from '@webb-tools/icons';
+import { ChevronDown } from '@tangle-network/icons';
 import { type FC } from 'react';
 import {
   Dropdown,

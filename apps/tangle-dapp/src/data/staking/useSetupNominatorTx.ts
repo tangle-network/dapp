@@ -1,6 +1,6 @@
 import { BN } from '@polkadot/util';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import convertAddressToBytes32 from '@webb-tools/webb-ui-components/utils/convertAddressToBytes32';
+import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+import convertAddressToBytes32 from '@tangle-network/webb-ui-components/utils/convertAddressToBytes32';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';
@@ -17,7 +17,7 @@ import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';
 import getSubstratePayeeValue from '../../utils/staking/getSubstratePayeeValue';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';
 import STAKING_PRECOMPILE_ABI from '../../abi/staking';
-import { assertBytes32 } from '@webb-tools/webb-ui-components';
+import { assertBytes32 } from '@tangle-network/webb-ui-components';
 
 export type NominationOptionsContext = {
   bondAmount: BN;

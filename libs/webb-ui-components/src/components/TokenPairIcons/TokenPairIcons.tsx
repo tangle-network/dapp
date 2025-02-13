@@ -1,4 +1,4 @@
-import { ChainIcon, TokenIcon } from '@webb-tools/icons';
+import { ChainIcon, TokenIcon } from '@tangle-network/icons';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { IconWithTooltip } from '../IconWithTooltip';

@@ -1,6 +1,6 @@
 import ChainsRing from '../../components/ChainsRing';
 import type { Meta, StoryObj } from '@storybook/react';
-import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
+import { chainsConfig } from '@tangle-network/dapp-config/chains/chain-config';
 
 const meta: Meta<typeof ChainsRing> = {
   title: 'Design System/Molecules/ChainsRing',

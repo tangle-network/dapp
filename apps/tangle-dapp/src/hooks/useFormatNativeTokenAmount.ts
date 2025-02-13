@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { useCallback } from 'react';
 
 import formatTangleBalance from '../utils/formatTangleBalance';

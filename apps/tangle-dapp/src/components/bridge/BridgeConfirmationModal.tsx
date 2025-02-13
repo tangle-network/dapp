@@ -1,56 +1,59 @@
-import { ChainConfig, chainsConfig } from '@webb-tools/dapp-config/chains';
-import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
-import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
-import { ChainIcon } from '@webb-tools/icons/ChainIcon';
-import { TokenIcon } from '@webb-tools/icons/TokenIcon';
-import { getFlexBasic } from '@webb-tools/icons/utils';
-import { BridgeTxState, BridgeToken } from '@webb-tools/tangle-shared-ui/types';
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import { ChainConfig, chainsConfig } from '@tangle-network/dapp-config/chains';
+import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
+import { ChainIcon } from '@tangle-network/icons/ChainIcon';
+import { TokenIcon } from '@tangle-network/icons/TokenIcon';
+import { getFlexBasic } from '@tangle-network/icons/utils';
+import {
+  BridgeToken,
+  BridgeTxState,
+} from '@tangle-network/tangle-shared-ui/types';
+import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
 import {
   EMPTY_VALUE_PLACEHOLDER,
   useWebbUI,
-} from '@webb-tools/webb-ui-components';
-import { Button } from '@webb-tools/webb-ui-components/components/buttons';
+} from '@tangle-network/webb-ui-components';
+import { Button } from '@tangle-network/webb-ui-components/components/buttons';
 import {
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from '@webb-tools/webb-ui-components/components/Modal';
-import { Typography } from '@webb-tools/webb-ui-components/typography';
+} from '@tangle-network/webb-ui-components/components/Modal';
+import { Typography } from '@tangle-network/webb-ui-components/typography';
 import {
   isSolanaAddress,
   shortenHex,
   shortenString,
-} from '@webb-tools/webb-ui-components/utils';
+} from '@tangle-network/webb-ui-components/utils';
+import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 import cx from 'classnames';
 import { FC, useCallback, useMemo } from 'react';
 import useWalletClient from '../../data/bridge/useWalletClient';
 
-import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
-import { FeeDetail, FeeDetailProps } from './FeeDetail';
-import useBridgeTxQueue from '../../context/bridge/BridgeTxQueueContext/useBridgeTxQueue';
-import { useHyperlaneTransfer } from '../../data/bridge/useHyperlaneTransfer';
-import { useRouterTransfer } from '../../data/bridge/useRouterTransfer';
-import { Decimal } from 'decimal.js';
-import { createPublicClient, http, getContract } from 'viem';
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
 import { IMailbox__factory } from '@hyperlane-xyz/core';
 import { HyperlaneCore } from '@hyperlane-xyz/sdk';
-import { useQuery } from '@tanstack/react-query';
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
-import { ArrowDownIcon } from '@webb-tools/icons';
-import axios from 'axios';
+import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
+import { ArrowDownIcon } from '@tangle-network/icons';
 import {
   mailboxAddress,
   ROUTER_TX_EXPLORER_URL,
   ROUTER_TX_STATUS_URL,
-} from '@webb-tools/tangle-shared-ui/constants/bridge';
-import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
+} from '@tangle-network/tangle-shared-ui/constants/bridge';
 import useLocalStorage, {
-  LocalStorageKey,
   BridgeDestTxStatus,
-} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
+  LocalStorageKey,
+} from '@tangle-network/tangle-shared-ui/hooks/useLocalStorage';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { Decimal } from 'decimal.js';
+import { createPublicClient, getContract, http } from 'viem';
+import useBridgeTxQueue from '../../context/bridge/BridgeTxQueueContext/useBridgeTxQueue';
+import { useHyperlaneTransfer } from '../../data/bridge/useHyperlaneTransfer';
+import { useRouterTransfer } from '../../data/bridge/useRouterTransfer';
+import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
+import { FeeDetail, FeeDetailProps } from './FeeDetail';
 
 interface BridgeConfirmationModalProps {
   isOpen: boolean;

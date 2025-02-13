@@ -1,4 +1,4 @@
-import { ThreeDotsVerticalIcon } from '@webb-tools/icons';
+import { ThreeDotsVerticalIcon } from '@tangle-network/icons';
 import { forwardRef } from 'react';
 
 import { DropdownBasicButton } from '../Dropdown/DropdownBasicButton';

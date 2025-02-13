@@ -1,18 +1,18 @@
-// Copyright 2024 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
 import {
   WebbApiProvider,
   WebbProviderEvents,
-} from '@webb-tools/abstract-api-provider';
-import { ApiConfig } from '@webb-tools/dapp-config';
-import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { EventBus } from '@webb-tools/dapp-types/EventBus';
+} from '@tangle-network/abstract-api-provider';
+import { ApiConfig } from '@tangle-network/dapp-config';
+import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
+import { WebbError, WebbErrorCodes } from '@tangle-network/dapp-types';
+import { EventBus } from '@tangle-network/dapp-types/EventBus';
 import {
   ChainType,
   calculateTypedChainId,
-} from '@webb-tools/dapp-types/TypedChainId';
+} from '@tangle-network/dapp-types/TypedChainId';
 import assert from 'assert';
 import values from 'lodash/values';
 import { BehaviorSubject } from 'rxjs';

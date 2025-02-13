@@ -1,8 +1,8 @@
-import { ArrowRight, GithubFill } from '@webb-tools/icons';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { SocialChip } from '@webb-tools/webb-ui-components/components/SocialChip';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { ArrowRight, GithubFill } from '@tangle-network/icons';
+import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
+import { SocialChip } from '@tangle-network/webb-ui-components/components/SocialChip';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
+import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import type { Blueprint } from '../../types/blueprint';

@@ -1,7 +1,7 @@
 import {
   EvmAddress,
   Bytes32,
-} from '@webb-tools/webb-ui-components/types/address';
+} from '@tangle-network/webb-ui-components/types/address';
 import {
   AbiFunction,
   AbiParameter,
@@ -14,7 +14,7 @@ import VESTING_PRECOMPILE_ABI from '../abi/vesting';
 import BATCH_PRECOMPILE_ABI from '../abi/batch';
 import BALANCES_ERC20_PRECOMPILE_ABI from '../abi/balancesErc20';
 import LST_PRECOMPILE_ABI from '../abi/lst';
-import { assertEvmAddress } from '@webb-tools/webb-ui-components';
+import { assertEvmAddress } from '@tangle-network/webb-ui-components';
 
 export enum Precompile {
   STAKING,
@@ -88,7 +88,7 @@ export type FindAbiArgsOf<
 export type ExtractAbiFunctionNames<T extends ViemAbiFunction[]> =
   T[number]['name'];
 
-// See https://github.com/webb-tools/tangle/tree/main/precompiles for more details.
+// See https://github.com/tangle-network/tangle/tree/main/precompiles for more details.
 export enum PrecompileAddress {
   STAKING = '0x0000000000000000000000000000000000000800',
   VESTING = '0x0000000000000000000000000000000000000801',

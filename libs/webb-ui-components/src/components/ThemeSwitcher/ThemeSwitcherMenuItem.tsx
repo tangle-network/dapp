@@ -1,6 +1,6 @@
 import { Half2Icon } from '@radix-ui/react-icons';
 import { useDarkMode } from '../../hooks';
-import { MoonLine, SunLine } from '@webb-tools/icons';
+import { MoonLine, SunLine } from '@tangle-network/icons';
 import { useMemo } from 'react';
 
 import DropdownMenuItem from '../Dropdown/DropdownMenuItem';

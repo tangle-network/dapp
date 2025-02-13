@@ -1,4 +1,4 @@
-import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
+import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
 import { AbiBatchCall } from '../../hooks/useEvmPrecompileCall';
 import { Hex } from 'viem';
 

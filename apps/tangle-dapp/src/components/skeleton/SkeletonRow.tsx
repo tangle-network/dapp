@@ -1,4 +1,4 @@
-import { SkeletonLoader } from '@webb-tools/webb-ui-components';
+import { SkeletonLoader } from '@tangle-network/webb-ui-components';
 import { FC } from 'react';
 
 const SkeletonRow: FC = () => {

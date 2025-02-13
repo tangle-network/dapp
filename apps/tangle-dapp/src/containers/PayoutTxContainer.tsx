@@ -1,4 +1,4 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
+import { useWebContext } from '@tangle-network/api-provider-environment';
 import {
   InputField,
   Modal,
@@ -7,15 +7,15 @@ import {
   ModalFooterActions,
   ModalHeader,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/webb-ui-components';
+import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/webb-ui-components/constants';
 import { type FC, useCallback, useEffect, useMemo } from 'react';
 
 import { MAX_PAYOUTS_BATCH_SIZE } from '../data/payouts/usePayoutAllTx';
 import usePayoutStakersTx from '../data/payouts/usePayoutStakersTx';
 import { TxStatus } from '../hooks/useSubstrateTx';
 import { PayoutTxProps } from './PayoutAllTxModal';
-import { Payout } from '@webb-tools/tangle-shared-ui/types';
+import { Payout } from '@tangle-network/tangle-shared-ui/types';
 
 type Props = {
   isModalOpen: boolean;

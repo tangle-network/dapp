@@ -1,4 +1,4 @@
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
 import { FC } from 'react';
 
 import KeyStatsItem from '../../components/KeyStatsItem/KeyStatsItem';

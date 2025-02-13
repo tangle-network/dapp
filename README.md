@@ -1,20 +1,22 @@
 <div align="center">
-<a href="https://www.webb.tools/">
+<a href="https://www.tangle.tools/">
 
-![Webb Logo](./.github/assets/webb_banner_light.png#gh-light-mode-only)
-![Webb Logo](./.github/assets/webb_banner_dark.png#gh-dark-mode-only)
+![Tangle Logo](./.github/assets/tangle-banner.png)
 </a>
 
   </div>
 
-# Webb Monorepo
+# Tangle Monorepo
 
 <p align="left">
-    <strong>Decentralized interfaces into the Webb protocol, featuring Tangle Network dApps for MPC-as-a-service restaking infrastructure.</strong>
+    <strong>Decentralized interfaces into the Tangle Network, featuring Tangle Network dApps for MPC-as-a-service restaking infrastructure.</strong>
     <br />
 </p>
 
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/tangle-network/dapp/check-build.yml?branch=develop&style=flat-square)](https://github.com/tangle-network/dapp/actions) [![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html) [![Follow Tangle on twitter](https://img.shields.io/twitter/follow/tangle_network.svg?style=social)](https://twitter.com/intent/follow?screen_name=tangle_network) [![Follow Webb on twitter](https://img.shields.io/twitter/follow/webbprotocol.svg?style=social)](https://twitter.com/intent/follow?screen_name=webbprotocol) [![Telegram](https://img.shields.io/badge/Telegram-gray?logo=telegram)](https://t.me/tanglenet) [![Discord](https://img.shields.io/discord/833784453251596298.svg?style=flat-square&label=Discord&logo=discord)](https://discord.gg/cv8EfJu3Tn)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/tangle-network/dapp/check-build.yml?branch=develop&style=flat-square)](https://github.com/tangle-network/dapp/actions)
+[![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![Follow Tangle on twitter](https://img.shields.io/twitter/follow/tangle_network.svg?style=social)](https://twitter.com/intent/follow?screen_name=tangle_network)
+[![Telegram](https://img.shields.io/badge/Telegram-gray?logo=telegram)](https://t.me/tanglenet) [![Discord](https://img.shields.io/discord/833784453251596298.svg?style=flat-square&label=Discord&logo=discord)](https://discord.gg/cv8EfJu3Tn)
 
 <!-- TABLE OF CONTENTS -->
 <h2 id="table-of-contents" style=border:0!important> Table of Contents </h2>
@@ -166,15 +168,14 @@ Unless you explicitly state otherwise, any contribution intentionally submitted 
 
 If you need help or you want to additional information please:
 
-- Refer to the [Tangle Network Official Documentation](https://docs.tangle.tools/) or [Webb Official Documentation](https://docs.webb.tools/).
-- If you have feedback on how to improve the dApp interface or you have a specific question? Check out the [Tangle dApp Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/tangle-dapp) or [Webb dApp Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/webb-dapp-feedback).
+- Refer to the [Tangle Network Official Documentation](https://docs.tangle.tools/).
+- If you have feedback on how to improve the dApp interface or you have a specific question? Check out the [Tangle dApp Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/tangle-dapp) or [Webb dApp Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/dapp-feedback).
 - If you found a bug please [open an issue](https://github.com/tangle-network/dapp/issues/new/choose) or [join our Discord](https://discord.gg/jUDeFpggrR) server to report it.
 
 ---
 
 **Follow us at**
 [![Follow Tangle on twitter](https://img.shields.io/twitter/follow/tangle_network.svg?style=social)](https://twitter.com/intent/follow?screen_name=tangle_network)
-[![Follow Webb on twitter](https://img.shields.io/twitter/follow/webbprotocol.svg?style=social)](https://twitter.com/intent/follow?screen_name=webbprotocol)
 [![Follow Webb on LinkedIn](https://img.shields.io/badge/LinkedIn-webbprotocol-blue?style=flat&logo=linkedin&logoColor=b0c0c0&labelColor=363D44)](https://www.linkedin.com/company/webb-protocol/)
 
 ---
@@ -184,10 +185,10 @@ If you need help or you want to additional information please:
 <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//github.com/tangle-network/dapp" target="_blank">
   <img src="https://img.shields.io/twitter/url?label=LinkedIn&logo=LinkedIn&style=social&url=https%3A%2F%2Fgithub.com%2Ftangle-network%2Fdapp" alt="Share on LinkedIn"/>
 </a>
-<a href="https://twitter.com/intent/tweet?text=%F0%9F%9A%80%20Explore%20%60tangle-network/dapp%60%20Monorepo%20on%20Github%3A%20your%20%23zeroKnowledgeApp%20in%20%23blockchain.%20Secure%2c%20efficient%20%23crypto%20interactions%20await!%0A%0ADive%20in%20%E2%9E%A1%EF%B8%8F%20https%3A//github.com/tangle-network/dapp%20%23webbEcosystem" target="_blank">
+<a href="https://twitter.com/intent/tweet?text=%F0%9F%9A%80%20Explore%20%60tangle-network/dapp%60%20Monorepo%20on%20Github%3A%20your%20%23zeroKnowledgeApp%20in%20%23blockchain.%20Secure%2c%20efficient%20%23crypto%20interactions%20await!%0A%0ADive%20in%20%E2%9E%A1%EF%B8%8F%20https%3A//github.com/tangle-network/dapp%20%23TangleEcosystem" target="_blank">
   <img src="https://img.shields.io/twitter/url?label=Twitter&logo=Twitter&style=social&url=https%3A%2F%2Fgithub.com%2Ftangle-network%2Fdapp" alt="Shared on Twitter"/>
 </a>
-<a href="https://t.me/share/url?text=%F0%9F%9A%80%20Explore%20%60tangle-network/dapp%60%20Monorepo%20on%20Github%3A%20your%20%23zeroKnowledgeApp%20in%20%23blockchain.%20Secure%2c%20efficient%20%23crypto%20interactions%20await!%0A%0ADive%20in%20%E2%9E%A1%EF%B8%8F%20https%3A//github.com/tangle-network/dapp%20%23webbEcosystem&url=https%3A%2F%2Fgithub.com%2Ftangle-network%2Fdapp" target="_blank">
+<a href="https://t.me/share/url?text=%F0%9F%9A%80%20Explore%20%60tangle-network/dapp%60%20Monorepo%20on%20Github%3A%20your%20%23zeroKnowledgeApp%20in%20%23blockchain.%20Secure%2c%20efficient%20%23crypto%20interactions%20await!%0A%0ADive%20in%20%E2%9E%A1%EF%B8%8F%20https%3A//github.com/tangle-network/dapp%20%23TangleEcosystem&url=https%3A%2F%2Fgithub.com%2Ftangle-network%2Fdapp" target="_blank">
   <img src="https://img.shields.io/twitter/url?label=Telegram&logo=Telegram&style=social&url=https%3A%2F%2Fgithub.com%2Fatangle-network%dapp" alt="Share on Telegram"/>
 </a>
 

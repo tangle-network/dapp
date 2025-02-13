@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
 import { useEffect, useState } from 'react';
 
 import { LsNetworkId } from '../../../constants/liquidStaking/types';

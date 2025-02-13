@@ -1,7 +1,7 @@
 import { Option } from '@polkadot/types';
 import { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
-import { getAccountInfo } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
-import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
+import { getAccountInfo } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
+import { useWebbUI } from '@tangle-network/webb-ui-components/hooks/useWebbUI';
 import { useCallback, useEffect, useState } from 'react';
 
 import useCurrentEra from '../../data/staking/useCurrentEra';

@@ -1,10 +1,10 @@
-import { IconBase } from '@webb-tools/icons/types';
+import { IconBase } from '@tangle-network/icons/types';
 import {
   IconButton,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import { FC, JSX } from 'react';
 import { twMerge } from 'tailwind-merge';
 

@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { AccountCircleLineIcon, ClipboardLineIcon } from '@webb-tools/icons';
+import {
+  AccountCircleLineIcon,
+  ClipboardLineIcon,
+} from '@tangle-network/icons';
 import { IconWithTooltip } from '../../components/IconWithTooltip';
 import { TextField } from '../../components/TextField';
 

@@ -1,13 +1,13 @@
-import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
+import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 import {
   isEvmAddress,
   isSubstrateAddress,
   toSubstrateAddress,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/webb-ui-components';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@webb-tools/webb-ui-components/types/address';
+} from '@tangle-network/webb-ui-components/types/address';
 import assert from 'assert';
 import useNetworkStore from '../context/useNetworkStore';
 

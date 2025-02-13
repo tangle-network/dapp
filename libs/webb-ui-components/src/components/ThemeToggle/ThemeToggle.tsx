@@ -1,6 +1,6 @@
 'use client';
 
-import { MoonLine, SunLine } from '@webb-tools/icons';
+import { MoonLine, SunLine } from '@tangle-network/icons';
 import cx from 'classnames';
 import { FC, useEffect, useMemo, useState } from 'react';
 import {

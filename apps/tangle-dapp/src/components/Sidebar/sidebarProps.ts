@@ -9,18 +9,18 @@ import {
   ShuffleLine,
   TokenSwapFill,
   WaterDropletIcon,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import {
   MobileSidebarProps,
   SideBarFooterType,
   SideBarItemProps,
   TangleLogo,
-} from '@webb-tools/webb-ui-components';
-import { SidebarTangleClosedIcon } from '@webb-tools/webb-ui-components/components';
+} from '@tangle-network/webb-ui-components';
+import { SidebarTangleClosedIcon } from '@tangle-network/webb-ui-components/components';
 import {
   TANGLE_DOCS_URL,
   TANGLE_MKT_URL,
-} from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/webb-ui-components/constants';
 
 import { PagePath } from '../../types';
 

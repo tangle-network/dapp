@@ -1,6 +1,6 @@
-import { Typography } from '@webb-tools/webb-ui-components';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
+import { Typography } from '@tangle-network/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
+import formatPercentage from '@tangle-network/webb-ui-components/utils/formatPercentage';
 import { FC } from 'react';
 
 export type PercentageCellProps = {

@@ -1,5 +1,5 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
+import { useWebContext } from '@tangle-network/api-provider-environment';
+import { WebbWeb3Provider } from '@tangle-network/web3-api-provider';
 import { useMemo } from 'react';
 
 const useWalletClient = () => {

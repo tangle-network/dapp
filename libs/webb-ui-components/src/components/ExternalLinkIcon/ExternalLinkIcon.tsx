@@ -1,5 +1,5 @@
-import { ExternalLinkLine } from '@webb-tools/icons';
-import { IconSize } from '@webb-tools/icons/types';
+import { ExternalLinkLine } from '@tangle-network/icons';
+import { IconSize } from '@tangle-network/icons/types';
 import { FC } from 'react';
 
 interface ExternalLinkIconProps {

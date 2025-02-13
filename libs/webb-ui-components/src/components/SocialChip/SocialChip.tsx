@@ -4,7 +4,7 @@ import {
   GlobalLine,
   Mail,
   TwitterFill,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
