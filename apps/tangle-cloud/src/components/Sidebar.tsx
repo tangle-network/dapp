@@ -6,12 +6,6 @@ import { DocumentationIcon } from '@webb-tools/icons/DocumentationIcon';
 import GlobalLine from '@webb-tools/icons/GlobalLine';
 import { GridFillIcon } from '@webb-tools/icons/GridFillIcon';
 import {
-  Dropdown,
-  DropdownBody,
-  DropdownButton,
-  DropdownMenuItem,
-} from '@webb-tools/webb-ui-components/components/Dropdown';
-import {
   MobileSidebar,
   SideBar as SideBarCmp,
   SideBarFooterType,
@@ -24,11 +18,9 @@ import {
   TANGLE_DOCS_URL,
 } from '@webb-tools/webb-ui-components/constants';
 import { setSidebarCookieOnToggle } from '@webb-tools/webb-ui-components/next-utils';
-import cx from 'classnames';
-import capitalize from 'lodash/capitalize';
 import { usePathname } from 'next/navigation';
-import { FC, useMemo } from 'react';
-import { PagePath } from '../../types';
+import { FC } from 'react';
+import { PagePath } from '../types';
 
 type Props = {
   isExpandedByDefault?: boolean;
