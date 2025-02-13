@@ -3,64 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/tangle-cloud/src",
   "projectType": "application",
-  "targets": {
-    "build": {
-      "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
-      "options": {
-        "outputPath": "dist/apps/tangle-cloud"
-      },
-      "configurations": {
-        "development": {
-          "mode": "development"
-        },
-        "production": {
-          "mode": "production"
-        }
-      }
-    },
-    "serve": {
-      "executor": "@nx/vite:dev-server",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "tangle-cloud:build",
-        "skipLint": true
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "tangle-cloud:build:development",
-          "hmr": true
-        },
-        "production": {
-          "buildTarget": "tangle-cloud:build:production",
-          "hmr": false
-        }
-      }
-    },
-    "preview": {
-      "executor": "@nx/vite:preview-server",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "tangle-cloud:build"
-      }
-    },
-    "test": {
-      "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
-      "options": {
-        "passWithNoTests": true,
-        "reportsDirectory": "../../coverage/apps/tangle-cloud"
-      }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/tangle-cloud/**/*.{ts,tsx,js,jsx}"]
-      }
-    }
-  },
   "tags": [],
-  "implicitDependencies": ["webb-ui-components", "tangle-shared-ui"]
+  "// targets": "to see all targets run: nx show project tangle-cloud --web",
+  "targets": {}
 }

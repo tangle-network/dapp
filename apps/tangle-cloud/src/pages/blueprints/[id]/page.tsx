@@ -1,21 +1,31 @@
-'use client';
-
 import BlueprintHeader from '@webb-tools/tangle-shared-ui/components/blueprints/BlueprintHeader';
 import OperatorsTable from '@webb-tools/tangle-shared-ui/components/tables/Operators';
 import useBlueprintDetails from '@webb-tools/tangle-shared-ui/data/restake/useBlueprintDetails';
 import { ErrorFallback } from '@webb-tools/webb-ui-components/components/ErrorFallback';
 import SkeletonLoader from '@webb-tools/webb-ui-components/components/SkeletonLoader';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { useParams, Navigate } from 'react-router-dom';
-import { PagePath } from '../types';
+import { PropsWithChildren } from 'react';
+import { Link, useParams } from 'react-router';
+import { TangleDAppPagePath } from '../../../types';
 
-export default function BlueprintDetails() {
-  const { id } = useParams<{ id: string }>();
-  const { result, isLoading, error } = useBlueprintDetails(id ?? '');
+const RestakeOperatorAction = ({
+  children,
+  address,
+}: PropsWithChildren<{ address: string }>) => {
+  return (
+    <Link
+      to={`${TangleDAppPagePath.RESTAKE_OPERATOR}/${address}`}
+      target="_blank"
+    >
+      {children}
+    </Link>
+  );
+};
 
-  if (!id) {
-    return <Navigate to={PagePath.BLUEPRINTS} replace />;
-  }
+const Page = () => {
+  const { id } = useParams();
+
+  const { result, isLoading, error } = useBlueprintDetails(id);
 
   if (isLoading) {
     return (
@@ -32,7 +42,8 @@ export default function BlueprintDetails() {
   } else if (error) {
     return <ErrorFallback title={error.name} />;
   } else if (result === null) {
-    return <Navigate to={PagePath.BLUEPRINTS} replace />;
+    // TODO: Show 404 page
+    return null;
   }
 
   return (

@@ -1,29 +1,25 @@
-import { WagmiConfig } from '@webb-tools/dapp-config/wagmi-config';
-import BaseServices, { EventHandlers, RegisterArgs } from './base';
+import type { Account, Address } from 'viem';
+import BaseServices, { RegisterArgsType } from './base';
+import type { Config } from 'wagmi';
+import { TxEventHandlers } from '@webb-tools/abstract-api-provider';
 
-export class EvmServices implements BaseServices {
+export class EvmServices extends BaseServices {
   constructor(
-    private readonly address: string,
-    private readonly signer: string,
-    private readonly config: WagmiConfig,
-  ) {}
-
-  validateRegisterArgs() {
-    // TODO: Implement validation
+    readonly activeAccount: Address,
+    readonly signer: Account | Address,
+    readonly provider: Config,
+  ) {
+    super();
   }
 
-  async register(args: RegisterArgs, eventHandlers: EventHandlers) {
-    try {
-      eventHandlers?.onRegister?.onTxSending?.();
-
-      // TODO: Implement EVM registration logic
-
-      eventHandlers?.onRegister?.onTxSuccess?.();
-    } catch (error) {
-      eventHandlers?.onRegister?.onTxFailed?.(
-        error instanceof Error ? error.message : 'Unknown error',
-        args,
-      );
-    }
-  }
+  register = async (
+    args: RegisterArgsType,
+    eventHandlers?: Partial<{
+      onPreRegister: Partial<TxEventHandlers<RegisterArgsType>>;
+      onRegister: Partial<TxEventHandlers<RegisterArgsType>>;
+    }>,
+  ): Promise<void> => {
+    console.error('Unimplemented');
+    eventHandlers?.onRegister?.onTxFailed?.('Unimplemented', args);
+  };
 }

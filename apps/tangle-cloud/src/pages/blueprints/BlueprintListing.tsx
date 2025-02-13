@@ -1,10 +1,6 @@
-'use client';
-
 import { RowSelectionState } from '@tanstack/table-core';
 import BlueprintGallery from '@webb-tools/tangle-shared-ui/components/blueprints/BlueprintGallery';
 import useBlueprintListing from '@webb-tools/tangle-shared-ui/data/blueprints/useBlueprintListing';
-import Image from 'next/image';
-import Link from 'next/link';
 import {
   ComponentProps,
   Dispatch,
@@ -13,13 +9,14 @@ import {
   SetStateAction,
   useMemo,
 } from 'react';
+import { Link } from 'react-router';
 import { PagePath } from '../../types';
 
 const BlueprintItemWrapper = ({
   children,
   id,
 }: PropsWithChildren<{ id: string }>) => {
-  return <Link href={`${PagePath.BLUEPRINTS}/${id}`}>{children}</Link>;
+  return <Link to={`${PagePath.BLUEPRINTS}/${id}`}>{children}</Link>;
 };
 
 type Props = {
@@ -41,13 +38,12 @@ const BlueprintListing: FC<Props> = ({
       ...blueprint,
       renderImage(imageUrl) {
         return (
-          <Image
+          <img
             src={imageUrl}
             width={72}
             height={72}
             alt={blueprint.name}
             className="flex-shrink-0 bg-center rounded-full"
-            fill={false}
           />
         );
       },
