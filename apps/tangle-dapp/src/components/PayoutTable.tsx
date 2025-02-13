@@ -19,6 +19,7 @@ import {
   Avatar,
   AvatarGroup,
   CopyWithTooltip,
+  ExternalLinkIcon,
   fuzzyFilter,
   shortenString,
   Table,
@@ -32,6 +33,7 @@ import TokenAmountCell from './tableCells/TokenAmountCell';
 import sortByBn from '../utils/sortByBn';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 import PayoutTxModal from '../containers/PayoutTxContainer';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 
 const COLUMN_HELPER = createColumnHelper<Payout>();
 
@@ -65,6 +67,10 @@ const PayoutTable: FC<Props> = ({
     null,
   );
 
+  const createExplorerAccountUrl = useNetworkStore(
+    (store) => store.network.createExplorerAccountUrl,
+  );
+
   const table = useReactTable({
     data,
     columns: [
@@ -81,6 +87,8 @@ const PayoutTable: FC<Props> = ({
         cell: (props) => {
           const address = props.getValue().address;
           const identity = props.getValue().identity;
+
+          const accountExplorerUrl = createExplorerAccountUrl(address);
 
           return (
             <div
@@ -100,6 +108,13 @@ const PayoutTable: FC<Props> = ({
                 textToCopy={address}
                 isButton={false}
               />
+
+              {accountExplorerUrl !== null && (
+                <ExternalLinkIcon
+                  href={accountExplorerUrl}
+                  className="fill-mono-160 dark:fill-mono-80"
+                />
+              )}
             </div>
           );
         },

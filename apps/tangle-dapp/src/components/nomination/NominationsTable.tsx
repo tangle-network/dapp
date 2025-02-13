@@ -14,12 +14,13 @@ import {
   Avatar,
   Chip,
   CopyWithTooltip,
+  ExternalLinkIcon,
   fuzzyFilter,
   shortenString,
   Table,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 
 import calculateCommission from '../../utils/calculateCommission';
 import { HeaderCell, StringCell } from '../tableCells';
@@ -27,38 +28,11 @@ import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import sortByBn from '../../utils/sortByBn';
+import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 
 const COLUMN_HELPER = createColumnHelper<Nominee>();
 
 const COLUMNS = [
-  COLUMN_HELPER.accessor('address', {
-    header: () => <HeaderCell title="Validator" className="justify-start" />,
-    cell: (props) => {
-      const address = props.getValue();
-      const identityName = props.row.original.identityName;
-
-      return (
-        <div className="flex items-center space-x-1">
-          <Avatar sourceVariant="address" value={address} theme="substrate">
-            {address}
-          </Avatar>
-
-          <Typography variant="body1" fw="normal" className="truncate">
-            {identityName === address
-              ? shortenString(address, 6)
-              : identityName}
-          </Typography>
-
-          <CopyWithTooltip
-            copyLabel="Copy Address"
-            textToCopy={address}
-            isButton={false}
-          />
-        </div>
-      );
-    },
-    sortingFn: sortByAddressOrIdentity<Nominee>(),
-  }),
   COLUMN_HELPER.accessor('isActive', {
     header: () => <HeaderCell title="Status" className="justify-start" />,
     cell: (props) => {
@@ -115,14 +89,64 @@ const NominationsTable: FC<NominationsTableProps> = ({
   nominees,
   pageSize,
 }) => {
+  const createExplorerAccountUrl = useNetworkStore(
+    (store) => store.network.createExplorerAccountUrl,
+  );
+
   const [sorting, setSorting] = useState<SortingState>([
     // Default sorting by total stake amount in descending order
     { id: 'totalStakeAmount', desc: true },
   ]);
 
+  const columns = useMemo(
+    () => [
+      COLUMN_HELPER.accessor('address', {
+        header: () => (
+          <HeaderCell title="Validator" className="justify-start" />
+        ),
+        cell: (props) => {
+          const address = props.getValue();
+          const identityName = props.row.original.identityName;
+
+          const accountExplorerUrl = createExplorerAccountUrl(address);
+
+          return (
+            <div className="flex items-center space-x-1">
+              <Avatar sourceVariant="address" value={address} theme="substrate">
+                {address}
+              </Avatar>
+
+              <Typography variant="body1" fw="normal" className="truncate">
+                {identityName === address
+                  ? shortenString(address, 6)
+                  : identityName}
+              </Typography>
+
+              <CopyWithTooltip
+                copyLabel="Copy Address"
+                textToCopy={address}
+                isButton={false}
+              />
+
+              {accountExplorerUrl !== null && (
+                <ExternalLinkIcon
+                  href={accountExplorerUrl}
+                  className="fill-mono-160 dark:fill-mono-80"
+                />
+              )}
+            </div>
+          );
+        },
+        sortingFn: sortByAddressOrIdentity<Nominee>(),
+      }),
+      ...COLUMNS,
+    ],
+    [createExplorerAccountUrl],
+  );
+
   const table = useReactTable({
     data: nominees,
-    columns: COLUMNS,
+    columns: columns,
     initialState: {
       pagination: {
         pageSize,

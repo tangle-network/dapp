@@ -1,5 +1,4 @@
 import { SideBar as SideBarCmp } from '@webb-tools/webb-ui-components';
-import { setSidebarCookieOnToggle } from '@webb-tools/webb-ui-components/next-utils';
 import { useLocation } from 'react-router';
 import { type FC } from 'react';
 
@@ -19,7 +18,6 @@ const Sidebar: FC<SidebarProps> = ({ isExpandedByDefault }) => {
       pathnameOrHash={location.pathname}
       className="hidden lg:block !z-0"
       isExpandedByDefault={isExpandedByDefault}
-      onSideBarToggle={setSidebarCookieOnToggle}
     />
   );
 };
