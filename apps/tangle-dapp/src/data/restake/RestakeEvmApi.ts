@@ -10,7 +10,7 @@ import { BN } from '@polkadot/util';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@tangle-network/webb-ui-components/types/address';
+} from '@tangle-network/ui-components/types/address';
 import {
   simulateContract,
   waitForTransactionReceipt,
@@ -28,7 +28,7 @@ import {
 import {
   convertAddressToBytes32,
   isEvmAddress,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';

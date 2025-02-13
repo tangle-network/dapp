@@ -4,13 +4,13 @@ import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { RowSelectionState } from '@tanstack/table-core';
 import RestakeBanner from '@tangle-network/tangle-shared-ui/components/blueprints/RestakeBanner';
 import useBlueprintListing from '@tangle-network/tangle-shared-ui/data/blueprints/useBlueprintListing';
-import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
 import {
   Modal,
   ModalTrigger,
-} from '@tangle-network/webb-ui-components/components/Modal';
-import { BLUEPRINT_DOCS_LINK } from '@tangle-network/webb-ui-components/constants/tangleDocs';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+} from '@tangle-network/ui-components/components/Modal';
+import { BLUEPRINT_DOCS_LINK } from '@tangle-network/ui-components/constants/tangleDocs';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';

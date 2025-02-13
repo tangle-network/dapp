@@ -13,18 +13,18 @@ import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
-import { CircularProgress } from '@tangle-network/webb-ui-components/components/CircularProgress';
-import { Table } from '@tangle-network/webb-ui-components/components/Table';
-import { TableVariant } from '@tangle-network/webb-ui-components/components/Table/types';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
+import { CircularProgress } from '@tangle-network/ui-components/components/CircularProgress';
+import { Table } from '@tangle-network/ui-components/components/Table';
+import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
-} from '@tangle-network/webb-ui-components/utils/formatDisplayAmount';
-import formatPercentage from '@tangle-network/webb-ui-components/utils/formatPercentage';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+} from '@tangle-network/ui-components/utils/formatDisplayAmount';
+import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC, useMemo } from 'react';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';

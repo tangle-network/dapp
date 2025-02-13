@@ -4,9 +4,9 @@ import {
   ListItem,
   shortenHex,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import { ScrollArea } from '@tangle-network/webb-ui-components/components/ScrollArea';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
+} from '@tangle-network/ui-components';
+import { ScrollArea } from '@tangle-network/ui-components/components/ScrollArea';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { ComponentProps, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Address } from 'viem';

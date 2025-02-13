@@ -11,11 +11,11 @@ import {
   ChainType,
   calculateTypedChainId,
 } from '@tangle-network/dapp-types/TypedChainId';
-import { notificationApi } from '@tangle-network/webb-ui-components';
+import { notificationApi } from '@tangle-network/ui-components';
 import {
   Network,
   NetworkId,
-} from '@tangle-network/webb-ui-components/constants/networks';
+} from '@tangle-network/ui-components/constants/networks';
 import { useCallback, useEffect, useState } from 'react';
 import { createPublicClient, fallback, http, webSocket } from 'viem';
 import useNetworkStore from '../context/useNetworkStore';

@@ -1,6 +1,6 @@
-import { toSubstrateAddress } from '@tangle-network/webb-ui-components';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
-import convertAddressToBytes32 from '@tangle-network/webb-ui-components/utils/convertAddressToBytes32';
+import { toSubstrateAddress } from '@tangle-network/ui-components';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import convertAddressToBytes32 from '@tangle-network/ui-components/utils/convertAddressToBytes32';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';

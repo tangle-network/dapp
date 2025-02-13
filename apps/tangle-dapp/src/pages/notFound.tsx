@@ -1,4 +1,4 @@
-import { Button, Typography } from '@tangle-network/webb-ui-components';
+import { Button, Typography } from '@tangle-network/ui-components';
 import { PagePath } from '../types';
 import { FC } from 'react';
 import { ArrowRight } from '@tangle-network/icons';

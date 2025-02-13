@@ -6,26 +6,23 @@ import { Spinner } from '@tangle-network/icons';
 import { ThreeDotsVerticalIcon } from '@tangle-network/icons/ThreeDotsVerticalIcon';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import {
-  isSubstrateAddress,
-  useWebbUI,
-} from '@tangle-network/webb-ui-components';
+import { isSubstrateAddress, useWebbUI } from '@tangle-network/ui-components';
 import {
   Accordion,
   AccordionButtonBase,
   AccordionContent,
   AccordionItem,
-} from '@tangle-network/webb-ui-components/components/Accordion';
-import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
-import IconButton from '@tangle-network/webb-ui-components/components/buttons/IconButton';
+} from '@tangle-network/ui-components/components/Accordion';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
+import IconButton from '@tangle-network/ui-components/components/buttons/IconButton';
 import {
   Dropdown,
   DropdownBody,
   DropdownMenuItem,
-} from '@tangle-network/webb-ui-components/components/Dropdown';
-import { Label } from '@tangle-network/webb-ui-components/components/Label';
-import { TextField } from '@tangle-network/webb-ui-components/components/TextField';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+} from '@tangle-network/ui-components/components/Dropdown';
+import { Label } from '@tangle-network/ui-components/components/Label';
+import { TextField } from '@tangle-network/ui-components/components/TextField';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
 import useServicesTransactions from '../../../hooks/useServicesTransactions';

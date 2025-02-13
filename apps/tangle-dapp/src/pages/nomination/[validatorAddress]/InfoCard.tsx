@@ -5,9 +5,9 @@ import {
   CopyWithTooltip,
   ExternalLinkIcon,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
-import { shortenString } from '@tangle-network/webb-ui-components/utils/shortenString';
+} from '@tangle-network/ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -15,7 +15,7 @@ import ValidatorSocials from '../../../components/ValidatorSocials';
 import useValidatorInfoCard from '../../../data/validatorDetails/useValidatorInfoCard';
 import ValueSkeleton from './ValueSkeleton';
 import { CardWithTangleLogo } from '../../../components';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 interface InfoCardProps {
   validatorAddress: SubstrateAddress;

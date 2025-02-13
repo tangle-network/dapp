@@ -14,9 +14,9 @@ import {
   InfoIconWithTooltip,
   Table,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import { TableVariant } from '@tangle-network/webb-ui-components/components/Table/types';
-import addCommasToNumber from '@tangle-network/webb-ui-components/utils/addCommasToNumber';
+} from '@tangle-network/ui-components';
+import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import { FC, useMemo, useState } from 'react';
 import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import useLockRows from './useLockRows';
@@ -25,7 +25,7 @@ import { LockUnlocksAtKind, SubstrateLockId } from '../../constants';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import { CheckboxCircleFill } from '@tangle-network/icons';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 
 export type BalanceLockRow = {
   index?: number;

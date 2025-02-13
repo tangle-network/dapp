@@ -5,7 +5,7 @@ import { TangleTokenSymbol } from '@tangle-network/tangle-shared-ui/types';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 
 const formatTangleBalance = (
   balance: BN | bigint | ToBn,

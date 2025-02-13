@@ -1,6 +1,6 @@
 import { ArrowRightUp } from '@tangle-network/icons';
-import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 import './top-banner.css';

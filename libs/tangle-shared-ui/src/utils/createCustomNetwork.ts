@@ -3,7 +3,7 @@ import getPolkadotJsDashboardUrl from '@tangle-network/dapp-config/utils/getPolk
 import {
   Network,
   NetworkId,
-} from '@tangle-network/webb-ui-components/constants/networks';
+} from '@tangle-network/ui-components/constants/networks';
 
 const createCustomNetwork = (customRpcEndpoint: string): Network => ({
   id: NetworkId.CUSTOM,

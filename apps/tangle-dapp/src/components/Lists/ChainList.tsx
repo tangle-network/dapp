@@ -6,8 +6,8 @@ import {
   Input,
   ListItem,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import { ScrollArea } from '@tangle-network/webb-ui-components/components/ScrollArea';
+} from '@tangle-network/ui-components';
+import { ScrollArea } from '@tangle-network/ui-components/components/ScrollArea';
 import { ComponentProps, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 

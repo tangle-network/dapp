@@ -1,10 +1,10 @@
 import { ExternalLinkLine, GithubFill } from '@tangle-network/icons';
-import { Card, CardVariant } from '@tangle-network/webb-ui-components';
-import { Avatar } from '@tangle-network/webb-ui-components/components/Avatar';
-import { ScrollArea } from '@tangle-network/webb-ui-components/components/ScrollArea';
-import SkeletonLoader from '@tangle-network/webb-ui-components/components/SkeletonLoader';
-import type { EventFor } from '@tangle-network/webb-ui-components/types';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+import { Card, CardVariant } from '@tangle-network/ui-components';
+import { Avatar } from '@tangle-network/ui-components/components/Avatar';
+import { ScrollArea } from '@tangle-network/ui-components/components/ScrollArea';
+import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
+import type { EventFor } from '@tangle-network/ui-components/types';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { Link } from 'react-router';
 import type { ComponentProps, FC } from 'react';
 import { twMerge } from 'tailwind-merge';

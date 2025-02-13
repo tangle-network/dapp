@@ -14,7 +14,7 @@ import {
   formatDisplayAmount,
   isEvmAddress,
   shortenHex,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 import LogoListItem from '../../components/Lists/LogoListItem';

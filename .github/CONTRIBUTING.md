@@ -56,15 +56,15 @@ In general, we follow the ["fork-and-pull" Git workflow](https://github.com/susa
 
 This repository adheres to the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification. In case you're not already familiar with it, you can run `yarn commit` in your terminal after staging your changes to interactively generate. The helper should guide you through the process of creating a commit message that adheres to these guidelines:
 
-* All rules from [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-* Commit body is disabled completely: Since it has not been used in this repository, it is disabled to avoid confusion and maintain consistency.
-* Scope should be one of the following: `tangle-dapp`, `testnet-leaderboard`, `webb-ui`, `icons`, `tools`.
+- All rules from [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+- Commit body is disabled completely: Since it has not been used in this repository, it is disabled to avoid confusion and maintain consistency.
+- Scope should be one of the following: `tangle-dapp`, `testnet-leaderboard`, `ui-components`, `icons`, `tools`.
 
 Here are some examples to follow:
 
-* `feat(tangle-dapp): Fixed a certain bug (#123)`
-* `docs: Added documentation for commit message guidelines`
-* `chore: Bump X dependency to latest version`
+- `feat(tangle-dapp): Fixed a certain bug (#123)`
+- `docs: Added documentation for commit message guidelines`
+- `chore: Bump X dependency to latest version`
 
 ## Getting Help
 

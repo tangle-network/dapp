@@ -13,8 +13,8 @@ import {
   ModalHeader,
   TxConfirmationRing,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import { TANGLE_DOCS_URL } from '@tangle-network/webb-ui-components/constants';
+} from '@tangle-network/ui-components';
+import { TANGLE_DOCS_URL } from '@tangle-network/ui-components/constants';
 import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 import { isHex } from 'viem';
 

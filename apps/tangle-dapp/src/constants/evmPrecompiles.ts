@@ -1,7 +1,7 @@
 import {
   EvmAddress,
   Bytes32,
-} from '@tangle-network/webb-ui-components/types/address';
+} from '@tangle-network/ui-components/types/address';
 import {
   AbiFunction,
   AbiParameter,
@@ -14,7 +14,7 @@ import VESTING_PRECOMPILE_ABI from '../abi/vesting';
 import BATCH_PRECOMPILE_ABI from '../abi/batch';
 import BALANCES_ERC20_PRECOMPILE_ABI from '../abi/balancesErc20';
 import LST_PRECOMPILE_ABI from '../abi/lst';
-import { assertEvmAddress } from '@tangle-network/webb-ui-components';
+import { assertEvmAddress } from '@tangle-network/ui-components';
 
 export enum Precompile {
   STAKING,

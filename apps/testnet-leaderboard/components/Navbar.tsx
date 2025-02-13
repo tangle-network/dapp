@@ -7,19 +7,19 @@ import {
   Accordion,
   AccordionContent,
   AccordionItem,
-} from '@tangle-network/webb-ui-components/components/Accordion';
-import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
+} from '@tangle-network/ui-components/components/Accordion';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
 import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
   DropdownMenuItem,
-} from '@tangle-network/webb-ui-components/components/Dropdown';
+} from '@tangle-network/ui-components/components/Dropdown';
 import {
   TANGLE_MKT_URL,
   WEBB_BLOG_URL,
-} from '@tangle-network/webb-ui-components/constants';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+} from '@tangle-network/ui-components/constants';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import cx from 'classnames';
 import Link from 'next/link';
 import type { ComponentProps } from 'react';

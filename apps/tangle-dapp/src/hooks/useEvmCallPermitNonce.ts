@@ -2,7 +2,7 @@ import CALL_PERMIT_PRECOMPILE_ABI from '../abi/callPermit';
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useContractRead from '../data/evm/useContractRead';
 import { PrecompileAddress } from '../constants/evmPrecompiles';
-import { assertEvmAddress } from '@tangle-network/webb-ui-components';
+import { assertEvmAddress } from '@tangle-network/ui-components';
 import { useCallback } from 'react';
 
 const useEvmCallPermitNonce = (): bigint | null => {

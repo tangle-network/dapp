@@ -1,7 +1,7 @@
 'use client';
 
-import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
-import { SOCIAL_URLS_RECORD } from '@tangle-network/webb-ui-components/constants';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
+import { SOCIAL_URLS_RECORD } from '@tangle-network/ui-components/constants';
 
 import { GUIDELINES_URL } from '../../constants';
 

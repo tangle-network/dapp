@@ -2,7 +2,7 @@
 
 import { useConnectWallet } from '@tangle-network/api-provider-environment';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
-import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { useMemo } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';
 import UpdateMetadataButton from '../UpdateMetadataButton';
@@ -12,7 +12,7 @@ import {
   assertSubstrateAddress,
   isEvmAddress,
   toSubstrateAddress,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 
 const ConnectWalletButton = () => {
   const { activeAccount, activeWallet, loading, isConnecting } =

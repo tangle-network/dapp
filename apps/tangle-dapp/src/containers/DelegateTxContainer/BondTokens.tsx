@@ -4,7 +4,7 @@ import {
   DropdownField,
   InputField,
   Typography,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { type FC, useCallback } from 'react';
 import { z } from 'zod';
 

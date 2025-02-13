@@ -1,4 +1,4 @@
-import type { PropsOf } from '@tangle-network/webb-ui-components/types';
+import type { PropsOf } from '@tangle-network/ui-components/types';
 import { twMerge } from 'tailwind-merge';
 
 export type TabsListProps = PropsOf<'ul'>;

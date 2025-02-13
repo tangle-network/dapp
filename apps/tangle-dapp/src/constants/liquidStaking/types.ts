@@ -6,8 +6,8 @@ import {
   TANGLE_MAINNET_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
   Network as TangleNetwork,
-} from '@tangle-network/webb-ui-components/constants/networks';
-import type { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+} from '@tangle-network/ui-components/constants/networks';
+import type { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 export type LsTangleNetworkId =
   | LsProtocolId.TANGLE_MAINNET
@@ -59,7 +59,7 @@ export type LsCardSearchParams = {
   protocolId: LsProtocolId;
 };
 
-// TODO: These should be moved/managed in libs/webb-ui-components/src/constants/networks.ts and not here. This is just a temporary solution.
+// TODO: These should be moved/managed in libs/ui-components/src/constants/networks.ts and not here. This is just a temporary solution.
 export type Network = {
   name: string;
   endpoint: string;

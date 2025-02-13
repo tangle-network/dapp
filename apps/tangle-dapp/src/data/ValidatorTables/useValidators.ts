@@ -1,6 +1,6 @@
 import { AccountId32 } from '@polkadot/types/interfaces';
 import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
-import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 
 import { Validator } from '../../types';

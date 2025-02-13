@@ -9,8 +9,8 @@ import {
   calculateTypedChainId,
   ChainType,
 } from '@tangle-network/dapp-types/TypedChainId';
-import { useWebbUI, WalletModal } from '@tangle-network/webb-ui-components';
-import { Network } from '@tangle-network/webb-ui-components/constants/networks';
+import { useWebbUI, WalletModal } from '@tangle-network/ui-components';
+import { Network } from '@tangle-network/ui-components/constants/networks';
 import { useMemo } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';
 

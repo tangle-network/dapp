@@ -3,7 +3,7 @@ import type { ComponentProps, FC } from 'react';
 
 import { ChainList } from '../../components/Lists/ChainList';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../constants/restake';
-import { ModalContent } from '@tangle-network/webb-ui-components';
+import { ModalContent } from '@tangle-network/ui-components';
 
 type Props = {
   onClose: () => void;

@@ -9,8 +9,8 @@ import {
   ModalContent,
   ModalFooterActions,
   ModalHeader,
-} from '@tangle-network/webb-ui-components';
-import { OPERATOR_JOIN_DOCS_LINK } from '@tangle-network/webb-ui-components/constants/tangleDocs';
+} from '@tangle-network/ui-components';
+import { OPERATOR_JOIN_DOCS_LINK } from '@tangle-network/ui-components/constants/tangleDocs';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import AmountInput from '../../components/AmountInput';
 import useBalances from '../../data/balances/useBalances';

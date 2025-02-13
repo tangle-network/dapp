@@ -3,15 +3,15 @@
 import { isEthereumAddress } from '@polkadot/util-crypto';
 import { FileCopyLine } from '@tangle-network/icons';
 import { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
-import { Avatar } from '@tangle-network/webb-ui-components/components/Avatar';
+import { Avatar } from '@tangle-network/ui-components/components/Avatar';
 import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
-} from '@tangle-network/webb-ui-components/components/Tooltip';
-import { useCopyable } from '@tangle-network/webb-ui-components/hooks/useCopyable';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
-import { shortenString } from '@tangle-network/webb-ui-components/utils/shortenString';
+} from '@tangle-network/ui-components/components/Tooltip';
+import { useCopyable } from '@tangle-network/ui-components/hooks/useCopyable';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import { type FC } from 'react';
 
 const IdentityCell: FC<{ address: string; identity: IdentityType }> = ({

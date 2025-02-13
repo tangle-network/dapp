@@ -17,12 +17,12 @@ import {
   AmountFormatStyle,
   formatDisplayAmount,
   isEvmAddress,
-} from '@tangle-network/webb-ui-components';
-import { CheckBox } from '@tangle-network/webb-ui-components/components/CheckBox';
-import { fuzzyFilter } from '@tangle-network/webb-ui-components/components/Filter/utils';
-import { Table } from '@tangle-network/webb-ui-components/components/Table';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+} from '@tangle-network/ui-components';
+import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
+import { fuzzyFilter } from '@tangle-network/ui-components/components/Filter/utils';
+import { Table } from '@tangle-network/ui-components/components/Table';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC, useMemo } from 'react';
 import TableCell from '../../components/restaking/TableCell';
 import useRestakeConsts from '../../data/restake/useRestakeConsts';

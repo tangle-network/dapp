@@ -11,11 +11,11 @@ import {
   toSubstrateAddress,
   Typography,
   useHiddenValue,
-} from '@tangle-network/webb-ui-components';
-import { Avatar } from '@tangle-network/webb-ui-components/components/Avatar';
-import { IconWithTooltip } from '@tangle-network/webb-ui-components/components/IconWithTooltip';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
-import { shortenString } from '@tangle-network/webb-ui-components/utils/shortenString';
+} from '@tangle-network/ui-components';
+import { Avatar } from '@tangle-network/ui-components/components/Avatar';
+import { IconWithTooltip } from '@tangle-network/ui-components/components/IconWithTooltip';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 

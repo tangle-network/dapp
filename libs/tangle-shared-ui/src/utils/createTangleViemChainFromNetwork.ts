@@ -1,7 +1,7 @@
 import {
   Network,
   NetworkId,
-} from '@tangle-network/webb-ui-components/constants/networks';
+} from '@tangle-network/ui-components/constants/networks';
 import { Chain } from 'viem';
 import { TangleTokenSymbol } from '../types';
 

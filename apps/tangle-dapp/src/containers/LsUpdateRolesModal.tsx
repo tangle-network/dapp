@@ -7,7 +7,7 @@ import {
   ModalHeader,
   TANGLE_DOCS_LS_UPDATE_ROLES_URL,
   Typography,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';

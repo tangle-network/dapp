@@ -4,8 +4,8 @@ import LockFillIcon from '@tangle-network/icons/LockFillIcon';
 import { LockLineIcon } from '@tangle-network/icons/LockLineIcon';
 import type { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
-import type { TextFieldInputProps } from '@tangle-network/webb-ui-components/components/TextField/types';
-import { TransactionInputCard } from '@tangle-network/webb-ui-components/components/TransactionInputCard';
+import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
+import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { FC, useCallback, useMemo, useRef } from 'react';
 import type {
   UseFormRegister,

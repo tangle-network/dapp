@@ -1,5 +1,5 @@
 import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
-import { assertEvmAddress } from '@tangle-network/webb-ui-components';
+import { assertEvmAddress } from '@tangle-network/ui-components';
 import { checksumAddress } from 'viem';
 import { RestakeAssetId } from '../types';
 

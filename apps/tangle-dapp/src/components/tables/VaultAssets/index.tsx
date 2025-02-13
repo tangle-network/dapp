@@ -12,15 +12,15 @@ import {
   ExternalLinkIcon,
   isEvmAddress,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import { Table } from '@tangle-network/webb-ui-components/components/Table';
-import { TableVariant } from '@tangle-network/webb-ui-components/components/Table/types';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
+} from '@tangle-network/ui-components';
+import { Table } from '@tangle-network/ui-components/components/Table';
+import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
-} from '@tangle-network/webb-ui-components/utils/formatDisplayAmount';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+} from '@tangle-network/ui-components/utils/formatDisplayAmount';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import type { Props, VaultAssetData } from './types';

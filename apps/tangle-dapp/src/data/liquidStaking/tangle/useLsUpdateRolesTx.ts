@@ -1,9 +1,9 @@
 import {
   assertBytes32,
   toSubstrateAddress,
-} from '@tangle-network/webb-ui-components';
-import { AnyAddress } from '@tangle-network/webb-ui-components/types/address';
-import convertAddressToBytes32 from '@tangle-network/webb-ui-components/utils/convertAddressToBytes32';
+} from '@tangle-network/ui-components';
+import { AnyAddress } from '@tangle-network/ui-components/types/address';
+import convertAddressToBytes32 from '@tangle-network/ui-components/utils/convertAddressToBytes32';
 import { useCallback } from 'react';
 
 import { TxName } from '../../../constants';

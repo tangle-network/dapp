@@ -9,7 +9,7 @@ import {
   AccordionItem,
   shortenHex,
   Typography,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 

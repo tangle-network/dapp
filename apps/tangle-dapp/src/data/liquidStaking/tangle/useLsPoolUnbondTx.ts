@@ -7,7 +7,7 @@ import useAgnosticTx from '../../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../../hooks/useEvmPrecompileCall';
 import { SubstrateTxFactory } from '../../../hooks/useSubstrateTx';
 import LST_PRECOMPILE_ABI from '../../../abi/lst';
-import { convertAddressToBytes32 } from '@tangle-network/webb-ui-components';
+import { convertAddressToBytes32 } from '@tangle-network/ui-components';
 
 type Context = {
   poolId: number;

@@ -1,7 +1,7 @@
 import { ShieldedCheckLineIcon } from '@tangle-network/icons';
-import { KeyValueWithButton } from '@tangle-network/webb-ui-components/components/KeyValueWithButton';
-import { AppTemplate } from '@tangle-network/webb-ui-components/containers/AppTemplate';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+import { KeyValueWithButton } from '@tangle-network/ui-components/components/KeyValueWithButton';
+import { AppTemplate } from '@tangle-network/ui-components/containers/AppTemplate';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { type FC } from 'react';
 import { Hash } from 'viem';
 

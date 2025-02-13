@@ -3,7 +3,7 @@
 import type { Option } from '@polkadot/types';
 import type { TanglePrimitivesServicesOperatorPreferences } from '@polkadot/types/lookup';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { useCallback } from 'react';
 import { combineLatest, of, switchMap } from 'rxjs';
 import useNetworkStore from '../../context/useNetworkStore';

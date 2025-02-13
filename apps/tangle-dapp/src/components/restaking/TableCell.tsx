@@ -1,4 +1,4 @@
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import type { ComponentProps, FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

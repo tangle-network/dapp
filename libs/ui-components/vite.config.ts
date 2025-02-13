@@ -13,7 +13,7 @@ const dirname_ = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(() => ({
   root: dirname_,
-  cacheDir: '../../node_modules/.vite/libs/webb-ui-components',
+  cacheDir: '../../node_modules/.vite/libs/ui-components',
 
   plugins: [
     react(),
@@ -32,7 +32,7 @@ export default defineConfig(() => ({
   // Configuration for building your library.
   // See: https://vitejs.dev/guide/build.html#library-mode
   build: {
-    outDir: '../../dist/libs/webb-ui-components',
+    outDir: '../../dist/libs/ui-components',
     emptyOutDir: true,
     reportCompressedSize: true,
     commonjsOptions: {
@@ -41,7 +41,7 @@ export default defineConfig(() => ({
     lib: {
       // Could also be a dictionary or array of multiple entry points.
       entry: 'src/index.ts',
-      name: 'webb-ui-components',
+      name: 'ui-components',
       fileName: 'index',
       // Change this to the formats you want to support.
       // Don't forget to update your package.json as well.
@@ -72,7 +72,7 @@ export default defineConfig(() => ({
 
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../../coverage/libs/webb-ui-components',
+      reportsDirectory: '../../coverage/libs/ui-components',
       provider: 'v8',
     },
     passWithNoTests: true,

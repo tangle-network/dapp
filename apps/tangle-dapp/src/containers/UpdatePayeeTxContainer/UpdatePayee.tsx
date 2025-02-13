@@ -1,4 +1,4 @@
-import { DropdownField, Typography } from '@tangle-network/webb-ui-components';
+import { DropdownField, Typography } from '@tangle-network/ui-components';
 import { type FC, useCallback } from 'react';
 import { z } from 'zod';
 

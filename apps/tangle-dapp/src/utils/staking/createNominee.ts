@@ -1,7 +1,7 @@
 import { PalletStakingValidatorPrefs } from '@polkadot/types/lookup';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { Nominee } from '@tangle-network/tangle-shared-ui/types';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 // TODO: Simplify this down to the most essential/required parameters.
 export type CreateNomineeOptions = {

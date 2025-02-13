@@ -1,7 +1,7 @@
 import { isPrimitive } from '@tangle-network/dapp-types';
 import { ExternalLinkLine } from '@tangle-network/icons/ExternalLinkLine';
-import { TitleWithInfo } from '@tangle-network/webb-ui-components/components/TitleWithInfo';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+import { TitleWithInfo } from '@tangle-network/ui-components/components/TitleWithInfo';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import {
   type ComponentProps,
   ForwardedRef,

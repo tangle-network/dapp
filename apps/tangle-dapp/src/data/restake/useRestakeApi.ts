@@ -4,7 +4,7 @@ import usePolkadotApi from '@tangle-network/tangle-shared-ui/hooks/usePolkadotAp
 import {
   assertEvmAddress,
   assertSubstrateAddress,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
 import useSubstrateInjectedExtension from '@tangle-network/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
 import RestakeEvmApi from './RestakeEvmApi';

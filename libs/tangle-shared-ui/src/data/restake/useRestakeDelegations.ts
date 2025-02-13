@@ -3,9 +3,9 @@ import useApiRx from '../../hooks/useApiRx';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import { RestakeAssetId } from '../../types';
 import { BN } from '@polkadot/util';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { PalletMultiAssetDelegationDelegatorDelegatorBlueprintSelection } from '@polkadot/types/lookup';
-import { assertSubstrateAddress } from '@tangle-network/webb-ui-components';
+import { assertSubstrateAddress } from '@tangle-network/ui-components';
 
 type Delegation = {
   operatorAccountAddress: SubstrateAddress;

@@ -1,14 +1,14 @@
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
-import { isSubstrateAddress } from '@tangle-network/webb-ui-components/utils/isSubstrateAddress';
-import { shortenHex } from '@tangle-network/webb-ui-components/utils/shortenHex';
-import { shortenString } from '@tangle-network/webb-ui-components/utils/shortenString';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import { isSubstrateAddress } from '@tangle-network/ui-components/utils/isSubstrateAddress';
+import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
+import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import BoostedChip from '../BoostedChip';
 import { BlueprintItemProps } from './types';
-import { CheckBox } from '@tangle-network/webb-ui-components/components/CheckBox';
+import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
 
 const BlueprintItem: FC<BlueprintItemProps> = ({
   name,

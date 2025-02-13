@@ -1,7 +1,7 @@
 import { BN_ZERO } from '@polkadot/util';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
-import addCommasToNumber from '@tangle-network/webb-ui-components/utils/addCommasToNumber';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import { type FC, useMemo } from 'react';
 
 import useUnbondingAmount from '../data/nomination/useUnbondingAmount';

@@ -1,6 +1,6 @@
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import type { Noop } from '@tangle-network/dapp-types/utils/types';
-import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { useMemo } from 'react';
 import type { FieldErrors, UseFormWatch } from 'react-hook-form';
 

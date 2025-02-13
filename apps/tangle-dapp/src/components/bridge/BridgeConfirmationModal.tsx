@@ -11,21 +11,21 @@ import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
 import {
   EMPTY_VALUE_PLACEHOLDER,
   useWebbUI,
-} from '@tangle-network/webb-ui-components';
-import { Button } from '@tangle-network/webb-ui-components/components/buttons';
+} from '@tangle-network/ui-components';
+import { Button } from '@tangle-network/ui-components/components/buttons';
 import {
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from '@tangle-network/webb-ui-components/components/Modal';
-import { Typography } from '@tangle-network/webb-ui-components/typography';
+} from '@tangle-network/ui-components/components/Modal';
+import { Typography } from '@tangle-network/ui-components/typography';
 import {
   isSolanaAddress,
   shortenHex,
   shortenString,
-} from '@tangle-network/webb-ui-components/utils';
+} from '@tangle-network/ui-components/utils';
 import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
 import cx from 'classnames';
 import { FC, useCallback, useMemo } from 'react';

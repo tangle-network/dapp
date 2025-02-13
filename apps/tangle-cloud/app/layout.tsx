@@ -1,8 +1,8 @@
-import '@tangle-network/webb-ui-components/tailwind.css';
+import '@tangle-network/ui-components/tailwind.css';
 import '../styles/globals.css';
 
 import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
-import { getSidebarStateFromCookie } from '@tangle-network/webb-ui-components/next-utils';
+import { getSidebarStateFromCookie } from '@tangle-network/ui-components/next-utils';
 import { headers } from 'next/headers';
 import { Suspense } from 'react';
 import { cookieToInitialState } from 'wagmi';

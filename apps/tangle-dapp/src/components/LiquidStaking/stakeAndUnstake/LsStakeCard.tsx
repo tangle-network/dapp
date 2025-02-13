@@ -4,9 +4,9 @@ import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@tangle-network/icons';
-import { Card } from '@tangle-network/webb-ui-components';
-import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
+import { Card } from '@tangle-network/ui-components';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {

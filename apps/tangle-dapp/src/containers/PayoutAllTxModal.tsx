@@ -6,16 +6,16 @@ import {
   ModalFooterActions,
   ModalHeader,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import { ScrollArea } from '@tangle-network/webb-ui-components/components/ScrollArea';
-import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/webb-ui-components/constants';
+} from '@tangle-network/ui-components';
+import { ScrollArea } from '@tangle-network/ui-components/components/ScrollArea';
+import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/ui-components/constants';
 import { type FC, useCallback, useEffect, useMemo } from 'react';
 
 import usePayoutAllTx, {
   MAX_PAYOUTS_BATCH_SIZE,
 } from '../data/payouts/usePayoutAllTx';
 import { TxStatus } from '../hooks/useSubstrateTx';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { Payout } from '@tangle-network/tangle-shared-ui/types';
 
 export type PayoutTxProps = {

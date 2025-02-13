@@ -14,7 +14,7 @@ import {
   EVMTokens,
 } from '@webb-tools/evm-contract-metadata';
 
-import { assertEvmAddress } from '@tangle-network/webb-ui-components';
+import { assertEvmAddress } from '@tangle-network/ui-components';
 import { Abi, erc20Abi } from 'viem';
 import { BridgeChainsConfigType, BridgeToken } from '../types';
 

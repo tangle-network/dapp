@@ -15,7 +15,7 @@ import {
   TooltipBody,
   TooltipTrigger,
   Typography,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useNetworkStore from '../../context/useNetworkStore';

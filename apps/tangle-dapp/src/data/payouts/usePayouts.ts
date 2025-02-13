@@ -15,7 +15,7 @@ import useLocalStorage, {
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { Payout } from '@tangle-network/tangle-shared-ui/types';
 import { getApiPromise as getPolkadotApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
-import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import useEraTotalRewards from './useEraTotalRewards';

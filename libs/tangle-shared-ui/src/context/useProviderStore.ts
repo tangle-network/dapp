@@ -6,7 +6,7 @@ import { InjectedExtension } from '@polkadot/extension-inject/types';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@tangle-network/webb-ui-components/types/address';
+} from '@tangle-network/ui-components/types/address';
 import { EIP1193Provider } from 'viem';
 import { EthereumProvider } from '@walletconnect/ethereum-provider';
 import { KeypairType } from '@polkadot/util-crypto/types';

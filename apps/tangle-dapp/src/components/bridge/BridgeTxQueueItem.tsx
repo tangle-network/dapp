@@ -4,8 +4,8 @@ import {
   BridgeQueueTxItem,
   BridgeTxState,
 } from '@tangle-network/tangle-shared-ui/types';
-import { TxProgressor } from '@tangle-network/webb-ui-components/components/TxProgressor';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+import { TxProgressor } from '@tangle-network/ui-components/components/TxProgressor';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { Decimal } from 'decimal.js';
 import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';

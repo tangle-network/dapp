@@ -40,25 +40,25 @@ This component library can be used by external dApp developers for their own pro
 
 ### External Usage
 
-To make use of the library in your own project install `@tangle-network/webb-ui-components` with your package manager of choice:
+To make use of the library in your own project install `@tangle-network/ui-components` with your package manager of choice:
 
 > NPM
 
 ```bash
-npm install @tangle-network/webb-ui-components
+npm install @tangle-network/ui-components
 ```
 
 > Yarn
 
 ```bash
-yarn add @tangle-network/webb-ui-components
+yarn add @tangle-network/ui-components
 ```
 
 Now that we have installed the component library we need to include `WebbUIProvider` in our React project and import the css styles file like so:
 
 ```js
-import { WebbUIProvider } from '@tangle-network/webb-ui-components';
-import '@tangle-network/webb-ui-components/index.css';
+import { WebbUIProvider } from '@tangle-network/ui-components';
+import '@tangle-network/ui-components/index.css';
 
 const App: FC = () => {
   return (
@@ -100,7 +100,7 @@ You will now be able to make use of all of the components included in Webb's des
 Making changes to the component library or using it within Webb's monorepo you will need to build the component library by running the following:
 
 ```
-nx build webb-ui-components
+nx build ui-components
 ```
 
 ### To start [Storybook](https://storybook.js.org/) for component library viewing
@@ -114,7 +114,7 @@ nx build webb-ui-components
 2. Start the storybook:
 
    ```bash
-   yarn nx storybook webb-ui-components
+   yarn nx storybook ui-components
    ```
 
 Visit `http://localhost:4400/` to see the Webb Component Library!

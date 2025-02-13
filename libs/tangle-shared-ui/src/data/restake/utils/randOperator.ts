@@ -7,7 +7,7 @@ import {
 } from '@ngneat/falso';
 import { evmToAddress } from '@polkadot/util-crypto';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
-import { assertSubstrateAddress } from '@tangle-network/webb-ui-components';
+import { assertSubstrateAddress } from '@tangle-network/ui-components';
 import { Decimal } from 'decimal.js';
 import uniqWith from 'lodash/uniqWith';
 import { RestakeOperator } from '../../../types';

@@ -7,8 +7,8 @@ on:
       - feature/**
 
     paths: [
-        'libs/webb-ui-components/src/stories/**',
-        'libs/webb-ui-components/.storybook/**',
+        'libs/ui-components/src/stories/**',
+        'libs/ui-components/.storybook/**',
       ] # Trigger the action only when files change in the folders defined here
 
   workflow_dispatch:
@@ -40,7 +40,7 @@ jobs:
       - name: Install and Build 🔧
         run: | # Install npm packages and build the Storybook files
           yarn install
-          yarn nx build-storybook webb-ui-components
+          yarn nx build-storybook ui-components
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
@@ -52,7 +52,7 @@ jobs:
             gh-pages
 
             # The folder that the build-storybook script generates files.
-          FOLDER: ~/work/dapp/dapp/dist/storybook/webb-ui-components/
+          FOLDER: ~/work/dapp/dapp/dist/storybook/ui-components/
 
           # Automatically remove deleted files from the deploy branch
           CLEAN: true

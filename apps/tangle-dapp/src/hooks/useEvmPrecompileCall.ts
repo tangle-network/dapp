@@ -17,7 +17,7 @@ import {
 } from '../constants/evmPrecompiles';
 import useEvmAddress20 from './useEvmAddress';
 import { TxStatus } from './useSubstrateTx';
-import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import useEvmTxRelayer, { isEvmTxRelayerEligible } from './useEvmTxRelayer';
 import useIsEvmTxRelayerCandidate from './useIsEvmTxRelayerCandidate';
 

@@ -8,8 +8,8 @@ import {
 } from '../../lib/bridge/hyperlane/utils';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { fetchEvmTokenBalance } from './useBridgeEvmBalances';
-import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
-import { notificationApi } from '@tangle-network/webb-ui-components';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
+import { notificationApi } from '@tangle-network/ui-components';
 
 export type HyperlaneQuoteProps = {
   token: BridgeToken;

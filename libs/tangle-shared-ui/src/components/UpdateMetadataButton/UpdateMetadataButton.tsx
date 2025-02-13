@@ -11,8 +11,8 @@ import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
-} from '@tangle-network/webb-ui-components';
-import { NetworkId } from '@tangle-network/webb-ui-components/constants/networks';
+} from '@tangle-network/ui-components';
+import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import isEqual from 'lodash/isEqual';
 import { FC, useCallback, useMemo, useState } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';

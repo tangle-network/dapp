@@ -6,13 +6,13 @@ import {
   Card,
   CardVariant,
   Divider,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import {
   EMPTY_VALUE_PLACEHOLDER,
   SOCIAL_URLS_RECORD,
   TANGLE_DOCS_STAKING_URL,
   WEBB_DISCORD_CHANNEL_URL,
-} from '@tangle-network/webb-ui-components/constants';
+} from '@tangle-network/ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 

@@ -7,8 +7,8 @@ import type {
 } from '@polkadot/types/lookup';
 import { BN, formatBalance, hexToString } from '@polkadot/util';
 import type { Chain } from '@tangle-network/dapp-config';
-import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
-import { isEvmAddress } from '@tangle-network/webb-ui-components/utils/isEvmAddress20';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
+import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';
 import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
 import { PublicClient } from 'viem';
 import { findErc20Token } from '../../hooks/useTangleEvmErc20Balances';

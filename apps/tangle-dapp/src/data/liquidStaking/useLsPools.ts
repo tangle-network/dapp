@@ -1,5 +1,5 @@
 import { BN_ZERO } from '@polkadot/util';
-import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import { useMemo } from 'react';
 
 import { LsPool } from '../../constants/liquidStaking/types';

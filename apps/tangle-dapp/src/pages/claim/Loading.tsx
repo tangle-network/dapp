@@ -1,5 +1,5 @@
 import Spinner from '@tangle-network/icons/Spinner';
-import { AppTemplate } from '@tangle-network/webb-ui-components/containers/AppTemplate';
+import { AppTemplate } from '@tangle-network/ui-components/containers/AppTemplate';
 
 export default function Loading() {
   return (

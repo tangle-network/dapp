@@ -58,7 +58,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
           'rounded-xl',
           'bg-mono-0 dark:bg-mono-200',
           'border border-mono-60 dark:border-mono-170',
-          withShadow && 'shadow-webb-lg dark:shadow-webb-lg-dark',
+          withShadow && 'shadow-tangle',
           tightPadding ? 'p-3' : 'p-6',
           getVariantClass(variant),
           className,

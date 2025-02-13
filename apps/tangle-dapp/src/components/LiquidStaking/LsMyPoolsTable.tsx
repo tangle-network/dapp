@@ -24,11 +24,11 @@ import {
   TooltipBody,
   TooltipTrigger,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import { ActionItemType } from '@tangle-network/webb-ui-components/components/ActionsDropdown/types';
-import { TableVariant } from '@tangle-network/webb-ui-components/components/Table/types';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+} from '@tangle-network/ui-components';
+import { ActionItemType } from '@tangle-network/ui-components/components/ActionsDropdown/types';
+import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import assert from 'assert';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';

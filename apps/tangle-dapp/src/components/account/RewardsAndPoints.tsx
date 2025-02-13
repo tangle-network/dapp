@@ -1,13 +1,13 @@
 import { BN } from '@polkadot/util';
 import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
-import addCommasToNumber from '@tangle-network/webb-ui-components/utils/addCommasToNumber';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
-} from '@tangle-network/webb-ui-components/utils/formatDisplayAmount';
+} from '@tangle-network/ui-components/utils/formatDisplayAmount';
 import { useMemo } from 'react';
 import useActivePoints from '../../data/points/useActivePoints';
 import useAccountRewardInfo from '../../data/rewards/useAccountRewardInfo';

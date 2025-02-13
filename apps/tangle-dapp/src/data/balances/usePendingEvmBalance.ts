@@ -1,7 +1,7 @@
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import usePromise from '@tangle-network/tangle-shared-ui/hooks/usePromise';
 import useViemPublicClient from '@tangle-network/tangle-shared-ui/hooks/useViemPublicClient';
-import { toEvmAddress } from '@tangle-network/webb-ui-components';
+import { toEvmAddress } from '@tangle-network/ui-components';
 import { useCallback, useMemo } from 'react';
 
 /**

@@ -4,8 +4,8 @@ import '@webb-tools/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
-import { Button, Card } from '@tangle-network/webb-ui-components';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
+import { Button, Card } from '@tangle-network/ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {

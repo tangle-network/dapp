@@ -1,5 +1,5 @@
 import { ChevronDown } from '@tangle-network/icons';
-import { Typography } from '@tangle-network/webb-ui-components';
+import { Typography } from '@tangle-network/ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

@@ -19,8 +19,8 @@ import {
   shortenString,
   Table,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+} from '@tangle-network/ui-components';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { Link } from 'react-router';
 import { FC, useMemo, useState } from 'react';
 

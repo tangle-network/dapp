@@ -1,5 +1,5 @@
 {
-  "name": "@tangle-network/webb-ui-components",
+  "name": "@tangle-network/ui-components",
   "version": "0.0.3",
   "type": "module",
   "main": "./index.js",
@@ -8,13 +8,14 @@
   "keywords": [
     "tangle",
     "tangle-network",
-    "webb-ui-components",
-    "webb-ui",
-    "webb-ui-library",
-    "webb-ui-component-library",
+    "ui-components",
+    "ui-library",
+    "tangle-ui",
+    "tangle-ui-library",
+    "tangle-ui-component-library",
     "dApp"
   ],
-  "homepage": "https://github.com/tangle-network/dapp/tree/develop/libs/webb-ui-components#readme",
+  "homepage": "https://github.com/tangle-network/dapp/tree/develop/libs/ui-components#readme",
   "bugs": "https://github.com/tangle-network/dapp/issues/new/choose",
   "license": "Apache-2.0",
   "author": "Tangle Developers",

@@ -6,10 +6,10 @@ import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
 import { Spinner } from '@tangle-network/icons';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { getApiRx } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
-import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
-import { AppTemplate } from '@tangle-network/webb-ui-components/containers/AppTemplate';
-import { useWebbUI } from '@tangle-network/webb-ui-components/hooks/useWebbUI';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
+import { AppTemplate } from '@tangle-network/ui-components/containers/AppTemplate';
+import { useWebbUI } from '@tangle-network/ui-components/hooks/useWebbUI';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { combineLatest, Subscription } from 'rxjs';
 

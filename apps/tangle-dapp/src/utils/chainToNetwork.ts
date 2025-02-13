@@ -9,7 +9,7 @@ import {
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
-} from '@tangle-network/webb-ui-components/constants/networks';
+} from '@tangle-network/ui-components/constants/networks';
 import assert from 'assert';
 
 const chainToNetworkMap = {

@@ -5,7 +5,7 @@ import {
   getApiPromise,
   getApiRx,
 } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
-import { SkeletonLoader, Typography } from '@tangle-network/webb-ui-components';
+import { SkeletonLoader, Typography } from '@tangle-network/ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 /**

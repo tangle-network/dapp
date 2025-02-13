@@ -12,8 +12,8 @@ import {
   formatDisplayAmount,
   isEvmAddress,
   shortenHex,
-} from '@tangle-network/webb-ui-components';
-import { useModal } from '@tangle-network/webb-ui-components/hooks/useModal';
+} from '@tangle-network/ui-components';
+import { useModal } from '@tangle-network/ui-components/hooks/useModal';
 import assert from 'assert';
 import {
   type ComponentProps,

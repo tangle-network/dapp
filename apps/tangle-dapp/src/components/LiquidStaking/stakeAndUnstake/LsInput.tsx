@@ -1,6 +1,6 @@
 import { BN } from '@polkadot/util';
 import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
-import { formatBn } from '@tangle-network/webb-ui-components';
+import { formatBn } from '@tangle-network/ui-components';
 import { forwardRef, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 

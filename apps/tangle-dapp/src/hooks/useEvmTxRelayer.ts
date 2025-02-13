@@ -13,8 +13,8 @@ import {
   PrecompileAddress,
   ZERO_ADDRESS,
 } from '../constants/evmPrecompiles';
-import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
-import { assertEvmAddress } from '@tangle-network/webb-ui-components';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
+import { assertEvmAddress } from '@tangle-network/ui-components';
 import assert from 'assert';
 import useViemWalletClient, {
   WalletClientTransport,

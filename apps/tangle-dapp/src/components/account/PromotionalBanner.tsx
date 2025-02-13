@@ -1,5 +1,5 @@
 import { FC, useState, useEffect } from 'react';
-import { Card, Typography } from '@tangle-network/webb-ui-components';
+import { Card, Typography } from '@tangle-network/ui-components';
 import { twMerge } from 'tailwind-merge';
 import { ArrowRightUp } from '@tangle-network/icons';
 

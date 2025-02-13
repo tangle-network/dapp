@@ -1,5 +1,5 @@
 import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
-import { Button } from '@tangle-network/webb-ui-components';
+import { Button } from '@tangle-network/ui-components';
 import type { FC } from 'react';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';

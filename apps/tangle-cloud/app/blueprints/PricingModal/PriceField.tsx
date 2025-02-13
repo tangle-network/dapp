@@ -4,8 +4,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@tangle-network/webb-ui-components/components/form';
-import { TextField } from '@tangle-network/webb-ui-components/components/TextField';
+} from '@tangle-network/ui-components/components/form';
+import { TextField } from '@tangle-network/ui-components/components/TextField';
 import type {
   ControllerRenderProps,
   FieldPath,

@@ -1,6 +1,6 @@
 import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
-import { SkeletonLoader } from '@tangle-network/webb-ui-components';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+import { SkeletonLoader } from '@tangle-network/ui-components';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC } from 'react';
 
 import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';

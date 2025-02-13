@@ -1,4 +1,4 @@
-import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import assert from 'assert';
 import { Decimal } from 'decimal.js';
 import { ethers } from 'ethers';

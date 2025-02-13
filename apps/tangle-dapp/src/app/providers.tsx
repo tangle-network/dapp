@@ -3,7 +3,7 @@ import {
   OFACFilterProvider,
   WebbProvider,
 } from '@tangle-network/api-provider-environment';
-import { WebbUIProvider } from '@tangle-network/webb-ui-components';
+import { WebbUIProvider } from '@tangle-network/ui-components';
 import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
 import { z } from 'zod';

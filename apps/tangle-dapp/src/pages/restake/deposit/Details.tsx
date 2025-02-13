@@ -1,5 +1,5 @@
 import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components';
 import { FC, useMemo } from 'react';
 import { UseFormWatch } from 'react-hook-form';
 import DetailsContainer from '../../../components/DetailsContainer';

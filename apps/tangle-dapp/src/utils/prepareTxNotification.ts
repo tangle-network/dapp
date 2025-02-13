@@ -1,4 +1,4 @@
-import { notificationApi } from '@tangle-network/webb-ui-components';
+import { notificationApi } from '@tangle-network/ui-components';
 
 import { TxStatus } from '../hooks/useSubstrateTx';
 

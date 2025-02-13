@@ -1,4 +1,4 @@
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 export type ValidatorReward = {
   validatorAddress: SubstrateAddress;

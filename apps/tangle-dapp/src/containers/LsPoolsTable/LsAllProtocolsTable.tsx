@@ -19,9 +19,9 @@ import {
   formatDisplayAmount,
   Table,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import { TableVariant } from '@tangle-network/webb-ui-components/components/Table/types';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+} from '@tangle-network/ui-components';
+import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 

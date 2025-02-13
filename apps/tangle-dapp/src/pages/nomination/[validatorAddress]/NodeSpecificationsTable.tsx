@@ -7,11 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
-import {
-  fuzzyFilter,
-  Table,
-  Typography,
-} from '@tangle-network/webb-ui-components';
+import { fuzzyFilter, Table, Typography } from '@tangle-network/ui-components';
 import cx from 'classnames';
 import { FC } from 'react';
 

@@ -4,7 +4,7 @@ import {
   EvmAddress,
   SolanaAddress,
   SubstrateAddress,
-} from '@tangle-network/webb-ui-components/types/address';
+} from '@tangle-network/ui-components/types/address';
 
 import { u128 } from '@polkadot/types';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';

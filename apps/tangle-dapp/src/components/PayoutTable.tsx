@@ -23,14 +23,14 @@ import {
   shortenString,
   Table,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+} from '@tangle-network/ui-components';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { type FC, useState } from 'react';
 
 import { HeaderCell, StringCell } from './tableCells';
 import TokenAmountCell from './tableCells/TokenAmountCell';
 import sortByBn from '../utils/sortByBn';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import PayoutTxModal from '../containers/PayoutTxContainer';
 
 const COLUMN_HELPER = createColumnHelper<Payout>();

@@ -12,9 +12,9 @@ import {
   Table,
   TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import addCommasToNumber from '@tangle-network/webb-ui-components/utils/addCommasToNumber';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+} from '@tangle-network/ui-components';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC, useMemo, useState } from 'react';
 
 import { LsPoolUnstakeRequest } from '../../constants/liquidStaking/types';

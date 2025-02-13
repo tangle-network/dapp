@@ -33,8 +33,8 @@ import {
   calculateTypedChainId,
 } from '@tangle-network/dapp-types/TypedChainId';
 import { WebbWeb3Provider } from '@tangle-network/web3-api-provider';
-import { useWebbUI } from '@tangle-network/webb-ui-components';
-import useWagmiHydration from '@tangle-network/webb-ui-components/hooks/useWagmiHydration';
+import { useWebbUI } from '@tangle-network/ui-components';
+import useWagmiHydration from '@tangle-network/ui-components/hooks/useWagmiHydration';
 import { useCallback, useEffect, useRef, useState, type FC } from 'react';
 import {
   BaseError as WagmiBaseError,
@@ -225,7 +225,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         case WebbErrorCodes.TalismanExtensionNotInstalled:
         case WebbErrorCodes.SubWalletExtensionNotInstalled:
           {
-            // TODO: Implement interactive feedback with new components from webb-ui-components:
+            // TODO: Implement interactive feedback with new components from ui-components:
           }
           break;
         case WebbErrorCodes.InsufficientProviderInterface:

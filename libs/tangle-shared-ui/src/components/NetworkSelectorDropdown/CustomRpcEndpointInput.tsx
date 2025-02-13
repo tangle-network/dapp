@@ -1,5 +1,5 @@
 import { Save, SaveWithBg } from '@tangle-network/icons';
-import { Input } from '@tangle-network/webb-ui-components';
+import { Input } from '@tangle-network/ui-components';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import useLocalStorage, { LocalStorageKey } from '../../hooks/useLocalStorage';
 

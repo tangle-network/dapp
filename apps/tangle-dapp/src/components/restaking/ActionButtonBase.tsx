@@ -1,6 +1,6 @@
 import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
-import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { FC, type ReactNode, useMemo } from 'react';
 
 type Props = {

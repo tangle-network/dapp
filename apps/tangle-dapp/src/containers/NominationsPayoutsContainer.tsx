@@ -8,8 +8,8 @@ import {
   Button,
   TabContent,
   TableAndChartTabs,
-} from '@tangle-network/webb-ui-components';
-import { TANGLE_DOCS_URL } from '@tangle-network/webb-ui-components/constants';
+} from '@tangle-network/ui-components';
+import { TANGLE_DOCS_URL } from '@tangle-network/ui-components/constants';
 import {
   type FC,
   useCallback,
@@ -18,7 +18,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 import { ContainerSkeleton } from '../components';
 import useNominations from '../data/nomination/useNominations';

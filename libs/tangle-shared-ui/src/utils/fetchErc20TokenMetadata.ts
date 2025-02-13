@@ -1,4 +1,4 @@
-import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { erc20Abi, PublicClient } from 'viem';
 
 const fetchErc20TokenMetadata = async (

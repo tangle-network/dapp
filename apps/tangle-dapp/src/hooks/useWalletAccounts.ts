@@ -3,9 +3,9 @@ import { HexString } from '@polkadot/util/types';
 import { Account } from '@tangle-network/abstract-api-provider';
 import { useWebContext } from '@tangle-network/api-provider-environment';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
-import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
-import { isEvmAddress } from '@tangle-network/webb-ui-components/utils/isEvmAddress20';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
+import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';
 import { useMemo } from 'react';
 
 export type WalletAccount = {

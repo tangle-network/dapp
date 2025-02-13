@@ -11,7 +11,7 @@ import {
   ModalFooterActions,
   ModalHeader,
   TANGLE_DOCS_LS_CREATE_POOL_URL,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import AddressInput from '../components/AddressInput';

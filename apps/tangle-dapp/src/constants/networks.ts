@@ -1,4 +1,4 @@
-import { NetworkId } from '@tangle-network/webb-ui-components/constants/networks';
+import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 
 import { NetworkFeature } from '../types';
 

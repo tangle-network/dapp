@@ -1,6 +1,6 @@
 import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
-import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import { useCallback, useMemo } from 'react';
 
 import useNetworkFeatures from '../../hooks/useNetworkFeatures';

@@ -1,8 +1,8 @@
 import { Option } from '@polkadot/types';
 import { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
 import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
-import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 

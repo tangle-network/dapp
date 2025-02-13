@@ -3,7 +3,7 @@ import {
   Mail as MailIcon,
   TwitterFill,
 } from '@tangle-network/icons';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import type { ComponentProps, FC, PropsWithChildren } from 'react';
 
 import type { IdentityType } from './types';

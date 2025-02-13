@@ -26,12 +26,18 @@
       background-color 600000s 0s,
       color 600000s 0s;
   }
-}
 
-:root {
-  --adjust-amount-width: 160px;
+  :root {
+    --adjust-amount-width: 160px;
 
-  --radix-dropdown-menu-content-max-height: 320px;
+    --radix-dropdown-menu-content-max-height: 320px;
+
+    --tangle-shadow: 0px 8px 50px 0px rgba(0, 0, 0, 0.2);
+  }
+
+  .dark {
+    --tangle-shadow: 0px 8px 50px 0px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .bg-body-base {

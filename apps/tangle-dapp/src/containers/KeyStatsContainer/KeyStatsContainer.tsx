@@ -1,4 +1,4 @@
-import { Card, CardVariant } from '@tangle-network/webb-ui-components';
+import { Card, CardVariant } from '@tangle-network/ui-components';
 import { twMerge } from 'tailwind-merge';
 
 import ActiveValidatorsKeyStat from './ActiveValidatorsKeyStat';

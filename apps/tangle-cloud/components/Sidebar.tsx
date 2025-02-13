@@ -10,20 +10,20 @@ import {
   DropdownBody,
   DropdownButton,
   DropdownMenuItem,
-} from '@tangle-network/webb-ui-components/components/Dropdown';
+} from '@tangle-network/ui-components/components/Dropdown';
 import {
   MobileSidebar,
   SideBar as SideBarCmp,
   SideBarFooterType,
   SideBarItemProps,
   SidebarTangleClosedIcon,
-} from '@tangle-network/webb-ui-components/components/SideBar';
-import { TangleCloudLogo } from '@tangle-network/webb-ui-components/components/TangleCloudLogo';
+} from '@tangle-network/ui-components/components/SideBar';
+import { TangleCloudLogo } from '@tangle-network/ui-components/components/TangleCloudLogo';
 import {
   TANGLE_DAPP_URL,
   TANGLE_DOCS_URL,
-} from '@tangle-network/webb-ui-components/constants';
-import { setSidebarCookieOnToggle } from '@tangle-network/webb-ui-components/next-utils';
+} from '@tangle-network/ui-components/constants';
+import { setSidebarCookieOnToggle } from '@tangle-network/ui-components/next-utils';
 import cx from 'classnames';
 import capitalize from 'lodash/capitalize';
 import { usePathname } from 'next/navigation';

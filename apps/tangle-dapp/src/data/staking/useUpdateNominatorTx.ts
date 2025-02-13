@@ -1,7 +1,7 @@
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
-import convertAddressToBytes32 from '@tangle-network/webb-ui-components/utils/convertAddressToBytes32';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import convertAddressToBytes32 from '@tangle-network/ui-components/utils/convertAddressToBytes32';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';

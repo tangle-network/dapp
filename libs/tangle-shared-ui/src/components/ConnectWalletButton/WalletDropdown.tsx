@@ -20,7 +20,7 @@ import {
   Typography,
   useWebbUI,
   WalletButton,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
@@ -28,7 +28,7 @@ import { BaseError } from 'viem';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@tangle-network/webb-ui-components/types/address';
+} from '@tangle-network/ui-components/types/address';
 
 const WalletDropdown: FC<{
   accountName?: string;

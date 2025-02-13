@@ -23,7 +23,7 @@ import {
   ModalContent,
   Typography,
   useModal,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { Decimal } from 'decimal.js';
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { twMerge } from 'tailwind-merge';

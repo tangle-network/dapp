@@ -3,11 +3,11 @@ import {
   isEvmAddress,
   isSubstrateAddress,
   toSubstrateAddress,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@tangle-network/webb-ui-components/types/address';
+} from '@tangle-network/ui-components/types/address';
 import assert from 'assert';
 import useNetworkStore from '../context/useNetworkStore';
 

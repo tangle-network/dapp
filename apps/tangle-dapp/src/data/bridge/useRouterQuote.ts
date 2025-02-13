@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import {
   ROUTER_PARTNER_ID,
   ROUTER_QUOTE_URL,

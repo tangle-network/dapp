@@ -18,14 +18,14 @@ import {
   shortenString,
   Table,
   Typography,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, useState } from 'react';
 
 import calculateCommission from '../../utils/calculateCommission';
 import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import sortByBn from '../../utils/sortByBn';
 
 const COLUMN_HELPER = createColumnHelper<Nominee>();

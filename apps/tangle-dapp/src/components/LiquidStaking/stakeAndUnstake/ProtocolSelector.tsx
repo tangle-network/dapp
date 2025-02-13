@@ -7,8 +7,8 @@ import {
   DropdownBody,
   DropdownMenuItem,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import { ScrollArea } from '@tangle-network/webb-ui-components/components/ScrollArea';
+} from '@tangle-network/ui-components';
+import { ScrollArea } from '@tangle-network/ui-components/components/ScrollArea';
 import { FC, useCallback } from 'react';
 
 import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';

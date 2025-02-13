@@ -1,6 +1,6 @@
-import '@tangle-network/webb-ui-components/tailwind.css';
+import '@tangle-network/ui-components/tailwind.css';
 
-import { TESTNET_LEADERBOARD_URL } from '@tangle-network/webb-ui-components/constants';
+import { TESTNET_LEADERBOARD_URL } from '@tangle-network/ui-components/constants';
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 

@@ -1,4 +1,4 @@
-import { WebbUIProvider } from '@tangle-network/webb-ui-components/provider';
+import { WebbUIProvider } from '@tangle-network/ui-components/provider';
 import type { PropsWithChildren } from 'react';
 
 const Provider = ({ children }: PropsWithChildren) => {

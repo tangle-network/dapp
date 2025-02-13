@@ -6,7 +6,7 @@ import {
   InfoIconWithTooltip,
   SkeletonLoader,
   Typography,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 

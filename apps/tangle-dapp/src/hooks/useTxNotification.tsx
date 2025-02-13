@@ -1,5 +1,5 @@
 import { ExternalLinkLine } from '@tangle-network/icons';
-import { Button, Typography } from '@tangle-network/webb-ui-components';
+import { Button, Typography } from '@tangle-network/ui-components';
 import capitalize from 'lodash/capitalize';
 import { useSnackbar } from 'notistack';
 import { useCallback } from 'react';

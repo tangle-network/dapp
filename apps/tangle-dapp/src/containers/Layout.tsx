@@ -1,11 +1,11 @@
-import { Footer } from '@tangle-network/webb-ui-components';
+import { Footer } from '@tangle-network/ui-components';
 import {
   bottomLinks,
   TANGLE_PRIVACY_POLICY_URL,
   TANGLE_SOCIAL_URLS_RECORD,
   TANGLE_TERMS_OF_SERVICE_URL,
   TANGLE_AVAILABLE_SOCIALS,
-} from '@tangle-network/webb-ui-components/constants';
+} from '@tangle-network/ui-components/constants';
 import { useLayoutBgClassName } from '@tangle-network/tangle-shared-ui/hooks/useLayoutBgClassName';
 import { type FC, type PropsWithChildren } from 'react';
 

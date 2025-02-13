@@ -6,8 +6,8 @@ import {
   ModalFooterActions,
   ModalHeader,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/webb-ui-components/constants';
+} from '@tangle-network/ui-components';
+import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/ui-components/constants';
 import { type FC, useCallback, useState } from 'react';
 
 import { BondedTokensBalanceInfo } from '../components';

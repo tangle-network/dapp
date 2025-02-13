@@ -1,11 +1,11 @@
 import { DropdownMenuTrigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
 import { ShuffleLine } from '@tangle-network/icons';
-import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
 import {
   Dropdown,
   DropdownBody,
-} from '@tangle-network/webb-ui-components/components/Dropdown';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+} from '@tangle-network/ui-components/components/Dropdown';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 

@@ -8,7 +8,7 @@ import {
 } from 'viem';
 import { ReadContractReturnType } from 'wagmi/actions';
 
-import { EvmAddress } from '@tangle-network/webb-ui-components/types/address';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import useViemPublicClient from '@tangle-network/tangle-shared-ui/hooks/useViemPublicClient';
 
 export type ContractReadOptions<

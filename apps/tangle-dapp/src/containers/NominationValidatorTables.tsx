@@ -5,7 +5,7 @@ import {
   Input,
   TabContent,
   TableAndChartTabs,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, useState } from 'react';
 
 import { ContainerSkeleton } from '../components';

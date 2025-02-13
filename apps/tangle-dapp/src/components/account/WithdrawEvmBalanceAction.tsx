@@ -2,7 +2,7 @@ import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
 import RefundLineIcon from '@tangle-network/icons/RefundLineIcon';
 import Spinner from '@tangle-network/icons/Spinner';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { toEvmAddress } from '@tangle-network/webb-ui-components';
+import { toEvmAddress } from '@tangle-network/ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
 import useEvmBalanceWithdrawTx from '../../data/balances/useEvmBalanceWithdrawTx';

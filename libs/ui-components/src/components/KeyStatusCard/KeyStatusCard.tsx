@@ -13,7 +13,7 @@ import { KeyStatusCardProps } from './types';
  * The `KeyStatusCard` component displays the current key and next key data
  *
  * ```jsx
- *  import { useKeyStatusSeedData } from "@tangle-network/webb-ui-components";
+ *  import { useKeyStatusSeedData } from "@tangle-network/ui-components";
  *
  *  const statusCardData = useKeyStatusSeedData();
  *

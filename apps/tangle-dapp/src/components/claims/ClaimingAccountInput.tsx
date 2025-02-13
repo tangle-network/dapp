@@ -5,14 +5,14 @@ import {
 } from '@tangle-network/dapp-types/WebbError';
 import { ChevronDown } from '@tangle-network/icons';
 import { WebbWeb3Provider } from '@tangle-network/web3-api-provider/webb-provider';
-import { useWebbUI } from '@tangle-network/webb-ui-components';
-import { Avatar } from '@tangle-network/webb-ui-components/components/Avatar';
+import { useWebbUI } from '@tangle-network/ui-components';
+import { Avatar } from '@tangle-network/ui-components/components/Avatar';
 import {
   AccountDropdownBody,
   Dropdown,
   DropdownButton,
-} from '@tangle-network/webb-ui-components/components/Dropdown';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+} from '@tangle-network/ui-components/components/Dropdown';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import type { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

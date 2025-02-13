@@ -1,5 +1,5 @@
-import { SideBar as SideBarCmp } from '@tangle-network/webb-ui-components';
-import { setSidebarCookieOnToggle } from '@tangle-network/webb-ui-components/next-utils';
+import { SideBar as SideBarCmp } from '@tangle-network/ui-components';
+import { setSidebarCookieOnToggle } from '@tangle-network/ui-components/next-utils';
 import { useLocation } from 'react-router';
 import { type FC } from 'react';
 

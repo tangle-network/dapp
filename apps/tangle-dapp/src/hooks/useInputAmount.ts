@@ -4,14 +4,14 @@ import {
   formatDisplayAmount,
   AmountFormatStyle,
   FormatOptions,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { useCallback, useEffect, useState } from 'react';
 
 import cleanNumericInputString from '../utils/cleanNumericInputString';
 import parseChainUnits, {
   ChainUnitParsingError,
 } from '../utils/parseChainUnits';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 
 type SafeParseInputAmountOptions = {
   amountString: string;

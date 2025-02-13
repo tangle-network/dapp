@@ -1,4 +1,4 @@
-import { WebbTypographyVariant } from '@tangle-network/webb-ui-components/typography/types';
+import { WebbTypographyVariant } from '@tangle-network/ui-components/typography/types';
 
 export interface HeaderCellProps {
   title: string;

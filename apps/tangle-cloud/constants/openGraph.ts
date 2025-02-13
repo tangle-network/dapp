@@ -1,4 +1,4 @@
-import { TANGLE_CLOUD_URL } from '@tangle-network/webb-ui-components/constants';
+import { TANGLE_CLOUD_URL } from '@tangle-network/ui-components/constants';
 import type { Metadata } from 'next';
 
 export const APP_NAME = 'Tangle Cloud';

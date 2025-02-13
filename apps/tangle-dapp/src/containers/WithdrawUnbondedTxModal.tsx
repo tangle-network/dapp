@@ -7,7 +7,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { type FC, useCallback, useState } from 'react';
 
 import { BondedTokensBalanceInfo } from '../components/BondedTokensBalanceInfo';

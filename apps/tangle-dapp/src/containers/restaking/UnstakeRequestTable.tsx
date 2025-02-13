@@ -17,10 +17,10 @@ import {
   formatDisplayAmount,
   isEvmAddress,
   Typography,
-} from '@tangle-network/webb-ui-components';
-import { CheckBox } from '@tangle-network/webb-ui-components/components/CheckBox';
-import { fuzzyFilter } from '@tangle-network/webb-ui-components/components/Filter/utils';
-import { Table } from '@tangle-network/webb-ui-components/components/Table';
+} from '@tangle-network/ui-components';
+import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
+import { fuzzyFilter } from '@tangle-network/ui-components/components/Filter/utils';
+import { Table } from '@tangle-network/ui-components/components/Table';
 import { FC, useMemo } from 'react';
 import AvatarWithText from '../../components/AvatarWithText';
 import useRestakeConsts from '../../data/restake/useRestakeConsts';
@@ -28,9 +28,9 @@ import useRestakeCurrentRound from '../../data/restake/useRestakeCurrentRound';
 import TableCell from '../../components/restaking/TableCell';
 import { calculateTimeRemaining } from '../../pages/restake/utils';
 import UnstakeRequestTableActions from './UnstakeRequestTableActions';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { BN } from '@polkadot/util';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import useSessionDurationMs from '../../data/useSessionDurationMs';
 import formatSessionDistance from '../../utils/formatSessionDistance';

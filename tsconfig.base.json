@@ -57,14 +57,12 @@
         "libs/tangle-shared-ui/src/index.ts"
       ],
       "@tangle-network/tangle-shared-ui/*": ["libs/tangle-shared-ui/src/*"],
+      "@tangle-network/ui-components": ["libs/ui-components/src/index.ts"],
+      "@tangle-network/ui-components/*": ["libs/ui-components/src/*"],
       "@tangle-network/web3-api-provider": [
         "libs/web3-api-provider/src/index.ts"
       ],
-      "@tangle-network/web3-api-provider/*": ["libs/web3-api-provider/src/*"],
-      "@tangle-network/webb-ui-components": [
-        "libs/webb-ui-components/src/index.ts"
-      ],
-      "@tangle-network/webb-ui-components/*": ["libs/webb-ui-components/src/*"]
+      "@tangle-network/web3-api-provider/*": ["libs/web3-api-provider/src/*"]
     }
   },
   "include": [

@@ -1,6 +1,6 @@
 import { ApiRx } from '@polkadot/api';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
-import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import { map, of } from 'rxjs';
 
 const rewardVaultsPotAccountsRxQuery = (apiRx: ApiRx) => {

@@ -6,12 +6,12 @@ import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubst
 import { RestakeOperator } from '@tangle-network/tangle-shared-ui/types';
 import type { OperatorMap } from '@tangle-network/tangle-shared-ui/types/restake';
 import delegationsToVaultTokens from '@tangle-network/tangle-shared-ui/utils/restake/delegationsToVaultTokens';
-import Button from '@tangle-network/webb-ui-components/components/buttons/Button';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
 import {
   Modal,
   ModalTrigger,
-} from '@tangle-network/webb-ui-components/components/Modal';
-import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
+} from '@tangle-network/ui-components/components/Modal';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import {
   type ComponentProps,
   type FC,

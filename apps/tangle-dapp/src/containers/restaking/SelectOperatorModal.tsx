@@ -10,7 +10,7 @@ import OperatorListItem from '../../components/Lists/OperatorListItem';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { BN } from '@polkadot/util';
 
 type Props = {

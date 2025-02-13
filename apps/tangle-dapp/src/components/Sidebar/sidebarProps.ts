@@ -15,12 +15,12 @@ import {
   SideBarFooterType,
   SideBarItemProps,
   TangleLogo,
-} from '@tangle-network/webb-ui-components';
-import { SidebarTangleClosedIcon } from '@tangle-network/webb-ui-components/components';
+} from '@tangle-network/ui-components';
+import { SidebarTangleClosedIcon } from '@tangle-network/ui-components/components';
 import {
   TANGLE_DOCS_URL,
   TANGLE_MKT_URL,
-} from '@tangle-network/webb-ui-components/constants';
+} from '@tangle-network/ui-components/constants';
 
 import { PagePath } from '../../types';
 

@@ -8,7 +8,7 @@ import {
   WebbError,
   WebbErrorCodes,
 } from '@tangle-network/dapp-types/WebbError';
-import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { map, of, switchMap } from 'rxjs';
 import usePolkadotApi from '../../hooks/usePolkadotApi';

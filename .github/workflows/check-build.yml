@@ -39,7 +39,7 @@ jobs:
       - name: build
         run: |
           yarn nx run-many --all --target=build
-          yarn nx build-storybook webb-ui-components
+          yarn nx build-storybook ui-components
 
         # Fix: JavaScript heap out of memory
         # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172

@@ -1,5 +1,5 @@
 import { ArrowRightUp } from '@tangle-network/icons';
-import { Button } from '@tangle-network/webb-ui-components';
+import { Button } from '@tangle-network/ui-components';
 
 export const StakingItemExternalLinkButton = ({ href }: { href: string }) => {
   return (

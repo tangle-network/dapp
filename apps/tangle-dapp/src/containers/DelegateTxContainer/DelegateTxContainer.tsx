@@ -8,10 +8,10 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from '@tangle-network/webb-ui-components';
-import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/webb-ui-components/constants';
-import pluralize from '@tangle-network/webb-ui-components/utils/pluralize';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+} from '@tangle-network/ui-components';
+import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/ui-components/constants';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import assert from 'assert';
 import { type FC, useCallback, useState } from 'react';
 

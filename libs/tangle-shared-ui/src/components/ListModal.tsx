@@ -6,7 +6,7 @@ import {
   Modal,
   ModalContent,
   ModalHeader,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { useMemo, useState } from 'react';
 import SkeletonRows from './SkeletonRows';
 import { twMerge } from 'tailwind-merge';

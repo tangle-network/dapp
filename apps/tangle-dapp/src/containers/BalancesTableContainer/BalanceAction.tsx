@@ -4,7 +4,7 @@ import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { Link } from 'react-router';
 import { FC, JSX, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';

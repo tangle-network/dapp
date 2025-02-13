@@ -5,8 +5,8 @@ import type {
   TanglePrimitivesServicesServiceBlueprint,
 } from '@polkadot/types/lookup';
 import type { ITuple } from '@polkadot/types/types';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
-import assertSubstrateAddress from '@tangle-network/webb-ui-components/utils/assertSubstrateAddress';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import merge from 'lodash/merge';
 import type { Blueprint } from '../../../types/blueprint';
 import { OperatorMap } from '../../../types/restake';

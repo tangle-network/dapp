@@ -9,11 +9,7 @@ import {
 } from '@tanstack/react-table';
 import { LoggerService } from '@tangle-network/browser-utils/logger';
 import { Search, Spinner } from '@tangle-network/icons';
-import {
-  Input,
-  Pagination,
-  Typography,
-} from '@tangle-network/webb-ui-components';
+import { Input, Pagination, Typography } from '@tangle-network/ui-components';
 import cx from 'classnames';
 import { type FC, useMemo, useState } from 'react';
 import useSWR from 'swr';

@@ -1,8 +1,8 @@
-import { isSubstrateAddress } from '@tangle-network/webb-ui-components';
+import { isSubstrateAddress } from '@tangle-network/ui-components';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@tangle-network/webb-ui-components/types/address';
+} from '@tangle-network/ui-components/types/address';
 
 import useActiveAccountAddress from './useActiveAccountAddress';
 

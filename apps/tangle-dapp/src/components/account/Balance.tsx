@@ -1,9 +1,6 @@
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import {
-  InfoIconWithTooltip,
-  Typography,
-} from '@tangle-network/webb-ui-components';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/webb-ui-components/constants';
+import { InfoIconWithTooltip, Typography } from '@tangle-network/ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { FC, useMemo, useState } from 'react';
 
 import { LockFillIcon } from '@tangle-network/icons';

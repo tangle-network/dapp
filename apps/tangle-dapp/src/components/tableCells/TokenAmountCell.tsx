@@ -3,7 +3,7 @@ import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetwork
 import {
   AmountFormatStyle,
   formatDisplayAmount,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 

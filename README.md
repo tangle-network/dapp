@@ -37,7 +37,7 @@
 
 <h2 id="start"> Getting Started </h2>
 
-This monorepo is the cornerstone for decentralized interfaces within the Webb protocol, incorporating a suite of dApps, including the revolutionary [Tangle Network](https://tangle.tools) applications. These applications are geared towards kickstarting advanced cryptographic developments and innovations in blockchain technology, leveraging multi-party computation (MPC) services and cross-chain capabilities.
+This monorepo is the cornerstone for decentralized interfaces within the Tangle Network, incorporating a suite of dApps, including the revolutionary [Tangle Network](https://tangle.tools) applications. These applications are geared towards kickstarting advanced cryptographic developments and innovations in blockchain technology, leveraging multi-party computation (MPC) services and cross-chain capabilities.
 
 It uses [nx.dev](https://nx.dev/) for fast and extensible building. The `apps` directory contains the protocol's interfaces while `libs` contains the necessary code and logic.
 
@@ -72,15 +72,15 @@ Great! Now your **Node** environment is ready!
 - `note-manager`: contains all the logic for storing note account data.
 - `polkadot-api-provider`: the Substrate (or Polkadot) provider for the bridge.
 - `react-hooks`: contains all the sharable hooks across the apps.
-- `tailwind-preset`: the Webb TailwindCSS preset for all the apps.
+- `tailwind-preset`: the TailwindCSS preset for all the apps.
 - `web3-api-provider`: the EVM provider for the bridge.
-- [webb-ui-components](./libs/webb-ui-components/README.md): a collection of reusable components for building interfaces quickly.
+- [ui-components](./libs/ui-components/README.md): a collection of reusable components for building interfaces quickly.
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
 <h2 id="test"> Testing </h2>
 
-The following instructions outlines how to run Webb Dapp test suite.
+The following instructions outlines how to run Tangle dApp test suite.
 
 ### To run tests
 
@@ -99,16 +99,16 @@ yarn test
 2. Start the storybook:
 
    ```bash
-   yarn nx storybook webb-ui-components
+   yarn nx storybook ui-components
    ```
 
-Visit `http://localhost:4400/` to see the Webb Component Library!
+Visit `http://localhost:4400/` to see the Tangle Component Library!
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
 <h2 id="contribute"> Contributing </h2>
 
-Interested in contributing to the Webb Dapp interface? Thank you so much for your interest! We are always appreciative for contributions from the open-source community!
+Interested in contributing to the Tangle dApp interface? Thank you so much for your interest! We are always appreciative for contributions from the open-source community!
 
 If you would like to contribute, please refer to our [Contribution Guide](./.github/CONTRIBUTING.md) for instructions. We are excited for your first contribution!
 
@@ -169,7 +169,7 @@ Unless you explicitly state otherwise, any contribution intentionally submitted 
 If you need help or you want to additional information please:
 
 - Refer to the [Tangle Network Official Documentation](https://docs.tangle.tools/).
-- If you have feedback on how to improve the dApp interface or you have a specific question? Check out the [Tangle dApp Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/tangle-dapp) or [Webb dApp Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/dapp-feedback).
+- If you have feedback on how to improve the dApp interface or you have a specific question? Check out the [Tangle dApp Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/tangle-dapp) or [Tangle dApp Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/dapp-feedback).
 - If you found a bug please [open an issue](https://github.com/tangle-network/dapp/issues/new/choose) or [join our Discord](https://discord.gg/jUDeFpggrR) server to report it.
 
 ---

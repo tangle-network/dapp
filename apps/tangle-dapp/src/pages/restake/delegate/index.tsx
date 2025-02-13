@@ -15,10 +15,10 @@ import {
   isEvmAddress,
   isSubstrateAddress,
   shortenHex,
-} from '@tangle-network/webb-ui-components';
-import { Modal } from '@tangle-network/webb-ui-components/components/Modal';
-import { useModal } from '@tangle-network/webb-ui-components/hooks/useModal';
-import { SubstrateAddress } from '@tangle-network/webb-ui-components/types/address';
+} from '@tangle-network/ui-components';
+import { Modal } from '@tangle-network/ui-components/components/Modal';
+import { useModal } from '@tangle-network/ui-components/hooks/useModal';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import keys from 'lodash/keys';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';

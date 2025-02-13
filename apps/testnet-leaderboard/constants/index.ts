@@ -1,8 +1,8 @@
 import {
   SOCIAL_URLS_RECORD,
   WEBB_DOC_ROUTES_RECORD,
-} from '@tangle-network/webb-ui-components/constants';
-import populateDocsUrl from '@tangle-network/webb-ui-components/utils/populateDocsUrl';
+} from '@tangle-network/ui-components/constants';
+import populateDocsUrl from '@tangle-network/ui-components/utils/populateDocsUrl';
 
 import { BadgeEnum } from '../types';
 

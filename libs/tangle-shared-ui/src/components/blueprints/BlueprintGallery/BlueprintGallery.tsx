@@ -9,10 +9,10 @@ import {
   TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import { fuzzyFilter } from '@tangle-network/webb-ui-components/components/Filter/utils';
-import { Pagination } from '@tangle-network/webb-ui-components/components/Pagination';
-import SkeletonLoader from '@tangle-network/webb-ui-components/components/SkeletonLoader';
-import { Typography } from '@tangle-network/webb-ui-components/typography/Typography';
+import { fuzzyFilter } from '@tangle-network/ui-components/components/Filter/utils';
+import { Pagination } from '@tangle-network/ui-components/components/Pagination';
+import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { ComponentProps, FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { TangleError } from '../../../types/error';

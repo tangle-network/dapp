@@ -1,7 +1,7 @@
 import RestakeBanner from '@tangle-network/tangle-shared-ui/components/blueprints/RestakeBanner';
 import { FC } from 'react';
 
-import { BLUEPRINT_DOCS_LINK } from '@tangle-network/webb-ui-components/constants/tangleDocs';
+import { BLUEPRINT_DOCS_LINK } from '@tangle-network/ui-components/constants/tangleDocs';
 import BlueprintListing from './BlueprintListing';
 
 const BlueprintsPage: FC = () => {

@@ -7,7 +7,7 @@ import {
   TabTrigger,
   Typography,
   TabsList as WebbTabsList,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, useEffect, useState } from 'react';
 
 import LsUnbondingTable from '../../components/LiquidStaking/LsUnbondingTable';

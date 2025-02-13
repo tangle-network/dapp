@@ -1,12 +1,12 @@
 import type { ApiRx } from '@polkadot/api';
 import type { Option } from '@polkadot/types';
 import type { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
-import { isTemplateBigInt } from '@tangle-network/webb-ui-components';
+import { isTemplateBigInt } from '@tangle-network/ui-components';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@tangle-network/webb-ui-components/types/address';
-import { isEvmAddress } from '@tangle-network/webb-ui-components/utils/isEvmAddress20';
+} from '@tangle-network/ui-components/types/address';
+import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';
 import isEqual from 'lodash/isEqual';
 import merge from 'lodash/merge';
 import { useObservable, useObservableState } from 'observable-hooks';

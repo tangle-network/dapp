@@ -4,7 +4,7 @@ import {
   ChipColors,
   InfoIconWithTooltip,
   Label,
-} from '@tangle-network/webb-ui-components';
+} from '@tangle-network/ui-components';
 import {
   Dispatch,
   FC,
