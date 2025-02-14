@@ -1,8 +1,8 @@
 import { ButtonProps } from '../buttons/types';
-import { IWebbComponentBase } from '../../types';
+import { IComponentBase } from '../../types';
 
 export interface ConnectWalletMobileButtonProps
-  extends IWebbComponentBase,
+  extends IComponentBase,
     Pick<
       ButtonProps,
       'variant' | 'isFullWidth' | 'leftIcon' | 'rightIcon' | 'size' | 'variant'

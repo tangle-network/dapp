@@ -3,7 +3,7 @@ import {
   MonospaceVariant,
   TypographyAlignValues,
   TypographyFontWeightValues,
-  WebbTypographyVariant,
+  TypographyVariant,
 } from '../types';
 
 /**
@@ -32,7 +32,7 @@ export function getTextAlignClassName(textAlign: TypographyAlignValues) {
  * @returns tailwindcss className to style the `font-weight` attribute
  */
 export function getFontWeightClassName(
-  variant: WebbTypographyVariant,
+  variant: TypographyVariant,
   fontWeight: TypographyFontWeightValues,
 ) {
   // Monospace variant do not have `semibold` for font weight, so cast it to `bold`
@@ -64,7 +64,7 @@ export function getFontWeightClassName(
  * @returns Whether the typography variant is heading variant
  */
 export function isHeadingVariant(
-  variant: WebbTypographyVariant,
+  variant: TypographyVariant,
 ): variant is HeadingVariant {
   const headingKeys = ['h1', 'h2', 'h3', 'h4', 'h5'];
   return headingKeys.indexOf(variant) !== -1;
@@ -76,13 +76,13 @@ export function isHeadingVariant(
  * @returns Whether the typography variant is monospace variant
  */
 export function isMonospaceVariant(
-  variant: WebbTypographyVariant,
+  variant: TypographyVariant,
 ): variant is MonospaceVariant {
   const monoKeys = ['mono1', 'mono2', 'mkt-monospace'];
   return monoKeys.indexOf(variant) !== -1;
 }
 
-export function getDefaultTextColor(variant: WebbTypographyVariant) {
+export function getDefaultTextColor(variant: TypographyVariant) {
   return variant.startsWith('h') || variant.startsWith('mkt-h')
     ? 'text-mono-200 dark:text-mono-00'
     : 'text-mono-160 dark:text-mono-80';

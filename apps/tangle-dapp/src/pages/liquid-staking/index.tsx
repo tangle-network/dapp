@@ -6,7 +6,7 @@ import {
   TabsRoot,
   TabTrigger,
   Typography,
-  TabsList as WebbTabsList,
+  TabsList as TabsListUI,
 } from '@tangle-network/ui-components';
 import { FC, useEffect, useState } from 'react';
 
@@ -108,7 +108,7 @@ const LiquidStakingPage: FC = () => {
         <TabsRoot defaultValue={Tab.ALL_POOLS} className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             {/* Tabs List on the left */}
-            <WebbTabsList className="space-x-4">
+            <TabsListUI className="space-x-4">
               {Object.values(Tab).map((tab, idx) => {
                 return (
                   <TabTrigger
@@ -127,7 +127,7 @@ const LiquidStakingPage: FC = () => {
                   </TabTrigger>
                 );
               })}
-            </WebbTabsList>
+            </TabsListUI>
 
             {/**
              * TODO: Check what's the min. amount required to create a new pool. If the free balance doesn't meet the min, disable the button and show a tooltip with the reason.

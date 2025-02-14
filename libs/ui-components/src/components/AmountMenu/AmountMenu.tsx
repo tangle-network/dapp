@@ -9,7 +9,7 @@ import { Divider } from '../Divider';
 import { AmountMenuProps } from './types';
 
 /**
- * The Webb AmountMenu Component
+ * The AmountMenu Component
  *
  * Props:
  *

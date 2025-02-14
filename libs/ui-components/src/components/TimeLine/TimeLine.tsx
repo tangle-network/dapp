@@ -14,7 +14,7 @@ import { TimeLineProps } from './types';
  *        title='Proposed'
  *        time={randRecentDate()}
  *        txHash={randEthereumAddress()}
- *        externalUrl='https://webb.tools'
+ *        externalUrl='https://tangle.tools'
  *      />
  *    </TimeLine>
  * ```

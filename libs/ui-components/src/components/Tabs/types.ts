@@ -1,4 +1,4 @@
-import { PropsOf, IWebbComponentBase } from '../../types';
+import { PropsOf, IComponentBase } from '../../types';
 
 export interface TabBaseProps {
   /**
@@ -10,7 +10,7 @@ export interface TabBaseProps {
 /**
  * The `Tabs` props
  */
-export interface TabsProps extends IWebbComponentBase {
+export interface TabsProps extends IComponentBase {
   /**
    * The displayed values of tabs
    */
@@ -24,7 +24,7 @@ export interface TabsProps extends IWebbComponentBase {
 /**
  * The `Tab` props
  */
-export interface TabProps extends PropsOf<'button'>, IWebbComponentBase {
+export interface TabProps extends PropsOf<'button'>, IComponentBase {
   /**
    * If `true`, indicate the tab is being actived
    */

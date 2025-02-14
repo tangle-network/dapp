@@ -1,7 +1,7 @@
 import type { ComponentProps } from 'react';
 
 import type { UseCopyableReturnType } from '../../hooks/useCopyable';
-import type { WebbComponentBase } from '../../types';
+import type { ComponentBase } from '../../types';
 import type { LabelWithValueProps } from '../LabelWithValue/types';
 
 export type KeyValueWithButtonSize = 'sm' | 'md';
@@ -21,7 +21,7 @@ export type KeyValueWithButtonBaseProps = Pick<
  * The `KeyValueWithButton` props
  */
 export interface KeyValueWithButtonProps
-  extends Omit<WebbComponentBase, keyof KeyValueWithButtonBaseProps>,
+  extends Omit<ComponentBase, keyof KeyValueWithButtonBaseProps>,
     KeyValueWithButtonBaseProps {
   /**
    * The label value

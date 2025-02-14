@@ -1,14 +1,11 @@
 import type { ReactNode } from 'react';
-import { WebbComponentBase } from '../../types';
-import {
-  WebbTypographyProps,
-  WebbTypographyVariant,
-} from '../../typography/types';
+import { ComponentBase } from '../../types';
+import { TypographyProps, TypographyVariant } from '../../typography/types';
 
 /**
  * The `TiltieWithInfo` component props
  */
-export interface TitleWithInfoProps extends WebbComponentBase {
+export interface TitleWithInfoProps extends ComponentBase {
   /**
    * The `title` to be displayed
    */
@@ -18,13 +15,13 @@ export interface TitleWithInfoProps extends WebbComponentBase {
    * The `title` variant
    * @default "body1"
    */
-  variant?: WebbTypographyVariant;
+  variant?: TypographyVariant;
 
   /**
    * The title tab
    * @default <span></span>
    */
-  titleComponent?: WebbTypographyProps['component'];
+  titleComponent?: TypographyProps['component'];
 
   /**
    * The class name of the title

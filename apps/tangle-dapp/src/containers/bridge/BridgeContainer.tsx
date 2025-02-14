@@ -11,7 +11,7 @@ import { useShallow } from 'zustand/react/shallow';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
-} from '@webb-tools/evm-contract-metadata';
+} from '@tangle-network/evm-contract-metadata';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import {
   Button,

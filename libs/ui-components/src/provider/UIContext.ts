@@ -4,9 +4,9 @@ import LoggerService from '@tangle-network/browser-utils/logger/LoggerService';
 import noop from 'lodash/noop';
 import { createContext } from 'react';
 import { notificationApi } from '../components/Notification';
-import { IWebbUIContext } from './types';
+import { IUIContext } from './types';
 
-const initialContext: IWebbUIContext = {
+const initialContext: IUIContext = {
   customMainComponent: undefined,
   notificationApi,
   setMainComponent: noop,
@@ -17,6 +17,6 @@ const initialContext: IWebbUIContext = {
   },
 };
 
-const WebbUIContext = createContext<IWebbUIContext>(initialContext);
+const UIContext = createContext<IUIContext>(initialContext);
 
-export default WebbUIContext;
+export default UIContext;

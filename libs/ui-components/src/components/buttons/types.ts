@@ -2,11 +2,7 @@ import type { WalletConfig } from '@tangle-network/dapp-config/wallets/wallet-co
 import type { StatusIndicatorProps } from '@tangle-network/icons/StatusIndicator/types';
 import type { IconBase } from '@tangle-network/icons/types';
 import type { HTMLAttributeAnchorTarget, JSXElementConstructor } from 'react';
-import type {
-  IWebbComponentBase,
-  PropsOf,
-  WebbComponentBase,
-} from '../../types';
+import type { IComponentBase, PropsOf, ComponentBase } from '../../types';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'utility' | 'link';
 
@@ -14,7 +10,7 @@ export type ButtonSize = 'sm' | 'md';
 
 export type ButtonSpinnerPlacement = 'start' | 'end';
 
-export type OmittedKeys = keyof IWebbComponentBase | 'disabled';
+export type OmittedKeys = keyof IComponentBase | 'disabled';
 
 export type ButtonBase = Omit<
   React.ComponentPropsWithoutRef<'button'>,
@@ -65,7 +61,7 @@ export interface UseButtonPropsMetadata {
 /**
  * The Button component options
  */
-export interface ButtonProps extends ButtonBase, IWebbComponentBase {
+export interface ButtonProps extends ButtonBase, IComponentBase {
   /**
    * Control the underlying rendered element directly by passing in a valid
    * component type
@@ -150,7 +146,7 @@ export interface ButtonProps extends ButtonBase, IWebbComponentBase {
   disabledTooltip?: string;
 }
 
-export interface ButtonSpinnerProps extends WebbComponentBase {
+export interface ButtonSpinnerProps extends ComponentBase {
   /**
    * Indicates if the button has a label or not
    * @default false

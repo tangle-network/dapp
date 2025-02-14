@@ -1,9 +1,9 @@
-import { IWebbComponentBase } from '../../types';
+import { IComponentBase } from '../../types';
 
 /**
  * Props for `Alert` component
  */
-export interface AlertProps extends IWebbComponentBase {
+export interface AlertProps extends IComponentBase {
   /**
    * Alert sizes - `sm`, `md` (default: "md")
    */

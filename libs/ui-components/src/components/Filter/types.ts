@@ -1,6 +1,6 @@
-import { PropsOf, IWebbComponentBase } from '../../types';
+import { PropsOf, IComponentBase } from '../../types';
 
-export interface FilterProps extends IWebbComponentBase, PropsOf<'div'> {
+export interface FilterProps extends IComponentBase, PropsOf<'div'> {
   /**
    * The search text
    */

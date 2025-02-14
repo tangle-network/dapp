@@ -3,16 +3,12 @@ import type {
   DropdownMenuProps as RdxDropdownMenuProps,
   DropdownMenuItemProps as RdxDropdownMenuItemProps,
 } from '@radix-ui/react-dropdown-menu';
-import type {
-  IWebbComponentBase,
-  PropsOf,
-  WebbComponentBase,
-} from '../../types';
+import type { IComponentBase, PropsOf, ComponentBase } from '../../types';
 
 /**
  * The `Dropdown` props
  */
-export interface DropdownProps extends PropsOf<'div'>, IWebbComponentBase {
+export interface DropdownProps extends PropsOf<'div'>, IComponentBase {
   /**
    * The root radix dropdown props
    */
@@ -26,7 +22,7 @@ type DropdownButtonPickedKeys = 'label' | 'icon' | 'size';
  */
 export interface DropdownButtonProps
   extends PropsOf<'button'>,
-    IWebbComponentBase,
+    IComponentBase,
     Pick<DropdownMenuProps, DropdownButtonPickedKeys> {
   /**
    * If true, the button will be rendered as a full width button
@@ -42,7 +38,7 @@ type DropdownBodyPickedKeys = 'size';
  * The `DropdownBody` props
  */
 export interface DropdownBodyProps
-  extends IWebbComponentBase,
+  extends IComponentBase,
     Pick<DropdownMenuProps, DropdownBodyPickedKeys>,
     DropdownMenuContentProps {
   /**
@@ -69,7 +65,7 @@ export type DropDownMemuOption = {
 /**
  * Dropdown Menu component
  */
-export interface DropdownMenuProps extends Omit<WebbComponentBase, 'onChange'> {
+export interface DropdownMenuProps extends Omit<ComponentBase, 'onChange'> {
   /**
    * The `Dropdown` size
    */
@@ -97,7 +93,7 @@ export interface DropdownMenuProps extends Omit<WebbComponentBase, 'onChange'> {
 }
 
 export interface DropdownMenuItemProps
-  extends IWebbComponentBase,
+  extends IComponentBase,
     RdxDropdownMenuItemProps {
   /**
    * Handle state if the item is being active

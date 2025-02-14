@@ -6,7 +6,10 @@ import { Spinner } from '@tangle-network/icons';
 import { ThreeDotsVerticalIcon } from '@tangle-network/icons/ThreeDotsVerticalIcon';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
-import { isSubstrateAddress, useWebbUI } from '@tangle-network/ui-components';
+import {
+  isSubstrateAddress,
+  useUIContext,
+} from '@tangle-network/ui-components';
 import {
   Accordion,
   AccordionButtonBase,
@@ -45,7 +48,7 @@ export default function RegistrationReview({
 
   const { network } = useNetworkStore();
 
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
 
   const { register } = useServicesTransactions();
 

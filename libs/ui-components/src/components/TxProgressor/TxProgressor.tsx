@@ -168,7 +168,7 @@ const TxProgressorBody = forwardRef<
     >
       <TxProgressorBodyItem {...txSourceInfo} isSource />
 
-      <ArrowRightIcon className="h-5 w-5" />
+      <ArrowRightIcon className="w-5 h-5" />
 
       <TxProgressorBodyItem {...txDestinationInfo} />
     </div>
@@ -292,7 +292,7 @@ TxProgressorFooter.displayName = 'TxProgressorFooter';
  *      txDestinationInfo={{
  *        typedChainId: PresetTypedChainId.PolygonTestnet,
  *        amount: 1.45,
- *        tokenSymbol: 'webbETH',
+ *        tokenSymbol: 'ETH',
  *        tokenType: 'shielded',
  *        accountType: 'note',
  *        walletAddress: randEthereumAddress(),
@@ -305,7 +305,7 @@ TxProgressorFooter.displayName = 'TxProgressorFooter';
  *        steps: 8,
  *        activeStep: 3,
  *      }}
- *      externalUrl={new URL('https://webb.tools')}
+ *      externalUrl={new URL('https://tangle.tools')}
  *      actionCmp='Open explorer'
  *    />
  *  </TxProgressor.Root>

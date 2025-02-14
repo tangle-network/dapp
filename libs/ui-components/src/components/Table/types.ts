@@ -1,9 +1,5 @@
 import type { Row, RowData, Table, useReactTable } from '@tanstack/react-table';
-import type {
-  IWebbComponentBase,
-  PropsOf,
-  WebbComponentBase,
-} from '../../types';
+import type { IComponentBase, PropsOf, ComponentBase } from '../../types';
 
 export enum TableVariant {
   DEFAULT,
@@ -16,7 +12,7 @@ export enum TableVariant {
  * The `Table` props
  */
 export interface TableProps<T extends RowData, E extends HTMLElement>
-  extends WebbComponentBase {
+  extends ComponentBase {
   /**
    * The table object, the return result of `useReactTable` hook
    */
@@ -103,11 +99,11 @@ export interface TableProps<T extends RowData, E extends HTMLElement>
 /**
  * The `THeader` props
  */
-export interface THeaderProps extends PropsOf<'th'>, IWebbComponentBase {}
+export interface THeaderProps extends PropsOf<'th'>, IComponentBase {}
 
 /**
  * The `TData` props
  */
-export interface TDataProps extends PropsOf<'td'>, IWebbComponentBase {
+export interface TDataProps extends PropsOf<'td'>, IComponentBase {
   isDisabledHoverStyle?: boolean;
 }

@@ -53,7 +53,6 @@ export const FileUploadField: FC<FileUploadFieldProps> = ({
         <input
           value={note}
           onChange={handleChange}
-          placeholder="webb://...."
           className={cx(
             'bg-transparent mono1 text-mono-200 dark:text-mono-0',
             'placeholder:text-mono-120 dark:placeholder:text-mono-80',

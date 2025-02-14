@@ -3,22 +3,15 @@
 import { Fragment, forwardRef, useCallback, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import * as constants from '../../constants';
+import { SOCIAL_URLS_RECORD } from '../../constants';
 import { Typography } from '../../typography';
 import { Button, ButtonProps } from '../buttons';
 import { ErrorFallbackProps } from './types';
 
-const telegramInfo = constants.defaultSocialConfigs.find(
-  (c) => c.name === 'telegram',
-);
+const contactLink = SOCIAL_URLS_RECORD.telegram;
 
-const contactLink = telegramInfo?.href ?? '';
-
-const githubInfo = constants.defaultSocialConfigs.find(
-  (c) => c.name === 'github',
-);
-
-const reportIssueLink = `${githubInfo?.href ?? ''}/webb-dapp/issues/new/choose`;
+const reportIssueLink =
+  `${SOCIAL_URLS_RECORD.github}/dapp/issues/new/choose` as const;
 
 /**
  * The `ErrorFallback` component, used to display an error message when an UI error occurs.

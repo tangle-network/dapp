@@ -33,7 +33,7 @@ export interface DepositCardProps extends PropsOf<'div'> {
   >;
 
   /**
-   * The deposit token/pair value (e.g. WebbETH/WETH)
+   * The deposit token/pair value (e.g. ETH/WETH)
    */
   token?: string;
 

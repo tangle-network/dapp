@@ -1,7 +1,7 @@
 import { createElement, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import type { WebbTypographyProps } from '../types';
+import type { TypographyProps } from '../types';
 import {
   getDefaultTextColor,
   getFontWeightClassName,
@@ -39,7 +39,7 @@ const DEFAULT_COMPONENT = {
 };
 
 /**
- * The Webb Typography component
+ * The Typography component
  *
  * Props:
  * - `variant`: Represent different variants of the component
@@ -55,7 +55,7 @@ const DEFAULT_COMPONENT = {
  * <Typography variant="h2" component="h3">This is heading 3 with variant h2</Typography>
  * ```
  */
-export const Typography: React.FC<WebbTypographyProps> = ({
+export const Typography: React.FC<TypographyProps> = ({
   children,
   className,
   component,

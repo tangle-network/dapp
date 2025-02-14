@@ -37,14 +37,14 @@ import { FeeDetailsProps } from './types';
  *  <FeeDetails
  *    info="This is the fee"
  *    totalFee={100}
- *    totalFeeToken="WEBB"
+ *    totalFeeToken="tnt"
  *    items={[
  *      {
  *        name: 'Gas',
  *        Icon: <GasStationFill />,
  *        info: 'This is the gas fee',
  *        value: 100,
- *        tokenSymbol: 'WEBB',
+ *        tokenSymbol: 'tnt',
  *        valueInUsd: 100,
  *     },
  *    ]}

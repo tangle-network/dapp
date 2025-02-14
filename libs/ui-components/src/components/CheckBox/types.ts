@@ -1,12 +1,12 @@
 import type { ComponentProps } from 'react';
 import type Button from '../buttons/Button';
-import type { WebbComponentBase } from '../../types';
-import type { WebbTypographyVariant } from '../../typography/types';
+import type { ComponentBase } from '../../types';
+import type { TypographyVariant } from '../../typography/types';
 
 /**
  * CheckBox Props
  */
-export interface CheckBoxProps extends WebbComponentBase {
+export interface CheckBoxProps extends ComponentBase {
   /**
    * If `true`, the checkbox will be disabled
    */
@@ -49,7 +49,7 @@ export interface CheckBoxProps extends WebbComponentBase {
    * The label typography variant
    * @default "body1"
    */
-  labelVariant?: WebbTypographyVariant;
+  labelVariant?: TypographyVariant;
 
   labelProps?: ComponentProps<'label'>;
 

@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react';
-import type { IWebbComponentBase, PropsOf, TokenType } from '../../types';
+import type { IComponentBase, PropsOf, TokenType } from '../../types';
 import type { AvatarProps } from '../Avatar';
 import type { ScrollArea } from '../ScrollArea';
 import type { InputProps } from '../Input';
@@ -153,9 +153,7 @@ export type ContractType = {
   onSelectContract?: () => void;
 };
 
-export interface ListCardWrapperProps
-  extends IWebbComponentBase,
-    PropsOf<'div'> {
+export interface ListCardWrapperProps extends IComponentBase, PropsOf<'div'> {
   /**
    * The list card title
    */

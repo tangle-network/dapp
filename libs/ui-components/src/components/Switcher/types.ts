@@ -1,4 +1,4 @@
 import { SwitchProps } from '@radix-ui/react-switch';
-import { IWebbComponentBase } from '../../types';
+import { IComponentBase } from '../../types';
 
-export interface SwitcherProps extends IWebbComponentBase, SwitchProps {}
+export interface SwitcherProps extends IComponentBase, SwitchProps {}

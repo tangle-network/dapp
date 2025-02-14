@@ -5,13 +5,13 @@ import {
   AccordionMultipleProps,
   AccordionItemProps as RdxAccordionItemProps,
 } from '@radix-ui/react-accordion';
-import { PropsOf, IWebbComponentBase } from '../../types';
+import { PropsOf, IComponentBase } from '../../types';
 
-export type AccordionProps = IWebbComponentBase &
+export type AccordionProps = IComponentBase &
   (AccordionSingleProps | AccordionMultipleProps);
 
 export interface AccordionButtonProps
-  extends IWebbComponentBase,
+  extends IComponentBase,
     PropsOf<'button'>,
     AccordionTriggerProps {
   Icon?: React.ReactNode;
@@ -22,9 +22,9 @@ export interface AccordionButtonProps
 export interface AccordionButtonBaseProps extends AccordionTriggerProps {}
 
 export interface AccordionContentProps
-  extends IWebbComponentBase,
+  extends IComponentBase,
     RdxAccordionContentProps {}
 
 export interface AccordionItemProps
-  extends IWebbComponentBase,
+  extends IComponentBase,
     RdxAccordionItemProps {}

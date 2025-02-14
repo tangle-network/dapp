@@ -10,7 +10,7 @@ import { Typography } from '../../typography/Typography';
 import { AvatarChildElement, AvatarGroupProps } from './types';
 
 /**
- * Webb Avatar Group - Use to display stacked avatar list
+ * Avatar Group - Use to display stacked avatar list
  *
  * Props:
  *

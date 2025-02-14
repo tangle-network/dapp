@@ -33,7 +33,7 @@ import {
   calculateTypedChainId,
 } from '@tangle-network/dapp-types/TypedChainId';
 import { WebbWeb3Provider } from '@tangle-network/web3-api-provider';
-import { useWebbUI } from '@tangle-network/ui-components';
+import { useUIContext } from '@tangle-network/ui-components';
 import useWagmiHydration from '@tangle-network/ui-components/hooks/useWagmiHydration';
 import { useCallback, useEffect, useRef, useState, type FC } from 'react';
 import {
@@ -84,7 +84,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
 
   const [isConnecting, setIsConnecting] = useState(false);
 
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
 
   const { connectAsync, connectors } = useConnect();
 

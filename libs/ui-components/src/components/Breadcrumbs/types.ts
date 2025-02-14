@@ -1,13 +1,13 @@
-import type { WebbComponentBase } from '../../types';
+import type { ComponentBase } from '../../types';
 
-export interface BreadcrumbsPropsType extends WebbComponentBase {
+export interface BreadcrumbsPropsType extends ComponentBase {
   separator?: string | React.ReactNode;
 }
 
-export interface BreadcrumbsItemPropsType extends WebbComponentBase {
+export interface BreadcrumbsItemPropsType extends ComponentBase {
   isLast?: boolean;
   icon?: React.ReactNode;
   textClassName?: string;
 }
 
-export interface BreadcrumbsSeparatorPropsType extends WebbComponentBase {}
+export interface BreadcrumbsSeparatorPropsType extends ComponentBase {}

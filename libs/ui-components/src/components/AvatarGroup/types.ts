@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import type { WebbComponentBase } from '../../types';
+import type { ComponentBase } from '../../types';
 import type { Avatar, AvatarProps } from '../Avatar';
 
 export type AvatarChildElement = ReactElement<AvatarProps, typeof Avatar>;
@@ -7,7 +7,7 @@ export type AvatarChildElement = ReactElement<AvatarProps, typeof Avatar>;
 /**
  * Avatar stack properties
  */
-export interface AvatarGroupProps extends WebbComponentBase {
+export interface AvatarGroupProps extends ComponentBase {
   /**
    * 	Max avatars to show before +n.
    * @default 3

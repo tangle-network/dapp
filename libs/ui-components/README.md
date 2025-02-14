@@ -1,26 +1,28 @@
 <div align="center">
-<a href="https://www.webb.tools/">
+<a href="https://www.tangle.tools/">
 
-![Webb Logo](./src/assets/webb_banner_light.png#gh-light-mode-only)
-![Webb Logo](./src/assets/webb_banner_dark.png#gh-dark-mode-only)
+![Tangle Logo](../../.github/assets/tangle-banner.png)
 </a>
 
 </div>
 
-# Webb UI Kit
+# UI Components Library
 
 <p align="left">
-    <strong> A React implementation of Webb's Design System </strong>
+    <strong> A React implementation of Tangle's Design System </strong>
     <br />
 </p>
 
-[![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html) [![Twitter](https://img.shields.io/badge/follow-%40webbprotocol-1DA1F2?logo=twitter&style=flat-square)](https://twitter.com/webbprotocol) [![Telegram](https://img.shields.io/badge/Telegram-gray?logo=telegram)](https://t.me/webbprotocol) [![Discord](https://img.shields.io/discord/833784453251596298.svg?style=flat-square&label=Discord&logo=discord)](https://discord.gg/cv8EfJu3Tn)
+[![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![X](https://img.shields.io/badge/follow-%40tangle_network-1DA1F2?logo=x&style=flat-square)](https://x.com/tangle_network)
+[![Telegram](https://img.shields.io/badge/Telegram-gray?logo=telegram)](https://t.me/tanglenet)
+[![Discord](https://img.shields.io/discord/833784453251596298.svg?style=flat-square&label=Discord&logo=discord)](https://discord.gg/cv8EfJu3Tn)
 
 <h2 id="start"> Getting Started </h2>
 
-This is the official component library for the Webb Ecosystem! It utilizes [nx.dev](https://nx.dev/) for a fast and extensible build system, and enables developers to build beautiful user interfaces for Web3 applications quickly. The library includes components that are documented using [Storybook](https://storybook.js.org/).
+This is the official component library for the Tangle Network! It utilizes [nx.dev](https://nx.dev/) for a fast and extensible build system, and enables developers to build beautiful user interfaces for Web3 applications quickly. The library includes components that are documented using [Storybook](https://storybook.js.org/).
 
-To view the available components, check out the official documentation [here](https://tangle-network.github.io/dapp/). If you have feedback or questions, head to the [Webb Dapp Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/webb-dapp-feedback). Contributions through PRs are welcomed!
+To view the available components, check out the official documentation [here](https://tangle-network.github.io/dapp/). If you have feedback or questions, head to the [Tangle Network Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/dapp-feedback). Contributions through PRs are welcomed!
 
 ## Prerequisites
 
@@ -54,17 +56,17 @@ npm install @tangle-network/ui-components
 yarn add @tangle-network/ui-components
 ```
 
-Now that we have installed the component library we need to include `WebbUIProvider` in our React project and import the css styles file like so:
+Now that we have installed the component library we need to include `UIProvider` in our React project and import the css styles file like so:
 
 ```js
-import { WebbUIProvider } from '@tangle-network/ui-components';
+import { UIProvider } from '@tangle-network/ui-components';
 import '@tangle-network/ui-components/index.css';
 
 const App: FC = () => {
   return (
-    <WebbUIProvider hasErrorBoudary>
+    <UIProvider hasErrorBoudary>
       <div>Hello dApp</div>
-    </WebbUIProvider>
+    </UIProvider>
   );
 };
 
@@ -75,7 +77,7 @@ export default App;
 
 The component library make use of [tailwindcss](https://tailwindcss.com/) for styling components. If you would like to customize a component just use the tailwind classes provided.
 
-To make use of the tailwind classes for Webb's design system (e.g. colors, typos, …) in your dApp you just need to install Webb's tailwind preset and include it in the tailwind config file. See the below example:
+To make use of the tailwind classes for Tangle's design system (e.g. colors, typos, …) in your dApp you just need to install Tangle's tailwind preset and include it in the tailwind config file. See the below example:
 
 ```js
 // tailwind.config.js
@@ -93,11 +95,11 @@ module.exports = {
 };
 ```
 
-You will now be able to make use of all of the components included in Webb's design system and Webb's preferred colors, typography and styles!
+You will now be able to make use of all of the components included in Tangle's design system and Tangle's preferred colors, typography and styles!
 
 ### Internal Usage
 
-Making changes to the component library or using it within Webb's monorepo you will need to build the component library by running the following:
+Making changes to the component library or using it within Tangle's monorepo you will need to build the component library by running the following:
 
 ```
 nx build ui-components
@@ -117,17 +119,17 @@ nx build ui-components
    yarn nx storybook ui-components
    ```
 
-Visit `http://localhost:4400/` to see the Webb Component Library!
+Visit `http://localhost:4400/` to see the Tangle Component Library!
 
 <h2 id="contribute"> Contributing </h2>
 
-Interested in contributing to the Webb Dapp interface? Thank you so much for your interest! We are always appreciative for contributions from the open-source community!
+Interested in contributing to the Tangle Network interface? Thank you so much for your interest! We are always appreciative for contributions from the open-source community!
 
 If you have a contribution in mind, please check out our [Contribution Guide](../../.github/CONTRIBUTING.md) for information on how to do so. We are excited for your first contribution!
 
 ### New Component Proposals
 
-We welcome and encourage new component proposals from all developers! If you'd like to kick off a new component proposal, please submit an issue using the [issue template](https://github.com/tangle-network/webb-dapp/issues/new/choose) and we will get in touch!
+We welcome and encourage new component proposals from all developers! If you'd like to kick off a new component proposal, please submit an issue using the [issue template](https://github.com/tangle-network/dapp/issues/new/choose) and we will get in touch!
 
 ### Lint before you push!
 
@@ -153,6 +155,6 @@ yarn build
 
 <h2 id="license"> License </h2>
 
-Licensed under <a href="https://github.com/tangle-network/webb-dapp/blob/develop/LICENSE">Apache 2.0 license</a>.
+Licensed under <a href="https://github.com/tangle-network/dapp/blob/develop/LICENSE">Apache 2.0 license</a>.
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this crate by you, as defined in the Apache 2.0 license, shall be licensed as above, without any additional terms or conditions.

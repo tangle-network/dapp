@@ -15,8 +15,6 @@ import WalletAndChainContainer from './WalletAndChainContainer';
 
 import BridgeTxQueueDropdown from '../components/bridge/BridgeTxQueueDropdown';
 
-// Some specific overrides for the social links for use in the
-// footer in Tangle dApp, since it defaults to the Webb socials.
 const SOCIAL_LINK_OVERRIDES: Partial<
   Record<(typeof TANGLE_AVAILABLE_SOCIALS)[number], string>
 > = TANGLE_SOCIAL_URLS_RECORD;

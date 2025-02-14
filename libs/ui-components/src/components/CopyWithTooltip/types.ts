@@ -1,10 +1,10 @@
 import { IconSize } from '@tangle-network/icons/types';
-import { WebbComponentBase } from '../../types';
+import { ComponentBase } from '../../types';
 
 /**
  * The `CopyWithTooltip` props
  */
-export interface CopyWithTooltipProps extends WebbComponentBase {
+export interface CopyWithTooltipProps extends ComponentBase {
   /**
    * Represents the text to copy to clipboard
    */

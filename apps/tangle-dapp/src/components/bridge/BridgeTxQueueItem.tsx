@@ -1,4 +1,4 @@
-import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
+import { EVMTokenBridgeEnum } from '@tangle-network/evm-contract-metadata';
 import { StatusVariant } from '@tangle-network/icons/StatusIndicator/types';
 import {
   BridgeQueueTxItem,

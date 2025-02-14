@@ -2,7 +2,7 @@
 
 // Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
-import '@webb-tools/tangle-substrate-types';
+import '@tangle-network/tangle-substrate-types';
 import {
   WebbApiProvider,
   WebbProviderEvents,

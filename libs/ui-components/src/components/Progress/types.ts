@@ -1,8 +1,8 @@
-import { PropsOf, WebbComponentBase } from '../../types';
+import { PropsOf, ComponentBase } from '../../types';
 
 type ProgressSize = 'sm' | 'md' | 'lg';
 
-export interface ProgressProps extends WebbComponentBase {
+export interface ProgressProps extends ComponentBase {
   /**
    * The progress value.
    */

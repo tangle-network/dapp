@@ -11,7 +11,7 @@ import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
-} from '@webb-tools/evm-contract-metadata';
+} from '@tangle-network/evm-contract-metadata';
 import { Decimal } from 'decimal.js';
 import { Abi } from 'viem';
 

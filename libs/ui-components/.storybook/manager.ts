@@ -1,12 +1,10 @@
 // .storybook/manager.js
 
 import { addons } from '@storybook/manager-api';
-import webbTheme from './webbTheme.js';
+import theme from './theme.js';
 import favicon from '../src/stories/assets/favicon.png';
 
-addons.setConfig({
-  theme: webbTheme,
-});
+addons.setConfig({ theme });
 
 const link = document.createElement('link');
 link.setAttribute('rel', 'shortcut icon');

@@ -9,4 +9,4 @@ export * from './useModal';
 export * from './useTimeAgo';
 export { default as useTimeAgo } from './useTimeAgo';
 export { default as useWagmiHydration } from './useWagmiHydration';
-export * from './useWebbUI';
+export * from './useUIContext';

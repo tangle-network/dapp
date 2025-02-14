@@ -33,7 +33,7 @@ declare module '@tanstack/table-core' {
  * SYSTEM TYPES *
  ****************/
 
-export interface IWebbComponentBase {
+export interface IComponentBase {
   /**
    * The tailwindcss className to override the style
    */
@@ -46,10 +46,7 @@ export interface IWebbComponentBase {
   children?: React.ReactNode | string;
 }
 
-/**
- * The Webb color type
- */
-export interface WebbColorsType {
+export interface ColorsType {
   mono: Record<string | number, string>;
   purple: Record<string | number, string>;
   blue: Record<string | number, string>;
@@ -62,13 +59,9 @@ export type ISubQlTime = {
   current: Date;
 };
 
-/**
- * The base interface required all component to extends in their props
- */
-
-export interface WebbComponentBase
+export interface ComponentBase
   extends React.HTMLAttributes<HTMLElement>,
-    IWebbComponentBase {}
+    IComponentBase {}
 
 /**
  * The internal link type

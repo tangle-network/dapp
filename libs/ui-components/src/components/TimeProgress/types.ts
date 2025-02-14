@@ -1,9 +1,9 @@
-import { ISubQlTime, WebbComponentBase } from '../../types';
+import { ISubQlTime, ComponentBase } from '../../types';
 
 /**
  * The `TimeProgress` props
  */
-export interface TimeProgressProps extends WebbComponentBase {
+export interface TimeProgressProps extends ComponentBase {
   /**
    * The start time
    */

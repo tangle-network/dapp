@@ -1,9 +1,9 @@
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { WebbComponentBase } from '../../types';
+import { ComponentBase } from '../../types';
 import CardVariant from './CardVariant';
 
-export type CardProps = WebbComponentBase & {
+export type CardProps = ComponentBase & {
   variant?: CardVariant;
   withShadow?: boolean;
   tightPadding?: boolean;

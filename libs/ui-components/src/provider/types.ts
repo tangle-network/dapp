@@ -3,7 +3,7 @@ import { type ComponentProps } from 'react';
 import type { NotificationProvider, notificationApi } from '../components';
 import type { ToggleThemeModeFunc } from '../hooks/useDarkMode';
 
-export interface IWebbUIContext {
+export interface IUIContext {
   theme: {
     isDarkMode: boolean;
     toggleThemeMode: ToggleThemeModeFunc;
@@ -17,9 +17,9 @@ export interface IWebbUIContext {
   logger: LoggerService;
 }
 
-export type WebbUIProviderProps = {
+export type UIProviderProps = {
   /**
-   * If `true`, the `WebbUIProvider` will provide a error handler for inside components
+   * If `true`, the `UIProvider` will provide a error handler for inside components
    */
   hasErrorBoundary?: boolean;
 

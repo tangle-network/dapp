@@ -3,13 +3,13 @@
 import { Component, ErrorInfo } from 'react';
 
 import { ErrorFallback } from '../../components/ErrorFallback';
-import { WebbUIErrorBoundaryProps, WebbUIErrorBoundaryState } from './types';
+import { UIErrorBoundaryProps, UIErrorBoundaryState } from './types';
 
-export class WebbUIErrorBoundary extends Component<
-  WebbUIErrorBoundaryProps,
-  WebbUIErrorBoundaryState
+export class UIErrorBoundary extends Component<
+  UIErrorBoundaryProps,
+  UIErrorBoundaryState
 > {
-  state: WebbUIErrorBoundaryState = {
+  state: UIErrorBoundaryState = {
     hasError: false,
     error: null,
     errorInfo: null,

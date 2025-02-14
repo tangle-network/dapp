@@ -1,13 +1,13 @@
 import { Close } from '@tangle-network/icons';
 import {
-  IWebbComponentBase,
+  IComponentBase,
   PropsOf,
   Typography,
 } from '@tangle-network/ui-components';
 import { ComponentProps, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-interface ListCardWrapperProps extends IWebbComponentBase, PropsOf<'div'> {
+interface ListCardWrapperProps extends IComponentBase, PropsOf<'div'> {
   title: string;
   overrideTitleProps?: ComponentProps<typeof Typography>;
   onClose?: () => void;

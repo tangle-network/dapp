@@ -1,5 +1,5 @@
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
-import { EVMTokenEnum } from '@webb-tools/evm-contract-metadata';
+import { EVMTokenEnum } from '@tangle-network/evm-contract-metadata';
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
 
 const useIsBridgeNativeToken = (

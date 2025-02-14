@@ -1,5 +1,5 @@
 import { Updater } from '@tanstack/react-table';
-import { WebbComponentBase } from '../../types';
+import { ComponentBase } from '../../types';
 import { IconSize } from '@tangle-network/icons/types';
 import { PaginationItemsOptions } from '../../utils';
 
@@ -9,7 +9,7 @@ type PickedKeys = 'boundaryCount' | 'siblingCount';
  * The `Pagination` props
  */
 export interface PaginationProps
-  extends WebbComponentBase,
+  extends ComponentBase,
     Pick<PaginationItemsOptions, PickedKeys> {
   /**
    * The table title to display in the pagination

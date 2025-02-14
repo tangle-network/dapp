@@ -1,4 +1,4 @@
-import type { Service } from '@webb-tools/tangle-substrate-types';
+import type { Service } from '@tangle-network/tangle-substrate-types';
 
 export default function toPrimitiveService({
   id,

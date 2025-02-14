@@ -22,7 +22,7 @@ import { RelayerInputProps } from './types';
  * <RelayerInput />
  * <RelayerInput
  *   relayerAddress='5DJEpHVVxSpaWGfdAzep11MK458y5JkHA5YvYm3dp3eawuXi'
- *   externalLink='https://webb.tools'
+ *   externalLink='https://tangle.tools'
  * />
  * ```
  */

@@ -17,7 +17,7 @@ import {
 } from './utils';
 
 /**
- * Webb Alert component
+ * Alert component
  *
  * Props:
  *

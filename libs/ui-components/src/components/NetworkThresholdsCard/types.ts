@@ -1,4 +1,4 @@
-import { WebbComponentBase } from '../../types';
+import { ComponentBase } from '../../types';
 
 export type ThresholdType = 'current' | 'next';
 
@@ -49,5 +49,5 @@ export interface NetworkThresholdsCardDataProps {
 }
 
 export interface NetworkThresholdsCardProps
-  extends Omit<WebbComponentBase, keyof NetworkThresholdsCardDataProps>,
+  extends Omit<ComponentBase, keyof NetworkThresholdsCardDataProps>,
     NetworkThresholdsCardDataProps {}

@@ -19,7 +19,7 @@ export const DropdownBody = forwardRef<HTMLDivElement, DropdownBodyProps>(
         className={twMerge(
           cx(
             'radix-side-top:animate-slide-up radix-side-bottom:animate-slide-down',
-            'min-w-[176px] shadow-md overflow-x-hidden overflow-y-auto webb-shadow-md',
+            'min-w-[176px] shadow-md overflow-x-hidden overflow-y-auto',
             size === 'md'
               ? 'rounded-b-lg border border-t-0'
               : 'rounded-lg border',

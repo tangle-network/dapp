@@ -1,14 +1,14 @@
-import type { WebbComponentBase } from '../../types';
+import type { ComponentBase } from '../../types';
 import type {
   TypographyFontWeightValues,
-  WebbTypographyVariant,
+  TypographyVariant,
 } from '../../typography/types';
 import type { ReactElement } from 'react';
 
 /**
  * The `LabelWithValue` props
  */
-export interface LabelWithValueProps extends WebbComponentBase {
+export interface LabelWithValueProps extends ComponentBase {
   /**
    * The label value
    */
@@ -17,7 +17,7 @@ export interface LabelWithValueProps extends WebbComponentBase {
    * The label variant
    * @default "utility"
    */
-  labelVariant?: WebbTypographyVariant;
+  labelVariant?: TypographyVariant;
   /**
    * The value to display
    */
@@ -30,7 +30,7 @@ export interface LabelWithValueProps extends WebbComponentBase {
    * The label variant
    * @default "body2"
    */
-  valueVariant?: WebbTypographyVariant;
+  valueVariant?: TypographyVariant;
   /**
    * The value will have the tooltip that contains the `valueTooltip` string to describe for the value.
    * Usually use for shorten hex string

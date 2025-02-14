@@ -1,7 +1,7 @@
 import { AvatarProps } from './types';
 
 /**
- * Get the avatar size in pixel for other avatar components to consistent with WebbUI Avatar component
+ * Get the avatar size in pixel for other avatar components to consistent with Avatar component
  * @param size The `Avatar` size component
  * @returns the size in pixel for other avatar components
  */

@@ -1,5 +1,5 @@
 import type { ComponentProps, ReactElement } from 'react';
-import type { IWebbComponentBase, PropsOf } from '../../types';
+import type { IComponentBase, PropsOf } from '../../types';
 import type { AmountMenu } from '../AmountMenu';
 import type { AvatarProps } from '../Avatar';
 import type { CheckBox } from '../CheckBox';
@@ -7,7 +7,7 @@ import type { InputProps } from '../Input/types';
 import type { TitleWithInfo } from '../TitleWithInfo';
 import type { AmountInput } from './AmountInput';
 
-export interface InputWrapperProps extends IWebbComponentBase {
+export interface InputWrapperProps extends IComponentBase {
   /**
    * The `id` prop for label and input
    * @default "amount"

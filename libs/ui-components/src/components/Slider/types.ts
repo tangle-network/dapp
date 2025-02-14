@@ -1,7 +1,7 @@
-import { WebbComponentBase } from '../../types';
+import { ComponentBase } from '../../types';
 
 type SliderOmissions = 'dir' | 'defaultValue' | 'onChange';
-export interface SliderProps extends Omit<WebbComponentBase, SliderOmissions> {
+export interface SliderProps extends Omit<ComponentBase, SliderOmissions> {
   /**
    * The value of the slider when initially rendered. Use when you do not need to control the state of the slider.
    */

@@ -286,17 +286,16 @@ export const bottomLinks = [
   },
 ] as const;
 
-export const defaultSocialConfigs: SocialConfigsType[] =
-  TANGLE_AVAILABLE_SOCIALS.map(
-    (name) =>
-      ({
-        name,
-        href: SOCIAL_URLS_RECORD[name],
-        Icon: SOCIAL_ICONS_RECORD[name],
-        target: '_blank',
-        rel: 'noopener noreferrer',
-      }) as const satisfies SocialConfigsType,
-  );
+export const defaultSocialConfigs = TANGLE_AVAILABLE_SOCIALS.map(
+  (name) =>
+    ({
+      name,
+      href: SOCIAL_URLS_RECORD[name],
+      Icon: SOCIAL_ICONS_RECORD[name],
+      target: '_blank',
+      rel: 'noopener noreferrer',
+    }) as const satisfies SocialConfigsType,
+);
 
 /**
  * The key for the sidebar open state in the cookie and localStorage

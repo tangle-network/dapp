@@ -31,7 +31,7 @@ export type ChainGroup =
 /**
  * The extended chain interface that includes the chain type and group
  */
-export type WebbExtendedChain = {
+export type ChainExtension = {
   /**
    * The display name of the chain
    */
@@ -58,4 +58,4 @@ export type WebbExtendedChain = {
   env?: AppEnvironment[];
 };
 
-export type ChainConfig = Chain & WebbExtendedChain;
+export type ChainConfig = Chain & ChainExtension;

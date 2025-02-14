@@ -1,6 +1,6 @@
 // This will override global types and provide type definitions for
 // the LST pallet for this file only.
-import '@webb-tools/tangle-restaking-types';
+import '@tangle-network/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';

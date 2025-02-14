@@ -3,7 +3,7 @@ import {
   OFACFilterProvider,
   WebbProvider,
 } from '@tangle-network/api-provider-environment';
-import { WebbUIProvider } from '@tangle-network/ui-components';
+import { UIProvider } from '@tangle-network/ui-components';
 import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
 import { z } from 'zod';
@@ -38,7 +38,7 @@ const Providers = ({
   } = envSchema.parse(process.env);
 
   return (
-    <WebbUIProvider hasErrorBoundary>
+    <UIProvider hasErrorBoundary>
       <WebbProvider
         appEvent={appEvent}
         applicationName="Tangle dApp"
@@ -59,7 +59,7 @@ const Providers = ({
           </HyperlaneWarpContext>
         </OFACFilterProvider>
       </WebbProvider>
-    </WebbUIProvider>
+    </UIProvider>
   );
 };
 

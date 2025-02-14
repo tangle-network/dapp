@@ -1,4 +1,4 @@
-import { ISubQlTime, WebbComponentBase } from '../../types';
+import { ISubQlTime, ComponentBase } from '../../types';
 
 export type KeyType = 'current' | 'next';
 
@@ -69,5 +69,5 @@ export interface KeyStatusCardDataProps {
  * The `KeyStatusCard` component props type
  */
 export interface KeyStatusCardProps
-  extends Omit<WebbComponentBase, keyof KeyStatusCardDataProps>,
+  extends Omit<ComponentBase, keyof KeyStatusCardDataProps>,
     KeyStatusCardDataProps {}

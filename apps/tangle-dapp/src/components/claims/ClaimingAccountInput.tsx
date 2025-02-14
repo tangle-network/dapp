@@ -5,7 +5,7 @@ import {
 } from '@tangle-network/dapp-types/WebbError';
 import { ChevronDown } from '@tangle-network/icons';
 import { WebbWeb3Provider } from '@tangle-network/web3-api-provider/webb-provider';
-import { useWebbUI } from '@tangle-network/ui-components';
+import { useUIContext } from '@tangle-network/ui-components';
 import { Avatar } from '@tangle-network/ui-components/components/Avatar';
 import {
   AccountDropdownBody,
@@ -29,7 +29,7 @@ const ClaimingAccountInput: FC<Props> = ({
   isDisabled,
 }) => {
   const { activeApi, setActiveAccount } = useWebContext();
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
   const accounts = useWalletAccounts();
 
   const handleEvmSwitch = async (

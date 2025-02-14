@@ -9,7 +9,7 @@ import {
   calculateTypedChainId,
   ChainType,
 } from '@tangle-network/dapp-types/TypedChainId';
-import { useWebbUI, WalletModal } from '@tangle-network/ui-components';
+import { useUIContext, WalletModal } from '@tangle-network/ui-components';
 import { Network } from '@tangle-network/ui-components/constants/networks';
 import { useMemo } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';
@@ -28,7 +28,7 @@ const ConnectWalletModal = () => {
   } = useConnectWallet();
 
   const { network } = useNetworkStore();
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
   const { apiConfig } = useWebContext();
 
   const targetTypedChainIds = useMemo(

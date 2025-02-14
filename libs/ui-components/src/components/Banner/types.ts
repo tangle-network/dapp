@@ -1,9 +1,9 @@
 import type { IconBase } from '@tangle-network/icons/types';
-import { PropsOf, WebbComponentBase } from '../../types';
+import { PropsOf, ComponentBase } from '../../types';
 import { ComponentProps } from 'react';
 import type { Button } from '../buttons';
 
-export interface BannerPropsType extends WebbComponentBase {
+export interface BannerPropsType extends ComponentBase {
   /**
    * Callback function when the close icon is clicked - this will close the banner
    */

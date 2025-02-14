@@ -1,5 +1,5 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
-import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
+import { EVMTokenBridgeEnum } from '@tangle-network/evm-contract-metadata';
 import { ChevronDown, TokenIcon } from '@tangle-network/icons';
 import { getFlexBasic } from '@tangle-network/icons/utils';
 import {

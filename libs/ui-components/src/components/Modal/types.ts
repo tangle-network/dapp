@@ -1,6 +1,6 @@
 import type { DialogContentProps } from '@radix-ui/react-dialog';
 import type { PropsOf } from '../../types';
-import type { WebbTypographyVariant } from '../../typography/types';
+import type { TypographyVariant } from '../../typography/types';
 
 export interface ModalContentProps extends DialogContentProps {
   size?: 'sm' | 'md' | 'lg';
@@ -18,5 +18,5 @@ export interface ModalHeaderProps extends PropsOf<'div'> {
    * The title variant of the modal
    * @default 'h5'
    */
-  titleVariant?: WebbTypographyVariant;
+  titleVariant?: TypographyVariant;
 }

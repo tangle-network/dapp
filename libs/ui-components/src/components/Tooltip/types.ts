@@ -3,7 +3,7 @@ import {
   TooltipProps as RdxTooltipPropsBase,
   TooltipTriggerProps as RdxTooltipTriggerProps,
 } from '@radix-ui/react-tooltip';
-import { IWebbComponentBase } from '../../types';
+import { IComponentBase } from '../../types';
 
 type OmittedKeys =
   | 'open'
@@ -13,7 +13,7 @@ type OmittedKeys =
 
 type TooltipPropsBase = Omit<RdxTooltipPropsBase, OmittedKeys>;
 
-export interface TooltipProps extends IWebbComponentBase, TooltipPropsBase {
+export interface TooltipProps extends IComponentBase, TooltipPropsBase {
   /**
    * The open state of the tooltip when it is initially rendered. Use when you do not need to control its open state.
    */
@@ -36,7 +36,7 @@ export interface TooltipProps extends IWebbComponentBase, TooltipPropsBase {
  * The `TooltipBody` props
  */
 export interface TooltipBodyProps
-  extends IWebbComponentBase,
+  extends IComponentBase,
     RdxTooltipContentProps {
   /**
    * The `title` of the tooltip content
@@ -58,5 +58,5 @@ export interface TooltipBodyProps
  * The `TooltipTrigger` props
  */
 export interface TooltipTriggerProps
-  extends IWebbComponentBase,
+  extends IComponentBase,
     RdxTooltipTriggerProps {}

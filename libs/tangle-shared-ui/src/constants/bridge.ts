@@ -12,7 +12,7 @@ import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
   EVMTokens,
-} from '@webb-tools/evm-contract-metadata';
+} from '@tangle-network/evm-contract-metadata';
 
 import { assertEvmAddress } from '@tangle-network/ui-components';
 import { Abi, erc20Abi } from 'viem';

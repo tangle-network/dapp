@@ -7,7 +7,7 @@ import {
   ModalContent,
   ModalFooterActions,
   ModalHeader,
-  useWebbUI,
+  useUIContext,
 } from '@tangle-network/ui-components';
 import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
@@ -27,7 +27,7 @@ const UnbondTxModal: FC<Props> = ({ isModalOpen, setIsModalOpen }) => {
   const [amount, setAmount] = useState<BN | null>(null);
   const [hasErrors, setHasErrors] = useState(false);
 
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
   const { nativeTokenSymbol } = useNetworkStore();
   const { execute: executeUnbondTx, status: unbondTxStatus } = useUnbondTx();
 

@@ -1,6 +1,6 @@
 import { ReactHTML } from 'react';
 
-import type { WebbComponentBase } from '../types';
+import type { ComponentBase } from '../types';
 
 export type TypographyBaseProps = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLElement>,
@@ -38,7 +38,7 @@ export type MarketingVariant =
   | 'mkt-caption'
   | 'mkt-monospace';
 
-export type WebbTypographyVariant =
+export type TypographyVariant =
   | HeadingVariant
   | BodyVariant
   | MonospaceVariant
@@ -54,9 +54,9 @@ export type WebbTypographyVariant =
  * - `ta`: Text align (default: `inherit`)
  * - `darkMode`: Control component dark mode display in `js`, leave it's empty if you want to control dark mode in `css`
  */
-export interface WebbTypographyProps<TypoVariant = WebbTypographyVariant>
+export interface TypographyProps<TypoVariant = TypographyVariant>
   extends TypographyBaseProps,
-    WebbComponentBase {
+    ComponentBase {
   /**
    * Represent different variants of the component
    */

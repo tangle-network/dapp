@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { WebbComponentBase } from '../../types';
+import { ComponentBase } from '../../types';
 
 export type ChipColors =
   | 'green'
@@ -13,7 +13,7 @@ export type ChipColors =
 /**
  * The `Chip` props
  */
-export interface ChipProps extends WebbComponentBase {
+export interface ChipProps extends ComponentBase {
   /**
    * The visual style of the badge
    *

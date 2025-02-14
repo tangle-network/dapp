@@ -5,7 +5,7 @@ import {
   NextThemeProvider,
   WebbProvider,
 } from '@tangle-network/api-provider-environment';
-import { WebbUIProvider } from '@tangle-network/ui-components';
+import { UIProvider } from '@tangle-network/ui-components';
 import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
 
@@ -21,7 +21,7 @@ const Providers = ({
 }: PropsWithChildren<Props>): ReactNode => {
   return (
     <NextThemeProvider>
-      <WebbUIProvider hasErrorBoundary isNextApp>
+      <UIProvider hasErrorBoundary isNextApp>
         <WebbProvider
           appEvent={appEvent}
           applicationName="Tangle dApp"
@@ -30,7 +30,7 @@ const Providers = ({
         >
           {children}
         </WebbProvider>
-      </WebbUIProvider>
+      </UIProvider>
     </NextThemeProvider>
   );
 };

@@ -18,7 +18,7 @@ import {
   KeyValueWithButton,
   shortenString,
   Typography,
-  useWebbUI,
+  useUIContext,
   WalletButton,
 } from '@tangle-network/ui-components';
 import { FC, useCallback, useMemo } from 'react';
@@ -36,7 +36,7 @@ const WalletDropdown: FC<{
   wallet: WalletConfig;
 }> = ({ accountAddress, accountName, wallet }) => {
   const { inactivateApi } = useWebContext();
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
   const { wallets } = useWallets();
 
   const createExplorerAccountUrl = useNetworkStore(
@@ -135,7 +135,7 @@ const SwitchAccountButton: FC = () => {
   const { network } = useNetworkStore();
   const { activeApi, accounts, setActiveAccount } = useWebContext();
 
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
 
   const handleSwitchAccount = useCallback(async () => {
     // Switch account only support on web3 provider.

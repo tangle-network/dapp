@@ -11,7 +11,7 @@ import { forwardRef } from 'react';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 
 /**
- * The Webb Button Component
+ * The Button Component
  *
  * Props:
  *

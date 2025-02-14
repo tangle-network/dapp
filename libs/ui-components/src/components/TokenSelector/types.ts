@@ -1,8 +1,8 @@
 import type { ReactElement, ReactNode } from 'react';
-import type { IWebbComponentBase, PropsOf, TokenType } from '../../types';
+import type { IComponentBase, PropsOf, TokenType } from '../../types';
 
 export interface TokenSelectorProps
-  extends IWebbComponentBase,
+  extends IComponentBase,
     Omit<PropsOf<'button'>, 'disabled'> {
   Icon?: ReactElement;
 

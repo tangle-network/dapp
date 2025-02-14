@@ -21,7 +21,7 @@ import { ShieldedAssetInputComponentProps } from './types';
  *
  * ```jsx
  *  <ShieldedAssetInput />
- *  <ShieldedAssetInput asset={{ token1Symbol: 'webb', token2Symbol: 'eth', balance: 2.1, balanceInUsd: 1000 }} />
+ *  <ShieldedAssetInput asset={{ token1Symbol: 'tnt', token2Symbol: 'eth', balance: 2.1, balanceInUsd: 1000 }} />
  * ```
  */
 

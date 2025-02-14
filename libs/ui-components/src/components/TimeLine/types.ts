@@ -1,8 +1,8 @@
-import { IWebbComponentBase, PropsOf } from '../../types';
+import { IComponentBase, PropsOf } from '../../types';
 
-export interface TimeLineProps extends PropsOf<'div'>, IWebbComponentBase {}
+export interface TimeLineProps extends PropsOf<'div'>, IComponentBase {}
 
-export interface TimeLineItemProps extends PropsOf<'div'>, IWebbComponentBase {
+export interface TimeLineItemProps extends PropsOf<'div'>, IComponentBase {
   /**
    * The timeline title
    */

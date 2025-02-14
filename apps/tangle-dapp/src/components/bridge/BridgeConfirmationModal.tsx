@@ -10,7 +10,7 @@ import {
 import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
 import {
   EMPTY_VALUE_PLACEHOLDER,
-  useWebbUI,
+  useUIContext,
 } from '@tangle-network/ui-components';
 import { Button } from '@tangle-network/ui-components/components/buttons';
 import {
@@ -26,7 +26,7 @@ import {
   shortenHex,
   shortenString,
 } from '@tangle-network/ui-components/utils';
-import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
+import { EVMTokenBridgeEnum } from '@tangle-network/evm-contract-metadata';
 import cx from 'classnames';
 import { FC, useCallback, useMemo } from 'react';
 import useWalletClient from '../../data/bridge/useWalletClient';
@@ -138,7 +138,7 @@ export const BridgeConfirmationModal = ({
     token,
   );
 
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
 
   const { setWithPreviousValue: setTokensToAcc, valueOpt: cachedTokensToAcc } =
     useLocalStorage(LocalStorageKey.BRIDGE_TOKENS_TO_ACC);

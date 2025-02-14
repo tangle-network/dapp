@@ -6,7 +6,7 @@ import {
   ModalContent,
   ModalFooterActions,
   ModalHeader,
-  useWebbUI,
+  useUIContext,
 } from '@tangle-network/ui-components';
 import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/ui-components/constants';
 import { type FC, useCallback, useEffect, useState } from 'react';
@@ -28,7 +28,7 @@ export type BondTokensProps = {
 };
 
 const BondMoreTxContainer: FC<Props> = ({ isModalOpen, setIsModalOpen }) => {
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
   const [amountToBond, setAmountToBond] = useState<BN | null>(null);
   const [isBondMoreTxLoading, setIsBondMoreTxLoading] = useState(false);
   const [hasErrors, setHasErrors] = useState(false);

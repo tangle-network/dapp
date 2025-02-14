@@ -1,4 +1,4 @@
-import { IWebbComponentBase, PropsOf } from '../../types';
+import { IComponentBase, PropsOf } from '../../types';
 
 type OmittedKeys = 'disabled' | 'required' | 'readOnly' | 'size' | 'onChange';
 
@@ -6,7 +6,7 @@ type OmittedKeys = 'disabled' | 'required' | 'readOnly' | 'size' | 'onChange';
  * The `Input` component props
  */
 export interface InputProps
-  extends IWebbComponentBase,
+  extends IComponentBase,
     Omit<PropsOf<'input'>, OmittedKeys> {
   /**
    * The input id

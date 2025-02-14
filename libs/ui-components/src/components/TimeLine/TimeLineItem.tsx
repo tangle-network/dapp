@@ -22,14 +22,14 @@ import { TimeLineItemProps } from './types';
  *      title='Proposed'
  *      time={randRecentDate()}
  *      txHash={randEthereumAddress()}
- *      externalUrl='https://webb.tools'
+ *      externalUrl='https://tangle.tools'
  *    />
  *
  *    <TimeLineItem
  *      title='Signed'
  *      time={randRecentDate()}
  *      txHash={randEthereumAddress()}
- *      externalUrl='https://webb.tools'
+ *      externalUrl='https://tangle.tools'
  *      extraContent={
  *        <div className='flex items-center space-x-2'>
  *          <KeyValueWithButton keyValue={randEthereumAddress()} size='sm' />
@@ -44,7 +44,7 @@ import { TimeLineItemProps } from './types';
  *      title='Key Rotated'
  *      time={randRecentDate()}
  *      txHash={randEthereumAddress()}
- *      externalUrl='https://webb.tools'
+ *      externalUrl='https://tangle.tools'
  *      extraContent={
  *        <div className='flex items-center space-x-4'>
  *          <LabelWithValue label='Height' value={1000654} />

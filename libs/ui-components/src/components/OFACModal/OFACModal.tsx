@@ -5,19 +5,19 @@ import { Typography } from '../../typography';
 import { SOCIAL_URLS_RECORD } from '../../constants';
 
 const contactUs = SOCIAL_URLS_RECORD.telegram;
-const reportIssueLink = `${SOCIAL_URLS_RECORD.github}/webb-dapp/issues/new/choose`;
+const reportIssueLink = `${SOCIAL_URLS_RECORD.github}/dapp/issues/new/choose`;
 
 /**
  * Modal to show when user is accessing the website from a country in OFAC list
  */
 const OFACModal: FC = () => {
   return (
-    <div className="bg-mono-0 dark:bg-mono-180 p-6 rounded-lg max-w-lg space-y-4">
+    <div className="max-w-lg p-6 space-y-4 rounded-lg bg-mono-0 dark:bg-mono-180">
       <Typography variant="h5" fw="black" ta="center">
         OFAC Restricted
       </Typography>
 
-      <div className="w-4/5 mx-auto flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center w-4/5 gap-4 mx-auto">
         <Typography variant="body2" fw="semibold" ta="center">
           You are accessing the website from a country in Office of Foreign
           Assets Control (OFAC) list. Access to this website is restricted.

@@ -10,7 +10,7 @@ import { getAvatarClassNames, getAvatarSizeInPx } from './utils';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 
 /**
- * Webb Avatar component
+ * Avatar component
  *
  * Props:
  *
@@ -24,7 +24,7 @@ import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
  *
  * @example
  *
- * <Avatar alt="Webb Logo" src="webblogo.png" />
+ * <Avatar alt="Logo" src="logo.png" />
  */
 export const Avatar: React.FC<AvatarProps> = ({
   alt,

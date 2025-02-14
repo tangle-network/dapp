@@ -1,6 +1,6 @@
-import { WebbComponentBase } from '../../types';
+import { ComponentBase } from '../../types';
 
-export interface TokenPairProps extends WebbComponentBase {
+export interface TokenPairProps extends ComponentBase {
   /**
    * The pool name
    */
