@@ -136,7 +136,9 @@ const ValidatorSelectionTable: FC<Props> = ({
                 />
 
                 <Typography variant="body1" fw="normal" className="truncate">
-                  {identity === address ? shortenString(address, 6) : identity}
+                  {identity === undefined
+                    ? shortenString(address, 6)
+                    : identity}
                 </Typography>
 
                 <CopyWithTooltip

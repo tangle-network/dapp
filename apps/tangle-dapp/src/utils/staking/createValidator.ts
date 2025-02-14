@@ -19,8 +19,7 @@ export type CreateNomineeOptions = {
 };
 
 const createValidator = (options: CreateNomineeOptions): Validator => {
-  const identityName =
-    options.identities.get(options.address) ?? options.address;
+  const identityName = options.identities.get(options.address) ?? undefined;
 
   // TODO: Will it ever be unset if the nominee is a validator?
   const commission =

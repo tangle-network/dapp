@@ -44,7 +44,7 @@ const COLUMNS = [
           </Avatar>
 
           <Typography variant="body1" fw="normal" className="truncate">
-            {identityName === address
+            {identityName === undefined
               ? shortenString(address, 6)
               : identityName}
           </Typography>
