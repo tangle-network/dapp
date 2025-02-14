@@ -31,6 +31,7 @@ const chainToNetworkMap = {
  */
 export default function chainToNetwork(typedChainId: number): Network {
   const network = chainToNetworkMap[typedChainId];
+
   if (network !== undefined) {
     return network;
   }
@@ -38,6 +39,7 @@ export default function chainToNetwork(typedChainId: number): Network {
   const chain = chainsPopulated[typedChainId];
 
   assert(chain !== undefined, `Chain with id ${typedChainId} not found`);
+
   assert(
     chain.rpcUrls.default.webSocket?.[0],
     `Chain with id ${typedChainId} has no WebSocket RPC endpoint`,

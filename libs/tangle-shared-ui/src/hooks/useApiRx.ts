@@ -2,13 +2,13 @@
 
 import { ApiRx } from '@polkadot/api';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { catchError, Observable } from 'rxjs';
+import { catchError, EMPTY, Observable } from 'rxjs';
 import useNetworkStore from '../context/useNetworkStore';
 import usePromise from './usePromise';
 import { getApiRx } from '../utils/polkadot/api';
 import ensureError from '../utils/ensureError';
 
-export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | null;
+export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | Error | null;
 
 /**
  * Fetch data from the Substrate API, using RxJS. This is especially useful
@@ -29,7 +29,7 @@ export type ObservableFactory<T> = (api: ApiRx) => Observable<T> | null;
  * );
  * ```
  */
-function useApiRx<T>(factory: ObservableFactory<T>) {
+const useApiRx = <T>(factory: ObservableFactory<T>) => {
   const [result, setResult] = useState<T | null>(null);
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -41,22 +41,22 @@ function useApiRx<T>(factory: ObservableFactory<T>) {
       if (rpcEndpoint === undefined) {
         return null;
       }
-
       return await getApiRx(rpcEndpoint);
     }, [rpcEndpoint]),
     null,
   );
 
-  const resetData = useCallback(() => {
+  const reset = useCallback(() => {
+    setLoading(true);
     setResult(null);
     setError(null);
   }, []);
 
   // Create the subscription when the API is ready.
   useEffect(() => {
-    if (apiRx === null) {
-      resetData();
+    isMountedRef.current = true;
 
+    if (apiRx === null) {
       return;
     }
 
@@ -67,25 +67,32 @@ function useApiRx<T>(factory: ObservableFactory<T>) {
     // be if the active chain is mainnet, but the factory is trying to fetch
     // data from a testnet pallet that hasn't been deployed to mainnet yet.
     try {
-      observable = factory(apiRx);
+      const factoryResult = factory(apiRx);
+
+      if (factoryResult instanceof Error) {
+        setError(factoryResult);
+        setLoading(false);
+
+        return;
+      }
+      // The factory is not yet ready to produce an observable.
+      else if (factoryResult === null) {
+        reset();
+
+        return;
+      } else {
+        observable = factoryResult;
+      }
     } catch (possibleError) {
-      const error = ensureError(possibleError);
+      const newError = ensureError(possibleError);
 
       console.error(
         'Error creating subscription, this can happen when TypeScript type definitions are outdated or accessing pallets on the wrong chain:',
-        error,
+        newError,
       );
 
-      setError(error);
+      setError(newError);
       setLoading(false);
-
-      return;
-    }
-
-    // The factory is not yet ready to produce an observable.
-    // Discard any previous data
-    if (observable === null) {
-      resetData();
 
       return;
     }
@@ -95,19 +102,17 @@ function useApiRx<T>(factory: ObservableFactory<T>) {
         catchError((possibleError: unknown) => {
           setError(ensureError(possibleError));
           setLoading(false);
-
           // By returning an empty observable, the subscription will be
           // automatically completed, effectively unsubscribing from the
           // observable. Since the empty observable emits nothing, the
           // data/state is left unchanged.
-          return new Observable<T>();
+          return EMPTY;
         }),
       )
       .subscribe((newResult) => {
-        if (!isMountedRef) {
+        if (!isMountedRef.current) {
           return;
         }
-
         setResult(newResult);
         setLoading(false);
       });
@@ -116,9 +121,9 @@ function useApiRx<T>(factory: ObservableFactory<T>) {
       isMountedRef.current = false;
       subscription.unsubscribe();
     };
-  }, [factory, apiRx, resetData]);
+  }, [factory, apiRx, reset]);
 
   return { result, isLoading, error };
-}
+};
 
 export default useApiRx;

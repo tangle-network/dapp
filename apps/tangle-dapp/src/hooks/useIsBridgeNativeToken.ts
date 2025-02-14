@@ -5,7 +5,7 @@ import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
 const useIsBridgeNativeToken = (
   sourceTypedChainId: PresetTypedChainId,
   token: BridgeToken,
-) => {
+): boolean => {
   const isNativeToken =
     (sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM &&
       token.tokenType === EVMTokenEnum.TNT) ||

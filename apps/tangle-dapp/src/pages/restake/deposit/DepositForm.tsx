@@ -280,7 +280,11 @@ const DepositForm: FC<Props> = (props) => {
               return (
                 <LogoListItem
                   logo={<TokenIcon size="xl" name={asset.symbol} />}
-                  leftUpperContent={`${asset.name} (${asset.symbol})`}
+                  leftUpperContent={
+                    asset.name !== undefined
+                      ? `${asset.name} (${asset.symbol})`
+                      : asset.symbol
+                  }
                   leftBottomContent={idText}
                   rightBottomText="Balance"
                   rightUpperText={`${fmtBalance} ${asset.symbol}`}

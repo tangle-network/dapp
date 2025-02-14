@@ -9,11 +9,20 @@ import {
 } from '../Dropdown';
 import { Typography } from '../../typography/Typography';
 import { useCallback } from 'react';
-import { DropdownFieldProps } from './types';
 import { AnimatedChevronRight } from '../BridgeInputs/AnimatedChevronRight';
 import { twMerge } from 'tailwind-merge';
+import { Label } from '../Label';
 
-const DropdownField = ({
+export type DropdownFieldProps = {
+  title: string;
+  items: string[];
+  className?: string;
+  selectedItem: string;
+  setSelectedItem: (selectedItem: string) => void;
+  dropdownBodyClassName?: string;
+};
+
+export const DropdownField = ({
   title,
   items,
   selectedItem,
@@ -31,19 +40,13 @@ const DropdownField = ({
   return (
     <div
       className={twMerge(
-        'px-4 py-2 w-full h-[74px] rounded-lg',
-        'bg-mono-20 dark:bg-mono-160',
+        'px-2.5 lg:px-4 py-2 w-full min-h-[74px] rounded-lg',
+        'bg-mono-20 dark:bg-mono-170',
         'outline outline-1 outline-offset-1 outline-transparent',
         className,
       )}
     >
-      <Typography
-        variant="body1"
-        fw="bold"
-        className="text-mono-100 dark:text-mono-100 leading-4 tracking-[1%]"
-      >
-        {title}
-      </Typography>
+      <Label>{title}</Label>
 
       <Dropdown className="block grow shrink basis-0">
         <DropdownBasicButton
@@ -51,11 +54,7 @@ const DropdownField = ({
           isFullWidth
         >
           <div className="flex items-center gap-5 justify-between w-full">
-            <Typography
-              variant="h5"
-              fw="bold"
-              className="!overflow-hidden whitespace-nowrap"
-            >
+            <Typography variant="h5" fw="bold" className="text-lg">
               {selectedItem}
             </Typography>
 
@@ -65,25 +64,21 @@ const DropdownField = ({
 
         <DropdownBody
           className={twMerge(
-            'max-w-[368px] !z-50 !bg-mono-0 dark:!bg-mono-160 !border-none !mt-4 !-mr-4',
+            'max-w-[360px] !z-50 !bg-mono-0 dark:!bg-mono-170 !mt-6 !-mr-4',
             dropdownBodyClassName,
           )}
         >
-          <RadioGroup value={selectedItem} onValueChange={handleValueChange}>
+          <RadioGroup
+            className="border dark:border-mono-140 !rounded-lg"
+            value={selectedItem}
+            onValueChange={handleValueChange}
+          >
             {items.map((item, i) => (
-              <RadioItem key={`${item}-${i}`} value={item} asChild>
-                <DropdownMenuItem
-                  className={twMerge(
-                    selectedItem === item
-                      ? 'bg-blue-10 hover:!bg-blue-10 dark:bg-blue-120 hover:dark:!bg-blue-120'
-                      : '',
-                    'hover:!bg-inherit',
-                  )}
-                >
+              <RadioItem key={i} value={item} asChild>
+                <DropdownMenuItem className="dark:hover:!bg-mono-160">
                   <Typography
-                    variant="h5"
-                    fw="bold"
-                    className="leading-4 tracking-[1%] text-mono-140 dark:text-mono-0"
+                    variant="body1"
+                    className="text-mono-140 dark:text-mono-0"
                   >
                     {item}
                   </Typography>
@@ -96,5 +91,3 @@ const DropdownField = ({
     </div>
   );
 };
-
-export default DropdownField;

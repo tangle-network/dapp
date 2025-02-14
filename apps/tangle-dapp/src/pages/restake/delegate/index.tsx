@@ -306,7 +306,11 @@ const RestakeDelegateForm: FC = () => {
               return (
                 <LogoListItem
                   logo={<TokenIcon size="xl" name={asset.symbol} />}
-                  leftUpperContent={`${asset.name} (${asset.symbol})`}
+                  leftUpperContent={
+                    asset.name !== undefined
+                      ? `${asset.name} (${asset.symbol})`
+                      : asset.symbol
+                  }
                   leftBottomContent={idText}
                   rightUpperText={`${fmtBalance} ${asset.symbol}`}
                   rightBottomText="Balance"
