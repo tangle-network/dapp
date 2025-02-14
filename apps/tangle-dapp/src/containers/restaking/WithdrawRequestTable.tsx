@@ -1,4 +1,18 @@
 import { BN } from '@polkadot/util';
+import { CheckboxCircleFill } from '@tangle-network/icons/CheckboxCircleFill';
+import { TimeFillIcon } from '@tangle-network/icons/TimeFillIcon';
+import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import type { DelegatorWithdrawRequest } from '@tangle-network/tangle-shared-ui/types/restake';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@tangle-network/ui-components';
+import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
+import { fuzzyFilter } from '@tangle-network/ui-components/components/Filter/utils';
+import { Table } from '@tangle-network/ui-components/components/Table';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -8,21 +22,6 @@ import {
   type TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import { CheckboxCircleFill } from '@tangle-network/icons/CheckboxCircleFill';
-import { TimeFillIcon } from '@tangle-network/icons/TimeFillIcon';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
-import type { DelegatorWithdrawRequest } from '@tangle-network/tangle-shared-ui/types/restake';
-import {
-  AmountFormatStyle,
-  formatDisplayAmount,
-  isEvmAddress,
-} from '@tangle-network/ui-components';
-import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
-import { fuzzyFilter } from '@tangle-network/ui-components/components/Filter/utils';
-import { Table } from '@tangle-network/ui-components/components/Table';
-import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC, useMemo } from 'react';
 import TableCell from '../../components/restaking/TableCell';
 import useRestakeConsts from '../../data/restake/useRestakeConsts';

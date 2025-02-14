@@ -1,3 +1,20 @@
+import { BN } from '@polkadot/util';
+import { CheckboxCircleFill } from '@tangle-network/icons/CheckboxCircleFill';
+import { TimeFillIcon } from '@tangle-network/icons/TimeFillIcon';
+import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import type { DelegatorUnstakeRequest } from '@tangle-network/tangle-shared-ui/types/restake';
+import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+  Typography,
+} from '@tangle-network/ui-components';
+import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
+import { fuzzyFilter } from '@tangle-network/ui-components/components/Filter/utils';
+import { Table } from '@tangle-network/ui-components/components/Table';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -7,33 +24,15 @@ import {
   type TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import { CheckboxCircleFill } from '@tangle-network/icons/CheckboxCircleFill';
-import { TimeFillIcon } from '@tangle-network/icons/TimeFillIcon';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
-import type { DelegatorUnstakeRequest } from '@tangle-network/tangle-shared-ui/types/restake';
-import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
-import {
-  AmountFormatStyle,
-  formatDisplayAmount,
-  isEvmAddress,
-  Typography,
-} from '@tangle-network/ui-components';
-import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
-import { fuzzyFilter } from '@tangle-network/ui-components/components/Filter/utils';
-import { Table } from '@tangle-network/ui-components/components/Table';
 import { FC, useMemo } from 'react';
 import AvatarWithText from '../../components/AvatarWithText';
+import TableCell from '../../components/restaking/TableCell';
 import useRestakeConsts from '../../data/restake/useRestakeConsts';
 import useRestakeCurrentRound from '../../data/restake/useRestakeCurrentRound';
-import TableCell from '../../components/restaking/TableCell';
-import { calculateTimeRemaining } from '../../pages/restake/utils';
-import UnstakeRequestTableActions from './UnstakeRequestTableActions';
-import pluralize from '@tangle-network/ui-components/utils/pluralize';
-import { BN } from '@polkadot/util';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
-import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import useSessionDurationMs from '../../data/useSessionDurationMs';
+import { calculateTimeRemaining } from '../../pages/restake/utils';
 import formatSessionDistance from '../../utils/formatSessionDistance';
+import UnstakeRequestTableActions from './UnstakeRequestTableActions';
 
 export type UnstakeRequestTableRow = {
   amount: string;

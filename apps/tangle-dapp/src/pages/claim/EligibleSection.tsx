@@ -17,7 +17,7 @@ import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/a
 import { isValidAddress } from '@tangle-network/ui-components';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
-import { useUIContext } from '@tangle-network/ui-components/hooks/useWebbUI';
+import { useUIContext } from '@tangle-network/ui-components/hooks/useUIContext';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
 import { shortenString } from '@tangle-network/ui-components/utils/shortenString';

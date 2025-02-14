@@ -8,7 +8,7 @@ import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetwork
 import { getApiRx } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { AppTemplate } from '@tangle-network/ui-components/containers/AppTemplate';
-import { useUIContext } from '@tangle-network/ui-components/hooks/useWebbUI';
+import { useUIContext } from '@tangle-network/ui-components/hooks/useUIContext';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { combineLatest, Subscription } from 'rxjs';
