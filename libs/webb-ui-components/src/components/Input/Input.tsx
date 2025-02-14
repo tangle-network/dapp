@@ -194,6 +194,7 @@ export const Input: React.FC<InputProps> = (props) => {
           value={controlledValue}
           onChange={(e) => {
             setCursor(e.target.selectionStart);
+
             isControlled && onChange !== undefined
               ? onChange(e.target.value)
               : setValue(e.target.value);
@@ -215,7 +216,9 @@ export const Input: React.FC<InputProps> = (props) => {
           variant="body4"
           fw="bold"
           className="mt-2 text-red-70 dark:text-red-50"
-        ></Typography>
+        >
+          {errorMessage}
+        </Typography>
       )}
     </div>
   );

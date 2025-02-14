@@ -20,7 +20,7 @@ import {
   shortenString,
   Typography,
 } from '@webb-tools/webb-ui-components';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useTxHistoryStore, { HistoryTx } from '../context/useTxHistoryStore';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
@@ -41,7 +41,6 @@ const TxHistoryDrawer = () => {
   const activeAccountAddress = useActiveAccountAddress();
   const transactions = useTxHistoryStore((state) => state.transactions);
   const networkId = useNetworkStore((store) => store.network2?.id);
-  const [isOpen, setIsOpen] = useState(true);
 
   const relevantTransactions = useMemo(() => {
     if (networkId === undefined || activeAccountAddress === null) {
@@ -81,7 +80,7 @@ const TxHistoryDrawer = () => {
 
   return (
     <div className="flex items-center">
-      <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog.Root>
         <Dialog.Trigger className="outline-none">
           <Button
             variant="secondary"

@@ -9,12 +9,20 @@ import {
 } from '../Dropdown';
 import { Typography } from '../../typography/Typography';
 import { useCallback } from 'react';
-import { DropdownFieldProps } from './types';
 import { AnimatedChevronRight } from '../BridgeInputs/AnimatedChevronRight';
 import { twMerge } from 'tailwind-merge';
 import { Label } from '../Label';
 
-const DropdownField = ({
+export type DropdownFieldProps = {
+  title: string;
+  items: string[];
+  className?: string;
+  selectedItem: string;
+  setSelectedItem: (selectedItem: string) => void;
+  dropdownBodyClassName?: string;
+};
+
+export const DropdownField = ({
   title,
   items,
   selectedItem,
@@ -83,5 +91,3 @@ const DropdownField = ({
     </div>
   );
 };
-
-export default DropdownField;
