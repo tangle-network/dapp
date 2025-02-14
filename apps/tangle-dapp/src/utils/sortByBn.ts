@@ -8,13 +8,16 @@ const sortByBn = <T>(
     const bnA = selector(rowA.original);
     const bnB = selector(rowB.original);
 
+    // Prioritize B if A is undefined or null.
     if (bnA === undefined || bnA === null) {
       return 1;
-    } else if (bnB === undefined || bnB === null) {
+    }
+    // Prioritize A if B is undefined or null.
+    else if (bnB === undefined || bnB === null) {
       return -1;
     }
 
-    return bnB.cmp(bnA);
+    return bnA.cmp(bnB);
   };
 };
 

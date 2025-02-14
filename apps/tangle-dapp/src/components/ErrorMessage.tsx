@@ -13,7 +13,7 @@ export default function ErrorMessage({
   children,
   className,
   typographyProps: {
-    variant = 'body4',
+    variant = 'body3',
     className: typoClassName,
     ...typographyProps
   } = {},

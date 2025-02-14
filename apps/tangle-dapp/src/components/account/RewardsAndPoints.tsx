@@ -35,6 +35,7 @@ const RewardsAndPoints = () => {
       return null;
     }
 
+    // Include only non-zero entries.
     return new Map(
       rewards.entries().filter(([_, value]) => value > ZERO_BIG_INT),
     );
@@ -64,7 +65,7 @@ const RewardsAndPoints = () => {
         hideErrorNotification
         isLoading={isRewardsLoading}
         error={rewardsError}
-        tooltip="Rewards earned from deposits in restaking"
+        tooltip="Rewards earned from deposits in restaking."
       >
         <div className="flex items-baseline gap-2">
           <Typography
@@ -95,11 +96,11 @@ const RewardsAndPoints = () => {
 
       <KeyStatsItem
         className="!p-0"
-        title="Earned Points"
+        title="Points Earned"
         hideErrorNotification
         isLoading={isPointsLoading}
         error={pointsError}
-        tooltip="Points earned toward airdrop through network participant"
+        tooltip="Points earned toward airdrop through network participation."
       >
         <div className="flex items-baseline gap-2">
           <Typography

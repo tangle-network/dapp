@@ -1,10 +1,9 @@
 import { PalletBalancesAccountData } from '@polkadot/types/lookup';
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
-// TODO: Update calculation with provided definition from Polkadot docs: https://wiki.polkadot.network/docs/learn-account-balances
-export function calculateTransferableBalance(
+export const calculateTransferableBalance = (
   accInfo: PalletBalancesAccountData,
-) {
+): BN => {
   const maxFrozen = bnMax(
     accInfo.frozen ?? BN_ZERO,
     'miscFrozen' in accInfo && BN.isBN(accInfo.miscFrozen)
@@ -21,4 +20,4 @@ export function calculateTransferableBalance(
   );
 
   return transferable;
-}
+};

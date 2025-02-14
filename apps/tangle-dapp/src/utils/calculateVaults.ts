@@ -64,7 +64,7 @@ const calculateVaults = ({
 
       vaults.set(vaultId, {
         id: vaultId,
-        name,
+        name: name ?? symbol,
         representAssetSymbol: symbol,
         decimals,
         capacity,

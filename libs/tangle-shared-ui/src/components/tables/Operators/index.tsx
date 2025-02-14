@@ -311,10 +311,7 @@ const OperatorsTable: FC<Props> = ({
       tableClassName={tableProps?.tableClassName}
       thClassName={tableProps?.thClassName}
       tbodyClassName={tableProps?.tbodyClassName}
-      trClassName={twMerge(
-        'group cursor-pointer overflow-hidden',
-        tableProps?.trClassName,
-      )}
+      trClassName={twMerge('group overflow-hidden', tableProps?.trClassName)}
       tdClassName={tableProps?.tdClassName}
       paginationClassName={tableProps?.paginationClassName}
     />

@@ -1,11 +1,10 @@
 import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
-import { Nominee } from '@tangle-network/tangle-shared-ui/types';
+import { Validator } from '@tangle-network/tangle-shared-ui/types';
 import Optional from '@tangle-network/tangle-shared-ui/utils/Optional';
 import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import { useCallback, useMemo } from 'react';
-
-import createNominee from '../../utils/staking/createNominee';
+import createValidator from '../../utils/staking/createValidator';
 import useStakingExposures from '../staking/useStakingExposures';
 import useValidatorPrefs from '../staking/useValidatorPrefs';
 import useValidatorIdentityNames from '../ValidatorTables/useValidatorIdentityNames';
@@ -33,7 +32,7 @@ const useNominations = () => {
     ),
   );
 
-  const nominees = useMemo<Optional<Nominee[]> | null>(() => {
+  const nominees = useMemo<Optional<Validator[]> | null>(() => {
     if (
       nominationInfoOpt === null ||
       sessionValidators === null ||
@@ -54,11 +53,11 @@ const useNominations = () => {
       );
 
       // TODO: Turn this into a set, and then use `has` instead of `some`.
-      const isActive = sessionValidators.some(
-        (validatorAddress) => validatorAddress.toString() === nomineeAddress,
-      );
+      const isActive = sessionValidators
+        .map((address) => assertSubstrateAddress(address.toString()))
+        .some((validatorAddress) => validatorAddress === nomineeAddress);
 
-      return createNominee({
+      return createValidator({
         address: nomineeAddress,
         isActive,
         identities,

@@ -6,6 +6,7 @@ import { useCallback } from 'react';
 
 import useEntryMap from '../../hooks/useEntryMap';
 import useCurrentEra from './useCurrentEra';
+import { assertSubstrateAddress } from '@webb-tools/webb-ui-components';
 
 const useStakingExposures = () => {
   // TODO: Also consider error from this hook.
@@ -27,7 +28,7 @@ const useStakingExposures = () => {
 
   const exposureMap = useEntryMap(
     exposures,
-    useCallback((key) => key.args[1].toString(), []),
+    useCallback((key) => assertSubstrateAddress(key.args[1].toString()), []),
   );
 
   return { result: exposureMap, ...other };

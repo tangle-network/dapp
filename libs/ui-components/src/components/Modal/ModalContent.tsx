@@ -44,7 +44,7 @@ export const ModalContent = forwardRef<HTMLDivElement, ModalContentProps>(
           {...props}
           className={twMerge(
             // Prevent the focus border from showing.
-            'focus:outline-none',
+            'outline-none focus:outline-none focus-visible:outline-none',
             'fixed z-50 w-full rounded-2xl overflow-hidden',
             'border dark:border-mono-160',
             'bg-mono-0 dark:bg-mono-180',

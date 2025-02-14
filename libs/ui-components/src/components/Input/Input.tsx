@@ -194,6 +194,7 @@ export const Input: React.FC<InputProps> = (props) => {
           value={controlledValue}
           onChange={(e) => {
             setCursor(e.target.selectionStart);
+
             isControlled && onChange !== undefined
               ? onChange(e.target.value)
               : setValue(e.target.value);
@@ -208,6 +209,7 @@ export const Input: React.FC<InputProps> = (props) => {
         )}
       </div>
 
+      {/** TODO: Replace with `ErrorMessage` component. */}
       {errorMessage !== undefined && (
         <Typography
           component="p"

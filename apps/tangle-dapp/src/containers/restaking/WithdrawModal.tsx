@@ -107,7 +107,9 @@ const WithdrawModal = ({
         return (
           <LogoListItem
             logo={<TokenIcon size="xl" name={symbol} />}
-            leftUpperContent={`${name} (${symbol})`}
+            leftUpperContent={
+              name !== undefined ? `${name} (${symbol})` : symbol
+            }
             leftBottomContent={idText}
             rightUpperText={`${fmtAmount} ${symbol}`}
             rightBottomText={

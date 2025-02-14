@@ -42,7 +42,7 @@ export type BasicAccountInfo = {
   identityName?: string;
 };
 
-export interface Nominee extends BasicAccountInfo {
+export interface Validator extends BasicAccountInfo {
   isActive: boolean;
   commission: BN;
   selfStakeAmount: BN;
@@ -51,7 +51,7 @@ export interface Nominee extends BasicAccountInfo {
 }
 
 export type VaultToken = {
-  name: string;
+  name?: string;
   symbol: string;
   amount: Decimal;
 };
@@ -93,7 +93,8 @@ export type BridgeQueueTxItem = {
   bridgeType: EVMTokenBridgeEnum;
 };
 
-export interface BridgeToken {
+export type BridgeToken = {
+  name?: string;
   symbol: string;
   tokenType: EVMTokenEnum;
   bridgeType: EVMTokenBridgeEnum;
@@ -103,7 +104,7 @@ export interface BridgeToken {
   chainId: PresetTypedChainId;
   hyperlaneSyntheticAddress?: EvmAddress;
   isTestnet?: boolean;
-}
+};
 
 export type BridgeChainsConfigType = Record<
   PresetTypedChainId,

@@ -3,6 +3,8 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
 import { PromiseOrT } from '@tangle-network/abstract-api-provider';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import useSubstrateInjectedExtension from '@tangle-network/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
 import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
@@ -12,20 +14,19 @@ import type { SubstrateAddress } from '@tangle-network/ui-components/types/addre
 import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
 import { Hash } from 'viem';
-
 import { TxName } from '../constants';
+import useTxHistoryStore, {
+  HistoryTxDetail,
+} from '../context/useTxHistoryStore';
 import { GetSuccessMessageFn } from '../types';
 import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
 import useTxNotification from './useTxNotification';
-import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 export enum TxStatus {
   NOT_YET_INITIATED,
   PROCESSING,
   ERROR,
   COMPLETE,
-  TIMED_OUT,
 }
 
 export type SubstrateTxFactory<Context = void> = (
@@ -34,12 +35,21 @@ export type SubstrateTxFactory<Context = void> = (
   context: Context,
 ) => PromiseOrT<SubmittableExtrinsic<'promise', ISubmittableResult> | null>;
 
-function useSubstrateTx<Context = void>(
-  factory: SubstrateTxFactory<Context>,
-  getSuccessMessage?: GetSuccessMessageFn<Context>,
-  timeoutDelay = 120_000,
-  overrideRpcEndpoint?: string,
-) {
+type Options<Context = void> = {
+  name: TxName;
+  factory: SubstrateTxFactory<Context>;
+  getDetails?: (context: Context) => Map<string, HistoryTxDetail>;
+  getSuccessMessage?: GetSuccessMessageFn<Context>;
+  overrideRpcEndpoint?: string;
+};
+
+const useSubstrateTx = <Context = void>({
+  name,
+  factory,
+  getDetails,
+  getSuccessMessage,
+  overrideRpcEndpoint,
+}: Options<Context>) => {
   const [status, setStatus] = useState(TxStatus.NOT_YET_INITIATED);
   const [txHash, setTxHash] = useState<Hash | null>(null);
   const [txBlockHash, setTxBlockHash] = useState<Hash | null>(null);
@@ -51,6 +61,8 @@ function useSubstrateTx<Context = void>(
   const isMountedRef = useIsMountedRef();
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const injector = useSubstrateInjectedExtension();
+  const { patchTx, pushTx } = useTxHistoryStore();
+  const networkId = useNetworkStore((store) => store.network2?.id ?? null);
 
   // Useful for debugging.
   useEffect(() => {
@@ -67,7 +79,8 @@ function useSubstrateTx<Context = void>(
       if (
         status === TxStatus.PROCESSING ||
         activeSubstrateAddress === null ||
-        isEvmAccount === null
+        isEvmAccount === null ||
+        networkId === null
       ) {
         return;
       }
@@ -121,24 +134,43 @@ function useSubstrateTx<Context = void>(
       setTxBlockHash(null);
       setStatus(TxStatus.PROCESSING);
 
-      const handleStatusUpdate = (status: ISubmittableResult) => {
+      const txHash = tx.hash.toHex();
+
+      pushTx({
+        hash: txHash,
+        name,
+        network: networkId,
+        origin: activeSubstrateAddress,
+        timestamp: Date.now(),
+        status: 'pending',
+        details: getDetails?.(context),
+      });
+
+      const handleStatusUpdate = (txStatus: ISubmittableResult) => {
+        // TODO: Handle pending, in-block, & finalized states appropriately.s
+
         // If the component is unmounted, or the transaction
         // has not yet been included in a block, ignore the
         // status update.
-        if (!isMountedRef.current || !status.isInBlock) {
+        if (!isMountedRef.current || !txStatus.isInBlock) {
           return;
         }
 
-        setTxHash(status.txHash.toHex());
-        setTxBlockHash(status.status.asInBlock.toHex());
+        patchTx(txHash, { status: 'inblock' });
+        setTxHash(txHash);
+        setTxBlockHash(txStatus.status.asInBlock.toHex());
 
-        const error = extractErrorFromTxStatus(status);
+        const error = extractErrorFromTxStatus(txStatus);
 
         setStatus(error === null ? TxStatus.COMPLETE : TxStatus.ERROR);
         setError(error);
 
         if (error === null && getSuccessMessage !== undefined) {
           setSuccessMessage(getSuccessMessage(context));
+        }
+
+        if (error === null) {
+          patchTx(txHash, { status: 'finalized' });
         }
       };
 
@@ -158,18 +190,25 @@ function useSubstrateTx<Context = void>(
         setStatus(TxStatus.ERROR);
         setError(error);
         setTxHash(null);
+        setTxBlockHash(null);
+        patchTx(txHash, { status: 'failed', errorMessage: error.message });
       }
     },
     [
       status,
       activeSubstrateAddress,
       isEvmAccount,
+      networkId,
+      injector,
       overrideRpcEndpoint,
       rpcEndpoint,
+      pushTx,
+      name,
+      getDetails,
       factory,
       isMountedRef,
+      patchTx,
       getSuccessMessage,
-      injector,
     ],
   );
 
@@ -179,26 +218,6 @@ function useSubstrateTx<Context = void>(
     setTxBlockHash(null);
     setError(null);
   }, [setStatus, setTxHash, setTxBlockHash, setError]);
-
-  // Timeout the transaction if it's taking too long. This
-  // won't cancel it, but it will alert the user that something
-  // may have gone wrong, and also unlock anything waiting for
-  // the transaction to complete, so that the user can try again
-  // if they want.
-  useEffect(() => {
-    const timeoutHandle =
-      status === TxStatus.PROCESSING
-        ? setTimeout(() => {
-            setStatus(TxStatus.TIMED_OUT);
-          }, timeoutDelay)
-        : null;
-
-    return () => {
-      if (timeoutHandle !== null) {
-        clearTimeout(timeoutHandle);
-      }
-    };
-  }, [status, timeoutDelay]);
 
   return {
     // Prevent the consumer from executing the transaction if
@@ -211,10 +230,11 @@ function useSubstrateTx<Context = void>(
     txBlockHash,
     successMessage,
   };
-}
+};
 
 export default useSubstrateTx;
 
+// TODO: Merge this with `useSubstrateTx`.
 export function useSubstrateTxWithNotification<Context = void>(
   txName: TxName,
   factory: SubstrateTxFactory<Context>,
@@ -236,12 +256,12 @@ export function useSubstrateTxWithNotification<Context = void>(
     txHash,
     txBlockHash,
     successMessage,
-  } = useSubstrateTx(
+  } = useSubstrateTx({
+    name: txName,
     factory,
     getSuccessMessage,
-    undefined,
     overrideRpcEndpoint,
-  );
+  });
 
   const execute = useCallback(
     (context: Context) => {
@@ -275,13 +295,17 @@ export function useSubstrateTxWithNotification<Context = void>(
 
     if (error !== null) {
       notifyError(txName, error);
-    } else if (txHash !== null && txBlockHash !== null) {
-      const explorerUrl = createExplorerTxUrl(false, txHash, txBlockHash);
+    } else if (txHash !== null) {
+      const explorerUrl = createExplorerTxUrl(
+        false,
+        txHash,
+        txBlockHash ?? undefined,
+      );
 
       notifySuccess(txName, explorerUrl, successMessage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  }, [status, error]);
 
   return {
     // Prevent the consumer from executing the transaction if

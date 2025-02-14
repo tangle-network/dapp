@@ -32,9 +32,7 @@ export const CopyWithTooltip: React.FC<CopyWithTooltipProps> = ({
   return (
     <CopyWithTooltipUI
       className={className}
-      onClick={() => {
-        copy(textToCopy);
-      }}
+      onClick={() => copy(textToCopy)}
       isCopied={isCopied}
       isButton={isButton}
       iconSize={iconSize}
