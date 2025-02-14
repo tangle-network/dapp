@@ -19,6 +19,8 @@ export function tryFindToken(
 
 export function getHyperlaneChainName(typedChainId: number) {
   switch (typedChainId) {
+    case PresetTypedChainId.EthereumMainNet:
+      return 'ethereum';
     case PresetTypedChainId.Arbitrum:
       return 'arbitrum';
     case PresetTypedChainId.Optimism:
