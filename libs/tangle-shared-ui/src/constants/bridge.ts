@@ -359,6 +359,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0x04667a82F593d55aa34CE38B204Ec0Fdc54cDe0C',
       ),
     },
+    {
+      symbol: 'ETHFI',
+      tokenType: 'ETHFI' as EVMTokenEnum,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xa0506Bea9638F3d1B83c9f0E9b9C940cA9c77338'),
+      abi: assertAbi(erc20Abi),
+      decimals: 8,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xc4B1827d959d4b109787893A7C8978050fDFC58B',
+      ),
+    },
   ],
   [PresetTypedChainId.Polygon]: [
     {
@@ -3777,6 +3789,33 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'stAVAIL',
     },
+    {
+      addressOrDenom: '0xa0506Bea9638F3d1B83c9f0E9b9C940cA9c77338',
+      chainName: 'ethereum',
+      collateralAddressOrDenom: '0xFe0c30065B384F05761f15d0CC899D4F9F9Cc0eB',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xc4B1827d959d4b109787893A7C8978050fDFC58B',
+        },
+      ],
+      decimals: 18,
+      name: 'ether.fi governance token',
+      standard: TokenStandard.EvmHypCollateral,
+      symbol: 'ETHFI',
+    },
+    {
+      addressOrDenom: '0xc4B1827d959d4b109787893A7C8978050fDFC58B',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|ethereum|0xa0506Bea9638F3d1B83c9f0E9b9C940cA9c77338',
+        },
+      ],
+      decimals: 18,
+      name: 'ether.fi governance token',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'ETHFI',
+    },
   ],
 };
 
@@ -3883,6 +3922,7 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'DAI/polygon-tangle',
   'DAI/ethereum-tangle',
   'mETH/ethereum-tangle',
+  'ETHFI/ethereum-tangle',
 ];
 
 export const mailboxAddress = {
