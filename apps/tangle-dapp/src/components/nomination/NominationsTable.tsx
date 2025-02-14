@@ -8,7 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { sortByAddressOrIdentity } from '@webb-tools/tangle-shared-ui/components/tables/utils';
-import { Nominee } from '@webb-tools/tangle-shared-ui/types';
+import { Validator } from '@webb-tools/tangle-shared-ui/types';
 import {
   AmountFormatStyle,
   Avatar,
@@ -30,7 +30,7 @@ import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import sortByBn from '../../utils/sortByBn';
 import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
 
-const COLUMN_HELPER = createColumnHelper<Nominee>();
+const COLUMN_HELPER = createColumnHelper<Validator>();
 
 const COLUMNS = [
   COLUMN_HELPER.accessor('isActive', {
@@ -81,7 +81,7 @@ const COLUMNS = [
 ];
 
 export type NominationsTableProps = {
-  nominees: Nominee[];
+  nominees: Validator[];
   pageSize: number;
 };
 
@@ -95,7 +95,7 @@ const NominationsTable: FC<NominationsTableProps> = ({
 
   const [sorting, setSorting] = useState<SortingState>([
     // Default sorting by total stake amount in descending order
-    { id: 'totalStakeAmount', desc: true },
+    { id: 'totalStakeAmount' satisfies keyof Validator, desc: true },
   ]);
 
   const columns = useMemo(

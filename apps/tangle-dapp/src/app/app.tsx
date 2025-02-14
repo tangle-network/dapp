@@ -20,8 +20,6 @@ import RestakePage from '../pages/restake';
 import { PagePath } from '../types';
 import Providers from './providers';
 
-// TODO: Add metadata tags for SEO
-
 function App() {
   return (
     <div>

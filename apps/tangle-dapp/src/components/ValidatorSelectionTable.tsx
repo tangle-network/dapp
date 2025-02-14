@@ -41,7 +41,6 @@ import {
   SetStateAction,
 } from 'react';
 
-import { Validator } from '../types';
 import calculateCommission from '../utils/calculateCommission';
 import { HeaderCell } from './tableCells';
 import TokenAmountCell from './tableCells/TokenAmountCell';
@@ -50,6 +49,7 @@ import SkeletonRows from '@webb-tools/tangle-shared-ui/components/SkeletonRows';
 import sortByBn from '../utils/sortByBn';
 import filterTableRowBy from '../utils/filterTableRowBy';
 import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { Validator } from '@webb-tools/tangle-shared-ui/types';
 
 type Props = {
   allValidators: Validator[];
@@ -136,7 +136,9 @@ const ValidatorSelectionTable: FC<Props> = ({
                 />
 
                 <Typography variant="body1" fw="normal" className="truncate">
-                  {identity === address ? shortenString(address, 6) : identity}
+                  {identity === undefined
+                    ? shortenString(address, 6)
+                    : identity}
                 </Typography>
 
                 <CopyWithTooltip

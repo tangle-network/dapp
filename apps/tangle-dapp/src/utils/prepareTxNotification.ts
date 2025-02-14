@@ -16,12 +16,6 @@ const prepareTxNotification = (
       variant = 'success';
 
       break;
-    case TxStatus.TIMED_OUT:
-      primaryMessage =
-        'The transaction is taking too long. It is unknown if it succeeded or not.';
-      variant = 'warning';
-
-      break;
     case TxStatus.ERROR:
       primaryMessage = 'An error occurred during the transaction.';
       secondaryMessage = error?.message || null;

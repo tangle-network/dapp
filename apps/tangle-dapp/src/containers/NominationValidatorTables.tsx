@@ -18,13 +18,13 @@ const TAB_WAITING = 'Waiting';
 
 const NominationValidatorTables: FC = () => {
   const { network } = useNetworkStore();
-  const { validators: activeValidatorsData } = useActiveValidators();
-  const { validators: waitingValidatorsData } = useWaitingValidators();
+  const { validators: activeValidators } = useActiveValidators();
+  const { validators: waitingValidators } = useWaitingValidators();
 
   const [searchValue, setSearchValue] = useState('');
 
-  const isActiveValidatorsLoading = activeValidatorsData === null;
-  const isWaitingValidatorsLoading = waitingValidatorsData === null;
+  const isActiveValidatorsLoading = activeValidators === null;
+  const isWaitingValidatorsLoading = waitingValidators === null;
 
   const learnMoreUrl = `https://polkadot.js.org/apps/?rpc=${network.wsRpcEndpoint}#/staking`;
 
@@ -46,7 +46,7 @@ const NominationValidatorTables: FC = () => {
     >
       {/* Active Validators Table */}
       <TabContent value={TAB_ACTIVE}>
-        {activeValidatorsData !== null && activeValidatorsData.length === 0 ? (
+        {activeValidators !== null && activeValidators.length === 0 ? (
           <TableStatus
             title="No Active Validators"
             description="Validators might be in the waiting state. Check back soon."
@@ -60,17 +60,13 @@ const NominationValidatorTables: FC = () => {
         ) : isActiveValidatorsLoading ? (
           <ContainerSkeleton />
         ) : (
-          <ValidatorTable
-            data={activeValidatorsData}
-            searchValue={searchValue}
-          />
+          <ValidatorTable data={activeValidators} searchValue={searchValue} />
         )}
       </TabContent>
 
       {/* Waiting Validators Table */}
       <TabContent value={TAB_WAITING}>
-        {waitingValidatorsData !== null &&
-        waitingValidatorsData.length === 0 ? (
+        {waitingValidators !== null && waitingValidators.length === 0 ? (
           <TableStatus
             title="No Waiting Validators"
             description="All validators are currently active. There are no validators in the waiting pool at the moment.
@@ -87,7 +83,7 @@ const NominationValidatorTables: FC = () => {
         ) : (
           <ValidatorTable
             isWaiting
-            data={waitingValidatorsData}
+            data={waitingValidators}
             searchValue={searchValue}
           />
         )}

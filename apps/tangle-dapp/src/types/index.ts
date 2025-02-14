@@ -3,7 +3,7 @@ import type {
   SpStakingPagedExposureMetadata,
 } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
-import { Nominee } from '@webb-tools/tangle-shared-ui/types';
+import { Validator } from '@webb-tools/tangle-shared-ui/types';
 
 export enum PagePath {
   DASHBOARD = '/',
@@ -46,8 +46,6 @@ export enum DelegationsAndPayoutsTab {
   PAYOUTS = 'Payouts',
 }
 
-export interface Validator extends Nominee {}
-
 export type NodeSpecification = {
   os: string;
   version: string;
@@ -68,8 +66,8 @@ export enum StakingRewardsDestination {
 }
 
 export enum StakingRewardsDestinationDisplayText {
-  STAKED = 'Staked (increase the amount at stake)',
-  STASH = 'Stash (do not increase the amount at stake)',
+  STAKED = 'Staked (increase stake)',
+  STASH = 'Stash (do not increase stake)',
   CONTROLLER = 'Controller Account',
   ACCOUNT = 'Specific Account',
   NONE = 'None',

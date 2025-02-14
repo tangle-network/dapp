@@ -22,20 +22,21 @@ import {
 } from '@webb-tools/webb-ui-components';
 import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
 import { Link } from 'react-router';
-import { FC, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { IS_PRODUCTION_ENV } from '../constants/env';
-import { PagePath, Validator } from '../types';
+import { PagePath } from '../types';
 import calculateCommission from '../utils/calculateCommission';
 import { HeaderCell, StringCell } from './tableCells';
 import PercentageCell from './tableCells/PercentageCell';
 import TokenAmountCell from './tableCells/TokenAmountCell';
 import sortByBn from '../utils/sortByBn';
 import filterTableRowBy from '../utils/filterTableRowBy';
+import { Validator } from '@webb-tools/tangle-shared-ui/types';
 
 const COLUMN_HELPER = createColumnHelper<Validator>();
 
-const getTableColumns = (isWaiting?: boolean) => [
+const getAdditionalColumns = (isWaiting?: boolean) => [
   // Hide the effective amount staked and self-staked columns on waiting validators tab
   // as they don't have values for these columns
   ...(isWaiting
@@ -103,7 +104,7 @@ type Props = {
   searchValue?: string;
 };
 
-const ValidatorTable: FC<Props> = ({ data, isWaiting, searchValue }) => {
+const ValidatorTable = ({ data, isWaiting, searchValue }: Props) => {
   const createExplorerAccountUrl = useNetworkStore(
     (store) => store.network.createExplorerAccountUrl,
   );
@@ -113,7 +114,7 @@ const ValidatorTable: FC<Props> = ({ data, isWaiting, searchValue }) => {
       return [];
     }
 
-    return [{ id: 'totalStakeAmount', desc: true }];
+    return [{ id: 'totalStakeAmount' satisfies keyof Validator, desc: true }];
   });
 
   const columns = useMemo(
@@ -125,7 +126,6 @@ const ValidatorTable: FC<Props> = ({ data, isWaiting, searchValue }) => {
         cell: (props) => {
           const address = props.getValue();
           const identity = props.row.original.identityName;
-
           const accountExplorerUrl = createExplorerAccountUrl(address);
 
           return (
@@ -159,7 +159,7 @@ const ValidatorTable: FC<Props> = ({ data, isWaiting, searchValue }) => {
           );
         },
       }),
-      ...getTableColumns(isWaiting),
+      ...getAdditionalColumns(isWaiting),
     ],
     [createExplorerAccountUrl, isWaiting],
   );

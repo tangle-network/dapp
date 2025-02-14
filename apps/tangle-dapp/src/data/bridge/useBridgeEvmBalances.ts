@@ -110,11 +110,21 @@ export const useBridgeEvmBalances = (
         tokens = BRIDGE_TOKENS[destinationChainId];
       }
 
-      const tokenBalances = await Promise.all(
+      const tokenBalancePromises = await Promise.allSettled(
         tokens.map((token) =>
           fetchTokenBalance(token, sourceChainId, accountEvmAddress),
         ),
       );
+
+      const tokenBalances = tokenBalancePromises.reduce<
+        BridgeTokenWithBalance[]
+      >((acc, result) => {
+        if (result.status === 'fulfilled' && result.value !== null) {
+          acc.push(result.value);
+        }
+
+        return acc;
+      }, []);
 
       newBalances[sourceChainId] = tokenBalances;
 
