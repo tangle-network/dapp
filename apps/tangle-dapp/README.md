@@ -29,7 +29,7 @@ Once the development environment is set up, you may proceed to install the requi
     yarn install
    ```
 
-   ⚠️ **REQUIRED:** Node.js version >= v18.19.0
+   ⚠️ **REQUIRED:** Node.js version >= v18.12.x
 
 3. Start the dApp by the following command:
 

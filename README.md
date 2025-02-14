@@ -43,15 +43,7 @@ It uses [nx.dev](https://nx.dev/) for fast and extensible building. The `apps` d
 
 ### Prerequisites
 
-This repository makes use of yarn, nodejs, and requires version node v18.12.x. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/. Once node.js is installed you may proceed to install [yarn](https://yarnpkg.com/):
-
-1. Run `corepack enable` to activate [Corepack](https://nodejs.org/api/corepack.html)
-2. Go into your project directory
-3. Run `yarn set version 4.2.2`
-
-For more information about the migration, you can refer to the Yarn [documentation](https://yarnpkg.com/migration/guide#migration-steps).
-
-Great! Now your **Node** environment is ready!
+This repository makes use of yarn, nodejs, and requires version node v18.12.x. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/.
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
@@ -69,12 +61,11 @@ Great! Now your **Node** environment is ready!
 - `dapp-config`: contains all configurations (chains, wallets, etc.) for the bridge dApp.
 - `dapp-types`: contains all the sharable TypeScript types and interfaces across the apps.
 - `icons`: contains all the sharable icons across the apps.
-- `note-manager`: contains all the logic for storing note account data.
 - `polkadot-api-provider`: the Substrate (or Polkadot) provider for the bridge.
-- `react-hooks`: contains all the sharable hooks across the apps.
 - `tailwind-preset`: the TailwindCSS preset for all the apps.
-- `web3-api-provider`: the EVM provider for the bridge.
+- `tangle-shared-ui`: the library contains the logic and UI components that specialize in the Tangle Network.
 - [ui-components](./libs/ui-components/README.md): a collection of reusable components for building interfaces quickly.
+- `web3-api-provider`: the EVM provider for the bridge.
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
 
@@ -185,11 +176,11 @@ If you need help or you want to additional information please:
 <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A//github.com/tangle-network/dapp" target="_blank">
   <img src="https://img.shields.io/twitter/url?label=LinkedIn&logo=LinkedIn&style=social&url=https%3A%2F%2Fgithub.com%2Ftangle-network%2Fdapp" alt="Share on LinkedIn"/>
 </a>
-<a href="https://twitter.com/intent/tweet?text=%F0%9F%9A%80%20Explore%20%60tangle-network/dapp%60%20Monorepo%20on%20Github%3A%20your%20%23zeroKnowledgeApp%20in%20%23blockchain.%20Secure%2c%20efficient%20%23crypto%20interactions%20await!%0A%0ADive%20in%20%E2%9E%A1%EF%B8%8F%20https%3A//github.com/tangle-network/dapp%20%23TangleEcosystem" target="_blank">
-  <img src="https://img.shields.io/twitter/url?label=Twitter&logo=Twitter&style=social&url=https%3A%2F%2Fgithub.com%2Ftangle-network%2Fdapp" alt="Shared on Twitter"/>
+<a href="https://twitter.com/intent/tweet?text=%F0%9F%9A%80%20Explore%20%60tangle-network/dapp%60%20Monorepo%20on%20Github%3A%20https%3A//github.com/tangle-network/dapp" target="_blank">
+  <img src="https://img.shields.io/twitter/url?label=Twitter&logo=X&style=social&url=https%3A%2F%2Fgithub.com%2Ftangle-network%2Fdapp" alt="Shared on Twitter"/>
 </a>
 <a href="https://t.me/share/url?text=%F0%9F%9A%80%20Explore%20%60tangle-network/dapp%60%20Monorepo%20on%20Github%3A%20your%20%23zeroKnowledgeApp%20in%20%23blockchain.%20Secure%2c%20efficient%20%23crypto%20interactions%20await!%0A%0ADive%20in%20%E2%9E%A1%EF%B8%8F%20https%3A//github.com/tangle-network/dapp%20%23TangleEcosystem&url=https%3A%2F%2Fgithub.com%2Ftangle-network%2Fdapp" target="_blank">
-  <img src="https://img.shields.io/twitter/url?label=Telegram&logo=Telegram&style=social&url=https%3A%2F%2Fgithub.com%2Fatangle-network%dapp" alt="Share on Telegram"/>
+  <img src="https://img.shields.io/twitter/url?label=Telegram&logo=Telegram&style=social&url=https%3A%2F%2Fgithub.com%2Ftangle-network%2Fdapp" alt="Share on Telegram"/>
 </a>
 
 <div align="right"><a href="#table-of-contents">↑ Back to top ↑</a></div>
