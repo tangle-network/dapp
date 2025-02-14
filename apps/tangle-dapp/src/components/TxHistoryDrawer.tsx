@@ -1,13 +1,16 @@
-'use client';
-
+import { BN } from '@polkadot/util';
 import * as Dialog from '@radix-ui/react-dialog';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import {
   CheckboxCircleLine,
   CloseCircleLineIcon,
   InformationLine,
   ShuffleLine,
   Spinner,
-} from '@webb-tools/icons';
+} from '@tangle-network/icons';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import {
   Alert,
   AmountFormatStyle,
@@ -19,23 +22,18 @@ import {
   shortenHex,
   shortenString,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { useCallback, useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
-import useTxHistoryStore, { HistoryTx } from '../context/useTxHistoryStore';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
-import { formatDistanceToNow } from 'date-fns';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+} from '@tangle-network/ui-components';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@webb-tools/webb-ui-components/types/address';
-import { BN } from '@polkadot/util';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
+} from '@tangle-network/ui-components/types/address';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
+import { formatDistanceToNow } from 'date-fns';
 import { capitalize } from 'lodash';
+import { useCallback, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
+import useTxHistoryStore, { HistoryTx } from '../context/useTxHistoryStore';
 import ExternalLink from './ExternalLink';
-import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 const TxHistoryDrawer = () => {
   const activeAccountAddress = useActiveAccountAddress();
@@ -208,9 +206,9 @@ const TransactionItem = ({
   }, [createExplorerTxUrl, hash, isEvm]);
 
   return (
-    <div className="bg-mono-20 dark:bg-mono-180 rounded-md p-3 space-y-4">
+    <div className="p-3 space-y-4 rounded-md bg-mono-20 dark:bg-mono-180">
       <div className="flex items-center justify-between">
-        <div className="flex gap-2 items-center justify-start">
+        <div className="flex items-center justify-start gap-2">
           {status === 'finalized' ? (
             <CheckboxCircleLine className="fill-green-50 dark:fill-green-50" />
           ) : status === 'failed' ? (
@@ -230,7 +228,7 @@ const TransactionItem = ({
         <ExternalLink href={explorerLink ?? '#'}>Explorer</ExternalLink>
       </div>
 
-      <div className="flex gap-1 flex-wrap">
+      <div className="flex flex-wrap gap-1">
         {details === undefined
           ? 'No details.'
           : Array.from(details.entries()).map(([key, value]) => (

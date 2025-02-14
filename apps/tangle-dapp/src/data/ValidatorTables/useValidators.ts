@@ -1,13 +1,12 @@
 import { AccountId32 } from '@polkadot/types/interfaces';
 import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
+import { Validator } from '@tangle-network/tangle-shared-ui/types';
 import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import { useCallback, useMemo } from 'react';
-
+import createValidator from '../../utils/staking/createValidator';
 import useValidatorPrefs from '../staking/useValidatorPrefs';
 import useValidatorStakingExposures from '../staking/useValidatorStakingExposures';
 import useValidatorIdentityNames from './useValidatorIdentityNames';
-import { Validator } from '@webb-tools/tangle-shared-ui/types';
-import createValidator from '../../utils/staking/createValidator';
 
 export const useValidators = (
   addresses: AccountId32[] | null,
