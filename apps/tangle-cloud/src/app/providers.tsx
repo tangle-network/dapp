@@ -1,7 +1,10 @@
 'use client';
 
-import { AppEvent, WebbProvider } from '@webb-tools/api-provider-environment';
-import { WebbUIProvider } from '@webb-tools/webb-ui-components';
+import {
+  AppEvent,
+  WebbProvider,
+} from '@tangle-network/api-provider-environment';
+import { UIProvider } from '@tangle-network/ui-components';
 import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
 
@@ -16,7 +19,7 @@ const Providers = ({
   wagmiInitialState,
 }: PropsWithChildren<Props>): ReactNode => {
   return (
-    <WebbUIProvider hasErrorBoundary>
+    <UIProvider hasErrorBoundary>
       <WebbProvider
         appEvent={appEvent}
         applicationName="Tangle Cloud"
@@ -24,7 +27,7 @@ const Providers = ({
       >
         {children}
       </WebbProvider>
-    </WebbUIProvider>
+    </UIProvider>
   );
 };
 
