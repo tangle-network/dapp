@@ -1049,7 +1049,7 @@ export enum ROUTER_ERROR_CODE {
 export const ROUTER_TX_EXPLORER_URL = 'https://explorer.routernitro.com/tx/';
 
 export const HYPERLANE_REGISTRY_URL =
-  process.env.NEXT_PUBLIC_HYPERLANE_REGISTRY_URL ||
+  process.env.HYPERLANE_REGISTRY_URL ||
   'https://github.com/hyperlane-xyz/hyperlane-registry';
 
 export const HYPERLANE_CHAINS: ChainMap<ChainMetadata> = {

@@ -21,8 +21,8 @@ import {
 } from '@webb-tools/webb-ui-components/constants';
 import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
 import cx from 'classnames';
-import Link from 'next/link';
 import type { ComponentProps } from 'react';
+import { Link } from 'react-router';
 
 type NavItem = ComponentProps<typeof Link> & {
   children: NonNullable<React.ReactNode>;
@@ -35,22 +35,22 @@ const isNavItem = (
 const navItems: Array<NavItem | { [label: string]: Array<NavItem> }> = [
   {
     children: 'community',
-    href: new URL('/community', TANGLE_MKT_URL).toString(),
+    to: new URL('/community', TANGLE_MKT_URL).toString(),
     target: '_blank',
   } satisfies NavItem,
   {
     children: 'ecosystem',
-    href: new URL('/ecosystem', TANGLE_MKT_URL).toString(),
+    to: new URL('/ecosystem', TANGLE_MKT_URL).toString(),
     target: '_blank',
   } satisfies NavItem,
   {
     children: 'validators',
-    href: new URL('/validators', TANGLE_MKT_URL).toString(),
+    to: new URL('/validators', TANGLE_MKT_URL).toString(),
     target: '_blank',
   } satisfies NavItem,
   {
     children: 'Webb Blog',
-    href: WEBB_BLOG_URL,
+    to: WEBB_BLOG_URL,
     target: '_blank',
   } satisfies NavItem,
 ];
@@ -124,7 +124,7 @@ export const Navbar = () => {
           <Button
             href={TANGLE_TESTNET_NATIVE_EXPLORER_URL}
             target="blank"
-            className="px-5 lg:py-4 border"
+            className="px-5 border lg:py-4"
           >
             Explore Testnet
           </Button>
@@ -147,7 +147,7 @@ const MobileNav = () => {
 
       <DropdownBody
         isPortal={false}
-        className="mt-4 pt-4 w-screen border-0 rounded-none"
+        className="w-screen pt-4 mt-4 border-0 rounded-none"
         size="sm"
         align="start"
       >

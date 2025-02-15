@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { FC, forwardRef, useMemo } from 'react';
 import { NavLink } from 'react-router';
 import { twMerge } from 'tailwind-merge';
@@ -20,7 +19,6 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
   (
     {
       className,
-      isNext,
       isMinimal,
       logoType,
       socialsLinkOverrides,
@@ -87,29 +85,17 @@ export const Footer = forwardRef<HTMLElement, FooterProps>(
           // Normal Footer
           <div className="mx-auto w-[360px] md:w-[768px] lg:w-[1160px] px-2">
             <div className="flex flex-wrap justify-between gap-6 pb-6 md:gap-0">
-              {isNext ? (
-                <Link
-                  className="block"
-                  href={
-                    logoType === 'tangle'
-                      ? constants.tangleLogoConfig.path
-                      : constants.logoConfig.path
-                  }
-                >
-                  {logoType === 'tangle' ? <TangleLogo /> : <Logo />}
-                </Link>
-              ) : (
-                <NavLink
-                  className="block"
-                  to={
-                    logoType === 'tangle'
-                      ? constants.tangleLogoConfig.path
-                      : constants.logoConfig.path
-                  }
-                >
-                  {logoType === 'tangle' ? <TangleLogo /> : <Logo />}
-                </NavLink>
-              )}
+              {/* TODO: Should make the link generic (not depending on react-router) */}
+              <NavLink
+                className="block"
+                to={
+                  logoType === 'tangle'
+                    ? constants.tangleLogoConfig.path
+                    : constants.logoConfig.path
+                }
+              >
+                {logoType === 'tangle' ? <TangleLogo /> : <Logo />}
+              </NavLink>
 
               {Object.keys(constants.footerNavs).map((key, idx) => {
                 return (

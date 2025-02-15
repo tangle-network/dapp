@@ -3,16 +3,12 @@ import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import cx from 'classnames';
 import { forwardRef, useCallback } from 'react';
 
-import {
-  useNextDarkMode,
-  useDarkMode as useNormalDarkMode,
-} from '../../hooks/useDarkMode';
+import { useDarkMode } from '../../hooks/useDarkMode';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import type { ChainRingItemType, ChainsRingProps } from './types';
 
 const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
-  ({ circleContent, additionalSvgContent, chainItems, isInNextApp }, ref) => {
-    const useDarkMode = isInNextApp ? useNextDarkMode : useNormalDarkMode;
+  ({ circleContent, additionalSvgContent, chainItems }, ref) => {
     const [isDarkMode] = useDarkMode();
 
     const getStrokeColor = useCallback(

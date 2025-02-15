@@ -8,7 +8,6 @@ import {
 import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
 import { FormField } from '@webb-tools/webb-ui-components/components/form';
 import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import Image from 'next/image';
 import type { Control, UseFormWatch } from 'react-hook-form';
 import inputs from './inputs';
 import InputsWrapper from './InputsWrapper';
@@ -61,13 +60,12 @@ export default function IndividualPricingField({
                 className="p-0 min-h-[60px]"
                 Icon={
                   blueprint.imgUrl && (
-                    <Image
+                    <img
                       src={blueprint.imgUrl}
                       width={36}
                       height={36}
                       alt={blueprint.name}
                       className="flex-shrink-0 bg-center rounded-full"
-                      fill={false}
                     />
                   )
                 }

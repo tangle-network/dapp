@@ -23,11 +23,10 @@ import {
   TANGLE_DAPP_URL,
   TANGLE_DOCS_URL,
 } from '@webb-tools/webb-ui-components/constants';
-import { setSidebarCookieOnToggle } from '@webb-tools/webb-ui-components/next-utils';
 import cx from 'classnames';
 import capitalize from 'lodash/capitalize';
-import { usePathname } from 'next/navigation';
 import { FC, useMemo } from 'react';
+import { useLocation } from 'react-router';
 import useRoleStore, { Role, ROLE_ICON_MAP } from '../stores/roleStore';
 import { PagePath } from '../types';
 
@@ -40,7 +39,6 @@ const SIDEBAR_ITEMS: SideBarItemProps[] = [
     name: 'Home',
     href: PagePath.HOME,
     isInternal: true,
-    isNext: true,
     Icon: HomeIcon,
     subItems: [],
   },
@@ -48,7 +46,6 @@ const SIDEBAR_ITEMS: SideBarItemProps[] = [
     name: 'Blueprints',
     href: PagePath.BLUEPRINTS,
     isInternal: true,
-    isNext: true,
     Icon: GridFillIcon,
     subItems: [],
   },
@@ -56,7 +53,6 @@ const SIDEBAR_ITEMS: SideBarItemProps[] = [
     name: 'Operators',
     href: PagePath.OPERATORS,
     isInternal: true,
-    isNext: true,
     Icon: GlobalLine,
     subItems: [],
   },
@@ -115,7 +111,7 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
 };
 
 const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
 
   return (
     <>
@@ -129,7 +125,6 @@ const Sidebar: FC<Props> = ({ isExpandedByDefault }) => {
         pathnameOrHash={pathname}
         className="hidden h-screen lg:block"
         isExpandedByDefault={isExpandedByDefault}
-        onSideBarToggle={setSidebarCookieOnToggle}
         ActionButton={ActionButton}
       />
 

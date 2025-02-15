@@ -181,11 +181,7 @@ export const SideBar = forwardRef<HTMLDivElement, MobileSidebarProps>(
                     />
                   </Link>
                 ))}
-              {isSidebarOpen && (
-                <ThemeToggle
-                  useNextThemes={footer.useNextThemesForThemeToggle}
-                />
-              )}
+              {isSidebarOpen && <ThemeToggle />}
             </div>
           </div>
         </div>

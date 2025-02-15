@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/nextjs';
+import type { StorybookConfig } from '@storybook/react-vite';
 import path, { dirname, join } from 'node:path';
 
 // These options were migrated by @nx/storybook:convert-to-inferred from the project.json file.
@@ -79,7 +79,7 @@ export default {
 
     return config;
   },
-  framework: '@storybook/nextjs',
+  framework: '@storybook/react-vite',
   swc: () => ({
     jsc: {
       transform: {

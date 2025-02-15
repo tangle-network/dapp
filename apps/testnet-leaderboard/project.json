@@ -4,41 +4,5 @@
   "sourceRoot": "apps/testnet-leaderboard",
   "projectType": "application",
   "tags": [],
-  "targets": {
-    "serve": {
-      "defaultConfiguration": "development",
-      "configurations": {
-        "development": {},
-        "production": {}
-      }
-    },
-    "export": {
-      "executor": "@nx/next:export",
-      "options": {
-        "buildTarget": "testnet-leaderboard:build:production"
-      }
-    },
-    "test": {
-      "inputs": [
-        "default",
-        "^production",
-        "{workspaceRoot}/jest.preset.js",
-        {
-          "externalDependencies": ["jest"]
-        }
-      ],
-      "options": {
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "coverage": true
-        }
-      }
-    },
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
+  "targets": {}
 }

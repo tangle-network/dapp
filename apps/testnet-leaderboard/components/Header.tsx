@@ -1,9 +1,7 @@
 import { TANGLE_MKT_URL } from '@webb-tools/webb-ui-components/constants';
-import Image from 'next/image';
-import Link from 'next/link';
 import { ComponentProps, ElementRef, forwardRef } from 'react';
+import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
-
 import { Navbar } from './Navbar';
 
 const Header = forwardRef<ElementRef<'header'>, ComponentProps<'header'>>(
@@ -18,11 +16,10 @@ const Header = forwardRef<ElementRef<'header'>, ComponentProps<'header'>>(
         ref={ref}
       >
         <div className="flex items-center justify-between w-full mx-auto max-w-7xl">
-          <Link href={TANGLE_MKT_URL}>
-            <Image
+          <Link to={TANGLE_MKT_URL}>
+            <img
               src="https://assets-global.website-files.com/6494562b44a28080aafcbad4/6494599436915879aa403230_Tangle%20Logo.png"
               alt="Tangle Logo"
-              priority
               width={124}
               height={54}
             />

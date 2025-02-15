@@ -1,15 +1,10 @@
 'use client';
 
-import NextLink from 'next/link';
 import { Fragment } from 'react';
 import { Link as ReactRouterLink } from 'react-router';
-import { LinkProps, isNextLinkProps, isReactRouterLinkProps } from './types';
+import { LinkProps, isReactRouterLinkProps } from './types';
 
 export const Link: React.FC<LinkProps> = (props) => {
-  if (isNextLinkProps(props)) {
-    return <NextLink {...extractInternalProp(props)} />;
-  }
-
   if (isReactRouterLinkProps(props)) {
     return <ReactRouterLink {...extractInternalProp(props)} />;
   }

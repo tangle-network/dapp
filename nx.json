@@ -7,7 +7,7 @@
       "inputs": ["production", "^production"],
       "outputs": [
         "{workspaceRoot}/dist/apps/tangle-dapp",
-        "{workspaceRoot}/dist/apps/testnet-leaderboard/.next"
+        "{workspaceRoot}/dist/apps/testnet-leaderboard"
       ],
       "cache": true
     },
@@ -56,11 +56,6 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
-    },
-    "@nx/next:build": {
-      "cache": true,
-      "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
     }
   },
   "namedInputs": {
@@ -96,12 +91,6 @@
         "linter": "eslint",
         "unitTestRunner": "jest"
       }
-    },
-    "@nx/next": {
-      "application": {
-        "style": "css",
-        "linter": "eslint"
-      }
     }
   },
   "workspaceLayout": {
@@ -136,16 +125,6 @@
       "options": {
         "targetName": "test"
       }
-    },
-    {
-      "plugin": "@nx/next/plugin",
-      "options": {
-        "buildTargetName": "build",
-        "devTargetName": "serve",
-        "startTargetName": "start",
-        "serveStaticTargetName": "serve-static"
-      },
-      "include": ["apps/tangle-cloud/**/*", "apps/testnet-leaderboard/**/*"]
     },
     {
       "plugin": "@nx/vite/plugin",

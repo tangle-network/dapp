@@ -2,11 +2,8 @@
 
 import { MoonLine, SunLine } from '@webb-tools/icons';
 import cx from 'classnames';
-import { FC, useEffect, useMemo, useState } from 'react';
-import {
-  useNextDarkMode,
-  useDarkMode as useNormalDarkMode,
-} from '../../hooks/useDarkMode';
+import { FC, useEffect, useState } from 'react';
+import { useDarkMode } from '../../hooks/useDarkMode';
 
 import { ThemeToggleProps } from './types';
 
@@ -19,14 +16,7 @@ import { ThemeToggleProps } from './types';
  * ```
  */
 
-export const ThemeToggle: FC<ThemeToggleProps> = ({
-  useNextThemes = false,
-}) => {
-  const useDarkMode = useMemo(
-    () => (useNextThemes ? useNextDarkMode : useNormalDarkMode),
-    [useNextThemes],
-  );
-
+export const ThemeToggle: FC<ThemeToggleProps> = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [isDarkMode, toggleThemeMode] = useDarkMode();
 
@@ -35,11 +25,7 @@ export const ThemeToggle: FC<ThemeToggleProps> = ({
     setIsMounted(true);
   }, []);
 
-  // If we use next themes, we don't want to show the UI
-  // until the compoennt is mounted, this prevents
-  // hydration mismatch
-  // Check: https://github.com/pacocoursey/next-themes#avoid-hydration-mismatch
-  if (!isMounted && useNextThemes) {
+  if (!isMounted) {
     return null;
   }
 

@@ -25,12 +25,6 @@ export interface CodeFileProps {
   language?: string;
 
   /**
-   * Track if the components is in a Next.js project or not
-   * @default true
-   */
-  isInNextProject: boolean;
-
-  /**
    * The tailwindcss className to override the style
    */
   className?: string;

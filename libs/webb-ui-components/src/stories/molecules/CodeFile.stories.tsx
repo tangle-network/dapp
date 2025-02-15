@@ -14,7 +14,7 @@ type Story = StoryObj<typeof CodeFile>;
 export const Default: Story = {
   render: () => (
     <div className="h-[600px] overflow-auto">
-      <CodeFile code={'contract A {}'} language="sol" isInNextProject={false} />
+      <CodeFile code={'contract A {}'} language="sol" />
     </div>
   ),
 };
