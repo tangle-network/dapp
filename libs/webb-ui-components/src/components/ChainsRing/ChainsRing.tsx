@@ -1,24 +1,21 @@
 import { chainsConfig } from '@webb-tools/dapp-config/chains/chain-config';
 import { ChainIcon } from '@webb-tools/icons/ChainIcon';
 import cx from 'classnames';
-import { forwardRef, useCallback } from 'react';
+import { forwardRef } from 'react';
 
-import { useDarkMode } from '../../hooks/useDarkMode';
 import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 import type { ChainRingItemType, ChainsRingProps } from './types';
 
+function getStrokeColorClass(item?: ChainRingItemType) {
+  if (item?.isActive === true) {
+    return cx('stroke-[#4B3AA4] dark:stroke-[#B5A9F2]');
+  }
+
+  return cx('stroke-[#9CA0B0]');
+}
+
 const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
   ({ circleContent, additionalSvgContent, chainItems }, ref) => {
-    const [isDarkMode] = useDarkMode();
-
-    const getStrokeColor = useCallback(
-      (item?: ChainRingItemType) => {
-        if (item === undefined) return '#9CA0B0';
-        return item.isActive ? (isDarkMode ? '#4B3AA4' : '#B5A9F2') : '#9CA0B0';
-      },
-      [isDarkMode],
-    );
-
     return (
       <div className="relative w-fit" ref={ref}>
         {chainItems.map((chainItem, idx) => {
@@ -71,81 +68,81 @@ const ChainsRing = forwardRef<HTMLDivElement, ChainsRingProps>(
         >
           {additionalSvgContent}
           <rect
+            className={getStrokeColorClass(chainItems[0])}
             x="104.5"
             y="91.082"
             width="26"
             height="26"
             rx="5"
-            stroke={getStrokeColor(chainItems[0])}
             strokeWidth="2"
           />
           <rect
+            className={getStrokeColorClass(chainItems[1])}
             x="143.471"
             y="21.5858"
             width="26"
             height="26"
             rx="5"
             transform="rotate(45 143.471 21.5858)"
-            stroke={getStrokeColor(chainItems[1])}
             strokeWidth="2"
           />
           <rect
+            className={getStrokeColorClass(chainItems[2])}
             x="220.5"
             y="1"
             width="26"
             height="26"
             rx="5"
             transform="rotate(90 220.5 1)"
-            stroke={getStrokeColor(chainItems[2])}
             strokeWidth="2"
           />
           <rect
+            className={getStrokeColorClass(chainItems[3])}
             x="288.885"
             y="39.9688"
             width="26"
             height="26"
             rx="5"
             transform="rotate(135 288.885 39.9688)"
-            stroke={getStrokeColor(chainItems[3])}
             strokeWidth="2"
           />
           <rect
+            className={getStrokeColorClass(chainItems[4])}
             x="284.5"
             y="91.082"
             width="26"
             height="26"
             rx="5"
-            stroke={getStrokeColor(chainItems[4])}
             strokeWidth="2"
           />
           <rect
+            className={getStrokeColorClass(chainItems[5])}
             x="270.75"
             y="148.863"
             width="26"
             height="26"
             rx="5"
             transform="rotate(45 270.75 148.863)"
-            stroke={getStrokeColor(chainItems[5])}
             strokeWidth="2"
           />
           <rect
+            className={getStrokeColorClass(chainItems[6])}
             x="220.5"
             y="181"
             width="26"
             height="26"
             rx="5"
             transform="rotate(90 220.5 181)"
-            stroke={getStrokeColor(chainItems[6])}
             strokeWidth="2"
           />
           <rect
+            className={getStrokeColorClass(chainItems[7])}
             x="161.606"
             y="167.25"
             width="26"
             height="26"
             rx="5"
             transform="rotate(135 161.606 167.25)"
-            stroke={getStrokeColor(chainItems[7])}
             strokeWidth="2"
           />
           <rect
