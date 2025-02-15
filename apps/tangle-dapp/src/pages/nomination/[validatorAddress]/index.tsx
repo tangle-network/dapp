@@ -1,4 +1,4 @@
-import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
+import { isSubstrateAddress } from '@tangle-network/ui-components';
 
 import { IS_PRODUCTION_ENV } from '../../../constants/env';
 import InfoCard from './InfoCard';

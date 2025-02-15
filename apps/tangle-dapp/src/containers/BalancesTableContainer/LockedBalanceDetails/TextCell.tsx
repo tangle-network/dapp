@@ -1,12 +1,12 @@
-import { StatusIndicator } from '@webb-tools/icons';
-import { StatusVariant } from '@webb-tools/icons/StatusIndicator/types';
+import { StatusIndicator } from '@tangle-network/icons';
+import { StatusVariant } from '@tangle-network/icons/StatusIndicator/types';
 import {
   SkeletonLoader,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, ReactNode } from 'react';
 
 const TextCell: FC<{

@@ -1,9 +1,8 @@
 import { AccountId32 } from '@polkadot/types/interfaces';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
+import { Validator } from '@tangle-network/tangle-shared-ui/types';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import { useCallback, useMemo } from 'react';
-
-import { Validator } from '../../types';
 import createValidator from '../../utils/staking/createValidator';
 import useValidatorPrefs from '../staking/useValidatorPrefs';
 import useValidatorStakingExposures from '../staking/useValidatorStakingExposures';
@@ -19,8 +18,10 @@ export const useValidators = (
 } => {
   const { result: identityNames, isLoading: isLoadingIdentityNames } =
     useValidatorIdentityNames();
+
   const { result: validatorPrefs, isLoading: isLoadingValidatorPrefs } =
     useValidatorPrefs();
+
   const { result: exposures } = useValidatorStakingExposures(isActive);
 
   const { result: nominations, isLoading: isLoadingNominations } = useApiRx(
@@ -38,9 +39,17 @@ export const useValidators = (
       return null;
     }
 
-    return addresses.map((accountId) =>
+    const uniqueAddresses = Array.from(
+      new Set(
+        addresses.map((accountId) =>
+          assertSubstrateAddress(accountId.toString()),
+        ),
+      ),
+    );
+
+    return uniqueAddresses.map((address) =>
       createValidator({
-        address: assertSubstrateAddress(accountId.toString()),
+        address,
         isActive,
         identities: identityNames,
         prefs: validatorPrefs,

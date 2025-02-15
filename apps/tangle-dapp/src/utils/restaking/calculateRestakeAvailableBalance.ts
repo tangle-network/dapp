@@ -1,5 +1,5 @@
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
-import { DelegatorInfo } from '@webb-tools/tangle-shared-ui/types/restake';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
 
 const calculateRestakeAvailableBalance = (
   delegatorInfo: DelegatorInfo,

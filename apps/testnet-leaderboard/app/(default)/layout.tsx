@@ -1,4 +1,4 @@
-import '@webb-tools/webb-ui-components/tailwind.css';
+import '@tangle-network/ui-components/tailwind.css';
 
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';

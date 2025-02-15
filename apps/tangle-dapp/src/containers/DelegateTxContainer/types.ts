@@ -1,9 +1,8 @@
 import { BN } from '@polkadot/util';
-
+import { Validator } from '@tangle-network/tangle-shared-ui/types';
 import {
   StakingRewardsDestination,
   StakingRewardsDestinationDisplayText,
-  Validator,
 } from '../../types';
 
 export type DelegateTxContainerProps = {

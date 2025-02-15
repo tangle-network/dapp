@@ -1,7 +1,7 @@
 import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
-import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
-import { ChevronDown, TokenIcon } from '@webb-tools/icons';
-import { getFlexBasic } from '@webb-tools/icons/utils';
+import { EVMTokenBridgeEnum } from '@tangle-network/evm-contract-metadata';
+import { ChevronDown, TokenIcon } from '@tangle-network/icons';
+import { getFlexBasic } from '@tangle-network/icons/utils';
 import {
   Accordion,
   AccordionButtonBase,
@@ -9,11 +9,11 @@ import {
   AccordionItem,
   shortenHex,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 
-import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
+import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
 import { Decimal } from 'decimal.js';
 
 export interface FeeDetailProps {

@@ -1,11 +1,11 @@
 import { HexString } from '@polkadot/util/types';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
+import { useWebContext } from '@tangle-network/api-provider-environment';
+import chainsPopulated from '@tangle-network/dapp-config/chains/chainsPopulated';
 import {
   calculateTypedChainId,
   ChainType,
-} from '@webb-tools/dapp-types/TypedChainId';
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+} from '@tangle-network/dapp-types/TypedChainId';
+import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
 import assert from 'assert';
 import { useCallback } from 'react';
 import {
@@ -27,7 +27,7 @@ import useEvmAddress20 from '../../hooks/useEvmAddress';
 import useTxNotification, {
   NotificationSteps,
 } from '../../hooks/useTxNotification';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 export type ContractWriteOptions<
   Abi extends ViemAbi,

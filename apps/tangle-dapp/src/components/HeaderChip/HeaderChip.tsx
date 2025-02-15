@@ -4,7 +4,7 @@ import {
   TooltipBody,
   TooltipTrigger,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { type FC, useMemo } from 'react';
 
 import ChipText from './ChipText';

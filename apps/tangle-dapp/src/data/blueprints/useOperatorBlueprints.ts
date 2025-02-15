@@ -1,10 +1,10 @@
-import { toPrimitiveBlueprint } from '@webb-tools/tangle-shared-ui/data/blueprints/utils/toPrimitiveBlueprint';
-import toPrimitiveService from '@webb-tools/tangle-shared-ui/data/blueprints/utils/toPrimitiveService';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import { toPrimitiveBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/toPrimitiveBlueprint';
+import toPrimitiveService from '@tangle-network/tangle-shared-ui/data/blueprints/utils/toPrimitiveService';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import {
   TangleError,
   TangleErrorCode,
-} from '@webb-tools/tangle-shared-ui/types/error';
+} from '@tangle-network/tangle-shared-ui/types/error';
 import { useCallback } from 'react';
 import { catchError, map, of } from 'rxjs';
 

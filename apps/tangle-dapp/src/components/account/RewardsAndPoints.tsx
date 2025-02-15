@@ -1,13 +1,13 @@
 import { BN } from '@polkadot/util';
-import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useActiveChain';
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
+import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
-} from '@webb-tools/webb-ui-components/utils/formatDisplayAmount';
+} from '@tangle-network/ui-components/utils/formatDisplayAmount';
 import { useMemo } from 'react';
 import useActivePoints from '../../data/points/useActivePoints';
 import useAccountRewardInfo from '../../data/rewards/useAccountRewardInfo';
@@ -35,6 +35,7 @@ const RewardsAndPoints = () => {
       return null;
     }
 
+    // Include only non-zero entries.
     return new Map(
       rewards.entries().filter(([_, value]) => value > ZERO_BIG_INT),
     );
@@ -64,7 +65,7 @@ const RewardsAndPoints = () => {
         hideErrorNotification
         isLoading={isRewardsLoading}
         error={rewardsError}
-        tooltip="Rewards earned from deposits in restaking"
+        tooltip="Rewards earned from deposits in restaking."
       >
         <div className="flex items-baseline gap-2">
           <Typography
@@ -95,11 +96,11 @@ const RewardsAndPoints = () => {
 
       <KeyStatsItem
         className="!p-0"
-        title="Earned Points"
+        title="Points Earned"
         hideErrorNotification
         isLoading={isPointsLoading}
         error={pointsError}
-        tooltip="Points earned toward airdrop through network participant"
+        tooltip="Points earned toward airdrop through network participation."
       >
         <div className="flex items-baseline gap-2">
           <Typography

@@ -1,21 +1,21 @@
-import { useWebContext } from '@webb-tools/api-provider-environment';
+import { useWebContext } from '@tangle-network/api-provider-environment';
 import {
   type Chain,
   chainsPopulated,
   DEFAULT_DECIMALS,
   type WalletConfig,
-} from '@webb-tools/dapp-config';
-import { DEFAULT_SS58 } from '@webb-tools/dapp-config/constants/polkadot';
-import getWalletsForTypedChainId from '@webb-tools/dapp-config/utils/getWalletIdsForTypedChainId';
+} from '@tangle-network/dapp-config';
+import { DEFAULT_SS58 } from '@tangle-network/dapp-config/constants/polkadot';
+import getWalletsForTypedChainId from '@tangle-network/dapp-config/utils/getWalletIdsForTypedChainId';
 import {
   ChainType,
   calculateTypedChainId,
-} from '@webb-tools/dapp-types/TypedChainId';
-import { notificationApi } from '@webb-tools/webb-ui-components';
+} from '@tangle-network/dapp-types/TypedChainId';
+import { notificationApi } from '@tangle-network/ui-components';
 import {
   Network,
   NetworkId,
-} from '@webb-tools/webb-ui-components/constants/networks';
+} from '@tangle-network/ui-components/constants/networks';
 import { useCallback, useEffect, useState } from 'react';
 import { createPublicClient, fallback, http, webSocket } from 'viem';
 import useNetworkStore from '../context/useNetworkStore';

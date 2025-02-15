@@ -6,8 +6,8 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowRight } from '@webb-tools/icons';
-import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
+import { ArrowRight } from '@tangle-network/icons';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import {
   AmountFormatStyle,
   Avatar,
@@ -19,10 +19,10 @@ import {
   TooltipBody,
   TooltipTrigger,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+} from '@tangle-network/ui-components';
+import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 

@@ -1,7 +1,7 @@
 import { GearIcon } from '@radix-ui/react-icons';
-import { IconBase } from '@webb-tools/icons/types';
-import { UploadCloudIcon } from '@webb-tools/icons/UploadCloudIcon';
-import { getIconSizeInPixel } from '@webb-tools/icons/utils';
+import { IconBase } from '@tangle-network/icons/types';
+import { UploadCloudIcon } from '@tangle-network/icons/UploadCloudIcon';
+import { getIconSizeInPixel } from '@tangle-network/icons/utils';
 import { twMerge } from 'tailwind-merge';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';

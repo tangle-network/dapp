@@ -1,15 +1,15 @@
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
-import { DEFAULT_SS58 } from '@webb-tools/dapp-config/constants/polkadot';
-import getPolkadotJsDashboardUrl from '@webb-tools/dapp-config/utils/getPolkadotJsDashboardUrl';
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
-import { ChainType } from '@webb-tools/dapp-types/TypedChainId';
+import chainsPopulated from '@tangle-network/dapp-config/chains/chainsPopulated';
+import { DEFAULT_SS58 } from '@tangle-network/dapp-config/constants/polkadot';
+import getPolkadotJsDashboardUrl from '@tangle-network/dapp-config/utils/getPolkadotJsDashboardUrl';
+import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
+import { ChainType } from '@tangle-network/dapp-types/TypedChainId';
 import {
   Network,
   NetworkId,
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
-} from '@webb-tools/webb-ui-components/constants/networks';
+} from '@tangle-network/ui-components/constants/networks';
 import assert from 'assert';
 
 const chainToNetworkMap = {
@@ -31,6 +31,7 @@ const chainToNetworkMap = {
  */
 export default function chainToNetwork(typedChainId: number): Network {
   const network = chainToNetworkMap[typedChainId];
+
   if (network !== undefined) {
     return network;
   }
@@ -38,6 +39,7 @@ export default function chainToNetwork(typedChainId: number): Network {
   const chain = chainsPopulated[typedChainId];
 
   assert(chain !== undefined, `Chain with id ${typedChainId} not found`);
+
   assert(
     chain.rpcUrls.default.webSocket?.[0],
     `Chain with id ${typedChainId} has no WebSocket RPC endpoint`,

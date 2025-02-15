@@ -1,7 +1,7 @@
-import { ArrowRight } from '@webb-tools/icons';
-import { IconBase } from '@webb-tools/icons/types';
-import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
-import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils';
+import { ArrowRight } from '@tangle-network/icons';
+import { IconBase } from '@tangle-network/icons/types';
+import { SkeletonLoader, Typography } from '@tangle-network/ui-components';
+import { getRoundedAmountString } from '@tangle-network/ui-components/utils';
 import { FC, ReactElement } from 'react';
 import { twMerge } from 'tailwind-merge';
 

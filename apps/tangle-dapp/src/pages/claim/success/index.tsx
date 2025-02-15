@@ -1,5 +1,5 @@
 import { isHex } from '@polkadot/util';
-import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
+import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
 
 import type { HexString } from '@polkadot/util/types';
 import { useEffect, useState } from 'react';

@@ -1,14 +1,14 @@
 <!-- Inspired by: https://github.com/auth0/open-source-template/blob/master/GENERAL-CONTRIBUTING.md -->
 
-# Contributing to Webb Protocol Projects
+# Contributing to Tangle Network Projects
 
-A big welcome and thank you for considering contributing to Webb Protocol open source projects! It’s people like you that make it a reality for users in our community.
+A big welcome and thank you for considering contributing to Tangle Network open source projects! It’s people like you that make it a reality for users in our community.
 
 Reading and following these guidelines will help us make the contribution process easy and effective for everyone involved. It also communicates that you agree to respect the time of the developers managing and developing these open source projects. In return, we will reciprocate that respect by addressing your issue, assessing changes, and helping you finalize your pull requests.
 
 ## Quicklinks
 
-- [Contributing to Webb Protocol Projects](#contributing-to-webb-protocol-projects)
+- [Contributing to Tangle Network Projects](#contributing-to-tangle-network-projects)
   - [Quicklinks](#quicklinks)
   - [Getting Started](#getting-started)
     - [Issues](#issues)
@@ -56,16 +56,16 @@ In general, we follow the ["fork-and-pull" Git workflow](https://github.com/susa
 
 This repository adheres to the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification. In case you're not already familiar with it, you can run `yarn commit` in your terminal after staging your changes to interactively generate. The helper should guide you through the process of creating a commit message that adheres to these guidelines:
 
-* All rules from [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-* Commit body is disabled completely: Since it has not been used in this repository, it is disabled to avoid confusion and maintain consistency.
-* Scope should be one of the following: `tangle-dapp`, `testnet-leaderboard`, `webb-ui`, `icons`, `tools`.
+- All rules from [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+- Commit body is disabled completely: Since it has not been used in this repository, it is disabled to avoid confusion and maintain consistency.
+- Scope should be one of the following: `tangle-dapp`, `testnet-leaderboard`, `ui-components`, `icons`, `tools`.
 
 Here are some examples to follow:
 
-* `feat(tangle-dapp): Fixed a certain bug (#123)`
-* `docs: Added documentation for commit message guidelines`
-* `chore: Bump X dependency to latest version`
+- `feat(tangle-dapp): Fixed a certain bug (#123)`
+- `docs: Added documentation for commit message guidelines`
+- `chore: Bump X dependency to latest version`
 
 ## Getting Help
 
-Join us in the [Webb Community](https://discord.gg/cv8EfJu3Tn) and post your question there.
+Join us in the [Tangle Network Discord](https://discord.gg/cv8EfJu3Tn) and post your question there.

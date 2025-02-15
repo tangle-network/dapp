@@ -1,4 +1,4 @@
-import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
+import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 
 const useIsAccountConnected = (): boolean => {
   const [activeAccount] = useActiveAccount();

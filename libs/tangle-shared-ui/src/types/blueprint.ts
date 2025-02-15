@@ -1,5 +1,5 @@
 import { TanglePrimitivesServicesFieldFieldType } from '@polkadot/types/lookup';
-import { FieldFieldType } from '@webb-tools/tangle-substrate-types';
+import { FieldFieldType } from '@tangle-network/tangle-substrate-types';
 
 export type PrimitiveFieldType =
   | { Optional: PrimitiveFieldType }

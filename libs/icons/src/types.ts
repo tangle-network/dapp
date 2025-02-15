@@ -6,7 +6,7 @@ type SVGBase = Omit<ComponentProps<'svg'>, 'path' | 'd' | 'onError'>;
 export type IconSize = 'md' | 'lg' | 'xl' | '2xl';
 
 /**
- * Base interface for Webb Icon
+ * Base interface for Icon
  */
 export interface IconBase extends SVGBase {
   /**
@@ -19,7 +19,7 @@ export interface IconBase extends SVGBase {
 }
 
 /**
- * Base interface for Web Token Icon
+ * Base interface for Token Icon
  */
 export interface TokenIconBase
   extends Omit<IconBase, 'darkMode' | 'type'>,

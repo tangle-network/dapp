@@ -22,43 +22,47 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
-      "@webb-tools/abstract-api-provider": [
+      "@tangle-network/abstract-api-provider": [
         "libs/abstract-api-provider/src/index.ts"
       ],
-      "@webb-tools/abstract-api-provider/*": [
+      "@tangle-network/abstract-api-provider/*": [
         "libs/abstract-api-provider/src/*"
       ],
-      "@webb-tools/api-provider-environment": [
+      "@tangle-network/api-provider-environment": [
         "libs/api-provider-environment/src/index.ts"
       ],
-      "@webb-tools/api-provider-environment/*": [
+      "@tangle-network/api-provider-environment/*": [
         "libs/api-provider-environment/src/*"
       ],
-      "@webb-tools/browser-utils": ["libs/browser-utils/src/index.ts"],
-      "@webb-tools/browser-utils/*": ["libs/browser-utils/src/*"],
-      "@webb-tools/dapp-config": ["libs/dapp-config/src/index.ts"],
-      "@webb-tools/dapp-config/*": ["libs/dapp-config/src/*"],
-      "@webb-tools/dapp-types": ["libs/dapp-types/src/index.ts"],
-      "@webb-tools/dapp-types/*": ["libs/dapp-types/src/*"],
-      "@webb-tools/icons": ["libs/icons/src/index.ts"],
-      "@webb-tools/icons/*": ["libs/icons/src/*"],
-      "@webb-tools/polkadot-api-provider": [
+      "@tangle-network/browser-utils": ["libs/browser-utils/src/index.ts"],
+      "@tangle-network/browser-utils/*": ["libs/browser-utils/src/*"],
+      "@tangle-network/dapp-config": ["libs/dapp-config/src/index.ts"],
+      "@tangle-network/dapp-config/*": ["libs/dapp-config/src/*"],
+      "@tangle-network/dapp-types": ["libs/dapp-types/src/index.ts"],
+      "@tangle-network/dapp-types/*": ["libs/dapp-types/src/*"],
+      "@tangle-network/icons": ["libs/icons/src/index.ts"],
+      "@tangle-network/icons/*": ["libs/icons/src/*"],
+      "@tangle-network/polkadot-api-provider": [
         "libs/polkadot-api-provider/src/index.ts"
       ],
-      "@webb-tools/polkadot-api-provider/*": [
+      "@tangle-network/polkadot-api-provider/*": [
         "libs/polkadot-api-provider/src/*"
       ],
-      "@webb-tools/react-components": ["libs/react-components/src/index.ts"],
-      "@webb-tools/react-components/*": ["libs/react-components/src/*"],
-      "@webb-tools/tailwind-preset": ["libs/tailwind-preset/index.js"],
-      "@webb-tools/tangle-shared-ui": ["libs/tangle-shared-ui/src/index.ts"],
-      "@webb-tools/tangle-shared-ui/*": ["libs/tangle-shared-ui/src/*"],
-      "@webb-tools/web3-api-provider": ["libs/web3-api-provider/src/index.ts"],
-      "@webb-tools/web3-api-provider/*": ["libs/web3-api-provider/src/*"],
-      "@webb-tools/webb-ui-components": [
-        "libs/webb-ui-components/src/index.ts"
+      "@tangle-network/react-components": [
+        "libs/react-components/src/index.ts"
       ],
-      "@webb-tools/webb-ui-components/*": ["libs/webb-ui-components/src/*"]
+      "@tangle-network/react-components/*": ["libs/react-components/src/*"],
+      "@tangle-network/tailwind-preset": ["libs/tailwind-preset/index.js"],
+      "@tangle-network/tangle-shared-ui": [
+        "libs/tangle-shared-ui/src/index.ts"
+      ],
+      "@tangle-network/tangle-shared-ui/*": ["libs/tangle-shared-ui/src/*"],
+      "@tangle-network/ui-components": ["libs/ui-components/src/index.ts"],
+      "@tangle-network/ui-components/*": ["libs/ui-components/src/*"],
+      "@tangle-network/web3-api-provider": [
+        "libs/web3-api-provider/src/index.ts"
+      ],
+      "@tangle-network/web3-api-provider/*": ["libs/web3-api-provider/src/*"]
     }
   },
   "include": [

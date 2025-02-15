@@ -1,7 +1,7 @@
 import { BN_ZERO } from '@polkadot/util';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
-import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
+import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
 import { useEffect, useState } from 'react';
 
 import { calculateInflation } from '../../utils';

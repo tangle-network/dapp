@@ -7,10 +7,10 @@ import {
   Dropdown,
   DropdownBasicButton,
   DropdownBody,
-} from '@webb-tools/webb-ui-components/components/Dropdown';
-import { Table } from '@webb-tools/webb-ui-components/components/Table';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { getRoundedAmountString } from '@webb-tools/webb-ui-components/utils/getRoundedAmountString';
+} from '@tangle-network/ui-components/components/Dropdown';
+import { Table } from '@tangle-network/ui-components/components/Table';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import { getRoundedAmountString } from '@tangle-network/ui-components/utils/getRoundedAmountString';
 import cx from 'classnames';
 import { FC } from 'react';
 

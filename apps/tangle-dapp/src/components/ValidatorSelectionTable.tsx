@@ -1,3 +1,19 @@
+import { Search } from '@tangle-network/icons';
+import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/components/tables/utils';
+import {
+  AmountFormatStyle,
+  Avatar,
+  CheckBox,
+  CopyWithTooltip,
+  fuzzyFilter,
+  Input,
+  shortenString,
+  Table,
+  Typography,
+} from '@tangle-network/ui-components';
+import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
+import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -12,44 +28,28 @@ import {
   type TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import { Search } from '@webb-tools/icons';
-import { sortByAddressOrIdentity } from '@webb-tools/tangle-shared-ui/components/tables/utils';
-import {
-  AmountFormatStyle,
-  Avatar,
-  CheckBox,
-  CopyWithTooltip,
-  fuzzyFilter,
-  Input,
-  shortenString,
-  Table,
-  Typography,
-} from '@webb-tools/webb-ui-components';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import formatPercentage from '@webb-tools/webb-ui-components/utils/formatPercentage';
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
 import cx from 'classnames';
 import {
+  Dispatch,
   FC,
+  memo,
+  SetStateAction,
   startTransition,
   useEffect,
   useMemo,
   useRef,
   useState,
-  memo,
-  Dispatch,
-  SetStateAction,
 } from 'react';
 
-import { Validator } from '../types';
+import SkeletonRows from '@tangle-network/tangle-shared-ui/components/SkeletonRows';
+import { Validator } from '@tangle-network/tangle-shared-ui/types';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import calculateCommission from '../utils/calculateCommission';
+import filterTableRowBy from '../utils/filterTableRowBy';
+import sortByBn from '../utils/sortByBn';
 import { HeaderCell } from './tableCells';
 import TokenAmountCell from './tableCells/TokenAmountCell';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
-import SkeletonRows from '@webb-tools/tangle-shared-ui/components/SkeletonRows';
-import sortByBn from '../utils/sortByBn';
-import filterTableRowBy from '../utils/filterTableRowBy';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
 
 type Props = {
   allValidators: Validator[];
@@ -136,7 +136,9 @@ const ValidatorSelectionTable: FC<Props> = ({
                 />
 
                 <Typography variant="body1" fw="normal" className="truncate">
-                  {identity === address ? shortenString(address, 6) : identity}
+                  {identity === undefined
+                    ? shortenString(address, 6)
+                    : identity}
                 </Typography>
 
                 <CopyWithTooltip

@@ -2,11 +2,11 @@ import { Bytes, Option, StorageKey } from '@polkadot/types';
 import { AccountId32 } from '@polkadot/types/interfaces';
 import { PalletIdentityRegistration } from '@polkadot/types/lookup';
 import { ITuple } from '@polkadot/types/types';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import {
   extractDataFromIdentityInfo,
   IdentityDataType,
-} from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
+} from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 

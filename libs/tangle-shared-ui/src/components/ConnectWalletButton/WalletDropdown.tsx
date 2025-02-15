@@ -2,12 +2,12 @@
 
 import { encodeAddress } from '@polkadot/util-crypto';
 import { Trigger as DropdownTrigger } from '@radix-ui/react-dropdown-menu';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { useWallets } from '@webb-tools/api-provider-environment/hooks/useWallets';
-import { ManagedWallet, WalletConfig } from '@webb-tools/dapp-config';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { LoginBoxLineIcon, WalletLineIcon } from '@webb-tools/icons';
-import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
+import { useWebContext } from '@tangle-network/api-provider-environment';
+import { useWallets } from '@tangle-network/api-provider-environment/hooks/useWallets';
+import { ManagedWallet, WalletConfig } from '@tangle-network/dapp-config';
+import { WebbError, WebbErrorCodes } from '@tangle-network/dapp-types';
+import { LoginBoxLineIcon, WalletLineIcon } from '@tangle-network/icons';
+import { WebbWeb3Provider } from '@tangle-network/web3-api-provider';
 import {
   AccountDropdownBody,
   Button,
@@ -18,9 +18,9 @@ import {
   KeyValueWithButton,
   shortenString,
   Typography,
-  useWebbUI,
+  useUIContext,
   WalletButton,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, useCallback, useMemo } from 'react';
 
 import useNetworkStore from '../../context/useNetworkStore';
@@ -28,7 +28,7 @@ import { BaseError } from 'viem';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@webb-tools/webb-ui-components/types/address';
+} from '@tangle-network/ui-components/types/address';
 
 const WalletDropdown: FC<{
   accountName?: string;
@@ -36,7 +36,7 @@ const WalletDropdown: FC<{
   wallet: WalletConfig;
 }> = ({ accountAddress, accountName, wallet }) => {
   const { inactivateApi } = useWebContext();
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
   const { wallets } = useWallets();
 
   const createExplorerAccountUrl = useNetworkStore(
@@ -135,7 +135,7 @@ const SwitchAccountButton: FC = () => {
   const { network } = useNetworkStore();
   const { activeApi, accounts, setActiveAccount } = useWebContext();
 
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
 
   const handleSwitchAccount = useCallback(async () => {
     // Switch account only support on web3 provider.

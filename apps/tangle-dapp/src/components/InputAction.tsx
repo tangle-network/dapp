@@ -1,5 +1,5 @@
-import { IconBase, IconSize } from '@webb-tools/icons/types';
-import { IconWithTooltip } from '@webb-tools/webb-ui-components';
+import { IconBase, IconSize } from '@tangle-network/icons/types';
+import { IconWithTooltip } from '@tangle-network/ui-components';
 import { FC, ReactElement } from 'react';
 import { twMerge } from 'tailwind-merge';
 

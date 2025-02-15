@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { AbiFunction } from 'viem';
-import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import useViemPublicClient from '@webb-tools/tangle-shared-ui/hooks/useViemPublicClient';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useViemPublicClient from '@tangle-network/tangle-shared-ui/hooks/useViemPublicClient';
 import {
   ExtractAbiFunctionNames,
   PrecompileAddress,

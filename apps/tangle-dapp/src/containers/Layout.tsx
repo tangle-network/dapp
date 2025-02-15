@@ -1,23 +1,21 @@
-import { Footer } from '@webb-tools/webb-ui-components';
+import { Footer } from '@tangle-network/ui-components';
 import {
   bottomLinks,
+  TANGLE_AVAILABLE_SOCIALS,
   TANGLE_PRIVACY_POLICY_URL,
   TANGLE_SOCIAL_URLS_RECORD,
   TANGLE_TERMS_OF_SERVICE_URL,
-  WEBB_AVAILABLE_SOCIALS,
-} from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/ui-components/constants';
 import { type FC, type PropsWithChildren } from 'react';
 
 import { MobileSidebar, Sidebar } from '../components';
 import DebugMetrics from './DebugMetrics';
-import WalletAndChainContainer from './WalletAndChainContainer';
+import TopNavigationPanel from './TopNavigationPanel';
 
 import BridgeTxQueueDropdown from '../components/bridge/BridgeTxQueueDropdown';
 
-// Some specific overrides for the social links for use in the
-// footer in Tangle dApp, since it defaults to the Webb socials.
 const SOCIAL_LINK_OVERRIDES: Partial<
-  Record<(typeof WEBB_AVAILABLE_SOCIALS)[number], string>
+  Record<(typeof TANGLE_AVAILABLE_SOCIALS)[number], string>
 > = TANGLE_SOCIAL_URLS_RECORD;
 
 const BOTTOM_LINK_OVERRIDES: Partial<
@@ -48,7 +46,7 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
               </div>
 
               <div className="flex items-center gap-2">
-                <WalletAndChainContainer />
+                <TopNavigationPanel />
 
                 <BridgeTxQueueDropdown dropdownButtonClassName="h-[44px]" />
               </div>

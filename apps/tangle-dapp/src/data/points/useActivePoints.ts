@@ -1,5 +1,5 @@
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
 import { useMemo } from 'react';
 import useSWR from 'swr';
 import { SWRKey } from '../../constants/swr';

@@ -1,6 +1,6 @@
 import type { ApiBase } from '@polkadot/api/base';
 import type { ApiTypes, AugmentedQueries } from '@polkadot/api/types';
-import type { MapKnownKeys } from '@webb-tools/dapp-types/utils/types';
+import type { MapKnownKeys } from '@tangle-network/dapp-types/utils/types';
 import has from 'lodash/has';
 
 function hasQuery<

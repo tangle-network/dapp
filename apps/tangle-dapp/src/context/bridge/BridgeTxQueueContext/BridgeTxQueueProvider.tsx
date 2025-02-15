@@ -1,13 +1,13 @@
-import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
+import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 import useLocalStorage, {
   LocalStorageKey,
   TxQueueByAccount,
-} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
+} from '@tangle-network/tangle-shared-ui/hooks/useLocalStorage';
 import {
   BridgeQueueTxItem,
   BridgeTxState,
-} from '@webb-tools/tangle-shared-ui/types';
-import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
+} from '@tangle-network/tangle-shared-ui/types';
+import Optional from '@tangle-network/tangle-shared-ui/utils/Optional';
 import { FC, PropsWithChildren, useCallback, useMemo, useState } from 'react';
 import BridgeTxQueueContext from './BridgeTxQueueContext';
 

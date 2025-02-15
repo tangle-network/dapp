@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import useActiveValidators from './useActiveValidators';
 import useWaitingValidators from './useWaitingValidators';
+import filterUnique from '../../utils/filterUnique';
 
 const useAllValidators = () => {
   const { validators: activeValidators, isLoading: isLoadingActiveValidators } =
@@ -14,7 +15,10 @@ const useAllValidators = () => {
 
   // TODO: Consider making this a map instead of an array.
   const allValidators = useMemo(
-    () => [...(activeValidators ?? []), ...(waitingValidators ?? [])],
+    () =>
+      [...(activeValidators ?? []), ...(waitingValidators ?? [])].filter(
+        filterUnique((validator) => validator.address),
+      ),
     [activeValidators, waitingValidators],
   );
 

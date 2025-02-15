@@ -1,7 +1,7 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
-import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
+import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import { useMemo } from 'react';
 
 const useRestakeAsset = (id: RestakeAssetId | null | undefined) => {

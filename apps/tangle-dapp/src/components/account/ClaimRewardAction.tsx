@@ -1,7 +1,7 @@
-import Spinner from '@webb-tools/icons/Spinner';
-import { IconBase } from '@webb-tools/icons/types';
-import VipDiamondLine from '@webb-tools/icons/VipDiamondLine';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
+import Spinner from '@tangle-network/icons/Spinner';
+import { IconBase } from '@tangle-network/icons/types';
+import VipDiamondLine from '@tangle-network/icons/VipDiamondLine';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useClaimRewardsTx from '../../data/rewards/useClaimRewardsTx';

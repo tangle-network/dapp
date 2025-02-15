@@ -1,5 +1,5 @@
 {
-  "name": "@webb-tools/dapp-config",
+  "name": "@tangle-network/dapp-config",
   "version": "0.0.1",
   "type": "module",
   "types": "./src/index.d.ts"

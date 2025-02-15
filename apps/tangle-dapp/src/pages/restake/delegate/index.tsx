@@ -1,12 +1,12 @@
-import { ChainConfig } from '@webb-tools/dapp-config';
-import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
-import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import { TokenIcon } from '@webb-tools/icons';
-import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
-import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import { useRpcSubscription } from '@webb-tools/tangle-shared-ui/hooks/usePolkadotApi';
+import { ChainConfig } from '@tangle-network/dapp-config';
+import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
+import isDefined from '@tangle-network/dapp-types/utils/isDefined';
+import { TokenIcon } from '@tangle-network/icons';
+import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
+import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
+import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
+import { useRpcSubscription } from '@tangle-network/tangle-shared-ui/hooks/usePolkadotApi';
 import {
   AmountFormatStyle,
   assertSubstrateAddress,
@@ -15,10 +15,10 @@ import {
   isEvmAddress,
   isSubstrateAddress,
   shortenHex,
-} from '@webb-tools/webb-ui-components';
-import { Modal } from '@webb-tools/webb-ui-components/components/Modal';
-import { useModal } from '@webb-tools/webb-ui-components/hooks/useModal';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+} from '@tangle-network/ui-components';
+import { Modal } from '@tangle-network/ui-components/components/Modal';
+import { useModal } from '@tangle-network/ui-components/hooks/useModal';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import keys from 'lodash/keys';
 import { FC, useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -41,8 +41,8 @@ import RestakeDelegateInput from './RestakeDelegateInput';
 import parseChainUnits from '../../../utils/parseChainUnits';
 import { BN } from '@polkadot/util';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
-import assertRestakeAssetId from '@webb-tools/tangle-shared-ui/utils/assertRestakeAssetId';
-import { RestakeAsset } from '@webb-tools/tangle-shared-ui/types/restake';
+import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 
 type RestakeOperator = {
@@ -306,7 +306,11 @@ const RestakeDelegateForm: FC = () => {
               return (
                 <LogoListItem
                   logo={<TokenIcon size="xl" name={asset.symbol} />}
-                  leftUpperContent={`${asset.name} (${asset.symbol})`}
+                  leftUpperContent={
+                    asset.name !== undefined
+                      ? `${asset.name} (${asset.symbol})`
+                      : asset.symbol
+                  }
                   leftBottomContent={idText}
                   rightUpperText={`${fmtBalance} ${asset.symbol}`}
                   rightBottomText="Balance"

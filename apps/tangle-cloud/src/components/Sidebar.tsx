@@ -1,28 +1,28 @@
 'use client';
 
 import { HomeIcon } from '@radix-ui/react-icons';
-import CommandFillIcon from '@webb-tools/icons/CommandFillIcon';
-import { DocumentationIcon } from '@webb-tools/icons/DocumentationIcon';
-import GlobalLine from '@webb-tools/icons/GlobalLine';
-import { GridFillIcon } from '@webb-tools/icons/GridFillIcon';
+import CommandFillIcon from '@tangle-network/icons/CommandFillIcon';
+import { DocumentationIcon } from '@tangle-network/icons/DocumentationIcon';
+import GlobalLine from '@tangle-network/icons/GlobalLine';
+import { GridFillIcon } from '@tangle-network/icons/GridFillIcon';
 import {
   Dropdown,
   DropdownBody,
   DropdownButton,
   DropdownMenuItem,
-} from '@webb-tools/webb-ui-components/components/Dropdown';
+} from '@tangle-network/ui-components/components/Dropdown';
 import {
   MobileSidebar,
   SideBar as SideBarCmp,
   SideBarFooterType,
   SideBarItemProps,
   SidebarTangleClosedIcon,
-} from '@webb-tools/webb-ui-components/components/SideBar';
-import { TangleCloudLogo } from '@webb-tools/webb-ui-components/components/TangleCloudLogo';
+} from '@tangle-network/ui-components/components/SideBar';
+import { TangleCloudLogo } from '@tangle-network/ui-components/components/TangleCloudLogo';
 import {
   TANGLE_DAPP_URL,
   TANGLE_DOCS_URL,
-} from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/ui-components/constants';
 import cx from 'classnames';
 import capitalize from 'lodash/capitalize';
 import { FC, useMemo } from 'react';

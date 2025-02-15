@@ -1,16 +1,16 @@
-import { ChainConfig } from '@webb-tools/dapp-config';
-import { chainsConfig } from '@webb-tools/dapp-config/chains';
+import { ChainConfig } from '@tangle-network/dapp-config';
+import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import {
   calculateTypedChainId,
   ChainType,
-} from '@webb-tools/dapp-types/TypedChainId';
-import { ChainIcon } from '@webb-tools/icons';
+} from '@tangle-network/dapp-types/TypedChainId';
+import { ChainIcon } from '@tangle-network/icons';
 import {
   Modal,
   ModalContent,
   Typography,
   useModal,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 

@@ -1,24 +1,28 @@
-import { ArrowRightUp, Search, TokenIcon } from '@webb-tools/icons';
+import { BN } from '@polkadot/util';
+import { ArrowRightUp, Search, TokenIcon } from '@tangle-network/icons';
 import {
+  AmountFormatStyle,
+  formatDisplayAmount,
   Input,
   ListItem,
   shortenHex,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/ui-components';
+import { ScrollArea } from '@tangle-network/ui-components/components/ScrollArea';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { ComponentProps, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { Address } from 'viem';
-
 import { ListCardWrapper } from './ListCardWrapper';
 
 export type AssetConfig = {
+  name?: string;
   symbol: string;
   optionalSymbol?: string;
-  balance?: string;
+  balance?: BN;
   explorerUrl?: string;
-  address?: Address;
+  address?: EvmAddress;
+  decimals: number;
 };
 
 type AssetListProps = {
@@ -76,23 +80,24 @@ export const AssetList = ({
               }}
               className="cursor-pointer w-full flex items-center gap-4 justify-between max-w-full min-h-[60px] py-[12px] px-6"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <TokenIcon
                   size="xl"
                   name={
                     asset.symbol === 'SolvBTC.BBN' ? 'SolvBTC' : asset.symbol
                   }
-                  className="mr-2"
                   spinnerSize="lg"
                 />
 
                 <div className="flex flex-col gap-1">
                   <Typography
-                    variant="h5"
+                    variant="body1"
                     fw="bold"
                     className="cursor-default text-mono-200 dark:text-mono-0"
                   >
-                    {asset.symbol}
+                    {asset.name === undefined
+                      ? asset.symbol
+                      : `${asset.name} (${asset.symbol})`}
                   </Typography>
 
                   {asset.explorerUrl !== undefined && (
@@ -118,12 +123,11 @@ export const AssetList = ({
               </div>
 
               <Typography
-                variant="h5"
-                fw="bold"
+                variant="body1"
                 className="cursor-default text-mono-200 dark:text-mono-0"
               >
-                {asset.balance
-                  ? `${asset.balance} ${asset.symbol}`
+                {asset.balance !== undefined
+                  ? `${formatDisplayAmount(asset.balance, asset.decimals, AmountFormatStyle.SHORT)} ${asset.symbol}`
                   : EMPTY_VALUE_PLACEHOLDER}
               </Typography>
             </ListItem>

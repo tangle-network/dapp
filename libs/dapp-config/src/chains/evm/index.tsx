@@ -1,8 +1,8 @@
-// Copyright 2024 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
-import { ChainType } from '@webb-tools/dapp-types/TypedChainId';
+import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
+import { ChainType } from '@tangle-network/dapp-types/TypedChainId';
 import {
   mainnet,
   arbitrumGoerli,

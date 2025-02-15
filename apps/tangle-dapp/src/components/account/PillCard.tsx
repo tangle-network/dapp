@@ -1,10 +1,10 @@
-import { IconBase } from '@webb-tools/icons/types';
+import { IconBase } from '@tangle-network/icons/types';
 import {
   Card,
   CardVariant,
   SkeletonLoader,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

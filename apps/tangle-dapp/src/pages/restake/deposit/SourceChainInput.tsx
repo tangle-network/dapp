@@ -1,7 +1,7 @@
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
-import type { TextFieldInputProps } from '@webb-tools/webb-ui-components/components/TextField/types';
-import type { TokenSelectorProps } from '@webb-tools/webb-ui-components/components/TokenSelector/types';
-import { TransactionInputCard } from '@webb-tools/webb-ui-components/components/TransactionInputCard';
+import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
+import type { TextFieldInputProps } from '@tangle-network/ui-components/components/TextField/types';
+import type { TokenSelectorProps } from '@tangle-network/ui-components/components/TokenSelector/types';
+import { TransactionInputCard } from '@tangle-network/ui-components/components/TransactionInputCard';
 import { FC, useCallback, useMemo } from 'react';
 import type {
   UseFormRegister,

@@ -1,33 +1,36 @@
 import { decodeAddress } from '@polkadot/util-crypto';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
-import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useActiveChain';
-import { Spinner } from '@webb-tools/icons';
-import { ThreeDotsVerticalIcon } from '@webb-tools/icons/ThreeDotsVerticalIcon';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { Blueprint } from '@webb-tools/tangle-shared-ui/types/blueprint';
-import { isSubstrateAddress, useWebbUI } from '@webb-tools/webb-ui-components';
+import { TxEvent } from '@tangle-network/abstract-api-provider';
+import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
+import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
+import { Spinner } from '@tangle-network/icons';
+import { ThreeDotsVerticalIcon } from '@tangle-network/icons/ThreeDotsVerticalIcon';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
+import {
+  isSubstrateAddress,
+  useUIContext,
+} from '@tangle-network/ui-components';
 import {
   Accordion,
   AccordionButtonBase,
   AccordionContent,
   AccordionItem,
-} from '@webb-tools/webb-ui-components/components/Accordion';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import IconButton from '@webb-tools/webb-ui-components/components/buttons/IconButton';
+} from '@tangle-network/ui-components/components/Accordion';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
+import IconButton from '@tangle-network/ui-components/components/buttons/IconButton';
 import {
   Dropdown,
   DropdownBody,
   DropdownMenuItem,
-} from '@webb-tools/webb-ui-components/components/Dropdown';
-import { Label } from '@webb-tools/webb-ui-components/components/Label';
-import { TextField } from '@webb-tools/webb-ui-components/components/TextField';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+} from '@tangle-network/ui-components/components/Dropdown';
+import { Label } from '@tangle-network/ui-components/components/Label';
+import { TextField } from '@tangle-network/ui-components/components/TextField';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { useCallback, useMemo, useState } from 'react';
 import useServicesTransactions from '../../../hooks/useServicesTransactions';
 import { PricingFormResult, PricingType } from '../PricingModal/types';
 import ParamsForm from './ParamsForm';
-import { TxEvent } from '@webb-tools/abstract-api-provider';
 
 type Props = {
   selectedBlueprints: Blueprint[];
@@ -44,7 +47,7 @@ export default function RegistrationReview({
 
   const { network } = useNetworkStore();
 
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
 
   const { register } = useServicesTransactions();
 

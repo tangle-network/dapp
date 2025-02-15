@@ -1,11 +1,11 @@
-import { Expand } from '@webb-tools/icons';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import usePromise from '@webb-tools/tangle-shared-ui/hooks/usePromise';
+import { Expand } from '@tangle-network/icons';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import usePromise from '@tangle-network/tangle-shared-ui/hooks/usePromise';
 import {
   getApiPromise,
   getApiRx,
-} from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
-import { SkeletonLoader, Typography } from '@webb-tools/webb-ui-components';
+} from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
+import { SkeletonLoader, Typography } from '@tangle-network/ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 /**

@@ -1,7 +1,7 @@
-// Copyright 2024 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ChainType } from '@webb-tools/dapp-types/TypedChainId';
+import { ChainType } from '@tangle-network/dapp-types/TypedChainId';
 import type { Chain } from 'viem/chains';
 
 import type { AppEnvironment } from '../types';
@@ -31,7 +31,7 @@ export type ChainGroup =
 /**
  * The extended chain interface that includes the chain type and group
  */
-export type WebbExtendedChain = {
+export type ChainExtension = {
   /**
    * The display name of the chain
    */
@@ -58,4 +58,4 @@ export type WebbExtendedChain = {
   env?: AppEnvironment[];
 };
 
-export type ChainConfig = Chain & WebbExtendedChain;
+export type ChainConfig = Chain & ChainExtension;

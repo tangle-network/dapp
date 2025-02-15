@@ -1,5 +1,5 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   Alert,
   Button,
@@ -8,10 +8,10 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from '@webb-tools/webb-ui-components';
-import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+} from '@tangle-network/ui-components';
+import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/ui-components/constants';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import assert from 'assert';
 import { type FC, useCallback, useState } from 'react';
 
@@ -20,7 +20,7 @@ import useStakingRewardsDestination from '../../data/nomination/useStakingReward
 import useIsBondedOrNominating from '../../data/staking/useIsBondedOrNominating';
 import useSetupNominatorTx from '../../data/staking/useSetupNominatorTx';
 import useUpdateNominatorTx from '../../data/staking/useUpdateNominatorTx';
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import useMaxNominationQuota from '../../hooks/useMaxNominationQuota';
 import { TxStatus } from '../../hooks/useSubstrateTx';
 import { StakingRewardsDestination } from '../../types';

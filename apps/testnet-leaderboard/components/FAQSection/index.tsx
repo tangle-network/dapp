@@ -1,6 +1,6 @@
-import { WEBB_DOC_ROUTES_RECORD } from '@webb-tools/webb-ui-components/constants';
-import FAQContainer from '@webb-tools/webb-ui-components/containers/FAQSection';
-import populateDocsUrl from '@webb-tools/webb-ui-components/utils/populateDocsUrl';
+import { WEBB_DOC_ROUTES_RECORD } from '@tangle-network/ui-components/constants';
+import FAQContainer from '@tangle-network/ui-components/containers/FAQSection';
+import populateDocsUrl from '@tangle-network/ui-components/utils/populateDocsUrl';
 
 const faqItems = [
   {

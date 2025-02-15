@@ -1,12 +1,12 @@
 'use client';
 
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import { ChainConfig, chainsPopulated } from '@webb-tools/dapp-config';
-import { Alert, ChainIcon, ChevronDown, Spinner } from '@webb-tools/icons';
+import { useWebContext } from '@tangle-network/api-provider-environment';
+import { ChainConfig, chainsPopulated } from '@tangle-network/dapp-config';
+import { Alert, ChainIcon, ChevronDown, Spinner } from '@tangle-network/icons';
 import {
   calculateTypedChainId,
   ChainType,
-} from '@webb-tools/dapp-types/TypedChainId';
+} from '@tangle-network/dapp-types/TypedChainId';
 import {
   Dropdown,
   DropdownBasicButton,
@@ -15,7 +15,7 @@ import {
   TooltipBody,
   TooltipTrigger,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { type FC, useCallback, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import useNetworkStore from '../../context/useNetworkStore';
@@ -178,7 +178,7 @@ const TriggerButton: FC<TriggerButtonProps> = ({
       type="button"
       disabled={isLoading}
       className={twMerge(
-        'flex items-center gap-2 rounded-lg p-2 px-4',
+        'flex items-center gap-2 rounded-lg p-2',
         'bg-transparent dark:bg-transparent',
         'hover:bg-mono-100/10 dark:hover:bg-mono-0/10',
         'border-2 border-mono-60 dark:border-mono-140',

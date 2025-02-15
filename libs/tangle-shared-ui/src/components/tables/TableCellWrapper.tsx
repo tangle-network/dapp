@@ -1,5 +1,5 @@
-import isPrimitive from '@webb-tools/dapp-types/utils/isPrimitive';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import isPrimitive from '@tangle-network/dapp-types/utils/isPrimitive';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
 

@@ -1,4 +1,4 @@
-import { DEFAULT_DECIMALS } from '@webb-tools/dapp-config/constants';
+import { DEFAULT_DECIMALS } from '@tangle-network/dapp-config/constants';
 import { formatUnits } from 'viem';
 import ensureError from './ensureError';
 

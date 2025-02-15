@@ -1,5 +1,5 @@
 // Import global styles.
-import '@webb-tools/webb-ui-components/tailwind.css';
+import '@tangle-network/ui-components/tailwind.css';
 import '../styles.css';
 
 import { Route, Routes } from 'react-router';
@@ -19,8 +19,6 @@ import NotFoundPage from '../pages/notFound';
 import RestakePage from '../pages/restake';
 import { PagePath } from '../types';
 import Providers from './providers';
-
-// TODO: Add metadata tags for SEO
 
 function App() {
   return (

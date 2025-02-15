@@ -1,14 +1,14 @@
 import { BN_ZERO } from '@polkadot/util';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import { type FC, useMemo } from 'react';
 
 import useUnbondingAmount from '../data/nomination/useUnbondingAmount';
 import useUnbonding from '../data/staking/useUnbonding';
 import formatTangleBalance from '../utils/formatTangleBalance';
 import { NominatorStatsItem } from './NominatorStatsItem';
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 const UnbondingStatsItem: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();

@@ -5,7 +5,7 @@ import App from './app/app';
 import { Buffer } from 'buffer';
 
 // Assign Buffer to globalThis if not already defined.
-// This is to satisfy usage of `Buffer` in the Webb UI library
+// This is to satisfy usage of `Buffer` in the UI library
 // for legacy code. Ideally, that legacy code should be updated
 // or removed.
 if (typeof globalThis.Buffer === 'undefined') {

@@ -7,10 +7,10 @@ import {
   ModalHeader,
   TANGLE_DOCS_LS_UPDATE_ROLES_URL,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import AddressInput from '../components/AddressInput';
 import useLsUpdateRolesTx from '../data/liquidStaking/tangle/useLsUpdateRolesTx';
 import { TxStatus } from '../hooks/useSubstrateTx';

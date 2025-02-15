@@ -2,7 +2,7 @@ import {
   InfoIconWithTooltip,
   SkeletonLoader,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import type { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 

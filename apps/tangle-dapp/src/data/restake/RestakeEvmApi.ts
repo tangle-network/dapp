@@ -1,4 +1,4 @@
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { Account, ContractFunctionName, AbiFunction } from 'viem';
 import RestakeApiBase, {
   RestakeUndelegateRequest,
@@ -10,14 +10,14 @@ import { BN } from '@polkadot/util';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@webb-tools/webb-ui-components/types/address';
+} from '@tangle-network/ui-components/types/address';
 import {
   simulateContract,
   waitForTransactionReceipt,
   writeContract,
 } from 'wagmi/actions';
 import { Config } from 'wagmi';
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
 import RESTAKING_PRECOMPILE_ABI from '../../abi/restaking';
 import {
   ExtractAbiFunctionNames,
@@ -28,7 +28,7 @@ import {
 import {
   convertAddressToBytes32,
   isEvmAddress,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';

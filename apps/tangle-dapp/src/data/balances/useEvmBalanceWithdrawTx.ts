@@ -1,5 +1,5 @@
 import type { HexString } from '@polkadot/util/types';
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config';
+import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
 import { useCallback } from 'react';
 
 import { TxName } from '../../constants';

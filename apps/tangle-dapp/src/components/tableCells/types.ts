@@ -1,10 +1,10 @@
-import { WebbTypographyVariant } from '@webb-tools/webb-ui-components/typography/types';
+import { TypographyVariant } from '@tangle-network/ui-components/typography/types';
 
 export interface HeaderCellProps {
   title: string;
   tooltip?: string;
   className?: string;
-  titleVariant?: WebbTypographyVariant;
+  titleVariant?: TypographyVariant;
 }
 
 export interface StringCellProps {

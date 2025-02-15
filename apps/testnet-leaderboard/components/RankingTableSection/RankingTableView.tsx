@@ -7,9 +7,9 @@ import {
   type PaginationState,
   useReactTable,
 } from '@tanstack/react-table';
-import { LoggerService } from '@webb-tools/browser-utils/logger';
-import { Search, Spinner } from '@webb-tools/icons';
-import { Input, Pagination, Typography } from '@webb-tools/webb-ui-components';
+import { LoggerService } from '@tangle-network/browser-utils/logger';
+import { Search, Spinner } from '@tangle-network/icons';
+import { Input, Pagination, Typography } from '@tangle-network/ui-components';
 import cx from 'classnames';
 import { type FC, useMemo, useState } from 'react';
 import useSWR from 'swr';

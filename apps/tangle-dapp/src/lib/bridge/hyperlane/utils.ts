@@ -1,7 +1,7 @@
 import { IToken } from '@hyperlane-xyz/sdk';
 
 import { getHyperlaneWarpCore } from './context';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { PresetTypedChainId } from '@tangle-network/dapp-types';
 
 export function tryFindToken(
   chain: string,
@@ -19,6 +19,8 @@ export function tryFindToken(
 
 export function getHyperlaneChainName(typedChainId: number) {
   switch (typedChainId) {
+    case PresetTypedChainId.EthereumMainNet:
+      return 'ethereum';
     case PresetTypedChainId.Arbitrum:
       return 'arbitrum';
     case PresetTypedChainId.Optimism:

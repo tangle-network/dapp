@@ -1,4 +1,7 @@
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import {
+  WebbError,
+  WebbErrorCodes,
+} from '@tangle-network/dapp-types/WebbError';
 import { useCallback, useState } from 'react';
 
 import {
@@ -8,7 +11,7 @@ import {
 import useEvmAddress20 from './useEvmAddress';
 import { PrecompileCall } from './useEvmPrecompileCall';
 import { AbiFunction } from 'viem';
-import useViemPublicClient from '@webb-tools/tangle-shared-ui/hooks/useViemPublicClient';
+import useViemPublicClient from '@tangle-network/tangle-shared-ui/hooks/useViemPublicClient';
 
 export type QueryStatus = 'idle' | 'loading' | 'success' | 'error';
 

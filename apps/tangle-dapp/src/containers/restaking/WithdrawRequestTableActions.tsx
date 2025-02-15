@@ -1,4 +1,4 @@
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { isScheduledRequestReady } from '../../pages/restake/utils';
 import { WithdrawRequestTableRow } from './WithdrawRequestTable';

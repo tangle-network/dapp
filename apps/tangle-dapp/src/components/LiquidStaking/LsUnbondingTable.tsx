@@ -6,15 +6,15 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { CheckboxCircleFill, TimeFillIcon } from '@webb-tools/icons';
-import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
+import { CheckboxCircleFill, TimeFillIcon } from '@tangle-network/icons';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import {
   Table,
   TANGLE_DOCS_LIQUID_STAKING_URL,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import addCommasToNumber from '@webb-tools/webb-ui-components/utils/addCommasToNumber';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+} from '@tangle-network/ui-components';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC, useMemo, useState } from 'react';
 
 import { LsPoolUnstakeRequest } from '../../constants/liquidStaking/types';

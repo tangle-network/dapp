@@ -1,4 +1,4 @@
-import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
+import { EVMChainId } from '@tangle-network/dapp-types/ChainId';
 import { defineChain } from 'viem';
 
 import { TANGLE_LOCAL_HTTP_RPC_ENDPOINT } from '../../../constants';

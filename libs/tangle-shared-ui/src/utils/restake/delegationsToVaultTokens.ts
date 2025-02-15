@@ -12,11 +12,15 @@ export default function delegationsToVaultTokens(
   delegations.forEach(({ assetId, amount }) => {
     const asset = assetMap[assetId];
 
-    if (asset === undefined) return;
+    if (asset === undefined) {
+      return;
+    }
 
     const parsed = safeFormatUnits(amount, asset.decimals);
 
-    if (parsed.success === false) return;
+    if (parsed.success === false) {
+      return;
+    }
 
     const vaultToken = vaultTokenMap.get(assetId);
 

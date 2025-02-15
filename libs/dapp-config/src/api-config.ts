@@ -1,7 +1,10 @@
-// Copyright 2024 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
+import {
+  WebbError,
+  WebbErrorCodes,
+} from '@tangle-network/dapp-types/WebbError';
 import values from 'lodash/values';
 import { ChainConfig } from './chains/chain-config.interface';
 import { WalletConfig } from './wallets/wallet-config.interface';

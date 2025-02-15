@@ -1,4 +1,4 @@
-import { PresetTypedChainId } from '@webb-tools/dapp-types/ChainId';
+import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
 
 export const SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS = [
   PresetTypedChainId.TangleTestnetNative,

@@ -1,6 +1,6 @@
-import { ArrowRightUp } from '@webb-tools/icons';
-import { IconBase } from '@webb-tools/icons/types';
-import { Button } from '@webb-tools/webb-ui-components';
+import { ArrowRightUp } from '@tangle-network/icons';
+import { IconBase } from '@tangle-network/icons/types';
+import { Button } from '@tangle-network/ui-components';
 import { FC, ReactNode } from 'react';
 
 export type ExternalLinkProps = {

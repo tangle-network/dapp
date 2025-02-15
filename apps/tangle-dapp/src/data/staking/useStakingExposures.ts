@@ -1,9 +1,9 @@
 import { Option, StorageKey, u32 } from '@polkadot/types';
 import { AccountId32 } from '@polkadot/types/interfaces';
 import { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
+import { assertSubstrateAddress } from '@tangle-network/ui-components';
 import { useCallback } from 'react';
-
 import useEntryMap from '../../hooks/useEntryMap';
 import useCurrentEra from './useCurrentEra';
 
@@ -27,7 +27,7 @@ const useStakingExposures = () => {
 
   const exposureMap = useEntryMap(
     exposures,
-    useCallback((key) => key.args[1].toString(), []),
+    useCallback((key) => assertSubstrateAddress(key.args[1].toString()), []),
   );
 
   return { result: exposureMap, ...other };

@@ -1,6 +1,6 @@
-import { SideBar as SideBarCmp } from '@webb-tools/webb-ui-components';
-import { useLocation } from 'react-router';
+import { SideBar as SideBarCmp } from '@tangle-network/ui-components';
 import { type FC } from 'react';
+import { useLocation } from 'react-router';
 
 import useSidebarProps from './useSidebarProps';
 

@@ -6,18 +6,21 @@ import {
   isEthereumAddress,
   keccakAsHex,
 } from '@polkadot/util-crypto';
-import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
-import { isValidAddress } from '@webb-tools/webb-ui-components';
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { CheckBox } from '@webb-tools/webb-ui-components/components/CheckBox';
-import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
+import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
+import {
+  WebbError,
+  WebbErrorCodes,
+} from '@tangle-network/dapp-types/WebbError';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
+import { isValidAddress } from '@tangle-network/ui-components';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
+import { CheckBox } from '@tangle-network/ui-components/components/CheckBox';
+import { useUIContext } from '@tangle-network/ui-components/hooks/useUIContext';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
+import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import assert from 'assert';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
@@ -29,7 +32,7 @@ import toAsciiHex from '../../utils/claims/toAsciiHex';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import getStatement, { Statement } from '../../utils/getStatement';
 import type { ClaimInfoType } from './types';
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 enum Step {
   INPUT_ADDRESS,
@@ -53,7 +56,7 @@ const EligibleSection: FC<Props> = ({
 
   const { activeApi } = useWebContext();
   const { toggleModal } = useConnectWallet();
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);

@@ -1,5 +1,5 @@
 {
-  "name": "@webb-tools/abstract-api-provider",
+  "name": "@tangle-network/abstract-api-provider",
   "version": "0.0.1",
   "type": "module",
   "types": "./src/index.d.ts"

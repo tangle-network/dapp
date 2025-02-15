@@ -4,8 +4,8 @@ import {
   ModalContent,
   ModalFooterActions,
   ModalHeader,
-} from '@webb-tools/webb-ui-components';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+} from '@tangle-network/ui-components';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import isEqual from 'lodash/isEqual';
 import {
   type Dispatch,

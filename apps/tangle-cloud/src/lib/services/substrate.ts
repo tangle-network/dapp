@@ -1,8 +1,8 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { Signer } from '@polkadot/types/types';
-import type { TxEventHandlers } from '@webb-tools/abstract-api-provider';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
-import { signAndSendExtrinsic } from '@webb-tools/polkadot-api-provider';
+import type { TxEventHandlers } from '@tangle-network/abstract-api-provider';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import { signAndSendExtrinsic } from '@tangle-network/polkadot-api-provider';
 import { parseUnits } from 'viem';
 import BaseServices, { RegisterArgsType } from './base';
 

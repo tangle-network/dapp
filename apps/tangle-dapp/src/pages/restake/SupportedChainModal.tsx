@@ -1,9 +1,9 @@
-import { chainsConfig } from '@webb-tools/dapp-config';
+import { chainsConfig } from '@tangle-network/dapp-config';
 import type { ComponentProps, FC } from 'react';
 
 import { ChainList } from '../../components/Lists/ChainList';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../constants/restake';
-import { ModalContent } from '@webb-tools/webb-ui-components';
+import { ModalContent } from '@tangle-network/ui-components';
 
 type Props = {
   onClose: () => void;

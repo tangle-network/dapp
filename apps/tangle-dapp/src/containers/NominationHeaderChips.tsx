@@ -1,4 +1,4 @@
-import { BlockIcon } from '@webb-tools/icons';
+import { BlockIcon } from '@tangle-network/icons';
 
 import { HeaderChip } from '../components';
 

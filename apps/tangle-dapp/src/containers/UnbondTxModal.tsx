@@ -1,5 +1,5 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   Caption,
   Modal,
@@ -7,9 +7,9 @@ import {
   ModalContent,
   ModalFooterActions,
   ModalHeader,
-  useWebbUI,
-} from '@webb-tools/webb-ui-components';
-import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
+  useUIContext,
+} from '@tangle-network/ui-components';
+import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
 
 import AmountInput from '../components/AmountInput';
@@ -27,7 +27,7 @@ const UnbondTxModal: FC<Props> = ({ isModalOpen, setIsModalOpen }) => {
   const [amount, setAmount] = useState<BN | null>(null);
   const [hasErrors, setHasErrors] = useState(false);
 
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
   const { nativeTokenSymbol } = useNetworkStore();
   const { execute: executeUnbondTx, status: unbondTxStatus } = useUnbondTx();
 

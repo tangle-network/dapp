@@ -1,0 +1,37 @@
+/** Layer base */
+body,
+html {
+  @apply bg-mono-20 dark:bg-mono-200 min-h-full min-w-full;
+}
+
+html[class*='dark'] {
+  @apply bg-mono-200;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply text-mono-200 dark:text-mono-0;
+}
+
+p,
+div,
+span,
+label {
+  @apply text-mono-180 dark:text-mono-0;
+}
+
+.card {
+  @apply bg-mono-0 dark:bg-mono-200;
+}
+
+html,
+body,
+div,
+main {
+  @apply scrollbar-thin scrollbar-thumb-mono-60 dark:scrollbar-thumb-mono-120;
+  @apply overflow-visible;
+}

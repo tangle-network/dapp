@@ -1,4 +1,4 @@
-import { Card, CardVariant } from '@webb-tools/webb-ui-components';
+import { Card, CardVariant } from '@tangle-network/ui-components';
 import { FC, PropsWithChildren } from 'react';
 import { twMerge } from 'tailwind-merge';
 

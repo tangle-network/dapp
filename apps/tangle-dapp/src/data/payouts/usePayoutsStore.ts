@@ -1,4 +1,4 @@
-import { Payout } from '@webb-tools/tangle-shared-ui/types';
+import { Payout } from '@tangle-network/tangle-shared-ui/types';
 import { create } from 'zustand';
 
 import { PayoutsEraRange } from '../types';

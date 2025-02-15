@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
-import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { useCallback } from 'react';
 import useViemPublicClient from './useViemPublicClient';
 import useAgnosticAccountInfo from './useAgnosticAccountInfo';
@@ -8,16 +8,16 @@ import { erc20Abi } from 'viem';
 import convertDecimalToBN from '../utils/convertDecimalToBn';
 import { BRIDGE_TOKENS } from '../constants/bridge';
 import { BridgeToken } from '../types';
-import { chainsConfig } from '@webb-tools/dapp-config';
+import { chainsConfig } from '@tangle-network/dapp-config';
 import assert from 'assert';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { assertEvmAddress } from '@webb-tools/webb-ui-components';
+import { assertEvmAddress } from '@tangle-network/ui-components';
 import useNetworkStore from '../context/useNetworkStore';
-import { NetworkId } from '@webb-tools/webb-ui-components/constants/networks';
+import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 
 type Erc20Token = {
   contractAddress: EvmAddress;
-  name: string;
+  name?: string;
   symbol: string;
   decimals: number;
   networks: NetworkId[];
@@ -43,7 +43,7 @@ const createErc20Token = (
 
   return {
     contractAddress: bridgeToken.hyperlaneSyntheticAddress,
-    name: bridgeToken.symbol,
+    name: bridgeToken.name,
     symbol: bridgeToken.symbol,
     decimals: bridgeToken.decimals,
     networks:

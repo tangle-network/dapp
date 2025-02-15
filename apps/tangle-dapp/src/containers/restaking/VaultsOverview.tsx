@@ -1,5 +1,5 @@
-import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
+import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import VaultsTable from '../../components/tables/Vaults';
 import useVaultTableData from '../../hooks/useVaultTableData';
 

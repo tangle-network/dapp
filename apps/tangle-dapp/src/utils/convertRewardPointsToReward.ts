@@ -1,5 +1,5 @@
 import { BN_QUINTILL } from '@polkadot/util';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config/constants/tangle';
 import { parseUnits } from 'viem';
 
 const BIG_INT_QUINTILL = BigInt(BN_QUINTILL.toString());
@@ -8,7 +8,7 @@ const BIG_INT_QUINTILL = BigInt(BN_QUINTILL.toString());
  * Convert the reward points to reward in token
  * Following the `do_payout_stakers` logic in the tangle
  * to convert the reward points to rewards
- * see https://github.com/webb-tools/tangle/blob/8c1be851059d21fe524ca30808219d5b26c01713/pallets/roles/src/functions.rs#L508-L539
+ * see https://github.com/tangle-network/tangle/blob/8c1be851059d21fe524ca30808219d5b26c01713/pallets/roles/src/functions.rs#L508-L539
  * @param rewardPoints the reward points (got from `api.query.roles.erasRestakeRewardPoints`)
  * @param validatorCommision the validator commission (got from `api.query.staking.erasValidatorPrefs`)
  * @param ownStaked the own staked amount of the validator (got from `api.query.staking.erasStakersOverview`)

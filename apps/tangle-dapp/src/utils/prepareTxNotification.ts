@@ -1,4 +1,4 @@
-import { notificationApi } from '@webb-tools/webb-ui-components';
+import { notificationApi } from '@tangle-network/ui-components';
 
 import { TxStatus } from '../hooks/useSubstrateTx';
 
@@ -14,12 +14,6 @@ const prepareTxNotification = (
     case TxStatus.COMPLETE:
       primaryMessage = 'Transaction completed successfully.';
       variant = 'success';
-
-      break;
-    case TxStatus.TIMED_OUT:
-      primaryMessage =
-        'The transaction is taking too long. It is unknown if it succeeded or not.';
-      variant = 'warning';
 
       break;
     case TxStatus.ERROR:

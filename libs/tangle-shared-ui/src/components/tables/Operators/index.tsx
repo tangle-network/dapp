@@ -9,8 +9,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
-import { CheckboxCircleFill } from '@webb-tools/icons/CheckboxCircleFill';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import { CheckboxCircleFill } from '@tangle-network/icons/CheckboxCircleFill';
 import {
   AmountFormatStyle,
   Avatar,
@@ -21,9 +21,9 @@ import {
   shortenString,
   Table,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+} from '@tangle-network/ui-components';
+import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { BN } from 'bn.js';
 import type { ComponentProps, PropsWithChildren } from 'react';
 import { FC, useMemo } from 'react';
@@ -311,10 +311,7 @@ const OperatorsTable: FC<Props> = ({
       tableClassName={tableProps?.tableClassName}
       thClassName={tableProps?.thClassName}
       tbodyClassName={tableProps?.tbodyClassName}
-      trClassName={twMerge(
-        'group cursor-pointer overflow-hidden',
-        tableProps?.trClassName,
-      )}
+      trClassName={twMerge('group overflow-hidden', tableProps?.trClassName)}
       tdClassName={tableProps?.tdClassName}
       paginationClassName={tableProps?.paginationClassName}
     />

@@ -1,4 +1,4 @@
-import { IconBase } from '@webb-tools/icons/types';
+import { IconBase } from '@tangle-network/icons/types';
 import { FC, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 

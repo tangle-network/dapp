@@ -1,8 +1,8 @@
-// Copyright 2024 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
-import { ApiConfig } from '@webb-tools/dapp-config';
-import { EventBus } from '@webb-tools/dapp-types/EventBus';
+import { ApiConfig } from '@tangle-network/dapp-config';
+import { EventBus } from '@tangle-network/dapp-types/EventBus';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AccountsAdapter } from './account/Accounts.adapter';
 

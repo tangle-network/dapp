@@ -1,15 +1,15 @@
 import {
   useConnectWallet,
   useWebContext,
-} from '@webb-tools/api-provider-environment';
-import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
+} from '@tangle-network/api-provider-environment';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import {
   ActionsDropdown,
   Button,
   TabContent,
   TableAndChartTabs,
-} from '@webb-tools/webb-ui-components';
-import { TANGLE_DOCS_URL } from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/ui-components';
+import { TANGLE_DOCS_URL } from '@tangle-network/ui-components/constants';
 import {
   type FC,
   useCallback,
@@ -18,7 +18,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 import { ContainerSkeleton } from '../components';
 import useNominations from '../data/nomination/useNominations';

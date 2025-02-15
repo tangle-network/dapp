@@ -4,12 +4,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   type Account,
   type WebbApiProvider,
-} from '@webb-tools/abstract-api-provider';
-import { LoggerService } from '@webb-tools/browser-utils/logger';
+} from '@tangle-network/abstract-api-provider';
+import { LoggerService } from '@tangle-network/browser-utils/logger';
 import {
   netStorageFactory,
   type NetworkStorage,
-} from '@webb-tools/browser-utils/storage';
+} from '@tangle-network/browser-utils/storage';
 import {
   ApiConfig,
   chainsConfig,
@@ -17,24 +17,24 @@ import {
   WALLET_CONFIG,
   type Chain,
   type Wallet,
-} from '@webb-tools/dapp-config';
-import getWagmiConfig from '@webb-tools/dapp-config/wagmi-config';
+} from '@tangle-network/dapp-config';
+import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
 import {
   WalletId,
   WebbError,
   WebbErrorCodes,
   type BareProps,
-} from '@webb-tools/dapp-types';
-import WalletNotInstalledError from '@webb-tools/dapp-types/errors/WalletNotInstalledError';
-import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
-import { WebbPolkadot } from '@webb-tools/polkadot-api-provider';
+} from '@tangle-network/dapp-types';
+import WalletNotInstalledError from '@tangle-network/dapp-types/errors/WalletNotInstalledError';
+import type { Maybe, Nullable } from '@tangle-network/dapp-types/utils/types';
+import { WebbPolkadot } from '@tangle-network/polkadot-api-provider';
 import {
   ChainType,
   calculateTypedChainId,
-} from '@webb-tools/dapp-types/TypedChainId';
-import { WebbWeb3Provider } from '@webb-tools/web3-api-provider';
-import { useWebbUI } from '@webb-tools/webb-ui-components';
-import useWagmiHydration from '@webb-tools/webb-ui-components/hooks/useWagmiHydration';
+} from '@tangle-network/dapp-types/TypedChainId';
+import { WebbWeb3Provider } from '@tangle-network/web3-api-provider';
+import { useUIContext } from '@tangle-network/ui-components';
+import useWagmiHydration from '@tangle-network/ui-components/hooks/useWagmiHydration';
 import { useCallback, useEffect, useRef, useState, type FC } from 'react';
 import {
   BaseError as WagmiBaseError,
@@ -84,7 +84,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
 
   const [isConnecting, setIsConnecting] = useState(false);
 
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
 
   const { connectAsync, connectors } = useConnect();
 
@@ -225,7 +225,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         case WebbErrorCodes.TalismanExtensionNotInstalled:
         case WebbErrorCodes.SubWalletExtensionNotInstalled:
           {
-            // TODO: Implement interactive feedback with new components from webb-ui-components:
+            // TODO: Implement interactive feedback with new components from ui-components:
           }
           break;
         case WebbErrorCodes.InsufficientProviderInterface:

@@ -4,8 +4,8 @@
  * - Amount should has a better type than string.
  */
 
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 export type RewardVaultMap = {
   [vaultId: string]: string[] | null;

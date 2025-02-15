@@ -1,5 +1,5 @@
 import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
+import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 import { useCallback, useEffect } from 'react';
 import { findInjectorForAddress } from '../utils/polkadot/api';
 import usePromise from './usePromise';

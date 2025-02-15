@@ -1,6 +1,6 @@
-import { SupportedBrowsers } from '@webb-tools/browser-utils/platform';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import { WalletId } from '@webb-tools/dapp-types/WalletId';
+import { SupportedBrowsers } from '@tangle-network/browser-utils/platform';
+import { PresetTypedChainId } from '@tangle-network/dapp-types';
+import { WalletId } from '@tangle-network/dapp-types/WalletId';
 import {
   MetaMaskIcon,
   PolkadotJsIcon,
@@ -8,7 +8,7 @@ import {
   SubWalletIcon,
   TalismanIcon,
   WalletConnectIcon,
-} from '@webb-tools/icons/wallets';
+} from '@tangle-network/icons/wallets';
 import findSubstrateWallet from '../utils/findSubstrateWallet';
 import type { WalletConfig } from './wallet-config.interface';
 

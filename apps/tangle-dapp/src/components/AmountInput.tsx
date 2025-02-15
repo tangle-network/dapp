@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config/constants/tangle';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { Button, Input } from '@webb-tools/webb-ui-components';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config/constants/tangle';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { Button, Input } from '@tangle-network/ui-components';
 import { FC, ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 

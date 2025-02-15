@@ -14,9 +14,9 @@ import {
   ExtractAbiFunctionNames,
   PrecompileAddress,
 } from '../constants/evmPrecompiles';
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
-import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 export type AgnosticTxOptions<
   Abi extends AbiFunction[],
@@ -88,7 +88,7 @@ function useAgnosticTx<
     txHash: substrateTxHash,
     txBlockHash: substrateTxBlockHash,
     successMessage: substrateSuccessMessage,
-  } = useSubstrateTx(substrateTxFactory, getSuccessMessage);
+  } = useSubstrateTx({ name, factory: substrateTxFactory, getSuccessMessage });
 
   const {
     execute: executeEvmPrecompileAbiCall,

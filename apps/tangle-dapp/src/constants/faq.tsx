@@ -1,5 +1,5 @@
-import { TESTNET_LEADERBOARD_URL } from '@webb-tools/webb-ui-components/constants';
-import type { FAQItem } from '@webb-tools/webb-ui-components/containers/FAQSection';
+import { TESTNET_LEADERBOARD_URL } from '@tangle-network/ui-components/constants';
+import type { FAQItem } from '@tangle-network/ui-components/containers/FAQSection';
 
 const EDGEWARE_URL = 'https://www.edgeware.io/';
 

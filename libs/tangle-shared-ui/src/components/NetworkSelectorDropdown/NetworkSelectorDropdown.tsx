@@ -1,15 +1,15 @@
-import { ChainIcon, StatusIndicator } from '@webb-tools/icons';
+import { ChainIcon, StatusIndicator } from '@tangle-network/icons';
 import {
   DropdownMenuItem,
   InfoIconWithTooltip,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import {
   Network,
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
-} from '@webb-tools/webb-ui-components/constants/networks';
+} from '@tangle-network/ui-components/constants/networks';
 import { FC, ReactNode, useCallback } from 'react';
 
 import CustomRpcEndpointInput from './CustomRpcEndpointInput';

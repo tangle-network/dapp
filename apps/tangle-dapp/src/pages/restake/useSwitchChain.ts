@@ -1,7 +1,7 @@
-import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
+import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
+import chainsPopulated from '@tangle-network/dapp-config/chains/chainsPopulated';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { useCallback } from 'react';
 import chainToNetwork from '../../utils/chainToNetwork';
 

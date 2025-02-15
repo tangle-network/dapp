@@ -1,4 +1,4 @@
-import { TokenIcon } from '@webb-tools/icons';
+import { TokenIcon } from '@tangle-network/icons';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

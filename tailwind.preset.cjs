@@ -250,8 +250,7 @@ const preset = {
       keyframes,
       animation,
       boxShadow: {
-        'webb-lg': '0px 8px 50px 0px rgba(0, 0, 0, 0.2)',
-        'webb-lg-dark': '0px 8px 50px 0px rgba(0, 0, 0, 0.1)',
+        tangle: 'var(--tangle-shadow)',
       },
       screens: {
         xs: '475px',

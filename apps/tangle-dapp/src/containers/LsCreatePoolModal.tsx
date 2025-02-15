@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import {
   Alert,
   isValidAddress,
@@ -11,7 +11,7 @@ import {
   ModalFooterActions,
   ModalHeader,
   TANGLE_DOCS_LS_CREATE_POOL_URL,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 import AddressInput from '../components/AddressInput';

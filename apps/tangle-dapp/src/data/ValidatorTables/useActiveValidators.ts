@@ -1,4 +1,4 @@
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 
@@ -15,6 +15,7 @@ const useActiveValidators = () => {
       return validators.pipe(
         map((validators) => {
           const validatorAddresses = Array.from(validators || []);
+
           return validatorAddresses.length > 0 ? validatorAddresses : null;
         }),
       );

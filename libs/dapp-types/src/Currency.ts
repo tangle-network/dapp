@@ -1,4 +1,4 @@
-// Copyright 2024 @webb-tools/
+// Copyright 2025 Tangle Network
 // SPDX-License-Identifier: Apache-2.0
 
 // The CurrencyType distinguishes how to interact with a particular currency in terms of
@@ -9,8 +9,8 @@ export enum CurrencyType {
   ORML,
 }
 
-// The CurrencyRole distinguishes how a currency may interact in the webb application
-// - Wrappable refers to a currency that may be converted into a `Governable` token (i.e. a `webbToken`)
+// The CurrencyRole distinguishes how a currency may interact in application
+// - Wrappable refers to a currency that may be converted into a `Governable` token
 // - Governable refers to a currency that supports the wrapping of `Wrappable` currencies,
 //   which can be modified from governance.
 export enum CurrencyRole {
