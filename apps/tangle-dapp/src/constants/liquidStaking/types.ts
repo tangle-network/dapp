@@ -1,13 +1,13 @@
 import { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import {
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
   Network as TangleNetwork,
-} from '@webb-tools/webb-ui-components/constants/networks';
-import type { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+} from '@tangle-network/ui-components/constants/networks';
+import type { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 export type LsTangleNetworkId =
   | LsProtocolId.TANGLE_MAINNET
@@ -59,7 +59,7 @@ export type LsCardSearchParams = {
   protocolId: LsProtocolId;
 };
 
-// TODO: These should be moved/managed in libs/webb-ui-components/src/constants/networks.ts and not here. This is just a temporary solution.
+// TODO: These should be moved/managed in libs/ui-components/src/constants/networks.ts and not here. This is just a temporary solution.
 export type Network = {
   name: string;
   endpoint: string;

@@ -1,6 +1,6 @@
-import type { WalletConfig } from '@webb-tools/dapp-config';
-import type { WebbError } from '@webb-tools/dapp-types/WebbError';
-import { Maybe } from '@webb-tools/dapp-types/utils/types';
+import type { WalletConfig } from '@tangle-network/dapp-config';
+import type { WebbError } from '@tangle-network/dapp-types/WebbError';
+import { Maybe } from '@tangle-network/dapp-types/utils/types';
 import { BehaviorSubject } from 'rxjs';
 
 /**

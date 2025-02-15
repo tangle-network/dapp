@@ -1,4 +1,4 @@
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
+import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
 import assert from 'assert';
 import { useCallback } from 'react';
 import {
@@ -8,8 +8,8 @@ import {
 } from 'viem';
 import { ReadContractReturnType } from 'wagmi/actions';
 
-import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
-import useViemPublicClient from '@webb-tools/tangle-shared-ui/hooks/useViemPublicClient';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
+import useViemPublicClient from '@tangle-network/tangle-shared-ui/hooks/useViemPublicClient';
 
 export type ContractReadOptions<
   Abi extends ViemAbi,

@@ -1,7 +1,7 @@
 import { Option } from '@polkadot/types';
 import { SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
-import { getAccountInfo } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
-import { useWebbUI } from '@webb-tools/webb-ui-components/hooks/useWebbUI';
+import { getAccountInfo } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
+import { useUIContext } from '@tangle-network/ui-components/hooks/useUIContext';
 import { useCallback, useEffect, useState } from 'react';
 
 import useCurrentEra from '../../data/staking/useCurrentEra';
@@ -11,7 +11,7 @@ export default function useValidatorInfoCard(
   rpcEndpoint: string,
   validatorAddress: string,
 ) {
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
   const { result: currentEra } = useCurrentEra();
 
   const [name, setName] = useState<string | null>(null);

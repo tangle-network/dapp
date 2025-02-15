@@ -6,16 +6,16 @@ import {
 } from '@polkadot/types/lookup';
 import { BN_ZERO } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import { useWebContext } from '@tangle-network/api-provider-environment';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import useLocalStorage, {
   LocalStorageKey,
-} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
-import { Payout } from '@webb-tools/tangle-shared-ui/types';
-import { getApiPromise as getPolkadotApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
+} from '@tangle-network/tangle-shared-ui/hooks/useLocalStorage';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import { Payout } from '@tangle-network/tangle-shared-ui/types';
+import { getApiPromise as getPolkadotApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import useEraTotalRewards from './useEraTotalRewards';

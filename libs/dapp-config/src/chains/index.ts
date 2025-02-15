@@ -1,4 +1,4 @@
-import { EVMChainId } from '@webb-tools/dapp-types';
+import { EVMChainId } from '@tangle-network/dapp-types';
 
 export * from './chain-config';
 export * from './chain-config.interface';

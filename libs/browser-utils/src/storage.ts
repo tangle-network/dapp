@@ -1,9 +1,9 @@
 'use client';
 
-// Copyright 2024 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
-import { Storage } from '@webb-tools/dapp-types';
+import { Storage } from '@tangle-network/dapp-types';
 import isBrowser from './isBrowser';
 
 export type NetworkStore = {

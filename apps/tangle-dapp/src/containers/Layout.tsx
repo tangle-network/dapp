@@ -1,12 +1,12 @@
-import { Footer } from '@webb-tools/webb-ui-components';
+import { Footer } from '@tangle-network/ui-components';
 import {
   bottomLinks,
   TANGLE_PRIVACY_POLICY_URL,
   TANGLE_SOCIAL_URLS_RECORD,
   TANGLE_TERMS_OF_SERVICE_URL,
-  WEBB_AVAILABLE_SOCIALS,
-} from '@webb-tools/webb-ui-components/constants';
-import { useLayoutBgClassName } from '@webb-tools/tangle-shared-ui/hooks/useLayoutBgClassName';
+  TANGLE_AVAILABLE_SOCIALS,
+} from '@tangle-network/ui-components/constants';
+import { useLayoutBgClassName } from '@tangle-network/tangle-shared-ui/hooks/useLayoutBgClassName';
 import { type FC, type PropsWithChildren } from 'react';
 
 import { MobileSidebar, Sidebar } from '../components';
@@ -15,10 +15,8 @@ import TopNavigationPanel from './TopNavigationPanel';
 
 import BridgeTxQueueDropdown from '../components/bridge/BridgeTxQueueDropdown';
 
-// Some specific overrides for the social links for use in the
-// footer in Tangle dApp, since it defaults to the Webb socials.
 const SOCIAL_LINK_OVERRIDES: Partial<
-  Record<(typeof WEBB_AVAILABLE_SOCIALS)[number], string>
+  Record<(typeof TANGLE_AVAILABLE_SOCIALS)[number], string>
 > = TANGLE_SOCIAL_URLS_RECORD;
 
 const BOTTOM_LINK_OVERRIDES: Partial<

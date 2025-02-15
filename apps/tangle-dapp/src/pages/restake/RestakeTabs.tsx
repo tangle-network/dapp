@@ -1,4 +1,4 @@
-import type { PropsOf } from '@webb-tools/webb-ui-components/types';
+import type { PropsOf } from '@tangle-network/ui-components/types';
 import { FC, useMemo } from 'react';
 import { useLocation } from 'react-router';
 import { twMerge } from 'tailwind-merge';

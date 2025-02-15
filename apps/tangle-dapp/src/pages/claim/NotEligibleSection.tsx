@@ -1,9 +1,9 @@
-import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
-import { Button } from '@webb-tools/webb-ui-components';
+import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
+import { Button } from '@tangle-network/ui-components';
 import type { FC } from 'react';
 
 import ClaimingAccountInput from '../../components/claims/ClaimingAccountInput';
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 const NotEligibleSection: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();

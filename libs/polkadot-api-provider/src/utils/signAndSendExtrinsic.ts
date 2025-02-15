@@ -1,7 +1,7 @@
 import type { AddressOrPair, SubmittableExtrinsic } from '@polkadot/api/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import { HexString } from '@polkadot/util/types';
-import { TxEventHandlers } from '@webb-tools/abstract-api-provider';
+import { TxEventHandlers } from '@tangle-network/abstract-api-provider';
 import noop from 'lodash/noop';
 
 export default function signAndSendExtrinsic<

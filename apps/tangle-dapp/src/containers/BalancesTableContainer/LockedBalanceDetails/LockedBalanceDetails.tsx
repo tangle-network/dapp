@@ -1,7 +1,7 @@
 import { BN_ZERO, formatDecimal } from '@polkadot/util';
-import { ArrowRightUp } from '@webb-tools/icons';
-import { Chip, Typography } from '@webb-tools/webb-ui-components';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+import { ArrowRightUp } from '@tangle-network/icons';
+import { Chip, Typography } from '@tangle-network/ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { FC, useMemo } from 'react';
 
 import { SubstrateLockId } from '../../../constants';

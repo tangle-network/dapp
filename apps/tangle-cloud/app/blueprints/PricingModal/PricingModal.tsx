@@ -1,18 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TabsContent } from '@radix-ui/react-tabs';
-import { Blueprint } from '@webb-tools/tangle-shared-ui/types/blueprint';
-import { Alert } from '@webb-tools/webb-ui-components/components/Alert';
-import { Form } from '@webb-tools/webb-ui-components/components/form';
+import { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
+import { Alert } from '@tangle-network/ui-components/components/Alert';
+import { Form } from '@tangle-network/ui-components/components/form';
 import {
   ModalBody,
   ModalContent,
   ModalHeader,
-} from '@webb-tools/webb-ui-components/components/Modal';
+} from '@tangle-network/ui-components/components/Modal';
 import {
   TabsListWithAnimation,
   TabsRoot,
   TabsTriggerWithAnimation,
-} from '@webb-tools/webb-ui-components/components/Tabs';
+} from '@tangle-network/ui-components/components/Tabs';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import FormActions from './FormActions';

@@ -1,5 +1,5 @@
-import Button from '@webb-tools/webb-ui-components/components/buttons/Button';
-import { ModalFooter } from '@webb-tools/webb-ui-components/components/Modal';
+import Button from '@tangle-network/ui-components/components/buttons/Button';
+import { ModalFooter } from '@tangle-network/ui-components/components/Modal';
 import { OPERATOR_PRICING_URL } from '../../../constants/links';
 
 export default function FormActions() {

@@ -3,7 +3,7 @@
 import { WsProvider } from '@polkadot/api';
 import { ApiPromise } from '@polkadot/api/promise';
 import { ApiRx } from '@polkadot/api/rx';
-import type { Maybe } from '@webb-tools/dapp-types/utils/types';
+import type { Maybe } from '@tangle-network/dapp-types/utils/types';
 import noop from 'lodash/noop';
 import { createContext, type Dispatch, type SetStateAction } from 'react';
 import { Prettify } from 'viem/chains';

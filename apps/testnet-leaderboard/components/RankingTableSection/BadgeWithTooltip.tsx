@@ -2,8 +2,8 @@ import {
   Tooltip,
   TooltipBody,
   TooltipTrigger,
-} from '@webb-tools/webb-ui-components/components/Tooltip';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+} from '@tangle-network/ui-components/components/Tooltip';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import cx from 'classnames';
 import capitalize from 'lodash/capitalize';
 import { FC } from 'react';

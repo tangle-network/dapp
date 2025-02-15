@@ -1,4 +1,4 @@
-import { ChevronDown } from '@webb-tools/icons';
+import { ChevronDown } from '@tangle-network/icons';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

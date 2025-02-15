@@ -4,7 +4,7 @@ import {
   ModalBody,
   ModalContent,
   ModalHeader,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC } from 'react';
 import LockedBalancesTable from './LockedBalancesTable';
 

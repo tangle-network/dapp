@@ -1,5 +1,5 @@
-import { LockUnlockLineIcon, SendPlanLineIcon } from '@webb-tools/icons';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { LockUnlockLineIcon, SendPlanLineIcon } from '@tangle-network/icons';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { FC, useState } from 'react';
 
 import TransferTxModal from '../../containers/TransferTxModal';
@@ -10,7 +10,7 @@ import { TxStatus } from '../../hooks/useSubstrateTx';
 import formatTangleBalance from '../../utils/formatTangleBalance';
 import ActionItem from './ActionItem';
 import WithdrawEvmBalanceAction from './WithdrawEvmBalanceAction';
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 const Actions: FC = () => {
   const { nativeTokenSymbol } = useNetworkStore();

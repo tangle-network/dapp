@@ -1,4 +1,4 @@
-import ConnectWalletButton from '@webb-tools/tangle-shared-ui/components/ConnectWalletButton';
+import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
 import { type FC } from 'react';
 
 import NetworkSelectionButton from '../components/NetworkSelectorButton';

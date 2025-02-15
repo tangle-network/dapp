@@ -1,5 +1,5 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { FC, useCallback } from 'react';
 
 import useVestingInfo from '../../../data/vesting/useVestingInfo';

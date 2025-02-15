@@ -1,0 +1,73 @@
+{
+  "name": "ui-components",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/ui-components/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "outputs": [
+        "{projectRoot}/{options.outDir}",
+        "{workspaceRoot}/dist/apps/tangle-dapp",
+        "{workspaceRoot}/dist/apps/testnet-leaderboard/.next"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "outDir": "../../dist/libs/ui-components"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
+      }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/scripts/publish.mjs ui-components {args.ver} {args.tag}"
+      },
+      "dependsOn": ["build"]
+    },
+    "test": {
+      "outputs": [
+        "{projectRoot}/{options.coverage.reportsDirectory}",
+        "{workspaceRoot}/coverage/libs/ui-components"
+      ],
+      "options": {
+        "coverage.reportsDirectory": "../../coverage/libs/ui-components"
+      }
+    },
+    "storybook": {
+      "options": {
+        "port": 4400,
+        "config-dir": ".storybook"
+      },
+      "configurations": {
+        "ci": {
+          "args": ["--quiet"]
+        }
+      }
+    },
+    "build-storybook": {
+      "outputs": [
+        "{projectRoot}/{options.output-dir}",
+        "{projectRoot}/storybook-static",
+        "{options.output-dir}",
+        "{options.outputDir}",
+        "{options.o}"
+      ],
+      "options": {
+        "config-dir": ".storybook",
+        "output-dir": "../../dist/storybook/ui-components"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    }
+  }
+}

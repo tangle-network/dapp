@@ -1,11 +1,11 @@
-import GlobalLine from '@webb-tools/icons/GlobalLine';
-import { Mail } from '@webb-tools/icons/Mail';
-import MapPinLine from '@webb-tools/icons/MapPinLine';
-import { TwitterFill } from '@webb-tools/icons/TwitterFill';
-import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
-import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
-import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+import GlobalLine from '@tangle-network/icons/GlobalLine';
+import { Mail } from '@tangle-network/icons/Mail';
+import MapPinLine from '@tangle-network/icons/MapPinLine';
+import { TwitterFill } from '@tangle-network/icons/TwitterFill';
+import { Avatar } from '@tangle-network/ui-components/components/Avatar';
+import { Chip } from '@tangle-network/ui-components/components/Chip';
+import { KeyValueWithButton } from '@tangle-network/ui-components/components/KeyValueWithButton';
+import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import { cloneElement, ReactElement } from 'react';
 
 import RestakeDetailCard from './index';

@@ -15,7 +15,7 @@
       "inputs": [
         "default",
         "^production",
-        "{workspaceRoot}/libs/webb-ui-components/.storybook/**/*",
+        "{workspaceRoot}/libs/ui-components/.storybook/**/*",
         "{workspaceRoot}/.storybook/**/*",
         "{projectRoot}/.storybook/**/*",
         "{projectRoot}/tsconfig.storybook.json"
@@ -71,7 +71,7 @@
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/jest.config.[jt]s",
-      "!{projectRoot}/libs/webb-ui-components/.storybook/**/*",
+      "!{projectRoot}/libs/ui-components/.storybook/**/*",
       "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
       "!{projectRoot}/.storybook/**/*",
       "!{projectRoot}/src/test-setup.[jt]s",

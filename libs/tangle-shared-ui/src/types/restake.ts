@@ -6,7 +6,7 @@ import {
   PalletMultiAssetDelegationOperatorOperatorStatus,
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { RestakeAssetId } from '../types';
 import { TransformEnum } from './utils';
 

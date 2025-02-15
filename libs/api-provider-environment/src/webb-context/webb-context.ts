@@ -3,9 +3,13 @@
 import type {
   Account,
   WebbApiProvider,
-} from '@webb-tools/abstract-api-provider';
-import { ApiConfig, type Chain, type Wallet } from '@webb-tools/dapp-config';
-import type { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
+} from '@tangle-network/abstract-api-provider';
+import {
+  ApiConfig,
+  type Chain,
+  type Wallet,
+} from '@tangle-network/dapp-config';
+import type { Maybe, Nullable } from '@tangle-network/dapp-types/utils/types';
 import { AppEvent, type TAppEvent } from '../app-event';
 import { createContext, useContext } from 'react';
 

@@ -1,13 +1,13 @@
-import { PrimitiveFieldType } from '@webb-tools/tangle-shared-ui/types/blueprint';
-import { Label } from '@webb-tools/webb-ui-components/components/Label';
+import { PrimitiveFieldType } from '@tangle-network/tangle-shared-ui/types/blueprint';
+import { Label } from '@tangle-network/ui-components/components/Label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@webb-tools/webb-ui-components/components/select';
-import { TextField } from '@webb-tools/webb-ui-components/components/TextField';
+} from '@tangle-network/ui-components/components/select';
+import { TextField } from '@tangle-network/ui-components/components/TextField';
 import { useEffect } from 'react';
 
 export interface FieldTypeInputProps {

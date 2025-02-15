@@ -1,10 +1,10 @@
-import useRestakeOperatorMap from '@webb-tools/tangle-shared-ui/data/restake/useRestakeOperatorMap';
-import { isSubstrateAddress } from '@webb-tools/webb-ui-components';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
+import { isSubstrateAddress } from '@tangle-network/ui-components';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { ComponentProps, useMemo } from 'react';
 
-import useRestakeDelegatorInfo from '@webb-tools/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import useRestakeTVL from '@webb-tools/tangle-shared-ui/data/restake/useRestakeTVL';
+import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
+import useRestakeTVL from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTVL';
 import { useParams } from 'react-router';
 import useOperatorBlueprints from '../../../../data/blueprints/useOperatorBlueprints';
 import OperatorInfoCard from './OperatorInfoCard';

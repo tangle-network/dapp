@@ -27,7 +27,7 @@ import type {
   TestFetcher,
   WasmGadget,
   WasmRuntime,
-} from '@webb-tools/tangle-substrate-types';
+} from '@tangle-network/tangle-substrate-types';
 import { PrimitiveFieldType } from '../../../types/blueprint';
 
 export function toPrimitiveBlueprint({

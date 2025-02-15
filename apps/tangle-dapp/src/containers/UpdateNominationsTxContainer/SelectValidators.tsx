@@ -1,4 +1,4 @@
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { Dispatch, type FC, SetStateAction, memo } from 'react';
 
 import ValidatorSelectionTable from '../../components/ValidatorSelectionTable';

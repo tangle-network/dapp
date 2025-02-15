@@ -1,4 +1,4 @@
-import { EVMChainId } from '@webb-tools/dapp-types/ChainId';
+import { EVMChainId } from '@tangle-network/dapp-types/ChainId';
 import { defineChain } from 'viem';
 
 import { DEFAULT_EVM_CURRENCY } from '../../../constants';

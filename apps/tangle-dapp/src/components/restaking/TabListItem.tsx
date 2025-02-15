@@ -1,4 +1,4 @@
-import type { PropsOf } from '@webb-tools/webb-ui-components/types';
+import type { PropsOf } from '@tangle-network/ui-components/types';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router';
 import { ComponentProps } from 'react';

@@ -1,4 +1,4 @@
-import { ManagedWallet } from '@webb-tools/dapp-config/wallets';
+import { ManagedWallet } from '@tangle-network/dapp-config/wallets';
 import { useEffect, useState } from 'react';
 import { useWebContext } from '../webb-context';
 

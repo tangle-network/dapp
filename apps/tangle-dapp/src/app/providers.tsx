@@ -2,16 +2,16 @@ import {
   AppEvent,
   OFACFilterProvider,
   WebbProvider,
-} from '@webb-tools/api-provider-environment';
-import { WebbUIProvider } from '@webb-tools/webb-ui-components';
+} from '@tangle-network/api-provider-environment';
+import { UIProvider } from '@tangle-network/ui-components';
 import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
 import { z } from 'zod';
 
 import HyperlaneWarpContext from '../context/bridge/HyperlaneWarpContext';
 import BridgeTxQueueProvider from '../context/bridge/BridgeTxQueueContext/BridgeTxQueueProvider';
-import PolkadotApiProvider from '@webb-tools/tangle-shared-ui/context/PolkadotApiProvider';
-import { RestakeContextProvider } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
+import PolkadotApiProvider from '@tangle-network/tangle-shared-ui/context/PolkadotApiProvider';
+import { RestakeContextProvider } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 
 const appEvent = new AppEvent();
 
@@ -38,7 +38,7 @@ const Providers = ({
   } = envSchema.parse(process.env);
 
   return (
-    <WebbUIProvider hasErrorBoundary>
+    <UIProvider hasErrorBoundary>
       <WebbProvider
         appEvent={appEvent}
         applicationName="Tangle dApp"
@@ -59,7 +59,7 @@ const Providers = ({
           </HyperlaneWarpContext>
         </OFACFilterProvider>
       </WebbProvider>
-    </WebbUIProvider>
+    </UIProvider>
   );
 };
 

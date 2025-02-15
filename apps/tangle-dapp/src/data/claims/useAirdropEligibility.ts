@@ -1,10 +1,10 @@
 import { Option, u128 } from '@polkadot/types';
 import { PalletAirdropClaimsStatementKind } from '@polkadot/types/lookup';
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { useCallback, useEffect, useState } from 'react';
 
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 const useAirdropEligibility = () => {
   const [isEligible, setIsEligible] = useState<boolean | null>(null);

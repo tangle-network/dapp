@@ -1,8 +1,8 @@
-// Copyright 2024 Webb Technologies Inc.
+// Copyright 2025 Tangle Network
 // SPDX-License-Identifier: Apache-2.0
-// This file has been modified by Webb Technologies Inc.
+// This file has been modified by Tangle Network
 
-import { EventBus } from '@webb-tools/dapp-types/EventBus';
+import { EventBus } from '@tangle-network/dapp-types/EventBus';
 
 export type LogEvent = {
   log: {

@@ -1,15 +1,12 @@
-'use client';
-
-import { create } from 'zustand';
-
+import { BN } from '@polkadot/util';
+import { HexString } from '@polkadot/util/types';
+import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@webb-tools/webb-ui-components/types/address';
-import { HexString } from '@polkadot/util/types';
-import { NetworkId } from '@webb-tools/webb-ui-components/constants/networks';
+} from '@tangle-network/ui-components/types/address';
+import { create } from 'zustand';
 import { TxName } from '../constants';
-import { BN } from '@polkadot/util';
 
 type HistoryTxStatus = 'pending' | 'inblock' | 'finalized' | 'failed';
 

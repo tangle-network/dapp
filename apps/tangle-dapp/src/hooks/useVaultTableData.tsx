@@ -1,18 +1,18 @@
 import { BN } from '@polkadot/util';
-import { useRestakeContext } from '@webb-tools/tangle-shared-ui/context/RestakeContext';
-import useRestakeAssetsTvl from '@webb-tools/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
+import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
+import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import {
   DelegatorInfo,
   OperatorMetadata,
-} from '@webb-tools/tangle-shared-ui/types/restake';
+} from '@tangle-network/tangle-shared-ui/types/restake';
 import { ComponentProps, useMemo } from 'react';
 import VaultAssetsTable from '../components/tables/VaultAssets';
 import { VaultAssetData } from '../components/tables/VaultAssets/types';
 import VaultsTable from '../components/tables/Vaults';
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
 import calculateVaults from '../utils/calculateVaults';
-import useVaultRewards from '@webb-tools/tangle-shared-ui/data/rewards/useVaultRewards';
+import useVaultRewards from '@tangle-network/tangle-shared-ui/data/rewards/useVaultRewards';
 
 type UseVaultTableDataParams = {
   operatorData?: OperatorMetadata;

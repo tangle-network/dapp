@@ -1,11 +1,11 @@
-import { EVMTokenBridgeEnum } from '@webb-tools/evm-contract-metadata';
-import { StatusVariant } from '@webb-tools/icons/StatusIndicator/types';
+import { EVMTokenBridgeEnum } from '@tangle-network/evm-contract-metadata';
+import { StatusVariant } from '@tangle-network/icons/StatusIndicator/types';
 import {
   BridgeQueueTxItem,
   BridgeTxState,
-} from '@webb-tools/tangle-shared-ui/types';
-import { TxProgressor } from '@webb-tools/webb-ui-components/components/TxProgressor';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+} from '@tangle-network/tangle-shared-ui/types';
+import { TxProgressor } from '@tangle-network/ui-components/components/TxProgressor';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { Decimal } from 'decimal.js';
 import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -13,8 +13,8 @@ import { twMerge } from 'tailwind-merge';
 import { useBridgeTxQueue } from '../../context/bridge/BridgeTxQueueContext';
 import useLocalStorage, {
   LocalStorageKey,
-} from '@webb-tools/tangle-shared-ui/hooks/useLocalStorage';
-import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
+} from '@tangle-network/tangle-shared-ui/hooks/useLocalStorage';
+import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 
 interface BridgeTxQueueItemProps {
   tx: BridgeQueueTxItem;

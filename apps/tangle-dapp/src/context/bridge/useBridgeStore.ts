@@ -1,13 +1,13 @@
 import { BN } from '@polkadot/util';
-import { chainsConfig } from '@webb-tools/dapp-config/chains';
-import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
+import { chainsConfig } from '@tangle-network/dapp-config/chains';
+import { ChainConfig } from '@tangle-network/dapp-config/chains/chain-config.interface';
+import { PresetTypedChainId } from '@tangle-network/dapp-types';
+import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import { Decimal } from 'decimal.js';
 import { create } from 'zustand';
 
-import { BridgeToken } from '@webb-tools/tangle-shared-ui/types';
-import { BRIDGE_CHAINS } from '@webb-tools/tangle-shared-ui/constants/bridge';
+import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
+import { BRIDGE_CHAINS } from '@tangle-network/tangle-shared-ui/constants/bridge';
 
 const sortChainOptions = (chains: ChainConfig[]) => {
   return chains.sort((a, b) => a.name.localeCompare(b.name));

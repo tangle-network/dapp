@@ -1,5 +1,5 @@
-import { chainsConfig } from '@webb-tools/dapp-config/chains';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
+import { chainsConfig } from '@tangle-network/dapp-config/chains';
+import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { Decimal } from 'decimal.js';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
@@ -9,13 +9,13 @@ import {
   BridgeChainBalances,
   BridgeToken,
   BridgeTokenWithBalance,
-} from '@webb-tools/tangle-shared-ui/types';
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
-import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
+} from '@tangle-network/tangle-shared-ui/types';
+import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
-import { isSolanaAddress } from '@webb-tools/webb-ui-components';
+import { isSolanaAddress } from '@tangle-network/ui-components';
 import assert from 'assert';
-import { BRIDGE_TOKENS } from '@webb-tools/tangle-shared-ui/constants/bridge';
+import { BRIDGE_TOKENS } from '@tangle-network/tangle-shared-ui/constants/bridge';
 
 export const fetchEvmTokenBalance = async (
   accountAddress: string,

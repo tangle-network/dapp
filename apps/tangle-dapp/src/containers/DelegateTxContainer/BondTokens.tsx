@@ -4,7 +4,7 @@ import {
   DropdownField,
   InputField,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { type FC, useCallback } from 'react';
 import { z } from 'zod';
 
@@ -14,7 +14,7 @@ import {
   STAKING_PAYEE_VALUE_TO_TEXT_MAP,
 } from '../../constants';
 import useBalances from '../../data/balances/useBalances';
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import { StakingRewardsDestinationDisplayText } from '../../types/index';
 import { BondTokensProps } from './types';
 

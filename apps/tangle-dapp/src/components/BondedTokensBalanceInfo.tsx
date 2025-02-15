@@ -1,6 +1,6 @@
-import { LockUnlockLineIcon, TimeLineIcon } from '@webb-tools/icons';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import { Typography } from '@webb-tools/webb-ui-components';
+import { LockUnlockLineIcon, TimeLineIcon } from '@tangle-network/icons';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { Typography } from '@tangle-network/ui-components';
 import { type FC } from 'react';
 
 import formatTangleBalance from '../utils/formatTangleBalance';

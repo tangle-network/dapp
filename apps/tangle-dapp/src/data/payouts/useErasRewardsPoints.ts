@@ -1,5 +1,5 @@
 import type { ApiRx } from '@polkadot/api';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { map } from 'rxjs';
 
 /**

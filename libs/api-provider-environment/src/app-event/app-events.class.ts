@@ -1,7 +1,7 @@
-import { Account } from '@webb-tools/abstract-api-provider';
-import { EventBus } from '@webb-tools/dapp-types/EventBus';
-import { Chain, Wallet } from '@webb-tools/dapp-config';
-import { TypedChainId, WalletId, WebbError } from '@webb-tools/dapp-types';
+import { Account } from '@tangle-network/abstract-api-provider';
+import { EventBus } from '@tangle-network/dapp-types/EventBus';
+import { Chain, Wallet } from '@tangle-network/dapp-config';
+import { TypedChainId, WalletId, WebbError } from '@tangle-network/dapp-types';
 
 type WalletConnectionStatus = 'idle' | 'loading' | 'sucess' | 'failed';
 

@@ -1,7 +1,7 @@
 import {
   BridgeQueueTxItem,
   BridgeTxState,
-} from '@webb-tools/tangle-shared-ui/types';
+} from '@tangle-network/tangle-shared-ui/types';
 import { createContext } from 'react';
 
 interface BridgeTxQueueContextProps {

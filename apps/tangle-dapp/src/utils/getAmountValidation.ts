@@ -1,5 +1,5 @@
-import { ZERO_BIG_INT } from '@webb-tools/dapp-config/constants';
-import safeParseUnits from '@webb-tools/tangle-shared-ui/utils/safeParseUnits';
+import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
+import safeParseUnits from '@tangle-network/tangle-shared-ui/utils/safeParseUnits';
 import { Decimal } from 'decimal.js';
 
 /**

@@ -1,5 +1,5 @@
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import assert from 'assert';
 import { useMemo } from 'react';
 

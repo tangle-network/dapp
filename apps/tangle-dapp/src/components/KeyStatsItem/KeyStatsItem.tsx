@@ -3,11 +3,11 @@ import {
   notificationApi,
   SkeletonLoader,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 import KeyStatsItemVariant from './KeyStatsItemVariant';
-import { isPrimitive } from '@webb-tools/dapp-types';
+import { isPrimitive } from '@tangle-network/dapp-types';
 
 export type KeyStatsItemProps = {
   title: string;

@@ -1,18 +1,17 @@
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/outline';
-import { useConnectWallet } from '@webb-tools/api-provider-environment/ConnectWallet';
-import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
-import { useActiveChain } from '@webb-tools/api-provider-environment/hooks/useActiveChain';
-import { useActiveWallet } from '@webb-tools/api-provider-environment/hooks/useActiveWallet';
-import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import chainsPopulated from '@webb-tools/dapp-config/chains/chainsPopulated';
-import { PresetTypedChainId } from '@webb-tools/dapp-types';
-import { useShallow } from 'zustand/react/shallow';
+import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
+import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
+import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
+import { useActiveWallet } from '@tangle-network/api-provider-environment/hooks/useActiveWallet';
+import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
+import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
+import chainsPopulated from '@tangle-network/dapp-config/chains/chainsPopulated';
+import { PresetTypedChainId } from '@tangle-network/dapp-types';
+import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
-} from '@webb-tools/evm-contract-metadata';
-import { calculateTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
+} from '@tangle-network/evm-contract-metadata';
 import {
   AmountFormatStyle,
   assertEvmAddress,
@@ -26,38 +25,39 @@ import {
   ModalContent,
   Typography,
   useModal,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { Decimal } from 'decimal.js';
-import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatEther } from 'viem';
+import { useShallow } from 'zustand/react/shallow';
 
+import { BN, BN_ZERO } from '@polkadot/util';
+import { WalletFillIcon } from '@tangle-network/icons';
+import { ROUTER_NATIVE_TOKEN_ADDRESS } from '@tangle-network/tangle-shared-ui/constants/bridge';
+import { BridgeTokenWithBalance } from '@tangle-network/tangle-shared-ui/types';
+import convertDecimalToBN from '@tangle-network/tangle-shared-ui/utils/convertDecimalToBn';
+import { useBalance } from 'wagmi';
 import AddressInput from '../../components/AddressInput';
-import { AddressType } from '../../constants';
 import AmountInput from '../../components/AmountInput';
 import { BridgeConfirmationModal } from '../../components/bridge/BridgeConfirmationModal';
 import { FeeDetail, FeeDetailProps } from '../../components/bridge/FeeDetail';
+import ErrorMessage from '../../components/ErrorMessage';
 import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
 import { ChainList } from '../../components/Lists/ChainList';
+import { AddressType } from '../../constants';
 import useBridgeStore from '../../context/bridge/useBridgeStore';
 import useBalances from '../../data/balances/useBalances';
-import { BridgeTokenWithBalance } from '@webb-tools/tangle-shared-ui/types';
-import useRouterQuote, {
-  RouterQuoteParams,
-} from '../../data/bridge/useRouterQuote';
+import { useBridgeEvmBalances } from '../../data/bridge/useBridgeEvmBalances';
 import {
   HyperlaneQuoteProps,
   useHyperlaneQuote,
 } from '../../data/bridge/useHyperlaneQuote';
+import useRouterQuote, {
+  RouterQuoteParams,
+} from '../../data/bridge/useRouterQuote';
 import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
-import ErrorMessage from '../../components/ErrorMessage';
-import { WalletFillIcon } from '@webb-tools/icons';
-import { useBalance } from 'wagmi';
-import { useBridgeEvmBalances } from '../../data/bridge/useBridgeEvmBalances';
-import { ROUTER_NATIVE_TOKEN_ADDRESS } from '@webb-tools/tangle-shared-ui/constants/bridge';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
-import { BN, BN_ZERO } from '@polkadot/util';
-import convertDecimalToBN from '@webb-tools/tangle-shared-ui/utils/convertDecimalToBn';
 
 type Props = {
   className?: string;

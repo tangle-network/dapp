@@ -1,5 +1,5 @@
-import type { Chain } from '@webb-tools/dapp-config';
-import { Maybe, Nullable } from '@webb-tools/dapp-types/utils/types';
+import type { Chain } from '@tangle-network/dapp-config';
+import { Maybe, Nullable } from '@tangle-network/dapp-types/utils/types';
 import { useObservableState } from 'observable-hooks';
 import { BehaviorSubject } from 'rxjs';
 

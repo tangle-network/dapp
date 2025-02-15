@@ -1,7 +1,7 @@
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
-import { TextField } from '@webb-tools/webb-ui-components/components/TextField';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { Avatar } from '@tangle-network/ui-components/components/Avatar';
+import { TextField } from '@tangle-network/ui-components/components/TextField';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import type { FC } from 'react';
 
 type Props = {

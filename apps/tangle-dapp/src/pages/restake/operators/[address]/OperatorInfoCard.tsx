@@ -1,22 +1,22 @@
 import { isHex } from '@polkadot/util';
-import isValidUrl from '@webb-tools/dapp-types/utils/isValidUrl';
-import { ExternalLinkLine } from '@webb-tools/icons/ExternalLinkLine';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import isValidUrl from '@tangle-network/dapp-types/utils/isValidUrl';
+import { ExternalLinkLine } from '@tangle-network/icons/ExternalLinkLine';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import type {
   DelegatorInfo,
   OperatorMap,
   OperatorMetadata,
-} from '@webb-tools/tangle-shared-ui/types/restake';
-import getTVLToDisplay from '@webb-tools/tangle-shared-ui/utils/getTVLToDisplay';
-import { getAccountInfo } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
-import { Card, CardVariant } from '@webb-tools/webb-ui-components';
-import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
-import InfoIconWithTooltip from '@webb-tools/webb-ui-components/components/IconWithTooltip/InfoIconWithTooltip';
-import { KeyValueWithButton } from '@webb-tools/webb-ui-components/components/KeyValueWithButton';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
-import { shortenHex } from '@webb-tools/webb-ui-components/utils/shortenHex';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+} from '@tangle-network/tangle-shared-ui/types/restake';
+import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
+import { getAccountInfo } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
+import { Card, CardVariant } from '@tangle-network/ui-components';
+import { Chip } from '@tangle-network/ui-components/components/Chip';
+import InfoIconWithTooltip from '@tangle-network/ui-components/components/IconWithTooltip/InfoIconWithTooltip';
+import { KeyValueWithButton } from '@tangle-network/ui-components/components/KeyValueWithButton';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
+import { shortenHex } from '@tangle-network/ui-components/utils/shortenHex';
+import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import { type ComponentProps, type FC, type ReactNode, useMemo } from 'react';
 import useSWRImmutable from 'swr/immutable';
 import { twMerge } from 'tailwind-merge';

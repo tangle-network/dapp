@@ -1,4 +1,4 @@
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import {
   InputField,
   Modal,
@@ -6,17 +6,17 @@ import {
   ModalFooterActions,
   ModalHeader,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import { TANGLE_DOCS_STAKING_URL } from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/ui-components';
+import { ScrollArea } from '@tangle-network/ui-components/components/ScrollArea';
+import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/ui-components/constants';
 import { type FC, useCallback, useEffect, useMemo } from 'react';
 
 import usePayoutAllTx, {
   MAX_PAYOUTS_BATCH_SIZE,
 } from '../data/payouts/usePayoutAllTx';
 import { TxStatus } from '../hooks/useSubstrateTx';
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
-import { Payout } from '@webb-tools/tangle-shared-ui/types';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import { Payout } from '@tangle-network/tangle-shared-ui/types';
 
 export type PayoutTxProps = {
   validatorAddress: SubstrateAddress;

@@ -13,7 +13,7 @@ module.exports = {
     ),
     join(
       __dirname,
-      '../../libs/webb-ui-components',
+      '../../libs/ui-components',
       'src/{pages,components}/**/*!(*.stories|*.spec).{ts,tsx,html}',
     ),
     ...createGlobPatternsForDependencies(__dirname),

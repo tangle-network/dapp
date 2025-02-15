@@ -1,11 +1,11 @@
 // This will override global types and provide type definitions for
 // the LST pallet for this file only.
-import '@webb-tools/tangle-restaking-types';
+import '@tangle-network/tangle-restaking-types';
 
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
-import { Button, Card } from '@webb-tools/webb-ui-components';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+import { Button, Card } from '@tangle-network/ui-components';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
@@ -25,9 +25,9 @@ import LsAgnosticBalance from './LsAgnosticBalance';
 import LsInput from './LsInput';
 import UnstakePeriodDetailItem from './UnstakePeriodDetailItem';
 import useLsChangeNetwork from './useLsChangeNetwork';
-import ListModal from '@webb-tools/tangle-shared-ui/components/ListModal';
+import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import LstListItem from '../LstListItem';
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import useLsAgnosticBalance from './useLsAgnosticBalance';
 
 const LsUnstakeCard: FC = () => {

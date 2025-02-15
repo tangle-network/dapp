@@ -1,4 +1,4 @@
-import type { Account } from '@webb-tools/abstract-api-provider';
+import type { Account } from '@tangle-network/abstract-api-provider';
 import { useObservableState } from 'observable-hooks';
 import { BehaviorSubject } from 'rxjs';
 

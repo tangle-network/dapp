@@ -1,5 +1,5 @@
-import { ChainConfig } from '@webb-tools/dapp-config/chains/chain-config.interface';
-import { ChainType } from '@webb-tools/dapp-types/TypedChainId';
+import { ChainConfig } from '@tangle-network/dapp-config/chains/chain-config.interface';
+import { ChainType } from '@tangle-network/dapp-types/TypedChainId';
 
 export function isSubstrateChain(chainConfig: ChainConfig) {
   return (

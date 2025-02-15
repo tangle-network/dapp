@@ -1,6 +1,6 @@
 'use client';
 
-import { WebsiteFooter } from '@webb-tools/webb-ui-components/components/WebsiteFooter';
+import { WebsiteFooter } from '@tangle-network/ui-components/components/WebsiteFooter';
 import { type ComponentProps, type ElementRef, forwardRef } from 'react';
 
 const Footer = forwardRef<ElementRef<'footer'>, ComponentProps<'footer'>>(

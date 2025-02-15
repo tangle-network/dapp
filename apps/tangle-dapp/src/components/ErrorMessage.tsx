@@ -1,7 +1,7 @@
-import isDefined from '@webb-tools/dapp-types/utils/isDefined';
-import { InformationLine } from '@webb-tools/icons';
-import type { PropsOf } from '@webb-tools/webb-ui-components/types';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import isDefined from '@tangle-network/dapp-types/utils/isDefined';
+import { InformationLine } from '@tangle-network/icons';
+import type { PropsOf } from '@tangle-network/ui-components/types';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { ComponentProps } from 'react';
 import { twMerge } from 'tailwind-merge';
 

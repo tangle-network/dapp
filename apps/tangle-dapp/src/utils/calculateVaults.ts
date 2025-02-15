@@ -1,11 +1,11 @@
 import { PalletRewardsRewardConfigForAssetVault } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
-import { RestakeAssetId } from '@webb-tools/tangle-shared-ui/types';
+import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import {
   AssetBalanceMap,
   DelegatorInfo,
   RestakeAssetMetadata,
-} from '@webb-tools/tangle-shared-ui/types/restake';
+} from '@tangle-network/tangle-shared-ui/types/restake';
 
 export type VaultType = {
   id: number;

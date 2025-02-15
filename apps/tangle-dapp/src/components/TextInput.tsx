@@ -1,5 +1,5 @@
-import BackspaceDeleteFillIcon from '@webb-tools/icons/BackspaceDeleteFillIcon';
-import { Button, Input } from '@webb-tools/webb-ui-components';
+import BackspaceDeleteFillIcon from '@tangle-network/icons/BackspaceDeleteFillIcon';
+import { Button, Input } from '@tangle-network/ui-components';
 import { FC } from 'react';
 
 import InputWrapper, { InputWrapperProps } from './InputWrapper';

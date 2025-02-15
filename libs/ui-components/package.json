@@ -1,0 +1,35 @@
+{
+  "name": "@tangle-network/ui-components",
+  "version": "0.0.3",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./src/index.d.ts",
+  "description": "Tangle UI Component Library",
+  "keywords": [
+    "tangle",
+    "tangle-network",
+    "ui-components",
+    "ui-library",
+    "tangle-ui",
+    "tangle-ui-library",
+    "tangle-ui-component-library",
+    "dApp"
+  ],
+  "homepage": "https://github.com/tangle-network/dapp/tree/develop/libs/ui-components#readme",
+  "bugs": "https://github.com/tangle-network/dapp/issues/new/choose",
+  "license": "Apache-2.0",
+  "author": "Tangle Developers",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tangle-network/dapp"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js"
+    }
+  }
+}

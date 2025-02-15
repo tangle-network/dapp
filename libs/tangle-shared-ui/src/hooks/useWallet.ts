@@ -4,12 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   EvmAddress,
   SubstrateAddress,
-} from '@webb-tools/webb-ui-components/types/address';
+} from '@tangle-network/ui-components/types/address';
 import {
   assertEvmAddress,
   assertSubstrateAddress,
   isEvmAddress,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import ensureError from '../utils/ensureError';
 import { EIP1193Provider } from 'viem';
 import { EthereumProvider } from '@walletconnect/ethereum-provider';

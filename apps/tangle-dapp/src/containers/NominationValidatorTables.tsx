@@ -1,11 +1,11 @@
-import { Search } from '@webb-tools/icons';
-import TableStatus from '@webb-tools/tangle-shared-ui/components/tables/TableStatus';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { Search } from '@tangle-network/icons';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   Input,
   TabContent,
   TableAndChartTabs,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC, useState } from 'react';
 
 import { ContainerSkeleton } from '../components';

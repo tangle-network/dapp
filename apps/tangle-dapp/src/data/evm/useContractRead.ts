@@ -1,4 +1,4 @@
-import { PromiseOrT } from '@webb-tools/abstract-api-provider';
+import { PromiseOrT } from '@tangle-network/abstract-api-provider';
 import { useCallback } from 'react';
 import { Abi as ViemAbi, ContractFunctionName } from 'viem';
 

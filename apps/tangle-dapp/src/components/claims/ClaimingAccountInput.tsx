@@ -1,15 +1,18 @@
-import { useWebContext } from '@webb-tools/api-provider-environment/webb-context';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import { ChevronDown } from '@webb-tools/icons';
-import { WebbWeb3Provider } from '@webb-tools/web3-api-provider/webb-provider';
-import { useWebbUI } from '@webb-tools/webb-ui-components';
-import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
+import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
+import {
+  WebbError,
+  WebbErrorCodes,
+} from '@tangle-network/dapp-types/WebbError';
+import { ChevronDown } from '@tangle-network/icons';
+import { WebbWeb3Provider } from '@tangle-network/web3-api-provider/webb-provider';
+import { useUIContext } from '@tangle-network/ui-components';
+import { Avatar } from '@tangle-network/ui-components/components/Avatar';
 import {
   AccountDropdownBody,
   Dropdown,
   DropdownButton,
-} from '@webb-tools/webb-ui-components/components/Dropdown';
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+} from '@tangle-network/ui-components/components/Dropdown';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import type { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -26,7 +29,7 @@ const ClaimingAccountInput: FC<Props> = ({
   isDisabled,
 }) => {
   const { activeApi, setActiveAccount } = useWebContext();
-  const { notificationApi } = useWebbUI();
+  const { notificationApi } = useUIContext();
   const accounts = useWalletAccounts();
 
   const handleEvmSwitch = async (

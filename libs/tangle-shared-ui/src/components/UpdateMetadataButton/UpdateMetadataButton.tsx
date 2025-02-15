@@ -3,16 +3,16 @@
 import { MetadataDef } from '@polkadot/extension-inject/types';
 import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
-import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
-import { RefreshLineIcon } from '@webb-tools/icons';
+import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import { RefreshLineIcon } from '@tangle-network/icons';
 import {
   IconButton,
   Tooltip,
   TooltipBody,
   TooltipTrigger,
-} from '@webb-tools/webb-ui-components';
-import { NetworkId } from '@webb-tools/webb-ui-components/constants/networks';
+} from '@tangle-network/ui-components';
+import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import isEqual from 'lodash/isEqual';
 import { FC, useCallback, useMemo, useState } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';
@@ -23,7 +23,7 @@ import useLocalStorage, {
 import usePromise from '../../hooks/usePromise';
 import useSubstrateInjectedExtension from '../../hooks/useSubstrateInjectedExtension';
 import { getApiPromise } from '../../utils/polkadot/api';
-import { useActiveWallet } from '@webb-tools/api-provider-environment/hooks/useActiveWallet';
+import { useActiveWallet } from '@tangle-network/api-provider-environment/hooks/useActiveWallet';
 
 const UpdateMetadataButton: FC = () => {
   const [isHidden, setIsHidden] = useState(false);

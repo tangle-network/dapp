@@ -6,8 +6,8 @@ import {
   randUserName,
 } from '@ngneat/falso';
 import { evmToAddress } from '@polkadot/util-crypto';
-import { TANGLE_TOKEN_DECIMALS } from '@webb-tools/dapp-config';
-import { assertSubstrateAddress } from '@webb-tools/webb-ui-components';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import { assertSubstrateAddress } from '@tangle-network/ui-components';
 import { Decimal } from 'decimal.js';
 import uniqWith from 'lodash/uniqWith';
 import { RestakeOperator } from '../../../types';

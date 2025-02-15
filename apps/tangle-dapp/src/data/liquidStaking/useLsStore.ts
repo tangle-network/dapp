@@ -1,4 +1,4 @@
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import { create } from 'zustand';
 
 import { LsNetworkId } from '../../constants/liquidStaking/types';

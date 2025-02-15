@@ -1,7 +1,7 @@
 import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { useActiveAccount } from '@webb-tools/api-provider-environment/hooks/useActiveAccount';
-import usePromise from '@webb-tools/tangle-shared-ui/hooks/usePromise';
-import { findInjectorForAddress } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
+import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
+import usePromise from '@tangle-network/tangle-shared-ui/hooks/usePromise';
+import { findInjectorForAddress } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
 import { useCallback } from 'react';
 
 export default function useSubstrateInjectedExtension() {

@@ -4,7 +4,7 @@ import { objFilter, objMerge } from '@hyperlane-xyz/utils';
 import {
   HYPERLANE_WARP_ROUTE_CONFIGS,
   HYPERLANE_WARP_ROUTE_WHITELIST,
-} from '@webb-tools/tangle-shared-ui/constants/bridge';
+} from '@tangle-network/tangle-shared-ui/constants/bridge';
 
 export default function assembleWarpCoreConfig(): WarpCoreConfig {
   const result = WarpCoreConfigSchema.safeParse(HYPERLANE_WARP_ROUTE_CONFIGS);

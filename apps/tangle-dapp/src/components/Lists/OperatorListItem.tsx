@@ -1,10 +1,10 @@
-import { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import {
   Avatar,
   EMPTY_VALUE_PLACEHOLDER,
   KeyValueWithButton,
   shortenString,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import { FC } from 'react';
 import LogoListItem from './LogoListItem';
 

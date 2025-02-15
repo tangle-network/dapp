@@ -1,5 +1,5 @@
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
-import { extractIdentityInfo } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
+import { extractIdentityInfo } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { useCallback, useMemo } from 'react';
 
 const useIdentities = (

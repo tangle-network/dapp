@@ -1,5 +1,5 @@
-import { toSubstrateAddress } from '@webb-tools/webb-ui-components';
-import { AnyAddress } from '@webb-tools/webb-ui-components/types/address';
+import { toSubstrateAddress } from '@tangle-network/ui-components';
+import { AnyAddress } from '@tangle-network/ui-components/types/address';
 import { useCallback } from 'react';
 
 import { TxName } from '../../../constants';

@@ -1,7 +1,7 @@
 import { PalletStakingRewardDestination } from '@polkadot/types/lookup';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
-import Optional from '@webb-tools/tangle-shared-ui/utils/Optional';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import Optional from '@tangle-network/tangle-shared-ui/utils/Optional';
 import { useCallback } from 'react';
 import { map } from 'rxjs';
 

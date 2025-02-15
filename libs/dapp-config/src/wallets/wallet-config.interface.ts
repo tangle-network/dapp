@@ -1,8 +1,8 @@
-// Copyright 2024 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
 import type { InjectedExtension } from '@polkadot/extension-inject/types';
-import type { SupportedBrowsers } from '@webb-tools/browser-utils/platform/getPlatformMetaData';
+import type { SupportedBrowsers } from '@tangle-network/browser-utils/platform/getPlatformMetaData';
 
 export interface WalletConfig {
   id: number;

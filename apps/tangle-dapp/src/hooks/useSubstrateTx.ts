@@ -1,27 +1,26 @@
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
-import { PromiseOrT } from '@webb-tools/abstract-api-provider';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import useSubstrateAddress from '@webb-tools/tangle-shared-ui/hooks/useSubstrateAddress';
-import useSubstrateInjectedExtension from '@webb-tools/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
-import ensureError from '@webb-tools/tangle-shared-ui/utils/ensureError';
-import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
-import useIsMountedRef from '@webb-tools/webb-ui-components/hooks/useIsMountedRef';
-import type { SubstrateAddress } from '@webb-tools/webb-ui-components/types/address';
+import { PromiseOrT } from '@tangle-network/abstract-api-provider';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
+import useSubstrateInjectedExtension from '@tangle-network/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
+import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
+import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
+import useIsMountedRef from '@tangle-network/ui-components/hooks/useIsMountedRef';
+import type { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import assert from 'assert';
 import { useCallback, useEffect, useState } from 'react';
 import { Hash } from 'viem';
-
 import { TxName } from '../constants';
-import { GetSuccessMessageFn } from '../types';
-import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
-import useTxNotification from './useTxNotification';
-import useAgnosticAccountInfo from '@webb-tools/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
 import useTxHistoryStore, {
   HistoryTxDetail,
 } from '../context/useTxHistoryStore';
+import { GetSuccessMessageFn } from '../types';
+import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
+import useTxNotification from './useTxNotification';
 
 export enum TxStatus {
   NOT_YET_INITIATED,

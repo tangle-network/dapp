@@ -1,4 +1,4 @@
-import { TANGLE_MKT_URL } from '@webb-tools/webb-ui-components/constants';
+import { TANGLE_MKT_URL } from '@tangle-network/ui-components/constants';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ComponentProps, ElementRef, forwardRef } from 'react';
@@ -12,7 +12,7 @@ const Header = forwardRef<ElementRef<'header'>, ComponentProps<'header'>>(
       <header
         {...props}
         className={twMerge(
-          'relative z-[1000] top-0 bg-mono-0 min-h-[88px] webb-shadow-sm px-[5%] py-6',
+          'relative z-[1000] top-0 bg-mono-0 min-h-[88px] shadow-sm px-[5%] py-6',
           className,
         )}
         ref={ref}

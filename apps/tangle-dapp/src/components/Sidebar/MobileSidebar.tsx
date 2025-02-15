@@ -1,4 +1,4 @@
-import { MobileSidebar as MobileSidebarCmp } from '@webb-tools/webb-ui-components';
+import { MobileSidebar as MobileSidebarCmp } from '@tangle-network/ui-components';
 import { useLocation } from 'react-router';
 import { FC } from 'react';
 

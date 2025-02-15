@@ -1,10 +1,10 @@
-import { ChevronDown, ChevronUp } from '@webb-tools/icons';
+import { ChevronDown, ChevronUp } from '@tangle-network/icons';
 import {
   Chip,
   ChipColors,
   InfoIconWithTooltip,
   Label,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import {
   Dispatch,
   FC,

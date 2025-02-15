@@ -1,4 +1,4 @@
-import type { IconBase } from '@webb-tools/icons/types';
+import type { IconBase } from '@tangle-network/icons/types';
 import type { ReactElement } from 'react';
 
 export type ChipType = 'ERA' | 'Session';

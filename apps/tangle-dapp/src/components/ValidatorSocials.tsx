@@ -1,6 +1,6 @@
-import MapPinLine from '@webb-tools/icons/MapPinLine';
-import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
-import { SocialChip } from '@webb-tools/webb-ui-components/components/SocialChip';
+import MapPinLine from '@tangle-network/icons/MapPinLine';
+import { Chip } from '@tangle-network/ui-components/components/Chip';
+import { SocialChip } from '@tangle-network/ui-components/components/SocialChip';
 import type { ComponentProps, FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

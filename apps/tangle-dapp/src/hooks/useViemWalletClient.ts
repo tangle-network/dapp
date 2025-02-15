@@ -1,5 +1,5 @@
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import useEvmChain from '@webb-tools/tangle-shared-ui/hooks/useEvmChain';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useEvmChain from '@tangle-network/tangle-shared-ui/hooks/useEvmChain';
 import { useEffect, useState } from 'react';
 import {
   createWalletClient,

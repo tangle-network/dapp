@@ -4,8 +4,11 @@ import type {
   PalletMultiAssetDelegationDelegatorDelegatorStatus,
   PalletMultiAssetDelegationDelegatorWithdrawRequest,
 } from '@polkadot/types/lookup';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types/WebbError';
-import assertSubstrateAddress from '@webb-tools/webb-ui-components/utils/assertSubstrateAddress';
+import {
+  WebbError,
+  WebbErrorCodes,
+} from '@tangle-network/dapp-types/WebbError';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { map, of, switchMap } from 'rxjs';
 import usePolkadotApi from '../../hooks/usePolkadotApi';

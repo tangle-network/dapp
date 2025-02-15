@@ -1,4 +1,4 @@
-import { LoggerService } from '@webb-tools/browser-utils/logger';
+import { LoggerService } from '@tangle-network/browser-utils/logger';
 import { FC } from 'react';
 import { unstable_serialize } from 'swr';
 

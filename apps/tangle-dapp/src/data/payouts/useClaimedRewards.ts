@@ -1,7 +1,7 @@
 import type { ApiRx } from '@polkadot/api';
 import type { u32, Vec } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces';
-import useApiRx from '@webb-tools/tangle-shared-ui/hooks/useApiRx';
+import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import { map } from 'rxjs';
 
 /**

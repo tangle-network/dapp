@@ -1,5 +1,5 @@
-import { ArrowRight } from '@webb-tools/icons';
-import { Button } from '@webb-tools/webb-ui-components';
+import { ArrowRight } from '@tangle-network/icons';
+import { Button } from '@tangle-network/ui-components';
 import { FC, useCallback } from 'react';
 
 import useLsWithdrawUnbondedTx from '../../data/liquidStaking/useLsWithdrawUnbondedTx';

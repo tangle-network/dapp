@@ -1,4 +1,4 @@
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 
 import TANGLE_LOCAL from '../../data/liquidStaking/adapters/tangleLocal';
 import TANGLE_MAINNET from '../../data/liquidStaking/adapters/tangleMainnet';

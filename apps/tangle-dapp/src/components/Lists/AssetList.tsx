@@ -1,4 +1,5 @@
-import { ArrowRightUp, Search, TokenIcon } from '@webb-tools/icons';
+import { BN } from '@polkadot/util';
+import { ArrowRightUp, Search, TokenIcon } from '@tangle-network/icons';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
@@ -6,15 +7,13 @@ import {
   ListItem,
   shortenHex,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/ui-components';
+import { ScrollArea } from '@tangle-network/ui-components/components/ScrollArea';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { ComponentProps, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import { ListCardWrapper } from './ListCardWrapper';
-import { BN } from '@polkadot/util';
-import { EvmAddress } from '@webb-tools/webb-ui-components/types/address';
 
 export type AssetConfig = {
   name?: string;

@@ -1,18 +1,18 @@
 import { BN_ZERO } from '@polkadot/util';
-import { useWebContext } from '@webb-tools/api-provider-environment';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { useWebContext } from '@tangle-network/api-provider-environment';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   Button,
   Card,
   CardVariant,
   Divider,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
 import {
   EMPTY_VALUE_PLACEHOLDER,
   SOCIAL_URLS_RECORD,
   TANGLE_DOCS_STAKING_URL,
   WEBB_DISCORD_CHANNEL_URL,
-} from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/ui-components/constants';
 import { type FC, useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 
@@ -30,7 +30,7 @@ import BondMoreTxModal from './BondMoreTxModal';
 import RebondTxModal from './RebondTxModal';
 import WithdrawUnbondedTxModal from './WithdrawUnbondedTxModal';
 import UnbondTxModal from './UnbondTxModal';
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 const NominatorStatsContainer: FC = () => {
   const [isDelegateModalOpen, setIsDelegateModalOpen] = useState(false);

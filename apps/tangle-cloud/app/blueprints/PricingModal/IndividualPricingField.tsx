@@ -1,13 +1,13 @@
-import type { Blueprint } from '@webb-tools/tangle-shared-ui/types/blueprint';
+import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 import {
   Accordion,
   AccordionButton,
   AccordionContent,
   AccordionItem,
-} from '@webb-tools/webb-ui-components/components/Accordion';
-import { Chip } from '@webb-tools/webb-ui-components/components/Chip';
-import { FormField } from '@webb-tools/webb-ui-components/components/form';
-import { ScrollArea } from '@webb-tools/webb-ui-components/components/ScrollArea';
+} from '@tangle-network/ui-components/components/Accordion';
+import { Chip } from '@tangle-network/ui-components/components/Chip';
+import { FormField } from '@tangle-network/ui-components/components/form';
+import { ScrollArea } from '@tangle-network/ui-components/components/ScrollArea';
 import Image from 'next/image';
 import type { Control, UseFormWatch } from 'react-hook-form';
 import inputs from './inputs';

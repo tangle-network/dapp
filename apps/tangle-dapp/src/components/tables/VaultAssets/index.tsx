@@ -6,21 +6,21 @@ import {
   type TableOptions,
   useReactTable,
 } from '@tanstack/react-table';
-import { makeExplorerUrl } from '@webb-tools/api-provider-environment/transaction/utils';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
+import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   ExternalLinkIcon,
   isEvmAddress,
   Typography,
-} from '@webb-tools/webb-ui-components';
-import { Table } from '@webb-tools/webb-ui-components/components/Table';
-import { TableVariant } from '@webb-tools/webb-ui-components/components/Table/types';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
+} from '@tangle-network/ui-components';
+import { Table } from '@tangle-network/ui-components/components/Table';
+import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import {
   AmountFormatStyle,
   formatDisplayAmount,
-} from '@webb-tools/webb-ui-components/utils/formatDisplayAmount';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
+} from '@tangle-network/ui-components/utils/formatDisplayAmount';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
 import type { Props, VaultAssetData } from './types';

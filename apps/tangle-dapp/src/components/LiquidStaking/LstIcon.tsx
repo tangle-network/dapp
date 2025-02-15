@@ -1,5 +1,5 @@
-import { TokenIcon } from '@webb-tools/icons';
-import { LsProtocolId } from '@webb-tools/tangle-shared-ui/types/liquidStaking';
+import { TokenIcon } from '@tangle-network/icons';
+import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 

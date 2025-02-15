@@ -19,7 +19,7 @@ import type {
   Evaluate,
   MappedObjectType,
   OmitByValue,
-} from '@webb-tools/dapp-types/utils/types';
+} from '@tangle-network/dapp-types/utils/types';
 
 /**
  * @description All enums from `@polkadot/types` will have the same convention:

@@ -1,7 +1,7 @@
-import { Button, Typography } from '@webb-tools/webb-ui-components';
+import { Button, Typography } from '@tangle-network/ui-components';
 import { PagePath } from '../types';
 import { FC } from 'react';
-import { ArrowRight } from '@webb-tools/icons';
+import { ArrowRight } from '@tangle-network/icons';
 import { Link } from 'react-router';
 
 const NotFoundPage: FC = () => {

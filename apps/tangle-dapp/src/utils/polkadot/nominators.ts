@@ -1,5 +1,5 @@
-import { getApiPromise } from '@webb-tools/tangle-shared-ui/utils/polkadot/api';
-import { getAccountInfo } from '@webb-tools/tangle-shared-ui/utils/polkadot/identity';
+import { getApiPromise } from '@tangle-network/tangle-shared-ui/utils/polkadot/api';
+import { getAccountInfo } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 
 export const getValidatorIdentityName = async (
   rpcEndpoint: string,

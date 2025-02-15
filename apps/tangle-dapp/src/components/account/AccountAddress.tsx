@@ -1,7 +1,7 @@
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { LoopRightFillIcon } from '@webb-tools/icons';
-import useNetworkStore from '@webb-tools/tangle-shared-ui/context/useNetworkStore';
-import useActiveAccountAddress from '@webb-tools/tangle-shared-ui/hooks/useActiveAccountAddress';
+import { LoopRightFillIcon } from '@tangle-network/icons';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import {
   CopyWithTooltip,
   shortenHex,
@@ -11,11 +11,11 @@ import {
   toSubstrateAddress,
   Typography,
   useHiddenValue,
-} from '@webb-tools/webb-ui-components';
-import { Avatar } from '@webb-tools/webb-ui-components/components/Avatar';
-import { IconWithTooltip } from '@webb-tools/webb-ui-components/components/IconWithTooltip';
-import { EMPTY_VALUE_PLACEHOLDER } from '@webb-tools/webb-ui-components/constants';
-import { shortenString } from '@webb-tools/webb-ui-components/utils/shortenString';
+} from '@tangle-network/ui-components';
+import { Avatar } from '@tangle-network/ui-components/components/Avatar';
+import { IconWithTooltip } from '@tangle-network/ui-components/components/IconWithTooltip';
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
+import { shortenString } from '@tangle-network/ui-components/utils/shortenString';
 import type { FC } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 

@@ -1,14 +1,5 @@
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
-} from '@tanstack/react-table';
-import { sortByAddressOrIdentity } from '@webb-tools/tangle-shared-ui/components/tables/utils';
-import { Validator } from '@webb-tools/tangle-shared-ui/types';
+import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/components/tables/utils';
+import { Validator } from '@tangle-network/tangle-shared-ui/types';
 import {
   AmountFormatStyle,
   Avatar,
@@ -18,15 +9,24 @@ import {
   shortenString,
   Table,
   Typography,
-} from '@webb-tools/webb-ui-components';
+} from '@tangle-network/ui-components';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+} from '@tanstack/react-table';
 import { FC, useState } from 'react';
 
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import calculateCommission from '../../utils/calculateCommission';
+import sortByBn from '../../utils/sortByBn';
 import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
-import pluralize from '@webb-tools/webb-ui-components/utils/pluralize';
-import sortByBn from '../../utils/sortByBn';
 
 const COLUMN_HELPER = createColumnHelper<Validator>();
 

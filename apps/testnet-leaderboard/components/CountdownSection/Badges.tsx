@@ -1,4 +1,4 @@
-import { Typography } from '@webb-tools/webb-ui-components/typography/Typography';
+import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import capitalize from 'lodash/capitalize';
 import type { FC } from 'react';
 

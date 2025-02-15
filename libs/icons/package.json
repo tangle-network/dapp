@@ -1,5 +1,5 @@
 {
-  "name": "@webb-tools/icons",
+  "name": "@tangle-network/icons",
   "version": "0.0.1",
   "type": "module",
   "main": "./index.js",

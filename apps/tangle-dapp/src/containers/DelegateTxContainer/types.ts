@@ -1,10 +1,9 @@
 import { BN } from '@polkadot/util';
-
+import { Validator } from '@tangle-network/tangle-shared-ui/types';
 import {
   StakingRewardsDestination,
   StakingRewardsDestinationDisplayText,
 } from '../../types';
-import { Validator } from '@webb-tools/tangle-shared-ui/types';
 
 export type DelegateTxContainerProps = {
   isModalOpen: boolean;

@@ -4,7 +4,7 @@ import type {
   PalletMultiAssetDelegationOperatorOperatorBondLessRequest,
   PalletMultiAssetDelegationOperatorOperatorStatus,
 } from '@polkadot/types/lookup';
-import isDefined from '@webb-tools/dapp-types/utils/isDefined';
+import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
 import { map, type Observable, of } from 'rxjs';

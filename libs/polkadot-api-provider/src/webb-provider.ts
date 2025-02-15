@@ -1,17 +1,17 @@
 'use client';
 
-// Copyright 2024 @webb-tools/
+// Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
-import '@webb-tools/tangle-substrate-types';
+import '@tangle-network/tangle-substrate-types';
 import {
   WebbApiProvider,
   WebbProviderEvents,
-} from '@webb-tools/abstract-api-provider';
-import { AccountsAdapter } from '@webb-tools/abstract-api-provider/account/Accounts.adapter';
-import { ApiConfig, Wallet } from '@webb-tools/dapp-config';
-import { WebbError, WebbErrorCodes } from '@webb-tools/dapp-types';
-import { EventBus } from '@webb-tools/dapp-types/EventBus';
-import { parseTypedChainId } from '@webb-tools/dapp-types/TypedChainId';
+} from '@tangle-network/abstract-api-provider';
+import { AccountsAdapter } from '@tangle-network/abstract-api-provider/account/Accounts.adapter';
+import { ApiConfig, Wallet } from '@tangle-network/dapp-config';
+import { WebbError, WebbErrorCodes } from '@tangle-network/dapp-types';
+import { EventBus } from '@tangle-network/dapp-types/EventBus';
+import { parseTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 
 import { ApiPromise } from '@polkadot/api';
 import {

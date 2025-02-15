@@ -986,7 +986,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-annotate-as-pure@npm:^7.22.5, @babel/helper-annotate-as-pure@npm:^7.25.9":
+"@babel/helper-annotate-as-pure@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/helper-annotate-as-pure@npm:7.25.9"
   dependencies:
@@ -1086,7 +1086,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-module-imports@npm:^7.22.5, @babel/helper-module-imports@npm:^7.25.9":
+"@babel/helper-module-imports@npm:^7.25.9":
   version: 7.25.9
   resolution: "@babel/helper-module-imports@npm:7.25.9"
   dependencies:
@@ -1518,7 +1518,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-syntax-jsx@npm:^7.0.0, @babel/plugin-syntax-jsx@npm:^7.22.5, @babel/plugin-syntax-jsx@npm:^7.25.9, @babel/plugin-syntax-jsx@npm:^7.7.2":
+"@babel/plugin-syntax-jsx@npm:^7.0.0, @babel/plugin-syntax-jsx@npm:^7.25.9, @babel/plugin-syntax-jsx@npm:^7.7.2":
   version: 7.25.9
   resolution: "@babel/plugin-syntax-jsx@npm:7.25.9"
   dependencies:
@@ -7952,15 +7952,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@open-web3/orml-type-definitions@npm:2.0.1, @open-web3/orml-type-definitions@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@open-web3/orml-type-definitions@npm:2.0.1"
-  dependencies:
-    lodash.merge: "npm:^4.6.2"
-  checksum: 10c0/9b84e3d53a4aca16ce47df2332e7bb48f53899782b597dba26c916ce68baca1986caf3f63588a314e89f4f60c56c5e0aecaeafebb97b6e8c43743f20007f8419
-  languageName: node
-  linkType: hard
-
 "@open-web3/orml-type-definitions@npm:^0.8.2-9":
   version: 0.8.2-11
   resolution: "@open-web3/orml-type-definitions@npm:0.8.2-11"
@@ -7977,14 +7968,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@open-web3/orml-types@npm:^2.0.1":
+"@open-web3/orml-type-definitions@npm:^2.0.1":
   version: 2.0.1
-  resolution: "@open-web3/orml-types@npm:2.0.1"
+  resolution: "@open-web3/orml-type-definitions@npm:2.0.1"
   dependencies:
-    "@open-web3/orml-type-definitions": "npm:2.0.1"
-  peerDependencies:
-    "@polkadot/api": ^8.12.2
-  checksum: 10c0/7c82066563ae53c93322660e5a1025951e985c92f152cf60e6dd8b7e05e405c2664873e00a2139d6fbc2174db5782443d184ef57a34937812b2cb1e8819f2b7b
+    lodash.merge: "npm:^4.6.2"
+  checksum: 10c0/9b84e3d53a4aca16ce47df2332e7bb48f53899782b597dba26c916ce68baca1986caf3f63588a314e89f4f60c56c5e0aecaeafebb97b6e8c43743f20007f8419
   languageName: node
   linkType: hard
 
@@ -9107,40 +9096,40 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkadot/dev-test@npm:^0.78.13":
-  version: 0.78.13
-  resolution: "@polkadot/dev-test@npm:0.78.13"
+"@polkadot/dev-test@npm:^0.83.2":
+  version: 0.83.2
+  resolution: "@polkadot/dev-test@npm:0.83.2"
   dependencies:
     jsdom: "npm:^24.0.0"
-    tslib: "npm:^2.6.2"
-  checksum: 10c0/fc47cf905275dc8b8c52b79ac607828b0dcec97a4854460d580f53e173f733d132800821c7105bd11d4b021d6408f54feac339bd0e21888105a5c0dec27e981b
+    tslib: "npm:^2.7.0"
+  checksum: 10c0/7c1abcff5234a8c00beace0a9468b8973ea1a40de9bdb75c1742f9e0583d430d549a0edafe5266d19453d5d01bc6370cc08d830f517f65ad357faa136ee518d7
   languageName: node
   linkType: hard
 
-"@polkadot/dev-ts@npm:^0.78.13":
-  version: 0.78.13
-  resolution: "@polkadot/dev-ts@npm:0.78.13"
+"@polkadot/dev-ts@npm:^0.83.2":
+  version: 0.83.2
+  resolution: "@polkadot/dev-ts@npm:0.83.2"
   dependencies:
     json5: "npm:^2.2.3"
-    tslib: "npm:^2.6.2"
-    typescript: "npm:^5.3.3"
-  checksum: 10c0/c87402e01f7f508cb8839039355b4b8c93e290be62af4bf028005113f350ec9b7f43aaa6bd14d25324d84d76a870be91dd5a77983f9f249421a2aaa41bf04fc8
+    tslib: "npm:^2.7.0"
+    typescript: "npm:^5.5.4"
+  checksum: 10c0/b923b53b3446d3730cbc30d0b0e9261b40c11061db8e11e743911a84e877a03b9cbefd5ee92c91fabe36c6cf5b5f09faaa0fc352b5d71dda1b8ee1342bb984b0
   languageName: node
   linkType: hard
 
-"@polkadot/dev@npm:^0.78.11":
-  version: 0.78.13
-  resolution: "@polkadot/dev@npm:0.78.13"
+"@polkadot/dev@npm:^0.83.2":
+  version: 0.83.2
+  resolution: "@polkadot/dev@npm:0.83.2"
   dependencies:
     "@eslint/js": "npm:^8.56.0"
-    "@polkadot/dev-test": "npm:^0.78.13"
-    "@polkadot/dev-ts": "npm:^0.78.13"
-    "@rollup/plugin-alias": "npm:^5.1.0"
-    "@rollup/plugin-commonjs": "npm:^25.0.7"
-    "@rollup/plugin-dynamic-import-vars": "npm:^2.1.2"
+    "@polkadot/dev-test": "npm:^0.83.2"
+    "@polkadot/dev-ts": "npm:^0.83.2"
+    "@rollup/plugin-alias": "npm:^5.1.1"
+    "@rollup/plugin-commonjs": "npm:^25.0.8"
+    "@rollup/plugin-dynamic-import-vars": "npm:^2.1.5"
     "@rollup/plugin-inject": "npm:^5.0.5"
     "@rollup/plugin-json": "npm:^6.1.0"
-    "@rollup/plugin-node-resolve": "npm:^15.2.3"
+    "@rollup/plugin-node-resolve": "npm:^15.3.1"
     "@tsconfig/strictest": "npm:^2.0.2"
     "@typescript-eslint/eslint-plugin": "npm:^6.19.1"
     "@typescript-eslint/parser": "npm:^6.19.1"
@@ -9167,8 +9156,8 @@ __metadata:
     madge: "npm:^6.1.0"
     rollup: "npm:^4.9.6"
     rollup-plugin-cleanup: "npm:^3.2.1"
-    tslib: "npm:^2.6.2"
-    typescript: "npm:^5.3.3"
+    tslib: "npm:^2.7.0"
+    typescript: "npm:^5.5.4"
     webpack: "npm:^5.89.0"
     webpack-cli: "npm:^5.1.4"
     webpack-dev-server: "npm:^4.15.1"
@@ -9199,7 +9188,7 @@ __metadata:
     polkadot-exec-rollup: scripts/polkadot-exec-rollup.mjs
     polkadot-exec-tsc: scripts/polkadot-exec-tsc.mjs
     polkadot-exec-webpack: scripts/polkadot-exec-webpack.mjs
-  checksum: 10c0/61060d4158a5758b9fd309df43d14692d01263aac5a5d283bce0aa97958bbf311b863cc2bfb303a791617c0c3c3e5cd164e81d8b0b9f9cfac4ef1b90df2852d2
+  checksum: 10c0/99df84d17a8a7c319f6f7def17cce4b39ae3a2a5da2b6f9da23ad452d3c0fc08746b59f46f04ba488805863a9f8db2ebf10040563f3182af16ca8c6bc779235d
   languageName: node
   linkType: hard
 
@@ -12245,7 +12234,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-alias@npm:^5.1.0":
+"@rollup/plugin-alias@npm:^5.1.1":
   version: 5.1.1
   resolution: "@rollup/plugin-alias@npm:5.1.1"
   peerDependencies:
@@ -12257,7 +12246,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-commonjs@npm:^25.0.7":
+"@rollup/plugin-commonjs@npm:^25.0.8":
   version: 25.0.8
   resolution: "@rollup/plugin-commonjs@npm:25.0.8"
   dependencies:
@@ -12276,7 +12265,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-dynamic-import-vars@npm:^2.1.2":
+"@rollup/plugin-dynamic-import-vars@npm:^2.1.5":
   version: 2.1.5
   resolution: "@rollup/plugin-dynamic-import-vars@npm:2.1.5"
   dependencies:
@@ -12324,9 +12313,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-node-resolve@npm:^15.2.3":
-  version: 15.3.0
-  resolution: "@rollup/plugin-node-resolve@npm:15.3.0"
+"@rollup/plugin-node-resolve@npm:^15.3.1":
+  version: 15.3.1
+  resolution: "@rollup/plugin-node-resolve@npm:15.3.1"
   dependencies:
     "@rollup/pluginutils": "npm:^5.0.1"
     "@types/resolve": "npm:1.20.2"
@@ -12338,7 +12327,7 @@ __metadata:
   peerDependenciesMeta:
     rollup:
       optional: true
-  checksum: 10c0/5f3b11f9f6d00fe9fd3fe1977cc71f6a99c2b13d0ee82ad6822c4c4ecfc98854791c5a505798762f7e2332d9d67568a561e89aa8268ed3b1668563be1845109e
+  checksum: 10c0/ecf3abe890fc98ad665fdbfb1ea245253e0d1f2bc6d9f4e8f496f212c76a2ce7cd4b9bc0abd21e6bcaa16f72d1c67cc6b322ea12a6ec68e8a8834df8242a5ecd
   languageName: node
   linkType: hard
 
@@ -15287,6 +15276,69 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tangle-network/evm-contract-metadata@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@tangle-network/evm-contract-metadata@npm:1.3.0"
+  dependencies:
+    "@hyperlane-xyz/sdk": "npm:^5.6.2"
+    "@hyperlane-xyz/utils": "npm:^5.6.2"
+    vite-plugin-dts: "npm:^4.3.0"
+  checksum: 10c0/ebc6d9e36b56d1590d923eae42453fbcc2ecfd866985fef78af097390551df87fd00f4bcc7864afe23a0c0b6feabaddc9aafbd5723a9984535aa3b053563b3ca
+  languageName: node
+  linkType: hard
+
+"@tangle-network/tangle-restaking-types@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@tangle-network/tangle-restaking-types@npm:0.1.0"
+  dependencies:
+    "@babel/cli": "npm:^7.23.9"
+    "@babel/core": "npm:^7.24.0"
+    "@babel/plugin-proposal-nullish-coalescing-operator": "npm:^7.18.6"
+    "@babel/plugin-proposal-numeric-separator": "npm:^7.18.6"
+    "@babel/plugin-proposal-optional-chaining": "npm:^7.20.7"
+    "@babel/plugin-syntax-bigint": "npm:^7.8.3"
+    "@babel/plugin-syntax-dynamic-import": "npm:^7.8.3"
+    "@babel/plugin-syntax-import-assertions": "npm:^7.23.3"
+    "@babel/plugin-syntax-import-meta": "npm:^7.10.4"
+    "@babel/plugin-syntax-top-level-await": "npm:^7.14.5"
+    "@babel/plugin-transform-regenerator": "npm:^7.23.3"
+    "@babel/plugin-transform-runtime": "npm:^7.24.0"
+    "@babel/preset-env": "npm:^7.24.0"
+    "@babel/preset-react": "npm:^7.23.3"
+    "@babel/preset-typescript": "npm:^7.23.3"
+    "@babel/register": "npm:^7.23.7"
+    "@babel/runtime": "npm:^7.24.0"
+    "@polkadot/api": "npm:^11.0.2"
+    "@polkadot/dev": "npm:^0.83.2"
+    "@polkadot/typegen": "npm:^11.0.2"
+    "@polkadot/types": "npm:^11.0.2"
+    babel-jest: "npm:^29.7.0"
+    babel-plugin-module-extension-resolver: "npm:^1.0.0"
+    babel-plugin-module-resolver: "npm:^5.0.0"
+    ecpair: "npm:^2.1.0"
+    elliptic: "npm:^6.5.5"
+    fs-extra: "npm:^11.2.0"
+    glob2base: "npm:^0.0.12"
+    minimatch: "npm:^9.0.3"
+    mkdirp: "npm:^3.0.1"
+    tiny-secp256k1: "npm:^2.2.3"
+  checksum: 10c0/5506adae19be6d2779af3fc65df4f387a16506ddb5c1cb8a08feb1c7343e9ce2b1c7b1be52b5291fec419517e9dc0d0d8e19588b8da73c45cb47aab5ee1c0577
+  languageName: node
+  linkType: hard
+
+"@tangle-network/tangle-substrate-types@npm:^0.9.13":
+  version: 0.9.13
+  resolution: "@tangle-network/tangle-substrate-types@npm:0.9.13"
+  dependencies:
+    "@polkadot/api": "npm:^13.2.1"
+    "@polkadot/typegen": "npm:^13.2.1"
+    "@polkadot/types": "npm:^13.2.1"
+    ecpair: "npm:^2.1.0"
+    tiny-secp256k1: "npm:^2.2.3"
+  checksum: 10c0/ee43d062a8ea851bef5b2bb29de1a36377bf0d63e5aad54f0efb831216293365c09905430dab206de0cebc7ee37434d802f924fbe8a2c8e4c6a1f537772d138f
+  languageName: node
+  linkType: hard
+
 "@tanstack/match-sorter-utils@npm:^8.19.4":
   version: 8.19.4
   resolution: "@tanstack/match-sorter-utils@npm:8.19.4"
@@ -17727,71 +17779,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webb-tools/evm-contract-metadata@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@webb-tools/evm-contract-metadata@npm:1.3.0"
-  dependencies:
-    "@hyperlane-xyz/sdk": "npm:^5.6.2"
-    "@hyperlane-xyz/utils": "npm:^5.6.2"
-    vite-plugin-dts: "npm:^4.3.0"
-  checksum: 10c0/00cdd6aab813f3d8854985651eae8668f8baab07aeb2f39d588919475a08b2eea17960fc7a3f0014ac5f55e8a03112e85134d4283c48325cc350ec71f566d44b
-  languageName: node
-  linkType: hard
-
-"@webb-tools/tangle-restaking-types@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@webb-tools/tangle-restaking-types@npm:0.1.0"
-  dependencies:
-    "@babel/cli": "npm:^7.23.9"
-    "@babel/core": "npm:^7.24.0"
-    "@babel/plugin-proposal-nullish-coalescing-operator": "npm:^7.18.6"
-    "@babel/plugin-proposal-numeric-separator": "npm:^7.18.6"
-    "@babel/plugin-proposal-optional-chaining": "npm:^7.20.7"
-    "@babel/plugin-syntax-bigint": "npm:^7.8.3"
-    "@babel/plugin-syntax-dynamic-import": "npm:^7.8.3"
-    "@babel/plugin-syntax-import-assertions": "npm:^7.23.3"
-    "@babel/plugin-syntax-import-meta": "npm:^7.10.4"
-    "@babel/plugin-syntax-top-level-await": "npm:^7.14.5"
-    "@babel/plugin-transform-regenerator": "npm:^7.23.3"
-    "@babel/plugin-transform-runtime": "npm:^7.24.0"
-    "@babel/preset-env": "npm:^7.24.0"
-    "@babel/preset-react": "npm:^7.23.3"
-    "@babel/preset-typescript": "npm:^7.23.3"
-    "@babel/register": "npm:^7.23.7"
-    "@babel/runtime": "npm:^7.24.0"
-    "@open-web3/orml-types": "npm:^2.0.1"
-    "@polkadot/api": "npm:^11.0.2"
-    "@polkadot/dev": "npm:^0.78.11"
-    "@polkadot/typegen": "npm:^11.0.2"
-    "@polkadot/types": "npm:^11.0.2"
-    babel-jest: "npm:^29.7.0"
-    babel-plugin-module-extension-resolver: "npm:^1.0.0"
-    babel-plugin-module-resolver: "npm:^5.0.0"
-    babel-plugin-styled-components: "npm:^2.1.4"
-    ecpair: "npm:^2.1.0"
-    elliptic: "npm:^6.5.5"
-    fs-extra: "npm:^11.2.0"
-    glob2base: "npm:^0.0.12"
-    minimatch: "npm:^9.0.3"
-    mkdirp: "npm:^3.0.1"
-    tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/78eb2677437354e3b928ab877a7b9f58a9f35b4862919fe9efa4af7477a624a798777fd7d766ee8b27d268d2b630e86415c97c5552de0575cdd37f4210075255
-  languageName: node
-  linkType: hard
-
-"@webb-tools/tangle-substrate-types@npm:^0.9.13":
-  version: 0.9.13
-  resolution: "@webb-tools/tangle-substrate-types@npm:0.9.13"
-  dependencies:
-    "@polkadot/api": "npm:^13.2.1"
-    "@polkadot/typegen": "npm:^13.2.1"
-    "@polkadot/types": "npm:^13.2.1"
-    ecpair: "npm:^2.1.0"
-    tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/82aca9b7aba6fead4fc50873c29a9ff1a0e606ad0c59e32b313a0b10ed9f0e7259cd5f462b649b8e68ed6c067454b935945bdc2c3544cfce751be48090c87937
-  languageName: node
-  linkType: hard
-
 "@webpack-cli/configtest@npm:^2.1.1":
   version: 2.1.1
   resolution: "@webpack-cli/configtest@npm:2.1.1"
@@ -19091,21 +19078,6 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.4.0 || ^8.0.0-0 <8.0.0
   checksum: 10c0/40164432e058e4b5c6d56feecacdad22692ae0534bd80c92d5399ed9e1a6a2b6797c8fda837995daddd4ca391f9aa2d58c74ad465164922e0f73631eaf9c4f76
-  languageName: node
-  linkType: hard
-
-"babel-plugin-styled-components@npm:^2.1.4":
-  version: 2.1.4
-  resolution: "babel-plugin-styled-components@npm:2.1.4"
-  dependencies:
-    "@babel/helper-annotate-as-pure": "npm:^7.22.5"
-    "@babel/helper-module-imports": "npm:^7.22.5"
-    "@babel/plugin-syntax-jsx": "npm:^7.22.5"
-    lodash: "npm:^4.17.21"
-    picomatch: "npm:^2.3.1"
-  peerDependencies:
-    styled-components: ">= 2"
-  checksum: 10c0/553f35f5feb4b51fda9c9aeef8a31c1b66f430687ab17830b7cdacfe7e93f912aef55bf59e402f4e0a1fa7ad039768ab3626512bbb9bf1f76fcc67ba47e7a56e
   languageName: node
   linkType: hard
 
@@ -36853,6 +36825,191 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tangle-monorepo@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "tangle-monorepo@workspace:."
+  dependencies:
+    "@0no-co/graphqlsp": "npm:^1.12.16"
+    "@actions/core": "npm:^1.11.1"
+    "@babel/core": "npm:^7.26.0"
+    "@chromatic-com/storybook": "npm:^3.2.2"
+    "@commitlint/cli": "npm:^19.6.1"
+    "@commitlint/config-conventional": "npm:^19.6.0"
+    "@date-fns/utc": "npm:^2.1.0"
+    "@eslint/eslintrc": "npm:^2.1.4"
+    "@eslint/js": "npm:~8.57.1"
+    "@ethersproject/abi": "npm:^5.7.0"
+    "@ethersproject/providers": "npm:^5.7.2"
+    "@graphql-codegen/cli": "npm:^5.0.3"
+    "@graphql-codegen/schema-ast": "npm:^4.1.0"
+    "@heroicons/react": "npm:^2.2.0"
+    "@hookform/resolvers": "npm:^3.9.1"
+    "@hyperlane-xyz/registry": "npm:^6.2.0"
+    "@hyperlane-xyz/sdk": "npm:^5.7.0"
+    "@hyperlane-xyz/utils": "npm:^5.7.0"
+    "@next/bundle-analyzer": "npm:^14.2.20"
+    "@ngneat/falso": "npm:^7.2.0"
+    "@nx/eslint": "npm:20.2.2"
+    "@nx/eslint-plugin": "npm:20.2.2"
+    "@nx/jest": "npm:20.2.2"
+    "@nx/js": "npm:20.3.0"
+    "@nx/next": "npm:20.2.2"
+    "@nx/react": "npm:20.2.2"
+    "@nx/storybook": "npm:20.2.2"
+    "@nx/vite": "npm:20.2.2"
+    "@nx/web": "npm:20.2.2"
+    "@nx/workspace": "npm:20.2.2"
+    "@octokit/request": "npm:^9.1.3"
+    "@polkadot/api": "npm:^13.2.1"
+    "@polkadot/apps-config": "npm:^0.146.1"
+    "@polkadot/extension-dapp": "npm:0.57.1"
+    "@polkadot/extension-inject": "npm:0.57.1"
+    "@polkadot/keyring": "npm:^13.2.3"
+    "@polkadot/react-identicon": "npm:^3.11.3"
+    "@polkadot/types": "npm:^13.2.1"
+    "@polkadot/util": "npm:^13.2.3"
+    "@polkadot/util-crypto": "npm:^13.2.3"
+    "@radix-ui/react-accordion": "npm:^1.2.2"
+    "@radix-ui/react-avatar": "npm:^1.1.2"
+    "@radix-ui/react-collapsible": "npm:^1.1.2"
+    "@radix-ui/react-dialog": "npm:^1.1.4"
+    "@radix-ui/react-dropdown-menu": "npm:^2.1.4"
+    "@radix-ui/react-icons": "npm:^1.3.2"
+    "@radix-ui/react-label": "npm:^2.1.1"
+    "@radix-ui/react-popover": "npm:^1.1.4"
+    "@radix-ui/react-progress": "npm:^1.1.1"
+    "@radix-ui/react-radio-group": "npm:^1.2.2"
+    "@radix-ui/react-scroll-area": "npm:^1.2.2"
+    "@radix-ui/react-select": "npm:^2.1.4"
+    "@radix-ui/react-separator": "npm:^1.1.1"
+    "@radix-ui/react-slider": "npm:^1.2.2"
+    "@radix-ui/react-switch": "npm:^1.1.2"
+    "@radix-ui/react-tabs": "npm:^1.1.2"
+    "@radix-ui/react-tooltip": "npm:^1.1.6"
+    "@solana/web3.js": "npm:^1.98.0"
+    "@storybook/addon-a11y": "npm:8.4.7"
+    "@storybook/addon-actions": "npm:8.4.7"
+    "@storybook/addon-essentials": "npm:8.4.7"
+    "@storybook/addon-interactions": "npm:8.4.7"
+    "@storybook/addon-themes": "npm:^8.4.7"
+    "@storybook/blocks": "npm:8.4.7"
+    "@storybook/channels": "npm:^8.4.7"
+    "@storybook/components": "npm:^8.4.7"
+    "@storybook/core-events": "npm:^8.4.7"
+    "@storybook/core-server": "npm:^8.4.7"
+    "@storybook/manager-api": "npm:^8.4.7"
+    "@storybook/nextjs": "npm:^8.4.7"
+    "@storybook/preview-api": "npm:^8.4.7"
+    "@storybook/react": "npm:^8.4.7"
+    "@storybook/theming": "npm:^8.4.7"
+    "@svgr/webpack": "npm:8.1.0"
+    "@swc-node/register": "npm:^1.10.9"
+    "@swc/cli": "npm:~0.5.2"
+    "@swc/core": "npm:~1.10.1"
+    "@swc/helpers": "npm:~0.5.15"
+    "@swc/jest": "npm:~0.2.37"
+    "@tailwindcss/forms": "npm:^0.5.9"
+    "@tangle-network/evm-contract-metadata": "npm:^1.3.0"
+    "@tangle-network/tangle-restaking-types": "npm:^0.1.0"
+    "@tangle-network/tangle-substrate-types": "npm:^0.9.13"
+    "@tanstack/match-sorter-utils": "npm:^8.19.4"
+    "@tanstack/react-query": "npm:^5.62.8"
+    "@tanstack/react-table": "npm:^8.20.6"
+    "@testing-library/dom": "npm:^10.4.0"
+    "@testing-library/react": "npm:16.1.0"
+    "@types/jest": "npm:29.5.14"
+    "@types/lodash": "npm:^4.17.13"
+    "@types/node": "npm:18.19.68"
+    "@types/react": "npm:18.3.17"
+    "@types/react-dom": "npm:18.3.5"
+    "@types/react-syntax-highlighter": "npm:^15.5.13"
+    "@types/yargs": "npm:^17.0.33"
+    "@typescript-eslint/eslint-plugin": "npm:^8.18.1"
+    "@typescript-eslint/parser": "npm:^8.18.1"
+    "@vitejs/plugin-react-swc": "npm:^3.7.2"
+    "@vitest/coverage-v8": "npm:^2.1.8"
+    "@vitest/ui": "npm:^2.1.8"
+    "@walletconnect/ethereum-provider": "npm:^2.18.0"
+    autoprefixer: "npm:^10.4.20"
+    babel-jest: "npm:29.7.0"
+    chromatic: "npm:^11.20.2"
+    classnames: "npm:^2.5.1"
+    copy-to-clipboard: "npm:^3.3.3"
+    date-fns: "npm:^4.1.0"
+    decimal.js: "npm:^10.4.3"
+    detect-browser: "npm:^5.3.0"
+    dotenv: "npm:^16.4.7"
+    esbuild: "npm:^0.24.0"
+    eslint: "npm:^8.57.1"
+    eslint-config-next: "npm:^14.2.20"
+    eslint-config-prettier: "npm:^9.1.0"
+    eslint-import-resolver-typescript: "npm:^3.7.0"
+    eslint-plugin-import-x: "npm:^4.5.1"
+    eslint-plugin-jsx-a11y: "npm:6.10.2"
+    eslint-plugin-react: "npm:7.37.2"
+    eslint-plugin-react-hooks: "npm:5.1.0"
+    eslint-plugin-react-refresh: "npm:^0.4.16"
+    eslint-plugin-storybook: "npm:^0.11.1"
+    eslint-plugin-unused-imports: "npm:^4.1.4"
+    ethers: "npm:5.7.2"
+    framer-motion: "npm:^11.15.0"
+    graphql: "npm:^16.10.0"
+    jest: "npm:29.7.0"
+    jest-environment-jsdom: "npm:^29.7.0"
+    js-base64: "npm:^3.7.7"
+    jsdom: "npm:~25.0.1"
+    lodash: "npm:^4.17.21"
+    next: "npm:^14.2.20"
+    next-secure-headers: "npm:^2.2.0"
+    next-themes: "npm:^0.4.4"
+    notistack: "npm:^3.0.1"
+    numbro: "npm:^2.5.0"
+    nx: "npm:20.3.2"
+    observable-hooks: "npm:^4.2.4"
+    postcss: "npm:8.4.49"
+    postcss-import: "npm:^16.1.0"
+    postcss-loader: "npm:^8.1.1"
+    postcss-nested: "npm:^7.0.2"
+    postcss-preset-env: "npm:^10.1.2"
+    prettier: "npm:^3.4.2"
+    react: "npm:^18.3.1"
+    react-circular-progressbar: "npm:^2.1.0"
+    react-dom: "npm:^18.3.1"
+    react-dropzone: "npm:^14.3.5"
+    react-hook-form: "npm:^7.54.1"
+    react-is: "npm:^18.3.1"
+    react-router: "npm:^7.0.2"
+    react-syntax-highlighter: "npm:^15.6.1"
+    recharts: "npm:^2.15.0"
+    rollup: "npm:^4.28.1"
+    rollup-plugin-preserve-directives: "npm:^0.4.0"
+    rxjs: "npm:7.8.1"
+    storybook: "npm:^8.4.7"
+    swr: "npm:^2.2.5"
+    tailwind-merge: "npm:^2.5.5"
+    tailwind-scrollbar: "npm:^3.1.0"
+    tailwindcss: "npm:^3.4.16"
+    tailwindcss-animate: "npm:^1.0.7"
+    tailwindcss-radix: "npm:^3.0.5"
+    ts-jest: "npm:29.2.5"
+    tslib: "npm:^2.8.1"
+    typescript: "npm:^5.7.2"
+    typescript-eslint: "npm:^8.18.1"
+    use-local-storage-state: "npm:^19.5.0"
+    viem: "npm:^2.21.55"
+    vite: "npm:~5.4.14"
+    vite-plugin-dts: "npm:~4.3.0"
+    vite-plugin-node-polyfills: "npm:^0.22.0"
+    vite-plugin-svgr: "npm:^4.3.0"
+    vite-plugin-wasm: "npm:^3.3.0"
+    vitest: "npm:^2.1.8"
+    wagmi: "npm:^2.14.3"
+    yargs: "npm:^17.7.2"
+    zod: "npm:^3.24.1"
+    zustand: "npm:^4.5.5"
+  languageName: unknown
+  linkType: soft
+
 "tapable@npm:^2.0.0, tapable@npm:^2.1.1, tapable@npm:^2.2.0, tapable@npm:^2.2.1":
   version: 2.2.1
   resolution: "tapable@npm:2.2.1"
@@ -37830,7 +37987,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.3.3, typescript@npm:^5.7.2":
+"typescript@npm:^5.5.4":
+  version: 5.7.3
+  resolution: "typescript@npm:5.7.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/b7580d716cf1824736cc6e628ab4cd8b51877408ba2be0869d2866da35ef8366dd6ae9eb9d0851470a39be17cbd61df1126f9e211d8799d764ea7431d5435afa
+  languageName: node
+  linkType: hard
+
+"typescript@npm:^5.7.2":
   version: 5.7.2
   resolution: "typescript@npm:5.7.2"
   bin:
@@ -37880,7 +38047,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.7.2#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.5.4#optional!builtin<compat/typescript>":
+  version: 5.7.3
+  resolution: "typescript@patch:typescript@npm%3A5.7.3#optional!builtin<compat/typescript>::version=5.7.3&hash=5786d5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10c0/6fd7e0ed3bf23a81246878c613423730c40e8bdbfec4c6e4d7bf1b847cbb39076e56ad5f50aa9d7ebd89877999abaee216002d3f2818885e41c907caaa192cc4
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^5.7.2#optional!builtin<compat/typescript>":
   version: 5.7.2
   resolution: "typescript@patch:typescript@npm%3A5.7.2#optional!builtin<compat/typescript>::version=5.7.2&hash=5786d5"
   bin:
@@ -39274,191 +39451,6 @@ __metadata:
   checksum: 10c0/27d836d81a1fec24a31d2d9b652f8ff6876b51940d1003bbd14dc5cfa57c58d84223b5a4eece229516522fd997bc0bc7be618ac42b129fb5fa42fa530060b16d
   languageName: node
   linkType: hard
-
-"webb-monorepo@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "webb-monorepo@workspace:."
-  dependencies:
-    "@0no-co/graphqlsp": "npm:^1.12.16"
-    "@actions/core": "npm:^1.11.1"
-    "@babel/core": "npm:^7.26.0"
-    "@chromatic-com/storybook": "npm:^3.2.2"
-    "@commitlint/cli": "npm:^19.6.1"
-    "@commitlint/config-conventional": "npm:^19.6.0"
-    "@date-fns/utc": "npm:^2.1.0"
-    "@eslint/eslintrc": "npm:^2.1.4"
-    "@eslint/js": "npm:~8.57.1"
-    "@ethersproject/abi": "npm:^5.7.0"
-    "@ethersproject/providers": "npm:^5.7.2"
-    "@graphql-codegen/cli": "npm:^5.0.3"
-    "@graphql-codegen/schema-ast": "npm:^4.1.0"
-    "@heroicons/react": "npm:^2.2.0"
-    "@hookform/resolvers": "npm:^3.9.1"
-    "@hyperlane-xyz/registry": "npm:^6.2.0"
-    "@hyperlane-xyz/sdk": "npm:^5.7.0"
-    "@hyperlane-xyz/utils": "npm:^5.7.0"
-    "@next/bundle-analyzer": "npm:^14.2.20"
-    "@ngneat/falso": "npm:^7.2.0"
-    "@nx/eslint": "npm:20.2.2"
-    "@nx/eslint-plugin": "npm:20.2.2"
-    "@nx/jest": "npm:20.2.2"
-    "@nx/js": "npm:20.3.0"
-    "@nx/next": "npm:20.2.2"
-    "@nx/react": "npm:20.2.2"
-    "@nx/storybook": "npm:20.2.2"
-    "@nx/vite": "npm:20.2.2"
-    "@nx/web": "npm:20.2.2"
-    "@nx/workspace": "npm:20.2.2"
-    "@octokit/request": "npm:^9.1.3"
-    "@polkadot/api": "npm:^13.2.1"
-    "@polkadot/apps-config": "npm:^0.146.1"
-    "@polkadot/extension-dapp": "npm:0.57.1"
-    "@polkadot/extension-inject": "npm:0.57.1"
-    "@polkadot/keyring": "npm:^13.2.3"
-    "@polkadot/react-identicon": "npm:^3.11.3"
-    "@polkadot/types": "npm:^13.2.1"
-    "@polkadot/util": "npm:^13.2.3"
-    "@polkadot/util-crypto": "npm:^13.2.3"
-    "@radix-ui/react-accordion": "npm:^1.2.2"
-    "@radix-ui/react-avatar": "npm:^1.1.2"
-    "@radix-ui/react-collapsible": "npm:^1.1.2"
-    "@radix-ui/react-dialog": "npm:^1.1.4"
-    "@radix-ui/react-dropdown-menu": "npm:^2.1.4"
-    "@radix-ui/react-icons": "npm:^1.3.2"
-    "@radix-ui/react-label": "npm:^2.1.1"
-    "@radix-ui/react-popover": "npm:^1.1.4"
-    "@radix-ui/react-progress": "npm:^1.1.1"
-    "@radix-ui/react-radio-group": "npm:^1.2.2"
-    "@radix-ui/react-scroll-area": "npm:^1.2.2"
-    "@radix-ui/react-select": "npm:^2.1.4"
-    "@radix-ui/react-separator": "npm:^1.1.1"
-    "@radix-ui/react-slider": "npm:^1.2.2"
-    "@radix-ui/react-switch": "npm:^1.1.2"
-    "@radix-ui/react-tabs": "npm:^1.1.2"
-    "@radix-ui/react-tooltip": "npm:^1.1.6"
-    "@solana/web3.js": "npm:^1.98.0"
-    "@storybook/addon-a11y": "npm:8.4.7"
-    "@storybook/addon-actions": "npm:8.4.7"
-    "@storybook/addon-essentials": "npm:8.4.7"
-    "@storybook/addon-interactions": "npm:8.4.7"
-    "@storybook/addon-themes": "npm:^8.4.7"
-    "@storybook/blocks": "npm:8.4.7"
-    "@storybook/channels": "npm:^8.4.7"
-    "@storybook/components": "npm:^8.4.7"
-    "@storybook/core-events": "npm:^8.4.7"
-    "@storybook/core-server": "npm:^8.4.7"
-    "@storybook/manager-api": "npm:^8.4.7"
-    "@storybook/nextjs": "npm:^8.4.7"
-    "@storybook/preview-api": "npm:^8.4.7"
-    "@storybook/react": "npm:^8.4.7"
-    "@storybook/theming": "npm:^8.4.7"
-    "@svgr/webpack": "npm:8.1.0"
-    "@swc-node/register": "npm:^1.10.9"
-    "@swc/cli": "npm:~0.5.2"
-    "@swc/core": "npm:~1.10.1"
-    "@swc/helpers": "npm:~0.5.15"
-    "@swc/jest": "npm:~0.2.37"
-    "@tailwindcss/forms": "npm:^0.5.9"
-    "@tanstack/match-sorter-utils": "npm:^8.19.4"
-    "@tanstack/react-query": "npm:^5.62.8"
-    "@tanstack/react-table": "npm:^8.20.6"
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/react": "npm:16.1.0"
-    "@types/jest": "npm:29.5.14"
-    "@types/lodash": "npm:^4.17.13"
-    "@types/node": "npm:18.19.68"
-    "@types/react": "npm:18.3.17"
-    "@types/react-dom": "npm:18.3.5"
-    "@types/react-syntax-highlighter": "npm:^15.5.13"
-    "@types/yargs": "npm:^17.0.33"
-    "@typescript-eslint/eslint-plugin": "npm:^8.18.1"
-    "@typescript-eslint/parser": "npm:^8.18.1"
-    "@vitejs/plugin-react-swc": "npm:^3.7.2"
-    "@vitest/coverage-v8": "npm:^2.1.8"
-    "@vitest/ui": "npm:^2.1.8"
-    "@walletconnect/ethereum-provider": "npm:^2.18.0"
-    "@webb-tools/evm-contract-metadata": "npm:^1.3.0"
-    "@webb-tools/tangle-restaking-types": "npm:^0.1.0"
-    "@webb-tools/tangle-substrate-types": "npm:^0.9.13"
-    autoprefixer: "npm:^10.4.20"
-    babel-jest: "npm:29.7.0"
-    chromatic: "npm:^11.20.2"
-    classnames: "npm:^2.5.1"
-    copy-to-clipboard: "npm:^3.3.3"
-    date-fns: "npm:^4.1.0"
-    decimal.js: "npm:^10.4.3"
-    detect-browser: "npm:^5.3.0"
-    dotenv: "npm:^16.4.7"
-    esbuild: "npm:^0.24.0"
-    eslint: "npm:^8.57.1"
-    eslint-config-next: "npm:^14.2.20"
-    eslint-config-prettier: "npm:^9.1.0"
-    eslint-import-resolver-typescript: "npm:^3.7.0"
-    eslint-plugin-import-x: "npm:^4.5.1"
-    eslint-plugin-jsx-a11y: "npm:6.10.2"
-    eslint-plugin-react: "npm:7.37.2"
-    eslint-plugin-react-hooks: "npm:5.1.0"
-    eslint-plugin-react-refresh: "npm:^0.4.16"
-    eslint-plugin-storybook: "npm:^0.11.1"
-    eslint-plugin-unused-imports: "npm:^4.1.4"
-    ethers: "npm:5.7.2"
-    framer-motion: "npm:^11.15.0"
-    graphql: "npm:^16.10.0"
-    jest: "npm:29.7.0"
-    jest-environment-jsdom: "npm:^29.7.0"
-    js-base64: "npm:^3.7.7"
-    jsdom: "npm:~25.0.1"
-    lodash: "npm:^4.17.21"
-    next: "npm:^14.2.20"
-    next-secure-headers: "npm:^2.2.0"
-    next-themes: "npm:^0.4.4"
-    notistack: "npm:^3.0.1"
-    numbro: "npm:^2.5.0"
-    nx: "npm:20.3.2"
-    observable-hooks: "npm:^4.2.4"
-    postcss: "npm:8.4.49"
-    postcss-import: "npm:^16.1.0"
-    postcss-loader: "npm:^8.1.1"
-    postcss-nested: "npm:^7.0.2"
-    postcss-preset-env: "npm:^10.1.2"
-    prettier: "npm:^3.4.2"
-    react: "npm:^18.3.1"
-    react-circular-progressbar: "npm:^2.1.0"
-    react-dom: "npm:^18.3.1"
-    react-dropzone: "npm:^14.3.5"
-    react-hook-form: "npm:^7.54.1"
-    react-is: "npm:^18.3.1"
-    react-router: "npm:^7.0.2"
-    react-syntax-highlighter: "npm:^15.6.1"
-    recharts: "npm:^2.15.0"
-    rollup: "npm:^4.28.1"
-    rollup-plugin-preserve-directives: "npm:^0.4.0"
-    rxjs: "npm:7.8.1"
-    storybook: "npm:^8.4.7"
-    swr: "npm:^2.2.5"
-    tailwind-merge: "npm:^2.5.5"
-    tailwind-scrollbar: "npm:^3.1.0"
-    tailwindcss: "npm:^3.4.16"
-    tailwindcss-animate: "npm:^1.0.7"
-    tailwindcss-radix: "npm:^3.0.5"
-    ts-jest: "npm:29.2.5"
-    tslib: "npm:^2.8.1"
-    typescript: "npm:^5.7.2"
-    typescript-eslint: "npm:^8.18.1"
-    use-local-storage-state: "npm:^19.5.0"
-    viem: "npm:^2.21.55"
-    vite: "npm:~5.4.14"
-    vite-plugin-dts: "npm:~4.3.0"
-    vite-plugin-node-polyfills: "npm:^0.22.0"
-    vite-plugin-svgr: "npm:^4.3.0"
-    vite-plugin-wasm: "npm:^3.3.0"
-    vitest: "npm:^2.1.8"
-    wagmi: "npm:^2.14.3"
-    yargs: "npm:^17.7.2"
-    zod: "npm:^3.24.1"
-    zustand: "npm:^4.5.5"
-  languageName: unknown
-  linkType: soft
 
 "webextension-polyfill@npm:>=0.10.0 <1.0":
   version: 0.12.0

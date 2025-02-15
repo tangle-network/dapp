@@ -1,5 +1,5 @@
-import NetworkSelectorDropdown from '@webb-tools/tangle-shared-ui/components/NetworkSelectorDropdown';
-import ConnectWalletButton from '@webb-tools/tangle-shared-ui/components/ConnectWalletButton';
+import NetworkSelectorDropdown from '@tangle-network/tangle-shared-ui/components/NetworkSelectorDropdown';
+import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton';
 import { ComponentProps } from 'react';
 import { twMerge } from 'tailwind-merge';
 
