@@ -6,7 +6,6 @@ import {
   TANGLE_TERMS_OF_SERVICE_URL,
   WEBB_AVAILABLE_SOCIALS,
 } from '@webb-tools/webb-ui-components/constants';
-import { useLayoutBgClassName } from '@webb-tools/tangle-shared-ui/hooks/useLayoutBgClassName';
 import { type FC, type PropsWithChildren } from 'react';
 
 import { MobileSidebar, Sidebar } from '../components';
@@ -36,10 +35,8 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
   isSidebarInitiallyExpanded,
   children,
 }) => {
-  const layoutBgClassname = useLayoutBgClassName();
-
   return (
-    <div className={`flex h-screen ${layoutBgClassname}`}>
+    <div className={`flex h-screen bg-tangle`}>
       <Sidebar isExpandedByDefault={isSidebarInitiallyExpanded} />
 
       <main className="flex-1 h-full overflow-y-auto scrollbar-hide">
