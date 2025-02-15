@@ -53,7 +53,7 @@ If a community member engages in unacceptable behavior, the community organizers
 
 ## 6. Reporting Guidelines
 
-If you are subject to or witness unacceptable behavior, or have any other concerns, please notify a community organizer as soon as possible: drew@commonwealth.im.
+If you are subject to or witness unacceptable behavior, or have any other concerns, please notify a community organizer as soon as possible: drew@tangle.tools.
 
 Link to reporting guidelines: [CONTRIBUTING.md](CONTRIBUTING.md)
 
@@ -71,7 +71,7 @@ This code of conduct and its related procedures also applies to unacceptable beh
 
 ## 9. Contact info
 
-You can contact Tangle Network via Email: drew@commonwealth.im
+You can contact Tangle Network via Email: drew@tangle.tools
 
 ## 10. License and attribution
 
