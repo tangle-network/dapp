@@ -1,8 +1,7 @@
 import { render } from '@testing-library/react';
-import { BrowserRouter } from 'react-router';
-
-import App from './app';
 import { act } from 'react';
+import { BrowserRouter } from 'react-router';
+import App from './app';
 
 describe('App', () => {
   it('should render successfully', async () => {

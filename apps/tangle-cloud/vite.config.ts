@@ -2,9 +2,13 @@
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import react from '@vitejs/plugin-react-swc';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import svgr from 'vite-plugin-svgr';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   root: __dirname,
@@ -54,5 +58,8 @@ export default defineConfig({
       reportsDirectory: '../../coverage/apps/tangle-cloud',
       provider: 'v8',
     },
+    setupFiles: [
+      resolve(__dirname, '../../libs/tangle-shared-ui/src/utils/setupTest.ts'),
+    ],
   },
 });

@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router';
 import Layout from '../components/Layout';
 import BlueprintDetailsPage from '../pages/blueprints/[id]/page';
 import BlueprintsLayout from '../pages/blueprints/layout';

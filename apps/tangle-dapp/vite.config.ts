@@ -66,6 +66,8 @@ export default defineConfig({
       reportsDirectory: '../../coverage/apps/tangle-dapp',
       provider: 'v8',
     },
-    setupFiles: [resolve(__dirname, 'src/utils/setupTest.ts')],
+    setupFiles: [
+      resolve(__dirname, '../../libs/tangle-shared-ui/src/utils/setupTest.ts'),
+    ],
   },
 });

@@ -4,5 +4,12 @@
   "sourceRoot": "apps/testnet-leaderboard",
   "projectType": "application",
   "tags": [],
-  "targets": {}
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo \"Ignored\""
+      }
+    }
+  }
 }

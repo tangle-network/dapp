@@ -1,12 +1,12 @@
 // Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import {
   InjectedExtension,
   MetadataDef,
 } from '@polkadot/extension-inject/types';
+import { u8aToString } from '@polkadot/util';
 import { LoggerService } from '@tangle-network/browser-utils';
 import { Wallet } from '@tangle-network/dapp-config';
 import findSubstrateWallet from '@tangle-network/dapp-config/utils/findSubstrateWallet';
@@ -15,7 +15,6 @@ import { EventBus } from '@tangle-network/dapp-types/EventBus';
 import lodash from 'lodash';
 import { isValidAddress } from './is-valid-address';
 import { PolkadotAccount, PolkadotAccounts } from './polkadot-accounts';
-import { fromUint8Array } from 'js-base64';
 
 const { isNumber } = lodash;
 
@@ -227,6 +226,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     ).forEach((entry) => {
       const cbs = this.subscriptions[entry];
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       cbs.forEach((cb) => this.off(entry, cb));
     }, this);
@@ -252,7 +252,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
       chain: this.apiPromise.runtimeChain.toString(),
       genesisHash: this.apiPromise.genesisHash.toHex(),
       icon: 'substrate',
-      metaCalls: fromUint8Array(
+      metaCalls: u8aToString(
         this.apiPromise.runtimeMetadata.asCallsOnly.toU8a(),
       ),
       specVersion: this.apiPromise.runtimeVersion.specVersion.toNumber(),

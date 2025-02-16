@@ -1,6 +1,9 @@
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
 import { EVMTokenBridgeEnum } from '@tangle-network/evm-contract-metadata';
-import { ChevronDown, TokenIcon } from '@tangle-network/icons';
+import {
+  ChevronDown,
+  ExternalLinkLine,
+  TokenIcon,
+} from '@tangle-network/icons';
 import { getFlexBasic } from '@tangle-network/icons/utils';
 import {
   Accordion,
@@ -194,7 +197,7 @@ export const FeeDetail = ({
                     {shortenHex(recipientExplorerUrl)}
                   </Typography>
 
-                  <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                  <ExternalLinkLine className="size-4" />
                 </a>
               </div>
             )}
