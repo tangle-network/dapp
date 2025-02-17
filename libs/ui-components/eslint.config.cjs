@@ -30,4 +30,12 @@ module.exports = [
     // Override or add rules here
     rules: {},
   },
+  {
+    rules: {
+      'storybook/no-uninstalled-addons': [
+        'error',
+        { packageJsonLocation: '../../package.json' },
+      ],
+    },
+  },
 ];

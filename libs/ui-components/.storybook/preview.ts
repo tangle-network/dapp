@@ -1,10 +1,9 @@
 import { withThemeByClassName } from '@storybook/addon-themes';
-
+import { Preview } from '@storybook/react/*';
 import '../src/tailwind.css';
 import './override.css';
 
-export const parameters = {
-  actions: { argTypesRegex: '^on[A-Z].*' },
+export const parameters: Preview['parameters'] = {
   controls: {
     expanded: true,
     matchers: {

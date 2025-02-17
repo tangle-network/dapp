@@ -28,8 +28,8 @@
     "**/*.spec.jsx",
     "**/*.test.jsx",
     "**/*.stories.ts",
-    "**/*.stories.tsx",
     "**/*.stories.js",
-    "**/*.stories.jsx"
+    "**/*.stories.jsx",
+    "**/*.stories.tsx"
   ]
 }

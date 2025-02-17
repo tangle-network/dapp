@@ -1,28 +1,28 @@
 /// <reference types='vitest' />
-import { defineConfig } from 'vite';
-
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+// import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import react from '@vitejs/plugin-react-swc';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import * as path from 'path';
 import { preserveDirectives } from 'rollup-plugin-preserve-directives';
+import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import wasm from 'vite-plugin-wasm';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import svgr from 'vite-plugin-svgr';
 
-const dirname_ = dirname(fileURLToPath(import.meta.url));
-
-export default defineConfig(() => ({
-  root: dirname_,
+export default defineConfig({
+  root: __dirname,
   cacheDir: '../../node_modules/.vite/libs/ui-components',
 
   plugins: [
     react(),
-    nxViteTsPaths(),
+    // nxViteTsPaths({ debug: true }),
+    tsconfigPaths({ root: '../..' }),
     dts({
-      entryRoot: './',
-      tsconfigPath: resolve(dirname_, 'tsconfig.lib.json'),
+      entryRoot: 'src',
+      tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
     }),
     wasm(),
+    svgr(),
   ],
 
   // Uncomment this if you are using workers.
@@ -77,4 +77,4 @@ export default defineConfig(() => ({
     },
     passWithNoTests: true,
   },
-}));
+});
