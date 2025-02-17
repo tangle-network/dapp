@@ -1,0 +1,1 @@
+var o=(n=>(n[n.Polkadot=1]="Polkadot",n[n.MetaMask=2]="MetaMask",n[n.WalletConnectV2=3]="WalletConnectV2",n[n.Rainbow=4]="Rainbow",n[n.OneWallet=5]="OneWallet",n[n.Talisman=6]="Talisman",n[n.SubWallet=7]="SubWallet",n))(o||{});export{o as W};

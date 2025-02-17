@@ -1,0 +1,1 @@
+const o=(l,e=4)=>{const t=l.toLowerCase(),i=t.startsWith("0x");let s="",n="";return i&&t.length<=e*2+2?t:!i&&t.length<=e*2?`0x${t}`:(i?(s=t.split("").slice(0,e+2).join(""),n=t.split("").slice(-e).join("")):(s=t.split("").slice(0,e).join(""),n=t.split("").slice(-e).join("")),i?`${s}...${n}`:`0x${s}...${n}`)};export{o as s};

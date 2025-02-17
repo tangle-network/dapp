@@ -1,0 +1,7 @@
+import{j as t}from"./jsx-runtime-BbjHj44Y.js";import{L as o}from"./LoadingPill-B9InIXuZ.js";import"./index-C6mWTJJr.js";import"./_commonjsHelpers-BosuxZz1.js";import"./ProposalBadge-aTrZS74o.js";import"./create-icon-BPUPqOkJ.js";import"./bundle-mjs-D696Ktp4.js";import"./index-BpvXyOxN.js";import"./ChainIcon-MpKHrVma.js";import"./Spinner-C8gHa2rr.js";import"./StatusIndicator-BMH2ux_C.js";import"./iframe-CzYK-pcq.js";import"./InformationLine-D6uBLwmF.js";import"./Alert-CUeVEtwL.js";const b={title:"Design System/Molecules/LoadingPill",component:o},r={render:()=>t.jsx(o,{})},e={render:()=>t.jsx(o,{status:"success"})},s={render:()=>t.jsx(o,{status:"error"})};var a,c,i;r.parameters={...r.parameters,docs:{...(a=r.parameters)==null?void 0:a.docs,source:{originalSource:`{
+  render: () => <LoadingPill />
+}`,...(i=(c=r.parameters)==null?void 0:c.docs)==null?void 0:i.source}}};var m,n,p;e.parameters={...e.parameters,docs:{...(m=e.parameters)==null?void 0:m.docs,source:{originalSource:`{
+  render: () => <LoadingPill status="success" />
+}`,...(p=(n=e.parameters)==null?void 0:n.docs)==null?void 0:p.source}}};var d,u,l;s.parameters={...s.parameters,docs:{...(d=s.parameters)==null?void 0:d.docs,source:{originalSource:`{
+  render: () => <LoadingPill status="error" />
+}`,...(l=(u=s.parameters)==null?void 0:u.docs)==null?void 0:l.source}}};const h=["Default","Success","Error"];export{r as Default,s as Error,e as Success,h as __namedExportsOrder,b as default};

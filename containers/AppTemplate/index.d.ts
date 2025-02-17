@@ -1,0 +1,19 @@
+import { PropsOf } from '../../types';
+import { Typography } from '../../typography/Typography/Typography';
+import { AppTemplateTitleProps } from './types';
+import { FC } from '../../../../../node_modules/react';
+declare const AppTemplateRoot: import('../../../../../node_modules/react').ForwardRefExoticComponent<Omit<import('../../../../../node_modules/react').DetailedHTMLProps<import('../../../../../node_modules/react').HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "ref"> & import('../../../../../node_modules/react').RefAttributes<HTMLDivElement>>;
+declare const AppTemplateContent: import('../../../../../node_modules/react').ForwardRefExoticComponent<Omit<import('../../../../../node_modules/react').DetailedHTMLProps<import('../../../../../node_modules/react').HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "ref"> & import('../../../../../node_modules/react').RefAttributes<HTMLDivElement>>;
+declare const AppTemplateTitle: import('../../../../../node_modules/react').ForwardRefExoticComponent<Omit<AppTemplateTitleProps, "ref"> & import('../../../../../node_modules/react').RefAttributes<HTMLDivElement>>;
+declare const AppTemplateDescriptionContainer: import('../../../../../node_modules/react').ForwardRefExoticComponent<Omit<import('../../../../../node_modules/react').DetailedHTMLProps<import('../../../../../node_modules/react').HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "ref"> & import('../../../../../node_modules/react').RefAttributes<HTMLDivElement>>;
+declare const AppTemplateDescription: FC<Partial<PropsOf<typeof Typography>>>;
+declare const AppTemplateBody: import('../../../../../node_modules/react').ForwardRefExoticComponent<Omit<import('../../../../../node_modules/react').DetailedHTMLProps<import('../../../../../node_modules/react').HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "ref"> & import('../../../../../node_modules/react').RefAttributes<HTMLDivElement>>;
+declare const AppTemplate: {
+    Root: import('../../../../../node_modules/react').ForwardRefExoticComponent<Omit<import('../../../../../node_modules/react').DetailedHTMLProps<import('../../../../../node_modules/react').HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "ref"> & import('../../../../../node_modules/react').RefAttributes<HTMLDivElement>>;
+    Content: import('../../../../../node_modules/react').ForwardRefExoticComponent<Omit<import('../../../../../node_modules/react').DetailedHTMLProps<import('../../../../../node_modules/react').HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "ref"> & import('../../../../../node_modules/react').RefAttributes<HTMLDivElement>>;
+    Title: import('../../../../../node_modules/react').ForwardRefExoticComponent<Omit<AppTemplateTitleProps, "ref"> & import('../../../../../node_modules/react').RefAttributes<HTMLDivElement>>;
+    DescriptionContainer: import('../../../../../node_modules/react').ForwardRefExoticComponent<Omit<import('../../../../../node_modules/react').DetailedHTMLProps<import('../../../../../node_modules/react').HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "ref"> & import('../../../../../node_modules/react').RefAttributes<HTMLDivElement>>;
+    Description: FC<Partial<Omit<import('../../typography/types').TypographyProps<import('../../typography/types').TypographyVariant>, "ref">>>;
+    Body: import('../../../../../node_modules/react').ForwardRefExoticComponent<Omit<import('../../../../../node_modules/react').DetailedHTMLProps<import('../../../../../node_modules/react').HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "ref"> & import('../../../../../node_modules/react').RefAttributes<HTMLDivElement>>;
+};
+export { AppTemplate, AppTemplateRoot, AppTemplateRoot as Root, AppTemplateContent, AppTemplateContent as Content, AppTemplateTitle, AppTemplateTitle as Title, AppTemplateDescriptionContainer, AppTemplateDescriptionContainer as DescriptionContainer, AppTemplateDescription, AppTemplateDescription as Description, AppTemplateBody, AppTemplateBody as Body, };
