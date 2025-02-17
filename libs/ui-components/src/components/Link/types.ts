@@ -1,4 +1,3 @@
-import { LinkProps as InternalLinkProps } from 'next/link';
 import type { ComponentPropsWithoutRef } from 'react';
 import { Link as ReactRouterLink } from 'react-router';
 
@@ -10,25 +9,10 @@ type WithInternal<T> = T & {
   isInternal?: boolean;
 };
 
-type NextLinkProps = Omit<
-  React.AnchorHTMLAttributes<HTMLAnchorElement>,
-  keyof InternalLinkProps
-> &
-  InternalLinkProps & {
-    children?: React.ReactNode;
-  } & React.RefAttributes<HTMLAnchorElement>;
-
 export type LinkProps = WithInternal<
-  | NextLinkProps
   | ComponentPropsWithoutRef<typeof ReactRouterLink>
   | ComponentPropsWithoutRef<'a'>
 >;
-
-function isNextLinkProps(
-  props: LinkProps,
-): props is WithInternal<NextLinkProps> {
-  return 'href' in props && !('to' in props) && !!props.isInternal;
-}
 
 function isReactRouterLinkProps(
   props: LinkProps,
@@ -36,4 +20,4 @@ function isReactRouterLinkProps(
   return 'to' in props && !('href' in props) && !!props.isInternal;
 }
 
-export { isNextLinkProps, isReactRouterLinkProps };
+export { isReactRouterLinkProps };

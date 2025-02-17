@@ -7,6 +7,8 @@ const unusedImports = require('eslint-plugin-unused-imports');
 const reactRefresh = require('eslint-plugin-react-refresh');
 const eslintConfigPrettier = require('eslint-config-prettier');
 
+const { createNodeResolver } = eslintPluginImportX;
+
 const compat = new FlatCompat({
   baseDirectory: __dirname,
   recommendedConfig: js.configs.recommended,
@@ -14,9 +16,34 @@ const compat = new FlatCompat({
 
 module.exports = [
   ...compat.extends('plugin:storybook/recommended'),
-  eslintPluginImportX.flatConfigs.recommended,
-  eslintPluginImportX.flatConfigs.typescript,
   reactRefresh.configs.recommended,
+  {
+    plugins: {
+      'import-x': eslintPluginImportX,
+    },
+    settings: {
+      'import-x/resolver-next': [
+        // This is the new resolver we are introducing
+        createNodeResolver(),
+        // you can add more resolvers down below
+        require('eslint-import-resolver-typescript').createTypeScriptImportResolver(
+          {
+            alwaysTryTypes: true,
+            project: [
+              './tsconfig.base.json',
+              'apps/*/tsconfig.json',
+              'apps/*/tsconfig.app.json',
+              'apps/*/tsconfig.node.json',
+              'apps/*/tsconfig.spec.json',
+              'libs/*/tsconfig.json',
+              'libs/*/tsconfig.lib.json',
+              'libs/*/tsconfig.spec.json',
+            ],
+          },
+        ),
+      ],
+    },
+  },
   {
     files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
     ignores: ['**/eslint.config.cjs'],
@@ -76,7 +103,7 @@ module.exports = [
     })
     .map((config) => ({
       ...config,
-      files: ['**/*.ts', '**/*.tsx'],
+      files: ['**/*.ts', '**/*.tsx', '**/*.cts', '**/*.mts'],
       rules: {
         ...config.rules,
         '@typescript-eslint/no-empty-interface': 0,
@@ -121,7 +148,7 @@ module.exports = [
     })),
   eslintConfigPrettier,
   {
-    ignores: ['**/.netlify/', '**/.next/'],
+    ignores: ['**/.netlify/'],
   },
   {
     files: ['**/eslint.config.cjs'],

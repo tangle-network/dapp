@@ -1,35 +1,18 @@
-import { forwardRef } from 'react';
-import cx from 'classnames';
-import { isHex } from 'viem';
 import { ExternalLinkLine } from '@tangle-network/icons';
-
+import cx from 'classnames';
+import { forwardRef } from 'react';
+import { isHex } from 'viem';
+import { Typography } from '../../typography';
+import { shortenHex } from '../../utils';
+import AddressChip from '../AddressChip';
 import ChainsRing from '../ChainsRing';
 import { TxConfirmationRingProps } from './types';
-import { Typography } from '../../typography';
-import AddressChip from '../AddressChip';
-import {
-  useDarkMode as useNormalDarkMode,
-  useNextDarkMode,
-} from '../../hooks/useDarkMode';
-import { shortenHex } from '../../utils';
 
 const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
   (
-    {
-      source,
-      dest,
-      title,
-      subtitle,
-      externalLink,
-      className,
-      isInNextApp = false,
-      ...props
-    },
+    { source, dest, title, subtitle, externalLink, className, ...props },
     ref,
   ) => {
-    const useDarkMode = isInNextApp ? useNextDarkMode : useNormalDarkMode;
-    const [isDarkMode] = useDarkMode();
-
     return (
       <div
         className={cx('flex justify-center', className)}
@@ -99,33 +82,32 @@ const TxConfirmationRing = forwardRef<HTMLDivElement, TxConfirmationRingProps>(
                 />
               </foreignObject>
               <circle
+                className="stroke-[#4B3AA4] dark:stroke-[#B5A9F2]"
                 cx="87"
                 cy="104.082"
                 r="2.5"
-                stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
                 strokeWidth="2"
               />
               <path
+                className="stroke-[#4B3AA4] dark:stroke-[#B5A9F2]"
                 d="M105.5 104.082L89.5 104.082"
-                stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
                 strokeWidth="2"
               />
               <circle
+                className="stroke-[#4B3AA4] dark:stroke-[#B5A9F2]"
                 cx="328"
                 cy="104.082"
                 r="2.5"
                 transform="rotate(-180 328 104.082)"
-                stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
                 strokeWidth="2"
               />
               <path
+                className="stroke-[#4B3AA4] dark:stroke-[#B5A9F2]"
                 d="M309.5 104.082L325.5 104.082"
-                stroke={isDarkMode ? '#4B3AA4' : '#B5A9F2'}
                 strokeWidth="2"
               />
             </g>
           }
-          isInNextApp={isInNextApp}
         />
       </div>
     );

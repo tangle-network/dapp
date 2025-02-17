@@ -8,7 +8,7 @@ export default function Index() {
   return (
     <div
       className={cx(
-        'bg-body bg-repeat-y bg-center',
+        'bg-tangle bg-repeat-y',
         'py-[60px] md:py-[90px] px-2 lg:px-0',
       )}
     >

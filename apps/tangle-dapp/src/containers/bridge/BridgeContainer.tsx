@@ -1,4 +1,4 @@
-import { ArrowsRightLeftIcon } from '@heroicons/react/24/outline';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
 import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
@@ -12,6 +12,11 @@ import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
 } from '@tangle-network/evm-contract-metadata';
+import ArrowLeftRightLineIcon from '@tangle-network/icons/ArrowLeftRightLineIcon';
+import WalletFillIcon from '@tangle-network/icons/WalletFillIcon';
+import { ROUTER_NATIVE_TOKEN_ADDRESS } from '@tangle-network/tangle-shared-ui/constants/bridge';
+import { BridgeTokenWithBalance } from '@tangle-network/tangle-shared-ui/types';
+import convertDecimalToBN from '@tangle-network/tangle-shared-ui/utils/convertDecimalToBn';
 import {
   AmountFormatStyle,
   assertEvmAddress,
@@ -30,14 +35,8 @@ import { Decimal } from 'decimal.js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatEther } from 'viem';
-import { useShallow } from 'zustand/react/shallow';
-
-import { BN, BN_ZERO } from '@polkadot/util';
-import { WalletFillIcon } from '@tangle-network/icons';
-import { ROUTER_NATIVE_TOKEN_ADDRESS } from '@tangle-network/tangle-shared-ui/constants/bridge';
-import { BridgeTokenWithBalance } from '@tangle-network/tangle-shared-ui/types';
-import convertDecimalToBN from '@tangle-network/tangle-shared-ui/utils/convertDecimalToBn';
 import { useBalance } from 'wagmi';
+import { useShallow } from 'zustand/react/shallow';
 import AddressInput from '../../components/AddressInput';
 import AmountInput from '../../components/AmountInput';
 import { BridgeConfirmationModal } from '../../components/bridge/BridgeConfirmationModal';
@@ -736,7 +735,7 @@ const BridgeContainer = ({ className }: Props) => {
               className="px-1 pt-6 cursor-pointer md:pt-0 md:pb-4"
               onClick={onSwitchChains}
             >
-              <ArrowsRightLeftIcon className="w-6 h-6 rotate-90 md:rotate-0" />
+              <ArrowLeftRightLineIcon className="w-6 h-6 rotate-90 md:rotate-0" />
             </div>
 
             {/** Destination chain */}

@@ -55,7 +55,6 @@ export const getApiRx = async (endpoint: string): Promise<ApiRx> => {
 export const findInjectorForAddress = async (
   address: string,
 ): Promise<InjectedExtension | null> => {
-  // TODO: This is a temporary workaround to prevent Next.js from throwing an error complaining about 'window is not defined'.
   const { web3Enable, web3FromAddress } = await import(
     '@polkadot/extension-dapp'
   );

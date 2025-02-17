@@ -1,21 +1,21 @@
 'use client';
 
 import { Alert } from '@tangle-network/icons/Alert';
-import { useMemo, type FC } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { type FC } from 'react';
+import { Prism, SyntaxHighlighterProps } from 'react-syntax-highlighter';
 import {
   oneDark,
   oneLight,
 } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { twMerge } from 'tailwind-merge';
-import {
-  useNextDarkMode,
-  useDarkMode as useNormalDarkMode,
-} from '../../hooks/useDarkMode';
+import { useDarkMode } from '../../hooks/useDarkMode';
 import { Typography } from '../../typography';
 import SkeletonLoader from '../SkeletonLoader/SkeletonLoader';
 import Button from '../buttons/Button';
 import type { CodeFileProps } from './types';
+
+// https://github.com/react-syntax-highlighter/react-syntax-highlighter/issues/539
+const SyntaxHighlighter = Prism as any as React.FC<SyntaxHighlighterProps>;
 
 const CodeFile: FC<CodeFileProps> = ({
   code,
@@ -23,13 +23,8 @@ const CodeFile: FC<CodeFileProps> = ({
   error,
   language,
   fetchCodeFnc,
-  isInNextProject,
   className,
 }) => {
-  const useDarkMode = useMemo(
-    () => (isInNextProject ? useNextDarkMode : useNormalDarkMode),
-    [isInNextProject],
-  );
   const [isDarkMode] = useDarkMode();
 
   if (isLoading) {

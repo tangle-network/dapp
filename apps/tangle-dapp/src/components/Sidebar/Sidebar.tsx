@@ -1,7 +1,6 @@
 import { SideBar as SideBarCmp } from '@tangle-network/ui-components';
-import { setSidebarCookieOnToggle } from '@tangle-network/ui-components/next-utils';
-import { useLocation } from 'react-router';
 import { type FC } from 'react';
+import { useLocation } from 'react-router';
 
 import useSidebarProps from './useSidebarProps';
 
@@ -19,7 +18,6 @@ const Sidebar: FC<SidebarProps> = ({ isExpandedByDefault }) => {
       pathnameOrHash={location.pathname}
       className="hidden lg:block !z-0"
       isExpandedByDefault={isExpandedByDefault}
-      onSideBarToggle={setSidebarCookieOnToggle}
     />
   );
 };

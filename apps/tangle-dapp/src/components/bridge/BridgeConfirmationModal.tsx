@@ -1,8 +1,23 @@
+import { IMailbox__factory } from '@hyperlane-xyz/core';
+import { HyperlaneCore } from '@hyperlane-xyz/sdk';
+import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
 import { ChainConfig, chainsConfig } from '@tangle-network/dapp-config/chains';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
+import { EVMTokenBridgeEnum } from '@tangle-network/evm-contract-metadata';
+import { ArrowDownIcon } from '@tangle-network/icons/ArrowDownIcon';
 import { ChainIcon } from '@tangle-network/icons/ChainIcon';
+import { ExternalLinkLine } from '@tangle-network/icons/ExternalLinkLine';
 import { TokenIcon } from '@tangle-network/icons/TokenIcon';
 import { getFlexBasic } from '@tangle-network/icons/utils';
+import {
+  mailboxAddress,
+  ROUTER_TX_EXPLORER_URL,
+  ROUTER_TX_STATUS_URL,
+} from '@tangle-network/tangle-shared-ui/constants/bridge';
+import useLocalStorage, {
+  BridgeDestTxStatus,
+  LocalStorageKey,
+} from '@tangle-network/tangle-shared-ui/hooks/useLocalStorage';
 import {
   BridgeToken,
   BridgeTxState,
@@ -26,32 +41,16 @@ import {
   shortenHex,
   shortenString,
 } from '@tangle-network/ui-components/utils';
-import { EVMTokenBridgeEnum } from '@tangle-network/evm-contract-metadata';
-import cx from 'classnames';
-import { FC, useCallback, useMemo } from 'react';
-import useWalletClient from '../../data/bridge/useWalletClient';
-
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
-import { IMailbox__factory } from '@hyperlane-xyz/core';
-import { HyperlaneCore } from '@hyperlane-xyz/sdk';
-import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
-import { ArrowDownIcon } from '@tangle-network/icons';
-import {
-  mailboxAddress,
-  ROUTER_TX_EXPLORER_URL,
-  ROUTER_TX_STATUS_URL,
-} from '@tangle-network/tangle-shared-ui/constants/bridge';
-import useLocalStorage, {
-  BridgeDestTxStatus,
-  LocalStorageKey,
-} from '@tangle-network/tangle-shared-ui/hooks/useLocalStorage';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import cx from 'classnames';
 import { Decimal } from 'decimal.js';
+import { FC, useCallback, useMemo } from 'react';
 import { createPublicClient, getContract, http } from 'viem';
 import useBridgeTxQueue from '../../context/bridge/BridgeTxQueueContext/useBridgeTxQueue';
 import { useHyperlaneTransfer } from '../../data/bridge/useHyperlaneTransfer';
 import { useRouterTransfer } from '../../data/bridge/useRouterTransfer';
+import useWalletClient from '../../data/bridge/useWalletClient';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
 import { FeeDetail, FeeDetailProps } from './FeeDetail';
 
@@ -842,7 +841,7 @@ const ConfirmationItem: FC<{
                 : shortenHex(accAddress, 10)}
             </Typography>
 
-            <ArrowTopRightOnSquareIcon className="w-5 h-5" />
+            <ExternalLinkLine className="size-5" />
           </a>
         )}
       </div>

@@ -7,7 +7,6 @@ export interface TxConfirmationRingProps {
   subtitle?: string;
   externalLink?: string;
   className?: string;
-  isInNextApp?: boolean;
 }
 
 interface SourceOrDestination extends Omit<AddressChipProps, 'className'> {

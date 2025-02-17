@@ -1,10 +1,12 @@
-const { createGlobPatternsForDependencies } = require('@nx/react/tailwind');
-const preset = require('../../tailwind.preset.cjs');
-const { join } = require('path');
-const plugin = require('tailwindcss/plugin');
+import { createGlobPatternsForDependencies } from '@nx/react/tailwind';
+import { join } from 'path';
+import plugin from 'tailwindcss/plugin';
+
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import preset from '../../tailwind.preset.cjs';
 
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   presets: [preset],
   content: [
     join(

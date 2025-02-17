@@ -34,10 +34,4 @@ export type UIProviderProps = {
   >;
 
   children?: React.ReactNode;
-
-  /**
-   * Check if the provider is used in a Next.js app or not.
-   * @default false
-   */
-  isNextApp?: boolean;
 };

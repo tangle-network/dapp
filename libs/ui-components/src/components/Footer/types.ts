@@ -2,10 +2,6 @@ import { TANGLE_AVAILABLE_SOCIALS, bottomLinks } from '../../constants';
 import { PropsOf } from '../../types';
 
 export interface FooterProps extends PropsOf<'footer'> {
-  /**
-   * If `true`, the footer will use `next/link` instead of `react-router` for the links.
-   */
-  isNext?: boolean;
   isMinimal?: boolean;
   logoType?: 'webb' | 'tangle';
 

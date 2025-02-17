@@ -12,7 +12,7 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES6",
-    "lib": ["WebWorker", "dom.iterable", "dom", "esnext"],
+    "lib": ["WebWorker", "dom.iterable", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
@@ -65,10 +65,6 @@
       "@tangle-network/web3-api-provider/*": ["libs/web3-api-provider/src/*"]
     }
   },
-  "include": [
-    "./types/global.d.ts",
-    "./libs/**/src/**/*.{js,jsx,ts,tsx}",
-    "./apps/**/src/**/*.{js,jsx,ts,tsx}"
-  ],
+  "include": ["./types/global.d.ts"],
   "exclude": ["node_modules", "tmp", "**/node_modules/*"]
 }

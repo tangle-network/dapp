@@ -10,8 +10,8 @@ import { Link } from '../Link';
 import { SubItem } from './SubItem';
 import WithInfo from './WithInfo';
 import { SideBarExtraItemProps, SideBarItemProps } from './types';
-import useLinkProps from './useLinkProps';
 import StyledItem from './StyledItem';
+import useLinkProps from './useLinkProps';
 
 const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   name,
@@ -19,7 +19,6 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   href,
   Icon,
   subItems,
-  isNext,
   isExpanded,
   isActive,
   setIsActive,
@@ -74,7 +73,6 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
   const linkProps = useLinkProps({
     href,
     isInternal,
-    isNext,
     isDisabled,
     hasSubItem: subItems.length > 0,
     onClick,
@@ -89,6 +87,7 @@ const SideBarItem: FC<SideBarItemProps & SideBarExtraItemProps> = ({
           onClick={setItemAsActiveAndToggleDropdown}
           className={isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}
         >
+          {/* TODO: Make the link generic */}
           <Link {...linkProps}>
             <StyledItem
               isActive={isActive}

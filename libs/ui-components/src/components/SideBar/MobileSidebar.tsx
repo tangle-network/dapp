@@ -100,7 +100,6 @@ export const MobileSidebar = forwardRef<HTMLDivElement, MobileSidebarProps>(
                 Icon={footer.Icon}
                 isInternal={footer.isInternal}
                 href={footer.href}
-                useNextThemesForThemeToggle={footer.useNextThemesForThemeToggle}
                 isExpanded
                 className="gap-2 p-2"
               />

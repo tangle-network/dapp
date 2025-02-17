@@ -1,12 +1,11 @@
 import { Footer } from '@tangle-network/ui-components';
 import {
   bottomLinks,
+  TANGLE_AVAILABLE_SOCIALS,
   TANGLE_PRIVACY_POLICY_URL,
   TANGLE_SOCIAL_URLS_RECORD,
   TANGLE_TERMS_OF_SERVICE_URL,
-  TANGLE_AVAILABLE_SOCIALS,
 } from '@tangle-network/ui-components/constants';
-import { useLayoutBgClassName } from '@tangle-network/tangle-shared-ui/hooks/useLayoutBgClassName';
 import { type FC, type PropsWithChildren } from 'react';
 
 import { MobileSidebar, Sidebar } from '../components';
@@ -34,10 +33,8 @@ const Layout: FC<PropsWithChildren<LayoutProps>> = ({
   isSidebarInitiallyExpanded,
   children,
 }) => {
-  const layoutBgClassname = useLayoutBgClassName();
-
   return (
-    <div className={`flex h-screen ${layoutBgClassname}`}>
+    <div className={`flex h-screen bg-tangle`}>
       <Sidebar isExpandedByDefault={isSidebarInitiallyExpanded} />
 
       <main className="flex-1 h-full overflow-y-auto scrollbar-hide">

@@ -8,10 +8,7 @@ import {
 } from '../components/Notification';
 
 import { UIErrorBoundary } from '../containers/UIErrorBoundary';
-import {
-  useNextDarkMode,
-  useDarkMode as useNormalDarkMode,
-} from '../hooks/useDarkMode';
+import { useDarkMode } from '../hooks/useDarkMode';
 import { IUIContext, UIProviderProps } from './types';
 import UIContext from './UIContext';
 
@@ -22,13 +19,7 @@ export const UIProvider: React.FC<UIProviderProps> = ({
   defaultThemeMode = 'dark',
   hasErrorBoundary,
   notificationOptions,
-  isNextApp = false,
 }) => {
-  const useDarkMode = useMemo(
-    () => (isNextApp ? useNextDarkMode : useNormalDarkMode),
-    [isNextApp],
-  );
-
   const [isDarkMode, toggleMode] = useDarkMode(defaultThemeMode);
 
   // The CustomMainComponent is a component that should be renderable inside of Pages -

@@ -9,16 +9,10 @@ const compat = new FlatCompat({
 
 module.exports = [
   ...baseConfig,
-  ...compat.extends(
-    'plugin:@nx/react-typescript',
-    'next',
-    'next/core-web-vitals',
-  ),
+  ...compat.extends('plugin:@nx/react-typescript'),
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-    rules: {
-      '@next/next/no-html-link-for-pages': ['error', 'apps/tangle-cloud/pages'],
-    },
+    rules: {},
   },
   {
     files: ['**/*.ts', '**/*.tsx'],

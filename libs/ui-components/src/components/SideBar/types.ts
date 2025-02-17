@@ -9,7 +9,6 @@ export type SideBarFooterType = {
   isInternal: boolean;
   href: string;
   Icon: (props: IconBase) => JSX.Element;
-  useNextThemesForThemeToggle?: boolean;
 };
 
 export interface SideBarFooterProps extends SideBarFooterType {
@@ -49,9 +48,6 @@ export type SideBarItemProps = {
   /** The item name */
   name: string;
 
-  /** Indicate the item is next.js link */
-  isNext?: boolean;
-
   /** If `true`, the item will be disabled */
   isDisabled?: boolean;
 
@@ -90,9 +86,6 @@ export type SideBarExtraItemProps = {
 export type SideBarSubItemProps = {
   /** Sub item name */
   name: string;
-
-  /** Indicate the item is next.js link */
-  isNext?: boolean;
 
   /** If `true`, the item will be disabled */
   isDisabled?: boolean;

@@ -6,7 +6,6 @@
 /apps/bridge-dapp/build/**/*
 /node_modules
 /.vscode
-/**/.next
 /**/.netlify
 /**/generated
 

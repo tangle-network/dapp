@@ -6,11 +6,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "outputs": [
-        "{projectRoot}/{options.outDir}",
-        "{workspaceRoot}/dist/apps/tangle-dapp",
-        "{workspaceRoot}/dist/apps/testnet-leaderboard/.next"
-      ],
+      "outputs": ["{projectRoot}/{options.outDir}"],
       "defaultConfiguration": "production",
       "options": {
         "outDir": "../../dist/libs/tailwind-preset"

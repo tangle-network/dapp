@@ -1,6 +1,6 @@
 import { randEthereumAddress } from '@ngneat/falso';
 import type { Meta, StoryObj } from '@storybook/react';
-import { walletsConfig } from '@tangle-network/dapp-config/wallets/wallets-config';
+import { WALLET_CONFIG } from '@tangle-network/dapp-config/wallets/wallets-config';
 import { WalletId } from '@tangle-network/dapp-types/WalletId';
 import WalletButton from '../../components/buttons/WalletButton';
 
@@ -18,7 +18,7 @@ type Story = StoryObj<typeof WalletButton>;
 export const Default: Story = {
   render: () => (
     <WalletButton
-      wallet={walletsConfig[WalletId.MetaMask]}
+      wallet={WALLET_CONFIG[WalletId.MetaMask]}
       address={randEthereumAddress()}
     />
   ),

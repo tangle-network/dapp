@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { chainsConfig } from '@tangle-network/dapp-config/chains/chain-config';
 import {
   ExternalLinkLine,
@@ -7,19 +8,17 @@ import {
   StatusIndicator,
   TokenIcon,
 } from '@tangle-network/icons';
-import { ArrowRightIcon } from '@heroicons/react/24/solid';
 import { Decimal } from 'decimal.js';
 import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
-
 import useTimeAgo from '../../hooks/useTimeAgo';
 import { PropsOf } from '../../types';
 import { Typography } from '../../typography';
+import AddressChip from '../AddressChip';
 import { ChainChip } from '../ChainChip/ChainChip';
 import { Chip, ChipProps } from '../Chip';
 import SteppedProgress from '../Progress/SteppedProgress';
 import { TitleWithInfo } from '../TitleWithInfo';
-import AddressChip from '../AddressChip';
 import {
   TxInfo,
   TxProgressorBodyProps,
