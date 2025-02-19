@@ -133,7 +133,10 @@ const PayoutTxModal: FC<Props> = ({ isModalOpen, setIsModalOpen, payout }) => {
     }
 
     const nextIndex = currentChunkIndex + 1;
-    console.log('Processing completion:', { nextIndex, total: eraChunks.length });
+    console.log('Processing completion:', {
+      nextIndex,
+      total: eraChunks.length,
+    });
 
     if (nextIndex >= eraChunks.length) {
       console.log('All chunks completed, closing modal...');
