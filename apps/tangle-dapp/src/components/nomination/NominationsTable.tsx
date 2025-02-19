@@ -9,6 +9,7 @@ import {
   shortenString,
   Table,
   Typography,
+  ExternalLinkIcon,
 } from '@tangle-network/ui-components';
 import {
   createColumnHelper,
@@ -19,7 +20,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import calculateCommission from '../../utils/calculateCommission';
@@ -27,38 +28,11 @@ import sortByBn from '../../utils/sortByBn';
 import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 const COLUMN_HELPER = createColumnHelper<Validator>();
 
 const COLUMNS = [
-  COLUMN_HELPER.accessor('address', {
-    header: () => <HeaderCell title="Validator" className="justify-start" />,
-    cell: (props) => {
-      const address = props.getValue();
-      const identityName = props.row.original.identityName;
-
-      return (
-        <div className="flex items-center space-x-1">
-          <Avatar sourceVariant="address" value={address} theme="substrate">
-            {address}
-          </Avatar>
-
-          <Typography variant="body1" fw="normal" className="truncate">
-            {identityName === undefined
-              ? shortenString(address, 6)
-              : identityName}
-          </Typography>
-
-          <CopyWithTooltip
-            copyLabel="Copy Address"
-            textToCopy={address}
-            isButton={false}
-          />
-        </div>
-      );
-    },
-    sortingFn: sortByAddressOrIdentity<Validator>(),
-  }),
   COLUMN_HELPER.accessor('isActive', {
     header: () => <HeaderCell title="Status" className="justify-start" />,
     cell: (props) => {
@@ -120,9 +94,59 @@ const NominationsTable: FC<NominationsTableProps> = ({
     { id: 'totalStakeAmount' satisfies keyof Validator, desc: true },
   ]);
 
+  const createExplorerAccountUrl = useNetworkStore(
+    (store) => store.network.createExplorerAccountUrl,
+  );
+
+  const columns = useMemo(
+    () => [
+      COLUMN_HELPER.accessor('address', {
+        header: () => (
+          <HeaderCell title="Validator" className="justify-start" />
+        ),
+        cell: (props) => {
+          const address = props.getValue();
+          const identityName = props.row.original.identityName;
+
+          const accountExplorerUrl = createExplorerAccountUrl(address);
+
+          return (
+            <div className="flex items-center space-x-2">
+              <Avatar sourceVariant="address" value={address} theme="substrate">
+                {address}
+              </Avatar>
+
+              <Typography variant="body1" fw="normal" className="truncate">
+                {identityName === address
+                  ? shortenString(address, 6)
+                  : (identityName ?? shortenString(address, 6))}
+              </Typography>
+
+              <CopyWithTooltip
+                copyLabel="Copy Address"
+                textToCopy={address}
+                isButton={false}
+              />
+
+              {accountExplorerUrl !== null && (
+                <ExternalLinkIcon
+                  href={accountExplorerUrl}
+                  className="fill-mono-160 dark:fill-mono-80"
+                />
+              )}
+            </div>
+          );
+        },
+        sortingFn: sortByAddressOrIdentity(),
+      }),
+      ...COLUMNS,
+    ],
+    [createExplorerAccountUrl],
+  );
+
   const table = useReactTable({
     data: nominees,
-    columns: COLUMNS,
+    columns: columns,
     initialState: {
       pagination: {
         pageSize,

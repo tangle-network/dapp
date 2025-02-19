@@ -32,6 +32,13 @@ export type Payout = {
   nominatorTotalRewardRaw: BN;
 };
 
+export type PayoutTwo = {
+  eras: number[];
+  validator: AddressWithIdentity;
+  totalReward: BN;
+  totalRewardFormatted: string;
+};
+
 export const ExplorerType = {
   Substrate: 'polkadot' as WebbProviderType,
   EVM: 'web3' as WebbProviderType,

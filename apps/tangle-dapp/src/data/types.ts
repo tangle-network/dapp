@@ -12,5 +12,5 @@ export enum PayoutsEraRange {
   SIX = 6,
   EIGHTEEN = 18,
   FIFTY_FOUR = 54,
-  MAX_EIGHTY = 80,
+  MAX_HISTORY_DEPTH = 80,
 }

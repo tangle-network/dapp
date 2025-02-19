@@ -1,4 +1,5 @@
 import { useWebContext } from '@tangle-network/api-provider-environment';
+import usePolkadotApi from '@tangle-network/tangle-shared-ui/hooks/usePolkadotApi';
 import {
   InputField,
   Modal,
@@ -6,33 +7,29 @@ import {
   ModalContent,
   ModalFooterActions,
   ModalHeader,
+  shortenString,
   Typography,
 } from '@tangle-network/ui-components';
 import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/ui-components/constants';
-import { type FC, useCallback, useEffect, useMemo } from 'react';
+import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { MAX_PAYOUTS_BATCH_SIZE } from '../data/payouts/usePayoutAllTx';
-import usePayoutStakersTx from '../data/payouts/usePayoutStakersTx';
+import usePayoutStakersTxTwo from '../data/payouts/usePayoutStakersTxTwo';
 import { TxStatus } from '../hooks/useSubstrateTx';
-import { PayoutTxProps } from './PayoutAllTxModal';
-import { Payout } from '@tangle-network/tangle-shared-ui/types';
+import { PayoutTwo } from '@tangle-network/tangle-shared-ui/types';
 
 type Props = {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
-  payoutTxProps: PayoutTxProps;
-  payouts: Payout[];
+  payout: PayoutTwo;
 };
 
-const PayoutTxModal: FC<Props> = ({
-  isModalOpen,
-  setIsModalOpen,
-  payoutTxProps: { validatorAddress, era },
-}) => {
+const PayoutTxModal: FC<Props> = ({ isModalOpen, setIsModalOpen, payout }) => {
   const { activeAccount } = useWebContext();
 
+  const [txIsCompleted, setTxIsCompleted] = useState(true);
+
   const walletAddress = useMemo(() => {
-    // TODO: Don't default to dummy addresses in order to circumvent the type system.
     if (!activeAccount?.address) {
       return '0x0';
     }
@@ -44,29 +41,144 @@ const PayoutTxModal: FC<Props> = ({
     setIsModalOpen(false);
   }, [setIsModalOpen]);
 
-  const { execute: executePayoutStakersTx, status: payoutStakersTxStatus } =
-    usePayoutStakersTx();
+  const {
+    execute: executeClaimPayouts,
+    status: claimPayoutsTxStatus,
+    error,
+  } = usePayoutStakersTxTwo();
 
-  // TODO: Why is the wallet address being used as a condition for readiness? Is it checking whether it's an empty string? Can it ever be an empty string?
-  const isReady = walletAddress && executePayoutStakersTx !== null;
+  const eraChunks = useMemo(() => {
+    // Sort eras in ascending order
+    const sortedEras = [...payout.eras].sort((a, b) => a - b);
+
+    // Split into chunks of MAX_PAYOUTS_BATCH_SIZE
+    const chunks: number[][] = [];
+    for (let i = 0; i < sortedEras.length; i += MAX_PAYOUTS_BATCH_SIZE) {
+      chunks.push(sortedEras.slice(i, i + MAX_PAYOUTS_BATCH_SIZE));
+    }
+    return chunks;
+  }, [payout.eras]);
+
+  const erasClaimingFor = useMemo(() => {
+    return eraChunks[0] || [];
+  }, [eraChunks]);
+
+  const eraRangeText = useMemo(() => {
+    if (erasClaimingFor.length === 0) return '';
+    return erasClaimingFor.join(', ');
+  }, [erasClaimingFor]);
+
+  const processChunk = useCallback(
+    async (index: number) => {
+      if (!executeClaimPayouts) {
+        console.warn('executeClaimPayouts not available');
+        setIsProcessingChunks(false);
+        setTxIsCompleted(true);
+        return;
+      }
+
+      const chunk = eraChunks[index];
+      if (!chunk) {
+        console.warn('No chunk found at index:', index);
+        return;
+      }
+
+      console.log(`Processing chunk ${index + 1}/${eraChunks.length}:`, {
+        validator: payout.validator,
+        eras: chunk,
+      });
+
+      await executeClaimPayouts({
+        payout: {
+          ...payout,
+          eras: chunk,
+        },
+      });
+    },
+    [executeClaimPayouts, eraChunks, payout],
+  );
 
   const submitTx = useCallback(async () => {
-    if (!isReady) {
+    try {
+      setTxIsCompleted(false);
+      setCurrentChunkIndex(0);
+      setIsProcessingChunks(true);
+
+      await processChunk(0);
+    } catch (err) {
+      console.error('Failed to start transaction process:', err);
+      setIsProcessingChunks(false);
+      setTxIsCompleted(true);
+    }
+  }, [processChunk]);
+
+  const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
+  const [isProcessingChunks, setIsProcessingChunks] = useState(false);
+  const [isModalClosing, setIsModalClosing] = useState(false);
+
+  // Reset state when modal is closed
+  useEffect(() => {
+    if (!isModalOpen) {
+      setCurrentChunkIndex(0);
+      setIsProcessingChunks(false);
+      setTxIsCompleted(true);
+      setIsModalClosing(false);
+    }
+  }, [isModalOpen]);
+
+  // Watch for transaction completion and trigger next chunk
+  useEffect(() => {
+    if (!isProcessingChunks || claimPayoutsTxStatus !== TxStatus.COMPLETE) {
       return;
     }
 
-    await executePayoutStakersTx({
-      era,
-      validatorAddress,
-    });
-  }, [era, executePayoutStakersTx, isReady, validatorAddress]);
+    const nextIndex = currentChunkIndex + 1;
+    console.log('Processing completion:', { nextIndex, total: eraChunks.length });
 
-  // Automatically close the modal when the transaction is complete & successful.
+    if (nextIndex >= eraChunks.length) {
+      console.log('All chunks completed, closing modal...');
+      // All chunks are done, close the modal
+      setTxIsCompleted(true);
+      setIsProcessingChunks(false);
+      closeModal();
+      return;
+    }
+
+    // Add a delay before processing the next chunk
+    const timer = setTimeout(() => {
+      console.log('Starting next chunk:', nextIndex);
+      setCurrentChunkIndex(nextIndex);
+      processChunk(nextIndex).catch((err) => {
+        console.error('Failed to process chunk:', err);
+        setIsProcessingChunks(false);
+        setTxIsCompleted(true);
+      });
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, [
+    claimPayoutsTxStatus,
+    currentChunkIndex,
+    eraChunks.length,
+    isProcessingChunks,
+    processChunk,
+    closeModal,
+  ]);
+
+  // Close modal on error
   useEffect(() => {
-    if (payoutStakersTxStatus === TxStatus.COMPLETE) {
+    if (error) {
+      console.error('Payout transaction error:', error);
       closeModal();
     }
-  }, [closeModal, payoutStakersTxStatus]);
+  }, [error, closeModal]);
+
+  // Handle modal closing
+  useEffect(() => {
+    if (error || (txIsCompleted && !isProcessingChunks)) {
+      closeModal();
+    }
+  }, [error, txIsCompleted, isProcessingChunks, closeModal]);
 
   return (
     <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -92,19 +204,19 @@ const PayoutTxModal: FC<Props> = ({
                 title="Payout Stakers For"
                 isAddressType
                 addressTheme="substrate"
-                value={validatorAddress}
+                value={payout.validator.address}
                 type="text"
                 readOnly
               />
             </InputField.Root>
 
-            {/* Era */}
+            {/* Eras */}
             <InputField.Root>
               <InputField.Input
-                title="Request Payout for Era"
+                title="Claiming Eras"
                 isAddressType={false}
-                value={era}
-                type="number"
+                value={eraRangeText}
+                type="text"
                 readOnly
               />
             </InputField.Root>
@@ -112,26 +224,39 @@ const PayoutTxModal: FC<Props> = ({
 
           <div className="flex flex-col gap-9">
             <Typography variant="body1">
-              Any account can request payout for stakers, this is not limited to
-              accounts that will be rewarded.
+              You are about to claim rewards for {erasClaimingFor.length} eras
+              from validator{' '}
+              {payout.validator.identity ||
+                shortenString(payout.validator.address, 10)}
             </Typography>
 
             <Typography variant="body1">
-              All the listed validators and all their nominators will receive
-              their rewards.
+              Claiming eras: {eraRangeText}
             </Typography>
 
             <Typography variant="body1">
-              The UI puts a limit of {MAX_PAYOUTS_BATCH_SIZE} payouts at a time,
-              where each payout is a single validator for a single era.
+              Note: Processing {eraChunks.length} batches of{' '}
+              {MAX_PAYOUTS_BATCH_SIZE} eras each.
+              {isProcessingChunks && (
+                <>
+                  <br />
+                  Progress: {currentChunkIndex} of {eraChunks.length} batches
+                  processed
+                  <br />
+                  {claimPayoutsTxStatus === TxStatus.PROCESSING
+                    ? `Signing transaction for batch ${currentChunkIndex + 1}...`
+                    : `Preparing batch ${currentChunkIndex + 1} of ${eraChunks.length}...`}
+                </>
+              )}
             </Typography>
           </div>
         </ModalBody>
 
         <ModalFooterActions
           learnMoreLinkHref={TANGLE_DOCS_STAKING_URL}
-          isConfirmDisabled={!isReady}
-          isProcessing={payoutStakersTxStatus === TxStatus.PROCESSING}
+          isConfirmDisabled={false}
+          // isProcessing={claimPayoutsTxStatus === TxStatus.PROCESSING}
+          isProcessing={!txIsCompleted}
           onConfirm={submitTx}
         />
       </ModalContent>
