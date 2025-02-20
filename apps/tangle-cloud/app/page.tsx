@@ -19,11 +19,9 @@ import Header from '../components/Header';
 import { useAccount } from 'wagmi';
 import { WalletLineIcon } from '@webb-tools/icons';
 import ConnectWalletButton from '@webb-tools/tangle-shared-ui/components/ConnectWalletButton';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@webb-tools/webb-ui-components/components/tabs';
 
 const TangleCloudDashboard = () => {
   const { isConnected } = useAccount();
-  
   // Debug log
   console.log('Wallet connection status:', isConnected);
 
@@ -225,80 +223,16 @@ const TangleCloudDashboard = () => {
               <Typography variant="h4" fw="bold" className="mb-6">
                 My Account
               </Typography>
-
-              <Tabs defaultValue="blueprints" className="w-full">
-                <TabsList className="mb-6">
-                  <TabsTrigger value="blueprints" className="flex items-center gap-2">
-                    <Code className="w-4 h-4" />
-                    My Blueprints
-                  </TabsTrigger>
-                  <TabsTrigger value="services" className="flex items-center gap-2">
-                    <Settings className="w-4 h-4" />
-                    Operating Services
-                  </TabsTrigger>
-                  <TabsTrigger value="instances" className="flex items-center gap-2">
-                    <Play className="w-4 h-4" />
-                    Deployed Instances
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="blueprints">
-                  <div className="space-y-3">
-                    <div className="p-4 rounded bg-mono-180">
-                      <div className="flex items-center justify-between mb-1">
-                        <Typography variant="body1" fw="medium">Custom Oracle Network</Typography>
-                        <span className="px-2 py-1 text-xs rounded bg-green-50/10 text-green-50">Live</span>
-                      </div>
-                      <Typography variant="body2" className="text-mono-100">2 Active Instances</Typography>
-                    </div>
-                    <div className="p-4 rounded bg-mono-180">
-                      <div className="flex items-center justify-between mb-1">
-                        <Typography variant="body1" fw="medium">Message Validator</Typography>
-                        <span className="px-2 py-1 text-xs rounded bg-yellow-50/10 text-yellow-50">Draft</span>
-                      </div>
-                      <Typography variant="body2" className="text-mono-100">In Development</Typography>
-                    </div>
+              
+              <div className="space-y-3">
+                <div className="p-4 rounded bg-mono-180">
+                  <div className="flex items-center justify-between mb-1">
+                    <Typography variant="body1" fw="medium">Custom Oracle Network</Typography>
+                    <span className="px-2 py-1 text-xs rounded bg-green-50/10 text-green-50">Live</span>
                   </div>
-                </TabsContent>
-
-                <TabsContent value="services">
-                  <div className="space-y-3">
-                    <div className="p-4 rounded bg-mono-180">
-                      <div className="flex items-center justify-between mb-1">
-                        <Typography variant="body1" fw="medium">Hyperlane ISM</Typography>
-                        <span className="px-2 py-1 text-xs rounded bg-blue-50/10 text-blue-50">Active</span>
-                      </div>
-                      <Typography variant="body2" className="text-mono-100">Uptime: 99.9%</Typography>
-                    </div>
-                    <div className="p-4 rounded bg-mono-180">
-                      <div className="flex items-center justify-between mb-1">
-                        <Typography variant="body1" fw="medium">Hyperlane Relayer</Typography>
-                        <span className="px-2 py-1 text-xs rounded bg-blue-50/10 text-blue-50">Active</span>
-                      </div>
-                      <Typography variant="body2" className="text-mono-100">Uptime: 99.8%</Typography>
-                    </div>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="instances">
-                  <div className="space-y-3">
-                    <div className="p-4 rounded bg-mono-180">
-                      <div className="flex items-center justify-between mb-1">
-                        <Typography variant="body1" fw="medium">Hyperlane ISM #1</Typography>
-                        <span className="px-2 py-1 text-xs rounded bg-green-50/10 text-green-50">Running</span>
-                      </div>
-                      <Typography variant="body2" className="text-mono-100">4 Operators</Typography>
-                    </div>
-                    <div className="p-4 rounded bg-mono-180">
-                      <div className="flex items-center justify-between mb-1">
-                        <Typography variant="body1" fw="medium">Oracle Network #2</Typography>
-                        <span className="px-2 py-1 text-xs rounded bg-green-50/10 text-green-50">Running</span>
-                      </div>
-                      <Typography variant="body2" className="text-mono-100">3 Operators</Typography>
-                    </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
+                  <Typography variant="body2" className="text-mono-100">2 Active Instances</Typography>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="p-12 rounded-lg border border-mono-160 bg-glass_dark">
@@ -311,7 +245,7 @@ const TangleCloudDashboard = () => {
                   Connect your wallet to view your activities across blueprints, operations, and deployments
                 </Typography>
 
-                <ConnectWalletButton size="lg" />
+                <ConnectWalletButton />
               </div>
             </div>
           )}
