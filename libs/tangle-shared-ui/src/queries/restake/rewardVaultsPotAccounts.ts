@@ -1,33 +1,32 @@
-import { ApiRx } from '@polkadot/api';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
-import { map, of } from 'rxjs';
+import { map } from 'rxjs';
+import useApiRx from '../../hooks/useApiRx';
 
-const rewardVaultsPotAccountsRxQuery = (apiRx: ApiRx) => {
-  if (apiRx.query.rewards?.rewardVaultsPotAccount === undefined) {
-    return of(new Map<number, SubstrateAddress>());
-  }
+const useVaultsPotAccounts = () => {
+  const result = useApiRx((api) => {
+    if (api.query.rewards?.rewardVaultsPotAccount === undefined) {
+      return null;
+    }
 
-  return apiRx.query.rewards.rewardVaultsPotAccount.entries().pipe(
-    map((entries) => {
-      const primitiveEntries = entries
-        .filter(([, potAccount]) => potAccount.isSome)
-        .map(
-          ([
-            {
-              args: [vaultId],
-            },
-            potAccount,
-          ]) =>
-            [
+    return api.query.rewards.rewardVaultsPotAccount.entries().pipe(
+      map((entries) => {
+        const primitiveEntries = entries
+          .filter(([, potAccount]) => potAccount.isSome)
+          .map(([key, potAccount]) => {
+            const vaultId = key.args[0];
+
+            return [
               vaultId.toNumber(),
               assertSubstrateAddress(potAccount.unwrap().toString()),
-            ] as const,
-        );
+            ] as const;
+          });
 
-      return new Map(primitiveEntries);
-    }),
-  );
+        return new Map(primitiveEntries);
+      }),
+    );
+  });
+
+  return result;
 };
 
-export default rewardVaultsPotAccountsRxQuery;
+export default useVaultsPotAccounts;
