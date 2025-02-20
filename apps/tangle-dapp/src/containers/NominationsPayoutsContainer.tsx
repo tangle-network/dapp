@@ -23,9 +23,7 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { ContainerSkeleton } from '../components';
 import useNominations from '../data/nomination/useNominations';
 import { MAX_PAYOUTS_BATCH_SIZE } from '../data/payouts/usePayoutAllTx';
-import { usePayoutsStore } from '../data/payouts/usePayoutsStore';
 import useIsBondedOrNominating from '../data/staking/useIsBondedOrNominating';
-import { PayoutsEraRange } from '../data/types';
 import useApi from '../hooks/useApi';
 import useQueryParamKey from '../hooks/useQueryParamKey';
 import {
@@ -35,7 +33,7 @@ import {
 import { DelegateTxContainer } from './DelegateTxContainer';
 import { UpdateNominationsTxContainer } from './UpdateNominationsTxContainer';
 import { UpdatePayeeTxContainer } from './UpdatePayeeTxContainer';
-import PayoutTableTwo from '../components/PayoutTableTwo';
+import PayoutsTable from '../components/PayoutsTable';
 import PayoutAllTxModal from './PayoutAllTxModal';
 import NominationsTable from '../components/nomination/NominationsTable';
 import StopNominationTxModal from './StopNominationTxModal';
@@ -85,18 +83,19 @@ const DelegationsPayoutsContainer: FC = () => {
     data: payoutsData,
     error: payoutsError,
     isLoading: payoutsIsLoading,
+    mutate: mutatePayouts,
   } = useSWR(
     [
       'payouts',
       activeAccount?.address ??
         '5D82gred9eR2ZwJAdVG4En8sQBdMDdBj2pWWtgUmVQb8qCep',
-      PayoutsEraRange.MAX_HISTORY_DEPTH,
       'ws://127.0.0.1:9944',
     ],
-    ([, address, eraRange, rpcEndpoint]) =>
-      getPayouts(address, eraRange, rpcEndpoint),
+    ([, address, rpcEndpoint]) => getPayouts(address, rpcEndpoint),
     {
-      refreshInterval: 10000,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      dedupingInterval: 5000, // Prevent multiple requests within 5 seconds
     },
   );
 
@@ -255,7 +254,7 @@ const DelegationsPayoutsContainer: FC = () => {
               icon={!isBondedOrNominating ? '🔍' : '⏳'}
             />
           ) : (
-            <PayoutTableTwo
+            <PayoutsTable
               data={fetchedPayouts ?? []}
               pageSize={PAGE_SIZE}
               sessionProgress={
@@ -270,6 +269,7 @@ const DelegationsPayoutsContainer: FC = () => {
               }
               historyDepth={historyDepth?.toNumber() ?? undefined}
               epochDuration={epochDuration ?? undefined}
+              onPayoutSuccess={() => mutatePayouts()}
             />
           )}
         </TabContent>
@@ -350,36 +350,5 @@ const ManageNominationsButton: FC<ManageNominationsButtonProps> = ({
     </div>
   );
 };
-
-/** @internal */
-function FilterByErasContainer() {
-  const { eraRange: activeEraRange, setEraRange: setActiveEraRange } =
-    usePayoutsStore();
-
-  const actionItems = Object.values(PayoutsEraRange)
-    .filter((value): value is PayoutsEraRange => typeof value !== 'string')
-    .flatMap((eraRange) => {
-      // Skip the active era range, as it's already displayed.
-      if (eraRange === activeEraRange) {
-        return [];
-      }
-
-      return [
-        {
-          label: `Last ${eraRange} eras`,
-          onClick: () => setActiveEraRange(eraRange),
-        },
-      ];
-    });
-
-  return (
-    <div className="flex items-center space-x-2">
-      <ActionsDropdown
-        buttonText={`Last ${activeEraRange} eras`}
-        actionItems={actionItems}
-      />
-    </div>
-  );
-}
 
 export default DelegationsPayoutsContainer;

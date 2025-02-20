@@ -23,16 +23,6 @@ export type AddressWithIdentity = {
 };
 
 export type Payout = {
-  era: number;
-  validator: AddressWithIdentity;
-  validatorTotalStake: BN;
-  nominators: AddressWithIdentity[];
-  validatorTotalReward: BN;
-  nominatorTotalReward: BN;
-  nominatorTotalRewardRaw: BN;
-};
-
-export type PayoutTwo = {
   eras: number[];
   validator: AddressWithIdentity;
   totalReward: BN;

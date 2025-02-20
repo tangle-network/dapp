@@ -7,7 +7,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { PayoutTwo } from '@tangle-network/tangle-shared-ui/types';
+import { Payout } from '@tangle-network/tangle-shared-ui/types';
 import {
   AmountFormatStyle,
   Avatar,
@@ -19,20 +19,22 @@ import {
 } from '@tangle-network/ui-components';
 import { type FC, useMemo, useState } from 'react';
 
+import { BN } from '@polkadot/util';
+import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
+
 import { HeaderCell, StringCell } from './tableCells';
 import TokenAmountCell from './tableCells/TokenAmountCell';
 import sortByBn from '../utils/sortByBn';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import PayoutTxModal from '../containers/PayoutTxContainer';
+import PayoutTxModal from '../containers/PayoutTxModal';
 import { WalletPayIcon } from '@tangle-network/icons';
 
-const COLUMN_HELPER = createColumnHelper<PayoutTwo>();
+const COLUMN_HELPER = createColumnHelper<Payout>();
 
 type Props = {
   /** Array of payout data to display */
-  data?: PayoutTwo[];
+  data?: Payout[];
   /** Number of rows to display per page */
-  pageSize: number;
   /** Optional className for additional styling */
   className?: string;
   /** Current session progress */
@@ -50,19 +52,23 @@ type Props = {
   historyDepth?: number;
   /** Epoch duration in blocks */
   epochDuration?: number;
+  /** Number of rows to display per page */
+  pageSize?: number;
+  /** Callback when payout is successful */
+  onPayoutSuccess?: () => void;
 };
 
-const PayoutTableTwo: FC<Props> = ({
+const PayoutsTable: FC<Props> = ({
   data = [],
-  pageSize,
   className,
   sessionProgress,
   historyDepth,
   epochDuration,
+  pageSize,
+  onPayoutSuccess,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [payoutTxProps, setPayoutTxProps] = useState<PayoutTwo | null>(null);
+  const [payoutTxProps, setPayoutTxProps] = useState<Payout | null>(null);
 
   // Default sort by highest reward
   const [sorting, setSorting] = useState<SortingState>([
@@ -71,6 +77,22 @@ const PayoutTableTwo: FC<Props> = ({
 
   const createExplorerAccountUrl = useNetworkStore(
     (store) => store.network.createExplorerAccountUrl,
+  );
+
+  // Create an empty payout object that matches the Payout type
+  const emptyPayout: Payout = useMemo(
+    () => ({
+      eras: [],
+      validator: {
+        address: assertSubstrateAddress(
+          '5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM',
+        ),
+        identity: '',
+      },
+      totalReward: new BN(0),
+      totalRewardFormatted: '0 tTNT',
+    }),
+    [],
   );
 
   const columns = useMemo(
@@ -217,13 +239,13 @@ const PayoutTableTwo: FC<Props> = ({
           return (
             <button
               onClick={() => {
-                setPayoutTxProps({
+                const payout = {
                   eras: rowData.eras,
                   validator: rowData.validator,
                   totalReward: rowData.totalReward,
                   totalRewardFormatted: rowData.totalRewardFormatted,
-                });
-
+                };
+                setPayoutTxProps(payout);
                 setIsModalOpen(true);
               }}
               className="flex items-center justify-center w-full"
@@ -273,15 +295,17 @@ const PayoutTableTwo: FC<Props> = ({
         />
       </div>
 
-      {payoutTxProps !== null && (
-        <PayoutTxModal
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-          payout={payoutTxProps}
-        />
-      )}
+      <PayoutTxModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={(open) => {
+          setIsModalOpen(open);
+          if (!open) setPayoutTxProps(null);
+        }}
+        payout={payoutTxProps || emptyPayout}
+        onSuccess={onPayoutSuccess}
+      />
     </>
   );
 };
 
-export default PayoutTableTwo;
+export default PayoutsTable;

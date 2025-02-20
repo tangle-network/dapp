@@ -1,5 +1,4 @@
 import { useWebContext } from '@tangle-network/api-provider-environment';
-import usePolkadotApi from '@tangle-network/tangle-shared-ui/hooks/usePolkadotApi';
 import {
   InputField,
   Modal,
@@ -14,20 +13,29 @@ import { TANGLE_DOCS_STAKING_URL } from '@tangle-network/ui-components/constants
 import { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { MAX_PAYOUTS_BATCH_SIZE } from '../data/payouts/usePayoutAllTx';
-import usePayoutStakersTxTwo from '../data/payouts/usePayoutStakersTxTwo';
+import usePayoutStakersTxTwo from '../data/payouts/usePayoutStakersTx';
 import { TxStatus } from '../hooks/useSubstrateTx';
-import { PayoutTwo } from '@tangle-network/tangle-shared-ui/types';
+import { Payout } from '@tangle-network/tangle-shared-ui/types';
 
 type Props = {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
-  payout: PayoutTwo;
+  payout: Payout;
+  onSuccess?: () => void;
 };
 
-const PayoutTxModal: FC<Props> = ({ isModalOpen, setIsModalOpen, payout }) => {
+const PayoutTxModal: FC<Props> = ({
+  isModalOpen,
+  setIsModalOpen,
+  payout,
+  onSuccess,
+}) => {
   const { activeAccount } = useWebContext();
 
-  const [txIsCompleted, setTxIsCompleted] = useState(true);
+  const [txIsCompleted, setTxIsCompleted] = useState(false);
+  const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
+  const [isProcessingChunks, setIsProcessingChunks] = useState(false);
+  const [isModalClosing, setIsModalClosing] = useState(false);
 
   const walletAddress = useMemo(() => {
     if (!activeAccount?.address) {
@@ -60,8 +68,10 @@ const PayoutTxModal: FC<Props> = ({ isModalOpen, setIsModalOpen, payout }) => {
   }, [payout.eras]);
 
   const erasClaimingFor = useMemo(() => {
-    return eraChunks[0] || [];
-  }, [eraChunks]);
+    return eraChunks[currentChunkIndex] || [];
+  }, [eraChunks, currentChunkIndex]);
+
+  console.log('erasClaimingFor', erasClaimingFor);
 
   const eraRangeText = useMemo(() => {
     if (erasClaimingFor.length === 0) return '';
@@ -112,10 +122,6 @@ const PayoutTxModal: FC<Props> = ({ isModalOpen, setIsModalOpen, payout }) => {
     }
   }, [processChunk]);
 
-  const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
-  const [isProcessingChunks, setIsProcessingChunks] = useState(false);
-  const [isModalClosing, setIsModalClosing] = useState(false);
-
   // Reset state when modal is closed
   useEffect(() => {
     if (!isModalOpen) {
@@ -139,11 +145,17 @@ const PayoutTxModal: FC<Props> = ({ isModalOpen, setIsModalOpen, payout }) => {
     });
 
     if (nextIndex >= eraChunks.length) {
-      console.log('All chunks completed, closing modal...');
-      // All chunks are done, close the modal
+      console.log('All chunks completed, waiting for chain...');
+      // All chunks are done
       setTxIsCompleted(true);
       setIsProcessingChunks(false);
-      closeModal();
+      
+      // Wait for chain to process the last transaction before revalidating
+      setTimeout(() => {
+        console.log('Chain processed, revalidating data...');
+        onSuccess?.();
+        closeModal();
+      }, 6000); // Give chain time to process
       return;
     }
 
@@ -166,6 +178,7 @@ const PayoutTxModal: FC<Props> = ({ isModalOpen, setIsModalOpen, payout }) => {
     isProcessingChunks,
     processChunk,
     closeModal,
+    onSuccess,
   ]);
 
   // Close modal on error
@@ -178,10 +191,10 @@ const PayoutTxModal: FC<Props> = ({ isModalOpen, setIsModalOpen, payout }) => {
 
   // Handle modal closing
   useEffect(() => {
-    if (error || (txIsCompleted && !isProcessingChunks)) {
+    if (error) {
       closeModal();
     }
-  }, [error, txIsCompleted, isProcessingChunks, closeModal]);
+  }, [error, closeModal]);
 
   return (
     <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>

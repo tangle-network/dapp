@@ -71,7 +71,7 @@ const usePayoutAllTx = () => {
     }, []);
 
   return useAgnosticTx({
-    name: TxName.PAYOUT_ALL,
+    name: TxName.PAYOUT_STAKERS_ALL,
     abi: BATCH_PRECOMPILE_ABI,
     precompileAddress: PrecompileAddress.BATCH,
     evmTxFactory,

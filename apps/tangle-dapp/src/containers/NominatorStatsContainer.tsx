@@ -18,7 +18,7 @@ import { Link } from 'react-router';
 
 import { NominatorStatsItem } from '../components';
 import useBalances from '../data/balances/useBalances';
-import useTotalPayoutRewards from '../data/nomination/useTotalPayoutRewards';
+// import useTotalPayoutRewards from '../data/nomination/useTotalPayoutRewards';
 import useIsBondedOrNominating from '../data/staking/useIsBondedOrNominating';
 import useStakingLedger from '../data/staking/useStakingLedger';
 import useNetworkFeatures from '../hooks/useNetworkFeatures';
@@ -45,8 +45,8 @@ const NominatorStatsContainer: FC = () => {
   const { free: freeBalance, error: balancesError } = useBalances();
   const isBondedOrNominating = useIsBondedOrNominating();
 
-  const { error: totalPayoutRewardsError, data: totalPayoutRewards } =
-    useTotalPayoutRewards();
+  // const { error: totalPayoutRewardsError, data: totalPayoutRewards } =
+  //   useTotalPayoutRewards();
 
   const [isWithdrawUnbondedModalOpen, setIsWithdrawUnbondedModalOpen] =
     useState(false);
@@ -85,7 +85,7 @@ const NominatorStatsContainer: FC = () => {
                   : formatTangleBalance(freeBalance, nativeTokenSymbol)}
             </NominatorStatsItem>
 
-            <NominatorStatsItem
+            {/* <NominatorStatsItem
               title="Unclaimed Payouts"
               isError={totalPayoutRewardsError !== null}
             >
@@ -93,7 +93,7 @@ const NominatorStatsContainer: FC = () => {
                 ? EMPTY_VALUE_PLACEHOLDER
                 : formatTangleBalance(totalPayoutRewards) +
                   ` ${nativeTokenSymbol}`}
-            </NominatorStatsItem>
+            </NominatorStatsItem> */}
           </div>
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />

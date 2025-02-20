@@ -3,18 +3,16 @@ import { BN, formatBalance } from '@polkadot/util';
 import type { Option, u32 } from '@polkadot/types';
 import type { EraIndex } from '@polkadot/types/interfaces';
 import type { PalletStakingStakingLedger } from '@polkadot/types/lookup';
-import { PayoutsEraRange } from '../types';
-import { PayoutTwo } from '@tangle-network/tangle-shared-ui/types';
+import { Payout } from '@tangle-network/tangle-shared-ui/types';
 import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
 
 const HISTORY_DEPTH = 80;
 
 export const getPayouts = async (
   useAddress: string,
-  eraRange: PayoutsEraRange,
   rpcEndpoint: string,
 ): Promise<{
-  payouts: PayoutTwo[];
+  payouts: Payout[];
   totalReward: string;
 }> => {
   try {
@@ -28,21 +26,14 @@ export const getPayouts = async (
       unit: 'tTNT',
     });
 
-    // 2. Get current era
-    const currentEraResult = await api.query.staking.currentEra();
-    const currentEra = (currentEraResult as Option<u32>).isSome
-      ? (currentEraResult as Option<u32>).unwrap()
-      : api.createType('u32', 0);
+    // Get active era
+    const activeEraOpt = await api.query.staking.activeEra();
+    const activeEra = activeEraOpt.unwrapOrDefault();
+    const activeEraNumber = activeEra.index.toNumber();
 
-    // 3. Calculate the eras we want to fetch
-    const currentEraNumber = currentEra.toNumber();
-
-    // Calculate the earliest era we can access based on HISTORY_DEPTH
-    const earliestAccessibleEra = Math.max(1, currentEraNumber - HISTORY_DEPTH);
-
-    // Start from the earliest era and add the requested range
-    const startEra = earliestAccessibleEra;
-    const endEra = Math.min(startEra + eraRange, currentEraNumber);
+    // Calculate era range - show exactly HISTORY_DEPTH eras back from active era
+    const startEra = Math.max(1, activeEraNumber - HISTORY_DEPTH);
+    const endEra = activeEraNumber;
 
     const eras: EraIndex[] = [];
     for (let era = startEra; era <= endEra; era++) {
@@ -142,6 +133,8 @@ export const getPayouts = async (
         };
       },
     );
+
+    
 
     await provider.disconnect();
 
