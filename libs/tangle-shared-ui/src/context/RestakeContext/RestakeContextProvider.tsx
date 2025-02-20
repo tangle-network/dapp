@@ -9,18 +9,10 @@ import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import RestakeContext from './RestakeContext';
 
 const RestakeContextProvider = (props: PropsWithChildren) => {
-  const {
-    assets,
-    isLoading: vaultsLoading,
-    error: vaultsError,
-  } = useRestakeAssets();
+  const assets = useRestakeAssets();
 
-  const {
-    balances,
-    isLoading: balancesLoading,
-    error: balancesError,
-    refetchErc20Balances: refetchErc20BalancesFn,
-  } = useRestakeBalances();
+  const { balances, refetchErc20Balances: refetchErc20BalancesFn } =
+    useRestakeBalances();
 
   const assetWithBalances = useMemo(() => {
     return toPairs(assets).reduce(
@@ -37,7 +29,7 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
           },
         };
       },
-      {} as AssetWithBalance,
+      {} satisfies AssetWithBalance,
     );
   }, [assets, balances]);
 
@@ -51,8 +43,6 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
         assetWithBalances,
         assets,
         balances,
-        isLoading: vaultsLoading || balancesLoading,
-        error: vaultsError || balancesError,
         refetchErc20Balances,
       }}
       {...props}

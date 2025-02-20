@@ -1,40 +1,28 @@
-import type { Evaluate } from '@tangle-network/dapp-types/utils/types';
-import { useObservableState } from 'observable-hooks';
 import { useMemo } from 'react';
-import { map, switchMap, type Observable } from 'rxjs';
-import usePolkadotApi from '../../hooks/usePolkadotApi';
+import { map } from 'rxjs';
 import { assetIdsQuery } from '../../queries/restake/assetIds';
 import { rewardVaultRxQuery } from '../../queries/restake/rewardVault';
-import rewardVaultsPotAccountsRxQuery from '../../queries/restake/rewardVaultsPotAccounts';
 import { RestakeAssetId } from '../../types';
-
-export type UseRestakeAssetIdsReturnType = {
-  assetIds: RestakeAssetId[];
-  assetIds$: Observable<RestakeAssetId[]>;
-};
+import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 
 /**
  * Retrieves the whitelisted asset IDs for restaking.
  * The hook returns an object containing the asset IDs and an observable to refresh the asset IDs.
  */
-export default function useRestakeAssetIds(): Evaluate<UseRestakeAssetIdsReturnType> {
-  const { apiRx } = usePolkadotApi();
+export default function useRestakeAssetIds(): RestakeAssetId[] {
+  const { result: vaultPotAccounts } = useVaultsPotAccounts();
 
-  const assetIds$ = useMemo(
-    () =>
-      rewardVaultsPotAccountsRxQuery(apiRx).pipe(
-        switchMap((vaultsPotAccounts) => {
-          const vaultIds = vaultsPotAccounts.keys().toArray();
+  const assetIds = useMemo(() => {
+    if (vaultPotAccounts === null) {
+      return null;
+    }
 
-          return rewardVaultRxQuery(apiRx, vaultIds).pipe(
-            map((rewardVaults) => assetIdsQuery(rewardVaults)),
-          );
-        }),
-      ),
-    [apiRx],
-  );
+    const vaultIds = vaultPotAccounts.keys().toArray();
 
-  const assetIds = useObservableState(assetIds$, []);
+    return rewardVaultRxQuery(apiRx, vaultIds).pipe(
+      map((rewardVaults) => assetIdsQuery(rewardVaults)),
+    );
+  }, [vaultPotAccounts]);
 
-  return { assetIds, assetIds$ };
+  return assetIds;
 }

@@ -19,7 +19,7 @@ import {
 export default function useBlueprintListing() {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { operatorMap } = useRestakeOperatorMap();
-  const { assets } = useRestakeAssets();
+  const assets = useRestakeAssets();
   const { operatorTVL } = useOperatorTVL(operatorMap, assets);
 
   const { result, ...rest } = useApiRx(

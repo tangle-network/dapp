@@ -1,16 +1,25 @@
 'use client';
 
 import { createContext } from 'react';
-import { RestakeContextType } from './types';
 import noop from 'lodash/noop';
+import {
+  AssetBalanceMap,
+  AssetWithBalance,
+  RestakeAssetMap,
+} from '../../types/restake';
 
-const RestakeContext = createContext<RestakeContextType>({
+type Context = {
+  refetchErc20Balances: () => Promise<void>;
+  balances: AssetBalanceMap;
+  assetWithBalances: AssetWithBalance;
+  assets: RestakeAssetMap;
+};
+
+const RestakeContext = createContext<Context>({
   assets: {},
   balances: {},
   assetWithBalances: {},
   refetchErc20Balances: noop as () => Promise<void>,
-  isLoading: false,
-  error: null,
 });
 
 export default RestakeContext;

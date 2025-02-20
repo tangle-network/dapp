@@ -25,7 +25,7 @@ import filterNativeAsset from '../../utils/restake/filterNativeAsset';
 
 export default function useRestakeBalances() {
   const { apiRx, apiRxLoading, apiRxError } = usePolkadotApi();
-  const { assetIds } = useRestakeAssetIds();
+  const assetIds = useRestakeAssetIds();
   const activeAccount = useSubstrateAddress();
 
   const { substrateAssetIds, evmAssetIds: evmAssetIdsSet } = useMemo(() => {

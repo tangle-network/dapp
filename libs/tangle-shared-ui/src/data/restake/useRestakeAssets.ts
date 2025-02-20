@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
-import useVaultsPotAccounts from '../../queries/restake/rewardVaultsPotAccounts';
 import useApiRx from '../../hooks/useApiRx';
 import { StorageKey, u32, Vec, Option } from '@polkadot/types';
 import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
@@ -9,6 +8,7 @@ import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import { isEvmAddress } from '@tangle-network/ui-components';
 import { RestakeAssetMetadata } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
+import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 
 function toPrimitiveRewardVault(
   entries: [
@@ -183,6 +183,7 @@ const useRestakeAssets = () => {
         vaultId,
         // TODO: Implement price fetching.
         priceInUsd: null,
+        status: 'Live' as const,
       } satisfies RestakeAssetMetadata;
 
       return [asset];
