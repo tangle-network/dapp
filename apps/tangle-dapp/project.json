@@ -7,11 +7,7 @@
   "// targets": "to see all targets run: nx show project tangle-dapp --web",
   "targets": {
     "build": {
-      "dependsOn": [
-        "codegen",
-        { "dependencies": true, "target": "build" },
-        "typecheck"
-      ]
+      "dependsOn": ["typecheck"]
     },
     "serve": {
       "dependsOn": ["codegen"]
@@ -29,10 +25,7 @@
       }
     },
     "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsc -p apps/tangle-dapp/tsconfig.app.json"
-      }
+      "dependsOn": ["codegen"]
     }
   }
 }
