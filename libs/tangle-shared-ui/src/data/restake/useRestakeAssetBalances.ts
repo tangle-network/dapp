@@ -29,6 +29,13 @@ const useRestakeAssetBalances = () => {
   const activeAccount = useSubstrateAddress();
 
   const { substrateAssetIds, evmAssetIds: evmAssetIdsSet } = useMemo(() => {
+    if (assetIds === null) {
+      return {
+        substrateAssetIds: new Set<`${bigint}`>(),
+        evmAssetIds: new Set<EvmAddress>(),
+      };
+    }
+
     return assetIds.reduce(
       (acc, assetId) => {
         if (isTemplateBigInt(assetId)) {

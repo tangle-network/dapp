@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useRestakeContext } from '../../context/RestakeContext';
 import { useDelegatorTVL } from '../../data/restake/useDelegatorTVL';
 import { useOperatorConcentration } from '../../data/restake/useOperatorConcentration';
@@ -16,10 +17,9 @@ const useRestakeTVL = (
     assets,
   );
 
-  const totalNetworkTVL = Object.values(vaultTVL).reduce(
-    (sum, tvl) => sum + tvl,
-    0,
-  );
+  const totalNetworkTVL = useMemo(() => {
+    return Object.values(vaultTVL).reduce((sum, tvl) => sum + tvl, 0);
+  }, [vaultTVL]);
 
   const operatorConcentration = useOperatorConcentration(
     operatorTVL,

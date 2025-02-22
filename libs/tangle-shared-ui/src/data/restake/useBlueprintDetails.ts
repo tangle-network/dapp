@@ -25,7 +25,7 @@ import { toPrimitiveBlueprint } from '../blueprints/utils/toPrimitiveBlueprint';
 import useRestakeOperatorMap from './useRestakeOperatorMap';
 import useRestakeAssets from './useRestakeAssets';
 
-export default function useBlueprintDetails(id?: string) {
+const useBlueprintDetails = (id?: string) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const assets = useRestakeAssets();
   const { operatorMap } = useRestakeOperatorMap();
@@ -39,23 +39,21 @@ export default function useBlueprintDetails(id?: string) {
 
   return useApiRx(
     useCallback(
-      (apiRx) => {
+      (api) => {
         if (
-          apiRx.query.services?.blueprints === undefined ||
-          apiRx.query.services?.operators === undefined
+          api.query.services?.blueprints === undefined ||
+          api.query.services?.operators === undefined
         ) {
           // TODO: Should return the error here instead of throw it
           throw new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
-        }
-
-        if (id === undefined) {
+        } else if (id === undefined) {
           return of(null);
         }
 
-        const blueprintDetails$ = apiRx.query.services.blueprints(id);
+        const blueprintDetails$ = api.query.services.blueprints(id);
 
         const operatorEntries$ =
-          apiRx.query.services.operators.entries<
+          api.query.services.operators.entries<
             Option<TanglePrimitivesServicesOperatorPreferences>
           >();
 
@@ -109,7 +107,7 @@ export default function useBlueprintDetails(id?: string) {
             };
 
             const operators =
-              operatorsSet !== undefined
+              operatorsSet !== undefined && assets !== null
                 ? await getBlueprintOperators(
                     rpcEndpoint,
                     assets,
@@ -139,7 +137,7 @@ export default function useBlueprintDetails(id?: string) {
       ],
     ),
   );
-}
+};
 
 async function getBlueprintOperators(
   rpcEndpoint: string,
@@ -183,3 +181,5 @@ async function getBlueprintOperators(
     } satisfies RestakeOperator;
   });
 }
+
+export default useBlueprintDetails;
