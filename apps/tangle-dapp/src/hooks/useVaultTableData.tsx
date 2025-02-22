@@ -11,7 +11,7 @@ import VaultAssetsTable from '../components/tables/VaultAssets';
 import { VaultAssetData } from '../components/tables/VaultAssets/types';
 import VaultsTable from '../components/tables/Vaults';
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
-import calculateVaults from '../utils/calculateVaults';
+import createVaultMap from '../utils/createVaultMap';
 import useVaultRewards from '@tangle-network/tangle-shared-ui/data/rewards/useVaultRewards';
 
 type UseVaultTableDataParams = {
@@ -23,65 +23,70 @@ const useVaultTableData = ({
   operatorData,
   delegatorInfo,
 }: UseVaultTableDataParams) => {
-  const { assets, balances } = useRestakeContext();
+  const { assets } = useRestakeContext();
   const rewardConfig = useRestakeRewardConfig();
   const assetsTvl = useRestakeAssetsTvl();
   const { result: vaultsRewards } = useVaultRewards();
   const assetTvl = useRestakeAssetsTvl();
 
-  const vaults = useMemo(
-    () => {
-      if (operatorData) {
-        // Handle operator-specific vaults
-        const uniqueAssetIds = operatorData.delegations.reduce(
-          (acc, { assetId }) => {
-            acc.add(assetId);
-            return acc;
-          },
-          new Set<RestakeAssetId>(),
-        );
-
-        const operatorAssets = Array.from(uniqueAssetIds)
-          .map((assetId) => assets[assetId])
-          .filter((asset) => asset !== undefined);
-
-        return calculateVaults({
-          assets: operatorAssets,
-          rewardConfig,
-          balances,
-          delegatorInfo,
-          vaultsRewards,
-          assetTvl,
-        })
-          .values()
-          .toArray();
-      }
-
+  const vaults = useMemo(() => {
+    if (assets === null) {
+      return [];
+    } else if (operatorData === undefined) {
       // Handle all vaults
-      return calculateVaults({
-        assets: Object.values(assets),
+      return createVaultMap({
+        assets: Array.from(assets.values()),
         rewardConfig,
-        balances,
         delegatorInfo,
         vaultsRewards,
         assetTvl,
       })
         .values()
         .toArray();
-    },
-    // prettier-ignore
-    [assetTvl, assets, balances, delegatorInfo, operatorData, rewardConfig, vaultsRewards],
-  );
+    }
+
+    // Handle operator-specific vaults.
+    const uniqueAssetIds = operatorData.delegations.reduce(
+      (acc, { assetId }) => {
+        acc.add(assetId);
+        return acc;
+      },
+      new Set<RestakeAssetId>(),
+    );
+
+    const operatorAssets = Array.from(uniqueAssetIds)
+      .map((assetId) => assets.get(assetId))
+      .filter((asset) => asset !== undefined);
+
+    return createVaultMap({
+      assets: operatorAssets,
+      rewardConfig,
+      delegatorInfo,
+      vaultsRewards,
+      assetTvl,
+    })
+      .values()
+      .toArray();
+  }, [
+    assetTvl,
+    assets,
+    delegatorInfo,
+    operatorData,
+    rewardConfig,
+    vaultsRewards,
+  ]);
 
   const tableProps = useMemo<ComponentProps<typeof VaultsTable>['tableProps']>(
     () => ({
       onRowClick(row, table) {
-        if (!row.getCanExpand()) return;
+        if (!row.getCanExpand()) {
+          return;
+        }
 
-        // Close all other rows
-        table.getRowModel().rows.forEach((r) => {
-          if (r.id !== row.id && r.getIsExpanded()) {
-            r.toggleExpanded(false);
+        // Close all other rows.
+        table.getRowModel().rows.forEach((row_) => {
+          if (row_.id !== row.id && row_.getIsExpanded()) {
+            row_.toggleExpanded(false);
           }
         });
 
@@ -89,13 +94,12 @@ const useVaultTableData = ({
       },
       getExpandedRowContent(row) {
         const vaultId = row.original.id;
-        const vaultAssets = Object.values(assets)
-          .filter((asset) => asset.vaultId === vaultId)
-          .map(({ assetId, decimals, symbol }) => {
+
+        const vaultAssets = Array.from(assets.values())
+          .filter((asset) => asset.metadata.vaultId === vaultId)
+          .map(({ assetId, metadata: { decimals, symbol }, balance }) => {
             const tvl = assetsTvl?.get(assetId) ?? null;
-            const available = balances[assetId]
-              ? new BN(balances[assetId].balance.toString())
-              : null;
+            const available = balance ?? null;
 
             const totalDeposits =
               typeof delegatorInfo?.deposits[assetId]?.amount === 'bigint'
@@ -117,7 +121,7 @@ const useVaultTableData = ({
         );
       },
     }),
-    [assets, assetsTvl, balances, delegatorInfo?.deposits],
+    [assets, assetsTvl, delegatorInfo?.deposits],
   );
 
   return {

@@ -16,7 +16,7 @@ export default function delegationsToVaultTokens(
       return;
     }
 
-    const parsed = safeFormatUnits(amount, asset.decimals);
+    const parsed = safeFormatUnits(amount, asset.metadata.decimals);
 
     if (parsed.success === false) {
       return;
@@ -26,8 +26,8 @@ export default function delegationsToVaultTokens(
 
     if (vaultToken === undefined) {
       vaultTokenMap.set(assetId, {
-        name: asset.name,
-        symbol: asset.symbol,
+        name: asset.metadata.name,
+        symbol: asset.metadata.symbol,
         amount: new Decimal(parsed.value),
       });
     } else {

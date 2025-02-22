@@ -11,7 +11,7 @@ const useVaultsPotAccounts = () => {
     return api.query.rewards.rewardVaultsPotAccount.entries().pipe(
       map((entries) => {
         const primitiveEntries = entries
-          .filter(([, potAccount]) => potAccount.isSome)
+          .filter(([, potAccountOpt]) => potAccountOpt.isSome)
           .map(([key, potAccount]) => {
             const vaultId = key.args[0];
 

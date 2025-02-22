@@ -109,21 +109,25 @@ const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
 
   const requests = useMemo(() => {
     // Not yet ready.
-    if (currentRound === null || sessionDurationMs === null) {
+    if (
+      currentRound === null ||
+      sessionDurationMs === null ||
+      assets === null
+    ) {
       return [];
     }
 
     return withdrawRequests.flatMap(({ assetId, amount, requestedRound }) => {
-      const metadata = assets[assetId];
+      const asset = assets.get(assetId);
 
       // Skip requests that are lacking metadata.
-      if (metadata === undefined || metadata === null) {
+      if (asset === undefined || asset === null) {
         return [];
       }
 
       const fmtAmount = formatDisplayAmount(
         new BN(amount.toString()),
-        metadata.decimals,
+        asset.metadata.decimals,
         AmountFormatStyle.SHORT,
       );
 
@@ -137,7 +141,7 @@ const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
         amount: fmtAmount,
         amountRaw: amount,
         assetId,
-        assetSymbol: metadata.symbol,
+        assetSymbol: asset.metadata.symbol,
         sessionsRemaining,
         sessionDurationMs,
       } satisfies WithdrawRequestTableRow;

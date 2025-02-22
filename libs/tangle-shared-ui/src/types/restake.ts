@@ -69,8 +69,6 @@ export type RestakeAssetMetadata = Readonly<{
   status?: PalletAssetsAssetStatus['type'];
 }>;
 
-export type RestakeAssetMap = Map<RestakeAssetId, RestakeAssetMetadata>;
-
 export type DelegatorWithdrawRequest = {
   readonly assetId: RestakeAssetId;
   readonly amount: bigint;
@@ -140,12 +138,12 @@ export type AssetBalanceMap = {
   readonly [assetId: RestakeAssetId]: AssetBalance;
 };
 
-export type RestakeAssetMapWithBalances = Map<
+export type RestakeAssetMap = Map<
   RestakeAssetId,
   {
     assetId: RestakeAssetId;
     metadata: RestakeAssetMetadata;
-    balance: AssetBalance | null;
+    balance?: BN;
   }
 >;
 

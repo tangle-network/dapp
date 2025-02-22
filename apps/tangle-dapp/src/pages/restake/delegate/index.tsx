@@ -166,17 +166,17 @@ const RestakeDelegateForm: FC = () => {
       ([assetIdString, { amount, delegatedAmount }]) => {
         const assetId = assertRestakeAssetId(assetIdString);
         const balance = new BN((amount - delegatedAmount).toString());
-        const metadata = assets[assetId];
+        const asset = assets?.get(assetId);
 
-        if (metadata === undefined) {
+        if (asset === undefined) {
           return [];
         }
 
         return {
-          id: metadata.assetId,
-          name: metadata.name,
-          symbol: metadata.symbol,
-          decimals: metadata.decimals,
+          id: asset.assetId,
+          name: asset.metadata.name,
+          symbol: asset.metadata.symbol,
+          decimals: asset.metadata.decimals,
           balance,
         } satisfies RestakeAsset;
       },

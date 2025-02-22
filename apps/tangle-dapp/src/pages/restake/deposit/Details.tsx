@@ -27,13 +27,13 @@ const Details: FC<Props> = ({ watch }) => {
       return null;
     }
 
-    const asset = assets[assetId];
+    const asset = assets?.get(assetId);
 
-    if (asset === undefined || asset.vaultId === null) {
+    if (asset === undefined || asset.metadata.vaultId === null) {
       return null;
     }
 
-    return rewardConfig.get(asset.vaultId)?.apy ?? null;
+    return rewardConfig.get(asset.metadata.vaultId)?.apy ?? null;
   }, [assetId, assets, rewardConfig]);
 
   const withdrawPeriod = useMemo(() => {

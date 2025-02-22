@@ -7,20 +7,20 @@ import {
   RestakeAssetMetadata,
 } from '@tangle-network/tangle-shared-ui/types/restake';
 
-export type VaultType = {
+export type RestakeVault = {
   id: number;
   name: string;
   representAssetSymbol: string;
   decimals: number;
-  capacity: BN | null;
-  reward: BN | null;
   tokenCount: number;
   available: BN | null;
   totalDeposits: BN | null;
   tvl: BN | null;
+  capacity: BN | null;
+  reward: BN | null;
 };
 
-type CalculateVaultsParams = {
+type Options = {
   assets: RestakeAssetMetadata[];
   balances: AssetBalanceMap;
   delegatorInfo?: DelegatorInfo | null;
@@ -29,15 +29,15 @@ type CalculateVaultsParams = {
   rewardConfig?: Map<number, PalletRewardsRewardConfigForAssetVault> | null;
 };
 
-const calculateVaults = ({
+const createVaultMap = ({
   assets,
   balances,
   delegatorInfo,
   vaultsRewards,
   assetTvl,
   rewardConfig,
-}: CalculateVaultsParams): Map<number, VaultType> => {
-  const vaults = new Map<number, VaultType>();
+}: Options): Map<number, RestakeVault> => {
+  const vaults = new Map<number, RestakeVault>();
 
   for (const { assetId, vaultId, name, symbol, decimals } of assets) {
     if (vaultId === null) {
@@ -55,7 +55,6 @@ const calculateVaults = ({
         : null;
 
     const tvl = assetTvl?.get(assetId) ?? null;
-
     const existingVault = vaults.get(vaultId);
 
     if (existingVault === undefined) {
@@ -74,17 +73,20 @@ const calculateVaults = ({
         totalDeposits,
         tvl,
       });
-    } else {
-      // Update existing vault values
-      existingVault.available = addBNsIfValid(
+    }
+    // Update existing vault values.
+    else {
+      existingVault.available = tryAddBNs(
         existingVault.available,
         available,
       );
-      existingVault.totalDeposits = addBNsIfValid(
+
+      existingVault.totalDeposits = tryAddBNs(
         existingVault.totalDeposits,
         totalDeposits,
       );
-      existingVault.tvl = addBNsIfValid(existingVault.tvl, tvl);
+
+      existingVault.tvl = tryAddBNs(existingVault.tvl, tvl);
       existingVault.tokenCount = existingVault.tokenCount + 1;
     }
   }
@@ -92,11 +94,14 @@ const calculateVaults = ({
   return vaults;
 };
 
-// Helper function to add BN values if they're valid
-const addBNsIfValid = (existing: BN | null, newValue: BN | null): BN | null => {
-  if (existing === null) return newValue;
-  if (newValue === null) return existing;
-  return existing.add(newValue);
+const tryAddBNs = (a: BN | null, b: BN | null): BN | null => {
+  if (a === null) {
+    return b;
+  } else if (b === null) {
+    return a;
+  }
+
+  return a.add(b);
 };
 
-export default calculateVaults;
+export default createVaultMap;

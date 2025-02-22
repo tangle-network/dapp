@@ -1,5 +1,4 @@
 import { BN } from '@polkadot/util';
-import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { TokenIcon } from '@tangle-network/icons';
@@ -24,7 +23,6 @@ import {
   useRef,
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { formatUnits } from 'viem';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import StyleContainer from '../../../components/restaking/StyleContainer';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
@@ -77,7 +75,7 @@ const DepositForm: FC<Props> = (props) => {
     QueryParamKey.RESTAKE_VAULT,
   );
 
-  const { assetWithBalances, refetchErc20Balances } = useRestakeContext();
+  const { assets, refetchErc20Balances } = useRestakeContext();
 
   const restakeApi = useRestakeApi();
 
@@ -108,44 +106,36 @@ const DepositForm: FC<Props> = (props) => {
   }, [activeTypedChainId, resetField]);
 
   useEffect(() => {
-    if (!vaultIdParam) {
+    if (!vaultIdParam || assets === null) {
       return;
     }
 
     // Find the first asset in the vault that has a balance.
-    const defaultAsset = Object.values(assetWithBalances).find(
+    const defaultAsset = Array.from(assets.values()).find(
       ({ metadata, balance }) => {
         if (metadata.vaultId?.toString() !== vaultIdParam) {
           return false;
         }
 
-        const balance_ = balance?.balance;
-
-        return balance_ !== undefined && balance_ > ZERO_BIG_INT;
+        return balance !== undefined && !balance.isZero();
       },
     );
 
     if (defaultAsset === undefined) {
       setVaultIdParam(null);
+
       return;
     }
 
-    if (defaultAsset.balance === null) {
-      setVaultIdParam(null);
-      return;
-    }
+    assert(defaultAsset.balance !== undefined);
 
     // Select the first asset in the vault by default.
     setValue('depositAssetId', defaultAsset.assetId);
-
-    setValue(
-      'amount',
-      formatUnits(defaultAsset.balance.balance, defaultAsset.metadata.decimals),
-    );
+    setValue('amount', defaultAsset.balance.toString());
 
     // Remove the param to prevent reuse after initial load.
     setVaultIdParam(null);
-  }, [assetWithBalances, setValue, setVaultIdParam, vaultIdParam]);
+  }, [assets, setValue, setVaultIdParam, vaultIdParam]);
 
   const {
     status: tokenModalOpen,
@@ -155,28 +145,26 @@ const DepositForm: FC<Props> = (props) => {
   } = useModal();
 
   const allAssets = useMemo<RestakeAsset[]>(() => {
-    const nativeAssetsWithBalances = Object.values(assetWithBalances)
-      .filter(
-        (asset) =>
-          asset.balance?.balance !== undefined &&
-          asset.balance.balance !== BigInt(0),
-      )
-      .map((asset) => {
-        assert(asset.balance !== null);
+    if (assets === null) {
+      return [];
+    }
 
-        const balance = new BN(asset.balance.balance.toString());
+    const nativeAssetsWithBalances = Array.from(assets.values())
+      .filter((asset) => asset.balance !== undefined && !asset.balance.isZero())
+      .map((asset) => {
+        assert(asset.balance !== undefined);
 
         return {
           id: asset.assetId,
           name: asset.metadata.name,
           symbol: asset.metadata.symbol,
-          balance,
+          balance: asset.balance,
           decimals: asset.metadata.decimals,
         } satisfies RestakeAsset;
       });
 
     return nativeAssetsWithBalances;
-  }, [assetWithBalances]);
+  }, [assets]);
 
   const handleAssetSelection = useCallback(
     (asset: RestakeAsset) => {
@@ -202,7 +190,6 @@ const DepositForm: FC<Props> = (props) => {
       }
 
       await restakeApi.deposit(asset.id, amountBn);
-
       setValue('amount', '', { shouldValidate: false });
       setValue('depositAssetId', '', { shouldValidate: false });
 

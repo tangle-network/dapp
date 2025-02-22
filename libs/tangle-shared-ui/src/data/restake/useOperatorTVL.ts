@@ -9,17 +9,20 @@ const calculateTVL = (operatorMap: OperatorMap, assetMap: RestakeAssetMap) => {
       const operatorTVL = operatorData.delegations.reduce((sum, delegation) => {
         const asset = assetMap.get(delegation.assetId);
 
-        if (!asset) {
+        if (asset === undefined) {
           return sum;
         }
 
-        const assetPrice = asset.priceInUsd ?? null;
+        const assetPrice = asset.metadata.priceInUsd ?? null;
 
         if (typeof assetPrice !== 'number') {
           return sum;
         }
 
-        const result = safeFormatUnits(delegation.amount, asset.decimals);
+        const result = safeFormatUnits(
+          delegation.amount,
+          asset.metadata.decimals,
+        );
 
         if (!result.success) {
           return sum;
@@ -27,11 +30,11 @@ const calculateTVL = (operatorMap: OperatorMap, assetMap: RestakeAssetMap) => {
 
         const amount = Number(result.value);
 
-        // Calculate operator TVL
+        // Calculate operator TVL.
         sum += amount * assetPrice;
 
-        // Calculate vault TVL
-        const vaultId = asset.vaultId;
+        // Calculate vault TVL.
+        const vaultId = asset.metadata.vaultId;
 
         if (vaultId !== null) {
           acc.vaultTVL[vaultId] =

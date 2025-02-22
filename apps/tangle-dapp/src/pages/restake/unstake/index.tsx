@@ -110,11 +110,11 @@ const RestakeUnstakeForm: FC = () => {
   }, [delegatorInfo?.unstakeRequests]);
 
   const selectedAsset = useMemo(() => {
-    if (!selectedAssetId || !assets[selectedAssetId]) {
+    if (!selectedAssetId || assets === null) {
       return null;
     }
 
-    return assets[selectedAssetId];
+    return assets.get(selectedAssetId) ?? null;
   }, [assets, selectedAssetId]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
@@ -150,7 +150,7 @@ const RestakeUnstakeForm: FC = () => {
   ]);
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
-    const step = decimalsToStep(selectedAsset?.decimals);
+    const step = decimalsToStep(selectedAsset?.metadata.decimals);
 
     return {
       type: 'number',
@@ -162,12 +162,17 @@ const RestakeUnstakeForm: FC = () => {
           '0',
           ZERO_BIG_INT,
           maxAmount,
-          selectedAsset?.decimals,
-          selectedAsset?.symbol,
+          selectedAsset?.metadata.decimals,
+          selectedAsset?.metadata.symbol,
         ),
       }),
     };
-  }, [maxAmount, register, selectedAsset?.decimals, selectedAsset?.symbol]);
+  }, [
+    maxAmount,
+    register,
+    selectedAsset?.metadata.decimals,
+    selectedAsset?.metadata.symbol,
+  ]);
 
   const displayError = (() => {
     return errors.operatorAccountId !== undefined || !selectedOperatorAccountId
@@ -183,16 +188,21 @@ const RestakeUnstakeForm: FC = () => {
 
   const restakeApi = useRestakeApi();
 
-  const isReady = restakeApi !== null && !isSubmitting;
+  const isReady = restakeApi !== null && !isSubmitting && assets !== null;
 
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
     async ({ amount, assetId, operatorAccountId }) => {
-      if (!assetId || !isDefined(assets[assetId]) || !isReady) {
+      if (!assetId || !isReady) {
         return;
       }
 
-      const assetMetadata = assets[assetId];
-      const amountBn = parseChainUnits(amount, assetMetadata.decimals);
+      const asset = assets.get(assetId);
+
+      if (asset === undefined) {
+        return;
+      }
+
+      const amountBn = parseChainUnits(amount, asset.metadata.decimals);
 
       if (!(amountBn instanceof BN)) {
         return;
@@ -202,6 +212,7 @@ const RestakeUnstakeForm: FC = () => {
 
       setFormValue('amount', '', { shouldValidate: false });
       setFormValue('assetId', '0x0', { shouldValidate: false });
+
       setFormValue('operatorAccountId', '' as SubstrateAddress, {
         shouldValidate: false,
       });
@@ -226,7 +237,7 @@ const RestakeUnstakeForm: FC = () => {
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col items-start justify-stretch">
               <TransactionInputCard.Root
-                tokenSymbol={selectedAsset?.symbol}
+                tokenSymbol={selectedAsset?.metadata.symbol}
                 className="bg-mono-20 dark:bg-mono-180"
               >
                 <TransactionInputCard.Header>

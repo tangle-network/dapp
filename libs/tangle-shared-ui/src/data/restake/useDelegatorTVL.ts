@@ -18,9 +18,9 @@ const calculateDelegatorTVL = (
     }
 
     const value =
-      asset.priceInUsd === null
+      asset.metadata.priceInUsd === null
         ? 0
-        : Number(delegation.amountBonded * BigInt(asset.priceInUsd));
+        : Number(delegation.amountBonded * BigInt(asset.metadata.priceInUsd));
 
     delegatorTVL[delegation.assetId] =
       (delegatorTVL[delegation.assetId] || 0) + value;

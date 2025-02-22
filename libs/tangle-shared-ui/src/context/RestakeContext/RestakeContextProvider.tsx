@@ -3,10 +3,11 @@
 import { PropsWithChildren, useCallback, useMemo } from 'react';
 import useRestakeAssets from '../../data/restake/useRestakeAssets';
 import useRestakeAssetBalances from '../../data/restake/useRestakeAssetBalances';
-import { RestakeAssetMapWithBalances } from '../../types/restake';
+import { RestakeAssetMap } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import RestakeContext from './RestakeContext';
 
+// TODO: Consider using Zustand store instead of React context. Or even, get rid of and just use `useRestakeAssets` directly.
 const RestakeContextProvider = (props: PropsWithChildren) => {
   const assets = useRestakeAssets();
 
@@ -18,17 +19,17 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
       return null;
     }
 
-    const map =
-      new Map() satisfies RestakeAssetMapWithBalances as RestakeAssetMapWithBalances;
+    const map = new Map() satisfies RestakeAssetMap as RestakeAssetMap;
 
     for (const [assetIdString, metadata] of assets.entries()) {
       const assetId = assertRestakeAssetId(assetIdString);
-      const balance = balances[assetIdString] ?? null;
+      const balance = balances[assetIdString];
 
       map.set(assetId, {
         assetId,
         metadata,
-        balance,
+        // TODO: Scale bigint to BN using appropriate decimals.
+        balance: balance?.balance,
       });
     }
 
@@ -42,9 +43,7 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
   return (
     <RestakeContext.Provider
       value={{
-        assetWithBalances,
-        assets,
-        balances,
+        assets: assetWithBalances,
         refetchErc20Balances,
       }}
       {...props}
