@@ -1,28 +1,62 @@
-import { useMemo } from 'react';
-import { map } from 'rxjs';
-import { assetIdsQuery } from '../../queries/restake/assetIds';
-import { rewardVaultRxQuery } from '../../queries/restake/rewardVault';
+import { map, of } from 'rxjs';
 import { RestakeAssetId } from '../../types';
 import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
+import useApiRx from '../../hooks/useApiRx';
+import { StorageKey, u32, Vec, Option } from '@polkadot/types';
+import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
+import createRestakeAssetId from '../../utils/createRestakeAssetId';
+import { useCallback } from 'react';
 
-/**
- * Retrieves the whitelisted asset IDs for restaking.
- * The hook returns an object containing the asset IDs and an observable to refresh the asset IDs.
- */
-export default function useRestakeAssetIds(): RestakeAssetId[] {
-  const { result: vaultPotAccounts } = useVaultsPotAccounts();
-
-  const assetIds = useMemo(() => {
-    if (vaultPotAccounts === null) {
-      return null;
+function toPrimitive(
+  entries: [
+    StorageKey<[u32]> | number,
+    Option<Vec<TanglePrimitivesServicesAsset>>,
+  ][],
+): RestakeAssetId[] {
+  return entries.flatMap(([, assets]) => {
+    if (assets.isNone) {
+      return [];
     }
 
-    const vaultIds = vaultPotAccounts.keys().toArray();
+    return assets.unwrap().map(createRestakeAssetId);
+  });
+}
 
-    return rewardVaultRxQuery(apiRx, vaultIds).pipe(
-      map((rewardVaults) => assetIdsQuery(rewardVaults)),
-    );
-  }, [vaultPotAccounts]);
+const useRestakeAssetIds = (): RestakeAssetId[] | null => {
+  const { result: vaultPotAccounts } = useVaultsPotAccounts();
+
+  const { result: assetIds } = useApiRx(
+    useCallback(
+      (api) => {
+        if (vaultPotAccounts === null) {
+          return null;
+        }
+
+        const vaultIds = vaultPotAccounts.keys().toArray();
+
+        if (api.query.rewards?.rewardVaults === undefined) {
+          return of([]);
+        } else if (vaultIds.length === 0) {
+          return api.query.rewards.rewardVaults
+            .entries()
+            .pipe(map(toPrimitive));
+        }
+
+        return api.query.rewards.rewardVaults
+          .multi(vaultIds)
+          .pipe(
+            map((results) =>
+              toPrimitive(
+                results.map((result, idx) => [vaultIds[idx], result] as const),
+              ),
+            ),
+          );
+      },
+      [vaultPotAccounts],
+    ),
+  );
 
   return assetIds;
-}
+};
+
+export default useRestakeAssetIds;

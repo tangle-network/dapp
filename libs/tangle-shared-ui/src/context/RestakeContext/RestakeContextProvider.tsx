@@ -3,7 +3,7 @@
 import toPairs from 'lodash/toPairs';
 import { PropsWithChildren, useCallback, useMemo } from 'react';
 import useRestakeAssets from '../../data/restake/useRestakeAssets';
-import useRestakeBalances from '../../data/restake/useRestakeBalances';
+import useRestakeAssetBalances from '../../data/restake/useRestakeAssetBalances';
 import { AssetWithBalance } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import RestakeContext from './RestakeContext';
@@ -12,7 +12,7 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
   const assets = useRestakeAssets();
 
   const { balances, refetchErc20Balances: refetchErc20BalancesFn } =
-    useRestakeBalances();
+    useRestakeAssetBalances();
 
   const assetWithBalances = useMemo(() => {
     return toPairs(assets).reduce(

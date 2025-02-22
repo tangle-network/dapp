@@ -77,8 +77,8 @@ const DepositForm: FC<Props> = (props) => {
     QueryParamKey.RESTAKE_VAULT,
   );
 
-  const { assetWithBalances, isLoading, refetchErc20Balances } =
-    useRestakeContext();
+  const { assetWithBalances, refetchErc20Balances } = useRestakeContext();
+
   const restakeApi = useRestakeApi();
 
   const setValue = useCallback(
@@ -108,7 +108,7 @@ const DepositForm: FC<Props> = (props) => {
   }, [activeTypedChainId, resetField]);
 
   useEffect(() => {
-    if (!vaultIdParam || isLoading) {
+    if (!vaultIdParam) {
       return;
     }
 
@@ -145,7 +145,7 @@ const DepositForm: FC<Props> = (props) => {
 
     // Remove the param to prevent reuse after initial load.
     setVaultIdParam(null);
-  }, [assetWithBalances, isLoading, setValue, setVaultIdParam, vaultIdParam]);
+  }, [assetWithBalances, setValue, setVaultIdParam, vaultIdParam]);
 
   const {
     status: tokenModalOpen,
@@ -246,7 +246,7 @@ const DepositForm: FC<Props> = (props) => {
                 errors={errors}
                 formRef={formRef}
                 isSubmitting={isSubmitting}
-                isValid={isValid}
+                isValid={isValid && isReady}
                 watch={watch}
               />
             </div>
@@ -257,7 +257,6 @@ const DepositForm: FC<Props> = (props) => {
             isOpen={tokenModalOpen}
             setIsOpen={updateTokenModal}
             onSelect={handleAssetSelection}
-            isLoading={isLoading}
             filterItem={(asset, query) =>
               filterBy(query, [asset.id, asset.name, asset.symbol])
             }

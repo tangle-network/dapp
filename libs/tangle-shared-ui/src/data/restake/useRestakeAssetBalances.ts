@@ -14,7 +14,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { combineLatest, map, of, switchMap } from 'rxjs';
 import { erc20Abi } from 'viem';
 import { useReadContracts } from 'wagmi';
-import useRestakeAssetIds from '../../data/restake/useRestakeAssetIds';
+import useRestakeAssetIds from './useRestakeAssetIds';
 import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import usePolkadotApi from '../../hooks/usePolkadotApi';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
@@ -23,7 +23,7 @@ import { AssetBalance, AssetBalanceMap } from '../../types/restake';
 import hasAssetsPallet from '../../utils/hasAssetsPallet';
 import filterNativeAsset from '../../utils/restake/filterNativeAsset';
 
-export default function useRestakeBalances() {
+const useRestakeAssetBalances = () => {
   const { apiRx, apiRxLoading, apiRxError } = usePolkadotApi();
   const assetIds = useRestakeAssetIds();
   const activeAccount = useSubstrateAddress();
@@ -77,6 +77,7 @@ export default function useRestakeBalances() {
           typeof balance.result === 'bigint'
         ) {
           const id = evmAssetIds[idx];
+
           acc[id] = {
             assetId: id,
             balance: balance.result,
@@ -85,7 +86,10 @@ export default function useRestakeBalances() {
 
         return acc;
       },
-      {} as Record<RestakeAssetId, AssetBalance>,
+      {} satisfies Record<RestakeAssetId, AssetBalance> as Record<
+        RestakeAssetId,
+        AssetBalance
+      >,
     );
 
     return merge(erc20BalancesMap, substrateBalances);
@@ -97,7 +101,7 @@ export default function useRestakeBalances() {
     error: apiRxError || error,
     refetchErc20Balances,
   };
-}
+};
 
 function substrateBalancesHandler([apiRx, assetIdSet, activeAccount]: [
   ApiRx,
@@ -180,7 +184,7 @@ function assetBalancesReducer(
         },
       } satisfies AssetBalanceMap);
     },
-    // Clone the initial value to avoid mutation
+    // Clone the initial value to avoid mutation.
     { ...initialValue },
   );
 }
@@ -200,12 +204,11 @@ function getNativeBalance$(apiRx: ApiRx, activeAccount: string) {
   );
 }
 
-function useErc20Balances(assetAddressesArg: Array<EvmAddress>) {
+const useErc20Balances = (assetAddressesArg: Array<EvmAddress>) => {
   const { evmAddress } = useAgnosticAccountInfo();
-
   const assetAddresses = useRef(assetAddressesArg);
 
-  // Shallow compare the asset addresses
+  // Shallow compare the asset addresses.
   useEffect(() => {
     if (!isEqual(assetAddresses.current, assetAddressesArg)) {
       assetAddresses.current = assetAddressesArg;
@@ -232,4 +235,6 @@ function useErc20Balances(assetAddressesArg: Array<EvmAddress>) {
       enabled: evmAddress !== null,
     },
   });
-}
+};
+
+export default useRestakeAssetBalances;

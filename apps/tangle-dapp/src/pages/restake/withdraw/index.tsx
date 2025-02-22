@@ -274,7 +274,7 @@ const RestakeWithdrawForm: FC = () => {
 
                 return (
                   <Button
-                    isDisabled={!isValid || isDefined(displayError)}
+                    isDisabled={!isValid || isDefined(displayError) || !isReady}
                     type="submit"
                     isFullWidth
                     isLoading={isSubmitting || isLoading}
