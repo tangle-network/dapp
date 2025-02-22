@@ -10,7 +10,7 @@ export default function delegationsToVaultTokens(
   const vaultTokenMap = new Map<RestakeAssetId, VaultToken>();
 
   delegations.forEach(({ assetId, amount }) => {
-    const asset = assetMap[assetId];
+    const asset = assetMap.get(assetId);
 
     if (asset === undefined) {
       return;

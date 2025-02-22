@@ -14,7 +14,8 @@ export function useDelegatorTVL(
           const delegatorTVL =
             delegatorInfo?.delegations.reduce(
               (acc, delegation) => {
-                const assetData = assetMap[delegation.assetId];
+                const assetData = assetMap.get(delegation.assetId);
+
                 if (assetData === undefined) {
                   return acc;
                 }

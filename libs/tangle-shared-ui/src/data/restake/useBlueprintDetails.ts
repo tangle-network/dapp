@@ -28,15 +28,14 @@ import useRestakeAssets from './useRestakeAssets';
 export default function useBlueprintDetails(id?: string) {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const assets = useRestakeAssets();
-
   const { operatorMap } = useRestakeOperatorMap();
   const { delegatorInfo } = useRestakeDelegatorInfo();
+  const activeSubstrateAddress = useSubstrateAddress(false);
+
   const { operatorTVL, operatorConcentration } = useRestakeTVL(
     operatorMap,
     delegatorInfo,
   );
-
-  const activeSubstrateAddress = useSubstrateAddress(false);
 
   return useApiRx(
     useCallback(
@@ -44,13 +43,17 @@ export default function useBlueprintDetails(id?: string) {
         if (
           apiRx.query.services?.blueprints === undefined ||
           apiRx.query.services?.operators === undefined
-        )
+        ) {
           // TODO: Should return the error here instead of throw it
           throw new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
+        }
 
-        if (id === undefined) return of(null);
+        if (id === undefined) {
+          return of(null);
+        }
 
         const blueprintDetails$ = apiRx.query.services.blueprints(id);
+
         const operatorEntries$ =
           apiRx.query.services.operators.entries<
             Option<TanglePrimitivesServicesOperatorPreferences>
@@ -58,11 +61,14 @@ export default function useBlueprintDetails(id?: string) {
 
         return combineLatest([blueprintDetails$, operatorEntries$]).pipe(
           switchMap(async ([blueprintDetails, operatorEntries]) => {
-            if (blueprintDetails.isNone) return null;
+            if (blueprintDetails.isNone) {
+              return null;
+            }
 
             const idNumber = Number(id);
             const [ownerAccount, serviceBlueprint] = blueprintDetails.unwrap();
             const owner = ownerAccount.toString();
+
             const { metadata, registrationParams } =
               toPrimitiveBlueprint(serviceBlueprint);
 
@@ -73,10 +79,9 @@ export default function useBlueprintDetails(id?: string) {
             } = extractOperatorData(operatorEntries, operatorMap, operatorTVL);
 
             const info = await getAccountInfo(rpcEndpoint, owner);
-
             const operatorsSet = blueprintOperatorMap.get(idNumber);
 
-            const details = {
+            const details: Blueprint = {
               id,
               name: metadata.name,
               description: metadata.description,
@@ -88,7 +93,9 @@ export default function useBlueprintDetails(id?: string) {
               tvl: (() => {
                 const blueprintTVL = blueprintTVLMap.get(idNumber);
 
-                if (blueprintTVL === undefined) return null;
+                if (blueprintTVL === undefined) {
+                  return null;
+                }
 
                 return `$${blueprintTVL.toLocaleString()}`;
               })(),
@@ -99,7 +106,7 @@ export default function useBlueprintDetails(id?: string) {
               registrationParams,
               // TODO: Determine `isBoosted` value.
               isBoosted: false,
-            } satisfies Blueprint;
+            };
 
             const operators =
               operatorsSet !== undefined
@@ -121,8 +128,15 @@ export default function useBlueprintDetails(id?: string) {
           }),
         );
       },
-      // prettier-ignore
-      [id, operatorMap, operatorTVL, rpcEndpoint, assets, operatorConcentration, activeSubstrateAddress],
+      [
+        id,
+        operatorMap,
+        operatorTVL,
+        rpcEndpoint,
+        assets,
+        operatorConcentration,
+        activeSubstrateAddress,
+      ],
     ),
   );
 }
@@ -149,6 +163,7 @@ async function getBlueprintOperators(
     const tvlInUsd = operatorTVL[address] ?? null;
     const delegations = operatorMap[address].delegations ?? [];
     const selfBondedAmount = operatorMap[address]?.stake ?? ZERO_BIG_INT;
+
     const isDelegated =
       activeSubstrateAddress !== null &&
       delegations.some(

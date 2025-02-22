@@ -3,10 +3,10 @@ import { of, switchMap } from 'rxjs';
 import { RestakeAssetMap, OperatorMap } from '../../types/restake';
 import safeFormatUnits from '../../utils/safeFormatUnits';
 
-export function useOperatorTVL(
+export const useOperatorTVL = (
   operatorMap: OperatorMap,
   assetMap: RestakeAssetMap,
-) {
+) => {
   const tvl$ = useObservable(
     (input$) =>
       input$.pipe(
@@ -15,7 +15,7 @@ export function useOperatorTVL(
             (acc, [operatorId, operatorData]) => {
               const operatorTVL = operatorData.delegations.reduce(
                 (sum, delegation) => {
-                  const asset = assetMap[delegation.assetId];
+                  const asset = assetMap.get(delegation.assetId);
                   const assetPrice = asset?.priceInUsd ?? null;
 
                   if (typeof assetPrice !== 'number') {
@@ -65,4 +65,4 @@ export function useOperatorTVL(
   );
 
   return useObservableState(tvl$, { operatorTVL: {}, vaultTVL: {} });
-}
+};

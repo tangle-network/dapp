@@ -27,8 +27,9 @@ export default function useRestakeDelegatorInfo() {
           if (
             apiRx.query.multiAssetDelegation?.delegators === undefined ||
             activeAddress === null
-          )
+          ) {
             return of(null);
+          }
 
           return apiRx.query.multiAssetDelegation
             ?.delegators(activeAddress)

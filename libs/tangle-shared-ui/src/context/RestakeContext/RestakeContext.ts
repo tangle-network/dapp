@@ -4,21 +4,21 @@ import { createContext } from 'react';
 import noop from 'lodash/noop';
 import {
   AssetBalanceMap,
-  AssetWithBalance,
+  RestakeAssetMapWithBalances,
   RestakeAssetMap,
 } from '../../types/restake';
 
 type Context = {
   refetchErc20Balances: () => Promise<void>;
   balances: AssetBalanceMap;
-  assetWithBalances: AssetWithBalance;
-  assets: RestakeAssetMap;
+  assetWithBalances: RestakeAssetMapWithBalances | null;
+  assets: RestakeAssetMap | null;
 };
 
 const RestakeContext = createContext<Context>({
-  assets: {},
+  assets: null,
   balances: {},
-  assetWithBalances: {},
+  assetWithBalances: null,
   refetchErc20Balances: noop as () => Promise<void>,
 });
 

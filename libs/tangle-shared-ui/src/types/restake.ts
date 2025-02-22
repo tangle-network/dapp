@@ -69,9 +69,7 @@ export type RestakeAssetMetadata = Readonly<{
   status?: PalletAssetsAssetStatus['type'];
 }>;
 
-export type RestakeAssetMap = {
-  readonly [assetId: RestakeAssetId]: RestakeAssetMetadata;
-};
+export type RestakeAssetMap = Map<RestakeAssetId, RestakeAssetMetadata>;
 
 export type DelegatorWithdrawRequest = {
   readonly assetId: RestakeAssetId;
@@ -142,13 +140,14 @@ export type AssetBalanceMap = {
   readonly [assetId: RestakeAssetId]: AssetBalance;
 };
 
-export type AssetWithBalance = {
-  readonly [assetId: RestakeAssetId]: {
-    readonly assetId: RestakeAssetId;
-    readonly metadata: RestakeAssetMetadata;
-    readonly balance: AssetBalance | null;
-  };
-};
+export type RestakeAssetMapWithBalances = Map<
+  RestakeAssetId,
+  {
+    assetId: RestakeAssetId;
+    metadata: RestakeAssetMetadata;
+    balance: AssetBalance | null;
+  }
+>;
 
 export type RestakeAsset = {
   id: RestakeAssetId;

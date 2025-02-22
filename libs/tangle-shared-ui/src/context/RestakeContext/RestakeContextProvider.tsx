@@ -1,10 +1,9 @@
 'use client';
 
-import toPairs from 'lodash/toPairs';
 import { PropsWithChildren, useCallback, useMemo } from 'react';
 import useRestakeAssets from '../../data/restake/useRestakeAssets';
 import useRestakeAssetBalances from '../../data/restake/useRestakeAssetBalances';
-import { AssetWithBalance } from '../../types/restake';
+import { RestakeAssetMapWithBalances } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import RestakeContext from './RestakeContext';
 
@@ -15,22 +14,25 @@ const RestakeContextProvider = (props: PropsWithChildren) => {
     useRestakeAssetBalances();
 
   const assetWithBalances = useMemo(() => {
-    return toPairs(assets).reduce(
-      (assetWithBalances, [assetIdString, metadata]) => {
-        const assetId = assertRestakeAssetId(assetIdString);
-        const balance = balances[assetId] ?? null;
+    if (assets === null) {
+      return null;
+    }
 
-        return {
-          ...assetWithBalances,
-          [assetId]: {
-            assetId,
-            metadata,
-            balance,
-          },
-        };
-      },
-      {} satisfies AssetWithBalance,
-    );
+    const map =
+      new Map() satisfies RestakeAssetMapWithBalances as RestakeAssetMapWithBalances;
+
+    for (const [assetIdString, metadata] of assets.entries()) {
+      const assetId = assertRestakeAssetId(assetIdString);
+      const balance = balances[assetIdString] ?? null;
+
+      map.set(assetId, {
+        assetId,
+        metadata,
+        balance,
+      });
+    }
+
+    return map;
   }, [assets, balances]);
 
   const refetchErc20Balances = useCallback(async () => {

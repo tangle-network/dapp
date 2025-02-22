@@ -195,8 +195,22 @@ const useRestakeAssets = () => {
     substrateAssetIds,
   ]);
 
+  const assetMap = useMemo(() => {
+    if (nativeAssets === null) {
+      return null;
+    }
+
+    const map = new Map<RestakeAssetId, RestakeAssetMetadata>();
+
+    for (const asset of nativeAssets) {
+      map.set(asset.assetId, asset);
+    }
+
+    return map;
+  }, [nativeAssets]);
+
   // TODO: Evm assets too.
-  return nativeAssets;
+  return assetMap;
 };
 
 export default useRestakeAssets;

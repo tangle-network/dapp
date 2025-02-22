@@ -4,10 +4,10 @@ import { useOperatorConcentration } from '../../data/restake/useOperatorConcentr
 import { useOperatorTVL } from '../../data/restake/useOperatorTVL';
 import type { DelegatorInfo, OperatorMap } from '../../types/restake';
 
-export default function useRestakeTVL(
+const useRestakeTVL = (
   operatorMap: OperatorMap,
   delegatorInfo: DelegatorInfo | null,
-) {
+) => {
   const { assets } = useRestakeContext();
   const { operatorTVL, vaultTVL } = useOperatorTVL(operatorMap, assets);
 
@@ -34,4 +34,6 @@ export default function useRestakeTVL(
     totalDelegatorTVL,
     totalNetworkTVL,
   };
-}
+};
+
+export default useRestakeTVL;
