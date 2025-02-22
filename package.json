@@ -30,7 +30,8 @@
     "check:codegen": "node ./tools/checkCodegen.js"
   },
   "resolutions": {
-    "eslint-plugin-import": "npm:eslint-plugin-import-x@^4.6.1"
+    "eslint-plugin-import": "npm:eslint-plugin-import-x@^4.6.1",
+    "@polkadot/api": "^13.2.1"
   },
   "dependencies": {
     "@actions/core": "^1.11.1",

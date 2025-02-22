@@ -12,7 +12,7 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES6",
-    "lib": ["WebWorker", "dom.iterable", "dom", "ESNext"],
+    "lib": ["WebWorker", "dom.iterable", "dom", "esnext"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
