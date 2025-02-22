@@ -9,6 +9,8 @@ import { isEvmAddress } from '@tangle-network/ui-components';
 import { RestakeAssetMetadata } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
+import useNetworkStore from '../../context/useNetworkStore';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 
 function toPrimitiveRewardVault(
   entries: [
@@ -31,6 +33,7 @@ function toPrimitiveRewardVault(
 }
 
 const useRestakeAssets = () => {
+  const { nativeTokenSymbol } = useNetworkStore();
   const { result: vaultPotAccounts } = useVaultsPotAccounts();
 
   const { result: rewardVaults } = useApiRx(
@@ -163,7 +166,7 @@ const useRestakeAssets = () => {
       return null;
     }
 
-    return substrateAssetIds.flatMap((assetId) => {
+    const nativeAssets = substrateAssetIds.flatMap((assetId) => {
       const details = nativeAssetDetails?.get(assetId);
       const metadata = nativeAssetMetadatas.get(assetId);
 
@@ -188,10 +191,26 @@ const useRestakeAssets = () => {
 
       return [asset];
     });
+
+    // Insert the native asset to allow for native restaking.
+    const nativeAsset: RestakeAssetMetadata = {
+      name: nativeTokenSymbol,
+      symbol: nativeTokenSymbol,
+      decimals: TANGLE_TOKEN_DECIMALS,
+      assetId: '0',
+      details: undefined,
+      vaultId: null,
+      status: 'Live',
+      // TODO: Waiting for price fetching implementation.
+      priceInUsd: null,
+    };
+
+    return [nativeAsset, ...nativeAssets];
   }, [
     nativeAssetDetails,
     nativeAssetMetadatas,
     nativeAssetVaultIds,
+    nativeTokenSymbol,
     substrateAssetIds,
   ]);
 
