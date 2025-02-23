@@ -130,16 +130,16 @@ const UnstakeRequestTable: FC<Props> = ({
 
     return unstakeRequests.flatMap(
       ({ assetId, amount, requestedRound, operatorAccountId }) => {
-        const metadata = assets[assetId];
+        const asset = assets?.get(assetId);
 
         // Skip requests that are lacking metadata.
-        if (metadata === undefined || metadata === null) {
+        if (asset === undefined || asset === null) {
           return [];
         }
 
         const fmtAmount = formatDisplayAmount(
           new BN(amount.toString()),
-          metadata.decimals,
+          asset.metadata.decimals,
           AmountFormatStyle.SHORT,
         );
 
@@ -153,7 +153,7 @@ const UnstakeRequestTable: FC<Props> = ({
           amount: fmtAmount,
           amountRaw: amount,
           assetId: assetId,
-          assetSymbol: metadata.symbol,
+          assetSymbol: asset.metadata.symbol,
           sessionsRemaining,
           sessionDurationMs,
           operatorAccountId,

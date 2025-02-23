@@ -118,7 +118,7 @@ const RestakeUnstakeForm: FC = () => {
   }, [assets, selectedAssetId]);
 
   const { maxAmount, formattedMaxAmount } = useMemo(() => {
-    if (!Array.isArray(delegatorInfo?.delegations)) {
+    if (!Array.isArray(delegatorInfo?.delegations) || assets === null) {
       return {};
     }
 
@@ -128,14 +128,20 @@ const RestakeUnstakeForm: FC = () => {
         item.operatorAccountId === selectedOperatorAccountId,
     );
 
-    if (!selectedDelegation || !assets[selectedDelegation.assetId]) {
+    if (selectedDelegation === undefined) {
+      return {};
+    }
+
+    const selectedDelegationAsset = assets.get(selectedDelegation.assetId);
+
+    if (selectedDelegationAsset === undefined) {
       return {};
     }
 
     const maxAmount = selectedDelegation.amountBonded;
 
     const formattedMaxAmount = Number(
-      formatUnits(maxAmount, assets[selectedDelegation.assetId].decimals),
+      formatUnits(maxAmount, selectedDelegationAsset.metadata.decimals),
     );
 
     return {
