@@ -55,7 +55,7 @@ export const getApiRx = async (endpoint: string): Promise<ApiRx> => {
 export const findInjectorForAddress = async (
   address: string,
 ): Promise<InjectedExtension | null> => {
-  const { web3Enable, web3FromAddress } = await import(
+  const { web3Enable, web3EnablePromise, web3FromAddress } = await import(
     '@polkadot/extension-dapp'
   );
 
@@ -67,7 +67,9 @@ export const findInjectorForAddress = async (
     return cachedInjector;
   }
 
-  const extensions = await web3Enable('Tangle');
+  const extensions = await (web3EnablePromise !== null
+    ? web3EnablePromise
+    : web3Enable('Tangle'));
 
   // No wallet extensions installed in the browser.
   if (extensions.length === 0) {
