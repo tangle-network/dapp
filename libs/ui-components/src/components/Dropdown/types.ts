@@ -29,7 +29,15 @@ export interface DropdownButtonProps
    */
   isFullWidth?: boolean;
 
-  hideChevron?: boolean;
+  /**
+   * If true, the dropdown arrow icon will be hidden
+   */
+  isHideArrowIcon?: boolean;
+
+  /**
+   * Allow to pass a custom arrow element
+   */
+  arrowElement?: React.ReactNode | string;
 }
 
 type DropdownBodyPickedKeys = 'size';

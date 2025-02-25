@@ -3,7 +3,7 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { ChevronDown } from '@tangle-network/icons';
 import cx from 'classnames';
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { DropdownButtonProps } from './types';
 
@@ -15,7 +15,7 @@ export const DropdownButton = forwardRef<
   DropdownButtonProps
 >(
   (
-    { className, icon, label, size, isFullWidth, hideChevron, ...props },
+    { className, icon, label, size, isFullWidth, isHideArrowIcon, arrowElement = <ChevronDown />, ...props },
     ref,
   ) => {
     return (
@@ -58,8 +58,25 @@ export const DropdownButton = forwardRef<
             )}
           </div>
 
-          {!hideChevron && (
-            <ChevronDown className="mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180" />
+          {!isHideArrowIcon && (
+            typeof arrowElement === 'string' ? (
+              <span className="mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180">
+                {arrowElement}
+              </span>
+            ) : React.isValidElement(arrowElement) ? (
+              React.cloneElement(arrowElement as React.ReactElement, {
+                className: twMerge(
+                  cx(
+                    'mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180',
+                    (arrowElement as React.ReactElement).props?.className
+                  )
+                )
+              })
+            ) : (
+              <div className="mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180">
+                {arrowElement}
+              </div>
+            )
           )}
         </button>
       </DropdownMenuPrimitive.Trigger>
