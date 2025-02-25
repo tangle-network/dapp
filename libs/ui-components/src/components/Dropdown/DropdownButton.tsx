@@ -15,7 +15,16 @@ export const DropdownButton = forwardRef<
   DropdownButtonProps
 >(
   (
-    { className, icon, label, size, isFullWidth, isHideArrowIcon, arrowElement = <ChevronDown />, ...props },
+    {
+      className,
+      icon,
+      label,
+      size,
+      isFullWidth,
+      isHideArrowIcon,
+      arrowElement = <ChevronDown />,
+      ...props
+    },
     ref,
   ) => {
     return (
@@ -58,8 +67,8 @@ export const DropdownButton = forwardRef<
             )}
           </div>
 
-          {!isHideArrowIcon && (
-            typeof arrowElement === 'string' ? (
+          {!isHideArrowIcon &&
+            (typeof arrowElement === 'string' ? (
               <span className="mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180">
                 {arrowElement}
               </span>
@@ -68,16 +77,15 @@ export const DropdownButton = forwardRef<
                 className: twMerge(
                   cx(
                     'mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180',
-                    (arrowElement as React.ReactElement).props?.className
-                  )
-                )
+                    (arrowElement as React.ReactElement).props?.className,
+                  ),
+                ),
               })
             ) : (
               <div className="mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180">
                 {arrowElement}
               </div>
-            )
-          )}
+            ))}
         </button>
       </DropdownMenuPrimitive.Trigger>
     );
