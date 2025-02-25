@@ -27,6 +27,9 @@ export const DropdownButton = forwardRef<
     },
     ref,
   ) => {
+
+    const arrowIconDefaultClassNames = 'mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180';
+
     return (
       <DropdownMenuPrimitive.Trigger asChild>
         <button
@@ -52,7 +55,7 @@ export const DropdownButton = forwardRef<
           )}
           ref={ref}
         >
-          <div className="flex items-center max-w-full gap-1 overflow-x-hidden">
+          <div className="flex items-center max-w-full gap-2 overflow-x-hidden">
             {icon && <span className="text-inherit">{icon}</span>}
 
             {label && (
@@ -69,20 +72,20 @@ export const DropdownButton = forwardRef<
 
           {!isHideArrowIcon &&
             (typeof arrowElement === 'string' ? (
-              <span className="mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180">
+              <span className={arrowIconDefaultClassNames}>
                 {arrowElement}
               </span>
             ) : React.isValidElement(arrowElement) ? (
               React.cloneElement(arrowElement as React.ReactElement, {
                 className: twMerge(
                   cx(
-                    'mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180',
+                    arrowIconDefaultClassNames,
                     (arrowElement as React.ReactElement).props?.className,
                   ),
                 ),
               })
             ) : (
-              <div className="mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180">
+              <div className={arrowIconDefaultClassNames}>
                 {arrowElement}
               </div>
             ))}
