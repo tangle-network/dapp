@@ -37,7 +37,7 @@ type Props = {
 const SIDEBAR_ITEMS: SideBarItemProps[] = [
   {
     name: 'Home',
-    href: PagePath.HOME,
+    href: PagePath.INSTANCES,
     isInternal: true,
     Icon: HomeIcon,
     subItems: [],
