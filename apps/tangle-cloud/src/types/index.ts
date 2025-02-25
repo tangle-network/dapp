@@ -5,8 +5,8 @@ export enum PagePath {
 
   INSTANCES = '/instances',
 
-  BLUEPRINTS = '/deploy',
-  BLUEPRINTS_DETAILS = '/deploy/:id',
+  BLUEPRINTS = '/blueprints',
+  BLUEPRINTS_DETAILS = '/blueprints/:id',
 
   OPERATORS = '/operators',
 }
