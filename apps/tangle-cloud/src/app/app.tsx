@@ -14,34 +14,37 @@ function App() {
       <Layout>
         <Routes>
           {/* Redirect root to instances */}
-          <Route path={PagePath.HOME} element={<Navigate to={PagePath.INSTANCES} replace />} />
+          <Route
+            path={PagePath.HOME}
+            element={<Navigate to={PagePath.INSTANCES} replace />}
+          />
 
           {/* Instances routes */}
           <Route
             path={PagePath.INSTANCES}
             element={
-                <InstancesLayout>
-                    <InstancesPage />
-                </InstancesLayout>
+              <InstancesLayout>
+                <InstancesPage />
+              </InstancesLayout>
             }
           />
 
           {/* Blueprints routes */}
           <Route path={PagePath.BLUEPRINTS}>
             <Route
-                path={PagePath.BLUEPRINTS}
-                element={
-                    <BlueprintsLayout>
-                        <BlueprintsPage />
-                    </BlueprintsLayout>
-                }
+              path={PagePath.BLUEPRINTS}
+              element={
+                <BlueprintsLayout>
+                  <BlueprintsPage />
+                </BlueprintsLayout>
+              }
             />
 
             <Route
-            path={PagePath.BLUEPRINTS_DETAILS}
-            element={<BlueprintDetailsPage />}
+              path={PagePath.BLUEPRINTS_DETAILS}
+              element={<BlueprintDetailsPage />}
             />
-        </Route>
+          </Route>
         </Routes>
       </Layout>
     </Providers>
