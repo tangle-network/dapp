@@ -3,26 +3,45 @@ import Layout from '../components/Layout';
 import BlueprintDetailsPage from '../pages/blueprints/[id]/page';
 import BlueprintsLayout from '../pages/blueprints/layout';
 import BlueprintsPage from '../pages/blueprints/page';
+import InstancesLayout from '../pages/instances/layout';
+import InstancesPage from '../pages/instances/page';
 import Providers from './providers';
+import { PagePath } from '../types';
 
 function App() {
   return (
     <Providers>
       <Layout>
         <Routes>
-          {/* Redirect root to blueprints */}
-          <Route path="/" element={<Navigate to="/blueprints" replace />} />
+          {/* Redirect root to instances */}
+          <Route path={PagePath.HOME} element={<Navigate to={PagePath.INSTANCES} replace />} />
 
-          {/* Blueprints routes */}
+          {/* Instances routes */}
           <Route
-            path="/blueprints"
+            path={PagePath.INSTANCES}
             element={
-              <BlueprintsLayout>
-                <BlueprintsPage />
-              </BlueprintsLayout>
+                <InstancesLayout>
+                    <InstancesPage />
+                </InstancesLayout>
             }
           />
-          <Route path="/blueprints/:id" element={<BlueprintDetailsPage />} />
+
+          {/* Blueprints routes */}
+          <Route path={PagePath.BLUEPRINTS}>
+            <Route
+                path={PagePath.BLUEPRINTS}
+                element={
+                    <BlueprintsLayout>
+                        <BlueprintsPage />
+                    </BlueprintsLayout>
+                }
+            />
+
+            <Route
+            path={PagePath.BLUEPRINTS_DETAILS}
+            element={<BlueprintDetailsPage />}
+            />
+        </Route>
         </Routes>
       </Layout>
     </Providers>
