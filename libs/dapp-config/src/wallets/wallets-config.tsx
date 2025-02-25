@@ -9,7 +9,6 @@ import {
   TalismanIcon,
   WalletConnectIcon,
 } from '@tangle-network/icons/wallets';
-import findSubstrateWallet from '../utils/findSubstrateWallet';
 import type { WalletConfig } from './wallet-config.interface';
 
 const ANY_EVM = [
@@ -54,7 +53,20 @@ const ANY_SUBSTRATE = [
   PresetTypedChainId.RococoPhala,
 ];
 
-export const WALLET_CONFIG: Record<number, WalletConfig> = {
+const detectSubstrateWallet = (walletName: string) => {
+  const extension = window.injectedWeb3?.[walletName];
+  if (extension === undefined) {
+    return;
+  }
+
+  if (extension.connect === undefined && extension.enable === undefined) {
+    return;
+  }
+
+  return extension;
+};
+
+export const WALLET_CONFIG: Record<WalletId, WalletConfig> = {
   // TODO: Should move all hardcoded wallet configs to connectors
   // https://wagmi.sh/examples/custom-connector
   [WalletId.MetaMask]: {
@@ -117,8 +129,8 @@ export const WALLET_CONFIG: Record<number, WalletConfig> = {
     title: `Polkadot{.js}`,
     platform: 'Substrate',
     enabled: true,
-    async detect(appName) {
-      return findSubstrateWallet(appName, 'polkadot-js');
+    async detect() {
+      return detectSubstrateWallet('polkadot-js');
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://polkadot.js.org/extension',
@@ -136,8 +148,8 @@ export const WALLET_CONFIG: Record<number, WalletConfig> = {
     title: 'Talisman',
     platform: 'Substrate',
     enabled: true,
-    detect(appName) {
-      return findSubstrateWallet(appName, 'talisman');
+    async detect() {
+      return detectSubstrateWallet('talisman');
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://talisman.xyz/',
@@ -155,8 +167,8 @@ export const WALLET_CONFIG: Record<number, WalletConfig> = {
     title: 'SubWallet',
     platform: 'Substrate',
     enabled: true,
-    detect(appName) {
-      return findSubstrateWallet(appName, 'subwallet-js');
+    async detect() {
+      return detectSubstrateWallet('subwallet-js');
     },
     supportedChainIds: [...ANY_SUBSTRATE],
     homeLink: 'https://www.subwallet.app/',
