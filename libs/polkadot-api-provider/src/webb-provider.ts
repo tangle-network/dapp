@@ -73,9 +73,7 @@ export class WebbPolkadot
   }
 
   async awaitMetaDataCheck() {
-    /// delay some time till the UI is instantiated and then check if the dApp needs to update extension meta data
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    await this.provider.checkMetaDataUpdate();
+    return this.provider.checkMetaDataUpdate();
   }
 
   static async init(
@@ -106,8 +104,7 @@ export class WebbPolkadot
       provider,
       accounts,
     );
-    /// check metadata update
-    await instance.awaitMetaDataCheck();
+
     await apiPromise.isReady;
 
     const unsub = await instance.listenerBlocks();
