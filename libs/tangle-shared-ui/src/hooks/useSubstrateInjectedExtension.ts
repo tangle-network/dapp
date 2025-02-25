@@ -1,29 +1,15 @@
 import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { useCallback, useEffect } from 'react';
-import { findInjectorForAddress } from '../utils/polkadot/api';
-import useAgnosticAccountInfo from './useAgnosticAccountInfo';
-import usePromise from './usePromise';
+import { useWebContext } from '@tangle-network/api-provider-environment';
+import { PolkadotProvider } from '@tangle-network/polkadot-api-provider';
 
 const useSubstrateInjectedExtension = (): InjectedExtension | null => {
-  const { substrateAddress } = useAgnosticAccountInfo();
+  const { activeApi } = useWebContext();
 
-  const { result: injector, refresh } = usePromise<InjectedExtension | null>(
-    useCallback(() => {
-      if (substrateAddress === null) {
-        return Promise.resolve(null);
-      }
+  if (activeApi instanceof PolkadotProvider) {
+    return activeApi.injectedExtension;
+  }
 
-      return findInjectorForAddress(substrateAddress);
-    }, [substrateAddress]),
-    null,
-  );
-
-  // Re-fetch the injector when the active account changes.
-  useEffect(() => {
-    refresh();
-  }, [substrateAddress, refresh]);
-
-  return injector;
+  return null;
 };
 
 export default useSubstrateInjectedExtension;
