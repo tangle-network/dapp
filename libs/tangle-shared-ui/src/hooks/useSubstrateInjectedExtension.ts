@@ -1,29 +1,15 @@
 import { InjectedExtension } from '@polkadot/extension-inject/types';
-import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
-import { useCallback, useEffect } from 'react';
-import { findInjectorForAddress } from '../utils/polkadot/api';
-import usePromise from './usePromise';
+import { useWebContext } from '@tangle-network/api-provider-environment';
+import { PolkadotProvider } from '@tangle-network/polkadot-api-provider';
 
 const useSubstrateInjectedExtension = (): InjectedExtension | null => {
-  const [activeAccount] = useActiveAccount();
+  const { activeApi } = useWebContext();
 
-  const { result: injector, refresh } = usePromise<InjectedExtension | null>(
-    useCallback(() => {
-      if (activeAccount === null) {
-        return Promise.resolve(null);
-      }
+  if (activeApi instanceof PolkadotProvider) {
+    return activeApi.injectedExtension;
+  }
 
-      return findInjectorForAddress(activeAccount.address);
-    }, [activeAccount]),
-    null,
-  );
-
-  // Re-fetch the injector when the active account changes.
-  useEffect(() => {
-    refresh();
-  }, [activeAccount, refresh]);
-
-  return injector;
+  return null;
 };
 
 export default useSubstrateInjectedExtension;

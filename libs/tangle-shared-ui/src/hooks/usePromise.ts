@@ -58,21 +58,21 @@ function usePromise<T>(factory: () => Promise<T>, fallbackValue: T) {
 
     factory()
       .then((newResult) => {
-        if (!isMounted.current || !isSubscribed) {
+        if (!isMounted.current || !isSubscribed.current) {
           return;
         }
 
         setResult(newResult);
       })
       .catch((possibleError: unknown) => {
-        if (!isMounted.current || !isSubscribed) {
+        if (!isMounted.current || !isSubscribed.current) {
           return;
         }
 
         setError(ensureError(possibleError));
       })
       .finally(() => {
-        if (!isMounted.current || !isSubscribed) {
+        if (!isMounted.current || !isSubscribed.current) {
           return;
         }
 

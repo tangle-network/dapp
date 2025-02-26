@@ -73,9 +73,7 @@ export class WebbPolkadot
   }
 
   async awaitMetaDataCheck() {
-    /// delay some time till the UI is instantiated and then check if the dApp needs to update extension meta data
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    await this.provider.checkMetaDataUpdate();
+    return this.provider.checkMetaDataUpdate();
   }
 
   static async init(
@@ -106,8 +104,7 @@ export class WebbPolkadot
       provider,
       accounts,
     );
-    /// check metadata update
-    await instance.awaitMetaDataCheck();
+
     await apiPromise.isReady;
 
     const unsub = await instance.listenerBlocks();
@@ -145,32 +142,14 @@ export class WebbPolkadot
   }
 
   async sign(message: string): Promise<string> {
-    const { web3Accounts, web3FromSource } = await import(
-      '@polkadot/extension-dapp'
-    );
-
     const account = await this.accounts.activeOrDefault;
     if (!account) {
       throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
     }
 
-    const allAccounts = await web3Accounts();
-    const injectedAccount = allAccounts.find(
-      (acc) =>
-        acc.address === account.address &&
-        acc.meta.name === account.name &&
-        acc.meta.source === this.injectedExtension.name,
-    );
-
-    if (!injectedAccount) {
-      throw WebbError.from(WebbErrorCodes.NoAccountAvailable);
-    }
-
-    const injector = await web3FromSource(injectedAccount.meta.source);
-
     // this injector object has a signer and a signRaw method
     // to be able to sign raw bytes
-    const signRaw = injector?.signer?.signRaw;
+    const signRaw = this.injectedExtension.signer?.signRaw;
 
     if (!signRaw) {
       throw WebbError.from(WebbErrorCodes.NoSignRaw);
