@@ -6,7 +6,7 @@ import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
 import { RestakeAssetId } from '../../types';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import { isEvmAddress } from '@tangle-network/ui-components';
-import { RestakeAsset2, RestakeAssetMetadata } from '../../types/restake';
+import { RestakeAsset, RestakeAssetMetadata } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 import useNetworkStore from '../../context/useNetworkStore';
@@ -16,6 +16,7 @@ import assert from 'assert';
 import usePromise from '../../hooks/usePromise';
 import fetchErc20TokenMetadata from '../../utils/fetchErc20TokenMetadata';
 import useViemPublicClient from '../../hooks/useViemPublicClient';
+import { NATIVE_ASSET_ID } from '../../constants/restaking';
 
 const toPrimitiveRewardVault = (
   entries: [
@@ -268,7 +269,7 @@ const useRestakeAssets = () => {
       name: nativeTokenSymbol,
       symbol: nativeTokenSymbol,
       decimals: TANGLE_TOKEN_DECIMALS,
-      assetId: '0',
+      assetId: NATIVE_ASSET_ID,
       details: undefined,
       vaultId: null,
       status: 'Live',
@@ -311,11 +312,11 @@ const useRestakeAssets = () => {
       return null;
     }
 
-    const map = new Map<RestakeAssetId, RestakeAsset2>();
+    const map = new Map<RestakeAssetId, RestakeAsset>();
 
     for (const [assetId, metadata] of assetMap.entries()) {
       map.set(assetId, {
-        assetId,
+        id: assetId,
         metadata,
         balance: balances?.get(assetId),
       });

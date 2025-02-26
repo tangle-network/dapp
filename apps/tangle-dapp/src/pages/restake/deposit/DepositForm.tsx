@@ -1,9 +1,8 @@
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import {
   AmountFormatStyle,
   Card,
@@ -39,6 +38,7 @@ import ActionButton from './ActionButton';
 import Details from './Details';
 import SourceChainInput from './SourceChainInput';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -129,7 +129,7 @@ const DepositForm: FC<Props> = (props) => {
     assert(defaultAsset.balance !== undefined);
 
     // Select the first asset in the vault by default.
-    setValue('depositAssetId', defaultAsset.assetId);
+    setValue('depositAssetId', defaultAsset.id);
     setValue('amount', defaultAsset.balance.toString());
 
     // Remove the param to prevent reuse after initial load.
@@ -143,26 +143,14 @@ const DepositForm: FC<Props> = (props) => {
     update: updateTokenModal,
   } = useModal();
 
-  const allAssets = useMemo<RestakeAsset[]>(() => {
+  const allAssets = useMemo(() => {
     if (assets === null) {
       return [];
     }
 
-    const nativeAssetsWithBalances = Array.from(assets.values())
-      .filter((asset) => asset.balance !== undefined && !asset.balance.isZero())
-      .map((asset) => {
-        assert(asset.balance !== undefined);
-
-        return {
-          id: asset.assetId,
-          name: asset.metadata.name,
-          symbol: asset.metadata.symbol,
-          balance: asset.balance,
-          decimals: asset.metadata.decimals,
-        } satisfies RestakeAsset;
-      });
-
-    return nativeAssetsWithBalances;
+    return Array.from(assets.values()).filter(
+      (asset) => asset.balance !== undefined && !asset.balance.isZero(),
+    );
   }, [assets]);
 
   const handleAssetSelection = useCallback(
@@ -182,7 +170,7 @@ const DepositForm: FC<Props> = (props) => {
         return;
       }
 
-      const amountBn = parseChainUnits(amount, asset.decimals);
+      const amountBn = parseChainUnits(amount, asset.metadata.decimals);
 
       if (!(amountBn instanceof BN)) {
         return;
@@ -199,7 +187,7 @@ const DepositForm: FC<Props> = (props) => {
       }
     },
     [
-      asset?.decimals,
+      asset?.metadata.decimals,
       asset?.id,
       isReady,
       refetchErc20Balances,
@@ -244,7 +232,11 @@ const DepositForm: FC<Props> = (props) => {
             setIsOpen={updateTokenModal}
             onSelect={handleAssetSelection}
             filterItem={(asset, query) =>
-              filterBy(query, [asset.id, asset.name, asset.symbol])
+              filterBy(query, [
+                asset.id,
+                asset.metadata.name,
+                asset.metadata.symbol,
+              ])
             }
             searchInputId="restake-deposit-assets-search"
             searchPlaceholder="Search assets..."
@@ -252,9 +244,11 @@ const DepositForm: FC<Props> = (props) => {
             descriptionWhenEmpty="It seems that there are no available assets on this account in this network yet. Please try again later."
             items={allAssets}
             renderItem={(asset) => {
+              const balance = asset.balance ?? BN_ZERO;
+
               const fmtBalance = formatDisplayAmount(
-                asset.balance,
-                asset.decimals,
+                balance,
+                asset.metadata.decimals,
                 AmountFormatStyle.SHORT,
               );
 
@@ -264,15 +258,15 @@ const DepositForm: FC<Props> = (props) => {
 
               return (
                 <LogoListItem
-                  logo={<TokenIcon size="xl" name={asset.symbol} />}
+                  logo={<TokenIcon size="xl" name={asset.metadata.symbol} />}
                   leftUpperContent={
-                    asset.name !== undefined
-                      ? `${asset.name} (${asset.symbol})`
-                      : asset.symbol
+                    asset.metadata.name !== undefined
+                      ? `${asset.metadata.name} (${asset.metadata.symbol})`
+                      : asset.metadata.symbol
                   }
                   leftBottomContent={idText}
                   rightBottomText="Balance"
-                  rightUpperText={`${fmtBalance} ${asset.symbol}`}
+                  rightUpperText={`${fmtBalance} ${asset.metadata.symbol}`}
                 />
               );
             }}

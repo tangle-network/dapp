@@ -1,4 +1,3 @@
-import { BN_ZERO } from '@polkadot/util';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
@@ -12,19 +11,7 @@ const useRestakeAsset = (id: RestakeAssetId | null | undefined) => {
       return null;
     }
 
-    const asset = assets.get(id);
-
-    if (asset === undefined) {
-      return null;
-    }
-
-    return {
-      id,
-      name: asset.metadata.name,
-      symbol: asset.metadata.symbol,
-      decimals: asset.metadata.decimals,
-      balance: asset.balance ?? BN_ZERO,
-    } satisfies RestakeAsset;
+    return assets.get(id) ?? null;
   }, [assets, id]);
 
   return asset;

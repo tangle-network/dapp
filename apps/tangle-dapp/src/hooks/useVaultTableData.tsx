@@ -100,7 +100,7 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
 
         const vaultAssets = Array.from(assets.values())
           .filter((asset) => asset.metadata.vaultId === vaultId)
-          .map(({ assetId, metadata: { decimals, symbol }, balance }) => {
+          .map(({ id: assetId, metadata: { decimals, symbol }, balance }) => {
             const tvl = assetsTvl?.get(assetId) ?? null;
             const available = balance ?? null;
 

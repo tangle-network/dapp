@@ -127,15 +127,15 @@ export type AssetAccountExistenceReason =
 
 export type AssetBalanceMap = Map<RestakeAssetId, BN>;
 
-export type RestakeAsset2 = {
-  assetId: RestakeAssetId;
+export type RestakeAsset = {
+  id: RestakeAssetId;
   metadata: RestakeAssetMetadata;
   balance?: BN;
 };
 
-export type RestakeAssetMap = Map<RestakeAssetId, RestakeAsset2>;
+export type RestakeAssetMap = Map<RestakeAssetId, RestakeAsset>;
 
-export type RestakeAsset = {
+export type RestakeAssetTableItem = {
   id: RestakeAssetId;
   name?: string;
   symbol: string;

@@ -1,4 +1,3 @@
-import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
 import {
   StakingRewardsDestination,
   StakingRewardsDestinationDisplayText,
@@ -138,5 +137,3 @@ export enum AddressType {
 }
 
 export const ERROR_NOT_ENOUGH_BALANCE = 'Not enough available balance';
-
-export const NATIVE_ASSET_ID = assertRestakeAssetId('0');

@@ -3,7 +3,7 @@ import { BN } from '@polkadot/util';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import {
   DelegatorInfo,
-  RestakeAsset2,
+  RestakeAsset,
 } from '@tangle-network/tangle-shared-ui/types/restake';
 
 export type RestakeVault = {
@@ -20,7 +20,7 @@ export type RestakeVault = {
 };
 
 type Options = {
-  assets: RestakeAsset2[];
+  assets: RestakeAsset[];
   delegatorInfo?: DelegatorInfo | null;
   vaultsRewards?: Map<number, BN> | null;
   assetTvl?: Map<RestakeAssetId, BN> | null;
@@ -44,11 +44,11 @@ const createVaultMap = ({
     const available = asset.balance ?? null;
 
     const totalDeposits =
-      typeof delegatorInfo?.deposits[asset.assetId]?.amount === 'bigint'
-        ? new BN(delegatorInfo.deposits[asset.assetId].amount.toString())
+      typeof delegatorInfo?.deposits[asset.id]?.amount === 'bigint'
+        ? new BN(delegatorInfo.deposits[asset.id].amount.toString())
         : null;
 
-    const tvl = assetTvl?.get(asset.assetId) ?? null;
+    const tvl = assetTvl?.get(asset.id) ?? null;
     const existingVault = vaults.get(asset.metadata.vaultId);
 
     if (existingVault === undefined) {

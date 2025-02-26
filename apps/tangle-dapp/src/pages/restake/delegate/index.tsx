@@ -41,7 +41,7 @@ import parseChainUnits from '../../../utils/parseChainUnits';
 import { BN } from '@polkadot/util';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
-import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
+import { RestakeAssetTableItem } from '@tangle-network/tangle-shared-ui/types/restake';
 import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
@@ -157,7 +157,7 @@ const RestakeDelegateForm: FC = () => {
     update: updateOperatorModal,
   } = useModal(false);
 
-  const depositedAssets = useMemo<RestakeAsset[]>(() => {
+  const depositedAssets = useMemo<RestakeAssetTableItem[]>(() => {
     if (!isDefined(delegatorInfo)) {
       return [];
     }
@@ -173,18 +173,18 @@ const RestakeDelegateForm: FC = () => {
         }
 
         return {
-          id: asset.assetId,
+          id: asset.id,
           name: asset.metadata.name,
           symbol: asset.metadata.symbol,
           decimals: asset.metadata.decimals,
           balance,
-        } satisfies RestakeAsset;
+        } satisfies RestakeAssetTableItem;
       },
     );
   }, [assets, delegatorInfo]);
 
   const handleAssetSelect = useCallback(
-    (asset: RestakeAsset) => {
+    (asset: RestakeAssetTableItem) => {
       setValue('assetId', asset.id);
       closeAssetModal();
     },
@@ -212,7 +212,7 @@ const RestakeDelegateForm: FC = () => {
         return;
       }
 
-      const amountBn = parseChainUnits(amount, selectedAsset.decimals);
+      const amountBn = parseChainUnits(amount, selectedAsset.metadata.decimals);
 
       if (!(amountBn instanceof BN)) {
         return;
@@ -224,7 +224,7 @@ const RestakeDelegateForm: FC = () => {
       setValue('amount', '', { shouldValidate: false });
       setValue('assetId', '', { shouldValidate: false });
     },
-    [isReady, restakeApi, selectedAsset?.decimals, setValue],
+    [isReady, restakeApi, selectedAsset?.metadata.decimals, setValue],
   );
 
   const operators = useMemo<RestakeOperator[]>(() => {

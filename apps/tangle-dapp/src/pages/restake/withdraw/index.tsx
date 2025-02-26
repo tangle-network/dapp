@@ -116,7 +116,7 @@ const RestakeWithdrawForm: FC = () => {
     }
 
     const fmtAvailableBalance = Number(
-      formatUnits(availableBalance, selectedAsset.decimals),
+      formatUnits(availableBalance, selectedAsset.metadata.decimals),
     );
 
     return {
@@ -126,7 +126,7 @@ const RestakeWithdrawForm: FC = () => {
   }, [delegatorInfo, selectedAsset, selectedAssetId]);
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
-    const step = decimalsToStep(selectedAsset?.decimals);
+    const step = decimalsToStep(selectedAsset?.metadata.decimals);
 
     return {
       type: 'number',
@@ -138,12 +138,17 @@ const RestakeWithdrawForm: FC = () => {
           step,
           ZERO_BIG_INT,
           maxAmount,
-          selectedAsset?.decimals,
-          selectedAsset?.symbol,
+          selectedAsset?.metadata.decimals,
+          selectedAsset?.metadata.symbol,
         ),
       }),
     };
-  }, [maxAmount, register, selectedAsset?.decimals, selectedAsset?.symbol]);
+  }, [
+    maxAmount,
+    register,
+    selectedAsset?.metadata.decimals,
+    selectedAsset?.metadata.symbol,
+  ]);
 
   const displayError = useMemo(() => {
     return errors.assetId !== undefined || !selectedAssetId
@@ -166,7 +171,7 @@ const RestakeWithdrawForm: FC = () => {
         return;
       }
 
-      const amountBn = parseChainUnits(amount, selectedAsset.decimals);
+      const amountBn = parseChainUnits(amount, selectedAsset.metadata.decimals);
 
       if (!(amountBn instanceof BN)) {
         return;
@@ -177,7 +182,7 @@ const RestakeWithdrawForm: FC = () => {
       setFormValue('amount', '', { shouldValidate: false });
       setFormValue('assetId', '0x0', { shouldValidate: false });
     },
-    [isReady, restakeApi, selectedAsset?.decimals, setFormValue],
+    [isReady, restakeApi, selectedAsset?.metadata.decimals, setFormValue],
   );
 
   return (
@@ -197,7 +202,7 @@ const RestakeWithdrawForm: FC = () => {
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col items-start justify-stretch">
               <TransactionInputCard.Root
-                tokenSymbol={selectedAsset?.symbol}
+                tokenSymbol={selectedAsset?.metadata.symbol}
                 className="bg-mono-20 dark:bg-mono-180"
               >
                 <TransactionInputCard.Header>
