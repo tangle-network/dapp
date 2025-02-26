@@ -57,12 +57,14 @@ import useRouterQuote, {
 } from '../../data/bridge/useRouterQuote';
 import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
+import { Network } from '@tangle-network/ui-components/constants/networks';
 
 type Props = {
+  network: Network;
   className?: string;
 };
 
-const BridgeContainer = ({ className }: Props) => {
+const BridgeContainer = ({ network, className }: Props) => {
   const { switchChain } = useWebContext();
   const [activeChain] = useActiveChain();
   const [activeAccount] = useActiveAccount();
@@ -71,9 +73,19 @@ const BridgeContainer = ({ className }: Props) => {
   const { toggleModal: toggleConnectWalletModal } = useConnectWallet();
   const [isTxInProgress, setIsTxInProgress] = useState(false);
 
+  console.log('network 🤖', network.name);
+
   const sourceChains = useBridgeStore(
     useShallow((store) => store.sourceChains),
   );
+
+  const srcChains = useMemo(() => {
+    if (network.name === 'Tangle Mainnet') {
+      return sourceChains.filter((chain) => chain.tag === 'live');
+    }
+
+    return sourceChains.filter((chain) => chain.tag === 'test');
+  }, [network.name, sourceChains]);
 
   const destinationChains = useBridgeStore(
     useShallow((store) => store.destinationChains),
@@ -726,7 +738,7 @@ const BridgeContainer = ({ className }: Props) => {
                 iconType="chain"
                 textClassName="whitespace-nowrap"
                 onClick={openSourceChainModal}
-                disabled={sourceChains.length <= 1}
+                disabled={srcChains.length <= 1}
               />
             </div>
 
@@ -921,7 +933,7 @@ const BridgeContainer = ({ className }: Props) => {
           <ChainList
             searchInputId="bridge-source-chain-search"
             onClose={closeSourceChainModal}
-            chains={sourceChains}
+            chains={srcChains}
             onSelectChain={setSelectedSourceChain}
             chainType="source"
             showSearchInput
