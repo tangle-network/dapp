@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import * as Tabs from '@radix-ui/react-tabs';
 
 import type { TypographyProps } from '../../typography/types';
@@ -8,6 +8,11 @@ export interface TableAndChartTabsProps extends Tabs.TabsProps {
    * The list of value for the tabs
    */
   tabs: string[];
+
+  /**
+   * The list of icons for the tabs
+   */
+  icons?: ReactElement[];
 
   /**
    * Components on the right side of the tabs to perform additional actions (optional)
@@ -39,4 +44,10 @@ export interface TableAndChartTabsProps extends Tabs.TabsProps {
    * @default 'h5'
    */
   triggerTypographyVariant?: TypographyProps['variant'];
+
+  /**
+   * Whether to expand the divider (optional)
+   * @default false
+   */
+  enableAdvancedDivider?: boolean;
 }
