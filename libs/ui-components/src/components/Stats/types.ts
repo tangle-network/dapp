@@ -12,9 +12,6 @@ export interface StatsProps extends PropsOf<'div'>, IComponentBase {
   items: Array<StatItem>;
 }
 
-/**
- * StatsItem types
- */
 export type StatsItemProps = {
   title: string | ReactNode;
   tooltip?: string | ReactNode;
@@ -23,9 +20,6 @@ export type StatsItemProps = {
   isError: boolean;
 };
 
-/**
- * KeyStatsItem types
- */
 export type KeyStatsItemProps = {
   title: string;
   prefix?: string;
