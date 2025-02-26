@@ -25,7 +25,7 @@ export const AccountStatsCardBody: FC<AccountStatsCardBodyProps> = ({
           className="gap-0"
           title={
             <Typography
-              variant="para1"
+              variant="label"
               className="text-mono-120 dark:!text-mono-100"
             >
               Total Restake
@@ -40,7 +40,7 @@ export const AccountStatsCardBody: FC<AccountStatsCardBodyProps> = ({
           className="gap-0"
           title={
             <Typography
-              variant="para1"
+              variant="label"
               className="text-mono-120 dark:!text-mono-100"
             >
               Restakers
