@@ -2,7 +2,12 @@ import { TANGLE_DAPP_URL } from '@tangle-network/ui-components/constants';
 
 export enum PagePath {
   HOME = '/',
+
+  INSTANCES = '/instances',
+
   BLUEPRINTS = '/blueprints',
+  BLUEPRINTS_DETAILS = '/blueprints/:id',
+
   OPERATORS = '/operators',
 }
 
