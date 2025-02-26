@@ -195,7 +195,7 @@ const getColumns = (nativeTokenSymbol: string) => [
             <div
               className={twMerge(
                 '!text-current transition-transform duration-300 ease-in-out',
-                row.getIsExpanded() ? '' : 'rotate-180',
+                row.getIsExpanded() ? 'rotate-180' : '',
               )}
             >
               <ChevronDown className="!fill-current" />
