@@ -29,8 +29,9 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
   const vaults = useMemo(() => {
     if (assets === null) {
       return [];
-    } else if (operatorData === undefined) {
-      // Handle all vaults
+    }
+    // Handle all vaults.
+    else if (operatorData === undefined) {
       return createVaultMap({
         assets: Array.from(assets.values()),
         rewardConfig,
@@ -46,6 +47,7 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
     const uniqueAssetIds = operatorData.delegations.reduce(
       (acc, { assetId }) => {
         acc.add(assetId);
+
         return acc;
       },
       new Set<RestakeAssetId>(),
@@ -90,6 +92,10 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
         return row.toggleExpanded();
       },
       getExpandedRowContent(row) {
+        if (assets === null) {
+          return;
+        }
+
         const vaultId = row.original.id;
 
         const vaultAssets = Array.from(assets.values())

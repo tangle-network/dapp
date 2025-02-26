@@ -2,7 +2,7 @@ import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/resta
 import VaultsTable from '../../components/tables/Vaults';
 import useVaultTableData from '../../hooks/useVaultTableData';
 
-export default function VaultsOverview() {
+const VaultsOverview = () => {
   const { delegatorInfo } = useRestakeDelegatorInfo();
 
   const { vaults, tableProps } = useVaultTableData({
@@ -10,4 +10,6 @@ export default function VaultsOverview() {
   });
 
   return <VaultsTable data={vaults} tableProps={tableProps} />;
-}
+};
+
+export default VaultsOverview;

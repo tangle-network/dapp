@@ -6,7 +6,7 @@ import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
 import { RestakeAssetId } from '../../types';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import { isEvmAddress } from '@tangle-network/ui-components';
-import { RestakeAssetMap, RestakeAssetMetadata } from '../../types/restake';
+import { RestakeAsset2, RestakeAssetMetadata } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 import useNetworkStore from '../../context/useNetworkStore';
@@ -102,35 +102,6 @@ const useRestakeAssets = () => {
     return assetIds.filter((assetId) => isEvmAddress(assetId));
   }, [assetIds]);
 
-  const evmAssets = useMemo(() => {
-    if (evmAssetIds === null) {
-      return null;
-    }
-
-    return evmAssetIds.flatMap((assetId) => {
-      const erc20Token = findErc20Token(assetId);
-
-      // Skip unknown EVM assets.
-      if (erc20Token === null) {
-        return [];
-      }
-
-      return [
-        {
-          assetId,
-          name: erc20Token.name,
-          decimals: erc20Token.decimals,
-          symbol: erc20Token.symbol,
-          vaultId: null,
-          // TODO: Implement token price fetching.
-          priceInUsd: null,
-          status: 'Live',
-          // TODO: Details?
-        } satisfies RestakeAssetMetadata,
-      ];
-    });
-  }, [evmAssetIds]);
-
   const { result: nativeAssetDetails } = useApiRx(
     useCallback((api) => {
       return api.query.assets.asset.entries().pipe(
@@ -173,7 +144,7 @@ const useRestakeAssets = () => {
     }, []),
   );
 
-  const { result: nativeAssetVaultIds } = useApiRx(
+  const { result: assetVaultIds } = useApiRx(
     useCallback((api) => {
       return api.query.rewards.assetLookupRewardVaults.entries().pipe(
         map((entries) => {
@@ -193,6 +164,35 @@ const useRestakeAssets = () => {
     }, []),
   );
 
+  const evmAssets = useMemo(() => {
+    if (evmAssetIds === null) {
+      return null;
+    }
+
+    return evmAssetIds.flatMap((assetId) => {
+      const erc20Token = findErc20Token(assetId);
+
+      // Skip unknown EVM assets.
+      if (erc20Token === null) {
+        return [];
+      }
+
+      return [
+        {
+          assetId,
+          name: erc20Token.name,
+          decimals: erc20Token.decimals,
+          symbol: erc20Token.symbol,
+          vaultId: assetVaultIds?.get(assetId) ?? null,
+          // TODO: Implement token price fetching.
+          priceInUsd: null,
+          status: 'Live',
+          // TODO: Details?
+        } satisfies RestakeAssetMetadata,
+      ];
+    });
+  }, [assetVaultIds, evmAssetIds]);
+
   const nativeAssets = useMemo<RestakeAssetMetadata[] | null>(() => {
     if (substrateAssetIds === null || nativeAssetMetadatas === null) {
       return null;
@@ -206,7 +206,7 @@ const useRestakeAssets = () => {
         return [];
       }
 
-      const vaultId = nativeAssetVaultIds?.get(assetId) ?? null;
+      const vaultId = assetVaultIds?.get(assetId) ?? null;
       const name = metadata.name.toUtf8();
 
       const asset = {
@@ -242,7 +242,7 @@ const useRestakeAssets = () => {
   }, [
     nativeAssetDetails,
     nativeAssetMetadatas,
-    nativeAssetVaultIds,
+    assetVaultIds,
     nativeTokenSymbol,
     substrateAssetIds,
   ]);
@@ -274,11 +274,9 @@ const useRestakeAssets = () => {
       return null;
     }
 
-    const map = new Map() satisfies RestakeAssetMap as RestakeAssetMap;
+    const map = new Map<RestakeAssetId, RestakeAsset2>();
 
-    for (const [assetIdString, metadata] of assetMap.entries()) {
-      const assetId = assertRestakeAssetId(assetIdString);
-
+    for (const [assetId, metadata] of assetMap.entries()) {
       map.set(assetId, {
         assetId,
         metadata,

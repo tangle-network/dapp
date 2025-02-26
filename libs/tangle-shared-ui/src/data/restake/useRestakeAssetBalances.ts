@@ -1,7 +1,6 @@
 import { isTemplateBigInt } from '@tangle-network/ui-components';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';
-import merge from 'lodash/merge';
 import { useCallback, useMemo } from 'react';
 import useRestakeAssetIds from './useRestakeAssetIds';
 import { RestakeAssetId } from '../../types';
@@ -11,6 +10,7 @@ import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { map } from 'rxjs';
 import { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
+import assert from 'assert';
 
 const useRestakeAssetBalances = () => {
   const substrateAddress = useSubstrateAddress();
@@ -87,27 +87,29 @@ const useRestakeAssetBalances = () => {
   );
 
   const balances = useMemo(() => {
-    const evmBalances = erc20Balances?.reduce((acc, balance, idx) => {
-      if (balance.status === 'success' && typeof balance.result === 'bigint') {
-        const id = evmAssetIds[idx];
+    const balances = new Map<RestakeAssetId, BN>();
 
-        // TODO: Scale bigint to BN using appropriate decimals?
-        acc.set(id, new BN(balance.result.toString()));
+    if (erc20Balances !== undefined) {
+      for (const [index, entry] of erc20Balances.entries()) {
+        if (entry.status === 'success' && typeof entry.result === 'bigint') {
+          const id = evmAssetIds.at(index);
+
+          assert(id !== undefined);
+
+          // TODO: Scale bigint to BN using appropriate decimals?
+          balances.set(id, new BN(entry.result.toString()));
+        }
       }
+    }
 
-      return acc;
-    }, new Map<RestakeAssetId, BN>());
+    if (assetAccounts !== null) {
+      for (const { assetId, account } of assetAccounts) {
+        assert(!balances.has(assetId));
+        balances.set(assetId, account.balance.toBn());
+      }
+    }
 
-    const substrateBalances = assetAccounts?.reduce(
-      (acc, { assetId, account }) => {
-        acc.set(assetId, account.balance.toBn());
-
-        return acc;
-      },
-      new Map<RestakeAssetId, BN>(),
-    );
-
-    return merge(evmBalances, substrateBalances);
+    return balances;
   }, [assetAccounts, erc20Balances, evmAssetIds]);
 
   return {

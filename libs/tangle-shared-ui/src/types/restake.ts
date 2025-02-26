@@ -133,14 +133,7 @@ export type RestakeAsset2 = {
   balance?: BN;
 };
 
-export type RestakeAssetMap = Map<
-  RestakeAssetId,
-  {
-    assetId: RestakeAssetId;
-    metadata: RestakeAssetMetadata;
-    balance?: BN;
-  }
->;
+export type RestakeAssetMap = Map<RestakeAssetId, RestakeAsset2>;
 
 export type RestakeAsset = {
   id: RestakeAssetId;
