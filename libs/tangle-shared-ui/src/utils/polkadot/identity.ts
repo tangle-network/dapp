@@ -4,6 +4,8 @@ import type {
 } from '@polkadot/types/lookup';
 import { getApiPromise } from './api';
 import { hexToString, isHex } from 'viem';
+import { IconBase } from '@tangle-network/icons/types';
+import { GithubFill, GlobalLine, Mail, TwitterFill } from '@tangle-network/icons';
 
 export type IdentityType = {
   name: string | null;
@@ -18,6 +20,14 @@ export enum IdentityDataType {
   EMAIL = 'email',
   TWITTER = 'twitter',
 }
+
+export const IDENTITY_ICONS_RECORD = {
+  [IdentityDataType.TWITTER]: TwitterFill,
+  [IdentityDataType.EMAIL]: Mail,
+  [IdentityDataType.WEB]: GlobalLine,
+  // [IdentityDataType.GITHUB]: GithubFill,
+  'github': GithubFill,
+};
 
 export const extractDataFromIdentityInfo = (
   info: PalletIdentityLegacyIdentityInfo,

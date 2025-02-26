@@ -27,8 +27,8 @@ export const DropdownButton = forwardRef<
     },
     ref,
   ) => {
-
-    const arrowIconDefaultClassNames = 'mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180';
+    const arrowIconDefaultClassNames =
+      'mx-2 transition-transform duration-300 ease-in-out enabled:group-radix-state-open:rotate-180';
 
     return (
       <DropdownMenuPrimitive.Trigger asChild>
@@ -72,9 +72,7 @@ export const DropdownButton = forwardRef<
 
           {!isHideArrowIcon &&
             (typeof arrowElement === 'string' ? (
-              <span className={arrowIconDefaultClassNames}>
-                {arrowElement}
-              </span>
+              <span className={arrowIconDefaultClassNames}>{arrowElement}</span>
             ) : React.isValidElement(arrowElement) ? (
               React.cloneElement(arrowElement as React.ReactElement, {
                 className: twMerge(
@@ -85,9 +83,7 @@ export const DropdownButton = forwardRef<
                 ),
               })
             ) : (
-              <div className={arrowIconDefaultClassNames}>
-                {arrowElement}
-              </div>
+              <div className={arrowIconDefaultClassNames}>{arrowElement}</div>
             ))}
         </button>
       </DropdownMenuPrimitive.Trigger>

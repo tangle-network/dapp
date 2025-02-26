@@ -1,10 +1,13 @@
-import TangleCloudCard from "../../components/TangleCloudCard";
+import AccountStatsCard from '../../components/accountStatsCard/AccountStatsCard';
+import { InstructionCard } from './InstructionCard';
 
 const Page = () => {
   return (
     <>
-      <TangleCloudCard>
-      </TangleCloudCard>
+      <div className="flex justify-between flex-wrap md:flex-nowrap gap-5">
+        <AccountStatsCard />
+        <InstructionCard />
+      </div>
     </>
   );
 };
