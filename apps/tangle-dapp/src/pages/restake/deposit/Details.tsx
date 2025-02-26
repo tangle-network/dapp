@@ -15,7 +15,7 @@ type Props = {
 };
 
 const Details = ({ watch }: Props) => {
-  const assets = useRestakeAssets();
+  const { assets } = useRestakeAssets();
   const { leaveDelegatorsDelay } = useRestakeConsts();
   const rewardConfig = useRestakeRewardConfig();
   const sessionDurationMs = useSessionDurationMs();

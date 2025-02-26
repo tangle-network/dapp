@@ -117,7 +117,7 @@ const UnstakeRequestTable: FC<Props> = ({
   unstakeRequests,
   operatorIdentities,
 }) => {
-  const assets = useRestakeAssets();
+  const { assets } = useRestakeAssets();
   const { delegationBondLessDelay } = useRestakeConsts();
   const { result: currentRound } = useRestakeCurrentRound();
   const sessionDurationMs = useSessionDurationMs();

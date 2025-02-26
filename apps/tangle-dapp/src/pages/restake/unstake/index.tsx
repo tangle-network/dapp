@@ -60,7 +60,7 @@ const RestakeUnstakeForm: FC = () => {
 
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
-  const assets = useRestakeAssets();
+  const { assets } = useRestakeAssets();
 
   const {
     status: isOperatorModalOpen,

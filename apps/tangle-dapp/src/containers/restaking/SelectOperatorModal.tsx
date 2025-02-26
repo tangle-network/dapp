@@ -32,7 +32,7 @@ const SelectOperatorModal = ({
   onItemSelected,
   operatorIdentities,
 }: Props) => {
-  const assets = useRestakeAssets();
+  const { assets } = useRestakeAssets();
 
   // Aggregate the delegations based on the operator account ID and asset ID.
   const delegations = useMemo(() => {

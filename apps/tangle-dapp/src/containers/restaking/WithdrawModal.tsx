@@ -36,7 +36,7 @@ const WithdrawModal = ({
   setIsOpen,
   onItemSelected,
 }: Props) => {
-  const assets = useRestakeAssets();
+  const { assets } = useRestakeAssets();
 
   const availableForWithdrawal = useMemo(() => {
     if (!delegatorInfo?.deposits) {

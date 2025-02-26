@@ -20,7 +20,7 @@ type Options = {
 };
 
 const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
-  const assets = useRestakeAssets();
+  const { assets } = useRestakeAssets();
   const rewardConfig = useRestakeRewardConfig();
   const assetsTvl = useRestakeAssetsTvl();
   const { result: vaultsRewards } = useVaultRewards();

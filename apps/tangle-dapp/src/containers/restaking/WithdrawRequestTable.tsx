@@ -102,7 +102,7 @@ type Props = {
 };
 
 const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
-  const assets = useRestakeAssets();
+  const { assets } = useRestakeAssets();
   const { leaveDelegatorsDelay } = useRestakeConsts();
   const { result: currentRound } = useRestakeCurrentRound();
   const sessionDurationMs = useSessionDurationMs();

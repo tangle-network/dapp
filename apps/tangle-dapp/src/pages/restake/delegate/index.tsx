@@ -83,7 +83,7 @@ const RestakeDelegateForm: FC = () => {
     register('operatorAccountId', { required: 'Operator is required' });
   }, [register]);
 
-  const assets = useRestakeAssets();
+  const { assets } = useRestakeAssets();
   const restakeApi = useRestakeApi();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
