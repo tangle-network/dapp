@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import KeyStatsItem from '../../components/KeyStatsItem/KeyStatsItem';
+import { KeyStatsItem } from '@tangle-network/ui-components';
 import useActualStakedPercentage from '../../data/staking/useActualStakedPercentage';
 
 const ActualStakedPercentageKeyStat: FC = () => {

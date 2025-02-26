@@ -1,20 +1,9 @@
-import {
-  InfoIconWithTooltip,
-  SkeletonLoader,
-  Typography,
-} from '@tangle-network/ui-components';
-import type { FC, ReactNode } from 'react';
+import { InfoIconWithTooltip, SkeletonLoader, Typography } from '../../index';
+import type { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { StatsItemProps } from './types';
 
-export type NominatorStatsItemProps = {
-  title: string;
-  tooltip?: string | ReactNode;
-  className?: string;
-  children: ReactNode | null;
-  isError: boolean;
-};
-
-export const NominatorStatsItem: FC<NominatorStatsItemProps> = ({
+export const StatsItem: FC<StatsItemProps> = ({
   title,
   tooltip,
   className,

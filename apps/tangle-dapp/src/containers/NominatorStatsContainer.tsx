@@ -6,6 +6,7 @@ import {
   Card,
   CardVariant,
   Divider,
+  StatsItem,
 } from '@tangle-network/ui-components';
 import {
   EMPTY_VALUE_PLACEHOLDER,
@@ -16,7 +17,6 @@ import {
 import { type FC, useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 
-import { NominatorStatsItem } from '../components';
 import useBalances from '../data/balances/useBalances';
 import useTotalPayoutRewards from '../data/nomination/useTotalPayoutRewards';
 import useIsBondedOrNominating from '../data/staking/useIsBondedOrNominating';
@@ -74,18 +74,15 @@ const NominatorStatsContainer: FC = () => {
       <div className="flex flex-col w-full gap-4 md:flex-row">
         <Card variant={CardVariant.GLASS} className={cardClass}>
           <div className="grid grid-cols-2 gap-2">
-            <NominatorStatsItem
-              title="Free Balance"
-              isError={balancesError !== null}
-            >
+            <StatsItem title="Free Balance" isError={balancesError !== null}>
               {activeAccountAddress === null
                 ? EMPTY_VALUE_PLACEHOLDER
                 : freeBalance === null
                   ? null
                   : formatTangleBalance(freeBalance, nativeTokenSymbol)}
-            </NominatorStatsItem>
+            </StatsItem>
 
-            <NominatorStatsItem
+            <StatsItem
               title="Unclaimed Payouts"
               isError={totalPayoutRewardsError !== null}
             >
@@ -93,7 +90,7 @@ const NominatorStatsContainer: FC = () => {
                 ? EMPTY_VALUE_PLACEHOLDER
                 : formatTangleBalance(totalPayoutRewards) +
                   ` ${nativeTokenSymbol}`}
-            </NominatorStatsItem>
+            </StatsItem>
           </div>
 
           <Divider className="my-6 bg-mono-0 dark:bg-mono-160" />
@@ -137,7 +134,7 @@ const NominatorStatsContainer: FC = () => {
 
         <Card variant={CardVariant.GLASS} className={cardClass}>
           <div className="grid grid-cols-2 gap-2">
-            <NominatorStatsItem
+            <StatsItem
               title={`Total Staked ${nativeTokenSymbol}`}
               tooltip="The total amount of tokens you have bonded for nominating."
               isError={false}
@@ -147,7 +144,7 @@ const NominatorStatsContainer: FC = () => {
                 : bondedAmountBalance === null
                   ? null
                   : bondedAmountBalance}
-            </NominatorStatsItem>
+            </StatsItem>
 
             <UnbondingStatsItem />
           </div>
