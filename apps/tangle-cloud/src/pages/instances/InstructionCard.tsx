@@ -1,11 +1,6 @@
 import { Children, createElement, type FC } from 'react';
 import TangleCloudCard from '../../components/TangleCloudCard';
-import {
-  Button,
-  Chip,
-  ListItem,
-  Typography,
-} from '@tangle-network/ui-components';
+import { Chip, ListItem, Typography } from '@tangle-network/ui-components';
 import { CLOUD_INSTRUCTIONS } from '../../constants/cloudInstruction';
 import { twMerge } from 'tailwind-merge';
 import { Link } from '@tangle-network/ui-components/components/Link';

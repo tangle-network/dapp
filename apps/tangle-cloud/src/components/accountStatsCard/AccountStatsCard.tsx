@@ -19,7 +19,11 @@ import { useWebContext } from '@tangle-network/api-provider-environment';
 import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import useSWRImmutable from 'swr/immutable';
-import { getAccountInfo, IDENTITY_ICONS_RECORD, IdentityDataType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
+import {
+  getAccountInfo,
+  IDENTITY_ICONS_RECORD,
+  IdentityDataType,
+} from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { isHex } from 'viem';
 import { isValidUrl } from '@tangle-network/dapp-types';
 
@@ -94,9 +98,10 @@ const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
         : `https://x.com/${twitterHandle}`;
 
     const emailHandle = operatorInfo?.email ?? '';
-    const emailUrl = emailHandle === '' || isValidUrl(emailHandle)
-      ? emailHandle
-      : `mailto:${emailHandle}`;
+    const emailUrl =
+      emailHandle === '' || isValidUrl(emailHandle)
+        ? emailHandle
+        : `mailto:${emailHandle}`;
 
     return {
       [IdentityDataType.TWITTER]: twitterUrl,
@@ -130,7 +135,7 @@ const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
         description={
           <KeyValueWithButton size="sm" keyValue={accountAddress ?? ''} />
         }
-        descExternalLink={accountExplorerUrl ?? ""}
+        descExternalLink={accountExplorerUrl ?? ''}
         className="mb-10"
         {...props.headerProps}
         RightElement={<ThreeDotsVerticalIcon />}
@@ -145,12 +150,13 @@ const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
           .filter(([key, value]) => !!value && key in IDENTITY_ICONS_RECORD)
           .map(([key, value]) => ({
             name: key,
-            href: value || "",
-            Icon: IDENTITY_ICONS_RECORD[key as keyof typeof IDENTITY_ICONS_RECORD],
+            href: value || '',
+            Icon: IDENTITY_ICONS_RECORD[
+              key as keyof typeof IDENTITY_ICONS_RECORD
+            ],
             target: '_blank',
             rel: 'noopener noreferrer',
-          }))
-        }
+          }))}
       />
     </AccountStatsDetailCard.Root>
   );

@@ -24,7 +24,5 @@ export interface SocialsProps extends PropsOf<'div'> {
    */
   socialConfigs?: Array<SocialConfigsType>;
 
-  linkOverrides?: Partial<
-    Record<SocialConfigsType['name'], string>
-  >;
+  linkOverrides?: Partial<Record<SocialConfigsType['name'], string>>;
 }

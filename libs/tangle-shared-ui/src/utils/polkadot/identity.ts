@@ -4,8 +4,12 @@ import type {
 } from '@polkadot/types/lookup';
 import { getApiPromise } from './api';
 import { hexToString, isHex } from 'viem';
-import { IconBase } from '@tangle-network/icons/types';
-import { GithubFill, GlobalLine, Mail, TwitterFill } from '@tangle-network/icons';
+import {
+  GithubFill,
+  GlobalLine,
+  Mail,
+  TwitterFill,
+} from '@tangle-network/icons';
 
 export type IdentityType = {
   name: string | null;
@@ -26,7 +30,7 @@ export const IDENTITY_ICONS_RECORD = {
   [IdentityDataType.EMAIL]: Mail,
   [IdentityDataType.WEB]: GlobalLine,
   // [IdentityDataType.GITHUB]: GithubFill,
-  'github': GithubFill,
+  github: GithubFill,
 };
 
 export const extractDataFromIdentityInfo = (
