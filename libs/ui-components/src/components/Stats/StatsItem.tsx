@@ -1,8 +1,4 @@
-import {
-  InfoIconWithTooltip,
-  SkeletonLoader,
-  Typography,
-} from '@tangle-network/ui-components';
+import { InfoIconWithTooltip, SkeletonLoader, Typography } from '../../index';
 import type { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { StatsItemProps } from './types';

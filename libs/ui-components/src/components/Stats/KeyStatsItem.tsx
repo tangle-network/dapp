@@ -3,7 +3,7 @@ import {
   notificationApi,
   SkeletonLoader,
   Typography,
-} from '@tangle-network/ui-components';
+} from '../../index';
 import { FC, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { KeyStatsItemProps } from './types';
