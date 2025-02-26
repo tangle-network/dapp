@@ -11,10 +11,10 @@ async function getOrCacheApiVariant<T extends ApiPromise | ApiRx>(
   cache: Map<string, Promise<T>>,
   factory: () => Promise<T>,
 ): Promise<T> {
-  const possiblyCachedInstance = cache.get(endpoint);
+  const cachedInstance = cache.get(endpoint);
 
-  if (possiblyCachedInstance !== undefined) {
-    return possiblyCachedInstance;
+  if (cachedInstance !== undefined) {
+    return cachedInstance;
   }
 
   // Immediately cache the promise to prevent data races
@@ -23,6 +23,16 @@ async function getOrCacheApiVariant<T extends ApiPromise | ApiRx>(
 
   cache.set(endpoint, newInstance);
 
+  const newInstanceAwaited = await newInstance;
+
+  newInstanceAwaited.once('connected', () => {
+    console.debug('Created new API instance for endpoint:', endpoint);
+  });
+
+  newInstanceAwaited.on('error', (error) => {
+    console.debug('Got error for API instance at endpoint:', endpoint, error);
+  });
+
   return newInstance;
 }
 
@@ -30,10 +40,10 @@ export const getApiPromise: (endpoint: string) => Promise<ApiPromise> = async (
   endpoint: string,
 ) => {
   return getOrCacheApiVariant(endpoint, apiPromiseCache, async () => {
-    const wsProvider = new WsProvider(endpoint);
+    const provider = new WsProvider(endpoint);
 
     return ApiPromise.create({
-      provider: wsProvider,
+      provider,
       noInitWarn: true,
     });
   });

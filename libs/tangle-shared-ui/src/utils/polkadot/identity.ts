@@ -45,7 +45,6 @@ export const extractIdentityInfo = (
   identityRegistration: PalletIdentityRegistration,
 ): IdentityType => {
   const info = identityRegistration.info;
-
   const name = extractDataFromIdentityInfo(info, IdentityDataType.NAME);
   const email = extractDataFromIdentityInfo(info, IdentityDataType.EMAIL);
   const web = extractDataFromIdentityInfo(info, IdentityDataType.WEB);
@@ -70,7 +69,9 @@ export async function getAccountInfo(rpcEndpoint: string, address: string) {
   const api = await getApiPromise(rpcEndpoint);
   const identityData = await api.query.identity.identityOf(address);
 
-  if (identityData.isNone) return null;
+  if (identityData.isNone) {
+    return null;
+  }
 
   const [identityRegistration] = identityData.unwrap();
 
@@ -94,7 +95,9 @@ export async function getMultipleAccountInfo(
   const identityData = await api.query.identity.identityOf.multi(addresses);
 
   return identityData.map((data) => {
-    if (data.isNone) return null;
+    if (data.isNone) {
+      return null;
+    }
 
     const [registration] = data.unwrap();
 
