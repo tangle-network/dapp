@@ -1,6 +1,9 @@
 import { BN } from '@polkadot/util';
-import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
-import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
+import {
+  TANGLE_TOKEN_DECIMALS,
+  ZERO_BIG_INT,
+} from '@tangle-network/dapp-config';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
@@ -11,11 +14,13 @@ import {
 import { useMemo } from 'react';
 import useActivePoints from '../../data/points/useActivePoints';
 import useAccountRewardInfo from '../../data/rewards/useAccountRewardInfo';
-import KeyStatsItem from '../KeyStatsItem/KeyStatsItem';
+import { KeyStatsItem } from '@tangle-network/ui-components';
 import ClaimRewardAction from './ClaimRewardAction';
 
 const RewardsAndPoints = () => {
-  const [activeChain] = useActiveChain();
+  const nativeTokenSymbol = useNetworkStore(
+    (store) => store.network2?.tokenSymbol,
+  );
 
   const {
     result: rewards,
@@ -42,7 +47,7 @@ const RewardsAndPoints = () => {
   }, [rewards]);
 
   const totalRewardsFormatted = useMemo(() => {
-    if (rewards === null || !activeChain) {
+    if (rewards === null) {
       return null;
     }
 
@@ -52,10 +57,10 @@ const RewardsAndPoints = () => {
 
     return formatDisplayAmount(
       new BN(totalRewards.toString()),
-      activeChain.nativeCurrency.decimals,
+      TANGLE_TOKEN_DECIMALS,
       AmountFormatStyle.SHORT,
     );
-  }, [activeChain, rewards]);
+  }, [rewards]);
 
   return (
     <div className="grid grid-cols-2 gap-6">
@@ -82,7 +87,7 @@ const RewardsAndPoints = () => {
             className="text-mono-140 dark:text-mono-40"
             component="span"
           >
-            {activeChain?.nativeCurrency.symbol}
+            {nativeTokenSymbol}
           </Typography>
 
           {claimableAssets !== null && claimableAssets.size > 0 ? (

@@ -37,7 +37,7 @@ type Props = {
 const SIDEBAR_ITEMS: SideBarItemProps[] = [
   {
     name: 'Home',
-    href: PagePath.HOME,
+    href: PagePath.INSTANCES,
     isInternal: true,
     Icon: HomeIcon,
     subItems: [],
@@ -85,7 +85,7 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
         isFullWidth
         size="sm"
         icon={ROLE_ICON_MAP[role]({ size: 'lg' })}
-        hideChevron={!isExpanded}
+        isHideArrowIcon={!isExpanded}
         label={isExpanded ? capitalizedRole : ''}
         className={cx('min-w-0 mx-auto', !isExpanded && 'px-2 w-fit')}
       />

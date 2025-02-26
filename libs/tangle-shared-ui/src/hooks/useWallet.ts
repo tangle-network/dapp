@@ -1,4 +1,8 @@
-import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
+import {
+  web3Accounts,
+  web3Enable,
+  web3EnablePromise,
+} from '@polkadot/extension-dapp';
 import useProviderStore from '../context/useProviderStore';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -66,7 +70,9 @@ const useWallet = () => {
       setIsConnecting(true);
 
       // Request access to any installed Substrate wallet extensions.
-      const extensions = await web3Enable(appName);
+      const extensions = await (web3EnablePromise !== null
+        ? web3EnablePromise
+        : web3Enable(appName));
 
       // No extension found or the user did not grant permission.
       if (extensions.length === 0) {

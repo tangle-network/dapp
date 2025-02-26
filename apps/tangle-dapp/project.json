@@ -7,7 +7,7 @@
   "// targets": "to see all targets run: nx show project tangle-dapp --web",
   "targets": {
     "build": {
-      "dependsOn": ["codegen", { "dependencies": true, "target": "build" }]
+      "dependsOn": ["typecheck"]
     },
     "serve": {
       "dependsOn": ["codegen"]
@@ -23,6 +23,9 @@
       "options": {
         "command": "yarn check:codegen"
       }
+    },
+    "typecheck": {
+      "dependsOn": ["codegen"]
     }
   }
 }

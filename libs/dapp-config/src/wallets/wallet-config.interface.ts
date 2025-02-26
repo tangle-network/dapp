@@ -1,7 +1,7 @@
 // Copyright 2024 @tangle-network/
 // SPDX-License-Identifier: Apache-2.0
 
-import type { InjectedExtension } from '@polkadot/extension-inject/types';
+import type { InjectedWindowProvider } from '@polkadot/extension-inject/types';
 import type { SupportedBrowsers } from '@tangle-network/browser-utils/platform/getPlatformMetaData';
 
 export interface WalletConfig {
@@ -32,8 +32,12 @@ export interface WalletConfig {
 
   /**
    * a function that will tell weather the wallet is installed or reachable
+   * - true - indicates a **EVM** wallet available
+   * - InjectedWindowProvider - indicates a **Substrate** wallet available
    */
-  detect(appName: string): Promise<boolean | InjectedExtension | undefined>;
+  detect(
+    appName: string,
+  ): Promise<boolean | InjectedWindowProvider | undefined>;
 
   /**
    * a list of supported typed chain ids

@@ -1,9 +1,8 @@
 'use client';
 
 import { MetadataDef } from '@polkadot/extension-inject/types';
-import { isAddress as isSubstrateAddress } from '@polkadot/util-crypto';
 import { HexString } from '@polkadot/util/types';
-import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
+import { useActiveWallet } from '@tangle-network/api-provider-environment/hooks/useActiveWallet';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import { RefreshLineIcon } from '@tangle-network/icons';
 import {
@@ -16,6 +15,7 @@ import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import isEqual from 'lodash/isEqual';
 import { FC, useCallback, useMemo, useState } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';
+import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 import useLocalStorage, {
   LocalStorageKey,
   SubstrateWalletsMetadataEntry,
@@ -23,12 +23,11 @@ import useLocalStorage, {
 import usePromise from '../../hooks/usePromise';
 import useSubstrateInjectedExtension from '../../hooks/useSubstrateInjectedExtension';
 import { getApiPromise } from '../../utils/polkadot/api';
-import { useActiveWallet } from '@tangle-network/api-provider-environment/hooks/useActiveWallet';
 
 const UpdateMetadataButton: FC = () => {
   const [isHidden, setIsHidden] = useState(false);
 
-  const [activeAccount] = useActiveAccount();
+  const { substrateAddress } = useAgnosticAccountInfo();
   const [activeWallet] = useActiveWallet();
   const injector = useSubstrateInjectedExtension();
   const { network } = useNetworkStore();
@@ -89,16 +88,10 @@ const UpdateMetadataButton: FC = () => {
     network.tokenSymbol,
   ]);
 
-  const isSubstrateAccount = useMemo(() => {
-    return activeAccount !== null
-      ? isSubstrateAddress(activeAccount.address)
-      : null;
-  }, [activeAccount]);
-
   const handleClick = async () => {
     if (
       injector === null ||
-      activeAccount === null ||
+      substrateAddress === null ||
       network.ss58Prefix === undefined
     ) {
       return;
@@ -153,7 +146,7 @@ const UpdateMetadataButton: FC = () => {
     isMetadataUpToDate === null ||
     isMetadataUpToDate ||
     isHidden ||
-    !isSubstrateAccount
+    substrateAddress === null
   ) {
     return null;
   }
