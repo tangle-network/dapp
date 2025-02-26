@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import KeyStatsItem from '../../components/KeyStatsItem/KeyStatsItem';
+import { KeyStatsItem } from '@tangle-network/ui-components';
 import useInflationPercentage from '../../data/KeyStats/useInflationPercentage';
 
 const InflationPercentageKeyStat: FC = () => {

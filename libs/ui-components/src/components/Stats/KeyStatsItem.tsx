@@ -3,27 +3,13 @@ import {
   notificationApi,
   SkeletonLoader,
   Typography,
-} from '@tangle-network/ui-components';
-import { FC, ReactNode, useEffect } from 'react';
+} from '../../index';
+import { FC, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
-import KeyStatsItemVariant from './KeyStatsItemVariant';
+import { KeyStatsItemProps } from './types';
 import { isPrimitive } from '@tangle-network/dapp-types';
 
-export type KeyStatsItemProps = {
-  title: string;
-  prefix?: string;
-  suffix?: string;
-  tooltip?: string;
-  className?: string;
-  showDataBeforeLoading?: boolean;
-  hideErrorNotification?: boolean;
-  children?: ReactNode;
-  error: Error | null;
-  isLoading?: boolean;
-  variant?: KeyStatsItemVariant;
-};
-
-const KeyStatsItem: FC<KeyStatsItemProps> = ({
+export const KeyStatsItem: FC<KeyStatsItemProps> = ({
   title,
   tooltip,
   className,
@@ -98,5 +84,3 @@ const KeyStatsItem: FC<KeyStatsItemProps> = ({
     </div>
   );
 };
-
-export default KeyStatsItem;

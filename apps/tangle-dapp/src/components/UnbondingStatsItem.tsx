@@ -7,8 +7,8 @@ import { type FC, useMemo } from 'react';
 import useUnbondingAmount from '../data/nomination/useUnbondingAmount';
 import useUnbonding from '../data/staking/useUnbonding';
 import formatTangleBalance from '../utils/formatTangleBalance';
-import { NominatorStatsItem } from './NominatorStatsItem';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
+import { StatsItem } from '@tangle-network/ui-components';
 
 const UnbondingStatsItem: FC = () => {
   const activeAccountAddress = useActiveAccountAddress();
@@ -62,13 +62,13 @@ const UnbondingStatsItem: FC = () => {
           );
 
   return (
-    <NominatorStatsItem
+    <StatsItem
       title={`Unbonding ${nativeTokenSymbol}`}
       tooltip={unbondingRemainingErasTooltip ?? undefined}
       isError={unbondingEntriesError !== null || unbondingAmountError !== null}
     >
       {balance}
-    </NominatorStatsItem>
+    </StatsItem>
   );
 };
 
