@@ -1,5 +1,7 @@
 import { useMemo, type FC } from 'react';
-import AccountStatsDetailCard, { type AccountStatsCardProps } from '../../components/accountStatsCard';
+import AccountStatsDetailCard, {
+  type AccountStatsCardProps,
+} from '../../components/accountStatsCard';
 import {
   assertSubstrateAddress,
   Avatar,
