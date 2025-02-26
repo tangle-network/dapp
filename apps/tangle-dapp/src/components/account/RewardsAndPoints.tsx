@@ -14,7 +14,7 @@ import {
 import { useMemo } from 'react';
 import useActivePoints from '../../data/points/useActivePoints';
 import useAccountRewardInfo from '../../data/rewards/useAccountRewardInfo';
-import KeyStatsItem from '../KeyStatsItem/KeyStatsItem';
+import { KeyStatsItem } from '@tangle-network/ui-components';
 import ClaimRewardAction from './ClaimRewardAction';
 
 const RewardsAndPoints = () => {
