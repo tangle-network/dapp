@@ -1,7 +1,7 @@
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { FC } from 'react';
 
-import KeyStatsItem from '../../components/KeyStatsItem/KeyStatsItem';
+import { KeyStatsItem } from '@tangle-network/ui-components';
 import useIdealStakePercentage from '../../data/KeyStats/useIdealStakePercentage';
 
 const IdealStakedPercentageKeyStat: FC = () => {
