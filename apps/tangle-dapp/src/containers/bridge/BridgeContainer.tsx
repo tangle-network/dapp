@@ -1,4 +1,4 @@
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
 import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
@@ -426,18 +426,19 @@ const BridgeContainer = ({ className }: Props) => {
 
   const assets: AssetConfig[] = useMemo(() => {
     return tokens.map((token) => {
-      const balance = isNativeToken
-        ? formatEther(nativeTokenBalance?.value ?? BigInt(0))
-        : sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
-            sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM
-          ? balances?.[sourceTypedChainId]?.find(
-              (tokenBalance: BridgeTokenWithBalance) =>
-                tokenBalance.address === token.address,
-            )?.syntheticBalance
-          : balances?.[sourceTypedChainId]?.find(
-              (tokenBalance: BridgeTokenWithBalance) =>
-                tokenBalance.address === token.address,
-            )?.balance;
+      const balance =
+        isNativeToken && token.tokenType === 'TNT'
+          ? formatEther(nativeTokenBalance?.value ?? BigInt(0))
+          : sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
+              sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM
+            ? balances?.[sourceTypedChainId]?.find(
+                (tokenBalance: BridgeTokenWithBalance) =>
+                  tokenBalance.address === token.address,
+              )?.syntheticBalance
+            : balances?.[sourceTypedChainId]?.find(
+                (tokenBalance: BridgeTokenWithBalance) =>
+                  tokenBalance.address === token.address,
+              )?.balance;
 
       const selectedChainExplorerUrl =
         selectedSourceChain.blockExplorers?.default;
@@ -461,18 +462,15 @@ const BridgeContainer = ({ className }: Props) => {
           : (token.address as `0x${string}`);
 
       const balance_ = (() => {
-        if (activeAccount === null || balance === undefined) {
-          return undefined;
-        }
-
-        return new BN(
-          typeof balance === 'string'
-            ? balance
-            : convertDecimalToBN(balance, token.decimals),
-        );
+        return activeAccount && balance
+          ? typeof balance === 'string'
+            ? convertDecimalToBN(new Decimal(balance), token.decimals)
+            : convertDecimalToBN(balance, token.decimals)
+          : undefined;
       })();
 
       return {
+        id: token.tokenType,
         name: token.name,
         symbol: token.tokenType,
         optionalSymbol: token.symbol,
@@ -494,15 +492,21 @@ const BridgeContainer = ({ className }: Props) => {
 
   const onSelectToken = useCallback(
     (asset: AssetConfig) => {
-      const tokenConfig = tokens.find(
-        (token) => token.address === asset.address,
-      );
+      const tokenConfig = tokens.find((token) => {
+        if (asset.id) {
+          return token.tokenType === asset.id;
+        } else if (isNativeToken) {
+          return token.tokenType === asset.symbol;
+        } else {
+          return token.address === asset.address;
+        }
+      });
 
       if (tokenConfig !== undefined) {
         setSelectedToken(tokenConfig);
       }
     },
-    [setSelectedToken, tokens],
+    [setSelectedToken, tokens, isNativeToken],
   );
 
   const sourceTokenBalance = useMemo(() => {
