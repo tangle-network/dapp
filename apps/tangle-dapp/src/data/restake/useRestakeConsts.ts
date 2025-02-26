@@ -1,79 +1,52 @@
-import usePolkadotApi from '@tangle-network/tangle-shared-ui/hooks/usePolkadotApi';
-import { useMemo } from 'react';
-
+import type { AugmentedConsts } from '@polkadot/api/types';
+import type { MapKnownKeys } from '@tangle-network/dapp-types/utils/types';
+import { useCallback, useState } from 'react';
+import useApi from '../../hooks/useApi';
 import getModuleConstant from '../../utils/getModuleConstant';
 
-const useRestakeConsts = () => {
-  const { apiPromise } = usePolkadotApi();
+export type RestakeConsts = {
+  delegationBondLessDelay: number | null;
+  leaveDelegatorsDelay: number | null;
+  leaveOperatorsDelay: number | null;
+  minDelegateAmount: number | null;
+  minOperatorBondAmount: number | null;
+  operatorBondLessDelay: number | null;
+};
 
-  const delegationBondLessDelay = useMemo(
+type RestakeConstsKeys = keyof MapKnownKeys<
+  AugmentedConsts<'promise'>['multiAssetDelegation']
+>;
+
+const CONSTANTS = [
+  'delegationBondLessDelay',
+  'leaveDelegatorsDelay',
+  'leaveOperatorsDelay',
+  'minDelegateAmount',
+  'minOperatorBondAmount',
+  'operatorBondLessDelay',
+] as const satisfies RestakeConstsKeys[];
+
+type ConstantName = (typeof CONSTANTS)[number];
+
+const useRestakeConsts = (): RestakeConsts => {
+  const [defaultConsts] = useState<RestakeConsts>(
     () =>
-      getModuleConstant(
-        apiPromise,
-        'multiAssetDelegation',
-        'delegationBondLessDelay',
-      )?.toNumber() ?? null,
-    [apiPromise],
+      Object.fromEntries(CONSTANTS.map((key) => [key, null])) as RestakeConsts,
   );
 
-  const leaveDelegatorsDelay = useMemo(
-    () =>
-      getModuleConstant(
-        apiPromise,
-        'multiAssetDelegation',
-        'leaveDelegatorsDelay',
-      )?.toNumber() ?? null,
-    [apiPromise],
+  const { result: consts } = useApi(
+    useCallback((api) => {
+      const getConstant = (name: ConstantName) =>
+        getModuleConstant(api, 'multiAssetDelegation', name)?.toNumber() ??
+        null;
+
+      return Object.fromEntries(
+        CONSTANTS.map((key) => [key, getConstant(key)]),
+      ) as RestakeConsts;
+    }, []),
   );
 
-  const leaveOperatorsDelay = useMemo(
-    () =>
-      getModuleConstant(
-        apiPromise,
-        'multiAssetDelegation',
-        'leaveOperatorsDelay',
-      )?.toNumber() ?? null,
-    [apiPromise],
-  );
-
-  const minDelegateAmount = useMemo(
-    () =>
-      getModuleConstant(
-        apiPromise,
-        'multiAssetDelegation',
-        'minDelegateAmount',
-      )?.toBigInt() ?? null,
-    [apiPromise],
-  );
-
-  const minOperatorBondAmount = useMemo(
-    () =>
-      getModuleConstant(
-        apiPromise,
-        'multiAssetDelegation',
-        'minOperatorBondAmount',
-      )?.toBigInt() ?? null,
-    [apiPromise],
-  );
-
-  const operatorBondLessDelay = useMemo(
-    () =>
-      getModuleConstant(
-        apiPromise,
-        'multiAssetDelegation',
-        'operatorBondLessDelay',
-      )?.toNumber() ?? null,
-    [apiPromise],
-  );
-
-  return {
-    delegationBondLessDelay,
-    leaveDelegatorsDelay,
-    leaveOperatorsDelay,
-    minDelegateAmount,
-    minOperatorBondAmount,
-    operatorBondLessDelay,
-  };
+  return consts ?? defaultConsts;
 };
 
 export default useRestakeConsts;
