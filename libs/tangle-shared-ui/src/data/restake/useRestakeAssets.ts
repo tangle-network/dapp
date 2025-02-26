@@ -41,6 +41,7 @@ const toPrimitiveRewardVault = (
 const useRestakeAssets = () => {
   const { nativeTokenSymbol } = useNetworkStore();
   const { result: vaultPotAccounts } = useVaultsPotAccounts();
+  const viemPublicClient = useViemPublicClient();
 
   const { result: rewardVaults } = useApiRx(
     useCallback(
@@ -167,32 +168,13 @@ const useRestakeAssets = () => {
     }, []),
   );
 
-  const viemPublicClient = useViemPublicClient();
-
   const { result: evmAssetMetadatas } = usePromise(
     useCallback(async () => {
       if (evmAssetIds === null || viemPublicClient === null) {
         return null;
       }
 
-      const contractAddresses = evmAssetIds.map(async (contractAddress) => {
-        const metadata = await fetchErc20TokenMetadata(
-          viemPublicClient,
-          contractAddress,
-        );
-
-        return { assetId: contractAddress, metadata };
-      });
-
-      const results = await Promise.allSettled(contractAddresses);
-
-      return results.flatMap((result) => {
-        if (result.status === 'fulfilled') {
-          return [result.value] as const;
-        } else {
-          return [];
-        }
-      });
+      return await fetchErc20TokenMetadata(viemPublicClient, evmAssetIds);
     }, [evmAssetIds, viemPublicClient]),
     null,
   );
@@ -204,24 +186,20 @@ const useRestakeAssets = () => {
 
     return evmAssetIds.flatMap((assetId) => {
       const metadata = evmAssetMetadatas.find(
-        (metadata) => metadata.assetId === assetId,
+        (metadata) => metadata.id === assetId,
       );
 
       // Skip if metadata is not found.
-      if (metadata === undefined || metadata.metadata === null) {
-        console.warn(
-          `Unable to fetch metadata for ERC-20 token at ${assetId}; ignoring`,
-        );
-
+      if (metadata === undefined) {
         return [];
       }
 
       return [
         {
           assetId,
-          name: metadata.metadata.name,
-          decimals: metadata.metadata.decimals,
-          symbol: metadata.metadata.symbol,
+          name: metadata.name,
+          decimals: metadata.decimals,
+          symbol: metadata.symbol,
           vaultId: assetVaultIds?.get(assetId) ?? null,
           // TODO: Implement token price fetching.
           priceInUsd: null,
