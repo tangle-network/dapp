@@ -6,7 +6,7 @@ const fetchErc20TokenMetadata = async (
   contractAddress: EvmAddress,
 ) => {
   try {
-    // Should check support of multicall3
+    // TODO: Should check support of multicall3.
     const [name, symbol, decimals] = await Promise.all([
       viemPublicClient.readContract({
         address: contractAddress,
@@ -37,6 +37,7 @@ const fetchErc20TokenMetadata = async (
     console.warn(
       `Failed to fetch ERC20 token metadata (is the contract deployed on this network?) (chain: ${viemPublicClient.chain?.name})`,
     );
+
     console.error(e);
 
     return null;

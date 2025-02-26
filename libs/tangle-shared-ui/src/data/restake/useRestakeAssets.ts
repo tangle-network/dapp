@@ -12,8 +12,10 @@ import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 import useNetworkStore from '../../context/useNetworkStore';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import useRestakeAssetBalances from './useRestakeAssetBalances';
-import { findErc20Token } from '../../hooks/useTangleEvmErc20Balances';
 import assert from 'assert';
+import usePromise from '../../hooks/usePromise';
+import fetchErc20TokenMetadata from '../../utils/fetchErc20TokenMetadata';
+import useViemPublicClient from '../../hooks/useViemPublicClient';
 
 const toPrimitiveRewardVault = (
   entries: [
@@ -164,25 +166,61 @@ const useRestakeAssets = () => {
     }, []),
   );
 
+  const viemPublicClient = useViemPublicClient();
+
+  const { result: evmAssetMetadatas } = usePromise(
+    useCallback(async () => {
+      if (evmAssetIds === null || viemPublicClient === null) {
+        return null;
+      }
+
+      const contractAddresses = evmAssetIds.map(async (contractAddress) => {
+        const metadata = await fetchErc20TokenMetadata(
+          viemPublicClient,
+          contractAddress,
+        );
+
+        return { assetId: contractAddress, metadata };
+      });
+
+      const results = await Promise.allSettled(contractAddresses);
+
+      return results.flatMap((result) => {
+        if (result.status === 'fulfilled') {
+          return [result.value] as const;
+        } else {
+          return [];
+        }
+      });
+    }, [evmAssetIds, viemPublicClient]),
+    null,
+  );
+
   const evmAssets = useMemo(() => {
-    if (evmAssetIds === null) {
+    if (evmAssetIds === null || evmAssetMetadatas === null) {
       return null;
     }
 
     return evmAssetIds.flatMap((assetId) => {
-      const erc20Token = findErc20Token(assetId);
+      const metadata = evmAssetMetadatas.find(
+        (metadata) => metadata.assetId === assetId,
+      );
 
-      // Skip unknown EVM assets.
-      if (erc20Token === null) {
+      // Skip if metadata is not found.
+      if (metadata === undefined || metadata.metadata === null) {
+        console.warn(
+          `Unable to fetch metadata for ERC-20 token at ${assetId}; ignoring`,
+        );
+
         return [];
       }
 
       return [
         {
           assetId,
-          name: erc20Token.name,
-          decimals: erc20Token.decimals,
-          symbol: erc20Token.symbol,
+          name: metadata.metadata.name,
+          decimals: metadata.metadata.decimals,
+          symbol: metadata.metadata.symbol,
           vaultId: assetVaultIds?.get(assetId) ?? null,
           // TODO: Implement token price fetching.
           priceInUsd: null,
@@ -191,7 +229,7 @@ const useRestakeAssets = () => {
         } satisfies RestakeAssetMetadata,
       ];
     });
-  }, [assetVaultIds, evmAssetIds]);
+  }, [assetVaultIds, evmAssetIds, evmAssetMetadatas]);
 
   const nativeAssets = useMemo<RestakeAssetMetadata[] | null>(() => {
     if (substrateAssetIds === null || nativeAssetMetadatas === null) {

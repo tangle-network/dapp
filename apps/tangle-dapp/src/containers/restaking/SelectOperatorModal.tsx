@@ -54,11 +54,7 @@ const SelectOperatorModal = ({
       titleWhenEmpty="No Delegation Found"
       descriptionWhenEmpty="Have you deposited or delegated an asset to an operator yet?"
       onSelect={(item) => {
-        if (assets === null) {
-          return;
-        }
-
-        const asset = assets.get(item.assetId);
+        const asset = assets?.get(item.assetId);
 
         if (asset === undefined) {
           return;
@@ -93,11 +89,7 @@ const SelectOperatorModal = ({
         ]);
       }}
       renderItem={({ amountBonded, assetId, operatorAccountId }) => {
-        if (assets === null) {
-          return null;
-        }
-
-        const asset = assets.get(assetId);
+        const asset = assets?.get(assetId);
 
         if (asset === undefined) {
           return null;

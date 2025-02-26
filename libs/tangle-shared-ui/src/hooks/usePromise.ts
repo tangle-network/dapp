@@ -80,7 +80,7 @@ function usePromise<T>(factory: () => Promise<T>, fallbackValue: T) {
       });
   }, [factory, isMounted]);
 
-  // Initial fetch.
+  // Initial fetch & automatically refetch when the factory function changes.
   useEffect(() => {
     refresh();
 

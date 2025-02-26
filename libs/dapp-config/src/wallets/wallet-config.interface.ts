@@ -31,7 +31,7 @@ export interface WalletConfig {
   enabled: boolean;
 
   /**
-   * a function that will tell weather the wallet is installed or reachable
+   * determine whether the wallet is installed or reachable
    */
   detect(appName: string): Promise<boolean | InjectedExtension | undefined>;
 
