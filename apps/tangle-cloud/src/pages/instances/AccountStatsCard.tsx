@@ -1,5 +1,5 @@
 import { useMemo, type FC } from 'react';
-import AccountStatsDetailCard, { type AccountStatsCardProps } from './index';
+import AccountStatsDetailCard, { type AccountStatsCardProps } from '../../components/accountStatsCard';
 import {
   assertSubstrateAddress,
   Avatar,
@@ -27,7 +27,7 @@ import {
 import { isHex } from 'viem';
 import { isValidUrl } from '@tangle-network/dapp-types';
 
-const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
+export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   const { activeAccount } = useWebContext();
 
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
@@ -161,5 +161,3 @@ const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
     </AccountStatsDetailCard.Root>
   );
 };
-
-export default AccountStatsCard;

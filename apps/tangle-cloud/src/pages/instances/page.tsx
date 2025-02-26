@@ -1,4 +1,4 @@
-import AccountStatsCard from '../../components/accountStatsCard/AccountStatsCard';
+import { AccountStatsCard } from './AccountStatsCard';
 import { InstructionCard } from './InstructionCard';
 
 const Page = () => {
