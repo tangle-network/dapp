@@ -73,8 +73,6 @@ const BridgeContainer = ({ network, className }: Props) => {
   const { toggleModal: toggleConnectWalletModal } = useConnectWallet();
   const [isTxInProgress, setIsTxInProgress] = useState(false);
 
-  console.log('network 🤖', network.name);
-
   const sourceChains = useBridgeStore(
     useShallow((store) => store.sourceChains),
   );
