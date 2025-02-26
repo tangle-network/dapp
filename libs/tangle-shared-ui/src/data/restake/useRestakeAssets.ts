@@ -15,12 +15,12 @@ import useRestakeAssetBalances from './useRestakeAssetBalances';
 import { findErc20Token } from '../../hooks/useTangleEvmErc20Balances';
 import assert from 'assert';
 
-function toPrimitiveRewardVault(
+const toPrimitiveRewardVault = (
   entries: [
     StorageKey<[u32]> | number,
     Option<Vec<TanglePrimitivesServicesAsset>>,
   ][],
-): [vaultId: bigint, assetIds: RestakeAssetId[] | null][] {
+): [vaultId: bigint, assetIds: RestakeAssetId[] | null][] => {
   return entries.map(([vaultId, assets]) => {
     const vaultIdBigInt =
       typeof vaultId === 'number'
@@ -33,7 +33,7 @@ function toPrimitiveRewardVault(
 
     return [vaultIdBigInt, assetIds] as const;
   });
-}
+};
 
 const useRestakeAssets = () => {
   const { nativeTokenSymbol } = useNetworkStore();
@@ -266,8 +266,7 @@ const useRestakeAssets = () => {
     return map;
   }, [evmAssets, nativeAssets]);
 
-  const { balances, refetchErc20Balances: refetchErc20BalancesFn } =
-    useRestakeAssetBalances();
+  const { balances, refetchErc20Balances } = useRestakeAssetBalances();
 
   const assetsWithBalances = useMemo(() => {
     if (assetMap === null) {
@@ -287,7 +286,14 @@ const useRestakeAssets = () => {
     return map;
   }, [assetMap, balances]);
 
-  return assetsWithBalances;
+  const refetchErc20Balances_ = useCallback(async () => {
+    await refetchErc20Balances();
+  }, [refetchErc20Balances]);
+
+  return {
+    assets: assetsWithBalances,
+    refetchErc20Balances: refetchErc20Balances_,
+  };
 };
 
 export default useRestakeAssets;

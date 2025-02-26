@@ -75,7 +75,7 @@ const DepositForm: FC<Props> = (props) => {
     QueryParamKey.RESTAKE_VAULT,
   );
 
-  const assets = useRestakeAssets();
+  const { assets, refetchErc20Balances } = useRestakeAssets();
   const restakeApi = useRestakeApi();
 
   const setValue = useCallback(
@@ -198,7 +198,14 @@ const DepositForm: FC<Props> = (props) => {
         refetchErc20Balances();
       }
     },
-    [asset?.decimals, asset?.id, isReady, restakeApi, setValue],
+    [
+      asset?.decimals,
+      asset?.id,
+      isReady,
+      refetchErc20Balances,
+      restakeApi,
+      setValue,
+    ],
   );
 
   return (

@@ -50,7 +50,7 @@ const OperatorsTable: FC<Props> = ({
   const { isEvm } = useAgnosticAccountInfo();
   const isAccountConnected = useIsAccountConnected();
   const activeSubstrateAddress = useSubstrateAddress(false);
-  const assets = useRestakeAssets();
+  const { assets } = useRestakeAssets();
 
   const { result: identities } = useIdentities(
     useMemo(() => Object.keys(operatorMap), [operatorMap]),
@@ -79,7 +79,10 @@ const OperatorsTable: FC<Props> = ({
             identityName: identities[address]?.name ?? undefined,
             restakersCount,
             tvlInUsd,
-            vaultTokens: delegationsToVaultTokens(delegations, assets),
+            vaultTokens:
+              assets === null
+                ? []
+                : delegationsToVaultTokens(delegations, assets),
             selfBondedAmount: stake,
             isDelegated,
           } satisfies RestakeOperator;

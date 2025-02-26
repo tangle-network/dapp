@@ -5,7 +5,7 @@ import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import { useMemo } from 'react';
 
 const useRestakeAsset = (id: RestakeAssetId | null | undefined) => {
-  const assets = useRestakeAssets();
+  const { assets } = useRestakeAssets();
 
   const asset = useMemo<RestakeAsset | null>(() => {
     if (id === null || id === undefined || assets === null) {

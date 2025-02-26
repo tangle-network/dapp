@@ -27,7 +27,7 @@ import useRestakeAssets from './useRestakeAssets';
 
 const useBlueprintDetails = (id?: string) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
-  const assets = useRestakeAssets();
+  const { assets } = useRestakeAssets();
   const { operatorMap } = useRestakeOperatorMap();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const activeSubstrateAddress = useSubstrateAddress(false);

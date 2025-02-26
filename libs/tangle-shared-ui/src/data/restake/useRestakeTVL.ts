@@ -9,7 +9,7 @@ const useRestakeTVL = (
   operatorMap: OperatorMap,
   delegatorInfo: DelegatorInfo | null,
 ) => {
-  const assets = useRestakeAssets();
+  const { assets } = useRestakeAssets();
   const { operatorTVL, vaultTVL } = useOperatorTVL(operatorMap, assets);
 
   const { delegatorTVL, totalDelegatorTVL } = useDelegatorTVL(
