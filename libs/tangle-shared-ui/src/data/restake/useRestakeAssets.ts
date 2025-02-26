@@ -12,7 +12,6 @@ import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 import useNetworkStore from '../../context/useNetworkStore';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import useRestakeAssetBalances from './useRestakeAssetBalances';
-import { BN } from '@polkadot/util';
 import { findErc20Token } from '../../hooks/useTangleEvmErc20Balances';
 import assert from 'assert';
 
@@ -279,18 +278,11 @@ const useRestakeAssets = () => {
 
     for (const [assetIdString, metadata] of assetMap.entries()) {
       const assetId = assertRestakeAssetId(assetIdString);
-      const balanceEntry = balances.get(assetId);
-
-      // TODO: Scale bigint to BN using appropriate decimals.
-      const balance =
-        balanceEntry !== undefined
-          ? new BN(balanceEntry.balance.toString())
-          : undefined;
 
       map.set(assetId, {
         assetId,
         metadata,
-        balance,
+        balance: balances?.get(assetId),
       });
     }
 

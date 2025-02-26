@@ -125,16 +125,7 @@ export type DelegatorInfo = {
 export type AssetAccountExistenceReason =
   TransformEnum<PalletAssetsExistenceReason>;
 
-/**
- * The account balance of an asset and its status.
- * @name PalletAssetsAssetAccount
- */
-export type AssetBalance = {
-  readonly assetId: RestakeAssetId;
-  readonly balance: bigint;
-};
-
-export type AssetBalanceMap = Map<RestakeAssetId, AssetBalance>;
+export type AssetBalanceMap = Map<RestakeAssetId, BN>;
 
 export type RestakeAsset2 = {
   assetId: RestakeAssetId;
