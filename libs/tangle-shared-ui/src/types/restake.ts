@@ -134,8 +134,12 @@ export type AssetBalance = {
   readonly balance: bigint;
 };
 
-export type AssetBalanceMap = {
-  readonly [assetId: RestakeAssetId]: AssetBalance;
+export type AssetBalanceMap = Map<RestakeAssetId, AssetBalance>;
+
+export type RestakeAsset2 = {
+  assetId: RestakeAssetId;
+  metadata: RestakeAssetMetadata;
+  balance?: BN;
 };
 
 export type RestakeAssetMap = Map<

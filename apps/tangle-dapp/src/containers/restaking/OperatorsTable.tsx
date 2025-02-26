@@ -1,6 +1,5 @@
 import { AddLineIcon } from '@tangle-network/icons';
 import OperatorsTableUI from '@tangle-network/tangle-shared-ui/components/tables/Operators';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { RestakeOperator } from '@tangle-network/tangle-shared-ui/types';
@@ -25,6 +24,7 @@ import { RestakeOperatorWrapper } from '../../components/tables/RestakeActionWra
 import useIdentities from '../../data/useIdentities';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import JoinOperatorsModal from './JoinOperatorsModal';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
@@ -50,7 +50,7 @@ const OperatorsTable: FC<Props> = ({
   const { isEvm } = useAgnosticAccountInfo();
   const isAccountConnected = useIsAccountConnected();
   const activeSubstrateAddress = useSubstrateAddress(false);
-  const { assets } = useRestakeContext();
+  const assets = useRestakeAssets();
 
   const { result: identities } = useIdentities(
     useMemo(() => Object.keys(operatorMap), [operatorMap]),

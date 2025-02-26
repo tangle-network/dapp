@@ -6,11 +6,15 @@ import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
 import { RestakeAssetId } from '../../types';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import { isEvmAddress } from '@tangle-network/ui-components';
-import { RestakeAssetMetadata } from '../../types/restake';
+import { RestakeAssetMap, RestakeAssetMetadata } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 import useNetworkStore from '../../context/useNetworkStore';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import useRestakeAssetBalances from './useRestakeAssetBalances';
+import { BN } from '@polkadot/util';
+import { findErc20Token } from '../../hooks/useTangleEvmErc20Balances';
+import assert from 'assert';
 
 function toPrimitiveRewardVault(
   entries: [
@@ -98,6 +102,35 @@ const useRestakeAssets = () => {
 
     return assetIds.filter((assetId) => isEvmAddress(assetId));
   }, [assetIds]);
+
+  const evmAssets = useMemo(() => {
+    if (evmAssetIds === null) {
+      return null;
+    }
+
+    return evmAssetIds.flatMap((assetId) => {
+      const erc20Token = findErc20Token(assetId);
+
+      // Skip unknown EVM assets.
+      if (erc20Token === null) {
+        return [];
+      }
+
+      return [
+        {
+          assetId,
+          name: erc20Token.name,
+          decimals: erc20Token.decimals,
+          symbol: erc20Token.symbol,
+          vaultId: null,
+          // TODO: Implement token price fetching.
+          priceInUsd: null,
+          status: 'Live',
+          // TODO: Details?
+        } satisfies RestakeAssetMetadata,
+      ];
+    });
+  }, [evmAssetIds]);
 
   const { result: nativeAssetDetails } = useApiRx(
     useCallback((api) => {
@@ -192,6 +225,7 @@ const useRestakeAssets = () => {
       return [asset];
     });
 
+    // TODO: Balance should be what is locked in staking, for native restaking.
     // Insert the native asset to allow for native restaking.
     const nativeAsset: RestakeAssetMetadata = {
       name: nativeTokenSymbol,
@@ -215,7 +249,7 @@ const useRestakeAssets = () => {
   ]);
 
   const assetMap = useMemo(() => {
-    if (nativeAssets === null) {
+    if (nativeAssets === null || evmAssets === null) {
       return null;
     }
 
@@ -225,11 +259,45 @@ const useRestakeAssets = () => {
       map.set(asset.assetId, asset);
     }
 
-    return map;
-  }, [nativeAssets]);
+    for (const asset of evmAssets) {
+      assert(!map.has(asset.assetId));
+      map.set(asset.assetId, asset);
+    }
 
-  // TODO: Evm assets too.
-  return assetMap;
+    return map;
+  }, [evmAssets, nativeAssets]);
+
+  const { balances, refetchErc20Balances: refetchErc20BalancesFn } =
+    useRestakeAssetBalances();
+
+  const assetsWithBalances = useMemo(() => {
+    if (assetMap === null) {
+      return null;
+    }
+
+    const map = new Map() satisfies RestakeAssetMap as RestakeAssetMap;
+
+    for (const [assetIdString, metadata] of assetMap.entries()) {
+      const assetId = assertRestakeAssetId(assetIdString);
+      const balanceEntry = balances.get(assetId);
+
+      // TODO: Scale bigint to BN using appropriate decimals.
+      const balance =
+        balanceEntry !== undefined
+          ? new BN(balanceEntry.balance.toString())
+          : undefined;
+
+      map.set(assetId, {
+        assetId,
+        metadata,
+        balance,
+      });
+    }
+
+    return map;
+  }, [assetMap, balances]);
+
+  return assetsWithBalances;
 };
 
 export default useRestakeAssets;

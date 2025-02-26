@@ -1,4 +1,3 @@
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { useMemo } from 'react';
@@ -11,6 +10,7 @@ import {
   formatDisplayAmount,
 } from '@tangle-network/ui-components';
 import { BN } from '@polkadot/util';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -32,7 +32,7 @@ const SelectOperatorModal = ({
   onItemSelected,
   operatorIdentities,
 }: Props) => {
-  const { assets } = useRestakeContext();
+  const assets = useRestakeAssets();
 
   // Aggregate the delegations based on the operator account ID and asset ID.
   const delegations = useMemo(() => {

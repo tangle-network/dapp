@@ -2,7 +2,6 @@ import { BN } from '@polkadot/util';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
 import { TokenIcon } from '@tangle-network/icons/TokenIcon';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
@@ -17,6 +16,7 @@ import { formatUnits } from 'viem';
 import LogoListItem from '../../components/Lists/LogoListItem';
 import filterBy from '../../utils/filterBy';
 import calculateRestakeAvailableBalance from '../../utils/restaking/calculateRestakeAvailableBalance';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -36,7 +36,7 @@ const WithdrawModal = ({
   setIsOpen,
   onItemSelected,
 }: Props) => {
-  const { assets } = useRestakeContext();
+  const assets = useRestakeAssets();
 
   const availableForWithdrawal = useMemo(() => {
     if (!delegatorInfo?.deposits) {

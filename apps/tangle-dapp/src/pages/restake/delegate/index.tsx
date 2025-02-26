@@ -3,7 +3,6 @@ import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@tangle-network/tangle-shared-ui/hooks/usePolkadotApi';
@@ -44,6 +43,7 @@ import useRestakeApi from '../../../data/restake/useRestakeApi';
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import useRestakeAsset from '../../../data/restake/useRestakeAsset';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -83,7 +83,7 @@ const RestakeDelegateForm: FC = () => {
     register('operatorAccountId', { required: 'Operator is required' });
   }, [register]);
 
-  const { assets } = useRestakeContext();
+  const assets = useRestakeAssets();
   const restakeApi = useRestakeApi();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();

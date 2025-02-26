@@ -1,7 +1,6 @@
 import { BN } from '@polkadot/util';
 import { CheckboxCircleFill } from '@tangle-network/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@tangle-network/icons/TimeFillIcon';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import type { DelegatorWithdrawRequest } from '@tangle-network/tangle-shared-ui/types/restake';
 import {
@@ -30,6 +29,7 @@ import useSessionDurationMs from '../../data/useSessionDurationMs';
 import { calculateTimeRemaining } from '../../pages/restake/utils';
 import formatSessionDistance from '../../utils/formatSessionDistance';
 import WithdrawRequestTableActions from './WithdrawRequestTableActions';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 export type WithdrawRequestTableRow = {
   amount: string;
@@ -102,7 +102,7 @@ type Props = {
 };
 
 const WithdrawRequestTable: FC<Props> = ({ withdrawRequests }) => {
-  const { assets } = useRestakeContext();
+  const assets = useRestakeAssets();
   const { leaveDelegatorsDelay } = useRestakeConsts();
   const { result: currentRound } = useRestakeCurrentRound();
   const sessionDurationMs = useSessionDurationMs();

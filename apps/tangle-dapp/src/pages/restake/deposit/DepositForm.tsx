@@ -3,7 +3,6 @@ import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import {
   AmountFormatStyle,
@@ -39,6 +38,7 @@ import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
 import Details from './Details';
 import SourceChainInput from './SourceChainInput';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -75,8 +75,7 @@ const DepositForm: FC<Props> = (props) => {
     QueryParamKey.RESTAKE_VAULT,
   );
 
-  const { assets, refetchErc20Balances } = useRestakeContext();
-
+  const assets = useRestakeAssets();
   const restakeApi = useRestakeApi();
 
   const setValue = useCallback(
@@ -199,14 +198,7 @@ const DepositForm: FC<Props> = (props) => {
         refetchErc20Balances();
       }
     },
-    [
-      asset?.decimals,
-      asset?.id,
-      isReady,
-      refetchErc20Balances,
-      restakeApi,
-      setValue,
-    ],
+    [asset?.decimals, asset?.id, isReady, restakeApi, setValue],
   );
 
   return (

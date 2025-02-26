@@ -2,9 +2,8 @@ import { PalletRewardsRewardConfigForAssetVault } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import {
-  AssetBalanceMap,
   DelegatorInfo,
-  RestakeAssetMetadata,
+  RestakeAsset2,
 } from '@tangle-network/tangle-shared-ui/types/restake';
 
 export type RestakeVault = {
@@ -21,8 +20,7 @@ export type RestakeVault = {
 };
 
 type Options = {
-  assets: RestakeAssetMetadata[];
-  balances: AssetBalanceMap;
+  assets: RestakeAsset2[];
   delegatorInfo?: DelegatorInfo | null;
   vaultsRewards?: Map<number, BN> | null;
   assetTvl?: Map<RestakeAssetId, BN> | null;
@@ -31,7 +29,6 @@ type Options = {
 
 const createVaultMap = ({
   assets,
-  balances,
   delegatorInfo,
   vaultsRewards,
   assetTvl,
@@ -39,33 +36,32 @@ const createVaultMap = ({
 }: Options): Map<number, RestakeVault> => {
   const vaults = new Map<number, RestakeVault>();
 
-  for (const { assetId, vaultId, name, symbol, decimals } of assets) {
-    if (vaultId === null) {
+  for (const asset of assets) {
+    if (asset.metadata.vaultId === null) {
       continue;
     }
 
-    const available =
-      typeof balances[assetId]?.balance === 'bigint'
-        ? new BN(balances[assetId].balance.toString())
-        : null;
+    const available = asset.balance ?? null;
 
     const totalDeposits =
-      typeof delegatorInfo?.deposits[assetId]?.amount === 'bigint'
-        ? new BN(delegatorInfo.deposits[assetId].amount.toString())
+      typeof delegatorInfo?.deposits[asset.assetId]?.amount === 'bigint'
+        ? new BN(delegatorInfo.deposits[asset.assetId].amount.toString())
         : null;
 
-    const tvl = assetTvl?.get(assetId) ?? null;
-    const existingVault = vaults.get(vaultId);
+    const tvl = assetTvl?.get(asset.assetId) ?? null;
+    const existingVault = vaults.get(asset.metadata.vaultId);
 
     if (existingVault === undefined) {
-      const capacity = rewardConfig?.get(vaultId)?.depositCap.toBn() ?? null;
-      const reward = vaultsRewards?.get(vaultId) ?? null;
+      const capacity =
+        rewardConfig?.get(asset.metadata.vaultId)?.depositCap.toBn() ?? null;
 
-      vaults.set(vaultId, {
-        id: vaultId,
-        name: name ?? symbol,
-        representAssetSymbol: symbol,
-        decimals,
+      const reward = vaultsRewards?.get(asset.metadata.vaultId) ?? null;
+
+      vaults.set(asset.metadata.vaultId, {
+        id: asset.metadata.vaultId,
+        name: asset.metadata.name ?? asset.metadata.symbol,
+        representAssetSymbol: asset.metadata.symbol,
+        decimals: asset.metadata.decimals,
         capacity,
         reward,
         tokenCount: 1,
@@ -76,10 +72,7 @@ const createVaultMap = ({
     }
     // Update existing vault values.
     else {
-      existingVault.available = tryAddBNs(
-        existingVault.available,
-        available,
-      );
+      existingVault.available = tryAddBNs(existingVault.available, available);
 
       existingVault.totalDeposits = tryAddBNs(
         existingVault.totalDeposits,

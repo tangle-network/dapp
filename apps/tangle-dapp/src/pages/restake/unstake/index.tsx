@@ -5,7 +5,6 @@ import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import LockFillIcon from '@tangle-network/icons/LockFillIcon';
 import { LockLineIcon } from '@tangle-network/icons/LockLineIcon';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import { DelegatorUnstakeRequest } from '@tangle-network/tangle-shared-ui/types/restake';
 import { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
@@ -42,6 +41,7 @@ import RestakeTabs from '../RestakeTabs';
 import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 const RestakeUnstakeForm: FC = () => {
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
@@ -60,7 +60,7 @@ const RestakeUnstakeForm: FC = () => {
 
   const switchChain = useSwitchChain();
   const activeTypedChainId = useActiveTypedChainId();
-  const { assets } = useRestakeContext();
+  const assets = useRestakeAssets();
 
   const {
     status: isOperatorModalOpen,

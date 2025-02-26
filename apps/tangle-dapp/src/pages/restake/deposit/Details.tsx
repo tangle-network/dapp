@@ -1,6 +1,5 @@
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components';
-import { FC, useMemo } from 'react';
+import { useMemo } from 'react';
 import { UseFormWatch } from 'react-hook-form';
 import DetailsContainer from '../../../components/DetailsContainer';
 import DetailItem from '../../../components/LiquidStaking/stakeAndUnstake/DetailItem';
@@ -9,13 +8,14 @@ import useRestakeRewardConfig from '../../../data/restake/useRestakeRewardConfig
 import { DepositFormFields } from '../../../types/restake';
 import useSessionDurationMs from '../../../data/useSessionDurationMs';
 import formatMsDuration from '../../../utils/formatMsDuration';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 type Props = {
   watch: UseFormWatch<DepositFormFields>;
 };
 
-const Details: FC<Props> = ({ watch }) => {
-  const { assets } = useRestakeContext();
+const Details = ({ watch }: Props) => {
+  const assets = useRestakeAssets();
   const { leaveDelegatorsDelay } = useRestakeConsts();
   const rewardConfig = useRestakeRewardConfig();
   const sessionDurationMs = useSessionDurationMs();

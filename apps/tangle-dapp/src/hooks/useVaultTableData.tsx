@@ -1,5 +1,4 @@
 import { BN } from '@polkadot/util';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import {
@@ -13,17 +12,15 @@ import VaultsTable from '../components/tables/Vaults';
 import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
 import createVaultMap from '../utils/createVaultMap';
 import useVaultRewards from '@tangle-network/tangle-shared-ui/data/rewards/useVaultRewards';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
-type UseVaultTableDataParams = {
+type Options = {
   operatorData?: OperatorMetadata;
   delegatorInfo: DelegatorInfo | null;
 };
 
-const useVaultTableData = ({
-  operatorData,
-  delegatorInfo,
-}: UseVaultTableDataParams) => {
-  const { assets } = useRestakeContext();
+const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
+  const assets = useRestakeAssets();
   const rewardConfig = useRestakeRewardConfig();
   const assetsTvl = useRestakeAssetsTvl();
   const { result: vaultsRewards } = useVaultRewards();

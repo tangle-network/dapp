@@ -1,7 +1,6 @@
 import { BN } from '@polkadot/util';
 import { CheckboxCircleFill } from '@tangle-network/icons/CheckboxCircleFill';
 import { TimeFillIcon } from '@tangle-network/icons/TimeFillIcon';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import type { DelegatorUnstakeRequest } from '@tangle-network/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
@@ -33,6 +32,7 @@ import useSessionDurationMs from '../../data/useSessionDurationMs';
 import { calculateTimeRemaining } from '../../pages/restake/utils';
 import formatSessionDistance from '../../utils/formatSessionDistance';
 import UnstakeRequestTableActions from './UnstakeRequestTableActions';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 export type UnstakeRequestTableRow = {
   amount: string;
@@ -117,7 +117,7 @@ const UnstakeRequestTable: FC<Props> = ({
   unstakeRequests,
   operatorIdentities,
 }) => {
-  const { assets } = useRestakeContext();
+  const assets = useRestakeAssets();
   const { delegationBondLessDelay } = useRestakeConsts();
   const { result: currentRound } = useRestakeCurrentRound();
   const sessionDurationMs = useSessionDurationMs();
