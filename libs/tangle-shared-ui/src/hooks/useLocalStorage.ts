@@ -14,6 +14,7 @@ export enum LocalStorageKey {
   BRIDGE_TX_QUEUE_BY_ACC = 'bridgeTxQueue',
   BRIDGE_TOKENS_TO_ACC = 'bridgeTokensToAcc',
   BRIDGE_DEST_TX_IDS = 'bridgeDestTxIds',
+  CLAIMED_ERAS_BY_VALIDATOR = 'claimedErasByValidator',
 }
 
 export type SubstrateWalletsMetadataEntry = {
@@ -69,7 +70,9 @@ export type LocalStorageValueOf<T extends LocalStorageKey> =
             ? BridgeTokensToAcc
             : T extends LocalStorageKey.BRIDGE_DEST_TX_IDS
               ? BridgeDestTxIds
-              : never;
+              : T extends LocalStorageKey.CLAIMED_ERAS_BY_VALIDATOR
+                ? Record<string, number[]>
+                : never;
 
 export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(
   key: Key,

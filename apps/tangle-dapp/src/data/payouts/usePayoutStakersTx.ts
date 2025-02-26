@@ -10,12 +10,15 @@ import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import BATCH_PRECOMPILE_ABI from '../../abi/batch';
 import STAKING_PRECOMPILE_ABI from '../../abi/staking';
-import { Payout } from '@tangle-network/tangle-shared-ui/types';
 import convertAddressToBytes32 from '@tangle-network/ui-components/utils/convertAddressToBytes32';
 import { toSubstrateAddress } from '@tangle-network/ui-components';
+import { shortenString } from '@tangle-network/ui-components';
+
+export const MAX_PAYOUTS_BATCH_SIZE = 20;
 
 type Context = {
-  payout: Payout;
+  validatorAddress: string;
+  eras: number[];
 };
 
 const usePayoutStakersTx = () => {
@@ -24,12 +27,11 @@ const usePayoutStakersTx = () => {
     'batchAll',
     Context
   > = useCallback((context) => {
-    // Sort eras in ascending order to ensure proper sequence
-    const sortedEras = [...context.payout.eras].sort((a, b) => a - b);
+    const sortedEras = [...context.eras].sort((a, b) => a - b);
 
     // Convert validator address to 32-byte format for EVM
     const validatorEvmAddress32 = convertAddressToBytes32(
-      context.payout.validator.address,
+      context.validatorAddress,
     );
 
     // Create batch of payoutStakers calls for each era
@@ -52,11 +54,10 @@ const usePayoutStakersTx = () => {
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     async (api, _activeSubstrateAddress, context) => {
       const validatorSubstrateAddress = toSubstrateAddress(
-        context.payout.validator.address,
+        context.validatorAddress,
       );
 
-      // Sort eras in ascending order
-      const sortedEras = [...context.payout.eras].sort((a, b) => a - b);
+      const sortedEras = [...context.eras].sort((a, b) => a - b);
 
       // Get current era to validate
       const currentEra = await api.query.staking.currentEra();
@@ -89,8 +90,10 @@ const usePayoutStakersTx = () => {
   );
 
   const getSuccessMessage: GetSuccessMessageFn<Context> = useCallback(
-    ({ payout }) =>
-      `Successfully claimed rewards for ${payout.eras.length} eras from validator ${payout.validator.identity || payout.validator.address}`,
+    ({ eras, validatorAddress }) => {
+      const eraCount = eras.length;
+      return `Successfully claimed rewards for ${eraCount} era${eraCount === 1 ? '' : 's'} from validator ${shortenString(validatorAddress, 8)}`;
+    },
     [],
   );
 

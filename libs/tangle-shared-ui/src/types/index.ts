@@ -18,8 +18,8 @@ import { Abi } from 'viem';
 export type TangleTokenSymbol = 'tTNT' | 'TNT';
 
 export type AddressWithIdentity = {
-  address: SubstrateAddress;
-  identity: string;
+  address: SubstrateAddress | null;
+  identity: string | null;
 };
 
 export type Payout = {
