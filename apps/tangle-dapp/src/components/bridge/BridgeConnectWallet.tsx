@@ -1,5 +1,3 @@
-'use client';
-
 import { useConnectWallet } from '@tangle-network/api-provider-environment';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
