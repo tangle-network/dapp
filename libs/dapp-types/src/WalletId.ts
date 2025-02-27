@@ -3,7 +3,6 @@ export enum WalletId {
   MetaMask,
   WalletConnectV2,
   Rainbow,
-  OneWallet,
   Talisman,
   SubWallet,
 }

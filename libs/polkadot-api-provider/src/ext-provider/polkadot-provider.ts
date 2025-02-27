@@ -10,7 +10,6 @@ import { u8aToString } from '@polkadot/util';
 import { LoggerService } from '@tangle-network/browser-utils';
 import { Wallet } from '@tangle-network/dapp-config';
 import findSubstrateWallet from '@tangle-network/dapp-config/utils/findSubstrateWallet';
-import WalletNotInstalledError from '@tangle-network/dapp-types/errors/WalletNotInstalledError';
 import { EventBus } from '@tangle-network/dapp-types/EventBus';
 import lodash from 'lodash';
 import { isValidAddress } from './is-valid-address';
@@ -38,8 +37,8 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
   private _accounts: PolkadotAccounts;
 
   constructor(
-    protected apiPromise: ApiPromise,
-    protected injectedExtension: InjectedExtension,
+    readonly apiPromise: ApiPromise,
+    readonly injectedExtension: InjectedExtension,
   ) {
     super();
     this.hookListeners();
@@ -180,12 +179,7 @@ export class PolkadotProvider extends EventBus<ExtensionProviderEvents> {
     wallet: Wallet,
   ): Promise<[ApiPromise, InjectedExtension]> {
     // Check whether the extension is existed or not
-    const currentExtension = await findSubstrateWallet(appName, wallet.name);
-
-    if (!currentExtension) {
-      logger.warn(`${wallet.title} extension isn't installed`);
-      throw new WalletNotInstalledError(wallet.id);
-    }
+    const currentExtension = await findSubstrateWallet(appName, wallet.id);
 
     // Initialize an ApiPromise
     const apiPromise = await PolkadotProvider.getApiPromise(endPoints, {

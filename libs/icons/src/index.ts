@@ -174,3 +174,5 @@ export { default as StatusIndicator } from './StatusIndicator';
 export * from './ProposalBadge';
 
 export { default as PolkadotJs } from './PolkadotJs';
+
+export * from './CloudOutlineIcon';
