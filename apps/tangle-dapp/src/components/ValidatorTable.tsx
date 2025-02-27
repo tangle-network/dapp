@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import sortByComparable from '@tangle-network/ui-components/utils/sortByComparable';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -28,7 +29,6 @@ import { IS_PRODUCTION_ENV } from '../constants/env';
 import { PagePath } from '../types';
 import calculateCommission from '../utils/calculateCommission';
 import filterTableRowBy from '../utils/filterTableRowBy';
-import sortByBn from '../utils/sortByBn';
 import { HeaderCell, StringCell } from './tableCells';
 import PercentageCell from './tableCells/PercentageCell';
 import TokenAmountCell from './tableCells/TokenAmountCell';
@@ -54,14 +54,14 @@ const getAdditionalColumns = (isWaiting?: boolean) => [
               formatStyle={AmountFormatStyle.SHORT}
             />
           ),
-          sortingFn: sortByBn((row) => row.totalStakeAmount),
+          sortingFn: sortByComparable((row) => row.totalStakeAmount),
         }),
         COLUMN_HELPER.accessor('selfStakeAmount', {
           header: () => (
             <HeaderCell title="Self-staked" className="justify-start" />
           ),
           cell: (props) => <TokenAmountCell amount={props.getValue()} />,
-          sortingFn: sortByBn((row) => row.selfStakeAmount),
+          sortingFn: sortByComparable((row) => row.selfStakeAmount),
         }),
       ]),
   COLUMN_HELPER.accessor('nominatorCount', {
@@ -75,7 +75,7 @@ const getAdditionalColumns = (isWaiting?: boolean) => [
     cell: (props) => (
       <PercentageCell percentage={calculateCommission(props.getValue())} />
     ),
-    sortingFn: sortByBn((row) => row.commission),
+    sortingFn: sortByComparable((row) => row.commission),
   }),
   // TODO: Hide this for live app for now
   ...(IS_PRODUCTION_ENV

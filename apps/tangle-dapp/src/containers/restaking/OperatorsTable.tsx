@@ -11,6 +11,7 @@ import {
   ModalTrigger,
 } from '@tangle-network/ui-components/components/Modal';
 import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
+import cx from 'classnames';
 import {
   type ComponentProps,
   type FC,
@@ -102,6 +103,13 @@ const OperatorsTable: FC<Props> = ({
     ? 'Only Substrate accounts can register as operators at this time.'
     : 'Connect a Substrate account to join as an operator.';
 
+  const isActiveAccountInOperatorMap = useMemo(
+    () =>
+      activeSubstrateAddress !== null &&
+      operatorMap[activeSubstrateAddress] !== undefined,
+    [activeSubstrateAddress, operatorMap],
+  );
+
   const RestakeAction = useCallback(
     ({ address, children }: PropsWithChildren<{ address: string }>) => {
       return (
@@ -121,7 +129,9 @@ const OperatorsTable: FC<Props> = ({
       <div className="w-full [&>button]:block [&>button]:ml-auto">
         <ModalTrigger asChild>
           <Button
-            className="mb-4 ml-auto -mt-14"
+            className={cx('mb-4 ml-auto -mt-14', {
+              hidden: isActiveAccountInOperatorMap,
+            })}
             variant="utility"
             size="sm"
             leftIcon={

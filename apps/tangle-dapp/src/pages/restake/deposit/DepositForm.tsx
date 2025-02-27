@@ -214,7 +214,7 @@ const DepositForm: FC<Props> = (props) => {
             </div>
 
             <div className="flex flex-col justify-between gap-4 grow">
-              <Details watch={watch} />
+              <Details />
 
               <ActionButton
                 errors={errors}
