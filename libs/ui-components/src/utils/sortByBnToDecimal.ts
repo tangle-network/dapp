@@ -10,22 +10,36 @@ const sortByBnToDecimal = <T>(
     const bnA = selector(rowA.original);
     const bnB = selector(rowB.original);
 
-    if (bnA === undefined || bnA === null) {
-      return 1;
-    }
-
-    if (bnB === undefined || bnB === null) {
-      return -1;
-    }
-
     const decimalsA = decimalsSelector(rowA.original);
     const decimalsB = decimalsSelector(rowB.original);
 
-    if (decimalsA === undefined || decimalsA === null) {
+    // If both values are null/undefined, treat them as equal
+    if (
+      (bnA === undefined || bnA === null) &&
+      (bnB === undefined || bnB === null) &&
+      (decimalsA === undefined || decimalsA === null) &&
+      (decimalsB === undefined || decimalsB === null)
+    ) {
+      return 0;
+    }
+
+    // Prioritize B if A is undefined or null
+    if (
+      bnA === undefined ||
+      bnA === null ||
+      decimalsA === undefined ||
+      decimalsA === null
+    ) {
       return 1;
     }
 
-    if (decimalsB === undefined || decimalsB === null) {
+    // Prioritize B if B is undefined or null
+    if (
+      bnB === undefined ||
+      bnB === null ||
+      decimalsB === undefined ||
+      decimalsB === null
+    ) {
       return -1;
     }
 

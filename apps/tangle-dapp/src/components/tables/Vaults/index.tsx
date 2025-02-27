@@ -58,15 +58,16 @@ const getColumns = (nativeTokenSymbol: string) => [
     sortDescFirst: true,
   }),
   COLUMN_HELPER.accessor('available', {
-    header: () => 'Available',
+    sortUndefined: 'last',
     sortingFn: sortByBnToDecimal(
       (row) => row.available,
       (row) => row.decimals,
     ),
+    header: () => 'Available',
     cell: (props) => {
       const value = props.getValue();
       const fmtAvailable =
-        value === null
+        value === undefined
           ? EMPTY_VALUE_PLACEHOLDER
           : formatDisplayAmount(
               value,
@@ -78,15 +79,16 @@ const getColumns = (nativeTokenSymbol: string) => [
     },
   }),
   COLUMN_HELPER.accessor('totalDeposits', {
-    header: () => 'Deposits',
+    sortUndefined: 'last',
     sortingFn: sortByBnToDecimal(
       (row) => row.totalDeposits,
       (row) => row.decimals,
     ),
+    header: () => 'Deposits',
     cell: (props) => {
       const value = props.getValue();
       const fmtDeposits =
-        value === null
+        value === undefined
           ? EMPTY_VALUE_PLACEHOLDER
           : formatDisplayAmount(
               value,
@@ -98,6 +100,7 @@ const getColumns = (nativeTokenSymbol: string) => [
     },
   }),
   COLUMN_HELPER.accessor('reward', {
+    sortUndefined: 'last',
     sortingFn: sortByBnToDecimal(
       (row) => row.reward,
       (row) => row.decimals,
@@ -111,7 +114,7 @@ const getColumns = (nativeTokenSymbol: string) => [
     cell: (props) => {
       const value = props.getValue();
       const fmtRewards =
-        value === null
+        value === undefined
           ? EMPTY_VALUE_PLACEHOLDER
           : formatDisplayAmount(
               value,
@@ -127,6 +130,7 @@ const getColumns = (nativeTokenSymbol: string) => [
     },
   }),
   COLUMN_HELPER.accessor('tvl', {
+    sortUndefined: 'last',
     sortingFn: sortByBnToDecimal(
       (row) => row.tvl,
       (row) => row.decimals,
@@ -141,7 +145,7 @@ const getColumns = (nativeTokenSymbol: string) => [
       const tvl = props.getValue();
 
       const fmtTvl =
-        tvl === null
+        tvl === undefined
           ? EMPTY_VALUE_PLACEHOLDER
           : formatDisplayAmount(
               tvl,
@@ -152,7 +156,7 @@ const getColumns = (nativeTokenSymbol: string) => [
       const depositCap = props.row.original.capacity;
 
       const fmtDepositCap =
-        depositCap === null
+        depositCap === undefined
           ? '∞'
           : formatDisplayAmount(
               depositCap,
@@ -161,7 +165,7 @@ const getColumns = (nativeTokenSymbol: string) => [
             );
 
       const capacityPercentage =
-        tvl === null || depositCap === null
+        tvl === undefined || depositCap === undefined
           ? null
           : calculateBnRatio(tvl, depositCap);
 
