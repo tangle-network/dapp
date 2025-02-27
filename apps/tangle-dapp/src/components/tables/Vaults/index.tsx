@@ -282,11 +282,27 @@ const VaultsTable: FC<Props> = ({
       {...tableProps}
       tableProps={table}
       className={tableProps?.className}
-      tableClassName={tableProps?.tableClassName}
-      thClassName={tableProps?.thClassName}
-      tbodyClassName={tableProps?.tbodyClassName}
-      trClassName={tableProps?.trClassName}
-      tdClassName={tableProps?.tdClassName}
+      tableWrapperClassName="py-2"
+      tableClassName={twMerge(
+        'border-collapse border-spacing-0',
+        tableProps?.tableClassName,
+      )}
+      expandedRowClassName={twMerge(
+        'bg-mono-0 dark:bg-mono-180',
+        'peer-[&[data-expanded="true"]:hover]:bg-mono-20',
+        'peer-[&[data-expanded="true"]:hover]:dark:bg-mono-170',
+      )}
+      thClassName={twMerge('py-2', tableProps?.thClassName)}
+      tbodyClassName={twMerge(
+        '[&_tr:first-child_td:first-child]:rounded-tl-xl [&_tr:first-child_td:last-child]:rounded-tr-xl',
+        '[&_tr:last-child_td:first-child]:rounded-bl-xl [&_tr:last-child_td:last-child]:rounded-br-xl',
+        tableProps?.tbodyClassName,
+      )}
+      trClassName={twMerge('border-b-0', tableProps?.trClassName)}
+      tdClassName={twMerge(
+        'first:rounded-l-none last:rounded-r-none',
+        tableProps?.tdClassName,
+      )}
       paginationClassName={tableProps?.paginationClassName}
     />
   );
