@@ -47,13 +47,10 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
                   triggerClassName,
                 )}
               >
-                {
-                  icons?.[idx] && (
-                    cloneElement(icons[idx], {
-                      // other props
-                    })
-                  )
-                }
+                {icons?.[idx] &&
+                  cloneElement(icons[idx], {
+                    // other props
+                  })}
                 <Typography
                   variant={triggerTypographyVariant}
                   fw="bold"
@@ -70,15 +67,15 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
               value={BLANK_TAB_VALUE}
               isDisableStyle
               className={twMerge(
-                'border-b-2 border-mono-170 py-4 !ml-0 flex-grow'
+                'border-b-2 border-mono-170 py-4 !ml-0 flex-grow',
               )}
             >
-               <Typography
-                  variant={triggerTypographyVariant}
-                  className="!text-transparent"
-                >
-                  {BLANK_TAB_VALUE}
-                </Typography>
+              <Typography
+                variant={triggerTypographyVariant}
+                className="!text-transparent"
+              >
+                {BLANK_TAB_VALUE}
+              </Typography>
             </TabTrigger>
           )}
         </TabsList>

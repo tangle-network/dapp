@@ -1,4 +1,4 @@
-import { RegisteredBlueprintsTabs } from "./RegisteredBlueprints";
+import { RegisteredBlueprintsTabs } from './RegisteredBlueprints';
 
 const Page = () => {
   return (
