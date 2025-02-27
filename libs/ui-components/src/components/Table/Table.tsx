@@ -89,6 +89,7 @@ export const Table = <T extends RowData>({
   className,
   variant = TableVariant.DEFAULT,
   paginationLabelOverride,
+  expandedRowClassName,
   ...props
 }: TableProps<T, HTMLDivElement>) => {
   const getRowClickHandler = useCallback(
@@ -173,8 +174,9 @@ export const Table = <T extends RowData>({
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
                 <tr
+                  data-expanded={row.getIsExpanded() ? 'true' : 'false'}
                   className={twMerge(
-                    'group/tr',
+                    'group/tr peer',
                     getVariantTrClass(variant),
                     trClassName,
                   )}
@@ -198,7 +200,7 @@ export const Table = <T extends RowData>({
                 </tr>
 
                 {getExpandedRowContent && row.getIsExpanded() && (
-                  <tr>
+                  <tr className={expandedRowClassName}>
                     <td colSpan={row.getVisibleCells().length}>
                       {getExpandedRowContent(row)}
                     </td>

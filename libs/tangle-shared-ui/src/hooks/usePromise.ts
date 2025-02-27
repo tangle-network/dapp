@@ -82,12 +82,14 @@ function usePromise<T>(factory: () => Promise<T>, fallbackValue: T) {
 
   // Initial fetch.
   useEffect(() => {
+    isSubscribed.current = true;
+
     refresh();
 
     return () => {
       isSubscribed.current = false;
     };
-  }, [factory, isMounted, refresh]);
+  }, [refresh]);
 
   return { result, isLoading, error, refresh };
 }

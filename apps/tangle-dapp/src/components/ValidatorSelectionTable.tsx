@@ -45,9 +45,9 @@ import SkeletonRows from '@tangle-network/tangle-shared-ui/components/SkeletonRo
 import { Validator } from '@tangle-network/tangle-shared-ui/types';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
+import sortByComparable from '@tangle-network/ui-components/utils/sortByComparable';
 import calculateCommission from '../utils/calculateCommission';
 import filterTableRowBy from '../utils/filterTableRowBy';
-import sortByBn from '../utils/sortByBn';
 import { HeaderCell } from './tableCells';
 import TokenAmountCell from './tableCells/TokenAmountCell';
 
@@ -163,7 +163,7 @@ const ValidatorSelectionTable: FC<Props> = ({
             formatStyle={AmountFormatStyle.SHORT}
           />
         ),
-        sortingFn: sortByBn((row) => row.totalStakeAmount),
+        sortingFn: sortByComparable((row) => row.totalStakeAmount),
       }),
       COLUMN_HELPER.accessor('nominatorCount', {
         header: () => (
@@ -193,7 +193,7 @@ const ValidatorSelectionTable: FC<Props> = ({
             {formatPercentage(calculateCommission(props.getValue()))}
           </Typography>
         ),
-        sortingFn: sortByBn((row) => row.commission),
+        sortingFn: sortByComparable((row) => row.commission),
       }),
     ],
     [isDesc],
