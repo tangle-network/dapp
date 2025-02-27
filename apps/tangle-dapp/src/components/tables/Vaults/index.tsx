@@ -1,12 +1,3 @@
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  getExpandedRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  TableOptions,
-  useReactTable,
-} from '@tanstack/react-table';
 import { ChevronDown } from '@tangle-network/icons/ChevronDown';
 import Spinner from '@tangle-network/icons/Spinner';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
@@ -25,13 +16,22 @@ import {
 } from '@tangle-network/ui-components/utils/formatDisplayAmount';
 import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import sortByBnToDecimal from '@tangle-network/ui-components/utils/sortByBnToDecimal';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  TableOptions,
+  useReactTable,
+} from '@tanstack/react-table';
 import { FC, useMemo } from 'react';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { PagePath, QueryParamKey } from '../../../types';
 import calculateBnRatio from '../../../utils/calculateBnRatio';
 import type { VaultType } from '../../../utils/calculateVaults';
-import sortByBn from '../../../utils/sortByBn';
 import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
 import { HeaderCell } from '../../tableCells';
 import type { Props } from './types';
@@ -59,7 +59,10 @@ const getColumns = (nativeTokenSymbol: string) => [
   }),
   COLUMN_HELPER.accessor('available', {
     header: () => 'Available',
-    sortingFn: sortByBn((row) => row.available),
+    sortingFn: sortByBnToDecimal(
+      (row) => row.available,
+      (row) => row.decimals,
+    ),
     cell: (props) => {
       const value = props.getValue();
       const fmtAvailable =
@@ -76,7 +79,10 @@ const getColumns = (nativeTokenSymbol: string) => [
   }),
   COLUMN_HELPER.accessor('totalDeposits', {
     header: () => 'Deposits',
-    sortingFn: sortByBn((row) => row.totalDeposits),
+    sortingFn: sortByBnToDecimal(
+      (row) => row.totalDeposits,
+      (row) => row.decimals,
+    ),
     cell: (props) => {
       const value = props.getValue();
       const fmtDeposits =
@@ -92,7 +98,10 @@ const getColumns = (nativeTokenSymbol: string) => [
     },
   }),
   COLUMN_HELPER.accessor('reward', {
-    sortingFn: sortByBn((row) => row.reward),
+    sortingFn: sortByBnToDecimal(
+      (row) => row.reward,
+      (row) => row.decimals,
+    ),
     header: () => (
       <HeaderCell
         title="Rewards"
@@ -118,7 +127,10 @@ const getColumns = (nativeTokenSymbol: string) => [
     },
   }),
   COLUMN_HELPER.accessor('tvl', {
-    sortingFn: sortByBn((row) => row.tvl),
+    sortingFn: sortByBnToDecimal(
+      (row) => row.tvl,
+      (row) => row.decimals,
+    ),
     header: () => (
       <HeaderCell
         title="TVL | Capacity"

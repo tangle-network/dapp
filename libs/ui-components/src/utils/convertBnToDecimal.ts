@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
 import { Decimal } from 'decimal.js';
 
-export default function convertBNToDecimal(bn: BN, decimals: number): Decimal {
+const convertBNToDecimal = (bn: BN, decimals: number): Decimal => {
   const decimalValue = new Decimal(bn.toString());
 
   // Scale the decimal value appropriately
@@ -9,4 +9,6 @@ export default function convertBNToDecimal(bn: BN, decimals: number): Decimal {
   const scaledDecimalValue = decimalValue.div(scaleFactor);
 
   return scaledDecimalValue;
-}
+};
+
+export default convertBNToDecimal;
