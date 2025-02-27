@@ -51,6 +51,7 @@ const FAQSection: FC<FAQSectionProps> = ({
           >
             <AccordionButton className="gap-2 px-0 py-4">
               <Typography
+                component="span"
                 variant="mkt-body2"
                 className="font-black text-mono-200"
               >

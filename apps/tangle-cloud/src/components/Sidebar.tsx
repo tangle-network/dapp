@@ -1,6 +1,5 @@
 'use client';
 
-import { HomeIcon } from '@radix-ui/react-icons';
 import CommandFillIcon from '@tangle-network/icons/CommandFillIcon';
 import { DocumentationIcon } from '@tangle-network/icons/DocumentationIcon';
 import GlobalLine from '@tangle-network/icons/GlobalLine';
@@ -23,12 +22,12 @@ import {
   TANGLE_DAPP_URL,
   TANGLE_DOCS_URL,
 } from '@tangle-network/ui-components/constants';
-import cx from 'classnames';
 import capitalize from 'lodash/capitalize';
 import { FC, useMemo } from 'react';
 import { useLocation } from 'react-router';
 import useRoleStore, { Role, ROLE_ICON_MAP } from '../stores/roleStore';
 import { PagePath } from '../types';
+import { ChevronRight, HomeFillIcon } from '@tangle-network/icons';
 
 type Props = {
   isExpandedByDefault?: boolean;
@@ -39,7 +38,7 @@ const SIDEBAR_ITEMS: SideBarItemProps[] = [
     name: 'Home',
     href: PagePath.INSTANCES,
     isInternal: true,
-    Icon: HomeIcon,
+    Icon: HomeFillIcon,
     subItems: [],
   },
   {
@@ -83,11 +82,12 @@ const ActionButton: FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
     <Dropdown>
       <DropdownButton
         isFullWidth
-        size="sm"
+        size="md"
         icon={ROLE_ICON_MAP[role]({ size: 'lg' })}
         isHideArrowIcon={!isExpanded}
         label={isExpanded ? capitalizedRole : ''}
-        className={cx('min-w-0 mx-auto', !isExpanded && 'px-2 w-fit')}
+        arrowElement={<ChevronRight />}
+        className="w-full px-4 py-4 !rounded-full normal-case border-none !bg-purple-50 justify-center font-bold"
       />
 
       <DropdownBody className="ml-2" side="right" align="center">

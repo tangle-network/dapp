@@ -1,8 +1,14 @@
+import { AccountStatsCard } from './AccountStatsCard';
+import { InstructionCard } from './InstructionCard';
+
 const Page = () => {
   return (
-    <div className="space-y-5">
-      <h1>Instances</h1>
-    </div>
+    <>
+      <div className="flex justify-between flex-wrap md:flex-nowrap gap-5">
+        <AccountStatsCard />
+        <InstructionCard />
+      </div>
+    </>
   );
 };
 
