@@ -11,12 +11,12 @@ export type RestakeVault = {
   name: string;
   representAssetSymbol: string;
   decimals: number;
-  capacity: BN | undefined;
-  reward: BN | undefined;
+  capacity?: BN;
+  reward?: BN;
   tokenCount: number;
-  available: BN | undefined;
-  totalDeposits: BN | undefined;
-  tvl: BN | undefined;
+  available?: BN;
+  totalDeposits?: BN;
+  tvl?: BN;
 };
 
 type Options = {

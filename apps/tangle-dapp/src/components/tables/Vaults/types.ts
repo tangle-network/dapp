@@ -4,7 +4,7 @@ import type { ComponentProps } from 'react';
 import type { RestakeVault } from '../../../utils/createVaultMap';
 
 export type Props = {
-  data?: RestakeVault[];
+  data: RestakeVault[] | null;
   isLoading?: boolean;
   loadingTableProps?: Partial<TableStatusProps>;
   emptyTableProps?: Partial<TableStatusProps>;

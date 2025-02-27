@@ -28,7 +28,7 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
 
   const vaults = useMemo(() => {
     if (assets === null) {
-      return [];
+      return null;
     }
     // Handle all vaults.
     else if (operatorData === undefined) {

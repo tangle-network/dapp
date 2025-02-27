@@ -225,8 +225,7 @@ const getColumns = (nativeTokenSymbol: string) => [
 ];
 
 const VaultsTable: FC<Props> = ({
-  data = [],
-  isLoading,
+  data,
   emptyTableProps,
   loadingTableProps,
   tableProps,
@@ -239,7 +238,7 @@ const VaultsTable: FC<Props> = ({
     useMemo(
       () =>
         ({
-          data,
+          data: data ?? [],
           columns: getColumns(nativeTokenSymbol),
           getCoreRowModel: getCoreRowModel(),
           getExpandedRowModel: getExpandedRowModel(),
@@ -252,6 +251,8 @@ const VaultsTable: FC<Props> = ({
       [data, nativeTokenSymbol],
     ),
   );
+
+  const isLoading = data === null;
 
   if (isLoading) {
     return (
