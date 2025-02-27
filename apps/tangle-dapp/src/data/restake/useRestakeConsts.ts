@@ -8,8 +8,8 @@ export type RestakeConsts = {
   delegationBondLessDelay: number | null;
   leaveDelegatorsDelay: number | null;
   leaveOperatorsDelay: number | null;
-  minDelegateAmount: number | null;
-  minOperatorBondAmount: number | null;
+  minDelegateAmount: bigint | null;
+  minOperatorBondAmount: bigint | null;
   operatorBondLessDelay: number | null;
 };
 
@@ -17,32 +17,60 @@ type RestakeConstsKeys = keyof MapKnownKeys<
   AugmentedConsts<'promise'>['multiAssetDelegation']
 >;
 
-const CONSTANTS = [
+const CONSTANTS_U32 = [
   'delegationBondLessDelay',
   'leaveDelegatorsDelay',
   'leaveOperatorsDelay',
-  'minDelegateAmount',
-  'minOperatorBondAmount',
   'operatorBondLessDelay',
 ] as const satisfies RestakeConstsKeys[];
 
-type ConstantName = (typeof CONSTANTS)[number];
+const CONSTANTS_U128 = [
+  'minDelegateAmount',
+  'minOperatorBondAmount',
+] as const satisfies RestakeConstsKeys[];
+
+type ConstantU32Name = (typeof CONSTANTS_U32)[number];
+type ConstantU128Name = (typeof CONSTANTS_U128)[number];
+type ConstantName = ConstantU32Name | ConstantU128Name;
 
 const useRestakeConsts = (): RestakeConsts => {
-  const [defaultConsts] = useState<RestakeConsts>(
-    () =>
-      Object.fromEntries(CONSTANTS.map((key) => [key, null])) as RestakeConsts,
-  );
+  // Create initial state with all values set to null
+  const [defaultConsts] = useState<RestakeConsts>(() => {
+    const initialState = {} as RestakeConsts;
+
+    // Initialize all U32 constants to null
+    CONSTANTS_U32.forEach((key) => {
+      initialState[key] = null;
+    });
+
+    // Initialize all U128 constants to null
+    CONSTANTS_U128.forEach((key) => {
+      initialState[key] = null;
+    });
+
+    return initialState;
+  });
 
   const { result: consts } = useApi(
     useCallback((api) => {
       const getConstant = (name: ConstantName) =>
-        getModuleConstant(api, 'multiAssetDelegation', name)?.toNumber() ??
-        null;
+        getModuleConstant(api, 'multiAssetDelegation', name);
 
-      return Object.fromEntries(
-        CONSTANTS.map((key) => [key, getConstant(key)]),
-      ) as RestakeConsts;
+      const result = {} as RestakeConsts;
+
+      // Process U32 constants
+      CONSTANTS_U32.forEach((key) => {
+        const value = getConstant(key);
+        result[key] = value ? value.toNumber() : null;
+      });
+
+      // Process U128 constants
+      CONSTANTS_U128.forEach((key) => {
+        const value = getConstant(key);
+        result[key] = value ? value.toBigInt() : null;
+      });
+
+      return result;
     }, []),
   );
 
