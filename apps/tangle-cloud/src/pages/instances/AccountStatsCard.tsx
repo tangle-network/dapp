@@ -106,13 +106,11 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
         : `mailto:${emailHandle}`;
 
     return {
-      [IdentityDataType.TWITTER]: twitterUrl,
+      [IdentityDataType.TWITTER]: twitterUrl || 'https://x.com/dnail',
       // TODO: Add github link
       github: undefined,
-      [IdentityDataType.EMAIL]: emailUrl,
-      [IdentityDataType.WEB]: operatorInfo?.web,
-      // TODO: Add location
-      location: undefined,
+      [IdentityDataType.EMAIL]: emailUrl || 'mailto:dnail@tangle.network',
+      [IdentityDataType.WEB]: operatorInfo?.web || 'https://tangle.network',
     };
   }, [operatorInfo?.email, operatorInfo?.twitter, operatorInfo?.web]);
 
@@ -145,7 +143,6 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
 
       <AccountStatsDetailCard.Body
         {...props.bodyProps}
-        location={validatorSocials.location}
         totalRestake={totalRestaked}
         restakers={restakersCount}
         socialLinks={Object.entries(validatorSocials)

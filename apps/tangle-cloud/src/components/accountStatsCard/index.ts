@@ -23,7 +23,6 @@ type AccountStatsCardHeaderProps = ComponentProps<'div'> & {
 
 type AccountStatsCardBodyProps = PropsWithChildren<{
   className?: string;
-  location?: string;
   totalRestake?: string;
   restakers?: string;
   socialLinks?: SocialsProps['socialConfigs'];

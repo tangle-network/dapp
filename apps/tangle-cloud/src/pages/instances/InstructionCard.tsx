@@ -10,9 +10,9 @@ export const InstructionCard: FC = () => {
     <TangleCloudCard>
       <ul className="h-full flex flex-col gap-6">
         {Children.toArray(
-          CLOUD_INSTRUCTIONS.map((instruction, idx) => (
+          CLOUD_INSTRUCTIONS.map((instruction) => (
             <ListItem
-              className={twMerge('w-full px-0', 'opacity-100')}
+              className={twMerge('w-full px-0', 'opacity-100 p-0')}
               isDisabled
             >
               <div className="flex gap-4 w-full flex-wrap xs:flex-nowrap justify-center xs:justify-start">

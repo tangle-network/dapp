@@ -29,7 +29,6 @@ export const IDENTITY_ICONS_RECORD = {
   [IdentityDataType.TWITTER]: TwitterFill,
   [IdentityDataType.EMAIL]: Mail,
   [IdentityDataType.WEB]: GlobalLine,
-  // [IdentityDataType.GITHUB]: GithubFill,
   github: GithubFill,
 };
 
