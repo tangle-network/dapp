@@ -1,35 +1,39 @@
+'use client';
+
 import { useConnectWallet } from '@tangle-network/api-provider-environment';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { useMemo } from 'react';
-import useNetworkStore from '../../context/useNetworkStore';
-import UpdateMetadataButton from '../UpdateMetadataButton';
-import WalletDropdown from './WalletDropdown';
-import ConnectWalletModal from './ConnectWalletModal';
-import {
-  assertSubstrateAddress,
-  isEvmAddress,
-  toSubstrateAddress,
-} from '@tangle-network/ui-components';
+import { isEvmAddress } from '@tangle-network/ui-components';
+import ConnectWalletModal from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton/ConnectWalletModal';
+import WalletDropdown from '@tangle-network/tangle-shared-ui/components/ConnectWalletButton/WalletDropdown';
+import useBridgeStore from '../../context/bridge/useBridgeStore';
+import { calculateTypedChainId } from '@tangle-network/dapp-types';
 
-const ConnectWalletButton = () => {
+const BridgeConnectWallet = () => {
   const { activeAccount, activeWallet, loading, isConnecting } =
     useWebContext();
 
-  const network = useNetworkStore((store) => store.network);
-  const { toggleModal } = useConnectWallet();
+  const { toggleModal: toggleConnectWalletModal } = useConnectWallet();
+
+  const selectedSourceChain = useBridgeStore(
+    (state) => state.selectedSourceChain,
+  );
+
+  const selectedSourceChainTypedChainId = useMemo(() => {
+    return calculateTypedChainId(
+      selectedSourceChain.chainType,
+      selectedSourceChain.id,
+    );
+  }, [selectedSourceChain]);
 
   const accountAddress = useMemo(() => {
-    if (activeAccount?.address === undefined) {
+    if (!activeAccount || activeAccount?.address === undefined) {
       return null;
     } else if (isEvmAddress(activeAccount.address)) {
       return activeAccount.address;
-    } else if (network.ss58Prefix === undefined) {
-      return assertSubstrateAddress(activeAccount.address);
     }
-
-    return toSubstrateAddress(activeAccount.address, network.ss58Prefix);
-  }, [activeAccount?.address, network.ss58Prefix]);
+  }, [activeAccount]);
 
   const isReady =
     !isConnecting && !loading && activeWallet && activeAccount !== null;
@@ -40,7 +44,9 @@ const ConnectWalletButton = () => {
         <Button
           isLoading={isConnecting || loading}
           loadingText={isConnecting ? 'Connecting' : undefined}
-          onClick={() => toggleModal(true)}
+          onClick={() =>
+            toggleConnectWalletModal(true, selectedSourceChainTypedChainId)
+          }
           className="flex items-center justify-center px-6"
         >
           Connect
@@ -52,8 +58,6 @@ const ConnectWalletButton = () => {
             accountName={activeAccount.name}
             wallet={activeWallet}
           />
-
-          <UpdateMetadataButton />
         </div>
       )}
 
@@ -62,4 +66,4 @@ const ConnectWalletButton = () => {
   );
 };
 
-export default ConnectWalletButton;
+export default BridgeConnectWallet;

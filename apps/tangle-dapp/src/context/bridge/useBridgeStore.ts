@@ -95,7 +95,7 @@ const useBridgeStore = create<BridgeStore>((set) => ({
   selectedDestinationChain: chainsConfig[PresetTypedChainId.TangleMainnetEVM],
 
   setSelectedSourceChain: (chain) =>
-    set(() => {
+    set((state) => {
       const availableDestinations = sortChainOptions(
         Object.keys(
           BRIDGE_CHAINS[calculateTypedChainId(chain.chainType, chain.id)],
@@ -111,11 +111,12 @@ const useBridgeStore = create<BridgeStore>((set) => ({
         ].supportedTokens;
 
       return {
-        selectedSourceChain: chain,
-        destinationChains: availableDestinations,
-        selectedDestinationChain: availableDestinations[0],
-        tokens,
-        selectedToken: tokens[0],
+        ...state,
+        selectedSourceChain: { ...chain },
+        destinationChains: [...availableDestinations],
+        selectedDestinationChain: { ...availableDestinations[0] },
+        tokens: [...tokens],
+        selectedToken: { ...tokens[0] },
       };
     }),
   setSelectedDestinationChain: (chain) =>

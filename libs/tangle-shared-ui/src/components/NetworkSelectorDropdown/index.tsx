@@ -1,7 +1,7 @@
 'use client';
 
 import { useWebContext } from '@tangle-network/api-provider-environment';
-import { ChainConfig, chainsPopulated } from '@tangle-network/dapp-config';
+import { chainsPopulated } from '@tangle-network/dapp-config';
 import { Alert, ChainIcon, ChevronDown, Spinner } from '@tangle-network/icons';
 import {
   calculateTypedChainId,
@@ -23,10 +23,7 @@ import useSwitchNetwork from '../../hooks/useSwitchNetwork';
 import createCustomNetwork from '../../utils/createCustomNetwork';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
-const NetworkSelectionButton: FC<{
-  isBridgePage?: boolean;
-  bridgeSourceChain?: ChainConfig;
-}> = ({ isBridgePage = false, bridgeSourceChain }) => {
+const NetworkSelectionButton: FC = () => {
   const { activeChain, activeWallet, isConnecting, loading, switchChain } =
     useWebContext();
 
@@ -66,57 +63,26 @@ const NetworkSelectionButton: FC<{
       return false;
     }
 
-    if (isBridgePage) {
-      return activeChain?.name !== bridgeSourceChain?.name;
-    }
-
     return (
       network.evmChainId !== undefined && network.evmChainId !== activeChain?.id
     );
-  }, [
-    activeChain?.id,
-    activeChain?.name,
-    activeWallet?.platform,
-    network.evmChainId,
-    bridgeSourceChain?.name,
-    isBridgePage,
-  ]);
+  }, [activeChain?.id, activeWallet?.platform, network.evmChainId]);
 
   const switchToCorrectEvmChain = useCallback(() => {
     if (!activeWallet) {
       return;
     }
 
-    if (isBridgePage) {
-      if (!bridgeSourceChain) {
-        return;
-      }
-      const typedChainId = calculateTypedChainId(
-        ChainType.EVM,
-        bridgeSourceChain.id,
-      );
-
-      const targetChain = chainsPopulated[typedChainId];
-
-      switchChain(targetChain, activeWallet);
-    } else {
-      if (!network.evmChainId) {
-        return;
-      }
-      const typedChainId = calculateTypedChainId(
-        ChainType.EVM,
-        network.evmChainId,
-      );
-      const targetChain = chainsPopulated[typedChainId];
-      switchChain(targetChain, activeWallet);
+    if (!network.evmChainId) {
+      return;
     }
-  }, [
-    activeWallet,
-    network.evmChainId,
-    switchChain,
-    isBridgePage,
-    bridgeSourceChain,
-  ]);
+    const typedChainId = calculateTypedChainId(
+      ChainType.EVM,
+      network.evmChainId,
+    );
+    const targetChain = chainsPopulated[typedChainId];
+    switchChain(targetChain, activeWallet);
+  }, [activeWallet, network.evmChainId, switchChain]);
 
   return (
     <div className="flex items-center gap-1">

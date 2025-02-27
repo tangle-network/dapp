@@ -1,13 +1,9 @@
 import { BN, BN_ZERO } from '@polkadot/util';
-import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
 import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
-import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
-import { useActiveWallet } from '@tangle-network/api-provider-environment/hooks/useActiveWallet';
 import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
-import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
-import chainsPopulated from '@tangle-network/dapp-config/chains/chainsPopulated';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
+import { chainsPopulated } from '@tangle-network/dapp-config';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
@@ -32,7 +28,7 @@ import {
   useModal,
 } from '@tangle-network/ui-components';
 import { Decimal } from 'decimal.js';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { formatEther } from 'viem';
 import { useBalance } from 'wagmi';
@@ -57,19 +53,17 @@ import useRouterQuote, {
 } from '../../data/bridge/useRouterQuote';
 import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
+import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
 
 type Props = {
   className?: string;
 };
 
 const BridgeContainer = ({ className }: Props) => {
-  const { switchChain } = useWebContext();
-  const [activeChain] = useActiveChain();
   const [activeAccount] = useActiveAccount();
   const { transferable: balance } = useBalances();
-  const [activeWallet] = useActiveWallet();
-  const { toggleModal: toggleConnectWalletModal } = useConnectWallet();
   const [isTxInProgress, setIsTxInProgress] = useState(false);
+  const { activeChain, activeWallet, switchChain } = useWebContext();
 
   const sourceChains = useBridgeStore(
     useShallow((store) => store.sourceChains),
@@ -84,7 +78,7 @@ const BridgeContainer = ({ className }: Props) => {
   );
 
   const setSelectedSourceChain = useBridgeStore(
-    (store) => store.setSelectedSourceChain,
+    useShallow((store) => store.setSelectedSourceChain),
   );
 
   const selectedDestinationChain = useBridgeStore(
@@ -525,18 +519,31 @@ const BridgeContainer = ({ className }: Props) => {
     return isEvmWallet && activeChain?.id !== selectedSourceChain.id;
   }, [activeChain?.id, activeWallet?.platform, selectedSourceChain.id]);
 
-  const isActionBtnDisabled = (() => {
-    if (!activeAccount || !activeChain || !activeWallet || isWrongChain) {
-      return false;
-    }
-
-    return (
+  const isActionBtnDisabled = useMemo(() => {
+    if (
+      !activeAccount ||
+      !activeChain ||
+      !activeWallet ||
+      isWrongChain ||
       !amount ||
       !destinationAddress ||
       isAmountInputError ||
       isAddressInputError
-    );
-  })();
+    ) {
+      return true;
+    }
+
+    return false;
+  }, [
+    activeAccount,
+    activeChain,
+    activeWallet,
+    isWrongChain,
+    amount,
+    destinationAddress,
+    isAmountInputError,
+    isAddressInputError,
+  ]);
 
   const isActionBtnLoading =
     isRouterQuoteLoading || isHyperlaneQuoteLoading || isTxInProgress;
@@ -552,8 +559,6 @@ const BridgeContainer = ({ className }: Props) => {
   const actionButtonText = (() => {
     if (isTxInProgress) {
       return 'Transaction in Progress';
-    } else if (!activeAccount || !activeWallet || !activeChain) {
-      return 'Connect Wallet';
     } else if (
       amount &&
       destinationAddress &&
@@ -570,9 +575,7 @@ const BridgeContainer = ({ className }: Props) => {
   })();
 
   const onClickActionBtn = useCallback(() => {
-    if (!activeAccount || !activeWallet || !activeChain) {
-      toggleConnectWalletModal(true, sourceTypedChainId);
-    } else if (
+    if (
       amount &&
       destinationAddress &&
       !isAmountInputError &&
@@ -590,19 +593,14 @@ const BridgeContainer = ({ className }: Props) => {
       }
     }
   }, [
-    activeAccount,
-    activeWallet,
-    activeChain,
     amount,
     destinationAddress,
     isAmountInputError,
     isAddressInputError,
     routerQuote,
-    routerQuoteError,
     hyperlaneQuote,
+    routerQuoteError,
     hyperlaneQuoteError,
-    toggleConnectWalletModal,
-    sourceTypedChainId,
     openConfirmBridgeModal,
     selectedToken.bridgeType,
     refetchHyperlaneQuote,
@@ -662,31 +660,6 @@ const BridgeContainer = ({ className }: Props) => {
       clearInterval(intervalId);
     };
   }, [refreshEvmBalances]);
-
-  const isSwitchingChainRef = useRef(false);
-
-  useEffect(() => {
-    if (
-      isWrongChain &&
-      activeWallet &&
-      activeAccount &&
-      !isSwitchingChainRef.current
-    ) {
-      isSwitchingChainRef.current = true;
-
-      const nextChain = chainsPopulated[sourceTypedChainId];
-
-      switchChain(nextChain, activeWallet).finally(() => {
-        isSwitchingChainRef.current = false;
-      });
-    }
-  }, [
-    isWrongChain,
-    activeWallet,
-    activeAccount,
-    sourceTypedChainId,
-    switchChain,
-  ]);
 
   return (
     <>
@@ -922,7 +895,17 @@ const BridgeContainer = ({ className }: Props) => {
             searchInputId="bridge-source-chain-search"
             onClose={closeSourceChainModal}
             chains={sourceChains}
-            onSelectChain={setSelectedSourceChain}
+            onSelectChain={(chain) => {
+              const typedChainId = calculateTypedChainId(
+                chain.chainType,
+                chain.id,
+              );
+              setSelectedSourceChain(chain);
+              const targetChain = chainsPopulated[typedChainId];
+              if (activeWallet) {
+                switchChain(targetChain, activeWallet);
+              }
+            }}
             chainType="source"
             showSearchInput
           />
