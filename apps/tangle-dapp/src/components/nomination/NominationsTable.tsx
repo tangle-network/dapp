@@ -10,6 +10,8 @@ import {
   Table,
   Typography,
 } from '@tangle-network/ui-components';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import sortByComparable from '@tangle-network/ui-components/utils/sortByComparable';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -20,10 +22,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { FC, useState } from 'react';
-
-import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import calculateCommission from '../../utils/calculateCommission';
-import sortByBn from '../../utils/sortByBn';
 import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
@@ -77,7 +76,7 @@ const COLUMNS = [
   COLUMN_HELPER.accessor('selfStakeAmount', {
     header: () => <HeaderCell title="Self-staked" className="justify-center" />,
     cell: (props) => <TokenAmountCell amount={props.getValue()} />,
-    sortingFn: sortByBn((row) => row.selfStakeAmount),
+    sortingFn: sortByComparable((row) => row.selfStakeAmount),
   }),
   COLUMN_HELPER.accessor('totalStakeAmount', {
     header: () => (
@@ -89,7 +88,7 @@ const COLUMNS = [
         formatStyle={AmountFormatStyle.SHORT}
       />
     ),
-    sortingFn: sortByBn((row) => row.totalStakeAmount),
+    sortingFn: sortByComparable((row) => row.totalStakeAmount),
   }),
   COLUMN_HELPER.accessor('nominatorCount', {
     header: () => <HeaderCell title="Nominations" className="justify-center" />,
@@ -102,7 +101,7 @@ const COLUMNS = [
     cell: (props) => (
       <PercentageCell percentage={calculateCommission(props.getValue())} />
     ),
-    sortingFn: sortByBn((row) => row.commission),
+    sortingFn: sortByComparable((row) => row.commission),
   }),
 ];
 
