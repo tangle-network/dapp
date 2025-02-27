@@ -242,9 +242,8 @@ const useRestakeAssets = () => {
     });
 
     // TODO: Balance should be what is locked in staking, for native restaking.
-    // Insert the native asset to allow for native restaking.
-    const nativeAsset: RestakeAssetMetadata = {
-      name: nativeTokenSymbol,
+    // Insert the network's native asset to allow for native restaking.
+    const nativeNetworkAsset: RestakeAssetMetadata = {
       symbol: nativeTokenSymbol,
       decimals: TANGLE_TOKEN_DECIMALS,
       assetId: NATIVE_ASSET_ID,
@@ -255,7 +254,7 @@ const useRestakeAssets = () => {
       priceInUsd: null,
     };
 
-    return [nativeAsset, ...nativeAssets];
+    return [nativeNetworkAsset, ...nativeAssets];
   }, [
     nativeAssetDetails,
     nativeAssetMetadatas,

@@ -11,12 +11,12 @@ export type RestakeVault = {
   name: string;
   representAssetSymbol: string;
   decimals: number;
+  capacity: BN | undefined;
+  reward: BN | undefined;
   tokenCount: number;
-  available: BN | null;
-  totalDeposits: BN | null;
-  tvl: BN | null;
-  capacity: BN | null;
-  reward: BN | null;
+  available: BN | undefined;
+  totalDeposits: BN | undefined;
+  tvl: BN | undefined;
 };
 
 type Options = {
@@ -41,21 +41,22 @@ const createVaultMap = ({
       continue;
     }
 
-    const available = asset.balance ?? null;
+    const available = asset.balance;
 
     const totalDeposits =
       typeof delegatorInfo?.deposits[asset.id]?.amount === 'bigint'
         ? new BN(delegatorInfo.deposits[asset.id].amount.toString())
-        : null;
+        : undefined;
 
-    const tvl = assetTvl?.get(asset.id) ?? null;
+    const tvl = assetTvl?.get(asset.id);
     const existingVault = vaults.get(asset.metadata.vaultId);
 
     if (existingVault === undefined) {
-      const capacity =
-        rewardConfig?.get(asset.metadata.vaultId)?.depositCap.toBn() ?? null;
+      const capacity = rewardConfig
+        ?.get(asset.metadata.vaultId)
+        ?.depositCap.toBn();
 
-      const reward = vaultsRewards?.get(asset.metadata.vaultId) ?? null;
+      const reward = vaultsRewards?.get(asset.metadata.vaultId);
 
       vaults.set(asset.metadata.vaultId, {
         id: asset.metadata.vaultId,
@@ -87,10 +88,10 @@ const createVaultMap = ({
   return vaults;
 };
 
-const tryAddBNs = (a: BN | null, b: BN | null): BN | null => {
-  if (a === null) {
+const tryAddBNs = (a: BN | undefined, b: BN | undefined): BN | undefined => {
+  if (a === undefined) {
     return b;
-  } else if (b === null) {
+  } else if (b === undefined) {
     return a;
   }
 

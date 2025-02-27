@@ -34,9 +34,9 @@ import calculateBnRatio from '../../../utils/calculateBnRatio';
 import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
 import { HeaderCell } from '../../tableCells';
 import type { Props } from './types';
-import { VaultType } from '../../../utils/calculateVaults';
+import { RestakeVault } from '../../../utils/createVaultMap';
 
-const COLUMN_HELPER = createColumnHelper<VaultType>();
+const COLUMN_HELPER = createColumnHelper<RestakeVault>();
 
 const getColumns = (nativeTokenSymbol: string) => [
   COLUMN_HELPER.accessor('name', {
