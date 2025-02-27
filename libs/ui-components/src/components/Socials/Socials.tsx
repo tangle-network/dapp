@@ -15,6 +15,7 @@ export const Socials = forwardRef<HTMLDivElement, SocialsProps>(
     {
       className,
       iconClassName = 'text-mono-180 dark:text-mono-0 hover:text-mono-140 dark:hover:text-mono-100',
+      innerIconClassName = '',
       iconPlacement = 'start',
       socialConfigs = defaultSocialConfigs,
       linkOverrides,
@@ -53,7 +54,12 @@ export const Socials = forwardRef<HTMLDivElement, SocialsProps>(
       >
         {resolvedSocialConfigs.map(({ Icon, name, ...linkProps }) => (
           <a key={name} {...linkProps} className={iconClassName}>
-            <Icon className="w-6 h-6 sm:w-8 sm:h-8 !fill-current" />
+            <Icon
+              className={twMerge(
+                'w-6 h-6 sm:w-8 sm:h-8 !fill-current',
+                innerIconClassName,
+              )}
+            />
           </a>
         ))}
       </div>

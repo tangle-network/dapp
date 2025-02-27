@@ -13,12 +13,16 @@ export interface SocialsProps extends PropsOf<'div'> {
    * The icon class name (use to override the icon style by tailwind classes)
    */
   iconClassName?: string;
+
+  /**
+   * The inner icon class name (use to override the icon style by tailwind classes)
+   */
+  innerIconClassName?: string;
+
   /**
    * The list of all social configs to render
    */
   socialConfigs?: Array<SocialConfigsType>;
 
-  linkOverrides?: Partial<
-    Record<(typeof TANGLE_AVAILABLE_SOCIALS)[number], string>
-  >;
+  linkOverrides?: Partial<Record<SocialConfigsType['name'], string>>;
 }
