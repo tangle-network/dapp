@@ -1,14 +1,5 @@
 import { DeriveSessionProgress } from '@polkadot/api-derive/types';
 import { BN } from '@polkadot/util';
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
-} from '@tanstack/react-table';
 import { WalletPayIcon } from '@tangle-network/icons';
 import {
   AddressWithIdentity,
@@ -24,14 +15,22 @@ import {
   Table,
   Typography,
 } from '@tangle-network/ui-components';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import sortByComparable from '@tangle-network/ui-components/utils/sortByComparable';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+} from '@tanstack/react-table';
 import { type FC, useState } from 'react';
-
+import PayoutTxModal from '../containers/PayoutTxContainer';
 import { HeaderCell, StringCell } from './tableCells';
 import TokenAmountCell from './tableCells/TokenAmountCell';
-import sortByBn from '../utils/sortByBn';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
-import PayoutTxModal from '../containers/PayoutTxContainer';
 
 const COLUMN_HELPER = createColumnHelper<Payout>();
 
@@ -123,7 +122,7 @@ const PayoutTable: FC<Props> = ({
             formatStyle={AmountFormatStyle.SHORT}
           />
         ),
-        sortingFn: sortByBn((row) => row.validatorTotalStake),
+        sortingFn: sortByComparable((row) => row.validatorTotalStake),
       }),
       COLUMN_HELPER.accessor('nominators', {
         header: () => (
@@ -157,7 +156,7 @@ const PayoutTable: FC<Props> = ({
             formatStyle={AmountFormatStyle.SHORT}
           />
         ),
-        sortingFn: sortByBn((row) => row.validatorTotalReward),
+        sortingFn: sortByComparable((row) => row.validatorTotalReward),
       }),
       COLUMN_HELPER.accessor('nominatorTotalReward', {
         header: () => (
@@ -166,7 +165,7 @@ const PayoutTable: FC<Props> = ({
         cell: (props) => {
           return <TokenAmountCell amount={props.getValue()} />;
         },
-        sortingFn: sortByBn((row) => row.nominatorTotalReward),
+        sortingFn: sortByComparable((row) => row.nominatorTotalReward),
       }),
       COLUMN_HELPER.display({
         id: 'remaining',

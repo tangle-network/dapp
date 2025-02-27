@@ -1,4 +1,4 @@
-import { ComponentProps, useMemo, useState, type FC } from 'react';
+import { useMemo, useState, type FC } from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -11,37 +11,13 @@ import {
   EnergyChipColors,
   EnergyChipStack,
   getRoundedAmountString,
-  Table,
   Typography,
 } from '@tangle-network/ui-components';
 import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
 import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '@tangle-network/tangle-shared-ui/components/tables/TangleCloudTable';
-
-export type BlueprintMonitoringItem = {
-  id: string;
-  name: string;
-  author: string;
-  imgUrl: string | null;
-  description: string | null;
-  restakersCount: number | null;
-  operatorsCount: number | null;
-  tvl: number | null;
-  uptime: number | null;
-  pricing: number | null;
-  pricingUnit: string | null;
-  instanceCount: number | null;
-};
-
-export type BlueprintMonitoringTableProps = {
-  blueprints: BlueprintMonitoringItem[];
-  isLoading: boolean;
-  error: Error | null;
-  loadingTableProps?: Partial<TableStatusProps>;
-  emptyTableProps?: Partial<TableStatusProps>;
-  tableConfig?: Partial<ComponentProps<typeof Table<BlueprintMonitoringItem>>>;
-};
+import { BlueprintMonitoringItem } from './type';
 
 const columnHelper = createColumnHelper<BlueprintMonitoringItem>();
 

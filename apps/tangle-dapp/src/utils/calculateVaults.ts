@@ -7,17 +7,19 @@ import {
   RestakeAssetMetadata,
 } from '@tangle-network/tangle-shared-ui/types/restake';
 
+// Use undefined for values that are not available
+// as React Table does not support sorting by null values
 export type VaultType = {
   id: number;
   name: string;
   representAssetSymbol: string;
   decimals: number;
-  capacity: BN | null;
-  reward: BN | null;
+  capacity: BN | undefined;
+  reward: BN | undefined;
   tokenCount: number;
-  available: BN | null;
-  totalDeposits: BN | null;
-  tvl: BN | null;
+  available: BN | undefined;
+  totalDeposits: BN | undefined;
+  tvl: BN | undefined;
 };
 
 type CalculateVaultsParams = {
@@ -47,20 +49,20 @@ const calculateVaults = ({
     const available =
       typeof balances[assetId]?.balance === 'bigint'
         ? new BN(balances[assetId].balance.toString())
-        : null;
+        : undefined;
 
     const totalDeposits =
       typeof delegatorInfo?.deposits[assetId]?.amount === 'bigint'
         ? new BN(delegatorInfo.deposits[assetId].amount.toString())
-        : null;
+        : undefined;
 
-    const tvl = assetTvl?.get(assetId) ?? null;
+    const tvl = assetTvl?.get(assetId);
 
     const existingVault = vaults.get(vaultId);
 
     if (existingVault === undefined) {
-      const capacity = rewardConfig?.get(vaultId)?.depositCap.toBn() ?? null;
-      const reward = vaultsRewards?.get(vaultId) ?? null;
+      const capacity = rewardConfig?.get(vaultId)?.depositCap.toBn();
+      const reward = vaultsRewards?.get(vaultId);
 
       vaults.set(vaultId, {
         id: vaultId,
@@ -93,9 +95,12 @@ const calculateVaults = ({
 };
 
 // Helper function to add BN values if they're valid
-const addBNsIfValid = (existing: BN | null, newValue: BN | null): BN | null => {
-  if (existing === null) return newValue;
-  if (newValue === null) return existing;
+const addBNsIfValid = (
+  existing: BN | undefined,
+  newValue: BN | undefined,
+): BN | undefined => {
+  if (existing === undefined) return newValue;
+  if (newValue === undefined) return existing;
   return existing.add(newValue);
 };
 

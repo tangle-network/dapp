@@ -125,15 +125,17 @@ const VaultAssetsTable: FC<Props> = ({ data, isShown }) => {
   );
 
   return (
-    <Table
-      variant={TableVariant.GLASS_INNER}
-      tableProps={table}
-      title={pluralize('asset', data.length !== 1)}
-      className={twMerge(
-        isShown ? 'animate-slide-down' : 'animate-slide-up',
-        'bg-mono-20 dark:bg-mono-180 -mt-1',
-      )}
-    />
+    <div className="px-3 pb-3">
+      <Table
+        variant={TableVariant.GLASS_INNER}
+        tableProps={table}
+        title={pluralize('asset', data.length !== 1)}
+        className={twMerge(
+          isShown ? 'animate-slide-down' : 'animate-slide-up',
+          'bg-mono-40/50 dark:bg-mono-200 -mt-1',
+        )}
+      />
+    </div>
   );
 };
 

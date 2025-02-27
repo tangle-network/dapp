@@ -1,12 +1,3 @@
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  getExpandedRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  TableOptions,
-  useReactTable,
-} from '@tanstack/react-table';
 import { ChevronDown } from '@tangle-network/icons/ChevronDown';
 import Spinner from '@tangle-network/icons/Spinner';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
@@ -25,13 +16,22 @@ import {
 } from '@tangle-network/ui-components/utils/formatDisplayAmount';
 import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import sortByBnToDecimal from '@tangle-network/ui-components/utils/sortByBnToDecimal';
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  TableOptions,
+  useReactTable,
+} from '@tanstack/react-table';
 import { FC, useMemo } from 'react';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { PagePath, QueryParamKey } from '../../../types';
 import calculateBnRatio from '../../../utils/calculateBnRatio';
 import type { VaultType } from '../../../utils/calculateVaults';
-import sortByBn from '../../../utils/sortByBn';
 import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
 import { HeaderCell } from '../../tableCells';
 import type { Props } from './types';
@@ -58,12 +58,16 @@ const getColumns = (nativeTokenSymbol: string) => [
     sortDescFirst: true,
   }),
   COLUMN_HELPER.accessor('available', {
+    sortUndefined: 'last',
+    sortingFn: sortByBnToDecimal(
+      (row) => row.available,
+      (row) => row.decimals,
+    ),
     header: () => 'Available',
-    sortingFn: sortByBn((row) => row.available),
     cell: (props) => {
       const value = props.getValue();
       const fmtAvailable =
-        value === null
+        value === undefined
           ? EMPTY_VALUE_PLACEHOLDER
           : formatDisplayAmount(
               value,
@@ -75,12 +79,16 @@ const getColumns = (nativeTokenSymbol: string) => [
     },
   }),
   COLUMN_HELPER.accessor('totalDeposits', {
+    sortUndefined: 'last',
+    sortingFn: sortByBnToDecimal(
+      (row) => row.totalDeposits,
+      (row) => row.decimals,
+    ),
     header: () => 'Deposits',
-    sortingFn: sortByBn((row) => row.totalDeposits),
     cell: (props) => {
       const value = props.getValue();
       const fmtDeposits =
-        value === null
+        value === undefined
           ? EMPTY_VALUE_PLACEHOLDER
           : formatDisplayAmount(
               value,
@@ -92,7 +100,11 @@ const getColumns = (nativeTokenSymbol: string) => [
     },
   }),
   COLUMN_HELPER.accessor('reward', {
-    sortingFn: sortByBn((row) => row.reward),
+    sortUndefined: 'last',
+    sortingFn: sortByBnToDecimal(
+      (row) => row.reward,
+      (row) => row.decimals,
+    ),
     header: () => (
       <HeaderCell
         title="Rewards"
@@ -102,7 +114,7 @@ const getColumns = (nativeTokenSymbol: string) => [
     cell: (props) => {
       const value = props.getValue();
       const fmtRewards =
-        value === null
+        value === undefined
           ? EMPTY_VALUE_PLACEHOLDER
           : formatDisplayAmount(
               value,
@@ -118,7 +130,11 @@ const getColumns = (nativeTokenSymbol: string) => [
     },
   }),
   COLUMN_HELPER.accessor('tvl', {
-    sortingFn: sortByBn((row) => row.tvl),
+    sortUndefined: 'last',
+    sortingFn: sortByBnToDecimal(
+      (row) => row.tvl,
+      (row) => row.decimals,
+    ),
     header: () => (
       <HeaderCell
         title="TVL | Capacity"
@@ -129,7 +145,7 @@ const getColumns = (nativeTokenSymbol: string) => [
       const tvl = props.getValue();
 
       const fmtTvl =
-        tvl === null
+        tvl === undefined
           ? EMPTY_VALUE_PLACEHOLDER
           : formatDisplayAmount(
               tvl,
@@ -140,7 +156,7 @@ const getColumns = (nativeTokenSymbol: string) => [
       const depositCap = props.row.original.capacity;
 
       const fmtDepositCap =
-        depositCap === null
+        depositCap === undefined
           ? '∞'
           : formatDisplayAmount(
               depositCap,
@@ -149,7 +165,7 @@ const getColumns = (nativeTokenSymbol: string) => [
             );
 
       const capacityPercentage =
-        tvl === null || depositCap === null
+        tvl === undefined || depositCap === undefined
           ? null
           : calculateBnRatio(tvl, depositCap);
 
@@ -195,7 +211,7 @@ const getColumns = (nativeTokenSymbol: string) => [
             <div
               className={twMerge(
                 '!text-current transition-transform duration-300 ease-in-out',
-                row.getIsExpanded() ? '' : 'rotate-180',
+                row.getIsExpanded() ? 'rotate-180' : '',
               )}
             >
               <ChevronDown className="!fill-current" />
@@ -266,11 +282,27 @@ const VaultsTable: FC<Props> = ({
       {...tableProps}
       tableProps={table}
       className={tableProps?.className}
-      tableClassName={tableProps?.tableClassName}
-      thClassName={tableProps?.thClassName}
-      tbodyClassName={tableProps?.tbodyClassName}
-      trClassName={tableProps?.trClassName}
-      tdClassName={tableProps?.tdClassName}
+      tableWrapperClassName="py-2"
+      tableClassName={twMerge(
+        'border-collapse border-spacing-0',
+        tableProps?.tableClassName,
+      )}
+      expandedRowClassName={twMerge(
+        'bg-mono-0 dark:bg-mono-180',
+        'peer-[&[data-expanded="true"]:hover]:bg-mono-20',
+        'peer-[&[data-expanded="true"]:hover]:dark:bg-mono-170',
+      )}
+      thClassName={twMerge('py-2', tableProps?.thClassName)}
+      tbodyClassName={twMerge(
+        '[&_tr:first-child_td:first-child]:rounded-tl-xl [&_tr:first-child_td:last-child]:rounded-tr-xl',
+        '[&_tr:last-child_td:first-child]:rounded-bl-xl [&_tr:last-child_td:last-child]:rounded-br-xl',
+        tableProps?.tbodyClassName,
+      )}
+      trClassName={twMerge('border-b-0', tableProps?.trClassName)}
+      tdClassName={twMerge(
+        'first:rounded-l-none last:rounded-r-none',
+        tableProps?.tdClassName,
+      )}
       paginationClassName={tableProps?.paginationClassName}
     />
   );
