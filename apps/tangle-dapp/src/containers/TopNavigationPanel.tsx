@@ -2,7 +2,7 @@ import ConnectWalletButton from '@tangle-network/tangle-shared-ui/components/Con
 import { type FC } from 'react';
 
 import NetworkSelectionButton from '../components/NetworkSelectorButton';
-import TxHistoryDrawer from '../components/TxHistoryDrawer';
+// import TxHistoryDrawer from '../components/TxHistoryDrawer';
 
 const TopNavigationPanel: FC = () => {
   return (
