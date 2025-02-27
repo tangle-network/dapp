@@ -4,8 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { TabsRoot, TabsList, TabTrigger } from '../Tabs';
 import { Typography } from '../../typography';
 import { TableAndChartTabsProps } from './types';
-
-const BLANK_TAB_VALUE = 'blank-tab';
+import cx from 'classnames';
 
 export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
   tabs,
@@ -33,7 +32,13 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
         )}
       >
         {/* Tabs List on the left */}
-        <TabsList className={twMerge('space-x-4 w-full', listClassName)}>
+        <TabsList
+          className={twMerge(
+            'space-x-4 w-full',
+            cx({ relative: enableAdvancedDivider }),
+            listClassName,
+          )}
+        >
           {tabs.map((tab, idx) => {
             return (
               <TabTrigger
@@ -44,6 +49,12 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
                   'text-mono-100 radix-state-active:text-mono-200',
                   'dark:radix-state-active:!text-mono-0',
                   'flex gap-2 items-center',
+                  cx({
+                    'border-b-2 py-4': enableAdvancedDivider,
+                    'aria-selected:border-blue-50 border-transparent': enableAdvancedDivider,
+                    '[&>*]:opacity-50 [&[aria-selected="true"]>*]:opacity-100':
+                      enableAdvancedDivider,
+                  }),
                   triggerClassName,
                 )}
               >
@@ -61,22 +72,8 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
               </TabTrigger>
             );
           })}
-
           {enableAdvancedDivider && (
-            <TabTrigger
-              value={BLANK_TAB_VALUE}
-              isDisableStyle
-              className={twMerge(
-                'border-b-2 border-mono-170 py-4 !ml-0 flex-grow',
-              )}
-            >
-              <Typography
-                variant={triggerTypographyVariant}
-                className="!text-transparent"
-              >
-                {BLANK_TAB_VALUE}
-              </Typography>
-            </TabTrigger>
+            <hr className="absolute bottom-0 -left-4 w-full border-mono-170 z-0" />
           )}
         </TabsList>
 

@@ -27,7 +27,7 @@ export const RegisteredBlueprintsTabs = () => {
       value={selectedTab}
       onValueChange={(tab) => setSelectedTab(tab as ERegisteredBlueprintsTab)}
       className="space-y-9 w-full"
-      triggerClassName="border-b-2 py-4 aria-selected:border-blue-50 border-mono-170 [&>*]:opacity-50 [&[aria-selected='true']>*]:opacity-100"
+      triggerClassName=""
       enableAdvancedDivider
     >
       <TabContent
