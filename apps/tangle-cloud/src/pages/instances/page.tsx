@@ -1,7 +1,7 @@
-import { RegisteredBlueprintsTabs } from './RegisteredBlueprints';
 import { AccountStatsCard } from './AccountStatsCard';
 import { InstructionCard } from './InstructionCard';
-import { InstancesTabs } from './Instances';
+import { RegisteredBlueprintsTabs } from './registeredBlueprints';
+import { InstancesTabs } from './instances';
 
 const Page = () => {
   return (
