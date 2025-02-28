@@ -77,14 +77,6 @@ const BridgeContainer = ({ network, className }: Props) => {
     useShallow((store) => store.sourceChains),
   );
 
-  const srcChains = useMemo(() => {
-    if (network.name === 'Tangle Mainnet') {
-      return sourceChains.filter((chain) => chain.tag === 'live');
-    }
-
-    return sourceChains.filter((chain) => chain.tag === 'test');
-  }, [network.name, sourceChains]);
-
   const destinationChains = useBridgeStore(
     useShallow((store) => store.destinationChains),
   );
@@ -104,6 +96,20 @@ const BridgeContainer = ({ network, className }: Props) => {
   const setSelectedDestinationChain = useBridgeStore(
     (store) => store.setSelectedDestinationChain,
   );
+
+  const srcChains = useMemo(() => {
+    if (network.name === 'Tangle Mainnet') {
+      const mainnetChains = sourceChains.filter(
+        (chain) => chain.tag === 'live',
+      );
+      setSelectedSourceChain(mainnetChains[0]);
+      return mainnetChains;
+    }
+
+    const testnetChains = sourceChains.filter((chain) => chain.tag === 'test');
+    setSelectedSourceChain(testnetChains[0]);
+    return testnetChains;
+  }, [network.name, setSelectedSourceChain, sourceChains]);
 
   const sourceTypedChainId = useMemo(() => {
     return calculateTypedChainId(
