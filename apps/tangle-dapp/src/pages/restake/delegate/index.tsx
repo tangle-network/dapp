@@ -77,7 +77,7 @@ const RestakeDelegateForm: FC = () => {
     [setFormValue],
   );
 
-  // Register select fields on mount
+  // Register select fields on mount.
   useEffect(() => {
     register('assetId', { required: 'Asset is required' });
     register('operatorAccountId', { required: 'Operator is required' });
@@ -161,6 +161,8 @@ const RestakeDelegateForm: FC = () => {
     if (!isDefined(delegatorInfo)) {
       return [];
     }
+
+    // TODO: For native restaking, insert the native token's staked balance as available as well. Whatever is staked is already considered 'deposited' in restaking.
 
     return Object.entries(delegatorInfo.deposits).flatMap(
       ([assetIdString, { amount, delegatedAmount }]) => {

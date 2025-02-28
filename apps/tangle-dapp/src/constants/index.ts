@@ -76,6 +76,7 @@ export enum TxName {
   RESTAKE_CANCEL_WITHDRAW = 'restake cancel withdraw',
   CLAIM_REWARDS = 'claim rewards',
   DEMOCRACY_UNLOCK = 'unlock democracy',
+  RESTAKE_NATIVE = 'restake native',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =
