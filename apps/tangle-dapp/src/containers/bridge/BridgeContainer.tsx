@@ -69,10 +69,6 @@ const BridgeContainer = () => {
   const { toggleModal: toggleConnectWalletModal } = useConnectWallet();
   const [isTxInProgress, setIsTxInProgress] = useState(false);
 
-  const sourceChains = useBridgeStore(
-    useShallow((store) => store.sourceChains),
-  );
-
   const destinationChains = useBridgeStore(
     useShallow((store) => store.destinationChains),
   );
