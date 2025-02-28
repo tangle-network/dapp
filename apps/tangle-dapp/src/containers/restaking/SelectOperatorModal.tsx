@@ -1,9 +1,7 @@
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
 import type { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { useMemo } from 'react';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { DEFAULT_DECIMALS } from '@tangle-network/dapp-config';
 import { formatUnits } from 'viem';
 import filterBy from '../../utils/filterBy';
 import OperatorListItem from '../../components/Lists/OperatorListItem';
@@ -12,6 +10,7 @@ import {
   formatDisplayAmount,
 } from '@tangle-network/ui-components';
 import { BN } from '@polkadot/util';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -33,7 +32,7 @@ const SelectOperatorModal = ({
   onItemSelected,
   operatorIdentities,
 }: Props) => {
-  const { assets } = useRestakeContext();
+  const { assets } = useRestakeAssets();
 
   // Aggregate the delegations based on the operator account ID and asset ID.
   const delegations = useMemo(() => {
@@ -55,9 +54,16 @@ const SelectOperatorModal = ({
       titleWhenEmpty="No Delegation Found"
       descriptionWhenEmpty="Have you deposited or delegated an asset to an operator yet?"
       onSelect={(item) => {
-        const asset = assets[item.assetId];
-        const decimals = asset?.decimals || DEFAULT_DECIMALS;
-        const fmtAmount = formatUnits(item.amountBonded, decimals);
+        const asset = assets?.get(item.assetId);
+
+        if (asset === undefined) {
+          return;
+        }
+
+        const fmtAmount = formatUnits(
+          item.amountBonded,
+          asset.metadata.decimals,
+        );
 
         onItemSelected({
           ...item,
@@ -65,13 +71,13 @@ const SelectOperatorModal = ({
         });
       }}
       filterItem={(delegation, query) => {
-        const metadata = assets[delegation.assetId];
+        const asset = assets?.get(delegation.assetId);
 
-        if (metadata === undefined) {
+        if (asset === undefined) {
           return false;
         }
 
-        const assetSymbol = metadata?.symbol;
+        const assetSymbol = asset.metadata.symbol;
 
         const identityName =
           operatorIdentities?.[delegation.operatorAccountId]?.name;
@@ -83,7 +89,7 @@ const SelectOperatorModal = ({
         ]);
       }}
       renderItem={({ amountBonded, assetId, operatorAccountId }) => {
-        const asset = assets[assetId];
+        const asset = assets?.get(assetId);
 
         if (asset === undefined) {
           return null;
@@ -91,7 +97,7 @@ const SelectOperatorModal = ({
 
         const fmtAmount = formatDisplayAmount(
           new BN(amountBonded.toString()),
-          asset.decimals,
+          asset.metadata.decimals,
           AmountFormatStyle.SHORT,
         );
 
@@ -101,7 +107,7 @@ const SelectOperatorModal = ({
           <OperatorListItem
             accountAddress={operatorAccountId}
             identity={identityName ?? undefined}
-            rightUpperText={`${fmtAmount} ${asset.symbol}`}
+            rightUpperText={`${fmtAmount} ${asset.metadata.symbol}`}
             rightBottomText="Delegated"
           />
         );

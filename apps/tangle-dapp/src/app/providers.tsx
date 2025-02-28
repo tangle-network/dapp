@@ -11,7 +11,6 @@ import { z } from 'zod';
 import HyperlaneWarpContext from '../context/bridge/HyperlaneWarpContext';
 import BridgeTxQueueProvider from '../context/bridge/BridgeTxQueueContext/BridgeTxQueueProvider';
 import PolkadotApiProvider from '@tangle-network/tangle-shared-ui/context/PolkadotApiProvider';
-import { RestakeContextProvider } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 
 const appEvent = new AppEvent();
 
@@ -51,9 +50,7 @@ const Providers = ({
         >
           <HyperlaneWarpContext>
             <BridgeTxQueueProvider>
-              <PolkadotApiProvider>
-                <RestakeContextProvider>{children}</RestakeContextProvider>
-              </PolkadotApiProvider>
+              <PolkadotApiProvider>{children}</PolkadotApiProvider>
             </BridgeTxQueueProvider>
           </HyperlaneWarpContext>
         </OFACFilterProvider>

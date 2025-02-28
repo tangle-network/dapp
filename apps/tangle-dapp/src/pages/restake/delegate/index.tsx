@@ -3,7 +3,6 @@ import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import { useRpcSubscription } from '@tangle-network/tangle-shared-ui/hooks/usePolkadotApi';
@@ -42,8 +41,9 @@ import parseChainUnits from '../../../utils/parseChainUnits';
 import { BN } from '@polkadot/util';
 import useRestakeApi from '../../../data/restake/useRestakeApi';
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
-import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
+import { RestakeAssetTableItem } from '@tangle-network/tangle-shared-ui/types/restake';
 import useRestakeAsset from '../../../data/restake/useRestakeAsset';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -83,7 +83,7 @@ const RestakeDelegateForm: FC = () => {
     register('operatorAccountId', { required: 'Operator is required' });
   }, [register]);
 
-  const { assets } = useRestakeContext();
+  const { assets } = useRestakeAssets();
   const restakeApi = useRestakeApi();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorMap } = useRestakeOperatorMap();
@@ -157,7 +157,7 @@ const RestakeDelegateForm: FC = () => {
     update: updateOperatorModal,
   } = useModal(false);
 
-  const depositedAssets = useMemo<RestakeAsset[]>(() => {
+  const depositedAssets = useMemo<RestakeAssetTableItem[]>(() => {
     if (!isDefined(delegatorInfo)) {
       return [];
     }
@@ -166,25 +166,25 @@ const RestakeDelegateForm: FC = () => {
       ([assetIdString, { amount, delegatedAmount }]) => {
         const assetId = assertRestakeAssetId(assetIdString);
         const balance = new BN((amount - delegatedAmount).toString());
-        const metadata = assets[assetId];
+        const asset = assets?.get(assetId);
 
-        if (metadata === undefined) {
+        if (asset === undefined) {
           return [];
         }
 
         return {
-          id: metadata.assetId,
-          name: metadata.name,
-          symbol: metadata.symbol,
-          decimals: metadata.decimals,
+          id: asset.id,
+          name: asset.metadata.name,
+          symbol: asset.metadata.symbol,
+          decimals: asset.metadata.decimals,
           balance,
-        } satisfies RestakeAsset;
+        } satisfies RestakeAssetTableItem;
       },
     );
   }, [assets, delegatorInfo]);
 
   const handleAssetSelect = useCallback(
-    (asset: RestakeAsset) => {
+    (asset: RestakeAssetTableItem) => {
       setValue('assetId', asset.id);
       closeAssetModal();
     },
@@ -212,7 +212,7 @@ const RestakeDelegateForm: FC = () => {
         return;
       }
 
-      const amountBn = parseChainUnits(amount, selectedAsset.decimals);
+      const amountBn = parseChainUnits(amount, selectedAsset.metadata.decimals);
 
       if (!(amountBn instanceof BN)) {
         return;
@@ -224,7 +224,7 @@ const RestakeDelegateForm: FC = () => {
       setValue('amount', '', { shouldValidate: false });
       setValue('assetId', '', { shouldValidate: false });
     },
-    [isReady, restakeApi, selectedAsset?.decimals, setValue],
+    [isReady, restakeApi, selectedAsset?.metadata.decimals, setValue],
   );
 
   const operators = useMemo<RestakeOperator[]>(() => {
