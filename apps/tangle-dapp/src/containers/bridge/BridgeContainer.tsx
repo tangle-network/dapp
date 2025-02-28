@@ -57,14 +57,10 @@ import useRouterQuote, {
 } from '../../data/bridge/useRouterQuote';
 import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
-import { Network } from '@tangle-network/ui-components/constants/networks';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
-type Props = {
-  network: Network;
-  className?: string;
-};
-
-const BridgeContainer = ({ network, className }: Props) => {
+const BridgeContainer = () => {
+  const { network } = useNetworkStore();
   const { switchChain } = useWebContext();
   const [activeChain] = useActiveChain();
   const [activeAccount] = useActiveAccount();
@@ -716,10 +712,7 @@ const BridgeContainer = ({ network, className }: Props) => {
 
       <Card
         withShadow
-        className={twMerge(
-          'flex flex-col gap-7 w-full max-w-[550px] mx-auto relative',
-          className,
-        )}
+        className="flex flex-col gap-7 w-full max-w-[550px] mx-auto relative"
       >
         <div className="flex flex-col gap-7">
           {' '}
