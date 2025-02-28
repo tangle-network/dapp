@@ -30,13 +30,13 @@ import { FC, useMemo } from 'react';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { PagePath, QueryParamKey } from '../../../types';
-import calculateBnRatio from '@tangle-network/ui-components/utils/calculateBnRatio';
-import type { VaultType } from '@tangle-network/ui-components/utils/calculateVaults';
+import calculateBnRatio from '../../../utils/calculateBnRatio';
 import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
 import { HeaderCell } from '../../tableCells';
 import type { Props } from './types';
+import { RestakeVault } from '../../../utils/createVaultMap';
 
-const COLUMN_HELPER = createColumnHelper<VaultType>();
+const COLUMN_HELPER = createColumnHelper<RestakeVault>();
 
 const getColumns = (nativeTokenSymbol: string) => [
   COLUMN_HELPER.accessor('name', {
@@ -225,8 +225,7 @@ const getColumns = (nativeTokenSymbol: string) => [
 ];
 
 const VaultsTable: FC<Props> = ({
-  data = [],
-  isLoading,
+  data,
   emptyTableProps,
   loadingTableProps,
   tableProps,
@@ -239,7 +238,7 @@ const VaultsTable: FC<Props> = ({
     useMemo(
       () =>
         ({
-          data,
+          data: data ?? [],
           columns: getColumns(nativeTokenSymbol),
           getCoreRowModel: getCoreRowModel(),
           getExpandedRowModel: getExpandedRowModel(),
@@ -248,10 +247,12 @@ const VaultsTable: FC<Props> = ({
           getRowCanExpand: (row) => row.original.tokenCount > 0,
           autoResetPageIndex: false,
           enableSortingRemoval: false,
-        }) satisfies TableOptions<VaultType>,
+        }) satisfies TableOptions<RestakeVault>,
       [data, nativeTokenSymbol],
     ),
   );
+
+  const isLoading = data === null;
 
   if (isLoading) {
     return (

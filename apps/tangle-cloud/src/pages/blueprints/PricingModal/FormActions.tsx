@@ -2,7 +2,7 @@ import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { ModalFooter } from '@tangle-network/ui-components/components/Modal';
 import { OPERATOR_PRICING_URL } from '../../../constants/links';
 
-export default function FormActions() {
+const FormActions = () => {
   return (
     <ModalFooter className="px-0">
       <Button
@@ -19,4 +19,6 @@ export default function FormActions() {
       </Button>
     </ModalFooter>
   );
-}
+};
+
+export default FormActions;

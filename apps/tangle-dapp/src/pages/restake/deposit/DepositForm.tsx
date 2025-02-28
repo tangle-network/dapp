@@ -1,11 +1,8 @@
-import { BN } from '@polkadot/util';
-import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { TokenIcon } from '@tangle-network/icons';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
-import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 import {
   AmountFormatStyle,
   Card,
@@ -24,7 +21,6 @@ import {
   useRef,
 } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { formatUnits } from 'viem';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import StyleContainer from '../../../components/restaking/StyleContainer';
 import { SUPPORTED_RESTAKE_DEPOSIT_TYPED_CHAIN_IDS } from '../../../constants/restake';
@@ -41,6 +37,8 @@ import RestakeTabs from '../RestakeTabs';
 import ActionButton from './ActionButton';
 import Details from './Details';
 import SourceChainInput from './SourceChainInput';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import { RestakeAsset } from '@tangle-network/tangle-shared-ui/types/restake';
 
 const getDefaultTypedChainId = (
   activeTypedChainId: number | null,
@@ -77,8 +75,7 @@ const DepositForm: FC<Props> = (props) => {
     QueryParamKey.RESTAKE_VAULT,
   );
 
-  const { assetWithBalances, isLoading, refetchErc20Balances } =
-    useRestakeContext();
+  const { assets, refetchErc20Balances } = useRestakeAssets();
   const restakeApi = useRestakeApi();
 
   const setValue = useCallback(
@@ -108,44 +105,36 @@ const DepositForm: FC<Props> = (props) => {
   }, [activeTypedChainId, resetField]);
 
   useEffect(() => {
-    if (!vaultIdParam || isLoading) {
+    if (!vaultIdParam || assets === null) {
       return;
     }
 
     // Find the first asset in the vault that has a balance.
-    const defaultAsset = Object.values(assetWithBalances).find(
+    const defaultAsset = Array.from(assets.values()).find(
       ({ metadata, balance }) => {
         if (metadata.vaultId?.toString() !== vaultIdParam) {
           return false;
         }
 
-        const balance_ = balance?.balance;
-
-        return balance_ !== undefined && balance_ > ZERO_BIG_INT;
+        return balance !== undefined && !balance.isZero();
       },
     );
 
     if (defaultAsset === undefined) {
       setVaultIdParam(null);
+
       return;
     }
 
-    if (defaultAsset.balance === null) {
-      setVaultIdParam(null);
-      return;
-    }
+    assert(defaultAsset.balance !== undefined);
 
     // Select the first asset in the vault by default.
-    setValue('depositAssetId', defaultAsset.assetId);
-
-    setValue(
-      'amount',
-      formatUnits(defaultAsset.balance.balance, defaultAsset.metadata.decimals),
-    );
+    setValue('depositAssetId', defaultAsset.id);
+    setValue('amount', defaultAsset.balance.toString());
 
     // Remove the param to prevent reuse after initial load.
     setVaultIdParam(null);
-  }, [assetWithBalances, isLoading, setValue, setVaultIdParam, vaultIdParam]);
+  }, [assets, setValue, setVaultIdParam, vaultIdParam]);
 
   const {
     status: tokenModalOpen,
@@ -154,29 +143,15 @@ const DepositForm: FC<Props> = (props) => {
     update: updateTokenModal,
   } = useModal();
 
-  const allAssets = useMemo<RestakeAsset[]>(() => {
-    const nativeAssetsWithBalances = Object.values(assetWithBalances)
-      .filter(
-        (asset) =>
-          asset.balance?.balance !== undefined &&
-          asset.balance.balance !== BigInt(0),
-      )
-      .map((asset) => {
-        assert(asset.balance !== null);
+  const allAssets = useMemo(() => {
+    if (assets === null) {
+      return [];
+    }
 
-        const balance = new BN(asset.balance.balance.toString());
-
-        return {
-          id: asset.assetId,
-          name: asset.metadata.name,
-          symbol: asset.metadata.symbol,
-          balance,
-          decimals: asset.metadata.decimals,
-        } satisfies RestakeAsset;
-      });
-
-    return nativeAssetsWithBalances;
-  }, [assetWithBalances]);
+    return Array.from(assets.values()).filter(
+      (asset) => asset.balance !== undefined && !asset.balance.isZero(),
+    );
+  }, [assets]);
 
   const handleAssetSelection = useCallback(
     (asset: RestakeAsset) => {
@@ -195,14 +170,13 @@ const DepositForm: FC<Props> = (props) => {
         return;
       }
 
-      const amountBn = parseChainUnits(amount, asset.decimals);
+      const amountBn = parseChainUnits(amount, asset.metadata.decimals);
 
       if (!(amountBn instanceof BN)) {
         return;
       }
 
       await restakeApi.deposit(asset.id, amountBn);
-
       setValue('amount', '', { shouldValidate: false });
       setValue('depositAssetId', '', { shouldValidate: false });
 
@@ -213,7 +187,7 @@ const DepositForm: FC<Props> = (props) => {
       }
     },
     [
-      asset?.decimals,
+      asset?.metadata.decimals,
       asset?.id,
       isReady,
       refetchErc20Balances,
@@ -246,7 +220,7 @@ const DepositForm: FC<Props> = (props) => {
                 errors={errors}
                 formRef={formRef}
                 isSubmitting={isSubmitting}
-                isValid={isValid}
+                isValid={isValid && isReady}
                 watch={watch}
               />
             </div>
@@ -257,9 +231,12 @@ const DepositForm: FC<Props> = (props) => {
             isOpen={tokenModalOpen}
             setIsOpen={updateTokenModal}
             onSelect={handleAssetSelection}
-            isLoading={isLoading}
             filterItem={(asset, query) =>
-              filterBy(query, [asset.id, asset.name, asset.symbol])
+              filterBy(query, [
+                asset.id,
+                asset.metadata.name,
+                asset.metadata.symbol,
+              ])
             }
             searchInputId="restake-deposit-assets-search"
             searchPlaceholder="Search assets..."
@@ -267,9 +244,11 @@ const DepositForm: FC<Props> = (props) => {
             descriptionWhenEmpty="It seems that there are no available assets on this account in this network yet. Please try again later."
             items={allAssets}
             renderItem={(asset) => {
+              const balance = asset.balance ?? BN_ZERO;
+
               const fmtBalance = formatDisplayAmount(
-                asset.balance,
-                asset.decimals,
+                balance,
+                asset.metadata.decimals,
                 AmountFormatStyle.SHORT,
               );
 
@@ -279,15 +258,15 @@ const DepositForm: FC<Props> = (props) => {
 
               return (
                 <LogoListItem
-                  logo={<TokenIcon size="xl" name={asset.symbol} />}
+                  logo={<TokenIcon size="xl" name={asset.metadata.symbol} />}
                   leftUpperContent={
-                    asset.name !== undefined
-                      ? `${asset.name} (${asset.symbol})`
-                      : asset.symbol
+                    asset.metadata.name !== undefined
+                      ? `${asset.metadata.name} (${asset.metadata.symbol})`
+                      : asset.metadata.symbol
                   }
                   leftBottomContent={idText}
                   rightBottomText="Balance"
-                  rightUpperText={`${fmtBalance} ${asset.symbol}`}
+                  rightUpperText={`${fmtBalance} ${asset.metadata.symbol}`}
                 />
               );
             }}

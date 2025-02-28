@@ -16,6 +16,7 @@ import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import AssetPlaceholder from '../AssetPlaceholder';
 import useRestakeAsset from '../../../data/restake/useRestakeAsset';
+import { BN_ZERO } from '@polkadot/util';
 
 type Props = {
   amountError?: string;
@@ -44,11 +45,12 @@ const SourceChainInput: FC<Props> = ({
       return {};
     }
 
-    const balanceBigInt = BigInt(asset.balance.toString());
+    const balance = asset.balance ?? BN_ZERO;
+    const balanceBigInt = BigInt(balance.toString());
 
     return {
       max: balanceBigInt,
-      maxFormatted: formatUnits(balanceBigInt, asset.decimals),
+      maxFormatted: formatUnits(balanceBigInt, asset.metadata.decimals),
     };
   }, [asset]);
 
@@ -61,7 +63,7 @@ const SourceChainInput: FC<Props> = ({
       min: minDelegateAmount ?? ZERO_BIG_INT,
       minFormatted: formatUnits(
         minDelegateAmount ?? ZERO_BIG_INT,
-        asset.decimals,
+        asset.metadata.decimals,
       ),
     };
   }, [asset, minDelegateAmount]);
@@ -74,7 +76,7 @@ const SourceChainInput: FC<Props> = ({
   );
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
-    const step = decimalsToStep(asset?.decimals);
+    const step = decimalsToStep(asset?.metadata.decimals);
 
     return {
       type: 'number',
@@ -86,8 +88,8 @@ const SourceChainInput: FC<Props> = ({
           minFormatted,
           min,
           max,
-          asset?.decimals,
-          asset?.symbol,
+          asset?.metadata.decimals,
+          asset?.metadata.symbol,
         ),
       }),
     };
@@ -108,7 +110,7 @@ const SourceChainInput: FC<Props> = ({
        * & token selection button.
        */}
       <TransactionInputCard.Root
-        tokenSymbol={asset?.symbol}
+        tokenSymbol={asset?.metadata.symbol}
         errorMessage={amountError}
         className="bg-mono-20 dark:bg-mono-180"
       >

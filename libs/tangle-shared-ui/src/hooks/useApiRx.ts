@@ -41,6 +41,7 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
       if (rpcEndpoint === undefined) {
         return null;
       }
+
       return await getApiRx(rpcEndpoint);
     }, [rpcEndpoint]),
     null,
