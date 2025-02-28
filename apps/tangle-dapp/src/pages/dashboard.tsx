@@ -5,7 +5,7 @@ import AccountSummaryCard from '../components/account/AccountSummaryCard';
 import PromotionalBanner from '../components/account/PromotionalBanner';
 import VaultsOverview from '../containers/restaking/VaultsOverview';
 
-const AccountPage: FC = () => {
+const DashboardPage: FC = () => {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-6 lg:flex-row">
@@ -23,4 +23,4 @@ const AccountPage: FC = () => {
   );
 };
 
-export default AccountPage;
+export default DashboardPage;

@@ -4,7 +4,7 @@ import '../styles.css';
 
 import { Route, Routes } from 'react-router';
 import Layout from '../containers/Layout';
-import AccountPage from '../pages/account';
+import DashboardPage from '../pages/dashboard';
 import BlueprintsPage from '../pages/blueprints';
 import BlueprintDetailsPage from '../pages/blueprints/[id]';
 import BridgePage from '../pages/bridge';
@@ -26,7 +26,11 @@ function App() {
       <Providers>
         <Layout>
           <Routes>
-            <Route index path={PagePath.DASHBOARD} element={<AccountPage />} />
+            <Route
+              index
+              path={PagePath.DASHBOARD}
+              element={<DashboardPage />}
+            />
 
             <Route path={PagePath.CLAIM_AIRDROP} element={<ClaimLayout />}>
               <Route index element={<ClaimPage />} />

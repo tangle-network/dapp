@@ -95,7 +95,7 @@ export const WALLET_CONFIG: Record<WalletId, WalletConfig> = {
     name: 'WalletConnect',
     title: 'WalletConnect',
     platform: 'EVM',
-    enabled: true,
+    enabled: false,
     async detect() {
       return true;
     },

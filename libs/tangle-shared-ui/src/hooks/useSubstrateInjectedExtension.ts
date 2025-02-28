@@ -5,11 +5,9 @@ import { PolkadotProvider } from '@tangle-network/polkadot-api-provider';
 const useSubstrateInjectedExtension = (): InjectedExtension | null => {
   const { activeApi } = useWebContext();
 
-  if (activeApi instanceof PolkadotProvider) {
-    return activeApi.injectedExtension;
-  }
-
-  return null;
+  return activeApi instanceof PolkadotProvider
+    ? activeApi.injectedExtension
+    : null;
 };
 
 export default useSubstrateInjectedExtension;

@@ -1,11 +1,7 @@
 import { BN } from '@polkadot/util';
-import {
-  DEFAULT_DECIMALS,
-  ZERO_BIG_INT,
-} from '@tangle-network/dapp-config/constants';
+import { ZERO_BIG_INT } from '@tangle-network/dapp-config/constants';
 import { TokenIcon } from '@tangle-network/icons/TokenIcon';
 import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { DelegatorInfo } from '@tangle-network/tangle-shared-ui/types/restake';
 import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertRestakeAssetId';
@@ -20,6 +16,7 @@ import { formatUnits } from 'viem';
 import LogoListItem from '../../components/Lists/LogoListItem';
 import filterBy from '../../utils/filterBy';
 import calculateRestakeAvailableBalance from '../../utils/restaking/calculateRestakeAvailableBalance';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
@@ -39,7 +36,7 @@ const WithdrawModal = ({
   setIsOpen,
   onItemSelected,
 }: Props) => {
-  const { assets } = useRestakeContext();
+  const { assets } = useRestakeAssets();
 
   const availableForWithdrawal = useMemo(() => {
     if (!delegatorInfo?.deposits) {
@@ -70,9 +67,13 @@ const WithdrawModal = ({
       titleWhenEmpty="No Assets Found"
       descriptionWhenEmpty="This account has no assets available to withdraw."
       onSelect={(deposit) => {
-        const asset = assets[deposit.assetId];
-        const decimals = asset?.decimals || DEFAULT_DECIMALS;
-        const fmtAmount = formatUnits(deposit.amount, decimals);
+        const asset = assets?.get(deposit.assetId);
+
+        if (asset === undefined) {
+          return;
+        }
+
+        const fmtAmount = formatUnits(deposit.amount, asset.metadata.decimals);
 
         onItemSelected({
           ...deposit,
@@ -80,23 +81,25 @@ const WithdrawModal = ({
         });
       }}
       filterItem={({ assetId }, query) => {
-        const asset = assets[assetId];
+        const asset = assets?.get(assetId);
 
-        return filterBy(query, [asset?.name, asset?.assetId, asset?.vaultId]);
+        return filterBy(query, [
+          asset?.metadata.name,
+          asset?.metadata.assetId,
+          asset?.metadata.vaultId,
+        ]);
       }}
       // TODO: This can be cleaned up a bit. Seems like a bit of reused code.
       renderItem={({ amount, assetId }) => {
-        const metadata = assets[assetId];
+        const asset = assets?.get(assetId);
 
-        if (metadata === undefined) {
+        if (asset === undefined) {
           return null;
         }
 
-        const { name, symbol, decimals, vaultId } = metadata;
-
         const fmtAmount = formatDisplayAmount(
           new BN(amount.toString()),
-          decimals,
+          asset.metadata.decimals,
           AmountFormatStyle.SHORT,
         );
 
@@ -106,14 +109,18 @@ const WithdrawModal = ({
 
         return (
           <LogoListItem
-            logo={<TokenIcon size="xl" name={symbol} />}
+            logo={<TokenIcon size="xl" name={asset.metadata.symbol} />}
             leftUpperContent={
-              name !== undefined ? `${name} (${symbol})` : symbol
+              asset.metadata.name !== undefined
+                ? `${asset.metadata.name} (${asset.metadata.symbol})`
+                : asset.metadata.symbol
             }
             leftBottomContent={idText}
-            rightUpperText={`${fmtAmount} ${symbol}`}
+            rightUpperText={`${fmtAmount} ${asset.metadata.symbol}`}
             rightBottomText={
-              vaultId !== null ? `Vault ID: ${vaultId}` : undefined
+              asset.metadata.vaultId !== null
+                ? `Vault ID: ${asset.metadata.vaultId}`
+                : undefined
             }
           />
         );

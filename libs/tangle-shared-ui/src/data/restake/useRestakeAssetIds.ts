@@ -1,40 +1,62 @@
-import type { Evaluate } from '@tangle-network/dapp-types/utils/types';
-import { useObservableState } from 'observable-hooks';
-import { useMemo } from 'react';
-import { map, switchMap, type Observable } from 'rxjs';
-import usePolkadotApi from '../../hooks/usePolkadotApi';
-import { assetIdsQuery } from '../../queries/restake/assetIds';
-import { rewardVaultRxQuery } from '../../queries/restake/rewardVault';
-import rewardVaultsPotAccountsRxQuery from '../../queries/restake/rewardVaultsPotAccounts';
+import { map, of } from 'rxjs';
 import { RestakeAssetId } from '../../types';
+import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
+import useApiRx from '../../hooks/useApiRx';
+import { StorageKey, u32, Vec, Option } from '@polkadot/types';
+import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
+import createRestakeAssetId from '../../utils/createRestakeAssetId';
+import { useCallback } from 'react';
 
-export type UseRestakeAssetIdsReturnType = {
-  assetIds: RestakeAssetId[];
-  assetIds$: Observable<RestakeAssetId[]>;
-};
+function toPrimitive(
+  entries: [
+    StorageKey<[u32]> | number,
+    Option<Vec<TanglePrimitivesServicesAsset>>,
+  ][],
+): RestakeAssetId[] {
+  return entries.flatMap(([, assets]) => {
+    if (assets.isNone) {
+      return [];
+    }
 
-/**
- * Retrieves the whitelisted asset IDs for restaking.
- * The hook returns an object containing the asset IDs and an observable to refresh the asset IDs.
- */
-export default function useRestakeAssetIds(): Evaluate<UseRestakeAssetIdsReturnType> {
-  const { apiRx } = usePolkadotApi();
+    return assets.unwrap().map(createRestakeAssetId);
+  });
+}
 
-  const assetIds$ = useMemo(
-    () =>
-      rewardVaultsPotAccountsRxQuery(apiRx).pipe(
-        switchMap((vaultsPotAccounts) => {
-          const vaultIds = vaultsPotAccounts.keys().toArray();
+const useRestakeAssetIds = (): RestakeAssetId[] | null => {
+  const { result: vaultPotAccounts } = useVaultsPotAccounts();
 
-          return rewardVaultRxQuery(apiRx, vaultIds).pipe(
-            map((rewardVaults) => assetIdsQuery(rewardVaults)),
+  const { result: assetIds } = useApiRx(
+    useCallback(
+      (api) => {
+        if (vaultPotAccounts === null) {
+          return null;
+        }
+
+        const vaultIds = vaultPotAccounts.keys().toArray();
+
+        if (api.query.rewards?.rewardVaults === undefined) {
+          return of([]);
+        } else if (vaultIds.length === 0) {
+          return api.query.rewards.rewardVaults
+            .entries()
+            .pipe(map(toPrimitive));
+        }
+
+        return api.query.rewards.rewardVaults
+          .multi(vaultIds)
+          .pipe(
+            map((results) =>
+              toPrimitive(
+                results.map((result, idx) => [vaultIds[idx], result] as const),
+              ),
+            ),
           );
-        }),
-      ),
-    [apiRx],
+      },
+      [vaultPotAccounts],
+    ),
   );
 
-  const assetIds = useObservableState(assetIds$, []);
+  return assetIds;
+};
 
-  return { assetIds, assetIds$ };
-}
+export default useRestakeAssetIds;
