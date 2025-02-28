@@ -28,11 +28,13 @@ export default function useBlueprintListing() {
         if (
           apiRx.query.services?.blueprints === undefined ||
           apiRx.query.services?.operators === undefined
-        )
+        ) {
           // TODO: Should return the error here instead of throw it
           throw new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
+        }
 
         const blueprintEntries$ = apiRx.query.services.blueprints.entries();
+
         const operatorEntries$ =
           apiRx.query.services.operators.entries<
             Option<TanglePrimitivesServicesOperatorPreferences>

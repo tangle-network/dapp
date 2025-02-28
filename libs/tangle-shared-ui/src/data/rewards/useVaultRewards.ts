@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import useApiRx from '../../hooks/useApiRx';
-import useVaultPotAccount from './useVaultPotAccount';
+import useVaultPotAccount from './useVaultsPotAccounts';
 import { map } from 'rxjs';
 import { BN } from '@polkadot/util';
 
