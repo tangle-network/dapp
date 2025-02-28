@@ -1,5 +1,5 @@
 import { PalletRewardsRewardConfigForAssetVault } from '@polkadot/types/lookup';
-import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
+import useApiRx from './useApiRx';
 import { useCallback, useMemo } from 'react';
 
 const useRestakeRewardConfig = () => {

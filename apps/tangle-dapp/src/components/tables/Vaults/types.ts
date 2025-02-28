@@ -1,7 +1,7 @@
 import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import type { Table } from '@tangle-network/ui-components/components/Table';
 import type { ComponentProps } from 'react';
-import type { VaultType } from '../../../utils/calculateVaults';
+import type { VaultType } from '@tangle-network/tangle-shared-ui/utils/calculateVaults';
 
 export type Props = {
   data?: VaultType[];

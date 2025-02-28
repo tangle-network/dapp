@@ -1,5 +1,5 @@
 import { type Table } from '@tangle-network/ui-components';
-import { TableStatusProps } from '../../tables/TableStatus';
+import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import { ComponentProps } from 'react';
 import { RowData, type useReactTable } from '@tanstack/react-table';
 

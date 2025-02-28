@@ -16,7 +16,7 @@ import {
 import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
 import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
-import { TangleCloudTable } from '@tangle-network/tangle-shared-ui/components/tables/TangleCloudTable';
+import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import { BlueprintMonitoringItem } from './type';
 
 const columnHelper = createColumnHelper<BlueprintMonitoringItem>();

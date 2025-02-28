@@ -1,5 +1,5 @@
 import { Table } from '@tangle-network/ui-components';
-import TableStatus from '../TableStatus';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
 import { twMerge } from 'tailwind-merge';
 import { TangleCloudTableProps } from './type';
@@ -26,6 +26,7 @@ export const TangleCloudTable = <T extends RowData>({
           'Please wait while we load the data.'
         }
         icon={loadingTableProps?.icon ?? '🔄'}
+        className={twMerge('w-full', loadingTableProps?.className)}
       />
     );
   } else if (isEmpty) {
@@ -35,6 +36,7 @@ export const TangleCloudTable = <T extends RowData>({
         title={emptyTableProps?.title ?? 'Empty Table'}
         description={emptyTableProps?.description ?? 'No data found'}
         icon={emptyTableProps?.icon ?? '🔍'}
+        className={twMerge('w-full', emptyTableProps?.className)}
       />
     );
   }

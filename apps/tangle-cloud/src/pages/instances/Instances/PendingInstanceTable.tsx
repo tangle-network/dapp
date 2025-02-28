@@ -8,17 +8,12 @@ import {
 import {
   Avatar,
   Button,
-  EMPTY_VALUE_PLACEHOLDER,
-  EnergyChipColors,
-  EnergyChipStack,
-  getRoundedAmountString,
   Typography,
 } from '@tangle-network/ui-components';
 import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
-import { TangleCloudTable } from '@tangle-network/tangle-shared-ui/components/tables/TangleCloudTable';
+import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import { EInstanceStatus, InstanceMonitoringItem } from './type';
-import { format } from 'date-fns';
 import { ChevronRight } from '@tangle-network/icons';
 
 const columnHelper = createColumnHelper<InstanceMonitoringItem>();
