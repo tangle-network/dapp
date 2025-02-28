@@ -15,9 +15,13 @@ export function useOperatorConcentration(
                 totalNetworkTVL > 0
                   ? (operatorTVL / totalNetworkTVL) * 100
                   : null;
+
               return acc;
             },
-            {} as Record<string, number | null>,
+            {} satisfies Record<string, number | null> as Record<
+              string,
+              number | null
+            >,
           );
 
           return of(operatorConcentration);

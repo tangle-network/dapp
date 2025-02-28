@@ -26,7 +26,6 @@ const RestakeOperatorAction = ({
 
 const Page = () => {
   const { id } = useParams();
-
   const { result, isLoading, error } = useBlueprintDetails(id);
 
   if (isLoading) {
