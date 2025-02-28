@@ -12,6 +12,9 @@ import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import calculateVaults from '@tangle-network/ui-components/utils/calculateVaults';
+import { BN } from '@polkadot/util';
+import VaultAssetsTable from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets';
+import { VaultAssetData } from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets/types';
 
 enum ETotalValueLockedTab {
   TVL = 'Total Value Locked',
@@ -103,7 +106,56 @@ export const TotalValueLockedTabs = () => {
         value={ETotalValueLockedTab.TVL}
         className="flex justify-center mx-auto"
       >
-        <TotalValueLockedTable data={vaults} isLoading={isLoading} error={null} loadingTableProps={{}} emptyTableProps={{}} />
+        <TotalValueLockedTable
+          data={vaults}
+          isLoading={isLoading}
+          error={null}
+          loadingTableProps={{}}
+          emptyTableProps={{}}
+          tableConfig={{
+            onRowClick(row, table) {
+              if (!row.getCanExpand()) return;
+      
+              // Close all other rows
+              table.getRowModel().rows.forEach((r) => {
+                if (r.id !== row.id && r.getIsExpanded()) {
+                  r.toggleExpanded(false);
+                }
+              });
+      
+              return row.toggleExpanded();
+            },
+            getExpandedRowContent(row) {
+              const vaultId = row.original.id;
+              const vaultAssets = Object.values(assets)
+                .filter((asset) => asset.vaultId === vaultId)
+                .map(({ assetId, decimals, symbol }) => {
+                  const tvl = assetTvl?.get(assetId) ?? null;
+                  const available = balances[assetId]
+                    ? new BN(balances[assetId].balance.toString())
+                    : null;
+      
+                  const totalDeposits =
+                    typeof delegatorInfo?.deposits[assetId]?.amount === 'bigint'
+                      ? new BN(delegatorInfo.deposits[assetId].amount.toString())
+                      : null;
+      
+                  return {
+                    id: assetId,
+                    symbol,
+                    decimals,
+                    tvl,
+                    available,
+                    totalDeposits,
+                  } satisfies VaultAssetData;
+                });
+      
+              return (
+                <VaultAssetsTable isShown={row.getIsExpanded()} data={vaultAssets} />
+              );
+            },
+          }}
+        />
       </TabContent>
     </TableAndChartTabs>
   );

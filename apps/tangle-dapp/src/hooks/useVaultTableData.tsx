@@ -7,8 +7,8 @@ import {
   OperatorMetadata,
 } from '@tangle-network/tangle-shared-ui/types/restake';
 import { ComponentProps, useMemo } from 'react';
-import VaultAssetsTable from '../components/tables/VaultAssets';
-import { VaultAssetData } from '../components/tables/VaultAssets/types';
+import VaultAssetsTable from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets';
+import { VaultAssetData } from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets/types';
 import VaultsTable from '../components/tables/Vaults';
 import useRestakeRewardConfig from '@tangle-network/tangle-shared-ui/hooks/useRestakeRewardConfig';
 import calculateVaults from '@tangle-network/ui-components/utils/calculateVaults';

@@ -54,7 +54,6 @@ export const TangleCloudTable = <T extends RowData>({
       tbodyClassName={tableConfig?.tbodyClassName}
       trClassName={twMerge(
         'group overflow-hidden',
-        '[&>td:not(:last-child)>*]:border-r [&>td:not(:last-child)>*]:border-mono-140',
         tableConfig?.trClassName,
       )}
       tdClassName={twMerge('!p-3 max-w-xs', tableConfig?.tdClassName)}

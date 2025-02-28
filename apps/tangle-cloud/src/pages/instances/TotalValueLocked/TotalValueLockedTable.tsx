@@ -2,7 +2,9 @@ import { type FC } from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
+  getExpandedRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 import {
@@ -24,6 +26,7 @@ import calculateBnRatio from '@tangle-network/ui-components/utils/calculateBnRat
 import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
 import { twMerge } from 'tailwind-merge';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { TangleCloudTableProps } from 'apps/tangle-cloud/src/components/tangleCloudTable/type';
 
 const COLUMN_HELPER = createColumnHelper<VaultType>();
 
@@ -45,6 +48,14 @@ const getColumns = (nativeTokenSymbol: string) => [
     ),
     sortDescFirst: true,
   }),
+  // TODO: Add APY column
+  // COLUMN_HELPER.accessor('apy', {
+  //   sortUndefined: 'last',
+  //   header: () => 'APY',
+  //   cell: (props) => {
+  //     return <TableCellWrapper>{fmtDeposits}</TableCellWrapper>;
+  //   },
+  // }),
   COLUMN_HELPER.accessor('totalDeposits', {
     sortUndefined: 'last',
     header: () => 'Deposits',
@@ -141,7 +152,9 @@ const getColumns = (nativeTokenSymbol: string) => [
     cell: ({ row }) => (
       <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1 gap-2">
-          {/* <Link
+          {/*
+          TODO: Add deposit button
+          <Link
             to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_VAULT}=${row.original.id}`}
             onClick={(event) => {
               event.stopPropagation();
@@ -176,6 +189,7 @@ type Props = {
   error: Error | null;
   loadingTableProps: Partial<TableStatusProps>;
   emptyTableProps: Partial<TableStatusProps>;
+  tableConfig: TangleCloudTableProps<VaultType>['tableConfig'];
 };
 
 export const TotalValueLockedTable: FC<Props> = ({ 
@@ -184,6 +198,7 @@ export const TotalValueLockedTable: FC<Props> = ({
   error,
   loadingTableProps,
   emptyTableProps,
+  tableConfig,
 }) => {
   const nativeTokenSymbol = useNetworkStore(
     (store) => store.network.tokenSymbol,
@@ -194,6 +209,9 @@ export const TotalValueLockedTable: FC<Props> = ({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getRowCanExpand: (row) => row.original.tokenCount > 0,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
@@ -210,6 +228,12 @@ export const TotalValueLockedTable: FC<Props> = ({
       tableProps={table}
       tableConfig={{
         tableClassName: 'min-w-[1000px]',
+        expandedRowClassName: twMerge(
+          'bg-mono-0 dark:bg-mono-180',
+          'peer-[&[data-expanded="true"]:hover]:bg-mono-20',
+          'peer-[&[data-expanded="true"]:hover]:dark:bg-mono-170',
+        ),
+        ...tableConfig,
       }}
     />
   );

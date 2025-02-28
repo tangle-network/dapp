@@ -18,6 +18,7 @@ import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/ta
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import { BlueprintMonitoringItem } from './type';
+import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 
 const columnHelper = createColumnHelper<BlueprintMonitoringItem>();
 
@@ -69,18 +70,14 @@ export const RegisteredBlueprints: FC = () => {
 
   const isEmpty = blueprints.length === 0;
 
-  /**
-   * `h-12` is followed the `lg` size of `Avatar` component
-   * to make the table cells have the same height
-   */
-  const commonCellClassName = 'h-12 flex items-center';
   const columns = useMemo(
     () => [
       columnHelper.accessor('name', {
         header: () => 'Blueprint',
         cell: (props) => {
           return (
-            <div className="flex items-center gap-2">
+            <TableCellWrapper>
+              <div className='flex items-center gap-2 overflow-hidden'>
               {props.row.original.imgUrl ? (
                 <Avatar
                   size="lg"
@@ -104,7 +101,8 @@ export const RegisteredBlueprints: FC = () => {
               >
                 {props.row.original.name}
               </Typography>
-            </div>
+              </div>
+            </TableCellWrapper>
           );
         },
       }),
@@ -112,7 +110,7 @@ export const RegisteredBlueprints: FC = () => {
         header: () => 'Pricing',
         cell: (props) => {
           return (
-            <div className={commonCellClassName}>
+            <TableCellWrapper>
               {props.row.original.pricing
                 ? `$${getRoundedAmountString(props.row.original.pricing)}`
                 : EMPTY_VALUE_PLACEHOLDER}
@@ -120,7 +118,7 @@ export const RegisteredBlueprints: FC = () => {
               {props.row.original.pricingUnit
                 ? props.row.original.pricingUnit
                 : EMPTY_VALUE_PLACEHOLDER}
-            </div>
+            </TableCellWrapper>
           );
         },
       }),
@@ -145,11 +143,12 @@ export const RegisteredBlueprints: FC = () => {
           const colors = [...activeColors, ...inactiveColors];
 
           return (
-            <EnergyChipStack
-              className={commonCellClassName}
-              colors={colors as EnergyChipColors[]}
-              label={`${props.row.original.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
-            />
+            <TableCellWrapper>
+              <EnergyChipStack
+                colors={colors as EnergyChipColors[]}
+                label={`${props.row.original.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
+              />
+            </TableCellWrapper>
           );
         },
       }),
@@ -157,14 +156,15 @@ export const RegisteredBlueprints: FC = () => {
         header: () => 'Instances',
         cell: (props) => {
           return (
-            <Typography
-              variant="body1"
-              fw="normal"
-              className={commonCellClassName}
-            >
-              {props.row.original.instanceCount?.toLocaleString() ??
-                EMPTY_VALUE_PLACEHOLDER}
-            </Typography>
+            <TableCellWrapper>
+              <Typography
+                variant="body1"
+                fw="normal"
+              >
+                {props.row.original.instanceCount?.toLocaleString() ??
+                  EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
+            </TableCellWrapper>
           );
         },
       }),
@@ -172,10 +172,10 @@ export const RegisteredBlueprints: FC = () => {
         header: () => 'Operators',
         cell: (props) => {
           return (
-            <div className={commonCellClassName}>
+            <TableCellWrapper>
               {props.row.original.operatorsCount?.toLocaleString() ??
                 EMPTY_VALUE_PLACEHOLDER}
-            </div>
+            </TableCellWrapper>
           );
         },
       }),
@@ -183,11 +183,11 @@ export const RegisteredBlueprints: FC = () => {
         header: () => 'TVL',
         cell: (props) => {
           return (
-            <div className={commonCellClassName}>
+            <TableCellWrapper removeRightBorder>
               {props.row.original.tvl
                 ? getTVLToDisplay(props.row.original.tvlInUsd)
                 : EMPTY_VALUE_PLACEHOLDER}
-            </div>
+            </TableCellWrapper>
           );
         },
       }),

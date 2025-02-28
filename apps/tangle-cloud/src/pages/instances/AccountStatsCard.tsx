@@ -8,7 +8,6 @@ import {
   EMPTY_VALUE_PLACEHOLDER,
   isEvmAddress,
   KeyValueWithButton,
-  shortenHex,
   shortenString,
   toSubstrateAddress,
 } from '@tangle-network/ui-components';
@@ -26,12 +25,11 @@ import {
   IDENTITY_ICONS_RECORD,
   IdentityDataType,
 } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
-import { isHex } from 'viem';
 import { isValidUrl } from '@tangle-network/dapp-types';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
-  const { activeAccount } = useWebContext();
-
+  const activeAccountAddr = useActiveAccountAddress();  
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { operatorMap } = useRestakeOperatorMap();
   const { delegatorInfo } = useRestakeDelegatorInfo();
@@ -40,16 +38,16 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   const network = useNetworkStore((store) => store.network);
 
   const accountAddress = useMemo(() => {
-    if (activeAccount?.address === undefined) {
+    if (!activeAccountAddr) {
       return null;
-    } else if (isEvmAddress(activeAccount.address)) {
-      return activeAccount.address;
+    } else if (isEvmAddress(activeAccountAddr)) {
+      return toSubstrateAddress(activeAccountAddr);
     } else if (network.ss58Prefix === undefined) {
-      return assertSubstrateAddress(activeAccount.address);
+      return assertSubstrateAddress(activeAccountAddr);
     }
 
-    return toSubstrateAddress(activeAccount.address, network.ss58Prefix);
-  }, [activeAccount?.address, network.ss58Prefix]);
+    return toSubstrateAddress(activeAccountAddr, network.ss58Prefix);
+  }, [activeAccountAddr, network.ss58Prefix]);
 
   const operatorData = useMemo(() => {
     return accountAddress
@@ -78,12 +76,10 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
       return getAccountInfo(args[0], args[1]);
     },
   );
-
+  
   const identityName = useMemo(() => {
     if (!accountAddress) return '';
-    const defaultName = isHex(accountAddress)
-      ? shortenHex(accountAddress)
-      : shortenString(accountAddress);
+    const defaultName = shortenString(accountAddress);
 
     if (!operatorInfo) {
       return defaultName;
@@ -126,9 +122,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
           <Avatar
             size="lg"
             value={accountAddress ?? ''}
-            theme={
-              isEvmAddress(accountAddress ?? '') ? 'ethereum' : 'substrate'
-            }
+            theme='substrate'
           />
         }
         title={identityName}
