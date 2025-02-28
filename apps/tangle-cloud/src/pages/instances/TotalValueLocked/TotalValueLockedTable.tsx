@@ -152,35 +152,41 @@ const getColumns = (nativeTokenSymbol: string) => [
     id: 'actions',
     header: () => null,
     cell: ({ row }) => {
-
       return (
-      <TableCellWrapper removeRightBorder>
-        <div className="flex items-center justify-end flex-1 gap-2">
-          <Link
-            to={TangleDAppPagePath.RESTAKE_DEPOSIT.replace('{{vault}}', row.original.id.toString())}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(event) => {
-              event.stopPropagation();
-            }}
-          >
-            <Button variant="utility" className="uppercase body4">
-              Deposit
-            </Button>
-          </Link>
-
-          <Button variant="utility" isJustIcon isDisabled={!row.getCanExpand()}>
-            <div
-              className={twMerge(
-                '!text-current transition-transform duration-300 ease-in-out',
-                row.getIsExpanded() ? 'rotate-180' : '',
+        <TableCellWrapper removeRightBorder>
+          <div className="flex items-center justify-end flex-1 gap-2">
+            <Link
+              to={TangleDAppPagePath.RESTAKE_DEPOSIT.replace(
+                '{{vault}}',
+                row.original.id.toString(),
               )}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(event) => {
+                event.stopPropagation();
+              }}
             >
-              <ChevronDown className="!fill-current" />
-            </div>
-          </Button>
-        </div>
-      </TableCellWrapper>
+              <Button variant="utility" className="uppercase body4">
+                Deposit
+              </Button>
+            </Link>
+
+            <Button
+              variant="utility"
+              isJustIcon
+              isDisabled={!row.getCanExpand()}
+            >
+              <div
+                className={twMerge(
+                  '!text-current transition-transform duration-300 ease-in-out',
+                  row.getIsExpanded() ? 'rotate-180' : '',
+                )}
+              >
+                <ChevronDown className="!fill-current" />
+              </div>
+            </Button>
+          </div>
+        </TableCellWrapper>
       );
     },
     enableSorting: false,

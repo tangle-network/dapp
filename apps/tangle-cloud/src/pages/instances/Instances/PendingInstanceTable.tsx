@@ -161,19 +161,22 @@ export const PendingInstanceTable: FC = () => {
         cell: (props) => {
           return (
             <TableCellWrapper removeRightBorder>
-            <Link
-              to={PagePath.BLUEPRINTS_DETAILS.replace(':id', props.row.original.blueprintId)}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(event) => {
-                event.stopPropagation();
-              }}
-            >
-              <Button variant="utility" className="uppercase body4">
-                View
-              </Button>
-            </Link>
-          </TableCellWrapper>
+              <Link
+                to={PagePath.BLUEPRINTS_DETAILS.replace(
+                  ':id',
+                  props.row.original.blueprintId,
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(event) => {
+                  event.stopPropagation();
+                }}
+              >
+                <Button variant="utility" className="uppercase body4">
+                  View
+                </Button>
+              </Link>
+            </TableCellWrapper>
           );
         },
       }),

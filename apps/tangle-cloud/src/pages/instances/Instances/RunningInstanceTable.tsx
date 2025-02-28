@@ -111,57 +111,57 @@ export const RunningInstanceTable: FC = () => {
           return (
             <TableCellWrapper>
               <div className="flex items-center gap-2">
-              {props.row.original.blueprint.imgUrl ? (
-                <Avatar
-                  size="lg"
-                  className="min-w-12"
-                  src={props.row.original.blueprint.imgUrl}
-                  alt={props.row.original.blueprint.name}
-                  sourceVariant="uri"
-                />
-              ) : (
-                <Avatar
-                  size="lg"
-                  className="min-w-12"
-                  fallback={props.row.original.blueprint.name.substring(0, 2)}
-                  theme="substrate"
-                />
-              )}
-              <div>
-                <Typography
-                  variant="body1"
-                  fw="bold"
-                  className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
-                >
-                  {props.row.original.blueprint.author}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  fw="normal"
-                  className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
-                >
-                  {props.row.original.blueprint.id}
-                </Typography>
-              </div>
-              <div>
-                <ChevronRight className="w-6 h-6" />
-              </div>
-              <div>
-                <Typography
-                  variant="body1"
-                  fw="bold"
-                  className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
-                >
-                  {props.row.original.instance.id}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  fw="normal"
-                  className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
-                >
-                  {props.row.original.instance.instanceId}
-                </Typography>
-              </div>
+                {props.row.original.blueprint.imgUrl ? (
+                  <Avatar
+                    size="lg"
+                    className="min-w-12"
+                    src={props.row.original.blueprint.imgUrl}
+                    alt={props.row.original.blueprint.name}
+                    sourceVariant="uri"
+                  />
+                ) : (
+                  <Avatar
+                    size="lg"
+                    className="min-w-12"
+                    fallback={props.row.original.blueprint.name.substring(0, 2)}
+                    theme="substrate"
+                  />
+                )}
+                <div>
+                  <Typography
+                    variant="body1"
+                    fw="bold"
+                    className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
+                  >
+                    {props.row.original.blueprint.author}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    fw="normal"
+                    className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
+                  >
+                    {props.row.original.blueprint.id}
+                  </Typography>
+                </div>
+                <div>
+                  <ChevronRight className="w-6 h-6" />
+                </div>
+                <div>
+                  <Typography
+                    variant="body1"
+                    fw="bold"
+                    className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
+                  >
+                    {props.row.original.instance.id}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    fw="normal"
+                    className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
+                  >
+                    {props.row.original.instance.instanceId}
+                  </Typography>
+                </div>
               </div>
             </TableCellWrapper>
           );
@@ -214,10 +214,7 @@ export const RunningInstanceTable: FC = () => {
         cell: (props) => {
           return (
             <TableCellWrapper>
-              <Typography
-                variant="body1"
-                fw="normal"
-              >
+              <Typography variant="body1" fw="normal">
                 {props.row.original.instance.lastActive
                   ? format(
                       props.row.original.instance.lastActive,
@@ -235,7 +232,10 @@ export const RunningInstanceTable: FC = () => {
           return (
             <TableCellWrapper removeRightBorder>
               <Link
-                to={PagePath.BLUEPRINTS_DETAILS.replace(':id', props.row.original.blueprintId)}
+                to={PagePath.BLUEPRINTS_DETAILS.replace(
+                  ':id',
+                  props.row.original.blueprintId,
+                )}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(event) => {

@@ -210,10 +210,7 @@ export const StoppedInstanceTable: FC = () => {
         cell: (props) => {
           return (
             <TableCellWrapper>
-              <Typography
-                variant="body1"
-                fw="normal"
-              >
+              <Typography variant="body1" fw="normal">
                 {props.row.original.instance.lastActive
                   ? format(
                       props.row.original.instance.lastActive,

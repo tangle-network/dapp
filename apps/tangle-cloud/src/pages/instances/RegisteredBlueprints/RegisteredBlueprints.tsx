@@ -62,8 +62,7 @@ const MOCK_BLUEPRINTS: BlueprintMonitoringItem[] = [
 
 export const RegisteredBlueprints: FC = () => {
   // TODO: Remove mock data
-  const [blueprints] =
-    useState<BlueprintMonitoringItem[]>(MOCK_BLUEPRINTS);
+  const [blueprints] = useState<BlueprintMonitoringItem[]>(MOCK_BLUEPRINTS);
   const [isLoading] = useState(false);
   const [error] = useState<Error | null>(null);
   const loadingTableProps: Partial<TableStatusProps> = {};
