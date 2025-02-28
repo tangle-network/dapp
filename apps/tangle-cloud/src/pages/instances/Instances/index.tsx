@@ -1,10 +1,12 @@
 import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
-import { GridFillIcon, TimeLineIcon } from '@tangle-network/icons';
+import { PlayFillIcon, TimeLineIcon } from '@tangle-network/icons';
 import { ReactElement, useState } from 'react';
 import { TabContent } from '@tangle-network/ui-components';
 import { TrashIcon } from '@radix-ui/react-icons';
 import { twMerge } from 'tailwind-merge';
-
+import { RunningInstanceTable } from './RunningInstanceTable';
+import { PendingInstanceTable } from './PendingInstanceTable';
+import { StoppedInstanceTable } from './StoppedInstanceTable';
 enum EInstancesTab {
   RUNNING_INSTANCES = 'Running',
   PENDING_INSTANCES = 'Pending',
@@ -14,7 +16,7 @@ enum EInstancesTab {
 const InstancesTab: string[] = Object.values(EInstancesTab);
 
 const InstancesTabIcon: ReactElement[] = [
-  <GridFillIcon className="w-4 h-4 !fill-blue-50" />,
+  <PlayFillIcon viewBox='0 0 16 16' className="w-4 h-4 !fill-blue-50" />,
   <TimeLineIcon className="w-4 h-4 !fill-yellow-100" />,
   <TrashIcon className="w-4 h-4  [&>path]:fill-red-100" />,
 ] as const;
@@ -41,7 +43,21 @@ export const InstancesTabs = () => {
         value={EInstancesTab.RUNNING_INSTANCES}
         className="flex justify-center mx-auto"
       >
-        <>asdasd</>
+        <RunningInstanceTable />
+      </TabContent>
+
+      <TabContent
+        value={EInstancesTab.PENDING_INSTANCES}
+        className="flex justify-center mx-auto"
+      >
+        <PendingInstanceTable />
+      </TabContent>
+
+      <TabContent
+        value={EInstancesTab.HISTORY_INSTANCES}
+        className="flex justify-center mx-auto"
+      >
+        <StoppedInstanceTable />
       </TabContent>
     </TableAndChartTabs>
   );

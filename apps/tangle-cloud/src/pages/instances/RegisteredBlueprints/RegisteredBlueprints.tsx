@@ -21,7 +21,7 @@ import { BlueprintMonitoringItem } from './type';
 
 const columnHelper = createColumnHelper<BlueprintMonitoringItem>();
 
-const MOCK_BLUEPRINTS = [
+const MOCK_BLUEPRINTS: BlueprintMonitoringItem[] = [
   {
     id: 'bp-01',
     name: 'Ethereum Staking Pool asdga idgasi dgausidgi agiadsiuasgduaidaisydfg i',
@@ -31,11 +31,14 @@ const MOCK_BLUEPRINTS = [
       'Decentralized ETH staking pool with automated rewards distribution',
     restakersCount: 156,
     operatorsCount: 12,
-    tvl: 2450000,
+    tvl: '2450000',
+    tvlInUsd: 24.5,
     uptime: 99.98,
     pricing: 0.05,
     pricingUnit: 'Hrs',
     instanceCount: 3,
+    registrationParams: [],
+    category: 'staking',
   },
   {
     id: 'bp-02',
@@ -45,123 +48,14 @@ const MOCK_BLUEPRINTS = [
     description: 'Professional grade validator node setup',
     restakersCount: 89,
     operatorsCount: 5,
-    tvl: 890000,
+    tvl: '890000',
+    tvlInUsd: 8.9,
     uptime: 99.95,
     pricing: 0.02,
     pricingUnit: 'Hrs',
     instanceCount: 8,
-  },
-  {
-    id: 'bp-03',
-    name: 'Liquid Staking Protocol',
-    author: 'StakeWise',
-    imgUrl: 'https://dummyimage.com/100x100',
-    description: null,
-    restakersCount: 234,
-    operatorsCount: 15,
-    tvl: 5600000,
-    uptime: 99.99,
-    pricing: 0.08,
-    pricingUnit: 'Hrs',
-    instanceCount: 2,
-  },
-  {
-    id: 'bp-04',
-    name: 'Solo Staking Setup',
-    author: 'StakeHub',
-    imgUrl: 'https://dummyimage.com/100x100',
-    description: 'Individual staking node configuration',
-    restakersCount: null,
-    operatorsCount: 1,
-    tvl: 32000,
-    uptime: 99.9,
-    pricing: null,
-    pricingUnit: null,
-    instanceCount: 12,
-  },
-  {
-    id: 'bp-05',
-    name: 'Multi-Chain Validator',
-    author: 'ChainOps',
-    imgUrl: 'https://dummyimage.com/100x100',
-    description: 'Cross-chain validation infrastructure',
-    restakersCount: 45,
-    operatorsCount: 8,
-    tvl: null,
-    uptime: 99.95,
-    pricing: 0.1,
-    pricingUnit: 'Hrs',
-    instanceCount: 5,
-  },
-  {
-    id: 'bp-06',
-    name: 'Staking Dashboard',
-    author: 'MetricsLab',
-    imgUrl: 'https://dummyimage.com/100x100',
-    description: 'Comprehensive staking metrics and monitoring',
-    restakersCount: 78,
-    operatorsCount: null,
-    tvl: 150000,
-    uptime: null,
-    pricing: 0.015,
-    pricingUnit: 'Hrs',
-    instanceCount: 15,
-  },
-  {
-    id: 'bp-07',
-    name: 'Automated Restaking',
-    author: 'AutoStake',
-    imgUrl: 'https://dummyimage.com/100x100',
-    description: 'Automated restaking mechanism',
-    restakersCount: 312,
-    operatorsCount: 4,
-    tvl: 780000,
-    uptime: 99.97,
-    pricing: 0.03,
-    pricingUnit: 'Hrs',
-    instanceCount: 6,
-  },
-  {
-    id: 'bp-08',
-    name: 'Security Module',
-    author: 'SecureStake',
-    imgUrl: 'https://dummyimage.com/100x100',
-    description: null,
-    restakersCount: 67,
-    operatorsCount: 3,
-    tvl: 230000,
-    uptime: 99.99,
-    pricing: 0.025,
-    pricingUnit: 'Hrs',
-    instanceCount: 9,
-  },
-  {
-    id: 'bp-09',
-    name: 'MEV Boost Relay',
-    author: 'MEVTech',
-    imgUrl: null,
-    description: 'MEV-Boost relay implementation',
-    restakersCount: 145,
-    operatorsCount: 6,
-    tvl: 1200000,
-    uptime: 99.96,
-    pricing: 0.04,
-    pricingUnit: 'Hrs',
-    instanceCount: 4,
-  },
-  {
-    id: 'bp-10',
-    name: 'Analytics Suite',
-    author: 'DataStake',
-    imgUrl: 'https://dummyimage.com/100x100',
-    description: 'Advanced staking analytics and reporting',
-    restakersCount: null,
-    operatorsCount: 2,
-    tvl: 45000,
-    uptime: 99.93,
-    pricing: 0.01,
-    pricingUnit: 'Hrs',
-    instanceCount: 18,
+    registrationParams: [],
+    category: 'staking',
   },
 ];
 
@@ -170,12 +64,8 @@ export const RegisteredBlueprints: FC = () => {
     useState<BlueprintMonitoringItem[]>(MOCK_BLUEPRINTS);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [loadingTableProps, setLoadingTableProps] = useState<
-    Partial<TableStatusProps>
-  >({});
-  const [emptyTableProps, setEmptyTableProps] = useState<
-    Partial<TableStatusProps>
-  >({});
+  const loadingTableProps: Partial<TableStatusProps> = {};
+  const emptyTableProps: Partial<TableStatusProps> = {};
 
   const isEmpty = blueprints.length === 0;
 
@@ -295,7 +185,7 @@ export const RegisteredBlueprints: FC = () => {
           return (
             <div className={commonCellClassName}>
               {props.row.original.tvl
-                ? getTVLToDisplay(props.row.original.tvl)
+                ? getTVLToDisplay(props.row.original.tvlInUsd)
                 : EMPTY_VALUE_PLACEHOLDER}
             </div>
           );
