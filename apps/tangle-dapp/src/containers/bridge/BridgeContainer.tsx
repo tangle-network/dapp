@@ -93,19 +93,28 @@ const BridgeContainer = () => {
     (store) => store.setSelectedDestinationChain,
   );
 
+  const mainnetSourceChains = useBridgeStore(
+    useShallow((store) => store.mainnetSourceChains),
+  );
+
+  const testnetSourceChains = useBridgeStore(
+    useShallow((store) => store.testnetSourceChains),
+  );
+
   const srcChains = useMemo(() => {
     if (network.name === 'Tangle Mainnet') {
-      const mainnetChains = sourceChains.filter(
-        (chain) => chain.tag === 'live',
-      );
-      setSelectedSourceChain(mainnetChains[0]);
-      return mainnetChains;
+      setSelectedSourceChain(mainnetSourceChains[0]);
+      return mainnetSourceChains;
     }
 
-    const testnetChains = sourceChains.filter((chain) => chain.tag === 'test');
-    setSelectedSourceChain(testnetChains[0]);
-    return testnetChains;
-  }, [network.name, setSelectedSourceChain, sourceChains]);
+    setSelectedSourceChain(testnetSourceChains[0]);
+    return testnetSourceChains;
+  }, [
+    mainnetSourceChains,
+    network.name,
+    setSelectedSourceChain,
+    testnetSourceChains,
+  ]);
 
   const sourceTypedChainId = useMemo(() => {
     return calculateTypedChainId(
