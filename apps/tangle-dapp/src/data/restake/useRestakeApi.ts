@@ -77,6 +77,11 @@ const useRestakeApi = () => {
       case 'EVM': {
         const evmAddress = assertEvmAddress(activeAccount.address);
 
+        // Wait for the relay EVM function to be ready.
+        if (isEvmTxRelayerCandidate && relayEvmTx === null) {
+          return null;
+        }
+
         return new RestakeEvmApi(
           relayEvmTx,
           isEvmTxRelayerCandidate,

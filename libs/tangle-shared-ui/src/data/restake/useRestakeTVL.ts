@@ -1,14 +1,15 @@
-import { useRestakeContext } from '../../context/RestakeContext';
+import { useMemo } from 'react';
 import { useDelegatorTVL } from '../../data/restake/useDelegatorTVL';
 import { useOperatorConcentration } from '../../data/restake/useOperatorConcentration';
 import { useOperatorTVL } from '../../data/restake/useOperatorTVL';
 import type { DelegatorInfo, OperatorMap } from '../../types/restake';
+import useRestakeAssets from './useRestakeAssets';
 
-export default function useRestakeTVL(
+const useRestakeTVL = (
   operatorMap: OperatorMap,
   delegatorInfo: DelegatorInfo | null,
-) {
-  const { assets } = useRestakeContext();
+) => {
+  const { assets } = useRestakeAssets();
   const { operatorTVL, vaultTVL } = useOperatorTVL(operatorMap, assets);
 
   const { delegatorTVL, totalDelegatorTVL } = useDelegatorTVL(
@@ -16,10 +17,9 @@ export default function useRestakeTVL(
     assets,
   );
 
-  const totalNetworkTVL = Object.values(vaultTVL).reduce(
-    (sum, tvl) => sum + tvl,
-    0,
-  );
+  const totalNetworkTVL = useMemo(() => {
+    return Object.values(vaultTVL).reduce((sum, tvl) => sum + tvl, 0);
+  }, [vaultTVL]);
 
   const operatorConcentration = useOperatorConcentration(
     operatorTVL,
@@ -34,4 +34,6 @@ export default function useRestakeTVL(
     totalDelegatorTVL,
     totalNetworkTVL,
   };
-}
+};
+
+export default useRestakeTVL;

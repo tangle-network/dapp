@@ -4,10 +4,9 @@ import useBlueprintDetails from '@tangle-network/tangle-shared-ui/data/restake/u
 import { ErrorFallback } from '@tangle-network/ui-components/components/ErrorFallback';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
-import { FC } from 'react';
 import { useParams } from 'react-router';
 
-const BlueprintDetailsPage: FC = () => {
+const BlueprintDetailsPage = () => {
   const { id = '' } = useParams();
   const { result, isLoading, error } = useBlueprintDetails(id);
 

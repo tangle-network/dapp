@@ -64,7 +64,10 @@ const RestakeDelegateInput: FC<Props> = ({
       return {};
     }
 
-    const maxFormatted = +formatUnits(availableBalance, selectedAsset.decimals);
+    const maxFormatted = +formatUnits(
+      availableBalance,
+      selectedAsset.metadata.decimals,
+    );
 
     return {
       max: availableBalance,
@@ -79,7 +82,10 @@ const RestakeDelegateInput: FC<Props> = ({
 
     return {
       min: minDelegateAmount,
-      minFormatted: formatUnits(minDelegateAmount, selectedAsset.decimals),
+      minFormatted: formatUnits(
+        minDelegateAmount,
+        selectedAsset.metadata.decimals,
+      ),
     };
   }, [minDelegateAmount, selectedAsset]);
 
@@ -91,7 +97,7 @@ const RestakeDelegateInput: FC<Props> = ({
   );
 
   const customAmountProps = useMemo<TextFieldInputProps>(() => {
-    const step = decimalsToStep(selectedAsset?.decimals);
+    const step = decimalsToStep(selectedAsset?.metadata.decimals);
 
     return {
       type: 'number',
@@ -103,8 +109,8 @@ const RestakeDelegateInput: FC<Props> = ({
           minFormatted,
           min,
           max,
-          selectedAsset?.decimals,
-          selectedAsset?.symbol,
+          selectedAsset?.metadata.decimals,
+          selectedAsset?.metadata.symbol,
         ),
       }),
     };
@@ -113,14 +119,14 @@ const RestakeDelegateInput: FC<Props> = ({
     min,
     minFormatted,
     register,
-    selectedAsset?.decimals,
-    selectedAsset?.symbol,
+    selectedAsset?.metadata.decimals,
+    selectedAsset?.metadata.symbol,
   ]);
 
   return (
     <div className="flex flex-col items-start justify-stretch">
       <TransactionInputCard.Root
-        tokenSymbol={selectedAsset?.symbol}
+        tokenSymbol={selectedAsset?.metadata.symbol}
         maxAmount={maxFormatted}
         onAmountChange={handleAmountChange}
         className="bg-mono-20 dark:bg-mono-180"
