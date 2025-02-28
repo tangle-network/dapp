@@ -1,6 +1,5 @@
 import { AddLineIcon } from '@tangle-network/icons';
 import OperatorsTableUI from '@tangle-network/tangle-shared-ui/components/tables/Operators';
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 import { RestakeOperator } from '@tangle-network/tangle-shared-ui/types';
@@ -12,6 +11,7 @@ import {
   ModalTrigger,
 } from '@tangle-network/ui-components/components/Modal';
 import assertSubstrateAddress from '@tangle-network/ui-components/utils/assertSubstrateAddress';
+import cx from 'classnames';
 import {
   type ComponentProps,
   type FC,
@@ -25,6 +25,7 @@ import { RestakeOperatorWrapper } from '../../components/tables/RestakeActionWra
 import useIdentities from '../../data/useIdentities';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import JoinOperatorsModal from './JoinOperatorsModal';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
@@ -50,7 +51,7 @@ const OperatorsTable: FC<Props> = ({
   const { isEvm } = useAgnosticAccountInfo();
   const isAccountConnected = useIsAccountConnected();
   const activeSubstrateAddress = useSubstrateAddress(false);
-  const { assets } = useRestakeContext();
+  const { assets } = useRestakeAssets();
 
   const { result: identities } = useIdentities(
     useMemo(() => Object.keys(operatorMap), [operatorMap]),
@@ -79,7 +80,10 @@ const OperatorsTable: FC<Props> = ({
             identityName: identities[address]?.name ?? undefined,
             restakersCount,
             tvlInUsd,
-            vaultTokens: delegationsToVaultTokens(delegations, assets),
+            vaultTokens:
+              assets === null
+                ? []
+                : delegationsToVaultTokens(delegations, assets),
             selfBondedAmount: stake,
             isDelegated,
           } satisfies RestakeOperator;
@@ -98,6 +102,13 @@ const OperatorsTable: FC<Props> = ({
   const disabledTooltip = isAccountConnected
     ? 'Only Substrate accounts can register as operators at this time.'
     : 'Connect a Substrate account to join as an operator.';
+
+  const isActiveAccountInOperatorMap = useMemo(
+    () =>
+      activeSubstrateAddress !== null &&
+      operatorMap[activeSubstrateAddress] !== undefined,
+    [activeSubstrateAddress, operatorMap],
+  );
 
   const RestakeAction = useCallback(
     ({ address, children }: PropsWithChildren<{ address: string }>) => {
@@ -118,7 +129,9 @@ const OperatorsTable: FC<Props> = ({
       <div className="w-full [&>button]:block [&>button]:ml-auto">
         <ModalTrigger asChild>
           <Button
-            className="mb-4 ml-auto -mt-14"
+            className={cx('mb-4 ml-auto -mt-14', {
+              hidden: isActiveAccountInOperatorMap,
+            })}
             variant="utility"
             size="sm"
             leftIcon={

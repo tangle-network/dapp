@@ -69,10 +69,6 @@ export type RestakeAssetMetadata = Readonly<{
   status?: PalletAssetsAssetStatus['type'];
 }>;
 
-export type RestakeAssetMap = {
-  readonly [assetId: RestakeAssetId]: RestakeAssetMetadata;
-};
-
 export type DelegatorWithdrawRequest = {
   readonly assetId: RestakeAssetId;
   readonly amount: bigint;
@@ -129,28 +125,17 @@ export type DelegatorInfo = {
 export type AssetAccountExistenceReason =
   TransformEnum<PalletAssetsExistenceReason>;
 
-/**
- * The account balance of an asset and its status.
- * @name PalletAssetsAssetAccount
- */
-export type AssetBalance = {
-  readonly assetId: RestakeAssetId;
-  readonly balance: bigint;
-};
-
-export type AssetBalanceMap = {
-  readonly [assetId: RestakeAssetId]: AssetBalance;
-};
-
-export type AssetWithBalance = {
-  readonly [assetId: RestakeAssetId]: {
-    readonly assetId: RestakeAssetId;
-    readonly metadata: RestakeAssetMetadata;
-    readonly balance: AssetBalance | null;
-  };
-};
+export type AssetBalanceMap = Map<RestakeAssetId, BN>;
 
 export type RestakeAsset = {
+  id: RestakeAssetId;
+  metadata: RestakeAssetMetadata;
+  balance?: BN;
+};
+
+export type RestakeAssetMap = Map<RestakeAssetId, RestakeAsset>;
+
+export type RestakeAssetTableItem = {
   id: RestakeAssetId;
   name?: string;
   symbol: string;

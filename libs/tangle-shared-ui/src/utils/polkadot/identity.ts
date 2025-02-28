@@ -4,6 +4,12 @@ import type {
 } from '@polkadot/types/lookup';
 import { getApiPromise } from './api';
 import { hexToString, isHex } from 'viem';
+import {
+  GithubFill,
+  GlobalLine,
+  Mail,
+  TwitterFill,
+} from '@tangle-network/icons';
 
 export type IdentityType = {
   name: string | null;
@@ -18,6 +24,13 @@ export enum IdentityDataType {
   EMAIL = 'email',
   TWITTER = 'twitter',
 }
+
+export const IDENTITY_ICONS_RECORD = {
+  [IdentityDataType.TWITTER]: TwitterFill,
+  [IdentityDataType.EMAIL]: Mail,
+  [IdentityDataType.WEB]: GlobalLine,
+  github: GithubFill,
+};
 
 export const extractDataFromIdentityInfo = (
   info: PalletIdentityLegacyIdentityInfo,
@@ -45,7 +58,6 @@ export const extractIdentityInfo = (
   identityRegistration: PalletIdentityRegistration,
 ): IdentityType => {
   const info = identityRegistration.info;
-
   const name = extractDataFromIdentityInfo(info, IdentityDataType.NAME);
   const email = extractDataFromIdentityInfo(info, IdentityDataType.EMAIL);
   const web = extractDataFromIdentityInfo(info, IdentityDataType.WEB);
@@ -70,7 +82,9 @@ export async function getAccountInfo(rpcEndpoint: string, address: string) {
   const api = await getApiPromise(rpcEndpoint);
   const identityData = await api.query.identity.identityOf(address);
 
-  if (identityData.isNone) return null;
+  if (identityData.isNone) {
+    return null;
+  }
 
   const [identityRegistration] = identityData.unwrap();
 
@@ -94,7 +108,9 @@ export async function getMultipleAccountInfo(
   const identityData = await api.query.identity.identityOf.multi(addresses);
 
   return identityData.map((data) => {
-    if (data.isNone) return null;
+    if (data.isNone) {
+      return null;
+    }
 
     const [registration] = data.unwrap();
 

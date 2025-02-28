@@ -147,7 +147,7 @@ const useSubstrateTx = <Context = void>({
       });
 
       const handleStatusUpdate = (txStatus: ISubmittableResult) => {
-        // TODO: Handle pending, in-block, & finalized states appropriately.s
+        // TODO: Handle pending, in-block, & finalized states appropriately.
 
         // If the component is unmounted, or the transaction
         // has not yet been included in a block, ignore the

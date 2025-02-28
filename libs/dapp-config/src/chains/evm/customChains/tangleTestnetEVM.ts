@@ -9,6 +9,11 @@ import {
 const tangleTestnetEVM = defineChain({
   id: EVMChainId.TangleTestnetEVM,
   name: 'Tangle Testnet',
+  contracts: {
+    multicall3: {
+      address: '0xC008F1301EB78017d61f5de8Dd4F5c5ecCBC497c',
+    },
+  },
   nativeCurrency: {
     name: 'Test Tangle Network Token',
     symbol: 'tTNT',

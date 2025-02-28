@@ -61,6 +61,11 @@ export interface TableProps<T extends RowData, E extends HTMLElement>
   trClassName?: string;
 
   /**
+   * The optional class name for overriding style table row component when it's expanded
+   */
+  expandedRowClassName?: string;
+
+  /**
    * The optional class name for overriding style TData component
    */
   tdClassName?: string;
