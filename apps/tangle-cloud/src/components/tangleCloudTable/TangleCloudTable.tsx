@@ -52,10 +52,7 @@ export const TangleCloudTable = <T extends RowData>({
       tableClassName={tableConfig?.tableClassName}
       thClassName={tableConfig?.thClassName}
       tbodyClassName={tableConfig?.tbodyClassName}
-      trClassName={twMerge(
-        'group overflow-hidden',
-        tableConfig?.trClassName,
-      )}
+      trClassName={twMerge('group overflow-hidden', tableConfig?.trClassName)}
       tdClassName={twMerge('!p-3 max-w-xs', tableConfig?.tdClassName)}
       paginationClassName={tableConfig?.paginationClassName}
     />

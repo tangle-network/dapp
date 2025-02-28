@@ -16,7 +16,6 @@ import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetwork
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeTVL from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTVL';
-import { useWebContext } from '@tangle-network/api-provider-environment';
 import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import useSWRImmutable from 'swr/immutable';
@@ -29,7 +28,7 @@ import { isValidUrl } from '@tangle-network/dapp-types';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 
 export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
-  const activeAccountAddr = useActiveAccountAddress();  
+  const activeAccountAddr = useActiveAccountAddress();
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { operatorMap } = useRestakeOperatorMap();
   const { delegatorInfo } = useRestakeDelegatorInfo();
@@ -76,7 +75,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
       return getAccountInfo(args[0], args[1]);
     },
   );
-  
+
   const identityName = useMemo(() => {
     if (!accountAddress) return '';
     const defaultName = shortenString(accountAddress);
@@ -119,11 +118,7 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
     <AccountStatsDetailCard.Root {...props.rootProps}>
       <AccountStatsDetailCard.Header
         IconElement={
-          <Avatar
-            size="lg"
-            value={accountAddress ?? ''}
-            theme='substrate'
-          />
+          <Avatar size="lg" value={accountAddress ?? ''} theme="substrate" />
         }
         title={identityName}
         description={

@@ -26,7 +26,9 @@ import calculateBnRatio from '@tangle-network/ui-components/utils/calculateBnRat
 import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
 import { twMerge } from 'tailwind-merge';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { TangleCloudTableProps } from 'apps/tangle-cloud/src/components/tangleCloudTable/type';
+import { TangleCloudTableProps } from '../../../components/tangleCloudTable/type';
+import { Link } from 'react-router';
+import { TangleDAppPagePath } from '../../../types';
 
 const COLUMN_HELPER = createColumnHelper<RestakeVault>();
 
@@ -75,7 +77,7 @@ const getColumns = (nativeTokenSymbol: string) => [
   }),
   COLUMN_HELPER.accessor('reward', {
     sortUndefined: 'last',
-    header: () => "Rewards",
+    header: () => 'Rewards',
     cell: (props) => {
       const value = props.getValue();
       const fmtRewards =
@@ -96,7 +98,7 @@ const getColumns = (nativeTokenSymbol: string) => [
   }),
   COLUMN_HELPER.accessor('tvl', {
     sortUndefined: 'last',
-    header: () => "TVL | Capacity",
+    header: () => 'TVL | Capacity',
     cell: (props) => {
       const tvl = props.getValue();
 
@@ -149,13 +151,15 @@ const getColumns = (nativeTokenSymbol: string) => [
   COLUMN_HELPER.display({
     id: 'actions',
     header: () => null,
-    cell: ({ row }) => (
+    cell: ({ row }) => {
+
+      return (
       <TableCellWrapper removeRightBorder>
         <div className="flex items-center justify-end flex-1 gap-2">
-          {/*
-          TODO: Add deposit button
           <Link
-            to={`${PagePath.RESTAKE_DEPOSIT}?${QueryParamKey.RESTAKE_VAULT}=${row.original.id}`}
+            to={TangleDAppPagePath.RESTAKE_DEPOSIT.replace('{{vault}}', row.original.id.toString())}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={(event) => {
               event.stopPropagation();
             }}
@@ -163,7 +167,7 @@ const getColumns = (nativeTokenSymbol: string) => [
             <Button variant="utility" className="uppercase body4">
               Deposit
             </Button>
-          </Link> */}
+          </Link>
 
           <Button variant="utility" isJustIcon isDisabled={!row.getCanExpand()}>
             <div
@@ -177,11 +181,11 @@ const getColumns = (nativeTokenSymbol: string) => [
           </Button>
         </div>
       </TableCellWrapper>
-    ),
+      );
+    },
     enableSorting: false,
   }),
 ];
-
 
 type Props = {
   data: RestakeVault[];
@@ -192,7 +196,7 @@ type Props = {
   tableConfig: TangleCloudTableProps<RestakeVault>['tableConfig'];
 };
 
-export const TotalValueLockedTable: FC<Props> = ({ 
+export const TotalValueLockedTable: FC<Props> = ({
   data,
   isLoading,
   error,

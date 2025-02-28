@@ -20,97 +20,94 @@ import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleClo
 import { EInstanceStatus, InstanceMonitoringItem } from './type';
 import { format } from 'date-fns';
 import { ChevronRight } from '@tangle-network/icons';
+import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 
 const columnHelper = createColumnHelper<InstanceMonitoringItem>();
 
 const instanceMonitoringData: InstanceMonitoringItem[] = [
   {
-    id: "1",
-    blueprintId: "blueprint-001",
+    id: '1',
+    blueprintId: 'blueprint-001',
     blueprint: {
-      id: "blueprint-001",
-      name: "Blueprint A",
+      id: 'blueprint-001',
+      name: 'Blueprint A',
       uptime: 99.5,
       pricing: 0.05,
-      pricingUnit: "USD/hour",
+      pricingUnit: 'USD/hour',
       instanceCount: 10,
       tvlInUsd: 5,
-      author: "Author A",
+      author: 'Author A',
       registrationParams: [],
-      imgUrl: "https://example.com/image1.png",
-      category: "Category A",
-      description: "Description A",
+      imgUrl: 'https://example.com/image1.png',
+      category: 'Category A',
+      description: 'Description A',
       restakersCount: 100,
       operatorsCount: 5,
-      tvl: "50000",
+      tvl: '50000',
     },
     instance: {
-      id: "instance-001",
-      instanceId: "i-00annd2f38e3hk32",
+      id: 'instance-001',
+      instanceId: 'i-00annd2f38e3hk32',
       earned: 1500,
       earnedInUsd: 1500,
       uptime: 98.5,
-      lastActive: "2025-02-27T14:30:00Z",
-      imgUrl: "https://example.com/image1.png",
+      lastActive: '2025-02-27T14:30:00Z',
+      imgUrl: 'https://example.com/image1.png',
       status: EInstanceStatus.RUNNING,
     },
   },
   {
-    id: "2",
-    blueprintId: "blueprint-002",
+    id: '2',
+    blueprintId: 'blueprint-002',
     blueprint: {
-      id: "blueprint-002",
-      name: "Blueprint B",
+      id: 'blueprint-002',
+      name: 'Blueprint B',
       uptime: 99.0,
       pricing: 0.03,
-      pricingUnit: "USD/hour",
+      pricingUnit: 'USD/hour',
       instanceCount: 8,
       tvlInUsd: 3,
-      author: "Author B", 
+      author: 'Author B',
       registrationParams: [],
-      imgUrl: "https://example.com/image2.png",
-      category: "Category B",
-      description: "Description B",
+      imgUrl: 'https://example.com/image2.png',
+      category: 'Category B',
+      description: 'Description B',
       restakersCount: 150,
       operatorsCount: 3,
-      tvl: "30000",
+      tvl: '30000',
     },
     instance: {
-      id: "instance-002",
-      instanceId: "i-00annd2f38e3hk32",
+      id: 'instance-002',
+      instanceId: 'i-00annd2f38e3hk32',
       earned: 1000,
       earnedInUsd: 1000,
       uptime: 97.5,
-      lastActive: "2025-02-27T14:30:00Z",
-      imgUrl: "https://example.com/image2.png",
+      lastActive: '2025-02-27T14:30:00Z',
+      imgUrl: 'https://example.com/image2.png',
       status: EInstanceStatus.RUNNING,
     },
   },
 ];
 
-
 export const StoppedInstanceTable: FC = () => {
-  const [instances, setInstances] =
-    useState<InstanceMonitoringItem[]>(instanceMonitoringData);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  // TODO: Remove mock data
+  const [instances] = useState<InstanceMonitoringItem[]>(
+    instanceMonitoringData,
+  );
+  const [isLoading] = useState(false);
+  const [error] = useState<Error | null>(null);
   const loadingTableProps: Partial<TableStatusProps> = {};
   const emptyTableProps: Partial<TableStatusProps> = {};
 
   const isEmpty = instances.length === 0;
 
-  /**
-   * `h-12` is followed the `lg` size of `Avatar` component
-   * to make the table cells have the same height
-   */
-  const commonCellClassName = 'h-12 flex items-center';
   const columns = useMemo(
     () => [
       columnHelper.accessor('instance', {
         header: () => 'Blueprint > Instance',
         cell: (props) => {
           return (
-            <div className="flex items-center gap-2">
+            <TableCellWrapper>
               {props.row.original.blueprint.imgUrl ? (
                 <Avatar
                   size="lg"
@@ -162,7 +159,7 @@ export const StoppedInstanceTable: FC = () => {
                   {props.row.original.instance.instanceId}
                 </Typography>
               </div>
-            </div>
+            </TableCellWrapper>
           );
         },
       }),
@@ -170,11 +167,11 @@ export const StoppedInstanceTable: FC = () => {
         header: () => 'Earned',
         cell: (props) => {
           return (
-            <div className={commonCellClassName}>
+            <TableCellWrapper>
               {props.row.original.instance.earnedInUsd
                 ? `$${getRoundedAmountString(props.row.original.instance.earnedInUsd)}`
                 : EMPTY_VALUE_PLACEHOLDER}
-            </div>
+            </TableCellWrapper>
           );
         },
       }),
@@ -199,11 +196,12 @@ export const StoppedInstanceTable: FC = () => {
           const colors = [...activeColors, ...inactiveColors];
 
           return (
-            <EnergyChipStack
-              className={commonCellClassName}
-              colors={colors as EnergyChipColors[]}
-              label={`${props.row.original.instance.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
-            />
+            <TableCellWrapper>
+              <EnergyChipStack
+                colors={colors as EnergyChipColors[]}
+                label={`${props.row.original.instance.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
+              />
+            </TableCellWrapper>
           );
         },
       }),
@@ -211,15 +209,19 @@ export const StoppedInstanceTable: FC = () => {
         header: () => 'Last Active',
         cell: (props) => {
           return (
-            <Typography
-              variant="body1"
-              fw="normal"
-              className={commonCellClassName}
-            >
-              {props.row.original.instance.lastActive ?
-                format(props.row.original.instance.lastActive, 'yy/MM/dd HH:mm')
-                : EMPTY_VALUE_PLACEHOLDER}
-            </Typography>
+            <TableCellWrapper>
+              <Typography
+                variant="body1"
+                fw="normal"
+              >
+                {props.row.original.instance.lastActive
+                  ? format(
+                      props.row.original.instance.lastActive,
+                      'yy/MM/dd HH:mm',
+                    )
+                  : EMPTY_VALUE_PLACEHOLDER}
+              </Typography>
+            </TableCellWrapper>
           );
         },
       }),
@@ -227,7 +229,7 @@ export const StoppedInstanceTable: FC = () => {
         header: () => '',
         cell: (props) => {
           return (
-            <div className={commonCellClassName}>
+            <TableCellWrapper removeRightBorder>
               <Button
                 variant="link"
                 size="sm"
@@ -237,7 +239,7 @@ export const StoppedInstanceTable: FC = () => {
               >
                 View
               </Button>
-            </div>
+            </TableCellWrapper>
           );
         },
       }),

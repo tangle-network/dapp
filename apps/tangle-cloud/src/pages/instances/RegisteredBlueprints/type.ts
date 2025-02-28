@@ -1,4 +1,4 @@
-import type { Blueprint } from "@tangle-network/tangle-shared-ui/types/blueprint";
+import type { Blueprint } from '@tangle-network/tangle-shared-ui/types/blueprint';
 
 export interface BlueprintMonitoringItem extends Blueprint {
   uptime: number | null;
@@ -6,4 +6,4 @@ export interface BlueprintMonitoringItem extends Blueprint {
   pricingUnit: string | null;
   instanceCount: number | null;
   tvlInUsd: number | null;
-};
+}

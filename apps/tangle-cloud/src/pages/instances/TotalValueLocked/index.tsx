@@ -2,7 +2,7 @@ import { TableAndChartTabs } from '@tangle-network/ui-components/components/Tabl
 import { LockFillIcon } from '@tangle-network/icons';
 import { ReactElement, useMemo, useState } from 'react';
 import { TabContent, toSubstrateAddress } from '@tangle-network/ui-components';
-import { TotalValueLockedTable } from './TotalValueLockedTable';  
+import { TotalValueLockedTable } from './TotalValueLockedTable';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeRewardConfig from '@tangle-network/tangle-shared-ui/hooks/useRestakeRewardConfig';
 import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
@@ -20,17 +20,13 @@ enum ETotalValueLockedTab {
   TVL = 'Total Value Locked',
 }
 
-const TotalValueLockedTab: string[] = Object.values(
-  ETotalValueLockedTab,
-);
+const TotalValueLockedTab: string[] = Object.values(ETotalValueLockedTab);
 const TotalValueLockedTabIcon: ReactElement[] = [
   <LockFillIcon className="w-4 h-4 !fill-blue-50" />,
 ] as const;
 
 export const TotalValueLockedTabs = () => {
-  const [selectedTab, setSelectedTab] = useState(
-    ETotalValueLockedTab.TVL,
-  );
+  const [selectedTab, setSelectedTab] = useState(ETotalValueLockedTab.TVL);
 
   const { assets } = useRestakeAssets();
   const { delegatorInfo } = useRestakeDelegatorInfo();
@@ -48,7 +44,6 @@ export const TotalValueLockedTabs = () => {
     return operatorMap[toSubstrateAddress(address)];
   }, [operatorMap, address]);
 
-  
   const vaults = useMemo(() => {
     if (assets === null) {
       return null;
@@ -121,46 +116,58 @@ export const TotalValueLockedTabs = () => {
           tableConfig={{
             onRowClick(row, table) {
               if (!row.getCanExpand()) return;
-      
+
               // Close all other rows
               table.getRowModel().rows.forEach((r) => {
                 if (r.id !== row.id && r.getIsExpanded()) {
                   r.toggleExpanded(false);
                 }
               });
-      
+
               return row.toggleExpanded();
             },
             getExpandedRowContent(row) {
               if (assets === null) {
                 return;
               }
-      
+
               const vaultId = row.original.id;
-      
+
               const vaultAssets = Array.from(assets.values())
                 .filter((asset) => asset.metadata.vaultId === vaultId)
-                .map(({ id: assetId, metadata: { decimals, symbol }, balance }) => {
-                  const tvl = assetTvl?.get(assetId) ?? null;
-                  const available = balance ?? null;
-      
-                  const totalDeposits =
-                    typeof delegatorInfo?.deposits[assetId]?.amount === 'bigint'
-                      ? new BN(delegatorInfo.deposits[assetId].amount.toString())
-                      : null;
-      
-                  return {
+                .map(
+                  ({
                     id: assetId,
-                    symbol,
-                    decimals,
-                    tvl,
-                    available,
-                    totalDeposits,
-                  } satisfies VaultAssetData;
-                });
-      
+                    metadata: { decimals, symbol },
+                    balance,
+                  }) => {
+                    const tvl = assetTvl?.get(assetId) ?? null;
+                    const available = balance ?? null;
+
+                    const totalDeposits =
+                      typeof delegatorInfo?.deposits[assetId]?.amount ===
+                      'bigint'
+                        ? new BN(
+                            delegatorInfo.deposits[assetId].amount.toString(),
+                          )
+                        : null;
+
+                    return {
+                      id: assetId,
+                      symbol,
+                      decimals,
+                      tvl,
+                      available,
+                      totalDeposits,
+                    } satisfies VaultAssetData;
+                  },
+                );
+
               return (
-                <VaultAssetsTable isShown={row.getIsExpanded()} data={vaultAssets} />
+                <VaultAssetsTable
+                  isShown={row.getIsExpanded()}
+                  data={vaultAssets}
+                />
               );
             },
           }}

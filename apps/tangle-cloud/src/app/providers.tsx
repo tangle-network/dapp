@@ -26,9 +26,7 @@ const Providers = ({
         applicationName="Tangle Cloud"
         wagmiInitialState={wagmiInitialState}
       >
-        <PolkadotApiProvider>
-          {children}
-        </PolkadotApiProvider>
+        <PolkadotApiProvider>{children}</PolkadotApiProvider>
       </WebbProvider>
     </UIProvider>
   );

@@ -51,7 +51,8 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
                   'flex gap-2 items-center',
                   cx({
                     'border-b-2 py-4': enableAdvancedDivider,
-                    'aria-selected:border-blue-50 border-transparent': enableAdvancedDivider,
+                    'aria-selected:border-blue-50 border-transparent':
+                      enableAdvancedDivider,
                     '[&>*]:opacity-50 [&[aria-selected="true"]>*]:opacity-100':
                       enableAdvancedDivider,
                   }),

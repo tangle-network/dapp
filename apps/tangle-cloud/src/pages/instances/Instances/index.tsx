@@ -16,7 +16,7 @@ enum EInstancesTab {
 const InstancesTab: string[] = Object.values(EInstancesTab);
 
 const InstancesTabIcon: ReactElement[] = [
-  <PlayFillIcon viewBox='0 0 16 16' className="w-4 h-4 !fill-blue-50" />,
+  <PlayFillIcon viewBox="0 0 16 16" className="w-4 h-4 !fill-blue-50" />,
   <TimeLineIcon className="w-4 h-4 !fill-yellow-100" />,
   <TrashIcon className="w-4 h-4  [&>path]:fill-red-100" />,
 ] as const;

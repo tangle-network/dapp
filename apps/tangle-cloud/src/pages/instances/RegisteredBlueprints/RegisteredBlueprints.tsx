@@ -61,10 +61,11 @@ const MOCK_BLUEPRINTS: BlueprintMonitoringItem[] = [
 ];
 
 export const RegisteredBlueprints: FC = () => {
-  const [blueprints, setBlueprints] =
+  // TODO: Remove mock data
+  const [blueprints] =
     useState<BlueprintMonitoringItem[]>(MOCK_BLUEPRINTS);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [isLoading] = useState(false);
+  const [error] = useState<Error | null>(null);
   const loadingTableProps: Partial<TableStatusProps> = {};
   const emptyTableProps: Partial<TableStatusProps> = {};
 
@@ -77,30 +78,30 @@ export const RegisteredBlueprints: FC = () => {
         cell: (props) => {
           return (
             <TableCellWrapper>
-              <div className='flex items-center gap-2 overflow-hidden'>
-              {props.row.original.imgUrl ? (
-                <Avatar
-                  size="lg"
-                  className="min-w-12"
-                  src={props.row.original.imgUrl}
-                  alt={props.row.original.name}
-                  sourceVariant="uri"
-                />
-              ) : (
-                <Avatar
-                  size="lg"
-                  className="min-w-12"
-                  fallback={props.row.original.name.substring(0, 2)}
-                  theme="substrate"
-                />
-              )}
-              <Typography
-                variant="body1"
-                fw="bold"
-                className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
-              >
-                {props.row.original.name}
-              </Typography>
+              <div className="flex items-center gap-2 overflow-hidden">
+                {props.row.original.imgUrl ? (
+                  <Avatar
+                    size="lg"
+                    className="min-w-12"
+                    src={props.row.original.imgUrl}
+                    alt={props.row.original.name}
+                    sourceVariant="uri"
+                  />
+                ) : (
+                  <Avatar
+                    size="lg"
+                    className="min-w-12"
+                    fallback={props.row.original.name.substring(0, 2)}
+                    theme="substrate"
+                  />
+                )}
+                <Typography
+                  variant="body1"
+                  fw="bold"
+                  className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
+                >
+                  {props.row.original.name}
+                </Typography>
               </div>
             </TableCellWrapper>
           );
@@ -157,10 +158,7 @@ export const RegisteredBlueprints: FC = () => {
         cell: (props) => {
           return (
             <TableCellWrapper>
-              <Typography
-                variant="body1"
-                fw="normal"
-              >
+              <Typography variant="body1" fw="normal">
                 {props.row.original.instanceCount?.toLocaleString() ??
                   EMPTY_VALUE_PLACEHOLDER}
               </Typography>
