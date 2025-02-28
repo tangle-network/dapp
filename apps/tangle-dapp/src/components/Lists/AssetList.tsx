@@ -16,7 +16,7 @@ import { twMerge } from 'tailwind-merge';
 import { ListCardWrapper } from './ListCardWrapper';
 
 export type AssetConfig = {
-  id?: string;
+  id: string;
   name?: string;
   symbol: string;
   optionalSymbol?: string;
