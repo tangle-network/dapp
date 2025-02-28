@@ -88,7 +88,7 @@ export const TANGLE_MAINNET_NETWORK = {
   id: NetworkId.TANGLE_MAINNET,
   substrateChainId: SubstrateChainId.TangleMainnetNative,
   evmChainId: EVMChainId.TangleMainnetEVM,
-  name: 'Tangle Mainnet',
+  name: 'Tangle',
   tokenSymbol: TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,
   nodeType: 'standalone',
   wsRpcEndpoint: TANGLE_MAINNET_WS_RPC_ENDPOINT,

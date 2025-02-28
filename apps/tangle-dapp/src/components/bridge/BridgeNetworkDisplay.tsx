@@ -81,9 +81,10 @@ const BridgeNetworkDisplay: FC<{
       {networkName && (
         <div
           className={twMerge(
-            'flex items-center gap-2 rounded-lg p-2',
+            'flex items-center gap-2 rounded-lg py-2 px-3',
             'bg-transparent dark:bg-transparent',
-            'border-2 border-mono-60 dark:border-mono-140',
+            'border-2 border-mono-60/40 dark:border-mono-140/40',
+            'cursor-not-allowed pointer-events-none select-none',
             className,
           )}
         >
