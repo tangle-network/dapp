@@ -3,7 +3,6 @@ import { LockFillIcon } from '@tangle-network/icons';
 import { ReactElement, useMemo, useState } from 'react';
 import { TabContent, toSubstrateAddress } from '@tangle-network/ui-components';
 import { TotalValueLockedTable } from './TotalValueLockedTable';  
-import { useRestakeContext } from '@tangle-network/tangle-shared-ui/context/RestakeContext';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeRewardConfig from '@tangle-network/tangle-shared-ui/hooks/useRestakeRewardConfig';
 import useRestakeAssetsTvl from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssetsTvl';
@@ -11,10 +10,11 @@ import useVaultRewards from '@tangle-network/tangle-shared-ui/data/rewards/useVa
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import useRestakeOperatorMap from '@tangle-network/tangle-shared-ui/data/restake/useRestakeOperatorMap';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-import calculateVaults from '@tangle-network/ui-components/utils/calculateVaults';
 import { BN } from '@polkadot/util';
 import VaultAssetsTable from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets';
 import { VaultAssetData } from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets/types';
+import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import createVaultMap from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
 
 enum ETotalValueLockedTab {
   TVL = 'Total Value Locked',
@@ -32,7 +32,7 @@ export const TotalValueLockedTabs = () => {
     ETotalValueLockedTab.TVL,
   );
 
-  const { isLoading, assets, balances } = useRestakeContext();
+  const { assets } = useRestakeAssets();
   const { delegatorInfo } = useRestakeDelegatorInfo();
 
   const address = useActiveAccountAddress();
@@ -43,54 +43,60 @@ export const TotalValueLockedTabs = () => {
 
   const operatorData = useMemo(() => {
     if (!address) {
-      return null;
+      return undefined;
     }
     return operatorMap[toSubstrateAddress(address)];
   }, [operatorMap, address]);
 
-  const vaults = useMemo(
-    () => {
-      if (operatorData) {
-        // Handle operator-specific vaults
-        const uniqueAssetIds = operatorData.delegations.reduce(
-          (acc, { assetId }) => {
-            acc.add(assetId);
-            return acc;
-          },
-          new Set<RestakeAssetId>(),
-        );
-
-        const operatorAssets = Array.from(uniqueAssetIds)
-          .map((assetId) => assets[assetId])
-          .filter((asset) => asset !== undefined);
-
-        return calculateVaults({
-          assets: operatorAssets,
-          rewardConfig,
-          balances,
-          delegatorInfo,
-          vaultsRewards,
-          assetTvl,
-        })
-          .values()
-          .toArray();
-      }
-
-      // Handle all vaults
-      return calculateVaults({
-        assets: Object.values(assets),
+  
+  const vaults = useMemo(() => {
+    if (assets === null) {
+      return null;
+    }
+    // Handle all vaults.
+    else if (operatorData === undefined) {
+      return createVaultMap({
+        assets: Array.from(assets.values()),
         rewardConfig,
-        balances,
         delegatorInfo,
         vaultsRewards,
         assetTvl,
       })
         .values()
         .toArray();
-    },
-    // prettier-ignore
-    [assetTvl, assets, balances, delegatorInfo, operatorData, rewardConfig, vaultsRewards],
-  );
+    }
+
+    // Handle operator-specific vaults.
+    const uniqueAssetIds = operatorData.delegations.reduce(
+      (acc, { assetId }) => {
+        acc.add(assetId);
+
+        return acc;
+      },
+      new Set<RestakeAssetId>(),
+    );
+
+    const operatorAssets = Array.from(uniqueAssetIds)
+      .map((assetId) => assets.get(assetId))
+      .filter((asset) => asset !== undefined);
+
+    return createVaultMap({
+      assets: operatorAssets,
+      rewardConfig,
+      delegatorInfo,
+      vaultsRewards,
+      assetTvl,
+    })
+      .values()
+      .toArray();
+  }, [
+    assetTvl,
+    assets,
+    delegatorInfo,
+    operatorData,
+    rewardConfig,
+    vaultsRewards,
+  ]);
 
   return (
     <TableAndChartTabs
@@ -107,8 +113,8 @@ export const TotalValueLockedTabs = () => {
         className="flex justify-center mx-auto"
       >
         <TotalValueLockedTable
-          data={vaults}
-          isLoading={isLoading}
+          data={vaults ?? []}
+          isLoading={vaults === null}
           error={null}
           loadingTableProps={{}}
           emptyTableProps={{}}
@@ -126,14 +132,17 @@ export const TotalValueLockedTabs = () => {
               return row.toggleExpanded();
             },
             getExpandedRowContent(row) {
+              if (assets === null) {
+                return;
+              }
+      
               const vaultId = row.original.id;
-              const vaultAssets = Object.values(assets)
-                .filter((asset) => asset.vaultId === vaultId)
-                .map(({ assetId, decimals, symbol }) => {
+      
+              const vaultAssets = Array.from(assets.values())
+                .filter((asset) => asset.metadata.vaultId === vaultId)
+                .map(({ id: assetId, metadata: { decimals, symbol }, balance }) => {
                   const tvl = assetTvl?.get(assetId) ?? null;
-                  const available = balances[assetId]
-                    ? new BN(balances[assetId].balance.toString())
-                    : null;
+                  const available = balance ?? null;
       
                   const totalDeposits =
                     typeof delegatorInfo?.deposits[assetId]?.amount === 'bigint'

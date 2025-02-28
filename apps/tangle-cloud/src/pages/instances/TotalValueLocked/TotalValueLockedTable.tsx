@@ -19,7 +19,7 @@ import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/ta
 import { ChevronDown } from '@tangle-network/icons';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable';
-import type { VaultType } from '@tangle-network/ui-components/utils/calculateVaults';
+import type { RestakeVault } from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import calculateBnRatio from '@tangle-network/ui-components/utils/calculateBnRatio';
@@ -28,7 +28,7 @@ import { twMerge } from 'tailwind-merge';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { TangleCloudTableProps } from 'apps/tangle-cloud/src/components/tangleCloudTable/type';
 
-const COLUMN_HELPER = createColumnHelper<VaultType>();
+const COLUMN_HELPER = createColumnHelper<RestakeVault>();
 
 const getColumns = (nativeTokenSymbol: string) => [
   COLUMN_HELPER.accessor('name', {
@@ -184,12 +184,12 @@ const getColumns = (nativeTokenSymbol: string) => [
 
 
 type Props = {
-  data: VaultType[];
+  data: RestakeVault[];
   isLoading: boolean;
   error: Error | null;
   loadingTableProps: Partial<TableStatusProps>;
   emptyTableProps: Partial<TableStatusProps>;
-  tableConfig: TangleCloudTableProps<VaultType>['tableConfig'];
+  tableConfig: TangleCloudTableProps<RestakeVault>['tableConfig'];
 };
 
 export const TotalValueLockedTable: FC<Props> = ({ 
@@ -218,7 +218,7 @@ export const TotalValueLockedTable: FC<Props> = ({
   const isEmpty = data.length === 0;
 
   return (
-    <TangleCloudTable<VaultType>
+    <TangleCloudTable<RestakeVault>
       title={pluralize('blueprint', !isEmpty)}
       data={data}
       error={error}

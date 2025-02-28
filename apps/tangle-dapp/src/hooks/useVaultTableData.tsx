@@ -9,8 +9,8 @@ import { ComponentProps, useMemo } from 'react';
 import VaultAssetsTable from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets';
 import { VaultAssetData } from '@tangle-network/tangle-shared-ui/components/tables/VaultAssets/types';
 import VaultsTable from '../components/tables/Vaults';
-import useRestakeRewardConfig from '../data/restake/useRestakeRewardConfig';
-import createVaultMap from '../utils/createVaultMap';
+import useRestakeRewardConfig from '@tangle-network/tangle-shared-ui/hooks/useRestakeRewardConfig';
+import createVaultMap from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
 import useVaultRewards from '@tangle-network/tangle-shared-ui/data/rewards/useVaultRewards';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 
