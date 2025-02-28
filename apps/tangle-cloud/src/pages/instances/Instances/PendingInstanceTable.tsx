@@ -174,7 +174,7 @@ export const PendingInstanceTable: FC = () => {
               <Button
                 variant="link"
                 size="sm"
-                className="w-full"
+                className="w-full uppercase"
                 as="a"
                 href={`/instances/${props.row.original.instance.id}`}
               >

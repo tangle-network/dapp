@@ -1,4 +1,4 @@
-import type { BlueprintMonitoringItem } from "../registeredBlueprints/type";
+import type { BlueprintMonitoringItem } from "../RegisteredBlueprints/type";
 
 export interface InstanceMonitoringItem {
   id: string;

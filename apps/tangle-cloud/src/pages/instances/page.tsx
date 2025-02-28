@@ -1,8 +1,8 @@
 import { AccountStatsCard } from './AccountStatsCard';
 import { InstructionCard } from './InstructionCard';
-import { RegisteredBlueprintsTabs } from './registeredBlueprints';
-import { InstancesTabs } from './instances';
-
+import { RegisteredBlueprintsTabs } from './RegisteredBlueprints';
+import { InstancesTabs } from './Instances';
+import { TvlTabs } from './tvl';
 const Page = () => {
   return (
     <>
@@ -12,6 +12,7 @@ const Page = () => {
       </div>
       <RegisteredBlueprintsTabs />
       <InstancesTabs />
+      <TvlTabs />
     </>
   );
 };
