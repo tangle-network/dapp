@@ -663,17 +663,32 @@ const BridgeContainer = () => {
 
   // Re-fetch EVM balances periodically.
   useEffect(() => {
-    // Re-fetch every 10 seconds.
-    const interval = 10 * 1000;
+    // Skip fetching if user is not active or connected
+    if (!activeAccount || !activeWallet) return;
+
+    // Initial fetch when dependencies change
+    refreshEvmBalances();
+
+    // Re-fetch every 30 seconds
+    const interval = 30 * 1000;
 
     const intervalId = setInterval(() => {
-      refreshEvmBalances();
+      // Only refresh if the component is visible in the viewport
+      if (document.visibilityState === 'visible') {
+        refreshEvmBalances();
+      }
     }, interval);
 
     return () => {
       clearInterval(intervalId);
     };
-  }, [refreshEvmBalances]);
+  }, [
+    refreshEvmBalances,
+    activeAccount,
+    activeWallet,
+    sourceTypedChainId,
+    destinationTypedChainId,
+  ]);
 
   const isSwitchingChainRef = useRef(false);
 

@@ -2,7 +2,7 @@ import { chainsConfig } from '@tangle-network/dapp-config/chains';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { Decimal } from 'decimal.js';
 import { ethers } from 'ethers';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Abi, createPublicClient, http } from 'viem';
 
 import {
@@ -53,10 +53,17 @@ export const useBridgeEvmBalances = (
   destinationChainId: number,
 ) => {
   const accountEvmAddress = useEvmAddress20();
-
   const [balances, setBalances] = useState<BridgeChainBalances>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Add refs to track last fetch and avoid unnecessary fetches
+  const lastFetchTimeRef = useRef<number>(0);
+  const isMountedRef = useRef<boolean>(true);
+  const fetchingRef = useRef<boolean>(false);
+
+  // Minimum time between fetches in milliseconds (2 seconds)
+  const MIN_FETCH_INTERVAL = 2000;
 
   const fetchTokenBalance = useCallback(
     async (
@@ -94,9 +101,24 @@ export const useBridgeEvmBalances = (
   );
 
   const fetchBalances = useCallback(async () => {
-    if (accountEvmAddress === null || !sourceChainId) {
+    // Check if the fetch should proceed
+    if (
+      accountEvmAddress === null ||
+      !sourceChainId ||
+      fetchingRef.current ||
+      !isMountedRef.current
+    ) {
       return;
     }
+
+    // Check if we need to throttle requests
+    const now = Date.now();
+    if (now - lastFetchTimeRef.current < MIN_FETCH_INTERVAL) {
+      return;
+    }
+
+    fetchingRef.current = true;
+    lastFetchTimeRef.current = now;
 
     setIsLoading(true);
     setError(null);
@@ -128,17 +150,30 @@ export const useBridgeEvmBalances = (
 
       newBalances[sourceChainId] = tokenBalances;
 
-      setBalances(newBalances);
+      if (isMountedRef.current) {
+        setBalances(newBalances);
+      }
     } catch (possibleError) {
       const error = ensureError(possibleError);
-      setError(`Failed to fetch token balances: ${error.message}`);
+      if (isMountedRef.current) {
+        setError(`Failed to fetch token balances: ${error.message}`);
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+      fetchingRef.current = false;
     }
   }, [accountEvmAddress, destinationChainId, fetchTokenBalance, sourceChainId]);
 
+  // Only fetch on mount and when dependencies actually change
   useEffect(() => {
+    isMountedRef.current = true;
     fetchBalances();
+
+    return () => {
+      isMountedRef.current = false;
+    };
   }, [fetchBalances]);
 
   return {
