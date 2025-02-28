@@ -6,6 +6,7 @@ import ListModal from '@tangle-network/tangle-shared-ui/components/ListModal';
 import {
   AmountFormatStyle,
   Card,
+  formatBn,
   formatDisplayAmount,
   isEvmAddress,
   shortenHex,
@@ -130,7 +131,13 @@ const DepositForm: FC<Props> = (props) => {
 
     // Select the first asset in the vault by default.
     setValue('depositAssetId', defaultAsset.id);
-    setValue('amount', defaultAsset.balance.toString());
+    setValue(
+      'amount',
+      formatBn(defaultAsset.balance, defaultAsset.metadata.decimals, {
+        // Show the entire fraction part.
+        fractionMaxLength: undefined,
+      }),
+    );
 
     // Remove the param to prevent reuse after initial load.
     setVaultIdParam(null);
