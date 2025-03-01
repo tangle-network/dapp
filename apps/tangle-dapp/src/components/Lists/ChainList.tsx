@@ -103,7 +103,9 @@ export const ChainList = ({
                   />
 
                   <Typography variant="h5" fw="bold" className="capitalize">
-                    {chain.displayName ?? chain.name}
+                    {chain.name === 'Tangle Mainnet'
+                      ? chain.name
+                      : (chain.displayName ?? chain.name)}
                   </Typography>
                 </div>
 

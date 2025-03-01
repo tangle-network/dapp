@@ -1,7 +1,7 @@
 'use client';
 
 import { useWebContext } from '@tangle-network/api-provider-environment';
-import { chainsPopulated } from '@tangle-network/dapp-config';
+import { ChainConfig, chainsPopulated } from '@tangle-network/dapp-config';
 import { Alert, ChainIcon, ChevronDown, Spinner } from '@tangle-network/icons';
 import {
   calculateTypedChainId,
@@ -17,13 +17,23 @@ import {
   Typography,
 } from '@tangle-network/ui-components';
 import { type FC, useCallback, useMemo } from 'react';
-import { twMerge } from 'tailwind-merge';
+import cx from 'classnames';
 import useNetworkStore from '../../context/useNetworkStore';
 import useSwitchNetwork from '../../hooks/useSwitchNetwork';
 import createCustomNetwork from '../../utils/createCustomNetwork';
 import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 
-const NetworkSelectionButton: FC = () => {
+type NetworkSelectionButtonProps = {
+  disableChainSelection?: boolean;
+  preferredChain?: ChainConfig;
+  overrideIsWrongEvmNetworkWithPreferredChain?: boolean;
+};
+
+const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
+  disableChainSelection = false,
+  preferredChain,
+  overrideIsWrongEvmNetworkWithPreferredChain = false,
+}) => {
   const { activeChain, activeWallet, isConnecting, loading, switchChain } =
     useWebContext();
 
@@ -45,6 +55,14 @@ const NetworkSelectionButton: FC = () => {
         return 'Loading';
       }
 
+      if (disableChainSelection) {
+        return activeChain?.name === 'Tangle Mainnet'
+          ? activeChain.name
+          : (activeChain?.displayName ??
+              activeChain?.name ??
+              'Unknown Network');
+      }
+
       return (
         network?.name ??
         activeChain?.displayName ??
@@ -53,7 +71,7 @@ const NetworkSelectionButton: FC = () => {
       );
     },
     // prettier-ignore
-    [isConnecting, loading, activeChain?.displayName, activeChain?.name, network?.name],
+    [isConnecting, loading, disableChainSelection, network?.name, activeChain?.displayName, activeChain?.name],
   );
 
   const isWrongEvmNetwork = useMemo(() => {
@@ -63,13 +81,34 @@ const NetworkSelectionButton: FC = () => {
       return false;
     }
 
+    if (overrideIsWrongEvmNetworkWithPreferredChain && preferredChain) {
+      return activeChain?.name !== preferredChain?.name;
+    }
+
     return (
       network.evmChainId !== undefined && network.evmChainId !== activeChain?.id
     );
-  }, [activeChain?.id, activeWallet?.platform, network.evmChainId]);
+  }, [
+    activeChain?.id,
+    activeChain?.name,
+    activeWallet?.platform,
+    network.evmChainId,
+    overrideIsWrongEvmNetworkWithPreferredChain,
+    preferredChain,
+  ]);
 
   const switchToCorrectEvmChain = useCallback(() => {
     if (!activeWallet) {
+      return;
+    }
+
+    if (overrideIsWrongEvmNetworkWithPreferredChain && preferredChain) {
+      const typedChainId = calculateTypedChainId(
+        ChainType.EVM,
+        preferredChain.id,
+      );
+      const targetChain = chainsPopulated[typedChainId];
+      switchChain(targetChain, activeWallet);
       return;
     }
 
@@ -82,7 +121,13 @@ const NetworkSelectionButton: FC = () => {
     );
     const targetChain = chainsPopulated[typedChainId];
     switchChain(targetChain, activeWallet);
-  }, [activeWallet, network.evmChainId, switchChain]);
+  }, [
+    activeWallet,
+    network.evmChainId,
+    switchChain,
+    overrideIsWrongEvmNetworkWithPreferredChain,
+    preferredChain,
+  ]);
 
   return (
     <div className="flex items-center gap-1">
@@ -90,7 +135,7 @@ const NetworkSelectionButton: FC = () => {
         <Tooltip>
           <TooltipTrigger>
             <div
-              className={twMerge(
+              className={cx(
                 'cursor-pointer p-2 rounded-full',
                 'bg-mono-0/10 dark:bg-mono-0/5',
                 'hover:bg-mono-0/30 dark:hover:bg-mono-0/10',
@@ -111,6 +156,7 @@ const NetworkSelectionButton: FC = () => {
           isLoading={isConnecting || loading}
           networkName={networkName}
           className="overflow-hidden"
+          disableChainSelection={disableChainSelection}
         />
 
         <DropdownBody isPortal className="mt-2">
@@ -130,24 +176,26 @@ type TriggerButtonProps = {
   className?: string;
   networkName: string;
   isLoading?: boolean;
-  isLocked?: boolean;
+  disableChainSelection?: boolean;
 };
 
 const TriggerButton: FC<TriggerButtonProps> = ({
   isLoading = false,
   networkName,
   className,
-  isLocked = false,
+  disableChainSelection,
 }) => {
   return (
     <DropdownBasicButton
       type="button"
-      disabled={isLoading}
-      className={twMerge(
+      disabled={isLoading || disableChainSelection}
+      className={cx(
         'flex items-center gap-2 rounded-lg p-2',
         'bg-transparent dark:bg-transparent',
         'hover:bg-mono-100/10 dark:hover:bg-mono-0/10',
         'border-2 border-mono-60 dark:border-mono-140',
+        disableChainSelection &&
+          'cursor-not-allowed pointer-events-none select-none border-mono-60/40 dark:border-mono-140/40',
         className,
       )}
     >
@@ -166,7 +214,9 @@ const TriggerButton: FC<TriggerButtonProps> = ({
           {networkName}
         </Typography>
 
-        {!isLocked && <ChevronDown size="lg" className="shrink-0 grow-0" />}
+        {!disableChainSelection && (
+          <ChevronDown size="lg" className="shrink-0 grow-0" />
+        )}
       </div>
     </DropdownBasicButton>
   );

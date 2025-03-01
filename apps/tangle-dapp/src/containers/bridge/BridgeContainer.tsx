@@ -708,7 +708,10 @@ const BridgeContainer = ({ className }: Props) => {
 
               <ChainOrTokenButton
                 value={
-                  selectedSourceChain.displayName ?? selectedSourceChain.name
+                  selectedSourceChain.name === 'Tangle Mainnet'
+                    ? selectedSourceChain.name
+                    : (selectedSourceChain.displayName ??
+                      selectedSourceChain.name)
                 }
                 className="w-full"
                 iconType="chain"
@@ -732,11 +735,14 @@ const BridgeContainer = ({ className }: Props) => {
 
               <ChainOrTokenButton
                 value={
-                  selectedDestinationChain.displayName ??
-                  selectedDestinationChain.name
+                  selectedDestinationChain.name === 'Tangle Mainnet'
+                    ? selectedDestinationChain.name
+                    : (selectedDestinationChain.displayName ??
+                      selectedDestinationChain.name)
                 }
                 className="w-full"
                 iconType="chain"
+                textClassName="whitespace-nowrap"
                 onClick={openDestinationChainModal}
                 disabled={destinationChains.length <= 1}
               />
