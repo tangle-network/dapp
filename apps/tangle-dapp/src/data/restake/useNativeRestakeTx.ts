@@ -30,7 +30,7 @@ const useNativeRestakeTx = () => {
       arguments: [
         convertAddressToBytes32(context.operatorAddress),
         BigInt(context.amount.toString()),
-        // TODO: Blueprint selection.
+        // TODO: Blueprint selection. For now, defaulting to all.
         [],
       ],
     }),
@@ -42,14 +42,14 @@ const useNativeRestakeTx = () => {
       api.tx.multiAssetDelegation.delegateNomination(
         context.operatorAddress,
         context.amount,
-        // TODO: Blueprint selection.
+        // TODO: Blueprint selection. For now, defaulting to all.
         { All: 'All' },
       ),
     [],
   );
 
   const getSuccessMessage: GetSuccessMessageFn<Context> = useCallback(
-    ({ amount }) => `Successfully rebonded ${formatNativeTokenAmount(amount)}.`,
+    ({ amount }) => `Delegated ${formatNativeTokenAmount(amount)}.`,
     [formatNativeTokenAmount],
   );
 

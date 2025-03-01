@@ -140,6 +140,7 @@ const RestakeUnstakeForm: FC = () => {
 
     const maxAmount = selectedDelegation.amountBonded;
 
+    // TODO: This should not be a number.
     const formattedMaxAmount = Number(
       formatUnits(maxAmount, selectedDelegationAsset.metadata.decimals),
     );
