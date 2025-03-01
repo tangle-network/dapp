@@ -1,5 +1,5 @@
 import type { BN } from '@polkadot/util';
-import type { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
+import type { RestakeAssetId } from '../../../types';
 
 export type VaultAssetData = {
   id: RestakeAssetId;
