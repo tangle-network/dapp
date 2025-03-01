@@ -4,34 +4,31 @@ import { GridFillIcon } from '@tangle-network/icons';
 import { ReactElement, useState } from 'react';
 import { TabContent } from '@tangle-network/ui-components';
 
-enum ERegisteredBlueprintsTab {
+enum RegisteredBlueprintsTab {
   REGISTERED_BLUEPRINTS = 'Registered Blueprints',
 }
 
-const RegisteredBlueprintsTab: string[] = Object.values(
-  ERegisteredBlueprintsTab,
-);
 const RegisteredBlueprintsTabIcon: ReactElement[] = [
   <GridFillIcon className="w-4 h-4 !fill-blue-50" />,
 ] as const;
 
 export const RegisteredBlueprintsTabs = () => {
   const [selectedTab, setSelectedTab] = useState(
-    ERegisteredBlueprintsTab.REGISTERED_BLUEPRINTS,
+    RegisteredBlueprintsTab.REGISTERED_BLUEPRINTS,
   );
 
   return (
     <TableAndChartTabs
-      tabs={RegisteredBlueprintsTab}
+      tabs={Object.values(RegisteredBlueprintsTab)}
       icons={RegisteredBlueprintsTabIcon}
       value={selectedTab}
-      onValueChange={(tab) => setSelectedTab(tab as ERegisteredBlueprintsTab)}
+      onValueChange={(tab) => setSelectedTab(tab as RegisteredBlueprintsTab)}
       className="space-y-9 w-full"
       triggerClassName=""
       enableAdvancedDivider
     >
       <TabContent
-        value={ERegisteredBlueprintsTab.REGISTERED_BLUEPRINTS}
+        value={RegisteredBlueprintsTab.REGISTERED_BLUEPRINTS}
         className="flex justify-center mx-auto"
       >
         <RegisteredBlueprints />

@@ -15,10 +15,10 @@ export interface Instance {
   uptime: number;
   lastActive: string;
   imgUrl: string;
-  status: EInstanceStatus;
+  status: InstanceStatus;
 }
 
-export enum EInstanceStatus {
+export enum InstanceStatus {
   RUNNING = 'Running',
   STOPPED = 'Stopped',
   PENDING = 'Pending',

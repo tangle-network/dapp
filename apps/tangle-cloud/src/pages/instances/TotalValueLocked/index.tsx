@@ -16,17 +16,16 @@ import { VaultAssetData } from '@tangle-network/tangle-shared-ui/components/tabl
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
 import createVaultMap from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
 
-enum ETotalValueLockedTab {
+enum TotalValueLockedTab {
   TVL = 'Total Value Locked',
 }
 
-const TotalValueLockedTab: string[] = Object.values(ETotalValueLockedTab);
 const TotalValueLockedTabIcon: ReactElement[] = [
   <LockFillIcon className="w-4 h-4 !fill-blue-50" />,
 ] as const;
 
 export const TotalValueLockedTabs = () => {
-  const [selectedTab, setSelectedTab] = useState(ETotalValueLockedTab.TVL);
+  const [selectedTab, setSelectedTab] = useState(TotalValueLockedTab.TVL);
 
   const { assets } = useRestakeAssets();
   const { delegatorInfo } = useRestakeDelegatorInfo();
@@ -95,16 +94,16 @@ export const TotalValueLockedTabs = () => {
 
   return (
     <TableAndChartTabs
-      tabs={TotalValueLockedTab}
+      tabs={Object.values(TotalValueLockedTab)}
       icons={TotalValueLockedTabIcon}
       value={selectedTab}
-      onValueChange={(tab) => setSelectedTab(tab as ETotalValueLockedTab)}
+      onValueChange={(tab) => setSelectedTab(tab as TotalValueLockedTab)}
       className="space-y-9 w-full"
       triggerClassName=""
       enableAdvancedDivider
     >
       <TabContent
-        value={ETotalValueLockedTab.TVL}
+        value={TotalValueLockedTab.TVL}
         className="flex justify-center mx-auto"
       >
         <TotalValueLockedTable

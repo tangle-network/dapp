@@ -9,9 +9,6 @@ export interface TableAndChartTabsProps extends Tabs.TabsProps {
    */
   tabs: string[];
 
-  /**
-   * The list of icons for the tabs
-   */
   icons?: ReactElement[];
 
   /**
@@ -45,9 +42,5 @@ export interface TableAndChartTabsProps extends Tabs.TabsProps {
    */
   triggerTypographyVariant?: TypographyProps['variant'];
 
-  /**
-   * Whether to expand the divider (optional)
-   * @default false
-   */
   enableAdvancedDivider?: boolean;
 }

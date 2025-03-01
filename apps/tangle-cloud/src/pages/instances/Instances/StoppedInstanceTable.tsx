@@ -17,7 +17,7 @@ import {
 import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
-import { EInstanceStatus, InstanceMonitoringItem } from './type';
+import { InstanceStatus, InstanceMonitoringItem } from './type';
 import { format } from 'date-fns';
 import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
@@ -53,7 +53,7 @@ const instanceMonitoringData: InstanceMonitoringItem[] = [
       uptime: 98.5,
       lastActive: '2025-02-27T14:30:00Z',
       imgUrl: 'https://example.com/image1.png',
-      status: EInstanceStatus.RUNNING,
+      status: InstanceStatus.RUNNING,
     },
   },
   {
@@ -84,7 +84,7 @@ const instanceMonitoringData: InstanceMonitoringItem[] = [
       uptime: 97.5,
       lastActive: '2025-02-27T14:30:00Z',
       imgUrl: 'https://example.com/image2.png',
-      status: EInstanceStatus.RUNNING,
+      status: InstanceStatus.RUNNING,
     },
   },
 ];

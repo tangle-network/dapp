@@ -27,7 +27,7 @@ export const EnergyChip = forwardRef<HTMLSpanElement, EnergyChipProps>(
       ...restProps
     } = props;
 
-    const baseClsx = useMemo(() => 'rounded-full h-5 w-1', []);
+    const baseClsx = 'rounded-full h-5 w-1';
 
     const className = useMemo(() => {
       const activeOrDisable = getEnergyChipClassName(color);

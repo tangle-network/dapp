@@ -7,13 +7,12 @@ import { twMerge } from 'tailwind-merge';
 import { RunningInstanceTable } from './RunningInstanceTable';
 import { PendingInstanceTable } from './PendingInstanceTable';
 import { StoppedInstanceTable } from './StoppedInstanceTable';
-enum EInstancesTab {
+
+enum InstancesTab {
   RUNNING_INSTANCES = 'Running',
   PENDING_INSTANCES = 'Pending',
   HISTORY_INSTANCES = 'History',
 }
-
-const InstancesTab: string[] = Object.values(EInstancesTab);
 
 const InstancesTabIcon: ReactElement[] = [
   <PlayFillIcon viewBox="0 0 16 16" className="w-4 h-4 !fill-blue-50" />,
@@ -23,15 +22,15 @@ const InstancesTabIcon: ReactElement[] = [
 
 export const InstancesTabs = () => {
   const [selectedTab, setSelectedTab] = useState(
-    EInstancesTab.RUNNING_INSTANCES,
+    InstancesTab.RUNNING_INSTANCES,
   );
 
   return (
     <TableAndChartTabs
-      tabs={InstancesTab}
+      tabs={Object.values(InstancesTab)}
       icons={InstancesTabIcon}
       value={selectedTab}
-      onValueChange={(tab) => setSelectedTab(tab as EInstancesTab)}
+      onValueChange={(tab) => setSelectedTab(tab as InstancesTab)}
       className="space-y-9 w-full"
       triggerClassName={twMerge(
         'border-b-2 py-4 aria-selected:border-blue-50',
@@ -40,21 +39,21 @@ export const InstancesTabs = () => {
       enableAdvancedDivider
     >
       <TabContent
-        value={EInstancesTab.RUNNING_INSTANCES}
+        value={InstancesTab.RUNNING_INSTANCES}
         className="flex justify-center mx-auto"
       >
         <RunningInstanceTable />
       </TabContent>
 
       <TabContent
-        value={EInstancesTab.PENDING_INSTANCES}
+        value={InstancesTab.PENDING_INSTANCES}
         className="flex justify-center mx-auto"
       >
         <PendingInstanceTable />
       </TabContent>
 
       <TabContent
-        value={EInstancesTab.HISTORY_INSTANCES}
+        value={InstancesTab.HISTORY_INSTANCES}
         className="flex justify-center mx-auto"
       >
         <StoppedInstanceTable />

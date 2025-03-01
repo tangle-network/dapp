@@ -25,28 +25,16 @@ import {
   IdentityDataType,
 } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { isValidUrl } from '@tangle-network/dapp-types';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 
 export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
-  const activeAccountAddr = useActiveAccountAddress();
+  const accountAddress = useSubstrateAddress();
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { operatorMap } = useRestakeOperatorMap();
   const { delegatorInfo } = useRestakeDelegatorInfo();
   const { operatorTVL } = useRestakeTVL(operatorMap, delegatorInfo);
 
   const network = useNetworkStore((store) => store.network);
-
-  const accountAddress = useMemo(() => {
-    if (!activeAccountAddr) {
-      return null;
-    } else if (isEvmAddress(activeAccountAddr)) {
-      return toSubstrateAddress(activeAccountAddr);
-    } else if (network.ss58Prefix === undefined) {
-      return assertSubstrateAddress(activeAccountAddr);
-    }
-
-    return toSubstrateAddress(activeAccountAddr, network.ss58Prefix);
-  }, [activeAccountAddr, network.ss58Prefix]);
 
   const operatorData = useMemo(() => {
     return accountAddress
