@@ -13,4 +13,5 @@ export enum PagePath {
 
 export enum TangleDAppPagePath {
   RESTAKE_OPERATOR = `${TANGLE_DAPP_URL}restake/operators`,
+  RESTAKE_DEPOSIT = `${TANGLE_DAPP_URL}restake?vault={{vault}}`,
 }

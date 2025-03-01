@@ -7,6 +7,7 @@ import {
 import { UIProvider } from '@tangle-network/ui-components';
 import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
+import PolkadotApiProvider from '@tangle-network/tangle-shared-ui/context/PolkadotApiProvider';
 
 const appEvent = new AppEvent();
 
@@ -25,7 +26,7 @@ const Providers = ({
         applicationName="Tangle Cloud"
         wagmiInitialState={wagmiInitialState}
       >
-        {children}
+        <PolkadotApiProvider>{children}</PolkadotApiProvider>
       </WebbProvider>
     </UIProvider>
   );
