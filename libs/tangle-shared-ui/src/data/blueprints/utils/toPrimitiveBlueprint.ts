@@ -1,8 +1,8 @@
 import type { Bytes, Option } from '@polkadot/types';
 import {
   TanglePrimitivesServicesFieldFieldType,
-  TanglePrimitivesServicesJobDefinition,
-  TanglePrimitivesServicesServiceBlueprint,
+  TanglePrimitivesServicesJobsJobDefinition,
+  TanglePrimitivesServicesServiceServiceBlueprint,
 } from '@polkadot/types/lookup';
 import { u8aToString } from '@polkadot/util';
 import type {
@@ -36,7 +36,7 @@ export function toPrimitiveBlueprint({
   registrationParams,
   requestParams,
   gadget,
-}: ServiceBlueprint | TanglePrimitivesServicesServiceBlueprint) {
+}: ServiceBlueprint | TanglePrimitivesServicesServiceServiceBlueprint) {
   return {
     metadata: toPrimitiveServiceMetadata(metadata),
     jobs: jobs.map(toPrimitiveJobDefinition),
@@ -72,7 +72,7 @@ function toPrimitiveJobDefinition({
   metadata,
   params,
   result,
-}: JobDefinition | TanglePrimitivesServicesJobDefinition) {
+}: JobDefinition | TanglePrimitivesServicesJobsJobDefinition) {
   return {
     metadata: toPrimitiveJobMetadata(metadata),
     params: params.map(toPrimitiveFieldType),
@@ -281,6 +281,7 @@ export function toPrimitiveFieldType(
 
     case 'Struct': {
       const [first, second] = fieldType.asStruct;
+
       return {
         Struct: [
           String(first),
