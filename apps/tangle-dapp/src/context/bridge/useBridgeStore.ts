@@ -99,20 +99,42 @@ const useBridgeStore = create<BridgeStore>((set) => ({
   ),
 
   setSelectedSourceChain: (chain) =>
-    set((state) => {
+    set((_state) => {
+      const sourceTypedChainId = calculateTypedChainId(
+        chain.chainType,
+        chain.id,
+      );
+
       const availableDestinations = sortChainOptions(
-        Object.keys(
-          BRIDGE_CHAINS[calculateTypedChainId(chain.chainType, chain.id)],
-        ).map((presetTypedChainId) => get(chainsConfig, presetTypedChainId)),
+        Object.keys(BRIDGE_CHAINS[sourceTypedChainId] || {}).map(
+          (presetTypedChainId) => get(chainsConfig, presetTypedChainId),
+        ),
+      );
+
+      if (availableDestinations.length === 0) {
+        const defaultSource = get(chainsConfig, PresetTypedChainId.Arbitrum);
+        const defaultDestination = get(
+          chainsConfig,
+          PresetTypedChainId.TangleMainnetEVM,
+        );
+
+        return {
+          selectedSourceChain: { ...defaultSource },
+          destinationChains: [defaultDestination],
+          selectedDestinationChain: { ...defaultDestination },
+          tokens: DEFAULT_TOKENS,
+          selectedToken: { ...DEFAULT_TOKENS[0] },
+        };
+      }
+
+      const destinationTypedChainId = calculateTypedChainId(
+        availableDestinations[0].chainType,
+        availableDestinations[0].id,
       );
 
       const tokens =
-        BRIDGE_CHAINS[calculateTypedChainId(chain.chainType, chain.id)][
-          calculateTypedChainId(
-            availableDestinations[0].chainType,
-            availableDestinations[0].id,
-          )
-        ].supportedTokens;
+        BRIDGE_CHAINS[sourceTypedChainId][destinationTypedChainId]
+          .supportedTokens;
 
       return {
         selectedSourceChain: { ...chain },
