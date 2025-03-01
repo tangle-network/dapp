@@ -30,11 +30,11 @@ import { FC, useMemo } from 'react';
 import { Link } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 import { PagePath, QueryParamKey } from '../../../types';
-import calculateBnRatio from '../../../utils/calculateBnRatio';
+import calculateBnRatio from '@tangle-network/ui-components/utils/calculateBnRatio';
 import sortByLocaleCompare from '../../../utils/sortByLocaleCompare';
 import { HeaderCell } from '../../tableCells';
 import type { Props } from './types';
-import { RestakeVault } from '../../../utils/createVaultMap';
+import { RestakeVault } from '@tangle-network/tangle-shared-ui/utils/createVaultMap';
 
 const COLUMN_HELPER = createColumnHelper<RestakeVault>();
 

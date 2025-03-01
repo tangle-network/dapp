@@ -1,5 +1,8 @@
 import { AccountStatsCard } from './AccountStatsCard';
 import { InstructionCard } from './InstructionCard';
+import { RegisteredBlueprintsTabs } from './RegisteredBlueprints';
+import { InstancesTabs } from './Instances';
+import { TotalValueLockedTabs } from './TotalValueLocked';
 
 const Page = () => {
   return (
@@ -8,6 +11,9 @@ const Page = () => {
         <AccountStatsCard />
         <InstructionCard />
       </div>
+      <RegisteredBlueprintsTabs />
+      <InstancesTabs />
+      <TotalValueLockedTabs />
     </>
   );
 };
