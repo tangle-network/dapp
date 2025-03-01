@@ -23,7 +23,7 @@ export const chainsConfig = {
     group: 'tangle',
     tag: 'live',
     id: SubstrateChainId.TangleMainnetNative,
-    name: 'Tangle',
+    name: 'Tangle Mainnet Native',
     nativeCurrency: {
       name: 'Tangle Mainnet Token',
       symbol: TANGLE_MAINNET_NATIVE_TOKEN_SYMBOL,

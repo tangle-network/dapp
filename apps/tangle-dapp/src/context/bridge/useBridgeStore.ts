@@ -111,7 +111,6 @@ const useBridgeStore = create<BridgeStore>((set) => ({
         ].supportedTokens;
 
       return {
-        ...state,
         selectedSourceChain: { ...chain },
         destinationChains: [...availableDestinations],
         selectedDestinationChain: { ...availableDestinations[0] },
