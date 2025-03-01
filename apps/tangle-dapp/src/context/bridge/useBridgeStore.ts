@@ -4,6 +4,7 @@ import { ChainConfig } from '@tangle-network/dapp-config/chains/chain-config.int
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import { Decimal } from 'decimal.js';
+import get from 'lodash/get';
 import { create } from 'zustand';
 
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
@@ -14,26 +15,26 @@ const sortChainOptions = (chains: ChainConfig[]) => {
 };
 
 const DEFAULT_SOURCE_CHAINS = sortChainOptions(
-  Object.keys(BRIDGE_CHAINS).map(
-    (presetTypedChainId) => chainsConfig[+presetTypedChainId],
+  Object.keys(BRIDGE_CHAINS).map((presetTypedChainId) =>
+    get(chainsConfig, presetTypedChainId),
   ),
 );
 
 const DEFAULT_DESTINATION_CHAINS = sortChainOptions(
   Object.keys(BRIDGE_CHAINS[Number(Object.keys(BRIDGE_CHAINS)[0])]).map(
-    (presetTypedChainId) => chainsConfig[Number(presetTypedChainId)],
+    (presetTypedChainId) => get(chainsConfig, presetTypedChainId),
   ),
 );
 
 const getDefaultTokens = (): BridgeToken[] => {
-  const firstSourceChain = chainsConfig[PresetTypedChainId.Arbitrum];
+  const firstSourceChain = get(chainsConfig, PresetTypedChainId.Arbitrum);
 
   const firstSourceChainId = calculateTypedChainId(
     firstSourceChain.chainType,
     firstSourceChain.id,
   );
 
-  const firstDestChain = chainsConfig[PresetTypedChainId.TangleMainnetEVM];
+  const firstDestChain = get(chainsConfig, PresetTypedChainId.TangleMainnetEVM);
 
   const firstDestChainId = calculateTypedChainId(
     firstDestChain.chainType,
@@ -91,15 +92,18 @@ const useBridgeStore = create<BridgeStore>((set) => ({
   sourceChains: DEFAULT_SOURCE_CHAINS,
   destinationChains: DEFAULT_DESTINATION_CHAINS,
 
-  selectedSourceChain: chainsConfig[PresetTypedChainId.Arbitrum],
-  selectedDestinationChain: chainsConfig[PresetTypedChainId.TangleMainnetEVM],
+  selectedSourceChain: get(chainsConfig, PresetTypedChainId.Arbitrum),
+  selectedDestinationChain: get(
+    chainsConfig,
+    PresetTypedChainId.TangleMainnetEVM,
+  ),
 
   setSelectedSourceChain: (chain) =>
     set((state) => {
       const availableDestinations = sortChainOptions(
         Object.keys(
           BRIDGE_CHAINS[calculateTypedChainId(chain.chainType, chain.id)],
-        ).map((presetTypedChainId) => chainsConfig[+presetTypedChainId]),
+        ).map((presetTypedChainId) => get(chainsConfig, presetTypedChainId)),
       );
 
       const tokens =
