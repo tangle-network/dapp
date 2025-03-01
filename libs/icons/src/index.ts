@@ -176,3 +176,4 @@ export * from './ProposalBadge';
 export { default as PolkadotJs } from './PolkadotJs';
 
 export * from './CloudOutlineIcon';
+export * from './PlayFillIcon';
