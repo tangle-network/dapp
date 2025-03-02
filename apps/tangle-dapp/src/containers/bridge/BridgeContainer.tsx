@@ -261,14 +261,15 @@ const BridgeContainer = () => {
       !activeAccount ||
       !activeAccount.address ||
       !destinationAddress ||
-      !selectedToken
+      !selectedToken ||
+      !amount
     ) {
       return null;
     }
 
     return {
       token: selectedToken,
-      amount: Number(amount?.toString() ?? '0'),
+      amount: Number(amount.toString()),
       sourceTypedChainId,
       destinationTypedChainId,
       senderAddress: activeAccount.address,
@@ -298,12 +299,15 @@ const BridgeContainer = () => {
   } = useHyperlaneQuote(hyperlaneQuoteParams);
 
   const recipientExplorerUrl = useMemo(() => {
-    if (destinationAddress === null) {
+    if (
+      destinationAddress === null ||
+      !selectedDestinationChain.blockExplorers?.default.url
+    ) {
       return undefined;
     }
 
     return makeExplorerUrl(
-      selectedDestinationChain.blockExplorers?.default.url ?? '',
+      selectedDestinationChain.blockExplorers.default.url,
       destinationAddress,
       'address',
       'web3',
@@ -314,26 +318,29 @@ const BridgeContainer = () => {
   ]);
 
   const routerFeeDetails: FeeDetailProps | null = useMemo(() => {
-    if (!routerQuote || !selectedToken) {
+    if (
+      !routerQuote ||
+      !selectedToken ||
+      !amount ||
+      !routerQuote?.bridgeFee.amount
+    ) {
       return null;
     }
 
-    const sendingAmount = parseFloat(
-      formatEther(BigInt(amount?.toString() ?? '0')),
-    );
+    const sendingAmount = parseFloat(formatEther(BigInt(amount.toString())));
 
     const formattedSendingAmount =
       sendingAmount.toString() + ' ' + routerQuote?.bridgeFee.symbol;
 
     const receivingAmount =
       sendingAmount -
-      parseFloat(formatEther(BigInt(routerQuote?.bridgeFee.amount ?? '0')));
+      parseFloat(formatEther(BigInt(routerQuote.bridgeFee.amount)));
 
     const formattedReceivingAmount =
       receivingAmount.toString() + ' ' + routerQuote?.bridgeFee.symbol;
 
     const formattedBridgeFee =
-      formatEther(BigInt(routerQuote?.bridgeFee.amount ?? '0')) +
+      formatEther(BigInt(routerQuote.bridgeFee.amount)) +
       ' ' +
       routerQuote?.bridgeFee.symbol;
 
@@ -367,11 +374,11 @@ const BridgeContainer = () => {
   ]);
 
   const hyperlaneFeeDetails: FeeDetailProps | null = useMemo(() => {
-    if (!hyperlaneQuote || !selectedToken) {
+    if (!hyperlaneQuote || !selectedToken || !amount) {
       return null;
     }
 
-    const sendingAmount = new Decimal(amount?.toString() ?? '0')
+    const sendingAmount = new Decimal(amount.toString())
       .div(new Decimal(10).pow(selectedToken.decimals))
       .toString();
 
@@ -858,12 +865,14 @@ const BridgeContainer = () => {
                         className="flex items-center gap-1"
                       >
                         <WalletFillIcon size="md" /> Balance:{' '}
-                        {sourceTokenBalance !== null
+                        {sourceTokenBalance !== null &&
+                        selectedToken?.decimals &&
+                        selectedToken?.tokenType
                           ? `${formatDisplayAmount(
                               sourceTokenBalance,
-                              selectedToken?.decimals ?? 18,
+                              selectedToken.decimals,
                               AmountFormatStyle.SHORT,
-                            )} ${selectedToken?.tokenType ?? ''}`
+                            )} ${selectedToken.tokenType}`
                           : EMPTY_VALUE_PLACEHOLDER}
                       </Typography>
                     )}
@@ -876,12 +885,14 @@ const BridgeContainer = () => {
                     className="flex items-center gap-1 ml-auto transition-opacity duration-300 ease-out"
                   >
                     <WalletFillIcon size="md" /> Balance:{' '}
-                    {sourceTokenBalance !== null
+                    {sourceTokenBalance !== null &&
+                    selectedToken?.decimals &&
+                    selectedToken?.tokenType
                       ? `${formatDisplayAmount(
                           sourceTokenBalance,
-                          selectedToken?.decimals ?? 18,
+                          selectedToken.decimals,
                           AmountFormatStyle.SHORT,
-                        )} ${selectedToken?.tokenType ?? ''}`
+                        )} ${selectedToken.tokenType}`
                       : EMPTY_VALUE_PLACEHOLDER}
                   </Typography>
                 )}
@@ -889,27 +900,29 @@ const BridgeContainer = () => {
             </div>
 
             <div className="flex flex-col gap-2">
-              <AddressInput
-                id="bridge-destination-address-input"
-                type={
-                  isSolanaDestination ? AddressType.SOLANA : AddressType.EVM
-                }
-                title="Recipient Address"
-                wrapperOverrides={{
-                  isFullWidth: true,
-                  wrapperClassName: 'bg-mono-20 dark:bg-mono-180',
-                }}
-                showAvatar={false}
-                value={destinationAddress ?? ''}
-                setValue={setDestinationAddress}
-                placeholder="0x..."
-                showErrorMessage={false}
-                setErrorMessage={(error) => {
-                  setIsAddressInputError(error ? true : false);
-                  setAddressInputErrorMessage(error);
-                }}
-                isDisabled={isTxInProgress}
-              />
+              {destinationAddress && (
+                <AddressInput
+                  id="bridge-destination-address-input"
+                  type={
+                    isSolanaDestination ? AddressType.SOLANA : AddressType.EVM
+                  }
+                  title="Recipient Address"
+                  wrapperOverrides={{
+                    isFullWidth: true,
+                    wrapperClassName: 'bg-mono-20 dark:bg-mono-180',
+                  }}
+                  showAvatar={false}
+                  value={destinationAddress}
+                  setValue={setDestinationAddress}
+                  placeholder="0x..."
+                  showErrorMessage={false}
+                  setErrorMessage={(error) => {
+                    setIsAddressInputError(error ? true : false);
+                    setAddressInputErrorMessage(error);
+                  }}
+                  isDisabled={isTxInProgress}
+                />
+              )}
 
               {addressInputErrorMessage !== null && (
                 <ErrorMessage
@@ -1023,34 +1036,36 @@ const BridgeContainer = () => {
         </ModalContent>
       </Modal>
 
-      <BridgeConfirmationModal
-        isOpen={isConfirmBridgeModalOpen}
-        handleClose={closeConfirmBridgeModal}
-        clearBridgeStore={clearBridgeStore}
-        sourceChain={selectedSourceChain}
-        destinationChain={selectedDestinationChain}
-        token={selectedToken}
-        feeDetails={
-          selectedToken?.bridgeType === EVMTokenBridgeEnum.Router
-            ? routerFeeDetails
-            : hyperlaneFeeDetails
-        }
-        activeAccountAddress={activeAccount?.address ?? ''}
-        destinationAddress={destinationAddress ?? ''}
-        routerTransferData={routerTransferData}
-        sendingAmount={
-          selectedToken?.bridgeType === EVMTokenBridgeEnum.Router
-            ? (routerFeeDetails?.sendingAmount ?? null)
-            : (hyperlaneFeeDetails?.sendingAmount ?? null)
-        }
-        receivingAmount={
-          selectedToken?.bridgeType === EVMTokenBridgeEnum.Router
-            ? (routerFeeDetails?.receivingAmount ?? null)
-            : (hyperlaneFeeDetails?.receivingAmount ?? null)
-        }
-        isTxInProgress={isTxInProgress}
-        setIsTxInProgress={setIsTxInProgress}
-      />
+      {activeAccount?.address && destinationAddress && (
+        <BridgeConfirmationModal
+          isOpen={isConfirmBridgeModalOpen}
+          handleClose={closeConfirmBridgeModal}
+          clearBridgeStore={clearBridgeStore}
+          sourceChain={selectedSourceChain}
+          destinationChain={selectedDestinationChain}
+          token={selectedToken}
+          feeDetails={
+            selectedToken?.bridgeType === EVMTokenBridgeEnum.Router
+              ? routerFeeDetails
+              : hyperlaneFeeDetails
+          }
+          activeAccountAddress={activeAccount.address}
+          destinationAddress={destinationAddress}
+          routerTransferData={routerTransferData}
+          sendingAmount={
+            selectedToken?.bridgeType === EVMTokenBridgeEnum.Router
+              ? (routerFeeDetails?.sendingAmount ?? null)
+              : (hyperlaneFeeDetails?.sendingAmount ?? null)
+          }
+          receivingAmount={
+            selectedToken?.bridgeType === EVMTokenBridgeEnum.Router
+              ? (routerFeeDetails?.receivingAmount ?? null)
+              : (hyperlaneFeeDetails?.receivingAmount ?? null)
+          }
+          isTxInProgress={isTxInProgress}
+          setIsTxInProgress={setIsTxInProgress}
+        />
+      )}
     </>
   );
 };
