@@ -48,21 +48,21 @@ const BlueprintGallery: FC<BlueprintGalleryProps> = ({
     [blueprints],
   );
 
-  const categoryItems = useMemo(
-    () => [
-      {
-        label: 'View All',
-        onClick: () => setFilteredCategory('View All'),
-        isActive: filteredCategory === 'View All',
-      },
-      ...categories.map((category) => ({
-        label: category,
-        onClick: () => setFilteredCategory(category),
-        isActive: filteredCategory === category,
-      })),
-    ],
-    [categories, filteredCategory],
-  );
+  // const categoryItems = useMemo(
+  //   () => [
+  //     {
+  //       label: 'View All',
+  //       onClick: () => setFilteredCategory('View All'),
+  //       isActive: filteredCategory === 'View All',
+  //     },
+  //     ...categories.map((category) => ({
+  //       label: category,
+  //       onClick: () => setFilteredCategory(category),
+  //       isActive: filteredCategory === category,
+  //     })),
+  //   ],
+  //   [categories, filteredCategory],
+  // );
 
   const columns = useMemo(
     () => [

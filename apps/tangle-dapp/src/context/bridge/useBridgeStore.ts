@@ -50,12 +50,11 @@ const DEFAULT_SELECTED_TOKEN = DEFAULT_TOKENS[0];
 
 interface BridgeStore {
   sourceChains: ChainConfig[];
-  destinationChains: ChainConfig[];
-
   selectedSourceChain: ChainConfig;
-  selectedDestinationChain: ChainConfig;
-
   setSelectedSourceChain: (chain: ChainConfig) => void;
+
+  destinationChains: ChainConfig[];
+  selectedDestinationChain: ChainConfig;
   setSelectedDestinationChain: (chain: ChainConfig) => void;
 
   tokens: BridgeToken[];
@@ -85,17 +84,17 @@ interface BridgeStore {
 
   receivingAmount: Decimal | null;
   setReceivingAmount: (receivingAmount: Decimal | null) => void;
+
+  mainnetSourceChains: ChainConfig[];
+  testnetSourceChains: ChainConfig[];
 }
 
 const useBridgeStore = create<BridgeStore>((set) => ({
   sourceChains: DEFAULT_SOURCE_CHAINS,
-  destinationChains: DEFAULT_DESTINATION_CHAINS,
-
   selectedSourceChain: chainsConfig[PresetTypedChainId.Arbitrum],
-  selectedDestinationChain: chainsConfig[PresetTypedChainId.TangleMainnetEVM],
-
   setSelectedSourceChain: (chain) =>
     set(() => {
+      console.log(chain);
       const availableDestinations = sortChainOptions(
         Object.keys(
           BRIDGE_CHAINS[calculateTypedChainId(chain.chainType, chain.id)],
@@ -118,6 +117,9 @@ const useBridgeStore = create<BridgeStore>((set) => ({
         selectedToken: tokens[0],
       };
     }),
+
+  destinationChains: DEFAULT_DESTINATION_CHAINS,
+  selectedDestinationChain: chainsConfig[PresetTypedChainId.TangleMainnetEVM],
   setSelectedDestinationChain: (chain) =>
     set((state) => {
       const tokens =
@@ -160,6 +162,13 @@ const useBridgeStore = create<BridgeStore>((set) => ({
 
   receivingAmount: null,
   setReceivingAmount: (receivingAmount) => set({ receivingAmount }),
+
+  mainnetSourceChains: DEFAULT_SOURCE_CHAINS.filter(
+    (chain) => chain.tag === 'live',
+  ),
+  testnetSourceChains: DEFAULT_SOURCE_CHAINS.filter(
+    (chain) => chain.tag === 'test',
+  ),
 }));
 
 export default useBridgeStore;

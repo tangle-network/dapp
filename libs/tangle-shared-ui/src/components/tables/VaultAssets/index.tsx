@@ -7,7 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useNetworkStore from '../../../context/useNetworkStore';
 import {
   ExternalLinkIcon,
   isEvmAddress,
