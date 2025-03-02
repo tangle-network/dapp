@@ -900,29 +900,28 @@ const BridgeContainer = () => {
             </div>
 
             <div className="flex flex-col gap-2">
-              {destinationAddress && (
-                <AddressInput
-                  id="bridge-destination-address-input"
-                  type={
-                    isSolanaDestination ? AddressType.SOLANA : AddressType.EVM
-                  }
-                  title="Recipient Address"
-                  wrapperOverrides={{
-                    isFullWidth: true,
-                    wrapperClassName: 'bg-mono-20 dark:bg-mono-180',
-                  }}
-                  showAvatar={false}
-                  value={destinationAddress}
-                  setValue={setDestinationAddress}
-                  placeholder="0x..."
-                  showErrorMessage={false}
-                  setErrorMessage={(error) => {
-                    setIsAddressInputError(error ? true : false);
-                    setAddressInputErrorMessage(error);
-                  }}
-                  isDisabled={isTxInProgress}
-                />
-              )}
+              <AddressInput
+                id="bridge-destination-address-input"
+                type={
+                  isSolanaDestination ? AddressType.SOLANA : AddressType.EVM
+                }
+                title="Recipient Address"
+                wrapperOverrides={{
+                  isFullWidth: true,
+                  wrapperClassName: 'bg-mono-20 dark:bg-mono-180',
+                }}
+                showAvatar={false}
+                // NOTE: destinationAddress can be passed as an empty string since the address will always be empty until the user inputs a value
+                value={destinationAddress ?? ''}
+                setValue={setDestinationAddress}
+                placeholder="0x..."
+                showErrorMessage={false}
+                setErrorMessage={(error) => {
+                  setIsAddressInputError(error ? true : false);
+                  setAddressInputErrorMessage(error);
+                }}
+                isDisabled={isTxInProgress}
+              />
 
               {addressInputErrorMessage !== null && (
                 <ErrorMessage

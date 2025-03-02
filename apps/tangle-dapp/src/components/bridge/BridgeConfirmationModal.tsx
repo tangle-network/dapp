@@ -53,6 +53,7 @@ import { useRouterTransfer } from '../../data/bridge/useRouterTransfer';
 import useWalletClient from '../../data/bridge/useWalletClient';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
 import { FeeDetail, FeeDetailProps } from './FeeDetail';
+import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 
 interface BridgeConfirmationModalProps {
   isOpen: boolean;
@@ -731,30 +732,40 @@ export const BridgeConfirmationModal = ({
 
         <ModalBody className="py-4">
           <div className="flex flex-col items-center gap-3">
-            <ConfirmationItem
-              type="source"
-              chain={sourceChain}
-              accAddress={activeAccountAddress}
-              amount={feeDetails?.amounts.sending}
-              tokenName={token?.tokenType || ''}
-            />
+            {token?.tokenType && feeDetails?.amounts.sending ? (
+              <ConfirmationItem
+                type="source"
+                chain={sourceChain}
+                accAddress={activeAccountAddress}
+                amount={feeDetails.amounts.sending}
+                tokenName={token.tokenType}
+              />
+            ) : (
+              <SkeletonLoader size="xl" />
+            )}
 
             <ArrowDownIcon size="lg" />
 
-            <ConfirmationItem
-              type="destination"
-              chain={destinationChain}
-              accAddress={destinationAddress}
-              amount={feeDetails?.amounts.receiving}
-              tokenName={token?.tokenType || ''}
-            />
+            {token?.tokenType && feeDetails?.amounts.receiving ? (
+              <ConfirmationItem
+                type="destination"
+                chain={destinationChain}
+                accAddress={destinationAddress}
+                amount={feeDetails.amounts.receiving}
+                tokenName={token.tokenType}
+              />
+            ) : (
+              <SkeletonLoader size="xl" />
+            )}
           </div>
 
-          {feeDetails && (
+          {token && feeDetails ? (
             <FeeDetail
               {...feeDetails}
               className="bg-mono-20 dark:bg-mono-170 rounded-xl"
             />
+          ) : (
+            <SkeletonLoader size="xl" />
           )}
         </ModalBody>
 
@@ -766,7 +777,10 @@ export const BridgeConfirmationModal = ({
               isTransferByRouterPending || isTransferByHyperlanePending
             }
             isDisabled={
-              isTransferByRouterPending || isTransferByHyperlanePending
+              !token ||
+              !feeDetails ||
+              isTransferByRouterPending ||
+              isTransferByHyperlanePending
             }
           >
             {isTransferByRouterPending || isTransferByHyperlanePending
