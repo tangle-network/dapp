@@ -219,7 +219,7 @@ const BridgeContainer = () => {
   const isSolanaDestination = selectedDestinationChain.name === 'Solana';
 
   const routerQuoteParams: RouterQuoteParams | null = useMemo(() => {
-    if (!amount) {
+    if (!amount || !selectedToken) {
       return null;
     }
 
@@ -248,8 +248,8 @@ const BridgeContainer = () => {
     return routerQuoteParams;
   }, [
     amount,
+    selectedToken,
     sourceTypedChainId,
-    selectedToken.address,
     destinationTypedChainId,
     isSolanaDestination,
     selectedDestinationChain.id,
@@ -257,7 +257,12 @@ const BridgeContainer = () => {
   ]);
 
   const hyperlaneQuoteParams: HyperlaneQuoteProps | null = useMemo(() => {
-    if (!activeAccount || !activeAccount.address || !destinationAddress) {
+    if (
+      !activeAccount ||
+      !activeAccount.address ||
+      !destinationAddress ||
+      !selectedToken
+    ) {
       return null;
     }
 
@@ -309,7 +314,7 @@ const BridgeContainer = () => {
   ]);
 
   const routerFeeDetails: FeeDetailProps | null = useMemo(() => {
-    if (!routerQuote) {
+    if (!routerQuote || !selectedToken) {
       return null;
     }
 
@@ -362,7 +367,7 @@ const BridgeContainer = () => {
   ]);
 
   const hyperlaneFeeDetails: FeeDetailProps | null = useMemo(() => {
-    if (!hyperlaneQuote) {
+    if (!hyperlaneQuote || !selectedToken) {
       return null;
     }
 
@@ -553,6 +558,8 @@ const BridgeContainer = () => {
   );
 
   const sourceTokenBalance = useMemo(() => {
+    if (!selectedToken) return BN_ZERO;
+
     const tokenAddress =
       sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
       sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM
@@ -577,6 +584,7 @@ const BridgeContainer = () => {
       !activeAccount ||
       !activeChain ||
       !activeWallet ||
+      !selectedToken ||
       isWrongChain ||
       !amount ||
       !destinationAddress ||
@@ -591,6 +599,7 @@ const BridgeContainer = () => {
     activeAccount,
     activeChain,
     activeWallet,
+    selectedToken,
     isWrongChain,
     amount,
     destinationAddress,
@@ -631,6 +640,7 @@ const BridgeContainer = () => {
     if (
       amount &&
       destinationAddress &&
+      selectedToken &&
       !isAmountInputError &&
       !isAddressInputError &&
       (routerQuote || hyperlaneQuote) &&
@@ -638,7 +648,7 @@ const BridgeContainer = () => {
       !hyperlaneQuoteError
     ) {
       openConfirmBridgeModal();
-    } else if (amount && !isAmountInputError) {
+    } else if (amount && selectedToken && !isAmountInputError) {
       if (selectedToken.bridgeType === EVMTokenBridgeEnum.Hyperlane) {
         refetchHyperlaneQuote();
       } else {
@@ -648,6 +658,7 @@ const BridgeContainer = () => {
   }, [
     amount,
     destinationAddress,
+    selectedToken,
     isAmountInputError,
     isAddressInputError,
     routerQuote,
@@ -655,7 +666,6 @@ const BridgeContainer = () => {
     routerQuoteError,
     hyperlaneQuoteError,
     openConfirmBridgeModal,
-    selectedToken.bridgeType,
     refetchHyperlaneQuote,
     refetchRouterQuote,
   ]);
@@ -810,7 +820,7 @@ const BridgeContainer = () => {
                   placeholder="Enter amount to bridge"
                   wrapperClassName="dark:bg-mono-180"
                   showMaxAction
-                  decimals={selectedToken.decimals}
+                  decimals={selectedToken?.decimals ?? 18}
                   showErrorMessage={false}
                   setErrorMessage={(error) => {
                     setIsAmountInputError(error ? true : false, error);
@@ -821,9 +831,9 @@ const BridgeContainer = () => {
 
                 <ChainOrTokenButton
                   value={
-                    selectedToken.tokenType === ('SolvBTC.BBN' as EVMTokenEnum)
+                    selectedToken?.tokenType === ('SolvBTC.BBN' as EVMTokenEnum)
                       ? 'SolvBTC'
-                      : selectedToken.tokenType
+                      : selectedToken?.tokenType || undefined
                   }
                   iconType="token"
                   onClick={openTokenModal}
@@ -851,9 +861,9 @@ const BridgeContainer = () => {
                         {sourceTokenBalance !== null
                           ? `${formatDisplayAmount(
                               sourceTokenBalance,
-                              selectedToken.decimals,
+                              selectedToken?.decimals ?? 18,
                               AmountFormatStyle.SHORT,
-                            )} ${selectedToken.tokenType}`
+                            )} ${selectedToken?.tokenType ?? ''}`
                           : EMPTY_VALUE_PLACEHOLDER}
                       </Typography>
                     )}
@@ -869,9 +879,9 @@ const BridgeContainer = () => {
                     {sourceTokenBalance !== null
                       ? `${formatDisplayAmount(
                           sourceTokenBalance,
-                          selectedToken.decimals,
+                          selectedToken?.decimals ?? 18,
                           AmountFormatStyle.SHORT,
-                        )} ${selectedToken.tokenType}`
+                        )} ${selectedToken?.tokenType ?? ''}`
                       : EMPTY_VALUE_PLACEHOLDER}
                   </Typography>
                 )}
@@ -1021,7 +1031,7 @@ const BridgeContainer = () => {
         destinationChain={selectedDestinationChain}
         token={selectedToken}
         feeDetails={
-          selectedToken.bridgeType === EVMTokenBridgeEnum.Router
+          selectedToken?.bridgeType === EVMTokenBridgeEnum.Router
             ? routerFeeDetails
             : hyperlaneFeeDetails
         }
@@ -1029,12 +1039,12 @@ const BridgeContainer = () => {
         destinationAddress={destinationAddress ?? ''}
         routerTransferData={routerTransferData}
         sendingAmount={
-          selectedToken.bridgeType === EVMTokenBridgeEnum.Router
+          selectedToken?.bridgeType === EVMTokenBridgeEnum.Router
             ? (routerFeeDetails?.sendingAmount ?? null)
             : (hyperlaneFeeDetails?.sendingAmount ?? null)
         }
         receivingAmount={
-          selectedToken.bridgeType === EVMTokenBridgeEnum.Router
+          selectedToken?.bridgeType === EVMTokenBridgeEnum.Router
             ? (routerFeeDetails?.receivingAmount ?? null)
             : (hyperlaneFeeDetails?.receivingAmount ?? null)
         }

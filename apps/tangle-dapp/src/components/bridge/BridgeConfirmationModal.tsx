@@ -60,7 +60,7 @@ interface BridgeConfirmationModalProps {
   clearBridgeStore: () => void;
   sourceChain: ChainConfig;
   destinationChain: ChainConfig;
-  token: BridgeToken;
+  token: BridgeToken | null;
   feeDetails: FeeDetailProps | null;
   activeAccountAddress: string;
   destinationAddress: string;
@@ -459,7 +459,7 @@ export const BridgeConfirmationModal = ({
   });
 
   const watchTransaction = useCallback(
-    async (txHash: string) => {
+    async (token: BridgeToken, txHash: string) => {
       try {
         const receipt = await srcChainPublicClient.waitForTransactionReceipt({
           hash: txHash as `0x${string}`,
@@ -524,14 +524,7 @@ export const BridgeConfirmationModal = ({
         updateTxState(txHash, BridgeTxState.Failed);
       }
     },
-    [
-      srcChainPublicClient,
-      token.bridgeType,
-      updateTxState,
-      setDestTxIds,
-      activeAccountAddress,
-      destinationChain,
-    ],
+    [srcChainPublicClient, updateTxState, setDestTxIds, activeAccountAddress, destinationChain],
   );
 
   const walletClient = useWalletClient();
@@ -542,6 +535,10 @@ export const BridgeConfirmationModal = ({
     try {
       if (!sendingAmount || !receivingAmount) {
         throw new Error('Invalid amount');
+      }
+
+      if (!token) {
+        throw new Error('Token not found');
       }
 
       if (token.bridgeType === EVMTokenBridgeEnum.Router) {
@@ -580,12 +577,12 @@ export const BridgeConfirmationModal = ({
             response.transactionHash,
             ROUTER_TX_EXPLORER_URL + response.transactionHash,
           );
-          watchTransaction(response.transactionHash);
+          watchTransaction(token, response.transactionHash);
         }
       } else {
         const response = await transferByHyperlaneAsync();
 
-        if (response && response.length > 1) {
+        if (token && response && response.length > 1) {
           const receipt = response[1]; // Add only transfer receipt to the queue not the approval
 
           addTxToQueue({
@@ -630,7 +627,7 @@ export const BridgeConfirmationModal = ({
               ).toString(),
             );
           }
-          watchTransaction(receipt.transactionHash);
+          watchTransaction(token, receipt.transactionHash);
         }
       }
 
@@ -639,11 +636,18 @@ export const BridgeConfirmationModal = ({
       handleClose();
       clearBridgeStore();
 
-      const isTokenAlreadyAdded = cachedTokensToAcc?.value?.[
-        activeAccountAddress
-      ]?.includes(token.address);
+      const isTokenAlreadyAdded = token.address
+        ? cachedTokensToAcc?.value?.[activeAccountAddress]?.includes(
+            token.address,
+          )
+        : false;
 
-      if (!isNativeToken && walletClient && !isTokenAlreadyAdded) {
+      if (
+        !isNativeToken &&
+        walletClient &&
+        !isTokenAlreadyAdded &&
+       token
+      ) {
         const success = await walletClient.watchAsset({
           type: 'ERC20',
           options: {
@@ -688,37 +692,7 @@ export const BridgeConfirmationModal = ({
       handleClose();
       clearBridgeStore();
     }
-  }, [
-    setIsTxInProgress,
-    sendingAmount,
-    receivingAmount,
-    token.bridgeType,
-    token.address,
-    token.tokenType,
-    token.decimals,
-    token.symbol,
-    handleClose,
-    clearBridgeStore,
-    cachedTokensToAcc?.value,
-    activeAccountAddress,
-    isNativeToken,
-    walletClient,
-    transferByRouterAsync,
-    addTxToQueue,
-    sourceChain.tag,
-    sourceChain.chainType,
-    sourceChain.id,
-    destinationChain.chainType,
-    destinationChain.id,
-    destinationAddress,
-    setIsOpenQueueDropdown,
-    updateTxState,
-    addTxExplorerUrl,
-    watchTransaction,
-    transferByHyperlaneAsync,
-    setTokensToAcc,
-    notificationApi,
-  ]);
+  }, [setIsTxInProgress, sendingAmount, receivingAmount, token, handleClose, clearBridgeStore, cachedTokensToAcc?.value, activeAccountAddress, isNativeToken, walletClient, transferByRouterAsync, addTxToQueue, sourceChain.tag, sourceChain.chainType, sourceChain.id, destinationChain.chainType, destinationChain.id, destinationAddress, setIsOpenQueueDropdown, updateTxState, addTxExplorerUrl, watchTransaction, transferByHyperlaneAsync, setTokensToAcc, notificationApi]);
 
   return (
     <Modal
@@ -735,7 +709,7 @@ export const BridgeConfirmationModal = ({
               chain={sourceChain}
               accAddress={activeAccountAddress}
               amount={feeDetails?.amounts.sending}
-              tokenName={token.tokenType}
+              tokenName={token?.tokenType || ''}
             />
 
             <ArrowDownIcon size="lg" />
@@ -745,7 +719,7 @@ export const BridgeConfirmationModal = ({
               chain={destinationChain}
               accAddress={destinationAddress}
               amount={feeDetails?.amounts.receiving}
-              tokenName={token.tokenType}
+              tokenName={token?.tokenType || ''}
             />
           </div>
 

@@ -47,7 +47,8 @@ const getDefaultTokens = (): BridgeToken[] => {
 };
 
 const DEFAULT_TOKENS = getDefaultTokens();
-const DEFAULT_SELECTED_TOKEN = DEFAULT_TOKENS[0];
+const DEFAULT_SELECTED_TOKEN =
+  DEFAULT_TOKENS.length > 0 ? DEFAULT_TOKENS[0] : null;
 
 interface BridgeStore {
   sourceChains: ChainConfig[];
@@ -61,8 +62,8 @@ interface BridgeStore {
   tokens: BridgeToken[];
   setTokens: (tokens: BridgeToken[]) => void;
 
-  selectedToken: BridgeToken;
-  setSelectedToken: (token: BridgeToken) => void;
+  selectedToken: BridgeToken | null;
+  setSelectedToken: (token: BridgeToken | null) => void;
 
   amount: BN | null;
   setAmount: (amount: BN | null) => void;
@@ -125,7 +126,8 @@ const useBridgeStore = create<BridgeStore>((set) => ({
           destinationChains: [defaultDestination],
           selectedDestinationChain: { ...defaultDestination },
           tokens: DEFAULT_TOKENS,
-          selectedToken: { ...DEFAULT_TOKENS[0] },
+          selectedToken:
+            DEFAULT_TOKENS.length > 0 ? { ...DEFAULT_TOKENS[0] } : null,
         };
       }
 
@@ -143,7 +145,7 @@ const useBridgeStore = create<BridgeStore>((set) => ({
         destinationChains: [...availableDestinations],
         selectedDestinationChain: { ...availableDestinations[0] },
         tokens: [...tokens],
-        selectedToken: { ...tokens[0] },
+        selectedToken: tokens.length > 0 ? { ...tokens[0] } : null,
       };
     }),
   setSelectedDestinationChain: (chain) =>
@@ -159,7 +161,7 @@ const useBridgeStore = create<BridgeStore>((set) => ({
       return {
         selectedDestinationChain: chain,
         tokens,
-        selectedToken: tokens[0],
+        selectedToken: tokens.length > 0 ? tokens[0] : null,
       };
     }),
 
