@@ -327,14 +327,17 @@ const BridgeContainer = () => {
       return null;
     }
 
-    const sendingAmount = parseFloat(formatEther(BigInt(amount.toString())));
+    const sendingAmount = amount
+      ? parseFloat(formatEther(BigInt(amount.toString())))
+      : 0;
 
     const formattedSendingAmount =
       sendingAmount.toString() + ' ' + routerQuote?.bridgeFee.symbol;
 
-    const receivingAmount =
-      sendingAmount -
-      parseFloat(formatEther(BigInt(routerQuote.bridgeFee.amount)));
+    const receivingAmount = routerQuote.bridgeFee.amount
+      ? sendingAmount -
+        parseFloat(formatEther(BigInt(routerQuote.bridgeFee.amount)))
+      : sendingAmount;
 
     const formattedReceivingAmount =
       receivingAmount.toString() + ' ' + routerQuote?.bridgeFee.symbol;
@@ -827,7 +830,7 @@ const BridgeContainer = () => {
                   placeholder="Enter amount to bridge"
                   wrapperClassName="dark:bg-mono-180"
                   showMaxAction
-                  decimals={selectedToken?.decimals ?? 18}
+                  decimals={selectedToken?.decimals}
                   showErrorMessage={false}
                   setErrorMessage={(error) => {
                     setIsAmountInputError(error ? true : false, error);
