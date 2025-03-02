@@ -85,10 +85,7 @@ class RestakeSubstrateApi extends RestakeApiBase {
       ? { Erc20: assetId }
       : { Custom: new BN(assetId) };
 
-    const blueprintSelectionEnum =
-      blueprintSelection === undefined
-        ? { All: 'All' }
-        : { Fixed: blueprintSelection };
+    const blueprintSelectionEnum = { Fixed: blueprintSelection ?? [] };
 
     // TODO: Evm address & lock multiplier.
     const extrinsic = this.api.tx.multiAssetDelegation.delegate(

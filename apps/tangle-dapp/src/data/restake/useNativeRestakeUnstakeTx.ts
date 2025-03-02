@@ -17,16 +17,16 @@ type Context = {
   operatorAddress: SubstrateAddress;
 };
 
-const useNativeRestakeTx = () => {
+const useNativeRestakeUnstakeTx = () => {
   const formatNativeTokenAmount = useFormatNativeTokenAmount();
 
   const evmTxFactory: EvmTxFactory<
     typeof RESTAKING_PRECOMPILE_ABI,
-    'delegateNomination',
+    'scheduleDelegatorNominationUnstake',
     Context
   > = useCallback(
     (context) => ({
-      functionName: 'delegateNomination',
+      functionName: 'scheduleDelegatorNominationUnstake',
       arguments: [
         convertAddressToBytes32(context.operatorAddress),
         BigInt(context.amount.toString()),
@@ -54,14 +54,13 @@ const useNativeRestakeTx = () => {
   );
 
   return useAgnosticTx({
-    name: TxName.RESTAKE_NATIVE_DELEGATE,
+    name: TxName.RESTAKE_NATIVE_UNSTAKE,
     abi: RESTAKING_PRECOMPILE_ABI,
     precompileAddress: PrecompileAddress.RESTAKING,
     evmTxFactory,
     substrateTxFactory,
     getSuccessMessage,
-    isEvmTxRelayerSubsidized: true,
   });
 };
 
-export default useNativeRestakeTx;
+export default useNativeRestakeUnstakeTx;

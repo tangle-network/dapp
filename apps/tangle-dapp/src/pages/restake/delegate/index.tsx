@@ -243,16 +243,6 @@ const RestakeDelegateForm: FC = () => {
     executeNativeRestake !== null &&
     nativeRestakeTxStatus !== TxStatus.PROCESSING;
 
-  console.debug(
-    'isReady',
-    isReady,
-    restakeApi !== null,
-    !isSubmitting,
-    selectedAsset !== null,
-    executeNativeRestake !== null,
-    nativeRestakeTxStatus !== TxStatus.PROCESSING,
-  );
-
   const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>(
     async ({ amount, assetId, operatorAccountId }) => {
       if (!isReady) {

@@ -17,6 +17,7 @@ import {
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useEvmTxRelayer from './useEvmTxRelayer';
 
 export type AgnosticTxOptions<
   Abi extends AbiFunction[],
@@ -30,6 +31,14 @@ export type AgnosticTxOptions<
   evmTxFactory:
     | EvmTxFactory<Abi, FunctionName, Context>
     | PrecompileCall<Abi, FunctionName>;
+
+  /**
+   * Whether this specific transaction is eligible for utilizing
+   * the transaction relayer to subsidize transaction fees. Other
+   * requirements must be met for this to be effective (ex. the balance
+   * being zero).
+   */
+  isEvmTxRelayerSubsidized?: boolean;
 
   /**
    * An identifiable name shown on the toast notification to
@@ -68,6 +77,7 @@ function useAgnosticTx<
   substrateTxFactory,
   name,
   getSuccessMessage,
+  isEvmTxRelayerSubsidized = false,
 }: AgnosticTxOptions<Abi, FunctionName, Context>) {
   const [agnosticStatus, setAgnosticStatus] = useState(
     TxStatus.NOT_YET_INITIATED,
@@ -75,6 +85,7 @@ function useAgnosticTx<
 
   const activeAccountAddress = useActiveAccountAddress();
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
+  const relayEvmTx = useEvmTxRelayer();
 
   const createExplorerTxUrl = useNetworkStore(
     (store) => store.network.createExplorerTxUrl,

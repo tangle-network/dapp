@@ -199,13 +199,9 @@ const RestakeUnstakeForm: FC = () => {
 
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
     async ({ amount, assetId, operatorAccountId }) => {
-      if (!assetId || !isReady) {
-        return;
-      }
+      const asset = assets?.get(assetId);
 
-      const asset = assets.get(assetId);
-
-      if (asset === undefined) {
+      if (!assetId || !isReady || asset === undefined) {
         return;
       }
 
