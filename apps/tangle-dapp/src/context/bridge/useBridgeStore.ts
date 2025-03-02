@@ -21,7 +21,7 @@ const DEFAULT_SOURCE_CHAINS = sortChainOptions(
 );
 
 const DEFAULT_DESTINATION_CHAINS = sortChainOptions(
-  Object.keys(BRIDGE_CHAINS[Number(Object.keys(BRIDGE_CHAINS)[0])]).map(
+  Object.keys(get(BRIDGE_CHAINS, [Object.keys(BRIDGE_CHAINS)[0]], {})).map(
     (presetTypedChainId) => get(chainsConfig, presetTypedChainId),
   ),
 );
@@ -41,9 +41,7 @@ const getDefaultTokens = (): BridgeToken[] => {
     firstDestChain.id,
   );
 
-  const bridgeConfig = BRIDGE_CHAINS[firstSourceChainId][firstDestChainId];
-
-  return bridgeConfig.supportedTokens;
+  return get(BRIDGE_CHAINS, [firstSourceChainId, firstDestChainId, 'supportedTokens'], []);
 };
 
 const DEFAULT_TOKENS = getDefaultTokens();
@@ -109,7 +107,7 @@ const useBridgeStore = create<BridgeStore>((set) => ({
       );
 
       const availableDestinations = sortChainOptions(
-        Object.keys(BRIDGE_CHAINS[sourceTypedChainId] || {}).map(
+        Object.keys(get(BRIDGE_CHAINS, [sourceTypedChainId], {})).map(
           (presetTypedChainId) => get(chainsConfig, presetTypedChainId),
         ),
       );
@@ -137,8 +135,7 @@ const useBridgeStore = create<BridgeStore>((set) => ({
       );
 
       const tokens =
-        BRIDGE_CHAINS[sourceTypedChainId][destinationTypedChainId]
-          .supportedTokens;
+        get(BRIDGE_CHAINS, [sourceTypedChainId, destinationTypedChainId, 'supportedTokens'], []);
 
       return {
         selectedSourceChain: { ...chain },
@@ -150,13 +147,12 @@ const useBridgeStore = create<BridgeStore>((set) => ({
     }),
   setSelectedDestinationChain: (chain) =>
     set((state) => {
-      const tokens =
-        BRIDGE_CHAINS[
-          calculateTypedChainId(
-            state.selectedSourceChain.chainType,
-            state.selectedSourceChain.id,
-          )
-        ][calculateTypedChainId(chain.chainType, chain.id)].supportedTokens;
+      const sourceTypedChainId = calculateTypedChainId(
+        state.selectedSourceChain.chainType,
+        state.selectedSourceChain.id,
+      );
+      const destinationTypedChainId = calculateTypedChainId(chain.chainType, chain.id);
+      const tokens = get(BRIDGE_CHAINS, [sourceTypedChainId, destinationTypedChainId, 'supportedTokens'], []);
 
       return {
         selectedDestinationChain: chain,
