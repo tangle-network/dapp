@@ -1,4 +1,4 @@
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
@@ -757,10 +757,7 @@ const BridgeContainer = () => {
 
               <ChainOrTokenButton
                 value={
-                  selectedSourceChain.name === 'Tangle Mainnet'
-                    ? selectedSourceChain.name
-                    : (selectedSourceChain.displayName ??
-                      selectedSourceChain.name)
+                  selectedSourceChain.displayName ?? selectedSourceChain.name
                 }
                 className="w-full"
                 iconType="chain"
@@ -784,10 +781,8 @@ const BridgeContainer = () => {
 
               <ChainOrTokenButton
                 value={
-                  selectedDestinationChain.name === 'Tangle Mainnet'
-                    ? selectedDestinationChain.name
-                    : (selectedDestinationChain.displayName ??
-                      selectedDestinationChain.name)
+                  selectedDestinationChain.displayName ??
+                  selectedDestinationChain.name
                 }
                 className="w-full"
                 iconType="chain"

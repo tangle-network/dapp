@@ -208,7 +208,7 @@ export const chainsConfig = {
     chainType: ChainType.EVM,
     group: 'tangle',
     tag: 'live',
-    displayName: 'Tangle',
+    displayName: 'Tangle Mainnet',
   } satisfies ChainConfig,
 
   [PresetTypedChainId.TangleTestnetEVM]: {
