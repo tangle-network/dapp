@@ -524,7 +524,13 @@ export const BridgeConfirmationModal = ({
         updateTxState(txHash, BridgeTxState.Failed);
       }
     },
-    [srcChainPublicClient, updateTxState, setDestTxIds, activeAccountAddress, destinationChain],
+    [
+      srcChainPublicClient,
+      updateTxState,
+      setDestTxIds,
+      activeAccountAddress,
+      destinationChain,
+    ],
   );
 
   const walletClient = useWalletClient();
@@ -642,12 +648,7 @@ export const BridgeConfirmationModal = ({
           )
         : false;
 
-      if (
-        !isNativeToken &&
-        walletClient &&
-        !isTokenAlreadyAdded &&
-       token
-      ) {
+      if (!isNativeToken && walletClient && !isTokenAlreadyAdded && token) {
         const success = await walletClient.watchAsset({
           type: 'ERC20',
           options: {
@@ -692,7 +693,33 @@ export const BridgeConfirmationModal = ({
       handleClose();
       clearBridgeStore();
     }
-  }, [setIsTxInProgress, sendingAmount, receivingAmount, token, handleClose, clearBridgeStore, cachedTokensToAcc?.value, activeAccountAddress, isNativeToken, walletClient, transferByRouterAsync, addTxToQueue, sourceChain.tag, sourceChain.chainType, sourceChain.id, destinationChain.chainType, destinationChain.id, destinationAddress, setIsOpenQueueDropdown, updateTxState, addTxExplorerUrl, watchTransaction, transferByHyperlaneAsync, setTokensToAcc, notificationApi]);
+  }, [
+    setIsTxInProgress,
+    sendingAmount,
+    receivingAmount,
+    token,
+    handleClose,
+    clearBridgeStore,
+    cachedTokensToAcc?.value,
+    activeAccountAddress,
+    isNativeToken,
+    walletClient,
+    transferByRouterAsync,
+    addTxToQueue,
+    sourceChain.tag,
+    sourceChain.chainType,
+    sourceChain.id,
+    destinationChain.chainType,
+    destinationChain.id,
+    destinationAddress,
+    setIsOpenQueueDropdown,
+    updateTxState,
+    addTxExplorerUrl,
+    watchTransaction,
+    transferByHyperlaneAsync,
+    setTokensToAcc,
+    notificationApi,
+  ]);
 
   return (
     <Modal

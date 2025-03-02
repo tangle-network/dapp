@@ -41,7 +41,11 @@ const getDefaultTokens = (): BridgeToken[] => {
     firstDestChain.id,
   );
 
-  return get(BRIDGE_CHAINS, [firstSourceChainId, firstDestChainId, 'supportedTokens'], []);
+  return get(
+    BRIDGE_CHAINS,
+    [firstSourceChainId, firstDestChainId, 'supportedTokens'],
+    [],
+  );
 };
 
 const DEFAULT_TOKENS = getDefaultTokens();
@@ -134,8 +138,11 @@ const useBridgeStore = create<BridgeStore>((set) => ({
         availableDestinations[0].id,
       );
 
-      const tokens =
-        get(BRIDGE_CHAINS, [sourceTypedChainId, destinationTypedChainId, 'supportedTokens'], []);
+      const tokens = get(
+        BRIDGE_CHAINS,
+        [sourceTypedChainId, destinationTypedChainId, 'supportedTokens'],
+        [],
+      );
 
       return {
         selectedSourceChain: { ...chain },
@@ -151,8 +158,15 @@ const useBridgeStore = create<BridgeStore>((set) => ({
         state.selectedSourceChain.chainType,
         state.selectedSourceChain.id,
       );
-      const destinationTypedChainId = calculateTypedChainId(chain.chainType, chain.id);
-      const tokens = get(BRIDGE_CHAINS, [sourceTypedChainId, destinationTypedChainId, 'supportedTokens'], []);
+      const destinationTypedChainId = calculateTypedChainId(
+        chain.chainType,
+        chain.id,
+      );
+      const tokens = get(
+        BRIDGE_CHAINS,
+        [sourceTypedChainId, destinationTypedChainId, 'supportedTokens'],
+        [],
+      );
 
       return {
         selectedDestinationChain: chain,
