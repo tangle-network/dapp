@@ -57,12 +57,10 @@ import useRouterQuote, {
 } from '../../data/bridge/useRouterQuote';
 import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
-type Props = {
-  className?: string;
-};
-
-const BridgeContainer = ({ className }: Props) => {
+const BridgeContainer = () => {
+  const { network } = useNetworkStore();
   const { switchChain } = useWebContext();
   const [activeChain] = useActiveChain();
   const [activeAccount] = useActiveAccount();
@@ -70,10 +68,6 @@ const BridgeContainer = ({ className }: Props) => {
   const [activeWallet] = useActiveWallet();
   const { toggleModal: toggleConnectWalletModal } = useConnectWallet();
   const [isTxInProgress, setIsTxInProgress] = useState(false);
-
-  const sourceChains = useBridgeStore(
-    useShallow((store) => store.sourceChains),
-  );
 
   const destinationChains = useBridgeStore(
     useShallow((store) => store.destinationChains),
@@ -94,6 +88,29 @@ const BridgeContainer = ({ className }: Props) => {
   const setSelectedDestinationChain = useBridgeStore(
     (store) => store.setSelectedDestinationChain,
   );
+
+  const mainnetSourceChains = useBridgeStore(
+    useShallow((store) => store.mainnetSourceChains),
+  );
+
+  const testnetSourceChains = useBridgeStore(
+    useShallow((store) => store.testnetSourceChains),
+  );
+
+  const srcChains = useMemo(() => {
+    if (network.name === 'Tangle Mainnet') {
+      setSelectedSourceChain(mainnetSourceChains[0]);
+      return mainnetSourceChains;
+    }
+
+    setSelectedSourceChain(testnetSourceChains[0]);
+    return testnetSourceChains;
+  }, [
+    mainnetSourceChains,
+    network.name,
+    setSelectedSourceChain,
+    testnetSourceChains,
+  ]);
 
   const sourceTypedChainId = useMemo(() => {
     return calculateTypedChainId(
@@ -715,10 +732,7 @@ const BridgeContainer = ({ className }: Props) => {
 
       <Card
         withShadow
-        className={twMerge(
-          'flex flex-col gap-7 w-full max-w-[550px] mx-auto relative',
-          className,
-        )}
+        className="flex flex-col gap-7 w-full max-w-[550px] mx-auto relative"
       >
         <div className="flex flex-col gap-7">
           {' '}
@@ -741,7 +755,7 @@ const BridgeContainer = ({ className }: Props) => {
                 iconType="chain"
                 textClassName="whitespace-nowrap"
                 onClick={openSourceChainModal}
-                disabled={sourceChains.length <= 1}
+                disabled={srcChains.length <= 1}
               />
             </div>
 
@@ -936,7 +950,7 @@ const BridgeContainer = ({ className }: Props) => {
           <ChainList
             searchInputId="bridge-source-chain-search"
             onClose={closeSourceChainModal}
-            chains={sourceChains}
+            chains={srcChains}
             onSelectChain={setSelectedSourceChain}
             chainType="source"
             showSearchInput
