@@ -1,4 +1,4 @@
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN_ZERO } from '@polkadot/util';
 import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
 import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 import { useActiveChain } from '@tangle-network/api-provider-environment/hooks/useActiveChain';
@@ -57,12 +57,10 @@ import useRouterQuote, {
 } from '../../data/bridge/useRouterQuote';
 import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
-type Props = {
-  className?: string;
-};
-
-const BridgeContainer = ({ className }: Props) => {
+const BridgeContainer = () => {
+  const { network } = useNetworkStore();
   const { switchChain } = useWebContext();
   const [activeChain] = useActiveChain();
   const [activeAccount] = useActiveAccount();
@@ -70,10 +68,6 @@ const BridgeContainer = ({ className }: Props) => {
   const [activeWallet] = useActiveWallet();
   const { toggleModal: toggleConnectWalletModal } = useConnectWallet();
   const [isTxInProgress, setIsTxInProgress] = useState(false);
-
-  const sourceChains = useBridgeStore(
-    useShallow((store) => store.sourceChains),
-  );
 
   const destinationChains = useBridgeStore(
     useShallow((store) => store.destinationChains),
@@ -94,6 +88,29 @@ const BridgeContainer = ({ className }: Props) => {
   const setSelectedDestinationChain = useBridgeStore(
     (store) => store.setSelectedDestinationChain,
   );
+
+  const mainnetSourceChains = useBridgeStore(
+    useShallow((store) => store.mainnetSourceChains),
+  );
+
+  const testnetSourceChains = useBridgeStore(
+    useShallow((store) => store.testnetSourceChains),
+  );
+
+  const srcChains = useMemo(() => {
+    if (network.name === 'Tangle Mainnet') {
+      setSelectedSourceChain(mainnetSourceChains[0]);
+      return mainnetSourceChains;
+    }
+
+    setSelectedSourceChain(testnetSourceChains[0]);
+    return testnetSourceChains;
+  }, [
+    mainnetSourceChains,
+    network.name,
+    setSelectedSourceChain,
+    testnetSourceChains,
+  ]);
 
   const sourceTypedChainId = useMemo(() => {
     return calculateTypedChainId(
@@ -425,58 +442,88 @@ const BridgeContainer = ({ className }: Props) => {
   ]);
 
   const assets: AssetConfig[] = useMemo(() => {
+    const isTangleChain =
+      sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
+      sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM;
+
     return tokens.map((token) => {
-      const balance = isNativeToken
-        ? formatEther(nativeTokenBalance?.value ?? BigInt(0))
-        : sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
-            sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM
-          ? balances?.[sourceTypedChainId]?.find(
-              (tokenBalance: BridgeTokenWithBalance) =>
-                tokenBalance.address === token.address,
-            )?.syntheticBalance
-          : balances?.[sourceTypedChainId]?.find(
-              (tokenBalance: BridgeTokenWithBalance) =>
-                tokenBalance.address === token.address,
-            )?.balance;
+      const balance = (() => {
+        if (
+          isNativeToken &&
+          (sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
+            sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM) &&
+          token.tokenType === 'TNT'
+        ) {
+          return nativeTokenBalance?.value !== undefined
+            ? formatEther(nativeTokenBalance.value)
+            : undefined;
+        }
+
+        if (
+          isNativeToken &&
+          sourceTypedChainId === PresetTypedChainId.Polygon &&
+          token.symbol === 'POL'
+        ) {
+          return nativeTokenBalance?.value !== undefined
+            ? formatEther(nativeTokenBalance.value)
+            : undefined;
+        }
+
+        if (
+          (isNativeToken &&
+            (sourceTypedChainId === PresetTypedChainId.Optimism ||
+              sourceTypedChainId === PresetTypedChainId.Arbitrum ||
+              sourceTypedChainId === PresetTypedChainId.Base) &&
+            token.symbol === 'ETH') ||
+          (sourceTypedChainId === PresetTypedChainId.BSC &&
+            token.symbol === 'BNB')
+        ) {
+          return nativeTokenBalance?.value !== undefined
+            ? formatEther(nativeTokenBalance.value)
+            : undefined;
+        }
+
+        const tokenBalance = balances?.[sourceTypedChainId]?.find(
+          (tokenBalance: BridgeTokenWithBalance) =>
+            tokenBalance.address === token.address,
+        );
+
+        return isTangleChain
+          ? tokenBalance?.syntheticBalance
+          : tokenBalance?.balance;
+      })();
 
       const selectedChainExplorerUrl =
         selectedSourceChain.blockExplorers?.default;
 
-      const tokenExplorerUrl =
-        selectedChainExplorerUrl?.url &&
-        makeExplorerUrl(
-          selectedChainExplorerUrl.url,
-          (sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
-          sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM
-            ? token.hyperlaneSyntheticAddress
-            : token.address) ?? '',
-          'address',
-          'web3',
-        );
+      const address = isTangleChain
+        ? token.hyperlaneSyntheticAddress
+        : (token.address as `0x${string}`);
 
-      const address =
-        sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
-        sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM
-          ? token.hyperlaneSyntheticAddress
-          : (token.address as `0x${string}`);
+      const tokenExplorerUrl = selectedChainExplorerUrl?.url
+        ? makeExplorerUrl(
+            selectedChainExplorerUrl.url,
+            (isTangleChain ? token.hyperlaneSyntheticAddress : token.address) ??
+              '',
+            'address',
+            'web3',
+          )
+        : undefined;
 
-      const balance_ = (() => {
-        if (activeAccount === null || balance === undefined) {
-          return undefined;
-        }
+      const formattedBalance = (() => {
+        if (!activeAccount || !balance) return undefined;
 
-        return new BN(
-          typeof balance === 'string'
-            ? balance
-            : convertDecimalToBN(balance, token.decimals),
-        );
+        return typeof balance === 'string'
+          ? convertDecimalToBN(new Decimal(balance), token.decimals)
+          : convertDecimalToBN(balance, token.decimals);
       })();
 
       return {
+        id: token.tokenType,
         name: token.name,
         symbol: token.tokenType,
         optionalSymbol: token.symbol,
-        balance: balance_,
+        balance: formattedBalance,
         explorerUrl: !isNativeToken ? tokenExplorerUrl : undefined,
         address: address !== undefined ? assertEvmAddress(address) : undefined,
         decimals: token.decimals,
@@ -494,15 +541,21 @@ const BridgeContainer = ({ className }: Props) => {
 
   const onSelectToken = useCallback(
     (asset: AssetConfig) => {
-      const tokenConfig = tokens.find(
-        (token) => token.address === asset.address,
-      );
+      const tokenConfig = tokens.find((token) => {
+        if (asset.id) {
+          return token.tokenType === asset.id;
+        } else if (isNativeToken) {
+          return token.tokenType === asset.symbol;
+        } else {
+          return token.address === asset.address;
+        }
+      });
 
       if (tokenConfig !== undefined) {
         setSelectedToken(tokenConfig);
       }
     },
-    [setSelectedToken, tokens],
+    [setSelectedToken, tokens, isNativeToken],
   );
 
   const sourceTokenBalance = useMemo(() => {
@@ -715,16 +768,12 @@ const BridgeContainer = ({ className }: Props) => {
 
       <Card
         withShadow
-        className={twMerge(
-          'flex flex-col gap-7 w-full max-w-[550px] mx-auto relative',
-          className,
-        )}
+        className="flex flex-col gap-7 w-full max-w-[550px] mx-auto relative"
       >
         <div className="flex flex-col gap-7">
-          {' '}
           {/* Source and Destination Chain Selector */}
           <div className="flex flex-col items-center justify-center md:flex-row md:justify-between md:items-end md:gap-2">
-            {/** Source chain */}
+            {/* Source chain */}
             <div className="flex flex-col flex-1 w-full gap-2">
               <Label
                 className="font-bold text-mono-120 dark:text-mono-120"
@@ -741,11 +790,11 @@ const BridgeContainer = ({ className }: Props) => {
                 iconType="chain"
                 textClassName="whitespace-nowrap"
                 onClick={openSourceChainModal}
-                disabled={sourceChains.length <= 1}
+                disabled={srcChains.length <= 1}
               />
             </div>
 
-            {/** Switch button */}
+            {/* Switch button */}
             <div
               className="px-1 pt-6 cursor-pointer md:pt-0 md:pb-4"
               onClick={onSwitchChains}
@@ -753,7 +802,7 @@ const BridgeContainer = ({ className }: Props) => {
               <ArrowLeftRightLineIcon className="w-6 h-6 rotate-90 md:rotate-0" />
             </div>
 
-            {/** Destination chain */}
+            {/* Destination chain */}
             <div className="flex flex-col flex-1 w-full gap-2">
               <Label htmlFor="bridge-destination-chain-selector">To</Label>
 
@@ -826,7 +875,11 @@ const BridgeContainer = ({ className }: Props) => {
                       >
                         <WalletFillIcon size="md" /> Balance:{' '}
                         {sourceTokenBalance !== null
-                          ? `${formatDisplayAmount(sourceTokenBalance, selectedToken.decimals, AmountFormatStyle.SHORT)} ${selectedToken.tokenType}`
+                          ? `${formatDisplayAmount(
+                              sourceTokenBalance,
+                              selectedToken.decimals,
+                              AmountFormatStyle.SHORT,
+                            )} ${selectedToken.tokenType}`
                           : EMPTY_VALUE_PLACEHOLDER}
                       </Typography>
                     )}
@@ -840,7 +893,11 @@ const BridgeContainer = ({ className }: Props) => {
                   >
                     <WalletFillIcon size="md" /> Balance:{' '}
                     {sourceTokenBalance !== null
-                      ? `${formatDisplayAmount(sourceTokenBalance, selectedToken.decimals, AmountFormatStyle.SHORT)} ${selectedToken.tokenType}`
+                      ? `${formatDisplayAmount(
+                          sourceTokenBalance,
+                          selectedToken.decimals,
+                          AmountFormatStyle.SHORT,
+                        )} ${selectedToken.tokenType}`
                       : EMPTY_VALUE_PLACEHOLDER}
                   </Typography>
                 )}
@@ -936,7 +993,7 @@ const BridgeContainer = ({ className }: Props) => {
           <ChainList
             searchInputId="bridge-source-chain-search"
             onClose={closeSourceChainModal}
-            chains={sourceChains}
+            chains={srcChains}
             onSelectChain={setSelectedSourceChain}
             chainType="source"
             showSearchInput
