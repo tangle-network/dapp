@@ -18,7 +18,6 @@ const TopNavigationPanel: FC = () => {
       <NetworkSelectorDropdown
         disableChainSelection={isInBridgePath}
         preferredChain={isInBridgePath ? selectedSourceChain : undefined}
-        overrideIsWrongEvmNetworkWithPreferredChain={isInBridgePath}
       />
       <ConnectWalletButton
         showChainSpecificWallets={isInBridgePath}

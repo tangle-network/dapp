@@ -26,13 +26,11 @@ import { NetworkSelectorDropdown } from './NetworkSelectorDropdown';
 type NetworkSelectionButtonProps = {
   disableChainSelection?: boolean;
   preferredChain?: ChainConfig;
-  overrideIsWrongEvmNetworkWithPreferredChain?: boolean;
 };
 
 const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
   disableChainSelection = false,
   preferredChain,
-  overrideIsWrongEvmNetworkWithPreferredChain = false,
 }) => {
   const { activeChain, activeWallet, isConnecting, loading, switchChain } =
     useWebContext();
@@ -81,7 +79,7 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
       return false;
     }
 
-    if (overrideIsWrongEvmNetworkWithPreferredChain && preferredChain) {
+    if (preferredChain) {
       return activeChain?.name !== preferredChain?.name;
     }
 
@@ -93,7 +91,6 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
     activeChain?.name,
     activeWallet?.platform,
     network.evmChainId,
-    overrideIsWrongEvmNetworkWithPreferredChain,
     preferredChain,
   ]);
 
@@ -102,7 +99,7 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
       return;
     }
 
-    if (overrideIsWrongEvmNetworkWithPreferredChain && preferredChain) {
+    if (preferredChain) {
       const typedChainId = calculateTypedChainId(
         ChainType.EVM,
         preferredChain.id,
@@ -121,13 +118,7 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
     );
     const targetChain = chainsPopulated[typedChainId];
     switchChain(targetChain, activeWallet);
-  }, [
-    activeWallet,
-    network.evmChainId,
-    switchChain,
-    overrideIsWrongEvmNetworkWithPreferredChain,
-    preferredChain,
-  ]);
+  }, [activeWallet, network.evmChainId, switchChain, preferredChain]);
 
   return (
     <div className="flex items-center gap-1">
