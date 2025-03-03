@@ -13,7 +13,7 @@ import useEthersSigner from './useEthersSigner';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 
 export type HyperlaneTransferProps = {
-  token: BridgeToken;
+  token: BridgeToken | null;
   amount: number;
   sourceTypedChainId: number;
   destinationTypedChainId: number;
@@ -31,7 +31,7 @@ export const transferByHyperlane = async ({
   recipientAddress,
   ethersSigner,
 }: HyperlaneTransferProps): Promise<TransactionReceipt[] | null> => {
-  if (!ethersSigner) {
+  if (!ethersSigner || !token) {
     return null;
   }
 

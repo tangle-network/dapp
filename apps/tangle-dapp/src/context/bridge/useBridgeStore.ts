@@ -4,6 +4,7 @@ import { ChainConfig } from '@tangle-network/dapp-config/chains/chain-config.int
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import { Decimal } from 'decimal.js';
+import get from 'lodash/get';
 import { create } from 'zustand';
 
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
@@ -14,39 +15,42 @@ const sortChainOptions = (chains: ChainConfig[]) => {
 };
 
 const DEFAULT_SOURCE_CHAINS = sortChainOptions(
-  Object.keys(BRIDGE_CHAINS).map(
-    (presetTypedChainId) => chainsConfig[+presetTypedChainId],
+  Object.keys(BRIDGE_CHAINS).map((presetTypedChainId) =>
+    get(chainsConfig, presetTypedChainId),
   ),
 );
 
 const DEFAULT_DESTINATION_CHAINS = sortChainOptions(
-  Object.keys(BRIDGE_CHAINS[Number(Object.keys(BRIDGE_CHAINS)[0])]).map(
-    (presetTypedChainId) => chainsConfig[Number(presetTypedChainId)],
+  Object.keys(get(BRIDGE_CHAINS, [Object.keys(BRIDGE_CHAINS)[0]], {})).map(
+    (presetTypedChainId) => get(chainsConfig, presetTypedChainId),
   ),
 );
 
 const getDefaultTokens = (): BridgeToken[] => {
-  const firstSourceChain = chainsConfig[PresetTypedChainId.Arbitrum];
+  const firstSourceChain = get(chainsConfig, PresetTypedChainId.Arbitrum);
 
   const firstSourceChainId = calculateTypedChainId(
     firstSourceChain.chainType,
     firstSourceChain.id,
   );
 
-  const firstDestChain = chainsConfig[PresetTypedChainId.TangleMainnetEVM];
+  const firstDestChain = get(chainsConfig, PresetTypedChainId.TangleMainnetEVM);
 
   const firstDestChainId = calculateTypedChainId(
     firstDestChain.chainType,
     firstDestChain.id,
   );
 
-  const bridgeConfig = BRIDGE_CHAINS[firstSourceChainId][firstDestChainId];
-
-  return bridgeConfig.supportedTokens;
+  return get(
+    BRIDGE_CHAINS,
+    [firstSourceChainId, firstDestChainId, 'supportedTokens'],
+    [],
+  );
 };
 
 const DEFAULT_TOKENS = getDefaultTokens();
-const DEFAULT_SELECTED_TOKEN = DEFAULT_TOKENS[0];
+const DEFAULT_SELECTED_TOKEN =
+  DEFAULT_TOKENS.length > 0 ? DEFAULT_TOKENS[0] : null;
 
 interface BridgeStore {
   sourceChains: ChainConfig[];
@@ -60,8 +64,8 @@ interface BridgeStore {
   tokens: BridgeToken[];
   setTokens: (tokens: BridgeToken[]) => void;
 
-  selectedToken: BridgeToken;
-  setSelectedToken: (token: BridgeToken) => void;
+  selectedToken: BridgeToken | null;
+  setSelectedToken: (token: BridgeToken | null) => void;
 
   amount: BN | null;
   setAmount: (amount: BN | null) => void;
@@ -91,49 +95,83 @@ interface BridgeStore {
 
 const useBridgeStore = create<BridgeStore>((set) => ({
   sourceChains: DEFAULT_SOURCE_CHAINS,
-  selectedSourceChain: chainsConfig[PresetTypedChainId.Arbitrum],
+  destinationChains: DEFAULT_DESTINATION_CHAINS,
+
+  selectedSourceChain: get(chainsConfig, PresetTypedChainId.Arbitrum),
+  selectedDestinationChain: get(
+    chainsConfig,
+    PresetTypedChainId.TangleMainnetEVM,
+  ),
+
   setSelectedSourceChain: (chain) =>
-    set(() => {
-      console.log(chain);
-      const availableDestinations = sortChainOptions(
-        Object.keys(
-          BRIDGE_CHAINS[calculateTypedChainId(chain.chainType, chain.id)],
-        ).map((presetTypedChainId) => chainsConfig[+presetTypedChainId]),
+    set((_state) => {
+      const sourceTypedChainId = calculateTypedChainId(
+        chain.chainType,
+        chain.id,
       );
 
-      const tokens =
-        BRIDGE_CHAINS[calculateTypedChainId(chain.chainType, chain.id)][
-          calculateTypedChainId(
-            availableDestinations[0].chainType,
-            availableDestinations[0].id,
-          )
-        ].supportedTokens;
+      const availableDestinations = sortChainOptions(
+        Object.keys(get(BRIDGE_CHAINS, [sourceTypedChainId], {})).map(
+          (presetTypedChainId) => get(chainsConfig, presetTypedChainId),
+        ),
+      );
+
+      if (availableDestinations.length === 0) {
+        const defaultSource = get(chainsConfig, PresetTypedChainId.Arbitrum);
+        const defaultDestination = get(
+          chainsConfig,
+          PresetTypedChainId.TangleMainnetEVM,
+        );
+
+        return {
+          selectedSourceChain: { ...defaultSource },
+          destinationChains: [defaultDestination],
+          selectedDestinationChain: { ...defaultDestination },
+          tokens: DEFAULT_TOKENS,
+          selectedToken:
+            DEFAULT_TOKENS.length > 0 ? { ...DEFAULT_TOKENS[0] } : null,
+        };
+      }
+
+      const destinationTypedChainId = calculateTypedChainId(
+        availableDestinations[0].chainType,
+        availableDestinations[0].id,
+      );
+
+      const tokens = get(
+        BRIDGE_CHAINS,
+        [sourceTypedChainId, destinationTypedChainId, 'supportedTokens'],
+        [],
+      );
 
       return {
-        selectedSourceChain: chain,
-        destinationChains: availableDestinations,
-        selectedDestinationChain: availableDestinations[0],
-        tokens,
-        selectedToken: tokens[0],
+        selectedSourceChain: { ...chain },
+        destinationChains: [...availableDestinations],
+        selectedDestinationChain: { ...availableDestinations[0] },
+        tokens: [...tokens],
+        selectedToken: tokens.length > 0 ? { ...tokens[0] } : null,
       };
     }),
-
-  destinationChains: DEFAULT_DESTINATION_CHAINS,
-  selectedDestinationChain: chainsConfig[PresetTypedChainId.TangleMainnetEVM],
   setSelectedDestinationChain: (chain) =>
     set((state) => {
-      const tokens =
-        BRIDGE_CHAINS[
-          calculateTypedChainId(
-            state.selectedSourceChain.chainType,
-            state.selectedSourceChain.id,
-          )
-        ][calculateTypedChainId(chain.chainType, chain.id)].supportedTokens;
+      const sourceTypedChainId = calculateTypedChainId(
+        state.selectedSourceChain.chainType,
+        state.selectedSourceChain.id,
+      );
+      const destinationTypedChainId = calculateTypedChainId(
+        chain.chainType,
+        chain.id,
+      );
+      const tokens = get(
+        BRIDGE_CHAINS,
+        [sourceTypedChainId, destinationTypedChainId, 'supportedTokens'],
+        [],
+      );
 
       return {
         selectedDestinationChain: chain,
         tokens,
-        selectedToken: tokens[0],
+        selectedToken: tokens.length > 0 ? tokens[0] : null,
       };
     }),
 
