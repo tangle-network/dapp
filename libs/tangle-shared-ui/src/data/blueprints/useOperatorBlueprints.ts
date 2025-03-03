@@ -4,12 +4,7 @@ import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
 import { useCallback } from 'react';
 import { catchError, map, of } from 'rxjs';
-
-type OperatorBlueprint = {
-  blueprintId: number;
-  blueprint: ReturnType<typeof toPrimitiveBlueprint>;
-  services: Array<ReturnType<typeof toPrimitiveService>>;
-};
+import { OperatorBlueprint } from './utils/type';
 
 const useOperatorBlueprints = (operatorAccount?: string) => {
   const { result, ...rest } = useApiRx(

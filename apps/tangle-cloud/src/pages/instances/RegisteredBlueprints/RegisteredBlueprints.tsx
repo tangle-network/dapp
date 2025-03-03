@@ -1,4 +1,4 @@
-import { useMemo, useState, type FC } from 'react';
+import { useMemo, type FC } from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -13,58 +13,25 @@ import {
   getRoundedAmountString,
   Typography,
 } from '@tangle-network/ui-components';
-import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
 import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
-import { BlueprintMonitoringItem } from './type';
+import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 
-const columnHelper = createColumnHelper<BlueprintMonitoringItem>();
+const columnHelper = createColumnHelper<MonitoringBlueprint>();
 
-const MOCK_BLUEPRINTS: BlueprintMonitoringItem[] = [
-  {
-    id: 'bp-01',
-    name: 'Ethereum Staking Pool asdga idgasi dgausidgi agiadsiuasgduaidaisydfg i',
-    author: 'TangleDAO',
-    imgUrl: 'https://dummyimage.com/100x100',
-    description:
-      'Decentralized ETH staking pool with automated rewards distribution',
-    restakersCount: 156,
-    operatorsCount: 12,
-    tvl: '2450000',
-    tvlInUsd: 24.5,
-    uptime: 99.98,
-    pricing: 0.05,
-    pricingUnit: 'Hrs',
-    instanceCount: 3,
-    registrationParams: [],
-    category: 'staking',
-  },
-  {
-    id: 'bp-02',
-    name: 'Validator Node',
-    author: 'ValidatorTech',
-    imgUrl: 'https://dummyimage.com/100x100',
-    description: 'Professional grade validator node setup',
-    restakersCount: 89,
-    operatorsCount: 5,
-    tvl: '890000',
-    tvlInUsd: 8.9,
-    uptime: 99.95,
-    pricing: 0.02,
-    pricingUnit: 'Hrs',
-    instanceCount: 8,
-    registrationParams: [],
-    category: 'staking',
-  },
-];
+export type RegisteredBlueprintsTableProps = {
+  blueprints: MonitoringBlueprint[];
+  isLoading: boolean;
+  error: Error | null;
+};
 
-export const RegisteredBlueprints: FC = () => {
-  // TODO: Remove mock data
-  const [blueprints] = useState<BlueprintMonitoringItem[]>(MOCK_BLUEPRINTS);
-  const [isLoading] = useState(false);
-  const [error] = useState<Error | null>(null);
+export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
+  blueprints,
+  isLoading,
+  error,
+}) => {
   const loadingTableProps: Partial<TableStatusProps> = {};
   const emptyTableProps: Partial<TableStatusProps> = {};
 
@@ -72,25 +39,25 @@ export const RegisteredBlueprints: FC = () => {
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('name', {
+      columnHelper.accessor('blueprint.metadata.name', {
         header: () => 'Blueprint',
         cell: (props) => {
           return (
             <TableCellWrapper>
               <div className="flex items-center gap-2 overflow-hidden">
-                {props.row.original.imgUrl ? (
+                {props.row.original.blueprint.metadata.logo ? (
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    src={props.row.original.imgUrl}
-                    alt={props.row.original.name}
+                    src={props.row.original.blueprint.metadata.logo}
+                    alt={props.row.original.blueprint.metadata.name}
                     sourceVariant="uri"
                   />
                 ) : (
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    fallback={props.row.original.name.substring(0, 2)}
+                    fallback={props.row.original.blueprint.metadata.name.substring(0, 2)}
                     theme="substrate"
                   />
                 )}
@@ -99,38 +66,38 @@ export const RegisteredBlueprints: FC = () => {
                   fw="bold"
                   className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
                 >
-                  {props.row.original.name}
+                  {props.row.original.blueprint.metadata.name}
                 </Typography>
               </div>
             </TableCellWrapper>
           );
         },
       }),
-      columnHelper.accessor('pricing', {
+      columnHelper.accessor('blueprint.pricing', {
         header: () => 'Pricing',
         cell: (props) => {
           return (
             <TableCellWrapper>
-              {props.row.original.pricing
-                ? `$${getRoundedAmountString(props.row.original.pricing)}`
+              {props.row.original.blueprint.pricing
+                ? `$${getRoundedAmountString(props.row.original.blueprint.pricing)}`
                 : EMPTY_VALUE_PLACEHOLDER}
               /
-              {props.row.original.pricingUnit
-                ? props.row.original.pricingUnit
+              {props.row.original.blueprint.pricingUnit
+                ? props.row.original.blueprint.pricingUnit
                 : EMPTY_VALUE_PLACEHOLDER}
             </TableCellWrapper>
           );
         },
       }),
-      columnHelper.accessor('uptime', {
+      columnHelper.accessor('blueprint.uptime', {
         header: () => 'Uptime',
         cell: (props) => {
           const DEFAULT_STACK = 10;
           const DEFAULT_PERCENTAGE = 100;
-          const numberOfActiveChips = !props.row.original.uptime
+          const numberOfActiveChips = !props.row.original.blueprint.uptime
             ? 0
             : Math.round(
-                (props.row.original.uptime * DEFAULT_STACK) /
+                (props.row.original.blueprint.uptime * DEFAULT_STACK) /
                   DEFAULT_PERCENTAGE,
               );
 
@@ -146,43 +113,43 @@ export const RegisteredBlueprints: FC = () => {
             <TableCellWrapper>
               <EnergyChipStack
                 colors={colors as EnergyChipColors[]}
-                label={`${props.row.original.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
+                label={`${props.row.original.blueprint.uptime || EMPTY_VALUE_PLACEHOLDER}%`}
               />
             </TableCellWrapper>
           );
         },
       }),
-      columnHelper.accessor('instanceCount', {
+      columnHelper.accessor('blueprint.instanceCount', {
         header: () => 'Instances',
         cell: (props) => {
           return (
             <TableCellWrapper>
               <Typography variant="body1" fw="normal">
-                {props.row.original.instanceCount?.toLocaleString() ??
+                {props.row.original.blueprint.instanceCount?.toLocaleString() ??
                   EMPTY_VALUE_PLACEHOLDER}
               </Typography>
             </TableCellWrapper>
           );
         },
       }),
-      columnHelper.accessor('operatorsCount', {
+      columnHelper.accessor('blueprint.operatorsCount', {
         header: () => 'Operators',
         cell: (props) => {
           return (
             <TableCellWrapper>
-              {props.row.original.operatorsCount?.toLocaleString() ??
+              {props.row.original.blueprint.operatorsCount?.toLocaleString() ??
                 EMPTY_VALUE_PLACEHOLDER}
             </TableCellWrapper>
           );
         },
       }),
-      columnHelper.accessor('tvl', {
+      columnHelper.accessor('blueprint.tvl', {
         header: () => 'TVL',
         cell: (props) => {
           return (
             <TableCellWrapper removeRightBorder>
-              {props.row.original.tvl
-                ? getTVLToDisplay(props.row.original.tvlInUsd)
+              {props.row.original.blueprint.tvl
+                ? getRoundedAmountString(props.row.original.blueprint.tvl)
                 : EMPTY_VALUE_PLACEHOLDER}
             </TableCellWrapper>
           );
@@ -197,13 +164,13 @@ export const RegisteredBlueprints: FC = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: (row) => row.id,
+    getRowId: (row) => row.blueprintId.toString(),
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
 
   return (
-    <TangleCloudTable<BlueprintMonitoringItem>
+    <TangleCloudTable<MonitoringBlueprint>
       title={pluralize('blueprint', !isEmpty)}
       data={blueprints}
       error={error}
