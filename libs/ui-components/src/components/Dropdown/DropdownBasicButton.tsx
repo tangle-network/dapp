@@ -14,14 +14,12 @@ export const DropdownBasicButton = forwardRef<
   DropdownButtonProps
 >(({ children, className, isFullWidth, ...props }, ref) => {
   return (
-    <DropdownMenuPrimitive.Trigger asChild>
-      <button
-        {...props}
-        className={twMerge(cx({ 'block w-full': isFullWidth }), className)}
-        ref={ref}
-      >
-        {children}
-      </button>
+    <DropdownMenuPrimitive.Trigger
+      {...props}
+      className={twMerge(cx({ 'block w-full': isFullWidth }), className)}
+      ref={ref}
+    >
+      {children}
     </DropdownMenuPrimitive.Trigger>
   );
 });

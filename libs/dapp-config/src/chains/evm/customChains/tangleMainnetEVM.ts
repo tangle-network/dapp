@@ -8,7 +8,7 @@ import {
 
 const tangleMainnetEVM = defineChain({
   id: EVMChainId.TangleMainnetEVM,
-  name: 'Tangle Mainnet EVM',
+  name: 'Tangle Mainnet',
   nativeCurrency: {
     name: 'Tangle Network Token',
     symbol: 'TNT',

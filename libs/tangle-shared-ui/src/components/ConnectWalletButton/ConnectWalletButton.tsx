@@ -1,5 +1,3 @@
-'use client';
-
 import { useConnectWallet } from '@tangle-network/api-provider-environment';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
@@ -13,25 +11,44 @@ import {
   isEvmAddress,
   toSubstrateAddress,
 } from '@tangle-network/ui-components';
+import { calculateTypedChainId } from '@tangle-network/dapp-types';
+import { ChainConfig } from '@tangle-network/dapp-config';
 
-const ConnectWalletButton = () => {
+type ConnectWalletButtonProps = {
+  showChainSpecificWallets?: boolean;
+  preferredChain?: ChainConfig;
+};
+
+const ConnectWalletButton = ({
+  showChainSpecificWallets = false,
+  preferredChain,
+}: ConnectWalletButtonProps) => {
   const { activeAccount, activeWallet, loading, isConnecting } =
     useWebContext();
 
   const network = useNetworkStore((store) => store.network);
   const { toggleModal } = useConnectWallet();
 
+  const preferredChainTypedChainId = useMemo(() => {
+    if (showChainSpecificWallets && preferredChain) {
+      return calculateTypedChainId(preferredChain.chainType, preferredChain.id);
+    }
+    return undefined;
+  }, [showChainSpecificWallets, preferredChain]);
+
   const accountAddress = useMemo(() => {
     if (activeAccount?.address === undefined) {
       return null;
     } else if (isEvmAddress(activeAccount.address)) {
       return activeAccount.address;
-    } else if (network.ss58Prefix === undefined) {
+    } else if (!showChainSpecificWallets && network.ss58Prefix === undefined) {
       return assertSubstrateAddress(activeAccount.address);
+    } else if (!showChainSpecificWallets) {
+      return toSubstrateAddress(activeAccount.address, network.ss58Prefix);
     }
 
-    return toSubstrateAddress(activeAccount.address, network.ss58Prefix);
-  }, [activeAccount?.address, network.ss58Prefix]);
+    return null;
+  }, [activeAccount?.address, network.ss58Prefix, showChainSpecificWallets]);
 
   const isReady =
     !isConnecting && !loading && activeWallet && activeAccount !== null;
@@ -42,7 +59,7 @@ const ConnectWalletButton = () => {
         <Button
           isLoading={isConnecting || loading}
           loadingText={isConnecting ? 'Connecting' : undefined}
-          onClick={() => toggleModal(true)}
+          onClick={() => toggleModal(true, preferredChainTypedChainId)}
           className="flex items-center justify-center px-6"
         >
           Connect
@@ -55,7 +72,7 @@ const ConnectWalletButton = () => {
             wallet={activeWallet}
           />
 
-          <UpdateMetadataButton />
+          {!showChainSpecificWallets && <UpdateMetadataButton />}
         </div>
       )}
 

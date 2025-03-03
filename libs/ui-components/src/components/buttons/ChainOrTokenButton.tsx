@@ -73,7 +73,7 @@ const ChainOrTokenButton = forwardRef<
                   size="lg"
                   spinnerSize="md"
                   className={cx(`shrink-0 grow-0 ${getFlexBasic('xl')}`)}
-                  name={value}
+                  name={value || undefined}
                 />
               </div>
             )}
