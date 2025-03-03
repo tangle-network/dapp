@@ -23,9 +23,6 @@ import {
   bitlayer,
 } from 'viem/chains';
 import type { ChainConfig } from '../chain-config.interface';
-import athenaLocalnet from './customChains/athenaLocalnet';
-import demeterLocalnet from './customChains/demeterLocalnet';
-import hermesLocalnet from './customChains/hermesLocalnet';
 import tangleLocalEVM from './customChains/tangleLocalEvm';
 import tangleMainnetEVM from './customChains/tangleMainnetEVM';
 import tangleTestnetEVM from './customChains/tangleTestnetEVM';
@@ -43,9 +40,6 @@ export const wagmiChains = [
   tangleMainnetEVM,
   tangleTestnetEVM,
   tangleLocalEVM,
-  hermesLocalnet,
-  athenaLocalnet,
-  demeterLocalnet,
   holesky,
   polygon,
   arbitrum,
@@ -226,29 +220,4 @@ export const chainsConfig = {
     tag: 'dev',
     displayName: 'Tangle Local (EVM)',
   } satisfies ChainConfig,
-
-  // Localnet
-  [PresetTypedChainId.HermesLocalnet]: {
-    ...hermesLocalnet,
-    chainType: ChainType.EVM,
-    group: 'webb-dev',
-    tag: 'dev',
-    env: ['development'],
-  } satisfies ChainConfig,
-
-  [PresetTypedChainId.AthenaLocalnet]: {
-    ...athenaLocalnet,
-    chainType: ChainType.EVM,
-    group: 'webb-dev',
-    tag: 'dev',
-    env: ['development'],
-  } satisfies ChainConfig,
-
-  [PresetTypedChainId.DemeterLocalnet]: {
-    ...demeterLocalnet,
-    chainType: ChainType.EVM,
-    group: 'webb-dev',
-    tag: 'dev',
-    env: ['development'],
-  } satisfies ChainConfig,
-} as const satisfies Record<number, ChainConfig>;
+} as const satisfies Record<PresetTypedChainId, ChainConfig>;
