@@ -1,12 +1,13 @@
 import { TableAndChartTabs } from '@tangle-network/ui-components/components/TableAndChartTabs';
 import { PlayFillIcon, TimeLineIcon } from '@tangle-network/icons';
-import { ReactElement, useState } from 'react';
+import { FC, ReactElement, useState } from 'react';
 import { TabContent } from '@tangle-network/ui-components';
 import { TrashIcon } from '@radix-ui/react-icons';
 import { twMerge } from 'tailwind-merge';
 import { RunningInstanceTable } from './RunningInstanceTable';
 import { PendingInstanceTable } from './PendingInstanceTable';
 import { StoppedInstanceTable } from './StoppedInstanceTable';
+import { InstancesTabsProps } from './type';
 
 enum InstancesTab {
   RUNNING_INSTANCES = 'Running',
@@ -20,7 +21,11 @@ const InstancesTabIcon: ReactElement[] = [
   <TrashIcon className="w-4 h-4  [&>path]:fill-red-100" />,
 ] as const;
 
-export const InstancesTabs = () => {
+export const InstancesTabs: FC<InstancesTabsProps> = ({
+  runningInstances,
+  pendingInstances,
+  stoppedInstances,
+}) => {
   const [selectedTab, setSelectedTab] = useState(
     InstancesTab.RUNNING_INSTANCES,
   );
@@ -42,21 +47,21 @@ export const InstancesTabs = () => {
         value={InstancesTab.RUNNING_INSTANCES}
         className="flex justify-center mx-auto"
       >
-        <RunningInstanceTable />
+        <RunningInstanceTable {...runningInstances} />
       </TabContent>
 
       <TabContent
         value={InstancesTab.PENDING_INSTANCES}
         className="flex justify-center mx-auto"
       >
-        <PendingInstanceTable />
+        <PendingInstanceTable {...pendingInstances} />
       </TabContent>
 
       <TabContent
         value={InstancesTab.HISTORY_INSTANCES}
         className="flex justify-center mx-auto"
       >
-        <StoppedInstanceTable />
+        <StoppedInstanceTable {...stoppedInstances} />
       </TabContent>
     </TableAndChartTabs>
   );

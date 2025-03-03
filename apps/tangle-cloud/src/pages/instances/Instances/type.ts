@@ -1,10 +1,18 @@
-import type { BlueprintMonitoringItem } from '../RegisteredBlueprints/type';
+import {
+  InstanceStatus,
+  MonitoringBlueprint,
+} from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 
-export interface InstanceMonitoringItem {
-  id: string;
-  blueprintId: string;
-  blueprint: BlueprintMonitoringItem;
-  instance: Instance;
+export interface InstancesTabProps {
+  data: MonitoringBlueprint['services'];
+  isLoading: boolean;
+  error: Error | null;
+}
+
+export interface InstancesTabsProps {
+  runningInstances: InstancesTabProps;
+  pendingInstances: InstancesTabProps;
+  stoppedInstances: InstancesTabProps;
 }
 
 export interface Instance {
@@ -16,10 +24,4 @@ export interface Instance {
   lastActive: string;
   imgUrl: string;
   status: InstanceStatus;
-}
-
-export enum InstanceStatus {
-  RUNNING = 'Running',
-  STOPPED = 'Stopped',
-  PENDING = 'Pending',
 }

@@ -1,6 +1,12 @@
 import { toPrimitiveBlueprint } from './toPrimitiveBlueprint';
 import toPrimitiveService from './toPrimitiveService';
 
+export enum InstanceStatus {
+  RUNNING = 'Running',
+  STOPPED = 'Stopped',
+  PENDING = 'Pending',
+}
+
 export interface OperatorBlueprint {
   blueprintId: number;
   blueprint: ReturnType<typeof toPrimitiveBlueprint>;
@@ -16,9 +22,16 @@ export interface MonitoringBlueprint extends OperatorBlueprint {
     operatorsCount?: number;
     tvl?: number;
   };
-  services: OperatorBlueprint['services'] & {
-    earned?: string;
-    uptime?: number;
-    lastActive?: Date;
-  };
+  services: Array<
+    OperatorBlueprint['services'][number] & {
+      earned?: number;
+      uptime?: number;
+      lastActive?: Date;
+      instanceId?: string;
+      earnedInUsd?: number;
+      imgUrl?: string;
+      status?: InstanceStatus;
+      blueprintData?: MonitoringBlueprint['blueprint'];
+    }
+  >;
 }

@@ -4,6 +4,7 @@ import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useA
 // TODO
 // import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
 import useFakeMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useFakeMonitoringBlueprints';
+import { InstanceStatus } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 
 export const BlueprintManagementSection = () => {
   const walletAddr = useActiveAccountAddress();
@@ -12,6 +13,7 @@ export const BlueprintManagementSection = () => {
   const { blueprints, isLoading, error } = useFakeMonitoringBlueprints(
     walletAddr?.toString(),
   );
+  const services = blueprints.flatMap((blueprint) => blueprint.services);
 
   return (
     <>
@@ -20,7 +22,29 @@ export const BlueprintManagementSection = () => {
         isLoading={isLoading}
         error={error}
       />
-      <InstancesTabs />
+      <InstancesTabs
+        runningInstances={{
+          data: services.filter(
+            (service) => service.status === InstanceStatus.RUNNING,
+          ),
+          isLoading,
+          error,
+        }}
+        pendingInstances={{
+          data: services.filter(
+            (service) => service.status === InstanceStatus.PENDING,
+          ),
+          isLoading,
+          error,
+        }}
+        stoppedInstances={{
+          data: services.filter(
+            (service) => service.status === InstanceStatus.STOPPED,
+          ),
+          isLoading,
+          error,
+        }}
+      />
     </>
   );
 };

@@ -5,7 +5,7 @@ function randPrimitiveService(
   operatorAccountAddr: string,
 ): ReturnType<typeof toPrimitiveService> {
   return {
-    id: id,
+    id: 10000 + id,
     blueprint: id,
     ownerAccount: operatorAccountAddr,
     permittedCallers: [],

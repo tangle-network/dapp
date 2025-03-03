@@ -57,7 +57,10 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    fallback={props.row.original.blueprint.metadata.name.substring(0, 2)}
+                    value={props.row.original.blueprint.metadata.name.substring(
+                      0,
+                      2,
+                    )}
                     theme="substrate"
                   />
                 )}
