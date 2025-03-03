@@ -11,7 +11,8 @@ const tangleTestnetEVM = defineChain({
   name: 'Tangle Testnet',
   contracts: {
     multicall3: {
-      address: '0xC008F1301EB78017d61f5de8Dd4F5c5ecCBC497c',
+      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+      blockCreated: 776_767,
     },
   },
   nativeCurrency: {
