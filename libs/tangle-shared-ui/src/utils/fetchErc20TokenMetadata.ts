@@ -24,6 +24,14 @@ const fetchErc20TokenMetadata = async (
   viemPublicClient: PublicClient,
   contractAddresses: EvmAddress[],
 ): Promise<TokenMetadata[]> => {
+  // If the chain does not have a multicall3 contract, fallback to individual readContract calls.
+  if (viemPublicClient.chain?.contracts?.multicall3?.address === undefined) {
+    return fetchErc20TokenMetadataWithIndividualCalls(
+      viemPublicClient,
+      contractAddresses,
+    );
+  }
+
   const functionNames = [
     'name',
     'symbol',
@@ -99,3 +107,51 @@ const fetchErc20TokenMetadata = async (
 };
 
 export default fetchErc20TokenMetadata;
+
+const fetchErc20TokenMetadataWithIndividualCalls = async (
+  viemPublicClient: PublicClient,
+  contractAddresses: EvmAddress[],
+): Promise<TokenMetadata[]> => {
+  // Fallback to individual readContract calls
+  const tokenMetadata: Record<string, TokenMetadata> = {};
+
+  // Create promises for all token metadata
+  const promises = contractAddresses.flatMap(async (tokenAddress) => {
+    try {
+      const [nameResult, symbolResult, decimalsResult] = await Promise.all([
+        viemPublicClient.readContract({
+          address: tokenAddress,
+          abi: erc20Abi,
+          functionName: 'name',
+        }),
+        viemPublicClient.readContract({
+          address: tokenAddress,
+          abi: erc20Abi,
+          functionName: 'symbol',
+        }),
+        viemPublicClient.readContract({
+          address: tokenAddress,
+          abi: erc20Abi,
+          functionName: 'decimals',
+        }),
+      ]);
+
+      tokenMetadata[tokenAddress] = {
+        id: tokenAddress,
+        name: nameResult,
+        symbol: symbolResult,
+        decimals: decimalsResult,
+      };
+    } catch (error) {
+      console.error(
+        `Error fetching metadata for token ${tokenAddress}:`,
+        error,
+      );
+    }
+  });
+
+  // Wait for all promises to resolve
+  await Promise.allSettled(promises);
+
+  return Object.values(tokenMetadata);
+};
