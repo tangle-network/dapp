@@ -1,7 +1,5 @@
-import { BN_ZERO } from '@polkadot/util';
 import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
-import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import { chainsPopulated } from '@tangle-network/dapp-config';
 import {
@@ -10,13 +8,8 @@ import {
 } from '@tangle-network/evm-contract-metadata';
 import ArrowLeftRightLineIcon from '@tangle-network/icons/ArrowLeftRightLineIcon';
 import WalletFillIcon from '@tangle-network/icons/WalletFillIcon';
-import { ROUTER_NATIVE_TOKEN_ADDRESS } from '@tangle-network/tangle-shared-ui/constants/bridge';
-import { BridgeTokenWithBalance } from '@tangle-network/tangle-shared-ui/types';
-import convertDecimalToBN from '@tangle-network/tangle-shared-ui/utils/convertDecimalToBn';
 import {
   AmountFormatStyle,
-  assertEvmAddress,
-  Button,
   Card,
   ChainOrTokenButton,
   EMPTY_VALUE_PLACEHOLDER,
@@ -27,16 +20,13 @@ import {
   Typography,
   useModal,
 } from '@tangle-network/ui-components';
-import { Decimal } from 'decimal.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
-import { formatEther } from 'viem';
-import { useBalance } from 'wagmi';
 import { useShallow } from 'zustand/react/shallow';
 import AddressInput from '../../components/AddressInput';
 import AmountInput from '../../components/AmountInput';
 import { BridgeConfirmationModal } from '../../components/bridge/BridgeConfirmationModal';
-import { FeeDetail, FeeDetailProps } from '../../components/bridge/FeeDetail';
+import { FeeDetail } from '../../components/bridge/FeeDetail';
 import ErrorMessage from '../../components/ErrorMessage';
 import { AssetConfig, AssetList } from '../../components/Lists/AssetList';
 import { ChainList } from '../../components/Lists/ChainList';
@@ -44,17 +34,19 @@ import { AddressType } from '../../constants';
 import useBridgeStore from '../../context/bridge/useBridgeStore';
 import useBalances from '../../data/balances/useBalances';
 import { useBridgeEvmBalances } from '../../data/bridge/useBridgeEvmBalances';
-import {
-  HyperlaneQuoteProps,
-  useHyperlaneQuote,
-} from '../../data/bridge/useHyperlaneQuote';
-import useRouterQuote, {
-  RouterQuoteParams,
-} from '../../data/bridge/useRouterQuote';
-import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
+import { useHyperlaneQuote } from '../../data/bridge/useHyperlaneQuote';
+import useRouterQuote from '../../data/bridge/useRouterQuote';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useBridgeAssets from '../../hooks/bridge/useBridgeAssets';
+import useBridgeTokenBalance from '../../hooks/bridge/useBridgeTokenBalance';
+import useHyperlaneFeeDetails from '../../hooks/bridge/useHyperlaneFeeDetails';
+import useRouterFeeDetails from '../../hooks/bridge/useRouterFeeDetails';
+import useRouterQuoteParams from '../../hooks/bridge/useRouterQuoteParams';
+import useHyperlaneQuoteParams from '../../hooks/bridge/useHyperlaneQuoteParams';
+import BridgeActionButton from '../../components/bridge/BridgeActionButton';
+import useRouterTransferData from '../../hooks/bridge/useRouterTransferData';
 
 const BridgeContainer = () => {
   const { network } = useNetworkStore();
@@ -66,30 +58,78 @@ const BridgeContainer = () => {
   const destinationChains = useBridgeStore(
     useShallow((store) => store.destinationChains),
   );
-
   const selectedSourceChain = useBridgeStore(
     useShallow((store) => store.selectedSourceChain),
   );
-
   const setSelectedSourceChain = useBridgeStore(
     useShallow((store) => store.setSelectedSourceChain),
   );
-
   const selectedDestinationChain = useBridgeStore(
     useShallow((store) => store.selectedDestinationChain),
   );
-
   const setSelectedDestinationChain = useBridgeStore(
     (store) => store.setSelectedDestinationChain,
   );
-
   const mainnetSourceChains = useBridgeStore(
     useShallow((store) => store.mainnetSourceChains),
   );
-
   const testnetSourceChains = useBridgeStore(
     useShallow((store) => store.testnetSourceChains),
   );
+  const isAmountInputError = useBridgeStore(
+    useShallow((store) => store.isAmountInputError),
+  );
+  const setIsAmountInputError = useBridgeStore(
+    useShallow((store) => store.setIsAmountInputError),
+  );
+  const amountInputErrorMessage = useBridgeStore(
+    useShallow((store) => store.amountInputErrorMessage),
+  );
+  const destinationAddress = useBridgeStore(
+    useShallow((store) => store.destinationAddress),
+  );
+  const setDestinationAddress = useBridgeStore(
+    useShallow((store) => store.setDestinationAddress),
+  );
+  const isAddressInputError = useBridgeStore(
+    useShallow((store) => store.isAddressInputError),
+  );
+  const setIsAddressInputError = useBridgeStore(
+    useShallow((store) => store.setIsAddressInputError),
+  );
+  const tokens = useBridgeStore(useShallow((store) => store.tokens));
+  const selectedToken = useBridgeStore(
+    useShallow((store) => store.selectedToken),
+  );
+  const setSelectedToken = useBridgeStore(
+    useShallow((store) => store.setSelectedToken),
+  );
+  const amount = useBridgeStore(useShallow((store) => store.amount));
+  const setAmount = useBridgeStore(useShallow((store) => store.setAmount));
+
+  const {
+    status: isSourceChainModalOpen,
+    open: openSourceChainModal,
+    close: closeSourceChainModal,
+    update: updateSourceChainModal,
+  } = useModal(false);
+  const {
+    status: isDestinationChainModalOpen,
+    open: openDestinationChainModal,
+    close: closeDestinationChainModal,
+    update: updateDestinationChainModal,
+  } = useModal(false);
+  const {
+    status: isTokenModalOpen,
+    open: openTokenModal,
+    close: closeTokenModal,
+    update: updateTokenModal,
+  } = useModal(false);
+  const {
+    status: isConfirmBridgeModalOpen,
+    open: openConfirmBridgeModal,
+    close: closeConfirmBridgeModal,
+  } = useModal(false);
 
   const srcChains = useMemo(() => {
     if (network.name === 'Tangle Mainnet') {
@@ -105,14 +145,12 @@ const BridgeContainer = () => {
     setSelectedSourceChain,
     testnetSourceChains,
   ]);
-
   const sourceTypedChainId = useMemo(() => {
     return calculateTypedChainId(
       selectedSourceChain.chainType,
       selectedSourceChain.id,
     );
   }, [selectedSourceChain]);
-
   const destinationTypedChainId = useMemo(() => {
     return calculateTypedChainId(
       selectedDestinationChain.chainType,
@@ -120,89 +158,10 @@ const BridgeContainer = () => {
     );
   }, [selectedDestinationChain]);
 
-  const tokens = useBridgeStore(useShallow((store) => store.tokens));
-
-  const selectedToken = useBridgeStore(
-    useShallow((store) => store.selectedToken),
-  );
-
-  const setSelectedToken = useBridgeStore((store) => store.setSelectedToken);
-  const amount = useBridgeStore(useShallow((store) => store.amount));
-  const setAmount = useBridgeStore(useShallow((store) => store.setAmount));
-
-  const { data: nativeTokenBalance } = useBalance({
-    address: activeAccount?.address as `0x${string}`,
-    chainId: selectedSourceChain.id,
-    query: {
-      enabled: activeAccount !== null,
-    },
-  });
-
   const { balances, refresh: refreshEvmBalances } = useBridgeEvmBalances(
     sourceTypedChainId,
     destinationTypedChainId,
   );
-
-  const isAmountInputError = useBridgeStore(
-    (store) => store.isAmountInputError,
-  );
-
-  const setIsAmountInputError = useBridgeStore(
-    (store) => store.setIsAmountInputError,
-  );
-
-  const amountInputErrorMessage = useBridgeStore(
-    (store) => store.amountInputErrorMessage,
-  );
-
-  const destinationAddress = useBridgeStore(
-    (store) => store.destinationAddress,
-  );
-
-  const setDestinationAddress = useBridgeStore(
-    (store) => store.setDestinationAddress,
-  );
-
-  const isAddressInputError = useBridgeStore(
-    (store) => store.isAddressInputError,
-  );
-
-  const setIsAddressInputError = useBridgeStore(
-    (store) => store.setIsAddressInputError,
-  );
-
-  const setSendingAmount = useBridgeStore((store) => store.setSendingAmount);
-
-  const setReceivingAmount = useBridgeStore(
-    (store) => store.setReceivingAmount,
-  );
-
-  const {
-    status: isSourceChainModalOpen,
-    open: openSourceChainModal,
-    close: closeSourceChainModal,
-    update: updateSourceChainModal,
-  } = useModal(false);
-
-  const {
-    status: isDestinationChainModalOpen,
-    open: openDestinationChainModal,
-    close: closeDestinationChainModal,
-    update: updateDestinationChainModal,
-  } = useModal(false);
-
-  const {
-    status: isTokenModalOpen,
-    open: openTokenModal,
-    close: closeTokenModal,
-    update: updateTokenModal,
-  } = useModal(false);
-
-  const {
-    status: isConfirmBridgeModalOpen,
-    open: openConfirmBridgeModal,
-    close: closeConfirmBridgeModal,
-  } = useModal(false);
 
   const isNativeToken = useIsBridgeNativeToken(
     calculateTypedChainId(
@@ -218,71 +177,24 @@ const BridgeContainer = () => {
 
   const isSolanaDestination = selectedDestinationChain.name === 'Solana';
 
-  const routerQuoteParams: RouterQuoteParams | null = useMemo(() => {
-    if (!amount || !selectedToken) {
-      return null;
-    }
-
-    const fromTokenAddress =
-      sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM
-        ? ROUTER_NATIVE_TOKEN_ADDRESS
-        : selectedToken.address;
-
-    const toTokenAddress =
-      destinationTypedChainId === PresetTypedChainId.TangleMainnetEVM
-        ? ROUTER_NATIVE_TOKEN_ADDRESS
-        : selectedToken.address;
-
-    const toTokenChainId = isSolanaDestination
-      ? 'solana'
-      : selectedDestinationChain.id.toString();
-
-    const routerQuoteParams = {
-      fromTokenAddress,
-      toTokenAddress,
-      amountInWei: amount.toString(),
-      fromTokenChainId: selectedSourceChain.id.toString(),
-      toTokenChainId,
-    };
-
-    return routerQuoteParams;
-  }, [
+  const routerQuoteParams = useRouterQuoteParams(
     amount,
     selectedToken,
+    selectedSourceChain,
+    selectedDestinationChain,
     sourceTypedChainId,
     destinationTypedChainId,
     isSolanaDestination,
-    selectedDestinationChain.id,
-    selectedSourceChain.id,
-  ]);
+  );
 
-  const hyperlaneQuoteParams: HyperlaneQuoteProps | null = useMemo(() => {
-    if (
-      !activeAccount ||
-      !activeAccount.address ||
-      !destinationAddress ||
-      !selectedToken ||
-      !amount
-    ) {
-      return null;
-    }
-
-    return {
-      token: selectedToken,
-      amount: Number(amount.toString()),
-      sourceTypedChainId,
-      destinationTypedChainId,
-      senderAddress: activeAccount.address,
-      recipientAddress: destinationAddress,
-    };
-  }, [
+  const hyperlaneQuoteParams = useHyperlaneQuoteParams(
     amount,
     selectedToken,
+    activeAccount,
+    destinationAddress,
     sourceTypedChainId,
     destinationTypedChainId,
-    destinationAddress,
-    activeAccount,
-  ]);
+  );
 
   const {
     data: routerQuote,
@@ -317,112 +229,21 @@ const BridgeContainer = () => {
     selectedDestinationChain.blockExplorers?.default.url,
   ]);
 
-  const routerFeeDetails: FeeDetailProps | null = useMemo(() => {
-    if (
-      !routerQuote ||
-      !selectedToken ||
-      !amount ||
-      !routerQuote?.bridgeFee.amount
-    ) {
-      return null;
-    }
-
-    const sendingAmount = amount
-      ? parseFloat(formatEther(BigInt(amount.toString())))
-      : 0;
-
-    const formattedSendingAmount =
-      sendingAmount.toString() + ' ' + routerQuote?.bridgeFee.symbol;
-
-    const receivingAmount = routerQuote.bridgeFee.amount
-      ? sendingAmount -
-        parseFloat(formatEther(BigInt(routerQuote.bridgeFee.amount)))
-      : sendingAmount;
-
-    const formattedReceivingAmount =
-      receivingAmount.toString() + ' ' + routerQuote?.bridgeFee.symbol;
-
-    const formattedBridgeFee =
-      formatEther(BigInt(routerQuote.bridgeFee.amount)) +
-      ' ' +
-      routerQuote?.bridgeFee.symbol;
-
-    const estimatedTime = routerQuote?.estimatedTime
-      ? `${Math.ceil(Number(routerQuote.estimatedTime) / 60)} min`
-      : '';
-
-    setSendingAmount(new Decimal(sendingAmount));
-    setReceivingAmount(new Decimal(receivingAmount));
-
-    return {
-      token: selectedToken,
-      amounts: {
-        sending: formattedSendingAmount,
-        receiving: formattedReceivingAmount,
-        bridgeFee: formattedBridgeFee,
-      },
-      estimatedTime: estimatedTime,
-      bridgeFeeTokenType: routerQuote.bridgeFee.symbol,
-      sendingAmount: new Decimal(sendingAmount),
-      receivingAmount: new Decimal(receivingAmount),
-      recipientExplorerUrl: recipientExplorerUrl,
-    };
-  }, [
+  const routerFeeDetails = useRouterFeeDetails(
+    selectedToken,
     amount,
     routerQuote,
-    selectedToken,
-    setReceivingAmount,
-    setSendingAmount,
     recipientExplorerUrl,
-  ]);
+  );
 
-  const hyperlaneFeeDetails: FeeDetailProps | null = useMemo(() => {
-    if (!hyperlaneQuote || !selectedToken || !amount) {
-      return null;
-    }
-
-    const sendingAmount = new Decimal(amount.toString())
-      .div(new Decimal(10).pow(selectedToken.decimals))
-      .toString();
-
-    const formattedSendingAmount = `${sendingAmount} ${selectedToken.symbol}`;
-
-    const formattedGasFee =
-      formatEther(hyperlaneQuote.fees.local.amount) +
-      ' ' +
-      hyperlaneQuote.fees.local.symbol;
-
-    const formattedBridgeFee =
-      formatEther(hyperlaneQuote.fees.interchain.amount) +
-      ' ' +
-      hyperlaneQuote.fees.interchain.symbol;
-
-    setSendingAmount(new Decimal(sendingAmount));
-    setReceivingAmount(new Decimal(sendingAmount));
-
-    return {
-      token: selectedToken,
-      amounts: {
-        sending: formattedSendingAmount,
-        receiving: formattedSendingAmount,
-        bridgeFee: formattedBridgeFee,
-        gasFee: formattedGasFee,
-      },
-      estimatedTime: '',
-      bridgeFeeTokenType: hyperlaneQuote.fees.local.symbol,
-      gasFeeTokenType: hyperlaneQuote.fees.interchain.symbol,
-      sendingAmount: new Decimal(sendingAmount),
-      receivingAmount: new Decimal(sendingAmount),
-      recipientExplorerUrl: recipientExplorerUrl,
-    };
-  }, [
+  const hyperlaneFeeDetails = useHyperlaneFeeDetails(
+    activeAccount,
+    selectedToken,
+    destinationAddress,
     amount,
     hyperlaneQuote,
-    selectedToken,
-    setReceivingAmount,
-    setSendingAmount,
     recipientExplorerUrl,
-  ]);
+  );
 
   const clearBridgeStore = useCallback(() => {
     setAmount(null);
@@ -450,103 +271,12 @@ const BridgeContainer = () => {
     refreshEvmBalances,
   ]);
 
-  const assets: AssetConfig[] = useMemo(() => {
-    const isTangleChain =
-      sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
-      sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM;
-
-    return tokens.map((token) => {
-      const balance = (() => {
-        if (
-          isNativeToken &&
-          (sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
-            sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM) &&
-          token.tokenType === 'TNT'
-        ) {
-          return nativeTokenBalance?.value !== undefined
-            ? formatEther(nativeTokenBalance.value)
-            : undefined;
-        }
-
-        if (
-          isNativeToken &&
-          sourceTypedChainId === PresetTypedChainId.Polygon &&
-          token.symbol === 'POL'
-        ) {
-          return nativeTokenBalance?.value !== undefined
-            ? formatEther(nativeTokenBalance.value)
-            : undefined;
-        }
-
-        if (
-          (isNativeToken &&
-            (sourceTypedChainId === PresetTypedChainId.Optimism ||
-              sourceTypedChainId === PresetTypedChainId.Arbitrum ||
-              sourceTypedChainId === PresetTypedChainId.Base) &&
-            token.symbol === 'ETH') ||
-          (sourceTypedChainId === PresetTypedChainId.BSC &&
-            token.symbol === 'BNB')
-        ) {
-          return nativeTokenBalance?.value !== undefined
-            ? formatEther(nativeTokenBalance.value)
-            : undefined;
-        }
-
-        const tokenBalance = balances?.[sourceTypedChainId]?.find(
-          (tokenBalance: BridgeTokenWithBalance) =>
-            tokenBalance.address === token.address,
-        );
-
-        return isTangleChain
-          ? tokenBalance?.syntheticBalance
-          : tokenBalance?.balance;
-      })();
-
-      const selectedChainExplorerUrl =
-        selectedSourceChain.blockExplorers?.default;
-
-      const address = isTangleChain
-        ? token.hyperlaneSyntheticAddress
-        : (token.address as `0x${string}`);
-
-      const tokenExplorerUrl = selectedChainExplorerUrl?.url
-        ? makeExplorerUrl(
-            selectedChainExplorerUrl.url,
-            (isTangleChain ? token.hyperlaneSyntheticAddress : token.address) ??
-              '',
-            'address',
-            'web3',
-          )
-        : undefined;
-
-      const formattedBalance = (() => {
-        if (!activeAccount || !balance) return undefined;
-
-        return typeof balance === 'string'
-          ? convertDecimalToBN(new Decimal(balance), token.decimals)
-          : convertDecimalToBN(balance, token.decimals);
-      })();
-
-      return {
-        id: token.tokenType,
-        name: token.name,
-        symbol: token.tokenType,
-        optionalSymbol: token.symbol,
-        balance: formattedBalance,
-        explorerUrl: !isNativeToken ? tokenExplorerUrl : undefined,
-        address: address !== undefined ? assertEvmAddress(address) : undefined,
-        decimals: token.decimals,
-      } satisfies AssetConfig;
-    });
-  }, [
-    tokens,
-    isNativeToken,
-    nativeTokenBalance?.value,
+  const assets = useBridgeAssets(
+    selectedToken,
+    selectedSourceChain,
     sourceTypedChainId,
     balances,
-    selectedSourceChain.blockExplorers?.default,
-    activeAccount,
-  ]);
+  );
 
   const onSelectToken = useCallback(
     (asset: AssetConfig) => {
@@ -567,139 +297,19 @@ const BridgeContainer = () => {
     [setSelectedToken, tokens, isNativeToken],
   );
 
-  const sourceTokenBalance = useMemo(() => {
-    if (!selectedToken) return BN_ZERO;
-
-    const tokenAddress =
-      sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
-      sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM
-        ? selectedToken.hyperlaneSyntheticAddress
-        : selectedToken.address;
-
-    const balance = assets.find(
-      (asset) => asset.address === tokenAddress,
-    )?.balance;
-
-    return balance ?? BN_ZERO;
-  }, [selectedToken, assets, sourceTypedChainId]);
-
-  const isWrongChain = useMemo(() => {
-    const isEvmWallet = activeWallet?.platform === 'EVM';
-
-    return isEvmWallet && activeChain?.id !== selectedSourceChain.id;
-  }, [activeChain?.id, activeWallet?.platform, selectedSourceChain.id]);
-
-  const isActionBtnDisabled = useMemo(() => {
-    if (
-      !activeAccount ||
-      !activeChain ||
-      !activeWallet ||
-      !selectedToken ||
-      isWrongChain ||
-      !amount ||
-      !destinationAddress ||
-      isAmountInputError ||
-      isAddressInputError
-    ) {
-      return true;
-    }
-
-    return false;
-  }, [
-    activeAccount,
-    activeChain,
-    activeWallet,
+  const sourceTokenBalance = useBridgeTokenBalance(
     selectedToken,
-    isWrongChain,
-    amount,
-    destinationAddress,
-    isAmountInputError,
-    isAddressInputError,
-  ]);
+    selectedSourceChain,
+    sourceTypedChainId,
+    balances,
+  );
 
-  const isActionBtnLoading =
-    isRouterQuoteLoading || isHyperlaneQuoteLoading || isTxInProgress;
-
-  const actionBtnLoadingText = (() => {
-    if (isTxInProgress) {
-      return 'Transaction in Progress';
-    }
-
-    return isActionBtnLoading ? 'Preview Transaction' : '';
-  })();
-
-  const actionButtonText = (() => {
-    if (isTxInProgress) {
-      return 'Transaction in Progress';
-    } else if (
-      amount &&
-      destinationAddress &&
-      !isAmountInputError &&
-      !isAddressInputError &&
-      (routerQuote || hyperlaneQuote) &&
-      !routerQuoteError &&
-      !hyperlaneQuoteError
-    ) {
-      return 'Confirm Bridge';
-    }
-
-    return 'Preview Transaction';
-  })();
-
-  const onClickActionBtn = useCallback(() => {
-    if (
-      amount &&
-      destinationAddress &&
-      selectedToken &&
-      !isAmountInputError &&
-      !isAddressInputError &&
-      (routerQuote || hyperlaneQuote) &&
-      !routerQuoteError &&
-      !hyperlaneQuoteError
-    ) {
-      openConfirmBridgeModal();
-    } else if (amount && selectedToken && !isAmountInputError) {
-      if (selectedToken.bridgeType === EVMTokenBridgeEnum.Hyperlane) {
-        refetchHyperlaneQuote();
-      } else {
-        refetchRouterQuote();
-      }
-    }
-  }, [
-    amount,
-    destinationAddress,
-    selectedToken,
-    isAmountInputError,
-    isAddressInputError,
+  const routerTransferData = useRouterTransferData(
     routerQuote,
-    hyperlaneQuote,
-    routerQuoteError,
-    hyperlaneQuoteError,
-    openConfirmBridgeModal,
-    refetchHyperlaneQuote,
-    refetchRouterQuote,
-  ]);
-
-  const routerTransferData: Omit<RouterTransferProps, 'ethersSigner'> | null =
-    useMemo(() => {
-      if (
-        !routerQuote ||
-        !routerQuoteParams ||
-        !activeAccount ||
-        !destinationAddress
-      ) {
-        return null;
-      }
-
-      return {
-        routerQuoteData: routerQuote,
-        fromTokenAddress: routerQuoteParams.fromTokenAddress,
-        toTokenAddress: routerQuoteParams.toTokenAddress,
-        senderAddress: activeAccount.address,
-        receiverAddress: destinationAddress,
-        refundAddress: activeAccount.address,
-      };
-    }, [routerQuote, routerQuoteParams, activeAccount, destinationAddress]);
+    routerQuoteParams,
+    activeAccount,
+    destinationAddress,
+  );
 
   // Reset inputs after the active account, wallet or chain is
   // disconnected.
@@ -764,9 +374,7 @@ const BridgeContainer = () => {
         className="flex flex-col gap-7 w-full max-w-[550px] mx-auto relative"
       >
         <div className="flex flex-col gap-7">
-          {/* Source and Destination Chain Selector */}
           <div className="flex flex-col items-center justify-center md:flex-row md:justify-between md:items-end md:gap-2">
-            {/* Source chain */}
             <div className="flex flex-col flex-1 w-full gap-2">
               <Label
                 className="font-bold text-mono-120 dark:text-mono-120"
@@ -787,7 +395,6 @@ const BridgeContainer = () => {
               />
             </div>
 
-            {/* Switch button */}
             <div
               className="px-1 pt-6 cursor-pointer md:pt-0 md:pb-4"
               onClick={onSwitchChains}
@@ -795,7 +402,6 @@ const BridgeContainer = () => {
               <ArrowLeftRightLineIcon className="w-6 h-6 rotate-90 md:rotate-0" />
             </div>
 
-            {/* Destination chain */}
             <div className="flex flex-col flex-1 w-full gap-2">
               <Label htmlFor="bridge-destination-chain-selector">To</Label>
 
@@ -813,7 +419,6 @@ const BridgeContainer = () => {
             </div>
           </div>
           <div className="flex flex-col gap-4">
-            {/* Sending Amount and Token Selector */}
             <div className="flex flex-col gap-2">
               <div
                 className={twMerge(
@@ -936,6 +541,7 @@ const BridgeContainer = () => {
               )}
             </div>
           </div>
+
           {routerQuote && !isRouterQuoteLoading && routerFeeDetails && (
             <FeeDetail
               token={routerFeeDetails.token}
@@ -947,6 +553,7 @@ const BridgeContainer = () => {
               recipientExplorerUrl={recipientExplorerUrl}
             />
           )}
+
           {hyperlaneQuote &&
             !isHyperlaneQuoteLoading &&
             hyperlaneFeeDetails && (
@@ -961,6 +568,7 @@ const BridgeContainer = () => {
                 recipientExplorerUrl={recipientExplorerUrl}
               />
             )}
+
           {routerQuoteError?.error !== undefined && (
             <ErrorMessage
               className="mt-0 duration-300 ease-out animate-in fade-in"
@@ -969,17 +577,31 @@ const BridgeContainer = () => {
               {routerQuoteError.error}
             </ErrorMessage>
           )}
-          {/* Action button */}
-          <Button
-            variant="primary"
-            isFullWidth
-            onClick={onClickActionBtn}
-            isLoading={isActionBtnLoading}
-            isDisabled={isActionBtnDisabled}
-            loadingText={actionBtnLoadingText}
-          >
-            {actionButtonText}
-          </Button>
+
+          <BridgeActionButton
+            activeWallet={activeWallet}
+            activeChain={activeChain}
+            selectedSourceChain={selectedSourceChain}
+            selectedDestinationChain={selectedDestinationChain}
+            activeAccount={activeAccount}
+            amount={amount}
+            destinationAddress={destinationAddress}
+            selectedToken={selectedToken}
+            isAmountInputError={isAmountInputError}
+            isAddressInputError={isAddressInputError}
+            isRouterQuote={!!routerQuote}
+            isHyperlaneQuote={!!hyperlaneQuote}
+            routerQuote={routerQuote}
+            hyperlaneQuote={hyperlaneQuote}
+            routerQuoteError={routerQuoteError}
+            hyperlaneQuoteError={hyperlaneQuoteError}
+            isTxInProgress={isTxInProgress}
+            isRouterQuoteLoading={isRouterQuoteLoading}
+            isHyperlaneQuoteLoading={isHyperlaneQuoteLoading}
+            openConfirmBridgeModal={openConfirmBridgeModal}
+            refetchRouterQuote={refetchRouterQuote}
+            refetchHyperlaneQuote={refetchHyperlaneQuote}
+          />
         </div>
       </Card>
 
@@ -987,7 +609,6 @@ const BridgeContainer = () => {
         open={isSourceChainModalOpen}
         onOpenChange={updateSourceChainModal}
       >
-        {/* Source Chain Selector */}
         <ModalContent size="md">
           <ChainList
             searchInputId="bridge-source-chain-search"
@@ -1014,7 +635,6 @@ const BridgeContainer = () => {
         open={isDestinationChainModalOpen}
         onOpenChange={updateDestinationChainModal}
       >
-        {/* Destination Chain Selector */}
         <ModalContent size="md">
           <ChainList
             searchInputId="bridge-destination-chain-search"
@@ -1028,7 +648,6 @@ const BridgeContainer = () => {
       </Modal>
 
       <Modal open={isTokenModalOpen} onOpenChange={updateTokenModal}>
-        {/* Token Selector */}
         <ModalContent size="md">
           <AssetList
             onClose={closeTokenModal}

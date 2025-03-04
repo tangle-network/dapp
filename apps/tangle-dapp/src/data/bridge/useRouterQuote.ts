@@ -15,7 +15,7 @@ export type RouterQuoteParams = {
   toTokenChainId: string;
 };
 
-type RouterQuoteResponse = {
+export type RouterQuote = {
   chainId: string;
   chainType: string;
   priceImpact: string;
@@ -53,10 +53,11 @@ type RouterQuoteError = {
 
 const fetchRouterQuote = async (
   params: RouterQuoteParams | null,
-): Promise<RouterQuoteResponse> => {
+): Promise<RouterQuote | null> => {
   try {
     if (!params) {
-      throw new Error('Router quote params are required');
+      console.error('Router quote params are required');
+      return null;
     }
 
     const {
@@ -67,7 +68,7 @@ const fetchRouterQuote = async (
       toTokenChainId,
     } = params;
 
-    const response = await axios.get<RouterQuoteResponse>(ROUTER_QUOTE_URL, {
+    const response = await axios.get<RouterQuote>(ROUTER_QUOTE_URL, {
       params: {
         fromTokenAddress,
         toTokenAddress,
@@ -85,22 +86,21 @@ const fetchRouterQuote = async (
       error.response !== undefined
     ) {
       console.error('Router quote error:', error.response.data);
-
-      throw error.response.data;
+      return null;
     }
 
     console.error('Error fetching router quote:', error);
-
-    throw error;
+    return null;
   }
 };
 
 const useRouterQuote = (props: RouterQuoteParams | null) => {
-  return useQuery<unknown, RouterQuoteError, RouterQuoteResponse>({
+  return useQuery<unknown, RouterQuoteError, RouterQuote | null>({
     queryKey: ['routerQuote', props],
     queryFn: () => fetchRouterQuote(props),
     enabled: false,
     refetchOnWindowFocus: false,
+    initialData: null,
   });
 };
 
