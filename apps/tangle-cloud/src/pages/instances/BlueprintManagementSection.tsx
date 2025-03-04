@@ -5,6 +5,7 @@ import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useA
 // import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
 import useFakeMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useFakeMonitoringBlueprints';
 import { InstanceStatus } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
+import { useMemo } from 'react';
 
 export const BlueprintManagementSection = () => {
   const walletAddr = useActiveAccountAddress();
@@ -13,7 +14,10 @@ export const BlueprintManagementSection = () => {
   const { blueprints, isLoading, error } = useFakeMonitoringBlueprints(
     walletAddr?.toString(),
   );
-  const services = blueprints.flatMap((blueprint) => blueprint.services);
+  const services = useMemo(
+    () => blueprints.flatMap((blueprint) => blueprint.services),
+    [blueprints],
+  );
 
   return (
     <>

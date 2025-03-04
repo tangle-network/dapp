@@ -135,9 +135,6 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
                   }
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                  }}
                 >
                   <Button variant="link" className="uppercase body4">
                     {shortenString(props.row.original.ownerAccount)}
@@ -185,8 +182,6 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
       data={data}
       error={error}
       isLoading={isLoading}
-      loadingTableProps={{}}
-      emptyTableProps={{}}
       tableProps={table}
       tableConfig={{
         tableClassName: 'min-w-[1000px]',

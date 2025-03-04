@@ -110,8 +110,6 @@ export const TotalValueLockedTabs = () => {
           data={vaults ?? []}
           isLoading={vaults === null}
           error={null}
-          loadingTableProps={{}}
-          emptyTableProps={{}}
           tableConfig={{
             onRowClick(row, table) {
               if (!row.getCanExpand()) return;

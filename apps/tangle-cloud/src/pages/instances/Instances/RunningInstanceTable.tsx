@@ -13,7 +13,6 @@ import {
   EnergyChipColors,
   EnergyChipStack,
   getRoundedAmountString,
-  NO_METRICS_PLACEHOLDER,
   Typography,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
@@ -110,12 +109,15 @@ export const RunningInstanceTable: FC<InstancesTabProps> = ({
             totalTtl = 0,
             timeRemaining = 0,
             progress = 0,
-            tooltip = NO_METRICS_PLACEHOLDER;
+            tooltip = 'No metrics';
+
           if (props.row.original.createdAtBlock && props.row.original.ttl) {
             createdAtBlock = props.row.original.createdAtBlock;
             totalTtl = createdAtBlock + props.row.original.ttl;
             timeRemaining = totalTtl - MOCK_CURRENT_BLOCK;
+
             const isCompleted = timeRemaining < 0;
+
             progress = isCompleted ? 1 : timeRemaining / totalTtl;
             tooltip = isCompleted
               ? 'Completed'
@@ -233,8 +235,6 @@ export const RunningInstanceTable: FC<InstancesTabProps> = ({
       data={data}
       error={error}
       isLoading={isLoading}
-      loadingTableProps={{}}
-      emptyTableProps={{}}
       tableProps={table}
       tableConfig={{
         tableClassName: 'min-w-[1000px]',

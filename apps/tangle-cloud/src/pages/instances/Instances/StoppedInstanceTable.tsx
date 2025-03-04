@@ -199,8 +199,6 @@ export const StoppedInstanceTable: FC<InstancesTabProps> = ({
       data={data}
       error={error}
       isLoading={isLoading}
-      loadingTableProps={{}}
-      emptyTableProps={{}}
       tableProps={table}
       tableConfig={{
         tableClassName: 'min-w-[1000px]',
