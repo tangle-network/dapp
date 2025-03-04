@@ -4,6 +4,10 @@ import { isScheduledRequestReady } from '../../pages/restake/utils';
 import { UnstakeRequestTableRow } from './UnstakeRequestTable';
 import { BN } from '@polkadot/util';
 import useRestakeApi from '../../data/restake/useRestakeApi';
+import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
+import useNativeRestakeUnstakeExecuteTx from '../../data/restake/useNativeRestakeUnstakeExecuteTx';
+import { TxStatus } from '../../hooks/useSubstrateTx';
+import useNativeRestakeUnstakeCancelTx from '../../data/restake/useNativeRestakeUnstakeCancelTx';
 
 type Props = {
   allRequests: UnstakeRequestTableRow[];
@@ -17,7 +21,19 @@ const UnstakeRequestTableActions: FC<Props> = ({
   const [isTransacting, setIsTransacting] = useState(false);
   const restakeApi = useRestakeApi();
 
-  const isReady = restakeApi !== null && !isTransacting;
+  const { execute: executeExecute, status: executeStatus } =
+    useNativeRestakeUnstakeExecuteTx();
+
+  const { execute: executeCancel, status: cancelStatus } =
+    useNativeRestakeUnstakeCancelTx();
+
+  const isReady =
+    restakeApi !== null &&
+    !isTransacting &&
+    executeExecute !== null &&
+    executeStatus !== TxStatus.PROCESSING &&
+    executeCancel !== null &&
+    cancelStatus !== TxStatus.PROCESSING;
 
   const handleCancelUnstake = useCallback(async () => {
     if (!isReady) {
@@ -34,10 +50,28 @@ const UnstakeRequestTableActions: FC<Props> = ({
       },
     );
 
+    const nativeUnstakeRequests = unstakeRequests.filter(
+      (request) => request.assetId === NATIVE_ASSET_ID,
+    );
+
+    const nonNativeUnstakeRequests = unstakeRequests.filter(
+      (request) => request.assetId !== NATIVE_ASSET_ID,
+    );
+
     setIsTransacting(true);
-    await restakeApi.cancelUndelegate(unstakeRequests);
+
+    if (nonNativeUnstakeRequests.length > 0) {
+      await restakeApi.cancelUndelegate(nonNativeUnstakeRequests);
+    }
+
+    if (nativeUnstakeRequests.length > 0) {
+      await executeCancel(
+        nativeUnstakeRequests.map((request) => request.operatorAddress),
+      );
+    }
+
     setIsTransacting(false);
-  }, [isReady, restakeApi, selectedRequests]);
+  }, [executeCancel, isReady, restakeApi, selectedRequests]);
 
   const handleExecuteUnstake = useCallback(async () => {
     if (!isReady) {
@@ -45,9 +79,36 @@ const UnstakeRequestTableActions: FC<Props> = ({
     }
 
     setIsTransacting(true);
-    await restakeApi.executeUndelegate();
+
+    const unstakeRequests = selectedRequests.map(
+      ({ operatorAccountId, assetId }) => {
+        return {
+          assetId,
+          operatorAddress: operatorAccountId,
+        };
+      },
+    );
+
+    const nativeUnstakeRequests = unstakeRequests.filter(
+      (request) => request.assetId === NATIVE_ASSET_ID,
+    );
+
+    const hasNonNativeUnstakeRequests = unstakeRequests.some(
+      (request) => request.assetId !== NATIVE_ASSET_ID,
+    );
+
+    if (hasNonNativeUnstakeRequests) {
+      await restakeApi.executeUndelegate();
+    }
+
+    if (nativeUnstakeRequests.length > 0) {
+      await executeExecute(
+        nativeUnstakeRequests.map((request) => request.operatorAddress),
+      );
+    }
+
     setIsTransacting(false);
-  }, [isReady, restakeApi]);
+  }, [executeExecute, isReady, restakeApi, selectedRequests]);
 
   const canCancelUnstake = selectedRequests.length > 0;
 
@@ -56,8 +117,8 @@ const UnstakeRequestTableActions: FC<Props> = ({
       return false;
     }
 
-    return allRequests.some(({ sessionsRemaining: timeRemaining }) =>
-      isScheduledRequestReady(timeRemaining),
+    return allRequests.some(({ sessionsRemaining }) =>
+      isScheduledRequestReady(sessionsRemaining),
     );
   }, [allRequests]);
 

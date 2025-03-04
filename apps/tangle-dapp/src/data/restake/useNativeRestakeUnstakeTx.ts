@@ -39,11 +39,11 @@ const useNativeRestakeUnstakeTx = () => {
 
   const substrateTxFactory: SubstrateTxFactory<Context> = useCallback(
     (api, _activeSubstrateAddress, context) =>
-      api.tx.multiAssetDelegation.delegateNomination(
+      api.tx.multiAssetDelegation.scheduleNominationUnstake(
         context.operatorAddress,
         context.amount,
-        // TODO: Blueprint selection. For now, defaulting to none.
-        { Fixed: [] },
+        // TODO: Blueprint selection. For now, unstake from all.
+        { All: 'All' },
       ),
     [],
   );

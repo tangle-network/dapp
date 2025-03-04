@@ -78,6 +78,8 @@ export enum TxName {
   DEMOCRACY_UNLOCK = 'unlock democracy',
   RESTAKE_NATIVE_DELEGATE = 'restake native',
   RESTAKE_NATIVE_UNSTAKE = 'restake undelegate native',
+  RESTAKE_NATIVE_UNSTAKE_EXECUTE = 'restake execute undelegate native',
+  RESTAKE_NATIVE_UNSTAKE_CANCEL = 'restake cancel undelegate native',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =
