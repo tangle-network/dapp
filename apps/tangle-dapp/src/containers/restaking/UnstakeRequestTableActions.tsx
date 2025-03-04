@@ -102,7 +102,6 @@ const UnstakeRequestTableActions: FC<Props> = ({
     }
 
     if (nativeUnstakeRequests.length > 0) {
-      console.debug('Executing native unstake requests', nativeUnstakeRequests);
       await executeExecute(
         nativeUnstakeRequests.map((request) => request.operatorAddress),
       );
