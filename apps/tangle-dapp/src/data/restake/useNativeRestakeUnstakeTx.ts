@@ -5,9 +5,7 @@ import { TxName } from '../../constants';
 import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
-import useFormatNativeTokenAmount from '../../hooks/useFormatNativeTokenAmount';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import { GetSuccessMessageFn } from '../../types';
 import RESTAKING_PRECOMPILE_ABI from '../../abi/restaking';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { convertAddressToBytes32 } from '@tangle-network/ui-components';
@@ -18,8 +16,6 @@ type Context = {
 };
 
 const useNativeRestakeUnstakeTx = () => {
-  const formatNativeTokenAmount = useFormatNativeTokenAmount();
-
   const evmTxFactory: EvmTxFactory<
     typeof RESTAKING_PRECOMPILE_ABI,
     'scheduleDelegatorNominationUnstake',
@@ -48,18 +44,12 @@ const useNativeRestakeUnstakeTx = () => {
     [],
   );
 
-  const getSuccessMessage: GetSuccessMessageFn<Context> = useCallback(
-    ({ amount }) => `Delegated ${formatNativeTokenAmount(amount)}.`,
-    [formatNativeTokenAmount],
-  );
-
   return useAgnosticTx({
     name: TxName.RESTAKE_NATIVE_UNSTAKE,
     abi: RESTAKING_PRECOMPILE_ABI,
     precompileAddress: PrecompileAddress.RESTAKING,
     evmTxFactory,
     substrateTxFactory,
-    getSuccessMessage,
   });
 };
 

@@ -42,6 +42,9 @@ import SupportedChainModal from '../SupportedChainModal';
 import useSwitchChain from '../useSwitchChain';
 import Details from './Details';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import useNativeRestakeUnstakeTx from '../../../data/restake/useNativeRestakeUnstakeTx';
+import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
+import { TxStatus } from '../../../hooks/useSubstrateTx';
 
 const RestakeUnstakeForm: FC = () => {
   const [isUnstakeRequestTableOpen, setIsUnstakeRequestTableOpen] =
@@ -195,7 +198,17 @@ const RestakeUnstakeForm: FC = () => {
 
   const restakeApi = useRestakeApi();
 
-  const isReady = restakeApi !== null && !isSubmitting && assets !== null;
+  const { execute: executeNativeUnstakeTx, status: nativeUnstakeTxStatus } =
+    useNativeRestakeUnstakeTx();
+
+  const isTransacting =
+    isSubmitting || nativeUnstakeTxStatus === TxStatus.PROCESSING;
+
+  const isReady =
+    restakeApi !== null &&
+    !isTransacting &&
+    assets !== null &&
+    executeNativeUnstakeTx !== null;
 
   const onSubmit = useCallback<SubmitHandler<UnstakeFormFields>>(
     async ({ amount, assetId, operatorAccountId }) => {
@@ -211,7 +224,16 @@ const RestakeUnstakeForm: FC = () => {
         return;
       }
 
-      await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
+      // Native restaking's unstake operation is handled through a separate
+      // extrinsic.
+      if (assetId === NATIVE_ASSET_ID) {
+        await executeNativeUnstakeTx({
+          amount: amountBn,
+          operatorAddress: operatorAccountId,
+        });
+      } else {
+        await restakeApi.undelegate(operatorAccountId, assetId, amountBn);
+      }
 
       setFormValue('amount', '', { shouldValidate: false });
       setFormValue('assetId', '0x0', { shouldValidate: false });
@@ -220,7 +242,7 @@ const RestakeUnstakeForm: FC = () => {
         shouldValidate: false,
       });
     },
-    [assets, isReady, restakeApi, setFormValue],
+    [assets, executeNativeUnstakeTx, isReady, restakeApi, setFormValue],
   );
 
   return (
@@ -317,7 +339,7 @@ const RestakeUnstakeForm: FC = () => {
                     isDisabled={!isValid || isDefined(displayError) || !isReady}
                     type="submit"
                     isFullWidth
-                    isLoading={isSubmitting || isLoading}
+                    isLoading={isTransacting || isLoading}
                     loadingText={loadingText}
                   >
                     {displayError ?? 'Schedule Unstake'}

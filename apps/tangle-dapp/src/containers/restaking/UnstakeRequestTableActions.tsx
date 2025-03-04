@@ -80,7 +80,7 @@ const UnstakeRequestTableActions: FC<Props> = ({
 
     setIsTransacting(true);
 
-    const unstakeRequests = selectedRequests.map(
+    const allUnstakeRequests = allRequests.map(
       ({ operatorAccountId, assetId }) => {
         return {
           assetId,
@@ -89,11 +89,11 @@ const UnstakeRequestTableActions: FC<Props> = ({
       },
     );
 
-    const nativeUnstakeRequests = unstakeRequests.filter(
+    const nativeUnstakeRequests = allUnstakeRequests.filter(
       (request) => request.assetId === NATIVE_ASSET_ID,
     );
 
-    const hasNonNativeUnstakeRequests = unstakeRequests.some(
+    const hasNonNativeUnstakeRequests = allUnstakeRequests.some(
       (request) => request.assetId !== NATIVE_ASSET_ID,
     );
 
@@ -102,13 +102,14 @@ const UnstakeRequestTableActions: FC<Props> = ({
     }
 
     if (nativeUnstakeRequests.length > 0) {
+      console.debug('Executing native unstake requests', nativeUnstakeRequests);
       await executeExecute(
         nativeUnstakeRequests.map((request) => request.operatorAddress),
       );
     }
 
     setIsTransacting(false);
-  }, [executeExecute, isReady, restakeApi, selectedRequests]);
+  }, [allRequests, executeExecute, isReady, restakeApi]);
 
   const canCancelUnstake = selectedRequests.length > 0;
 
