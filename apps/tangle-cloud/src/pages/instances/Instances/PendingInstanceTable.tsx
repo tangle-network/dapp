@@ -5,7 +5,16 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Avatar, Button, EMPTY_VALUE_PLACEHOLDER, getRoundedAmountString, isEvmAddress, shortenString, toSubstrateAddress, Typography } from '@tangle-network/ui-components';
+import {
+  Avatar,
+  Button,
+  EMPTY_VALUE_PLACEHOLDER,
+  getRoundedAmountString,
+  isEvmAddress,
+  shortenString,
+  toSubstrateAddress,
+  Typography,
+} from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import { ChevronRight } from '@tangle-network/icons';
@@ -34,7 +43,7 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
         enableSorting: false,
         cell: (props) => {
           return (
-            <TableCellWrapper className=''>
+            <TableCellWrapper>
               <div className="flex items-center gap-2 w-full">
                 {props.row.original.imgUrl ? (
                   <Avatar
@@ -52,7 +61,7 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
                     theme="substrate"
                   />
                 )}
-                <div className='w-4/12'>
+                <div className="w-4/12">
                   <Typography
                     variant="body1"
                     fw="bold"
@@ -71,7 +80,7 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
                 <div>
                   <ChevronRight className="w-6 h-6" />
                 </div>
-                <div className='w-4/12'>
+                <div className="w-4/12">
                   <Typography
                     variant="body1"
                     fw="bold"
@@ -113,26 +122,28 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
         cell: (props) => {
           return (
             <TableCellWrapper>
-              {!props.row.original.ownerAccount
-                ? EMPTY_VALUE_PLACEHOLDER
-                : (
-                  <Link
-                    to={network.createExplorerAccountUrl(
+              {!props.row.original.ownerAccount ? (
+                EMPTY_VALUE_PLACEHOLDER
+              ) : (
+                <Link
+                  to={
+                    network.createExplorerAccountUrl(
                       isEvmAddress(props.row.original.ownerAccount)
                         ? props.row.original.ownerAccount
-                        : toSubstrateAddress(props.row.original.ownerAccount)
-                    ) as string}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                    }}
+                        : toSubstrateAddress(props.row.original.ownerAccount),
+                    ) as string
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                  }}
                 >
                   <Button variant="link" className="uppercase body4">
                     {shortenString(props.row.original.ownerAccount)}
                   </Button>
                 </Link>
-              )}             
+              )}
             </TableCellWrapper>
           );
         },
@@ -141,7 +152,7 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
         header: () => '',
         cell: (props) => {
           return (
-            <TableCellWrapper removeRightBorder className='max-w-24'>
+            <TableCellWrapper removeRightBorder className="max-w-24">
               <div className="flex gap-2">
                 <Button variant="utility" className="uppercase body4">
                   Approve

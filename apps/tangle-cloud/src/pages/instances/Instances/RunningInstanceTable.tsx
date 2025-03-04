@@ -45,7 +45,7 @@ export const RunningInstanceTable: FC<InstancesTabProps> = ({
         enableSorting: false,
         cell: (props) => {
           return (
-            <TableCellWrapper className=''>
+            <TableCellWrapper>
               <div className="flex items-center gap-2 w-full">
                 {props.row.original.imgUrl ? (
                   <Avatar
@@ -63,7 +63,7 @@ export const RunningInstanceTable: FC<InstancesTabProps> = ({
                     theme="substrate"
                   />
                 )}
-                <div className='w-4/12'>
+                <div className="w-4/12">
                   <Typography
                     variant="body1"
                     fw="bold"
@@ -82,7 +82,7 @@ export const RunningInstanceTable: FC<InstancesTabProps> = ({
                 <div>
                   <ChevronRight className="w-6 h-6" />
                 </div>
-                <div className='w-4/12'>
+                <div className="w-4/12">
                   <Typography
                     variant="body1"
                     fw="bold"
