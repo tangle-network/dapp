@@ -84,7 +84,7 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
               {props.row.original.blueprint.pricing
                 ? `$${getRoundedAmountString(props.row.original.blueprint.pricing)}`
                 : EMPTY_VALUE_PLACEHOLDER}
-              /
+              &nbsp;/&nbsp;
               {props.row.original.blueprint.pricingUnit
                 ? props.row.original.blueprint.pricingUnit
                 : EMPTY_VALUE_PLACEHOLDER}

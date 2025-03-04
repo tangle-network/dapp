@@ -304,4 +304,6 @@ export const SIDEBAR_OPEN_KEY = 'isSidebarOpen';
 
 export const EMPTY_VALUE_PLACEHOLDER = '—';
 
+export const NO_METRICS_PLACEHOLDER = 'No metrics';
+
 export const TANGLE_CLOUD_URL = 'https://cloud.tangle.tools';

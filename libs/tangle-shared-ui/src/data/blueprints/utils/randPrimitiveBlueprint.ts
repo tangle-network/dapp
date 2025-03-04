@@ -1,3 +1,4 @@
+import { randFullName } from '@ngneat/falso';
 import { toPrimitiveBlueprint } from './toPrimitiveBlueprint';
 
 function randPrimitiveBlueprint(
@@ -7,7 +8,7 @@ function randPrimitiveBlueprint(
     metadata: {
       name: `Blueprint ${id}`,
       description: `Description for Blueprint ${id}`,
-      author: `Author ${id}`,
+      author: randFullName(),
       category: `Category ${id}`,
       codeRepository: `https://github.com/blueprint-${id}`,
       logo: `https://dummyimage.com/100x100`,

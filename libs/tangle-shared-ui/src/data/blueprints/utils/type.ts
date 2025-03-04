@@ -32,6 +32,7 @@ export interface MonitoringBlueprint extends OperatorBlueprint {
       imgUrl?: string;
       status?: InstanceStatus;
       blueprintData?: MonitoringBlueprint['blueprint'];
+      createdAtBlock?: number;
     }
   >;
 }

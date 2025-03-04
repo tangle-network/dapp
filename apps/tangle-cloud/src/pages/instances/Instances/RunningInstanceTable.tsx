@@ -8,10 +8,12 @@ import {
 import {
   Avatar,
   Button,
+  CircularProgress,
   EMPTY_VALUE_PLACEHOLDER,
   EnergyChipColors,
   EnergyChipStack,
   getRoundedAmountString,
+  NO_METRICS_PLACEHOLDER,
   Typography,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
@@ -26,6 +28,8 @@ import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/bluep
 
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
+
+const MOCK_CURRENT_BLOCK = 5000;
 
 export const RunningInstanceTable: FC<InstancesTabProps> = ({
   data,
@@ -94,6 +98,36 @@ export const RunningInstanceTable: FC<InstancesTabProps> = ({
                   </Typography>
                 </div>
               </div>
+            </TableCellWrapper>
+          );
+        },
+      }),
+      columnHelper.accessor('ttl', {
+        header: () => 'Time Remaining',
+        cell: (props) => {
+          let createdAtBlock = 0,
+            totalTtl = 0,
+            timeRemaining = 0,
+            progress = 0,
+            tooltip = NO_METRICS_PLACEHOLDER;
+          if (props.row.original.createdAtBlock && props.row.original.ttl) {
+            createdAtBlock = props.row.original.createdAtBlock;
+            totalTtl = createdAtBlock + props.row.original.ttl;
+            timeRemaining = totalTtl - MOCK_CURRENT_BLOCK;
+            const isCompleted = timeRemaining < 0;
+            progress = isCompleted ? 1 : timeRemaining / totalTtl;
+            tooltip = isCompleted
+              ? 'Completed'
+              : `${timeRemaining} blocks remaining`;
+          }
+
+          return (
+            <TableCellWrapper>
+              <CircularProgress
+                progress={progress}
+                size="md"
+                tooltip={tooltip}
+              />
             </TableCellWrapper>
           );
         },

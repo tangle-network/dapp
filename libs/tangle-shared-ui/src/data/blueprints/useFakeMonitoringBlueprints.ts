@@ -26,6 +26,8 @@ const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
         lastActive: new Date(),
         imgUrl: 'https://picsum.photos/200/300',
         instanceId: `i-${randNumber({ min: 0, max: 1000000 }).toString()}`,
+        createdAtBlock: randNumber({ min: 0, max: 10000 }),
+        ttl: randNumber({ min: 0, max: 10000 }),
       };
       return {
         blueprintId: idx,
