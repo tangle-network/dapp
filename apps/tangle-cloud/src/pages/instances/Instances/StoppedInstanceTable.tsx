@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-table';
 import {
   Avatar,
+  Button,
   EMPTY_VALUE_PLACEHOLDER,
   EnergyChipColors,
   EnergyChipStack,
@@ -20,6 +21,8 @@ import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { InstancesTabProps } from './type';
 import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
+import { PagePath } from '../../../types';
+import { Link } from 'react-router';
 
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
@@ -33,12 +36,13 @@ export const StoppedInstanceTable: FC<InstancesTabProps> = ({
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('imgUrl', {
+      columnHelper.accessor('id', {
         header: () => 'Blueprint > Instance',
+        enableSorting: false,
         cell: (props) => {
           return (
-            <TableCellWrapper>
-              <div className="flex items-center gap-2">
+            <TableCellWrapper className=''>
+              <div className="flex items-center gap-2 w-full">
                 {props.row.original.imgUrl ? (
                   <Avatar
                     size="lg"
@@ -55,7 +59,7 @@ export const StoppedInstanceTable: FC<InstancesTabProps> = ({
                     theme="substrate"
                   />
                 )}
-                <div>
+                <div className='w-4/12'>
                   <Typography
                     variant="body1"
                     fw="bold"
@@ -74,7 +78,7 @@ export const StoppedInstanceTable: FC<InstancesTabProps> = ({
                 <div>
                   <ChevronRight className="w-6 h-6" />
                 </div>
-                <div>
+                <div className='w-4/12'>
                   <Typography
                     variant="body1"
                     fw="bold"
@@ -147,6 +151,30 @@ export const StoppedInstanceTable: FC<InstancesTabProps> = ({
                   ? format(props.row.original.lastActive, 'yy/MM/dd HH:mm')
                   : EMPTY_VALUE_PLACEHOLDER}
               </Typography>
+            </TableCellWrapper>
+          );
+        },
+      }),
+      columnHelper.accessor('id', {
+        header: () => '',
+        cell: (props) => {
+          return (
+            <TableCellWrapper removeRightBorder>
+              <Link
+                to={PagePath.BLUEPRINTS_DETAILS.replace(
+                  ':id',
+                  props.row.original.blueprint.toString(),
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(event) => {
+                  event.stopPropagation();
+                }}
+              >
+                <Button variant="utility" className="uppercase body4">
+                  View
+                </Button>
+              </Link>
             </TableCellWrapper>
           );
         },

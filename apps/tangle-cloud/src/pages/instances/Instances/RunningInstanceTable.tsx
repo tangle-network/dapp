@@ -40,12 +40,13 @@ export const RunningInstanceTable: FC<InstancesTabProps> = ({
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('imgUrl', {
+      columnHelper.accessor('id', {
         header: () => 'Blueprint > Instance',
+        enableSorting: false,
         cell: (props) => {
           return (
-            <TableCellWrapper>
-              <div className="flex items-center gap-2">
+            <TableCellWrapper className=''>
+              <div className="flex items-center gap-2 w-full">
                 {props.row.original.imgUrl ? (
                   <Avatar
                     size="lg"
@@ -62,7 +63,7 @@ export const RunningInstanceTable: FC<InstancesTabProps> = ({
                     theme="substrate"
                   />
                 )}
-                <div>
+                <div className='w-4/12'>
                   <Typography
                     variant="body1"
                     fw="bold"
@@ -81,7 +82,7 @@ export const RunningInstanceTable: FC<InstancesTabProps> = ({
                 <div>
                   <ChevronRight className="w-6 h-6" />
                 </div>
-                <div>
+                <div className='w-4/12'>
                   <Typography
                     variant="body1"
                     fw="bold"

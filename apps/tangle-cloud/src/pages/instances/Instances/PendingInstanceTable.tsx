@@ -5,15 +5,15 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Avatar, Button, Typography } from '@tangle-network/ui-components';
+import { Avatar, Button, EMPTY_VALUE_PLACEHOLDER, getRoundedAmountString, isEvmAddress, shortenString, toSubstrateAddress, Typography } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { Link } from 'react-router';
-import { PagePath } from '../../../types';
 import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import { InstancesTabProps } from './type';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
@@ -23,16 +23,19 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
   isLoading,
   error,
 }) => {
+  const network = useNetworkStore((store) => store.network);
+
   const isEmpty = data.length === 0;
 
   const columns = useMemo(
     () => [
       columnHelper.accessor('id', {
         header: () => 'Blueprint > Instance',
+        enableSorting: false,
         cell: (props) => {
           return (
-            <TableCellWrapper>
-              <div className="flex items-center gap-2">
+            <TableCellWrapper className=''>
+              <div className="flex items-center gap-2 w-full">
                 {props.row.original.imgUrl ? (
                   <Avatar
                     size="lg"
@@ -49,7 +52,7 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
                     theme="substrate"
                   />
                 )}
-                <div>
+                <div className='w-4/12'>
                   <Typography
                     variant="body1"
                     fw="bold"
@@ -68,7 +71,7 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
                 <div>
                   <ChevronRight className="w-6 h-6" />
                 </div>
-                <div>
+                <div className='w-4/12'>
                   <Typography
                     variant="body1"
                     fw="bold"
@@ -89,26 +92,64 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
           );
         },
       }),
+      columnHelper.accessor('blueprintData.pricing', {
+        header: () => 'Pricing',
+        cell: (props) => {
+          return (
+            <TableCellWrapper>
+              {props.row.original.blueprintData?.pricing
+                ? `$${getRoundedAmountString(props.row.original.blueprintData.pricing)}`
+                : EMPTY_VALUE_PLACEHOLDER}
+              &nbsp;/&nbsp;
+              {props.row.original.blueprintData?.pricingUnit
+                ? props.row.original.blueprintData.pricingUnit
+                : EMPTY_VALUE_PLACEHOLDER}
+            </TableCellWrapper>
+          );
+        },
+      }),
+      columnHelper.accessor('ownerAccount', {
+        header: () => 'Deployer',
+        cell: (props) => {
+          return (
+            <TableCellWrapper>
+              {!props.row.original.ownerAccount
+                ? EMPTY_VALUE_PLACEHOLDER
+                : (
+                  <Link
+                    to={network.createExplorerAccountUrl(
+                      isEvmAddress(props.row.original.ownerAccount)
+                        ? props.row.original.ownerAccount
+                        : toSubstrateAddress(props.row.original.ownerAccount)
+                    ) as string}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                    }}
+                >
+                  <Button variant="link" className="uppercase body4">
+                    {shortenString(props.row.original.ownerAccount)}
+                  </Button>
+                </Link>
+              )}             
+            </TableCellWrapper>
+          );
+        },
+      }),
       columnHelper.accessor('id', {
         header: () => '',
         cell: (props) => {
           return (
-            <TableCellWrapper removeRightBorder>
-              <Link
-                to={PagePath.BLUEPRINTS_DETAILS.replace(
-                  ':id',
-                  props.row.original.blueprint.toString(),
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(event) => {
-                  event.stopPropagation();
-                }}
-              >
+            <TableCellWrapper removeRightBorder className='max-w-24'>
+              <div className="flex gap-2">
                 <Button variant="utility" className="uppercase body4">
-                  View
+                  Approve
                 </Button>
-              </Link>
+                <Button variant="utility" className="uppercase body4">
+                  Reject
+                </Button>
+              </div>
             </TableCellWrapper>
           );
         },
