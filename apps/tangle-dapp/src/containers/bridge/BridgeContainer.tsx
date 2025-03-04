@@ -133,18 +133,10 @@ const BridgeContainer = () => {
 
   const srcChains = useMemo(() => {
     if (network.name === 'Tangle Mainnet') {
-      setSelectedSourceChain(mainnetSourceChains[0]);
       return mainnetSourceChains;
     }
-
-    setSelectedSourceChain(testnetSourceChains[0]);
     return testnetSourceChains;
-  }, [
-    mainnetSourceChains,
-    network.name,
-    setSelectedSourceChain,
-    testnetSourceChains,
-  ]);
+  }, [mainnetSourceChains, network.name, testnetSourceChains]);
   const sourceTypedChainId = useMemo(() => {
     return calculateTypedChainId(
       selectedSourceChain.chainType,
@@ -357,6 +349,20 @@ const BridgeContainer = () => {
     activeWallet,
     sourceTypedChainId,
     destinationTypedChainId,
+  ]);
+
+  // Set the selected source chain when the network type changes.
+  useEffect(() => {
+    if (network.name === 'Tangle Mainnet') {
+      setSelectedSourceChain(mainnetSourceChains[0]);
+    } else {
+      setSelectedSourceChain(testnetSourceChains[0]);
+    }
+  }, [
+    mainnetSourceChains,
+    network.name,
+    setSelectedSourceChain,
+    testnetSourceChains,
   ]);
 
   return (
