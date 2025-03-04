@@ -1,4 +1,4 @@
-import type { Bytes, Option } from '@polkadot/types';
+import type { Bytes, Option, Vec } from '@polkadot/types';
 import {
   TanglePrimitivesServicesFieldFieldType,
   TanglePrimitivesServicesJobsJobDefinition,
@@ -280,16 +280,11 @@ export function toPrimitiveFieldType(
       } as const;
 
     case 'Struct': {
-      const [first, second] = fieldType.asStruct;
+      const second =
+        fieldType.asStruct as Vec<TanglePrimitivesServicesFieldFieldType>;
 
       return {
-        Struct: [
-          String(first),
-          second.map<[string, PrimitiveFieldType]>(([first, second]) => [
-            String(first),
-            toPrimitiveFieldType(second),
-          ]),
-        ],
+        Struct: second.map((fieldType) => toPrimitiveFieldType(fieldType)),
       } as const;
     }
 
