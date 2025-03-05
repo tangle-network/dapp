@@ -1,7 +1,4 @@
-import { BN } from '@polkadot/util';
 import { RouterQuoteParams } from '../hooks/useRouterQuote';
-import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
-import { ChainConfig } from '@tangle-network/dapp-config/chains';
 import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
 import { ROUTER_NATIVE_TOKEN_ADDRESS } from '@tangle-network/tangle-shared-ui/constants/bridge';
 import useBridgeStore from '../context/useBridgeStore';

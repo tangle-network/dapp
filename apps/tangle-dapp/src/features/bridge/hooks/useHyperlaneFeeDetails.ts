@@ -1,6 +1,5 @@
 import { FeeDetailProps } from '../components/FeeDetail';
 import { Account } from '@tangle-network/abstract-api-provider/account';
-import { BN } from '@polkadot/util';
 import { HyperlaneQuote } from './useHyperlaneQuote';
 import Decimal from 'decimal.js';
 import { formatEther } from 'viem';
