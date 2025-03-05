@@ -1,10 +1,10 @@
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
-import { FeeDetailProps } from '../../components/bridge/FeeDetail';
+import { FeeDetailProps } from '../components/FeeDetail';
 import { BN } from '@polkadot/util';
 import Decimal from 'decimal.js';
 import { formatEther } from 'viem';
-import useBridgeStore from '../../context/bridge/useBridgeStore';
-import { RouterQuote } from '../../data/bridge/useRouterQuote';
+import useBridgeStore from '../context/useBridgeStore';
+import { RouterQuote } from '../hooks/useRouterQuote';
 import { useMemo } from 'react';
 import {
   AmountFormatStyle,

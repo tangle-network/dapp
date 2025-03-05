@@ -9,8 +9,7 @@ import { Typography } from '@tangle-network/ui-components/typography/Typography'
 import { Decimal } from 'decimal.js';
 import { FC, useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { useBridgeTxQueue } from '../../context/bridge/BridgeTxQueueContext';
+import { useBridgeTxQueue } from '../context/BridgeTxQueueContext';
 import useLocalStorage, {
   LocalStorageKey,
 } from '@tangle-network/tangle-shared-ui/hooks/useLocalStorage';

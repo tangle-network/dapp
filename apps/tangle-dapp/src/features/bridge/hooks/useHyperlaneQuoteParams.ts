@@ -1,6 +1,6 @@
 import { BN } from '@polkadot/util';
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
-import { HyperlaneQuoteProps } from '../../data/bridge/useHyperlaneQuote';
+import { HyperlaneQuoteProps } from './useHyperlaneQuote';
 import { Account } from '@tangle-network/abstract-api-provider/account';
 
 /**

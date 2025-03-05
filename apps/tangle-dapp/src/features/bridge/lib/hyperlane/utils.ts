@@ -1,5 +1,4 @@
 import { IToken } from '@hyperlane-xyz/sdk';
-
 import { getHyperlaneWarpCore } from './context';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 

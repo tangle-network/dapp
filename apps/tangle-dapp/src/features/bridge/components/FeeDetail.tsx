@@ -15,7 +15,6 @@ import {
 } from '@tangle-network/ui-components';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
-
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
 
 export interface FeeDetailProps {

@@ -5,7 +5,6 @@ import {
   MultiProtocolProvider,
   WarpCore,
 } from '@hyperlane-xyz/sdk';
-
 import assembleChainMetadata from './assembleChainMetadata';
 import assembleWarpCoreConfig from './assembleWarpCoreConfig';
 

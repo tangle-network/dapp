@@ -1,11 +1,11 @@
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
-import { FeeDetailProps } from '../../components/bridge/FeeDetail';
+import { FeeDetailProps } from '../components/FeeDetail';
 import { Account } from '@tangle-network/abstract-api-provider/account';
 import { BN } from '@polkadot/util';
-import { HyperlaneQuote } from '../../data/bridge/useHyperlaneQuote';
+import { HyperlaneQuote } from './useHyperlaneQuote';
 import Decimal from 'decimal.js';
 import { formatEther } from 'viem';
-import useBridgeStore from '../../context/bridge/useBridgeStore';
+import useBridgeStore from '../context/useBridgeStore';
 import {
   AmountFormatStyle,
   formatDisplayAmount,

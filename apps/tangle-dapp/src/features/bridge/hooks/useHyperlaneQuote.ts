@@ -1,11 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { getHyperlaneWarpCore } from '../../lib/bridge/hyperlane/context';
+import { getHyperlaneWarpCore } from '../lib/hyperlane/context';
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
-import {
-  getHyperlaneChainName,
-  tryFindToken,
-} from '../../lib/bridge/hyperlane/utils';
+import { getHyperlaneChainName, tryFindToken } from '../lib/hyperlane/utils';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { fetchEvmTokenBalance } from './useBridgeEvmBalances';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';

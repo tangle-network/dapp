@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import {
   ROUTER_PARTNER_ID,

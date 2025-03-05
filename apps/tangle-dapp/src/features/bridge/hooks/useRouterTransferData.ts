@@ -1,9 +1,6 @@
 import { Account } from '@tangle-network/abstract-api-provider/account';
-import {
-  RouterQuote,
-  RouterQuoteParams,
-} from '../../data/bridge/useRouterQuote';
-import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
+import { RouterQuote, RouterQuoteParams } from '../hooks/useRouterQuote';
+import { RouterTransferProps } from '../hooks/useRouterTransfer';
 
 /**
  * Hook to prepare data for a router transfer.

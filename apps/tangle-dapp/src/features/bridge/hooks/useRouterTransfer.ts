@@ -2,7 +2,6 @@ import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { JsonRpcSigner } from '@ethersproject/providers';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-
 import useEthersSigner from './useEthersSigner';
 import { isEvmAddress } from '@tangle-network/ui-components';
 import { ROUTER_TRANSACTION_URL } from '@tangle-network/tangle-shared-ui/constants/bridge';

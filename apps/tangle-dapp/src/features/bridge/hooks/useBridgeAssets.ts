@@ -3,11 +3,11 @@ import {
   BridgeToken,
   BridgeTokenWithBalance,
 } from '@tangle-network/tangle-shared-ui/types';
-import { AssetConfig } from '../../components/Lists/AssetList';
-import useIsBridgeNativeToken from '../useIsBridgeNativeToken';
+import { AssetConfig } from '../../../components/Lists/AssetList';
+import useIsBridgeNativeToken from './useIsBridgeNativeToken';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import { ChainConfig } from '@tangle-network/dapp-config';
-import useBridgeStore from '../../context/bridge/useBridgeStore';
+import useBridgeStore from '../context/useBridgeStore';
 import { useShallow } from 'zustand/react/shallow';
 import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 import { useBalance } from 'wagmi';

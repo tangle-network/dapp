@@ -1,8 +1,7 @@
 import { useWebContext } from '@tangle-network/api-provider-environment';
 import { WebbWeb3Provider } from '@tangle-network/web3-api-provider';
 import { useMemo } from 'react';
-
-import viemConnectorClientToEthersSigner from '../../utils/viemConnectorClientToEthersSigner';
+import viemConnectorClientToEthersSigner from '../../../utils/viemConnectorClientToEthersSigner';
 
 const useEthersSigner = () => {
   const { activeApi } = useWebContext();

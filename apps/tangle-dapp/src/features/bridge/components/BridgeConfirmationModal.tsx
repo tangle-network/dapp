@@ -47,11 +47,11 @@ import cx from 'classnames';
 import { Decimal } from 'decimal.js';
 import { FC, useCallback, useMemo } from 'react';
 import { createPublicClient, getContract, http } from 'viem';
-import useBridgeTxQueue from '../../context/bridge/BridgeTxQueueContext/useBridgeTxQueue';
-import { useHyperlaneTransfer } from '../../data/bridge/useHyperlaneTransfer';
-import { useRouterTransfer } from '../../data/bridge/useRouterTransfer';
-import useWalletClient from '../../data/bridge/useWalletClient';
-import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
+import useBridgeTxQueue from '../context/BridgeTxQueueContext/useBridgeTxQueue';
+import { useHyperlaneTransfer } from '../hooks/useHyperlaneTransfer';
+import { useRouterTransfer } from '../hooks/useRouterTransfer';
+import useWalletClient from '../hooks/useWalletClient';
+import useIsBridgeNativeToken from '../hooks/useIsBridgeNativeToken';
 import { FeeDetail, FeeDetailProps } from './FeeDetail';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 
