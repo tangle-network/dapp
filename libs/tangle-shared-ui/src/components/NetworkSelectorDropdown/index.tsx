@@ -53,17 +53,22 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
         return 'Loading';
       }
 
+      const UNKNOWN_NETWORK = 'Unknown Network';
+
       if (disableChainSelection) {
         return activeChain?.name === 'Tangle Mainnet'
           ? activeChain.name
-          : (activeChain?.displayName ?? activeChain?.name ?? network?.name);
+          : (activeChain?.displayName ??
+              activeChain?.name ??
+              network?.name ??
+              UNKNOWN_NETWORK);
       }
 
       return (
         network?.name ??
         activeChain?.displayName ??
         activeChain?.name ??
-        network?.name
+        UNKNOWN_NETWORK
       );
     },
     // prettier-ignore
