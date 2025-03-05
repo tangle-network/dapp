@@ -131,7 +131,7 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
                       isEvmAddress(props.row.original.ownerAccount)
                         ? props.row.original.ownerAccount
                         : toSubstrateAddress(props.row.original.ownerAccount),
-                    ) as string
+                    ) ?? '#'
                   }
                   target="_blank"
                   rel="noopener noreferrer"
