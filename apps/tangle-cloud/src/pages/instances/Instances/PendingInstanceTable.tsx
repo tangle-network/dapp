@@ -1,181 +1,163 @@
-import { useMemo, useState, type FC } from 'react';
+import { useMemo, type FC } from 'react';
 import {
   createColumnHelper,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Avatar, Button, Typography } from '@tangle-network/ui-components';
-import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import {
+  Avatar,
+  Button,
+  EMPTY_VALUE_PLACEHOLDER,
+  getRoundedAmountString,
+  isEvmAddress,
+  shortenString,
+  toSubstrateAddress,
+  Typography,
+} from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
-import { InstanceStatus, InstanceMonitoringItem } from './type';
 import { ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { Link } from 'react-router';
-import { PagePath } from '../../../types';
+import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
+import { InstancesTabProps } from './type';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
-const columnHelper = createColumnHelper<InstanceMonitoringItem>();
+const columnHelper =
+  createColumnHelper<MonitoringBlueprint['services'][number]>();
 
-const instanceMonitoringData: InstanceMonitoringItem[] = [
-  {
-    id: '1',
-    blueprintId: 'blueprint-001',
-    blueprint: {
-      id: 'blueprint-001',
-      name: 'Blueprint A',
-      uptime: 99.5,
-      pricing: 0.05,
-      pricingUnit: 'USD/hour',
-      instanceCount: 10,
-      tvlInUsd: 5,
-      author: 'Author A',
-      registrationParams: [],
-      imgUrl: 'https://example.com/image1.png',
-      category: 'Category A',
-      description: 'Description A',
-      restakersCount: 100,
-      operatorsCount: 5,
-      tvl: '50000',
-    },
-    instance: {
-      id: 'instance-001',
-      instanceId: 'i-00annd2f38e3hk32',
-      earned: 1500,
-      earnedInUsd: 1500,
-      uptime: 98.5,
-      lastActive: '2025-02-27T14:30:00Z',
-      imgUrl: 'https://example.com/image1.png',
-      status: InstanceStatus.RUNNING,
-    },
-  },
-  {
-    id: '2',
-    blueprintId: 'blueprint-002',
-    blueprint: {
-      id: 'blueprint-002',
-      name: 'Blueprint B',
-      uptime: 99.0,
-      pricing: 0.03,
-      pricingUnit: 'USD/hour',
-      instanceCount: 8,
-      tvlInUsd: 3,
-      author: 'Author B',
-      registrationParams: [],
-      imgUrl: 'https://example.com/image2.png',
-      category: 'Category B',
-      description: 'Description B',
-      restakersCount: 150,
-      operatorsCount: 3,
-      tvl: '30000',
-    },
-    instance: {
-      id: 'instance-002',
-      instanceId: 'i-00annd2f38e3hk32',
-      earned: 1000,
-      earnedInUsd: 1000,
-      uptime: 97.5,
-      lastActive: '2025-02-27T14:30:00Z',
-      imgUrl: 'https://example.com/image2.png',
-      status: InstanceStatus.RUNNING,
-    },
-  },
-];
+export const PendingInstanceTable: FC<InstancesTabProps> = ({
+  data,
+  isLoading,
+  error,
+}) => {
+  const network = useNetworkStore((store) => store.network);
 
-export const PendingInstanceTable: FC = () => {
-  // TODO: Remove mock data
-  const [instances] = useState<InstanceMonitoringItem[]>(
-    instanceMonitoringData,
-  );
-  const [isLoading] = useState(false);
-  const [error] = useState<Error | null>(null);
-  const loadingTableProps: Partial<TableStatusProps> = {};
-  const emptyTableProps: Partial<TableStatusProps> = {};
-
-  const isEmpty = instances.length === 0;
+  const isEmpty = data.length === 0;
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('instance', {
+      columnHelper.accessor('id', {
         header: () => 'Blueprint > Instance',
+        enableSorting: false,
         cell: (props) => {
           return (
             <TableCellWrapper>
-              {props.row.original.blueprint.imgUrl ? (
-                <Avatar
-                  size="lg"
-                  className="min-w-12"
-                  src={props.row.original.blueprint.imgUrl}
-                  alt={props.row.original.blueprint.name}
-                  sourceVariant="uri"
-                />
-              ) : (
-                <Avatar
-                  size="lg"
-                  className="min-w-12"
-                  fallback={props.row.original.blueprint.name.substring(0, 2)}
-                  theme="substrate"
-                />
-              )}
-              <div>
-                <Typography
-                  variant="body1"
-                  fw="bold"
-                  className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
-                >
-                  {props.row.original.blueprint.author}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  fw="normal"
-                  className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
-                >
-                  {props.row.original.blueprint.id}
-                </Typography>
-              </div>
-              <div>
-                <ChevronRight className="w-6 h-6" />
-              </div>
-              <div>
-                <Typography
-                  variant="body1"
-                  fw="bold"
-                  className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
-                >
-                  {props.row.original.instance.id}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  fw="normal"
-                  className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
-                >
-                  {props.row.original.instance.instanceId}
-                </Typography>
+              <div className="flex items-center gap-2 w-full">
+                {props.row.original.imgUrl ? (
+                  <Avatar
+                    size="lg"
+                    className="min-w-12"
+                    src={props.row.original.imgUrl}
+                    alt={props.row.original.id.toString()}
+                    sourceVariant="uri"
+                  />
+                ) : (
+                  <Avatar
+                    size="lg"
+                    className="min-w-12"
+                    value={props.row.original.instanceId?.substring(0, 2)}
+                    theme="substrate"
+                  />
+                )}
+                <div className="w-4/12">
+                  <Typography
+                    variant="body1"
+                    fw="bold"
+                    className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
+                  >
+                    {props.row.original.blueprintData?.metadata?.author || ''}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    fw="normal"
+                    className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
+                  >
+                    {props.row.original.blueprintData?.metadata?.name || ''}
+                  </Typography>
+                </div>
+                <div>
+                  <ChevronRight className="w-6 h-6" />
+                </div>
+                <div className="w-4/12">
+                  <Typography
+                    variant="body1"
+                    fw="bold"
+                    className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
+                  >
+                    {props.row.original.id || ''}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    fw="normal"
+                    className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
+                  >
+                    {props.row.original.instanceId || ''}
+                  </Typography>
+                </div>
               </div>
             </TableCellWrapper>
           );
         },
       }),
-      columnHelper.accessor('instance.id', {
-        header: () => '',
+      columnHelper.accessor('blueprintData.pricing', {
+        header: () => 'Pricing',
         cell: (props) => {
           return (
-            <TableCellWrapper removeRightBorder>
-              <Link
-                to={PagePath.BLUEPRINTS_DETAILS.replace(
-                  ':id',
-                  props.row.original.blueprintId,
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(event) => {
-                  event.stopPropagation();
-                }}
-              >
+            <TableCellWrapper>
+              {props.row.original.blueprintData?.pricing
+                ? `$${getRoundedAmountString(props.row.original.blueprintData.pricing)}`
+                : EMPTY_VALUE_PLACEHOLDER}
+              &nbsp;/&nbsp;
+              {props.row.original.blueprintData?.pricingUnit
+                ? props.row.original.blueprintData.pricingUnit
+                : EMPTY_VALUE_PLACEHOLDER}
+            </TableCellWrapper>
+          );
+        },
+      }),
+      columnHelper.accessor('ownerAccount', {
+        header: () => 'Deployer',
+        cell: (props) => {
+          return (
+            <TableCellWrapper>
+              {!props.row.original.ownerAccount ? (
+                EMPTY_VALUE_PLACEHOLDER
+              ) : (
+                <Link
+                  to={
+                    network.createExplorerAccountUrl(
+                      isEvmAddress(props.row.original.ownerAccount)
+                        ? props.row.original.ownerAccount
+                        : toSubstrateAddress(props.row.original.ownerAccount),
+                    ) ?? '#'
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button variant="link" className="uppercase body4">
+                    {shortenString(props.row.original.ownerAccount)}
+                  </Button>
+                </Link>
+              )}
+            </TableCellWrapper>
+          );
+        },
+      }),
+      columnHelper.accessor('id', {
+        header: () => '',
+        cell: () => {
+          return (
+            <TableCellWrapper removeRightBorder className="max-w-24">
+              <div className="flex gap-2">
                 <Button variant="utility" className="uppercase body4">
-                  View
+                  Approve
                 </Button>
-              </Link>
+                <Button variant="utility" className="uppercase body4">
+                  Reject
+                </Button>
+              </div>
             </TableCellWrapper>
           );
         },
@@ -185,23 +167,21 @@ export const PendingInstanceTable: FC = () => {
   );
 
   const table = useReactTable({
-    data: instances,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: (row) => row.id,
+    getRowId: (row) => row.id.toString(),
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
 
   return (
-    <TangleCloudTable<InstanceMonitoringItem>
+    <TangleCloudTable<MonitoringBlueprint['services'][number]>
       title={pluralize('Running Instance', !isEmpty)}
-      data={instances}
+      data={data}
       error={error}
       isLoading={isLoading}
-      loadingTableProps={loadingTableProps}
-      emptyTableProps={emptyTableProps}
       tableProps={table}
       tableConfig={{
         tableClassName: 'min-w-[1000px]',

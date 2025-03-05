@@ -3,7 +3,7 @@ import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks
 import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
-import { chainsPopulated } from '@tangle-network/dapp-config';
+import { chainsConfig, chainsPopulated } from '@tangle-network/dapp-config';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
@@ -55,6 +55,7 @@ import { RouterTransferProps } from '../../data/bridge/useRouterTransfer';
 import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { get } from 'lodash';
 
 const BridgeContainer = () => {
   const { network } = useNetworkStore();
@@ -93,11 +94,15 @@ const BridgeContainer = () => {
 
   const srcChains = useMemo(() => {
     if (network.name === 'Tangle Mainnet') {
-      setSelectedSourceChain(mainnetSourceChains[0]);
+      setSelectedSourceChain(
+        get(chainsConfig, PresetTypedChainId.TangleMainnetEVM),
+      );
       return mainnetSourceChains;
     }
 
-    setSelectedSourceChain(testnetSourceChains[0]);
+    setSelectedSourceChain(
+      get(chainsConfig, PresetTypedChainId.TangleTestnetEVM),
+    );
     return testnetSourceChains;
   }, [
     mainnetSourceChains,

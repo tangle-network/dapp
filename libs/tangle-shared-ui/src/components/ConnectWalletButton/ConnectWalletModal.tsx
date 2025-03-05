@@ -14,7 +14,9 @@ import { Network } from '@tangle-network/ui-components/constants/networks';
 import { useMemo } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';
 
-const ConnectWalletModal = () => {
+const ConnectWalletModal = ({
+  walletModalDefaultText = 'Connect your Substrate or EVM wallet to interact with the Tangle Network.',
+}) => {
   const {
     connectingWalletId,
     failedWalletId,
@@ -51,7 +53,7 @@ const ConnectWalletModal = () => {
       notificationApi={notificationApi}
       apiConfig={apiConfig}
       targetTypedChainIds={targetTypedChainIds}
-      contentDefaultText="Connect your Substrate or EVM wallet to interact with the Tangle Network."
+      contentDefaultText={walletModalDefaultText}
     />
   );
 };

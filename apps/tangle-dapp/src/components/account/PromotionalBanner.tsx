@@ -91,11 +91,19 @@ const PromotionalBanner: FC<{ className?: string }> = ({ className }) => {
               <Typography variant="h4" fw="bold">
                 {slide.title}
               </Typography>
-              <Typography variant="body1">{slide.description}</Typography>
+              <Typography
+                variant="body1"
+                className="text-lg text-mono-180 dark:text-mono-40"
+              >
+                {slide.description}
+              </Typography>
               <div>
                 <ul className="list-disc list-inside">
                   {slide.bulletPoints.map((point, idx) => (
-                    <li key={idx} className="text-mono-160 dark:text-mono-80">
+                    <li
+                      key={idx}
+                      className="text-lg text-mono-180 dark:text-mono-40"
+                    >
                       {point}
                     </li>
                   ))}
@@ -105,26 +113,26 @@ const PromotionalBanner: FC<{ className?: string }> = ({ className }) => {
                 href={slide.btnLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[16px] font-bold text-blue-60 dark:text-blue-50 mt-auto flex items-center gap-1 w-fit"
+                className="text-base font-bold text-blue-70 dark:text-blue-40 mt-auto flex items-center gap-1 w-fit"
               >
                 {slide.btnText}
 
-                <ArrowRightUp className="w-4 h-4 fill-blue-60 dark:fill-blue-50" />
+                <ArrowRightUp className="w-5 h-5 fill-blue-70 dark:fill-blue-40" />
               </a>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="absolute left-1/2 -translate-x-1/2 flex gap-2 bottom-4">
+      <div className="absolute left-1/2 -translate-x-1/2 flex gap-3 bottom-5">
         {SLIDES.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-2 h-2 rounded-full transition-all ${
+            className={`h-3 rounded-full transition-all ${
               currentSlide === index
-                ? 'bg-white w-4'
-                : 'bg-white/50 hover:bg-white/75'
+                ? 'bg-mono-140 dark:bg-mono-0 w-6'
+                : 'bg-mono-140/70 dark:bg-mono-0/70 hover:bg-mono-140/90 dark:hover:bg-mono-0/90 w-3'
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />
