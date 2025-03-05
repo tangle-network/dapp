@@ -86,18 +86,19 @@ export default function BridgeActionButton({
     isAddressInputError,
   ]);
 
-  const isActionBtnLoading =
-    isRouterQuoteLoading || isHyperlaneQuoteLoading || isTxInProgress;
+  const isActionBtnLoading = useMemo(() => {
+    return isRouterQuoteLoading || isHyperlaneQuoteLoading || isTxInProgress;
+  }, [isRouterQuoteLoading, isHyperlaneQuoteLoading, isTxInProgress]);
 
-  const actionBtnLoadingText = (() => {
+  const actionBtnLoadingText = useMemo(() => {
     if (isTxInProgress) {
       return 'Transaction in Progress';
     }
 
     return isActionBtnLoading ? 'Preview Transaction' : '';
-  })();
+  }, [isTxInProgress, isActionBtnLoading]);
 
-  const actionButtonText = (() => {
+  const actionButtonText = useMemo(() => {
     if (isTxInProgress) {
       return 'Transaction in Progress';
     } else if (
@@ -113,7 +114,17 @@ export default function BridgeActionButton({
     }
 
     return 'Preview Transaction';
-  })();
+  }, [
+    isTxInProgress,
+    amount,
+    destinationAddress,
+    isAmountInputError,
+    isAddressInputError,
+    isRouterQuote,
+    isHyperlaneQuote,
+    routerQuoteError,
+    hyperlaneQuoteError,
+  ]);
 
   const onClickActionBtn = useCallback(() => {
     if (
