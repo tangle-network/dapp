@@ -11,7 +11,6 @@ import {
   TooltipBody,
   TooltipTrigger,
 } from '@tangle-network/ui-components';
-import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import isEqual from 'lodash/isEqual';
 import { FC, useCallback, useMemo, useState } from 'react';
 import useNetworkStore from '../../context/useNetworkStore';
@@ -54,11 +53,7 @@ const UpdateMetadataButton: FC = () => {
   );
 
   const isMetadataUpToDate = useMemo(() => {
-    // Only update metadata for the mainnet. This is because
-    // the testnet and local networks have the same genesis hash,
-    // so they represent the same network. Only the mainnet's metadata
-    // is relevant.
-    if (apiPromise === null || network.id !== NetworkId.TANGLE_MAINNET) {
+    if (apiPromise === null) {
       return null;
     }
 
@@ -83,7 +78,6 @@ const UpdateMetadataButton: FC = () => {
     activeWallet?.platform,
     apiPromise,
     cachedMetadata?.value,
-    network.id,
     network.ss58Prefix,
     network.tokenSymbol,
   ]);
