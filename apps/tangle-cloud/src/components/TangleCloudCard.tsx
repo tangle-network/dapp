@@ -10,7 +10,7 @@ const TangleCloudCard: FC<TangleCloudCardProps> = ({ children, className }) => {
       variant={CardVariant.GLASS}
       className={twMerge(
         'relative overflow-hidden shadow-sm',
-        'w-full xl:w-1/2 p-5',
+        'w-full xl:w-1/2 p-5 z-0',
         className,
       )}
     >

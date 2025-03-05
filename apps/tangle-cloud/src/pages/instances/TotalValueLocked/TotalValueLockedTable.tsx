@@ -197,8 +197,8 @@ type Props = {
   data: RestakeVault[];
   isLoading: boolean;
   error: Error | null;
-  loadingTableProps: Partial<TableStatusProps>;
-  emptyTableProps: Partial<TableStatusProps>;
+  loadingTableProps?: Partial<TableStatusProps>;
+  emptyTableProps?: Partial<TableStatusProps>;
   tableConfig: TangleCloudTableProps<RestakeVault>['tableConfig'];
 };
 
@@ -206,8 +206,8 @@ export const TotalValueLockedTable: FC<Props> = ({
   data,
   isLoading,
   error,
-  loadingTableProps,
-  emptyTableProps,
+  loadingTableProps = {},
+  emptyTableProps = {},
   tableConfig,
 }) => {
   const nativeTokenSymbol = useNetworkStore(
