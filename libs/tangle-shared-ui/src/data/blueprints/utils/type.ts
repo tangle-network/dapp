@@ -1,3 +1,4 @@
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { toPrimitiveBlueprint } from './toPrimitiveBlueprint';
 import toPrimitiveService from './toPrimitiveService';
 
@@ -33,8 +34,9 @@ export interface MonitoringBlueprint extends OperatorBlueprint {
       status?: InstanceStatus;
       blueprintData?: MonitoringBlueprint['blueprint'];
       createdAtBlock?: number;
-      pendingOperators?: string[];
-      operatorIdentityMap?: Map<string, string>;
+      pendingOperators?: SubstrateAddress[];
+      operatorIdentityMap?: Map<SubstrateAddress, string>;
+      operators?: SubstrateAddress[];
     }
   >;
 }

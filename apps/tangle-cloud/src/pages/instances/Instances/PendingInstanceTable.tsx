@@ -29,6 +29,7 @@ import { InstancesTabProps } from './type';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
 import { NestedOperatorCell } from '../../../components/NestedOperatorCell';
+import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 
 const columnHelper =
   createColumnHelper<MonitoringBlueprint['services'][number]>();
@@ -201,9 +202,7 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
               <TableCellWrapper>
                 <NestedOperatorCell
                   operators={props.row.original.pendingOperators}
-                  operatorIdentityMap={
-                    props.row.original.operatorIdentityMap || new Map([])
-                  }
+                  operatorIdentityMap={props.row.original.operatorIdentityMap}
                 />
               </TableCellWrapper>
             );
@@ -214,7 +213,13 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
           cell: (props) => {
             return (
               <TableCellWrapper>
-                Block {props.row.original.createdAtBlock}
+                {props.row.original.createdAtBlock ? (
+                  <>
+                    Block {addCommasToNumber(props.row.original.createdAtBlock)}
+                  </>
+                ) : (
+                  EMPTY_VALUE_PLACEHOLDER
+                )}
               </TableCellWrapper>
             );
           },

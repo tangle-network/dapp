@@ -5,20 +5,18 @@ import {
   DropdownButton,
   DropdownMenuItem,
   EMPTY_VALUE_PLACEHOLDER,
-  isEvmAddress,
   KeyValueWithButton,
   shortenString,
-  toSubstrateAddress,
   Typography,
 } from '@tangle-network/ui-components';
 import { Link } from 'react-router';
 import { ExternalLinkLine } from '@tangle-network/icons';
 import { Children, FC } from 'react';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 type NestedOperatorCellProps = {
-  operators?: string[];
-  operatorIdentityMap?: Map<string, string>;
+  operators?: SubstrateAddress[];
+  operatorIdentityMap?: Map<SubstrateAddress, string>;
 };
 export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
   operators,
@@ -43,7 +41,7 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
                 .map((operator) => (
                   <Avatar
                     sourceVariant="address"
-                    value={toSubstrateAddress(operator).toString()}
+                    value={operator.toString()}
                     theme="substrate"
                     size="md"
                   />
@@ -56,44 +54,41 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
       />
       <DropdownBody className="mt-2" side="bottom" align="center">
         {operators.length > 1 &&
-          operators.map((operator) => {
-            return (
-              <DropdownMenuItem className="px-4 py-2 hover:bg-mono-170">
-                <div className="flex items-center gap-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <Avatar
-                        sourceVariant="address"
-                        value={toSubstrateAddress(operator).toString()}
-                        theme="substrate"
-                        size="md"
-                      />
-                      <Typography variant="body3" fw="bold">
-                        {shortenString(
-                          operatorIdentityMap?.get(operator) || operator,
-                        )}
-                      </Typography>
+          Children.toArray(
+            operators.map((operator) => {
+              return (
+                <DropdownMenuItem className="px-4 py-2 hover:bg-mono-170">
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Avatar
+                          sourceVariant="address"
+                          value={operator.toString()}
+                          theme="substrate"
+                          size="md"
+                        />
+                        <Typography variant="body3" fw="bold">
+                          {shortenString(
+                            operatorIdentityMap?.get(operator) ||
+                              operator.toString(),
+                          )}
+                        </Typography>
+                      </div>
+                      <KeyValueWithButton size="sm" keyValue={operator} />
                     </div>
-                    <KeyValueWithButton size="sm" keyValue={operator} />
+                    <Link
+                      to={network.createExplorerAccountUrl(operator) ?? ''}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="!text-inherit"
+                    >
+                      <ExternalLinkLine className="!fill-current" />
+                    </Link>
                   </div>
-                  <Link
-                    to={
-                      network.createExplorerAccountUrl(
-                        isEvmAddress(operator)
-                          ? operator
-                          : toSubstrateAddress(operator),
-                      ) || ''
-                    }
-                    target="_blank"
-                    rel="noreferrer"
-                    className="!text-inherit"
-                  >
-                    <ExternalLinkLine className="!fill-current" />
-                  </Link>
-                </div>
-              </DropdownMenuItem>
-            );
-          })}
+                </DropdownMenuItem>
+              );
+            }),
+          )}
       </DropdownBody>
     </Dropdown>
   );

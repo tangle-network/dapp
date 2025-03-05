@@ -3,8 +3,10 @@ import { InstanceStatus, MonitoringBlueprint } from './utils/type';
 import randPrimitiveBlueprint from './utils/randPrimitiveBlueprint';
 import randPrimitiveService from './utils/randPrimitiveService';
 import { randNumber, randUserName } from '@ngneat/falso';
+import { toSubstrateAddress } from '@tangle-network/ui-components';
 
 const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
+  const operatorAccountAddress = toSubstrateAddress(operatorAccount);
   return Array.from({ length: 4 })
     .fill(null)
     .map((_, idx) => {
@@ -29,12 +31,19 @@ const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
         createdAtBlock: randNumber({ min: 0, max: 10000 }),
         ttl: randNumber({ min: 0, max: 10000 }),
         pendingOperators: [
-          operatorAccount,
-          operatorAccount,
-          operatorAccount,
-          operatorAccount,
+          operatorAccountAddress,
+          operatorAccountAddress,
+          operatorAccountAddress,
+          operatorAccountAddress,
         ],
-        operatorIdentityMap: new Map([[operatorAccount, randUserName()]]),
+        operatorIdentityMap: new Map([
+          [operatorAccountAddress, randUserName()],
+        ]),
+        operators: [
+          operatorAccountAddress,
+          operatorAccountAddress,
+          operatorAccountAddress,
+        ],
       };
       return {
         blueprintId: idx,
