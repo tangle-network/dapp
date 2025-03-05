@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { ExternalLinkLine } from '@tangle-network/icons';
 import { isPrimitive } from '@tangle-network/dapp-types';
 import { AccountStatsCardHeaderProps } from '.';
+import { Link } from 'react-router';
 
 export const AccountStatsCardHeader: FC<AccountStatsCardHeaderProps> = ({
   className,
@@ -50,14 +51,14 @@ export const AccountStatsCardHeader: FC<AccountStatsCardHeaderProps> = ({
             )}
 
             {descExternalLink && (
-              <a
-                href={descExternalLink}
+              <Link
+                to={descExternalLink}
                 target="_blank"
                 rel="noreferrer"
                 className="!text-inherit"
               >
                 <ExternalLinkLine className="!fill-current" />
-              </a>
+              </Link>
             )}
           </div>
         </div>

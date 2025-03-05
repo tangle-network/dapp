@@ -1,13 +1,17 @@
-import { Children, createElement, type FC } from 'react';
+import { Children, ComponentProps, createElement, type FC } from 'react';
 import TangleCloudCard from '../../components/TangleCloudCard';
 import { Chip, ListItem, Typography } from '@tangle-network/ui-components';
 import { CLOUD_INSTRUCTIONS } from '../../constants/cloudInstruction';
 import { twMerge } from 'tailwind-merge';
 import { Link } from '@tangle-network/ui-components/components/Link';
 
-export const InstructionCard: FC = () => {
+type InstructionCardProps = {
+  rootProps?: ComponentProps<typeof TangleCloudCard>;
+};
+
+export const InstructionCard: FC<InstructionCardProps> = ({ rootProps }) => {
   return (
-    <TangleCloudCard>
+    <TangleCloudCard {...rootProps}>
       <ul className="h-full flex flex-col gap-6">
         {Children.toArray(
           CLOUD_INSTRUCTIONS.map((instruction) => (

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { InstanceStatus, MonitoringBlueprint } from './utils/type';
 import randPrimitiveBlueprint from './utils/randPrimitiveBlueprint';
 import randPrimitiveService from './utils/randPrimitiveService';
-import { randNumber } from '@ngneat/falso';
+import { randNumber, randUserName } from '@ngneat/falso';
 
 const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
   return Array.from({ length: 4 })
@@ -28,6 +28,13 @@ const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
         instanceId: `i-${randNumber({ min: 0, max: 1000000 }).toString()}`,
         createdAtBlock: randNumber({ min: 0, max: 10000 }),
         ttl: randNumber({ min: 0, max: 10000 }),
+        pendingOperators: [
+          operatorAccount,
+          operatorAccount,
+          operatorAccount,
+          operatorAccount,
+        ],
+        operatorIdentityMap: new Map([[operatorAccount, randUserName()]]),
       };
       return {
         blueprintId: idx,

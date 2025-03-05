@@ -7,6 +7,7 @@ export interface InstancesTabProps {
   data: MonitoringBlueprint['services'];
   isLoading: boolean;
   error: Error | null;
+  isOperator?: boolean;
 }
 
 export interface InstancesTabsProps {

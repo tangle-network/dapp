@@ -33,6 +33,8 @@ export interface MonitoringBlueprint extends OperatorBlueprint {
       status?: InstanceStatus;
       blueprintData?: MonitoringBlueprint['blueprint'];
       createdAtBlock?: number;
+      pendingOperators?: string[];
+      operatorIdentityMap?: Map<string, string>;
     }
   >;
 }
