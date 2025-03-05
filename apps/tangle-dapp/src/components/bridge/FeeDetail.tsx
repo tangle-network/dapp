@@ -17,7 +17,6 @@ import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
-import { Decimal } from 'decimal.js';
 
 export interface FeeDetailProps {
   token: BridgeToken;
@@ -27,13 +26,8 @@ export interface FeeDetailProps {
     bridgeFee: string;
     gasFee?: string;
   };
-  estimatedTime?: string;
   className?: string;
   isCollapsible?: boolean;
-  bridgeFeeTokenType: string;
-  gasFeeTokenType?: string;
-  sendingAmount: Decimal | null;
-  receivingAmount: Decimal | null;
   recipientExplorerUrl?: string;
 }
 

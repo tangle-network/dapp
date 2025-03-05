@@ -5,6 +5,13 @@ import Decimal from 'decimal.js';
 import { formatEther } from 'viem';
 import useBridgeStore from '../../context/bridge/useBridgeStore';
 import { RouterQuote } from '../../data/bridge/useRouterQuote';
+import { useMemo } from 'react';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@tangle-network/ui-components';
+import convertBNToDecimal from '@tangle-network/ui-components/utils/convertBnToDecimal';
+import convertDecimalToBN from '@tangle-network/tangle-shared-ui/utils/convertDecimalToBn';
 
 /**
  * Hook to get the fee details for a router transfer.
@@ -26,53 +33,66 @@ export default function useRouterFeeDetails(
     (store) => store.setReceivingAmount,
   );
 
-  if (
-    !routerQuote ||
-    !selectedToken ||
-    !amount ||
-    !routerQuote?.bridgeFee.amount
-  ) {
-    return null;
-  }
+  const routerFeeDetails = useMemo(() => {
+    if (
+      !routerQuote ||
+      !selectedToken ||
+      !amount ||
+      !routerQuote?.bridgeFee.amount
+    ) {
+      return null;
+    }
 
-  const sendingAmount = amount
-    ? parseFloat(formatEther(BigInt(amount.toString())))
-    : 0;
+    const formattedSendingAmount =
+      formatDisplayAmount(
+        amount,
+        selectedToken.decimals,
+        AmountFormatStyle.SHORT,
+      ) +
+      ' ' +
+      selectedToken.symbol;
 
-  const formattedSendingAmount =
-    sendingAmount.toString() + ' ' + routerQuote?.bridgeFee.symbol;
+    const sendingAmount = amount
+      ? convertBNToDecimal(amount, selectedToken.decimals)
+      : new Decimal(0);
 
-  const receivingAmount = routerQuote.bridgeFee.amount
-    ? sendingAmount -
-      parseFloat(formatEther(BigInt(routerQuote.bridgeFee.amount)))
-    : sendingAmount;
+    const receivingAmount = routerQuote.bridgeFee.amount
+      ? sendingAmount.minus(
+          new Decimal(formatEther(BigInt(routerQuote.bridgeFee.amount))),
+        )
+      : sendingAmount;
 
-  const formattedReceivingAmount =
-    receivingAmount.toString() + ' ' + routerQuote?.bridgeFee.symbol;
+    const formattedReceivingAmount =
+      formatDisplayAmount(
+        convertDecimalToBN(receivingAmount, selectedToken.decimals),
+        selectedToken.decimals,
+        AmountFormatStyle.SHORT,
+      ) +
+      ' ' +
+      routerQuote.bridgeFee.symbol;
 
-  const formattedBridgeFee =
-    formatEther(BigInt(routerQuote.bridgeFee.amount)) +
-    ' ' +
-    routerQuote?.bridgeFee.symbol;
+    const formattedBridgeFee = `${formatEther(BigInt(routerQuote.bridgeFee.amount))} ${routerQuote.bridgeFee.symbol}`;
 
-  const estimatedTime = routerQuote?.estimatedTime
-    ? `${Math.ceil(Number(routerQuote.estimatedTime) / 60)} min`
-    : '';
+    setSendingAmount(sendingAmount);
+    setReceivingAmount(new Decimal(receivingAmount));
 
-  setSendingAmount(new Decimal(sendingAmount));
-  setReceivingAmount(new Decimal(receivingAmount));
+    return {
+      token: selectedToken,
+      amounts: {
+        sending: formattedSendingAmount,
+        receiving: formattedReceivingAmount,
+        bridgeFee: formattedBridgeFee,
+      },
+      recipientExplorerUrl: recipientExplorerUrl,
+    };
+  }, [
+    routerQuote,
+    selectedToken,
+    amount,
+    setSendingAmount,
+    setReceivingAmount,
+    recipientExplorerUrl,
+  ]);
 
-  return {
-    token: selectedToken,
-    amounts: {
-      sending: formattedSendingAmount,
-      receiving: formattedReceivingAmount,
-      bridgeFee: formattedBridgeFee,
-    },
-    estimatedTime: estimatedTime,
-    bridgeFeeTokenType: routerQuote.bridgeFee.symbol,
-    sendingAmount: new Decimal(sendingAmount),
-    receivingAmount: new Decimal(receivingAmount),
-    recipientExplorerUrl: recipientExplorerUrl,
-  };
+  return routerFeeDetails;
 }

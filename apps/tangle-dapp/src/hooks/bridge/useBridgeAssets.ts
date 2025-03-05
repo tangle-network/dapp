@@ -18,13 +18,13 @@ import Decimal from 'decimal.js';
 import { assertEvmAddress } from '@tangle-network/ui-components/utils/assertEvmAddress';
 
 /**
- * Hook to get the list of bridge assets that can be used to bridge tokens.
+ * Hook to get the list of formatted bridge assets that is used to display on the AssetList modal.
  *
  * @param {BridgeToken | null} selectedToken The currently selected bridge token (or null if none selected)
  * @param {ChainConfig} selectedSourceChain The currently selected source chain
  * @param {number} sourceTypedChainId The typed chain ID of the source chain
  * @param {Partial<Record<PresetTypedChainId, BridgeTokenWithBalance[]>>} tokenBalances Record of token balances by chain ID
- * @returns {AssetConfig[]} A list of asset configurations that can be used to bridge tokens.
+ * @returns {AssetConfig[]} A list of asset configurations that is used to display on the AssetList modal.
  */
 export default function useBridgeAssets(
   selectedToken: BridgeToken | null,

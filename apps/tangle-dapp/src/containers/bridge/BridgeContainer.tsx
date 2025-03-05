@@ -108,25 +108,39 @@ const BridgeContainer = () => {
   );
   const amount = useBridgeStore(useShallow((store) => store.amount));
   const setAmount = useBridgeStore(useShallow((store) => store.setAmount));
+  const sendingAmount = useBridgeStore(
+    useShallow((store) => store.sendingAmount),
+  );
+  const receivingAmount = useBridgeStore(
+    useShallow((store) => store.receivingAmount),
+  );
 
   const srcChains = useMemo(() => {
-    if (network.name === 'Tangle Mainnet') {
-      setSelectedSourceChain(
-        get(chainsConfig, PresetTypedChainId.TangleMainnetEVM),
-      );
-      return mainnetSourceChains;
-    }
+    return network.name === 'Tangle Mainnet'
+      ? mainnetSourceChains
+      : testnetSourceChains;
+  }, [mainnetSourceChains, network.name, testnetSourceChains]);
 
-    setSelectedSourceChain(
-      get(chainsConfig, PresetTypedChainId.TangleTestnetEVM),
-    );
-    return testnetSourceChains;
-  }, [
-    mainnetSourceChains,
-    network.name,
-    setSelectedSourceChain,
-    testnetSourceChains,
-  ]);
+  useEffect(() => {
+    if (activeChain) {
+      const activeChainConfig = calculateTypedChainId(
+        activeChain.chainType,
+        activeChain.id,
+      );
+
+      setSelectedSourceChain(get(chainsConfig, activeChainConfig));
+    } else {
+      if (network.name === 'Tangle Mainnet') {
+        setSelectedSourceChain(
+          get(chainsConfig, PresetTypedChainId.TangleMainnetEVM),
+        );
+      } else {
+        setSelectedSourceChain(
+          get(chainsConfig, PresetTypedChainId.TangleTestnetEVM),
+        );
+      }
+    }
+  }, [activeChain, network.name, setSelectedSourceChain]);
 
   const sourceTypedChainId = useMemo(() => {
     return calculateTypedChainId(
@@ -266,17 +280,28 @@ const BridgeContainer = () => {
   ]);
 
   const onSwitchChains = useCallback(() => {
-    setSelectedSourceChain(selectedDestinationChain);
-    setSelectedDestinationChain(selectedSourceChain);
-    refreshEvmBalances();
-    clearBridgeStore();
+    if (activeWallet) {
+      const typedChainId = calculateTypedChainId(
+        selectedDestinationChain.chainType,
+        selectedDestinationChain.id,
+      );
+      const targetChain = chainsPopulated[typedChainId];
+      switchChain(targetChain, activeWallet);
+
+      setSelectedSourceChain(selectedDestinationChain);
+      setSelectedDestinationChain(selectedSourceChain);
+      refreshEvmBalances();
+      clearBridgeStore();
+    }
   }, [
-    clearBridgeStore,
-    selectedDestinationChain,
-    selectedSourceChain,
-    setSelectedDestinationChain,
     setSelectedSourceChain,
+    selectedDestinationChain,
+    setSelectedDestinationChain,
+    selectedSourceChain,
     refreshEvmBalances,
+    clearBridgeStore,
+    activeWallet,
+    switchChain,
   ]);
 
   const assets = useBridgeAssets(
@@ -365,20 +390,6 @@ const BridgeContainer = () => {
     activeWallet,
     sourceTypedChainId,
     destinationTypedChainId,
-  ]);
-
-  // Set the selected source chain when the network type changes.
-  useEffect(() => {
-    if (network.name === 'Tangle Mainnet') {
-      setSelectedSourceChain(mainnetSourceChains[0]);
-    } else {
-      setSelectedSourceChain(testnetSourceChains[0]);
-    }
-  }, [
-    mainnetSourceChains,
-    network.name,
-    setSelectedSourceChain,
-    testnetSourceChains,
   ]);
 
   return (
@@ -567,11 +578,7 @@ const BridgeContainer = () => {
           {routerQuote && !isRouterQuoteLoading && routerFeeDetails && (
             <FeeDetail
               token={routerFeeDetails.token}
-              estimatedTime={routerFeeDetails.estimatedTime}
               amounts={routerFeeDetails.amounts}
-              bridgeFeeTokenType={routerFeeDetails.bridgeFeeTokenType}
-              sendingAmount={routerFeeDetails.sendingAmount}
-              receivingAmount={routerFeeDetails.receivingAmount}
               recipientExplorerUrl={recipientExplorerUrl}
             />
           )}
@@ -581,12 +588,7 @@ const BridgeContainer = () => {
             hyperlaneFeeDetails && (
               <FeeDetail
                 token={hyperlaneFeeDetails.token}
-                estimatedTime={hyperlaneFeeDetails.estimatedTime}
                 amounts={hyperlaneFeeDetails.amounts}
-                bridgeFeeTokenType={hyperlaneFeeDetails.bridgeFeeTokenType}
-                gasFeeTokenType={hyperlaneFeeDetails.gasFeeTokenType}
-                sendingAmount={hyperlaneFeeDetails.sendingAmount}
-                receivingAmount={hyperlaneFeeDetails.receivingAmount}
                 recipientExplorerUrl={recipientExplorerUrl}
               />
             )}
@@ -695,16 +697,8 @@ const BridgeContainer = () => {
           activeAccountAddress={activeAccount.address}
           destinationAddress={destinationAddress}
           routerTransferData={routerTransferData}
-          sendingAmount={
-            selectedToken?.bridgeType === EVMTokenBridgeEnum.Router
-              ? (routerFeeDetails?.sendingAmount ?? null)
-              : (hyperlaneFeeDetails?.sendingAmount ?? null)
-          }
-          receivingAmount={
-            selectedToken?.bridgeType === EVMTokenBridgeEnum.Router
-              ? (routerFeeDetails?.receivingAmount ?? null)
-              : (hyperlaneFeeDetails?.receivingAmount ?? null)
-          }
+          sendingAmount={sendingAmount}
+          receivingAmount={receivingAmount}
           isTxInProgress={isTxInProgress}
           setIsTxInProgress={setIsTxInProgress}
         />

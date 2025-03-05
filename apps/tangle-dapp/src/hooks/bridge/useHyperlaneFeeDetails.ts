@@ -6,6 +6,12 @@ import { HyperlaneQuote } from '../../data/bridge/useHyperlaneQuote';
 import Decimal from 'decimal.js';
 import { formatEther } from 'viem';
 import useBridgeStore from '../../context/bridge/useBridgeStore';
+import {
+  AmountFormatStyle,
+  formatDisplayAmount,
+} from '@tangle-network/ui-components';
+import convertBNToDecimal from '@tangle-network/ui-components/utils/convertBnToDecimal';
+import { useMemo } from 'react';
 
 /**
  * Hook to get the fee details for a hyperlane transfer.
@@ -31,50 +37,58 @@ export default function useHyperlaneFeeDetails(
     (store) => store.setReceivingAmount,
   );
 
-  if (
-    !activeAccount ||
-    !activeAccount.address ||
-    !destinationAddress ||
-    !selectedToken ||
-    !amount ||
-    !hyperlaneQuote ||
-    !selectedToken
-  ) {
-    return null;
-  }
+  const hyperlaneFeeDetails = useMemo(() => {
+    if (
+      !activeAccount ||
+      !activeAccount.address ||
+      !destinationAddress ||
+      !selectedToken ||
+      !amount ||
+      !hyperlaneQuote
+    ) {
+      return null;
+    }
 
-  const sendingAmount = new Decimal(amount.toString())
-    .div(new Decimal(10).pow(selectedToken.decimals))
-    .toString();
+    const formattedSendingAmount =
+      formatDisplayAmount(
+        amount,
+        selectedToken.decimals,
+        AmountFormatStyle.SHORT,
+      ) +
+      ' ' +
+      selectedToken.symbol;
 
-  const formattedSendingAmount = `${sendingAmount} ${selectedToken.symbol}`;
+    const formattedGasFee = `${formatEther(hyperlaneQuote.fees.local.amount)} ${hyperlaneQuote.fees.local.symbol}`;
 
-  const formattedGasFee =
-    formatEther(hyperlaneQuote.fees.local.amount) +
-    ' ' +
-    hyperlaneQuote.fees.local.symbol;
+    const formattedBridgeFee = `${formatEther(hyperlaneQuote.fees.interchain.amount)} ${hyperlaneQuote.fees.interchain.symbol}`;
 
-  const formattedBridgeFee =
-    formatEther(hyperlaneQuote.fees.interchain.amount) +
-    ' ' +
-    hyperlaneQuote.fees.interchain.symbol;
+    const sendingAmount = amount
+      ? convertBNToDecimal(amount, selectedToken.decimals)
+      : new Decimal(0);
 
-  setSendingAmount(new Decimal(sendingAmount));
-  setReceivingAmount(new Decimal(sendingAmount));
+    setSendingAmount(sendingAmount);
+    setReceivingAmount(sendingAmount);
 
-  return {
-    token: selectedToken,
-    amounts: {
-      sending: formattedSendingAmount,
-      receiving: formattedSendingAmount,
-      bridgeFee: formattedBridgeFee,
-      gasFee: formattedGasFee,
-    },
-    estimatedTime: '',
-    bridgeFeeTokenType: hyperlaneQuote.fees.local.symbol,
-    gasFeeTokenType: hyperlaneQuote.fees.interchain.symbol,
-    sendingAmount: new Decimal(sendingAmount),
-    receivingAmount: new Decimal(sendingAmount),
-    recipientExplorerUrl: recipientExplorerUrl,
-  };
+    return {
+      token: selectedToken,
+      amounts: {
+        sending: formattedSendingAmount,
+        receiving: formattedSendingAmount,
+        bridgeFee: formattedBridgeFee,
+        gasFee: formattedGasFee,
+      },
+      recipientExplorerUrl: recipientExplorerUrl,
+    };
+  }, [
+    activeAccount,
+    destinationAddress,
+    amount,
+    selectedToken,
+    hyperlaneQuote,
+    setSendingAmount,
+    setReceivingAmount,
+    recipientExplorerUrl,
+  ]);
+
+  return hyperlaneFeeDetails;
 }
