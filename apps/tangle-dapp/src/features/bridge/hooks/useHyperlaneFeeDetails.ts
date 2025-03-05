@@ -1,4 +1,3 @@
-import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
 import { FeeDetailProps } from '../components/FeeDetail';
 import { Account } from '@tangle-network/abstract-api-provider/account';
 import { BN } from '@polkadot/util';
@@ -12,30 +11,32 @@ import {
 } from '@tangle-network/ui-components';
 import convertBNToDecimal from '@tangle-network/ui-components/utils/convertBnToDecimal';
 import { useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 /**
  * Hook to get the fee details for a hyperlane transfer.
  *
  * @param {Account<unknown> | null} activeAccount the active account
- * @param {BridgeToken | null} selectedToken the selected token
- * @param {string | null} destinationAddress the destination address
- * @param {BN | null} amount the amount
  * @param {HyperlaneQuote | null} hyperlaneQuote the hyperlane quote
  * @param {string | undefined} recipientExplorerUrl the recipient explorer url
  * @returns {FeeDetailProps | null} the fee details props
  */
 export default function useHyperlaneFeeDetails(
   activeAccount: Account<unknown> | null,
-  selectedToken: BridgeToken | null,
-  destinationAddress: string | null,
-  amount: BN | null,
   hyperlaneQuote: HyperlaneQuote | null,
   recipientExplorerUrl?: string,
 ): FeeDetailProps | null {
+  const selectedToken = useBridgeStore(
+    useShallow((store) => store.selectedToken),
+  );
+  const destinationAddress = useBridgeStore(
+    useShallow((store) => store.destinationAddress),
+  );
   const setSendingAmount = useBridgeStore((store) => store.setSendingAmount);
   const setReceivingAmount = useBridgeStore(
     (store) => store.setReceivingAmount,
   );
+  const amount = useBridgeStore(useShallow((store) => store.amount));
 
   const hyperlaneFeeDetails = useMemo(() => {
     if (

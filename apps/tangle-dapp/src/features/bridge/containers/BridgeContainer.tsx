@@ -190,7 +190,6 @@ const BridgeContainer = () => {
       selectedSourceChain.chainType,
       selectedSourceChain.id,
     ),
-    selectedToken,
   );
 
   const [addressInputErrorMessage, setAddressInputErrorMessage] = useState<
@@ -200,20 +199,13 @@ const BridgeContainer = () => {
   const isSolanaDestination = selectedDestinationChain.name === 'Solana';
 
   const routerQuoteParams = useRouterQuoteParams(
-    amount,
-    selectedToken,
-    selectedSourceChain,
-    selectedDestinationChain,
     sourceTypedChainId,
     destinationTypedChainId,
     isSolanaDestination,
   );
 
   const hyperlaneQuoteParams = useHyperlaneQuoteParams(
-    amount,
-    selectedToken,
     activeAccount,
-    destinationAddress,
     sourceTypedChainId,
     destinationTypedChainId,
   );
@@ -252,17 +244,12 @@ const BridgeContainer = () => {
   ]);
 
   const routerFeeDetails = useRouterFeeDetails(
-    selectedToken,
-    amount,
     routerQuote,
     recipientExplorerUrl,
   );
 
   const hyperlaneFeeDetails = useHyperlaneFeeDetails(
     activeAccount,
-    selectedToken,
-    destinationAddress,
-    amount,
     hyperlaneQuote,
     recipientExplorerUrl,
   );
@@ -304,12 +291,7 @@ const BridgeContainer = () => {
     switchChain,
   ]);
 
-  const assets = useBridgeAssets(
-    selectedToken,
-    selectedSourceChain,
-    sourceTypedChainId,
-    balances,
-  );
+  const assets = useBridgeAssets(sourceTypedChainId, balances);
 
   const onSelectToken = useCallback(
     (asset: AssetConfig) => {
@@ -331,8 +313,6 @@ const BridgeContainer = () => {
   );
 
   const sourceTokenBalance = useBridgeTokenBalance(
-    selectedToken,
-    selectedSourceChain,
     sourceTypedChainId,
     balances,
   );

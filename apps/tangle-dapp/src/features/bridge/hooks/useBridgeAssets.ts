@@ -20,18 +20,20 @@ import { assertEvmAddress } from '@tangle-network/ui-components/utils/assertEvmA
 /**
  * Hook to get the list of formatted bridge assets that is used to display on the AssetList modal.
  *
- * @param {BridgeToken | null} selectedToken The currently selected bridge token (or null if none selected)
- * @param {ChainConfig} selectedSourceChain The currently selected source chain
  * @param {number} sourceTypedChainId The typed chain ID of the source chain
  * @param {Partial<Record<PresetTypedChainId, BridgeTokenWithBalance[]>>} tokenBalances Record of token balances by chain ID
  * @returns {AssetConfig[]} A list of asset configurations that is used to display on the AssetList modal.
  */
 export default function useBridgeAssets(
-  selectedToken: BridgeToken | null,
-  selectedSourceChain: ChainConfig,
   sourceTypedChainId: number,
   tokenBalances: Partial<Record<PresetTypedChainId, BridgeTokenWithBalance[]>>,
 ): AssetConfig[] {
+  const selectedToken = useBridgeStore(
+    useShallow((store) => store.selectedToken),
+  );
+  const selectedSourceChain = useBridgeStore(
+    useShallow((store) => store.selectedSourceChain),
+  );
   const tokens = useBridgeStore(useShallow((store) => store.tokens));
   const [activeAccount] = useActiveAccount();
 
@@ -40,7 +42,6 @@ export default function useBridgeAssets(
       selectedSourceChain.chainType,
       selectedSourceChain.id,
     ),
-    selectedToken,
   );
 
   const isSourceTangleChain =

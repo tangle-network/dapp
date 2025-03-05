@@ -1,6 +1,4 @@
-import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
 import { FeeDetailProps } from '../components/FeeDetail';
-import { BN } from '@polkadot/util';
 import Decimal from 'decimal.js';
 import { formatEther } from 'viem';
 import useBridgeStore from '../context/useBridgeStore';
@@ -12,22 +10,23 @@ import {
 } from '@tangle-network/ui-components';
 import convertBNToDecimal from '@tangle-network/ui-components/utils/convertBnToDecimal';
 import convertDecimalToBN from '@tangle-network/tangle-shared-ui/utils/convertDecimalToBn';
+import { useShallow } from 'zustand/react/shallow';
 
 /**
  * Hook to get the fee details for a router transfer.
  *
- * @param {BridgeToken | null} selectedToken the selected token
- * @param {BN | null} amount the amount
  * @param {RouterQuote | null} routerQuote the router quote
  * @param {string | undefined} recipientExplorerUrl the recipient explorer url
  * @returns {FeeDetailProps | null} the fee details props
  */
 export default function useRouterFeeDetails(
-  selectedToken: BridgeToken | null,
-  amount: BN | null,
   routerQuote: RouterQuote | null,
   recipientExplorerUrl?: string,
 ): FeeDetailProps | null {
+  const selectedToken = useBridgeStore(
+    useShallow((store) => store.selectedToken),
+  );
+  const amount = useBridgeStore(useShallow((store) => store.amount));
   const setSendingAmount = useBridgeStore((store) => store.setSendingAmount);
   const setReceivingAmount = useBridgeStore(
     (store) => store.setReceivingAmount,

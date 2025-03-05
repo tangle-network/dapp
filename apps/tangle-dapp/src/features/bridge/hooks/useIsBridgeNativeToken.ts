@@ -1,23 +1,28 @@
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { EVMTokenEnum } from '@tangle-network/evm-contract-metadata';
-import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
+import useBridgeStore from '../context/useBridgeStore';
+import { useShallow } from 'zustand/react/shallow';
 
 const useIsBridgeNativeToken = (
   sourceTypedChainId: PresetTypedChainId,
-  token: BridgeToken | null,
 ): boolean => {
-  if (!token) return false;
+  const selectedToken = useBridgeStore(
+    useShallow((store) => store.selectedToken),
+  );
+
+  if (!selectedToken) return false;
 
   const isNativeToken =
     (sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM &&
-      token.tokenType === EVMTokenEnum.TNT) ||
+      selectedToken.tokenType === EVMTokenEnum.TNT) ||
     (sourceTypedChainId === PresetTypedChainId.Polygon &&
-      token.symbol === 'POL') ||
+      selectedToken.symbol === 'POL') ||
     ((sourceTypedChainId === PresetTypedChainId.Optimism ||
       sourceTypedChainId === PresetTypedChainId.Arbitrum ||
       sourceTypedChainId === PresetTypedChainId.Base) &&
-      token.symbol === 'ETH') ||
-    (sourceTypedChainId === PresetTypedChainId.BSC && token.symbol === 'BNB');
+      selectedToken.symbol === 'ETH') ||
+    (sourceTypedChainId === PresetTypedChainId.BSC &&
+      selectedToken.symbol === 'BNB');
 
   return isNativeToken;
 };

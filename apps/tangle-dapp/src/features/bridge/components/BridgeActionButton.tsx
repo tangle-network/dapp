@@ -58,33 +58,21 @@ export default function BridgeActionButton({
     return isEvmWallet && activeChain?.id !== selectedSourceChain.id;
   }, [activeChain?.id, activeWallet?.platform, selectedSourceChain.id]);
 
-  const isActionBtnDisabled = useMemo(() => {
-    if (
-      !activeAccount ||
-      !activeChain ||
-      !activeWallet ||
-      !selectedToken ||
-      isWrongChain ||
-      !amount ||
-      !destinationAddress ||
-      isAmountInputError ||
-      isAddressInputError
-    ) {
-      return true;
-    }
+  let isActionBtnDisabled = false;
 
-    return false;
-  }, [
-    activeAccount,
-    activeChain,
-    activeWallet,
-    selectedToken,
-    isWrongChain,
-    amount,
-    destinationAddress,
-    isAmountInputError,
-    isAddressInputError,
-  ]);
+  if (
+    !activeAccount ||
+    !activeChain ||
+    !activeWallet ||
+    !selectedToken ||
+    isWrongChain ||
+    !amount ||
+    !destinationAddress ||
+    isAmountInputError ||
+    isAddressInputError
+  ) {
+    isActionBtnDisabled = true;
+  }
 
   const isActionBtnLoading = useMemo(() => {
     return isRouterQuoteLoading || isHyperlaneQuoteLoading || isTxInProgress;
