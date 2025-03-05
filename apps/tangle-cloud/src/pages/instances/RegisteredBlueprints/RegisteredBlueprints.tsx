@@ -97,6 +97,7 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
         cell: (props) => {
           const DEFAULT_STACK = 10;
           const DEFAULT_PERCENTAGE = 100;
+
           const numberOfActiveChips = !props.row.original.blueprint.uptime
             ? 0
             : Math.round(
