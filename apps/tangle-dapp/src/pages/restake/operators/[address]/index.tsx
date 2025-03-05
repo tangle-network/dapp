@@ -6,7 +6,7 @@ import { ComponentProps, useMemo } from 'react';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
 import useRestakeTVL from '@tangle-network/tangle-shared-ui/data/restake/useRestakeTVL';
 import { useParams } from 'react-router';
-import useOperatorBlueprints from '../../../../data/blueprints/useOperatorBlueprints';
+import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
 import OperatorInfoCard from './OperatorInfoCard';
 import RegisteredBlueprintsCard from './RegisteredBlueprintsCard';
 import TVLTable from './TVLTable';

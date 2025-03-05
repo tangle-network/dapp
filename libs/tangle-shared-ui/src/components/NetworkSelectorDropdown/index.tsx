@@ -53,19 +53,22 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
         return 'Loading';
       }
 
+      const UNKNOWN_NETWORK = 'Unknown Network';
+
       if (disableChainSelection) {
         return activeChain?.name === 'Tangle Mainnet'
           ? activeChain.name
           : (activeChain?.displayName ??
               activeChain?.name ??
-              'Unknown Network');
+              network?.name ??
+              UNKNOWN_NETWORK);
       }
 
       return (
         network?.name ??
         activeChain?.displayName ??
         activeChain?.name ??
-        'Unknown Network'
+        UNKNOWN_NETWORK
       );
     },
     // prettier-ignore
@@ -138,7 +141,7 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
             </div>
           </TooltipTrigger>
 
-          <TooltipBody>Wrong EVM Chain Connected</TooltipBody>
+          <TooltipBody>Switch to Selected EVM Network</TooltipBody>
         </Tooltip>
       )}
 
@@ -156,6 +159,7 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
             selectedNetwork={network}
             onSetCustomNetwork={switchToCustomNetwork}
             onNetworkChange={(newNetwork) => switchNetwork(newNetwork, false)}
+            isNotConnectedToSelectedNetwork={isWrongEvmNetwork}
           />
         </DropdownBody>
       </Dropdown>

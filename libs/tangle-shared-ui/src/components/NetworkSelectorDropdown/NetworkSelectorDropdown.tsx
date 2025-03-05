@@ -19,6 +19,7 @@ export type NetworkSelectorDropdownProps = {
   isCustomEndpointSelected: boolean;
   onSetCustomNetwork: (customRpcEndpoint: string) => void;
   onNetworkChange: (network: Network) => void;
+  isNotConnectedToSelectedNetwork: boolean;
 };
 
 export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
@@ -26,6 +27,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
   isCustomEndpointSelected,
   onSetCustomNetwork,
   onNetworkChange,
+  isNotConnectedToSelectedNetwork,
 }) => {
   return (
     <div className="flex flex-col items-center justify-between">
@@ -34,6 +36,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
         isSelected={selectedNetwork?.id === TANGLE_MAINNET_NETWORK.id}
         name={TANGLE_MAINNET_NETWORK.name}
         onClick={() => onNetworkChange(TANGLE_MAINNET_NETWORK)}
+        isNotConnected={isNotConnectedToSelectedNetwork}
       />
 
       {/* Tangle Testnet */}
@@ -41,6 +44,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
         isSelected={selectedNetwork?.id === TANGLE_TESTNET_NATIVE_NETWORK.id}
         name={TANGLE_TESTNET_NATIVE_NETWORK.name}
         onClick={() => onNetworkChange(TANGLE_TESTNET_NATIVE_NETWORK)}
+        isNotConnected={isNotConnectedToSelectedNetwork}
       />
 
       <hr className="w-full h-0 border-t border-mono-40 dark:border-mono-120" />
@@ -50,6 +54,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
         isSelected={selectedNetwork?.id === TANGLE_LOCAL_DEV_NETWORK.id}
         name={TANGLE_LOCAL_DEV_NETWORK.name}
         onClick={() => onNetworkChange(TANGLE_LOCAL_DEV_NETWORK)}
+        isNotConnected={isNotConnectedToSelectedNetwork}
       />
 
       {/* Custom network */}
@@ -57,6 +62,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
         isSelected={isCustomEndpointSelected}
         name="Custom endpoint"
         tooltip="Connect to a custom network by specifying its RPC endpoint URL"
+        isNotConnected={isNotConnectedToSelectedNetwork}
       />
 
       <div className="w-full px-4 pt-1 pb-2">
@@ -73,6 +79,7 @@ export const NetworkSelectorDropdown: FC<NetworkSelectorDropdownProps> = ({
 type NetworkOptionProps = {
   name: string;
   isSelected: boolean;
+  isNotConnected: boolean;
   tooltip?: ReactNode;
   onClick?: () => void;
 };
@@ -80,6 +87,7 @@ type NetworkOptionProps = {
 const NetworkOption: FC<NetworkOptionProps> = ({
   name,
   isSelected,
+  isNotConnected,
   tooltip,
   onClick,
 }) => {
@@ -110,7 +118,11 @@ const NetworkOption: FC<NetworkOptionProps> = ({
           {tooltip !== undefined && <InfoIconWithTooltip content={tooltip} />}
         </div>
 
-        {isSelected && <StatusIndicator variant="success" />}
+        {isSelected && isNotConnected ? (
+          <StatusIndicator variant="warning" />
+        ) : isSelected && !isNotConnected ? (
+          <StatusIndicator variant="success" />
+        ) : null}
       </div>
     </DropdownMenuItem>
   );

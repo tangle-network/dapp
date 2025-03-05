@@ -3,13 +3,10 @@ import AccountStatsDetailCard, {
   type AccountStatsCardProps,
 } from '../../components/accountStatsCard';
 import {
-  assertSubstrateAddress,
   Avatar,
   EMPTY_VALUE_PLACEHOLDER,
-  isEvmAddress,
   KeyValueWithButton,
   shortenString,
-  toSubstrateAddress,
 } from '@tangle-network/ui-components';
 import { ThreeDotsVerticalIcon } from '@tangle-network/icons';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
