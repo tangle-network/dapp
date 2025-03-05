@@ -136,7 +136,7 @@ const NetworkSelectionButton: FC<NetworkSelectionButtonProps> = ({
             </div>
           </TooltipTrigger>
 
-          <TooltipBody>Switch to Selected Network</TooltipBody>
+          <TooltipBody>Switch to Selected EVM Network</TooltipBody>
         </Tooltip>
       )}
 
