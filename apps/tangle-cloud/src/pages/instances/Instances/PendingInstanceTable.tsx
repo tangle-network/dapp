@@ -147,7 +147,7 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
       }),
       columnHelper.accessor('id', {
         header: () => '',
-        cell: (props) => {
+        cell: () => {
           return (
             <TableCellWrapper removeRightBorder className="max-w-24">
               <div className="flex gap-2">
