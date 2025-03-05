@@ -1,8 +1,8 @@
 import type { Option, StorageKey, u64 } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces';
-import type {
-  TanglePrimitivesServicesOperatorPreferences,
-  TanglePrimitivesServicesServiceBlueprint,
+import {
+  TanglePrimitivesServicesServiceServiceBlueprint,
+  TanglePrimitivesServicesTypesOperatorPreferences,
 } from '@polkadot/types/lookup';
 import type { ITuple } from '@polkadot/types/types';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
@@ -19,7 +19,9 @@ import { toPrimitiveBlueprint } from './toPrimitiveBlueprint';
 export function extractBlueprintsData(
   blueprintEntries: [
     StorageKey<[u64]>,
-    Option<ITuple<[AccountId32, TanglePrimitivesServicesServiceBlueprint]>>,
+    Option<
+      ITuple<[AccountId32, TanglePrimitivesServicesServiceServiceBlueprint]>
+    >,
   ][],
 ) {
   const blueprintsMap = new Map<
@@ -47,7 +49,7 @@ export function extractBlueprintsData(
 export function extractOperatorData(
   operatorEntries: [
     StorageKey<[u64, AccountId32]>,
-    Option<TanglePrimitivesServicesOperatorPreferences>,
+    Option<TanglePrimitivesServicesTypesOperatorPreferences>,
   ][],
   operatorMap: OperatorMap,
   operatorTVL: Record<string, number>,
