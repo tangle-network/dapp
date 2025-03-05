@@ -9,7 +9,6 @@ import {
   Typography,
 } from '@tangle-network/ui-components';
 import { ScrollArea } from '@tangle-network/ui-components/components/ScrollArea';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { ComponentProps, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -44,9 +43,15 @@ export const AssetList = ({
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredAssets = useMemo(() => {
-    return assets.filter((asset) =>
-      asset.symbol.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+    return assets
+      .filter((asset) =>
+        asset.symbol.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+      .sort((a, b) => {
+        if (!a.balance) return 1;
+        if (!b.balance) return -1;
+        return b.balance.cmp(a.balance);
+      });
   }, [assets, searchQuery]);
 
   return (
@@ -127,9 +132,9 @@ export const AssetList = ({
                 variant="body1"
                 className="cursor-default text-mono-200 dark:text-mono-0"
               >
-                {asset.balance !== undefined
+                {asset.balance !== undefined && !asset.balance.isZero()
                   ? `${formatDisplayAmount(asset.balance, asset.decimals, AmountFormatStyle.SHORT)} ${asset.symbol}`
-                  : EMPTY_VALUE_PLACEHOLDER}
+                  : ''}
               </Typography>
             </ListItem>
           ))}
