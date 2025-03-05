@@ -16,7 +16,7 @@ const tangleTestnetEVM = defineChain({
     },
   },
   nativeCurrency: {
-    name: 'Test Tangle Network Token',
+    name: 'Testnet Tangle Network Token',
     symbol: 'tTNT',
     decimals: 18,
   },
