@@ -189,7 +189,7 @@ const RestakeDelegateForm: FC = () => {
       } satisfies RestakeAssetTableItem);
     }
 
-    if (!isDefined(delegatorInfo)) {
+    if (delegatorInfo === null) {
       return result;
     }
 
