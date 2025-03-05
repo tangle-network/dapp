@@ -1,7 +1,7 @@
 import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks/useActiveAccount';
 import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
-import { chainsPopulated } from '@tangle-network/dapp-config';
+import { chainsConfig, chainsPopulated } from '@tangle-network/dapp-config';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
@@ -47,6 +47,8 @@ import useRouterQuoteParams from '../../hooks/bridge/useRouterQuoteParams';
 import useHyperlaneQuoteParams from '../../hooks/bridge/useHyperlaneQuoteParams';
 import BridgeActionButton from '../../components/bridge/BridgeActionButton';
 import useRouterTransferData from '../../hooks/bridge/useRouterTransferData';
+import { get } from 'lodash';
+import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
 
 const BridgeContainer = () => {
   const { network } = useNetworkStore();
@@ -107,6 +109,39 @@ const BridgeContainer = () => {
   const amount = useBridgeStore(useShallow((store) => store.amount));
   const setAmount = useBridgeStore(useShallow((store) => store.setAmount));
 
+  const srcChains = useMemo(() => {
+    if (network.name === 'Tangle Mainnet') {
+      setSelectedSourceChain(
+        get(chainsConfig, PresetTypedChainId.TangleMainnetEVM),
+      );
+      return mainnetSourceChains;
+    }
+
+    setSelectedSourceChain(
+      get(chainsConfig, PresetTypedChainId.TangleTestnetEVM),
+    );
+    return testnetSourceChains;
+  }, [
+    mainnetSourceChains,
+    network.name,
+    setSelectedSourceChain,
+    testnetSourceChains,
+  ]);
+
+  const sourceTypedChainId = useMemo(() => {
+    return calculateTypedChainId(
+      selectedSourceChain.chainType,
+      selectedSourceChain.id,
+    );
+  }, [selectedSourceChain]);
+
+  const destinationTypedChainId = useMemo(() => {
+    return calculateTypedChainId(
+      selectedDestinationChain.chainType,
+      selectedDestinationChain.id,
+    );
+  }, [selectedDestinationChain]);
+
   const {
     status: isSourceChainModalOpen,
     open: openSourceChainModal,
@@ -130,25 +165,6 @@ const BridgeContainer = () => {
     open: openConfirmBridgeModal,
     close: closeConfirmBridgeModal,
   } = useModal(false);
-
-  const srcChains = useMemo(() => {
-    if (network.name === 'Tangle Mainnet') {
-      return mainnetSourceChains;
-    }
-    return testnetSourceChains;
-  }, [mainnetSourceChains, network.name, testnetSourceChains]);
-  const sourceTypedChainId = useMemo(() => {
-    return calculateTypedChainId(
-      selectedSourceChain.chainType,
-      selectedSourceChain.id,
-    );
-  }, [selectedSourceChain]);
-  const destinationTypedChainId = useMemo(() => {
-    return calculateTypedChainId(
-      selectedDestinationChain.chainType,
-      selectedDestinationChain.id,
-    );
-  }, [selectedDestinationChain]);
 
   const { balances, refresh: refreshEvmBalances } = useBridgeEvmBalances(
     sourceTypedChainId,

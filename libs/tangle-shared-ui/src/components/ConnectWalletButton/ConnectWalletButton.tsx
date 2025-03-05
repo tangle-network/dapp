@@ -11,7 +11,7 @@ import {
   isEvmAddress,
   toSubstrateAddress,
 } from '@tangle-network/ui-components';
-import { calculateTypedChainId } from '@tangle-network/dapp-types';
+import { calculateTypedChainId, ChainType } from '@tangle-network/dapp-types';
 import { ChainConfig } from '@tangle-network/dapp-config';
 
 type ConnectWalletButtonProps = {
@@ -53,6 +53,14 @@ const ConnectWalletButton = ({
   const isReady =
     !isConnecting && !loading && activeWallet && activeAccount !== null;
 
+  const preferredChainType = useMemo(() => {
+    if (!preferredChain?.chainType) return undefined;
+    return Object.keys(ChainType).find(
+      (key) =>
+        ChainType[key as keyof typeof ChainType] === preferredChain.chainType,
+    );
+  }, [preferredChain]);
+
   return (
     <>
       {!isReady || !accountAddress ? (
@@ -76,7 +84,13 @@ const ConnectWalletButton = ({
         </div>
       )}
 
-      <ConnectWalletModal />
+      <ConnectWalletModal
+        walletModalDefaultText={
+          showChainSpecificWallets && preferredChainType
+            ? `Connect your ${preferredChainType} wallet to interact with the Tangle Network.`
+            : undefined
+        }
+      />
     </>
   );
 };
