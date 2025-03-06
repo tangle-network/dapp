@@ -199,7 +199,7 @@ const BridgeContainer = () => {
 
   const {
     data: hyperlaneQuote,
-    isLoading: isHyperlaneQuoteLoading,
+    isFetching: isHyperlaneQuoteFetching,
     refetch: refetchHyperlaneQuote,
     error: hyperlaneQuoteError,
   } = useHyperlaneQuote(hyperlaneQuoteParams);
@@ -521,7 +521,7 @@ const BridgeContainer = () => {
           </div>
 
           {hyperlaneQuote &&
-            !isHyperlaneQuoteLoading &&
+            !isHyperlaneQuoteFetching &&
             hyperlaneFeeDetails && (
               <BridgeFeeDetail
                 token={hyperlaneFeeDetails.token}
@@ -545,7 +545,7 @@ const BridgeContainer = () => {
             hyperlaneQuote={hyperlaneQuote}
             hyperlaneQuoteError={hyperlaneQuoteError}
             isTxInProgress={isTxInProgress}
-            isHyperlaneQuoteLoading={isHyperlaneQuoteLoading}
+            isHyperlaneQuoteLoading={isHyperlaneQuoteFetching}
             openConfirmBridgeModal={openConfirmBridgeModal}
             refetchHyperlaneQuote={refetchHyperlaneQuote}
           />
