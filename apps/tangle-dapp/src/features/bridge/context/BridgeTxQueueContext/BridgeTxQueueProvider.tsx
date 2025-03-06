@@ -104,7 +104,7 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 
   const addTxExplorerUrl = useCallback(
-    (txHash: string, explorerUrl: string) => {
+    (txHash: string, explorerUrl: string | null) => {
       if (!activeAccount) return;
       setCachedBridgeTxQueueByAcc((cache) => {
         const currTxQueue = getTxQueueFromLocalStorage(
@@ -177,7 +177,7 @@ const BridgeTxQueueProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 
   const addTxDestinationTxExplorerUrl = useCallback(
-    (txHash: string, destinationTxExplorerUrl: string) => {
+    (txHash: string, destinationTxExplorerUrl: string | null) => {
       if (!activeAccount) return;
       setCachedBridgeTxQueueByAcc((cache) => {
         const currTxQueue = getTxQueueFromLocalStorage(
