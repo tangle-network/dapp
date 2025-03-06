@@ -14,6 +14,7 @@ export enum SubstrateLockId {
   STAKING = 'staking ',
   ELECTIONS_PHRAGMEN = 'phrelect',
   DEMOCRACY = 'democrac',
+  DELEGATE = 'delegate',
 
   // TODO: Need to account for the other lock types.
   OTHER = '?other',

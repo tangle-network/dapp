@@ -66,11 +66,7 @@ const RestakeDelegateInput: FC<Props> = ({
   }, [delegatorInfo, nativeAssetBalance, selectedAsset, selectedAssetId]);
 
   const { max, maxFormatted } = useMemo(() => {
-    if (
-      !isDefined(selectedAsset) ||
-      !isDefined(delegatorInfo) ||
-      availableBalance === null
-    ) {
+    if (selectedAsset === null || availableBalance === null) {
       return {};
     }
 
@@ -84,7 +80,7 @@ const RestakeDelegateInput: FC<Props> = ({
       max: availableBalance,
       maxFormatted,
     };
-  }, [availableBalance, delegatorInfo, selectedAsset]);
+  }, [availableBalance, selectedAsset]);
 
   const { min, minFormatted } = useMemo(() => {
     if (!isDefined(minDelegateAmount) || !isDefined(selectedAsset)) {
