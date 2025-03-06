@@ -7,10 +7,10 @@ import {
   ModalContent,
   ModalHeader,
 } from '@tangle-network/ui-components';
+import { ScrollArea } from '@tangle-network/ui-components/components/ScrollArea';
 import { useMemo, useState } from 'react';
-import SkeletonRows from './SkeletonRows';
 import { twMerge } from 'tailwind-merge';
-import { ScrollArea } from '@radix-ui/react-scroll-area';
+import SkeletonRows from './SkeletonRows';
 
 export type ListModalProps<T> = {
   isOpen: boolean;
@@ -140,34 +140,36 @@ const ListModal = <T,>({
               className="px-8 py-14"
             />
           ) : (
-            <ScrollArea className="w-full h-full pt-4">
-              <ul>
-                {/** TODO: Handle edge case where all processed items are omitted by returning null, and thus the list is actually empty. */}
-                {processedItems.map((item, index) => {
-                  const key =
-                    getItemKey !== undefined
-                      ? getItemKey(item)
-                      : index.toString();
+            <div className="h-full max-h-[448px] overflow-y-auto">
+              <ScrollArea className="w-full h-full pt-4">
+                <ul>
+                  {/** TODO: Handle edge case where all processed items are omitted by returning null, and thus the list is actually empty. */}
+                  {processedItems.map((item, index) => {
+                    const key =
+                      getItemKey !== undefined
+                        ? getItemKey(item)
+                        : index.toString();
 
-                  const itemContent = renderItem(item);
+                    const itemContent = renderItem(item);
 
-                  // Ignore the item if the render function returns `null`.
-                  if (itemContent === null) {
-                    return null;
-                  }
+                    // Ignore the item if the render function returns `null`.
+                    if (itemContent === null) {
+                      return null;
+                    }
 
-                  return (
-                    <ListItem
-                      key={key}
-                      onClick={() => onSelect(item)}
-                      className="w-full flex items-center gap-4 justify-between max-w-full min-h-[60px] py-3 cursor-pointer"
-                    >
-                      {itemContent}
-                    </ListItem>
-                  );
-                })}
-              </ul>
-            </ScrollArea>
+                    return (
+                      <ListItem
+                        key={key}
+                        onClick={() => onSelect(item)}
+                        className="w-full flex items-center gap-4 justify-between max-w-full min-h-[60px] py-3 cursor-pointer"
+                      >
+                        {itemContent}
+                      </ListItem>
+                    );
+                  })}
+                </ul>
+              </ScrollArea>
+            </div>
           )}
         </div>
       </ModalContent>
