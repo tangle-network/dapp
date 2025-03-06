@@ -38,7 +38,6 @@ import {
   shortenString,
 } from '@tangle-network/ui-components/utils';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import cx from 'classnames';
 import { Decimal } from 'decimal.js';
 import { FC, useCallback, useMemo } from 'react';

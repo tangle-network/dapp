@@ -2,10 +2,7 @@ import { useActiveAccount } from '@tangle-network/api-provider-environment/hooks
 import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transaction/utils';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import { chainsConfig, chainsPopulated } from '@tangle-network/dapp-config';
-import {
-  EVMTokenBridgeEnum,
-  EVMTokenEnum,
-} from '@tangle-network/evm-contract-metadata';
+import { EVMTokenEnum } from '@tangle-network/evm-contract-metadata';
 import ArrowLeftRightLineIcon from '@tangle-network/icons/ArrowLeftRightLineIcon';
 import WalletFillIcon from '@tangle-network/icons/WalletFillIcon';
 import {

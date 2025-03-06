@@ -11,7 +11,6 @@ import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
-  EVMTokens,
 } from '@tangle-network/evm-contract-metadata';
 
 import { assertEvmAddress } from '@tangle-network/ui-components';
