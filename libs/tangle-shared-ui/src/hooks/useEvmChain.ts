@@ -3,7 +3,7 @@ import useNetworkStore from '../context/useNetworkStore';
 import getTangleEvmChain from '../utils/getTangleEvmChain';
 
 const useEvmChain = () => {
-  const { network2 } = useNetworkStore();
+  const network2 = useNetworkStore((store) => store.network2);
 
   const chain = useMemo(() => {
     if (
