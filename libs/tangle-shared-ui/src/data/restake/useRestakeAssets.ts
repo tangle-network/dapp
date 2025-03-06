@@ -227,7 +227,7 @@ const useRestakeAssets = () => {
       const name = metadata.name.toUtf8();
 
       const asset = {
-        name: name === '' ? `Asset ${assetId}` : name,
+        name: name === '' ? `Asset #${assetId}` : name,
         symbol: metadata.symbol.toUtf8(),
         decimals: metadata.decimals.toNumber(),
         assetId,
@@ -244,6 +244,7 @@ const useRestakeAssets = () => {
     // TODO: Balance should be what is locked in staking, for native restaking.
     // Insert the network's native asset to allow for native restaking.
     const nativeNetworkAsset: RestakeAssetMetadata = {
+      name: nativeTokenSymbol,
       symbol: nativeTokenSymbol,
       decimals: TANGLE_TOKEN_DECIMALS,
       assetId: NATIVE_ASSET_ID,
