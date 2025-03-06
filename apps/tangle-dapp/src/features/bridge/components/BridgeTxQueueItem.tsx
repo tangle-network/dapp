@@ -36,26 +36,10 @@ const BridgeTxQueueItem: FC<BridgeTxQueueItemProps> = ({ tx, className }) => {
           const updatedDestTxIds = {
             ...currentDestTxIds,
             [activeAccountAddress]: {
-              router: currentDestTxIds[activeAccountAddress]?.router,
               hyperlane:
                 currentDestTxIds[activeAccountAddress]?.hyperlane.filter(
                   (item) => item.srcTx !== tx.hash,
                 ) || [],
-            },
-          };
-          return updatedDestTxIds;
-        });
-      } else if (tx.bridgeType === EVMTokenBridgeEnum.Router) {
-        setDestTxIds((prevValue) => {
-          const currentDestTxIds = prevValue?.value || {};
-          const updatedDestTxIds = {
-            ...currentDestTxIds,
-            [activeAccountAddress]: {
-              router:
-                currentDestTxIds[activeAccountAddress]?.router.filter(
-                  (item) => item.srcTx !== tx.hash,
-                ) || [],
-              hyperlane: currentDestTxIds[activeAccountAddress]?.hyperlane,
             },
           };
           return updatedDestTxIds;

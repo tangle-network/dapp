@@ -35,18 +35,14 @@ import useBridgeStore from '../context/useBridgeStore';
 import useBalances from '../../../data/balances/useBalances';
 import { useEvmBalances } from '../hooks/useEvmBalances';
 import { useHyperlaneQuote } from '../hooks/useHyperlaneQuote';
-import useRouterQuote from '../hooks/useRouterQuote';
 import useIsNativeToken from '../hooks/useIsNativeToken';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useAssets from '../hooks/useAssets';
 import useTokenBalance from '../hooks/useTokenBalance';
 import useHyperlaneFeeDetails from '../hooks/useHyperlaneFeeDetails';
-import useRouterFeeDetails from '../hooks/useRouterFeeDetails';
-import useRouterQuoteParams from '../hooks/useRouterQuoteParams';
 import useHyperlaneQuoteParams from '../hooks/useHyperlaneQuoteParams';
 import BridgeActionButton from '../components/BridgeActionButton';
-import useRouterTransferData from '../hooks/useRouterTransferData';
 import { get } from 'lodash';
 import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
 
@@ -198,24 +194,11 @@ const BridgeContainer = () => {
 
   const isSolanaDestination = selectedDestinationChain.name === 'Solana';
 
-  const routerQuoteParams = useRouterQuoteParams(
-    sourceTypedChainId,
-    destinationTypedChainId,
-    isSolanaDestination,
-  );
-
   const hyperlaneQuoteParams = useHyperlaneQuoteParams(
     activeAccount,
     sourceTypedChainId,
     destinationTypedChainId,
   );
-
-  const {
-    data: routerQuote,
-    isLoading: isRouterQuoteLoading,
-    refetch: refetchRouterQuote,
-    error: routerQuoteError,
-  } = useRouterQuote(routerQuoteParams);
 
   const {
     data: hyperlaneQuote,
@@ -242,11 +225,6 @@ const BridgeContainer = () => {
     destinationAddress,
     selectedDestinationChain.blockExplorers?.default.url,
   ]);
-
-  const routerFeeDetails = useRouterFeeDetails(
-    routerQuote,
-    recipientExplorerUrl,
-  );
 
   const hyperlaneFeeDetails = useHyperlaneFeeDetails(
     activeAccount,
@@ -313,13 +291,6 @@ const BridgeContainer = () => {
   );
 
   const sourceTokenBalance = useTokenBalance(sourceTypedChainId, balances);
-
-  const routerTransferData = useRouterTransferData(
-    routerQuote,
-    routerQuoteParams,
-    activeAccount,
-    destinationAddress,
-  );
 
   // Reset inputs after the active account, wallet or chain is
   // disconnected.
@@ -552,14 +523,6 @@ const BridgeContainer = () => {
             </div>
           </div>
 
-          {routerQuote && !isRouterQuoteLoading && routerFeeDetails && (
-            <BridgeFeeDetail
-              token={routerFeeDetails.token}
-              amounts={routerFeeDetails.amounts}
-              recipientExplorerUrl={recipientExplorerUrl}
-            />
-          )}
-
           {hyperlaneQuote &&
             !isHyperlaneQuoteLoading &&
             hyperlaneFeeDetails && (
@@ -569,15 +532,6 @@ const BridgeContainer = () => {
                 recipientExplorerUrl={recipientExplorerUrl}
               />
             )}
-
-          {routerQuoteError?.error !== undefined && (
-            <ErrorMessage
-              className="mt-0 duration-300 ease-out animate-in fade-in"
-              typographyProps={{ variant: 'body2', fw: 'normal' }}
-            >
-              {routerQuoteError.error}
-            </ErrorMessage>
-          )}
 
           <BridgeActionButton
             activeWallet={activeWallet}
@@ -590,17 +544,12 @@ const BridgeContainer = () => {
             selectedToken={selectedToken}
             isAmountInputError={isAmountInputError}
             isAddressInputError={isAddressInputError}
-            isRouterQuote={!!routerQuote}
             isHyperlaneQuote={!!hyperlaneQuote}
-            routerQuote={routerQuote}
             hyperlaneQuote={hyperlaneQuote}
-            routerQuoteError={routerQuoteError}
             hyperlaneQuoteError={hyperlaneQuoteError}
             isTxInProgress={isTxInProgress}
-            isRouterQuoteLoading={isRouterQuoteLoading}
             isHyperlaneQuoteLoading={isHyperlaneQuoteLoading}
             openConfirmBridgeModal={openConfirmBridgeModal}
-            refetchRouterQuote={refetchRouterQuote}
             refetchHyperlaneQuote={refetchHyperlaneQuote}
           />
         </div>
@@ -666,14 +615,9 @@ const BridgeContainer = () => {
           sourceChain={selectedSourceChain}
           destinationChain={selectedDestinationChain}
           token={selectedToken}
-          feeDetails={
-            selectedToken?.bridgeType === EVMTokenBridgeEnum.Router
-              ? routerFeeDetails
-              : hyperlaneFeeDetails
-          }
+          feeDetails={hyperlaneFeeDetails}
           activeAccountAddress={activeAccount.address}
           destinationAddress={destinationAddress}
-          routerTransferData={routerTransferData}
           sendingAmount={sendingAmount}
           receivingAmount={receivingAmount}
           isTxInProgress={isTxInProgress}

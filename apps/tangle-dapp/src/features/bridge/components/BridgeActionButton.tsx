@@ -18,16 +18,11 @@ interface BridgeActionButtonProps {
   isAmountInputError: boolean;
   isAddressInputError: boolean;
   isTxInProgress: boolean;
-  isRouterQuoteLoading: boolean;
   isHyperlaneQuoteLoading: boolean;
-  routerQuoteError: any | null;
   hyperlaneQuoteError: any | null;
-  isRouterQuote: boolean;
   isHyperlaneQuote: boolean;
-  routerQuote: any | null;
   hyperlaneQuote: any | null;
   openConfirmBridgeModal: () => void;
-  refetchRouterQuote: () => void;
   refetchHyperlaneQuote: () => void;
 }
 
@@ -42,14 +37,10 @@ export default function BridgeActionButton({
   isAmountInputError,
   isAddressInputError,
   isTxInProgress,
-  isRouterQuoteLoading,
   isHyperlaneQuoteLoading,
-  routerQuoteError,
   hyperlaneQuoteError,
-  isRouterQuote,
   isHyperlaneQuote,
   openConfirmBridgeModal,
-  refetchRouterQuote,
   refetchHyperlaneQuote,
 }: BridgeActionButtonProps) {
   const isWrongChain = useMemo(() => {
@@ -75,8 +66,8 @@ export default function BridgeActionButton({
   }
 
   const isActionBtnLoading = useMemo(() => {
-    return isRouterQuoteLoading || isHyperlaneQuoteLoading || isTxInProgress;
-  }, [isRouterQuoteLoading, isHyperlaneQuoteLoading, isTxInProgress]);
+    return isHyperlaneQuoteLoading || isTxInProgress;
+  }, [isHyperlaneQuoteLoading, isTxInProgress]);
 
   const actionBtnLoadingText = useMemo(() => {
     if (isTxInProgress) {
@@ -94,8 +85,7 @@ export default function BridgeActionButton({
       destinationAddress &&
       !isAmountInputError &&
       !isAddressInputError &&
-      (isRouterQuote || isHyperlaneQuote) &&
-      !routerQuoteError &&
+      isHyperlaneQuote &&
       !hyperlaneQuoteError
     ) {
       return 'Confirm Bridge';
@@ -108,9 +98,7 @@ export default function BridgeActionButton({
     destinationAddress,
     isAmountInputError,
     isAddressInputError,
-    isRouterQuote,
     isHyperlaneQuote,
-    routerQuoteError,
     hyperlaneQuoteError,
   ]);
 
@@ -121,16 +109,13 @@ export default function BridgeActionButton({
       selectedToken &&
       !isAmountInputError &&
       !isAddressInputError &&
-      (isRouterQuote || isHyperlaneQuote) &&
-      !routerQuoteError &&
+      isHyperlaneQuote &&
       !hyperlaneQuoteError
     ) {
       openConfirmBridgeModal();
     } else if (amount && selectedToken && !isAmountInputError) {
       if (selectedToken.bridgeType === EVMTokenBridgeEnum.Hyperlane) {
         refetchHyperlaneQuote();
-      } else {
-        refetchRouterQuote();
       }
     }
   }, [
@@ -139,13 +124,10 @@ export default function BridgeActionButton({
     selectedToken,
     isAmountInputError,
     isAddressInputError,
-    isRouterQuote,
     isHyperlaneQuote,
-    routerQuoteError,
     hyperlaneQuoteError,
     openConfirmBridgeModal,
     refetchHyperlaneQuote,
-    refetchRouterQuote,
   ]);
 
   return (
