@@ -42,7 +42,9 @@ export default function useAssets(
     sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM;
 
   const { data: nativeTokenBalance } = useBalance({
-    address: activeAccount?.address as `0x${string}`,
+    address: activeAccount?.address
+      ? assertEvmAddress(activeAccount.address)
+      : undefined,
     chainId: selectedSourceChain.id,
     query: {
       enabled: activeAccount !== null,
@@ -101,7 +103,7 @@ export default function useAssets(
 
     const address = isSourceTangleChain
       ? token.hyperlaneSyntheticAddress
-      : (token.address as `0x${string}`);
+      : token.address;
 
     const tokenExplorerUrl = selectedChainExplorerUrl?.url
       ? makeExplorerUrl(
