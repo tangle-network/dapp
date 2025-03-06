@@ -76,7 +76,7 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
             fw="normal"
             className="text-mono-200 dark:text-mono-0"
           >
-            {props.row.original.name?.toUpperCase()}
+            {props.row.original.name?.toUpperCase()}{' '}
             <span className="text-mono-180 dark:text-mono-120">
               #{props.getValue()}
             </span>
