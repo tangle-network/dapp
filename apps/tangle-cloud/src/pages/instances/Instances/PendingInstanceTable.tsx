@@ -33,8 +33,7 @@ import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNu
 
 type MonitoringBlueprintServiceItem = MonitoringBlueprint['services'][number];
 
-const columnHelper =
-  createColumnHelper<MonitoringBlueprintServiceItem>();
+const columnHelper = createColumnHelper<MonitoringBlueprintServiceItem>();
 
 export const PendingInstanceTable: FC<InstancesTabProps> = ({
   data,
