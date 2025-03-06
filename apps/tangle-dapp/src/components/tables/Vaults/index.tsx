@@ -229,6 +229,7 @@ const VaultsTable: FC<Props> = ({
   emptyTableProps,
   loadingTableProps,
   tableProps,
+  isLoading: isLoadingProp,
 }) => {
   const nativeTokenSymbol = useNetworkStore(
     (store) => store.network.tokenSymbol,
@@ -252,7 +253,7 @@ const VaultsTable: FC<Props> = ({
     ),
   );
 
-  const isLoading = data === null;
+  const isLoading = isLoadingProp || data === null;
 
   if (isLoading) {
     return (
