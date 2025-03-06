@@ -39,7 +39,7 @@ const useLsActivePoolDisplayName = (): ActivePoolDisplayNameReturn => {
       return null;
     }
 
-    return `${name}#${lsPoolId}` satisfies LsPoolDisplayName;
+    return `${name ?? 'Pool'} #${lsPoolId}` satisfies LsPoolDisplayName;
   }, [activePool, lsPoolId, name]);
 
   return { name, id: lsPoolId, displayName };

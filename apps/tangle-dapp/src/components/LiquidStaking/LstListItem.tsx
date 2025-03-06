@@ -41,7 +41,7 @@ const LstListItem: FC<Props> = ({ pool, isSelfStaked }) => {
           fw="bold"
           className="block text-mono-200 dark:text-mono-0"
         >
-          {pool.name?.toUpperCase()}
+          {pool.name?.toUpperCase()}{' '}
           <span className="text-mono-180 dark:text-mono-120">#{pool.id}</span>
         </Typography>
       }
