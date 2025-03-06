@@ -5,6 +5,7 @@ import { EVMTokenBridgeEnum } from '@tangle-network/evm-contract-metadata';
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { useCallback, useMemo } from 'react';
+import { HyperlaneQuote } from '../hooks/useHyperlaneQuote';
 
 interface BridgeActionButtonProps {
   activeWallet: WalletConfig | undefined;
@@ -19,9 +20,9 @@ interface BridgeActionButtonProps {
   isAddressInputError: boolean;
   isTxInProgress: boolean;
   isHyperlaneQuoteLoading: boolean;
-  hyperlaneQuoteError: any | null;
+  hyperlaneQuoteError: Error | null;
   isHyperlaneQuote: boolean;
-  hyperlaneQuote: any | null;
+  hyperlaneQuote: HyperlaneQuote | null;
   openConfirmBridgeModal: () => void;
   refetchHyperlaneQuote: () => void;
 }
