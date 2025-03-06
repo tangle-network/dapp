@@ -26,21 +26,21 @@ import { useShallow } from 'zustand/react/shallow';
 import AddressInput from '../../../components/AddressInput';
 import AmountInput from '../../../components/AmountInput';
 import { BridgeConfirmationModal } from '../components/BridgeConfirmationModal';
-import { FeeDetail } from '../components/FeeDetail';
+import { BridgeFeeDetail } from '../components/BridgeFeeDetail';
 import ErrorMessage from '../../../components/ErrorMessage';
 import { AssetConfig, AssetList } from '../../../components/Lists/AssetList';
 import { ChainList } from '../../../components/Lists/ChainList';
 import { AddressType } from '../../../constants';
 import useBridgeStore from '../context/useBridgeStore';
 import useBalances from '../../../data/balances/useBalances';
-import { useBridgeEvmBalances } from '../hooks/useBridgeEvmBalances';
+import { useEvmBalances } from '../hooks/useEvmBalances';
 import { useHyperlaneQuote } from '../hooks/useHyperlaneQuote';
 import useRouterQuote from '../hooks/useRouterQuote';
-import useIsBridgeNativeToken from '../hooks/useIsBridgeNativeToken';
+import useIsNativeToken from '../hooks/useIsNativeToken';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import useBridgeAssets from '../hooks/useBridgeAssets';
-import useBridgeTokenBalance from '../hooks/useBridgeTokenBalance';
+import useAssets from '../hooks/useAssets';
+import useTokenBalance from '../hooks/useTokenBalance';
 import useHyperlaneFeeDetails from '../hooks/useHyperlaneFeeDetails';
 import useRouterFeeDetails from '../hooks/useRouterFeeDetails';
 import useRouterQuoteParams from '../hooks/useRouterQuoteParams';
@@ -180,12 +180,12 @@ const BridgeContainer = () => {
     close: closeConfirmBridgeModal,
   } = useModal(false);
 
-  const { balances, refresh: refreshEvmBalances } = useBridgeEvmBalances(
+  const { balances, refresh: refreshEvmBalances } = useEvmBalances(
     sourceTypedChainId,
     destinationTypedChainId,
   );
 
-  const isNativeToken = useIsBridgeNativeToken(
+  const isNativeToken = useIsNativeToken(
     calculateTypedChainId(
       selectedSourceChain.chainType,
       selectedSourceChain.id,
@@ -291,7 +291,7 @@ const BridgeContainer = () => {
     switchChain,
   ]);
 
-  const assets = useBridgeAssets(sourceTypedChainId, balances);
+  const assets = useAssets(sourceTypedChainId, balances);
 
   const onSelectToken = useCallback(
     (asset: AssetConfig) => {
@@ -312,7 +312,7 @@ const BridgeContainer = () => {
     [setSelectedToken, tokens, isNativeToken],
   );
 
-  const sourceTokenBalance = useBridgeTokenBalance(
+  const sourceTokenBalance = useTokenBalance(
     sourceTypedChainId,
     balances,
   );
@@ -556,7 +556,7 @@ const BridgeContainer = () => {
           </div>
 
           {routerQuote && !isRouterQuoteLoading && routerFeeDetails && (
-            <FeeDetail
+            <BridgeFeeDetail
               token={routerFeeDetails.token}
               amounts={routerFeeDetails.amounts}
               recipientExplorerUrl={recipientExplorerUrl}
@@ -566,7 +566,7 @@ const BridgeContainer = () => {
           {hyperlaneQuote &&
             !isHyperlaneQuoteLoading &&
             hyperlaneFeeDetails && (
-              <FeeDetail
+              <BridgeFeeDetail
                 token={hyperlaneFeeDetails.token}
                 amounts={hyperlaneFeeDetails.amounts}
                 recipientExplorerUrl={recipientExplorerUrl}

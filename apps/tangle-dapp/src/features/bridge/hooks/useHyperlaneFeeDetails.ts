@@ -1,4 +1,4 @@
-import { FeeDetailProps } from '../components/FeeDetail';
+import { BridgeFeeDetailProps } from '../components/BridgeFeeDetail';
 import { Account } from '@tangle-network/abstract-api-provider/account';
 import { HyperlaneQuote } from './useHyperlaneQuote';
 import Decimal from 'decimal.js';
@@ -18,13 +18,13 @@ import { useShallow } from 'zustand/react/shallow';
  * @param {Account<unknown> | null} activeAccount the active account
  * @param {HyperlaneQuote | null} hyperlaneQuote the hyperlane quote
  * @param {string | undefined} recipientExplorerUrl the recipient explorer url
- * @returns {FeeDetailProps | null} the fee details props
+ * @returns {BridgeFeeDetailProps | null} the fee details props
  */
 export default function useHyperlaneFeeDetails(
   activeAccount: Account<unknown> | null,
   hyperlaneQuote: HyperlaneQuote | null,
   recipientExplorerUrl?: string,
-): FeeDetailProps | null {
+): BridgeFeeDetailProps | null {
   const selectedToken = useBridgeStore(
     useShallow((store) => store.selectedToken),
   );

@@ -51,8 +51,8 @@ import useBridgeTxQueue from '../context/BridgeTxQueueContext/useBridgeTxQueue';
 import { useHyperlaneTransfer } from '../hooks/useHyperlaneTransfer';
 import { useRouterTransfer } from '../hooks/useRouterTransfer';
 import useWalletClient from '../hooks/useWalletClient';
-import useIsBridgeNativeToken from '../hooks/useIsBridgeNativeToken';
-import { FeeDetail, FeeDetailProps } from './FeeDetail';
+import useIsNativeToken from '../hooks/useIsNativeToken';
+import { BridgeFeeDetail, BridgeFeeDetailProps } from './BridgeFeeDetail';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 
 interface BridgeConfirmationModalProps {
@@ -62,7 +62,7 @@ interface BridgeConfirmationModalProps {
   sourceChain: ChainConfig;
   destinationChain: ChainConfig;
   token: BridgeToken | null;
-  feeDetails: FeeDetailProps | null;
+  feeDetails: BridgeFeeDetailProps | null;
   activeAccountAddress: string;
   destinationAddress: string;
   routerTransferData: {
@@ -133,9 +133,8 @@ export const BridgeConfirmationModal = ({
     recipientAddress: destinationAddress,
   });
 
-  const isNativeToken = useIsBridgeNativeToken(
+  const isNativeToken = useIsNativeToken(
     calculateTypedChainId(sourceChain.chainType, sourceChain.id),
-    token,
   );
 
   const { notificationApi } = useUIContext();
@@ -760,7 +759,7 @@ export const BridgeConfirmationModal = ({
           </div>
 
           {token && feeDetails ? (
-            <FeeDetail
+            <BridgeFeeDetail
               {...feeDetails}
               className="bg-mono-20 dark:bg-mono-170 rounded-xl"
             />

@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { getHyperlaneWarpCore } from '../lib/hyperlane/context';
+import { getHyperlaneWarpCore } from '../context/BridgeHyperlaneContext/BridgeHyperlaneContext';
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
-import { getHyperlaneChainName, tryFindToken } from '../lib/hyperlane/utils';
+import getHyperlaneChainName from '../utils/getHyperlaneChainName';
+import getHyperlaneToken from '../utils/getHyperlaneToken';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
-import { fetchEvmTokenBalance } from './useBridgeEvmBalances';
+import { fetchEvmTokenBalance } from './useEvmBalances';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { notificationApi } from '@tangle-network/ui-components';
 
@@ -60,7 +61,7 @@ export const getHyperlaneQuote = async (
         ? token.hyperlaneSyntheticAddress
         : token.address;
 
-    const hyperlaneToken = tryFindToken(
+    const hyperlaneToken = getHyperlaneToken(
       getHyperlaneChainName(sourceTypedChainId),
       tokenToBridge,
     );

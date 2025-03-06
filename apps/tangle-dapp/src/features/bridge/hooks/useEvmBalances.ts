@@ -47,7 +47,7 @@ export const fetchEvmTokenBalance = async (
   }
 };
 
-export const useBridgeEvmBalances = (
+export const useEvmBalances = (
   sourceChainId: number,
   destinationChainId: number,
 ) => {

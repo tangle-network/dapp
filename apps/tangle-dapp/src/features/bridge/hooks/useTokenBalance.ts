@@ -1,7 +1,7 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
 import { BridgeTokenWithBalance } from '@tangle-network/tangle-shared-ui/types';
-import useBridgeAssets from './useBridgeAssets';
+import useAssets from './useAssets';
 import { useMemo } from 'react';
 import useBridgeStore from '../context/useBridgeStore';
 import { useShallow } from 'zustand/react/shallow';
@@ -13,7 +13,7 @@ import { useShallow } from 'zustand/react/shallow';
  * @param {Partial<Record<PresetTypedChainId, BridgeTokenWithBalance[]>>} balances Record of token balances by chain ID
  * @returns {BN | null} The balance of the selected token on the source chain, or null if no balance is available.
  */
-export default function useBridgeTokenBalance(
+export default function useTokenBalance(
   sourceTypedChainId: number,
   balances: Partial<Record<PresetTypedChainId, BridgeTokenWithBalance[]>>,
 ): BN | null {
@@ -25,7 +25,7 @@ export default function useBridgeTokenBalance(
     sourceTypedChainId === PresetTypedChainId.TangleMainnetEVM ||
     sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM;
 
-  const assets = useBridgeAssets(sourceTypedChainId, balances);
+  const assets = useAssets(sourceTypedChainId, balances);
 
   const tokenAddress = useMemo(() => {
     if (!selectedToken) return null;

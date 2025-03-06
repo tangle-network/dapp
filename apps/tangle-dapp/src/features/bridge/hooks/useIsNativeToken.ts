@@ -3,7 +3,7 @@ import { EVMTokenEnum } from '@tangle-network/evm-contract-metadata';
 import useBridgeStore from '../context/useBridgeStore';
 import { useShallow } from 'zustand/react/shallow';
 
-const useIsBridgeNativeToken = (
+const useIsNativeToken = (
   sourceTypedChainId: PresetTypedChainId,
 ): boolean => {
   const selectedToken = useBridgeStore(
@@ -27,4 +27,4 @@ const useIsBridgeNativeToken = (
   return isNativeToken;
 };
 
-export default useIsBridgeNativeToken;
+export default useIsNativeToken;

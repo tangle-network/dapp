@@ -3,8 +3,9 @@ import { JsonRpcSigner } from '@ethersproject/providers';
 import { useMutation } from '@tanstack/react-query';
 import { providers, utils } from 'ethers';
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
-import { getHyperlaneWarpCore } from '../lib/hyperlane/context';
-import { getHyperlaneChainName, tryFindToken } from '../lib/hyperlane/utils';
+import { getHyperlaneWarpCore } from '../context/BridgeHyperlaneContext/BridgeHyperlaneContext';
+import getHyperlaneChainName from '../utils/getHyperlaneChainName';
+import getHyperlaneToken from '../utils/getHyperlaneToken';
 import useEthersSigner from './useEthersSigner';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
 
@@ -42,7 +43,7 @@ export const transferByHyperlane = async ({
         ? token.hyperlaneSyntheticAddress
         : token.address;
 
-    const hyperlaneToken = tryFindToken(
+    const hyperlaneToken = getHyperlaneToken(
       getHyperlaneChainName(sourceTypedChainId),
       tokenToBridge,
     );

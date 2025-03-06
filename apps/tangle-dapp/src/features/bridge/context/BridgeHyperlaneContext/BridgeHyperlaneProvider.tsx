@@ -2,9 +2,11 @@ import { FC, PropsWithChildren, useEffect } from 'react';
 import {
   initHyperlaneWarpContext,
   removeHyperlaneWarpContext,
-} from '../lib/hyperlane/context';
+} from './BridgeHyperlaneContext';
 
-const HyperlaneWarpContext: FC<PropsWithChildren> = ({ children }) => {
+const BridgeHyperlaneProvider: FC<PropsWithChildren> = ({
+  children,
+}) => {
   useEffect(() => {
     const initHyperlane = async () => {
       try {
@@ -21,4 +23,4 @@ const HyperlaneWarpContext: FC<PropsWithChildren> = ({ children }) => {
   return children;
 };
 
-export default HyperlaneWarpContext;
+export default BridgeHyperlaneProvider;

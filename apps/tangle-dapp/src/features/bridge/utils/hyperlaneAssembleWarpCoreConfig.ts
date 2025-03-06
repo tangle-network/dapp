@@ -6,7 +6,7 @@ import {
   HYPERLANE_WARP_ROUTE_WHITELIST,
 } from '@tangle-network/tangle-shared-ui/constants/bridge';
 
-export default function assembleWarpCoreConfig(): WarpCoreConfig {
+export default function hyperlaneAssembleWarpCoreConfig(): WarpCoreConfig {
   const result = WarpCoreConfigSchema.safeParse(HYPERLANE_WARP_ROUTE_CONFIGS);
   if (!result.success) {
     throw new Error(`Invalid warp core config: ${result.error.toString()}`);

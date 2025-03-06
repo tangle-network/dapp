@@ -1,7 +1,7 @@
 import { PresetTypedChainId } from '@tangle-network/dapp-types/ChainId';
 import { BridgeTokenWithBalance } from '@tangle-network/tangle-shared-ui/types';
 import { AssetConfig } from '../../../components/Lists/AssetList';
-import useIsBridgeNativeToken from './useIsBridgeNativeToken';
+import useIsNativeToken from './useIsNativeToken';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import useBridgeStore from '../context/useBridgeStore';
 import { useShallow } from 'zustand/react/shallow';
@@ -20,7 +20,7 @@ import { assertEvmAddress } from '@tangle-network/ui-components/utils/assertEvmA
  * @param {Partial<Record<PresetTypedChainId, BridgeTokenWithBalance[]>>} tokenBalances Record of token balances by chain ID
  * @returns {AssetConfig[]} A list of asset configurations that is used to display on the AssetList modal.
  */
-export default function useBridgeAssets(
+export default function useAssets(
   sourceTypedChainId: number,
   tokenBalances: Partial<Record<PresetTypedChainId, BridgeTokenWithBalance[]>>,
 ): AssetConfig[] {
@@ -30,7 +30,7 @@ export default function useBridgeAssets(
   const tokens = useBridgeStore(useShallow((store) => store.tokens));
   const [activeAccount] = useActiveAccount();
 
-  const isNativeToken = useIsBridgeNativeToken(
+  const isNativeToken = useIsNativeToken(
     calculateTypedChainId(
       selectedSourceChain.chainType,
       selectedSourceChain.id,

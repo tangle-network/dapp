@@ -1,4 +1,4 @@
-import { FeeDetailProps } from '../components/FeeDetail';
+import { BridgeFeeDetailProps } from '../components/BridgeFeeDetail';
 import Decimal from 'decimal.js';
 import { formatEther } from 'viem';
 import useBridgeStore from '../context/useBridgeStore';
@@ -17,12 +17,12 @@ import { useShallow } from 'zustand/react/shallow';
  *
  * @param {RouterQuote | null} routerQuote the router quote
  * @param {string | undefined} recipientExplorerUrl the recipient explorer url
- * @returns {FeeDetailProps | null} the fee details props
+ * @returns {BridgeFeeDetailProps | null} the fee details props
  */
 export default function useRouterFeeDetails(
   routerQuote: RouterQuote | null,
   recipientExplorerUrl?: string,
-): FeeDetailProps | null {
+): BridgeFeeDetailProps | null {
   const selectedToken = useBridgeStore(
     useShallow((store) => store.selectedToken),
   );

@@ -17,7 +17,7 @@ import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
 
-export interface FeeDetailProps {
+export interface BridgeFeeDetailProps {
   token: BridgeToken;
   amounts: {
     sending: string;
@@ -30,13 +30,13 @@ export interface FeeDetailProps {
   recipientExplorerUrl?: string;
 }
 
-export const FeeDetail = ({
+export const BridgeFeeDetail = ({
   token,
   amounts,
   className,
   isCollapsible = true,
   recipientExplorerUrl,
-}: FeeDetailProps) => {
+}: BridgeFeeDetailProps) => {
   return (
     <Accordion
       type="single"

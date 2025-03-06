@@ -6,7 +6,7 @@ import {
 } from '@tangle-network/tangle-shared-ui/constants/bridge';
 import { z } from 'zod';
 
-export default async function assembleChainMetadata() {
+export default async function hyperlaneAssembleChainMetadata() {
   const result = z.record(z.custom<ChainMetadata>()).safeParse({
     ...HYPERLANE_CHAINS,
   });
