@@ -239,7 +239,7 @@ export const BridgeConfirmationModal = ({
                   receipt.transactionHash,
                   'tx',
                   'web3',
-                ).toString(),
+                ),
               );
             }
           }
@@ -439,7 +439,7 @@ export const BridgeConfirmationModal = ({
               receipt.transactionHash,
               'tx',
               'web3',
-            ).toString(),
+            ),
           );
         }
         watchTransaction(token, receipt.transactionHash);
@@ -605,7 +605,7 @@ const ConfirmationItem: FC<{
       accAddress,
       'address',
       'web3',
-    ).toString();
+    );
   }, [chain, accAddress]);
 
   return (

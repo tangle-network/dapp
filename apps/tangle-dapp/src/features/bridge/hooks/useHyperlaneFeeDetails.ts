@@ -23,7 +23,7 @@ import { useShallow } from 'zustand/react/shallow';
 export default function useHyperlaneFeeDetails(
   activeAccount: Account<unknown> | null,
   hyperlaneQuote: HyperlaneQuote | null,
-  recipientExplorerUrl?: string,
+  recipientExplorerUrl: string | null,
 ): BridgeFeeDetailProps | null {
   const selectedToken = useBridgeStore(
     useShallow((store) => store.selectedToken),

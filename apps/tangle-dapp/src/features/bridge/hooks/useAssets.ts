@@ -114,7 +114,7 @@ export default function useAssets(
           'address',
           'web3',
         )
-      : undefined;
+      : null;
 
     const formattedBalance = (() => {
       if (!activeAccount || !balance) return undefined;
@@ -130,7 +130,7 @@ export default function useAssets(
       symbol: token.tokenType,
       optionalSymbol: token.symbol,
       balance: formattedBalance,
-      explorerUrl: !isNativeToken ? tokenExplorerUrl : undefined,
+      explorerUrl: !isNativeToken && tokenExplorerUrl ? tokenExplorerUrl : null,
       address: address !== undefined ? assertEvmAddress(address) : undefined,
       decimals: token.decimals,
     } satisfies AssetConfig;

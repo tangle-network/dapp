@@ -209,7 +209,7 @@ const BridgeContainer = () => {
       destinationAddress === null ||
       !selectedDestinationChain.blockExplorers?.default.url
     ) {
-      return undefined;
+      return null;
     }
 
     return makeExplorerUrl(

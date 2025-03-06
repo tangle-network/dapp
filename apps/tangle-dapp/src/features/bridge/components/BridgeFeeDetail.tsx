@@ -27,7 +27,7 @@ export interface BridgeFeeDetailProps {
   };
   className?: string;
   isCollapsible?: boolean;
-  recipientExplorerUrl?: string;
+  recipientExplorerUrl: string | null;
 }
 
 export const BridgeFeeDetail = ({
