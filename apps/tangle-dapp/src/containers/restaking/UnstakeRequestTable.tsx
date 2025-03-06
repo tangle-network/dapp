@@ -152,7 +152,7 @@ const UnstakeRequestTable: FC<Props> = ({
         return {
           amount: fmtAmount,
           amountRaw: amount,
-          assetId: assetId,
+          assetId,
           assetSymbol: asset.metadata.symbol,
           sessionsRemaining,
           sessionDurationMs,

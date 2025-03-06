@@ -138,7 +138,7 @@
     "@swc/jest": "~0.2.37",
     "@tailwindcss/forms": "^0.5.9",
     "@tangle-network/tangle-restaking-types": "^0.1.0",
-    "@tangle-network/tangle-substrate-types": "^0.9.13",
+    "@tangle-network/tangle-substrate-types": "^0.9.14",
     "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/react-table": "^8.20.6",
     "@testing-library/dom": "^10.4.0",

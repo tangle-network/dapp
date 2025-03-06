@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';
 import { StorageKey, u32, Vec, Option } from '@polkadot/types';
-import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
+import { TanglePrimitivesServicesTypesAsset } from '@polkadot/types/lookup';
 import { RestakeAssetId } from '../../types';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import { isEvmAddress } from '@tangle-network/ui-components';
@@ -21,7 +21,7 @@ import { NATIVE_ASSET_ID } from '../../constants/restaking';
 const toPrimitiveRewardVault = (
   entries: [
     StorageKey<[u32]> | number,
-    Option<Vec<TanglePrimitivesServicesAsset>>,
+    Option<Vec<TanglePrimitivesServicesTypesAsset>>,
   ][],
 ): [vaultId: bigint, assetIds: RestakeAssetId[] | null][] => {
   return entries.map(([vaultId, assets]) => {
