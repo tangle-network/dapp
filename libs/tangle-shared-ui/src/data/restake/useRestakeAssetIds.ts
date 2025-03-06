@@ -22,10 +22,11 @@ function toPrimitive(
   });
 }
 
-const useRestakeAssetIds = (): RestakeAssetId[] | null => {
-  const { result: vaultPotAccounts } = useVaultsPotAccounts();
+const useRestakeAssetIds = () => {
+  const { result: vaultPotAccounts, isLoading: isLoadingVaultPotAccounts } =
+    useVaultsPotAccounts();
 
-  const { result: assetIds } = useApiRx(
+  const { result: assetIds, isLoading: isLoadingAssetIds } = useApiRx(
     useCallback(
       (api) => {
         if (vaultPotAccounts === null) {
@@ -56,7 +57,10 @@ const useRestakeAssetIds = (): RestakeAssetId[] | null => {
     ),
   );
 
-  return assetIds;
+  return {
+    assetIds,
+    isLoading: isLoadingVaultPotAccounts || isLoadingAssetIds,
+  };
 };
 
 export default useRestakeAssetIds;
