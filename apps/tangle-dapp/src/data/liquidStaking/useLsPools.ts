@@ -75,7 +75,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
       const membersMap = new Map(membersKeyValuePairs);
 
       const name = tanglePool.metadata.name.isNone
-        ? undefined
+        ? 'Pool'
         : tanglePool.metadata.name.unwrap().toUtf8();
 
       const iconUrl = tanglePool.metadata.icon.isNone
