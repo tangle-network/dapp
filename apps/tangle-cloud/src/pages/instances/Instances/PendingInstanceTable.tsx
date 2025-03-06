@@ -31,8 +31,10 @@ import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
 import { NestedOperatorCell } from '../../../components/NestedOperatorCell';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 
+type MonitoringBlueprintServiceItem = MonitoringBlueprint['services'][number];
+
 const columnHelper =
-  createColumnHelper<MonitoringBlueprint['services'][number]>();
+  createColumnHelper<MonitoringBlueprintServiceItem>();
 
 export const PendingInstanceTable: FC<InstancesTabProps> = ({
   data,
@@ -46,7 +48,7 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
 
   const columns = useMemo(() => {
     const baseColumns: AccessorKeyColumnDef<
-      MonitoringBlueprint['services'][number],
+      MonitoringBlueprintServiceItem,
       any
     >[] = [
       columnHelper.accessor('id', {
@@ -275,7 +277,7 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
   });
 
   return (
-    <TangleCloudTable<MonitoringBlueprint['services'][number]>
+    <TangleCloudTable<MonitoringBlueprintServiceItem>
       title={pluralize('Running Instance', !isEmpty)}
       data={data}
       error={error}
