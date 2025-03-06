@@ -312,10 +312,7 @@ const BridgeContainer = () => {
     [setSelectedToken, tokens, isNativeToken],
   );
 
-  const sourceTokenBalance = useTokenBalance(
-    sourceTypedChainId,
-    balances,
-  );
+  const sourceTokenBalance = useTokenBalance(sourceTypedChainId, balances);
 
   const routerTransferData = useRouterTransferData(
     routerQuote,

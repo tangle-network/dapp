@@ -4,9 +4,7 @@ import {
   removeHyperlaneWarpContext,
 } from './BridgeHyperlaneContext';
 
-const BridgeHyperlaneProvider: FC<PropsWithChildren> = ({
-  children,
-}) => {
+const BridgeHyperlaneProvider: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     const initHyperlane = async () => {
       try {
