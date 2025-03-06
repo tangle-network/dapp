@@ -188,9 +188,9 @@ function useAgnosticTx<
         : substrateSuccessMessage;
 
       const explorerUrl = createExplorerTxUrl(
-        false,
+        isEvmAccount,
         txHash,
-        substrateTxBlockHash ?? undefined,
+        isEvmAccount ? undefined : (substrateTxBlockHash ?? undefined),
       );
 
       notifySuccess(name, explorerUrl, successMessage);
