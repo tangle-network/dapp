@@ -31,6 +31,7 @@ const useRestakeAsset = (id: RestakeAssetId | null | undefined) => {
         id: NATIVE_ASSET_ID,
         balance: bondedInStaking.value,
         metadata: {
+          name: nativeTokenSymbol,
           decimals: TANGLE_TOKEN_DECIMALS,
           symbol: nativeTokenSymbol,
           status: 'Live',
