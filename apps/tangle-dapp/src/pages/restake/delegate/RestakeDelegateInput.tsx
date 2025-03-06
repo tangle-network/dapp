@@ -22,6 +22,8 @@ import decimalsToStep from '../../../utils/decimalsToStep';
 import { getAmountValidation } from '../../../utils/getAmountValidation';
 import AssetPlaceholder from '../AssetPlaceholder';
 import calculateRestakeAvailableBalance from '../../../utils/restaking/calculateRestakeAvailableBalance';
+import useNativeRestakeAssetBalance from '../../../data/restake/useNativeRestakeAssetBalance';
+import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
 
 type Props = {
   amountError: string | undefined;
@@ -49,21 +51,26 @@ const RestakeDelegateInput: FC<Props> = ({
 
   const { minDelegateAmount } = useRestakeConsts();
   const selectedAsset = useRestakeAsset(selectedAssetId);
+  const nativeAssetBalance = useNativeRestakeAssetBalance();
+
+  const availableBalance = useMemo(() => {
+    if (selectedAssetId === NATIVE_ASSET_ID) {
+      return nativeAssetBalance === null
+        ? null
+        : BigInt(nativeAssetBalance.toString());
+    } else if (delegatorInfo === null || selectedAsset === null) {
+      return null;
+    } else {
+      return calculateRestakeAvailableBalance(delegatorInfo, selectedAsset.id);
+    }
+  }, [delegatorInfo, nativeAssetBalance, selectedAsset, selectedAssetId]);
 
   const { max, maxFormatted } = useMemo(() => {
-    if (!isDefined(selectedAsset) || !isDefined(delegatorInfo)) {
+    if (selectedAsset === null || availableBalance === null) {
       return {};
     }
 
-    const availableBalance = calculateRestakeAvailableBalance(
-      delegatorInfo,
-      selectedAsset.id,
-    );
-
-    if (availableBalance === null) {
-      return {};
-    }
-
+    // TODO: This should not be casted to a number, as it will fail in large/small values. Need to refactor.
     const maxFormatted = +formatUnits(
       availableBalance,
       selectedAsset.metadata.decimals,
@@ -73,7 +80,7 @@ const RestakeDelegateInput: FC<Props> = ({
       max: availableBalance,
       maxFormatted,
     };
-  }, [delegatorInfo, selectedAsset]);
+  }, [availableBalance, selectedAsset]);
 
   const { min, minFormatted } = useMemo(() => {
     if (!isDefined(minDelegateAmount) || !isDefined(selectedAsset)) {

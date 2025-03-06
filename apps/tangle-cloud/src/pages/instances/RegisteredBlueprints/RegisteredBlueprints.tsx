@@ -13,28 +13,23 @@ import {
   getRoundedAmountString,
   Typography,
 } from '@tangle-network/ui-components';
-import { TableStatusProps } from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
-
-const columnHelper = createColumnHelper<MonitoringBlueprint>();
 
 export type RegisteredBlueprintsTableProps = {
   blueprints: MonitoringBlueprint[];
   isLoading: boolean;
   error: Error | null;
 };
+const columnHelper = createColumnHelper<MonitoringBlueprint>();
 
 export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
   blueprints,
   isLoading,
   error,
 }) => {
-  const loadingTableProps: Partial<TableStatusProps> = {};
-  const emptyTableProps: Partial<TableStatusProps> = {};
-
   const isEmpty = blueprints.length === 0;
 
   const columns = useMemo(
@@ -69,6 +64,7 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
                   fw="bold"
                   className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
                 >
+                  {props.row.original.blueprint.metadata.name}
                   {props.row.original.blueprint.metadata.name}
                 </Typography>
               </div>
@@ -179,8 +175,6 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
       data={blueprints}
       error={error}
       isLoading={isLoading}
-      loadingTableProps={loadingTableProps}
-      emptyTableProps={emptyTableProps}
       tableProps={table}
       tableConfig={{
         tableClassName: 'min-w-[1000px]',

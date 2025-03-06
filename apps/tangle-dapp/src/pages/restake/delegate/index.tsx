@@ -1,4 +1,7 @@
-import { ChainConfig } from '@tangle-network/dapp-config';
+import {
+  ChainConfig,
+  TANGLE_TOKEN_DECIMALS,
+} from '@tangle-network/dapp-config';
 import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import isDefined from '@tangle-network/dapp-types/utils/isDefined';
 import { TokenIcon } from '@tangle-network/icons';
@@ -44,6 +47,11 @@ import assertRestakeAssetId from '@tangle-network/tangle-shared-ui/utils/assertR
 import { RestakeAssetTableItem } from '@tangle-network/tangle-shared-ui/types/restake';
 import useRestakeAsset from '../../../data/restake/useRestakeAsset';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useNativeRestakeTx from '../../../data/restake/useNativeRestakeTx';
+import { TxStatus } from '../../../hooks/useSubstrateTx';
+import useNativeRestakeAssetBalance from '../../../data/restake/useNativeRestakeAssetBalance';
 
 type RestakeOperator = {
   accountId: SubstrateAddress;
@@ -77,7 +85,7 @@ const RestakeDelegateForm: FC = () => {
     [setFormValue],
   );
 
-  // Register select fields on mount
+  // Register select fields on mount.
   useEffect(() => {
     register('assetId', { required: 'Asset is required' });
     register('operatorAccountId', { required: 'Operator is required' });
@@ -157,12 +165,35 @@ const RestakeDelegateForm: FC = () => {
     update: updateOperatorModal,
   } = useModal(false);
 
+  const { nativeTokenSymbol } = useNetworkStore();
+  const nativeRestakeAssetBalance = useNativeRestakeAssetBalance();
+
+  const { execute: executeNativeRestake, status: nativeRestakeTxStatus } =
+    useNativeRestakeTx();
+
   const depositedAssets = useMemo<RestakeAssetTableItem[]>(() => {
-    if (!isDefined(delegatorInfo)) {
-      return [];
+    const result: RestakeAssetTableItem[] = [];
+
+    // Insert the native token's staked balance as available as well.
+    // This is to be used for native restaking.
+    if (
+      nativeRestakeAssetBalance !== null &&
+      !nativeRestakeAssetBalance.isZero()
+    ) {
+      result.push({
+        id: NATIVE_ASSET_ID,
+        name: undefined,
+        symbol: nativeTokenSymbol,
+        decimals: TANGLE_TOKEN_DECIMALS,
+        balance: nativeRestakeAssetBalance,
+      } satisfies RestakeAssetTableItem);
     }
 
-    return Object.entries(delegatorInfo.deposits).flatMap(
+    if (delegatorInfo === null) {
+      return result;
+    }
+
+    const deposits = Object.entries(delegatorInfo.deposits).flatMap(
       ([assetIdString, { amount, delegatedAmount }]) => {
         const assetId = assertRestakeAssetId(assetIdString);
         const balance = new BN((amount - delegatedAmount).toString());
@@ -181,7 +212,9 @@ const RestakeDelegateForm: FC = () => {
         } satisfies RestakeAssetTableItem;
       },
     );
-  }, [assets, delegatorInfo]);
+
+    return result.concat(deposits);
+  }, [assets, delegatorInfo, nativeRestakeAssetBalance, nativeTokenSymbol]);
 
   const handleAssetSelect = useCallback(
     (asset: RestakeAssetTableItem) => {
@@ -204,7 +237,11 @@ const RestakeDelegateForm: FC = () => {
   const selectedAsset = useRestakeAsset(watch('assetId'));
 
   const isReady =
-    restakeApi !== null && !isSubmitting && selectedAsset !== null;
+    restakeApi !== null &&
+    !isSubmitting &&
+    selectedAsset !== null &&
+    executeNativeRestake !== null &&
+    nativeRestakeTxStatus !== TxStatus.PROCESSING;
 
   const onSubmit = useCallback<SubmitHandler<DelegationFormFields>>(
     async ({ amount, assetId, operatorAccountId }) => {
@@ -218,13 +255,28 @@ const RestakeDelegateForm: FC = () => {
         return;
       }
 
-      await restakeApi.delegate(operatorAccountId, assetId, amountBn);
+      // If the asset ID is the native asset, the user is trying to native
+      // restake. This is a special case because it uses a different extrinsic.
+      if (assetId === NATIVE_ASSET_ID) {
+        await executeNativeRestake({
+          amount: amountBn,
+          operatorAddress: operatorAccountId,
+        });
+      } else {
+        await restakeApi.delegate(operatorAccountId, assetId, amountBn);
+      }
 
       setValue('operatorAccountId', '', { shouldValidate: false });
       setValue('amount', '', { shouldValidate: false });
       setValue('assetId', '', { shouldValidate: false });
     },
-    [isReady, restakeApi, selectedAsset?.metadata.decimals, setValue],
+    [
+      executeNativeRestake,
+      isReady,
+      restakeApi,
+      selectedAsset?.metadata.decimals,
+      setValue,
+    ],
   );
 
   const operators = useMemo<RestakeOperator[]>(() => {
@@ -270,10 +322,12 @@ const RestakeDelegateForm: FC = () => {
 
               <ActionButton
                 errors={errors}
-                isValid={isValid}
+                isValid={isValid && isReady}
                 openChainModal={openChainModal}
                 watch={watch}
-                isSubmitting={isSubmitting}
+                isSubmitting={
+                  isSubmitting || nativeRestakeTxStatus === TxStatus.PROCESSING
+                }
               />
             </div>
           </div>

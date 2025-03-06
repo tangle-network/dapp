@@ -8,6 +8,7 @@ import { BalanceLockRow } from '.';
 import { LockUnlocksAtKind, SubstrateLockId } from '../../constants';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
 import { sortVestingSchedulesAscending } from '../BalancesTableContainer/LockedBalanceDetails/utils';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 const useVestingLockRows = (): BalanceLockRow[] | null => {
   const { schedulesOpt: vestingSchedulesOpt } = useVestingInfo();
@@ -57,10 +58,25 @@ const useVestingLockRows = (): BalanceLockRow[] | null => {
             endingBlockNumber.sub(currentBlockNumber).toString(),
           )} blocks left until all vested tokens are available to claim.`;
 
+      // Do not exceed the total locked amount in case that
+      // the ending block has already passed, and the difference
+      // between the current block number and the starting block
+      // number exceeds the total locked amount.
+      const amountAlreadyVested = currentBlockNumber?.gt(schedule.startingBlock)
+        ? BN.min(
+            schedule.locked,
+            currentBlockNumber
+              .sub(schedule.startingBlock)
+              .mul(schedule.perBlock),
+          )
+        : BN_ZERO;
+
+      const remaining = schedule.locked.sub(amountAlreadyVested);
+
       return {
         index,
         type: SubstrateLockId.VESTING,
-        remaining: schedule.locked,
+        remaining,
         totalLocked: schedule.locked,
         unlocksAt: endingBlockNumber,
         unlocksAtKind: LockUnlocksAtKind.BLOCK,

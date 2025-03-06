@@ -1,6 +1,7 @@
 'use client';
 
 import type { Option } from '@polkadot/types';
+import { TanglePrimitivesServicesTypesOperatorPreferences } from '@polkadot/types/lookup';
 import { ZERO_BIG_INT } from '@tangle-network/dapp-config';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { useCallback } from 'react';
@@ -21,9 +22,8 @@ import {
 import delegationsToVaultTokens from '../../utils/restake/delegationsToVaultTokens';
 import { extractOperatorData } from '../blueprints/utils/blueprintHelpers';
 import { toPrimitiveBlueprint } from '../blueprints/utils/toPrimitiveBlueprint';
-import useRestakeOperatorMap from './useRestakeOperatorMap';
 import useRestakeAssets from './useRestakeAssets';
-import { TanglePrimitivesServicesTypesOperatorPreferences } from '@polkadot/types/lookup';
+import useRestakeOperatorMap from './useRestakeOperatorMap';
 
 const useBlueprintDetails = (id?: string) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);

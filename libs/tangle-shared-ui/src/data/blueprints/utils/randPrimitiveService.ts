@@ -9,7 +9,7 @@ function randPrimitiveService(
     blueprint: id,
     ownerAccount: operatorAccountAddr,
     permittedCallers: [],
-    operators: [operatorAccountAddr],
+    operators: [operatorAccountAddr, operatorAccountAddr, operatorAccountAddr],
     ttl: 1000,
   };
 }

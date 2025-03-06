@@ -28,17 +28,20 @@ export function extractBlueprintsData(
     number,
     ReturnType<typeof toPrimitiveBlueprint> & { owner: string }
   >();
+
   const ownerSet = new Set<string>();
 
   for (const [key, value] of blueprintEntries) {
     const id = key.args[0].toNumber();
 
-    if (value.isNone) continue;
+    if (value.isNone) {
+      continue;
+    }
 
     const [ownerAccountId32, serviceBlueprint] = value.unwrap();
     const owner = ownerAccountId32.toString();
-
     const primitiveBlueprint = toPrimitiveBlueprint(serviceBlueprint);
+
     blueprintsMap.set(id, merge(primitiveBlueprint, { owner }));
     ownerSet.add(owner);
   }
@@ -59,7 +62,9 @@ export function extractOperatorData(
   const blueprintTVLMap = new Map<number, number>();
 
   for (const [key, value] of operatorEntries) {
-    if (value.isNone) continue;
+    if (value.isNone) {
+      continue;
+    }
 
     const [blueprintIdU64, operatorAccountId32] = key.args;
     const blueprintId = blueprintIdU64.toNumber();
@@ -77,8 +82,10 @@ export function extractOperatorData(
     }
 
     const operator = operatorMap[operatorAccount];
+
     if (operator !== undefined) {
       const restakerSet = blueprintRestakersMap.get(blueprintId);
+
       if (restakerSet === undefined) {
         blueprintRestakersMap.set(
           blueprintId,
@@ -93,6 +100,7 @@ export function extractOperatorData(
 
     if (operatorTVL[operatorAccount] !== undefined) {
       const currentTVL = blueprintTVLMap.get(blueprintId) ?? 0;
+
       blueprintTVLMap.set(
         blueprintId,
         currentTVL + operatorTVL[operatorAccount],

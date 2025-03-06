@@ -81,7 +81,7 @@ export interface DropdownMenuProps extends Omit<ComponentBase, 'onChange'> {
   /**
    * The label to be display, if not provided, the `Dropdown` trigger will display the value property
    */
-  label?: string;
+  label?: string | React.ReactElement;
   /**
    * The icon before the `Dropdown` label
    */

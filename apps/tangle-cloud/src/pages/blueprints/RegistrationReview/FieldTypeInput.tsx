@@ -36,9 +36,8 @@ const isList = (
 
 const isStruct = (
   type: PrimitiveFieldType,
-): type is {
-  Struct: PrimitiveFieldType[];
-} => typeof type === 'object' && 'Struct' in type;
+): type is { Struct: PrimitiveFieldType[] } =>
+  typeof type === 'object' && 'Struct' in type;
 
 const isNumberType = (
   type: string,
@@ -212,11 +211,11 @@ const FieldTypeInput: React.FC<FieldTypeInputProps> = ({
 
     return (
       <div>
-        <Label>{label} (Struct )</Label>
+        <Label>{label} (Struct)</Label>
 
         <div className="ml-4">
           {fields.map((fieldType, idx) => (
-            <div key={`${id}.Struct.${id}.${idx}`}>
+            <div key={`${id}.Struct.${idx}`}>
               <Label>Field {idx + 1}</Label>
 
               <FieldTypeInput

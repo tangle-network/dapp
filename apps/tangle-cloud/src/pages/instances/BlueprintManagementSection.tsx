@@ -5,27 +5,33 @@ import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useA
 // import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
 import useFakeMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useFakeMonitoringBlueprints';
 import { InstanceStatus } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
-import { useMemo } from 'react';
+import { FC, useMemo } from 'react';
 
-export const BlueprintManagementSection = () => {
+type BlueprintManagementSectionProps = {
+  isOperator: boolean;
+};
+export const BlueprintManagementSection: FC<
+  BlueprintManagementSectionProps
+> = ({ isOperator }) => {
   const walletAddr = useActiveAccountAddress();
   // TODO
   // const { isLoading, blueprints, error } = useOperatorBlueprints(walletAddr?.toString());
   const { blueprints, isLoading, error } = useFakeMonitoringBlueprints(
     walletAddr?.toString(),
   );
-  const services = useMemo(
-    () => blueprints.flatMap((blueprint) => blueprint.services),
-    [blueprints],
-  );
+  const services = useMemo(() => {
+    return blueprints.flatMap((blueprint) => blueprint.services);
+  }, [blueprints]);
 
   return (
     <>
-      <RegisteredBlueprintsTabs
-        blueprints={blueprints}
-        isLoading={isLoading}
-        error={error}
-      />
+      {isOperator && (
+        <RegisteredBlueprintsTabs
+          blueprints={blueprints}
+          isLoading={isLoading}
+          error={error}
+        />
+      )}
       <InstancesTabs
         runningInstances={{
           data: services.filter(
@@ -40,6 +46,7 @@ export const BlueprintManagementSection = () => {
           ),
           isLoading,
           error,
+          isOperator,
         }}
         stoppedInstances={{
           data: services.filter(
