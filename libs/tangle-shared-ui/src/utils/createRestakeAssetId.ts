@@ -1,10 +1,10 @@
-import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
+import { TanglePrimitivesServicesTypesAsset } from '@polkadot/types/lookup';
 import { assertEvmAddress } from '@tangle-network/ui-components';
 import { checksumAddress } from 'viem';
 import { RestakeAssetId } from '../types';
 
 const createRestakeAssetId = (
-  tangleAssetId: TanglePrimitivesServicesAsset,
+  tangleAssetId: TanglePrimitivesServicesTypesAsset,
 ): RestakeAssetId => {
   switch (tangleAssetId.type) {
     case 'Custom':

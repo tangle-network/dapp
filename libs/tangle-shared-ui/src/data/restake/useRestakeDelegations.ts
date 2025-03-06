@@ -40,7 +40,7 @@ const useRestakeDelegations = () => {
       return info.delegations.map(
         (delegation) =>
           ({
-            assetId: createRestakeAssetId(delegation.assetId),
+            assetId: createRestakeAssetId(delegation.asset),
             amount: delegation.amount.toBn(),
             operatorAccountAddress: assertSubstrateAddress(
               delegation.operator.toString(),

@@ -64,7 +64,7 @@ export default function useRestakeDelegatorInfo() {
                   const amountBigInt = delegation.amount.toBigInt();
 
                   return {
-                    assetId: createRestakeAssetId(delegation.assetId),
+                    assetId: createRestakeAssetId(delegation.asset),
                     amountBonded: amountBigInt,
                     operatorAccountId: assertSubstrateAddress(
                       delegation.operator.toString(),
@@ -102,7 +102,7 @@ function getWithdrawRequests(
   return requests.map((req) => {
     return {
       amount: req.amount.toBigInt(),
-      assetId: createRestakeAssetId(req.assetId),
+      assetId: createRestakeAssetId(req.asset),
       requestedRound: req.requestedRound.toNumber(),
     } satisfies DelegatorInfo['withdrawRequests'][number];
   });
@@ -117,7 +117,7 @@ function getUnstakeRequests(
   return requests.map((req) => {
     return {
       amount: req.amount.toBigInt(),
-      assetId: createRestakeAssetId(req.assetId),
+      assetId: createRestakeAssetId(req.asset),
       requestedRound: req.requestedRound.toNumber(),
       operatorAccountId: assertSubstrateAddress(req.operator.toString()),
     } satisfies DelegatorInfo['unstakeRequests'][number];

@@ -1,5 +1,5 @@
 import type { Option } from '@polkadot/types';
-import type { TanglePrimitivesServicesOperatorPreferences } from '@polkadot/types/lookup';
+import type { TanglePrimitivesServicesTypesOperatorPreferences } from '@polkadot/types/lookup';
 import { useCallback } from 'react';
 import { combineLatest, switchMap } from 'rxjs';
 
@@ -37,7 +37,7 @@ export default function useBlueprintListing() {
 
         const operatorEntries$ =
           apiRx.query.services.operators.entries<
-            Option<TanglePrimitivesServicesOperatorPreferences>
+            Option<TanglePrimitivesServicesTypesOperatorPreferences>
           >();
 
         return combineLatest([blueprintEntries$, operatorEntries$]).pipe(

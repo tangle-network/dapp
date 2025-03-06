@@ -131,6 +131,7 @@ const DepositForm: FC<Props> = (props) => {
 
     // Select the first asset in the vault by default.
     setValue('depositAssetId', defaultAsset.id);
+
     setValue(
       'amount',
       formatBn(defaultAsset.balance, defaultAsset.metadata.decimals, {
