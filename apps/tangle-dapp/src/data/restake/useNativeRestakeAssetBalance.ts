@@ -1,13 +1,15 @@
 import { BN, BN_ZERO } from '@polkadot/util';
 import { NATIVE_ASSET_ID } from '@tangle-network/tangle-shared-ui/constants/restaking';
 import useRestakeDelegatorInfo from '@tangle-network/tangle-shared-ui/data/restake/useRestakeDelegatorInfo';
-import { useMemo } from 'react';
-import useBalancesLock from '../balances/useBalancesLock';
-import { SubstrateLockId } from '../../constants';
+import { useCallback, useMemo } from 'react';
+import useStakingLedger from '../staking/useStakingLedger';
 
 const useNativeRestakeAssetBalance = (): BN | null => {
   const { delegatorInfo } = useRestakeDelegatorInfo();
-  const stakingLock = useBalancesLock(SubstrateLockId.STAKING);
+
+  const { result: bondedInStaking } = useStakingLedger(
+    useCallback((ledger) => ledger.active.toBn(), []),
+  );
 
   const delegated = useMemo(() => {
     if (delegatorInfo === null) {
@@ -23,12 +25,12 @@ const useNativeRestakeAssetBalance = (): BN | null => {
   }, [delegatorInfo]);
 
   const balance = useMemo(() => {
-    if (stakingLock.amount === null) {
+    if (bondedInStaking === null || bondedInStaking.value === null) {
       return null;
     }
 
-    return stakingLock.amount.sub(delegated);
-  }, [delegated, stakingLock.amount]);
+    return bondedInStaking.value.sub(delegated);
+  }, [bondedInStaking, delegated]);
 
   return balance;
 };
