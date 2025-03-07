@@ -18,6 +18,7 @@ import usePayoutStakersTx, {
 } from '../data/payouts/usePayoutStakersTx';
 import { Payout } from '@tangle-network/tangle-shared-ui/types';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import { PayoutTxState } from '../types';
 
 type Props = {
   isModalOpen: boolean;
@@ -26,8 +27,6 @@ type Props = {
   validatorsAndEras: { validator: string | SubstrateAddress; eras: number[] }[];
   onSuccess?: () => void;
 };
-
-const TRANSACTION_CHECK_DELAY = 4000;
 
 const PayoutAllTxModal: FC<Props> = ({
   isModalOpen,
@@ -47,7 +46,8 @@ const PayoutAllTxModal: FC<Props> = ({
   const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
   const [currentValidatorIndex, setCurrentValidatorIndex] = useState(0);
 
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [txState, setTxState] = useState<PayoutTxState>(PayoutTxState.IDLE);
+  const [pollingId, setPollingId] = useState<NodeJS.Timeout | null>(null);
   const [processingError, setProcessingError] = useState<string | null>(null);
 
   const [processedValidators, setProcessedValidators] = useState<string[]>([]);
@@ -64,9 +64,17 @@ const PayoutAllTxModal: FC<Props> = ({
     return address;
   }, [activeAccount]);
 
+  const isProcessing = useMemo(() => {
+    return (
+      txState === PayoutTxState.PROCESSING || txState === PayoutTxState.WAITING
+    );
+  }, [txState]);
+
   const isCompleted = useMemo(
-    () => processedValidators.length === payouts.length,
-    [processedValidators.length, payouts.length],
+    () =>
+      txState === PayoutTxState.COMPLETED ||
+      processedValidators.length === validatorsAndEras.length,
+    [txState, processedValidators.length, validatorsAndEras.length],
   );
 
   useEffect(() => {
@@ -112,110 +120,247 @@ const PayoutAllTxModal: FC<Props> = ({
     return currentEras;
   }, [eraChunksByValidator, currentValidatorIndex, currentChunkIndex]);
 
-  const sleep = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
+  useEffect(() => {
+    return () => {
+      if (pollingId) {
+        clearTimeout(pollingId);
+        setPollingId(null);
+      }
+    };
+  }, [pollingId]);
 
-  const processChunks = useCallback(async () => {
+  const handleTransactionSuccess = useCallback(() => {
+    if (pollingId) {
+      clearTimeout(pollingId);
+      setPollingId(null);
+    }
+
+    const validatorData = eraChunksByValidator[currentValidatorIndex];
+    if (validatorData && validatorData.validator) {
+      const chunk = validatorData.eras[currentChunkIndex];
+
+      setProcessedErasByValidator((prev) => {
+        const validatorAddress = validatorData.validator as string;
+        if (!validatorAddress) return prev;
+
+        const validatorEras = prev[validatorAddress] || [];
+        return {
+          ...prev,
+          [validatorAddress]: [...validatorEras, ...chunk],
+        };
+      });
+
+      const substrateAddress = toSubstrateAddress(validatorData.validator);
+      addClaimedEras(substrateAddress, chunk);
+    }
+
+    setTxState(PayoutTxState.SUCCESS);
+  }, [
+    addClaimedEras,
+    currentChunkIndex,
+    currentValidatorIndex,
+    eraChunksByValidator,
+    pollingId,
+  ]);
+
+  const handleTransactionError = useCallback(
+    (err: unknown) => {
+      if (pollingId) {
+        clearTimeout(pollingId);
+        setPollingId(null);
+      }
+
+      setProcessingError(
+        err instanceof Error
+          ? err.message
+          : typeof err === 'string'
+            ? err
+            : 'Transaction failed',
+      );
+      setTxState(PayoutTxState.ERROR);
+    },
+    [pollingId],
+  );
+
+  const processCurrentChunk = useCallback(async () => {
     if (eraChunksByValidator.length === 0) {
       setProcessingError('No validators with unclaimed eras');
+      setTxState(PayoutTxState.ERROR);
       return;
     }
 
     if (!executePayoutStakersTx) {
       setProcessingError('Transaction execution not available');
+      setTxState(PayoutTxState.ERROR);
+      return;
+    }
+
+    const validatorData = eraChunksByValidator[currentValidatorIndex];
+    if (
+      !validatorData ||
+      !validatorData.validator ||
+      validatorData.eras.length === 0
+    ) {
+      setTimeout(() => {
+        if (validatorData && validatorData.validator) {
+          setProcessedValidators((prev) => [
+            ...prev,
+            validatorData.validator as string,
+          ]);
+        }
+
+        if (currentValidatorIndex >= eraChunksByValidator.length - 1) {
+          setTxState(PayoutTxState.COMPLETED);
+          onSuccess?.();
+        } else {
+          setCurrentValidatorIndex(currentValidatorIndex + 1);
+          setCurrentChunkIndex(0);
+          setTxState(PayoutTxState.IDLE);
+
+          setTimeout(() => processCurrentChunk(), 0);
+        }
+      }, 0);
+      return;
+    }
+
+    const chunk = validatorData.eras[currentChunkIndex];
+    if (!chunk || chunk.length === 0) {
+      setTimeout(() => {
+        if (currentChunkIndex >= validatorData.eras.length - 1) {
+          if (validatorData && validatorData.validator) {
+            setProcessedValidators((prev) => [
+              ...prev,
+              validatorData.validator as string,
+            ]);
+          }
+
+          if (currentValidatorIndex >= eraChunksByValidator.length - 1) {
+            setTxState(PayoutTxState.COMPLETED);
+            onSuccess?.();
+          } else {
+            setCurrentValidatorIndex(currentValidatorIndex + 1);
+            setCurrentChunkIndex(0);
+            setTxState(PayoutTxState.IDLE);
+            setTimeout(() => processCurrentChunk(), 0);
+          }
+        } else {
+          setCurrentChunkIndex(currentChunkIndex + 1);
+          setTxState(PayoutTxState.IDLE);
+          setTimeout(() => processCurrentChunk(), 0);
+        }
+      }, 0);
       return;
     }
 
     try {
-      setIsProcessing(true);
       setProcessingError(null);
-      setCurrentValidatorIndex(0);
-      setCurrentChunkIndex(0);
-      setProcessedValidators([]);
-      setProcessedErasByValidator({});
+      setTxState(PayoutTxState.PROCESSING);
 
-      // Process each validator sequentially
-      for (
-        let validatorIndex = 0;
-        validatorIndex < eraChunksByValidator.length;
-        validatorIndex++
-      ) {
-        setCurrentValidatorIndex(validatorIndex);
-        const validatorData = eraChunksByValidator[validatorIndex];
+      await executePayoutStakersTx({
+        validatorAddress: validatorData.validator,
+        eras: chunk,
+      });
 
-        if (!validatorData.validator || validatorData.eras.length === 0) {
-          continue; // Skip validators with no unclaimed eras
-        }
+      setTxState(PayoutTxState.WAITING);
 
-        // Process all chunks for this validator
-        for (
-          let chunkIndex = 0;
-          chunkIndex < validatorData.eras.length;
-          chunkIndex++
-        ) {
-          setCurrentChunkIndex(chunkIndex);
-          const chunk = validatorData.eras[chunkIndex];
-
-          await executePayoutStakersTx({
-            validatorAddress: validatorData.validator,
-            eras: chunk,
-          });
-
-          // Wait and check transaction status
-          await sleep(TRANSACTION_CHECK_DELAY);
-
-          if (payoutStakersTxStatus === TxStatus.ERROR) {
-            throw new Error(
-              typeof error === 'string' ? error : 'Transaction failed',
-            );
+      const id = setTimeout(() => {
+        if (txState === PayoutTxState.WAITING) {
+          if (payoutStakersTxStatus === TxStatus.COMPLETE) {
+            handleTransactionSuccess();
+          } else if (payoutStakersTxStatus === TxStatus.ERROR) {
+            handleTransactionError(error);
+          } else {
+            handleTransactionSuccess();
           }
-
-          // Update processed eras for this validator
-          setProcessedErasByValidator((prev) => {
-            const validatorAddress = validatorData.validator;
-            if (!validatorAddress) return prev;
-
-            const validatorEras = prev[validatorAddress] || [];
-            return {
-              ...prev,
-              [validatorAddress]: [...validatorEras, ...chunk],
-            };
-          });
-
-          const substrateAddress = toSubstrateAddress(validatorData.validator);
-          addClaimedEras(substrateAddress, chunk);
         }
+      }, 5000);
 
-        // Mark this validator as processed
-        if (validatorData.validator) {
-          const validatorAddress = validatorData.validator;
-          setProcessedValidators((prev) => [...prev, validatorAddress]);
-        }
-      }
-
-      onSuccess?.();
+      setPollingId(id);
     } catch (err) {
-      console.error('Failed to process chunks:', err);
-      setProcessingError(
-        err instanceof Error ? err.message : 'Transaction failed',
-      );
-    } finally {
-      setIsProcessing(false);
+      console.error('Failed to process chunk:', err);
+      handleTransactionError(err);
     }
   }, [
-    addClaimedEras,
     eraChunksByValidator,
     executePayoutStakersTx,
+    currentValidatorIndex,
+    currentChunkIndex,
     onSuccess,
+    txState,
     payoutStakersTxStatus,
+    handleTransactionSuccess,
+    handleTransactionError,
     error,
   ]);
 
+  useEffect(() => {
+    if (txState === PayoutTxState.WAITING) {
+      if (payoutStakersTxStatus === TxStatus.COMPLETE) {
+        handleTransactionSuccess();
+      } else if (payoutStakersTxStatus === TxStatus.ERROR) {
+        handleTransactionError(error);
+      }
+    }
+  }, [
+    payoutStakersTxStatus,
+    txState,
+    handleTransactionSuccess,
+    handleTransactionError,
+    error,
+  ]);
+
+  useEffect(() => {
+    if (txState === PayoutTxState.SUCCESS) {
+      const validatorData = eraChunksByValidator[currentValidatorIndex];
+
+      if (currentChunkIndex >= validatorData.eras.length - 1) {
+        if (validatorData && validatorData.validator) {
+          setProcessedValidators((prev) => [
+            ...prev,
+            validatorData.validator as string,
+          ]);
+        }
+
+        if (currentValidatorIndex >= eraChunksByValidator.length - 1) {
+          setTxState(PayoutTxState.COMPLETED);
+          onSuccess?.();
+        } else {
+          setCurrentValidatorIndex(currentValidatorIndex + 1);
+          setCurrentChunkIndex(0);
+          setTxState(PayoutTxState.IDLE);
+          setTimeout(() => processCurrentChunk(), 0);
+        }
+      } else {
+        setCurrentChunkIndex(currentChunkIndex + 1);
+        setTxState(PayoutTxState.IDLE);
+        setTimeout(() => processCurrentChunk(), 0);
+      }
+    }
+  }, [
+    txState,
+    currentChunkIndex,
+    currentValidatorIndex,
+    eraChunksByValidator,
+    onSuccess,
+    processCurrentChunk,
+  ]);
+
+  const processAllValidators = useCallback(() => {
+    setCurrentValidatorIndex(0);
+    setCurrentChunkIndex(0);
+    setProcessedValidators([]);
+    setProcessedErasByValidator({});
+    setProcessingError(null);
+    setTxState(PayoutTxState.IDLE);
+
+    processCurrentChunk();
+  }, [processCurrentChunk]);
+
   const submitTx = useCallback(() => {
     if (!isProcessing) {
-      processChunks();
+      processAllValidators();
     }
-  }, [isProcessing, processChunks]);
+  }, [isProcessing, processAllValidators]);
 
   const handleModalClose = useCallback(
     (open: boolean) => {
@@ -238,9 +383,13 @@ const PayoutAllTxModal: FC<Props> = ({
       setProcessedErasByValidator({});
       setProcessedValidators([]);
       setProcessingError(null);
-      setIsProcessing(false);
+      setTxState(PayoutTxState.IDLE);
+      if (pollingId) {
+        clearTimeout(pollingId);
+        setPollingId(null);
+      }
     }
-  }, [isModalOpen]);
+  }, [isModalOpen, pollingId]);
 
   useEffect(() => {
     if (isCompleted && onSuccess) {
@@ -254,6 +403,45 @@ const PayoutAllTxModal: FC<Props> = ({
       0,
     );
   }, [processedErasByValidator]);
+
+  const getTotalChunks = useCallback(() => {
+    return eraChunksByValidator.reduce(
+      (total, validator) => total + validator.eras.length,
+      0,
+    );
+  }, [eraChunksByValidator]);
+
+  const getTotalProcessedChunks = useCallback(() => {
+    const completedValidatorsChunks = processedValidators.reduce(
+      (total, validatorAddress) => {
+        const validatorIndex = eraChunksByValidator.findIndex(
+          (v) => v.validator === validatorAddress,
+        );
+        if (validatorIndex >= 0) {
+          return total + eraChunksByValidator[validatorIndex].eras.length;
+        }
+        return total;
+      },
+      0,
+    );
+
+    if (
+      currentValidatorIndex < eraChunksByValidator.length &&
+      eraChunksByValidator[currentValidatorIndex]?.validator &&
+      !processedValidators.includes(
+        eraChunksByValidator[currentValidatorIndex].validator as string,
+      )
+    ) {
+      return completedValidatorsChunks + currentChunkIndex;
+    }
+
+    return completedValidatorsChunks;
+  }, [
+    currentChunkIndex,
+    currentValidatorIndex,
+    eraChunksByValidator,
+    processedValidators,
+  ]);
 
   const progress = useMemo(() => {
     if (isCompleted) return 100;
@@ -332,10 +520,27 @@ const PayoutAllTxModal: FC<Props> = ({
                     {!isCompleted && (
                       <div className="space-y-2">
                         <div className="flex justify-between">
-                          <span>Current Batch:</span>
+                          <span>Current Validator:</span>
                           <span className="text-sm">
                             {isProcessing
-                              ? `${currentChunkIndex + 1} of ${eraChunksByValidator.reduce((acc, validator) => acc + validator.eras.length, 0)}`
+                              ? `${currentValidatorIndex + 1} of ${eraChunksByValidator.length}`
+                              : '-'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Current Batch:</span>
+                          <span className="text-sm">
+                            {isProcessing &&
+                            eraChunksByValidator[currentValidatorIndex]
+                              ? `${currentChunkIndex + 1} of ${eraChunksByValidator[currentValidatorIndex].eras.length}`
+                              : '-'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Total Progress:</span>
+                          <span className="text-sm">
+                            {isProcessing
+                              ? `${getTotalProcessedChunks()} of ${getTotalChunks()}`
                               : '-'}
                           </span>
                         </div>

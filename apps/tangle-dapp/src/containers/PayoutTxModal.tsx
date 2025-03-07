@@ -16,6 +16,7 @@ import usePayoutStakersTx, {
   MAX_PAYOUTS_BATCH_SIZE,
 } from '../data/payouts/usePayoutStakersTx';
 import { Payout } from '@tangle-network/tangle-shared-ui/types';
+import { PayoutTxState } from '../types';
 
 type Props = {
   isModalOpen: boolean;
@@ -23,8 +24,6 @@ type Props = {
   payout: Payout;
   onSuccess?: () => void;
 };
-
-const TRANSACTION_CHECK_DELAY = 4000;
 
 const PayoutTxModal: FC<Props> = ({
   isModalOpen,
@@ -40,32 +39,25 @@ const PayoutTxModal: FC<Props> = ({
     error,
   } = usePayoutStakersTx();
 
+  const [txState, setTxState] = useState<PayoutTxState>(PayoutTxState.IDLE);
   const [currentChunkIndex, setCurrentChunkIndex] = useState(0);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [processingError, setProcessingError] = useState<string | null>(null);
   const [processedEras, setProcessedEras] = useState<number[]>([]);
   const [claimedEras, setClaimedEras] = useState<number[]>([]);
+  const [pollingId, setPollingId] = useState<NodeJS.Timeout | null>(null);
 
   const walletAddress = useMemo(() => {
-    const address = activeAccount?.address
+    return activeAccount?.address
       ? toSubstrateAddress(activeAccount?.address)
       : null;
-    return address;
   }, [activeAccount]);
 
-  const isCompleted = useMemo(
-    () => processedEras.length === payout.eras.length,
-    [processedEras.length, payout.eras.length],
-  );
-
   useEffect(() => {
-    if (!walletAddress) return;
+    if (!walletAddress || !isModalOpen) return;
 
-    if (!isProcessing) {
-      const claimedEras = getClaimedEras(walletAddress);
-      setClaimedEras(claimedEras);
-    }
-  }, [getClaimedEras, isProcessing, walletAddress]);
+    const claimed = getClaimedEras(walletAddress);
+    setClaimedEras(claimed);
+  }, [getClaimedEras, walletAddress, isModalOpen]);
 
   // Split eras into chunks of MAX_PAYOUTS_BATCH_SIZE
   const eraChunks = useMemo(() => {
@@ -84,120 +76,226 @@ const PayoutTxModal: FC<Props> = ({
     return chunks;
   }, [claimedEras, payout.eras, walletAddress]);
 
-  const formatEras = (eras: number[]): string => {
+  const formatEras = useCallback((eras: number[]): string => {
     if (!eras || eras.length === 0) return '-';
     return eras.join(', ');
-  };
+  }, []);
 
-  const erasClaimingFor = useMemo(() => {
-    return eraChunks[currentChunkIndex] || [];
-  }, [eraChunks, currentChunkIndex]);
+  const currentChunk = useMemo(
+    () => eraChunks[currentChunkIndex] || [],
+    [eraChunks, currentChunkIndex],
+  );
 
-  const sleep = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
+  const nextChunk = useMemo(
+    () => eraChunks[currentChunkIndex + 1] || undefined,
+    [eraChunks, currentChunkIndex],
+  );
 
-  const processChunks = useCallback(async () => {
-    if (!payout.validator.address || eraChunks.length === 0) {
+  const hasNextChunk = useMemo(
+    () => currentChunkIndex < eraChunks.length - 1,
+    [currentChunkIndex, eraChunks],
+  );
+
+  const isCompleted = useMemo(
+    () =>
+      txState === PayoutTxState.COMPLETED ||
+      (processedEras.length > 0 &&
+        processedEras.length >= payout.eras.length - claimedEras.length),
+    [txState, processedEras.length, payout.eras.length, claimedEras.length],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (pollingId) {
+        clearTimeout(pollingId);
+        setPollingId(null);
+      }
+    };
+  }, [pollingId]);
+
+  useEffect(() => {
+    if (txState === PayoutTxState.WAITING) {
+      if (payoutStakersTxStatus === TxStatus.COMPLETE) {
+        if (pollingId) {
+          clearTimeout(pollingId);
+          setPollingId(null);
+        }
+
+        // Update processed eras
+        setProcessedEras((prev) => [...prev, ...currentChunk]);
+
+        // Mark eras as claimed in local storage
+        if (payout.validator.address) {
+          const validatorAddress = payout.validator.address;
+          addClaimedEras(validatorAddress, currentChunk);
+        }
+        setTxState(PayoutTxState.SUCCESS);
+      } else if (payoutStakersTxStatus === TxStatus.ERROR) {
+        if (pollingId) {
+          clearTimeout(pollingId);
+          setPollingId(null);
+        }
+
+        setProcessingError(
+          typeof error === 'string' ? error : 'Transaction failed',
+        );
+        setTxState(PayoutTxState.ERROR);
+      }
+    }
+  }, [
+    payoutStakersTxStatus,
+    txState,
+    pollingId,
+    currentChunk,
+    payout.validator.address,
+    addClaimedEras,
+    error,
+  ]);
+
+  const processCurrentChunk = useCallback(async () => {
+    if (!payout.validator.address || !currentChunk.length) {
       setProcessingError('No eras to process');
+      setTxState(PayoutTxState.ERROR);
       return;
     }
 
     if (!executePayoutStakersTx) {
       setProcessingError('Transaction execution not available');
+      setTxState(PayoutTxState.ERROR);
       return;
     }
 
     try {
-      setIsProcessing(true);
+      setTxState(PayoutTxState.PROCESSING);
       setProcessingError(null);
-      setCurrentChunkIndex(0);
-      setProcessedEras([]);
 
-      for (let i = 0; i < eraChunks.length; i++) {
-        setCurrentChunkIndex(i);
-        const chunk = eraChunks[i];
+      await executePayoutStakersTx({
+        validatorAddress: payout.validator.address,
+        eras: currentChunk,
+      });
 
-        await executePayoutStakersTx({
-          validatorAddress: payout.validator.address,
-          eras: chunk,
-        });
+      setTxState(PayoutTxState.WAITING);
 
-        // Wait and check transaction status
-        await sleep(TRANSACTION_CHECK_DELAY);
+      const id = setTimeout(() => {
+        if (txState === PayoutTxState.WAITING) {
+          if (payoutStakersTxStatus === TxStatus.COMPLETE) {
+            setProcessedEras((prev) => [...prev, ...currentChunk]);
 
-        if (payoutStakersTxStatus === TxStatus.ERROR) {
-          throw new Error(
-            typeof error === 'string' ? error : 'Transaction failed',
-          );
+            if (payout.validator.address) {
+              const validatorAddress = payout.validator.address;
+              addClaimedEras(validatorAddress, currentChunk);
+            }
+
+            setTxState(PayoutTxState.SUCCESS);
+          } else if (payoutStakersTxStatus === TxStatus.ERROR) {
+            setProcessingError(
+              typeof error === 'string' ? error : 'Transaction failed',
+            );
+            setTxState(PayoutTxState.ERROR);
+          } else {
+            setProcessedEras((prev) => [...prev, ...currentChunk]);
+
+            if (payout.validator.address) {
+              const validatorAddress = payout.validator.address;
+              addClaimedEras(validatorAddress, currentChunk);
+            }
+
+            setTxState(PayoutTxState.SUCCESS);
+          }
         }
+      }, 5000);
 
-        setProcessedEras((prev) => [...prev, ...chunk]);
-
-        const substrateAddress = toSubstrateAddress(payout.validator.address);
-
-        addClaimedEras(substrateAddress, chunk);
-      }
-
-      onSuccess?.();
+      setPollingId(id);
     } catch (err) {
-      console.error('Failed to process chunks:', err);
+      console.error('Failed to process chunk:', err);
       setProcessingError(
         err instanceof Error ? err.message : 'Transaction failed',
       );
-    } finally {
-      setIsProcessing(false);
+      setTxState(PayoutTxState.ERROR);
     }
   }, [
-    addClaimedEras,
-    eraChunks,
-    executePayoutStakersTx,
-    onSuccess,
     payout.validator.address,
+    currentChunk,
+    executePayoutStakersTx,
+    txState,
     payoutStakersTxStatus,
+    addClaimedEras,
     error,
   ]);
 
-  const submitTx = useCallback(() => {
-    if (!isProcessing) {
-      processChunks();
+  const moveToNextChunk = useCallback(() => {
+    if (hasNextChunk) {
+      setCurrentChunkIndex((prev) => prev + 1);
+      setTxState(PayoutTxState.IDLE);
+    } else {
+      setTxState(PayoutTxState.COMPLETED);
+      onSuccess?.();
     }
-  }, [isProcessing, processChunks]);
+  }, [hasNextChunk, onSuccess]);
+
+  const retryCurrentChunk = useCallback(() => {
+    setTxState(PayoutTxState.IDLE);
+    setProcessingError(null);
+  }, []);
+
+  const submitTx = useCallback(() => {
+    if (txState === PayoutTxState.IDLE) {
+      processCurrentChunk();
+    }
+  }, [txState, processCurrentChunk]);
 
   const handleModalClose = useCallback(
     (open: boolean) => {
-      if (!open && isProcessing && !isCompleted) {
+      if (
+        !open &&
+        (txState === PayoutTxState.PROCESSING ||
+          txState === PayoutTxState.WAITING)
+      ) {
         return;
       }
       setIsModalOpen(open);
     },
-    [isProcessing, isCompleted, setIsModalOpen],
+    [txState, setIsModalOpen],
   );
 
   const closeModal = useCallback(() => {
     handleModalClose(false);
   }, [handleModalClose]);
 
-  // Reset state when modal is closed
   useEffect(() => {
     if (!isModalOpen) {
       setCurrentChunkIndex(0);
       setProcessedEras([]);
       setProcessingError(null);
-      setIsProcessing(false);
+      setTxState(PayoutTxState.IDLE);
+      if (pollingId) {
+        clearInterval(pollingId);
+        setPollingId(null);
+      }
     }
-  }, [isModalOpen]);
-
-  useEffect(() => {
-    if (isCompleted && onSuccess) {
-      onSuccess();
-    }
-  }, [isCompleted, onSuccess]);
+  }, [isModalOpen, pollingId]);
 
   const progress = useMemo(() => {
     if (isCompleted) return 100;
-    if (!isProcessing) return 0;
-    return ((currentChunkIndex + 1) / eraChunks.length) * 100;
-  }, [currentChunkIndex, eraChunks.length, isProcessing, isCompleted]);
+    if (
+      txState === PayoutTxState.IDLE &&
+      currentChunkIndex === 0 &&
+      processedEras.length === 0
+    )
+      return 0;
+
+    const totalUnprocessedEras = payout.eras.length - claimedEras.length;
+    if (totalUnprocessedEras <= 0) return 100;
+
+    return (processedEras.length / totalUnprocessedEras) * 100;
+  }, [
+    txState,
+    currentChunkIndex,
+    processedEras.length,
+    payout.eras.length,
+    claimedEras.length,
+    isCompleted,
+  ]);
 
   return (
     <Modal open={isModalOpen} onOpenChange={handleModalClose}>
@@ -235,7 +333,7 @@ const PayoutTxModal: FC<Props> = ({
               <InputField.Input
                 title="Claiming Eras"
                 isAddressType={false}
-                value={formatEras(erasClaimingFor)}
+                value={formatEras(currentChunk)}
                 type="text"
                 readOnly
               />
@@ -243,7 +341,7 @@ const PayoutTxModal: FC<Props> = ({
           </div>
 
           <div className="flex flex-col gap-4">
-            {erasClaimingFor.length === 0 ? (
+            {eraChunks.length === 0 ? (
               <Typography
                 variant="h5"
                 className="text-gray-900 dark:text-gray-100"
@@ -264,7 +362,7 @@ const PayoutTxModal: FC<Props> = ({
                       <div className="flex justify-between">
                         <span className="font-medium">Current Batch:</span>
                         <span className="text-sm">
-                          {isProcessing
+                          {txState !== PayoutTxState.IDLE
                             ? `${currentChunkIndex + 1} of ${eraChunks.length}`
                             : '-'}
                         </span>
@@ -284,33 +382,52 @@ const PayoutTxModal: FC<Props> = ({
                       </span>
                       <span className="text-sm">
                         {isCompleted
-                          ? formatEras(payout.eras)
-                          : formatEras(erasClaimingFor) || '-'}
+                          ? formatEras(processedEras)
+                          : formatEras(currentChunk) || '-'}
                       </span>
                     </div>
+
+                    {nextChunk && txState === PayoutTxState.SUCCESS && (
+                      <div className="flex flex-col gap-2">
+                        <span className="font-medium">Next Batch:</span>
+                        <span className="text-sm">{formatEras(nextChunk)}</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
                     <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
                       <div
-                        className={`h-2 rounded-full transition-all duration-500 ${isCompleted ? 'bg-green-600' : 'bg-blue-600'}`}
+                        className={`h-2 rounded-full transition-all duration-500 ${isCompleted ? 'bg-green-600' : txState === PayoutTxState.ERROR ? 'bg-red-600' : 'bg-blue-600'}`}
                         style={{ width: `${progress}%` }}
                       />
                     </div>
 
                     <div className="text-sm">
-                      {isProcessing ? (
+                      {txState === PayoutTxState.PROCESSING && (
                         <span className="!text-blue-600">
                           Processing batch {currentChunkIndex + 1} of{' '}
                           {eraChunks.length}...
                         </span>
-                      ) : processingError ? (
-                        <span className="!text-red-600">{processingError}</span>
-                      ) : processedEras.length > 0 ? (
-                        <span className="!text-green-600">
-                          Successfully processed {processedEras.length} eras
+                      )}
+                      {txState === PayoutTxState.WAITING && (
+                        <span className="!text-blue-600">
+                          Waiting for transaction confirmation...
                         </span>
-                      ) : null}
+                      )}
+                      {txState === PayoutTxState.ERROR && processingError && (
+                        <span className="!text-red-600">{processingError}</span>
+                      )}
+                      {txState === PayoutTxState.SUCCESS && (
+                        <span className="!text-green-600">
+                          Successfully processed batch {currentChunkIndex + 1}
+                        </span>
+                      )}
+                      {txState === PayoutTxState.COMPLETED && (
+                        <span className="!text-green-600">
+                          All eras successfully processed!
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -320,19 +437,36 @@ const PayoutTxModal: FC<Props> = ({
         </ModalBody>
 
         <ModalFooterActions
-          isConfirmDisabled={erasClaimingFor.length === 0 || isProcessing}
-          isProcessing={isProcessing}
-          confirmButtonText={
-            erasClaimingFor.length === 0
-              ? 'No Rewards to Claim'
-              : processedEras.length === payout.eras.length
-                ? 'Close'
-                : 'Confirm Payout'
+          isConfirmDisabled={
+            eraChunks.length === 0 ||
+            txState === PayoutTxState.PROCESSING ||
+            txState === PayoutTxState.WAITING
           }
-          onConfirm={
-            processedEras.length === payout.eras.length ? closeModal : submitTx
+          isProcessing={
+            txState === PayoutTxState.PROCESSING ||
+            txState === PayoutTxState.WAITING
           }
-          hasCloseButton
+          confirmButtonText={(() => {
+            if (eraChunks.length === 0) return 'No Rewards to Claim';
+            if (isCompleted || txState === PayoutTxState.COMPLETED)
+              return 'Close';
+            if (txState === PayoutTxState.SUCCESS && hasNextChunk)
+              return 'Process Next Batch';
+            if (txState === PayoutTxState.ERROR) return 'Retry';
+            return 'Confirm Payout';
+          })()}
+          onConfirm={(() => {
+            if (isCompleted || txState === PayoutTxState.COMPLETED)
+              return closeModal;
+            if (txState === PayoutTxState.SUCCESS && hasNextChunk)
+              return moveToNextChunk;
+            if (txState === PayoutTxState.ERROR) return retryCurrentChunk;
+            return submitTx;
+          })()}
+          hasCloseButton={
+            txState !== PayoutTxState.PROCESSING &&
+            txState !== PayoutTxState.WAITING
+          }
         />
       </ModalContent>
     </Modal>
