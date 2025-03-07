@@ -120,12 +120,9 @@ const TransferTxModal: FC<Props> = ({ isModalOpen, setIsModalOpen }) => {
     transferableBalance,
   ]);
 
-  const handleSetErrorMessage = useCallback(
-    (error: string | null) => {
-      setHasErrors(error !== null);
-    },
-    [setHasErrors],
-  );
+  const handleSetErrorMessage = useCallback((error: string | null) => {
+    setHasErrors(error !== null);
+  }, []);
 
   const transferableBalanceTooltip: ReactNode = transferableBalance !==
     null && (

@@ -280,11 +280,10 @@ export function toPrimitiveFieldType(
       } as const;
 
     case 'Struct': {
-      const second =
+      const struct =
         fieldType.asStruct as Vec<TanglePrimitivesServicesFieldFieldType>;
-
       return {
-        Struct: second.map((fieldType) => toPrimitiveFieldType(fieldType)),
+        Struct: struct.map((fieldType) => toPrimitiveFieldType(fieldType)),
       } as const;
     }
 

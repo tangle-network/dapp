@@ -1,23 +1,22 @@
 import { assert } from '@polkadot/util';
 import { useCallback, useEffect, useState } from 'react';
 
-import { TxName } from '../constants';
-import { GetSuccessMessageFn } from '../types';
-import useEvmPrecompileCall, {
-  PrecompileCall,
-  EvmTxFactory,
-} from './useEvmPrecompileCall';
-import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
-import useTxNotification from './useTxNotification';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import { AbiFunction } from 'viem';
+import { TxName } from '../constants';
 import {
   ExtractAbiFunctionNames,
   PrecompileAddress,
 } from '../constants/evmPrecompiles';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import useEvmTxRelayer from './useEvmTxRelayer';
+import { GetSuccessMessageFn } from '../types';
+import useEvmPrecompileCall, {
+  EvmTxFactory,
+  PrecompileCall,
+} from './useEvmPrecompileCall';
+import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
+import useTxNotification from './useTxNotification';
 
 export type AgnosticTxOptions<
   Abi extends AbiFunction[],
@@ -85,7 +84,6 @@ function useAgnosticTx<
 
   const activeAccountAddress = useActiveAccountAddress();
   const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
-  const relayEvmTx = useEvmTxRelayer();
 
   const createExplorerTxUrl = useNetworkStore(
     (store) => store.network.createExplorerTxUrl,

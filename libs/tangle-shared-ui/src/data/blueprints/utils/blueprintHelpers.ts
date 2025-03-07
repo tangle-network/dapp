@@ -1,8 +1,8 @@
 import type { Option, StorageKey, u64 } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces';
-import type {
-  TanglePrimitivesServicesTypesOperatorPreferences,
+import {
   TanglePrimitivesServicesServiceServiceBlueprint,
+  TanglePrimitivesServicesTypesOperatorPreferences,
 } from '@polkadot/types/lookup';
 import type { ITuple } from '@polkadot/types/types';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
