@@ -27,6 +27,7 @@
 
 ### 🩹 Fixes
 
+- **tangle-dapp:** Fix bridge page crash when connected to a Substrate account ([#2881](https://github.com/tangle-network/dapp/pull/2881))
 - **tangle-dapp:** Fix Restake Data not Showing ([#2876](https://github.com/tangle-network/dapp/pull/2876))
 - **tangle-dapp:** Network switching & other fixes ([#2873](https://github.com/tangle-network/dapp/pull/2873))
 - **tangle-dapp:** Network Switching Improvements ([#2855](https://github.com/tangle-network/dapp/pull/2855))
