@@ -12,7 +12,7 @@ import { makeExplorerUrl } from '@tangle-network/api-provider-environment/transa
 import convertDecimalToBN from '@tangle-network/tangle-shared-ui/utils/convertDecimalToBn';
 import Decimal from 'decimal.js';
 import { assertEvmAddress } from '@tangle-network/ui-components/utils/assertEvmAddress';
-import { isEvmAddress } from '@tangle-network/ui-components';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 /**
  * Hook to get the list of formatted bridge assets that is used to display on the AssetList modal.
@@ -25,6 +25,8 @@ export default function useAssets(
   sourceTypedChainId: number,
   tokenBalances: Partial<Record<PresetTypedChainId, BridgeTokenWithBalance[]>>,
 ): AssetConfig[] {
+  const { evmAddress } = useAgnosticAccountInfo();
+
   const selectedSourceChain = useBridgeStore(
     useShallow((store) => store.selectedSourceChain),
   );
@@ -43,14 +45,10 @@ export default function useAssets(
     sourceTypedChainId === PresetTypedChainId.TangleTestnetEVM;
 
   const { data: nativeTokenBalance } = useBalance({
-    address: activeAccount?.address
-      ? isEvmAddress(activeAccount.address)
-        ? activeAccount.address
-        : undefined
-      : undefined,
+    address: evmAddress !== null ? evmAddress : undefined,
     chainId: selectedSourceChain.id,
     query: {
-      enabled: activeAccount !== null,
+      enabled: evmAddress !== null,
     },
   });
 
