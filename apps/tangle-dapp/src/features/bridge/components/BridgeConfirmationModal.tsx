@@ -77,6 +77,7 @@ export const BridgeConfirmationModal = ({
   destinationAddress,
   sendingAmount,
   receivingAmount,
+  isTxInProgress,
   setIsTxInProgress,
 }: BridgeConfirmationModalProps) => {
   const {
@@ -531,7 +532,15 @@ export const BridgeConfirmationModal = ({
   return (
     <Modal
       open={isOpen}
-      onOpenChange={(open) => (open === false ? handleClose() : null)}
+      onOpenChange={(open) => {
+        if (open === false && isTxInProgress) {
+          return;
+        }
+
+        if (open === false) {
+          handleClose();
+        }
+      }}
     >
       <ModalContent size="md">
         <ModalHeader>Confirm Bridge</ModalHeader>
