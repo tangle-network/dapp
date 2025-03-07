@@ -9,6 +9,7 @@ import { map } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
 import { RestakeAssetId } from '../../types';
+import { TangleError, TangleErrorCode } from '../../types/error';
 import useErc20Balances from './useErc20Balances';
 import useRestakeAssetIds from './useRestakeAssetIds';
 
@@ -55,8 +56,8 @@ const useRestakeAssetBalances = () => {
   const { result: assetAccounts, isLoading: isLoadingAssetAccounts } = useApiRx(
     useCallback(
       (api) => {
-        if (substrateAddress === null || substrateAssetIds === null) {
-          return null;
+        if (substrateAddress === null) {
+          return new TangleError(TangleErrorCode.NO_ACTIVE_ACCOUNT);
         }
 
         const queries = substrateAssetIds.map(
