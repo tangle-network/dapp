@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';
 import { StorageKey, u32, Vec, Option } from '@polkadot/types';
-import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
+import { TanglePrimitivesServicesTypesAsset } from '@polkadot/types/lookup';
 import { RestakeAssetId } from '../../types';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import { isEvmAddress } from '@tangle-network/ui-components';
@@ -21,7 +21,7 @@ import { NATIVE_ASSET_ID } from '../../constants/restaking';
 const toPrimitiveRewardVault = (
   entries: [
     StorageKey<[u32]> | number,
-    Option<Vec<TanglePrimitivesServicesAsset>>,
+    Option<Vec<TanglePrimitivesServicesTypesAsset>>,
   ][],
 ): [vaultId: bigint, assetIds: RestakeAssetId[] | null][] => {
   return entries.map(([vaultId, assets]) => {
@@ -227,7 +227,7 @@ const useRestakeAssets = () => {
       const name = metadata.name.toUtf8();
 
       const asset = {
-        name: name === '' ? `Asset ${assetId}` : name,
+        name: name === '' ? `Asset #${assetId}` : name,
         symbol: metadata.symbol.toUtf8(),
         decimals: metadata.decimals.toNumber(),
         assetId,
@@ -244,6 +244,7 @@ const useRestakeAssets = () => {
     // TODO: Balance should be what is locked in staking, for native restaking.
     // Insert the network's native asset to allow for native restaking.
     const nativeNetworkAsset: RestakeAssetMetadata = {
+      name: nativeTokenSymbol,
       symbol: nativeTokenSymbol,
       decimals: TANGLE_TOKEN_DECIMALS,
       assetId: NATIVE_ASSET_ID,

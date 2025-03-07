@@ -1,6 +1,6 @@
 import type { ApiRx } from '@polkadot/api';
 import type { Option, StorageKey, u32, Vec } from '@polkadot/types';
-import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
+import { TanglePrimitivesServicesTypesAsset } from '@polkadot/types/lookup';
 import { map, of } from 'rxjs';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import { RestakeAssetId } from '../../types';
@@ -8,7 +8,7 @@ import { RestakeAssetId } from '../../types';
 function toPrimitive(
   entries: [
     StorageKey<[u32]> | number,
-    Option<Vec<TanglePrimitivesServicesAsset>>,
+    Option<Vec<TanglePrimitivesServicesTypesAsset>>,
   ][],
 ): [vaultId: bigint, assetIds: RestakeAssetId[] | null][] {
   return entries.map(([vaultId, assets]) => {

@@ -3,14 +3,14 @@ import { RestakeAssetId } from '../../types';
 import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 import useApiRx from '../../hooks/useApiRx';
 import { StorageKey, u32, Vec, Option } from '@polkadot/types';
-import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
+import { TanglePrimitivesServicesTypesAsset } from '@polkadot/types/lookup';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import { useCallback } from 'react';
 
 function toPrimitive(
   entries: [
     StorageKey<[u32]> | number,
-    Option<Vec<TanglePrimitivesServicesAsset>>,
+    Option<Vec<TanglePrimitivesServicesTypesAsset>>,
   ][],
 ): RestakeAssetId[] {
   return entries.flatMap(([, assets]) => {

@@ -35,7 +35,7 @@ const SelectedPoolIndicator: FC<SelectedPoolIndicatorProps> = ({ onClick }) => {
           'Select LST'
         ) : (
           <>
-            {activePool.name.toUpperCase()}
+            {activePool.name.toUpperCase()}{' '}
             <span className="text-mono-180 dark:text-mono-120">
               #{activePool.id}
             </span>

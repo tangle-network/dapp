@@ -14,6 +14,7 @@ export enum SubstrateLockId {
   STAKING = 'staking ',
   ELECTIONS_PHRAGMEN = 'phrelect',
   DEMOCRACY = 'democrac',
+  DELEGATE = 'delegate',
 
   // TODO: Need to account for the other lock types.
   OTHER = '?other',
@@ -76,6 +77,10 @@ export enum TxName {
   RESTAKE_CANCEL_WITHDRAW = 'restake cancel withdraw',
   CLAIM_REWARDS = 'claim rewards',
   DEMOCRACY_UNLOCK = 'unlock democracy',
+  RESTAKE_NATIVE_DELEGATE = 'restake delegate nomination',
+  RESTAKE_NATIVE_UNSTAKE = 'restake undelegate native',
+  RESTAKE_NATIVE_UNSTAKE_EXECUTE = 'restake execute undelegate native',
+  RESTAKE_NATIVE_UNSTAKE_CANCEL = 'restake cancel undelegate native',
 }
 
 export const PAYMENT_DESTINATION_OPTIONS: StakingRewardsDestinationDisplayText[] =

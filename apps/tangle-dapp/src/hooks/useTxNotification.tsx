@@ -50,6 +50,10 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.RESTAKE_CANCEL_WITHDRAW]: 'Withdraw request(s) cancelled',
   [TxName.CLAIM_REWARDS]: 'Claimed rewards',
   [TxName.DEMOCRACY_UNLOCK]: 'Democracy tokens unlocked',
+  [TxName.RESTAKE_NATIVE_DELEGATE]: 'Restaked native tokens',
+  [TxName.RESTAKE_NATIVE_UNSTAKE]: 'Scheduled undelegate request',
+  [TxName.RESTAKE_NATIVE_UNSTAKE_EXECUTE]: 'Undelegate request(s) executed',
+  [TxName.RESTAKE_NATIVE_UNSTAKE_CANCEL]: 'Undelegate request(s) cancelled',
 };
 
 const makeKey = (txName: TxName): `${TxName}-tx-notification` =>

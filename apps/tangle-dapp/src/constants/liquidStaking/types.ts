@@ -76,7 +76,7 @@ export type LsNetwork = {
 
 export type LsPool = {
   id: number;
-  name?: string;
+  name: string;
   ownerAddress?: SubstrateAddress;
   nominatorAddress?: SubstrateAddress;
   bouncerAddress?: SubstrateAddress;
