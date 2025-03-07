@@ -178,6 +178,9 @@ export const Table = <T extends RowData>({
                   className={twMerge(
                     'group/tr peer',
                     getVariantTrClass(variant),
+                    getExpandedRowContent &&
+                      row.getIsExpanded() &&
+                      'border-b-0',
                     trClassName,
                   )}
                   onClick={getRowClickHandler(row)}
@@ -200,7 +203,12 @@ export const Table = <T extends RowData>({
                 </tr>
 
                 {getExpandedRowContent && row.getIsExpanded() && (
-                  <tr className={expandedRowClassName}>
+                  <tr
+                    className={twMerge(
+                      getVariantTrClass(variant),
+                      expandedRowClassName,
+                    )}
+                  >
                     <td colSpan={row.getVisibleCells().length}>
                       {getExpandedRowContent(row)}
                     </td>

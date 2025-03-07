@@ -37,12 +37,12 @@ declare global {
 
 const useViemWalletClient = (transport = WalletClientTransport.HTTP_RPC) => {
   const [walletClient, setWalletClient] = useState<WalletClient | null>(null);
-  const { network } = useNetworkStore();
+  const network = useNetworkStore((store) => store.network2);
   const evmChain = useEvmChain();
 
   // Update the wallet client when the network changes.
   useEffect(() => {
-    if (evmChain === null || network.httpRpcEndpoint === undefined) {
+    if (evmChain === null || network?.httpRpcEndpoint === undefined) {
       return;
     }
 

@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useRef } from 'react';
-import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
+import { useWebContext } from '@tangle-network/api-provider-environment/webb-context/webb-context';
+import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { isEqual } from 'lodash';
+import { useEffect, useMemo, useRef } from 'react';
 import { erc20Abi } from 'viem';
 import { useReadContracts } from 'wagmi';
-import { EvmAddress } from '@tangle-network/ui-components/types/address';
+import useAgnosticAccountInfo from '../../hooks/useAgnosticAccountInfo';
 
 const useErc20Balances = (assetAddressesArg: EvmAddress[]) => {
+  const { loading, isConnecting } = useWebContext();
   const { evmAddress } = useAgnosticAccountInfo();
   const assetAddressesRef = useRef(assetAddressesArg);
 
@@ -30,12 +32,17 @@ const useErc20Balances = (assetAddressesArg: EvmAddress[]) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [evmAddress, assetAddressesRef.current]);
 
-  return useReadContracts({
+  const result = useReadContracts({
     contracts: contracts,
     query: {
       enabled: evmAddress !== null,
     },
   });
+
+  return {
+    ...result,
+    isLoading: loading || isConnecting || result.isLoading,
+  };
 };
 
 export default useErc20Balances;
