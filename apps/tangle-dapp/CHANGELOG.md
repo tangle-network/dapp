@@ -1,3 +1,66 @@
+## 0.1.0 (2025-03-07)
+
+### 🚀 Features
+
+- **tangle-dapp:** Integrate native restaking ([#2857](https://github.com/tangle-network/dapp/pull/2857))
+- **tangle-cloud:** implement mock logic for Tangle Cloud Operator Home Page Instance section ([#2866](https://github.com/tangle-network/dapp/pull/2866))
+- **tangle-cloud:** implement operator home page ([#2858](https://github.com/tangle-network/dapp/pull/2858))
+- **repo:** Add Typecheck for dApps ([#2838](https://github.com/tangle-network/dapp/pull/2838))
+- migrate cloud to vite ([#2819](https://github.com/tangle-network/dapp/pull/2819))
+- **tangle-dapp:** Add TNT Rewards, Fix TVL Calculation ([#2795](https://github.com/tangle-network/dapp/pull/2795))
+- **tangle-dapp:** Aggregate Vault Token and Display Self-Bonded ([#2789](https://github.com/tangle-network/dapp/pull/2789))
+- **tangle-dapp:** Use TX relayer for EVM accounts with no balance ([#2758](https://github.com/tangle-network/dapp/pull/2758))
+- **tangle-dapp:** Display Points on Tangle dApp ([#2773](https://github.com/tangle-network/dapp/pull/2773))
+- **tangle-dapp:** Bridge UI update and new Hyperlane routes ([#2744](https://github.com/tangle-network/dapp/pull/2744))
+- **tangle-dapp:** Add Rewards Claiming Functionality ([#2754](https://github.com/tangle-network/dapp/pull/2754))
+- **tangle-dapp:** Add ERC-20 asset restaking ([#2753](https://github.com/tangle-network/dapp/pull/2753))
+- **tangle-dapp:** Add ability for EVM accounts to use restaking operations ([#2740](https://github.com/tangle-network/dapp/pull/2740))
+- **tangle-dapp:** Add `Join Operator` button & modal ([#2742](https://github.com/tangle-network/dapp/pull/2742))
+- **tangle-cloud:** Add Operator Registration Flow ([#2730](https://github.com/tangle-network/dapp/pull/2730))
+- **tangle-dapp:** Add Solana bridge route with UI enhancements ([#2709](https://github.com/tangle-network/dapp/pull/2709))
+- **tangle-dapp:** Update account page to prioritize restaking ([#2694](https://github.com/tangle-network/dapp/pull/2694))
+- **repo:** Bump deps, Fix Storybook build ([#2707](https://github.com/tangle-network/dapp/pull/2707))
+- **tangle-cloud:** Add Blueprint Details Page ([#2706](https://github.com/tangle-network/dapp/pull/2706))
+- **repo:** Fix Routing, Add Eslint Rules, Remove Unused Deps ([#2702](https://github.com/tangle-network/dapp/pull/2702))
+- **tangle-dapp:** Bridge revamp & Router integration ([#2698](https://github.com/tangle-network/dapp/pull/2698))
+- **tangle-dapp:** Implement LS pools update roles modal ([#2675](https://github.com/tangle-network/dapp/pull/2675))
+
+### 🩹 Fixes
+
+- **tangle-dapp:** Fix bridge page crash when connected to a Substrate account ([#2881](https://github.com/tangle-network/dapp/pull/2881))
+- **tangle-dapp:** Fix Restake Data not Showing ([#2876](https://github.com/tangle-network/dapp/pull/2876))
+- **tangle-dapp:** Network switching & other fixes ([#2873](https://github.com/tangle-network/dapp/pull/2873))
+- **tangle-dapp:** Network Switching Improvements ([#2855](https://github.com/tangle-network/dapp/pull/2855))
+- **tangle-dapp:** Fix token selector not working for Tangle mainnet ([#2849](https://github.com/tangle-network/dapp/pull/2849))
+- **tangle-shared-ui:** Fix Incorrect Instance Provider ([#2859](https://github.com/tangle-network/dapp/pull/2859))
+- **tangle-shared-ui:** Fix Table Issues, Resolve API Errors ([#2851](https://github.com/tangle-network/dapp/pull/2851))
+- **tangle-shared-ui:** Fix Talisman Keep Popping Up ([#2846](https://github.com/tangle-network/dapp/pull/2846))
+- **tangle-dapp:** Fix Incorrect Token Symbol on Unclaimed Reward ([#2836](https://github.com/tangle-network/dapp/pull/2836))
+- **tangle-dapp:** Various bug fixes ([#2796](https://github.com/tangle-network/dapp/pull/2796))
+- **tangle-dapp:** Bridge UI fixes ([#2813](https://github.com/tangle-network/dapp/pull/2813))
+- **tangle-dapp:** Remove Heavy SVG, Use Shallow for Selectors ([#2806](https://github.com/tangle-network/dapp/pull/2806))
+- **tangle-dapp:** Fix bridge transaction status not updating correctly in edge cases ([#2794](https://github.com/tangle-network/dapp/pull/2794))
+- **tangle-dapp:** Fix explorer links ([#2792](https://github.com/tangle-network/dapp/pull/2792))
+- **tangle-dapp:** Fix Missing Default Tab & Incorrect Balance ([#2788](https://github.com/tangle-network/dapp/pull/2788))
+- **tangle-dapp:** Improve Error Handling When Parsing Response ([#2757](https://github.com/tangle-network/dapp/pull/2757))
+- **tangle-dapp:** Fix restake tables & refactor restaking hooks ([#2732](https://github.com/tangle-network/dapp/pull/2732))
+- **tangle-dapp:** Fix assets not showing in restaking after new Tangle update ([#2720](https://github.com/tangle-network/dapp/pull/2720))
+- **repo:** Fix Storybook deployment and trigger workflow ([33cc641e](https://github.com/tangle-network/dapp/commit/33cc641e))
+
+### 🔥 Performance
+
+- **tangle-dapp:** Optimize Bridge API Requests when fetching balances ([#2854](https://github.com/tangle-network/dapp/pull/2854))
+
+### ❤️ Thank You
+
+- Daniel Bui @danielbui12
+- drewstone @drewstone
+- Pavan Soratur @devpavan04
+- Trung-Tin Pham @AtelyPham
+- yuri @yurixander
+- yurixander @yurixander
+- Yurixander @yurixander
+
 ## 0.0.18 (2024-12-03)
 
 ### 🚀 Features
