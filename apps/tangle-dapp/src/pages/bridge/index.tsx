@@ -1,6 +1,5 @@
 import { FC } from 'react';
-
-import BridgeContainer from '../../containers/bridge/BridgeContainer';
+import BridgeContainer from '../../features/bridge/containers/BridgeContainer';
 
 const Bridge: FC = () => {
   return <BridgeContainer />;

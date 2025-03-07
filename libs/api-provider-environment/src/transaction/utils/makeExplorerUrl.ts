@@ -64,7 +64,11 @@ export const makeExplorerUrl = (
   pathOrHash: string,
   variant: ExplorerVariant,
   environment: WebbProviderType,
-): string => {
+): string | null => {
+  if (!baseUrl || !pathOrHash) {
+    return null;
+  }
+
   switch (environment) {
     case 'web3':
       return new URL(`${variant}/${pathOrHash}`, baseUrl).toString();

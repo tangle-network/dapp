@@ -52,12 +52,8 @@ export type BridgeDestTxIds = Record<
       destChain: ChainConfig;
       status: BridgeDestTxStatus;
     }[];
-    router: {
-      srcTx: string;
-      status: BridgeDestTxStatus;
-    }[];
   }
->; // accountAddress -> { hyperlane: [], router: [] }
+>; // accountAddress -> { hyperlane: [] }
 
 /**
  * Type definition associating local storage keys with their

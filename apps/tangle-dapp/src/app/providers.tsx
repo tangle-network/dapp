@@ -7,9 +7,8 @@ import { UIProvider } from '@tangle-network/ui-components';
 import { type PropsWithChildren, type ReactNode } from 'react';
 import type { State } from 'wagmi';
 import { z } from 'zod';
-
-import HyperlaneWarpContext from '../context/bridge/HyperlaneWarpContext';
-import BridgeTxQueueProvider from '../context/bridge/BridgeTxQueueContext/BridgeTxQueueProvider';
+import BridgeHyperlaneProvider from '../features/bridge/context/BridgeHyperlaneContext/BridgeHyperlaneProvider';
+import BridgeTxQueueProvider from '../features/bridge/context/BridgeTxQueueContext/BridgeTxQueueProvider';
 import PolkadotApiProvider from '@tangle-network/tangle-shared-ui/context/PolkadotApiProvider';
 
 const appEvent = new AppEvent();
@@ -48,11 +47,11 @@ const Providers = ({
           blockedRegions={blockedRegions}
           blockedCountryCodes={blockedCountryCodes}
         >
-          <HyperlaneWarpContext>
+          <BridgeHyperlaneProvider>
             <BridgeTxQueueProvider>
               <PolkadotApiProvider>{children}</PolkadotApiProvider>
             </BridgeTxQueueProvider>
-          </HyperlaneWarpContext>
+          </BridgeHyperlaneProvider>
         </OFACFilterProvider>
       </WebbProvider>
     </UIProvider>

@@ -5,9 +5,8 @@ import {
   MultiProtocolProvider,
   WarpCore,
 } from '@hyperlane-xyz/sdk';
-
-import assembleChainMetadata from './assembleChainMetadata';
-import assembleWarpCoreConfig from './assembleWarpCoreConfig';
+import hyperlaneAssembleChainMetadata from '../../utils/hyperlaneAssembleChainMetadata';
+import hyperlaneAssembleWarpCoreConfig from '../../utils/hyperlaneAssembleWarpCoreConfig';
 
 export interface HyperlaneWarpContext {
   registry: IRegistry;
@@ -23,9 +22,9 @@ export function getHyperlaneWarpContext() {
 }
 
 export async function initHyperlaneWarpContext() {
-  const { registry, chains } = await assembleChainMetadata();
+  const { registry, chains } = await hyperlaneAssembleChainMetadata();
   const multiProvider = new MultiProtocolProvider(chains);
-  const coreConfig = assembleWarpCoreConfig();
+  const coreConfig = hyperlaneAssembleWarpCoreConfig();
   const warpCore = WarpCore.FromConfig(multiProvider, coreConfig);
   warpContext = { registry, chains, multiProvider, warpCore };
   return warpContext;
