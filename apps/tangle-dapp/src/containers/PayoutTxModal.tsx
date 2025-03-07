@@ -17,6 +17,13 @@ import usePayoutStakersTx, {
 } from '../data/payouts/usePayoutStakersTx';
 import { Payout } from '@tangle-network/tangle-shared-ui/types';
 import { PayoutTxState } from '../types';
+import {
+  formatEras,
+  calculatePayoutProgress,
+  isTransactionProcessing,
+  isTransactionCompleted,
+  getPayoutButtonText,
+} from '../utils/payout';
 
 type Props = {
   isModalOpen: boolean;
@@ -76,11 +83,6 @@ const PayoutTxModal: FC<Props> = ({
     return chunks;
   }, [claimedEras, payout.eras, walletAddress]);
 
-  const formatEras = useCallback((eras: number[]): string => {
-    if (!eras || eras.length === 0) return '-';
-    return eras.join(', ');
-  }, []);
-
   const currentChunk = useMemo(
     () => eraChunks[currentChunkIndex] || [],
     [eraChunks, currentChunkIndex],
@@ -98,9 +100,11 @@ const PayoutTxModal: FC<Props> = ({
 
   const isCompleted = useMemo(
     () =>
-      txState === PayoutTxState.COMPLETED ||
-      (processedEras.length > 0 &&
-        processedEras.length >= payout.eras.length - claimedEras.length),
+      isTransactionCompleted({
+        txState,
+        processedCount: processedEras.length,
+        totalCount: payout.eras.length - claimedEras.length,
+      }),
     [txState, processedEras.length, payout.eras.length, claimedEras.length],
   );
 
@@ -276,18 +280,16 @@ const PayoutTxModal: FC<Props> = ({
   }, [isModalOpen, pollingId]);
 
   const progress = useMemo(() => {
-    if (isCompleted) return 100;
-    if (
-      txState === PayoutTxState.IDLE &&
-      currentChunkIndex === 0 &&
-      processedEras.length === 0
-    )
-      return 0;
-
     const totalUnprocessedEras = payout.eras.length - claimedEras.length;
-    if (totalUnprocessedEras <= 0) return 100;
 
-    return (processedEras.length / totalUnprocessedEras) * 100;
+    return calculatePayoutProgress({
+      isCompleted,
+      txState,
+      currentIndex: currentChunkIndex,
+      processedCount: processedEras.length,
+      totalCount: totalUnprocessedEras,
+      isIdle: txState === PayoutTxState.IDLE,
+    });
   }, [
     txState,
     currentChunkIndex,
@@ -442,19 +444,13 @@ const PayoutTxModal: FC<Props> = ({
             txState === PayoutTxState.PROCESSING ||
             txState === PayoutTxState.WAITING
           }
-          isProcessing={
-            txState === PayoutTxState.PROCESSING ||
-            txState === PayoutTxState.WAITING
-          }
-          confirmButtonText={(() => {
-            if (eraChunks.length === 0) return 'No Rewards to Claim';
-            if (isCompleted || txState === PayoutTxState.COMPLETED)
-              return 'Close';
-            if (txState === PayoutTxState.SUCCESS && hasNextChunk)
-              return 'Process Next Batch';
-            if (txState === PayoutTxState.ERROR) return 'Retry';
-            return 'Confirm Payout';
-          })()}
+          isProcessing={isTransactionProcessing(txState)}
+          confirmButtonText={getPayoutButtonText({
+            txState,
+            isCompleted,
+            hasNextItem: hasNextChunk,
+            hasItemsToProcess: eraChunks.length > 0,
+          })}
           onConfirm={(() => {
             if (isCompleted || txState === PayoutTxState.COMPLETED)
               return closeModal;

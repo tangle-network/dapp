@@ -19,6 +19,13 @@ import usePayoutStakersTx, {
 import { Payout } from '@tangle-network/tangle-shared-ui/types';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { PayoutTxState } from '../types';
+import {
+  formatEras,
+  calculatePayoutProgress,
+  isTransactionProcessing,
+  isTransactionCompleted,
+  getPayoutButtonText,
+} from '../utils/payout';
 
 type Props = {
   isModalOpen: boolean;
@@ -65,15 +72,16 @@ const PayoutAllTxModal: FC<Props> = ({
   }, [activeAccount]);
 
   const isProcessing = useMemo(() => {
-    return (
-      txState === PayoutTxState.PROCESSING || txState === PayoutTxState.WAITING
-    );
+    return isTransactionProcessing(txState);
   }, [txState]);
 
   const isCompleted = useMemo(
     () =>
-      txState === PayoutTxState.COMPLETED ||
-      processedValidators.length === validatorsAndEras.length,
+      isTransactionCompleted({
+        txState,
+        processedCount: processedValidators.length,
+        totalCount: validatorsAndEras.length,
+      }),
     [txState, processedValidators.length, validatorsAndEras.length],
   );
 
@@ -107,11 +115,6 @@ const PayoutAllTxModal: FC<Props> = ({
       };
     });
   }, [claimedEras, validatorsAndEras, walletAddress]);
-
-  const formatEras = (eras: number[]): string => {
-    if (!eras || eras.length === 0) return '-';
-    return eras.join(', ');
-  };
 
   const erasClaimingFor = useMemo(() => {
     const currentEras =
@@ -444,14 +447,24 @@ const PayoutAllTxModal: FC<Props> = ({
   ]);
 
   const progress = useMemo(() => {
-    if (isCompleted) return 100;
-    if (!isProcessing) return 0;
-    const totalChunks = eraChunksByValidator.reduce(
-      (acc, validator) => acc + validator.eras.length,
-      0,
-    );
-    return ((currentChunkIndex + 1) / totalChunks) * 100;
-  }, [currentChunkIndex, eraChunksByValidator, isProcessing, isCompleted]);
+    const totalChunks = getTotalChunks();
+    const processedChunks = getTotalProcessedChunks();
+
+    return calculatePayoutProgress({
+      isCompleted,
+      txState,
+      currentIndex: currentChunkIndex,
+      processedCount: processedChunks,
+      totalCount: totalChunks,
+      isIdle: txState === PayoutTxState.IDLE,
+    });
+  }, [
+    currentChunkIndex,
+    getTotalChunks,
+    getTotalProcessedChunks,
+    isCompleted,
+    txState,
+  ]);
 
   return (
     <Modal open={isModalOpen} onOpenChange={handleModalClose}>
@@ -638,13 +651,12 @@ const PayoutAllTxModal: FC<Props> = ({
         <ModalFooterActions
           isConfirmDisabled={erasClaimingFor.length === 0 || isProcessing}
           isProcessing={isProcessing}
-          confirmButtonText={
-            erasClaimingFor.length === 0
-              ? 'No Rewards to Claim'
-              : processedValidators.length === payouts.length
-                ? 'Close'
-                : 'Confirm Payout'
-          }
+          confirmButtonText={getPayoutButtonText({
+            txState,
+            isCompleted,
+            hasNextItem: false,
+            hasItemsToProcess: erasClaimingFor.length > 0,
+          })}
           onConfirm={
             processedValidators.length === payouts.length
               ? closeModal
