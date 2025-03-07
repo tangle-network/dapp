@@ -9,7 +9,7 @@ import {
   formatDisplayAmount,
 } from '@tangle-network/ui-components';
 import convertBNToDecimal from '@tangle-network/ui-components/utils/convertBnToDecimal';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 /**
@@ -24,7 +24,7 @@ export default function useHyperlaneFeeDetails(
   activeAccount: Account<unknown> | null,
   hyperlaneQuote: HyperlaneQuote | null,
   recipientExplorerUrl: string | null,
-): BridgeFeeDetailProps | null {
+): Omit<BridgeFeeDetailProps, 'sendingAmount'> | null {
   const selectedToken = useBridgeStore(
     useShallow((store) => store.selectedToken),
   );
@@ -62,13 +62,6 @@ export default function useHyperlaneFeeDetails(
 
     const formattedBridgeFee = `${formatEther(hyperlaneQuote.fees.interchain.amount)} ${hyperlaneQuote.fees.interchain.symbol}`;
 
-    const sendingAmount = amount
-      ? convertBNToDecimal(amount, selectedToken.decimals)
-      : new Decimal(0);
-
-    setSendingAmount(sendingAmount);
-    setReceivingAmount(sendingAmount);
-
     return {
       token: selectedToken,
       amounts: {
@@ -78,6 +71,9 @@ export default function useHyperlaneFeeDetails(
         gasFee: formattedGasFee,
       },
       recipientExplorerUrl: recipientExplorerUrl,
+      sendingAmount: amount
+        ? convertBNToDecimal(amount, selectedToken.decimals)
+        : new Decimal(0),
     };
   }, [
     activeAccount,
@@ -85,10 +81,15 @@ export default function useHyperlaneFeeDetails(
     amount,
     selectedToken,
     hyperlaneQuote,
-    setSendingAmount,
-    setReceivingAmount,
     recipientExplorerUrl,
   ]);
+
+  useEffect(() => {
+    if (hyperlaneFeeDetails) {
+      setSendingAmount(hyperlaneFeeDetails.sendingAmount);
+      setReceivingAmount(hyperlaneFeeDetails.sendingAmount);
+    }
+  }, [hyperlaneFeeDetails, setSendingAmount, setReceivingAmount]);
 
   return hyperlaneFeeDetails;
 }

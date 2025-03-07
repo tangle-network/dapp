@@ -14,7 +14,7 @@ export const MetaMaskIcon = (props: IconBase) => {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <g clip-path="url(#clip0_38_10)">
+        <g clipPath="url(#clip0_38_10)">
           <path
             d="M22.3504 23.0805L17.1987 21.4905L13.3137 23.8977L10.6031 23.8965L6.71577 21.4905L1.56642 23.0805L0 17.5997L1.56642 11.5168L0 6.37401L1.56642 0L9.61268 4.98272H14.304L22.3504 0L23.9168 6.37401L22.3504 11.5168L23.9168 17.5997L22.3504 23.0805Z"
             fill="#FF5C16"
