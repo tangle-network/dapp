@@ -6,7 +6,6 @@ import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import { Decimal } from 'decimal.js';
 import get from 'lodash/get';
 import { create } from 'zustand';
-
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
 import { BRIDGE_CHAINS } from '@tangle-network/tangle-shared-ui/constants/bridge';
 

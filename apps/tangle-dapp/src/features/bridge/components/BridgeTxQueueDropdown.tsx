@@ -8,8 +8,7 @@ import {
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import { FC, useMemo } from 'react';
 import { twMerge } from 'tailwind-merge';
-
-import { useBridgeTxQueue } from '../../context/bridge/BridgeTxQueueContext';
+import { useBridgeTxQueue } from '../context/BridgeTxQueueContext';
 import BridgeTxQueueItem from './BridgeTxQueueItem';
 
 const BridgeTxQueueDropdown: FC<{

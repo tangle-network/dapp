@@ -9,11 +9,7 @@ import { ChainIcon } from '@tangle-network/icons/ChainIcon';
 import { ExternalLinkLine } from '@tangle-network/icons/ExternalLinkLine';
 import { TokenIcon } from '@tangle-network/icons/TokenIcon';
 import { getFlexBasic } from '@tangle-network/icons/utils';
-import {
-  mailboxAddress,
-  ROUTER_TX_EXPLORER_URL,
-  ROUTER_TX_STATUS_URL,
-} from '@tangle-network/tangle-shared-ui/constants/bridge';
+import { mailboxAddress } from '@tangle-network/tangle-shared-ui/constants/bridge';
 import useLocalStorage, {
   BridgeDestTxStatus,
   LocalStorageKey,
@@ -42,17 +38,15 @@ import {
   shortenString,
 } from '@tangle-network/ui-components/utils';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import cx from 'classnames';
 import { Decimal } from 'decimal.js';
 import { FC, useCallback, useMemo } from 'react';
 import { createPublicClient, getContract, http } from 'viem';
-import useBridgeTxQueue from '../../context/bridge/BridgeTxQueueContext/useBridgeTxQueue';
-import { useHyperlaneTransfer } from '../../data/bridge/useHyperlaneTransfer';
-import { useRouterTransfer } from '../../data/bridge/useRouterTransfer';
-import useWalletClient from '../../data/bridge/useWalletClient';
-import useIsBridgeNativeToken from '../../hooks/useIsBridgeNativeToken';
-import { FeeDetail, FeeDetailProps } from './FeeDetail';
+import useBridgeTxQueue from '../context/BridgeTxQueueContext/useBridgeTxQueue';
+import { useHyperlaneTransfer } from '../hooks/useHyperlaneTransfer';
+import useWalletClient from '../hooks/useWalletClient';
+import useIsNativeToken from '../hooks/useIsNativeToken';
+import { BridgeFeeDetail, BridgeFeeDetailProps } from './BridgeFeeDetail';
 import SkeletonLoader from '@tangle-network/ui-components/components/SkeletonLoader';
 
 interface BridgeConfirmationModalProps {
@@ -62,17 +56,9 @@ interface BridgeConfirmationModalProps {
   sourceChain: ChainConfig;
   destinationChain: ChainConfig;
   token: BridgeToken | null;
-  feeDetails: FeeDetailProps | null;
+  feeDetails: BridgeFeeDetailProps | null;
   activeAccountAddress: string;
   destinationAddress: string;
-  routerTransferData: {
-    routerQuoteData: any;
-    fromTokenAddress: string;
-    toTokenAddress: string;
-    senderAddress: string;
-    receiverAddress: string;
-    refundAddress: string;
-  } | null;
   sendingAmount: Decimal | null;
   receivingAmount: Decimal | null;
   isTxInProgress: boolean;
@@ -89,9 +75,9 @@ export const BridgeConfirmationModal = ({
   feeDetails,
   activeAccountAddress,
   destinationAddress,
-  routerTransferData,
   sendingAmount,
   receivingAmount,
+  isTxInProgress,
   setIsTxInProgress,
 }: BridgeConfirmationModalProps) => {
   const {
@@ -102,18 +88,6 @@ export const BridgeConfirmationModal = ({
     addTxExplorerUrl,
     addTxDestinationTxExplorerUrl,
   } = useBridgeTxQueue();
-
-  const {
-    mutateAsync: transferByRouterAsync,
-    isPending: isTransferByRouterPending,
-  } = useRouterTransfer({
-    routerQuoteData: routerTransferData?.routerQuoteData,
-    fromTokenAddress: routerTransferData?.fromTokenAddress ?? '',
-    toTokenAddress: routerTransferData?.toTokenAddress ?? '',
-    senderAddress: routerTransferData?.senderAddress ?? '',
-    receiverAddress: routerTransferData?.receiverAddress ?? '',
-    refundAddress: routerTransferData?.refundAddress ?? '',
-  });
 
   const {
     mutateAsync: transferByHyperlaneAsync,
@@ -133,9 +107,8 @@ export const BridgeConfirmationModal = ({
     recipientAddress: destinationAddress,
   });
 
-  const isNativeToken = useIsBridgeNativeToken(
+  const isNativeToken = useIsNativeToken(
     calculateTypedChainId(sourceChain.chainType, sourceChain.id),
-    token,
   );
 
   const { notificationApi } = useUIContext();
@@ -230,7 +203,6 @@ export const BridgeConfirmationModal = ({
                             ? { ...item, status: BridgeDestTxStatus.Completed }
                             : item,
                       ) || [],
-                    router: currentDestTxIds[activeAccountAddress]?.router,
                   },
                 };
                 return updatedDestTxIds;
@@ -253,12 +225,6 @@ export const BridgeConfirmationModal = ({
                             ? { ...item, status: BridgeDestTxStatus.Failed }
                             : item,
                       ) || [],
-                    router: currentDestTxIds[activeAccountAddress]?.router.map(
-                      (item) =>
-                        item.srcTx === sourceTxHash
-                          ? { ...item, status: BridgeDestTxStatus.Failed }
-                          : item,
-                    ),
                   },
                 };
                 return updatedDestTxIds;
@@ -274,7 +240,7 @@ export const BridgeConfirmationModal = ({
                   receipt.transactionHash,
                   'tx',
                   'web3',
-                ).toString(),
+                ),
               );
             }
           }
@@ -348,117 +314,6 @@ export const BridgeConfirmationModal = ({
     retry: true,
   });
 
-  const checkRouterMessageDelivery = useCallback(
-    async (sourceTxHash: string, status: BridgeDestTxStatus) => {
-      if (
-        status === BridgeDestTxStatus.Completed ||
-        status === BridgeDestTxStatus.Failed
-      )
-        return;
-
-      try {
-        const response = await axios.get(ROUTER_TX_STATUS_URL, {
-          params: {
-            srcTxHash: sourceTxHash,
-          },
-        });
-
-        if (response.data.status === 'pending') {
-          updateTxState(sourceTxHash, BridgeTxState.Pending);
-        } else if (response.data.status === 'failed') {
-          updateTxState(sourceTxHash, BridgeTxState.Failed);
-          setDestTxIds((prevValue) => {
-            const currentDestTxIds = prevValue?.value || {};
-            const updatedDestTxIds = {
-              ...currentDestTxIds,
-              [activeAccountAddress]: {
-                router:
-                  currentDestTxIds[activeAccountAddress]?.router.map((item) =>
-                    item.srcTx === sourceTxHash
-                      ? { ...item, status: BridgeDestTxStatus.Failed }
-                      : item,
-                  ) || [],
-                hyperlane: currentDestTxIds[activeAccountAddress]?.hyperlane,
-              },
-            };
-            return updatedDestTxIds;
-          });
-        } else if (response.data.status === 'completed') {
-          updateTxState(sourceTxHash, BridgeTxState.Completed);
-          setDestTxIds((prevValue) => {
-            const currentDestTxIds = prevValue?.value || {};
-            const updatedDestTxIds = {
-              ...currentDestTxIds,
-              [activeAccountAddress]: {
-                router:
-                  currentDestTxIds[activeAccountAddress]?.router.map((item) =>
-                    item.srcTx === sourceTxHash
-                      ? { ...item, status: BridgeDestTxStatus.Completed }
-                      : item,
-                  ) || [],
-                hyperlane: currentDestTxIds[activeAccountAddress]?.hyperlane,
-              },
-            };
-            return updatedDestTxIds;
-          });
-        }
-
-        return true;
-      } catch (error) {
-        console.error('Error checking router message delivery:', error);
-        return false;
-      }
-    },
-    [activeAccountAddress, setDestTxIds, updateTxState],
-  );
-
-  const finalizePendingRouterTxs = useCallback(async () => {
-    const destTxnIds = cachedDestTxIds?.value;
-
-    if (!destTxnIds) {
-      return;
-    }
-
-    const routerTxnIds = destTxnIds[activeAccountAddress].router;
-
-    if (routerTxnIds.length === 0) return;
-
-    const checkedRouterTxs = routerTxnIds.map((txId) => {
-      return checkRouterMessageDelivery(txId.srcTx, txId.status);
-    });
-
-    return await Promise.all(checkedRouterTxs);
-  }, [checkRouterMessageDelivery, cachedDestTxIds, activeAccountAddress]);
-
-  const enableFinalizePendingRouterTxs = useMemo(() => {
-    const destTxnIds = cachedDestTxIds?.value;
-
-    if (!destTxnIds) {
-      return false;
-    }
-
-    const routerTxnIds = destTxnIds[activeAccountAddress]?.router || [];
-
-    if (routerTxnIds.length === 0) {
-      return false;
-    }
-
-    return routerTxnIds.some(
-      (txId) => txId.status === BridgeDestTxStatus.Pending,
-    );
-  }, [cachedDestTxIds, activeAccountAddress]);
-
-  useQuery({
-    queryKey: ['routerMessageDelivery'],
-    queryFn: () => {
-      return finalizePendingRouterTxs();
-    },
-    refetchInterval: 10000,
-    refetchIntervalInBackground: true,
-    enabled: enableFinalizePendingRouterTxs,
-    retry: true,
-  });
-
   const watchTransaction = useCallback(
     async (token: BridgeToken, txHash: string) => {
       try {
@@ -482,9 +337,6 @@ export const BridgeConfirmationModal = ({
                 const updatedDestTxIds = {
                   ...currentDestTxIds,
                   [activeAccountAddress]: {
-                    router: [
-                      ...(currentDestTxIds[activeAccountAddress]?.router || []),
-                    ],
                     hyperlane: [
                       ...(currentDestTxIds[activeAccountAddress]?.hyperlane ||
                         []),
@@ -507,10 +359,6 @@ export const BridgeConfirmationModal = ({
               const updatedDestTxIds = {
                 ...currentDestTxIds,
                 [activeAccountAddress]: {
-                  router: [
-                    ...(currentDestTxIds[activeAccountAddress]?.router || []),
-                    { srcTx: txHash, status: BridgeDestTxStatus.Pending },
-                  ],
                   hyperlane: currentDestTxIds[activeAccountAddress]?.hyperlane,
                 },
               };
@@ -548,94 +396,54 @@ export const BridgeConfirmationModal = ({
         throw new Error('Token not found');
       }
 
-      if (token.bridgeType === EVMTokenBridgeEnum.Router) {
-        const response = await transferByRouterAsync();
+      const response = await transferByHyperlaneAsync();
 
-        if (response) {
-          addTxToQueue({
-            hash: response.transactionHash,
-            env:
-              sourceChain.tag === 'live'
-                ? 'live'
-                : sourceChain.tag === 'test'
-                  ? 'test'
-                  : 'dev',
-            sourceTypedChainId: calculateTypedChainId(
-              sourceChain.chainType,
-              sourceChain.id,
-            ),
-            destinationTypedChainId: calculateTypedChainId(
-              destinationChain.chainType,
-              destinationChain.id,
-            ),
-            sourceAddress: activeAccountAddress,
-            recipientAddress: destinationAddress,
-            sourceAmount: sendingAmount.toString(),
-            destinationAmount: receivingAmount.toString(),
-            tokenSymbol: token.tokenType,
-            creationTimestamp: new Date().getTime(),
-            bridgeType: EVMTokenBridgeEnum.Router,
-          });
+      if (token && response && response.length > 1) {
+        const receipt = response[1]; // Add only transfer receipt to the queue not the approval
 
-          setIsTxInProgress(false);
-          setIsOpenQueueDropdown(true);
-          updateTxState(response.transactionHash, BridgeTxState.Pending);
-          addTxExplorerUrl(
-            response.transactionHash,
-            ROUTER_TX_EXPLORER_URL + response.transactionHash,
-          );
-          watchTransaction(token, response.transactionHash);
-        }
-      } else {
-        const response = await transferByHyperlaneAsync();
-
-        if (token && response && response.length > 1) {
-          const receipt = response[1]; // Add only transfer receipt to the queue not the approval
-
-          addTxToQueue({
-            hash: receipt.transactionHash,
-            env:
-              sourceChain.tag === 'live'
-                ? 'live'
-                : sourceChain.tag === 'test'
-                  ? 'test'
-                  : 'dev',
-            sourceTypedChainId: calculateTypedChainId(
-              sourceChain.chainType,
-              sourceChain.id,
-            ),
-            destinationTypedChainId: calculateTypedChainId(
-              destinationChain.chainType,
-              destinationChain.id,
-            ),
-            sourceAddress: activeAccountAddress,
-            recipientAddress: destinationAddress,
-            sourceAmount: sendingAmount.toString(),
-            destinationAmount: receivingAmount.toString(),
-            tokenSymbol: token.tokenType,
-            creationTimestamp: new Date().getTime(),
-            bridgeType: EVMTokenBridgeEnum.Hyperlane,
-          });
-
-          setIsOpenQueueDropdown(true);
-          updateTxState(receipt.transactionHash, BridgeTxState.Pending);
-          const sourceTypedChainId = calculateTypedChainId(
+        addTxToQueue({
+          hash: receipt.transactionHash,
+          env:
+            sourceChain.tag === 'live'
+              ? 'live'
+              : sourceChain.tag === 'test'
+                ? 'test'
+                : 'dev',
+          sourceTypedChainId: calculateTypedChainId(
             sourceChain.chainType,
             sourceChain.id,
-          );
-          if (chainsConfig[sourceTypedChainId].blockExplorers) {
-            addTxExplorerUrl(
+          ),
+          destinationTypedChainId: calculateTypedChainId(
+            destinationChain.chainType,
+            destinationChain.id,
+          ),
+          sourceAddress: activeAccountAddress,
+          recipientAddress: destinationAddress,
+          sourceAmount: sendingAmount.toString(),
+          destinationAmount: receivingAmount.toString(),
+          tokenSymbol: token.tokenType,
+          creationTimestamp: new Date().getTime(),
+          bridgeType: EVMTokenBridgeEnum.Hyperlane,
+        });
+
+        setIsOpenQueueDropdown(true);
+        updateTxState(receipt.transactionHash, BridgeTxState.Pending);
+        const sourceTypedChainId = calculateTypedChainId(
+          sourceChain.chainType,
+          sourceChain.id,
+        );
+        if (chainsConfig[sourceTypedChainId].blockExplorers) {
+          addTxExplorerUrl(
+            receipt.transactionHash,
+            makeExplorerUrl(
+              chainsConfig[sourceTypedChainId].blockExplorers.default.url,
               receipt.transactionHash,
-              makeExplorerUrl(
-                chainsConfig[sourceTypedChainId].blockExplorers.default.url,
-                receipt.transactionHash,
-                'tx',
-                'web3',
-              ).toString(),
-            );
-          }
-          watchTransaction(token, receipt.transactionHash);
+              'tx',
+              'web3',
+            ),
+          );
         }
+        watchTransaction(token, receipt.transactionHash);
       }
 
       setIsTxInProgress(false);
@@ -705,7 +513,6 @@ export const BridgeConfirmationModal = ({
     activeAccountAddress,
     isNativeToken,
     walletClient,
-    transferByRouterAsync,
     addTxToQueue,
     sourceChain.tag,
     sourceChain.chainType,
@@ -725,7 +532,15 @@ export const BridgeConfirmationModal = ({
   return (
     <Modal
       open={isOpen}
-      onOpenChange={(open) => (open === false ? handleClose() : null)}
+      onOpenChange={(open) => {
+        if (open === false && isTxInProgress) {
+          return;
+        }
+
+        if (open === false) {
+          handleClose();
+        }
+      }}
     >
       <ModalContent size="md">
         <ModalHeader>Confirm Bridge</ModalHeader>
@@ -760,7 +575,7 @@ export const BridgeConfirmationModal = ({
           </div>
 
           {token && feeDetails ? (
-            <FeeDetail
+            <BridgeFeeDetail
               {...feeDetails}
               className="bg-mono-20 dark:bg-mono-170 rounded-xl"
             />
@@ -773,19 +588,10 @@ export const BridgeConfirmationModal = ({
           <Button
             isFullWidth
             onClick={handleConfirm}
-            isLoading={
-              isTransferByRouterPending || isTransferByHyperlanePending
-            }
-            isDisabled={
-              !token ||
-              !feeDetails ||
-              isTransferByRouterPending ||
-              isTransferByHyperlanePending
-            }
+            isLoading={isTransferByHyperlanePending}
+            isDisabled={!token || !feeDetails || isTransferByHyperlanePending}
           >
-            {isTransferByRouterPending || isTransferByHyperlanePending
-              ? 'Bridging'
-              : 'Bridge'}
+            {isTransferByHyperlanePending ? 'Bridging' : 'Bridge'}
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -808,7 +614,7 @@ const ConfirmationItem: FC<{
       accAddress,
       'address',
       'web3',
-    ).toString();
+    );
   }, [chain, accAddress]);
 
   return (

@@ -83,10 +83,10 @@ export type BridgeQueueTxItem = {
   tokenSymbol: string;
   creationTimestamp: number;
   state: BridgeTxState;
-  explorerUrl?: string;
+  explorerUrl?: string | null;
   destinationTxHash?: string;
   destinationTxState?: BridgeTxState;
-  destinationTxExplorerUrl?: string;
+  destinationTxExplorerUrl?: string | null;
   bridgeType: EVMTokenBridgeEnum;
 };
 

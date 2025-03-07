@@ -15,11 +15,9 @@ import {
 } from '@tangle-network/ui-components';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
-
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
-import { Decimal } from 'decimal.js';
 
-export interface FeeDetailProps {
+export interface BridgeFeeDetailProps {
   token: BridgeToken;
   amounts: {
     sending: string;
@@ -27,23 +25,18 @@ export interface FeeDetailProps {
     bridgeFee: string;
     gasFee?: string;
   };
-  estimatedTime?: string;
   className?: string;
   isCollapsible?: boolean;
-  bridgeFeeTokenType: string;
-  gasFeeTokenType?: string;
-  sendingAmount: Decimal | null;
-  receivingAmount: Decimal | null;
-  recipientExplorerUrl?: string;
+  recipientExplorerUrl: string | null;
 }
 
-export const FeeDetail = ({
+export const BridgeFeeDetail = ({
   token,
   amounts,
   className,
   isCollapsible = true,
   recipientExplorerUrl,
-}: FeeDetailProps) => {
+}: BridgeFeeDetailProps) => {
   return (
     <Accordion
       type="single"

@@ -8,7 +8,7 @@ interface BridgeTxQueueContextProps {
   txQueue: BridgeQueueTxItem[];
   addTxToQueue: (tx: Omit<BridgeQueueTxItem, 'state'>) => void;
   deleteTxFromQueue: (txHash: string) => void;
-  addTxExplorerUrl: (txHash: string, explorerUrl: string) => void;
+  addTxExplorerUrl: (txHash: string, explorerUrl: string | null) => void;
   updateTxState: (txHash: string, state: BridgeTxState) => void;
   updateTxDestinationTxState: (
     txHash: string,
@@ -17,7 +17,7 @@ interface BridgeTxQueueContextProps {
   ) => void;
   addTxDestinationTxExplorerUrl: (
     txHash: string,
-    destinationTxExplorerUrl: string,
+    destinationTxExplorerUrl: string | null,
   ) => void;
   isOpenQueueDropdown: boolean;
   setIsOpenQueueDropdown: (isOpen: boolean) => void;

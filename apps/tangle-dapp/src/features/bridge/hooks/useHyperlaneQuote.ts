@@ -1,13 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { getHyperlaneWarpCore } from '../../lib/bridge/hyperlane/context';
+import { getHyperlaneWarpCore } from '../context/BridgeHyperlaneContext/BridgeHyperlaneContext';
 import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
-import {
-  getHyperlaneChainName,
-  tryFindToken,
-} from '../../lib/bridge/hyperlane/utils';
+import getHyperlaneChainName from '../utils/getHyperlaneChainName';
+import getHyperlaneToken from '../utils/getHyperlaneToken';
 import { PresetTypedChainId } from '@tangle-network/dapp-types';
-import { fetchEvmTokenBalance } from './useBridgeEvmBalances';
+import { fetchEvmTokenBalance } from './useEvmBalances';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { notificationApi } from '@tangle-network/ui-components';
 
@@ -20,10 +18,26 @@ export type HyperlaneQuoteProps = {
   recipientAddress: string;
 };
 
-export const getHyperlaneQuote = async (props: HyperlaneQuoteProps | null) => {
+export type HyperlaneQuote = {
+  fees: {
+    local: {
+      amount: bigint;
+      symbol: string;
+    };
+    interchain: {
+      amount: bigint;
+      symbol: string;
+    };
+  };
+};
+
+export const getHyperlaneQuote = async (
+  props: HyperlaneQuoteProps | null,
+): Promise<HyperlaneQuote | null> => {
   try {
     if (!props) {
-      throw new Error('Hyperlane quote props are required');
+      console.error('Hyperlane quote props are required');
+      return null;
     }
 
     const {
@@ -38,7 +52,8 @@ export const getHyperlaneQuote = async (props: HyperlaneQuoteProps | null) => {
     const warpCore = getHyperlaneWarpCore();
 
     if (!warpCore) {
-      throw new Error('Hyperlane warp core not found');
+      console.error('Hyperlane warp core not found');
+      return null;
     }
 
     const tokenToBridge =
@@ -46,12 +61,14 @@ export const getHyperlaneQuote = async (props: HyperlaneQuoteProps | null) => {
         ? token.hyperlaneSyntheticAddress
         : token.address;
 
-    const hyperlaneToken = tryFindToken(
+    const hyperlaneToken = getHyperlaneToken(
       getHyperlaneChainName(sourceTypedChainId),
       tokenToBridge,
     );
+
     if (!hyperlaneToken) {
-      throw new Error('Hyperlane token not found');
+      console.error('Hyperlane token not found');
+      return null;
     }
 
     const originTokenAmount = hyperlaneToken.amount(amount);
@@ -62,6 +79,7 @@ export const getHyperlaneQuote = async (props: HyperlaneQuoteProps | null) => {
         originTokenAmount,
         destination,
       });
+
     if (!isCollateralSufficient) {
       const balance = await fetchEvmTokenBalance(
         senderAddress,
@@ -77,6 +95,7 @@ export const getHyperlaneQuote = async (props: HyperlaneQuoteProps | null) => {
       });
 
       console.error('Insufficient destination collateral');
+      return null;
     }
 
     const errors = await warpCore.validateTransfer({
@@ -87,7 +106,8 @@ export const getHyperlaneQuote = async (props: HyperlaneQuoteProps | null) => {
     });
 
     if (errors) {
-      throw new Error('Invalid transfer parameters');
+      console.error('Invalid transfer parameters');
+      return null;
     }
 
     const fees = await warpCore.estimateTransferRemoteFees({
@@ -111,10 +131,10 @@ export const getHyperlaneQuote = async (props: HyperlaneQuoteProps | null) => {
   } catch (e: unknown) {
     if (axios.isAxiosError(e) && e.response) {
       console.error('Hyperlane quote error:', e.response.data);
-      throw e.response.data;
+      return null;
     }
     console.error('Error fetching hyperlane quote:', e);
-    throw e;
+    return null;
   }
 };
 
@@ -124,5 +144,6 @@ export const useHyperlaneQuote = (props: HyperlaneQuoteProps | null) => {
     queryFn: () => getHyperlaneQuote(props),
     enabled: false,
     refetchOnWindowFocus: false,
+    initialData: null,
   });
 };
