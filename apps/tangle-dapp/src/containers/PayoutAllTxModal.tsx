@@ -471,8 +471,8 @@ const PayoutAllTxModal: FC<Props> = ({
       <ModalContent size="lg">
         <ModalHeader>Payout Stakers</ModalHeader>
 
-        <ModalBody className="grid grid-cols-2 gap-9">
-          <div className="flex flex-col gap-4">
+        <ModalBody className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-9">
+          <div className="flex flex-col gap-5">
             {walletAddress && (
               <InputField.Root>
                 <InputField.Input
@@ -512,7 +512,7 @@ const PayoutAllTxModal: FC<Props> = ({
             </InputField.Root>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-5">
             {erasClaimingFor.length === 0 ? (
               <Typography
                 variant="h5"
@@ -528,30 +528,36 @@ const PayoutAllTxModal: FC<Props> = ({
                 >
                   Transaction Progress
                 </Typography>
-                <div className="space-y-4">
-                  <div className="space-y-3">
+                <div className="space-y-5">
+                  <div className="space-y-4">
                     {!isCompleted && (
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span>Current Validator:</span>
-                          <span className="text-sm">
+                      <div className="space-y-3 p-4 bg-slate-100 dark:bg-gray-800 rounded-lg shadow-sm">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium text-gray-700 dark:text-gray-300">
+                            Current Validator:
+                          </span>
+                          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                             {isProcessing
                               ? `${currentValidatorIndex + 1} of ${eraChunksByValidator.length}`
                               : '-'}
                           </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span>Current Batch:</span>
-                          <span className="text-sm">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium text-gray-700 dark:text-gray-300">
+                            Current Batch:
+                          </span>
+                          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                             {isProcessing &&
                             eraChunksByValidator[currentValidatorIndex]
                               ? `${currentChunkIndex + 1} of ${eraChunksByValidator[currentValidatorIndex].eras.length}`
                               : '-'}
                           </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span>Total Progress:</span>
-                          <span className="text-sm">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium text-gray-700 dark:text-gray-300">
+                            Total Progress:
+                          </span>
+                          <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                             {isProcessing
                               ? `${getTotalProcessedChunks()} of ${getTotalChunks()}`
                               : '-'}
@@ -560,9 +566,11 @@ const PayoutAllTxModal: FC<Props> = ({
                         {isProcessing &&
                           eraChunksByValidator[currentValidatorIndex]
                             ?.validator && (
-                            <div className="flex justify-between">
-                              <span>Processing Validator:</span>
-                              <span className="text-sm">
+                            <div className="flex justify-between items-center">
+                              <span className="font-medium text-gray-700 dark:text-gray-300">
+                                Processing Validator:
+                              </span>
+                              <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                                 {shortenString(
                                   eraChunksByValidator[currentValidatorIndex]
                                     .validator,
@@ -573,9 +581,11 @@ const PayoutAllTxModal: FC<Props> = ({
                           )}
                         {isProcessing &&
                           eraChunksByValidator[currentValidatorIndex]?.eras && (
-                            <div className="flex flex-col gap-2">
-                              <span>Processing Eras:</span>
-                              <span className="text-sm break-all">
+                            <div className="flex flex-col gap-2 mt-2 p-3 bg-blue-50/30 dark:bg-blue-900/30 rounded-md">
+                              <span className="font-medium text-gray-700 dark:text-gray-300">
+                                Processing Eras:
+                              </span>
+                              <span className="text-sm break-all font-semibold text-gray-900 dark:text-gray-100">
                                 {formatEras(
                                   eraChunksByValidator[
                                     currentValidatorIndex
@@ -588,19 +598,21 @@ const PayoutAllTxModal: FC<Props> = ({
                     )}
 
                     {processedValidators.length > 0 && (
-                      <div className="flex flex-col gap-2 rounded-lg">
-                        <span className="font-medium">
+                      <div className="flex flex-col gap-3 p-4 bg-green-50/30 dark:bg-green-900/20 rounded-lg shadow-sm">
+                        <span className="font-medium text-gray-900 dark:text-gray-200">
                           Processed Validators:
                         </span>
 
-                        <div className="space-y-2 text-sm">
+                        <div className="space-y-2.5 text-sm divide-y divide-gray-200 dark:divide-gray-700">
                           {processedValidators.map((validator, index) => (
                             <div
                               key={validator}
-                              className="flex justify-between items-center"
+                              className="flex justify-between items-center pt-2 first:pt-0"
                             >
-                              <span>{shortenString(validator, 10)}</span>
-                              <span className="text-green-600">
+                              <span className="font-mono text-gray-800 dark:text-gray-300 font-medium">
+                                {shortenString(validator, 10)}
+                              </span>
+                              <span className="text-green-600 dark:text-green-400 font-semibold">
                                 {processedErasByValidator[validator]?.length ||
                                   0}{' '}
                                 eras
@@ -613,16 +625,16 @@ const PayoutAllTxModal: FC<Props> = ({
                   </div>
 
                   <div className="space-y-2">
-                    <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                    <div className="w-full bg-gray-300 rounded-full h-2.5 dark:bg-gray-700 overflow-hidden">
                       <div
-                        className={`h-2 rounded-full transition-all duration-500 ${isCompleted ? 'bg-green-600' : 'bg-blue-600'}`}
+                        className={`h-2.5 rounded-full transition-all duration-700 ease-in-out ${isCompleted ? 'bg-green-600 dark:bg-green-500' : 'bg-blue-600 dark:bg-blue-500'}`}
                         style={{ width: `${progress}%` }}
                       />
                     </div>
 
                     <div className="text-sm">
                       {isProcessing ? (
-                        <span className="!text-blue-600">
+                        <span className="!text-blue-600 dark:!text-blue-400 font-medium">
                           Processing batch {currentChunkIndex + 1} of{' '}
                           {eraChunksByValidator.reduce(
                             (acc, validator) => acc + validator.eras.length,
@@ -631,10 +643,12 @@ const PayoutAllTxModal: FC<Props> = ({
                           ...
                         </span>
                       ) : processingError ? (
-                        <span className="!text-red-600">{processingError}</span>
+                        <span className="!text-red-600 dark:!text-red-400 font-medium">
+                          {processingError}
+                        </span>
                       ) : processedValidators.length > 0 ? (
                         <div className="flex items-center gap-1.5">
-                          <span className="!text-green-600">
+                          <span className="!text-green-600 dark:!text-green-400 font-medium">
                             Successfully processed {processedValidators.length}{' '}
                             validators ({totalProcessedEras} eras)
                           </span>

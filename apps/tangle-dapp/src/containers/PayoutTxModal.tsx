@@ -304,8 +304,8 @@ const PayoutTxModal: FC<Props> = ({
       <ModalContent size="lg">
         <ModalHeader>Payout Stakers</ModalHeader>
 
-        <ModalBody className="grid grid-cols-2 gap-9">
-          <div className="flex flex-col gap-4">
+        <ModalBody className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-9">
+          <div className="flex flex-col gap-5">
             {walletAddress && (
               <InputField.Root>
                 <InputField.Input
@@ -342,7 +342,7 @@ const PayoutTxModal: FC<Props> = ({
             </InputField.Root>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-5">
             {eraChunks.length === 0 ? (
               <Typography
                 variant="h5"
@@ -358,12 +358,14 @@ const PayoutTxModal: FC<Props> = ({
                 >
                   Transaction Progress
                 </Typography>
-                <div className="space-y-4">
-                  <div className="space-y-3">
+                <div className="space-y-5">
+                  <div className="space-y-4">
                     {!isCompleted && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Current Batch:</span>
-                        <span className="text-sm">
+                      <div className="flex justify-between items-center p-2 bg-slate-100 dark:bg-gray-800 rounded-md">
+                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                          Current Batch:
+                        </span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                           {txState !== PayoutTxState.IDLE
                             ? `${currentChunkIndex + 1} of ${eraChunks.length}`
                             : '-'}
@@ -372,17 +374,21 @@ const PayoutTxModal: FC<Props> = ({
                     )}
 
                     {isCompleted && (
-                      <div className="flex justify-between">
-                        <span className="font-medium">Remaining Batches:</span>
-                        <span className="text-sm">0</span>
+                      <div className="flex justify-between items-center p-2 bg-slate-100 dark:bg-gray-800 rounded-md">
+                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                          Remaining Batches:
+                        </span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                          0
+                        </span>
                       </div>
                     )}
 
-                    <div className="flex flex-col gap-2">
-                      <span className="font-medium">
+                    <div className="flex flex-col gap-2 p-3 bg-blue-50/30 dark:bg-blue-900/30 rounded-md">
+                      <span className="font-medium text-gray-700 dark:text-gray-300">
                         {isCompleted ? 'Processed Eras:' : 'Processing Eras:'}
                       </span>
-                      <span className="text-sm">
+                      <span className="text-sm break-all font-semibold text-gray-900 dark:text-gray-100">
                         {isCompleted
                           ? formatEras(processedEras)
                           : formatEras(currentChunk) || '-'}
@@ -390,43 +396,49 @@ const PayoutTxModal: FC<Props> = ({
                     </div>
 
                     {nextChunk && txState === PayoutTxState.SUCCESS && (
-                      <div className="flex flex-col gap-2">
-                        <span className="font-medium">Next Batch:</span>
-                        <span className="text-sm">{formatEras(nextChunk)}</span>
+                      <div className="flex flex-col gap-2 p-3 bg-blue-50/30 dark:bg-blue-900/30 rounded-md mt-2">
+                        <span className="font-medium text-gray-700 dark:text-gray-300">
+                          Next Batch:
+                        </span>
+                        <span className="text-sm break-all font-semibold text-gray-900 dark:text-gray-100">
+                          {formatEras(nextChunk)}
+                        </span>
                       </div>
                     )}
                   </div>
 
                   <div className="space-y-2">
-                    <div className="w-full bg-gray-200 rounded-full h-2 dark:bg-gray-700">
+                    <div className="w-full bg-gray-300 rounded-full h-2.5 dark:bg-gray-700 overflow-hidden">
                       <div
-                        className={`h-2 rounded-full transition-all duration-500 ${isCompleted ? 'bg-green-600' : txState === PayoutTxState.ERROR ? 'bg-red-600' : 'bg-blue-600'}`}
+                        className={`h-2.5 rounded-full transition-all duration-700 ease-in-out ${isCompleted ? 'bg-green-600 dark:bg-green-500' : txState === PayoutTxState.ERROR ? 'bg-red-600 dark:bg-red-500' : 'bg-blue-600/30 dark:bg-blue-500'}`}
                         style={{ width: `${progress}%` }}
                       />
                     </div>
 
                     <div className="text-sm">
                       {txState === PayoutTxState.PROCESSING && (
-                        <span className="!text-blue-600">
+                        <span className="!text-blue-600 dark:!text-blue-400 font-medium">
                           Processing batch {currentChunkIndex + 1} of{' '}
                           {eraChunks.length}...
                         </span>
                       )}
                       {txState === PayoutTxState.WAITING && (
-                        <span className="!text-blue-600">
+                        <span className="!text-blue-600 dark:!text-blue-400 font-medium">
                           Waiting for transaction confirmation...
                         </span>
                       )}
                       {txState === PayoutTxState.ERROR && processingError && (
-                        <span className="!text-red-600">{processingError}</span>
+                        <span className="!text-red-600 dark:!text-red-400 font-medium">
+                          {processingError}
+                        </span>
                       )}
                       {txState === PayoutTxState.SUCCESS && (
-                        <span className="!text-green-600">
+                        <span className="!text-green-600 dark:!text-green-400 font-medium">
                           Successfully processed batch {currentChunkIndex + 1}
                         </span>
                       )}
                       {txState === PayoutTxState.COMPLETED && (
-                        <span className="!text-green-600">
+                        <span className="!text-green-600 dark:!text-green-400 font-medium">
                           All eras successfully processed!
                         </span>
                       )}
