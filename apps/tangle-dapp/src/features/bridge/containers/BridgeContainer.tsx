@@ -4,9 +4,11 @@ import { calculateTypedChainId } from '@tangle-network/dapp-types/TypedChainId';
 import { chainsConfig, chainsPopulated } from '@tangle-network/dapp-config';
 import { EVMTokenEnum } from '@tangle-network/evm-contract-metadata';
 import ArrowLeftRightLineIcon from '@tangle-network/icons/ArrowLeftRightLineIcon';
-import WalletFillIcon from '@tangle-network/icons/WalletFillIcon';
+import { Close } from '@tangle-network/icons';
+import WalletIcon from '@tangle-network/icons/WalletIcon';
 import {
   AmountFormatStyle,
+  Button,
   Card,
   ChainOrTokenButton,
   EMPTY_VALUE_PLACEHOLDER,
@@ -16,6 +18,9 @@ import {
   ModalContent,
   Typography,
   useModal,
+  Tooltip,
+  TooltipTrigger,
+  TooltipBody,
 } from '@tangle-network/ui-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -137,6 +142,14 @@ const BridgeContainer = () => {
     }
   }, [activeChain, network.name, setSelectedSourceChain]);
 
+  const [showAddressInput, setShowAddressInput] = useState(false);
+
+  useEffect(() => {
+    if (activeAccount?.address && !showAddressInput) {
+      setDestinationAddress(activeAccount.address);
+    }
+  }, [activeAccount, setDestinationAddress, showAddressInput]);
+
   const sourceTypedChainId = useMemo(() => {
     return calculateTypedChainId(
       selectedSourceChain.chainType,
@@ -246,11 +259,12 @@ const BridgeContainer = () => {
     setDestinationAddress(null);
     setIsAmountInputError(false, null);
     setIsAddressInputError(false);
+    setShowAddressInput(false);
   }, [
     setAmount,
     setDestinationAddress,
-    setIsAddressInputError,
     setIsAmountInputError,
+    setIsAddressInputError,
   ]);
 
   const onSwitchChains = useCallback(() => {
@@ -316,6 +330,7 @@ const BridgeContainer = () => {
       setDestinationAddress(null);
       setIsAmountInputError(false, null);
       setIsAddressInputError(false);
+      setShowAddressInput(false);
     }
   }, [
     activeAccount,
@@ -361,14 +376,14 @@ const BridgeContainer = () => {
       <Typography
         variant="h4"
         fw="bold"
-        className="text-mono-200 dark:text-mono-0 max-w-[550px] mx-auto w-full text-left"
+        className="text-mono-200 dark:text-mono-0 max-w-[540px] mx-auto w-full text-left"
       >
         Bridge
       </Typography>
 
       <Card
         withShadow
-        className="flex flex-col gap-7 w-full max-w-[550px] mx-auto relative"
+        className="flex flex-col gap-7 w-full max-w-[540px] mx-auto relative"
       >
         <div className="flex flex-col gap-7">
           <div className="flex flex-col items-center justify-center md:flex-row md:justify-between md:items-end md:gap-2">
@@ -487,7 +502,7 @@ const BridgeContainer = () => {
                         variant="body1"
                         className="flex items-center gap-1"
                       >
-                        <WalletFillIcon size="md" /> Balance:{' '}
+                        <WalletIcon size="md" /> Balance:{' '}
                         {sourceTokenBalance !== null &&
                         selectedToken?.decimals &&
                         selectedToken?.tokenType
@@ -507,7 +522,7 @@ const BridgeContainer = () => {
                     variant="body1"
                     className="flex items-center gap-1 ml-auto transition-opacity duration-300 ease-out"
                   >
-                    <WalletFillIcon size="md" /> Balance:{' '}
+                    <WalletIcon size="md" /> Balance:{' '}
                     {sourceTokenBalance !== null &&
                     selectedToken?.decimals &&
                     selectedToken?.tokenType
@@ -522,39 +537,41 @@ const BridgeContainer = () => {
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <AddressInput
-                id="bridge-destination-address-input"
-                type={
-                  isSolanaDestination ? AddressType.SOLANA : AddressType.EVM
-                }
-                title="Recipient Address"
-                wrapperOverrides={{
-                  isFullWidth: true,
-                  wrapperClassName: 'bg-mono-20 dark:bg-mono-180',
-                }}
-                showAvatar={false}
-                // NOTE: destinationAddress can be passed as an empty string since the address will always be empty until the user inputs a value
-                value={destinationAddress ?? ''}
-                setValue={setDestinationAddress}
-                placeholder="0x..."
-                showErrorMessage={false}
-                setErrorMessage={(error) => {
-                  setIsAddressInputError(error ? true : false);
-                  setAddressInputErrorMessage(error);
-                }}
-                isDisabled={isWrongWallet || isTxInProgress}
-              />
+            {showAddressInput && (
+              <div className="flex flex-col gap-2 duration-300 ease-out animate-in fade-in slide-in-from-top-4">
+                <AddressInput
+                  id="bridge-destination-address-input"
+                  type={
+                    isSolanaDestination ? AddressType.SOLANA : AddressType.EVM
+                  }
+                  title="Recipient Address"
+                  wrapperOverrides={{
+                    isFullWidth: true,
+                    wrapperClassName: 'bg-mono-20 dark:bg-mono-180',
+                  }}
+                  showAvatar={false}
+                  // NOTE: destinationAddress can be passed as an empty string since the address will always be empty until the user inputs a value
+                  value={destinationAddress ?? ''}
+                  setValue={setDestinationAddress}
+                  placeholder="0x..."
+                  showErrorMessage={false}
+                  setErrorMessage={(error) => {
+                    setIsAddressInputError(error ? true : false);
+                    setAddressInputErrorMessage(error);
+                  }}
+                  isDisabled={isTxInProgress}
+                />
 
-              {addressInputErrorMessage !== null && (
-                <ErrorMessage
-                  className="mt-0"
-                  typographyProps={{ variant: 'body2', fw: 'normal' }}
-                >
-                  {addressInputErrorMessage}
-                </ErrorMessage>
-              )}
-            </div>
+                {addressInputErrorMessage !== null && (
+                  <ErrorMessage
+                    className="mt-0"
+                    typographyProps={{ variant: 'body2', fw: 'normal' }}
+                  >
+                    {addressInputErrorMessage}
+                  </ErrorMessage>
+                )}
+              </div>
+            )}
           </div>
 
           {hyperlaneQuote &&
@@ -567,27 +584,59 @@ const BridgeContainer = () => {
               />
             )}
 
-          <BridgeActionButton
-            activeWallet={activeWallet}
-            activeChain={activeChain}
-            selectedSourceChain={selectedSourceChain}
-            selectedDestinationChain={selectedDestinationChain}
-            sourceTypedChainId={sourceTypedChainId}
-            activeAccount={activeAccount}
-            isWrongWallet={isWrongWallet}
-            amount={amount}
-            destinationAddress={destinationAddress}
-            selectedToken={selectedToken}
-            isAmountInputError={isAmountInputError}
-            isAddressInputError={isAddressInputError}
-            isHyperlaneQuote={!!hyperlaneQuote}
-            hyperlaneQuote={hyperlaneQuote}
-            hyperlaneQuoteError={hyperlaneQuoteError}
-            isTxInProgress={isTxInProgress}
-            isHyperlaneQuoteLoading={isHyperlaneQuoteFetching}
-            openConfirmBridgeModal={openConfirmBridgeModal}
-            refetchHyperlaneQuote={refetchHyperlaneQuote}
-          />
+          <div className="flex items-center gap-2">
+            <BridgeActionButton
+              activeWallet={activeWallet}
+              activeChain={activeChain}
+              selectedSourceChain={selectedSourceChain}
+              selectedDestinationChain={selectedDestinationChain}
+              sourceTypedChainId={sourceTypedChainId}
+              isWrongWallet={isWrongWallet}
+              activeAccount={activeAccount}
+              amount={amount}
+              destinationAddress={destinationAddress}
+              selectedToken={selectedToken}
+              isAmountInputError={isAmountInputError}
+              isAddressInputError={isAddressInputError}
+              isHyperlaneQuote={!!hyperlaneQuote}
+              hyperlaneQuote={hyperlaneQuote}
+              hyperlaneQuoteError={hyperlaneQuoteError}
+              isTxInProgress={isTxInProgress}
+              isHyperlaneQuoteLoading={isHyperlaneQuoteFetching}
+              openConfirmBridgeModal={openConfirmBridgeModal}
+              refetchHyperlaneQuote={refetchHyperlaneQuote}
+            />
+
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  variant="utility"
+                  className="p-2 rounded-full w-fit"
+                  onClick={() => {
+                    if (showAddressInput) {
+                      setDestinationAddress(activeAccount?.address || null);
+                      setIsAddressInputError(false);
+                      setAddressInputErrorMessage(null);
+                      setShowAddressInput(false);
+                    } else {
+                      setShowAddressInput(true);
+                    }
+                  }}
+                >
+                  {showAddressInput ? (
+                    <Close size="lg" />
+                  ) : (
+                    <WalletIcon size="lg" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipBody side="bottom">
+                {!showAddressInput
+                  ? 'Send to a different wallet'
+                  : 'Send to your wallet'}
+              </TooltipBody>
+            </Tooltip>
+          </div>
         </div>
       </Card>
 
