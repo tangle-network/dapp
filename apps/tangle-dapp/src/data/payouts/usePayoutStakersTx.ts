@@ -36,7 +36,6 @@ const usePayoutStakersTx = () => {
 
     // Create batch of payoutStakers calls for each era
     const payoutCalls = sortedEras.map((era) => {
-      console.log('Creating payoutStakers call for era:', era);
       return createEvmBatchCall(
         STAKING_PRECOMPILE_ABI,
         PrecompileAddress.STAKING,

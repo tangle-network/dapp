@@ -6,6 +6,7 @@ import { useClaimedEras } from '../../hooks/useClaimedEras';
 import { useMemo } from 'react';
 import filterClaimedPayouts from '../payouts/filterClaimedPayouts';
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import toSubstrateAddress from '@tangle-network/ui-components/utils/toSubstrateAddress';
 
 /**
  * Hook to calculate the total unclaimed payout rewards
@@ -15,7 +16,10 @@ export default function useTotalPayoutRewards() {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { getClaimedEras, claimedErasByValidator } = useClaimedEras();
   const { nativeTokenSymbol } = useNetworkStore();
-  const { substrateAddress } = useAgnosticAccountInfo();
+  const { isEvm, evmAddress, substrateAddress } = useAgnosticAccountInfo();
+
+  const userSubstrateAddress =
+    isEvm && evmAddress ? toSubstrateAddress(evmAddress) : substrateAddress;
 
   // Fetch payouts data
   const {
@@ -23,7 +27,7 @@ export default function useTotalPayoutRewards() {
     error: payoutsError,
     isLoading,
   } = useSWR(
-    ['payoutsData', substrateAddress, rpcEndpoint, nativeTokenSymbol],
+    ['payoutsData', userSubstrateAddress, rpcEndpoint, nativeTokenSymbol],
     ([, address, rpcEndpoint, nativeTokenSymbol]) =>
       getPayouts(address, rpcEndpoint, nativeTokenSymbol),
     {

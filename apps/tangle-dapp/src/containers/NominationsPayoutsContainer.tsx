@@ -8,6 +8,7 @@ import {
   Button,
   TabContent,
   TableAndChartTabs,
+  toSubstrateAddress,
 } from '@tangle-network/ui-components';
 import { TANGLE_DOCS_URL } from '@tangle-network/ui-components/constants';
 import { type FC, useEffect, useMemo, useRef, useState } from 'react';
@@ -61,14 +62,17 @@ const DelegationsPayoutsContainer: FC = () => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const nativeTokenSymbol = useNetworkStore((store) => store.nativeTokenSymbol);
 
-  const { substrateAddress } = useAgnosticAccountInfo();
+  const { isEvm, evmAddress, substrateAddress } = useAgnosticAccountInfo();
+
+  const userSubstrateAddress =
+    isEvm && evmAddress ? toSubstrateAddress(evmAddress) : substrateAddress;
 
   const {
     data: payoutsData,
     isLoading: payoutsIsLoading,
     mutate: mutatePayouts,
   } = useSWR(
-    ['payouts', substrateAddress, rpcEndpoint, nativeTokenSymbol],
+    ['payouts', userSubstrateAddress, rpcEndpoint, nativeTokenSymbol],
     ([, address, rpcEndpoint, nativeTokenSymbol]) =>
       getPayouts(address, rpcEndpoint, nativeTokenSymbol),
     {
