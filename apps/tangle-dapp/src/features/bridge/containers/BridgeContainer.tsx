@@ -34,6 +34,7 @@ import { useEvmBalances } from '../hooks/useEvmBalances';
 import { useHyperlaneQuote } from '../hooks/useHyperlaneQuote';
 import useIsNativeToken from '../hooks/useIsNativeToken';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
+import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useAssets from '../hooks/useAssets';
 import useTokenBalance from '../hooks/useTokenBalance';
@@ -49,6 +50,7 @@ const BridgeContainer = () => {
   const { transferable: balance } = useBalances();
   const [isTxInProgress, setIsTxInProgress] = useState(false);
   const { activeChain, activeWallet, switchChain } = useWebContext();
+  const { toggleModal } = useConnectWallet();
 
   const destinationChains = useBridgeStore(
     useShallow((store) => store.destinationChains),
@@ -141,6 +143,16 @@ const BridgeContainer = () => {
       selectedSourceChain.id,
     );
   }, [selectedSourceChain]);
+
+  const isWrongWallet = useMemo(() => {
+    return activeWallet?.platform === 'Substrate';
+  }, [activeWallet?.platform]);
+
+  const handleWrongWallet = useCallback(() => {
+    if (isWrongWallet) {
+      toggleModal(true, sourceTypedChainId);
+    }
+  }, [isWrongWallet, toggleModal, sourceTypedChainId]);
 
   const destinationTypedChainId = useMemo(() => {
     return calculateTypedChainId(
@@ -242,6 +254,11 @@ const BridgeContainer = () => {
   ]);
 
   const onSwitchChains = useCallback(() => {
+    if (isWrongWallet) {
+      handleWrongWallet();
+      return;
+    }
+
     if (activeWallet) {
       const typedChainId = calculateTypedChainId(
         selectedDestinationChain.chainType,
@@ -256,14 +273,16 @@ const BridgeContainer = () => {
       clearBridgeStore();
     }
   }, [
-    setSelectedSourceChain,
+    isWrongWallet,
+    activeWallet,
+    handleWrongWallet,
     selectedDestinationChain,
+    switchChain,
+    setSelectedSourceChain,
     setSelectedDestinationChain,
     selectedSourceChain,
     refreshEvmBalances,
     clearBridgeStore,
-    activeWallet,
-    switchChain,
   ]);
 
   const assets = useAssets(sourceTypedChainId, balances);
@@ -368,7 +387,13 @@ const BridgeContainer = () => {
                 className="w-full"
                 iconType="chain"
                 textClassName="whitespace-nowrap"
-                onClick={openSourceChainModal}
+                onClick={() => {
+                  if (isWrongWallet) {
+                    handleWrongWallet();
+                    return;
+                  }
+                  openSourceChainModal();
+                }}
                 disabled={srcChains.length <= 1}
               />
             </div>
@@ -391,7 +416,13 @@ const BridgeContainer = () => {
                 className="w-full"
                 iconType="chain"
                 textClassName="whitespace-nowrap"
-                onClick={openDestinationChainModal}
+                onClick={() => {
+                  if (isWrongWallet) {
+                    handleWrongWallet();
+                    return;
+                  }
+                  openDestinationChainModal();
+                }}
                 disabled={destinationChains.length <= 1}
               />
             </div>
@@ -419,7 +450,7 @@ const BridgeContainer = () => {
                     setIsAmountInputError(error ? true : false, error);
                   }}
                   max={balance === null ? null : sourceTokenBalance}
-                  isDisabled={isTxInProgress}
+                  isDisabled={isWrongWallet || isTxInProgress}
                 />
 
                 <ChainOrTokenButton
@@ -429,7 +460,13 @@ const BridgeContainer = () => {
                       : selectedToken?.tokenType || undefined
                   }
                   iconType="token"
-                  onClick={openTokenModal}
+                  onClick={() => {
+                    if (isWrongWallet) {
+                      handleWrongWallet();
+                      return;
+                    }
+                    openTokenModal();
+                  }}
                   className="py-2 w-fit"
                   status="success"
                 />
@@ -506,7 +543,7 @@ const BridgeContainer = () => {
                   setIsAddressInputError(error ? true : false);
                   setAddressInputErrorMessage(error);
                 }}
-                isDisabled={isTxInProgress}
+                isDisabled={isWrongWallet || isTxInProgress}
               />
 
               {addressInputErrorMessage !== null && (
@@ -535,7 +572,9 @@ const BridgeContainer = () => {
             activeChain={activeChain}
             selectedSourceChain={selectedSourceChain}
             selectedDestinationChain={selectedDestinationChain}
+            sourceTypedChainId={sourceTypedChainId}
             activeAccount={activeAccount}
+            isWrongWallet={isWrongWallet}
             amount={amount}
             destinationAddress={destinationAddress}
             selectedToken={selectedToken}

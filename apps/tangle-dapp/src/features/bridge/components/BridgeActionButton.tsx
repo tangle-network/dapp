@@ -6,14 +6,17 @@ import { BridgeToken } from '@tangle-network/tangle-shared-ui/types';
 import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { useCallback, useMemo } from 'react';
 import { HyperlaneQuote } from '../hooks/useHyperlaneQuote';
+import { useConnectWallet } from '@tangle-network/api-provider-environment/ConnectWallet';
 
 interface BridgeActionButtonProps {
   activeWallet: WalletConfig | undefined;
   activeChain: Chain | null | undefined;
   selectedSourceChain: ChainConfig;
   selectedDestinationChain: ChainConfig;
+  sourceTypedChainId: number;
   activeAccount: Account<unknown> | null;
   selectedToken: BridgeToken | null;
+  isWrongWallet: boolean;
   amount: BN | null;
   destinationAddress: string | null;
   isAmountInputError: boolean;
@@ -31,8 +34,10 @@ export default function BridgeActionButton({
   activeWallet,
   activeChain,
   selectedSourceChain,
+  sourceTypedChainId,
   activeAccount,
   selectedToken,
+  isWrongWallet,
   amount,
   destinationAddress,
   isAmountInputError,
@@ -44,27 +49,42 @@ export default function BridgeActionButton({
   openConfirmBridgeModal,
   refetchHyperlaneQuote,
 }: BridgeActionButtonProps) {
+  const { toggleModal } = useConnectWallet();
+
   const isWrongChain = useMemo(() => {
     const isEvmWallet = activeWallet?.platform === 'EVM';
 
     return isEvmWallet && activeChain?.id !== selectedSourceChain.id;
   }, [activeChain?.id, activeWallet?.platform, selectedSourceChain.id]);
 
-  let isActionBtnDisabled = false;
+  const isActionBtnDisabled = useMemo(() => {
+    if (isWrongWallet) {
+      return false;
+    }
 
-  if (
-    !activeAccount ||
-    !activeChain ||
-    !activeWallet ||
-    !selectedToken ||
-    isWrongChain ||
-    !amount ||
-    !destinationAddress ||
-    isAmountInputError ||
-    isAddressInputError
-  ) {
-    isActionBtnDisabled = true;
-  }
+    return (
+      !activeAccount ||
+      !activeChain ||
+      !activeWallet ||
+      !selectedToken ||
+      isWrongChain ||
+      !amount ||
+      !destinationAddress ||
+      isAmountInputError ||
+      isAddressInputError
+    );
+  }, [
+    activeAccount,
+    activeChain,
+    activeWallet,
+    selectedToken,
+    isWrongChain,
+    amount,
+    destinationAddress,
+    isAmountInputError,
+    isAddressInputError,
+    isWrongWallet,
+  ]);
 
   const isActionBtnLoading = useMemo(() => {
     return isHyperlaneQuoteLoading || isTxInProgress;
@@ -79,6 +99,10 @@ export default function BridgeActionButton({
   }, [isTxInProgress, isActionBtnLoading]);
 
   const actionButtonText = useMemo(() => {
+    if (isWrongWallet) {
+      return 'Switch to EVM Wallet';
+    }
+
     if (isTxInProgress) {
       return 'Transaction in Progress';
     } else if (
@@ -94,6 +118,7 @@ export default function BridgeActionButton({
 
     return 'Preview Transaction';
   }, [
+    isWrongWallet,
     isTxInProgress,
     amount,
     destinationAddress,
@@ -104,6 +129,11 @@ export default function BridgeActionButton({
   ]);
 
   const onClickActionBtn = useCallback(() => {
+    if (isWrongWallet) {
+      toggleModal(true, sourceTypedChainId);
+      return;
+    }
+
     if (
       amount &&
       destinationAddress &&
@@ -120,6 +150,7 @@ export default function BridgeActionButton({
       }
     }
   }, [
+    isWrongWallet,
     amount,
     destinationAddress,
     selectedToken,
@@ -127,6 +158,8 @@ export default function BridgeActionButton({
     isAddressInputError,
     isHyperlaneQuote,
     hyperlaneQuoteError,
+    toggleModal,
+    sourceTypedChainId,
     openConfirmBridgeModal,
     refetchHyperlaneQuote,
   ]);
