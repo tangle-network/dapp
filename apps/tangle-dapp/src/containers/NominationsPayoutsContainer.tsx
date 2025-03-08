@@ -61,6 +61,7 @@ const DelegationsPayoutsContainer: FC = () => {
 
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const nativeTokenSymbol = useNetworkStore((store) => store.nativeTokenSymbol);
+  const networkId = useNetworkStore((store) => store.network.id);
 
   const { isEvm, evmAddress, substrateAddress } = useAgnosticAccountInfo();
 
@@ -90,8 +91,9 @@ const DelegationsPayoutsContainer: FC = () => {
       payoutsData?.payouts,
       claimedErasByValidator,
       getClaimedEras,
+      networkId,
     );
-  }, [payoutsData, claimedErasByValidator, getClaimedEras]);
+  }, [payoutsData, claimedErasByValidator, getClaimedEras, networkId]);
 
   const validatorsAndEras = useMemo(() => {
     if (!unclaimedPayouts.length) return [];

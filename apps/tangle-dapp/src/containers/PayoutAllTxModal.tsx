@@ -1,6 +1,7 @@
 import { useWebContext } from '@tangle-network/api-provider-environment';
 import { useClaimedEras } from '../hooks/useClaimedEras';
 import { TxStatus } from '../hooks/useSubstrateTx';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   InputField,
   Modal,
@@ -44,6 +45,7 @@ const PayoutAllTxModal: FC<Props> = ({
 }) => {
   const { activeAccount } = useWebContext();
   const { getClaimedEras, addClaimedEras } = useClaimedEras();
+  const networkId = useNetworkStore((store) => store.network.id);
   const {
     execute: executePayoutStakersTx,
     status: payoutStakersTxStatus,
@@ -89,10 +91,10 @@ const PayoutAllTxModal: FC<Props> = ({
     if (!walletAddress) return;
 
     if (!isProcessing) {
-      const claimedEras = getClaimedEras(walletAddress);
+      const claimedEras = getClaimedEras(networkId, walletAddress);
       setClaimedEras(claimedEras);
     }
-  }, [getClaimedEras, isProcessing, walletAddress]);
+  }, [getClaimedEras, isProcessing, walletAddress, networkId]);
 
   // Split eras into chunks of MAX_PAYOUTS_BATCH_SIZE
   const eraChunksByValidator = useMemo(() => {
@@ -154,7 +156,7 @@ const PayoutAllTxModal: FC<Props> = ({
       });
 
       const substrateAddress = toSubstrateAddress(validatorData.validator);
-      addClaimedEras(substrateAddress, chunk);
+      addClaimedEras(networkId, substrateAddress, chunk);
     }
 
     setTxState(PayoutTxState.SUCCESS);
@@ -163,6 +165,7 @@ const PayoutAllTxModal: FC<Props> = ({
     currentChunkIndex,
     currentValidatorIndex,
     eraChunksByValidator,
+    networkId,
     pollingId,
   ]);
 

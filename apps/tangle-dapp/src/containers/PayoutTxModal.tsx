@@ -1,6 +1,7 @@
 import { useWebContext } from '@tangle-network/api-provider-environment';
 import { useClaimedEras } from '../hooks/useClaimedEras';
 import { TxStatus } from '../hooks/useSubstrateTx';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   InputField,
   Modal,
@@ -40,6 +41,7 @@ const PayoutTxModal: FC<Props> = ({
 }) => {
   const { activeAccount } = useWebContext();
   const { getClaimedEras, addClaimedEras } = useClaimedEras();
+  const networkId = useNetworkStore((store) => store.network.id);
   const {
     execute: executePayoutStakersTx,
     status: payoutStakersTxStatus,
@@ -62,9 +64,9 @@ const PayoutTxModal: FC<Props> = ({
   useEffect(() => {
     if (!walletAddress || !isModalOpen) return;
 
-    const claimed = getClaimedEras(walletAddress);
+    const claimed = getClaimedEras(networkId, walletAddress);
     setClaimedEras(claimed);
-  }, [getClaimedEras, walletAddress, isModalOpen]);
+  }, [getClaimedEras, walletAddress, isModalOpen, networkId]);
 
   // Split eras into chunks of MAX_PAYOUTS_BATCH_SIZE
   const eraChunks = useMemo(() => {
@@ -131,7 +133,7 @@ const PayoutTxModal: FC<Props> = ({
         // Mark eras as claimed in local storage
         if (payout.validator.address) {
           const validatorAddress = payout.validator.address;
-          addClaimedEras(validatorAddress, currentChunk);
+          addClaimedEras(networkId, validatorAddress, currentChunk);
         }
         setTxState(PayoutTxState.SUCCESS);
       } else if (payoutStakersTxStatus === TxStatus.ERROR) {
@@ -154,6 +156,7 @@ const PayoutTxModal: FC<Props> = ({
     payout.validator.address,
     addClaimedEras,
     error,
+    networkId,
   ]);
 
   const processCurrentChunk = useCallback(async () => {
@@ -187,7 +190,7 @@ const PayoutTxModal: FC<Props> = ({
 
             if (payout.validator.address) {
               const validatorAddress = payout.validator.address;
-              addClaimedEras(validatorAddress, currentChunk);
+              addClaimedEras(networkId, validatorAddress, currentChunk);
             }
 
             setTxState(PayoutTxState.SUCCESS);
@@ -201,7 +204,7 @@ const PayoutTxModal: FC<Props> = ({
 
             if (payout.validator.address) {
               const validatorAddress = payout.validator.address;
-              addClaimedEras(validatorAddress, currentChunk);
+              addClaimedEras(networkId, validatorAddress, currentChunk);
             }
 
             setTxState(PayoutTxState.SUCCESS);
@@ -225,6 +228,7 @@ const PayoutTxModal: FC<Props> = ({
     payoutStakersTxStatus,
     addClaimedEras,
     error,
+    networkId,
   ]);
 
   const moveToNextChunk = useCallback(() => {

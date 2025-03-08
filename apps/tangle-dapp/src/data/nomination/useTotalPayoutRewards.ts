@@ -16,6 +16,7 @@ export default function useTotalPayoutRewards() {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { getClaimedEras, claimedErasByValidator } = useClaimedEras();
   const { nativeTokenSymbol } = useNetworkStore();
+  const networkId = useNetworkStore((store) => store.network.id);
   const { isEvm, evmAddress, substrateAddress } = useAgnosticAccountInfo();
 
   const userSubstrateAddress =
@@ -46,8 +47,15 @@ export default function useTotalPayoutRewards() {
       payoutsData?.payouts,
       claimedErasByValidator,
       getClaimedEras,
+      networkId,
     );
-  }, [payoutsData, claimedErasByValidator, getClaimedEras, substrateAddress]);
+  }, [
+    payoutsData,
+    claimedErasByValidator,
+    getClaimedEras,
+    substrateAddress,
+    networkId,
+  ]);
 
   // Calculate total rewards from unclaimed payouts
   const totalRewards = useMemo(() => {

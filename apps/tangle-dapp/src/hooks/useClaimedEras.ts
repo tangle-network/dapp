@@ -3,8 +3,19 @@ import useLocalStorage, {
 } from '@tangle-network/tangle-shared-ui/hooks/useLocalStorage';
 import { useCallback, useEffect, useState } from 'react';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 
-type ClaimedErasByValidator = Record<SubstrateAddress, number[]>;
+// Create a unique key by combining NetworkId and SubstrateAddress
+type ValidatorKey = `${NetworkId}:${SubstrateAddress}`;
+
+type ClaimedErasByValidator = Record<ValidatorKey, number[]>;
+
+const createValidatorKey = (
+  networkId: NetworkId,
+  validatorAddress: SubstrateAddress,
+): ValidatorKey => {
+  return `${networkId}:${validatorAddress}`;
+};
 
 /**
  * Hook to manage claimed eras by validator address in local storage.
@@ -24,11 +35,16 @@ export const useClaimedEras = () => {
   }, [storage.valueOpt]);
 
   const addClaimedEras = useCallback(
-    (validatorAddress: SubstrateAddress, eras: number[]) => {
+    (
+      networkId: NetworkId,
+      validatorAddress: SubstrateAddress,
+      eras: number[],
+    ) => {
+      const validatorKey = createValidatorKey(networkId, validatorAddress);
       const newClaimedEras = {
         ...claimedErasByValidator,
-        [validatorAddress]: [
-          ...(claimedErasByValidator[validatorAddress] || []),
+        [validatorKey]: [
+          ...(claimedErasByValidator[validatorKey] || []),
           ...eras,
         ].sort((a, b) => a - b),
       };
@@ -42,8 +58,9 @@ export const useClaimedEras = () => {
   );
 
   const getClaimedEras = useCallback(
-    (validatorAddress: SubstrateAddress): number[] => {
-      return claimedErasByValidator[validatorAddress] || [];
+    (networkId: NetworkId, validatorAddress: SubstrateAddress): number[] => {
+      const validatorKey = createValidatorKey(networkId, validatorAddress);
+      return claimedErasByValidator[validatorKey] || [];
     },
     [claimedErasByValidator],
   );
