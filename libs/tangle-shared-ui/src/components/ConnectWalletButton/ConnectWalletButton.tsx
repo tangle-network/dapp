@@ -41,14 +41,12 @@ const ConnectWalletButton = ({
       return null;
     } else if (isEvmAddress(activeAccount.address)) {
       return activeAccount.address;
-    } else if (!showChainSpecificWallets && network.ss58Prefix === undefined) {
+    } else if (network.ss58Prefix === undefined) {
       return assertSubstrateAddress(activeAccount.address);
-    } else if (!showChainSpecificWallets) {
+    } else {
       return toSubstrateAddress(activeAccount.address, network.ss58Prefix);
     }
-
-    return null;
-  }, [activeAccount?.address, network.ss58Prefix, showChainSpecificWallets]);
+  }, [activeAccount?.address, network.ss58Prefix]);
 
   const isReady =
     !isConnecting && !loading && activeWallet && activeAccount !== null;
