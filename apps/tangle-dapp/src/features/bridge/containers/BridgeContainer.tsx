@@ -18,6 +18,9 @@ import {
   ModalContent,
   Typography,
   useModal,
+  Tooltip,
+  TooltipTrigger,
+  TooltipBody,
 } from '@tangle-network/ui-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -565,26 +568,35 @@ const BridgeContainer = () => {
               refetchHyperlaneQuote={refetchHyperlaneQuote}
             />
 
-            <Button
-              variant="utility"
-              className="p-2 rounded-full w-fit"
-              onClick={() => {
-                if (showAddressInput) {
-                  setDestinationAddress(activeAccount?.address || null);
-                  setIsAddressInputError(false);
-                  setAddressInputErrorMessage(null);
-                  setShowAddressInput(false);
-                } else {
-                  setShowAddressInput(true);
-                }
-              }}
-            >
-              {showAddressInput ? (
-                <Close size="lg" />
-              ) : (
-                <WalletIcon size="lg" />
-              )}
-            </Button>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  variant="utility"
+                  className="p-2 rounded-full w-fit"
+                  onClick={() => {
+                    if (showAddressInput) {
+                      setDestinationAddress(activeAccount?.address || null);
+                      setIsAddressInputError(false);
+                      setAddressInputErrorMessage(null);
+                      setShowAddressInput(false);
+                    } else {
+                      setShowAddressInput(true);
+                    }
+                  }}
+                >
+                  {showAddressInput ? (
+                    <Close size="lg" />
+                  ) : (
+                    <WalletIcon size="lg" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipBody side="bottom">
+                {!showAddressInput
+                  ? 'Send to a different wallet'
+                  : 'Send to your wallet'}
+              </TooltipBody>
+            </Tooltip>
           </div>
         </div>
       </Card>
