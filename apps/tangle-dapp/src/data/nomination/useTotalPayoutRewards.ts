@@ -1,21 +1,21 @@
 import { BN, formatBalance } from '@polkadot/util';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useSWR from 'swr';
 import { getPayouts } from '../payouts/getPayouts';
 import { useClaimedEras } from '../../hooks/useClaimedEras';
 import { useMemo } from 'react';
 import filterClaimedPayouts from '../payouts/filterClaimedPayouts';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 /**
  * Hook to calculate the total unclaimed payout rewards
  * @returns Object containing the total unclaimed rewards and any error
  */
 export default function useTotalPayoutRewards() {
-  const activeAccountAddress = useActiveAccountAddress();
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { getClaimedEras, claimedErasByValidator } = useClaimedEras();
   const { nativeTokenSymbol } = useNetworkStore();
+  const { substrateAddress } = useAgnosticAccountInfo();
 
   // Fetch payouts data
   const {
@@ -23,12 +23,7 @@ export default function useTotalPayoutRewards() {
     error: payoutsError,
     isLoading,
   } = useSWR(
-    [
-      'payoutsData',
-      activeAccountAddress ?? null,
-      rpcEndpoint,
-      nativeTokenSymbol,
-    ],
+    ['payoutsData', substrateAddress, rpcEndpoint, nativeTokenSymbol],
     ([, address, rpcEndpoint, nativeTokenSymbol]) =>
       getPayouts(address, rpcEndpoint, nativeTokenSymbol),
     {
@@ -41,19 +36,14 @@ export default function useTotalPayoutRewards() {
 
   // Calculate unclaimed payouts using the shared utility function
   const unclaimedPayouts = useMemo(() => {
-    if (!activeAccountAddress) return [];
+    if (!substrateAddress) return [];
 
     return filterClaimedPayouts(
       payoutsData?.payouts,
       claimedErasByValidator,
       getClaimedEras,
     );
-  }, [
-    payoutsData,
-    claimedErasByValidator,
-    getClaimedEras,
-    activeAccountAddress,
-  ]);
+  }, [payoutsData, claimedErasByValidator, getClaimedEras, substrateAddress]);
 
   // Calculate total rewards from unclaimed payouts
   const totalRewards = useMemo(() => {

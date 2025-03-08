@@ -34,6 +34,7 @@ import { getPayouts } from '../data/payouts/getPayouts';
 import { useClaimedEras } from '../hooks/useClaimedEras';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import filterClaimedPayouts from '../data/payouts/filterClaimedPayouts';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 
 const PAGE_SIZE = 10;
 
@@ -60,12 +61,14 @@ const DelegationsPayoutsContainer: FC = () => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const nativeTokenSymbol = useNetworkStore((store) => store.nativeTokenSymbol);
 
+  const { substrateAddress } = useAgnosticAccountInfo();
+
   const {
     data: payoutsData,
     isLoading: payoutsIsLoading,
     mutate: mutatePayouts,
   } = useSWR(
-    ['payouts', activeAccount?.address ?? null, rpcEndpoint, nativeTokenSymbol],
+    ['payouts', substrateAddress, rpcEndpoint, nativeTokenSymbol],
     ([, address, rpcEndpoint, nativeTokenSymbol]) =>
       getPayouts(address, rpcEndpoint, nativeTokenSymbol),
     {
