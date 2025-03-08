@@ -18,18 +18,15 @@ import { Abi } from 'viem';
 export type TangleTokenSymbol = 'tTNT' | 'TNT';
 
 export type AddressWithIdentity = {
-  address: SubstrateAddress;
-  identity: string;
+  address: SubstrateAddress | null;
+  identity: string | null;
 };
 
 export type Payout = {
-  era: number;
+  eras: number[];
   validator: AddressWithIdentity;
-  validatorTotalStake: BN;
-  nominators: AddressWithIdentity[];
-  validatorTotalReward: BN;
-  nominatorTotalReward: BN;
-  nominatorTotalRewardRaw: BN;
+  totalReward: BN;
+  totalRewardFormatted: string;
 };
 
 export const ExplorerType = {

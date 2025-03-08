@@ -3,25 +3,19 @@
 import { HexString } from '@polkadot/util/types';
 import { useCallback, useEffect, useState } from 'react';
 
-import { BridgeQueueTxItem, Payout, TangleTokenSymbol } from '../types';
+import { BridgeQueueTxItem, TangleTokenSymbol } from '../types';
 import Optional from '../utils/Optional';
 import { ChainConfig } from '@tangle-network/dapp-config';
 
 export enum LocalStorageKey {
-  PAYOUTS = 'payouts',
   CUSTOM_RPC_ENDPOINT = 'customRpcEndpoint',
   KNOWN_NETWORK_ID = 'knownNetworkId',
   SUBSTRATE_WALLETS_METADATA = 'substrateWalletsMetadata',
   BRIDGE_TX_QUEUE_BY_ACC = 'bridgeTxQueue',
   BRIDGE_TOKENS_TO_ACC = 'bridgeTokensToAcc',
   BRIDGE_DEST_TX_IDS = 'bridgeDestTxIds',
+  CLAIMED_ERAS_BY_VALIDATOR = 'claimedErasByValidator',
 }
-
-export type PayoutsCache = {
-  [rpcEndpoint: string]: {
-    [address: string]: Payout[];
-  };
-};
 
 export type SubstrateWalletsMetadataEntry = {
   tokenSymbol: TangleTokenSymbol;
@@ -60,20 +54,20 @@ export type BridgeDestTxIds = Record<
  * respective value types.
  */
 export type LocalStorageValueOf<T extends LocalStorageKey> =
-  T extends LocalStorageKey.PAYOUTS
-    ? PayoutsCache
-    : T extends LocalStorageKey.CUSTOM_RPC_ENDPOINT
-      ? string
-      : T extends LocalStorageKey.KNOWN_NETWORK_ID
-        ? number
-        : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
-          ? SubstrateWalletsMetadataCache
-          : T extends LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC
-            ? TxQueueByAccount
-            : T extends LocalStorageKey.BRIDGE_TOKENS_TO_ACC
-              ? BridgeTokensToAcc
-              : T extends LocalStorageKey.BRIDGE_DEST_TX_IDS
-                ? BridgeDestTxIds
+  T extends LocalStorageKey.CUSTOM_RPC_ENDPOINT
+    ? string
+    : T extends LocalStorageKey.KNOWN_NETWORK_ID
+      ? number
+      : T extends LocalStorageKey.SUBSTRATE_WALLETS_METADATA
+        ? SubstrateWalletsMetadataCache
+        : T extends LocalStorageKey.BRIDGE_TX_QUEUE_BY_ACC
+          ? TxQueueByAccount
+          : T extends LocalStorageKey.BRIDGE_TOKENS_TO_ACC
+            ? BridgeTokensToAcc
+            : T extends LocalStorageKey.BRIDGE_DEST_TX_IDS
+              ? BridgeDestTxIds
+              : T extends LocalStorageKey.CLAIMED_ERAS_BY_VALIDATOR
+                ? Record<string, number[]>
                 : never;
 
 export const getJsonFromLocalStorage = <Key extends LocalStorageKey>(
