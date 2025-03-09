@@ -35,6 +35,7 @@ export type Payout = {
 export const ExplorerType = {
   Substrate: 'polkadot' as WebbProviderType,
   EVM: 'web3' as WebbProviderType,
+  Solana: 'solana' as WebbProviderType,
 } as const;
 
 export type BasicAccountInfo = {

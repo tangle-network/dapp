@@ -4,14 +4,19 @@ import {
   isSubstrateAddress,
   toSubstrateAddress,
 } from '@tangle-network/ui-components';
+import { isSolanaAddress } from '@tangle-network/ui-components/utils/isSolanaAddress';
 import {
   EvmAddress,
+  SolanaAddress,
   SubstrateAddress,
 } from '@tangle-network/ui-components/types/address';
-import assert from 'assert';
 import useNetworkStore from '../context/useNetworkStore';
 
-const useActiveAccountAddress = (): SubstrateAddress | EvmAddress | null => {
+const useActiveAccountAddress = ():
+  | SubstrateAddress
+  | EvmAddress
+  | SolanaAddress
+  | null => {
   const { network } = useNetworkStore();
   const [activeAccount] = useActiveAccount();
 
@@ -21,13 +26,18 @@ const useActiveAccountAddress = (): SubstrateAddress | EvmAddress | null => {
     return null;
   }
 
-  assert(isEvmAddress(address) || isSubstrateAddress(address));
+  if (isSolanaAddress(address)) {
+    return address;
+  }
 
-  // Encode it with the correct SS58 prefix in case that it is a
-  // Substrate address.
-  return network.ss58Prefix !== undefined && isSubstrateAddress(address)
-    ? toSubstrateAddress(address, network.ss58Prefix)
-    : address;
+  if (isEvmAddress(address) || isSubstrateAddress(address)) {
+    return network.ss58Prefix !== undefined && isSubstrateAddress(address)
+      ? toSubstrateAddress(address, network.ss58Prefix)
+      : address;
+  }
+
+  console.warn(`Unknown address type: ${address}`);
+  return address as SubstrateAddress;
 };
 
 export default useActiveAccountAddress;

@@ -27,12 +27,13 @@ import useNetworkStore from '../../context/useNetworkStore';
 import { BaseError } from 'viem';
 import {
   EvmAddress,
+  SolanaAddress,
   SubstrateAddress,
 } from '@tangle-network/ui-components/types/address';
 
 const WalletDropdown: FC<{
   accountName?: string;
-  accountAddress: SubstrateAddress | EvmAddress;
+  accountAddress: SubstrateAddress | EvmAddress | SolanaAddress;
   wallet: WalletConfig;
 }> = ({ accountAddress, accountName, wallet }) => {
   const { inactivateApi } = useWebContext();

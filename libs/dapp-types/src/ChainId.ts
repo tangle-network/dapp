@@ -148,6 +148,16 @@ export enum PresetTypedChainId {
     ChainType.Solana,
     SolanaChainId.SolanaMainnet,
   ),
+
+  SolanaTestnet = calculateTypedChainId(
+    ChainType.Solana,
+    SolanaChainId.SolanaTestnet,
+  ),
+
+  SolanaDevnet = calculateTypedChainId(
+    ChainType.Solana,
+    SolanaChainId.SolanaDevnet,
+  ),
 }
 
 export { EVMChainId, SubstrateChainId, SolanaChainId };
