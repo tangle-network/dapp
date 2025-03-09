@@ -2,6 +2,7 @@ export * from './arrayFrom';
 export * from './assertAddressBy';
 export * from './assertBytes32';
 export * from './assertEvmAddress';
+export { default as assertSolanaAddress } from './assertSolanaAddress';
 export { default as assertSubstrateAddress } from './assertSubstrateAddress';
 export * from './calculateDateProgress';
 export { default as convertAddressToBytes32 } from './convertAddressToBytes32';

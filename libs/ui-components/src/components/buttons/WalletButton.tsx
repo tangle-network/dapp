@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import { isHex } from 'viem';
 import { Typography } from '../../typography/Typography';
 import { shortenHex, shortenString } from '../../utils';
+import { isSolanaAddress } from '../../utils/isSolanaAddress';
 import { WalletButtonProps } from './types';
 
 const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
@@ -43,7 +44,9 @@ const WalletButton = forwardRef<HTMLButtonElement, WalletButtonProps>(
               ? accountName
               : isHex(address)
                 ? `${shortenHex(address)}`
-                : `${shortenString(address)}`}
+                : isSolanaAddress(address)
+                  ? `${shortenString(address)}`
+                  : `${shortenString(address)}`}
           </Typography>
         </div>
       </button>

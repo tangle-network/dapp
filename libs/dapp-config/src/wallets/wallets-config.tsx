@@ -12,6 +12,17 @@ import {
 } from '@tangle-network/icons/wallets';
 import type { WalletConfig } from './wallet-config.interface';
 
+// Remove this!
+declare global {
+  interface Window {
+    phantom?: {
+      solana?: {
+        isPhantom?: boolean;
+      };
+    };
+  }
+}
+
 const ANY_EVM = [
   PresetTypedChainId.EthereumMainNet,
   PresetTypedChainId.TangleMainnetEVM,
@@ -54,7 +65,11 @@ const ANY_SUBSTRATE = [
   PresetTypedChainId.RococoPhala,
 ];
 
-const ANY_SOLANA = [PresetTypedChainId.SolanaMainnet];
+const ANY_SOLANA = [
+  PresetTypedChainId.SolanaMainnet,
+  PresetTypedChainId.SolanaTestnet,
+  PresetTypedChainId.SolanaDevnet,
+];
 
 const detectSubstrateWallet = (walletName: string) => {
   const extension = window.injectedWeb3?.[walletName];
@@ -67,6 +82,19 @@ const detectSubstrateWallet = (walletName: string) => {
   }
 
   return extension;
+};
+
+const detectPhantomWallet = async (): Promise<boolean> => {
+  try {
+    if ('phantom' in window) {
+      const provider = window.phantom?.solana;
+      return !!provider?.isPhantom;
+    }
+    return false;
+  } catch (error) {
+    console.error('Error detecting Phantom wallet:', error);
+    return false;
+  }
 };
 
 export const WALLET_CONFIG: Record<WalletId, WalletConfig> = {
@@ -190,7 +218,7 @@ export const WALLET_CONFIG: Record<WalletId, WalletConfig> = {
     platform: 'Solana',
     enabled: true,
     async detect() {
-      return true;
+      return await detectPhantomWallet();
     },
     supportedChainIds: [...ANY_SOLANA],
     homeLink: 'https://phantom.com/',
