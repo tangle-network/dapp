@@ -3,6 +3,7 @@ import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import { WalletId } from '@tangle-network/dapp-types/WalletId';
 import {
   MetaMaskIcon,
+  PhantomWalletIcon,
   PolkadotJsIcon,
   RainbowIcon,
   SubWalletIcon,
@@ -52,6 +53,8 @@ const ANY_SUBSTRATE = [
   PresetTypedChainId.Polkadot,
   PresetTypedChainId.RococoPhala,
 ];
+
+const ANY_SOLANA = [PresetTypedChainId.SolanaMainnet];
 
 const detectSubstrateWallet = (walletName: string) => {
   const extension = window.injectedWeb3?.[walletName];
@@ -177,6 +180,25 @@ export const WALLET_CONFIG: Record<WalletId, WalletConfig> = {
         'https://chrome.google.com/webstore/detail/subwallet-polkadot-extens/onhogfjeacnfoofkfgppdlbmlmnplgbn',
       [SupportedBrowsers.FireFox]:
         'https://addons.mozilla.org/firefox/addon/subwallet/',
+    },
+  },
+  [WalletId.Phantom]: {
+    id: WalletId.Phantom,
+    Logo: <PhantomWalletIcon />,
+    name: 'Phantom',
+    title: 'Phantom',
+    platform: 'Solana',
+    enabled: true,
+    async detect() {
+      return true;
+    },
+    supportedChainIds: [...ANY_SOLANA],
+    homeLink: 'https://phantom.com/',
+    installLinks: {
+      [SupportedBrowsers.Chrome]:
+        'https://chromewebstore.google.com/detail/phantom/bfnaelmomeimhlpmgjnjophhpkkoljpa',
+      [SupportedBrowsers.FireFox]:
+        'https://addons.mozilla.org/en-CA/firefox/addon/phantom-app/',
     },
   },
 };
