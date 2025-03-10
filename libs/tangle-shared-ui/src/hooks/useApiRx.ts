@@ -45,9 +45,6 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
       return await getApiRx(rpcEndpoint);
     }, [rpcEndpoint]),
     null,
-    {
-      enabled: rpcEndpoint !== undefined,
-    },
   );
 
   const reset = useCallback(() => {

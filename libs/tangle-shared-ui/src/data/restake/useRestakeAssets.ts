@@ -182,9 +182,6 @@ const useRestakeAssets = () => {
         return await fetchErc20TokenMetadata(viemPublicClient, evmAssetIds);
       }, [evmAssetIds, viemPublicClient]),
       null,
-      {
-        enabled: evmAssetIds !== null && viemPublicClient !== null,
-      },
     );
 
   const evmAssets = useMemo(() => {
