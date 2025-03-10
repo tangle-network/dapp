@@ -26,6 +26,7 @@ import sortByBn from '../utils/sortByBn';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import PayoutTxModal from '../containers/PayoutTxModal';
 import { WalletPayIcon } from '@tangle-network/icons';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 
 const COLUMN_HELPER = createColumnHelper<Payout>();
 
@@ -210,7 +211,7 @@ const PayoutsTable: React.FC<Props> = ({
           tableProps={table}
           isPaginated
           totalRecords={data.length}
-          title="Unclaimed Payouts"
+          title={pluralize('Unclaimed Payout', data.length !== 1)}
         />
       </div>
 
