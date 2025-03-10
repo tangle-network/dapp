@@ -30,6 +30,7 @@
     ".": {
       "import": "./index.js",
       "require": "./index.js"
-    }
+    },
+    "./style.css": "./style.css"
   }
 }
