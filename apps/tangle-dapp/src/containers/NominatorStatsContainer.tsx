@@ -81,15 +81,13 @@ const NominatorStatsContainer: FC = () => {
                   ? null
                   : formatTangleBalance(freeBalance, nativeTokenSymbol)}
             </StatsItem>
-
             <StatsItem
               title="Unclaimed Payouts"
-              isError={totalPayoutRewardsError !== null}
+              isError={totalPayoutRewardsError}
             >
-              {totalPayoutRewards === null
+              {activeAccountAddress === null
                 ? EMPTY_VALUE_PLACEHOLDER
-                : formatTangleBalance(totalPayoutRewards) +
-                  ` ${nativeTokenSymbol}`}
+                : formatTangleBalance(totalPayoutRewards, nativeTokenSymbol)}
             </StatsItem>
           </div>
 

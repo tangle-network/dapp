@@ -109,9 +109,9 @@ const InputFieldInput = forwardRef<
     () =>
       isAddressType
         ? isEthereumAddress(String(value))
-          ? shortenHex(String(value), 7)
+          ? shortenHex(String(value), 10)
           : isSubstrateAddress(String(value))
-            ? shortenString(String(value), 7)
+            ? shortenString(String(value), 10)
             : value
         : value,
     [isAddressType, value],
