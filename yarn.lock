@@ -12981,11 +12981,11 @@ __metadata:
   linkType: hard
 
 "@storybook/core-events@npm:^8.4.7":
-  version: 8.5.6
-  resolution: "@storybook/core-events@npm:8.5.6"
+  version: 8.6.4
+  resolution: "@storybook/core-events@npm:8.6.4"
   peerDependencies:
     storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10c0/7942189b6a6b6d1d61c45de6c1d1f162ca6acdb414f99b5fd769793666064a83c94f51d76565636a5810a2f9e748d71bef3e4d7e3c7a34f40501d87b8a651338
+  checksum: 10c0/3d298c74f889f45f8dd8f9e41c5b07d84cc98c3f754ba46268334b5b63f08336f519a12d26ee48397a9a9cfa87bcdd1bb8edcb38efcd4d1a372678bcd835dafa
   languageName: node
   linkType: hard
 
