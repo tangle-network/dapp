@@ -208,11 +208,32 @@ export type ExposureMap = Record<
 
 export type GetSuccessMessageFn<Context> = (context: Context) => string;
 
+/**
+ * Transaction states for payout processing
+ */
 export enum PayoutTxState {
+  /**
+   * Transaction is not active
+   */
   IDLE = 'idle',
-  PROCESSING = 'processing', // Transaction is being executed
-  WAITING = 'waiting', // Waiting for confirmation
-  SUCCESS = 'success', // Current chunk succeeded
-  ERROR = 'error', // Transaction error
-  COMPLETED = 'completed', // All chunks completed
+  /**
+   * Transaction is being executed
+   */
+  PROCESSING = 'processing',
+  /**
+   * Waiting for confirmation
+   */
+  WAITING = 'waiting',
+  /**
+   * Current chunk succeeded
+   */
+  SUCCESS = 'success',
+  /**
+   * Transaction error
+   */
+  ERROR = 'error',
+  /**
+   * All chunks completed
+   */
+  COMPLETED = 'completed',
 }
