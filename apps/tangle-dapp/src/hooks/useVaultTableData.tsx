@@ -20,11 +20,12 @@ type Options = {
 };
 
 const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
-  const { assets } = useRestakeAssets();
   const rewardConfig = useRestakeRewardConfig();
   const assetsTvl = useRestakeAssetsTvl();
-  const { result: vaultsRewards } = useVaultRewards();
   const assetTvl = useRestakeAssetsTvl();
+  const { assets, isLoading: isLoadingAssets } = useRestakeAssets();
+  const { result: vaultsRewards, isLoading: isLoadingVaultsRewards } =
+    useVaultRewards();
 
   const vaults = useMemo(() => {
     if (assets === null) {
@@ -130,6 +131,7 @@ const useVaultTableData = ({ operatorData, delegatorInfo }: Options) => {
   return {
     vaults,
     tableProps,
+    isLoading: isLoadingAssets || isLoadingVaultsRewards,
   };
 };
 

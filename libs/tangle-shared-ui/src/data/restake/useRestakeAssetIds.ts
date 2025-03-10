@@ -1,16 +1,16 @@
-import { map, of } from 'rxjs';
-import { RestakeAssetId } from '../../types';
-import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
-import useApiRx from '../../hooks/useApiRx';
-import { StorageKey, u32, Vec, Option } from '@polkadot/types';
-import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
-import createRestakeAssetId from '../../utils/createRestakeAssetId';
+import { Option, StorageKey, u32, Vec } from '@polkadot/types';
+import { TanglePrimitivesServicesTypesAsset } from '@polkadot/types/lookup';
 import { useCallback } from 'react';
+import { map, of } from 'rxjs';
+import useApiRx from '../../hooks/useApiRx';
+import { RestakeAssetId } from '../../types';
+import createRestakeAssetId from '../../utils/createRestakeAssetId';
+import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 
 function toPrimitive(
   entries: [
     StorageKey<[u32]> | number,
-    Option<Vec<TanglePrimitivesServicesAsset>>,
+    Option<Vec<TanglePrimitivesServicesTypesAsset>>,
   ][],
 ): RestakeAssetId[] {
   return entries.flatMap(([, assets]) => {
@@ -22,10 +22,11 @@ function toPrimitive(
   });
 }
 
-const useRestakeAssetIds = (): RestakeAssetId[] | null => {
-  const { result: vaultPotAccounts } = useVaultsPotAccounts();
+const useRestakeAssetIds = () => {
+  const { result: vaultPotAccounts, isLoading: isLoadingVaultPotAccounts } =
+    useVaultsPotAccounts();
 
-  const { result: assetIds } = useApiRx(
+  const { result: assetIds, isLoading: isLoadingAssetIds } = useApiRx(
     useCallback(
       (api) => {
         if (vaultPotAccounts === null) {
@@ -56,7 +57,10 @@ const useRestakeAssetIds = (): RestakeAssetId[] | null => {
     ),
   );
 
-  return assetIds;
+  return {
+    assetIds,
+    isLoading: isLoadingVaultPotAccounts || isLoadingAssetIds,
+  };
 };
 
 export default useRestakeAssetIds;

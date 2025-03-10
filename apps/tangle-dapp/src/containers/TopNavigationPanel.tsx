@@ -3,7 +3,7 @@ import { type FC } from 'react';
 import { useLocation } from 'react-router';
 import { PagePath } from '../types';
 import NetworkSelectorDropdown from '@tangle-network/tangle-shared-ui/components/NetworkSelectorDropdown';
-import useBridgeStore from '../context/bridge/useBridgeStore';
+import useBridgeStore from '../features/bridge/context/useBridgeStore';
 // import TxHistoryDrawer from '../components/TxHistoryDrawer';
 
 const TopNavigationPanel: FC = () => {

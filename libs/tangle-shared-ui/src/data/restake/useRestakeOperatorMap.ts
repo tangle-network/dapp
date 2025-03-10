@@ -112,7 +112,7 @@ function toPrimitiveDelegations(
   const restakerSet = new Set<string>();
 
   const primitiveDelegations = delegations.map(
-    ({ amount, assetId, delegator }) => {
+    ({ amount, asset, delegator }) => {
       const delegatorAccountId = delegator.toString();
 
       restakerSet.add(delegatorAccountId);
@@ -120,7 +120,7 @@ function toPrimitiveDelegations(
       return {
         amount: amount.toBigInt(),
         delegatorAccountId,
-        assetId: createRestakeAssetId(assetId),
+        assetId: createRestakeAssetId(asset),
       } satisfies OperatorMetadata['delegations'][number];
     },
   );

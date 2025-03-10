@@ -1,27 +1,27 @@
+import { Option, StorageKey, u32, Vec } from '@polkadot/types';
+import { TanglePrimitivesServicesTypesAsset } from '@polkadot/types/lookup';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import { isEvmAddress } from '@tangle-network/ui-components';
+import assert from 'assert';
 import { useCallback, useMemo } from 'react';
 import { map } from 'rxjs';
+import { NATIVE_ASSET_ID } from '../../constants/restaking';
+import useNetworkStore from '../../context/useNetworkStore';
 import useApiRx from '../../hooks/useApiRx';
-import { StorageKey, u32, Vec, Option } from '@polkadot/types';
-import { TanglePrimitivesServicesAsset } from '@polkadot/types/lookup';
+import usePromise from '../../hooks/usePromise';
+import useViemPublicClient from '../../hooks/useViemPublicClient';
 import { RestakeAssetId } from '../../types';
-import createRestakeAssetId from '../../utils/createRestakeAssetId';
-import { isEvmAddress } from '@tangle-network/ui-components';
 import { RestakeAsset, RestakeAssetMetadata } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
-import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
-import useNetworkStore from '../../context/useNetworkStore';
-import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
-import useRestakeAssetBalances from './useRestakeAssetBalances';
-import assert from 'assert';
-import usePromise from '../../hooks/usePromise';
+import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import fetchErc20TokenMetadata from '../../utils/fetchErc20TokenMetadata';
-import useViemPublicClient from '../../hooks/useViemPublicClient';
-import { NATIVE_ASSET_ID } from '../../constants/restaking';
+import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
+import useRestakeAssetBalances from './useRestakeAssetBalances';
 
 const toPrimitiveRewardVault = (
   entries: [
     StorageKey<[u32]> | number,
-    Option<Vec<TanglePrimitivesServicesAsset>>,
+    Option<Vec<TanglePrimitivesServicesTypesAsset>>,
   ][],
 ): [vaultId: bigint, assetIds: RestakeAssetId[] | null][] => {
   return entries.map(([vaultId, assets]) => {
@@ -39,11 +39,13 @@ const toPrimitiveRewardVault = (
 };
 
 const useRestakeAssets = () => {
-  const { nativeTokenSymbol } = useNetworkStore();
-  const { result: vaultPotAccounts } = useVaultsPotAccounts();
+  const nativeTokenSymbol = useNetworkStore((store) => store.nativeTokenSymbol);
   const viemPublicClient = useViemPublicClient();
 
-  const { result: rewardVaults } = useApiRx(
+  const { result: vaultPotAccounts, isLoading: isLoadingVaultsPotAccounts } =
+    useVaultsPotAccounts();
+
+  const { result: rewardVaults, isLoading: isLoadingRewardVaults } = useApiRx(
     useCallback(
       (api) => {
         if (
@@ -78,7 +80,7 @@ const useRestakeAssets = () => {
 
   const assetIds = useMemo(() => {
     if (rewardVaults === null) {
-      return [];
+      return null;
     }
 
     return rewardVaults
@@ -106,31 +108,35 @@ const useRestakeAssets = () => {
     return assetIds.filter((assetId) => isEvmAddress(assetId));
   }, [assetIds]);
 
-  const { result: nativeAssetDetails } = useApiRx(
-    useCallback((api) => {
-      return api.query.assets.asset.entries().pipe(
-        map((entries) => {
-          const keyValues = entries.flatMap(([key, detailsOpt]) => {
-            if (detailsOpt.isNone) {
-              return [];
-            }
+  const { result: nativeAssetDetails, isLoading: isLoadingNativeAssetDetails } =
+    useApiRx(
+      useCallback((api) => {
+        return api.query.assets.asset.entries().pipe(
+          map((entries) => {
+            const keyValues = entries.flatMap(([key, detailsOpt]) => {
+              if (detailsOpt.isNone) {
+                return [];
+              }
 
-            const assetId = assertRestakeAssetId(
-              key.args[0].toBigInt().toString(),
-            );
+              const assetId = assertRestakeAssetId(
+                key.args[0].toBigInt().toString(),
+              );
 
-            const details = detailsOpt.unwrap();
+              const details = detailsOpt.unwrap();
 
-            return [[assetId, details] as const];
-          });
+              return [[assetId, details] as const];
+            });
 
-          return new Map(keyValues);
-        }),
-      );
-    }, []),
-  );
+            return new Map(keyValues);
+          }),
+        );
+      }, []),
+    );
 
-  const { result: nativeAssetMetadatas } = useApiRx(
+  const {
+    result: nativeAssetMetadatas,
+    isLoading: isLoadingNativeAssetMetadatas,
+  } = useApiRx(
     useCallback((api) => {
       return api.query.assets.metadata.entries().pipe(
         map((entries) => {
@@ -148,7 +154,7 @@ const useRestakeAssets = () => {
     }, []),
   );
 
-  const { result: assetVaultIds } = useApiRx(
+  const { result: assetVaultIds, isLoading: isLoadingAssetVaultIds } = useApiRx(
     useCallback((api) => {
       return api.query.rewards.assetLookupRewardVaults.entries().pipe(
         map((entries) => {
@@ -168,16 +174,20 @@ const useRestakeAssets = () => {
     }, []),
   );
 
-  const { result: evmAssetMetadatas } = usePromise(
-    useCallback(async () => {
-      if (evmAssetIds === null || viemPublicClient === null) {
-        return null;
-      }
+  const { result: evmAssetMetadatas, isLoading: isLoadingEvmAssetMetadatas } =
+    usePromise(
+      useCallback(async () => {
+        if (evmAssetIds === null || viemPublicClient === null) {
+          return null;
+        }
 
-      return await fetchErc20TokenMetadata(viemPublicClient, evmAssetIds);
-    }, [evmAssetIds, viemPublicClient]),
-    null,
-  );
+        return await fetchErc20TokenMetadata(viemPublicClient, evmAssetIds);
+      }, [evmAssetIds, viemPublicClient]),
+      null,
+      {
+        enabled: evmAssetIds !== null && viemPublicClient !== null,
+      },
+    );
 
   const evmAssets = useMemo(() => {
     if (evmAssetIds === null || evmAssetMetadatas === null) {
@@ -227,7 +237,7 @@ const useRestakeAssets = () => {
       const name = metadata.name.toUtf8();
 
       const asset = {
-        name: name === '' ? `Asset ${assetId}` : name,
+        name: name === '' ? `Asset #${assetId}` : name,
         symbol: metadata.symbol.toUtf8(),
         decimals: metadata.decimals.toNumber(),
         assetId,
@@ -244,6 +254,7 @@ const useRestakeAssets = () => {
     // TODO: Balance should be what is locked in staking, for native restaking.
     // Insert the network's native asset to allow for native restaking.
     const nativeNetworkAsset: RestakeAssetMetadata = {
+      name: nativeTokenSymbol,
       symbol: nativeTokenSymbol,
       decimals: TANGLE_TOKEN_DECIMALS,
       assetId: NATIVE_ASSET_ID,
@@ -282,7 +293,11 @@ const useRestakeAssets = () => {
     return map;
   }, [evmAssets, nativeAssets]);
 
-  const { balances, refetchErc20Balances } = useRestakeAssetBalances();
+  const {
+    balances,
+    refetchErc20Balances,
+    isLoading: isLoadingBalances,
+  } = useRestakeAssetBalances();
 
   const assetsWithBalances = useMemo(() => {
     if (assetMap === null) {
@@ -309,6 +324,14 @@ const useRestakeAssets = () => {
   return {
     assets: assetsWithBalances,
     refetchErc20Balances: refetchErc20Balances_,
+    isLoading:
+      isLoadingBalances ||
+      isLoadingNativeAssetDetails ||
+      isLoadingNativeAssetMetadatas ||
+      isLoadingEvmAssetMetadatas ||
+      isLoadingAssetVaultIds ||
+      isLoadingRewardVaults ||
+      isLoadingVaultsPotAccounts,
   };
 };
 

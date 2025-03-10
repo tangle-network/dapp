@@ -1,20 +1,21 @@
+import { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
+import { BN } from '@polkadot/util';
 import { isTemplateBigInt } from '@tangle-network/ui-components';
 import { EvmAddress } from '@tangle-network/ui-components/types/address';
 import { isEvmAddress } from '@tangle-network/ui-components/utils/isEvmAddress20';
+import assert from 'assert';
 import { useCallback, useMemo } from 'react';
-import useRestakeAssetIds from './useRestakeAssetIds';
-import { RestakeAssetId } from '../../types';
-import useErc20Balances from './useErc20Balances';
+import { map } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';
 import useSubstrateAddress from '../../hooks/useSubstrateAddress';
-import { map } from 'rxjs';
-import { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
-import { BN } from '@polkadot/util';
-import assert from 'assert';
+import { RestakeAssetId } from '../../types';
+import { TangleError, TangleErrorCode } from '../../types/error';
+import useErc20Balances from './useErc20Balances';
+import useRestakeAssetIds from './useRestakeAssetIds';
 
 const useRestakeAssetBalances = () => {
   const substrateAddress = useSubstrateAddress();
-  const assetIds = useRestakeAssetIds();
+  const { assetIds, isLoading: isLoadingAssetIds } = useRestakeAssetIds();
 
   const { evmAssetIds, substrateAssetIds } = useMemo(() => {
     if (assetIds === null) {
@@ -46,14 +47,17 @@ const useRestakeAssetBalances = () => {
     };
   }, [assetIds]);
 
-  const { data: erc20Balances, refetch: refetchErc20Balances } =
-    useErc20Balances(evmAssetIds);
+  const {
+    data: erc20Balances,
+    refetch: refetchErc20Balances,
+    isLoading: isLoadingErc20Balances,
+  } = useErc20Balances(evmAssetIds);
 
-  const { result: assetAccounts } = useApiRx(
+  const { result: assetAccounts, isLoading: isLoadingAssetAccounts } = useApiRx(
     useCallback(
       (api) => {
-        if (substrateAddress === null || substrateAssetIds === null) {
-          return null;
+        if (substrateAddress === null) {
+          return new TangleError(TangleErrorCode.NO_ACTIVE_ACCOUNT);
         }
 
         const queries = substrateAssetIds.map(
@@ -115,6 +119,8 @@ const useRestakeAssetBalances = () => {
   return {
     balances,
     refetchErc20Balances,
+    isLoading:
+      isLoadingErc20Balances || isLoadingAssetAccounts || isLoadingAssetIds,
   };
 };
 

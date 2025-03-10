@@ -1,22 +1,22 @@
 import { assert } from '@polkadot/util';
 import { useCallback, useEffect, useState } from 'react';
 
-import { TxName } from '../constants';
-import { GetSuccessMessageFn } from '../types';
-import useEvmPrecompileCall, {
-  PrecompileCall,
-  EvmTxFactory,
-} from './useEvmPrecompileCall';
-import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
-import useTxNotification from './useTxNotification';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
+import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
 import { AbiFunction } from 'viem';
+import { TxName } from '../constants';
 import {
   ExtractAbiFunctionNames,
   PrecompileAddress,
 } from '../constants/evmPrecompiles';
-import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { GetSuccessMessageFn } from '../types';
+import useEvmPrecompileCall, {
+  EvmTxFactory,
+  PrecompileCall,
+} from './useEvmPrecompileCall';
+import useSubstrateTx, { SubstrateTxFactory, TxStatus } from './useSubstrateTx';
+import useTxNotification from './useTxNotification';
 
 export type AgnosticTxOptions<
   Abi extends AbiFunction[],
@@ -30,6 +30,14 @@ export type AgnosticTxOptions<
   evmTxFactory:
     | EvmTxFactory<Abi, FunctionName, Context>
     | PrecompileCall<Abi, FunctionName>;
+
+  /**
+   * Whether this specific transaction is eligible for utilizing
+   * the transaction relayer to subsidize transaction fees. Other
+   * requirements must be met for this to be effective (ex. the balance
+   * being zero).
+   */
+  isEvmTxRelayerSubsidized?: boolean;
 
   /**
    * An identifiable name shown on the toast notification to
@@ -68,6 +76,7 @@ function useAgnosticTx<
   substrateTxFactory,
   name,
   getSuccessMessage,
+  isEvmTxRelayerSubsidized = false,
 }: AgnosticTxOptions<Abi, FunctionName, Context>) {
   const [agnosticStatus, setAgnosticStatus] = useState(
     TxStatus.NOT_YET_INITIATED,
@@ -177,9 +186,9 @@ function useAgnosticTx<
         : substrateSuccessMessage;
 
       const explorerUrl = createExplorerTxUrl(
-        false,
+        isEvmAccount,
         txHash,
-        substrateTxBlockHash ?? undefined,
+        isEvmAccount ? undefined : (substrateTxBlockHash ?? undefined),
       );
 
       notifySuccess(name, explorerUrl, successMessage);

@@ -76,7 +76,11 @@ const DepositForm: FC<Props> = (props) => {
     QueryParamKey.RESTAKE_VAULT,
   );
 
-  const { assets, refetchErc20Balances } = useRestakeAssets();
+  const {
+    assets,
+    refetchErc20Balances,
+    isLoading: isLoadingAssets,
+  } = useRestakeAssets();
   const restakeApi = useRestakeApi();
 
   const setValue = useCallback(
@@ -106,7 +110,7 @@ const DepositForm: FC<Props> = (props) => {
   }, [activeTypedChainId, resetField]);
 
   useEffect(() => {
-    if (!vaultIdParam || assets === null) {
+    if (!vaultIdParam || assets === null || isLoadingAssets) {
       return;
     }
 
@@ -131,6 +135,7 @@ const DepositForm: FC<Props> = (props) => {
 
     // Select the first asset in the vault by default.
     setValue('depositAssetId', defaultAsset.id);
+
     setValue(
       'amount',
       formatBn(defaultAsset.balance, defaultAsset.metadata.decimals, {
@@ -141,7 +146,7 @@ const DepositForm: FC<Props> = (props) => {
 
     // Remove the param to prevent reuse after initial load.
     setVaultIdParam(null);
-  }, [assets, setValue, setVaultIdParam, vaultIdParam]);
+  }, [assets, setValue, setVaultIdParam, vaultIdParam, isLoadingAssets]);
 
   const {
     status: tokenModalOpen,

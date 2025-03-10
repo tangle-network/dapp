@@ -229,6 +229,7 @@ const VaultsTable: FC<Props> = ({
   emptyTableProps,
   loadingTableProps,
   tableProps,
+  isLoading: isLoadingProp,
 }) => {
   const nativeTokenSymbol = useNetworkStore(
     (store) => store.network.tokenSymbol,
@@ -252,7 +253,7 @@ const VaultsTable: FC<Props> = ({
     ),
   );
 
-  const isLoading = data === null;
+  const isLoading = isLoadingProp || data === null;
 
   if (isLoading) {
     return (
@@ -292,6 +293,7 @@ const VaultsTable: FC<Props> = ({
         'bg-mono-0 dark:bg-mono-180',
         'peer-[&[data-expanded="true"]:hover]:bg-mono-20',
         'peer-[&[data-expanded="true"]:hover]:dark:bg-mono-170',
+        'last:border-b-0',
       )}
       thClassName={twMerge('py-2', tableProps?.thClassName)}
       tbodyClassName={twMerge(
@@ -299,7 +301,7 @@ const VaultsTable: FC<Props> = ({
         '[&_tr:last-child_td:first-child]:rounded-bl-xl [&_tr:last-child_td:last-child]:rounded-br-xl',
         tableProps?.tbodyClassName,
       )}
-      trClassName={twMerge('border-b-0', tableProps?.trClassName)}
+      trClassName={twMerge('last:border-b-0', tableProps?.trClassName)}
       tdClassName={twMerge(
         'first:rounded-l-none last:rounded-r-none',
         tableProps?.tdClassName,

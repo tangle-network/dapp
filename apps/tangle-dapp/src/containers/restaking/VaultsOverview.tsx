@@ -5,11 +5,13 @@ import useVaultTableData from '../../hooks/useVaultTableData';
 const VaultsOverview = () => {
   const { delegatorInfo } = useRestakeDelegatorInfo();
 
-  const { vaults, tableProps } = useVaultTableData({
+  const { vaults, tableProps, isLoading } = useVaultTableData({
     delegatorInfo,
   });
 
-  return <VaultsTable data={vaults} tableProps={tableProps} />;
+  return (
+    <VaultsTable data={vaults} tableProps={tableProps} isLoading={isLoading} />
+  );
 };
 
 export default VaultsOverview;

@@ -7,12 +7,10 @@ import {
   TANGLE_TERMS_OF_SERVICE_URL,
 } from '@tangle-network/ui-components/constants';
 import { type FC, type PropsWithChildren } from 'react';
-
 import { MobileSidebar, Sidebar } from '../components';
 import DebugMetrics from './DebugMetrics';
 import TopNavigationPanel from './TopNavigationPanel';
-
-import BridgeTxQueueDropdown from '../components/bridge/BridgeTxQueueDropdown';
+import BridgeTxQueueDropdown from '../features/bridge/components/BridgeTxQueueDropdown';
 
 const SOCIAL_LINK_OVERRIDES: Partial<
   Record<(typeof TANGLE_AVAILABLE_SOCIALS)[number], string>

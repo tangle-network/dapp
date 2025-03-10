@@ -58,7 +58,7 @@ export const DropdownButton = forwardRef<
           <div className="flex items-center max-w-full gap-2 overflow-x-hidden">
             {icon && <span className="text-inherit">{icon}</span>}
 
-            {label && (
+            {typeof label === 'string' ? (
               <span
                 className={cx(
                   'text-inherit',
@@ -67,6 +67,8 @@ export const DropdownButton = forwardRef<
               >
                 {label}
               </span>
+            ) : (
+              label
             )}
           </div>
 

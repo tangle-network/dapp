@@ -1,8 +1,8 @@
-import type { Bytes, Option } from '@polkadot/types';
+import type { Bytes, Option, Vec } from '@polkadot/types';
 import {
   TanglePrimitivesServicesFieldFieldType,
-  TanglePrimitivesServicesJobDefinition,
-  TanglePrimitivesServicesServiceBlueprint,
+  TanglePrimitivesServicesJobsJobDefinition,
+  TanglePrimitivesServicesServiceServiceBlueprint,
 } from '@polkadot/types/lookup';
 import { u8aToString } from '@polkadot/util';
 import type {
@@ -36,7 +36,7 @@ export function toPrimitiveBlueprint({
   registrationParams,
   requestParams,
   gadget,
-}: ServiceBlueprint | TanglePrimitivesServicesServiceBlueprint) {
+}: ServiceBlueprint | TanglePrimitivesServicesServiceServiceBlueprint) {
   return {
     metadata: toPrimitiveServiceMetadata(metadata),
     jobs: jobs.map(toPrimitiveJobDefinition),
@@ -72,7 +72,7 @@ function toPrimitiveJobDefinition({
   metadata,
   params,
   result,
-}: JobDefinition | TanglePrimitivesServicesJobDefinition) {
+}: JobDefinition | TanglePrimitivesServicesJobsJobDefinition) {
   return {
     metadata: toPrimitiveJobMetadata(metadata),
     params: params.map(toPrimitiveFieldType),
@@ -280,15 +280,10 @@ export function toPrimitiveFieldType(
       } as const;
 
     case 'Struct': {
-      const [first, second] = fieldType.asStruct;
+      const struct =
+        fieldType.asStruct as Vec<TanglePrimitivesServicesFieldFieldType>;
       return {
-        Struct: [
-          String(first),
-          second.map<[string, PrimitiveFieldType]>(([first, second]) => [
-            String(first),
-            toPrimitiveFieldType(second),
-          ]),
-        ],
+        Struct: struct.map((fieldType) => toPrimitiveFieldType(fieldType)),
       } as const;
     }
 

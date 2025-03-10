@@ -11,7 +11,6 @@ import { PresetTypedChainId } from '@tangle-network/dapp-types';
 import {
   EVMTokenBridgeEnum,
   EVMTokenEnum,
-  EVMTokens,
 } from '@tangle-network/evm-contract-metadata';
 
 import { assertEvmAddress } from '@tangle-network/ui-components';
@@ -371,17 +370,20 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0xc4B1827d959d4b109787893A7C8978050fDFC58B',
       ),
     },
-  ],
-  [PresetTypedChainId.Polygon]: [
     {
       symbol: 'TNT',
       tokenType: EVMTokenEnum.TNT,
-      bridgeType: EVMTokenBridgeEnum.Router,
-      address: assertEvmAddress(EVMTokens.polygon.router.TNT.address),
-      abi: assertAbi(EVMTokens.polygon.router.TNT.abi),
-      decimals: EVMTokens.polygon.router.TNT.decimals,
-      chainId: PresetTypedChainId.Polygon,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x1465399089F3bFC43E7A52637a296C46423f8417'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.EthereumMainNet,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xFB7D161c56FC001Ee4BD30F7B94519fEed25b22F',
+      ),
     },
+  ],
+  [PresetTypedChainId.Polygon]: [
     {
       symbol: 'CRV',
       tokenType: 'CRV' as EVMTokenEnum,
@@ -540,15 +542,6 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
     },
   ],
   [PresetTypedChainId.Arbitrum]: [
-    {
-      symbol: 'TNT',
-      tokenType: EVMTokenEnum.TNT,
-      bridgeType: EVMTokenBridgeEnum.Router,
-      address: assertEvmAddress(EVMTokens.arbitrum.router.TNT.address),
-      abi: assertAbi(EVMTokens.arbitrum.router.TNT.abi),
-      decimals: EVMTokens.arbitrum.router.TNT.decimals,
-      chainId: PresetTypedChainId.Arbitrum,
-    },
     {
       symbol: 'ARB',
       tokenType: 'ARB' as EVMTokenEnum,
@@ -801,17 +794,20 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0xC0fD9c0ee70d7d9Eede7f5918077dC506aF95E48',
       ),
     },
-  ],
-  [PresetTypedChainId.Optimism]: [
     {
       symbol: 'TNT',
       tokenType: EVMTokenEnum.TNT,
-      bridgeType: EVMTokenBridgeEnum.Router,
-      address: assertEvmAddress(EVMTokens.optimism.router.TNT.address),
-      abi: assertAbi(EVMTokens.optimism.router.TNT.abi),
-      decimals: EVMTokens.optimism.router.TNT.decimals,
-      chainId: PresetTypedChainId.Optimism,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xB23565d388d03B95212Dc5b8F02e40D7edC77E1A'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.Arbitrum,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xFB7D161c56FC001Ee4BD30F7B94519fEed25b22F',
+      ),
     },
+  ],
+  [PresetTypedChainId.Optimism]: [
     {
       symbol: 'cbETH',
       tokenType: 'cbETH' as EVMTokenEnum,
@@ -1004,28 +1000,34 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0xC0fD9c0ee70d7d9Eede7f5918077dC506aF95E48',
       ),
     },
+    {
+      symbol: 'TNT',
+      tokenType: EVMTokenEnum.TNT,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0xA06164d6440dd1E8cb51b743d7bEAB86c44f74f1'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.Optimism,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xFB7D161c56FC001Ee4BD30F7B94519fEed25b22F',
+      ),
+    },
   ],
   [PresetTypedChainId.Linea]: [
     {
       symbol: 'TNT',
       tokenType: EVMTokenEnum.TNT,
-      bridgeType: EVMTokenBridgeEnum.Router,
-      address: assertEvmAddress(EVMTokens.linea.router.TNT.address),
-      abi: assertAbi(EVMTokens.linea.router.TNT.abi),
-      decimals: EVMTokens.linea.router.TNT.decimals,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x606F11cF2395881689eC7d1289A2282ab694bDa2'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
       chainId: PresetTypedChainId.Linea,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xFB7D161c56FC001Ee4BD30F7B94519fEed25b22F',
+      ),
     },
   ],
   [PresetTypedChainId.Base]: [
-    {
-      symbol: 'TNT',
-      tokenType: EVMTokenEnum.TNT,
-      bridgeType: EVMTokenBridgeEnum.Router,
-      address: assertEvmAddress(EVMTokens.base.router.TNT.address),
-      abi: assertAbi(EVMTokens.base.router.TNT.abi),
-      decimals: EVMTokens.base.router.TNT.decimals,
-      chainId: PresetTypedChainId.Base,
-    },
     {
       symbol: 'Avail (Wormhole)',
       tokenType: 'AVAIL' as EVMTokenEnum,
@@ -1230,17 +1232,20 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
         '0xC0fD9c0ee70d7d9Eede7f5918077dC506aF95E48',
       ),
     },
-  ],
-  [PresetTypedChainId.BSC]: [
     {
       symbol: 'TNT',
       tokenType: EVMTokenEnum.TNT,
-      bridgeType: EVMTokenBridgeEnum.Router,
-      address: assertEvmAddress(EVMTokens.bsc.router.TNT.address),
-      abi: assertAbi(EVMTokens.bsc.router.TNT.abi),
-      decimals: EVMTokens.bsc.router.TNT.decimals,
-      chainId: PresetTypedChainId.BSC,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x64570ea315052A04E0b476254bb142BA21759DF5'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.Base,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xFB7D161c56FC001Ee4BD30F7B94519fEed25b22F',
+      ),
     },
+  ],
+  [PresetTypedChainId.BSC]: [
     {
       symbol: 'BNB',
       tokenType: 'BNB' as EVMTokenEnum,
@@ -1251,6 +1256,18 @@ export const BRIDGE_TOKENS: Record<PresetTypedChainId, BridgeToken[]> = {
       chainId: PresetTypedChainId.BSC,
       hyperlaneSyntheticAddress: assertEvmAddress(
         '0x7497aDa0D9761ce5fc5965dDF926810BEfDDEA4d',
+      ),
+    },
+    {
+      symbol: 'TNT',
+      tokenType: EVMTokenEnum.TNT,
+      bridgeType: EVMTokenBridgeEnum.Hyperlane,
+      address: assertEvmAddress('0x108F919b5A76B64e80dBf74130Ff6441A62F6405'),
+      abi: assertAbi(erc20Abi),
+      decimals: 18,
+      chainId: PresetTypedChainId.BSC,
+      hyperlaneSyntheticAddress: assertEvmAddress(
+        '0xFB7D161c56FC001Ee4BD30F7B94519fEed25b22F',
       ),
     },
   ],
@@ -1388,23 +1405,6 @@ export const BRIDGE_CHAINS: BridgeChainsConfigType = {
   //   },
   // },
 };
-
-export const ROUTER_QUOTE_URL = `https://api-beta.pathfinder.routerprotocol.com/api/v2/quote`;
-
-export const ROUTER_TX_STATUS_URL = `https://api-beta.pathfinder.routerprotocol.com/api/v2/status`;
-
-export const ROUTER_TRANSACTION_URL = `https://api-beta.pathfinder.routerprotocol.com/api/v2/transaction`;
-
-export const ROUTER_NATIVE_TOKEN_ADDRESS =
-  '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
-
-export const ROUTER_PARTNER_ID = 252;
-
-export enum ROUTER_ERROR_CODE {
-  LOW_AMOUNT_INPUT = 'AMOUNT-LOW-W-VALUE',
-}
-
-export const ROUTER_TX_EXPLORER_URL = 'https://explorer.routernitro.com/tx/';
 
 export const HYPERLANE_REGISTRY_URL =
   process.env.HYPERLANE_REGISTRY_URL ||
@@ -3816,6 +3816,112 @@ export const HYPERLANE_WARP_ROUTE_CONFIGS: WarpCoreConfig = {
       standard: TokenStandard.EvmHypSynthetic,
       symbol: 'ETHFI',
     },
+    {
+      addressOrDenom: '0xB23565d388d03B95212Dc5b8F02e40D7edC77E1A',
+      chainName: 'arbitrum',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xFB7D161c56FC001Ee4BD30F7B94519fEed25b22F',
+        },
+      ],
+      decimals: 18,
+      name: 'Tangle Network Token',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'TNT',
+    },
+    {
+      addressOrDenom: '0x64570ea315052A04E0b476254bb142BA21759DF5',
+      chainName: 'base',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xFB7D161c56FC001Ee4BD30F7B94519fEed25b22F',
+        },
+      ],
+      decimals: 18,
+      name: 'Tangle Network Token',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'TNT',
+    },
+    {
+      addressOrDenom: '0x108F919b5A76B64e80dBf74130Ff6441A62F6405',
+      chainName: 'bsc',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xFB7D161c56FC001Ee4BD30F7B94519fEed25b22F',
+        },
+      ],
+      decimals: 18,
+      name: 'Tangle Network Token',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'TNT',
+    },
+    {
+      addressOrDenom: '0x1465399089F3bFC43E7A52637a296C46423f8417',
+      chainName: 'ethereum',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xFB7D161c56FC001Ee4BD30F7B94519fEed25b22F',
+        },
+      ],
+      decimals: 18,
+      name: 'Tangle Network Token',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'TNT',
+    },
+    {
+      addressOrDenom: '0x606F11cF2395881689eC7d1289A2282ab694bDa2',
+      chainName: 'linea',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xFB7D161c56FC001Ee4BD30F7B94519fEed25b22F',
+        },
+      ],
+      decimals: 18,
+      name: 'Tangle Network Token',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'TNT',
+    },
+    {
+      addressOrDenom: '0xA06164d6440dd1E8cb51b743d7bEAB86c44f74f1',
+      chainName: 'optimism',
+      connections: [
+        {
+          token: 'ethereum|tangle|0xFB7D161c56FC001Ee4BD30F7B94519fEed25b22F',
+        },
+      ],
+      decimals: 18,
+      name: 'Tangle Network Token',
+      standard: TokenStandard.EvmHypSynthetic,
+      symbol: 'TNT',
+    },
+    {
+      addressOrDenom: '0xFB7D161c56FC001Ee4BD30F7B94519fEed25b22F',
+      chainName: 'tangle',
+      connections: [
+        {
+          token: 'ethereum|arbitrum|0xB23565d388d03B95212Dc5b8F02e40D7edC77E1A',
+        },
+        {
+          token: 'ethereum|base|0x64570ea315052A04E0b476254bb142BA21759DF5',
+        },
+        {
+          token: 'ethereum|bsc|0x108F919b5A76B64e80dBf74130Ff6441A62F6405',
+        },
+        {
+          token: 'ethereum|ethereum|0x1465399089F3bFC43E7A52637a296C46423f8417',
+        },
+        {
+          token: 'ethereum|linea|0x606F11cF2395881689eC7d1289A2282ab694bDa2',
+        },
+        {
+          token: 'ethereum|optimism|0xA06164d6440dd1E8cb51b743d7bEAB86c44f74f1',
+        },
+      ],
+      decimals: 18,
+      name: 'Tangle Network Token',
+      standard: TokenStandard.EvmHypNative,
+      symbol: 'TNT',
+    },
   ],
 };
 
@@ -3923,6 +4029,12 @@ export const HYPERLANE_WARP_ROUTE_WHITELIST: Array<string> | null = [
   'DAI/ethereum-tangle',
   'mETH/ethereum-tangle',
   'ETHFI/ethereum-tangle',
+  'TNT/ethereum-tangle',
+  'TNT/arbitrum-tangle',
+  'TNT/base-tangle',
+  'TNT/optimism-tangle',
+  'TNT/linea-tangle',
+  'TNT/bsc-tangle',
 ];
 
 export const mailboxAddress = {

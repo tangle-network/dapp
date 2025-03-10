@@ -187,20 +187,20 @@ export const isEvmTxRelayerEligible = <
 const useEvmTxRelayer = () => {
   const { evmAddress } = useAgnosticAccountInfo();
 
-  const {
-    network: { evmChainId, evmTxRelayerEndpoint },
-  } = useNetworkStore();
+  const network = useNetworkStore((store) => store.network2);
 
   const walletClient = useViemWalletClient(WalletClientTransport.WINDOW);
   const estimateGas = useEvmGasEstimate();
-  const nonce = useEvmCallPermitNonce();
+  const { data: nonce } = useEvmCallPermitNonce();
+
+  const { evmChainId, evmTxRelayerEndpoint } = network ?? {};
 
   const isReady =
     evmAddress !== null &&
     evmTxRelayerEndpoint !== undefined &&
     walletClient !== null &&
     evmChainId !== undefined &&
-    nonce !== null;
+    nonce !== undefined;
 
   const signTx = useCallback(
     async (

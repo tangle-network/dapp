@@ -20,7 +20,7 @@ export type AssetConfig = {
   symbol: string;
   optionalSymbol?: string;
   balance?: BN;
-  explorerUrl?: string;
+  explorerUrl: string | null;
   address?: EvmAddress;
   decimals: number;
 };
@@ -106,7 +106,7 @@ export const AssetList = ({
                       : `${asset.name} (${asset.symbol})`}
                   </Typography>
 
-                  {asset.explorerUrl !== undefined && (
+                  {asset.explorerUrl && (
                     <a
                       href={asset.explorerUrl}
                       target="_blank"
@@ -117,7 +117,7 @@ export const AssetList = ({
                         variant="body1"
                         className="text-current dark:text-current dark:hover:text-current"
                       >
-                        {asset.address !== undefined
+                        {asset.address
                           ? shortenHex(asset.address)
                           : 'View Explorer'}
                       </Typography>

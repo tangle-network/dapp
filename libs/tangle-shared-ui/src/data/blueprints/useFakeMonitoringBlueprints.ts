@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { InstanceStatus, MonitoringBlueprint } from './utils/type';
 import randPrimitiveBlueprint from './utils/randPrimitiveBlueprint';
 import randPrimitiveService from './utils/randPrimitiveService';
-import { randNumber } from '@ngneat/falso';
+import { randNumber, randUserName } from '@ngneat/falso';
+import { toSubstrateAddress } from '@tangle-network/ui-components';
 
 const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
+  const operatorAccountAddress = toSubstrateAddress(operatorAccount);
   return Array.from({ length: 4 })
     .fill(null)
     .map((_, idx) => {
@@ -28,6 +30,20 @@ const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
         instanceId: `i-${randNumber({ min: 0, max: 1000000 }).toString()}`,
         createdAtBlock: randNumber({ min: 0, max: 10000 }),
         ttl: randNumber({ min: 0, max: 10000 }),
+        pendingOperators: [
+          operatorAccountAddress,
+          operatorAccountAddress,
+          operatorAccountAddress,
+          operatorAccountAddress,
+        ],
+        operatorIdentityMap: new Map([
+          [operatorAccountAddress, randUserName()],
+        ]),
+        operators: [
+          operatorAccountAddress,
+          operatorAccountAddress,
+          operatorAccountAddress,
+        ],
       };
       return {
         blueprintId: idx,

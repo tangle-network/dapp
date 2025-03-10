@@ -266,6 +266,155 @@ const RESTAKING_PRECOMPILE_ABI = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'who',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'assetId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address',
+        name: 'tokenAddress',
+        type: 'address',
+      },
+    ],
+    name: 'balanceOf',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'who',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'assetId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address',
+        name: 'tokenAddress',
+        type: 'address',
+      },
+    ],
+    name: 'delegatedBalanceOf',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'operator',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint64[]',
+        name: 'blueprintSelection',
+        type: 'uint64[]',
+      },
+    ],
+    name: 'delegateNomination',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'operator',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint64[]',
+        name: 'blueprintSelection',
+        type: 'uint64[]',
+      },
+    ],
+    name: 'scheduleDelegatorNominationUnstake',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'operator',
+        type: 'bytes32',
+      },
+    ],
+    name: 'executeDelegatorNominationUnstake',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'operator',
+        type: 'bytes32',
+      },
+    ],
+    name: 'cancelDelegatorNominationUnstake',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'who',
+        type: 'address',
+      },
+    ],
+    name: 'delegatedNominationBalance',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ] as const satisfies AbiFunction[];
 
 export default RESTAKING_PRECOMPILE_ABI;

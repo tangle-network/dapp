@@ -5,7 +5,7 @@ export type PrimitiveFieldType =
   | { Optional: PrimitiveFieldType }
   | { Array: [number, PrimitiveFieldType] }
   | { List: PrimitiveFieldType }
-  | { Struct: [string, [string, PrimitiveFieldType][]] }
+  | { Struct: PrimitiveFieldType[] }
   | Exclude<FieldFieldType['type'], 'Optional' | 'Array' | 'List' | 'Struct'>
   | Exclude<
       TanglePrimitivesServicesFieldFieldType['type'],
@@ -24,7 +24,7 @@ export type PrimitiveNumberFieldKeys =
 
 export type PrimitiveField =
   | {
-      None: null;
+      Optional: [PrimitiveFieldType, PrimitiveField | null];
     }
   | {
       Bool: boolean;
@@ -36,13 +36,10 @@ export type PrimitiveField =
       String: string;
     }
   | {
-      Bytes: Uint8Array;
+      Array: [PrimitiveFieldType, PrimitiveField[]];
     }
   | {
-      Array: PrimitiveField[];
-    }
-  | {
-      List: PrimitiveField[];
+      List: [PrimitiveFieldType, PrimitiveField[]];
     }
   | {
       Struct: [string, [string, PrimitiveField][]];

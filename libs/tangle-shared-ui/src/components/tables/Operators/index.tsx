@@ -165,7 +165,7 @@ const getStaticColumns = (
     ),
   }), */
   COLUMN_HELPER.accessor('vaultTokens', {
-    header: () => 'Vaults',
+    header: () => 'Assets',
     cell: (props) => {
       const tokensList = props.getValue();
 
