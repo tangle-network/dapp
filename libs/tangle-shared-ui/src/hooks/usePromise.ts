@@ -45,7 +45,7 @@ function usePromise<T>(
   },
 ) {
   const [result, setResult] = useState<T>(fallbackValue);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const isMounted = useIsMountedRef();
   const isSubscribed = useRef(true);
