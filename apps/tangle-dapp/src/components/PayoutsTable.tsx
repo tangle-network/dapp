@@ -18,6 +18,7 @@ import {
   ExternalLinkIcon,
 } from '@tangle-network/ui-components';
 import { useMemo, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import { HeaderCell, StringCell } from './tableCells';
 import TokenAmountCell from './tableCells/TokenAmountCell';
@@ -200,7 +201,10 @@ const PayoutsTable: React.FC<Props> = ({
   return (
     <>
       <div
-        className={`overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160 ${className || ''}`}
+        className={twMerge(
+          'overflow-hidden border rounded-lg bg-mono-0 dark:bg-mono-180 border-mono-40 dark:border-mono-160',
+          className,
+        )}
       >
         <Table
           tableProps={table}
