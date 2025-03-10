@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export interface DynamicSVGImportOptions {
   onCompleted?: (
@@ -27,6 +27,8 @@ export function useDynamicSVGImport(
   name?: string,
   options: DynamicSVGImportOptions = {},
 ) {
+  const currentNameRef = useRef<string>('');
+
   const [importedIcon, setImportedIcon] = useState<
     React.ReactElement<React.SVGProps<SVGElement>, 'svg'> | undefined
   >();
@@ -42,16 +44,26 @@ export function useDynamicSVGImport(
   const type = options.type ?? 'token';
 
   useEffect(() => {
+    currentNameRef.current = normalizedName;
+
     setLoading(true);
 
     const importIcon = async (): Promise<void> => {
+      // Store the name we're currently processing
+      const processingName = normalizedName;
+
       try {
-        const mod = await getIcon(type, normalizedName);
+        const mod = await getIcon(type, processingName);
         const Icon = mod.default;
 
-        setImportedIcon(<Icon />);
-        onCompleted?.(normalizedName, Icon);
+        // Only update state if this is still the current name
+        if (processingName === currentNameRef.current) {
+          setImportedIcon(<Icon />);
+          onCompleted?.(processingName, Icon);
+        }
       } catch (err) {
+        const isCurrentNameMatch = processingName === currentNameRef.current;
+
         if (
           (err as any).message.includes('Cannot find module') ||
           (err as any).message.includes('Unknown variable dynamic import')
@@ -59,14 +71,20 @@ export function useDynamicSVGImport(
           const mod = await getDefaultIcon(type);
           const Icon = mod.default;
 
-          setImportedIcon(<Icon />);
-          onCompleted?.(normalizedName, Icon);
+          if (isCurrentNameMatch) {
+            setImportedIcon(<Icon />);
+            onCompleted?.(processingName, Icon);
+          }
         } else {
-          onError?.(err as any);
-          setError(err as Error);
+          if (isCurrentNameMatch) {
+            onError?.(err as any);
+            setError(err as Error);
+          }
         }
       } finally {
-        setLoading(false);
+        if (processingName === currentNameRef.current) {
+          setLoading(false);
+        }
       }
     };
 
