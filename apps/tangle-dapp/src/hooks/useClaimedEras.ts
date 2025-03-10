@@ -27,6 +27,10 @@ export const useClaimedEras = () => {
   const [claimedErasByValidator, setClaimedErasByValidator] =
     useState<ClaimedErasByValidator>({});
 
+  /**
+   * Initializes the claimed eras state from local storage when available.
+   * This ensures persistence of claimed eras data across page refreshes.
+   */
   useEffect(() => {
     const storedData = storage.valueOpt?.value ?? null;
     if (storedData) {

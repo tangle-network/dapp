@@ -111,6 +111,16 @@ const PayoutTxModal: FC<Props> = ({
     [txState, processedEras.length, payout.eras.length, claimedEras.length],
   );
 
+  /**
+   * Cleanup function for the polling mechanism used in this component.
+   *
+   * Uses polling (via setTimeout) to periodically check the status of
+   * payout transactions.
+   *
+   * This effect ensures that any pending timeout is cleared when:
+   * - The component unmounts
+   * - The pollingId changes (e.g., when a new polling cycle starts)
+   */
   useEffect(() => {
     return () => {
       if (pollingId) {
@@ -120,6 +130,13 @@ const PayoutTxModal: FC<Props> = ({
     };
   }, [pollingId]);
 
+  /**
+   * Monitors transaction status and updates component state accordingly.
+   *
+   * When a transaction is in WAITING state, this effect:
+   * - On success: Updates processed eras, stores claimed eras in local storage, and updates state
+   * - On error: Clears timeout, sets error message, and updates state
+   */
   useEffect(() => {
     if (txState === PayoutTxState.WAITING) {
       if (payoutStakersTxStatus === TxStatus.COMPLETE) {
@@ -271,6 +288,12 @@ const PayoutTxModal: FC<Props> = ({
     handleModalClose(false);
   }, [handleModalClose]);
 
+  /**
+   * Resets component state when the modal is closed.
+   *
+   * This ensures a clean slate for the next time the modal is opened,
+   * clearing all transaction progress, errors, and clearing any active polling.
+   */
   useEffect(() => {
     if (!isModalOpen) {
       setCurrentChunkIndex(0);
@@ -278,7 +301,7 @@ const PayoutTxModal: FC<Props> = ({
       setProcessingError(null);
       setTxState(PayoutTxState.IDLE);
       if (pollingId) {
-        clearInterval(pollingId);
+        clearTimeout(pollingId);
         setPollingId(null);
       }
     }
