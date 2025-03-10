@@ -13,6 +13,7 @@ import STAKING_PRECOMPILE_ABI from '../../abi/staking';
 import convertAddressToBytes32 from '@tangle-network/ui-components/utils/convertAddressToBytes32';
 import { toSubstrateAddress } from '@tangle-network/ui-components';
 import { shortenString } from '@tangle-network/ui-components';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
 
 export const MAX_PAYOUTS_BATCH_SIZE = 20;
 
@@ -91,7 +92,7 @@ const usePayoutStakersTx = () => {
   const getSuccessMessage: GetSuccessMessageFn<Context> = useCallback(
     ({ eras, validatorAddress }) => {
       const eraCount = eras.length;
-      return `Successfully claimed rewards for ${eraCount} era${eraCount === 1 ? '' : 's'} from validator ${shortenString(validatorAddress, 8)}`;
+      return `Successfully claimed rewards for ${eraCount} ${pluralize('era', eraCount !== 1)} from validator ${shortenString(validatorAddress, 8)}`;
     },
     [],
   );
