@@ -45,7 +45,7 @@ const PayoutsTable: React.FC<Props> = ({
   const [payoutTxProps, setPayoutTxProps] = useState<Payout | null>(null);
 
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'totalReward', desc: true },
+    { id: 'totalReward' satisfies keyof Payout, desc: true },
   ]);
 
   const createExplorerAccountUrl = useNetworkStore(
