@@ -56,7 +56,7 @@ export function useDynamicSVGImport(
         const mod = await getIcon(type, processingName);
         const Icon = mod.default;
 
-        // Only update state if this is still the current name and component is still mounted
+        // Only update state if this is still the current name
         if (processingName === currentNameRef.current) {
           setImportedIcon(<Icon />);
           onCompleted?.(processingName, Icon);
