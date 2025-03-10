@@ -94,7 +94,7 @@ const DelegationsPayoutsContainer: FC = () => {
     if (!unclaimedPayouts.length) return [];
 
     return unclaimedPayouts.map((payout) => ({
-      validator: payout.validator.address || '',
+      validator: payout.validator.address,
       eras: payout.eras,
     }));
   }, [unclaimedPayouts]);

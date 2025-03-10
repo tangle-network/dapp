@@ -32,7 +32,7 @@ type Props = {
   isModalOpen: boolean;
   setIsModalOpen: (isModalOpen: boolean) => void;
   payouts: Payout[];
-  validatorsAndEras: { validator: string | SubstrateAddress; eras: number[] }[];
+  validatorsAndEras: { validator: SubstrateAddress | null; eras: number[] }[];
   onSuccess?: () => void;
 };
 
