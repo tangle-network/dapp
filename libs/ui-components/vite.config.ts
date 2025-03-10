@@ -1,7 +1,6 @@
 /// <reference types='vitest' />
 import react from '@vitejs/plugin-react-swc';
 import * as path from 'path';
-import { preserveDirectives } from 'rollup-plugin-preserve-directives';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import wasm from 'vite-plugin-wasm';
@@ -21,8 +20,12 @@ export default defineConfig({
       tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
     }),
     wasm(),
-    svgr(),
+    svgr({ svgrOptions: { exportType: 'default' }, include: '**/*.svg' }),
   ],
+
+  define: {
+    'process.env': {},
+  },
 
   css: {
     postcss: {
@@ -60,7 +63,6 @@ export default defineConfig({
     rollupOptions: {
       // External packages that should not be bundled into your library.
       external: ['react', 'react-dom', 'react/jsx-runtime'],
-      plugins: [preserveDirectives()],
       output: {
         exports: 'named',
         preserveModules: true,

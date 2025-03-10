@@ -185,7 +185,6 @@
     "prettier": "^3.4.2",
     "react-is": "^18.3.1",
     "rollup": "^4.28.1",
-    "rollup-plugin-preserve-directives": "^0.4.0",
     "storybook": "^8.6.3",
     "tailwind-merge": "^2.5.5",
     "tailwind-scrollbar": "^3.1.0",
