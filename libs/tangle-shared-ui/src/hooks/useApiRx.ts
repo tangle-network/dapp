@@ -45,6 +45,9 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
       return await getApiRx(rpcEndpoint);
     }, [rpcEndpoint]),
     null,
+    {
+      enabled: rpcEndpoint !== undefined,
+    },
   );
 
   const reset = useCallback(() => {
@@ -123,6 +126,11 @@ const useApiRx = <T>(factory: ObservableFactory<T>) => {
       subscription.unsubscribe();
     };
   }, [factory, apiRx, reset]);
+
+  // Reset the result when the RPC endpoint changes.
+  useEffect(() => {
+    setResult(null);
+  }, [rpcEndpoint]);
 
   return { result, isLoading, error };
 };
