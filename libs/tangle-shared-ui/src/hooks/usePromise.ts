@@ -37,15 +37,9 @@ import ensureError from '../utils/ensureError';
  *  }, null);
  * ```
  */
-function usePromise<T>(
-  factory: () => Promise<T>,
-  fallbackValue: T,
-  options?: {
-    enabled?: boolean;
-  },
-) {
+function usePromise<T>(factory: () => Promise<T>, fallbackValue: T) {
   const [result, setResult] = useState<T>(fallbackValue);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const isMounted = useIsMountedRef();
   const isSubscribed = useRef(true);
@@ -56,10 +50,6 @@ function usePromise<T>(
     // `isMounted` prevents updates after component unmount,
     // `isSubscribed` allows proper cleanup if the effect re-runs before the promise resolves.
     if (!isMounted.current) {
-      return;
-    }
-
-    if (options?.enabled === false) {
       return;
     }
 
@@ -88,7 +78,7 @@ function usePromise<T>(
 
         setIsLoading(false);
       });
-  }, [factory, isMounted, options?.enabled]);
+  }, [factory, isMounted]);
 
   // Initial fetch & automatically refetch when the factory function changes.
   useEffect(() => {

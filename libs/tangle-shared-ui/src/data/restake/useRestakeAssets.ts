@@ -11,6 +11,7 @@ import useApiRx from '../../hooks/useApiRx';
 import usePromise from '../../hooks/usePromise';
 import useViemPublicClient from '../../hooks/useViemPublicClient';
 import { RestakeAssetId } from '../../types';
+import { TangleError, TangleErrorCode } from '../../types/error';
 import { RestakeAsset, RestakeAssetMetadata } from '../../types/restake';
 import assertRestakeAssetId from '../../utils/assertRestakeAssetId';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
@@ -48,11 +49,8 @@ const useRestakeAssets = () => {
   const { result: rewardVaults, isLoading: isLoadingRewardVaults } = useApiRx(
     useCallback(
       (api) => {
-        if (
-          vaultPotAccounts === null ||
-          api.query.rewards?.rewardVaultsPotAccount === undefined
-        ) {
-          return null;
+        if (vaultPotAccounts === null) {
+          return new TangleError(TangleErrorCode.INVALID_PARAMS);
         }
 
         // Retrieve all vaults that have pot accounts.
@@ -184,9 +182,6 @@ const useRestakeAssets = () => {
         return await fetchErc20TokenMetadata(viemPublicClient, evmAssetIds);
       }, [evmAssetIds, viemPublicClient]),
       null,
-      {
-        enabled: evmAssetIds !== null && viemPublicClient !== null,
-      },
     );
 
   const evmAssets = useMemo(() => {

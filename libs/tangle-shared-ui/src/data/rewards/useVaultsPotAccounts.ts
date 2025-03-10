@@ -6,10 +6,6 @@ import { useCallback } from 'react';
 const useVaultsPotAccounts = () => {
   const result = useApiRx(
     useCallback((api) => {
-      if (api.query.rewards?.rewardVaultsPotAccount === undefined) {
-        return null;
-      }
-
       return api.query.rewards.rewardVaultsPotAccount.entries().pipe(
         map((entries) => {
           const primitiveEntries = entries

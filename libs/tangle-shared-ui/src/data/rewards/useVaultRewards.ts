@@ -3,6 +3,7 @@ import useApiRx from '../../hooks/useApiRx';
 import useVaultPotAccount from './useVaultsPotAccounts';
 import { map } from 'rxjs';
 import { BN } from '@polkadot/util';
+import { TangleError, TangleErrorCode } from '../../types/error';
 
 const useVaultRewards = () => {
   const { result: vaultPotAccounts } = useVaultPotAccount();
@@ -11,11 +12,7 @@ const useVaultRewards = () => {
     useCallback(
       (apiRx) => {
         if (vaultPotAccounts === null) {
-          return null;
-        }
-
-        if (apiRx.query.balances?.account === undefined) {
-          return null;
+          return new TangleError(TangleErrorCode.INVALID_PARAMS);
         }
 
         const vaultPotAccountEntries = Array.from(vaultPotAccounts.entries());
