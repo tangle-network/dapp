@@ -109,6 +109,55 @@
     "releaseTagPattern": "{projectName}/{version}",
     "git": {
       "commitMessage": "[RELEASE] {projectName} v{version}"
+    },
+    "conventionalCommits": {
+      "types": {
+        "build": {
+          "changelog": {
+            "hidden": false
+          }
+        },
+        "chore": {
+          "changelog": {
+            "hidden": false
+          }
+        },
+        "ci": {
+          "changelog": {
+            "hidden": false
+          }
+        },
+        "docs": {
+          "changelog": {
+            "hidden": false
+          }
+        },
+        "perf": {
+          "changelog": {
+            "hidden": false
+          }
+        },
+        "refactor": {
+          "changelog": {
+            "hidden": false
+          }
+        },
+        "revert": {
+          "changelog": {
+            "hidden": false
+          }
+        },
+        "style": {
+          "changelog": {
+            "hidden": false
+          }
+        },
+        "test": {
+          "changelog": {
+            "hidden": false
+          }
+        }
+      }
     }
   },
   "plugins": [

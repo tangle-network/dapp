@@ -1,3 +1,26 @@
+## 0.1.1 (2025-03-10)
+
+### 🩹 Fixes
+
+- ***:** Fix other commit types not rendering on changelog ([0b6ed055](https://github.com/tangle-network/dapp/commit/0b6ed055))
+- **tangle-shared-ui:** Fix Incorrect Vault Data Display ([#2894](https://github.com/tangle-network/dapp/pull/2894))
+
+### 💅 Refactors
+
+- **tangle-dapp:** Use 0 instead of value placeholders ([#2886](https://github.com/tangle-network/dapp/pull/2886))
+
+### 🏡 Chore
+
+- **tangle-dapp:** Payouts v2 ([#2833](https://github.com/tangle-network/dapp/pull/2833))
+- **tangle-dapp:** Update Bridge Destination Address Input ([#2884](https://github.com/tangle-network/dapp/pull/2884))
+- **tangle-dapp:** Add switch wallet button for bridge ([#2883](https://github.com/tangle-network/dapp/pull/2883))
+
+### ❤️ Thank You
+
+- Pavan Soratur @devpavan04
+- Trung-Tin Pham @AtelyPham
+- yurixander @yurixander
+
 ## 0.1.0 (2025-03-07)
 
 ### 🚀 Features
