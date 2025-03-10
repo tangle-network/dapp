@@ -1,53 +1,87 @@
-import { BN } from '@polkadot/util';
+import { BN, formatBalance } from '@polkadot/util';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import useSWR from 'swr';
+import { getPayouts } from '../payouts/getPayouts';
+import { useClaimedEras } from '../../hooks/useClaimedEras';
+import { useMemo } from 'react';
+import filterClaimedPayouts from '../payouts/filterClaimedPayouts';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
-import { useMemo, useState } from 'react';
 
-import { usePayoutsStore } from '../payouts/usePayoutsStore';
-
+/**
+ * Hook to calculate the total unclaimed payout rewards
+ * @returns Object containing the total unclaimed rewards and any error
+ */
 export default function useTotalPayoutRewards() {
-  const payouts = usePayoutsStore((state) => state.data);
-  const maxEras = usePayoutsStore((state) => state.eraRange);
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const { getClaimedEras, claimedErasByValidator } = useClaimedEras();
+  const { nativeTokenSymbol } = useNetworkStore();
+  const networkId = useNetworkStore((store) => store.network.id);
 
-  const address = useSubstrateAddress();
+  const userSubstrateAddress = useSubstrateAddress();
 
-  const payoutsAtMaxEras = useMemo(() => {
-    if (payouts === null || address === null) {
-      return null;
+  // Fetch payouts data
+  const {
+    data: payoutsData,
+    error: payoutsError,
+    isLoading,
+  } = useSWR(
+    ['payoutsData', userSubstrateAddress, rpcEndpoint, nativeTokenSymbol],
+    ([, address, rpcEndpoint, nativeTokenSymbol]) =>
+      getPayouts(address, rpcEndpoint, nativeTokenSymbol),
+    {
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      refreshInterval: 5000,
+      dedupingInterval: 5000,
+    },
+  );
+
+  // Calculate unclaimed payouts using the shared utility function
+  const unclaimedPayouts = useMemo(() => {
+    if (!userSubstrateAddress) return [];
+
+    return filterClaimedPayouts(
+      payoutsData?.payouts,
+      claimedErasByValidator,
+      getClaimedEras,
+      networkId,
+    );
+  }, [
+    payoutsData,
+    claimedErasByValidator,
+    getClaimedEras,
+    userSubstrateAddress,
+    networkId,
+  ]);
+
+  // Calculate total rewards from unclaimed payouts
+  const totalRewards = useMemo(() => {
+    if (!unclaimedPayouts || unclaimedPayouts.length === 0) {
+      return new BN(0);
     }
 
-    return payouts[maxEras] ?? [];
-  }, [address, payouts, maxEras]);
+    return unclaimedPayouts.reduce(
+      (total, payout) => total.add(payout.totalReward),
+      new BN(0),
+    );
+  }, [unclaimedPayouts]);
 
-  const [error, setError] = useState<Error | null>(null);
-
-  const totalPayoutRewards = useMemo(() => {
-    // TODO: Why is there a try-catch block here? What kind of error could be thrown? The BN operations here should not throw any errors.
-    try {
-      // Not ready yet.
-      if (address === null || payoutsAtMaxEras === null) {
-        return null;
-      }
-      // Nothing to claim; total payouts are 0.
-      else if (payoutsAtMaxEras.length === 0) {
-        return new BN(0);
-      }
-
-      const totalPayoutRewards = payoutsAtMaxEras.reduce((acc, payout) => {
-        const currentReward = payout.nominatorTotalRewardRaw;
-
-        return acc.add(currentReward);
-      }, new BN(0));
-
-      return new BN(totalPayoutRewards.toString());
-    } catch (e) {
-      setError(
-        e instanceof Error
-          ? e
-          : new Error('An error occurred while calculating total payouts.'),
-      );
-      return null;
+  // Format the total rewards
+  const formattedTotalRewards = useMemo(() => {
+    if (totalRewards.isZero()) {
+      return '0';
     }
-  }, [address, payoutsAtMaxEras]);
 
-  return { error, data: totalPayoutRewards };
+    return formatBalance(totalRewards, {
+      withUnit: nativeTokenSymbol,
+    });
+  }, [nativeTokenSymbol, totalRewards]);
+
+  return {
+    data: totalRewards,
+    formattedTotal: formattedTotalRewards,
+    unclaimedPayouts,
+    error: payoutsError,
+    isLoading,
+  };
 }

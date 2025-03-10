@@ -10,24 +10,12 @@ import {
   TableAndChartTabs,
 } from '@tangle-network/ui-components';
 import { TANGLE_DOCS_URL } from '@tangle-network/ui-components/constants';
-import {
-  type FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { type FC, useEffect, useMemo, useRef, useState } from 'react';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 import { ContainerSkeleton } from '../components';
 import useNominations from '../data/nomination/useNominations';
-import usePayouts from '../data/payouts/usePayouts';
-import { MAX_PAYOUTS_BATCH_SIZE } from '../data/payouts/usePayoutAllTx';
-import { usePayoutsStore } from '../data/payouts/usePayoutsStore';
 import useIsBondedOrNominating from '../data/staking/useIsBondedOrNominating';
-import { PayoutsEraRange } from '../data/types';
-import useApi from '../hooks/useApi';
 import useQueryParamKey from '../hooks/useQueryParamKey';
 import {
   DelegationsAndPayoutsTab as NominationsAndPayoutsTab,
@@ -36,11 +24,16 @@ import {
 import { DelegateTxContainer } from './DelegateTxContainer';
 import { UpdateNominationsTxContainer } from './UpdateNominationsTxContainer';
 import { UpdatePayeeTxContainer } from './UpdatePayeeTxContainer';
-import type { DeriveSessionProgress } from '@polkadot/api-derive/session/types';
-import PayoutTable from '../components/PayoutTable';
+import PayoutsTable from '../components/PayoutsTable';
 import PayoutAllTxModal from './PayoutAllTxModal';
 import NominationsTable from '../components/nomination/NominationsTable';
 import StopNominationTxModal from './StopNominationTxModal';
+import useSWR from 'swr';
+import { getPayouts } from '../data/payouts/getPayouts';
+import { useClaimedEras } from '../hooks/useClaimedEras';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import filterClaimedPayouts from '../data/payouts/filterClaimedPayouts';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 
 const PAGE_SIZE = 10;
 
@@ -57,7 +50,6 @@ function assertTab(tab: string): NominationsAndPayoutsTab {
 }
 
 const DelegationsPayoutsContainer: FC = () => {
-  const [payoutsStartIndex, setPayoutsStartIndex] = useState(0);
   const { toggleModal } = useConnectWallet();
   const tableRef = useRef<HTMLDivElement>(null);
   const { activeAccount, loading, isConnecting } = useWebContext();
@@ -65,17 +57,47 @@ const DelegationsPayoutsContainer: FC = () => {
   const [isPayoutAllModalOpen, setIsPayoutAllModalOpen] = useState(false);
   const [isUpdatePayeeModalOpen, setIsUpdatePayeeModalOpen] = useState(false);
 
-  const { result: historyDepth } = useApi(
-    useCallback(async (api) => api.consts.staking.historyDepth.toBn(), []),
+  const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
+  const nativeTokenSymbol = useNetworkStore((store) => store.nativeTokenSymbol);
+  const networkId = useNetworkStore((store) => store.network.id);
+
+  const userSubstrateAddress = useSubstrateAddress();
+
+  const {
+    data: payoutsData,
+    isLoading: payoutsIsLoading,
+    mutate: mutatePayouts,
+  } = useSWR(
+    ['payouts', userSubstrateAddress, rpcEndpoint, nativeTokenSymbol],
+    ([, address, rpcEndpoint, nativeTokenSymbol]) =>
+      getPayouts(address, rpcEndpoint, nativeTokenSymbol),
+    {
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      refreshInterval: 5000,
+      dedupingInterval: 5000,
+    },
   );
 
-  const { result: progress } = useApi(
-    useCallback((api) => api.derive.session.progress(), []),
-  );
+  const { getClaimedEras, claimedErasByValidator } = useClaimedEras();
 
-  const { result: epochDuration } = useApi(
-    useCallback(async (api) => api.consts.babe.epochDuration.toNumber(), []),
-  );
+  const unclaimedPayouts = useMemo(() => {
+    return filterClaimedPayouts(
+      payoutsData?.payouts,
+      claimedErasByValidator,
+      getClaimedEras,
+      networkId,
+    );
+  }, [payoutsData, claimedErasByValidator, getClaimedEras, networkId]);
+
+  const validatorsAndEras = useMemo(() => {
+    if (!unclaimedPayouts.length) return [];
+
+    return unclaimedPayouts.map((payout) => ({
+      validator: payout.validator.address,
+      eras: payout.eras,
+    }));
+  }, [unclaimedPayouts]);
 
   const { value: queryParamsTab } = useQueryParamKey(
     QueryParamKey.DELEGATIONS_AND_PAYOUTS_TAB,
@@ -97,12 +119,6 @@ const DelegationsPayoutsContainer: FC = () => {
   const nomineesOpt = useNominations();
   const isBondedOrNominating = useIsBondedOrNominating();
 
-  const payoutsData = usePayoutsStore((state) => state.data);
-  const payoutsIsLoading = usePayoutsStore((state) => state.isLoading);
-  const maxEras = usePayoutsStore((state) => state.eraRange);
-
-  usePayouts();
-
   const currentNominationAddresses = useMemo(() => {
     if (nomineesOpt === null) {
       return null;
@@ -113,32 +129,6 @@ const DelegationsPayoutsContainer: FC = () => {
     );
   }, [nomineesOpt]);
 
-  const fetchedPayouts = useMemo(() => {
-    if (payoutsData[maxEras]) {
-      return payoutsData[maxEras];
-    }
-
-    return [];
-  }, [payoutsData, maxEras]);
-
-  const nextPayoutBatch = useMemo(() => {
-    // No more payouts to process.
-    if (payoutsStartIndex >= fetchedPayouts.length) {
-      return [];
-    }
-
-    return fetchedPayouts.slice(
-      payoutsStartIndex,
-      payoutsStartIndex + MAX_PAYOUTS_BATCH_SIZE,
-    );
-  }, [fetchedPayouts, payoutsStartIndex]);
-
-  const increasePayoutsStartIndex = useCallback(() => {
-    setPayoutsStartIndex((prev) =>
-      Math.min(prev + MAX_PAYOUTS_BATCH_SIZE, fetchedPayouts.length),
-    );
-  }, [fetchedPayouts.length]);
-
   // Scroll to the table when the tab changes, or when the page
   // is first loaded with a tab query parameter present.
   useEffect(() => {
@@ -148,15 +138,6 @@ const DelegationsPayoutsContainer: FC = () => {
 
     tableRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [queryParamsTab]);
-
-  const validatorAndEras = useMemo(
-    () =>
-      fetchedPayouts.map((payout) => ({
-        validatorAddress: payout.validator.address,
-        era: payout.era,
-      })),
-    [fetchedPayouts],
-  );
 
   return (
     <div ref={tableRef}>
@@ -178,23 +159,14 @@ const DelegationsPayoutsContainer: FC = () => {
                 onStopNomination={() => setIsStopNominationModalOpen(true)}
               />
             ) : (
-              <div className="flex items-center gap-2">
-                <FilterByErasContainer />
-
-                <Button
-                  variant="utility"
-                  size="sm"
-                  isDisabled={
-                    fetchedPayouts.length === 0 ||
-                    payoutsStartIndex >= fetchedPayouts.length
-                  }
-                  onClick={() => setIsPayoutAllModalOpen(true)}
-                >
-                  Payout All
-                  {fetchedPayouts.length >= MAX_PAYOUTS_BATCH_SIZE &&
-                    ` (${MAX_PAYOUTS_BATCH_SIZE} max)`}
-                </Button>
-              </div>
+              <Button
+                variant="utility"
+                size="sm"
+                isDisabled={unclaimedPayouts.length === 0}
+                onClick={() => setIsPayoutAllModalOpen(true)}
+              >
+                Payout All
+              </Button>
             )
           ) : null
         }
@@ -248,7 +220,7 @@ const DelegationsPayoutsContainer: FC = () => {
             />
           ) : payoutsIsLoading ? (
             <ContainerSkeleton />
-          ) : fetchedPayouts && fetchedPayouts.length === 0 ? (
+          ) : unclaimedPayouts.length === 0 ? (
             <TableStatus
               title={
                 !isBondedOrNominating
@@ -270,12 +242,12 @@ const DelegationsPayoutsContainer: FC = () => {
               icon={!isBondedOrNominating ? '🔍' : '⏳'}
             />
           ) : (
-            <PayoutTable
-              data={fetchedPayouts ?? []}
+            <PayoutsTable
+              data={unclaimedPayouts}
               pageSize={PAGE_SIZE}
-              sessionProgress={progress as unknown as DeriveSessionProgress}
-              historyDepth={historyDepth}
-              epochDuration={epochDuration}
+              onPayoutSuccess={() => {
+                mutatePayouts();
+              }}
             />
           )}
         </TabContent>
@@ -310,13 +282,11 @@ const DelegationsPayoutsContainer: FC = () => {
       <PayoutAllTxModal
         isModalOpen={isPayoutAllModalOpen}
         setIsModalOpen={setIsPayoutAllModalOpen}
-        validatorsAndEras={validatorAndEras}
-        // Pass the fetched payouts capped to the max batch
-        // size to avoid exceeding the block weight limit.
-        payouts={nextPayoutBatch}
-        // Increase the start index to fetch the next batch
-        // of payouts, and avoid stale data.
-        onComplete={increasePayoutsStartIndex}
+        validatorsAndEras={validatorsAndEras}
+        payouts={unclaimedPayouts}
+        onSuccess={() => {
+          mutatePayouts();
+        }}
       />
     </div>
   );
@@ -356,36 +326,5 @@ const ManageNominationsButton: FC<ManageNominationsButtonProps> = ({
     </div>
   );
 };
-
-/** @internal */
-function FilterByErasContainer() {
-  const { eraRange: activeEraRange, setEraRange: setActiveEraRange } =
-    usePayoutsStore();
-
-  const actionItems = Object.values(PayoutsEraRange)
-    .filter((value): value is PayoutsEraRange => typeof value !== 'string')
-    .flatMap((eraRange) => {
-      // Skip the active era range, as it's already displayed.
-      if (eraRange === activeEraRange) {
-        return [];
-      }
-
-      return [
-        {
-          label: `Last ${eraRange} eras`,
-          onClick: () => setActiveEraRange(eraRange),
-        },
-      ];
-    });
-
-  return (
-    <div className="flex items-center space-x-2">
-      <ActionsDropdown
-        buttonText={`Last ${activeEraRange} eras`}
-        actionItems={actionItems}
-      />
-    </div>
-  );
-}
 
 export default DelegationsPayoutsContainer;
