@@ -8,7 +8,6 @@ import {
   Button,
   TabContent,
   TableAndChartTabs,
-  toSubstrateAddress,
 } from '@tangle-network/ui-components';
 import { TANGLE_DOCS_URL } from '@tangle-network/ui-components/constants';
 import { type FC, useEffect, useMemo, useRef, useState } from 'react';
@@ -29,13 +28,12 @@ import PayoutsTable from '../components/PayoutsTable';
 import PayoutAllTxModal from './PayoutAllTxModal';
 import NominationsTable from '../components/nomination/NominationsTable';
 import StopNominationTxModal from './StopNominationTxModal';
-
 import useSWR from 'swr';
 import { getPayouts } from '../data/payouts/getPayouts';
 import { useClaimedEras } from '../hooks/useClaimedEras';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import filterClaimedPayouts from '../data/payouts/filterClaimedPayouts';
-import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
 
 const PAGE_SIZE = 10;
 
@@ -63,10 +61,7 @@ const DelegationsPayoutsContainer: FC = () => {
   const nativeTokenSymbol = useNetworkStore((store) => store.nativeTokenSymbol);
   const networkId = useNetworkStore((store) => store.network.id);
 
-  const { isEvm, evmAddress, substrateAddress } = useAgnosticAccountInfo();
-
-  const userSubstrateAddress =
-    isEvm && evmAddress ? toSubstrateAddress(evmAddress) : substrateAddress;
+  const userSubstrateAddress = useSubstrateAddress();
 
   const {
     data: payoutsData,
