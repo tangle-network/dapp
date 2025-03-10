@@ -79,7 +79,7 @@ const RewardsAndPoints = () => {
             className="text-mono-140 dark:text-mono-40"
             component="span"
           >
-            {totalRewardsFormatted ?? EMPTY_VALUE_PLACEHOLDER}{' '}
+            {totalRewardsFormatted ?? 0}{' '}
           </Typography>
 
           <Typography

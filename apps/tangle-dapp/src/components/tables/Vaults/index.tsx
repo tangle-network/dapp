@@ -66,9 +66,10 @@ const getColumns = (nativeTokenSymbol: string) => [
     header: () => 'Available',
     cell: (props) => {
       const value = props.getValue();
+
       const fmtAvailable =
         value === undefined
-          ? EMPTY_VALUE_PLACEHOLDER
+          ? 0
           : formatDisplayAmount(
               value,
               props.row.original.decimals,
@@ -87,9 +88,10 @@ const getColumns = (nativeTokenSymbol: string) => [
     header: () => 'Deposits',
     cell: (props) => {
       const value = props.getValue();
+
       const fmtDeposits =
         value === undefined
-          ? EMPTY_VALUE_PLACEHOLDER
+          ? 0
           : formatDisplayAmount(
               value,
               props.row.original.decimals,
@@ -113,9 +115,10 @@ const getColumns = (nativeTokenSymbol: string) => [
     ),
     cell: (props) => {
       const value = props.getValue();
+
       const fmtRewards =
         value === undefined
-          ? EMPTY_VALUE_PLACEHOLDER
+          ? 0
           : formatDisplayAmount(
               value,
               props.row.original.decimals,
@@ -146,7 +149,7 @@ const getColumns = (nativeTokenSymbol: string) => [
 
       const fmtTvl =
         tvl === undefined
-          ? EMPTY_VALUE_PLACEHOLDER
+          ? 0
           : formatDisplayAmount(
               tvl,
               props.row.original.decimals,
