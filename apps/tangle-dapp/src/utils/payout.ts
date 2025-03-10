@@ -1,3 +1,4 @@
+import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components';
 import { PayoutTxState } from '../types';
 
 /**
@@ -6,7 +7,7 @@ import { PayoutTxState } from '../types';
  * @returns Formatted string of eras
  */
 export const formatEras = (eras: number[] | undefined): string => {
-  if (!eras || eras.length === 0) return '-';
+  if (!eras || eras.length === 0) return EMPTY_VALUE_PLACEHOLDER;
   return eras.join(', ');
 };
 

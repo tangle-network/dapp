@@ -3,6 +3,7 @@ import { useClaimedEras } from '../hooks/useClaimedEras';
 import { TxStatus } from '../hooks/useSubstrateTx';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
+  EMPTY_VALUE_PLACEHOLDER,
   InputField,
   Modal,
   ModalBody,
@@ -372,7 +373,7 @@ const PayoutTxModal: FC<Props> = ({
                         <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                           {txState !== PayoutTxState.IDLE
                             ? `${currentChunkIndex + 1} of ${eraChunks.length}`
-                            : '-'}
+                            : EMPTY_VALUE_PLACEHOLDER}
                         </span>
                       </div>
                     )}
@@ -395,7 +396,7 @@ const PayoutTxModal: FC<Props> = ({
                       <span className="text-sm break-all font-semibold text-gray-900 dark:text-gray-100">
                         {isCompleted
                           ? formatEras(processedEras)
-                          : formatEras(currentChunk) || '-'}
+                          : formatEras(currentChunk) || EMPTY_VALUE_PLACEHOLDER}
                       </span>
                     </div>
 
