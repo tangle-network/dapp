@@ -8,7 +8,6 @@ import Button from '@tangle-network/ui-components/components/buttons/Button';
 import { CircularProgress } from '@tangle-network/ui-components/components/CircularProgress';
 import { Table } from '@tangle-network/ui-components/components/Table';
 import { TableVariant } from '@tangle-network/ui-components/components/Table/types';
-import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { Typography } from '@tangle-network/ui-components/typography/Typography';
 import {
   AmountFormatStyle,
@@ -66,9 +65,10 @@ const getColumns = (nativeTokenSymbol: string) => [
     header: () => 'Available',
     cell: (props) => {
       const value = props.getValue();
+
       const fmtAvailable =
         value === undefined
-          ? EMPTY_VALUE_PLACEHOLDER
+          ? 0
           : formatDisplayAmount(
               value,
               props.row.original.decimals,
@@ -87,9 +87,10 @@ const getColumns = (nativeTokenSymbol: string) => [
     header: () => 'Deposits',
     cell: (props) => {
       const value = props.getValue();
+
       const fmtDeposits =
         value === undefined
-          ? EMPTY_VALUE_PLACEHOLDER
+          ? 0
           : formatDisplayAmount(
               value,
               props.row.original.decimals,
@@ -113,9 +114,10 @@ const getColumns = (nativeTokenSymbol: string) => [
     ),
     cell: (props) => {
       const value = props.getValue();
+
       const fmtRewards =
         value === undefined
-          ? EMPTY_VALUE_PLACEHOLDER
+          ? 0
           : formatDisplayAmount(
               value,
               props.row.original.decimals,
@@ -146,7 +148,7 @@ const getColumns = (nativeTokenSymbol: string) => [
 
       const fmtTvl =
         tvl === undefined
-          ? EMPTY_VALUE_PLACEHOLDER
+          ? 0
           : formatDisplayAmount(
               tvl,
               props.row.original.decimals,
@@ -229,7 +231,7 @@ const VaultsTable: FC<Props> = ({
   emptyTableProps,
   loadingTableProps,
   tableProps,
-  isLoading: isLoadingProp,
+  isLoading,
 }) => {
   const nativeTokenSymbol = useNetworkStore(
     (store) => store.network.tokenSymbol,
@@ -253,8 +255,6 @@ const VaultsTable: FC<Props> = ({
     ),
   );
 
-  const isLoading = isLoadingProp || data === null;
-
   if (isLoading) {
     return (
       <TableStatus
@@ -265,7 +265,7 @@ const VaultsTable: FC<Props> = ({
         className={loadingTableProps?.className}
       />
     );
-  } else if (data.length === 0) {
+  } else if (data === null || data.length === 0) {
     return (
       <TableStatus
         title="No Vaults Found"

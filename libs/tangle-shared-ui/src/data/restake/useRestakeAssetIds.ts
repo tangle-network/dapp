@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { map, of } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';
 import { RestakeAssetId } from '../../types';
+import { TangleError, TangleErrorCode } from '../../types/error';
 import createRestakeAssetId from '../../utils/createRestakeAssetId';
 import useVaultsPotAccounts from '../rewards/useVaultsPotAccounts';
 
@@ -30,7 +31,7 @@ const useRestakeAssetIds = () => {
     useCallback(
       (api) => {
         if (vaultPotAccounts === null) {
-          return null;
+          return new TangleError(TangleErrorCode.INVALID_PARAMS);
         }
 
         const vaultIds = vaultPotAccounts.keys().toArray();

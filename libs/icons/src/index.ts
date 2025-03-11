@@ -149,6 +149,7 @@ export { default as UserFillIcon } from './UserFillIcon';
 export { default as UserLineIcon } from './UserLineIcon';
 export * from './UserStarFillIcon';
 export { default as VipDiamondLine } from './VipDiamondLine';
+export { default as WalletIcon } from './WalletIcon';
 export { default as WalletFillIcon } from './WalletFillIcon';
 export { default as WalletLineIcon } from './WalletLineIcon';
 export { default as WalletPayIcon } from './WalletPayIcon';
