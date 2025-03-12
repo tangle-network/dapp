@@ -12,7 +12,6 @@ import {
   SubtractCircleLineIcon,
 } from '@tangle-network/icons';
 import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
-import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import {
   ActionsDropdown,
   AmountFormatStyle,
@@ -38,7 +37,6 @@ import LsUpdateRolesModal from '../../containers/LsUpdateRolesModal';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import BlueIconButton from '../BlueIconButton';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
@@ -124,12 +122,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
                 />
               </TooltipTrigger>
 
-              <TooltipBody className="max-w-none">
-                {tryEncodeAddressWithPrefix(
-                  ownerAddress,
-                  props.row.original.protocolId,
-                )}
-              </TooltipBody>
+              <TooltipBody className="max-w-none">{ownerAddress}</TooltipBody>
             </Tooltip>
           );
         },
@@ -152,10 +145,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
                   </TooltipTrigger>
 
                   <TooltipBody className="max-w-none">
-                    {tryEncodeAddressWithPrefix(
-                      substrateAddress,
-                      props.row.original.protocolId,
-                    )}
+                    {substrateAddress}
                   </TooltipBody>
                 </Tooltip>
               ))}

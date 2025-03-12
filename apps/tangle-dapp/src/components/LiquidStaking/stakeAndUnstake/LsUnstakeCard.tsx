@@ -52,11 +52,7 @@ const LsUnstakeCard: FC = () => {
   const { execute: executeTangleUnbondTx, status: tangleUnbondTxStatus } =
     useLsPoolUnbondTx();
 
-  const exchangeRateOrError = useLsExchangeRate();
-
-  // TODO: Properly handle the error state.
-  const exchangeRate =
-    exchangeRateOrError instanceof Error ? null : exchangeRateOrError;
+  const exchangeRate = useLsExchangeRate();
 
   const handleUnstakeClick = useCallback(async () => {
     // Cannot perform transaction: Amount not set.

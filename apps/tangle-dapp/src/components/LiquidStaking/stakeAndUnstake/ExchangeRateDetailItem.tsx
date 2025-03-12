@@ -16,9 +16,7 @@ const ExchangeRateDetailItem: FC = () => {
   );
 
   const exchangeRateElement =
-    exchangeRate instanceof Error ? (
-      exchangeRate
-    ) : exchangeRate === null ? (
+    exchangeRate === null ? (
       <SkeletonLoader className="w-[50px]" />
     ) : (
       exchangeRate

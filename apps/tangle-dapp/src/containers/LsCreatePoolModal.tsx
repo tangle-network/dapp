@@ -15,7 +15,7 @@ import { FC, useCallback, useEffect, useState } from 'react';
 
 import AddressInput from '../components/AddressInput';
 import AmountInput from '../components/AmountInput';
-import LsProtocolDropdownInput from '../components/LiquidStaking/LsProtocolDropdownInput';
+import LsProtocolChip from '../components/LiquidStaking/LsProtocolChip';
 import TextInput from '../components/TextInput';
 import useBalances from '../data/balances/useBalances';
 import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
@@ -151,10 +151,7 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
               wrapperOverrides={{ isFullWidth: true }}
             />
 
-            <LsProtocolDropdownInput
-              id="ls-create-pool-protocol"
-              isDerivativeVariant={false}
-            />
+            <LsProtocolChip />
           </div>
 
           <AddressInput

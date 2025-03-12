@@ -56,11 +56,7 @@ const LsStakeCard: FC = () => {
     return isMember ? 'Increase Stake' : defaultText;
   }, [activeAccountAddress, lsPoolMembers, lsPoolId]);
 
-  const exchangeRateOrError = useLsExchangeRate();
-
-  // TODO: Properly handle the error state.
-  const exchangeRate =
-    exchangeRateOrError instanceof Error ? null : exchangeRateOrError;
+  const exchangeRate = useLsExchangeRate();
 
   const handleStakeClick = useCallback(async () => {
     // Not ready yet; no amount given.
@@ -68,11 +64,7 @@ const LsStakeCard: FC = () => {
       return;
     }
 
-    if (
-      isTangleNetwork &&
-      executeTanglePoolJoinTx !== null &&
-      lsPoolId !== null
-    ) {
+    if (executeTanglePoolJoinTx !== null && lsPoolId !== null) {
       executeTanglePoolJoinTx({
         amount: fromAmount,
         poolId: lsPoolId,

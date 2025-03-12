@@ -32,7 +32,6 @@ import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
-import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 
 export type LsPoolsTableProps = {
   pools: LsPool[];
@@ -99,12 +98,7 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
               />
             </TooltipTrigger>
 
-            <TooltipBody className="max-w-none">
-              {tryEncodeAddressWithPrefix(
-                ownerAddress,
-                props.row.original.protocolId,
-              )}
-            </TooltipBody>
+            <TooltipBody className="max-w-none">{ownerAddress}</TooltipBody>
           </Tooltip>
         );
       },
@@ -127,10 +121,7 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
                 </TooltipTrigger>
 
                 <TooltipBody className="max-w-none">
-                  {tryEncodeAddressWithPrefix(
-                    substrateAddress,
-                    props.row.original.protocolId,
-                  )}
+                  {substrateAddress}
                 </TooltipBody>
               </Tooltip>
             ))}

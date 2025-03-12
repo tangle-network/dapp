@@ -11,6 +11,7 @@ import { LstIconSize } from './types';
 import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
 import LogoListItem from '../Lists/LogoListItem';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 type Props = {
   pool: LsPool;
@@ -18,6 +19,10 @@ type Props = {
 };
 
 const LstListItem: FC<Props> = ({ pool, isSelfStaked }) => {
+  const networkTokenSymbol = useNetworkStore(
+    (store) => store.network2?.tokenSymbol,
+  );
+
   const fmtStakeAmount = formatDisplayAmount(
     pool.totalStaked,
     TANGLE_TOKEN_DECIMALS,
@@ -29,7 +34,13 @@ const LstListItem: FC<Props> = ({ pool, isSelfStaked }) => {
       ? undefined
       : `${formatPercentage(pool.commissionFractional)} commission`;
 
-  const stakeText = `${fmtStakeAmount} ${lsProtocol.token}`;
+  const leftBottomContent = [
+    fmtStakeAmount,
+    networkTokenSymbol ?? '',
+    isSelfStaked ? 'self ' : 'staked',
+  ]
+    .filter((part) => part.trim() !== '')
+    .join(' ');
 
   return (
     <LogoListItem
@@ -43,7 +54,7 @@ const LstListItem: FC<Props> = ({ pool, isSelfStaked }) => {
           <span className="text-mono-180 dark:text-mono-120">#{pool.id}</span>
         </Typography>
       }
-      leftBottomContent={`${stakeText} ${isSelfStaked ? 'self ' : ''}staked`}
+      leftBottomContent={leftBottomContent}
       rightUpperText={`${pool.apyPercentage ?? EMPTY_VALUE_PLACEHOLDER}% APY`}
       rightBottomText={fmtCommission}
       logo={<LstIcon iconUrl={pool.iconUrl} size={LstIconSize.LG} />}
