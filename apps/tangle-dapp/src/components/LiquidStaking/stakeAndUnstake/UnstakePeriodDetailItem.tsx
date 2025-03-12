@@ -1,14 +1,8 @@
-import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import { SkeletonLoader } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { FC } from 'react';
 
-import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import DetailItem from './DetailItem';
-
-export type UnstakePeriodDetailItemProps = {
-  protocolId: LsProtocolId;
-};
 
 type UnstakePeriod = {
   value: number;
@@ -16,11 +10,7 @@ type UnstakePeriod = {
   isEstimate: boolean;
 };
 
-const UnstakePeriodDetailItem: FC<UnstakePeriodDetailItemProps> = ({
-  protocolId,
-}) => {
-  const protocol = getLsProtocolDef(protocolId);
-
+const UnstakePeriodDetailItem: FC = () => {
   const unlockPeriod = ((): UnstakePeriod | null => {
     // TODO: This is actually in eras, not days. May need conversion.
     const days = protocol.unstakingPeriod;

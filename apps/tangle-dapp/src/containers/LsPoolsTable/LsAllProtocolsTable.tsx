@@ -28,10 +28,9 @@ import { twMerge } from 'tailwind-merge';
 import StatItem from '../../components/StatItem';
 import { LsPool, LsToken } from '../../constants/liquidStaking/types';
 import useLsPools from '../../data/liquidStaking/useLsPools';
-import { useLsStore } from '../../data/liquidStaking/useLsStore';
-import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
 import LsPoolsTable from './LsPoolsTable';
 import sortByLocaleCompare from '../../utils/sortByLocaleCompare';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 export type LsProtocolRow = {
   name: string;
@@ -131,14 +130,12 @@ const PROTOCOL_COLUMNS = [
 
 const LsAllProtocolsTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const { lsNetworkId } = useLsStore();
+  const network = useNetworkStore((store) => store.network2);
 
   // Expand the first row by default.
   const [expanded, setExpanded] = useState<ExpandedState>({
     0: true,
   });
-
-  const lsNetwork = getLsNetwork(lsNetworkId);
 
   const getExpandedRowContent = useCallback(
     (row: Row<LsProtocolRow>) => (

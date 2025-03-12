@@ -38,17 +38,16 @@ import LsUpdateRolesModal from '../../containers/LsUpdateRolesModal';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 import BlueIconButton from '../BlueIconButton';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
 import LstIcon from './LstIcon';
 import UpdateCommissionModal from './UpdateCommissionModal';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 
 export interface LsMyPoolRow extends LsPool {
   myStake: BN;
-  lsProtocolId: LsProtocolId;
   isRoot: boolean;
   isNominator: boolean;
   isBouncer: boolean;
@@ -91,10 +90,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
         header: () => 'ID',
         cell: (props) => (
           <div className="flex gap-2 items-center justify-start">
-            <LstIcon
-              lsProtocolId={props.row.original.protocolId}
-              iconUrl={props.row.original.iconUrl}
-            />
+            <LstIcon iconUrl={props.row.original.iconUrl} />
 
             <Typography
               variant="body2"
@@ -168,31 +164,23 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
       }),
       COLUMN_HELPER.accessor('totalStaked', {
         header: () => 'Total Staked (TVL)',
-        cell: (props) => {
-          const lsProtocol = getLsProtocolDef(props.row.original.protocolId);
-
-          return (
-            <TokenAmountCell
-              amount={props.getValue()}
-              decimals={lsProtocol.decimals}
-              formatStyle={AmountFormatStyle.SI}
-            />
-          );
-        },
+        cell: (props) => (
+          <TokenAmountCell
+            amount={props.getValue()}
+            decimals={TANGLE_TOKEN_DECIMALS}
+            formatStyle={AmountFormatStyle.SI}
+          />
+        ),
       }),
       COLUMN_HELPER.accessor('myStake', {
         header: () => 'My Stake',
-        cell: (props) => {
-          const lsProtocol = getLsProtocolDef(props.row.original.protocolId);
-
-          return (
-            <TokenAmountCell
-              amount={props.getValue()}
-              decimals={lsProtocol.decimals}
-              formatStyle={AmountFormatStyle.SHORT}
-            />
-          );
-        },
+        cell: (props) => (
+          <TokenAmountCell
+            amount={props.getValue()}
+            decimals={TANGLE_TOKEN_DECIMALS}
+            formatStyle={AmountFormatStyle.SHORT}
+          />
+        ),
       }),
       COLUMN_HELPER.accessor('commissionFractional', {
         header: () => 'Commission',

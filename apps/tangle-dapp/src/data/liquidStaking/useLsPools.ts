@@ -18,7 +18,6 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
   const bondedPools = useLsBondedPools();
   const poolMembers = useAssetAccounts();
   const compoundApys = useLsPoolCompoundApys();
-  const { lsProtocolId } = useLsStore();
 
   const isSupported = networkFeatures.includes(NetworkFeature.LsPools);
 
@@ -93,8 +92,6 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         totalStaked,
         apyPercentage,
         members: membersMap,
-        // TODO: Ensure that this also works for the Restaking Parachain, once it's implemented.
-        protocolId: lsProtocolId,
         iconUrl,
       };
 
@@ -102,14 +99,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
     });
 
     return new Map(keyValuePairs);
-  }, [
-    bondedPools,
-    poolNominations,
-    compoundApys,
-    poolMembers,
-    isSupported,
-    lsProtocolId,
-  ]);
+  }, [bondedPools, poolNominations, compoundApys, poolMembers, isSupported]);
 
   // In case that the user connects to testnet or mainnet, but the network
   // doesn't have the liquid staking pools feature.

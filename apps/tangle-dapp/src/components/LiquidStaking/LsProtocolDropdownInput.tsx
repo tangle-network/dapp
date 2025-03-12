@@ -11,31 +11,19 @@ import {
 import { ScrollArea } from '@tangle-network/ui-components/components/ScrollArea';
 import { FC, useCallback } from 'react';
 
-import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../constants/liquidStaking/constants';
-import { LsNetworkId } from '../../constants/liquidStaking/types';
-import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
-import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import DropdownChevronIcon from '../DropdownChevronIcon';
 import InputWrapper from '../InputWrapper';
 
 type LsProtocolDropdownInputProps = {
   id: string;
-  networkId: LsNetworkId;
-  protocolId: LsProtocolId;
-  setProtocolId?: (newProtocolId: LsProtocolId) => void;
   isDerivativeVariant: boolean;
 };
 
 const LsProtocolDropdownInput: FC<LsProtocolDropdownInputProps> = ({
   id,
-  networkId,
-  protocolId,
   setProtocolId,
   isDerivativeVariant,
 }) => {
-  const protocol = getLsProtocolDef(protocolId);
-  const network = getLsNetwork(networkId);
-
   const trySetProtocolId = useCallback(
     (newProtocolId: LsProtocolId) => {
       return () => {

@@ -1,7 +1,6 @@
 import { BN } from '@polkadot/util';
 import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
 import useSubstrateAddress from '@tangle-network/tangle-shared-ui/hooks/useSubstrateAddress';
-import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import {
   Alert,
   isValidAddress,
@@ -18,13 +17,12 @@ import AddressInput from '../components/AddressInput';
 import AmountInput from '../components/AmountInput';
 import LsProtocolDropdownInput from '../components/LiquidStaking/LsProtocolDropdownInput';
 import TextInput from '../components/TextInput';
-import { LsNetworkId } from '../constants/liquidStaking/types';
 import useBalances from '../data/balances/useBalances';
 import useLsCreatePoolTx from '../data/liquidStaking/tangle/useLsCreatePoolTx';
-import { useLsStore } from '../data/liquidStaking/useLsStore';
 import { TxStatus } from '../hooks/useSubstrateTx';
-import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
 import { AddressType, ERROR_NOT_ENOUGH_BALANCE } from '../constants';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 
 export type LsCreatePoolModalProps = {
   isOpen: boolean;
@@ -45,19 +43,14 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
   const [bouncerAddress, setBouncerAddress] = useState('');
 
   const [initialBondAmount, setInitialBondAmount] = useState<BN | null>(null);
-  const [protocolId, setProtocolId] = useState<LsProtocolId | null>(null);
-  const { lsNetworkId } = useLsStore();
 
-  const lsNetwork = getLsNetwork(lsNetworkId);
+  const network = useNetworkStore((store) => store.network2);
 
   const { result: createPoolMinBond } = useApiRx(
     useCallback((api) => {
       return api.query.lst.minCreateBond();
     }, []),
   );
-
-  // TODO: Also add Restaking Parachain when its non-testnet version is available.
-  const isLiveNetwork = lsNetworkId === LsNetworkId.TANGLE_MAINNET;
 
   const { execute, status } = useLsCreatePoolTx();
 
@@ -160,9 +153,6 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
 
             <LsProtocolDropdownInput
               id="ls-create-pool-protocol"
-              networkId={lsNetworkId}
-              protocolId={protocolId ?? lsNetwork.defaultProtocolId}
-              setProtocolId={setProtocolId}
               isDerivativeVariant={false}
             />
           </div>
@@ -202,10 +192,10 @@ const LsCreatePoolModal: FC<LsCreatePoolModalProps> = ({
            * know that the pool will be created on the testnet, and that
            * it won't be accessible on other networks.
            */}
-          {!isLiveNetwork && (
+          {network !== undefined && network.id !== NetworkId.TANGLE_MAINNET && (
             <Alert
               type="info"
-              description={`This liquid staking pool will be created on ${lsNetwork.networkName} and will not be accessible on other networks.`}
+              description={`This liquid staking pool will be created on ${network.name} and will not be accessible on other networks.`}
             />
           )}
         </ModalBody>

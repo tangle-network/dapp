@@ -3,7 +3,6 @@ import { Typography } from '@tangle-network/ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
 import { LsToken } from '../../../constants/liquidStaking/types';
 import DropdownChevronIcon from '../../DropdownChevronIcon';
 
@@ -34,7 +33,6 @@ const LsTokenChip: FC<LsTokenChipProps> = ({
       )}
 
       <Typography variant="h5" fw="bold">
-        {isDerivativeVariant && LS_DERIVATIVE_TOKEN_PREFIX}
         {token}
       </Typography>
 

@@ -2,6 +2,7 @@ import { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import {
+  NetworkId,
   TANGLE_LOCAL_DEV_NETWORK,
   TANGLE_MAINNET_NETWORK,
   TANGLE_TESTNET_NATIVE_NETWORK,
@@ -31,17 +32,8 @@ type ProtocolDefCommon = {
   chainIconFileName: string;
 };
 
-export enum LsNetworkId {
-  TANGLE_LOCAL,
-  TANGLE_TESTNET,
-  TANGLE_MAINNET,
-}
-
 export interface LsTangleNetworkDef extends ProtocolDefCommon {
-  networkId:
-    | LsNetworkId.TANGLE_MAINNET
-    | LsNetworkId.TANGLE_TESTNET
-    | LsNetworkId.TANGLE_LOCAL;
+  networkId: NetworkId;
   id: LsTangleNetworkId;
   token: LsToken.TNT | LsToken.T_TNT;
   rpcEndpoint: string;
@@ -66,14 +58,6 @@ export type Network = {
   tokenSymbol: LsToken;
 };
 
-export type LsNetwork = {
-  id: LsNetworkId;
-  networkName: string;
-  chainIconFileName: string;
-  defaultProtocolId: LsProtocolId;
-  protocols: LsProtocolDef[];
-};
-
 export type LsPool = {
   id: number;
   name: string;
@@ -85,7 +69,6 @@ export type LsPool = {
   apyPercentage?: number;
   commissionFractional?: number;
   members: Map<SubstrateAddress, PalletAssetsAssetAccount>;
-  protocolId: LsProtocolId;
   iconUrl?: string;
 };
 
@@ -93,9 +76,6 @@ export type LsPoolUnstakeRequest = {
   poolName?: string;
   poolId: number;
   poolIconUrl?: string;
-  poolProtocolId: LsProtocolId;
-  decimals: number;
-  token: LsToken;
   unlockEra: number;
   erasLeftToUnlock?: number;
   isReadyToWithdraw: boolean;

@@ -32,8 +32,6 @@ import LsMyPoolsTable, {
 import StatItem from '../components/StatItem';
 import { LsToken } from '../constants/liquidStaking/types';
 import useLsMyPools from '../data/liquidStaking/useLsMyPools';
-import { useLsStore } from '../data/liquidStaking/useLsStore';
-import getLsNetwork from '../utils/liquidStaking/getLsNetwork';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
 
 export type LsMyProtocolRow = {
@@ -162,14 +160,11 @@ const PROTOCOL_COLUMNS = [
 
 const LsMyProtocolsTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const { lsNetworkId } = useLsStore();
 
   // Expand the first row by default.
   const [expanded, setExpanded] = useState<ExpandedState>({
     0: true,
   });
-
-  const lsNetwork = getLsNetwork(lsNetworkId);
 
   const getExpandedRowContent = useCallback(
     (row: Row<LsMyProtocolRow>) => (
@@ -206,7 +201,7 @@ const LsMyProtocolsTable: FC = () => {
         decimals: lsProtocol.decimals,
       } satisfies LsMyProtocolRow;
     });
-  }, [lsNetwork.protocols, myPools]);
+  }, [myPools]);
 
   const table = useReactTable({
     data: rows,

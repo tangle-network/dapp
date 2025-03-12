@@ -32,7 +32,6 @@ import TokenAmountCell from '../../components/tableCells/TokenAmountCell';
 import { LsPool } from '../../constants/liquidStaking/types';
 import useLsSetStakingIntent from '../../data/liquidStaking/useLsSetStakingIntent';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
-import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import tryEncodeAddressWithPrefix from '../../utils/liquidStaking/tryEncodeAddressWithPrefix';
 
 export type LsPoolsTableProps = {
@@ -66,10 +65,7 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
       header: () => 'ID',
       cell: (props) => (
         <div className="flex items-center justify-start gap-2">
-          <LstIcon
-            lsProtocolId={props.row.original.protocolId}
-            iconUrl={props.row.original.iconUrl}
-          />
+          <LstIcon iconUrl={props.row.original.iconUrl} />
 
           <Typography
             variant="body2"
@@ -143,17 +139,12 @@ const LsPoolsTable: FC<LsPoolsTableProps> = ({ pools, isShown }) => {
     }),
     COLUMN_HELPER.accessor('totalStaked', {
       header: () => 'Total Staked (TVL)',
-      cell: (props) => {
-        const lsProtocol = getLsProtocolDef(props.row.original.protocolId);
-
-        return (
-          <TokenAmountCell
-            amount={props.getValue()}
-            decimals={lsProtocol.decimals}
-            formatStyle={AmountFormatStyle.SHORT}
-          />
-        );
-      },
+      cell: (props) => (
+        <TokenAmountCell
+          amount={props.getValue()}
+          formatStyle={AmountFormatStyle.SHORT}
+        />
+      ),
     }),
     COLUMN_HELPER.accessor('commissionFractional', {
       header: () => 'Commission',

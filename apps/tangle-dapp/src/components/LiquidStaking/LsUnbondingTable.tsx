@@ -51,10 +51,7 @@ const LsUnbondingTable: FC = () => {
         header: () => 'Pool ID',
         cell: (props) => (
           <div className="flex items-center justify-start gap-2">
-            <LstIcon
-              lsProtocolId={props.row.original.poolProtocolId}
-              iconUrl={props.row.original.poolIconUrl}
-            />
+            <LstIcon iconUrl={props.row.original.poolIconUrl} />
 
             <Typography
               variant="body2"
@@ -71,17 +68,7 @@ const LsUnbondingTable: FC = () => {
       }),
       COLUMN_HELPER.accessor('amount', {
         header: () => 'Amount',
-        cell: (props) => {
-          const unstakeRequest = props.row.original;
-
-          return (
-            <TokenAmountCell
-              amount={props.getValue()}
-              symbol={unstakeRequest.token}
-              decimals={props.row.original.decimals}
-            />
-          );
-        },
+        cell: (props) => <TokenAmountCell amount={props.getValue()} />,
       }),
       COLUMN_HELPER.accessor('erasLeftToUnlock', {
         header: () => 'Status',

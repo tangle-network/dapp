@@ -9,8 +9,8 @@ import {
 import { LsPool } from '../../constants/liquidStaking/types';
 import { LstIconSize } from './types';
 import formatPercentage from '@tangle-network/ui-components/utils/formatPercentage';
-import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import LogoListItem from '../Lists/LogoListItem';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 
 type Props = {
   pool: LsPool;
@@ -18,11 +18,9 @@ type Props = {
 };
 
 const LstListItem: FC<Props> = ({ pool, isSelfStaked }) => {
-  const lsProtocol = getLsProtocolDef(pool.protocolId);
-
   const fmtStakeAmount = formatDisplayAmount(
     pool.totalStaked,
-    lsProtocol.decimals,
+    TANGLE_TOKEN_DECIMALS,
     AmountFormatStyle.SI,
   );
 
@@ -48,13 +46,7 @@ const LstListItem: FC<Props> = ({ pool, isSelfStaked }) => {
       leftBottomContent={`${stakeText} ${isSelfStaked ? 'self ' : ''}staked`}
       rightUpperText={`${pool.apyPercentage ?? EMPTY_VALUE_PLACEHOLDER}% APY`}
       rightBottomText={fmtCommission}
-      logo={
-        <LstIcon
-          lsProtocolId={pool.protocolId}
-          iconUrl={pool.iconUrl}
-          size={LstIconSize.LG}
-        />
-      }
+      logo={<LstIcon iconUrl={pool.iconUrl} size={LstIconSize.LG} />}
     />
   );
 };
