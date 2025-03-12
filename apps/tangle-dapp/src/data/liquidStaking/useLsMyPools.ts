@@ -14,9 +14,7 @@ const useLsMyPools = () => {
       return null;
     }
 
-    const lsPoolsArray = Array.from(lsPools.values());
-
-    return lsPoolsArray
+    return Array.from(lsPools.values())
       .filter((lsPool) => lsPool.members.has(substrateAddress))
       .map((lsPool) => {
         const account = lsPool.members.get(substrateAddress);
