@@ -1,8 +1,9 @@
 import { SkeletonLoader } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 
 import DetailItem from './DetailItem';
+import useApi from '../../../hooks/useApi';
 
 type UnstakePeriod = {
   value: number;
@@ -11,9 +12,19 @@ type UnstakePeriod = {
 };
 
 const UnstakePeriodDetailItem: FC = () => {
+  const { result: unstakingPeriod } = useApi(
+    useCallback((api) => {
+      return api.consts.staking.bondingDuration.toNumber();
+    }, []),
+  );
+
   const unlockPeriod = ((): UnstakePeriod | null => {
+    if (unstakingPeriod === null) {
+      return null;
+    }
+
     // TODO: This is actually in eras, not days. May need conversion.
-    const days = protocol.unstakingPeriod;
+    const days = unstakingPeriod;
 
     const roundedDays = Math.round(days);
 

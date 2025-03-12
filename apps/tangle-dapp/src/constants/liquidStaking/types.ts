@@ -1,19 +1,8 @@
 import { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
-import {
-  NetworkId,
-  TANGLE_LOCAL_DEV_NETWORK,
-  TANGLE_MAINNET_NETWORK,
-  TANGLE_TESTNET_NATIVE_NETWORK,
-  Network as TangleNetwork,
-} from '@tangle-network/ui-components/constants/networks';
+import { NetworkId } from '@tangle-network/ui-components/constants/networks';
 import type { SubstrateAddress } from '@tangle-network/ui-components/types/address';
-
-export type LsTangleNetworkId =
-  | LsProtocolId.TANGLE_MAINNET
-  | LsProtocolId.TANGLE_TESTNET
-  | LsProtocolId.TANGLE_LOCAL;
 
 export enum LsToken {
   DOT = 'DOT',
@@ -25,26 +14,11 @@ export enum LsToken {
   T_TNT = 'tTNT',
 }
 
-type ProtocolDefCommon = {
+export type LsProtocolDef = {
+  networkId: NetworkId;
   name: string;
-  decimals: number;
-  unstakingPeriod: number;
   chainIconFileName: string;
 };
-
-export interface LsTangleNetworkDef extends ProtocolDefCommon {
-  networkId: NetworkId;
-  id: LsTangleNetworkId;
-  token: LsToken.TNT | LsToken.T_TNT;
-  rpcEndpoint: string;
-  ss58Prefix:
-    | typeof TANGLE_MAINNET_NETWORK.ss58Prefix
-    | typeof TANGLE_TESTNET_NATIVE_NETWORK.ss58Prefix
-    | typeof TANGLE_LOCAL_DEV_NETWORK.ss58Prefix;
-  tangleNetwork: TangleNetwork;
-}
-
-export type LsProtocolDef = LsTangleNetworkDef;
 
 export type LsCardSearchParams = {
   amount: BN;

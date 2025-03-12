@@ -33,6 +33,9 @@ import StatItem from '../components/StatItem';
 import { LsToken } from '../constants/liquidStaking/types';
 import useLsMyPools from '../data/liquidStaking/useLsMyPools';
 import sortByLocaleCompare from '../utils/sortByLocaleCompare';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import getLsProtocols from '../utils/getLsProtocols';
 
 export type LsMyProtocolRow = {
   name: string;
@@ -42,7 +45,6 @@ export type LsMyProtocolRow = {
   tvlInUsd?: number;
   iconName: string;
   pools: LsMyPoolRow[];
-  decimals: number;
   token: LsToken;
 };
 
@@ -72,11 +74,9 @@ const PROTOCOL_COLUMNS = [
   COLUMN_HELPER.accessor('tvl', {
     header: () => 'Total Staked (TVL)',
     cell: (props) => {
-      const formattedTvl = formatBn(
-        props.getValue(),
-        props.row.original.decimals,
-        { includeCommas: true },
-      );
+      const formattedTvl = formatBn(props.getValue(), TANGLE_TOKEN_DECIMALS, {
+        includeCommas: true,
+      });
 
       const subtitle =
         props.row.original.tvlInUsd === undefined
@@ -99,7 +99,7 @@ const PROTOCOL_COLUMNS = [
     cell: (props) => {
       const formattedMyStake = formatDisplayAmount(
         props.getValue(),
-        props.row.original.decimals,
+        TANGLE_TOKEN_DECIMALS,
         AmountFormatStyle.SHORT,
       );
 
@@ -178,30 +178,39 @@ const LsMyProtocolsTable: FC = () => {
 
   const myPoolsOrNull = useLsMyPools();
   const myPools = useMemo(() => myPoolsOrNull ?? [], [myPoolsOrNull]);
+  const network = useNetworkStore((store) => store.network2);
 
   const rows = useMemo<LsMyProtocolRow[]>(() => {
-    return lsNetwork.protocols.map((lsProtocol) => {
-      const tvl = myPools
-        .filter((myPool) => myPool.protocolId === lsProtocol.id)
-        .reduce((acc, pool) => acc.add(pool.totalStaked), new BN(0));
+    // Not yet ready.
+    if (network === undefined) {
+      return [];
+    }
 
-      const myStake = myPools
-        .filter((myPool) => myPool.protocolId === lsProtocol.id)
-        .reduce((acc, pool) => acc.add(pool.myStake), new BN(0));
+    const protocols = getLsProtocols(network);
+
+    return protocols.map((lsProtocol) => {
+      const tvl = myPools.reduce(
+        (acc, pool) => acc.add(pool.totalStaked),
+        new BN(0),
+      );
+
+      const myStake = myPools.reduce(
+        (acc, pool) => acc.add(pool.myStake),
+        new BN(0),
+      );
 
       return {
         name: lsProtocol.name,
         tvl,
-        iconName: lsProtocol.token,
+        iconName: 'TNT',
         myStake: myStake,
         pools: myPools,
+        token: network.tokenSymbol === 'TNT' ? LsToken.TNT : LsToken.T_TNT,
         // TODO: Calculate the USD value of the TVL.
         tvlInUsd: undefined,
-        token: lsProtocol.token,
-        decimals: lsProtocol.decimals,
       } satisfies LsMyProtocolRow;
     });
-  }, [myPools]);
+  }, [myPools, network]);
 
   const table = useReactTable({
     data: rows,
