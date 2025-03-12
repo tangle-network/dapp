@@ -125,3 +125,9 @@ export type BridgeChainBalances = Partial<
 export type RestakeAssetId = `${bigint}` | EvmAddress;
 
 export type TangleAssetId = { Custom: u128 } | { Erc20: EvmAddress };
+
+
+export interface GraphQLPagination {
+  first: number;
+  offset: number;
+}

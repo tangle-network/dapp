@@ -2,7 +2,7 @@ import { DEFAULT_GRAPHQL_ENDPOINT } from '@tangle-network/dapp-config/constants/
 import type { TypedDocumentString } from '../graphql/graphql';
 
 const ENDPOINT =
-  import.meta.env.VITE_GRAPHQL_ENDPOINT ?? DEFAULT_GRAPHQL_ENDPOINT;
+  process.env.VITE_GRAPHQL_ENDPOINT ?? DEFAULT_GRAPHQL_ENDPOINT;
 
 export async function executeGraphQL<TResult, TVariables>(
   query: TypedDocumentString<TResult, TVariables>,

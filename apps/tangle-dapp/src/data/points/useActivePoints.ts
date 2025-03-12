@@ -3,8 +3,8 @@ import ensureError from '@tangle-network/tangle-shared-ui/utils/ensureError';
 import { useMemo } from 'react';
 import useSWR from 'swr';
 import { SWRKey } from '../../constants/swr';
-import { graphql } from '../../graphql/gql';
-import { executeGraphQL } from '../../utils/executeGraphQL';
+import { graphql } from '@tangle-network/tangle-shared-ui/graphql'
+import { executeGraphQL } from '@tangle-network/tangle-shared-ui/utils/executeGraphQL'
 
 const GetAccountPointsQueryDocument = graphql(/* GraphQL */ `
   query GetAccountPoints($account: String!) {

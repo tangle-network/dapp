@@ -14,6 +14,7 @@ const graphqlDir = path.join(
   '..',
   'apps',
   'tangle-dapp',
+  'tangle-cloud',
   'src',
   'graphql',
 );
