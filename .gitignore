@@ -97,7 +97,7 @@ tmp
 vite.config.*.timestamp*
 
 # Generated graphql files
-apps/tangle-dapp/src/graphql/
-apps/tangle-dapp/schema.graphql
+libs/tangle-shared-ui/src/graphql/
+libs/tangle-shared-ui/schema.graphql
 
 vitest.config.*.timestamp*
