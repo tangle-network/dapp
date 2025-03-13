@@ -43,6 +43,7 @@ import TokenAmountCell from '../tableCells/TokenAmountCell';
 import LstIcon from './LstIcon';
 import UpdateCommissionModal from './UpdateCommissionModal';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import LsSetPoolStateModal from './LsSetPoolStateModal';
 
 export interface LsMyPoolRow extends LsPool {
   myStake: BN;
@@ -67,7 +68,9 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
 
   const [isUpdateCommissionModalOpen, setIsUpdateCommissionModalOpen] =
     useState(false);
+
   const [isUpdateRolesModalOpen, setIsUpdateRolesModalOpen] = useState(false);
+  const [isSetStateModalOpen, setIsSetStateModalOpen] = useState(false);
 
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
@@ -194,11 +197,6 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
             });
           }
 
-          // Bouncer can close or open entry into the pool.
-          if (props.row.original.isBouncer) {
-            // TODO: Bouncer options.
-          }
-
           // Root can update the commission and roles.
           if (props.row.original.isRoot) {
             actionItems.push({
@@ -214,6 +212,17 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
               onClick: () => {
                 setSelectedPoolId(props.row.original.id);
                 setIsUpdateRolesModalOpen(true);
+              },
+            });
+          }
+
+          // Bouncer can close or open entry into the pool.
+          if (props.row.original.isBouncer) {
+            actionItems.push({
+              label: 'Close or Destroy',
+              onClick: () => {
+                setSelectedPoolId(props.row.original.id);
+                setIsSetStateModalOpen(true);
               },
             });
           }
@@ -350,6 +359,13 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
         currentCommissionFractional={selectedPoolCommission}
         isOpen={isUpdateCommissionModalOpen}
         setIsOpen={setIsUpdateCommissionModalOpen}
+      />
+
+      <LsSetPoolStateModal
+        poolId={selectedPoolId}
+        currentState="Open"
+        isOpen={isSetStateModalOpen}
+        setIsOpen={setIsSetStateModalOpen}
       />
     </>
   );

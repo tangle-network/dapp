@@ -1,7 +1,3 @@
-// This will override global types and provide type definitions for
-// the LST pallet for this file only.
-import '@tangle-network/tangle-restaking-types';
-
 import { BN } from '@polkadot/util';
 import { ArrowDownIcon } from '@radix-ui/react-icons';
 import { Button, Card } from '@tangle-network/ui-components';
