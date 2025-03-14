@@ -96,3 +96,8 @@ export type TransformEnum<EnumType extends Enum> =
         ? never
         : AsEnumValuesToPrimitive<EnumType>
     >;
+
+export type PolkadotPrimitivesResult<T, E> = {
+  ok: T;
+  err: E;
+};
