@@ -9,7 +9,14 @@ function randPrimitiveService(
     blueprint: id,
     ownerAccount: operatorAccountAddr,
     permittedCallers: [],
-    operators: [operatorAccountAddr, operatorAccountAddr, operatorAccountAddr],
+    operatorSecurityCommitments: [],
+    securityRequirements: [],
+    membershipModel: {
+      dynamic: {
+        minOperators: 1,
+        maxOperators: 10,
+      },
+    },
     ttl: 1000,
   };
 }

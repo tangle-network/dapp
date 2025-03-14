@@ -17,7 +17,6 @@ import type {
   ImageRegistryFetcher,
   JobDefinition,
   JobMetadata,
-  JobResultVerifier,
   NativeGadget,
   OperatingSystem,
   ServiceBlueprint,
@@ -103,18 +102,6 @@ export function toPrimitiveServiceRequestHook(requestHook: ServiceRequestHook) {
 
     default:
       return requestHook.type;
-  }
-}
-
-export function toPrimitiveJobResultVerifier(verifier: JobResultVerifier) {
-  switch (verifier.type) {
-    case 'Evm':
-      return {
-        Evm: verifier.asEvm.toHex(),
-      } as const;
-
-    default:
-      return verifier.type;
   }
 }
 

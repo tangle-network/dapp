@@ -1,6 +1,7 @@
 import { ApiPromise, ApiRx, WsProvider } from '@polkadot/api';
 import { InjectedExtension } from '@polkadot/extension-inject/types';
 import { firstValueFrom } from 'rxjs';
+import { tangleRpc, tangleTypes } from '@tangle-network/tangle-substrate-types';
 
 const apiPromiseCache = new Map<string, Promise<ApiPromise>>();
 const apiRxCache = new Map<string, Promise<ApiRx>>();
@@ -45,6 +46,8 @@ export const getApiPromise: (endpoint: string) => Promise<ApiPromise> = async (
     return ApiPromise.create({
       provider,
       noInitWarn: true,
+      rpc: tangleRpc,
+      types: tangleTypes,
     });
   });
 };
@@ -56,6 +59,8 @@ export const getApiRx = async (endpoint: string): Promise<ApiRx> => {
     const api = new ApiRx({
       provider,
       noInitWarn: true,
+      rpc: tangleRpc,
+      types: tangleTypes,
     });
 
     return firstValueFrom(api.isReady);
