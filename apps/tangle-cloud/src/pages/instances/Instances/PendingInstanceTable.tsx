@@ -50,9 +50,7 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
 
   const assetIds = useMemo(() => {
     return data.flatMap((instance) =>
-      instance.securityRequirements.map(
-        (requirement) => requirement.asset.assetId,
-      ),
+      instance.securityRequirements.map((requirement) => requirement.asset),
     );
   }, [data]);
 
@@ -154,7 +152,7 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
                             <LsTokenIcon
                               name={
                                 assets
-                                  ?.get(requirement.asset.assetId)
+                                  ?.get(requirement.asset)
                                   ?.symbol?.toString() ?? ''
                               }
                               size="lg"
@@ -174,9 +172,7 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
                     props.row.original.securityRequirements
                       .concat(props.row.original.securityRequirements)
                       .map((requirement) => {
-                        const assetMetadata = assets?.get(
-                          requirement.asset.assetId,
-                        );
+                        const assetMetadata = assets?.get(requirement.asset);
                         return (
                           <div className="flex items-center gap-2">
                             <LsTokenIcon

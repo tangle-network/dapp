@@ -1,3 +1,5 @@
+import { assertSubstrateAddress } from '@tangle-network/ui-components';
+import createRestakeAssetId from '../../../utils/createRestakeAssetId';
 import type { Service } from '@tangle-network/tangle-substrate-types';
 
 export default function toPrimitiveService({
@@ -13,12 +15,14 @@ export default function toPrimitiveService({
   return {
     id: id.toNumber(),
     blueprint: blueprint.toNumber(),
-    ownerAccount: owner.toString(),
+    ownerAccount: assertSubstrateAddress(owner.toString()),
     operatorSecurityCommitments: toPrimitiveOperatorSecurityCommitments(
       operatorSecurityCommitments,
     ),
     securityRequirements: toPrimitiveSecurityRequirements(securityRequirements),
-    permittedCallers: permittedCallers.map((caller) => caller.toString()),
+    permittedCallers: permittedCallers.map((caller) =>
+      assertSubstrateAddress(caller.toString()),
+    ),
     ttl: ttl.toNumber(),
     membershipModel: toPrimitiveMembershipModel(membershipModel),
   } as const;
@@ -29,16 +33,10 @@ export function toPrimitiveOperatorSecurityCommitments(
 ) {
   return operatorSecurityCommitments.map(([operatorId, securityCommitment]) => {
     return {
-      operator: operatorId.toString(),
+      operator: assertSubstrateAddress(operatorId.toString()),
       securityCommitments: securityCommitment.map((commitment) => {
         return {
-          asset: {
-            type: commitment.asset.type.toString(),
-            [commitment.asset.type.toString()]:
-              commitment.asset.type === 'Erc20'
-                ? commitment.asset.asErc20.toString()
-                : commitment.asset.asCustom.toString(),
-          },
+          asset: createRestakeAssetId(commitment.asset),
           exposurePercent: commitment.exposurePercent.toNumber(),
         };
       }),
@@ -50,17 +48,8 @@ export function toPrimitiveSecurityRequirements(
   securityRequirements: Service['securityRequirements'],
 ) {
   return securityRequirements.map((requirement) => {
-    const assetId =
-      requirement.asset.type === 'Erc20'
-        ? requirement.asset.asErc20.toString()
-        : requirement.asset.asCustom.toString();
-
     return {
-      asset: {
-        type: requirement.asset.type.toString(),
-        assetId: assetId,
-        [requirement.asset.type.toString()]: assetId,
-      },
+      asset: createRestakeAssetId(requirement.asset),
       minExposurePercent: requirement.minExposurePercent.toNumber(),
       maxExposurePercent: requirement.maxExposurePercent.toNumber(),
     };

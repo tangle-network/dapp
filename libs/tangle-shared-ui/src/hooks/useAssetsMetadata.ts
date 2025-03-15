@@ -1,7 +1,12 @@
 import useApiRx from './useApiRx';
 import { useCallback, useMemo } from 'react';
+import { RestakeAssetId } from '../types';
 
-const useAssetsMetadata = (singleOrMultipleAssetIds: string | string[]) => {
+type useAssetsMetadataProps = RestakeAssetId | RestakeAssetId[];
+
+const useAssetsMetadata = (
+  singleOrMultipleAssetIds: useAssetsMetadataProps,
+) => {
   let addresses: string[];
 
   if (Array.isArray(singleOrMultipleAssetIds)) {
