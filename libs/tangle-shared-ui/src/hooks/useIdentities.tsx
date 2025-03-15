@@ -1,5 +1,5 @@
-import useApiRx from '@tangle-network/tangle-shared-ui/hooks/useApiRx';
-import { extractIdentityInfo } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
+import useApiRx from './useApiRx';
+import { extractIdentityInfo } from '../utils/polkadot/identity';
 import { useCallback, useMemo } from 'react';
 
 const useIdentities = (
@@ -36,7 +36,7 @@ const useIdentities = (
     });
   }, [addresses, result]);
 
-  return { result: Object.fromEntries(identityNames), ...other };
+  return { result: new Map(identityNames), ...other };
 };
 
 export default useIdentities;

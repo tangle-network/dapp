@@ -14,8 +14,7 @@ const useOperatorBlueprints = (operatorAccount?: string) => {
           apiRx.rpc?.services?.queryServicesWithBlueprintsByOperator ===
           undefined
         )
-          // TODO: Should return the error here instead of throw it
-          throw new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
+          return new TangleError(TangleErrorCode.FEATURE_NOT_SUPPORTED);
 
         if (!operatorAccount) return of<OperatorBlueprint[]>([]);
 

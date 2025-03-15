@@ -1,11 +1,9 @@
 import { RegisteredBlueprintsTabs } from './RegisteredBlueprints';
 import { InstancesTabs } from './Instances';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
-// TODO
-// import useOperatorBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useOperatorBlueprints';
-import useFakeMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useFakeMonitoringBlueprints';
-import { InstanceStatus } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
+import useMonitoringBlueprints from '@tangle-network/tangle-shared-ui/data/blueprints/useMonitoringBlueprints';
 import { FC, useMemo } from 'react';
+import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 
 type BlueprintManagementSectionProps = {
   isOperator: boolean;
@@ -14,14 +12,29 @@ export const BlueprintManagementSection: FC<
   BlueprintManagementSectionProps
 > = ({ isOperator }) => {
   const walletAddr = useActiveAccountAddress();
-  // TODO
-  // const { isLoading, blueprints, error } = useOperatorBlueprints(walletAddr?.toString());
-  const { blueprints, isLoading, error } = useFakeMonitoringBlueprints(
+
+  const { isLoading, blueprints, error } = useMonitoringBlueprints(
     walletAddr?.toString(),
   );
-  const services = useMemo(() => {
+
+  const runningInstances = useMemo(() => {
+    if (blueprints.length === 0) {
+      return [];
+    }
     return blueprints.flatMap((blueprint) => blueprint.services);
   }, [blueprints]);
+
+  const { result: operatorIdentityMap } = useIdentities(
+    useMemo(() => {
+      const operatorMap = runningInstances.flatMap((instance) => {
+        const approvedOperators = instance.approvedOperators ?? [];
+        const pendingOperators = instance.pendingOperators ?? [];
+        return [...approvedOperators, ...pendingOperators];
+      });
+      const operatorSet = new Set(operatorMap);
+      return Array.from(operatorSet);
+    }, [runningInstances]),
+  );
 
   return (
     <>
@@ -34,24 +47,19 @@ export const BlueprintManagementSection: FC<
       )}
       <InstancesTabs
         runningInstances={{
-          data: services.filter(
-            (service) => service.status === InstanceStatus.RUNNING,
-          ),
+          data: runningInstances,
           isLoading,
           error,
         }}
         pendingInstances={{
-          data: services.filter(
-            (service) => service.status === InstanceStatus.PENDING,
-          ),
+          data: [],
           isLoading,
           error,
           isOperator,
+          operatorIdentityMap,
         }}
         stoppedInstances={{
-          data: services.filter(
-            (service) => service.status === InstanceStatus.STOPPED,
-          ),
+          data: [],
           isLoading,
           error,
         }}

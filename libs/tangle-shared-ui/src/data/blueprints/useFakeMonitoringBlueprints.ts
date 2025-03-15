@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { InstanceStatus, MonitoringBlueprint } from './utils/type';
+import { MonitoringBlueprint } from './utils/type';
 import randPrimitiveBlueprint from './utils/randPrimitiveBlueprint';
 import randPrimitiveService from './utils/randPrimitiveService';
-import { randNumber, randUserName } from '@ngneat/falso';
+import { randNumber } from '@ngneat/falso';
 import { toSubstrateAddress } from '@tangle-network/ui-components';
 
 const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
@@ -12,12 +12,9 @@ const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
     .map((_, idx) => {
       const blueprint: MonitoringBlueprint['blueprint'] = {
         ...randPrimitiveBlueprint(idx),
-        pricing: randNumber({ min: 0, max: 1000 }),
-        pricingUnit: 'Hour',
         uptime: randNumber({ min: 0, max: 100 }),
         instanceCount: randNumber({ min: 0, max: 100 }),
         operatorsCount: randNumber({ min: 0, max: 100 }),
-        tvl: randNumber({ min: 0, max: 1000000 }),
       };
       const service: MonitoringBlueprint['services'][number] = {
         ...randPrimitiveService(idx, operatorAccount),
@@ -26,8 +23,7 @@ const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
         earned: randNumber({ min: 0, max: 1000000 }),
         earnedInUsd: randNumber({ min: 0, max: 1000000 }),
         lastActive: new Date(),
-        imgUrl: 'https://picsum.photos/200/300',
-        instanceId: `i-${randNumber({ min: 0, max: 1000000 }).toString()}`,
+        externalInstanceId: `i-${randNumber({ min: 0, max: 1000000 }).toString()}`,
         createdAtBlock: randNumber({ min: 0, max: 10000 }),
         ttl: randNumber({ min: 0, max: 10000 }),
         pendingOperators: [
@@ -36,10 +32,7 @@ const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
           operatorAccountAddress,
           operatorAccountAddress,
         ],
-        operatorIdentityMap: new Map([
-          [operatorAccountAddress, randUserName()],
-        ]),
-        operators: [
+        approvedOperators: [
           operatorAccountAddress,
           operatorAccountAddress,
           operatorAccountAddress,
@@ -51,15 +44,12 @@ const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
         services: [
           {
             ...service,
-            status: InstanceStatus.RUNNING,
           },
           {
             ...service,
-            status: InstanceStatus.PENDING,
           },
           {
             ...service,
-            status: InstanceStatus.STOPPED,
           },
         ],
       } satisfies MonitoringBlueprint;

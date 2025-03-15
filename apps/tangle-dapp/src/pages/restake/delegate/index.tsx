@@ -26,7 +26,7 @@ import { FC, useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import LogoListItem from '../../../components/Lists/LogoListItem';
 import OperatorListItem from '../../../components/Lists/OperatorListItem';
-import useIdentities from '../../../data/useIdentities';
+import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useActiveTypedChainId from '../../../hooks/useActiveTypedChainId';
 import useQueryState from '../../../hooks/useQueryState';
 import { QueryParamKey } from '../../../types';
@@ -286,7 +286,7 @@ const RestakeDelegateForm: FC = () => {
         .filter(([, metadata]) => metadata.status === 'Active')
         .map(([accountId]) => ({
           accountId: assertSubstrateAddress(accountId),
-          identityName: operatorIdentities?.[accountId]?.name ?? undefined,
+          identityName: operatorIdentities.get(accountId)?.name ?? undefined,
           isActive: true,
         }))
     );
