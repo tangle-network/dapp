@@ -7,16 +7,18 @@ import {
   EMPTY_VALUE_PLACEHOLDER,
   KeyValueWithButton,
   shortenString,
+  toSubstrateAddress,
   Typography,
 } from '@tangle-network/ui-components';
 import { Link } from 'react-router';
 import { ExternalLinkLine } from '@tangle-network/icons';
 import { Children, FC } from 'react';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
+
 type NestedOperatorCellProps = {
-  operators?: SubstrateAddress[];
-  operatorIdentityMap?: Map<SubstrateAddress, string>;
+  operators?: string[];
+  operatorIdentityMap?: Map<string, IdentityType | null>;
 };
 export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
   operators,
@@ -69,7 +71,7 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
                         />
                         <Typography variant="body3" fw="bold">
                           {shortenString(
-                            operatorIdentityMap?.get(operator) ||
+                            operatorIdentityMap?.get(operator)?.name ||
                               operator.toString(),
                           )}
                         </Typography>
@@ -77,7 +79,11 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
                       <KeyValueWithButton size="sm" keyValue={operator} />
                     </div>
                     <Link
-                      to={network.createExplorerAccountUrl(operator) ?? ''}
+                      to={
+                        network.createExplorerAccountUrl(
+                          toSubstrateAddress(operator),
+                        ) ?? ''
+                      }
                       target="_blank"
                       rel="noreferrer"
                       className="!text-inherit"

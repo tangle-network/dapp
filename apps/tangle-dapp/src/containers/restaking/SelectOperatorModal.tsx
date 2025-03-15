@@ -14,7 +14,7 @@ import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useR
 
 type Props = {
   delegatorInfo: DelegatorInfo | null;
-  operatorIdentities?: Record<string, IdentityType | null> | null;
+  operatorIdentities?: Map<string, IdentityType | null> | null;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 
@@ -79,8 +79,9 @@ const SelectOperatorModal = ({
 
         const assetSymbol = asset.metadata.symbol;
 
-        const identityName =
-          operatorIdentities?.[delegation.operatorAccountId]?.name;
+        const identityName = operatorIdentities?.get(
+          delegation.operatorAccountId,
+        )?.name;
 
         return filterBy(query, [
           delegation.operatorAccountId,
@@ -101,7 +102,7 @@ const SelectOperatorModal = ({
           AmountFormatStyle.SHORT,
         );
 
-        const identityName = operatorIdentities?.[operatorAccountId]?.name;
+        const identityName = operatorIdentities?.get(operatorAccountId)?.name;
 
         return (
           <OperatorListItem

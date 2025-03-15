@@ -8,7 +8,6 @@ import { u8aToString } from '@polkadot/util';
 import type {
   Architecture,
   ContainerGadget,
-  FieldFieldType,
   Gadget,
   GadgetBinary,
   GadgetSource,
@@ -21,8 +20,6 @@ import type {
   OperatingSystem,
   ServiceBlueprint,
   ServiceMetadata,
-  ServiceRegistrationHook,
-  ServiceRequestHook,
   TestFetcher,
   WasmGadget,
   WasmRuntime,
@@ -79,32 +76,6 @@ function toPrimitiveJobDefinition({
   } as const;
 }
 
-export function toPrimitiveServiceRegistrationHook(
-  registrationHook: ServiceRegistrationHook,
-) {
-  switch (registrationHook.type) {
-    case 'Evm':
-      return {
-        Evm: registrationHook.asEvm.toHex(),
-      } as const;
-
-    default:
-      return registrationHook.type;
-  }
-}
-
-export function toPrimitiveServiceRequestHook(requestHook: ServiceRequestHook) {
-  switch (requestHook.type) {
-    case 'Evm':
-      return {
-        Evm: requestHook.asEvm.toHex(),
-      } as const;
-
-    default:
-      return requestHook.type;
-  }
-}
-
 export function toPrimitiveJobMetadata({ name, description }: JobMetadata) {
   return {
     name: u8aToString(name),
@@ -157,28 +128,31 @@ export function toPrimitiveGadgetSource(source: GadgetSource) {
   } as const;
 }
 
+/**
+ * @dev @polkadot/type-gen enum converter is not working for some reason
+ * so we need to convert the type manually
+ */
 export function toPrimitiveGadgetSourceFetcher(fetcher: GadgetSourceFetcher) {
-  switch (fetcher.type) {
-    case 'ContainerImage':
+  switch (fetcher.type.toUpperCase()) {
+    case 'ContainerImage'.toUpperCase():
       return {
         ContainerImage: toPrimitiveContainerImage(fetcher.asContainerImage),
       } as const;
 
-    case 'Github':
+    case 'Github'.toUpperCase():
       return {
         Github: toPrimitiveGithubFetcher(fetcher.asGithub),
       } as const;
 
-    case 'Ipfs':
+    case 'Ipfs'.toUpperCase():
       return {
         Ipfs: u8aToString(fetcher.asIpfs),
       } as const;
 
-    case 'Testing':
+    case 'Testing'.toUpperCase():
       return {
         Testing: toPrimitiveTestingFetcher(fetcher.asTesting),
       } as const;
-
     default:
       throw new Error('Unknown GadgetSourceFetcher type');
   }
@@ -245,7 +219,7 @@ export function toPrimitiveOperatingSystem(os: OperatingSystem) {
 }
 
 export function toPrimitiveFieldType(
-  fieldType: FieldFieldType | TanglePrimitivesServicesFieldFieldType,
+  fieldType: TanglePrimitivesServicesFieldFieldType,
 ): PrimitiveFieldType {
   switch (fieldType.type) {
     case 'Optional':
