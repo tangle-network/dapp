@@ -61,14 +61,14 @@ const DelegationsPayoutsContainer: FC = () => {
   const nativeTokenSymbol = useNetworkStore((store) => store.nativeTokenSymbol);
   const networkId = useNetworkStore((store) => store.network.id);
 
-  const userSubstrateAddress = useSubstrateAddress();
+  const substrateAddress = useSubstrateAddress();
 
   const {
     data: payoutsData,
     isLoading: payoutsIsLoading,
     mutate: mutatePayouts,
   } = useSWR(
-    ['payouts', userSubstrateAddress, rpcEndpoint, nativeTokenSymbol],
+    ['payouts', substrateAddress, rpcEndpoint, nativeTokenSymbol],
     ([, address, rpcEndpoint, nativeTokenSymbol]) =>
       getPayouts(address, rpcEndpoint, nativeTokenSymbol),
     {
@@ -91,7 +91,9 @@ const DelegationsPayoutsContainer: FC = () => {
   }, [payoutsData, claimedErasByValidator, getClaimedEras, networkId]);
 
   const validatorsAndEras = useMemo(() => {
-    if (!unclaimedPayouts.length) return [];
+    if (!unclaimedPayouts.length) {
+      return [];
+    }
 
     return unclaimedPayouts.map((payout) => ({
       validator: payout.validator.address,

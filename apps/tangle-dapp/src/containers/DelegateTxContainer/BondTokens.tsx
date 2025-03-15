@@ -101,7 +101,7 @@ const BondTokens: FC<BondTokensProps> = ({
               title="Payment Destination"
               items={payeeOptions}
               selectedItem={STAKING_PAYEE_VALUE_TO_TEXT_MAP[payee]}
-              setSelectedItem={handleSetPayee}
+              setSelectedItemId={handleSetPayee}
             />
 
             <Typography

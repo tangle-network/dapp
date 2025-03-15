@@ -1,39 +1,23 @@
 import { useCallback } from 'react';
 
-import { LsNetworkId } from '../../constants/liquidStaking/types';
-import { useLsStore } from './useLsStore';
 import { useQuery } from '@tanstack/react-query';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 const MAX_BN_OPERATION_NUMBER = 2 ** 26 - 1;
 
 const useLsExchangeRate = () => {
-  const { lsNetworkId } = useLsStore();
+  const network = useNetworkStore((store) => store.network2);
 
   const fetch = useCallback(async () => {
-    let promise: Promise<number | Error | null>;
+    // Tangle networks with the `lst` pallet have a fixed exchange
+    // rate of 1:1.
+    const newExchangeRate = await Promise.resolve(1);
 
-    switch (lsNetworkId) {
-      // Tangle networks with the `lst` pallet have a fixed exchange
-      // rate of 1:1.
-      case LsNetworkId.TANGLE_LOCAL:
-      case LsNetworkId.TANGLE_MAINNET:
-      case LsNetworkId.TANGLE_TESTNET:
-        promise = Promise.resolve(1);
-    }
-
-    const newExchangeRate = await promise;
-
-    // Still loading. Do not update the value. Display the stale
-    // value.
-    if (newExchangeRate === null) {
-      return null;
-    }
-
-    return newExchangeRate;
-  }, [lsNetworkId]);
+    return newExchangeRate === null ? null : newExchangeRate;
+  }, []);
 
   const { data: exchangeRate } = useQuery({
-    queryKey: ['useLsExchangeRate', lsNetworkId],
+    queryKey: ['useLsExchangeRate', network?.id],
     queryFn: fetch,
   });
 

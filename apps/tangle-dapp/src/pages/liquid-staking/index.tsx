@@ -1,5 +1,4 @@
 import { AddLineIcon } from '@tangle-network/icons';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import {
   Button,
   TabContent,
@@ -18,10 +17,8 @@ import LsMyProtocolsTable from '../../containers/LsMyProtocolsTable';
 import { LsAllProtocolsTable } from '../../containers/LsPoolsTable';
 import { useLsStore } from '../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
-import getLsTangleNetwork from '../../utils/liquidStaking/getLsTangleNetwork';
 import TabListItem from '../../components/restaking/TabListItem';
 import TabsList from '../../components/restaking/TabsList';
-import findLsNetworkByChainId from '../../utils/liquidStaking/findLsNetworkByChainId';
 
 enum Tab {
   ALL_POOLS = 'All Pools',
@@ -32,32 +29,11 @@ enum Tab {
 const LiquidStakingPage: FC = () => {
   const [isStaking, setIsStaking] = useState(true);
 
-  const {
-    lsNetworkId,
-    setIsStaking: setIsStakingInStore,
-    isStaking: isStakingInStore,
-    setSelectedNetworkId,
-  } = useLsStore();
+  const { setIsStaking: setIsStakingInStore, isStaking: isStakingInStore } =
+    useLsStore();
 
   const isAccountConnected = useIsAccountConnected();
-  const { network } = useNetworkStore();
   const [isCreatePoolModalOpen, setIsCreatePoolModalOpen] = useState(false);
-
-  const lsTangleNetwork = getLsTangleNetwork(lsNetworkId);
-
-  // Sync the network with the selected liquid staking network on load.
-  // It might differ initially if the user navigates to the page and
-  // the active network differs from the default liquid staking network.
-  useEffect(() => {
-    const newLsNetworkId = findLsNetworkByChainId(network.id);
-
-    if (lsTangleNetwork.id !== network.id && newLsNetworkId !== null) {
-      setSelectedNetworkId(newLsNetworkId);
-    }
-
-    // Run once on load.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Sync the Zustand store state of whether liquid staking or unstaking with
   // the URL param state.

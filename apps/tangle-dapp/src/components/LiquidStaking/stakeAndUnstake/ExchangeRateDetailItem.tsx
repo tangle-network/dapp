@@ -2,23 +2,21 @@ import { SkeletonLoader } from '@tangle-network/ui-components';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { FC } from 'react';
 
-import { LsToken } from '../../../constants/liquidStaking/types';
 import useLsActivePoolDisplayName from '../../../data/liquidStaking/useLsActivePoolDisplayName';
 import useLsExchangeRate from '../../../data/liquidStaking/useLsExchangeRate';
 import DetailItem from './DetailItem';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
-export type ExchangeRateDetailItemProps = {
-  token: LsToken;
-};
-
-const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({ token }) => {
+const ExchangeRateDetailItem: FC = () => {
   const { displayName: lsActivePoolDisplayName } = useLsActivePoolDisplayName();
   const exchangeRate = useLsExchangeRate();
 
+  const networkTokenSymbol = useNetworkStore(
+    (store) => store.network2?.tokenSymbol,
+  );
+
   const exchangeRateElement =
-    exchangeRate instanceof Error ? (
-      exchangeRate
-    ) : exchangeRate === null ? (
+    exchangeRate === null ? (
       <SkeletonLoader className="w-[50px]" />
     ) : (
       exchangeRate
@@ -29,7 +27,8 @@ const ExchangeRateDetailItem: FC<ExchangeRateDetailItemProps> = ({ token }) => {
       exchangeRateElement
     ) : (
       <div className="flex gap-1 items-center justify-center whitespace-nowrap">
-        1 {token} = {exchangeRateElement}{' '}
+        1 {networkTokenSymbol ?? EMPTY_VALUE_PLACEHOLDER} ={' '}
+        {exchangeRateElement}{' '}
         {lsActivePoolDisplayName?.toUpperCase() ?? EMPTY_VALUE_PLACEHOLDER}
       </div>
     );

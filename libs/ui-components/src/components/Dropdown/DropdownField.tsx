@@ -13,28 +13,34 @@ import { AnimatedChevronRight } from '../BridgeInputs/AnimatedChevronRight';
 import { twMerge } from 'tailwind-merge';
 import { Label } from '../Label';
 
-export type DropdownFieldProps = {
+type ToString = { toString(): string };
+
+type Props<Item extends ToString> = {
   title: string;
-  items: string[];
+  items: Item[];
   className?: string;
-  selectedItem: string;
-  setSelectedItem: (selectedItem: string) => void;
+  selectedItem: Item;
+  setSelectedItemId: (selectedItemId: string) => void;
   dropdownBodyClassName?: string;
+  getDisplayText?: (item: Item) => string;
+  getId?: (item: Item) => string;
 };
 
-export const DropdownField = ({
+export const DropdownField = <Item extends ToString>({
   title,
   items,
   selectedItem,
-  setSelectedItem,
+  setSelectedItemId,
   className,
   dropdownBodyClassName,
-}: DropdownFieldProps) => {
+  getId,
+  getDisplayText,
+}: Props<Item>) => {
   const handleValueChange = useCallback(
-    (selectedItem: string) => {
-      setSelectedItem(selectedItem);
+    (selectedItemId: string) => {
+      setSelectedItemId(selectedItemId);
     },
-    [setSelectedItem],
+    [setSelectedItemId],
   );
 
   return (
@@ -55,7 +61,7 @@ export const DropdownField = ({
         >
           <div className="flex items-center gap-5 justify-between w-full">
             <Typography variant="h5" fw="bold" className="text-lg">
-              {selectedItem}
+              {getDisplayText?.(selectedItem) ?? selectedItem.toString()}
             </Typography>
 
             <AnimatedChevronRight size="lg" />
@@ -70,17 +76,21 @@ export const DropdownField = ({
         >
           <RadioGroup
             className="border dark:border-mono-140 !rounded-lg"
-            value={selectedItem}
+            value={getId?.(selectedItem) ?? selectedItem.toString()}
             onValueChange={handleValueChange}
           >
             {items.map((item, i) => (
-              <RadioItem key={i} value={item} asChild>
+              <RadioItem
+                key={i}
+                value={getId?.(item) ?? item.toString()}
+                asChild
+              >
                 <DropdownMenuItem className="dark:hover:!bg-mono-160">
                   <Typography
                     variant="body1"
                     className="text-mono-140 dark:text-mono-0"
                   >
-                    {item}
+                    {getDisplayText?.(item) ?? item.toString()}
                   </Typography>
                 </DropdownMenuItem>
               </RadioItem>

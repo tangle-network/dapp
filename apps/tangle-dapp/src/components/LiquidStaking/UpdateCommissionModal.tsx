@@ -15,14 +15,14 @@ import AddressInput from '../AddressInput';
 import PercentageInput from '../PercentageInput';
 import { AddressType } from '../../constants';
 
-export type UpdateCommissionModalProps = {
+type Props = {
   poolId: number | null;
   currentCommissionFractional: number | null;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 };
 
-const UpdateCommissionModal: FC<UpdateCommissionModalProps> = ({
+const UpdateCommissionModal: FC<Props> = ({
   poolId,
   currentCommissionFractional,
   isOpen,

@@ -2,12 +2,9 @@ import { BN } from '@polkadot/util';
 import { EMPTY_VALUE_PLACEHOLDER } from '@tangle-network/ui-components/constants';
 import { useEffect, useState } from 'react';
 
-import { LsNetworkId } from '../../../constants/liquidStaking/types';
 import useBalances from '../../../data/balances/useBalances';
 import useLsPoolBalance from '../../../data/liquidStaking/tangle/useLsPoolBalance';
-import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useIsAccountConnected from '../../../hooks/useIsAccountConnected';
-import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 
 type BalanceUpdater = (
   prevBalance: BN | null | typeof EMPTY_VALUE_PLACEHOLDER,
@@ -42,7 +39,6 @@ const createBalanceStateUpdater = (
 
 const useLsAgnosticBalance = (isNative: boolean) => {
   const { free: tangleFreeBalance } = useBalances();
-  const { lsProtocolId, lsNetworkId } = useLsStore();
   const tangleAssetBalance = useLsPoolBalance();
 
   const [balance, setBalance] = useState<
@@ -50,7 +46,6 @@ const useLsAgnosticBalance = (isNative: boolean) => {
   >(EMPTY_VALUE_PLACEHOLDER);
 
   const isAccountConnected = useIsAccountConnected();
-  const protocol = getLsProtocolDef(lsProtocolId);
 
   // Reset balance to a placeholder when the active account is
   // disconnected, and to a loading state once an account is
@@ -64,21 +59,13 @@ const useLsAgnosticBalance = (isNative: boolean) => {
     if (isAccountConnected) {
       setBalance(null);
     }
-  }, [isAccountConnected, isNative, lsProtocolId]);
-
-  const isLsTangleNetwork =
-    lsNetworkId === LsNetworkId.TANGLE_LOCAL ||
-    lsNetworkId === LsNetworkId.TANGLE_MAINNET ||
-    lsNetworkId === LsNetworkId.TANGLE_TESTNET;
+  }, [isAccountConnected, isNative]);
 
   // Update the balance to the Tangle balance when the Tangle
   // network is the active network.
   useEffect(() => {
-    if (!isLsTangleNetwork) {
-      return;
-    }
     // Relevant balance hasn't loaded yet or isn't available.
-    else if (
+    if (
       (isNative && tangleFreeBalance === null) ||
       (!isNative && tangleAssetBalance === null)
     ) {
@@ -90,13 +77,7 @@ const useLsAgnosticBalance = (isNative: boolean) => {
         isNative ? tangleFreeBalance : tangleAssetBalance,
       ),
     );
-  }, [
-    protocol.networkId,
-    tangleFreeBalance,
-    isLsTangleNetwork,
-    tangleAssetBalance,
-    isNative,
-  ]);
+  }, [tangleFreeBalance, tangleAssetBalance, isNative]);
 
   return balance;
 };

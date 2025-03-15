@@ -4,18 +4,13 @@ import assert from 'assert';
 import { useCallback, useMemo } from 'react';
 
 import { LsPoolUnstakeRequest } from '../../constants/liquidStaking/types';
-import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import useCurrentEra from '../staking/useCurrentEra';
 import useLsPools from './useLsPools';
-import { useLsStore } from './useLsStore';
 
 const useLsUnbonding = () => {
   const pools = useLsPools();
   const { result: currentEra } = useCurrentEra();
-  const { lsProtocolId } = useLsStore();
   const activeSubstrateAddress = useSubstrateAddress();
-
-  const lsProtocol = getLsProtocolDef(lsProtocolId);
 
   const { result: unbondingOpt } = useApiRx(
     useCallback(
@@ -58,17 +53,14 @@ const useLsUnbonding = () => {
             erasLeftToUnlock <= 0 ? undefined : erasLeftToUnlock,
           // TODO: Points is different than amount.
           amount: points.toBn(),
-          token: lsProtocol.token,
-          decimals: lsProtocol.decimals,
           poolId,
           poolName: pool.name,
           isReadyToWithdraw: erasLeftToUnlock <= 0,
           poolIconUrl: pool.iconUrl,
-          poolProtocolId: pool.protocolId,
         } satisfies LsPoolUnstakeRequest;
       })
       .toArray();
-  }, [currentEra, lsProtocol.decimals, lsProtocol.token, pools, unbondingOpt]);
+  }, [currentEra, pools, unbondingOpt]);
 
   return unstakeRequests;
 };

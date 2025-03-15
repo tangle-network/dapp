@@ -31,7 +31,7 @@ const UpdatePayee: FC<UpdatePayeeProps> = ({
         title="Payout Destination"
         items={payeeOptions}
         selectedItem={STAKING_PAYEE_VALUE_TO_TEXT_MAP[payee]}
-        setSelectedItem={handleSetPayee}
+        setSelectedItemId={handleSetPayee}
         dropdownBodyClassName="max-w-[344px]"
       />
 
