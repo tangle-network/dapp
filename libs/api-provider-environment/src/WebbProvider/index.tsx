@@ -19,6 +19,7 @@ import {
   type Wallet,
 } from '@tangle-network/dapp-config';
 import getWagmiConfig from '@tangle-network/dapp-config/wagmi-config';
+import { type WebbSolanaProvider } from '@tangle-network/solana-api-provider';
 import {
   WalletId,
   WebbError,
@@ -33,6 +34,7 @@ import {
   calculateTypedChainId,
 } from '@tangle-network/dapp-types/TypedChainId';
 import { WebbWeb3Provider } from '@tangle-network/web3-api-provider';
+import { createSolanaProvider } from '@tangle-network/solana-api-provider';
 import { useUIContext } from '@tangle-network/ui-components';
 import useWagmiHydration from '@tangle-network/ui-components/hooks/useWagmiHydration';
 import { useCallback, useEffect, useRef, useState, type FC } from 'react';
@@ -224,6 +226,7 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         case WebbErrorCodes.PolkadotJSExtensionNotInstalled:
         case WebbErrorCodes.TalismanExtensionNotInstalled:
         case WebbErrorCodes.SubWalletExtensionNotInstalled:
+        case WebbErrorCodes.PhantomExtensionNotInstalled:
           {
             // TODO: Implement interactive feedback with new components from ui-components:
           }
@@ -284,6 +287,82 @@ const WebbProviderInner: FC<WebbProviderInnerProps> = ({
         abortSignal?.throwIfAborted();
 
         switch (wallet.id) {
+          case WalletId.Phantom:
+            {
+              abortSignal?.throwIfAborted();
+
+              const webbSolanaProvider = await createSolanaProvider(
+                wallet.id,
+                chain.id,
+                apiConfig,
+              );
+
+              const providerUpdateHandler = async ([
+                updatedChainId,
+              ]: number[]) => {
+                const nextChain = Object.values(chains).find(
+                  (chain) =>
+                    chain.id === updatedChainId &&
+                    chain.chainType === ChainType.Solana,
+                );
+                const activeChain = nextChain ? nextChain : chain;
+
+                try {
+                  const newTypedChainId = calculateTypedChainId(
+                    ChainType.Solana,
+                    updatedChainId,
+                  );
+
+                  webbSolanaProvider.typedChainidSubject.next(newTypedChainId);
+
+                  setActiveWallet(wallet);
+                  setActiveChain(activeChain);
+
+                  appEvent.send('networkSwitched', [
+                    {
+                      chainType: activeChain.chainType,
+                      chainId: activeChain.id,
+                    },
+                    wallet.id,
+                  ]);
+                } catch (e) {
+                  setActiveChain(undefined);
+                  setActiveWallet(wallet);
+                  if (e instanceof WebbError) {
+                    catchWebbError(e);
+                  }
+                }
+              };
+
+              abortSignal?.throwIfAborted();
+
+              webbSolanaProvider.on('providerUpdate', providerUpdateHandler);
+
+              (webbSolanaProvider as WebbSolanaProvider).setChainListener();
+              (webbSolanaProvider as WebbSolanaProvider).setAccountListener();
+
+              abortSignal?.throwIfAborted();
+
+              appEvent.send('networkSwitched', [
+                {
+                  chainType: chain.chainType,
+                  chainId: chain.id,
+                },
+                wallet.id,
+              ]);
+
+              abortSignal?.throwIfAborted();
+
+              await setActiveApiWithAccounts(
+                webbSolanaProvider,
+                chain,
+                _networkStorage ?? networkStorage,
+              );
+
+              localActiveApi = webbSolanaProvider;
+            }
+            break;
+
           case WalletId.Polkadot:
           case WalletId.Talisman:
           case WalletId.SubWallet:

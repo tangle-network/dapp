@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import useActiveAccountAddress from '@tangle-network/tangle-shared-ui/hooks/useActiveAccountAddress';
 import useAgnosticAccountInfo from '@tangle-network/tangle-shared-ui/hooks/useAgnosticAccountInfo';
+import { isSolanaAddress } from '@tangle-network/ui-components/utils/isSolanaAddress';
 import { AbiFunction } from 'viem';
 import { TxName } from '../constants';
 import {
@@ -83,7 +84,8 @@ function useAgnosticTx<
   );
 
   const activeAccountAddress = useActiveAccountAddress();
-  const { isEvm: isEvmAccount } = useAgnosticAccountInfo();
+  const { isEvm: isEvmAccount, isSolana: isSolanaAccount } =
+    useAgnosticAccountInfo();
 
   const createExplorerTxUrl = useNetworkStore(
     (store) => store.network.createExplorerTxUrl,
@@ -112,6 +114,11 @@ function useAgnosticTx<
 
   const execute = useCallback(
     async (context: Context) => {
+      if (isSolanaAccount) {
+        notifyError(name, new Error('Solana transactions are not supported!'));
+        return;
+      }
+
       notifyProcessing(name);
 
       if (executeEvmPrecompileAbiCall !== null) {
@@ -127,13 +134,24 @@ function useAgnosticTx<
         await executeSubstrateTx(context);
       }
     },
-    [executeEvmPrecompileAbiCall, executeSubstrateTx, name, notifyProcessing],
+    [
+      executeEvmPrecompileAbiCall,
+      executeSubstrateTx,
+      isSolanaAccount,
+      name,
+      notifyError,
+      notifyProcessing,
+    ],
   );
 
   // Special effect that handles when an account is disconnected,
   // and prevents the same transaction status from being notified
   // multiple times.
   useEffect(() => {
+    if (activeAccountAddress && isSolanaAddress(activeAccountAddress)) {
+      return;
+    }
+
     const nextAgnosticStatus =
       isEvmAccount === null
         ? null
@@ -152,6 +170,7 @@ function useAgnosticTx<
       setAgnosticStatus(nextAgnosticStatus);
     }
   }, [
+    activeAccountAddress,
     agnosticStatus,
     evmReset,
     evmTxStatus,
@@ -164,10 +183,14 @@ function useAgnosticTx<
   useEffect(() => {
     // Transaction is processing or not yet initiated.
     if (
-      isEvmAccount === null ||
+      (isEvmAccount === null && !isSolanaAccount) ||
       agnosticStatus === TxStatus.PROCESSING ||
       agnosticStatus === TxStatus.NOT_YET_INITIATED
     ) {
+      return;
+    }
+
+    if (isSolanaAccount) {
       return;
     }
 
@@ -186,9 +209,9 @@ function useAgnosticTx<
         : substrateSuccessMessage;
 
       const explorerUrl = createExplorerTxUrl(
-        isEvmAccount,
+        isEvmAccount === true,
         txHash,
-        isEvmAccount ? undefined : (substrateTxBlockHash ?? undefined),
+        isEvmAccount === true ? undefined : (substrateTxBlockHash ?? undefined),
       );
 
       notifySuccess(name, explorerUrl, successMessage);
