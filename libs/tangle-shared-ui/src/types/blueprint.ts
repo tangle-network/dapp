@@ -1,12 +1,10 @@
 import { TanglePrimitivesServicesFieldFieldType } from '@polkadot/types/lookup';
-import { FieldFieldType } from '@tangle-network/tangle-substrate-types';
 
 export type PrimitiveFieldType =
   | { Optional: PrimitiveFieldType }
   | { Array: [number, PrimitiveFieldType] }
   | { List: PrimitiveFieldType }
   | { Struct: PrimitiveFieldType[] }
-  | Exclude<FieldFieldType['type'], 'Optional' | 'Array' | 'List' | 'Struct'>
   | Exclude<
       TanglePrimitivesServicesFieldFieldType['type'],
       'Optional' | 'Array' | 'List' | 'Struct'

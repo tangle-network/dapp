@@ -8,7 +8,6 @@ import { u8aToString } from '@polkadot/util';
 import type {
   Architecture,
   ContainerGadget,
-  FieldFieldType,
   Gadget,
   GadgetBinary,
   GadgetSource,
@@ -21,8 +20,6 @@ import type {
   OperatingSystem,
   ServiceBlueprint,
   ServiceMetadata,
-  ServiceRegistrationHook,
-  ServiceRequestHook,
   TestFetcher,
   WasmGadget,
   WasmRuntime,
@@ -77,32 +74,6 @@ function toPrimitiveJobDefinition({
     params: params.map(toPrimitiveFieldType),
     result: result.map(toPrimitiveFieldType),
   } as const;
-}
-
-export function toPrimitiveServiceRegistrationHook(
-  registrationHook: ServiceRegistrationHook,
-) {
-  switch (registrationHook.type) {
-    case 'Evm':
-      return {
-        Evm: registrationHook.asEvm.toHex(),
-      } as const;
-
-    default:
-      return registrationHook.type;
-  }
-}
-
-export function toPrimitiveServiceRequestHook(requestHook: ServiceRequestHook) {
-  switch (requestHook.type) {
-    case 'Evm':
-      return {
-        Evm: requestHook.asEvm.toHex(),
-      } as const;
-
-    default:
-      return requestHook.type;
-  }
 }
 
 export function toPrimitiveJobMetadata({ name, description }: JobMetadata) {
@@ -245,7 +216,7 @@ export function toPrimitiveOperatingSystem(os: OperatingSystem) {
 }
 
 export function toPrimitiveFieldType(
-  fieldType: FieldFieldType | TanglePrimitivesServicesFieldFieldType,
+  fieldType: TanglePrimitivesServicesFieldFieldType,
 ): PrimitiveFieldType {
   switch (fieldType.type) {
     case 'Optional':
@@ -267,8 +238,7 @@ export function toPrimitiveFieldType(
       } as const;
 
     case 'Struct': {
-      const struct =
-        fieldType.asStruct as Vec<TanglePrimitivesServicesFieldFieldType>;
+      const struct = fieldType.asStruct;
       return {
         Struct: struct.map((fieldType) => toPrimitiveFieldType(fieldType)),
       } as const;
