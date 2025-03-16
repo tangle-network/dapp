@@ -97,7 +97,13 @@ const RestakeDelegateForm: FC = () => {
   const { operatorMap } = useRestakeOperatorMap();
 
   const { result: operatorIdentities } = useIdentities(
-    useMemo(() => Object.keys(operatorMap), [operatorMap]),
+    useMemo(
+      () =>
+        Object.keys(operatorMap).map((address) =>
+          assertSubstrateAddress(address),
+        ),
+      [operatorMap],
+    ),
   );
 
   const switchChain = useSwitchChain();
@@ -286,7 +292,9 @@ const RestakeDelegateForm: FC = () => {
         .filter(([, metadata]) => metadata.status === 'Active')
         .map(([accountId]) => ({
           accountId: assertSubstrateAddress(accountId),
-          identityName: operatorIdentities.get(accountId)?.name ?? undefined,
+          identityName:
+            operatorIdentities.get(assertSubstrateAddress(accountId))?.name ??
+            undefined,
           isActive: true,
         }))
     );

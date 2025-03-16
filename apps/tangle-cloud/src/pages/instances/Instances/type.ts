@@ -3,6 +3,7 @@ import {
   MonitoringBlueprint,
 } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 export interface InstancesTabProps {
   data: MonitoringBlueprint['services'];
@@ -14,7 +15,7 @@ export type RunningInstanceTabProps = InstancesTabProps;
 
 export interface PendingInstanceTabProps extends InstancesTabProps {
   isOperator?: boolean;
-  operatorIdentityMap?: Map<string, IdentityType | null>;
+  operatorIdentityMap?: Map<SubstrateAddress, IdentityType | null>;
 }
 
 export type StoppedInstanceTabProps = InstancesTabProps;

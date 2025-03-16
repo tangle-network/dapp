@@ -18,7 +18,7 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 type NestedOperatorCellProps = {
   operators?: SubstrateAddress[];
-  operatorIdentityMap?: Map<string, IdentityType | null>;
+  operatorIdentityMap?: Map<SubstrateAddress, IdentityType | null>;
 };
 
 export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
@@ -73,8 +73,8 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
                         />
                         <Typography variant="body3" fw="bold">
                           {shortenString(
-                            operatorIdentityMap?.get(operator.toString())
-                              ?.name || operator.toString(),
+                            operatorIdentityMap?.get(operator)?.name ||
+                              operator.toString(),
                           )}
                         </Typography>
                       </div>

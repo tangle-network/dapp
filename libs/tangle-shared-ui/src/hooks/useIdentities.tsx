@@ -1,11 +1,12 @@
 import useApiRx from './useApiRx';
 import { extractIdentityInfo } from '../utils/polkadot/identity';
 import { useCallback, useMemo } from 'react';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 const useIdentities = (
-  singleOrMultipleValidatorAddresses: string | string[],
+  singleOrMultipleValidatorAddresses: SubstrateAddress | SubstrateAddress[],
 ) => {
-  let addresses: string[];
+  let addresses: SubstrateAddress[];
 
   if (Array.isArray(singleOrMultipleValidatorAddresses)) {
     addresses = singleOrMultipleValidatorAddresses;

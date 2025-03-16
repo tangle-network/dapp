@@ -37,5 +37,5 @@ export interface MonitoringBlueprint extends OperatorBlueprint {
 
 export interface ServiceInstance {
   instanceId: number;
-  serviceInstance: ReturnType<typeof toPrimitiveService>;
+  serviceInstance?: ReturnType<typeof toPrimitiveService>;
 }

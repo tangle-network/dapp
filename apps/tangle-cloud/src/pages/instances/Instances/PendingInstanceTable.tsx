@@ -144,9 +144,8 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
                     className: 'max-w-fit',
                   }}
                   icon={Children.toArray(
-                    props.row.original.securityRequirements
-                      .concat(props.row.original.securityRequirements)
-                      .map((requirement) => {
+                    props.row.original.securityRequirements.map(
+                      (requirement) => {
                         return (
                           <div className="flex items-center gap-2">
                             <LsTokenIcon
@@ -166,12 +165,12 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
                             </Typography>
                           </div>
                         );
-                      }),
+                      },
+                    ),
                   )}
                   content={Children.toArray(
-                    props.row.original.securityRequirements
-                      .concat(props.row.original.securityRequirements)
-                      .map((requirement) => {
+                    props.row.original.securityRequirements.map(
+                      (requirement) => {
                         const assetMetadata = assets?.get(requirement.asset);
                         return (
                           <div className="flex items-center gap-2">
@@ -194,7 +193,8 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
                             </Typography>
                           </div>
                         );
-                      }),
+                      },
+                    ),
                   )}
                 />
               </TableCellWrapper>

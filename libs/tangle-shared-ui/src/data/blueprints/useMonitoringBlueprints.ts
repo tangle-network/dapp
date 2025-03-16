@@ -35,47 +35,44 @@ export default function useMonitoringBlueprints(
             Option<TanglePrimitivesServicesService>
           >();
 
-        return combineLatest([
-          apiRx.rpc.services.queryServicesWithBlueprintsByOperator(
-            operatorAccountAddress,
-          ),
-          instanceEntries$,
-        ]).pipe(
-          map(([servicesWithBlueprintsVec, instanceEntries]) => {
-            return [
-              servicesWithBlueprintsVec.map(
-                ({ blueprintId, blueprint, services }) => {
-                  return {
-                    blueprintId: blueprintId.toNumber(),
-                    blueprint: toPrimitiveBlueprint(blueprint),
-                    services: services.map(toPrimitiveService),
-                  };
-                },
-              ),
-              instanceEntries.map(([instanceId, serviceInstance]) => {
-                return {
-                  instanceId: instanceId.args[0].toNumber(),
-                  serviceInstance: serviceInstance.isSome
-                    ? toPrimitiveService(serviceInstance.unwrap())
-                    : null,
-                };
+        const serviceInstances$ = instanceEntries$.pipe(
+          map((entries) =>
+            entries.map(
+              (entry): ServiceInstance => ({
+                instanceId: entry[0].args[0].toNumber(),
+                serviceInstance: entry[1].isSome
+                  ? toPrimitiveService(entry[1].unwrap())
+                  : undefined,
               }),
-            ];
-          }),
-          map(([servicesWithBlueprintsVec, serviceInstances]) => {
-            return servicesWithBlueprintsVec.map((servicesWithBlueprint) =>
-              createMonitoringBlueprint(
-                servicesWithBlueprint as OperatorBlueprint,
-                serviceInstances as ServiceInstance[],
+            ),
+          ),
+        );
+
+        const servicesWithBlueprints$ = apiRx.rpc.services
+          .queryServicesWithBlueprintsByOperator(operatorAccountAddress)
+          .pipe(
+            map((vec) =>
+              vec.map(
+                (item): OperatorBlueprint => ({
+                  blueprintId: item.blueprintId.toNumber(),
+                  blueprint: toPrimitiveBlueprint(item.blueprint),
+                  services: item.services.map(toPrimitiveService),
+                }),
               ),
-            );
-          }),
+            ),
+          );
+
+        return combineLatest([servicesWithBlueprints$, serviceInstances$]).pipe(
+          map(([blueprints, instances]) =>
+            blueprints.map((blueprint) =>
+              createMonitoringBlueprint(blueprint, instances),
+            ),
+          ),
           catchError((error) => {
             console.error(
               'Error querying services with blueprints by operator:',
               error,
             );
-
             return of<MonitoringBlueprint[]>([]);
           }),
         );
@@ -85,7 +82,7 @@ export default function useMonitoringBlueprints(
   );
 
   return {
-    blueprints: (result ?? []) as MonitoringBlueprint[],
+    blueprints: result ?? [],
     ...rest,
   };
 }

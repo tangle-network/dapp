@@ -181,7 +181,7 @@ export function createMonitoringBlueprint(
 
   const instanceCount = serviceInstances.filter(
     (instance) =>
-      instance.serviceInstance.blueprint === operatorBlueprints.blueprintId,
+      instance.serviceInstance?.blueprint === operatorBlueprints.blueprintId,
   ).length;
 
   const blueprintData = {
@@ -195,8 +195,9 @@ export function createMonitoringBlueprint(
   const services = operatorBlueprints.services.map((service) => {
     const instanceId = serviceInstances.find(
       (instance) =>
-        instance.serviceInstance.blueprint === operatorBlueprints.blueprintId &&
-        instance.serviceInstance.id === service.id,
+        instance.serviceInstance?.blueprint ===
+          operatorBlueprints.blueprintId &&
+        instance.serviceInstance?.id === service.id,
     )?.instanceId;
 
     return {

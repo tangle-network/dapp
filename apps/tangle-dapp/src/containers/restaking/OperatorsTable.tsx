@@ -54,7 +54,13 @@ const OperatorsTable: FC<Props> = ({
   const { assets } = useRestakeAssets();
 
   const { result: identities } = useIdentities(
-    useMemo(() => Object.keys(operatorMap), [operatorMap]),
+    useMemo(
+      () =>
+        Object.keys(operatorMap).map((address) =>
+          assertSubstrateAddress(address),
+        ),
+      [operatorMap],
+    ),
   );
 
   const operators = useMemo(
