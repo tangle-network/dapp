@@ -5,15 +5,15 @@ import { execSync } from 'child_process';
 const schemaPath = path.join(
   path.dirname(new URL(import.meta.url).pathname),
   '..',
-  'apps',
-  'tangle-dapp',
+  'libs',
+  'tangle-shared-ui',
   'schema.graphql',
 );
 const graphqlDir = path.join(
   path.dirname(new URL(import.meta.url).pathname),
   '..',
-  'apps',
-  'tangle-dapp',
+  'libs',
+  'tangle-shared-ui',
   'src',
   'graphql',
 );

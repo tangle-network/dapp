@@ -3,7 +3,6 @@ import { PlayFillIcon, TimeLineIcon } from '@tangle-network/icons';
 import { FC, ReactElement, useState } from 'react';
 import { TabContent } from '@tangle-network/ui-components';
 import { TrashIcon } from '@radix-ui/react-icons';
-import { twMerge } from 'tailwind-merge';
 import { RunningInstanceTable } from './RunningInstanceTable';
 import { PendingInstanceTable } from './PendingInstanceTable';
 import { StoppedInstanceTable } from './StoppedInstanceTable';
@@ -37,10 +36,6 @@ export const InstancesTabs: FC<InstancesTabsProps> = ({
       value={selectedTab}
       onValueChange={(tab) => setSelectedTab(tab as InstancesTab)}
       className="space-y-9 w-full"
-      triggerClassName={twMerge(
-        'border-b-2 py-4 aria-selected:border-blue-50',
-        '[&>*]:opacity-50 [&[aria-selected="true"]>*]:opacity-100',
-      )}
       enableAdvancedDivider
     >
       <TabContent

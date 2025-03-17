@@ -15,6 +15,12 @@ import {
   IdentityType,
 } from '../../../utils/polkadot/identity';
 import { toPrimitiveBlueprint } from './toPrimitiveBlueprint';
+import {
+  MonitoringBlueprint,
+  OperatorBlueprint,
+  ServiceInstance,
+} from './type';
+import { randNumber } from '@ngneat/falso';
 
 export function extractBlueprintsData(
   blueprintEntries: [
@@ -162,4 +168,59 @@ export async function fetchOwnerIdentities(
   });
 
   return ownerIdentitiesMap;
+}
+
+// TODO: implement full features of this function
+export function createMonitoringBlueprint(
+  operatorBlueprints: OperatorBlueprint,
+  serviceInstances: ServiceInstance[],
+): MonitoringBlueprint {
+  const totalOperator = operatorBlueprints.services.reduce((acc, service) => {
+    return acc + service.operatorSecurityCommitments.length;
+  }, 0);
+
+  const instanceCount = serviceInstances.filter(
+    (instance) =>
+      instance.serviceInstance?.blueprint === operatorBlueprints.blueprintId,
+  ).length;
+
+  const blueprintData = {
+    ...operatorBlueprints.blueprint,
+    instanceCount: instanceCount,
+    operatorsCount: totalOperator,
+    // TODO: get uptime from the graphql
+    uptime: randNumber({ min: 0, max: 100 }),
+  };
+
+  const services = operatorBlueprints.services.map((service) => {
+    const instanceId = serviceInstances.find(
+      (instance) =>
+        instance.serviceInstance?.blueprint ===
+          operatorBlueprints.blueprintId &&
+        instance.serviceInstance?.id === service.id,
+    )?.instanceId;
+
+    return {
+      ...service,
+      blueprintData: blueprintData,
+      // TODO: get uptime from the graphql
+      uptime: randNumber({ min: 0, max: 100 }),
+      // TODO
+      earned: randNumber({ min: 0, max: 1000000 }),
+      // TODO
+      earnedInUsd: randNumber({ min: 0, max: 1000000 }),
+      // TODO: get last active from the graphql
+      lastActive: new Date(),
+      // TODO: may be update this
+      externalInstanceId: instanceId ? `i-${instanceId}` : undefined,
+      // TODO: get last active from the graphql
+      createdAtBlock: randNumber({ min: 0, max: 10000 }),
+    };
+  });
+
+  return {
+    ...operatorBlueprints,
+    blueprint: blueprintData,
+    services: services,
+  };
 }

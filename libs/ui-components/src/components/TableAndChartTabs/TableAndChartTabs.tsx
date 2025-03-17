@@ -50,7 +50,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
                   'dark:radix-state-active:!text-mono-0',
                   'flex gap-2 items-center',
                   cx({
-                    'border-b-2 py-4': enableAdvancedDivider,
+                    'border-b-4 py-4': enableAdvancedDivider,
                     'aria-selected:border-blue-50 border-transparent':
                       enableAdvancedDivider,
                     '[&>*]:opacity-50 [&[aria-selected="true"]>*]:opacity-100':
@@ -74,7 +74,7 @@ export const TableAndChartTabs: FC<TableAndChartTabsProps> = ({
             );
           })}
           {enableAdvancedDivider && (
-            <hr className="absolute bottom-0 -left-4 w-full border-mono-170 z-0" />
+            <hr className="absolute bottom-0 -left-4 w-full border-mono-80 dark:border-mono-170 z-0" />
           )}
         </TabsList>
 

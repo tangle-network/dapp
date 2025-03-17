@@ -13,11 +13,14 @@ import { Link } from 'react-router';
 import { ExternalLinkLine } from '@tangle-network/icons';
 import { Children, FC } from 'react';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+
 type NestedOperatorCellProps = {
   operators?: SubstrateAddress[];
-  operatorIdentityMap?: Map<SubstrateAddress, string>;
+  operatorIdentityMap?: Map<SubstrateAddress, IdentityType | null>;
 };
+
 export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
   operators,
   operatorIdentityMap,
@@ -56,6 +59,7 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
         {operators.length > 1 &&
           Children.toArray(
             operators.map((operator) => {
+              const explorerUrl = network.createExplorerAccountUrl(operator);
               return (
                 <DropdownMenuItem className="px-4 py-2 hover:bg-mono-170">
                   <div className="flex items-center gap-4">
@@ -69,21 +73,23 @@ export const NestedOperatorCell: FC<NestedOperatorCellProps> = ({
                         />
                         <Typography variant="body3" fw="bold">
                           {shortenString(
-                            operatorIdentityMap?.get(operator) ||
+                            operatorIdentityMap?.get(operator)?.name ||
                               operator.toString(),
                           )}
                         </Typography>
                       </div>
                       <KeyValueWithButton size="sm" keyValue={operator} />
                     </div>
-                    <Link
-                      to={network.createExplorerAccountUrl(operator) ?? ''}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="!text-inherit"
-                    >
-                      <ExternalLinkLine className="!fill-current" />
-                    </Link>
+                    {explorerUrl && (
+                      <Link
+                        to={explorerUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="!text-inherit"
+                      >
+                        <ExternalLinkLine className="!fill-current" />
+                      </Link>
+                    )}
                   </div>
                 </DropdownMenuItem>
               );

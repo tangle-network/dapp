@@ -110,7 +110,7 @@ const COLUMNS = [
 
 type Props = {
   unstakeRequests: DelegatorUnstakeRequest[];
-  operatorIdentities: Record<string, IdentityType | null>;
+  operatorIdentities: Map<string, IdentityType | null>;
 };
 
 const UnstakeRequestTable: FC<Props> = ({
@@ -158,7 +158,7 @@ const UnstakeRequestTable: FC<Props> = ({
           sessionDurationMs,
           operatorAccountId,
           operatorIdentityName:
-            operatorIdentities?.[operatorAccountId]?.name ?? undefined,
+            operatorIdentities.get(operatorAccountId)?.name ?? undefined,
         } satisfies UnstakeRequestTableRow;
       },
     );
