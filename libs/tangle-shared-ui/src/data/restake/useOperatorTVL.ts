@@ -6,18 +6,18 @@ import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { RestakeAssetId } from '../../types';
 import { assertSubstrateAddress } from '@tangle-network/ui-components/utils';
 
-type useOperatorTVLType = {
-  operatorTVLByAsset: Record<SubstrateAddress, Record<RestakeAssetId, number>>;
-  operatorTVL: Record<SubstrateAddress, number>;
-  vaultTVL: Record<RestakeAssetId, number>;
+export type OperatorTVLType = {
+  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>;
+  operatorTVL: Map<SubstrateAddress, number>;
+  vaultTVL: Map<RestakeAssetId, number>;
 };
 
 const calculateTVL = (
   operatorMap: OperatorMap,
   assetMap: RestakeAssetMap,
-): useOperatorTVLType => {
+): OperatorTVLType => {
   return Object.entries(operatorMap).reduce(
-    (acc: useOperatorTVLType, [_operatorId, operatorData]) => {
+    (acc: OperatorTVLType, [_operatorId, operatorData]) => {
       const operatorId = assertSubstrateAddress(_operatorId);
 
       operatorData.delegations.forEach((delegation) => {
@@ -43,23 +43,27 @@ const calculateTVL = (
 
         const amount = Number(result.value) * assetPrice;
 
-        // Initialize nested structure if it doesn't exist
-        if (!acc.operatorTVLByAsset[operatorId]) {
-          acc.operatorTVLByAsset[operatorId] = {};
+        if (!acc.operatorTVLByAsset.has(operatorId)) {
+          acc.operatorTVLByAsset.set(operatorId, new Map());
         }
 
-        // Add amount to the specific operator and asset combination
-        acc.operatorTVLByAsset[operatorId][delegation.assetId] =
-          (acc.operatorTVLByAsset[operatorId][delegation.assetId] || 0) +
-          amount;
+        acc.operatorTVLByAsset
+          .get(operatorId)
+          ?.set(
+            delegation.assetId,
+            (acc.operatorTVLByAsset.get(operatorId)?.get(delegation.assetId) ||
+              0) + amount,
+          );
 
-        // Track total TVL by asset ID
-        acc.vaultTVL[delegation.assetId] =
-          (acc.vaultTVL[delegation.assetId] || 0) + amount;
+        acc.vaultTVL.set(
+          delegation.assetId,
+          (acc.vaultTVL.get(delegation.assetId) || 0) + amount,
+        );
 
-        // Calculate total TVL for operator (sum of all their assets)
-        acc.operatorTVL[operatorId] =
-          (acc.operatorTVL[operatorId] || 0) + amount;
+        acc.operatorTVL.set(
+          operatorId,
+          (acc.operatorTVL.get(operatorId) || 0) + amount,
+        );
 
         return;
       });
@@ -67,10 +71,10 @@ const calculateTVL = (
       return acc;
     },
     {
-      operatorTVLByAsset: {},
-      vaultTVL: {},
-      operatorTVL: {},
-    } satisfies useOperatorTVLType,
+      operatorTVLByAsset: new Map(),
+      vaultTVL: new Map(),
+      operatorTVL: new Map(),
+    } satisfies OperatorTVLType,
   );
 };
 
@@ -83,10 +87,10 @@ export const useOperatorTVL = (
       input$.pipe(
         switchMap(([operatorMap, assetMap]) => {
           if (assetMap === null) {
-            return of<useOperatorTVLType>({
-              operatorTVLByAsset: {},
-              vaultTVL: {},
-              operatorTVL: {},
+            return of<OperatorTVLType>({
+              operatorTVLByAsset: new Map(),
+              vaultTVL: new Map(),
+              operatorTVL: new Map(),
             });
           }
 
@@ -95,7 +99,7 @@ export const useOperatorTVL = (
             assetMap,
           );
 
-          return of<useOperatorTVLType>({
+          return of<OperatorTVLType>({
             operatorTVLByAsset,
             operatorTVL,
             vaultTVL,
@@ -105,9 +109,9 @@ export const useOperatorTVL = (
     [operatorMap, assetMap],
   );
 
-  return useObservableState(tvl$, {
-    operatorTVLByAsset: {},
-    operatorTVL: {},
-    vaultTVL: {},
+  return useObservableState<OperatorTVLType>(tvl$, {
+    operatorTVLByAsset: new Map(),
+    operatorTVL: new Map(),
+    vaultTVL: new Map(),
   });
 };

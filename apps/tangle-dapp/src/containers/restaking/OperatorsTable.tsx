@@ -26,15 +26,17 @@ import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities'
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import JoinOperatorsModal from './JoinOperatorsModal';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
+import { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
+import { OperatorTVLType } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTVL';
 
 type OperatorUI = NonNullable<
   ComponentProps<typeof OperatorsTableUI>['data']
 >[number];
 
 type Props = {
-  operatorConcentration?: Record<string, number | null>;
+  operatorConcentration?: OperatorConcentration;
   operatorMap: OperatorMap;
-  operatorTVL?: Record<string, number>;
+  operatorTVL?: OperatorTVLType['operatorTVL'];
   onRestakeClicked?: LinkProps['onClick'];
 };
 
@@ -68,10 +70,10 @@ const OperatorsTable: FC<Props> = ({
       Object.entries(operatorMap).map<OperatorUI>(
         ([addressString, { delegations, restakersCount, stake }]) => {
           const address = assertSubstrateAddress(addressString);
-          const tvlInUsd = operatorTVL?.[address] ?? null;
+          const tvlInUsd = operatorTVL?.get(address) ?? null;
 
           const concentrationPercentage =
-            operatorConcentration?.[address] ?? null;
+            operatorConcentration?.get(address) ?? null;
 
           const isDelegated =
             activeSubstrateAddress !== null &&

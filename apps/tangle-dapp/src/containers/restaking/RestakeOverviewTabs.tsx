@@ -10,6 +10,8 @@ import RestakeUnstakeForm from '../../pages/restake/unstake';
 import RestakeWithdrawForm from '../../pages/restake/withdraw';
 import OperatorsTable from './OperatorsTable';
 import VaultsOverview from './VaultsOverview';
+import { OperatorConcentration } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorConcentration';
+import { OperatorTVLType } from '@tangle-network/tangle-shared-ui/data/restake/useOperatorTVL';
 
 enum RestakeTab {
   RESTAKE = 'Restake',
@@ -19,9 +21,9 @@ enum RestakeTab {
 }
 
 type Props = {
-  operatorConcentration?: Record<string, number | null>;
+  operatorConcentration?: OperatorConcentration;
   operatorMap: OperatorMap;
-  operatorTVL?: Record<string, number>;
+  operatorTVL?: OperatorTVLType['operatorTVL'];
   action: RestakeAction;
 };
 

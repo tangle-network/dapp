@@ -40,18 +40,12 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
   }, [accountAddress]);
 
   const totalRestaked = useMemo(() => {
-    if (!accountAddress) {
+    if (!accountAddress || !operatorData) {
       return EMPTY_VALUE_PLACEHOLDER;
     }
 
-    const operator = operatorMap[accountAddress];
-
-    if (!operator) {
-      return EMPTY_VALUE_PLACEHOLDER;
-    }
-
-    return getTVLToDisplay(operatorTVL[accountAddress]);
-  }, [accountAddress, operatorTVL]);
+    return getTVLToDisplay(operatorTVL.get(accountAddress));
+  }, [accountAddress, operatorTVL, operatorData]);
 
   const restakersCount = useMemo(
     () =>

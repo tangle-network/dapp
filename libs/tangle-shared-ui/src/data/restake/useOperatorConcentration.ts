@@ -1,8 +1,12 @@
+import { assertSubstrateAddress } from '@tangle-network/ui-components';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 import { useObservable, useObservableState } from 'observable-hooks';
 import { of, switchMap } from 'rxjs';
 
+export type OperatorConcentration = Map<SubstrateAddress, number | null>;
+
 export function useOperatorConcentration(
-  operatorTVL: Record<string, number>,
+  operatorTVL: Map<SubstrateAddress, number>,
   totalNetworkTVL: number,
 ) {
   const concentration$ = useObservable(
@@ -10,25 +14,25 @@ export function useOperatorConcentration(
       input$.pipe(
         switchMap(([operatorTVL, totalNetworkTVL]) => {
           const operatorConcentration = Object.entries(operatorTVL).reduce(
-            (acc, [operatorId, operatorTVL]) => {
-              acc[operatorId] =
+            (acc, [_operatorId, operatorTVL]) => {
+              const operatorId = assertSubstrateAddress(_operatorId);
+              acc.set(
+                operatorId,
                 totalNetworkTVL > 0
                   ? (operatorTVL / totalNetworkTVL) * 100
-                  : null;
+                  : null,
+              );
 
               return acc;
             },
-            {} satisfies Record<string, number | null> as Record<
-              string,
-              number | null
-            >,
+            new Map<SubstrateAddress, number | null>(),
           );
 
-          return of(operatorConcentration);
+          return of<OperatorConcentration>(operatorConcentration);
         }),
       ),
     [operatorTVL, totalNetworkTVL],
   );
 
-  return useObservableState(concentration$, {});
+  return useObservableState(concentration$, new Map());
 }

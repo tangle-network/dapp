@@ -1,9 +1,19 @@
 import { useMemo } from 'react';
 import { useDelegatorTVL } from '../../data/restake/useDelegatorTVL';
 import { useOperatorConcentration } from '../../data/restake/useOperatorConcentration';
-import { useOperatorTVL } from '../../data/restake/useOperatorTVL';
+import {
+  OperatorTVLType,
+  useOperatorTVL,
+} from '../../data/restake/useOperatorTVL';
 import type { DelegatorInfo, OperatorMap } from '../../types/restake';
 import useRestakeAssets from './useRestakeAssets';
+import { BN } from '@polkadot/util';
+
+export type RestakeTVLType = OperatorTVLType & {
+  delegatorTVL: BN;
+  totalDelegatorTVL: BN;
+  totalNetworkTVL: BN;
+};
 
 const useRestakeTVL = (
   operatorMap: OperatorMap,

@@ -193,8 +193,8 @@ async function getBlueprintOperators(
   assetMap: RestakeAssetMap,
   operatorAccountSet: Set<SubstrateAddress>,
   operatorMap: OperatorMap,
-  operatorTVL: Record<string, number>,
-  operatorConcentration: Record<string, number | null>,
+  operatorTVL: Map<SubstrateAddress, number>,
+  operatorConcentration: Map<SubstrateAddress, number | null>,
   activeSubstrateAddress: SubstrateAddress | null,
 ) {
   const operatorAccountArr = Array.from(operatorAccountSet);
@@ -206,8 +206,8 @@ async function getBlueprintOperators(
 
   return operatorAccountArr.map((address, idx) => {
     const info = accountInfoArr[idx];
-    const concentrationPercentage = operatorConcentration[address] ?? null;
-    const tvlInUsd = operatorTVL[address] ?? null;
+    const concentrationPercentage = operatorConcentration.get(address) ?? null;
+    const tvlInUsd = operatorTVL.get(address) ?? null;
     const delegations = operatorMap[address].delegations ?? [];
     const selfBondedAmount = operatorMap[address]?.stake ?? ZERO_BIG_INT;
 

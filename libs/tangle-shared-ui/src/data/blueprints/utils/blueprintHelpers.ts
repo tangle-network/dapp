@@ -62,7 +62,7 @@ export function extractOperatorData(
     Option<TanglePrimitivesServicesTypesOperatorPreferences>,
   ][],
   operatorMap: OperatorMap,
-  operatorTVLByAsset: Record<string, Record<string, number>>,
+  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
   runningInstancesMap: Map<number, ServiceInstance[]>,
 ) {
   const blueprintOperatorMap = new Map<number, Set<SubstrateAddress>>();
@@ -120,7 +120,7 @@ export function extractOperatorData(
 function calculateBlueprintOperatorExposure(
   runningInstancesMap: Map<number, ServiceInstance[]>,
   blueprintId: number,
-  operatorTVLByAsset: Record<SubstrateAddress, Record<RestakeAssetId, number>>,
+  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
 ) {
   const PERCENT_DIVISOR = 100;
 
@@ -135,16 +135,20 @@ function calculateBlueprintOperatorExposure(
     const operatorExposure =
       instance.serviceInstance?.operatorSecurityCommitments?.reduce(
         (acc, commitment) => {
-          const operatorTVL = operatorTVLByAsset[commitment.operator];
+          const operatorTVL = operatorTVLByAsset.get(commitment.operator);
           if (operatorTVL === undefined) {
             return acc;
           }
 
           const exposureAmount = commitment.securityCommitments.reduce(
             (acc, securityCommitment) => {
+              const assetTVL = operatorTVL.get(securityCommitment.asset);
+              if (assetTVL === undefined) {
+                return acc;
+              }
+
               const exposurePercent =
-                (operatorTVL[securityCommitment.asset] *
-                  securityCommitment.exposurePercent) /
+                (assetTVL * securityCommitment.exposurePercent) /
                 PERCENT_DIVISOR;
               return acc + exposurePercent;
             },
@@ -223,7 +227,7 @@ export async function fetchOwnerIdentities(
 export function createMonitoringBlueprint(
   operatorBlueprints: OperatorBlueprint,
   serviceInstances: ServiceInstance[],
-  operatorTVLByAsset: Record<string, Record<string, number>>,
+  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
   runningInstancesMap: Map<number, ServiceInstance[]>,
 ): MonitoringBlueprint {
   const totalOperator = operatorBlueprints.services.reduce((acc, service) => {
