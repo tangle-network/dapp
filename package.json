@@ -51,7 +51,7 @@
     "@polkadot/extension-inject": "0.57.1",
     "@polkadot/keyring": "^13.2.3",
     "@polkadot/react-identicon": "^3.11.3",
-    "@polkadot/types": "^13.2.1",
+    "@polkadot/types": "^15.8.1",
     "@polkadot/util": "^13.2.3",
     "@polkadot/util-crypto": "^13.2.3",
     "@radix-ui/react-accordion": "^1.2.2",
