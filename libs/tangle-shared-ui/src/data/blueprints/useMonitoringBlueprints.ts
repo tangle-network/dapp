@@ -21,7 +21,7 @@ export default function useMonitoringBlueprints(
 ) {
   const { operatorMap } = useRestakeOperatorMap();
   const { assets } = useRestakeAssets();
-  const { operatorTVL } = useOperatorTVL(operatorMap, assets);
+  const { operatorTVLByAsset } = useOperatorTVL(operatorMap, assets);
 
   const { result, ...rest } = useApiRx(
     useCallback(
@@ -69,33 +69,45 @@ export default function useMonitoringBlueprints(
             ),
           );
 
-        const runningInstanceEntries$ = apiRx.query.services.instances.entries();
-        
+        const runningInstanceEntries$ =
+          apiRx.query.services.instances.entries();
 
-        return combineLatest([servicesWithBlueprints$, operatorServiceInstances$, runningInstanceEntries$]).pipe(
+        return combineLatest([
+          servicesWithBlueprints$,
+          operatorServiceInstances$,
+          runningInstanceEntries$,
+        ]).pipe(
           map(([blueprints, operatorInstances, runningInstanceEntries]) => {
             // mapping from blueprint id to service instance
             const runningInstancesMap = new Map<number, ServiceInstance[]>();
 
-            for (const [instanceId, mayBeServiceInstance] of runningInstanceEntries) {
+            for (const [
+              instanceId,
+              mayBeServiceInstance,
+            ] of runningInstanceEntries) {
               const serviceInstanceId = instanceId.args[0].toNumber();
 
               if (mayBeServiceInstance.isNone) {
                 continue;
               }
 
-              const instanceData = toPrimitiveService(mayBeServiceInstance.unwrap());
-              runningInstancesMap.set(instanceData.blueprint, [...(runningInstancesMap.get(instanceData.blueprint) ?? []), {
-                instanceId: serviceInstanceId,
-                serviceInstance: instanceData,
-              }]);
+              const instanceData = toPrimitiveService(
+                mayBeServiceInstance.unwrap(),
+              );
+              runningInstancesMap.set(instanceData.blueprint, [
+                ...(runningInstancesMap.get(instanceData.blueprint) ?? []),
+                {
+                  instanceId: serviceInstanceId,
+                  serviceInstance: instanceData,
+                },
+              ]);
             }
 
             return blueprints.map((blueprint) =>
               createMonitoringBlueprint(
                 blueprint,
                 operatorInstances,
-                operatorTVL,
+                operatorTVLByAsset,
                 runningInstancesMap,
               ),
             );
@@ -109,7 +121,7 @@ export default function useMonitoringBlueprints(
           }),
         );
       },
-      [operatorAccountAddress, operatorTVL],
+      [operatorAccountAddress, operatorTVLByAsset],
     ),
   );
 

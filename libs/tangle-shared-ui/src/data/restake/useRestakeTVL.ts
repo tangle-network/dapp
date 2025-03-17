@@ -10,7 +10,10 @@ const useRestakeTVL = (
   delegatorInfo: DelegatorInfo | null,
 ) => {
   const { assets } = useRestakeAssets();
-  const { operatorTVL, vaultTVL } = useOperatorTVL(operatorMap, assets);
+  const { operatorTVL, vaultTVL, operatorTVLByAsset } = useOperatorTVL(
+    operatorMap,
+    assets,
+  );
 
   const { delegatorTVL, totalDelegatorTVL } = useDelegatorTVL(
     delegatorInfo,
@@ -33,6 +36,7 @@ const useRestakeTVL = (
     vaultTVL,
     totalDelegatorTVL,
     totalNetworkTVL,
+    operatorTVLByAsset,
   };
 };
 

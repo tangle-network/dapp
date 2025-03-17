@@ -62,7 +62,7 @@ export function extractOperatorData(
     Option<TanglePrimitivesServicesTypesOperatorPreferences>,
   ][],
   operatorMap: OperatorMap,
-  operatorTVL: Record<string, Record<string, number>>,
+  operatorTVLByAsset: Record<string, Record<string, number>>,
   runningInstancesMap: Map<number, ServiceInstance[]>,
 ) {
   const blueprintOperatorMap = new Map<number, Set<SubstrateAddress>>();
@@ -109,7 +109,7 @@ export function extractOperatorData(
     const operatorExposure = calculateBlueprintOperatorExposure(
       runningInstancesMap,
       blueprintId,
-      operatorTVL,
+      operatorTVLByAsset,
     );
     blueprintTVLMap.set(blueprintId, operatorExposure);
   }
@@ -120,7 +120,7 @@ export function extractOperatorData(
 function calculateBlueprintOperatorExposure(
   runningInstancesMap: Map<number, ServiceInstance[]>,
   blueprintId: number,
-  operatorTVLs: Record<SubstrateAddress, Record<RestakeAssetId, number>>,
+  operatorTVLByAsset: Record<SubstrateAddress, Record<RestakeAssetId, number>>,
 ) {
   const PERCENT_DIVISOR = 100;
 
@@ -132,21 +132,31 @@ function calculateBlueprintOperatorExposure(
   }
 
   for (const instance of instances) {
-    const operatorExposure = instance.serviceInstance?.operatorSecurityCommitments?.reduce((acc, commitment) => {
-      const operatorTVL = operatorTVLs[commitment.operator];
-      if (operatorTVL === undefined) {
-        return acc;
-      }
+    const operatorExposure =
+      instance.serviceInstance?.operatorSecurityCommitments?.reduce(
+        (acc, commitment) => {
+          const operatorTVL = operatorTVLByAsset[commitment.operator];
+          if (operatorTVL === undefined) {
+            return acc;
+          }
 
-      const exposureAmount = commitment.securityCommitments.reduce((acc, securityCommitment) => {
-        const exposurePercent = operatorTVL[securityCommitment.asset] * securityCommitment.exposurePercent / PERCENT_DIVISOR;
-        return acc + exposurePercent;
-      }, 0);
+          const exposureAmount = commitment.securityCommitments.reduce(
+            (acc, securityCommitment) => {
+              const exposurePercent =
+                (operatorTVL[securityCommitment.asset] *
+                  securityCommitment.exposurePercent) /
+                PERCENT_DIVISOR;
+              return acc + exposurePercent;
+            },
+            0,
+          );
 
-      return acc + exposureAmount;
-    }, 0);
+          return acc + exposureAmount;
+        },
+        0,
+      );
 
-    if (operatorExposure === undefined) { 
+    if (operatorExposure === undefined) {
       continue;
     }
 
@@ -213,7 +223,7 @@ export async function fetchOwnerIdentities(
 export function createMonitoringBlueprint(
   operatorBlueprints: OperatorBlueprint,
   serviceInstances: ServiceInstance[],
-  operatorTVL: Record<string, Record<string, number>>,
+  operatorTVLByAsset: Record<string, Record<string, number>>,
   runningInstancesMap: Map<number, ServiceInstance[]>,
 ): MonitoringBlueprint {
   const totalOperator = operatorBlueprints.services.reduce((acc, service) => {
@@ -228,8 +238,8 @@ export function createMonitoringBlueprint(
   const blueprintTVL = calculateBlueprintOperatorExposure(
     runningInstancesMap,
     operatorBlueprints.blueprintId,
-    operatorTVL,
-  )
+    operatorTVLByAsset,
+  );
 
   const blueprintData = {
     ...operatorBlueprints.blueprint,
