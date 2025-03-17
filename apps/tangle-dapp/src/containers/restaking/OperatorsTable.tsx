@@ -22,7 +22,7 @@ import {
 } from 'react';
 import { LinkProps } from 'react-router';
 import { RestakeOperatorWrapper } from '../../components/tables/RestakeActionWrappers';
-import useIdentities from '../../data/useIdentities';
+import useIdentities from '@tangle-network/tangle-shared-ui/hooks/useIdentities';
 import useIsAccountConnected from '../../hooks/useIsAccountConnected';
 import JoinOperatorsModal from './JoinOperatorsModal';
 import useRestakeAssets from '@tangle-network/tangle-shared-ui/data/restake/useRestakeAssets';
@@ -54,7 +54,13 @@ const OperatorsTable: FC<Props> = ({
   const { assets } = useRestakeAssets();
 
   const { result: identities } = useIdentities(
-    useMemo(() => Object.keys(operatorMap), [operatorMap]),
+    useMemo(
+      () =>
+        Object.keys(operatorMap).map((address) =>
+          assertSubstrateAddress(address),
+        ),
+      [operatorMap],
+    ),
   );
 
   const operators = useMemo(
@@ -77,7 +83,7 @@ const OperatorsTable: FC<Props> = ({
           return {
             address,
             concentrationPercentage,
-            identityName: identities[address]?.name ?? undefined,
+            identityName: identities.get(address)?.name ?? undefined,
             restakersCount,
             tvlInUsd,
             vaultTokens:

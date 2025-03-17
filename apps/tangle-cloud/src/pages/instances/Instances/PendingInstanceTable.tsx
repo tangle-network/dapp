@@ -1,4 +1,4 @@
-import { useMemo, type FC } from 'react';
+import { Children, useMemo, type FC } from 'react';
 import {
   AccessorKeyColumnDef,
   createColumnHelper,
@@ -13,7 +13,7 @@ import {
   DropdownBody,
   DropdownButton,
   EMPTY_VALUE_PLACEHOLDER,
-  getRoundedAmountString,
+  IconWithTooltip,
   isEvmAddress,
   shortenString,
   toSubstrateAddress,
@@ -25,25 +25,36 @@ import { ChevronDown, ChevronRight } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { Link } from 'react-router';
 import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
-import { InstancesTabProps } from './type';
+import { PendingInstanceTabProps } from './type';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
 import { NestedOperatorCell } from '../../../components/NestedOperatorCell';
 import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNumber';
+import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
+import useAssetsMetadata from '@tangle-network/tangle-shared-ui/hooks/useAssetsMetadata';
 
 type MonitoringBlueprintServiceItem = MonitoringBlueprint['services'][number];
 
 const columnHelper = createColumnHelper<MonitoringBlueprintServiceItem>();
 
-export const PendingInstanceTable: FC<InstancesTabProps> = ({
+export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
   data,
   isLoading,
   error,
   isOperator,
+  operatorIdentityMap,
 }) => {
   const network = useNetworkStore((store) => store.network);
 
   const isEmpty = data.length === 0;
+
+  const assetIds = useMemo(() => {
+    return data.flatMap((instance) =>
+      instance.securityRequirements.map((requirement) => requirement.asset),
+    );
+  }, [data]);
+
+  const { result: assets } = useAssetsMetadata(assetIds);
 
   const columns = useMemo(() => {
     const baseColumns: AccessorKeyColumnDef<
@@ -57,11 +68,11 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
           return (
             <TableCellWrapper>
               <div className="flex items-center gap-2 w-full">
-                {props.row.original.imgUrl ? (
+                {props.row.original.blueprintData?.metadata?.logo ? (
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    src={props.row.original.imgUrl}
+                    src={props.row.original.blueprintData.metadata.logo}
                     alt={props.row.original.id.toString()}
                     sourceVariant="uri"
                   />
@@ -69,7 +80,7 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    value={props.row.original.instanceId?.substring(0, 2)}
+                    value={props.row.original.id.toString()}
                     theme="substrate"
                   />
                 )}
@@ -98,14 +109,17 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
                     fw="bold"
                     className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
-                    {props.row.original.id || ''}
+                    {props.row.original.id
+                      ? `Instance-${props.row.original.id}`
+                      : EMPTY_VALUE_PLACEHOLDER}
                   </Typography>
                   <Typography
                     variant="body2"
                     fw="normal"
                     className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
                   >
-                    {props.row.original.instanceId || ''}
+                    {props.row.original.externalInstanceId ||
+                      EMPTY_VALUE_PLACEHOLDER}
                   </Typography>
                 </div>
               </div>
@@ -117,18 +131,72 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
 
     if (isOperator) {
       baseColumns.push(
-        columnHelper.accessor('blueprintData.pricing', {
+        columnHelper.accessor('securityRequirements', {
           header: () => 'Pricing',
           cell: (props) => {
             return (
               <TableCellWrapper>
-                {props.row.original.blueprintData?.pricing
-                  ? `$${getRoundedAmountString(props.row.original.blueprintData.pricing)}`
-                  : EMPTY_VALUE_PLACEHOLDER}
-                &nbsp;/&nbsp;
-                {props.row.original.blueprintData?.pricingUnit
-                  ? props.row.original.blueprintData.pricingUnit
-                  : EMPTY_VALUE_PLACEHOLDER}
+                <IconWithTooltip
+                  overrideTooltipTriggerProps={{
+                    className: 'flex flex-col gap-2',
+                  }}
+                  overrideTooltipBodyProps={{
+                    className: 'max-w-fit',
+                  }}
+                  icon={Children.toArray(
+                    props.row.original.securityRequirements.map(
+                      (requirement) => {
+                        return (
+                          <div className="flex items-center gap-2">
+                            <LsTokenIcon
+                              name={
+                                assets
+                                  ?.get(requirement.asset)
+                                  ?.symbol?.toString() ?? ''
+                              }
+                              size="lg"
+                            />
+                            <Typography
+                              variant="para1"
+                              className="whitespace-nowrap"
+                            >
+                              {requirement.minExposurePercent}% -{' '}
+                              {requirement.maxExposurePercent}%
+                            </Typography>
+                          </div>
+                        );
+                      },
+                    ),
+                  )}
+                  content={Children.toArray(
+                    props.row.original.securityRequirements.map(
+                      (requirement) => {
+                        const assetMetadata = assets?.get(requirement.asset);
+                        return (
+                          <div className="flex items-center gap-2">
+                            <LsTokenIcon
+                              name={assetMetadata?.symbol?.toString() ?? ''}
+                              size="lg"
+                            />
+                            <Typography
+                              variant="para1"
+                              className="whitespace-nowrap"
+                            >
+                              {assetMetadata?.name} is required to spend
+                            </Typography>
+                            <Typography
+                              variant="para1"
+                              className="whitespace-nowrap"
+                            >
+                              {requirement.minExposurePercent}% -{' '}
+                              {requirement.maxExposurePercent}%
+                            </Typography>
+                          </div>
+                        );
+                      },
+                    ),
+                  )}
+                />
               </TableCellWrapper>
             );
           },
@@ -181,16 +249,14 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
       );
     } else {
       baseColumns.push(
-        columnHelper.accessor('operators', {
+        columnHelper.accessor('approvedOperators', {
           header: 'Approved Operators',
           cell: (props) => {
             return (
               <TableCellWrapper>
                 <NestedOperatorCell
-                  operators={props.row.original.operators}
-                  operatorIdentityMap={
-                    props.row.original.operatorIdentityMap || new Map([])
-                  }
+                  operators={props.row.original.approvedOperators}
+                  operatorIdentityMap={operatorIdentityMap}
                 />
               </TableCellWrapper>
             );
@@ -203,7 +269,7 @@ export const PendingInstanceTable: FC<InstancesTabProps> = ({
               <TableCellWrapper>
                 <NestedOperatorCell
                   operators={props.row.original.pendingOperators}
-                  operatorIdentityMap={props.row.original.operatorIdentityMap}
+                  operatorIdentityMap={operatorIdentityMap}
                 />
               </TableCellWrapper>
             );

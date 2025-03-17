@@ -7,16 +7,18 @@ import {
 } from '@tanstack/react-table';
 import {
   Avatar,
+  Button,
   EMPTY_VALUE_PLACEHOLDER,
   EnergyChipColors,
   EnergyChipStack,
-  getRoundedAmountString,
   Typography,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
+import { Link } from 'react-router';
+import { PagePath } from '../../../types';
 
 export type RegisteredBlueprintsTableProps = {
   blueprints: MonitoringBlueprint[];
@@ -65,25 +67,8 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
                   className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
                 >
                   {props.row.original.blueprint.metadata.name}
-                  {props.row.original.blueprint.metadata.name}
                 </Typography>
               </div>
-            </TableCellWrapper>
-          );
-        },
-      }),
-      columnHelper.accessor('blueprint.pricing', {
-        header: () => 'Pricing',
-        cell: (props) => {
-          return (
-            <TableCellWrapper>
-              {props.row.original.blueprint.pricing
-                ? `$${getRoundedAmountString(props.row.original.blueprint.pricing)}`
-                : EMPTY_VALUE_PLACEHOLDER}
-              &nbsp;/&nbsp;
-              {props.row.original.blueprint.pricingUnit
-                ? props.row.original.blueprint.pricingUnit
-                : EMPTY_VALUE_PLACEHOLDER}
             </TableCellWrapper>
           );
         },
@@ -143,14 +128,26 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
           );
         },
       }),
-      columnHelper.accessor('blueprint.tvl', {
-        header: () => 'TVL',
+      columnHelper.accessor('blueprintId', {
+        header: () => '',
         cell: (props) => {
           return (
             <TableCellWrapper removeRightBorder>
-              {props.row.original.blueprint.tvl
-                ? getRoundedAmountString(props.row.original.blueprint.tvl)
-                : EMPTY_VALUE_PLACEHOLDER}
+              <Link
+                to={PagePath.BLUEPRINTS_DETAILS.replace(
+                  ':id',
+                  props.row.original.blueprintId.toString(),
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(event) => {
+                  event.stopPropagation();
+                }}
+              >
+                <Button variant="utility" className="uppercase body4">
+                  View
+                </Button>
+              </Link>
             </TableCellWrapper>
           );
         },
@@ -164,7 +161,7 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: (row) => row.blueprintId.toString(),
+    getRowId: (row) => `blueprint-${row.blueprintId.toString()}`,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });

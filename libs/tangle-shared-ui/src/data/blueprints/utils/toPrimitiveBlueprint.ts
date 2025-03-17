@@ -128,28 +128,31 @@ export function toPrimitiveGadgetSource(source: GadgetSource) {
   } as const;
 }
 
+/**
+ * @dev @polkadot/type-gen enum converter is not working for some reason
+ * so we need to convert the type manually
+ */
 export function toPrimitiveGadgetSourceFetcher(fetcher: GadgetSourceFetcher) {
-  switch (fetcher.type) {
-    case 'ContainerImage':
+  switch (fetcher.type.toUpperCase()) {
+    case 'ContainerImage'.toUpperCase():
       return {
         ContainerImage: toPrimitiveContainerImage(fetcher.asContainerImage),
       } as const;
 
-    case 'Github':
+    case 'Github'.toUpperCase():
       return {
         Github: toPrimitiveGithubFetcher(fetcher.asGithub),
       } as const;
 
-    case 'Ipfs':
+    case 'Ipfs'.toUpperCase():
       return {
         Ipfs: u8aToString(fetcher.asIpfs),
       } as const;
 
-    case 'Testing':
+    case 'Testing'.toUpperCase():
       return {
         Testing: toPrimitiveTestingFetcher(fetcher.asTesting),
       } as const;
-
     default:
       throw new Error('Unknown GadgetSourceFetcher type');
   }

@@ -22,7 +22,7 @@ export const InstructionCard: FC<InstructionCardProps> = ({ rootProps }) => {
               <div className="flex gap-4 w-full flex-wrap xs:flex-nowrap justify-center xs:justify-start">
                 <Chip
                   color="dark-grey"
-                  className="!dark:bg-mono-0/[20%] min-w-14 h-14 flex items-center justify-center"
+                  className="bg-mono-120/[10%] dark:bg-mono-0/[20%] min-w-14 h-14 flex items-center justify-center"
                 >
                   {createElement(instruction.icon, {
                     className: instruction.className,
@@ -31,7 +31,7 @@ export const InstructionCard: FC<InstructionCardProps> = ({ rootProps }) => {
                 <div className="gap-1 flex flex-col items-center xs:items-start">
                   <Link
                     href={instruction.to}
-                    className="text-blue-50 text-center xs:text-left"
+                    className="text-blue-50 text-center xs:text-left font-bold"
                     target={instruction.external ? '_blank' : '_self'}
                     rel={instruction.external ? 'noopener noreferrer' : ''}
                   >
