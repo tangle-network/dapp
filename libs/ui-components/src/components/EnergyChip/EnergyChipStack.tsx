@@ -14,10 +14,7 @@ export const EnergyChipStack = (props: EnergyChipStackProps) => {
   } = props;
 
   return (
-    <div
-      className={twMerge('flex gap-1', className)}
-      {...restProps}
-    >
+    <div className={twMerge('flex gap-1', className)} {...restProps}>
       <div className="flex items-center gap-[2px]">
         {Array.from({ length: stack }).map((_, index) => (
           <EnergyChip key={index} color={colors[index]} />
