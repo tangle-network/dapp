@@ -133,7 +133,7 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
         header: () => 'TVL',
         cell: (props) => {
           return (
-            <TableCellWrapper removeRightBorder>
+            <TableCellWrapper>
               {props.row.original.blueprint.tvl
                 ? getTVLToDisplay(props.row.original.blueprint.tvl)
                 : EMPTY_VALUE_PLACEHOLDER}
