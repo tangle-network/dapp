@@ -15,13 +15,15 @@ import {
   extractOperatorData,
   fetchOwnerIdentities,
 } from './utils/blueprintHelpers';
+import { ServiceInstance } from './utils/type';
+import toPrimitiveService from './utils/toPrimitiveService';
 
 export default function useBlueprintListing() {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);
   const { operatorMap } = useRestakeOperatorMap();
   const { assets } = useRestakeAssets();
   const { operatorTVL } = useOperatorTVL(operatorMap, assets);
-
+  
   const { result, ...rest } = useApiRx(
     useCallback(
       (apiRx) => {
@@ -34,14 +36,15 @@ export default function useBlueprintListing() {
         }
 
         const blueprintEntries$ = apiRx.query.services.blueprints.entries();
+        const runningInstanceEntries$ = apiRx.query.services.instances.entries();
 
         const operatorEntries$ =
           apiRx.query.services.operators.entries<
             Option<TanglePrimitivesServicesTypesOperatorPreferences>
           >();
 
-        return combineLatest([blueprintEntries$, operatorEntries$]).pipe(
-          switchMap(async ([blueprintEntries, operatorEntries]) => {
+        return combineLatest([blueprintEntries$, runningInstanceEntries$, operatorEntries$]).pipe(
+          switchMap(async ([blueprintEntries, runningInstanceEntries, operatorEntries]) => {
             const { blueprintsMap, ownerSet } =
               extractBlueprintsData(blueprintEntries);
 
@@ -50,11 +53,28 @@ export default function useBlueprintListing() {
               ownerSet,
             );
 
+            // mapping from blueprint id to service instance
+            const runningInstancesMap = new Map<number, ServiceInstance[]>();
+
+            for (const [instanceId, mayBeServiceInstance] of runningInstanceEntries) {
+              const serviceInstanceId = instanceId.args[0].toNumber();
+
+              if (mayBeServiceInstance.isNone) {
+                continue;
+              }
+
+              const instanceData = toPrimitiveService(mayBeServiceInstance.unwrap());
+              runningInstancesMap.set(instanceData.blueprint, [...(runningInstancesMap.get(instanceData.blueprint) ?? []), {
+                instanceId: serviceInstanceId,
+                serviceInstance: instanceData,
+              }]);
+            }
+
             const {
               blueprintOperatorMap,
               blueprintRestakersMap,
               blueprintTVLMap,
-            } = extractOperatorData(operatorEntries, operatorMap, operatorTVL);
+            } = extractOperatorData(operatorEntries, operatorMap, operatorTVL, runningInstancesMap);
 
             return createBlueprintObjects(
               blueprintsMap,

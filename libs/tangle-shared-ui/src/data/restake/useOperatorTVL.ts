@@ -6,17 +6,16 @@ import safeFormatUnits from '../../utils/safeFormatUnits';
 const calculateTVL = (operatorMap: OperatorMap, assetMap: RestakeAssetMap) => {
   return Object.entries(operatorMap).reduce(
     (acc, [operatorId, operatorData]) => {
-      const operatorTVL = operatorData.delegations.reduce((sum, delegation) => {
+      operatorData.delegations.forEach((delegation) => {
         const asset = assetMap.get(delegation.assetId);
-
         if (asset === undefined) {
-          return sum;
+          return;
         }
 
         const assetPrice = asset.metadata.priceInUsd ?? null;
 
         if (typeof assetPrice !== 'number') {
-          return sum;
+          return;
         }
 
         const result = safeFormatUnits(
@@ -25,30 +24,31 @@ const calculateTVL = (operatorMap: OperatorMap, assetMap: RestakeAssetMap) => {
         );
 
         if (!result.success) {
-          return sum;
+          return;
         }
 
-        const amount = Number(result.value);
+        const amount = Number(result.value) * assetPrice;
 
-        // Calculate operator TVL.
-        sum += amount * assetPrice;
-
-        // Calculate vault TVL.
-        const vaultId = asset.metadata.vaultId;
-
-        if (vaultId !== null) {
-          acc.vaultTVL[vaultId] =
-            (acc.vaultTVL[vaultId] || 0) + amount * assetPrice;
+        // Initialize nested structure if it doesn't exist
+        if (!acc.operatorTVL[operatorId]) {
+          acc.operatorTVL[operatorId] = {};
         }
 
-        return sum;
-      }, 0);
+        // Add amount to the specific operator and asset combination
+        acc.operatorTVL[operatorId][delegation.assetId] = 
+          (acc.operatorTVL[operatorId][delegation.assetId] || 0) + amount;
 
-      acc.operatorTVL[operatorId] = operatorTVL;
+        // Track total TVL by asset ID
+        acc.vaultTVL[delegation.assetId] = 
+          (acc.vaultTVL[delegation.assetId] || 0) + amount;
+
+        return;
+      });
+
       return acc;
     },
     {
-      operatorTVL: {} as Record<string, number>,
+      operatorTVL: {} as Record<string, Record<string, number>>,
       vaultTVL: {} as Record<string, number>,
     },
   );
@@ -62,12 +62,10 @@ export const useOperatorTVL = (
     (input$) =>
       input$.pipe(
         switchMap(([operatorMap, assetMap]) => {
-          type Result = Record<string, number>;
-
           if (assetMap === null) {
             return of({
-              operatorTVL: {} satisfies Result as Result,
-              vaultTVL: {} satisfies Result as Result,
+              operatorTVL: {},
+              vaultTVL: {},
             });
           }
 

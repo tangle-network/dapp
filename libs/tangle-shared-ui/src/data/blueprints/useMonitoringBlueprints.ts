@@ -12,10 +12,17 @@ import {
 import { createMonitoringBlueprint } from './utils/blueprintHelpers';
 import { Option } from '@polkadot/types';
 import { TanglePrimitivesServicesService } from '@polkadot/types/lookup';
+import useRestakeOperatorMap from '../restake/useRestakeOperatorMap';
+import useRestakeAssets from '../restake/useRestakeAssets';
+import { useOperatorTVL } from '../restake/useOperatorTVL';
 
 export default function useMonitoringBlueprints(
   operatorAccountAddress?: string,
 ) {
+  const { operatorMap } = useRestakeOperatorMap();
+  const { assets } = useRestakeAssets();
+  const { operatorTVL } = useOperatorTVL(operatorMap, assets);
+
   const { result, ...rest } = useApiRx(
     useCallback(
       (apiRx) => {
@@ -30,12 +37,12 @@ export default function useMonitoringBlueprints(
           return of<MonitoringBlueprint[]>([]);
         }
 
-        const instanceEntries$ =
+        const operatorInstanceEntries$ =
           apiRx.query.services.instances.entries<
             Option<TanglePrimitivesServicesService>
           >();
 
-        const serviceInstances$ = instanceEntries$.pipe(
+        const operatorServiceInstances$ = operatorInstanceEntries$.pipe(
           map((entries) =>
             entries.map(
               (entry): ServiceInstance => ({
@@ -62,12 +69,37 @@ export default function useMonitoringBlueprints(
             ),
           );
 
-        return combineLatest([servicesWithBlueprints$, serviceInstances$]).pipe(
-          map(([blueprints, instances]) =>
-            blueprints.map((blueprint) =>
-              createMonitoringBlueprint(blueprint, instances),
-            ),
-          ),
+        const runningInstanceEntries$ = apiRx.query.services.instances.entries();
+        
+
+        return combineLatest([servicesWithBlueprints$, operatorServiceInstances$, runningInstanceEntries$]).pipe(
+          map(([blueprints, operatorInstances, runningInstanceEntries]) => {
+            // mapping from blueprint id to service instance
+            const runningInstancesMap = new Map<number, ServiceInstance[]>();
+
+            for (const [instanceId, mayBeServiceInstance] of runningInstanceEntries) {
+              const serviceInstanceId = instanceId.args[0].toNumber();
+
+              if (mayBeServiceInstance.isNone) {
+                continue;
+              }
+
+              const instanceData = toPrimitiveService(mayBeServiceInstance.unwrap());
+              runningInstancesMap.set(instanceData.blueprint, [...(runningInstancesMap.get(instanceData.blueprint) ?? []), {
+                instanceId: serviceInstanceId,
+                serviceInstance: instanceData,
+              }]);
+            }
+
+            return blueprints.map((blueprint) =>
+              createMonitoringBlueprint(
+                blueprint,
+                operatorInstances,
+                operatorTVL,
+                runningInstancesMap,
+              ),
+            );
+          }),
           catchError((error) => {
             console.error(
               'Error querying services with blueprints by operator:',
@@ -77,7 +109,7 @@ export default function useMonitoringBlueprints(
           }),
         );
       },
-      [operatorAccountAddress],
+      [operatorAccountAddress, operatorTVL],
     ),
   );
 
