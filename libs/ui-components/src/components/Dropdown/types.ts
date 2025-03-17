@@ -38,6 +38,10 @@ export interface DropdownButtonProps
    * Allow to pass a custom arrow element
    */
   arrowElement?: React.ReactNode | string;
+
+  labelClassName?: string;
+
+  iconClassName?: string;
 }
 
 type DropdownBodyPickedKeys = 'size';

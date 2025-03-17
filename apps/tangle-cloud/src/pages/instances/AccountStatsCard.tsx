@@ -107,7 +107,11 @@ export const AccountStatsCard: FC<AccountStatsCardProps> = (props) => {
         }
         title={identityName}
         description={
-          <KeyValueWithButton size="sm" keyValue={accountAddress ?? ''} />
+          <KeyValueWithButton
+            size="sm"
+            keyValue={accountAddress ?? ''}
+            className="!text-mono-120 dark:!text-mono-100 font-normal"
+          />
         }
         descExternalLink={accountExplorerUrl ?? ''}
         className="mb-10"
