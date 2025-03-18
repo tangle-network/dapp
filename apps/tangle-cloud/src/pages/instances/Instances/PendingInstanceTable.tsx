@@ -219,7 +219,7 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
           header: () => '',
           cell: (props) => {
             return (
-              <TableCellWrapper removeRightBorder className="max-w-24">
+              <TableCellWrapper removeRightBorder>
                 <div className="flex gap-2">
                   <Button variant="utility" className="uppercase body4">
                     Approve
