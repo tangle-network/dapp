@@ -19,6 +19,7 @@ import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/bluep
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
 import { Link } from 'react-router';
 import { PagePath } from '../../../types';
+import getTVLToDisplay from '@tangle-network/tangle-shared-ui/utils/getTVLToDisplay';
 
 export type RegisteredBlueprintsTableProps = {
   blueprints: MonitoringBlueprint[];
@@ -124,6 +125,18 @@ export const RegisteredBlueprints: FC<RegisteredBlueprintsTableProps> = ({
             <TableCellWrapper>
               {props.row.original.blueprint.operatorsCount?.toLocaleString() ??
                 EMPTY_VALUE_PLACEHOLDER}
+            </TableCellWrapper>
+          );
+        },
+      }),
+      columnHelper.accessor('blueprint.tvl', {
+        header: () => 'TVL',
+        cell: (props) => {
+          return (
+            <TableCellWrapper>
+              {props.row.original.blueprint.tvl
+                ? getTVLToDisplay(props.row.original.blueprint.tvl)
+                : EMPTY_VALUE_PLACEHOLDER}
             </TableCellWrapper>
           );
         },

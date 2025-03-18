@@ -21,6 +21,7 @@ import {
   ServiceInstance,
 } from './type';
 import { randNumber } from '@ngneat/falso';
+import { RestakeAssetId } from '../../../types';
 
 export function extractBlueprintsData(
   blueprintEntries: [
@@ -61,7 +62,8 @@ export function extractOperatorData(
     Option<TanglePrimitivesServicesTypesOperatorPreferences>,
   ][],
   operatorMap: OperatorMap,
-  operatorTVL: Record<string, number>,
+  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
+  runningInstancesMap: Map<number, ServiceInstance[]>,
 ) {
   const blueprintOperatorMap = new Map<number, Set<SubstrateAddress>>();
   const blueprintRestakersMap = new Map<number, Set<string>>();
@@ -104,17 +106,68 @@ export function extractOperatorData(
       }
     }
 
-    if (operatorTVL[operatorAccount] !== undefined) {
-      const currentTVL = blueprintTVLMap.get(blueprintId) ?? 0;
-
-      blueprintTVLMap.set(
-        blueprintId,
-        currentTVL + operatorTVL[operatorAccount],
-      );
-    }
+    const operatorExposure = calculateBlueprintOperatorExposure(
+      runningInstancesMap,
+      blueprintId,
+      operatorTVLByAsset,
+    );
+    blueprintTVLMap.set(blueprintId, operatorExposure);
   }
 
   return { blueprintOperatorMap, blueprintRestakersMap, blueprintTVLMap };
+}
+
+function calculateBlueprintOperatorExposure(
+  runningInstancesMap: Map<number, ServiceInstance[]>,
+  blueprintId: number,
+  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
+) {
+  const PERCENT_DIVISOR = 100;
+
+  let blueprintTVL = 0;
+
+  const instances = runningInstancesMap.get(blueprintId);
+  if (instances === undefined) {
+    return 0;
+  }
+
+  for (const instance of instances) {
+    const operatorExposure =
+      instance.serviceInstance?.operatorSecurityCommitments?.reduce(
+        (acc, commitment) => {
+          const operatorTVL = operatorTVLByAsset.get(commitment.operator);
+          if (operatorTVL === undefined) {
+            return acc;
+          }
+
+          const exposureAmount = commitment.securityCommitments.reduce(
+            (acc, securityCommitment) => {
+              const assetTVL = operatorTVL.get(securityCommitment.asset);
+              if (assetTVL === undefined) {
+                return acc;
+              }
+
+              const exposurePercent =
+                (assetTVL * securityCommitment.exposurePercent) /
+                PERCENT_DIVISOR;
+              return acc + exposurePercent;
+            },
+            0,
+          );
+
+          return acc + exposureAmount;
+        },
+        0,
+      );
+
+    if (operatorExposure === undefined) {
+      continue;
+    }
+
+    blueprintTVL += operatorExposure;
+  }
+
+  return blueprintTVL;
 }
 
 export function createBlueprintObjects(
@@ -174,6 +227,8 @@ export async function fetchOwnerIdentities(
 export function createMonitoringBlueprint(
   operatorBlueprints: OperatorBlueprint,
   serviceInstances: ServiceInstance[],
+  operatorTVLByAsset: Map<SubstrateAddress, Map<RestakeAssetId, number>>,
+  runningInstancesMap: Map<number, ServiceInstance[]>,
 ): MonitoringBlueprint {
   const totalOperator = operatorBlueprints.services.reduce((acc, service) => {
     return acc + service.operatorSecurityCommitments.length;
@@ -184,10 +239,17 @@ export function createMonitoringBlueprint(
       instance.serviceInstance?.blueprint === operatorBlueprints.blueprintId,
   ).length;
 
+  const blueprintTVL = calculateBlueprintOperatorExposure(
+    runningInstancesMap,
+    operatorBlueprints.blueprintId,
+    operatorTVLByAsset,
+  );
+
   const blueprintData = {
     ...operatorBlueprints.blueprint,
     instanceCount: instanceCount,
     operatorsCount: totalOperator,
+    tvl: blueprintTVL,
     // TODO: get uptime from the graphql
     uptime: randNumber({ min: 0, max: 100 }),
   };
