@@ -14,8 +14,8 @@ export function useOperatorConcentration(
       input$.pipe(
         switchMap(([operatorTVL, totalNetworkTVL]) => {
           const operatorConcentration = Object.entries(operatorTVL).reduce(
-            (acc, [_operatorId, operatorTVL]) => {
-              const operatorId = assertSubstrateAddress(_operatorId);
+            (acc, [operatorId_, operatorTVL]) => {
+              const operatorId = assertSubstrateAddress(operatorId_);
               acc.set(
                 operatorId,
                 totalNetworkTVL > 0

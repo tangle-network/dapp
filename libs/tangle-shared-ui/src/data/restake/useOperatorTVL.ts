@@ -17,8 +17,8 @@ const calculateTVL = (
   assetMap: RestakeAssetMap,
 ): OperatorTVLType => {
   return Object.entries(operatorMap).reduce(
-    (acc: OperatorTVLType, [_operatorId, operatorData]) => {
-      const operatorId = assertSubstrateAddress(_operatorId);
+    (acc: OperatorTVLType, [operatorId_, operatorData]) => {
+      const operatorId = assertSubstrateAddress(operatorId_);
 
       operatorData.delegations.forEach((delegation) => {
         const asset = assetMap.get(delegation.assetId);
