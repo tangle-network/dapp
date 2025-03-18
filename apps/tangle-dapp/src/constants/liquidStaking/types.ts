@@ -1,4 +1,7 @@
-import { PalletAssetsAssetAccount } from '@polkadot/types/lookup';
+import {
+  PalletAssetsAssetAccount,
+  PalletTangleLstPoolsPoolState,
+} from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import { NetworkId } from '@tangle-network/ui-components/constants/networks';
@@ -44,6 +47,7 @@ export type LsPool = {
   commissionFractional?: number;
   members: Map<SubstrateAddress, PalletAssetsAssetAccount>;
   iconUrl?: string;
+  state: PalletTangleLstPoolsPoolState['type'];
 };
 
 export type LsPoolUnstakeRequest = {

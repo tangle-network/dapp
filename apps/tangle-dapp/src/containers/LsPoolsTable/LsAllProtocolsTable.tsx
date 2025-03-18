@@ -153,7 +153,8 @@ const LsAllProtocolsTable: FC = () => {
       return [];
     }
 
-    return Array.from(lsPools.values());
+    // Only include open pools.
+    return Array.from(lsPools.values()).filter((pool) => pool.state === 'Open');
   }, [lsPools]);
 
   const rows = useMemo<LsProtocolRow[]>(() => {

@@ -16,20 +16,13 @@ import { z } from 'zod';
 
 type Props = {
   poolId: number | null;
-  currentState: PalletTangleLstPoolsPoolState['type'] | null;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 };
 
-const LsSetPoolStateModal: FC<Props> = ({
-  poolId,
-  currentState,
-  isOpen,
-  setIsOpen,
-}) => {
-  const [state, setState] = useState<
-    PalletTangleLstPoolsPoolState['type'] | null
-  >(null);
+const LsSetPoolStateModal: FC<Props> = ({ poolId, isOpen, setIsOpen }) => {
+  const [state, setState] =
+    useState<PalletTangleLstPoolsPoolState['type']>('Open');
 
   const { execute, status } = useLsPoolSetStateTx();
 
@@ -37,7 +30,6 @@ const LsSetPoolStateModal: FC<Props> = ({
     poolId !== null &&
     execute !== null &&
     state !== null &&
-    state !== currentState &&
     status !== TxStatus.PROCESSING;
 
   const handleSetStateClick = useCallback(() => {

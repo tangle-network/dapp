@@ -1,24 +1,26 @@
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import {
-  EMPTY_VALUE_PLACEHOLDER,
-  Typography,
-} from '@tangle-network/ui-components';
+import { SkeletonLoader, Typography } from '@tangle-network/ui-components';
 import { FC } from 'react';
+import InputWrapper from '../InputWrapper';
 
 const LsProtocolChip: FC = () => {
-  const networkTokenSymbol = useNetworkStore(
-    (store) => store.network2?.tokenSymbol,
-  );
+  const network = useNetworkStore((store) => store.network2);
 
   return (
-    <div className="flex items-center justify-center gap-2 rounded-lg">
-      <LsTokenIcon name="tnt" />
+    <InputWrapper title="Protocol" id="ls-protocol-chip" isFullWidth>
+      <div className="flex items-center justify-start gap-2 rounded-lg">
+        <LsTokenIcon name="tnt" />
 
-      <Typography variant="h5" fw="bold">
-        {networkTokenSymbol ?? EMPTY_VALUE_PLACEHOLDER}
-      </Typography>
-    </div>
+        {network !== undefined ? (
+          <Typography variant="h5" fw="bold">
+            {network.name} &mdash; {network.tokenSymbol}
+          </Typography>
+        ) : (
+          <SkeletonLoader className="w-20" />
+        )}
+      </div>
+    </InputWrapper>
   );
 };
 

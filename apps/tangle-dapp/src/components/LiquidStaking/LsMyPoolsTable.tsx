@@ -363,7 +363,6 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
 
       <LsSetPoolStateModal
         poolId={selectedPoolId}
-        currentState="Open"
         isOpen={isSetStateModalOpen}
         setIsOpen={setIsSetStateModalOpen}
       />

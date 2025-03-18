@@ -34,11 +34,6 @@ const useLsBondedPools = () => {
 
       const tanglePool = valueOpt.unwrap();
 
-      // Ignore all non-open pools.
-      if (!tanglePool.state.isOpen) {
-        return [];
-      }
-
       return [[poolIdKey.args[0].toNumber(), tanglePool] as const];
     });
   }, [rawBondedPools]);
