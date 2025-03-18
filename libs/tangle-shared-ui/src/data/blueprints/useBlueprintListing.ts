@@ -16,7 +16,7 @@ import {
   fetchOwnerIdentities,
 } from './utils/blueprintHelpers';
 import { ServiceInstance } from './utils/type';
-import toPrimitiveService from './utils/toPrimitiveService';
+import { toPrimitiveService } from './utils/toPrimitiveService';
 
 export default function useBlueprintListing() {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);

@@ -25,7 +25,7 @@ import { toPrimitiveBlueprint } from '../blueprints/utils/toPrimitiveBlueprint';
 import useRestakeAssets from './useRestakeAssets';
 import useRestakeOperatorMap from './useRestakeOperatorMap';
 import { ServiceInstance } from '../blueprints/utils/type';
-import toPrimitiveService from '../blueprints/utils/toPrimitiveService';
+import { toPrimitiveService } from '../blueprints/utils/toPrimitiveService';
 
 const useBlueprintDetails = (id?: string) => {
   const rpcEndpoint = useNetworkStore((store) => store.network.wsRpcEndpoint);

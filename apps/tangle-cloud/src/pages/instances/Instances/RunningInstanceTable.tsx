@@ -45,7 +45,7 @@ export const RunningInstanceTable: FC<RunningInstanceTabProps> = ({
         cell: (props) => {
           return (
             <TableCellWrapper>
-              <div className="flex items-center gap-2 w-full">
+              <div className="flex items-center gap-2 w-11/12">
                 {props.row.original.blueprintData?.metadata?.logo ? (
                   <Avatar
                     size="lg"
