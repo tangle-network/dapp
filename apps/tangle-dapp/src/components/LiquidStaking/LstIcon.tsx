@@ -1,13 +1,10 @@
 import { TokenIcon } from '@tangle-network/icons';
-import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import getLsProtocolDef from '../../utils/liquidStaking/getLsProtocolDef';
 import { LstIconSize } from './types';
 
-export type LstIconProps = {
-  lsProtocolId: LsProtocolId;
+type Props = {
   iconUrl?: string;
   size?: LstIconSize;
 };
@@ -21,19 +18,9 @@ const getTailwindSize = (size: LstIconSize) => {
   }
 };
 
-const LstIcon: FC<LstIconProps> = ({
-  iconUrl,
-  lsProtocolId,
-  size = LstIconSize.MD,
-}) => {
-  const lsProtocol = getLsProtocolDef(lsProtocolId);
-
+const LstIcon: FC<Props> = ({ iconUrl, size = LstIconSize.MD }) => {
   return iconUrl === undefined ? (
-    <TokenIcon
-      size="md"
-      name={lsProtocol.token}
-      className={getTailwindSize(size)}
-    />
+    <TokenIcon size="md" name="tangle" className={getTailwindSize(size)} />
   ) : (
     <img
       className={twMerge(
@@ -41,7 +28,7 @@ const LstIcon: FC<LstIconProps> = ({
         getTailwindSize(size),
       )}
       src={iconUrl}
-      alt={`${lsProtocol.name} icon`}
+      alt="Tangle's icon"
       width={size}
       height={size}
     />
