@@ -18,7 +18,7 @@ interface CreateIconOptions extends IconBase {
   /**
    * The `svg` path or group element
    */
-  path?: React.ReactElement | React.ReactElement[];
+  path?: React.ReactElement;
   /**
    * If the `svg` has a single path, simply copy the path's `d` attribute
    */
