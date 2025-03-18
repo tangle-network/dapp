@@ -15,7 +15,11 @@ export const BlueprintManagementSection: FC<
 > = ({ isOperator }) => {
   const operatorAccountAddress = useSubstrateAddress();
 
-  const { isLoading, blueprints: registeredBlueprints, error } = useMonitoringBlueprints(operatorAccountAddress);
+  const {
+    isLoading,
+    blueprints: registeredBlueprints,
+    error,
+  } = useMonitoringBlueprints(operatorAccountAddress);
 
   const runningInstances = useMemo(() => {
     if (registeredBlueprints.length === 0) {

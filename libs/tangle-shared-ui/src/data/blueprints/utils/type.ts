@@ -50,7 +50,6 @@ export type MonitoringServiceRequest = ReturnType<
   approvedOperators?: SubstrateAddress[];
 };
 
-
 export interface ServiceInstance {
   instanceId: number;
   serviceInstance?: ReturnType<typeof toPrimitiveService>;

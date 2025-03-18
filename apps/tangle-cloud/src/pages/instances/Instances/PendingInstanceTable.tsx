@@ -55,10 +55,7 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
   const { result: assets } = useAssetsMetadata(assetIds);
 
   const columns = useMemo(() => {
-    const baseColumns: AccessorKeyColumnDef<
-    MonitoringServiceRequest,
-      any
-    >[] = [
+    const baseColumns: AccessorKeyColumnDef<MonitoringServiceRequest, any>[] = [
       columnHelper.accessor('blueprint', {
         header: () => 'Blueprint',
         enableSorting: false,
@@ -189,9 +186,9 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
                     <Link
                       to={
                         network.createExplorerAccountUrl(
-                          isEvmAddress(props.row.original.ownerAccount)
-                            ? props.row.original.ownerAccount
-                            : toSubstrateAddress(props.row.original.ownerAccount),
+                          isEvmAddress(props.row.original.owner)
+                            ? props.row.original.owner
+                            : toSubstrateAddress(props.row.original.owner),
                         ) ?? ''
                       }
                       target="_blank"
@@ -271,7 +268,10 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
               <TableCellWrapper>
                 {props.row.original.requestCreatedAtBlock ? (
                   <>
-                    Block {addCommasToNumber(props.row.original.requestCreatedAtBlock)}
+                    Block{' '}
+                    {addCommasToNumber(
+                      props.row.original.requestCreatedAtBlock,
+                    )}
                   </>
                 ) : (
                   EMPTY_VALUE_PLACEHOLDER
