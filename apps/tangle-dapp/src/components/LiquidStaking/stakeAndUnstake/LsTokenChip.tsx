@@ -3,20 +3,30 @@ import { Typography } from '@tangle-network/ui-components';
 import { FC } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { LsToken } from '../../../constants/liquidStaking/types';
 import DropdownChevronIcon from '../../DropdownChevronIcon';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import { LsToken } from '../../../constants/liquidStaking/types';
 
 type LsTokenChipProps = {
-  token?: LsToken;
   isDerivativeVariant: boolean;
   onClick?: () => void;
 };
 
 const LsTokenChip: FC<LsTokenChipProps> = ({
-  token,
   isDerivativeVariant,
   onClick,
 }) => {
+  const networkTokenSymbol = useNetworkStore(
+    (store) => store.network2?.tokenSymbol,
+  );
+
+  const token =
+    networkTokenSymbol === undefined
+      ? LsToken.T_TNT
+      : networkTokenSymbol === 'TNT'
+        ? LsToken.TNT
+        : LsToken.T_TNT;
+
   return (
     <div
       onClick={onClick}
