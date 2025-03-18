@@ -219,7 +219,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
           // Bouncer can close or open entry into the pool.
           if (props.row.original.isBouncer) {
             actionItems.push({
-              label: 'Close or Destroy',
+              label: 'Set State',
               onClick: () => {
                 setSelectedPoolId(props.row.original.id);
                 setIsSetStateModalOpen(true);
