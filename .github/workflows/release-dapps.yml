@@ -1,10 +1,13 @@
-name: 'Release 🚀'
+name: 'Release dApps 🚀'
+
 on:
   push:
     branches:
       - master
+
     paths-ignore:
       - '.github/workflows/**'
+
   workflow_dispatch:
 
 jobs:
@@ -19,16 +22,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  Build-Publish:
-    name: Build-Publish
+  build-publish:
+    name: Build and Publish
     needs: pre-ci
-    if: "!startsWith(github.event.head_commit.message, '[SKIP CI]') && startsWith(github.event.head_commit.message, '[RELEASE]') && github.repository == 'tangle-network/dapp'"
     runs-on: ubuntu-latest
+
+    if: ( !startsWith(github.event.head_commit.message, '[SKIP CI]') &&
+      startsWith(github.event.head_commit.message, '[RELEASE]') &&
+      github.repository == 'tangle-network/dapp' )
+
     steps:
       #Check out
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 100
+          fetch-depth: 0
 
       - name: Enable corepack
         run: |
@@ -59,17 +66,17 @@ jobs:
         # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
-        run: yarn nx run-many --all --target=build
+        run: yarn run build
 
       # Create github release
-      - name: Release tangle dapp
+      - name: Release Tangle dApp
         if: steps.changed-tangle-dapp.outputs.changed == 'true'
         uses: ./.github/actions/create-release
         with:
           package-path: apps/tangle-dapp
           repo-token: ${{ secrets.REPO_TOKEN }}
 
-      - name: Release tangle cloud
+      - name: Release Tangle Cloud
         if: steps.changed-tangle-cloud.outputs.changed == 'true'
         uses: ./.github/actions/create-release
         with:

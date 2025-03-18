@@ -2,9 +2,10 @@
 
 import { releaseChangelog, releaseVersion } from 'nx/release/index.js';
 import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
 
 (async () => {
-  const options = await yargs(process.argv.slice(2))
+  const options = await yargs(hideBin(process.argv))
     .version(false) // don't use the default meaning of version in yargs
     .option('version', {
       description:

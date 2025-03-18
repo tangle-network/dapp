@@ -25,9 +25,10 @@
     "format": "prettier --write \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx,svg}\" ",
     "format:check": "prettier --check \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx,svg}\" ",
     "pr:check": "prettier --write \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx,svg}\" && yarn lint && yarn build",
-    "chromatic": "npx chromatic --build-script-name=build:storybook --exit-zero-on-changes",
+    "chromatic": "chromatic --build-script-name=build:storybook --exit-zero-on-changes",
     "generate:release": "node ./tools/release.js",
-    "codegen": "npx graphql-codegen --config codegen.ts",
+    "publish:libs": "node ./tools/publishLibs.js",
+    "codegen": "graphql-codegen --config codegen.ts",
     "check:codegen": "node ./tools/checkCodegen.js"
   },
   "resolutions": {

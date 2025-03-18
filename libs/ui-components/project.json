@@ -20,13 +20,6 @@
         }
       }
     },
-    "publish": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "node tools/scripts/publish.mjs ui-components {args.ver} {args.tag}"
-      },
-      "dependsOn": ["build"]
-    },
     "test": {
       "outputs": [
         "{projectRoot}/{options.coverage.reportsDirectory}",

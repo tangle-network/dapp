@@ -1,0 +1,86 @@
+name: 'Release Libraries 📦'
+
+on:
+  push:
+    branches:
+      - develop
+
+    paths:
+      - 'libs/**/CHANGELOG.md'
+
+    paths-ignore:
+      - '.github/workflows/**'
+
+  workflow_dispatch:
+
+jobs:
+  pre-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: 'Block Concurrent Executions'
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 10
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-publish:
+    name: Build and Publish
+    needs: pre-ci
+    runs-on: ubuntu-latest
+
+    if: ( !startsWith(github.event.head_commit.message, '[SKIP CI]') &&
+      startsWith(github.event.head_commit.message, '[RELEASE]') &&
+      github.repository == 'tangle-network/dapp' )
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 'Changed Files'
+        uses: tj-actions/changed-files@v46
+        id: changed-files
+        with:
+          files: 'libs/**/CHANGELOG.md'
+          separator: ','
+
+      - name: 'Detect Libraries to Publish'
+        run: |
+          echo "Changed Files: ${{ steps.changed-files.outputs.all_changed_files }}"
+
+          # Extract library names from changed files paths and create comma-separated list
+          LIBS_TO_PUBLISH=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | \
+            tr ',' '\n' | \
+            grep -o 'libs/[^/]*' | \
+            sed 's/libs\///' | \
+            tr '\n' ',' | \
+            sed 's/,$//')
+
+          echo "Libraries to publish: $LIBS_TO_PUBLISH"
+          echo "LIBS_TO_PUBLISH=$LIBS_TO_PUBLISH" >> $GITHUB_ENV
+
+      - name: Enable corepack
+        run: |
+          corepack enable
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4.2.0
+        with:
+          node-version: '>=18.12.x'
+          cache: yarn
+
+      - name: Install deps
+        run: yarn install
+
+      - name: Build
+        # Fix: JavaScript heap out of memory
+        # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'
+        run: yarn build
+
+      - name: Publish
+        run: yarn run publish:libs --projects $LIBS_TO_PUBLISH --dryRun false
