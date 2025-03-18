@@ -8,9 +8,6 @@ on:
     paths:
       - 'libs/**/CHANGELOG.md'
 
-    paths-ignore:
-      - '.github/workflows/**'
-
   workflow_dispatch:
 
 jobs:
@@ -28,11 +25,13 @@ jobs:
   build-publish:
     name: Build and Publish
     needs: pre-ci
-    runs-on: ubuntu-latest
 
-    if: ( !startsWith(github.event.head_commit.message, '[SKIP CI]') &&
-      startsWith(github.event.head_commit.message, '[RELEASE]') &&
-      github.repository == 'tangle-network/dapp' )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+      id-token: write
 
     steps:
       - name: 'Checkout'
@@ -71,16 +70,27 @@ jobs:
         with:
           node-version: '>=18.12.x'
           cache: yarn
+          registry-url: https://registry.npmjs.org/
 
       - name: Install deps
         run: yarn install
+        shell: bash
+
+      - name: Print Environment Info
+        run: yarn nx report
+        shell: bash
 
       - name: Build
         # Fix: JavaScript heap out of memory
         # https://github.com/actions/runner-images/issues/70#issuecomment-1191708172
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'
-        run: yarn build
+        run: yarn nx run-many --target=build --projects $LIBS_TO_PUBLISH
+        shell: bash
 
-      - name: Publish
-        run: yarn run publish:libs --projects $LIBS_TO_PUBLISH --dryRun false
+      - name: Publish libraries
+        uses: ./.github/actions/create-lib-release
+        with:
+          projects: $LIBS_TO_PUBLISH
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          npm-token: ${{ secrets.NPM_ACCESS_TOKEN }}

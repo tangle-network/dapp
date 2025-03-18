@@ -27,7 +27,6 @@
     "pr:check": "prettier --write \"{libs,apps,tools}/**/*.{ts,js,jsx,tsx,svg}\" && yarn lint && yarn build",
     "chromatic": "chromatic --build-script-name=build:storybook --exit-zero-on-changes",
     "generate:release": "node ./tools/release.js",
-    "publish:libs": "node ./tools/publishLibs.js",
     "codegen": "graphql-codegen --config codegen.ts",
     "check:codegen": "node ./tools/checkCodegen.js"
   },

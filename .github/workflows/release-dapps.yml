@@ -71,14 +71,14 @@ jobs:
       # Create github release
       - name: Release Tangle dApp
         if: steps.changed-tangle-dapp.outputs.changed == 'true'
-        uses: ./.github/actions/create-release
+        uses: ./.github/actions/create-dapp-release
         with:
           package-path: apps/tangle-dapp
           repo-token: ${{ secrets.REPO_TOKEN }}
 
       - name: Release Tangle Cloud
         if: steps.changed-tangle-cloud.outputs.changed == 'true'
-        uses: ./.github/actions/create-release
+        uses: ./.github/actions/create-dapp-release
         with:
           package-path: apps/tangle-cloud
           repo-token: ${{ secrets.REPO_TOKEN }}

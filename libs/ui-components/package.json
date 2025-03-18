@@ -23,7 +23,7 @@
     "url": "https://github.com/tangle-network/dapp"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "exports": {
     ".": {
