@@ -59,7 +59,7 @@ async function publishToGithub(releaseInfo, version, project, repo, owner) {
       authorization: `token ${process.env.GITHUB_TOKEN}`,
     },
     owner,
-    name: `[${version}] ${project}`,
+    name: `[${version}] @${owner}/${project}`,
     repo,
     tag_name: `${project}/${version}`,
     body: releaseInfo,
