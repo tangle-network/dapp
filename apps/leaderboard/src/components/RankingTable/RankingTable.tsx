@@ -39,7 +39,10 @@ const getColumns = (pageIndex: number, pageSize: number) => [
   COLUMN_HELPER.accessor('id', {
     header: () => <HeaderCell title="Address" />,
     cell: (cellCtx) => (
-      <ValidatorIdentity address={assertSubstrateAddress(cellCtx.getValue())} />
+      <ValidatorIdentity
+        showAddressInTooltip
+        address={assertSubstrateAddress(cellCtx.getValue())}
+      />
     ),
   }),
 

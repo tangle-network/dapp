@@ -71,9 +71,6 @@ export const Avatar: React.FC<AvatarProps> = ({
           size={getAvatarSizeInPx(size)}
           value={valueAddress}
           theme={theme}
-          style={{
-            cursor: 'auto',
-          }}
         />
       )}
 

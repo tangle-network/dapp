@@ -6,6 +6,7 @@ import type { ValidatorIdentityProps } from './types';
 import { shortenString } from '../../utils/shortenString';
 import { CopyWithTooltip } from '../CopyWithTooltip';
 import ExternalLinkIcon from '../ExternalLinkIcon';
+import { Tooltip, TooltipBody, TooltipTrigger } from '../Tooltip';
 
 type Props = ComponentProps<'div'> & ValidatorIdentityProps;
 
@@ -16,6 +17,9 @@ export const ValidatorIdentity = forwardRef<HTMLDivElement, Props>(
       identityName,
       accountExplorerUrl,
       displayCharacterCount = 6,
+      avatarSize,
+      textVariant = 'body1',
+      showAddressInTooltip,
       className,
       ...props
     },
@@ -27,13 +31,34 @@ export const ValidatorIdentity = forwardRef<HTMLDivElement, Props>(
         className={twMerge('flex items-center space-x-2', className)}
         ref={ref}
       >
-        <Avatar sourceVariant="address" value={address} theme="substrate">
+        <Avatar
+          sourceVariant="address"
+          value={address}
+          size={avatarSize}
+          theme="substrate"
+        >
           {address}
         </Avatar>
 
-        <Typography variant="body1" fw="normal" className="truncate">
-          {identityName || shortenString(address, displayCharacterCount)}
-        </Typography>
+        {!showAddressInTooltip ? (
+          <Typography variant={textVariant} fw="normal" className="truncate">
+            {identityName || shortenString(address, displayCharacterCount)}
+          </Typography>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger>
+              <Typography
+                variant={textVariant}
+                fw="normal"
+                className="truncate"
+              >
+                {identityName || shortenString(address, displayCharacterCount)}
+              </Typography>
+            </TooltipTrigger>
+
+            <TooltipBody className="max-w-none">{address}</TooltipBody>
+          </Tooltip>
+        )}
 
         <CopyWithTooltip
           copyLabel="Copy Address"
