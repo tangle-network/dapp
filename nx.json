@@ -5,10 +5,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"],
-      "outputs": [
-        "{workspaceRoot}/dist/apps/tangle-dapp",
-        "{workspaceRoot}/dist/apps/testnet-leaderboard"
-      ],
+      "outputs": ["{workspaceRoot}/dist"],
       "cache": true
     },
     "build-storybook": {

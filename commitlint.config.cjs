@@ -15,7 +15,6 @@ module.exports = {
         'tangle-cloud',
         'leaderboard',
         'tangle-shared-ui',
-        'testnet-leaderboard',
         'ui-components',
         'icons',
         'tools',
