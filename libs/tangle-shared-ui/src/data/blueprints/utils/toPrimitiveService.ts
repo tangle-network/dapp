@@ -98,7 +98,7 @@ export function toPrimitiveOperatorsWithApprovalState(
           });
         break;
       default:
-        throw new Error('Unknown approval state type');
+        throw new Error(`Unknown approval state type: ${approvalState.type}`);
     }
 
     return result;
