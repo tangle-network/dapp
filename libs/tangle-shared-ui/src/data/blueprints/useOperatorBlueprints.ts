@@ -1,5 +1,5 @@
 import { toPrimitiveBlueprint } from './utils/toPrimitiveBlueprint';
-import toPrimitiveService from './utils/toPrimitiveService';
+import { toPrimitiveService } from './utils/toPrimitiveService';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
 import { useCallback } from 'react';

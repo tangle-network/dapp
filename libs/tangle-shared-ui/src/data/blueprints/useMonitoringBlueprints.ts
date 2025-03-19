@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { toPrimitiveBlueprint } from './utils/toPrimitiveBlueprint';
-import toPrimitiveService from './utils/toPrimitiveService';
+import { toPrimitiveService } from './utils/toPrimitiveService';
 import { catchError, combineLatest, map, of } from 'rxjs';
 import useApiRx from '../../hooks/useApiRx';
 import { TangleError, TangleErrorCode } from '../../types/error';
@@ -15,9 +15,10 @@ import { TanglePrimitivesServicesService } from '@polkadot/types/lookup';
 import useRestakeOperatorMap from '../restake/useRestakeOperatorMap';
 import useRestakeAssets from '../restake/useRestakeAssets';
 import { useOperatorTVL } from '../restake/useOperatorTVL';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 export default function useMonitoringBlueprints(
-  operatorAccountAddress?: string,
+  operatorAccountAddress?: SubstrateAddress | null,
 ) {
   const { operatorMap } = useRestakeOperatorMap();
   const { assets } = useRestakeAssets();

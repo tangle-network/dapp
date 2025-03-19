@@ -1,8 +1,9 @@
-import toPrimitiveService from './toPrimitiveService';
+import { toPrimitiveService } from './toPrimitiveService';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 function randPrimitiveService(
   id: number,
-  operatorAccountAddr: string,
+  operatorAccountAddr: SubstrateAddress,
 ): ReturnType<typeof toPrimitiveService> {
   return {
     id: 10000 + id,
@@ -12,7 +13,12 @@ function randPrimitiveService(
     operatorSecurityCommitments: [],
     securityRequirements: [],
     membershipModel: {
-      dynamic: {
+      Dynamic: {
+        minOperators: 1,
+        maxOperators: 10,
+      },
+      type: 'Dynamic',
+      membershipModelValue: {
         minOperators: 1,
         maxOperators: 10,
       },

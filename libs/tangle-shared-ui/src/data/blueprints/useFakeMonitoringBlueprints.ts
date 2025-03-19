@@ -17,7 +17,7 @@ const generateBlueprints = (operatorAccount: string): MonitoringBlueprint[] => {
         operatorsCount: randNumber({ min: 0, max: 100 }),
       };
       const service: MonitoringBlueprint['services'][number] = {
-        ...randPrimitiveService(idx, operatorAccount),
+        ...randPrimitiveService(idx, operatorAccountAddress),
         blueprintData: blueprint,
         uptime: randNumber({ min: 0, max: 100 }),
         earned: randNumber({ min: 0, max: 1000000 }),
