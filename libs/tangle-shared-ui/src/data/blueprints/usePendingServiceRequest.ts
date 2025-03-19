@@ -26,7 +26,7 @@ export default function usePendingServiceRequest(
           catchError((error) => {
             console.error('Error querying service requests:', error);
             return of([]);
-          })
+          }),
         );
       },
       [operatorAccountAddress],
@@ -37,21 +37,21 @@ export default function usePendingServiceRequest(
     if (!serviceRequestEntries) return [];
 
     return serviceRequestEntries
-      .map(([requestId, serviceRequest]) => 
-        toPrimitiveServiceRequest(requestId[0], serviceRequest.unwrap())
+      .map(([requestId, serviceRequest]) =>
+        toPrimitiveServiceRequest(requestId[0], serviceRequest.unwrap()),
       )
-      .filter((serviceRequest) => 
+      .filter((serviceRequest) =>
         serviceRequest.operatorsWithApprovalState.some(
-          (operator) => 
+          (operator) =>
             operator.operator === operatorAccountAddress &&
-            operator.approvalStateStatus === 'Pending'
-        )
+            operator.approvalStateStatus === 'Pending',
+        ),
       );
   }, [serviceRequestEntries, operatorAccountAddress]);
 
   const blueprintIds = useMemo(() => {
     return primitiveServiceRequests.map(
-      (serviceRequest) => serviceRequest.blueprint
+      (serviceRequest) => serviceRequest.blueprint,
     );
   }, [primitiveServiceRequests]);
 
@@ -59,21 +59,21 @@ export default function usePendingServiceRequest(
     useCallback(
       (apiRx) => {
         if (!blueprintIds.length) return of([]);
-        
+
         return apiRx.query.services.blueprints.multi(blueprintIds).pipe(
-          map((blueprints) => 
+          map((blueprints) =>
             blueprints
               .map((blueprint) => blueprint.unwrap())
-              .map(([_, blueprint]) => toPrimitiveBlueprint(blueprint))
+              .map(([_, blueprint]) => toPrimitiveBlueprint(blueprint)),
           ),
           catchError((error) => {
             console.error('Error querying blueprints:', error);
             return of([]);
-          })
+          }),
         );
       },
-      [blueprintIds]
-    )
+      [blueprintIds],
+    ),
   );
 
   const finalResult = useMemo(() => {
