@@ -7,7 +7,8 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
 };
 
 const useTxNotification = () => {
-  const { notifyProcessing, notifySuccess, notifyError } = useSharedTxNotification<TxName>(SUCCESS_MESSAGES);
+  const { notifyProcessing, notifySuccess, notifyError } =
+    useSharedTxNotification<TxName>(SUCCESS_MESSAGES);
 
   return { notifyProcessing, notifySuccess, notifyError };
 };

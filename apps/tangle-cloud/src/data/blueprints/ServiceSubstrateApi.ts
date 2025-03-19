@@ -5,7 +5,10 @@ import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { BN } from '@polkadot/util';
 import { isEvmAddress } from '@tangle-network/ui-components';
 import { TxName } from '../../constants';
-import BaseSubstrateApi, { TxFailureCallback, TxSuccessCallback } from '../base/BaseSubstrateApi';
+import BaseSubstrateApi, {
+  TxFailureCallback,
+  TxSuccessCallback,
+} from '../base/BaseSubstrateApi';
 
 class ServiceSubstrateApi extends BaseSubstrateApi {
   constructor(
@@ -27,9 +30,9 @@ class ServiceSubstrateApi extends BaseSubstrateApi {
   approveServiceRequest(
     requestId: number,
     operatorCommitments: {
-      assetId: RestakeAssetId,
-      exposurePercent: number,
-    }[]
+      assetId: RestakeAssetId;
+      exposurePercent: number;
+    }[],
   ) {
     const securityCommitments = operatorCommitments.map((commitment) => ({
       assetId: isEvmAddress(commitment.assetId)

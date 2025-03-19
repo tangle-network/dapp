@@ -1,5 +1,7 @@
 import { TxName } from '../constants';
-import useSharedTxNotification from '@tangle-network/tangle-shared-ui/hooks/useTxNotification';
+import useSharedTxNotification, {
+  type NotificationSteps,
+} from '@tangle-network/tangle-shared-ui/hooks/useTxNotification';
 
 const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.BOND]: 'Bonded tokens into staking',
@@ -49,8 +51,10 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
 };
 
 const useTxNotification = () => {
-  const { notifyProcessing, notifySuccess, notifyError } = useSharedTxNotification(SUCCESS_MESSAGES);
+  const { notifyProcessing, notifySuccess, notifyError } =
+    useSharedTxNotification(SUCCESS_MESSAGES);
   return { notifyProcessing, notifySuccess, notifyError };
 };
 
-export default useTxNotification;
+export type { NotificationSteps };
+export { useTxNotification as default };

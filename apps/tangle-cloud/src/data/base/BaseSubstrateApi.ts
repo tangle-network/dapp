@@ -46,7 +46,6 @@ class BaseSubstrateApi {
     };
   };
 
-
   protected async submitTx(
     txName: TxName,
     extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
@@ -57,8 +56,6 @@ class BaseSubstrateApi {
       this.handleStatusUpdate(txName),
     );
   }
-
-
 }
 
 export default BaseSubstrateApi;

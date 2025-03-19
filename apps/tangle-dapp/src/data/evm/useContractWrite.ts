@@ -25,8 +25,9 @@ import { TxName } from '../../constants';
 import { IS_PRODUCTION_ENV } from '../../constants/env';
 import useEvmAddress20 from '../../hooks/useEvmAddress';
 import useTxNotification, {
-  NotificationSteps,
+  type NotificationSteps,
 } from '../../hooks/useTxNotification';
+
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 export type ContractWriteOptions<

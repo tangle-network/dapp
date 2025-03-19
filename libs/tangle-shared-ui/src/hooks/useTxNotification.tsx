@@ -10,7 +10,9 @@ const SUCCESS_TIMEOUT = 10_000;
 
 type BaseTxName = string | number;
 
-const makeKey = <TxName extends BaseTxName>(txName: TxName): `${TxName}-tx-notification` =>
+const makeKey = <TxName extends BaseTxName>(
+  txName: TxName,
+): `${TxName}-tx-notification` =>
   `${txName}-tx-notification` as `${TxName}-tx-notification`;
 
 export type NotificationSteps = {
@@ -78,7 +80,12 @@ const useTxNotification = <TxName extends BaseTxName>(
         },
       );
     },
-    [closeSnackbar, enqueueSnackbar, isEvmActiveAccount, successMessageByTxName],
+    [
+      closeSnackbar,
+      enqueueSnackbar,
+      isEvmActiveAccount,
+      successMessageByTxName,
+    ],
   );
 
   const notifyError = useCallback(
@@ -89,7 +96,9 @@ const useTxNotification = <TxName extends BaseTxName>(
 
       enqueueSnackbar(
         <div>
-          <Typography variant="h5">{capitalize(txName.toString())} failed</Typography>
+          <Typography variant="h5">
+            {capitalize(txName.toString())} failed
+          </Typography>
 
           <Typography variant="body1">{errorMessage}</Typography>
         </div>,

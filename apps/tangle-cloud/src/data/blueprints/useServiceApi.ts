@@ -1,9 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import ServiceSubstrateApi from './ServiceSubstrateApi';
 import usePolkadotApi from '@tangle-network/tangle-shared-ui/hooks/usePolkadotApi';
-import {
-  assertSubstrateAddress,
-} from '@tangle-network/ui-components';
+import { assertSubstrateAddress } from '@tangle-network/ui-components';
 import { useWebContext } from '@tangle-network/api-provider-environment/webb-context';
 import useSubstrateInjectedExtension from '@tangle-network/tangle-shared-ui/hooks/useSubstrateInjectedExtension';
 import useTxNotification from '../../hooks/useTxNotification';
@@ -41,9 +39,7 @@ const useBlueprintServiceApi = () => {
   );
 
   const api = useMemo(() => {
-    if (
-      activeAccount === null
-    ) {
+    if (activeAccount === null) {
       return null;
     }
 
@@ -60,13 +56,7 @@ const useBlueprintServiceApi = () => {
       onSuccess,
       onFailure,
     );
-  }, [
-    activeAccount,
-    apiPromise,
-    injector,
-    onFailure,
-    onSuccess,
-  ]);
+  }, [activeAccount, apiPromise, injector, onFailure, onSuccess]);
 
   return api;
 };
