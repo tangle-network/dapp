@@ -13,6 +13,7 @@ module.exports = {
         'repo',
         'tangle-dapp',
         'tangle-cloud',
+        'leaderboard',
         'tangle-shared-ui',
         'testnet-leaderboard',
         'ui-components',
