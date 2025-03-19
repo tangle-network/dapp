@@ -19,7 +19,7 @@ import useTxHistoryStore, {
   HistoryTxDetail,
 } from '../context/useTxHistoryStore';
 import { GetSuccessMessageFn } from '../types';
-import extractErrorFromTxStatus from '../utils/extractErrorFromStatus';
+import extractErrorFromTxStatus from '@tangle-network/tangle-shared-ui/utils/extractErrorFromStatus';
 import useTxNotification from './useTxNotification';
 
 export enum TxStatus {

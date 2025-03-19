@@ -11,9 +11,9 @@ import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
+import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
 
 type Context = {
   assetIds: RestakeAssetId[];

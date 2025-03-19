@@ -10,10 +10,10 @@ import { ApiPromise } from '@polkadot/api';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { BN } from '@polkadot/util';
 import { isEvmAddress } from '@tangle-network/ui-components';
-import optimizeTxBatch from '../../utils/optimizeTxBatch';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { TxName } from '../../constants';
-import extractErrorFromTxStatus from '../../utils/extractErrorFromStatus';
+import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
+import extractErrorFromTxStatus from '@tangle-network/tangle-shared-ui/utils/extractErrorFromStatus';
 
 class RestakeSubstrateApi extends RestakeApiBase {
   constructor(

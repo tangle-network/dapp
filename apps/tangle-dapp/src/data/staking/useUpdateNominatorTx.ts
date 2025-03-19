@@ -9,7 +9,7 @@ import { PrecompileAddress } from '../../constants/evmPrecompiles';
 import useAgnosticTx from '../../hooks/useAgnosticTx';
 import { AbiBatchCall, EvmTxFactory } from '../../hooks/useEvmPrecompileCall';
 import { SubstrateTxFactory } from '../../hooks/useSubstrateTx';
-import optimizeTxBatch from '../../utils/optimizeTxBatch';
+import optimizeTxBatch from '@tangle-network/tangle-shared-ui/utils/optimizeTxBatch';
 import createEvmBatchCallArgs from '../../utils/staking/createEvmBatchCallArgs';
 import createEvmBatchCall from '../../utils/staking/createEvmBatchCall';
 import getEvmPayeeValue from '../../utils/staking/getEvmPayeeValue';
