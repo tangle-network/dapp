@@ -44,5 +44,6 @@ export default defineConfig({
       reportsDirectory: '../../coverage/apps/leaderboard',
       provider: 'v8',
     },
+    passWithNoTests: true,
   },
 });
