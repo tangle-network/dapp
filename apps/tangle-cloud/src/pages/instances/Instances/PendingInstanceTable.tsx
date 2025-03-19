@@ -180,7 +180,7 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
                       theme="substrate"
                       size="md"
                     />
-                    <Button 
+                    <Button
                       variant="link"
                       className="uppercase body4"
                       href={ownerUrl}
