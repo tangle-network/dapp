@@ -1,16 +1,12 @@
-import { FC, useMemo, useState } from 'react';
 import { sortByAddressOrIdentity } from '@tangle-network/tangle-shared-ui/components/tables/utils';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { Validator } from '@tangle-network/tangle-shared-ui/types';
 import {
   AmountFormatStyle,
-  Avatar,
   Chip,
-  CopyWithTooltip,
   fuzzyFilter,
-  shortenString,
   Table,
-  Typography,
-  ExternalLinkIcon,
+  ValidatorIdentity,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import sortByComparable from '@tangle-network/ui-components/utils/sortByComparable';
@@ -23,11 +19,11 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import { FC, useMemo, useState } from 'react';
 import calculateCommission from '../../utils/calculateCommission';
 import { HeaderCell, StringCell } from '../tableCells';
 import PercentageCell from '../tableCells/PercentageCell';
 import TokenAmountCell from '../tableCells/TokenAmountCell';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
 const COLUMN_HELPER = createColumnHelper<Validator>();
 
@@ -110,30 +106,11 @@ const NominationsTable: FC<NominationsTableProps> = ({
           const accountExplorerUrl = createExplorerAccountUrl(address);
 
           return (
-            <div className="flex items-center space-x-2">
-              <Avatar sourceVariant="address" value={address} theme="substrate">
-                {address}
-              </Avatar>
-
-              <Typography variant="body1" fw="normal" className="truncate">
-                {identityName === address
-                  ? shortenString(address, 6)
-                  : (identityName ?? shortenString(address, 6))}
-              </Typography>
-
-              <CopyWithTooltip
-                copyLabel="Copy Address"
-                textToCopy={address}
-                isButton={false}
-              />
-
-              {accountExplorerUrl !== null && (
-                <ExternalLinkIcon
-                  href={accountExplorerUrl}
-                  className="fill-mono-160 dark:fill-mono-80"
-                />
-              )}
-            </div>
+            <ValidatorIdentity
+              address={address}
+              identityName={identityName !== address ? identityName : null}
+              accountExplorerUrl={accountExplorerUrl}
+            />
           );
         },
         sortingFn: sortByAddressOrIdentity(),
