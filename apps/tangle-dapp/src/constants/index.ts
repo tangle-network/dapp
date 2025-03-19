@@ -65,6 +65,7 @@ export enum TxName {
   LS_TANGLE_POOL_CREATE = 'create liquid staking pool',
   LS_TANGLE_POOL_UPDATE_ROLES = 'update pool roles',
   LS_TANGLE_POOL_SET_STATE = 'set pool state',
+  LS_TANGLE_POOL_UPDATE_NOMINATIONS = 'update pool nominations',
   RESTAKE_JOIN_OPERATORS = 'join operators',
   RESTAKE_DEPOSIT = 'restake deposit',
   RESTAKE_DELEGATE = 'restake delegate',

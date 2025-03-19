@@ -95,7 +95,7 @@ const useLsPools = (): Map<number, LsPool> | null | Error => {
         totalStaked,
         apyPercentage,
         members: membersMap,
-        iconUrl,
+        iconUrl: iconUrl?.trim() === '' ? undefined : iconUrl,
         state: tanglePool.state.type,
         // Encode addresses with the active network's SS58 prefix to prevent
         // address comparison bugs.

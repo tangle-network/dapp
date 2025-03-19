@@ -20,7 +20,7 @@ const getTailwindSize = (size: LstIconSize) => {
 
 const LstIcon: FC<Props> = ({ iconUrl, size = LstIconSize.MD }) => {
   return iconUrl === undefined ? (
-    <TokenIcon size="md" name="tangle" className={getTailwindSize(size)} />
+    <TokenIcon size="md" name="tnt" className={getTailwindSize(size)} />
   ) : (
     <img
       className={twMerge(
@@ -28,7 +28,7 @@ const LstIcon: FC<Props> = ({ iconUrl, size = LstIconSize.MD }) => {
         getTailwindSize(size),
       )}
       src={iconUrl}
-      alt="Tangle's icon"
+      alt="Liquid staking pool icon"
       width={size}
       height={size}
     />
