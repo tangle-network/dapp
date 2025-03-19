@@ -8,7 +8,7 @@ export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/apps/leaderboard',
   server: {
-    port: 4200,
+    port: 4400,
     host: 'localhost',
     fs: {
       allow: ['../..'],
@@ -18,7 +18,7 @@ export default defineConfig({
     'process.env': {},
   },
   preview: {
-    port: 4300,
+    port: 4500,
     host: 'localhost',
   },
   plugins: [react(), nxViteTsPaths(), nxCopyAssetsPlugin(['*.md'])],
