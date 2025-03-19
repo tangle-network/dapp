@@ -68,6 +68,7 @@ build/
 docs-build/
 # Build files for mac
 .DS_Store
+._*
 
 # nx-repo compiled output
 dist

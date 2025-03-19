@@ -1,16 +1,9 @@
+import preset from '../../tailwind.preset';
+
 import { createGlobPatternsForDependencies } from '@nx/react/tailwind';
 import { join } from 'path';
-import plugin from 'tailwindcss/plugin';
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { Config } from 'tailwindcss/types/config';
 
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import preset from '../../tailwind.preset.cjs';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-/** @type {import('tailwindcss').Config} */
 export default {
   presets: [preset],
   content: [
@@ -19,9 +12,6 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        primary: '#8E59FF',
-      },
       backgroundImage: {
         glass:
           'linear-gradient(180deg,rgba(255,255,255,0.80) 0%,rgba(255,255,255,0.00) 100%)',
@@ -41,38 +31,5 @@ export default {
       },
     },
   },
-  plugins: [
-    plugin(function ({ addUtilities }) {
-      addUtilities(
-        {
-          '.scrollbar-hide': {
-            /* IE and Edge */
-            '-ms-overflow-style': 'none',
-
-            /* Firefox */
-            'scrollbar-width': 'none',
-
-            /* Safari and Chrome */
-            '&::-webkit-scrollbar': {
-              display: 'none',
-            },
-          },
-
-          '.scrollbar-default': {
-            /* IE and Edge */
-            '-ms-overflow-style': 'auto',
-
-            /* Firefox */
-            'scrollbar-width': 'auto',
-
-            /* Safari and Chrome */
-            '&::-webkit-scrollbar': {
-              display: 'block',
-            },
-          },
-        },
-        ['responsive'],
-      );
-    }),
-  ],
-};
+  plugins: [],
+} as const satisfies Config;

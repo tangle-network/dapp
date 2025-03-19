@@ -1,0 +1,35 @@
+# Composite action needed to access github context
+
+name: 'Create Library Release'
+description: 'This will create Github release for libraries and publish to npm'
+inputs:
+  projects:
+    description: 'projects to run action, separated by comma e.g. ui-components,icons'
+    required: true
+  gh-token:
+    description: 'github token to create github release'
+    required: true
+  npm-token:
+    description: 'npm token to publish to npm'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Use Node.js >=18.12.x
+      uses: actions/setup-node@v4.0.2
+      with:
+        node-version: '>=18.12.x'
+
+    - name: Run gh-release-script.js
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      run: |
+        node ${{ github.action_path }}/gh-release-script.js \
+          --projects ${{ inputs.projects }} \
+          --repo ${{ github.event.repository.name }} \
+          --owner ${{ github.repository_owner }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.gh-token }}
+        NODE_AUTH_TOKEN: ${{ inputs.npm-token }}
+        NPM_CONFIG_PROVENANCE: true

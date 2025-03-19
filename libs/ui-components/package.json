@@ -1,10 +1,9 @@
 {
   "name": "@tangle-network/ui-components",
-  "version": "0.0.3",
+  "version": "0.0.1",
   "type": "module",
-  "main": "./index.js",
-  "types": "./src/index.d.ts",
   "description": "Tangle UI Component Library",
+  "sideEffects": false,
   "keywords": [
     "tangle",
     "tangle-network",
@@ -24,12 +23,21 @@
     "url": "https://github.com/tangle-network/dapp"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "exports": {
     ".": {
-      "import": "./index.js",
-      "require": "./index.js"
-    }
+      "import": "./index.es.js",
+      "require": "./index.cjs.js",
+      "types": "./index.d.ts",
+      "default": "./index.es.js"
+    },
+    "./tailwind.preset": {
+      "import": "./tailwind.preset.es.js",
+      "require": "./tailwind.preset.cjs.js",
+      "types": "./tailwind.preset.d.ts",
+      "default": "./tailwind.preset.es.js"
+    },
+    "./style.css": "./style.css"
   }
 }

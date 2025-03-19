@@ -1,13 +1,15 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 
-export default {
+const config: StorybookConfig = {
   core: {
     disableTelemetry: true,
   },
+
   stories: [
     '../src/stories/**/*.mdx',
     '../src/stories/**/*.stories.@(js|jsx|ts|tsx)',
   ],
+
   addons: [
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
@@ -16,6 +18,7 @@ export default {
     '@chromatic-com/storybook',
     '@storybook/addon-themes',
   ],
+
   framework: {
     name: '@storybook/react-vite',
     options: {
@@ -24,4 +27,14 @@ export default {
       },
     },
   },
-} satisfies StorybookConfig;
+
+  docs: {
+    autodocs: true,
+  },
+
+  typescript: {
+    reactDocgen: 'react-docgen-typescript',
+  },
+};
+
+export default config;

@@ -52,7 +52,6 @@
         "libs/react-components/src/index.ts"
       ],
       "@tangle-network/react-components/*": ["libs/react-components/src/*"],
-      "@tangle-network/tailwind-preset": ["libs/tailwind-preset/index.js"],
       "@tangle-network/tangle-shared-ui": [
         "libs/tangle-shared-ui/src/index.ts"
       ],
