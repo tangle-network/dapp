@@ -28,10 +28,11 @@ import { twMerge } from 'tailwind-merge';
 import StatItem from '../../components/StatItem';
 import { LsPool, LsToken } from '../../constants/liquidStaking/types';
 import useLsPools from '../../data/liquidStaking/useLsPools';
-import { useLsStore } from '../../data/liquidStaking/useLsStore';
-import getLsNetwork from '../../utils/liquidStaking/getLsNetwork';
 import LsPoolsTable from './LsPoolsTable';
 import sortByLocaleCompare from '../../utils/sortByLocaleCompare';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import getLsProtocols from '../../utils/getLsProtocols';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 
 export type LsProtocolRow = {
   name: string;
@@ -131,14 +132,12 @@ const PROTOCOL_COLUMNS = [
 
 const LsAllProtocolsTable: FC = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const { lsNetworkId } = useLsStore();
+  const network = useNetworkStore((store) => store.network2);
 
   // Expand the first row by default.
   const [expanded, setExpanded] = useState<ExpandedState>({
     0: true,
   });
-
-  const lsNetwork = getLsNetwork(lsNetworkId);
 
   const getExpandedRowContent = useCallback(
     (row: Row<LsProtocolRow>) => (
@@ -154,26 +153,35 @@ const LsAllProtocolsTable: FC = () => {
       return [];
     }
 
-    return Array.from(lsPools.values());
+    // Only include open pools.
+    return Array.from(lsPools.values()).filter((pool) => pool.state === 'Open');
   }, [lsPools]);
 
   const rows = useMemo<LsProtocolRow[]>(() => {
-    return lsNetwork.protocols.map((lsProtocol) => {
-      const tvl = pools
-        .filter((pool) => pool.protocolId === lsProtocol.id)
-        .reduce((acc, pool) => acc.add(pool.totalStaked), new BN(0));
+    // Not yet ready.
+    if (network === undefined) {
+      return [];
+    }
+
+    const protocols = getLsProtocols(network);
+
+    return protocols.map((lsProtocol) => {
+      const tvl = pools.reduce(
+        (acc, pool) => acc.add(pool.totalStaked),
+        new BN(0),
+      );
 
       return {
         name: lsProtocol.name,
         tvl,
-        token: lsProtocol.token,
+        token: network.tokenSymbol === 'TNT' ? LsToken.TNT : LsToken.T_TNT,
         pools: pools,
+        decimals: TANGLE_TOKEN_DECIMALS,
         // TODO: Calculate the USD value of the TVL.
         tvlInUsd: undefined,
-        decimals: lsProtocol.decimals,
       } satisfies LsProtocolRow;
     });
-  }, [lsNetwork.protocols, pools]);
+  }, [network, pools]);
 
   const table = useReactTable({
     data: rows,

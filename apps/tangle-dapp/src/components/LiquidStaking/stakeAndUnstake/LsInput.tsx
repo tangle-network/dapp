@@ -1,29 +1,27 @@
 import { BN } from '@polkadot/util';
 import { LsProtocolId } from '@tangle-network/tangle-shared-ui/types/liquidStaking';
-import { formatBn } from '@tangle-network/ui-components';
+import {
+  EMPTY_VALUE_PLACEHOLDER,
+  formatBn,
+} from '@tangle-network/ui-components';
 import { forwardRef, ReactNode, useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-import { LS_DERIVATIVE_TOKEN_PREFIX } from '../../../constants/liquidStaking/constants';
-import { LsNetworkId, LsToken } from '../../../constants/liquidStaking/types';
-import { useLsStore } from '../../../data/liquidStaking/useLsStore';
 import useInputAmount from '../../../hooks/useInputAmount';
-import getLsProtocolDef from '../../../utils/liquidStaking/getLsProtocolDef';
 import ErrorMessage from '../../ErrorMessage';
-import LsNetworkSwitcher from './LsNetworkSwitcher';
+import LsActiveNetwork from './LsActiveNetwork';
 import LsTokenChip from './LsTokenChip';
 import SelectedPoolIndicator from './SelectedPoolIndicator';
 import { ERROR_NOT_ENOUGH_BALANCE } from '../../../constants';
+import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 
-export type LsInputProps = {
+type Props = {
   id: string;
-  networkId: LsNetworkId;
-  decimals: number;
   amount: BN | null;
   isReadOnly?: boolean;
   placeholder?: string;
   rightElement?: ReactNode;
-  token: LsToken;
   isDerivativeVariant?: boolean;
   minAmount?: BN;
   maxAmount?: BN;
@@ -32,57 +30,50 @@ export type LsInputProps = {
   showPoolIndicator?: boolean;
   onAmountChange?: (newAmount: BN | null) => void;
   setProtocolId?: (newProtocolId: LsProtocolId) => void;
-  setNetworkId?: (newNetworkId: LsNetworkId) => void;
   onTokenClick?: () => void;
 };
 
-const LsInput = forwardRef<HTMLInputElement, LsInputProps>(
+const LsInput = forwardRef<HTMLInputElement, Props>(
   (
     {
       id,
       amount,
-      decimals,
       isReadOnly = false,
       placeholder = '0',
       isDerivativeVariant = false,
       rightElement,
-      networkId,
-      token,
       minAmount,
       maxAmount,
       maxErrorMessage = ERROR_NOT_ENOUGH_BALANCE,
       onAmountChange,
-      setNetworkId,
       className,
       showPoolIndicator = true,
       onTokenClick,
     },
     ref,
   ) => {
-    const { lsProtocolId } = useLsStore();
-
-    const selectedProtocol = getLsProtocolDef(lsProtocolId);
+    const networkTokenSymbol =
+      useNetworkStore((store) => store.network2?.tokenSymbol) ??
+      EMPTY_VALUE_PLACEHOLDER;
 
     const minErrorMessage = ((): string | undefined => {
       if (minAmount === undefined) {
         return undefined;
       }
 
-      const unit = `${isDerivativeVariant ? LS_DERIVATIVE_TOKEN_PREFIX : ''}${token}`;
-
-      const formattedMinAmount = formatBn(minAmount, decimals, {
+      const formattedMinAmount = formatBn(minAmount, TANGLE_TOKEN_DECIMALS, {
         fractionMaxLength: undefined,
         includeCommas: true,
       });
 
-      return `Amount must be at least ${formattedMinAmount} ${unit}`;
+      return `Amount must be at least ${formattedMinAmount} ${networkTokenSymbol}`;
     })();
 
     const { displayAmount, handleChange, errorMessage, setDisplayAmount } =
       useInputAmount({
         amount,
         setAmount: onAmountChange,
-        decimals,
+        decimals: TANGLE_TOKEN_DECIMALS,
         min: minAmount,
         minErrorMessage,
         max: maxAmount,
@@ -108,10 +99,7 @@ const LsInput = forwardRef<HTMLInputElement, LsInputProps>(
           )}
         >
           <div className="flex justify-between">
-            <LsNetworkSwitcher
-              activeLsNetworkId={networkId}
-              setNetworkId={setNetworkId}
-            />
+            <LsActiveNetwork />
 
             {rightElement}
           </div>
@@ -138,7 +126,6 @@ const LsInput = forwardRef<HTMLInputElement, LsInputProps>(
             ) : (
               <LsTokenChip
                 isDerivativeVariant={isDerivativeVariant}
-                token={selectedProtocol.token}
                 onClick={onTokenClick}
               />
             )}

@@ -99,7 +99,9 @@ function useEvmPrecompileCall<
         relayEvmTx === null ||
         isEvmTxRelayerCandidate === null
       ) {
-        console.warn('Attempted to execute EVM pre-compile call too early.');
+        console.debug(
+          'Attempted to execute EVM pre-compile call too early. Try disabling your action button until the dependencies are ready.',
+        );
 
         return;
       }
