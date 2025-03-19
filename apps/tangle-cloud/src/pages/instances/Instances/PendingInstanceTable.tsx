@@ -14,16 +14,13 @@ import {
   DropdownButton,
   EMPTY_VALUE_PLACEHOLDER,
   IconWithTooltip,
-  isEvmAddress,
   shortenString,
-  toSubstrateAddress,
   Typography,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
 import { ChevronDown } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
-import { Link } from 'react-router';
 import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import { PendingInstanceTabProps } from './type';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
@@ -183,22 +180,16 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
                       theme="substrate"
                       size="md"
                     />
-                    <Link
-                      to={
-                        network.createExplorerAccountUrl(
-                          isEvmAddress(props.row.original.owner)
-                            ? props.row.original.owner
-                            : toSubstrateAddress(props.row.original.owner),
-                        ) ?? ''
-                      }
+                    <Button 
+                      variant="link"
+                      className="uppercase body4"
+                      href={ownerUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Button variant="link" className="uppercase body4">
-                        {operatorIdentityMap?.get(owner)?.name ??
-                          shortenString(owner)}
-                      </Button>
-                    </Link>
+                      {operatorIdentityMap?.get(owner)?.name ??
+                        shortenString(owner)}
+                    </Button>
                   </>
                 )}
               </TableCellWrapper>

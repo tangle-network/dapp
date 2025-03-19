@@ -10,7 +10,7 @@ import { toPrimitiveBlueprint } from './utils/toPrimitiveBlueprint';
 export default function usePendingServiceRequest(
   operatorAccountAddress: SubstrateAddress | null,
 ) {
-  const { result: serviceRequestEntries, ...rest } = useApiRx(
+  const { result: serviceRequestEntries } = useApiRx(
     useCallback(
       (apiRx) => {
         if (apiRx.query?.services?.serviceRequests === undefined) {
@@ -55,7 +55,7 @@ export default function usePendingServiceRequest(
     );
   }, [primitiveServiceRequests]);
 
-  const { result: blueprints } = useApiRx(
+  const { result: blueprints, ...rest } = useApiRx(
     useCallback(
       (apiRx) => {
         if (!blueprintIds.length) return of([]);
