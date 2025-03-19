@@ -44,6 +44,7 @@ import LstIcon from './LstIcon';
 import UpdateCommissionModal from './UpdateCommissionModal';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import LsSetPoolStateModal from './LsSetPoolStateModal';
+import LsUpdateNominationsModal from './LsUpdateNominationsModal';
 
 export interface LsMyPoolRow extends LsPool {
   myStake: BN;
@@ -67,6 +68,9 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
   const [selectedPoolId, setSelectedPoolId] = useState<number | null>(null);
 
   const [isUpdateCommissionModalOpen, setIsUpdateCommissionModalOpen] =
+    useState(false);
+
+  const [isUpdateNominationsModalOpen, setIsUpdateNominationsModalOpen] =
     useState(false);
 
   const [isUpdateRolesModalOpen, setIsUpdateRolesModalOpen] = useState(false);
@@ -192,8 +196,10 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
           if (props.row.original.isNominator) {
             actionItems.push({
               label: 'Update Nominations',
-              // TODO: Implement onClick handler.
-              onClick: () => void 0,
+              onClick: () => {
+                setSelectedPoolId(props.row.original.id);
+                setIsUpdateNominationsModalOpen(true);
+              },
             });
           }
 
@@ -247,13 +253,15 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
           const isStakeActionDisabled =
             lsPoolId === props.row.original.id && isStaking;
 
+          const isPoolDestroying = props.row.original.state === 'Destroying';
+
           return (
             <div className="flex justify-end gap-1">
               {/**
                * Show management actions if the active user has any role in
                * the pool.
                */}
-              {hasAnyRole && (
+              {hasAnyRole && !isPoolDestroying && (
                 <ActionsDropdown
                   buttonText="Manage"
                   actionItems={actionItems}
@@ -268,9 +276,13 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
               />
 
               <BlueIconButton
-                isDisabled={isStakeActionDisabled}
+                isDisabled={isStakeActionDisabled || isPoolDestroying}
                 onClick={() => setLsStakingIntent(props.row.original.id, true)}
-                tooltip="Increase Stake"
+                tooltip={
+                  isPoolDestroying
+                    ? 'Pool is being destroyed; cannot increase stake.'
+                    : 'Increase Stake'
+                }
                 Icon={AddCircleLineIcon}
               />
             </div>
@@ -365,6 +377,12 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
         poolId={selectedPoolId}
         isOpen={isSetStateModalOpen}
         setIsOpen={setIsSetStateModalOpen}
+      />
+
+      <LsUpdateNominationsModal
+        poolId={selectedPoolId}
+        isOpen={isUpdateNominationsModalOpen}
+        setIsOpen={setIsUpdateNominationsModalOpen}
       />
     </>
   );

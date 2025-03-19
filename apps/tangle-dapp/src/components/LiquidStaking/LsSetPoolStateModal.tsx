@@ -10,7 +10,7 @@ import {
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TxStatus } from '../../hooks/useSubstrateTx';
-import useLsPoolSetStateTx from '../../data/liquidStaking/tangle/useLsPoolSetStatusTx';
+import useLsPoolSetStateTx from '../../data/liquidStaking/tangle/useLsPoolSetStateTx';
 import { PalletTangleLstPoolsPoolState } from '@polkadot/types/lookup';
 import { z } from 'zod';
 

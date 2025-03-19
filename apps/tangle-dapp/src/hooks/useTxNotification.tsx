@@ -38,6 +38,7 @@ const SUCCESS_MESSAGES: Record<TxName, string> = {
   [TxName.LS_TANGLE_POOL_UNBOND]: 'Unbonded from liquid staking pool',
   [TxName.LS_TANGLE_POOL_CREATE]: 'Created liquid staking pool',
   [TxName.LS_TANGLE_POOL_UPDATE_ROLES]: 'Updated pool roles',
+  [TxName.LS_TANGLE_POOL_UPDATE_NOMINATIONS]: 'Updated pool nominations',
   [TxName.RESTAKE_JOIN_OPERATORS]: 'Joined as an operator',
   [TxName.RESTAKE_DEPOSIT]: 'Deposited tokens',
   [TxName.RESTAKE_DELEGATE]: 'Delegated tokens',
