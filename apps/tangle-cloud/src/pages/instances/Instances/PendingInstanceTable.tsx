@@ -14,17 +14,14 @@ import {
   DropdownButton,
   EMPTY_VALUE_PLACEHOLDER,
   IconWithTooltip,
-  isEvmAddress,
   shortenString,
-  toSubstrateAddress,
   Typography,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import { TangleCloudTable } from '../../../components/tangleCloudTable/TangleCloudTable';
-import { ChevronDown, ChevronRight } from '@tangle-network/icons';
+import { ChevronDown } from '@tangle-network/icons';
 import TableCellWrapper from '@tangle-network/tangle-shared-ui/components/tables/TableCellWrapper';
-import { Link } from 'react-router';
-import { MonitoringBlueprint } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
+import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import { PendingInstanceTabProps } from './type';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu';
@@ -33,9 +30,7 @@ import addCommasToNumber from '@tangle-network/ui-components/utils/addCommasToNu
 import LsTokenIcon from '@tangle-network/tangle-shared-ui/components/LsTokenIcon';
 import useAssetsMetadata from '@tangle-network/tangle-shared-ui/hooks/useAssetsMetadata';
 
-type MonitoringBlueprintServiceItem = MonitoringBlueprint['services'][number];
-
-const columnHelper = createColumnHelper<MonitoringBlueprintServiceItem>();
+const columnHelper = createColumnHelper<MonitoringServiceRequest>();
 
 export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
   data,
@@ -57,71 +52,37 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
   const { result: assets } = useAssetsMetadata(assetIds);
 
   const columns = useMemo(() => {
-    const baseColumns: AccessorKeyColumnDef<
-      MonitoringBlueprintServiceItem,
-      any
-    >[] = [
-      columnHelper.accessor('id', {
-        header: () => 'Blueprint > Instance',
+    const baseColumns: AccessorKeyColumnDef<MonitoringServiceRequest, any>[] = [
+      columnHelper.accessor('blueprint', {
+        header: () => 'Blueprint',
         enableSorting: false,
         cell: (props) => {
           return (
             <TableCellWrapper>
-              <div className="flex items-center gap-2 w-full">
+              <div className="flex items-center gap-2 overflow-hidden">
                 {props.row.original.blueprintData?.metadata?.logo ? (
                   <Avatar
                     size="lg"
                     className="min-w-12"
                     src={props.row.original.blueprintData.metadata.logo}
-                    alt={props.row.original.id.toString()}
+                    alt={props.row.original.blueprintData.metadata.name}
                     sourceVariant="uri"
                   />
                 ) : (
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    value={props.row.original.id.toString()}
+                    value={props.row.original.blueprintData?.metadata.name}
                     theme="substrate"
                   />
                 )}
-                <div className="w-4/12">
-                  <Typography
-                    variant="body1"
-                    fw="bold"
-                    className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
-                  >
-                    {props.row.original.blueprintData?.metadata?.author || ''}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    fw="normal"
-                    className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
-                  >
-                    {props.row.original.blueprintData?.metadata?.name || ''}
-                  </Typography>
-                </div>
-                <div>
-                  <ChevronRight className="w-6 h-6" />
-                </div>
-                <div className="w-4/12">
-                  <Typography
-                    variant="body1"
-                    fw="bold"
-                    className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
-                  >
-                    {props.row.original.id
-                      ? `Instance-${props.row.original.id}`
-                      : EMPTY_VALUE_PLACEHOLDER}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    fw="normal"
-                    className="!text-mono-100 text-ellipsis whitespace-nowrap overflow-hidden"
-                  >
-                    {props.row.original.externalInstanceId ||
-                      EMPTY_VALUE_PLACEHOLDER}
-                  </Typography>
-                </div>
+                <Typography
+                  variant="body1"
+                  fw="bold"
+                  className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
+                >
+                  {props.row.original.blueprintData?.metadata.name}
+                </Typography>
               </div>
             </TableCellWrapper>
           );
@@ -201,39 +162,55 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
             );
           },
         }),
-        columnHelper.accessor('ownerAccount', {
+        columnHelper.accessor('owner', {
           header: () => 'Deployer',
           cell: (props) => {
+            const owner = props.row.original.owner;
+            const ownerUrl = network.createExplorerAccountUrl(owner);
+
             return (
               <TableCellWrapper>
-                {!props.row.original.ownerAccount ? (
+                {!ownerUrl ? (
                   EMPTY_VALUE_PLACEHOLDER
                 ) : (
-                  <Link
-                    to={
-                      network.createExplorerAccountUrl(
-                        isEvmAddress(props.row.original.ownerAccount)
-                          ? props.row.original.ownerAccount
-                          : toSubstrateAddress(props.row.original.ownerAccount),
-                      ) ?? ''
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button variant="link" className="uppercase body4">
-                      {shortenString(props.row.original.ownerAccount)}
+                  <>
+                    <Avatar
+                      sourceVariant="address"
+                      value={owner.toString()}
+                      theme="substrate"
+                      size="md"
+                    />
+                    <Button
+                      variant="link"
+                      className="uppercase body4"
+                      href={ownerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {operatorIdentityMap?.get(owner)?.name ??
+                        shortenString(owner)}
                     </Button>
-                  </Link>
+                  </>
                 )}
               </TableCellWrapper>
             );
           },
         }),
-        columnHelper.accessor('id', {
+        columnHelper.accessor('ttl', {
+          header: () => 'Duration',
+          cell: (props) => {
+            return (
+              <TableCellWrapper>
+                {addCommasToNumber(props.row.original.ttl)} blocks
+              </TableCellWrapper>
+            );
+          },
+        }),
+        columnHelper.accessor('requestId', {
           header: () => '',
           cell: (props) => {
             return (
-              <TableCellWrapper removeRightBorder className="max-w-24">
+              <TableCellWrapper removeRightBorder>
                 <div className="flex gap-2">
                   <Button variant="utility" className="uppercase body4">
                     Approve
@@ -275,14 +252,17 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
             );
           },
         }),
-        columnHelper.accessor('createdAtBlock', {
+        columnHelper.accessor('requestCreatedAtBlock', {
           header: 'Created At',
           cell: (props) => {
             return (
               <TableCellWrapper>
-                {props.row.original.createdAtBlock ? (
+                {props.row.original.requestCreatedAtBlock ? (
                   <>
-                    Block {addCommasToNumber(props.row.original.createdAtBlock)}
+                    Block{' '}
+                    {addCommasToNumber(
+                      props.row.original.requestCreatedAtBlock,
+                    )}
                   </>
                 ) : (
                   EMPTY_VALUE_PLACEHOLDER
@@ -291,7 +271,7 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
             );
           },
         }),
-        columnHelper.accessor('id', {
+        columnHelper.accessor('requestId', {
           header: '',
           cell: (props) => {
             return (
@@ -336,13 +316,13 @@ export const PendingInstanceTable: FC<PendingInstanceTabProps> = ({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: (row) => row.id.toString(),
+    getRowId: (row) => `PendingServiceRequest-${row.blueprint.toString()}`,
     autoResetPageIndex: false,
     enableSortingRemoval: false,
   });
 
   return (
-    <TangleCloudTable<MonitoringBlueprintServiceItem>
+    <TangleCloudTable<MonitoringServiceRequest>
       title={pluralize('Running Instance', !isEmpty)}
       data={data}
       error={error}

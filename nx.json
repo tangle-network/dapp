@@ -53,6 +53,11 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/libs/{projectName}"
+      }
     }
   },
   "namedInputs": {
@@ -98,7 +103,7 @@
     }
   },
   "release": {
-    "projects": ["apps/tangle-dapp"],
+    "projects": ["apps/tangle-dapp", "libs/ui-components"],
     "projectsRelationship": "independent",
     "changelog": {
       "projectChangelogs": true

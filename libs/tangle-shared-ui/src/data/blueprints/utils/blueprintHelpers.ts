@@ -17,6 +17,7 @@ import {
 import { toPrimitiveBlueprint } from './toPrimitiveBlueprint';
 import {
   MonitoringBlueprint,
+  MonitoringServiceRequest,
   OperatorBlueprint,
   ServiceInstance,
 } from './type';
@@ -285,4 +286,18 @@ export function createMonitoringBlueprint(
     blueprint: blueprintData,
     services: services,
   };
+}
+
+export function createPendingServiceRequests(
+  pendingServiceRequests: MonitoringServiceRequest[],
+  blueprints: OperatorBlueprint['blueprint'][],
+): MonitoringServiceRequest[] {
+  return pendingServiceRequests.map((pendingServiceRequest, idx) => {
+    return {
+      ...pendingServiceRequest,
+      blueprintData: {
+        ...blueprints[idx],
+      },
+    };
+  });
 }

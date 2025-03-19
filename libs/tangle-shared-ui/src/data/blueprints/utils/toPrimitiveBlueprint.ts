@@ -1,4 +1,4 @@
-import type { Bytes, Option, Vec } from '@polkadot/types';
+import type { Bytes, Option } from '@polkadot/types';
 import {
   TanglePrimitivesServicesFieldFieldType,
   TanglePrimitivesServicesJobsJobDefinition,

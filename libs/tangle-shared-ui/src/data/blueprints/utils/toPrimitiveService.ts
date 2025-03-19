@@ -1,8 +1,14 @@
 import { assertSubstrateAddress } from '@tangle-network/ui-components';
 import createRestakeAssetId from '../../../utils/createRestakeAssetId';
 import type { Service } from '@tangle-network/tangle-substrate-types';
+import {
+  TanglePrimitivesServicesServiceServiceRequest,
+  TanglePrimitivesServicesTypesApprovalState,
+} from '@polkadot/types/lookup';
+import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
+import { RestakeAssetId } from '../../../types';
 
-export default function toPrimitiveService({
+export function toPrimitiveService({
   id,
   blueprint,
   owner,
@@ -26,6 +32,77 @@ export default function toPrimitiveService({
     ttl: ttl.toNumber(),
     membershipModel: toPrimitiveMembershipModel(membershipModel),
   } as const;
+}
+
+export function toPrimitiveServiceRequest(
+  requestId: number,
+  {
+    blueprint,
+    owner,
+    securityRequirements,
+    ttl,
+    args,
+    permittedCallers,
+    operatorsWithApprovalState,
+    membershipModel,
+  }: TanglePrimitivesServicesServiceServiceRequest,
+) {
+  return {
+    requestId,
+    blueprint: blueprint.toNumber(),
+    owner: assertSubstrateAddress(owner.toString()),
+    securityRequirements: toPrimitiveSecurityRequirements(securityRequirements),
+    ttl: ttl.toNumber(),
+    // TODO: toPrimitiveArgs(args)
+    args: args,
+    permittedCallers: permittedCallers.map((caller) =>
+      assertSubstrateAddress(caller.toString()),
+    ),
+    operatorsWithApprovalState: toPrimitiveOperatorsWithApprovalState(
+      operatorsWithApprovalState,
+    ),
+    membershipModel: toPrimitiveMembershipModel(membershipModel),
+  } as const;
+}
+
+export function toPrimitiveOperatorsWithApprovalState(
+  operatorsWithApprovalState: TanglePrimitivesServicesServiceServiceRequest['operatorsWithApprovalState'],
+) {
+  return operatorsWithApprovalState.map(([operatorId, approvalState]) => {
+    const result: {
+      operator: SubstrateAddress;
+      approvalStateStatus: TanglePrimitivesServicesTypesApprovalState['type'];
+      approvalStateValue:
+        | undefined
+        | {
+            asset: RestakeAssetId;
+            exposurePercent: number;
+          }[];
+    } = {
+      operator: assertSubstrateAddress(operatorId.toString()),
+      approvalStateStatus: approvalState.type,
+      approvalStateValue: [],
+    };
+
+    switch (approvalState.type) {
+      case 'Pending':
+      case 'Rejected':
+        break;
+      case 'Approved':
+        result.approvalStateValue =
+          approvalState.asApproved.securityCommitments.map((commitment) => {
+            return {
+              asset: createRestakeAssetId(commitment.asset),
+              exposurePercent: commitment.exposurePercent.toNumber(),
+            };
+          });
+        break;
+      default:
+        throw new Error(`Unknown approval state type: ${approvalState.type}`);
+    }
+
+    return result;
+  });
 }
 
 export function toPrimitiveOperatorSecurityCommitments(

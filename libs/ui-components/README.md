@@ -1,7 +1,7 @@
 <div align="center">
 <a href="https://www.tangle.tools/">
 
-![Tangle Logo](../../.github/assets/tangle-banner.png)
+![Tangle Logo](./src/assets/tangle-banner.png)
 </a>
 
 </div>
@@ -20,19 +20,19 @@
 
 <h2 id="start"> Getting Started </h2>
 
-This is the official component library for the Tangle Network! It utilizes [nx.dev](https://nx.dev/) for a fast and extensible build system, and enables developers to build beautiful user interfaces for Web3 applications quickly. The library includes components that are documented using [Storybook](https://storybook.js.org/).
+This is the official component library for the Tangle Network! It utilizes [nx.dev](https://nx.dev/) for a fast and extensible build system, and enables developers to build beautiful user interfaces for Web3 applications quickly.
 
-To view the available components, check out the official documentation [here](https://tangle-network.github.io/dapp/). If you have feedback or questions, head to the [Tangle Network Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/dapp-feedback). Contributions through PRs are welcomed!
+If you have feedback or questions, head to the [Tangle Network Feedback Discussion](https://github.com/tangle-network/feedback/discussions/categories/dapp-feedback). Contributions through PRs are welcomed!
 
 ## Prerequisites
 
-This library makes use of yarn, nodejs, and requires version node v18. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/. Once node.js is installed you may proceed to install [`yarn`](https://classic.yarnpkg.com/en/docs/install):
+This library makes use of yarn, nodejs, and requires version node `>=18.12.x`. To install node.js binaries, installers, and source tarballs, please visit https://nodejs.org/en/download/.
+
+Once node.js is installed you may proceed to install [`yarn`](https://yarnpkg.com/getting-started) via `corepack`:
 
 ```bash
-npm install --global yarn
+corepack enable
 ```
-
-This component library also makes use of [tailwindcss](https://tailwindcss.com/). For installation guides please refer to official documentation [here](https://tailwindcss.com/docs/installation/framework-guides).
 
 Great! Now your environment is ready!
 
@@ -77,13 +77,13 @@ export default App;
 
 The component library make use of [tailwindcss](https://tailwindcss.com/) for styling components. If you would like to customize a component just use the tailwind classes provided.
 
-To make use of the tailwind classes for Tangle's design system (e.g. colors, typos, …) in your dApp you just need to install Tangle's tailwind preset and include it in the tailwind config file. See the below example:
+To leverage Tangle's design system (including colors, typography, and other styling elements) in your dApp, you can incorporate Tangle's tailwind preset into your tailwind configuration file. Here's how to set it up:
 
 ```js
 // tailwind.config.js
 
 /** @type {import('tailwindcss').Config} */
-const preset = require('@tangle-network/tailwind-preset');
+const preset = require('@tangle-network/ui-components/tailwind.preset');
 
 module.exports = {
   presets: [preset],

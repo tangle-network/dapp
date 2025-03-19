@@ -1,13 +1,12 @@
 /// <reference types='vitest' />
-// import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import react from '@vitejs/plugin-react-swc';
 import * as path from 'path';
-import { preserveDirectives } from 'rollup-plugin-preserve-directives';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import wasm from 'vite-plugin-wasm';
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import svgr from 'vite-plugin-svgr';
+import tailwindcss from 'tailwindcss';
 
 export default defineConfig({
   root: __dirname,
@@ -15,15 +14,28 @@ export default defineConfig({
 
   plugins: [
     react(),
-    // nxViteTsPaths({ debug: true }),
-    tsconfigPaths({ root: '../..' }),
+    nxViteTsPaths({ debug: false }),
     dts({
       entryRoot: 'src',
       tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
     }),
     wasm(),
-    svgr(),
+    svgr({ svgrOptions: { exportType: 'default' }, include: '**/*.svg' }),
   ],
+
+  define: {
+    'process.env': {},
+  },
+
+  css: {
+    postcss: {
+      plugins: [tailwindcss],
+    },
+  },
+
+  optimizeDeps: {
+    exclude: ['node_modules/.cache/storybook'],
+  },
 
   // Uncomment this if you are using workers.
   // worker: {  //  plugins: [ nxViteTsPaths() ],
@@ -40,27 +52,37 @@ export default defineConfig({
     },
     lib: {
       // Could also be a dictionary or array of multiple entry points.
-      entry: 'src/index.ts',
+      entry: {
+        index: 'src/index.ts',
+        'tailwind.preset': 'src/tailwind.preset.ts',
+      },
       name: 'ui-components',
-      fileName: 'index',
       // Change this to the formats you want to support.
       // Don't forget to update your package.json as well.
-      formats: ['es'],
+      formats: ['cjs', 'es'],
     },
     rollupOptions: {
-      output: {
-        preserveModules: true,
-      },
-      plugins: [preserveDirectives()],
-      onwarn(warning, defaultHandler) {
-        if (warning.code === 'SOURCEMAP_ERROR') {
-          return;
-        }
-
-        defaultHandler(warning);
-      },
       // External packages that should not be bundled into your library.
       external: ['react', 'react-dom', 'react/jsx-runtime'],
+      output: {
+        exports: 'named',
+        preserveModules: true,
+        entryFileNames: (chunkInfo) => {
+          if (chunkInfo.name.includes('node_modules')) {
+            return (
+              chunkInfo.name.replace('node_modules', 'external') +
+              '.[format].js'
+            );
+          }
+
+          return '[name].[format].js';
+        },
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
+          tailwindcss: 'tailwindcss',
+        },
+      },
     },
   },
 

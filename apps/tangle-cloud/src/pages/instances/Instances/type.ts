@@ -1,24 +1,27 @@
 import {
   InstanceStatus,
   MonitoringBlueprint,
+  MonitoringServiceRequest,
 } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import { IdentityType } from '@tangle-network/tangle-shared-ui/utils/polkadot/identity';
 import { SubstrateAddress } from '@tangle-network/ui-components/types/address';
 
 export interface InstancesTabProps {
-  data: MonitoringBlueprint['services'];
   isLoading: boolean;
   error: Error | null;
 }
 
-export type RunningInstanceTabProps = InstancesTabProps;
+export interface RunningInstanceTabProps extends InstancesTabProps {
+  data: MonitoringBlueprint['services'];
+}
 
 export interface PendingInstanceTabProps extends InstancesTabProps {
+  data: MonitoringServiceRequest[];
   isOperator?: boolean;
   operatorIdentityMap?: Map<SubstrateAddress, IdentityType | null>;
 }
 
-export type StoppedInstanceTabProps = InstancesTabProps;
+export type StoppedInstanceTabProps = RunningInstanceTabProps;
 
 export interface InstancesTabsProps {
   runningInstances: RunningInstanceTabProps;

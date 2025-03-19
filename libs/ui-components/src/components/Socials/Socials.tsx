@@ -52,8 +52,8 @@ export const Socials = forwardRef<HTMLDivElement, SocialsProps>(
           className,
         )}
       >
-        {resolvedSocialConfigs.map(({ Icon, name, ...linkProps }) => (
-          <a key={name} {...linkProps} className={iconClassName}>
+        {resolvedSocialConfigs.map(({ Icon, name, ...linkProps }, idx) => (
+          <a key={`${name}-${idx}`} {...linkProps} className={iconClassName}>
             <Icon
               className={twMerge(
                 'w-6 h-6 sm:w-8 sm:h-8 !fill-current',

@@ -1,10 +1,10 @@
 # Composite action needed to access github context
 
-name: 'Create Release'
-description: 'This will publish to NPM registry and create Github release'
+name: 'Create dApp Release'
+description: 'This will create Github release for dApps'
 inputs:
   package-path: # id of input
-    description: 'package path to run action e.g. package/common'
+    description: 'package path to run action e.g. apps/tangle-dapp'
     required: true
   repo-token:
     description: 'token to create github release'

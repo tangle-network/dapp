@@ -135,6 +135,9 @@ To release a new version of the projects in this monorepo, follow these steps:
 
 1. Create a new branch from `develop`.
 2. Run `yarn run generate:release` to review the new bump version and the changelog.
+
+   2.1. To release specific projects, use `,` to separate the project names, use the `--projects` flag: `yarn run generate:release --projects=ui-components,other-project`, default is all projects.
+
 3. If everything looks good, run `yarn run generate:release -d=false` to apply changes, stage, and
    commit them.
 

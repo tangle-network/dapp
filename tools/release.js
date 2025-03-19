@@ -2,9 +2,10 @@
 
 import { releaseChangelog, releaseVersion } from 'nx/release/index.js';
 import yargs from 'yargs/yargs';
+import { hideBin } from 'yargs/helpers';
 
 (async () => {
-  const options = await yargs(process.argv.slice(2))
+  const options = await yargs(hideBin(process.argv))
     .version(false) // don't use the default meaning of version in yargs
     .option('version', {
       description:
@@ -41,7 +42,25 @@ import yargs from 'yargs/yargs';
       type: 'boolean',
       default: false,
     })
+    .option('projects', {
+      description: 'Projects to release, defaults to all',
+      type: 'string',
+      array: true,
+      default: [],
+    })
+    .option('firstRelease', {
+      alias: 'first-release',
+      description:
+        'Whether or not to perform a first release, defaults to false',
+      type: 'boolean',
+      default: false,
+    })
     .parseAsync();
+
+  const projectList =
+    Array.isArray(options.projects) && options.projects.length > 0
+      ? { projects: options.projects }
+      : {};
 
   const { workspaceVersion, projectsVersionData } = await releaseVersion({
     specifier: options.version,
@@ -52,6 +71,8 @@ import yargs from 'yargs/yargs';
     // we want to commit the changelog changes as well
     gitCommit: false,
     gitTag: false,
+    firstRelease: options.firstRelease,
+    ...projectList,
   });
 
   await releaseChangelog({
@@ -62,6 +83,8 @@ import yargs from 'yargs/yargs';
     stageChanges: options.stageChanges,
     gitCommit: options.gitCommit,
     gitTag: options.gitTag,
+    firstRelease: options.firstRelease,
+    ...projectList,
   });
 
   process.exit(0);

@@ -1,4 +1,9 @@
-/** @type {import('tailwind/types/config').ThemeConfig['colors']} */
+import { Config, ThemeConfig } from 'tailwindcss/types/config';
+import formsPlugin from '@tailwindcss/forms';
+import radixPlugin from 'tailwindcss-radix';
+import scrollbarPlugin from 'tailwind-scrollbar';
+import animatePlugin from 'tailwindcss-animate';
+
 const colors = {
   mono: {
     0: '#FFFFFF',
@@ -95,9 +100,8 @@ const colors = {
     120: '#422417',
     DEFAULT: '#DD4800',
   },
-};
+} as const satisfies ThemeConfig['colors'];
 
-/** @type {import('tailwind/types/config').ThemeConfig['keyframes']} */
 const keyframes = {
   // Dropdown menu
   'scale-in': {
@@ -192,16 +196,15 @@ const keyframes = {
   },
   // Accordion
   'accordion-slide-down': {
-    from: { height: 0 },
+    from: { height: '0px' },
     to: { height: 'var(--radix-accordion-content-height)' },
   },
   'accordion-slide-up': {
     from: { height: 'var(--radix-accordion-content-height)' },
-    to: { height: 0 },
+    to: { height: '0px' },
   },
-};
+} as const satisfies ThemeConfig['keyframes'];
 
-/** @type {import('tailwind/types/config').ThemeConfig['animation']} */
 const animation = {
   // Dropdown menu
   'scale-in': 'scale-in 0.2s ease-in-out',
@@ -238,9 +241,8 @@ const animation = {
   // Accordion
   'accordion-slide-down': 'accordion-slide-down 300ms ease-out',
   'accordion-slide-up': 'accordion-slide-up 300ms ease-out',
-};
+} as const satisfies ThemeConfig['animation'];
 
-/** @type {import('tailwind/types/config').Config} */
 const preset = {
   darkMode: 'class',
   content: [],
@@ -261,11 +263,11 @@ const preset = {
     extends: {},
   },
   plugins: [
-    require('@tailwindcss/forms'),
-    require('tailwindcss-radix')(),
-    require('tailwind-scrollbar')({ nocompatible: true }),
-    require('tailwindcss-animate'),
+    formsPlugin(),
+    radixPlugin({}),
+    scrollbarPlugin({ nocompatible: true }),
+    animatePlugin,
   ],
-};
+} as const satisfies Config;
 
-module.exports = preset;
+export default preset;
