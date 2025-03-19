@@ -29,7 +29,7 @@ const getColumns = (pageIndex: number, pageSize: number) => [
     cell: (cellCtx) => {
       const globalRowIndex = cellCtx.row.index + pageIndex * pageSize;
       return (
-        <Typography variant="mkt-small-caps" fw="bold">
+        <Typography variant="body1" fw="bold">
           #{globalRowIndex + 1}
         </Typography>
       );
