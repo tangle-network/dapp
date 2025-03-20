@@ -8,7 +8,7 @@ import {
 } from '@tangle-network/ui-components';
 import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
 import BlueprintItem from '@tangle-network/tangle-shared-ui/components/blueprints/BlueprintGallery/BlueprintItem';
-
+import { useState } from 'react';
 type RejectConfirmationModelProps = {
   onClose: () => void;
   onConfirm: () => Promise<boolean>;
@@ -20,10 +20,13 @@ function RejectConfirmationModel({
   onConfirm,
   selectedRequest,
 }: RejectConfirmationModelProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const onSubmit = async () => {
+    setIsSubmitting(true);
     const isSuccess = await onConfirm();
     if (!isSuccess) return;
-
+    setIsSubmitting(false);
     onClose();
   };
 
@@ -76,7 +79,7 @@ function RejectConfirmationModel({
         <Button variant="secondary" onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={onSubmit}>
+        <Button variant="primary" onClick={onSubmit} isDisabled={isSubmitting}>
           Reject
         </Button>
       </ModalFooter>

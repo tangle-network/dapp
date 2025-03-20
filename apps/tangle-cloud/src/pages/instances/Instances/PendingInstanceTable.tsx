@@ -94,15 +94,15 @@ export const PendingInstanceTable: FC = () => {
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    src={props.row.original.blueprintData.metadata.logo}
-                    alt={props.row.original.blueprintData.metadata.name}
+                    src={props.row.original.blueprintData?.metadata.logo}
+                    alt={props.row.original.blueprintData?.metadata?.name}
                     sourceVariant="uri"
                   />
                 ) : (
                   <Avatar
                     size="lg"
                     className="min-w-12"
-                    value={props.row.original.blueprintData?.metadata.name}
+                    value={props.row.original.blueprintData?.metadata?.name}
                     theme="substrate"
                   />
                 )}
@@ -111,7 +111,7 @@ export const PendingInstanceTable: FC = () => {
                   fw="bold"
                   className="!text-blue-50 text-ellipsis whitespace-nowrap overflow-hidden"
                 >
-                  {props.row.original.blueprintData?.metadata.name}
+                  {props.row.original.blueprintData?.metadata?.name}
                 </Typography>
               </div>
             </TableCellWrapper>
