@@ -58,7 +58,7 @@ This repository adheres to the [Conventional Commits](https://www.conventionalco
 
 - All rules from [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 - Commit body is disabled completely: Since it has not been used in this repository, it is disabled to avoid confusion and maintain consistency.
-- Scope should be one of the following: `tangle-dapp`, `testnet-leaderboard`, `ui-components`, `icons`, `tools`.
+- Valid scopes can be found in the [commitlint.config.cjs](../commitlint.config.cjs) file.
 
 Here are some examples to follow:
 

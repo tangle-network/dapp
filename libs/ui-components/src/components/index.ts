@@ -90,3 +90,4 @@ export * from './Caption';
 export * from './ListStatus';
 export * from './CircularProgress';
 export * from './EnergyChip';
+export * from './ValidatorIdentity';

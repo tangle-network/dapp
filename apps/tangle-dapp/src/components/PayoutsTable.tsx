@@ -1,3 +1,9 @@
+import { Payout } from '@tangle-network/tangle-shared-ui/types';
+import {
+  AmountFormatStyle,
+  Table,
+  ValidatorIdentity,
+} from '@tangle-network/ui-components';
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -7,26 +13,16 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { Payout } from '@tangle-network/tangle-shared-ui/types';
-import {
-  AmountFormatStyle,
-  Avatar,
-  CopyWithTooltip,
-  Table,
-  Typography,
-  shortenString,
-  ExternalLinkIcon,
-} from '@tangle-network/ui-components';
 import { useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+import { WalletPayIcon } from '@tangle-network/icons';
+import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
+import pluralize from '@tangle-network/ui-components/utils/pluralize';
+import PayoutTxModal from '../containers/PayoutTxModal';
+import sortByBn from '../utils/sortByBn';
 import { HeaderCell, StringCell } from './tableCells';
 import TokenAmountCell from './tableCells/TokenAmountCell';
-import sortByBn from '../utils/sortByBn';
-import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
-import PayoutTxModal from '../containers/PayoutTxModal';
-import { WalletPayIcon } from '@tangle-network/icons';
-import pluralize from '@tangle-network/ui-components/utils/pluralize';
 
 const COLUMN_HELPER = createColumnHelper<Payout>();
 
@@ -76,48 +72,21 @@ const PayoutsTable: React.FC<Props> = ({
         ),
         cell: (props) => {
           const { address, identity } = props.getValue();
-          const displayName =
-            identity || (address ? shortenString(address, 6) : '');
 
           const accountExplorerUrl = address
             ? createExplorerAccountUrl(address)
-            : '';
+            : null;
+
+          if (address === null) {
+            return null;
+          }
 
           return (
-            <div
-              className="flex items-center justify-start space-x-2"
-              key={address}
-            >
-              {address !== null && (
-                <Avatar
-                  sourceVariant="address"
-                  value={address}
-                  theme="substrate"
-                >
-                  {address}
-                </Avatar>
-              )}
-
-              <Typography variant="body1" className="text-muted-foreground">
-                {displayName}
-              </Typography>
-
-              {address !== null && typeof address === 'string' && (
-                <CopyWithTooltip
-                  copyLabel="Copy Validator Address"
-                  textToCopy={address}
-                  isButton={false}
-                />
-              )}
-
-              {typeof accountExplorerUrl === 'string' &&
-                accountExplorerUrl !== '' && (
-                  <ExternalLinkIcon
-                    href={accountExplorerUrl}
-                    className="fill-mono-160 dark:fill-mono-80"
-                  />
-                )}
-            </div>
+            <ValidatorIdentity
+              address={address}
+              identityName={identity}
+              accountExplorerUrl={accountExplorerUrl}
+            />
           );
         },
         sortingFn: (rowA, rowB) => {

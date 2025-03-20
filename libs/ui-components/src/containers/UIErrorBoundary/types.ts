@@ -1,5 +1,5 @@
 import type LoggerService from '@tangle-network/browser-utils/logger/LoggerService';
-import type { ErrorInfo, ReactNode } from 'react';
+import type { ErrorInfo, FunctionComponent, ReactNode } from 'react';
 
 export interface UIErrorBoundaryState {
   hasError: boolean;
@@ -9,5 +9,6 @@ export interface UIErrorBoundaryState {
 
 export interface UIErrorBoundaryProps {
   children: ReactNode;
+  Fallback?: FunctionComponent<UIErrorBoundaryState>;
   logger: LoggerService;
 }

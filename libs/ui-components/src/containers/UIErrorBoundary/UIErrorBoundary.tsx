@@ -27,11 +27,19 @@ export class UIErrorBoundary extends Component<
       error,
       errorInfo,
     });
+
+    this.setState({
+      hasError: true,
+      error,
+      errorInfo,
+    });
   }
 
   render() {
     if (this.state.hasError) {
-      return (
+      return this.props.Fallback ? (
+        <this.props.Fallback {...this.state} />
+      ) : (
         <div className="flex items-center justify-center w-screen h-screen">
           <ErrorFallback />
         </div>

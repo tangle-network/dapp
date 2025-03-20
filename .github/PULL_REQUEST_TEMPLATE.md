@@ -10,6 +10,7 @@ _Put an `x` in the boxes that apply._
 
 - [ ] `apps/tangle-dapp`
 - [ ] `apps/tangle-cloud`
+- [ ] `apps/leaderboard`
 - [ ] `libs/tangle-shared-ui`
 - [ ] `libs/ui-components`
 

@@ -1,15 +1,16 @@
 name: 'Publish Storybook Docs 📚'
 
 on:
-  push:
-    branches:
-      - develop
-      - feature/**
+  # TODO: Enable this when Storybook build is fixed
+  # push:
+  #   branches:
+  #     - develop
+  #     - feature/**
 
-    paths: [
-        'libs/ui-components/src/stories/**',
-        'libs/ui-components/.storybook/**',
-      ] # Trigger the action only when files change in the folders defined here
+  #   paths: [
+  #       'libs/ui-components/src/stories/**',
+  #       'libs/ui-components/.storybook/**',
+  #     ] # Trigger the action only when files change in the folders defined here
 
   workflow_dispatch:
 

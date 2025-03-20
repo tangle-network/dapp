@@ -3,14 +3,10 @@ import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetwork
 import { Validator } from '@tangle-network/tangle-shared-ui/types';
 import {
   AmountFormatStyle,
-  Avatar,
   Button,
-  CopyWithTooltip,
-  ExternalLinkIcon,
   fuzzyFilter,
-  shortenString,
   Table,
-  Typography,
+  ValidatorIdentity,
 } from '@tangle-network/ui-components';
 import pluralize from '@tangle-network/ui-components/utils/pluralize';
 import sortByComparable from '@tangle-network/ui-components/utils/sortByComparable';
@@ -128,33 +124,11 @@ const ValidatorTable = ({ data, isWaiting, searchValue }: Props) => {
           const accountExplorerUrl = createExplorerAccountUrl(address);
 
           return (
-            <div className="flex items-center space-x-1">
-              <Avatar
-                sourceVariant="address"
-                value={address}
-                theme="substrate"
-              />
-
-              <Typography variant="body1" fw="normal" className="truncate">
-                {identity !== undefined
-                  ? formatIdentity(identity)
-                  : shortenString(address, 6)}
-              </Typography>
-
-              <CopyWithTooltip
-                copyLabel="Copy Address"
-                textToCopy={address}
-                isButton={false}
-                iconClassName="!fill-mono-160 dark:!fill-mono-80"
-              />
-
-              {accountExplorerUrl !== null && (
-                <ExternalLinkIcon
-                  href={accountExplorerUrl}
-                  className="fill-mono-160 dark:fill-mono-80"
-                />
-              )}
-            </div>
+            <ValidatorIdentity
+              address={address}
+              identityName={identity}
+              accountExplorerUrl={accountExplorerUrl}
+            />
           );
         },
       }),
@@ -202,12 +176,3 @@ const ValidatorTable = ({ data, isWaiting, searchValue }: Props) => {
 };
 
 export default ValidatorTable;
-
-/* @internal */
-function formatIdentity(inputString: string): string {
-  if (inputString.length > 15) {
-    return `${inputString.slice(0, 12)}...`;
-  } else {
-    return inputString;
-  }
-}
