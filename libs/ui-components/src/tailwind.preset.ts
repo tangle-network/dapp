@@ -264,7 +264,7 @@ const preset = {
   },
   plugins: [
     formsPlugin(),
-    radixPlugin({}),
+    radixPlugin,
     scrollbarPlugin({ nocompatible: true }),
     animatePlugin,
   ],
