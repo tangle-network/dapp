@@ -328,7 +328,7 @@ const LsMyPoolsTable: FC<LsMyPoolsTableProps> = ({ pools, isShown }) => {
     }
   }, [isUpdateCommissionModalOpen, isUpdateRolesModalOpen]);
 
-  // TODO: Missing error and loading state. Should ideally abstract all these states into an abstract Table component, since it's getting reused in multiple places.
+  // TODO: Missing error and loading state.
   if (!isAccountConnected) {
     return (
       <TableStatus

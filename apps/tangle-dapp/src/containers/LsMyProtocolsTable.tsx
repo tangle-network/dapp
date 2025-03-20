@@ -36,6 +36,8 @@ import sortByLocaleCompare from '../utils/sortByLocaleCompare';
 import useNetworkStore from '@tangle-network/tangle-shared-ui/context/useNetworkStore';
 import { TANGLE_TOKEN_DECIMALS } from '@tangle-network/dapp-config';
 import getLsProtocols from '../utils/getLsProtocols';
+import TableStatus from '@tangle-network/tangle-shared-ui/components/tables/TableStatus';
+import useIsAccountConnected from '../hooks/useIsAccountConnected';
 
 export type LsMyProtocolRow = {
   name: string;
@@ -176,14 +178,14 @@ const LsMyProtocolsTable: FC = () => {
     [],
   );
 
-  const myPoolsOrNull = useLsMyPools();
-  const myPools = useMemo(() => myPoolsOrNull ?? [], [myPoolsOrNull]);
+  const isAccountConnected = useIsAccountConnected();
+  const myPools = useLsMyPools();
   const network = useNetworkStore((store) => store.network2);
 
-  const rows = useMemo<LsMyProtocolRow[]>(() => {
+  const rows = useMemo<LsMyProtocolRow[] | null>(() => {
     // Not yet ready.
-    if (network === undefined) {
-      return [];
+    if (network === undefined || myPools === null) {
+      return null;
     }
 
     const protocols = getLsProtocols(network);
@@ -213,7 +215,7 @@ const LsMyProtocolsTable: FC = () => {
   }, [myPools, network]);
 
   const table = useReactTable({
-    data: rows,
+    data: rows ?? [],
     columns: PROTOCOL_COLUMNS,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
@@ -233,6 +235,23 @@ const LsMyProtocolsTable: FC = () => {
   const onRowClick = useCallback((row: Row<LsMyProtocolRow>) => {
     row.toggleExpanded();
   }, []);
+
+  if (!isAccountConnected) {
+    return (
+      <TableStatus
+        title="Connect Wallet"
+        description="Connect your wallet to view & manage the liquid staking pools that you're involved in."
+      />
+    );
+  } else if (rows === null) {
+    return (
+      <TableStatus
+        icon="🔄"
+        title="Loading Pools"
+        description="Please wait while your liquid staking pools are fetched from the network."
+      />
+    );
+  }
 
   return (
     <Table
