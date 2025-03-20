@@ -50,9 +50,7 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
               assetOptions?.map((option) => {
                 return (
                   <SelectItem value={option.asset}>
-                    {
-                      assetMetadata?.get(option.asset)?.name || option.asset
-                    }
+                    {assetMetadata?.get(option.asset)?.name || option.asset}
                   </SelectItem>
                 );
               }) ?? [],

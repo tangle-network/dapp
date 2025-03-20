@@ -162,7 +162,9 @@ export const PendingInstanceTable: FC = () => {
                   content={Children.toArray(
                     props.row.original.securityRequirements.map(
                       (requirement) => {
-                        const assetMetadata = assetsMetadata?.get(requirement.asset);
+                        const assetMetadata = assetsMetadata?.get(
+                          requirement.asset,
+                        );
                         return (
                           <div className="flex items-center gap-2">
                             <LsTokenIcon
