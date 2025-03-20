@@ -12,17 +12,20 @@ import { useForm } from 'react-hook-form';
 import { Children, useRef } from 'react';
 import { RestakeAssetId } from '@tangle-network/tangle-shared-ui/types';
 import { AssetCommitmentFormItem } from './AssetCommitmentFormItem';
+import { PalletAssetsAssetMetadata } from '@polkadot/types/lookup';
 
 type ApproveConfirmationModelProps = {
   onClose: () => void;
   onConfirm: (data: ApprovalConfirmationFormFields) => Promise<boolean>;
   selectedRequest: MonitoringServiceRequest | null;
+  assetsMetadata: Map<string, PalletAssetsAssetMetadata | null>;
 };
 
 function ApproveConfirmationModel({
   onClose,
   onConfirm,
   selectedRequest,
+  assetsMetadata,
 }: ApproveConfirmationModelProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const {
@@ -189,6 +192,7 @@ function ApproveConfirmationModel({
               <AssetCommitmentFormItem
                 index={index}
                 assetId={watch(`securityCommitment.${index}.assetId`)}
+                assetMetadata={assetsMetadata}
                 assetOptions={selectedRequest?.securityRequirements}
                 onChangeAssetId={(value) => {
                   setValue(

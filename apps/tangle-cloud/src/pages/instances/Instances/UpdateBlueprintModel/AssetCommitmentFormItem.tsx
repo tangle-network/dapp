@@ -11,6 +11,7 @@ import ErrorMessage from '../../../../components/ErrorMessage';
 import { Children, FC } from 'react';
 import { CloseCircleLineIcon } from '@tangle-network/icons';
 import { MonitoringServiceRequest } from '@tangle-network/tangle-shared-ui/data/blueprints/utils/type';
+import { PalletAssetsAssetMetadata } from '@polkadot/types/lookup';
 
 type AssetCommitmentFormItemProps = {
   index: number;
@@ -21,6 +22,7 @@ type AssetCommitmentFormItemProps = {
   exposurePercent?: string;
   onChangeExposurePercent: (value: string) => void;
   exposurePercentErrorMsg?: string;
+  assetMetadata?: Map<string, PalletAssetsAssetMetadata | null>;
 };
 
 export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
@@ -32,6 +34,7 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
   exposurePercent,
   onChangeExposurePercent,
   exposurePercentErrorMsg,
+  assetMetadata,
 }) => {
   return (
     <div className="flex flex-wrap gap-4">
@@ -46,7 +49,11 @@ export const AssetCommitmentFormItem: FC<AssetCommitmentFormItemProps> = ({
             {Children.toArray(
               assetOptions?.map((option) => {
                 return (
-                  <SelectItem value={option.asset}>{option.asset}</SelectItem>
+                  <SelectItem value={option.asset}>
+                    {
+                      assetMetadata?.get(option.asset)?.name || option.asset
+                    }
+                  </SelectItem>
                 );
               }) ?? [],
             )}

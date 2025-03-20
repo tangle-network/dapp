@@ -79,7 +79,7 @@ export const PendingInstanceTable: FC = () => {
     );
   }, [pendingBlueprints]);
 
-  const { result: assets } = useAssetsMetadata(assetIds);
+  const { result: assetsMetadata } = useAssetsMetadata(assetIds);
 
   const columns = useMemo(() => {
     const baseColumns: AccessorKeyColumnDef<MonitoringServiceRequest, any>[] = [
@@ -141,7 +141,7 @@ export const PendingInstanceTable: FC = () => {
                           <div className="flex items-center gap-2">
                             <LsTokenIcon
                               name={
-                                assets
+                                assetsMetadata
                                   ?.get(requirement.asset)
                                   ?.symbol?.toString() ?? ''
                               }
@@ -162,7 +162,7 @@ export const PendingInstanceTable: FC = () => {
                   content={Children.toArray(
                     props.row.original.securityRequirements.map(
                       (requirement) => {
-                        const assetMetadata = assets?.get(requirement.asset);
+                        const assetMetadata = assetsMetadata?.get(requirement.asset);
                         return (
                           <div className="flex items-center gap-2">
                             <LsTokenIcon
@@ -422,6 +422,7 @@ export const PendingInstanceTable: FC = () => {
           onClose={onCloseBlueprintApproveModal}
           onConfirm={onConfirmApprove}
           selectedRequest={selectedRequest}
+          assetsMetadata={assetsMetadata}
         />
       </Modal>
     </>
